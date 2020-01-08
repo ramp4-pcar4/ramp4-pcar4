@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "lib": ["es7", "dom"],
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "module": "commonjs",
+    "target": "es5",
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "types": ["arcgis-js-api", "dojo"],
+    "typeRoots": ["./node_modules/@types"],
+    "experimentalDecorators": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
