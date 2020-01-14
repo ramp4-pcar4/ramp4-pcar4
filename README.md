@@ -1,10 +1,10 @@
-#RAMP 4
+# RAMP 4
 
-##Installing dependencies
+## Installing dependencies
 `rush update`
 
-##Running a dev site
+## Running a dev site
 `rush server`
 
-##Buiding a prod library
+## Buiding a prod library
 `rush build`
