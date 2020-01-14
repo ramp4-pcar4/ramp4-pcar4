@@ -19,8 +19,9 @@ export default class AttribLayer extends BaseLayer {
 
     }
 
-    protected getFC(layerIdx: number): AttribFC {
-        return (<AttribFC>super.getFC(layerIdx));
+    // only here to make typescript casting nice
+    protected getFC(layerIdx: number|string, validRoot: boolean = false): AttribFC {
+        return (<AttribFC>super.getFC(layerIdx, validRoot));
     }
 
     /**
@@ -41,24 +42,24 @@ export default class AttribLayer extends BaseLayer {
         return esriConfig;
     }
 
-    getAttributes (layerIdx: number = undefined): Promise<AttributeSet> {
+    getAttributes (layerIdx: number | string = undefined): Promise<AttributeSet> {
         return this.getFC(layerIdx).attLoader.getAttribs();
     }
 
-    abortAttributeLoad (layerIdx: number = undefined): void {
+    abortAttributeLoad (layerIdx: number | string = undefined): void {
         this.getFC(layerIdx).attLoader.abortAttribLoad();
     }
 
-    destroyAttributes (layerIdx: number = undefined): void {
+    destroyAttributes (layerIdx: number | string = undefined): void {
         this.getFC(layerIdx).attLoader.destroyAttribs();
     }
 
     // formerly known as getFormattedAttributes
-    getTabularAttributes (layerIdx: number = undefined): Promise<AttributeSet> {
+    getTabularAttributes (layerIdx: number | string = undefined): Promise<AttributeSet> {
         return this.getFC(layerIdx).getTabularAttributes();
     }
 
-    getFeatureCount (layerIdx: number = undefined): number {
+    getFeatureCount (layerIdx: number | string = undefined): number {
         return this.getFC(layerIdx).featureCount;
     }
 

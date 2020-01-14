@@ -12,6 +12,7 @@ export default class BaseFC extends BaseBase {
     protected parentLayer: BaseLayer;
     layerIdx: number; // final name TBD
     name: string;
+    uid: string;
     scaleSet: ScaleSet;
     supportsFeatures: boolean;
     legend: Array<LegendSymbology>; // TODO old ramp stored this in same structure as arcgis server i.e. legend.layer[idx].legend[]
@@ -20,7 +21,7 @@ export default class BaseFC extends BaseBase {
     constructor (infoBundle: InfoBundle, parent: BaseLayer, layerIdx: number = 0) {
 
         super(infoBundle);
-
+        this.uid = this.gapi.utils.shared.generateUUID();
         this.parentLayer = parent;
         this.layerIdx = layerIdx;
         this.name = '';

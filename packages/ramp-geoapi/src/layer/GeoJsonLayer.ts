@@ -151,6 +151,7 @@ export default class GeoJsonLayer extends AttribLayer {
         const featIdx: number = 0; // GeoJSON is always 0
         const gjFC = new GeoJsonFC(this.infoBundle(), this, featIdx);
         this.fcs[featIdx] = gjFC;
+        this.layerTree = new TreeNode(featIdx, gjFC.uid, this.name);
 
         // TODO implement symbology load
         // const pLS = aFC.loadSymbology();

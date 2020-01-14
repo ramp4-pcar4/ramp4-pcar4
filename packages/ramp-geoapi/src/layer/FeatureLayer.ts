@@ -110,7 +110,7 @@ export default class FeatureLayer extends AttribLayer {
         // feature has only one layer
         const featFC = new FeatureFC(this.infoBundle(), this, featIdx);
         this.fcs[featIdx] = featFC;
-        this.layerTree = new TreeNode(featIdx, this.name); // TODO verify name is populated at this point
+        this.layerTree = new TreeNode(featIdx, featFC.uid, this.name); // TODO verify name is populated at this point
 
         // TODO implement symbology load
         // const pLS = aFC.loadSymbology();
