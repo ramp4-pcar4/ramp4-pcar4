@@ -4,7 +4,7 @@
 `rush update`
 
 ## Running a dev site
-`rush server`
+`rush serve`
 
 ## Buiding a prod library
 `rush build`
