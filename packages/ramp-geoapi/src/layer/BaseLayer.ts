@@ -11,6 +11,8 @@ import NaughtyPromise from '../util/NaughtyPromise';
 
 export default class BaseLayer extends BaseBase {
 
+    uid: string;
+
     // TODO think about how to expose. protected makes sense, but might want to make it public to allow hacking and use by a dev module if we decide to
     //      could be the FCs need to access it so no choice
     innerLayer: esri.Layer;
@@ -48,6 +50,7 @@ export default class BaseLayer extends BaseBase {
     //      that actual implementer classes call in their constructors. e.g. for a file layer, might need to process file parts prior to running LayerBase stuff
     protected constructor (infoBundle: InfoBundle, rampConfig: RampLayerConfig) {
         super(infoBundle);
+        this.uid = this.gapi.utils.shared.generateUUID();
 
         this.visibilityChanged = new TypedEvent<boolean>();
         this.opacityChanged = new TypedEvent<number>();
@@ -193,7 +196,9 @@ export default class BaseLayer extends BaseBase {
         }
 
         // basic layer tree. fancier layers will simply steamroll over this
-        this.layerTree = new TreeNode(0, this.name);
+        // TODO reconsider the default uid. true value should be uid of 0th FC child.
+        //      if this always gets overwritten then we likely dont care.
+        this.layerTree = new TreeNode(0, this.uid, this.name);
 
         // TODO implement extent defaulting. Need to add property, get appropriate format from incoming ramp config, maybe need an interface
         /*
@@ -246,27 +251,72 @@ export default class BaseLayer extends BaseBase {
 
     getLayerTree(): TreeNode {
 
-        // TODO construction of tree is done in onLoad
         // TODO throw error if called too early? may want to standardize that error for other properties
-        // TODO make type for tree node
         // TODO make basic tree code here (one child at root)
-        // TODO override in MapImageLayer for fancy tree
         return this.layerTree;
     }
 
-    protected getFC(layerIdx: number): BaseFC {
-        let workingIdx: number = layerIdx; // copy so orig val can be displayed in error msg
-
-        if (this.isUn(layerIdx)) {
-            workingIdx = this.fcs.findIndex((fc: BaseFC) => fc); // find first fc (there could be indexes of nothing, thus the find)
+    // finds an index corresponding to the uid.
+    // -1 indicates the uid targets the root layer
+    protected uidToIdx(uid: string): number {
+        if (uid === this.uid) {
+            return -1;
+        } else {
+            const fcIdx: number = this.fcs.findIndex(fc => fc.uid === uid);
+            if (fcIdx === -1) {
+                // no match
+                throw new Error(`Attempt to access non-existing unique id [layerid ${this.innerLayer.id}, uid ${uid}]`);
+            } else {
+                return fcIdx;
+            }
         }
-        if (workingIdx === -1 || this.isUn(this.fcs[workingIdx])) {
-            throw new Error(`Attempt to access non-existing layer index [layerid ${this.innerLayer.id}, index ${layerIdx}]`);
-        }
-        return this.fcs[workingIdx];
     }
 
-    getName (layerIdx: number = undefined): string {
+    // attempts to get an FC based on the index or uid passed.
+    // will return undefined if a valid root request is made.
+    // missing layerIdx will be treated as root request if validRoot, otherwise treated as first valid FC child.
+    // will throw error if specific parameters cannot be found
+    protected getFC(layerIdx: number | string, validRoot: boolean = false): BaseFC {
+        // highscool cs IF party
+
+        // default request
+        if (this.isUn(layerIdx)) {
+            if (validRoot) {
+                // requesting the root layer, return nothing
+                return undefined;
+            } else {
+                // find first fc (there could be indexes of nothing, thus the find)
+                return this.fcs.find((fc: BaseFC) => fc);
+            }
+        }
+
+        let workingIdx: number;
+
+        if (typeof layerIdx === 'string') {
+            // uid request
+            workingIdx = this.uidToIdx(layerIdx);
+        } else {
+            // index request
+            workingIdx = layerIdx;
+        }
+
+        if (workingIdx === -1) {
+            if (validRoot) {
+                // requesting the root layer, return nothing
+                return undefined;
+            } else {
+                // asked for the root when not valid
+                throw new Error(`Attempt to access a function on layer root that only applies to an index of the layer [layerid ${this.innerLayer.id}]`);
+            }
+        } else if (this.isUn(this.fcs[workingIdx])) {
+            // passed a non-existing index/uid
+            throw new Error(`Attempt to access non-existing layer index [layerid ${this.innerLayer.id}, lookup value ${layerIdx}]`);
+        } else {
+            return this.fcs[workingIdx];
+        }
+    }
+
+    getName (layerIdx: number | string = undefined): string {
         return this.getFC(layerIdx).name;
     }
 
@@ -274,10 +324,10 @@ export default class BaseLayer extends BaseBase {
      * Returns the visibility of the layer/sublayer.
      *
      * @function getVisibility
-     * @param {Integer} [layerIdx] targets a layer index to get visibility for. Uses first/only if omitted.
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to get visibility for. Uses first/only if omitted.
      * @returns {Boolean} visibility of the layer/sublayer
      */
-    getVisibility (layerIdx: number = undefined): boolean {
+    getVisibility (layerIdx: number | string = undefined): boolean {
         return this.getFC(layerIdx).getVisibility();
     }
 
@@ -286,9 +336,9 @@ export default class BaseLayer extends BaseBase {
      *
      * @function setVisibility
      * @param {Boolean} value the new visibility setting
-     * @param {Integer} [layerIdx] targets a layer index to get visibility for. Uses first/only if omitted.
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to get visibility for. Uses first/only if omitted.
      */
-    setVisibility (value: boolean, layerIdx: number = undefined): void {
+    setVisibility (value: boolean, layerIdx: number | string = undefined): void {
         this.getFC(layerIdx).setVisibility(value);
     }
 
@@ -296,10 +346,10 @@ export default class BaseLayer extends BaseBase {
      * Returns the opacity of the layer/sublayer.
      *
      * @function getOpacity
-     * @param {Integer} [layerIdx] targets a layer index to get opacity for. Uses first/only if omitted.
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to get opacity for. Uses first/only if omitted.
      * @returns {Boolean} opacity of the layer/sublayer
      */
-    getOpacity (layerIdx: number = undefined): number {
+    getOpacity (layerIdx: number | string = undefined): number {
         return this.getFC(layerIdx).getOpacity();
     }
 
@@ -308,9 +358,9 @@ export default class BaseLayer extends BaseBase {
      *
      * @function setOpacity
      * @param {Decimal} value the new opacity setting. Valid value is anything between 0 and 1, inclusive.
-     * @param {Integer} [layerIdx] targets a layer index to get opacity for. Uses first/only if omitted.
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to get opacity for. Uses first/only if omitted.
      */
-    setOpacity (value: number, layerIdx: number = undefined): void {
+    setOpacity (value: number, layerIdx: number | string = undefined): void {
         this.getFC(layerIdx).setOpacity(value);
     }
 
@@ -318,14 +368,14 @@ export default class BaseLayer extends BaseBase {
      * Indicates if a feature class supports features (false would be an image/raster/etc)
      *
      * @function supportsFeatures
-     * @param {Integer} [layerIdx] targets a layer index to get visibility for. Uses first/only if omitted.
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to get visibility for. Uses first/only if omitted.
      * @returns {Boolean} if the layer/sublayer supports features
      */
-    supportsFeatures (layerIdx: number = undefined): boolean {
+    supportsFeatures (layerIdx: number | string = undefined): boolean {
         return this.getFC(layerIdx).supportsFeatures;
     }
 
-    getLegend (layerIdx: number = undefined): Array<LegendSymbology> {
+    getLegend (layerIdx: number | string = undefined): Array<LegendSymbology> {
         return this.getFC(layerIdx).legend;
     }
 
