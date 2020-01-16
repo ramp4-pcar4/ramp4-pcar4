@@ -17,7 +17,9 @@ import RvShell from '@/components/rv-shell.vue';
 export default class App extends Vue {}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+@import './styles/main.css';
+
 #app {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
