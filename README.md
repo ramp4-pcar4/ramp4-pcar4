@@ -1,5 +1,15 @@
 # R4MP
 
+## Dev setup
+
+Install Rush if you don't already have it:
+
+````
+npm install -g @microsoft/rush
+```
+
+Install a `v10.x` version of Node.js. `v10.17.0` seems to work nicely.
+
 ## Installing dependencies
 
 and use Rush to install dependencies:

@@ -2,7 +2,7 @@
 // TODO change all the 'any' in this file to more strict types if possible
 
 import esri = __esri;
-import { InfoBundle } from '../gapiTypes';
+import { InfoBundle, QueryFeaturesArcServerParams, QueryFeaturesGeoJsonParams, GetGraphicResult } from '../gapiTypes';
 import BaseBase from '../BaseBase';
 import Aql from './Aql';
 
@@ -11,6 +11,58 @@ export default class QueryService extends BaseBase {
     constructor (infoBundle: InfoBundle) {
         super(infoBundle);
     }
+
+    // gets array of oids matching a query from an arcgis server feature source
+    arcGisServerQueryIds(options: QueryFeaturesArcServerParams): Promise<Array<number>> {
+        // create and set the esri query parameters
+
+        const query = new this.esriBundle.Query();
+        query.returnGeometry = false;
+
+        if (options.filterSql) {
+            query.where = options.filterSql;
+        }
+        if (options.filterGeometry) {
+            query.geometry = this.queryGeometryHelper(options.filterGeometry, false, options.map.getScale(), options.sourceSR);
+            query.spatialRelationship = 'intersects';
+        }
+        query.outFields = options.outFields ? options.outFields.split(',').map(s => s.trim()) : ['*'];
+
+        const queryTask = new this.esriBundle.QueryTask({ url: options.url });
+
+        return queryTask.executeForIds(query);
+    }
+
+    // for now, the any is attributes. figure why just return the ids when everything is local;
+    // would just need another loop to map ids to attributes.
+    geoJsonQuery(options: QueryFeaturesGeoJsonParams): Promise<Array<GetGraphicResult>> {
+        // NOTE in ESRI4, you cant just dig into the underlying feature arrays of a layer.
+        //      so we use a blank query if there is no geometry.
+        const query = new this.esriBundle.Query();
+        query.returnGeometry = !!options.includeGeometry;
+
+        if (options.filterGeometry) {
+            query.geometry = this.queryGeometryHelper(options.filterGeometry, true);
+            query.spatialRelationship = 'intersects';
+        }
+
+        return (<esri.FeatureLayer>options.layer.innerLayer).queryFeatures(query).then(featSet => {
+            let feats: any = featSet.features;
+            if (options.filterSql && feats.length > 0) {
+                // aql
+                feats = this.sqlAttributeFilter(feats, options.filterSql, true);
+            }
+
+            // convert to our type. seems a bit wasteful, maybe find better way
+            return feats.map(f => ({
+                attributes: f.attributes,
+                geometry: f.geometry
+            }));
+        });
+    }
+
+    // TODO think about splitting up a lot of the below functions into server specific
+    //      and file specific functions.  File specific should utilze AQL.
 
     /**
      * Helper function to modify input geometries for queries. Will attempt to avoid various pitfalls,
@@ -23,7 +75,7 @@ export default class QueryService extends BaseBase {
      * @param {Integer} [sourceWkid] optional WKID of the layer being queried to help detect problem situations
      * @return {Object} resolves with a feature set of features that satisfy the query
      */
-    protected queryGeometryHelper(geometry: esri.Geometry, isFileLayer: boolean, mapScale?: number, sourceWkid?: number): esri.Geometry {
+    protected queryGeometryHelper(geometry: esri.Geometry, isFileLayer: boolean, mapScale?: number, sourceSR?: esri.SpatialReference): esri.Geometry {
         // NOTE while we have attempted to make most projection things be based around spatial references,
         //      not wkids, for the time being will leave this as is. We only have logic to handle a specific
         //      case (projecting lat-long to lambert), and things run ok if no wkid is specified.
@@ -39,8 +91,8 @@ export default class QueryService extends BaseBase {
             // first check for case of very large extent in Lambert against a LatLong layer.
             // in this case, we tend to get better results keeping things in an Extent form
             // as it handles the north pole/180meridan crossage better.
-            if (mapScale && sourceWkid && mapScale > 20000000 && geometry.spatialReference &&
-                geometry.spatialReference.wkid === 3978 && sourceWkid === 4326) {
+            if (mapScale && sourceSR && sourceSR.wkid && mapScale > 20000000 && geometry.spatialReference &&
+                geometry.spatialReference.wkid === 3978 && sourceSR.wkid === 4326) {
                 finalGeom = geometry;
             } else {
                 // convert extent to polygon to avoid issues when a service in a different projection
@@ -55,6 +107,7 @@ export default class QueryService extends BaseBase {
         return finalGeom;
     }
 
+    // TODO slated for review / removal, as has probably been made obsolete by functions up above.
     /**
      * Fetch attributes from a layer that intersects with the given geometry
      * Accepts the following options:
@@ -124,6 +177,7 @@ export default class QueryService extends BaseBase {
 
     }
 
+    // TODO slated for review / removal, as has probably been made obsolete by functions up above.
     // similar to queryGeometry, but only returns OIDs, allowing us to run more efficient web requests.
     // specifically, we can ignore the result limit on the server. Also doesn't require a geomtery, can just be
     // where clause

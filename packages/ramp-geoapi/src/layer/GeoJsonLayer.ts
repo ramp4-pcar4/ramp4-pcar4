@@ -32,13 +32,14 @@ function fieldValidator(fields: Array<esri.Field>, targetName: string): string {
 }
 
 // TODO i think we need to change the extends to AttribLayer, as FeatureLayer constructor will attempt to make its own feature layer
-export default class GeoJsonLayer extends AttribLayer {
+export class GeoJsonLayer extends AttribLayer {
 
     private esriJson: esri.FeatureLayerProperties; // used as temp var to get around typescript parameter grousing. will be undefined after initLayer()
 
     constructor (infoBundle: InfoBundle, rampLayerConfig: RampLayerConfig, geoJson: any, systemOptions: any) {
 
         super(infoBundle, rampLayerConfig);
+        this.isFile = true;
 
         // NOTE: file based layers can require reprojection.
         //       that is an asynchronous action. and has to happen before the esri layer
@@ -195,3 +196,5 @@ export default class GeoJsonLayer extends AttribLayer {
     }
 
 }
+
+export default GeoJsonLayer;

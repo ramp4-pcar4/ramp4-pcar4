@@ -48,6 +48,9 @@ export class Map extends MapBase {
     }
 
     // TODO passthrough functions, either by aly magic or make them hardcoded
+    getScale(): number {
+        return this.innerView.scale;
+    }
 
     // TODO function to allow a second Map to be shot out, that shares this map but has a different scene
 
