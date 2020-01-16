@@ -10,6 +10,11 @@ import UtilModule from './util/UtilModule';
 
 export * from './gapiTypes';
 export { Map } from './map/Map';
+export { FeatureLayer } from './layer/FeatureLayer';
+export { WmsLayer } from './layer/WmsLayer';
+export { MapImageLayer } from './layer/MapImageLayer';
+export { GeoJsonLayer } from './layer/GeoJsonLayer';
+export { HighlightLayer } from './layer/HighlightLayer';
 
 // TODO once working, try to use asynch / await keywords
 
@@ -49,8 +54,7 @@ function initAll(esriBundle: EsriBundle, window: DojoWindow, epsgLookup: EpsgLoo
         esriBundle: undefined,
         maps: undefined,
         layers: undefined,
-        utils: undefined,
-        fakeNewsMaps: undefined // TODO remove
+        utils: undefined
     };
     const infoBundle: InfoBundle = {
         api,
@@ -100,7 +104,7 @@ function initAll(esriBundle: EsriBundle, window: DojoWindow, epsgLookup: EpsgLoo
 /**
  * The main loader of the GeoAPI.
  * Options:
- * - esriApiUrl: url to an instance of the ESRI JS API 4.x. Default value is official source using the version that has passed development tests. Can override to older versions or a different host location.
+ * - apiUrl: url to an instance of the ESRI JS API 4.x. Default value is official source using the version that has passed development tests. Can override to older versions or a different host location.
  * - epsgLookup: a function that takes an EPSG code and returns a promise of a proj4 projection string for the EPSG code. Default function will use epsg.io service endpoint.
  * @param {Window} window a reference to the host page window. Required to dynamically add the script for the mapping api
  * @param {Object} [options] contains any of the above options

@@ -23,7 +23,7 @@ export class AsynchAttribController {
     constructor() {
         this.loadedCount = 0;
         this.loadAbortFlag = false;
-        this.loadAbortFlag = false;
+        this.loadIsDone = false;
     }
 }
 
@@ -68,6 +68,10 @@ export class AttributeLoaderBase extends BaseBase {
 
     loadCount(): number {
         return this.aac.loadedCount;
+    }
+
+    isLoaded(): boolean {
+        return this.aac.loadIsDone;
     }
 
     // this will be overrideable.
