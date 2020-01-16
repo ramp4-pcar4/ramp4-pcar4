@@ -9,6 +9,15 @@ import UtilModule from './util/UtilModule';
 // gapi loader needs to be a oneshot default due to magic (something about module load being dependant on dojo script load [waves hands, points at Aly]).
 // so putting the types here so they can be shared around
 
+export interface EpsgLookup {
+    (code: string | number): Promise<string>;
+}
+
+export interface GeoApiOptions {
+    apiUrl?: string;
+    epsgLookup?: EpsgLookup
+}
+
 export interface DojoWindow extends Window {
     require?: any;  // require is both a function, and has event handlers. probably a way to define in typescript interface, not going to right now.
 }
@@ -72,10 +81,6 @@ export class EsriBundle {
     dojoQuery: dojo.query;
     esriConfig: esri.config;
     esriRequest: (url: string, opts: esri.RequestOptions) => Promise<esri.RequestResponse>; // esri.request; // TODO figure out how to do this.  the esri.request doesn't align right with what dojo spits back. if it has to be a function, add the types to the signature
-}
-
-export interface EpsgLookup {
-    (code: string | number): Promise<string>;
 }
 
 // TODO might be worth making this a class or a generator function with defaults.  dont know what the impact of making all properties optonal is.

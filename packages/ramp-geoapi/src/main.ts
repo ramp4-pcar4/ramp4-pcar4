@@ -1,4 +1,4 @@
-import { GeoApi, DojoWindow, EsriBundle, InfoBundle, EpsgLookup } from './gapiTypes';
+import { GeoApi, DojoWindow, EsriBundle, InfoBundle, EpsgLookup, GeoApiOptions } from './gapiTypes';
 // import { FakeNewsMapModule } from './fakenewsmap';
 import MapModule from './map/MapModule';
 
@@ -96,7 +96,17 @@ function initAll(esriBundle: EsriBundle, window: DojoWindow, epsgLookup: EpsgLoo
 }
 
 // TODO if we find we have more things like epsgLookup that need to be provided at initialization, consider changing the paremeter into an options object
-export default async (esriApiUrl: string, window: DojoWindow, epsgLookup: EpsgLookup = undefined): Promise<GeoApi> => {
+
+/**
+ * The main loader of the GeoAPI.
+ * Options:
+ * - esriApiUrl: url to an instance of the ESRI JS API 4.x. Default value is official source using the version that has passed development tests. Can override to older versions or a different host location.
+ * - epsgLookup: a function that takes an EPSG code and returns a promise of a proj4 projection string for the EPSG code. Default function will use epsg.io service endpoint.
+ * @param {Window} window a reference to the host page window. Required to dynamically add the script for the mapping api
+ * @param {Object} [options] contains any of the above options
+ * @returns {Promise} resolves with instantiated GeoAPI object
+ */
+export default async (window: DojoWindow, options: GeoApiOptions = {}): Promise<GeoApi> => {
 
     // esriDeps is an array pairing ESRI JSAPI dependencies with their imported names
     // in esriBundle
@@ -177,9 +187,9 @@ export default async (esriApiUrl: string, window: DojoWindow, epsgLookup: EpsgLo
         oScript.onerror = (err: any) => reject(err);
         oScript.onload = () => resolve();
         oHead.appendChild(oScript);
-        oScript.src = esriApiUrl;
+        oScript.src = options.apiUrl || 'https://js.arcgis.com/4.14'; // default value should be used for general testing and be considered our "supported" version
     });
 
     const esriBundle = await makeDojoRequests(esriDeps, window);
-    return initAll(esriBundle, window, epsgLookup);
+    return initAll(esriBundle, window, options.epsgLookup);
 };
