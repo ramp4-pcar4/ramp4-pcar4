@@ -2,12 +2,12 @@
 
 
 import esri = __esri;
-import { InfoBundle, LayerState, RampLayerConfig, ArcGisServerUrl } from '../gapiTypes';
+import { InfoBundle, LayerState, RampLayerConfig, ArcGisServerUrl, IdentifyParameters, IdentifyResultSet, IdentifyResult, IdentifyResultFormat, QueryFeaturesParams } from '../gapiTypes';
 import AttribLayer from './AttribLayer';
 import TreeNode from './TreeNode';
 import FeatureFC from './FeatureFC';
 
-export default class FeatureLayer extends AttribLayer {
+export class FeatureLayer extends AttribLayer {
 
     constructor (infoBundle: InfoBundle, config: RampLayerConfig) {
 
@@ -110,6 +110,7 @@ export default class FeatureLayer extends AttribLayer {
         // feature has only one layer
         const featFC = new FeatureFC(this.infoBundle(), this, featIdx);
         this.fcs[featIdx] = featFC;
+        featFC.serviceUrl = layerUrl;
         this.layerTree = new TreeNode(featIdx, featFC.uid, this.name); // TODO verify name is populated at this point
 
         // TODO implement symbology load
@@ -118,7 +119,7 @@ export default class FeatureLayer extends AttribLayer {
         // update asynch data
         // TODO do all this lol
         // TODO check if we have custom renderer, add to options parameter here
-        const pLD: Promise<void> = featFC.loadLayerMetadata(layerUrl).then(() => {
+        const pLD: Promise<void> = featFC.loadLayerMetadata().then(() => {
             // apply any config based overrides to the data we just downloaded
             featFC.nameField = this.origRampConfig.nameField || featFC.nameField || '';
             featFC.tooltipField = this.origRampConfig.tooltipField || featFC.nameField;
@@ -174,7 +175,7 @@ export default class FeatureLayer extends AttribLayer {
         });
         */
 
-        const pFC = featFC.loadFeatureCount(layerUrl);
+        const pFC = featFC.loadFeatureCount();
 
 
         // if file based (or server extent was fried), calculate extent based on geometry
@@ -191,4 +192,88 @@ export default class FeatureLayer extends AttribLayer {
         return loadPromises;
     }
 
+    // ----------- LAYER ACTIONS -----------
+
+    identify(options: IdentifyParameters): IdentifyResultSet {
+
+        const myFC: FeatureFC = <FeatureFC>this.getFC(undefined); // undefined will get the first/only
+
+        // early kickout check. not loaded/error; not visible; not queryable; off scale
+        if (!this.isValidState() ||
+            !myFC.getVisibility() ||
+            // !this.isQueryable() || // TODO implement when we have this flag created
+            myFC.scaleSet.isOffScale(options.map.getScale()).offScale) {
+
+            // return empty result.
+            return super.identify(options);
+        }
+
+        const innerResult: IdentifyResult = {
+            uid: myFC.uid,
+            isLoading: true,
+            items: []
+        };
+
+        const result: IdentifyResultSet = {
+            results: [innerResult],
+            done: undefined, // set below
+            uid: this.uid
+        };
+
+        const tolerance = options.tolerance || 0; // this.clickTolerance; // TODO remove the 0 and add the parameter once we implement clickTolerance from config constructor
+
+        // run a spatial query
+        // const qry: esri.Query = new this.esriBundle.Query();
+        const qOpts: QueryFeaturesParams = {
+            outFields: '*', // TODO investigate this further, possibly add in layer defined outfields
+            includeGeometry: false,
+            map: options.map
+        };
+
+        // more accurate results without making the buffer if we're dealing with extents
+        // polygons from added file need buffer
+        // TODO further investigate why esri is requiring buffer for file-based polygons. logic says it shouldnt
+        // TODO FOR REAL TEST THIS OUT IN 4.x
+
+        // TODO default to point for now, to make things work.
+        //      need to figure out what format the core will be passing in geometry.
+        //      might consider having an IdentifyUtils class (or use the queryservice) to help with these common things
+        //      (e.g. this, buffer creation, etc)
+        //      using Geometry.fromJSON does not work well, it won't figure out the type and cast-up
+        const realGeom: esri.Geometry = this.esriBundle.Point.fromJSON(options.geometry);
+        if (myFC.geomType === 'polygon') {
+            qOpts.filterGeometry = realGeom;
+        } else {
+            // TODO investigate why we are using opts.clickEvent.mapPoint and not opts.geometry
+            // TODO add buffer back once we have buffer tech ready
+            // qOpts.filterGeometry = this.makeClickBuffer(opts.clickEvent.mapPoint, opts.map, tolerance);
+            qOpts.filterGeometry = realGeom; // TODO remove me after buffer tech
+        }
+
+        result.done = myFC.queryFeatures(qOpts).then(results => {
+            // TODO might be a problem overwriting the array if something is watching/binding to the original
+            innerResult.items = results.map(gr => {
+                return {
+                    // TODO decide if we want to handle alias mapping here or not.
+                    //      if we do, our "ESRI" format will need to include field metadata.
+                    //      if we dont, we need to ensure an outside fixture can access field metadata via uid easily.
+                    data: gr.attributes, // this.attributesToDetails(vAtt.attributes, layerData.fields),
+                    format: IdentifyResultFormat.ESRI
+
+                    // See comments on IdentifyItem interface definition; we may decide to not keep these properties
+                    // id:  gr.attributes[myFC.oidField].toString(),
+                    // symbol: this.gapi.utils.symbology.getGraphicIcon(gr.attributes, myFC.renderer) // TODO update to myFC.getIcon
+                    // name: this.getFeatureName(vAtt.oid.toString(), vAtt.attributes),
+                };
+            });
+
+            innerResult.isLoading = false;
+        });
+
+        return result;
+
+    }
+
 }
+
+export default FeatureLayer;

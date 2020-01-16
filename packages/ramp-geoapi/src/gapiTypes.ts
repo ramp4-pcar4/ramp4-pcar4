@@ -3,8 +3,10 @@
 
 import esri = __esri; // magic command to get ESRI JS API type definitions.
 import MapModule from './map/MapModule';
+import Map from './map/Map';
 import LayerModule from './layer/LayerModule';
 import UtilModule from './util/UtilModule';
+import GeoJsonLayer from './layer/GeoJsonLayer';
 
 // gapi loader needs to be a oneshot default due to magic (something about module load being dependant on dojo script load [waves hands, points at Aly]).
 // so putting the types here so they can be shared around
@@ -93,12 +95,12 @@ export interface GeoApi {
     utils: UtilModule;
     dev?: any;
     // agol?: any;
-    shared?: any;
+    // shared?: any;
     // query?: any;
     // events?: any;
     // TODO add module names as we import them
 
-    fakeNewsMaps?: any; // TODO remove after real maps are implemented
+    // fakeNewsMaps?: any; // TODO remove after real maps are implemented
 }
 
 // used to pass reference information into class constructors. saves us from having two parameters. value!
@@ -116,10 +118,20 @@ export enum LayerState { // these are used as css classes; hence the `rv` prefix
     ERROR = 'rv-error'
 }
 
+export enum IdentifyResultFormat {
+    ESRI = 'esri',
+    TEXT = 'text',
+    IMAGE = 'image', // TODO does this need to be split out into image formats like jpg, png?
+    HTML = 'html',
+    XML = 'xml',
+    JSON = 'json',
+    UNKNOWN = 'unknown'
+}
+
 // a collection of attributes
 export interface AttributeSet {
     features: Array<any>;
-    oidIndex?: {[key: string]: number}; // TODO check if we're relly using the index enough to make it worth keeping
+    oidIndex: {[key: number]: number};
 }
 
 export interface LegendSymbology {
@@ -135,7 +147,89 @@ export interface ArcGisServerUrl {
     index: number;
 }
 
-// ----------------------- CLIENT CONFIG INTERFACES FOR AUTOCOMPLETE -----------------------------------
+export interface GetGraphicParams {
+    getGeom?: boolean;
+    getAttribs?: boolean;
+    map?: Map;
+}
+
+export interface GetGraphicServiceDetails {
+    includeGeometry?: boolean; // indicates if the feature geometry should be included in the result
+    attribs?: string; // comma delimited list of attributes to download. '*' for all
+    serviceUrl: string; // feature layer endpoint on an arcgis server
+    maxOffset?: number; // indicates detail level required of geometry. can be critical if service is in different projection than the map
+    mapSR?: string; // stringified spatial reference of the map
+    oid: number; // oid of the feature to find
+}
+
+export interface GetGraphicResult {
+    // TODO strongly type if we can find types that dont freak out
+    //      we may also want to consider some esri-neutral types, since this appears to be used in the client
+    //      quite a lot in RAMP2.
+    //      alternately, using a real graphic may be needed for things like toggling visibility
+    //      of a result graphic (or a real graphic hiding inside a wrapper?).
+    //      Fuuurthermore, we often use this result to just get the attribute or the geometry
+    //      (omitting unrequired things if fetching from the server), thus making internal hidden
+    //      stuff tricky if it's not valid.
+    //      perhaps we get very fancy with a wrapper, that can have hidden internals if valid,
+    //      and error checking if people say request just attributes then attempt to change visibility
+    attributes?: any;
+    geometry?: any;
+}
+
+export interface QueryFeaturesParams {
+    filterGeometry?: esri.Geometry; // filter by geometry
+    filterSql?: string; // filter by sql query
+    includeGeometry?: boolean; // if geometry should be included in the result
+    outFields?: string; // comma separated list of attributes to restrict what is downloaded
+    sourceSR?: esri.SpatialReference; // the spatial reference of the web service. providing helps avoid some reprojection issues
+    map?: Map; // needed if querying geometry against a web service
+}
+
+export interface QueryFeaturesArcServerParams extends QueryFeaturesParams {
+    url: string;
+}
+
+export interface QueryFeaturesGeoJsonParams extends QueryFeaturesParams {
+    layer: GeoJsonLayer;
+}
+
+export interface IdentifyParameters {
+    // TODO will need a larger thinking session on how we expose any esri native types on our interfaces.
+    //      if not esri, needs to be converted inside geoapi to esri, so we need some type of strict interface.
+    geometry: any; // esri.Geometry; // TODO figure out how to manage this. typescript gets angry about supertypes.
+    map: Map;
+    tolerance?: number;
+    returnGeometry?: boolean;
+    // TODO think about adding more options to facilitate more flexible identification.
+    //      e.g. for MapImageLayer, an overriding list of child layers to query
+}
+
+// TODO for the identify structure, currently using uid to tie back to layers/sublayers. should we also include layerid / layerindex for completeness?
+
+export interface IdentifyItem {
+    data: any; // TODO figure out how we want to do this. we want the pipeline to be flexible and handle anything
+    format: IdentifyResultFormat;
+    // See https://github.com/ramp4-pcar4/r4design/issues/11
+    // name: string;
+    // id: string;
+    // symbol: string; // SVG code. does this need to be more flexible to handle WMS image symbols? would a symbol stack-ish thing be more appropriate?
+}
+
+export interface IdentifyResult {
+    items: Array<IdentifyItem>;
+    uid: string; // this would match to the FC. TODO might want to name the property something more specific to that, like sublayerUid? indexUid? childUid?
+    isLoading: boolean; // TODO confirm we still need this. the .done of IdentifyResultSet should provide the same information. maybe it's a binding thing (bind to bool > bind to promise?)
+
+}
+
+export interface IdentifyResultSet {
+    results: Array<IdentifyResult>;
+    done: Promise<void>;
+    uid: string; // this would be the parent layer's uid. TODO again, might want more specific name. parentUid? layerUid?
+}
+
+// ----------------------- CLIENT CONFIG INTERFACES -----------------------------------
 
 export interface RampSpatialReference {
     wkid?: number;

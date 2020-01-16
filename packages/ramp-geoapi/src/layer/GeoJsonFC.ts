@@ -1,10 +1,12 @@
 // TODO add proper comments
 
 import esri = __esri;
-import { InfoBundle } from '../gapiTypes';
+import { InfoBundle, GetGraphicParams, GetGraphicResult, QueryFeaturesGeoJsonParams, QueryFeaturesParams } from '../gapiTypes';
 import BaseLayer from './BaseLayer';
 import AttribFC from './AttribFC';
 import { AttributeLoaderDetails, FileLayerAttributeLoader } from '../util/AttributeLoader';
+import QuickCache from './QuickCache';
+import GeoJsonLayer from './GeoJsonLayer';
 
 export default class GeoJsonFC extends AttribFC {
 
@@ -24,6 +26,7 @@ export default class GeoJsonFC extends AttribFC {
         this.supportsFeatures = true;
 
         this.geomType = l.geometryType;
+        this.quickCache = new QuickCache(this.geomType);
 
         // TODO if we ever make config override for scale, would need to apply on the layer constructor, will end up here
         this.scaleSet.minScale = l.minScale || 0;
@@ -65,6 +68,58 @@ export default class GeoJsonFC extends AttribFC {
         };
         this.attLoader = new FileLayerAttributeLoader(this.infoBundle(), loadData);
 
+    }
+
+    /**
+     * Fetches a graphic from the given layer.
+     * This overrides the baseclass method, as we are all local and dont need quick caches or server hits
+     *
+     * @function getGraphic
+     * @param  {Integer} objectId      ID of object being searched for
+     * @param {Object} opts            object containing option parametrs
+     *                 - map           map wrapper object of current map. only required if requesting geometry
+     *                 - getGeom          boolean. indicates if return value should have geometry included. default to false
+     *                 - getAttribs       boolean. indicates if return value should have attributes included. default to false
+     * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .layerFC for convenience
+     */
+    getGraphic (objectId: number, opts: GetGraphicParams): Promise<GetGraphicResult> {
+
+        const gjOpt: QueryFeaturesParams = {
+            filterSql: `${this.oidField}=${objectId}`,
+            includeGeometry: !!opts.getGeom
+        };
+
+        // TODO not sure how much we care about this. since local, result will always have attribs and geom,
+        //      regardless of what requester asked for.
+        //      if thats a problem, add some logic to pare off properties of the result (might need to clone
+        //      to avoid breaking original source in the layer)
+
+        return this.queryFeatures(gjOpt).then(resultArr => {
+            if (resultArr.length === 0) {
+                throw new Error(`Could not find object id ${objectId}`);
+            } else if (resultArr.length !== 1) {
+                console.warn('did not get a single result on a query for a specific object id');
+            }
+            return resultArr[0];
+        });
+    }
+
+    // TODO we are using the getgraphci type as it's an unbound loosely typed feature
+    //      may want to change name of the type to something more general
+    /**
+     * Requests a set of features for this layer that match the criteria of the options
+     *
+     * @param options {Object} options to provide filters and helpful information.
+     * @returns {Array} set of features that satisfy the criteria
+     */
+    queryFeatures(options: QueryFeaturesParams): Promise<Array<GetGraphicResult>>{
+
+        const gjOpt: QueryFeaturesGeoJsonParams = {
+            layer: (<GeoJsonLayer>this.parentLayer),
+            ...options
+        };
+
+        return this.gapi.utils.query.geoJsonQuery(gjOpt);
     }
 
 }
