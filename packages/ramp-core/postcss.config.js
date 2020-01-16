@@ -16,6 +16,6 @@ module.exports = {
         // needed to scope tailwind styles
         require('postcss-nested'),
         // needed to cut down on css file size, tailwind is very large without any trimming
-        ...(process.env.NODE_ENV === 'production' ? [purgecss] : [purgecss])
+        ...(process.env.NODE_ENV === 'production' ? [purgecss] : [])
     ]
 };
