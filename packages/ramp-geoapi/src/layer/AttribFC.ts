@@ -2,11 +2,12 @@
 // TODO add proper comments
 
 import esri = __esri;
-import { InfoBundle, AttributeSet } from '../gapiTypes';
+import { InfoBundle, AttributeSet, GetGraphicParams, GetGraphicResult, GetGraphicServiceDetails, QueryFeaturesParams, QueryFeaturesArcServerParams } from '../gapiTypes';
 import BaseLayer from './BaseLayer';
 import BaseFC from './BaseFC';
 import { AttributeLoaderBase, AttributeLoaderDetails, ArcServerAttributeLoader } from '../util/AttributeLoader';
 import { BaseRenderer } from '../util/Renderers';
+import QuickCache from './QuickCache';
 
 export default class AttribFC extends BaseFC {
 
@@ -20,6 +21,8 @@ export default class AttribFC extends BaseFC {
     attLoader: AttributeLoaderBase;
     featureCount: number; // TODO figure out how to identify an unknown count. will use undefined for now. -1 would be other option
     renderer: BaseRenderer;
+    serviceUrl: string;
+    protected quickCache: QuickCache;
 
     constructor (infoBundle: InfoBundle, parent: BaseLayer, layerIdx: number = 0) {
         super(infoBundle, parent, layerIdx);
@@ -27,14 +30,16 @@ export default class AttribFC extends BaseFC {
         this.geomType = '';
         this.oidField = '';
         this.nameField = '';
+        this.serviceUrl = '';
     }
 
+    // serviceUrl: string,
     // NOTE this logic is for ArcGIS Server sourced things.
     //      other sourced attribute layers should override this function.
     // TODO consider moving a bulk of this out to LayerModule; the wizard may have use for running this (e.g. getting field list for a service url)
-    loadLayerMetadata(serviceUrl: string, options: any = {}): Promise<void> {
+    loadLayerMetadata(options: any = {}): Promise<void> {
 
-        if (!serviceUrl) {
+        if (!this.serviceUrl) {
             // case where a non-server subclass ends up calling this via .super magic.
             // will avoid failed attempts at reading a non-existing service.
             // class should implement their own logic to load metadata (e.g. scrape from file layer)
@@ -43,7 +48,7 @@ export default class AttribFC extends BaseFC {
         return new Promise ((resolve, reject) => {
 
             // extract info for this service
-            const restReq: IPromise<esri.RequestResponse> = this.esriBundle.esriRequest(serviceUrl, { query: { f: 'json' } });
+            const restReq: IPromise<esri.RequestResponse> = this.esriBundle.esriRequest(this.serviceUrl, { query: { f: 'json' } });
 
             // TODO revisit error handling. might need a try-catch? could also try then().error() to clean up
             restReq.then((serviceResult: esri.RequestResponse) => {
@@ -52,7 +57,9 @@ export default class AttribFC extends BaseFC {
 
                     // properties for all endpoints
                     this.layerType = sData.type;
-                    this.geomType = sData.geometryType || 'none'; // TODO need to decide what propert default is. Raster Layer has null gt.
+                    // TODO need to decide what propert default is. Raster Layer has null gt.
+                    this.geomType = this.gapi.utils.shared.serverGeomTypeToClientGeomType(sData.geometryType) || 'none';
+                    this.quickCache = new QuickCache(this.geomType);
                     this.scaleSet.minScale = sData.effectiveMinScale || sData.minScale;
                     this.scaleSet.maxScale = sData.effectiveMaxScale || sData.maxScale;
                     this.supportsFeatures = false; // saves us from having to keep comparing type to 'Feature Layer' on the client
@@ -77,7 +84,7 @@ export default class AttribFC extends BaseFC {
                             // we encountered a service that does not mark a field as the object id.
                             // attempt to use alternate definition. if neither exists, we are toast.
                             this.oidField = sData.objectIdField ||
-                                (() => { console.error(`Encountered service with no OID defined: ${serviceUrl}`); return ''; })();
+                                (() => { console.error(`Encountered service with no OID defined: ${this.serviceUrl}`); return ''; })();
                         }
 
                         // TODO revist. see https://github.com/james-rae/pocGAPI/issues/14
@@ -107,7 +114,7 @@ export default class AttribFC extends BaseFC {
                             // version number is only provided on 10.0 SP1 servers and up.
                             // servers 10.1 and higher support the query limit flag
                             supportsLimit: (sData.currentVersion || 1) >= 10.1,
-                            serviceUrl,
+                            serviceUrl: this.serviceUrl,
                             oidField: this.oidField,
                             attribs: '*' // TODO re-align with our attribs decision above
                         };
@@ -130,9 +137,9 @@ export default class AttribFC extends BaseFC {
         });
     }
 
-    loadFeatureCount(serviceUrl: string): Promise<void> {
+    loadFeatureCount(): Promise<void> {
 
-        if (!serviceUrl) {
+        if (!this.serviceUrl) {
             // case where a non-server subclass ends up calling this via .super magic.
             // will avoid failed attempts at reading a non-existing service.
             // class should implement their own logic to load feature count (e.g. scrape from file layer)
@@ -153,7 +160,7 @@ export default class AttribFC extends BaseFC {
                     returnGeometry: false
                 }
             };
-            const restReq: IPromise<esri.RequestResponse> = this.esriBundle.esriRequest(`${serviceUrl}/query`, restParam);
+            const restReq: IPromise<esri.RequestResponse> = this.esriBundle.esriRequest(`${this.serviceUrl}/query`, restParam);
 
             // TODO revisit error handling. might need a try-catch?
             // TODO have discussion about error case. app shouldnt bomb without count. but how to handle? ignore? show error? console error? special error count val e.g. -2
@@ -169,13 +176,13 @@ export default class AttribFC extends BaseFC {
                     resolve();
                 } else {
                     // case where service request was successful but no data appeared in result
-                    console.warn('Unable to load feature count: ' + serviceUrl);
+                    console.warn('Unable to load feature count: ' + this.serviceUrl);
                     resolve();
                 }
             }, error => {
                 // failed to load service info. reject with error
                 // TODO investigate if this is proper location where EsriErrorDetails will appear
-                console.warn('Unable to load feature count: ' + serviceUrl, error);
+                console.warn('Unable to load feature count: ' + this.serviceUrl, error);
                 resolve();
             });
         });
@@ -198,6 +205,7 @@ export default class AttribFC extends BaseFC {
 
         // TODO after refactor, consider changing this to a warning and just return some dummy value
         // TODO make a layertype constant / enum?
+        //      adopt the esri layer.type values would be a good idea
         if (this.layerType === 'Raster Layer') {
             throw new Error('Attempting to get attributes on a raster layer.');
         }
@@ -266,5 +274,187 @@ export default class AttribFC extends BaseFC {
             });
 
         return this.attLoader.tabularAttributesCache;
+    }
+
+    // TODO rename to getFeature for consistency?
+    /**
+     * Fetches a graphic from the given layer.
+     * Will attempt local copy (unless overridden), will hit the server if not available.
+     *
+     * @function getGraphic
+     * @param  {Integer} objectId      ID of object being searched for
+     * @param {Object} opts            object containing option parametrs
+     *                 - map           map wrapper object of current map. only required if requesting geometry
+     *                 - getGeom       boolean. indicates if return value should have geometry included. default to false
+     *                 - getAttribs    boolean. indicates if return value should have attributes included. default to false
+     * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .layerFC for convenience
+     */
+    getGraphic (objectId: number, opts: GetGraphicParams): Promise<GetGraphicResult> {
+        // TODO RAMP2 version of this included the FC object. we want to keep those hidden, so
+        //      for now will just return the graphic structure and if we need more stuff we
+        //      will figure out a proper way to do that.
+        // TODO we're just returning raw data, so will not type the promise result as esri.Graphic
+        //      seeing as we wont have all the decorations needed to satisfy the type
+
+        // see https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2190 for reasons why
+        // things are done the way they are in this function.
+
+        // NOTE this is for server-based layers. local layers with features should override this for gains.
+
+        const resultFeat: any = {};
+
+        // const nonPoint = this.geomType !== 'esriGeometryPoint';
+        let needWebAttr: boolean = false;
+        let needWebGeom: boolean = false;
+        let scale: number;
+
+        // if we need to access attribute promise, this var will become that
+        // promise. if not, this var remains a fast instant-resolve
+        let attribWaitPromise: Promise<void> = Promise.resolve();
+
+        if (opts.getAttribs) {
+            // attempt to get attributes from fastest source.
+            let aCache = this.quickCache.getAttribs(objectId);
+            if (aCache) {
+                // value is already cached. use it
+                resultFeat.attributes = aCache;
+            } else if (this.attLoader.isLoaded || this.parentLayer.isFile) {
+                // all attributes have been loaded (or is a file and are local). use that store.
+                // since attributes come from a promise, reset the wait promise to the attribute promise
+                attribWaitPromise = this.attLoader.getAttribs().then(atSet => {
+                    resultFeat.attributes = atSet.features[atSet.oidIndex[objectId]].attributes;
+                });
+            } else {
+                // we will need to download data from the service
+                needWebAttr = true;
+            }
+        }
+
+        if (opts.getGeom) {
+            scale = opts.map.innerView.scale;
+
+            // first locate the appropriate cache due to simplifications.
+            let gCache = this.quickCache.getGeom(objectId, scale);
+
+            // attempt to get geometry from fastest source.
+            if (gCache) {
+                resultFeat.geometry = gCache;
+
+            /*
+            // TODO / NOTE: at first glance it looks like ESRI 4 is hiding the guts of server-based feature layers.
+            //              when there is time, can take a look to see if any hidden/system caches are there on
+            //              the esri layer object to exploit.
+            //              for now, will just skip this optimization.
+
+            } else if (this.parentLayer.innerLayer.type === 'feature') {
+                // it is a feature layer. we can attempt to extract info from it.
+                // but remember the feature may not exist on the client currently
+
+                let localGraphic =  (<esri.FeatureLayer>this.parentLayer.innerLayer).graphics.find(g =>
+                    g.attributes[this.oidField] === objectId);
+
+
+                if (localGraphic) {
+                    // found one. cache it and use it
+                    gCache[objectId] = localGraphic.geometry;
+                    resultFeat.geometry = localGraphic.geometry;
+                } else {
+                    needWebGeom = true;
+                }
+            */
+            } else {
+                if (this.isUn(opts.map)) {
+                    throw new Error ('Map parameter must be provided for fetchGraphic calls on server based layers that want geometry in the result');
+                }
+                needWebGeom = true;
+            }
+        }
+
+        // hit the server if we dont have cached values
+        if (needWebAttr || needWebGeom) {
+            const serviceParams: GetGraphicServiceDetails = {
+                oid: objectId,
+                serviceUrl: this.serviceUrl,
+                includeGeometry: needWebGeom,
+                attribs: '*' // TODO likely want to align with outfields from the config. might want to start storing outfields/adjusted-outfields in the FC
+            };
+
+            if (needWebGeom) {
+                serviceParams.mapSR = JSON.stringify(opts.map.innerView.spatialReference); // TODO test; stringify might include all the esri wrapper garbage. if so, make a custom jsonifier in proj utils
+                if (!this.quickCache.isPoint) {
+                    serviceParams.maxOffset = opts.map.innerView.resolution;
+                }
+            }
+
+            return this.gapi.utils.attributes.loadSingleFeature(serviceParams).then(webFeat => {
+                if (needWebGeom) {
+                    // save our result in the cache
+                    this.quickCache.setGeom(objectId, webFeat.geometry, scale);
+                    resultFeat.geometry = webFeat.geometry;
+                }
+
+                if (needWebAttr || this.isUn(this.quickCache.getAttribs(objectId))) {
+                    // extra check in the if is for efficiency. attributes get downloaded in the request
+                    // regardless if we wanted them. if we didn't want them, but didn't have them cached,
+                    // will cache them anyways to save another hit later.
+                    this.quickCache.setAttribs(objectId, webFeat.attributes);
+
+                    if (needWebAttr) {
+                        // only put attribs on the result if requester asked for them
+                        resultFeat.attributes = webFeat.attributes;
+                    }
+                }
+
+                return resultFeat;
+            });
+
+        } else {
+            // no need for web requests. everything was available locally
+            return attribWaitPromise.then(() => resultFeat);
+        }
+    }
+
+    getIcon (objectId: number): Promise<string> {
+        return this.getGraphic(objectId, { getAttribs: true }).then(g => {
+            return this.gapi.utils.symbology.getGraphicIcon(g.attributes, this.renderer);
+        });
+    }
+
+    // TODO we are using the getgraphic type as it's an unbound loosely typed feature
+    //      may want to change name of the type to something more general
+    /**
+     * Requests a set of features for this layer that match the criteria of the options
+     *
+     * @param options {Object} options to provide filters and helpful information.
+     * @returns {Array} set of features that satisfy the criteria
+     */
+    queryFeatures(options: QueryFeaturesParams): Promise<Array<GetGraphicResult>>{
+        // NOTE this assumes a server based layer
+        //      local based layers should override this function
+
+        if (this.parentLayer.isFile) {
+            console.error(`a file layer called a server based query function`);
+            console.trace();
+        }
+
+        // TODO do we want do default options.outfields to our app-defined outfields if they are not provided?
+
+        // execute the query ids
+        const agsOpt: QueryFeaturesArcServerParams = {
+            url: this.serviceUrl,
+            ...options
+        };
+
+        return this.gapi.utils.query.arcGisServerQueryIds(agsOpt).then(oids => {
+            // run result ids through our quick cache pipeline
+            const p: GetGraphicParams = {
+                getGeom: !!options.includeGeometry,
+                getAttribs: true,
+                map: options.map
+            };
+            const cacheQueue: Array<Promise<GetGraphicResult>> = oids.map(oid => this.getGraphic(oid, p));
+            return Promise.all(cacheQueue);
+        });
+
     }
 }
