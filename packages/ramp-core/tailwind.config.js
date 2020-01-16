@@ -92,7 +92,7 @@ module.exports = {
 
                         // prefix shell size selector to the rule; slice the dot from the rule selector
                         // resulting class name is of the form `.[xs|sm|md|lg]:{selector}`
-                        newRule.selector = `.${shellSize} .${shellSize}\\:${newRule.selector.slice(1)}`;
+                        newRule.selector = `&.${shellSize} .${shellSize}\\:${newRule.selector.slice(1)}`;
                         newRules.push(newRule);
                     });
                 });

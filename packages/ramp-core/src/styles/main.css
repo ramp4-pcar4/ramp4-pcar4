@@ -1,4 +1,4 @@
-#app {
+.ramp-app {
     @tailwind base;
     @tailwind components;
     @tailwind utilities;

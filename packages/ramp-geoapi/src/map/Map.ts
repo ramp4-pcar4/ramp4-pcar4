@@ -13,7 +13,7 @@ export class Map extends MapBase {
     // TODO think about how to expose. protected makes sense, but might want to make it public to allow hacking and use by a dev module if we decide to
     innerView: esri.MapView;
 
-    constructor (infoBundle: InfoBundle, config: RampMapConfig, targetDiv: string) {
+    constructor (infoBundle: InfoBundle, config: RampMapConfig, targetDiv: string | HTMLDivElement) {
 
         super(infoBundle, config);
 

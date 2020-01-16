@@ -1,5 +1,5 @@
 <template>
-    <div id="mapDiv" class="h-full"></div>
+    <div class="h-full"></div>
 </template>
 
 <script lang="ts">
@@ -39,7 +39,7 @@ export default class EsriMap extends Vue {
                 initialBasemapId: 'esriImagery'
             };
 
-            const map: Map = gapi.maps.createMap(esriMapConfig, 'mapDiv');
+            const map: Map = gapi.maps.createMap(esriMapConfig, this.$el as HTMLDivElement);
         });
     }
 }

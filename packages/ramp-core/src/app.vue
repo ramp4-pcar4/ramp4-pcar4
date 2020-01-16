@@ -1,19 +1,19 @@
 <template>
-    <div id="app">
-        <rv-shell></rv-shell>
+    <div class="ramp-app">
+        <shell></shell>
     </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 
-import RvShell from '@/components/rv-shell.vue';
+import Shell from '@/components/shell.vue';
 
 import ro from '@/scripts/resize-observer.js';
 
 @Component({
     components: {
-        RvShell
+        Shell
     }
 })
 export default class App extends Vue {
@@ -27,8 +27,10 @@ export default class App extends Vue {
 
 <style lang="scss">
 @import './styles/main.css';
+</style>
 
-#app {
+<style lang="scss" scoped>
+.ramp-app {
     height: 900px;
 }
 </style>
