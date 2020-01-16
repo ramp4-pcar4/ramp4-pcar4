@@ -3,7 +3,7 @@ const purgecss = require('@fullhuman/postcss-purgecss')({
     // Paths to all of the template files in your project
     content: ['./src/**/*.html', './src/**/*.vue'],
 
-    whitelist: ['xs', 'sm', 'md', 'lg'],
+    whitelist: ['xs', 'sm', 'md', 'lg'], // whitelist ramp shell size classes so they are not purged
 
     // Include any special characters you're using in this regular expression
     defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || []
