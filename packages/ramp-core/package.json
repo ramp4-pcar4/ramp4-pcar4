@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --target lib --name r4mp --inline-vue src/main.ts",
+    "build": "vue-cli-service build --target lib --formats umd --name r4mp src/main.ts 2>&1",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint"
