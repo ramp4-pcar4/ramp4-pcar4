@@ -1,5 +1,7 @@
 <template>
-    <esri-map></esri-map>
+    <div class="h-full">
+        <esri-map></esri-map>
+    </div>
 </template>
 
 <script lang="ts">
@@ -12,7 +14,7 @@ import EsriMap from '@/components/map/esri-map.vue';
         EsriMap
     }
 })
-export default class RvShell extends Vue {}
+export default class Shell extends Vue {}
 </script>
 
 <style lang="scss" scoped></style>

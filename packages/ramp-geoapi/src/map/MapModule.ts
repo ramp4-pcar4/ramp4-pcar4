@@ -13,7 +13,7 @@ export default class MapModule extends BaseBase {
     }
 
     // TODO will we have a config type? is it bad to have something that is defined on the client be defined here?
-    createMap(config: any, targetDiv: string): Map {
+    createMap(config: any, targetDiv: string | HTMLDivElement): Map {
         const map: Map = new Map(this.infoBundle(), config, targetDiv);
         return map;
     }
