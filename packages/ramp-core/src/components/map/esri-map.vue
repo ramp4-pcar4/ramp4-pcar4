@@ -9,7 +9,7 @@ import GapiLoader, { Map, GeoApi, RampMapConfig } from 'ramp-geoapi';
 @Component
 export default class EsriMap extends Vue {
     created(): void {
-        const gapiPromise: Promise<GeoApi> = GapiLoader('https://js.arcgis.com/4.14', window);
+        const gapiPromise: Promise<GeoApi> = GapiLoader(window);
 
         gapiPromise.then((gapi: GeoApi) => {
             const esriMapConfig: RampMapConfig = {
