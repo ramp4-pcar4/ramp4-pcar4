@@ -13,5 +13,38 @@
         </noscript>
         <div id="app"></div>
         <!-- built files will be auto injected -->
+
+        <script>
+            setTimeout(() => {
+                new RAMP.Map(document.getElementById('app'), {
+                    map: {
+                        extent: {
+                            xmax: -5007771.626060756,
+                            xmin: -16632697.354854,
+                            ymax: 10015875.184845109,
+                            ymin: 5022907.964742964,
+                            spatialReference: {
+                                wkid: 102100,
+                                latestWkid: 3857
+                            }
+                        },
+                        lods: [], //gapi.maps.defaultLODs(gapi.maps.defaultTileSchemas()[1]), // idx 1 = mercator
+                        basemaps: [
+                            {
+                                id: 'esriImagery',
+                                tileSchemaId: 'DEFAULT_ESRI_World_AuxMerc_3857',
+                                layers: [
+                                    {
+                                        layerType: 'esriTile',
+                                        url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                                    }
+                                ]
+                            }
+                        ],
+                        initialBasemapId: 'esriImagery'
+                    }
+                });
+            }, 5000);
+        </script>
     </body>
 </html>

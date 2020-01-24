@@ -3,43 +3,26 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
-import GapiLoader, { Map, GeoApi, RampMapConfig } from 'ramp-geoapi';
+import { Vue, Watch, Component } from 'vue-property-decorator';
+import { Get, Sync, Call } from 'vuex-pathify';
+import GapiLoader, { Map, GeoApi, RampMapConfig, RampLayerConfig } from 'ramp-geoapi';
+
+import { ConfigStore } from '@/store/modules/config';
+import { LayerStore, layer } from '@/store/modules/layer';
 
 @Component
 export default class EsriMap extends Vue {
+    @Get(ConfigStore.getMapConfig) esriMapConfig!: RampMapConfig;
+
+    gapi!: GeoApi;
+    map!: Map;
+
     created(): void {
         const gapiPromise: Promise<GeoApi> = GapiLoader(window);
 
         gapiPromise.then((gapi: GeoApi) => {
-            const esriMapConfig: RampMapConfig = {
-                extent: {
-                    xmax: -5007771.626060756,
-                    xmin: -16632697.354854,
-                    ymax: 10015875.184845109,
-                    ymin: 5022907.964742964,
-                    spatialReference: {
-                        wkid: 102100,
-                        latestWkid: 3857
-                    }
-                },
-                lods: gapi.maps.defaultLODs(gapi.maps.defaultTileSchemas()[1]), // idx 1 = mercator
-                basemaps: [
-                    {
-                        id: 'esriImagery',
-                        tileSchemaId: 'DEFAULT_ESRI_World_AuxMerc_3857',
-                        layers: [
-                            {
-                                layerType: 'esriTile',
-                                url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
-                            }
-                        ]
-                    }
-                ],
-                initialBasemapId: 'esriImagery'
-            };
-
-            const map: Map = gapi.maps.createMap(esriMapConfig, this.$el as HTMLDivElement);
+            this.gapi = gapi;
+            this.map = gapi.maps.createMap(this.esriMapConfig, this.$el as HTMLDivElement);
         });
     }
 }

@@ -6,6 +6,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
+import { Get, Sync, Call } from 'vuex-pathify';
 
 import EsriMap from '@/components/map/esri-map.vue';
 
