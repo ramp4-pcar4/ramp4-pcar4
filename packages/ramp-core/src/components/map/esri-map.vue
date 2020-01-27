@@ -8,7 +8,7 @@ import { Get, Sync, Call } from 'vuex-pathify';
 import GapiLoader, { Map, GeoApi, RampMapConfig, RampLayerConfig } from 'ramp-geoapi';
 
 import { ConfigStore } from '@/store/modules/config';
-import { LayerStore, layer } from '@/store/modules/layer';
+// import { LayerStore, layer } from '@/store/modules/layer';
 
 @Component
 export default class EsriMap extends Vue {
