@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import pathify from 'vuex-pathify';
 import cloneDeep from 'clone-deep';
 
-import { fixtures } from './modules/fixtures';
+import { fixtures } from './modules/fixture';
 import { legend } from '@/store/modules/legend';
 import { config } from '@/store/modules/config';
 import { RootState } from '@/store/state';

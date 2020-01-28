@@ -8,7 +8,7 @@ class Map {
         const thisApp = createApp(mapDiv);
 
         // TODO: decide whether to move to src/main.ts:createApp
-        (thisApp.$store as any).set(ConfigStore.setConfig, config || undefined);
+        thisApp.$store.set(ConfigStore.setConfig, config || undefined);
 
         // TODO: temporary put the app instance on global scope so it can be accessed
         (window as any).thisApp = thisApp;

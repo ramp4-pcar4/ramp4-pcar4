@@ -1,4 +1,4 @@
-import { Fixture } from '@/store/modules/fixtures';
+import { Fixture } from '@/store/modules/fixture';
 
 class Gazebo implements Fixture {
     id: string = 'Gazebo';

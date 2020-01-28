@@ -1,8 +1,8 @@
 import { ActionContext, Action, Mutation } from 'vuex';
 import { make } from 'vuex-pathify';
 
-import { FixturesState, Fixture } from './fixtures-state';
-import { RootState } from '../../state';
+import { FixturesState, Fixture } from './fixture-state';
+import { RootState } from '@/store/state';
 
 type FixturesContext = ActionContext<FixturesState, RootState>;
 

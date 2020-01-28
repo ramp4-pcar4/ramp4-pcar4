@@ -65,6 +65,7 @@ export enum ConfigStore {
      *
      * `@param` config - The new RAMP config
      */
+
     setConfig = 'config/setConfig!',
     /**
      * getMapConfig

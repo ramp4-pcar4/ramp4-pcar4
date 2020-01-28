@@ -1,6 +1,6 @@
 import Vue from 'vue';
 
-import { Fixture } from '@/store/modules/fixtures';
+import { Fixture } from '@/store/modules/fixture';
 
 import SnowmanV from './snowman.vue'; // import on-map component
 const svInstance = new (Vue.extend(SnowmanV))(); // instantiate it
