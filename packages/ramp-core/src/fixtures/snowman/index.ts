@@ -20,7 +20,7 @@ class Snowman implements Fixture {
 
         setTimeout(() => {
             console.log(`[fixture] ${this.id} self-terminates`);
-            thisApp.$store.set('fixtures/removeFixture!', { value: this });
+            thisApp.$store.set('fixture/removeFixture!', { value: this });
 
             // removes the snowman from DOM and destroys the instance
             // TODO: this should be called in the `terminated` life hook

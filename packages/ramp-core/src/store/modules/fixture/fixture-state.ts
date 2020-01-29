@@ -1,4 +1,6 @@
-export class FixturesState {
+import Map from '@/api/map';
+
+export class FixtureState {
     fixtures: Fixture[] = [];
 }
 
@@ -10,6 +12,14 @@ export interface Fixture {
      * @memberof Fixture
      */
     id: string;
+
+    /**
+     * A reference to the R4MP instance this fixture is running inside.
+     *
+     * @type {Map}
+     * @memberof Fixture
+     */
+    map?: Map;
 
     /**
      * [Optional] Called synchronously when the fixture is added to R4MP.

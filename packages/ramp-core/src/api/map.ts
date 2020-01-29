@@ -2,6 +2,7 @@ import { RampMapConfig } from 'ramp-geoapi';
 
 import { createApp } from '@/main';
 import { ConfigStore } from '@/store/modules/config';
+import { Fixture } from '@/store/modules/fixture';
 
 class Map {
     constructor(mapDiv: HTMLElement, config?: RampMapConfig) {
@@ -20,19 +21,22 @@ class Map {
         // start loading fixtures; this is just an example
         // TODO: fixtures specified in the config should be loaded first, then fixtures added through the API
         // TODO: remove
-        chunkLoader('snowman');
-        chunkLoader('gazebo');
+        this.chunkLoader('snowman');
+        this.chunkLoader('gazebo');
     }
-}
 
-// TODO: moves this fixture loading function to a separate file
-// TODO: write logic for loading external fixtures
-function chunkLoader(value: string) {
-    // perform a dynamic webpack import of a internal fixture (allows for code splitting)
-    import(/* webpackChunkName: "[request]" */ `@/fixtures/${value}/index.ts`).then(fixture => {
-        // TODO: this is horrible
-        (window as any).thisApp.$store.set('fixtures/addFixture!', { value: fixture.default });
-    });
+    // TODO: moves this fixture loading function to a separate file
+    // TODO: write logic for loading external fixtures
+    chunkLoader(value: string) {
+        // perform a dynamic webpack import of a internal fixture (allows for code splitting)
+        import(/* webpackChunkName: "[request]" */ `@/fixture/${value}/index.ts`).then((fixture: any) => {
+            // TODO: this is horrible
+            const map = (window as any).thisApp;
+
+            // fixture.default.map = map;
+            map.$store.set('fixture/addFixture!', { value: fixture.default });
+        });
+    }
 }
 
 export default Map;
