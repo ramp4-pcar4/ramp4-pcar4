@@ -1,4 +1,13 @@
 module.exports = {
+    configureWebpack: {
+        output: {
+            libraryExport: 'default'
+        },
+
+        optimization: {
+            minimize: false // to build an unminified production build, uncomment the following
+        }
+    },
     chainWebpack: config => {
         config.performance.hints(false);
 

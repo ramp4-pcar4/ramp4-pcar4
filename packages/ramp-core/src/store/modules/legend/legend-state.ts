@@ -1,1 +1,1 @@
-export interface LegendState {}
+export class LegendState {}

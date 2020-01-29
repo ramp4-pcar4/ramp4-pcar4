@@ -10,45 +10,24 @@ import { RampConfig } from '@/types';
 // use for actions
 type ConfigContext = ActionContext<ConfigState, RootState>;
 
-interface actions {
+/* interface actions {
     [key: string]: Action<ConfigState, RootState>;
 }
-
-const state: ConfigState = {
-    config: {
-        map: {
-            lods: [],
-            extent: {
-                xmin: 0,
-                xmax: 0,
-                ymin: 0,
-                ymax: 0,
-                spatialReference: {}
-            },
-            basemaps: [],
-            initialBasemapId: ''
-        }
-    }
-};
-
+ */
 const getters = {
     getMapConfig: (state: ConfigState): RampMapConfig => {
         return state.config.map as RampMapConfig;
     }
 };
 
-const actions: actions = {
+const actions /* : actions */ = {
     setConfig: (context: ConfigContext, config: RampConfig): void => {
         const newConfig = merge(context.state.config, config);
         context.commit('SET_CONFIG', newConfig);
-    },
-
-    ...make.actions(state)
+    }
 };
 
-const mutations = {
-    ...make.mutations(state)
-};
+const mutations = {};
 
 /**
  * All string paths for config store Getters, Actions and state
@@ -77,10 +56,29 @@ export enum ConfigStore {
     getMapConfig = 'config/getMapConfig'
 }
 
-export const config = {
-    namespaced: true,
-    state,
-    getters,
-    actions,
-    mutations
-};
+export function config() {
+    const state = new ConfigState({
+        config: {
+            map: {
+                lods: [],
+                extent: {
+                    xmin: 0,
+                    xmax: 0,
+                    ymin: 0,
+                    ymax: 0,
+                    spatialReference: {}
+                },
+                basemaps: [],
+                initialBasemapId: ''
+            }
+        }
+    });
+
+    return {
+        namespaced: true,
+        state,
+        getters: { ...getters },
+        actions: { ...actions, ...make.actions(state) },
+        mutations: { ...mutations, ...make.mutations(state) }
+    };
+}

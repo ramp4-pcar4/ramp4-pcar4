@@ -7,11 +7,9 @@ import { RootState } from '@/store';
 // use for actions
 type LegendContext = ActionContext<LegendState, RootState>;
 
-interface actions {
+/* interface actions {
     [key: string]: Action<LegendState, RootState>;
-}
-
-const state: LegendState = {};
+} */
 
 // decide if these are needed
 //enum Action {}
@@ -20,18 +18,18 @@ const state: LegendState = {};
 
 const getters = {};
 
-const actions: actions = {
-    ...make.actions(state)
-};
+const actions = {};
 
-const mutations = {
-    ...make.mutations(state)
-};
+const mutations = {};
 
-export const legend = {
-    namespaced: true,
-    state,
-    getters,
-    actions,
-    mutations
-};
+export function legend() {
+    const state = new LegendState();
+
+    return {
+        namespaced: true,
+        state,
+        getters: { ...getters },
+        actions: { ...actions, ...make.actions(state) },
+        mutations: { ...mutations, ...make.mutations(state) }
+    };
+}

@@ -16,7 +16,7 @@
 
         <script>
             setTimeout(() => {
-                new RAMP.Map(document.getElementById('app'), {
+                const map = new RAMP.Map(document.getElementById('app'), {
                     map: {
                         extent: {
                             xmax: -5007771.626060756,
@@ -44,7 +44,13 @@
                         initialBasemapId: 'esriImagery'
                     }
                 });
-            }, 5000);
+
+                // start loading fixtures; this is just an example
+                // TODO: fixtures specified in the config should be loaded first, then fixtures added through the API
+                // TODO: remove
+                map.fixture.add('snowman');
+                map.fixture.add('gazebo');
+            }, 2000);
         </script>
     </body>
 </html>

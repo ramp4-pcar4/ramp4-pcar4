@@ -1,5 +1,9 @@
 import { RampConfig } from '@/types';
 
-export interface ConfigState {
+export class ConfigState {
     config: RampConfig;
+
+    constructor(config: any) {
+        this.config = config;
+    }
 }

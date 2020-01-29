@@ -6,8 +6,6 @@ import { RootState } from '@/store/state';
 
 type FixtureContext = ActionContext<FixtureState, RootState>;
 
-const state: FixtureState = new FixtureState();
-
 type StoreActions = { [key: string]: Action<FixtureState, RootState> };
 type StoreMutations = { [key: string]: Mutation<FixtureState> };
 
@@ -71,10 +69,14 @@ const mutations: StoreMutations = {
     }
 };
 
-export const fixture = {
-    namespaced: true,
-    state,
-    getters,
-    actions,
-    mutations
-};
+export function fixture() {
+    const state = new FixtureState();
+
+    return {
+        namespaced: true,
+        state,
+        getters: { ...getters },
+        actions: { ...actions },
+        mutations: { ...mutations }
+    };
+}

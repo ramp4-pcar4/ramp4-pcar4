@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
+        <title>ramp-core</title>
+
+        <link rel="stylesheet" href="../dist/RAMP.css" />
+
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="../dist/RAMP.umd.js"></script>
+    </head>
+    <body>
+        <noscript>
+            <strong>We're sorry but ramp-core doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+        </noscript>
+        <div id="app"></div>
+
+        <script>
+            const map = new RAMP.Map(document.getElementById('app'), {
+                map: {
+                    extent: {
+                        xmax: -5007771.626060756,
+                        xmin: -16632697.354854,
+                        ymax: 10015875.184845109,
+                        ymin: 5022907.964742964,
+                        spatialReference: {
+                            wkid: 102100,
+                            latestWkid: 3857
+                        }
+                    },
+                    lods: [], //gapi.maps.defaultLODs(gapi.maps.defaultTileSchemas()[1]), // idx 1 = mercator
+                    basemaps: [
+                        {
+                            id: 'esriImagery',
+                            tileSchemaId: 'DEFAULT_ESRI_World_AuxMerc_3857',
+                            layers: [
+                                {
+                                    layerType: 'esriTile',
+                                    url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                                }
+                            ]
+                        }
+                    ],
+                    initialBasemapId: 'esriImagery'
+                }
+            });
+
+            // start loading fixtures; this is just an example
+            // TODO: fixtures specified in the config should be loaded first, then fixtures added through the API
+            // TODO: remove
+            map.fixture.add('snowman');
+            map.fixture.add('gazebo');
+        </script>
+    </body>
+</html>

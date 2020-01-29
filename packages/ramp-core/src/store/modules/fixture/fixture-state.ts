@@ -16,10 +16,10 @@ export interface Fixture {
     /**
      * A reference to the R4MP instance this fixture is running inside.
      *
-     * @type {Map}
+     * @type {Vue}
      * @memberof Fixture
      */
-    map?: Map;
+    app?: Vue;
 
     /**
      * [Optional] Called synchronously when the fixture is added to R4MP.

@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import pathify from 'vuex-pathify';
-import cloneDeep from 'clone-deep';
 
 import { fixture } from './modules/fixture';
 import { legend } from '@/store/modules/legend';
@@ -14,9 +13,9 @@ export const createStore = () =>
     new Vuex.Store<RootState>({
         plugins: [pathify.plugin],
         modules: {
-            fixture: cloneDeep(fixture),
-            config: cloneDeep(config),
-            legend: cloneDeep(legend)
+            fixture: fixture(),
+            config: config(),
+            legend: legend()
         }
     });
 
