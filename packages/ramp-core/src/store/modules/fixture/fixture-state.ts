@@ -1,10 +1,14 @@
-import Map from '@/api/map';
+import { InstanceAPI } from '@/api/internal';
 
 export class FixtureState {
     fixtures: Fixture[] = [];
 }
 
-export interface Fixture {
+export class Fixture {
+    constructor(id: string) {
+        this.id = id;
+    }
+
     /**
      * ID of the fixture.
      *
@@ -14,12 +18,12 @@ export interface Fixture {
     id: string;
 
     /**
-     * A reference to the R4MP instance this fixture is running inside.
+     * A reference to the InstanceAPI this fixture is running inside.
      *
-     * @type {Vue}
+     * @type {InstanceAPI}
      * @memberof Fixture
      */
-    app?: Vue;
+    iApi!: InstanceAPI;
 
     /**
      * [Optional] Called synchronously when the fixture is added to R4MP.

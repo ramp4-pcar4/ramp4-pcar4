@@ -1,11 +1,9 @@
 import { Fixture } from '@/store/modules/fixture';
 
-class Gazebo implements Fixture {
-    id: string = 'Gazebo';
-
+class Gazebo extends Fixture {
     added(): void {
         console.log(`[fixture] ${this.id} added`);
     }
 }
 
-export default new Gazebo();
+export default new Gazebo('gazebo');

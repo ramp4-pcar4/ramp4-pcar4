@@ -16,7 +16,7 @@
 
         <script>
             setTimeout(() => {
-                const map = new RAMP.Map(document.getElementById('app'), {
+                const rInstance = new RAMP.Instance(document.getElementById('app'), {
                     map: {
                         extent: {
                             xmax: -5007771.626060756,
@@ -48,8 +48,8 @@
                 // start loading fixtures; this is just an example
                 // TODO: fixtures specified in the config should be loaded first, then fixtures added through the API
                 // TODO: remove
-                map.fixture.add('snowman');
-                map.fixture.add('gazebo');
+                rInstance.fixture.add('snowman');
+                rInstance.fixture.add('gazebo');
             }, 2000);
         </script>
     </body>
