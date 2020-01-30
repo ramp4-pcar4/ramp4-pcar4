@@ -15,8 +15,8 @@
         <!-- built files will be auto injected -->
 
         <script>
-            setTimeout(() => {
-                const rInstance = new RAMP.Instance(document.getElementById('app'), {
+            function rampOnLoad() {
+                const rInstance = new RAMP.Map(document.getElementById('app'), {
                     map: {
                         extent: {
                             xmax: -5007771.626060756,
@@ -42,7 +42,25 @@
                             }
                         ],
                         initialBasemapId: 'esriImagery'
-                    }
+                    },
+                    layers: [
+                        {
+                            id: 'fancyTest',
+                            url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
+                            state: {
+                                opacity: 0.8
+                            },
+                            customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                        },
+                        {
+                            id: 'fancyTest2',
+                            url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/8',
+                            state: {
+                                opacity: 0.8
+                            },
+                            customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                        }
+                    ]
                 });
 
                 // start loading fixtures; this is just an example
@@ -50,7 +68,7 @@
                 // TODO: remove
                 rInstance.fixture.add('snowman');
                 rInstance.fixture.add('gazebo');
-            }, 2000);
+            }
         </script>
     </body>
 </html>

@@ -22,6 +22,6 @@ export class InstanceAPI {
         this.fixture = new FixtureAPI(this); // pass the iApi reference to the FixtureAPI
 
         // TODO: decide whether to move to src/main.ts:createApp
-        this.vApp.$store.set(ConfigStore.setConfig, config || undefined);
+        this.vApp.$store.set(ConfigStore.newConfig, config || undefined);
     }
 }

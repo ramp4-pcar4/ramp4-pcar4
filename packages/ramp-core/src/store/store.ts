@@ -4,6 +4,7 @@ import pathify from 'vuex-pathify';
 
 import { fixture } from './modules/fixture';
 import { legend } from '@/store/modules/legend';
+import { layer } from '@/store/modules/layer';
 import { config } from '@/store/modules/config';
 import { RootState } from '@/store/state';
 
@@ -15,6 +16,7 @@ export const createStore = () =>
         modules: {
             fixture: fixture(),
             config: config(),
+            layer: layer,
             legend: legend()
         }
     });
