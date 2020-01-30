@@ -1,5 +1,6 @@
-import Map from './map';
+import { InstanceAPI } from './internal';
 
+// export `InstanceApi` as `Instance` on global RAMP interface
 export default {
-    Map
+    Instance: InstanceAPI
 };
