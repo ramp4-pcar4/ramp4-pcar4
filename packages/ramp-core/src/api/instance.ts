@@ -39,7 +39,7 @@ export class InstanceAPI {
 
         // TODO: decide whether to move to src/main.ts:createApp
         // TODO: store a reference to the even bus in the global store [?]
-        this.vApp.$store.set(ConfigStore.setConfig, config || undefined);
+        this.vApp.$store.set(ConfigStore.newConfig, config || undefined);
     }
 
     /**

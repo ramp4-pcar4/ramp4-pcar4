@@ -5,25 +5,35 @@
 <script lang="ts">
 import { Vue, Watch, Component } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
-import GapiLoader, { Map, GeoApi, RampMapConfig, RampLayerConfig } from 'ramp-geoapi';
+import GapiLoader, { Map, GeoApi, RampMapConfig } from 'ramp-geoapi';
+// import { window } from '@/main';
 
 import { ConfigStore } from '@/store/modules/config';
-// import { LayerStore, layer } from '@/store/modules/layer';
+import { LayerStore, layer } from '@/store/modules/layer';
+import FeatureLayer from 'ramp-geoapi/dist/layer/FeatureLayer';
 
 @Component
 export default class EsriMap extends Vue {
-    @Get(ConfigStore.getMapConfig) esriMapConfig!: RampMapConfig;
+    @Get(ConfigStore.getMapConfig) mapConfig!: RampMapConfig;
+
+    @Get(LayerStore.layers) layers!: FeatureLayer[];
 
     gapi!: GeoApi;
     map!: Map;
 
-    created(): void {
-        const gapiPromise: Promise<GeoApi> = GapiLoader(window);
-
-        gapiPromise.then((gapi: GeoApi) => {
-            this.gapi = gapi;
-            this.map = gapi.maps.createMap(this.esriMapConfig, this.$el as HTMLDivElement);
+    @Watch('layers')
+    onLayerArrayChange(newValue: FeatureLayer[], oldValue: FeatureLayer[]) {
+        newValue.forEach(layer => {
+            if (!oldValue.includes(layer)) {
+                this.map.addLayer(layer);
+            }
         });
+    }
+
+    @Watch('mapConfig')
+    onMapConfigChange(newValue: RampMapConfig, oldValue: RampMapConfig) {
+        this.map = (window as any).RAMP.geoapi.maps.createMap(this.mapConfig, this.$el as HTMLDivElement);
+        this.onLayerArrayChange(this.layers, []);
     }
 }
 </script>

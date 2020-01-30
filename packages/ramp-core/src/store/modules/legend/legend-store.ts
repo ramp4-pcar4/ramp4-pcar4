@@ -12,9 +12,9 @@ type LegendContext = ActionContext<LegendState, RootState>;
 } */
 
 // decide if these are needed
-//enum Action {}
+// enum Action {}
 
-//enum Mutation {}
+// enum Mutation {}
 
 const getters = {};
 
