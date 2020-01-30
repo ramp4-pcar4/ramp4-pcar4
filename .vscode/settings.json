@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
+        "Proxied",
         "behaviour",
         "fullhuman",
         "geoapi",
@@ -7,6 +8,8 @@
         "prefetch",
         "tailwindcss",
         "tslib",
-        "vetur"
+        "unminified",
+        "vetur",
+        "wany"
     ]
 }
