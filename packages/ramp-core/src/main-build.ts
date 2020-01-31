@@ -31,11 +31,9 @@ export function createApp(element: HTMLElement): Vue {
 const gapiPromise: Promise<GeoApi> = GapiLoader(window);
 
 gapiPromise.then((gapi: GeoApi) => {
-    window.RAMP = {
-        geoapi: gapi,
-        Map,
-        mapInstances: []
-    };
+    window.RAMP.geoapi = gapi;
+
+    (window as any).rampOnLoad();
 });
 
 export default api;
