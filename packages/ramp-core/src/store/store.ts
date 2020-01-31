@@ -16,7 +16,7 @@ export const createStore = () =>
         modules: {
             fixture: fixture(),
             config: config(),
-            layer: layer,
+            layer: layer(),
             legend: legend()
         }
     });

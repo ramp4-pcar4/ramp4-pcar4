@@ -1,5 +1,9 @@
 import FeatureLayer from 'ramp-geoapi/dist/layer/FeatureLayer';
 
-export interface LayerState {
+export class LayerState {
     layers: FeatureLayer[];
+
+    constructor(layers: FeatureLayer[]) {
+        this.layers = layers;
+    }
 }
