@@ -11,25 +11,19 @@ import { RampConfig } from '@/types';
 // use for actions
 type ConfigContext = ActionContext<ConfigState, RootState>;
 
-/* interface actions {
-    [key: string]: Action<ConfigState, RootState>;
-}
- */
 const getters = {
     getMapConfig: (state: ConfigState): RampMapConfig => {
         return state.config.map as RampMapConfig;
     }
 };
 
-const actions /* : actions */ = {
+const actions = {
     newConfig: function(this: any, context: ConfigContext, config: RampConfig): void {
         const newConfig = merge(context.state.config, config);
         this.set(LayerStore.addLayers, newConfig.layers);
 
         context.commit('SET_CONFIG', newConfig);
     }
-
-    //...make.actions(state)
 };
 
 const mutations = {};
