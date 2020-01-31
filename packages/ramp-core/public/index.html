@@ -15,7 +15,7 @@
         <!-- built files will be auto injected -->
 
         <script>
-            setTimeout(() => {
+            function initRAMP() {
                 const rInstance = new RAMP.Instance(document.getElementById('app'), {
                     map: {
                         extent: {
@@ -50,7 +50,7 @@
                 // TODO: remove
                 rInstance.fixture.add('snowman');
                 rInstance.fixture.add('gazebo');
-            }, 2000);
+            }
         </script>
     </body>
 </html>
