@@ -9,36 +9,24 @@ import FeatureLayer from 'ramp-geoapi/dist/layer/FeatureLayer';
 // use for actions
 type LayerContext = ActionContext<LayerState, RootState>;
 
-interface actions {
-    [key: string]: Action<LayerState, RootState>;
-}
-
-const state: LayerState = {
-    layers: []
-};
-
 const getters = {
     getLayerById: (state: LayerState) => (id: string): FeatureLayer | undefined => {
         return state.layers.find((layer: FeatureLayer) => layer.uid === id);
     }
 };
 
-const actions: actions = {
+const actions = {
     addLayers: (context: LayerContext, layerConfigs: RampLayerConfig[]) => {
         layerConfigs.forEach(layerConfig => {
             context.commit('ADD_LAYER', (window as any).RAMP.geoapi.layers.createFeatureLayer(layerConfig));
         });
-    },
-
-    ...make.actions(state)
+    }
 };
 
 const mutations = {
     ADD_LAYER: (state: LayerState, value: FeatureLayer) => {
         state.layers.push(value);
-    },
-
-    ...make.mutations(state)
+    }
 };
 
 export enum LayerStore {
@@ -56,10 +44,14 @@ export enum LayerStore {
     addLayers = 'layer/addLayers!'
 }
 
-export const layer = {
-    namespaced: true,
-    state,
-    getters,
-    actions,
-    mutations
-};
+export function layer() {
+    const state = new LayerState([]);
+
+    return {
+        namespaced: true,
+        state,
+        getters: { ...getters },
+        actions: { ...actions, ...make.actions(state) },
+        mutations: { ...mutations, ...make.mutations(state) }
+    };
+}
