@@ -5,6 +5,7 @@ import { LayerState } from './layer-state';
 import { RootState } from '@/store';
 import { RampLayerConfig } from 'ramp-geoapi';
 import FeatureLayer from 'ramp-geoapi/dist/layer/FeatureLayer';
+import api from '@/api';
 
 // use for actions
 type LayerContext = ActionContext<LayerState, RootState>;
@@ -18,7 +19,7 @@ const getters = {
 const actions = {
     addLayers: (context: LayerContext, layerConfigs: RampLayerConfig[]) => {
         layerConfigs.forEach(layerConfig => {
-            context.commit('ADD_LAYER', (window as any).RAMP.geoapi.layers.createFeatureLayer(layerConfig));
+            context.commit('ADD_LAYER', api.geoapi.layers.createFeatureLayer(layerConfig));
         });
     }
 };
