@@ -21,7 +21,7 @@ module.exports = {
         config.plugin('wrapper-plugin').use(WrapperPlugin, [
             {
                 test: /RAMP.umd.js/, // only wrap output of bundle files with '.js' extension,
-                footer: "if (typeof initRAMP === 'function') { initRAMP(); }",
+                footer: "RAMP.gapiPromise.then(function() { if (typeof initRAMP === 'function') { initRAMP(); }});",
                 afterOptimization: true
             }
         ]);
