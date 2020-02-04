@@ -2,10 +2,12 @@
     "cSpell.words": [
         "Proxied",
         "behaviour",
+        "deepmerge",
         "fullhuman",
         "geoapi",
         "pathify",
         "prefetch",
+        "purgecss",
         "tailwindcss",
         "tslib",
         "unminified",
