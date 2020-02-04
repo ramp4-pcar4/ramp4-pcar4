@@ -1,14 +1,16 @@
 import Vue from 'vue';
-
 import { RampMapConfig } from 'ramp-geoapi';
+import { Store } from 'vuex';
 
-import { createApp } from '@/main-build';
+import App from '@/app.vue';
+import { createStore, RootState } from '@/store';
 import { ConfigStore } from '@/store/modules/config';
 
-import { FixtureAPI } from './internal';
+import { FixtureAPI /* PanelAPI */ } from './internal';
 
 export class InstanceAPI {
     fixture: FixtureAPI;
+    // panel: PanelAPI;
 
     /**
      * A public event bus for all events. Can also be used by fixtures to talk to each other.
@@ -30,11 +32,13 @@ export class InstanceAPI {
     constructor(element: HTMLElement, config?: RampMapConfig) {
         this._eventBus = new Vue();
 
-        this.vApp = createApp(element);
+        this.vApp = createApp(element, this);
 
         this.fixture = new FixtureAPI(this); // pass the iApi reference to the FixtureAPI
+        // this.panel = new PanelAPI(this);
 
         // TODO: decide whether to move to src/main.ts:createApp
+        // TODO: store a reference to the even bus in the global store [?]
         this.vApp.$store.set(ConfigStore.setConfig, config || undefined);
     }
 
@@ -102,4 +106,21 @@ export class InstanceAPI {
     }
 }
 
-// (new InstanceAPI(document.getElementById('aa') as HTMLElement)).on()
+/**
+ * Creates a R4MP Vue application and mounts it on the provided element.
+ *
+ * @param {HTMLElement} element
+ * @param {InstanceAPI} iApi R4MP API reference that controls this R4MP Vue application
+ * @returns {Vue}
+ */
+function createApp(element: HTMLElement, iApi: InstanceAPI): Vue {
+    const store: Store<RootState> = createStore();
+
+    // passing the `iApi` reference to the root Vue component will propagate it to all the child component in this instance of R4MP Vue application
+    // if several R4MP apps are created, each will contain a reference of its own API instance
+    return new Vue({
+        iApi,
+        store,
+        render: h => h(App)
+    }).$mount(element);
+}
