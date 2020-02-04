@@ -1,28 +1,24 @@
 import Vue, { VueConstructor } from 'vue';
 
 export class PanelState {
-    // items2: Panel[] = [];
+    items: { [name: string]: PanelConfig } = {};
 
-    items: { [name: string]: Panel } = {};
     pinned: string | null = null;
 }
 
-export type PanelScreens = { id: string; component: VueConstructor<Vue> }[];
-export type PanelRoute = { id: string; params?: object };
+export type PanelConfigScreen = { id: string; component: VueConstructor<Vue> };
+export type PanelConfigRoute = { id: string; props?: object };
 
-export class Panel {
+export interface PanelConfig {
+    /**
+     * ID of this panel.
+     *
+     * @type {string}
+     * @memberof Panel
+     */
     id: string;
-    route: PanelRoute;
-    screens: PanelScreens;
 
-    constructor(id: string, screens: PanelScreens, route: PanelRoute) {
-        this.id = id;
-        this.screens = screens;
-        this.route = route;
+    route: PanelConfigRoute;
 
-        this.screens.forEach(({ id, component }) => {
-            (component as any).$item = 'blah';
-            Vue.component(id, component);
-        });
-    }
+    screens: PanelConfigScreen[];
 }

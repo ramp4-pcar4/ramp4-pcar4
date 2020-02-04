@@ -1,6 +1,6 @@
 <template>
     <div class="sm:flex">
-        <panel-container v-for="panel in visible" :key="`${panel.id}`" :panel="panel"></panel-container>
+        <panel-container v-for="panelConfig in visible" :key="`${panelConfig.id}`" :panel-config="panelConfig"></panel-container>
     </div>
 </template>
 
@@ -8,7 +8,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
-import { Panel } from '@/store/modules/panel';
+import { PanelConfig } from '@/store/modules/panel';
 
 import PanelV from './panel-container.vue';
 
@@ -18,7 +18,7 @@ import PanelV from './panel-container.vue';
     }
 })
 export default class PanelStackV extends Vue {
-    @Get('panel/visible') visible!: Panel[];
+    @Get('panel/visible') visible!: PanelConfig[];
 }
 </script>
 

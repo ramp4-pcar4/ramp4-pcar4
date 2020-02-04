@@ -1,7 +1,7 @@
 <template>
     <panel-screen>
         <template #header>
-            Gazebo/Panel 2/Screen A
+            Gazebo/Panel 2/Screen B
         </template>
 
         <template #controls>
@@ -9,6 +9,7 @@
 
             <!-- ✔ this is the correct way to pin a panel and bind the button active state whether this panel is pinned or not 👇 -->
             <pin @click="panel.pin(!isPinned)" :active="isPinned"></pin>
+            <close @click="panel.close()"></close>
         </template>
 
         <template #content>
@@ -17,10 +18,10 @@
             <div class="flex flex-col items-center mt-4">
                 <!-- ✔ this is the correct way to switch between screens in the same panel 👇 -->
                 <button
-                    @click="panel.route('p-2-screen-2', { greeting: 'Howdy?' })"
+                    @click="panel.route('p-2-screen-1', { greeting: 'Greeting from Screen B' })"
                     class="bg-green-500 hover:bg-blue-700 text-white font-bold py-2 px-4"
                 >
-                    Go back to B
+                    Switch to Screen A
                 </button>
             </div>
 

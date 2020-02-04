@@ -6,11 +6,11 @@ import App from '@/app.vue';
 import { createStore, RootState } from '@/store';
 import { ConfigStore } from '@/store/modules/config';
 
-import { FixtureAPI /* PanelAPI */ } from './internal';
+import { FixtureAPI, PanelAPI } from './internal';
 
 export class InstanceAPI {
     fixture: FixtureAPI;
-    // panel: PanelAPI;
+    panel: PanelAPI;
 
     /**
      * A public event bus for all events. Can also be used by fixtures to talk to each other.
@@ -35,7 +35,7 @@ export class InstanceAPI {
         this.vApp = createApp(element, this);
 
         this.fixture = new FixtureAPI(this); // pass the iApi reference to the FixtureAPI
-        // this.panel = new PanelAPI(this);
+        this.panel = new PanelAPI(this);
 
         // TODO: decide whether to move to src/main.ts:createApp
         // TODO: store a reference to the even bus in the global store [?]

@@ -1,7 +1,7 @@
 import { ActionContext, Action, Mutation } from 'vuex';
 import { make } from 'vuex-pathify';
 
-import { PanelState, Panel } from './panel-state';
+import { PanelState, PanelConfig } from './panel-state';
 import { RootState } from '@/store/state';
 
 type PanelContext = ActionContext<PanelState, RootState>;
@@ -13,11 +13,13 @@ export enum PanelAction {}
 // addPanel = 'addPanel'
 
 export enum PanelMutation {
-    ADD_PANEL = 'ADD_PANEL'
+    ADD_PANEL = 'ADD_PANEL',
+    REMOVE_PANEL = 'REMOVE_PANEL'
 }
 
 const getters = {
-    visible(state: PanelState): Panel[] {
+    visible(state: PanelState): PanelConfig[] {
+        // get first three panels
         return Object.keys(state.items)
             .slice(-3)
             .map(key => state.items[key]);
@@ -31,9 +33,14 @@ const actions = {
 };
 
 const mutations = {
-    [PanelMutation.ADD_PANEL](state: PanelState, { value }: { value: Panel }): void {
+    [PanelMutation.ADD_PANEL](state: PanelState, { value }: { value: PanelConfig }): void {
         // TODO: find out what is better in terms of performance and use the better one: `object spread` or `Vue.set()`
         state.items = { ...state.items, [value.id]: value };
+    },
+
+    [PanelMutation.REMOVE_PANEL](state: PanelState, { value }: { value: PanelConfig }): void {
+        delete state.items[value.id];
+        state.items = { ...state.items };
     }
 };
 

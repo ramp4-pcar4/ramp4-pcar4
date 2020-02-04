@@ -22,6 +22,12 @@ export class APIScope {
         return this.iApi.vApp;
     }
 
+    /**
+     * Creates an instance of APIScope.
+     *
+     * @param {InstanceAPI} iApi
+     * @memberof APIScope
+     */
     constructor(iApi: InstanceAPI) {
         this.iApi = iApi;
     }

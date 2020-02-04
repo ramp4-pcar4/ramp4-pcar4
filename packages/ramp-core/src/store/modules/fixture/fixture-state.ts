@@ -1,16 +1,12 @@
 import { InstanceAPI } from '@/api/internal';
 
 export class FixtureState {
-    fixtures: Fixture[] = [];
+    items: { [name: string]: FixtureConfig } = {};
 }
 
-export class Fixture {
-    constructor(id: string) {
-        this.id = id;
-    }
-
+export interface FixtureConfig {
     /**
-     * ID of the fixture.
+     * ID of this fixture.
      *
      * @type {string}
      * @memberof Fixture
@@ -19,23 +15,21 @@ export class Fixture {
 
     /**
      * A reference to the InstanceAPI this fixture is running inside.
+     * NOTE: this needs to be populated inside the `init()` life hook.
      *
      * @type {InstanceAPI}
      * @memberof Fixture
      */
-    iApi!: InstanceAPI;
+    $iApi?: InstanceAPI;
 
     /**
-     * The instance of Vue R4MP application controlled by the InstanceAPI.
+     * Called at the very beginning of the life cycle with the `iApi` reference.
+     * External fixtures can store this reference manually at `this.$iApi`.
      *
-     * @readonly
-     * @protected
-     * @type {Vue}
-     * @memberof APIScope
+     * @param {InstanceAPI} $iApi
+     * @memberof FixtureConfig
      */
-    get vApp(): Vue {
-        return this.iApi.vApp;
-    }
+    created($iApi: InstanceAPI): void;
 
     /**
      * [Optional] Called synchronously when the fixture is added to R4MP.
@@ -67,5 +61,55 @@ export class Fixture {
      *
      * @memberof Fixture
      */
+    terminated?(): void;
+}
+
+export class FixtureConfigHelper implements FixtureConfig {
+    id: string;
+
+    /**
+     * Creates an instance of FixtureConfigHelper.
+     *
+     * @param {string} id
+     * @memberof FixtureConfigHelper
+     */
+    constructor(id: string) {
+        this.id = id;
+    }
+
+    /**
+     * Called at the very beginning of the life cycle with the `iApi` reference which is store at `this.$iApi`.
+     *
+     * @param {InstanceAPI} $iApi
+     * @memberof FixtureConfigHelper
+     */
+    created($iApi: InstanceAPI): void {
+        this.$iApi = $iApi;
+    }
+
+    /**
+     * A reference to the InstanceAPI this fixture is running inside.
+     * NOTE: This is guaranteed to have value by the time `added()` life hook is called.
+     *
+     * @type {InstanceAPI}
+     * @memberof FixtureConfigHelper
+     */
+    $iApi!: InstanceAPI;
+
+    /**
+     * The instance of Vue R4MP application controlled by the InstanceAPI.
+     *
+     * @readonly
+     * @protected
+     * @type {Vue}
+     * @memberof APIScope
+     */
+    get vApp(): Vue {
+        return this.$iApi.vApp;
+    }
+
+    added?(): void;
+    removed?(): void;
+    initialized?(): void;
     terminated?(): void;
 }
