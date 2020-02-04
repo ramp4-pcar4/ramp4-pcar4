@@ -9,12 +9,11 @@ type FixtureContext = ActionContext<FixtureState, RootState>;
 type StoreActions = { [key: string]: Action<FixtureState, RootState> };
 type StoreMutations = { [key: string]: Mutation<FixtureState> };
 
-export enum ActionName {
-    addFixture = 'addFixture',
-    removeFixture = 'removeFixture'
-}
+export enum FixtureAction {}
+/* addFixture = 'addFixture',
+    removeFixture = 'removeFixture' */
 
-export enum MutationName {
+export enum FixtureMutation {
     ADD_FIXTURE = 'ADD_FIXTURE',
     REMOVE_FIXTURE = 'REMOVE_FIXTURE'
 }
@@ -22,13 +21,13 @@ export enum MutationName {
 const getters = {};
 
 const actions: StoreActions = {
-    [ActionName.addFixture](context: FixtureContext, { value }: { value: Fixture }): void {
+    /* [ActionName.addFixture](context: FixtureContext, { value }: { value: Fixture }): void {
         context.commit(MutationName.ADD_FIXTURE, { value });
     },
 
     [ActionName.removeFixture](context: FixtureContext, { value }: { value: Fixture }): void {
         context.commit(MutationName.REMOVE_FIXTURE, { value });
-    }
+    } */
 };
 
 const mutations: StoreMutations = {
@@ -39,7 +38,7 @@ const mutations: StoreMutations = {
      * @param {FixtureState} state
      * @param {{ value: Fixture }} { value }
      */
-    [MutationName.ADD_FIXTURE](state: FixtureState, { value }: { value: Fixture }): void {
+    [FixtureMutation.ADD_FIXTURE](state: FixtureState, { value }: { value: Fixture }): void {
         state.fixtures.push(value);
 
         // call the `added` life hook if available
@@ -54,7 +53,7 @@ const mutations: StoreMutations = {
      * @param {FixtureState} state
      * @param {{ value: Fixture }} { value }
      */
-    [MutationName.REMOVE_FIXTURE](state: FixtureState, { value }: { value: Fixture }): void {
+    [FixtureMutation.REMOVE_FIXTURE](state: FixtureState, { value }: { value: Fixture }): void {
         const index = state.fixtures.findIndex(fixture => fixture.id === value.id);
         if (index === -1) {
             return;

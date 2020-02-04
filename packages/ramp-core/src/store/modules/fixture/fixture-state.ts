@@ -26,6 +26,18 @@ export class Fixture {
     iApi!: InstanceAPI;
 
     /**
+     * The instance of Vue R4MP application controlled by the InstanceAPI.
+     *
+     * @readonly
+     * @protected
+     * @type {Vue}
+     * @memberof APIScope
+     */
+    get vApp(): Vue {
+        return this.iApi.vApp;
+    }
+
+    /**
      * [Optional] Called synchronously when the fixture is added to R4MP.
      *
      * @memberof Fixture

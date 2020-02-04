@@ -31,6 +31,6 @@ export default class App extends Vue {
 
 <style lang="scss" scoped>
 .ramp-app {
-    height: 900px;
+    height: 700px;
 }
 </style>
