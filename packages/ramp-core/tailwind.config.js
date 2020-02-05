@@ -78,7 +78,7 @@ module.exports = {
         zIndex: ['responsive', 'container-query']
     },
     corePlugins: {
-        preflight: true // remove reset CSS because we don't want to mess up host page default styles
+        preflight: true // since all tailwind styles will be scoped under `ramp-app`, it's safe to enable preflight CSS reset
     },
     plugins: [
         function({ addVariant, e }) {

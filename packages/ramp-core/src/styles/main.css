@@ -1,3 +1,4 @@
+/* scope all of tailwind-generated styles under `ramp-app` */
 .ramp-app {
     @tailwind base;
     @tailwind components;
