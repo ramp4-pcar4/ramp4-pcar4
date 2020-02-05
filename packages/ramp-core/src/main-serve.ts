@@ -8,6 +8,8 @@ const wany = window as any;
 wany.RAMP = api;
 
 // execute `initRAMP` global function if it's defined as soon at the RAMP library is added to the global scope
-if (typeof wany.initRAMP === 'function') {
-    wany.initRAMP();
-}
+api.gapiPromise.then(() => {
+    if (typeof wany.initRAMP === 'function') {
+        wany.initRAMP();
+    }
+});

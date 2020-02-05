@@ -1,4 +1,4 @@
-import { RampMapConfig } from 'ramp-geoapi';
+import { GeoApi, RampLayerConfig, RampMapConfig } from 'ramp-geoapi';
 
 /**
  * The global window object enhanced with RAMP
@@ -17,4 +17,5 @@ export interface EnhancedWindow extends Window {
  */
 export interface RampConfig {
     map: RampMapConfig;
+    layers: RampLayerConfig[];
 }
