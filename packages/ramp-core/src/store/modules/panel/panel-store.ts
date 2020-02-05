@@ -19,7 +19,8 @@ export enum PanelMutation {
 
 const getters = {
     visible(state: PanelState): PanelConfig[] {
-        // get first three panels
+        // get first three panels; it's a dud
+        // TODO: need to write proper logic for select visible panels based on the number of allowed panels for the current layout and if there is a pinned panel
         return Object.keys(state.items)
             .slice(-3)
             .map(key => state.items[key]);
