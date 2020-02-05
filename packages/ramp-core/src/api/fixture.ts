@@ -39,31 +39,32 @@ export class FixtureAPI extends APIScope {
     /**
      * Removes the specified fixture from R4MP instance.
      *
-     * @param {(string | FixtureItemAPI)} value
+     * @param {(FixtureItemAPI | string)} fixtureOrId
      * @returns {(FixtureItemAPI | null)}
      * @memberof FixtureAPI
      */
-    remove(value: string | FixtureItemAPI): FixtureItemAPI | null {
-        const fixtureConfig = typeof value === 'string' ? this.get(value) : value;
+    remove(fixtureOrId: FixtureItemAPI | string): FixtureItemAPI | null {
+        const fixture = this.get(fixtureOrId);
 
         // TODO: output warning to a log that a fixture with this id cannot be found
-        if (!fixtureConfig) {
+        if (!fixture) {
             return null;
         }
 
-        this.vApp.$store.set(`fixture/${FixtureMutation.REMOVE_FIXTURE}!`, { value });
+        this.vApp.$store.set(`fixture/${FixtureMutation.REMOVE_FIXTURE}!`, { value: fixture._config });
 
-        return fixtureConfig;
+        return fixture;
     }
 
     /**
      * Finds and returns a fixture with the id specified.
      *
-     * @param {string} id
+     * @param {(string | { id: string })} item
      * @returns {(FixtureItemAPI | null)}
      * @memberof FixtureAPI
      */
-    get(id: string): FixtureItemAPI | null {
+    get(item: string | { id: string }): FixtureItemAPI | null {
+        const id = typeof item === 'string' ? item : item.id;
         const fixtureConfig = this.vApp.$store.get<FixtureConfig>(`fixture/items@${id}`);
 
         // TODO: output warning to a log that a fixture with this id cannot be found
@@ -106,5 +107,17 @@ export class FixtureItemAPI extends APIScope {
         super(iApi);
 
         this._config = config;
+    }
+
+    /**
+     * Removes the specified fixture from R4MP instance.
+     * This is a proxy to `RAMP.fixture.remove(...)`.
+     *
+     * @returns {this}
+     * @memberof FixtureItemAPI
+     */
+    remove(): this {
+        this.iApi.fixture.remove(this);
+        return this;
     }
 }

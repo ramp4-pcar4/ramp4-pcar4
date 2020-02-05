@@ -20,15 +20,7 @@ export enum FixtureMutation {
 
 const getters = {};
 
-const actions: StoreActions = {
-    /* [ActionName.addFixture](context: FixtureContext, { value }: { value: Fixture }): void {
-        context.commit(MutationName.ADD_FIXTURE, { value });
-    },
-
-    [ActionName.removeFixture](context: FixtureContext, { value }: { value: Fixture }): void {
-        context.commit(MutationName.REMOVE_FIXTURE, { value });
-    } */
-};
+const actions: StoreActions = {};
 
 const mutations: StoreMutations = {
     /**

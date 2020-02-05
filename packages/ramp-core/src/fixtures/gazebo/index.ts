@@ -42,8 +42,8 @@ class GazeboFixture extends FixtureConfigHelper {
             }
         };
 
-        const pApi1 = this.$iApi.panel.add(p1);
-        const pApi2 = this.$iApi.panel.add(p2);
+        const pApi1 = this.$iApi.panel.open(p1);
+        const pApi2 = this.$iApi.panel.open(p2);
 
         pApi2.pin(true);
     }

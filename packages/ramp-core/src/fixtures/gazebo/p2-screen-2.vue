@@ -18,8 +18,8 @@
             <div class="flex flex-col items-center mt-4">
                 <!-- ✔ this is the correct way to switch between screens in the same panel 👇 -->
                 <button
-                    @click="panel.route('p-2-screen-1', { greeting: 'Greeting from Screen B' })"
-                    class="bg-green-500 hover:bg-blue-700 text-white font-bold py-2 px-4"
+                    @click="panel.route({ id: 'p-2-screen-1', props: { greeting: 'Greeting from Screen B' } })"
+                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4"
                 >
                     Switch to Screen A
                 </button>

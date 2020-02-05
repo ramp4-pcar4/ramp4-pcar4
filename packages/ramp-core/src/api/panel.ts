@@ -1,45 +1,93 @@
 import Vue from 'vue';
 
 import { APIScope, InstanceAPI } from './internal';
-import { PanelConfig } from '@/store/modules/panel';
+import { PanelConfig, PanelConfigRoute } from '@/store/modules/panel';
 
 export class PanelAPI extends APIScope {
     /**
      * Adds and automatically opens a new panel in the panel stack.
      *
-     * @param {PanelConfig} value
+     * @param {PanelConfig} config
      * @returns {PanelItemAPI}
      * @memberof PanelAPI
      */
-    add(value: PanelConfig): PanelItemAPI {
-        this.vApp.$store.set('panel/ADD_PANEL!', { value });
+    open(config: PanelConfig): PanelItemAPI {
+        this.vApp.$store.set('panel/ADD_PANEL!', { value: config });
 
-        return new PanelItemAPI(this.iApi, value);
+        return new PanelItemAPI(this.iApi, config);
     }
 
-    remove(value: string | PanelItemAPI): PanelItemAPI | null {
-        const panelConfig = typeof value === 'string' ? this.get(value) : value;
+    /**
+     * Closes the panel specified.
+     *
+     * @param {(string | PanelItemAPI)} panelOrId
+     * @returns {(PanelItemAPI | null)}
+     * @memberof PanelAPI
+     */
+    close(panelOrId: PanelItemAPI | string): PanelItemAPI | null {
+        const panel = this.get(panelOrId);
 
-        // TODO: output warning to a log that a fixture with this id cannot be found
-        if (!panelConfig) {
+        if (!panel) {
             return null;
         }
 
-        this.vApp.$store.set(`panel/REMOVE_PANEL!`, { value });
+        this.vApp.$store.set(`panel/REMOVE_PANEL!`, { value: panel._config });
 
-        return panelConfig;
+        return panel;
+    }
+
+    /**
+     * Mark this panel as pinned. This automatically unpins any previous pinned panel if exists.
+     *
+     * @param {(string | PanelItemAPI)} panelOrId
+     * @param {boolean} value
+     * @returns {(PanelItemAPI | null)}
+     * @memberof PanelAPI
+     */
+    pin(panelOrId: PanelItemAPI | string, value: boolean): PanelItemAPI | null {
+        const panel = this.get(panelOrId);
+
+        if (!panel) {
+            return null;
+        }
+
+        this.vApp.$store.set('panel/pinned', value ? panel.id : null);
+
+        return panel;
+    }
+
+    /**
+     * Sets route to the specified screen id and pass props to the panel screen components.
+     *
+     * @param {(PanelItemAPI | string)} panelOrId
+     * @param {PanelConfigRoute} route
+     * @returns {(PanelItemAPI | null)}
+     * @memberof PanelAPI
+     */
+    route(panelOrId: PanelItemAPI | string, route: PanelConfigRoute): PanelItemAPI | null {
+        const panelItem = this.get(panelOrId);
+
+        if (!panelItem) {
+            return null;
+        }
+
+        this.vApp.$store.set(`panel/items@${panelItem.id}.route`, route);
+
+        return panelItem;
     }
 
     /**
      * Finds and returns a panel with the id specified.
      *
-     * @param {string} id
+     * @param {(string | { id: string })} item
      * @returns {(PanelItemAPI | null)}
      * @memberof PanelAPI
      */
-    get(id: string): PanelItemAPI | null {
+    get(item: string | { id: string }): PanelItemAPI | null {
+        const id = typeof item === 'string' ? item : item.id;
         const panel = this.vApp.$store.get<PanelConfig>(`panel/items@${id}`);
 
+        // TODO: output warning to a log that a fixture with this id cannot be found
         if (!panel) {
             return null;
         }
@@ -98,32 +146,39 @@ export class PanelItemAPI extends APIScope {
 
     /**
      * Mark this panel as pinned. This automatically unpins any previous pinned panel if exists.
+     * This is a proxy to `RAMP.panel.pin(...)`.
      *
      * @param {boolean} value
      * @returns {this}
      * @memberof PanelItemAPI
      */
     pin(value: boolean): this {
-        this.vApp.$store.set('panel/pinned', value ? this._config.id : null);
-
+        this.iApi.panel.pin(this, value);
         return this;
     }
 
+    /**
+     * Close this panel.
+     * This is a proxy to `RAMP.panel.close(...)`.
+     *
+     * @returns {this}
+     * @memberof PanelItemAPI
+     */
     close(): this {
-        this.iApi.panel.remove(this);
+        this.iApi.panel.close(this);
         return this;
     }
 
     /**
      * Sets route to the specified screen id and pass props to the panel screen components.
+     * This is a proxy to `RAMP.panel.route(...)`.
      *
-     * @param {string} id
-     * @param {object} [props={}]
+     * @param {PanelConfigRoute} route
      * @returns {this}
      * @memberof PanelItemAPI
      */
-    route(id: string, props: object = {}): this {
-        this.vApp.$store.set(`panel/items@${this.id}.route`, { id, props });
+    route(route: PanelConfigRoute): this {
+        this.iApi.panel.route(this, route);
 
         return this;
     }
