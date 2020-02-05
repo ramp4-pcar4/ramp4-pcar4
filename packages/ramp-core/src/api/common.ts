@@ -18,7 +18,7 @@ export class APIScope {
      * @type {Vue}
      * @memberof APIScope
      */
-    protected get vApp(): Vue {
+    protected get $vApp(): Vue {
         return this.$iApi.$vApp;
     }
 

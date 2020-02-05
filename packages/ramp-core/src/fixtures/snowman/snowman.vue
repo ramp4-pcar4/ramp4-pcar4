@@ -32,11 +32,11 @@ export default class SnowmanV extends Vue {
             // TODO: this should be called in the `terminated` life hook; it's called in the timeout just for display
             this.$destroy(); // destroy Vue component
             this.$el.parentNode!.removeChild(this.$el); // remove DOM nodes
-            // you can also do it like this 👉 this.$iApi.vApp.$el.removeChild(this.$el);
+            // you can also do it like this 👉 this.$iApi.$vApp.$el.removeChild(this.$el);
 
             // NOTE: 📢 it's possible to call the store directly from a fixture component, but DON'T DO THIS! 🛑
             // always use the API, that's what it's for, let it call the store directly
-            // 👉 this.$iApi.vApp.$store.set('fixture/REMOVE_FIXTURE!', { value: this }); ❌
+            // 👉 this.$iApi.$vApp.$store.set('fixture/REMOVE_FIXTURE!', { value: this }); ❌
 
             // 👇 this is the correct way ✔
             this.$iApi.fixture.remove(this.fixture); // remove fixure from R4MP

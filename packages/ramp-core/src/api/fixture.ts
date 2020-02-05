@@ -31,7 +31,7 @@ export class FixtureAPI extends APIScope {
 
         // TODO: calling `ADD_FIXTURE` mutation directly here; might want to switch to calling the action `addFixture`
         // TODO: using this horrible concatenated mixture `fixture/${FixtureMutation.ADD_FIXTURE}!` all the time doesn't seem like a good idea;
-        this.vApp.$store.set(`fixture/${FixtureMutation.ADD_FIXTURE}!`, { value: fixtureConfig });
+        this.$vApp.$store.set(`fixture/${FixtureMutation.ADD_FIXTURE}!`, { value: fixtureConfig });
 
         return new FixtureItemAPI(this.$iApi, fixtureConfig);
     }
@@ -51,7 +51,7 @@ export class FixtureAPI extends APIScope {
             return null;
         }
 
-        this.vApp.$store.set(`fixture/${FixtureMutation.REMOVE_FIXTURE}!`, { value: fixture._config });
+        this.$vApp.$store.set(`fixture/${FixtureMutation.REMOVE_FIXTURE}!`, { value: fixture._config });
 
         return fixture;
     }
@@ -65,7 +65,7 @@ export class FixtureAPI extends APIScope {
      */
     get(item: string | { id: string }): FixtureItemAPI | null {
         const id = typeof item === 'string' ? item : item.id;
-        const fixtureConfig = this.vApp.$store.get<FixtureConfig>(`fixture/items@${id}`);
+        const fixtureConfig = this.$vApp.$store.get<FixtureConfig>(`fixture/items@${id}`);
 
         // TODO: output warning to a log that a fixture with this id cannot be found
         if (!fixtureConfig) {

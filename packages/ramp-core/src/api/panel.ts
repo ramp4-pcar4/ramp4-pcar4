@@ -12,7 +12,7 @@ export class PanelAPI extends APIScope {
      * @memberof PanelAPI
      */
     open(config: PanelConfig): PanelItemAPI {
-        this.vApp.$store.set('panel/ADD_PANEL!', { value: config });
+        this.$vApp.$store.set('panel/ADD_PANEL!', { value: config });
 
         return new PanelItemAPI(this.$iApi, config);
     }
@@ -31,7 +31,7 @@ export class PanelAPI extends APIScope {
             return null;
         }
 
-        this.vApp.$store.set(`panel/REMOVE_PANEL!`, { value: panel._config });
+        this.$vApp.$store.set(`panel/REMOVE_PANEL!`, { value: panel._config });
 
         return panel;
     }
@@ -51,7 +51,7 @@ export class PanelAPI extends APIScope {
             return null;
         }
 
-        this.vApp.$store.set('panel/pinned', value ? panel.id : null);
+        this.$vApp.$store.set('panel/pinned', value ? panel.id : null);
 
         return panel;
     }
@@ -71,7 +71,7 @@ export class PanelAPI extends APIScope {
             return null;
         }
 
-        this.vApp.$store.set(`panel/items@${panelItem.id}.route`, route);
+        this.$vApp.$store.set(`panel/items@${panelItem.id}.route`, route);
 
         return panelItem;
     }
@@ -85,7 +85,7 @@ export class PanelAPI extends APIScope {
      */
     get(item: string | { id: string }): PanelItemAPI | null {
         const id = typeof item === 'string' ? item : item.id;
-        const panel = this.vApp.$store.get<PanelConfig>(`panel/items@${id}`);
+        const panel = this.$vApp.$store.get<PanelConfig>(`panel/items@${id}`);
 
         // TODO: output warning to a log that a fixture with this id cannot be found
         if (!panel) {
@@ -103,7 +103,7 @@ export class PanelAPI extends APIScope {
      * @memberof PanelAPI
      */
     get pinned(): string | null {
-        return this.vApp.$store.get<string | null>('panel/pinned')!;
+        return this.$vApp.$store.get<string | null>('panel/pinned')!;
     }
 }
 

@@ -25,7 +25,7 @@ class SnowmanFixture extends FixtureConfigHelper {
 
         // NOTE: right now Snowman terminates from inside its own component, but it can be done here as well 👇
         // svInstance.$destroy();
-        // this.$iApi.vApp.$el.removeChild(this.$el);
+        // this.$iApi.$vApp.$el.removeChild(this.$el);
         // this.$iApi.fixture.remove(fixture);
     }
 
