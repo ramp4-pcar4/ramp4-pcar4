@@ -27,13 +27,13 @@ export class FixtureAPI extends APIScope {
         }
 
         // pass the reference to the API instance to the fixture config
-        fixtureConfig.created(this.iApi);
+        fixtureConfig.created(this.$iApi);
 
         // TODO: calling `ADD_FIXTURE` mutation directly here; might want to switch to calling the action `addFixture`
         // TODO: using this horrible concatenated mixture `fixture/${FixtureMutation.ADD_FIXTURE}!` all the time doesn't seem like a good idea;
         this.vApp.$store.set(`fixture/${FixtureMutation.ADD_FIXTURE}!`, { value: fixtureConfig });
 
-        return new FixtureItemAPI(this.iApi, fixtureConfig);
+        return new FixtureItemAPI(this.$iApi, fixtureConfig);
     }
 
     /**
@@ -72,7 +72,7 @@ export class FixtureAPI extends APIScope {
             return null;
         }
 
-        return new FixtureItemAPI(this.iApi, fixtureConfig);
+        return new FixtureItemAPI(this.$iApi, fixtureConfig);
     }
 }
 
@@ -117,7 +117,7 @@ export class FixtureItemAPI extends APIScope {
      * @memberof FixtureItemAPI
      */
     remove(): this {
-        this.iApi.fixture.remove(this);
+        this.$iApi.fixture.remove(this);
         return this;
     }
 }

@@ -19,7 +19,7 @@ class SnowmanFixture extends FixtureConfigHelper {
         // adds the snowman on-map component to the main map instance
         // TODO: this should be done in the `initialized` life hook
         svInstance.$mount();
-        this.$iApi.vApp.$el.appendChild(svInstance.$el);
+        this.$iApi.$vApp.$el.appendChild(svInstance.$el);
 
         // snowman self-terminates from its own component
 

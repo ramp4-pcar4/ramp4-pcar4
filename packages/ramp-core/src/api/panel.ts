@@ -14,7 +14,7 @@ export class PanelAPI extends APIScope {
     open(config: PanelConfig): PanelItemAPI {
         this.vApp.$store.set('panel/ADD_PANEL!', { value: config });
 
-        return new PanelItemAPI(this.iApi, config);
+        return new PanelItemAPI(this.$iApi, config);
     }
 
     /**
@@ -92,7 +92,7 @@ export class PanelAPI extends APIScope {
             return null;
         }
 
-        return new PanelItemAPI(this.iApi, panel);
+        return new PanelItemAPI(this.$iApi, panel);
     }
 
     /**
@@ -153,7 +153,7 @@ export class PanelItemAPI extends APIScope {
      * @memberof PanelItemAPI
      */
     pin(value: boolean): this {
-        this.iApi.panel.pin(this, value);
+        this.$iApi.panel.pin(this, value);
         return this;
     }
 
@@ -165,7 +165,7 @@ export class PanelItemAPI extends APIScope {
      * @memberof PanelItemAPI
      */
     close(): this {
-        this.iApi.panel.close(this);
+        this.$iApi.panel.close(this);
         return this;
     }
 
@@ -178,7 +178,7 @@ export class PanelItemAPI extends APIScope {
      * @memberof PanelItemAPI
      */
     route(route: PanelConfigRoute): this {
-        this.iApi.panel.route(this, route);
+        this.$iApi.panel.route(this, route);
 
         return this;
     }

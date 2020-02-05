@@ -8,7 +8,7 @@ export class APIScope {
      * @type {InstanceAPI}
      * @memberof APIScope
      */
-    protected readonly iApi: InstanceAPI;
+    protected readonly $iApi: InstanceAPI;
 
     /**
      * The instance of Vue R4MP application controlled by this InstanceAPI.
@@ -19,7 +19,7 @@ export class APIScope {
      * @memberof APIScope
      */
     protected get vApp(): Vue {
-        return this.iApi.vApp;
+        return this.$iApi.$vApp;
     }
 
     /**
@@ -29,6 +29,6 @@ export class APIScope {
      * @memberof APIScope
      */
     constructor(iApi: InstanceAPI) {
-        this.iApi = iApi;
+        this.$iApi = iApi;
     }
 }

@@ -105,7 +105,7 @@ export class FixtureConfigHelper implements FixtureConfig {
      * @memberof APIScope
      */
     get vApp(): Vue {
-        return this.$iApi.vApp;
+        return this.$iApi.$vApp;
     }
 
     added?(): void;
