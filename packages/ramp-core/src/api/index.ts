@@ -17,9 +17,11 @@ interface APIInterface {
 
 let api: any = {};
 
-const gapiPromise = GapiLoader(window);
-
 api.Instance = InstanceAPI;
+
+// Load geoapi
+// moved from `main-build` since it was being attached to the api object anyways
+const gapiPromise = GapiLoader(window);
 api.gapiPromise = gapiPromise;
 
 gapiPromise.then((gapi: GeoApi) => {
