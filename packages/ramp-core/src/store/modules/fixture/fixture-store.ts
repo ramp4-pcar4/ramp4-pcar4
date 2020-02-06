@@ -1,7 +1,7 @@
 import { ActionContext, Action, Mutation } from 'vuex';
 import { make } from 'vuex-pathify';
 
-import { FixtureState, Fixture } from './fixture-state';
+import { FixtureState, FixtureConfig } from './fixture-state';
 import { RootState } from '@/store/state';
 
 type FixtureContext = ActionContext<FixtureState, RootState>;
@@ -9,27 +9,18 @@ type FixtureContext = ActionContext<FixtureState, RootState>;
 type StoreActions = { [key: string]: Action<FixtureState, RootState> };
 type StoreMutations = { [key: string]: Mutation<FixtureState> };
 
-export enum ActionName {
-    addFixture = 'addFixture',
-    removeFixture = 'removeFixture'
-}
+export enum FixtureAction {}
+/* addFixture = 'addFixture',
+    removeFixture = 'removeFixture' */
 
-export enum MutationName {
+export enum FixtureMutation {
     ADD_FIXTURE = 'ADD_FIXTURE',
     REMOVE_FIXTURE = 'REMOVE_FIXTURE'
 }
 
 const getters = {};
 
-const actions: StoreActions = {
-    [ActionName.addFixture](context: FixtureContext, { value }: { value: Fixture }): void {
-        context.commit(MutationName.ADD_FIXTURE, { value });
-    },
-
-    [ActionName.removeFixture](context: FixtureContext, { value }: { value: Fixture }): void {
-        context.commit(MutationName.REMOVE_FIXTURE, { value });
-    }
-};
+const actions: StoreActions = {};
 
 const mutations: StoreMutations = {
     /**
@@ -37,10 +28,10 @@ const mutations: StoreMutations = {
      * // TODO: add options for override behaviour as in what to do if a fixture with the same id is already added
      *
      * @param {FixtureState} state
-     * @param {{ value: Fixture }} { value }
+     * @param {{ value: FixtureConfig }} { value }
      */
-    [MutationName.ADD_FIXTURE](state: FixtureState, { value }: { value: Fixture }): void {
-        state.fixtures.push(value);
+    [FixtureMutation.ADD_FIXTURE](state: FixtureState, { value }: { value: FixtureConfig }): void {
+        state.items = { ...state.items, [value.id]: value };
 
         // call the `added` life hook if available
         if (typeof value.added === 'function') {
@@ -52,15 +43,11 @@ const mutations: StoreMutations = {
      * Mutation to remove an existing fixture from the fixture list.
      *
      * @param {FixtureState} state
-     * @param {{ value: Fixture }} { value }
+     * @param {{ value: FixtureConfig }} { value }
      */
-    [MutationName.REMOVE_FIXTURE](state: FixtureState, { value }: { value: Fixture }): void {
-        const index = state.fixtures.findIndex(fixture => fixture.id === value.id);
-        if (index === -1) {
-            return;
-        }
-
-        state.fixtures.splice(index, 1);
+    [FixtureMutation.REMOVE_FIXTURE](state: FixtureState, { value }: { value: FixtureConfig }): void {
+        delete state.items[value.id];
+        state.items = { ...state.items };
 
         // call the `removed` life hook if available
         if (typeof value.removed === 'function') {

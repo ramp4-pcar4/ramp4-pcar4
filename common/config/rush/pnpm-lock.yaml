@@ -25,6 +25,7 @@ dependencies:
   '@vue/eslint-config-prettier': 5.1.0_5245c988bcb90338057324bbfb65fa35
   '@vue/eslint-config-typescript': 4.0.0_eslint@5.16.0+typescript@3.5.3
   '@vue/test-utils': 1.0.0-beta.29_d81dac297579cfd5597855dabf60f13b
+  await-to-js: 2.1.1
   awesome-typescript-loader: 5.2.1_typescript@3.5.3
   deepmerge: 4.2.2
   eslint: 5.16.0
@@ -2275,6 +2276,12 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-g0Ya30YrMBAEZk60lp+qfX5YQllG+S5W3GYCFvyHTvhOki0AEQJLPEcIuGRsqVwLi8FvXPVtwTGhfr38hVpm0g==
+  /await-to-js/2.1.1:
+    dev: false
+    engines:
+      node: '>=6.0.0'
+    resolution:
+      integrity: sha512-CHBC6gQGCIzjZ09tJ+XmpQoZOn4GdWePB4qUweCaKNJ0D3f115YdhmYVTZ4rMVpiJ3cFzZcTYK1VMYEICV4YXw==
   /awesome-typescript-loader/5.2.1_typescript@3.5.3:
     dependencies:
       chalk: 2.4.2
@@ -11878,6 +11885,7 @@ packages:
       '@vue/eslint-config-prettier': 5.1.0_5245c988bcb90338057324bbfb65fa35
       '@vue/eslint-config-typescript': 4.0.0_eslint@5.16.0+typescript@3.5.3
       '@vue/test-utils': 1.0.0-beta.29_d81dac297579cfd5597855dabf60f13b
+      await-to-js: 2.1.1
       deepmerge: 4.2.2
       eslint: 5.16.0
       eslint-plugin-prettier: 3.1.2_eslint@5.16.0+prettier@1.19.1
@@ -11903,7 +11911,7 @@ packages:
     peerDependencies:
       webpack: '*'
     resolution:
-      integrity: sha512-pkVkWvWA8/ZZJQxq+8olzv4E5Xa1f41Tl4BKLYQNyzLKeDwPu4F+uKp78I3Xex94eex9d0KFOp5nHajZtP7cEw==
+      integrity: sha512-FzsGxxQBVBgyreDaUcFJF721EK7HgBegvmVBjHaIUy01i2PRXXNVpPpCjWv8F56cmY6m6Xt/9EvRINb9+sZYEQ==
       tarball: 'file:projects/ramp-core.tgz'
     version: 0.0.0
   'file:projects/ramp-geoapi.tgz':
@@ -11938,6 +11946,7 @@ packages:
       integrity: sha512-Aj91IWDw3RhVYp6cI4T4P9y5s4rvgWwE0bkZQo1jIKxaC5seIKQvwyJv4EmSwOaOGClqVfSkScWw4qhotGzMlA==
       tarball: 'file:projects/ramp-geoapi.tgz'
     version: 0.0.0
+registry: ''
 specifiers:
   '@babel/cli': ^7.2.3
   '@babel/core': ^7.4.0
@@ -11965,6 +11974,7 @@ specifiers:
   '@vue/eslint-config-prettier': ^5.0.0
   '@vue/eslint-config-typescript': ^4.0.0
   '@vue/test-utils': 1.0.0-beta.29
+  await-to-js: ^2.1.1
   awesome-typescript-loader: 5.2.1
   deepmerge: ~4.2.2
   eslint: ^5.16.0

@@ -5,6 +5,9 @@ module.exports = {
         // remove all breakpoints because ramp components will depend on the shell size, not the size of the window/page
         screens: {
             // sm: '640px'
+        },
+        boxShadow: {
+            tm: '0 0 0 1px rgba(0, 0, 0, 0.05), 0 2px 3px 0 rgba(0, 0, 0, 0.1)'
         }
     },
     variants: {
@@ -45,7 +48,7 @@ module.exports = {
         lineHeight: ['responsive', 'container-query'],
         listStylePosition: ['responsive', 'container-query'],
         listStyleType: ['responsive', 'container-query'],
-        margin: ['responsive', 'container-query'],
+        margin: ['responsive', 'last', 'container-query'],
         maxHeight: ['responsive', 'container-query'],
         maxWidth: ['responsive', 'container-query'],
         minHeight: ['responsive', 'container-query'],
@@ -75,7 +78,7 @@ module.exports = {
         zIndex: ['responsive', 'container-query']
     },
     corePlugins: {
-        preflight: false // remove reset CSS because we don't want to mess up host page default styles
+        preflight: true // since all tailwind styles will be scoped under `ramp-app`, it's safe to enable preflight CSS reset
     },
     plugins: [
         function({ addVariant, e }) {

@@ -3,3 +3,4 @@
 export * from './common';
 export * from './fixture';
 export * from './instance';
+export * from './panel';

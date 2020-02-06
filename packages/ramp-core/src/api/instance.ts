@@ -6,11 +6,11 @@ import App from '@/app.vue';
 import { createStore, RootState } from '@/store';
 import { ConfigStore } from '@/store/modules/config';
 
-import { FixtureAPI /* PanelAPI */ } from './internal';
+import { FixtureAPI, PanelAPI } from './internal';
 
 export class InstanceAPI {
     fixture: FixtureAPI;
-    // panel: PanelAPI;
+    panel: PanelAPI;
 
     /**
      * A public event bus for all events. Can also be used by fixtures to talk to each other.
@@ -27,19 +27,19 @@ export class InstanceAPI {
      * @type {Vue}
      * @memberof InstanceAPI
      */
-    readonly vApp: Vue;
+    readonly $vApp: Vue;
 
     constructor(element: HTMLElement, config?: RampMapConfig) {
         this._eventBus = new Vue();
 
-        this.vApp = createApp(element, this);
+        this.$vApp = createApp(element, this);
 
         this.fixture = new FixtureAPI(this); // pass the iApi reference to the FixtureAPI
-        // this.panel = new PanelAPI(this);
+        this.panel = new PanelAPI(this);
 
         // TODO: decide whether to move to src/main.ts:createApp
         // TODO: store a reference to the even bus in the global store [?]
-        this.vApp.$store.set(ConfigStore.newConfig, config || undefined);
+        this.$vApp.$store.set(ConfigStore.newConfig, config || undefined);
     }
 
     /**

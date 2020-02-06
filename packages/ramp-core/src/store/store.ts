@@ -2,27 +2,31 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import pathify from 'vuex-pathify';
 
-import { fixture } from './modules/fixture';
-import { legend } from '@/store/modules/legend';
-import { layer } from '@/store/modules/layer';
 import { config } from '@/store/modules/config';
+import { fixture } from '@/store/modules/fixture';
+import { layer } from '@/store/modules/layer';
+import { legend } from '@/store/modules/legend';
+import { panel } from '@/store/modules/panel';
 import { RootState } from '@/store/state';
 
 Vue.use(Vuex);
+
+// pathify.options.deep = 2;
 
 export const createStore = () =>
     new Vuex.Store<RootState>({
         plugins: [pathify.plugin],
         modules: {
-            fixture: fixture(),
             config: config(),
+            fixture: fixture(),
             layer: layer(),
-            legend: legend()
+            legend: legend(),
+            panel: panel()
         }
     });
 
 declare module 'vuex' {
-    // Declare augmentation for Vuex store for Pathify
+    // declare augmentation for Vuex store for Pathify
     interface Store<S> {
         set: <T>(path: string, value: any) => Promise<T> | undefined;
         get: <T>(path: string, ...args: any) => T | undefined;
