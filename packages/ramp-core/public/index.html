@@ -6,6 +6,8 @@
         <meta name="viewport" content="width=device-width,initial-scale=1.0" />
         <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
         <title>ramp-core</title>
+
+        <script src="./diligord-fixture.js"></script>
     </head>
     <body>
         <noscript>
@@ -68,6 +70,7 @@
                 // TODO: remove
                 rInstance.fixture.add('snowman');
                 rInstance.fixture.add('gazebo');
+                rInstance.fixture.add(window.hostFixtures.diligord);
             }
         </script>
     </body>

@@ -18,7 +18,19 @@ export interface PanelConfig {
      */
     id: string;
 
-    route: PanelConfigRoute;
+    /**
+     * Specifies which panel screen to display and optional props to be passed to the screen panel component.
+     *
+     * @type {PanelConfigRoute}
+     * @memberof PanelConfig
+     */
+    route?: PanelConfigRoute;
 
+    /**
+     * A collection of panel screens to be displayed inside the panel.
+     *
+     * @type {PanelConfigScreen[]}
+     * @memberof PanelConfig
+     */
     screens: PanelConfigScreen[];
 }

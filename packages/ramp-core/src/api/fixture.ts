@@ -5,22 +5,25 @@ import { InstanceAPI } from './instance';
 
 export class FixtureAPI extends APIScope {
     // TODO: moves this fixture loading function to a separate file
-    // TODO: write logic for loading external fixtures
 
     /**
-     * TODO: sample code to load an external fixture
+     * Loads a (built-in) fixture or adds supplied fixture config into the R4MP Vue instance.
      *
-     * Loads (built-in) fixture or adds supplied fixture configs into the R4MP Vue instance.
-     *
-     * @param {string} value
-     * @returns {Promise<void>}
+     * @param {(string | FixtureConfig)} value
+     * @returns {Promise<FixtureItemAPI>}
      * @memberof FixtureAPI
      */
-    async add(value: string): Promise<FixtureItemAPI> {
-        // perform a dynamic webpack import of a internal fixture (allows for code splitting)
-        const { default: fixtureConfig }: { default: FixtureConfig } = await import(
-            /* webpackChunkName: "[request]" */ `@/fixtures/${value}/index.ts`
-        );
+    async add(value: string | FixtureConfig): Promise<FixtureItemAPI> {
+        let fixtureConfig: FixtureConfig;
+
+        if (typeof value === 'string') {
+            // perform a dynamic webpack import of a internal fixture (allows for code splitting)
+            fixtureConfig = (await import(/* webpackChunkName: "[request]" */ `@/fixtures/${value}/index.ts`)).default;
+        } else {
+            fixtureConfig = value;
+        }
+
+        // TODO: check if fixtureConfig exists at all
 
         if (typeof fixtureConfig.created !== 'function') {
             throw new Error('malformed fixture config; `created` life hook is missing');

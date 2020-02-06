@@ -12,9 +12,18 @@ export class PanelAPI extends APIScope {
      * @memberof PanelAPI
      */
     open(config: PanelConfig): PanelItemAPI {
+        // TODO: make `route` optional parameter and by default always assign the first panel as the initial route
         this.$vApp.$store.set('panel/ADD_PANEL!', { value: config });
 
-        return new PanelItemAPI(this.$iApi, config);
+        const panel = this.get(config.id)!;
+
+        // TODO: does the condition below constitute business logic? should this be moved to the store mutation?
+        // if the panel route is not defined, set it to the first panel screen automatically
+        if (!panel._config.route) {
+            this.route(panel, { id: panel._config.screens[0].id });
+        }
+
+        return panel;
     }
 
     /**
@@ -153,6 +162,7 @@ export class PanelItemAPI extends APIScope {
      * @memberof PanelItemAPI
      */
     pin(value: boolean): this {
+        // TODO: change to toggle the pin status
         this.$iApi.panel.pin(this, value);
         return this;
     }
