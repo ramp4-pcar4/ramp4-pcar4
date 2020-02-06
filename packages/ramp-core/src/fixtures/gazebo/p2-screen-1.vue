@@ -9,6 +9,9 @@
 
             <!-- ✔ this is the correct way to pin a panel and bind the button active state whether this panel is pinned or not 👇 -->
             <pin @click="panel.pin(!isPinned)" :active="isPinned"></pin>
+
+            <!-- ✔ this will also work 👇 -->
+            <!-- <pin @click="panel.pin(!panel.isPinned)" :active="panel.isPinned"></pin> -->
         </template>
 
         <template #content>
@@ -46,7 +49,10 @@ export default class Scree2V extends Vue {
     // ✔ create a computer property from the `pinned` value exposed on the API
     // TODO: if there many similar pieces of code that repeat often, we can pull them out into a mixin
     get isPinned(): boolean {
-        return this.$iApi.panel.pinned === this.panel.id;
+        return this.panel.isPinned;
+
+        // ✔ this also works 👇
+        // return this.$iApi.panel.pinned !== null && this.$iApi.panel.pinned.id === this.panel.id;
     }
 }
 </script>

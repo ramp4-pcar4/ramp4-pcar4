@@ -26,7 +26,10 @@
             // this returns `true` if the current panel is pinned by comparing the id of the pinned panel with the id of this panel
             // this is used to modify the icon inside the `pin` header control
             isPinned: function() {
-                return this.$iApi.panel.pinned === this.panel.id;
+                return this.$iApi.panel.pinned && this.$iApi.panel.pinned.id === this.panel.id;
+
+                // or just
+                // return this.panel.isPinned;
             }
         },
 
@@ -44,8 +47,8 @@
 
                 // pass `pin` and `close` controls `controls` slot of the panel-screen
                 h('template', { slot: 'controls' }, [
-                    // using built-in `pin` panel header control
-                    h('pin', { props: { active: this.isPinned }, on: { click: () => this.panel.pin(true) } }),
+                    // using built-in `pin` panel header control; can use either `this.isPinned` getter method or the `this.panel.isPinned` panel getter
+                    h('pin', { props: { active: this.isPinned }, on: { click: () => this.panel.pin(!this.panel.isPinned) } }),
 
                     // using built-in `close` panel header control
                     h('close', {

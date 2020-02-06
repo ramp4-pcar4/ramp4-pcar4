@@ -12,7 +12,6 @@ export class PanelAPI extends APIScope {
      * @memberof PanelAPI
      */
     open(config: PanelConfig): PanelItemAPI {
-        // TODO: make `route` optional parameter and by default always assign the first panel as the initial route
         this.$vApp.$store.set('panel/ADD_PANEL!', { value: config });
 
         const panel = this.get(config.id)!;
@@ -40,29 +39,58 @@ export class PanelAPI extends APIScope {
             return null;
         }
 
+        // unpin the panel before removing if it was pinned
+        if (panel.isPinned) {
+            panel.pin(false);
+        }
+
         this.$vApp.$store.set(`panel/REMOVE_PANEL!`, { value: panel._config });
 
         return panel;
     }
 
     /**
-     * Mark this panel as pinned. This automatically unpins any previous pinned panel if exists.
+     * Pin/unpin/toggle (if no value provided) pin status of the provided panel. When pinning, automatically unpins any previous pinned panel if exists.
      *
      * @param {(string | PanelItemAPI)} panelOrId
      * @param {boolean} value
      * @returns {(PanelItemAPI | null)}
      * @memberof PanelAPI
      */
-    pin(panelOrId: PanelItemAPI | string, value: boolean): PanelItemAPI | null {
+    pin(panelOrId: PanelItemAPI | string, value?: boolean): PanelItemAPI | null {
         const panel = this.get(panelOrId);
 
         if (!panel) {
             return null;
         }
 
-        this.$vApp.$store.set('panel/pinned', value ? panel.id : null);
+        // use the provided value or negate the existing `isPinned` status of this panel
+        value = typeof value !== 'undefined' ? value : !panel.isPinned;
+
+        // if the panel is not currently pinned, and the `value` is not `true`, don't do anything,
+        // as this might unintentionally unpin a different panel;
+        // say `panelA` is pinned and if the following is called `$iApi.panel.pin(panelB, false)`, it should do nothing
+        if (!panel.isPinned && !value) {
+            return panel;
+        }
+
+        // NOTE: we store `pinned` in the store as a reference to a panel config object, not a panel id
+        this.$vApp.$store.set('panel/pinned', value ? panel._config : null);
 
         return panel;
+    }
+
+    /**
+     * Returns the currently pinned panel API item, if exists.
+     *
+     * @readonly
+     * @type {(PanelItemAPI | null)}
+     * @memberof PanelAPI
+     */
+    get pinned(): PanelItemAPI | null {
+        const config = this.$vApp.$store.get<PanelConfig | null>('panel/pinned');
+
+        return config ? new PanelItemAPI(this.$iApi, config) : null;
     }
 
     /**
@@ -74,45 +102,34 @@ export class PanelAPI extends APIScope {
      * @memberof PanelAPI
      */
     route(panelOrId: PanelItemAPI | string, route: PanelConfigRoute): PanelItemAPI | null {
-        const panelItem = this.get(panelOrId);
+        const panel = this.get(panelOrId);
 
-        if (!panelItem) {
+        if (!panel) {
             return null;
         }
 
-        this.$vApp.$store.set(`panel/items@${panelItem.id}.route`, route);
+        this.$vApp.$store.set(`panel/items@${panel.id}.route`, route);
 
-        return panelItem;
+        return panel;
     }
 
     /**
      * Finds and returns a panel with the id specified.
      *
-     * @param {(string | { id: string })} item
+     * @param {(string | PanelItemAPI)} item
      * @returns {(PanelItemAPI | null)}
      * @memberof PanelAPI
      */
-    get(item: string | { id: string }): PanelItemAPI | null {
+    get(item: string | PanelItemAPI): PanelItemAPI | null {
         const id = typeof item === 'string' ? item : item.id;
-        const panel = this.$vApp.$store.get<PanelConfig>(`panel/items@${id}`);
+        const config = this.$vApp.$store.get<PanelConfig>(`panel/items@${id}`);
 
         // TODO: output warning to a log that a fixture with this id cannot be found
-        if (!panel) {
+        if (!config) {
             return null;
         }
 
-        return new PanelItemAPI(this.$iApi, panel);
-    }
-
-    /**
-     * Returns the id of the currently pinned panel, if exists.
-     *
-     * @readonly
-     * @type {(string | null)}
-     * @memberof PanelAPI
-     */
-    get pinned(): string | null {
-        return this.$vApp.$store.get<string | null>('panel/pinned')!;
+        return new PanelItemAPI(this.$iApi, config);
     }
 }
 
@@ -154,17 +171,32 @@ export class PanelItemAPI extends APIScope {
     }
 
     /**
-     * Mark this panel as pinned. This automatically unpins any previous pinned panel if exists.
+     * Pin/unpin/toggle (if no value provided) pin status of this panel. When pinning, automatically unpins any previous pinned panel if exists.
      * This is a proxy to `RAMP.panel.pin(...)`.
      *
-     * @param {boolean} value
+     * @param {boolean} [value]
      * @returns {this}
      * @memberof PanelItemAPI
      */
-    pin(value: boolean): this {
+    pin(value?: boolean): this {
+        // use the provided value or negate the existing `isPinned` status of this panel
+        value = typeof value !== 'undefined' ? value : !this.isPinned;
+
         // TODO: change to toggle the pin status
         this.$iApi.panel.pin(this, value);
+
         return this;
+    }
+
+    /**
+     * Checks if this panel is pinned or not.
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof PanelItemAPI
+     */
+    get isPinned(): boolean {
+        return this.$iApi.panel.pinned !== null && this.$iApi.panel.pinned.id === this.id;
     }
 
     /**
@@ -176,6 +208,7 @@ export class PanelItemAPI extends APIScope {
      */
     close(): this {
         this.$iApi.panel.close(this);
+
         return this;
     }
 

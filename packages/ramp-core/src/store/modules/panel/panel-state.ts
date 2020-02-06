@@ -1,9 +1,21 @@
 import Vue, { VueConstructor } from 'vue';
 
 export class PanelState {
+    /**
+     * A list of all open (visible and hidden) panels.
+     *
+     * @type {{ [name: string]: PanelConfig }}
+     * @memberof PanelState
+     */
     items: { [name: string]: PanelConfig } = {};
 
-    pinned: string | null = null;
+    /**
+     * Indicates a pinned panel.
+     *
+     * @type {(PanelConfig | null)}
+     * @memberof PanelState
+     */
+    pinned: PanelConfig | null = null;
 }
 
 export type PanelConfigScreen = { id: string; component: VueConstructor<Vue> };
