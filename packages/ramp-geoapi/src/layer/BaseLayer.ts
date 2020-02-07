@@ -2,12 +2,13 @@
 // TODO add proper comments
 
 import esri = __esri;
-import { InfoBundle, LayerState, RampLayerConfig, LegendSymbology } from '../gapiTypes';
+import { InfoBundle, LayerState, RampLayerConfig, LegendSymbology, IdentifyParameters, IdentifyResultSet } from '../gapiTypes';
 import BaseBase from '../BaseBase';
 import { TypedEvent } from '../Event';
 import BaseFC from './BaseFC';
 import TreeNode from './TreeNode';
 import NaughtyPromise from '../util/NaughtyPromise';
+import ScaleSet from './ScaleSet';
 
 export default class BaseLayer extends BaseBase {
 
@@ -24,6 +25,8 @@ export default class BaseLayer extends BaseBase {
 
     // statuses
     state: LayerState;
+    supportsIdentify: boolean;
+    isFile: boolean;
 
     /**
      * Indicates layer had loaded and achieved one sucessful update. I.e. layer has been drawn on the map once.
@@ -57,6 +60,8 @@ export default class BaseLayer extends BaseBase {
         this.stateChanged = new TypedEvent<string>();
 
         this.state = LayerState.LOADING;
+        this.supportsIdentify = false; // default state.
+        this.isFile = false; // default state.
         this.sawLoad = false;
         this.sawRefresh = false;
         this.loadProimse = new NaughtyPromise();
@@ -236,6 +241,17 @@ export default class BaseLayer extends BaseBase {
     }
 
     /**
+     * Indicates if the layer is in a state that is makes sense to interact with.
+     * I.e. False if layer has not done it's initial load, or is in error state.
+     *
+     * @method isValidState
+     * @returns {Boolean} true if layer is in an interactive state
+     */
+    isValidState(): boolean {
+        return (this.state === LayerState.LOADED || this.state === LayerState.REFRESH);
+    }
+
+    /**
      * Provides a promise that resolves when the layer is ready to be added to a map.
      * Adding to a map before this has resolved is ok, but it will not appear on the map until after
      * (really only relevant if the timing/order of adding layers is important)
@@ -365,6 +381,17 @@ export default class BaseLayer extends BaseBase {
     }
 
     /**
+     * Returns the opacity of the layer/sublayer.
+     *
+     * @function getOpacity
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to get opacity for. Uses first/only if omitted.
+     * @returns {Boolean} opacity of the layer/sublayer
+     */
+    getScaleSet (layerIdx: number | string = undefined): ScaleSet {
+        return this.getFC(layerIdx).scaleSet;
+    }
+
+    /**
      * Indicates if a feature class supports features (false would be an image/raster/etc)
      *
      * @function supportsFeatures
@@ -377,6 +404,20 @@ export default class BaseLayer extends BaseBase {
 
     getLegend (layerIdx: number | string = undefined): Array<LegendSymbology> {
         return this.getFC(layerIdx).legend;
+    }
+
+    // ----------- LAYER ACTIONS -----------
+
+    identify(options: IdentifyParameters): IdentifyResultSet {
+        // returns an empty set.
+        // serves as a fallback incase someone tries to identify on a non-identifiyable layer
+        // (callers can use this.supportsIdentify to check for that)
+        // and also as a "no results" option for subclasses to use.
+        return {
+            results: [],
+            done: Promise.resolve(),
+            uid: this.uid
+        };
     }
 
 }

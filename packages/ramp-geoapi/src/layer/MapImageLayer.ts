@@ -2,13 +2,14 @@
 
 
 import esri = __esri;
-import { InfoBundle, LayerState, RampLayerConfig, RampLayerMapImageLayerEntryConfig, AttributeSet } from '../gapiTypes';
+import { InfoBundle, LayerState, RampLayerConfig, RampLayerMapImageLayerEntryConfig, AttributeSet, IdentifyParameters, IdentifyResultSet, QueryFeaturesParams, IdentifyResult, IdentifyResultFormat } from '../gapiTypes';
 import AttribLayer from './AttribLayer';
 import TreeNode from './TreeNode';
 import MapImageFC from './MapImageFC';
+import ScaleSet from './ScaleSet';
 
 // Formerly known as DynamicLayer
-export default class MapImageLayer extends AttribLayer {
+export class MapImageLayer extends AttribLayer {
 
     // indicates if sublayers can have opacity adjusted
     isDynamic: boolean;
@@ -297,10 +298,10 @@ export default class MapImageLayer extends AttribLayer {
         leafsToInit.forEach((mlFC: MapImageFC) => {
 
             // NOTE: can consider alternates, like innerLayer.url + / + layerIdx
-            const serviceUrl: string = findSublayer(mlFC.layerIdx).url;
+            mlFC.serviceUrl = findSublayer(mlFC.layerIdx).url;
 
             // TODO check if we have custom renderer, add to options parameter here
-            const pLMD: Promise<void> = mlFC.loadLayerMetadata(serviceUrl).then(() => {
+            const pLMD: Promise<void> = mlFC.loadLayerMetadata().then(() => {
                 // apply any updates that were in the configuration snippets
                 const subC: RampLayerMapImageLayerEntryConfig = subConfigs[mlFC.layerIdx];
                 if (subC) {
@@ -320,7 +321,7 @@ export default class MapImageLayer extends AttribLayer {
 
                 // feature count if valid
                 if (mlFC.supportsFeatures) {
-                    return mlFC.loadFeatureCount(serviceUrl);
+                    return mlFC.loadFeatureCount();
                 } else {
                     return Promise.resolve();
                 }
@@ -456,4 +457,122 @@ export default class MapImageLayer extends AttribLayer {
         }
     }
 
+    /**
+     * Returns the opacity of the layer/sublayer.
+     *
+     * @function getOpacity
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to get opacity for. Uses first/only if omitted.
+     * @returns {Boolean} opacity of the layer/sublayer
+     */
+    // TODO need to verify if a MapImage root layer can have its own scaleset, or if it just
+    //      uses the collation of all its children
+    /*
+    getScaleSet (layerIdx: number | string = undefined): ScaleSet {
+        const fc = this.getFC(layerIdx, true);
+        if (this.isUn(fc)) {
+            return this.scaleSet;
+        } else {
+            return this.getFC(fc.layerIdx).scaleSet;
+        }
+    }
+    */
+
+    // ----------- LAYER ACTIONS -----------
+
+    identify(options: IdentifyParameters): IdentifyResultSet {
+        // NOTE: we are looping over queries on each sublayer instead of running an identify on the entire layer.
+        //       reasons:
+        //         the queries allow us to only return OIDs. identify always pulls all the features.
+        //         identify returns results defined by server aliases instead of server field names, requiring us to reverse-engineer them
+        //         the query allows us to utilze our quick cache with the OID. the first hit is more heavy than an identify,
+        //         but this also means the result is now cached and odds are the user is going to click on/inspect the result anyway.
+        //         also, if the grid has been opened, the identify can utilize the local attribute set.
+
+        // early kickout check. not loaded/error
+        if (!this.isValidState()) {
+            // return empty result.
+            return super.identify(options);
+        }
+
+        const activeFCs: Array<MapImageFC> = (<Array<MapImageFC>>this.fcs).filter(fc => {
+            return fc.getVisibility() &&
+                fc.supportsFeatures &&
+                !fc.scaleSet.isOffScale(options.map.getScale()).offScale;
+                // && fc.getQuery() // TODO add in query check once implemented
+        });
+
+        // early kickout check. all sublayers are one of: not visible; not queryable; off scale; a raster layer
+        if (activeFCs.length === 0) {
+            // return empty result.
+            return super.identify(options);
+        }
+
+        const result: IdentifyResultSet = {
+            results: [],
+            done: undefined, // set below
+            uid: this.uid
+        };
+
+        // prepare a query
+        // it may make more sense to have this made for each FC
+        const qOpts: QueryFeaturesParams = {
+            outFields: '*', // TODO investigate this further, possibly add in layer defined outfields. would need to be updated for each FC
+            includeGeometry: false,
+            map: options.map
+        };
+
+        // TODO refactor when buffer is ready.
+        //      buffer will only be applied to point layers, so need some in-loop checking
+        //      see comments in featurelayer identify for issues and ways to share this code
+        // right now just do assumed point, FIX LATER
+        const realGeom: esri.Geometry = this.esriBundle.Point.fromJSON(options.geometry);
+        qOpts.filterGeometry = realGeom;
+        /*
+        if (myFC.geomType === 'polygon') {
+            qOpts.filterGeometry = realGeom;
+        } else {
+            // TODO investigate why we are using opts.clickEvent.mapPoint and not opts.geometry
+            // TODO add buffer back once we have buffer tech ready
+            // qOpts.filterGeometry = this.makeClickBuffer(opts.clickEvent.mapPoint, opts.map, tolerance);
+            qOpts.filterGeometry = realGeom; // TODO remove me after buffer tech
+        }
+        */
+
+        // loop over active FCs. call query on each. prepare a geometry
+        result.done = Promise.all(activeFCs.map(fc => {
+            const innerResult: IdentifyResult = {
+                uid: fc.uid,
+                isLoading: true,
+                items: []
+            };
+            result.results.push(innerResult);
+
+            return fc.queryFeatures(qOpts).then(results => {
+                // TODO might be a problem overwriting the array if something is watching/binding to the original
+                innerResult.items = results.map(gr => {
+                    return {
+                        // TODO this block is the same as in featurelayer. might want to abstract to a shared function. really depends if we keep the extra params
+                        // TODO decide if we want to handle alias mapping here or not.
+                        //      if we do, our "ESRI" format will need to include field metadata.
+                        //      if we dont, we need to ensure an outside fixture can access field metadata via uid easily.
+                        data: gr.attributes, // this.attributesToDetails(vAtt.attributes, layerData.fields),
+                        format: IdentifyResultFormat.ESRI
+
+                        // See comments on IdentifyItem interface definition; we may decide to not keep these properties
+                        // id:  gr.attributes[fc.oidField].toString(),
+                        // symbol: this.gapi.utils.symbology.getGraphicIcon(gr.attributes, fc.renderer) // TODO use fc.getIcon instead
+                        // name: this.getFeatureName(vAtt.oid.toString(), vAtt.attributes),
+                    };
+                });
+
+                innerResult.isLoading = false;
+            });
+
+        })).then(() => Promise.resolve()); // just to stop typescript from crying about array result of .all()
+
+        return result;
+    }
+
 }
+
+export default MapImageLayer;

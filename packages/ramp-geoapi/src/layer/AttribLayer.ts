@@ -3,20 +3,17 @@
 
 
 import esri = __esri;
-import { InfoBundle, AttributeSet, RampLayerConfig } from '../gapiTypes';
+import { InfoBundle, AttributeSet, RampLayerConfig, GetGraphicParams, GetGraphicResult } from '../gapiTypes';
 import BaseLayer from './BaseLayer';
 import AttribFC from './AttribFC';
 
 export default class AttribLayer extends BaseLayer {
 
-    innerView: esri.MapView;
-
-    // TODO type the config?
     // TODO make this protected? is it possible to instatiate a raw AttribLayer?
     constructor (infoBundle: InfoBundle, config: RampLayerConfig) {
 
         super(infoBundle, config);
-
+        this.supportsIdentify = true;
     }
 
     // only here to make typescript casting nice
@@ -46,6 +43,10 @@ export default class AttribLayer extends BaseLayer {
         return this.getFC(layerIdx).attLoader.getAttribs();
     }
 
+    getGeomType (layerIdx: number | string = undefined): string {
+        return this.getFC(layerIdx).geomType;
+    }
+
     abortAttributeLoad (layerIdx: number | string = undefined): void {
         this.getFC(layerIdx).attLoader.abortAttribLoad();
     }
@@ -61,6 +62,15 @@ export default class AttribLayer extends BaseLayer {
 
     getFeatureCount (layerIdx: number | string = undefined): number {
         return this.getFC(layerIdx).featureCount;
+    }
+
+    // TODO think about this name. using getGraphic for consistency.
+    getGraphic (objectId: number, options: GetGraphicParams, layerIdx: number | string = undefined): Promise<GetGraphicResult> {
+        return this.getFC(layerIdx).getGraphic(objectId, options);
+    }
+
+    getIcon (objectId: number, layerIdx: number | string = undefined): Promise<string> {
+        return this.getFC(layerIdx).getIcon(objectId);
     }
 
 }

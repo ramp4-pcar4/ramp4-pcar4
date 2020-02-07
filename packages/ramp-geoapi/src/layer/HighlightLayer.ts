@@ -11,7 +11,7 @@ import defaultSymbols from './defaulthighlightSymbols.json';
  *                         layerId - id to use for the highlight layer. defaults to rv_highlight
  *                         markerSymbol - esri symbol in server json format to symbolize the click marker. defaults to a red pin
  */
-export default class HighlightLayer extends BaseBase {
+export class HighlightLayer extends BaseBase {
 
     innerLayer: esri.GraphicsLayer;
     protected markerSymbol: esri.PictureMarkerSymbol;
@@ -57,6 +57,13 @@ export default class HighlightLayer extends BaseBase {
         this.innerLayer.add(marker);
     }
 
+    // TODO looking at RAMP2 code there is a lot of the following:
+    //  client code wrangles up parameters, calls fetchGraphic on GeoAPI Layer
+    //  then takes result, and passes it to this function.
+    //  is there a way we can streamline this? like a one-call "fetch and highlight"?
+    //  bit tricky since the layers are not intrinsically connected.  maybe
+    //  its a utility on the client? anything to avoid that block of code that's repeated all
+    //  over the client and is mostly doing geoapi-ish stuff.
     /**
      * Add a graphic or array of graphics to the highlight layer. Remove any previous graphics.
      * @method addhighlight
@@ -83,3 +90,5 @@ export default class HighlightLayer extends BaseBase {
     }
 
 }
+
+export default HighlightLayer;

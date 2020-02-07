@@ -1,7 +1,7 @@
 // TODO add proper comments
 
 import esri = __esri;
-import { InfoBundle, AttributeSet } from '../gapiTypes';
+import { InfoBundle, AttributeSet, GetGraphicServiceDetails, GetGraphicResult } from '../gapiTypes';
 import BaseBase from '../BaseBase';
 import { AttributeLoaderDetails, AsynchAttribController } from './AttributeLoader';
 
@@ -9,6 +9,14 @@ export default class AttributeService extends BaseBase {
 
     constructor (infoBundle: InfoBundle) {
         super(infoBundle);
+    }
+
+    private oidIndexer(attSet: AttributeSet, oidField: string): void {
+        // make index on object id
+        attSet.features.forEach((feat, idx) => {
+            // map object id to index of object in feature array
+            attSet.oidIndex[feat.attributes[oidField]] = idx;
+        });
     }
 
     private arcGisBatchLoad (details: AttributeLoaderDetails, controller: AsynchAttribController): Promise<Array<any>> {
@@ -25,7 +33,7 @@ export default class AttributeService extends BaseBase {
                 f: 'json'
             }
         };
-        const restReq: IPromise<esri.RequestResponse> = this.esriBundle.esriRequest(details.serviceUrl + '/query', params);
+        const restReq = this.esriBundle.esriRequest(details.serviceUrl + '/query', params);
 
         return new Promise((resolve, reject) => {
             // TODO revisit error handling. might need a try-catch?
@@ -87,11 +95,13 @@ export default class AttributeService extends BaseBase {
 
         return new Promise((resolve, reject) => {
             this.arcGisBatchLoad(details, controller).then((a: Array<any>) => {
-                // TODO transform into attribute set here. the array may need transfomring, and the index needs generating
+                // TODO transform into attribute set here. the array may need transfomring
                 const attSet: AttributeSet = {
                     features: a,
                     oidIndex: {}
                 };
+
+                this.oidIndexer(attSet, details.oidField);
 
                 // done thanks
                controller.loadIsDone = true;
@@ -120,10 +130,62 @@ export default class AttributeService extends BaseBase {
             features: pluckedAttributes.toArray(),
             oidIndex: {}
         };
+        this.oidIndexer(attSet, details.oidField);
 
         controller.loadIsDone = true;
         controller.loadedCount = attSet.features.length;
         return Promise.resolve(attSet);
+    }
+
+    loadSingleFeature(details: GetGraphicServiceDetails): Promise<GetGraphicResult> {
+        const params: esri.RequestOptions = {
+            query: {
+                f: 'json',
+                objectIds: details.oid,
+                returnGeometry: details.includeGeometry,
+                outFields: details.attribs
+            }
+        };
+        if (!this.isUn(details.maxOffset)) {
+            params.query.maxAllowableOffset = details.maxOffset;
+        }
+        if (!this.isUn(details.mapSR)) {
+            params.query.outSR = details.mapSR;
+        }
+
+        // TODO investigate adding `geometryPrecision` to the param.
+        //      if we have bloated decimal places, this will drop them.
+        //      need to be careful of the units of the map and the current scale.
+        //      e.g. a basemap in lat long will certainly need decimal places.
+        //      could add this to the tile schema object of our config. if missing we omit, but allow
+        //      author to define a precision for better performance. could we apply that elsewhere? (e.g. featurelayers?)
+
+        const restReq = this.esriBundle.esriRequest(details.serviceUrl + '/query', params);
+
+        return restReq.then((serviceResult: esri.RequestResponse) => {
+            if (serviceResult.data && serviceResult.data.features) {
+                const feats: Array<any> = serviceResult.data.features;
+                 if (feats.length > 0) {
+
+                    const feat = feats[0];
+                    const result: GetGraphicResult = {
+                        attributes: feat.attributes // attributes are always there, so we always return them. letter caller decide to discard them or not.
+                    };
+
+                    if (details.includeGeometry) {
+                        // server result omits spatial reference
+                        feat.geometry.spatialReference = serviceResult.data.spatialReference;
+                        result.geometry = feat.geometry;
+                    }
+
+                    return result;
+
+                }
+            }
+
+            // if we got this far, we failed to get something
+            throw new Error(`Could not locate feature ${details.oid} for layer ${details.serviceUrl}`);
+        });
     }
 
 }
