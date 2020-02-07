@@ -25,6 +25,8 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
+import { PanelConfig } from '../../store/modules/panel';
+import { PanelItemAPI } from '../../api';
 
 @Component({})
 export default class Scree2V extends Vue {
@@ -37,15 +39,18 @@ export default class Scree2V extends Vue {
     }
 
     // ❌ this is bad because it's tappnig directly into the store circumventing the API
+    // and it also receives back a PanelConfig object, not the PanelItemAPI object
     // this will work, but if the store changes strcture, it might break 👇
     get pinned(): string | null {
-        return this.$store.get<string | null>('panel/pinned')!;
+        const panelConfig = this.$store.get<PanelConfig | null>('panel/pinned')!;
+        return panelConfig ? panelConfig.id : null;
     }
 
     pinPanel(): void {
         // ❌ this is bad because it's tappnig directly into the store circumventing the API
-        // this will work, but if the store changes strcture, it might break 👇
-        this.$store.set('panel/pinned', this.pinned !== 'p1' ? 'p1' : null);
+        // this will work, but if the store changes structure, it might break 👇
+        const panelConfig = this.$store.get<PanelConfig>(`panel/items@p1`)!;
+        this.$store.set('panel/pinned', this.pinned !== 'p1' ? panelConfig : null);
     }
 }
 </script>

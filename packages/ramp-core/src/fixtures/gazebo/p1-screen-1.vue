@@ -6,7 +6,7 @@
 
         <template #controls>
             <!-- this is fine, but the name of the panel is hardcoded there, so you wouldn't need to update it if it ever changes -->
-            <pin :active="pinned === 'p1'" @click="pinPanel"></pin>
+            <pin :active="pinned && pinned.id === 'p1'" @click="pinPanel"></pin>
         </template>
 
         <template #content>
@@ -36,13 +36,14 @@ export default class Screen1V extends Vue {
     @Sync('panel/items@p1.route') route!: PanelConfigRoute;
 
     // ❌ also don't do this for the reasons above 👇
-    @Sync('panel/pinned') pinned!: string | null;
+    @Sync('panel/pinned') pinned!: PanelConfig | null;
 
     url: string = 'https://i2.wp.com/freepngimages.com/wp-content/uploads/2017/08/wooden-garden-gazebo.png?w=860';
 
     pinPanel(): void {
         // this is fine, but the name of the panel is hardcoded there, so you wouldn't need to update it if it ever changes
-        this.pinned = this.pinned !== 'p1' ? 'p1' : null;
+        const panelConfig = this.$store.get<PanelConfig>(`panel/items@p1`)!;
+        this.pinned = this.pinned === null || (this.pinned && this.pinned.id) !== 'p1' ? panelConfig : null;
     }
 }
 </script>
