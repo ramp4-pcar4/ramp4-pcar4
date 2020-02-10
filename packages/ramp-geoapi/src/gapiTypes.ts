@@ -2,6 +2,8 @@
 // TODO after all the stuff has been dumped in here, re-organize the order into logical sections
 
 import esri = __esri; // magic command to get ESRI JS API type definitions.
+import BaseGeometry from './api/geometry/BaseGeometry'; // this is a bit wonky. could expose on RampAPI, but dont want clients using the baseclass
+import { Attributes } from './api/apiDefs';
 import MapModule from './map/MapModule';
 import Map from './map/Map';
 import LayerModule from './layer/LayerModule';
@@ -17,7 +19,7 @@ export interface EpsgLookup {
 
 export interface GeoApiOptions {
     apiUrl?: string;
-    epsgLookup?: EpsgLookup
+    epsgLookup?: EpsgLookup;
 }
 
 export interface DojoWindow extends Window {
@@ -129,8 +131,11 @@ export enum IdentifyResultFormat {
 }
 
 // a collection of attributes
+// TODO consider changin .features to .attributes or .attribs.
+//      features would be back-compatible, but it's confusing as we now have a Graphic class, which would be more
+//      aligned with the word "feature"
 export interface AttributeSet {
-    features: Array<any>;
+    features: Array<Attributes>;
     oidIndex: {[key: number]: number};
 }
 
@@ -173,12 +178,14 @@ export interface GetGraphicResult {
     //      stuff tricky if it's not valid.
     //      perhaps we get very fancy with a wrapper, that can have hidden internals if valid,
     //      and error checking if people say request just attributes then attempt to change visibility
-    attributes?: any;
-    geometry?: any;
+    // TODO replace all this with a RAMPAPI.Graphic?
+    attributes?: Attributes;
+    geometry?: BaseGeometry;
 }
 
+// TODO convert the SR param to our API SR class?
 export interface QueryFeaturesParams {
-    filterGeometry?: esri.Geometry; // filter by geometry
+    filterGeometry?: BaseGeometry; // filter by geometry
     filterSql?: string; // filter by sql query
     includeGeometry?: boolean; // if geometry should be included in the result
     outFields?: string; // comma separated list of attributes to restrict what is downloaded
@@ -197,7 +204,7 @@ export interface QueryFeaturesGeoJsonParams extends QueryFeaturesParams {
 export interface IdentifyParameters {
     // TODO will need a larger thinking session on how we expose any esri native types on our interfaces.
     //      if not esri, needs to be converted inside geoapi to esri, so we need some type of strict interface.
-    geometry: any; // esri.Geometry; // TODO figure out how to manage this. typescript gets angry about supertypes.
+    geometry: BaseGeometry; // esri.Geometry; // TODO figure out how to manage this. typescript gets angry about supertypes.
     map: Map;
     tolerance?: number;
     returnGeometry?: boolean;

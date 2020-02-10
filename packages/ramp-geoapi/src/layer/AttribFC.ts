@@ -428,7 +428,7 @@ export default class AttribFC extends BaseFC {
      * @param options {Object} options to provide filters and helpful information.
      * @returns {Array} set of features that satisfy the criteria
      */
-    queryFeatures(options: QueryFeaturesParams): Promise<Array<GetGraphicResult>>{
+    queryFeatures(options: QueryFeaturesParams): Promise<Array<GetGraphicResult>> {
         // NOTE this assumes a server based layer
         //      local based layers should override this function
 

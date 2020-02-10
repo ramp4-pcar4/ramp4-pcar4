@@ -5,6 +5,9 @@ import esri = __esri;
 import { InfoBundle, QueryFeaturesArcServerParams, QueryFeaturesGeoJsonParams, GetGraphicResult } from '../gapiTypes';
 import BaseBase from '../BaseBase';
 import Aql from './Aql';
+import BaseGeometry from '../api/geometry/BaseGeometry';
+import Extent from '../api/geometry/Extent';
+import { GeometryType } from '../api/apiDefs';
 
 export default class QueryService extends BaseBase {
 
@@ -69,33 +72,33 @@ export default class QueryService extends BaseBase {
      * usually around projections
      *
      * @private
-     * @param {Object} geometry the geometry to be used in a query as a filter
+     * @param {BaseGeometry} geometry the geometry to be used in a query as a filter
      * @param {Boolean} isFileLayer true if layer is not tied to an arcgis server
      * @param {Integer} [mapScale] optional scale value of the map to help detect problem situations
      * @param {SpatialReference} [sourceSR] optional spatial reference of the layer being queried to help detect problem situations
      * @return {Geometry} returns the input geometry in the most appropriate form based on the inputs
      */
-    protected queryGeometryHelper(geometry: esri.Geometry, isFileLayer: boolean, mapScale?: number, sourceSR?: esri.SpatialReference): esri.Geometry {
+    protected queryGeometryHelper(geometry: BaseGeometry, isFileLayer: boolean, mapScale?: number, sourceSR?: esri.SpatialReference): esri.Geometry {
+        // TODO consider casting sourceSR to our API SR class?
         let finalGeom: esri.Geometry;
 
-        if (isFileLayer && geometry.type !== 'extent') {
+        if (isFileLayer && geometry.type !== GeometryType.EXTENT) {
             throw new Error('Cannot use geometries other than Extents in queries against non-ArcGIS Server based layers');
         }
-        if (!isFileLayer && geometry.type === 'extent') {
+        if (!isFileLayer && geometry.type === GeometryType.EXTENT) {
             // first check for case of very large extent in Lambert against a LatLong layer.
             // in this case, we tend to get better results keeping things in an Extent form
             // as it handles the north pole/180meridan crossage better.
-            if (mapScale && sourceSR && sourceSR.wkid && mapScale > 20000000 && geometry.spatialReference &&
-                geometry.spatialReference.wkid === 3978 && sourceSR.wkid === 4326) {
-                finalGeom = geometry;
+            if (mapScale && sourceSR && mapScale > 20000000 &&  geometry.sr.wkid === 3978 && sourceSR.wkid === 4326) {
+                finalGeom = this.gapi.utils.geom.geomRampToEsri(geometry);
             } else {
                 // convert extent to polygon to avoid issues when a service in a different projection
                 // attempts to warp the extent
-                finalGeom = this.esriBundle.Polygon.fromExtent(<esri.Extent>geometry);
+                finalGeom = this.gapi.utils.geom.geomRampToEsri((<Extent>geometry).toPolygon());
             }
         } else {
             // take as is
-            finalGeom = geometry;
+            finalGeom = this.gapi.utils.geom.geomRampToEsri(geometry);
         }
 
         return finalGeom;

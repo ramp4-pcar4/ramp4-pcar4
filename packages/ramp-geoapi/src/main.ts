@@ -15,6 +15,11 @@ export { WmsLayer } from './layer/WmsLayer';
 export { MapImageLayer } from './layer/MapImageLayer';
 export { GeoJsonLayer } from './layer/GeoJsonLayer';
 export { HighlightLayer } from './layer/HighlightLayer';
+export * from './api/apiDefs';
+export * from './api/api';
+
+// TODO figure out best way to export * from './api/api' so it can be consumed by whatever
+//      on the client is making the actual API that gets exposed to everyone.
 
 // TODO once working, try to use asynch / await keywords
 
