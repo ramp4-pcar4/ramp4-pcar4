@@ -240,14 +240,14 @@ export class FeatureLayer extends AttribLayer {
         //      might consider having an IdentifyUtils class (or use the queryservice) to help with these common things
         //      (e.g. this, buffer creation, etc)
         //      using Geometry.fromJSON does not work well, it won't figure out the type and cast-up
-        const realGeom: esri.Geometry = this.esriBundle.Point.fromJSON(options.geometry);
+        // const realGeom: esri.Geometry = this.esriBundle.Point.fromJSON(options.geometry);
         if (myFC.geomType === 'polygon') {
-            qOpts.filterGeometry = realGeom;
+            qOpts.filterGeometry = options.geometry;
         } else {
             // TODO investigate why we are using opts.clickEvent.mapPoint and not opts.geometry
             // TODO add buffer back once we have buffer tech ready
             // qOpts.filterGeometry = this.makeClickBuffer(opts.clickEvent.mapPoint, opts.map, tolerance);
-            qOpts.filterGeometry = realGeom; // TODO remove me after buffer tech
+            qOpts.filterGeometry = options.geometry; // TODO remove me after buffer tech
         }
 
         result.done = myFC.queryFeatures(qOpts).then(results => {

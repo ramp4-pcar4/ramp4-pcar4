@@ -4,7 +4,7 @@
 
 Install Rush if you don't already have it:
 
-````
+```
 npm install -g @microsoft/rush
 ```
 

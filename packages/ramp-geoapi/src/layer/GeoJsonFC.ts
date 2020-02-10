@@ -112,7 +112,7 @@ export default class GeoJsonFC extends AttribFC {
      * @param options {Object} options to provide filters and helpful information.
      * @returns {Array} set of features that satisfy the criteria
      */
-    queryFeatures(options: QueryFeaturesParams): Promise<Array<GetGraphicResult>>{
+    queryFeatures(options: QueryFeaturesParams): Promise<Array<GetGraphicResult>> {
 
         const gjOpt: QueryFeaturesGeoJsonParams = {
             layer: (<GeoJsonLayer>this.parentLayer),

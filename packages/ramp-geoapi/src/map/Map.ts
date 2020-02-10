@@ -23,7 +23,7 @@ export class Map extends MapBase {
             constraints: {
                 lods: <Array<esri.LOD>>config.lods
             },
-            spatialReference: config.extent.spatialReference,
+            spatialReference: config.extent.spatialReference, // TODO use utils.geom.convSrToEsriSr?
             extent: config.extent,
 
             // TODO remove these once starting extent is working
