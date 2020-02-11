@@ -13,10 +13,12 @@ import { Get, Sync, Call } from 'vuex-pathify';
 import PanelScreenV from './panel-screen.vue';
 import PinV from './controls/pin.vue';
 import CloseV from './controls/close.vue';
+import OptionsMenuV from './controls/menu.vue';
 
 Vue.component('panel-screen', PanelScreenV);
 Vue.component('pin', PinV);
 Vue.component('close', CloseV);
+Vue.component('options', OptionsMenuV);
 
 import { PanelConfig } from '@/store/modules/panel';
 import { PanelItemAPI } from '../../api';

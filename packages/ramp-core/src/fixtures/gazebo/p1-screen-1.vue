@@ -6,6 +6,16 @@
 
         <template #controls>
             <!-- this is fine, but the name of the panel is hardcoded there, so you wouldn't need to update it if it ever changes -->
+            <options>
+                <!-- TODO: determine how we want to display options here.
+                    1. Should it be something like I have here (using slots)?
+                    2. Should we do something like RAMP3 where we have a prop that takes in an array of available options (like options=["fullscreen", "..."])?
+                    3. Should we just decide on what options should be displayed on all panels and just have them hard-coded in?
+                    4. Something else? -->
+                <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Option 1</a>
+                <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Option 2</a>
+                <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Option 3</a>
+            </options>
             <pin :active="pinned && pinned.id === 'p1'" @click="pinPanel"></pin>
         </template>
 
