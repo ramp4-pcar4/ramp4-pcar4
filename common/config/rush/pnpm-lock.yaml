@@ -8,6 +8,7 @@ dependencies:
   '@fullhuman/postcss-purgecss': 1.3.0
   '@rush-temp/ramp-core': 'file:projects/ramp-core.tgz_webpack@4.41.3'
   '@rush-temp/ramp-geoapi': 'file:projects/ramp-geoapi.tgz'
+  '@tailwindcss/custom-forms': 0.2.1_tailwindcss@1.1.4
   '@types/arcgis-js-api': 4.14.0
   '@types/clone-deep': 4.0.1
   '@types/dojo': 1.9.42
@@ -1220,6 +1221,17 @@ packages:
       webpack: ^2.0.0 || ^3.0.0 || ^4.0.0
     resolution:
       integrity: sha512-cWKrGaFX+rfbMrAxVv56DzhPNqOJPZuNIS2HGMELtgGzb+vsMzyig9mml5gZ/hr2BGtSLV+dP2LUEuAL8aG2mQ==
+  /@tailwindcss/custom-forms/0.2.1_tailwindcss@1.1.4:
+    dependencies:
+      lodash: 4.17.15
+      mini-svg-data-uri: 1.1.3
+      tailwindcss: 1.1.4
+      traverse: 0.6.6
+    dev: false
+    peerDependencies:
+      tailwindcss: ^1.0
+    resolution:
+      integrity: sha512-XdP5XY6kxo3x5o50mWUyoYWxOPV16baagLoZ5uM41gh6IhXzhz/vJYzqrTb/lN58maGIKlpkxgVsQUNSsbAS3Q==
   /@types/arcgis-js-api/4.14.0:
     dev: false
     resolution:
@@ -7562,6 +7574,10 @@ packages:
       webpack: ^4.4.0
     resolution:
       integrity: sha512-a3Y4of27Wz+mqK3qrcd3VhYz6cU0iW5x3Sgvqzbj+XmlrSizmvu8QQMl5oMYJjgHOC4iyt+w7l4umP+dQeW3bw==
+  /mini-svg-data-uri/1.1.3:
+    dev: false
+    resolution:
+      integrity: sha512-EeKOmdzekjdPe53/GdxmUpNgDQFkNeSte6XkJmOBt4BfWL6FQ9G9RtLNh+JMjFS3LhdpSICMIkZdznjiecASHQ==
   /minimalistic-assert/1.0.1:
     dev: false
     resolution:
@@ -10748,6 +10764,10 @@ packages:
     dev: false
     resolution:
       integrity: sha1-qLE/1r/SSJUZZ0zN5VujaTtwbQk=
+  /traverse/0.6.6:
+    dev: false
+    resolution:
+      integrity: sha1-y99WD9e5r2MlAv7UD5GMFX6pcTc=
   /tryer/1.0.1:
     dev: false
     resolution:
@@ -11873,6 +11893,7 @@ packages:
   'file:projects/ramp-core.tgz_webpack@4.41.3':
     dependencies:
       '@fullhuman/postcss-purgecss': 1.3.0
+      '@tailwindcss/custom-forms': 0.2.1_tailwindcss@1.1.4
       '@types/clone-deep': 4.0.1
       '@types/jest': 24.9.1
       '@vue/cli-plugin-babel': 4.1.2_@vue+cli-service@4.1.2
@@ -11911,7 +11932,7 @@ packages:
     peerDependencies:
       webpack: '*'
     resolution:
-      integrity: sha512-FzsGxxQBVBgyreDaUcFJF721EK7HgBegvmVBjHaIUy01i2PRXXNVpPpCjWv8F56cmY6m6Xt/9EvRINb9+sZYEQ==
+      integrity: sha512-f0Szq4pn9GqMip1a7g+MtxAWh2FMxymFzk8jprBii5+ecmWDB/7hGxEmJewt7BeDIiLxHMVEkLGpiNmUJHv3Mw==
       tarball: 'file:projects/ramp-core.tgz'
     version: 0.0.0
   'file:projects/ramp-geoapi.tgz':
@@ -11957,6 +11978,7 @@ specifiers:
   '@fullhuman/postcss-purgecss': ~1.3.0
   '@rush-temp/ramp-core': 'file:./projects/ramp-core.tgz'
   '@rush-temp/ramp-geoapi': 'file:./projects/ramp-geoapi.tgz'
+  '@tailwindcss/custom-forms': ^0.2.1
   '@types/arcgis-js-api': ~4.14.0
   '@types/clone-deep': ~4.0.1
   '@types/dojo': ^1.9.41

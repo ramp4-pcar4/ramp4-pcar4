@@ -102,6 +102,7 @@ module.exports = {
 
                 container.append(newRules);
             });
-        }
+        },
+        require('@tailwindcss/custom-forms')
     ]
 };
