@@ -32,6 +32,9 @@ export default class EsriMap extends Vue {
 
     @Watch('mapConfig')
     onMapConfigChange(newValue: RampMapConfig, oldValue: RampMapConfig) {
+        if (newValue === oldValue) {
+            return;
+        }
         this.map = (window as any).RAMP.geoapi.maps.createMap(this.mapConfig, this.$el as HTMLDivElement);
         this.onLayerArrayChange(this.layers, []);
     }

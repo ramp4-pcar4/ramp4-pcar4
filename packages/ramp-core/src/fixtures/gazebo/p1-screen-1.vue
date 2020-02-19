@@ -17,7 +17,7 @@
         <template #content>
             <div class="flex flex-col items-center">
                 <!-- this is fine -->
-                <button @click="route = { id: 'p-1-screen-2' }" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4">
+                <button @click="route = { id: 'p-1-screen-2' }" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-8 px-16">
                     See Gazebo 2
                 </button>
 

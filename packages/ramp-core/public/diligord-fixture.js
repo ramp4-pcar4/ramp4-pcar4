@@ -66,15 +66,15 @@
                         h(
                             'button',
                             {
-                                class: 'bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4',
+                                class: 'bg-purple-500 hover:bg-purple-700 text-white font-bold py-8 px-16',
                                 on: { click: () => (this.count += 10) }
                             },
                             [h('span', this.count)]
                         ),
-                        h('label', { class: 'mt-4' }, 'Change panel title'),
+                        h('label', { class: 'mt-16' }, 'Change panel title'),
 
                         h('input', {
-                            class: 'border-2  p-2',
+                            class: 'border-2  p-8',
 
                             // bind title to the input value
                             domProps: {
