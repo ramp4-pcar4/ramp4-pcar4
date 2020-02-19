@@ -50,3 +50,6 @@ class GazeboFixture extends FixtureConfigHelper {
 }
 
 export default new GazeboFixture('gazebo');
+
+import GazeboAppbarButton from './gazebo-appbar-button.vue';
+export { GazeboAppbarButton as AppbarButton };

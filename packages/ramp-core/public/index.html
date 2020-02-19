@@ -62,7 +62,10 @@
                             },
                             customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
                         }
-                    ]
+                    ],
+                    fixtures: {
+                        appbar: [{ id: 'gazebo' }, { id: 'divider' }, { id: 'legend' }, { id: 'divider' }]
+                    }
                 });
 
                 // start loading fixtures; this is just an example
@@ -70,6 +73,7 @@
                 // TODO: remove
                 rInstance.fixture.add('snowman');
                 rInstance.fixture.add('gazebo');
+                rInstance.fixture.add('appbar');
                 rInstance.fixture.add(window.hostFixtures.diligord);
             }
         </script>

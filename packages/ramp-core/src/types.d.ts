@@ -18,4 +18,5 @@ export interface EnhancedWindow extends Window {
 export interface RampConfig {
     map: RampMapConfig;
     layers: RampLayerConfig[];
+    fixtures: { [key: string]: any };
 }

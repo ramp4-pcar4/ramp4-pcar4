@@ -6,11 +6,13 @@ import App from '@/app.vue';
 import { createStore, RootState } from '@/store';
 import { ConfigStore } from '@/store/modules/config';
 
-import { FixtureAPI, PanelAPI } from './internal';
+import { FixtureAPI, PanelAPI, APIScope } from './internal';
 
 export class InstanceAPI {
     fixture: FixtureAPI;
     panel: PanelAPI;
+    // allow fixture apis to be added on, this is solely to make typescript happy
+    [key: string]: any;
 
     /**
      * A public event bus for all events. Can also be used by fixtures to talk to each other.
@@ -101,7 +103,7 @@ export class InstanceAPI {
      * @memberof InstanceAPI
      */
     emit(event: string, ...args: any[]): this {
-        this._eventBus.$off(event, ...args);
+        this._eventBus.$emit(event, ...args);
         return this;
     }
 }

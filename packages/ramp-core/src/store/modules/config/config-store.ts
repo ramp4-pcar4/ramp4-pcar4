@@ -14,6 +14,10 @@ type ConfigContext = ActionContext<ConfigState, RootState>;
 const getters = {
     getMapConfig: (state: ConfigState): RampMapConfig => {
         return state.config.map as RampMapConfig;
+    },
+
+    getFixtureConfig: (state: ConfigState) => (key: string): any => {
+        return state.config.fixtures[key];
     }
 };
 
