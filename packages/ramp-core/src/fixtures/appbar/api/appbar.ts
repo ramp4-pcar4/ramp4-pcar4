@@ -20,9 +20,9 @@ export class AppbarAPI extends APIScope {
      * @returns {Promise<AppbarItemAPI[]} The list of current Appbar Items in the store, as AppbarItemAPIs
      * @memberof AppbarAPI
      */
-    async set(appbarConfig: any): Promise<AppbarItemAPI[] | AppbarItemAPI | undefined> {
+    async set(appbarConfig: any): Promise<AppbarItemAPI[] | AppbarItemAPI | null> {
         if (!appbarConfig) {
-            return undefined;
+            return null;
         }
 
         for (let i = 0; i < appbarConfig.length; i++) {

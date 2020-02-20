@@ -14,8 +14,8 @@ export enum AppbarMutation {
 }
 
 const getters = {
-    getById: (state: AppbarState) => (id: string): AppbarItemConfig | undefined => {
-        return state.items.find(item => item.id === id);
+    getById: (state: AppbarState) => (id: string): AppbarItemConfig | null => {
+        return state.items.find(item => item.id === id) || null;
     }
 };
 
