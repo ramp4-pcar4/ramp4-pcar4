@@ -1,6 +1,6 @@
 <template>
     <div>
-        <button class="text-gray-500 hover:text-black p-2" @click="open = !open">
+        <button class="text-gray-500 hover:text-black p-8" @click="open = !open">
             <slot name="header"></slot>
         </button>
         <button
@@ -9,7 +9,11 @@
             tabindex="-1"
             class="fixed inset-0 h-full w-full bg-black opacity-0 cursor-default"
         ></button>
-        <div v-if="open" class="rv-dropdown shadow-md border border-gray:200 absolute mt-2 py-2 w-64 bg-white rounded z-10">
+        <div
+            v-if="open"
+            @blur="open = false"
+            class="rv-dropdown shadow-md border border-gray:200 absolute py-8 w-256 bg-white rounded z-10"
+        >
             <slot></slot>
         </div>
     </div>

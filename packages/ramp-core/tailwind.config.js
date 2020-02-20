@@ -13,10 +13,15 @@ module.exports = {
         screens: {
             // sm: '640px'
         },
-        boxShadow: {
-            tm: '0 0 0 1px rgba(0, 0, 0, 0.05), 0 2px 3px 0 rgba(0, 0, 0, 0.1)'
-        },
-        spacing: spacingConfig
+        spacing: spacingConfig,
+        extend: {
+            colors: {
+                'black-75': 'rgba(0, 0, 0, 0.75)'
+            },
+            boxShadow: {
+                tm: '0 0 0 1px rgba(0, 0, 0, 0.05), 0 2px 3px 0 rgba(0, 0, 0, 0.1)'
+            }
+        }
     },
     variants: {
         // https://tailwindcss.com/docs/pseudo-class-variants

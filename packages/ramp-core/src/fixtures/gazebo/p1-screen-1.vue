@@ -5,13 +5,15 @@
         </template>
 
         <template #controls>
-            <!-- this is fine, but the name of the panel is hardcoded there, so you wouldn't need to update it if it ever changes -->
-            <panel-options-menu>
-                <a href="#">Option 1</a>
-                <a href="#">Option 2</a>
-                <a href="#">Option 3</a>
-            </panel-options-menu>
-            <pin :active="pinned && pinned.id === 'p1'" @click="pinPanel"></pin>
+            <div v-focus-list class="flex">
+                <!-- this is fine, but the name of the panel is hardcoded there, so you wouldn't need to update it if it ever changes -->
+                <panel-options-menu focus-item>
+                    <a href="#">Option 1</a>
+                    <a href="#">Option 2</a>
+                    <a href="#">Option 3</a>
+                </panel-options-menu>
+                <pin :active="pinned && pinned.id === 'p1'" @click="pinPanel" focus-item></pin>
+            </div>
         </template>
 
         <template #content>

@@ -1,6 +1,13 @@
 <template>
-    <div class="absolute top-0 left-0 flex flex-col items-center bg-black opacity-75 h-full w-40 md:w-64 pointer-events-auto">
-        <component v-for="(item, index) in items" :is="item.id" :key="`${item.id}-${index}`" class="h-16 mt-8 mb-8 first:mt-16"></component>
+    <div class="absolute top-0 left-0 flex flex-col items-stretch bg-black-75 h-full w-40 md:w-64 pointer-events-auto" v-focus-list>
+        <component
+            v-for="(item, index) in items"
+            :is="item.id"
+            :key="`${item.id}-${index}`"
+            class="h-24 my-4 first:mt-8 text-gray-400 hover:text-white"
+            :class="{ 'py-12': item.id !== DIVIDER }"
+            :focus-item="item.id !== DIVIDER"
+        ></component>
     </div>
 </template>
 
@@ -10,14 +17,23 @@ import { Get, Sync, Call } from 'vuex-pathify';
 import { AppbarItemConfig } from './store';
 import DividerV from './divider.vue';
 
-Vue.component('divider', DividerV);
+const DIVIDER_ID = 'divider';
+
+Vue.component(DIVIDER_ID, DividerV);
 
 @Component
 export default class AppbarV extends Vue {
+    // to use in the template
+    DIVIDER = DIVIDER_ID;
+
     get items() {
         return this.$iApi.$vApp.$store.get('appbar/items');
     }
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.focused {
+    @apply bg-blue-900 text-white;
+}
+</style>

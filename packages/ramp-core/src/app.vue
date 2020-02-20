@@ -11,6 +11,9 @@ import Shell from '@/components/shell.vue';
 
 import ro from '@/scripts/resize-observer.js';
 
+import { FocusList } from '@/directives/focus-list';
+Vue.directive('focus-list', FocusList);
+
 @Component({
     components: {
         Shell
