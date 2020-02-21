@@ -1,5 +1,12 @@
 const postcss = require('postcss');
 
+// generate spacing rules, these create width, height, padding, margin, etc. rules
+// will end up with w-0 = 0px, w-1 = 1px, and so on
+spacingConfig = {};
+for (i = 0; i < 1000; i++) {
+    spacingConfig[i] = `${i}px`;
+}
+
 module.exports = {
     theme: {
         // remove all breakpoints because ramp components will depend on the shell size, not the size of the window/page
@@ -8,9 +15,11 @@ module.exports = {
         },
         boxShadow: {
             tm: '0 0 0 1px rgba(0, 0, 0, 0.05), 0 2px 3px 0 rgba(0, 0, 0, 0.1)'
-        }
+        },
+        spacing: spacingConfig
     },
     variants: {
+        // https://tailwindcss.com/docs/pseudo-class-variants
         // add the `container-query` variant to all the core plugins which have `responsive` specified (hint: it's all of them)
         alignContent: ['responsive', 'container-query'],
         alignItems: ['responsive', 'container-query'],
@@ -48,7 +57,7 @@ module.exports = {
         lineHeight: ['responsive', 'container-query'],
         listStylePosition: ['responsive', 'container-query'],
         listStyleType: ['responsive', 'container-query'],
-        margin: ['responsive', 'last', 'container-query'],
+        margin: ['responsive', 'last', 'container-query', 'first'],
         maxHeight: ['responsive', 'container-query'],
         maxWidth: ['responsive', 'container-query'],
         minHeight: ['responsive', 'container-query'],

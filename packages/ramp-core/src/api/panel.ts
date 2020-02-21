@@ -166,8 +166,12 @@ export class PanelItemAPI extends APIScope {
         this._config = config;
 
         // register all the panel screen components globally
-        // TODO: check if already registered and don't do it again
-        this._config.screens.forEach(({ id, component }) => Vue.component(id, component));
+        this._config.screens.forEach(({ id, component }) => {
+            // only register if it hasn't been registered before
+            if (!(id in this.$vApp.$options.components!)) {
+                Vue.component(id, component);
+            }
+        });
     }
 
     /**

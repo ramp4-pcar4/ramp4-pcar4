@@ -1,0 +1,21 @@
+<template>
+    <button class="text-gray-400 hover:text-white hover: p-6" @click="onClick()">
+        <!-- https://material.io/resources/icons/?icon=layers&style=baseline -->
+        <svg class="fill-current w-24 h-24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z" />
+        </svg>
+    </button>
+</template>
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator';
+
+@Component
+export default class LegendAppbarButton extends Vue {
+    onClick() {
+        console.log('legend appbar button clicked');
+    }
+}
+</script>
+
+<style lang="scss" scoped></style>

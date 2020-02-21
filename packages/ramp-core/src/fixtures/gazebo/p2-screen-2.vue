@@ -18,17 +18,17 @@
         <template #content>
             I'm a simple panel.
 
-            <div class="flex flex-col items-center mt-4">
+            <div class="flex flex-col items-center mt-16">
                 <!-- ✔ this is the correct way to switch between screens in the same panel 👇 -->
                 <button
                     @click="panel.route({ id: 'p-2-screen-1', props: { greeting: 'Greeting from Screen B' } })"
-                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4"
+                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-8 px-16"
                 >
                     Switch to Screen A
                 </button>
             </div>
 
-            <p class="mt-4">{{ greeting }}</p>
+            <p class="mt-16">{{ greeting }}</p>
         </template>
     </panel-screen>
 </template>

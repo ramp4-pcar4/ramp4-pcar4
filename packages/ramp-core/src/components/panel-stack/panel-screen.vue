@@ -1,14 +1,14 @@
 <template>
     <div>
-        <header class="flex items-center border-b border-solid border-gray-600 px-2">
-            <h2 class="flex-grow text-lg py-4 pl-2">
+        <header class="flex items-center border-b border-solid border-gray-600 px-8">
+            <h2 class="flex-grow text-lg py-16 pl-8">
                 <slot name="header"></slot>
             </h2>
 
             <slot name="controls"></slot>
         </header>
 
-        <div class="m-2">
+        <div class="m-8">
             <slot name="content"></slot>
         </div>
     </div>
