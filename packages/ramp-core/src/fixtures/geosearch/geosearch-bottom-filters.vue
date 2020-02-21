@@ -4,11 +4,11 @@
             <div class="bg-white shadow">
                 <input
                     type="checkbox"
-                    class="form-checkbox border-2 mx-2 border-gray-600"
+                    class="form-checkbox border-2 mx-8 border-gray-600"
                     v-model="mutableVisibleOnly"
                     v-on:change="updateExtentFilters"
                 />
-                <span class="ml">Visible on map</span>
+                <span class="ml-4">Visible on map</span>
             </div>
         </label>
     </div>

@@ -17,14 +17,14 @@
                 :selectedType="queryParams.type"
             ></geosearch-top-filters>
             <ul class="rv-results-list">
-                <li class="mt h-12" v-for="(result, idx) in searchResults" v-bind:key="idx">
-                    <button class="h-full w-full inline-block hover:bg-gray-300" @click="zoomIn(result)">
-                        <div class="rv-result-description">
-                            <div class="w-3/4">
-                                <span class="float-left">{{ result.name }},</span>
-                                <span class="float-left px" v-if="result.province">{{ result.province }}</span>
+                <li class="relative h-48" v-for="(result, idx) in searchResults" v-bind:key="idx">
+                    <button class="absolute inset-0 h-full w-full hover:bg-gray-300" @click="zoomIn(result)">
+                        <div class="rv-result-description flex px-32">
+                            <div class="flex-1 text-left truncate">
+                                <span>{{ result.name }},</span>
+                                <span v-if="result.province">{{ result.province }}</span>
                             </div>
-                            <span class="font-bold w-1/4 float-right truncate" v-if="result.type">{{ result.type }}</span>
+                            <span class="font-bold max-w-10 truncate" v-if="result.type">{{ result.type }}</span>
                         </div>
                     </button>
                 </li>
@@ -32,7 +32,7 @@
             <div class="rv-geosearch-divider border-b border-gray-600"></div>
             <geosearch-bottom-filters
                 v-bind:visibleOnly="queryParams.resultsVisible"
-                class="absolute bottom-0 mb-8"
+                class="absolute bottom-0 mb-32"
             ></geosearch-bottom-filters>
         </template>
     </panel-screen>
@@ -43,7 +43,7 @@ import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 import { PanelItemAPI } from '@/api';
 
-import { GeosearchStore } from '@/store/modules/geosearch';
+import { GeosearchStore } from './store';
 
 import GeosearchBar from './geosearch-bar.vue';
 import GeosearchTopFilters from './geosearch-top-filters.vue';
@@ -57,25 +57,34 @@ import GeosearchBottomFilters from './geosearch-bottom-filters.vue';
     }
 })
 export default class GeosearchComponent extends Vue {
-    // fetch defined province and type filters
-    @Get(GeosearchStore.getProvinces) provinces!: Array<string>;
-    @Get(GeosearchStore.getTypes) types!: Array<string>;
-    // get search value, query param filters and current geosearch search results
-    @Get(GeosearchStore.searchVal) searchVal!: string;
-    @Get(GeosearchStore.queryParams) queryParams!: any;
-    @Get(GeosearchStore.searchResults) searchResults!: Array<any>;
-
     @Prop() panel!: PanelItemAPI;
+    // fetch defined province and type filters
+    get provinces() {
+        return this.$iApi.$vApp.$store.get('geosearch/getProvinces');
+    }
+    get types() {
+        return this.$iApi.$vApp.$store.get('geosearch/getTypes');
+    }
+    // get search value, query param filters and current geosearch search results
+    get searchVal() {
+        return this.$iApi.$vApp.$store.get('geosearch/searchVal');
+    }
+    get queryParams() {
+        return this.$iApi.$vApp.$store.get('geosearch/queryParams');
+    }
+    get searchResults() {
+        return this.$iApi.$vApp.$store.get('geosearch/searchResults');
+    }
+    get isPinned(): boolean {
+        return this.panel.isPinned;
+    }
 
-    @Call(GeosearchStore.runQuery) runQuery!: () => Array<any>;
+    runQuery() {
+        return this.$iApi.$vApp.$store.dispatch('geosearch/runQuery');
+    }
 
     zoomIn(result: any): void {
         // TODO: call some geosearch store action
-    }
-
-    // ✔ create a computer property from the `pinned` value exposed on the API
-    get isPinned(): boolean {
-        return this.panel.isPinned;
     }
 
     // @watch only seemed to be working on individual param attributes

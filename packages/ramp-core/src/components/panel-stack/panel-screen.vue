@@ -1,6 +1,6 @@
 <template>
     <div>
-        <header class="flex items-center border-b border-solid border-gray-600 px-8">
+        <header class="flex items-center border-b border-solid border-gray-600 px-8 h-48">
             <h2 class="flex-grow text-lg py-16 pl-8">
                 <slot name="header"></slot>
             </h2>

@@ -7,7 +7,6 @@ export class GeosearchState {
     lastSearchVal: string;
     searchResults: Array<any>;
     savedResults: Array<any>;
-    isResultsVisible: Boolean;
 
     constructor() {
         // initialize geosearch feature service that contains all key geosearch functionality - running queries, fetch initial filters, update filters, etc.
@@ -68,7 +67,6 @@ export class GeosearchState {
         ];
         this.searchResults = tempResults;
         this.savedResults = tempResults;
-        this.isResultsVisible = false;
     }
 }
 

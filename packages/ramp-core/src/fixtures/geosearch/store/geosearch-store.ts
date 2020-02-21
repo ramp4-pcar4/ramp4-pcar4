@@ -60,7 +60,6 @@ const mutations = {
         // uncomment once GSService query implemented
         // if (!state.searchVal) {
         //     state.searchResults = [];
-        //     state.isResultsVisible = false;
         //     // return Promise.resolve();
         //     return state.searchResults;
         // }
@@ -69,7 +68,6 @@ const mutations = {
         if (state.searchVal && state.searchVal !== state.lastSearchVal) {
             // TODO: GSservice query yet to be implemented
         } else {
-            state.isResultsVisible = true;
             // discard any old results
             let filteredData = filter(state.queryParams, state.savedResults);
             state.searchResults = filteredData || [];

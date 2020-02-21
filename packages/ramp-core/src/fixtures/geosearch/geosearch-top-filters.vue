@@ -1,8 +1,8 @@
 <template>
-    <div class="rv-geosearch-top-filters w-full mt-4">
-        <div class="inline-block w-32 h-10 mx-3">
+    <div class="rv-geosearch-top-filters w-full mt-16">
+        <div class="inline-block w-128 h-40 mx-12">
             <select
-                class="form-select border-b border-b-gray-600 w-20 h-auto py-0"
+                class="form-select border-b border-b-gray-600 w-80 h-auto py-0"
                 v-model="mutableSelectedProvince"
                 v-on:change="setNewProvince(mutableSelectedProvince)"
             >
@@ -12,9 +12,9 @@
                 </option>
             </select>
         </div>
-        <div class="inline-block w-24 h-10 mx-3">
+        <div class="inline-block w-96 h-40 mx-12">
             <select
-                class="form-select border-b border-b-gray-600 w-12 h-auto py-0"
+                class="form-select border-b border-b-gray-600 w-48 h-auto py-0"
                 v-model="mutableSelectedType"
                 v-on:change="setNewType(mutableSelectedType)"
             >
@@ -30,16 +30,13 @@
             v-on:click="clearFilters"
         >
             <div class="rv-geosearch-icon">
-                <svg class="fill-current w-4 pr-2 h-4 pt-1" viewBox="0 0 23 21">
+                <svg class="fill-current w-16 pr-8 h-16 pt-4" viewBox="0 0 23 21">
                     <path
                         d="M 14.7574,20.8284L 17.6036,17.9822L 14.7574,15.1716L 16.1716,13.7574L 19.0178,16.568L 21.8284,13.7574L 23.2426,15.1716L 20.432,17.9822L 23.2426,20.8284L 21.8284,22.2426L 19.0178,19.3964L 16.1716,22.2426L 14.7574,20.8284 Z M 2,2L 19.9888,2.00001L 20,2.00001L 20,2.01122L 20,3.99999L 19.9207,3.99999L 13,10.9207L 13,22.909L 8.99999,18.909L 8.99999,10.906L 2.09405,3.99999L 2,3.99999L 2,2 Z "
                     />
-                    <!-- <path
-                        d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
-                    /> -->
                 </svg>
                 <span
-                    class="text-center text-white rounded absolute bg-gray-200 invisible group-hover:visible w-7 top-100 left-50 -ml-16 z-1"
+                    class="text-center text-white rounded absolute bg-gray-200 invisible group-hover:visible w-28 top-400 left-200 -ml-64 z-4"
                 >
                     Clear filters
                 </span>
@@ -52,7 +49,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
-import { GeosearchStore } from '@/store/modules/geosearch';
+import { GeosearchStore } from './store';
 import { ConfigStore } from '@/store/modules/config';
 
 @Component({})
@@ -77,12 +74,10 @@ export default class GeosearchTopFilters extends Vue {
 
     setNewProvince(province: string): void {
         this.setProvince(province);
-        // TODO: can potentially call geosearch store query function here
     }
 
     setNewType(type: string): void {
         this.setType(type);
-        // TODO: can potentially call geosearch store query function here
     }
 
     clearFilters(): void {
@@ -90,7 +85,6 @@ export default class GeosearchTopFilters extends Vue {
         this.mutableSelectedType = '';
         this.setProvince(undefined);
         this.setType(undefined);
-        // TODO: can potentially call geosearch store query function here
     }
 }
 </script>
