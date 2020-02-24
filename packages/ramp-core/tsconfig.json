@@ -6,6 +6,7 @@
         "importHelpers": true,
         "moduleResolution": "node",
         "experimentalDecorators": true,
+        "resolveJsonModule": true,
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "strictPropertyInitialization": true,
