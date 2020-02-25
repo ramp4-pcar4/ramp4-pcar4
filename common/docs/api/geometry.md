@@ -67,7 +67,7 @@ Various co-ordinate inputs of the constructors.
 
 ```
 const mptFromCoords = new RAMP.GEO.MultiPoint('myid', [[-76.77, 44.42], [-68.69, 51.39]]);
-const mptFromMultiPt = new RAMP.GEO.Point('myid', mptFromCoords);
+const mptFromMultiPt = new RAMP.GEO.MultiPoint('myid', mptFromCoords);
 const pt = new RAMP.GEO.Point('myid', [-76.77, 44.42]);
 const mptMixedPoints = new RAMP.GEO.MultiPoint('myid', [pt, [-68.69, 51.39], {x: "-97.86", y: 55.74}]);
 ```
@@ -93,8 +93,8 @@ mpt.updateAt(pt, 0);     // multipoint innards are now [[-78.22, 44.42], [-68.69
 This has effectively the same interface as `MultiPoint`, so examples will be sparse. `LineString` enforces a minimum of two vertices.
 
 ```
-const lineFromCoords = new RAMP.GEO.MultiPoint('myid', [[-76.77, 44.42], [-68.69, 51.39]]);
-const lineFromLine = new RAMP.GEO.Point('myid', lineFromCoords); // also accepts MultiPoint
+const lineFromCoords = new RAMP.GEO.LineString('myid', [[-76.77, 44.42], [-68.69, 51.39]]);
+const lineFromLine = new RAMP.GEO.LineString('myid', lineFromCoords); // also accepts MultiPoint
 lineFromCoords.type; // 'LineString'
 ```
 

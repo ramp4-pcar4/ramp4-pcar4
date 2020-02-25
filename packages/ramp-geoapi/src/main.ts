@@ -7,6 +7,8 @@ import MapModule from './map/MapModule';
 
 import LayerModule from './layer/LayerModule';
 import UtilModule from './util/UtilModule';
+import * as apiDefs from './api/apiDefs';
+import * as apiClasses from './api/api';
 
 export * from './gapiTypes';
 export { Map } from './map/Map';
@@ -15,8 +17,10 @@ export { WmsLayer } from './layer/WmsLayer';
 export { MapImageLayer } from './layer/MapImageLayer';
 export { GeoJsonLayer } from './layer/GeoJsonLayer';
 export { HighlightLayer } from './layer/HighlightLayer';
-export * from './api/apiDefs';
-export * from './api/api';
+export const ApiBundle = {
+    ...apiClasses,
+    ...apiDefs
+};
 
 // TODO figure out best way to export * from './api/api' so it can be consumed by whatever
 //      on the client is making the actual API that gets exposed to everyone.
