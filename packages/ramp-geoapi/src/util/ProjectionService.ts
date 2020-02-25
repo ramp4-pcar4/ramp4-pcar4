@@ -123,16 +123,9 @@ export default class ProjectionService extends BaseBase {
 
         let inSr: string = this.normalizeProj(inputSR);
         let outSr: string = this.normalizeProj(outputSR);
-        const urnRegex = /urn:ogc:def:crs:EPSG::(\d+)/;
 
         if (!inSr && geoJson.crs && geoJson.crs.type === 'name') {
-            // no input SR given, and geojson has some spatial ref info on it
-            const matches = geoJson.crs.properties.name.match( urnRegex );
-            if (matches) {
-                inSr = 'EPSG:' + matches[1];
-            } else {
-                inSr = geoJson.crs.properties.name;
-            }
+            inSr = this.gapi.utils.geom.parseGeoJsonCrs(geoJson.crs);
         }
 
         if (!inSr) {
