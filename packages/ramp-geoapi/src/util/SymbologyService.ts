@@ -1,9 +1,10 @@
 import esri = __esri;
 import { InfoBundle, LegendSymbology } from '../gapiTypes';
 import BaseBase from '../BaseBase';
-
-import svgjs from 'svg.js';
 import { BaseRenderer, BaseSymbolUnit, SimpleRenderer, ClassBreaksRenderer, UniqueValueRenderer } from './Renderers';
+import { LineStyle } from '../api/apiDefs';
+import svgjs from 'svg.js';
+
 
 // Functions for turning ESRI Renderers into images
 // Specifically, converting ESRI "Simple" symbols into images,
@@ -273,6 +274,7 @@ export default class SymbologyService extends BaseBase {
             .size(this.CONTAINER_SIZE, this.CONTAINER_SIZE)
             .viewbox(0, 0, this.CONTAINER_SIZE, this.CONTAINER_SIZE);
 
+        // TODO use enums here if we can (functions, tricky)
         // functions to draw esri simple marker symbols
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
@@ -303,19 +305,20 @@ export default class SymbologyService extends BaseBase {
         // jscs:enable requireSpacesInAnonymousFunctionExpression
 
         // line dash styles
+        // if we need to revist the svg numbers, can see esri 4 styles at https://developers.arcgis.com/javascript/latest/sample-code/playground/live/index.html#/config=symbols/2d/SimpleLineSymbol.json
         const ESRI_DASH_MAPS = {
-            solid: 'none', // esriSLSSolid
-            none: 'none', // esriSLSNull
-            dash: '5.333,4', // esriSLSDash
-            dot: '1.333,4', // esriSLSDot
-            'dash-dot': '5.333,4,1.333,4', // esriSLSDashDot
-            'long-dash': '10.666,4', // esriSLSLongDash
-            'long-dash-dot': '10.666,4,1.333,4', // esriSLSLongDashDot
-            'long-dash-dot-dot': '10.666,4,1.333,4,1.333,4', // esriSLSLongDashDotDot
-            'short-dot': '1.333,1.333', // esriSLSShortDot
-            'short-dash': '5.333,1.333', // esriSLSShortDash
-            'short-dash-dot': '5.333,1.333,1.333,1.333', // esriSLSShortDashDot
-            'short-dash-dot-dot': '5.333,1.333,1.333,1.333,1.333,1.333' // esriSLSShortDashDotDot
+            [LineStyle.SOLID]: 'none', // esriSLSSolid
+            [LineStyle.NONE]: 'none', // esriSLSNull
+            [LineStyle.DASH]: '5.333,4', // esriSLSDash
+            [LineStyle.DOT]: '1.333,4', // esriSLSDot
+            [LineStyle.DASHDOT]: '5.333,4,1.333,4', // esriSLSDashDot
+            [LineStyle.LONGDASH]: '10.666,4', // esriSLSLongDash
+            [LineStyle.LONGDASHDOT]: '10.666,4,1.333,4', // esriSLSLongDashDot
+            [LineStyle.LONGDASHDOTDOT]: '10.666,4,1.333,4,1.333,4', // esriSLSLongDashDotDot
+            [LineStyle.SHORTDOT]: '1.333,1.333', // esriSLSShortDot
+            [LineStyle.SHORTDASH]: '5.333,1.333', // esriSLSShortDash
+            [LineStyle.SHORTDASHDOT]: '5.333,1.333,1.333,1.333', // esriSLSShortDashDot
+            [LineStyle.SHORTDASHDOTDOT]: '5.333,1.333,1.333,1.333,1.333,1.333' // esriSLSShortDashDotDot
         };
 
         // default stroke style

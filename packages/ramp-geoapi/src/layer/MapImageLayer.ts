@@ -525,8 +525,8 @@ export class MapImageLayer extends AttribLayer {
         //      buffer will only be applied to point layers, so need some in-loop checking
         //      see comments in featurelayer identify for issues and ways to share this code
         // right now just do assumed point, FIX LATER
-        const realGeom: esri.Geometry = this.esriBundle.Point.fromJSON(options.geometry);
-        qOpts.filterGeometry = realGeom;
+        // const realGeom: esri.Geometry = this.esriBundle.Point.fromJSON(options.geometry);
+        qOpts.filterGeometry = options.geometry;
         /*
         if (myFC.geomType === 'polygon') {
             qOpts.filterGeometry = realGeom;
