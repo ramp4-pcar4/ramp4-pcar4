@@ -1,7 +1,7 @@
 <template>
     <panel-screen>
         <template #header>
-            <geosearch-bar :searchTerm="searchVal"></geosearch-bar>
+            <geosearch-bar></geosearch-bar>
         </template>
 
         <template #controls>
@@ -10,30 +10,28 @@
         </template>
 
         <template #content>
-            <geosearch-top-filters
-                :provinces="provinces"
-                :types="types"
-                :selectedProvince="queryParams.province"
-                :selectedType="queryParams.type"
-            ></geosearch-top-filters>
-            <ul class="rv-results-list" v-focus-list>
+            <geosearch-top-filters></geosearch-top-filters>
+            <ul class="rv-results-list h-500 border-t border-gray-600 overflow-hidden overflow-y-auto" v-focus-list>
                 <li class="relative h-48" v-for="(result, idx) in searchResults" v-bind:key="idx">
                     <button class="absolute inset-0 h-full w-full hover:bg-gray-300 default-focus-style" @click="zoomIn(result)" focus-item>
-                        <div class="rv-result-description flex px-32">
+                        <div class="rv-result-description flex px-8">
                             <div class="flex-1 text-left truncate">
-                                <span>{{ result.name }},</span>
-                                <span v-if="result.province">{{ result.province }}</span>
+                                <span v-html="highlightSearchTerm(result.name) + ','"></span>
+                                <span v-if="result.location.province" class="text-gray-600 text-sm">
+                                    {{
+                                        result.location.city
+                                            ? result.location.city + ', ' + result.location.province.abbr
+                                            : result.location.province.abbr
+                                    }}</span
+                                >
                             </div>
-                            <span class="font-bold max-w-10 truncate" v-if="result.type">{{ result.type }}</span>
+                            <span class="font-bold truncate" v-if="result.type">{{ result.type }}</span>
                         </div>
                     </button>
                 </li>
             </ul>
             <div class="rv-geosearch-divider border-b border-gray-600"></div>
-            <geosearch-bottom-filters
-                v-bind:visibleOnly="queryParams.resultsVisible"
-                class="absolute bottom-0 mb-32"
-            ></geosearch-bottom-filters>
+            <geosearch-bottom-filters class="absolute bottom-0 mb-32"></geosearch-bottom-filters>
         </template>
     </panel-screen>
 </template>
@@ -44,10 +42,14 @@ import { Get, Sync, Call } from 'vuex-pathify';
 import { PanelItemAPI } from '@/api';
 
 import { GeosearchStore } from './store';
+import { Map } from 'ramp-geoapi';
 
 import GeosearchBar from './geosearch-bar.vue';
 import GeosearchTopFilters from './geosearch-top-filters.vue';
 import GeosearchBottomFilters from './geosearch-bottom-filters.vue';
+
+// TODO: temporary import for map zoom call
+import { ApiBundle } from 'ramp-geoapi';
 
 @Component({
     components: {
@@ -58,55 +60,25 @@ import GeosearchBottomFilters from './geosearch-bottom-filters.vue';
 })
 export default class GeosearchComponent extends Vue {
     @Prop() panel!: PanelItemAPI;
-    // fetch defined province and type filters
-    get provinces() {
-        return this.$iApi.$vApp.$store.get('geosearch/getProvinces');
-    }
-    get types() {
-        return this.$iApi.$vApp.$store.get('geosearch/getTypes');
-    }
-    // get search value, query param filters and current geosearch search results
-    get searchVal() {
-        return this.$iApi.$vApp.$store.get('geosearch/searchVal');
-    }
-    get queryParams() {
-        return this.$iApi.$vApp.$store.get('geosearch/queryParams');
-    }
-    get searchResults() {
-        return this.$iApi.$vApp.$store.get('geosearch/searchResults');
-    }
+    // fetch search val + search results from store
+    @Get(GeosearchStore.searchVal) searchVal!: string;
+    @Get(GeosearchStore.searchResults) searchResults!: Array<any>;
+
     get isPinned(): boolean {
         return this.panel.isPinned;
     }
 
-    runQuery() {
-        return this.$iApi.$vApp.$store.dispatch('geosearch/runQuery');
-    }
-
+    // zoom in to a clicked result
     zoomIn(result: any): void {
-        // TODO: call some geosearch store action
+        // TODO: replace with ramp api once complete - RAMP.GEO.Point()?
+        let zoomPoint = new ApiBundle.Point('zoomies', result.position);
+        this.$iApi.map.zoomMapTo(zoomPoint, 50000);
     }
 
-    // @watch only seemed to be working on individual param attributes
-    @Watch('searchVal')
-    onSearchValChange(newSearchVal: any, oldSearchVal: any) {
-        if (newSearchVal !== oldSearchVal) {
-            this.runQuery();
-        }
-    }
-
-    @Watch('queryParams.province')
-    onProvinceChange(newProv: any, oldProv: any) {
-        if (newProv !== oldProv) {
-            this.runQuery();
-        }
-    }
-
-    @Watch('queryParams.type')
-    onTypeChange(newType: any, oldType: any) {
-        if (newType !== oldType) {
-            this.runQuery();
-        }
+    // highlight the search term in each listed geosearch result
+    highlightSearchTerm(name: string) {
+        // wrap matched search term in results inside span with styling
+        return name.replace(new RegExp(`${this.searchVal}`, 'gi'), match => '<span class="font-bold text-blue-600">' + match + '</span>');
     }
 }
 </script>

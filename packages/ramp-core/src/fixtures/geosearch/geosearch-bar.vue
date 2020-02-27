@@ -4,8 +4,8 @@
             type="search"
             class="form-input flex-grow border-b border-gray-600 mx-8 h-8"
             placeholder="Search text"
-            v-model="mutableSearchTerm"
-            v-on:change="onSearchTermChange(mutableSearchTerm)"
+            :value="searchVal"
+            @change="onSearchTermChange($event.target.value)"
         />
 
         <!-- <button class="text-gray-500 cursor-default" disabled>
@@ -29,18 +29,14 @@ import { GeosearchStore } from './store';
 
 @Component({})
 export default class GeosearchBar extends Vue {
-    @Prop() searchTerm!: string;
-    mutableSearchTerm!: string;
+    // fetch geosearch search value from store
+    @Get(GeosearchStore.searchVal) searchVal!: string;
 
+    // import required geosearch actions
     @Call(GeosearchStore.setSearchTerm) setSearchTerm!: (searchTerm: string) => any;
 
-    data() {
-        return {
-            mutableSearchTerm: this.searchTerm
-        };
-    }
-
-    onSearchTermChange(searchTerm: string) {
+    // call geosearch action to update with new search term and trigger watcher in geosearch-component
+    onSearchTermChange(searchTerm: string): void {
         this.setSearchTerm(searchTerm);
     }
 }
