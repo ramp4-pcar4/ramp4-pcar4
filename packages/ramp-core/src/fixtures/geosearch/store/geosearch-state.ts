@@ -7,6 +7,8 @@ export class GeosearchState {
     lastSearchVal: string;
     searchResults: Array<any>;
     savedResults: Array<any>;
+    resultsVisible: boolean;
+    loadingResults: boolean;
 
     constructor() {
         // initialize geosearch feature service that contains all key geosearch functionality - running queries, fetch initial filters, update filters, etc.
@@ -16,57 +18,15 @@ export class GeosearchState {
         let queryParams: QueryParams = {
             type: '',
             province: '',
-            extent: '',
-            resultsVisible: false
+            extent: ''
         };
         this.queryParams = queryParams;
+        this.resultsVisible = false;
         this.searchVal = '';
         this.lastSearchVal = '';
-        const tempResults = [
-            // hardcoded search results until geosearch feature query function is implemented
-            {
-                name: 'Jasper National Park of Canada',
-                province: 'AB',
-                type: 'Conservation Area'
-            },
-            {
-                name: 'Jaspers Pond',
-                province: 'NL',
-                type: 'Lake'
-            },
-            {
-                name: 'Duncan Woods Creek',
-                province: 'ON',
-                type: 'River'
-            },
-            {
-                name: 'German Mills Creek',
-                province: 'ON',
-                type: 'River'
-            },
-            {
-                name: 'Westmount',
-                province: 'ON',
-                type: 'Unincorporated place'
-            },
-            {
-                name: 'Rainbow Lake',
-                province: 'AB',
-                type: 'Town'
-            },
-            {
-                name: 'Cold Lake',
-                province: 'SK',
-                type: 'City'
-            },
-            {
-                name: 'Good Friday Gulf',
-                province: 'NU',
-                type: 'Bay'
-            }
-        ];
-        this.searchResults = tempResults;
-        this.savedResults = tempResults;
+        this.searchResults = [];
+        this.savedResults = [];
+        this.loadingResults = false;
     }
 }
 
@@ -74,5 +34,4 @@ interface QueryParams {
     type: string;
     province: string;
     extent: string;
-    resultsVisible: boolean;
 }

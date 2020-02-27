@@ -3,7 +3,7 @@
  * @description A feature that provides geo location search
  */
 
-import { GeoSearch } from './geosearch';
+import { GeoSearchObj } from './geosearchObj';
 
 const CODE_TO_ABBR = {
     10: 'NL',
@@ -31,7 +31,6 @@ const CODE_TO_ABBR = {
  * {
  *      excludeTypes: string | Array<string>,
  *      language: string,
- *      settings: Object,
  *      geoLocateUrl: string,
  *      geoNameUrl: string
  * }
@@ -39,12 +38,11 @@ const CODE_TO_ABBR = {
 export class GeoSearchUI {
     constructor(config = {}) {
         // initialize geosearch object and default config properties if not provided
-        (<any>this)._geoSearchObj = new GeoSearch(config);
+        (<any>this)._geoSearchObj = new GeoSearchObj(config);
         (<any>this)._lang = (<any>config).language || 'en';
         (<any>this)._provinceList = [];
         (<any>this)._typeList = [];
         (<any>this)._excludedTypes = (<any>config).excludeTypes || [];
-        (<any>this)._settings = (<any>config).settings || {};
     }
 
     get lang() {
@@ -55,9 +53,6 @@ export class GeoSearchUI {
     }
     get typeList() {
         return (<any>this)._typeList;
-    }
-    get settings() {
-        return (<any>this)._settings;
     }
 
     set provinceList(val) {
@@ -86,8 +81,22 @@ export class GeoSearchUI {
      * @return {Promise}
      */
     query(q: string) {
-        // TODO: return empty promise for now
-        return Promise.resolve();
+        return (<any>this)._geoSearchObj.query(q.toUpperCase()).onComplete.then((q: any) => {
+            let featureResult: any[] = [];
+            let queryResult = q.results.map((item: any) => ({
+                name: item.name,
+                bbox: item.bbox,
+                type: item.type,
+                position: [item.LatLon.lon, item.LatLon.lat],
+                location: {
+                    city: item.location,
+                    latitude: item.LatLon.lat,
+                    longitude: item.LatLon.lon,
+                    province: this.findProvinceObj(item.province)
+                }
+            }));
+            return featureResult.concat(queryResult);
+        });
     }
 
     /**

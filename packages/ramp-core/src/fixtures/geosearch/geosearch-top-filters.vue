@@ -3,8 +3,8 @@
         <div class="inline-block w-128 h-40 mx-12">
             <select
                 class="form-select border-b border-b-gray-600 w-80 h-auto py-0"
-                v-model="mutableSelectedProvince"
-                v-on:change="setNewProvince(mutableSelectedProvince)"
+                :value="queryParams.province"
+                v-on:change="setProvince($event.target.value)"
             >
                 <option value="" disabled hidden>Province</option>
                 <option v-for="province in provinces" v-bind:key="province.code">
@@ -15,8 +15,8 @@
         <div class="inline-block w-96 h-40 mx-12">
             <select
                 class="form-select border-b border-b-gray-600 w-48 h-auto py-0"
-                v-model="mutableSelectedType"
-                v-on:change="setNewType(mutableSelectedType)"
+                :value="queryParams.type"
+                v-on:change="setType($event.target.value)"
             >
                 <option value="" disabled hidden>Type</option>
                 <option v-for="type in types" v-bind:key="type.code">
@@ -26,7 +26,7 @@
         </div>
         <button
             class="inline-block text-gray-500 hover:text-black float-right"
-            :disabled="!mutableSelectedType && !mutableSelectedProvince"
+            :disabled="!queryParams.type && !queryParams.province"
             v-on:click="clearFilters"
         >
             <div class="rv-geosearch-icon">
@@ -54,35 +54,17 @@ import { ConfigStore } from '@/store/modules/config';
 
 @Component({})
 export default class GeosearchTopFilters extends Vue {
-    @Prop() provinces!: Array<any>;
-    @Prop() types!: Array<any>;
-    @Prop() selectedProvince!: string;
-    @Prop() selectedType!: string;
+    // fetch defined province/type filters + filter params from store
+    @Get(GeosearchStore.getProvinces) provinces!: Array<any>;
+    @Get(GeosearchStore.getTypes) types!: Array<any>;
+    @Get(GeosearchStore.queryParams) queryParams!: any;
 
+    // import required geosearch store actions
     @Call(GeosearchStore.setProvince) setProvince!: (prov: any) => any;
     @Call(GeosearchStore.setType) setType!: (type: any) => any;
 
-    mutableSelectedProvince!: string;
-    mutableSelectedType!: string;
-
-    data() {
-        return {
-            mutableSelectedProvince: this.selectedProvince,
-            mutableSelectedType: this.selectedType
-        };
-    }
-
-    setNewProvince(province: string): void {
-        this.setProvince(province);
-    }
-
-    setNewType(type: string): void {
-        this.setType(type);
-    }
-
+    // clear filters by setting filters to undefined
     clearFilters(): void {
-        this.mutableSelectedProvince = '';
-        this.mutableSelectedType = '';
         this.setProvince(undefined);
         this.setType(undefined);
     }
