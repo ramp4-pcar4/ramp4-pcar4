@@ -3,77 +3,70 @@ import { make } from 'vuex-pathify';
 
 import { GeosearchState } from './geosearch-state';
 import { RootState } from '@/store/state';
+// TODO: temporary import for map zoom call
+import { ApiBundle } from 'ramp-geoapi';
 
 type GeosearchContext = ActionContext<GeosearchState, RootState>;
 
-// temporary use (once hardcoded data replaced this should no longer be needed)
-const ABBR_TO_PROV = {
-    NL: 'Newfoundland and Labrador',
-    PE: 'Prince Edward Island',
-    NS: 'Nova Scotia',
-    NB: 'New Brunswick',
-    QC: 'Quebec',
-    ON: 'Ontario',
-    MB: 'Manitoba',
-    SK: 'Saskatchewan',
-    AB: 'Alberta',
-    BC: 'British Columbia',
-    YU: 'Yukon',
-    NT: 'Northwest Territories',
-    NU: 'Nunavut',
-    UF: 'Undersea Feature',
-    IW: 'International Waters'
-};
-
 const getters = {
     /**
-     * Fetches the list of all possible provinces in a geoName query.
+     * Fetches the list of all possible provinces in a geoName query. Province objects contain the following properties:
+     * code: numeric province code (i.e. ontario is 35)
+     * abbr: short hand notation (Ontario is ON)
+     * name: full province name
      *
      * @function getProvinces
      * @return   {Array}    a list of all provinces in the form
      */
     getProvinces: (state: GeosearchState): [] => {
-        // province objects contain the following properties:
-        // code: numeric province code (i.e. ontario is 35)
-        // abbr: short hand notation (Ontario is ON)
-        // name: full province name
-        return state.GSservice.fetchProvinces();
+        const provs = state.GSservice.fetchProvinces();
+        // sort the province filters in alphabetical order
+        provs.sort((provA: any, provB: any) => (provA.name > provB.name ? 1 : -1));
+        return provs;
     },
 
     /**
-     * Fetches the list of all possible types in a geoName query.
+     * Fetches the list of all possible types in a geoName query. Returned type objects contain the following properties:
+     * code: short form code (i.e. TERR)
+     * name: full type name (i.e. Territory)
      *
      * @function getTypes
      * @return   {Array}    a list of all types in the form
      */
     getTypes: (state: GeosearchState): [] => {
-        // returned type objects contain the following properties:
-        // code: short form code (i.e. TERR)
-        // name: full type name (i.e. Territory)
-        return state.GSservice.fetchTypes();
+        const types = state.GSservice.fetchTypes();
+        // sort the type filters in alphabetical order
+        types.sort((typeA: any, typeB: any) => (typeA.name > typeB.name ? 1 : -1));
+        return types;
     }
 };
 
 const mutations = {
     RUN_QUERY: (state: GeosearchState) => {
-        // return empty promise if there is no search value is specified
-        // uncomment once GSService query implemented
-        // if (!state.searchVal) {
-        //     state.searchResults = [];
-        //     // return Promise.resolve();
-        //     return state.searchResults;
-        // }
+        // no search value is specified
+        if (!state.searchVal) {
+            state.searchResults = [];
+            return state.searchResults;
+        }
 
-        // only run new query if a different search term is entered
+        // run new query if different search term is entered
         if (state.searchVal && state.searchVal !== state.lastSearchVal) {
-            // TODO: GSservice query yet to be implemented
+            return state.GSservice.query(`${state.searchVal}*`).then((data: any) => {
+                // store data for current search term
+                state.lastSearchVal = state.searchVal;
+                state.savedResults = data;
+                state.resultsVisible = true;
+
+                // replace old saved results
+                let filteredData = filter(state.queryParams, state.savedResults);
+                state.searchResults = filteredData || [];
+
+                return data;
+            });
         } else {
-            // discard any old results
+            // otherwise no new search term so we only need to filter on query param values
             let filteredData = filter(state.queryParams, state.savedResults);
             state.searchResults = filteredData || [];
-
-            // return data for optional processing further down the promise chain
-            // return Promise.resolve(state.searchResults);
             return state.searchResults;
         }
     },
@@ -85,14 +78,14 @@ const mutations = {
             case 'type': {
                 state.queryParams.type = value;
                 if (typeof state.queryParams.type === 'undefined') {
-                    delete state.queryParams.type;
+                    state.queryParams.type = '';
                 }
                 break;
             }
             case 'province': {
                 state.queryParams.province = value;
                 if (typeof state.queryParams.province === 'undefined') {
-                    delete state.queryParams.province;
+                    state.queryParams.province = '';
                 }
                 break;
             }
@@ -104,8 +97,10 @@ const mutations = {
             }
         }
     },
-    ZOOM_TO: (state: GeosearchState, result: any) => {
-        // TODO: implementation
+    ZOOM_TO: (state: GeosearchState, mapResult: any) => {
+        // TODO: replace with ramp api once complete - new RAMP.GEO.Point()?
+        let zoomPoint = new ApiBundle.Point(mapResult.result.name, mapResult.result.position);
+        mapResult.map.zoomMapTo(zoomPoint, 50000);
     }
 };
 
@@ -162,8 +157,8 @@ const actions = {
      * @function zoomTo
      * @param {Object} result a search result to zoom to
      */
-    zoomTo: function(context: GeosearchContext, result: any): void {
-        context.commit('ZOOM_TO', result);
+    zoomTo: function(context: GeosearchContext, mapResult: any): void {
+        context.commit('ZOOM_TO', mapResult);
     }
 };
 
@@ -179,7 +174,7 @@ function filter(queryParams: any, data: Array<any>) {
         // TODO: handle filter by extent
     }
     if (queryParams.province && queryParams.province !== '...') {
-        data = data.filter(r => r.province && (<any>ABBR_TO_PROV)[r.province] === queryParams.province);
+        data = data.filter(r => r.location.province.name && r.location.province.name === queryParams.province);
     }
     if (queryParams.type && queryParams.type !== '...') {
         data = data.filter(r => r.type === queryParams.type);

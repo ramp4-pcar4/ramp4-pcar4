@@ -20,9 +20,9 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 @Component({})
 export default class GeosearchBottomFilters extends Vue {
     @Prop() visibleOnly!: boolean;
-
     mutableVisibleOnly!: boolean;
 
+    // to remove Vue warning of changing prop values
     data() {
         return {
             mutableVisibleOnly: this.visibleOnly

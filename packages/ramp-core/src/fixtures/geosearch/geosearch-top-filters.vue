@@ -4,7 +4,7 @@
             <select
                 class="form-select border-b border-b-gray-600 w-80 h-auto py-0"
                 v-model="mutableSelectedProvince"
-                v-on:change="setNewProvince(mutableSelectedProvince)"
+                v-on:change="setProvince(mutableSelectedProvince)"
             >
                 <option value="" disabled hidden>Province</option>
                 <option v-for="province in provinces" v-bind:key="province.code">
@@ -16,7 +16,7 @@
             <select
                 class="form-select border-b border-b-gray-600 w-48 h-auto py-0"
                 v-model="mutableSelectedType"
-                v-on:change="setNewType(mutableSelectedType)"
+                v-on:change="setType(mutableSelectedType)"
             >
                 <option value="" disabled hidden>Type</option>
                 <option v-for="type in types" v-bind:key="type.code">
@@ -59,12 +59,10 @@ export default class GeosearchTopFilters extends Vue {
     @Prop() selectedProvince!: string;
     @Prop() selectedType!: string;
 
-    @Call(GeosearchStore.setProvince) setProvince!: (prov: any) => any;
-    @Call(GeosearchStore.setType) setType!: (type: any) => any;
-
     mutableSelectedProvince!: string;
     mutableSelectedType!: string;
 
+    // to remove Vue warning of changing prop values
     data() {
         return {
             mutableSelectedProvince: this.selectedProvince,
@@ -72,14 +70,17 @@ export default class GeosearchTopFilters extends Vue {
         };
     }
 
-    setNewProvince(province: string): void {
-        this.setProvince(province);
+    // call geosearch action to update with new province filter and trigger watcher in geosearch-component
+    setProvince(province: string | undefined): void {
+        this.$iApi.$vApp.$store.dispatch('geosearch/setProvince', province);
     }
 
-    setNewType(type: string): void {
-        this.setType(type);
+    // call geosearch action to update with new type filter and trigger watcher in geosearch-component
+    setType(type: string | undefined): void {
+        this.$iApi.$vApp.$store.dispatch('geosearch/setType', type);
     }
 
+    // clear filters by setting filters to undefined
     clearFilters(): void {
         this.mutableSelectedProvince = '';
         this.mutableSelectedType = '';
