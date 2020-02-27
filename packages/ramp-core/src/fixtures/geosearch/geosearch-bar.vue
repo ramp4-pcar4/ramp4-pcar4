@@ -32,16 +32,16 @@ export default class GeosearchBar extends Vue {
     @Prop() searchTerm!: string;
     mutableSearchTerm!: string;
 
-    @Call(GeosearchStore.setSearchTerm) setSearchTerm!: (searchTerm: string) => any;
-
+    // to remove Vue warning of changing prop values
     data() {
         return {
             mutableSearchTerm: this.searchTerm
         };
     }
 
-    onSearchTermChange(searchTerm: string) {
-        this.setSearchTerm(searchTerm);
+    // call geosearch action to update with new search term and trigger watcher in geosearch-component
+    onSearchTermChange(searchTerm: string): void {
+        this.$iApi.$vApp.$store.dispatch('geosearch/setSearchTerm', searchTerm);
     }
 }
 </script>

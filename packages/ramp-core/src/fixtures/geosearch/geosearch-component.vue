@@ -16,15 +16,21 @@
                 :selectedProvince="queryParams.province"
                 :selectedType="queryParams.type"
             ></geosearch-top-filters>
-            <ul class="rv-results-list" v-focus-list>
+            <ul class="rv-results-list h-500 border-t border-gray-600 overflow-hidden overflow-y-auto" v-focus-list>
                 <li class="relative h-48" v-for="(result, idx) in searchResults" v-bind:key="idx">
                     <button class="absolute inset-0 h-full w-full hover:bg-gray-300 default-focus-style" @click="zoomIn(result)" focus-item>
-                        <div class="rv-result-description flex px-32">
+                        <div class="rv-result-description flex px-8">
                             <div class="flex-1 text-left truncate">
-                                <span>{{ result.name }},</span>
-                                <span v-if="result.province">{{ result.province }}</span>
+                                <span v-html="highlightSearchTerm(result.name) + ','"></span>
+                                <span v-if="result.location.province" class="text-gray-600 text-sm">
+                                    {{
+                                        result.location.city
+                                            ? result.location.city + ', ' + result.location.province.abbr
+                                            : result.location.province.abbr
+                                    }}</span
+                                >
                             </div>
-                            <span class="font-bold max-w-10 truncate" v-if="result.type">{{ result.type }}</span>
+                            <span class="font-bold truncate" v-if="result.type">{{ result.type }}</span>
                         </div>
                     </button>
                 </li>
@@ -44,6 +50,7 @@ import { Get, Sync, Call } from 'vuex-pathify';
 import { PanelItemAPI } from '@/api';
 
 import { GeosearchStore } from './store';
+import { Map } from 'ramp-geoapi';
 
 import GeosearchBar from './geosearch-bar.vue';
 import GeosearchTopFilters from './geosearch-top-filters.vue';
@@ -79,17 +86,31 @@ export default class GeosearchComponent extends Vue {
         return this.panel.isPinned;
     }
 
+    // call run query action in geosearch store
     runQuery() {
         return this.$iApi.$vApp.$store.dispatch('geosearch/runQuery');
     }
 
-    zoomIn(result: any): void {
-        // TODO: call some geosearch store action
+    // zoom in to a clicked result
+    zoomIn(result: any): Promise<any> {
+        // one arg passed to zoomTo store action containing: map object + clicked geosearch result
+        const mapResult = {
+            // TODO: replace below line once map API is complete
+            map: this.$iApi.map,
+            result: result
+        };
+        return this.$iApi.$vApp.$store.dispatch('geosearch/zoomTo', mapResult);
     }
 
-    // @watch only seemed to be working on individual param attributes
+    // highlight the search term in each listed geosearch result
+    highlightSearchTerm(name: string) {
+        // wrap matched search term in results inside span with styling
+        return name.replace(new RegExp(`${this.searchVal}`, 'gi'), match => '<span class="font-bold text-blue-600">' + match + '</span>');
+    }
+
     @Watch('searchVal')
     onSearchValChange(newSearchVal: any, oldSearchVal: any) {
+        // run new query to update results if search term changes
         if (newSearchVal !== oldSearchVal) {
             this.runQuery();
         }
@@ -97,6 +118,7 @@ export default class GeosearchComponent extends Vue {
 
     @Watch('queryParams.province')
     onProvinceChange(newProv: any, oldProv: any) {
+        // run new query to update results if province filter changes
         if (newProv !== oldProv) {
             this.runQuery();
         }
@@ -104,6 +126,7 @@ export default class GeosearchComponent extends Vue {
 
     @Watch('queryParams.type')
     onTypeChange(newType: any, oldType: any) {
+        // run new query to update results if type filter changes
         if (newType !== oldType) {
             this.runQuery();
         }
