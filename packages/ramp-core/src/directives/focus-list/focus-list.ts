@@ -15,6 +15,7 @@ enum KEYS {
 const LIST_ATTR = 'focus-list';
 const ITEM_ATTR = 'focus-item';
 const FOCUSED_CLASS = 'focused';
+const FOCUSED_ID = 'focusedItem';
 const TABBABLE_TAGS = `button,input,select,a,textarea,[contenteditable],[${LIST_ATTR}]`;
 
 /**
@@ -115,28 +116,6 @@ class FocusListManager {
     }
 
     /**
-     * Tries to figure out if the list is horizontal or vertical
-     * This function doesn't worry too much about "edge cases" for list layouts as list orientation can be specified
-     *
-     * @returns `true` iff list is thought to be horizontal
-     */
-    /* private guessHorizontal() {
-        const tempFocusManager = this;
-        const items: HTMLElement[] = Array.prototype.filter.call(this.element.querySelectorAll(`[${ITEM_ATTR}]`), (el: Element) => {
-            return el.closest(`[${LIST_ATTR}]`) === tempFocusManager.element;
-        });
-        for (let i = 1; i < items.length; i++) {
-            const currPosition = items[i].getBoundingClientRect();
-            const prevPosition = items[i - 1].getBoundingClientRect();
-            // if the items overlap in y axis and are item 2 is completely to the right of item 1, assume horizontal
-            if (currPosition.top < prevPosition.bottom && currPosition.left >= prevPosition.right) {
-                return true;
-            }
-        }
-        return false;
-    } */
-
-    /**
      * Sets `tabindex` to `value` for every tabbable thing under `focusItem` (or the list if not specified)
      *
      * @param {Number} value the value to give `tabindex` on each tabbable item
@@ -163,7 +142,7 @@ class FocusListManager {
      */
     defocusItem(item: Element) {
         item.classList.remove(FOCUSED_CLASS);
-        //this.element.focus();
+        //item.removeAttribute('id');
         this.setTabIndex(-1, item);
     }
 
@@ -172,9 +151,31 @@ class FocusListManager {
      *
      * @param {Element} item The element to focus
      */
-    focusItem(item: Element) {
+    focusItem(item: HTMLElement) {
         item.classList.add(FOCUSED_CLASS);
+        this.setAriaActiveDescendant(item);
         this.setTabIndex(0, item);
+    }
+
+    /**
+     * Clears the focused element ID from any element that has it, removing it's ancestors `aria-activedescendant` as well.
+     * It then moves the focus to `item` and updates the lists `aria-activedescendant`
+     *
+     * @param item The element that should be the active descendant
+     */
+    setAriaActiveDescendant(item: HTMLElement) {
+        // if theres an element with FOCUSED_ID somewhere else on the page, remove it (and its list's aria-activedescendant)
+        // so that we can put it on our element.
+        const focusedElement = document.getElementById(FOCUSED_ID);
+        if (focusedElement) {
+            focusedElement.removeAttribute('id');
+            const closestList = focusedElement.closest(`[${LIST_ATTR}]`)!;
+            if (closestList !== this.element) {
+                closestList.removeAttribute('aria-activedescendant');
+            }
+        }
+        item.setAttribute('id', FOCUSED_ID);
+        this.element.setAttribute('aria-activedescendant', FOCUSED_ID);
     }
 
     /**
@@ -233,6 +234,7 @@ class FocusListManager {
                 // shift highlight ⬆ (backwards)
                 this.shiftHighlight(listOfItems, true);
                 break;
+
             case KEYS.ArrowDownIE:
             case KEYS.ArrowDown:
                 if (this.isHorizontal) {
@@ -243,6 +245,7 @@ class FocusListManager {
                 // shift highlight ⬇
                 this.shiftHighlight(listOfItems);
                 break;
+
             case KEYS.ArrowLeftIE:
             case KEYS.ArrowLeft:
                 if (!this.isHorizontal) {
@@ -253,6 +256,7 @@ class FocusListManager {
                 // shift highlight ⬅ (backwards)
                 this.shiftHighlight(listOfItems, true);
                 break;
+
             case KEYS.ArrowRightIE:
             case KEYS.ArrowRight:
                 if (!this.isHorizontal) {
@@ -263,6 +267,7 @@ class FocusListManager {
                 // shift highlight ➡
                 this.shiftHighlight(listOfItems);
                 break;
+
             case KEYS.EscapeIE:
             case KEYS.Escape:
                 // we only care about escape presses if the highlighted item isnt the list
@@ -272,9 +277,11 @@ class FocusListManager {
                     // defocus current item, move focus to the list
                     this.defocusItem(this.highlightedItem);
                     this.highlightedItem = this.element;
+                    this.element.removeAttribute('aria-activedescendant');
                     this.element.focus();
                 }
                 break;
+
             case KEYS.Enter:
                 // if the the list is the target then it has focus, meaning the user is traversing this list
                 // and not a list farther down the tree (or a tabbable button, etc.)
@@ -286,6 +293,7 @@ class FocusListManager {
                     // click on the highlighted focus-item
                     this.highlightedItem.click();
                 }
+                break;
         }
     }
 
@@ -308,6 +316,8 @@ class FocusListManager {
 
         if (this.highlightedItem !== this.element) {
             this.focusItem(this.highlightedItem);
+        } else {
+            this.element.removeAttribute('aria-activedescendant');
         }
     }
 }
