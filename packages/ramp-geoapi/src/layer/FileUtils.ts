@@ -213,15 +213,6 @@ export default class FileUtils extends BaseBase {
 
         const destProj = this.gapi.utils.proj.normalizeProj(targetSR);
 
-        // look up projection definitions if they don't already exist and we have enough info
-        const srcLookup = this.gapi.utils.proj.checkProj(srcProj);
-
-        // note we need to use the SR object, not the normalized string, as checkProj cant handle a raw WKT
-        //      and this function won't have a raw EPSG code / proj4 string coming from param targetSR.
-        //      if this becomes a problem, we can change checkProj to test if the start of a string is `EPSG`, and if not, assume it's wkt.
-        //      nicer solution would be find a wkt regex to validate, but lazy search didnt reveal one.
-        const destLookup =  this.gapi.utils.proj.checkProj(targetSR);
-
         // change latitude and longitude fields from esriFieldTypeString -> esriFieldTypeDouble if they exist
         if (options) {
             if (options.latfield) {
@@ -271,21 +262,18 @@ export default class FileUtils extends BaseBase {
             });
         };
 
-        // call promises in order
-        return srcLookup
-            .then((happy: boolean) => {
-                if (happy) {
-                    return destLookup;
-                } else {
-                    throw new Error(`could not find projection information - ${srcProj}`);
-                }
-            }).then((happy: boolean) => {
-                if (happy) {
-                    return buildLayer();
-                } else {
-                    throw new Error(`could not find projection information - ${destProj}`);
-                }
-            });
+        // look up projection definitions if they don't already exist and we have enough info
+
+        // note we need to use the SR object, not the normalized string, as checkProj cant handle a raw WKT
+        //      and this function won't have a raw EPSG code / proj4 string coming from param targetSR.
+        //      if this becomes a problem, we can change checkProj to test if the start of a string is `EPSG`, and if not, assume it's wkt.
+        //      nicer solution would be find a wkt regex to validate, but lazy search didnt reveal one.
+
+        // TODO if we want/need, we can put an error handler on the promise to deal with incompatible projections.
+        //      e.g. maybe we want to catch it and then build a dummy layer set to error state?
+        return this.gapi.utils.proj.checkProjBomber([srcProj, targetSR]).then(() => {
+            return buildLayer();
+        });
     }
 
 }

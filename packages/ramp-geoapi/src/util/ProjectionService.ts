@@ -1,7 +1,10 @@
 import esri = __esri;
-import { InfoBundle, EpsgLookup, RampSpatialReference } from '../gapiTypes';
+import { InfoBundle, EpsgLookup } from '../gapiTypes';
 import BaseBase from '../BaseBase';
 import { Tools } from 'terraformer';
+import BaseGeometry from '../api/geometry/BaseGeometry';
+import { SpatialReference } from '../api/api';
+import { SrDef } from '../api/apiDefs';
 
 // since ProjectionService is now a class instead a stateless service, it appears that the proj4 library is maintaining it's state
 // (i.e. if we add defs in one function, they remain available in other functions).
@@ -78,10 +81,6 @@ export default class ProjectionService extends BaseBase {
         return this.espgWorker(code);
     }
 
-    rampSrToEsriSr(rsr: RampSpatialReference): esri.SpatialReference {
-        return this.esriBundle.SpatialReference.fromJSON(rsr);
-    }
-
     /**
      * Convert a projection to an string that is compatible with proj4.  If it is an ESRI SpatialReference or an integer it will be converted.
      * @param {Object|Integer|String} proj an ESRI SpatialReference, integer or string.  Strings will be unchanged and unchecked,
@@ -93,6 +92,7 @@ export default class ProjectionService extends BaseBase {
 
         if (typeof proj === 'object') {
             if (proj.wkid) {
+                // TODO consider checking for .latestWkid first, then using .wkid as backup
                 return 'EPSG:' + proj.wkid;
             } else if (proj.wkt) {
                 return proj.wkt;
@@ -107,8 +107,14 @@ export default class ProjectionService extends BaseBase {
 
     // TODO probably need to make this return a promise, and do epsgLookups on the proj codes.
     //      at the moment we're safe, as the function calling this is dong the lookups. depends how robust/reusable we want this to be
+    // TODO given how rough this function is (no promise, modifying input object in place, incorrect .crs on output)
+    //      we may want to make it private and use it strictly as a utility within this service module.
+    //      public functions can use it, and they can ensure all the nonsense is being handled.
+    //      alternative is we strengthen this by doing object copies and spatial reference correcting in this function
     /**
      * Reproject a GeoJSON object in place.
+     * Note the .crs of the object will not be updated or corrected.
+     *
      * @param {Object} geojson the GeoJSON to be reprojected, this will be modified in place
      * @param {String|Number} outputSpatialReference the target spatial reference,
      * 'EPSG:4326' is used by default; if a number is suppied it will be used as an EPSG code
@@ -118,8 +124,6 @@ export default class ProjectionService extends BaseBase {
      */
     projectGeoJson(geoJson: any, inputSR: string | number, outputSR: string | number): any {
         // TODO revist the types on the SR params. figure out what we're really supporting, and what terraformer can support
-
-        // TODO add a "if number, convert to string" or do this.normalizeProj
 
         let inSr: string = this.normalizeProj(inputSR);
         let outSr: string = this.normalizeProj(outputSR);
@@ -223,7 +227,59 @@ export default class ProjectionService extends BaseBase {
                 return doLookup(srcProj);
             }
         });
-
     }
+
+    // utility for checking a set of spatial references, and accepting an error bomb if they cannot be used
+    checkProjBomber(spatialReferences: Array<any>): Promise<void> {
+        if (spatialReferences.length === 0) {
+            return Promise.resolve();
+        }
+        const prj = spatialReferences.pop();
+        return this.checkProj(prj).then(happy => {
+            if (happy) {
+                // recursion. array will have 1 less at this point
+                return this.checkProjBomber(spatialReferences);
+            } else {
+                console.error('Unable to parse or locate projection information for this item:', prj);
+                throw new Error('Could not find projection information, see console for details');
+            }
+        });
+    }
+
+    /**
+     * Project a geometry using local calculations (proj4)
+     *
+     * @param {SpatialReference | Integer | String} destProj the spatial reference of the result (as SpatialReference, integer WKID or an EPSG string)
+     * @param {BaseGeometry} geometry a RAMP API Geometry object
+     * @return {Promise} resolve in a RAMP API Geometry object with co-ordinates in the destination projection
+     */
+    projectGeometry(destProj: SrDef, geometry: BaseGeometry): Promise<BaseGeometry> {
+        // NOTES: a few significant changes to this function from RAMP2
+        //        Making the result asynch. due to us now validating the projection and possibly
+        //        downloading a new formula if the we dont have an existing solution.
+        //        Using RAMP API geometry instead of ESRI geometry on the input.
+        //        Going directly from RAMP API geometry to geojson to perform the projection,
+        //        skirting the terraformer library
+
+        // TODO validate if one of the srs is wkt that everything works. if destination is wkt make sure return object has proper .sr
+        return this.checkProjBomber([destProj, geometry.sr]).then(() => {
+            // convert to geojson
+
+            const preGJ = this.gapi.utils.geom.geomRampToGeoJson(geometry);
+
+            // project geojson
+            const postGJ = this.projectGeoJson(preGJ, this.normalizeProj(geometry.sr), this.normalizeProj(destProj));
+
+            // convert back to RAMP geometry
+            const projectedRampGeom = this.gapi.utils.geom.geomGeoJsonToRamp(postGJ, geometry.id);
+
+            // fix up the spatial reference, as the GeoJSON projection library doesn't really handle it well.
+            projectedRampGeom.sr = SpatialReference.parseSR(destProj);
+
+            return projectedRampGeom;
+        });
+    }
+
+    // TODO copy in the extent projector from ramp2
 
 }
