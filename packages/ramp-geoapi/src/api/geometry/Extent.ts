@@ -67,10 +67,12 @@ export default class Extent extends BaseGeometry {
         return [this.rawMin.slice(), this.rawMax.slice()];
     }
 
+    toPolygonArray(): Array<Array<Array<number>>> {
+        return [[this.rawMin.slice(), [this.xmin, this.ymax], this.rawMax.slice(), [this.xmax, this.ymin], this.rawMin.slice()]];
+    }
+
     toPolygon(): Polygon {
-        // avoid slices since the constructor is going to copy them anyways
-        const poly = [[this.rawMin, [this.xmin, this.ymax], this.rawMax, [this.xmax, this.ymin], this.rawMin]];
-        return new Polygon(this.id, poly, this.sr, true);
+        return new Polygon(this.id, this.toPolygonArray(), this.sr, true);
     }
 
     static fromParams(id: IdDef,

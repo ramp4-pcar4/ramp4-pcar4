@@ -91,7 +91,7 @@ export interface PolygonStyleParams extends StyleParams {
     outlineWidth?: number;
     outlineStyle?: LineStyle;
 
-    //the above 3 are for flexibility and backwards compatibility. the property below allows a shortcut by just supplying a line style
+    // the above 3 are for flexibility and backwards compatibility. the property below allows a shortcut by just supplying a line style
     outlineParams?: LineStyleParams;
 
     // again, mostly for backwards compatibility. opacity can now be provided on the colour itself. and we can use inherited style and colour for the fills as default
@@ -101,7 +101,7 @@ export interface PolygonStyleParams extends StyleParams {
     fillStyle?: FillStyle;
 }
 
-export interface Attributes {[key: string]: any};
+export interface Attributes { [key: string]: any; }
 
 export type SrDef = SpatialReference | string | number;
 
