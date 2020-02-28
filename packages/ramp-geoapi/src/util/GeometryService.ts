@@ -115,8 +115,7 @@ export default class GeometryService extends BaseBase {
         }
     }
 
-    // i am unhappy with these names, but dont want to start them with ramp... or geoJson...
-    graphicRampToFeatureGeoJson(rampGraphic: RampAPI.Graphic): any { // the geojson Feature interface is being crabby.
+    graphicRampToGeoJson(rampGraphic: RampAPI.Graphic): any { // the geojson Feature interface is being crabby.
         const f = {
             type: 'Feature',
             geometry: this.geomRampToGeoJson(rampGraphic.geometry),
@@ -128,10 +127,13 @@ export default class GeometryService extends BaseBase {
         return f;
     }
 
-    featureGeoJsonToGraphicRamp(geoJsonGraphic: any, geomId?: number | string): RampAPI.Graphic {
+    graphicGeoJsonToRamp(geoJsonFeature: any, geomId?: number | string): RampAPI.Graphic {
+        if (geoJsonFeature.type !== 'Feature') {
+            throw new Error('Expected input parameter of graphicGeoJsonToRamp to be a GeoJson feature');
+        }
         const g = new RampAPI.Graphic();
-        g.geometry = this.geomGeoJsonToRamp(geoJsonGraphic.geometry, geomId);
-        Object.keys(geoJsonGraphic.properties).forEach(k => g.attributes[k] = geoJsonGraphic.properties[k]);
+        g.geometry = this.geomGeoJsonToRamp(geoJsonFeature.geometry, geomId);
+        Object.keys(geoJsonFeature.properties).forEach(k => g.attributes[k] = geoJsonFeature.properties[k]);
 
         return g;
     }
