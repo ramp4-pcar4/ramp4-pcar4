@@ -31,6 +31,14 @@ export interface PanelConfig {
     id: string;
 
     /**
+     * The width of this panel.
+     *
+     * @type {number}
+     * @memberof Panel
+     */
+    width?: number;
+
+    /**
      * Specifies which panel screen to display and optional props to be passed to the screen panel component.
      *
      * @type {PanelConfigRoute}
