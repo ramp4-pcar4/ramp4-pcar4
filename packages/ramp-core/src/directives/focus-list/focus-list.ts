@@ -18,6 +18,8 @@ const FOCUSED_CLASS = 'focused';
 const FOCUSED_ID = 'focusedItem';
 const TABBABLE_TAGS = `button,input,select,a,textarea,[contenteditable],[${LIST_ATTR}]`;
 
+// TODO: Figure out a way to put the control scheme into the description of the focus-list for screen readers (hidden text?), or see if the help file would be sufficient.
+
 /**
  * The FocusList Directive
  *
@@ -27,7 +29,7 @@ const TABBABLE_TAGS = `button,input,select,a,textarea,[contenteditable],[${LIST_
  * **Example**:
  *
  * ```
- * <div v-focus-list="horizontal">
+ * <div v-focus-list="'horizontal'">
  *     <button focus-item></button>
  *     <button focus-item></button>
  *     <button focus-item></button>
@@ -112,6 +114,9 @@ class FocusListManager {
         });
         element.addEventListener('click', function(event: MouseEvent) {
             focusManager.onClick(event);
+        });
+        element.addEventListener('focus', function(event: FocusEvent) {
+            focusManager.onFocus();
         });
     }
 
@@ -205,6 +210,8 @@ class FocusListManager {
                 this.highlightedItem = listOfItems[index + 1] || listOfItems[0];
             }
         }
+        // moves focus from any sub-items
+        this.element.focus();
         this.focusItem(this.highlightedItem);
     }
 
@@ -319,5 +326,20 @@ class FocusListManager {
         } else {
             this.element.removeAttribute('aria-activedescendant');
         }
+    }
+
+    /**
+     * Callback for the focus event listener on the focus list element.
+     * NOTE: this is only called when the LIST ELEMENT is focused, not any descendant
+     *
+     * This is used to pull back the `focusedItem` id and the aria-activedescendant attribute when a list is focused
+     */
+    onFocus() {
+        // if the element already has the attribute, or the highlighted element is the list there is nothing to do
+        if (this.element.hasAttribute('aria-activedescendant') || this.highlightedItem === this.element) {
+            return;
+        }
+        // otherwise set the active descendant
+        this.setAriaActiveDescendant(this.highlightedItem);
     }
 }

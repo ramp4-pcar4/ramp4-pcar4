@@ -16,9 +16,9 @@
                 :selectedProvince="queryParams.province"
                 :selectedType="queryParams.type"
             ></geosearch-top-filters>
-            <ul class="rv-results-list">
+            <ul class="rv-results-list" v-focus-list>
                 <li class="relative h-48" v-for="(result, idx) in searchResults" v-bind:key="idx">
-                    <button class="absolute inset-0 h-full w-full hover:bg-gray-300" @click="zoomIn(result)">
+                    <button class="absolute inset-0 h-full w-full hover:bg-gray-300 default-focus-style" @click="zoomIn(result)" focus-item>
                         <div class="rv-result-description flex px-32">
                             <div class="flex-1 text-left truncate">
                                 <span>{{ result.name }},</span>
