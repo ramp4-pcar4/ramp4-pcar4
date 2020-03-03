@@ -20,16 +20,7 @@ export default class BaseGeometry {
 
     constructor(id: IdDef, sr?: SrDef) {
         this.id = id.toString();
-
-        // default to lat long if no SR is provided
-        if (!sr) {
-            this.sr = SpatialReference.latLongSR();
-        } else if (sr instanceof SpatialReference) {
-            this.sr = sr.clone();
-        } else {
-            // cheating typescript. this will pass a string wkt or number wkid
-            this.sr = new SpatialReference(<any>sr);
-        }
+        this.sr = SpatialReference.parseSR(sr);
     }
 
     /**

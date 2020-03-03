@@ -1,5 +1,7 @@
 // TODO add proper documentation
 
+import { SrDef } from '../apiDefs';
+
 /**
  * Represents a geographical spatial reference.
  */
@@ -37,6 +39,9 @@ export default class SpatialReference {
      * @returns {Boolean} result of the comparison
      */
     isEqual(otherSR: SpatialReference): boolean {
+        // TODO consider improving this logic. might make more sense to do
+        //      some type of cross-matching against wkid and latestWkid.
+        //      e.g. 102100 and 3857 should effectively be considered equal
         return (this.wkid === otherSR.wkid) &&
             (this.wkt === otherSR.wkt) &&
             (this.latestWkid === otherSR.latestWkid);
@@ -76,4 +81,33 @@ export default class SpatialReference {
     static latLongSR(): SpatialReference {
         return new SpatialReference(4326);
     }
+
+    /**
+     * Returns a spatial ref object from a config typed object
+     * @param srObject config spatial reference object
+     * @returns spatial reference object with same settings as input
+     */
+    static fromConfig(srObject: any): SpatialReference {
+        // note using any type on input as this API class wont know about config object interfaces
+        if (srObject.wkt) {
+            return new SpatialReference(<string>srObject.wkt);
+        } else if (srObject.wkid) {
+            return new SpatialReference(srObject.wkid, srObject.latestWkid);
+        } else {
+            throw new Error('Could not parse config spatial reference object');
+        }
+    }
+
+    static parseSR(sr?: SrDef): SpatialReference {
+        if (!sr) {
+             // default to lat long if no SR is provided
+            return SpatialReference.latLongSR();
+        } else if (sr instanceof SpatialReference) {
+            return sr.clone();
+        } else {
+            // cheating typescript. this will pass a string wkt or number wkid
+            return new SpatialReference(<any>sr);
+        }
+    }
+
 }
