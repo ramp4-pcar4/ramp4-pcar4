@@ -11,6 +11,9 @@ import Shell from '@/components/shell.vue';
 
 import ro from '@/scripts/resize-observer.js';
 
+import { FocusList } from '@/directives/focus-list';
+Vue.directive('focus-list', FocusList);
+
 @Component({
     components: {
         Shell
@@ -26,11 +29,16 @@ export default class App extends Vue {
 </script>
 
 <style lang="scss">
-@import './styles/main.css';
+// APP-WIDE STYLES
+@use 'styles/main';
+@use 'directives/focus-list/focus-list';
+.ramp-app {
+    @include focus-list.default-focused-styling;
+    height: 700px;
+}
 </style>
 
 <style lang="scss" scoped>
 .ramp-app {
-    height: 700px;
 }
 </style>

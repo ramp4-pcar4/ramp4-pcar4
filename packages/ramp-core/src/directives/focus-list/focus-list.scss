@@ -1,0 +1,28 @@
+$focus-outline-width: 2px;
+
+@mixin blue-outline {
+    outline: $focus-outline-width rgba(5, 141, 232, 0.8) solid;
+    outline-offset: -$focus-outline-width;
+}
+
+@mixin grey-outline {
+    outline: $focus-outline-width rgba(150, 150, 150, 0.8) solid;
+    outline-offset: -$focus-outline-width;
+}
+
+@mixin default-focused-styling {
+    [focus-list] {
+        &[aria-activedescendant] {
+            outline: 0 !important;
+        }
+        [focus-item].focused.default-focus-style {
+            @include grey-outline;
+        }
+        &:focus {
+            @include blue-outline;
+            [focus-item].focused.default-focus-style {
+                @include blue-outline;
+            }
+        }
+    }
+}

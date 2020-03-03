@@ -1,5 +1,5 @@
 <template>
-    <button class="text-green-600 hover:text-green-200 p-6" @click="togglePanel()">
+    <button class="py-6" @click="togglePanel()">
         G
     </button>
 </template>

@@ -1,5 +1,5 @@
 <template>
-    <span class="border-b pl-24 md:pl-48"></span>
+    <span class="border-b p-0 self-center w-2/3"></span>
 </template>
 
 <script lang="ts">
