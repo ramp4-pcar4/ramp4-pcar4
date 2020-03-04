@@ -3,8 +3,8 @@ import { InfoBundle, EpsgLookup } from '../gapiTypes';
 import BaseBase from '../BaseBase';
 import { Tools } from 'terraformer';
 import BaseGeometry from '../api/geometry/BaseGeometry';
-import { SpatialReference } from '../api/api';
-import { SrDef } from '../api/apiDefs';
+import { SpatialReference, Extent, Polygon } from '../api/api';
+import { SrDef, GeometryType } from '../api/apiDefs';
 
 // since ProjectionService is now a class instead a stateless service, it appears that the proj4 library is maintaining it's state
 // (i.e. if we add defs in one function, they remain available in other functions).
@@ -261,6 +261,10 @@ export default class ProjectionService extends BaseBase {
         //        Going directly from RAMP API geometry to geojson to perform the projection,
         //        skirting the terraformer library
 
+        if (geometry.type === GeometryType.EXTENT) {
+            return this.projectExtent(destProj, <Extent>geometry);
+        }
+
         // TODO validate if one of the srs is wkt that everything works. if destination is wkt make sure return object has proper .sr
         return this.checkProjBomber([destProj, geometry.sr]).then(() => {
             // convert to geojson
@@ -280,6 +284,76 @@ export default class ProjectionService extends BaseBase {
         });
     }
 
-    // TODO copy in the extent projector from ramp2
+    /**
+     * Reproject an Extent object on the client.  Does not require network traffic,
+     * but may not handle conversion between projection types as well.
+     * Internally it tests 8 points along each edge and takes the max extent of the result.
+     * To project an extent without warping, convert to a polygon and do a standard geometry projection
+     * (result will not be guaranteed to retain Extent characteristics)
+     *
+     * @param {SpatialReference | Integer | String} destProj the spatial reference of the result (as SpatialReference, integer WKID or an EPSG string)
+     * @param {Extent} extent to reproject
+     * @returns {Promise} resolves with the reprojected extent
+     */
+    projectExtent(destProj: SrDef, extent: Extent): Promise<Extent> {
+
+        // interpolates two points by splitting the line in half recursively
+        // steps indicates how many recursions
+        const interpolate = (p0: Array<number>, p1: Array<number>, steps: number): Array<Array<number>> => {
+            if (steps === 0) {
+                // return the points
+                return [p0, p1];
+            }
+
+            // midpoint between the two points
+            const mid = [(p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2];
+            if (steps === 1) {
+                return [p0, mid, p1];
+            }
+            if (steps > 1) {
+                // interpolate between the midpoint
+                const i0 = interpolate(p0, mid, steps - 1);
+                const i1 = interpolate(mid, p1, steps - 1);
+                // joint the result. the slice prevents duplication of the midpoint
+                return i0.concat(i1.slice(1));
+            }
+        };
+
+        // TODO original code is constructing point array in counter-clockwise manner (see commented logic below)
+        //      the poly array will be clockwise.
+        //      if we run into issues, might need to do a reverse on the array, or just stick with original hardcoded approach
+        const points: Array<Array<number>> = extent.toPolygonArray().pop();
+        // [[extent.xmin, extent.ymin], [extent.xmax, extent.ymin],
+        // [extent.xmax, extent.ymax], [extent.xmin, extent.ymax],
+        // [extent.xmin, extent.ymin]];
+
+        let interpolatedPoly: Array<Array<number>> = [];
+
+        // interpolate each edge by splitting it in half 3 times (since lines are not guaranteed to project to lines we need to consider
+        // max / min points in the middle of line segments)
+        [0, 1, 2, 3]
+            .map(i => interpolate(points[i], points[i + 1], 3).slice(1))
+            .forEach(seg => interpolatedPoly = interpolatedPoly.concat(seg));
+
+        const iPoly: Polygon = new Polygon('warpy', [interpolatedPoly], extent.sr, true);
+
+        return this.projectGeometry(destProj, iPoly).then((iWarped: Polygon) => {
+            // take our projected interpolated polygon, strip out the co-ords for X and Y
+            const rawWarp = iWarped.toArray().pop();
+            const xvals = rawWarp.map(p => p[0]);
+            const yvals = rawWarp.map(p => p[1]);
+
+            // find the bounding corners of our projected interpolated polygon
+            const x0 = Math.min.apply(null, xvals);
+            const x1 = Math.max.apply(null, xvals);
+
+            const y0 = Math.min.apply(null, yvals);
+            const y1 = Math.max.apply(null, yvals);
+
+            // make a new extent from the bounds
+            return Extent.fromParams(extent.id + '_projected', x0, y0, x1, y1, iWarped.sr);
+        });
+
+    }
 
 }
