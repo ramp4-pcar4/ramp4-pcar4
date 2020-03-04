@@ -255,11 +255,14 @@ export default class QueryService extends BaseBase {
      * @param {Boolean} [attribAsProperty=false]    indicates if the attribute object resides in a propery called `attributes`. Set to false if array contains raw attribute objects.
      * @returns {Array} array of attribute objects that meet the conditions of the filter. the result objects will be in the same form as they were passed in
      */
-    sqlAttributeFilter (attributeArray: any, sqlWhere: any, attribAsProperty: boolean = false): Array<any> {
+    sqlAttributeFilter (attributeArray: any, sqlWhere: string, attribAsProperty: boolean = false): Array<any> {
         // attribAsProperty means where the attribute lives in relation to the array
         // {att} is a standard key-value object of attributes
         // [ {att} , {att} ] would be the false case.  this is the format of attributes from the geoApi attribute loader
         // [ {attributes:{att}}, {attributes:{att}} ] would be the true case. this is the format of attributes sitting in the graphics array of a filebased layer
+
+        // TODO if we want to get fancy we could type the array as Array<RampAPI.Graphic> | Array<esri.Graphic> | Array<RampAPI.Attributes> | Array<generickeyvalueobject>
+        //      seems a bit overkill for now, lets just have good documentation
 
         // convert the sql where clause to an attribute query language tree, then
         // use that to evaluate against each attribute.
@@ -281,12 +284,26 @@ export default class QueryService extends BaseBase {
      * Given an SQL WHERE condition, will search an array of Graphics adjust their visibility
      * based on if they satisfy the WHERE condition.
      *
-     * @function sqlGraphicsVisibility
+     * @function sqlEsriGraphicsVisibility
      * @param {Array} graphics          array of Graphics.
      * @param {String} sqlWhere         a SQL WHERE clause (without the word `WHERE`) that has field names matching the attribute property names.
      * @returns {Array} array of attributes of visible features.
      */
-    sqlGraphicsVisibility (graphics: any, sqlWhere: string): Array<any> {
+    sqlEsriGraphicsVisibility (graphics: Array<esri.Graphic>, sqlWhere: string): void {
+        // R4MP NOTES:
+        // since we never had a usecase in RAMP2 for the return value, am removing it for now
+        // to boost speed (as this can get executed often when filters are engaged)
+        // we are also strongly typing for ESRI graphics, as this function is for ESRI trickery.
+        // we may decide to make a mirror'd function that does RAMP graphics, which could
+        // support sql queries on SimpleLayer graphics in theory (though maybe not, we
+        // likely would need to target their underlying esri graphics as well).
+        // Since this has an ESRI type on the function interface, we don't want non-GeoAPI
+        // code using it. At minimum put some warnings on the JSDoc indicating lack
+        // of support and discouragment of use.
+        // If we want to make things more intense, we could technically migrate
+        // this function into GeoJsonFC, though it would seem odd as the logic
+        // really seems to fit the theme of queryservice file.
+
         // variant of sqlAttributeFilter.  customized for turning graphics visibility on and off.
         // since we need to turn off the items "not in the query", this saves us doing multiple iterations.
         // however it becomes limited in that it really needs arrays of Graphic objects.
@@ -294,31 +311,23 @@ export default class QueryService extends BaseBase {
         // convert the sql where clause to an attribute query language tree, then
         // use that to evaluate against each attribute.
 
+        // a function that decides what the visibility of a graphic should be
+        let brain: (g: esri.Graphic) => boolean;
+
         if (sqlWhere === '') {
             // no restrictions. show everything
-            graphics.forEach((g: { show: () => void; }) => g.show());
-            return graphics;
+            brain = g => true;
         } else if (sqlWhere === '1=2') {
             // everything off. hide everything
-            // TODO layer should be invisible, so maybe this is irrelevant? or is it better to be safe, as something else could use this function.
-            graphics.forEach((g: { hide: () => void; }) => g.hide());
-            return [];
+            brain = g => false;
+        } else {
+            // real sql. construct an AQL query from it and set our vis logic to use it
+            const aql = Aql.fromSql(sqlWhere);
+            brain = g => aql.evaluate(g.attributes);
         }
 
-        // otherwise we have a sql query to evaluate
-        const aql = Aql.fromSql(sqlWhere);
-        const visibleAttributes = [];
-
-        graphics.forEach((g: { attributes: any; show: () => void; hide: () => void; }) => {
-            if (aql.evaluate(g.attributes)) {
-                g.show();
-                visibleAttributes.push(g.attributes);
-            } else {
-                g.hide();
-            }
-        });
-
-        return visibleAttributes;
+        // run our brain logic against every graphic in the array
+        graphics.forEach(g => g.visible = brain(g));
     }
 
 }

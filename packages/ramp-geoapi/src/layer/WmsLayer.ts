@@ -12,6 +12,8 @@ export class WmsLayer extends BaseLayer {
         super(infoBundle, config);
         this.supportsIdentify = true;
     }
+
+    // TODO add all the identify goodness
 }
 
 export default WmsLayer;

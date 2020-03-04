@@ -13,4 +13,18 @@ export default class FeatureFC extends AttribFC {
         super(infoBundle, parent, layerIdx);
     }
 
+    /**
+     * Applies the current filter settings to the physical map layer.
+     *
+     * @function applySqlFilter
+     * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all keys
+     */
+    applySqlFilter (exclusions: Array<string> = []): void {
+        // note DynamicFC will override this function to handle the dynamic layer case
+
+        const sql = this.filter.getCombinedSql(exclusions);
+        // feature layer on a server
+        (<esri.FeatureLayer>this.parentLayer.innerLayer).definitionExpression = sql;
+    }
+
 }

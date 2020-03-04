@@ -84,4 +84,14 @@ export default class Extent extends BaseGeometry {
         return new Extent(id, [xmin, ymin], [xmax, ymax], sr);
     }
 
+    isEqual(e: Extent): boolean {
+        // TODO consider relaxing input type? so it can accept config extent, esri extent, etc.
+        //      alternative is caller is forced to cast first then compare
+        if (!e) {
+            // a param was empty/nothing
+            return false;
+        }
+        return this.xmin === e.xmin && this.ymin === e.ymin && this.xmax === e.xmax && this.ymax === e.ymax;
+    }
+
 }

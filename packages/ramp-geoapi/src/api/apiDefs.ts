@@ -58,6 +58,13 @@ export enum FillStyle {
     VERTICAL = 'vertical'
 }
 
+export enum CoreFilter {
+    SYMBOL = 'symbol',
+    GRID = 'grid',
+    EXTENT = 'extent',
+    API = 'api' // this would be a default api key. e.g. if someone just does an API filter set with no key parameter, it would use this.
+}
+
 export interface ColourParams {
     r: number;
     g: number;

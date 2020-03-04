@@ -122,4 +122,52 @@ export default class GeoJsonFC extends AttribFC {
         return this.gapi.utils.query.geoJsonQuery(gjOpt);
     }
 
+    // TODO this is more of a utility function. leaving it public as it might be useful, revist when
+    //      the app is mature.
+    queryOIDs(options: QueryFeaturesParams): Promise<Array<number>> {
+
+        const gjOpt: QueryFeaturesGeoJsonParams = {
+            layer: (<GeoJsonLayer>this.parentLayer),
+            ...options
+        };
+
+        // run the query. since geojson is local, the util always returns everything.
+        // iterate through the results and strip out the OIDs
+        return this.gapi.utils.query.geoJsonQuery(gjOpt).then(gjFeats => gjFeats.map(feat => feat.attributes[this.oidField]));
+    }
+
+    /**
+     * Applies the current filter settings to the physical map layer.
+     *
+     * @function applySqlFilter
+     * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all keys
+     */
+    applySqlFilter (exclusions: Array<string> = []): void {
+
+        const sql = this.filter.getCombinedSql(exclusions);
+
+        // fetch all local graphics
+        // TODO deal with this later.
+        //      It would appear that as of ESRI API 4.14, the ability to change the visibility of individual
+        //      graphics on a client side feature layer does not work and is coming later™.
+        //      For the moment, will not code a workaround. When R4MP nears release, attempt to resolve:
+        //      Plan A: A newer ESRI API is released that works. Use it. Donethanks.
+        //      Plan B: Attempt to implement the "remove graphic, add graphic" technique to change visibility
+        //      Plan C: Explore the impact of using GraphicsLayer instead of FeatureLayer, would need to
+        //              figure out if FeatureLayer has any functions we require that GL doesnt support
+        //      Additional reading: https://community.esri.com/thread/228376-how-can-you-change-graphicvisible-in-410
+        //      Branch that attempts to filter on FeatureLayerView instead of Feature
+        //      https://github.com/james-rae/ramp4-pcar4/commits/filterViewGeoJson
+        //      https://github.com/james-rae/ramp4-pcar4/commit/e0e36d30094eaafb4452a74250fb638d52062cbd
+        //      Attempts to manually update things did not work
+        //      e.g. (this.parent.innerLayer as any).source.items[0].visible = false;
+
+        (<esri.FeatureLayer>this.parentLayer.innerLayer).queryFeatures().then(fs => {
+            console.warn('Request to filter geometry on the map of local layer will not work at this time');
+            this.gapi.utils.query.sqlEsriGraphicsVisibility(fs.features, sql);
+        });
+
+    }
+
+
 }
