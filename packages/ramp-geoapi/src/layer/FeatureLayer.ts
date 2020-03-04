@@ -217,7 +217,7 @@ export class FeatureLayer extends AttribLayer {
         const result: IdentifyResultSet = {
             results: [innerResult],
             done: undefined, // set below
-            uid: this.uid
+            parentUid: this.uid
         };
 
         const tolerance = options.tolerance || 0; // this.clickTolerance; // TODO remove the 0 and add the parameter once we implement clickTolerance from config constructor

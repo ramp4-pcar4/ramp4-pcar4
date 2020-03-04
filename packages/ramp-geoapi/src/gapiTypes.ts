@@ -1,5 +1,9 @@
 // TODO add proper comments
 // TODO after all the stuff has been dumped in here, re-organize the order into logical sections
+// TODO revist the definitions. things that are exposed on the API might be better defined in the ApiTypes files.
+//      this file should have stuff that relatively GAPI agnostic and frequently used in outsider code.
+//      May need an overall re-hash of how definitions are exported in general; what way makes most sense
+//      and leads to cleanest imports for consumers of GAPI
 
 import esri = __esri; // magic command to get ESRI JS API type definitions.
 import BaseGeometry from './api/geometry/BaseGeometry'; // this is a bit wonky. could expose on RampAPI, but dont want clients using the baseclass
@@ -205,9 +209,9 @@ export interface IdentifyParameters {
     // TODO will need a larger thinking session on how we expose any esri native types on our interfaces.
     //      if not esri, needs to be converted inside geoapi to esri, so we need some type of strict interface.
     geometry: BaseGeometry; // esri.Geometry; // TODO figure out how to manage this. typescript gets angry about supertypes.
-    map: Map;
+    map: Map; // TODO see if we can make this optional. could be only required if returnGeometry is true. revist after tolerance buffers are implemented
     tolerance?: number;
-    returnGeometry?: boolean;
+    returnGeometry?: boolean; // TODO revisit this. might make more sense to offload geom to a followup request. if we keep, we may need to add property to IdentifyItem for the geom to live in
     // TODO think about adding more options to facilitate more flexible identification.
     //      e.g. for MapImageLayer, an overriding list of child layers to query
 }
@@ -225,7 +229,7 @@ export interface IdentifyItem {
 
 export interface IdentifyResult {
     items: Array<IdentifyItem>;
-    uid: string; // this would match to the FC. TODO might want to name the property something more specific to that, like sublayerUid? indexUid? childUid?
+    uid: string; // this would match to the FC. TODO might want to name the property something more specific to that, like sublayerUid? indexUid? childUid? might be ok with uid as the parentUid is different name
     isLoading: boolean; // TODO confirm we still need this. the .done of IdentifyResultSet should provide the same information. maybe it's a binding thing (bind to bool > bind to promise?)
 
 }
@@ -233,8 +237,13 @@ export interface IdentifyResult {
 export interface IdentifyResultSet {
     results: Array<IdentifyResult>;
     done: Promise<void>;
-    uid: string; // this would be the parent layer's uid. TODO again, might want more specific name. parentUid? layerUid?
+    parentUid: string; // this would be the parent layer's uid.
 }
+
+export interface FilterEventParam {
+    filter: string,
+    uid: string
+};
 
 // ----------------------- CLIENT CONFIG INTERFACES -----------------------------------
 

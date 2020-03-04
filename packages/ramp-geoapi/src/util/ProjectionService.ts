@@ -3,7 +3,9 @@ import { InfoBundle, EpsgLookup } from '../gapiTypes';
 import BaseBase from '../BaseBase';
 import { Tools } from 'terraformer';
 import BaseGeometry from '../api/geometry/BaseGeometry';
-import { SpatialReference, Extent, Polygon } from '../api/api';
+import SpatialReference from '../api/geometry/SpatialReference';
+import Extent from '../api/geometry/Extent';
+import Polygon from '../api/geometry/Polygon';
 import { SrDef, GeometryType } from '../api/apiDefs';
 
 // since ProjectionService is now a class instead a stateless service, it appears that the proj4 library is maintaining it's state

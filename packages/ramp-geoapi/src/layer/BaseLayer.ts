@@ -2,7 +2,7 @@
 // TODO add proper comments
 
 import esri = __esri;
-import { InfoBundle, LayerState, RampLayerConfig, LegendSymbology, IdentifyParameters, IdentifyResultSet } from '../gapiTypes';
+import { InfoBundle, LayerState, RampLayerConfig, LegendSymbology, IdentifyParameters, IdentifyResultSet, FilterEventParam } from '../gapiTypes';
 import BaseBase from '../BaseBase';
 import { TypedEvent } from '../Event';
 import BaseFC from './BaseFC';
@@ -10,9 +10,12 @@ import TreeNode from './TreeNode';
 import NaughtyPromise from '../util/NaughtyPromise';
 import ScaleSet from './ScaleSet';
 
+
+
 export default class BaseLayer extends BaseBase {
 
     uid: string;
+    id: string;
 
     // TODO think about how to expose. protected makes sense, but might want to make it public to allow hacking and use by a dev module if we decide to
     //      could be the FCs need to access it so no choice
@@ -22,6 +25,7 @@ export default class BaseLayer extends BaseBase {
     visibilityChanged: TypedEvent<boolean>;
     opacityChanged: TypedEvent<number>;
     stateChanged: TypedEvent<string>;
+    filterChanged: TypedEvent<FilterEventParam>;
 
     // statuses
     state: LayerState;
@@ -58,6 +62,7 @@ export default class BaseLayer extends BaseBase {
         this.visibilityChanged = new TypedEvent<boolean>();
         this.opacityChanged = new TypedEvent<number>();
         this.stateChanged = new TypedEvent<string>();
+        this.filterChanged = new TypedEvent<FilterEventParam>();
 
         this.state = LayerState.LOADING;
         this.supportsIdentify = false; // default state.
@@ -70,6 +75,7 @@ export default class BaseLayer extends BaseBase {
         this.fcs = [];
         this.origRampConfig = rampConfig;
         this.name = rampConfig.name || '';
+        this.id = rampConfig.id || '';
     }
 
     protected updateState(newState: LayerState): void {
@@ -416,7 +422,7 @@ export default class BaseLayer extends BaseBase {
         return {
             results: [],
             done: Promise.resolve(),
-            uid: this.uid
+            parentUid: this.uid
         };
     }
 
