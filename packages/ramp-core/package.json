@@ -11,6 +11,8 @@
         "lint": "vue-cli-service lint"
     },
     "dependencies": {
+        "ag-grid-community": "^22.1.1",
+        "ag-grid-vue": "^22.1.1",
         "await-to-js": "^2.1.1",
         "deepmerge": "~4.2.2",
         "ramp-geoapi": "0.0.1",

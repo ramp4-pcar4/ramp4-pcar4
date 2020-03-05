@@ -26,6 +26,8 @@ dependencies:
   '@vue/eslint-config-prettier': 5.1.0_5245c988bcb90338057324bbfb65fa35
   '@vue/eslint-config-typescript': 4.0.0_eslint@5.16.0+typescript@3.5.3
   '@vue/test-utils': 1.0.0-beta.29_d81dac297579cfd5597855dabf60f13b
+  ag-grid-community: 22.1.1
+  ag-grid-vue: 22.1.1_2745769b0d794b5814353541496f578a
   await-to-js: 2.1.1
   awesome-typescript-loader: 5.2.1_typescript@3.5.3
   deepmerge: 4.2.2
@@ -2001,6 +2003,22 @@ packages:
       node: '>= 0.12.0'
     resolution:
       integrity: sha512-aT6camzM4xEA54YVJYSqxz1kv4IHnQZRtThJJHhUMRExaU5spC7jX5ugSwTaTgJliIgs4VhZOk7htClvQ/LmRA==
+  /ag-grid-community/22.1.1:
+    dev: false
+    resolution:
+      integrity: sha512-FNyv9e9JIuuR8NNi/r3NjIjUVy2/K5GgPjwQ63g9/Z4U8EudQZLINGMVKI6OwtZfWyyNSd0hQDCNsdvx0OR1WQ==
+  /ag-grid-vue/22.1.1_2745769b0d794b5814353541496f578a:
+    dependencies:
+      ag-grid-community: 22.1.1
+      vue: 2.6.11
+      vue-property-decorator: 8.3.0
+    dev: false
+    peerDependencies:
+      ag-grid-community: ~22.1.1
+      vue: '>= 2.2 <= 2.5.17 || >= 2.5.20'
+      vue-property-decorator: ^7.2.0 || ^8.0.0
+    resolution:
+      integrity: sha512-Vz3ZArEgbH4ptzW7nYdb2X/yF/1aO3Cqehf983oUTIgE7B5YomUQRRJxA7bnk8xll8Bdbq4384Xb4LkO7ZEarg==
   /aggregate-error/3.0.1:
     dependencies:
       clean-stack: 2.2.0
@@ -6629,6 +6647,9 @@ packages:
       node: '>=6'
     peerDependencies:
       jest-resolve: '*'
+    peerDependenciesMeta:
+      jest-resolve:
+        optional: true
     resolution:
       integrity: sha512-pgFw2tm54fzgYvc/OHrnysABEObZCUNFnhjoRjaVOCN8NYc032/gVjPaHD4Aq6ApkSieWtfKAFQtmDKAmhupnQ==
   /jest-regex-util/24.9.0:
@@ -11906,6 +11927,8 @@ packages:
       '@vue/eslint-config-prettier': 5.1.0_5245c988bcb90338057324bbfb65fa35
       '@vue/eslint-config-typescript': 4.0.0_eslint@5.16.0+typescript@3.5.3
       '@vue/test-utils': 1.0.0-beta.29_d81dac297579cfd5597855dabf60f13b
+      ag-grid-community: 22.1.1
+      ag-grid-vue: 22.1.1_2745769b0d794b5814353541496f578a
       await-to-js: 2.1.1
       deepmerge: 4.2.2
       eslint: 5.16.0
@@ -11932,7 +11955,7 @@ packages:
     peerDependencies:
       webpack: '*'
     resolution:
-      integrity: sha512-f0Szq4pn9GqMip1a7g+MtxAWh2FMxymFzk8jprBii5+ecmWDB/7hGxEmJewt7BeDIiLxHMVEkLGpiNmUJHv3Mw==
+      integrity: sha512-s30brJt8j/LuDvkWvTWRBIIogs44WPfkJwaD6WHIjZMhfj6eCN8D35uslY3QKzq63Xh0Yw/x9RfrNV8sNWSkow==
       tarball: 'file:projects/ramp-core.tgz'
     version: 0.0.0
   'file:projects/ramp-geoapi.tgz':
@@ -11996,6 +12019,8 @@ specifiers:
   '@vue/eslint-config-prettier': ^5.0.0
   '@vue/eslint-config-typescript': ^4.0.0
   '@vue/test-utils': 1.0.0-beta.29
+  ag-grid-community: ^22.1.1
+  ag-grid-vue: ^22.1.1
   await-to-js: ^2.1.1
   awesome-typescript-loader: 5.2.1
   deepmerge: ~4.2.2

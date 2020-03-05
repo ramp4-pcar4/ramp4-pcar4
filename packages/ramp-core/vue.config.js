@@ -25,5 +25,14 @@ module.exports = {
                 afterOptimization: true
             }
         ]);
+    },
+    css: {
+        loaderOptions: {
+            postcss: {
+                config: {
+                    path: './postcss.config.js'
+                }
+            }
+        }
     }
 };

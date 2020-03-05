@@ -14,7 +14,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
-import DropdownMenuV from './dropdown-menu.vue';
+import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 
 @Component({
     components: {
