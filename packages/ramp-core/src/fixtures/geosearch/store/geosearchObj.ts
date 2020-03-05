@@ -1,10 +1,11 @@
 import Provinces from './provinces';
 import Types from './types';
+import * as Q from './query';
 
 const GEO_LOCATE_URL = 'https://geogratis.gc.ca/services/geolocation/@{language}/locate';
 const GEO_NAMES_URL = 'https://geogratis.gc.ca/services/geoname/@{language}/geonames.json';
 
-export class GeoSearch {
+export class GeoSearchObj {
     config: any;
 
     constructor(uConfig?: any) {
@@ -16,17 +17,27 @@ export class GeoSearch {
         geoLocateUrl = geoLocateUrl.replace('@{language}', language);
         geoNameUrl = geoNameUrl.replace('@{language}', language);
 
+        // set default values to be used in query.ts if needed
+        const categories = uConfig.settings ? uConfig.settings.categories : [];
+        const sortOrder = uConfig.settings ? uConfig.settings.sortOrder : [];
+        const maxResults = uConfig.settings ? uConfig.settings.maxResults : 100;
+        const officialOnly = uConfig.settings ? uConfig.settings.officialOnly : false;
+
         this.config = {
             language,
-            types: Types(language),
-            provinces: Provinces(language),
+            types: Types(language), // list of type filter options
+            provinces: Provinces(language), // list of province filter options
+            categories,
+            sortOrder,
+            maxResults,
+            officialOnly,
             geoNameUrl,
             geoLocateUrl
         };
     }
 
-    query(query: string): void {
-        // TODO: implementation
+    query(query: string): Q.Query {
+        return Q.make(this.config, query);
     }
 }
 

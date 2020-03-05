@@ -6,164 +6,115 @@ import { RootState } from '@/store/state';
 
 type GeosearchContext = ActionContext<GeosearchState, RootState>;
 
-// temporary use (once hardcoded data replaced this should no longer be needed)
-const ABBR_TO_PROV = {
-    NL: 'Newfoundland and Labrador',
-    PE: 'Prince Edward Island',
-    NS: 'Nova Scotia',
-    NB: 'New Brunswick',
-    QC: 'Quebec',
-    ON: 'Ontario',
-    MB: 'Manitoba',
-    SK: 'Saskatchewan',
-    AB: 'Alberta',
-    BC: 'British Columbia',
-    YU: 'Yukon',
-    NT: 'Northwest Territories',
-    NU: 'Nunavut',
-    UF: 'Undersea Feature',
-    IW: 'International Waters'
-};
-
 const getters = {
     /**
-     * Fetches the list of all possible provinces in a geoName query.
+     * Fetches the list of all possible provinces in a geoName query. Province objects contain the following properties:
+     * code: numeric province code (i.e. ontario is 35)
+     * abbr: short hand notation (Ontario is ON)
+     * name: full province name
      *
      * @function getProvinces
      * @return   {Array}    a list of all provinces in the form
      */
     getProvinces: (state: GeosearchState): [] => {
-        // province objects contain the following properties:
-        // code: numeric province code (i.e. ontario is 35)
-        // abbr: short hand notation (Ontario is ON)
-        // name: full province name
-        return state.GSservice.fetchProvinces();
+        const provs = state.GSservice.fetchProvinces();
+        // sort the province filters in alphabetical order
+        provs.sort((provA: any, provB: any) => (provA.name > provB.name ? 1 : -1));
+        return provs;
     },
 
     /**
-     * Fetches the list of all possible types in a geoName query.
+     * Fetches the list of all possible types in a geoName query. Returned type objects contain the following properties:
+     * code: short form code (i.e. TERR)
+     * name: full type name (i.e. Territory)
      *
      * @function getTypes
      * @return   {Array}    a list of all types in the form
      */
     getTypes: (state: GeosearchState): [] => {
-        // returned type objects contain the following properties:
-        // code: short form code (i.e. TERR)
-        // name: full type name (i.e. Territory)
-        return state.GSservice.fetchTypes();
+        const types = state.GSservice.fetchTypes();
+        // sort the type filters in alphabetical order
+        types.sort((typeA: any, typeB: any) => (typeA.name > typeB.name ? 1 : -1));
+        return types;
     }
 };
 
 const mutations = {
-    RUN_QUERY: (state: GeosearchState) => {
-        // return empty promise if there is no search value is specified
-        // uncomment once GSService query implemented
-        // if (!state.searchVal) {
-        //     state.searchResults = [];
-        //     // return Promise.resolve();
-        //     return state.searchResults;
-        // }
-
-        // only run new query if a different search term is entered
-        if (state.searchVal && state.searchVal !== state.lastSearchVal) {
-            // TODO: GSservice query yet to be implemented
-        } else {
-            // discard any old results
-            let filteredData = filter(state.queryParams, state.savedResults);
-            state.searchResults = filteredData || [];
-
-            // return data for optional processing further down the promise chain
-            // return Promise.resolve(state.searchResults);
-            return state.searchResults;
-        }
+    SET_PROVINCE: (state: GeosearchState, province: string) => {
+        state.queryParams.province = province;
     },
-    SET_QUERY_PARAM: (state: GeosearchState, queryParam: any) => {
-        const paramName = queryParam.paramName;
-        const value = queryParam.value;
-
-        switch (paramName) {
-            case 'type': {
-                state.queryParams.type = value;
-                if (typeof state.queryParams.type === 'undefined') {
-                    delete state.queryParams.type;
-                }
-                break;
-            }
-            case 'province': {
-                state.queryParams.province = value;
-                if (typeof state.queryParams.province === 'undefined') {
-                    delete state.queryParams.province;
-                }
-                break;
-            }
-            case 'searchTerm': {
-                // save last search val
-                state.lastSearchVal = state.searchVal;
-                state.searchVal = value;
-                break;
-            }
-        }
-    },
-    ZOOM_TO: (state: GeosearchState, result: any) => {
-        // TODO: implementation
+    SET_TYPE: (state: GeosearchState, type: string) => {
+        state.queryParams.type = type;
     }
 };
 
 const actions = {
     /**
-     * Runs geosearch query and returns the results or suggestions.
+     * Runs geosearch query to update search and saved results.
      *
      * @function runQuery
-     * @return {Promise} promise resolving with results (when results are found - { results: [] }) or suggestions (when results are not found - { suggestions: [] }) or nothing (when search value is not specified - {});
      */
     runQuery: function(context: GeosearchContext): void {
-        context.commit('RUN_QUERY');
+        // set loading flag to true and turn off when reach return
+        context.commit('SET_LOADING_RESULTS', true);
+        // when no search value is specified
+        if (!context.state.searchVal) {
+            context.commit('SET_SEARCH_RESULTS', []);
+            context.commit('SET_LOADING_RESULTS', false);
+        }
+
+        // run new query if different search term is entered
+        if (context.state.searchVal && context.state.searchVal !== context.state.lastSearchVal) {
+            context.state.GSservice.query(`${context.state.searchVal}*`).then((data: any) => {
+                // store data for current search term
+                context.commit('SET_LAST_SEARCH_VAL', context.state.searchVal);
+                context.commit('SET_SAVED_RESULTS', data);
+
+                // replace old saved results
+                let filteredData = filter(context.state.queryParams, context.state.savedResults);
+                context.commit('SET_SEARCH_RESULTS', filteredData || []);
+                context.commit('SET_LOADING_RESULTS', false);
+            });
+        } else {
+            // otherwise no new search term so we only need to filter on query param values
+            let filteredData = filter(context.state.queryParams, context.state.savedResults);
+            context.commit('SET_SEARCH_RESULTS', filteredData || []);
+            context.commit('SET_LOADING_RESULTS', false);
+        }
     },
     /**
-     * Include results in the given province. Passing a value of undefined clears the province.
+     * Update province filter value.
      *
      * @function setProvince
      * @param   {string}    province   the province code all results must be in
      */
     setProvince: function(context: GeosearchContext, province: string): void {
-        const queryParam = {
-            paramName: 'province',
-            value: province
-        };
-        context.commit('SET_QUERY_PARAM', queryParam);
+        context.commit('SET_PROVINCE', typeof province === 'undefined' ? '' : province);
+        // run query after province filter changes
+        context.dispatch('runQuery');
     },
     /**
-     * Include results with the given type. Passing a value of undefined clears the type.
+     * Update type filter value.
      *
      * @function setType
      * @param   {string}    type   the type code all results must have
      */
     setType: function(context: GeosearchContext, type: string): void {
-        const queryParam = {
-            paramName: 'type',
-            value: type
-        };
-        context.commit('SET_QUERY_PARAM', queryParam);
+        context.commit('SET_TYPE', typeof type === 'undefined' ? '' : type);
+        // run query after type filter changes
+        context.dispatch('runQuery');
     },
     /**
-     * Include results with the given search term.
+     * Update current search val and last search val.
      *
      * @function setSearchTerm
      * @param   {string}    searchTerm  current geosearch search value term
      */
     setSearchTerm: function(context: GeosearchContext, searchTerm: any): void {
-        const queryParam = {
-            paramName: 'searchTerm',
-            value: searchTerm
-        };
-        context.commit('SET_QUERY_PARAM', queryParam);
-    },
-    /**
-     * @function zoomTo
-     * @param {Object} result a search result to zoom to
-     */
-    zoomTo: function(context: GeosearchContext, result: any): void {
-        context.commit('ZOOM_TO', result);
+        context.commit('SET_LAST_SEARCH_VAL', context.state.searchVal);
+        context.commit('SET_SEARCH_VAL', searchTerm);
+        // run query after search term changes
+        context.dispatch('runQuery');
     }
 };
 
@@ -179,7 +130,7 @@ function filter(queryParams: any, data: Array<any>) {
         // TODO: handle filter by extent
     }
     if (queryParams.province && queryParams.province !== '...') {
-        data = data.filter(r => r.province && (<any>ABBR_TO_PROV)[r.province] === queryParams.province);
+        data = data.filter(r => r.location.province.name && r.location.province.name === queryParams.province);
     }
     if (queryParams.type && queryParams.type !== '...') {
         data = data.filter(r => r.type === queryParams.type);
@@ -209,6 +160,10 @@ export enum GeosearchStore {
      */
     searchResults = 'geosearch/searchResults',
     /**
+     * (State) resultsVisible: boolean
+     */
+    resultsVisible = 'geosearch/resultsVisible',
+    /**
      * (Action) runQuery: () => Promise
      */
     runQuery = 'geosearch/runQuery',
@@ -221,7 +176,7 @@ export enum GeosearchStore {
      */
     setType = 'geosearch/setType',
     /**
-     * (Action) setExtent: (extent: any)
+     * (Action) setSearchTerm: (searchTerm: string)
      */
     setSearchTerm = 'geosearch/setSearchTerm'
 }
