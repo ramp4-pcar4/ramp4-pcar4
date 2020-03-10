@@ -280,8 +280,10 @@ export interface RampLayerWmsLayerEntryConfig {
 }
 
 export interface RampLayerConfig {
-    id?: string;
-    url?: string;
+    id: string;
+    layerType: string;
+    fileType?: string;
+    url: string;
     name?: string;
     state?: RampLayerStateConfig;
     customRenderer?: any; // TODO expand, if worth it. fairly complex object

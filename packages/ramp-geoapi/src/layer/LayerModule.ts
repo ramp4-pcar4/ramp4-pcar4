@@ -15,8 +15,12 @@ export default class LayerModule extends BaseBase {
 
     file: FileUtils;
 
+    // TODO see if this can be fixed; made it static due to error with `this.infoBundle()` not being a function in the create layer functions below
+    static infoBundle: InfoBundle;
+
     constructor (infoBundle: InfoBundle) {
         super(infoBundle);
+        LayerModule.infoBundle = infoBundle;
         this.file = new FileUtils(infoBundle);
     }
 
@@ -24,24 +28,24 @@ export default class LayerModule extends BaseBase {
     // specific ones, maybe a string-driven one
 
     createFeatureLayer(config: RampLayerConfig): FeatureLayer {
-        const l = new FeatureLayer(this.infoBundle(), config);
+        const l = new FeatureLayer(LayerModule.infoBundle, config);
         return l;
     }
 
     // geoJson can be string or geoJson object
     // systemOptions is a work in progress. make a nice type when solidified. will contain optional stuff that wouldnt be in the ramp config, like current map spatial reference
     createGeoJSONLayer(config: RampLayerConfig, geoJson: any, systemOptions: any): GeoJsonLayer {
-        return new GeoJsonLayer(this.infoBundle(), config, geoJson, systemOptions);
+        return new GeoJsonLayer(LayerModule.infoBundle, config, geoJson, systemOptions);
     }
 
     createMapImageLayer(config: RampLayerConfig): MapImageLayer {
-        const l = new MapImageLayer(this.infoBundle(), config);
+        const l = new MapImageLayer(LayerModule.infoBundle, config);
         return l;
     }
 
     createHighlightLayer(options: any): HighlightLayer {
         // TODO figure out parameters
-        return new HighlightLayer(this.infoBundle(), options);
+        return new HighlightLayer(LayerModule.infoBundle, options);
     }
 
     /*

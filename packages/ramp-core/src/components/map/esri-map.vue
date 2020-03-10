@@ -10,23 +10,24 @@ import GapiLoader, { Map, GeoApi, RampMapConfig } from 'ramp-geoapi';
 
 import { ConfigStore } from '@/store/modules/config';
 import { LayerStore, layer } from '@/store/modules/layer';
-import FeatureLayer from 'ramp-geoapi/dist/layer/FeatureLayer';
+import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
 
 @Component
 export default class EsriMap extends Vue {
     @Get(ConfigStore.getMapConfig) mapConfig!: RampMapConfig;
 
-    @Get(LayerStore.layers) layers!: FeatureLayer[];
+    @Get(LayerStore.layers) layers!: BaseLayer[];
 
     gapi!: GeoApi;
     map!: Map;
 
     @Watch('layers')
-    onLayerArrayChange(newValue: FeatureLayer[], oldValue: FeatureLayer[]) {
+    onLayerArrayChange(newValue: BaseLayer[], oldValue: BaseLayer[]) {
         newValue.forEach(layer => {
-            if (!oldValue.includes(layer)) {
+            // TODO add a proper check for this after
+            // if (!oldValue.includes(layer)) {
                 this.map.addLayer(layer);
-            }
+            // }
         });
     }
 
