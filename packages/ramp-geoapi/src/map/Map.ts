@@ -52,10 +52,9 @@ export class Map extends MapBase {
     }
 
     // promise resolves when layer gets added to map
-    addLayer (layer: LayerBase): Promise<void> {
-        return layer.isReadyForMap().then(() => {
-            this.innerMap.add(layer.innerLayer);
-        });
+    async addLayer (layer: LayerBase): Promise<void> {
+        await layer.isReadyForMap();
+        this.innerMap.add(layer.innerLayer);
     }
 
     addHighlightLayer (highlightLayer: HighlightLayer): void {
