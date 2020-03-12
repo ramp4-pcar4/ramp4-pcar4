@@ -26,9 +26,7 @@ export default class AppbarV extends Vue {
     // to use in the template
     DIVIDER = DIVIDER_ID;
 
-    get items() {
-        return this.$iApi.$vApp.$store.get('appbar/items');
-    }
+    @Get('appbar/items') items!: AppbarItemConfig[];
 }
 </script>
 

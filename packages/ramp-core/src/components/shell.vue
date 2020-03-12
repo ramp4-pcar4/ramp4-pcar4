@@ -4,7 +4,7 @@
 
         <!-- TODO: should inner shell be a separate component? -->
         <div class="inner-shell absolute top-0 left-0 h-full w-full pointer-events-none">
-            <panel-stack class="absolute inset-0 xs:pl-48 md:p-12 md:pl-80 lg:p-12"></panel-stack>
+            <panel-stack class="absolute inset-0 overflow-hidden xs:pl-40 sm:pl-48 md:p-12 md:pl-80 lg:p-12"></panel-stack>
         </div>
     </div>
 </template>

@@ -1,5 +1,13 @@
 <template>
-    <div :style="{'width': (panelConfig.width || 350) + 'px'}" class="shadow-tm bg-white h-full xs:mr-0 sm:mr-12 last:mr-0 pointer-events-auto" :tabindex="0" v-focus-list>
+    <div
+        class="shadow-tm bg-white h-full xs:mr-0 xs:flex-grow sm:mr-12 last:mr-0 pointer-events-auto"
+        :style="{
+            'flex-basis': panelConfig.width ? panelConfig.width + 'px' : '350px',
+            'max-width': panelConfig.width ? Math.max(panelConfig.width, 500) + 'px' : '500px'
+        }"
+        :tabindex="0"
+        v-focus-list
+    >
         <!-- this renders a panel screen which is currently in view -->
         <!-- TODO: add animation transition animation here -->
         <component :is="panelConfig.route.id" v-bind="panelConfig.route.props" :panel="panel"></component>

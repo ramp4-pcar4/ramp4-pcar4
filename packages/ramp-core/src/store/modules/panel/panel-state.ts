@@ -9,6 +9,12 @@ export class PanelState {
      */
     items: { [name: string]: PanelConfig } = {};
 
+    width: number = 0;
+
+    visible: PanelConfig[] = [];
+
+    orderedItems: PanelConfig[] = [];
+
     /**
      * Indicates a pinned panel.
      *
@@ -16,6 +22,8 @@ export class PanelState {
      * @memberof PanelState
      */
     pinned: PanelConfig | null = null;
+
+    priority: PanelConfig | null = null;
 }
 
 export type PanelConfigScreen = { id: string; component: VueConstructor<Vue> };

@@ -18,7 +18,8 @@ class AppbarFixture extends FixtureConfigHelper {
 
         const appbarInstance = new (Vue.extend(AppbarV))({
             iApi: this.$iApi,
-            propsData: { fixture }
+            propsData: { fixture },
+            store: this.vApp.$store
         });
 
         appbarInstance.$mount();

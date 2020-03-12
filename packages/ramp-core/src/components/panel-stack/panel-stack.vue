@@ -12,6 +12,13 @@ import { PanelConfig } from '@/store/modules/panel';
 
 import PanelV from './panel-container.vue';
 
+declare class ResizeObserver {
+    constructor(callback: Function);
+    observe(target: Element): void;
+    unobserve(target: Element): void;
+    disconnect(): void;
+}
+
 @Component({
     components: {
         'panel-container': PanelV
@@ -19,6 +26,15 @@ import PanelV from './panel-container.vue';
 })
 export default class PanelStackV extends Vue {
     @Get('panel/visible') visible!: PanelConfig[];
+    @Sync('panel/width') width!: number;
+
+    mounted() {
+        const resizeObserver = new ResizeObserver((entries: any) => {
+            this.width = entries[0].contentRect.width;
+        });
+
+        resizeObserver.observe(this.$el);
+    }
 }
 </script>
 
