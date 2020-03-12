@@ -9,10 +9,14 @@ export class PanelState {
      */
     items: { [name: string]: PanelConfig } = {};
 
-    width: number = 0;
-
-    visible: PanelConfig[] = [];
-
+    /**
+     * A list of all panels in the arrangement they would be put on screen.
+     * The last item will be the first on screen (rightmost, therefore rightmost in array).
+     * Note: The `visible` array is used for whats actually on screen, this is used for calculating `visible`.
+     *
+     * @type {PanelConfig[]}
+     * @memberof PanelState
+     */
     orderedItems: PanelConfig[] = [];
 
     /**
@@ -23,7 +27,30 @@ export class PanelState {
      */
     pinned: PanelConfig | null = null;
 
+    /**
+     * Indicates the most recently opened panel has priority
+     * This is given the value of that recent panel in order to check on removal
+     *
+     * @type {PanelConfig | null}
+     * @memberof PanelState
+     */
     priority: PanelConfig | null = null;
+
+    /**
+     * The panels that are displayed on the screen
+     *
+     * @type {PanelConfig[]}
+     * @memberof PanelState
+     */
+    visible: PanelConfig[] = [];
+
+    /**
+     * The screen width that the visible panels are allowed to use.
+     *
+     * @type {number}
+     * @memberof PanelState
+     */
+    width: number = 0;
 }
 
 export type PanelConfigScreen = { id: string; component: VueConstructor<Vue> };
