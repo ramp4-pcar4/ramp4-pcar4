@@ -12,7 +12,7 @@ export class PanelAPI extends APIScope {
      * @memberof PanelAPI
      */
     open(config: PanelConfig): PanelItemAPI {
-        this.$vApp.$store.set('panel/ADD_PANEL!', { value: config });
+        this.$vApp.$store.set('panel/addPanel!', config);
 
         const panel = this.get(config.id)!;
 
@@ -44,7 +44,7 @@ export class PanelAPI extends APIScope {
             panel.pin(false);
         }
 
-        this.$vApp.$store.set(`panel/REMOVE_PANEL!`, { value: panel._config });
+        this.$vApp.$store.set(`panel/removePanel!`, panel._config);
 
         return panel;
     }
