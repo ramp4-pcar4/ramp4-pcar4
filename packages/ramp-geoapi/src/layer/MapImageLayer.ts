@@ -510,14 +510,14 @@ export class MapImageLayer extends AttribLayer {
         const result: IdentifyResultSet = {
             results: [],
             done: undefined, // set below
-            uid: this.uid
+            parentUid: this.uid
         };
 
         // prepare a query
         // it may make more sense to have this made for each FC
         const qOpts: QueryFeaturesParams = {
             outFields: '*', // TODO investigate this further, possibly add in layer defined outfields. would need to be updated for each FC
-            includeGeometry: false,
+            includeGeometry: options.returnGeometry,
             map: options.map
         };
 

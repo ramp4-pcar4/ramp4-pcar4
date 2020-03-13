@@ -6,6 +6,7 @@ import esri = __esri;
 import { InfoBundle, AttributeSet, RampLayerConfig, GetGraphicParams, GetGraphicResult } from '../gapiTypes';
 import BaseLayer from './BaseLayer';
 import AttribFC from './AttribFC';
+import Extent from '../api/geometry/Extent';
 
 export default class AttribLayer extends BaseLayer {
 
@@ -71,6 +72,25 @@ export default class AttribLayer extends BaseLayer {
 
     getIcon (objectId: number, layerIdx: number | string = undefined): Promise<string> {
         return this.getFC(layerIdx).getIcon(objectId);
+    }
+
+    setSqlFilter(filterKey: string, whereClause: string, layerIdx: number | string = undefined): void {
+        this.getFC(layerIdx).setSqlFilter(filterKey, whereClause);
+    }
+
+    getSqlFilter(filterKey: string, layerIdx: number | string = undefined): string {
+        return this.getFC(layerIdx).getSqlFilter(filterKey);
+    }
+
+    // TODO this makes for a fairly gnarly param. i.e. to target a sublayer with no extras, gotta call
+    //      mylayer.getFilterOIDs(undefined, undefined, myUid)
+    //      changing the two params to an options object somewhat helps, though that would also be optional param.
+    getFilterOIDs(exclusions: Array<string> = [], extent: Extent = undefined, layerIdx: number | string = undefined): Promise<Array<number>> {
+        return this.getFC(layerIdx).getFilterOIDs(exclusions, extent);
+    }
+
+    applySqlFilter (exclusions: Array<string> = [], layerIdx: number | string = undefined): void {
+        this.getFC(layerIdx).applySqlFilter(exclusions);
     }
 
 }
