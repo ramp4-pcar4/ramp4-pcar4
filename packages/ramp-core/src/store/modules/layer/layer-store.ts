@@ -4,28 +4,37 @@ import { make } from 'vuex-pathify';
 import { LayerState } from './layer-state';
 import { RootState } from '@/store';
 import { RampLayerConfig } from 'ramp-geoapi';
-import FeatureLayer from 'ramp-geoapi/dist/layer/FeatureLayer';
+import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
+import LayerBlueprint from './layer-blueprint.class'
+
 import api from '@/api';
 
 // use for actions
 type LayerContext = ActionContext<LayerState, RootState>;
 
 const getters = {
-    getLayerById: (state: LayerState) => (id: string): FeatureLayer | undefined => {
-        return state.layers.find((layer: FeatureLayer) => layer.uid === id);
+    getLayerById: (state: LayerState) => (id: string): BaseLayer | undefined => {
+        return state.layers.find((layer: BaseLayer) => layer.uid === id);
     }
 };
 
 const actions = {
     addLayers: (context: LayerContext, layerConfigs: RampLayerConfig[]) => {
+        const blueprints: any = [];
         layerConfigs.forEach(layerConfig => {
-            context.commit('ADD_LAYER', api.geoapi.layers.createFeatureLayer(layerConfig));
+            blueprints.push(LayerBlueprint.makeBlueprint(layerConfig))
         });
+        blueprints.forEach((blueprint: any) => {
+            blueprint.makeLayer().then((layer: BaseLayer) => {
+                context.commit('ADD_LAYER', layer);
+            })
+
+        })
     }
 };
 
 const mutations = {
-    ADD_LAYER: (state: LayerState, value: FeatureLayer) => {
+    ADD_LAYER: (state: LayerState, value: BaseLayer) => {
         state.layers.push(value);
     }
 };

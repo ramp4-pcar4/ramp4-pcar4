@@ -115,6 +115,8 @@ export class GeoJsonLayer extends AttribLayer {
 
         this.esriJson = undefined; // done with parameter trickery, erase this.
 
+        delete esriConfig.url;
+
         return esriConfig;
     }
 

@@ -47,18 +47,50 @@
                     },
                     layers: [
                         {
-                            id: 'fancyTest',
-                            url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
+                            id: 'WaterQuantity',
+                            layerType: 'esriMapImage',
+                            url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                            layerEntries: [
+                                {
+                                    index: 1,
+                                    state: {
+                                        opacity: 1,
+                                        visibility: true
+                                    }
+                                }
+                            ],
                             state: {
-                                opacity: 0.8
+                                opacity: 1,
+                                visibility: true
                             },
                             customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
                         },
                         {
-                            id: 'fancyTest2',
-                            url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/8',
+                            id: 'CleanAir',
+                            layerType: 'esriFeature',
+                            url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
                             state: {
-                                opacity: 0.8
+                                opacity: 0.8,
+                                visibility: true
+                            },
+                            customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                        },
+                        {
+                            id: 'HydrometricStations',
+                            layerType: 'ogcWfs',
+                            url: 'http://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/collections/hydrometric-stations/items?startindex=7500',
+                            state: {
+                                visibility: true
+                            },
+                            customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                        },
+                        {
+                            id: 'Happy',
+                            layerType: 'esriFeature',
+                            fileType: 'geojson',
+                            url: 'http://fgpv.cloudapp.net/demo/__assets__/Sample%20Data/happy.json',
+                            state: {
+                                visibility: true
                             },
                             customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
                         }
