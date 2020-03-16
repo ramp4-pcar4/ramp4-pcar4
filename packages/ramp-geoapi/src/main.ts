@@ -11,7 +11,7 @@ import * as apiDefs from './api/apiDefs';
 import * as apiClasses from './api/api';
 
 export * from './gapiTypes';
-export { Map } from './map/Map';
+export { RampMap } from './map/RampMap';
 export { FeatureLayer } from './layer/FeatureLayer';
 export { WmsLayer } from './layer/WmsLayer';
 export { MapImageLayer } from './layer/MapImageLayer';
@@ -150,7 +150,7 @@ export default async (window: DojoWindow, options: GeoApiOptions = {}): Promise<
         ['esri/layers/ImageryLayer', 'ImageryLayer'], // formerly known as ArcGISImageServiceLayer
         ['esri/layers/MapImageLayer', 'MapImageLayer'], // formerly known as ArcGISDynamicMapServiceLayer
         ['esri/layers/TileLayer', 'TileLayer'], // formerly known as ArcGISTiledMapServiceLayer
-        ['esri/layers/WMSLayer', 'WmsLayer'],
+        ['esri/layers/WMSLayer', 'WMSLayer'],
         ['esri/layers/support/Field', 'Field'],
         ['esri/layers/support/ImageParameters', 'ImageParameters'],
         ['esri/layers/support/Sublayer', 'Sublayer'], // formerly known as LayerDrawingOptions

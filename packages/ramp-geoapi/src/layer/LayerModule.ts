@@ -9,6 +9,8 @@ import HighlightLayer from './HighlightLayer';
 import FileUtils from './FileUtils';
 import GeoJsonLayer from './GeoJsonLayer';
 import MapImageLayer from './MapImageLayer';
+import WmsLayer from './WmsLayer';
+import TreeNode from './TreeNode';
 // import Map from './Map';
 
 export default class LayerModule extends BaseBase {
@@ -23,20 +25,22 @@ export default class LayerModule extends BaseBase {
     // TODO make create layer set of functions
     // specific ones, maybe a string-driven one
 
-    createFeatureLayer(config: RampLayerConfig): FeatureLayer {
-        const l = new FeatureLayer(this.infoBundle(), config);
-        return l;
+    createFeatureLayer(config: RampLayerConfig, reloadTree?: TreeNode): FeatureLayer {
+        return new FeatureLayer(this.infoBundle(), config, reloadTree);
     }
 
     // geoJson can be string or geoJson object
     // systemOptions is a work in progress. make a nice type when solidified. will contain optional stuff that wouldnt be in the ramp config, like current map spatial reference
-    createGeoJSONLayer(config: RampLayerConfig, geoJson: any, systemOptions: any): GeoJsonLayer {
-        return new GeoJsonLayer(this.infoBundle(), config, geoJson, systemOptions);
+    createGeoJSONLayer(config: RampLayerConfig, geoJson: any, systemOptions: any, reloadTree?: TreeNode): GeoJsonLayer {
+        return new GeoJsonLayer(this.infoBundle(), config, geoJson, systemOptions, reloadTree);
     }
 
-    createMapImageLayer(config: RampLayerConfig): MapImageLayer {
-        const l = new MapImageLayer(this.infoBundle(), config);
-        return l;
+    createMapImageLayer(config: RampLayerConfig, reloadTree?: TreeNode): MapImageLayer {
+        return new MapImageLayer(this.infoBundle(), config, reloadTree);
+    }
+
+    createWmsLayer(config: RampLayerConfig, reloadTree?: TreeNode): WmsLayer {
+        return new WmsLayer(this.infoBundle(), config, reloadTree);
     }
 
     createHighlightLayer(options: any): HighlightLayer {

@@ -21,9 +21,9 @@ export default class BaseFC extends BaseBase {
     constructor (infoBundle: InfoBundle, parent: BaseLayer, layerIdx: number = 0) {
 
         super(infoBundle);
-        this.uid = this.gapi.utils.shared.generateUUID();
         this.parentLayer = parent;
         this.layerIdx = layerIdx;
+        this.uid = this.parentLayer.bestUid(layerIdx);
         this.name = '';
         this.scaleSet = new ScaleSet();
         this.supportsFeatures = false; // default state. featurish layers should set to true when the load

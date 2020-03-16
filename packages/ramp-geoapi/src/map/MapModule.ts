@@ -3,7 +3,7 @@
 
 import esri = __esri;
 import { InfoBundle, RampLodConfig } from '../gapiTypes';
-import Map from './Map';
+import RampMap from './RampMap';
 import BaseBase from '../BaseBase';
 
 export default class MapModule extends BaseBase {
@@ -13,9 +13,8 @@ export default class MapModule extends BaseBase {
     }
 
     // TODO will we have a config type? is it bad to have something that is defined on the client be defined here?
-    createMap(config: any, targetDiv: string | HTMLDivElement): Map {
-        const map: Map = new Map(this.infoBundle(), config, targetDiv);
-        return map;
+    createMap(config: any, targetDiv: string | HTMLDivElement): RampMap {
+        return new RampMap(this.infoBundle(), config, targetDiv);
     }
 
     // TODO other functions

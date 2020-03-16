@@ -13,6 +13,7 @@ import HighlightService from './HighlightService';
 import ProjectionService from './ProjectionService';
 import SymbologyService from './SymbologyService';
 import GeometryService from './GeometryService';
+import OgcService from './OgcService';
 
 export default class UtilModule extends BaseBase {
 
@@ -23,6 +24,7 @@ export default class UtilModule extends BaseBase {
     proj: ProjectionService;
     symbology: SymbologyService;
     geom: GeometryService;
+    ogc: OgcService;
 
     constructor (infoBundle: InfoBundle, epsgFunction: EpsgLookup = undefined) {
         super(infoBundle);
@@ -33,6 +35,7 @@ export default class UtilModule extends BaseBase {
         this.proj = new ProjectionService(infoBundle, epsgFunction);
         this.symbology = new SymbologyService(infoBundle);
         this.geom = new GeometryService(infoBundle);
+        this.ogc = new OgcService(infoBundle);
     }
 
 }

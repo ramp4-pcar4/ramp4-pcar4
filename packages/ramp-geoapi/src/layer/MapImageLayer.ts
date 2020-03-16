@@ -13,20 +13,16 @@ export class MapImageLayer extends AttribLayer {
 
     // indicates if sublayers can have opacity adjusted
     isDynamic: boolean;
+    innerLayer: esri.MapImageLayer;
 
-    constructor (infoBundle: InfoBundle, config: RampLayerConfig) {
+    constructor (infoBundle: InfoBundle, config: RampLayerConfig, reloadTree?: TreeNode) {
 
-        super(infoBundle, config);
+        super(infoBundle, config, reloadTree);
 
         this.innerLayer = new this.esriBundle.MapImageLayer(this.makeEsriLayerConfig(config));
 
         this.initLayer();
 
-    }
-
-    // timesaver, sick of casting this var everywhere
-    protected typedInnerLayer(): esri.MapImageLayer {
-        return (<esri.MapImageLayer>this.innerLayer);
     }
 
     /**
@@ -107,7 +103,7 @@ export class MapImageLayer extends AttribLayer {
             this.setVisibility(this.origRampConfig.state.visibility);
         });
 
-        this.isDynamic = this.typedInnerLayer().capabilities.exportMap.supportsDynamicLayers;
+        this.isDynamic = this.innerLayer.capabilities.exportMap.supportsDynamicLayers;
 
         // TODO the whole "configIsComplete" logic in RAMP2 was never invoked by the client.
         //      Don't see the point in re-adding it here.
@@ -119,7 +115,7 @@ export class MapImageLayer extends AttribLayer {
         };
 
         const findSublayer = (targetIndex: number): esri.Sublayer => {
-            return this.typedInnerLayer().allSublayers.find((s: esri.Sublayer) => {
+            return this.innerLayer.allSublayers.find((s: esri.Sublayer) => {
                 return s.id === targetIndex;
             });
         };
@@ -267,9 +263,6 @@ export class MapImageLayer extends AttribLayer {
             }
         };
 
-        // TODO validate -1 is how we are notating a map image layer root (effectively service folder, no real index)
-        this.layerTree = new TreeNode(-1, this.uid, this.origRampConfig.name, false); // public structure describing the tree
-
         // process the child layers our config is interested in, and all their children.
         (<Array<RampLayerMapImageLayerEntryConfig>>this.origRampConfig.layerEntries).forEach((le: RampLayerMapImageLayerEntryConfig) => {
             if (!le.stateOnly) {
@@ -336,7 +329,7 @@ export class MapImageLayer extends AttribLayer {
         });
 
         // any sublayers not in our tree, we need to turn off.
-        this.typedInnerLayer().allSublayers.forEach((s: esri.Sublayer) => {
+        this.innerLayer.allSublayers.forEach((s: esri.Sublayer) => {
             // find sublayers that are not groups, and dont exist in our initilazation array
             if (!s.sublayers && !leafsToInit.find((fc: MapImageFC) => fc.layerIdx === s.id)) {
                 s.visible = false;
@@ -345,7 +338,7 @@ export class MapImageLayer extends AttribLayer {
 
         // get mapName of the legend entry from the service to use as the name if not provided in config
         if (!this.name) {
-            const serviceRequest: Promise<esri.RequestResponse> = this.esriBundle.esriRequest(this.typedInnerLayer().url, {
+            const serviceRequest: Promise<esri.RequestResponse> = this.esriBundle.esriRequest(this.innerLayer.url, {
                 query: {
                     f: 'json'
                 }
@@ -358,9 +351,6 @@ export class MapImageLayer extends AttribLayer {
             });
             loadPromises.push(setTitle);
         }
-
-        // TODO add back in promises
-        // loadPromises.push(pLD, pFC, pLS);
 
         return loadPromises;
     }
