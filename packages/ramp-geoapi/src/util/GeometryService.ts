@@ -138,6 +138,9 @@ export default class GeometryService extends BaseBase {
         return g;
     }
 
+    // everything below is worker functions for the main hawggies above.
+    // they can be used by outside callers, but in most cases, use the standard things ^
+
     parseGeoJsonCrs(crs: GeoJson.CoordinateReferenceSystem): string {
         if (!crs) {
             return 'EPSG:4326';
@@ -263,8 +266,9 @@ export default class GeometryService extends BaseBase {
     }
 
     convEsriExtentToRamp(esriExtent: esri.Extent, id?: number | string): RampAPI.Extent {
+        console.log('incoming extent in esri format', esriExtent);
         return RampAPI.Extent.fromParams(id, esriExtent.xmin, esriExtent.ymin,
-            esriExtent.xmax, esriExtent.ymin, this.convEsriSrToSr(esriExtent.spatialReference));
+            esriExtent.xmax, esriExtent.ymax, this.convEsriSrToSr(esriExtent.spatialReference));
     }
 
     convEsriMultiPointToRamp(esriMultiPoint: esri.Multipoint, id?: number | string): RampAPI.MultiPoint {

@@ -4,10 +4,12 @@ import esri = __esri;
 import { InfoBundle } from '../gapiTypes';
 import BaseLayer from './BaseLayer';
 import AttribFC from './AttribFC';
+import FeatureLayer from './FeatureLayer';
 
 export default class FeatureFC extends AttribFC {
 
     tooltipField: string;
+    protected parentLayer: FeatureLayer;
 
     constructor (infoBundle: InfoBundle, parent: BaseLayer, layerIdx: number = 0) {
         super(infoBundle, parent, layerIdx);
@@ -24,7 +26,7 @@ export default class FeatureFC extends AttribFC {
 
         const sql = this.filter.getCombinedSql(exclusions);
         // feature layer on a server
-        (<esri.FeatureLayer>this.parentLayer.innerLayer).definitionExpression = sql;
+        this.parentLayer.innerLayer.definitionExpression = sql;
     }
 
 }

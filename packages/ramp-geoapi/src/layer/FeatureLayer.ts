@@ -9,11 +9,10 @@ import FeatureFC from './FeatureFC';
 
 export class FeatureLayer extends AttribLayer {
 
-    constructor (infoBundle: InfoBundle, config: RampLayerConfig) {
+    innerLayer: esri.FeatureLayer;
 
-        const esriConfig = config; // this becomes real logic
-
-        super(infoBundle, esriConfig);
+    constructor (infoBundle: InfoBundle, config: RampLayerConfig, reloadTree?: TreeNode) {
+        super(infoBundle, config, reloadTree);
 
         this.innerLayer = new this.esriBundle.FeatureLayer(this.makeEsriLayerConfig(config));
         this.initLayer();
@@ -111,7 +110,9 @@ export class FeatureLayer extends AttribLayer {
         const featFC = new FeatureFC(this.infoBundle(), this, featIdx);
         this.fcs[featIdx] = featFC;
         featFC.serviceUrl = layerUrl;
-        this.layerTree = new TreeNode(featIdx, featFC.uid, this.name); // TODO verify name is populated at this point
+        this.layerTree.childs.push(new TreeNode(featIdx, featFC.uid, this.name)); // TODO verify name is populated at this point
+        // TODO see if we need to re-synch the parent name
+        // this.layerTree.name = this.name;
 
         // TODO implement symbology load
         // const pLS = aFC.loadSymbology();

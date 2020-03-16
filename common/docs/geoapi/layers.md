@@ -20,14 +20,22 @@ While most physical layers have one logical layer, some can have multiple logica
 
 Every `Layer` object has a method `.getLayerTree()`. This returns a heirarchical object that describes the logical layout of the layer.
 
-Most layers have one single logical component, and will find their tree to be a shrubbery.
+Most layers have one single logical component and a basic tree. The structure is a bit redundant, but keeps things aligned and predictable.
 
 ```json
 {
-    layerIdx: 4,
+    layerIdx: -1,
     name: "Fancy Layer",
-    childs: [],
-    isLayer: true,
+    childs: [
+        {
+            layerIdx: 4,
+            name: "Fancy Layer",
+            childs: [],
+            isLayer: true,
+            uid: "432rubbishasdfsdfad"
+        }
+    ],
+    isLayer: false,
     uid: "ABCDskipafewYbecauseihavetogo4aP&Z4U"
 }
 ```
@@ -78,7 +86,7 @@ There are two ways to reference parts of the layer structure.
 
 `uid`s are used to uniquely identify both physical and logical layers in `Layer` objects. Note that sub-folder structures for Map Image Layers do not have a `uid`.
 
-`layerIdx` indicates the index on the server for the item. We use `-1` as a placeholder index value to denote a service root of an ESRI Map Image Layer. For layers that are not tied to an ArcGIS Server, we use `0` as the index value.
+`layerIdx` indicates the index on the server for the item. We use `-1` as a placeholder index value to denote the physical layer root. For layers that are not tied to an ArcGIS Server, we use `0` as the index value.
 
 Most methods on the `Layer` objects support an optional parameter to target the logical layer to use in the method. This parameter can be the `layerIdx` (integer), the `uid` (string), or can be left blank in most cases.
 
@@ -302,7 +310,7 @@ Request the set of attributes for the logical layer. The first request will incu
 myLayer.getAttributes('uid'); // Promise resolving with a set of attributes.
 ```
 
-Request the loading process of attributes be halted. The end result of this request is the appearance of the layer not having loaded attributes. TODO figure out and document how the load count/status can be monitored. 
+Request the loading process of attributes be halted. The end result of this request is the appearance of the layer not having loaded attributes. TODO figure out and document how the load count/status can be monitored.
 
 ```js
 myLayer.abortAttributeLoad('uid');

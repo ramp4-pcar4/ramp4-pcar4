@@ -4,14 +4,16 @@ import esri = __esri;
 import { InfoBundle } from '../gapiTypes';
 import BaseLayer from './BaseLayer';
 import AttribFC from './AttribFC';
+import MapImageLayer from './MapImageLayer';
 
 export default class MapImageFC extends AttribFC {
 
     protected innerSubLayer: esri.Sublayer;
+    protected parentLayer: MapImageLayer;
 
     constructor (infoBundle: InfoBundle, parent: BaseLayer, layerIdx: number = 0) {
         super(infoBundle, parent, layerIdx);
-        this.innerSubLayer = (<esri.MapImageLayer>this.parentLayer.innerLayer).allSublayers.find((s: esri.Sublayer) => {
+        this.innerSubLayer = this.parentLayer.innerLayer.allSublayers.find((s: esri.Sublayer) => {
             return s.id === layerIdx;
         });
     }
