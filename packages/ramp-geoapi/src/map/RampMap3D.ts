@@ -6,7 +6,8 @@ import esri = __esri;
 import { InfoBundle } from '../gapiTypes';
 import MapBase from './MapBase';
 
-export class Map3D extends MapBase {
+// naming RampMap3D, to align with calling the 2D version RampMap
+export class RampMap3D extends MapBase {
 
     innerView: esri.SceneView;
 

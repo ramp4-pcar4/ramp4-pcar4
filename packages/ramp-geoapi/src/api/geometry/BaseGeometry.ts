@@ -19,7 +19,7 @@ export default class BaseGeometry {
     readonly id: string;
 
     constructor(id: IdDef, sr?: SrDef) {
-        this.id = id.toString();
+        this.id = id ? id.toString() : '';
         this.sr = SpatialReference.parseSR(sr);
     }
 

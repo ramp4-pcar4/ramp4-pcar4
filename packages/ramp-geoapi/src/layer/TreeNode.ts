@@ -13,4 +13,25 @@ export default class TreeNode {
         this.childs = [];
         this.uid = uid;
     }
+
+    // returns a tree node in the tree that has the given uid.
+    // returns undefined if nothing found
+    findChildByUid(uid: string): TreeNode {
+        if (this.uid === uid) {
+            return this;
+        } else {
+            return this.childs.find(t => t.findChildByUid(uid));
+        }
+    }
+
+    // returns a tree node in the tree that has the given layer index.
+    // returns undefined if nothing found
+    findChildByIdx(idx: number): TreeNode {
+        if (this.layerIdx === idx) {
+            return this;
+        } else {
+            return this.childs.find(t => t.findChildByIdx(idx));
+        }
+    }
+
 }

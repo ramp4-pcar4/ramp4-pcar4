@@ -7,11 +7,14 @@ import { InfoBundle, RampMapConfig } from '../gapiTypes';
 import MapBase from './MapBase';
 import LayerBase from '../layer/BaseLayer';
 import HighlightLayer from '../layer/HighlightLayer';
-import { Extent, Point, SpatialReference } from '../api/api';
+import Extent from '../api/geometry/Extent';
+import Point from '../api/geometry/Point';
+import SpatialReference from '../api/geometry/SpatialReference';
 import BaseGeometry from '../api/geometry/BaseGeometry';
 import { GeometryType } from '../api/apiDefs';
 
-export class Map extends MapBase {
+// NOTE naming this RampMap, to avoid collisions with javascript object `Map`
+export class RampMap extends MapBase {
 
     // TODO think about how to expose. protected makes sense, but might want to make it public to allow hacking and use by a dev module if we decide to
     innerView: esri.MapView;
@@ -85,10 +88,22 @@ export class Map extends MapBase {
 
     }
 
+    getExtent(): Extent {
+        return this.gapi.utils.geom.convEsriExtentToRamp(this.innerView.extent);
+    }
+
+    setExtent(newExt: Extent): Promise<void> {
+        return this.zoomMapTo(newExt);
+    }
+
+    getSR(): SpatialReference {
+        return this.rampSR.clone();
+    }
+
     // TODO function to allow a second Map to be shot out, that shares this map but has a different scene
 
     // TODO basemap generation stuff (might need to be delayed due to lack of dojo dijit)
 
 }
 
-export default Map;
+export default RampMap;
