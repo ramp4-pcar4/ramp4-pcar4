@@ -60,8 +60,8 @@ export default class GeosearchTopFilters extends Vue {
     @Get(GeosearchStore.queryParams) queryParams!: any;
 
     // import required geosearch store actions
-    @Call(GeosearchStore.setProvince) setProvince!: (prov: any) => any;
-    @Call(GeosearchStore.setType) setType!: (type: any) => any;
+    @Call(GeosearchStore.setProvince) setProvince!: (prov: any) => void;
+    @Call(GeosearchStore.setType) setType!: (type: any) => void;
 
     // clear filters by setting filters to undefined
     clearFilters(): void {

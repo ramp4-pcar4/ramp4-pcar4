@@ -11,7 +11,17 @@
 
         <template #content>
             <geosearch-top-filters></geosearch-top-filters>
-            <ul class="rv-results-list h-500 border-t border-gray-600 overflow-hidden overflow-y-auto" v-focus-list>
+            <!-- TODO: add a loading bar here? -->
+            <div class="px-5 mt-10 truncate">
+                <span class="relative h-48" v-if="searchVal && searchResults.length === 0 && !loadingResults"
+                    >No results to show for <span class="font-bold text-blue-600">{{ searchVal }}</span></span
+                >
+            </div>
+            <ul
+                class="rv-results-list h-500 border-t border-b border-gray-600 overflow-hidden overflow-y-auto"
+                v-focus-list
+                v-if="searchResults.length > 0"
+            >
                 <li class="relative h-48" v-for="(result, idx) in searchResults" v-bind:key="idx">
                     <button class="absolute inset-0 h-full w-full hover:bg-gray-300 default-focus-style" @click="zoomIn(result)" focus-item>
                         <div class="rv-result-description flex px-8">
@@ -30,7 +40,6 @@
                     </button>
                 </li>
             </ul>
-            <div class="rv-geosearch-divider border-b border-gray-600"></div>
             <geosearch-bottom-filters class="absolute bottom-0 mb-32"></geosearch-bottom-filters>
         </template>
     </panel-screen>
@@ -60,9 +69,10 @@ import { ApiBundle } from 'ramp-geoapi';
 })
 export default class GeosearchComponent extends Vue {
     @Prop() panel!: PanelItemAPI;
-    // fetch search val + search results from store
+    // fetch store properties/data
     @Get(GeosearchStore.searchVal) searchVal!: string;
     @Get(GeosearchStore.searchResults) searchResults!: Array<any>;
+    @Get(GeosearchStore.loadingResults) loadingResults!: boolean;
 
     get isPinned(): boolean {
         return this.panel.isPinned;
