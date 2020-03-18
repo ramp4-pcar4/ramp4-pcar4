@@ -1,8 +1,8 @@
 <template>
     <div class="rv-geosearch-top-filters w-full mt-16">
-        <div class="inline-block w-128 h-40 mx-12">
+        <div class="inline-block w-152 h-40 mx-16">
             <select
-                class="form-select border-b border-b-gray-600 w-80 h-auto py-0"
+                class="form-select border-b border-b-gray-600 w-100 h-auto py-0"
                 :value="queryParams.province"
                 v-on:change="setProvince($event.target.value)"
             >
@@ -12,9 +12,9 @@
                 </option>
             </select>
         </div>
-        <div class="inline-block w-96 h-40 mx-12">
+        <div class="inline-block w-120 h-40 mx-16">
             <select
-                class="form-select border-b border-b-gray-600 w-48 h-auto py-0"
+                class="form-select border-b border-b-gray-600 w-70 h-auto py-0"
                 :value="queryParams.type"
                 v-on:change="setType($event.target.value)"
             >
