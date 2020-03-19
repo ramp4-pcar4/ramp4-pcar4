@@ -1,6 +1,10 @@
 <template>
     <div class="sm:flex">
-        <panel-container v-for="panelConfig in visible" :key="`${panelConfig.id}`" :panel-config="panelConfig"></panel-container>
+        <panel-container
+            v-for="panelConfig in visible(isExtraSmall)"
+            :key="`${panelConfig.id}`"
+            :panel-config="panelConfig"
+        ></panel-container>
     </div>
 </template>
 
@@ -25,12 +29,14 @@ declare class ResizeObserver {
     }
 })
 export default class PanelStackV extends Vue {
-    @Get('panel/visible') visible!: PanelConfig[];
+    @Get('panel/getVisible!') visible!: (extraSmallScreen: boolean) => PanelConfig[];
     @Sync('panel/width') width!: number;
+    isExtraSmall: boolean = !this.$root.$el.classList.contains('sm');
 
     mounted() {
         const resizeObserver = new ResizeObserver((entries: any) => {
             this.width = entries[0].contentRect.width;
+            this.isExtraSmall = !this.$root.$el.classList.contains('sm');
         });
 
         resizeObserver.observe(this.$el);

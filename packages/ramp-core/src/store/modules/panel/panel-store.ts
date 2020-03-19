@@ -26,7 +26,15 @@ export enum PanelMutation {
     SET_WIDTH = 'SET_WIDTH'
 }
 
-const getters = {};
+const getters = {
+    getVisible: (state: PanelState) => (extraSmallScreen: boolean) => {
+        if (extraSmallScreen && state.visible.length > 0) {
+            return [state.visible.slice().pop()];
+        }
+
+        return state.visible;
+    }
+};
 
 const actions = {
     [PanelAction.addPanel](context: PanelContext, value: PanelConfig): void {
