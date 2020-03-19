@@ -1,5 +1,5 @@
 <template>
-    <div class="absolute top-0 left-0 flex flex-col items-stretch bg-black-75 h-full w-40 md:w-64 pointer-events-auto" v-focus-list>
+    <div class="absolute top-0 left-0 flex flex-col items-stretch bg-black-75 h-full w-40 sm:w-64 pointer-events-auto" v-focus-list>
         <component
             v-for="(item, index) in items"
             :is="item.id"

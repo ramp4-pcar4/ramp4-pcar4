@@ -73,6 +73,8 @@ export interface PanelConfig {
      */
     width?: number;
 
+    maxWidth?: number;
+
     /**
      * Specifies which panel screen to display and optional props to be passed to the screen panel component.
      *

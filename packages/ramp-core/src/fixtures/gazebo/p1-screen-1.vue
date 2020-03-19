@@ -1,5 +1,5 @@
 <template>
-    <panel-screen>
+    <panel-screen style="{max-width: 600px;}">
         <template #header>
             Gazebo/Panel 1/Screen A
         </template>
