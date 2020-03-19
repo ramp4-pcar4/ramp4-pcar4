@@ -56,11 +56,18 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
 import { AgGridVue } from 'ag-grid-vue';
 import ColumnDropdown from '../column-dropdown.vue';
+import { GridStore, GridConfig, GridState } from '../store';
+import TableStateManager from '../store/table-state-manager';
 
 // custom filter templates
 import CustomNumberFilter from './CustomNumberFilter.vue';
 import CustomTextFilter from './CustomTextFilter.vue';
 import CustomHeader from './CustomHeader.vue';
+
+
+const NUM_TYPES: string[] = ['oid', 'double', 'integer'];
+const DATE_TYPE: string = 'date';
+const TEXT_TYPE: string = 'string';
 
 @Component({
     components: {
@@ -72,38 +79,26 @@ import CustomHeader from './CustomHeader.vue';
     }
 })
 export default class TableComponent extends Vue {
-    @Prop() layer!: Object;
+    @Prop() layerUid!: string;
     @Get(LayerStore.layers) layers!: FeatureLayer[];
+    @Sync(`grid/grids`) grids!: { [uid: string]: GridConfig };
 
-    created() {
-        this.gridOptions = {
-            floatingFilter: true,
-            suppressRowTransform: true,
-            onFilterChanged: this.updateFilterInfo,
-            onBodyScroll: this.updateFilterInfo,
-            rowBuffer: 0
-        };
-    }
+    columnApi: any = null;
+    columnDefs: any = [];
+    rowData: any = [];
 
-    data() {
-        return {
-            columnApi: null,
-            columnDefs: null,
-            rowData: null,
-            quicksearch: null,
-            filterInfo: {
-                firstRow: 0,
-                lastRow: 0,
-                visibleRows: 0
-            },
-            filterStatus: '',
-            filterByExtent: false,
-            showFilters: true,
-            lazyFilterEnabled: true
-        };
-    }
+    quicksearch = '';
+    filterInfo = {
+        firstRow: 0,
+        lastRow: 0,
+        visibleRows: 0
+    };
+    filterStatus = '';
 
     beforeMount() {
+        // load the grid config for this layer
+        this.config = this.grids[this.layerUid];
+
         // imported separate components
         this.frameworkComponents = {
             agColumnHeader: CustomHeader,
@@ -111,20 +106,35 @@ export default class TableComponent extends Vue {
             textFloatingFilter: CustomTextFilter
         };
 
-        // should load row data here
-        this.rowData = [];
-        this.columnDefs = [];
+        // set up grid options
+        this.gridOptions = {
+            floatingFilter: this.config.state.colFilter,
+            suppressRowTransform: true,
+            onFilterChanged: this.updateFilterInfo,
+            onBodyScroll: this.updateFilterInfo,
+            rowBuffer: 0
+        };
 
-        const fancyLayer: FeatureLayer = this.layers[1]; // this already got created somewhere, esrimap.vue i think
+        const fancyLayer: FeatureLayer | undefined = this.layers.find((l: any) => l.uid === this.layerUid);
+        if (fancyLayer === undefined) {
+            // this really shouldn't happen unless the wrong API call is made, but maybe we should
+            // do something else here anyway.
+            console.error(`Could not find layer with uid ${this.layerUid}.`);
+            return;
+        }
+
         fancyLayer.isLayerLoaded().then(() => {
             const tableAttributePromise = fancyLayer.getTabularAttributes();
 
             tableAttributePromise.then((tableAttributes: any) => {
                 ['rvSymbol', 'rvInteractive', ...tableAttributes.columns].forEach((column: any) => {
+
+                    // retrieve the field info for the column
+                    let fieldInfo = tableAttributes.fields.find((field: any) => field.name === column.data);
+
                     let col: ColumnDefinition = {
                         headerName: column.title || '',
                         field: column.data || column,
-                        filter: column.title == 'OBJECTID' ? 'agNumberColumnFilter' : 'agTextColumnFilter',
                         isSelector: false,
                         sortable: true,
                         lockPosition: true,
@@ -138,11 +148,14 @@ export default class TableComponent extends Vue {
                     if (column === 'rvSymbol' || column === 'rvInteractive') {
                         this.setUpSymbolsAndInteractive(col, this.columnDefs);
                     } else {
-                        // set up column filters
-                        if (col.filter === 'agNumberColumnFilter') {
-                            this.setUpNumberFilter(col);
-                        } else if (col.filter === 'agTextColumnFilter') {
-                            this.setUpTextFilter(col, this.lazyFilterEnabled)
+                        // set up column filters according to their respective types
+                        // TODO: implement date and selector filters.
+                        if (NUM_TYPES.indexOf(fieldInfo.type) > -1) {
+                            this.setUpNumberFilter(col, this.config.state);
+                            col.filter = 'agNumberColumnFilter';
+                        } else if (fieldInfo.type === TEXT_TYPE) {
+                            this.setUpTextFilter(col, this.config.state);
+                            col.filter = 'agTextColumnFilter';
                         }
 
                         this.columnDefs.push(col);
@@ -168,27 +181,10 @@ export default class TableComponent extends Vue {
         this.gridApi.setQuickFilter(this.quicksearch);
     }
 
-    // unused atm since we want to have lazy filters as default filter mode
-    toggleLazyFilters() {
-        // problem: after applying filters to column on a lazy filters, toggling filters mode does not change the previously filtered column settings
-        // changing search filter mode (WILL WORK WITH TABLE REFRESH)
-        this.lazyFilterEnabled = !this.lazyFilterEnabled;
-        this.columnDefs.forEach((col: any) => {
-            if (col.filter === 'agTextColumnFilter') {
-                this.setUpTextFilter(col, this.lazyFilterEnabled);
-            }
-        });
-        // reset column state
-        this.columnApi.resetColumnState();
-        // clear all active filters
-        this.gridApi.setFilterModel(null);
-        this.gridApi.onFilterChanged();
-    }
-
 
     toggleShowFilters() {
-        this.showFilters = !this.showFilters;
-        this.gridOptions.floatingFilter = this.showFilters;
+        this.gridOptions.floatingFilter = !this.gridOptions.floatingFilter;
+        this.config.state.colFilter = this.gridOptions.floatingFilter;
         this.gridOptions.api.refreshHeader();
     }
 
@@ -205,39 +201,46 @@ export default class TableComponent extends Vue {
     updateFilterStatus() {
         this.filterStatus = `${this.filterInfo.firstRow} - ${this.filterInfo.lastRow} of ${this.filterInfo.visibleRows} entries shown`;
 
-        if(this.filterInfo.visibleRows !== this.rowData.length) {
+        if (this.filterInfo.visibleRows !== this.rowData.length) {
             this.filterStatus += ` (filtered from ${this.rowData.length} records)`;
         }
     }
 
-    setUpNumberFilter(colDef: any) {
+    setUpNumberFilter(colDef: any, state: TableStateManager) {
+        let minVal = state.getColumnFilter(colDef.field + ' min') !== undefined ? state.getColumnFilter(colDef.field + ' min') : '';
+        let maxVal = state.getColumnFilter(colDef.field + ' max') !== undefined ? state.getColumnFilter(colDef.field + ' max') : '';
+
         colDef.floatingFilterComponent = 'numberFloatingFilter';
         colDef.filterParams.inRangeInclusive = true;
         colDef.floatingFilterComponentParams = {
-            suppressFilterButton: true
+            suppressFilterButton: true,
+            stateManager: state,
+            minValDefault: minVal,
+            maxValDefault: maxVal
         };
     }
 
-    setUpTextFilter(colDef: any, lazyFilterEnabled: any) {
+    setUpTextFilter(colDef: any, state: TableStateManager) {
+        let value = state.getColumnFilter(colDef.field) !== undefined ? state.getColumnFilter(colDef.field) : '';
+
         colDef.floatingFilterComponent = 'textFloatingFilter';
         colDef.floatingFilterComponentParams = {
-            suppressFilterButton: true
+            suppressFilterButton: true,
+            stateManager: state,
+            defaultValue: value
         };
+
+        // If we want to add different search methods in the future, consider using some sort of generic search function.
+        // see: https://github.com/ramp4-pcar4/ramp4-pcar4/pull/57#pullrequestreview-377999397
+
         // default to regex filtering for text columns
-        if (!lazyFilterEnabled) {
-            colDef.filterParams.textCustomComparator = function(filter: any, gridValue: any, filterText: any) {
-                const re = new RegExp(`^${filterText.replace(/\*/, '.*')}`);
-                return re.test(gridValue);
-            };
-        } else {
-            colDef.filterParams.textCustomComparator = function(filter: any, gridValue: any, filterText: any) {
-                // treat * as a regular special char with lazy filter on
-                const newFilterText = filterText.replace(/\*/, '\\*');
-                // surround filter text with .* to match anything before and after
-                const re = new RegExp(`^.*${newFilterText}.*`);
-                return re.test(gridValue);
-            };
-        }
+        colDef.filterParams.textCustomComparator = function(filter: any, gridValue: any, filterText: any) {
+            // treat * as a regular special character
+            const newFilterText = filterText.replace(/\*/, '\\*');
+            // surround filter text with .* to match anything before and after
+            const re = new RegExp(`^.*${newFilterText}.*`);
+            return re.test(gridValue);
+        };
 
         // modified from: https://www.ag-grid.com/javascript-grid-filter-text/#text-formatter
         let disregardAccents = function(s: any) {
@@ -334,7 +337,7 @@ export default class TableComponent extends Vue {
 
     clearColumnFilters() {
         this.gridApi.setQuickFilter(null);
-        this.quicksearch = null;
+        this.quicksearch = '';
 
         this.gridOptions.api.setFilterModel({});
         this.gridApi.refreshHeader();
@@ -342,18 +345,21 @@ export default class TableComponent extends Vue {
 }
 
 export default interface TableComponent {
+    config: GridConfig;
     gridOptions: any;
     gridApi: any;
     columnApi: any;
     columnDefs: any;
     rowData: any;
     frameworkComponents: any;
-    quicksearch: any;
-    filterInfo: any;
-    filterStatus: any;
+    quicksearch: string;
+    filterInfo: {
+        firstRow: number;
+        lastRow: number;
+        visibleRows: number;
+    };
+    filterStatus: string;
     filterByExtent: any;
-    showFilters: any;
-    lazyFilterEnabled: any; // default mode set lazyFilters to true
 }
 
 interface ColumnDefinition {
@@ -362,7 +368,7 @@ interface ColumnDefinition {
     headerTooltip?: String;
     alias?: String;
     width?: Number;
-    filter: String;
+    filter?: String;
     filterParams: Object;
     cellRenderer: Function;
     sortable: Boolean;

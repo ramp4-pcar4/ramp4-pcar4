@@ -49,7 +49,7 @@
             <close @click="panel.close()"></close>
         </template>
         <template #content>
-            <TableComponent class="rv-grid" ref="rvGrid"></TableComponent>
+            <TableComponent class="rv-grid" ref="rvGrid" :layerUid="open"></TableComponent>
         </template>
     </panel-screen>
 </template>
@@ -61,7 +61,6 @@ import { Get, Sync, Call } from 'vuex-pathify';
 import { PanelItemAPI } from '@/api';
 import TableComponent from '@/fixtures/grid/table/table.vue';
 
-import { ConfigStore } from '@/store/modules/config';
 import { LayerStore, layer } from '@/store/modules/layer';
 import FeatureLayer from 'ramp-geoapi/dist/layer/FeatureLayer';
 
@@ -75,6 +74,7 @@ export default class Screen1 extends Vue {
     @Prop() header!: String;
 
     @Get(LayerStore.layers) layers!: FeatureLayer[];
+    @Get('grid/open') open: any;
 
     quicksearch: String = '';
     grid: any = undefined;

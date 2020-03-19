@@ -21,12 +21,17 @@ export default class EsriMap extends Vue {
     gapi!: GeoApi;
     map!: Map;
 
+    created() {
+        // temporarily print out loaded layers to console for grid testing purposes.
+        console.log(this.layers);
+    }
+
     @Watch('layers')
     onLayerArrayChange(newValue: BaseLayer[], oldValue: BaseLayer[]) {
         newValue.forEach(layer => {
             // TODO add a proper check for this after
             // if (!oldValue.includes(layer)) {
-                this.map.addLayer(layer);
+            this.map.addLayer(layer);
             // }
         });
     }
