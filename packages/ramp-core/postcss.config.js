@@ -1,7 +1,7 @@
 // purgecss stuff is from https://tailwindcss.com/docs/controlling-file-size
 const purgecss = require('@fullhuman/postcss-purgecss')({
     // Paths to all of the template files in your project
-    content: ['./src/**/*.html', './src/**/*.vue'],
+    content: ['./src/**/*.html', './src/**/*.vue', './node_modules/ag-grid-community/dist/styles/ag-grid.css', './node_modules/ag-grid-community/dist/styles/ag-theme-material.css'],
 
     whitelist: ['xs', 'sm', 'md', 'lg'], // whitelist ramp shell size classes so they are not purged
 
