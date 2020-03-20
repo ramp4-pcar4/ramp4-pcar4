@@ -1,18 +1,16 @@
 <template>
-    <div
+    <!-- this renders a panel screen which is currently in view -->
+    <!-- TODO: add animation transition animation here -->
+    <component
         class="shadow-tm bg-white h-full xs:mr-0 sm:mr-12 last:mr-0 pointer-events-auto"
         :style="{
-            'flex-basis': panelConfig.width ? panelConfig.width + 'px' : '350px',
-            'max-width': panelConfig.maxWidth ? panelConfig.maxWidth + 'px' : Math.max(panelConfig.width, 500) + 'px'
+            'flex-basis': panelConfig.width ? panelConfig.width + 'px' : '350px'
         }"
-        :class="[{ 'flex-grow': panelConfig.maxWidth }]"
-        :tabindex="0"
+        :is="panelConfig.route.id"
+        v-bind="panelConfig.route.props"
+        :panel="panel"
         v-focus-list
-    >
-        <!-- this renders a panel screen which is currently in view -->
-        <!-- TODO: add animation transition animation here -->
-        <component :is="panelConfig.route.id" v-bind="panelConfig.route.props" :panel="panel"></component>
-    </div>
+    ></component>
 </template>
 
 <script lang="ts">
