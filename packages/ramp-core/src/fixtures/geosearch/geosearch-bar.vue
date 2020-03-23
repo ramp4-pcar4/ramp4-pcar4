@@ -25,7 +25,7 @@ export default class GeosearchBar extends Vue {
     @Call(GeosearchStore.setSearchTerm) setSearchTerm!: (searchTerm: string) => void;
 
     // debounce function for search term change
-    onSearchTermChange = _.debounce(function(searchTerm: string) {
+    onSearchTermChange = _.debounce((searchTerm: string) => {
         this.setSearchTerm(searchTerm);
     }, 500);
 }

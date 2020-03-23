@@ -45,6 +45,9 @@ const mutations = {
     },
     SET_TYPE: (state: GeosearchState, type: string) => {
         state.queryParams.type = type;
+    },
+    SET_EXTENT: (state: GeosearchState, extent: any) => {
+        state.queryParams.extent = extent;
     }
 };
 
@@ -60,26 +63,27 @@ const actions = {
         // when no search value is specified
         if (!context.state.searchVal) {
             context.commit('SET_SEARCH_RESULTS', []);
+            context.commit('SET_SAVED_RESULTS', []);
             context.commit('SET_LOADING_RESULTS', false);
-        }
+        } else {
+            // run new query if different search term is entered
+            if (context.state.searchVal && context.state.searchVal !== context.state.lastSearchVal) {
+                context.state.GSservice.query(`${context.state.searchVal}*`).then((data: any) => {
+                    // store data for current search term
+                    context.commit('SET_LAST_SEARCH_VAL', context.state.searchVal);
+                    context.commit('SET_SAVED_RESULTS', data);
 
-        // run new query if different search term is entered
-        if (context.state.searchVal && context.state.searchVal !== context.state.lastSearchVal) {
-            context.state.GSservice.query(`${context.state.searchVal}*`).then((data: any) => {
-                // store data for current search term
-                context.commit('SET_LAST_SEARCH_VAL', context.state.searchVal);
-                context.commit('SET_SAVED_RESULTS', data);
-
-                // replace old saved results
-                let filteredData = filter(context.state.queryParams, context.state.savedResults);
+                    // replace old saved results
+                    let filteredData = filter(context.state.resultsVisible, context.state.queryParams, context.state.savedResults);
+                    context.commit('SET_SEARCH_RESULTS', filteredData || []);
+                    context.commit('SET_LOADING_RESULTS', false);
+                });
+            } else {
+                // otherwise no new search term so we only need to filter on query param values
+                let filteredData = filter(context.state.resultsVisible, context.state.queryParams, context.state.savedResults);
                 context.commit('SET_SEARCH_RESULTS', filteredData || []);
                 context.commit('SET_LOADING_RESULTS', false);
-            });
-        } else {
-            // otherwise no new search term so we only need to filter on query param values
-            let filteredData = filter(context.state.queryParams, context.state.savedResults);
-            context.commit('SET_SEARCH_RESULTS', filteredData || []);
-            context.commit('SET_LOADING_RESULTS', false);
+            }
         }
     },
     /**
@@ -115,19 +119,43 @@ const actions = {
         context.commit('SET_SEARCH_VAL', searchTerm);
         // run query after search term changes
         context.dispatch('runQuery');
+    },
+    /**
+     * Toggle map extent filter.
+     *
+     * @function setMapExtent
+     * @param   {any}    mapExtent   current map extent info
+     */
+    setMapExtent: function(context: GeosearchContext, mapExtent: any): void {
+        context.commit('SET_RESULTS_VISIBLE', mapExtent.visible);
+        // TODO: handle different types of extent/format extent object differently here?
+        context.commit('SET_EXTENT', mapExtent.extent);
+        // run query after toggling map extent filters
+        context.dispatch('runQuery');
     }
 };
 
 /**
  * Helper function that filters based on query parameters.
  *
- * @function filter (potentially rename)
+ * @function filter
+ * @param {Boolean} visibleOnly Apply map extent filters
  * @param {Object}  queryParams Contains which filter to process
- * @param {Array}   data        An array of locations from the query
+ * @param {Array}   data        An array of results from the query
  */
-function filter(queryParams: any, data: Array<any>) {
-    if (queryParams.extent) {
-        // TODO: handle filter by extent
+function filter(visibleOnly: boolean, queryParams: any, data: Array<any>) {
+    // console.log("visible only: ", visibleOnly);
+    if (visibleOnly && queryParams.extent) {
+        // TODO: how to filter results by extent?
+        // data = data.filter(r => {
+        //     // console.log('data point: ', r);
+        //     !(
+        //         r.bbox[0] > queryParams.extent.xmin ||
+        //         r.bbox[2] < queryParams.extent.xmax ||
+        //         r.bbox[3] < queryParams.extent.ymin ||
+        //         r.bbox[1] > queryParams.extent.ymax
+        //     );
+        // });
     }
     if (queryParams.province && queryParams.province !== '...') {
         data = data.filter(r => r.location.province.name && r.location.province.name === queryParams.province);
@@ -164,6 +192,10 @@ export enum GeosearchStore {
      */
     resultsVisible = 'geosearch/resultsVisible',
     /**
+     * (State) resultsVisible: boolean
+     */
+    loadingResults = 'geosearch/loadingResults',
+    /**
      * (Action) runQuery: () => Promise
      */
     runQuery = 'geosearch/runQuery',
@@ -178,7 +210,11 @@ export enum GeosearchStore {
     /**
      * (Action) setSearchTerm: (searchTerm: string)
      */
-    setSearchTerm = 'geosearch/setSearchTerm'
+    setSearchTerm = 'geosearch/setSearchTerm',
+    /**
+     * (Action) setMapExtent: (mapExtent: any)
+     */
+    setMapExtent = 'geosearch/setMapExtent'
 }
 
 export function geosearch() {

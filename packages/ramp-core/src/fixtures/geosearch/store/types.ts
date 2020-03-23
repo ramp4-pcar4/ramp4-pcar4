@@ -16,19 +16,17 @@ class Types {
         });
     }
 
+    // remove any excluded types indicated by config
     filterValidTypes(exclude?: string | string[]): defs.GenericObjectType {
         if (this.filterComplete) {
             return this.validTypes;
         }
-
         exclude = typeof exclude === 'string' ? [exclude] : exclude;
-
         if (exclude && exclude.length > 0) {
             for (const key of exclude) {
                 delete this.validTypes[key];
             }
         }
-
         this.filterComplete = true;
         return this.validTypes;
     }
