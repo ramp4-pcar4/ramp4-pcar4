@@ -11,6 +11,7 @@ dependencies:
   '@tailwindcss/custom-forms': 0.2.1_tailwindcss@1.1.4
   '@types/arcgis-js-api': 4.14.0
   '@types/clone-deep': 4.0.1
+  '@types/debounce': 1.2.0
   '@types/dojo': 1.9.42
   '@types/geojson': 1.0.6
   '@types/jest': 24.9.1
@@ -32,6 +33,7 @@ dependencies:
   await-to-js: 2.1.1
   awesome-typescript-loader: 5.2.1_typescript@3.5.3
   axios: 0.19.2
+  debounce: 1.2.0
   deepmerge: 4.2.2
   eslint: 5.16.0
   eslint-plugin-prettier: 3.1.2_eslint@5.16.0+prettier@1.19.1
@@ -1278,6 +1280,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-rr+OQyAjxze7GgWrSaJwydHStIhHq2lvY3BOC2Mj7KnzI7XK0Uw1TOOdI9lDoajEbSWLiYgoo4f1R51erQfhPQ==
+  /@types/debounce/1.2.0:
+    dev: false
+    resolution:
+      integrity: sha512-bWG5wapaWgbss9E238T0R6bfo5Fh3OkeoSt245CM7JJwVwpw6MEBCbIxLq5z8KzsE3uJhzcIuQkyiZmzV3M/Dw==
   /@types/dojo/1.9.42:
     dev: false
     resolution:
@@ -3871,6 +3877,10 @@ packages:
     dev: false
     resolution:
       integrity: sha1-sgOOhG3DO6pXlhKNCAS0VbjB4h0=
+  /debounce/1.2.0:
+    dev: false
+    resolution:
+      integrity: sha512-mYtLl1xfZLi1m4RtQYlZgJUNQjl4ZxVnHzIR8nLLgi4q1YT8o/WM+MK/f8yfcc9s5Ir5zRaPZyZU6xs1Syoocg==
   /debug/2.6.9:
     dependencies:
       ms: 2.0.0
@@ -11943,6 +11953,7 @@ packages:
       '@fullhuman/postcss-purgecss': 1.3.0
       '@tailwindcss/custom-forms': 0.2.1_tailwindcss@1.1.4
       '@types/clone-deep': 4.0.1
+      '@types/debounce': 1.2.0
       '@types/jest': 24.9.1
       '@types/lodash': 4.14.149
       '@vue/cli-plugin-babel': 4.1.2_@vue+cli-service@4.1.2
@@ -11959,6 +11970,7 @@ packages:
       ag-grid-vue: 22.1.1_2745769b0d794b5814353541496f578a
       await-to-js: 2.1.1
       axios: 0.19.2
+      debounce: 1.2.0
       deepmerge: 4.2.2
       eslint: 5.16.0
       eslint-plugin-prettier: 3.1.2_eslint@5.16.0+prettier@1.19.1
@@ -11985,7 +11997,7 @@ packages:
     peerDependencies:
       webpack: '*'
     resolution:
-      integrity: sha512-aBJImMP9kRKHs6XS0zrzJYDewQ+TQeITJyaTQciNLPCw+3K/VjJiQKVs+9D49rD3/RiqkawjFn3zw2zpeRBfjg==
+      integrity: sha512-LEKhpDXUaMO9HDYtvP7TFf9lGu+In9+L6+PpRzd/1suYGI7lr7cJjuk30Gzqkh3rZNtXrEJEprDMa+roJ3Ea1w==
       tarball: 'file:projects/ramp-core.tgz'
     version: 0.0.0
   'file:projects/ramp-geoapi.tgz':
@@ -12034,6 +12046,7 @@ specifiers:
   '@tailwindcss/custom-forms': ^0.2.1
   '@types/arcgis-js-api': ~4.14.0
   '@types/clone-deep': ~4.0.1
+  '@types/debounce': ^1.2.0
   '@types/dojo': ^1.9.41
   '@types/geojson': ^1.0.0
   '@types/jest': ^24.0.19
@@ -12055,6 +12068,7 @@ specifiers:
   await-to-js: ^2.1.1
   awesome-typescript-loader: 5.2.1
   axios: 0.19.2
+  debounce: ^1.2.0
   deepmerge: ~4.2.2
   eslint: ^5.16.0
   eslint-plugin-prettier: ^3.1.1

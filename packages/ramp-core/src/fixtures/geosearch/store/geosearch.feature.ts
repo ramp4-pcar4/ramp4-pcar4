@@ -2,9 +2,16 @@
  * @namespace geoSearch
  * @description A feature that provides geo location search
  */
+import Provinces from './provinces';
+import Types from './types';
+import * as Q from './query';
+import * as defs from './definitions';
 
-import { GeoSearchObj } from './geosearchObj';
+// geosearch query services
+const GEO_LOCATE_URL = 'https://geogratis.gc.ca/services/geolocation/@{language}/locate';
+const GEO_NAMES_URL = 'https://geogratis.gc.ca/services/geoname/@{language}/geonames.json';
 
+// translates codes from json file to province abbreviations
 const CODE_TO_ABBR = {
     10: 'NL',
     11: 'PE',
@@ -36,17 +43,39 @@ const CODE_TO_ABBR = {
  * }
  */
 export class GeoSearchUI {
-    constructor(config = {}) {
-        // initialize geosearch object and default config properties if not provided
-        (<any>this)._geoSearchObj = new GeoSearchObj(config);
-        (<any>this)._lang = (<any>config).language || 'en';
+    config: defs.MainConfig;
+
+    constructor(uConfig: any) {
+        // set default URLS if none provided and search/replace language in string (if exists)
+        const language = uConfig.language ? uConfig.language : 'en';
+        let geoLocateUrl = uConfig.geoLocateUrl ? uConfig.geoLocateUrl : GEO_LOCATE_URL;
+        let geoNameUrl = uConfig.geoNameUrl ? uConfig.geoNameUrl : GEO_NAMES_URL;
+        geoLocateUrl = geoLocateUrl.replace('@{language}', language);
+        geoNameUrl = geoNameUrl.replace('@{language}', language);
+
+        // set default config values
+        const categories = uConfig.settings ? uConfig.settings.categories : [];
+        const sortOrder = uConfig.settings ? uConfig.settings.sortOrder : [];
+        const maxResults = uConfig.settings ? uConfig.settings.maxResults : 100;
+        const officialOnly = uConfig.settings ? uConfig.settings.officialOnly : false;
+
+        // match a new config object with the one defined in definitions.ts
+        this.config = {
+            language,
+            geoNameUrl,
+            geoLocateUrl,
+            types: Types(language), // list of type filters
+            provinces: Provinces(language), // list of province filters
+            categories,
+            sortOrder,
+            maxResults,
+            officialOnly
+        };
+        // remove any types to be excluded from config
+        this.config.types.filterValidTypes(uConfig.excludeTypes);
         (<any>this)._provinceList = [];
         (<any>this)._typeList = [];
-        (<any>this)._excludedTypes = (<any>config).excludeTypes || [];
-    }
-
-    get lang() {
-        return (<any>this)._lang;
+        (<any>this)._excludedTypes = uConfig.excludeTypes || [];
     }
     get provinceList() {
         return (<any>this)._provinceList;
@@ -54,7 +83,6 @@ export class GeoSearchUI {
     get typeList() {
         return (<any>this)._typeList;
     }
-
     set provinceList(val) {
         (<any>this)._provinceList = val;
     }
@@ -81,8 +109,9 @@ export class GeoSearchUI {
      * @return {Promise}
      */
     query(q: string) {
-        return (<any>this)._geoSearchObj.query(q.toUpperCase()).onComplete.then((q: any) => {
-            let featureResult: any[] = [];
+        // run query based on search string input
+        return Q.make(this.config, q.toUpperCase()).onComplete.then((q: any) => {
+            // format returned query results appropriately to support zoom/extent functionality
             let queryResult = q.results.map((item: any) => ({
                 name: item.name,
                 bbox: item.bbox,
@@ -95,7 +124,7 @@ export class GeoSearchUI {
                     province: this.findProvinceObj(item.province)
                 }
             }));
-            return featureResult.concat(queryResult);
+            return [].concat(queryResult);
         });
     }
 
@@ -114,8 +143,8 @@ export class GeoSearchUI {
         };
         provinceList.push(reset);
 
-        // obtain the province filter data from stored geosearch object
-        let rawProvinces = (<any>this)._geoSearchObj.config.provinces.list;
+        // obtain province filters stored in config
+        let rawProvinces = this.config.provinces.list;
         for (let code in rawProvinces) {
             provinceList.push({
                 code: code,
@@ -141,8 +170,8 @@ export class GeoSearchUI {
         };
         typeList.push(reset);
 
-        // obtain the type filter data from stored geosearch object
-        let rawTypes = (<any>this)._geoSearchObj.config.types.allTypes;
+        // obtain the type filters stored in config
+        let rawTypes = this.config.types.allTypes;
         for (let type in rawTypes) {
             if (!(<any>this)._excludedTypes.includes(type)) {
                 typeList.push({
