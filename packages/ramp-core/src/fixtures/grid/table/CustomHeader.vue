@@ -61,7 +61,7 @@ export default class CustomHeader extends Vue {
         const columns: any = this.columnApi.getAllDisplayedColumns();
         const allColumns: any = this.columnApi.getAllGridColumns();
 
-        let columnIdx: number = columns.findIndex((col: any) => col.colId === this.params.displayName);
+        let columnIdx: number = columns.findIndex((col: any) => col.colId === this.params.column.colId);
         if (columnIdx === 0) return;
 
         const index: number = allColumns.indexOf(columns[columnIdx - 1]);
@@ -77,7 +77,7 @@ export default class CustomHeader extends Vue {
         const columns = this.columnApi.getAllDisplayedColumns();
         const allColumns = this.columnApi.getAllGridColumns();
 
-        let columnIdx = columns.findIndex((col: any) => col.colId === this.params.displayName);
+        let columnIdx = columns.findIndex((col: any) => col.colId === this.params.column.colId);
         if (columnIdx === columns.length - 1) return;
 
         const index = allColumns.indexOf(columns[columnIdx + 1]);
