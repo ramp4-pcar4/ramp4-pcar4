@@ -131,6 +131,26 @@ export class PanelAPI extends APIScope {
 
         return new PanelItemAPI(this.$iApi, config);
     }
+
+    /**
+     * Sets the width of the specified panel
+     *
+     * @param item panel to modify
+     * @param width the width to set
+     * @returns {{PanelItemAPI | null}}
+     * @memberof PanelAPI
+     */
+    setWidth(item: string | PanelItemAPI, width: number | undefined): PanelItemAPI | null {
+        const panel = this.get(item);
+
+        if (!panel) {
+            return null;
+        }
+
+        this.$vApp.$store.set(`panel/items@${panel.id}.width`, width);
+
+        return panel;
+    }
 }
 
 export class PanelItemAPI extends APIScope {
@@ -228,5 +248,30 @@ export class PanelItemAPI extends APIScope {
         this.$iApi.panel.route(this, route);
 
         return this;
+    }
+
+    /**
+     * Sets width to the specified value.
+     * This is a proxy to `RAMP.panel.setWidth(...)`.
+     *
+     * @param width the width to set
+     * @returns {this}
+     * @memberof PanelItemAPI
+     */
+    setWidth(width: number | undefined): this {
+        this.$iApi.panel.setWidth(this, width);
+
+        return this;
+    }
+
+    /**
+     * Returns the width of the panel (as set in the config)
+     *
+     * @readonly
+     * @type number | undefined
+     * @memberof PanelItemAPI
+     */
+    get width(): number | undefined {
+        return this._config.width;
     }
 }
