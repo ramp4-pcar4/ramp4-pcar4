@@ -10,69 +10,77 @@ import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 
 @Component({})
 export default class CustomNumberFilter extends Vue {
-    minVal: any = null;
-    maxVal: any = null;
-    colDef: any;
-
     beforeMount() {
-        this.colDef = this.params.column.colDef;
+        // Load previously stored values (if saved in table state manager)
         this.minVal = this.params.minValDefault;
         this.maxVal = this.params.maxValDefault;
+
+        // Apply the default values to the column filter.
         this.minValChanged();
         this.maxValChanged();
     }
 
     minValChanged() {
         this.minVal = this.minVal !== '' && !isNaN(this.minVal) ? this.minVal : null;
-        let that = this;
-        this.params.parentFilterInstance(function(instance: any) {
-            that.setFilterModel(instance);
-            that.params.stateManager.setColumnFilter(that.colDef.field + ' min', that.minVal);
+        this.params.parentFilterInstance((instance: any) => {
+            this.setFilterModel(instance);
+
+            // Save the new filter value in the state manager. Allows for quick recovery if the grid is
+            // closed and re-opened.
+            this.params.stateManager.setColumnFilter(this.params.column.colDef.field + ' min', this.minVal);
         });
     }
 
     maxValChanged() {
         this.maxVal = this.maxVal !== '' && !isNaN(this.maxVal) ? this.maxVal : null;
-        let that = this;
-        this.params.parentFilterInstance(function(instance: any) {
-            that.setFilterModel(instance);
-            that.params.stateManager.setColumnFilter(that.colDef.field + ' max', that.maxVal);
+        this.params.parentFilterInstance((instance: any) => {
+            this.setFilterModel(instance);
+
+            // Save the new filter value in the state manager. Allows for quick recovery if the grid is
+            // closed and re-opened.
+            this.params.stateManager.setColumnFilter(this.params.column.colDef.field + ' max', this.maxVal);
         });
     }
 
     setFilterModel(instance: any) {
-        let that = this;
-        if(isNaN(that.minVal) || that.minVal == null) that.minVal = '';
-        if(isNaN(that.maxVal) || that.maxVal == null) that.maxVal = '';
+        // If the value is not a number, or is null, set its value to the empty string.
+        if(isNaN(this.minVal) || this.minVal === null) this.minVal = '';
+        if(isNaN(this.maxVal) || this.maxVal === null) this.maxVal = '';
 
-        if (that.maxVal !== '' && that.minVal !== '') {
+        if (this.maxVal !== '' && this.minVal !== '') {
+            // If both min and max values are set, set the filter to display
+            // all items in between the two numbers.
             instance.setModel({
                 filterType: 'number',
                 type: 'inRange',
-                filter: that.minVal,
-                filterTo: that.maxVal
+                filter: this.minVal,
+                filterTo: this.maxVal
             });
-        } else if (that.minVal === '') {
+        } else if (this.minVal === '') {
+            // If only the maximum value is set, set the filter to display all items
+            // that are lower than it.
             instance.setModel({
                 filterType: 'number',
                 type: 'lessThanOrEqual',
-                filter: that.maxVal
+                filter: this.maxVal
             });
-        } else if (that.maxVal === '') {
+        } else if (this.maxVal === '') {
+            // If only the minimum value is set, set the filter to display all items
+            // that are higher than it.
             instance.setModel({
                 filterType: 'number',
                 type: 'greaterThanOrEqual',
-                filter: that.minVal
+                filter: this.minVal
             });
-            // otherwise clear filters
         } else {
+            // Clear the filter if neither value is set.
             instance.setModel(null);
         }
         this.params.api.onFilterChanged();
     }
 
     onParentModelChanged(parentModel: any) {
-        if(parentModel == null) {
+        if (parentModel === null) {
             this.minVal = '';
             this.maxVal = '';
         }
