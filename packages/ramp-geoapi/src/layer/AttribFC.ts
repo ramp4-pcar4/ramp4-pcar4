@@ -367,7 +367,7 @@ export default class AttribFC extends BaseFC {
                 }
             */
             } else {
-                if (this.isUn(opts.map)) {
+                if (this.isUndefined(opts.map)) {
                     throw new Error ('Map parameter must be provided for fetchGraphic calls on server based layers that want geometry in the result');
                 }
                 needWebGeom = true;
@@ -397,7 +397,7 @@ export default class AttribFC extends BaseFC {
                     resultFeat.geometry = webFeat.geometry;
                 }
 
-                if (needWebAttr || this.isUn(this.quickCache.getAttribs(objectId))) {
+                if (needWebAttr || this.isUndefined(this.quickCache.getAttribs(objectId))) {
                     // extra check in the if is for efficiency. attributes get downloaded in the request
                     // regardless if we wanted them. if we didn't want them, but didn't have them cached,
                     // will cache them anyways to save another hit later.

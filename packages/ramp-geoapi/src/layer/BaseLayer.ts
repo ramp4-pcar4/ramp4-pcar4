@@ -85,7 +85,7 @@ export default class BaseLayer extends BaseBase {
     // incarnation of a layer to preserve continuity during a reload
     bestUid(idx?: number): string {
 
-        if (!this.isUn(idx) && !this.isUn(this.reloadTree)) {
+        if (!this.isUndefined(idx) && !this.isUndefined(this.reloadTree)) {
             // we have the ingredients for a reload scenario.
             // if we find an old uid from the last incarnation, use it.
             const t = this.reloadTree.findChildByIdx(idx);
@@ -320,7 +320,7 @@ export default class BaseLayer extends BaseBase {
         // highscool cs IF party
 
         // default request
-        if (this.isUn(layerIdx)) {
+        if (this.isUndefined(layerIdx)) {
             if (validRoot) {
                 // requesting the root layer, return nothing
                 return undefined;
@@ -349,7 +349,7 @@ export default class BaseLayer extends BaseBase {
                 // TODO would it be kinder/friendlier to return the first child fc?
                 throw new Error(`Attempt to access a function on layer root that only applies to an index of the layer [layerid ${this.innerLayer.id}]`);
             }
-        } else if (this.isUn(this.fcs[workingIdx])) {
+        } else if (this.isUndefined(this.fcs[workingIdx])) {
             // passed a non-existing index/uid
             throw new Error(`Attempt to access non-existing layer index [layerid ${this.innerLayer.id}, lookup value ${layerIdx}]`);
         } else {

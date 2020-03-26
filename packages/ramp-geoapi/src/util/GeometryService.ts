@@ -266,7 +266,6 @@ export default class GeometryService extends BaseBase {
     }
 
     convEsriExtentToRamp(esriExtent: esri.Extent, id?: number | string): RampAPI.Extent {
-        console.log('incoming extent in esri format', esriExtent);
         return RampAPI.Extent.fromParams(id, esriExtent.xmin, esriExtent.ymin,
             esriExtent.xmax, esriExtent.ymax, this.convEsriSrToSr(esriExtent.spatialReference));
     }

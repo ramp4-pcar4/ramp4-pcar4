@@ -238,10 +238,10 @@ export class MapImageLayer extends AttribLayer {
             const subC: RampLayerMapImageLayerEntryConfig = subConfigs[sid];
 
             if (subLayer.sublayers && subLayer.sublayers.length > 0) {
-                // group sublayer. set up our tree for the client, then crawl childs.
+                // group sublayer. set up our tree for the client, then crawl children.
                 const gName = (subC ? subC.name : '') || subLayer.title || ''; // config if exists, else server, else none
                 const treeGroup = new TreeNode(sid, '', gName, false); // TODO leaving uid blank. there is no object to tie back to. ensure not a problem for vue bindings
-                parentTreeNode.childs.push(treeGroup);
+                parentTreeNode.children.push(treeGroup);
 
                 // process the kids in the group.
                 subLayer.sublayers.forEach((subSubLayer: esri.Sublayer) => {
@@ -259,7 +259,7 @@ export class MapImageLayer extends AttribLayer {
                 }
 
                 const treeLeaf = new TreeNode(sid, this.fcs[sid].uid, this.fcs[sid].name, true);
-                parentTreeNode.childs.push(treeLeaf);
+                parentTreeNode.children.push(treeLeaf);
             }
         };
 
@@ -299,7 +299,7 @@ export class MapImageLayer extends AttribLayer {
                 const subC: RampLayerMapImageLayerEntryConfig = subConfigs[mlFC.layerIdx];
                 if (subC) {
                     mlFC.setVisibility(subC.state.visibility); // TODO do we need an init flag? perhaps the layer will already be invisible while this is getting set
-                    if (!this.isUn(subC.state.opacity)) {
+                    if (!this.isUndefined(subC.state.opacity)) {
                         // mlFC.setOpacity(subC.state.opacity); // TODO uncomment when opacity is coded
                     }
                     // mlFC.setQueryable(subC.state.query); // TODO uncomment when done
@@ -362,7 +362,7 @@ export class MapImageLayer extends AttribLayer {
 
     getName (layerIdx: number | string = undefined): string {
         const fc = this.getFC(layerIdx, true);
-        if (this.isUn(fc)) {
+        if (this.isUndefined(fc)) {
             return this.name;
         } else {
             // see comment in getOpacity
@@ -379,7 +379,7 @@ export class MapImageLayer extends AttribLayer {
      */
     getVisibility (layerIdx: number | string = undefined): boolean {
         const fc = this.getFC(layerIdx, true);
-        if (this.isUn(fc)) {
+        if (this.isUndefined(fc)) {
             return this.innerLayer.visible;
         } else {
             // see comment in getOpacity
@@ -396,7 +396,7 @@ export class MapImageLayer extends AttribLayer {
      */
     setVisibility (value: boolean, layerIdx: number | string = undefined): void {
         const fc = this.getFC(layerIdx, true);
-        if (this.isUn(fc)) {
+        if (this.isUndefined(fc)) {
             this.innerLayer.visible = value;
         } else {
             // see comment in getOpacity
@@ -413,7 +413,7 @@ export class MapImageLayer extends AttribLayer {
      */
     getOpacity (layerIdx: number | string = undefined): number {
         const fc = this.getFC(layerIdx, true);
-        if (this.isUn(fc) || !this.isDynamic) {
+        if (this.isUndefined(fc) || !this.isDynamic) {
             return this.innerLayer.opacity;
         } else {
             // this is a bit redundant / inefficient. we could just do fc.getOpacity()
@@ -436,7 +436,7 @@ export class MapImageLayer extends AttribLayer {
      */
     setOpacity (value: number, layerIdx: number | string = undefined): void {
         const fc = this.getFC(layerIdx, true);
-        if (this.isUn(fc) || !this.isDynamic) {
+        if (this.isUndefined(fc) || !this.isDynamic) {
             this.innerLayer.opacity = value;
 
             // TODO check our implementation inside MapImageFC. we might need to adjust the opacity value of all the
@@ -459,7 +459,7 @@ export class MapImageLayer extends AttribLayer {
     /*
     getScaleSet (layerIdx: number | string = undefined): ScaleSet {
         const fc = this.getFC(layerIdx, true);
-        if (this.isUn(fc)) {
+        if (this.isUndefined(fc)) {
             return this.scaleSet;
         } else {
             return this.getFC(fc.layerIdx).scaleSet;
