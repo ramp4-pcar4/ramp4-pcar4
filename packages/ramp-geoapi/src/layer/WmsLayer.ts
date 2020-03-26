@@ -93,7 +93,7 @@ export class WmsLayer extends BaseLayer {
         const wmsFC = new WmsFC(this.infoBundle(), this, 0);
         this.fcs[0] = wmsFC;
 
-        this.layerTree.childs.push(new TreeNode(0, wmsFC.uid, this.name));
+        this.layerTree.children.push(new TreeNode(0, wmsFC.uid, this.name));
         // TODO see if we need to re-synch the parent name
         // this.layerTree.name = this.name;
 

@@ -26,11 +26,11 @@ Most layers have one single logical component and a basic tree. The structure is
 {
     layerIdx: -1,
     name: "Fancy Layer",
-    childs: [
+    children: [
         {
             layerIdx: 4,
             name: "Fancy Layer",
-            childs: [],
+            children: [],
             isLayer: true,
             uid: "432rubbishasdfsdfad"
         }
@@ -46,29 +46,29 @@ A Map Image Layer composed of multiple sources could have a more structured resu
 {
     layerIdx: -1,
     name: "Restaurants",
-    childs: [
+    children: [
         {
             layerIdx: 4,
             name: "Fine Dining",
-            childs: [],
+            children: [],
             isLayer: true,
             uid: "432rubbishasdfsdfad"
         },
         {
             layerIdx: 6,
             name: "Fast Food",
-            childs: [
+            children: [
                 {
                     layerIdx: 7,
                     name: "Burger Joints",
-                    childs: [],
+                    children: [],
                     isLayer: true,
                     uid: "765rubbishasdfsdfad"
                 },
                 {
                     layerIdx: 9,
                     name: "Pizza Parlours",
-                    childs: [],
+                    children: [],
                     isLayer: true,
                     uid: "988rubbishasdfsdfad"
                 }

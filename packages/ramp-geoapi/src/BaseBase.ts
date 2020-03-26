@@ -35,7 +35,7 @@ export default class BaseBase {
      * @param varr what you want to check
      * @returns {boolean} if the thing is undefined
      */
-    protected isUn(varr: any): boolean {
+    protected isUndefined(varr: any): boolean {
         // i make a function cause i hate typing this statement
         return typeof varr === 'undefined';
     }

@@ -738,7 +738,7 @@ export default class SymbologyService extends BaseBase {
         // when no layer has been found it can be a layer whitout a legend like annotation layer
         // in this case, do not apply a renderer
         let renderer: Object;
-        if (!this.isUn(layerLegend)) {
+        if (!this.isUndefined(layerLegend)) {
             // make the mock renderer
 
             // this is in arcgis server format. the fromJSON() call below converts it to JS API format.
@@ -831,7 +831,7 @@ export default class SymbologyService extends BaseBase {
         // derive renderer for specified layer
         let fakeRenderer: BaseRenderer;
         let intIndex: number;
-        if (this.isUn(layerIndex)) {
+        if (this.isUndefined(layerIndex)) {
             intIndex = 0;
             fakeRenderer = this.mapServerLegendToRendererAll(serverLegendData);
         }

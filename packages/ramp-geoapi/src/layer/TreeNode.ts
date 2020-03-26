@@ -2,15 +2,15 @@
 export default class TreeNode {
     layerIdx: number;
     name: string;
-    childs: Array<TreeNode>;
-    isLayer: boolean; // false for groups. effectively a shortcut for `childs.length === 0`
+    children: Array<TreeNode>;
+    isLayer: boolean; // false for groups. effectively a shortcut for `children.length === 0`
     uid: string;
 
     constructor (idx: number, uid: string, name: string = '', isLayer: boolean = true) {
         this.layerIdx = idx;
         this.name = name;
         this.isLayer = isLayer;
-        this.childs = [];
+        this.children = [];
         this.uid = uid;
     }
 
@@ -20,7 +20,7 @@ export default class TreeNode {
         if (this.uid === uid) {
             return this;
         } else {
-            return this.childs.find(t => t.findChildByUid(uid));
+            return this.children.find(t => t.findChildByUid(uid));
         }
     }
 
@@ -30,7 +30,7 @@ export default class TreeNode {
         if (this.layerIdx === idx) {
             return this;
         } else {
-            return this.childs.find(t => t.findChildByIdx(idx));
+            return this.children.find(t => t.findChildByIdx(idx));
         }
     }
 

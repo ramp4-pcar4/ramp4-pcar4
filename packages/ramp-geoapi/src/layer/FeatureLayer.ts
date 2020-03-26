@@ -110,7 +110,7 @@ export class FeatureLayer extends AttribLayer {
         const featFC = new FeatureFC(this.infoBundle(), this, featIdx);
         this.fcs[featIdx] = featFC;
         featFC.serviceUrl = layerUrl;
-        this.layerTree.childs.push(new TreeNode(featIdx, featFC.uid, this.name)); // TODO verify name is populated at this point
+        this.layerTree.children.push(new TreeNode(featIdx, featFC.uid, this.name)); // TODO verify name is populated at this point
         // TODO see if we need to re-synch the parent name
         // this.layerTree.name = this.name;
 
