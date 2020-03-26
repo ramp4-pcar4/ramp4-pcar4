@@ -106,6 +106,29 @@ export class InstanceAPI {
         this._eventBus.$emit(event, ...args);
         return this;
     }
+
+    /**
+     * The 'screen' size for the app. Returns the largest screen class on the element; 'lg', 'md', 'sm' or 'xs'
+     *
+     * @readonly
+     * @type string | null
+     * @memberof InstanceAPI
+     */
+    get screenSize(): string | null {
+        if (!this.$vApp || !this.$vApp.$el) {
+            return null;
+        }
+        const classList = this.$vApp.$el.classList;
+        if (classList.contains('lg')) {
+            return 'lg';
+        } else if (classList.contains('md')) {
+            return 'md';
+        } else if (classList.contains('sm')) {
+            return 'sm';
+        } else {
+            return 'xs';
+        }
+    }
 }
 
 /**

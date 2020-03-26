@@ -39,6 +39,10 @@ class GazeboFixture extends FixtureConfigHelper {
             route: {
                 id: 'p-2-screen-2',
                 props: { greeting: 'Default greeting!' }
+            },
+            style: {
+                'flex-grow': '1',
+                'max-width': '500px'
             }
         };
 

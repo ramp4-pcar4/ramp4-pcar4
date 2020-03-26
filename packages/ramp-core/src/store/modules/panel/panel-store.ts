@@ -27,8 +27,8 @@ export enum PanelMutation {
 }
 
 const getters = {
-    getVisible: (state: PanelState) => (extraSmallScreen: boolean) => {
-        if (extraSmallScreen && state.visible.length > 0) {
+    getVisible: (state: PanelState) => (screenSize: string) => {
+        if (screenSize === 'xs' && state.visible.length > 0) {
             return [state.visible.slice().pop()];
         }
 

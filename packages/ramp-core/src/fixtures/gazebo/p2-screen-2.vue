@@ -1,5 +1,5 @@
 <template>
-    <panel-screen class="flex-grow" :style="{ 'max-width': '600px' }">
+    <panel-screen>
         <template #header>
             Gazebo/Panel 2/Screen B
         </template>
