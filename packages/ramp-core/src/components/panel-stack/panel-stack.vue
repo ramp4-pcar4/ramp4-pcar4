@@ -1,7 +1,7 @@
 <template>
     <div class="sm:flex">
         <panel-container
-            v-for="panelConfig in visible(isExtraSmall)"
+            v-for="panelConfig in visible($iApi.screenSize)"
             :key="`${panelConfig.id}`"
             :panel-config="panelConfig"
         ></panel-container>

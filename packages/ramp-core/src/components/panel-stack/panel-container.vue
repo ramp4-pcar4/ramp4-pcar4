@@ -1,16 +1,15 @@
 <template>
-    <!-- this renders a panel screen which is currently in view -->
-    <!-- TODO: add animation transition animation here -->
-    <component
+    <div
         class="shadow-tm bg-white h-full xs:mr-0 sm:mr-12 last:mr-0 pointer-events-auto"
         :style="{
-            'flex-basis': panelConfig.width ? panelConfig.width + 'px' : '350px'
+            'flex-basis': panelConfig.width ? panelConfig.width + 'px' : '350px',
+            ...panelConfig.style
         }"
-        :is="panelConfig.route.id"
-        v-bind="panelConfig.route.props"
-        :panel="panel"
-        v-focus-list
-    ></component>
+    >
+        <!-- this renders a panel screen which is currently in view -->
+        <!-- TODO: add animation transition animation here -->
+        <component :is="panelConfig.route.id" v-bind="panelConfig.route.props" :panel="panel" v-focus-list></component>
+    </div>
 </template>
 
 <script lang="ts">
