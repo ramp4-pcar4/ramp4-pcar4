@@ -11,8 +11,6 @@ import { FixtureAPI, PanelAPI, APIScope } from './internal';
 export class InstanceAPI {
     fixture: FixtureAPI;
     panel: PanelAPI;
-    // allow fixture apis to be added on, this is solely to make typescript happy
-    [key: string]: any;
 
     /**
      * A public event bus for all events. Can also be used by fixtures to talk to each other.

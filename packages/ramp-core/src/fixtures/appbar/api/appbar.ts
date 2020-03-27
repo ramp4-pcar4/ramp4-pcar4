@@ -1,18 +1,14 @@
 import Vue from 'vue';
 
+import { FixtureInstance } from '@/api';
+
 import { APIScope } from '@/api/common';
 import { InstanceAPI } from '@/api/internal';
 import { AppbarItemConfig } from '../store';
 
 const DIVIDER_ID = 'divider';
 
-export class AppbarAPI extends APIScope {
-    constructor(iApi: InstanceAPI) {
-        super(iApi);
-
-        this.$iApi.appbar = this;
-    }
-
+export class AppbarAPI extends FixtureInstance {
     /**
      * Overwrites the current appbar config
      *
@@ -20,7 +16,7 @@ export class AppbarAPI extends APIScope {
      * @returns {Promise<AppbarItemAPI[]} The list of current Appbar Items in the store, as AppbarItemAPIs
      * @memberof AppbarAPI
      */
-    async set(appbarConfig: any): Promise<AppbarItemAPI[] | AppbarItemAPI | null> {
+    async setConfig(appbarConfig: any): Promise<AppbarItemAPI[] | AppbarItemAPI | null> {
         if (!appbarConfig) {
             return null;
         }
@@ -36,7 +32,7 @@ export class AppbarAPI extends APIScope {
         }
         this.$vApp.$store.set('appbar/items', appbarConfig);
 
-        return this.get()!;
+        return this.getItems()!;
     }
 
     /**
@@ -46,7 +42,7 @@ export class AppbarAPI extends APIScope {
      * @returns {AppbarItemAPI[] | AppbarItemAPI | null}
      * @memberof AppbarAPI
      */
-    get(id?: string): AppbarItemAPI[] | AppbarItemAPI | null {
+    getItems(id?: string): AppbarItemAPI[] | AppbarItemAPI | null {
         if (id) {
             const config = this.$vApp.$store.get<AppbarItemConfig | null>('appbar/getById!', id);
             return config ? new AppbarItemAPI(this.$iApi, config) : null;
