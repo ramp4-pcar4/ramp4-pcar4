@@ -7,13 +7,14 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
-import { FixtureItemAPI } from '@/api';
+import { FixtureInstance } from '@/api';
 
 // this is an example of a on-map component (doesn't use panels)
 
 @Component({})
 export default class SnowmanV extends Vue {
-    @Prop() fixture!: FixtureItemAPI; // this prop is passed to this component by its fixture main class
+    @Prop() fixture!: FixtureInstance; // this prop is passed to this component by its fixture main class
+    @Prop() message!: string;
 
     url: string = 'https://i.ya-webdesign.com/images/evil-snowman-png-1.png';
 
@@ -22,6 +23,8 @@ export default class SnowmanV extends Vue {
         // and accessing the parent fixture as well
         this.$iApi;
         this.fixture;
+
+        console.log(this.message);
 
         setTimeout(() => {
             console.log(`[fixture] ${this.fixture.id} self-terminates`);
@@ -39,7 +42,7 @@ export default class SnowmanV extends Vue {
             // 👉 this.$iApi.$vApp.$store.set('fixture/REMOVE_FIXTURE!', { value: this }); ❌
 
             // 👇 this is the correct way ✔
-            this.$iApi.fixture.remove(this.fixture); // remove fixure from R4MP
+            this.fixture.remove(); // or // this.$iApi.fixture.remove(this.fixture);
         }, 6000);
     }
 }

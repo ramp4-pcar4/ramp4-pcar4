@@ -1,10 +1,11 @@
+import Vue from 'vue';
 import { InstanceAPI } from '@/api/internal';
 
 export class FixtureState {
-    items: { [name: string]: FixtureConfig } = {};
+    items: { [name: string]: FixtureBase } = {};
 }
 
-export interface FixtureConfig {
+export interface FixtureBase {
     /**
      * ID of this fixture.
      *
@@ -12,24 +13,6 @@ export interface FixtureConfig {
      * @memberof Fixture
      */
     id: string;
-
-    /**
-     * A reference to the InstanceAPI this fixture is running inside.
-     * NOTE: this needs to be populated inside the `init()` life hook.
-     *
-     * @type {InstanceAPI}
-     * @memberof Fixture
-     */
-    $iApi?: InstanceAPI;
-
-    /**
-     * Called at the very beginning of the life cycle with the `iApi` reference.
-     * External fixtures can store this reference manually at `this.$iApi`.
-     *
-     * @param {InstanceAPI} $iApi
-     * @memberof FixtureConfig
-     */
-    created($iApi: InstanceAPI): void;
 
     /**
      * [Optional] Called synchronously when the fixture is added to R4MP.
@@ -64,7 +47,8 @@ export interface FixtureConfig {
     terminated?(): void;
 }
 
-export class FixtureConfigHelper implements FixtureConfig {
+// TODO: deprecated;
+export class FixtureConfigHelper implements FixtureBase {
     id: string;
 
     /**

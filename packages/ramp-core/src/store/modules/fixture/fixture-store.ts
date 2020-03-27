@@ -1,7 +1,7 @@
 import { ActionContext, Action, Mutation } from 'vuex';
 import { make } from 'vuex-pathify';
 
-import { FixtureState, FixtureConfig } from './fixture-state';
+import { FixtureState, FixtureBase } from './fixture-state';
 import { RootState } from '@/store/state';
 
 type FixtureContext = ActionContext<FixtureState, RootState>;
@@ -28,9 +28,9 @@ const mutations: StoreMutations = {
      * // TODO: add options for override behaviour as in what to do if a fixture with the same id is already added
      *
      * @param {FixtureState} state
-     * @param {{ value: FixtureConfig }} { value }
+     * @param {{ value: FixtureBase }} { value }
      */
-    [FixtureMutation.ADD_FIXTURE](state: FixtureState, { value }: { value: FixtureConfig }): void {
+    [FixtureMutation.ADD_FIXTURE](state: FixtureState, { value }: { value: FixtureBase }): void {
         state.items = { ...state.items, [value.id]: value };
 
         // call the `added` life hook if available
@@ -43,9 +43,9 @@ const mutations: StoreMutations = {
      * Mutation to remove an existing fixture from the fixture list.
      *
      * @param {FixtureState} state
-     * @param {{ value: FixtureConfig }} { value }
+     * @param {{ value: FixtureBase }} { value }
      */
-    [FixtureMutation.REMOVE_FIXTURE](state: FixtureState, { value }: { value: FixtureConfig }): void {
+    [FixtureMutation.REMOVE_FIXTURE](state: FixtureState, { value }: { value: FixtureBase }): void {
         delete state.items[value.id];
         state.items = { ...state.items };
 
