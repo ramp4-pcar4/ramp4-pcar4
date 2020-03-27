@@ -55,6 +55,7 @@ export class PanelState {
 
 export type PanelConfigScreen = { id: string; component: VueConstructor<Vue> };
 export type PanelConfigRoute = { id: string; props?: object };
+export type PanelConfigStyle = { [key: string]: string };
 
 export interface PanelConfig {
     /**
@@ -88,4 +89,12 @@ export interface PanelConfig {
      * @memberof PanelConfig
      */
     screens: PanelConfigScreen[];
+
+    /**
+     * The style object to apply to the panel.
+     *
+     * @type {PanelConfigStyle}
+     * @memberof PanelConfig
+     */
+    style?: PanelConfigStyle;
 }

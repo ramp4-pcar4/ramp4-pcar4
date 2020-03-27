@@ -26,7 +26,21 @@ export enum PanelMutation {
     SET_WIDTH = 'SET_WIDTH'
 }
 
-const getters = {};
+const getters = {
+    /**
+     * Returns `visible` from the state. If the screenSize of the app is 'xs', returns only the first panel.
+     *
+     * @param screenSize the size of the app's screen as a string
+     * @returns {PanelConfig[]}
+     */
+    getVisible: (state: PanelState) => (screenSize: string): PanelConfig[] => {
+        if (screenSize === 'xs' && state.visible.length > 0) {
+            return [state.visible.slice().pop()!];
+        }
+
+        return state.visible;
+    }
+};
 
 const actions = {
     [PanelAction.addPanel](context: PanelContext, value: PanelConfig): void {
