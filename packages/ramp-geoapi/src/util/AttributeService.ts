@@ -146,10 +146,10 @@ export default class AttributeService extends BaseBase {
                 outFields: details.attribs
             }
         };
-        if (!this.isUn(details.maxOffset)) {
+        if (!this.isUndefined(details.maxOffset)) {
             params.query.maxAllowableOffset = details.maxOffset;
         }
-        if (!this.isUn(details.mapSR)) {
+        if (!this.isUndefined(details.mapSR)) {
             params.query.outSR = details.mapSR;
         }
 

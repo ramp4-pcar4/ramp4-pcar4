@@ -5,7 +5,7 @@
 <script lang="ts">
 import { Vue, Watch, Component } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
-import GapiLoader, { Map, GeoApi, RampMapConfig } from 'ramp-geoapi';
+import GapiLoader, { RampMap, GeoApi, RampMapConfig } from 'ramp-geoapi';
 // import { window } from '@/main';
 
 import { ConfigStore } from '@/store/modules/config';
@@ -19,7 +19,7 @@ export default class EsriMap extends Vue {
     @Get(LayerStore.layers) layers!: BaseLayer[];
 
     gapi!: GeoApi;
-    map!: Map;
+    map!: RampMap;
 
     created() {
         // temporarily print out loaded layers to console for grid testing purposes.

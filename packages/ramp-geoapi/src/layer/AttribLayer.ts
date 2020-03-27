@@ -7,13 +7,13 @@ import { InfoBundle, AttributeSet, RampLayerConfig, GetGraphicParams, GetGraphic
 import BaseLayer from './BaseLayer';
 import AttribFC from './AttribFC';
 import Extent from '../api/geometry/Extent';
+import TreeNode from './TreeNode';
 
 export default class AttribLayer extends BaseLayer {
 
-    // TODO make this protected? is it possible to instatiate a raw AttribLayer?
-    constructor (infoBundle: InfoBundle, config: RampLayerConfig) {
+    protected constructor (infoBundle: InfoBundle, config: RampLayerConfig, reloadTree?: TreeNode) {
 
-        super(infoBundle, config);
+        super(infoBundle, config, reloadTree);
         this.supportsIdentify = true;
     }
 

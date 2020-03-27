@@ -34,11 +34,12 @@ function fieldValidator(fields: Array<esri.Field>, targetName: string): string {
 // TODO i think we need to change the extends to AttribLayer, as FeatureLayer constructor will attempt to make its own feature layer
 export class GeoJsonLayer extends AttribLayer {
 
+    innerLayer: esri.FeatureLayer;
     private esriJson: esri.FeatureLayerProperties; // used as temp var to get around typescript parameter grousing. will be undefined after initLayer()
 
-    constructor (infoBundle: InfoBundle, rampLayerConfig: RampLayerConfig, geoJson: any, systemOptions: any) {
+    constructor (infoBundle: InfoBundle, rampLayerConfig: RampLayerConfig, geoJson: any, systemOptions: any, reloadTree?: TreeNode) {
 
-        super(infoBundle, rampLayerConfig);
+        super(infoBundle, rampLayerConfig, reloadTree);
         this.isFile = true;
 
         // NOTE: file based layers can require reprojection.
@@ -154,7 +155,7 @@ export class GeoJsonLayer extends AttribLayer {
         const featIdx: number = 0; // GeoJSON is always 0
         const gjFC = new GeoJsonFC(this.infoBundle(), this, featIdx);
         this.fcs[featIdx] = gjFC;
-        this.layerTree = new TreeNode(featIdx, gjFC.uid, this.name);
+        this.layerTree.children.push(new TreeNode(featIdx, gjFC.uid, this.name));
 
         // TODO implement symbology load
         // const pLS = aFC.loadSymbology();
@@ -184,7 +185,7 @@ export class GeoJsonLayer extends AttribLayer {
 
         */
 
-        gjFC.featureCount = (<esri.FeatureLayer>this.innerLayer).source.length;
+        gjFC.featureCount = this.innerLayer.source.length;
 
         // if file based (or server extent was fried), calculate extent based on geometry
         // TODO implement this. may need a manual loop to calculate graphicsExtent since ESRI torpedo'd the function

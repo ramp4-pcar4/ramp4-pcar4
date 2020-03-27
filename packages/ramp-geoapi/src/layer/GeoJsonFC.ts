@@ -10,6 +10,7 @@ import GeoJsonLayer from './GeoJsonLayer';
 
 export default class GeoJsonFC extends AttribFC {
 
+    protected parentLayer: GeoJsonLayer;
     tooltipField: string; // TODO if we end up having more things that are shared with FeatureFC, consider making a FeatureBaseFC class for both to inherit from
 
     constructor (infoBundle: InfoBundle, parent: BaseLayer, layerIdx: number = 0) {
@@ -19,7 +20,7 @@ export default class GeoJsonFC extends AttribFC {
     // TODO consider moving a bulk of this out to LayerModule; the wizard may have use for running this (e.g. getting field list for a service url)
     extractLayerMetadata(): void {
 
-        const l: esri.FeatureLayer = <esri.FeatureLayer>this.parentLayer.innerLayer;
+        const l = this.parentLayer.innerLayer;
 
         // properties for all endpoints
         this.layerType = 'Feature Layer'; // TODO validate this matches server string. TODO validate we don't want to change to a different value. TODO define an Enum for layerType?
@@ -115,7 +116,7 @@ export default class GeoJsonFC extends AttribFC {
     queryFeatures(options: QueryFeaturesParams): Promise<Array<GetGraphicResult>> {
 
         const gjOpt: QueryFeaturesGeoJsonParams = {
-            layer: (<GeoJsonLayer>this.parentLayer),
+            layer: this.parentLayer,
             ...options
         };
 
@@ -127,7 +128,7 @@ export default class GeoJsonFC extends AttribFC {
     queryOIDs(options: QueryFeaturesParams): Promise<Array<number>> {
 
         const gjOpt: QueryFeaturesGeoJsonParams = {
-            layer: (<GeoJsonLayer>this.parentLayer),
+            layer: this.parentLayer,
             ...options
         };
 
@@ -162,7 +163,7 @@ export default class GeoJsonFC extends AttribFC {
         //      Attempts to manually update things did not work
         //      e.g. (this.parent.innerLayer as any).source.items[0].visible = false;
 
-        (<esri.FeatureLayer>this.parentLayer.innerLayer).queryFeatures().then(fs => {
+        this.parentLayer.innerLayer.queryFeatures().then(fs => {
             console.warn('Request to filter geometry on the map of local layer will not work at this time');
             this.gapi.utils.query.sqlEsriGraphicsVisibility(fs.features, sql);
         });

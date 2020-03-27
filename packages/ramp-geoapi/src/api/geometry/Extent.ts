@@ -56,6 +56,12 @@ export default class Extent extends BaseGeometry {
         return this.rawMax[1];
     }
 
+    center(): Point {
+        return new Point(this.id + '_centerPoint',
+            [((this.xmax - this.xmin) / 2.0) + this.xmin, ((this.ymax - this.ymin) / 2.0) + this.ymin],
+            this.sr, true);
+    }
+
     clone(): Extent {
         return new Extent(this.id, this.rawMin, this.rawMax, this.sr);
     }

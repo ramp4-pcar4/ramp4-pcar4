@@ -42,7 +42,7 @@ import { Get, Sync, Call } from 'vuex-pathify';
 import { PanelItemAPI } from '@/api';
 
 import { GeosearchStore } from './store';
-import { Map } from 'ramp-geoapi';
+import { RampMap } from 'ramp-geoapi';
 
 import GeosearchBar from './geosearch-bar.vue';
 import GeosearchTopFilters from './geosearch-top-filters.vue';

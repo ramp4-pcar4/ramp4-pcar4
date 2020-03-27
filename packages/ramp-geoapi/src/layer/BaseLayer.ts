@@ -50,14 +50,16 @@ export default class BaseLayer extends BaseBase {
     // FC management
     protected fcs: Array<BaseFC>;
     protected layerTree: TreeNode;
+    protected reloadTree: TreeNode;
 
     // ----------- LAYER CONSTRUCTION AND INITIALIZAION -----------
 
     // NOTE since constructor needs to be called first, we might want to push a lot of initialization to an .init() function
     //      that actual implementer classes call in their constructors. e.g. for a file layer, might need to process file parts prior to running LayerBase stuff
-    protected constructor (infoBundle: InfoBundle, rampConfig: RampLayerConfig) {
+    protected constructor (infoBundle: InfoBundle, rampConfig: RampLayerConfig, reloadTree?: TreeNode) {
         super(infoBundle);
-        this.uid = this.gapi.utils.shared.generateUUID();
+        this.reloadTree = reloadTree; // this needs to be set before doing uid calculations
+        this.uid = this.bestUid(-1);
 
         this.visibilityChanged = new TypedEvent<boolean>();
         this.opacityChanged = new TypedEvent<number>();
@@ -76,6 +78,24 @@ export default class BaseLayer extends BaseBase {
         this.origRampConfig = rampConfig;
         this.name = rampConfig.name || '';
         this.id = rampConfig.id || '';
+
+    }
+
+    // will give a new uid to use. if appropriate, will recycle same uid from a previous
+    // incarnation of a layer to preserve continuity during a reload
+    bestUid(idx?: number): string {
+
+        if (!this.isUndefined(idx) && !this.isUndefined(this.reloadTree)) {
+            // we have the ingredients for a reload scenario.
+            // if we find an old uid from the last incarnation, use it.
+            const t = this.reloadTree.findChildByIdx(idx);
+            if (t && t.uid) {
+                return t.uid;
+            }
+        }
+
+        // could find no previous uid, or situation does not apply. new uid.
+        return this.gapi.utils.shared.generateUUID();
     }
 
     protected updateState(newState: LayerState): void {
@@ -206,10 +226,8 @@ export default class BaseLayer extends BaseBase {
             this.name = this.innerLayer.title || '';
         }
 
-        // basic layer tree. fancier layers will simply steamroll over this
-        // TODO reconsider the default uid. true value should be uid of 0th FC child.
-        //      if this always gets overwritten then we likely dont care.
-        this.layerTree = new TreeNode(0, this.uid, this.name);
+        // make the root of the tree
+        this.layerTree = new TreeNode(-1, this.uid, this.name, false);
 
         // TODO implement extent defaulting. Need to add property, get appropriate format from incoming ramp config, maybe need an interface
         /*
@@ -302,7 +320,7 @@ export default class BaseLayer extends BaseBase {
         // highscool cs IF party
 
         // default request
-        if (this.isUn(layerIdx)) {
+        if (this.isUndefined(layerIdx)) {
             if (validRoot) {
                 // requesting the root layer, return nothing
                 return undefined;
@@ -328,9 +346,10 @@ export default class BaseLayer extends BaseBase {
                 return undefined;
             } else {
                 // asked for the root when not valid
+                // TODO would it be kinder/friendlier to return the first child fc?
                 throw new Error(`Attempt to access a function on layer root that only applies to an index of the layer [layerid ${this.innerLayer.id}]`);
             }
-        } else if (this.isUn(this.fcs[workingIdx])) {
+        } else if (this.isUndefined(this.fcs[workingIdx])) {
             // passed a non-existing index/uid
             throw new Error(`Attempt to access non-existing layer index [layerid ${this.innerLayer.id}, lookup value ${layerIdx}]`);
         } else {
@@ -338,7 +357,7 @@ export default class BaseLayer extends BaseBase {
         }
     }
 
-    getName (layerIdx: number | string = undefined): string {
+    getName(layerIdx: number | string = undefined): string {
         return this.getFC(layerIdx).name;
     }
 

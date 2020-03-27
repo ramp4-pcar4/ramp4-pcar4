@@ -5,6 +5,24 @@ import SpatialReference from './geometry/SpatialReference';
 //       api domain of constants. RAMP2 we were often in the ArcGIS server domain.
 //       e.g. 'esriSLSDashDot' is now 'dash-dot'
 
+// keep these values in line with what the config schema expects
+export enum LayerType {
+    // ESRI
+    FEATURE = 'esriFeature',
+    MAPIMAGE = 'esriMapImage',
+    TILE = 'esriTile',
+
+    // OGS
+    WMS = 'ogcWms',
+    WFS = 'ogcWfs',
+
+    // FILE
+    // TODO need to think about these, as RAMP2 config schema used featurelayer plus second fileType property
+    CSV = '',
+    SHAPEFILE = '',
+    GEOJSON = '',
+}
+
 export enum GeometryType {
     POINT = 'Point',
     MULTIPOINT = 'MultiPoint',
