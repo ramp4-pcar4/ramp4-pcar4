@@ -12,6 +12,7 @@
         <template #content>
             <geosearch-top-filters></geosearch-top-filters>
             <!-- TODO: add a loading bar here? -->
+            <loading-bar class="p-4 mx-2 mb-2" v-if="loadingResults"></loading-bar>
             <div class="px-5 mt-10 truncate">
                 <span class="relative h-48" v-if="searchVal && searchResults.length === 0 && !loadingResults"
                     >No results to show for <span class="font-bold text-blue-600">{{ searchVal }}</span></span
@@ -56,6 +57,7 @@ import { RampMap } from 'ramp-geoapi';
 import GeosearchBar from './geosearch-bar.vue';
 import GeosearchTopFilters from './geosearch-top-filters.vue';
 import GeosearchBottomFilters from './geosearch-bottom-filters.vue';
+import LoadingBar from './loading-bar.vue';
 
 // TODO: temporary import for map zoom call
 import { ApiBundle } from 'ramp-geoapi';
@@ -64,7 +66,8 @@ import { ApiBundle } from 'ramp-geoapi';
     components: {
         GeosearchBar,
         GeosearchTopFilters,
-        GeosearchBottomFilters
+        GeosearchBottomFilters,
+        LoadingBar
     }
 })
 export default class GeosearchComponent extends Vue {
