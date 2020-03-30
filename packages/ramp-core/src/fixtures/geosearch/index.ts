@@ -1,5 +1,3 @@
-import Vue from 'vue';
-
 import { PanelConfig } from '@/store/modules/panel';
 import { FixtureConfigHelper } from '@/store/modules/fixture';
 // import on-map components
@@ -33,3 +31,6 @@ class GeosearchFixture extends FixtureConfigHelper {
 }
 
 export default new GeosearchFixture('geosearch');
+
+import GeosearchAppbarButton from './geosearch-appbar-button.vue';
+export { GeosearchAppbarButton as AppbarButton };
