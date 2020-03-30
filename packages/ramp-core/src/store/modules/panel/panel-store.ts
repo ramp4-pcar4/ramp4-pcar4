@@ -1,8 +1,9 @@
 import { ActionContext, Action, Mutation } from 'vuex';
 import { make } from 'vuex-pathify';
 
-import { PanelState, PanelConfig } from './panel-state';
+import { PanelState, PanelConfig, PanelConfigRoute } from './panel-state';
 import { RootState } from '@/store/state';
+import { PanelInstance } from '@/api';
 
 type PanelContext = ActionContext<PanelState, RootState>;
 
@@ -10,16 +11,21 @@ type StoreActions = { [key: string]: Action<PanelState, RootState> };
 type StoreMutations = { [key: string]: Mutation<PanelState> };
 
 export enum PanelAction {
-    addPanel = 'addPanel',
-    removePanel = 'removePanel',
+    openPanel = 'openPanel',
+    /* addPanel = 'addPanel', */
+    closePanel = 'removePanel',
     setWidth = 'setWidth',
     updateVisible = 'updateVisible'
 }
 
 export enum PanelMutation {
+    REGISTER_PANEL = 'REGISTER_PANEL',
+    OPEN_PANEL = 'OPEN_PANEL',
+
     ADD_PANEL = 'ADD_PANEL',
     ADD_TO_PANEL_ORDER = 'ADD_TO_PANEL_ORDER',
-    REMOVE_PANEL = 'REMOVE_PANEL',
+    CLOSE_PANEL = 'REMOVE_PANEL',
+
     SET_ORDERED_ITEMS = 'SET_ORDERED_ITEMS',
     SET_PRIORITY = 'SET_PRIORITY',
     SET_VISIBLE = 'SET_VISIBLE',
@@ -43,26 +49,36 @@ const getters = {
 };
 
 const actions = {
-    [PanelAction.addPanel](context: PanelContext, value: PanelConfig): void {
-        context.commit(PanelMutation.ADD_PANEL, value);
+    [PanelAction.openPanel](context: PanelContext, value: { panel: PanelInstance }): void {
+        context.commit(PanelMutation.OPEN_PANEL, value);
         context.commit(PanelMutation.SET_PRIORITY, value);
         context.dispatch(PanelAction.updateVisible);
     },
-    [PanelAction.removePanel](context: PanelContext, value: PanelConfig): void {
-        if (context.state.priority === value) {
+
+    /* [PanelAction.addPanel](context: PanelContext, value: PanelConfig): void {
+        context.commit(PanelMutation.ADD_PANEL, value);
+        context.commit(PanelMutation.SET_PRIORITY, value);
+        context.dispatch(PanelAction.updateVisible);
+    }, */
+
+    [PanelAction.closePanel](context: PanelContext, value: { panel: PanelConfig }): void {
+        if (context.state.priority === value.panel) {
             context.commit(PanelMutation.SET_PRIORITY, null);
         }
-        context.commit(PanelMutation.REMOVE_PANEL, value);
+
+        context.commit(PanelMutation.CLOSE_PANEL, value);
         context.dispatch(PanelAction.updateVisible);
     },
+
     [PanelAction.setWidth](context: PanelContext, value: number): void {
         context.commit(PanelMutation.SET_WIDTH, value);
         context.dispatch(PanelAction.updateVisible);
     },
+
     [PanelAction.updateVisible](context: PanelContext): void {
         //TODO: update when panel width system is in place
-        let remainingWidth = context.state.width;
-        let nowVisible: PanelConfig[] = [];
+        let remainingWidth = context.state.stackWidth;
+        let nowVisible: PanelInstance[] = [];
 
         // add panels until theres no space in the stack
         for (let i = context.state.orderedItems.length - 1; i >= 0 && remainingWidth >= (context.state.orderedItems[i].width || 350); i--) {
@@ -70,9 +86,9 @@ const actions = {
             nowVisible.unshift(context.state.orderedItems[i]);
         }
 
-        // if pinned isn't visible we need to change the order of the panels (to make it visble)
+        // if pinned isn't visible we need to change the order of the panels (to make it visible)
         if (context.state.pinned && !nowVisible.includes(context.state.pinned)) {
-            let lastElement: PanelConfig;
+            let lastElement: PanelInstance;
 
             // remove elements from visible until theres room for pinned
             for (let i = 0; i < nowVisible.length - 1 && remainingWidth < (context.state.pinned.width || 350); i++) {
@@ -110,16 +126,22 @@ const actions = {
 };
 
 const mutations = {
-    [PanelMutation.ADD_PANEL](state: PanelState, value: PanelConfig): void {
-        state.orderedItems = [...state.orderedItems, value];
-        state.items = { ...state.items, [value.id]: value };
+    [PanelMutation.REGISTER_PANEL](state: PanelState, { panel }: { panel: PanelInstance }): void {
+        state.items = { ...state.items, [panel.id]: panel };
     },
 
-    [PanelMutation.REMOVE_PANEL](state: PanelState, value: PanelConfig): void {
-        const index = state.orderedItems.indexOf(value);
+    [PanelMutation.OPEN_PANEL](state: PanelState, { panel }: { panel: PanelInstance }): void {
+        state.orderedItems = [...state.orderedItems, panel];
+    },
+
+    /* [PanelMutation.ADD_PANEL](state: PanelState, value: PanelConfig): void {
+        state.orderedItems = [...state.orderedItems, value];
+        state.items = { ...state.items, [value.id]: value };
+    }, */
+
+    [PanelMutation.CLOSE_PANEL](state: PanelState, { panel }: { panel: PanelInstance }): void {
+        const index = state.orderedItems.indexOf(panel);
         state.orderedItems = [...state.orderedItems.slice(0, index), ...state.orderedItems.slice(index + 1)];
-        delete state.items[value.id];
-        state.items = { ...state.items };
     }
 };
 

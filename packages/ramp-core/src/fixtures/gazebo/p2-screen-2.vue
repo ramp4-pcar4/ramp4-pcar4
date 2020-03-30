@@ -21,7 +21,7 @@
             <div class="flex flex-col items-center mt-16">
                 <!-- ✔ this is the correct way to switch between screens in the same panel 👇 -->
                 <button
-                    @click="panel.route({ id: 'p-2-screen-1', props: { greeting: 'Greeting from Screen B' } })"
+                    @click="panel.show({ screen: 'p-2-screen-1', props: { greeting: 'Greeting from Screen B' } })"
                     class="bg-green-500 hover:bg-green-700 text-white font-bold py-8 px-16"
                 >
                     Switch to Screen A
@@ -37,12 +37,12 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
-import { PanelItemAPI } from '@/api';
+import { PanelInstance } from '@/api';
 
 @Component({})
 export default class Scree2V extends Vue {
     // ✔ this prop is always present and it's set by the panel-container component
-    @Prop() panel!: PanelItemAPI;
+    @Prop() panel!: PanelInstance;
 
     // ✔ this prop is passed to this component as part of the `route` property when switching/rendering this screen
     @Prop() greeting?: string;

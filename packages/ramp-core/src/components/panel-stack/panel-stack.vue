@@ -1,10 +1,6 @@
 <template>
     <div class="sm:flex">
-        <panel-container
-            v-for="panelConfig in visible($iApi.screenSize)"
-            :key="`${panelConfig.id}`"
-            :panel-config="panelConfig"
-        ></panel-container>
+        <panel-container v-for="panel in visible($iApi.screenSize)" :key="`${panel.id}`" :panel="panel"></panel-container>
     </div>
 </template>
 
@@ -12,7 +8,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
-import { PanelConfig } from '@/store/modules/panel';
+import { PanelInstance } from '@/api';
 
 import PanelV from './panel-container.vue';
 
@@ -29,14 +25,13 @@ declare class ResizeObserver {
     }
 })
 export default class PanelStackV extends Vue {
-    @Get('panel/getVisible!') visible!: (extraSmallScreen: boolean) => PanelConfig[];
-    @Sync('panel/width') width!: number;
-    isExtraSmall: boolean = !this.$root.$el.classList.contains('sm');
+    @Get('panel/getVisible!') visible!: (extraSmallScreen: boolean) => PanelInstance[];
+    @Sync('panel/stackWidth') stackWidth!: number;
 
     mounted() {
+        // sync the `panel-stack` width into the store so that visible can get calculated
         const resizeObserver = new ResizeObserver((entries: any) => {
-            this.width = entries[0].contentRect.width;
-            this.isExtraSmall = !this.$root.$el.classList.contains('sm');
+            this.stackWidth = entries[0].contentRect.width;
         });
 
         resizeObserver.observe(this.$el);
