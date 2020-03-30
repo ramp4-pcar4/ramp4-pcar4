@@ -14,40 +14,43 @@ import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 @Component({})
 export default class CustomSelectorFilter extends Vue {
     beforeMount() {
+        // Load previously stored value (if saved in table state manager)
         this.selectedOption = this.params.defaultValue;
-        this.colDef = this.params.column.colDef;
 
-        const colName = this.params.column.colId;
         let rowData = this.params.rowData;
 
         // obtain row data and filter out duplicates for selector list
-        rowData = rowData.map((row: any) => row[colName]);
+        rowData = rowData.map((row: any) => row[this.params.column.colId]);
         this.options = rowData.filter((item: any, idx: any) => rowData.indexOf(item) === idx);
 
-        // add '...' as option to clear selector
+        // add the '...' option to allow clearing the selector
         this.options.unshift('...');
 
+        // Apply the default value to the column filter.
         this.selectionChanged();
     }
 
     selectionChanged() {
-        let that = this;
-        this.params.parentFilterInstance(function(instance: any) {
-            // clear selector filters
-            if (that.selectedOption === '...') {
+        this.params.parentFilterInstance((instance: any) => {
+            if (this.selectedOption === '...') {
+                // Clear the selector filter.
                 instance.setModel(null);
                 instance.onFilterChanged();
-                that.selectedOption = '';
+                this.selectedOption = '';
             } else {
-                // otherwise filter by the selected option
+                // Filter by the selected option.
                 instance.setModel({
                     filterType: 'text',
                     type: 'contains',
-                    filter: that.selectedOption
+                    filter: this.selectedOption
                 });
             }
-            that.params.api.onFilterChanged();
-            that.params.stateManager.setColumnFilter(that.colDef.field, that.selectedOption);
+
+            // Save the new filter value in the state manager. Allows for quick recovery if the grid is
+            // closed and re-opened.
+            this.params.stateManager.setColumnFilter(this.params.column.colDef.field, this.selectedOption);
+
+            this.params.api.onFilterChanged();
         });
     }
 

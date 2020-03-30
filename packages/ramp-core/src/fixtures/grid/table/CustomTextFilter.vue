@@ -9,26 +9,27 @@ import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 
 @Component({})
 export default class CustomTextFilter extends Vue {
-    filterValue: string = '';
-    colDef: any;
-
     beforeMount() {
-        // would like better way to access panel state manager, pass it down as a prop? (didn't know how to do this)
-        this.colDef = this.params.column.colDef;
+        // Load previously stored value (if saved in table state manager)
         this.filterValue = this.params.defaultValue;
+
+        // Apply the default value to the column filter.
         this.valueChanged();
     }
 
     valueChanged(): void {
-        let that = this;
-        this.params.parentFilterInstance(function(instance: any) {
+        this.params.parentFilterInstance((instance: any) => {
             instance.setModel({
                 filterType: 'text',
                 type: 'contains',
-                filter: that.filterValue
+                filter: this.filterValue
             });
-            that.params.stateManager.setColumnFilter(that.colDef.field, that.filterValue);
-            that.params.api.onFilterChanged();
+
+            // Save the new filter value in the state manager. Allows for quick recovery if the grid is
+            // closed and re-opened.
+            this.params.stateManager.setColumnFilter(this.params.column.colDef.field, this.filterValue);
+
+            this.params.api.onFilterChanged();
         });
     }
 

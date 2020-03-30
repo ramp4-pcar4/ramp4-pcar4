@@ -66,6 +66,7 @@ import CustomSelectorFilter from './CustomSelectorFilter.vue';
 import CustomDateFilter from './CustomDateFilter.vue';
 import CustomHeader from './CustomHeader.vue';
 
+// these should match up with the `type` value returned by the attribute promise.
 const NUM_TYPES: string[] = ['oid', 'double', 'integer'];
 const DATE_TYPE: string = 'date';
 const TEXT_TYPE: string = 'string';
@@ -132,6 +133,8 @@ export default class TableComponent extends Vue {
             const tableAttributePromise = fancyLayer.getTabularAttributes();
 
             tableAttributePromise.then((tableAttributes: any) => {
+                // Iterate through table columns and set up column definitions and column filter stuff.
+                // Also adds the `rvSymbol` and `rvInteractive` columns to the table.
                 ['rvSymbol', 'rvInteractive', ...tableAttributes.columns].forEach((column: any) => {
                     let col: ColumnDefinition = {
                         headerName: column.title || '',
@@ -161,6 +164,7 @@ export default class TableComponent extends Vue {
                             col.filter = 'agDateColumnFilter';
                         } else if (fieldInfo.type === TEXT_TYPE) {
                             if (col.isSelector) {
+                                // set up a selector filter instead of a text filter if the `isSelector` flag is true.
                                 this.setUpSelectorFilter(col, tableAttributes.rows, this.config.state);
                             } else {
                                 this.setUpTextFilter(col, this.config.state);
@@ -173,7 +177,7 @@ export default class TableComponent extends Vue {
                     }
                 });
 
-                // load layer rows
+                // load layer data into the table.
                 this.rowData = tableAttributes.rows;
                 this.updateFilterInfo();
             });
@@ -188,18 +192,20 @@ export default class TableComponent extends Vue {
         this.updateFilterInfo();
     }
 
+    // Updates the global search value.
     updateQuickSearch() {
         this.gridApi.setQuickFilter(this.quicksearch);
     }
 
+    // Toggles the floating (column) filters on and off.
     toggleShowFilters() {
         this.gridOptions.floatingFilter = !this.gridOptions.floatingFilter;
         this.config.state.colFilter = this.gridOptions.floatingFilter;
         this.gridOptions.api.refreshHeader();
     }
 
+    // Updates the current status of the filter.
     updateFilterInfo() {
-        // update filter info
         if (this.gridApi) {
             this.filterInfo.firstRow = this.gridApi.getFirstDisplayedRow() + 1;
             this.filterInfo.lastRow = this.gridApi.getLastDisplayedRow() + 1;
@@ -208,6 +214,7 @@ export default class TableComponent extends Vue {
         }
     }
 
+    // Changes the filter status text in the grid.
     updateFilterStatus() {
         this.filterStatus = `${this.filterInfo.firstRow} - ${this.filterInfo.lastRow} of ${this.filterInfo.visibleRows} entries shown`;
 
@@ -217,6 +224,7 @@ export default class TableComponent extends Vue {
     }
 
     setUpDateFilter(colDef: any, state: TableStateManager) {
+        // Retrieve stored filter values from the state manager if it exists.
         let minVal = state.getColumnFilter(colDef.field + ' min') !== undefined ? state.getColumnFilter(colDef.field + ' min') : '';
         let maxVal = state.getColumnFilter(colDef.field + ' max') !== undefined ? state.getColumnFilter(colDef.field + ' max') : '';
 
@@ -241,6 +249,7 @@ export default class TableComponent extends Vue {
     }
 
     setUpSelectorFilter(colDef: any, rowData: any, state: TableStateManager) {
+        // Retrieve stored filter value from the state manager if it exists.
         let value = state.getColumnFilter(colDef.field) !== undefined ? state.getColumnFilter(colDef.field) : '';
 
         colDef.floatingFilterComponent = 'selectorFloatingFilter';
@@ -254,6 +263,7 @@ export default class TableComponent extends Vue {
     }
 
     setUpNumberFilter(colDef: any, state: TableStateManager) {
+        // Retrieve stored filter values from the state manager if it exists.
         let minVal = state.getColumnFilter(colDef.field + ' min') !== undefined ? state.getColumnFilter(colDef.field + ' min') : '';
         let maxVal = state.getColumnFilter(colDef.field + ' max') !== undefined ? state.getColumnFilter(colDef.field + ' max') : '';
 
@@ -268,6 +278,7 @@ export default class TableComponent extends Vue {
     }
 
     setUpTextFilter(colDef: any, state: TableStateManager) {
+        // Retrieve stored filter value from the state manager if it exists.
         let value = state.getColumnFilter(colDef.field) !== undefined ? state.getColumnFilter(colDef.field) : '';
 
         colDef.floatingFilterComponent = 'textFloatingFilter';
@@ -316,6 +327,8 @@ export default class TableComponent extends Vue {
     }
 
     setUpSymbolsAndInteractive(col: any, colDef: any) {
+        // Set up the interactive column that contains the zoom and details button.
+        // TODO: add zoom and details functionality.
         if (col.field === 'rvInteractive') {
             let zoomDef = {
                 sortable: false,
@@ -360,6 +373,8 @@ export default class TableComponent extends Vue {
             colDef.push(detailsDef);
         }
 
+        // Set up the symbol column.
+        // TODO: the symbol is currently a hardcoded svg. Once geoApi returns proper icon this should be changed (aka: set the cell renderer to return cell.value).
         if (col.field === 'rvSymbol') {
             let iconDef = {
                 sortable: false,
@@ -383,9 +398,11 @@ export default class TableComponent extends Vue {
     }
 
     clearColumnFilters() {
+        // Reset the global search filter.
         this.gridApi.setQuickFilter(null);
         this.quicksearch = '';
 
+        // Clear any existing column filters.
         this.gridOptions.api.setFilterModel({});
         this.gridApi.refreshHeader();
     }
