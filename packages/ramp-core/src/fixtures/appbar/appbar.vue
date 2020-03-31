@@ -6,7 +6,7 @@
             :key="`${item.id}-${index}`"
             class="h-24 my-4 first:mt-8 text-gray-400 hover:text-white"
             :class="{ 'py-12': item.id !== DIVIDER }"
-            :focus-item="item.id !== DIVIDER"
+            :v-focus-item="item.id !== DIVIDER"
         ></component>
     </div>
 </template>

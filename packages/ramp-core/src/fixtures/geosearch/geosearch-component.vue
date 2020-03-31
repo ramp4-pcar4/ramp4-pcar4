@@ -23,7 +23,11 @@
                 v-if="searchResults.length > 0"
             >
                 <li class="relative h-48" v-for="(result, idx) in searchResults" v-bind:key="idx">
-                    <button class="absolute inset-0 h-full w-full hover:bg-gray-300 default-focus-style" @click="zoomIn(result)" focus-item>
+                    <button
+                        class="absolute inset-0 h-full w-full hover:bg-gray-300 default-focus-style"
+                        @click="zoomIn(result)"
+                        v-focus-item
+                    >
                         <div class="rv-result-description flex px-8">
                             <div class="flex-1 text-left truncate">
                                 <span v-html="highlightSearchTerm(result.name) + ','"></span>
