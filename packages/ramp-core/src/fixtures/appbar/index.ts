@@ -1,38 +1,30 @@
-import Vue from 'vue';
-
-import { FixtureConfigHelper } from '@/store/modules/fixture';
-
 import AppbarV from './appbar.vue';
 import { AppbarAPI } from './api/appbar';
 import { appbar } from './store/index';
 
-class AppbarFixture extends FixtureConfigHelper {
+class AppbarFixture extends AppbarAPI {
     async added() {
         console.log(`[fixture] ${this.id} added`);
 
-        const fixture = this.$iApi.fixture.get(this.id)!;
+        this.$vApp.$store.registerModule('appbar', appbar());
 
-        this.vApp.$store.registerModule('appbar', appbar());
+        const appbarInstance = this.extend(AppbarV, { store: this.$vApp.$store });
 
-        this.$iApi.emit('appbarApi', new AppbarAPI(this.$iApi));
-
-        const appbarInstance = new (Vue.extend(AppbarV))({
-            iApi: this.$iApi,
-            propsData: { fixture },
-            store: this.vApp.$store
-        });
-
-        appbarInstance.$mount();
-        const innerShell = this.vApp.$el.getElementsByClassName('inner-shell')[0];
+        const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         innerShell.insertBefore(appbarInstance.$el, innerShell.children[0]);
 
-        await this.$iApi.appbar.set(this.vApp.$store.get('config/getFixtureConfig', 'appbar'));
+        // when other fixtures need access to appbar API, they can do it directly on the fixture object
+        // `this.$iApi.fixture.get<AppbarFixture>('appbar').setConfig()`
+
+        // this is a bit more complicated than access it directly on the global `$iApi` (`this.$iApi.setConfig()`),
+        // but the above approach doesn't pollute a global, provides an easy way to check if fixture exists and gives you intellisense
+
+        await this.setConfig(this.$vApp.$store.get('config/getFixtureConfig', 'appbar'));
     }
 
     removed() {
-        this.$iApi.appbar = null;
-        this.vApp.$store.unregisterModule('appbar');
+        this.$vApp.$store.unregisterModule('appbar');
     }
 }
 
-export default new AppbarFixture('appbar');
+export default AppbarFixture;

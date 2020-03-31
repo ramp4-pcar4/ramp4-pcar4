@@ -1,60 +1,73 @@
-import { APIScope } from './internal';
-import { FixtureConfig, FixtureMutation } from '@/store/modules/fixture';
-import { InstanceAPI } from './instance';
+import Vue, { VueConstructor, ComponentOptions } from 'vue';
+
+import { APIScope, InstanceAPI } from './internal';
+import { FixtureBase, FixtureMutation } from '@/store/modules/fixture';
+
 // TODO: implement the same `internal.ts` pattern in store, so can import from a single place;
 
-export class FixtureAPI extends APIScope {
-    // TODO: moves this fixture loading function to a separate file
+/**
+ * A constructor returning an object implementing FixtureBase interface.
+ */
+type IFixtureBase = new () => FixtureBase;
 
+/**
+ * A constructor returning an instance of FixtureInstance class.
+ */
+type IFixtureInstance = new (id: string, iApi: InstanceAPI) => FixtureInstance;
+
+export class FixtureAPI extends APIScope {
     /**
-     * Loads a (built-in) fixture or adds supplied fixture config into the R4MP Vue instance.
+     * Loads a (built-in) fixture or adds supplied fixture into the R4MP Vue instance.
      *
-     * @param {(string | FixtureConfig)} value
-     * @returns {Promise<FixtureItemAPI>}
+     * @param {string} id
+     * @param {IFixtureBase} [constructor]
+     * @returns {Promise<FixtureBase>}
      * @memberof FixtureAPI
      */
-    async add(value: string | FixtureConfig): Promise<FixtureItemAPI> {
-        let fixtureConfig: FixtureConfig;
+    async add(id: string, constructor?: IFixtureBase): Promise<FixtureBase> {
+        let fixture: FixtureBase;
 
-        if (typeof value === 'string') {
-            // perform a dynamic webpack import of a internal fixture (allows for code splitting)
-            fixtureConfig = (await import(/* webpackChunkName: "[request]" */ `@/fixtures/${value}/index.ts`)).default;
+        // only need to provide fixture constructors for external fixtures since internal ones are loaded automatically
+        if (constructor) {
+            if (typeof constructor !== 'function') {
+                throw new Error('malformed fixture constructor');
+            }
+
+            // run the provided constructor and update the resulting object with FixtureInstance functions/properties
+            fixture = FixtureInstance.updateBaseToInstance(new constructor(), id, this.$iApi);
         } else {
-            fixtureConfig = value;
+            // perform a dynamic webpack import of a internal fixture (allows for code splitting)
+            const instanceConstructor: IFixtureInstance = (await import(/* webpackChunkName: "[request]" */ `@/fixtures/${id}/index.ts`))
+                .default;
+
+            fixture = new instanceConstructor(id, this.$iApi);
         }
-
-        // TODO: check if fixtureConfig exists at all
-
-        if (typeof fixtureConfig.created !== 'function') {
-            throw new Error('malformed fixture config; `created` life hook is missing');
-        }
-
-        // pass the reference to the API instance to the fixture config
-        fixtureConfig.created(this.$iApi);
 
         // TODO: calling `ADD_FIXTURE` mutation directly here; might want to switch to calling the action `addFixture`
         // TODO: using this horrible concatenated mixture `fixture/${FixtureMutation.ADD_FIXTURE}!` all the time doesn't seem like a good idea;
-        this.$vApp.$store.set(`fixture/${FixtureMutation.ADD_FIXTURE}!`, { value: fixtureConfig });
+        // fixtures are always stored as objects implementing `FixtureBase` interfaces;
+        this.$vApp.$store.set(`fixture/${FixtureMutation.ADD_FIXTURE}!`, { value: fixture });
 
-        return new FixtureItemAPI(this.$iApi, fixtureConfig);
+        return fixture;
     }
 
     /**
      * Removes the specified fixture from R4MP instance.
      *
-     * @param {(FixtureItemAPI | string)} fixtureOrId
-     * @returns {(FixtureItemAPI | null)}
+     * @template T
+     * @param {(FixtureBase | string)} fixtureOrId
+     * @returns {(T | null)}
      * @memberof FixtureAPI
      */
-    remove(fixtureOrId: FixtureItemAPI | string): FixtureItemAPI | null {
-        const fixture = this.get(fixtureOrId);
+    remove<T extends FixtureBase = FixtureBase>(fixtureOrId: FixtureBase | string): T | null {
+        const fixture = this.get<T>(fixtureOrId);
 
         // TODO: output warning to a log that a fixture with this id cannot be found
         if (!fixture) {
             return null;
         }
 
-        this.$vApp.$store.set(`fixture/${FixtureMutation.REMOVE_FIXTURE}!`, { value: fixture._config });
+        this.$vApp.$store.set(`fixture/${FixtureMutation.REMOVE_FIXTURE}!`, { value: fixture });
 
         return fixture;
     }
@@ -62,54 +75,79 @@ export class FixtureAPI extends APIScope {
     /**
      * Finds and returns a fixture with the id specified.
      *
+     * @template T
      * @param {(string | { id: string })} item
-     * @returns {(FixtureItemAPI | null)}
+     * @returns {(T | null)}
      * @memberof FixtureAPI
      */
-    get(item: string | { id: string }): FixtureItemAPI | null {
+    get<T extends FixtureBase = FixtureBase>(item: string | { id: string }): T | null {
         const id = typeof item === 'string' ? item : item.id;
-        const fixtureConfig = this.$vApp.$store.get<FixtureConfig>(`fixture/items@${id}`);
+        const fixture = this.$vApp.$store.get<T>(`fixture/items@${id}`);
 
         // TODO: output warning to a log that a fixture with this id cannot be found
-        if (!fixtureConfig) {
+        if (!fixture) {
             return null;
         }
 
-        return new FixtureItemAPI(this.$iApi, fixtureConfig);
+        return fixture;
     }
 }
 
-export class FixtureItemAPI extends APIScope {
+/**
+ * A base class for Fixture subclasses. It provides some utility functions to Fixtures and also gives access to `$iApi` and `$vApp` globals.
+ *
+ * @export
+ * @class FixtureInstance
+ * @extends {APIScope}
+ * @implements {FixtureBase}
+ */
+export class FixtureInstance extends APIScope implements FixtureBase {
     /**
-     * The original `FixtureConfig` object. Kept for reference.
+     * Adds missing functions and properties to the object implementing FixtureBase interface.
+     * This is only needed for external fixtures as they can't inherit from FixtureInstance.
      *
-     * @type {FixtureConfig}
-     * @memberof FixtureItemAPI
+     * TODO: If you know a better way to deep-mixin props/getters/functions from a class into another class instance, please tell me. I honestly don't know 🤷‍♂️.
+     *
+     * @static
+     * @param {FixtureBase} value
+     * @param {string} id
+     * @param {InstanceAPI} $iApi
+     * @returns {FixtureInstance}
+     * @memberof FixtureInstance
      */
-    readonly _config: FixtureConfig;
+    static updateBaseToInstance(value: FixtureBase, id: string, $iApi: InstanceAPI): FixtureInstance {
+        const instance = new FixtureInstance(id, $iApi);
+
+        Object.defineProperties(value, {
+            id: { value: id },
+            $iApi: { value: $iApi },
+            $vApp: {
+                get(): Vue {
+                    return instance.$vApp;
+                }
+            },
+            remove: { value: instance.remove },
+            extend: { value: instance.extend }
+        });
+
+        return value as FixtureInstance;
+    }
 
     /**
      * ID of this fixture.
      *
-     * @readonly
      * @type {string}
-     * @memberof FixtureItemAPI
+     * @memberof FixtureInstance
      */
-    get id(): string {
-        return this._config.id;
-    }
+    readonly id: string;
 
     /**
      * Creates an instance of FixtureItemAPI.
-     *
-     * @param {InstanceAPI} iApi
-     * @param {FixtureConfig} config
-     * @memberof FixtureItemAPI
      */
-    constructor(iApi: InstanceAPI, config: FixtureConfig) {
+    constructor(id: string, iApi: InstanceAPI) {
         super(iApi);
 
-        this._config = config;
+        this.id = id;
     }
 
     /**
@@ -117,10 +155,39 @@ export class FixtureItemAPI extends APIScope {
      * This is a proxy to `RAMP.fixture.remove(...)`.
      *
      * @returns {this}
-     * @memberof FixtureItemAPI
+     * @memberof FixtureInstance
      */
     remove(): this {
         this.$iApi.fixture.remove(this);
         return this;
     }
+
+    /**
+     *
+     *
+     * @param {VueConstructor<Vue>} vueConstructor
+     * @param {ComponentOptions<Vue>} [options={}]
+     * @param {boolean} [mount=true]
+     * @returns {Vue}
+     * @memberof FixtureInstance
+     */
+    extend(vueConstructor: VueConstructor<Vue>, options: ComponentOptions<Vue> = {}, mount: boolean = true): Vue {
+        const component = new (Vue.extend(vueConstructor))({
+            iApi: this.$iApi,
+            ...options,
+            propsData: {
+                ...options.propsData,
+                fixture: this
+            }
+        });
+
+        component.$mount();
+
+        return component;
+    }
+
+    added?(): void;
+    removed?(): void;
+    initialized?(): void;
+    terminated?(): void;
 }

@@ -85,7 +85,19 @@
                                     this.title = event.target.value;
                                 }
                             }
-                        })
+                        }),
+
+                        this.title === 'fight'
+                            ? h('img', {
+                                  style: {
+                                      width: '300px',
+                                      marginTop: '30px'
+                                  },
+                                  domProps: {
+                                      src: 'https://media.giphy.com/media/sGAlRSaXKjTfq/giphy.gif'
+                                  }
+                              })
+                            : null
                     ])
                 ])
             ]);
@@ -104,22 +116,45 @@
     };
 
     // then, create a fixture config
-    const diligordFixture = {
-        id: 'diligord',
-
-        // `created` function receives a reference to the FixtureItemAPI instance and we need to save it for later
-        // this is only needed when creating external fixtures (ones that are not compiled as part of the R4MP core)
-        // fixtures compiled as part of the core, use a helper class which takes care of this
-        created($iApi) {
-            this.$iApi = $iApi;
-        },
-
+    class DiligordFixture {
         added() {
+            // `this.id` and `this.$iApi` and `this.$vApp` are automatically made available on this object
+            console.log(this.id, this.$iApi, this.$vApp);
+
+            // you can also create a custom component using the `extend` function and put it anywhere on the page, even outside the R4MP container
+            const component = this.extend({
+                render: function(h) {
+                    return h(
+                        'p',
+                        {
+                            style: {
+                                marginTop: '80px',
+                                fontWeight: 'bold',
+                                color: '#34495e',
+                                fontSize: '20pt',
+                                textAlign: 'center'
+                            }
+                        },
+                        [this.firstName, ' ', this.lastName, ' aka ', this.alias]
+                    );
+                },
+                data: function() {
+                    return {
+                        firstName: 'Walter',
+                        lastName: 'White',
+                        alias: 'Heisenberg'
+                    };
+                }
+            });
+
+            // and put it on the page
+            document.querySelector('.ramp-app').after(component.$el);
+
             // this life hook is called when the fixture is added to R4MP, and now it's possible to open our panel
             this.$iApi.panel.open(dPanel1);
         }
-    };
+    }
 
     window.hostFixtures = window.hostFixtures || {};
-    window.hostFixtures[diligordFixture.id] = diligordFixture;
+    window.hostFixtures['diligord'] = DiligordFixture;
 })();

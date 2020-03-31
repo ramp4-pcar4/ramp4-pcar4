@@ -1,18 +1,20 @@
 import Vue from 'vue';
-import { RampMapConfig } from 'ramp-geoapi';
+import { RampMapConfig, RampMap } from 'ramp-geoapi';
 import { Store } from 'vuex';
 
 import App from '@/app.vue';
 import { createStore, RootState } from '@/store';
 import { ConfigStore } from '@/store/modules/config';
 
-import { FixtureAPI, PanelAPI, APIScope } from './internal';
+import { FixtureAPI, PanelAPI } from './internal';
 
 export class InstanceAPI {
     fixture: FixtureAPI;
     panel: PanelAPI;
-    // allow fixture apis to be added on, this is solely to make typescript happy
-    [key: string]: any;
+
+    // FIXME: temporarily store map in global, remove line below when map API is complete
+    // set by the `map/esri-map.vue` file
+    map!: RampMap;
 
     /**
      * A public event bus for all events. Can also be used by fixtures to talk to each other.

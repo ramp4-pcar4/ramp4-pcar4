@@ -1,25 +1,17 @@
-import Vue from 'vue';
-import { APIScope } from '@/api/common';
-import { InstanceAPI } from '@/api/internal';
-import { PanelConfig } from '@/store/modules/panel';
-import { GridStore, GridConfig, GridState } from '../store';
+import { FixtureInstance } from '@/api';
+import { GridConfig } from '../store';
 import TableStateManager from '../store/table-state-manager';
 
-export class GridAPI extends APIScope {
-    constructor(iApi: InstanceAPI, panel: PanelConfig) {
-        super(iApi);
-        this.$iApi.grid = this;
+import GridV from './../grid.vue';
 
-        this.panel = panel;
-    }
-
+export class GridAPI extends FixtureInstance {
     /**
      * Open the grid for the layer with the given uid.
      *
      * @param {string} id
      * @memberof GridAPI
      */
-    open(id: string): void {
+    openGrid(id: string): void {
         // get GridConfig for specified uid
         let gridSettings: GridConfig | undefined = this.$vApp.$store.get(`grid/grids@${id}`);
 
@@ -40,10 +32,20 @@ export class GridAPI extends APIScope {
 
         // open the grid
         this.$vApp.$store.set('grid/open', id ? id : null);
-        this.$iApi.panel.open(this.panel);
-    }
-}
 
-export interface GridAPI {
-    panel: PanelConfig;
+        // FIXME: this is temporary; panel enhancements will fix this; coming soon ™
+        this.$iApi.panel.open({
+            id: 'grid-panel',
+            width: 900,
+            screens: [
+                {
+                    id: 'grid-screen',
+                    component: GridV
+                }
+            ],
+            route: {
+                id: 'grid-screen'
+            }
+        });
+    }
 }
