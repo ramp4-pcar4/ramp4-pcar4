@@ -5,14 +5,12 @@ import GeosearchComponent from './geosearch-component.vue';
 import { GeosearchAPI } from './api/geosearch';
 import { geosearch } from './store/index';
 
-class GeosearchFixture extends FixtureConfigHelper {
+class GeosearchFixture extends GeosearchAPI {
     async added() {
         console.log(`[fixture] ${this.id} added`);
         const geosearchScreen = [{ id: 'geosearch-component', component: GeosearchComponent }];
 
-        this.vApp.$store.registerModule('geosearch', geosearch());
-
-        this.$iApi.emit('geosearchApi', new GeosearchAPI(this.$iApi));
+        this.$vApp.$store.registerModule('geosearch', geosearch());
 
         const geosearchPanel: PanelConfig = {
             id: 'geosearch-panel',
@@ -25,12 +23,11 @@ class GeosearchFixture extends FixtureConfigHelper {
     }
 
     removed() {
-        this.$iApi.geosearch = null;
-        this.vApp.$store.unregisterModule('geosearch');
+        this.$vApp.$store.unregisterModule('geosearch');
     }
 }
 
-export default new GeosearchFixture('geosearch');
+export default GeosearchFixture;
 
 import GeosearchAppbarButton from './geosearch-appbar-button.vue';
 export { GeosearchAppbarButton as AppbarButton };

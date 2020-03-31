@@ -1,12 +1,19 @@
 import Vue, { VueConstructor, ComponentOptions } from 'vue';
 
-import { APIScope } from './internal';
+import { APIScope, InstanceAPI } from './internal';
 import { FixtureBase, FixtureMutation } from '@/store/modules/fixture';
-import { InstanceAPI } from './instance';
+
 // TODO: implement the same `internal.ts` pattern in store, so can import from a single place;
 
-type IFixtureInstance = new (id: string, iApi: InstanceAPI) => FixtureInstance;
+/**
+ * A constructor returning an object implementing FixtureBase interface.
+ */
 type IFixtureBase = new () => FixtureBase;
+
+/**
+ * A constructor returning an instance of FixtureInstance class.
+ */
+type IFixtureInstance = new (id: string, iApi: InstanceAPI) => FixtureInstance;
 
 export class FixtureAPI extends APIScope {
     /**
@@ -183,51 +190,4 @@ export class FixtureInstance extends APIScope implements FixtureBase {
     removed?(): void;
     initialized?(): void;
     terminated?(): void;
-}
-
-// TODO: deprecated;
-export class FixtureItemAPI extends APIScope {
-    /**
-     * The original `FixtureConfig` object. Kept for reference.
-     *
-     * @type {FixtureBase}
-     * @memberof FixtureItemAPI
-     */
-    readonly _config: FixtureBase;
-
-    /**
-     * ID of this fixture.
-     *
-     * @readonly
-     * @type {string}
-     * @memberof FixtureItemAPI
-     */
-    get id(): string {
-        return this._config.id!;
-    }
-
-    /**
-     * Creates an instance of FixtureItemAPI.
-     *
-     * @param {InstanceAPI} iApi
-     * @param {FixtureBase} config
-     * @memberof FixtureItemAPI
-     */
-    constructor(iApi: InstanceAPI, config: FixtureBase) {
-        super(iApi);
-
-        this._config = config;
-    }
-
-    /**
-     * Removes the specified fixture from R4MP instance.
-     * This is a proxy to `RAMP.fixture.remove(...)`.
-     *
-     * @returns {this}
-     * @memberof FixtureItemAPI
-     */
-    remove(): this {
-        this.$iApi.fixture.remove(this);
-        return this;
-    }
 }
