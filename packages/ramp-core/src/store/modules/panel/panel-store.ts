@@ -12,7 +12,6 @@ type StoreMutations = { [key: string]: Mutation<PanelState> };
 
 export enum PanelAction {
     openPanel = 'openPanel',
-    /* addPanel = 'addPanel', */
     closePanel = 'removePanel',
     setWidth = 'setWidth',
     updateVisible = 'updateVisible'
@@ -22,7 +21,6 @@ export enum PanelMutation {
     REGISTER_PANEL = 'REGISTER_PANEL',
     OPEN_PANEL = 'OPEN_PANEL',
 
-    ADD_PANEL = 'ADD_PANEL',
     ADD_TO_PANEL_ORDER = 'ADD_TO_PANEL_ORDER',
     CLOSE_PANEL = 'REMOVE_PANEL',
 
@@ -54,12 +52,6 @@ const actions = {
         context.commit(PanelMutation.SET_PRIORITY, value);
         context.dispatch(PanelAction.updateVisible);
     },
-
-    /* [PanelAction.addPanel](context: PanelContext, value: PanelConfig): void {
-        context.commit(PanelMutation.ADD_PANEL, value);
-        context.commit(PanelMutation.SET_PRIORITY, value);
-        context.dispatch(PanelAction.updateVisible);
-    }, */
 
     [PanelAction.closePanel](context: PanelContext, value: { panel: PanelConfig }): void {
         if (context.state.priority === value.panel) {
@@ -133,11 +125,6 @@ const mutations = {
     [PanelMutation.OPEN_PANEL](state: PanelState, { panel }: { panel: PanelInstance }): void {
         state.orderedItems = [...state.orderedItems, panel];
     },
-
-    /* [PanelMutation.ADD_PANEL](state: PanelState, value: PanelConfig): void {
-        state.orderedItems = [...state.orderedItems, value];
-        state.items = { ...state.items, [value.id]: value };
-    }, */
 
     [PanelMutation.CLOSE_PANEL](state: PanelState, { panel }: { panel: PanelInstance }): void {
         const index = state.orderedItems.indexOf(panel);

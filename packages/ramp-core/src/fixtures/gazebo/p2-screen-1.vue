@@ -36,7 +36,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
-import { PanelItemAPI, PanelInstance } from '@/api';
+import { PanelInstance } from '@/api';
 
 @Component({})
 export default class Scree2V extends Vue {

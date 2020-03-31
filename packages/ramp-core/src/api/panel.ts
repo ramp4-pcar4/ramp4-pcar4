@@ -3,14 +3,6 @@ import Vue from 'vue';
 import { APIScope, InstanceAPI } from './internal';
 import { PanelConfig, PanelConfigRoute, PanelMutation, PanelConfigScreens, PanelConfigStyle, PanelAction } from '@/store/modules/panel';
 
-export type PanelConfigSet = { [name: string]: PanelConfig };
-
-export type PanelConfigPair = { id: string; config: PanelConfig };
-
-export type PanelInstanceSet = { [name: string]: PanelInstance };
-
-export type PanelInstancePath = { id: string; screen?: string; props?: object };
-
 export class PanelAPI extends APIScope {
     /**
      * Register provided panel object (could be several of just one) and return the resulting `PanelInstance` objects.
@@ -25,6 +17,7 @@ export class PanelAPI extends APIScope {
     register(value: PanelConfigPair | PanelConfigSet): PanelInstance | PanelInstanceSet {
         const panels: PanelInstance[] = [];
 
+        // check if only a single `PanelConfig` is provided
         if (isPanelConfigPair(value)) {
             panels.push(new PanelInstance(this.$iApi, value.id, value.config));
         } else {
@@ -34,8 +27,10 @@ export class PanelAPI extends APIScope {
             }, panels);
         }
 
+        // register all the panels with the store
         panels.forEach(panel => this.$vApp.$store.set(`panel/${PanelMutation.REGISTER_PANEL}!`, { panel }));
 
+        // return either a single panel or a set of panels, depending on the function input
         if (panels.length === 1) {
             return panels[0];
         } else {
@@ -67,7 +62,12 @@ export class PanelAPI extends APIScope {
     /**
      * Opens a registered panel in the panel stack.
      *
-     * @param {(string | PanelInstance | PanelInstancePath)} value
+     *  - `RAMP.panel.open('panel-id')` -- opens the 'panel-id' panel on the first screen in the set
+     *  - `RAMP.panel.open(<PanelInstance>)` -- opens the provided `PanelInstance` object on the first screen in the set
+     *  - `RAMP.panel.open({ id: 'panel-id', screen: 'screen-id' })` -- opens the 'panel-id' panel on the 'screen-id' screen
+     *  - `RAMP.panel.open({ id: 'panel-id', screen: 'screen-id', props: {... } })` -- opens the 'panel-id' panel on the 'screen-id' screen passing supplied `props` to it
+     *
+     * @param {(string | PanelInstance | PanelInstancePath)} value a panel id, a `PanelInstance` object or an object of the form `{ id: <panel-id>, screen: <id>, props: <object> }`.
      * @returns {PanelInstance}
      * @memberof PanelAPI
      */
@@ -90,6 +90,17 @@ export class PanelAPI extends APIScope {
         this.$vApp.$store.set(`panel/${PanelAction.openPanel}!`, { panel });
 
         return panel;
+    }
+
+    /**
+     * Returns an array of open `PanelInstance` objects.
+     *
+     * @readonly
+     * @type {PanelInstance[]}
+     * @memberof PanelAPI
+     */
+    get opened(): PanelInstance[] {
+        return this.$vApp.$store.get<PanelInstance[]>('panel/orderedItems')!;
     }
 
     /**
@@ -173,10 +184,10 @@ export class PanelAPI extends APIScope {
      * @param {(string | PanelInstance)} value
      * @param {object} style
      * @param {boolean} [replace=false] merge with existing styles if `false`; replace if `true`
-     * @returns {(PanelItemAPI | null)}
+     * @returns {(PanelInstance | null)}
      * @memberof PanelAPI
      */
-    setStyle(value: string | PanelInstance, style: object, replace: boolean = false): PanelItemAPI | null {
+    setStyle(value: string | PanelInstance, style: object, replace: boolean = false): PanelInstance | null {
         const panel = this.get(value);
 
         this.$vApp.$store.set(`panel/items@${panel.id}.style`, replace ? style : { ...panel.style, ...style });
@@ -274,18 +285,35 @@ export class PanelInstance extends APIScope {
      * Opens a registered panel in the panel stack.
      * This is a proxy to `RAMP.panel.open(...)`.
      *
-     * @param {(string | { screen: string; props?: object })} value
+     *  - `somePanel.open()` -- opens the panel on the first screen in the set
+     *  - `somePanel.open('screen-id')` -- opens the panel on the 'screen-id' screen
+     *  - `somePanel.open({ screen: 'screen-id', props: {... } })` -- opens the panel on the 'screen-id' screen passing supplied `props` to it
+     *
+     * @param {(string | { screen: string; props?: object })} value a screen id, or an object of the form `{ screen: <id>, props: <object> }`.
      * @returns {this}
      * @memberof PanelInstance
      */
-    open(value: string | { screen: string; props?: object }): this {
-        if (typeof value === 'string') {
+    open(value?: string | { screen: string; props?: object }): this {
+        if (typeof value === 'undefined') {
+            // if no screen id is provided, open the panel using the default value
             this.$iApi.panel.open(this);
         } else {
-            this.$iApi.panel.open({ id: this.id, ...value });
+            // pass the screen id and props, if given, to the `open` function
+            this.$iApi.panel.open({ id: this.id, ...(typeof value === 'string' ? { screen: value } : value) });
         }
 
         return this;
+    }
+
+    /**
+     * Checks if the panel is open or not.
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof PanelInstance
+     */
+    get isOpen(): boolean {
+        return this.$iApi.panel.opened.indexOf(this) !== -1;
     }
 
     /**
@@ -363,49 +391,6 @@ export class PanelInstance extends APIScope {
     }
 }
 
-// TODO: deprecated
-export class PanelItemAPI extends APIScope {
-    /**
-     * The original `PanelConfig` object. Kept for reference.
-     *
-     * @type {PanelConfig}
-     * @memberof PanelItemAPI
-     */
-    /* readonly _config: PanelConfig; */
-
-    /**
-     * ID of this fixture.
-     *
-     * @readonly
-     * @type {string}
-     * @memberof FixtureItemAPI
-     */
-    /* get id(): string {
-        return this._config.id;
-    } */
-
-    /**
-     * Creates an instance of PanelItemAPI.
-     *
-     * @param {InstanceAPI} iApi
-     * @param {PanelConfig} config
-     * @memberof PanelItemAPI
-     */
-    constructor(iApi: InstanceAPI, config: PanelConfig) {
-        super(iApi);
-
-        /* this._config = config; */
-
-        // register all the panel screen components globally
-        /* this._config.screens.forEach(({ id, component }) => {
-            // only register if it hasn't been registered before
-            if (!(id in this.$vApp.$options.components!)) {
-                Vue.component(id, component);
-            }
-        }); */
-    }
-}
-
 /**
  * Check if the provided value is of `PanelConfigPair` type.
  *
@@ -415,3 +400,23 @@ export class PanelItemAPI extends APIScope {
 function isPanelConfigPair(value: PanelConfigPair | PanelConfigSet): value is PanelConfigPair {
     return value.id !== undefined && typeof value.id === 'string' && value.config !== undefined;
 }
+
+/**
+ * A set of key-value pairs with `PanelConfig` objects and their ids.
+ */
+export type PanelConfigSet = { [name: string]: PanelConfig };
+
+/**
+ * A single pair of `PanelConfig`/id values.
+ */
+export type PanelConfigPair = { id: string; config: PanelConfig };
+
+/**
+ * A set of key-value pairs with `PanelInstance` objects and their ids.
+ */
+export type PanelInstanceSet = { [name: string]: PanelInstance };
+
+/**
+ * A path specifying panel id, screen id, and any props for that panel screen. Used when opening a panel through `$iApi.panel.open(...)`.
+ */
+export type PanelInstancePath = { id: string; screen?: string; props?: object };

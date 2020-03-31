@@ -1,6 +1,3 @@
-import { PanelConfig } from '@/store/modules/panel';
-import { FixtureConfigHelper } from '@/store/modules/fixture';
-// import on-map components
 import GeosearchComponent from './geosearch-component.vue';
 import { GeosearchAPI } from './api/geosearch';
 import { geosearch } from './store/index';
@@ -8,18 +5,17 @@ import { geosearch } from './store/index';
 class GeosearchFixture extends GeosearchAPI {
     async added() {
         console.log(`[fixture] ${this.id} added`);
-        const geosearchScreen = [{ id: 'geosearch-component', component: GeosearchComponent }];
 
         this.$vApp.$store.registerModule('geosearch', geosearch());
 
-        const geosearchPanel: PanelConfig = {
+        this.$iApi.panel.register({
             id: 'geosearch-panel',
-            screens: geosearchScreen,
-            route: {
-                id: 'geosearch-component'
+            config: {
+                screens: { 'geosearch-component': GeosearchComponent }
             }
-        };
-        this.$iApi.panel.open(geosearchPanel);
+        });
+
+        this.$iApi.panel.open('geosearch-panel');
     }
 
     removed() {

@@ -2,8 +2,6 @@ import { FixtureInstance } from '@/api';
 import { GridConfig } from '../store';
 import TableStateManager from '../store/table-state-manager';
 
-import GridV from './../grid.vue';
-
 export class GridAPI extends FixtureInstance {
     /**
      * Open the grid for the layer with the given uid.
@@ -33,19 +31,6 @@ export class GridAPI extends FixtureInstance {
         // open the grid
         this.$vApp.$store.set('grid/open', id ? id : null);
 
-        // FIXME: this is temporary; panel enhancements will fix this; coming soon ™
-        this.$iApi.panel.open({
-            id: 'grid-panel',
-            width: 900,
-            screens: [
-                {
-                    id: 'grid-screen',
-                    component: GridV
-                }
-            ],
-            route: {
-                id: 'grid-screen'
-            }
-        });
+        this.$iApi.panel.open('grid-panel');
     }
 }
