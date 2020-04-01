@@ -8,7 +8,7 @@
     // TODO: make an example of a compiled external fixture
     const dScreen1 = {
         // the `panel` prop is automatically passed to all panel screen components by the panel-container
-        // this is the `PanelItemAPI` instance inside which this screen component is displayed, and it exposes panel API functions
+        // this is the `PanelInstance` instance inside which this screen component is displayed, and it exposes panel API functions
         // methods, computed functions and template will have access to the panel as `this.panel`
         props: ['panel'],
 
@@ -105,13 +105,10 @@
     };
 
     // then, create a panel config
-    const dPanel1 = {
+    const dpanel = {
         id: 'diligord-p1',
-        screens: [{ id: 'diligord-s1', component: dScreen1 }],
-
-        // if the route is not specified, the first screen will be used automatically
-        route: {
-            id: 'diligord-s1'
+        config: {
+            screens: { 'diligord-s1': dScreen1 }
         }
     };
 
@@ -151,7 +148,7 @@
             document.querySelector('.ramp-app').after(component.$el);
 
             // this life hook is called when the fixture is added to R4MP, and now it's possible to open our panel
-            this.$iApi.panel.open(dPanel1);
+            this.$iApi.panel.register(dpanel).open();
         }
     }
 

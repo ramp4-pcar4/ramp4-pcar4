@@ -1,14 +1,8 @@
 <template>
-    <div
-        class="shadow-tm bg-white h-full xs:mr-0 sm:mr-12 last:mr-0 pointer-events-auto"
-        :style="{
-            'flex-basis': panelConfig.width ? panelConfig.width + 'px' : '350px',
-            ...panelConfig.style
-        }"
-    >
+    <div class="shadow-tm bg-white h-full xs:mr-0 sm:mr-12 last:mr-0 pointer-events-auto" :style="panel.style">
         <!-- this renders a panel screen which is currently in view -->
         <!-- TODO: add animation transition animation here -->
-        <component :is="panelConfig.route.id" v-bind="panelConfig.route.props" :panel="panel" v-focus-list></component>
+        <component :is="panel.route.screen" v-bind="panel.route.props" :panel="panel" v-focus-list></component>
     </div>
 </template>
 
@@ -28,17 +22,11 @@ Vue.component('close', CloseV);
 Vue.component('panel-options-menu', PanelOptionsMenuV);
 Vue.component('dropdown-menu', DropdownMenuV);
 
-import { PanelConfig } from '@/store/modules/panel';
-import { PanelItemAPI } from '@/api';
+import { PanelInstance } from '@/api';
 
 @Component
 export default class PanelContainerV extends Vue {
-    @Prop() panelConfig!: PanelConfig;
-
-    get panel(): PanelItemAPI {
-        // wrap a panel config into a PanelItemAPI and pass it to the fixture components that render inside the panel-screen
-        return new PanelItemAPI(this.$iApi, this.panelConfig);
-    }
+    @Prop() panel!: PanelInstance;
 }
 </script>
 

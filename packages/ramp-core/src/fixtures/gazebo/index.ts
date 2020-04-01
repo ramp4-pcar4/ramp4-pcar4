@@ -11,45 +11,34 @@ class GazeboFixture extends FixtureInstance {
     added(): void {
         console.log(`[fixture] ${this.id} added`);
 
-        const p1screens = [
-            { id: 'p-1-screen-1', component: P1Screen1V },
-            { id: 'p-1-screen-2', component: P1Screen2V }
-        ];
-
-        const p2screens = [
-            { id: 'p-2-screen-1', component: P2Screen1V },
-            { id: 'p-2-screen-2', component: P2Screen2V }
-        ];
-
-        // panel-1 has examples of how not to bind things and interact with stuff; bad panel ❌
-        // it generally avoids using API and goes straight to the store; fixtures/panels/screens should not do that;
-        const p1: PanelConfig = {
-            id: 'p1',
-            screens: p1screens,
-            route: {
-                id: 'p-1-screen-1'
-            }
-        };
-
-        // panel-2 has examples of how properly bind things and interact with stuff; good panel ✔
-        // use API functions; underlying store structure might change and all the code accessing the store directly will break
-        const p2: PanelConfig = {
-            id: 'p2',
-            screens: p2screens,
-            route: {
-                id: 'p-2-screen-2',
-                props: { greeting: 'Default greeting!' }
+        this.$iApi.panel.register({
+            // panel-1 has examples of how not to bind things and interact with stuff; bad panel ❌
+            // it generally avoids using API and goes straight to the store; fixtures/panels/screens should not do that;
+            p1: {
+                screens: {
+                    'p-1-screen-1': P1Screen1V,
+                    'p-1-screen-2': P1Screen2V
+                }
             },
-            style: {
-                'flex-grow': '1',
-                'max-width': '500px'
+            // panel-2 has examples of how properly bind things and interact with stuff; good panel ✔
+            // use API functions; underlying store structure might change and all the code accessing the store directly will break
+            p2: {
+                screens: {
+                    'p-2-screen-1': P2Screen1V,
+                    'p-2-screen-2': P2Screen2V
+                },
+                style: {
+                    'flex-grow': '1',
+                    'max-width': '500px'
+                }
             }
-        };
+        });
 
-        const pApi1 = this.$iApi.panel.open(p1);
-        const pApi2 = this.$iApi.panel.open(p2);
-
-        pApi2.pin(true);
+        this.$iApi.panel.open({ id: 'p1', screen: 'p-1-screen-2' });
+        this.$iApi.panel
+            .get('p2')
+            .open()
+            .pin();
     }
 }
 

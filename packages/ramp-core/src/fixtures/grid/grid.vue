@@ -58,7 +58,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
-import { PanelItemAPI } from '@/api';
+import { PanelInstance } from '@/api';
 import TableComponent from '@/fixtures/grid/table/table.vue';
 
 import { LayerStore, layer } from '@/store/modules/layer';
@@ -70,7 +70,7 @@ import FeatureLayer from 'ramp-geoapi/dist/layer/FeatureLayer';
     }
 })
 export default class Screen1 extends Vue {
-    @Prop() panel!: PanelItemAPI;
+    @Prop() panel!: PanelInstance;
     @Prop() header!: String;
 
     @Get(LayerStore.layers) layers!: FeatureLayer[];
@@ -99,9 +99,9 @@ export default class Screen1 extends Vue {
 .ag-floating-filter-full-body input,
 .ag-floating-filter-full-body select,
 .rv-global-search {
-    @apply bg-transparent text-black-75 h-24 pb-8 border-0 border-b-2
+    @apply bg-transparent text-black-75 h-24 pb-8 border-0 border-b-2;
 }
 .rv-input {
-    @apply m-0 py-1
+    @apply m-0 py-1;
 }
 </style>

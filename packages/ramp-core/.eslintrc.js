@@ -6,7 +6,8 @@ module.exports = {
     extends: ['plugin:vue/essential', '@vue/prettier', '@vue/typescript'],
     rules: {
         'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-        'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
+        'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+        'no-dupe-class-members': 'off' // `no-dupe-class-members` complains when function overloads are used
     },
     parserOptions: {
         parser: '@typescript-eslint/parser'

@@ -18,17 +18,11 @@ import GeosearchComponent from './geosearch-component.vue';
 export default class GeosearchAppbarButton extends Vue {
     togglePanel(): void {
         const panel = this.$iApi.panel.get('geosearch-panel');
-        const geosearchScreen = [{ id: 'geosearch-component', component: GeosearchComponent }];
-        if (panel) {
+
+        if (panel.isOpen) {
             panel.close();
         } else {
-            this.$iApi.panel.open({
-                id: 'geosearch-panel',
-                screens: geosearchScreen,
-                route: {
-                    id: 'geosearch-component'
-                }
-            });
+            panel.open();
         }
     }
 }

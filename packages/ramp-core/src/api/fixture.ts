@@ -142,7 +142,11 @@ export class FixtureInstance extends APIScope implements FixtureBase {
     readonly id: string;
 
     /**
-     * Creates an instance of FixtureItemAPI.
+     * Creates an instance of FixtureInstance.
+     *
+     * @param {string} id
+     * @param {InstanceAPI} iApi
+     * @memberof FixtureInstance
      */
     constructor(id: string, iApi: InstanceAPI) {
         super(iApi);

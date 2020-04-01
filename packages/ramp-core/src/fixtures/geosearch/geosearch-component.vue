@@ -48,7 +48,7 @@
 <script lang="ts">
 import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
-import { PanelItemAPI } from '@/api';
+import { PanelInstance } from '@/api';
 
 import { GeosearchStore } from './store';
 import { RampMap } from 'ramp-geoapi';
@@ -68,7 +68,7 @@ import { ApiBundle } from 'ramp-geoapi';
     }
 })
 export default class GeosearchComponent extends Vue {
-    @Prop() panel!: PanelItemAPI;
+    @Prop() panel!: PanelInstance;
     // fetch store properties/data
     @Get(GeosearchStore.searchVal) searchVal!: string;
     @Get(GeosearchStore.searchResults) searchResults!: Array<any>;
