@@ -5,14 +5,22 @@ import { PanelConfig, PanelConfigRoute, PanelMutation, PanelConfigScreens, Panel
 
 export class PanelAPI extends APIScope {
     /**
-     * Register provided panel object (could be several of just one) and return the resulting `PanelInstance` objects.
+     * Registers a provided panel object and returns the resulting `PanelInstance` objects.
      * When the panel is registered, all its screens are added to the Vue as components right away.
      *
-     * @param {(PanelConfigPair | PanelConfigSet)} value
-     * @returns {(PanelInstance | PanelInstanceSet)}
+     * @param {PanelConfigPair} value a PanelConfig/id pair in the form of `{ id: string, config: PanelConfig }`
+     * @returns {PanelInstance}
      * @memberof PanelAPI
      */
     register(value: PanelConfigPair): PanelInstance;
+    /**
+     * Registers a set of provided panel objects and returns the resulting `PanelInstance` object set.
+     * When the panel is registered, all its screens are added to the Vue as components right away.
+     *
+     * @param {PanelConfigSet} value a set of PanelConfig objects in the form of `{ [name: string]: PanelConfig }` where keys assumed to be ids
+     * @returns {PanelInstanceSet}
+     * @memberof PanelAPI
+     */
     register(value: PanelConfigSet): PanelInstanceSet;
     register(value: PanelConfigPair | PanelConfigSet): PanelInstance | PanelInstanceSet {
         const panels: PanelInstance[] = [];
@@ -48,6 +56,7 @@ export class PanelAPI extends APIScope {
      * @returns {PanelInstance}
      * @memberof PanelAPI
      */
+    // TODO: implement overload to get a list of panels, similar to `feature.get([...])`
     get(value: string | PanelInstance): PanelInstance {
         const id = typeof value === 'string' ? value : value.id;
         const panel = this.$vApp.$store.get<PanelInstance>(`panel/items@${id}`);
