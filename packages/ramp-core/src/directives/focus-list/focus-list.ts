@@ -35,8 +35,8 @@ const TABBABLE_TAGS = `button,input,select,a,textarea,[contenteditable],[${LIST_
  * </div>
  * ```
  */
-export const FocusList = {
-    bind(el: HTMLElement, binding: any /*, vnode: any */) {
+export const FocusList: Vue.DirectiveOptions = {
+    bind(el: HTMLElement, binding: Vue.VNodeDirective /*, vnode: Vue.VNode */) {
         // make it tabbable if it isn't
         // NOTE: +<string> = the string as a number, +<null> = 0
         if (+el.getAttribute('tabindex')! <= 0) {
