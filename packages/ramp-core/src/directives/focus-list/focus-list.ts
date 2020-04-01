@@ -15,7 +15,6 @@ enum KEYS {
 const LIST_ATTR = 'focus-list';
 const ITEM_ATTR = 'focus-item';
 const FOCUSED_CLASS = 'focused';
-const FOCUSED_ID = 'focusedItem';
 const TABBABLE_TAGS = `button,input,select,a,textarea,[contenteditable],[${LIST_ATTR}]`;
 
 // TODO: Figure out a way to put the control scheme into the description of the focus-list for screen readers (hidden text?), or see if the help file would be sufficient.
@@ -23,21 +22,21 @@ const TABBABLE_TAGS = `button,input,select,a,textarea,[contenteditable],[${LIST_
 /**
  * The FocusList Directive
  *
- * To use; add `v-focus-list` to your main element and `focus-item` to sub-items you want to be selectable
+ * To use; add `v-focus-list` to your main element and `v-focus-item` to sub-items you want to be selectable
  * The directive will assume your list is vertical. To force it to be horizontal set the attribute to have a value of 'horizontal'.
  *
  * **Example**:
  *
  * ```
  * <div v-focus-list="'horizontal'">
- *     <button focus-item></button>
- *     <button focus-item></button>
- *     <button focus-item></button>
+ *     <button v-focus-item></button>
+ *     <button v-focus-item></button>
+ *     <button v-focus-item></button>
  * </div>
  * ```
  */
-export const FocusList = {
-    bind(el: HTMLElement, binding: any /*, vnode: any */) {
+export const FocusList: Vue.DirectiveOptions = {
+    bind(el: HTMLElement, binding: Vue.VNodeDirective /*, vnode: Vue.VNode */) {
         // make it tabbable if it isn't
         // NOTE: +<string> = the string as a number, +<null> = 0
         if (+el.getAttribute('tabindex')! <= 0) {
@@ -163,24 +162,12 @@ class FocusListManager {
     }
 
     /**
-     * Clears the focused element ID from any element that has it, removing it's ancestors `aria-activedescendant` as well.
-     * It then moves the focus to `item` and updates the lists `aria-activedescendant`
+     * Updates the list's `aria-activedescendant` to be `item`
      *
      * @param item The element that should be the active descendant
      */
     setAriaActiveDescendant(item: HTMLElement) {
-        // if theres an element with FOCUSED_ID somewhere else on the page, remove it (and its list's aria-activedescendant)
-        // so that we can put it on our element.
-        const focusedElement = document.getElementById(FOCUSED_ID);
-        if (focusedElement) {
-            focusedElement.removeAttribute('id');
-            const closestList = focusedElement.closest(`[${LIST_ATTR}]`)!;
-            if (closestList !== this.element) {
-                closestList.removeAttribute('aria-activedescendant');
-            }
-        }
-        item.setAttribute('id', FOCUSED_ID);
-        this.element.setAttribute('aria-activedescendant', FOCUSED_ID);
+        this.element.setAttribute('aria-activedescendant', item.getAttribute('id')!);
     }
 
     /**
