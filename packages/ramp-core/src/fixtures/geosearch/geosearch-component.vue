@@ -36,7 +36,7 @@
                                     }}</span
                                 >
                             </div>
-                            <span class="font-bold truncate" v-if="result.type">{{ result.type }}</span>
+                            <span class="flex-2 text-right font-bold truncate" v-if="result.type">{{ result.type }}</span>
                         </div>
                     </button>
                 </li>
@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 import { PanelInstance } from '@/api';
 
