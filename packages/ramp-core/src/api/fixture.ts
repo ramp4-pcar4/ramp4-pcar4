@@ -57,7 +57,7 @@ export class FixtureAPI extends APIScope {
      *
      * @template T
      * @param {(FixtureBase | string)} fixtureOrId
-     * @returns {(T | null)}
+     * @returns {T}
      * @memberof FixtureAPI
      */
     remove<T extends FixtureBase = FixtureBase>(fixtureOrId: FixtureBase | string): T {
