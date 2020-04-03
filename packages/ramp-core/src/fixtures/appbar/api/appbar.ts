@@ -57,7 +57,7 @@ export class AppbarAPI extends FixtureInstance {
         // get the ordered list of items and see if any of them are registered
         this.$vApp.$store.get<string[]>('appbar/order')!.forEach(id => {
             // appbar check components with the literal id and with a `-appbar-button` suffix;
-            [id, `${id}-appbar-button`].some(v => {
+            [`${id}-appbar-button`, id].some(v => {
                 if (v in this.$vApp.$options.components!) {
                     // if an item is registered globally, save the name of the registered component
                     this.$vApp.$store.set(`appbar/items@${id}.componentId`, v);

@@ -4,62 +4,67 @@ The Appbar is used as a starting point for functionality in the app. Its main us
 
 ## Configuration
 
-Any arbitrary vue component can be added to the appbar, the config for an item is
+Any arbitrary vue component can be added to the appbar, the config for appbar is as follows:
 
 ```json
 {
-    "id": "my-appbar-button",
-    "component": MyAppbarButton
+    "items": ["my-appbar-button"]
 }
 ```
 
-If an item is supplied without a component it is assumed to be a fixture (that we've developed), and will pull the appbar button from the named fixture folder.
+An item can be supplied as simply a component name or as an object indicating the component's name and any options to be passed to that component as props:
 
 ```json
 {
-    "id": "legend"
+    "items": [{ "id": "my-other-appbar-button-with-options", "options": { "colour": "red" } }]
 }
 ```
 
-The above pulls in the appbar button from `legend` and registers it under `legend-appbar-button`.
+The `-appbar-button` suffix is optional and can be omitted. If a `gazebo` id is provided, the Appbar will automatically check if a `gazebo-appbar-button` component exist and use that one instead. This is a convenience feature to make config less verbose:
+
+````json
+{
+    "items": [
+        "gazebo"
+    ]
+}
 
 Using what we've learned, the whole config for an appbar could be:
 
 ```json
-[
-    {
-        id: "my-appbar-button",
-        component: MyAppbarButton
-    },
-    {
-        id: "legend"
-    },
-    {
-        id: "my-second-button"
-        component: FancyButton
-    }
-]
-```
+{
+    "items": [
+        "my-appbar-button",
+        { "id": "my-other-appbar-button-with-options", "options": { "colour": "red" } },
+        "gazebo"
+    ]
+}
+````
 
 Lastly, there is a Divider component that can be used by specifying an item with the `divider` id. As its name suggests, this component just adds a divider in between groups of appbar buttons.
 
-Lets say we want to separate the `legend` button from the other two;
+Lets say we want to separate the `gazebo` button from the other two:
 
 ```json
-[
-    {
-        id: "legend"
-    },
-    {
-        id: "divider"
-    },
-    {
-        id: "my-appbar-button",
-        component: MyAppbarButton
-    },
-    {
-        id: "my-second-button"
-        component: FancyButton
-    }
-]
+{
+    "items": [
+        "my-appbar-button",
+        { "id": "my-other-appbar-button-with-options", "options": { "colour": "red" } },
+        "divider",
+        "gazebo"
+    ]
+}
+```
+
+And, you guessed it, you can register your own `my-fancy-divider` component and use it instead:
+
+```json
+{
+    "items": [
+        "my-appbar-button",
+        { "id": "my-other-appbar-button-with-options", "options": { "colour": "red" } },
+        "my-fancy-divider",
+        "gazebo"
+    ]
+}
 ```
