@@ -43,8 +43,20 @@ export interface AppbarItemConfig {
 export class AppbarItemInstance implements AppbarItemConfig {
     id: string;
 
+    /**
+     * Optional object containing any options to be passed to the appbar component.
+     *
+     * @type {object}
+     * @memberof AppbarItemInstance
+     */
     options: object;
 
+    /**
+     * An actual id of the appbar Vue component to use when rendering in the template.
+     *
+     * @type {string}
+     * @memberof AppbarItemInstance
+     */
     componentId?: string;
 
     constructor(value: string | AppbarItemConfig) {

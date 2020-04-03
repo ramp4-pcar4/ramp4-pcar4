@@ -1,5 +1,5 @@
 <template>
-    <button class="py-6" @click="togglePanel()" :style="{ color: options.colour }">G</button>
+    <button class="py-6" @click="togglePanel()" :style="{ fontWeight: 'bold', color: options.colour }">G</button>
 </template>
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';

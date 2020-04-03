@@ -7,6 +7,7 @@ class SnowmanFixture extends FixtureInstance {
     added(): void {
         console.log(`[fixture] ${this.id} added`);
 
+        // register snowman appbar button
         this.$iApi.component('snowman-appbar-button', SnowmanAppbarButtonV);
 
         // instantiate it a new instance of the Snowman component using a helper function which will add `$iApi` to the component automatically

@@ -23,10 +23,6 @@ Vue.component('divider', DividerV);
 @Component
 export default class AppbarV extends Vue {
     @Get('appbar/visible') items!: AppbarItemInstance[];
-
-    get registeredItems(): AppbarItemInstance[] {
-        return this.items.filter(item => item.componentId);
-    }
 }
 </script>
 

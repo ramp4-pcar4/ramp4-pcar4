@@ -14,10 +14,12 @@ export enum AppbarMutation {
 }
 
 const getters = {
-    /* getById: (state: AppbarState) => (id: string): AppbarItemInstance | null => {
-        return state.items.find(item => item.id === id) || null;
-    } */
-
+    /**
+     * Return a list of appbar items with registered components (ones that can be rendered right now).
+     *
+     * @param {AppbarState} state
+     * @returns {AppbarItemInstance[]}
+     */
     visible(state: AppbarState): AppbarItemInstance[] {
         return state.order.map<AppbarItemInstance>(id => state.items[id]).filter(item => item.componentId);
     }
@@ -25,15 +27,7 @@ const getters = {
 
 const actions = {};
 
-const mutations = {
-    /* [AppbarMutation.ADD_ITEM](state: AppbarState, value: AppbarItemInstance): void {
-        state.items.push(value);
-    },
-
-    [AppbarMutation.REMOVE_ITEM](state: AppbarState, value: AppbarItemInstance): void {
-        state.items.splice(state.items.indexOf(value), 1);
-    } */
-};
+const mutations = {};
 
 export function appbar() {
     const state = new AppbarState();

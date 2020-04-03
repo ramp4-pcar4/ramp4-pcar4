@@ -1,7 +1,7 @@
 import Vue, { VueConstructor, ComponentOptions } from 'vue';
 
 import { APIScope, InstanceAPI } from './internal';
-import { FixtureBase, FixtureMutation } from '@/store/modules/fixture';
+import { FixtureBase, FixtureMutation, FixtureBaseSet } from '@/store/modules/fixture';
 
 // TODO: implement the same `internal.ts` pattern in store, so can import from a single place;
 
@@ -29,7 +29,7 @@ export class FixtureAPI extends APIScope {
         let fixture: FixtureBase;
 
         // if the fixture already exist, do nothing and just return it
-        if (id in this.$vApp.$store.get<{ [name: string]: FixtureBase }>(`fixture/items`)!) {
+        if (id in this.$vApp.$store.get<FixtureBaseSet>(`fixture/items`)!) {
             return this.get(id);
         }
 

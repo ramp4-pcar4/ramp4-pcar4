@@ -11,7 +11,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 
 @Component
-export default class LegendAppbarButton extends Vue {
+export default class LegendAppbarButtonV extends Vue {
     onClick() {
         console.log('legend appbar button clicked');
     }

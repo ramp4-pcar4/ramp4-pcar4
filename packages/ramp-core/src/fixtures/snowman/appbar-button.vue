@@ -11,6 +11,8 @@ export default class SnowmanAppbarButtonV extends Vue {
     togglePanel(): void {
         // summon the SNOWMAN!
         this.$iApi.fixture.add('snowman');
+
+        // the above will re-add the snowman fixture as it was self-terminated
     }
 }
 </script>
