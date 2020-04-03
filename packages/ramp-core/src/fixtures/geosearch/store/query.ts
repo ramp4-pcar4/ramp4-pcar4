@@ -43,7 +43,7 @@ export class Query {
         return (<Promise<defs.RawNameResult>>this.jsonRequest(this.getUrl())).then(r => this.normalizeNameItems(r.items));
     }
 
-    private getUrl(useLocate?: boolean, restrict?: number[], altQuery?: string, lat?: number, lon?: number): string {
+    private getUrl(useLocate?: boolean, restrict?: number[], lat?: number, lon?: number): string {
         let url = '';
         if (useLocate) {
             // URL for FSA and NFA search
@@ -91,19 +91,18 @@ export class Query {
         });
     }
 
-    locateByQuery(altQuery?: string): Promise<defs.LocateResponseList> {
-        return <Promise<defs.LocateResponseList>>this.jsonRequest(this.getUrl(true, undefined, altQuery));
+    locateByQuery(): Promise<defs.LocateResponseList> {
+        return <Promise<defs.LocateResponseList>>this.jsonRequest(this.getUrl(true, undefined));
     }
 
     nameByLatLon(lat: number, lon: number, restrict?: number[]): any {
-        return (<Promise<defs.RawNameResult>>this.jsonRequest(this.getUrl(false, restrict, undefined, lat, lon))).then(r => {
+        return (<Promise<defs.RawNameResult>>this.jsonRequest(this.getUrl(false, restrict, lat, lon))).then(r => {
             return this.normalizeNameItems(r.items);
         });
     }
 }
 
 export class LatLongQuery extends Query {
-    // TODO: first result needs to be location of lat/lon coordinates
     constructor(config: defs.MainConfig, query: string) {
         super(config, query);
         let coords: number[];
@@ -126,8 +125,8 @@ export class LatLongQuery extends Query {
                 latitude: coords[0],
                 longitude: coords[1]
             },
-            type: { name: 'Latitude/Longitude', code: 'COORD' },
-            position: [coords[0], coords[1]],
+            type: 'Latitude/Longitude',
+            position: [coords[1], coords[0]],
             bbox: boundingBox
         };
 
@@ -145,7 +144,6 @@ export class LatLongQuery extends Query {
 }
 
 export class FSAQuery extends Query {
-    // TODO: first result needs to be location of FSA
     constructor(config: defs.MainConfig, query: string) {
         // extract the first three characters to conduct FSA search
         query = query.substring(0, 3).toUpperCase();
@@ -212,7 +210,6 @@ export class NTSQuery extends Query {
     unit!: defs.NTSResult;
     mapSheets: defs.NTSResultList = [];
 
-    // TODO: first geosearch result needs to be location of NTS map number
     constructor(config: defs.MainConfig, query: string) {
         super(config, query);
         // front pad 0 if NTS starts with two digits
