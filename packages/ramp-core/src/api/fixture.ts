@@ -24,6 +24,7 @@ export class FixtureAPI extends APIScope {
      * @returns {Promise<FixtureBase>}
      * @memberof FixtureAPI
      */
+    // TODO: implement overload to add a list of features
     async add(id: string, constructor?: IFixtureBase): Promise<FixtureBase> {
         let fixture: FixtureBase;
 
@@ -56,16 +57,11 @@ export class FixtureAPI extends APIScope {
      *
      * @template T
      * @param {(FixtureBase | string)} fixtureOrId
-     * @returns {(T | null)}
+     * @returns {T}
      * @memberof FixtureAPI
      */
-    remove<T extends FixtureBase = FixtureBase>(fixtureOrId: FixtureBase | string): T | null {
+    remove<T extends FixtureBase = FixtureBase>(fixtureOrId: FixtureBase | string): T {
         const fixture = this.get<T>(fixtureOrId);
-
-        // TODO: output warning to a log that a fixture with this id cannot be found
-        if (!fixture) {
-            return null;
-        }
 
         this.$vApp.$store.set(`fixture/${FixtureMutation.REMOVE_FIXTURE}!`, { value: fixture });
 
@@ -73,23 +69,49 @@ export class FixtureAPI extends APIScope {
     }
 
     /**
-     * Finds and returns a fixture with the id specified.
+     * Finds and returns a `FixtureBase` object with the id specified.
      *
-     * @template T
-     * @param {(string | { id: string })} item
-     * @returns {(T | null)}
+     * @template T subclass of the `FixtureBase`; defaults to `FixtureBase`
+     * @param {(string | FixtureBase)} item fixture id or `FixtureBase` item
+     * @returns {T}
      * @memberof FixtureAPI
      */
-    get<T extends FixtureBase = FixtureBase>(item: string | { id: string }): T | null {
-        const id = typeof item === 'string' ? item : item.id;
-        const fixture = this.$vApp.$store.get<T>(`fixture/items@${id}`);
+    get<T extends FixtureBase = FixtureBase>(item: string | FixtureBase): T;
+    /**
+     * Finds and returns a collection of `FixtureBase` objects given a list of ids.
+     * This can be useful when retrieving several fixtures at one time as follows:
+     * ```ts
+     * const [one, two, three] = RAMP.fixture.get(['fixture-one', 'fixture-two', 'fixture-three']);
+     * ```
+     *
+     * @template T subclass of the `FixtureBase`; defaults to `FixtureBase`
+     * @param {string[]} item a list of fixture ids
+     * @returns {T[]}
+     * @memberof FixtureAPI
+     */
+    get<T extends FixtureBase = FixtureBase>(item: string[]): T[];
+    get<T extends FixtureBase = FixtureBase>(item: string | FixtureBase | string[]): T | T[] {
+        const ids: string[] = [];
 
-        // TODO: output warning to a log that a fixture with this id cannot be found
-        if (!fixture) {
-            return null;
+        // parse the input and figure our what it is
+        if (typeof item === 'string') {
+            ids.push(item);
+        } else if (Array.isArray(item)) {
+            ids.push(...item);
+        } else {
+            ids.push(item.id);
         }
 
-        return fixture;
+        const fixtures = ids.map(id => {
+            const fixture = this.$vApp.$store.get<T>(`fixture/items@${id}`);
+            if (!fixture) {
+                throw new Error("fixture doesn't exist");
+            }
+
+            return fixture;
+        });
+
+        return fixtures.length === 1 ? fixtures[0] : fixtures;
     }
 }
 
