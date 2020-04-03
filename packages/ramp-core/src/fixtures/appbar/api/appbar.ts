@@ -1,89 +1,68 @@
-import Vue from 'vue';
-
 import { FixtureInstance } from '@/api';
 
-import { APIScope } from '@/api/common';
-import { InstanceAPI } from '@/api/internal';
-import { AppbarItemConfig } from '../store';
-
-const DIVIDER_ID = 'divider';
+import { AppbarFixtureConfig, AppbarItemInstance, AppbarItemSet } from '../store';
 
 export class AppbarAPI extends FixtureInstance {
     /**
-     * Overwrites the current appbar config
-     *
-     * @param {any} appbarConfig The new appbar config
-     * @returns {Promise<AppbarItemAPI[]} The list of current Appbar Items in the store, as AppbarItemAPIs
-     * @memberof AppbarAPI
-     */
-    async setConfig(appbarConfig: any): Promise<AppbarItemAPI[] | AppbarItemAPI | null> {
-        if (!appbarConfig) {
-            return null;
-        }
-
-        for (let i = 0; i < appbarConfig.length; i++) {
-            const config = appbarConfig[i];
-
-            // if theres no component specified and its not a divider, retrieve the component from the fixtures folder
-            if (!config.component && config.id !== DIVIDER_ID) {
-                config.component = (await import(`@/fixtures/${config.id}/index.ts`)).AppbarButton;
-                config.id = config.id + '-appbar-button';
-            }
-        }
-        this.$vApp.$store.set('appbar/items', appbarConfig);
-
-        return this.getItems()!;
-    }
-
-    /**
-     * Returns the list of all AppbarItemAPIs if no id, otherwise returns the AppbarItemAPI relating to id.
-     *
-     * @param {string} id Optional. If specified returns the AppbarItem with id
-     * @returns {AppbarItemAPI[] | AppbarItemAPI | null}
-     * @memberof AppbarAPI
-     */
-    getItems(id?: string): AppbarItemAPI[] | AppbarItemAPI | null {
-        if (id) {
-            const config = this.$vApp.$store.get<AppbarItemConfig | null>('appbar/getById!', id);
-            return config ? new AppbarItemAPI(this.$iApi, config) : null;
-        }
-
-        const configs = this.$vApp.$store.get<any | null>('appbar/items');
-        if (!configs) {
-            return null;
-        }
-
-        let items: AppbarItemAPI[] = [];
-        Object.keys(configs).forEach((id: string) => {
-            items.push(new AppbarItemAPI(this.$iApi, configs[id]));
-        });
-
-        return items;
-    }
-}
-
-export class AppbarItemAPI extends APIScope {
-    readonly _config: AppbarItemConfig;
-
-    /**
-     * ID of this appbar item.
+     * Returns `AppbarFixtureConfig` section of the global config file.
      *
      * @readonly
-     * @type {string}
-     * @memberof AppbarItemAPI
+     * @type {AppbarFixtureConfig}
+     * @memberof AppbarFixture
      */
-    get id(): string {
-        return this._config.id;
+    get config(): AppbarFixtureConfig | undefined {
+        return super.config;
     }
 
-    constructor(iApi: InstanceAPI, config: AppbarItemConfig) {
-        super(iApi);
-
-        this._config = config;
-
-        // Register component if it hasn't been registered before
-        if (!(this.id in this.$vApp.$options.components!)) {
-            Vue.component(this.id, this._config.component);
+    /**
+     * Parses the appbar config JSON snippet from the config file and save resulting objects to the fixture store.
+     *
+     * @param {AppbarFixtureConfig} [appbarConfig]
+     * @returns
+     * @memberof AppbarAPI
+     */
+    _parseConfig(appbarConfig?: AppbarFixtureConfig) {
+        if (!appbarConfig) {
+            return;
         }
+
+        const appbarItems = appbarConfig.items.map(item => new AppbarItemInstance(item));
+
+        // save appbar items as a collection to the store
+        // they are saves as a set for easy by-id access
+        this.$vApp.$store.set(
+            'appbar/items',
+            appbarItems.reduce<AppbarItemSet>((map, item) => {
+                map[item.id] = item;
+                return map;
+            }, {})
+        );
+
+        // save an ordered list of item ids to use when rendering components
+        this.$vApp.$store.set(
+            'appbar/order',
+            appbarItems.map(item => item.id)
+        );
+
+        this._validateItems();
+    }
+
+    /**
+     * Checks if components specified as appbar items are registered or not.
+     * Will check the literal id values, and id values with `-appbar-button` suffixes appended.
+     *
+     * @memberof AppbarAPI
+     */
+    _validateItems() {
+        // get the ordered list of items and see if any of them are registered
+        this.$vApp.$store.get<string[]>('appbar/order')!.forEach(id => {
+            // appbar check components with the literal id and with a `-appbar-button` suffix;
+            [id, `${id}-appbar-button`].some(v => {
+                if (v in this.$vApp.$options.components!) {
+                    // if an item is registered globally, save the name of the registered component
+                    this.$vApp.$store.set(`appbar/items@${id}.componentId`, v);
+                }
+            });
+        });
     }
 }

@@ -2,11 +2,12 @@
     <div class="absolute top-0 left-0 flex flex-col items-stretch bg-black-75 h-full w-40 sm:w-64 pointer-events-auto" v-focus-list>
         <component
             v-for="(item, index) in items"
-            :is="item.id"
-            :key="`${item.id}-${index}`"
+            :is="item.componentId"
+            :key="`${item}-${index}`"
             class="h-24 my-4 first:mt-8 text-gray-400 hover:text-white"
-            :class="{ 'py-12': item.id !== DIVIDER }"
-            :v-focus-item="item.id !== DIVIDER"
+            :class="{ 'py-12': item.id !== 'divider' }"
+            :focus-item="item.id !== 'divider'"
+            :options="item.options"
         ></component>
     </div>
 </template>
@@ -14,19 +15,18 @@
 <script lang="ts">
 import { Vue, Watch, Component } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
-import { AppbarItemConfig } from './store';
+import { AppbarItemInstance } from './store';
 import DividerV from './divider.vue';
 
-const DIVIDER_ID = 'divider';
-
-Vue.component(DIVIDER_ID, DividerV);
+Vue.component('divider', DividerV);
 
 @Component
 export default class AppbarV extends Vue {
-    // to use in the template
-    DIVIDER = DIVIDER_ID;
+    @Get('appbar/visible') items!: AppbarItemInstance[];
 
-    @Get('appbar/items') items!: AppbarItemConfig[];
+    get registeredItems(): AppbarItemInstance[] {
+        return this.items.filter(item => item.componentId);
+    }
 }
 </script>
 

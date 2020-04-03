@@ -1,13 +1,25 @@
-import Vue, { VueConstructor } from 'vue';
-
 export class AppbarState {
     /**
-     * A list of all open (visible and hidden) panels.
+     * A set of all open (visible and hidden) panels.
      *
-     * @type {AppbarItemConfig[]}
+     * @type {AppbarItem[]}
      * @memberof AppbarState
      */
-    items: AppbarItemConfig[] = [];
+    items: AppbarItemSet = {};
+
+    /**
+     * An ordered list of appbar item ids.
+     *
+     * @type {string[]}
+     * @memberof AppbarState
+     */
+    order: string[] = [];
+}
+
+export type AppbarItemSet = { [name: string]: AppbarItemInstance };
+
+export interface AppbarFixtureConfig {
+    items: (string | AppbarItemConfig)[];
 }
 
 export interface AppbarItemConfig {
@@ -20,10 +32,26 @@ export interface AppbarItemConfig {
     id: string;
 
     /**
-     * The component to be displayed on the Appbar
+     * The options for the displayed appbar button.
      *
-     * @type {VueConstructor<Vue>}
+     * @type {object}
      * @memberof AppbarItemConfig
      */
-    component?: VueConstructor<Vue>;
+    options?: object;
+}
+
+export class AppbarItemInstance implements AppbarItemConfig {
+    id: string;
+
+    options: object;
+
+    componentId?: string;
+
+    constructor(value: string | AppbarItemConfig) {
+        const params = { options: {}, ...(typeof value === 'string' ? { id: value } : value) };
+        ({ id: this.id, options: this.options } = params);
+
+        // this should work too, but it doesn't;
+        // ({ id: this.id, options: this.options } = { options: {}, ...(typeof value === 'string' ? { id: value} : value) });
+    }
 }

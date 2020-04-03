@@ -28,6 +28,11 @@ export class FixtureAPI extends APIScope {
     async add(id: string, constructor?: IFixtureBase): Promise<FixtureBase> {
         let fixture: FixtureBase;
 
+        // if the fixture already exist, do nothing and just return it
+        if (id in this.$vApp.$store.get<{ [name: string]: FixtureBase }>(`fixture/items`)!) {
+            return this.get(id);
+        }
+
         // only need to provide fixture constructors for external fixtures since internal ones are loaded automatically
         if (constructor) {
             if (typeof constructor !== 'function') {
@@ -189,7 +194,7 @@ export class FixtureInstance extends APIScope implements FixtureBase {
     }
 
     /**
-     *
+     * A helper function to create a "subclass" of the base Vue constructor
      *
      * @param {VueConstructor<Vue>} vueConstructor
      * @param {ComponentOptions<Vue>} [options={}]
@@ -216,4 +221,15 @@ export class FixtureInstance extends APIScope implements FixtureBase {
     removed?(): void;
     initialized?(): void;
     terminated?(): void;
+
+    /**
+     * Returns the fixture config section (JSON) taken from the global config.
+     *
+     * @readonly
+     * @type {*}
+     * @memberof FixtureInstance
+     */
+    get config(): any {
+        return this.$vApp.$store.get('config/getFixtureConfig', this.id);
+    }
 }
