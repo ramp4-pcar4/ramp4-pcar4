@@ -103,7 +103,6 @@ export class Query {
 }
 
 export class LatLongQuery extends Query {
-    // TODO: first result needs to be location of lat/lon coordinates
     constructor(config: defs.MainConfig, query: string) {
         super(config, query);
         let coords: number[];
@@ -126,8 +125,8 @@ export class LatLongQuery extends Query {
                 latitude: coords[0],
                 longitude: coords[1]
             },
-            type: { name: 'Latitude/Longitude', code: 'COORD' },
-            position: [coords[0], coords[1]],
+            type: 'Latitude/Longitude',
+            position: [coords[1], coords[0]],
             bbox: boundingBox
         };
 
@@ -145,7 +144,6 @@ export class LatLongQuery extends Query {
 }
 
 export class FSAQuery extends Query {
-    // TODO: first result needs to be location of FSA
     constructor(config: defs.MainConfig, query: string) {
         // extract the first three characters to conduct FSA search
         query = query.substring(0, 3).toUpperCase();
@@ -212,7 +210,6 @@ export class NTSQuery extends Query {
     unit!: defs.NTSResult;
     mapSheets: defs.NTSResultList = [];
 
-    // TODO: first geosearch result needs to be location of NTS map number
     constructor(config: defs.MainConfig, query: string) {
         super(config, query);
         // front pad 0 if NTS starts with two digits

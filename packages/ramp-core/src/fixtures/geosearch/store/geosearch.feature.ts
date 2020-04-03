@@ -111,6 +111,52 @@ export class GeoSearchUI {
     query(q: string) {
         // run query based on search string input
         return Q.make(this.config, q.toUpperCase()).onComplete.then((q: any) => {
+            // any feature result requires a manual first entry
+            let featureResult: any[] = [];
+            if (q.featureResults) {
+                if (q.featureResults.fsa) {
+                    // add first geosearch result as location of FSA itself
+                    const bboxRange = 0.02;
+                    featureResult = [
+                        {
+                            name: q.featureResults.fsa,
+                            bbox: [
+                                q.featureResults.LatLon.lon + bboxRange,
+                                q.featureResults.LatLon.lat - bboxRange,
+                                q.featureResults.LatLon.lon - bboxRange,
+                                q.featureResults.LatLon.lat + bboxRange
+                            ],
+                            type: q.featureResults.desc,
+                            position: [q.featureResults.LatLon.lon, q.featureResults.LatLon.lat],
+                            location: {
+                                latitude: q.featureResults.LatLon.lat,
+                                longitude: q.featureResults.LatLon.lon,
+                                province: this.findProvinceObj(q.featureResults.province)
+                            }
+                        }
+                    ];
+                } else if (q.featureResults.nts) {
+                    // add first geosearch result as location of NTS map number
+                    featureResult = [
+                        {
+                            name: q.featureResults.nts,
+                            bbox: q.featureResults.bbox,
+                            type: q.featureResults.desc,
+                            position: [q.featureResults.LatLon.lon, q.featureResults.LatLon.lat],
+                            location: {
+                                city: q.featureResults.location,
+                                latitude: q.featureResults.LatLon.lat,
+                                longitude: q.featureResults.LatLon.lon
+                            }
+                        }
+                    ];
+                }
+            } else if (q.latLongResult !== undefined) {
+                // add first geosearch result as location of lat/lon coordinates
+                featureResult = [q.latLongResult];
+            }
+            // console.log("first feature result: ", featureResult);
+
             // format returned query results appropriately to support zoom/extent functionality
             let queryResult = q.results.map((item: any) => ({
                 name: item.name,
@@ -124,7 +170,8 @@ export class GeoSearchUI {
                     province: this.findProvinceObj(item.province)
                 }
             }));
-            return [].concat(queryResult);
+            // console.log("remaining query results: ", queryResult);
+            return featureResult.concat(queryResult);
         });
     }
 

@@ -11,7 +11,6 @@
 
         <template #content>
             <geosearch-top-filters></geosearch-top-filters>
-            <!-- TODO: add a loading bar here? -->
             <loading-bar class="p-4 mx-2 mb-2" v-if="loadingResults"></loading-bar>
             <div class="px-5 mt-10 truncate">
                 <span class="relative h-48" v-if="searchVal && searchResults.length === 0 && !loadingResults"
@@ -27,7 +26,7 @@
                     <button class="absolute inset-0 h-full w-full hover:bg-gray-300 default-focus-style" @click="zoomIn(result)" focus-item>
                         <div class="rv-result-description flex px-8">
                             <div class="flex-1 text-left truncate">
-                                <span v-html="highlightSearchTerm(result.name) + ','"></span>
+                                <span v-html="highlightSearchTerm(result.name, result.location.province)"></span>
                                 <span v-if="result.location.province" class="text-gray-600 text-sm">
                                     {{
                                         result.location.city
@@ -36,7 +35,9 @@
                                     }}</span
                                 >
                             </div>
-                            <span class="flex-2 text-right font-bold truncate" v-if="result.type">{{ result.type }}</span>
+                            <span class="flex-2 text-right font-bold truncate" v-if="result.type" style="max-width: 50%">{{
+                                result.type
+                            }}</span>
                         </div>
                     </button>
                 </li>
@@ -89,9 +90,14 @@ export default class GeosearchComponent extends Vue {
     }
 
     // highlight the search term in each listed geosearch result
-    highlightSearchTerm(name: string) {
+    highlightSearchTerm(name: string, province: any) {
         // wrap matched search term in results inside span with styling
-        return name.replace(new RegExp(`${this.searchVal}`, 'gi'), match => '<span class="font-bold text-blue-600">' + match + '</span>');
+        const highlightedResult = name.replace(
+            new RegExp(`${this.searchVal}`, 'gi'),
+            match => '<span class="font-bold text-blue-600">' + match + '</span>'
+        );
+        // add comma to new highlighted result if a province/location is provided
+        return province ? highlightedResult + ',' : highlightedResult;
     }
 }
 </script>
