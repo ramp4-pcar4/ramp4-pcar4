@@ -1,21 +1,18 @@
 <template>
     <button class="py-6" @click="togglePanel()">
-        G
+        ⛄
     </button>
 </template>
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 
 @Component
-export default class GazeboAppbarButton extends Vue {
+export default class SnowmanAppbarButtonV extends Vue {
     togglePanel(): void {
-        const panel = this.$iApi.panel.get('p1');
+        // summon the SNOWMAN!
+        this.$iApi.fixture.add('snowman');
 
-        if (panel.isOpen) {
-            panel.close();
-        } else {
-            panel.open();
-        }
+        // the above will re-add the snowman fixture as it was self-terminated
     }
 }
 </script>

@@ -96,25 +96,26 @@
                         }
                     ],
                     fixtures: {
-                        appbar: [
-                            { id: 'gazebo' },
-                            { id: 'divider' },
-                            { id: 'legend' },
-                            { id: 'gazebo' },
-                            { id: 'geosearch' },
-                            { id: 'legend' },
-                            { id: 'divider' }
-                        ]
+                        appbar: {
+                            items: [
+                                { id: 'gazebo', options: { colour: '#54a0ff' } },
+                                'divider',
+                                'snowman-appbar-button',
+                                'legend',
+                                'geosearch',
+                                'divider'
+                            ]
+                        }
                     }
                 });
 
                 // start loading fixtures; this is just an example
-                // TODO: fixtures specified in the config should be loaded first, then fixtures added through the API
-                // TODO: remove
+
+                rInstance.fixture.add('appbar');
                 rInstance.fixture.add('snowman');
                 rInstance.fixture.add('gazebo');
                 rInstance.fixture.add('geosearch');
-                rInstance.fixture.add('appbar');
+                rInstance.fixture.add('legend');
                 rInstance.fixture.add('grid');
                 rInstance.fixture.add('diligord', window.hostFixtures.diligord);
             }

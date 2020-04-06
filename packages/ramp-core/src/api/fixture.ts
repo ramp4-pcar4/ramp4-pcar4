@@ -1,7 +1,7 @@
 import Vue, { VueConstructor, ComponentOptions } from 'vue';
 
 import { APIScope, InstanceAPI } from './internal';
-import { FixtureBase, FixtureMutation } from '@/store/modules/fixture';
+import { FixtureBase, FixtureMutation, FixtureBaseSet } from '@/store/modules/fixture';
 
 // TODO: implement the same `internal.ts` pattern in store, so can import from a single place;
 
@@ -27,6 +27,11 @@ export class FixtureAPI extends APIScope {
     // TODO: implement overload to add a list of features
     async add(id: string, constructor?: IFixtureBase): Promise<FixtureBase> {
         let fixture: FixtureBase;
+
+        // if the fixture already exist, do nothing and just return it
+        if (id in this.$vApp.$store.get<FixtureBaseSet>(`fixture/items`)!) {
+            return this.get(id);
+        }
 
         // only need to provide fixture constructors for external fixtures since internal ones are loaded automatically
         if (constructor) {
@@ -149,7 +154,12 @@ export class FixtureInstance extends APIScope implements FixtureBase {
                 }
             },
             remove: { value: instance.remove },
-            extend: { value: instance.extend }
+            extend: { value: instance.extend },
+            config: {
+                get(): any {
+                    return instance.config;
+                }
+            }
         });
 
         return value as FixtureInstance;
@@ -189,7 +199,7 @@ export class FixtureInstance extends APIScope implements FixtureBase {
     }
 
     /**
-     *
+     * A helper function to create a "subclass" of the base Vue constructor
      *
      * @param {VueConstructor<Vue>} vueConstructor
      * @param {ComponentOptions<Vue>} [options={}]
@@ -216,4 +226,15 @@ export class FixtureInstance extends APIScope implements FixtureBase {
     removed?(): void;
     initialized?(): void;
     terminated?(): void;
+
+    /**
+     * Returns the fixture config section (JSON) taken from the global config.
+     *
+     * @readonly
+     * @type {*}
+     * @memberof FixtureInstance
+     */
+    get config(): any {
+        return this.$vApp.$store.get('config/getFixtureConfig', this.id);
+    }
 }

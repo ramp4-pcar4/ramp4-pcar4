@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import Vue, { VueConstructor } from 'vue';
 import { RampMapConfig, RampMap } from 'ramp-geoapi';
 import { Store } from 'vuex';
 
@@ -6,7 +6,7 @@ import App from '@/app.vue';
 import { createStore, RootState } from '@/store';
 import { ConfigStore } from '@/store/modules/config';
 
-import { FixtureAPI, PanelAPI } from './internal';
+import { FixtureAPI, PanelAPI, GlobalEvents } from './internal';
 
 export class InstanceAPI {
     fixture: FixtureAPI;
@@ -46,6 +46,35 @@ export class InstanceAPI {
         this.$vApp.$store.set(ConfigStore.newConfig, config || undefined);
     }
 
+    // TODO: we probably need to expose other Vue global functions here like `set`, `use`, etc.
+    /**
+     * Retrieves a global Vue component by its id.
+     *
+     * @param {string} id
+     * @returns {VueConstructor}
+     * @memberof InstanceAPI
+     */
+    component(id: string): VueConstructor;
+    /**
+     * Registers a global Vue component given an id and a constructor.
+     *
+     * @template VC
+     * @param {string} id
+     * @param {VC} vueConstructor
+     * @returns {VC}
+     * @memberof InstanceAPI
+     */
+    component<VC extends VueConstructor>(id: string, vueConstructor: VC): VC;
+    component(id: string, definition?: VueConstructor): VueConstructor {
+        if (definition) {
+            const vc = Vue.component(id, definition);
+            this.emit(GlobalEvents.COMPONENT, id);
+            return vc;
+        }
+
+        return Vue.component(id);
+    }
+
     /**
      * Listen for a custom event. Events can be triggered by `emit`. The callback will receive all the additional arguments passed into these event-triggering methods.
      *
@@ -56,6 +85,7 @@ export class InstanceAPI {
      * @returns {this}
      * @memberof InstanceAPI
      */
+    // TODO: rename event-related global functions to use `$` prefix to match them to Vue default event functions, for consistency
     on(event: string | string[], callback: Function): this {
         this._eventBus.$on(event, callback);
         return this;

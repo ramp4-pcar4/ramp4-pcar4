@@ -5,6 +5,8 @@ export class FixtureState {
     items: { [name: string]: FixtureBase } = {};
 }
 
+export type FixtureBaseSet = { [name: string]: FixtureBase };
+
 export interface FixtureBase {
     /**
      * ID of this fixture.

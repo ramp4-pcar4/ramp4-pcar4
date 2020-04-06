@@ -1,7 +1,7 @@
 import { ActionContext, Action, Mutation } from 'vuex';
 import { make } from 'vuex-pathify';
 
-import { AppbarState, AppbarItemConfig } from './appbar-state';
+import { AppbarState, AppbarItemInstance } from './appbar-state';
 import { RootState } from '@/store/state';
 
 type AppbarContext = ActionContext<AppbarState, RootState>;
@@ -14,22 +14,20 @@ export enum AppbarMutation {
 }
 
 const getters = {
-    getById: (state: AppbarState) => (id: string): AppbarItemConfig | null => {
-        return state.items.find(item => item.id === id) || null;
+    /**
+     * Return a list of appbar items with registered components (ones that can be rendered right now).
+     *
+     * @param {AppbarState} state
+     * @returns {AppbarItemInstance[]}
+     */
+    visible(state: AppbarState): AppbarItemInstance[] {
+        return state.order.map<AppbarItemInstance>(id => state.items[id]).filter(item => item.componentId);
     }
 };
 
 const actions = {};
 
-const mutations = {
-    [AppbarMutation.ADD_ITEM](state: AppbarState, value: AppbarItemConfig): void {
-        state.items.push(value);
-    },
-
-    [AppbarMutation.REMOVE_ITEM](state: AppbarState, value: AppbarItemConfig): void {
-        state.items.splice(state.items.indexOf(value), 1);
-    }
-};
+const mutations = {};
 
 export function appbar() {
     const state = new AppbarState();
@@ -39,6 +37,6 @@ export function appbar() {
         state,
         getters: { ...getters },
         actions: { ...actions },
-        mutations: { ...mutations, ...make.mutations(['items']) }
+        mutations: { ...mutations, ...make.mutations(['items', 'order']) }
     };
 }

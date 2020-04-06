@@ -15,7 +15,7 @@ import { Vue, Component } from 'vue-property-decorator';
 import GeosearchComponent from './geosearch-component.vue';
 
 @Component
-export default class GeosearchAppbarButton extends Vue {
+export default class GeosearchAppbarButtonV extends Vue {
     togglePanel(): void {
         const panel = this.$iApi.panel.get('geosearch-panel');
 
