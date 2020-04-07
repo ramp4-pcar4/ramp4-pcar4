@@ -1,6 +1,7 @@
 import Vue, { VueConstructor } from 'vue';
 import { RampMapConfig, RampMap } from 'ramp-geoapi';
 import { Store } from 'vuex';
+import { i18n } from '@/lang';
 
 import App from '@/app.vue';
 import { createStore, RootState } from '@/store';
@@ -178,6 +179,7 @@ function createApp(element: HTMLElement, iApi: InstanceAPI): Vue {
     return new Vue({
         iApi,
         store,
+        i18n,
         render: h => h(App)
     }).$mount(element);
 }

@@ -6,7 +6,7 @@
                 :value="queryParams.province"
                 v-on:change="setProvince($event.target.value)"
             >
-                <option value="" disabled hidden>Province</option>
+                <option value="" disabled hidden>{{ $t('filters.province') }}</option>
                 <option v-for="province in provinces" v-bind:key="province.code">
                     {{ province.name }}
                 </option>
@@ -18,7 +18,7 @@
                 :value="queryParams.type"
                 v-on:change="setType($event.target.value)"
             >
-                <option value="" disabled hidden>Type</option>
+                <option value="" disabled hidden>{{ $t('filters.type') }}</option>
                 <option v-for="type in types" v-bind:key="type.code">
                     {{ type.name }}
                 </option>
@@ -37,9 +37,8 @@
                 </svg>
                 <span
                     class="text-center text-white rounded absolute bg-gray-200 invisible group-hover:visible w-28 top-400 left-200 -ml-64 z-4"
+                    >{{ $t('filters.clear') }}</span
                 >
-                    Clear filters
-                </span>
             </div>
         </button>
     </div>
@@ -51,8 +50,13 @@ import { Get, Sync, Call } from 'vuex-pathify';
 
 import { GeosearchStore } from './store';
 import { ConfigStore } from '@/store/modules/config';
+import messages from './lang';
 
-@Component({})
+@Component({
+    i18n: {
+        messages
+    }
+})
 export default class GeosearchTopFilters extends Vue {
     // fetch defined province/type filters + filter params from store
     @Get(GeosearchStore.getProvinces) provinces!: Array<any>;

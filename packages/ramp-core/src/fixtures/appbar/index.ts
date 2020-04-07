@@ -1,6 +1,6 @@
 import AppbarV from './appbar.vue';
 import { AppbarAPI } from './api/appbar';
-import { appbar } from './store/index';
+import { appbar } from './store';
 import { GlobalEvents } from '@/api';
 
 class AppbarFixture extends AppbarAPI {

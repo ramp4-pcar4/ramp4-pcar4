@@ -13,12 +13,14 @@
         <noscript>
             <strong>We're sorry but ramp-core doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
         </noscript>
+        <button onclick="switchLang()">switch lang</button>
         <div id="app"></div>
         <!-- built files will be auto injected -->
 
         <script>
+            let rInstance;
             function initRAMP() {
-                const rInstance = new RAMP.Instance(document.getElementById('app'), {
+                rInstance = new RAMP.Instance(document.getElementById('app'), {
                     map: {
                         extent: {
                             xmax: -5007771.626060756,
@@ -118,6 +120,14 @@
                 rInstance.fixture.add('legend');
                 rInstance.fixture.add('grid');
                 rInstance.fixture.add('diligord', window.hostFixtures.diligord);
+                console.log(rInstance);
+            }
+            function switchLang() {
+                if (rInstance.$vApp.$i18n.locale === 'en') {
+                    rInstance.$vApp.$i18n.locale = 'fr';
+                } else {
+                    rInstance.$vApp.$i18n.locale = 'en';
+                }
             }
         </script>
     </body>

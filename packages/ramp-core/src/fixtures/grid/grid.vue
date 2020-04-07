@@ -38,7 +38,7 @@
                 ></path>
             </svg>
             <panel-options-menu>
-                <a href="#" @click="clearFilters()">Clear Filters</a>
+                <a href="#" @click="clearFilters()">{{ $t('filters.clear') }}</a>
             </panel-options-menu>
             <pin @click="panel.pin()" :active="panel.isPinned"></pin>
             <close @click="panel.close()"></close>
