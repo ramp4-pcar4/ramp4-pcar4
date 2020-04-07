@@ -22,14 +22,13 @@ const actions = {
     addLayers: (context: LayerContext, layerConfigs: RampLayerConfig[]) => {
         const blueprints: any = [];
         layerConfigs.forEach(layerConfig => {
-            blueprints.push(LayerBlueprint.makeBlueprint(layerConfig))
+            blueprints.push(LayerBlueprint.makeBlueprint(layerConfig));
         });
         blueprints.forEach((blueprint: any) => {
             blueprint.makeLayer().then((layer: BaseLayer) => {
                 context.commit('ADD_LAYER', layer);
-            })
-
-        })
+            });
+        });
     }
 };
 

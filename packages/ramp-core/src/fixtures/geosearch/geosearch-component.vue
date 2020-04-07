@@ -11,7 +11,7 @@
 
         <template #content>
             <geosearch-top-filters></geosearch-top-filters>
-            <!-- TODO: add a loading bar here? -->
+            <loading-bar class="p-4 mx-2 mb-2" v-if="loadingResults"></loading-bar>
             <div class="px-5 mt-10 truncate">
                 <span class="relative h-48" v-if="searchVal && searchResults.length === 0 && !loadingResults"
                     >No results to show for <span class="font-bold text-blue-600">{{ searchVal }}</span></span
@@ -30,7 +30,7 @@
                     >
                         <div class="rv-result-description flex px-8">
                             <div class="flex-1 text-left truncate">
-                                <span v-html="highlightSearchTerm(result.name) + ','"></span>
+                                <span v-html="highlightSearchTerm(result.name, result.location.province)"></span>
                                 <span v-if="result.location.province" class="text-gray-600 text-sm">
                                     {{
                                         result.location.city
@@ -39,7 +39,9 @@
                                     }}</span
                                 >
                             </div>
-                            <span class="font-bold truncate" v-if="result.type">{{ result.type }}</span>
+                            <span class="flex-2 text-right font-bold truncate" v-if="result.type" style="max-width: 50%">{{
+                                result.type
+                            }}</span>
                         </div>
                     </button>
                 </li>
@@ -50,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 import { PanelInstance } from '@/api';
 
@@ -60,6 +62,7 @@ import { RampMap } from 'ramp-geoapi';
 import GeosearchBar from './geosearch-bar.vue';
 import GeosearchTopFilters from './geosearch-top-filters.vue';
 import GeosearchBottomFilters from './geosearch-bottom-filters.vue';
+import LoadingBar from './loading-bar.vue';
 
 // TODO: temporary import for map zoom call
 import { ApiBundle } from 'ramp-geoapi';
@@ -68,7 +71,8 @@ import { ApiBundle } from 'ramp-geoapi';
     components: {
         GeosearchBar,
         GeosearchTopFilters,
-        GeosearchBottomFilters
+        GeosearchBottomFilters,
+        LoadingBar
     }
 })
 export default class GeosearchComponent extends Vue {
@@ -90,9 +94,14 @@ export default class GeosearchComponent extends Vue {
     }
 
     // highlight the search term in each listed geosearch result
-    highlightSearchTerm(name: string) {
+    highlightSearchTerm(name: string, province: any) {
         // wrap matched search term in results inside span with styling
-        return name.replace(new RegExp(`${this.searchVal}`, 'gi'), match => '<span class="font-bold text-blue-600">' + match + '</span>');
+        const highlightedResult = name.replace(
+            new RegExp(`${this.searchVal}`, 'gi'),
+            match => '<span class="font-bold text-blue-600">' + match + '</span>'
+        );
+        // add comma to new highlighted result if a province/location is provided
+        return province ? highlightedResult + ',' : highlightedResult;
     }
 }
 </script>

@@ -20,7 +20,6 @@ import { debounce } from 'debounce';
 export default class GeosearchBar extends Vue {
     // fetch geosearch search value from store
     @Get(GeosearchStore.searchVal) searchVal!: string;
-    // @Get(GeosearchStore.loadingResults) loadingResults!: boolean;
 
     // import required geosearch actions
     @Call(GeosearchStore.setSearchTerm) setSearchTerm!: (searchTerm: string) => void;

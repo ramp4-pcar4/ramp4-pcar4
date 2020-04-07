@@ -127,11 +127,16 @@ const actions = {
      * @param   {any}    mapExtent   current map extent info
      */
     setMapExtent: function(context: GeosearchContext, mapExtent: any): void {
-        context.commit('SET_RESULTS_VISIBLE', mapExtent.visible);
-        // TODO: handle different types of extent/format extent object differently here?
-        context.commit('SET_EXTENT', mapExtent.extent);
-        // run query after toggling map extent filters
-        context.dispatch('runQuery');
+        // if results should be filtered by current map view
+        if (mapExtent.visible !== undefined) {
+            context.commit('SET_RESULTS_VISIBLE', mapExtent.visible);
+        }
+        // reproject current extent object with lat/lon WKID number
+        (window as any).RAMP.geoapi.utils.proj.projectExtent(4326, mapExtent.extent).then((projExtent: any) => {
+            context.commit('SET_EXTENT', projExtent);
+            // run query after toggling map extent filters
+            context.dispatch('runQuery');
+        });
     }
 };
 
@@ -144,18 +149,15 @@ const actions = {
  * @param {Array}   data        An array of results from the query
  */
 function filter(visibleOnly: boolean, queryParams: any, data: Array<any>) {
-    // console.log("visible only: ", visibleOnly);
     if (visibleOnly && queryParams.extent) {
-        // TODO: how to filter results by extent?
-        // data = data.filter(r => {
-        //     // console.log('data point: ', r);
-        //     !(
-        //         r.bbox[0] > queryParams.extent.xmin ||
-        //         r.bbox[2] < queryParams.extent.xmax ||
-        //         r.bbox[3] < queryParams.extent.ymin ||
-        //         r.bbox[1] > queryParams.extent.ymax
-        //     );
-        // });
+        // ensure bbox boundaries are within the current map extent properties
+        data = data.filter(
+            r =>
+                r.bbox[0] <= queryParams.extent.xmax &&
+                r.bbox[1] <= queryParams.extent.ymax &&
+                r.bbox[2] >= queryParams.extent.xmin &&
+                r.bbox[3] >= queryParams.extent.ymin
+        );
     }
     if (queryParams.province && queryParams.province !== '...') {
         data = data.filter(r => r.location.province.name && r.location.province.name === queryParams.province);
