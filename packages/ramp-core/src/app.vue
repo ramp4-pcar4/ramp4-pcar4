@@ -1,6 +1,5 @@
 <template>
     <div class="ramp-app">
-        <p>{{ $t('hello') }}</p>
         <shell></shell>
     </div>
 </template>

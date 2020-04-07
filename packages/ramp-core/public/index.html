@@ -123,10 +123,10 @@
                 console.log(rInstance);
             }
             function switchLang() {
-                if (rInstance.$vApp.$i18n.locale === 'en') {
-                    rInstance.$vApp.$i18n.locale = 'fr';
+                if (rInstance.language === 'en') {
+                    rInstance.switchLanguage('fr');
                 } else {
-                    rInstance.$vApp.$i18n.locale = 'en';
+                    rInstance.switchLanguage('en');
                 }
             }
         </script>
