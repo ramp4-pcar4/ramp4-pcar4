@@ -8,7 +8,7 @@
                     :checked="resultsVisible"
                     @change="updateMapExtent($event.target.checked)"
                 />
-                <span class="ml-4">Visible on map</span>
+                <span class="ml-4">{{ $t('visible') }}</span>
             </div>
         </label>
     </div>
@@ -20,8 +20,13 @@ import { Get, Sync, Call } from 'vuex-pathify';
 
 import { GeosearchStore } from './store';
 import { debounce } from 'debounce';
+import messages from './lang';
 
-@Component({})
+@Component({
+    i18n: {
+        messages
+    }
+})
 export default class GeosearchBottomFilters extends Vue {
     @Get(GeosearchStore.resultsVisible) resultsVisible!: any;
 

@@ -39,6 +39,7 @@
                 ></path>
             </svg>
             <panel-options-menu>
+                <!-- TODO: put into lang file when actual options are here -->
                 <a href="#">Item 1 </a>
                 <a href="#">Item 2</a>
                 <a href="#">Item 3</a>

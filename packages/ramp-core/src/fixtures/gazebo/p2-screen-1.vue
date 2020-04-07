@@ -15,7 +15,7 @@
         </template>
 
         <template #content>
-            I'm a simple panel.
+            {{ $t('hello') }}
 
             <div class="flex flex-col items-center mt-16">
                 <!-- ✔ this is the correct way to switch between screens in the same panel 👇 -->
@@ -37,8 +37,13 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
 import { PanelInstance } from '@/api';
+import messages from './lang';
 
-@Component({})
+@Component({
+    i18n: {
+        messages
+    }
+})
 export default class Scree2V extends Vue {
     // ✔ this prop is always present and it's set by the panel-container component
     @Prop() panel!: PanelInstance;

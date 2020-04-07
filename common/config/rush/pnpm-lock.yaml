@@ -16,7 +16,6 @@ dependencies:
   '@types/geojson': 1.0.6
   '@types/jest': 24.9.1
   '@types/lodash': 4.14.149
-  '@types/node': 7.0.0
   '@types/proj4': 2.5.0
   '@vue/cli-plugin-babel': 4.1.2_@vue+cli-service@4.1.2
   '@vue/cli-plugin-e2e-cypress': 4.1.2_24f387d243024b6d224425483548dff1
@@ -35,6 +34,7 @@ dependencies:
   axios: 0.19.2
   debounce: 1.2.0
   deepmerge: 4.2.2
+  dsv-loader: 2.0.0
   eslint: 5.16.0
   eslint-plugin-prettier: 3.1.2_eslint@5.16.0+prettier@1.19.1
   eslint-plugin-vue: 6.1.2_eslint@5.16.0
@@ -57,6 +57,7 @@ dependencies:
   typescript: 3.5.3
   vue: 2.6.11
   vue-class-component: 7.2.2
+  vue-i18n: 8.16.0
   vue-property-decorator: 8.3.0
   vue-template-compiler: 2.6.11
   vuex: 3.1.2
@@ -1343,6 +1344,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA==
+  /@types/node/13.11.0:
+    dev: false
+    resolution:
+      integrity: sha512-uM4mnmsIIPK/yeO+42F2RQhGUIs39K2RFmugcJANppXe6J1nvH87PvzPZYpza7Xhhs8Yn9yIAVdLZ84z61+0xQ==
   /@types/node/7.0.0:
     dev: false
     resolution:
@@ -3853,6 +3858,15 @@ packages:
     dev: false
     resolution:
       integrity: sha512-m62ShEObQ39CfralilEQRjH6oAMtNCV1xJyEx5LpRYUVN+EviphDgUc/F3hnYbADmkiNs67Y+3ylmlG7Lnu+FA==
+  /d3-dsv/1.2.0:
+    dependencies:
+      commander: 2.20.3
+      iconv-lite: 0.4.24
+      rw: 1.3.3
+    dev: false
+    hasBin: true
+    resolution:
+      integrity: sha512-9yVlqvZcSOMhCYzniHE7EVUws7Fa1zgw+/EAV2BxJoG3ME19V6BQFBwI855XQDsxyOuG7NibqRMTtiF/Qup46g==
   /dashdash/1.14.1:
     dependencies:
       assert-plus: 1.0.0
@@ -4188,6 +4202,13 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==
+  /dsv-loader/2.0.0:
+    dependencies:
+      d3-dsv: 1.2.0
+      loader-utils: 0.2.17
+    dev: false
+    resolution:
+      integrity: sha1-pg4ci/iBCe1kRfWUKNmFcE4LzIY=
   /duplexer/0.1.1:
     dev: false
     resolution:
@@ -9699,6 +9720,10 @@ packages:
     dev: false
     resolution:
       integrity: sha1-6Eg5bwV9Ij8kOGkkYY4laUFh7Ec=
+  /rw/1.3.3:
+    dev: false
+    resolution:
+      integrity: sha1-P4Yt+pGrdmsUiF700BEkv9oHT7Q=
   /rxjs/5.5.12:
     dependencies:
       symbol-observable: 1.0.1
@@ -11297,6 +11322,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-BXq3jwIagosjgNVae6tkHzzIk6a8MHFtzAdwhnV5VlvPTFxDCvIttgSiHWjdGoTJvXtmRu5HacExfdarRcFhog==
+  /vue-i18n/8.16.0:
+    dev: false
+    resolution:
+      integrity: sha512-cp9JOsx4ETzlCsnD22FE8ZhAmD8kcyNLRKV0DPsS7bBNTCdIlOKuyTGonWKYcGCUtNMtwemDWRBevRm8eevBVg==
   /vue-jest/3.0.5_64ba5b21466dd6d31604ca8f3ce0789b:
     dependencies:
       babel-core: 7.0.0-bridge.0_@babel+core@7.8.4
@@ -11956,6 +11985,7 @@ packages:
       '@types/debounce': 1.2.0
       '@types/jest': 24.9.1
       '@types/lodash': 4.14.149
+      '@types/node': 13.11.0
       '@vue/cli-plugin-babel': 4.1.2_@vue+cli-service@4.1.2
       '@vue/cli-plugin-e2e-cypress': 4.1.2_24f387d243024b6d224425483548dff1
       '@vue/cli-plugin-eslint': 4.1.2_24f387d243024b6d224425483548dff1
@@ -11972,6 +12002,7 @@ packages:
       axios: 0.19.2
       debounce: 1.2.0
       deepmerge: 4.2.2
+      dsv-loader: 2.0.0
       eslint: 5.16.0
       eslint-plugin-prettier: 3.1.2_eslint@5.16.0+prettier@1.19.1
       eslint-plugin-vue: 6.1.2_eslint@5.16.0
@@ -11986,6 +12017,7 @@ packages:
       typescript: 3.5.3
       vue: 2.6.11
       vue-class-component: 7.2.2
+      vue-i18n: 8.16.0
       vue-property-decorator: 8.3.0
       vue-template-compiler: 2.6.11
       vuex: 3.1.2
@@ -11997,7 +12029,7 @@ packages:
     peerDependencies:
       webpack: '*'
     resolution:
-      integrity: sha512-LEKhpDXUaMO9HDYtvP7TFf9lGu+In9+L6+PpRzd/1suYGI7lr7cJjuk30Gzqkh3rZNtXrEJEprDMa+roJ3Ea1w==
+      integrity: sha512-BomCKXkCKDR6IzOFKV70etUDudq6z92NiZydsa9u33/Chv1g1n6CtOLpf64gnjegkR32H0gJ5Q3bk3R4BJy1QQ==
       tarball: 'file:projects/ramp-core.tgz'
     version: 0.0.0
   'file:projects/ramp-geoapi.tgz':
@@ -12051,7 +12083,6 @@ specifiers:
   '@types/geojson': ^1.0.0
   '@types/jest': ^24.0.19
   '@types/lodash': ^4.14.149
-  '@types/node': 7.0.0
   '@types/proj4': 2.5.0
   '@vue/cli-plugin-babel': ^4.1.0
   '@vue/cli-plugin-e2e-cypress': ^4.1.0
@@ -12070,6 +12101,7 @@ specifiers:
   axios: 0.19.2
   debounce: ^1.2.0
   deepmerge: ~4.2.2
+  dsv-loader: ~2.0.0
   eslint: ^5.16.0
   eslint-plugin-prettier: ^3.1.1
   eslint-plugin-vue: ^6.0.0
@@ -12092,6 +12124,7 @@ specifiers:
   typescript: ~3.5.3
   vue: ^2.6.10
   vue-class-component: ^7.0.2
+  vue-i18n: ~8.16.0
   vue-property-decorator: ^8.3.0
   vue-template-compiler: ^2.6.10
   vuex: ^3.1.2
