@@ -214,6 +214,20 @@ export default class TableComponent extends Vue {
         }
     }
 
+    // Clear all table filters.
+    // TODO: In the old version of RAMP we had "static filters". If we re-implement these at some point, this function
+    // needs to be modified to not wipe them.
+    clearFilters() {
+        // Replace the filter model with an empty model.
+        this.gridApi.setFilterModel({});
+
+        // Clear any saved filter state in the table state manager.
+        this.config.state.clearFilters();
+
+        // Refresh the column filters to reset inputs.
+        this.gridApi.refreshHeader();
+    }
+
     // Changes the filter status text in the grid.
     updateFilterStatus() {
         this.filterStatus = `${this.filterInfo.firstRow} - ${this.filterInfo.lastRow} of ${this.filterInfo.visibleRows} entries shown`;
@@ -242,9 +256,7 @@ export default class TableComponent extends Vue {
         colDef.filterParams.inRangeInclusive = true;
         colDef.floatingFilterComponentParams = {
             suppressFilterButton: true,
-            stateManager: state,
-            minValDefault: minVal,
-            maxValDefault: maxVal
+            stateManager: state
         };
     }
 
@@ -257,7 +269,6 @@ export default class TableComponent extends Vue {
         colDef.floatingFilterComponentParams = {
             suppressFilterButton: true,
             stateManager: state,
-            defaultValue: value,
             rowData: rowData
         };
     }
@@ -271,9 +282,7 @@ export default class TableComponent extends Vue {
         colDef.filterParams.inRangeInclusive = true;
         colDef.floatingFilterComponentParams = {
             suppressFilterButton: true,
-            stateManager: state,
-            minValDefault: minVal,
-            maxValDefault: maxVal
+            stateManager: state
         };
     }
 
@@ -284,8 +293,7 @@ export default class TableComponent extends Vue {
         colDef.floatingFilterComponent = 'textFloatingFilter';
         colDef.floatingFilterComponentParams = {
             suppressFilterButton: true,
-            stateManager: state,
-            defaultValue: value
+            stateManager: state
         };
 
         // If we want to add different search methods in the future, consider using some sort of generic search function.

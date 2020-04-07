@@ -11,7 +11,7 @@ import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 export default class CustomTextFilter extends Vue {
     beforeMount() {
         // Load previously stored value (if saved in table state manager)
-        this.filterValue = this.params.defaultValue;
+        this.filterValue = this.params.stateManager.getColumnFilter(this.params.column.colDef.field);
 
         // Apply the default value to the column filter.
         this.valueChanged();
@@ -19,6 +19,8 @@ export default class CustomTextFilter extends Vue {
 
     valueChanged(): void {
         this.params.parentFilterInstance((instance: any) => {
+            this.filterValue = this.filterValue ? this.filterValue : '';
+
             instance.setModel({
                 filterType: 'text',
                 type: 'contains',
@@ -34,7 +36,9 @@ export default class CustomTextFilter extends Vue {
     }
 
     onParentModelChanged(parentModel: any): void {
-        this.filterValue = !parentModel ? '' : parentModel.filter;
+        if(parentModel === {}) {
+            this.filterValue = '';
+        }
     }
 
     setModel() {

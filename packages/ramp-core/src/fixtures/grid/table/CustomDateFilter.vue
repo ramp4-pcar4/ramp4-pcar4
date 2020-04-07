@@ -16,8 +16,8 @@ import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 export default class CustomNumberFilter extends Vue {
     beforeMount() {
         // Load previously stored values (if saved in table state manager)
-        this.minVal = this.params.minValDefault;
-        this.maxVal = this.params.maxValDefault;
+        this.minVal = this.params.stateManager.getColumnFilter(this.params.column.colDef.field + ' min');
+        this.maxVal = this.params.stateManager.getColumnFilter(this.params.column.colDef.field + ' max');
 
         // Apply the default values to the column filter.
         this.minValChanged();
@@ -45,7 +45,6 @@ export default class CustomNumberFilter extends Vue {
     }
 
     setFilterModel(instance: any) {
-
         // This is the furthest date supported by JavaScript.
         let maxPossibleDate: Date | String = new Date(8640000000000000);
         maxPossibleDate = `${maxPossibleDate.getFullYear()}-${maxPossibleDate.getMonth() + 1}-${maxPossibleDate.getDate()}`;
@@ -85,7 +84,12 @@ export default class CustomNumberFilter extends Vue {
         this.params.api.onFilterChanged();
     }
 
-    onParentModelChanged(parentModel: any) {}
+    onParentModelChanged(parentModel: any) {
+        if (parentModel === {}) {
+            this.minVal = '';
+            this.maxVal = '';
+        }
+    }
 
     setModel() {
         return {
@@ -114,7 +118,7 @@ export default interface CustomNumberFilter {
 .rv-input {
     @apply m-0 py-1;
 }
-.rv-input[type=date]::-webkit-inner-spin-button {
+.rv-input[type='date']::-webkit-inner-spin-button {
     -webkit-appearance: none;
     display: none;
 }

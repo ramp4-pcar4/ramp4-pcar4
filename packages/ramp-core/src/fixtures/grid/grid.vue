@@ -12,11 +12,10 @@
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fit=""
-                width="24px"
-                height="24px"
                 preserveAspectRatio="xMidYMid meet"
                 viewBox="0 0 24 24"
                 focusable="false"
+                class="fill-current w-24 h-24"
                 v-if="quicksearch.length < 3"
             >
                 <g id="search_cache224">
@@ -29,7 +28,7 @@
                 data-v-486a0302=""
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 352 512"
-                class="fill-current w-4 h-4 cursor-pointer"
+                class="fill-current w-18 h-18 ml-6 cursor-pointer"
                 @click="resetQuickSearch()"
                 v-else
             >
@@ -39,11 +38,7 @@
                 ></path>
             </svg>
             <panel-options-menu>
-                <a href="#">Item 1 </a>
-                <a href="#">Item 2</a>
-                <a href="#">Item 3</a>
-                <hr />
-                <a href="#">Item 4</a>
+                <a href="#" @click="clearFilters()">Clear Filters</a>
             </panel-options-menu>
             <pin @click="panel.pin()" :active="panel.isPinned"></pin>
             <close @click="panel.close()"></close>
@@ -91,6 +86,11 @@ export default class Screen1 extends Vue {
     resetQuickSearch(): void {
         this.grid.quicksearch = this.quicksearch = '';
         this.grid.updateQuickSearch();
+    }
+
+    clearFilters(): void {
+        this.resetQuickSearch();
+        this.grid.clearFilters();
     }
 }
 </script>
