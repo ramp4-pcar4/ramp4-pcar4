@@ -162,6 +162,27 @@ export class InstanceAPI {
             return 'xs';
         }
     }
+
+    /**
+     * Switches the app to the specified language (e.g. 'en' or 'fr').
+     *
+     * @param {string} language The locale string to switch to
+     * @memberof InstanceAPI
+     */
+    switchLanguage(language: string): void {
+        this.$vApp.$i18n.locale = language;
+    }
+
+    /**
+     * The current locale string for the app.
+     *
+     * @readonly
+     * @type string
+     * @memberof InstanceAPI
+     */
+    get language(): string {
+        return this.$vApp.$i18n.locale;
+    }
 }
 
 /**
