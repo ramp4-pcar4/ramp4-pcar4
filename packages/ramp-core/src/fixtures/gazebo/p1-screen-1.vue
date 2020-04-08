@@ -18,7 +18,7 @@
 
         <template #content>
             <div class="flex flex-col items-center">
-                <!-- this is fine -->
+                <!-- setting panel route directly in the store will not work ❌  -->
                 <button @click="route = { screen: 'p-1-screen-2' }" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-8 px-16">
                     See Gazebo 2
                 </button>
@@ -37,7 +37,7 @@ import { PanelConfigRoute } from '@/store/modules/panel';
 import { PanelInstance } from '../../api';
 
 @Component
-export default class Screen1V extends Vue {
+export default class P1Screen1V extends Vue {
     // ❌ this is a horrible way, don't do that! this is directly tapping into the store and two-way binds `route` property fro a specific panel
     // this will work, but all possible interactions should go through the API, because the store implementation might change and this will break
     // 👇

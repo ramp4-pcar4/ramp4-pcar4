@@ -11,7 +11,7 @@
 
         <template #content>
             <div class="flex flex-col items-center">
-                <!-- this is fine -->
+                <!-- setting panel route directly in the store will not work ❌  -->
                 <button @click="goToScreen('p-1-screen-1')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-8 px-16">
                     See Gazebo 1
                 </button>
@@ -28,7 +28,7 @@ import { Get, Sync, Call } from 'vuex-pathify';
 import { PanelInstance } from '../../api';
 
 @Component({})
-export default class Scree2V extends Vue {
+export default class P1Scree2V extends Vue {
     url: string = 'https://i2.wp.com/freepngimages.com/wp-content/uploads/2016/02/garden-shed-transparent-image-2.png?w=693';
 
     // ❌ this is bad because it's tappnig directly into the store circumventing the API

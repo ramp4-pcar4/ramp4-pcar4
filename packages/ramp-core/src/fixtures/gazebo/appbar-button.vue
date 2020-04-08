@@ -9,12 +9,12 @@ export default class GazeboAppbarButton extends Vue {
     @Prop({ default: { colour: 'auto' } }) options!: { colour: string };
 
     togglePanel(): void {
-        const panel = this.$iApi.panel.get('p1');
+        const panel = this.$iApi.panel.get('p2');
 
         if (panel.isOpen) {
             panel.close();
         } else {
-            panel.open();
+            panel.open({ screen: 'p-2-screen-2' });
         }
     }
 }

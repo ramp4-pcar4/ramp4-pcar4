@@ -1,7 +1,9 @@
-import Vue from 'vue';
+import Vue, { AsyncComponent, VueConstructor } from 'vue';
 
 import { APIScope, InstanceAPI } from './internal';
 import { PanelConfig, PanelConfigRoute, PanelMutation, PanelConfigScreens, PanelConfigStyle, PanelAction } from '@/store/modules/panel';
+
+import ScreenSpinnerV from '@/components/panel-stack/screen-spinner.vue';
 
 export class PanelAPI extends APIScope {
     /**
@@ -92,9 +94,11 @@ export class PanelAPI extends APIScope {
         }
 
         // if the screen route is not defined, the default is the first screen component
-        if (screen) {
-            this.show(panel, { screen, props });
+        if (!screen) {
+            screen = Object.keys(panel.screens).pop()!;
         }
+
+        this.show(panel, { screen, props });
 
         this.$vApp.$store.set(`panel/${PanelAction.openPanel}!`, { panel });
 
@@ -181,6 +185,49 @@ export class PanelAPI extends APIScope {
     // TODO: implement panel route history
     show(value: string | PanelInstance, route: PanelConfigRoute): PanelInstance {
         const panel = this.get(value);
+
+        // register all the panel screen components globally
+        // only register if it hasn't been registered before
+        if (!(route.screen in this.$vApp.$options.components!)) {
+            const screen = panel.screens[route.screen];
+
+            let payload: VueConstructor | AsyncComponent;
+
+            // object | VueConstructor => use as is
+            // string => load fixture file, pass as `component` in `AsyncComponentFactory` function
+            // AsyncComponentFunction => execute as it returns a promise, pass the output as `component` in `AsyncComponentFactory` function
+            // https://vuejs.org/v2/guide/components-dynamic-async.html#Handling-Loading-State
+
+            if (typeof screen === 'object' || isVueConstructor(screen)) {
+                payload = screen;
+            } else {
+                let component: Promise<any>;
+
+                if (typeof screen === 'string') {
+                    component = import(/* webpackChunkName: "[request]" */ `./../../src/fixtures/${screen}`);
+                } else {
+                    component = screen();
+                }
+
+                payload = () => ({
+                    // The component to load (should be a Promise)
+                    component: component as any,
+                    // A component to use while the async component is loading
+                    loading: ScreenSpinnerV,
+                    // A component to use if the load fails
+                    // TODO: add error component
+                    // error: ErrorComponent,
+                    // Delay before showing the loading component. Default: 200ms.
+                    delay: 200
+                    // The error component will be displayed if a timeout is
+                    // provided and exceeded. Default: Infinity.
+                    // TODO: restore the error timeout
+                    // timeout: 3000
+                });
+            }
+
+            Vue.component(route.screen, payload);
+        }
 
         this.$vApp.$store.set(`panel/items@${panel.id}.route`, route);
 
@@ -270,16 +317,6 @@ export class PanelInstance extends APIScope {
         if (Object.keys(this.screens).length === 0) {
             throw new Error('panel must have at least a single screen');
         }
-
-        // register all the panel screen components globally
-        Object.entries(this.screens).forEach(([id, component]) => {
-            // only register if it hasn't been registered before
-            if (!(id in this.$vApp.$options.components!)) {
-                Vue.component(id, component);
-            } else {
-                throw new Error('duplicate component');
-            }
-        });
 
         // set the first screen as the default route
         this.route = { screen: Object.keys(this.screens).pop()! };
@@ -401,7 +438,17 @@ export class PanelInstance extends APIScope {
 }
 
 /**
- * Check if the provided value is of `PanelConfigPair` type.
+ * Checks if the provided value is a `VueConstructor`.
+ *
+ * @param {(VueConstructor | any)} value
+ * @returns {value is VueConstructor}
+ */
+function isVueConstructor(value: VueConstructor | any): value is VueConstructor {
+    return typeof value.component === 'function';
+}
+
+/**
+ * Checks if the provided value is of `PanelConfigPair` type.
  *
  * @param {(PanelConfigPair | PanelConfigSet)} value
  * @returns {value is PanelConfigPair}
