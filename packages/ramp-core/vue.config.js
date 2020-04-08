@@ -16,6 +16,13 @@ module.exports = {
         // remove the prefetch plugin: stops downloading split code chunks until they are needed
         config.plugins.delete('prefetch');
 
+        // load csv files (used for translations)
+        config.module
+            .rule('dsv')
+            .test(/\.csv$/)
+            .use('dsv-loader')
+            .loader('dsv-loader');
+
         // add an automatic callback to execute `initRAMP` global function if it's defined as soon at the RAMP library is added to the global scope
         // this only applies to the production build; dev build calls this function from `main-serve.ts`
         config.plugin('wrapper-plugin').use(WrapperPlugin, [

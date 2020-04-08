@@ -1,6 +1,7 @@
 import Vue, { VueConstructor } from 'vue';
 import { RampMapConfig, RampMap } from 'ramp-geoapi';
 import { Store } from 'vuex';
+import { i18n } from '@/lang';
 
 import App from '@/app.vue';
 import { createStore, RootState } from '@/store';
@@ -161,6 +162,27 @@ export class InstanceAPI {
             return 'xs';
         }
     }
+
+    /**
+     * Sets the language of the app to the specified string (e.g. 'en' or 'fr').
+     *
+     * @param {string} language The locale string to switch to
+     * @memberof InstanceAPI
+     */
+    setLanguage(language: string): void {
+        this.$vApp.$i18n.locale = language;
+    }
+
+    /**
+     * The current locale string for the app.
+     *
+     * @readonly
+     * @type string
+     * @memberof InstanceAPI
+     */
+    get language(): string {
+        return this.$vApp.$i18n.locale;
+    }
 }
 
 /**
@@ -178,6 +200,7 @@ function createApp(element: HTMLElement, iApi: InstanceAPI): Vue {
     return new Vue({
         iApi,
         store,
+        i18n,
         render: h => h(App)
     }).$mount(element);
 }
