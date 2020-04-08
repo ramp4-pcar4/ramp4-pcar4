@@ -12,8 +12,8 @@ import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 export default class CustomNumberFilter extends Vue {
     beforeMount() {
         // Load previously stored values (if saved in table state manager)
-        this.minVal = this.params.minValDefault;
-        this.maxVal = this.params.maxValDefault;
+        this.minVal = this.params.stateManager.getColumnFilter(this.params.column.colDef.field + ' min');
+        this.maxVal = this.params.stateManager.getColumnFilter(this.params.column.colDef.field + ' max');
 
         // Apply the default values to the column filter.
         this.minValChanged();
@@ -80,7 +80,7 @@ export default class CustomNumberFilter extends Vue {
     }
 
     onParentModelChanged(parentModel: any) {
-        if (parentModel === null) {
+        if (parentModel === {}) {
             this.minVal = '';
             this.maxVal = '';
         }

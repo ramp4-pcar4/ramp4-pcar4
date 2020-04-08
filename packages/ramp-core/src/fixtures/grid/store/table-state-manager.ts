@@ -44,6 +44,15 @@ export default class TableStateManager {
     }
 
     /**
+     * Clears all saved column filters.
+     *
+     * @memberof TableStateManager
+     */
+    clearFilters() {
+        this._columnFilters = {};
+    }
+
+    /**
      * Returns whether column filters are enabled for the table.
      *
      * @memberof TableStateManager

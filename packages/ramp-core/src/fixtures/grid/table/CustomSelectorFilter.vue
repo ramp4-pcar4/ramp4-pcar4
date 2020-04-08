@@ -15,7 +15,7 @@ import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 export default class CustomSelectorFilter extends Vue {
     beforeMount() {
         // Load previously stored value (if saved in table state manager)
-        this.selectedOption = this.params.defaultValue;
+        this.selectedOption = this.params.stateManager.getColumnFilter(this.params.column.colDef.field);
 
         let rowData = this.params.rowData;
 
@@ -31,6 +31,8 @@ export default class CustomSelectorFilter extends Vue {
     }
 
     selectionChanged() {
+        this.selectedOption = this.selectedOption ? this.selectedOption : '';
+
         this.params.parentFilterInstance((instance: any) => {
             if (this.selectedOption === '...') {
                 // Clear the selector filter.
@@ -55,7 +57,9 @@ export default class CustomSelectorFilter extends Vue {
     }
 
     onParentModelChanged(parentModel: any) {
-        this.selectedOption = !parentModel ? '' : parentModel.filter;
+        if(parentModel === {}) {
+            this.selectedOption = '';
+        }
     }
 
     setModel() {
