@@ -18,9 +18,9 @@ module.exports = {
 
         // load csv files (used for translations)
         config.module
-            .rule('lint')
+            .rule('dsv')
             .test(/\.csv$/)
-            .use('eslint')
+            .use('dsv-loader')
             .loader('dsv-loader');
 
         // add an automatic callback to execute `initRAMP` global function if it's defined as soon at the RAMP library is added to the global scope

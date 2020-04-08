@@ -1,5 +1,4 @@
 import { fold } from '@/lang';
-
-const rows = require('./lang.csv');
+import rows from './lang.csv';
 
 export default fold(rows);
