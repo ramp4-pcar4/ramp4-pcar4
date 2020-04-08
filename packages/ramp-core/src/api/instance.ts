@@ -164,12 +164,12 @@ export class InstanceAPI {
     }
 
     /**
-     * Switches the app to the specified language (e.g. 'en' or 'fr').
+     * Sets the language of the app to the specified string (e.g. 'en' or 'fr').
      *
      * @param {string} language The locale string to switch to
      * @memberof InstanceAPI
      */
-    switchLanguage(language: string): void {
+    setLanguage(language: string): void {
         this.$vApp.$i18n.locale = language;
     }
 

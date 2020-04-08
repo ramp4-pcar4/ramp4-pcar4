@@ -6,6 +6,12 @@
     // since this is a raw JS file, we need to create the template for our screen using the render function (https://vuejs.org/v2/guide/render-function.html)
     // it's possible to write this as a regular Vue component with HTML-based template and compile it with `vue-template-compiler` if you don't want to bother with render functions
     // TODO: make an example of a compiled external fixture
+    // TODO: translation examples
+    //    Theres a few options for external translations:
+    //      they fold their own csv rows
+    //      they use json for their translations
+    //      they use an <i18n> vue single file section (which I haven't tested)
+    //      they put their translations right in the i18n section of the component configuration
     const dScreen1 = {
         // the `panel` prop is automatically passed to all panel screen components by the panel-container
         // this is the `PanelInstance` instance inside which this screen component is displayed, and it exposes panel API functions
