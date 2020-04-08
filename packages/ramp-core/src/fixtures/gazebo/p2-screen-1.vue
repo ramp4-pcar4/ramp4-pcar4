@@ -17,13 +17,17 @@
         <template #content>
             {{ $t('hello') }}
 
-            <div class="flex flex-col items-center mt-16">
+            <div class="flex flex-row justify-center items-center mt-16">
                 <!-- ✔ this is the correct way to switch between screens in the same panel 👇 -->
                 <button
                     @click="panel.show({ screen: 'p-2-screen-2', props: { greeting: 'Howdy?' } })"
-                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-8 px-16"
+                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-8 px-16 m-2"
                 >
                     Go back to B
+                </button>
+
+                <button @click="panel.show('p-2-screen-3')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-8 px-16 m-2">
+                    Go to C
                 </button>
             </div>
 
@@ -44,7 +48,7 @@ import messages from './lang';
         messages
     }
 })
-export default class Scree2V extends Vue {
+export default class P2Screen1V extends Vue {
     // ✔ this prop is always present and it's set by the panel-container component
     @Prop() panel!: PanelInstance;
 

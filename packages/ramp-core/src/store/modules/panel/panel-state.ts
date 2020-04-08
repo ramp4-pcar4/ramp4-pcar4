@@ -1,4 +1,4 @@
-import Vue, { VueConstructor } from 'vue';
+import { VueConstructor } from 'vue';
 import { PanelInstance } from '@/api';
 
 export class PanelState {
@@ -54,7 +54,15 @@ export class PanelState {
     stackWidth: number = 0;
 }
 
-export type PanelConfigScreens = { [key: string]: VueConstructor<Vue> };
+// this should have been `AsyncComponentPromise` type, but something is off there
+export type AsyncComponentFunction = () => Promise<typeof import('*.vue')>;
+
+/**
+ * - `string`: a path to the screen component relative to the fixtures home folder
+ * - `VueConstructor`: a regular Vue constructor function
+ * - `AsyncComponentFunction`: a function returning a promise which resolves into a Vue component
+ */
+export type PanelConfigScreens = { [key: string]: string | VueConstructor | AsyncComponentFunction };
 export type PanelConfigRoute = { screen: string; props?: object };
 export type PanelConfigStyle = { [key: string]: string };
 
