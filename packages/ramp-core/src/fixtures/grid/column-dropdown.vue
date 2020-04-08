@@ -18,7 +18,7 @@
                         ></path>
                     </g>
                 </svg>
-                {{ $t('columns') }}
+                {{ $t('label.columns') }}
             </div>
         </template>
         <a
@@ -46,7 +46,13 @@
 import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
-@Component
+import messages from './lang';
+
+@Component({
+    i18n: {
+        messages
+    }
+})
 export default class ColumnDropdown extends Vue {
     @Prop() columnDefs!: Array<Object>;
     @Prop() columnApi!: Object;
