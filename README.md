@@ -31,7 +31,7 @@ $rush serve
 
 Fun test page will be found at `http://localhost:8080/`
 
-## Buiding a prod library
+## Building a prod library
 
 ```
 $ rush build

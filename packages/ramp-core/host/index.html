@@ -26,41 +26,108 @@
         <script src="../dist/RAMP.umd.js"></script>
 
         <script>
-            const rInstance = new RAMP.Instance(document.getElementById('app'), {
-                map: {
-                    extent: {
-                        xmax: -5007771.626060756,
-                        xmin: -16632697.354854,
-                        ymax: 10015875.184845109,
-                        ymin: 5022907.964742964,
-                        spatialReference: {
-                            wkid: 102100,
-                            latestWkid: 3857
-                        }
+            function initRAMP() {
+                const rInstance = new RAMP.Instance(document.getElementById('app'), {
+                    map: {
+                        extent: {
+                            xmax: -5007771.626060756,
+                            xmin: -16632697.354854,
+                            ymax: 10015875.184845109,
+                            ymin: 5022907.964742964,
+                            spatialReference: {
+                                wkid: 102100,
+                                latestWkid: 3857
+                            }
+                        },
+                        lods: RAMP.geoapi.maps.defaultLODs(RAMP.geoapi.maps.defaultTileSchemas()[1]), // idx 1 = mercator
+                        basemaps: [
+                            {
+                                id: 'esriImagery',
+                                tileSchemaId: 'DEFAULT_ESRI_World_AuxMerc_3857',
+                                layers: [
+                                    {
+                                        layerType: 'esriTile',
+                                        url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                                    }
+                                ]
+                            }
+                        ],
+                        initialBasemapId: 'esriImagery'
                     },
-                    lods: [], //gapi.maps.defaultLODs(gapi.maps.defaultTileSchemas()[1]), // idx 1 = mercator
-                    basemaps: [
+                    layers: [
                         {
-                            id: 'esriImagery',
-                            tileSchemaId: 'DEFAULT_ESRI_World_AuxMerc_3857',
-                            layers: [
+                            id: 'WaterQuantity',
+                            layerType: 'esriMapImage',
+                            url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                            layerEntries: [
                                 {
-                                    layerType: 'esriTile',
-                                    url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                                    index: 1,
+                                    state: {
+                                        opacity: 1,
+                                        visibility: true
+                                    }
                                 }
-                            ]
+                            ],
+                            state: {
+                                opacity: 1,
+                                visibility: true
+                            },
+                            customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                        },
+                        {
+                            id: 'CleanAir',
+                            layerType: 'esriFeature',
+                            url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
+                            state: {
+                                opacity: 0.8,
+                                visibility: true
+                            },
+                            customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                        },
+                        {
+                            id: 'HydrometricStations',
+                            layerType: 'ogcWfs',
+                            url: 'http://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/collections/hydrometric-stations/items?startindex=7500',
+                            state: {
+                                visibility: true
+                            },
+                            customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                        },
+                        {
+                            id: 'Happy',
+                            layerType: 'esriFeature',
+                            fileType: 'geojson',
+                            url: 'http://fgpv.cloudapp.net/demo/__assets__/Sample%20Data/happy.json',
+                            state: {
+                                visibility: true
+                            },
+                            customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
                         }
                     ],
-                    initialBasemapId: 'esriImagery'
-                }
-            });
+                    fixtures: {
+                        appbar: {
+                            items: [
+                                { id: 'gazebo', options: { colour: '#54a0ff' } },
+                                'divider',
+                                'snowman-appbar-button',
+                                'legend',
+                                'geosearch',
+                                'divider'
+                            ]
+                        }
+                    }
+                });
 
-            // start loading fixtures; this is just an example
-            // TODO: fixtures specified in the config should be loaded first, then fixtures added through the API
-            // TODO: remove
-            rInstance.fixture.add('snowman');
-            rInstance.fixture.add('gazebo');
-            rInstance.fixture.add('geosearch');
+                // start loading fixtures; this is just an example
+
+                rInstance.fixture.add('appbar');
+                rInstance.fixture.add('snowman');
+                rInstance.fixture.add('gazebo');
+                rInstance.fixture.add('geosearch');
+                rInstance.fixture.add('legend');
+                rInstance.fixture.add('grid');
+                rInstance.fixture.add('diligord', window.hostFixtures.diligord);
+            }
         </script>
     </body>
 </html>
