@@ -34,8 +34,7 @@ export default class GeosearchBottomFilters extends Vue {
     @Call(GeosearchStore.setMapExtent) setMapExtent!: (mapExtent: any) => void;
 
     created() {
-        // TODO: temp call to watch for map extent changes, replace later?
-        this.$iApi.map.innerView.watch('extent', this.onMapExtentChange);
+        this.$iApi.map.extentChanged.listen(this.onMapExtentChange);
     }
 
     // update geosearch results to match those in current view if visible is checked
@@ -47,13 +46,11 @@ export default class GeosearchBottomFilters extends Vue {
     }
 
     // update store map extent and geosearch results on map view change with debounce
-    onMapExtentChange = debounce((newExtent: any, oldExtent: any) => {
-        if (newExtent !== oldExtent) {
-            this.setMapExtent({
-                extent: this.$iApi.map.getExtent(),
-                visible: this.resultsVisible
-            });
-        }
+    onMapExtentChange = debounce((newExtent: any) => {
+        this.setMapExtent({
+            extent: newExtent,
+            visible: this.resultsVisible
+        });
     }, 300);
 }
 </script>

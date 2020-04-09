@@ -26,7 +26,7 @@ export default class FeatureFC extends AttribFC {
 
         const sql = this.filter.getCombinedSql(exclusions);
         // feature layer on a server
-        this.parentLayer.innerLayer.definitionExpression = sql;
+        this.parentLayer._innerLayer.definitionExpression = sql;
     }
 
 }

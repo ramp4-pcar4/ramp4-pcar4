@@ -33,7 +33,7 @@ export default class OgcService extends BaseBase {
         //            now that we have API and fixtures, a person can write their own fancy
         //            requests if they need it.
 
-        const esriLayer = wmsLayer.innerLayer;
+        const esriLayer = wmsLayer._innerLayer;
         let wkid: number;
         let req: any;
         const ext = map.getExtent();
@@ -41,7 +41,7 @@ export default class OgcService extends BaseBase {
         const layers = layerList.join(',');
 
         // tear off any decimals from the screenpoint coords.
-        const screenPoint = map.innerView.toScreen(this.gapi.utils.geom.convPointToEsri(point));
+        const screenPoint = map._innerView.toScreen(this.gapi.utils.geom.convPointToEsri(point));
         const intX = Math.floor(screenPoint.x);
         const intY = Math.floor(screenPoint.y);
 
@@ -102,8 +102,8 @@ export default class OgcService extends BaseBase {
             SERVICE: 'WMS',
             REQUEST: 'GetFeatureInfo',
             VERSION: esriLayer.version,
-            WIDTH: map.innerView.width,
-            HEIGHT: map.innerView.height,
+            WIDTH: map._innerView.width,
+            HEIGHT: map._innerView.height,
             QUERY_LAYERS: layers,
             LAYERS: layers,
             INFO_FORMAT: mimeType
@@ -273,7 +273,7 @@ export default class OgcService extends BaseBase {
         };
 
         const slMap = new Map();
-        crawlSublayers(wmsLayer.innerLayer.sublayers, slMap);
+        crawlSublayers(wmsLayer._innerLayer.sublayers, slMap);
 
         // NOTE currently this logic (from ramp 2) seems out of sycnh with the config schema
         //      WMSLayerEntryNode does not appear to have .styleToURL or .currentStyle

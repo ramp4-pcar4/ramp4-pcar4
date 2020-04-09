@@ -19,7 +19,7 @@ export default class BaseLayer extends BaseBase {
 
     // TODO think about how to expose. protected makes sense, but might want to make it public to allow hacking and use by a dev module if we decide to
     //      could be the FCs need to access it so no choice
-    innerLayer: esri.Layer;
+    _innerLayer: esri.Layer;
 
     // events
     visibilityChanged: TypedEvent<boolean>;
@@ -136,18 +136,18 @@ export default class BaseLayer extends BaseBase {
         // TODO consider putting lots of info on the events.  e.g. instead of just state changed, have .state, .layerid
         //      visibility might need an optional FC index (whatever we're calling that)
 
-        this.innerLayer.watch('visibility', (newval: boolean) => {
+        this._innerLayer.watch('visibility', (newval: boolean) => {
             this.visibilityChanged.fireEvent(newval);
         });
 
-        this.innerLayer.watch('opacity', (newval: number) => {
+        this._innerLayer.watch('opacity', (newval: number) => {
             this.opacityChanged.fireEvent(newval);
         });
 
         // TODO for state stuff, do we need to also synch this.state?
         //      if so probably want a protected worker changeMyState function that sets prop and fires event.
 
-        this.innerLayer.watch('loadStatus', (newval: string) => {
+        this._innerLayer.watch('loadStatus', (newval: string) => {
             const statemap = {
                 'not-loaded': LayerState.LOADING,
                 loading: LayerState.LOADING,
@@ -166,7 +166,7 @@ export default class BaseLayer extends BaseBase {
             }
         });
 
-        this.innerLayer.on('layerview-create', (e: esri.LayerLayerviewCreateEvent) => {
+        this._innerLayer.on('layerview-create', (e: esri.LayerLayerviewCreateEvent) => {
             e.layerView.watch('updating', (newval: boolean) => {
                 this.updateState(newval ? LayerState.REFRESH : LayerState.LOADED );
                 if (newval) {
@@ -223,7 +223,7 @@ export default class BaseLayer extends BaseBase {
     protected onLoadActions(): Array<Promise<void>> {
         if (!this.name) {
             // no name from config. attempt layer name
-            this.name = this.innerLayer.title || '';
+            this.name = this._innerLayer.title || '';
         }
 
         // make the root of the tree
@@ -233,7 +233,7 @@ export default class BaseLayer extends BaseBase {
         /*
         if (!this.extent) {
             // no extent from config. attempt layer extent
-            this.extent = this.innerLayer.fullExtent;
+            this.extent = this._innerLayer.fullExtent;
         }
 
         this.extent = shared.makeSafeExtent(this.extent);
@@ -241,7 +241,7 @@ export default class BaseLayer extends BaseBase {
 
        // layer base class doesnt have spatial ref, but we will assume all our layers do.
        // consider adding fancy checks if its missing, and if so just promise.resolve
-       const lookupPromise = this.gapi.utils.proj.checkProj((<any>this.innerLayer).spatialReference).then((goodSR: boolean) => {
+       const lookupPromise = this.gapi.utils.proj.checkProj((<any>this._innerLayer).spatialReference).then((goodSR: boolean) => {
             if (goodSR) {
                 return Promise.resolve();
             } else {
@@ -305,7 +305,7 @@ export default class BaseLayer extends BaseBase {
             const fcIdx: number = this.fcs.findIndex(fc => fc.uid === uid);
             if (fcIdx === -1) {
                 // no match
-                throw new Error(`Attempt to access non-existing unique id [layerid ${this.innerLayer.id}, uid ${uid}]`);
+                throw new Error(`Attempt to access non-existing unique id [layerid ${this._innerLayer.id}, uid ${uid}]`);
             } else {
                 return fcIdx;
             }
@@ -347,11 +347,11 @@ export default class BaseLayer extends BaseBase {
             } else {
                 // asked for the root when not valid
                 // TODO would it be kinder/friendlier to return the first child fc?
-                throw new Error(`Attempt to access a function on layer root that only applies to an index of the layer [layerid ${this.innerLayer.id}]`);
+                throw new Error(`Attempt to access a function on layer root that only applies to an index of the layer [layerid ${this._innerLayer.id}]`);
             }
         } else if (this.isUndefined(this.fcs[workingIdx])) {
             // passed a non-existing index/uid
-            throw new Error(`Attempt to access non-existing layer index [layerid ${this.innerLayer.id}, lookup value ${layerIdx}]`);
+            throw new Error(`Attempt to access non-existing layer index [layerid ${this._innerLayer.id}, lookup value ${layerIdx}]`);
         } else {
             return this.fcs[workingIdx];
         }

@@ -9,12 +9,12 @@ import FeatureFC from './FeatureFC';
 
 export class FeatureLayer extends AttribLayer {
 
-    innerLayer: esri.FeatureLayer;
+    _innerLayer: esri.FeatureLayer;
 
     constructor (infoBundle: InfoBundle, config: RampLayerConfig, reloadTree?: TreeNode) {
         super(infoBundle, config, reloadTree);
 
-        this.innerLayer = new this.esriBundle.FeatureLayer(this.makeEsriLayerConfig(config));
+        this._innerLayer = new this.esriBundle.FeatureLayer(this.makeEsriLayerConfig(config));
         this.initLayer();
 
     }
@@ -101,8 +101,8 @@ export class FeatureLayer extends AttribLayer {
 
         // TODO .url seems to not have the /index ending.  there is parsedUrl.path, but thats not on official definition
         //      can also consider changing logic to use origRampConfig.url;
-        // const layerUrl: string = (<esri.FeatureLayer>this.innerLayer).url;
-        const layerUrl: string = (<any>this.innerLayer).parsedUrl.path;
+        // const layerUrl: string = (<esri.FeatureLayer>this._innerLayer).url;
+        const layerUrl: string = (<any>this._innerLayer).parsedUrl.path;
         const urlData: ArcGisServerUrl = this.gapi.utils.shared.parseUrlIndex(layerUrl);
         const featIdx: number =  urlData.index;
 

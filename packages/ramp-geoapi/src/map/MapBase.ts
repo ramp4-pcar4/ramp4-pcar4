@@ -12,7 +12,7 @@ import Basemap from './Basemap';
 export default class MapBase extends BaseBase {
 
     // TODO think about how to expose. protected makes sense, but might want to make it public to allow hacking and use by a dev module if we decide to
-    innerMap: esri.Map;
+    _innerMap: esri.Map;
     protected basemapStore: Array<Basemap>;
 
     protected constructor (infoBundle: InfoBundle, config: RampMapConfig) {
@@ -24,7 +24,7 @@ export default class MapBase extends BaseBase {
         if (config.initialBasemapId) {
             esriConfig.basemap = this.findBasemap(config.initialBasemapId).innerBasemap;
         }
-        this.innerMap = new this.esriBundle.Map(esriConfig);
+        this._innerMap = new this.esriBundle.Map(esriConfig);
 
     }
 
@@ -45,10 +45,10 @@ export default class MapBase extends BaseBase {
             //      would need to back out of this function call and trigger something else if we
             //      detect here.
 
-            this.innerMap.basemap = bm.innerBasemap;
+            this._innerMap.basemap = bm.innerBasemap;
         } else {
             // blank basemap case
-            this.innerMap.basemap = undefined;
+            this._innerMap.basemap = undefined;
         }
     }
 

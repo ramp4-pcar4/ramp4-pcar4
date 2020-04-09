@@ -20,7 +20,7 @@ export default class GeoJsonFC extends AttribFC {
     // TODO consider moving a bulk of this out to LayerModule; the wizard may have use for running this (e.g. getting field list for a service url)
     extractLayerMetadata(): void {
 
-        const l = this.parentLayer.innerLayer;
+        const l = this.parentLayer._innerLayer;
 
         // properties for all endpoints
         this.layerType = 'Feature Layer'; // TODO validate this matches server string. TODO validate we don't want to change to a different value. TODO define an Enum for layerType?
@@ -163,7 +163,7 @@ export default class GeoJsonFC extends AttribFC {
         //      Attempts to manually update things did not work
         //      e.g. (this.parent.innerLayer as any).source.items[0].visible = false;
 
-        this.parentLayer.innerLayer.queryFeatures().then(fs => {
+        this.parentLayer._innerLayer.queryFeatures().then(fs => {
             console.warn('Request to filter geometry on the map of local layer will not work at this time');
             this.gapi.utils.query.sqlEsriGraphicsVisibility(fs.features, sql);
         });
