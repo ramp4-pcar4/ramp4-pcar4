@@ -37,3 +37,17 @@ export class APIScope {
         this.$iApi = iApi;
     }
 }
+
+/**
+ * An object containing versioning information.
+ *
+ * @export
+ * @interface AppVersion
+ */
+export interface AppVersion {
+    hash: string;
+    major: number;
+    minor: number;
+    patch: number;
+    timestamp: string;
+}

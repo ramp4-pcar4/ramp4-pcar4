@@ -1,5 +1,5 @@
 <template>
-    <div class="ramp-app">
+    <div class="ramp-app" :lang="$i18n.locale">
         <shell></shell>
     </div>
 </template>

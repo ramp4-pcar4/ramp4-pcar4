@@ -9,6 +9,11 @@ interface LocaleMessages {
     [key: string]: { [name: string]: string };
 }
 
+const fallbackLocale: string = 'en';
+
+// get the language of the page from the root `html` node
+const locale: string = document.documentElement!.getAttribute('lang') || fallbackLocale;
+
 /**
  * Fold the imported CSV file in the form of `{ key: string, enValue: string, frValue: string }[]` to the form understood by VueI18n: `{ en: { [name: string]: string }, fr: { [name: string]: string } }`.
  *
@@ -26,9 +31,8 @@ export function fold(rows: csvRows): LocaleMessages {
     );
 }
 
-// TODO: determine initial language to use
 export const i18n: VueI18n = new VueI18n({
-    locale: 'en',
-    fallbackLocale: 'en',
+    locale,
+    fallbackLocale,
     messages: fold(rows)
 });
