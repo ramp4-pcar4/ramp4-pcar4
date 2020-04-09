@@ -1,4 +1,8 @@
+const webpack = require('webpack');
 const WrapperPlugin = require('wrapper-webpack-plugin');
+
+const childProcess = require('child_process');
+const pkg = require('./package.json');
 
 module.exports = {
     configureWebpack: {
@@ -30,6 +34,29 @@ module.exports = {
                 test: /RAMP.umd.js/, // only wrap output of bundle files with '.js' extension,
                 footer: "RAMP.gapiPromise.then(function() { if (typeof initRAMP === 'function') { initRAMP(); }});",
                 afterOptimization: true
+            }
+        ]);
+
+        // get version numbers
+        const [major, minor, patch] = pkg.version.split('.');
+        // get the hash of the current commit
+        const hash = JSON.stringify(
+            childProcess
+                .execSync('git rev-parse HEAD')
+                .toString()
+                .trim()
+        );
+
+        // inject version information into the bundle
+        config.plugin('version').use(webpack.DefinePlugin, [
+            {
+                __VERSION__: {
+                    major,
+                    minor,
+                    patch,
+                    timestamp: Date.now(),
+                    hash
+                }
             }
         ]);
     },
