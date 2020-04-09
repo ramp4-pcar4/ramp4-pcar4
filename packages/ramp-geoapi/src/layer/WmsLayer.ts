@@ -11,7 +11,7 @@ import TreeNode from './TreeNode';
 
 export class WmsLayer extends BaseLayer {
 
-    innerLayer: esri.WMSLayer;
+    _innerLayer: esri.WMSLayer;
     sublayerNames: Array<string>;
     readonly mimeType: string;
 
@@ -20,7 +20,7 @@ export class WmsLayer extends BaseLayer {
         this.supportsIdentify = true;
         this.mimeType = config.featureInfoMimeType; // TODO is there a default? will that be in the config defaulting?
 
-        this.innerLayer = new this.esriBundle.WMSLayer(this.makeEsriLayerConfig(config));
+        this._innerLayer = new this.esriBundle.WMSLayer(this.makeEsriLayerConfig(config));
         this.initLayer();
     }
 
@@ -49,7 +49,7 @@ export class WmsLayer extends BaseLayer {
         esriConfig.sublayers = this.sublayerNames.map(sln => {
             return {
                 name: sln
-            }
+            };
         });
 
         const styles = lEntries.map(e => e.currentStyle).join();
@@ -112,7 +112,7 @@ export class WmsLayer extends BaseLayer {
             });
         };
 
-        crawlSublayers(this.innerLayer.sublayers);
+        crawlSublayers(this._innerLayer.sublayers);
         */
 
         // TODO implement symbology load
@@ -222,9 +222,9 @@ export class WmsLayer extends BaseLayer {
      * @param {Boolean} forceRefresh show the new fancy version of the layer or not
      */
     setCustomParameter(key: string, value: string, forceRefresh: boolean = true): void {
-        this.innerLayer.customLayerParameters[key] = value;
+        this._innerLayer.customLayerParameters[key] = value;
         if (forceRefresh) {
-            this.innerLayer.refresh();
+            this._innerLayer.refresh();
         }
     }
 }

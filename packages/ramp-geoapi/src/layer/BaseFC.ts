@@ -38,7 +38,7 @@ export default class BaseFC extends BaseBase {
      */
     getVisibility (): boolean {
         // basic case - fc vis === layer vis
-        return this.parentLayer.innerLayer.visible;
+        return this.parentLayer._innerLayer.visible;
     }
 
     /**
@@ -49,7 +49,7 @@ export default class BaseFC extends BaseBase {
      */
     setVisibility (value: boolean): void {
         // basic case - set layer visibility
-        this.parentLayer.innerLayer.visible = value;
+        this.parentLayer._innerLayer.visible = value;
     }
 
     /**
@@ -60,7 +60,7 @@ export default class BaseFC extends BaseBase {
      */
     getOpacity (): number {
         // basic case - fc opac === layer opac
-        return this.parentLayer.innerLayer.opacity;
+        return this.parentLayer._innerLayer.opacity;
     }
 
     /**
@@ -71,7 +71,7 @@ export default class BaseFC extends BaseBase {
      */
     setOpacity (value: number): void {
         // basic case - set layer opacity
-        this.parentLayer.innerLayer.opacity = value;
+        this.parentLayer._innerLayer.opacity = value;
     }
 
 }

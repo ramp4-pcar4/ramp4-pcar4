@@ -1,6 +1,5 @@
-// a 2D esri map
+// wraps and represents a 2D esri map
 // TODO add proper comments
-
 
 import esri = __esri;
 import { InfoBundle, RampMapConfig } from '../gapiTypes';
@@ -12,15 +11,46 @@ import Point from '../api/geometry/Point';
 import SpatialReference from '../api/geometry/SpatialReference';
 import BaseGeometry from '../api/geometry/BaseGeometry';
 import { GeometryType } from '../api/apiDefs';
+import { TypedEvent } from '../Event';
 
 // NOTE naming this RampMap, to avoid collisions with javascript object `Map`
 export class RampMap extends MapBase {
 
-    // TODO think about how to expose. protected makes sense, but might want to make it public to allow hacking and use by a dev module if we decide to
-    innerView: esri.MapView;
+    // NOTE unlike ESRI3, the map view doesnt have a custom event, it uses property watches.
+    //      so if we want to detect scale change we'll need to have another event, it won't be
+    //      a big bundle of properties like ESRI3 provided
 
+    /**
+     * Event that fires when the map extent changes. Event parameter is the extent in RAMP API Extent format.
+     */
+    extentChanged: TypedEvent<Extent>;
+
+    /**
+     * Event that fires when the map scale changes. Event parameter is the scale denominator integer.
+     */
+    scaleChanged: TypedEvent<number>;
+
+    // TODO think about how to expose. protected makes sense, but might want to make it public to allow hacking and use by a dev module if we decide to.
+    //      there are also cases where other parts of the geoapi need to access this.
+    /**
+     * The internal esri map view. Avoid referencing outside of geoapi.
+     * @private
+     */
+    _innerView: esri.MapView;
+
+    /**
+     * The map spatial reference in RAMP API Spatial Reference format.
+     * Saves us from converting from ESRI format every time it is needed
+     * @private
+     */
     private rampSR: SpatialReference;
 
+    /**
+     * @constructor
+     * @param {InfoBundle} infoBundle provides the common shared linkages to geoapi
+     * @param {RampMapConfig} config configuration data for the map
+     * @param {string | HTMLDivElement} targetDiv the page div or the div id that the map should be created in
+     */
     constructor (infoBundle: InfoBundle, config: RampMapConfig, targetDiv: string | HTMLDivElement) {
 
         super(infoBundle, config);
@@ -28,7 +58,7 @@ export class RampMap extends MapBase {
         this.rampSR = SpatialReference.fromConfig(config.extent.spatialReference);
 
         const esriViewConfig: esri.MapViewProperties = {
-            map: this.innerMap,
+            map: this._innerMap,
             container: targetDiv,
             constraints: {
                 lods: <Array<esri.LOD>>config.lods
@@ -42,10 +72,24 @@ export class RampMap extends MapBase {
         };
 
         // TODO extract more from config and set appropriate view properties (e.g. intial extent, initial projection, LODs)
-        this.innerView = new this.esriBundle.MapView(esriViewConfig);
+        this._innerView = new this.esriBundle.MapView(esriViewConfig);
 
+        this._innerView.watch('extent', (newval: esri.Extent) => {
+            this.extentChanged.fireEvent(<Extent>this.gapi.utils.geom.geomEsriToRamp(newval, 'map_extent_event'));
+        });
+
+        this._innerView.watch('scale', (newval: number) => {
+            this.scaleChanged.fireEvent(newval);
+        });
     }
 
+    /**
+     * Projects a geometry to the map's spatial reference
+     *
+     * @private
+     * @param {BaseGeometry} geom the RAMP API geometry to project
+     * @returns {Promise<BaseGeometry>} the geometry projected to the map's projection, in RAMP API Geometry format
+     */
     private geomToMapSR(geom: BaseGeometry): Promise<BaseGeometry> {
         if (this.rampSR.isEqual(geom.sr)) {
             return Promise.resolve(geom);
@@ -54,27 +98,48 @@ export class RampMap extends MapBase {
         }
     }
 
-    // promise resolves when layer gets added to map
+    /**
+     * Adds a layer to the map
+     *
+     * @param {LayerBase} layer the GeoAPI layer to add
+     * @returns {Promise<void>} a promise that resolves when the layer has been added to the map
+     */
     async addLayer (layer: LayerBase): Promise<void> {
         await layer.isReadyForMap();
-        this.innerMap.add(layer.innerLayer);
+        this._innerMap.add(layer._innerLayer);
     }
 
+    /**
+     * Adds a highlight layer to the map
+     *
+     * @param {HighlightLayer} highlightLayer the highlight
+     */
     addHighlightLayer (highlightLayer: HighlightLayer): void {
-        this.innerMap.add(highlightLayer.innerLayer);
+        this._innerMap.add(highlightLayer._innerLayer);
     }
 
     // TODO passthrough functions, either by aly magic or make them hardcoded
-    getScale(): number {
-        return this.innerView.scale;
-    }
 
+    /**
+     * Zooms the map to a given extent.
+     *
+     * @param {Extent} extent A RAMP API Extent to zoom the map to
+     * @returns {Promise<void>} A promise that resolves when the map has finished zooming
+     */
     zoomMapTo(extent: Extent): Promise<void>;
+    /**
+     * Zooms the map to a given center point, at a given scale.
+     *
+     * @param {Point} extent A RAMP API Point to center the map at
+     * @param {number} mapScale An integer defining the scale the map should be at
+     * @returns {Promise<void>} A promise that resolves when the map has finished zooming
+     */
     zoomMapTo(centerPoint: Point, mapScale: number): Promise<void>;
     zoomMapTo(geom: BaseGeometry, scale?: number): Promise<void> {
         // TODO technically this can accept any geometry. should we open up the suggested signatures to allow various things?
-
         return this.geomToMapSR(geom).then(g => {
+            // TODO investigate the `snapTo` parameter if we have an extent / poly coming in
+            //      see how it compares to the old "fit to view" parameter of ESRI3
             const zoomP: any = {
                 target: this.gapi.utils.geom.geomRampToEsri(g)
             };
@@ -83,19 +148,34 @@ export class RampMap extends MapBase {
                 zoomP.scale = scale;
             }
 
-            return this.innerView.goTo(zoomP);
+            return this._innerView.goTo(zoomP);
         });
 
     }
 
+    /**
+     * Provides the scale of the map (the scale denominator as integer)
+     *
+     * @returns {number} the map scale
+     */
+    getScale(): number {
+        return this._innerView.scale;
+    }
+
+    /**
+     * Provides the extent of the map
+     *
+     * @returns {Extent} the map extent in RAMP API Extent format
+     */
     getExtent(): Extent {
-        return this.gapi.utils.geom.convEsriExtentToRamp(this.innerView.extent);
+        return this.gapi.utils.geom.convEsriExtentToRamp(this._innerView.extent);
     }
 
-    setExtent(newExt: Extent): Promise<void> {
-        return this.zoomMapTo(newExt);
-    }
-
+    /**
+     * Provides the spatial reference of the map
+     *
+     * @returns {SpatialReference} the map spatial reference in RAMP API format
+     */
     getSR(): SpatialReference {
         return this.rampSR.clone();
     }
