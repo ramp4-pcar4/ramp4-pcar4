@@ -1,7 +1,18 @@
 <template>
     <div class="w-full bg-white">
         <div class="flex items-center">
-            <span class="truncate w-full text-sm mb-0">{{ filterStatus }}</span>
+            <span class="truncate w-full text-sm mb-0">
+                {{
+                    $t('filters.label.info', {
+                        range: `${this.filterInfo.firstRow} - ${this.filterInfo.lastRow}`,
+                        total: this.filterInfo.visibleRows
+                    })
+                }}
+
+                <span v-if="this.filterInfo.visibleRows !== this.rowData.length">{{
+                    $t('filters.label.filtered', { max: this.rowData.length })
+                }}</span>
+            </span>
             <div class="flex-grow"></div>
 
             <!-- show/hide columns -->
@@ -26,7 +37,7 @@
                             ></path>
                         </g>
                     </svg>
-                    Filters
+                    {{ $t('label.filters') }}
                 </button>
             </div>
         </div>
@@ -66,6 +77,8 @@ import CustomSelectorFilter from './CustomSelectorFilter.vue';
 import CustomDateFilter from './CustomDateFilter.vue';
 import CustomHeader from './CustomHeader.vue';
 
+import messages from '../lang';
+
 // these should match up with the `type` value returned by the attribute promise.
 const NUM_TYPES: string[] = ['oid', 'double', 'integer'];
 const DATE_TYPE: string = 'date';
@@ -80,6 +93,9 @@ const TEXT_TYPE: string = 'string';
         CustomDateFilter,
         CustomTextFilter,
         CustomHeader
+    },
+    i18n: {
+        messages
     }
 })
 export default class TableComponent extends Vue {
@@ -210,7 +226,6 @@ export default class TableComponent extends Vue {
             this.filterInfo.firstRow = this.gridApi.getFirstDisplayedRow() + 1;
             this.filterInfo.lastRow = this.gridApi.getLastDisplayedRow() + 1;
             this.filterInfo.visibleRows = this.gridApi.getDisplayedRowCount();
-            this.updateFilterStatus();
         }
     }
 
@@ -226,15 +241,6 @@ export default class TableComponent extends Vue {
 
         // Refresh the column filters to reset inputs.
         this.gridApi.refreshHeader();
-    }
-
-    // Changes the filter status text in the grid.
-    updateFilterStatus() {
-        this.filterStatus = `${this.filterInfo.firstRow} - ${this.filterInfo.lastRow} of ${this.filterInfo.visibleRows} entries shown`;
-
-        if (this.filterInfo.visibleRows !== this.rowData.length) {
-            this.filterStatus += ` (filtered from ${this.rowData.length} records)`;
-        }
     }
 
     setUpDateFilter(colDef: any, state: TableStateManager) {

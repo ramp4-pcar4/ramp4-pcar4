@@ -1,13 +1,24 @@
 <template>
     <div>
-        <input class="rv-input w-full" type="text" placeholder="text" @keyup="valueChanged()" v-model="filterValue" />
+        <input
+            class="rv-input w-full"
+            type="text"
+            @keyup="valueChanged()"
+            v-model="filterValue"
+            :placeholder="$t('filters.column.label.text')"
+        />
     </div>
 </template>
 
 <script lang="ts">
 import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
+import messages from '../lang';
 
-@Component({})
+@Component({
+    i18n: {
+        messages
+    }
+})
 export default class CustomTextFilter extends Vue {
     beforeMount() {
         // Load previously stored value (if saved in table state manager)
@@ -36,7 +47,7 @@ export default class CustomTextFilter extends Vue {
     }
 
     onParentModelChanged(parentModel: any): void {
-        if(parentModel === {}) {
+        if (parentModel === {}) {
             this.filterValue = '';
         }
     }

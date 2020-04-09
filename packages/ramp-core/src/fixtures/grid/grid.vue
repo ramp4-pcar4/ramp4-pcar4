@@ -5,9 +5,9 @@
             <input
                 @keyup="updateQuickSearch()"
                 v-model="quicksearch"
-                placeholder="Search table"
                 class="rv-global-search rv-input"
                 aria-invalid="false"
+                :placeholder="$t('filters.label.global')"
             />
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -58,10 +58,14 @@ import TableComponent from '@/fixtures/grid/table/table.vue';
 
 import { LayerStore, layer } from '@/store/modules/layer';
 import FeatureLayer from 'ramp-geoapi/dist/layer/FeatureLayer';
+import messages from './lang';
 
 @Component({
     components: {
         TableComponent
+    },
+    i18n: {
+        messages
     }
 })
 export default class Screen1 extends Vue {

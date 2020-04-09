@@ -1,3 +1,8 @@
 key,enValue,enValid,frValue,frValid
-columns,Columns,1,Colonnes,0
+label.columns,Columns,1,Colonnes,0
+label.filters,Filters,1,Filtres,0
+filters.label.global,Search table,1,Tableau de recherche,0
+filters.column.label.text,text,0,texte,0
 filters.clear,Clear filters,1,Effacer les filtres,0
+filters.label.info,{range} of {total} entries shown,1,Affichage de l'élément {range} sur {total} éléments,0
+filters.label.filtered,(filtered from {max} total entries),1,(filtrés de {max} éléments au total),0
