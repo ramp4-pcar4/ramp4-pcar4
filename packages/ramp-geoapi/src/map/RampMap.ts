@@ -56,6 +56,8 @@ export class RampMap extends MapBase {
         super(infoBundle, config);
 
         this.rampSR = SpatialReference.fromConfig(config.extent.spatialReference);
+        this.extentChanged = new TypedEvent<Extent>();
+        this.scaleChanged = new TypedEvent<number>();
 
         const esriViewConfig: esri.MapViewProperties = {
             map: this._innerMap,
