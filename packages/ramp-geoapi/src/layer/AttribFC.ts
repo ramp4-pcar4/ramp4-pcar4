@@ -335,7 +335,7 @@ export default class AttribFC extends BaseFC {
         }
 
         if (opts.getGeom) {
-            scale = opts.map.innerView.scale;
+            scale = opts.map.getScale();
 
             // first locate the appropriate cache due to simplifications.
             let gCache = this.quickCache.getGeom(objectId, scale);
@@ -350,11 +350,11 @@ export default class AttribFC extends BaseFC {
             //              the esri layer object to exploit.
             //              for now, will just skip this optimization.
 
-            } else if (this.parentLayer.innerLayer.type === 'feature') {
+            } else if (this.parentLayer._innerLayer.type === 'feature') {
                 // it is a feature layer. we can attempt to extract info from it.
                 // but remember the feature may not exist on the client currently
 
-                let localGraphic =  (<esri.FeatureLayer>this.parentLayer.innerLayer).graphics.find(g =>
+                let localGraphic =  (<esri.FeatureLayer>this.parentLayer._innerLayer).graphics.find(g =>
                     g.attributes[this.oidField] === objectId);
 
 
@@ -384,9 +384,9 @@ export default class AttribFC extends BaseFC {
             };
 
             if (needWebGeom) {
-                serviceParams.mapSR = JSON.stringify(opts.map.innerView.spatialReference); // TODO test; stringify might include all the esri wrapper garbage. if so, make a custom jsonifier in proj utils
+                serviceParams.mapSR = JSON.stringify(opts.map._innerView.spatialReference); // TODO test; stringify might include all the esri wrapper garbage. if so, make a custom jsonifier in proj utils
                 if (!this.quickCache.isPoint) {
-                    serviceParams.maxOffset = opts.map.innerView.resolution;
+                    serviceParams.maxOffset = opts.map._innerView.resolution;
                 }
             }
 

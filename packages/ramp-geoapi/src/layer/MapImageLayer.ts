@@ -13,13 +13,13 @@ export class MapImageLayer extends AttribLayer {
 
     // indicates if sublayers can have opacity adjusted
     isDynamic: boolean;
-    innerLayer: esri.MapImageLayer;
+    _innerLayer: esri.MapImageLayer;
 
     constructor (infoBundle: InfoBundle, config: RampLayerConfig, reloadTree?: TreeNode) {
 
         super(infoBundle, config, reloadTree);
 
-        this.innerLayer = new this.esriBundle.MapImageLayer(this.makeEsriLayerConfig(config));
+        this._innerLayer = new this.esriBundle.MapImageLayer(this.makeEsriLayerConfig(config));
 
         this.initLayer();
 
@@ -103,7 +103,7 @@ export class MapImageLayer extends AttribLayer {
             this.setVisibility(this.origRampConfig.state.visibility);
         });
 
-        this.isDynamic = this.innerLayer.capabilities.exportMap.supportsDynamicLayers;
+        this.isDynamic = this._innerLayer.capabilities.exportMap.supportsDynamicLayers;
 
         // TODO the whole "configIsComplete" logic in RAMP2 was never invoked by the client.
         //      Don't see the point in re-adding it here.
@@ -115,7 +115,7 @@ export class MapImageLayer extends AttribLayer {
         };
 
         const findSublayer = (targetIndex: number): esri.Sublayer => {
-            return this.innerLayer.allSublayers.find((s: esri.Sublayer) => {
+            return this._innerLayer.allSublayers.find((s: esri.Sublayer) => {
                 return s.id === targetIndex;
             });
         };
@@ -290,7 +290,7 @@ export class MapImageLayer extends AttribLayer {
         // process each leaf FC we walked to in the sublayer tree crawl above
         leafsToInit.forEach((mlFC: MapImageFC) => {
 
-            // NOTE: can consider alternates, like innerLayer.url + / + layerIdx
+            // NOTE: can consider alternates, like _innerLayer.url + / + layerIdx
             mlFC.serviceUrl = findSublayer(mlFC.layerIdx).url;
 
             // TODO check if we have custom renderer, add to options parameter here
@@ -329,7 +329,7 @@ export class MapImageLayer extends AttribLayer {
         });
 
         // any sublayers not in our tree, we need to turn off.
-        this.innerLayer.allSublayers.forEach((s: esri.Sublayer) => {
+        this._innerLayer.allSublayers.forEach((s: esri.Sublayer) => {
             // find sublayers that are not groups, and dont exist in our initilazation array
             if (!s.sublayers && !leafsToInit.find((fc: MapImageFC) => fc.layerIdx === s.id)) {
                 s.visible = false;
@@ -338,7 +338,7 @@ export class MapImageLayer extends AttribLayer {
 
         // get mapName of the legend entry from the service to use as the name if not provided in config
         if (!this.name) {
-            const serviceRequest: Promise<esri.RequestResponse> = this.esriBundle.esriRequest(this.innerLayer.url, {
+            const serviceRequest: Promise<esri.RequestResponse> = this.esriBundle.esriRequest(this._innerLayer.url, {
                 query: {
                     f: 'json'
                 }
@@ -380,7 +380,7 @@ export class MapImageLayer extends AttribLayer {
     getVisibility (layerIdx: number | string = undefined): boolean {
         const fc = this.getFC(layerIdx, true);
         if (this.isUndefined(fc)) {
-            return this.innerLayer.visible;
+            return this._innerLayer.visible;
         } else {
             // see comment in getOpacity
             return super.getVisibility(fc.layerIdx);
@@ -397,7 +397,7 @@ export class MapImageLayer extends AttribLayer {
     setVisibility (value: boolean, layerIdx: number | string = undefined): void {
         const fc = this.getFC(layerIdx, true);
         if (this.isUndefined(fc)) {
-            this.innerLayer.visible = value;
+            this._innerLayer.visible = value;
         } else {
             // see comment in getOpacity
             super.setVisibility(value, fc.layerIdx);
@@ -414,7 +414,7 @@ export class MapImageLayer extends AttribLayer {
     getOpacity (layerIdx: number | string = undefined): number {
         const fc = this.getFC(layerIdx, true);
         if (this.isUndefined(fc) || !this.isDynamic) {
-            return this.innerLayer.opacity;
+            return this._innerLayer.opacity;
         } else {
             // this is a bit redundant / inefficient. we could just do fc.getOpacity()
             // current rationale is we keep the implementation in the baseclass
@@ -437,7 +437,7 @@ export class MapImageLayer extends AttribLayer {
     setOpacity (value: number, layerIdx: number | string = undefined): void {
         const fc = this.getFC(layerIdx, true);
         if (this.isUndefined(fc) || !this.isDynamic) {
-            this.innerLayer.opacity = value;
+            this._innerLayer.opacity = value;
 
             // TODO check our implementation inside MapImageFC. we might need to adjust the opacity value of all the
             //      FCs if we are in the not-dynamic case

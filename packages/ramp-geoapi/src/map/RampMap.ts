@@ -36,7 +36,7 @@ export class RampMap extends MapBase {
      * The internal esri map view. Avoid referencing outside of geoapi.
      * @private
      */
-    innerView: esri.MapView;
+    _innerView: esri.MapView;
 
     /**
      * The map spatial reference in RAMP API Spatial Reference format.
@@ -58,7 +58,7 @@ export class RampMap extends MapBase {
         this.rampSR = SpatialReference.fromConfig(config.extent.spatialReference);
 
         const esriViewConfig: esri.MapViewProperties = {
-            map: this.innerMap,
+            map: this._innerMap,
             container: targetDiv,
             constraints: {
                 lods: <Array<esri.LOD>>config.lods
@@ -72,13 +72,13 @@ export class RampMap extends MapBase {
         };
 
         // TODO extract more from config and set appropriate view properties (e.g. intial extent, initial projection, LODs)
-        this.innerView = new this.esriBundle.MapView(esriViewConfig);
+        this._innerView = new this.esriBundle.MapView(esriViewConfig);
 
-        this.innerView.watch('extent', (newval: esri.Extent) => {
+        this._innerView.watch('extent', (newval: esri.Extent) => {
             this.extentChanged.fireEvent(<Extent>this.gapi.utils.geom.geomEsriToRamp(newval, 'map_extent_event'));
         });
 
-        this.innerView.watch('scale', (newval: number) => {
+        this._innerView.watch('scale', (newval: number) => {
             this.scaleChanged.fireEvent(newval);
         });
     }
@@ -106,7 +106,7 @@ export class RampMap extends MapBase {
      */
     async addLayer (layer: LayerBase): Promise<void> {
         await layer.isReadyForMap();
-        this.innerMap.add(layer.innerLayer);
+        this._innerMap.add(layer._innerLayer);
     }
 
     /**
@@ -115,7 +115,7 @@ export class RampMap extends MapBase {
      * @param {HighlightLayer} highlightLayer the highlight
      */
     addHighlightLayer (highlightLayer: HighlightLayer): void {
-        this.innerMap.add(highlightLayer.innerLayer);
+        this._innerMap.add(highlightLayer._innerLayer);
     }
 
     // TODO passthrough functions, either by aly magic or make them hardcoded
@@ -148,7 +148,7 @@ export class RampMap extends MapBase {
                 zoomP.scale = scale;
             }
 
-            return this.innerView.goTo(zoomP);
+            return this._innerView.goTo(zoomP);
         });
 
     }
@@ -159,7 +159,7 @@ export class RampMap extends MapBase {
      * @returns {number} the map scale
      */
     getScale(): number {
-        return this.innerView.scale;
+        return this._innerView.scale;
     }
 
     /**
@@ -168,7 +168,7 @@ export class RampMap extends MapBase {
      * @returns {Extent} the map extent in RAMP API Extent format
      */
     getExtent(): Extent {
-        return this.gapi.utils.geom.convEsriExtentToRamp(this.innerView.extent);
+        return this.gapi.utils.geom.convEsriExtentToRamp(this._innerView.extent);
     }
 
     /**

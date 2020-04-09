@@ -34,7 +34,7 @@ function fieldValidator(fields: Array<esri.Field>, targetName: string): string {
 // TODO i think we need to change the extends to AttribLayer, as FeatureLayer constructor will attempt to make its own feature layer
 export class GeoJsonLayer extends AttribLayer {
 
-    innerLayer: esri.FeatureLayer;
+    _innerLayer: esri.FeatureLayer;
     private esriJson: esri.FeatureLayerProperties; // used as temp var to get around typescript parameter grousing. will be undefined after initLayer()
 
     constructor (infoBundle: InfoBundle, rampLayerConfig: RampLayerConfig, geoJson: any, systemOptions: any, reloadTree?: TreeNode) {
@@ -66,7 +66,7 @@ export class GeoJsonLayer extends AttribLayer {
 
             this.esriJson = eJson;
             // this will be asynch, triggered after the reprojection of the geojson
-            this.innerLayer = new this.esriBundle.FeatureLayer(this.makeEsriLayerConfig(rampLayerConfig));
+            this._innerLayer = new this.esriBundle.FeatureLayer(this.makeEsriLayerConfig(rampLayerConfig));
 
             this.esriJson = undefined;
             this.initLayer();
@@ -185,7 +185,7 @@ export class GeoJsonLayer extends AttribLayer {
 
         */
 
-        gjFC.featureCount = this.innerLayer.source.length;
+        gjFC.featureCount = this._innerLayer.source.length;
 
         // if file based (or server extent was fried), calculate extent based on geometry
         // TODO implement this. may need a manual loop to calculate graphicsExtent since ESRI torpedo'd the function

@@ -13,7 +13,7 @@ export default class MapImageFC extends AttribFC {
 
     constructor (infoBundle: InfoBundle, parent: BaseLayer, layerIdx: number = 0) {
         super(infoBundle, parent, layerIdx);
-        this.innerSubLayer = this.parentLayer.innerLayer.allSublayers.find((s: esri.Sublayer) => {
+        this.innerSubLayer = this.parentLayer._innerLayer.allSublayers.find((s: esri.Sublayer) => {
             return s.id === layerIdx;
         });
     }

@@ -49,7 +49,7 @@ export default class QueryService extends BaseBase {
             query.spatialRelationship = 'intersects';
         }
 
-        return (<esri.FeatureLayer>options.layer.innerLayer).queryFeatures(query).then(featSet => {
+        return (<esri.FeatureLayer>options.layer._innerLayer).queryFeatures(query).then(featSet => {
             let feats: any = featSet.features;
             if (options.filterSql && feats.length > 0) {
                 // aql

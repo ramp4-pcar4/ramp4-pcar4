@@ -9,7 +9,7 @@ import MapBase from './MapBase';
 // naming RampMap3D, to align with calling the 2D version RampMap
 export class RampMap3D extends MapBase {
 
-    innerView: esri.SceneView;
+    _innerView: esri.SceneView;
 
     constructor (infoBundle: InfoBundle, config: any, targetDiv: string) {
         // TODO massage incoming config to something that conforms to esri.MapProperties interface
@@ -19,8 +19,8 @@ export class RampMap3D extends MapBase {
 
         // TODO extract more from config and set appropriate view properties (e.g. intial extent, initial projection, LODs)
         /* // need to add SceneView to our bundle for this to work. later!
-        this.innerView = new esriBundle.SceneView({
-            map: this.innerMap,
+        this._innerView = new esriBundle.SceneView({
+            map: this._innerMap,
             container: targetDiv,
             center: [-76.772, 44.423],
             zoom: 10

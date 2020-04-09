@@ -13,7 +13,7 @@ import defaultSymbols from './defaulthighlightSymbols.json';
  */
 export class HighlightLayer extends BaseBase {
 
-    innerLayer: esri.GraphicsLayer;
+    _innerLayer: esri.GraphicsLayer;
     protected markerSymbol: esri.PictureMarkerSymbol;
 
     // TODO make types for options
@@ -38,7 +38,7 @@ export class HighlightLayer extends BaseBase {
         }
 
         // need to make type 'any' to allow for the adding of custom functions below
-        this.innerLayer = new this.esriBundle.GraphicsLayer({ id, visible: true });
+        this._innerLayer = new this.esriBundle.GraphicsLayer({ id, visible: true });
         this.markerSymbol = markerSymbol;
     }
 
@@ -50,11 +50,11 @@ export class HighlightLayer extends BaseBase {
      */
     addMarker (point: esri.Point, clearLayer: boolean = false): void {
         if (clearLayer) {
-            this.innerLayer.removeAll();
+            this._innerLayer.removeAll();
         }
 
         const marker = new this.esriBundle.Graphic({ geometry: point, symbol: this.markerSymbol });
-        this.innerLayer.add(marker);
+        this._innerLayer.add(marker);
     }
 
     // TODO looking at RAMP2 code there is a lot of the following:
@@ -72,13 +72,13 @@ export class HighlightLayer extends BaseBase {
      */
     addHighlight (graphic: esri.Graphic | Array<esri.Graphic>, clearLayer: boolean = false): void {
         if (clearLayer) {
-            this.innerLayer.removeAll();
+            this._innerLayer.removeAll();
         }
 
         const graphics = Array.isArray(graphic) ? graphic : [graphic];
 
         // add new highlight graphics
-       this.innerLayer.addMany(graphics);
+       this._innerLayer.addMany(graphics);
     }
 
     /**
@@ -86,7 +86,7 @@ export class HighlightLayer extends BaseBase {
      * @method clearhighlight
      */
     clearHighlight(): void {
-        this.innerLayer.removeAll();
+        this._innerLayer.removeAll();
     }
 
 }
