@@ -10,16 +10,37 @@
         <script src="./diligord-fixture.js"></script>
     </head>
     <body>
+        <style>
+            #instance-language {
+                margin-left: 20px;
+            }
+        </style>
+
         <noscript>
             <strong>We're sorry but ramp-core doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
         </noscript>
-        <button onclick="switchLang()">switch lang</button>
+        <button onclick="switchLang()">Switch language</button><span id="instance-language"></span>
+
         <div id="app"></div>
+
+        <span id="ramp-version"></span>
         <!-- built files will be auto injected -->
 
         <script>
             let rInstance;
             function initRAMP() {
+                document.getElementById('ramp-version').innerText =
+                    'v.' +
+                    RAMP.version.major +
+                    '.' +
+                    RAMP.version.minor +
+                    '.' +
+                    RAMP.version.patch +
+                    ' [#' +
+                    RAMP.version.hash.slice(0, 6) +
+                    ']  -  built on ' +
+                    new Date(RAMP.version.timestamp).toLocaleDateString();
+
                 rInstance = new RAMP.Instance(document.getElementById('app'), {
                     map: {
                         extent: {
@@ -122,12 +143,14 @@
                 rInstance.fixture.add('diligord', window.hostFixtures.diligord);
                 console.log(rInstance);
             }
+
             function switchLang() {
                 if (rInstance.language === 'en') {
                     rInstance.setLanguage('fr');
                 } else {
                     rInstance.setLanguage('en');
                 }
+                document.getElementById('instance-language').innerText = rInstance.language;
             }
         </script>
     </body>
