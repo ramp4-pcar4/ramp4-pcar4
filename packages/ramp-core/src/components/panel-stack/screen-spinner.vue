@@ -1,6 +1,7 @@
 <template>
-    <panel-screen :header="false">
+    <panel-screen :header="false" class="screen-spinner">
         <template #content>
+            <!-- TODO: fine a spinner that is actually good 🎍 -->
             <div class="loader"></div>
         </template>
     </panel-screen>

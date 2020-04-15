@@ -189,44 +189,7 @@ export class PanelAPI extends APIScope {
         // register all the panel screen components globally
         // only register if it hasn't been registered before
         if (!(route.screen in this.$vApp.$options.components!)) {
-            const screen = panel.screens[route.screen];
-
-            let payload: VueConstructor | AsyncComponent;
-
-            // object | VueConstructor => use as is
-            // string => load fixture file, pass as `component` in `AsyncComponentFactory` function
-            // AsyncComponentFunction => execute as it returns a promise, pass the output as `component` in `AsyncComponentFactory` function
-            // https://vuejs.org/v2/guide/components-dynamic-async.html#Handling-Loading-State
-
-            if (typeof screen === 'object' || isVueConstructor(screen)) {
-                payload = screen;
-            } else {
-                let component: Promise<any>;
-
-                if (typeof screen === 'string') {
-                    component = import(/* webpackChunkName: "[request]" */ `./../../src/fixtures/${screen}`);
-                } else {
-                    component = screen();
-                }
-
-                payload = () => ({
-                    // The component to load (should be a Promise)
-                    component: component as any,
-                    // A component to use while the async component is loading
-                    loading: ScreenSpinnerV,
-                    // A component to use if the load fails
-                    // TODO: add error component
-                    // error: ErrorComponent,
-                    // Delay before showing the loading component. Default: 200ms.
-                    delay: 200
-                    // The error component will be displayed if a timeout is
-                    // provided and exceeded. Default: Infinity.
-                    // TODO: restore the error timeout
-                    // timeout: 3000
-                });
-            }
-
-            Vue.component(route.screen, payload);
+            panel.registerScreen(route.screen);
         }
 
         this.$vApp.$store.set(`panel/items@${panel.id}.route`, route);
@@ -268,6 +231,80 @@ export class PanelInstance extends APIScope {
      * @memberof PanelInstance
      */
     readonly screens: PanelConfigScreens;
+
+    /**
+     * A list of screen component ids which are loaded and ready to be rendered.
+     *
+     * @private
+     * @type {string[]}
+     * @memberof PanelInstance
+     */
+    private readonly loadedScreens: string[] = [];
+
+    /**
+     * Checks if a given screen component id is already loaded and ready to render.
+     *
+     * @param {string} id
+     * @returns {boolean}
+     * @memberof PanelInstance
+     */
+    isScreenLoaded(id: string): boolean {
+        return this.loadedScreens.indexOf(id) !== -1;
+    }
+
+    /**
+     * Loads and register panel screen components.
+     * This function should be called just before the screen is to be shown; this will avoid needlessly loading components upfront
+     * (sometimes certain screens might not get used at all).
+     *
+     * @param {string} id
+     * @memberof PanelInstance
+     */
+    registerScreen(id: string): void {
+        const screen = this.screens[id];
+
+        let payload: VueConstructor | AsyncComponent;
+
+        // the `screen` value can be either a `string` component file path, an component `object`, a component constructor function, or an `AsynComponentFunction`
+        // - `object` or `VueConstructor` => use as is as all the component code is already loaded
+        // - `string` => load fixture file, pass as `component` in `AsyncComponentFactory` function
+        // - `AsyncComponentFunction` => execute as it returns a promise, pass the output as `component` in `AsyncComponentFactory` function
+        // https://vuejs.org/v2/guide/components-dynamic-async.html#Handling-Loading-State
+
+        if (typeof screen === 'object' || isVueConstructor(screen)) {
+            payload = screen;
+            this.loadedScreens.push(id); // mark this screen immediately as loaded
+        } else {
+            let component: Promise<any>;
+
+            if (typeof screen === 'string') {
+                component = import(/* webpackChunkName: "[request]" */ `./../../src/fixtures/${screen}`);
+            } else {
+                component = screen();
+            }
+
+            // wait until the component promise is resolved and mark it as loaded
+            component.then(() => this.loadedScreens.push(id));
+
+            payload = () => ({
+                // The component to load (should be a Promise)
+                component: component as any,
+                // A component to use while the async component is loading
+                loading: ScreenSpinnerV,
+                // A component to use if the load fails
+                // TODO: add error component
+                // error: ErrorComponent,
+                // Delay before showing the loading component. Default: 200ms.
+                delay: 200
+                // The error component will be displayed if a timeout is
+                // provided and exceeded. Default: Infinity.
+                // TODO: restore the error timeout
+                // timeout: 3000
+            });
+        }
+
+        Vue.component(id, payload);
+    }
 
     /**
      * The style object to apply to the panel.

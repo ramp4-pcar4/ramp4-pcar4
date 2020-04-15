@@ -5,6 +5,7 @@
         "Proxied",
         "TABBABLE",
         "activedescendant",
+        "animejs",
         "behaviour",
         "contenteditable",
         "deepmerge",
