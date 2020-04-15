@@ -1,12 +1,14 @@
 <template>
-    <div class="sm:flex">
+    <transition-group @enter="enter" @leave="leave" name="panel-container" tag="div">
         <panel-container v-for="panel in visible($iApi.screenSize)" :key="`${panel.id}`" :panel="panel"></panel-container>
-    </div>
+    </transition-group>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
+
+import anime from 'animejs';
 
 import { PanelInstance } from '@/api';
 
@@ -28,7 +30,7 @@ export default class PanelStackV extends Vue {
     @Get('panel/getVisible!') visible!: (extraSmallScreen: boolean) => PanelInstance[];
     @Sync('panel/stackWidth') stackWidth!: number;
 
-    mounted() {
+    mounted(): void {
         // sync the `panel-stack` width into the store so that visible can get calculated
         const resizeObserver = new ResizeObserver((entries: any) => {
             this.stackWidth = entries[0].contentRect.width;
@@ -36,7 +38,58 @@ export default class PanelStackV extends Vue {
 
         resizeObserver.observe(this.$el);
     }
+
+    enter(el: HTMLElement, done: () => void): void {
+        this.animateTransition(el, done, [
+            [6, 0],
+            [0, 1]
+        ]);
+    }
+
+    leave(el: HTMLElement, done: () => {}): void {
+        const [bbox, pbbox] = [el.getBoundingClientRect(), el.parentElement!.getBoundingClientRect()];
+
+        // the panel will be positioned `absolute` and it will screw up its dimensions
+        // to prevent this, set width/height/left manually before detaching the panel
+        el.style.width = `${bbox.width}px`;
+        el.style.height = `${bbox.height}px`;
+        el.style.left = `${bbox.left - pbbox.left}px`;
+
+        // without this, the FLIP transition won't work
+        el.style.position = 'absolute';
+
+        this.animateTransition(el, done, [
+            [0, -6],
+            [1, 0]
+        ]);
+    }
+
+    /**
+     * Animate transition between panel screen components by fading them in/out.
+     */
+    animateTransition(el: HTMLElement, done: () => void, values: number[][]): void {
+        anime({
+            targets: el,
+            duration: 300,
+            translateY: {
+                value: values[0],
+                easing: 'cubicBezier(.5, .05, .1, .3)'
+            },
+            opacity: {
+                value: values[1],
+                duration: 250,
+                easing: 'cubicBezier(.5, .05, .1, .3)'
+            },
+            complete: done
+        });
+    }
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+// this is needed to trigger the FLIP list transition; doesn't seem possible to do it using JS only
+// https://vuejs.org/v2/guide/transitions.html#List-Move-Transitions
+.panel-container-move {
+    transition: 0.3s transform cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+</style>
