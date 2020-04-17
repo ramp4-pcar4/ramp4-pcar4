@@ -71,7 +71,7 @@ function mixins<A, B, C, D, E>(
     CtorE: Constructor<E>
 ): Constructor<A & B & C & D & E>;
 function mixins<T>(...Ctors: Constructor<T>[]): Constructor<T> {
-    class Class { }
+    class Class {}
 
     Ctors.forEach(Ctor => {
         Object.getOwnPropertyNames(Ctor.prototype).forEach(name => {
@@ -148,9 +148,11 @@ class ClientSideData extends LayerBlueprintMixin {
     // WFS layer overrides this since it has a special loading behaviour
     async loadData(): Promise<any> {
         // TODO: change type 'any' here if possible
-        const [error, response] = await to<any>(axios.get(this.config.url, {
-            responseType: 'blob'
-        }));
+        const [error, response] = await to<any>(
+            axios.get(this.config.url, {
+                responseType: 'blob'
+            })
+        );
 
         if (!response) {
             console.error(`File data failed to load for "${this.config.id}"`, error);
@@ -159,13 +161,12 @@ class ClientSideData extends LayerBlueprintMixin {
 
         const reader = new FileReader();
 
-        return new Promise ((resolve: any, reject: any) => {
+        return new Promise((resolve: any, reject: any) => {
             reader.onerror = error => {
                 console.error(`File data failed to load for "${this.config.id}"`, error);
                 reject({ reason: 'error', message: 'Failed to read file' });
             };
-            reader.onload = () =>
-                resolve(reader.result);
+            reader.onload = () => resolve(reader.result);
 
             reader.readAsArrayBuffer(response.data);
         });
@@ -220,7 +221,7 @@ class ClientSideData extends LayerBlueprintMixin {
             [this._isDataValid, this._rawData] = [false, null];
         }
 
-        await this.checkDataLoaded()    // TODO this used to be validation function, made it a function to get formatted data (which is currently only the raw data), change as required
+        await this.checkDataLoaded(); // TODO this used to be validation function, made it a function to get formatted data (which is currently only the raw data), change as required
 
         // TODO uncomment and remove temp
         // TODO: targetSR property should be added to the WFS layer config node
@@ -243,8 +244,7 @@ class ClientSideData extends LayerBlueprintMixin {
  * @class ServerSideData
  * @extends {LayerBlueprintMixin}
  */
-class ServerSideData extends LayerBlueprintMixin {
-}
+class ServerSideData extends LayerBlueprintMixin {}
 
 /**
  * The base mixin of all LayerBlueprints. Because JS doesn't allow multiple inheritance, mixins are used. The base mixin provides/defines common functions across all blueprints like `makeLayer`.
@@ -330,7 +330,7 @@ class FeatureServiceSource extends mixins(BlueprintBase, ServerSideData) {
     }
 
     get layerRecordFactory(): LayerRecordFactory {
-        return config => api.geoapi.layers.createFeatureLayer(config) // TODO: gapiService.gapi.layer.createFeatureRecord;
+        return config => api.geoapi.layers.createFeatureLayer(config); // TODO: gapiService.gapi.layer.createFeatureRecord;
     }
 
     /**
@@ -360,7 +360,7 @@ class MapImageServiceSource extends mixins(BlueprintBase, ServerSideData) {
     }
 
     get layerRecordFactory(): LayerRecordFactory {
-        return config => api.geoapi.layers.createMapImageLayer(config)  // TODO: gapiService.gapi.layer.createMapImageRecord;
+        return config => api.geoapi.layers.createMapImageLayer(config); // TODO: gapiService.gapi.layer.createMapImageRecord;
     }
 
     get type() {
@@ -467,9 +467,10 @@ class WFSServiceSource extends mixins(BlueprintBase, ClientSideData) {
      * @returns {Promise<any>}
      * @memberof WFSServiceSource
      */
-    async makeLayer(force: boolean = false): Promise<BaseLayer> { // TODO make this return type `WFSLayer` when implemented
+    async makeLayer(force: boolean = false): Promise<BaseLayer> {
+        // TODO make this return type `WFSLayer` when implemented
         const formattedData = await super._returnFormattedData(force);
-        return super.makeLayer(force, formattedData, { mapSR: { wkid: 102100 }}); // TODO remove hard coded value after
+        return super.makeLayer(force, formattedData, { mapSR: { wkid: 102100 } }); // TODO remove hard coded value after
     }
 
     /**
@@ -556,11 +557,7 @@ class WFSServiceSource extends mixins(BlueprintBase, ClientSideData) {
             const limit = Math.min(1000, totalCount - startindex - data.features.length);
             return this._getWFSData(totalCount, data.features.length + startindex, limit, wfsData);
         } else {
-            if (
-                this.config.xyInAttribs &&
-                wfsData.features.length > 0 &&
-                wfsData.features[0].geometry.type === 'Point'
-            ) {
+            if (this.config.xyInAttribs && wfsData.features.length > 0 && wfsData.features[0].geometry.type === 'Point') {
                 // attempt copy of points to attributes.
                 // if we extend this logic to all feature based layers (not just wfs),
                 // suggest porting this block to geoApi.
@@ -603,9 +600,10 @@ class CSVSource extends mixins(BlueprintBase, ClientSideData) {
      * @returns {Promise<any>}
      * @memberof CSVSource
      */
-    async makeLayer(force: boolean = false): Promise<BaseLayer> {  // TODO make this return type `CSVLayer` when implemented
+    async makeLayer(force: boolean = false): Promise<BaseLayer> {
+        // TODO make this return type `CSVLayer` when implemented
         const formattedData = await super._returnFormattedData(force);
-        return super.makeLayer(force, formattedData, { mapSR: { wkid: 102100 }}); // TODO remove hard coded value after
+        return super.makeLayer(force, formattedData, { mapSR: { wkid: 102100 } }); // TODO remove hard coded value after
     }
 
     // TODO uncomment
@@ -634,9 +632,10 @@ class GeoJSONSource extends mixins(BlueprintBase, ClientSideData) {
      * @returns {Promise<any>}
      * @memberof GeoJSONSource
      */
-    async makeLayer(force: boolean = false): Promise<BaseLayer> {    // TODO make this return type `GeoJsonLayer` when implemented
+    async makeLayer(force: boolean = false): Promise<BaseLayer> {
+        // TODO make this return type `GeoJsonLayer` when implemented
         const formattedData = await super._returnFormattedData(force);
-        return super.makeLayer(force, formattedData, { mapSR: { wkid: 102100 }}); // TODO remove hard coded value after
+        return super.makeLayer(force, formattedData, { mapSR: { wkid: 102100 } }); // TODO remove hard coded value after
     }
 
     get layerRecordFactory(): LayerRecordFactory {
@@ -664,9 +663,10 @@ class ShapefileSource extends mixins(BlueprintBase, ClientSideData) {
      * @returns {Promise<any>}
      * @memberof ShapefileSource
      */
-    async makeLayer(force: boolean = false): Promise<BaseLayer> {    // TODO make this return type `ShapefileLayer` when implemented
+    async makeLayer(force: boolean = false): Promise<BaseLayer> {
+        // TODO make this return type `ShapefileLayer` when implemented
         const formattedData = await super._returnFormattedData(force);
-        return super.makeLayer(force, formattedData, { mapSR: { wkid: 102100 }}); // TODO remove hard coded value after
+        return super.makeLayer(force, formattedData, { mapSR: { wkid: 102100 } }); // TODO remove hard coded value after
     }
 
     // TODO uncomment

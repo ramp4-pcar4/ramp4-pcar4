@@ -5,7 +5,7 @@ import { LayerState } from './layer-state';
 import { RootState } from '@/store';
 import { RampLayerConfig } from 'ramp-geoapi';
 import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
-import LayerBlueprint from './layer-blueprint.class'
+import LayerBlueprint from './layer-blueprint.class';
 
 import api from '@/api';
 
