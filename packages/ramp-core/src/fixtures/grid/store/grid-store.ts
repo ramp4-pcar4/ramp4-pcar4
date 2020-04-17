@@ -23,11 +23,11 @@ const getters = {
 const actions = {
     [GridAction.addGrid](context: GridContext, value: GridConfig): void {
         context.commit(GridMutation.ADD_GRID, value);
-    },
+    }
 };
 const mutations = {
     [GridMutation.ADD_GRID](state: GridState, value: GridConfig): void {
-        state.grids = { ...state.grids, [value.uid]: value};
+        state.grids = { ...state.grids, [value.uid]: value };
     }
 };
 

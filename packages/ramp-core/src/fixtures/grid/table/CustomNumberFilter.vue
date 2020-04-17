@@ -44,8 +44,8 @@ export default class CustomNumberFilter extends Vue {
 
     setFilterModel(instance: any) {
         // If the value is not a number, or is null, set its value to the empty string.
-        if(isNaN(this.minVal) || this.minVal === null) this.minVal = '';
-        if(isNaN(this.maxVal) || this.maxVal === null) this.maxVal = '';
+        if (isNaN(this.minVal) || this.minVal === null) this.minVal = '';
+        if (isNaN(this.maxVal) || this.maxVal === null) this.maxVal = '';
 
         if (this.maxVal !== '' && this.minVal !== '') {
             // If both min and max values are set, set the filter to display

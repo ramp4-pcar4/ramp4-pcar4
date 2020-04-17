@@ -105,7 +105,6 @@ export default class TableStateManager {
     set open(val) {
         this._open = val;
     }
-
 }
 
 export default interface TableStateManager {
