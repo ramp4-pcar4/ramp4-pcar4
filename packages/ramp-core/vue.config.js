@@ -11,6 +11,12 @@ module.exports = {
         },
 
         optimization: {
+            splitChunks: {
+                // increase the minimum size of the chunk to 300kb
+                // without this, webpack tries to break up larger fixtures into chunks
+                // since we already using dynamic imports to split panel screen components into separate chunks, there is no need to break them up further based on their size
+                minSize: 300000
+            },
             minimize: false // to build an unminified production build, uncomment the following
         }
     },
