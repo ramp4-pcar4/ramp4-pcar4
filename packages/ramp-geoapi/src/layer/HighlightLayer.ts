@@ -20,6 +20,7 @@ export class HighlightLayer extends BaseBase {
     constructor (infoBundle: InfoBundle, options: any) {
         super(infoBundle);
 
+        // TODO determine if we are setting a layer type for highlight layers.
         let id: string = 'rv_highlight';
         let markerSymbol: esri.PictureMarkerSymbol = this.esriBundle.PictureMarkerSymbol.fromJSON(defaultSymbols.markerSymbol);
 

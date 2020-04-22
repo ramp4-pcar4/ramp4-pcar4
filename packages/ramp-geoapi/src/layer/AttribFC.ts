@@ -14,7 +14,7 @@ import Extent from '../api/geometry/Extent';
 export default class AttribFC extends BaseFC {
 
     geomType: string;
-    layerType: string; // TODO revisit this. is value still useful?
+    layerType: string; // TODO revisit this. is value still useful? // NOTE this can fuel the new dataformat function being proposed
     oidField: string;
     fields: Array<esri.Field>;
     nameField: string;

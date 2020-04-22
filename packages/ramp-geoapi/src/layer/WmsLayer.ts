@@ -3,7 +3,7 @@
 
 import esri = __esri;
 import { InfoBundle, IdentifyParameters, IdentifyResultSet, IdentifyResult, RampLayerConfig, RampLayerWmsLayerEntryConfig, IdentifyItem, IdentifyResultFormat } from '../gapiTypes';
-import { GeometryType } from '../api/apiDefs';
+import { GeometryType, LayerType } from '../api/apiDefs';
 import BaseLayer from './BaseLayer';
 import Point from '../api/geometry/Point';
 import WmsFC from './WmsFC';
@@ -18,6 +18,7 @@ export class WmsLayer extends BaseLayer {
     constructor (infoBundle: InfoBundle, config: RampLayerConfig, reloadTree?: TreeNode) {
         super(infoBundle, config, reloadTree);
         this.supportsIdentify = true;
+        this._layerType = LayerType.WMS;
         this.mimeType = config.featureInfoMimeType; // TODO is there a default? will that be in the config defaulting?
 
         this._innerLayer = new this.esriBundle.WMSLayer(this.makeEsriLayerConfig(config));
