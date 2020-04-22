@@ -3,7 +3,7 @@
         <input
             type="search"
             class="form-input flex-grow border-b border-gray-600 mx-8 h-8"
-            placeholder="Search text"
+            :placeholder="$t('searchText')"
             :value="searchVal"
             @input="onSearchTermChange($event.target.value)"
         />
@@ -13,10 +13,16 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
+
 import { GeosearchStore } from './store';
 import { debounce } from 'debounce';
+import messages from './lang';
 
-@Component({})
+@Component({
+    i18n: {
+        messages
+    }
+})
 export default class GeosearchBar extends Vue {
     // fetch geosearch search value from store
     @Get(GeosearchStore.searchVal) searchVal!: string;

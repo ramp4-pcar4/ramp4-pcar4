@@ -57,7 +57,7 @@ export default class CustomSelectorFilter extends Vue {
     }
 
     onParentModelChanged(parentModel: any) {
-        if(parentModel === {}) {
+        if (parentModel === {}) {
             this.selectedOption = '';
         }
     }
