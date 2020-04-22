@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "sourceMap": true,
+        "moduleResolution": "node",
+        "target": "esnext",
+        "module": "esnext",
+        "strict": true,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "experimentalDecorators": true
+    },
+    "include": ["./src/**/*"],
+    "exclude": ["node_modules", "common"]
+}

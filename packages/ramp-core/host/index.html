@@ -9,7 +9,18 @@
 
         <link rel="stylesheet" href="../dist/RAMP.css" />
 
+        <!-- these two fixtures will load before either RAMP is loaded -->
+        <script src="../dist/sample-fixtures/mouruge-fixture.js"></script>
+        <script src="../dist/sample-fixtures/diligord-fixture.js"></script>
+
+        <!-- the host page must load Vue since RAMP doesn't bundle it -->
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+        <!-- this fixture will load after Vue is loaded; `iklob` requires Vue to be exposed on the global scope -->
+        <script src="../dist/sample-fixtures/iklob-fixture.js"></script>
+
+        <!-- loading main RAMP file; this needs to be loaded after Vue -->
+        <script src="../dist/RAMP.umd.js"></script>
     </head>
     <body>
         <noscript>
@@ -23,11 +34,11 @@
             }
         </script>
 
-        <script src="../dist/RAMP.umd.js"></script>
-
         <script>
+            let rInstance;
+
             function initRAMP() {
-                const rInstance = new RAMP.Instance(document.getElementById('app'), {
+                rInstance = new RAMP.Instance(document.getElementById('app'), {
                     map: {
                         extent: {
                             xmax: -5007771.626060756,
@@ -127,6 +138,7 @@
                 rInstance.fixture.add('legend');
                 rInstance.fixture.add('grid');
                 rInstance.fixture.add('diligord', window.hostFixtures.diligord);
+                rInstance.fixture.add('mouruge', window.hostFixtures.mouruge);
             }
         </script>
     </body>

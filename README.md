@@ -31,6 +31,12 @@ $rush serve
 
 Fun test page will be found at `http://localhost:8080/`
 
+### Idiosyncrasies of the serve build
+
+Rush is running the `serve` command in all the packages in parallel and ignoring dependency trees. The packages in turn run `webpack --watch` in one form or another to watch and recompile them as files change since Rush itself [cannot run watch tasks in the background right now](https://github.com/microsoft/rushstack/issues/1151). Due to the way Rush is implemented, the `serve` command is executed in packages in the alphabetic order and only the output from the first package's watch tas.
+
+Due to this technicality, `ramp-core` package should remain the first package on the list as its output is the main indication of the `serve` task progress (`geoapi` and `sample-fixtures` compile very quickly compared to `core`). When adding new packages to the monorepo, its name should not alphabetically precede `ramp-core`.
+
 ## Building a prod library
 
 ```

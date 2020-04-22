@@ -1,3 +1,6 @@
+// this is a plain JS sample fixture that doesn't require a compilation step since it doesn't use Vue templates
+// instead, templates need to be written as a render function directly
+// consequently, this makes for a smallest fixture bundle
 (function() {
     const messages = {
         en: {
