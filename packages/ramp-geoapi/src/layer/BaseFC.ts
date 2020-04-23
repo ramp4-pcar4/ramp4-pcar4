@@ -3,6 +3,7 @@
 
 import esri = __esri;
 import { InfoBundle, LegendSymbology } from '../gapiTypes';
+import { DataFormat } from '../api/apiDefs';
 import BaseBase from '../BaseBase';
 import BaseLayer from './BaseLayer';
 import ScaleSet from './ScaleSet';
@@ -10,6 +11,7 @@ import ScaleSet from './ScaleSet';
 export default class BaseFC extends BaseBase {
 
     protected parentLayer: BaseLayer;
+    dataFormat: DataFormat;
     layerIdx: number; // final name TBD
     name: string;
     uid: string;

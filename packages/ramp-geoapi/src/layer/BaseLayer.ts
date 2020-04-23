@@ -9,7 +9,7 @@ import BaseFC from './BaseFC';
 import TreeNode from './TreeNode';
 import NaughtyPromise from '../util/NaughtyPromise';
 import ScaleSet from './ScaleSet';
-import { LayerType } from '../api/apiDefs';
+import { LayerType, DataFormat } from '../api/apiDefs';
 
 export default class BaseLayer extends BaseBase {
 
@@ -393,6 +393,17 @@ export default class BaseLayer extends BaseBase {
      */
     getName(layerIdx: number | string = undefined): string {
         return this.getFC(layerIdx).name;
+    }
+
+    /**
+     * Returns the data format of a sublayer.
+     *
+     * @function dataFormat
+     * @param {Integer | String} [layerIdx] targets a sublayer index or uid to get the data format for. Uses first/only if omitted.
+     * @returns {String} format type of the sublayer
+     */
+    dataFormat(layerIdx: number | string = undefined): DataFormat {
+        return this.getFC(layerIdx).dataFormat;
     }
 
     /**

@@ -7,6 +7,7 @@ import AttribFC from './AttribFC';
 import { AttributeLoaderDetails, FileLayerAttributeLoader } from '../util/AttributeLoader';
 import QuickCache from './QuickCache';
 import GeoJsonLayer from './GeoJsonLayer';
+import { DataFormat } from '../api/apiDefs';
 
 export default class GeoJsonFC extends AttribFC {
 
@@ -15,6 +16,7 @@ export default class GeoJsonFC extends AttribFC {
 
     constructor (infoBundle: InfoBundle, parent: BaseLayer, layerIdx: number = 0) {
         super(infoBundle, parent, layerIdx);
+        this.dataFormat = DataFormat.ESRI_FEATURE;
     }
 
     // TODO consider moving a bulk of this out to LayerModule; the wizard may have use for running this (e.g. getting field list for a service url)

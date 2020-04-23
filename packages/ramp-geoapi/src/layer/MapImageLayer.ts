@@ -7,7 +7,7 @@ import AttribLayer from './AttribLayer';
 import TreeNode from './TreeNode';
 import MapImageFC from './MapImageFC';
 import ScaleSet from './ScaleSet';
-import { LayerType } from '../api/apiDefs';
+import { LayerType, DataFormat } from '../api/apiDefs';
 
 // Formerly known as DynamicLayer
 export class MapImageLayer extends AttribLayer {
@@ -256,6 +256,7 @@ export class MapImageLayer extends AttribLayer {
                     const miFC = new MapImageFC(this.infoBundle(), this, sid);
                     const lName = (subC ? subC.name : '') || subLayer.title || ''; // config if exists, else server, else none
                     miFC.name = lName;
+                    miFC.dataFormat = subLayer.objectIdField === null ? DataFormat.ESRI_RASTER : DataFormat.ESRI_FEATURE;
                     this.fcs[sid] = miFC;
                     leafsToInit.push(miFC);
                 }

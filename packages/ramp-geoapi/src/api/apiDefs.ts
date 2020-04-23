@@ -18,6 +18,15 @@ export enum LayerType {
     WFS = 'ogcWfs', // TODO proposing this should not be a part of this enum. WFS = Feature
 }
 
+// Format indicates what form the spatial data is encoded in.
+// TODO add more as we support more formats
+export enum DataFormat {
+    ESRI_FEATURE = 'esriFeature',
+    ESRI_RASTER = 'esriRaster',
+    ESRI_TILE = 'esriTile',
+    OGC_RASTER = 'ogcRaster'
+}
+
 export enum GeometryType {
     POINT = 'Point',
     MULTIPOINT = 'MultiPoint',

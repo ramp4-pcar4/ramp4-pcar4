@@ -5,6 +5,7 @@ import { InfoBundle } from '../gapiTypes';
 import BaseLayer from './BaseLayer';
 import AttribFC from './AttribFC';
 import FeatureLayer from './FeatureLayer';
+import { DataFormat } from '../api/apiDefs';
 
 export default class FeatureFC extends AttribFC {
 
@@ -13,6 +14,7 @@ export default class FeatureFC extends AttribFC {
 
     constructor (infoBundle: InfoBundle, parent: BaseLayer, layerIdx: number = 0) {
         super(infoBundle, parent, layerIdx);
+        this.dataFormat = DataFormat.ESRI_FEATURE;
     }
 
     /**
