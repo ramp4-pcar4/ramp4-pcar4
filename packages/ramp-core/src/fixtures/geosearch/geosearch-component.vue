@@ -65,9 +65,6 @@ import GeosearchBottomFilters from './geosearch-bottom-filters.vue';
 import LoadingBar from './loading-bar.vue';
 import messages from './lang';
 
-// TODO: temporary import for map zoom call
-import { ApiBundle } from 'ramp-geoapi';
-
 @Component({
     components: {
         GeosearchBar,
@@ -92,8 +89,7 @@ export default class GeosearchComponent extends Vue {
 
     // zoom in to a clicked result
     zoomIn(result: any): void {
-        // TODO: replace with ramp api once complete - RAMP.GEO.Point()?
-        let zoomPoint = new ApiBundle.Point('zoomies', result.position);
+        let zoomPoint = new (window as any).RAMP.GEO.Point('zoomies', result.position);
         this.$iApi.map.zoomMapTo(zoomPoint, 50000);
     }
 
