@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const WrapperPlugin = require('wrapper-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const childProcess = require('child_process');
 const pkg = require('./package.json');
@@ -42,6 +43,16 @@ module.exports = {
                 afterOptimization: true
             }
         ]);
+
+        // copy over external fixture samples
+        config
+            .plugin('webpack-copy-plugin')
+            .use(CopyPlugin, [[{ from: 'node_modules/ramp-sample-fixtures/dist/', to: 'sample-fixtures' }]]);
+
+        // modify the default injection point from 'body' to 'head', so it's easier to orchestrate the loading order; only when `serve`ing
+        config.when(process.env.NODE_ENV === 'development', config => {
+            config.plugin('html').tap(args => [{ ...args[0], inject: 'head' }]);
+        });
 
         // get version numbers
         const [major, minor, patch] = pkg.version.split('.');

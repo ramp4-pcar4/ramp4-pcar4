@@ -7,9 +7,16 @@
         <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
         <title>ramp-core</title>
 
-        <script src="./diligord-fixture.js"></script>
+        <!-- these two fixtures will load before either RAMP is loaded -->
+        <script src="../sample-fixtures/mouruge-fixture.js"></script>
+        <script src="../sample-fixtures/diligord-fixture.js"></script>
+
+        <!-- RAMP with bundled-in Vue will be injected here -->
     </head>
     <body>
+        <!-- this fixture will load after RAMP (and Vue) are loaded (since Vue is bundled with RAMP in `dev`); `iklob` requires Vue to be exposed on the global scope -->
+        <script src="../sample-fixtures/iklob-fixture.js"></script>
+
         <style>
             #instance-language {
                 margin-left: 20px;
@@ -142,8 +149,9 @@
                 rInstance.fixture.add('basemap');
                 rInstance.fixture.add('legend');
                 rInstance.fixture.add('grid');
+
                 rInstance.fixture.add('diligord', window.hostFixtures.diligord);
-                console.log(rInstance);
+                rInstance.fixture.add('mouruge', window.hostFixtures.mouruge);
             }
 
             function switchLang() {

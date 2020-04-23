@@ -20,6 +20,7 @@
         "deepmerge": "~4.2.2",
         "lodash": "4.17.15",
         "ramp-geoapi": "0.0.1",
+        "ramp-sample-fixtures": "0.0.1",
         "vue": "^2.6.10",
         "vue-class-component": "^7.0.2",
         "vue-i18n": "~8.16.0",

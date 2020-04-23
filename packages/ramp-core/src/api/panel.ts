@@ -27,6 +27,7 @@ export class PanelAPI extends APIScope {
     register(value: PanelConfigPair | PanelConfigSet): PanelInstance | PanelInstanceSet {
         const panels: PanelInstance[] = [];
 
+        // TODO: check if the panel with the same id already exist and stop if it does
         // check if only a single `PanelConfig` is provided
         if (isPanelConfigPair(value)) {
             panels.push(new PanelInstance(this.$iApi, value.id, value.config));
