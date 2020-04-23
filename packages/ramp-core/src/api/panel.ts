@@ -137,6 +137,33 @@ export class PanelAPI extends APIScope {
     }
 
     /**
+     * Toggle panel.
+     *
+     * @param {string | PanelInstance | PanelInstancePath} [value]
+     * @param {boolean} toggle
+     * @returns {PanelInstance}
+     * @memberof PanelAPI
+     */
+    toggle(value: string | PanelInstance | PanelInstancePath, toggle?: boolean): PanelInstance {
+        let panel: PanelInstance;
+
+        // figure out what is passed to the function, retrieve the panel object and make call to open or close function
+        if (typeof value === 'string' || value instanceof PanelInstance) {
+            panel = this.get(value);
+        } else {
+            panel = this.get(value.id);
+        }
+
+        // use specified toggle value if provided + check if toggle value is possible
+        toggle = typeof toggle !== 'undefined' ? toggle : !panel.isOpen;
+        if (toggle !== panel.isOpen) {
+            toggle ? this.open(value) : this.close(panel);
+        }
+
+        return panel;
+    }
+
+    /**
      * Pin/unpin/toggle (if no value provided) pin status of the provided panel. When pinning, automatically unpins any previous pinned panel if exists.
      *
      * @param {(string | PanelInstance)} value
@@ -413,9 +440,36 @@ export class PanelInstance extends APIScope {
     }
 
     /**
+     * Toggle panel.
+     * This is a proxy to `RAMP.panel.toggle(...)`.
+     *
+     * @param {boolean} [value] value to toggle panel
+     * @returns {this}
+     * @memberof PanelInstance
+     */
+    toggle(value?: boolean | { screen: string; props?: object; toggle?: boolean }): this {
+        // toggle panel if no value provided, force toggle panel if value specified, or toggle panel on specified screen if provided
+        // ensure that a toggle value must be provided to panel API toggle if called
+        if (typeof value === 'undefined') {
+            this.$iApi.panel.toggle(this, !this.isOpen);
+        } else if (typeof value === 'boolean') {
+            // only call forced toggle if it is possible to do so
+            if (value !== this.isOpen) {
+                this.$iApi.panel.toggle(this, value);
+            }
+        } else {
+            this.$iApi.panel.toggle(
+                { id: this.id, screen: value.screen, props: value.props },
+                typeof value.toggle !== 'undefined' ? value.toggle : !this.isOpen
+            );
+        }
+
+        return this;
+    }
+
+    /**
      * Pin/unpin/toggle (if no value provided) pin status of this panel. When pinning, automatically unpins any previous pinned panel if exists.
      * This is a proxy to `RAMP.panel.pin(...)`.
-     *
      *
      * @param {boolean} [value]
      * @returns {this}
