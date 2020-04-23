@@ -1,5 +1,5 @@
 <template>
-    <button class="py-6" @click="togglePanel()">
+    <button class="py-6" @click="$iApi.panel.toggle('basemap-panel')">
         <!-- Basemap icon -->
         <svg class="fill-current w-24 h-24 ml-8 md:ml-20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path
@@ -15,17 +15,7 @@ import { Vue, Component } from 'vue-property-decorator';
 import BasemapComponent from './basemap.vue';
 
 @Component
-export default class BasemapAppbarButtonV extends Vue {
-    togglePanel(): void {
-        const panel = this.$iApi.panel.get('basemap-panel');
-
-        if (panel.isOpen) {
-            panel.close();
-        } else {
-            panel.open();
-        }
-    }
-}
+export default class BasemapAppbarButtonV extends Vue {}
 </script>
 
 <style lang="scss" scoped></style>
