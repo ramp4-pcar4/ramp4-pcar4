@@ -1,0 +1,43 @@
+<template>
+    <div>
+        <button @click="zoomIn()" class="default-focus-style w-32 h-32 text-gray-600 hover:text-black" v-focus-item>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="fill-current w-32 h-20">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                <path d="M0 0h24v24H0z" fill="none" />
+            </svg>
+        </button>
+        <divider-nav></divider-nav>
+        <!-- slider goes here? -->
+        <button @click="zoomOut()" class="default-focus-style w-32 h-32 text-gray-600 hover:text-black" v-focus-item>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="fill-current w-32 h-20">
+                <path d="M19 13H5v-2h14v2z" />
+                <path d="M0 0h24v24H0z" fill="none" />
+            </svg>
+        </button>
+    </div>
+</template>
+
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator';
+
+import DividerNavV from './divider-nav.vue';
+
+@Component({
+    components: {
+        'divider-nav': DividerNavV
+    }
+})
+export default class FullscreenNavV extends Vue {
+    zoomIn(): void {
+        console.log('zoom in');
+        this.$iApi.map._innerView.goTo({ zoom: this.$iApi.map._innerView.zoom + 1 }); //scale: this.$iApi.map._innerView.scale / 2 });
+    }
+
+    zoomOut(): void {
+        console.log('zoom out');
+        this.$iApi.map._innerView.goTo({ zoom: this.$iApi.map._innerView.zoom - 1 }); //scale: this.$iApi.map._innerView.scale * 2 });
+    }
+}
+</script>
+
+<style lang="scss" scoped></style>
