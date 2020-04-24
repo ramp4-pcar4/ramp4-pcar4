@@ -2,7 +2,7 @@
 // TODO add proper comments
 
 import esri = __esri;
-import { InfoBundle, RampMapConfig } from '../gapiTypes';
+import { InfoBundle, RampMapConfig, MapClick } from '../gapiTypes';
 import MapBase from './MapBase';
 import LayerBase from '../layer/BaseLayer';
 import HighlightLayer from '../layer/HighlightLayer';
@@ -30,8 +30,12 @@ export class RampMap extends MapBase {
      */
     scaleChanged: TypedEvent<number>;
 
-    // TODO think about how to expose. protected makes sense, but might want to make it public to allow hacking and use by a dev module if we decide to.
-    //      there are also cases where other parts of the geoapi need to access this.
+    mapClicked: TypedEvent<MapClick>;
+
+    mapDoubleClicked: TypedEvent<MapClick>;
+
+    // NOTE having this var be protected makes sense, there are also cases where other parts of the geoapi need to access this.
+    //      being public will also to allow hacking, which can be useful in a pinch. use underscore to make it clear this in not for playtimes.
     /**
      * The internal esri map view. Avoid referencing outside of geoapi.
      * @private
@@ -58,6 +62,8 @@ export class RampMap extends MapBase {
         this.rampSR = SpatialReference.fromConfig(config.extent.spatialReference);
         this.extentChanged = new TypedEvent<Extent>();
         this.scaleChanged = new TypedEvent<number>();
+        this.mapClicked = new TypedEvent<MapClick>();
+        this.mapDoubleClicked = new TypedEvent<MapClick>();
 
         const esriViewConfig: esri.MapViewProperties = {
             map: this._innerMap,
@@ -82,6 +88,14 @@ export class RampMap extends MapBase {
 
         this._innerView.watch('scale', (newval: number) => {
             this.scaleChanged.fireEvent(newval);
+        });
+
+        this._innerView.on('click', esriClick => {
+            this.mapClicked.fireEvent(this.gapi.utils.geom.esriMapClickToRamp(esriClick, 'map_click_point'));
+        });
+
+        this._innerView.on('double-click', esriClick => {
+            this.mapDoubleClicked.fireEvent(this.gapi.utils.geom.esriMapClickToRamp(esriClick, 'map_doubleclick_point'));
         });
     }
 

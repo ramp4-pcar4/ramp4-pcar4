@@ -25,7 +25,6 @@ export default class GeoJsonFC extends AttribFC {
         const l = this.parentLayer._innerLayer;
 
         // properties for all endpoints
-        this.layerType = 'Feature Layer'; // TODO validate this matches server string. TODO validate we don't want to change to a different value. TODO define an Enum for layerType?
         this.supportsFeatures = true;
 
         this.geomType = l.geometryType;

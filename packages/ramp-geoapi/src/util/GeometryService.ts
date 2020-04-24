@@ -2,11 +2,12 @@
 
 import esri = __esri;
 import GeoJson from 'geojson'; // this is a @types thing, no idea if this import is correct. cannot do the = GeoJSON global namespace like how __esri works
-import { InfoBundle } from '../gapiTypes';
+import { InfoBundle, MapClick } from '../gapiTypes';
 import * as RampAPI from '../api/api';
 import BaseGeometry from '../api/geometry/BaseGeometry'; // this is a bit wonky. could expose on RampAPI, but dont want clients using the baseclass
 import BaseBase from '../BaseBase';
 import { GeometryType } from '../api/apiDefs';
+import { Geometry } from 'esri/geometry';
 
 enum gjType {
     POINT = 'Point',
@@ -25,7 +26,29 @@ export default class GeometryService extends BaseBase {
     // these converters are public, but we should discourage use by 3rd party individuals for the ESRI specific stuff
     // TODO doc this in docs.
 
-    // converts any ramp api geom to corresponding esri geometry
+    /**
+     * Convert an ESRI map click event object to a generic RAMPish map click event object
+     *
+     * @param {MapViewClickEvent | MapViewDoubleClickEvent} esriMapClick an event param from an esri 2D map click or double-click event
+     * @param {String | Number} [id] optional id for the map point geometry on the result
+     * @returns {MapClick} a generic bundle of data matching the incoming esri data
+     */
+    esriMapClickToRamp(esriMapClick: esri.MapViewClickEvent | esri.MapViewDoubleClickEvent, id?: number | string): MapClick {
+        return {
+            mapPoint: this.convEsriPointToRamp(esriMapClick.mapPoint, id),
+            screenX: esriMapClick.x,
+            screenY: esriMapClick.y,
+            button: esriMapClick.button,
+            clickTime: esriMapClick.timestamp
+        };
+    }
+
+    /**
+     * Converts any RAMP API geometry to a corresponding ESRI geometry
+     *
+     * @param {BaseGeometry} rampApiGeom a RAMP API geometry
+     * @returns {Geometry} an ESRI geometry
+     */
     geomRampToEsri(rampApiGeom: BaseGeometry): esri.Geometry {
 
         switch (rampApiGeom.type) {
@@ -50,7 +73,13 @@ export default class GeometryService extends BaseBase {
         }
     }
 
-    // converts any esri geometry to corresponding ramp api geom
+    /**
+     * Converts any ESRI geometry to a corresponding RAMP API geometry
+     *
+     * @param {Geometry} esriGeometry an ESRI geometry
+     * @param {String | Number} [id] optional id for the result geometry
+     * @returns {BaseGeometry} a RAMP API geometry
+     */
     geomEsriToRamp(esriGeometry: esri.Geometry, id?: number | string): BaseGeometry {
 
         switch (esriGeometry.type) {
@@ -69,28 +98,39 @@ export default class GeometryService extends BaseBase {
         }
     }
 
-    // converts any GeoJson geometry to corresponding ramp api geom
-    geomGeoJsonToRamp(GeoJsonGeometry: GeoJson.DirectGeometryObject, id?: number | string): BaseGeometry {
+    /**
+     * Converts any GeoJson geometry to a corresponding RAMP API geometry
+     *
+     * @param {GeoJson.DirectGeometryObject} geoJsonGeometry a GeoJson geometry
+     * @param {String | Number} [id] optional id for the result geometry
+     * @returns {BaseGeometry} a RAMP API geometry
+     */
+    geomGeoJsonToRamp(geoJsonGeometry: GeoJson.DirectGeometryObject, id?: number | string): BaseGeometry {
 
-        switch (GeoJsonGeometry.type) {
+        switch (geoJsonGeometry.type) {
             case gjType.POINT:
-                return this.convGeoJsonPointToRamp(<GeoJson.Point>GeoJsonGeometry, id);
+                return this.convGeoJsonPointToRamp(<GeoJson.Point>geoJsonGeometry, id);
             case gjType.LINESTRING:
-                return this.convGeoJsonLineToRamp(<GeoJson.LineString>GeoJsonGeometry, id);
+                return this.convGeoJsonLineToRamp(<GeoJson.LineString>geoJsonGeometry, id);
             case gjType.POLYGON:
-                return this.convGeoJsonPolygonToRamp(<GeoJson.Polygon>GeoJsonGeometry, id);
+                return this.convGeoJsonPolygonToRamp(<GeoJson.Polygon>geoJsonGeometry, id);
             case gjType.MULTIPOINT:
-                return this.convGeoJsonMultiPointToRamp(<GeoJson.MultiPoint>GeoJsonGeometry, id);
+                return this.convGeoJsonMultiPointToRamp(<GeoJson.MultiPoint>geoJsonGeometry, id);
             case gjType.MULTILINESTRING:
-                return this.convGeoJsonMultiLineToRamp(<GeoJson.MultiLineString>GeoJsonGeometry, id);
+                return this.convGeoJsonMultiLineToRamp(<GeoJson.MultiLineString>geoJsonGeometry, id);
             case gjType.MULTIPOLYGON:
-                return this.convGeoJsonMultiPolygonToRamp(<GeoJson.MultiPolygon>GeoJsonGeometry, id);
+                return this.convGeoJsonMultiPolygonToRamp(<GeoJson.MultiPolygon>geoJsonGeometry, id);
             default:
-                throw new Error(`Encountered unhandled geometry type ${GeoJsonGeometry.type}`);
+                throw new Error(`Encountered unhandled geometry type ${geoJsonGeometry.type}`);
         }
     }
 
-    // converts any ramp api geom to corresponding GeoJson geometry
+    /**
+     * Converts any RAMP API geometry to a corresponding GeoJson geometry
+     *
+     * @param {BaseGeometry} geoJsonGeometry a RAMP API geometry
+     * @returns {GeoJson.DirectGeometryObject} a GeoJson geometry
+     */
     geomRampToGeoJson(rampApiGeom: BaseGeometry): GeoJson.DirectGeometryObject {
 
         switch (rampApiGeom.type) {

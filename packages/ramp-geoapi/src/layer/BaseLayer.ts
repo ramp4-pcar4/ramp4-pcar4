@@ -292,7 +292,7 @@ export default class BaseLayer extends BaseBase {
     /**
      * The type of the physical layer
      */
-    get layerType(): LayerType { return this._layerType}
+    get layerType(): LayerType { return this._layerType; }
 
     /**
      * Provides a tree structure describing the layer and any sublayers,
