@@ -170,6 +170,39 @@ export class RampMap extends MapBase {
     }
 
     /**
+     * Zooms the map to a given zoom level. The center point will not change.
+     * In the rare case where there is no basemap, this will likely do nothing
+     *
+     * @param {number} zoomLevel An integer matching the level of detail / zoom level the map should adjust to
+     * @returns {Promise<void>} A promise that resolves when the map has finished zooming
+     */
+    zoomToLevel(zoomLevel: number): Promise<void> {
+        return this._innerView.goTo({ zoom: zoomLevel });
+    }
+
+    /**
+     * Zooms the map to the next zoom level in towards the earth. The center point will not change.
+     * In the rare case where there is no basemap, this will likely do nothing
+     *
+     * @returns {Promise<void>} A promise that resolves when the map has finished zooming
+     */
+    zoomIn(): Promise<void> {
+        // TODO fancy it up and add some bounds checking
+        return this.zoomToLevel(this._innerView.zoom + 1);
+    }
+
+    /**
+     * Zooms the map to the next zoom level out away from the earth. The center point will not change.
+     * In the rare case where there is no basemap, this will likely do nothing
+     *
+     * @returns {Promise<void>} A promise that resolves when the map has finished zooming
+     */
+    zoomOut(): Promise<void> {
+        // TODO fancy it up and add some bounds checking
+        return this.zoomToLevel(this._innerView.zoom - 1);
+    }
+
+    /**
      * Provides the scale of the map (the scale denominator as integer)
      *
      * @returns {number} the map scale
