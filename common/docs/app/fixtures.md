@@ -26,7 +26,7 @@ Provide a function that returns a promise resolving with a Vue component:
 
 ```ts
 screens: {
-    'p-2-screen-1': () => import(/* webpackChunkName: "p-2-screen-1" */ `./p2-screen-1.vue`),
+    'p-2-screen-1': () => import(/* webpackChunkName: "p-2-screen-1" */ `./p2-screen-1.vue`)
 }
 ```
 
