@@ -41,7 +41,7 @@ export default class EsriMap extends Vue {
         if (newValue === oldValue) {
             return;
         }
-        this.map = (window as any).RAMP.geoapi.maps.createMap(this.mapConfig, this.$el as HTMLDivElement);
+        this.map = RAMP.geoapi.maps.createMap(this.mapConfig, this.$el as HTMLDivElement);
         // FIXME: temporarily store map in global, remove line below when map API is complete
         this.$iApi.map = this.map;
         this.onLayerArrayChange(this.layers, []);

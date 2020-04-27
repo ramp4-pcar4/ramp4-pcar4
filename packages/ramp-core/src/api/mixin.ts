@@ -1,7 +1,5 @@
 import Vue, { ComponentOptions, VueConstructor } from 'vue';
 
-import { InstanceAPI } from './internal';
-
 export default {
     /**
      * This function runs automatically by Vue when the mixin is registered using `Vue.use(...)` and allows to inject components options at different points in an instance life cycle.
@@ -27,29 +25,3 @@ export default {
         });
     }
 };
-
-// extend `ComponentOptions` to accept `iApi` as one of the component options
-declare module 'vue/types/options' {
-    interface ComponentOptions<V extends Vue> {
-        /**
-         * A reference to R4MP API instance controlling this R4MP Vue app.
-         *
-         * @type {InstanceAPI}
-         * @memberof ComponentOptions
-         */
-        iApi?: InstanceAPI;
-    }
-}
-
-// extend `Vue` to expose `$iApi` as the existing property
-declare module 'vue/types/vue' {
-    interface Vue {
-        /**
-         * A reference to R4MP API instance controlling this R4MP Vue app.
-         *
-         * @type {InstanceAPI}
-         * @memberof Vue
-         */
-        $iApi: InstanceAPI;
-    }
-}
