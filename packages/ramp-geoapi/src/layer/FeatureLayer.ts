@@ -6,7 +6,8 @@ import { InfoBundle, LayerState, RampLayerConfig, ArcGisServerUrl, IdentifyParam
 import AttribLayer from './AttribLayer';
 import TreeNode from './TreeNode';
 import FeatureFC from './FeatureFC';
-import { LayerType } from '../api/apiDefs';
+import { LayerType, GeometryType } from '../api/apiDefs';
+import Point from '../api/geometry/Point';
 
 export class FeatureLayer extends AttribLayer {
 
@@ -222,8 +223,6 @@ export class FeatureLayer extends AttribLayer {
             parentUid: this.uid
         };
 
-        const tolerance = options.tolerance || 0; // this.clickTolerance; // TODO remove the 0 and add the parameter once we implement clickTolerance from config constructor
-
         // run a spatial query
         // const qry: esri.Query = new this.esriBundle.Query();
         const qOpts: QueryFeaturesParams = {
@@ -232,24 +231,11 @@ export class FeatureLayer extends AttribLayer {
             map: options.map
         };
 
-        // more accurate results without making the buffer if we're dealing with extents
-        // polygons from added file need buffer
-        // TODO further investigate why esri is requiring buffer for file-based polygons. logic says it shouldnt
-        // TODO FOR REAL TEST THIS OUT IN 4.x
-
-        // TODO default to point for now, to make things work.
-        //      need to figure out what format the core will be passing in geometry.
-        //      might consider having an IdentifyUtils class (or use the queryservice) to help with these common things
-        //      (e.g. this, buffer creation, etc)
-        //      using Geometry.fromJSON does not work well, it won't figure out the type and cast-up
-        // const realGeom: esri.Geometry = this.esriBundle.Point.fromJSON(options.geometry);
-        if (myFC.geomType === 'polygon') {
-            qOpts.filterGeometry = options.geometry;
+        if (myFC.geomType !== 'polygon' && options.geometry.type === GeometryType.POINT) {
+            // if our layer is not polygon, and our identify input is a point, make a point buffer
+            qOpts.filterGeometry = this.gapi.utils.query.makeClickBuffer(<Point>options.geometry, options.map, options.tolerance);
         } else {
-            // TODO investigate why we are using opts.clickEvent.mapPoint and not opts.geometry
-            // TODO add buffer back once we have buffer tech ready
-            // qOpts.filterGeometry = this.makeClickBuffer(opts.clickEvent.mapPoint, opts.map, tolerance);
-            qOpts.filterGeometry = options.geometry; // TODO remove me after buffer tech
+            qOpts.filterGeometry = options.geometry;
         }
 
         result.done = myFC.queryFeatures(qOpts).then(results => {

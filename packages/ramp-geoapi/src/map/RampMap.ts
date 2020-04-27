@@ -229,6 +229,24 @@ export class RampMap extends MapBase {
         return this.rampSR.clone();
     }
 
+    /**
+     * Get the height of the map on the screen in pixels
+     *
+     * @returns {Number} pixel height
+     */
+    getPixelHeight(): number {
+        return this._innerView.height;
+    }
+
+    /**
+     * Get the width of the map on the screen in pixels
+     *
+     * @returns {Number} pixel width
+     */
+    getPixelWidth(): number {
+        return this._innerView.width;
+    }
+
     // TODO function to allow a second Map to be shot out, that shares this map but has a different scene
 
     // TODO basemap generation stuff (might need to be delayed due to lack of dojo dijit)

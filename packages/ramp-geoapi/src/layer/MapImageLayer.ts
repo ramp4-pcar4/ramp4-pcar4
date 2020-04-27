@@ -7,7 +7,9 @@ import AttribLayer from './AttribLayer';
 import TreeNode from './TreeNode';
 import MapImageFC from './MapImageFC';
 import ScaleSet from './ScaleSet';
-import { LayerType, DataFormat } from '../api/apiDefs';
+import { LayerType, DataFormat, GeometryType } from '../api/apiDefs';
+import Extent from '../api/geometry/Extent';
+import Point from  '../api/geometry/Point';
 
 // Formerly known as DynamicLayer
 export class MapImageLayer extends AttribLayer {
@@ -513,22 +515,10 @@ export class MapImageLayer extends AttribLayer {
             map: options.map
         };
 
-        // TODO refactor when buffer is ready.
-        //      buffer will only be applied to point layers, so need some in-loop checking
-        //      see comments in featurelayer identify for issues and ways to share this code
-        // right now just do assumed point, FIX LATER
-        // const realGeom: esri.Geometry = this.esriBundle.Point.fromJSON(options.geometry);
-        qOpts.filterGeometry = options.geometry;
-        /*
-        if (myFC.geomType === 'polygon') {
-            qOpts.filterGeometry = realGeom;
-        } else {
-            // TODO investigate why we are using opts.clickEvent.mapPoint and not opts.geometry
-            // TODO add buffer back once we have buffer tech ready
-            // qOpts.filterGeometry = this.makeClickBuffer(opts.clickEvent.mapPoint, opts.map, tolerance);
-            qOpts.filterGeometry = realGeom; // TODO remove me after buffer tech
+        let pointBuffer: Extent;
+        if (options.geometry.type === GeometryType.POINT) {
+            pointBuffer = this.gapi.utils.query.makeClickBuffer(<Point>options.geometry, options.map, options.tolerance);
         }
-        */
 
         // loop over active FCs. call query on each. prepare a geometry
         result.done = Promise.all(activeFCs.map(fc => {
@@ -538,6 +528,15 @@ export class MapImageLayer extends AttribLayer {
                 items: []
             };
             result.results.push(innerResult);
+
+            if (fc.geomType !== 'polygon' && pointBuffer) {
+                // we want to use a point buffer if
+                // - a point was used as identify input (aka a pointBuffer exists in the var)
+                // - the sublayer is not a polygon layer
+                qOpts.filterGeometry = pointBuffer;
+            } else {
+                qOpts.filterGeometry = options.geometry;
+            }
 
             return fc.queryFeatures(qOpts).then(results => {
                 // TODO might be a problem overwriting the array if something is watching/binding to the original
