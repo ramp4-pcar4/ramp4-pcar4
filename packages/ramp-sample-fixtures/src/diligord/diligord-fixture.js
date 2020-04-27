@@ -132,7 +132,8 @@
             // `this.id` and `this.$iApi` and `this.$vApp` are automatically made available on this object
             console.log(this.id, this.$iApi, this.$vApp);
 
-            // you can also create a custom component using the `extend` function and put it anywhere on the page, even outside the R4MP container
+            // you can also create a custom component using the helper `extend` function and put it anywhere on the page, even outside the R4MP container
+            // the helper function will add references to this fixture and `$iApi` to the extended component
             const component = this.extend({
                 render: function(h) {
                     return h(
