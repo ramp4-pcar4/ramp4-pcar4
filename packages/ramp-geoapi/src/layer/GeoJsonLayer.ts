@@ -6,6 +6,7 @@ import { InfoBundle, LayerState, RampLayerConfig, IdentifyParameters, IdentifyRe
 import AttribLayer from './AttribLayer';
 import TreeNode from './TreeNode';
 import GeoJsonFC from './GeoJsonFC';
+import { LayerType } from '../api/apiDefs';
 
 
 // util function to manage trickery. file layer can have field names that are bad keys.
@@ -41,6 +42,7 @@ export class GeoJsonLayer extends AttribLayer {
 
         super(infoBundle, rampLayerConfig, reloadTree);
         this.isFile = true;
+        this._layerType = LayerType.FEATURE;
 
         // NOTE: file based layers can require reprojection.
         //       that is an asynchronous action. and has to happen before the esri layer

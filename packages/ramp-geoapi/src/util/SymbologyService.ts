@@ -622,7 +622,7 @@ export default class SymbologyService extends BaseBase {
 
     /**
      * Generate a legend object based on an ESRI renderer.
-     * @private
+     *
      * @param  {Object} renderer an ESRI renderer object in server JSON form
      * @return {Array} list of legend symbologies
      */
@@ -645,25 +645,22 @@ export default class SymbologyService extends BaseBase {
             // e.g. a renderer has SU for 'type=X' and 'type=Y', both with label 'Fun Stuff'. This merges the logic into
             // one line on the legend for Fun Stuff!
 
-            const legendCollater: {[key: string]: Array<BaseSymbolUnit>} = {};
+            // using Map will preserve the order things were encountered
+            const legendCollater = new Map<string, Array<BaseSymbolUnit>>();
 
             allRendererSUs.forEach(su => {
-                if (legendCollater[su.label]) {
+                const lblArray = legendCollater.get(su.label);
+                if (lblArray) {
                     // not the first time we hit this label. add to the list
-                    legendCollater[su.label].push(su);
+                    lblArray.push(su);
                 } else {
-                    legendCollater[su.label] = [su];
+                    legendCollater.set(su.label, [su]);
                 }
             });
 
-            // TODO this code will return the legend array in the order that object.keys presents the keys.
-            //      we may need to add some additional logic to enforce a different order.
-            //      e.g. alphabetical by label, with default being last.
-            //           alphabetical by label, default not treated special.
-            //           same order as renderer's array, with default being last.
-
             // iterate through the unique keys in the collater. process each legend item
-            finalSymbols = Object.keys(legendCollater).map((lbl: string) => legendCollater[lbl]);
+            finalSymbols = [];
+            legendCollater.forEach(lblArray => finalSymbols.push(lblArray));
         }
 
         // iterate through the final symbol array. process each legend item

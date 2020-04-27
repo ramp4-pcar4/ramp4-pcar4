@@ -11,16 +11,20 @@ export enum LayerType {
     FEATURE = 'esriFeature',
     MAPIMAGE = 'esriMapImage',
     TILE = 'esriTile',
+    // TODO add esri image server type when/if we decide to support it?
 
     // OGS
     WMS = 'ogcWms',
-    WFS = 'ogcWfs',
+    WFS = 'ogcWfs', // TODO proposing this should not be a part of this enum. WFS = Feature
+}
 
-    // FILE
-    // TODO need to think about these, as RAMP2 config schema used featurelayer plus second fileType property
-    CSV = '',
-    SHAPEFILE = '',
-    GEOJSON = '',
+// Format indicates what form the spatial data is encoded in.
+// TODO add more as we support more formats
+export enum DataFormat {
+    ESRI_FEATURE = 'esriFeature',
+    ESRI_RASTER = 'esriRaster',
+    ESRI_TILE = 'esriTile',
+    OGC_RASTER = 'ogcRaster'
 }
 
 export enum GeometryType {

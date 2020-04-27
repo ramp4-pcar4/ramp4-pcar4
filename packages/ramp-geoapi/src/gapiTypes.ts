@@ -7,6 +7,7 @@
 
 import esri = __esri; // magic command to get ESRI JS API type definitions.
 import BaseGeometry from './api/geometry/BaseGeometry'; // this is a bit wonky. could expose on RampAPI, but dont want clients using the baseclass
+import Point from './api/geometry/Point';
 import { Attributes } from './api/apiDefs';
 import MapModule from './map/MapModule';
 import RampMap from './map/RampMap';
@@ -132,6 +133,14 @@ export enum IdentifyResultFormat {
     XML = 'xml',
     JSON = 'json',
     UNKNOWN = 'unknown'
+}
+
+export interface MapClick {
+    mapPoint: Point;
+    screenX: number;
+    screenY: number;
+    button: number;
+    clickTime: number;
 }
 
 // a collection of attributes

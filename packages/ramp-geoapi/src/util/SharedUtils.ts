@@ -9,30 +9,6 @@ export default class SharedUtils extends BaseBase {
         super(infoBundle);
     }
 
-    // TODO figure out grand scheme of layer type strings. use enum? adopt server strings?
-    /**
-     * Will return a string indicating the type of layer a layer object is.
-     * @method getLayerType
-     * @param  {Object} layer an ESRI API layer object
-     * @return {String} layer type
-     */
-    getLayerType(layer: esri.Layer): string {
-
-        if (layer instanceof this.esriBundle.FeatureLayer) {
-            return 'FeatureLayer';
-        } else if (layer instanceof this.esriBundle.WMSLayer) {
-            return 'WmsLayer';
-        } else if (layer instanceof this.esriBundle.MapImageLayer) {
-            return 'MapImageLayer';
-        } else if (layer instanceof this.esriBundle.TileLayer) {
-            return 'TileLayer';
-        } else {
-            // Can add more types above as we support them
-            return 'UNKNOWN';
-        }
-
-    }
-
     /**
      * Get a 'good enough' uuid. For backup purposes if client does not supply its own
      * unique layer id

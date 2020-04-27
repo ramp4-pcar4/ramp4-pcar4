@@ -6,6 +6,7 @@ import { InfoBundle, LayerState, RampLayerConfig, ArcGisServerUrl, IdentifyParam
 import AttribLayer from './AttribLayer';
 import TreeNode from './TreeNode';
 import FeatureFC from './FeatureFC';
+import { LayerType } from '../api/apiDefs';
 
 export class FeatureLayer extends AttribLayer {
 
@@ -13,7 +14,7 @@ export class FeatureLayer extends AttribLayer {
 
     constructor (infoBundle: InfoBundle, config: RampLayerConfig, reloadTree?: TreeNode) {
         super(infoBundle, config, reloadTree);
-
+        this._layerType = LayerType.FEATURE;
         this._innerLayer = new this.esriBundle.FeatureLayer(this.makeEsriLayerConfig(config));
         this.initLayer();
 

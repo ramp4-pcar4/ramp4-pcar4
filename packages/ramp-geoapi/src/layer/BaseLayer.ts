@@ -2,15 +2,14 @@
 // TODO add proper comments
 
 import esri = __esri;
-import { InfoBundle, LayerState, RampLayerConfig, LegendSymbology, IdentifyParameters, IdentifyResultSet, FilterEventParam } from '../gapiTypes';
+import { InfoBundle, LayerState, RampLayerConfig, LegendSymbology, IdentifyParameters, IdentifyResultSet, FilterEventParam, IdentifyResult } from '../gapiTypes';
 import BaseBase from '../BaseBase';
 import { TypedEvent } from '../Event';
 import BaseFC from './BaseFC';
 import TreeNode from './TreeNode';
 import NaughtyPromise from '../util/NaughtyPromise';
 import ScaleSet from './ScaleSet';
-
-
+import { LayerType, DataFormat } from '../api/apiDefs';
 
 export default class BaseLayer extends BaseBase {
 
@@ -41,6 +40,7 @@ export default class BaseLayer extends BaseBase {
     protected sawRefresh: boolean;
     protected name: string; // TODO re-evaluate this. using protected property here to store name until FCs get created. might be smarter way
     protected origRampConfig: RampLayerConfig;
+    protected _layerType: LayerType;
 
     // TODO consider also having a loaded boolean property, allowing a synch check if layer has loaded or not. state can flip around to update, etc.
     //      alternately implement something like function layerLoaded() from old geoApi
@@ -289,6 +289,18 @@ export default class BaseLayer extends BaseBase {
 
     // ----------- LAYER MANAGEMENT -----------
 
+    /**
+     * The type of the physical layer
+     */
+    get layerType(): LayerType { return this._layerType; }
+
+    /**
+     * Provides a tree structure describing the layer and any sublayers,
+     * including uid values. Should only be called after isLayerLoaded resolves.
+     *
+     * @method getLayerTree
+     * @returns {TreeNode} the root of the layer tree
+     */
     getLayerTree(): TreeNode {
 
         // TODO throw error if called too early? may want to standardize that error for other properties
@@ -296,8 +308,14 @@ export default class BaseLayer extends BaseBase {
         return this.layerTree;
     }
 
-    // finds an index corresponding to the uid.
-    // -1 indicates the uid targets the root layer
+    /**
+     * Finds an FC index corresponding to the given uid.
+     * -1 indicates the uid targets the root layer
+     *
+     * @private
+     * @param {string} uid the uid we want the index for
+     * @returns {number} the integer index of the uid
+     */
     protected uidToIdx(uid: string): number {
         if (uid === this.uid) {
             return -1;
@@ -312,10 +330,19 @@ export default class BaseLayer extends BaseBase {
         }
     }
 
-    // attempts to get an FC based on the index or uid passed.
-    // will return undefined if a valid root request is made.
-    // missing layerIdx will be treated as root request if validRoot, otherwise treated as first valid FC child.
-    // will throw error if specific parameters cannot be found
+    /**
+     * Attempts to get an FC based on the index or uid provided.
+     * Will return undefined if a valid root request is made.
+     * A missing layerIdx will be interpreted as root request if validRoot is true,
+     * otherwise it will interpret as a request for the first valid FC child.
+     * An index of -1 will be interpreted as a root request.
+     * Will throw error if specific parameters cannot be matched to items in the layer
+     *
+     * @private
+     * @param {number | string} layerIdx the uid or numeric index of the item we are interested in
+     * @param {boolean} [validRoot=false] indicates if asking for the layer root is a valid request
+     * @returns {BaseFC} the matching feature class object, or undefined if the root was requested
+     */
     protected getFC(layerIdx: number | string, validRoot: boolean = false): BaseFC {
         // highscool cs IF party
 
@@ -357,8 +384,26 @@ export default class BaseLayer extends BaseBase {
         }
     }
 
+    /**
+     * Returns the name of the layer/sublayer.
+     *
+     * @function getName
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to get the name for. Uses first/only if omitted.
+     * @returns {String} name of the layer/sublayer
+     */
     getName(layerIdx: number | string = undefined): string {
         return this.getFC(layerIdx).name;
+    }
+
+    /**
+     * Returns the data format of a sublayer.
+     *
+     * @function dataFormat
+     * @param {Integer | String} [layerIdx] targets a sublayer index or uid to get the data format for. Uses first/only if omitted.
+     * @returns {String} format type of the sublayer
+     */
+    dataFormat(layerIdx: number | string = undefined): DataFormat {
+        return this.getFC(layerIdx).dataFormat;
     }
 
     /**
@@ -433,6 +478,13 @@ export default class BaseLayer extends BaseBase {
 
     // ----------- LAYER ACTIONS -----------
 
+    /**
+     * Baseline identify function for layers that do not support identify.
+     * Will return an empty result. Layers that support identify should override this method.
+     *
+     * @param options not used, present for nice signature of overrided function
+     * @returns {IdentifyResultSet} an empty result set
+     */
     identify(options: IdentifyParameters): IdentifyResultSet {
         // returns an empty set.
         // serves as a fallback incase someone tries to identify on a non-identifiyable layer

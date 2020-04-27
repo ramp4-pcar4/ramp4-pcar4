@@ -10,11 +10,11 @@ import { BaseRenderer } from '../util/Renderers';
 import QuickCache from './QuickCache';
 import Filter from './Filter';
 import Extent from '../api/geometry/Extent';
+import { DataFormat } from '../api/apiDefs';
 
 export default class AttribFC extends BaseFC {
 
     geomType: string;
-    layerType: string; // TODO revisit this. is value still useful?
     oidField: string;
     fields: Array<esri.Field>;
     nameField: string;
@@ -60,7 +60,7 @@ export default class AttribFC extends BaseFC {
                     const sData: any = serviceResult.data;
 
                     // properties for all endpoints
-                    this.layerType = sData.type;
+
                     // TODO need to decide what propert default is. Raster Layer has null gt.
                     this.geomType = this.gapi.utils.shared.serverGeomTypeToClientGeomType(sData.geometryType) || 'none';
                     this.quickCache = new QuickCache(this.geomType);
@@ -71,6 +71,7 @@ export default class AttribFC extends BaseFC {
 
                     if (sData.type === 'Feature Layer') {
                         this.supportsFeatures = true;
+                        this.dataFormat = DataFormat.ESRI_FEATURE;
                         this.fields = sData.fields.map((f: any) => this.esriBundle.Field.fromJSON(f)); // TODO need to use Field.fromJSON() to make things correct
                         this.nameField = sData.displayField;
 
@@ -123,6 +124,8 @@ export default class AttribFC extends BaseFC {
                             attribs: '*' // TODO re-align with our attribs decision above
                         };
                         this.attLoader = new ArcServerAttributeLoader(this.infoBundle(), loadData);
+                    } else {
+                        this.dataFormat = DataFormat.ESRI_RASTER;
                     }
 
                     // tell caller we are donethanks
@@ -208,9 +211,7 @@ export default class AttribFC extends BaseFC {
         }
 
         // TODO after refactor, consider changing this to a warning and just return some dummy value
-        // TODO make a layertype constant / enum?
-        //      adopt the esri layer.type values would be a good idea
-        if (this.layerType === 'Raster Layer') {
+        if (this.dataFormat === DataFormat.ESRI_RASTER) {
             throw new Error('Attempting to get attributes on a raster layer.');
         }
 

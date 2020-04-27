@@ -7,6 +7,7 @@ import AttribLayer from './AttribLayer';
 import TreeNode from './TreeNode';
 import MapImageFC from './MapImageFC';
 import ScaleSet from './ScaleSet';
+import { LayerType, DataFormat } from '../api/apiDefs';
 
 // Formerly known as DynamicLayer
 export class MapImageLayer extends AttribLayer {
@@ -18,6 +19,7 @@ export class MapImageLayer extends AttribLayer {
     constructor (infoBundle: InfoBundle, config: RampLayerConfig, reloadTree?: TreeNode) {
 
         super(infoBundle, config, reloadTree);
+        this._layerType = LayerType.MAPIMAGE;
 
         this._innerLayer = new this.esriBundle.MapImageLayer(this.makeEsriLayerConfig(config));
 

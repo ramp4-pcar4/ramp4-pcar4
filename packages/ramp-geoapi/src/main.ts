@@ -200,7 +200,7 @@ export default async (window: DojoWindow, options: GeoApiOptions = {}): Promise<
         oScript.onerror = (err: any) => reject(err);
         oScript.onload = () => resolve();
         oHead.appendChild(oScript);
-        oScript.src = options.apiUrl || 'https://js.arcgis.com/4.14'; // default value should be used for general testing and be considered our "supported" version
+        oScript.src = options.apiUrl || 'https://js.arcgis.com/4.15'; // default value should be used for general testing and be considered our "supported" version
     });
 
     const esriBundle = await makeDojoRequests(esriDeps, window);
