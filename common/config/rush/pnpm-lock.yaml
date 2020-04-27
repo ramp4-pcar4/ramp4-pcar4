@@ -22,18 +22,18 @@ dependencies:
   '@vue/cli-plugin-babel': 4.3.1_@vue+cli-service@4.3.1
   '@vue/cli-plugin-e2e-cypress': 4.3.1_26b4135a6a7ea6e5db753560c48793ec
   '@vue/cli-plugin-eslint': 4.3.1_26b4135a6a7ea6e5db753560c48793ec
-  '@vue/cli-plugin-typescript': 4.3.1_4393d990a4a77a4ef1a94eecd7abd551
+  '@vue/cli-plugin-typescript': 4.3.1_22122c1b335748d34772818bd2671b9d
   '@vue/cli-plugin-unit-jest': 4.3.1_26ec19d41106f6887b12594fc4613ed9
   '@vue/cli-plugin-vuex': 4.3.1_@vue+cli-service@4.3.1
-  '@vue/cli-service': 4.3.1_dade6536ab75b4e40cf6bd8a48594f01
+  '@vue/cli-service': 4.3.1_c697b53a0674ec5a6a3e3a567d98b494
   '@vue/eslint-config-prettier': 5.1.0_484a2925e2c2b62f874c20a5d1f8a049
-  '@vue/eslint-config-typescript': 4.0.0_eslint@5.16.0+typescript@3.5.3
+  '@vue/eslint-config-typescript': 4.0.0_eslint@5.16.0+typescript@3.8.3
   '@vue/test-utils': 1.0.0-beta.29_d81dac297579cfd5597855dabf60f13b
   ag-grid-community: 22.1.1
   ag-grid-vue: 22.1.1_1dc7f8a466c694e72b2b9eba2d4b7b31
   animejs: 3.2.0
   await-to-js: 2.1.1
-  awesome-typescript-loader: 5.2.1_typescript@3.5.3
+  awesome-typescript-loader: 5.2.1_typescript@3.8.3
   axios: 0.19.2
   css-loader: 3.5.2_webpack@4.41.3
   debounce: 1.2.0
@@ -57,11 +57,11 @@ dependencies:
   terraformer: 1.0.9
   terraformer-arcgis-parser: 1.1.0
   ts-jest: 23.10.5_jest@23.6.0
-  ts-loader: 7.0.1_typescript@3.5.3
+  ts-loader: 7.0.1_typescript@3.8.3
   tslib: 1.10.0
-  tslint: 5.17.0_typescript@3.5.3
+  tslint: 5.17.0_typescript@3.8.3
   tslint-loader: 3.6.0_tslint@5.17.0
-  typescript: 3.5.3
+  typescript: 3.8.3
   vue: 2.6.11
   vue-class-component: 7.2.3_vue@2.6.11
   vue-i18n: 8.16.0
@@ -1450,7 +1450,7 @@ packages:
     dev: false
     resolution:
       integrity: sha512-XAvHLwG7UQ+8M4caKIH0ZozIOYay5fQkAgyIXegXT9jPtdIGdhga+sUEdAr1CiG46aB+c64xQEYyEzlwWVTNzA==
-  /@typescript-eslint/eslint-plugin/1.13.0_0b5e999c52a893676e7127c05369c7b6:
+  /@typescript-eslint/eslint-plugin/1.13.0_01b5b14c201fc628df6ec486d97f4eb6:
     dependencies:
       '@typescript-eslint/experimental-utils': 1.13.0_eslint@5.16.0
       '@typescript-eslint/parser': 1.13.0_eslint@5.16.0
@@ -1458,7 +1458,7 @@ packages:
       eslint-utils: 1.4.3
       functional-red-black-tree: 1.0.1
       regexpp: 2.0.1
-      tsutils: 3.17.1_typescript@3.5.3
+      tsutils: 3.17.1_typescript@3.8.3
     dev: false
     engines:
       node: ^6.14.0 || ^8.10.0 || >=9.10.0
@@ -1606,7 +1606,7 @@ packages:
     dependencies:
       '@babel/core': 7.9.0
       '@vue/babel-preset-app': 4.3.1
-      '@vue/cli-service': 4.3.1_dade6536ab75b4e40cf6bd8a48594f01
+      '@vue/cli-service': 4.3.1_c697b53a0674ec5a6a3e3a567d98b494
       '@vue/cli-shared-utils': 4.3.1
       babel-loader: 8.1.0_@babel+core@7.9.0+webpack@4.41.3
       cache-loader: 4.1.0_webpack@4.41.3
@@ -1619,7 +1619,7 @@ packages:
       integrity: sha512-tBqu0v1l4LfWX8xuJmofpp+8xQzKddFNxdLmeVDOX/omDBQX0qaVDeMUtRxxSTazI06SKr605SnUQoa35qwbvw==
   /@vue/cli-plugin-e2e-cypress/4.3.1_26b4135a6a7ea6e5db753560c48793ec:
     dependencies:
-      '@vue/cli-service': 4.3.1_dade6536ab75b4e40cf6bd8a48594f01
+      '@vue/cli-service': 4.3.1_c697b53a0674ec5a6a3e3a567d98b494
       '@vue/cli-shared-utils': 4.3.1
       cypress: 3.8.3
       eslint-plugin-cypress: 2.10.3_eslint@5.16.0
@@ -1631,7 +1631,7 @@ packages:
       integrity: sha512-/7V2jCLBkwPDKLVkkaWZMEBfecQ2W3B8IWk4JI4MTHK2yenIMNsciMotS8XxtpGkNF3HsxDr2LI+onBd6xHDFQ==
   /@vue/cli-plugin-eslint/4.3.1_26b4135a6a7ea6e5db753560c48793ec:
     dependencies:
-      '@vue/cli-service': 4.3.1_dade6536ab75b4e40cf6bd8a48594f01
+      '@vue/cli-service': 4.3.1_c697b53a0674ec5a6a3e3a567d98b494
       '@vue/cli-shared-utils': 4.3.1
       eslint: 5.16.0
       eslint-loader: 2.2.1_eslint@5.16.0+webpack@4.41.3
@@ -1647,25 +1647,25 @@ packages:
       integrity: sha512-5UEP93b8C/JQs9Rnuldsu8jMz0XO4wNXG0lL/GdChYBEheKCyXJXzan7qzEbIuvUwG3I+qlUkGsiyNokIgXejg==
   /@vue/cli-plugin-router/4.3.1_@vue+cli-service@4.3.1:
     dependencies:
-      '@vue/cli-service': 4.3.1_dade6536ab75b4e40cf6bd8a48594f01
+      '@vue/cli-service': 4.3.1_c697b53a0674ec5a6a3e3a567d98b494
       '@vue/cli-shared-utils': 4.3.1
     dev: false
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     resolution:
       integrity: sha512-m0ntr5R6q62oNMODgoyHAVAd/sDtsH15GdBrScZsPNeyHxmzmNBDlsNM38yYGGY064zDRRWif15d1yaTREybrA==
-  /@vue/cli-plugin-typescript/4.3.1_4393d990a4a77a4ef1a94eecd7abd551:
+  /@vue/cli-plugin-typescript/4.3.1_22122c1b335748d34772818bd2671b9d:
     dependencies:
       '@types/webpack-env': 1.15.1
-      '@vue/cli-service': 4.3.1_dade6536ab75b4e40cf6bd8a48594f01
+      '@vue/cli-service': 4.3.1_c697b53a0674ec5a6a3e3a567d98b494
       '@vue/cli-shared-utils': 4.3.1
       cache-loader: 4.1.0_webpack@4.41.3
       fork-ts-checker-webpack-plugin: 3.1.1
       globby: 9.2.0
       thread-loader: 2.1.3_webpack@4.41.3
-      ts-loader: 6.2.2_typescript@3.5.3
-      tslint: 5.20.1_typescript@3.5.3
-      typescript: 3.5.3
+      ts-loader: 6.2.2_typescript@3.8.3
+      tslint: 5.20.1_typescript@3.8.3
+      typescript: 3.8.3
       webpack: 4.41.3_webpack@4.41.3
       yorkie: 2.0.0
     dev: false
@@ -1679,7 +1679,7 @@ packages:
       '@babel/core': 7.9.0
       '@babel/plugin-transform-modules-commonjs': 7.9.0_@babel+core@7.9.0
       '@types/jest': 24.9.1
-      '@vue/cli-service': 4.3.1_dade6536ab75b4e40cf6bd8a48594f01
+      '@vue/cli-service': 4.3.1_c697b53a0674ec5a6a3e3a567d98b494
       '@vue/cli-shared-utils': 4.3.1
       babel-core: 7.0.0-bridge.0_@babel+core@7.9.0
       babel-jest: 24.9.0_@babel+core@7.9.0
@@ -1701,13 +1701,13 @@ packages:
       integrity: sha512-mhIqwW6UGsPEOlw+rHBQjhlCjSxD9fKuVVVtkl989/bFZA17ZsdDrj/BfMTwX8mvoY5x6pPXb+Ti/opkkAOD7w==
   /@vue/cli-plugin-vuex/4.3.1_@vue+cli-service@4.3.1:
     dependencies:
-      '@vue/cli-service': 4.3.1_dade6536ab75b4e40cf6bd8a48594f01
+      '@vue/cli-service': 4.3.1_c697b53a0674ec5a6a3e3a567d98b494
     dev: false
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     resolution:
       integrity: sha512-mukwOlhZGBJhkqO2b3wHFFHjK5aP00b1WUHdrOfLR7M18euhaTyb4kA5nwZwEOmU3EzZx6kHzSFCRy/XaMkLug==
-  /@vue/cli-service/4.3.1_dade6536ab75b4e40cf6bd8a48594f01:
+  /@vue/cli-service/4.3.1_c697b53a0674ec5a6a3e3a567d98b494:
     dependencies:
       '@intervolga/optimize-cssnano-plugin': 1.0.6_webpack@4.41.3
       '@soda/friendly-errors-webpack-plugin': 1.7.1_webpack@4.41.3
@@ -1747,7 +1747,7 @@ packages:
       lodash.transform: 4.6.0
       mini-css-extract-plugin: 0.9.0_webpack@4.41.3
       minimist: 1.2.5
-      pnp-webpack-plugin: 1.6.4_typescript@3.5.3
+      pnp-webpack-plugin: 1.6.4_typescript@3.8.3
       portfinder: 1.0.25
       postcss-loader: 3.0.0
       sass-loader: 8.0.2_sass@1.26.3+webpack@4.41.3
@@ -1838,9 +1838,9 @@ packages:
       prettier: '>= 1.13.0'
     resolution:
       integrity: sha512-LNqBXtM+4XqKz6yW3rrF/frCVZUKyYryiiMc8aCGq3czSXhTR/UNhl89FAtqZcpSwh5u8k2Qh8BvFctva68HUQ==
-  /@vue/eslint-config-typescript/4.0.0_eslint@5.16.0+typescript@3.5.3:
+  /@vue/eslint-config-typescript/4.0.0_eslint@5.16.0+typescript@3.8.3:
     dependencies:
-      '@typescript-eslint/eslint-plugin': 1.13.0_0b5e999c52a893676e7127c05369c7b6
+      '@typescript-eslint/eslint-plugin': 1.13.0_01b5b14c201fc628df6ec486d97f4eb6
       '@typescript-eslint/parser': 1.13.0_eslint@5.16.0
     dev: false
     peerDependencies:
@@ -2432,7 +2432,7 @@ packages:
       node: '>=6.0.0'
     resolution:
       integrity: sha512-CHBC6gQGCIzjZ09tJ+XmpQoZOn4GdWePB4qUweCaKNJ0D3f115YdhmYVTZ4rMVpiJ3cFzZcTYK1VMYEICV4YXw==
-  /awesome-typescript-loader/5.2.1_typescript@3.5.3:
+  /awesome-typescript-loader/5.2.1_typescript@3.8.3:
     dependencies:
       chalk: 2.4.2
       enhanced-resolve: 4.1.1
@@ -2441,7 +2441,7 @@ packages:
       micromatch: 3.1.10
       mkdirp: 0.5.5
       source-map-support: 0.5.18
-      typescript: 3.5.3
+      typescript: 3.8.3
       webpack-log: 1.2.0
     dev: false
     peerDependencies:
@@ -9651,9 +9651,9 @@ packages:
     dev: false
     resolution:
       integrity: sha512-2qHaIQr2VLRFoxe2nASzsV6ef4yOOH+Fi9FBOVH6cqeSgUnoyySPZkxzLuzd+RYOQTRpROA0ztTMqxROKSb/nA==
-  /pnp-webpack-plugin/1.6.4_typescript@3.5.3:
+  /pnp-webpack-plugin/1.6.4_typescript@3.8.3:
     dependencies:
-      ts-pnp: 1.2.0_typescript@3.5.3
+      ts-pnp: 1.2.0_typescript@3.8.3
     dev: false
     engines:
       node: '>=6'
@@ -12104,14 +12104,14 @@ packages:
       jest: '>=24 <25'
     resolution:
       integrity: sha512-Hb94C/+QRIgjVZlJyiWwouYUF+siNJHJHknyspaOcZ+OQAIdFG/UrdQVXw/0B8Z3No34xkUXZJpOTy9alOWdVQ==
-  /ts-loader/6.2.2_typescript@3.5.3:
+  /ts-loader/6.2.2_typescript@3.8.3:
     dependencies:
       chalk: 2.4.2
       enhanced-resolve: 4.1.1
       loader-utils: 1.4.0
       micromatch: 4.0.2
       semver: 6.3.0
-      typescript: 3.5.3
+      typescript: 3.8.3
     dev: false
     engines:
       node: '>=8.6'
@@ -12119,14 +12119,14 @@ packages:
       typescript: '*'
     resolution:
       integrity: sha512-HDo5kXZCBml3EUPcc7RlZOV/JGlLHwppTLEHb3SHnr5V7NXD4klMEkrhJe5wgRbaWsSXi+Y1SIBN/K9B6zWGWQ==
-  /ts-loader/7.0.1_typescript@3.5.3:
+  /ts-loader/7.0.1_typescript@3.8.3:
     dependencies:
       chalk: 2.4.2
       enhanced-resolve: 4.1.1
       loader-utils: 1.4.0
       micromatch: 4.0.2
       semver: 6.3.0
-      typescript: 3.5.3
+      typescript: 3.8.3
     dev: false
     engines:
       node: '>=10.0.0'
@@ -12134,9 +12134,9 @@ packages:
       typescript: '*'
     resolution:
       integrity: sha512-wdGs9xO8UnwASwbluehzXciBtc9HfGlYA8Aiv856etLmdv8mJfAxCkt3YpS4g7G1IsGxaCVKQ102Qh0zycpeZQ==
-  /ts-pnp/1.2.0_typescript@3.5.3:
+  /ts-pnp/1.2.0_typescript@3.8.3:
     dependencies:
-      typescript: 3.5.3
+      typescript: 3.8.3
     dev: false
     engines:
       node: '>=6'
@@ -12167,13 +12167,13 @@ packages:
       object-assign: 4.1.1
       rimraf: 2.7.1
       semver: 5.7.1
-      tslint: 5.17.0_typescript@3.5.3
+      tslint: 5.17.0_typescript@3.8.3
     dev: false
     peerDependencies:
       tslint: '>=4.0.0'
     resolution:
       integrity: sha512-Me9Qf/87BOfCY8uJJw+J7VMF4U8WiMXKLhKKKugMydF0xMhMOt9wo2mjYTNhwbF9H7SHh8PAIwRG8roisTNekQ==
-  /tslint/5.17.0_typescript@3.5.3:
+  /tslint/5.17.0_typescript@3.8.3:
     dependencies:
       '@babel/code-frame': 7.8.3
       builtin-modules: 1.1.1
@@ -12187,8 +12187,8 @@ packages:
       resolve: 1.16.1
       semver: 5.7.1
       tslib: 1.10.0
-      tsutils: 2.29.0_typescript@3.5.3
-      typescript: 3.5.3
+      tsutils: 2.29.0_typescript@3.8.3
+      typescript: 3.8.3
     dev: false
     engines:
       node: '>=4.8.0'
@@ -12197,7 +12197,7 @@ packages:
       typescript: '>=2.1.0 || >=2.1.0-dev || >=2.2.0-dev || >=2.3.0-dev || >=2.4.0-dev || >=2.5.0-dev || >=2.6.0-dev || >=2.7.0-dev || >=2.8.0-dev || >=2.9.0-dev || >=3.0.0-dev || >= 3.1.0-dev || >= 3.2.0-dev'
     resolution:
       integrity: sha512-pflx87WfVoYepTet3xLfDOLDm9Jqi61UXIKePOuca0qoAZyrGWonDG9VTbji58Fy+8gciUn8Bt7y69+KEVjc/w==
-  /tslint/5.20.1_typescript@3.5.3:
+  /tslint/5.20.1_typescript@3.8.3:
     dependencies:
       '@babel/code-frame': 7.8.3
       builtin-modules: 1.1.1
@@ -12211,8 +12211,8 @@ packages:
       resolve: 1.16.1
       semver: 5.7.1
       tslib: 1.10.0
-      tsutils: 2.29.0_typescript@3.5.3
-      typescript: 3.5.3
+      tsutils: 2.29.0_typescript@3.8.3
+      typescript: 3.8.3
     dev: false
     engines:
       node: '>=4.8.0'
@@ -12221,19 +12221,19 @@ packages:
       typescript: '>=2.3.0-dev || >=2.4.0-dev || >=2.5.0-dev || >=2.6.0-dev || >=2.7.0-dev || >=2.8.0-dev || >=2.9.0-dev || >=3.0.0-dev || >= 3.1.0-dev || >= 3.2.0-dev'
     resolution:
       integrity: sha512-EcMxhzCFt8k+/UP5r8waCf/lzmeSyVlqxqMEDQE7rWYiQky8KpIBz1JAoYXfROHrPZ1XXd43q8yQnULOLiBRQg==
-  /tsutils/2.29.0_typescript@3.5.3:
+  /tsutils/2.29.0_typescript@3.8.3:
     dependencies:
       tslib: 1.10.0
-      typescript: 3.5.3
+      typescript: 3.8.3
     dev: false
     peerDependencies:
       typescript: '>=2.1.0 || >=2.1.0-dev || >=2.2.0-dev || >=2.3.0-dev || >=2.4.0-dev || >=2.5.0-dev || >=2.6.0-dev || >=2.7.0-dev || >=2.8.0-dev || >=2.9.0-dev || >= 3.0.0-dev || >= 3.1.0-dev'
     resolution:
       integrity: sha512-g5JVHCIJwzfISaXpXE1qvNalca5Jwob6FjI4AoPlqMusJ6ftFE7IkkFoMhVLRgK+4Kx3gkzb8UZK5t5yTTvEmA==
-  /tsutils/3.17.1_typescript@3.5.3:
+  /tsutils/3.17.1_typescript@3.8.3:
     dependencies:
       tslib: 1.10.0
-      typescript: 3.5.3
+      typescript: 3.8.3
     dev: false
     engines:
       node: '>= 6'
@@ -12296,13 +12296,13 @@ packages:
     dev: false
     resolution:
       integrity: sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
-  /typescript/3.5.3:
+  /typescript/3.8.3:
     dev: false
     engines:
       node: '>=4.2.0'
     hasBin: true
     resolution:
-      integrity: sha512-ACzBtm/PhXBDId6a6sDJfroT2pOWt/oOnk4/dElG5G33ZL776N3Y6/6bKZJBFpd+b05F3Ct9qDjMeJmRWtE2/g==
+      integrity: sha512-MYlEfn5VrLNsgudQTVJeNaQFUAI7DkhnOjdpAp4T+ku1TfQClewlbSuTVHiA+8skNBgaf02TL/kLOvig4y3G8w==
   /uglify-js/3.4.10:
     dependencies:
       commander: 2.19.0
@@ -13416,12 +13416,12 @@ packages:
       '@vue/cli-plugin-babel': 4.3.1_@vue+cli-service@4.3.1
       '@vue/cli-plugin-e2e-cypress': 4.3.1_26b4135a6a7ea6e5db753560c48793ec
       '@vue/cli-plugin-eslint': 4.3.1_26b4135a6a7ea6e5db753560c48793ec
-      '@vue/cli-plugin-typescript': 4.3.1_4393d990a4a77a4ef1a94eecd7abd551
+      '@vue/cli-plugin-typescript': 4.3.1_22122c1b335748d34772818bd2671b9d
       '@vue/cli-plugin-unit-jest': 4.3.1_26ec19d41106f6887b12594fc4613ed9
       '@vue/cli-plugin-vuex': 4.3.1_@vue+cli-service@4.3.1
-      '@vue/cli-service': 4.3.1_dade6536ab75b4e40cf6bd8a48594f01
+      '@vue/cli-service': 4.3.1_c697b53a0674ec5a6a3e3a567d98b494
       '@vue/eslint-config-prettier': 5.1.0_484a2925e2c2b62f874c20a5d1f8a049
-      '@vue/eslint-config-typescript': 4.0.0_eslint@5.16.0+typescript@3.5.3
+      '@vue/eslint-config-typescript': 4.0.0_eslint@5.16.0+typescript@3.8.3
       '@vue/test-utils': 1.0.0-beta.29_d81dac297579cfd5597855dabf60f13b
       ag-grid-community: 22.1.1
       ag-grid-vue: 22.1.1_1dc7f8a466c694e72b2b9eba2d4b7b31
@@ -13442,7 +13442,7 @@ packages:
       sass-loader: 8.0.2_sass@1.26.3+webpack@4.41.3
       tailwindcss: 1.1.4
       tslib: 1.10.0
-      typescript: 3.5.3
+      typescript: 3.8.3
       vue: 2.6.11
       vue-class-component: 7.2.3_vue@2.6.11
       vue-i18n: 8.16.0
@@ -13458,7 +13458,7 @@ packages:
       webpack: '*'
       webpack-cli: '*'
     resolution:
-      integrity: sha512-rf61t15UphBwf9GTfT9dHxABBQuOW91jBSgKA6ljLUJVRU1cegonbyvdEvwHg7HW3UbOF9/Ct7c9s+tKh//lJQ==
+      integrity: sha512-/iuwRmH5EO+/epOF2YZYWEp4Hfekf28sRHSCBlUUDD4+ADVe5Me7QTgszGRZCpCtjymefgfhmKm+dQiekoKegQ==
       tarball: 'file:projects/ramp-core.tgz'
     version: 0.0.0
   'file:projects/ramp-geoapi.tgz':
@@ -13474,23 +13474,23 @@ packages:
       '@types/geojson': 1.0.6
       '@types/node': 7.0.0
       '@types/proj4': 2.5.0
-      awesome-typescript-loader: 5.2.1_typescript@3.5.3
+      awesome-typescript-loader: 5.2.1_typescript@3.8.3
       js-sql-parser: 1.0.7
       proj4: 2.6.0
       source-map-loader: 0.2.3
       svg.js: 2.7.1
       terraformer: 1.0.9
       terraformer-arcgis-parser: 1.1.0
-      tslint: 5.17.0_typescript@3.5.3
+      tslint: 5.17.0_typescript@3.8.3
       tslint-loader: 3.6.0_tslint@5.17.0
-      typescript: 3.5.3
+      typescript: 3.8.3
       webpack: 4.41.3_webpack@4.41.3
       webpack-cli: 3.3.10_webpack@4.41.3
       webpack-dev-server: 3.9.0_webpack@4.41.3
     dev: false
     name: '@rush-temp/ramp-geoapi'
     resolution:
-      integrity: sha512-1MpLXk+hVWjWoo+cATdJA92pIa9e1Ab/Ewfkr6td8XOmoJk5H67gyu/fOxRNtmTbrJh9dl9220isLqdPrx001Q==
+      integrity: sha512-zYcrm0ny7ACGR9lKpTX6srNwF2INTZhs/qqbcBqE439RKJMWSZWBS3/O1KGA77ad2Gh83YyKKcx1WfGvQDHjUA==
       tarball: 'file:projects/ramp-geoapi.tgz'
     version: 0.0.0
   'file:projects/ramp-sample-fixtures.tgz':
@@ -13501,9 +13501,9 @@ packages:
       jest: 23.6.0
       prettier: 1.19.1
       ts-jest: 23.10.5_jest@23.6.0
-      ts-loader: 7.0.1_typescript@3.5.3
+      ts-loader: 7.0.1_typescript@3.8.3
       tslib: 1.10.0
-      typescript: 3.5.3
+      typescript: 3.8.3
       vue: 2.6.11
       vue-class-component: 7.2.3_vue@2.6.11
       vue-jest: 2.6.0_d81dac297579cfd5597855dabf60f13b
@@ -13515,7 +13515,7 @@ packages:
     dev: false
     name: '@rush-temp/ramp-sample-fixtures'
     resolution:
-      integrity: sha512-ToEiPhqtC7BzixJ9ChYh69pWhzMHF4HGVpNryHLOXpUCAsTIsw2W2I1T5c8dvv6HztFOLIggNY7gsL2O0fMIUw==
+      integrity: sha512-OguwqMo1M+GWZfRLFMArIJ5GpRgZgpZlCyFD0Tonv6Wi+ttEB0KFoCCeVgweGn8Tnil0lIfjgfKgtap2oMr8nw==
       tarball: 'file:projects/ramp-sample-fixtures.tgz'
     version: 0.0.0
 registry: ''
@@ -13582,7 +13582,7 @@ specifiers:
   tslib: ~1.10.0
   tslint: 5.17.0
   tslint-loader: 3.6.0
-  typescript: ~3.5.3
+  typescript: ~3.8.3
   vue: ^2.6.10
   vue-class-component: ^7.0.2
   vue-i18n: ~8.16.0
