@@ -4,10 +4,14 @@ import rows from './lang.csv';
 
 Vue.use(VueI18n);
 
-type csvRows = { key: string; enValue: string; frValue: string }[];
-interface LocaleMessages {
-    [key: string]: { [name: string]: string };
-}
+export type CsvRows = { key: string; enValue: string; frValue: string }[];
+
+export type I18nComponentOptions = {
+    messages?: VueI18n.LocaleMessages;
+    dateTimeFormats?: VueI18n.DateTimeFormats;
+    numberFormats?: VueI18n.NumberFormats;
+    sharedMessages?: VueI18n.LocaleMessages;
+};
 
 const fallbackLocale: string = 'en';
 
@@ -17,17 +21,18 @@ const locale: string = document.documentElement!.getAttribute('lang') || fallbac
 /**
  * Fold the imported CSV file in the form of `{ key: string, enValue: string, frValue: string }[]` to the form understood by VueI18n: `{ en: { [name: string]: string }, fr: { [name: string]: string } }`.
  *
- * @param {csvRows} rows
- * @returns {LocaleMessages}
+ * @param {CsvRows} rows
+ * @returns {VueI18n.LocaleMessages}
  */
-export function fold(rows: csvRows): LocaleMessages {
+// TODO: enhance to accept any number of languages
+export function fold(rows: CsvRows): VueI18n.LocaleMessages {
     return rows.reduce(
         (map, item) => {
             map.en[item.key] = item.enValue;
             map.fr[item.key] = item.frValue;
             return map;
         },
-        { en: {}, fr: {} } as LocaleMessages
+        { en: {}, fr: {} } as VueI18n.LocaleMessages
     );
 }
 

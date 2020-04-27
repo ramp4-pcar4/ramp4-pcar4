@@ -41,13 +41,8 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
 import { PanelInstance } from '@/api';
-import messages from './lang';
 
-@Component({
-    i18n: {
-        messages
-    }
-})
+@Component
 export default class P2Screen1V extends Vue {
     // ✔ this prop is always present and it's set by the panel-container component
     @Prop() panel!: PanelInstance;

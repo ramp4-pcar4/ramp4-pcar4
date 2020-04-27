@@ -1,8 +1,6 @@
 <template>
     <panel-screen>
-        <template #header>
-            Gazebo/Panel 2/Screen C
-        </template>
+        <template #header> Gazebo/Panel 2/Screen C </template>
 
         <template #controls>
             <!-- <pin> is a global button component that any fixture/panel/screen can reuse -->
@@ -26,6 +24,18 @@
                 </button>
 
                 <img width="250px" class="my-16" src="https://media.giphy.com/media/iWkHDNtcHpB5e/giphy.gif" alt="" srcset="" />
+
+                <p>Locale merging:</p>
+                <dl>
+                    <dt>global locale:</dt>
+                    <dd class="ml-32 font-bold">{{ $t('lang-native') }}</dd>
+                    <dt>fixture locale:</dt>
+                    <dd class="ml-32 font-bold">{{ $t('hello') }}</dd>
+                    <dt>specific panel locale:</dt>
+                    <dd class="ml-32 font-bold">{{ $t('spec') }}</dd>
+                    <dt>common panels locale:</dt>
+                    <dd class="ml-32 font-bold">{{ $t('who') }}</dd>
+                </dl>
             </div>
         </template>
     </panel-screen>
@@ -37,7 +47,15 @@ import { Get, Sync, Call } from 'vuex-pathify';
 
 import { PanelInstance } from '@/api';
 
-@Component({})
+@Component({
+    i18n: {
+        messages: {
+            en: {
+                who: '[me cat]'
+            }
+        }
+    }
+})
 export default class P2Screen3V extends Vue {
     // ✔ this prop is always present and it's set by the panel-container component
     @Prop() panel!: PanelInstance;
