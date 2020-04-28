@@ -243,6 +243,34 @@ export class PanelInstance extends APIScope {
     }
 
     /**
+     * Toggle panel.
+     * This is a proxy to `RAMP.panel.toggle(...)`.
+     *
+     * @param {(boolean | { screen: string; props?: object; toggle?: boolean })} [value]
+     * @returns {this}
+     * @memberof PanelInstance
+     */
+    toggle(value?: boolean | { screen: string; props?: object; toggle?: boolean }): this {
+        // toggle panel if no value provided, force toggle panel if value specified, or toggle panel on specified screen if provided
+        // ensure that a toggle value must be provided to panel API toggle if called
+        if (typeof value === 'undefined') {
+            this.$iApi.panel.toggle(this, !this.isOpen);
+        } else if (typeof value === 'boolean') {
+            // only call forced toggle if it is possible to do so
+            if (value !== this.isOpen) {
+                this.$iApi.panel.toggle(this, value);
+            }
+        } else {
+            this.$iApi.panel.toggle(
+                { id: this.id, screen: value.screen, props: value.props },
+                typeof value.toggle !== 'undefined' ? value.toggle : !this.isOpen
+            );
+        }
+
+        return this;
+    }
+
+    /**
      * Pin/unpin/toggle (if no value provided) pin status of this panel. When pinning, automatically unpins any previous pinned panel if exists.
      * This is a proxy to `RAMP.panel.pin(...)`.
      *
