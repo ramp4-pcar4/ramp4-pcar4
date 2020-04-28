@@ -35,7 +35,9 @@ export default class QueryService extends BaseBase {
 
         const queryTask = new this.esriBundle.QueryTask({ url: options.url });
 
-        return queryTask.executeForIds(query);
+        return queryTask.executeForIds(query).then((oids) => {
+            return Array.isArray(oids) ? oids : [];
+        });
     }
 
     // for now, the any is attributes. figure why just return the ids when everything is local;

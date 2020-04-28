@@ -18,12 +18,14 @@ import anime from 'animejs';
 import PanelScreenV from './panel-screen.vue';
 import PinV from './controls/pin.vue';
 import CloseV from './controls/close.vue';
+import BackV from './controls/back.vue';
 import PanelOptionsMenuV from './controls/panel-options-menu.vue';
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 
 Vue.component('panel-screen', PanelScreenV);
 Vue.component('pin', PinV);
 Vue.component('close', CloseV);
+Vue.component('back', BackV)
 Vue.component('panel-options-menu', PanelOptionsMenuV);
 Vue.component('dropdown-menu', DropdownMenuV);
 
