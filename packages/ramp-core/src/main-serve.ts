@@ -4,17 +4,16 @@
 import api from '@/api';
 import Vue from 'vue';
 
-const wany = window as any;
-
-wany.RAMP = api;
+// assign RAMP api to global variable
+window.RAMP = api;
 
 // expose Vue to the global scope so fixtures that use Vue have access to it
 // this is only needed in `serve` mode; in `build`, Vue is explicitly loaded by the host page
-wany.Vue = Vue;
+window.Vue = Vue;
 
 // execute `initRAMP` global function if it's defined as soon at the RAMP library is added to the global scope
 api.gapiPromise.then(() => {
-    if (typeof wany.initRAMP === 'function') {
-        wany.initRAMP();
+    if (typeof window.initRAMP === 'function') {
+        window.initRAMP();
     }
 });

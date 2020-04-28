@@ -89,7 +89,7 @@ export default class GeosearchComponent extends Vue {
 
     // zoom in to a clicked result
     zoomIn(result: any): void {
-        let zoomPoint = new (window as any).RAMP.GEO.Point('zoomies', result.position);
+        let zoomPoint = new RAMP.GEO.Point('zoomies', result.position);
         this.$iApi.map.zoomMapTo(zoomPoint, 50000);
     }
 

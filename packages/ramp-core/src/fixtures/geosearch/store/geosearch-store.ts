@@ -131,8 +131,8 @@ const actions = {
         if (mapExtent.visible !== undefined) {
             context.commit('SET_RESULTS_VISIBLE', mapExtent.visible);
         }
-        // reproject current extent object with lat/lon WKID number
-        (window as any).RAMP.geoapi.utils.proj.projectExtent(4326, mapExtent.extent).then((projExtent: any) => {
+        // re-project current extent object with lat/lon WKID number
+        RAMP.geoapi.utils.proj.projectExtent(4326, mapExtent.extent).then((projExtent: any) => {
             context.commit('SET_EXTENT', projExtent);
             // run query after toggling map extent filters
             context.dispatch('runQuery');

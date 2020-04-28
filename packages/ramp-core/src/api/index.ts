@@ -11,7 +11,7 @@ declare const __VERSION__: AppVersion;
 // install/register mixin plugin with Vue, so it's available on all Vue instances
 Vue.use(mixin);
 
-interface RampGeo {
+export interface RampGeo {
     Extent: typeof ApiBundle.Extent;
     Graphic: typeof ApiBundle.Graphic;
     Hover: typeof ApiBundle.Hover;
@@ -48,6 +48,7 @@ export interface APIInterface {
 // moved from `main-build` since it was being attached to the api object anyways
 let geoapi: GeoApi;
 let rampgeo: RampGeo;
+
 const gapiPromise = GapiLoader(window);
 gapiPromise.then((gapi: GeoApi) => {
     geoapi = gapi;
