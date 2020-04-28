@@ -1,5 +1,7 @@
-import { VueConstructor } from 'vue';
+import { Component, VueConstructor, ComponentOptions } from 'vue';
+
 import { PanelInstance } from '@/api';
+import { I18nComponentOptions, CsvRows } from '@/lang';
 
 export class PanelState {
     /**
@@ -55,14 +57,28 @@ export class PanelState {
 }
 
 // this should have been `AsyncComponentPromise` type, but something is off there
-export type AsyncComponentFunction = () => Promise<typeof import('*.vue')>;
+// there seems to be a bug in the TS definitions for `AsyncComponent`
+// according to the definitions, `component` should be a function returning a Promise returning a Component object
+// while the official documentation (https://vuejs.org/v2/guide/components-dynamic-async.html#Handling-Loading-State) states that `component` property should be a Promise, not a function
+// hence the need to `EnHanced` types
+export type AsyncComponentEh = typeof import('*.vue') | VueConstructor;
+
+export type AsyncComponentFunctionEh = () => Promise<AsyncComponentEh>;
+
+export type AsyncComponentFactoryEh = () => {
+    component: Promise<Component>;
+    loading?: Component;
+    error?: Component;
+    delay?: number;
+    timeout?: number;
+};
 
 /**
  * - `string`: a path to the screen component relative to the fixtures home folder
  * - `VueConstructor`: a regular Vue constructor function
  * - `AsyncComponentFunction`: a function returning a promise which resolves into a Vue component
  */
-export type PanelConfigScreens = { [key: string]: string | VueConstructor | AsyncComponentFunction };
+export type PanelConfigScreens = { [key: string]: string | ComponentOptions<Vue> | VueConstructor | AsyncComponentFunctionEh };
 export type PanelConfigRoute = { screen: string; props?: object };
 export type PanelConfigStyle = { [key: string]: string };
 
@@ -82,4 +98,13 @@ export interface PanelConfig {
      * @memberof PanelConfig
      */
     style?: PanelConfigStyle;
+
+    /**
+     * Locale messages in the form of either i18n options object or unparsed CSV rows.
+     * These messages will be passed to any screen opened inside this panel.
+     *
+     * @type {(I18nComponentOptions | CsvRows)}
+     * @memberof PanelConfig
+     */
+    i18n?: I18nComponentOptions | CsvRows;
 }

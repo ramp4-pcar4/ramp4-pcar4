@@ -58,7 +58,7 @@
         "sass-loader": "^8.0.0",
         "tailwindcss": "~1.1.4",
         "tslib": "~1.10.0",
-        "typescript": "~3.5.3",
+        "typescript": "~3.8.3",
         "vue-template-compiler": "^2.6.10",
         "wrapper-webpack-plugin": "2.1.0"
     }

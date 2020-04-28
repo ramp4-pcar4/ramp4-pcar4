@@ -1,9 +1,7 @@
-import Vue, { AsyncComponent, VueConstructor } from 'vue';
+import { APIScope, PanelInstance } from './internal';
+import { PanelConfig, PanelConfigRoute, PanelMutation, PanelAction } from '@/store/modules/panel';
 
-import { APIScope, InstanceAPI } from './internal';
-import { PanelConfig, PanelConfigRoute, PanelMutation, PanelConfigScreens, PanelConfigStyle, PanelAction } from '@/store/modules/panel';
-
-import ScreenSpinnerV from '@/components/panel-stack/screen-spinner.vue';
+import { CsvRows, I18nComponentOptions } from '@/lang';
 
 export class PanelAPI extends APIScope {
     /**
@@ -20,23 +18,20 @@ export class PanelAPI extends APIScope {
      * When the panel is registered, all its screens are added to the Vue as components right away.
      *
      * @param {PanelConfigSet} value a set of PanelConfig objects in the form of `{ [name: string]: PanelConfig }` where keys assumed to be ids
+     * @param {PanelRegistrationOptions} [options] a set of options that will apply to all the panel in the set
      * @returns {PanelInstanceSet}
      * @memberof PanelAPI
      */
-    register(value: PanelConfigSet): PanelInstanceSet;
-    register(value: PanelConfigPair | PanelConfigSet): PanelInstance | PanelInstanceSet {
-        const panels: PanelInstance[] = [];
+    register(value: PanelConfigSet, options?: PanelRegistrationOptions): PanelInstanceSet;
+    register(value: PanelConfigPair | PanelConfigSet, options?: PanelRegistrationOptions): PanelInstance | PanelInstanceSet {
+        const panelConfigs = isPanelConfigPair(value) ? { [value.id]: value.config } : value;
 
         // TODO: check if the panel with the same id already exist and stop if it does
-        // check if only a single `PanelConfig` is provided
-        if (isPanelConfigPair(value)) {
-            panels.push(new PanelInstance(this.$iApi, value.id, value.config));
-        } else {
-            Object.entries(value).reduce((map, [id, config]) => {
-                map.push(new PanelInstance(this.$iApi, id, config));
-                return map;
-            }, panels);
-        }
+
+        const panels: PanelInstance[] = Object.entries(panelConfigs).reduce<PanelInstance[]>((map, [id, config]) => {
+            map.push(new PanelInstance(this.$iApi, id, config, options));
+            return map;
+        }, []);
 
         // register all the panels with the store
         panels.forEach(panel => this.$vApp.$store.set(`panel/${PanelMutation.REGISTER_PANEL}!`, { panel }));
@@ -243,302 +238,6 @@ export class PanelAPI extends APIScope {
     }
 }
 
-export class PanelInstance extends APIScope {
-    /**
-     * ID of this panel.
-     *
-     * @type {string}
-     * @memberof PanelInstance
-     */
-    readonly id: string;
-
-    /**
-     * A collection of panel screens to be displayed inside the panel.
-     *
-     * @type {PanelConfigScreens}
-     * @memberof PanelInstance
-     */
-    readonly screens: PanelConfigScreens;
-
-    /**
-     * A list of screen component ids which are loaded and ready to be rendered.
-     *
-     * @private
-     * @type {string[]}
-     * @memberof PanelInstance
-     */
-    private readonly loadedScreens: string[] = [];
-
-    /**
-     * Checks if a given screen component id is already loaded and ready to render.
-     *
-     * @param {string} id
-     * @returns {boolean}
-     * @memberof PanelInstance
-     */
-    isScreenLoaded(id: string): boolean {
-        return this.loadedScreens.indexOf(id) !== -1;
-    }
-
-    /**
-     * Loads and register panel screen components.
-     * This function should be called just before the screen is to be shown; this will avoid needlessly loading components upfront
-     * (sometimes certain screens might not get used at all).
-     *
-     * @param {string} id
-     * @memberof PanelInstance
-     */
-    registerScreen(id: string): void {
-        const screen = this.screens[id];
-
-        let payload: VueConstructor | AsyncComponent;
-
-        // the `screen` value can be either a `string` component file path, an component `object`, a component constructor function, or an `AsynComponentFunction`
-        // - `object` or `VueConstructor` => use as is as all the component code is already loaded
-        // - `string` => load fixture file, pass as `component` in `AsyncComponentFactory` function
-        // - `AsyncComponentFunction` => execute as it returns a promise, pass the output as `component` in `AsyncComponentFactory` function
-        // https://vuejs.org/v2/guide/components-dynamic-async.html#Handling-Loading-State
-
-        if (typeof screen === 'object' || isVueConstructor(screen)) {
-            payload = screen;
-            this.loadedScreens.push(id); // mark this screen immediately as loaded
-        } else {
-            let component: Promise<any>;
-
-            if (typeof screen === 'string') {
-                component = import(/* webpackChunkName: "[request]" */ `./../../src/fixtures/${screen}`);
-            } else {
-                component = screen();
-            }
-
-            // wait until the component promise is resolved and mark it as loaded
-            component.then(() => this.loadedScreens.push(id));
-
-            payload = () => ({
-                // The component to load (should be a Promise)
-                component: component as any,
-                // A component to use while the async component is loading
-                loading: ScreenSpinnerV,
-                // A component to use if the load fails
-                // TODO: add error component
-                // error: ErrorComponent,
-                // Delay before showing the loading component. Default: 200ms.
-                delay: 200
-                // The error component will be displayed if a timeout is
-                // provided and exceeded. Default: Infinity.
-                // TODO: restore the error timeout
-                // timeout: 3000
-            });
-        }
-
-        Vue.component(id, payload);
-    }
-
-    /**
-     * The style object to apply to the panel.
-     *
-     * @type {PanelConfigStyle}
-     * @memberof PanelConfig
-     */
-    style: PanelConfigStyle;
-
-    /**
-     * Returns the width of the panel in pixels or undefined if not set.
-     *
-     * @readonly
-     * @type {(number | undefined)}
-     * @memberof PanelInstance
-     */
-    get width(): number | undefined {
-        if (!this.style.width || this.style.width.slice(-2) !== 'px') {
-            return undefined;
-        }
-
-        return parseInt(this.style.width);
-    }
-
-    /**
-     * Specifies which panel screen to display and optional props to be passed to the screen panel component.
-     *
-     * @type {PanelConfigRoute}
-     * @memberof PanelConfig
-     */
-    route: PanelConfigRoute;
-
-    /**
-     * Creates an instance of PanelInstance.
-     *
-     * @param {InstanceAPI} iApi
-     * @param {string} id
-     * @param {PanelConfig} config
-     * @memberof PanelInstance
-     */
-    constructor(iApi: InstanceAPI, id: string, config: PanelConfig) {
-        super(iApi);
-
-        // copy values from the config adding `style` default
-        ({ id: this.id, screens: this.screens, style: this.style } = { id, style: {}, ...config });
-
-        if (Object.keys(this.screens).length === 0) {
-            throw new Error('panel must have at least a single screen');
-        }
-
-        // set the first screen as the default route
-        this.route = { screen: Object.keys(this.screens).pop()! };
-
-        // auto-set `flex-basis` value on the panel if not already set
-        if (!this.style['flex-basis']) {
-            this.style['flex-basis'] = this.style.width || '350px';
-        }
-    }
-
-    /**
-     * Opens a registered panel in the panel stack.
-     * This is a proxy to `RAMP.panel.open(...)`.
-     *
-     *  - `somePanel.open()` -- opens the panel on the first screen in the set
-     *  - `somePanel.open('screen-id')` -- opens the panel on the 'screen-id' screen
-     *  - `somePanel.open({ screen: 'screen-id', props: {... } })` -- opens the panel on the 'screen-id' screen passing supplied `props` to it
-     *
-     * @param {(string | { screen: string; props?: object })} value a screen id, or an object of the form `{ screen: <id>, props: <object> }`.
-     * @returns {this}
-     * @memberof PanelInstance
-     */
-    open(value?: string | { screen: string; props?: object }): this {
-        if (typeof value === 'undefined') {
-            // if no screen id is provided, open the panel using the default value
-            this.$iApi.panel.open(this);
-        } else {
-            // pass the screen id and props, if given, to the `open` function
-            this.$iApi.panel.open({ id: this.id, ...(typeof value === 'string' ? { screen: value } : value) });
-        }
-
-        return this;
-    }
-
-    /**
-     * Checks if the panel is open or not.
-     *
-     * @readonly
-     * @type {boolean}
-     * @memberof PanelInstance
-     */
-    get isOpen(): boolean {
-        return this.$iApi.panel.opened.indexOf(this) !== -1;
-    }
-
-    /**
-     * Close this panel.
-     * This is a proxy to `RAMP.panel.close(...)`.
-     *
-     * @returns {this}
-     * @memberof PanelInstance
-     */
-    close(): this {
-        this.$iApi.panel.close(this);
-
-        return this;
-    }
-
-    /**
-     * Toggle panel.
-     * This is a proxy to `RAMP.panel.toggle(...)`.
-     *
-     * @param {boolean} [value] value to toggle panel
-     * @returns {this}
-     * @memberof PanelInstance
-     */
-    toggle(value?: boolean | { screen: string; props?: object; toggle?: boolean }): this {
-        // toggle panel if no value provided, force toggle panel if value specified, or toggle panel on specified screen if provided
-        // ensure that a toggle value must be provided to panel API toggle if called
-        if (typeof value === 'undefined') {
-            this.$iApi.panel.toggle(this, !this.isOpen);
-        } else if (typeof value === 'boolean') {
-            // only call forced toggle if it is possible to do so
-            if (value !== this.isOpen) {
-                this.$iApi.panel.toggle(this, value);
-            }
-        } else {
-            this.$iApi.panel.toggle(
-                { id: this.id, screen: value.screen, props: value.props },
-                typeof value.toggle !== 'undefined' ? value.toggle : !this.isOpen
-            );
-        }
-
-        return this;
-    }
-
-    /**
-     * Pin/unpin/toggle (if no value provided) pin status of this panel. When pinning, automatically unpins any previous pinned panel if exists.
-     * This is a proxy to `RAMP.panel.pin(...)`.
-     *
-     * @param {boolean} [value]
-     * @returns {this}
-     * @memberof PanelInstance
-     */
-    pin(value?: boolean): this {
-        // use the provided value or negate the existing `isPinned` status of this panel
-        value = typeof value !== 'undefined' ? value : !this.isPinned;
-
-        // TODO: change to toggle the pin status
-        this.$iApi.panel.pin(this, value);
-
-        return this;
-    }
-
-    /**
-     * Checks if this panel is pinned or not.
-     *
-     * @readonly
-     * @type {boolean}
-     * @memberof PanelInstance
-     */
-    get isPinned(): boolean {
-        return this.$iApi.panel.pinned !== null && this.$iApi.panel.pinned.id === this.id;
-    }
-
-    /**
-     * Sets route to the specified screen id and pass props to the panel screen components.
-     * This is a proxy to `RAMP.panel.route(...)`.
-     *
-     * @param {(string | PanelConfigRoute)} value
-     * @returns {this}
-     * @memberof PanelInstance
-     */
-    show(value: string | PanelConfigRoute): this {
-        const route = typeof value === 'string' ? { screen: value } : value;
-
-        this.$iApi.panel.show(this, route);
-
-        return this;
-    }
-
-    /**
-     * Sets the styles of the specified panel by using a provided CSS styles object.
-     * This is a proxy to `RAMP.panel.setStyles(...)`.
-     *
-     * @param {object} style
-     * @param {boolean} [replace=false]
-     * @returns {this}
-     * @memberof PanelInstance
-     */
-    setStyles(style: object, replace: boolean = false): this {
-        this.$iApi.panel.setStyle(this, style, replace);
-
-        return this;
-    }
-}
-
-/**
- * Checks if the provided value is a `VueConstructor`.
- *
- * @param {(VueConstructor | any)} value
- * @returns {value is VueConstructor}
- */
-function isVueConstructor(value: VueConstructor | any): value is VueConstructor {
-    return typeof value.component === 'function';
-}
-
 /**
  * Checks if the provided value is of `PanelConfigPair` type.
  *
@@ -568,3 +267,16 @@ export type PanelInstanceSet = { [name: string]: PanelInstance };
  * A path specifying panel id, screen id, and any props for that panel screen. Used when opening a panel through `$iApi.panel.open(...)`.
  */
 export type PanelInstancePath = { id: string; screen?: string; props?: object };
+
+/**
+ * A set of common registration options to apply to panels being registered.
+ */
+export type PanelRegistrationOptions = {
+    /**
+     * Locale messages in the form of either i18n options object or un-parsed CSV rows.
+     * These messages will be passed to any screen opened inside this panel.
+     *
+     * @type {(I18nComponentOptions | CsvRows)}
+     */
+    i18n?: I18nComponentOptions | CsvRows;
+};

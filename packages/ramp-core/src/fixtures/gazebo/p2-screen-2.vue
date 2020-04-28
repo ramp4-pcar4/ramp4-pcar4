@@ -16,7 +16,7 @@
         </template>
 
         <template #content>
-            I'm a simple panel.
+            {{ $t('hello2') }}
 
             <div class="flex flex-row justify-center items-center mt-16">
                 <!-- ✔ this is the correct way to switch between screens in the same panel 👇 -->
