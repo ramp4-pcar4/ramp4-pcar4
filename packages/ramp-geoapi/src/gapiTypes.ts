@@ -8,12 +8,13 @@
 import esri = __esri; // magic command to get ESRI JS API type definitions.
 import BaseGeometry from './api/geometry/BaseGeometry'; // this is a bit wonky. could expose on RampAPI, but dont want clients using the baseclass
 import Point from './api/geometry/Point';
+import SpatialReference from './api/geometry/SpatialReference';
 import { Attributes } from './api/apiDefs';
 import MapModule from './map/MapModule';
 import RampMap from './map/RampMap';
 import LayerModule from './layer/LayerModule';
-import UtilModule from './util/UtilModule';
 import GeoJsonLayer from './layer/GeoJsonLayer';
+import UtilModule from './util/UtilModule';
 
 // gapi loader needs to be a oneshot default due to magic (something about module load being dependant on dojo script load [waves hands, points at Aly]).
 // so putting the types here so they can be shared around
@@ -168,7 +169,7 @@ export interface ArcGisServerUrl {
 export interface GetGraphicParams {
     getGeom?: boolean;
     getAttribs?: boolean;
-    map?: RampMap;
+    unboundMap?: RampMap; // this allows a reference map to be provided. useful for getting graphics from a layer that is not on a map. only required if layer has not been added to the map and geometry is requested
 }
 
 export interface GetGraphicServiceDetails {
@@ -196,13 +197,12 @@ export interface GetGraphicResult {
     geometry?: BaseGeometry;
 }
 
-// TODO convert the SR param to our API SR class?
 export interface QueryFeaturesParams {
     filterGeometry?: BaseGeometry; // filter by geometry
     filterSql?: string; // filter by sql query
     includeGeometry?: boolean; // if geometry should be included in the result
     outFields?: string; // comma separated list of attributes to restrict what is downloaded
-    sourceSR?: esri.SpatialReference; // the spatial reference of the web service. providing helps avoid some reprojection issues
+    sourceSR?: SpatialReference; // the spatial reference of the web service. providing helps avoid some reprojection issues
     map?: RampMap; // needed if querying geometry against a web service
 }
 
@@ -215,10 +215,8 @@ export interface QueryFeaturesGeoJsonParams extends QueryFeaturesParams {
 }
 
 export interface IdentifyParameters {
-    // TODO will need a larger thinking session on how we expose any esri native types on our interfaces.
-    //      if not esri, needs to be converted inside geoapi to esri, so we need some type of strict interface.
     geometry: BaseGeometry; // esri.Geometry; // TODO figure out how to manage this. typescript gets angry about supertypes.
-    map: RampMap; // TODO see if we can make this optional. could be only required if returnGeometry is true. revist after tolerance buffers are implemented. NOTE will also be required for WMS
+    unboundMap?: RampMap; // this allows a reference map to be provided. useful for identifying on a layer that is not on a map. not required if layer has been added to the map
     tolerance?: number;
     returnGeometry?: boolean; // TODO revisit this. might make more sense to offload geom to a followup request. if we keep, we may need to add property to IdentifyItem for the geom to live in
     // TODO think about adding more options to facilitate more flexible identification.

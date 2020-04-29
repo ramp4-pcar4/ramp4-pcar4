@@ -4,7 +4,7 @@ import DetailsLayerV from './details-layers.vue';
 import DetailsResultV from './details-result.vue';
 import DetailsItemV from './details-item.vue';
 import { LayerStore, layer } from '@/store/modules/layer';
-import { IdentifyResult, IdentifyResultSet, IdentifyItem, IdentifyResultFormat, MapClick } from 'ramp-geoapi';
+import { IdentifyResult, IdentifyResultSet, IdentifyItem, IdentifyResultFormat, IdentifyParameters, MapClick } from 'ramp-geoapi';
 import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
 
 class DetailsFixture extends DetailsAPI {
@@ -44,14 +44,13 @@ class DetailsFixture extends DetailsAPI {
         // Don't perform an identify request if the layers array hasn't been established yet.
         if (layers === undefined) return;
 
-        let p = {
-            map: this.$iApi.map,
+        let p: IdentifyParameters = {
             geometry: payload.mapPoint
         };
 
         // Perform an identify request on each layer. Does not perform the request on layers that do not have an identify function (layers that do not support identify).
         const identifyInstances: IdentifyResultSet[] = layers
-            .filter(layer => typeof layer.identify !== 'undefined')
+            .filter(layer => layer.supportsIdentify)
             .map(layer => {
                 return layer.identify(p);
             });

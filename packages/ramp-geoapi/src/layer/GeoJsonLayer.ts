@@ -212,12 +212,13 @@ export class GeoJsonLayer extends AttribLayer {
         //      the generic one on AttribLayer, and then MapImageLayer overrides it with the child variation.
 
         const myFC: GeoJsonFC = <GeoJsonFC>this.getFC(undefined); // undefined will get the first/only
+        const map = options.unboundMap || this.hostMap;
 
         // early kickout check. not loaded/error; not visible; not queryable; off scale
         if (!this.isValidState() ||
             !myFC.getVisibility() ||
             // !this.isQueryable() || // TODO implement when we have this flag created
-            myFC.scaleSet.isOffScale(options.map.getScale()).offScale) {
+            myFC.scaleSet.isOffScale(map.getScale()).offScale) {
 
             // return empty result.
             return super.identify(options);
@@ -238,11 +239,10 @@ export class GeoJsonLayer extends AttribLayer {
         const tolerance = options.tolerance || 0; // this.clickTolerance; // TODO remove the 0 and add the parameter once we implement clickTolerance from config constructor
 
         // run a spatial query
-        // const qry: esri.Query = new this.esriBundle.Query();
         const qOpts: QueryFeaturesParams = {
             outFields: '*', // TODO investigate this further, possibly add in layer defined outfields
             includeGeometry: false,
-            map: options.map
+            map
         };
 
         // TODO in RAMP2, it was found that doing a point identify against a polygon layer
@@ -251,7 +251,7 @@ export class GeoJsonLayer extends AttribLayer {
 
         if (myFC.geomType !== 'polygon' && options.geometry.type === GeometryType.POINT) {
             // if our layer is not polygon, and our identify input is a point, make a point buffer
-            qOpts.filterGeometry = this.gapi.utils.query.makeClickBuffer(<Point>options.geometry, options.map, options.tolerance);
+            qOpts.filterGeometry = this.gapi.utils.query.makeClickBuffer(<Point>options.geometry, map, options.tolerance);
         } else {
             qOpts.filterGeometry = options.geometry;
         }

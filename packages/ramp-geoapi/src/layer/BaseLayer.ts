@@ -10,14 +10,16 @@ import TreeNode from './TreeNode';
 import NaughtyPromise from '../util/NaughtyPromise';
 import ScaleSet from './ScaleSet';
 import { LayerType, DataFormat } from '../api/apiDefs';
+import RampMap from '../map/RampMap';
 
 export default class BaseLayer extends BaseBase {
 
     uid: string;
     id: string;
+    hostMap: RampMap; // will be undefined until layer is added to a map
 
-    // TODO think about how to expose. protected makes sense, but might want to make it public to allow hacking and use by a dev module if we decide to
-    //      could be the FCs need to access it so no choice
+    // NOTE while having this var be protected makes sense, there are also cases where other parts of the geoapi need to access this.
+    //      being public will also to allow hacking, which can be useful in a pinch. use underscore to make it clear this in not for playtimes.
     _innerLayer: esri.Layer;
 
     // events
@@ -385,6 +387,18 @@ export default class BaseLayer extends BaseBase {
     }
 
     /**
+     * Wraps an error test for when someone calls a map dependend function too early
+     * @private
+     */
+    protected mapCheck() {
+        // Map Check Hah ha-ha-Hah
+        // I be the anti-map rhythm rock shocker
+        if (this.isUndefined(this.hostMap)) {
+            throw new Error('Attempting to use map-dependent logic before the layer has been added to the map');
+        }
+    }
+
+    /**
      * Returns the name of the layer/sublayer.
      *
      * @function getName
@@ -451,14 +465,52 @@ export default class BaseLayer extends BaseBase {
     }
 
     /**
-     * Returns the opacity of the layer/sublayer.
+     * Returns the scale set (min and max visible scale) of the layer/sublayer.
      *
-     * @function getOpacity
-     * @param {Integer | String} [layerIdx] targets a layer index or uid to get opacity for. Uses first/only if omitted.
-     * @returns {Boolean} opacity of the layer/sublayer
+     * @function getScaleSet
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to get the scale set for. Uses first/only if omitted.
+     * @returns {ScaleSet} scale set of the layer/sublayer
      */
     getScaleSet (layerIdx: number | string = undefined): ScaleSet {
         return this.getFC(layerIdx).scaleSet;
+    }
+
+    /**
+     * Indicates if the layer/sublayer is not in a visible scale range.
+     *
+     * @function isOffscale
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to check offscale status for. Uses first/only if omitted.
+     * @param {Integer} [testScale] optional scale to test against. if not provided, current map scale is used.
+     * @returns {Boolean} true if the layer/sublayer is outside of a visible scale range
+     */
+    isOffscale (layerIdx: number | string = undefined, testScale: number = undefined): boolean {
+        let mahScale: number;
+        if (this.isUndefined(testScale)) {
+            this.mapCheck();
+            mahScale = this.hostMap.getScale();
+        } else {
+            mahScale = testScale;
+        }
+
+        return this.getScaleSet(layerIdx).isOffScale(mahScale).offScale;
+    }
+
+    /**
+     * Cause the map to zoom to a scale level where the layer is visible.
+     *
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to check offscale status for. Uses first/only if omitted.
+     * @returns {Promise} resolves when map has finished zooming
+     */
+    zoomToVisibleScale (layerIdx: number | string = undefined): Promise<void> {
+        this.mapCheck();
+
+        // TODO consider enhancing to bring in the old "pan to data" step from RAMP2.
+        //      was never a great function; only worked well if data was in a condensed area.
+        //      if we do it, we would wait for zoom promise, then check if map center is
+        //      inside the layer extent. if not, pan the map to layer extent center.
+        //      would need to add an extra boolean flag parameter to indicate if we do the pan or not.
+        //      alternate idea is make a separate pan-to-extent function and let caller make two calls. hmmm. nice.
+        return this.hostMap.zoomToVisibleScale(this.getScaleSet(layerIdx));
     }
 
     /**

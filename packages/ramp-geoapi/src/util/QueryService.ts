@@ -9,6 +9,7 @@ import BaseGeometry from '../api/geometry/BaseGeometry';
 import Extent from '../api/geometry/Extent';
 import Point from '../api/geometry/Point';
 import RampMap from '../map/RampMap';
+import SpatialReference from '../api/geometry/SpatialReference';
 import { GeometryType } from '../api/apiDefs';
 
 export default class QueryService extends BaseBase {
@@ -82,7 +83,7 @@ export default class QueryService extends BaseBase {
      * @param {SpatialReference} [sourceSR] optional spatial reference of the layer being queried to help detect problem situations
      * @return {Geometry} returns the input geometry in the most appropriate form based on the inputs
      */
-    protected queryGeometryHelper(geometry: BaseGeometry, isFileLayer: boolean, mapScale?: number, sourceSR?: esri.SpatialReference): esri.Geometry {
+    protected queryGeometryHelper(geometry: BaseGeometry, isFileLayer: boolean, mapScale?: number, sourceSR?: SpatialReference): esri.Geometry {
         // TODO consider casting sourceSR to our API SR class?
         let finalGeom: esri.Geometry;
 
