@@ -24,58 +24,60 @@ Fixtures themselves do not require localization, but they **must** provide local
 
 #### Panel Registration Options
 
-Pass locale messages inside a `PanelConfig` when registering a panel:
-
-```ts
-this.$iApi.panel.register({
-    id: 'panel-id',
-    config: {
-        screens: <...>,
-        i18n: messages
-    }
-})
-```
-
-The above will inject `i18n` options into screen components.
-
-Alternatively, pass locale messages as part of the `PanelRegistrationOptions` when registering multiple panels at the same time:
+Pass locale messages as part of the `PanelRegistrationOptions` when registering panels:
 
 ```ts
 // fixture.ts
+
+// with a single panel
 this.$iApi.panel.register({
-    'panel-one': {
-        screens: <...>
-    },
-    'panel-two': {
-        screens: <...>
+        id: 'panel-one',
+        config: {
+            screens: <...>
+        }
     },
     {
-        i18n: messages
+        i18n: <i18nOptions>
     }
-})
-```
+);
 
-The above will inject `i18n` options into all screen component of all panels being registered.
-
-It's also possible to specify both options, with `PanelConfig` `i18n` options takes precedence of the common `PanelRegistrationOptions`:
-
-```ts
-// fixture.ts
+// or several panels
 this.$iApi.panel.register({
-    'panel-one': {
-        screens: <...>,
-        i18n: panelOneSpecificMessages
-    },
-    'panel-two': {
-        screens: <...>
+        'panel-one': {
+            screens: <...>
+        },
+        'panel-two': {
+            screens: <...>
+        },
     },
     {
-        i18n: commonMessages
+        i18n: <i18nOptions>
     }
-})
+);
 ```
 
-`i18n` messages can be passed as either a `I18nComponentOptions` object or as loaded CSV file in the form used by the core localization (see above).
+`i18n` options use the following type:
+
+```
+type I18nComponentOptions = {
+    messages?: VueI18n.LocaleMessages;  // https://kazupon.github.io/vue-i18n/guide/messages.html#structure
+    dateTimeFormats?: VueI18n.DateTimeFormats;  // https://kazupon.github.io/vue-i18n/guide/datetime.html#datetime-localization
+    numberFormats?: VueI18n.NumberFormats;  // https://kazupon.github.io/vue-i18n/guide/number.html#custom-formatting
+    sharedMessages?: VueI18n.LocaleMessages;
+};
+```
+
+The above code will merge `messages`, `dateTimeFormats` and `numberFormats` into the corresponding global locales, while the `sharedMessages` property will be ignored.
+
+> **Important:**
+> Because all values are merged into the global locales, all components--even ones that do not belong to this panel or fixtures--will be able to use these messages. There is a potential for key name collisions.
+>
+> As a rule of thumb, fixture locale keys should be prefixed with the fixture name (or its abbreviation (`basemap` => `bm`) for brevity):
+>
+> | key                 | enValue              | enValid | frValue                       | frValid |
+> | ------------------- | -------------------- | ------- | ----------------------------- | ------- |
+> | **basemap.**refresh | Map refresh required | 1       | Actualiser la carte           | 1       |
+> | **basemap.**select  | Select basemap       | 1       | Sélectionner la carte de base | 1       |
 
 #### Vue Component Options
 

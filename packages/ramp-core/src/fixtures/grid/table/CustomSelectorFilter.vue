@@ -11,7 +11,7 @@
 <script lang="ts">
 import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 
-@Component({})
+@Component
 export default class CustomSelectorFilter extends Vue {
     beforeMount() {
         // Load previously stored value (if saved in table state manager)

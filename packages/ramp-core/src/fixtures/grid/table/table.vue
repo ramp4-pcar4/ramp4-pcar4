@@ -77,8 +77,6 @@ import CustomSelectorFilter from './CustomSelectorFilter.vue';
 import CustomDateFilter from './CustomDateFilter.vue';
 import CustomHeader from './CustomHeader.vue';
 
-import messages from '../lang';
-
 // these should match up with the `type` value returned by the attribute promise.
 const NUM_TYPES: string[] = ['oid', 'double', 'integer'];
 const DATE_TYPE: string = 'date';
@@ -93,9 +91,6 @@ const TEXT_TYPE: string = 'string';
         CustomDateFilter,
         CustomTextFilter,
         CustomHeader
-    },
-    i18n: {
-        messages
     }
 })
 export default class TableComponent extends Vue {

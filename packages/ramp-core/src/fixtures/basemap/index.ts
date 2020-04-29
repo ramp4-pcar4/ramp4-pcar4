@@ -3,6 +3,8 @@ import { BasemapAPI } from './api/basemap';
 import { basemap } from './store/index';
 import BasemapAppbarButtonV from './appbar-button.vue';
 
+import messages from './lang/lang.csv';
+
 class BasemapFixture extends BasemapAPI {
     async added() {
         console.log(`[fixture] ${this.id} added`);
@@ -11,12 +13,15 @@ class BasemapFixture extends BasemapAPI {
 
         this.$vApp.$store.registerModule('basemap', basemap());
 
-        this.$iApi.panel.register({
-            id: 'basemap-panel',
-            config: {
-                screens: { 'basemap-component': BasemapComponent }
-            }
-        });
+        this.$iApi.panel.register(
+            {
+                id: 'basemap-panel',
+                config: {
+                    screens: { 'basemap-component': BasemapComponent }
+                }
+            },
+            { i18n: { messages } }
+        );
 
         this.$iApi.panel.open('basemap-panel');
     }

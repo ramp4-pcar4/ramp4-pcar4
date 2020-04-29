@@ -40,7 +40,7 @@
 <script lang="ts">
 import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 
-@Component({})
+@Component
 export default class CustomHeader extends Vue {
     data(): Object {
         return {
