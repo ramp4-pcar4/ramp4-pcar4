@@ -30,9 +30,7 @@
                     <dt>global locale:</dt>
                     <dd class="ml-32 font-bold">{{ $t('lang-native') }}</dd>
                     <dt>fixture locale:</dt>
-                    <dd class="ml-32 font-bold">{{ $t('hello') }}</dd>
-                    <dt>specific panel locale:</dt>
-                    <dd class="ml-32 font-bold">{{ $t('spec') }}</dd>
+                    <dd class="ml-32 font-bold">{{ $t('gz.hello') }}</dd>
                     <dt>common panels locale:</dt>
                     <dd class="ml-32 font-bold">{{ $t('who') }}</dd>
                 </dl>

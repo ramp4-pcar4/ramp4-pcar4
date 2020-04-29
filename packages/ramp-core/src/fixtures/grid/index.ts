@@ -3,18 +3,23 @@ import { grid } from './store/index';
 
 import GridV from './grid.vue';
 
+import rows from './lang/lang.csv';
+
 class GridFixture extends GridAPI {
     async added() {
-        this.$iApi.panel.register({
-            'grid-panel': {
-                screens: {
-                    'grid-screen': GridV
-                },
-                style: {
-                    width: '900px'
+        this.$iApi.panel.register(
+            {
+                'grid-panel': {
+                    screens: {
+                        'grid-screen': GridV
+                    },
+                    style: {
+                        width: '900px'
+                    }
                 }
-            }
-        });
+            },
+            { i18n: rows }
+        );
 
         this.$vApp.$store.registerModule('grid', grid());
 

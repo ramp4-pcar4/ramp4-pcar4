@@ -1,5 +1,4 @@
-import Vue, { Component, ComponentOptions, VueConstructor } from 'vue';
-import merge from 'deepmerge';
+import Vue, { Component, VueConstructor } from 'vue';
 
 import { APIScope, InstanceAPI, isVueConstructor, isComponentOptions, isTypeofImportVue } from './internal';
 
@@ -13,9 +12,6 @@ import {
 } from '@/store/modules/panel';
 
 import ScreenSpinnerV from '@/components/panel-stack/screen-spinner.vue';
-
-import { I18nComponentOptions, fold } from '@/lang';
-import { PanelRegistrationOptions } from './panel';
 
 export class PanelInstance extends APIScope {
     /**
@@ -42,14 +38,6 @@ export class PanelInstance extends APIScope {
      * @memberof PanelInstance
      */
     private readonly loadedScreens: string[] = [];
-
-    /**
-     * A collection of i18n locale messages that will be passed to any screen opened inside this panel.
-     *
-     * @type {I18nComponentOptions}
-     * @memberof PanelInstance
-     */
-    readonly i18n: I18nComponentOptions = {};
 
     /**
      * Checks if a given screen component id is already loaded and ready to render.
@@ -82,8 +70,7 @@ export class PanelInstance extends APIScope {
         // https://vuejs.org/v2/guide/components-dynamic-async.html#Handling-Loading-State
 
         if (isComponentOptions(screen) || isVueConstructor(screen)) {
-            // patch in panel's i18n messages into the Vue constructor or options object
-            payload = patchI18nMessages(screen, this.i18n);
+            payload = screen;
 
             this.loadedScreens.push(id); // mark this screen immediately as loaded
         } else {
@@ -102,7 +89,7 @@ export class PanelInstance extends APIScope {
                     this.loadedScreens.push(id);
 
                     // if data is a `*.vue` file, use its `default` export
-                    resolve(patchI18nMessages(isTypeofImportVue(data) ? data.default : data, this.i18n));
+                    resolve(isTypeofImportVue(data) ? data.default : data);
                 });
                 asyncComponent.catch(error => reject(error));
             });
@@ -167,18 +154,11 @@ export class PanelInstance extends APIScope {
      * @param {PanelRegistrationOptions} [options={}]
      * @memberof PanelInstance
      */
-    constructor(iApi: InstanceAPI, id: string, config: PanelConfig, options: PanelRegistrationOptions = {}) {
+    constructor(iApi: InstanceAPI, id: string, config: PanelConfig) {
         super(iApi);
 
         // copy values from the config adding `style` default
         ({ id: this.id, screens: this.screens, style: this.style } = { id, style: {}, ...config });
-
-        // both the panel config nad panel registration options can specify locale messages as either i18n options or CSV rows
-        // fold CSV rows and merge messages with panel config messages overriding same-key messages supplied in the registration options
-        this.i18n = [options.i18n, config.i18n].reduce<I18nComponentOptions>((map, value = {}) => {
-            const i18n = { messages: Array.isArray(value) ? fold(value) : {}, ...(!Array.isArray(value) ? value : {}) };
-            return merge(map, i18n);
-        }, {});
 
         // check if this panel has at least a single screen
         if (Object.keys(this.screens).length === 0) {
@@ -330,35 +310,4 @@ export class PanelInstance extends APIScope {
 
         return this;
     }
-}
-
-/**
- * A helper function to patch i18n locale options/messages into the Vue construction or Vue component options.
- * The messages will be merged with any already specified on the constructor/options.
- *
- * @param {(VueConstructor | ComponentOptions<Vue>)} value
- * @param {I18nComponentOptions} i18n
- * @returns {(VueConstructor | ComponentOptions<Vue>)}
- */
-function patchI18nMessages(
-    value: VueConstructor | ComponentOptions<Vue>,
-    i18n: I18nComponentOptions
-): VueConstructor | ComponentOptions<Vue> {
-    if (!i18n) {
-        return value;
-    }
-
-    let options: ComponentOptions<Vue>;
-
-    if (isComponentOptions(value)) {
-        options = value;
-    } else {
-        // a Vue constructor has a `options` property although it's not present in types
-        // see here how constructor options are resolved: https://github.com/vuejs/vue/blob/b9de23b1008b52deca7e7df40843e318a42f3f53/src/core/instance/init.js#L93
-        options = (value as any).options;
-    }
-
-    options.i18n = merge(options.i18n || {}, i18n);
-
-    return value;
 }

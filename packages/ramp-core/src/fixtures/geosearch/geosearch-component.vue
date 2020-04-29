@@ -63,7 +63,6 @@ import GeosearchBar from './geosearch-bar.vue';
 import GeosearchTopFilters from './geosearch-top-filters.vue';
 import GeosearchBottomFilters from './geosearch-bottom-filters.vue';
 import LoadingBar from './loading-bar.vue';
-import messages from './lang';
 
 @Component({
     components: {
@@ -71,9 +70,6 @@ import messages from './lang';
         GeosearchTopFilters,
         GeosearchBottomFilters,
         LoadingBar
-    },
-    i18n: {
-        messages
     }
 })
 export default class GeosearchComponent extends Vue {

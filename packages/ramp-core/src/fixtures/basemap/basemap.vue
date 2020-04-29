@@ -45,14 +45,10 @@ import { PanelInstance } from '@/api';
 
 import { BasemapStore } from './store';
 import BasemapItem from './basemap-item.vue';
-import messages from './lang';
 
 @Component({
     components: {
         BasemapItem
-    },
-    i18n: {
-        messages
     }
 })
 export default class BasemapComponent extends Vue {
