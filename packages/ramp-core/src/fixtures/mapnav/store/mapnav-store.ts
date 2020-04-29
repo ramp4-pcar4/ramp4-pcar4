@@ -21,12 +21,13 @@ const getters = {
     }
 };
 
-const actions: StoreActions = {};
+const actions = {};
 
-const mutations: StoreMutations = {};
+const mutations = {};
 
 export function mapnav() {
     const state = new MapnavState();
+
     return {
         namespaced: true,
         state,
