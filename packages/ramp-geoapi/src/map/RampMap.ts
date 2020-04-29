@@ -12,6 +12,7 @@ import SpatialReference from '../api/geometry/SpatialReference';
 import BaseGeometry from '../api/geometry/BaseGeometry';
 import { GeometryType } from '../api/apiDefs';
 import { TypedEvent } from '../Event';
+import ScaleSet from '../layer/ScaleSet';
 
 // NOTE naming this RampMap, to avoid collisions with javascript object `Map`
 export class RampMap extends MapBase {
@@ -34,7 +35,7 @@ export class RampMap extends MapBase {
 
     mapDoubleClicked: TypedEvent<MapClick>;
 
-    // NOTE having this var be protected makes sense, there are also cases where other parts of the geoapi need to access this.
+    // NOTE while having this var be protected makes sense, there are also cases where other parts of the geoapi need to access this.
     //      being public will also to allow hacking, which can be useful in a pinch. use underscore to make it clear this in not for playtimes.
     /**
      * The internal esri map view. Avoid referencing outside of geoapi.
@@ -123,6 +124,7 @@ export class RampMap extends MapBase {
     async addLayer (layer: LayerBase): Promise<void> {
         await layer.isReadyForMap();
         this._innerMap.add(layer._innerLayer);
+        layer.hostMap = this;
     }
 
     /**
@@ -200,6 +202,36 @@ export class RampMap extends MapBase {
     zoomOut(): Promise<void> {
         // TODO fancy it up and add some bounds checking
         return this.zoomToLevel(this._innerView.zoom - 1);
+    }
+
+    /**
+     * Zooms the map to the closest zoom level that will be visible for a given scale set.
+     * Does nothing if scale set is already visible for the map.
+     *
+     * @returns {Promise<void>} A promise that resolves when the map has finished zooming
+     */
+    zoomToVisibleScale(scaleSet: ScaleSet): Promise<void> {
+        const offStatus = scaleSet.isOffScale(this.getScale());
+
+        if (!offStatus.offScale) { return Promise.resolve(); }
+
+        const lods = this._innerView.constraints.lods;
+
+        if (!lods) {
+            // handle case with no tiles / lods
+            return this.zoomMapTo(this.getExtent().center(), offStatus.zoomIn ? scaleSet.minScale : scaleSet.minScale);
+        }
+
+        // the lods array is ordered largest scale to smallest scale.  e.g. world view to city view
+        // if zoomOut is false, we reverse the array so we search it in the other direction.
+        const modLods = offStatus.zoomIn ? lods : [...lods].reverse();
+
+        // scan for appropriate LOD that will make scale set visible, or pick last LOD if no boundary was found
+        const scaleLod = modLods.find(currentLod => offStatus.zoomIn ? currentLod.scale < scaleSet.minScale :
+                currentLod.scale > scaleSet.maxScale) || modLods[modLods.length - 1];
+
+        return this.zoomToLevel(scaleLod.level);
+
     }
 
     /**

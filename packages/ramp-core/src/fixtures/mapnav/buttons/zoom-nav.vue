@@ -30,12 +30,12 @@ import DividerNavV from './divider-nav.vue';
 export default class FullscreenNavV extends Vue {
     zoomIn(): void {
         console.log('zoom in');
-        this.$iApi.map._innerView.goTo({ zoom: this.$iApi.map._innerView.zoom + 1 }); //scale: this.$iApi.map._innerView.scale / 2 });
+        this.$iApi.map.zoomIn();
     }
 
     zoomOut(): void {
         console.log('zoom out');
-        this.$iApi.map._innerView.goTo({ zoom: this.$iApi.map._innerView.zoom - 1 }); //scale: this.$iApi.map._innerView.scale * 2 });
+        this.$iApi.map.zoomOut();
     }
 }
 </script>

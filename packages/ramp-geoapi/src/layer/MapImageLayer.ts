@@ -488,10 +488,12 @@ export class MapImageLayer extends AttribLayer {
             return super.identify(options);
         }
 
+        const map = options.unboundMap || this.hostMap;
+
         const activeFCs: Array<MapImageFC> = (<Array<MapImageFC>>this.fcs).filter(fc => {
             return fc.getVisibility() &&
                 fc.supportsFeatures &&
-                !fc.scaleSet.isOffScale(options.map.getScale()).offScale;
+                !fc.scaleSet.isOffScale(map.getScale()).offScale;
                 // && fc.getQuery() // TODO add in query check once implemented
         });
 
@@ -509,15 +511,16 @@ export class MapImageLayer extends AttribLayer {
 
         // prepare a query
         // it may make more sense to have this made for each FC
+        // TODO investigate if we need the sourceSR param set here
         const qOpts: QueryFeaturesParams = {
             outFields: '*', // TODO investigate this further, possibly add in layer defined outfields. would need to be updated for each FC
             includeGeometry: options.returnGeometry,
-            map: options.map
+            map
         };
 
         let pointBuffer: Extent;
         if (options.geometry.type === GeometryType.POINT) {
-            pointBuffer = this.gapi.utils.query.makeClickBuffer(<Point>options.geometry, options.map, options.tolerance);
+            pointBuffer = this.gapi.utils.query.makeClickBuffer(<Point>options.geometry, map, options.tolerance);
         }
 
         // loop over active FCs. call query on each. prepare a geometry

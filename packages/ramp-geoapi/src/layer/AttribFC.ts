@@ -289,7 +289,7 @@ export default class AttribFC extends BaseFC {
      * @function getGraphic
      * @param  {Integer} objectId      ID of object being searched for
      * @param {Object} opts            object containing option parametrs
-     *                 - map           map wrapper object of current map. only required if requesting geometry
+     *                 - unboundMap    map wrapper object of current map. only required if requesting geometry, and the layer is not on the map
      *                 - getGeom       boolean. indicates if return value should have geometry included. default to false
      *                 - getAttribs    boolean. indicates if return value should have attributes included. default to false
      * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .layerFC for convenience
@@ -307,6 +307,7 @@ export default class AttribFC extends BaseFC {
         // NOTE this is for server-based layers. local layers with features should override this for gains.
 
         const resultFeat: any = {};
+        const map = opts.unboundMap || this.parentLayer.hostMap;
 
         // const nonPoint = this.geomType !== 'esriGeometryPoint';
         let needWebAttr: boolean = false;
@@ -336,7 +337,7 @@ export default class AttribFC extends BaseFC {
         }
 
         if (opts.getGeom) {
-            scale = opts.map.getScale();
+            scale = map.getScale();
 
             // first locate the appropriate cache due to simplifications.
             let gCache = this.quickCache.getGeom(objectId, scale);
@@ -368,9 +369,6 @@ export default class AttribFC extends BaseFC {
                 }
             */
             } else {
-                if (this.isUndefined(opts.map)) {
-                    throw new Error ('Map parameter must be provided for fetchGraphic calls on server based layers that want geometry in the result');
-                }
                 needWebGeom = true;
             }
         }
@@ -385,9 +383,9 @@ export default class AttribFC extends BaseFC {
             };
 
             if (needWebGeom) {
-                serviceParams.mapSR = JSON.stringify(opts.map._innerView.spatialReference); // TODO test; stringify might include all the esri wrapper garbage. if so, make a custom jsonifier in proj utils
+                serviceParams.mapSR = map.getSR().wkid.toString();
                 if (!this.quickCache.isPoint) {
-                    serviceParams.maxOffset = opts.map._innerView.resolution;
+                    serviceParams.maxOffset = map._innerView.resolution;
                 }
             }
 
@@ -471,7 +469,7 @@ export default class AttribFC extends BaseFC {
             const p: GetGraphicParams = {
                 getGeom: !!options.includeGeometry,
                 getAttribs: true,
-                map: options.map
+                unboundMap: options.map
             };
             const cacheQueue: Array<Promise<GetGraphicResult>> = oids.map(oid => this.getGraphic(oid, p));
             return Promise.all(cacheQueue);

@@ -102,8 +102,8 @@ export default class OgcService extends BaseBase {
             SERVICE: 'WMS',
             REQUEST: 'GetFeatureInfo',
             VERSION: esriLayer.version,
-            WIDTH: map._innerView.width,
-            HEIGHT: map._innerView.height,
+            WIDTH: map.getPixelWidth(),
+            HEIGHT: map.getPixelHeight(),
             QUERY_LAYERS: layers,
             LAYERS: layers,
             INFO_FORMAT: mimeType

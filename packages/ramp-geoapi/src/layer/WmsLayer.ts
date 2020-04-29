@@ -153,13 +153,14 @@ export class WmsLayer extends BaseLayer {
         };
 
         const myFC: WmsFC = <WmsFC>this.getFC(undefined); // undefined will get the first/only
+        const map = options.unboundMap || this.hostMap;
 
         // early kickout check. not loaded/error
         if (!this.isValidState() ||
             !myFC.getVisibility() ||
             // !this.isQueryable() || // TODO implement when we have this flag created
             // !infoMap[this.config.featureInfoMimeType] || // TODO implement once config is defined
-            myFC.scaleSet.isOffScale(options.map.getScale()).offScale) {
+            myFC.scaleSet.isOffScale(map.getScale()).offScale) {
             // return empty result.
             return super.identify(options);
         }
@@ -181,7 +182,7 @@ export class WmsLayer extends BaseLayer {
         result.done = this.gapi.utils.ogc
             .getFeatureInfo(
                 this,
-                options.map,
+                map,
                 this.sublayerNames,
                 <Point>options.geometry,
                 this.mimeType)
