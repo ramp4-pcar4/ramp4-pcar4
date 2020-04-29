@@ -3,6 +3,8 @@ import { GeosearchAPI } from './api/geosearch';
 import { geosearch } from './store/index';
 import GeosearchAppbarButtonV from './appbar-button.vue';
 
+import rows from './lang/lang.csv';
+
 class GeosearchFixture extends GeosearchAPI {
     async added() {
         console.log(`[fixture] ${this.id} added`);
@@ -12,12 +14,15 @@ class GeosearchFixture extends GeosearchAPI {
 
         this.$vApp.$store.registerModule('geosearch', geosearch());
 
-        this.$iApi.panel.register({
-            id: 'geosearch-panel',
-            config: {
-                screens: { 'geosearch-component': GeosearchComponent }
-            }
-        });
+        this.$iApi.panel.register(
+            {
+                id: 'geosearch-panel',
+                config: {
+                    screens: { 'geosearch-component': GeosearchComponent }
+                }
+            },
+            { i18n: rows }
+        );
 
         this.$iApi.panel.open('geosearch-panel');
     }
