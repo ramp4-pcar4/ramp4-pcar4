@@ -7,6 +7,8 @@ import BaseBase from '../BaseBase';
 import Aql from './Aql';
 import BaseGeometry from '../api/geometry/BaseGeometry';
 import Extent from '../api/geometry/Extent';
+import Point from '../api/geometry/Point';
+import RampMap from '../map/RampMap';
 import { GeometryType } from '../api/apiDefs';
 
 export default class QueryService extends BaseBase {
@@ -102,6 +104,25 @@ export default class QueryService extends BaseBase {
         }
 
         return finalGeom;
+    }
+
+    /**
+     * Create an extent centered around a point, that is appropriate for the current map scale.
+     *
+     * @function makeClickBuffer
+     * @param {Point} point         point on the map for extent center
+     * @param {RampMap} map         map object the extent is relevant for
+     * @param {Integer} tolerance   optional. distance in pixels from mouse point that qualifies as a hit. default is 5
+     * @return {Extent} an extent of desired size and location
+     */
+    makeClickBuffer(point: Point, map: RampMap, tolerance: number = 5): Extent {
+        // take pixel tolerance, convert to map units at current scale.
+        const mapExt = map.getExtent();
+        const buffSize = tolerance * (mapExt.xmax - mapExt.xmin) / map.getPixelWidth();
+
+        // Build tolerance envelope of correct size
+        return new Extent('ze_buffer', [point.x - buffSize, point.y - buffSize],
+            [point.x + buffSize, point.y + buffSize], point.sr);
     }
 
     // TODO slated for review / removal, as has been made obsolete by functions up above and in the FCs.
