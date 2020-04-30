@@ -98,13 +98,4 @@ export interface PanelConfig {
      * @memberof PanelConfig
      */
     style?: PanelConfigStyle;
-
-    /**
-     * Locale messages in the form of either i18n options object or unparsed CSV rows.
-     * These messages will be passed to any screen opened inside this panel.
-     *
-     * @type {(I18nComponentOptions | CsvRows)}
-     * @memberof PanelConfig
-     */
-    i18n?: I18nComponentOptions | CsvRows;
 }

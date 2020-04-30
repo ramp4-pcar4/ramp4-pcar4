@@ -42,14 +42,9 @@
 import { Vue, Prop, Component } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
-import messages from './lang';
 import { BasemapStore } from './store';
 
-@Component({
-    i18n: {
-        messages
-    }
-})
+@Component
 export default class BasemapItem extends Vue {
     @Prop() basemap!: any;
     @Get(BasemapStore.selectedBasemap) selectedBasemap!: any;

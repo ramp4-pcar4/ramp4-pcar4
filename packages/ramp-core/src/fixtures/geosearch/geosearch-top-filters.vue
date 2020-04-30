@@ -50,13 +50,8 @@ import { Get, Sync, Call } from 'vuex-pathify';
 
 import { GeosearchStore } from './store';
 import { ConfigStore } from '@/store/modules/config';
-import messages from './lang';
 
-@Component({
-    i18n: {
-        messages
-    }
-})
+@Component
 export default class GeosearchTopFilters extends Vue {
     // fetch defined province/type filters + filter params from store
     @Get(GeosearchStore.getProvinces) provinces!: Array<any>;

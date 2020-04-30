@@ -16,13 +16,8 @@ import { Get, Sync, Call } from 'vuex-pathify';
 
 import { GeosearchStore } from './store';
 import { debounce } from 'debounce';
-import messages from './lang';
 
-@Component({
-    i18n: {
-        messages
-    }
-})
+@Component
 export default class GeosearchBar extends Vue {
     // fetch geosearch search value from store
     @Get(GeosearchStore.searchVal) searchVal!: string;

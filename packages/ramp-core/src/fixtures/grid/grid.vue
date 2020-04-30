@@ -58,14 +58,10 @@ import TableComponent from '@/fixtures/grid/table/table.vue';
 
 import { LayerStore, layer } from '@/store/modules/layer';
 import FeatureLayer from 'ramp-geoapi/dist/layer/FeatureLayer';
-import messages from './lang';
 
 @Component({
     components: {
         TableComponent
-    },
-    i18n: {
-        messages
     }
 })
 export default class Screen1 extends Vue {

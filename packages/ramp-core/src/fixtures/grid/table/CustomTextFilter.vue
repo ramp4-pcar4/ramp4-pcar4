@@ -12,13 +12,8 @@
 
 <script lang="ts">
 import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
-import messages from '../lang';
 
-@Component({
-    i18n: {
-        messages
-    }
-})
+@Component
 export default class CustomTextFilter extends Vue {
     beforeMount() {
         // Load previously stored value (if saved in table state manager)

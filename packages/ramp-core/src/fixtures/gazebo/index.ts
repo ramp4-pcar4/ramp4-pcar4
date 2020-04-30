@@ -63,13 +63,6 @@ class GazeboFixture extends FixtureInstance {
                     style: {
                         'flex-grow': '1',
                         'max-width': '500px'
-                    },
-                    i18n: {
-                        messages: {
-                            en: {
-                                spec: 'gazebo'
-                            }
-                        }
                     }
                 }
             },

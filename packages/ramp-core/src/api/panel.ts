@@ -1,7 +1,7 @@
 import { APIScope, PanelInstance } from './internal';
 import { PanelConfig, PanelConfigRoute, PanelMutation, PanelAction } from '@/store/modules/panel';
 
-import { CsvRows, I18nComponentOptions } from '@/lang';
+import { CsvRows, I18nComponentOptions, fold } from '@/lang';
 
 export class PanelAPI extends APIScope {
     /**
@@ -9,10 +9,11 @@ export class PanelAPI extends APIScope {
      * When the panel is registered, all its screens are added to the Vue as components right away.
      *
      * @param {PanelConfigPair} value a PanelConfig/id pair in the form of `{ id: string, config: PanelConfig }`
+     * @param {PanelRegistrationOptions} [options]
      * @returns {PanelInstance}
      * @memberof PanelAPI
      */
-    register(value: PanelConfigPair): PanelInstance;
+    register(value: PanelConfigPair, options?: PanelRegistrationOptions): PanelInstance;
     /**
      * Registers a set of provided panel objects and returns the resulting `PanelInstance` object set.
      * When the panel is registered, all its screens are added to the Vue as components right away.
@@ -26,10 +27,26 @@ export class PanelAPI extends APIScope {
     register(value: PanelConfigPair | PanelConfigSet, options?: PanelRegistrationOptions): PanelInstance | PanelInstanceSet {
         const panelConfigs = isPanelConfigPair(value) ? { [value.id]: value.config } : value;
 
-        // TODO: check if the panel with the same id already exist and stop if it does
+        if (options) {
+            // if CSV rows are supplied, fold them into a i18n component options object
+            const i18n: I18nComponentOptions = {
+                messages: Array.isArray(options.i18n) ? fold(options.i18n) : {},
+                ...(!Array.isArray(options.i18n) ? options.i18n : {})
+            };
 
+            const $i18n = this.$vApp.$i18n;
+
+            // merge `messages`, `dateTimeFormats` and  `numberFormats` into the global locale
+            // ignore `sharedMessages` prop as it makes no sense to use it here
+            Object.entries(i18n.messages || {}).forEach(value => $i18n.mergeLocaleMessage(...value));
+            Object.entries(i18n.dateTimeFormats || {}).forEach(value => $i18n.mergeDateTimeFormat(...value));
+            Object.entries(i18n.numberFormats || {}).forEach(value => $i18n.mergeNumberFormat(...value));
+        }
+
+        // TODO: check if the panel with the same id already exist and don't create a new one
+        // create panel instances
         const panels: PanelInstance[] = Object.entries(panelConfigs).reduce<PanelInstance[]>((map, [id, config]) => {
-            map.push(new PanelInstance(this.$iApi, id, config, options));
+            map.push(new PanelInstance(this.$iApi, id, config));
             return map;
         }, []);
 
