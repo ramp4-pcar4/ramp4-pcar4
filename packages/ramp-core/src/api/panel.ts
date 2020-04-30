@@ -1,7 +1,7 @@
 import { APIScope, PanelInstance } from './internal';
 import { PanelConfig, PanelConfigRoute, PanelMutation, PanelAction } from '@/store/modules/panel';
 
-import { CsvRows, I18nComponentOptions, fold } from '@/lang';
+import { I18nComponentOptions } from '@/lang';
 
 export class PanelAPI extends APIScope {
     /**
@@ -28,12 +28,7 @@ export class PanelAPI extends APIScope {
         const panelConfigs = isPanelConfigPair(value) ? { [value.id]: value.config } : value;
 
         if (options) {
-            // if CSV rows are supplied, fold them into a i18n component options object
-            const i18n: I18nComponentOptions = {
-                messages: Array.isArray(options.i18n) ? fold(options.i18n) : {},
-                ...(!Array.isArray(options.i18n) ? options.i18n : {})
-            };
-
+            const i18n = options.i18n || {};
             const $i18n = this.$vApp.$i18n;
 
             // merge `messages`, `dateTimeFormats` and  `numberFormats` into the global locale
@@ -293,7 +288,7 @@ export type PanelRegistrationOptions = {
      * Locale messages in the form of either i18n options object or un-parsed CSV rows.
      * These messages will be passed to any screen opened inside this panel.
      *
-     * @type {(I18nComponentOptions | CsvRows)}
+     * @type {(I18nComponentOptions)}
      */
-    i18n?: I18nComponentOptions | CsvRows;
+    i18n?: I18nComponentOptions;
 };

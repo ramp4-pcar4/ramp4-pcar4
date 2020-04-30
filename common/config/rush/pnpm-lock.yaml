@@ -8,6 +8,7 @@ dependencies:
   '@fullhuman/postcss-purgecss': 1.3.0
   '@rush-temp/ramp-core': 'file:projects/ramp-core.tgz_777e958c1436af419002454c0780d0b4'
   '@rush-temp/ramp-geoapi': 'file:projects/ramp-geoapi.tgz'
+  '@rush-temp/ramp-locale-loader': 'file:projects/ramp-locale-loader.tgz'
   '@rush-temp/ramp-sample-fixtures': 'file:projects/ramp-sample-fixtures.tgz'
   '@tailwindcss/custom-forms': 0.2.1_tailwindcss@1.1.4
   '@types/animejs': 3.1.0
@@ -36,6 +37,7 @@ dependencies:
   awesome-typescript-loader: 5.2.1_typescript@3.8.3
   axios: 0.19.2
   css-loader: 3.5.2_webpack@4.41.3
+  d3-dsv: 1.2.0
   debounce: 1.2.0
   deepmerge: 4.2.2
   dsv-loader: 2.0.0
@@ -45,6 +47,8 @@ dependencies:
   http-server: 0.12.1
   jest: 23.6.0
   js-sql-parser: 1.0.7
+  jsmin: 1.0.1
+  loader-utils: 2.0.0
   lodash: 4.17.15
   postcss-nested: 4.2.1
   prettier: 1.19.1
@@ -7895,6 +7899,13 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-OYu7XEzjkCQ3C5Ps3QIZsQfNpqoJyZZA99wd9aWd05NCtC5pWOkShK2mkL6HXQR6/Cy2lbNdPlZBpuQHXE63gA==
+  /jsmin/1.0.1:
+    dev: false
+    engines:
+      node: '>=0.1.93'
+    hasBin: true
+    resolution:
+      integrity: sha1-570NzWSWw79IYyNb9GGj2YqjuYw=
   /json-parse-better-errors/1.0.2:
     dev: false
     resolution:
@@ -8187,6 +8198,16 @@ packages:
       node: '>=4.0.0'
     resolution:
       integrity: sha512-qH0WSMBtn/oHuwjy/NucEgbx5dbxxnxup9s4PVXJUDHZBQY+s0NWA9rJf53RBnQZxfch7euUui7hpoAPvALZdA==
+  /loader-utils/2.0.0:
+    dependencies:
+      big.js: 5.2.2
+      emojis-list: 3.0.0
+      json5: 2.1.3
+    dev: false
+    engines:
+      node: '>=8.9.0'
+    resolution:
+      integrity: sha512-rP4F0h2RaWSvPEkD7BLDFQnvSf+nK+wr3ESUjNTyAGobqrijmW92zc+SO6d4p4B1wh7+B/Jg1mkQe5NYUEHtHQ==
   /locate-path/2.0.0:
     dependencies:
       p-locate: 2.0.0
@@ -13493,6 +13514,22 @@ packages:
       integrity: sha512-zYcrm0ny7ACGR9lKpTX6srNwF2INTZhs/qqbcBqE439RKJMWSZWBS3/O1KGA77ad2Gh83YyKKcx1WfGvQDHjUA==
       tarball: 'file:projects/ramp-geoapi.tgz'
     version: 0.0.0
+  'file:projects/ramp-locale-loader.tgz':
+    dependencies:
+      '@types/node': 13.11.1
+      d3-dsv: 1.2.0
+      jsmin: 1.0.1
+      loader-utils: 2.0.0
+      prettier: 1.19.1
+      ts-loader: 7.0.1_typescript@3.8.3
+      tslib: 1.10.0
+      typescript: 3.8.3
+    dev: false
+    name: '@rush-temp/ramp-locale-loader'
+    resolution:
+      integrity: sha512-JG6xBNS1rK/NpTbttRhi9eWWxjeJeF9T0zG+NmEBNCEmOIL10drhZJ29j8OCq+5DQWMTJwu9q6UfbItWtDn+DQ==
+      tarball: 'file:projects/ramp-locale-loader.tgz'
+    version: 0.0.0
   'file:projects/ramp-sample-fixtures.tgz':
     dependencies:
       '@types/jest': 24.9.1
@@ -13529,6 +13566,7 @@ specifiers:
   '@fullhuman/postcss-purgecss': ~1.3.0
   '@rush-temp/ramp-core': 'file:./projects/ramp-core.tgz'
   '@rush-temp/ramp-geoapi': 'file:./projects/ramp-geoapi.tgz'
+  '@rush-temp/ramp-locale-loader': 'file:./projects/ramp-locale-loader.tgz'
   '@rush-temp/ramp-sample-fixtures': 'file:./projects/ramp-sample-fixtures.tgz'
   '@tailwindcss/custom-forms': ^0.2.1
   '@types/animejs': ~3.1.0
@@ -13557,6 +13595,7 @@ specifiers:
   awesome-typescript-loader: 5.2.1
   axios: 0.19.2
   css-loader: ^3.5.2
+  d3-dsv: ^1.2.0
   debounce: ^1.2.0
   deepmerge: ~4.2.2
   dsv-loader: ~2.0.0
@@ -13566,6 +13605,8 @@ specifiers:
   http-server: ^0.12.0
   jest: ^23.6.0
   js-sql-parser: 1.0.7
+  jsmin: 1.0.1
+  loader-utils: ^2.0.0
   lodash: 4.17.15
   postcss-nested: ~4.2.1
   prettier: ^1.19.1

@@ -3,7 +3,7 @@ import { GeosearchAPI } from './api/geosearch';
 import { geosearch } from './store/index';
 import GeosearchAppbarButtonV from './appbar-button.vue';
 
-import rows from './lang/lang.csv';
+import messages from './lang/lang.csv';
 
 class GeosearchFixture extends GeosearchAPI {
     async added() {
@@ -21,7 +21,7 @@ class GeosearchFixture extends GeosearchAPI {
                     screens: { 'geosearch-component': GeosearchComponent }
                 }
             },
-            { i18n: rows }
+            { i18n: { messages } }
         );
 
         this.$iApi.panel.open('geosearch-panel');

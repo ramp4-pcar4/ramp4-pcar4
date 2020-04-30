@@ -96,24 +96,24 @@ Additionally, it's possible to provide locale messages directly to the screen co
 })
 ```
 
-The above requires hardcoding locale string into the component file. If using a CSV file of locale messages needs to be folded first before passing to the component constructor:
+The above requires hardcoding locale string into the component file. If using a CSV file, `ramp-locale-loader` will fold the CSV content into the `VueI18n.LocaleMessages` form automatically (the file name needs to end in `lang.csv`):
 
 ```ts
 // screen-component.vue
-import row from './lang.csv'
-import { fold } from '@/lang';
+import messages from './lang.csv'
 
 @Component({
     i18n: {
-        messages: fold(rows)
+        messages
     }
 })
 ```
 
-If all three method of passing locale messages are used, more specific `i18n` options take precedence:
+The above approach can be used in the core fixtures and in external fixtures compiled with webpack given that `ramp-locale-loader` package is used. For all other cases, it's responsibility of the fixture to format their locale messages appropriately as `VueI18n.LocaleMessages`.
+
+If two methods of passing locale messages are used, more specific `i18n` options take precedence:
 
 -   component file options
--   panel registration options
 -   common panel registration options
 
 If the string key cannot be found there, `i18n` falls back to the core strings, so it's possible to use any of the common core strings in any screen components without specifying any locale messages at all.

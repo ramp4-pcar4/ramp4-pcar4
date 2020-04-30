@@ -9,6 +9,7 @@
         "animejs",
         "basemap",
         "behaviour",
+        "cacheable",
         "contenteditable",
         "deepmerge",
         "devtool",
