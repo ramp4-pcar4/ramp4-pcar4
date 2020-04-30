@@ -32,7 +32,7 @@ module.exports = {
         alignSelf: ['responsive', 'container-query'],
         appearance: ['responsive', 'container-query'],
         backgroundAttachment: ['responsive', 'container-query'],
-        backgroundColor: ['responsive', 'container-query', 'hover', 'focus'],
+        backgroundColor: ['responsive', 'container-query', 'hover', 'focus', 'even'],
         backgroundPosition: ['responsive', 'container-query'],
         backgroundRepeat: ['responsive', 'container-query'],
         backgroundSize: ['responsive', 'container-query'],

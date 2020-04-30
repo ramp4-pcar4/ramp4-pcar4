@@ -106,19 +106,19 @@
                             customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
                         },
                         {
-                            id: 'HydrometricStations',
+                            id: 'WFSLayer',
                             layerType: 'ogcWfs',
-                            url: 'http://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/collections/hydrometric-stations/items?startindex=7500',
+                            url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=6000',
                             state: {
                                 visibility: true
                             },
-                            customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                            customRenderer: {}
                         },
                         {
                             id: 'Happy',
                             layerType: 'esriFeature',
                             fileType: 'geojson',
-                            url: 'http://fgpv.cloudapp.net/demo/__assets__/Sample%20Data/happy.json',
+                            url: 'http://fgpv-app.azureedge.net/demo/assets/sample_data/happy.json',
                             state: {
                                 visibility: true
                             },
@@ -150,7 +150,7 @@
                 rInstance.fixture.add('basemap');
                 rInstance.fixture.add('legend');
                 rInstance.fixture.add('grid');
-
+                rInstance.fixture.add('details');
                 rInstance.fixture.add('diligord', window.hostFixtures.diligord);
                 rInstance.fixture.add('mouruge', window.hostFixtures.mouruge);
             }
