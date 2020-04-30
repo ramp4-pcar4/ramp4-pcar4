@@ -30,9 +30,9 @@ module.exports = {
         // load csv files (used for translations)
         config.module
             .rule('dsv')
-            .test(/\.csv$/)
-            .use('dsv-loader')
-            .loader('dsv-loader');
+            .test(/lang\.csv$/)
+            .use('ramp-locale-loader')
+            .loader('ramp-locale-loader');
 
         // add an automatic callback to execute `initRAMP` global function if it's defined as soon at the RAMP library is added to the global scope
         // this only applies to the production build; dev build calls this function from `main-serve.ts`

@@ -1,7 +1,6 @@
 import { Component, VueConstructor, ComponentOptions } from 'vue';
 
 import { PanelInstance } from '@/api';
-import { I18nComponentOptions, CsvRows } from '@/lang';
 
 export class PanelState {
     /**

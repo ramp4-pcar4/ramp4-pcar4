@@ -11,7 +11,7 @@ import P2Screen3V from './p2-screen-3.vue';
 
 import { AsyncComponentEh } from '@/store/modules/panel';
 
-import rows from './lang/lang.csv';
+import messages from './lang/lang.csv';
 
 class GazeboFixture extends FixtureInstance {
     added(): void {
@@ -66,7 +66,7 @@ class GazeboFixture extends FixtureInstance {
                     }
                 }
             },
-            { i18n: rows }
+            { i18n: { messages } }
         );
 
         this.$iApi.panel
