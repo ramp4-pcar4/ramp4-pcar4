@@ -60,15 +60,11 @@ export default class DetailsItemV extends Vue {
         if (this.isFeature) {
             return this.payload;
         } else {
-            this.identifyResult = this.payload[this.layerIndex];
-            return this.identifyResult.items[this.itemIndex];
+            return this.payload[this.layerIndex].items[this.itemIndex];
         }
     }
 }
 
-export default interface DetailsItemV {
-    identifyResult: IdentifyResult;
-}
 </script>
 
 <style lang="scss"></style>

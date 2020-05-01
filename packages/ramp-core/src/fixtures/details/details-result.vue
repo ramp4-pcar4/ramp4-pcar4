@@ -51,10 +51,6 @@ export default class DetailsResultV extends Vue {
         return this.payload[this.layerIndex];
     }
 }
-
-export default interface DetailsResultV {
-    identifyResult: IdentifyResult;
-}
 </script>
 
 <style lang="scss"></style>
