@@ -251,8 +251,15 @@ export default class FileUtils extends BaseBase {
                 esriJson.forEach(gr => {
                     gr.geometry.spatialReference = fancySR;
                     gr.geometry.type = defRender.geometryType;
-                });
 
+                    // TEMPORARY hunt any complex datatypes and replace with a string
+                    // TODO figure out how to actually handle arrays or objects as attribute values
+                    Object.keys(gr.attributes).forEach(attName => {
+                        if (Array.isArray(gr.attributes[attName]) || typeof gr.attributes[attName] === 'object') {
+                            gr.attributes[attName] = '[Complex Value Removed]';
+                        }
+                    });
+                });
 
                 configPackage.source = <any>esriJson; // TODO see if this needs to become esriJson.features
                 configPackage.spatialReference = fancySR;
