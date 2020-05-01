@@ -53,19 +53,21 @@ export default class DetailsItemV extends Vue {
 
     identifyTypes: any = IdentifyResultFormat;
 
-    beforeMount() {
+    /**
+     * Returns the information for a single identify result, given the layer and item offsets.
+     */
+    get identifyItem() {
         if (this.isFeature) {
-            this.identifyItem = this.payload;
+            return this.payload;
         } else {
             this.identifyResult = this.payload[this.layerIndex];
-            this.identifyItem = this.identifyResult.items[this.itemIndex];
+            return this.identifyResult.items[this.itemIndex];
         }
     }
 }
 
 export default interface DetailsItemV {
     identifyResult: IdentifyResult;
-    identifyItem: IdentifyResult[] | IdentifyItem;
 }
 </script>
 

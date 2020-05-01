@@ -37,15 +37,18 @@ export default class DetailsResultV extends Vue {
 
     @Get(DetailsStore.payload) payload!: IdentifyResult[];
 
-    beforeMount() {
-        this.identifyResult = this.payload[this.layerIndex];
-    }
-
     /**
      * Switches the panel screen to display the data for a given result. Provides the currently selected layer index and the currently selected feature index as props.
      */
     openResult(itemIndex: number) {
         this.panel.show({ screen: 'details-screen-item', props: { layerIndex: this.layerIndex, itemIndex: itemIndex } });
+    }
+
+    /**
+     * Returns the identify information for the layer specified by layerIndex.
+     */
+    get identifyResult() {
+        return this.payload[this.layerIndex];
     }
 }
 

@@ -34,7 +34,3 @@ export class DetailsAPI extends FixtureInstance {
         }
     }
 }
-
-export interface DetailsAPI {
-    openDetails(payload: IdentifyResult[]): void;
-}
