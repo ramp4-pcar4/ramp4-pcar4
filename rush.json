@@ -369,6 +369,10 @@
         {
             "packageName": "ramp-sample-fixtures",
             "projectFolder": "packages/ramp-sample-fixtures"
+        },
+        {
+            "packageName": "ramp-locale-loader",
+            "projectFolder": "packages/ramp-locale-loader"
         }
     ]
 }

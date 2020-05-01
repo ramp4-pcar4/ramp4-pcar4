@@ -3,7 +3,7 @@ import { grid } from './store/index';
 
 import GridV from './grid.vue';
 
-import rows from './lang/lang.csv';
+import messages from './lang/lang.csv';
 
 class GridFixture extends GridAPI {
     async added() {
@@ -18,7 +18,7 @@ class GridFixture extends GridAPI {
                     }
                 }
             },
-            { i18n: rows }
+            { i18n: { messages } }
         );
 
         this.$vApp.$store.registerModule('grid', grid());
