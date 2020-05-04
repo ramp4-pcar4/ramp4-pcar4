@@ -277,7 +277,7 @@ The result object is on the fancy side, as there are a few levels identify acts 
 Example call
 
 ```js
-var opts = { geometry: myPoint, map: myMap, tolerance: 3 };
+var opts = { geometry: myPoint, tolerance: 3 };
 var result = myLayer.identify(opts);
 result.done.then(() => {
     result.results.forEach(r => processResults(r));

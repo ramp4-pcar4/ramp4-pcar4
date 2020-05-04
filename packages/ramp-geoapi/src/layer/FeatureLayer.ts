@@ -200,12 +200,13 @@ export class FeatureLayer extends AttribLayer {
     identify(options: IdentifyParameters): IdentifyResultSet {
 
         const myFC: FeatureFC = <FeatureFC>this.getFC(undefined); // undefined will get the first/only
+        const map = options.unboundMap || this.hostMap;
 
         // early kickout check. not loaded/error; not visible; not queryable; off scale
         if (!this.isValidState() ||
             !myFC.getVisibility() ||
             // !this.isQueryable() || // TODO implement when we have this flag created
-            myFC.scaleSet.isOffScale(options.map.getScale()).offScale) {
+            myFC.scaleSet.isOffScale(map.getScale()).offScale) {
 
             // return empty result.
             return super.identify(options);
@@ -225,15 +226,16 @@ export class FeatureLayer extends AttribLayer {
 
         // run a spatial query
         // const qry: esri.Query = new this.esriBundle.Query();
+        // TODO investigate if we need the sourceSR param set here
         const qOpts: QueryFeaturesParams = {
             outFields: '*', // TODO investigate this further, possibly add in layer defined outfields
             includeGeometry: false,
-            map: options.map
+            map
         };
 
         if (myFC.geomType !== 'polygon' && options.geometry.type === GeometryType.POINT) {
             // if our layer is not polygon, and our identify input is a point, make a point buffer
-            qOpts.filterGeometry = this.gapi.utils.query.makeClickBuffer(<Point>options.geometry, options.map, options.tolerance);
+            qOpts.filterGeometry = this.gapi.utils.query.makeClickBuffer(<Point>options.geometry, map, options.tolerance);
         } else {
             qOpts.filterGeometry = options.geometry;
         }
@@ -259,9 +261,7 @@ export class FeatureLayer extends AttribLayer {
         });
 
         return result;
-
     }
-
 }
 
 export default FeatureLayer;
