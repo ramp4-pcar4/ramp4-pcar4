@@ -10,7 +10,7 @@
             <slot name="controls"></slot>
         </header>
 
-        <div v-if="content" class="p-8 flex-grow default-focus-style" v-focus-item>
+        <div v-if="content" class="p-8 flex-grow default-focus-style overflow-y-auto" v-focus-item>
             <slot name="content"></slot>
         </div>
     </div>

@@ -17,8 +17,7 @@ class DetailsFixture extends DetailsAPI {
                     'details-screen-item': DetailsItemV
                 },
                 style: {
-                    width: '350px',
-                    'overflow-y': 'auto'
+                    width: '350px'
                 }
             }
         });

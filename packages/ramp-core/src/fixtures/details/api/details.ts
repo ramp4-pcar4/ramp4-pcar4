@@ -12,9 +12,13 @@ export class DetailsAPI extends FixtureInstance {
         // Save the provided identify result in the store.
         this.$vApp.$store.set('details/setPayload!', payload);
 
+        let panel = this.$iApi.panel.get('details-panel');
+
         // Open the details panel.
-        if (!this.$iApi.panel.get('details-panel').isOpen) {
+        if (!panel.isOpen) {
             this.$iApi.panel.open({ id: 'details-panel', screen: 'details-screen-layers' });
+        } else {
+            panel.show('details-screen-layers');
         }
     }
 
@@ -33,8 +37,4 @@ export class DetailsAPI extends FixtureInstance {
             this.$iApi.panel.open({ id: 'details-panel', screen: 'details-screen-item', props: { isFeature: true } });
         }
     }
-}
-
-export interface DetailsAPI {
-    openDetails(payload: IdentifyResult[]): void;
 }
