@@ -2,6 +2,7 @@ import Vue, { VueConstructor } from 'vue';
 import { RampMapConfig, RampMap } from 'ramp-geoapi';
 import { Store } from 'vuex';
 import { i18n } from '@/lang';
+import screenfull from 'screenfull';
 
 import App from '@/app.vue';
 import { createStore, RootState } from '@/store';
@@ -182,6 +183,18 @@ export class InstanceAPI {
      */
     get language(): string {
         return this.$vApp.$i18n.locale;
+    }
+
+    /**
+     * Toggles fullscreen for the app.
+     *
+     * @memberof InstanceAPI
+     */
+    toggleFullscreen(): void {
+        if (screenfull.isEnabled) {
+            // TODO: decide if we should add an event. theres already a `screefull.onchange`
+            screenfull.toggle(this.$vApp.$root.$el);
+        }
     }
 }
 
