@@ -25,13 +25,11 @@ import { Get, Call } from 'vuex-pathify';
 import { GlobalEvents } from '@/api';
 
 import FullscreenNavV from './buttons/fullscreen-nav.vue';
-import HelpNavV from './buttons/help-nav.vue';
 import HomeNavV from './buttons/home-nav.vue';
 import ZoomNavV from './buttons/zoom-nav.vue';
 import DividerNavV from './buttons/divider-nav.vue';
 
 Vue.component('fullscreen-nav-button', FullscreenNavV);
-Vue.component('help-nav-button', HelpNavV);
 Vue.component('home-nav-button', HomeNavV);
 
 @Component({

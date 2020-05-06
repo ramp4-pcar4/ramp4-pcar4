@@ -136,7 +136,8 @@
                                 'basemap',
                                 'divider'
                             ]
-                        }
+                        },
+                        mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] }
                     }
                 });
 
@@ -151,6 +152,8 @@
                 rInstance.fixture.add('legend');
                 rInstance.fixture.add('grid');
                 rInstance.fixture.add('details');
+                rInstance.fixture.add('help');
+
                 rInstance.fixture.add('diligord', window.hostFixtures.diligord);
                 rInstance.fixture.add('mouruge', window.hostFixtures.mouruge);
             }

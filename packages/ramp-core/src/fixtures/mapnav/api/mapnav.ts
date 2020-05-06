@@ -11,8 +11,7 @@ export class MapnavAPI extends FixtureInstance {
      * @memberof MapnavFixture
      */
     get config(): MapnavFixtureConfig | undefined {
-        return { items: ['fullscreen', 'help', 'home', 'basemap'] };
-        //return super.config;
+        return super.config;
     }
 
     /**
