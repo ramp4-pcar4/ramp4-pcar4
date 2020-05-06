@@ -35,6 +35,8 @@ export class InstanceAPI {
      */
     readonly $vApp: Vue;
 
+    private _isFullscreen: boolean;
+
     constructor(element: HTMLElement, config?: RampMapConfig) {
         this._eventBus = new Vue();
 
@@ -46,6 +48,15 @@ export class InstanceAPI {
         // TODO: decide whether to move to src/main.ts:createApp
         // TODO: store a reference to the even bus in the global store [?]
         this.$vApp.$store.set(ConfigStore.newConfig, config || undefined);
+
+        this._isFullscreen = screenfull.isEnabled && screenfull.isFullscreen && screenfull.element === this.$vApp.$root.$el;
+        if (screenfull.isEnabled) {
+            // update fullscreen flag as needed (getters don't work right with screenfull)
+            screenfull.onchange(() => {
+                // screnfull decrees a second enabled check
+                this._isFullscreen = screenfull.isEnabled && screenfull.isFullscreen && screenfull.element === this.$vApp.$root.$el;
+            });
+        }
     }
 
     // TODO: we probably need to expose other Vue global functions here like `set`, `use`, etc.
@@ -195,6 +206,17 @@ export class InstanceAPI {
             // TODO: decide if we should add an event. theres already a `screefull.onchange`
             screenfull.toggle(this.$vApp.$root.$el);
         }
+    }
+
+    /**
+     * Whether the app is fullscreen.
+     *
+     * @readonly
+     * @type boolean
+     * @memberof InstanceAPI
+     */
+    get isFullscreen(): boolean {
+        return this._isFullscreen;
     }
 }
 
