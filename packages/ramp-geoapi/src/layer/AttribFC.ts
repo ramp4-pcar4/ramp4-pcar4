@@ -2,7 +2,8 @@
 // TODO add proper comments
 
 import esri = __esri;
-import { InfoBundle, AttributeSet, GetGraphicParams, GetGraphicResult, GetGraphicServiceDetails, QueryFeaturesParams, QueryFeaturesArcServerParams } from '../gapiTypes';
+import { InfoBundle, AttributeSet, GetGraphicParams, GetGraphicResult, GetGraphicServiceDetails, QueryFeaturesParams,
+    QueryFeaturesArcServerParams, RampLayerFieldMetadataConfig, FieldDefinition, TabularAttributeSet } from '../gapiTypes';
 import BaseLayer from './BaseLayer';
 import BaseFC from './BaseFC';
 import { AttributeLoaderBase, AttributeLoaderDetails, ArcServerAttributeLoader } from '../util/AttributeLoader';
@@ -17,6 +18,7 @@ export default class AttribFC extends BaseFC {
     geomType: string;
     oidField: string;
     fields: Array<esri.Field>;
+    fieldList: string; // list of field names, useful for numerous esri api calls
     nameField: string;
     extent: esri.Extent;
     legend: any; // TODO figure out what this is. i think it's our custom class. make a definition somewhere
@@ -34,6 +36,7 @@ export default class AttribFC extends BaseFC {
         this.oidField = '';
         this.nameField = '';
         this.serviceUrl = '';
+        this.fieldList = '';
         this.filter = new Filter();
     }
 
@@ -92,16 +95,6 @@ export default class AttribFC extends BaseFC {
                                 (() => { console.error(`Encountered service with no OID defined: ${this.serviceUrl}`); return ''; })();
                         }
 
-                        // TODO revist. see https://github.com/james-rae/pocGAPI/issues/14
-                        // ensure our attribute list contains the object id
-                        /*
-                        if (attribs !== '*') {
-                            if (attribs.split(',').indexOf(layerData.oidField) === -1) {
-                                attribs += (',' + layerData.oidField);
-                            }
-                        }
-                        */
-
                         // TODO add in renderer and legend magic
                         // add renderer and legend
                         const sourceRenderer = (options && options.customRenderer && options.customRenderer.type) ?
@@ -121,11 +114,12 @@ export default class AttribFC extends BaseFC {
                             supportsLimit: (sData.currentVersion || 1) >= 10.1,
                             serviceUrl: this.serviceUrl,
                             oidField: this.oidField,
-                            attribs: '*' // TODO re-align with our attribs decision above
+                            attribs: '*' // NOTE we set to * here for generic case. loader may override later once config settings are applied
                         };
                         this.attLoader = new ArcServerAttributeLoader(this.infoBundle(), loadData);
                     } else {
                         this.dataFormat = DataFormat.ESRI_RASTER;
+                        this.fields = [];
                     }
 
                     // tell caller we are donethanks
@@ -141,6 +135,56 @@ export default class AttribFC extends BaseFC {
                 console.warn('Service metadata load error : ' + error.EsriErrorDetails || error);
                 reject(error);
             });
+        });
+    }
+
+    /**
+     * Will take field config metadata and incorporate it into this FC.
+     * Should be used after loading process has populated .fields property
+     *
+     * @param configMetadata data from the config object. can be undefined
+     */
+    processFieldMetadata(configMetadata: RampLayerFieldMetadataConfig = undefined): void {
+        // TODO ensure we do not have to worry about case mismatch of field names.
+
+        // check for no enhancements requested
+        if (this.isUndefined(configMetadata)) {
+            this.fieldList = '*';
+            return;
+        }
+
+        // if exlusive fields, only respect fields in the field info array
+        if (configMetadata.exclusiveFields) {
+            // ensure object id field is included
+            if (!configMetadata.fieldInfo.find(f => f.data === this.oidField)) {
+                configMetadata.fieldInfo.push({ data: this.oidField });
+            }
+
+            // TODO do we also need to ensure fields required by other things are auto-included?
+            //      e.g. hovertip
+            //           ref fields for class breaks or unique value renderers
+            //           name field
+            //      alternately, we don't, and insist config author properly defines their fields
+            //      might also want to consider an additional attribute on fields, something like
+            //      "coreHidden" that indicates the field has to exist, but should not be shown
+            //      on things like details panes or grids
+
+            this.fieldList = configMetadata.fieldInfo.map(f => f.data).join(',');
+            this.fields = this.fields.filter(origField => {
+                return configMetadata.fieldInfo.find(fInfo => fInfo.data === origField.name);
+            });
+        } else {
+            this.fieldList = '*';
+        }
+
+        // if any aliases overrides, apply them
+        configMetadata.fieldInfo.forEach(cf => {
+            if (cf.alias) {
+                const ff = this.fields.find(fff => fff.name === cf.data);
+                if (ff) {
+                    ff.alias = cf.alias;
+                }
+            }
         });
     }
 
@@ -195,6 +239,23 @@ export default class AttribFC extends BaseFC {
         });
     }
 
+    /**
+     * Returns an array of field definitions. Raster layers will have empty arrays.
+     *
+     * @returns {Array} list of field definitions
+     */
+    getFields (): Array<FieldDefinition> {
+        // extra fancy so we dont have to expose the ESRI field class
+        return this.fields.map(f => {
+            return {
+                name: f.name,
+                alias: f.alias,
+                type: f.type,
+                length: f.length
+            };
+        });
+    }
+
     // formerly known as getFormattedAttributes
     // TODO making this work for now same as old way. do we want to think about different ways?
     //      e.g. have consumer parse the raw data and format it?
@@ -204,7 +265,7 @@ export default class AttribFC extends BaseFC {
      * Retrieves attributes from a layer for a specified feature index
      * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
      */
-    getTabularAttributes (): Promise<any> {
+    getTabularAttributes (): Promise<TabularAttributeSet> {
         // TODO rethink how this works. is it better to read from attributes every time?
         if (this.attLoader.tabularAttributesCache) {
             return this.attLoader.tabularAttributesCache;
@@ -229,7 +290,7 @@ export default class AttribFC extends BaseFC {
                         // filter out fields where there is no corresponding attribute data
                         attSet.features[0].attributes.hasOwnProperty(field.name))
                     .map(field => ({
-                        data: field.name,
+                        data: field.name, // TODO calling this data is really unintuitive. consider global rename to fieldName, name, attribName, etc.
                         title: field.alias || field.name
                     }));
 
@@ -238,7 +299,7 @@ export default class AttribFC extends BaseFC {
                 const rows = attSet.features.map(feature => {
                     const att = feature.attributes;
                     att.rvInteractive = '';
-                    att.rvSymbol = undefined; // TODO re-add this.gapi.symbology.getGraphicIcon(att, this.renderer);
+                    att.rvSymbol = this.renderer.getGraphicIcon(feature.attributes);
                     return att;
                 });
 
@@ -263,10 +324,10 @@ export default class AttribFC extends BaseFC {
                 return {
                     columns,
                     rows,
-                    fields: this.fields, // keep fields for reference ...
+                    fields: this.getFields(), // keep fields for reference ...
                     oidField: this.oidField, // ... keep a reference to id field ...
                     oidIndex: attSet.oidIndex, // TODO determine if we need this anymore. who uses it? // ... and keep id mapping array
-                    renderer: this.renderer
+                    renderer: this.renderer // TODO this should probably not be here. we should have a better way to derive data that the renderer could provide
                 };
             })
             .catch(e => {
@@ -295,16 +356,17 @@ export default class AttribFC extends BaseFC {
      * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .layerFC for convenience
      */
     getGraphic (objectId: number, opts: GetGraphicParams): Promise<GetGraphicResult> {
-        // TODO RAMP2 version of this included the FC object. we want to keep those hidden, so
+        // NOTE RAMP2 version of this included the FC object. we want to keep those hidden, so
         //      for now will just return the graphic structure and if we need more stuff we
         //      will figure out a proper way to do that.
-        // TODO we're just returning raw data, so will not type the promise result as esri.Graphic
-        //      seeing as we wont have all the decorations needed to satisfy the type
 
         // see https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2190 for reasons why
         // things are done the way they are in this function.
 
         // NOTE this is for server-based layers. local layers with features should override this for gains.
+
+        // TODO toy with the idea of changing GetGraphicResult to RAMP.API Graphic type.
+        //      potential reasons not to: that type has additional properties like style.
 
         const resultFeat: any = {};
         const map = opts.unboundMap || this.parentLayer.hostMap;
@@ -379,7 +441,7 @@ export default class AttribFC extends BaseFC {
                 oid: objectId,
                 serviceUrl: this.serviceUrl,
                 includeGeometry: needWebGeom,
-                attribs: '*' // TODO likely want to align with outfields from the config. might want to start storing outfields/adjusted-outfields in the FC
+                attribs: this.fieldList
             };
 
             if (needWebGeom) {
@@ -417,13 +479,18 @@ export default class AttribFC extends BaseFC {
         }
     }
 
+    /**
+     * Gets the icon for a specific feature, as an SVG string.
+     *
+     * @param {Integer} objectId the object id of the feature to find
+     * @returns {Promise} resolves with an svg string encoding of the icon
+     */
     getIcon (objectId: number): Promise<string> {
         return this.getGraphic(objectId, { getAttribs: true }).then(g => {
             return this.gapi.utils.symbology.getGraphicIcon(g.attributes, this.renderer);
         });
     }
 
-    // TODO make override in geojson layer
     // TODO this is more of a utility function. leaving it public as it might be useful, revist when
     //      the app is mature.
     queryOIDs(options: QueryFeaturesParams): Promise<Array<number>> {
@@ -450,9 +517,15 @@ export default class AttribFC extends BaseFC {
     //      may want to change name of the type to something more general
     /**
      * Requests a set of features for this layer that match the criteria of the options
+     * - filterGeometry : a RAMP API geometry to restrict results to
+     * - filterSql : a where clause to apply against feature attributes
+     * - includeGeometry : a boolean to indicate if result features should include the geometry
+     * - outFields : a string of comma separated field names. will restrict fields included in the output
+     * - sourceSR : a spatial reference indicating what the source layer is encoded in. providing can assist in result geometry being of a proper resolution
+     * - map : a Ramp map. required if geometry was requested and the layer is not on a map
      *
      * @param options {Object} options to provide filters and helpful information.
-     * @returns {Array} set of features that satisfy the criteria
+     * @returns {Promise} resolves with an array of features that satisfy the criteria
      */
     queryFeatures(options: QueryFeaturesParams): Promise<Array<GetGraphicResult>> {
         // NOTE this assumes a server based layer
@@ -463,6 +536,14 @@ export default class AttribFC extends BaseFC {
         //      layers record count, and this.attLoader.isLoaded is false,
         //      we could trigger a getattributes call to bulk download them upfront.
         //      would be more efficient (way less web calls).
+
+        if (this.isUndefined(options.map)) {
+            options.map = this.parentLayer.hostMap;
+        }
+
+        if (!options.outFields) {
+            options.outFields = this.fieldList;
+        }
 
         return this.queryOIDs(options).then(oids => {
             // run result ids through our quick cache pipeline
@@ -518,6 +599,13 @@ export default class AttribFC extends BaseFC {
         return cache;
     }
 
+    /**
+     * Applies an SQL filter. Will overwrite any existing filter for the given key.
+     * Use `1=2` for a "hide all" where clause.
+     *
+     * @param {String} filterKey the filter key / named filter to apply the SQL to
+     * @param {String} whereClause the WHERE clause of the filter
+     */
     setSqlFilter(filterKey: string, whereClause: string): void {
         // TODO maybe implement a check first? e.g. if we are setting to '' but that key is already '',
         //      then just exit, no need to trigger updates?
@@ -528,6 +616,12 @@ export default class AttribFC extends BaseFC {
         });
     }
 
+    /**
+     * Returns the value of a named SQL filter.
+     *
+     * @param {String} filterKey the filter key / named filter to view
+     * @returns {String} the value of the where clause for the filter. Empty string if not defined.
+     */
     getSqlFilter(filterKey: string): string {
         return this.filter.getSql(filterKey);
     }

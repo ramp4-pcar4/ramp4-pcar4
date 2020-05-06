@@ -42,16 +42,6 @@ export default class GeoJsonFC extends AttribFC {
         this.nameField = l.displayField;
         this.oidField = l.objectIdField;
 
-        // TODO revist. see https://github.com/james-rae/pocGAPI/issues/14
-        // ensure our attribute list contains the object id
-        /*
-        if (attribs !== '*') {
-            if (attribs.split(',').indexOf(layerData.oidField) === -1) {
-                attribs += (',' + layerData.oidField);
-            }
-        }
-        */
-
         // if there was a custom renderer in the config, it would have been applied when the
         // layer was constructed. no need to check here.
         this.renderer = this.gapi.utils.symbology.makeRenderer(l.renderer, this.fields);
@@ -65,8 +55,7 @@ export default class GeoJsonFC extends AttribFC {
         const loadData: AttributeLoaderDetails = {
             sourceGraphics: l.source,
             oidField: this.oidField,
-            attribs: '*' // TODO re-align with our attribs decision above
-
+            attribs: '*' // * as default. layer loader may update after processing config overrides
         };
         this.attLoader = new FileLayerAttributeLoader(this.infoBundle(), loadData);
 
@@ -110,9 +99,15 @@ export default class GeoJsonFC extends AttribFC {
     //      may want to change name of the type to something more general
     /**
      * Requests a set of features for this layer that match the criteria of the options
+     * - filterGeometry : a RAMP API geometry to restrict results to
+     * - filterSql : a where clause to apply against feature attributes
+     * - includeGeometry : a boolean to indicate if result features should include the geometry
+     * - outFields : a string of comma separated field names. will restrict fields included in the output
+     * - sourceSR : a spatial reference indicating what the source layer is encoded in. providing can assist in result geometry being of a proper resolution
+     * - map : a Ramp map. required if geometry was requested and the layer is not on a map
      *
      * @param options {Object} options to provide filters and helpful information.
-     * @returns {Array} set of features that satisfy the criteria
+     * @returns {Promise} resolves with an array of features that satisfy the criteria
      */
     queryFeatures(options: QueryFeaturesParams): Promise<Array<GetGraphicResult>> {
 
