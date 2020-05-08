@@ -717,4 +717,16 @@ export default class BaseLayer extends BaseBase {
         this.stubError();
     }
 
+    /**
+     * Add a WMS layer parameter, maybe even refresh the layer
+     *
+     * @function setCustomParameter
+     * @param {String} key name of the key to be created or updated
+     * @param {String} value value of the key
+     * @param {Boolean} forceRefresh show the new fancy version of the layer or not
+     */
+    setCustomParameter(key: string, value: string, forceRefresh: boolean = true): void {
+        this.stubError();
+    }
+
 }

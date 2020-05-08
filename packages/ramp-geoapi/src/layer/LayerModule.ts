@@ -11,6 +11,7 @@ import GeoJsonLayer from './GeoJsonLayer';
 import MapImageLayer from './MapImageLayer';
 import WmsLayer from './WmsLayer';
 import TreeNode from './TreeNode';
+import { ImageryLayer } from './ImageryLayer';
 // import Map from './Map';
 
 export default class LayerModule extends BaseBase {
@@ -41,6 +42,10 @@ export default class LayerModule extends BaseBase {
 
     createWmsLayer(config: RampLayerConfig, reloadTree?: TreeNode): WmsLayer {
         return new WmsLayer(this.infoBundle(), config, reloadTree);
+    }
+
+    createImageryLayer(config: RampLayerConfig, reloadTree?: TreeNode): ImageryLayer {
+        return new ImageryLayer(this.infoBundle(), config, reloadTree);
     }
 
     createHighlightLayer(options: any): HighlightLayer {
