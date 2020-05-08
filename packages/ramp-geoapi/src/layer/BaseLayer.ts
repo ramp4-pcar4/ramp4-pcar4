@@ -2,7 +2,8 @@
 // TODO add proper comments
 
 import esri = __esri;
-import { InfoBundle, LayerState, RampLayerConfig, LegendSymbology, IdentifyParameters, IdentifyResultSet, FilterEventParam, IdentifyResult } from '../gapiTypes';
+import { InfoBundle, LayerState, RampLayerConfig, LegendSymbology, IdentifyParameters, IdentifyResultSet,
+    FilterEventParam, AttributeSet, FieldDefinition, TabularAttributeSet, GetGraphicResult, GetGraphicParams } from '../gapiTypes';
 import BaseBase from '../BaseBase';
 import { TypedEvent } from '../Event';
 import BaseFC from './BaseFC';
@@ -11,6 +12,7 @@ import NaughtyPromise from '../util/NaughtyPromise';
 import ScaleSet from './ScaleSet';
 import { LayerType, DataFormat } from '../api/apiDefs';
 import RampMap from '../map/RampMap';
+import Extent from '../api/geometry/Extent';
 
 export default class BaseLayer extends BaseBase {
 
@@ -547,6 +549,172 @@ export default class BaseLayer extends BaseBase {
             done: Promise.resolve(),
             parentUid: this.uid
         };
+    }
+
+    // ----------- STUB METHODS -----------
+    // these are here to provide a consistant method interface when calling methods are
+    // dealing with vars typed as BaseLayer. Layer classes that actually use these
+    // methods will override the stubs.
+
+    protected stubError(): void {
+        throw new Error(`Attempted to use a method not valid for ${this.layerType}`);
+    }
+
+    /**
+     * Invokes the process to get the full set of attribute values for the given sublayer.
+     * Repeat calls will re-use the downloaded values unless the values have been explicitly cleared.
+     *
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to get attributes for. Uses first/only if omitted.
+     * @returns {Promise} resolves with set of attribute values
+     */
+    getAttributes (layerIdx: number | string = undefined): Promise<AttributeSet> {
+        this.stubError();
+        return Promise.resolve(undefined);
+    }
+
+    /**
+     * Returns an array of field definitions about the given sublayer's fields. Raster layers will have empty arrays.
+     *
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to get fields for. Uses first/only if omitted.
+     * @returns {Array} list of field definitions
+     */
+    getFields (layerIdx: number | string = undefined): Array<FieldDefinition> {
+        this.stubError();
+        return [];
+    }
+
+    /**
+     * Returns the geometry type of the given sublayer.
+     *
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to get the geometry type of. Uses first/only if omitted.
+     * @returns {Array} list of field definitions
+     */
+    getGeomType (layerIdx: number | string = undefined): string {
+        this.stubError();
+        return '';
+    }
+
+    /**
+     * Requests that an attribute load request be aborted. Useful when encountering a massive dataset or a runaway process.
+     *
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to stop loading attributes for. Uses first/only if omitted.
+     */
+    abortAttributeLoad (layerIdx: number | string = undefined): void {
+        this.stubError();
+    }
+
+    /**
+     * Requests that any downloaded attribute sets be removed from memory. The next getAttributes request will pull from the server again.
+     *
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to detroy attributes for. Uses first/only if omitted.
+     */
+    destroyAttributes (layerIdx: number | string = undefined): void {
+        this.stubError();
+    }
+
+    // formerly known as getFormattedAttributes
+    /**
+     * Invokes the process to get the full set of attribute values for the given sublayer,
+     * formatted in a tabular format. Additional data properties are also included.
+     * Repeat calls will re-use the downloaded values unless the values have been explicitly cleared.
+     *
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to get tabular attributes for. Uses first/only if omitted.
+     * @returns {Promise} resolves with set of tabular attribute values
+     */
+    getTabularAttributes (layerIdx: number | string = undefined): Promise<TabularAttributeSet> {
+        this.stubError();
+        return Promise.resolve(undefined);
+    }
+
+    /**
+     * Get the feature count for the given sublayer.
+     *
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to get the feature count for. Uses first/only if omitted.
+     * @returns {Integer} number of features in the sublayer
+     */
+    getFeatureCount (layerIdx: number | string = undefined): number {
+        this.stubError();
+        return 0;
+    }
+
+    // TODO think about this name. using getGraphic for consistency.
+    /**
+     * Gets information on a graphic in the most efficient way possible. Options object properties:
+     * - getGeom ; a boolean to indicate if the result should include graphic geometry
+     * - getAttribs ; a boolean to indicate if the result should include graphic attributes
+     * - unboundMap ; an optional RampMap reference. Only required if geometry was requested and the layer has not been added to a map.
+     *
+     * @param {Integer} objectId the object id of the graphic to find
+     * @param {Object} options options object for the request, see above
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to find the graphic in. Uses first/only if omitted.
+     * @returns {Promise} resolves with a fake graphic containing the requested information
+     */
+    getGraphic (objectId: number, options: GetGraphicParams, layerIdx: number | string = undefined): Promise<GetGraphicResult> {
+        this.stubError();
+        return Promise.resolve(undefined);
+    }
+
+    /**
+     * Gets the icon for a specific feature, as an SVG string.
+     *
+     * @param {Integer} objectId the object id of the feature to find
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to find the icon in. Uses first/only if omitted.
+     * @returns {Promise} resolves with an svg string encoding of the icon
+     */
+    getIcon (objectId: number, layerIdx: number | string = undefined): Promise<string> {
+        this.stubError();
+        return Promise.resolve(undefined);
+    }
+
+    /**
+     * Applies an SQL filter to the layer. Will overwrite any existing filter for the given key.
+     * Use `1=2` for a "hide all" where clause.
+     *
+     * @param {String} filterKey the filter key / named filter to apply the SQL to
+     * @param {String} whereClause the WHERE clause of the filter
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to apply the filter to. Uses first/only if omitted.
+     */
+    setSqlFilter(filterKey: string, whereClause: string, layerIdx: number | string = undefined): void {
+        this.stubError();
+    }
+
+    /**
+     * Returns the value of a named SQL filter for a given sublayer.
+     *
+     * @param {String} filterKey the filter key / named filter to view
+     * @param {Integer | String} [layerIdx] targets a layer index or uid that has the filter. Uses first/only if omitted.
+     * @returns {String} the value of the where clause for the filter. Empty string if not defined.
+     */
+    getSqlFilter(filterKey: string, layerIdx: number | string = undefined): string {
+        this.stubError();
+        return '';
+    }
+
+    // TODO this makes for a fairly gnarly param. i.e. to target a sublayer with no extras, gotta call
+    //      mylayer.getFilterOIDs(undefined, undefined, myUid)
+    //      changing the two params to an options object somewhat helps, though that would also be optional param.
+    /**
+     * Gets array of object ids that currently pass any filters for the given sublayer
+     *
+     * @param {Array} [exclusions] list of any filters keys to exclude from the result. omission includes all filters
+     * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to inspect. Uses first/only if omitted.
+     * @returns {Promise} resolves with array of object ids that pass the filter. if no filters are active, resolves with undefined.
+     */
+    getFilterOIDs(exclusions: Array<string> = [], extent: Extent = undefined, layerIdx: number | string = undefined): Promise<Array<number>> {
+        this.stubError();
+        return Promise.resolve(undefined);
+    }
+
+    /**
+     * Applies the current filter settings to the physical map layer.
+     *
+     * @function applySqlFilter
+     * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all keys
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to update. Uses first/only if omitted.
+     */
+    applySqlFilter (exclusions: Array<string> = [], layerIdx: number | string = undefined): void {
+        this.stubError();
     }
 
 }
