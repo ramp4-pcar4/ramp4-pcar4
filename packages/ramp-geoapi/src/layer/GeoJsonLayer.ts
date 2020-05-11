@@ -163,30 +163,18 @@ export class GeoJsonLayer extends AttribLayer {
         // TODO implement symbology load
         // const pLS = aFC.loadSymbology();
 
-        // update asynch data
-        // TODO do all this lol
         // NOTE: call extract, not load, as there is no service involved here
         // TODO figure out what do to with custom renderer here
         gjFC.extractLayerMetadata();
+        // NOTE name field overrides from config have already been applied by this point
         if (this.origRampConfig.tooltipField) {
             gjFC.tooltipField = fieldValidator(gjFC.fields, this.origRampConfig.tooltipField);
         } else {
             gjFC.tooltipField = gjFC.nameField;
         }
 
-        /*
-
-        // TODO add back in after we deicde https://github.com/james-rae/pocGAPI/issues/14
-
-        // check the config for any custom field aliases, and add the alias as a property if it exists
-        if (this.origRampConfig.fieldMetadata) {
-            ld.fields.forEach(field => {
-                const clientAlias = this.config.source.fieldMetadata.find(f => f.data === field.name);
-                field.clientAlias = clientAlias ? clientAlias.alias : undefined;
-            });
-        }
-
-        */
+        gjFC.processFieldMetadata(this.origRampConfig.fieldMetadata);
+        gjFC.attLoader.updateFieldList(gjFC.fieldList);
 
         gjFC.featureCount = this._innerLayer.source.length;
 
@@ -240,7 +228,7 @@ export class GeoJsonLayer extends AttribLayer {
 
         // run a spatial query
         const qOpts: QueryFeaturesParams = {
-            outFields: '*', // TODO investigate this further, possibly add in layer defined outfields
+            outFields: myFC.fieldList,
             includeGeometry: false,
             map
         };

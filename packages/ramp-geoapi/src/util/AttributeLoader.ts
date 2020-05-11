@@ -42,6 +42,16 @@ export class AttributeLoaderBase extends BaseBase {
         this.details = details;
     }
 
+    /**
+     * Allows the list of field names to download to be updated. Allows support for diverant loading
+     * flows between different layers.
+     *
+     * @param {string} newList
+     */
+    updateFieldList(newList: string): void {
+        this.details.attribs = newList;
+    }
+
     getAttribs(): Promise<AttributeSet> {
         if (!this.loadPromise) {
             // promise creation

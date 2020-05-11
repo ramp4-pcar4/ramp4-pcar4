@@ -15,6 +15,7 @@ import RampMap from './map/RampMap';
 import LayerModule from './layer/LayerModule';
 import GeoJsonLayer from './layer/GeoJsonLayer';
 import UtilModule from './util/UtilModule';
+import { BaseRenderer } from './util/Renderers';
 
 // gapi loader needs to be a oneshot default due to magic (something about module load being dependant on dojo script load [waves hands, points at Aly]).
 // so putting the types here so they can be shared around
@@ -153,6 +154,22 @@ export interface AttributeSet {
     oidIndex: {[key: number]: number};
 }
 
+export interface FieldDefinition {
+    name: string;
+    alias: string;
+    type: string;
+    length?: number;
+}
+
+export interface TabularAttributeSet {
+    columns: Array<{ data: string; title: string; }>;
+    rows: Array<Attributes>;
+    fields: Array<FieldDefinition>;
+    oidField: string;
+    oidIndex: number; // TODO determine if we need this anymore
+    renderer: BaseRenderer; // TODO determine if we need this anymore
+}
+
 export interface LegendSymbology {
     label: string;
     definitionClause: string;
@@ -265,9 +282,14 @@ export interface RampLayerStateConfig {
     opacity?: number;
 }
 
-export interface RampLayerFieldMetadataConfig {
-    data?: string;
+export interface RampLayerFieldInfoConfig {
+    data: string; // TODO data is such a confusing word. name or fieldName makes way more sense
     alias?: string;
+}
+
+export interface RampLayerFieldMetadataConfig {
+    fieldInfo?: Array<RampLayerFieldInfoConfig>;
+    exclusiveFields?: boolean; // default to false. if true, means we only recognize and download field in fieldInfo. if false, we download all fields, and fieldInfo provides additional data as needed
 }
 
 // i.e. a dynamic layer child
@@ -275,14 +297,14 @@ export interface RampLayerMapImageLayerEntryConfig { // A+ name
     index?: number;
     name?: string;
     nameField?: string;
-    outfields?: string; // TODO tbd if we keep this
+    // outfields?: string; // TODO tbd if we keep this
     state?: RampLayerStateConfig;
     // following items need to be flushed out
     extent?: any;
     controls?:  any;
     stateOnly?:  any;
     table?:  any;
-    fieldMetadata?:  any;
+    fieldMetadata?: RampLayerFieldMetadataConfig;
 }
 
 // i.e. a wms layer child
@@ -307,7 +329,7 @@ export interface RampLayerConfig {
     customRenderer?: any; // TODO expand, if worth it. fairly complex object
     refreshInterval?: number;
     initialFilteredQuery?: string;
-    fieldMetadata?: Array<RampLayerFieldMetadataConfig>;
+    fieldMetadata?: RampLayerFieldMetadataConfig;
     nameField?: string;
     tooltipField?: string;
     featureInfoMimeType?: string;

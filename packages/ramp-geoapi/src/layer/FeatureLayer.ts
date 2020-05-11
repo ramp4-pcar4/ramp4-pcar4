@@ -127,16 +127,8 @@ export class FeatureLayer extends AttribLayer {
             featFC.nameField = this.origRampConfig.nameField || featFC.nameField || '';
             featFC.tooltipField = this.origRampConfig.tooltipField || featFC.nameField;
 
-            // TODO add back in after we deicde https://github.com/james-rae/pocGAPI/issues/14
-            /*
-            // check the config for any custom field aliases, and add the alias as a property if it exists
-            if (this.origRampConfig.fieldMetadata) {
-                ld.fields.forEach(field => {
-                    const clientAlias = this.config.source.fieldMetadata.find(f => f.data === field.name);
-                    field.clientAlias = clientAlias ? clientAlias.alias : undefined;
-                });
-            }
-            */
+            featFC.processFieldMetadata(this.origRampConfig.fieldMetadata);
+            featFC.attLoader.updateFieldList(featFC.fieldList);
         });
 
         /*
@@ -228,7 +220,7 @@ export class FeatureLayer extends AttribLayer {
         // const qry: esri.Query = new this.esriBundle.Query();
         // TODO investigate if we need the sourceSR param set here
         const qOpts: QueryFeaturesParams = {
-            outFields: '*', // TODO investigate this further, possibly add in layer defined outfields
+            outFields: myFC.fieldList,
             includeGeometry: false,
             map
         };

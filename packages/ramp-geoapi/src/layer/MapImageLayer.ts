@@ -275,22 +275,6 @@ export class MapImageLayer extends AttribLayer {
             }
         });
 
-        // TODO figure out what we're doing with layer types
-        /*
-        // converts server layer type string to client layer type string
-        const serverLayerTypeToClientLayerType = serverType => {
-            switch (serverType) {
-                case 'Feature Layer':
-                    return shared.clientLayerType.ESRI_FEATURE;
-                case 'Raster Layer':
-                    return shared.clientLayerType.ESRI_RASTER;
-                default:
-                    console.warn('Unexpected layer type in serverLayerTypeToClientLayerType', serverType);
-                    return shared.clientLayerType.UNKNOWN;
-            }
-        };
-        */
-
         // process each leaf FC we walked to in the sublayer tree crawl above
         leafsToInit.forEach((mlFC: MapImageFC) => {
 
@@ -307,17 +291,18 @@ export class MapImageLayer extends AttribLayer {
                         // mlFC.setOpacity(subC.state.opacity); // TODO uncomment when opacity is coded
                     }
                     // mlFC.setQueryable(subC.state.query); // TODO uncomment when done
+
+                    mlFC.nameField = subC.nameField || mlFC.nameField || '';
+                    mlFC.processFieldMetadata(subC.fieldMetadata);
                 } else {
                     // pulling from parent would be cool, but complex. all the promises would need to be resolved in tree-order
                     // maybe put defaulting here for visible/opac/query
+                    mlFC.processFieldMetadata();
                 }
 
-                // TODO figure out what we're doing with layer types
-                //      i believe load metadata is setting this now anyways
-                // dFC.layerType = serverLayerTypeToClientLayerType(ld.layerType);
-
-                // feature count if valid
+                // do any things that are specific to feature or raster subtypes
                 if (mlFC.supportsFeatures) {
+                    mlFC.attLoader.updateFieldList(mlFC.fieldList);
                     return mlFC.loadFeatureCount();
                 } else {
                     return Promise.resolve();
@@ -513,7 +498,6 @@ export class MapImageLayer extends AttribLayer {
         // it may make more sense to have this made for each FC
         // TODO investigate if we need the sourceSR param set here
         const qOpts: QueryFeaturesParams = {
-            outFields: '*', // TODO investigate this further, possibly add in layer defined outfields. would need to be updated for each FC
             includeGeometry: options.returnGeometry,
             map
         };
@@ -540,6 +524,8 @@ export class MapImageLayer extends AttribLayer {
             } else {
                 qOpts.filterGeometry = options.geometry;
             }
+
+            qOpts.outFields = fc.fieldList;
 
             return fc.queryFeatures(qOpts).then(results => {
                 // TODO might be a problem overwriting the array if something is watching/binding to the original
