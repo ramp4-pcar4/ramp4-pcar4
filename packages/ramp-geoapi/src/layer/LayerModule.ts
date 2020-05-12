@@ -5,13 +5,14 @@ import esri = __esri;
 import { InfoBundle, RampLayerConfig } from '../gapiTypes';
 import BaseBase from '../BaseBase';
 import FeatureLayer from './FeatureLayer';
-import HighlightLayer from './HighlightLayer';
 import FileUtils from './FileUtils';
 import GeoJsonLayer from './GeoJsonLayer';
+import HighlightLayer from './HighlightLayer';
+import ImageryLayer from './ImageryLayer';
 import MapImageLayer from './MapImageLayer';
-import WmsLayer from './WmsLayer';
+import TileLayer from './TileLayer';
 import TreeNode from './TreeNode';
-// import Map from './Map';
+import WmsLayer from './WmsLayer';
 
 export default class LayerModule extends BaseBase {
 
@@ -41,6 +42,14 @@ export default class LayerModule extends BaseBase {
 
     createWmsLayer(config: RampLayerConfig, reloadTree?: TreeNode): WmsLayer {
         return new WmsLayer(this.infoBundle(), config, reloadTree);
+    }
+
+    createImageryLayer(config: RampLayerConfig, reloadTree?: TreeNode): ImageryLayer {
+        return new ImageryLayer(this.infoBundle(), config, reloadTree);
+    }
+
+    createTileLayer(config: RampLayerConfig, reloadTree?: TreeNode): TileLayer {
+        return new TileLayer(this.infoBundle(), config, reloadTree);
     }
 
     createHighlightLayer(options: any): HighlightLayer {

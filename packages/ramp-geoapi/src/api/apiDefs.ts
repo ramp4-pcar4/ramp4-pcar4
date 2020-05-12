@@ -11,7 +11,7 @@ export enum LayerType {
     FEATURE = 'esriFeature',
     MAPIMAGE = 'esriMapImage',
     TILE = 'esriTile',
-    // TODO add esri image server type when/if we decide to support it?
+    IMAGERY = 'esriImagery',
 
     // OGS
     WMS = 'ogcWms',
