@@ -51,7 +51,7 @@ export class MapImageLayer extends AttribLayer {
         const rampMapImageLayerConfig = {
             id: "extraFancyTest",
             name: "I was once called Dynamic",
-            layerType: "esriDynamic", // TODO change this?
+            layerType: "esriMapImage", 
             layerEntries: [{ index: 21 }, { index: 17 }, { index: 19 }],
             disabledControls: ["opacity", "visibility"],
             state: {
