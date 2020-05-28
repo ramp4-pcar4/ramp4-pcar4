@@ -23,7 +23,7 @@ To completely clear and reinstall all dependencies, run `rush update -p --full`:
 -   `-p` for purge, to remove all the installed packages
 -   `--full` just because it looks important
 
-## Running a dev site
+## Running a development build
 
 ```
 $rush serve
