@@ -27,6 +27,21 @@ const actions = {
         this.set(LayerStore.addLayers, newConfig.layers);
 
         context.commit('SET_CONFIG', newConfig);
+    },
+    overrideConfig: function(this: any, context: ConfigContext, newConfig: RampConfig): void {
+        this.set(LayerStore.addLayers, newConfig.layers);
+        context.commit('SET_CONFIG', newConfig);
+    },
+    updateConfig: function(this: any, context: ConfigContext, fixtureConfig: any): void {
+        // TODO: verify config snippet to be applied over config is valid
+        // shallow merge to override any identical existing fixtures properties
+        const newFixtureConfig = {
+            fixtures: { ...context.state.config.fixtures, ...fixtureConfig }
+        };
+        // shallow merge to override fixtures section of config
+        const newConfig = { ...context.state.config, ...newFixtureConfig };
+        console.log('new config: ', newConfig);
+        context.commit('SET_CONFIG', newConfig);
     }
 };
 
@@ -48,6 +63,26 @@ export enum ConfigStore {
      * `@param` config - The new RAMP config
      */
     newConfig = 'config/newConfig!',
+    /**
+     * `function overrideConfig(newConfig: RampConfig) => void`
+     *
+     * Description: TODO
+     *
+     * `@remarks` Action - use `@Call`
+     *
+     * `@param` config - new RAMP config to override existing one entirely
+     */
+    overrideConfig = 'config/overrideConfig',
+    /**
+     * `function updateConfig(fixtureConfig: any) => void`
+     *
+     * Update config based on a modified fixture snippet
+     *
+     * `@remarks` Action - use `@Call`
+     *
+     * `@param` config - updated fixture config snippet
+     */
+    updateConfig = 'config/updateConfig',
     /**
      * getMapConfig
      *
