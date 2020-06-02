@@ -23,7 +23,8 @@ class AppbarFixture extends AppbarAPI {
         );
 
         // since components used in appbar can be registered after this point, listen to the global component registration event and re-validate items
-        this.$iApi.on(GlobalEvents.COMPONENT, this._validateItems.bind(this));
+        // TODO revist. this seems to be self-contained to the appbar fixture, so ideally can stay as is and not worry about events api.
+        this.$iApi.event.on(GlobalEvents.COMPONENT, this._validateItems.bind(this));
     }
 
     removed() {

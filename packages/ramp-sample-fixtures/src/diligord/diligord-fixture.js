@@ -165,6 +165,13 @@
             // this life hook is called when the fixture is added to R4MP, and now it's possible to open our panel
             this.$iApi.panel.register(dpanel).open();
         }
+
+        // TEMP CODE FOR SAMPLE
+        // will allow an outside caller to update the fixture
+        doAThing (text) {
+            // too dumb do figure out how to get text on the fixture panels. vue hates me.
+            console.log('EVENTS API SAMPLE: dillygord got this data from gazebo', text);
+        }
     }
 
     window.hostFixtures = window.hostFixtures || {};

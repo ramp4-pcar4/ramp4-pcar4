@@ -13,9 +13,13 @@ import { AsyncComponentEh } from '@/store/modules/panel';
 
 import messages from './lang/lang.csv';
 
+const BEHOLD_TEXT_EVENT = 'gazebo/beholdMyText';
+
 class GazeboFixture extends FixtureInstance {
     added(): void {
         console.log(`[fixture] ${this.id} added`);
+
+        this.$iApi.event.registerEventName(BEHOLD_TEXT_EVENT);
 
         this.$iApi.component('gazebo-appbar-button', GazeboAppbarButton);
 

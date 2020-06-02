@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import GapiLoader, { GeoApi, ApiBundle } from 'ramp-geoapi';
+import GapiLoader, { GeoApi, ApiBundle as GeoApiBundle } from 'ramp-geoapi';
 
 import { InstanceAPI, AppVersion } from './internal';
 import mixin from './mixin';
@@ -12,20 +12,20 @@ declare const __VERSION__: AppVersion;
 Vue.use(mixin);
 
 export interface RampGeo {
-    Extent: typeof ApiBundle.Extent;
-    Graphic: typeof ApiBundle.Graphic;
-    Hover: typeof ApiBundle.Hover;
-    LineString: typeof ApiBundle.LineString;
-    LineStyleOptions: typeof ApiBundle.LineStyleOptions;
-    LinearRing: typeof ApiBundle.LinearRing;
-    MultiLineString: typeof ApiBundle.MultiLineString;
-    MultiPoint: typeof ApiBundle.MultiPoint;
-    MultiPolygon: typeof ApiBundle.MultiPolygon;
-    Point: typeof ApiBundle.Point;
-    PointStyleOptions: typeof ApiBundle.PointStyleOptions;
-    Polygon: typeof ApiBundle.Polygon;
-    PolygonStyleOptions: typeof ApiBundle.PolygonStyleOptions;
-    SpatialReference: typeof ApiBundle.SpatialReference;
+    Extent: typeof GeoApiBundle.Extent;
+    Graphic: typeof GeoApiBundle.Graphic;
+    Hover: typeof GeoApiBundle.Hover;
+    LineString: typeof GeoApiBundle.LineString;
+    LineStyleOptions: typeof GeoApiBundle.LineStyleOptions;
+    LinearRing: typeof GeoApiBundle.LinearRing;
+    MultiLineString: typeof GeoApiBundle.MultiLineString;
+    MultiPoint: typeof GeoApiBundle.MultiPoint;
+    MultiPolygon: typeof GeoApiBundle.MultiPolygon;
+    Point: typeof GeoApiBundle.Point;
+    PointStyleOptions: typeof GeoApiBundle.PointStyleOptions;
+    Polygon: typeof GeoApiBundle.Polygon;
+    PolygonStyleOptions: typeof GeoApiBundle.PolygonStyleOptions;
+    SpatialReference: typeof GeoApiBundle.SpatialReference;
 }
 
 export interface APIInterface {
@@ -53,20 +53,20 @@ const gapiPromise = GapiLoader(window);
 gapiPromise.then((gapi: GeoApi) => {
     geoapi = gapi;
     rampgeo = {
-        Extent: ApiBundle.Extent,
-        Graphic: ApiBundle.Graphic,
-        Hover: ApiBundle.Hover,
-        LineString: ApiBundle.LineString,
-        LineStyleOptions: ApiBundle.LineStyleOptions,
-        LinearRing: ApiBundle.LinearRing,
-        MultiLineString: ApiBundle.MultiLineString,
-        MultiPoint: ApiBundle.MultiPoint,
-        MultiPolygon: ApiBundle.MultiPolygon,
-        Point: ApiBundle.Point,
-        PointStyleOptions: ApiBundle.PointStyleOptions,
-        Polygon: ApiBundle.Polygon,
-        PolygonStyleOptions: ApiBundle.PolygonStyleOptions,
-        SpatialReference: ApiBundle.SpatialReference
+        Extent: GeoApiBundle.Extent,
+        Graphic: GeoApiBundle.Graphic,
+        Hover: GeoApiBundle.Hover,
+        LineString: GeoApiBundle.LineString,
+        LineStyleOptions: GeoApiBundle.LineStyleOptions,
+        LinearRing: GeoApiBundle.LinearRing,
+        MultiLineString: GeoApiBundle.MultiLineString,
+        MultiPoint: GeoApiBundle.MultiPoint,
+        MultiPolygon: GeoApiBundle.MultiPolygon,
+        Point: GeoApiBundle.Point,
+        PointStyleOptions: GeoApiBundle.PointStyleOptions,
+        Polygon: GeoApiBundle.Polygon,
+        PolygonStyleOptions: GeoApiBundle.PolygonStyleOptions,
+        SpatialReference: GeoApiBundle.SpatialReference
     };
 });
 

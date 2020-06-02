@@ -1,14 +1,8 @@
 import { GeoApi, DojoWindow, EsriBundle, InfoBundle, EpsgLookup, GeoApiOptions } from './gapiTypes';
-// import { FakeNewsMapModule } from './fakenewsmap';
 import MapModule from './map/MapModule';
-
-// import agol from './util/agol';
-// import events from './old_events';
-
 import LayerModule from './layer/LayerModule';
 import UtilModule from './util/UtilModule';
-import * as apiDefs from './api/apiDefs';
-import * as apiClasses from './api/api';
+import * as ApiBundle from './api/api';
 
 export * from './gapiTypes';
 export { RampMap } from './map/RampMap';
@@ -17,13 +11,11 @@ export { WmsLayer } from './layer/WmsLayer';
 export { MapImageLayer } from './layer/MapImageLayer';
 export { GeoJsonLayer } from './layer/GeoJsonLayer';
 export { HighlightLayer } from './layer/HighlightLayer';
-export const ApiBundle = {
-    ...apiClasses,
-    ...apiDefs
-};
 
-// TODO figure out best way to export * from './api/api' so it can be consumed by whatever
-//      on the client is making the actual API that gets exposed to everyone.
+// this contains things that will be public on the RAMP api. struggling with a better name.
+// GeoApiApi? ThingsForRampApi? It's fine here but when RAMP imports it, "ApiBundle" can be a bit confusing
+// possibly becomes irrelevant if geoapi goes into core post-dojo
+export { ApiBundle };
 
 // TODO once working, try to use asynch / await keywords
 
@@ -70,15 +62,6 @@ function initAll(esriBundle: EsriBundle, window: DojoWindow, epsgLookup: EpsgLoo
         esriBundle,
         window
     };
-
-    /*
-    api.layer = layer(esriBundle, api);
-    api.legend = legend();
-    api.proj = proj(esriBundle);
-    api.Map = esriMap(esriBundle, api);
-    api.attribs = attribute(esriBundle, api);
-    api.symbology = symbology(esriBundle, api, window);
-    */
 
     // api.events = events(); // TODO figure out how this thing will really work in ESRI4 paradigm. might make sense to expose via dev module?
     // api.agol = agol(esriBundle); // TODO not 100% we are going to support AGOL in R4MP.

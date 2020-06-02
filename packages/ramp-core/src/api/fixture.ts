@@ -118,6 +118,29 @@ export class FixtureAPI extends APIScope {
 
         return fixtures.length === 1 ? fixtures[0] : fixtures;
     }
+
+    /**
+     * Loads the set of standard, built-in fixtures to the R4MP Vue instance.
+     * This will quickly set up the vanilla version of RAMP.
+     * Note this function is automatically run by the instance startup unless the loadDefaultFixtures option is
+     * set to false. The function is exposed to allow custom pages the ability to call it at a different point
+     * in the startup. Also, a subset of standard fixtures can be provided on the optional parameter if one
+     * wishes to omit some of the standard fixtures.
+     *
+     * @param {Array<string>} [fixtureNames] list of built-in fixtures names to add. omission means all built-in fixtures will be added
+     * @returns {Promise<Array<FixtureBase>>} resolves with array of default fixtures
+     * @memberof FixtureAPI
+     */
+    addDefaultFixtures(fixtureNames?: Array<string>): Promise<Array<FixtureBase>> {
+        if (!Array.isArray(fixtureNames) || fixtureNames.length === 0) {
+            fixtureNames = ['appbar', 'mapnav', 'help', 'details', 'grid', 'basemap', 'geosearch', 'legend'];
+        }
+
+        // add all the requested default promises.
+        // return the promise-all of all the add fixture promises
+        // TODO alterately, don't do a promise.all, and just return the array of promises. not sure which is more useful.
+        return Promise.all(fixtureNames.map(fn => this.add(fn)));
+    }
 }
 
 /**

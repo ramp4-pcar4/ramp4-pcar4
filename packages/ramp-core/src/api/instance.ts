@@ -9,26 +9,23 @@ import App from '@/app.vue';
 import { createStore, RootState } from '@/store';
 import { ConfigStore } from '@/store/modules/config';
 
-import { FixtureAPI, PanelAPI, GlobalEvents } from './internal';
+import { FixtureAPI, PanelAPI, GlobalEvents, EventAPI } from './internal';
 import { MapAPI } from './map';
 
+interface RampOptions {
+    loadDefaultFixtures?: boolean;
+    loadDefaultEvents?: boolean;
+}
+
 export class InstanceAPI {
-    fixture: FixtureAPI;
-    panel: PanelAPI;
-    mapActions: MapAPI;
+    readonly fixture: FixtureAPI;
+    readonly panel: PanelAPI;
+    readonly event: EventAPI;
+    readonly mapActions: MapAPI;
 
     // FIXME: temporarily store map in global, remove line below when map API is complete
     // set by the `map/esri-map.vue` file
     map!: RampMap;
-
-    /**
-     * A public event bus for all events. Can also be used by fixtures to talk to each other.
-     *
-     * @private
-     * @type {Vue}
-     * @memberof InstanceAPI
-     */
-    private readonly _eventBus: Vue;
 
     /**
      * The instance of Vue R4MP application controlled by this InstanceAPI.
@@ -40,8 +37,8 @@ export class InstanceAPI {
 
     private _isFullscreen: boolean;
 
-    constructor(element: HTMLElement, configs?: RampConfigs) {
-        this._eventBus = new Vue();
+    constructor(element: HTMLElement, configs?: RampConfigs, options?: RampOptions) {
+        this.event = new EventAPI(this);
 
         this.$vApp = createApp(element, this);
 
@@ -70,6 +67,19 @@ export class InstanceAPI {
                 this._isFullscreen = screenfull.isEnabled && screenfull.isFullscreen && screenfull.element === this.$vApp.$root.$el;
             });
         }
+
+        // default missing options
+        if (!options) { options = {}; }
+
+        // use strict check against false, as missing properties have default value of true.
+        // run the default setup functions unless flags have been set to false.
+        if (!(options.loadDefaultFixtures === false)) {
+            this.fixture.addDefaultFixtures();
+        }
+        if (!(options.loadDefaultEvents === false)) {
+            this.event.addDefaultEvents();
+        }
+
     }
 
     // TODO: we probably need to expose other Vue global functions here like `set`, `use`, etc.
@@ -94,75 +104,11 @@ export class InstanceAPI {
     component(id: string, definition?: VueConstructor): VueConstructor {
         if (definition) {
             const vc = Vue.component(id, definition);
-            this.emit(GlobalEvents.COMPONENT, id);
+            this.event.emit(GlobalEvents.COMPONENT, id);
             return vc;
         }
 
         return Vue.component(id);
-    }
-
-    /**
-     * Listen for a custom event. Events can be triggered by `emit`. The callback will receive all the additional arguments passed into these event-triggering methods.
-     *
-     * Proxied to `Vue.$on`.
-     *
-     * @param {(string | string[])} event
-     * @param {Function} callback
-     * @returns {this}
-     * @memberof InstanceAPI
-     */
-    // TODO: rename event-related global functions to use `$` prefix to match them to Vue default event functions, for consistency
-    on(event: string | string[], callback: Function): this {
-        this._eventBus.$on(event, callback);
-        return this;
-    }
-
-    /**
-     * Listen for a custom event, but only once. The listener will be removed once it triggers for the first time.
-     *
-     * Proxied to `Vue.$once`.
-     *
-     * @param {(string | string[])} event
-     * @param {Function} callback
-     * @returns {this}
-     * @memberof InstanceAPI
-     */
-    once(event: string | string[], callback: Function): this {
-        this._eventBus.$once(event, callback);
-        return this;
-    }
-
-    /**
-     * Remove custom event listener(s).
-     * - If no arguments are provided, remove all event listeners;
-     * - If only the event is provided, remove all listeners for that event;
-     * - If both event and callback are given, remove the listener for that specific callback only.
-     *
-     * Proxied to `Vue.$off`.
-     *
-     * @param {(string | string[])} [event]
-     * @param {Function} [callback]
-     * @returns {this}
-     * @memberof InstanceAPI
-     */
-    off(event?: string | string[], callback?: Function): this {
-        this._eventBus.$off(event, callback);
-        return this;
-    }
-
-    /**
-     * Trigger an event on the current instance. Any additional arguments will be passed into the listener’s callback function.
-     *
-     * Proxied to `Vue.$emit`.
-     *
-     * @param {string} event
-     * @param {...any[]} args
-     * @returns {this}
-     * @memberof InstanceAPI
-     */
-    emit(event: string, ...args: any[]): this {
-        this._eventBus.$emit(event, ...args);
-        return this;
     }
 
     /**

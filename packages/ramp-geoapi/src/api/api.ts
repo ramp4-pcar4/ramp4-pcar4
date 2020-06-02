@@ -19,21 +19,19 @@ import Polygon from './geometry/Polygon';
 import PolygonStyleOptions from './style/PolygonStyleOptions';
 import SpatialReference from './geometry/SpatialReference';
 
-// TODO break into subcollection? like geometry, style? maybe do that on the actual API (which will consume these)
-export {
-    // Attributes,
-    Extent,
-    Graphic,
-    Hover,
-    LineString,
-    LineStyleOptions,
-    LinearRing,
-    MultiLineString,
-    MultiPoint,
-    MultiPolygon,
-    Point,
-    PointStyleOptions,
-    Polygon,
-    PolygonStyleOptions,
-    SpatialReference
-};
+export { Extent };
+export { Graphic };
+export { Hover };
+export { LineString };
+export { LineStyleOptions };
+export { LinearRing };
+export { MultiLineString };
+export { MultiPoint };
+export { MultiPolygon };
+export { Point };
+export { PointStyleOptions };
+export { Polygon };
+export { PolygonStyleOptions };
+export { SpatialReference };
+
+export * from './apiDefs';

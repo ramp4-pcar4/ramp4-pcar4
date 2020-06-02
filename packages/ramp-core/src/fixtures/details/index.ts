@@ -32,11 +32,6 @@ class DetailsFixture extends DetailsAPI {
             value => this._parseConfig(value)
         );
 
-        // Add map click handler for global map identify.
-        // TODO: come back to this later, it will most likely be moved to the Event API (https://github.com/ramp4-pcar4/r4design/issues/14)
-        this.$iApi.map.mapClicked.listen((payload: MapClick) => {
-            return this.$iApi.mapActions.identify(payload);
-        });
     }
 
     removed() {
