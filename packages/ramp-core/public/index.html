@@ -149,7 +149,7 @@
                 rInstance.fixture.add('appbar');
                 rInstance.fixture.add('mapnav');
                 rInstance.fixture.add('snowman');
-                rInstance.fixture.add('gazebo');
+                var gazProm = rInstance.fixture.add('gazebo');
                 rInstance.fixture.add('geosearch');
                 rInstance.fixture.add('basemap');
                 rInstance.fixture.add('legend');
@@ -157,8 +157,21 @@
                 rInstance.fixture.add('details');
                 rInstance.fixture.add('help');
 
-                rInstance.fixture.add('diligord', window.hostFixtures.diligord);
+                var dillyProm = rInstance.fixture.add('diligord', window.hostFixtures.diligord);
                 rInstance.fixture.add('mouruge', window.hostFixtures.mouruge);
+
+                // sample event declared by the page
+                Promise.all([gazProm, dillyProm]).then(function (funArray) {
+                    // using the fixture gets even though I could use funArray
+                    var gazebo = rInstance.fixture.get('gazebo');
+                    var handler = function (text) {
+                        // important to use get here, as the fixture might have been removed later on
+                        var diligord = rInstance.fixture.get('diligord');
+                        if (!diligord) { return; }
+                        diligord.doAThing(text);
+                    };
+                    gazebo.on('beholdMyText', handler, 'SAMPLE_HANLDER');
+                });
             }
 
             function switchLang() {

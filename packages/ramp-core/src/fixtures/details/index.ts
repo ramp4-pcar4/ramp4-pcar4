@@ -26,11 +26,16 @@ class DetailsFixture extends DetailsAPI {
 
         // Add map click handler for global map identify.
         // TODO: come back to this later, it will most likely be moved to the Event API (https://github.com/ramp4-pcar4/r4design/issues/14)
+        // the plon: add a map click global event
+        //           add a default event that listens for global event, calls this.identify
+        //           be sure to have some "if mode is show identify" logic or at least comments
         this.$iApi.map.mapClicked.listen((payload: MapClick) => {
             return this.identify(payload);
         });
     }
 
+    // TODO we probably want the identify logic living somehwere else. In the core. A fixture should receive the results.
+    //      this way other things can get results off whatever event they ride on. Even if this fixture is removed.
     /**
      * Performs an identify request on all layers that support identify, and combines the results into an object that is readable by the details panel.
      *
