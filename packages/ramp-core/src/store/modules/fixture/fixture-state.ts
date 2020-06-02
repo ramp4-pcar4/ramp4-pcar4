@@ -50,52 +50,53 @@ export interface FixtureBase {
 }
 
 // TODO: deprecated;
-export class FixtureConfigHelper implements FixtureBase {
-    id: string;
+//export class FixtureConfigHelper implements FixtureBase {
+//    id: string;
+//
+//    /**
+//     * Creates an instance of FixtureConfigHelper.
+//     *
+//     * @param {string} id
+//     * @memberof FixtureConfigHelper
+//     */
+//    constructor(id: string) {
+//        this.id = id;
+//    }
+//
+//    /**
+//     * Called at the very beginning of the life cycle with the `iApi` reference which is store at `this.$iApi`.
+//     *
+//     * @param {InstanceAPI} $iApi
+//     * @memberof FixtureConfigHelper
+//     */
+//    created($iApi: InstanceAPI): void {
+//        this.$iApi = $iApi;
+//    }
+//
+//    /**
+//     * A reference to the InstanceAPI this fixture is running inside.
+//     * NOTE: This is guaranteed to have value by the time `added()` life hook is called.
+//     *
+//     * @type {InstanceAPI}
+//     * @memberof FixtureConfigHelper
+//     */
+//    $iApi!: InstanceAPI;
+//
+//    /**
+//     * The instance of Vue R4MP application controlled by the InstanceAPI.
+//     *
+//     * @readonly
+//     * @protected
+//     * @type {Vue}
+//     * @memberof APIScope
+//     */
+//    get vApp(): Vue {
+//        return this.$iApi.$vApp;
+//    }
+//
+//    added?(): void;
+//    removed?(): void;
+//    initialized?(): void;
+//    terminated?(): void;
+//}
 
-    /**
-     * Creates an instance of FixtureConfigHelper.
-     *
-     * @param {string} id
-     * @memberof FixtureConfigHelper
-     */
-    constructor(id: string) {
-        this.id = id;
-    }
-
-    /**
-     * Called at the very beginning of the life cycle with the `iApi` reference which is store at `this.$iApi`.
-     *
-     * @param {InstanceAPI} $iApi
-     * @memberof FixtureConfigHelper
-     */
-    created($iApi: InstanceAPI): void {
-        this.$iApi = $iApi;
-    }
-
-    /**
-     * A reference to the InstanceAPI this fixture is running inside.
-     * NOTE: This is guaranteed to have value by the time `added()` life hook is called.
-     *
-     * @type {InstanceAPI}
-     * @memberof FixtureConfigHelper
-     */
-    $iApi!: InstanceAPI;
-
-    /**
-     * The instance of Vue R4MP application controlled by the InstanceAPI.
-     *
-     * @readonly
-     * @protected
-     * @type {Vue}
-     * @memberof APIScope
-     */
-    get vApp(): Vue {
-        return this.$iApi.$vApp;
-    }
-
-    added?(): void;
-    removed?(): void;
-    initialized?(): void;
-    terminated?(): void;
-}

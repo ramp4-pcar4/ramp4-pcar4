@@ -16,7 +16,6 @@ export class ImageryLayer extends BaseLayer {
         this.supportsIdentify = false;
         this._layerType = LayerType.IMAGERY;
 
-
         this._innerLayer = new this.esriBundle.ImageryLayer(this.makeEsriLayerConfig(config));
         this.initLayer();
     }
