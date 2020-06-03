@@ -7,6 +7,8 @@
         <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
         <title>ramp-core</title>
 
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
         <!-- these two fixtures will load before either RAMP is loaded -->
         <script src="../sample-fixtures/mouruge-fixture.js"></script>
         <script src="../sample-fixtures/diligord-fixture.js"></script>
@@ -34,7 +36,7 @@
         <!-- built files will be auto injected -->
 
         <script>
-            let rInstance;
+            window.rInstance = null;
             function initRAMP() {
                 document.getElementById('ramp-version').innerText =
                     'v.' +
