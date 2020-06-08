@@ -28,6 +28,12 @@
             "name": "test:e2e",
             "summary": "Runs e2e tests on ramp-core",
             "shellCommand": "npm run --prefix packages/ramp-core test:e2e -- --headless"
+        },
+        {
+            "commandKind": "global",
+            "name": "test:e2e-ui",
+            "summary": "Runs e2e tests on ramp-core",
+            "shellCommand": "npm run --prefix packages/ramp-core test:e2e"
         }
         // {
         //   /**

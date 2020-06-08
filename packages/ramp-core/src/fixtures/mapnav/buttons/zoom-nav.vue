@@ -7,7 +7,6 @@
             </svg>
         </button>
         <divider-nav></divider-nav>
-        <!-- slider goes here? -->
         <button @click="zoomOut()" class="zoom-out default-focus-style w-32 h-32 text-gray-600 hover:text-black" v-focus-item>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="fill-current w-32 h-20">
                 <path d="M19 13H5v-2h14v2z" />

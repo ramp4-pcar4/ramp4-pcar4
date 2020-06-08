@@ -43,7 +43,7 @@ Due to this technicality, `ramp-core` package should remain the first package on
 
 `rush test:e2e` will run a UI-less (headless) version of cypress that will provide output saying which tests passed/failed.
 
-If you want to have a UI or have the tests react to changes in either the code or testing files, you should run `npm run test:e2e` from inside `packages/ramp-core`.
+If you want to have a UI or have the tests react to changes in either the code or testing files, you should run `rush test:e2e-ui`.
 
 ## Building a prod library
 
