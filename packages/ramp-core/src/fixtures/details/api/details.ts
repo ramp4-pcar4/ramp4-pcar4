@@ -64,11 +64,10 @@ export class DetailsAPI extends FixtureInstance {
         );
 
         this._validateItems();
-
     }
 
     /**
-     * Check to see if the stored components are registered properly. 
+     * Check to see if the stored components are registered properly.
      *
      * @memberof DetailsAPI
      */

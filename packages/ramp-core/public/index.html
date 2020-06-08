@@ -52,106 +52,185 @@
                     new Date(RAMP.version.timestamp).toLocaleDateString();
 
                 rInstance = new RAMP.Instance(document.getElementById('app'), {
-                    map: {
-                        extent: {
-                            xmax: -5007771.626060756,
-                            xmin: -16632697.354854,
-                            ymax: 10015875.184845109,
-                            ymin: 5022907.964742964,
-                            spatialReference: {
-                                wkid: 102100,
-                                latestWkid: 3857
-                            }
+                    en: {
+                        map: {
+                            extent: {
+                                xmax: -5007771.626060756,
+                                xmin: -16632697.354854,
+                                ymax: 10015875.184845109,
+                                ymin: 5022907.964742964,
+                                spatialReference: {
+                                    wkid: 102100,
+                                    latestWkid: 3857
+                                }
+                            },
+                            lods: RAMP.geoapi.maps.defaultLODs(RAMP.geoapi.maps.defaultTileSchemas()[1]), // idx 1 = mercator
+                            basemaps: [
+                                {
+                                    id: 'esriImagery',
+                                    tileSchemaId: 'DEFAULT_ESRI_World_AuxMerc_3857',
+                                    layers: [
+                                        {
+                                            layerType: 'esriTile',
+                                            url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                                        }
+                                    ]
+                                }
+                            ],
+                            initialBasemapId: 'esriImagery'
                         },
-                        lods: RAMP.geoapi.maps.defaultLODs(RAMP.geoapi.maps.defaultTileSchemas()[1]), // idx 1 = mercator
-                        basemaps: [
+                        layers: [
                             {
-                                id: 'esriImagery',
-                                tileSchemaId: 'DEFAULT_ESRI_World_AuxMerc_3857',
-                                layers: [
+                                id: 'WaterQuantity',
+                                layerType: 'esriMapImage',
+                                url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                                layerEntries: [
                                     {
-                                        layerType: 'esriTile',
-                                        url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                                        index: 1,
+                                        state: {
+                                            opacity: 1,
+                                            visibility: true
+                                        }
+                                    }
+                                ],
+                                state: {
+                                    opacity: 1,
+                                    visibility: true
+                                },
+                                customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                            },
+                            {
+                                id: 'CleanAir',
+                                layerType: 'esriFeature',
+                                url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
+                                state: {
+                                    opacity: 0.8,
+                                    visibility: true
+                                },
+                                customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                            },
+                            {
+                                id: 'WFSLayer',
+                                layerType: 'ogcWfs',
+                                url:
+                                    'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=6000',
+                                state: {
+                                    visibility: true
+                                },
+                                customRenderer: {}
+                            },
+                            {
+                                id: 'Happy',
+                                layerType: 'esriFeature',
+                                fileType: 'geojson',
+                                url: 'http://fgpv-app.azureedge.net/demo/assets/sample_data/happy.json',
+                                state: {
+                                    visibility: true
+                                },
+                                customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                            }
+                        ],
+                        fixtures: {
+                            appbar: {
+                                items: [
+                                    { id: 'gazebo', options: { colour: '#54a0ff' } },
+                                    'divider',
+                                    'snowman-appbar-button',
+                                    'legend',
+                                    'geosearch',
+                                    'basemap',
+                                    'divider'
+                                ]
+                            },
+                            mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
+                            details: {
+                                items: [
+                                    {
+                                        id: 'WaterQuantity',
+                                        template: 'Water-Quantity-Template'
+                                    },
+                                    {
+                                        id: 'WFSLayer',
+                                        template: 'WFSLayer-Custom'
                                     }
                                 ]
                             }
-                        ],
-                        initialBasemapId: 'esriImagery'
+                        }
                     },
-                    layers: [
-                        {
-                            id: 'WaterQuantity',
-                            layerType: 'esriMapImage',
-                            url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
-                            layerEntries: [
+                    fr: {
+                        map: {
+                            extent: {
+                                xmax: -5007771.626060756,
+                                xmin: -16632697.354854,
+                                ymax: 10015875.184845109,
+                                ymin: 5022907.964742964,
+                                spatialReference: {
+                                    wkid: 102100,
+                                    latestWkid: 3857
+                                }
+                            },
+                            lods: RAMP.geoapi.maps.defaultLODs(RAMP.geoapi.maps.defaultTileSchemas()[1]), // idx 1 = mercator
+                            basemaps: [
                                 {
-                                    index: 1,
-                                    state: {
-                                        opacity: 1,
-                                        visibility: true
-                                    }
+                                    id: 'esriImagery',
+                                    tileSchemaId: 'DEFAULT_ESRI_World_AuxMerc_3857',
+                                    layers: [
+                                        {
+                                            layerType: 'esriTile',
+                                            url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                                        }
+                                    ]
                                 }
                             ],
-                            state: {
-                                opacity: 1,
-                                visibility: true
-                            },
-                            customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                            initialBasemapId: 'esriImagery'
                         },
-                        {
-                            id: 'CleanAir',
-                            layerType: 'esriFeature',
-                            url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
-                            state: {
-                                opacity: 0.8,
-                                visibility: true
-                            },
-                            customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
-                        },
-                        {
-                            id: 'WFSLayer',
-                            layerType: 'ogcWfs',
-                            url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=6000',
-                            state: {
-                                visibility: true
-                            },
-                            customRenderer: {}
-                        },
-                        {
-                            id: 'Happy',
-                            layerType: 'esriFeature',
-                            fileType: 'geojson',
-                            url: 'http://fgpv-app.azureedge.net/demo/assets/sample_data/happy.json',
-                            state: {
-                                visibility: true
-                            },
-                            customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
-                        }
-                    ],
-                    fixtures: {
-                        appbar: {
-                            items: [
-                                { id: 'gazebo', options: { colour: '#54a0ff' } },
-                                'divider',
-                                'snowman-appbar-button',
-                                'legend',
-                                'geosearch',
-                                'basemap',
-                                'divider'
-                            ]
-                        },
-                        mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
-                        details: {
-                            items: [
-                                {
-                                    id: 'WaterQuantity',
-                                    template: 'Water-Quantity-Template'
+                        layers: [
+                            {
+                                id: 'CleanWater',
+                                layerType: 'esriFeature',
+                                url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/3',
+                                state: {
+                                    opacity: 0.8,
+                                    visibility: true
                                 },
-                                {
-                                    id: 'WFSLayer',
-                                    template: 'WFSLayer-Custom'
-                                }
-                            ]
+                                customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                            },
+                            {
+                                id: 'WFSLayer',
+                                layerType: 'ogcWfs',
+                                url:
+                                    'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=6000',
+                                state: {
+                                    visibility: true
+                                },
+                                customRenderer: {}
+                            }
+                        ],
+                        fixtures: {
+                            appbar: {
+                                items: [
+                                    { id: 'gazebo', options: { colour: '#54a0ff' } },
+                                    'divider',
+                                    'snowman-appbar-button',
+                                    'legend',
+                                    'geosearch',
+                                    'basemap',
+                                    'divider'
+                                ]
+                            },
+                            mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
+                            details: {
+                                items: [
+                                    {
+                                        id: 'WaterQuantity',
+                                        template: 'Water-Quantity-Template'
+                                    },
+                                    {
+                                        id: 'WFSLayer',
+                                        template: 'WFSLayer-Custom'
+                                    }
+                                ]
+                            }
                         }
                     }
                 });

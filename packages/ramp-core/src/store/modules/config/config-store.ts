@@ -7,11 +7,19 @@ import { ConfigState } from './config-state';
 import { RootState } from '@/store';
 import { LayerStore } from '../layer';
 import { RampConfig } from '@/types';
+import { i18n } from '@/lang';
 
 // use for actions
 type ConfigContext = ActionContext<ConfigState, RootState>;
 
 const getters = {
+    getActiveConfig: (state: ConfigState) => (lang: string): RampConfig => {
+        if (state.registeredConfigs[lang] === undefined) {
+            throw new Error('Unsupported language or no registered config exists for requested language');
+        }
+        return state.registeredConfigs[lang];
+    },
+
     getMapConfig: (state: ConfigState): RampMapConfig => {
         return state.config.map as RampMapConfig;
     },
@@ -28,9 +36,25 @@ const actions = {
 
         context.commit('SET_CONFIG', newConfig);
     },
+    registerConfig: function(this: any, context: ConfigContext, configInfo: any): void {
+        const langs = configInfo.langs;
+        const config = configInfo.config;
+        if (langs !== undefined && langs.length > 0) {
+            // register config for specified languages
+            langs.forEach((lang: string) => (context.state.registeredConfigs[lang] = config));
+        } else {
+            // register config for all available languages
+            for (const lang in i18n.messages) {
+                context.state.registeredConfigs[lang] = config;
+            }
+        }
+    },
     overrideConfig: function(this: any, context: ConfigContext, newConfig: RampConfig): void {
         this.set(LayerStore.addLayers, newConfig.layers);
+        // save and override registered and main config
+        context.dispatch('registerConfig', newConfig);
         context.commit('SET_CONFIG', newConfig);
+        // TODO: trigger map reload?
     },
     updateConfig: function(this: any, context: ConfigContext, fixtureConfig: any): void {
         // TODO: verify config snippet to be applied over config is valid
@@ -38,9 +62,10 @@ const actions = {
         const newFixtureConfig = {
             fixtures: { ...context.state.config.fixtures, ...fixtureConfig }
         };
+
         // shallow merge to override fixtures section of config
         const newConfig = { ...context.state.config, ...newFixtureConfig };
-        console.log('new config: ', newConfig);
+        context.dispatch('registerConfig', newConfig);
         context.commit('SET_CONFIG', newConfig);
     }
 };
@@ -64,15 +89,25 @@ export enum ConfigStore {
      */
     newConfig = 'config/newConfig!',
     /**
+     * `function registerConfig(configInfo: any) => void`
+     *
+     * Register a config to specified languages, if no languages specified config will be registered to all available languages
+     *
+     * `@remarks` Action - use `@Call`
+     *
+     * `@param` config - new RAMP config to be registered
+     */
+    registerConfig = 'config/registerConfig!',
+    /**
      * `function overrideConfig(newConfig: RampConfig) => void`
      *
-     * Description: TODO
+     * Overrides current active config
      *
      * `@remarks` Action - use `@Call`
      *
      * `@param` config - new RAMP config to override existing one entirely
      */
-    overrideConfig = 'config/overrideConfig',
+    overrideConfig = 'config/overrideConfig!',
     /**
      * `function updateConfig(fixtureConfig: any) => void`
      *
@@ -82,7 +117,17 @@ export enum ConfigStore {
      *
      * `@param` config - updated fixture config snippet
      */
-    updateConfig = 'config/updateConfig',
+    updateConfig = 'config/updateConfig!',
+    /**
+     * Get active config based on the current map language
+     *
+     * `@remarks` Getter - use `@Get`
+     *
+     * `@param` lang - language of config
+     *
+     * `@returns` <RampConfig> Active config associated with language
+     */
+    getActiveConfig = 'config/getActiveConfig',
     /**
      * getMapConfig
      *
