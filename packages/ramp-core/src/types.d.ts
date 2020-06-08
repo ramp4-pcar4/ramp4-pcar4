@@ -69,3 +69,12 @@ export interface RampConfig {
     layers: RampLayerConfig[];
     fixtures: { [key: string]: any };
 }
+
+/**
+ * Multiple configuration objects pertaining to different languages for RAMP apps
+ *
+ * @interface RampConfigs
+ */
+export interface RampConfigs {
+    [key: string]: RampConfig;
+}

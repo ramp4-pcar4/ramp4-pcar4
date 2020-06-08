@@ -1436,11 +1436,6 @@
     },
 
     "properties": {
-        "language": {
-            "type": "string",
-            "enum": ["en", "fr"],
-            "description": "The language of the strings used in the configuration file."
-        },
         "version": {
             "type": "string",
             "enum": ["4.0"],
