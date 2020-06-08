@@ -37,7 +37,7 @@ export class InstanceAPI {
 
     private _isFullscreen: boolean;
 
-    constructor(element: HTMLElement, config?: RampMapConfig) {
+    constructor(element: HTMLElement, configs?: [RampMapConfig]) {
         this._eventBus = new Vue();
 
         this.$vApp = createApp(element, this);
@@ -47,7 +47,18 @@ export class InstanceAPI {
 
         // TODO: decide whether to move to src/main.ts:createApp
         // TODO: store a reference to the even bus in the global store [?]
-        this.$vApp.$store.set(ConfigStore.newConfig, config || undefined);
+        this.$vApp.$store.set(ConfigStore.newConfig, configs !== undefined && configs.length > 0 ? configs[0] : undefined);
+
+        if (configs !== undefined) {
+            // either register configs per language or register one config for all languages
+            if (configs.length === 1) {
+                this.$vApp.$store.set(ConfigStore.registerOneConfig, configs[0]);
+            } else {
+                for (let i = 0; i < configs.length; i++) {
+                    this.$vApp.$store.set(ConfigStore.registerConfig, configs[i]);
+                }
+            }
+        }
 
         this._isFullscreen = screenfull.isEnabled && screenfull.isFullscreen && screenfull.element === this.$vApp.$root.$el;
         if (screenfull.isEnabled) {
@@ -183,6 +194,11 @@ export class InstanceAPI {
      */
     setLanguage(language: string): void {
         this.$vApp.$i18n.locale = language;
+        const activeConfig = this.$vApp.$store.get(ConfigStore.getActiveConfig);
+        // setting main config in store as active config
+        if (activeConfig !== undefined) {
+            this.$vApp.$store.set(ConfigStore.overrideConfig, activeConfig);
+        }
     }
 
     /**
