@@ -65,6 +65,7 @@ declare global {
  * @interface RampConfig
  */
 export interface RampConfig {
+    language: string;
     map: RampMapConfig;
     layers: RampLayerConfig[];
     fixtures: { [key: string]: any };

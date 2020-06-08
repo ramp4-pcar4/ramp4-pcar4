@@ -51,7 +51,8 @@
                     ']  -  built on ' +
                     new Date(RAMP.version.timestamp).toLocaleDateString();
 
-                rInstance = new RAMP.Instance(document.getElementById('app'), {
+                rInstance = new RAMP.Instance(document.getElementById('app'), [{
+                    language: 'en',
                     map: {
                         extent: {
                             xmax: -5007771.626060756,
@@ -142,7 +143,69 @@
                         },
                         mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] }
                     }
-                });
+                }, 
+                {
+                    language: 'fr',
+                    map: {
+                        extent: {
+                            xmax: -5007771.626060756,
+                            xmin: -16632697.354854,
+                            ymax: 10015875.184845109,
+                            ymin: 5022907.964742964,
+                            spatialReference: {
+                                wkid: 102100,
+                                latestWkid: 3857
+                            }
+                        },
+                        lods: RAMP.geoapi.maps.defaultLODs(RAMP.geoapi.maps.defaultTileSchemas()[1]), // idx 1 = mercator
+                        basemaps: [
+                            {
+                                id: 'esriImagery',
+                                tileSchemaId: 'DEFAULT_ESRI_World_AuxMerc_3857',
+                                layers: [
+                                    {
+                                        layerType: 'esriTile',
+                                        url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                                    }
+                                ]
+                            }
+                        ],
+                        initialBasemapId: 'esriImagery'
+                    },
+                    layers: [
+                        {
+                            id: 'CleanWater',
+                            layerType: 'esriFeature',
+                            url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/3',
+                            state: {
+                                opacity: 0.8,
+                                visibility: true
+                            },
+                            customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                        },
+                        {
+                            id: 'WFSLayer',
+                            layerType: 'ogcWfs',
+                            url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=6000',
+                            state: {
+                                visibility: true
+                            },
+                            customRenderer: {}
+                        },
+                    ],
+                    fixtures: {
+                        appbar: {
+                            items: [
+                                { id: 'gazebo', options: { colour: '#54a0ff' } },
+                                'divider',
+                                'snowman-appbar-button',
+                                'legend',
+                                'geosearch'
+                            ]
+                        },
+                        mapnav: { items: ['fullscreen', 'help', 'home'] }
+                    }
+                }]);
 
                 // start loading fixtures; this is just an example
 
