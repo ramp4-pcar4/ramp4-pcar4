@@ -1,9 +1,9 @@
 <template>
-    <div class="absolute right-0 bottom-0 pb-12 pr-12">
+    <div class="mapnav absolute right-0 bottom-0 pb-12 pr-12">
         <div class="flex flex-col" v-focus-list>
-            <zoom-nav-section class="map-nav-section bg-white-75 hover:bg-white"></zoom-nav-section>
+            <zoom-nav-section class="mapnav-section bg-white-75 hover:bg-white"></zoom-nav-section>
             <span class="py-1"></span>
-            <div class="map-nav-section bg-white-75 hover:bg-white">
+            <div class="mapnav-section bg-white-75 hover:bg-white">
                 <template v-for="(button, index) in visible">
                     <component
                         :is="button.id + '-nav-button'"
@@ -11,7 +11,7 @@
                         :key="button.id + 'button'"
                         v-focus-item
                     ></component>
-                    <divider-nav class="map-nav-divider" v-if="index !== visible.length - 1" :key="button.id + 'spacer'"></divider-nav>
+                    <divider-nav class="mapnav-divider" v-if="index !== visible.length - 1" :key="button.id + 'spacer'"></divider-nav>
                 </template>
             </div>
         </div>
@@ -44,7 +44,7 @@ export default class MapNavV extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.map-nav-section {
+.mapnav-section {
     @apply flex-col flex shadow-tm pointer-events-auto;
 }
 </style>

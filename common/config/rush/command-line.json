@@ -4,7 +4,6 @@
  */
 {
     "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/command-line.schema.json",
-
     /**
      * Custom "commands" introduce new verbs for the command-line.  To see the help for these
      * example commands, try "rush --help", "rush my-bulk-command --help", or
@@ -23,6 +22,18 @@
             "name": "host",
             "summary": "Serves the production build from the `host` folder in `ramp-core`. This can be used to test the final library build.",
             "shellCommand": "npm run --prefix packages/ramp-core host"
+        },
+        {
+            "commandKind": "global",
+            "name": "test:e2e",
+            "summary": "Runs e2e tests on ramp-core",
+            "shellCommand": "npm run --prefix packages/ramp-core test:e2e -- --headless"
+        },
+        {
+            "commandKind": "global",
+            "name": "test:e2e-ui",
+            "summary": "Runs e2e tests on ramp-core",
+            "shellCommand": "npm run --prefix packages/ramp-core test:e2e"
         }
         // {
         //   /**
@@ -136,7 +147,6 @@
         //   "shellCommand": "node common/scripts/my-global-command.js"
         // }
     ],
-
     /**
      * Custom "parameters" introduce new parameters for specified Rush command-line commands.
      * For example, you might define a "--production" parameter for the "rush build" command.
