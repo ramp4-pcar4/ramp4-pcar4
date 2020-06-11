@@ -8,16 +8,19 @@
             <close @click="panel.close()"></close>
         </template>
         <template #content>
-            <div
-                class="px-20 py-10 text-md truncate hover:bg-gray-200 cursor-pointer"
-                v-for="(item, idx) in identifyResult.items"
-                :key="idx"
-                @click="openResult(idx)"
-                v-focus-item
-            >
-                <!-- TODO: Change this later. If the name attribute is added to the IdentifyItem class, that can be used. -->
-                {{ item.data.Name || item.data.OBJECTID || 'Identify Result ' + (idx + 1) }}
+            <div v-if="identifyResult.items.length > 0">
+                <div
+                    class="px-20 py-10 text-md truncate hover:bg-gray-200 cursor-pointer"
+                    v-for="(item, idx) in identifyResult.items"
+                    :key="idx"
+                    @click="openResult(idx)"
+                    v-focus-item
+                >
+                    <!-- TODO: Change this later. If the name attribute is added to the IdentifyItem class, that can be used. -->
+                    {{ item.data.Name || item.data.OBJECTID || 'Identify Result ' + (idx + 1) }}
+                </div>
             </div>
+            <div v-else>No results found for the selected layer.</div>
         </template>
     </panel-screen>
 </template>

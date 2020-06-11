@@ -127,7 +127,112 @@
                                 'divider'
                             ]
                         },
-                        mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] }
+                        mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
+                        details: {
+                            items: [
+                                {
+                                    id: 'WaterQuantity',
+                                    template: 'Water-Quantity-Template'
+                                },
+                                {
+                                    id: 'WFSLayer',
+                                    template: 'WFSLayer-Custom'
+                                }
+                            ]
+                        }
+                    }
+                });
+
+                // Register some custom templates. I'm sure there's a way to add these from a separate file...
+
+                Vue.component('WFSLayer-Custom', {
+                    props: ['identifyData'],
+                    render: function(h) {
+                        return h('div', [
+                            h('span', 'This is an example template that contains an image.'),
+                            h('span', { 
+                                domProps: { innerHTML: '<img src="https://i.imgur.com/WtY0tdC.gif" />' }
+                            })
+                        ])
+                    }
+                })
+
+                Vue.component('Water-Quantity-Template', {
+                    props: ['identifyData'],
+                    render: function(h) {
+
+                        // Demonstrates that you can display different components in a template depending on an attribute value.
+                        let renderHeader = () => {
+                            if(this.identifyData.data['Symbol'] === "3") {
+                                return h('span', {
+                                    style: 'display: flex; font-size: 1.25rem; background-color: #e53e3e; color: white; padding: 4px; text-align: center;'
+                                }, this.identifyData.data['StationName']);
+                            } else {
+                                return h('span', {
+                                    style: 'display: flex; font-size: 1.25rem; background-color: #3182ce; color: white; padding: 4px; text-align: center;'
+                                }, this.identifyData.data['StationName']);
+                            }
+                        }
+
+                        let createSection = (title, id) => {
+                            return h('div', {
+                                style: 'display: flex; flex-direction: column; font-size: .875rem; padding-top: 5px;'
+                            }, [
+                                h('span', {
+                                    style: 'color: #a0aec0; font-weight: bold;'
+                                }, title),
+                                h('span', this.identifyData.data[id])
+                            ])
+                        }
+
+                        return h('div', { style: 'align-items: center; justify-content: center; font-size: .875rem; font-family: "Arial", sans-serif;' }, [
+                            renderHeader(),
+                            createSection('Station ID', 'StationID'),
+                            createSection('Province', 'E_Province'),
+                            createSection('Report Year', 'Report_Year'),
+                            h('div', {
+                                style: 'display: flex; flex-direction: row; color: #a0aec0; font-weight: bold; padding-top: 5px;'
+                            }, [
+                                h('div', {
+                                    style: 'flex: 1 1 0%; width: 100%;'
+                                }, 'Latitude'),
+                                h('div', {
+                                    style: 'flex: 1 1 0%; width: 100%;'
+                                }, 'Longitude')
+                            ]),
+                            h('div', {
+                                style: 'display: flex; flex-direction: row;'
+                            }, [
+                                h('div', {
+                                    style: 'flex: 1 1 0%; width: 100%;'
+                                }, this.identifyData.data['Latitude']),
+                                h('div', {
+                                    style: 'flex: 1 1 0%; width: 100%;'
+                                }, this.identifyData.data['Longitude'])
+                            ]),
+                            h('div', {
+                                style: 'display: flex; flex-direction: column; padding-top: 5px; color: #4299e1;'
+                            }, [
+                                h('span', {
+                                    style: 'font-weight: bold; color: #a0aec0;'
+                                }, 'Links'),
+                                h('span', {
+                                    domProps: {
+                                        innerHTML: this.identifyData.data['E_DetailPageURL']
+                                    }
+                                }),
+                                h('span', {
+                                    domProps: {
+                                        innerHTML: this.identifyData.data['E_URL_Historical']
+                                    }
+                                }),
+                                h('span', {
+                                    domProps: {
+                                        innerHTML: this.identifyData.data['E_URL_RealTime']
+                                    }
+                                })
+                            ])
+                        ]);
                     }
                 });
 
@@ -141,6 +246,7 @@
                 rInstance.fixture.add('basemap');
                 rInstance.fixture.add('legend');
                 rInstance.fixture.add('grid');
+                rInstance.fixture.add('details');
                 rInstance.fixture.add('help');
 
                 rInstance.fixture.add('diligord', window.hostFixtures.diligord);

@@ -24,6 +24,14 @@ class DetailsFixture extends DetailsAPI {
 
         this.$vApp.$store.registerModule('details', details());
 
+        // Parse the details portion of the configuration file and save any custom
+        // template bindings in the details store.
+        this._parseConfig(this.config);
+        this.$vApp.$watch(
+            () => this.config,
+            value => this._parseConfig(value)
+        );
+
         // Add map click handler for global map identify.
         // TODO: come back to this later, it will most likely be moved to the Event API (https://github.com/ramp4-pcar4/r4design/issues/14)
         this.$iApi.map.mapClicked.listen((payload: MapClick) => {
