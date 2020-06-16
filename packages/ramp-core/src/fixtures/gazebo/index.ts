@@ -13,9 +13,13 @@ import { AsyncComponentEh } from '@/store/modules/panel';
 
 import messages from './lang/lang.csv';
 
+const BEHOLD_TEXT_EVENT = 'gazebo/beholdMyText';
+
 class GazeboFixture extends FixtureInstance {
     added(): void {
         console.log(`[fixture] ${this.id} added`);
+
+        this.$iApi.registerEventName(BEHOLD_TEXT_EVENT);
 
         this.$iApi.component('gazebo-appbar-button', GazeboAppbarButton);
 
@@ -78,7 +82,7 @@ class GazeboFixture extends FixtureInstance {
         // ideally this would have been triggered by opening the cat panel, but i'm too dumb
         // to figure out how buttons in .vue templates can reach back up to the fixture.
         setTimeout(() => {
-            this.emit('beholdMyText', 'I am a cat');
+            this.$iApi.emit(BEHOLD_TEXT_EVENT, 'I am a cat');
         }, 10000);
     }
 }

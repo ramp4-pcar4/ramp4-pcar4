@@ -47,56 +47,6 @@ export interface FixtureBase {
      * @memberof Fixture
      */
     terminated?(): void;
-
-    /**
-     * Adds an event handler to the fixture.
-     *
-     * @param {string} event name of the fixture event to react to
-     * @param {Function} callback function to execute when event triggers
-     * @param {string} [handlerName] name of the handler (for reference). a name will be generated if not provided.
-     * @returns {string} the handler name
-     * @memberof Fixture
-     */
-    on(event: string, callback: Function, handlerName?: string): string;
-
-    /**
-     * Removes an event handler on the fixture.
-     *
-     * @param {string} handlerName name of the handler to remove
-     * @memberof Fixture
-     */
-    off(handlerName: string): void;
-
-    /**
-     * Triggers an event on the fixture.
-     *
-     * @param {string} event the name of the event
-     * @param {...any[]} args any arguements the event is expecting
-     * @memberof Fixture
-     */
-    emit(event: string, ...args: any[]): void;
-
-    /**
-     * Returns any active event handler names for an event.
-     *
-     * @param {string} event name of the event
-     * @returns {Array} handler names for the given event
-     * @memberof Fixture
-     */
-    activeHandlers(event: string): Array<string>;
-
-    /**
-     * Returns a list of event names the fixture supports.
-     *
-     * @returns {Array} event names for the fixture
-     * @memberof Fixture
-     */
-    availableEvents(): Array<string>;
-
-
-    // TODO add event toggle or enable/disable? do we want it?
-    // TODO add event "once()"? do we want it?
-
 }
 
 // TODO: deprecated;

@@ -8,7 +8,7 @@ import App from '@/app.vue';
 import { createStore, RootState } from '@/store';
 import { ConfigStore } from '@/store/modules/config';
 
-import { FixtureAPI, PanelAPI, GlobalEvents } from './internal';
+import { FixtureAPI, PanelAPI, GlobalEvents, EventBus } from './internal';
 
 export class InstanceAPI {
     fixture: FixtureAPI;
@@ -25,7 +25,7 @@ export class InstanceAPI {
      * @type {Vue}
      * @memberof InstanceAPI
      */
-    private readonly _eventBus: Vue;
+    private readonly _eventBus: EventBus;
 
     /**
      * The instance of Vue R4MP application controlled by this InstanceAPI.
@@ -38,7 +38,7 @@ export class InstanceAPI {
     private _isFullscreen: boolean;
 
     constructor(element: HTMLElement, config?: RampMapConfig) {
-        this._eventBus = new Vue();
+        this._eventBus = new EventBus();
 
         this.$vApp = createApp(element, this);
 
@@ -88,20 +88,23 @@ export class InstanceAPI {
         return Vue.component(id);
     }
 
+    // TODO for now, am exposing the choice event bus functions on the instance via basic wrappers
+    //      we may chose to just expose the bus, making calls look like instance.event.on() .
+    //      on the instance feels a bit cleaner, but the code looks rather silly below. wrapper wrapping a wrapper.
+    // TODO if the event design is accepted, consider re-adding some of the overloads (via param magic or new methods).
+    //      there are more comments in the event.ts file on this.
+
     /**
      * Listen for a custom event. Events can be triggered by `emit`. The callback will receive all the additional arguments passed into these event-triggering methods.
      *
-     * Proxied to `Vue.$on`.
-     *
-     * @param {(string | string[])} event
+     * @param {string} event
      * @param {Function} callback
-     * @returns {this}
+     * @param {string} [handlerName] name of the handler (for reference). a name will be generated if not provided.
+     * @returns {string} the handler name
      * @memberof InstanceAPI
      */
-    // TODO: rename event-related global functions to use `$` prefix to match them to Vue default event functions, for consistency
-    on(event: string | string[], callback: Function): this {
-        this._eventBus.$on(event, callback);
-        return this;
+    on(event: string, callback: Function, handlerName: string = ''): string {
+        return this._eventBus.on(event, callback, handlerName);
     }
 
     /**
@@ -114,42 +117,63 @@ export class InstanceAPI {
      * @returns {this}
      * @memberof InstanceAPI
      */
+    /* TODO strongly consider reimplmenting once event design is OKd.
     once(event: string | string[], callback: Function): this {
         this._eventBus.$once(event, callback);
         return this;
     }
+    */
 
     /**
-     * Remove custom event listener(s).
-     * - If no arguments are provided, remove all event listeners;
-     * - If only the event is provided, remove all listeners for that event;
-     * - If both event and callback are given, remove the listener for that specific callback only.
+     * Remove custom event handler
      *
-     * Proxied to `Vue.$off`.
-     *
-     * @param {(string | string[])} [event]
-     * @param {Function} [callback]
-     * @returns {this}
+     * @param {string} handlerName name of the handler to remove
      * @memberof InstanceAPI
      */
-    off(event?: string | string[], callback?: Function): this {
-        this._eventBus.$off(event, callback);
-        return this;
+    off(handlerName: string): void {
+        this._eventBus.off(handlerName);
     }
 
     /**
      * Trigger an event on the current instance. Any additional arguments will be passed into the listener’s callback function.
      *
-     * Proxied to `Vue.$emit`.
-     *
      * @param {string} event
      * @param {...any[]} args
-     * @returns {this}
      * @memberof InstanceAPI
      */
-    emit(event: string, ...args: any[]): this {
-        this._eventBus.$emit(event, ...args);
-        return this;
+    emit(event: string, ...args: any[]): void {
+        this._eventBus.emit(event, ...args);
+    }
+
+    /**
+     * Returns any active event handler names for an event.
+     *
+     * @param {string} event name of the event
+     * @returns {Array} handler names for the given event
+     * @memberof InstanceAPI
+     */
+    activeHandlers(event: string): Array<string> {
+        return this._eventBus.activeHandlers(event);
+    }
+
+    /**
+     * Returns a list of event names known to exist on the bus.
+     *
+     * @returns {Array} event names for the fixture
+     * @memberof InstanceAPI
+     */
+    availableEvents(): Array<string> {
+        return this._eventBus.availableEvents();
+    }
+
+    /**
+     * Adds event names to the names registry of the event bus.
+     *
+     * @param {string | Array} names event names or names to register
+     * @memberof InstanceAPI
+     */
+    registerEventName(names: string | Array<string>): void {
+        this._eventBus.registerEventName(names);
     }
 
     /**

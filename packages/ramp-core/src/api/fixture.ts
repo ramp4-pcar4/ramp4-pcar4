@@ -120,21 +120,6 @@ export class FixtureAPI extends APIScope {
     }
 }
 
-// private for fixture internals, so don't export
-// a simple data structure for managing the Event API on fixtures.
-// TODO if we end up supporting toggle/disabled events, add an active boolean flag to the structure
-class FixtureEventHandler {
-    eventName: string;
-    handlerName: string;
-    handlerFunc: Function;
-
-    constructor (eName: string, hName: string, handler: Function) {
-        this.eventName = eName;
-        this.handlerName = hName;
-        this.handlerFunc = handler;
-    }
-}
-
 /**
  * A base class for Fixture subclasses. It provides some utility functions to Fixtures and also gives access to `$iApi` and `$vApp` globals.
  *
@@ -174,12 +159,7 @@ export class FixtureInstance extends APIScope implements FixtureBase {
                 get(): any {
                     return instance.config;
                 }
-            },
-            on: { value: instance.on },
-            off: { value: instance.off },
-            emit: { value: instance.emit },
-            activeHandlers: { value: instance.activeHandlers },
-            availableEvents: { value: instance.availableEvents }
+            }
         });
 
         return value as FixtureInstance;
@@ -256,127 +236,6 @@ export class FixtureInstance extends APIScope implements FixtureBase {
      */
     get config(): any {
         return this.$vApp.$store.get('config/getFixtureConfig', this.id);
-    }
-
-    // ------ EVENT API LAND ------
-
-    // need something that manages event name, handler name, and the actual handler function
-    private eventRegister: Array<FixtureEventHandler> = [];
-
-    /**
-     * Takes a fixture event name and derives the secret name for the global bus
-     *
-     * @param {string} event the name of the fixture event
-     * @returns {string} secret name for the global bus
-     * @memberof FixtureInstance
-     * @private
-     */
-    private eventNamer(event: string): string {
-        return `${this.id}/${event}`;
-    }
-
-    /**
-     * Locates a handler name registered on this fixture, or undefined if not found
-     *
-     * @param {string} handlerName the name of the fixture event handler
-     * @returns {FixtureEventHandler | undefined} handler information or undefined
-     * @memberof FixtureInstance
-     * @private
-     */
-    private findHandler(handlerName: string): FixtureEventHandler | undefined {
-        return this.eventRegister.find(feh => feh.handlerName === handlerName);
-    }
-
-    /**
-     * Adds an event handler to the fixture.
-     *
-     * @param {string} event name of the fixture event to react to
-     * @param {Function} callback function to execute when event triggers
-     * @param {string} [handlerName] name of the handler (for reference). a name will be generated if not provided.
-     * @returns {string} the handler name
-     * @memberof FixtureInstance
-     */
-    on(event: string, callback: Function, handlerName: string = ''): string {
-        // check if name already registered
-        if (this.findHandler(handlerName)) {
-            // TODO decide if we are replacing, erroring, do nothing + console warn?
-            throw new Error('Duplicate handler name registration: ' + handlerName);
-        }
-
-        if (!handlerName) {
-            const d = new Date();
-            handlerName = this.id + btoa(d.getTime().toString());
-        }
-
-        // track the event, register with main event bus
-        const feh = new FixtureEventHandler(event, handlerName, callback);
-        this.eventRegister.push(feh);
-        this.$iApi.on(this.eventNamer(event), callback);
-
-        return handlerName;
-    }
-
-    /**
-     * Removes an event handler on the fixture.
-     *
-     * @param {string} handlerName name of the handler to remove
-     * @memberof FixtureInstance
-     */
-    off(handlerName: string): void {
-        // TODO support other overloads? like event + handler function?
-        // TODO handle the "off all" scenario?
-
-        // check if name exists. if not... do nothing? console warn? error?
-        const feh = this.findHandler(handlerName);
-
-        if (feh) {
-            // remove from event bus and the registry
-            this.eventRegister.splice(this.eventRegister.indexOf(feh), 1);
-            this.$iApi.off(this.eventNamer(feh.eventName), feh.handlerFunc);
-        }
-
-        // TODO case where no handler was found. do nothing? console warn? error?
-        //      for now just exit. the goal was achived (non-existing handler will no longer react)
-    }
-
-    /**
-     * Triggers an event on the fixture.
-     *
-     * @param {string} event the name of the event
-     * @param {...any[]} args any arguements the event is expecting
-     * @memberof FixtureInstance
-     */
-    emit(event: string, ...args: any[]): void {
-        // TODO any checking that event exists? or we just agree it is global bus fun
-        this.$iApi.emit(this.eventNamer(event), ...args);
-    }
-
-    /**
-     * Returns any active event handler names for an event.
-     *
-     * @param {string} event name of the event
-     * @returns {Array} handler names for the given event
-     * @memberof FixtureInstance
-     */
-    activeHandlers(event: string): Array<string> {
-        // TODO add a filter if we implement disabled events
-        return this.eventRegister.filter(feh => feh.eventName === event).map(feh => feh.handlerName);
-    }
-
-    /**
-     * Returns a list of event names the fixture supports.
-     *
-     * @returns {Array} event names for the fixture
-     * @memberof FixtureInstance
-     */
-    availableEvents(): Array<string> {
-        // suppose this needs to be defined on specific fixtures?
-        // it's a bit odd as we can add any event off the cuff
-        // but there would also be events that fixtures raise that could have no listeners.
-        // so maybe return value is merge or fixture defined event names plus any events that
-        // listeners have been created on
-        // TODO implement after comment choice is resolved
-        return []; //shut up warnings
     }
 
 }
