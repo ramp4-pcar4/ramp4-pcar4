@@ -8,23 +8,7 @@
             <close @click="panel.close()"></close>
         </template>
         <template #content>
-            <!-- ESRI Format -->
-            <div v-if="identifyItem.format === identifyTypes.ESRI">
-                <div
-                    class="p-5 pl-3 flex justify-end flex-wrap even:bg-gray-300"
-                    v-for="(val, name, itemIdx) in identifyItem.data"
-                    :key="itemIdx"
-                >
-                    <span class="inline font-bold">{{ name }}</span>
-                    <span class="flex-auto"></span>
-                    <span class="inline" v-html="val"></span>
-                </div>
-            </div>
-
-            <!-- Others... for now. -->
-            <div v-else>
-                <div v-html="item.data"></div>
-            </div>
+            <component :is="detailsTemplate" :identifyData="identifyItem"></component>
         </template>
     </panel-screen>
 </template>
@@ -32,13 +16,22 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
-import { DetailsStore } from './store';
+import { DetailsStore, DetailsItemInstance } from './store';
 
 import { PanelInstance } from '@/api';
 import { IdentifyResult, IdentifyResultSet, IdentifyItem, IdentifyResultFormat } from 'ramp-geoapi';
+import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
 
-@Component({})
+import ESRIDefaultV from './templates/esri-default.vue';
+
+@Component({
+    components: {
+        'esri-default': ESRIDefaultV
+    }
+})
 export default class DetailsItemV extends Vue {
+    @Get('details/items') templateBindings!: { [id: string]: DetailsItemInstance };
+
     @Prop() panel!: PanelInstance;
 
     // the index of the details item we want to display
@@ -50,6 +43,7 @@ export default class DetailsItemV extends Vue {
 
     // retrieve the identify payload from the store
     @Get(DetailsStore.payload) payload!: IdentifyResult[];
+    @Get('layer/layers') layers!: BaseLayer[];
 
     identifyTypes: any = IdentifyResultFormat;
 
@@ -57,14 +51,36 @@ export default class DetailsItemV extends Vue {
      * Returns the information for a single identify result, given the layer and item offsets.
      */
     get identifyItem() {
-        if (this.isFeature) {
-            return this.payload;
-        } else {
-            return this.payload[this.layerIndex].items[this.itemIndex];
+        return this.isFeature ? this.payload : this.payload[this.layerIndex].items[this.itemIndex];
+    }
+
+    get detailsTemplate() {
+        const layerInfo = this.payload[this.layerIndex];
+
+        // Check to see if there is a custom template defined for the selected layer.
+        let item: BaseLayer | undefined = this.layers
+            .map(layer => {
+                let layerNode = layer.getLayerTree();
+
+                if (!layerNode) return;
+
+                // Determine if the selected UID is a child of this layer.
+                if (layerNode.findChildByUid(layerInfo.uid) !== undefined) {
+                    return layer;
+                }
+            })
+            .filter(node => node != undefined)[0];
+
+        // If there is a custom template binding for this layer in the store, then
+        // return its name.
+        if (item && this.templateBindings[item.id] && this.templateBindings[item.id].componentId) {
+            return this.templateBindings[item.id].componentId;
         }
+
+        // If nothing is found, use a default template.
+        return 'esri-default';
     }
 }
-
 </script>
 
 <style lang="scss"></style>

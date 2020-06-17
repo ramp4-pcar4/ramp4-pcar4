@@ -1,7 +1,12 @@
 import { FixtureInstance } from '@/api';
 import { IdentifyResult, IdentifyItem } from 'ramp-geoapi';
+import { DetailsConfig, DetailsItemSet, DetailsItemInstance } from '../store';
 
 export class DetailsAPI extends FixtureInstance {
+    get config(): DetailsConfig | undefined {
+        return super.config;
+    }
+
     /**
      * Updates the identify result in the store, and then opens the details panel.
      *
@@ -36,5 +41,42 @@ export class DetailsAPI extends FixtureInstance {
         if (!this.$iApi.panel.get('details-panel').isOpen) {
             this.$iApi.panel.open({ id: 'details-panel', screen: 'details-screen-item', props: { isFeature: true } });
         }
+    }
+
+    /**
+     * Read the details section of the configuration file and save any custom template bindings in the store.
+     *
+     * @param {DetailsConfig} [config]
+     * @memberof DetailsAPI
+     */
+    _parseConfig(config?: DetailsConfig) {
+        if (!config) return;
+
+        const detailsItems = config.items.map((item: any) => new DetailsItemInstance(item));
+
+        // save the items in the store
+        this.$vApp.$store.set(
+            'details/items',
+            detailsItems.reduce<DetailsItemSet>((map, item) => {
+                map[item.id] = item;
+                return map;
+            }, {})
+        );
+
+        this._validateItems();
+
+    }
+
+    /**
+     * Check to see if the stored components are registered properly. 
+     *
+     * @memberof DetailsAPI
+     */
+    _validateItems() {
+        Object.values(this.$vApp.$store.get<DetailsItemInstance[]>('details/items')!).forEach(item => {
+            if (item.template in this.$vApp.$options.components!) {
+                this.$vApp.$store.set(`details/items@${item.id}.componentId`, item.template);
+            }
+        });
     }
 }

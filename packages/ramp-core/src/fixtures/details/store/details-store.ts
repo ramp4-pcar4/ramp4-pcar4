@@ -39,6 +39,6 @@ export function details() {
         state,
         getters: { ...getters },
         actions: { ...actions },
-        mutations: { ...mutations, ...make.mutations([]) }
+        mutations: { ...mutations, ...make.mutations(['items']) }
     };
 }
