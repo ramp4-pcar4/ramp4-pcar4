@@ -27,7 +27,7 @@
                     Switch to Screen A
                 </button>
 
-                <button @click="panel.show('p-2-screen-3')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-8 px-16 m-2">
+                <button @click="enhancedCatActivities()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-8 px-16 m-2">
                     See a cat
                 </button>
             </div>
@@ -58,6 +58,12 @@ export default class P2Screen2V extends Vue {
 
         // ✔ this also works 👇
         // return this.$iApi.panel.pinned !== null && this.$iApi.panel.pinned.id === this.panel.id;
+    }
+
+    enhancedCatActivities() {
+        // shows a cat, also does an event API flex
+        this.panel.show('p-2-screen-3')
+        this.$iApi.emit('gazebo/beholdMyText', 'I am a cat');
     }
 }
 </script>

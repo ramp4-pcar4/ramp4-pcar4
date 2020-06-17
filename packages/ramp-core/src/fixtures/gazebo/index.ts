@@ -77,13 +77,6 @@ class GazeboFixture extends FixtureInstance {
             .get('p2')
             .open({ screen: 'p-2-screen-2' })
             .pin();
-
-        // TEMP CODE FOR SAMPLE
-        // ideally this would have been triggered by opening the cat panel, but i'm too dumb
-        // to figure out how buttons in .vue templates can reach back up to the fixture.
-        setTimeout(() => {
-            this.$iApi.emit(BEHOLD_TEXT_EVENT, 'I am a cat');
-        }, 10000);
     }
 }
 
