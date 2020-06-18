@@ -1,5 +1,6 @@
 import Vue, { VueConstructor } from 'vue';
-import { RampMapConfig, RampMap } from 'ramp-geoapi';
+import { RampMap } from 'ramp-geoapi';
+import { RampConfigs } from '@/types';
 import { Store } from 'vuex';
 import { i18n } from '@/lang';
 import screenfull from 'screenfull';
@@ -37,7 +38,7 @@ export class InstanceAPI {
 
     private _isFullscreen: boolean;
 
-    constructor(element: HTMLElement, config?: RampMapConfig) {
+    constructor(element: HTMLElement, configs?: RampConfigs) {
         this._eventBus = new Vue();
 
         this.$vApp = createApp(element, this);
@@ -47,7 +48,16 @@ export class InstanceAPI {
 
         // TODO: decide whether to move to src/main.ts:createApp
         // TODO: store a reference to the even bus in the global store [?]
-        this.$vApp.$store.set(ConfigStore.newConfig, config || undefined);
+        if (configs !== undefined) {
+            const defaultConfig = configs[Object.keys(configs)[0]];
+            this.$vApp.$store.set(ConfigStore.newConfig, defaultConfig !== undefined ? defaultConfig : undefined);
+
+            // register first config for all available languages and then overwrite configs per language as needed
+            this.$vApp.$store.set(ConfigStore.registerConfig, { config: defaultConfig });
+            for (let lang in configs) {
+                this.$vApp.$store.set(ConfigStore.registerConfig, { config: configs[lang], langs: [lang] });
+            }
+        }
 
         this._isFullscreen = screenfull.isEnabled && screenfull.isFullscreen && screenfull.element === this.$vApp.$root.$el;
         if (screenfull.isEnabled) {
@@ -153,7 +163,7 @@ export class InstanceAPI {
     }
 
     /**
-     * The 'screen' size for the app. Returns the largest screen class on the element; 'lg', 'md', 'sm' or 'xs'
+     * The 'screen' size for the app. Returns the largest screen class on the element; 'lg', 'md', 'sm' or 'xs'.
      *
      * @readonly
      * @type string | null
@@ -176,6 +186,16 @@ export class InstanceAPI {
     }
 
     /**
+     * Gets the config linked to the current language of the app.
+     *
+     * @memberof InstanceAPI
+     */
+    getConfig(): void {
+        const language = this.$vApp.$i18n.locale;
+        return this.$vApp.$store.get(ConfigStore.getActiveConfig, language);
+    }
+
+    /**
      * Sets the language of the app to the specified string (e.g. 'en' or 'fr').
      *
      * @param {string} language The locale string to switch to
@@ -183,6 +203,9 @@ export class InstanceAPI {
      */
     setLanguage(language: string): void {
         this.$vApp.$i18n.locale = language;
+        const activeConfig = this.getConfig();
+        console.log('active config: ', activeConfig);
+        // TODO: do something with active config - reload map?
     }
 
     /**

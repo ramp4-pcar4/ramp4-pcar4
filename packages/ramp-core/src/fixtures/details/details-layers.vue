@@ -7,9 +7,7 @@
             <close @click="panel.close()"></close>
         </template>
         <template #content>
-            <div class="p-5">
-                Found {{ payloadResults }} results in {{ payload.length }} layer{{ payload.length !== 1 ? 's' : '' }}
-            </div>
+            <div class="p-5">Found {{ payloadResults }} results in {{ payload.length }} layer{{ payload.length !== 1 ? 's' : '' }}</div>
             <div
                 class="px-20 py-10 text-md flex hover:bg-gray-200 cursor-pointer"
                 v-for="(item, idx) in payload"
@@ -65,7 +63,7 @@ export default class DetailsLayersV extends Vue {
             })
             .filter(node => node != undefined)[0];
 
-        if(!item) return;
+        if (!item) return;
 
         return item.getName() ? item.getName() : item.id;
     }
