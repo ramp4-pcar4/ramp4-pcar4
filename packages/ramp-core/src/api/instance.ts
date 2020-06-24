@@ -10,10 +10,12 @@ import { createStore, RootState } from '@/store';
 import { ConfigStore } from '@/store/modules/config';
 
 import { FixtureAPI, PanelAPI, GlobalEvents } from './internal';
+import { MapAPI } from './map';
 
 export class InstanceAPI {
     fixture: FixtureAPI;
     panel: PanelAPI;
+    mapActions: MapAPI;
 
     // FIXME: temporarily store map in global, remove line below when map API is complete
     // set by the `map/esri-map.vue` file
@@ -45,6 +47,7 @@ export class InstanceAPI {
 
         this.fixture = new FixtureAPI(this); // pass the iApi reference to the FixtureAPI
         this.panel = new PanelAPI(this);
+        this.mapActions = new MapAPI(this);
 
         // TODO: decide whether to move to src/main.ts:createApp
         // TODO: store a reference to the even bus in the global store [?]
