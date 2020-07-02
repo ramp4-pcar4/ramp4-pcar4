@@ -11,6 +11,7 @@ import GapiLoader, { RampMap, GeoApi, RampMapConfig } from 'ramp-geoapi';
 import { ConfigStore } from '@/store/modules/config';
 import { LayerStore, layer } from '@/store/modules/layer';
 import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
+import { GlobalEvents } from '../../api';
 
 @Component
 export default class EsriMap extends Vue {
@@ -44,6 +45,7 @@ export default class EsriMap extends Vue {
         this.map = RAMP.geoapi.maps.createMap(this.mapConfig, this.$el as HTMLDivElement);
         // FIXME: temporarily store map in global, remove line below when map API is complete
         this.$iApi.map = this.map;
+        this.$iApi.emit(GlobalEvents.MAP_CREATED, this.$iApi.map);
         this.onLayerArrayChange(this.layers, []);
     }
 }
