@@ -34,7 +34,7 @@ export default class GeosearchBottomFilters extends Vue {
         //      hard-bound means no one outside can un-hook and replace with a different reaction.
         //      going default means the handler function needs to be public / on the geosearch api.
         // TODO consider if we need some type of unregistration on fixture destroy
-        this.$iApi.event.on(GlobalEvents.MAPEXTENTCHANGE, this.onMapExtentChange, 'geosearch_map_extent');
+        this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, this.onMapExtentChange, 'geosearch_map_extent');
     }
 
     // update geosearch results to match those in current view if visible is checked

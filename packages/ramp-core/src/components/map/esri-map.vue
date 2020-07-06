@@ -50,13 +50,13 @@ export default class EsriMap extends Vue {
 
         // TODO wire up more events from map to main bus. or migrate into "map API" if that happens
         this.$iApi.map.mapClicked.listen((payload: MapClick) => {
-            this.$iApi.event.emit(GlobalEvents.MAPCLICK, payload);
+            this.$iApi.event.emit(GlobalEvents.MAP_CLICK, payload);
         });
         this.$iApi.map.mapDoubleClicked.listen((payload: MapClick) => {
-            this.$iApi.event.emit(GlobalEvents.MAPDOUBLECLICK, payload);
+            this.$iApi.event.emit(GlobalEvents.MAP_DOUBLECLICK, payload);
         });
         this.$iApi.map.extentChanged.listen((payload: GeoApiBundle.Extent) => {
-            this.$iApi.event.emit(GlobalEvents.MAPEXTENTCHANGE, payload);
+            this.$iApi.event.emit(GlobalEvents.MAP_EXTENTCHANGE, payload);
         });
 
         this.onLayerArrayChange(this.layers, []);

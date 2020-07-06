@@ -51,7 +51,7 @@ export class MapAPI extends APIScope {
         const identifyResults: IdentifyResult[] = ([] as IdentifyResult[]).concat(...identifyInstances.map(({ results }) => results));
 
         // TODO make the event payload an interface? should there be a public area with all event payload interfaces?
-        this.$iApi.event.emit(GlobalEvents.IDENTIFY, { results: identifyResults, click: payload });
+        this.$iApi.event.emit(GlobalEvents.MAP_IDENTIFY, { results: identifyResults, click: payload });
     }
 }
 

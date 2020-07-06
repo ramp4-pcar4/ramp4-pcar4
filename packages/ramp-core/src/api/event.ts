@@ -17,10 +17,10 @@ export enum GlobalEvents {
     MAP_CREATED = 'map/created',
 
     // TODO docs, determine the payloads
-    MAPCLICK = 'map/click',
-    MAPDOUBLECLICK = 'map/doubleclick',
-    MAPEXTENTCHANGE = 'map/extentchanged',
-    IDENTIFY = 'map/identify',
+    MAP_CLICK = 'map/click',
+    MAP_DOUBLECLICK = 'map/doubleclick',
+    MAP_EXTENTCHANGE = 'map/extentchanged',
+    MAP_IDENTIFY = 'map/identify',
 }
 
 // TODO export this enum?
@@ -289,7 +289,7 @@ export class EventAPI extends APIScope {
                 zeHandler = (clickParam: MapClick) => {
                     this.$iApi.mapActions.identify(clickParam);
                 };
-                this.on(GlobalEvents.MAPCLICK, zeHandler, handlerName);
+                this.on(GlobalEvents.MAP_CLICK, zeHandler, handlerName);
                 break;
 
             case DefEH.IDENTIFY_DETAILS:
@@ -300,7 +300,7 @@ export class EventAPI extends APIScope {
                         detailFix.openDetails(identifyParam.results)
                     }
                 };
-                this.on(GlobalEvents.IDENTIFY, zeHandler, handlerName);
+                this.on(GlobalEvents.MAP_IDENTIFY, zeHandler, handlerName);
                 break;
 
             default:
