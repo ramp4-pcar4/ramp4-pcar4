@@ -14,6 +14,7 @@ module.exports = {
             // sm: '640px'
         },
         spacing: spacingConfig,
+        inset: spacingConfig,
         extend: {
             colors: {
                 'black-75': 'rgba(0, 0, 0, 0.75)',

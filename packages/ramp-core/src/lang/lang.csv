@@ -4,3 +4,4 @@ lang-dir,ltr,1,ltr,1
 lang-en,English,1,French,1
 lang-fr,anglais,1,français,1
 lang-native,English,1,Français,1
+map.toggleScaleUnits,Toggle between imperial and metric map scale,1,Basculer entre les échelles métriques et impériales pour la carte,1

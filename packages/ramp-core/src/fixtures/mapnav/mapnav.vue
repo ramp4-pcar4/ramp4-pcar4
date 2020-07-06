@@ -1,5 +1,5 @@
 <template>
-    <div class="mapnav absolute right-0 bottom-0 pb-12 pr-12">
+    <div class="mapnav absolute right-0 bottom-0 pb-36 pr-12">
         <div class="flex flex-col" v-focus-list>
             <zoom-nav-section class="mapnav-section bg-white-75 hover:bg-white"></zoom-nav-section>
             <span class="py-1"></span>
