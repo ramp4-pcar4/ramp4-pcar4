@@ -2,12 +2,11 @@
 
 import esri = __esri;
 import GeoJson from 'geojson'; // this is a @types thing, no idea if this import is correct. cannot do the = GeoJSON global namespace like how __esri works
-import { InfoBundle, MapClick } from '../gapiTypes';
+import { InfoBundle, MapClick, MapMove } from '../gapiTypes';
 import * as RampAPI from '../api/api';
 import BaseGeometry from '../api/geometry/BaseGeometry'; // this is a bit wonky. could expose on RampAPI, but dont want clients using the baseclass
 import BaseBase from '../BaseBase';
 import { GeometryType } from '../api/apiDefs';
-import { Geometry } from 'esri/geometry';
 
 enum gjType {
     POINT = 'Point',
@@ -31,7 +30,7 @@ export default class GeometryService extends BaseBase {
      *
      * @param {MapViewClickEvent | MapViewDoubleClickEvent} esriMapClick an event param from an esri 2D map click or double-click event
      * @param {String | Number} [id] optional id for the map point geometry on the result
-     * @returns {MapClick} a generic bundle of data matching the incoming esri data
+     * @returns {MapClick} a generic bundle of data matching a subset of the incoming esri data
      */
     esriMapClickToRamp(esriMapClick: esri.MapViewClickEvent | esri.MapViewDoubleClickEvent, id?: number | string): MapClick {
         return {
@@ -40,6 +39,21 @@ export default class GeometryService extends BaseBase {
             screenY: esriMapClick.y,
             button: esriMapClick.button,
             clickTime: esriMapClick.timestamp
+        };
+    }
+
+    /**
+     * Convert an ESRI map click event object to a generic RAMPish map click event object
+     *
+     * @param {MapViewPointerMoveEvent} esriMapMove an event param from an esri 2D map click or double-click event
+     * @returns {MapMove} a generic bundle of data matching a subset of the incoming esri data
+     */
+    esriMapMouseToRamp(esriMapMove: esri.MapViewPointerMoveEvent): MapMove {
+        return {
+            screenX: esriMapMove.x,
+            screenY: esriMapMove.y,
+            button: esriMapMove.button,
+            moveTime: esriMapMove.timestamp
         };
     }
 

@@ -2,7 +2,7 @@
 // TODO add proper comments
 
 import esri = __esri;
-import { InfoBundle, RampMapConfig, MapClick } from '../gapiTypes';
+import { InfoBundle, RampMapConfig, MapClick, MapMove } from '../gapiTypes';
 import MapBase from './MapBase';
 import LayerBase from '../layer/BaseLayer';
 import HighlightLayer from '../layer/HighlightLayer';
@@ -35,6 +35,8 @@ export class RampMap extends MapBase {
 
     mapDoubleClicked: TypedEvent<MapClick>;
 
+    mapMouseMoved: TypedEvent<MapMove>;
+
     // NOTE while having this var be protected makes sense, there are also cases where other parts of the geoapi need to access this.
     //      being public will also to allow hacking, which can be useful in a pinch. use underscore to make it clear this in not for playtimes.
     /**
@@ -65,6 +67,7 @@ export class RampMap extends MapBase {
         this.scaleChanged = new TypedEvent<number>();
         this.mapClicked = new TypedEvent<MapClick>();
         this.mapDoubleClicked = new TypedEvent<MapClick>();
+        this.mapMouseMoved = new TypedEvent<MapMove>();
 
         const esriViewConfig: esri.MapViewProperties = {
             map: this._innerMap,
@@ -97,6 +100,12 @@ export class RampMap extends MapBase {
 
         this._innerView.on('double-click', esriClick => {
             this.mapDoubleClicked.fireEvent(this.gapi.utils.geom.esriMapClickToRamp(esriClick, 'map_doubleclick_point'));
+        });
+
+        this._innerView.on('pointer-move', esriMouseMove => {
+            // TODO this even fires on just about every change in pixel the pointer makes.
+            //      should we debounce here? or on the client?
+            this.mapMouseMoved.fireEvent(this.gapi.utils.geom.esriMapMouseToRamp(esriMouseMove));
         });
     }
 
@@ -244,6 +253,15 @@ export class RampMap extends MapBase {
     }
 
     /**
+     * Provides the resolution of the map. This means the number of map units that is covered by one pixel.
+     *
+     * @returns {number} the map resolution
+     */
+    getResolution(): number {
+        return this._innerView.resolution;
+    }
+
+    /**
      * Provides the extent of the map
      *
      * @returns {Extent} the map extent in RAMP API Extent format
@@ -277,6 +295,17 @@ export class RampMap extends MapBase {
      */
     getPixelWidth(): number {
         return this._innerView.width;
+    }
+
+    /**
+     * Get a point in map co-ordinates corresponding to a pixel in screen co-ordinates.
+     *
+     * @param {Number} screenX pixel co-ord of the point on the map, x-axis.
+     * @param {Number} screenY pixel co-ord of the point on the map, y-axis.
+     * @returns {Point} the map point analagous to the screen point
+     */
+    screenPointToMapPoint(screenX: number, screenY: number): Point {
+        return this.gapi.utils.geom.convEsriPointToRamp(this._innerView.toMap({x: screenX, y: screenY}), 'mappoint');
     }
 
     // TODO function to allow a second Map to be shot out, that shares this map but has a different scene
