@@ -5,7 +5,7 @@
 <script lang="ts">
 import { Vue, Watch, Component } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
-import GapiLoader, { RampMap, GeoApi, RampMapConfig, MapClick, ApiBundle as GeoApiBundle } from 'ramp-geoapi';
+import GapiLoader, { RampMap, GeoApi, RampMapConfig, MapClick, MapMove, ApiBundle as GeoApiBundle } from 'ramp-geoapi';
 import { GlobalEvents } from '../../api/internal';
 import { APIInterface, RampGeo } from '../../api';
 // import { window } from '@/main';
@@ -58,6 +58,11 @@ export default class EsriMap extends Vue {
         this.$iApi.map.extentChanged.listen((payload: GeoApiBundle.Extent) => {
             this.$iApi.event.emit(GlobalEvents.MAP_EXTENTCHANGE, payload);
         });
+        this.$iApi.map.mapMouseMoved.listen((payload: MapMove) => {
+            // TODO debounce here? the map event fires pretty much every change in pixel value.
+            this.$iApi.event.emit(GlobalEvents.MAP_MOUSEMOVE, payload);
+        });
+
 
         this.onLayerArrayChange(this.layers, []);
     }

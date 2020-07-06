@@ -17,10 +17,11 @@ export enum GlobalEvents {
     MAP_CREATED = 'map/created',
 
     // TODO docs, determine the payloads
-    MAP_CLICK = 'map/click',
-    MAP_DOUBLECLICK = 'map/doubleclick',
-    MAP_EXTENTCHANGE = 'map/extentchanged',
+    MAP_CLICK = 'map/click', // payload is interface MapClick from geoapi
+    MAP_DOUBLECLICK = 'map/doubleclick', // payload is interface MapClick from geoapi
+    MAP_EXTENTCHANGE = 'map/extentchanged', // payload is rampapi Extent
     MAP_IDENTIFY = 'map/identify',
+    MAP_MOUSEMOVE = 'map/mousemove',
 }
 
 // TODO export this enum?
