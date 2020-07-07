@@ -27,7 +27,7 @@
 <script lang="ts">
 import { Vue, Component, Watch, Prop, Inject } from 'vue-property-decorator';
 import { debounce } from 'debounce';
-
+import { ApiBundle, MapMove } from 'ramp-geoapi';
 import { GlobalEvents } from '@/api';
 
 @Component
@@ -39,13 +39,16 @@ export default class MapCaptionV extends Vue {
 
     scale: { label: string; width: string } = { label: '0km', width: '0px' };
 
+    // since calculation of latlong is asynch, we cannot directly calculate it
+    // in cursorPointDMS property. we calculate and update this private property.
+    private latLongCursor: { lat: number; long: number} = { lat: 0, long: 0 };
+
     /**
      * Convert lat/long in decimal degree to degree, minute, second.
      * Uses the 'formatLatLong' utils function
      */
     get cursorPointDMS(): { x: string; y: string } {
-        const { y: lat, x: long } = { y: 0, x: 0 }; // TODO: get cursor location from map
-        return this.formatLatLong(long, lat);
+        return this.formatLatLong(this.latLongCursor.long, this.latLongCursor.lat);
     }
 
     mounted() {
@@ -62,6 +65,14 @@ export default class MapCaptionV extends Vue {
                     this.updateScale();
                 }, 300)
             );
+
+            // for demonstration. will decide the best way to wire this up. i.e. where.
+            // and possibly with a named event that is not part of the "defaults", but is documented so it can be removed/edited
+            this.$iApi.event.on(GlobalEvents.MAP_MOUSEMOVE,
+                (mmm: MapMove) => {
+                    this.updateCursorPoint(mmm.screenX, mmm.screenY);
+                },
+                'a_name_to_be_decided_later');
         });
     }
 
@@ -77,15 +88,16 @@ export default class MapCaptionV extends Vue {
         // the starting length of the scale line in pixels
         // reduce the length of the bar on extra small layouts
         const factor = window.innerWidth > 600 ? 70 : 35;
+        const mapResolution = this.$iApi.map.getResolution();
 
         // distance in meters
-        const meters = this.$iApi.map._innerView.resolution * factor;
-        console.log(this.$iApi.map._innerView.resolution, 'resolution');
+        const meters = mapResolution * factor;
+        console.log(mapResolution, 'resolution');
         console.log(this.$iApi.map.getScale(), 'scale');
         const metersInAMile = 1609.34;
 
         // get the distance in units, either miles or kilometers
-        const units = (this.$iApi.map._innerView.resolution * factor) / (this.isImperialScale ? metersInAMile : 1000);
+        const units = (mapResolution * factor) / (this.isImperialScale ? metersInAMile : 1000);
         const unit = this.isImperialScale ? 'mi' : 'km';
 
         // length of the distance number
@@ -98,12 +110,33 @@ export default class MapCaptionV extends Vue {
         const distance = Math.ceil(units / div) * div;
 
         // calcualte length of the scale line in pixels based on the round distance
-        const pixels = (distance * (this.isImperialScale ? metersInAMile : 1000)) / this.$iApi.map._innerView.resolution;
+        const pixels = (distance * (this.isImperialScale ? metersInAMile : 1000)) / mapResolution;
 
         this.scale = {
             width: `${pixels}px`,
             label: `${distance}${unit}`
         };
+    }
+
+    /**
+     * Will convert a screen co-ord to lat long and update our property
+     * after the coversion finishes (asynch)
+     *
+     * @private
+     * @param screenX pixel position in x-axis
+     * @param screenY pixel position in y-axis
+     */
+    private updateCursorPoint(screenX: number, screenY: number): void {
+        // get map point from cursor location
+        const mapCursorPoint = this.$iApi.map.screenPointToMapPoint(screenX, screenY);
+
+        // project from map co-ords to lat long.
+        RAMP.geoapi.utils.proj.projectGeometry(4326, mapCursorPoint).then((llPoint: any) => {
+            // update our private property
+            const castPoint: ApiBundle.Point = llPoint;
+            this.latLongCursor.lat = castPoint.y;
+            this.latLongCursor.long = castPoint.x;
+        });
     }
 
     /**

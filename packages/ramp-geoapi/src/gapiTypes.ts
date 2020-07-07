@@ -137,12 +137,23 @@ export enum IdentifyResultFormat {
     UNKNOWN = 'unknown'
 }
 
+// TODO since MapClick and MapMove are payloads on public events, is there a proper
+//      way they should be exposed from the main app as well (like, exported? in one of those .d.ts files?)?
+//      same question probably applies to a number of other interfaces here.
+
 export interface MapClick {
     mapPoint: Point;
     screenX: number;
     screenY: number;
     button: number;
     clickTime: number;
+}
+
+export interface MapMove {
+    screenX: number;
+    screenY: number;
+    button: number;
+    moveTime: number;
 }
 
 // a collection of attributes
