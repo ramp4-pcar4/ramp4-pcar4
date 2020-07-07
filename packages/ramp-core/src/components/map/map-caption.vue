@@ -50,7 +50,11 @@ export default class MapCaptionV extends Vue {
 
     mounted() {
         // When map is created update scale
-        this.$iApi.on(GlobalEvents.MAP_CREATED, () => {
+        // TODO consider giving this handler a specific name and put in the document.
+        //      since it happens at map create, could be risky/tricky putting it in the "default" events
+        //      as odds are if there is any delay, the handler will miss the MAP_CREATED event.
+        //      But having a specific name means someone can remove it later at their lesiure.
+        this.$iApi.event.on(GlobalEvents.MAP_CREATED, () => {
             this.updateScale();
             // Listen for scale changes, debounce so that zoom animations don't rapidly call update
             this.$iApi.map.scaleChanged.listen(

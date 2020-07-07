@@ -17,7 +17,8 @@
 <script lang="ts">
 import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
-
+import { ApiBundle as GeoApiBundle } from 'ramp-geoapi';
+import { GlobalEvents } from '../../api/internal'
 import { GeosearchStore } from './store';
 import { debounce } from 'debounce';
 
@@ -29,7 +30,11 @@ export default class GeosearchBottomFilters extends Vue {
     @Call(GeosearchStore.setMapExtent) setMapExtent!: (mapExtent: any) => void;
 
     created() {
-        this.$iApi.map.extentChanged.listen(this.onMapExtentChange);
+        // TODO decide if this event handler should go into the default ramp events, or remain as hard-bound to geosearch.
+        //      hard-bound means no one outside can un-hook and replace with a different reaction.
+        //      going default means the handler function needs to be public / on the geosearch api.
+        // TODO consider if we need some type of unregistration on fixture destroy
+        this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, this.onMapExtentChange, 'geosearch_map_extent');
     }
 
     // update geosearch results to match those in current view if visible is checked
@@ -41,7 +46,7 @@ export default class GeosearchBottomFilters extends Vue {
     }
 
     // update store map extent and geosearch results on map view change with debounce
-    onMapExtentChange = debounce((newExtent: any) => {
+    onMapExtentChange = debounce((newExtent: GeoApiBundle.Extent) => {
         this.setMapExtent({
             extent: newExtent,
             visible: this.resultsVisible

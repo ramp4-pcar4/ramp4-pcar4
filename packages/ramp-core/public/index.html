@@ -243,7 +243,7 @@
                     render: function(h) {
                         return h('div', [
                             h('span', 'This is an example template that contains an image.'),
-                            h('span', { 
+                            h('span', {
                                 domProps: { innerHTML: '<img src="https://i.imgur.com/WtY0tdC.gif" />' }
                             })
                         ])
@@ -329,21 +329,36 @@
                     }
                 });
 
-                // start loading fixtures; this is just an example
+                // start loading non-default fixtures; this is just an example
 
-                rInstance.fixture.add('appbar');
-                rInstance.fixture.add('mapnav');
                 rInstance.fixture.add('snowman');
                 rInstance.fixture.add('gazebo');
-                rInstance.fixture.add('geosearch');
-                rInstance.fixture.add('basemap');
-                rInstance.fixture.add('legend');
-                rInstance.fixture.add('grid');
-                rInstance.fixture.add('details');
-                rInstance.fixture.add('help');
 
                 rInstance.fixture.add('diligord', window.hostFixtures.diligord);
                 rInstance.fixture.add('mouruge', window.hostFixtures.mouruge);
+
+                // sample event declared by the page
+
+                // interesting race condition here. we could use rInstance.availableEvents to find the name,
+                // but given the asynch nature of fixture.add, the name will not be registered yet.
+                var gazeboEventName = 'gazebo/beholdMyText';
+
+                // a handler to react to a gazebo event
+                // click "see a cat" button to trigger console output
+                var handler = function (text) {
+                    // important to use get here, as the fixture might have been removed later on
+                    var diligord = rInstance.fixture.get('diligord');
+                    if (!diligord) { return; }
+                    diligord.doAThing(text);
+                };
+                rInstance.event.on(gazeboEventName, handler, 'SAMPLE_HANLDER');
+
+                // a one time handler. clicking "see a cat" many times should only result in one console log
+                var onceHandler = function (text) {
+                    console.log('EVENTS API SAMPLE: a one time event : ' + text);
+                };
+                rInstance.event.once(gazeboEventName, onceHandler, 'SAMPLE_HANLDER_ONCE');
+
             }
 
             function switchLang() {

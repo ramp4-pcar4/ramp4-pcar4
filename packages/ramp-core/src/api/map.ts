@@ -1,8 +1,7 @@
-import { APIScope } from './internal';
-import { IdentifyResult, IdentifyResultSet, IdentifyItem, IdentifyResultFormat, IdentifyParameters, MapClick } from 'ramp-geoapi';
+import { APIScope, GlobalEvents } from './internal';
+import { IdentifyResult, IdentifyResultSet, IdentifyParameters, MapClick } from 'ramp-geoapi';
 import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
-import { LayerStore, layer } from '@/store/modules/layer';
-import { DetailsAPI } from '@/fixtures/details/api/details';
+import { LayerStore } from '@/store/modules/layer';
 
 export class MapAPI extends APIScope {
     _identifyMode: IdentifyMode[] = [
@@ -12,6 +11,18 @@ export class MapAPI extends APIScope {
         IdentifyMode.Haze,
         IdentifyMode.Details
     ];
+
+    // a note about modes and events.
+    // depending if we choose to implement the old modes are come up with a new scheme,
+    // there are two event handlers that are running stuff (see events.ts).
+    // there is a map click event that then triggers the identify routine below
+    // and there is the identify event, raised by the routine below, that then opens the details panel.
+    // so the solution may need to either do some on/off'ing of the event handlers,
+    // or we introduce some global flag variables that get referenced
+    // (e.g. dont run identify could be a first line in the function below: if api.noIdentify then return )
+    // global flags MIGHT be safer, as it doesn't have to assume the default handlers are in play.
+    // i.e. if someone did some event modding for custom results, and we have core code then swapping
+    //      default event handlers, would be a mess.
 
     /**
      * Performs an identify request on all layers that support identify, and combines the results into an object that is readable by the details panel.
@@ -39,10 +50,8 @@ export class MapAPI extends APIScope {
         // Merge all results received by the identify into one array.
         const identifyResults: IdentifyResult[] = ([] as IdentifyResult[]).concat(...identifyInstances.map(({ results }) => results));
 
-        // Open the details panel if the details fixture is present and the `Details` mode is set.
-        if(this.$iApi.fixture.get('details')) {
-          this.$iApi.fixture.get<DetailsAPI>('details').openDetails(identifyResults);
-        }
+        // TODO make the event payload an interface? should there be a public area with all event payload interfaces?
+        this.$iApi.event.emit(GlobalEvents.MAP_IDENTIFY, { results: identifyResults, click: payload });
     }
 }
 
