@@ -6,11 +6,10 @@
 
         <!-- TODO: find out if any ARIA attributes are needed for the map scale -->
 
-        <!-- TODO: coords -->
-        <!--span class="flex-shrink-0 relative top-1" v-if="cursorPoint.y !== 0 || cursorPoint.x !== 0">
-                {{ cursorPointDMS.y }} {{ $t(`${tPath}.${cursorPoint.y > 0 ? 'north' : 'south'}`) }} | {{ cursorPointDMS.x }}
-                {{ $t(`${tPath}.${0 > cursorPoint.x ? 'west' : 'east'}`) }}
-            </span-->
+        <span class="flex-shrink-0 relative top-1 pr-14" v-if="latLongCursor.lat !== 0 || latLongCursor.long !== 0">
+            {{ cursorPointDMS.y }} {{ $t(`map.coordinates.${latLongCursor.lat > 0 ? 'north' : 'south'}`) }} | {{ cursorPointDMS.x }}
+            {{ $t(`map.coordinates.${0 > latLongCursor.long ? 'west' : 'east'}`) }}
+        </span>
 
         <button
             class="flex-shrink-0 mx-10 pointer-events-auto h-20 cursor-pointer border-none"
@@ -32,16 +31,13 @@ import { GlobalEvents } from '@/api';
 
 @Component
 export default class MapCaptionV extends Vue {
-    // TODO: use proper type for map instance
-    //@Prop() cursorPoint: MapPoint;
-
     isImperialScale: boolean = false;
 
     scale: { label: string; width: string } = { label: '0km', width: '0px' };
 
     // since calculation of latlong is asynch, we cannot directly calculate it
     // in cursorPointDMS property. we calculate and update this private property.
-    private latLongCursor: { lat: number; long: number} = { lat: 0, long: 0 };
+    private latLongCursor: { lat: number; long: number } = { lat: 0, long: 0 };
 
     /**
      * Convert lat/long in decimal degree to degree, minute, second.
@@ -68,11 +64,13 @@ export default class MapCaptionV extends Vue {
 
             // for demonstration. will decide the best way to wire this up. i.e. where.
             // and possibly with a named event that is not part of the "defaults", but is documented so it can be removed/edited
-            this.$iApi.event.on(GlobalEvents.MAP_MOUSEMOVE,
+            this.$iApi.event.on(
+                GlobalEvents.MAP_MOUSEMOVE,
                 (mmm: MapMove) => {
                     this.updateCursorPoint(mmm.screenX, mmm.screenY);
                 },
-                'a_name_to_be_decided_later');
+                'a_name_to_be_decided_later'
+            );
         });
     }
 
