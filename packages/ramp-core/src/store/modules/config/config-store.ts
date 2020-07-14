@@ -135,7 +135,15 @@ export enum ConfigStore {
      *
      * `@returns` <RampMapConfig> The map portion of the current config
      */
-    getMapConfig = 'config/getMapConfig'
+    getMapConfig = 'config/getMapConfig',
+    /**
+     * getFixtureConfig
+     *
+     * `@remarks` Getter - use `@Get`
+     *
+     * `@returns` <any> A particular fixture config
+     */
+    getFixtureConfig = 'config/getFixtureConfig'
 }
 
 export function config() {

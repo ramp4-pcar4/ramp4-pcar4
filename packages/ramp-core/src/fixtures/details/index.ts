@@ -31,7 +31,6 @@ class DetailsFixture extends DetailsAPI {
             () => this.config,
             value => this._parseConfig(value)
         );
-
     }
 
     removed() {
