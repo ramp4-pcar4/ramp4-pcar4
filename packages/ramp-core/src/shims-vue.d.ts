@@ -13,3 +13,8 @@ declare module '*.csv' {
     const content: any;
     export default content;
 }
+
+declare module '*.xsl' {
+    const content: any;
+    export default content;
+}
