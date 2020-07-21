@@ -131,6 +131,21 @@
                             }
                         ],
                         fixtures: {
+                            legend: {
+                                reorderable: true,
+                                root: {
+                                    children: [
+                                        {
+                                            layerId: "WaterQuantity",
+                                            name: "Water Quantity"
+                                        },
+                                        {
+                                            layerId: "CleanAir",
+                                            name: "Clean Air"
+                                        }
+                                    ]
+                                }
+                            },
                             appbar: {
                                 items: [
                                     { id: 'gazebo', options: { colour: '#54a0ff' } },

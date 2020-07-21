@@ -5,7 +5,7 @@ import pathify from 'vuex-pathify';
 import { config } from '@/store/modules/config';
 import { fixture } from '@/store/modules/fixture';
 import { layer } from '@/store/modules/layer';
-import { legend } from '@/store/modules/legend';
+// import { legend } from '@/store/modules/legend';
 import { panel } from '@/store/modules/panel';
 import { RootState } from '@/store/state';
 
@@ -20,7 +20,7 @@ export const createStore = () =>
             config: config(),
             fixture: fixture(),
             layer: layer(),
-            legend: legend(),
+            // legend: legend(),
             panel: panel()
         }
     });
