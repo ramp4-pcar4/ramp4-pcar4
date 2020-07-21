@@ -40,6 +40,10 @@ The `geosearch` is a utility that allows one to search for geographic names and 
 
 The `help` provides a means to display user help for the application. TODO create and hyperlink to `help.md`, or provide any other relevant info here.
 
+### Metadata
+
+The `metadata` provides an interface to view extra information about a layer. TODO create and hyperlink to `metadata.md`, or provide any other relevant info here.
+
 ## Default Events Handlers
 
 Along with the default fixtures, there are default event handlers that are applied to make them react to each other and to the RAMP core. See the examples section below and the LINKTO Events API page for details on how to work with event handlers.
