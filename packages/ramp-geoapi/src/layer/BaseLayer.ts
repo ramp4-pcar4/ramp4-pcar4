@@ -48,7 +48,7 @@ export default class BaseLayer extends BaseBase {
 
     // TODO consider also having a loaded boolean property, allowing a synch check if layer has loaded or not. state can flip around to update, etc.
     //      alternately implement something like function layerLoaded() from old geoApi
-    protected loadProimse: NaughtyPromise; // a promise that resolves when layer is fully ready and safe to use. for convenience of caller
+    protected loadPromise: NaughtyPromise; // a promise that resolves when layer is fully ready and safe to use. for convenience of caller
     protected esriPromise: NaughtyPromise; // a promise that resolves when esri layer object has been created
 
     // FC management
@@ -75,7 +75,7 @@ export default class BaseLayer extends BaseBase {
         this.isFile = false; // default state.
         this.sawLoad = false;
         this.sawRefresh = false;
-        this.loadProimse = new NaughtyPromise();
+        this.loadPromise = new NaughtyPromise();
         this.esriPromise = new NaughtyPromise();
 
         this.fcs = [];
@@ -220,7 +220,7 @@ export default class BaseLayer extends BaseBase {
         const loadPromises: Array<Promise<void>> = this.onLoadActions();
         Promise.all(loadPromises).then(() => {
             this.updateState(LayerState.LOADED);
-            this.loadProimse.resolveMe();
+            this.loadPromise.resolveMe();
         });
     }
 
@@ -265,7 +265,7 @@ export default class BaseLayer extends BaseBase {
      * @returns {Promise} resolves when the layer has finished loading
      */
     isLayerLoaded(): Promise<void> {
-        return this.loadProimse.getPromise();
+        return this.loadPromise.getPromise();
     }
 
     /**

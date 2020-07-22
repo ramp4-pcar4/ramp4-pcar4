@@ -30,6 +30,12 @@ export default class EsriMap extends Vue {
 
     @Watch('layers')
     onLayerArrayChange(newValue: BaseLayer[], oldValue: BaseLayer[]) {
+        // TODO we are getting frequent errors at startup; something reacts to layer array
+        //      change before map exists. kicking out for now to make demos work.
+        //      possibly this is evil in vue state land. if so, then someone figure out
+        //      the root cause and fix that.
+        if (!this.map) { return; }
+
         newValue.forEach(layer => {
             // TODO add a proper check for this after
             // if (!oldValue.includes(layer)) {

@@ -20,6 +20,12 @@ const getters = {
 
 const actions = {
     addLayers: (context: LayerContext, layerConfigs: RampLayerConfig[]) => {
+        // TODO we are getting frequent errors at startup; something passes in an
+        //      undefined layerConfigs. kicking out for now to make demos work.
+        //      possibly this is evil in vue state land. if so, then someone figure out
+        //      the root cause and fix that.
+        if (!Array.isArray(layerConfigs)) { return; }
+
         const blueprints: any = [];
         layerConfigs.forEach(layerConfig => {
             blueprints.push(LayerBlueprint.makeBlueprint(layerConfig));
