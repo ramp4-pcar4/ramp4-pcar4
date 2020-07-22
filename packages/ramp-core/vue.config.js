@@ -28,11 +28,22 @@ module.exports = {
         config.plugins.delete('prefetch');
 
         // load csv files (used for translations)
-        config.module
-            .rule('dsv')
+        const csvRule = config.module.rule('dsv');
+
+        csvRule.uses.clear();
+        csvRule
             .test(/lang\.csv$/)
             .use('ramp-locale-loader')
-            .loader('ramp-locale-loader');
+            .loader('ramp-locale-loader')
+
+        // load xsl files (for metadata fixture)
+        const xslRule = config.module.rule('loadxsl');
+        xslRule.uses.clear();
+
+        xslRule
+            .test(/\.xsl$/)
+            .use('raw-loader')
+            .loader('raw-loader');
 
         // add an automatic callback to execute `initRAMP` global function if it's defined as soon at the RAMP library is added to the global scope
         // this only applies to the production build; dev build calls this function from `main-serve.ts`

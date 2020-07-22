@@ -26,7 +26,7 @@ dependencies:
   '@vue/cli-plugin-typescript': 4.3.1_22122c1b335748d34772818bd2671b9d
   '@vue/cli-plugin-unit-jest': 4.3.1_26ec19d41106f6887b12594fc4613ed9
   '@vue/cli-plugin-vuex': 4.3.1_@vue+cli-service@4.3.1
-  '@vue/cli-service': 4.3.1_c697b53a0674ec5a6a3e3a567d98b494
+  '@vue/cli-service': 4.3.1_a7f726f1764fe8b9df6991b9942a87ff
   '@vue/eslint-config-prettier': 5.1.0_484a2925e2c2b62f874c20a5d1f8a049
   '@vue/eslint-config-typescript': 4.0.0_eslint@5.16.0+typescript@3.8.3
   '@vue/test-utils': 1.0.0-beta.29_d81dac297579cfd5597855dabf60f13b
@@ -51,6 +51,7 @@ dependencies:
   postcss-nested: 4.2.1
   prettier: 1.19.1
   proj4: 2.6.0
+  raw-loader: 4.0.1_webpack@4.41.3
   sass: 1.26.3
   sass-loader: 8.0.2_sass@1.26.3+webpack@4.41.3
   screenfull: 5.0.2
@@ -1609,7 +1610,7 @@ packages:
     dependencies:
       '@babel/core': 7.9.0
       '@vue/babel-preset-app': 4.3.1
-      '@vue/cli-service': 4.3.1_c697b53a0674ec5a6a3e3a567d98b494
+      '@vue/cli-service': 4.3.1_a7f726f1764fe8b9df6991b9942a87ff
       '@vue/cli-shared-utils': 4.3.1
       babel-loader: 8.1.0_@babel+core@7.9.0+webpack@4.41.3
       cache-loader: 4.1.0_webpack@4.41.3
@@ -1622,7 +1623,7 @@ packages:
       integrity: sha512-tBqu0v1l4LfWX8xuJmofpp+8xQzKddFNxdLmeVDOX/omDBQX0qaVDeMUtRxxSTazI06SKr605SnUQoa35qwbvw==
   /@vue/cli-plugin-e2e-cypress/4.3.1_26b4135a6a7ea6e5db753560c48793ec:
     dependencies:
-      '@vue/cli-service': 4.3.1_c697b53a0674ec5a6a3e3a567d98b494
+      '@vue/cli-service': 4.3.1_a7f726f1764fe8b9df6991b9942a87ff
       '@vue/cli-shared-utils': 4.3.1
       cypress: 3.8.3
       eslint-plugin-cypress: 2.10.3_eslint@5.16.0
@@ -1634,7 +1635,7 @@ packages:
       integrity: sha512-/7V2jCLBkwPDKLVkkaWZMEBfecQ2W3B8IWk4JI4MTHK2yenIMNsciMotS8XxtpGkNF3HsxDr2LI+onBd6xHDFQ==
   /@vue/cli-plugin-eslint/4.3.1_26b4135a6a7ea6e5db753560c48793ec:
     dependencies:
-      '@vue/cli-service': 4.3.1_c697b53a0674ec5a6a3e3a567d98b494
+      '@vue/cli-service': 4.3.1_a7f726f1764fe8b9df6991b9942a87ff
       '@vue/cli-shared-utils': 4.3.1
       eslint: 5.16.0
       eslint-loader: 2.2.1_eslint@5.16.0+webpack@4.41.3
@@ -1650,7 +1651,7 @@ packages:
       integrity: sha512-5UEP93b8C/JQs9Rnuldsu8jMz0XO4wNXG0lL/GdChYBEheKCyXJXzan7qzEbIuvUwG3I+qlUkGsiyNokIgXejg==
   /@vue/cli-plugin-router/4.3.1_@vue+cli-service@4.3.1:
     dependencies:
-      '@vue/cli-service': 4.3.1_c697b53a0674ec5a6a3e3a567d98b494
+      '@vue/cli-service': 4.3.1_a7f726f1764fe8b9df6991b9942a87ff
       '@vue/cli-shared-utils': 4.3.1
     dev: false
     peerDependencies:
@@ -1660,7 +1661,7 @@ packages:
   /@vue/cli-plugin-typescript/4.3.1_22122c1b335748d34772818bd2671b9d:
     dependencies:
       '@types/webpack-env': 1.15.1
-      '@vue/cli-service': 4.3.1_c697b53a0674ec5a6a3e3a567d98b494
+      '@vue/cli-service': 4.3.1_a7f726f1764fe8b9df6991b9942a87ff
       '@vue/cli-shared-utils': 4.3.1
       cache-loader: 4.1.0_webpack@4.41.3
       fork-ts-checker-webpack-plugin: 3.1.1
@@ -1682,7 +1683,7 @@ packages:
       '@babel/core': 7.9.0
       '@babel/plugin-transform-modules-commonjs': 7.9.0_@babel+core@7.9.0
       '@types/jest': 24.9.1
-      '@vue/cli-service': 4.3.1_c697b53a0674ec5a6a3e3a567d98b494
+      '@vue/cli-service': 4.3.1_a7f726f1764fe8b9df6991b9942a87ff
       '@vue/cli-shared-utils': 4.3.1
       babel-core: 7.0.0-bridge.0_@babel+core@7.9.0
       babel-jest: 24.9.0_@babel+core@7.9.0
@@ -1704,13 +1705,13 @@ packages:
       integrity: sha512-mhIqwW6UGsPEOlw+rHBQjhlCjSxD9fKuVVVtkl989/bFZA17ZsdDrj/BfMTwX8mvoY5x6pPXb+Ti/opkkAOD7w==
   /@vue/cli-plugin-vuex/4.3.1_@vue+cli-service@4.3.1:
     dependencies:
-      '@vue/cli-service': 4.3.1_c697b53a0674ec5a6a3e3a567d98b494
+      '@vue/cli-service': 4.3.1_a7f726f1764fe8b9df6991b9942a87ff
     dev: false
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     resolution:
       integrity: sha512-mukwOlhZGBJhkqO2b3wHFFHjK5aP00b1WUHdrOfLR7M18euhaTyb4kA5nwZwEOmU3EzZx6kHzSFCRy/XaMkLug==
-  /@vue/cli-service/4.3.1_c697b53a0674ec5a6a3e3a567d98b494:
+  /@vue/cli-service/4.3.1_a7f726f1764fe8b9df6991b9942a87ff:
     dependencies:
       '@intervolga/optimize-cssnano-plugin': 1.0.6_webpack@4.41.3
       '@soda/friendly-errors-webpack-plugin': 1.7.1_webpack@4.41.3
@@ -1753,6 +1754,7 @@ packages:
       pnp-webpack-plugin: 1.6.4_typescript@3.8.3
       portfinder: 1.0.25
       postcss-loader: 3.0.0
+      raw-loader: 4.0.1_webpack@4.41.3
       sass-loader: 8.0.2_sass@1.26.3+webpack@4.41.3
       ssri: 7.1.0
       terser-webpack-plugin: 2.3.5_webpack@4.41.3
@@ -10399,6 +10401,18 @@ packages:
       node: '>= 0.8'
     resolution:
       integrity: sha512-4Oz8DUIwdvoa5qMJelxipzi/iJIi40O5cGV1wNYp5hvZP8ZN0T+jiNkL0QepXs+EsQ9XJ8ipEDoiH70ySUJP3Q==
+  /raw-loader/4.0.1_webpack@4.41.3:
+    dependencies:
+      loader-utils: 2.0.0
+      schema-utils: 2.6.6
+      webpack: 4.41.3_webpack@4.41.3
+    dev: false
+    engines:
+      node: '>= 10.13.0'
+    peerDependencies:
+      webpack: ^4.0.0 || ^5.0.0
+    resolution:
+      integrity: sha512-baolhQBSi3iNh1cglJjA0mYzga+wePk7vdEX//1dTFd+v4TsQlQE0jitJSNF1OIP82rdYulH7otaVmdlDaJ64A==
   /react-is/16.13.1:
     dev: false
     resolution:
@@ -13445,7 +13459,7 @@ packages:
       '@vue/cli-plugin-typescript': 4.3.1_22122c1b335748d34772818bd2671b9d
       '@vue/cli-plugin-unit-jest': 4.3.1_26ec19d41106f6887b12594fc4613ed9
       '@vue/cli-plugin-vuex': 4.3.1_@vue+cli-service@4.3.1
-      '@vue/cli-service': 4.3.1_c697b53a0674ec5a6a3e3a567d98b494
+      '@vue/cli-service': 4.3.1_a7f726f1764fe8b9df6991b9942a87ff
       '@vue/eslint-config-prettier': 5.1.0_484a2925e2c2b62f874c20a5d1f8a049
       '@vue/eslint-config-typescript': 4.0.0_eslint@5.16.0+typescript@3.8.3
       '@vue/test-utils': 1.0.0-beta.29_d81dac297579cfd5597855dabf60f13b
@@ -13464,6 +13478,7 @@ packages:
       lodash: 4.17.15
       postcss-nested: 4.2.1
       prettier: 1.19.1
+      raw-loader: 4.0.1_webpack@4.41.3
       sass: 1.26.3
       sass-loader: 8.0.2_sass@1.26.3+webpack@4.41.3
       screenfull: 5.0.2
@@ -13485,7 +13500,7 @@ packages:
       webpack: '*'
       webpack-cli: '*'
     resolution:
-      integrity: sha512-bk1sButiO8cwnuEId0g+LmgxWY+eD+EG3PtafMwdonDaajo7SjC14Aacntetx0vOc6nxyMASBgSDmngg463ZgQ==
+      integrity: sha512-MgYRX3aTp0G3IXYNFu4VtN8saDqd7Hh69brwAi3HmKih21DldP3hxXZiME3amE0fp/l4arOYNaAFrtcO9dHJCw==
       tarball: 'file:projects/ramp-core.tgz'
     version: 0.0.0
   'file:projects/ramp-geoapi.tgz':
@@ -13615,6 +13630,7 @@ specifiers:
   postcss-nested: ~4.2.1
   prettier: ^1.19.1
   proj4: 2.6.0
+  raw-loader: ^4.0.1
   sass: ^1.23.7
   sass-loader: ^8.0.0
   screenfull: ~5.0.2
