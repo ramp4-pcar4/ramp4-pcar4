@@ -12,7 +12,7 @@ dependencies:
   '@rush-temp/ramp-sample-fixtures': 'file:projects/ramp-sample-fixtures.tgz'
   '@tailwindcss/custom-forms': 0.2.1_tailwindcss@1.1.4
   '@types/animejs': 3.1.0
-  '@types/arcgis-js-api': 4.15.0
+  '@types/arcgis-js-api': 4.16.0
   '@types/clone-deep': 4.0.1
   '@types/debounce': 1.2.0
   '@types/dojo': 1.9.42
@@ -1296,10 +1296,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-OOOQ11ylW8GeFY85yM3HrprR5wZl1R1KsxrxNLMpE9l24zs+4yXAu4WsDESWcCAf5+PxvPNsLV9W/PB3J+XGMQ==
-  /@types/arcgis-js-api/4.15.0:
+  /@types/arcgis-js-api/4.16.0:
     dev: false
     resolution:
-      integrity: sha512-8k3izWm6TBuNgYjYr7k5S9aXpzJ6R51g3HMecQvB4CAD5tgO+kUFn3i1BPnfweAPnrURei9ponU9QL1N5o0BhA==
+      integrity: sha512-AAXUeyzF2PxtjKOO/Zqffq/mLpNp/uVaKwqq/n8ayqsqOGtffNDBTrfeUDvaFnrox8oTVFhDIAEObZHJNxwFgA==
   /@types/babel__core/7.1.7:
     dependencies:
       '@babel/parser': 7.9.4
@@ -13511,7 +13511,7 @@ packages:
       '@babel/plugin-proposal-object-rest-spread': 7.9.5_@babel+core@7.9.0
       '@babel/preset-env': 7.9.5_@babel+core@7.9.0
       '@babel/preset-typescript': 7.9.0_@babel+core@7.9.0
-      '@types/arcgis-js-api': 4.15.0
+      '@types/arcgis-js-api': 4.16.0
       '@types/dojo': 1.9.42
       '@types/geojson': 1.0.6
       '@types/node': 7.0.0
@@ -13532,7 +13532,7 @@ packages:
     dev: false
     name: '@rush-temp/ramp-geoapi'
     resolution:
-      integrity: sha512-zYcrm0ny7ACGR9lKpTX6srNwF2INTZhs/qqbcBqE439RKJMWSZWBS3/O1KGA77ad2Gh83YyKKcx1WfGvQDHjUA==
+      integrity: sha512-tsoOVQNbzYs/yYIVONCy6iq1nfJRmjBCHirSE8ygmpY7n0LAKs+UjDVc9cOE+kvkiCopSkYUwlVHEgXTXNMA1w==
       tarball: 'file:projects/ramp-geoapi.tgz'
     version: 0.0.0
   'file:projects/ramp-locale-loader.tgz':
@@ -13591,7 +13591,7 @@ specifiers:
   '@rush-temp/ramp-sample-fixtures': 'file:./projects/ramp-sample-fixtures.tgz'
   '@tailwindcss/custom-forms': ^0.2.1
   '@types/animejs': ~3.1.0
-  '@types/arcgis-js-api': ~4.15.0
+  '@types/arcgis-js-api': ~4.16.0
   '@types/clone-deep': ~4.0.1
   '@types/debounce': ^1.2.0
   '@types/dojo': ^1.9.41
