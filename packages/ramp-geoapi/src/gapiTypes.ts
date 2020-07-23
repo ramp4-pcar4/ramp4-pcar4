@@ -77,6 +77,7 @@ export class EsriBundle {
     UniqueValueRenderer: esri.UniqueValueRendererConstructor;
 
     // SERVICES
+    FeatureFilter: esri.FeatureFilterConstructor;
     GeometryService: esri.GeometryServiceConstructor;
     IdentifyParameters: esri.IdentifyParametersConstructor;
     IdentifyTask: esri.IdentifyTaskConstructor;
