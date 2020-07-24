@@ -4,7 +4,6 @@
 import esri = __esri;
 import { InfoBundle, QueryFeaturesArcServerParams, QueryFeaturesGeoJsonParams, GetGraphicResult } from '../gapiTypes';
 import BaseBase from '../BaseBase';
-import Aql from './Aql';
 import BaseGeometry from '../api/geometry/BaseGeometry';
 import Extent from '../api/geometry/Extent';
 import Point from '../api/geometry/Point';
@@ -18,8 +17,13 @@ export default class QueryService extends BaseBase {
         super(infoBundle);
     }
 
-    // gets array of oids matching a query from an arcgis server feature source
-    arcGisServerQueryIds(options: QueryFeaturesArcServerParams): Promise<Array<number>> {
+    /**
+     * Gets an array of OIDs from an arcgis server feature source that satisfy a query
+     *
+     * @param options contains properties that define the query and specificy request particulars.
+     * @returns resolves with array of object ids.
+     */
+    async arcGisServerQueryIds(options: QueryFeaturesArcServerParams): Promise<Array<number>> {
         // create and set the esri query parameters
 
         const query = new this.esriBundle.Query();
@@ -36,41 +40,52 @@ export default class QueryService extends BaseBase {
 
         const queryTask = new this.esriBundle.QueryTask({ url: options.url });
 
-        return queryTask.executeForIds(query).then((oids) => {
-            return Array.isArray(oids) ? oids : [];
-        });
+        const oids = await queryTask.executeForIds(query);
+        return Array.isArray(oids) ? oids : [];
     }
 
-    // for now, the any is attributes. figure why just return the ids when everything is local;
-    // would just need another loop to map ids to attributes.
-    geoJsonQuery(options: QueryFeaturesGeoJsonParams): Promise<Array<GetGraphicResult>> {
-        // NOTE in ESRI4, you cant just dig into the underlying feature arrays of a layer.
-        //      so we use a blank query if there is no geometry.
+    /**
+     * Gets an array of graphics from a locally stored feature layer (file, geojson) that satisfy a query
+     *
+     * @param options contains properties that define the query and specificy request particulars.
+     * @returns resolves with array of graphic result objects.
+     */
+    async geoJsonQuery(options: QueryFeaturesGeoJsonParams): Promise<Array<GetGraphicResult>> {
+
         const query = new this.esriBundle.Query();
         query.returnGeometry = !!options.includeGeometry;
+        query.outFields = ['*']; // TODO look into using the options value. test it well, as the .where gets wonky with outfields
 
         if (options.filterGeometry) {
             query.geometry = this.queryGeometryHelper(options.filterGeometry, true);
             query.spatialRelationship = 'intersects';
         }
 
-        return (<esri.FeatureLayer>options.layer._innerLayer).queryFeatures(query).then(featSet => {
-            let feats: any = featSet.features;
-            if (options.filterSql && feats.length > 0) {
-                // aql
-                feats = this.sqlAttributeFilter(feats, options.filterSql, true);
-            }
+        if (options.filterSql) {
+            query.where = options.filterSql;
+        }
 
-            // convert to our type. seems a bit wasteful, maybe find better way
-            return feats.map(f => ({
-                attributes: f.attributes,
-                geometry: f.geometry
-            }));
+        await options.layer.isLayerLoaded();
+
+        // NOTE: for this to work, the outfields need to be set on the geojson layer when it is created.
+        //       anything not in the outfields will not be available for the .where filter and will give
+        //       an empty result.
+        const featSet = await options.layer._innerView.queryFeatures(query);
+
+        // convert to our type. seems a bit wasteful, but we already want to convert to ramp geoms so do it
+        return featSet.features.map((f, i) => {
+            const ggr: GetGraphicResult = {
+                attributes: f.attributes
+            };
+            if (query.returnGeometry) {
+                ggr.geometry = this.gapi.utils.geom.geomEsriToRamp(f.geometry, `queryResult${i}`);
+            }
+            return ggr;
         });
     }
 
     // TODO think about splitting up a lot of the below functions into server specific
-    //      and file specific functions.  File specific should utilze AQL.
+    //      and file specific functions.
 
     /**
      * Helper function to modify input geometries for queries. Will attempt to avoid various pitfalls,
@@ -88,6 +103,7 @@ export default class QueryService extends BaseBase {
         let finalGeom: esri.Geometry;
 
         if (isFileLayer && geometry.type !== GeometryType.EXTENT) {
+            // TODO verify this is still the case with new layerview queries.
             throw new Error('Cannot use geometries other than Extents in queries against non-ArcGIS Server based layers');
         }
         if (!isFileLayer && geometry.type === GeometryType.EXTENT) {
@@ -126,182 +142,6 @@ export default class QueryService extends BaseBase {
         // Build tolerance envelope of correct size
         return new Extent('ze_buffer', [point.x - buffSize, point.y - buffSize],
             [point.x + buffSize, point.y + buffSize], point.sr);
-    }
-
-    // TODO slated for review / removal, as has been made obsolete by functions up above and in the FCs.
-    /**
-     * Fetch attributes from a layer that intersects with the given geometry
-     * Accepts the following options:
-     *   - geometry: Required. geometry to intersect with the layer.
-     *               Layers that are not hosted on an ArcGIS Server (e.g. file layers, WFS) can only use Extent geometries
-     *   - url: Required if server based layer. Url to the map service layer to query against. Endpoint must support
-     *          ESRI REST query interface. E.g. A feature layer endpoint.
-     *   - featureLayer: Required if file based layer. Feature layer to query against
-     *   - outFields: Optional. Array of strings containing field names to include in the results. Defaults to all fields.
-     *   - where: Optional. A SQL where clause to filter results further. Useful when dealing with more results than the server can return.
-     *            Cannot be used with layers that are not hosted on an ArcGIS Server (e.g. file layers, WFS)
-     *   - returnGeometry: Optional. A boolean indicating if result geometery should be returned with results.  Defaults to false
-     *   - sourceWkid: Optional. An integer indicating the WKID that the queried layer is natively stored in on the server.
-     *                 If provided, allows query to attempt to mitigate any extent projection issues. Irrelevant for file based layers.
-     *   - mapScale: Optional. An integer indicating the current map scale. If provided, allows query to attempt to mitigate any
-     *               extent projection issues. Irrelevant for file based layers.
-     *   - outSpatialReference: Required if returnGeometry is true. The spatial reference the return geometry should be in.
-     * @param {Object} options settings to determine the details and behaviors of the query.
-     * @return {Promise} resolves with a feature set of features that satisfy the query
-     */
-    obsoleteQueryGeometry(options: any): Promise<esri.FeatureSet> {
-
-        const isFile = !!options.featureLayer;
-        const query = new this.esriBundle.Query();
-
-        query.returnGeometry = options.returnGeometry || false;
-        if (options.returnGeometry) {
-            query.outSpatialReference = options.outSpatialReference;
-        }
-        if (options.outFields) {
-            query.outFields = options.outFields;
-        } else {
-            query.outFields = ['*'];
-        }
-        if (options.where) {
-            if (isFile) {
-                throw new Error('Cannot use WHERE clauses in queries against non-ArcGIS Server based layers');
-            }
-            query.where = options.where;
-        }
-
-        query.geometry = this.queryGeometryHelper(options.geometry, isFile, options.mapScale, options.sourceWkid);
-
-        // TODO find the updated constant (if it exists). but the default is `intersects` anyway so may not need it
-        // query.spatialRelationship = esriBundle.Query.SPATIAL_REL_INTERSECTS; // esriSpatialRelIntersects
-
-        return new Promise((resolve, reject) => {
-            // run the query. server based layers use a query task. file based layers use the layer's query function.
-            if (options.url) {
-                const queryTask = new this.esriBundle.QueryTask(options.url);
-
-                // issue the map server query request
-                queryTask.execute(query).then(featureSet => {
-                    resolve(featureSet);
-                }).catch(error => {
-                    reject(error);
-                });
-            } else if (isFile) {
-                // run the query on the layers internal data
-                (<esri.FeatureLayer>options.featureLayer).queryFeatures(query).then(featureSet => {
-                    resolve(featureSet);
-                }).catch(error => {
-                    reject(error);
-                });
-            }
-        });
-
-    }
-
-    // TODO slated for review / removal, as has been made obsolete by functions up above and in the FCs.
-    //      we may want to make a specific "getIDs" on the attrib layers. server is direct call. file
-    //      can be normal query that then just extracts the OIDs. or make a special direct query..should be similar
-    //
-    // similar to queryGeometry, but only returns OIDs, allowing us to run more efficient web requests.
-    // specifically, we can ignore the result limit on the server. Also doesn't require a geomtery, can just be
-    // where clause
-    /**
-     * Fetch the Object IDs of features from a layer that satisfies the options
-     * Accepts the following options:
-     *   - geometry: Optional. geometry to intersect with the layer.
-     *               Layers that are not hosted on an ArcGIS Server (e.g. file layers, WFS) can only use Extent geometries
-     *   - url: Required if server based layer. Url to the map service layer to query against. Endpoint must support
-     *          ESRI REST query interface. E.g. A feature layer endpoint.
-     *   - featureLayer: Required if file based layer. Feature layer to query against
-     *   - where: Optional. A SQL where clause to filter results further. Useful when dealing with more results than the server can return,
-     *            or if additional filters are active.
-     *            Cannot be used with layers that are not hosted on an ArcGIS Server (e.g. file layers, WFS)
-     *   - sourceWkid: Optional. An integer indicating the WKID that the queried layer is natively stored in on the server.
-     *                 If provided, allows query to attempt to mitigate any extent projection issues. Irrelevant for file based layers.
-     *   - mapScale: Optional. An integer indicating the current map scale. If provided, allows query to attempt to mitigate any
-     *               extent projection issues. Irrelevant for file based layers.
-     * @param {Object} options settings to determine the details of the query
-     * @return {Promise} resolves with an array of Object Ids that satisfy the query
-     */
-    obsoleteQueryIds(options: any): Promise<number[]> {
-
-        // create and set the esri query parameters
-
-        const isFile = !!options.featureLayer;
-        const query = new this.esriBundle.Query();
-        query.returnGeometry = false;
-
-        if (options.where) {
-            if (isFile) {
-                throw new Error('Cannot use WHERE clauses in queries against non-ArcGIS Server based layers');
-            }
-            query.where = options.where;
-        }
-        if (options.geometry) {
-            query.geometry = this.queryGeometryHelper(options.geometry, isFile, options.mapScale, options.sourceWkid);
-
-            // TODO find the updated constant (if it exists). but the default is `intersects` anyway so may not need it
-            // query.spatialRelationship = esriBundle.Query.SPATIAL_REL_INTERSECTS; // esriSpatialRelIntersects
-        }
-
-        return new Promise((resolve, reject) => {
-            // run the query. server based layers use a query task. file based layers use the layer's query function.
-            if (options.url) {
-                const queryTask = new this.esriBundle.QueryTask(options.url);
-
-                // issue the map server query request
-                queryTask.executeForIds(query).then(oidArray => {
-                    resolve(oidArray);
-                }).catch(error => {
-                    reject(error);
-                });
-            } else if (isFile) {
-                // run the query on the layers internal data
-                (<esri.FeatureLayer>options.featureLayer).queryObjectIds(query).then(oidArray => {
-                    resolve(oidArray);
-                }).catch(error => {
-                    reject(error);
-                });
-            }
-        });
-
-    }
-
-    /**
-     * Given an SQL WHERE condition, will search an array of attribute objects and return a filtered
-     * array containing attributes that satisfy the WHERE condition.
-     * Array can contain raw attribute objects, or objects with a propery `attributes` that contain
-     * an attribute object.
-     *
-     * @function sqlAttributeFilter
-     * @param {Array} attributeArray               array of attribute objects or objects with `attributes` property.
-     * @param {String} sqlWhere                    a SQL WHERE clause (without the word `WHERE`) that has field names matching the attribute property names.
-     * @param {Boolean} [attribAsProperty=false]    indicates if the attribute object resides in a propery called `attributes`. Set to false if array contains raw attribute objects.
-     * @returns {Array} array of attribute objects that meet the conditions of the filter. the result objects will be in the same form as they were passed in
-     */
-    sqlAttributeFilter (attributeArray: any, sqlWhere: string, attribAsProperty: boolean = false): Array<any> {
-        // attribAsProperty means where the attribute lives in relation to the array
-        // {att} is a standard key-value object of attributes
-        // [ {att} , {att} ] would be the false case.  this is the format of attributes from the geoApi attribute loader
-        // [ {attributes:{att}}, {attributes:{att}} ] would be the true case. this is the format of attributes sitting in the graphics array of a filebased layer
-
-        // TODO if we want to get fancy we could type the array as Array<RampAPI.Graphic> | Array<esri.Graphic> | Array<RampAPI.Attributes> | Array<generickeyvalueobject>
-        //      seems a bit overkill for now, lets just have good documentation
-
-        // convert the sql where clause to an attribute query language tree, then
-        // use that to evaluate against each attribute.
-        const aql = Aql.fromSql(sqlWhere);
-
-        // split in two to avoid doing boolean check at every iteration
-        if (attribAsProperty) {
-            return attributeArray.filter((a: { attributes: any; }) => {
-                return aql.evaluate(a.attributes);
-            });
-        } else {
-            return attributeArray.filter((a: any) => {
-                return aql.evaluate(a);
-            });
-        }
     }
 
 }

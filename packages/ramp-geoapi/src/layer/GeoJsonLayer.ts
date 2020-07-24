@@ -117,6 +117,7 @@ export class GeoJsonLayer extends AttribLayer {
         });
 
         esriConfig.displayField = fieldValidator(<Array<esri.Field>>esriConfig.fields, rampLayerConfig.nameField) || 'OBJECTID';
+        esriConfig.outFields = ['*']; // TODO eventually will want this overridable by the config.
 
         // TODO inspect rampLayerConfig for any config field alias overrides or field restrictions. apply them to esriConfig.fields
 

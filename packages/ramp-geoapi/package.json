@@ -16,7 +16,6 @@
     "author": "Good ol James & Jahid, with scaffold from our fine buddy Juri Strumpflohner",
     "license": "ISC",
     "dependencies": {
-        "js-sql-parser": "1.0.7",
         "proj4": "2.6.0",
         "svg.js": "2.7.1",
         "terraformer": "1.0.9",
