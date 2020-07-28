@@ -1,10 +1,10 @@
 <template>
-    <div class="appbar absolute top-0 left-0 flex flex-col items-stretch bg-black-75 h-full w-40 sm:w-64 pointer-events-auto" v-focus-list>
+    <div class="absolute top-0 left-0 flex flex-col items-stretch w-40 h-full pointer-events-auto appbar bg-black-75 sm:w-64" v-focus-list>
         <component
             v-for="(item, index) in items"
             :is="item.componentId"
             :key="`${item}-${index}`"
-            class="h-24 my-4 first:mt-8 text-gray-400 hover:text-white focus:outline-none"
+            class="my-4 text-gray-400 first:mt-8 hover:text-white focus:outline-none"
             :class="{ 'py-12': item.id !== 'divider' }"
             :focus-item="item.id !== 'divider'"
             :options="item.options"
