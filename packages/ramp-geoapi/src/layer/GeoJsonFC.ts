@@ -95,7 +95,7 @@ export default class GeoJsonFC extends AttribFC {
         });
     }
 
-    // TODO we are using the getgraphci type as it's an unbound loosely typed feature
+    // TODO we are using the getgraphic type as it's an unbound loosely typed feature
     //      may want to change name of the type to something more general
     /**
      * Requests a set of features for this layer that match the criteria of the options
@@ -143,25 +143,10 @@ export default class GeoJsonFC extends AttribFC {
 
         const sql = this.filter.getCombinedSql(exclusions);
 
-        // fetch all local graphics
-        // TODO deal with this later.
-        //      It would appear that as of ESRI API 4.14, the ability to change the visibility of individual
-        //      graphics on a client side feature layer does not work and is coming later™.
-        //      For the moment, will not code a workaround. When R4MP nears release, attempt to resolve:
-        //      Plan A: A newer ESRI API is released that works. Use it. Donethanks.
-        //      Plan B: Attempt to implement the "remove graphic, add graphic" technique to change visibility
-        //      Plan C: Explore the impact of using GraphicsLayer instead of FeatureLayer, would need to
-        //              figure out if FeatureLayer has any functions we require that GL doesnt support
-        //      Additional reading: https://community.esri.com/thread/228376-how-can-you-change-graphicvisible-in-410
-        //      Branch that attempts to filter on FeatureLayerView instead of Feature
-        //      https://github.com/james-rae/ramp4-pcar4/commits/filterViewGeoJson
-        //      https://github.com/james-rae/ramp4-pcar4/commit/e0e36d30094eaafb4452a74250fb638d52062cbd
-        //      Attempts to manually update things did not work
-        //      e.g. (this.parent.innerLayer as any).source.items[0].visible = false;
-
-        this.parentLayer._innerLayer.queryFeatures().then(fs => {
-            console.warn('Request to filter geometry on the map of local layer will not work at this time');
-            this.gapi.utils.query.sqlEsriGraphicsVisibility(fs.features, sql);
+        // NOTE this can be expanded to have spatial filters as well. if we head to that,
+        //      will will need to ensure any spatial elements get included in the new FeatureFilter
+        this.parentLayer._innerView.filter = new this.esriBundle.FeatureFilter({
+            where: sql
         });
 
     }

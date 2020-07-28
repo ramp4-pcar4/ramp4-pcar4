@@ -36,7 +36,10 @@ function fieldValidator(fields: Array<esri.Field>, targetName: string): string {
 // TODO i think we need to change the extends to AttribLayer, as FeatureLayer constructor will attempt to make its own feature layer
 export class GeoJsonLayer extends AttribLayer {
 
+    // these two just mask the BaseLayer properties with a better type
     _innerLayer: esri.FeatureLayer;
+    _innerView: esri.FeatureLayerView;
+
     private esriJson: esri.FeatureLayerProperties; // used as temp var to get around typescript parameter grousing. will be undefined after initLayer()
 
     constructor (infoBundle: InfoBundle, rampLayerConfig: RampLayerConfig, geoJson: any, systemOptions: any, reloadTree?: TreeNode) {
@@ -114,6 +117,7 @@ export class GeoJsonLayer extends AttribLayer {
         });
 
         esriConfig.displayField = fieldValidator(<Array<esri.Field>>esriConfig.fields, rampLayerConfig.nameField) || 'OBJECTID';
+        esriConfig.outFields = ['*']; // TODO eventually will want this overridable by the config.
 
         // TODO inspect rampLayerConfig for any config field alias overrides or field restrictions. apply them to esriConfig.fields
 
@@ -185,6 +189,13 @@ export class GeoJsonLayer extends AttribLayer {
             this.extent = this._apiRef.proj.graphicsUtils.graphicsExtent(this._layer.graphics);
         }
         */
+
+        // TODO testing this out for now. our SQL support needs the view in place, so this delays our load promise until the view is ready.
+        //      if this becomes problematic (e.g. we want to create a layer and have it "load" without adding it to a map),
+        //      we can instead put the view promise dependency on the applySqlFilter of GeoJsonFC. this will require making the viewPromise public.
+        //      Alllso, we might consider putting this promise in the onLoadActions of BaseLayer, if we find other layers
+        //      become hooked on the power of the view and require it to be ready.
+        loadPromises.push(this.viewPromise.getPromise());
 
         return loadPromises;
     }

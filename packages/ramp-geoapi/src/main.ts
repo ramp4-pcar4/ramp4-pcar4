@@ -158,6 +158,7 @@ export default async (window: DojoWindow, options: GeoApiOptions = {}): Promise<
         ['esri/tasks/support/PrintTemplate', 'PrintTemplate'],
         ['esri/tasks/support/ProjectParameters', 'ProjectParameters'],
         ['esri/tasks/support/Query', 'Query'],
+        ['esri/views/layers/support/FeatureFilter', 'FeatureFilter'],
         ['esri/views/MapView', 'MapView'],
         ['esri/widgets/BasemapGallery', 'BasemapGallery'],
         ['esri/widgets/ScaleBar', 'ScaleBar']
