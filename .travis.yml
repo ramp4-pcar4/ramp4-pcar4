@@ -3,6 +3,8 @@ dist: trusty
 language: node_js
 node_js:
     - 10.16.3
+before_script:
+    - export NODE_OPTIONS=--max_old_space_size=4096
 script:
     - set -e
 
