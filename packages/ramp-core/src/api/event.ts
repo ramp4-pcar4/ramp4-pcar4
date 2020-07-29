@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import { APIScope, InstanceAPI } from './internal';
 import { DetailsAPI } from '@/fixtures/details/api/details';
+import { SettingsAPI} from '@/fixtures/settings/api/settings'
 import { IdentifyResult, IdentifyResultSet, MapClick } from 'ramp-geoapi';
 
 export enum GlobalEvents {
@@ -34,6 +35,7 @@ export enum GlobalEvents {
 enum DefEH {
     IDENTIFY_DETAILS = 'ramp_identify_opens_details',
     MAP_IDENTIFY = 'ramp_map_click_runs_identify',
+    OPEN_SETTINGS = 'ramp_settings_opens_panel'
 }
 
 // private for EventBus internals, so don't export
@@ -265,7 +267,7 @@ export class EventAPI extends APIScope {
             // TODO the enum-values-to-array logic we use in the event names list
             //      fails a bit here. we could make it work if we force every default
             //      handler name to being with a specific prefix. Alternately use object, not enum.
-            eventHandlerNames = [DefEH.MAP_IDENTIFY, DefEH.IDENTIFY_DETAILS];
+            eventHandlerNames = [DefEH.MAP_IDENTIFY, DefEH.IDENTIFY_DETAILS, DefEH.OPEN_SETTINGS];
         }
 
         // add all the requested default event handlers.
@@ -302,6 +304,18 @@ export class EventAPI extends APIScope {
                     }
                 };
                 this.on(GlobalEvents.MAP_IDENTIFY, zeHandler, handlerName);
+                break;
+
+            case DefEH.OPEN_SETTINGS:
+                zeHandler = (payload: any) => {
+                    const settingsFixture: SettingsAPI = this.$iApi.fixture.get('settings');
+                    if(settingsFixture) {
+                        settingsFixture.open(payload);
+                    }
+                };
+
+                // Create a new event: opens the settings panel and hooks it up to the requested layer.
+                this.$iApi.event.on('settings/open', zeHandler, handlerName);
                 break;
 
             default:
