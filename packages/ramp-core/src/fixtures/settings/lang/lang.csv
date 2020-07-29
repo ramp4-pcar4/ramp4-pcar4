@@ -1,0 +1,11 @@
+key,enValue,enValid,frValue,frValid
+settings.title,Settings,1,Paramètres,1
+settings.label.display,Display,1,Affichage,1
+settings.label.visibility,Show layer,1,Afficher la couche,1
+settings.label.opacity,Opacity,1,Opacité,1
+settings.label.boundingBox,Bounding box,1,Zone de délimitation,1
+settings.label.data,Data,1,Données,1
+settings.label.query,Toggle query,1,Basculer la requête,1
+settings.label.interval,Refresh interval,1,Intervalle d'actualisation,1
+settings.label.refreshHint,Refresh interval in minutes,1,Intervalle d'actualisation en minutes,1
+settings.label.refreshOff, Leave blank or 0 to turn off automatic refresh,1,Laisser le champ vide ou y inscrire 0 pour désactiver l'actualisation automatique,1
