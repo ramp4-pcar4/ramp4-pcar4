@@ -1,17 +1,16 @@
 <template>
-    <panel-screen>
+    <panel-screen :panel="panel">
         <template #header>
             <geosearch-bar></geosearch-bar>
         </template>
-
         <template #controls>
-            <pin @click="panel.pin()" :active="isPinned"></pin>
-            <close @click="panel.close()"></close>
+            <pin @click="panel.pin()" :active="isPinned" v-if="$iApi.screenSize !== 'xs'"></pin>
+            <close @click="panel.close()" v-if="$iApi.screenSize !== 'xs'"></close>
         </template>
 
         <template #content>
             <geosearch-top-filters></geosearch-top-filters>
-            <loading-bar class="p-4 mx-2 mb-2" v-if="loadingResults"></loading-bar>
+            <loading-bar class="mb-2" v-if="loadingResults"></loading-bar>
             <div class="px-5 mt-10 truncate">
                 <span class="relative h-48" v-if="searchVal && searchResults.length === 0 && !loadingResults"
                     >{{ $t('noResults') }}<span class="font-bold text-blue-600">{{ searchVal }}</span></span
@@ -46,7 +45,7 @@
                     </button>
                 </li>
             </ul>
-            <geosearch-bottom-filters class="absolute bottom-0 mb-32"></geosearch-bottom-filters>
+            <geosearch-bottom-filters class="absolute bottom-10"></geosearch-bottom-filters>
         </template>
     </panel-screen>
 </template>
