@@ -1,11 +1,11 @@
 <template>
-    <panel-screen>
+    <panel-screen :panel="panel">
         <template #header>
             Mouruge Fixture
         </template>
 
         <template #controls>
-            <close @click="panel.close()"></close>
+            <close @click="panel.close()" v-if="$iApi.screenSize !== 'xs'"></close>
         </template>
 
         <template #content>

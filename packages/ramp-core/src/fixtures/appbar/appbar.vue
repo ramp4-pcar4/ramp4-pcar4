@@ -1,10 +1,10 @@
 <template>
-    <div class="absolute top-0 left-0 flex flex-col items-stretch bg-black-75 h-full w-40 sm:w-64 pointer-events-auto" v-focus-list>
+    <div class="appbar absolute top-0 left-0 flex flex-col items-stretch bg-black-75 h-full w-40 sm:w-64 pointer-events-auto" v-focus-list>
         <component
             v-for="(item, index) in items"
             :is="item.componentId"
             :key="`${item}-${index}`"
-            class="h-24 my-4 first:mt-8 text-gray-400 hover:text-white"
+            class="h-24 my-4 first:mt-8 text-gray-400 hover:text-white focus:outline-none"
             :class="{ 'py-12': item.id !== 'divider' }"
             :focus-item="item.id !== 'divider'"
             :options="item.options"
@@ -29,5 +29,13 @@ export default class AppbarV extends Vue {
 <style lang="scss" scoped>
 .focused {
     @apply bg-blue-900 text-white;
+}
+
+.appbar {
+    backdrop-filter: blur(5px);
+
+    > button {
+        outline: none;
+    }
 }
 </style>

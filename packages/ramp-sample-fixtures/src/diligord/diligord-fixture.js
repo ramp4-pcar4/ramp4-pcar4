@@ -55,24 +55,29 @@
             };
         },
         render: function(h) {
-            return h('panel-screen', [
+            // using built-in `pin` panel header control; can use either `this.isPinned` getter method or the `this.panel.isPinned` panel getter
+            const pin =
+                this.$iApi.screenSize === 'xs'
+                    ? undefined
+                    : h('pin', { props: { active: this.isPinned }, on: { click: () => this.panel.pin(!this.panel.isPinned) } });
+
+            const close =
+                this.$iApi.screenSize === 'xs'
+                    ? undefined
+                    : h('close', {
+                          on: {
+                              click: () => this.panel.close() // this works ✔
+                              // click: this.closeMethod, // this also works ✔
+                              // click: this.panel.close // this doesn't work ❌
+                          }
+                      });
+
+            return h('panel-screen', { props: { panel: this.panel } }, [
                 // pass a `span` to the `header` slot of the panel-screen
                 h('template', { slot: 'header' }, [h('span', this.title)]),
 
                 // pass `pin` and `close` controls `controls` slot of the panel-screen
-                h('template', { slot: 'controls' }, [
-                    // using built-in `pin` panel header control; can use either `this.isPinned` getter method or the `this.panel.isPinned` panel getter
-                    h('pin', { props: { active: this.isPinned }, on: { click: () => this.panel.pin(!this.panel.isPinned) } }),
-
-                    // using built-in `close` panel header control
-                    h('close', {
-                        on: {
-                            click: () => this.panel.close() // this works ✔
-                            // click: this.closeMethod, // this also works ✔
-                            // click: this.panel.close // this doesn't work ❌
-                        }
-                    })
-                ]),
+                h('template', { slot: 'controls' }, [pin, close]),
 
                 // pass screen content to the `header` slot of the panel-screen
                 h('template', { slot: 'content' }, [
@@ -168,7 +173,7 @@
 
         // TEMP CODE FOR SAMPLE
         // will allow an outside caller to update the fixture
-        doAThing (text) {
+        doAThing(text) {
             // too dumb do figure out how to get text on the fixture panels. vue hates me.
             console.log('EVENTS API SAMPLE: dillygord got this data from gazebo', text);
         }

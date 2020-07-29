@@ -1,5 +1,7 @@
 <template>
-    <div class="absolute bottom-0 flex justify-center pointer-events-none text-white bg-black-75 left-64 right-0 py-2">
+    <div
+        class="map-caption absolute bottom-0 flex justify-center pointer-events-none text-gray-400 bg-black-75 left-32 sm:left-64 right-0 py-2"
+    >
         <span class="relative ml-10 truncate top-1">Attribution goes here</span>
 
         <span class="flex-grow w-15"></span>
@@ -12,7 +14,7 @@
         </span>
 
         <button
-            class="flex-shrink-0 mx-10 pointer-events-auto h-20 cursor-pointer border-none"
+            class="flex-shrink-0 mx-10 px-4 pointer-events-auto h-20 cursor-pointer border-none"
             @click="onScaleClick"
             :aria-pressed="isImperialScale"
             :aria-label="$t('map.toggleScaleUnits')"
@@ -176,4 +178,8 @@ export default class MapCaptionV extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.map-caption {
+    backdrop-filter: blur(5px);
+}
+</style>

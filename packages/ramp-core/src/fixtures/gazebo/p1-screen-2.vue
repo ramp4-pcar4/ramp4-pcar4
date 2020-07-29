@@ -1,12 +1,12 @@
 <template>
-    <panel-screen>
+    <panel-screen :panel="panel">
         <template #header>
             Gazebo/Panel 1/Screen B
         </template>
 
         <template #controls>
             <!-- this is fine, but the name of the panel is hardcoded there, so you wouldn't need to update it if it ever changes -->
-            <pin :active="pinned === 'p1'" @click="pinPanel"></pin>
+            <pin :active="pinned === 'p1'" @click="pinPanel" v-if="$iApi.screenSize !== 'xs'"></pin>
         </template>
 
         <template #content>

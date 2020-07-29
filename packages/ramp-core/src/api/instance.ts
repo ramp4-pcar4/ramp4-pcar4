@@ -69,7 +69,9 @@ export class InstanceAPI {
         }
 
         // default missing options
-        if (!options) { options = {}; }
+        if (!options) {
+            options = {};
+        }
 
         // use strict check against false, as missing properties have default value of true.
         // run the default setup functions unless flags have been set to false.
@@ -79,7 +81,6 @@ export class InstanceAPI {
         if (!(options.loadDefaultEvents === false)) {
             this.event.addDefaultEvents();
         }
-
     }
 
     // TODO: we probably need to expose other Vue global functions here like `set`, `use`, etc.

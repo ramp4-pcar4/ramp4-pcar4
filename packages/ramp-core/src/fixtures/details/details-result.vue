@@ -1,5 +1,5 @@
 <template>
-    <panel-screen>
+    <panel-screen :panel="panel">
         <template #header>
             Details
         </template>
