@@ -140,8 +140,26 @@
                                             name: "Water Quantity"
                                         },
                                         {
-                                            layerId: "CleanAir",
-                                            name: "Clean Air"
+                                            name: "Visibility Set",
+                                            exclusiveVisibility: [
+                                                {
+                                                    layerId: "CleanAir",
+                                                    name: "Clean Air"
+                                                },
+                                                {
+                                                    name: "Group in Set",
+                                                    children: [
+                                                        {
+                                                            layerId: "CleanAir",
+                                                            name: "Clean Air"
+                                                        },
+                                                        {
+                                                            layerId: "WaterQuantity",
+                                                            name: "Water Quantity"
+                                                        }
+                                                    ]
+                                                }
+                                            ]       
                                         }
                                     ]
                                 }

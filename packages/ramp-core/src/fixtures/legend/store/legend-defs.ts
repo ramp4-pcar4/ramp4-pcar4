@@ -7,12 +7,11 @@ import TreeNode from 'ramp-geoapi/dist/layer/TreeNode';
 export class LegendItem {
     _id: string;
     _name: string;
-    _type: 'LegendEntry' | 'LegendGroup' | 'VisibilitySet' | 'InfoSection';
+    _type: LegendTypes;
     _controls: Array<string>;
     _parent: LegendItem | undefined = undefined; // (mainly would be useful to deal with visibility sets)
 
     _uid: string;
-    _layer: BaseLayer | undefined;
     _layerTree: TreeNode | undefined;
 
     _hidden: boolean;
@@ -27,7 +26,7 @@ export class LegendItem {
         this._id = legendItem.layerId;
         this._uid = legendItem.uid;
         this._name = legendItem.name !== undefined ? legendItem.name : '';
-        this._type = legendItem.type !== undefined ? legendItem.type : 'LegendEntry';
+        this._type = legendItem.type !== undefined ? legendItem.type : LegendTypes.Entry;
         this._controls =
             legendItem.controls !== undefined
                 ? legendItem.controls
@@ -46,7 +45,6 @@ export class LegendItem {
         this._opacity = legendItem.opacity !== undefined ? legendItem.opacity : 1;
         this._visibility = legendItem.visibility !== undefined ? legendItem.visibility : true;
         this._hidden = legendItem.hidden !== undefined ? legendItem.hidden : false;
-        this._layer = legendItem.layer;
         this._layerTree = legendItem.layerTree;
         this._itemConfig = legendItem;
     }
@@ -71,12 +69,9 @@ export class LegendItem {
         return this._hidden;
     }
 
-    /**
-     * Gets visibility of the LegendItem
-     * @return {boolean | undefined} - true if the item is currently visible, false if invisible, undefined if "visibility" is not part of controls
-     */
-    get visibility(): boolean | undefined {
-        return this._visibility;
+    /** Returns item's parent */
+    get parent(): LegendItem | undefined {
+        return this._parent;
     }
 
     /**
@@ -100,6 +95,30 @@ export class LegendItem {
             }
         }
     }
+
+    /**
+     * Gets visibility of the LegendItem
+     * @return {boolean | undefined} - true if the item is currently visible, false if invisible, undefined if "visibility" is not part of controls
+     */
+    get visibility(): boolean | undefined {
+        return this._visibility;
+    }
+
+    /**
+     * Sets visibility of the LegendItem
+     * @param visibility - true if visible, false if invisible. Undefined has no effect.
+     */
+    toggleVisibility(visibility: boolean | undefined = undefined): void {
+        // TODO: need to rework some logic to check if legend entry is apart of a visibility set
+        if (visibility !== undefined && this._controls.includes(Controls.Visibility)) {
+            this._visibility = visibility;
+            // some event/listener should trigger after visibility value toggles
+        } else {
+            this._visibility = !this._visibility;
+        }
+    }
+
+    // TODO: add BaseLayer event listeners to update properties on change
 
     /**
      * Removes element from legend and removes layer if it's the last reference to it.
@@ -142,32 +161,13 @@ export class LegendEntry extends LegendItem {
      */
     constructor(legendEntry: any) {
         super(legendEntry);
-        this._type = legendEntry.type !== undefined ? legendEntry.type : 'LegendEntry';
+        this._type = legendEntry.type !== undefined ? legendEntry.type : LegendTypes.Entry;
         this._symbologyExpanded = legendEntry.symbologyExpanded !== undefined ? legendEntry.symbologyExpanded : false;
     }
 
     /** Returns uid associated with BaseLayer */
     get uid(): string {
         return this._uid;
-    }
-
-    /** Returns BaseLayer associated to legend entry */
-    get layer(): BaseLayer | undefined {
-        return this._layer;
-    }
-
-    /**
-     * Sets visibility of the LegendItem
-     * @param visibility - true if visible, false if invisible. Undefined has no effect.
-     */
-    toggleVisibility(visibility: boolean | undefined = undefined): void {
-        // TODO: need to rework some logic to check if legend entry is apart of a visibility set
-        if (visibility !== undefined && this._controls.includes(Controls.Visibility)) {
-            this._visibility = visibility;
-            // some event/listener should trigger after visibility value toggles
-        } else {
-            this._visibility = !this._visibility;
-        }
     }
 
     /**
@@ -184,7 +184,7 @@ export class LegendEntry extends LegendItem {
      */
     toggleMetadata(): void {
         if (this._controlAvailable(Controls.Metadata)) {
-            // TODO: toggle metadata panel through API/store call
+            // TODO: toggle metadata panel through API/store call - undecided if this method should reside here
         }
     }
 
@@ -193,7 +193,7 @@ export class LegendEntry extends LegendItem {
      */
     toggleSettings(): void {
         if (this._controlAvailable(Controls.Settings)) {
-            // TODO: toggle settings panel through API/store call
+            // TODO: toggle settings panel through API/store call - undecided if this method should reside here
         }
     }
 
@@ -202,7 +202,7 @@ export class LegendEntry extends LegendItem {
      */
     toggleDataTable(): any {
         if (this._controlAvailable(Controls.Data)) {
-            // TODO: toggle datatable through API using uid
+            // TODO: toggle datatable through API using uid - undecided if this method should reside here
         }
     }
 }
@@ -213,7 +213,6 @@ export class LegendEntry extends LegendItem {
 export class LegendGroup extends LegendItem {
     _children: Array<LegendEntry | LegendGroup> = [];
     _expanded: boolean;
-    // _isSet: boolean;
     _lastVisible: LegendEntry | LegendGroup | undefined;
 
     /**
@@ -223,8 +222,7 @@ export class LegendGroup extends LegendItem {
     constructor(legendGroup: any) {
         super(legendGroup);
         this._expanded = legendGroup.expanded !== undefined ? legendGroup.expanded : true;
-        this._type = legendGroup.exclusiveVisibility !== undefined ? 'VisibilitySet' : 'LegendGroup';
-        // this._isSet = this._type === 'VisibilitySet' ? true : false;
+        this._type = legendGroup.exclusiveVisibility !== undefined ? LegendTypes.Set : LegendTypes.Group;
 
         // initialize group children properties
         this._initGroupProperties(legendGroup);
@@ -236,25 +234,37 @@ export class LegendGroup extends LegendItem {
      * @ignore
      */
     _initGroupProperties(legendGroup: any): void {
-        // initialize objects for all non-hidden group children entries
-        legendGroup.children
+        // initialize objects for all non-hidden group/set children entries
+        const children = this._type === LegendTypes.Set ? legendGroup.exclusiveVisibility : legendGroup.children;
+        // console.log("checking children: ", children);
+        children
             .filter((entry: any) => !entry.hidden)
             .forEach((entry: any) => {
-                // create new LegendGroup/LegendEntry/VisibilitySet and push to child array
-                if (entry.exclusiveVisibility !== undefined)
-                    if (entry._type === LegendTypes.Group || entry._type === LegendTypes.Set) {
-                        this._children.push(new LegendGroup(entry));
-                    } else {
+                // create new LegendGroup/LegendEntry and push to child array
+                if (entry._type === LegendTypes.Group || entry._type === LegendTypes.Set) {
+                    this._children.push(new LegendGroup(entry));
+                } else {
+                    // obtain all layers and fetch uid
+                    const layers = legendGroup.layers;
+                    const curLayer = layers.find((layer: BaseLayer) => layer.id === this._id);
+                    // wait for layer to finish loading
+                    curLayer?.isLayerLoaded().then(() => {
+                        // obtain uid and layer tree structure
+                        entry.uid = curLayer?.uid;
+                        entry.layerTree = curLayer?.getLayerTree();
+
+                        // create and save new single legend entry
                         this._children.push(new LegendEntry(entry));
-                    }
+                    });
+                }
             });
 
         this._children.forEach(child => {
-            // TODO: setup events to watch for visibility and opacity (+ other key layer properties) changes here?
+            // TODO: need to setup events to watch for visibility and opacity (+ other key layer properties) changes here?
         });
     }
 
-    /** Returns the children for the group (if any). Children can be either LegendGroups (if nested groups) or LegendEntrys. */
+    /** Returns children of the group. Children can be either legend groups (nested) or single legend entries. */
     get children(): Array<LegendGroup | LegendEntry> {
         return this._children;
     }
@@ -282,6 +292,12 @@ export class LegendGroup extends LegendItem {
     toggleVisibility(visible: boolean | undefined = undefined): void {
         const oldVal = this._visibility;
         visible !== undefined ? (this._visibility = visible) : (this._visibility = !this._visibility);
+        // check if visibility value changes
+        if (oldVal === this._visibility) {
+            return;
+        }
+
+        // if current item is a legend group, simply toggle visibility for all children
         if (this._type === LegendTypes.Group) {
             this._children.forEach((entry: any) => {
                 entry.toggleVisibility(visible);
@@ -303,7 +319,7 @@ export class LegendGroup extends LegendItem {
                         entry.toggleVisibility(this._visibility);
                         this._lastVisible = entry;
                     }
-                })
+                });
             }
         }
     }

@@ -1,6 +1,8 @@
 import { FixtureInstance } from '@/api';
-import { LegendConfig, LegendElement } from '../store';
+import { LegendConfig } from '../store';
+import { LegendStore } from '../store';
 import { LayerStore } from '@/store/modules/layer';
+import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
 
 export class LegendAPI extends FixtureInstance {
     /**
@@ -26,28 +28,26 @@ export class LegendAPI extends FixtureInstance {
             return;
         }
 
-        let legendEntries: Array<LegendElement> = [];
+        const layers: BaseLayer[] | undefined = this.$vApp.$store.get(LayerStore.layers);
+        // let legendEntries: Array<LegendItem> = [];
         let stack: Array<any> = [];
-        // initialize stack
+        // initialize stack with all legend elements listed in config
         legendConfig.root.children.forEach(legendItem => stack.push(legendItem));
 
         // parse children from legend root structure through traversal
         while (stack.length > 0) {
             // pop legend entry in stack and check if it has a corresponding layer
             const lastEntry = stack.pop();
-            // TODO: create legend wrapper object once class definitions implemented and bind to legend object
-            if (lastEntry.layerId !== undefined) {
-                // TODO: figure out a good approach to wait and map layerId to uid then call `getLayerById` to bind GeoApi BaseLayer to legend object
-                // lastEntry.layer = this.$vApp.$store.get('layer/getLayerById', lastEntry.layerId);
-            }
-            legendEntries.push(lastEntry);
-            // push all children in current legend node back onto stack
+            this.$vApp.$store.set(LegendStore.addLegendItem, { config: lastEntry, layers: layers });
+
+            // push all children in current legend node back onto stack (for legend groups)
             if (lastEntry?.children !== undefined && lastEntry.children.length > 0) {
-                lastEntry?.children.forEach((child: any) => stack.push(child));
+                lastEntry?.children.forEach((groupChild: any) => stack.push(groupChild));
+            }
+            // push all children in current legend node back onto stack (for visibility sets)
+            if (lastEntry?.exclusiveVisibility !== undefined && lastEntry.exclusiveVisibility.length > 0) {
+                lastEntry?.exclusiveVisibility.forEach((setChild: any) => stack.push(setChild));
             }
         }
-
-        this.$vApp.$store.set('legend/children', legendEntries);
-        // TODO: validate legend items?
     }
 }

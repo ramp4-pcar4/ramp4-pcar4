@@ -1,9 +1,23 @@
-import LegendAppbarButtonV from './appbar-button.vue';
-import { FixtureInstance } from '@/api';
+import { LegendAPI } from './api/legend';
+import { legend } from './store/index';
 
-class LegendFixture extends FixtureInstance {
+import messages from './lang/lang.csv';
+
+class LegendFixture extends LegendAPI {
     added() {
-        this.$iApi.component('legend-appbar-button', LegendAppbarButtonV);
+        // TODO: register legend panel, appbar buttons, etc. once Vue components complete
+        this.$vApp.$store.registerModule('legend', legend());
+
+        // parse legend section of config and store information in legend store
+        this._parseConfig(this.config);
+        this.$vApp.$watch(
+            () => this.config,
+            value => this._parseConfig(value)
+        );
+    }
+
+    removed() {
+        this.$vApp.$store.unregisterModule('legend');
     }
 }
 
