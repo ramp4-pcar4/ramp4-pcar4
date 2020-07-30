@@ -1,16 +1,16 @@
 <template>
-    <panel-screen>
+    <panel-screen :panel="panel">
         <template #header> Gazebo/Panel 2/Screen C </template>
 
         <template #controls>
             <!-- <pin> is a global button component that any fixture/panel/screen can reuse -->
 
             <!-- ✔ this is the correct way to pin a panel and bind the button active state whether this panel is pinned or not 👇 -->
-            <pin @click="panel.pin()" :active="panel.isPinned"></pin>
+            <pin @click="panel.pin()" :active="panel.isPinned" v-if="$iApi.screenSize !== 'xs'"></pin>
 
             <!-- ✔ this will also work 👇 -->
             <!-- <pin @click="panel.pin()" :active="panel.isPinned"></pin> -->
-            <close @click="panel.close()"></close>
+            <close @click="panel.close()" v-if="$iApi.screenSize !== 'xs'"></close>
         </template>
 
         <template #content>

@@ -1,5 +1,5 @@
 <template>
-    <panel-screen>
+    <panel-screen :panel="panel">
         <template #header>
             Gazebo/Panel 1/Screen A
         </template>
@@ -12,7 +12,7 @@
                     <a href="#">Option 2</a>
                     <a href="#">Option 3</a>
                 </panel-options-menu>
-                <pin :active="pinned && pinned.id === 'p1'" @click="pinPanel"></pin>
+                <pin :active="pinned && pinned.id === 'p1'" @click="pinPanel" v-if="$iApi.screenSize !== 'xs'"></pin>
             </div>
         </template>
 

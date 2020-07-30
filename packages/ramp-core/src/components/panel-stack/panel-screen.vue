@@ -5,6 +5,7 @@
             class="flex flex-shrink-0 items-center border-b border-solid border-gray-600 px-8 h-48 default-focus-style"
             v-focus-item
         >
+            <back v-if="$iApi.screenSize === 'xs'" @click="panel.close()"></back>
             <h2 class="flex-grow text-lg py-16 pl-8"><slot name="header"></slot></h2>
 
             <slot name="controls"></slot>
@@ -19,6 +20,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
+import { PanelInstance } from '@/api';
 
 @Component
 export default class PanelScreenV extends Vue {
@@ -31,6 +33,8 @@ export default class PanelScreenV extends Vue {
      * A prop indicating if the `content` slot should be rendered.
      */
     @Prop({ default: true }) content!: boolean;
+
+    @Prop() panel!: PanelInstance;
 }
 </script>
 

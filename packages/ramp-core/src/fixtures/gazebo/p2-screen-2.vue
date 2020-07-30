@@ -1,5 +1,5 @@
 <template>
-    <panel-screen>
+    <panel-screen :panel="panel">
         <template #header>
             Gazebo/Panel 2/Screen B
         </template>
@@ -8,7 +8,7 @@
             <!-- <pin> is a global button component that any fixture/panel/screen can reuse -->
 
             <!-- ✔ this is the correct way to pin a panel and bind the button active state whether this panel is pinned or not 👇 -->
-            <pin @click="panel.pin()" :active="isPinned"></pin>
+            <pin @click="panel.pin()" :active="isPinned" v-if="$iApi.screenSize !== 'xs'"></pin>
 
             <!-- ✔ this will also work 👇 -->
             <!-- <pin @click="panel.pin()" :active="panel.isPinned"></pin> -->
@@ -62,7 +62,7 @@ export default class P2Screen2V extends Vue {
 
     enhancedCatActivities() {
         // shows a cat, also does an event API flex
-        this.panel.show('p-2-screen-3')
+        this.panel.show('p-2-screen-3');
         this.$iApi.event.emit('gazebo/beholdMyText', 'I am a cat');
     }
 }

@@ -18,7 +18,8 @@ module.exports = {
         extend: {
             colors: {
                 'black-75': 'rgba(0, 0, 0, 0.75)',
-                'white-75': 'rgba(255, 255, 255, 0.75)'
+                'white-75': 'rgba(255, 255, 255, 0.75)',
+                'grey-test': 'rgba(150,150,150,0.7);'
             },
             boxShadow: {
                 tm: '0 0 0 1px rgba(0, 0, 0, 0.05), 0 2px 3px 0 rgba(0, 0, 0, 0.1)'

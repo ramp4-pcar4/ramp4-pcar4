@@ -1,12 +1,12 @@
 <template>
-    <panel-screen>
+    <panel-screen :panel="panel">
         <template #header>
             {{ $t('basemap.title') }}
         </template>
 
         <template #controls>
-            <pin @click="panel.pin()" :active="isPinned"></pin>
-            <close @click="panel.close()"></close>
+            <pin @click="panel.pin()" :active="isPinned" v-if="!$iApi.screenSize !== 'xs'"></pin>
+            <close @click="panel.close()" v-if="$iApi.screenSize !== 'xs'"></close>
         </template>
 
         <template #content>
@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 import { PanelInstance } from '@/api';
 
