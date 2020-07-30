@@ -1,8 +1,8 @@
-import { LegendItem } from './legend-defs';
+import { LegendEntry, LegendGroup } from './legend-defs';
 
 export class LegendState {
     legendConfig: LegendConfig | undefined = undefined;
-    children: Array<LegendItem> = [];
+    children: Array<LegendEntry | LegendGroup> = [];
 }
 
 export interface LegendConfig {
