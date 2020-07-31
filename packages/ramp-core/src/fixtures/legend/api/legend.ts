@@ -1,6 +1,9 @@
 import { FixtureInstance } from '@/api';
-import { LegendConfig, LegendElement } from '../store';
+import { LegendConfig } from '../store';
+import { LegendStore } from '../store';
+import { LegendItem, LegendEntry, LegendGroup } from '../store/legend-defs';
 import { LayerStore } from '@/store/modules/layer';
+import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
 
 export class LegendAPI extends FixtureInstance {
     /**
@@ -26,28 +29,43 @@ export class LegendAPI extends FixtureInstance {
             return;
         }
 
-        let legendEntries: Array<LegendElement> = [];
+        const layers: BaseLayer[] | undefined = this.$vApp.$store.get(LayerStore.layers);
+        let legendEntries: Array<LegendItem> = [];
         let stack: Array<any> = [];
-        // initialize stack
+        // initialize stack with all legend elements listed in config
         legendConfig.root.children.forEach(legendItem => stack.push(legendItem));
 
         // parse children from legend root structure through traversal
         while (stack.length > 0) {
             // pop legend entry in stack and check if it has a corresponding layer
             const lastEntry = stack.pop();
-            // TODO: create legend wrapper object once class definitions implemented and bind to legend object
-            if (lastEntry.layerId !== undefined) {
-                // TODO: figure out a good approach to wait and map layerId to uid then call `getLayerById` to bind GeoApi BaseLayer to legend object
-                // lastEntry.layer = this.$vApp.$store.get('layer/getLayerById', lastEntry.layerId);
+            lastEntry.layers = layers;
+            // this.$vApp.$store.set(LegendStore.addLegendItem, { config: lastEntry, layers: layers });
+
+            // (assuming visibility sets and groups will specify in config `exclusiveVisibility` or `children` properties, respectively)
+            if (lastEntry.children !== undefined || lastEntry.exclusiveVisibility !== undefined) {
+                // create a wrapper legend object for group or visibility set
+                const legendGroup = new LegendGroup(lastEntry);
+                legendEntries.push(legendGroup);
+            } else if (lastEntry.layerId !== undefined && layers !== undefined) {
+                // create a wrapper legend object for single legend entry
+                const legendEntry = new LegendEntry(lastEntry);
+                legendEntries.push(legendEntry);
             }
-            legendEntries.push(lastEntry);
-            // push all children in current legend node back onto stack
+
+            // TODO: link parent objects as required for visibility sets
+            // push all children in current legend node back onto stack (for legend groups)
             if (lastEntry?.children !== undefined && lastEntry.children.length > 0) {
-                lastEntry?.children.forEach((child: any) => stack.push(child));
+                lastEntry?.children.forEach((groupChild: any) => stack.push(groupChild));
+            }
+            // push all children in current legend node back onto stack (for visibility sets)
+            if (lastEntry?.exclusiveVisibility !== undefined && lastEntry.exclusiveVisibility.length > 0) {
+                lastEntry?.exclusiveVisibility.forEach((setChild: any) => stack.push(setChild));
             }
         }
 
-        this.$vApp.$store.set('legend/children', legendEntries);
+        // console.log('all legend entries: ', legendEntries);
+        this.$vApp.$store.set(LegendStore.children, legendEntries);
         // TODO: validate legend items?
     }
 }
