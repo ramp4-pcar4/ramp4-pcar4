@@ -34,7 +34,7 @@ module.exports = {
         csvRule
             .test(/lang\.csv$/)
             .use('ramp-locale-loader')
-            .loader('ramp-locale-loader')
+            .loader('ramp-locale-loader');
 
         // load xsl files (for metadata fixture)
         const xslRule = config.module.rule('loadxsl');
@@ -63,6 +63,11 @@ module.exports = {
         // modify the default injection point from 'body' to 'head', so it's easier to orchestrate the loading order; only when `serve`ing
         config.when(process.env.NODE_ENV === 'development', config => {
             config.plugin('html').tap(args => [{ ...args[0], inject: 'head' }]);
+        });
+
+        // copy `ramp-starter.js` to `dist` folder when building prod build
+        config.when(process.env.NODE_ENV === 'production', config => {
+            config.plugin('webpack-copy-plugin').tap(args => [[...args[0], { from: 'public/ramp-starter.js', to: '' }]]);
         });
 
         // get version numbers
