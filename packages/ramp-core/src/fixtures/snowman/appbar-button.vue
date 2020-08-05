@@ -1,6 +1,6 @@
 <template>
     <button class="py-6" @click="togglePanel()">
-        ⛄
+        <span class="block h-24">⛄</span>
     </button>
 </template>
 <script lang="ts">
