@@ -80,7 +80,7 @@ export default class SymbologyService extends BaseBase {
      * @param {String} imageUri url or dataUrl of the legend image
      * @return {Promise} a promise resolving with symbology svg code and its label
      */
-    generateWMSSymbology(name: string, imageUri: string): Promise<Object> {
+    async generateWMSSymbology(name: string, imageUri: string): Promise<Object> {
         const draw = svgjs(window.document.createElement('div'))
             .size(this.CONTAINER_SIZE, this.CONTAINER_SIZE)
             .viewbox(0, 0, 0, 0);
@@ -91,18 +91,13 @@ export default class SymbologyService extends BaseBase {
         };
 
         if (imageUri) {
-            const renderPromise = this.renderSymbologyImage(imageUri).then(svgcode => {
-                symbologyItem.svgcode = svgcode;
-
-                return symbologyItem;
-            });
-
-            return renderPromise;
+            const svgcode = await this.renderSymbologyImage(imageUri);
+            symbologyItem.svgcode = svgcode;
         } else {
             symbologyItem.svgcode = draw.svg();
-
-            return Promise.resolve(symbologyItem);
         }
+
+        return symbologyItem;
     }
 
     /**
@@ -149,14 +144,14 @@ export default class SymbologyService extends BaseBase {
      * @param {String} imageUri a image dataUrl or a regular url
      * @param {Object} draw [optional=null] an svg container to draw the image on; if not supplied, a new one is created
      */
-    renderSymbologyImage(imageUri: string, draw: any = null): Promise<string> {
+    async renderSymbologyImage(imageUri: string, draw: any = null): Promise<string> {
         if (draw === null) {
             draw = svgjs(window.document.createElement('div'))
                 .size(this.CONTAINER_SIZE, this.CONTAINER_SIZE)
                 .viewbox(0, 0, 0, 0);
         }
 
-        const symbologyPromise = this.gapi.utils.shared.convertImagetoDataURL(imageUri)
+        return this.gapi.utils.shared.convertImagetoDataURL(imageUri)
             .then(imageUri =>
                 this.svgDrawImage(draw, imageUri))
             .then(({ loader }) => {
@@ -167,8 +162,6 @@ export default class SymbologyService extends BaseBase {
                 console.error('Cannot draw symbology image; returning empty', err);
                 return draw.svg();
             });
-
-        return symbologyPromise;
     }
 
     /**
@@ -178,7 +171,7 @@ export default class SymbologyService extends BaseBase {
      * @param {String} imageUri a image dataUrl or a regular url
      * @param {Object} draw [optional=null] an svg container to draw the image on; if not supplied, a new one is created
      */
-    renderSymbologyIcon(imageUri: string, draw: any = null): Promise<string> {
+    async renderSymbologyIcon(imageUri: string, draw: any = null): Promise<string> {
         if (draw === null) {
             // create a temporary svg element and add it to the page; if not added, the element's bounding box cannot be calculated correctly
             const container = window.document.createElement('div');
@@ -191,19 +184,16 @@ export default class SymbologyService extends BaseBase {
         }
 
         // need to draw the image to get its size (technically not needed if we have a url, but this is simpler)
-        const picturePromise = this.gapi.utils.shared.convertImagetoDataURL(imageUri)
-            .then(imageUri =>
-                this.svgDrawImage(draw, imageUri))
-            .then(({ image }) => {
-                image.center(this.CONTAINER_CENTER, this.CONTAINER_CENTER);
+        const convertedUrl = await this.gapi.utils.shared.convertImagetoDataURL(imageUri);
 
-                // scale image to fit into the symbology item container
-                this.fitInto(image, this.CONTENT_IMAGE_SIZE);
+        const { image } = await this.svgDrawImage(draw, convertedUrl);
 
-                return draw.svg();
-            });
+        image.center(this.CONTAINER_CENTER, this.CONTAINER_CENTER);
 
-        return picturePromise;
+        // scale image to fit into the symbology item container
+        this.fitInto(image, this.CONTENT_IMAGE_SIZE);
+
+        return draw.svg();
     }
 
     /**

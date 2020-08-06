@@ -56,7 +56,6 @@ export default class Point extends BaseGeometry {
      */
     toArray(): Array<number> {
         // this makes a copy
-        // TODO decide if it should be a copy. document choice
         return this.rawArray.slice();
     }
 
@@ -70,16 +69,6 @@ export default class Point extends BaseGeometry {
             // two element array
             buffer = input;
 
-        /*
-        // TODO for the moment, favoring offloading the geojson support to a converter function in geoapi.
-        //      would make everything much more efficient (i.e. not checking every input; the geojson converter will expect proper input)
-        } else if (input.type === 'Feature' && input.geometry && input.geometry.type === 'Point') {
-            // geojson point feature
-            buffer = input.geometry.coordinates;
-        } else if (input.type === 'Point') {
-            // geojson point geometry
-            buffer = input.coordinates;
-        */
         } else if (input instanceof Point) {
             // fast return, it's already pure
             return input.toArray();
@@ -90,7 +79,6 @@ export default class Point extends BaseGeometry {
 
         // check that point values are numeric
         if (isNaN(buffer[0]) || isNaN(buffer[1])) {
-            // TODO once converter endpoints for esri, geojson are available, add those to the error message
             throw new Error('Unsupported point format detected. Supported formats are two element array of numbers, or object with x and y properties containing numbers');
         } else {
             // TODO if we find things are slow, consider dropping the "text number to number number" casting we provide here. add more errors
@@ -98,19 +86,4 @@ export default class Point extends BaseGeometry {
             return [parseFloat(buffer[0]), parseFloat(buffer[1])];
         }
     }
-
-    /* // this is passing the contents of raw array by reference, thus linking stuff we dont want linked
-    // purely for efficiency.
-    // we can often have the use case in other geometry items where the input is an array of points (e.g. a polygon ring).
-    // since we want to encode these minimally, in number arrays, we want to convert from fancy objects to raw data.
-    // this function lives here so we can access the protected raw guts and just use them, instead of
-    // having to go through .x and .y and constructing arrays for every point.
-    static fastArray(listOfPoints: Array<Point>): Array<Array<number>> {
-        // the error trick here is to detect impure arrays. hiding it in a function lets us tack it on the back
-        // of a || operator, so standard case should be nice and fast as there will always be a raw array.
-        // caller should handle the error and use a slower conversion.
-        const trick = () => { throw new Error('non-point element found'); };
-        return listOfPoints.map(p => p.rawArray || trick());
-    }
-    */
 }

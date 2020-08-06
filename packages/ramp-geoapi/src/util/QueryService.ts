@@ -36,7 +36,6 @@ export default class QueryService extends BaseBase {
             query.geometry = this.queryGeometryHelper(options.filterGeometry, false, options.map.getScale(), options.sourceSR);
             query.spatialRelationship = 'intersects';
         }
-        query.outFields = options.outFields ? options.outFields.split(',').map(s => s.trim()) : ['*'];
 
         const queryTask = new this.esriBundle.QueryTask({ url: options.url });
 

@@ -4,6 +4,8 @@
 // we can add more classes to support more renderer types if we need to
 
 import esri = __esri;
+import { Attributes } from '../api/apiDefs';
+
 
 export enum RendererType {
     Simple = 'simple',
@@ -27,12 +29,13 @@ export class BaseRenderer {
         this.falseRenderer = falseRenderer;
 
         // specifics for a renderer should be implemented in subclass constructor
+        // note layerFields is not used here but used in subclasses. keeping it here to keep all constructor sigs the same.
+        // we could remove it if it becomes clear we never need it in the base renderer.
     }
 
-    // TODO lets have some nice types
-
-
-    protected makeSearchParams(attributes: any): any {
+    // this function takes a set of attributes and extracts a value that can be used to match the owner of the attributes
+    // to a part of a renderer. Use `any` result as the type can vary between renderers.
+    protected makeSearchParams(attributes: Attributes): any {
         // basic case: return the attributes.
         // subclasses can override this for magic
         return attributes;
@@ -219,7 +222,7 @@ export class UniqueValueRenderer extends BaseRenderer {
 
     }
 
-    protected makeSearchParams(attributes: any): any {
+    protected makeSearchParams(attributes: Attributes): any {
         // make a key value for the graphic in question, using delimiter if multiple fields
         // put an empty string when key value is null
 
@@ -293,7 +296,7 @@ export class ClassBreaksRenderer extends BaseRenderer {
 
     }
 
-    protected makeSearchParams(attributes: any): any {
+    protected makeSearchParams(attributes: Attributes): any {
         // return the number that defines which class break the attributes belong to
         return parseFloat(attributes[this.valField]);
     }

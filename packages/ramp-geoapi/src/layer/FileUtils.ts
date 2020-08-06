@@ -33,7 +33,7 @@ const featureTypeToRenderer = {
  * Features without existing OBJECTID from that same dataset will get a new properties OBJECTID_FILE
  * with an empty string as value.
  */
-function assignIds(geoJson: any) {
+function assignIds(geoJson: any): void {
     if (geoJson.type !== 'FeatureCollection') {
         throw new Error('GeoJSON is not in FeatureCollection format');
     }
@@ -147,9 +147,9 @@ export default class FileUtils extends BaseBase {
     }
 
     // TODO general type cleanup. just trying to make it work for now
-    geoJsonToEsriJson(geoJson: any, options: any): Promise<esri.FeatureLayerProperties> {
+    async geoJsonToEsriJson(geoJson: any, options: any): Promise<esri.FeatureLayerProperties> {
 
-        let targetSR;
+        let targetSR: any;
         let srcProj = 'EPSG:4326'; // 4326 is the default for GeoJSON with no projection defined
         let layerId: string;
         const configPackage: esri.FeatureLayerProperties = {
@@ -229,46 +229,6 @@ export default class FileUtils extends BaseBase {
             }
         }
 
-        // make the layer
-        // TODO the layer gets made in layer constructor now. odds are we just need to return a nicely formatted object with all the treats
-        const buildLayer = () => {
-            return new Promise(resolve => {
-                // project data and convert to esri json format
-
-                const fancySR = new this.esriBundle.SpatialReference(targetSR);
-
-                this.gapi.utils.proj.projectGeoJson(geoJson, srcProj, destProj);
-
-                // terraformer has no support for non-wkid layers. can also do funny things if source is 102100.
-                // use 8888 as placehold then adjust below
-
-                // NOTE typescript lies here. it insists esriJson will have .features property, but it infact is the feature array itself
-                //      it also claims the .sr param is not valid, though it's in the documentation and the code.  lies!
-                const esriJson = <any>ArcGIS.convert(geoJson, <any>{ sr: 8888 });
-                configPackage.geometryType = defRender.geometryType;
-
-                // set proper SR on the geometeries
-                esriJson.forEach(gr => {
-                    gr.geometry.spatialReference = fancySR;
-                    gr.geometry.type = defRender.geometryType;
-
-                    // TEMPORARY hunt any complex datatypes and replace with a string
-                    // TODO figure out how to actually handle arrays or objects as attribute values
-                    Object.keys(gr.attributes).forEach(attName => {
-                        if (Array.isArray(gr.attributes[attName]) || typeof gr.attributes[attName] === 'object') {
-                            gr.attributes[attName] = '[Complex Value Removed]';
-                        }
-                    });
-                });
-
-                configPackage.source = <any>esriJson; // TODO see if this needs to become esriJson.features
-                configPackage.spatialReference = fancySR;
-                configPackage.id = layerId;
-
-                resolve(configPackage);
-            });
-        };
-
         // look up projection definitions if they don't already exist and we have enough info
 
         // note we need to use the SR object, not the normalized string, as checkProj cant handle a raw WKT
@@ -278,9 +238,43 @@ export default class FileUtils extends BaseBase {
 
         // TODO if we want/need, we can put an error handler on the promise to deal with incompatible projections.
         //      e.g. maybe we want to catch it and then build a dummy layer set to error state?
-        return this.gapi.utils.proj.checkProjBomber([srcProj, targetSR]).then(() => {
-            return buildLayer();
+        await this.gapi.utils.proj.checkProjBomber([srcProj, targetSR]);
+
+        // generate a nicely formatted object that that esri feature layer constructor can accept to make a local layer
+
+        // project data and convert to esri json format
+        const fancySR = new this.esriBundle.SpatialReference(targetSR);
+
+        this.gapi.utils.proj.projectGeoJson(geoJson, srcProj, destProj);
+
+        // terraformer has no support for non-wkid layers. can also do funny things if source is 102100.
+        // use 8888 as placehold then adjust below
+
+        // NOTE typescript lies here. it insists esriJson will have .features property, but it infact is the feature array itself
+        //      it also claims the .sr param is not valid, though it's in the documentation and the code.  lies!
+        const esriJson = <any>ArcGIS.convert(geoJson, <any>{ sr: 8888 });
+        configPackage.geometryType = defRender.geometryType;
+
+        // set proper SR on the geometeries
+        esriJson.forEach(gr => {
+            gr.geometry.spatialReference = fancySR;
+            gr.geometry.type = defRender.geometryType;
+
+            // TEMPORARY hunt any complex datatypes and replace with a string
+            // TODO figure out how to actually handle arrays or objects as attribute values
+            Object.keys(gr.attributes).forEach(attName => {
+                if (Array.isArray(gr.attributes[attName]) || typeof gr.attributes[attName] === 'object') {
+                    gr.attributes[attName] = '[Complex Value Removed]';
+                }
+            });
         });
+
+        configPackage.source = <any>esriJson; // TODO see if this needs to become esriJson.features
+        configPackage.spatialReference = fancySR;
+        configPackage.id = layerId;
+
+        return configPackage;
+
     }
 
 }

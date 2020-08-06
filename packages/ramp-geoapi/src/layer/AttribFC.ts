@@ -3,7 +3,7 @@
 
 import esri = __esri;
 import { InfoBundle, AttributeSet, GetGraphicParams, GetGraphicResult, GetGraphicServiceDetails, QueryFeaturesParams,
-    QueryFeaturesArcServerParams, RampLayerFieldMetadataConfig, FieldDefinition, TabularAttributeSet } from '../gapiTypes';
+    QueryFeaturesArcServerParams, RampLayerFieldMetadataConfig, FieldDefinition, TabularAttributeSet, LegendSymbology } from '../gapiTypes';
 import BaseLayer from './BaseLayer';
 import BaseFC from './BaseFC';
 import { AttributeLoaderBase, AttributeLoaderDetails, ArcServerAttributeLoader } from '../util/AttributeLoader';
@@ -21,7 +21,6 @@ export default class AttribFC extends BaseFC {
     fieldList: string; // list of field names, useful for numerous esri api calls
     nameField: string;
     extent: esri.Extent;
-    legend: any; // TODO figure out what this is. i think it's our custom class. make a definition somewhere
     attLoader: AttributeLoaderBase;
     featureCount: number; // TODO figure out how to identify an unknown count. will use undefined for now. -1 would be other option
     renderer: BaseRenderer;
@@ -45,6 +44,8 @@ export default class AttribFC extends BaseFC {
     //      other sourced attribute layers should override this function.
     // TODO consider moving a bulk of this out to LayerModule; the wizard may have use for running this (e.g. getting field list for a service url)
     loadLayerMetadata(options: any = {}): Promise<void> {
+
+        // given all the error handlers, leaving this as a non-async function
 
         if (!this.serviceUrl) {
             // case where a non-server subclass ends up calling this via .super magic.
@@ -188,55 +189,53 @@ export default class AttribFC extends BaseFC {
         });
     }
 
-    loadFeatureCount(): Promise<void> {
+    async loadFeatureCount(): Promise<void> {
 
         if (!this.serviceUrl) {
             // case where a non-server subclass ends up calling this via .super magic.
             // will avoid failed attempts at reading a non-existing service.
             // class should implement their own logic to load feature count (e.g. scrape from file layer)
-            return Promise.resolve();
+            return;
         }
 
         // TODO detect when we are in Raster Layer case? if we do this, we would need the caller of this
         //      function to wait on the loadLayerMetadata promise, then check this.supportsFeatures
 
-        return new Promise ((resolve, reject) => {
+        // extract info for this service
+        const restParam: esri.RequestOptions = {
+            query: {
+                f: 'json',
+                where: '1=1',
+                returnCountOnly: true,
+                returnGeometry: false
+            }
+        };
+        const restReq: IPromise<esri.RequestResponse> = this.esriBundle.esriRequest(`${this.serviceUrl}/query`, restParam);
 
-            // extract info for this service
-            const restParam: esri.RequestOptions = {
-                query: {
-                    f: 'json',
-                    where: '1=1',
-                    returnCountOnly: true,
-                    returnGeometry: false
-                }
-            };
-            const restReq: IPromise<esri.RequestResponse> = this.esriBundle.esriRequest(`${this.serviceUrl}/query`, restParam);
+        // TODO revisit error handling. might need a try-catch?
+        // TODO have discussion about error case. app shouldnt bomb without count. but how to handle? ignore? show error? console error? special error count val e.g. -2
+        restReq.then((serviceResult: esri.RequestResponse) => {
+            if (serviceResult.data) {
 
-            // TODO revisit error handling. might need a try-catch?
-            // TODO have discussion about error case. app shouldnt bomb without count. but how to handle? ignore? show error? console error? special error count val e.g. -2
-            restReq.then((serviceResult: esri.RequestResponse) => {
-                if (serviceResult.data) {
+                // TODO old geoApi had logic to execute web request twice; comment indicated first request could fail.
+                //      re-apply this if we notice the same thing. sounds like garbage server problem tbh.
+                // TODO need to decide on placeholder for unknown count.
+                this.featureCount = serviceResult.data.count;
 
-                    // TODO old geoApi had logic to execute web request twice; comment indicated first request could fail.
-                    //      re-apply this if we notice the same thing. sounds like garbage server problem tbh.
-                    // TODO need to decide on placeholder for unknown count.
-                    this.featureCount = serviceResult.data.count;
-
-                    // tell caller we are donethanks
-                    resolve();
-                } else {
-                    // case where service request was successful but no data appeared in result
-                    console.warn('Unable to load feature count: ' + this.serviceUrl);
-                    resolve();
-                }
-            }, error => {
-                // failed to load service info. reject with error
-                // TODO investigate if this is proper location where EsriErrorDetails will appear
-                console.warn('Unable to load feature count: ' + this.serviceUrl, error);
-                resolve();
-            });
+                // tell caller we are donethanks
+                return;
+            } else {
+                // case where service request was successful but no data appeared in result
+                console.warn('Unable to load feature count: ' + this.serviceUrl);
+                return;
+            }
+        }, error => {
+            // failed to load service info. reject with error
+            // TODO investigate if this is proper location where EsriErrorDetails will appear
+            console.warn('Unable to load feature count: ' + this.serviceUrl, error);
+            return;
         });
+
     }
 
     /**
@@ -355,7 +354,7 @@ export default class AttribFC extends BaseFC {
      *                 - getAttribs    boolean. indicates if return value should have attributes included. default to false
      * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .layerFC for convenience
      */
-    getGraphic (objectId: number, opts: GetGraphicParams): Promise<GetGraphicResult> {
+    async getGraphic (objectId: number, opts: GetGraphicParams): Promise<GetGraphicResult> {
         // NOTE RAMP2 version of this included the FC object. we want to keep those hidden, so
         //      for now will just return the graphic structure and if we need more stuff we
         //      will figure out a proper way to do that.
@@ -376,10 +375,6 @@ export default class AttribFC extends BaseFC {
         let needWebGeom: boolean = false;
         let scale: number;
 
-        // if we need to access attribute promise, this var will become that
-        // promise. if not, this var remains a fast instant-resolve
-        let attribWaitPromise: Promise<void> = Promise.resolve();
-
         if (opts.getAttribs) {
             // attempt to get attributes from fastest source.
             let aCache = this.quickCache.getAttribs(objectId);
@@ -389,9 +384,9 @@ export default class AttribFC extends BaseFC {
             } else if (this.attLoader.isLoaded || this.parentLayer.isFile) {
                 // all attributes have been loaded (or is a file and are local). use that store.
                 // since attributes come from a promise, reset the wait promise to the attribute promise
-                attribWaitPromise = this.attLoader.getAttribs().then(atSet => {
-                    resultFeat.attributes = atSet.features[atSet.oidIndex[objectId]].attributes;
-                });
+                const atSet = await this.attLoader.getAttribs();
+                resultFeat.attributes = atSet.features[atSet.oidIndex[objectId]].attributes;
+
             } else {
                 // we will need to download data from the service
                 needWebAttr = true;
@@ -413,6 +408,7 @@ export default class AttribFC extends BaseFC {
             //              when there is time, can take a look to see if any hidden/system caches are there on
             //              the esri layer object to exploit.
             //              for now, will just skip this optimization.
+            // UPDATE: could probably do thsi by running queryFeatures on the layer view.
 
             } else if (this.parentLayer._innerLayer.type === 'feature') {
                 // it is a feature layer. we can attempt to extract info from it.
@@ -451,32 +447,27 @@ export default class AttribFC extends BaseFC {
                 }
             }
 
-            return this.gapi.utils.attributes.loadSingleFeature(serviceParams).then(webFeat => {
-                if (needWebGeom) {
-                    // save our result in the cache
-                    this.quickCache.setGeom(objectId, webFeat.geometry, scale);
-                    resultFeat.geometry = webFeat.geometry;
+            const webFeat = await this.gapi.utils.attributes.loadSingleFeature(serviceParams);
+            if (needWebGeom) {
+                // save our result in the cache
+                this.quickCache.setGeom(objectId, webFeat.geometry, scale);
+                resultFeat.geometry = webFeat.geometry;
+            }
+
+            if (needWebAttr || this.isUndefined(this.quickCache.getAttribs(objectId))) {
+                // extra check in the if is for efficiency. attributes get downloaded in the request
+                // regardless if we wanted them. if we didn't want them, but didn't have them cached,
+                // will cache them anyways to save another hit later.
+                this.quickCache.setAttribs(objectId, webFeat.attributes);
+
+                if (needWebAttr) {
+                    // only put attribs on the result if requester asked for them
+                    resultFeat.attributes = webFeat.attributes;
                 }
-
-                if (needWebAttr || this.isUndefined(this.quickCache.getAttribs(objectId))) {
-                    // extra check in the if is for efficiency. attributes get downloaded in the request
-                    // regardless if we wanted them. if we didn't want them, but didn't have them cached,
-                    // will cache them anyways to save another hit later.
-                    this.quickCache.setAttribs(objectId, webFeat.attributes);
-
-                    if (needWebAttr) {
-                        // only put attribs on the result if requester asked for them
-                        resultFeat.attributes = webFeat.attributes;
-                    }
-                }
-
-                return resultFeat;
-            });
-
-        } else {
-            // no need for web requests. everything was available locally
-            return attribWaitPromise.then(() => resultFeat);
+            }
         }
+
+        return resultFeat;
     }
 
     /**
@@ -485,10 +476,9 @@ export default class AttribFC extends BaseFC {
      * @param {Integer} objectId the object id of the feature to find
      * @returns {Promise} resolves with an svg string encoding of the icon
      */
-    getIcon (objectId: number): Promise<string> {
-        return this.getGraphic(objectId, { getAttribs: true }).then(g => {
-            return this.gapi.utils.symbology.getGraphicIcon(g.attributes, this.renderer);
-        });
+    async getIcon (objectId: number): Promise<string> {
+        const g = await this.getGraphic(objectId, { getAttribs: true });
+        return this.gapi.utils.symbology.getGraphicIcon(g.attributes, this.renderer);
     }
 
     // TODO this is more of a utility function. leaving it public as it might be useful, revist when
@@ -527,7 +517,7 @@ export default class AttribFC extends BaseFC {
      * @param options {Object} options to provide filters and helpful information.
      * @returns {Promise} resolves with an array of features that satisfy the criteria
      */
-    queryFeatures(options: QueryFeaturesParams): Promise<Array<GetGraphicResult>> {
+    async queryFeatures(options: QueryFeaturesParams): Promise<Array<GetGraphicResult>> {
         // NOTE this assumes a server based layer
         //      local based layers should override this function
 
@@ -545,16 +535,17 @@ export default class AttribFC extends BaseFC {
             options.outFields = this.fieldList;
         }
 
-        return this.queryOIDs(options).then(oids => {
-            // run result ids through our quick cache pipeline
-            const p: GetGraphicParams = {
-                getGeom: !!options.includeGeometry,
-                getAttribs: true,
-                unboundMap: options.map
-            };
-            const cacheQueue: Array<Promise<GetGraphicResult>> = oids.map(oid => this.getGraphic(oid, p));
-            return Promise.all(cacheQueue);
-        });
+        const oids = await this.queryOIDs(options);
+
+        // run result ids through our quick cache pipeline
+        const p: GetGraphicParams = {
+            getGeom: !!options.includeGeometry,
+            getAttribs: true,
+            unboundMap: options.map
+        };
+        const cacheQueue: Array<Promise<GetGraphicResult>> = oids.map(oid => this.getGraphic(oid, p));
+        return Promise.all(cacheQueue);
+
     }
 
     /**
@@ -566,14 +557,14 @@ export default class AttribFC extends BaseFC {
      * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent
      * @returns {Promise} resolves with array of object ids that pass the filter. if no filters are active, resolves with undefined.
      */
-    getFilterOIDs(exclusions: Array<string> = [], extent: Extent = undefined): Promise<Array<number>> {
+    async getFilterOIDs(exclusions: Array<string> = [], extent: Extent = undefined): Promise<Array<number>> {
         // NOTE this logic should perform for both server and file based layers, as long as .queryOIDs is properly overriden
         const sql = this.filter.getCombinedSql(exclusions);
         const bExt: boolean = !!extent; // keep typescript happy
 
         if (!(sql || bExt)) {
             // no filters active. return undefined so caller can not worry about applying filters
-            return Promise.resolve(undefined);
+            return undefined;
         }
 
         if (extent) {

@@ -73,13 +73,13 @@ export default class SharedUtils extends BaseBase {
      * @param {String} imageType [optional = 'image/png'] format of the image representation
      * @return {Promise} promise resolving with the dataURL of the image
      */
-    convertImagetoDataURL(imageUri: string, imageType: string = 'image/png'): Promise<string> {
+    async convertImagetoDataURL(imageUri: string, imageType: string = 'image/png'): Promise<string> {
         // this is already a dataUrl, just return
         if (imageUri.startsWith('data')) {
-            return Promise.resolve(imageUri);
+            return imageUri;
         }
 
-        const loadingPromise = this.convertImageToCanvas(imageUri)
+        return this.convertImageToCanvas(imageUri)
             .then(canvas => {
                 // Converting image to dataURL
                 return canvas.toDataURL(imageType);
@@ -88,8 +88,6 @@ export default class SharedUtils extends BaseBase {
                 console.error('Failed to load crossorigin image', imageUri, error);
                 return imageUri;
             });
-
-        return loadingPromise;
     }
 
     /**
