@@ -1,5 +1,3 @@
-const postcss = require('postcss');
-
 // generate spacing rules, these create width, height, padding, margin, etc. rules
 // will end up with w-0 = 0px, w-1 = 1px, and so on
 spacingConfig = {};
@@ -8,21 +6,7 @@ for (i = 0; i < 1000; i++) {
 }
 
 module.exports = {
-    purge: {
-        // Paths to all of the template files in your project
-        content: [
-            './src/**/*.html',
-            './src/**/*.vue',
-            './node_modules/ag-grid-community/dist/styles/ag-grid.css',
-            './node_modules/ag-grid-community/dist/styles/ag-theme-material.css'
-        ],
-
-        // These options are passed through directly to PurgeCSS
-        options: {
-            // whitelist ramp shell size classes so they are not purged
-            whitelist: ['xs', 'sm', 'md', 'lg']
-        }
-    },
+    purge: false,
     theme: {
         // remove all breakpoints because ramp components will depend on the shell size, not the size of the window/page
         screens: {
