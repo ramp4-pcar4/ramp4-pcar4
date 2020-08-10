@@ -12,7 +12,7 @@ export function startup() {
 
     // expose Vue to the global scope so fixtures that use Vue have access to it
     // this is only needed in `serve` mode; in `build`, Vue is explicitly loaded by the host page
-    //TODO: there are issues with how Vue is loading when using Cypress
+    // TODO: there are issues with how Vue is loading when using Cypress
     window.Vue = Vue;
 
     // execute `initRAMP` global function if it's defined as soon at the RAMP library is added to the global scope
@@ -22,5 +22,3 @@ export function startup() {
         }
     });
 }
-
-startup();

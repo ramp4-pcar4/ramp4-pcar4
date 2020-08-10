@@ -1,5 +1,7 @@
 window.rInstance = null;
 function initRAMP() {
+    console.log('RAMP has loaded.');
+
     document.getElementById('ramp-version').innerText =
         'v.' +
         RAMP.version.major +
