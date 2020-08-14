@@ -40,27 +40,30 @@ export class LegendAPI extends FixtureInstance {
             // pop legend entry in stack and check if it has a corresponding layer
             const lastEntry = stack.pop();
             lastEntry.layers = layers;
-            // this.$vApp.$store.set(LegendStore.addLegendItem, { config: lastEntry, layers: layers });
 
             // (assuming visibility sets and groups will specify in config `exclusiveVisibility` or `children` properties, respectively)
             if (lastEntry.children !== undefined || lastEntry.exclusiveVisibility !== undefined) {
                 // create a wrapper legend object for group or visibility set
-                const legendGroup = new LegendGroup(lastEntry);
+                const legendGroup = new LegendGroup(lastEntry, lastEntry.parent);
                 legendEntries.push(legendGroup);
+
+                if (lastEntry?.children !== undefined && lastEntry.children.length > 0) {
+                    // push all children in current legend node back onto stack (for legend groups)
+                    lastEntry?.children.forEach((groupChild: any) => {
+                        groupChild.parent = legendGroup;
+                        stack.push(groupChild);
+                    });
+                } else {
+                    // push all children in current legend node back onto stack (for visibility sets)
+                    lastEntry?.exclusiveVisibility.forEach((setChild: any) => {
+                        setChild.parent = legendGroup;
+                        stack.push(setChild);
+                    });
+                }
             } else if (lastEntry.layerId !== undefined && layers !== undefined) {
                 // create a wrapper legend object for single legend entry
-                const legendEntry = new LegendEntry(lastEntry);
+                const legendEntry = new LegendEntry(lastEntry, lastEntry.parent);
                 legendEntries.push(legendEntry);
-            }
-
-            // TODO: link parent objects as required for visibility sets
-            // push all children in current legend node back onto stack (for legend groups)
-            if (lastEntry?.children !== undefined && lastEntry.children.length > 0) {
-                lastEntry?.children.forEach((groupChild: any) => stack.push(groupChild));
-            }
-            // push all children in current legend node back onto stack (for visibility sets)
-            if (lastEntry?.exclusiveVisibility !== undefined && lastEntry.exclusiveVisibility.length > 0) {
-                lastEntry?.exclusiveVisibility.forEach((setChild: any) => stack.push(setChild));
             }
         }
 
