@@ -106,6 +106,16 @@ function checkExpanded(child: LegendItem, expanded: boolean): boolean {
 function toggle(child: LegendEntry | LegendGroup, options: any) {
     const visibility = options.visibility;
     const expand = options.expand;
+    // for current legend child toggle properties if possible, check for appropriate legend element type
+    if (visibility !== undefined) {
+        // visibility set edge case
+        if (!(child.parent instanceof LegendGroup && child.parent.visibility === visibility)) {
+            child.toggleVisibility(visibility);
+        }
+    }
+    if (expand !== undefined && child instanceof LegendGroup) {
+        child.toggleExpanded(expand);
+    }
     // traverse the tree and make recursive calls
     if (child.children && child.children.length > 0) {
         child.children.forEach(ch => {
@@ -113,20 +123,29 @@ function toggle(child: LegendEntry | LegendGroup, options: any) {
             toggle(ch, options);
         });
     }
-    // for current legend child toggle properties if possible, check for appropriate legend element type
-    if (visibility !== undefined) {
-        visibility ? child.toggleVisibility(true) : child.toggleVisibility(false);
-    }
-    if (expand !== undefined && child instanceof LegendGroup) {
-        expand ? child.toggleExpanded(true) : child.toggleExpanded(false);
-    }
 }
 
 export enum LegendStore {
     /**
      * (State) children: Array<LegendItem>
      */
-    children = 'legend/children'
+    children = 'legend/children',
+    /**
+     * (Action) expandGroups - expand all possible legend groups
+     */
+    expandGroups = 'legend/expandGroups',
+    /**
+     * (Action) collapseGroups - collapse all legend groups
+     */
+    collapseGroups = 'legend/collapseGroups',
+    /**
+     * (Action) showAll - turn on visibility for all possible legend entries
+     */
+    showAll = 'legend/showAll',
+    /**
+     * (Action) hideAll - turn off visibility for all legend entries
+     */
+    hideAll = 'legend/hideAll'
 }
 
 export function legend() {

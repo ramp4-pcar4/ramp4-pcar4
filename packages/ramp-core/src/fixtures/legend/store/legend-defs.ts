@@ -333,6 +333,10 @@ export class LegendGroup extends LegendItem {
             this._lastVisible = toggledChild;
             this._visibility = false;
         }
+        // case for updating nested groups
+        if (this.parent instanceof LegendGroup) {
+            this.parent.checkVisibility(this);
+        }
     }
 
     /**
