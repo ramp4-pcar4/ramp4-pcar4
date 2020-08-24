@@ -118,6 +118,12 @@ export class LegendEntry extends LegendItem {
 
         // find matching BaseLayer in layer store to the layerId in config
         this._layer = legendEntry.layers.find((layer: BaseLayer) => layer.id === this._id);
+
+        // check if a layer has been bound to this entry. If not, set the type to "placeholder".
+        if(this._layer === undefined) {
+            this._type = LegendTypes.Placeholder;
+        }
+
         this._isLoaded = this._layer !== undefined ? this._layer.isValidState() : true;
         // initialize more layer properties after layer loads
         this._waitLayerLoad();
@@ -380,11 +386,12 @@ export class LegendGroup extends LegendItem {
     }
 }
 
-enum LegendTypes {
+export enum LegendTypes {
     Group = 'LegendGroup',
     Set = 'VisibilitySet',
     Entry = 'LegendEntry',
-    Info = 'InfoSection'
+    Info = 'InfoSection',
+    Placeholder = 'Placeholder'
 }
 
 enum Controls {
