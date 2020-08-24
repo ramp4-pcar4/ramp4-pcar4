@@ -129,14 +129,14 @@ function initRAMP() {
                                             {
                                                 layerId: 'WaterQuantity',
                                                 name: 'Water Quantity in Nested Group'
-                                            },
-                                            {
-                                                layerId: 'WaterQuality',
-                                                name: 'Water Quality in Nested Group'
                                             }
                                         ]
                                     }
                                 ]
+                            },
+                            {
+                                layerId: 'WaterQuality',
+                                name: 'Water Quality in Nested Group'
                             }
                         ]
                     }
