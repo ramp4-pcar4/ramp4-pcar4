@@ -63,6 +63,25 @@ function initRAMP() {
                     customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
                 },
                 {
+                    id: 'WaterQuality',
+                    layerType: 'esriMapImage',
+                    url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                    layerEntries: [
+                        {
+                            index: 5,
+                            state: {
+                                opacity: 1,
+                                visibility: true
+                            }
+                        }
+                    ],
+                    state: {
+                        opacity: 1,
+                        visibility: true
+                    },
+                    customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                },
+                {
                     id: 'CleanAir',
                     layerType: 'esriFeature',
                     url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
@@ -98,10 +117,6 @@ function initRAMP() {
                     root: {
                         children: [
                             {
-                                layerId: 'WaterQuantity',
-                                name: 'Water Quantity'
-                            },
-                            {
                                 name: 'Visibility Set',
                                 exclusiveVisibility: [
                                     {
@@ -112,12 +127,12 @@ function initRAMP() {
                                         name: 'Group in Set',
                                         children: [
                                             {
-                                                layerId: 'CleanAir',
-                                                name: 'Clean Air in Nested Group'
-                                            },
-                                            {
                                                 layerId: 'WaterQuantity',
                                                 name: 'Water Quantity in Nested Group'
+                                            },
+                                            {
+                                                layerId: 'WaterQuality',
+                                                name: 'Water Quality in Nested Group'
                                             }
                                         ]
                                     }
