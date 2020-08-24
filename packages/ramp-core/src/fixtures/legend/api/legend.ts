@@ -33,6 +33,7 @@ export class LegendAPI extends FixtureInstance {
         let legendEntries: Array<LegendItem> = [];
         let stack: Array<any> = [];
         // initialize stack with all legend elements listed in config
+
         legendConfig.root.children.forEach(legendItem => stack.push(legendItem));
 
         // parse children from legend root structure through traversal
