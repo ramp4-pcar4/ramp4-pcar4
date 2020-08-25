@@ -12,6 +12,7 @@ import { LegendItem } from '../store/legend-defs';
 import LayerEntry from './legend-entry.vue';
 import LegendGroup from './legend-group.vue';
 import LegendVisibilitySet from './legend-visibility-set.vue';
+import LegendPlaceholder from './legend-placeholder.vue';
 
 @Component
 export default class LegendComponent extends Vue {
@@ -22,7 +23,8 @@ export default class LegendComponent extends Vue {
     templates = {
         VisibilitySet: LegendVisibilitySet,
         LegendGroup: LegendGroup,
-        LegendEntry: LayerEntry
+        LegendEntry: LayerEntry,
+        Placeholder: LegendPlaceholder
     };
 }
 </script>
