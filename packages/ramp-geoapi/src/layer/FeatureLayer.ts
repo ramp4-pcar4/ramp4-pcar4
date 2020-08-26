@@ -77,30 +77,6 @@ export class FeatureLayer extends AttribLayer {
             */
         }
 
-        // get attribute package
-
-        // TODO implement the package. we probably want to refactor this so everything is defined in layers (AttribFC seems good target)
-        //      and loading attributes is a call to attribute module
-        // TODO split file stuff to subclass?
-        /*
-        let attribPackage;
-        let featIdx;
-        if (this.dataSource() !== shared.dataSources.ESRI) {
-            featIdx = '0';
-            attribPackage = this._apiRef.attribs.loadFileAttribs(this._layer);
-        } else {
-            const splitUrl = shared.parseUrlIndex(this._layer.url);
-            featIdx = splitUrl.index;
-            this.rootUrl = splitUrl.rootUrl;
-
-            // methods in the attrib loader will update our copy of the renderer. if we pass in the config reference, it gets
-            // updated and some weird stuff happens. Make a copy.
-            const cloneRenderer = jsonCloner(this.config.customRenderer);
-            attribPackage = this._apiRef.attribs.loadServerAttribs(splitUrl.rootUrl, featIdx, this.config.outfields,
-                cloneRenderer);
-        }
-        */
-
         // TODO .url seems to not have the /index ending.  there is parsedUrl.path, but thats not on official definition
         //      can also consider changing logic to use origRampConfig.url;
         // const layerUrl: string = (<esri.FeatureLayer>this._innerLayer).url;
@@ -113,14 +89,11 @@ export class FeatureLayer extends AttribLayer {
         this.fcs[featIdx] = featFC;
         featFC.serviceUrl = layerUrl;
         this.layerTree.children.push(new TreeNode(featIdx, featFC.uid, this.name)); // TODO verify name is populated at this point
+
         // TODO see if we need to re-synch the parent name
         // this.layerTree.name = this.name;
 
-        // TODO implement symbology load
-        // const pLS = aFC.loadSymbology();
-
         // update asynch data
-        // TODO do all this lol
         // TODO check if we have custom renderer, add to options parameter here
         const pLD: Promise<void> = featFC.loadLayerMetadata().then(() => {
             // apply any config based overrides to the data we just downloaded

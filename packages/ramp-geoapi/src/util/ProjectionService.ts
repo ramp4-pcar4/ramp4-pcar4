@@ -161,19 +161,19 @@ export default class ProjectionService extends BaseBase {
      * @param {Object} spatialReference to be checked to see if it's supported by proj4. Can be ESRI SR object or a EPSG string.
      * @returns {Promise<boolean>} true if proj was defined or was able to download definition. false if out of luck
      */
-    checkProj(spatialReference: any): Promise<boolean> {
+    async checkProj(spatialReference: any): Promise<boolean> {
         let srcProj: string;
         let latestProj: string;
 
         if (spatialReference.wkt) {
             // WKT is fine to use raw. quick exit.
-            return Promise.resolve(true);
+            return true;
         }
 
         try {
             srcProj = this.normalizeProj(spatialReference);
         } catch {
-            return Promise.resolve(false);
+            return false;
         }
         if (spatialReference.latestWkid) {
             latestProj = this.normalizeProj(spatialReference.latestWkid);
@@ -192,52 +192,48 @@ export default class ProjectionService extends BaseBase {
 
         if (proj4.defs(srcProj)) {
             // already defined in proj4. good.
-            return Promise.resolve(true);
+            return true;
         }
 
         // we currently don't have main projection in proj4
         if (latestProj && proj4.defs(latestProj)) {
             // we have the latestWkid projection defined.
             applyLatest(latestProj, srcProj);
-            return Promise.resolve(true);
+            return true;
         }
 
         // need to find a definition
 
         // function to execute a lookup & store result if success
-        const doLookup = (epsgStr: string) => {
-            return this.epsgLookup(epsgStr).then(def => {
-                if (def === null || def === '') {
-                    return false;
-                }
-                proj4.defs(epsgStr, def);
-                return true;
-            });
+        const doLookup = async (epsgStr: string): Promise<boolean> => {
+            const def = await this.epsgLookup(epsgStr);
+            if (def === null || def === '') {
+                return false;
+            }
+            proj4.defs(epsgStr, def);
+            return true;
         };
 
         // check the latestWkid first, if it exists (as that wkid is usally the EPSG friendly one)
         // otherwise make a dummy promise that will just cause the standard wkid promise to run.
         const latestLookup = latestProj ? doLookup(latestProj) : Promise.resolve(false);
 
-        return latestLookup.then(latestSuccess => {
-            if (latestSuccess) {
-                // found the latestWkid code
-                applyLatest(latestProj, srcProj);
-                return true;
-            } else {
-                // no luck with latestWkid, so lookup on normal code
-                return doLookup(srcProj);
-            }
-        });
+        const latestSuccess = await latestLookup;
+        if (latestSuccess) {
+            // found the latestWkid code
+            applyLatest(latestProj, srcProj);
+            return true;
+        } else {
+            // no luck with latestWkid, so lookup on normal code
+            return doLookup(srcProj);
+        }
     }
 
     // utility for checking a set of spatial references, and accepting an error bomb if they cannot be used
-    checkProjBomber(spatialReferences: Array<any>): Promise<void> {
-        if (spatialReferences.length === 0) {
-            return Promise.resolve();
-        }
-        const prj = spatialReferences.pop();
-        return this.checkProj(prj).then(happy => {
+    async checkProjBomber(spatialReferences: Array<any>): Promise<void> {
+        if (spatialReferences.length > 0) {
+            const prj = spatialReferences.pop();
+            const happy = await this.checkProj(prj);
             if (happy) {
                 // recursion. array will have 1 less at this point
                 return this.checkProjBomber(spatialReferences);
@@ -245,7 +241,7 @@ export default class ProjectionService extends BaseBase {
                 console.error('Unable to parse or locate projection information for this item:', prj);
                 throw new Error('Could not find projection information, see console for details');
             }
-        });
+        }
     }
 
     /**
@@ -255,7 +251,7 @@ export default class ProjectionService extends BaseBase {
      * @param {BaseGeometry} geometry a RAMP API Geometry object
      * @return {Promise} resolve in a RAMP API Geometry object with co-ordinates in the destination projection
      */
-    projectGeometry(destProj: SrDef, geometry: BaseGeometry): Promise<BaseGeometry> {
+    async projectGeometry(destProj: SrDef, geometry: BaseGeometry): Promise<BaseGeometry> {
         // NOTES: a few significant changes to this function from RAMP2
         //        Making the result asynch. due to us now validating the projection and possibly
         //        downloading a new formula if the we dont have an existing solution.
@@ -268,22 +264,20 @@ export default class ProjectionService extends BaseBase {
         }
 
         // TODO validate if one of the srs is wkt that everything works. if destination is wkt make sure return object has proper .sr
-        return this.checkProjBomber([destProj, geometry.sr]).then(() => {
-            // convert to geojson
+        await this.checkProjBomber([destProj, geometry.sr]);
 
-            const preGJ = this.gapi.utils.geom.geomRampToGeoJson(geometry);
+        // convert to geojson
+        const preGJ = this.gapi.utils.geom.geomRampToGeoJson(geometry);
 
-            // project geojson
-            const postGJ = this.projectGeoJson(preGJ, this.normalizeProj(geometry.sr), this.normalizeProj(destProj));
+        // project geojson
+        const postGJ = this.projectGeoJson(preGJ, this.normalizeProj(geometry.sr), this.normalizeProj(destProj));
 
-            // convert back to RAMP geometry
-            const projectedRampGeom = this.gapi.utils.geom.geomGeoJsonToRamp(postGJ, geometry.id);
+        // convert back to RAMP geometry
+        const projectedRampGeom = this.gapi.utils.geom.geomGeoJsonToRamp(postGJ, geometry.id);
 
-            // fix up the spatial reference, as the GeoJSON projection library doesn't really handle it well.
-            projectedRampGeom.sr = SpatialReference.parseSR(destProj);
-
-            return projectedRampGeom;
-        });
+        // fix up the spatial reference, as the GeoJSON projection library doesn't really handle it well.
+        projectedRampGeom.sr = SpatialReference.parseSR(destProj);
+        return projectedRampGeom;
     }
 
     /**
@@ -297,7 +291,7 @@ export default class ProjectionService extends BaseBase {
      * @param {Extent} extent to reproject
      * @returns {Promise} resolves with the reprojected extent
      */
-    projectExtent(destProj: SrDef, extent: Extent): Promise<Extent> {
+    async projectExtent(destProj: SrDef, extent: Extent): Promise<Extent> {
 
         // interpolates two points by splitting the line in half recursively
         // steps indicates how many recursions
@@ -316,6 +310,7 @@ export default class ProjectionService extends BaseBase {
                 // interpolate between the midpoint
                 const i0 = interpolate(p0, mid, steps - 1);
                 const i1 = interpolate(mid, p1, steps - 1);
+
                 // joint the result. the slice prevents duplication of the midpoint
                 return i0.concat(i1.slice(1));
             }
@@ -325,10 +320,10 @@ export default class ProjectionService extends BaseBase {
         //      the poly array will be clockwise.
         //      if we run into issues, might need to do a reverse on the array, or just stick with original hardcoded approach
         const points: Array<Array<number>> = extent.toPolygonArray().pop();
-        // [[extent.xmin, extent.ymin], [extent.xmax, extent.ymin],
-        // [extent.xmax, extent.ymax], [extent.xmin, extent.ymax],
-        // [extent.xmin, extent.ymin]];
 
+        // [ [extent.xmin, extent.ymin], [extent.xmax, extent.ymin],
+        // [extent.xmax, extent.ymax], [extent.xmin, extent.ymax],
+        // [extent.xmin, extent.ymin] ];
         let interpolatedPoly: Array<Array<number>> = [];
 
         // interpolate each edge by splitting it in half 3 times (since lines are not guaranteed to project to lines we need to consider
@@ -339,22 +334,19 @@ export default class ProjectionService extends BaseBase {
 
         const iPoly: Polygon = new Polygon('warpy', [interpolatedPoly], extent.sr, true);
 
-        return this.projectGeometry(destProj, iPoly).then((iWarped: Polygon) => {
-            // take our projected interpolated polygon, strip out the co-ords for X and Y
-            const rawWarp = iWarped.toArray().pop();
-            const xvals = rawWarp.map(p => p[0]);
-            const yvals = rawWarp.map(p => p[1]);
+        const iWarped = await this.projectGeometry(destProj, iPoly) as Polygon;
 
-            // find the bounding corners of our projected interpolated polygon
-            const x0 = Math.min.apply(null, xvals);
-            const x1 = Math.max.apply(null, xvals);
+        // take our projected interpolated polygon, strip out the co-ords for X and Y
+        const rawWarp = iWarped.toArray().pop();
+        const xvals = rawWarp.map(p => p[0]);
+        const yvals = rawWarp.map(p_1 => p_1[1]);
 
-            const y0 = Math.min.apply(null, yvals);
-            const y1 = Math.max.apply(null, yvals);
-
-            // make a new extent from the bounds
-            return Extent.fromParams(extent.id + '_projected', x0, y0, x1, y1, iWarped.sr);
-        });
+        // find the bounding corners of our projected interpolated polygon
+        const x0 = Math.min.apply(null, xvals);
+        const x1 = Math.max.apply(null, xvals);
+        const y0 = Math.min.apply(null, yvals);
+        const y1 = Math.max.apply(null, yvals);
+        return Extent.fromParams(extent.id + '_projected', x0, y0, x1, y1, iWarped.sr);
 
     }
 

@@ -8,10 +8,9 @@ import { InfoBundle, RampMapConfig } from '../gapiTypes';
 import BaseBase from '../BaseBase';
 import Basemap from './Basemap';
 
-// TODO would ideally call this BaseMap, but that would get confused with Basemap.
+// would ideally call this BaseMap, but that would get confused with Basemap.
 export default class MapBase extends BaseBase {
 
-    // TODO think about how to expose. protected makes sense, but might want to make it public to allow hacking and use by a dev module if we decide to
     _innerMap: esri.Map;
     protected basemapStore: Array<Basemap>;
 

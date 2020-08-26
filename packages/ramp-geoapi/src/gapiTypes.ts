@@ -211,16 +211,6 @@ export interface GetGraphicServiceDetails {
 }
 
 export interface GetGraphicResult {
-    // TODO strongly type if we can find types that dont freak out
-    //      we may also want to consider some esri-neutral types, since this appears to be used in the client
-    //      quite a lot in RAMP2.
-    //      alternately, using a real graphic may be needed for things like toggling visibility
-    //      of a result graphic (or a real graphic hiding inside a wrapper?).
-    //      Fuuurthermore, we often use this result to just get the attribute or the geometry
-    //      (omitting unrequired things if fetching from the server), thus making internal hidden
-    //      stuff tricky if it's not valid.
-    //      perhaps we get very fancy with a wrapper, that can have hidden internals if valid,
-    //      and error checking if people say request just attributes then attempt to change visibility
     // TODO replace all this with a RAMPAPI.Graphic?
     attributes?: Attributes;
     geometry?: BaseGeometry;

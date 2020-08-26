@@ -73,7 +73,7 @@ export default class GeoJsonFC extends AttribFC {
      *                 - getAttribs       boolean. indicates if return value should have attributes included. default to false
      * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .layerFC for convenience
      */
-    getGraphic (objectId: number, opts: GetGraphicParams): Promise<GetGraphicResult> {
+    async getGraphic (objectId: number, opts: GetGraphicParams): Promise<GetGraphicResult> {
 
         const gjOpt: QueryFeaturesParams = {
             filterSql: `${this.oidField}=${objectId}`,
@@ -85,18 +85,19 @@ export default class GeoJsonFC extends AttribFC {
         //      if thats a problem, add some logic to pare off properties of the result (might need to clone
         //      to avoid breaking original source in the layer)
 
-        return this.queryFeatures(gjOpt).then(resultArr => {
-            if (resultArr.length === 0) {
-                throw new Error(`Could not find object id ${objectId}`);
-            } else if (resultArr.length !== 1) {
-                console.warn('did not get a single result on a query for a specific object id');
-            }
-            return resultArr[0];
-        });
+        const resultArr = await this.queryFeatures(gjOpt);
+        if (resultArr.length === 0) {
+            throw new Error(`Could not find object id ${objectId}`);
+        } else if (resultArr.length !== 1) {
+            console.warn('did not get a single result on a query for a specific object id');
+        }
+        return resultArr[0];
+
     }
 
     // TODO we are using the getgraphic type as it's an unbound loosely typed feature
     //      may want to change name of the type to something more general
+
     /**
      * Requests a set of features for this layer that match the criteria of the options
      * - filterGeometry : a RAMP API geometry to restrict results to
@@ -109,7 +110,7 @@ export default class GeoJsonFC extends AttribFC {
      * @param options {Object} options to provide filters and helpful information.
      * @returns {Promise} resolves with an array of features that satisfy the criteria
      */
-    queryFeatures(options: QueryFeaturesParams): Promise<Array<GetGraphicResult>> {
+    async queryFeatures(options: QueryFeaturesParams): Promise<Array<GetGraphicResult>> {
 
         const gjOpt: QueryFeaturesGeoJsonParams = {
             layer: this.parentLayer,
@@ -121,7 +122,7 @@ export default class GeoJsonFC extends AttribFC {
 
     // TODO this is more of a utility function. leaving it public as it might be useful, revist when
     //      the app is mature.
-    queryOIDs(options: QueryFeaturesParams): Promise<Array<number>> {
+    async queryOIDs(options: QueryFeaturesParams): Promise<Array<number>> {
 
         const gjOpt: QueryFeaturesGeoJsonParams = {
             layer: this.parentLayer,

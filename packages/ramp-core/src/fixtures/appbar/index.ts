@@ -3,6 +3,8 @@ import { AppbarAPI } from './api/appbar';
 import { appbar } from './store';
 import { GlobalEvents } from '@/api';
 
+// "It's a trap!" -- Admiral Appbar
+
 class AppbarFixture extends AppbarAPI {
     async added() {
         console.log(`[fixture] ${this.id} added`);

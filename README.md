@@ -2,17 +2,27 @@
 
 ## Dev setup
 
+### Node.js
+
+Install a version of Node.js that is compatible with Rush. Recommended versions are `v10.13+`, `v12.13+`, `v13.0+`. At this time, use `v11` and `v14` at your peril. This list of versions may change with future updates to Rush.
+
+If running `v10`, you may encounter "out of heap" errors when building the app. This can be mitigated by updating to `v12`, or by running the following command
+
+```
+$ export NODE_OPTIONS=--max_old_space_size=4096
+```
+
+### Rush
+
 Install Rush if you don't already have it:
 
 ```
-npm install -g @microsoft/rush
+$ npm install -g @microsoft/rush
 ```
-
-Install a `v10.x` version of Node.js. `v10.17.0` seems to work nicely.
 
 ## Installing dependencies
 
-and use Rush to install dependencies:
+Use Rush to install dependencies:
 
 ```
 $ rush update
@@ -26,7 +36,7 @@ To completely clear and reinstall all dependencies, run `rush update -p --full`:
 ## Running a development build
 
 ```
-$rush serve
+$ rush serve
 ```
 
 Fun test page will be found at `http://localhost:8080/`
