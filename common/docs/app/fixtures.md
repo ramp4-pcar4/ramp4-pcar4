@@ -1,5 +1,7 @@
 # Fixtures
 
+This covers various ways to create fixtures.
+
 ## Lazy-Loading
 
 It's possible to lazy-load fixture code for screen panels. This will split code for individual panel screens into separate file and will be loaded on demand. Otherwise, all fixture code is loaded right away and it defeats parts of the idea to make R4MP as flexible as possible. See `gazebo` fixture for examples.
