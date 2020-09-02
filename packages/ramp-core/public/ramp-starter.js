@@ -35,7 +35,7 @@ function initRAMP() {
                         layers: [
                             {
                                 layerType: 'esriTile',
-                                url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                                url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                             }
                         ]
                     }
@@ -46,7 +46,7 @@ function initRAMP() {
                 {
                     id: 'WaterQuantity',
                     layerType: 'esriMapImage',
-                    url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                     layerEntries: [
                         {
                             index: 1,
@@ -65,7 +65,7 @@ function initRAMP() {
                 {
                     id: 'WaterQuality',
                     layerType: 'esriMapImage',
-                    url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                     layerEntries: [
                         {
                             index: 5,
@@ -84,7 +84,7 @@ function initRAMP() {
                 {
                     id: 'CleanAir',
                     layerType: 'esriFeature',
-                    url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
+                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
                     state: {
                         opacity: 0.8,
                         visibility: true
@@ -104,7 +104,7 @@ function initRAMP() {
                     id: 'Happy',
                     layerType: 'esriFeature',
                     fileType: 'geojson',
-                    url: 'http://fgpv-app.azureedge.net/demo/assets/sample_data/happy.json',
+                    url: 'https://fgpv-app.azureedge.net/demo/assets/sample_data/happy.json',
                     state: {
                         visibility: true
                     },
@@ -191,7 +191,7 @@ function initRAMP() {
                         layers: [
                             {
                                 layerType: 'esriTile',
-                                url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                                url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                             }
                         ]
                     }
@@ -202,7 +202,7 @@ function initRAMP() {
                 {
                     id: 'CleanWater',
                     layerType: 'esriFeature',
-                    url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/3',
+                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/3',
                     state: {
                         opacity: 0.8,
                         visibility: true

@@ -143,7 +143,7 @@ export default class BaseLayer extends BaseBase {
         // TODO consider putting lots of info on the events.  e.g. instead of just state changed, have .state, .layerid
         //      visibility might need an optional FC index (whatever we're calling that)
 
-        this._innerLayer.watch('visibility', (newval: boolean) => {
+        this._innerLayer.watch('visible', (newval: boolean) => {
             this.visibilityChanged.fireEvent(newval);
         });
 
