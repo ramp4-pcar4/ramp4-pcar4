@@ -12,6 +12,7 @@ import QuickCache from './QuickCache';
 import Filter from './Filter';
 import Extent from '../api/geometry/Extent';
 import { DataFormat } from '../api/apiDefs';
+import deepmerge from 'deepmerge';
 
 export default class AttribFC extends BaseFC {
 
@@ -287,18 +288,20 @@ export default class AttribFC extends BaseFC {
 
                         // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
                         // filter out fields where there is no corresponding attribute data
-                        attSet.features[0].attributes.hasOwnProperty(field.name))
+                        attSet.features[0].hasOwnProperty(field.name))
                     .map(field => ({
                         data: field.name, // TODO calling this data is really unintuitive. consider global rename to fieldName, name, attribName, etc.
                         title: field.alias || field.name
                     }));
 
                 // derive the icon for the row
-                // TODO figure out if we want to change the system attributes.
+                // TODO figure out if we want to change the system attributes. making a copy for now with deepmerge.
+                // if we add rv properties to the feature in the attribute set, we may see those fields showing up in details panes, API outputs, etc.
+                // that said, copying means we double the size of attributes in memory.
                 const rows = attSet.features.map(feature => {
-                    const att = feature.attributes;
+                    const att = deepmerge({}, feature);
                     att.rvInteractive = '';
-                    att.rvSymbol = this.renderer.getGraphicIcon(feature.attributes);
+                    att.rvSymbol = this.renderer.getGraphicIcon(feature);
                     return att;
                 });
 
@@ -385,7 +388,7 @@ export default class AttribFC extends BaseFC {
                 // all attributes have been loaded (or is a file and are local). use that store.
                 // since attributes come from a promise, reset the wait promise to the attribute promise
                 const atSet = await this.attLoader.getAttribs();
-                resultFeat.attributes = atSet.features[atSet.oidIndex[objectId]].attributes;
+                resultFeat.attributes = atSet.features[atSet.oidIndex[objectId]];
 
             } else {
                 // we will need to download data from the service
