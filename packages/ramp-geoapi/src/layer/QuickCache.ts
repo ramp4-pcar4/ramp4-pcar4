@@ -1,5 +1,8 @@
 // TODO add proper comments
 
+import { Attributes } from "../api/apiDefs";
+import BaseGeometry from '../api/geometry/BaseGeometry';
+
 // manages the quick-lookup of attributes.
 // i.e. when it makes sense to just download one instead of the entire set
 
@@ -15,7 +18,11 @@ export default class QuickCache {
 
     // TODO if we come up with nice types for attribs or geoms, apply them
 
-    private attribs: {[key: number]: any};
+    private attribs: {[key: number]: Attributes};
+
+    // the "any" type here is funny. for points, its BaseGeometry, for line/poly based, it's an object indexed by scale,
+    // which then containts an object indexed by key (likely oid) and returns BaseGeometry.
+    // will keep as any since it's private and the interfaces are casting to BaseGeometry. otherwise would need type shenannigans.
     private geoms: {[key: number]: any};
 
     readonly isPoint: boolean;
@@ -34,7 +41,7 @@ export default class QuickCache {
         return this.geoms[scale];
     }
 
-    private getGeomStore(scale: number = undefined): {[key: number]: any} {
+    private getGeomStore(scale: number = undefined): {[key: number]: BaseGeometry} {
         // polygon and line layers have to also cache their geometry by scale level, as the
         // geometry can be simplified at smaller scales
 
@@ -48,22 +55,22 @@ export default class QuickCache {
         // throw new Error('LOD must be provided for geometry quickcache on line or polygon layer');
     }
 
-    getAttribs(key: number): any {
+    getAttribs(key: number): Attributes {
         return this.attribs[key];
     }
 
-    setAttribs(key: number, atts: any): void {
+    setAttribs(key: number, atts: Attributes): void {
         this.attribs[key] = atts;
     }
 
-    getGeom(key: number, scale: number = undefined): any {
+    getGeom(key: number, scale: number = undefined): BaseGeometry {
 
         // polygon and line layers have to also cache their geometry by scale level, as the
         // geometry can be simplified at smaller scales
         return this.getGeomStore(scale)[key];
     }
 
-    setGeom(key: number, geom: any, scale: number = undefined): void {
+    setGeom(key: number, geom: BaseGeometry, scale: number = undefined): void {
         const store = this.getGeomStore(scale);
         store[key] = geom;
     }

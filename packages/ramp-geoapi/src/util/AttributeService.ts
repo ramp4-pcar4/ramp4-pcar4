@@ -15,7 +15,7 @@ export default class AttributeService extends BaseBase {
         // make index on object id
         attSet.features.forEach((feat, idx) => {
             // map object id to index of object in feature array
-            attSet.oidIndex[feat.attributes[oidField]] = idx;
+            attSet.oidIndex[feat[oidField]] = idx;
         });
     }
 
@@ -89,28 +89,26 @@ export default class AttributeService extends BaseBase {
         });
     }
 
-    loadArcGisServerAttributes(details: AttributeLoaderDetails, controller: AsynchAttribController): Promise<AttributeSet> {
+    async loadArcGisServerAttributes(details: AttributeLoaderDetails, controller: AsynchAttribController): Promise<AttributeSet> {
         details.maxId = -1;
         details.batchSize = -1;
 
-        return new Promise((resolve, reject) => {
-            this.arcGisBatchLoad(details, controller).then((a: Array<any>) => {
-                // TODO transform into attribute set here. the array may need transfomring
-                const attSet: AttributeSet = {
-                    features: a,
-                    oidIndex: {}
-                };
+        const serverResult: Array<any> = await this.arcGisBatchLoad(details, controller);
 
-                this.oidIndexer(attSet, details.oidField);
+        // hoist the attributes from the .attributes property
+        const attSet: AttributeSet = {
+            features: serverResult.map(aa => aa.attributes),
+            oidIndex: {}
+        };
 
-                // done thanks
-               controller.loadIsDone = true;
-               resolve(attSet);
-            });
-        });
+        this.oidIndexer(attSet, details.oidField);
+
+        // done thanks
+        controller.loadIsDone = true;
+        return attSet;
     }
 
-    loadGraphicsAttributes(details: AttributeLoaderDetails, controller: AsynchAttribController): Promise<AttributeSet> {
+    async loadGraphicsAttributes(details: AttributeLoaderDetails, controller: AsynchAttribController): Promise<AttributeSet> {
          // TODO call code to strip from layer
          if (!details.sourceGraphics) {
             throw new Error('No .sourceGraphics provided to file layer attribute loader');
@@ -125,7 +123,6 @@ export default class AttributeService extends BaseBase {
             return g.attributes;
         });
 
-        // TODO generate oidIndex if we decide we are still going to use it
         const attSet: AttributeSet = {
             features: pluckedAttributes.toArray(),
             oidIndex: {}
@@ -134,7 +131,7 @@ export default class AttributeService extends BaseBase {
 
         controller.loadIsDone = true;
         controller.loadedCount = attSet.features.length;
-        return Promise.resolve(attSet);
+        return attSet;
     }
 
     loadSingleFeature(details: GetGraphicServiceDetails): Promise<GetGraphicResult> {
