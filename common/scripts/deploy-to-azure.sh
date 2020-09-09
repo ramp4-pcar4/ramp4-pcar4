@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # login into Azure as a service-principal using encrypted credentials
-# following repos are allowed: 
+# following repos are allowed:
 # aleksueir/ramp4-pcar4
 # ramp4-pcar4/ramp4-pcar4
 # alyec/ramp4-pcar4
@@ -10,6 +10,8 @@
 # ryancoulsonca/ramp4-pcar4
 # spencerwahl/ramp4-pcar4
 # yileifeng/ramp4-pcar4
+# avocadoes/ramp4-pcar4
+# an-w/ramp4-pcar4
 
 az login -u $AZ_LOGIN_NAME -p $AZ_PASSWORD --service-principal --tenant $AZ_TENANT > /dev/null 2>&1
 
