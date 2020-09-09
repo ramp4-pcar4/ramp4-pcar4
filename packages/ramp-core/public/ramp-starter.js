@@ -94,7 +94,7 @@ function initRAMP() {
                 {
                     id: 'WFSLayer',
                     layerType: 'ogcWfs',
-                    url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=6000',
+                    url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
                     state: {
                         visibility: true
                     },
