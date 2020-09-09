@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full h-full bg-white">
+    <div class="flex flex-col w-full h-full bg-white">
         <div class="flex items-center">
             <span class="truncate w-full text-sm mb-0">
                 {{
@@ -44,8 +44,7 @@
 
         <!-- main grid component -->
         <ag-grid-vue
-            class="ag-theme-material"
-            style="height: calc(100% - 30px);"
+            class="ag-theme-material flex-grow"
             :gridOptions="gridOptions"
             :columnDefs="columnDefs"
             :rowData="rowData"
