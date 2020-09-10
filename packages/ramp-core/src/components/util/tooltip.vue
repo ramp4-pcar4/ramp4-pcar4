@@ -43,8 +43,8 @@ export default class TooltipV extends Vue {
 
     &::after {
         content: '';
-        position: absolute;
         border-width: 5px;
+        @apply absolute;
     }
 
     :hover > &,
@@ -55,52 +55,44 @@ export default class TooltipV extends Vue {
 }
 
 .rv-ui-tooltip-top {
-    bottom: 100%;
-    left: 50%;
+    @apply left-1/2 bottom-full;
     transform: translateX(-50%);
 
     &::after {
-        top: 100%;
-        left: 50%;
+        @apply left-1/2 top-full;
         margin-left: -5px;
         border-color: black transparent transparent transparent;
     }
 }
 
 .rv-ui-tooltip-bottom {
-    top: 100%;
-    left: 50%;
+    @apply left-1/2 top-full;
     transform: translateX(-50%);
 
     &::after {
-        bottom: 100%;
-        left: 50%;
+        @apply left-1/2 bottom-full;
         margin-left: -5px;
         border-color: transparent transparent black transparent;
     }
 }
 
 .rv-ui-tooltip-left {
-    right: 100%;
-    top: 50%;
+    @apply right-full top-1/2;
     transform: translateY(-50%);
 
     &::after {
-        right: -9px;
-        bottom: 50%;
+        @apply -right-9 bottom-1/2;
         margin-bottom: -4px;
         border-color: transparent transparent transparent black;
     }
 }
 
 .rv-ui-tooltip-right {
-    left: 100%;
-    top: 50%;
+    @apply left-full top-1/2;
     transform: translateY(-50%);
 
     &::after {
-        left: -9px;
-        bottom: 50%;
+        @apply -left-9 bottom-1/2;
         margin-bottom: -4px;
         border-color: transparent black transparent transparent;
     }

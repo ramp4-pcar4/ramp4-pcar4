@@ -13,8 +13,16 @@ module.exports = {
             // sm: '640px'
         },
         spacing: spacingConfig,
-        inset: spacingConfig,
         extend: {
+            inset: {
+                '-9': '-9px',
+                '1': '1px',
+                '32': '32px',
+                '64': '64px',
+                '200': '200px',
+                '1/2': '50%',
+                full: '100%'
+            },
             colors: {
                 'black-75': 'rgba(0, 0, 0, 0.75)',
                 'white-75': 'rgba(255, 255, 255, 0.75)',
