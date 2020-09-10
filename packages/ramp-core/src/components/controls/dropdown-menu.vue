@@ -1,6 +1,6 @@
 <template>
     <div>
-        <button class="text-gray-500 hover:text-black p-8" @click="open = !open">
+        <button class="relative text-gray-500 hover:text-black p-8" @click="open = !open">
             <slot name="header"></slot>
         </button>
         <button
