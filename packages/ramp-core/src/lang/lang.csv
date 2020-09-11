@@ -9,3 +9,7 @@ map.coordinates.east,E,1,E,1
 map.coordinates.west,W,1,O,1
 map.coordinates.north,N,1,N,1
 map.coordinates.south,S,1,S,1
+panels.controls.close,Close,1,Fermer,1
+panels.controls.pin,Pin,1,Épingler,0
+panels.controls.unpin,Unpin,1,Détacher,0
+panels.controls.back,Back,1,Retourner,0

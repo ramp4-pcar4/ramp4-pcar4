@@ -1,7 +1,8 @@
 key,enValue,enValid,frValue,frValid
-noResults,No results to show for ,1,Aucun résultat pour montrer pour ,0
-searchText,Geolocation Search,1,[fr] Geolocation Search,0
-visible,Visible on map,1,Visible sur la carte,0
-filters.province,Province,1,Province,0
-filters.type,Type,1,Type,0
-filters.clear,Clear filters,1,Effacer les filtres,0
+geosearch.title,Geolocation Search,1,Recherche géolocalisée,1
+geosearch.noResults,No results to show for ,1,Aucun résultat pour montrer pour ,0
+geosearch.searchText,Geolocation Search,1,Recherche géolocalisée,1
+geosearch.visible,Visible on map,1,Visible sur la carte,1
+geosearch.filters.province,Province,1,Province,1
+geosearch.filters.type,Type,1,Type,1
+geosearch.filters.clear,Clear filters,1,Effacer les filtres,1

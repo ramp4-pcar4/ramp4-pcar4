@@ -7,16 +7,22 @@ import messages from './lang/lang.csv';
 
 class LegendFixture extends LegendAPI {
     added() {
-        this.$iApi.panel.register({
-            'legend-panel': {
-                screens: {
-                    'legend-screen': LegendV
-                },
-                style: {
-                    width: '350px'
+        console.log(`[fixture] ${this.id} added`);
+        this.$iApi.panel.register(
+            {
+                'legend-panel': {
+                    screens: {
+                        'legend-screen': LegendV
+                    },
+                    style: {
+                        width: '350px'
+                    }
                 }
+            },
+            {
+                i18n: { messages }
             }
-        });
+        );
 
         this.$iApi.panel.open('legend-panel');
 

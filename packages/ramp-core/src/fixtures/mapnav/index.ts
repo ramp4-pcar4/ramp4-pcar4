@@ -2,6 +2,7 @@ import MapnavV from './mapnav.vue';
 import { MapnavAPI } from './api/mapnav';
 import { mapnav } from './store';
 import { GlobalEvents } from '@/api';
+import messages from './lang/lang.csv';
 
 class MapnavFixture extends MapnavAPI {
     async added() {
@@ -10,7 +11,11 @@ class MapnavFixture extends MapnavAPI {
         // TODO: registering a fixture store module seems like a common action almost every fixture needs; check if this can be automated somehow
         this.$vApp.$store.registerModule('mapnav', mapnav());
 
-        const mapnavInstance = this.extend(MapnavV, { store: this.$vApp.$store });
+        // since this has no panel we need to merge in translations ourselves
+        // TODO?: see if giving fixtures a nicer way to merge translations w/o panel makes sense
+        Object.entries(messages).forEach(value => this.$vApp.$i18n.mergeLocaleMessage(...value));
+
+        const mapnavInstance = this.extend(MapnavV, { store: this.$vApp.$store, i18n: this.$vApp.$i18n });
 
         // TODO: the `innerShell` reference will probably get used more than once; consider creating a dedicated ref on `$iApi`;
         const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];

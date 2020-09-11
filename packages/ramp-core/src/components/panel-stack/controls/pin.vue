@@ -12,7 +12,7 @@
                 />
             </svg>
         </button>
-        <tooltip direction="bottom">{{ this.active ? 'Unpin' : 'Pin' }}</tooltip>
+        <tooltip direction="bottom">{{ $t(this.active ? 'panels.controls.unpin' : 'panels.controls.pin') }}</tooltip>
     </div>
 </template>
 

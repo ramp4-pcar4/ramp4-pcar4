@@ -9,7 +9,7 @@
                 <path d="M0 0h24v24H0z" fill="none" />
             </svg>
         </template>
-        <template #tooltip>Basemap</template>
+        <template #tooltip>{{ $t('basemap.title') }}</template>
     </appbar-button>
 </template>
 

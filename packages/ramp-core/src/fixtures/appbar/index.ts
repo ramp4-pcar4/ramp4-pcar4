@@ -12,7 +12,7 @@ class AppbarFixture extends AppbarAPI {
         // TODO: registering a fixture store module seems like a common action almost every fixture needs; check if this can be automated somehow
         this.$vApp.$store.registerModule('appbar', appbar());
 
-        const appbarInstance = this.extend(AppbarV, { store: this.$vApp.$store });
+        const appbarInstance = this.extend(AppbarV, { store: this.$vApp.$store, i18n: this.$vApp.$i18n });
 
         // TODO: the `innerShell` reference will probably get used more than once; consider creating a dedicated ref on `$iApi`;
         const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];

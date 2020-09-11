@@ -7,7 +7,7 @@
                 <path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z" />
             </svg>
         </template>
-        <template #tooltip>Legend</template>
+        <template #tooltip>{{ $t('legend.title') }}</template>
     </appbar-button>
 </template>
 <script lang="ts">
@@ -16,7 +16,7 @@ import { Vue, Component } from 'vue-property-decorator';
 @Component
 export default class LegendAppbarButtonV extends Vue {
     onClick() {
-        console.log('legend appbar button clicked');
+        this.$iApi.panel.toggle('legend-panel');
     }
 }
 </script>

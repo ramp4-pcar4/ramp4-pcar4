@@ -8,7 +8,7 @@
                 />
             </svg>
         </button>
-        <tooltip direction="left">Basemap</tooltip>
+        <tooltip direction="left">{{ $t('basemap.title') }}</tooltip>
     </div>
 </template>
 
