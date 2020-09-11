@@ -3,7 +3,7 @@
         <button class="py-6 w-full h-full focus:outline-none" @click="onClickFunction()" v-focus-item>
             <slot name="icon"></slot>
         </button>
-        <tooltip direction="right">
+        <tooltip position="right">
             <slot name="tooltip"></slot>
         </tooltip>
     </div>

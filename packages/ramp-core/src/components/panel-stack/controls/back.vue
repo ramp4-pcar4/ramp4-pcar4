@@ -8,7 +8,7 @@
                 />
             </svg>
         </button>
-        <tooltip direction="bottom">{{ $t('panels.controls.back') }}</tooltip>
+        <tooltip position="bottom">{{ $t('panels.controls.back') }}</tooltip>
     </div>
 </template>
 

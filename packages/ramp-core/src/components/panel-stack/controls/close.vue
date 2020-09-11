@@ -7,7 +7,7 @@
                 />
             </svg>
         </button>
-        <tooltip direction="bottom">{{ $t('panels.controls.close') }}</tooltip>
+        <tooltip position="bottom">{{ $t('panels.controls.close') }}</tooltip>
     </div>
 </template>
 

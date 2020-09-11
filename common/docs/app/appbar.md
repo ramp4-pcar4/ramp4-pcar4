@@ -68,3 +68,20 @@ And, you guessed it, you can register your own `my-fancy-divider` component and 
     ]
 }
 ```
+
+## Making an appbar button
+
+Most things on the appbar will want a button that has an icon, a tooltip, and does something when clicked. For this you can use the `appbar-button` helper component:
+
+```html
+<template>
+    <appbar-button :onClickFunction="yourFunctionHere">
+        <template #icon>
+            <!-- whatever you want the button to show goes here, it will usually be an svg -->
+        </template>
+        <template #tooltip>
+            <!-- what you want the tooltip to say (don't forget translations!) -->
+        </template>
+    </appbar-button>
+</template>
+```

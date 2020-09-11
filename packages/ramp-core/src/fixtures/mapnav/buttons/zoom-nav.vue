@@ -7,7 +7,7 @@
                     <path d="M0 0h24v24H0z" fill="none" />
                 </svg>
             </button>
-            <tooltip direction="left">{{ $t('mapnav.zoomIn') }}</tooltip>
+            <tooltip position="left">{{ $t('mapnav.zoomIn') }}</tooltip>
         </div>
         <divider-nav></divider-nav>
         <div class="relative w-32 h-32" tabindex="-1">
@@ -17,7 +17,7 @@
                     <path d="M0 0h24v24H0z" fill="none" />
                 </svg>
             </button>
-            <tooltip direction="left">{{ $t('mapnav.zoomOut') }}</tooltip>
+            <tooltip position="left">{{ $t('mapnav.zoomOut') }}</tooltip>
         </div>
     </div>
 </template>

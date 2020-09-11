@@ -6,7 +6,7 @@
                 <path d="M0 0h24v24H0z" fill="none" />
             </svg>
         </button>
-        <tooltip direction="left">{{ $t('mapnav.home') }}</tooltip>
+        <tooltip position="left">{{ $t('mapnav.home') }}</tooltip>
     </div>
 </template>
 

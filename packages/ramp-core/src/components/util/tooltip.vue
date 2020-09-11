@@ -1,7 +1,7 @@
 <template>
     <span
         role="tooltip"
-        :class="'rv-ui-tooltip-' + direction"
+        :class="'rv-ui-tooltip-' + position"
         class="rv-ui-tooltip absolute opacity-0 invisible bg-black text-white text-center py-3 px-5 rounded z-50"
         ><slot></slot
     ></span>
@@ -12,7 +12,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 
 @Component
 export default class TooltipV extends Vue {
-    @Prop({ default: 'top' }) direction!: string;
+    @Prop({ default: 'top' }) position!: string;
     @Prop() tooltipfor!: HTMLElement | null;
 
     mounted() {

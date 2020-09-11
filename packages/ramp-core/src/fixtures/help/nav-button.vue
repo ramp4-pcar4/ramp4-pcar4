@@ -8,7 +8,7 @@
                 />
             </svg>
         </button>
-        <tooltip direction="left">Help</tooltip>
+        <tooltip position="left">Help</tooltip>
     </div>
 </template>
 
