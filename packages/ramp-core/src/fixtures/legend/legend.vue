@@ -1,8 +1,7 @@
 <template>
     <panel-screen>
         <template #header>
-            <!-- TODO: add translation -->
-            Legend
+            {{ $t('legend.title') }}
         </template>
 
         <template #controls>

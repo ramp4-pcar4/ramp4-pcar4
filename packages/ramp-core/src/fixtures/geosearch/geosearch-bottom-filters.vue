@@ -7,7 +7,7 @@
                     class="form-checkbox border-2 mx-8 border-gray-600"
                     :checked="resultsVisible"
                     @change="updateMapExtent($event.target.checked)"
-                />{{ $t('visible') }}</label
+                />{{ $t('geosearch.visible') }}</label
             >
         </div>
     </div>

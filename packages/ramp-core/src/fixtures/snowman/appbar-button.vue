@@ -1,7 +1,10 @@
 <template>
-    <button class="py-6" @click="togglePanel()">
-        <span class="block h-24">⛄</span>
-    </button>
+    <appbar-button :onClickFunction="togglePanel">
+        <template #icon>
+            <span class="block h-24">⛄</span>
+        </template>
+        <template #tooltip>⛄</template>
+    </appbar-button>
 </template>
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';

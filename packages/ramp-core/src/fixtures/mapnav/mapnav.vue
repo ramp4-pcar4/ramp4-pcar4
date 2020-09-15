@@ -7,9 +7,8 @@
                 <template v-for="(button, index) in visible">
                     <component
                         :is="button.id + '-nav-button'"
-                        class="default-focus-style w-32 h-32 text-gray-600 hover:text-black"
+                        class="w-32 h-32 text-gray-600 hover:text-black"
                         :key="button.id + 'button'"
-                        v-focus-item
                     ></component>
                     <divider-nav class="mapnav-divider" v-if="index !== visible.length - 1" :key="button.id + 'spacer'"></divider-nav>
                 </template>
@@ -46,5 +45,9 @@ export default class MapNavV extends Vue {
 <style lang="scss" scoped>
 .mapnav-section {
     @apply flex-col flex shadow-tm pointer-events-auto;
+
+    .focused {
+        @apply text-black;
+    }
 }
 </style>

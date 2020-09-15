@@ -15,6 +15,9 @@ import { FocusList, FocusItem } from '@/directives/focus-list';
 Vue.directive('focus-list', FocusList);
 Vue.directive('focus-item', FocusItem);
 
+import TooltipV from '@/components/util/tooltip.vue';
+Vue.component('tooltip', TooltipV);
+
 @Component({
     components: {
         Shell

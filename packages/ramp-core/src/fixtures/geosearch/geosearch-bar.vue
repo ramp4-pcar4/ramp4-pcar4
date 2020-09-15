@@ -3,7 +3,7 @@
         <input
             type="search"
             class="flex-grow border-b text-base px-12 py-8 outline-none focus:shadow-outline border-gray-600 mx-8 h-8"
-            :placeholder="$t('searchText')"
+            :placeholder="$t('geosearch.searchText')"
             :value="searchVal"
             @input="onSearchTermChange($event.target.value)"
         />

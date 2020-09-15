@@ -8,6 +8,7 @@ const purgecss = require('@fullhuman/postcss-purgecss')({
     ],
 
     whitelist: ['xs', 'sm', 'md', 'lg'],
+    whitelistPatternsChildren: [/:focus/, /:hover/],
 
     // This is the function used to extract class names from your templates
     defaultExtractor: content => {

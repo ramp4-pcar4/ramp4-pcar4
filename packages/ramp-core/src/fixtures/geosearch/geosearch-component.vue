@@ -13,7 +13,7 @@
             <loading-bar class="mb-2" v-if="loadingResults"></loading-bar>
             <div class="px-5 mt-10 truncate">
                 <span class="relative h-48" v-if="searchVal && searchResults.length === 0 && !loadingResults"
-                    >{{ $t('noResults') }}<span class="font-bold text-blue-600">{{ searchVal }}</span></span
+                    >{{ $t('geosearch.noResults') }}<span class="font-bold text-blue-600">{{ searchVal }}</span></span
                 >
             </div>
             <ul
