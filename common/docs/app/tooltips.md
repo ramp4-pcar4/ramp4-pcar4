@@ -4,7 +4,7 @@ The `tooltip` component will show the desired text in a bubble, on hover or on n
 
 ## Use
 
-The component only needs the text you want to show, and optionally a position. By default the position is `top`.
+The component only needs the text you want to show, and optionally a position. Position can be `top`, `bottom`, `left` or `right`. By default the position is `top`.
 
 The tooltip should be the next sibling of the button/control/etc.
 
