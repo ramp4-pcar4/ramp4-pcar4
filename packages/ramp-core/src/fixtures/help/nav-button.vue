@@ -8,7 +8,7 @@
                 />
             </svg>
         </button>
-        <tooltip position="left">Help</tooltip>
+        <tooltip position="left">{{ $t('help.title') }}</tooltip>
     </div>
 </template>
 
