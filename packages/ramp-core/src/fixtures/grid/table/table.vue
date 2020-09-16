@@ -338,7 +338,7 @@ export default class TableComponent extends Vue {
         // Set up the interactive column that contains the zoom and details button.
         // TODO: add zoom and details functionality.
         if (col.field === 'rvInteractive') {
-            let zoomDef = {
+            let detailsDef = {
                 sortable: false,
                 filter: false,
                 lockPosition: true,
@@ -357,9 +357,9 @@ export default class TableComponent extends Vue {
                     };
                 }
             };
-            colDef.push(zoomDef);
+            colDef.push(detailsDef);
 
-            let detailsDef = {
+            let zoomDef = {
                 sortable: false,
                 filter: false,
                 lockPosition: true,
@@ -376,9 +376,29 @@ export default class TableComponent extends Vue {
                         justifyContent: 'center',
                         alignItems: 'center'
                     };
+                },
+                onCellClicked: (cell: any) => {
+                    const latlon = [cell.data.Longitude, cell.data.Latitude];
+                    if (!latlon.includes(undefined)) {
+                        // use lat/lon from cell data if it exists
+                        const zoomPoint = new RAMP.GEO.Point('zoomies', latlon);
+                        this.$iApi.map.zoomMapTo(zoomPoint, 50000);
+                    } else {
+                        // get position from layer
+                        const layer = this.layers.find((l: any) => l.uid === this.layerUid);
+                        if (layer === undefined) return;
+                        
+                        const oid = cell.data.OBJECTID;
+                        const opts = { getGeom: true };
+                        layer.getGraphic(oid, opts).then(g => {
+                            const geom: any = g.geometry;
+                            const zoomPoint = new RAMP.GEO.Point('zoomies', [geom.x, geom.y], geom.spatialReference.wkid);
+                            this.$iApi.map.zoomMapTo(zoomPoint, 50000);
+                        });
+                    }
                 }
             };
-            colDef.push(detailsDef);
+            colDef.push(zoomDef);
         }
 
         // Set up the symbol column.

@@ -557,7 +557,7 @@ export default class SymbologyService extends BaseBase {
             if (c) {
                 return {
                     colour: `rgb(${c.r},${c.g},${c.b})`,
-                    opacity: c.a / 255
+                    opacity: c.a
                 };
             } else {
                 return {
