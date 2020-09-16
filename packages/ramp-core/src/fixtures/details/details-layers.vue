@@ -18,7 +18,7 @@
                     {{ layerInfo(idx) }}
                 </div>
                 <div class="flex-auto"></div>
-                <div class="text-gray-400 px-5">{{ item.items.length }}</div>
+                <div class="px-5">{{ item.items.length }}</div>
             </div>
         </template>
     </panel-screen>
