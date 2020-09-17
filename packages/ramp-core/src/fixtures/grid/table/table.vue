@@ -100,6 +100,7 @@ export default class TableComponent extends Vue {
     columnApi: any = null;
     columnDefs: any = [];
     rowData: any = [];
+    oidField: string = 'OBJECTID';
 
     quicksearch = '';
     filterInfo = {
@@ -190,6 +191,9 @@ export default class TableComponent extends Vue {
                 // load layer data into the table.
                 this.rowData = tableAttributes.rows;
                 this.updateFilterInfo();
+
+                // save field that contains oid for this layer
+                this.oidField = tableAttributes.oidField;
             });
         });
     }
@@ -378,24 +382,17 @@ export default class TableComponent extends Vue {
                     };
                 },
                 onCellClicked: (cell: any) => {
-                    const latlon = [cell.data.Longitude, cell.data.Latitude];
-                    if (!latlon.includes(undefined)) {
-                        // use lat/lon from cell data if it exists
-                        const zoomPoint = new RAMP.GEO.Point('zoomies', latlon);
-                        this.$iApi.map.zoomMapTo(zoomPoint, 50000);
-                    } else {
-                        // get position from layer
-                        const layer = this.layers.find((l: any) => l.uid === this.layerUid);
-                        if (layer === undefined) return;
-                        
-                        const oid = cell.data.OBJECTID;
-                        const opts = { getGeom: true };
-                        layer.getGraphic(oid, opts).then(g => {
-                            const geom: any = g.geometry;
-                            const zoomPoint = new RAMP.GEO.Point('zoomies', [geom.x, geom.y], geom.spatialReference.wkid);
-                            this.$iApi.map.zoomMapTo(zoomPoint, 50000);
-                        });
-                    }
+                    const layer = this.layers.find((l: any) => l.uid === this.layerUid);
+                    if (layer === undefined) return;
+                    const oid = cell.data[this.oidField];
+                    const opts = { getGeom: true };
+                    layer.getGraphic(oid, opts).then(g => {
+                        if (g.geometry === undefined) {
+                            console.error(`Could not find graphic for objectid ${oid}`);
+                        } else {
+                            this.$iApi.map.zoomMapTo(g.geometry, 50000);
+                        }
+                    });
                 }
             };
             colDef.push(zoomDef);
