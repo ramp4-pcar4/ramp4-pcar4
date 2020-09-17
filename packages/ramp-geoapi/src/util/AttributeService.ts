@@ -172,7 +172,8 @@ export default class AttributeService extends BaseBase {
                     if (details.includeGeometry) {
                         // server result omits spatial reference
                         feat.geometry.spatialReference = serviceResult.data.spatialReference;
-                        result.geometry = feat.geometry;
+                        const localEsriGeom = this.esriBundle.geometryJsonUtils.fromJSON(feat.geometry);
+                        result.geometry = this.gapi.utils.geom.geomEsriToRamp(localEsriGeom);
                     }
 
                     return result;
