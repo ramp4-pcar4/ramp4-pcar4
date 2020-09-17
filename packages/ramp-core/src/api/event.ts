@@ -9,7 +9,10 @@ export enum GlobalEvents {
      * Fires when a Vue component is registered with `rInstance.component(...)`.
      * Payload: `(id: string)`
      */
-    COMPONENT = 'r4/component', // TODO for compatibility with future versions of ramp, maybe use ramp/ instead of r4/ ?
+    COMPONENT = 'ramp/component',
+
+    // TODO document payload
+    FILTER_CHANGE = 'filter/change',
 
     /**
      * Fires when the map is created

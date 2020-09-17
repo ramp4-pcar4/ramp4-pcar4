@@ -57,6 +57,34 @@ The `metadata` provides an interface to view extra information about a layer. TO
 
 The `settings` allow you to make live modifications to a layer on the map. TODO create and hyperlink to `settings.md`
 
+## Default Events
+
+All events are specific to a RAMP instance. An event on one instance says nothing about a different instance.
+
+### Core Events
+
+These events will always be present, regardless of what fixtures are active. Event names here include the `GlobalEvents` enum value first. Italics in the payload indicate a property of a general payload object.
+
+TODO if we have API docs that expose the payload interfaces, link to those definitions. Otherwise we'll need to put the interface specs here
+
+| Event Name | Payload | Event Announces|
+| ---------- | ---------- | ---------- |
+| COMPONENT<br>'ramp/component' | *id*: component id| A vue component registered |
+| FILTER_CHANGE<br>'filter/change' | FilterEventParam object| A filter has changed |
+| MAP_CLICK<br>'map/click' | MapClick object | The map was clicked |
+| MAP_CREATED<br>'map/created' | Map API object| The map was created |
+| MAP_DOUBLECLICK<br>'map/doubleclick' | MapClick object | The map was double clicked |
+| MAP_EXTENTCHANGE<br>'map/extentchanged' | RAMP Extent object| The map extent changed|
+| MAP_IDENTIFY<br>'map/identify' | *results*: Array of IdentifyResult<br>*click*: MapClick object| A map identify was requested |
+| MAP_MOUSEMOVE<br>'map/mousemove' | MapMove object | The mouse moved over the map |
+
+
+### Core Fixture Events
+
+These events will be present if the associated core fixtures are running
+
+TODO add stuff as we make events that core fixtures raise
+
 ## Default Events Handlers
 
 Along with the default fixtures, there are default event handlers that are applied to make them react to each other and to the RAMP core. See the examples section below and the LINKTO Events API page for details on how to work with event handlers.

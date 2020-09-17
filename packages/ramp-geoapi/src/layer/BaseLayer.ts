@@ -25,6 +25,9 @@ export default class BaseLayer extends BaseBase {
     _innerLayer: esri.Layer;
     _innerView: esri.LayerView;
 
+    // used to manage debouncing when applying filter updates against a layer. Private! but needs to be seen by FCs.
+    _lastFilterUpdate: string = '';
+
     // events
     visibilityChanged: TypedEvent<boolean>;
     opacityChanged: TypedEvent<number>;
