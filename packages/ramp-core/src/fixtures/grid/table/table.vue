@@ -100,6 +100,7 @@ export default class TableComponent extends Vue {
     columnApi: any = null;
     columnDefs: any = [];
     rowData: any = [];
+    oidField: string = 'OBJECTID';
 
     quicksearch = '';
     filterInfo = {
@@ -190,6 +191,9 @@ export default class TableComponent extends Vue {
                 // load layer data into the table.
                 this.rowData = tableAttributes.rows;
                 this.updateFilterInfo();
+
+                // save field that contains oid for this layer
+                this.oidField = tableAttributes.oidField;
             });
         });
     }
@@ -338,7 +342,7 @@ export default class TableComponent extends Vue {
         // Set up the interactive column that contains the zoom and details button.
         // TODO: add zoom and details functionality.
         if (col.field === 'rvInteractive') {
-            let zoomDef = {
+            let detailsDef = {
                 sortable: false,
                 filter: false,
                 lockPosition: true,
@@ -357,9 +361,9 @@ export default class TableComponent extends Vue {
                     };
                 }
             };
-            colDef.push(zoomDef);
+            colDef.push(detailsDef);
 
-            let detailsDef = {
+            let zoomDef = {
                 sortable: false,
                 filter: false,
                 lockPosition: true,
@@ -376,9 +380,22 @@ export default class TableComponent extends Vue {
                         justifyContent: 'center',
                         alignItems: 'center'
                     };
+                },
+                onCellClicked: (cell: any) => {
+                    const layer = this.layers.find((l: any) => l.uid === this.layerUid);
+                    if (layer === undefined) return;
+                    const oid = cell.data[this.oidField];
+                    const opts = { getGeom: true };
+                    layer.getGraphic(oid, opts).then(g => {
+                        if (g.geometry === undefined) {
+                            console.error(`Could not find graphic for objectid ${oid}`);
+                        } else {
+                            this.$iApi.map.zoomMapTo(g.geometry, 50000);
+                        }
+                    });
                 }
             };
-            colDef.push(detailsDef);
+            colDef.push(zoomDef);
         }
 
         // Set up the symbol column.

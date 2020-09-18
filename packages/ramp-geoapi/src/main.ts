@@ -127,6 +127,7 @@ export default async (window: DojoWindow, options: GeoApiOptions = {}): Promise<
         ['esri/geometry/Polygon', 'Polygon'],
         ['esri/geometry/Polyline', 'Polyline'],
         ['esri/geometry/SpatialReference', 'SpatialReference'],
+        ['esri/geometry/support/jsonUtils', 'geometryJsonUtils'],
         ['esri/Graphic', 'Graphic'],
         ['esri/layers/FeatureLayer', 'FeatureLayer'],
         ['esri/layers/GraphicsLayer', 'GraphicsLayer'],

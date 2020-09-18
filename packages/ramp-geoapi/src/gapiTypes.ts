@@ -58,13 +58,14 @@ export class EsriBundle {
 
     // GEOMETRY & GRAPHICS
     Extent: esri.ExtentConstructor;
+    geometryJsonUtils: esri.jsonUtils; // excellent naming
     Graphic: esri.GraphicConstructor;
     Multipoint: esri.MultipointConstructor;
     Point: esri.PointConstructor;
     Polygon: esri.PolygonConstructor;
     Polyline: esri.PolylineConstructor;
     SpatialReference: esri.SpatialReferenceConstructor;
-
+    
     // SYMBOLS & RENDERERS
     ClassBreaksRenderer: esri.ClassBreaksRendererConstructor;
     PictureMarkerSymbol: esri.PictureMarkerSymbolConstructor;

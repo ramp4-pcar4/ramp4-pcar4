@@ -148,20 +148,12 @@ export class RampMap extends MapBase {
     // TODO passthrough functions, either by aly magic or make them hardcoded
 
     /**
-     * Zooms the map to a given extent.
+     * Zooms the map to a given geometry.
      *
-     * @param {Extent} extent A RAMP API Extent to zoom the map to
+     * @param {BaseGeometry} geom A RAMP API geometry to zoom the map to
+     * @param {number} [scale] An optional scale value of the map. Is ignored for non-Point geometries
      * @returns {Promise<void>} A promise that resolves when the map has finished zooming
      */
-    zoomMapTo(extent: Extent): Promise<void>;
-    /**
-     * Zooms the map to a given center point, at a given scale.
-     *
-     * @param {Point} extent A RAMP API Point to center the map at
-     * @param {number} mapScale An integer defining the scale the map should be at
-     * @returns {Promise<void>} A promise that resolves when the map has finished zooming
-     */
-    zoomMapTo(centerPoint: Point, mapScale: number): Promise<void>;
     zoomMapTo(geom: BaseGeometry, scale?: number): Promise<void> {
         // TODO technically this can accept any geometry. should we open up the suggested signatures to allow various things?
         return this.geomToMapSR(geom).then(g => {
@@ -170,14 +162,11 @@ export class RampMap extends MapBase {
             const zoomP: any = {
                 target: this.gapi.utils.geom.geomRampToEsri(g)
             };
-
             if (g.type === GeometryType.POINT) {
-                zoomP.scale = scale;
+                zoomP.scale = scale || 50000;
             }
-
             return this._innerView.goTo(zoomP);
         });
-
     }
 
     /**
