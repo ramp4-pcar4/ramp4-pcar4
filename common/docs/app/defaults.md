@@ -10,7 +10,10 @@ TODO maybe these lists go in separate pages, like reference pages.
 
 ### Appbar
 
-The `appbar` provides a means to open and track panels, or run custom commands. TODO hyperlink to `appbar.md`
+The `appbar` provides a means to open and track panels, or run custom commands.
+
+Continued [here](appbar.md).
+
 
 ### Mapnav
 
@@ -22,11 +25,15 @@ The `legend` provides an interactive listing of the layers and other data on the
 
 ### Grid
 
-The `grid` provides a tabular view of attributes for a feature class. TODO hyperlink to `datatable.md`
+The `grid` provides a tabular view of attributes for a feature class.
+
+Continued [here](datatable.md).
 
 ### Details
 
-The `details` provides an interface to view information about a feature / voxel, and to see a collection of identify results. TODO hyperlink to `details.md`
+The `details` provides an interface to view information about a feature / voxel, and to see a collection of identify results.
+
+Continued [here](details.md).
 
 ### Basemap
 
@@ -34,7 +41,9 @@ The `basemap` provides a means to change the basemap layers of the map. TODO cre
 
 ### Geosearch
 
-The `geosearch` is a utility that allows one to search for geographic names and zoom to the results. TODO hyperlink to `geosearch.md`
+The `geosearch` is a utility that allows one to search for geographic names and zoom to the results.
+
+Continued [here](geosearch.md).
 
 ### Help
 
