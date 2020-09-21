@@ -8,7 +8,7 @@
 
             <!-- name -->
             <div class="flex-1 truncate" @click="$iApi.fixture.get('grid').openGrid(legendItem.layer.uid)">
-                <span>{{ legendItem.name }}</span>
+                <span>{{ $t(legendItem.id) }}</span>
             </div>
 
             <!-- visibility -->

@@ -1,2 +1,8 @@
 key,enValue,enValid,frValue,frValid
 legend.title,Legend,1,Légende,1
+Visibility Set, Visibility Set, 1, Ensemble de Visibilité, 0
+Group in Set, Group in Set, 1, Ensemble Groupé, 0
+CleanAir, Clean Air in Set, 1, Air Pur dans l'Ensemble, 0
+WFSLayer, WFSLayer, 1, WFSLayer, 0
+WaterQuantity, Water Quantity in Nested Group, 1, Quantité d'Eau dans Groupe Imbriqué, 0
+WaterQuality, Water Quality in Nested Group, 1, Qualité de l'Eau dans Groupe Imbriqué, 0
