@@ -60,7 +60,7 @@ import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
 import { LayerStore, layer } from '@/store/modules/layer';
-import FeatureLayer from 'ramp-geoapi/dist/layer/FeatureLayer';
+import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
@@ -94,8 +94,8 @@ const TEXT_TYPE: string = 'string';
 })
 export default class TableComponent extends Vue {
     @Prop() layerUid!: string;
-    @Get(LayerStore.layers) layers!: FeatureLayer[];
-    @Sync(`grid/grids`) grids!: { [uid: string]: GridConfig };
+    @Get('layer/getLayerByUid') getLayerByUid!: (id: string) => BaseLayer | undefined;
+    @Sync('grid/grids') grids!: { [uid: string]: GridConfig };
 
     columnApi: any = null;
     columnDefs: any = [];
@@ -132,7 +132,7 @@ export default class TableComponent extends Vue {
             rowBuffer: 0
         };
 
-        const fancyLayer: FeatureLayer | undefined = this.layers.find((l: any) => l.uid === this.layerUid);
+        const fancyLayer: BaseLayer | undefined = this.getLayerByUid(this.layerUid);
         if (fancyLayer === undefined) {
             // this really shouldn't happen unless the wrong API call is made, but maybe we should
             // do something else here anyway.
@@ -340,7 +340,7 @@ export default class TableComponent extends Vue {
 
     setUpSymbolsAndInteractive(col: any, colDef: any) {
         // Set up the interactive column that contains the zoom and details button.
-        // TODO: add zoom and details functionality.
+        // TODO: add details functionality.
         if (col.field === 'rvInteractive') {
             let detailsDef = {
                 sortable: false,
@@ -382,7 +382,7 @@ export default class TableComponent extends Vue {
                     };
                 },
                 onCellClicked: (cell: any) => {
-                    const layer = this.layers.find((l: any) => l.uid === this.layerUid);
+                    const layer: BaseLayer | undefined = this.getLayerByUid(this.layerUid);
                     if (layer === undefined) return;
                     const oid = cell.data[this.oidField];
                     const opts = { getGeom: true };
@@ -399,7 +399,6 @@ export default class TableComponent extends Vue {
         }
 
         // Set up the symbol column.
-        // TODO: the symbol is currently a hardcoded svg. Once geoApi returns proper icon this should be changed (aka: set the cell renderer to return cell.value).
         if (col.field === 'rvSymbol') {
             let iconDef = {
                 sortable: false,
@@ -408,7 +407,14 @@ export default class TableComponent extends Vue {
                 isStatic: true,
                 width: 82,
                 cellRenderer: (cell: any) => {
-                    return '<svg id="SvgjsSvg1175" width="32" height="32" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" viewBox="0 0 32 32"><defs id="SvgjsDefs1176"></defs><image id="SvgjsImage1177" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAA+BJREFUSIm1lVlslFUUx39n9k5n2k73KbO0BYEimC4uIfJAlGCCSICkqYmJjyY8+GCixu2RRDQQozG+GHnQB0hMiEsMhhg1EUgIVEjaaCsUmC5QmK6zfrN9xwdi7TfTSsV43u69/3t+93/u/b7j4H8Ox1pEqmoDuoEwUA/MADFgSET0gQGq2qaqbwH9+WyquWCkKBXy2F1uXFV+nG7vlGmaJ0TkPRGZ+VcAVX3ZNEtH5idHvHM3L2Okpis03rrwuob23ldrgxteUtVXROT4mgCmaX5ipBcPjQ9+Qy51Z1WHmYUJMlcmmI1FayK9z35mmuZmm832+j8CVPXNbGL20I0LJykVsqsmt4DmY4ydO0Hn9oHXVHVSRD5aEaCq3cVc9nDs0leW5CJ2In0HqappRFVJxmPcGj5tgRSMeWKD37J+e/8xVT0jIiMrOThy5+oFW8GYt0x6AxEQG6M/f4rd4SH62EEcLj/FfNKiMxJTzI4PO5o6ut8FDlgAqhouGOln5sYHlzY4PQHatu7C7vLgcHmJ9B64N+/2Ee7ZSzGXYeLK1xZI/Oo5GqLb9qlqs4jcXe7gueTMBPD3s7Y73NQ0R5fGbq9/GdxLqZCjPErFLOn5aZu/Yd1e4PhyB1uMRNwiNkt5jPQiNpudgpGyrHl8ATKJFZ8+ueQsvvq2LkuJRKSlmMtYhIFoD/nUAkZ6jrsjP1Ib6qaYS5GKX6X98efJpReoC/WwMHnZsq+YzwK0WgCqaojdeucNkYdZuHUNgJaup3G6/biq/Yjtnq6UN6gNPlQBEJsdIGsBALecHr9FqKZJdnEaV3UAp6eGZPw63mIQd3UAgMT0KFV1zRUlcrqrAW6Xl+h8dX0by28hn0nQtP5RFqfHuDP6C8GunRQLBnOxS/gaI4S795CanawAeANBRORcuYMzvvpgyuGu9RVziwCMnf+culAPbl89+Uyc2OCXlkQ3L56i/Jupqg3h8dUtAD+VO8iapvlhy8Ydb08NfVdxqrVGy6YdAEdFpFDuABF5PxDa/GJyJhZO3B7G4w8S2vYUAE0d3RXJNux4gd9/+Hhp3Nj5JP7G0BjwwV9z5YCEqu4PP7Lr7HipWJW8O8Lw6WNrOnkg3EfrxieSwD4RWXrvFX9TEflVVXdH+/acil9va4pfO4tZyq+a2O700rJpJw2RLVPAfhH5bfn6iv1ARM6qal9TZ8/RQKirf/H2NUnFb5BLz1EqpHG4fLh9TfibO6ht7TRtDtcXwBsiUtGVVu1oIjIBDKjq4Ybo1oHG9m27gQgQAGaBm8D3wEkR+WO1PPdt+iIyBAwB79xP+0CA/xp/AqtDiSR2zJWEAAAAAElFTkSuQmCC" width="24" height="24" x="4" y="4" transform="matrix(1,0,0,1,0,0)"></image></svg>';
+                    const layer: BaseLayer | undefined = this.getLayerByUid(this.layerUid);
+                    if (layer === undefined) return;
+                    const iconContainer = document.createElement('span');
+                    const oid = cell.data[this.oidField];
+                    layer.getIcon(oid).then(i => {
+                        iconContainer.innerHTML = i;
+                    });
+                    return iconContainer;
                 },
                 cellStyle: (cell: any) => {
                     return {
