@@ -13,8 +13,11 @@ import api from '@/api';
 type LayerContext = ActionContext<LayerState, RootState>;
 
 const getters = {
+    getLayerByUid: (state: LayerState) => (uid: string): BaseLayer | undefined => {
+        return state.layers.find((layer: BaseLayer) => layer.getLayerTree().findChildByUid(uid) !== undefined);
+    },
     getLayerById: (state: LayerState) => (id: string): BaseLayer | undefined => {
-        return state.layers.find((layer: BaseLayer) => layer.uid === id);
+        return state.layers.find((layer: BaseLayer) => layer.id === id);
     }
 };
 
@@ -45,6 +48,10 @@ const mutations = {
 };
 
 export enum LayerStore {
+    /**
+     * (Getter) getLayerByUid: (uid: string) => Layer | undefined
+     */
+    getLayerByUid = 'layer/getLayerByUid',
     /**
      * (Getter) getLayerById: (id: string) => Layer | undefined
      */
