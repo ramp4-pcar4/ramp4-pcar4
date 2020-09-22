@@ -1,12 +1,12 @@
 <template>
     <!-- Display a checkbox. -->
     <div v-if="!isRadio">
-        <input type="checkbox" :checked="value" class="rounded-none form-checkbox h-15 w-15 text-black border-gray-500 hover:border-black">
+        <input type="checkbox" :checked="value" class="rounded-none form-checkbox h-15 w-15 text-black border-gray-500 hover:border-black cursor-pointer">
     </div>
 
     <!-- If isRadio is set to true, a radio button will be displayed instead. -->
     <div v-else>
-        <input type="radio" :checked="value" class="form-radio h-15 w-15 text-black border-gray-500 hover:border-black">
+        <input type="radio" :checked="value" class="form-radio h-15 w-15 text-black border-gray-500 hover:border-black cursor-pointer">
     </div>
 </template>
 
