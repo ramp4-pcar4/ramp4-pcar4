@@ -2,13 +2,14 @@
     <div class="legend-item">
         <div class="legend-item-header">
             <!-- symbology stack -->
-            <div @click="toggleSymbology">
+            <div @click="toggleSymbology" class="relative">
                 <symbology-stack :visible="displaySymbology" :layer="legendItem.layer" />
+                <tooltip v-if="!displaySymbology" position="right"> {{$t('legend.expand')}} </tooltip>
             </div>
 
             <!-- name -->
             <div class="flex-1 truncate" @click="$iApi.fixture.get('grid').openGrid(legendItem.layer.uid)">
-                <span>{{ $t(legendItem.id) }}</span>
+                <span>{{ legendItem.name }}</span>
             </div>
 
             <!-- visibility -->
