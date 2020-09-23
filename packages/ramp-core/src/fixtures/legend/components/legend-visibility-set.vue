@@ -10,7 +10,7 @@
             </div>
 
             <!-- name -->
-            <span class="flex-1">{{ $t(legendItem.name) }}</span>
+            <span class="flex-1">{{ legendItem.name }}</span>
 
             <!-- visibility -->
             <div @click="legendItem.toggleVisibility(); legendItem.toggleExpanded();">
