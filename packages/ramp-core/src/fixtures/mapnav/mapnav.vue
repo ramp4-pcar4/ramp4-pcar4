@@ -5,11 +5,7 @@
             <span class="py-1"></span>
             <div class="mapnav-section bg-white-75 hover:bg-white">
                 <template v-for="(button, index) in visible">
-                    <component
-                        :is="button.id + '-nav-button'"
-                        class="w-32 h-32 text-gray-600 hover:text-black"
-                        :key="button.id + 'button'"
-                    ></component>
+                    <component :is="button.id + '-nav-button'" :key="button.id + 'button'"></component>
                     <divider-nav class="mapnav-divider" v-if="index !== visible.length - 1" :key="button.id + 'spacer'"></divider-nav>
                 </template>
             </div>
@@ -27,9 +23,11 @@ import FullscreenNavV from './buttons/fullscreen-nav.vue';
 import HomeNavV from './buttons/home-nav.vue';
 import ZoomNavV from './buttons/zoom-nav.vue';
 import DividerNavV from './buttons/divider-nav.vue';
+import MapnavButtonV from './button.vue';
 
 Vue.component('fullscreen-nav-button', FullscreenNavV);
 Vue.component('home-nav-button', HomeNavV);
+Vue.component('mapnav-button', MapnavButtonV);
 
 @Component({
     components: {
