@@ -2,8 +2,9 @@
     <div class="legend-item">
         <div class="legend-item-header">
             <!-- symbology stack -->
-            <div @click="toggleSymbology">
+            <div @click="toggleSymbology" class="relative">
                 <symbology-stack :visible="displaySymbology" :layer="legendItem.layer" />
+                <tooltip v-if="!displaySymbology" position="right"> {{$t('legend.expand')}} </tooltip>
             </div>
 
             <!-- name -->
