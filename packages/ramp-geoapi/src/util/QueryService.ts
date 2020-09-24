@@ -69,7 +69,10 @@ export default class QueryService extends BaseBase {
         // NOTE: for this to work, the outfields need to be set on the geojson layer when it is created.
         //       anything not in the outfields will not be available for the .where filter and will give
         //       an empty result.
-        const featSet = await options.layer._innerView.queryFeatures(query);
+        // NOTE: using ._innerView appears to be somewhat flawed. The query tends to only respect items that
+        //       are in the visible view of the map. The layer query appears to be working now with local data
+        //       (was not in earlier versions of ESRI API)
+        const featSet = await options.layer._innerLayer.queryFeatures(query);
 
         // convert to our type. seems a bit wasteful, but we already want to convert to ramp geoms so do it
         return featSet.features.map((f, i) => {
