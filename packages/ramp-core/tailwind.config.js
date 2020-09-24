@@ -1,10 +1,3 @@
-// generate spacing rules, these create width, height, padding, margin, etc. rules
-// will end up with w-0 = 0px, w-1 = 1px, and so on
-spacingConfig = {};
-for (i = 0; i < 1000; i++) {
-    spacingConfig[i] = `${i}px`;
-}
-
 module.exports = {
     purge: false,
     theme: {
@@ -12,7 +5,38 @@ module.exports = {
         screens: {
             // sm: '640px'
         },
-        spacing: spacingConfig,
+        spacing: {
+            '0': '0px',
+            '1': '1px',
+            '2': '2px',
+            '3': '3px',
+            '4': '4px',
+            '5': '5px',
+            '6': '6px',
+            '8': '8px',
+            '10': '10px',
+            '12': '12px',
+            '14': '14px',
+            '15': '15px',
+            '16': '16px',
+            '18': '18px',
+            '20': '20px',
+            '24': '24px',
+            '25': '25px',
+            '28': '28px',
+            '30': '30px',
+            '32': '32px',
+            '36': '36px',
+            '40': '40px',
+            '48': '48px',
+            '56': '56px',
+            '64': '64px',
+            '75': '75px',
+            '80': '80px',
+            '180': '180px',
+            '256': '256px',
+            '500': '500px'
+        },
         extend: {
             inset: {
                 '-9': '-9px',
