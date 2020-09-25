@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "serve": "vue-cli-service serve src/main-serve.ts",
+        "serve": "vue-cli-service serve",
         "build": "vue-cli-service build --target lib --formats umd --name RAMP src/main-build.ts 2>&1",
         "test:unit": "vue-cli-service test:unit",
         "test:e2e": "vue-cli-service test:e2e",
