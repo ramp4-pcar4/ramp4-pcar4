@@ -78,9 +78,7 @@ export default class Screen1 extends Vue {
 
     mounted() {
         this.grid = this.$refs.rvGrid;
-        this.layer = this.grid.getLayerByUid(this.grid.layerUid);
-        this.head = this.layer.layerType == "esriFeature" ? this.layer.name : this.layer.layerTree.children[0].name;
-        console.log(this.grid.getLayerByUid(this.grid.layerUid)); // for testing
+        this.head = this.layerName;
     }
 
     updateQuickSearch(): void {
@@ -96,6 +94,14 @@ export default class Screen1 extends Vue {
     clearFilters(): void {
         this.resetQuickSearch();
         this.grid.clearFilters();
+    }
+
+    get layerName() {
+        if (this.grid) {
+            this.layer = this.grid.getLayerByUid(this.grid.layerUid);
+            return this.layer.getName(this.grid.layerUid);
+        }
+        return '' ;
     }
 }
 </script>
