@@ -36,16 +36,16 @@ import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
 import { LegendStore } from '../store';
 import { LegendEntry, LegendTypes } from '../store/legend-defs';
 
-import CheckboxComponent from './checkbox.vue';
+import CheckboxV from './checkbox.vue';
 import SymbologyStack from './symbology-stack.vue';
 
 @Component({
     components: {
-        checkbox: CheckboxComponent,
+        checkbox: CheckboxV,
         'symbology-stack': SymbologyStack
     }
 })
-export default class LegendPlaceholder extends Vue {
+export default class LegendPlaceholderV extends Vue {
     @Prop() legendItem!: LegendEntry;
     @Prop() props!: any;
     @Get(LayerStore.layers) layers!: BaseLayer[];

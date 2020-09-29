@@ -23,7 +23,7 @@ import { Get, Sync, Call } from 'vuex-pathify';
 import { LegendStore } from './store';
 
 @Component
-export default class LegendHeader extends Vue {
+export default class LegendHeaderV extends Vue {
     // toggle all possible legend groups
     toggleGroups(): void {
         // TODO: call expandGroups() or collapseGroups() action in store

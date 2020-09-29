@@ -13,8 +13,8 @@
             <span class="flex-1">{{ legendItem.name }}</span>
 
             <!-- visibility -->
-            <div @click="legendItem.toggleVisibility(); legendItem.toggleExpanded();">
-                <checkbox :value="legendItem.visibility" :isRadio="props && props.isVisibilitySet" />
+            <div @click="legendItem.toggleExpanded();">
+                <checkbox :value="legendItem.visibility" :isRadio="props && props.isVisibilitySet" :legendItem="legendItem"/>
             </div>
         </div>
 
@@ -30,16 +30,16 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
 import { LegendStore } from '../store';
-import { LegendItem } from '../store/legend-defs';
-import CheckboxComponent from './checkbox.vue';
+import { LegendGroup } from '../store/legend-defs';
+import CheckboxV from './checkbox.vue';
 
 @Component({
     components: {
         LegendComponent: () => import('./legend-component.vue'),
-        checkbox: CheckboxComponent
+        checkbox: CheckboxV
     }
 })
-export default class LegendGroup extends Vue {
+export default class LegendGroupV extends Vue {
     @Prop() legendItem!: LegendGroup;
     @Prop() props!: any;
 }

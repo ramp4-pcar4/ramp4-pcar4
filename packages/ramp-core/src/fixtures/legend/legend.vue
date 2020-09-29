@@ -23,13 +23,13 @@ import { PanelInstance } from '@/api';
 
 import { LegendStore } from './store';
 import { LegendItem } from './store/legend-defs';
-import LegendHeader from './legend-header.vue';
-import LegendComponent from './components/legend-component.vue';
+import LegendHeaderV from './legend-header.vue';
+import LegendComponentV from './components/legend-component.vue';
 
 @Component({
     components: {
-        LegendHeader,
-        LegendComponent
+        'legend-header': LegendHeaderV,
+        'legend-component': LegendComponentV
     }
 })
 export default class LegendV extends Vue {

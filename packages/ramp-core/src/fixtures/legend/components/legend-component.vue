@@ -9,22 +9,22 @@ import { Get, Sync, Call } from 'vuex-pathify';
 import { LegendStore } from '../store';
 import { LegendItem } from '../store/legend-defs';
 
-import LayerEntry from './legend-entry.vue';
-import LegendGroup from './legend-group.vue';
-import LegendVisibilitySet from './legend-visibility-set.vue';
-import LegendPlaceholder from './legend-placeholder.vue';
+import LayerEntryV from './legend-entry.vue';
+import LegendGroupV from './legend-group.vue';
+import LegendVisibilitySetV from './legend-visibility-set.vue';
+import LegendPlaceholderV from './legend-placeholder.vue';
 
 @Component
-export default class LegendComponent extends Vue {
+export default class LegendComponentV extends Vue {
     @Prop() legendItem!: LegendItem;
     @Prop() props!: any;
 
     // Binds each type to its respective Vue component.
     templates = {
-        VisibilitySet: LegendVisibilitySet,
-        LegendGroup: LegendGroup,
-        LegendEntry: LayerEntry,
-        Placeholder: LegendPlaceholder
+        VisibilitySet: LegendVisibilitySetV,
+        LegendGroup: LegendGroupV,
+        LegendEntry: LayerEntryV,
+        Placeholder: LegendPlaceholderV
     };
 }
 </script>
