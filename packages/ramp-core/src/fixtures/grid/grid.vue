@@ -1,6 +1,6 @@
 <template>
     <panel-screen>
-        <template #header>{{ header }}</template>
+        <template #header>{{$t('grid.title')}}: {{head}} </template>
         <template #controls>
             <input
                 @keyup="updateQuickSearch()"
@@ -73,9 +73,14 @@ export default class Screen1 extends Vue {
 
     quicksearch: String = '';
     grid: any = undefined;
+    head: String = '';
+    layer: any = undefined;
 
     mounted() {
         this.grid = this.$refs.rvGrid;
+        this.layer = this.grid.getLayerByUid(this.grid.layerUid);
+        this.head = this.layer.layerType == "esriFeature" ? this.layer.name : this.layer.layerTree.children[0].name;
+        console.log(this.grid.getLayerByUid(this.grid.layerUid)); // for testing
     }
 
     updateQuickSearch(): void {
