@@ -13,8 +13,8 @@
             </div>
 
             <!-- visibility -->
-            <div @click="legendItem.toggleVisibility()">
-                <checkbox :value="legendItem.visibility" :isRadio="props && props.isVisibilitySet" />
+            <div>
+                <checkbox :value="visibility" :isRadio="props && props.isVisibilitySet" :legendItem="legendItem"/>
             </div>
         </div>
 
@@ -29,7 +29,7 @@
                 <div class="flex-1 truncate">{{ item.label }}</div>
 
                 <!-- TODO: add visibility button functionality. It should toggle each symbol individually. -->
-                <checkbox :value="legendItem.visibility" />
+                <checkbox :value="visibility" :legendItem="legendItem"/>
             </div>
         </div>
     </div>
@@ -40,22 +40,29 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
 import { LegendStore } from '../store';
-import { LegendItem } from '../store/legend-defs';
+import { LegendEntry } from '../store/legend-defs';
 
-import CheckboxComponent from './checkbox.vue';
+import CheckboxV from './checkbox.vue';
 import SymbologyStack from './symbology-stack.vue';
 
 @Component({
     components: {
-        checkbox: CheckboxComponent,
+        checkbox: CheckboxV,
         'symbology-stack': SymbologyStack
     }
 })
-export default class LegendEntry extends Vue {
+export default class LegendEntryV extends Vue {
     @Prop() legendItem!: LegendEntry;
     @Prop() props!: any;
 
     displaySymbology: boolean = false;
+    visibility: boolean | undefined = this.legendItem.visibility;
+
+    mounted(): void {
+        this.legendItem.layer?.visibilityChanged.listen((visibility: boolean) => {
+            this.visibility = this.legendItem.visibility;
+        })
+    }
 
     /**
      * Display symbology stack for the layer.
