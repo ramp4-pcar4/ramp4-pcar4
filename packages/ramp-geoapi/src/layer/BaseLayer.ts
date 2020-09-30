@@ -383,7 +383,9 @@ export default class BaseLayer extends BaseBase {
             } else {
                 // asked for the root when not valid
                 // TODO would it be kinder/friendlier to return the first child fc?
-                throw new Error(`Attempt to access a function on layer root that only applies to an index of the layer [layerid ${this._innerLayer.id}]`);
+                // throw new Error(`Attempt to access a function on layer root that only applies to an index of the layer [layerid ${this._innerLayer.id}]`);
+                // TODO going with return first for the time being, revisit later
+                return this.fcs.find((fc: BaseFC) => fc);
             }
         } else if (this.isUndefined(this.fcs[workingIdx])) {
             // passed a non-existing index/uid

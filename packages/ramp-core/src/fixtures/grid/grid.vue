@@ -1,6 +1,6 @@
 <template>
     <panel-screen>
-        <template #header>{{ header }}</template>
+        <template #header>{{$t('grid.title')}}: {{head}} </template>
         <template #controls>
             <input
                 @keyup="updateQuickSearch()"
@@ -73,9 +73,12 @@ export default class Screen1 extends Vue {
 
     quicksearch: String = '';
     grid: any = undefined;
+    head: String = '';
+    layer: any = undefined;
 
     mounted() {
         this.grid = this.$refs.rvGrid;
+        this.head = this.layerName;
     }
 
     updateQuickSearch(): void {
@@ -91,6 +94,14 @@ export default class Screen1 extends Vue {
     clearFilters(): void {
         this.resetQuickSearch();
         this.grid.clearFilters();
+    }
+
+    get layerName() {
+        if (this.grid) {
+            this.layer = this.grid.getLayerByUid(this.grid.layerUid);
+            return this.layer.getName(this.grid.layerUid);
+        }
+        return '' ;
     }
 }
 </script>
