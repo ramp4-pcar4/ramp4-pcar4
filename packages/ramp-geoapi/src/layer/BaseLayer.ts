@@ -387,7 +387,9 @@ export default class BaseLayer extends BaseBase {
             }
         } else if (this.isUndefined(this.fcs[workingIdx])) {
             // passed a non-existing index/uid
-            throw new Error(`Attempt to access non-existing layer index [layerid ${this._innerLayer.id}, lookup value ${layerIdx}]`);
+            // throw new Error(`Attempt to access a function on layer root that only applies to an index of the layer [layerid ${this._innerLayer.id}]`);
+            // TODO going with return first for the time being, revisit later
+            return this.fcs.find((fc: BaseFC) => fc);
         } else {
             return this.fcs[workingIdx];
         }
