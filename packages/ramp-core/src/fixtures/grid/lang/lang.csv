@@ -1,5 +1,5 @@
 key,enValue,enValid,frValue,frValid
-grid.title, Features, 1, Éléments, 0
+grid.title,Features,1,Éléments,1
 label.columns,Columns,1,Colonnes,0
 label.filters,Filters,1,Filtres,0
 filters.label.global,Search table,1,Tableau de recherche,0

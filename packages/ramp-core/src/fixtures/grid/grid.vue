@@ -97,7 +97,7 @@ export default class Screen1 extends Vue {
     }
 
     get layerName() {
-        if(this.grid) {
+        if (this.grid) {
             this.layer = this.grid.getLayerByUid(this.grid.layerUid);
             return this.layer.layerType == "esriFeature" ? this.layer.name : this.layer.layerTree.children[0].name;
         }
