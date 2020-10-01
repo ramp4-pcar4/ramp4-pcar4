@@ -359,6 +359,12 @@ export default class TableComponent extends Vue {
                         justifyContent: 'center',
                         alignItems: 'center'
                     };
+                },
+                onCellClicked: (cell: any) => {
+                    const fakeIdentifyItem = {data: cell.data};
+                    delete fakeIdentifyItem['data']['rvInteractive'];
+                    delete fakeIdentifyItem['data']['rvSymbol']; // might be able to use this in the details template?
+                    this.$iApi.event.emit('details/open', {identifyItem: fakeIdentifyItem, uid: this.layerUid});
                 }
             };
             colDef.push(detailsDef);

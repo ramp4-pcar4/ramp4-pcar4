@@ -40,6 +40,7 @@ export default class DetailsItemV extends Vue {
 
     // true if the current payload is a single IdentifyItem
     @Prop() isFeature!: boolean;
+    @Prop() uid!: string;
 
     // retrieve the identify payload from the store
     @Get(DetailsStore.payload) payload!: IdentifyResult[];
@@ -65,7 +66,7 @@ export default class DetailsItemV extends Vue {
                 if (!layerNode) return;
 
                 // Determine if the selected UID is a child of this layer.
-                if (layerNode.findChildByUid(layerInfo.uid) !== undefined) {
+                if (layerNode.findChildByUid(layerInfo?.uid || this.uid) !== undefined) {
                     return layer;
                 }
             })

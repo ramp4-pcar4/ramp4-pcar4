@@ -31,6 +31,12 @@ class DetailsFixture extends DetailsAPI {
             () => this.config,
             value => this._parseConfig(value)
         );
+
+        let handler = (payload: any) => {
+            const detailsFixture: DetailsAPI = this.$iApi.fixture.get('details');
+            detailsFixture.openFeature(payload.identifyItem, payload.uid);
+        };
+        this.$iApi.event.on('details/open', handler, 'details_opened_handler');
     }
 
     removed() {
