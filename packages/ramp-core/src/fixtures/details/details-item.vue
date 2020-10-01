@@ -40,10 +40,12 @@ export default class DetailsItemV extends Vue {
 
     // true if the current payload is a single IdentifyItem
     @Prop() isFeature!: boolean;
+    @Prop() uid!: string;
 
     // retrieve the identify payload from the store
     @Get(DetailsStore.payload) payload!: IdentifyResult[];
     @Get('layer/layers') layers!: BaseLayer[];
+    @Get('layer/getLayerByUid') getLayerByUid!: (id: string) => BaseLayer | undefined;
 
     identifyTypes: any = IdentifyResultFormat;
 
@@ -56,25 +58,12 @@ export default class DetailsItemV extends Vue {
 
     get detailsTemplate() {
         const layerInfo = this.payload[this.layerIndex];
-
-        // Check to see if there is a custom template defined for the selected layer.
-        let item: BaseLayer | undefined = this.layers
-            .map(layer => {
-                let layerNode = layer.getLayerTree();
-
-                if (!layerNode) return;
-
-                // Determine if the selected UID is a child of this layer.
-                if (layerNode.findChildByUid(layerInfo.uid) !== undefined) {
-                    return layer;
-                }
-            })
-            .filter(node => node != undefined)[0];
+        const layer: BaseLayer | undefined = this.getLayerByUid(layerInfo?.uid || this.uid);
 
         // If there is a custom template binding for this layer in the store, then
         // return its name.
-        if (item && this.templateBindings[item.id] && this.templateBindings[item.id].componentId) {
-            return this.templateBindings[item.id].componentId;
+        if (layer && this.templateBindings[layer.id] && this.templateBindings[layer.id].componentId) {
+            return this.templateBindings[layer.id].componentId;
         }
 
         // If nothing is found, use a default template.
