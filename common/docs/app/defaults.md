@@ -68,6 +68,11 @@ TODO keep updating the list, make new subsections as appropriate. Maybe move to 
 - `ramp_map_click_runs_identify` causes the identify process to start when the map is clicked
 - `ramp_identify_opens_details` causes the details fixture to open, displaying the result of an identify request.
 
+### Fixture Handlers
+
+- `ramp_settings_opens_panel` causes the settings fixture to open for a layer
+- `opens_feature_details` causes the details fixture to open for a single feature
+
 ## Examples
 
 ### Default Setup

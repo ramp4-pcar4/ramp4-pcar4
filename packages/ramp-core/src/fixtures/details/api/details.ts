@@ -31,16 +31,18 @@ export class DetailsAPI extends FixtureInstance {
      * Provided with the data for a single feature, open the details panel directly to the feature screen.
      *
      * @param {IdentifyItem} payload
+     * @param {string} uid
      * @memberof DetailsAPI
      */
-    openFeature(payload: IdentifyItem) {
+    openFeature(identifyItem: IdentifyItem, uid: string) {
         // Save the provided identify result in the store.
-        this.$vApp.$store.set('details/setPayload!', payload);
-
+        this.$vApp.$store.set('details/setPayload!', identifyItem);
         // Open the details panel.
-        if (!this.$iApi.panel.get('details-panel').isOpen) {
-            this.$iApi.panel.open({ id: 'details-panel', screen: 'details-screen-item', props: { isFeature: true } });
+        const panel = this.$iApi.panel.get('details-panel');
+        if (panel.isOpen) {
+            this.$iApi.panel.close(panel);
         }
+        this.$iApi.panel.open({ id: 'details-panel', screen: 'details-screen-item', props: { isFeature: true, uid: uid } });
     }
 
     /**

@@ -58,6 +58,8 @@
 <script lang="ts">
 import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
+import { GlobalEvents } from '../../../api/internal';
+import deepmerge from 'deepmerge';
 
 import { LayerStore, layer } from '@/store/modules/layer';
 import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
@@ -359,6 +361,12 @@ export default class TableComponent extends Vue {
                         justifyContent: 'center',
                         alignItems: 'center'
                     };
+                },
+                onCellClicked: (cell: any) => {
+                    const fakeIdentifyItem = deepmerge({}, {data: cell.data});
+                    delete fakeIdentifyItem['data']['rvInteractive'];
+                    delete fakeIdentifyItem['data']['rvSymbol']; 
+                    this.$iApi.event.emit(GlobalEvents.DETAILS_OPEN, {identifyItem: fakeIdentifyItem, uid: this.layerUid});
                 }
             };
             colDef.push(detailsDef);

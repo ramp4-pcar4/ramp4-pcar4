@@ -23,6 +23,8 @@ export enum GlobalEvents {
     MAP_EXTENTCHANGE = 'map/extentchanged', // payload is rampapi Extent
     MAP_IDENTIFY = 'map/identify',
     MAP_MOUSEMOVE = 'map/mousemove',
+    SETTINGS_OPEN = 'settings/open',
+    DETAILS_OPEN = 'details/open'
 }
 
 // TODO export this enum?
@@ -35,7 +37,8 @@ export enum GlobalEvents {
 enum DefEH {
     IDENTIFY_DETAILS = 'ramp_identify_opens_details',
     MAP_IDENTIFY = 'ramp_map_click_runs_identify',
-    OPEN_SETTINGS = 'ramp_settings_opens_panel'
+    OPEN_SETTINGS = 'ramp_settings_opens_panel',
+    OPEN_DETAILS = 'opens_feature_details'
 }
 
 // private for EventBus internals, so don't export
@@ -267,7 +270,7 @@ export class EventAPI extends APIScope {
             // TODO the enum-values-to-array logic we use in the event names list
             //      fails a bit here. we could make it work if we force every default
             //      handler name to being with a specific prefix. Alternately use object, not enum.
-            eventHandlerNames = [DefEH.MAP_IDENTIFY, DefEH.IDENTIFY_DETAILS, DefEH.OPEN_SETTINGS];
+            eventHandlerNames = [DefEH.MAP_IDENTIFY, DefEH.IDENTIFY_DETAILS, DefEH.OPEN_SETTINGS, DefEH.OPEN_DETAILS];
         }
 
         // add all the requested default event handlers.
@@ -286,7 +289,6 @@ export class EventAPI extends APIScope {
         let zeHandler: Function;
 
         switch (handlerName) {
-
             case DefEH.MAP_IDENTIFY:
                 // when map clicks, run the identify action
                 zeHandler = (clickParam: MapClick) => {
@@ -296,7 +298,6 @@ export class EventAPI extends APIScope {
                 };
                 this.on(GlobalEvents.MAP_CLICK, zeHandler, handlerName);
                 break;
-
             case DefEH.IDENTIFY_DETAILS:
                 // when identify runs, open details fixture and show the results
                 zeHandler = (identifyParam: any) => {
@@ -307,19 +308,25 @@ export class EventAPI extends APIScope {
                 };
                 this.on(GlobalEvents.MAP_IDENTIFY, zeHandler, handlerName);
                 break;
-
             case DefEH.OPEN_SETTINGS:
                 zeHandler = (payload: any) => {
                     const settingsFixture: SettingsAPI = this.$iApi.fixture.get('settings');
-                    if(settingsFixture) {
+                    if (settingsFixture) {
                         settingsFixture.open(payload);
                     }
                 };
-
                 // Create a new event: opens the settings panel and hooks it up to the requested layer.
-                this.$iApi.event.on('settings/open', zeHandler, handlerName);
+                this.$iApi.event.on(GlobalEvents.SETTINGS_OPEN, zeHandler, handlerName);
                 break;
-
+            case DefEH.OPEN_DETAILS:
+                zeHandler = (payload: any) => {
+                    const detailsFixture: DetailsAPI = this.$iApi.fixture.get('details');
+                    if (detailsFixture) {
+                        detailsFixture.openFeature(payload.identifyItem, payload.uid);
+                    }
+                };
+                this.$iApi.event.on(GlobalEvents.DETAILS_OPEN, zeHandler, handlerName);
+                break;
             default:
                 console.error(`Unrecognized default event handler name encountered: ${handlerName}`);
                 return `ERROR_NOT_REGISTERED__${handlerName}`;
