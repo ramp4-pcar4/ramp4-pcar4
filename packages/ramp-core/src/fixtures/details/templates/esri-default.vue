@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="p-5 pl-3 flex justify-end flex-wrap even:bg-gray-300" v-for="(val, name, itemIdx) in identifyData.data" :key="itemIdx">
+        <div class="p-5 pl-3 flex justify-end flex-wrap even:bg-gray-300" v-for="(val, name, itemIdx) in data" :key="itemIdx">
             <span class="inline font-bold">{{ name }}</span>
             <span class="flex-auto"></span>
             <span class="inline" v-html="val"></span>
@@ -18,7 +18,17 @@ import { IdentifyResult, IdentifyResultSet, IdentifyItem, IdentifyResultFormat }
 @Component({})
 export default class ESRIDefaultV extends Vue {
     // passed in by the details panel. Contains all of the identify data.
-    @Prop() identifyData!: Object;
+    @Prop() identifyData!: IdentifyItem;
+
+    // clone identifyData and remove unwanted data
+    data: Object = this.itemData;
+    helper: any = {}
+
+    get itemData() {
+        Object.assign(this.helper, this.identifyData.data);
+        delete this.helper.Symbol;
+        return this.helper;
+    }
 }
 </script>
 

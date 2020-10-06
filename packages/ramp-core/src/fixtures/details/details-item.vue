@@ -1,7 +1,8 @@
 <template>
     <panel-screen>
         <template #header>
-            Details
+            <span v-html=icon class="inline-block w-1/6"> </span>
+            <span class="inline-block w-5/6"> {{ itemName }} </span>
         </template>
         <template #controls>
             <back @click="panel.show({ screen: 'details-screen-result', props: { layerIndex: layerIndex } })" v-if="!isFeature"></back>
@@ -48,12 +49,29 @@ export default class DetailsItemV extends Vue {
     @Get('layer/getLayerByUid') getLayerByUid!: (id: string) => BaseLayer | undefined;
 
     identifyTypes: any = IdentifyResultFormat;
+    icon: string = '';
+
+    mounted() {
+        this.itemIcon;
+    }
 
     /**
      * Returns the information for a single identify result, given the layer and item offsets.
      */
     get identifyItem() {
-        return this.isFeature ? this.payload : this.payload[this.layerIndex].items[this.itemIndex];
+        const item: any = this.isFeature ? this.payload : this.payload[this.layerIndex].items[this.itemIndex];
+        return item;
+    }
+
+    get itemName() {
+        if (this.identifyItem.data.Name == undefined) return this.identifyItem.data.StationName;
+        return this.identifyItem.data.Name;
+    }
+
+    get itemIcon() {
+        const layer: BaseLayer | undefined = this.layers[this.layerIndex];
+        if (layer === undefined) return '';
+        return layer.getIcon(this.identifyItem.data.OBJECTID).then(value => this.icon = value);
     }
 
     get detailsTemplate() {
