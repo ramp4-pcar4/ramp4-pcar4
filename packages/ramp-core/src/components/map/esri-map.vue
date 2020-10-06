@@ -36,11 +36,8 @@ export default class EsriMap extends Vue {
         //      the root cause and fix that.
         if (!this.map) { return; }
 
-        newValue.forEach(layer => {
-            // TODO add a proper check for this after
-            // if (!oldValue.includes(layer)) {
+        newValue.filter(l => !oldValue.includes(l)).forEach(layer => {
             this.map.addLayer(layer);
-            // }
 
             // a bit dangerous but ideally https://github.com/ramp4-pcar4/ramp4-pcar4/issues/126 and https://github.com/ramp4-pcar4/ramp4-pcar4/issues/173
             // will make this more seamless and not need to worry about having multiple listeners.

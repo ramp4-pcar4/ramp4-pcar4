@@ -43,7 +43,7 @@ const actions = {
 
 const mutations = {
     ADD_LAYER: (state: LayerState, value: BaseLayer) => {
-        state.layers.push(value);
+        state.layers = [...state.layers, value]
     }
 };
 
