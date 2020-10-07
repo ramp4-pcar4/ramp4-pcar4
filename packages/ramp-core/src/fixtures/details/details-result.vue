@@ -16,8 +16,7 @@
                     @click="openResult(idx)"
                     v-focus-item
                 >
-                    <!-- TODO: Change this later. If the name attribute is added to the IdentifyItem class, that can be used. -->
-                    {{ item.data.Name || item.data.OBJECTID || 'Identify Result ' + (idx + 1) }}
+                    {{ item.data[nameField] || 'Identify Result ' + (idx + 1) }}
                 </div>
             </div>
             <div v-else>No results found for the selected layer.</div>
@@ -32,6 +31,7 @@ import { DetailsStore } from './store';
 
 import { PanelInstance } from '@/api';
 import { IdentifyResult } from 'ramp-geoapi';
+import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
 
 @Component({})
 export default class DetailsResultV extends Vue {
@@ -39,6 +39,7 @@ export default class DetailsResultV extends Vue {
     @Prop() layerIndex!: number;
 
     @Get(DetailsStore.payload) payload!: IdentifyResult[];
+    @Get('layer/getLayerByUid') getLayerByUid!: (id: string) => BaseLayer | undefined;
 
     /**
      * Switches the panel screen to display the data for a given result. Provides the currently selected layer index and the currently selected feature index as props.
@@ -52,6 +53,16 @@ export default class DetailsResultV extends Vue {
      */
     get identifyResult() {
         return this.payload[this.layerIndex];
+    }
+
+    /**
+     * Returns the name field for the layer specified by layerIndex.
+     */
+    get nameField() {
+        const layerInfo = this.payload[this.layerIndex];
+        const uid = layerInfo?.uid;
+        const layer: BaseLayer | undefined = this.getLayerByUid(uid);
+        return layer?.getNameField(uid);
     }
 }
 </script>

@@ -47,7 +47,6 @@ export default class DetailsItemV extends Vue {
 
     // retrieve the identify payload from the store
     @Get(DetailsStore.payload) payload!: IdentifyResult[];
-    @Get('layer/layers') layers!: BaseLayer[];
     @Get('layer/getLayerByUid') getLayerByUid!: (id: string) => BaseLayer | undefined;
 
     identifyTypes: any = IdentifyResultFormat;
@@ -66,10 +65,10 @@ export default class DetailsItemV extends Vue {
     }
 
     get itemName() {
-        // TODO get name field from layer once https://github.com/ramp4-pcar4/ramp4-pcar4/issues/272 is implemented.
-        if (this.identifyItem.data.Name !== undefined) return this.identifyItem.data.Name;
-        else if (this.identifyItem.data.StationName !== undefined) return this.identifyItem.data.StationName;
-        return 'Details';
+        const layerInfo = this.payload[this.layerIndex];
+        const layer: BaseLayer | undefined = this.getLayerByUid(layerInfo?.uid || this.uid);
+        const nameField = layer?.getNameField();
+        return nameField ? this.identifyItem.data[nameField] : 'Details';
     }
 
     get itemIcon() {
@@ -77,8 +76,8 @@ export default class DetailsItemV extends Vue {
         const uid = layerInfo?.uid || this.uid;
         const layer: BaseLayer | undefined = this.getLayerByUid(uid);
         if (layer === undefined) return '';
-        // TODO get objectid field from layer once https://github.com/ramp4-pcar4/ramp4-pcar4/issues/273 is implemented.
-        return layer.getIcon(this.identifyItem.data.OBJECTID, uid).then(value => this.icon = value);
+        const oidField = layer.getOidField();
+        return layer.getIcon(this.identifyItem.data[oidField], uid).then(value => this.icon = value);
     }
 
     get detailsTemplate() {
