@@ -56,7 +56,7 @@ export default class LegendPlaceholderV extends Vue {
     layerAdded(newValue: BaseLayer[], oldValue: BaseLayer[]) {
         this.layer = newValue.find((layer: BaseLayer) => layer.id === this.legendItem.id);
 
-        if (this.layer != undefined) {
+        if (this.layer !== undefined) {
             this.layer.isLayerLoaded().then(r => {
                 this.legendItem._layer = this.layer;
                 this.legendItem._type = LegendTypes.Entry;

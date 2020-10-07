@@ -161,6 +161,7 @@ export class GeoJsonLayer extends AttribLayer {
         // feature has only one layer
         const featIdx: number = 0; // GeoJSON is always 0
         const gjFC = new GeoJsonFC(this.infoBundle(), this, featIdx);
+        gjFC.name = this.name; // geojson layer is flat, so the FC and layer share their name. we do this here and not in extractMetaData because .name is private
         this.fcs[featIdx] = gjFC;
         this.layerTree.children.push(new TreeNode(featIdx, gjFC.uid, this.name));
 

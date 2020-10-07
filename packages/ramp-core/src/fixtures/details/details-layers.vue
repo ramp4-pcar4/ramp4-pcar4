@@ -61,7 +61,7 @@ export default class DetailsLayersV extends Vue {
                     return layer;
                 }
             })
-            .filter(node => node != undefined)[0];
+            .filter(node => node !== undefined)[0];
 
         if (!item) return;
 

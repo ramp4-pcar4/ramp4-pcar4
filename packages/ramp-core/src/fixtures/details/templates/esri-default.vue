@@ -24,7 +24,7 @@ export default class ESRIDefaultV extends Vue {
     get itemData() {
         const helper: any = {};
         Object.assign(helper, this.identifyData.data);
-        if (helper.Symbol != undefined) delete helper.Symbol;
+        if (helper.Symbol !== undefined) delete helper.Symbol;
         return helper;
     }
 }
