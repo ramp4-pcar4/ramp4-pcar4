@@ -21,8 +21,12 @@ export default class ESRIDefaultV extends Vue {
     @Prop() identifyData!: IdentifyItem;
 
     // clone identifyData and remove unwanted data
-    data: Object = this.itemData;
+    data: Object = {};
     helper: any = {}
+
+    mounted() {
+        this.data = this.itemData;
+    }
 
     get itemData() {
         Object.assign(this.helper, this.identifyData.data);

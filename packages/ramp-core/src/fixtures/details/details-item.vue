@@ -64,12 +64,14 @@ export default class DetailsItemV extends Vue {
     }
 
     get itemName() {
-        if (this.identifyItem.data.Name == undefined) return this.identifyItem.data.StationName;
-        return this.identifyItem.data.Name;
+        if (this.identifyItem.data.Name != undefined) return this.identifyItem.data.Name;
+        else if (this.identifyItem.data.StationName != undefined) return this.identifyItem.data.StationName;
+        return 'Details';
     }
 
     get itemIcon() {
-        const layer: BaseLayer | undefined = this.layers[this.layerIndex];
+        const layerInfo = this.payload[this.layerIndex];
+        const layer: BaseLayer | undefined = this.getLayerByUid(layerInfo?.uid || this.uid);
         if (layer === undefined) return '';
         return layer.getIcon(this.identifyItem.data.OBJECTID).then(value => this.icon = value);
     }
