@@ -1,7 +1,10 @@
 <template>
     <panel-screen>
         <template #header>
-            Details
+            <div class="flex">
+                <span v-html=icon class="flex-initial"> </span>
+                <span class="flex-initial"> {{ itemName }} </span>
+            </div>
         </template>
         <template #controls>
             <back @click="panel.show({ screen: 'details-screen-result', props: { layerIndex: layerIndex } })" v-if="!isFeature"></back>
@@ -48,12 +51,35 @@ export default class DetailsItemV extends Vue {
     @Get('layer/getLayerByUid') getLayerByUid!: (id: string) => BaseLayer | undefined;
 
     identifyTypes: any = IdentifyResultFormat;
+    icon: string = '';
+
+    mounted() {
+        this.itemIcon;
+    }
 
     /**
      * Returns the information for a single identify result, given the layer and item offsets.
      */
     get identifyItem() {
-        return this.isFeature ? this.payload : this.payload[this.layerIndex].items[this.itemIndex];
+        const item: any = this.isFeature ? this.payload : this.payload[this.layerIndex].items[this.itemIndex];
+        return item;
+    }
+
+    get itemName() {
+        // TODO get name field from layer once https://github.com/ramp4-pcar4/ramp4-pcar4/issues/272 is implemented.
+        if (this.identifyItem.data.Name != undefined) return this.identifyItem.data.Name;
+        else if (this.identifyItem.data.StationName != undefined) return this.identifyItem.data.StationName;
+        return 'Details';
+    }
+
+    get itemIcon() {
+        const layerInfo = this.payload[this.layerIndex];
+        const uid = layerInfo?.uid || this.uid;
+        const layer: BaseLayer | undefined = this.getLayerByUid(uid);
+        if (layer === undefined) return '';
+        // TODO get objectid field from layer once https://github.com/ramp4-pcar4/ramp4-pcar4/issues/273 is implemented.
+        // TODO use second uid parameter in getIcon after https://github.com/ramp4-pcar4/ramp4-pcar4/issues/257 is implemented.
+        return layer.getIcon(this.identifyItem.data.OBJECTID).then(value => this.icon = value);
     }
 
     get detailsTemplate() {
