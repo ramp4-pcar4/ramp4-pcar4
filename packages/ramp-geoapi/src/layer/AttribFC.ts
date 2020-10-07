@@ -601,13 +601,32 @@ export default class AttribFC extends BaseFC {
      * @param {String} whereClause the WHERE clause of the filter
      */
     setSqlFilter(filterKey: string, whereClause: string): void {
-        // TODO maybe implement a check first? e.g. if we are setting to '' but that key is already '',
-        //      then just exit, no need to trigger updates?
+
+        // dirty test
+        const currentFilter = this.filter.getSql(filterKey);
+        if (whereClause === currentFilter) { return; }
+
         this.filter.setSql(filterKey, whereClause);
         this.parentLayer.filterChanged.fireEvent({
             uid: this.uid,
-            filter: filterKey
+            filterKey
         });
+
+        // updating the filter on the layer can smash the server if multiple changes occur at once.
+        // this will delay applying changes if more changes arrive shortly after this one.
+        const debounceKey = `${this.uid}-${filterKey}-${whereClause}`;
+        this.parentLayer._lastFilterUpdate = debounceKey;
+
+        const refreshCheck = () => {
+            if (this.parentLayer._lastFilterUpdate === debounceKey) {
+                // no other filter changes have happened in the delay window.
+                // apply the filter to the layer
+                this.applySqlFilter();
+            }
+        };
+
+        setTimeout(refreshCheck, 100);
+
     }
 
     /**

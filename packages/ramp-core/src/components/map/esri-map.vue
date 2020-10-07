@@ -5,7 +5,7 @@
 <script lang="ts">
 import { Vue, Watch, Component } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
-import GapiLoader, { RampMap, GeoApi, RampMapConfig, MapClick, MapMove, ApiBundle as GeoApiBundle } from 'ramp-geoapi';
+import GapiLoader, { RampMap, GeoApi, RampMapConfig, MapClick, MapMove, FilterEventParam, CoreFilterKey, ApiBundle as GeoApiBundle } from 'ramp-geoapi';
 import { GlobalEvents } from '../../api/internal';
 import { APIInterface, RampGeo } from '../../api';
 // import { window } from '@/main';
@@ -41,6 +41,12 @@ export default class EsriMap extends Vue {
             // if (!oldValue.includes(layer)) {
             this.map.addLayer(layer);
             // }
+
+            // a bit dangerous but ideally https://github.com/ramp4-pcar4/ramp4-pcar4/issues/126 and https://github.com/ramp4-pcar4/ramp4-pcar4/issues/173
+            // will make this more seamless and not need to worry about having multiple listeners.
+            layer.filterChanged.listen((payload: FilterEventParam) => {
+                this.$iApi.event.emit(GlobalEvents.FILTER_CHANGE, payload);
+            });
         });
     }
 
@@ -49,6 +55,7 @@ export default class EsriMap extends Vue {
         if (newValue === oldValue) {
             return;
         }
+
         this.map = RAMP.geoapi.maps.createMap(this.mapConfig, this.$el as HTMLDivElement);
         // FIXME: temporarily store map in global, remove line below when map API is complete
         this.$iApi.map = this.map;
@@ -62,7 +69,14 @@ export default class EsriMap extends Vue {
             this.$iApi.event.emit(GlobalEvents.MAP_DOUBLECLICK, payload);
         });
         this.$iApi.map.extentChanged.listen((payload: GeoApiBundle.Extent) => {
+            // NOTE: yes, double events. rationale is a block of code dealing with filters will not
+            //       want to have two event handlers (one on filter, one on extent change) and synch
+            //       between them. They can subscribe to the filter event and get all the info they need.
             this.$iApi.event.emit(GlobalEvents.MAP_EXTENTCHANGE, payload);
+            this.$iApi.event.emit(GlobalEvents.FILTER_CHANGE, {
+                extent: payload,
+                filterKey: CoreFilterKey.EXTENT
+            });
         });
         this.$iApi.map.mapMouseMoved.listen((payload: MapMove) => {
             // TODO debounce here? the map event fires pretty much every change in pixel value.

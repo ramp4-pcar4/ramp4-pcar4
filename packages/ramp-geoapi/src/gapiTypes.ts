@@ -7,6 +7,7 @@
 
 import esri = __esri; // magic command to get ESRI JS API type definitions.
 import BaseGeometry from './api/geometry/BaseGeometry'; // this is a bit wonky. could expose on RampAPI, but dont want clients using the baseclass
+import Extent from './api/geometry/Extent';
 import Point from './api/geometry/Point';
 import SpatialReference from './api/geometry/SpatialReference';
 import { Attributes } from './api/apiDefs';
@@ -65,7 +66,7 @@ export class EsriBundle {
     Polygon: esri.PolygonConstructor;
     Polyline: esri.PolylineConstructor;
     SpatialReference: esri.SpatialReferenceConstructor;
-    
+
     // SYMBOLS & RENDERERS
     ClassBreaksRenderer: esri.ClassBreaksRendererConstructor;
     PictureMarkerSymbol: esri.PictureMarkerSymbolConstructor;
@@ -268,8 +269,19 @@ export interface IdentifyResultSet {
 }
 
 export interface FilterEventParam {
-    filter: string;
-    uid: string;
+    filterKey: string;
+    uid?: string;
+    extent?: Extent;
+    extraData?: any;
+}
+
+// these represent filter keys that the core reserves. the above interface does not use it for typing as
+// 3rd parties can define their own keys.
+export enum CoreFilterKey {
+    SYMBOL = 'symbol',
+    GRID = 'grid',
+    EXTENT = 'extent',
+    API = 'api'
 }
 
 // ----------------------- CLIENT CONFIG INTERFACES -----------------------------------
