@@ -45,11 +45,13 @@
         <!-- main grid component -->
         <ag-grid-vue
             class="ag-theme-material flex-grow"
+            enableCellTextSelection="true"
             :gridOptions="gridOptions"
             :columnDefs="columnDefs"
             :rowData="rowData"
             :frameworkComponents="frameworkComponents"
             @grid-ready="onGridReady"
+            @keydown.native="stopArrowKeyProp" 
         >
         </ag-grid-vue>
     </div>
@@ -444,6 +446,13 @@ export default class TableComponent extends Vue {
         // Clear any existing column filters.
         this.gridOptions.api.setFilterModel({});
         this.gridApi.refreshHeader();
+    }
+
+    stopArrowKeyProp(event: KeyboardEvent) {
+        const arrowKeys = ['ArrowDown', 'Down', 'ArrowLeft', 'Left', 'ArrowUp', 'Up', 'ArrowRight', 'Right'];
+        if (arrowKeys.includes(event.key)) {
+            event.stopPropagation();
+        }
     }
 }
 
