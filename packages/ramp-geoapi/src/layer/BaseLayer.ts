@@ -332,7 +332,7 @@ export default class BaseLayer extends BaseBase {
         if (uid === this.uid) {
             return -1;
         } else {
-            const fcIdx: number = this.fcs.findIndex(fc => fc.uid === uid);
+            const fcIdx: number = this.fcs.findIndex(fc => fc?.uid === uid);
             if (fcIdx === -1) {
                 // no match
                 throw new Error(`Attempt to access non-existing unique id [layerid ${this._innerLayer.id}, uid ${uid}]`);
