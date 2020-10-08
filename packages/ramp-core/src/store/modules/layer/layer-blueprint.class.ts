@@ -737,7 +737,7 @@ class UrlWrapper {
      * @memberof UrlWrapper
      */
     updateQuery(queryMapUpdate: QueryMap): string {
-        const requestQueryMap: QueryMap = deepmerge({}, this.queryMap, queryMapUpdate);
+        const requestQueryMap: QueryMap = <QueryMap>deepmerge.all([{}, this.queryMap, queryMapUpdate]);
         const requestUrl = `${this.base}${Object.entries(requestQueryMap)
             .filter(([_, value]) => value !== undefined)
             .map(([key, value], index) => `${index === 0 ? '?' : ''}${key}=${value}`)

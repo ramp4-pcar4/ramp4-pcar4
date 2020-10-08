@@ -43,7 +43,8 @@ const actions = {
 
 const mutations = {
     ADD_LAYER: (state: LayerState, value: BaseLayer) => {
-        state.layers.push(value);
+        // copy to new array so watchers will have a reference to the old value
+        state.layers = [...state.layers, value]
     }
 };
 

@@ -32,9 +32,8 @@ const getters = {
 const actions = {
     newConfig: function(this: any, context: ConfigContext, config: RampConfig): void {
         const newConfig = merge(context.state.config, config);
-        this.set(LayerStore.addLayers, newConfig.layers);
-
         context.commit('SET_CONFIG', newConfig);
+        this.set(LayerStore.addLayers, newConfig.layers);
     },
     registerConfig: function(this: any, context: ConfigContext, configInfo: any): void {
         const langs = configInfo.langs;
