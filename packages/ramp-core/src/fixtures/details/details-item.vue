@@ -75,7 +75,10 @@ export default class DetailsItemV extends Vue {
         const layerInfo = this.payload[this.layerIndex];
         const uid = layerInfo?.uid || this.uid;
         const layer: BaseLayer | undefined = this.getLayerByUid(uid);
-        if (layer === undefined) return '';
+        if (layer === undefined) {
+            console.warn(`could not find layer for uid ${uid} during icon lookup`);
+            return '';
+        }
         const oidField = layer.getOidField();
         return layer.getIcon(this.identifyItem.data[oidField], uid).then(value => this.icon = value);
     }

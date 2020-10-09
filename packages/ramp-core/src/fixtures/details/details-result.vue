@@ -51,12 +51,21 @@ export default class DetailsResultV extends Vue {
         this.panel.show({ screen: 'details-screen-item', props: { layerIndex: this.layerIndex, itemIndex: itemIndex } });
     }
 
+    /**
+     * Updates the value of icon[idx] with the svg string of the item.
+     * 
+     * @param {any} data data of item in identifyResult.items
+     * @param {number} idx index of item in identifyResult.items
+     */
     itemIcon(data: any, idx: number) {
         const uid = this.identifyResult.uid;
         const layer: BaseLayer | undefined = this.getLayerByUid(uid);
-        if (layer === undefined) return;
+        if (layer === undefined) {
+            console.warn(`could not find layer for uid ${uid} during icon lookup`);
+            return;
+        }
         const oidField = layer.getOidField();
-        layer.getIcon(data[oidField], uid).then(value => {if (this.icon[idx] != value) this.$set(this.icon, idx, value)});
+        layer.getIcon(data[oidField], uid).then(value => {if (this.icon[idx] !== value) this.$set(this.icon, idx, value)});
     }
 
     /**
