@@ -1,6 +1,6 @@
 describe('Mapnav', () => {
     beforeEach(() => {
-        cy.visit('/');
+        cy.visit('/index-e2e.html?script=mapnav');
         cy.get('.ramp-app');
         cy.get('.mapnav');
     });

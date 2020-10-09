@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- Fun Note: the `host` instance of index.html is what gets used when building the project via `rush build` -->
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <link rel="icon" href="./favicon.ico" />
+        <title>Test Page</title>
+
+        <link rel="stylesheet" href="./../dist/RAMP.css" />
+
+        <!-- the host page must load Vue since RAMP doesn't bundle it -->
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+        <!-- loading main RAMP file; this needs to be loaded after Vue -->
+        <script src="./../dist/RAMP.umd.js"></script>
+    </head>
+    <body>
+        <div id="app"></div>
+
+        <span id="ramp-version"></span>
+
+        <script>
+            // get RAMP "starter" script from url param
+            const params = new URLSearchParams(document.location.search);
+            let script = document.createElement("script");
+            let starterParam = params.get("script");
+            if (starterParam) {
+                // html-webpack-plugin doesn't like template strings
+                script.src = "./../dist/starter-scripts/" + starterParam + ".js";
+            } else {
+                script.src = "./../dist/ramp-starter.js";
+            }
+            // log an error msg if script doesn't exist / is broken
+            script.onerror = () => {
+                console.log("invalid script");
+            }
+            document.body.appendChild(script);
+        </script>
+    </body>
+</html>
