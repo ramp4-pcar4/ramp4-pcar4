@@ -73,6 +73,26 @@ export default class AttribLayer extends BaseLayer {
     }
 
     /**
+     * Returns the name field of the given sublayer.
+     *
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to get the name field of. Uses first/only if omitted.
+     * @returns {string} name field
+     */
+    getNameField (layerIdx: number | string = undefined): string {
+        return this.getFC(layerIdx).nameField;
+    }
+
+    /**
+     * Returns the OID field of the given sublayer.
+     *
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to get the OID field of. Uses first/only if omitted.
+     * @returns {string} OID field
+     */
+    getOidField (layerIdx: number | string = undefined): string {
+        return this.getFC(layerIdx).oidField;
+    }
+
+    /**
      * Requests that an attribute load request be aborted. Useful when encountering a massive dataset or a runaway process.
      *
      * @param {Integer | String} [layerIdx] targets a layer index or uid to stop loading attributes for. Uses first/only if omitted.
