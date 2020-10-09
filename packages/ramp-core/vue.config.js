@@ -6,6 +6,18 @@ const childProcess = require('child_process');
 const pkg = require('./package.json');
 
 module.exports = {
+    pages: {
+        index: {
+          entry: 'src/main.ts',
+          template: 'public/index.html',
+          filename: 'index.html'
+        },
+        test: {
+          entry: 'src/main.ts',
+          template: 'public/index-e2e.html',
+          filename: 'index-e2e.html'
+        }
+    },
     configureWebpack: {
         output: {
             libraryExport: 'default'
@@ -53,7 +65,8 @@ module.exports = {
         // DEV-specific configuration
         config.when(process.env.NODE_ENV === 'development', config => {
             // modify the default injection point from 'body' to 'head', so it's easier to orchestrate the loading order; only when `serve`ing
-            config.plugin('html').tap(args => [{ ...args[0], inject: 'head' }]);
+            config.plugin('html-index').tap(args => [{ ...args[0], inject: 'head' }]);
+            config.plugin('html-test').tap(args => [{ ...args[0], inject: 'head' }]);
         });
 
         // PROD-specific configuration
@@ -70,6 +83,7 @@ module.exports = {
 
             // copy `ramp-starter.js` to `dist` folder when building prod build
             config.plugin('webpack-copy-plugin').tap(args => [[...args[0], { from: 'public/ramp-starter.js', to: '' }]]);
+            config.plugin('webpack-copy-plugin').tap(args => [[...args[0], { from: 'public/starter-scripts/', to: './starter-scripts/' }]]);
         });
 
         // get version numbers
