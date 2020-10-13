@@ -10,13 +10,14 @@
         <template #content>
             <div v-if="identifyResult.items.length > 0">
                 <div
-                    class="px-20 py-10 text-md truncate hover:bg-gray-200 cursor-pointer"
+                    class="flex px-10 py-10 text-md truncate hover:bg-gray-200 cursor-pointer"
                     v-for="(item, idx) in identifyResult.items"
                     :key="idx"
                     @click="openResult(idx)"
                     v-focus-item
                 >
-                    {{ item.data[nameField] || 'Identify Result ' + (idx + 1) }}
+                    <span v-html=icon[idx] class="flex-initial"> {{ itemIcon(item.data, idx) }} </span>
+                    <span class="flex-initial p-5"> {{ item.data[nameField] || 'Identify Result ' + (idx + 1) }} </span>
                 </div>
             </div>
             <div v-else>No results found for the selected layer.</div>
@@ -41,11 +42,30 @@ export default class DetailsResultV extends Vue {
     @Get(DetailsStore.payload) payload!: IdentifyResult[];
     @Get('layer/getLayerByUid') getLayerByUid!: (id: string) => BaseLayer | undefined;
 
+    icon: string[] = [];
+
     /**
      * Switches the panel screen to display the data for a given result. Provides the currently selected layer index and the currently selected feature index as props.
      */
     openResult(itemIndex: number) {
         this.panel.show({ screen: 'details-screen-item', props: { layerIndex: this.layerIndex, itemIndex: itemIndex } });
+    }
+
+    /**
+     * Updates the value of icon[idx] with the svg string of the item.
+     * 
+     * @param {any} data data of item in identifyResult.items
+     * @param {number} idx index of item in identifyResult.items
+     */
+    itemIcon(data: any, idx: number) {
+        const uid = this.identifyResult.uid;
+        const layer: BaseLayer | undefined = this.getLayerByUid(uid);
+        if (layer === undefined) {
+            console.warn(`could not find layer for uid ${uid} during icon lookup`);
+            return;
+        }
+        const oidField = layer.getOidField();
+        layer.getIcon(data[oidField], uid).then(value => {if (this.icon[idx] !== value) this.$set(this.icon, idx, value)});
     }
 
     /**
