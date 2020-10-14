@@ -2,7 +2,7 @@
     <span
         role="tooltip"
         :class="'rv-ui-tooltip-' + position"
-        class="rv-ui-tooltip absolute opacity-0 invisible bg-black text-white text-center py-3 px-5 rounded z-50"
+        class="rv-ui-tooltip pointer-events-none absolute opacity-0 invisible bg-black text-white text-center py-3 px-5 rounded z-50"
         ><slot></slot
     ></span>
 </template>
