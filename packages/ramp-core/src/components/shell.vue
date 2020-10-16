@@ -2,7 +2,7 @@
     <div class="h-full relative">
         <!-- TODO: should inner shell be a separate component? -->
         <div class="inner-shell absolute top-0 left-0 h-full w-full pointer-events-none">
-            <panel-stack class="sm:flex absolute inset-0 overflow-hidden xs:pl-40 sm:p-12 sm:pl-80 z-10"></panel-stack>
+            <panel-stack class="sm:flex absolute inset-0 overflow-hidden xs:pl-40 sm:p-12 sm:pl-80 z-10 sm:pb-36 xs:pb-12"></panel-stack>
             <map-caption></map-caption>
         </div>
 
