@@ -11,7 +11,7 @@ dependencies:
   '@rush-temp/ramp-sample-fixtures': 'file:projects/ramp-sample-fixtures.tgz'
   '@tailwindcss/custom-forms': 0.2.1_tailwindcss@1.6.2
   '@types/animejs': 3.1.1
-  '@types/arcgis-js-api': 4.16.0
+  '@types/arcgis-js-api': 4.17.0
   '@types/clone-deep': 4.0.1
   '@types/debounce': 1.2.0
   '@types/dojo': 1.9.43
@@ -1381,10 +1381,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-vKWHlTcIyyglTNqT/eBPQcmHYMxv23Jrn1qU/SWcTilodSG12d0BNcq+D2fAyW2vv3YwsJJbPBhTRzPt8aPJDw==
-  /@types/arcgis-js-api/4.16.0:
+  /@types/arcgis-js-api/4.17.0:
     dev: false
     resolution:
-      integrity: sha512-AAXUeyzF2PxtjKOO/Zqffq/mLpNp/uVaKwqq/n8ayqsqOGtffNDBTrfeUDvaFnrox8oTVFhDIAEObZHJNxwFgA==
+      integrity: sha512-X7FOaEPsMkTT8K1dedMo/DNEnnLJsDgI1oogKdyus2gqWmVjLaGO7YP0jqT22v4pM2Y/32tbooIpU6/yYLn1Wg==
   /@types/babel__core/7.1.9:
     dependencies:
       '@babel/parser': 7.11.0
@@ -13646,12 +13646,13 @@ packages:
       '@babel/plugin-proposal-object-rest-spread': 7.11.0_@babel+core@7.11.0
       '@babel/preset-env': 7.11.0_@babel+core@7.11.0
       '@babel/preset-typescript': 7.10.4_@babel+core@7.11.0
-      '@types/arcgis-js-api': 4.16.0
+      '@types/arcgis-js-api': 4.17.0
       '@types/dojo': 1.9.43
       '@types/geojson': 1.0.6
       '@types/node': 7.0.0
       '@types/proj4': 2.5.0
       awesome-typescript-loader: 5.2.1_typescript@3.8.3
+      deepmerge: 4.2.2
       proj4: 2.6.0
       source-map-loader: 0.2.3
       svg.js: 2.7.1
@@ -13666,7 +13667,7 @@ packages:
     dev: false
     name: '@rush-temp/ramp-geoapi'
     resolution:
-      integrity: sha512-MKQVbj2QF+Qiav0mMILo4TDydi/GVj494iCuJug0n0o0tlk6RjaL8hBTrkKKGmyp1g5K39VdVU4IAu4LQGJnlw==
+      integrity: sha512-MiuJt2ACxpqGL9FugGeOJeMgW6S+BxD49MoFQJYknX087wgPgtdaw5Bz39+pjDai8uVxtlnXL7M8moWEMS9PHw==
       tarball: 'file:projects/ramp-geoapi.tgz'
     version: 0.0.0
   'file:projects/ramp-locale-loader.tgz':
@@ -13708,6 +13709,7 @@ packages:
       integrity: sha512-OguwqMo1M+GWZfRLFMArIJ5GpRgZgpZlCyFD0Tonv6Wi+ttEB0KFoCCeVgweGn8Tnil0lIfjgfKgtap2oMr8nw==
       tarball: 'file:projects/ramp-sample-fixtures.tgz'
     version: 0.0.0
+registry: ''
 specifiers:
   '@babel/cli': ^7.2.3
   '@babel/core': ^7.4.0
@@ -13721,7 +13723,7 @@ specifiers:
   '@rush-temp/ramp-sample-fixtures': 'file:./projects/ramp-sample-fixtures.tgz'
   '@tailwindcss/custom-forms': ^0.2.1
   '@types/animejs': ~3.1.0
-  '@types/arcgis-js-api': ~4.16.0
+  '@types/arcgis-js-api': ~4.17.0
   '@types/clone-deep': ~4.0.1
   '@types/debounce': ^1.2.0
   '@types/dojo': ^1.9.41
