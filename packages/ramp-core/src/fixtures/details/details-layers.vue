@@ -1,13 +1,13 @@
 <template>
     <panel-screen>
         <template #header>
-            Details
+            {{ $t('details.title') }}
         </template>
         <template #controls>
             <close @click="panel.close()"></close>
         </template>
         <template #content>
-            <div class="p-5">Found {{ payloadResults }} results in {{ payload.length }} layer{{ payload.length !== 1 ? 's' : '' }}</div>
+            <div class="p-5">{{ $t('details.layers.found', { numResults: payloadResults, numLayers: payload.length }) }}</div>
             <div
                 class="px-20 py-10 text-md flex hover:bg-gray-200 cursor-pointer"
                 v-for="(item, idx) in payload"
