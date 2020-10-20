@@ -1,0 +1,4 @@
+key,enValue,enValid,frValue,frValid
+details.title,Details,1,Détails,0
+details.layers.found,Found {numResults} results in {numLayers} layers,1,Figure {numResults} résultats en {numLayers} couches,0
+details.results.empty,No results found for the selected layer.,1,Aucun résultat trouvé de la couche sélectionnée.,0
