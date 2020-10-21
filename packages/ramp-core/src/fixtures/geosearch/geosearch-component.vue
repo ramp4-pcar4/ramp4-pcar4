@@ -11,13 +11,13 @@
         <template #content>
             <geosearch-top-filters></geosearch-top-filters>
             <loading-bar class="mb-2" v-if="loadingResults"></loading-bar>
-            <div class="px-5 mt-10 truncate">
+            <div class="px-5 mb-10 truncate">
                 <span class="relative h-48" v-if="searchVal && searchResults.length === 0 && !loadingResults"
-                    >{{ $t('geosearch.noResults') }}<span class="font-bold text-blue-600">{{ searchVal }}</span></span
+                    >{{ $t('geosearch.noResults') }}<span class="font-bold text-blue-600">"{{ searchVal }}"</span></span
                 >
             </div>
             <ul
-                class="rv-results-list h-500 border-t border-b border-gray-600 overflow-hidden overflow-y-auto"
+                class="rv-results-list h-500 mb-5 border-t border-b border-gray-600 overflow-hidden overflow-y-auto"
                 v-focus-list
                 v-if="searchResults.length > 0"
             >

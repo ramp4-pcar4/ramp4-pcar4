@@ -1,7 +1,7 @@
 <template>
     <div class="rv-geosearch-bottom-filters">
         <div class="bg-white">
-            <label class="ml-4"
+            <label class="ml-8"
                 ><input
                     type="checkbox"
                     class="form-checkbox border-2 mx-8 border-gray-600"
