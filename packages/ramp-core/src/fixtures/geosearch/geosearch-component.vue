@@ -17,7 +17,7 @@
                 >
             </div>
             <ul
-                class="rv-results-list h-500 border-t border-b border-gray-600 overflow-hidden overflow-y-auto"
+                class="rv-results-list h-500 mb-5 border-t border-b border-gray-600 overflow-hidden overflow-y-auto"
                 v-focus-list
                 v-if="searchResults.length > 0"
             >
