@@ -1,7 +1,7 @@
 <template>
     <panel-screen :panel="panel">
         <template #header>
-            Details
+            {{ $t('details.title') }}
         </template>
         <template #controls>
             <back @click="panel.show('details-screen-layers')"></back>
@@ -20,7 +20,7 @@
                     <span class="flex-initial p-5"> {{ item.data[nameField] || 'Identify Result ' + (idx + 1) }} </span>
                 </div>
             </div>
-            <div v-else>No results found for the selected layer.</div>
+            <div v-else>{{ $t('details.results.empty') }}</div>
         </template>
     </panel-screen>
 </template>
