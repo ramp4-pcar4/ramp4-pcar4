@@ -1,6 +1,6 @@
 <template>
-    <div class="rv-geosearch-top-filters w-full mt-16">
-        <div class="inline-block w-2/6 h-40 mx-16">
+    <div class="rv-geosearch-top-filters flex w-full mt-16">
+        <div class="inline-block w-2/5 h-40 ml-16">
             <select
                 class="form-select border-b border-b-gray-600 w-full h-auto py-0"
                 :value="queryParams.province"
@@ -12,7 +12,7 @@
                 </option>
             </select>
         </div>
-        <div class="inline-block w-2/6 h-40 mx-16">
+        <div class="inline-block w-2/5 h-40 mx-16">
             <select
                 class="form-select border-b border-b-gray-600 w-full h-auto py-0"
                 :value="queryParams.type"
@@ -25,7 +25,7 @@
             </select>
         </div>
         <button
-            class="inline-block text-gray-500 w-1/8 hover:text-black float-right"
+            class="inline-block flex text-gray-500 w-1/8 hover:text-black float-right"
             :disabled="!queryParams.type && !queryParams.province"
             v-on:click="clearFilters"
         >
