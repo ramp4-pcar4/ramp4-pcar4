@@ -1,5 +1,11 @@
 key,enValue,enValid,frValue,frValid
 legend.title,Legend,1,Légende,1
-legend.show, Show layer, 1, Afficher la couche, 0
-legend.hide, Hide layer, 1, Masquer la couche, 0
-legend.expand, Expand legend, 1, Développer la légende, 0
+legend.show,Show layer,1,Afficher la couche,0
+legend.hide,Hide layer,1,Masquer la couche,0
+legend.expand,Expand legend,1,Développer la légende,0
+legend.toggle.group,Toggle Groups,1,Basculer les Groupes,1
+legend.toggle.visible,Toggle Visibility,1,Basculer la Visibilité,1
+legend.visible.show,Show All,1,Montrer tout,1
+legend.visible.hide,Hide All,1,Cacher tout,1
+legend.group.expand,Expand All,1,Élargir les groupes,1
+legend.group.collapse,Collapse All,1,Réduire les groupes,1
