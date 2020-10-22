@@ -4,3 +4,7 @@
     @tailwind components;
     @tailwind utilities;
 }
+
+.ramp-app button:focus {
+    outline: 2px solid black;
+}

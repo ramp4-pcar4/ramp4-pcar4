@@ -1,7 +1,7 @@
 <template>
     <span
         role="tooltip"
-        :class="'rv-ui-tooltip-' + position"
+        :position="position"
         class="rv-ui-tooltip pointer-events-none absolute opacity-0 invisible bg-black text-white text-center py-3 px-5 rounded z-50"
         ><slot></slot
     ></span>
@@ -43,60 +43,39 @@ export default class TooltipV extends Vue {
     width: max-content;
     font-size: x-small;
 
-    &::after {
-        content: '';
-        border-width: 5px;
-        @apply absolute;
+    &[position='top'] {
+        @apply left-1/2 bottom-full;
+        transform: translateX(-50%);
+    }
+    &[position='top-left'] {
+        @apply right-0 bottom-full;
+    }
+    &[position='top-right'] {
+        @apply left-0 bottom-full;
+    }
+    &[position='bottom'] {
+        @apply left-1/2 top-full;
+        transform: translateX(-50%);
+    }
+    &[position='bottom-left'] {
+        @apply right-0 top-full;
+    }
+    &[position='bottom-right'] {
+        @apply left-0 top-full;
+    }
+    &[position='left'] {
+        @apply right-full top-1/2;
+        transform: translateY(-50%);
+    }
+    &[position='right'] {
+        @apply left-full top-1/2;
+        transform: translateY(-50%);
     }
 
     :hover > &,
     :focus + &,
     :focus .focused + & {
         @apply visible opacity-100 text-base;
-    }
-}
-
-.rv-ui-tooltip-top {
-    @apply left-1/2 bottom-full;
-    transform: translateX(-50%);
-
-    &::after {
-        @apply left-1/2 top-full;
-        margin-left: -5px;
-        border-color: black transparent transparent transparent;
-    }
-}
-
-.rv-ui-tooltip-bottom {
-    @apply left-1/2 top-full;
-    transform: translateX(-50%);
-
-    &::after {
-        @apply left-1/2 bottom-full;
-        margin-left: -5px;
-        border-color: transparent transparent black transparent;
-    }
-}
-
-.rv-ui-tooltip-left {
-    @apply right-full top-1/2;
-    transform: translateY(-50%);
-
-    &::after {
-        @apply -right-9 bottom-1/2;
-        margin-bottom: -4px;
-        border-color: transparent transparent transparent black;
-    }
-}
-
-.rv-ui-tooltip-right {
-    @apply left-full top-1/2;
-    transform: translateY(-50%);
-
-    &::after {
-        @apply -left-9 bottom-1/2;
-        margin-bottom: -4px;
-        border-color: transparent black transparent transparent;
     }
 }
 </style>
