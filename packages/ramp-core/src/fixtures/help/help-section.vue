@@ -1,12 +1,12 @@
 <template>
     <div>
         <div >
-            <div class="help-section-header flex items-center p-15 hover:bg-gray-200 cursor-pointer" @click="toggleExpanded()">
+            <div class="help-section-header flex items-center p-15 hover:bg-gray-200 cursor-pointer select-none" @click="toggleExpanded()">
                 <!-- name -->
-                <span class="text-lg flex-grow select-none">{{ helpSection.header }}</span>
+                <span class="text-lg flex-grow">{{ helpSection.header }}</span>
 
                 <!-- dropdown icon -->
-                <div id="icon" :class="{ 'rotate-180': expanded }">
+                <div id="icon" :class="{ 'transform -rotate-180': expanded }">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
                         <path d="M0 0h24v24H0V0z" fill="none" />
                         <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
@@ -43,8 +43,5 @@ export default class HelpSectionV extends Vue {
 }
 .help-section-header #icon {
     transition: transform 0.3s cubic-bezier(0.35, 0, 0.25, 1);
-}
-.rotate-180 {
-    transform: rotate(-180deg);
 }
 </style>

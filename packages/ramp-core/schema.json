@@ -12,8 +12,13 @@
             "properties": {
                 "folderName": {
                     "type": "string",
-                    "default": "",
+                    "default": "default",
                     "description": "Help folder name which contains the help description and images."
+                },
+                "panelWidth": {
+                    "type": "number",
+                    "default": 350,
+                    "description": "Help panel width in pixels"
                 }
             },
             "required": ["folderName"],
@@ -1522,7 +1527,8 @@
                 "help": {
                     "$ref": "#/$defs/help",
                     "default": {
-                        "folderName": "default"
+                        "folderName": "default",
+                        "panelWidth": 350
                     },
                     "description": "Specifies details for the Help section"
                 }

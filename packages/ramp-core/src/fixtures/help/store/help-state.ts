@@ -10,4 +10,5 @@ export class HelpState {
 
 export interface HelpConfig {
     folderName: string;
+    panelWidth: number;
 }
