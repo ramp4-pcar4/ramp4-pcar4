@@ -84,6 +84,7 @@ module.exports = {
             // copy `ramp-starter.js` to `dist` folder when building prod build
             config.plugin('webpack-copy-plugin').tap(args => [[...args[0], { from: 'public/ramp-starter.js', to: '' }]]);
             config.plugin('webpack-copy-plugin').tap(args => [[...args[0], { from: 'public/starter-scripts/', to: './starter-scripts/' }]]);
+            config.plugin('webpack-copy-plugin').tap(args => [[...args[0], { from: 'public/help', to: 'help' }]]);
         });
 
         // get version numbers

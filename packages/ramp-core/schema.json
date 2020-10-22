@@ -1454,9 +1454,6 @@
                     "default": false,
                     "description": "Indicates if viewer takes up entire viewport."
                 },
-                "help": {
-                    "$ref": "#/$defs/help"
-                },
                 "restrictNavigation": {
                     "type": "boolean",
                     "default": false,
@@ -1521,6 +1518,13 @@
                         "templates": []
                     },
                     "description": "Provides configuration to identify results and details panel. Default to no user custom templates."
+                },
+                "help": {
+                    "$ref": "#/$defs/help",
+                    "default": {
+                        "folderName": "default"
+                    },
+                    "description": "Specifies details for the Help section"
                 }
             },
             "unevaluatedProperties": false

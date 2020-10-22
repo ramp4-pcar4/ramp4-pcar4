@@ -1,5 +1,5 @@
 <template>
-    <mapnav-button>
+    <mapnav-button :onClickFunction="onClick">
         <template #icon>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="fill-current w-32 h-20">
                 <path d="M0 0h24v24H0z" fill="none" />
@@ -14,9 +14,14 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
+import { GlobalEvents } from '../../api/internal';
 
 @Component
-export default class HelpNavV extends Vue {}
+export default class HelpNavV extends Vue {
+    onClick() {
+        this.$iApi.event.emit(GlobalEvents.HELP_OPEN);
+    }
+}
 </script>
 
 <style lang="scss" scoped></style>
