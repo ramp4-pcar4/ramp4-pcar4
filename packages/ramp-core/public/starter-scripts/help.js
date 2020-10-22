@@ -31,7 +31,11 @@ function initRAMP() {
                 initialBasemapId: 'esriImagery'
             },
             fixtures: {
-                mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] }
+                mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
+                help: { 
+                    folderName: 'other',
+                    panelWidth: 500
+                }
             }
         }
     }

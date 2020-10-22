@@ -9,6 +9,8 @@ class HelpFixture extends HelpAPI {
     added() {
         console.log(`[fixture] ${this.id} added`);
 
+        this.$iApi.component('help-nav-button', HelpNavV);
+
         this.$vApp.$store.registerModule('help', help());
 
         this.$iApi.panel.register(
@@ -26,10 +28,7 @@ class HelpFixture extends HelpAPI {
                 i18n: { messages }
             }
         );
-
         this.$iApi.panel.open('help-panel');
-        
-        this.$iApi.component('help-nav-button', HelpNavV);
 
         // parse help section of config and store information in help store
         this._parseConfig(this.config);
