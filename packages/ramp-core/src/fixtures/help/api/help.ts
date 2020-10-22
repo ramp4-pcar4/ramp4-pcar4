@@ -2,6 +2,11 @@ import { FixtureInstance } from '@/api';
 import { HelpConfig, HelpStore } from '../store';
 
 export class HelpAPI extends FixtureInstance {
+    /**
+     * Opens help panel if not already open
+     *
+     * @memberof HelpAPI
+     */
     openHelp() {
         const panel = this.$iApi.panel.get('help-panel');
         if (!panel.isOpen) {
@@ -14,7 +19,7 @@ export class HelpAPI extends FixtureInstance {
      *
      * @readonly
      * @type {HelpConfig}
-     * @memberof HelpFixture
+     * @memberof HelpAPI
      */
     get config(): HelpConfig | undefined {
         return super.config;
@@ -24,7 +29,6 @@ export class HelpAPI extends FixtureInstance {
      * Parses the help config JSON snippet from the config file and save to the fixture store.
      *
      * @param {HelpConfig} [helpConfig]
-     * @returns
      * @memberof HelpAPI
      */
     _parseConfig(helpConfig?: HelpConfig) {
