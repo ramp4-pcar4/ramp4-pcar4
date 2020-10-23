@@ -1,21 +1,21 @@
 <template>
     <div v-if="!visible">
         <!-- Multiple icons to display -->
-        <div v-if="stack.length > 1">
+        <div v-if="stack.length > 1" class="-ml-2">
             <!-- the :class line calculates margin-left for each of the 3 symbols, and gives a margin-top to symbols that arent the first -->
             <div
                 class="relative"
-                :class="['ml-' + idx * 3, idx > 0 ? '-mt-34' : '', 'symbol-' + idx]"
+                :class="['ml-' + idx * 3, idx > 0 ? '-mt-32' : '', 'symbol-' + idx]"
                 :style="{ 'z-index': 3 - idx }"
                 v-for="(item, idx) in stack.slice(0, 3).reverse()"
                 :key="idx"
             >
-                <span class="symbologyIcon" v-html="stack[idx].svgcode"></span>
+                <span class="symbologyIcon w-28 h-28" v-html="stack[idx].svgcode"></span>
             </div>
         </div>
 
         <!-- Only one icon to display. -->
-        <div v-else-if="stack.length > 0" class="symbologyIcon">
+        <div v-else-if="stack.length > 0" class="symbologyIcon w-32 h-32">
             <span v-html="stack[0].svgcode"></span>
         </div>
     </div>
@@ -68,7 +68,7 @@ export default class SymbologyStack extends Vue {
 
 <style lang="scss" scoped>
 .symbologyIcon {
-    @apply bg-white w-32 h-32 inline-flex justify-center items-center overflow-hidden;
+    @apply bg-white inline-flex justify-center items-center overflow-hidden;
     box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
 }
 
