@@ -47,20 +47,20 @@ export default class TooltipV extends Vue {
         @apply left-1/2 bottom-full;
         transform: translateX(-50%);
     }
-    &[position='top-left'] {
+    &[position='top-right'] {
         @apply right-0 bottom-full;
     }
-    &[position='top-right'] {
+    &[position='top-left'] {
         @apply left-0 bottom-full;
     }
     &[position='bottom'] {
         @apply left-1/2 top-full;
         transform: translateX(-50%);
     }
-    &[position='bottom-left'] {
+    &[position='bottom-right'] {
         @apply right-0 top-full;
     }
-    &[position='bottom-right'] {
+    &[position='bottom-left'] {
         @apply left-0 top-full;
     }
     &[position='left'] {

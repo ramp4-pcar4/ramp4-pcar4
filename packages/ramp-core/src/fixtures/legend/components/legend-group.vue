@@ -17,11 +17,10 @@
                 <!-- name -->
                 <span class="flex-1">{{ legendItem.name }}</span>
 
-            <!-- visibility -->
-            <div @click="legendItem.toggleExpanded();">
-                <checkbox :value="legendItem.visibility" :isRadio="props && props.isVisibilitySet" :legendItem="legendItem"/>
+                <!-- visibility -->
+                <checkbox :value="legendItem.visibility" :isRadio="props && props.isVisibilitySet" :legendItem="legendItem" />
             </div>
-            <tooltip position="top-right">Expand Group</tooltip>
+            <tooltip position="top-left">Expand Group</tooltip>
         </div>
 
         <!-- Display children of the group -->

@@ -1,14 +1,27 @@
 <template>
     <!-- Display a checkbox. -->
     <div v-if="!isRadio" class="relative">
-        <input type="checkbox" :checked="value" @click="legendItem.toggleVisibility()" class="rounded-none form-checkbox mx-5 h-15 w-15 text-black border-gray-500 hover:border-black cursor-pointer">
-        <tooltip position="left"> {{$t(value? 'legend.hide' : 'legend.show')}} </tooltip>
+        <input
+            type="checkbox"
+            :checked="value"
+            @click.stop="legendItem.toggleVisibility()"
+            class="rounded-none form-checkbox mx-5 h-15 w-15 text-black border-gray-500 hover:border-black cursor-pointer"
+            tabindex="-1"
+        />
+        <tooltip position="top-right"> {{ $t(value ? 'legend.visibility.hide' : 'legend.visibility.show') }} </tooltip>
     </div>
 
     <!-- If isRadio is set to true, a radio button will be displayed instead. -->
     <div v-else class="relative">
-        <input type="radio" :checked="value" :name="legendItem.parent.name" @click="legendItem.toggleVisibility()" class="form-radio mx-5 h-15 w-15 text-black border-gray-500 hover:border-black cursor-pointer">
-        <tooltip position="left"> {{$t(value? 'legend.hide' : 'legend.show')}} </tooltip>
+        <input
+            type="radio"
+            :checked="value"
+            :name="legendItem.parent.name"
+            @click.stop="legendItem.toggleVisibility()"
+            class="form-radio mx-5 h-15 w-15 text-black border-gray-500 hover:border-black cursor-pointer"
+            tabindex="-1"
+        />
+        <tooltip position="top-right"> {{ $t(value ? 'legend.visibility.hide' : 'legend.visibility.show') }} </tooltip>
     </div>
 </template>
 
