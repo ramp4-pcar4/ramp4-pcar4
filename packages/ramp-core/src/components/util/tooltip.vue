@@ -40,7 +40,6 @@ export default class TooltipV extends Vue {
 .rv-ui-tooltip {
     transition: opacity 0.2s;
     transition: font-size 0.2s;
-    
     width: max-content;
     font-size: x-small;
 
