@@ -66,6 +66,7 @@ export default class SymbologyStack extends Vue {
 .closeSymbologyIcon {
     @apply w-32 h-36 inline-flex justify-center items-center mr-15;
 }
+
 .symbol-1 {
     @apply ml-3;
     margin-top: -34px;
@@ -73,5 +74,14 @@ export default class SymbologyStack extends Vue {
 .symbol-2 {
     @apply ml-6;
     margin-top: -34px;
+    transition-property: margin-left margin-top;
+    transition-duration: 0.2s;
+
+    :hover > & {
+        @apply ml-8;
+        margin-top: -32px;
+        margin-bottom: -2px;
+        margin-right: -2px;
+    }
 }
 </style>
