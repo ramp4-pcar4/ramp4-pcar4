@@ -1,24 +1,13 @@
 <template>
-    <!-- Display a checkbox. -->
-    <div v-if="!isRadio" class="relative">
+    <div class="relative">
+        <!-- TODO: see if getting this to use v-model works; children wouldnt update properly on initial try -->
         <input
-            type="checkbox"
+            :type="isRadio ? 'radio' : 'checkbox'"
             :checked="value"
             @click.stop="legendItem.toggleVisibility()"
-            class="rounded-none form-checkbox mx-5 h-15 w-15 text-black border-gray-500 hover:border-black cursor-pointer"
-            tabindex="-1"
-        />
-        <tooltip position="top-right"> {{ $t(value ? 'legend.visibility.hide' : 'legend.visibility.show') }} </tooltip>
-    </div>
-
-    <!-- If isRadio is set to true, a radio button will be displayed instead. -->
-    <div v-else class="relative">
-        <input
-            type="radio"
-            :checked="value"
-            :name="legendItem.parent.name"
-            @click.stop="legendItem.toggleVisibility()"
-            class="form-radio mx-5 h-15 w-15 text-black border-gray-500 hover:border-black cursor-pointer"
+            @keyup.enter.stop="legendItem.toggleVisibility()"
+            :class="isRadio ? 'form-radio' : 'form-checkbox rounded-none'"
+            class="mx-5 h-15 w-15 text-black border-gray-500 hover:border-black cursor-pointer"
             tabindex="-1"
         />
         <tooltip position="top-right"> {{ $t(value ? 'legend.visibility.hide' : 'legend.visibility.show') }} </tooltip>

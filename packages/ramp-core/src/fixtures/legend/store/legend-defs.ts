@@ -120,7 +120,7 @@ export class LegendEntry extends LegendItem {
         this._layer = legendEntry.layers.find((layer: BaseLayer) => layer.id === this._id);
 
         // check if a layer has been bound to this entry. If not, set the type to "placeholder".
-        if(this._layer === undefined) {
+        if (this._layer === undefined) {
             this._type = LegendTypes.Placeholder;
         }
 
@@ -185,6 +185,13 @@ export class LegendEntry extends LegendItem {
             // update parent visibility if current legend entry is part of a group or set
             if (this._parent instanceof LegendGroup && updateParent) {
                 this._parent.checkVisibility(this);
+
+                // if its a set turn off the visibility of all other children
+                if (this.parent instanceof LegendSet) {
+                    this.parent.children.forEach(child => {
+                        if (child !== this && child.visibility) child.toggleVisibility(false);
+                    });
+                }
             }
         }
     }
@@ -382,9 +389,21 @@ export class LegendGroup extends LegendItem {
         // update parent visibility if current legend entry is part of a group or set
         if (this._parent instanceof LegendGroup && updateParent) {
             this._parent.checkVisibility(this);
+
+            // if its a set turn off the visibility of all other children
+            if (this.parent instanceof LegendSet) {
+                this.parent.children.forEach(child => {
+                    if (child !== this && child.visibility) child.toggleVisibility(false);
+                });
+            }
         }
     }
 }
+
+/**
+ * Create a legend group (which can also be visibility sets) which can contain children - providing nesting capability for Legends.
+ */
+export class LegendSet extends LegendGroup {}
 
 export enum LegendTypes {
     Group = 'LegendGroup',

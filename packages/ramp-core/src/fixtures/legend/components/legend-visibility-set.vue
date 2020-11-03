@@ -40,7 +40,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
 import { LegendStore } from '../store';
-import { LegendGroup } from '../store/legend-defs';
+import { LegendSet } from '../store/legend-defs';
 import CheckboxV from './checkbox.vue';
 
 @Component({
@@ -50,7 +50,7 @@ import CheckboxV from './checkbox.vue';
     }
 })
 export default class LegendVisibilitySetV extends Vue {
-    @Prop() legendItem!: LegendGroup;
+    @Prop() legendItem!: LegendSet;
     @Prop() props!: any;
 }
 </script>
