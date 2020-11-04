@@ -38,8 +38,10 @@ export default class TooltipV extends Vue {
 
 <style lang="scss" scoped>
 .rv-ui-tooltip {
-    transition: opacity 0.3s;
+    transition: opacity 0.2s;
+    transition: font-size 0.2s;
     width: max-content;
+    font-size: x-small;
 
     &::after {
         content: '';
@@ -50,7 +52,7 @@ export default class TooltipV extends Vue {
     :hover > &,
     :focus + &,
     :focus .focused + & {
-        @apply visible opacity-100;
+        @apply visible opacity-100 text-base;
     }
 }
 
