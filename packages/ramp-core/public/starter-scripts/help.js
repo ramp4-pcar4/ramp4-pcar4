@@ -47,5 +47,5 @@ function initRAMP() {
 
     rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
     rInstance.fixture.addDefaultFixtures(['mapnav', 'help']);
-    rInstance.event.addDefaultEvents(['opens_help_panel']);
+    rInstance.event.addDefaultEvents(['toggles_help_panel']);
 }

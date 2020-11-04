@@ -334,10 +334,10 @@ export class EventAPI extends APIScope {
                 this.$iApi.event.on(GlobalEvents.DETAILS_OPEN, zeHandler, handlerName);
                 break;
             case DefEH.TOGGLE_HELP:
-                zeHandler = () => {
+                zeHandler = (payload?: boolean) => {
                     const helpFixture: HelpAPI = this.$iApi.fixture.get('help');
                     if (helpFixture) {
-                        helpFixture.toggleHelp();
+                        helpFixture.toggleHelp(payload);
                     }
                 };
                 this.$iApi.event.on(GlobalEvents.HELP_TOGGLE, zeHandler, handlerName);

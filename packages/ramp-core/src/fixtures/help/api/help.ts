@@ -5,11 +5,18 @@ export class HelpAPI extends FixtureInstance {
     /**
      * Toggles help panel
      *
+     * @param {boolean} [open] force panel open or closed
      * @memberof HelpAPI
      */
-    toggleHelp() {
+    toggleHelp(open?: boolean) {
         const panel = this.$iApi.panel.get('help-panel');
-        this.$iApi.panel.toggle(panel);
+        if (open === undefined) {
+            this.$iApi.panel.toggle(panel);
+        } else if (open && !panel.isOpen) {
+            this.$iApi.panel.open(panel);
+        } else if (!open && panel.isOpen) {
+            this.$iApi.panel.close(panel);
+        }
     }
 
     /**
