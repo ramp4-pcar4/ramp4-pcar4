@@ -12,8 +12,13 @@
             "properties": {
                 "folderName": {
                     "type": "string",
-                    "default": "",
+                    "default": "default",
                     "description": "Help folder name which contains the help description and images."
+                },
+                "panelWidth": {
+                    "type": "number",
+                    "default": 350,
+                    "description": "Help panel width in pixels"
                 }
             },
             "required": ["folderName"],
@@ -1454,9 +1459,6 @@
                     "default": false,
                     "description": "Indicates if viewer takes up entire viewport."
                 },
-                "help": {
-                    "$ref": "#/$defs/help"
-                },
                 "restrictNavigation": {
                     "type": "boolean",
                     "default": false,
@@ -1521,6 +1523,14 @@
                         "templates": []
                     },
                     "description": "Provides configuration to identify results and details panel. Default to no user custom templates."
+                },
+                "help": {
+                    "$ref": "#/$defs/help",
+                    "default": {
+                        "folderName": "default",
+                        "panelWidth": 350
+                    },
+                    "description": "Specifies details for the Help section"
                 }
             },
             "unevaluatedProperties": false

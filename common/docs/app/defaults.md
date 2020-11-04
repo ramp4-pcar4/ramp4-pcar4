@@ -85,6 +85,13 @@ These events will be present if the associated core fixtures are running
 
 TODO add stuff as we make events that core fixtures raise
 
+| Event Name | Payload | Event Announces |
+| ---------- | ---------- | ---------- |
+| SETTINGS_OPEN<br>'settings/open' | BaseLayer object | A layer's settings was requested |
+| DETAILS_OPEN<br>'details/open' | *identifyItem*: IdentifyItem object<br>*uid*: layer uid | A feature's details was requested |
+| HELP_TOGGLE<br>'help/toggle' | boolean (optional) | Help panel toggle was requested with optional force open/close |
+
+
 ## Default Events Handlers
 
 Along with the default fixtures, there are default event handlers that are applied to make them react to each other and to the RAMP core. See the examples section below and the LINKTO Events API page for details on how to work with event handlers.

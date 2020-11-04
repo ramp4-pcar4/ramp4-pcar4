@@ -2,6 +2,7 @@ import Vue from 'vue';
 import { APIScope, InstanceAPI } from './internal';
 import { DetailsAPI } from '@/fixtures/details/api/details';
 import { SettingsAPI} from '@/fixtures/settings/api/settings'
+import { HelpAPI } from '@/fixtures/help/api/help'
 import { IdentifyResult, IdentifyResultSet, MapClick } from 'ramp-geoapi';
 
 export enum GlobalEvents {
@@ -27,7 +28,8 @@ export enum GlobalEvents {
     MAP_IDENTIFY = 'map/identify',
     MAP_MOUSEMOVE = 'map/mousemove',
     SETTINGS_OPEN = 'settings/open',
-    DETAILS_OPEN = 'details/open'
+    DETAILS_OPEN = 'details/open',
+    HELP_TOGGLE = 'help/toggle'
 }
 
 // TODO export this enum?
@@ -41,7 +43,8 @@ enum DefEH {
     IDENTIFY_DETAILS = 'ramp_identify_opens_details',
     MAP_IDENTIFY = 'ramp_map_click_runs_identify',
     OPEN_SETTINGS = 'ramp_settings_opens_panel',
-    OPEN_DETAILS = 'opens_feature_details'
+    OPEN_DETAILS = 'opens_feature_details',
+    TOGGLE_HELP = 'toggles_help_panel'
 }
 
 // private for EventBus internals, so don't export
@@ -273,7 +276,7 @@ export class EventAPI extends APIScope {
             // TODO the enum-values-to-array logic we use in the event names list
             //      fails a bit here. we could make it work if we force every default
             //      handler name to being with a specific prefix. Alternately use object, not enum.
-            eventHandlerNames = [DefEH.MAP_IDENTIFY, DefEH.IDENTIFY_DETAILS, DefEH.OPEN_SETTINGS, DefEH.OPEN_DETAILS];
+            eventHandlerNames = [DefEH.MAP_IDENTIFY, DefEH.IDENTIFY_DETAILS, DefEH.OPEN_SETTINGS, DefEH.OPEN_DETAILS, DefEH.TOGGLE_HELP];
         }
 
         // add all the requested default event handlers.
@@ -329,6 +332,15 @@ export class EventAPI extends APIScope {
                     }
                 };
                 this.$iApi.event.on(GlobalEvents.DETAILS_OPEN, zeHandler, handlerName);
+                break;
+            case DefEH.TOGGLE_HELP:
+                zeHandler = (payload?: boolean) => {
+                    const helpFixture: HelpAPI = this.$iApi.fixture.get('help');
+                    if (helpFixture) {
+                        helpFixture.toggleHelp(payload);
+                    }
+                };
+                this.$iApi.event.on(GlobalEvents.HELP_TOGGLE, zeHandler, handlerName);
                 break;
             default:
                 console.error(`Unrecognized default event handler name encountered: ${handlerName}`);
