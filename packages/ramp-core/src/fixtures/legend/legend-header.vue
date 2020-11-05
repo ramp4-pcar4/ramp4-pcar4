@@ -6,11 +6,13 @@
                     <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
                 </svg>
             </button>
-            <tooltip class="mx-5" v-if="!showGroup" position="right"> {{ $t('legend.toggle.group') }} </tooltip>
+            <tooltip class="mx-5" v-if="!showGroup" position="right"> {{ $t('legend.header.groups') }} </tooltip>
         </div>
         <div class="absolute z-10 ml-40 top-0 left-0 bg-white shadow-md" v-if="showGroup">
-            <button class="block hover:bg-gray-300 w-full p-10 text-center" @click="expand">{{ $t('legend.group.expand') }}</button>
-            <button class="block hover:bg-gray-300 w-full p-10 text-center" @click="collapse">{{ $t('legend.group.collapse') }}</button>
+            <button class="block hover:bg-gray-300 w-full p-10 text-center" @click="expand">{{ $t('legend.header.groups.expand') }}</button>
+            <button class="block hover:bg-gray-300 w-full p-10 text-center" @click="collapse">
+                {{ $t('legend.header.groups.collapse') }}
+            </button>
         </div>
         <span class="flex-grow"></span>
         <div class="relative">
@@ -21,11 +23,11 @@
                     />
                 </svg>
             </button>
-            <tooltip class="mx-5" v-if="!showVisible" position="left"> {{ $t('legend.toggle.visible') }} </tooltip>
+            <tooltip class="mx-5" v-if="!showVisible" position="left"> {{ $t('legend.header.visible') }} </tooltip>
         </div>
         <div class="absolute z-10 mr-32 top-0 right-0 bg-white shadow-md" v-if="showVisible">
-            <button class="block hover:bg-gray-300 w-full p-10 text-center" @click="show">{{ $t('legend.visible.show') }}</button>
-            <button class="block hover:bg-gray-300 w-full p-10 text-center" @click="hide">{{ $t('legend.visible.hide') }}</button>
+            <button class="block hover:bg-gray-300 w-full p-10 text-center" @click="show">{{ $t('legend.header.visible.show') }}</button>
+            <button class="block hover:bg-gray-300 w-full p-10 text-center" @click="hide">{{ $t('legend.header.visible.hide') }}</button>
         </div>
     </div>
 </template>
