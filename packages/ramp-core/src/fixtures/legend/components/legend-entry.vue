@@ -1,35 +1,41 @@
 <template>
     <div class="legend-item">
-        <div class="legend-item-header">
-            <!-- symbology stack -->
-            <div @click="toggleSymbology" class="relative">
-                <symbology-stack :visible="displaySymbology" :layer="legendItem.layer" />
-                <tooltip v-if="!displaySymbology" position="right"> {{$t('legend.expand')}} </tooltip>
+        <div
+            class="default-focus-style p-5 flex items-center hover:bg-gray-200 cursor-pointer h-44"
+            @click="$iApi.fixture.get('grid').openGrid(legendItem.layer.uid)"
+            v-focus-item
+        >
+            <!-- symbology stack toggle-->
+            <div class="relative w-32 h-32">
+                <button @click.stop="toggleSymbology" tabindex="-1">
+                    <symbology-stack class="w-32 h-32" :visible="displaySymbology" :layer="legendItem.layer" />
+                </button>
+                <tooltip position="top-left">
+                    {{ displaySymbology ? $t('legend.symbology.hide') : $t('legend.symbology.expand') }}
+                </tooltip>
             </div>
 
             <!-- name -->
-            <div class="flex-1 truncate" @click="$iApi.fixture.get('grid').openGrid(legendItem.layer.uid)">
+            <div class="flex-1 truncate ml-15">
                 <span>{{ legendItem.name }}</span>
             </div>
 
             <!-- visibility -->
-            <div>
-                <checkbox :value="visibility" :isRadio="props && props.isVisibilitySet" :legendItem="legendItem"/>
-            </div>
+            <checkbox :value="visibility" :isRadio="props && props.isVisibilitySet" :legendItem="legendItem" />
         </div>
 
         <!-- Symbology Stack Section -->
-        <div v-if="displaySymbology">
+        <div v-if="displaySymbology" v-focus-item class="default-focus-style">
             <!-- display each symbol -->
-            <div class="legend-symbology" v-for="(item, idx) in legendItem.layer.getLegend()" :key="idx">
+            <div class="p-5 flex items-center" v-for="(item, idx) in legendItem.layer.getLegend()" :key="idx">
                 <div class="symbologyIcon">
                     <span v-html="item.svgcode"></span>
                 </div>
 
-                <div class="flex-1 truncate">{{ item.label }}</div>
+                <div class="flex-1 truncate ml-15">{{ item.label }}</div>
 
                 <!-- TODO: add visibility button functionality. It should toggle each symbol individually. -->
-                <checkbox :value="visibility" :legendItem="legendItem"/>
+                <checkbox :value="visibility" :legendItem="legendItem" />
             </div>
         </div>
     </div>
@@ -59,9 +65,9 @@ export default class LegendEntryV extends Vue {
     visibility: boolean | undefined = this.legendItem.visibility;
 
     mounted(): void {
-        this.legendItem.layer?.visibilityChanged.listen((visibility: boolean) => {
+        this.legendItem.layer!.visibilityChanged.listen((visibility: boolean) => {
             this.visibility = this.legendItem.visibility;
-        })
+        });
     }
 
     /**
@@ -73,14 +79,4 @@ export default class LegendEntryV extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
-.legend-symbology {
-    @apply px-5 py-5 pr-0 flex items-center;
-}
-.legend-item-header {
-    @apply px-5 py-5 pr-0 flex items-center;
-}
-.legend-item-header:hover {
-    @apply bg-gray-200 cursor-pointer;
-}
-</style>
+<style lang="scss" scoped></style>

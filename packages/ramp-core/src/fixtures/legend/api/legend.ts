@@ -1,7 +1,7 @@
 import { FixtureInstance } from '@/api';
 import { LegendConfig } from '../store';
 import { LegendStore } from '../store';
-import { LegendItem, LegendEntry, LegendGroup } from '../store/legend-defs';
+import { LegendItem, LegendEntry, LegendGroup, LegendSet } from '../store/legend-defs';
 import { LayerStore } from '@/store/modules/layer';
 import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
 
@@ -45,7 +45,12 @@ export class LegendAPI extends FixtureInstance {
             // (assuming visibility sets and groups will specify in config `exclusiveVisibility` or `children` properties, respectively)
             if (lastEntry.children !== undefined || lastEntry.exclusiveVisibility !== undefined) {
                 // create a wrapper legend object for group or visibility set
-                const legendGroup = new LegendGroup(lastEntry, lastEntry.parent);
+                let legendGroup;
+                if (lastEntry.exclusiveVisibility) {
+                    legendGroup = new LegendSet(lastEntry, lastEntry.parent);
+                } else {
+                    legendGroup = new LegendGroup(lastEntry, lastEntry.parent);
+                }
                 legendEntries.push(legendGroup);
 
                 // NOTE: the below code is if storing nested legend items is necessary, alternative method is to just store top-level legend items and perform traversals, there are pros and cons for each method

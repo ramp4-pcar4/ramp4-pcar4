@@ -1,24 +1,32 @@
 <template>
     <div v-if="!visible">
         <!-- Multiple icons to display -->
-        <div v-if="stack.length > 1">
-            <div :class="'symbol-' + idx" v-for="(item, idx) in stack" :key="idx">
-                <span class="symbologyIcon" v-if="idx < 3" v-html="stack[2 - idx].svgcode"></span>
+        <div v-if="stack.length > 1" class="-ml-2">
+            <!-- the :class line calculates margin-left for each of the 3 symbols, and gives a margin-top to symbols that arent the first -->
+            <div
+                class="relative"
+                :class="['ml-' + idx * 3, idx > 0 ? '-mt-32' : '', 'symbol-' + idx]"
+                :style="{ 'z-index': 3 - idx }"
+                v-for="(item, idx) in stack.slice(0, 3).reverse()"
+                :key="idx"
+            >
+                <span class="symbologyIcon w-28 h-28" v-html="stack[idx].svgcode"></span>
             </div>
         </div>
 
         <!-- Only one icon to display. -->
-        <div v-else-if="stack.length > 0">
-            <div class="symbologyIcon">
-                <span v-html="stack[0].svgcode"></span>
-            </div>
+        <div v-else-if="stack.length > 0" class="symbologyIcon w-32 h-32">
+            <span v-html="stack[0].svgcode"></span>
         </div>
     </div>
-    <div v-else>
-        <!-- If the symbology stack is already open, display an X in the place of the stack. -->
-        <div class="closeSymbologyIcon">
-            <close />
-        </div>
+
+    <!-- If the symbology stack is already open, display an X in the place of the stack. -->
+    <div v-else class="h-32 w-32 inline-flex justify-center items-center">
+        <svg class="fill-current w-16 h-16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512">
+            <path
+                d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
+            />
+        </svg>
     </div>
 </template>
 
@@ -58,22 +66,13 @@ export default class SymbologyStack extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .symbologyIcon {
-    @apply bg-white w-32 h-32 inline-flex justify-center items-center mr-15;
+    @apply bg-white inline-flex justify-center items-center overflow-hidden;
     box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
 }
-.closeSymbologyIcon {
-    @apply w-32 h-36 inline-flex justify-center items-center mr-15;
-}
 
-.symbol-1 {
-    @apply ml-3;
-    margin-top: -34px;
-}
 .symbol-2 {
-    @apply ml-6;
-    margin-top: -34px;
     transition-property: margin-left margin-top;
     transition-duration: 0.2s;
 

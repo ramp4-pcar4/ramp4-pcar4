@@ -127,12 +127,14 @@ class FocusListManager {
      */
     setTabIndex(value: number, focusItem: Element = this.element) {
         let tabbable = focusItem.querySelectorAll(TABBABLE_TAGS);
-        //const tempFocusManager = this;
         tabbable.forEach((el: Element) => {
-            // make sure its not part of a sub-list
+            // set tab index if not under a sublist OR it is under a `.focused` item of a sublist
+            // always set tabindex to -1 if wanted (if focus moves away from an item you want sublists to all be untabbable as well)
             if (
+                value === -1 ||
                 el.closest(`[${LIST_ATTR}]`) === this.element ||
-                (el.closest(`[${LIST_ATTR}]`) === el && el.parentElement!.closest(`[${LIST_ATTR}]`) === this.element)
+                (el.closest(`[${LIST_ATTR}]`) === el && el.parentElement!.closest(`[${LIST_ATTR}]`) === this.element) ||
+                el.closest(`[${LIST_ATTR}],.${FOCUSED_CLASS}`)!.classList.contains(FOCUSED_CLASS)
             ) {
                 el.setAttribute('tabindex', value.toString());
             }
@@ -146,7 +148,6 @@ class FocusListManager {
      */
     defocusItem(item: Element) {
         item.classList.remove(FOCUSED_CLASS);
-        //item.removeAttribute('id');
         this.setTabIndex(-1, item);
     }
 
@@ -328,5 +329,6 @@ class FocusListManager {
         }
         // otherwise set the active descendant
         this.setAriaActiveDescendant(this.highlightedItem);
+        this.setTabIndex(0, this.highlightedItem);
     }
 }

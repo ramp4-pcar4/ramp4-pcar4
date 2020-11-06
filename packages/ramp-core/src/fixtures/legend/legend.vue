@@ -11,7 +11,9 @@
 
         <template #content>
             <legend-header></legend-header>
-            <legend-component v-for="(item, idx) in children" :legendItem="item" :key="idx"></legend-component>
+            <div v-focus-list>
+                <legend-component v-for="(item, idx) in children" :legendItem="item" :key="idx"></legend-component>
+            </div>
         </template>
     </panel-screen>
 </template>
