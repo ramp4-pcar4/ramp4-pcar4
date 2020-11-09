@@ -12,3 +12,4 @@ legend.visibility.show,Show layer,1,Afficher la couche,0
 legend.visibility.hide,Hide layer,1,Masquer la couche,0
 legend.symbology.expand,Expand legend,1,Développer la légende,0
 legend.symbology.hide,Hide legend,1,Hide legend,0
+legend.entry.data,Show more data,1,Show more data,0
