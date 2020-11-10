@@ -1,5 +1,5 @@
 <template>
-    <dropdown-menu>
+    <dropdown-menu position="bottom-right">
         <template #header>
             <div class="flex text-black">
                 <svg
@@ -29,7 +29,7 @@
                 col.hide = !col.hide;
             "
             href="#"
-            class="flex leading-snug items-center"
+            class="flex leading-snug items-center w-256"
         >
             {{ col.headerName }}
             <div class="flex-auto"></div>
