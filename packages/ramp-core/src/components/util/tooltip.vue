@@ -19,6 +19,17 @@ export default class TooltipV extends Vue {
         //give the tooltip a random id and then set aria attributes as needed on parent
         this.$el.setAttribute('id', this.generateID());
         this.$el.previousElementSibling!.setAttribute('aria-labelledby', this.$el.id);
+
+        // Handle hovering through events so that we can stop propogation
+        (this.$el.previousElementSibling! as HTMLElement).addEventListener('mouseover', function(event: MouseEvent) {
+            event.stopPropagation();
+            this.classList.add('show-tooltip');
+        });
+        (this.$el.previousElementSibling! as HTMLElement).addEventListener('mouseout', function(event: MouseEvent) {
+            if (this.classList.contains('show-tooltip')) {
+                this.classList.remove('show-tooltip');
+            }
+        });
     }
 
     generateID(): string {
@@ -72,7 +83,7 @@ export default class TooltipV extends Vue {
         transform: translateY(-50%);
     }
 
-    :hover > &,
+    .show-tooltip + &,
     :focus + &,
     :focus .focused + & {
         @apply visible opacity-100 text-base;

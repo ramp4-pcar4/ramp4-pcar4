@@ -9,7 +9,8 @@ enum KEYS {
     ArrowRightIE = 'Right',
     Escape = 'Escape',
     EscapeIE = 'Esc',
-    Enter = 'Enter'
+    Enter = 'Enter',
+    Space = ' '
 }
 
 const LIST_ATTR = 'focus-list';
@@ -278,6 +279,7 @@ class FocusListManager {
                 break;
 
             case KEYS.Enter:
+            case KEYS.Space:
                 // if the the list is the target then it has focus, meaning the user is traversing this list
                 // and not a list farther down the tree (or a tabbable button, etc.)
                 // however if the list is the highlighted item we let the default behaviour through (as it has regular focus)
