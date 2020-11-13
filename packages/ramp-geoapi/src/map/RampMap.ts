@@ -297,6 +297,16 @@ export class RampMap extends MapBase {
         return this.gapi.utils.geom.convEsriPointToRamp(this._innerView.toMap({x: screenX, y: screenY}), 'mappoint');
     }
 
+    /**
+     * Get a pixel in screen co-ordinates corresponding to a point in map co-ordinates.
+     *
+     * @param {Point} mapPoint point on the map
+     * @returns {esri.ScreenPoint} the screen point analagous to the map point
+     */
+    mapPointToScreenPoint(mapPoint: Point): esri.ScreenPoint {
+        return this._innerView.toScreen(this.gapi.utils.geom.convPointToEsri(mapPoint))
+    }
+
     // TODO function to allow a second Map to be shot out, that shares this map but has a different scene
 
     // TODO basemap generation stuff (might need to be delayed due to lack of dojo dijit)
