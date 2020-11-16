@@ -19,7 +19,7 @@ function initRAMP() {
                 basemaps: [
                     {
                         id: 'CBCT',
-                        tileSchemaId: 'DEFAULT_NRCAN_Lambert_3978 ',
+                        tileSchemaId: 'DEFAULT_NRCAN_Lambert_3978',
                         layers: [
                             {
                                 layerType: 'esriTile',

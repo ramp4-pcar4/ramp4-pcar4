@@ -1556,7 +1556,7 @@
                         "arrowIcon": "",
                         "poleIcon": ""
                     },
-                    "description": ""
+                    "description": "Provides configuration to the north arrow and pole marker"
                 }
             },
             "unevaluatedProperties": false
