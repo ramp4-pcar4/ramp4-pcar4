@@ -1,12 +1,12 @@
-import { NorthArrowAPI } from './api/north-arrow';
-import { northArrow } from './store/index';
-import NorthArrowV from './north-arrow.vue'; 
+import { NortharrowAPI } from './api/northarrow';
+import { northarrow } from './store/index';
+import NortharrowV from './northarrow.vue'; 
 
-class NorthArrowFixture extends NorthArrowAPI {
+class NortharrowFixture extends NortharrowAPI {
    async added() {
         console.log(`[fixture] ${this.id} added`);
 
-        this.$vApp.$store.registerModule('northArrow', northArrow());
+        this.$vApp.$store.registerModule('northarrow', northarrow());
 
         this._parseConfig(this.config);
         this.$vApp.$watch(
@@ -15,14 +15,14 @@ class NorthArrowFixture extends NorthArrowAPI {
         );
 
         const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
-        const northArrowInstance = this.extend(NorthArrowV, { store: this.$vApp.$store });
-        innerShell.append(northArrowInstance.$el)
+        const northarrowInstance = this.extend(NortharrowV, { store: this.$vApp.$store });
+        innerShell.append(northarrowInstance.$el)
     }
 
     removed(): void {
         console.log(`[fixture] ${this.id} removed`); 
-        this.$vApp.$store.unregisterModule('northArrow');
+        this.$vApp.$store.unregisterModule('northarrow');
     }
 }
 
-export default NorthArrowFixture;
+export default NortharrowFixture;

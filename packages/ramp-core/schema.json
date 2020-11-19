@@ -24,9 +24,9 @@
             "required": ["folderName"],
             "additionalProperties": false
         },
-        "northArrow": {
+        "northarrow": {
             "type": "object",
-            "description": "Provides configuration to the northArrow fixture.",
+            "description": "Provides configuration to the northarrow fixture.",
             "properties": {
                 "arrowIcon": {
                     "type": "string",
@@ -1550,8 +1550,8 @@
                     },
                     "description": "Specifies details for the Help section"
                 },
-                "northArrow": {
-                    "$ref": "#/$defs/northArrow",
+                "northarrow": {
+                    "$ref": "#/$defs/northarrow",
                     "default": {
                         "arrowIcon": "",
                         "poleIcon": ""

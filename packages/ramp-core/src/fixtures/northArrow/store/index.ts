@@ -1,2 +1,2 @@
-export * from './north-arrow-state';
-export * from './north-arrow-store';
+export * from './northarrow-state';
+export * from './northarrow-store';

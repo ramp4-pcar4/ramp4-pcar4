@@ -1,13 +1,13 @@
 <template>
     <div class="absolute transition-all duration-300 ease-out" :style="arrowStyle">
-        <span class="north-arrow" v-html="arrow"></span>
+        <span class="northarrow" v-html="arrow"></span>
     </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
-import { NorthArrowStore } from './store';
+import { NortharrowStore } from './store';
 import { GlobalEvents } from '../../api/internal';
 import { ApiBundle, HighlightLayer } from 'ramp-geoapi';
 import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
@@ -15,9 +15,9 @@ import flag from './flag.json';
 import { debounce } from 'debounce';
 
 @Component({})
-export default class NorthArrowV extends Vue {
-    @Get(NorthArrowStore.arrowIcon) arrowIcon!: string;
-    @Get(NorthArrowStore.poleIcon) poleIcon!: string;
+export default class NortharrowV extends Vue {
+    @Get(NortharrowStore.arrowIcon) arrowIcon!: string;
+    @Get(NortharrowStore.poleIcon) poleIcon!: string;
 
     angle: number = 0;
     arrowLeft: number = 0;
@@ -40,14 +40,14 @@ export default class NorthArrowV extends Vue {
         }
         // don't think this condition should be needed but sometimes errors at startup without it 
         if (this.$iApi.map._innerView.ready) {
-            this.updateNorthArrow(this.$iApi.map.getExtent())
+            this.updateNortharrow(this.$iApi.map.getExtent())
         }
-        this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, debounce(this.updateNorthArrow, 300));
+        this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, debounce(this.updateNortharrow, 300));
     }
 
-    async updateNorthArrow(newExtent: ApiBundle.Extent) {
+    async updateNortharrow(newExtent: ApiBundle.Extent) {
         const innerShell = document.querySelector('.inner-shell')!;
-        const arrowWidth = document.querySelector('.north-arrow')!.getBoundingClientRect().width;
+        const arrowWidth = document.querySelector('.northarrow')!.getBoundingClientRect().width;
         const appbarWidth = document.querySelector('.appbar')?.clientWidth || 0;
         const sr = newExtent.sr;
         const mercator = [900913, 3587, 54004, 41001, 102113, 102100, 3785];
@@ -55,13 +55,14 @@ export default class NorthArrowV extends Vue {
             // mercator projection, always in center of viewer with no rotation 
             this.displayArrow = true;
             this.angle = 0;
+            this.angle = this.$iApi.map._innerView.rotation;
             this.arrowLeft = appbarWidth + (innerShell.clientWidth - appbarWidth - arrowWidth) / 2;
         } else {
             // north value (set longitude to be half of Canada extent (141° W, 52° W))
             const pole: ApiBundle.Point = new ApiBundle.Point("pole", { x: -96, y: 90 });   
             const projPole = await RAMP.geoapi.utils.proj.projectGeometry(sr, pole) as ApiBundle.Point;
             const poleScreenPos = this.$iApi.map.mapPointToScreenPoint(projPole);
-            if (poleScreenPos.y < 0) {
+            if (poleScreenPos.screenY < 0) {
                 // draw arrow if pole not visibile
                 this.displayArrow = true;
                 // get angle from bottom centre 
@@ -77,7 +78,7 @@ export default class NorthArrowV extends Vue {
                 const bearing = Math.atan2(y, x) * 180 / Math.PI;
                 // calculate style
                 this.angle = (bearing + 360) % 360 - 180;
-                this.arrowLeft = poleScreenPos.x - innerShell.clientLeft + ((poleScreenPos.y - innerShell.clientTop) * Math.tan(this.angle * Math.PI / 180) - arrowWidth / 2);
+                this.arrowLeft = poleScreenPos.screenX - innerShell.clientLeft + ((poleScreenPos.screenY - innerShell.clientTop) * Math.tan(this.angle * Math.PI / 180) - arrowWidth / 2);
                 // make sure arrow is within visible part of map
                 this.arrowLeft = Math.max(appbarWidth - arrowWidth / 2, Math.min(this.$iApi.map.getPixelWidth() - arrowWidth / 2, this.arrowLeft))
             } else {
@@ -85,6 +86,7 @@ export default class NorthArrowV extends Vue {
                 this.displayArrow = false;
                 if (!this.poleMarkerAdded) {
                     this.poleMarkerAdded = true;
+                    // TODO update to use RAMP API Styles once Highlight Layer implements an api that accepts RAMP Graphics. Get rid of all ESRI stuff when that happens
                     let markerSymbol: any = flag;
                     if (this.poleIcon) {
                         // convert data uri to esri symbol json
