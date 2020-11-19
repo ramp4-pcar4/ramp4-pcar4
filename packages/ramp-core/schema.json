@@ -24,6 +24,24 @@
             "required": ["folderName"],
             "additionalProperties": false
         },
+        "northarrow": {
+            "type": "object",
+            "description": "Provides configuration to the northarrow fixture.",
+            "properties": {
+                "arrowIcon": {
+                    "type": "string",
+                    "default": "",
+                    "description": "The graphical icon url/data url of the north arrow."
+                },
+                "poleIcon": {
+                    "type": "string",
+                    "default": "",
+                    "description": "The graphical icon url/data url of the north pole that replaces north arrow when it's on north pole"
+                }
+            },
+            "required": ["arrowIcon", "poleIcon"],
+            "additionalProperties": false
+        },
         "appbar": {
             "type": "object",
             "description": "Provides configuration to the appbar fixture. If not supplied, the default appbar controls are displayed.",
@@ -1531,6 +1549,14 @@
                         "panelWidth": 350
                     },
                     "description": "Specifies details for the Help section"
+                },
+                "northarrow": {
+                    "$ref": "#/$defs/northarrow",
+                    "default": {
+                        "arrowIcon": "",
+                        "poleIcon": ""
+                    },
+                    "description": "Provides configuration to the north arrow and pole marker"
                 }
             },
             "unevaluatedProperties": false
