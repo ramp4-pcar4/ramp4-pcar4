@@ -1,7 +1,7 @@
 import { ActionContext } from 'vuex';
 import { make } from 'vuex-pathify';
 
-import { NorthArrowState } from './north-arrow-state';
+import { NortharrowState } from './northarrow-state';
 import { RootState } from '@/store/state';
 
 
@@ -11,13 +11,13 @@ const mutations = {};
 
 const actions = {};
 
-export enum NorthArrowStore {
-    arrowIcon = 'northArrow/arrowIcon',
-    poleIcon = 'northArrow/poleIcon'
+export enum NortharrowStore {
+    arrowIcon = 'northarrow/arrowIcon',
+    poleIcon = 'northarrow/poleIcon'
 }
 
-export function northArrow() {
-    const state = new NorthArrowState();
+export function northarrow() {
+    const state = new NortharrowState();
 
     return {
         namespaced: true,

@@ -159,6 +159,11 @@ export interface MapMove {
     moveTime: number;
 }
 
+export interface ScreenPoint {
+    screenX: number;
+    screenY: number;
+}
+
 // a collection of attributes
 // TODO consider changin .features to .attributes or .attribs.
 //      features would be back-compatible, but it's confusing as we now have a Graphic class, which would be more

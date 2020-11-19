@@ -133,7 +133,7 @@ export class FixtureAPI extends APIScope {
      */
     addDefaultFixtures(fixtureNames?: Array<string>): Promise<Array<FixtureBase>> {
         if (!Array.isArray(fixtureNames) || fixtureNames.length === 0) {
-            fixtureNames = ['appbar', 'mapnav', 'help', 'northArrow', 'details', 'grid', 'basemap', 'geosearch', 'legend', 'metadata', 'settings'];
+            fixtureNames = ['appbar', 'mapnav', 'help', 'northarrow', 'details', 'grid', 'basemap', 'geosearch', 'legend', 'metadata', 'settings'];
         }
 
         // add all the requested default promises.

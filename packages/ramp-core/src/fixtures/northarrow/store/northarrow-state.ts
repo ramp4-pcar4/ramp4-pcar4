@@ -1,9 +1,9 @@
-export class NorthArrowState {
+export class NortharrowState {
     arrowIcon: string = "";
     poleIcon: string = "";
 }
 
-export interface NorthArrowConfig {
+export interface NortharrowConfig {
     arrowIcon: string;
     poleIcon: string;
 }
