@@ -1,6 +1,16 @@
 <template>
-    <div class="pointer-events-auto absolute top-0 right-0 mt-12 mr-12 w-180 h-180 border border-solid border-black overflow-hidden">
-        <div class="overviewmap absolute h-full w-full"></div>
+    <div>
+        <div :style="{ visibility: minimized ? 'hidden' : 'visible' }" class="pointer-events-auto absolute top-0 right-0 mt-12 mr-12 w-180 h-180 shadow-tm overflow-hidden bg-gray-200">
+            <!-- map -->
+            <div class="overviewmap pointer-events-none absolute h-full w-full"></div>
+            <!-- extent highlight -->
+            <div class="extent absolute opacity-50 bg-blue-500" :style="extentStyle"></div>
+        </div>
+        <div v-if="minimized" class="pointer-events-auto absolute top-0 right-0 mt-12 mr-12 w-48 h-48 shadow-tm bg-gray-200"></div>
+        <!-- overview toggle -->
+        <div class="pointer-events-auto cursor-pointer absolute top-0 right-0 mt-12 mr-12 h-24 w-24 transition-all duration-300 ease-out" @click="minimized=!minimized" :style="{ transform: `rotate(${minimized ? 225 : 45}deg)` }">
+            <svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" focusable="false"><g id="apple-keyboard-control"><path d="M 19.7782,11.7782L 18.364,13.1924L 12,6.82843L 5.63604,13.1924L 4.22183,11.7782L 12,4L 19.7782,11.7782 Z "></path></g></svg>
+        </div>
     </div>
 </template>
 
@@ -8,7 +18,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 import { FixtureInstance } from '@/api';
-import { RampMap, ApiBundle } from 'ramp-geoapi'
+import { RampMap, ApiBundle, RampMapConfig } from 'ramp-geoapi'
 import { GlobalEvents } from '../../api/internal';
 import { debounce } from 'debounce';
 
@@ -16,6 +26,20 @@ import { debounce } from 'debounce';
 export default class OverviewmapV extends Vue {
 
     overviewMap!: RampMap;
+
+    minimized = false;
+
+    extentWidth = 0;
+    extentHeight = 0;
+
+    get extentStyle() {
+        return {
+            left: `calc(50% - ${this.extentWidth}px / 2)`,
+            top: `calc(50% - ${this.extentHeight}px / 2)`,
+            width: `${this.extentWidth}px`,
+            height: `${this.extentHeight}px`
+        }
+    }
 
     mounted() {
         let config = {
@@ -43,21 +67,24 @@ export default class OverviewmapV extends Vue {
             ],
             initialBasemapId: 'esriTopo'
         };
-        const overviewEl = this.$el.querySelector('.overviewmap') as HTMLDivElement
-        this.overviewMap = RAMP.geoapi.maps.createMap(config, overviewEl);
+
+        this.overviewMap = RAMP.geoapi.maps.createMap(config, this.$el.querySelector('.overviewmap') as HTMLDivElement);
         this.overviewMap._innerView.ui.components = [];
         this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, debounce(this.updateOverview, 300));
     }
 
     updateOverview(newExtent: ApiBundle.Extent) {
+        const mapScale = this.$iApi.map.getScale();
+        const mapHeight = this.$iApi.map.getPixelHeight();
+        const mapWidth = this.$iApi.map.getPixelWidth()
+
+        const hRatio = mapHeight / this.overviewMap.getPixelHeight();
+        const wRatio = mapWidth / this.overviewMap.getPixelWidth();
+        const overviewScale = mapScale * 2 * Math.max(hRatio, wRatio);
         const point = newExtent.center();
-        const hRatio = this.$iApi.map.getPixelHeight() / this.overviewMap.getPixelHeight();
-        const wRatio = this.$iApi.map.getPixelWidth() / this.overviewMap.getPixelWidth();
-        const scaleRatio = Math.max(hRatio, wRatio);
-        const scale = this.$iApi.map.getScale() * 2 * scaleRatio;
-        console.log("new scale", scale)
-        this.overviewMap.zoomMapTo(point, scale).then(() => {
-        console.log("actual scale", this.overviewMap.getScale())
+        this.overviewMap.zoomMapTo(point, overviewScale).then(() => {
+            this.extentWidth = mapWidth / this.overviewMap.getScale() * mapScale;
+            this.extentHeight = mapHeight / this.overviewMap.getScale() * mapScale;
         });
     }
 }
