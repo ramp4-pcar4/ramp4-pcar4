@@ -47,7 +47,7 @@ export default class NortharrowV extends Vue {
 
     async updateNortharrow(newExtent: ApiBundle.Extent) {
         const innerShell = document.querySelector('.inner-shell')!;
-        const arrowWidth = document.querySelector('.northarrow')!.getBoundingClientRect().width;
+        const arrowWidth = this.$el.querySelector('.northarrow')!.getBoundingClientRect().width;
         const appbarWidth = document.querySelector('.appbar')?.clientWidth || 0;
         const sr = newExtent.sr;
         const mercator = [900913, 3587, 54004, 41001, 102113, 102100, 3785];
@@ -55,7 +55,6 @@ export default class NortharrowV extends Vue {
             // mercator projection, always in center of viewer with no rotation 
             this.displayArrow = true;
             this.angle = 0;
-            this.angle = this.$iApi.map._innerView.rotation;
             this.arrowLeft = appbarWidth + (innerShell.clientWidth - appbarWidth - arrowWidth) / 2;
         } else {
             // north value (set longitude to be half of Canada extent (141° W, 52° W))
@@ -65,20 +64,10 @@ export default class NortharrowV extends Vue {
             if (poleScreenPos.screenY < 0) {
                 // draw arrow if pole not visibile
                 this.displayArrow = true;
-                // get angle from bottom centre 
-                const bottomCentre = new ApiBundle.Point("point", { x: newExtent.center().x, y: newExtent.ymin }, sr);
-                const bc = await RAMP.geoapi.utils.proj.projectGeometry("EPSG:4326", bottomCentre) as ApiBundle.Point;
-                // set info on longitude and latitude
-                const dLon = (bc.x - pole.x) * Math.PI / 180;
-                const lat1 = pole.y * Math.PI / 180;
-                const lat2 = bc.y * Math.PI / 180;
-                // calculate bearing
-                const y = Math.sin(dLon) * Math.cos(lat2);
-                const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
-                const bearing = Math.atan2(y, x) * 180 / Math.PI;
-                // calculate style
-                this.angle = (bearing + 360) % 360 - 180;
-                this.arrowLeft = poleScreenPos.screenX - innerShell.clientLeft + ((poleScreenPos.screenY - innerShell.clientTop) * Math.tan(this.angle * Math.PI / 180) - arrowWidth / 2);
+                // get angle from bottom centre
+                const bcScreenPos = { screenX: innerShell.clientWidth / 2, screenY: innerShell.clientHeight };
+                this.angle = Math.atan((poleScreenPos.screenX - bcScreenPos.screenX) / (bcScreenPos.screenY - poleScreenPos.screenY)) * 180 / Math.PI;
+                this.arrowLeft = innerShell.clientWidth / 2 + innerShell.clientHeight * Math.tan(this.angle * Math.PI / 180) - arrowWidth / 2;
                 // make sure arrow is within visible part of map
                 this.arrowLeft = Math.max(appbarWidth - arrowWidth / 2, Math.min(this.$iApi.map.getPixelWidth() - arrowWidth / 2, this.arrowLeft))
             } else {
@@ -122,4 +111,3 @@ export default class NortharrowV extends Vue {
 </script>
 
 <style lang="scss" scoped></style>
-
