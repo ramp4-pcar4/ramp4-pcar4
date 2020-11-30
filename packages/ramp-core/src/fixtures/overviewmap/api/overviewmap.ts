@@ -8,8 +8,21 @@ export class OverviewmapAPI extends FixtureInstance {
      * @param {OverviewmapConfig} [OverviewmapConfig]
      * @memberof OverviewmapAPI
      */
-    _parseConfig(OverviewmapConfig?: OverviewmapConfig) {
-        if (!OverviewmapConfig) return;
+    _parseConfig(overviewmapConfig?: OverviewmapConfig) {
+        if (!overviewmapConfig) return;
+        let mapConfig = {
+            extent: {
+                xmax: 1,
+                xmin: 0,
+                ymax: 1,
+                ymin: 0,
+                spatialReference: overviewmapConfig.spatialReference
+            },
+            lods: overviewmapConfig.lods,
+            basemaps: [overviewmapConfig.basemap],
+            initialBasemapId: overviewmapConfig.basemap.id
+        }
+        this.$vApp.$store.set(OverviewmapStore.mapConfig, mapConfig);
     }
 
     get config(): OverviewmapConfig {

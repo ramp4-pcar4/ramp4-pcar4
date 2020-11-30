@@ -1,9 +1,6 @@
-import { ActionContext } from 'vuex';
 import { make } from 'vuex-pathify';
 
 import { OverviewmapState } from './overviewmap-state';
-import { RootState } from '@/store/state';
-
 
 const getters = {};
 
@@ -12,6 +9,7 @@ const mutations = {};
 const actions = {};
 
 export enum OverviewmapStore {
+    mapConfig = 'overviewmap/mapConfig'
 }
 
 export function overviewmap() {
