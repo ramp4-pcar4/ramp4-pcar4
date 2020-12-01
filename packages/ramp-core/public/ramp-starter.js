@@ -437,3 +437,7 @@ function switchLang() {
     }
     document.getElementById('instance-language').innerText = rInstance.language;
 }
+
+function animateToggle() {
+    // get and toggle animate status
+}
