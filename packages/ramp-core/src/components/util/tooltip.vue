@@ -14,6 +14,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 export default class TooltipV extends Vue {
     @Prop({ default: 'top' }) position!: string;
     @Prop() tooltipfor!: HTMLElement | null;
+    animate: boolean = false; //@Get animate status
 
     mounted() {
         //give the tooltip a random id and then set aria attributes as needed on parent
@@ -30,6 +31,13 @@ export default class TooltipV extends Vue {
                 this.classList.remove('show-tooltip');
             }
         });
+        
+        // if !animate, set transition duration to 0
+        if (this.animate) {
+            this.$el.setAttribute('animate', 'true')
+        } else {
+            this.$el.setAttribute('animate', 'false')
+        }
     }
 
     generateID(): string {
@@ -49,11 +57,16 @@ export default class TooltipV extends Vue {
 
 <style lang="scss" scoped>
 .rv-ui-tooltip {
-    transition: opacity 0.2s;
-    transition: font-size 0.2s;
+    transition-property: opacity font-size;
     width: max-content;
     font-size: x-small;
 
+    &[animate='true'] {
+        transition-duration: 0.2s;
+    }
+    &[animate='false'] {
+        transition-duration: 0s;
+    }
     &[position='top'] {
         @apply left-1/2 bottom-full;
         transform: translateX(-50%);
