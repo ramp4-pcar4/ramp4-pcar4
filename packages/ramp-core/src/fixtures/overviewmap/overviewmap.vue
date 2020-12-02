@@ -1,11 +1,18 @@
 <template>
     <div class="relative">
-        <div :style="mapStyle" class="pointer-events-auto absolute top-0 right-0 mt-12 mr-12 shadow-tm overflow-hidden border-4 border-solid border-white bg-white transition-all duration-300 ease-out">
+        <div :style="mapStyle" class="pointer-events-auto absolute top-0 right-0 mt-12 mr-12 shadow-tm border-4 border-solid border-white bg-white transition-all duration-300 ease-out">
             <!-- map -->
             <div class="overviewmap pointer-events-none h-full w-full"></div>
             <!-- toggle -->
-            <div class="cursor-pointer fill-current text-gray-500 absolute h-30 w-30 transition-all duration-300 ease-out z-10" @click="minimized=!minimized" :style="toggleStyle">
-                <svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" focusable="false"><g id="apple-keyboard-control"><path d="M 19.7782,11.7782L 18.364,13.1924L 12,6.82843L 5.63604,13.1924L 4.22183,11.7782L 12,4L 19.7782,11.7782 Z "></path></g></svg>
+            <div class="absolute h-30 w-30 top-0 right-0">
+                <button tabindex="0" class="cursor-pointer absolute h-full w-full" @click="minimized=!minimized">
+                    <svg class="absolute  fill-current text-gray-500 transition-all duration-300 ease-out" :style="toggleStyle" xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" focusable="false">
+                        <g id="apple-keyboard-control">
+                            <path d="M 19.7782,11.7782L 18.364,13.1924L 12,6.82843L 5.63604,13.1924L 4.22183,11.7782L 12,4L 19.7782,11.7782 Z "></path>
+                        </g>
+                    </svg>
+                </button>
+                <tooltip position="left">{{ $t(minimized ? 'overviewmap.expand' : 'overviewmap.minimize') }}</tooltip>
             </div>
         </div>
     </div>
@@ -24,14 +31,16 @@ import { debounce } from 'debounce';
 @Component({})
 export default class OverviewmapV extends Vue {
     @Get(OverviewmapStore.mapConfig) mapConfig!: RampMapConfig;
+    @Get(OverviewmapStore.startMinimized) startMinimized!: boolean;
 
     overviewMap!: RampMap;
-    minimized: boolean = false;
+    minimized: boolean = true;
 
     mounted() {
         let config = this.mapConfig || defaultConfig;
         this.overviewMap = RAMP.geoapi.maps.createMap(config, this.$el.querySelector('.overviewmap') as HTMLDivElement);
         this.overviewMap._innerView.ui.components = [];
+        this.minimized = this.startMinimized;
 
         // TODO update extent highlighting code to use ramp graphics once GraphicsLayer is implemented
         let symbol = {
@@ -75,7 +84,7 @@ export default class OverviewmapV extends Vue {
 
 <style lang="scss" scoped>
 .overviewmap::before {
-    @apply absolute w-0 h-0 top-0 right-0 border-solid z-10;
+    @apply absolute w-0 h-0 top-0 right-0 border-solid;
     border-width: 0 40px 40px 0;
     border-color: transparent #eee transparent transparent;
     content: "";

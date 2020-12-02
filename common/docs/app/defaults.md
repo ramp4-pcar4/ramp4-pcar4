@@ -57,6 +57,14 @@ The `metadata` provides an interface to view extra information about a layer. TO
 
 The `settings` allow you to make live modifications to a layer on the map. TODO create and hyperlink to `settings.md`
 
+### Northarrow
+
+The `northarrow` provides an arrow at the top of the map pointing to the geographic north pole. TODO create and hyperlink to `northarrow.md`
+
+### Overviewmap
+
+The `overviewmap` provides a smaller map displaying the current map extent within the context of a larger area. TODO create and hyperlink to `overviewmap.md`
+
 ## Default Events
 
 All events are specific to a RAMP instance. An event on one instance says nothing about a different instance.

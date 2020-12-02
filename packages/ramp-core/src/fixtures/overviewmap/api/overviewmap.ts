@@ -16,13 +16,14 @@ export class OverviewmapAPI extends FixtureInstance {
                 xmin: 0,
                 ymax: 1,
                 ymin: 0,
-                spatialReference: overviewmapConfig.spatialReference
+                spatialReference: overviewmapConfig.map.spatialReference
             },
-            lods: overviewmapConfig.lods,
-            basemaps: [overviewmapConfig.basemap],
-            initialBasemapId: overviewmapConfig.basemap.id
+            lods: overviewmapConfig.map.lods,
+            basemaps: [overviewmapConfig.map.basemap],
+            initialBasemapId: overviewmapConfig.map.basemap.id
         }
         this.$vApp.$store.set(OverviewmapStore.mapConfig, mapConfig);
+        this.$vApp.$store.set(OverviewmapStore.startMinimized, overviewmapConfig.startMinimized);
     }
 
     get config(): OverviewmapConfig {

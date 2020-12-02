@@ -46,14 +46,25 @@
             "type": "object",
             "description": "Provides the configuration to the overviewmap fixture",
             "properties": {
-                "lods": {
-                    "$ref": "#/defs/lodSetNode"
+                "map": {
+                    "type": "object",
+                    "description": "Specifies the map of the overviewmap fixture",
+                    "properties": {
+                        "lods": {
+                            "$ref": "#/defs/lodSetNode"
+                        },
+                        "basemap": {
+                            "$ref": "#/defs/basemapNode"
+                        },
+                        "spatialReference": {
+                            "$ref": "#/$defs/spatialReferenceNode"
+                        }
+                    }
                 },
-                "basemap": {
-                    "$ref": "#/defs/basemapNode"
-                },
-                "spatialReference": {
-                    "$ref": "#/$defs/spatialReferenceNode"
+                "startMinimized": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Initial state of the overviewmap"
                 }
             }
         },

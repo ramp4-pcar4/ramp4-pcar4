@@ -2,10 +2,14 @@ import { RampMapConfig, RampLodConfig, RampBasemapConfig, RampSpatialReference }
 
 export class OverviewmapState {
     mapConfig: RampMapConfig | undefined = undefined;
+    startMinimized: boolean = true;
 }
 
 export interface OverviewmapConfig {
-    lods: RampLodConfig;
-    basemap: RampBasemapConfig;
-    spatialReference: RampSpatialReference;
+    map: {
+        lods: RampLodConfig;
+        basemap: RampBasemapConfig;
+        spatialReference: RampSpatialReference;
+    },
+    startMinimized: boolean;
 }
