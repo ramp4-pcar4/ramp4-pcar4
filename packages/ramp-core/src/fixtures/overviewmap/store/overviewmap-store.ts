@@ -9,7 +9,8 @@ const mutations = {};
 const actions = {};
 
 export enum OverviewmapStore {
-    mapConfig = 'overviewmap/mapConfig'
+    mapConfig = 'overviewmap/mapConfig',
+    startMinimized = 'overviewmap/startMinimized'
 }
 
 export function overviewmap() {
