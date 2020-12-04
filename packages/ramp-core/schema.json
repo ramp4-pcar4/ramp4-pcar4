@@ -42,6 +42,32 @@
             "required": ["arrowIcon", "poleIcon"],
             "additionalProperties": false
         },
+        "overviewmap": {
+            "type": "object",
+            "description": "Provides the configuration to the overviewmap fixture",
+            "properties": {
+                "map": {
+                    "type": "object",
+                    "description": "Specifies the map of the overviewmap fixture",
+                    "properties": {
+                        "lods": {
+                            "$ref": "#/defs/lodSetNode"
+                        },
+                        "basemap": {
+                            "$ref": "#/defs/basemapNode"
+                        },
+                        "spatialReference": {
+                            "$ref": "#/$defs/spatialReferenceNode"
+                        }
+                    }
+                },
+                "startMinimized": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Initial state of the overviewmap"
+                }
+            }
+        },
         "appbar": {
             "type": "object",
             "description": "Provides configuration to the appbar fixture. If not supplied, the default appbar controls are displayed.",
@@ -1557,6 +1583,10 @@
                         "poleIcon": ""
                     },
                     "description": "Provides configuration to the north arrow and pole marker"
+                },
+                "overviewmap": {
+                    "$ref": "#/$defs/overviewmap",
+                    "description": "Provides the configuration to the overviewmap fixture"
                 }
             },
             "unevaluatedProperties": false

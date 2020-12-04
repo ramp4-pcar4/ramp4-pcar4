@@ -40,5 +40,5 @@ function initRAMP() {
     };
 
     rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
-    rInstance.fixture.addDefaultFixtures(['northarrow', 'appbar'])
+    rInstance.fixture.addDefaultFixtures(['northarrow', 'appbar', 'overviewmap'])
 }
