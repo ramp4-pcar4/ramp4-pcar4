@@ -37,6 +37,12 @@ export class RampMap extends MapBase {
 
     mapMouseMoved: TypedEvent<MapMove>;
 
+    mapKeyDown: TypedEvent<KeyboardEvent>;
+
+    mapKeyUp: TypedEvent<KeyboardEvent>;
+
+    mapBlur: TypedEvent<FocusEvent>;
+
     // NOTE while having this var be protected makes sense, there are also cases where other parts of the geoapi need to access this.
     //      being public will also to allow hacking, which can be useful in a pinch. use underscore to make it clear this in not for playtimes.
     /**
@@ -68,6 +74,9 @@ export class RampMap extends MapBase {
         this.mapClicked = new TypedEvent<MapClick>();
         this.mapDoubleClicked = new TypedEvent<MapClick>();
         this.mapMouseMoved = new TypedEvent<MapMove>();
+        this.mapKeyDown = new TypedEvent<KeyboardEvent>();
+        this.mapKeyUp = new TypedEvent<KeyboardEvent>();
+        this.mapBlur = new TypedEvent<FocusEvent>();
 
         const esriViewConfig: esri.MapViewProperties = {
             map: this._innerMap,
@@ -107,6 +116,20 @@ export class RampMap extends MapBase {
             // TODO this even fires on just about every change in pixel the pointer makes.
             //      should we debounce here? or on the client?
             this.mapMouseMoved.fireEvent(this.gapi.utils.geom.esriMapMouseToRamp(esriMouseMove));
+        });
+
+        this._innerView.on('key-down', esriKeyDown => {
+            this.mapKeyDown.fireEvent(esriKeyDown.native);
+            esriKeyDown.stopPropagation();
+        });
+
+        this._innerView.on('key-up', esriKeyUp => {
+            this.mapKeyUp.fireEvent(esriKeyUp.native);
+            esriKeyUp.stopPropagation();
+        });
+
+        this._innerView.on('blur', esriBlur => {
+            this.mapBlur.fireEvent(esriBlur.native);
         });
 
         this._innerView.container.addEventListener('touchmove', e => {
@@ -159,9 +182,10 @@ export class RampMap extends MapBase {
      *
      * @param {BaseGeometry} geom A RAMP API geometry to zoom the map to
      * @param {number} [scale] An optional scale value of the map. Is ignored for non-Point geometries
+     * @param {boolean} [animate] An optional animation setting. On by default
      * @returns {Promise<void>} A promise that resolves when the map has finished zooming
      */
-    zoomMapTo(geom: BaseGeometry, scale?: number): Promise<void> {
+    zoomMapTo(geom: BaseGeometry, scale?: number, animate: boolean = true): Promise<void> {
         // TODO technically this can accept any geometry. should we open up the suggested signatures to allow various things?
         return this.geomToMapSR(geom).then(g => {
             // TODO investigate the `snapTo` parameter if we have an extent / poly coming in
@@ -172,7 +196,8 @@ export class RampMap extends MapBase {
             if (g.type === GeometryType.POINT) {
                 zoomP.scale = scale || 50000;
             }
-            return this._innerView.goTo(zoomP);
+            const opts: any = { animate: animate };
+            return this._innerView.goTo(zoomP, opts);
         });
     }
 

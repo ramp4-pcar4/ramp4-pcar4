@@ -36,7 +36,7 @@ function initRAMP() {
 
     let options = {
         loadDefaultFixtures: false,
-        loadDefaultEvents: false
+        loadDefaultEvents: true
     };
 
     rInstance = new RAMP.Instance(document.getElementById('app'), config, options);

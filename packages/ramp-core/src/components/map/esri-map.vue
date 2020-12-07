@@ -79,6 +79,15 @@ export default class EsriMap extends Vue {
             // TODO debounce here? the map event fires pretty much every change in pixel value.
             this.$iApi.event.emit(GlobalEvents.MAP_MOUSEMOVE, payload);
         });
+        this.$iApi.map.mapKeyDown.listen((payload: KeyboardEvent) => {
+            this.$iApi.event.emit(GlobalEvents.MAP_KEYDOWN, payload);
+        });
+        this.$iApi.map.mapKeyUp.listen((payload: KeyboardEvent) => {
+            this.$iApi.event.emit(GlobalEvents.MAP_KEYUP, payload);
+        });
+        this.$iApi.map.mapBlur.listen((payload: FocusEvent) => {
+            this.$iApi.event.emit(GlobalEvents.MAP_BLUR, payload);
+        });
 
 
         this.onLayerArrayChange(this.layers, []);
