@@ -108,6 +108,12 @@ export class RampMap extends MapBase {
             //      should we debounce here? or on the client?
             this.mapMouseMoved.fireEvent(this.gapi.utils.geom.esriMapMouseToRamp(esriMouseMove));
         });
+
+        this._innerView.container.addEventListener('touchmove', e => {
+            // need this for panning and zooming to work on mobile devices / touchscreens
+            // touchmove stops the drag event (what the MapView reacts to) from firing properly
+            e.preventDefault();
+        });
     }
 
     /**
