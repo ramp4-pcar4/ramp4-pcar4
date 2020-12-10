@@ -27,6 +27,9 @@ export enum GlobalEvents {
     MAP_EXTENTCHANGE = 'map/extentchanged', // payload is rampapi Extent
     MAP_IDENTIFY = 'map/identify',
     MAP_MOUSEMOVE = 'map/mousemove',
+    MAP_KEYDOWN = 'map/keydown',
+    MAP_KEYUP = 'map/keyup',
+    MAP_BLUR = 'map/blur',
     SETTINGS_OPEN = 'settings/open',
     DETAILS_OPEN = 'details/open',
     HELP_TOGGLE = 'help/toggle'
@@ -42,6 +45,9 @@ export enum GlobalEvents {
 enum DefEH {
     IDENTIFY_DETAILS = 'ramp_identify_opens_details',
     MAP_IDENTIFY = 'ramp_map_click_runs_identify',
+    MAP_KEYDOWN = 'ramp_map_keydown',
+    MAP_KEYUP = 'ramp_map_keyup',
+    MAP_BLUR = 'ramp_map_blur',
     OPEN_SETTINGS = 'ramp_settings_opens_panel',
     OPEN_DETAILS = 'opens_feature_details',
     TOGGLE_HELP = 'toggles_help_panel'
@@ -276,7 +282,7 @@ export class EventAPI extends APIScope {
             // TODO the enum-values-to-array logic we use in the event names list
             //      fails a bit here. we could make it work if we force every default
             //      handler name to being with a specific prefix. Alternately use object, not enum.
-            eventHandlerNames = [DefEH.MAP_IDENTIFY, DefEH.IDENTIFY_DETAILS, DefEH.OPEN_SETTINGS, DefEH.OPEN_DETAILS, DefEH.TOGGLE_HELP];
+            eventHandlerNames = [DefEH.MAP_IDENTIFY, DefEH.MAP_KEYDOWN, DefEH.MAP_KEYUP, DefEH.MAP_BLUR, DefEH.IDENTIFY_DETAILS, DefEH.OPEN_SETTINGS, DefEH.OPEN_DETAILS, DefEH.TOGGLE_HELP];
         }
 
         // add all the requested default event handlers.
@@ -341,6 +347,24 @@ export class EventAPI extends APIScope {
                     }
                 };
                 this.$iApi.event.on(GlobalEvents.HELP_TOGGLE, zeHandler, handlerName);
+                break;
+            case DefEH.MAP_KEYDOWN:
+                zeHandler = (payload: KeyboardEvent) => {
+                    this.$iApi.mapActions.mapKeyDown(payload);
+                };
+                this.$iApi.event.on(GlobalEvents.MAP_KEYDOWN, zeHandler, handlerName);
+                break;
+            case DefEH.MAP_KEYUP:
+                zeHandler = (payload: KeyboardEvent) => {
+                    this.$iApi.mapActions.mapKeyUp(payload);
+                };
+                this.$iApi.event.on(GlobalEvents.MAP_KEYUP, zeHandler, handlerName);
+                break;
+            case DefEH.MAP_BLUR:
+                zeHandler = (payload: FocusEvent) => {
+                    this.$iApi.mapActions.stopPan();
+                };
+                this.$iApi.event.on(GlobalEvents.MAP_BLUR, zeHandler, handlerName);
                 break;
             default:
                 console.error(`Unrecognized default event handler name encountered: ${handlerName}`);
