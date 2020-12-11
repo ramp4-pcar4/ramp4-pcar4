@@ -82,13 +82,17 @@ export class MapAPI extends APIScope {
      * @memberof MapAPI
      */
     mapKeyDown(payload: KeyboardEvent) {
-        let zoomKeys = ['=', '-'];
-        let panKeys = ['Shift', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowUp'];
+        const zoomKeys = ['=', '-'];
+        const panKeys = ['Shift', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowUp'];
 
         if (panKeys.includes(payload.key) && !this._activeKeys.includes(payload.key)) {
             this._activeKeys.push(payload.key);
-            this.pan();
-        } else if (zoomKeys.includes(payload.key)) {
+            // don't pan in middle of zoom animation
+            if (!this._activeKeys.some(k => zoomKeys.includes(k))) {
+                this.pan();
+            }
+        } else if (zoomKeys.includes(payload.key) && !this._activeKeys.includes(payload.key)) {
+            this._activeKeys.push(payload.key);
             this.zoom(payload);
         } else if (payload.key === 'Enter') {
             this.identify(this.$iApi.map.getExtent().center());
@@ -102,9 +106,15 @@ export class MapAPI extends APIScope {
      * @memberof MapAPI
      */
     mapKeyUp(payload: KeyboardEvent) {
-        if (this._activeKeys.includes(payload.key)) {
+        const zoomKeys = ['=', '-'];
+
+        // ignore zoom keys, manually deactivate them when zoom finishes so keyup won't interrupt zoom animation
+        if (this._activeKeys.includes(payload.key) && !zoomKeys.includes(payload.key)) {
             this._activeKeys.splice(this._activeKeys.indexOf(payload.key), 1);
-            this.pan();
+            // don't pan in middle of zoom animation
+            if (!this._activeKeys.some(k => zoomKeys.includes(k))) {
+                this.pan();
+            }
         }
     }
 
@@ -116,6 +126,16 @@ export class MapAPI extends APIScope {
     stopPan() {
         this._activeKeys = [];
         clearInterval(this._panInterval);
+    }
+
+    /**
+     * Returns if keys are active on map
+     *
+     * @memberof MapAPI
+     * @returns {boolean} - true if any pan/zoom keys are active
+     */
+    get keysActive(): boolean {
+        return this._activeKeys.length !== 0;
     }
 
     /**
@@ -132,6 +152,7 @@ export class MapAPI extends APIScope {
         } else if (payload.key === '-') {
             await this.$iApi.map.zoomOut();
         }
+        this._activeKeys.splice(this._activeKeys.indexOf(payload.key), 1);
         this.pan();
     }
 

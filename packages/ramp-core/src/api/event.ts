@@ -27,6 +27,7 @@ export enum GlobalEvents {
     MAP_EXTENTCHANGE = 'map/extentchanged', // payload is rampapi Extent
     MAP_IDENTIFY = 'map/identify',
     MAP_MOUSEMOVE = 'map/mousemove',
+    MAP_MOUSEDOWN = 'map/mousedown',
     MAP_KEYDOWN = 'map/keydown',
     MAP_KEYUP = 'map/keyup',
     MAP_BLUR = 'map/blur',
