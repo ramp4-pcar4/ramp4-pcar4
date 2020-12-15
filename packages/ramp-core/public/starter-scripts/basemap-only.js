@@ -40,5 +40,4 @@ function initRAMP() {
     };
 
     rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
-    rInstance.fixture.addDefaultFixtures(['crosshairs'])
 }
