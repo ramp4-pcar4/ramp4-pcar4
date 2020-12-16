@@ -52,7 +52,6 @@ export default class TooltipV extends Vue {
     transition-property: opacity font-size;
     width: max-content;
     font-size: x-small;
-    
     &[position='top'] {
         @apply left-1/2 bottom-full;
         transform: translateX(-50%);
@@ -81,7 +80,6 @@ export default class TooltipV extends Vue {
         @apply left-full top-1/2;
         transform: translateY(-50%);
     }
-
     .show-tooltip + &,
     :focus + &,
     :focus .focused + & {
