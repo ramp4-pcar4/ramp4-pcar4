@@ -37,6 +37,8 @@ export class RampMap extends MapBase {
 
     mapMouseMoved: TypedEvent<MapMove>;
 
+    mapMouseDown: TypedEvent<PointerEvent>;
+
     mapKeyDown: TypedEvent<KeyboardEvent>;
 
     mapKeyUp: TypedEvent<KeyboardEvent>;
@@ -74,6 +76,7 @@ export class RampMap extends MapBase {
         this.mapClicked = new TypedEvent<MapClick>();
         this.mapDoubleClicked = new TypedEvent<MapClick>();
         this.mapMouseMoved = new TypedEvent<MapMove>();
+        this.mapMouseDown = new TypedEvent<PointerEvent>();
         this.mapKeyDown = new TypedEvent<KeyboardEvent>();
         this.mapKeyUp = new TypedEvent<KeyboardEvent>();
         this.mapBlur = new TypedEvent<FocusEvent>();
@@ -116,6 +119,10 @@ export class RampMap extends MapBase {
             // TODO this even fires on just about every change in pixel the pointer makes.
             //      should we debounce here? or on the client?
             this.mapMouseMoved.fireEvent(this.gapi.utils.geom.esriMapMouseToRamp(esriMouseMove));
+        });
+
+        this._innerView.on('pointer-down', esriMouseDown => {
+            this.mapMouseDown.fireEvent(esriMouseDown.native);
         });
 
         this._innerView.on('key-down', esriKeyDown => {

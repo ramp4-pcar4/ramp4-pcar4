@@ -14,7 +14,6 @@ The `appbar` provides a means to open and track panels, or run custom commands.
 
 Continued [here](appbar.md).
 
-
 ### Mapnav
 
 The `mapnav` provides a means pan and zoom the map. TODO create and hyperlink to `mapnav.md`, or provide any other relevant info here.
@@ -65,6 +64,10 @@ The `northarrow` provides an arrow at the top of the map pointing to the geograp
 
 The `overviewmap` provides a smaller map displaying the current map extent within the context of a larger area. TODO create and hyperlink to `overviewmap.md`
 
+### Crosshairs
+
+The `crosshairs` displays crosshairs at the centre of the map when keyboard navigation is active. TODO create and hyperlink to `crosshairs.md`
+
 ## Default Events
 
 All events are specific to a RAMP instance. An event on one instance says nothing about a different instance.
@@ -75,15 +78,19 @@ These events will always be present, regardless of what fixtures are active. Eve
 
 TODO if we have API docs that expose the payload interfaces, link to those definitions. Otherwise we'll need to put the interface specs here
 
-| Event Name | Payload | Event Announces|
+| Event Name | Payload | Event Announces |
 | ---------- | ---------- | ---------- |
-| COMPONENT<br>'ramp/component' | *id*: component id| A vue component registered |
+| COMPONENT<br>'ramp/component' | *id*: component id | A vue component registered |
 | FILTER_CHANGE<br>'filter/change' | FilterEventParam object| A filter has changed |
+| MAP_BLUR<br>'map/blur' | FocusEvent object | The map lost focus |
 | MAP_CLICK<br>'map/click' | MapClick object | The map was clicked |
 | MAP_CREATED<br>'map/created' | Map API object| The map was created |
 | MAP_DOUBLECLICK<br>'map/doubleclick' | MapClick object | The map was double clicked |
-| MAP_EXTENTCHANGE<br>'map/extentchanged' | RAMP Extent object| The map extent changed|
-| MAP_IDENTIFY<br>'map/identify' | *results*: Array of IdentifyResult<br>*click*: MapClick object| A map identify was requested |
+| MAP_EXTENTCHANGE<br>'map/extentchanged' | RAMP Extent object | The map extent changed |
+| MAP_IDENTIFY<br>'map/identify' | *results*: Array of IdentifyResult<br>*click*: MapClick object | A map identify was requested |
+| MAP_KEYDOWN<br>'map/keydown' | KeyboardEvent object | A key was pressed |
+| MAP_KEYUP<br>'map/keyup' | KeyboardEvent object | A key was released |
+| MAP_MOUSEDOWN<br>'map/mousedown' | PointerEvent object | A mouse button was depressed |
 | MAP_MOUSEMOVE<br>'map/mousemove' | MapMove object | The mouse moved over the map |
 
 
@@ -110,11 +117,15 @@ TODO keep updating the list, make new subsections as appropriate. Maybe move to 
 
 - `ramp_map_click_runs_identify` causes the identify process to start when the map is clicked
 - `ramp_identify_opens_details` causes the details fixture to open, displaying the result of an identify request.
+- `ramp_map_keydown` causes a key press to be processed on the map
+- `ramp_map_keyup` causes a key release to be processed on the map
+- `ramp_map_blur` causes keyboard navigation to stop when the map loses focus
 
 ### Fixture Handlers
 
 - `ramp_settings_opens_panel` causes the settings fixture to open for a layer
 - `opens_feature_details` causes the details fixture to open for a single feature
+- `toggles_help_panel` causes the help fixture to toggle the help panel
 
 ## Examples
 
