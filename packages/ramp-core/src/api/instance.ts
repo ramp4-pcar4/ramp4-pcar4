@@ -169,12 +169,18 @@ export class InstanceAPI {
         return this.$vApp.$i18n.locale;
     }
 
-    get animate(): string{
-        return " " // fix: return animate status
-    }
-
-    setAnimate(status:string): void {
-        // toggle animate status
+    /**
+     * The current animation status.
+     * 
+     * @readonly
+     * @type string
+     * @memberof InstanceAPI
+     */
+    get animate(): string {
+        if (this.$vApp.$el.classList.contains("animation-enabled")) {
+            return "on"
+        }
+        return "off"
     }
 
     /**

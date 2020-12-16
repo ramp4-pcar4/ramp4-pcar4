@@ -439,5 +439,10 @@ function switchLang() {
 }
 
 function animateToggle() {
-    // get and toggle animate status
+    if (rInstance.$vApp.$el.classList.contains("animation-enabled")) {
+        rInstance.$vApp.$el.classList.remove("animation-enabled");
+    } else {
+        rInstance.$vApp.$el.classList.add("animation-enabled");
+    }
+    document.getElementById('animate-status').innerText = "Animate: " + rInstance.animate;
 }

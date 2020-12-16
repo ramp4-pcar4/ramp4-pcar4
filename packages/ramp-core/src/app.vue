@@ -1,14 +1,12 @@
 <template>
-    <div class="ramp-app" :lang="$i18n.locale">
+    <div class="ramp-app animation-enabled" :lang="$i18n.locale">
         <shell></shell>
     </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-
 import Shell from '@/components/shell.vue';
-
 import ro from '@/scripts/resize-observer.js';
 
 import { FocusList, FocusItem } from '@/directives/focus-list';
@@ -39,10 +37,5 @@ export default class App extends Vue {
 .ramp-app {
     @include focus-list.default-focused-styling;
     height: 700px;
-}
-</style>
-
-<style lang="scss" scoped>
-.ramp-app {
 }
 </style>
