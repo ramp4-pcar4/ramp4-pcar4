@@ -169,14 +169,6 @@ export class InstanceAPI {
         return this.$vApp.$i18n.locale;
     }
 
-    get animate(): string{
-        return " " // fix: return animate status
-    }
-
-    setAnimate(status:string): void {
-        // toggle animate status
-    }
-
     /**
      * The current animation status.
      * 
