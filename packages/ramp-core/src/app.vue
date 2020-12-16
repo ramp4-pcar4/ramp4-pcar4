@@ -6,7 +6,9 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
+
 import Shell from '@/components/shell.vue';
+
 import ro from '@/scripts/resize-observer.js';
 
 import { FocusList, FocusItem } from '@/directives/focus-list';
@@ -26,6 +28,7 @@ export default class App extends Vue {
         // let ResizeObserver observe the app div
         // it applies 'xs' 'sm' 'md' and 'lg' classes to the div depending on the size
         ro.observe(this.$el);
+        console.log(this.$el);
     }
 }
 </script>
@@ -38,4 +41,10 @@ export default class App extends Vue {
     @include focus-list.default-focused-styling;
     height: 700px;
 }
+.ramp-app.animation-enabled .rv-ui-tooltip {
+    transition-duration: 0.2s;
+}
+</style>
+
+<style lang="scss" scoped>
 </style>

@@ -30,21 +30,6 @@ export default class TooltipV extends Vue {
                 this.classList.remove('show-tooltip');
             }
         });
-
-        if (this.$iApi.$vApp.$el.classList.contains("animation-enabled")) {
-            this.$el.setAttribute('animate', 'true');
-        } else {
-            this.$el.setAttribute('animate', 'false');
-        }
-        (this.$el.previousElementSibling! as HTMLElement).addEventListener('mouseover', this.checkAnimation);
-    }
-
-    checkAnimation(event: MouseEvent) {
-        if (this.$el.getAttribute('animate') == 'false' && this.$iApi.$vApp.$el.classList.contains("animation-enabled")) {
-            this.$el.setAttribute('animate', 'true');
-        } else if (this.$el.getAttribute('animate') == 'true' && !this.$iApi.$vApp.$el.classList.contains("animation-enabled")) {
-            this.$el.setAttribute('animate', 'false');
-        }
     }
 
     generateID(): string {
@@ -67,13 +52,7 @@ export default class TooltipV extends Vue {
     transition-property: opacity font-size;
     width: max-content;
     font-size: x-small;
-
-    &[animate='true'] {
-        transition-duration: 0.2s;
-    }
-    &[animate='false'] {
-        transition-duration: 0s;
-    }
+    
     &[position='top'] {
         @apply left-1/2 bottom-full;
         transform: translateX(-50%);
