@@ -49,11 +49,9 @@ export default class TooltipV extends Vue {
 
 <style lang="scss" scoped>
 .rv-ui-tooltip {
-    transition: opacity 0.2s;
-    transition: font-size 0.2s;
+    transition-property: opacity font-size;
     width: max-content;
     font-size: x-small;
-
     &[position='top'] {
         @apply left-1/2 bottom-full;
         transform: translateX(-50%);
@@ -82,11 +80,13 @@ export default class TooltipV extends Vue {
         @apply left-full top-1/2;
         transform: translateY(-50%);
     }
-
     .show-tooltip + &,
     :focus + &,
     :focus .focused + & {
         @apply visible opacity-100 text-base;
     }
+}
+.ramp-app.animation-enabled .rv-ui-tooltip {
+    transition-duration: 0.2s;
 }
 </style>

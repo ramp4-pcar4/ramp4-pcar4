@@ -437,3 +437,12 @@ function switchLang() {
     }
     document.getElementById('instance-language').innerText = rInstance.language;
 }
+
+function animateToggle() {
+    if (rInstance.$vApp.$el.classList.contains("animation-enabled")) {
+        rInstance.$vApp.$el.classList.remove("animation-enabled");
+    } else {
+        rInstance.$vApp.$el.classList.add("animation-enabled");
+    }
+    document.getElementById('animate-status').innerText = "Animate: " + rInstance.animate;
+}

@@ -1,5 +1,5 @@
 <template>
-    <div class="ramp-app" :lang="$i18n.locale">
+    <div class="ramp-app animation-enabled" :lang="$i18n.locale">
         <shell></shell>
     </div>
 </template>
@@ -43,6 +43,4 @@ export default class App extends Vue {
 </style>
 
 <style lang="scss" scoped>
-.ramp-app {
-}
 </style>
