@@ -98,7 +98,7 @@ const TEXT_TYPE: string = 'string';
 })
 export default class TableComponent extends Vue {
     @Prop() layerUid!: string;
-    @Get('layer/getLayerByUid') getLayerByUid!: (id: string) => BaseLayer | undefined;
+    @Get('layer/getLayerByUid') getLayerByUid!: (uid: string) => BaseLayer | undefined;
     @Sync('grid/grids') grids!: { [uid: string]: GridConfig };
 
     columnApi: any = null;
@@ -145,7 +145,7 @@ export default class TableComponent extends Vue {
         }
 
         fancyLayer.isLayerLoaded().then(() => {
-            const tableAttributePromise = fancyLayer.getTabularAttributes();
+            const tableAttributePromise = fancyLayer.getTabularAttributes(this.layerUid);
 
             tableAttributePromise.then((tableAttributes: any) => {
                 // Iterate through table columns and set up column definitions and column filter stuff.
@@ -396,7 +396,7 @@ export default class TableComponent extends Vue {
                     if (layer === undefined) return;
                     const oid = cell.data[this.oidField];
                     const opts = { getGeom: true };
-                    layer.getGraphic(oid, opts).then(g => {
+                    layer.getGraphic(oid, opts, this.layerUid).then(g => {
                         if (g.geometry === undefined) {
                             console.error(`Could not find graphic for objectid ${oid}`);
                         } else {
@@ -421,7 +421,7 @@ export default class TableComponent extends Vue {
                     if (layer === undefined) return;
                     const iconContainer = document.createElement('span');
                     const oid = cell.data[this.oidField];
-                    layer.getIcon(oid).then(i => {
+                    layer.getIcon(oid, this.layerUid).then(i => {
                         iconContainer.innerHTML = i;
                     });
                     return iconContainer;

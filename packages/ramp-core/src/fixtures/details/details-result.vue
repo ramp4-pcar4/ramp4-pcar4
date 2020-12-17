@@ -40,7 +40,7 @@ export default class DetailsResultV extends Vue {
     @Prop() layerIndex!: number;
 
     @Get(DetailsStore.payload) payload!: IdentifyResult[];
-    @Get('layer/getLayerByUid') getLayerByUid!: (id: string) => BaseLayer | undefined;
+    @Get('layer/getLayerByUid') getLayerByUid!: (uid: string) => BaseLayer | undefined;
 
     icon: string[] = [];
 
@@ -64,7 +64,7 @@ export default class DetailsResultV extends Vue {
             console.warn(`could not find layer for uid ${uid} during icon lookup`);
             return;
         }
-        const oidField = layer.getOidField();
+        const oidField = layer.getOidField(uid);
         layer.getIcon(data[oidField], uid).then(value => {if (this.icon[idx] !== value) this.$set(this.icon, idx, value)});
     }
 

@@ -43,6 +43,6 @@ export function grid() {
         state,
         getters: { ...getters },
         actions: { ...actions },
-        mutations: { ...mutations, ...make.mutations(['grids', 'open']) }
+        mutations: { ...mutations, ...make.mutations(['grids', 'currentUid']) }
     };
 }

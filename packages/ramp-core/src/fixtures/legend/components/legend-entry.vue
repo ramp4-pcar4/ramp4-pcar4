@@ -3,13 +3,13 @@
         <div class="relative">
             <div
                 class="default-focus-style p-5 flex items-center hover:bg-gray-200 cursor-pointer h-44"
-                @click="$iApi.fixture.get('grid').openGrid(legendItem.layer.uid)"
+                @click="$iApi.fixture.get('grid').openGrid(legendItem.uid)"
                 v-focus-item
             >
                 <!-- symbology stack toggle-->
                 <div class="relative w-32 h-32">
                     <button @click.stop="toggleSymbology" tabindex="-1">
-                        <symbology-stack class="w-32 h-32" :visible="displaySymbology" :layer="legendItem.layer" />
+                        <symbology-stack class="w-32 h-32" :visible="displaySymbology" :layer="legendItem.layer" :uid="legendItem.uid" />
                     </button>
                     <tooltip position="top-left">
                         {{ displaySymbology ? $t('legend.symbology.hide') : $t('legend.symbology.expand') }}
@@ -30,7 +30,7 @@
         <!-- Symbology Stack Section -->
         <div v-if="displaySymbology" v-focus-item class="default-focus-style">
             <!-- display each symbol -->
-            <div class="p-5 flex items-center" v-for="(item, idx) in legendItem.layer.getLegend()" :key="idx">
+            <div class="p-5 flex items-center" v-for="(item, idx) in legendItem.layer.getLegend(legendItem.uid)" :key="idx">
                 <div class="symbologyIcon">
                     <span v-html="item.svgcode"></span>
                 </div>

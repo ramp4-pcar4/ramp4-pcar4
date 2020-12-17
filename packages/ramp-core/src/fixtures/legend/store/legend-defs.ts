@@ -103,6 +103,7 @@ export class LegendItem {
 export class LegendEntry extends LegendItem {
     _uid: string | undefined;
     _layer: BaseLayer | undefined;
+    _layerIndex: number | undefined;
     _layerTree: TreeNode | undefined;
     _isLoaded: boolean;
     _symbologyStack: any;
@@ -118,6 +119,7 @@ export class LegendEntry extends LegendItem {
 
         // find matching BaseLayer in layer store to the layerId in config
         this._layer = legendEntry.layers.find((layer: BaseLayer) => layer.id === this._id);
+        this._layerIndex = legendEntry.entryIndex;
 
         // check if a layer has been bound to this entry. If not, set the type to "placeholder".
         if (this._layer === undefined) {
@@ -136,19 +138,19 @@ export class LegendEntry extends LegendItem {
         // wait for layer to finish loading
         this._layer?.isLayerLoaded().then(() => {
             // obtain uid and layer tree structure
-            this._uid = this._layer?.uid;
             this._layerTree = this._layer?.getLayerTree();
+            this._uid = this._layerTree?.findChildByIdx(this._layerIndex!)?.uid || this._layer?.uid;
 
             // toggle off visibility if entry is part of a visibility set with a set entry already toggled on
             if (this._parent instanceof LegendGroup && this._parent.type === LegendTypes.Set) {
-                this._parent.children.some(entry => entry.visibility && entry.id !== this._id) ? this._layer?.setVisibility(false) : null;
+                this._parent.children.some(entry => entry.visibility && entry.id !== this._id) ? this._layer?.setVisibility(false, this.uid) : null;
             }
         });
     }
 
     /** Returns visibility of layer. */
     get visibility(): boolean | undefined {
-        return this._layer?.getVisibility();
+        return this._layer?.getVisibility(this.uid);
     }
 
     /** Returns uid associated with BaseLayer. */
@@ -181,7 +183,7 @@ export class LegendEntry extends LegendItem {
             if (this.visibility === visibility) {
                 return;
             }
-            visibility !== undefined ? this._layer?.setVisibility(visibility) : this._layer?.setVisibility(!this.visibility);
+            visibility !== undefined ? this._layer?.setVisibility(visibility, this.uid) : this._layer?.setVisibility(!this.visibility, this.uid);
             // update parent visibility if current legend entry is part of a group or set
             if (this._parent instanceof LegendGroup && updateParent) {
                 this._parent.checkVisibility(this);

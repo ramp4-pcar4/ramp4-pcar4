@@ -6,17 +6,17 @@ export class GridAPI extends FixtureInstance {
     /**
      * Open the grid for the layer with the given uid.
      *
-     * @param {string} id
+     * @param {string} uid
      * @memberof GridAPI
      */
-    openGrid(id: string): void {
+    openGrid(uid: string): void {
         // get GridConfig for specified uid
-        let gridSettings: GridConfig | undefined = this.$vApp.$store.get(`grid/grids@${id}`);
+        let gridSettings: GridConfig | undefined = this.$vApp.$store.get(`grid/grids@${uid}`);
 
         // if no GridConfig exists for the given uid, create it.
         if (gridSettings === undefined) {
             gridSettings = {
-                uid: id,
+                uid: uid,
                 state: new TableStateManager({
                     table: {
                         showFilter: true,
@@ -29,7 +29,7 @@ export class GridAPI extends FixtureInstance {
         }
 
         // open the grid
-        this.$vApp.$store.set('grid/open', id ? id : null);
+        this.$vApp.$store.set('grid/currentUid', uid ? uid : null);
 
         this.$iApi.panel.open('grid-panel');
     }

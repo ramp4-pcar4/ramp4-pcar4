@@ -55,7 +55,7 @@ export default class DetailsItemV extends Vue {
 
     // retrieve the identify payload from the store
     @Get(DetailsStore.payload) payload!: IdentifyResult[];
-    @Get('layer/getLayerByUid') getLayerByUid!: (id: string) => BaseLayer | undefined;
+    @Get('layer/getLayerByUid') getLayerByUid!: (uid: string) => BaseLayer | undefined;
 
     identifyTypes: any = IdentifyResultFormat;
     icon: string = '';
@@ -74,8 +74,9 @@ export default class DetailsItemV extends Vue {
 
     get itemName() {
         const layerInfo = this.payload[this.layerIndex];
-        const layer: BaseLayer | undefined = this.getLayerByUid(layerInfo?.uid || this.uid);
-        const nameField = layer?.getNameField();
+        const uid = layerInfo?.uid || this.uid;
+        const layer: BaseLayer | undefined = this.getLayerByUid(uid);
+        const nameField = layer?.getNameField(uid);
         return nameField ? this.identifyItem.data[nameField] : 'Details';
     }
 
@@ -87,7 +88,7 @@ export default class DetailsItemV extends Vue {
             console.warn(`could not find layer for uid ${uid} during icon lookup`);
             return '';
         }
-        const oidField = layer.getOidField();
+        const oidField = layer.getOidField(uid);
         return layer.getIcon(this.identifyItem.data[oidField], uid).then(value => this.icon = value);
     }
 
@@ -113,9 +114,9 @@ export default class DetailsItemV extends Vue {
             console.warn(`Could not find layer for uid ${uid} during zoom geometry lookup`);
             return;
         }
-        const oid = this.identifyItem.data[layer.getOidField()];
+        const oid = this.identifyItem.data[layer.getOidField(uid)];
         const opts = { getGeom: true };
-        layer.getGraphic(oid, opts).then(g => {
+        layer.getGraphic(oid, opts, uid).then(g => {
             if (g.geometry === undefined) {
                 console.error(`Could not find graphic for objectid ${oid}`);
             } else {

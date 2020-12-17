@@ -1,6 +1,6 @@
 <template>
     <panel-screen>
-        <template #header>{{$t('grid.title')}}: {{head}} </template>
+        <template #header>{{ $t('grid.title') }}: {{ head }} </template>
         <template #controls>
             <input
                 @keyup="updateQuickSearch()"
@@ -44,7 +44,7 @@
             <close @click="panel.close()"></close>
         </template>
         <template #content>
-            <TableComponent class="rv-grid" ref="rvGrid" :layerUid="open"></TableComponent>
+            <TableComponent class="rv-grid" ref="rvGrid" :layerUid="currentUid"></TableComponent>
         </template>
     </panel-screen>
 </template>
@@ -57,7 +57,7 @@ import { PanelInstance } from '@/api';
 import TableComponent from '@/fixtures/grid/table/table.vue';
 
 import { LayerStore, layer } from '@/store/modules/layer';
-import FeatureLayer from 'ramp-geoapi/dist/layer/FeatureLayer';
+import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
 
 @Component({
     components: {
@@ -68,8 +68,8 @@ export default class Screen1 extends Vue {
     @Prop() panel!: PanelInstance;
     @Prop() header!: String;
 
-    @Get(LayerStore.layers) layers!: FeatureLayer[];
-    @Get('grid/open') open: any;
+    @Get(LayerStore.layers) layers!: BaseLayer[];
+    @Get('grid/currentUid') currentUid: any;
 
     quicksearch: String = '';
     grid: any = undefined;
