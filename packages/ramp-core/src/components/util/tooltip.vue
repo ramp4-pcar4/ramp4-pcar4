@@ -86,4 +86,7 @@ export default class TooltipV extends Vue {
         @apply visible opacity-100 text-base;
     }
 }
+.ramp-app.animation-enabled .rv-ui-tooltip {
+    transition-duration: 0.2s;
+}
 </style>

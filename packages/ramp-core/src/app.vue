@@ -40,9 +40,6 @@ export default class App extends Vue {
     @include focus-list.default-focused-styling;
     height: 700px;
 }
-.ramp-app.animation-enabled .rv-ui-tooltip {
-    transition-duration: 0.2s;
-}
 </style>
 
 <style lang="scss" scoped>
