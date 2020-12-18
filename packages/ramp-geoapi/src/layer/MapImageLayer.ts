@@ -264,6 +264,10 @@ export class MapImageLayer extends AttribLayer {
 
                 const treeLeaf = new TreeNode(sid, this.fcs[sid].uid, this.fcs[sid].name, true);
                 parentTreeNode.children.push(treeLeaf);
+
+                subLayer.watch('visible', () => {
+                    this.visibilityChanged.fireEvent(this.getVisibility());
+                })
             }
         };
 

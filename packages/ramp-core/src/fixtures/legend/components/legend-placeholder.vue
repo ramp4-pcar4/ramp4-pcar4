@@ -60,6 +60,7 @@ export default class LegendPlaceholderV extends Vue {
             this.layer.isLayerLoaded().then(r => {
                 this.legendItem._layer = this.layer;
                 this.legendItem._type = LegendTypes.Entry;
+                this.legendItem._uid = this.layer!.getLayerTree().findChildByIdx(this.legendItem._layerIndex!)?.uid || this.layer!.uid;
             });
         }
     }

@@ -41,6 +41,7 @@ import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
 export default class SymbologyStack extends Vue {
     @Prop() visible!: boolean;
     @Prop() layer!: BaseLayer;
+    @Prop() uid!: string;
 
     stack: any = [];
 
@@ -59,8 +60,8 @@ export default class SymbologyStack extends Vue {
      * Retrieves the symbology stack. Waits on all symbols in the stack to finish loading before displaying.
      */
     getSymbologyStack(): any {
-        Promise.all(this.layer.getLegend().map((l: any) => l.drawPromise)).then((r: any) => {
-            this.stack = this.layer.getLegend();
+        Promise.all(this.layer.getLegend(this.uid).map((l: any) => l.drawPromise)).then((r: any) => {
+            this.stack = this.layer.getLegend(this.uid);
         });
     }
 }
