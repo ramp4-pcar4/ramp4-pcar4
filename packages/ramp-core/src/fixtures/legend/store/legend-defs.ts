@@ -121,12 +121,13 @@ export class LegendEntry extends LegendItem {
         this._layer = legendEntry.layers.find((layer: BaseLayer) => layer.id === this._id);
         this._layerIndex = legendEntry.entryIndex;
 
-        // check if a layer has been bound to this entry. If not, set the type to "placeholder".
-        if (this._layer === undefined) {
+        this._isLoaded = this._layer !== undefined ? this._layer.isValidState() : true;
+
+        // check if a layer has been bound to this entry and is done loading. If not, set the type to "placeholder".
+        if (this._layer === undefined || !this._isLoaded) {
             this._type = LegendTypes.Placeholder;
         }
 
-        this._isLoaded = this._layer !== undefined ? this._layer.isValidState() : true;
         // initialize more layer properties after layer loads
         this._waitLayerLoad();
     }
