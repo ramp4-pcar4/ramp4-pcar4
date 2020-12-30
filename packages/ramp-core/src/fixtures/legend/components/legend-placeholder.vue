@@ -64,6 +64,11 @@ export default class LegendPlaceholderV extends Vue {
             });
         }
     }
+
+    mounted() {
+        // in case layer is added while placeholder component is dead
+        this.layerAdded(this.layers, []);
+    }
 }
 </script>
 
