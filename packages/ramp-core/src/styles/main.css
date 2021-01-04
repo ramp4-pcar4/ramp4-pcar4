@@ -26,3 +26,19 @@
     font-weight: 700;
     font-style: normal;
 }
+
+.notification {
+    position: absolute;
+    height: 128px;
+    width: 256px;
+    padding: 64px;
+    z-index: 50;
+    left: 0;
+    right: 0;
+    top: 0;
+    margin: auto;
+    margin-top: 16px;
+    border: 2px solid red;
+    font-size: x-large;
+    background-color: white;
+}

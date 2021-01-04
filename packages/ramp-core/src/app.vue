@@ -1,9 +1,6 @@
 <template>
     <div class="ramp-app animation-enabled" :lang="$i18n.locale">
         <shell></shell>
-        <div v-if="isIE()" class="absolute h-128 w-256 p-40 z-50 left-0 right-0 top-0 mx-auto my-16 border-2 border-red-500 text-lg bg-white">
-            Internet Explorer is not a supported browser, please use a different browser.
-        </div>
     </div>
 </template>
 
@@ -31,12 +28,6 @@ export default class App extends Vue {
         // let ResizeObserver observe the app div
         // it applies 'xs' 'sm' 'md' and 'lg' classes to the div depending on the size
         ro.observe(this.$el);
-    }
-    isIE(): boolean {
-        let ua = navigator.userAgent;
-        const IE = RegExp('MSIE');
-        const IE11 = RegExp('Trident');
-        return IE.test(ua) || IE11.test(ua);
     }
 }
 </script>
