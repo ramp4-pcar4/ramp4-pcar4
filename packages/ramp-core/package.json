@@ -18,7 +18,6 @@
         "axios": "0.19.2",
         "debounce": "^1.2.0",
         "deepmerge": "~4.2.2",
-        "lodash": "4.17.15",
         "marked": "^1.2.2",
         "ramp-geoapi": "0.0.1",
         "ramp-locale-loader": "0.0.1",
