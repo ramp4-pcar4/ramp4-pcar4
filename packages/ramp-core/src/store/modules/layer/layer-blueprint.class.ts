@@ -1,6 +1,5 @@
 import to from 'await-to-js';
 import deepmerge from 'deepmerge';
-import lodash from 'lodash';
 import axios from 'axios';
 
 import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
@@ -228,7 +227,7 @@ class ClientSideData extends LayerBlueprintMixin {
         // this.config.targetSR = configService.getSync.map.instance.spatialReference;
 
         // clone data because the makeSomethingLayer functions mangle the config data
-        const clonedFormattedData = lodash.cloneDeep(this._formattedData);
+        const clonedFormattedData = deepmerge({}, this._formattedData);
 
         if (!clonedFormattedData) {
             console.error(`Failed to get data for "${this.config.id}"`);
