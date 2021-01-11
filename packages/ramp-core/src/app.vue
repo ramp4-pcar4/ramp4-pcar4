@@ -33,14 +33,9 @@ export default class App extends Vue {
 </script>
 
 <style lang="scss">
-// APP-WIDE STYLES
-@use 'styles/main';
 @use 'directives/focus-list/focus-list';
 .ramp-app {
     @include focus-list.default-focused-styling;
     height: 700px;
 }
-</style>
-
-<style lang="scss" scoped>
 </style>
