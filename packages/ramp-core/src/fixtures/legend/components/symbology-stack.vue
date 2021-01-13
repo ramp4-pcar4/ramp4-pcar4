@@ -68,11 +68,6 @@ export default class SymbologyStack extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.symbologyIcon {
-    @apply bg-white inline-flex justify-center items-center overflow-hidden;
-    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
-}
-
 .symbol-2 {
     transition-property: margin-left margin-top;
     transition-duration: 0.2s;
