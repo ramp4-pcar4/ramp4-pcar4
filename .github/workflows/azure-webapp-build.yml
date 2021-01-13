@@ -1,0 +1,35 @@
+on: push
+
+env:
+    AZURE_WEBAPP_NAME: r4mp
+    NODE_VERSION: "14.15.4"
+
+jobs:
+    build-and-deploy:
+        name: Build and Deploy
+        runs-on: ubuntu-latest
+        if: github.repository == 'milespetrov/ramp4-pcar4'
+        steps:
+            - name: Extract branch name
+              shell: bash
+              run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+              id: extract_branch
+            - uses: actions/checkout@v2
+            - name: Use Node.js ${{ env.NODE_VERSION }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+            - name: npm install, build
+              run: |
+                  node common/scripts/install-run-rush.js update -p --full
+                  node common/scripts/install-run-rush.js rebuild --verbose
+                  mkdir -p ghDeploy/${{ steps.extract_branch.outputs.branch }}
+                  mv packages/ramp-core/dist ghDeploy/${{ steps.extract_branch.outputs.branch }}
+                  mv packages/ramp-core/host ghDeploy/${{ steps.extract_branch.outputs.branch }}
+
+            - name: "Deploy to Azure WebApp"
+              uses: azure/webapps-deploy@v2
+              with:
+                  app-name: ${{ env.AZURE_WEBAPP_NAME }}
+                  publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+                  package: ghDeploy/

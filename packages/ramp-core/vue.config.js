@@ -8,14 +8,14 @@ const pkg = require('./package.json');
 module.exports = {
     pages: {
         index: {
-          entry: 'src/main.ts',
-          template: 'public/index.html',
-          filename: 'index.html'
+            entry: 'src/main.ts',
+            template: 'public/index.html',
+            filename: 'index.html'
         },
         test: {
-          entry: 'src/main.ts',
-          template: 'public/index-e2e.html',
-          filename: 'index-e2e.html'
+            entry: 'src/main.ts',
+            template: 'public/index-e2e.html',
+            filename: 'index-e2e.html'
         }
     },
     configureWebpack: {
