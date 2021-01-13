@@ -5,6 +5,7 @@
 // so we need to expose RAMP API on the window manually
 import api from '@/api';
 import Vue from 'vue';
+import '@/styles/main.css';
 
 // assign RAMP api to global variable
 window.RAMP = api;
