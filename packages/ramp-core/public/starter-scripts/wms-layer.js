@@ -1,5 +1,5 @@
 window.rInstance = null;
-document.title = "WMS Layer"
+document.title = "WMS Layers"
 
 function initRAMP() {
     let config = {
@@ -32,6 +32,20 @@ function initRAMP() {
             },
             layers: [
                 {
+                    id: "ahocevar",
+                    layerType: "ogcWms",
+                    url: "https://ahocevar.com/geoserver/wms",
+                    state: {
+                        visibility: true
+                    },
+                    layerEntries: [
+                        {
+                            id: "ne:ne"
+                        }
+                    ],
+                    featureInfoMimeType: "text/plain"
+                },
+                {
                     id: 'RailwayNetwork',
                     layerType: 'ogcWms',
                     url: 'http://maps.geogratis.gc.ca/wms/railway_en',
@@ -49,7 +63,7 @@ function initRAMP() {
                         { id: "railway.marker_post" },
                         { id: "railway.crossing" }
                     ],
-                    customRenderer: {}
+                    featureInfoMimeType: "text/html"
                 },
                 {
                   id: "GeoMet",
@@ -59,20 +73,12 @@ function initRAMP() {
                       visibility: true,
                       opacity: 0.5
                   },
-                  disabledControls: [
-                    "styles"
-                  ],
                   layerEntries: [
                     {
-                      id: "GDPS.ETA_UU",
-                      allStyles: [
-                        "WINDARROW",
-                        "WINDARROWKMH"
-                      ],
-                      currentStyle: "WINDARROWKMH"
+                      id: "GDPS.ETA_NT"
                     }
                   ],
-                  customRenderer: {}
+                  featureInfoMimeType: "text/plain"
                 }
             ],
             fixtures: {
@@ -85,8 +91,12 @@ function initRAMP() {
                                 name: 'Railways'
                             },
                             {
+                                layerId: 'ahocevar',
+                                name: 'ahocevar'
+                            },
+                            {
                                 layerId: 'GeoMet',
-                                name: 'Winds'
+                                name: 'Cloud Coverage'
                             }
                         ]
                     }
@@ -97,7 +107,14 @@ function initRAMP() {
                     ]
                 },
                 mapnav: { items: ['fullscreen', 'legend', 'home', 'basemap'] },
-                details: { items: [] }
+                details: { 
+                    items: [
+                        {
+                            id: 'GeoMet',
+                            template: 'GeoMet-Template'
+                        }
+                    ] 
+                }
             }
         }
     }
@@ -106,6 +123,104 @@ function initRAMP() {
         loadDefaultFixtures: false,
         loadDefaultEvents: true
     };
+
+    Vue.component('GeoMet-Template', {
+        props: ['identifyData'],
+        render: function(h) {
+            if (!this.identifyData) return;
+            let parseText = text => {
+                let obj = {};
+                let rx = /(\w+) = '(?:"([^"]*)"|([^']*))/g;
+                while((m = rx.exec(text)) !== null) {
+                    if (m[2]) {
+                        obj[m[1]] = m[2];
+                    } else {
+                        obj[m[1]] = m[3];
+                    }
+                }
+                return obj;
+            }
+
+            let data = parseText(this.identifyData.data);
+
+            return h(
+                'div', 
+                {
+                    style: 'align-items: center; justify-content: center; font-size: .875rem; font-family: "Arial", sans-serif;'
+                },
+                [
+                    h(
+                        'span',
+                        {
+                            style:
+                                'display: flex; font-size: 1.25rem; background-color: #3182ce; color: white; padding: 4px; text-align: center;'
+                        },
+                        'GDPS.ETA_NT - Cloud Coverage (%)'
+                    ),
+                    h(
+                        'div',
+                        {
+                            style: 'display: flex; flex-direction: column; font-size: .875rem; padding-top: 5px;'
+                        },
+                        [
+                            h(
+                                'span',
+                                {
+                                    style: 'color: #a0aec0; font-weight: bold;'
+                                },
+                                'Coverage'
+                            ),
+                            h('span', data.value_0)
+                        ]
+                    ),
+                    h(
+                        'div',
+                        {
+                            style: 'display: flex; flex-direction: row; color: #a0aec0; font-weight: bold; padding-top: 5px;'
+                        },
+                        [
+                            h(
+                                'div',
+                                {
+                                    style: 'flex: 1 1 0%; width: 100%;'
+                                },
+                                'x'
+                            ),
+                            h(
+                                'div',
+                                {
+                                    style: 'flex: 1 1 0%; width: 100%;'
+                                },
+                                'y'
+                            )
+                        ]
+                    ),
+                    h(
+                        'div',
+                        {
+                            style: 'display: flex; flex-direction: row;'
+                        },
+                        [
+                            h(
+                                'div',
+                                {
+                                    style: 'flex: 1 1 0%; width: 100%;'
+                                },
+                                data.x
+                            ),
+                            h(
+                                'div',
+                                {
+                                    style: 'flex: 1 1 0%; width: 100%;'
+                                },
+                                data.y
+                            )
+                        ]
+                    )
+                ]
+            );
+        }
+    });
 
     rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
     rInstance.fixture.addDefaultFixtures(['mapnav', 'legend', 'appbar', 'grid', 'details']);

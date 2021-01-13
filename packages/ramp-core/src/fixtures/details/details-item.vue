@@ -4,12 +4,13 @@
             {{ $t('details.title') }}
         </template>
         <template #controls>
-            <back @click="panel.show({ screen: 'details-screen-result', props: { layerIndex: layerIndex } })" v-if="!isFeature"></back>
+            <back @click="panel.show({ screen: 'details-screen-result', props: { layerIndex: layerIndex } })" v-if="!isFeature && layerType !== 'ogcWms'"></back>
+            <back @click="panel.show({ screen: 'details-screen-layers' })" v-if="layerType === 'ogcWms'"></back>
             <close @click="panel.close()"></close>
         </template>
         <template #content>
-            <div class="flex py-8">
-                <span v-html=icon class="symbologyIcon"> </span>
+            <div class="flex py-8" v-if="layerType !== 'ogcWms'">
+                <span v-html="icon" class="symbologyIcon"> </span>
                 <span class="flex-grow my-auto text-lg"> {{ itemName }} </span>
                 <button @click="zoomToFeature()" class="text-gray-600 m-8">
                     <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
@@ -34,10 +35,12 @@ import { IdentifyResult, IdentifyResultSet, IdentifyItem, IdentifyResultFormat }
 import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
 
 import ESRIDefaultV from './templates/esri-default.vue';
+import HTMLDefaultV from './templates/html-default.vue';
 
 @Component({
     components: {
-        'esri-default': ESRIDefaultV
+        'esri-default': ESRIDefaultV,
+        'html-default': HTMLDefaultV
     }
 })
 export default class DetailsItemV extends Vue {
@@ -48,10 +51,10 @@ export default class DetailsItemV extends Vue {
     // the index of the details item we want to display
     @Prop() layerIndex!: number;
     @Prop() itemIndex!: number;
+    @Prop() layerType!: string;
 
     // true if the current payload is a single IdentifyItem
     @Prop() isFeature!: boolean;
-    @Prop() uid!: string;
 
     // retrieve the identify payload from the store
     @Get(DetailsStore.payload) payload!: IdentifyResult[];
@@ -61,40 +64,43 @@ export default class DetailsItemV extends Vue {
     icon: string = '';
 
     mounted() {
-        this.itemIcon;
+        if (this.layerType !== 'ogcWms') {
+            this.fetchIcon();
+        }
     }
 
     /**
      * Returns the information for a single identify result, given the layer and item offsets.
      */
     get identifyItem() {
-        const item: any = this.isFeature ? this.payload : this.payload[this.layerIndex].items[this.itemIndex];
-        return item;
+        return this.payload[this.layerIndex].items[this.itemIndex];
     }
 
     get itemName() {
         const layerInfo = this.payload[this.layerIndex];
-        const uid = layerInfo?.uid || this.uid;
+        const uid = layerInfo.uid;
         const layer: BaseLayer | undefined = this.getLayerByUid(uid);
         const nameField = layer?.getNameField(uid);
-        return nameField ? this.identifyItem.data[nameField] : 'Details';
+        return nameField ? this.identifyItem.data[nameField] : this.$t('details.title');
     }
 
-    get itemIcon() {
+    fetchIcon() {
         const layerInfo = this.payload[this.layerIndex];
-        const uid = layerInfo?.uid || this.uid;
+        const uid = layerInfo.uid;
         const layer: BaseLayer | undefined = this.getLayerByUid(uid);
         if (layer === undefined) {
             console.warn(`could not find layer for uid ${uid} during icon lookup`);
-            return '';
+            return;
         }
         const oidField = layer.getOidField(uid);
-        return layer.getIcon(this.identifyItem.data[oidField], uid).then(value => this.icon = value);
+        layer.getIcon(this.identifyItem.data[oidField], uid).then(value => {
+            this.icon = value;
+        });
     }
 
     get detailsTemplate() {
         const layerInfo = this.payload[this.layerIndex];
-        const layer: BaseLayer | undefined = this.getLayerByUid(layerInfo?.uid || this.uid);
+        const layer: BaseLayer | undefined = this.getLayerByUid(layerInfo.uid);
 
         // If there is a custom template binding for this layer in the store, then
         // return its name.
@@ -103,12 +109,16 @@ export default class DetailsItemV extends Vue {
         }
 
         // If nothing is found, use a default template.
-        return 'esri-default';
+        if (this.layerType === 'ogcWms') {
+            return 'html-default';
+        } else {
+            return 'esri-default';
+        }
     }
 
     zoomToFeature() {
         const layerInfo = this.payload[this.layerIndex];
-        const uid = layerInfo?.uid || this.uid;
+        const uid = layerInfo.uid;
         const layer: BaseLayer | undefined = this.getLayerByUid(uid);
         if (layer === undefined) {
             console.warn(`Could not find layer for uid ${uid} during zoom geometry lookup`);

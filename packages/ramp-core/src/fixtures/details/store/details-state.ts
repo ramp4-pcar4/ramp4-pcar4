@@ -42,9 +42,9 @@ export class DetailsState {
     /**
      * An object containing a features attributes.
      *
-     * @type IdentifyResult[] | IdentifyItem
+     * @type IdentifyResult[]
      * @memberof DetailsState
      */
 
-    payload: IdentifyResult[] | IdentifyItem = [];
+    payload: IdentifyResult[] = [];
 }
