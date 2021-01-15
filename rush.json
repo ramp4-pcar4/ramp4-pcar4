@@ -16,7 +16,7 @@
      * path segment in the "$schema" field for all your Rush config files.  This will ensure
      * correct error-underlining and tab-completion for editors such as VS Code.
      */
-    "rushVersion": "5.17.2",
+    "rushVersion": "5.36.1",
 
     /**
      * The next field selects which package manager should be installed and determines its version.
@@ -26,7 +26,7 @@
      * Specify one of: "pnpmVersion", "npmVersion", or "yarnVersion".  See the Rush documentation
      * for details about these alternatives.
      */
-    "pnpmVersion": "4.6.0",
+    "pnpmVersion": "5.15.1",
 
     // "npmVersion": "4.5.0",
     // "yarnVersion": "1.9.4",
@@ -35,6 +35,7 @@
      * Options that are only used when the PNPM package manager is selected
      */
     "pnpmOptions": {
+        "useWorkspaces": true
         /**
          * If true, then Rush will add the "--strict-peer-dependencies" option when invoking PNPM.
          * This causes "rush install" to fail if there are unsatisfied peer dependencies, which is
@@ -69,7 +70,7 @@
      * Specify a SemVer range to ensure developers use a Node.js version that is appropriate
      * for your repo.
      */
-    "nodeSupportedVersionRange": ">=10.13.0 <14.15.5",
+    "nodeSupportedVersionRange": "=14.15.4",
 
     /**
      * Odd-numbered major versions of Node.js are experimental.  Even-numbered releases

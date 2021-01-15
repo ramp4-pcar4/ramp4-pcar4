@@ -29,5 +29,6 @@
         "unminified",
         "vetur",
         "wany"
-    ]
+    ],
+    "files.eol": "\n"
 }
