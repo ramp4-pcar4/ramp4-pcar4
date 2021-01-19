@@ -383,9 +383,9 @@ class WMSServiceSource extends mixins(BlueprintBase, ServerSideData) {
     }
 
     // TODO uncomment
-    // get layerRecordFactory(): LayerRecordFactory {
-    //     return undefined;  // TODO: gapiService.gapi.layer.createWmsRecord;
-    // }
+    get layerRecordFactory(): LayerRecordFactory {
+        return config => api.geoapi.layers.createWmsLayer(config);
+    }
 
     get type() {
         return GEO.Service.Types.WMS;

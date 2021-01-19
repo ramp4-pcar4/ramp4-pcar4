@@ -186,25 +186,25 @@ export class WmsLayer extends BaseLayer {
                 this.sublayerNames,
                 <Point>options.geometry,
                 this.mimeType)
-            .then(data => {
+            .then(response => {
 
                 // check if a result is returned by the service. If not, do not add to the array of data
                 // TODO verify we want empty .items array
                 // TODO is is possible to have more than one item as a result? check how this works
-                if (data) {
-                    if (typeof data !== 'string') {
+                if (response) {
+                    if (typeof response.data !== 'string') {
                         // likely json or an image
                         // TODO improve the dection (maybe use the this.mimeType?)
                         innerResult.items.push({
                             format: IdentifyResultFormat.JSON,
-                            data: data
+                            data: response.data
                         });
-                    } else if (data.indexOf('Search returned no results') === -1 && data !== '') {
+                    } else if (response.data.indexOf('Search returned no results') === -1 && response.data !== '') {
                         // TODO if service is french, will the "no results" message be different?
                         // TODO consider utilizing the infoMap variable above to detect HTML format.
                         innerResult.items.push({
                             format: IdentifyResultFormat.TEXT,
-                            data: data
+                            data: response.data
                         });
                     }
                 }

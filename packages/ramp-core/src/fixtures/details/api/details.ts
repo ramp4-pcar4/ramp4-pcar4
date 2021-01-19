@@ -35,14 +35,21 @@ export class DetailsAPI extends FixtureInstance {
      * @memberof DetailsAPI
      */
     openFeature(identifyItem: IdentifyItem, uid: string) {
+        // make IdentifyResult[] for consitency
+        const identifyResult: IdentifyResult = {
+            items: [identifyItem],
+            uid: uid,
+            isLoading: false
+        };
+
         // Save the provided identify result in the store.
-        this.$vApp.$store.set('details/setPayload!', identifyItem);
+        this.$vApp.$store.set('details/setPayload!', [identifyResult]);
         // Open the details panel.
         const panel = this.$iApi.panel.get('details-panel');
         if (panel.isOpen) {
             this.$iApi.panel.close(panel);
         }
-        this.$iApi.panel.open({ id: 'details-panel', screen: 'details-screen-item', props: { isFeature: true, uid: uid } });
+        this.$iApi.panel.open({ id: 'details-panel', screen: 'details-screen-item', props: { isFeature: true, resultIndex: 0, itemIndex: 0 } });
     }
 
     /**

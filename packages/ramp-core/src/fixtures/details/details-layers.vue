@@ -38,12 +38,18 @@ export default class DetailsLayersV extends Vue {
     @Prop() panel!: PanelInstance;
     @Get(DetailsStore.payload) payload!: IdentifyResult[];
     @Get('layer/layers') layers!: BaseLayer[];
+    @Get('layer/getLayerByUid') getLayerByUid!: (uid: string) => BaseLayer | undefined;
 
     /**
      * Switches the panel screen to display the data for a given result.
      */
     openResult(index: number) {
-        this.panel.show({ screen: 'details-screen-result', props: { layerIndex: index } });
+        if (this.getLayerByUid(this.payload[index].uid)!.layerType === 'ogcWms') {
+            // skip results screen for wms layers
+            this.panel.show({ screen: 'details-screen-item', props: { resultIndex: index, layerType: 'ogcWms' , itemIndex: 0} });
+        } else {
+            this.panel.show({ screen: 'details-screen-result', props: { resultIndex: index } });
+        }
     }
 
     layerInfo(idx: number) {
