@@ -4,7 +4,7 @@
             {{ $t('details.title') }}
         </template>
         <template #controls>
-            <back @click="panel.show({ screen: 'details-screen-result', props: { layerIndex: layerIndex } })" v-if="!isFeature && layerType !== 'ogcWms'"></back>
+            <back @click="panel.show({ screen: 'details-screen-result', props: { resultIndex: resultIndex } })" v-if="!isFeature && layerType !== 'ogcWms'"></back>
             <back @click="panel.show({ screen: 'details-screen-layers' })" v-if="layerType === 'ogcWms'"></back>
             <close @click="panel.close()"></close>
         </template>
@@ -49,7 +49,7 @@ export default class DetailsItemV extends Vue {
     @Prop() panel!: PanelInstance;
 
     // the index of the details item we want to display
-    @Prop() layerIndex!: number;
+    @Prop() resultIndex!: number;
     @Prop() itemIndex!: number;
     @Prop() layerType!: string;
 
@@ -73,11 +73,11 @@ export default class DetailsItemV extends Vue {
      * Returns the information for a single identify result, given the layer and item offsets.
      */
     get identifyItem() {
-        return this.payload[this.layerIndex].items[this.itemIndex];
+        return this.payload[this.resultIndex].items[this.itemIndex];
     }
 
     get itemName() {
-        const layerInfo = this.payload[this.layerIndex];
+        const layerInfo = this.payload[this.resultIndex];
         const uid = layerInfo.uid;
         const layer: BaseLayer | undefined = this.getLayerByUid(uid);
         const nameField = layer?.getNameField(uid);
@@ -85,7 +85,7 @@ export default class DetailsItemV extends Vue {
     }
 
     fetchIcon() {
-        const layerInfo = this.payload[this.layerIndex];
+        const layerInfo = this.payload[this.resultIndex];
         const uid = layerInfo.uid;
         const layer: BaseLayer | undefined = this.getLayerByUid(uid);
         if (layer === undefined) {
@@ -99,7 +99,7 @@ export default class DetailsItemV extends Vue {
     }
 
     get detailsTemplate() {
-        const layerInfo = this.payload[this.layerIndex];
+        const layerInfo = this.payload[this.resultIndex];
         const layer: BaseLayer | undefined = this.getLayerByUid(layerInfo.uid);
 
         // If there is a custom template binding for this layer in the store, then
@@ -117,7 +117,7 @@ export default class DetailsItemV extends Vue {
     }
 
     zoomToFeature() {
-        const layerInfo = this.payload[this.layerIndex];
+        const layerInfo = this.payload[this.resultIndex];
         const uid = layerInfo.uid;
         const layer: BaseLayer | undefined = this.getLayerByUid(uid);
         if (layer === undefined) {

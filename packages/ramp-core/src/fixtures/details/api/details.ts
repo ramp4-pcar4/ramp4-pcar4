@@ -49,7 +49,7 @@ export class DetailsAPI extends FixtureInstance {
         if (panel.isOpen) {
             this.$iApi.panel.close(panel);
         }
-        this.$iApi.panel.open({ id: 'details-panel', screen: 'details-screen-item', props: { isFeature: true, layerIndex: 0, itemIndex: 0 } });
+        this.$iApi.panel.open({ id: 'details-panel', screen: 'details-screen-item', props: { isFeature: true, resultIndex: 0, itemIndex: 0 } });
     }
 
     /**

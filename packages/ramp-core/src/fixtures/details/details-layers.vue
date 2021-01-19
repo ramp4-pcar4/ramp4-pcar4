@@ -46,9 +46,9 @@ export default class DetailsLayersV extends Vue {
     openResult(index: number) {
         if (this.getLayerByUid(this.payload[index].uid)!.layerType === 'ogcWms') {
             // skip results screen for wms layers
-            this.panel.show({ screen: 'details-screen-item', props: { layerIndex: index, layerType: 'ogcWms' , itemIndex: 0} });
+            this.panel.show({ screen: 'details-screen-item', props: { resultIndex: index, layerType: 'ogcWms' , itemIndex: 0} });
         } else {
-            this.panel.show({ screen: 'details-screen-result', props: { layerIndex: index } });
+            this.panel.show({ screen: 'details-screen-result', props: { resultIndex: index } });
         }
     }
 

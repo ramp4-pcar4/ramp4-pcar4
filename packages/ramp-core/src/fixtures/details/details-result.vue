@@ -37,7 +37,7 @@ import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
 @Component({})
 export default class DetailsResultV extends Vue {
     @Prop() panel!: PanelInstance;
-    @Prop() layerIndex!: number;
+    @Prop() resultIndex!: number;
 
     @Get(DetailsStore.payload) payload!: IdentifyResult[];
     @Get('layer/getLayerByUid') getLayerByUid!: (uid: string) => BaseLayer | undefined;
@@ -48,7 +48,7 @@ export default class DetailsResultV extends Vue {
      * Switches the panel screen to display the data for a given result. Provides the currently selected layer index and the currently selected feature index as props.
      */
     openResult(itemIndex: number) {
-        this.panel.show({ screen: 'details-screen-item', props: { layerIndex: this.layerIndex, itemIndex: itemIndex } });
+        this.panel.show({ screen: 'details-screen-item', props: { resultIndex: this.resultIndex, itemIndex: itemIndex } });
     }
 
     /**
@@ -69,17 +69,17 @@ export default class DetailsResultV extends Vue {
     }
 
     /**
-     * Returns the identify information for the layer specified by layerIndex.
+     * Returns the identify information for the layer specified by resultIndex.
      */
     get identifyResult() {
-        return this.payload[this.layerIndex];
+        return this.payload[this.resultIndex];
     }
 
     /**
-     * Returns the name field for the layer specified by layerIndex.
+     * Returns the name field for the layer specified by resultIndex.
      */
     get nameField() {
-        const layerInfo = this.payload[this.layerIndex];
+        const layerInfo = this.payload[this.resultIndex];
         const uid = layerInfo?.uid;
         const layer: BaseLayer | undefined = this.getLayerByUid(uid);
         return layer?.getNameField(uid);
