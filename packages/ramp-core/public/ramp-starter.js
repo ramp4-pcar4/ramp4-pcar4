@@ -2,6 +2,11 @@ window.rInstance = null;
 function initRAMP() {
     console.log('RAMP has loaded.');
 
+    if (isIE()) {
+        document.getElementById('IE').className = "notification";
+        document.getElementById('IE').innerHTML = "Internet Explorer is not a supported browser, please use a different browser.";
+    }
+
     document.getElementById('ramp-version').innerText =
         'v.' +
         RAMP.version.major +
