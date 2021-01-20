@@ -2,11 +2,6 @@ window.rInstance = null;
 function initRAMP() {
     console.log('RAMP has loaded.');
 
-    if (isIE()) {
-        document.getElementById('IE').className = "notification";
-        document.getElementById('IE').innerHTML = "Internet Explorer is not a supported browser, please use a different browser.";
-    }
-
     document.getElementById('ramp-version').innerText =
         'v.' +
         RAMP.version.major +
@@ -450,11 +445,4 @@ function animateToggle() {
         rInstance.$vApp.$el.classList.add("animation-enabled");
     }
     document.getElementById('animate-status').innerText = "Animate: " + rInstance.animate;
-}
-
-function isIE() {
-    let ua = navigator.userAgent;
-    const IE = RegExp('MSIE');
-    const IE11 = RegExp('Trident');
-    return IE.test(ua) || IE11.test(ua);
 }

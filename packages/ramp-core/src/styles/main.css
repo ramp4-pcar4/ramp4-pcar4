@@ -29,7 +29,7 @@
 
 .notification {
     position: absolute;
-    height: 128px;
+    height: 100px;
     width: 256px;
     padding: 64px;
     z-index: 50;
