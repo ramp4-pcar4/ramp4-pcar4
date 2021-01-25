@@ -1,0 +1,21 @@
+version: '3.9'
+services:
+    r4mp:
+        image: 'ghcr.io/${owner:-ramp4-pcar4}/r4mp:${branch:-develop}'
+        command: tail -F /dev/null
+        ports:
+            - '8080:8080'
+        volumes:
+            - ./:/app
+            - /app/common/temp
+            - /app/packages/ramp-core/node_modules
+            - /app/packages/ramp-geoapi/node_modules
+            - /app/packages/ramp-locale-loader/node_modules
+            - /app/packages/ramp-sample-fixtures/node_modules
+            - /app/packages/ramp-core/.rush
+            - /app/packages/ramp-geoapi/.rush
+            - /app/packages/ramp-locale-loader/.rush
+            - /app/packages/ramp-sample-fixtures/.rush
+        environment:
+            - CHOKIDAR_USEPOLLING=true
+            - GIT_DISCOVERY_ACROSS_FILESYSTEM=1

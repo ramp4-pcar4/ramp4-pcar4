@@ -1,16 +1,64 @@
 # R4MP
 
-## Dev setup
+## Developing with Docker
+
+<p align="center">
+    <img src="https://i.imgur.com/SZc8JnH.png" alt="docker" />
+</p>
+
+You can run a full developer environment using Docker containers on Windows, macOS, and Linux distributions.
+
+### Requirements
+
+- [Docker](https://hub.docker.com/editions/community/docker-ce-desktop-windows)
+- [Git](https://git-scm.com/downloads)
+- [VS Code](https://code.visualstudio.com/Download)
+
+*These dependencies are free to use.*
+
+
+### Installation
+
+#### Install tools
+
+Follow the instructions to download and install Docker for Windows: https://hub.docker.com/editions/community/docker-ce-desktop-windows.
+
+Add the following extensions to VS Code:
+- [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
+- [Visual Studio Code Remote - Containers Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+
+#### Start container and connect
+
+Run `docker-compose up` to start the container. Navigate to the [Visual Studio Code Remote - Containers Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) you installed in VS Code and right-click the `app` folder selecting the `Open Container` option.
+
+### Workflows
+
+#### Stopping a container
+
+Run `docker-compose down` to shutdown the container.
+
+#### Keeping the image up-to-date
+
+Run `docker-compose pull` whenever you pull updates from the upstream base branch like `develop`. This ensures you have an up-to-date image of the latest develop environment.
+
+#### Changing the default image
+
+By default the latest image from `ghcr.io/ramp4-pcar4/r4mp` tagged `develop` is used. You can define optional parameters `owner` and `branch` before `docker-compose` to change which image is used, like `owner=my_repo branch=my-branch docker-compose up`.
+
+The `branch` parameter can also be the short form SHA8 of the commit your branch is based on. This is useful if you're working off an older version of a base branch like `develop`.
+
+#### Working inside vs outside a container
+
+- All files modified in the container are locally modified and vice-versa. Feel free to modify code inside or outside the container, it's your preference.
+- You need to run node/npm/rush commands inside the container.
+- Use git locally when committing or pushing/pulling. While Git is available inside the container, it doesn't have your git credentials. Any credentials added inside the image won't persist between containers.
+- Some folders like `node_modules` are only available inside the container. If you're developing outside the container VS Code will complain/show inline errors that npm dependencies cannot be found. Developing inside the container avoids this issue.
+
+## Developing locally
 
 ### Node.js
 
-Install a version of Node.js that is compatible with Rush. Recommended versions are `v10.13+`, `v12.13+`, `v13.0+`. At this time, use `v11` and `v14` at your peril. This list of versions may change with future updates to Rush.
-
-If running `v10`, you may encounter "out of heap" errors when building the app. This can be mitigated by updating to `v12`, or by running the following command
-
-```
-$ export NODE_OPTIONS=--max_old_space_size=4096
-```
+Install Node.js `v14.15.4`.
 
 ### Rush
 
@@ -20,7 +68,7 @@ Install Rush if you don't already have it:
 $ npm install -g @microsoft/rush
 ```
 
-## Installing dependencies
+### Installing dependencies
 
 Use Rush to install dependencies:
 
@@ -33,7 +81,7 @@ To completely clear and reinstall all dependencies, run `rush update -p --full`:
 -   `-p` for purge, to remove all the installed packages
 -   `--full` just because it looks important
 
-## Running a development build
+### Running a development build
 
 ```
 $ rush serve
@@ -55,7 +103,7 @@ Due to this technicality, `ramp-core` package should remain the first package on
 
 If you want to have a UI or have the tests react to changes in either the code or testing files, you should run `rush test:e2e-ui`.
 
-## Building a prod library
+### Building a prod library
 
 ```
 $ rush build

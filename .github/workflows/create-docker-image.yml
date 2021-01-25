@@ -1,0 +1,44 @@
+on:
+    push:
+        branches:
+            - master
+            - develop
+        tags:
+            - v*.*.*
+
+jobs:
+    docker:
+        name: Build Docker image
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  repository: ${{ github.repository }}
+                  path: ./${{ github.repository }}
+            - name: Extract branch name
+              shell: bash
+              run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF##*/})"
+              id: extract_branch
+            - name: Extract short sha
+              shell: bash
+              run: echo "##[set-output name=sha8;]$(echo ${GITHUB_SHA} | cut -c1-8)"
+              id: extract_sha8
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v1
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v1
+            - name: Login to GitHub Container Registry
+              uses: docker/login-action@v1
+              with:
+                  registry: ghcr.io
+                  username: milespetrov
+                  password: ${{ secrets.CR_PAT }}
+            - name: Build and push
+              id: docker_build
+              uses: docker/build-push-action@v2
+              with:
+                  push: true
+                  context: ./${{ github.repository }}
+                  tags: |
+                      ghcr.io/${{ github.repository_owner }}/r4mp:${{ steps.extract_sha8.outputs.sha8 }}
+                      ghcr.io/${{ github.repository_owner }}/r4mp:${{ steps.extract_branch.outputs.branch }}
