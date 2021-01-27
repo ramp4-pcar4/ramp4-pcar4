@@ -1,5 +1,5 @@
 import { FixtureInstance } from '@/api';
-import { IdentifyResult, IdentifyItem } from 'ramp-geoapi';
+import { IdentifyItem, IdentifyResult } from '@/geo/api';
 import { DetailsConfig, DetailsItemSet, DetailsItemInstance } from '../store';
 
 export class DetailsAPI extends FixtureInstance {

@@ -70,13 +70,20 @@ module.exports = {
         });
 
         // PROD-specific configuration
+        // TODO the initRAMP() call below used to block on the old geoapi promise before executing.
+        //      since that promise is now gone, it's possible there is a better way to launch initRAMP ?
+        // TODO with the removal of the geoapi promise, it appears .initRAMP is not present when this code runs.
+        // TODO a timeout delay for now, but should be fixed to be proper / most efficient solution
+        //      we might also need an interval incase 500ms is not enough?
+        //      is there a risk in looping forever? if implementer does not want to use an initRAMP
+        ///     we shouldn't spin forever; maybe add a counter to kill after x attempts?
         config.when(process.env.NODE_ENV === 'production', config => {
             // add an automatic callback to execute `initRAMP` global function if it's defined as soon at the RAMP library is added to the global scope
             // this only applies to the production build; dev build calls this function from `main-serve.ts`
             config.plugin('wrapper-plugin').use(WrapperPlugin, [
                 {
                     test: /RAMP.umd.js/, // only wrap output of bundle files with '.js' extension,
-                    footer: "RAMP.gapiPromise.then(function() { if (typeof initRAMP === 'function') { initRAMP(); }});",
+                    footer: "setTimeout(() => { if (typeof initRAMP === 'function') { initRAMP(); }}, 500);",
                     afterOptimization: true
                 }
             ]);
