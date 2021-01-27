@@ -70,13 +70,15 @@ module.exports = {
         });
 
         // PROD-specific configuration
+        // TODO the initRAMP() call below used to block on the old geoapi promise before executing.
+        //      since that promise is now gone, it's possible there is a better way to launch initRAMP ?
         config.when(process.env.NODE_ENV === 'production', config => {
             // add an automatic callback to execute `initRAMP` global function if it's defined as soon at the RAMP library is added to the global scope
             // this only applies to the production build; dev build calls this function from `main-serve.ts`
             config.plugin('wrapper-plugin').use(WrapperPlugin, [
                 {
                     test: /RAMP.umd.js/, // only wrap output of bundle files with '.js' extension,
-                    footer: "RAMP.gapiPromise.then(function() { if (typeof initRAMP === 'function') { initRAMP(); }});",
+                    footer: "if (typeof initRAMP === 'function') { initRAMP(); }",
                     afterOptimization: true
                 }
             ]);

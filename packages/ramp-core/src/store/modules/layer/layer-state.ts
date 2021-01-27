@@ -1,9 +1,11 @@
-import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
+import { LayerInstance, RampLayerConfig } from '@/geo/internal';
 
 export class LayerState {
-    layers: BaseLayer[];
+    layers: LayerInstance[];
+    layerConfigs: RampLayerConfig[];
 
-    constructor(layers: BaseLayer[]) {
+    constructor(layers: LayerInstance[], configs: RampLayerConfig[]) {
         this.layers = layers;
+        this.layerConfigs = configs;
     }
 }

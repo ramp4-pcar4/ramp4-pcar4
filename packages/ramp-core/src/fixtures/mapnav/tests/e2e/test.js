@@ -16,7 +16,7 @@ describe('Mapnav', () => {
     it('zoom-in button works', () => {
         cy.window().then(window => {
             cy.get('.mapnav .zoom-in').click();
-            /* cy.wrap(window.rInstance.map._innerView)
+            /* cy.wrap(window.rInstance.map.esriView)
                 .its('zoom')
                 .should('change'); */
         });
@@ -25,7 +25,7 @@ describe('Mapnav', () => {
     it('zoom-out button works', () => {
         cy.window().then(window => {
             cy.get('.mapnav .zoom-out').click();
-            cy.wrap(window.rInstance.map._innerView)
+            cy.wrap(window.rInstance.map.esriView)
                 .its('zoom')
                 .should('eq', 0);
         });

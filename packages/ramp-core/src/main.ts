@@ -16,8 +16,12 @@ window.RAMP = api;
 window.Vue = Vue;
 
 // execute `initRAMP` global function if it's defined as soon at the RAMP library is added to the global scope
-api.gapiPromise.then(() => {
+
+// TODO with the removal of the geoapi promise, it appears .initRAMP is not present when this code runs.
+// TODO a timeout delay for now, but should be fixed to be proper / most efficient solution
+setTimeout(() => {
     if (typeof window.initRAMP === 'function') {
         window.initRAMP();
     }
-});
+}, 500);
+

@@ -1,5 +1,4 @@
 import Vue, { VueConstructor } from 'vue';
-import { RampMap } from 'ramp-geoapi';
 import { RampConfig, RampConfigs } from '@/types';
 import { Store } from 'vuex';
 import { i18n } from '@/lang';
@@ -10,7 +9,7 @@ import { createStore, RootState } from '@/store';
 import { ConfigStore } from '@/store/modules/config';
 
 import { FixtureAPI, PanelAPI, GlobalEvents, EventAPI } from './internal';
-import { MapAPI } from './map';
+import { GeoAPI } from '@/geo/internal';
 
 interface RampOptions {
     loadDefaultFixtures?: boolean;
@@ -21,11 +20,7 @@ export class InstanceAPI {
     readonly fixture: FixtureAPI;
     readonly panel: PanelAPI;
     readonly event: EventAPI;
-    readonly mapActions: MapAPI;
-
-    // FIXME: temporarily store map in global, remove line below when map API is complete
-    // set by the `map/esri-map.vue` file
-    map!: RampMap;
+    readonly geo: GeoAPI;
 
     /**
      * The instance of Vue R4MP application controlled by this InstanceAPI.
@@ -44,7 +39,7 @@ export class InstanceAPI {
 
         this.fixture = new FixtureAPI(this); // pass the iApi reference to the FixtureAPI
         this.panel = new PanelAPI(this);
-        this.mapActions = new MapAPI(this);
+        this.geo = new GeoAPI(this);
 
         // TODO: decide whether to move to src/main.ts:createApp
         // TODO: store a reference to the even bus in the global store [?]

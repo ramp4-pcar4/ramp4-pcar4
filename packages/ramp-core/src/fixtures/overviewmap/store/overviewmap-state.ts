@@ -1,4 +1,4 @@
-import { RampMapConfig, RampLodConfig, RampBasemapConfig, RampSpatialReference } from 'ramp-geoapi'
+import { RampMapConfig, RampLodConfig, RampBasemapConfig, RampSpatialReference } from '@/geo/internal';
 
 export class OverviewmapState {
     mapConfig: RampMapConfig | undefined = undefined;

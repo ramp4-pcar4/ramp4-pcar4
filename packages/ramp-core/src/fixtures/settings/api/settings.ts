@@ -1,9 +1,9 @@
 import { FixtureInstance } from '@/api';
-import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
+import { LayerInstance } from '@/geo/internal';
 
 export class SettingsAPI extends FixtureInstance {
     /**
-     * Opens the settings panel. Passes the provided BaseLayer object to the panel.
+     * Opens the settings panel. Passes the provided LayerInstance object to the panel.
      * @param layer
      */
     toggleSettings(uid: string): void {
