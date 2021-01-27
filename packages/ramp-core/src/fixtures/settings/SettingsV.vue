@@ -83,9 +83,9 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
 import { PanelInstance } from '@/api';
-import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
 
 import SettingsComponent from './SettingsComponentV.vue';
+import { LayerInstance } from '@/api/internal';
 
 @Component({
     components: {
@@ -94,7 +94,7 @@ import SettingsComponent from './SettingsComponentV.vue';
 })
 export default class SettingsV extends Vue {
     @Prop() panel!: PanelInstance;
-    @Prop() layer!: BaseLayer;
+    @Prop() layer!: LayerInstance;
     @Prop() uid!: string;
 
     // Models.
@@ -104,10 +104,10 @@ export default class SettingsV extends Vue {
 
     mounted() {
         // Listen for a layer load event. Some of these values may change when the layer fully loads.
-        this.layer.stateChanged.listen(payload => {
+        this.layer.isLayerLoaded().then(() => {
             this.visibilityModel = this.layer.getVisibility(this.uid);
             this.opacityModel = this.layer.getOpacity(this.uid) * 100;
-        });
+        })
     }
 
     // Update the layer visibility.

@@ -1,6 +1,6 @@
 import Vue from 'vue';
 
-import { RampLayerConfig, RampMapConfig } from 'ramp-geoapi';
+import { RampLayerConfig, RampMapConfig } from './geo/api';
 import { APIInterface, InstanceAPI } from './api';
 
 // extend `ComponentOptions` to accept `iApi` as one of the component options

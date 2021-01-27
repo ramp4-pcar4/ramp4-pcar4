@@ -15,7 +15,7 @@ function initRAMP() {
                         latestWkid: 3857
                     }
                 },
-                lods: RAMP.geoapi.maps.defaultLODs(RAMP.geoapi.maps.defaultTileSchemas()[1]), // idx 1 = mercator
+                lods: RAMP.GEO.defaultLODs(RAMP.GEO.defaultTileSchemas()[1]), // idx 1 = mercator
                 basemaps: [
                     {
                         id: 'esriImagery',
@@ -107,13 +107,13 @@ function initRAMP() {
                     ]
                 },
                 mapnav: { items: ['fullscreen', 'legend', 'home', 'basemap'] },
-                details: { 
+                details: {
                     items: [
                         {
                             id: 'GeoMet',
                             template: 'GeoMet-Template'
                         }
-                    ] 
+                    ]
                 }
             }
         }
@@ -144,7 +144,7 @@ function initRAMP() {
             let data = parseText(this.identifyData.data);
 
             return h(
-                'div', 
+                'div',
                 {
                     style: 'align-items: center; justify-content: center; font-size: .875rem; font-family: "Arial", sans-serif;'
                 },

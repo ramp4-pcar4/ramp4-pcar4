@@ -27,7 +27,7 @@ function initRAMP() {
                         latestWkid: 3857
                     }
                 },
-                lods: RAMP.geoapi.maps.defaultLODs(RAMP.geoapi.maps.defaultTileSchemas()[1]), // idx 1 = mercator
+                lods: RAMP.GEO.defaultLODs(RAMP.GEO.defaultTileSchemas()[1]), // idx 1 = mercator
                 basemaps: [
                     {
                         id: 'esriImagery',
@@ -110,6 +110,31 @@ function initRAMP() {
                     },
                     customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
                 }
+
+               /*
+                {
+                    id: 'TestTile',
+                    layerType: 'esriTile',
+                    url: 'https://services.arcgisonline.com/arcgis/rest/services/USA_Topo_Maps/MapServer',
+                    state: {
+                        opacity: 1,
+                        visibility: true
+                    },
+                    customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                },
+                {
+                    "id": "CanGRID_tmean_MAM_en",
+                    "layerType": "ogcWms",
+                    "url": "https://geo.weather.gc.ca/geomet-climate?SERVICE=WMS&VERSION=1.3.0",
+                    "name": "Total precipitation",
+                    "state": {
+                        "opacity": 0.85,
+                        "visibility": true
+                    },
+                    "layerEntries": [{"id": "CANGRD.TREND.TM_SPRING" }],
+                    "featureInfoMimeType": "application/json"
+                }
+                */
             ],
             fixtures: {
                 legend: {
@@ -187,7 +212,7 @@ function initRAMP() {
                         latestWkid: 3857
                     }
                 },
-                lods: RAMP.geoapi.maps.defaultLODs(RAMP.geoapi.maps.defaultTileSchemas()[1]), // idx 1 = mercator
+                lods: RAMP.GEO.defaultLODs(RAMP.GEO.defaultTileSchemas()[1]), // idx 1 = mercator
                 basemaps: [
                     {
                         id: 'esriImagery',

@@ -1,7 +1,7 @@
 import { ActionContext, Action } from 'vuex';
 import { make } from 'vuex-pathify';
 import merge from 'deepmerge';
-import { RampMapConfig } from 'ramp-geoapi';
+import { RampMapConfig } from '@/geo/api';
 
 import { ConfigState } from './config-state';
 import { RootState } from '@/store';
@@ -33,7 +33,8 @@ const actions = {
     newConfig: function(this: any, context: ConfigContext, config: RampConfig): void {
         const newConfig = merge(context.state.config, config);
         context.commit('SET_CONFIG', newConfig);
-        this.set(LayerStore.addLayers, newConfig.layers);
+        console.log('new config adding layers', newConfig.layers);
+        this.set(LayerStore.addLayerConfigs, newConfig.layers);
     },
     registerConfig: function(this: any, context: ConfigContext, configInfo: any): void {
         const langs = configInfo.langs;

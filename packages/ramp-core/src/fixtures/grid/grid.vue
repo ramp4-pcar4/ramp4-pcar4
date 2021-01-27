@@ -53,11 +53,10 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
-import { PanelInstance } from '@/api';
+import { LayerInstance, PanelInstance } from '@/api';
 import TableComponent from '@/fixtures/grid/table/table.vue';
 
 import { LayerStore, layer } from '@/store/modules/layer';
-import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
 
 @Component({
     components: {
@@ -68,7 +67,7 @@ export default class Screen1 extends Vue {
     @Prop() panel!: PanelInstance;
     @Prop() header!: String;
 
-    @Get(LayerStore.layers) layers!: BaseLayer[];
+    @Get(LayerStore.layers) layers!: LayerInstance[];
     @Get('grid/currentUid') currentUid: any;
 
     quicksearch: String = '';

@@ -1,8 +1,7 @@
-import { FixtureInstance } from '@/api/internal';
+import { FixtureInstance, LayerInstance } from '@/api/internal';
 import { ExportV1SubFixture } from '@/fixtures/export-v1';
 import { fabric } from 'fabric';
-import { RampLayerConfig, LegendSymbology, RampLayerMapImageLayerEntryConfig } from 'ramp-geoapi';
-import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
+import { LegendSymbology, RampLayerConfig, RampLayerMapImageLayerEntryConfig } from '@/geo/api';
 
 /**
  * Represents a map layer.
@@ -48,7 +47,7 @@ class ExportV1LegendFixture extends FixtureInstance implements ExportV1SubFixtur
 
         // read layers config directly from the global config and also get a lits of layer objects
         const layerConfigs = this.$iApi.getConfig().layers;
-        const layers = this.$vApp.$store.get<BaseLayer[]>('layer/layers') || [];
+        const layers = this.$vApp.$store.get<LayerInstance[]>('layer/layers') || [];
 
         let runningHeight = 0;
 
@@ -102,12 +101,12 @@ class ExportV1LegendFixture extends FixtureInstance implements ExportV1SubFixtur
      * Create segments of the export image based on the provided layers and layer configs.
      *
      * @private
-     * @param {BaseLayer[]} layers
+     * @param {LayerInstance[]} layers
      * @param {RampLayerConfig[]} layerConfigs
      * @returns {Promise<Segment>[]}
      * @memberof ExportV1LegendFixture
      */
-    private _makeSegments(layers: BaseLayer[], layerConfigs: RampLayerConfig[]): Promise<Segment>[] {
+    private _makeSegments(layers: LayerInstance[], layerConfigs: RampLayerConfig[]): Promise<Segment>[] {
         return layers.map(async (layer, index) => {
             // TODO: exclude invisible layers
 
@@ -136,11 +135,11 @@ class ExportV1LegendFixture extends FixtureInstance implements ExportV1SubFixtur
      *
      * @private
      * @param {(number[] | string[])} ids
-     * @param {BaseLayer} layer
+     * @param {LayerInstance} layer
      * @returns {Promise<SegmentChunk>[]}
      * @memberof ExportV1LegendFixture
      */
-    private _makeSegmentChunks(ids: (number | string)[], layer: BaseLayer): Promise<SegmentChunk>[] {
+    private _makeSegmentChunks(ids: (number | string)[], layer: LayerInstance): Promise<SegmentChunk>[] {
         return ids.map<Promise<SegmentChunk>>(async (idx: number | string) => {
             // TODO: exclude invisible layer entries
 

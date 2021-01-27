@@ -8,9 +8,8 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 import { NortharrowStore } from './store';
-import { GlobalEvents } from '../../api/internal';
-import { ApiBundle, HighlightLayer } from 'ramp-geoapi';
-import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
+import { GlobalEvents } from '@/api/internal';
+import { Extent, Point } from '@/geo/api';
 import flag from './flag.json';
 import { debounce } from 'debounce';
 
@@ -38,29 +37,29 @@ export default class NortharrowV extends Vue {
         if (this.arrowIcon) {
             this.arrow = `<img width='25' src='${this.arrowIcon}'>`;
         }
-        // don't think this condition should be needed but sometimes errors at startup without it 
-        if (this.$iApi.map._innerView.ready) {
-            this.updateNortharrow(this.$iApi.map.getExtent())
+        // don't think this condition should be needed but sometimes errors at startup without it
+        if (this.$iApi.geo.map.esriView?.ready) {
+            this.updateNortharrow(this.$iApi.geo.map.getExtent())
         }
         this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, debounce(this.updateNortharrow, 300));
     }
 
-    async updateNortharrow(newExtent: ApiBundle.Extent) {
+    async updateNortharrow(newExtent: Extent) {
         const innerShell = document.querySelector('.inner-shell')!;
         const arrowWidth = this.$el.querySelector('.northarrow')!.getBoundingClientRect().width;
         const appbarWidth = document.querySelector('.appbar')?.clientWidth || 0;
         const sr = newExtent.sr;
         const mercator = [900913, 3587, 54004, 41001, 102113, 102100, 3785];
-        if (mercator.includes(sr.wkid) || mercator.includes(sr.latestWkid)) {
-            // mercator projection, always in center of viewer with no rotation 
+        if ((sr.wkid && mercator.includes(sr.wkid)) || (sr.latestWkid && mercator.includes(sr.latestWkid))) {
+            // mercator projection, always in center of viewer with no rotation
             this.displayArrow = true;
             this.angle = 0;
             this.arrowLeft = appbarWidth + (innerShell.clientWidth - appbarWidth - arrowWidth) / 2;
         } else {
             // north value (set longitude to be half of Canada extent (141° W, 52° W))
-            const pole: ApiBundle.Point = new ApiBundle.Point("pole", { x: -96, y: 90 });   
-            const projPole = await RAMP.geoapi.utils.proj.projectGeometry(sr, pole) as ApiBundle.Point;
-            const poleScreenPos = this.$iApi.map.mapPointToScreenPoint(projPole);
+            const pole: Point = new Point("pole", { x: -96, y: 90 });
+            const projPole = await this.$iApi.geo.utils.proj.projectGeometry(sr, pole) as Point;
+            const poleScreenPos = this.$iApi.geo.map.mapPointToScreenPoint(projPole);
             if (poleScreenPos.screenY < 0) {
                 // draw arrow if pole not visibile
                 this.displayArrow = true;
@@ -69,7 +68,7 @@ export default class NortharrowV extends Vue {
                 this.angle = Math.atan((poleScreenPos.screenX - bcScreenPos.screenX) / (bcScreenPos.screenY - poleScreenPos.screenY)) * 180 / Math.PI;
                 this.arrowLeft = innerShell.clientWidth / 2 + innerShell.clientHeight * Math.tan(this.angle * Math.PI / 180) - arrowWidth / 2;
                 // make sure arrow is within visible part of map
-                this.arrowLeft = Math.max(appbarWidth - arrowWidth / 2, Math.min(this.$iApi.map.getPixelWidth() - arrowWidth / 2, this.arrowLeft))
+                this.arrowLeft = Math.max(appbarWidth - arrowWidth / 2, Math.min(this.$iApi.geo.map.getPixelWidth() - arrowWidth / 2, this.arrowLeft))
             } else {
                 // add pole marker if visible
                 this.displayArrow = false;
@@ -86,25 +85,35 @@ export default class NortharrowV extends Vue {
                             type: "esriPMS",
                             contentType: contentType,
                             imageData: imageData
-                        } 
+                        }
                     }
                     // add pole marker to a highlight layer
-                    const esriP = RAMP.geoapi.utils.geom.convPointToEsri(projPole);
-                    const poleLayer = RAMP.geoapi.layers.createHighlightLayer({ layerId: "PoleMarker", markerSymbol: markerSymbol });
-                    poleLayer.addMarker(esriP)
-                    this.$iApi.map.addHighlightLayer(poleLayer);
+                    // TODO the whole highlight layer needs to be revisited after the no-dojo migration.
+                    //      it is currently acting like a normal layer. since highlights do not go into the
+                    //      layer config / config store / etc, we are duplicating a lot of normal layer loading
+                    //      here. hack city for now.
+
+                    // check if we need to load the layer class
+                    const lType = 'highlight';
+                    if (!this.$iApi.geo.layer.layerDefExists(lType)) {
+                        await this.$iApi.geo.layer.addLayerDef(lType);
+                    }
+                    const poleLayer = await this.$iApi.geo.layer.createLayer({ layerId: "PoleMarker", markerSymbol: markerSymbol, layerType: 'highlight' });
+                    await poleLayer.initiate();
+                    (poleLayer as any).addMarker(projPole); // since addMarker is not a standard layer interface function, we need to cast as any.
+                    this.$iApi.geo.map.addLayer(poleLayer);
                 }
             }
         }
     }
 
     get arrowStyle() {
-        return { 
+        return {
             'transform-origin': `top center`,
-            transform: `rotate(${this.angle}deg)`, 
-            left: `${this.arrowLeft}px`,  
+            transform: `rotate(${this.angle}deg)`,
+            left: `${this.arrowLeft}px`,
             visibility: this.displayArrow ? `visible` : `hidden`
-        }
+        };
     }
 }
 

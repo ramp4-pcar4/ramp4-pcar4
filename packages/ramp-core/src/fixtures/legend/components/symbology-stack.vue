@@ -35,25 +35,23 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
 import { LegendItem } from '../store/legend-defs';
-import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
+import { LayerInstance } from '@/api/internal';
 
 @Component
 export default class SymbologyStack extends Vue {
     @Prop() visible!: boolean;
-    @Prop() layer!: BaseLayer;
+    @Prop() layer!: LayerInstance;
     @Prop() uid!: string;
 
     stack: any = [];
 
     mounted() {
+        // TODO ramp2 would create a placeholder stack if the layer wasn't loaded. Icon would be first letter of layer
+        //      see if we should be doing that here as well, or if we are fine with empty icons.
         // When the layer is loaded, get the icon.
-        if (this.layer.state !== 'rv-loaded') {
-            this.layer.stateChanged.listen(() => {
-                this.getSymbologyStack();
-            });
-        } else {
+        this.layer.isLayerLoaded().then(() => {
             this.getSymbologyStack();
-        }
+        });
     }
 
     /**

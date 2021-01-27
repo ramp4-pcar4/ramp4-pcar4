@@ -13,7 +13,7 @@ function initRAMP() {
                         latestWkid: 3857
                     }
                 },
-                lods: RAMP.geoapi.maps.defaultLODs(RAMP.geoapi.maps.defaultTileSchemas()[1]), // idx 1 = mercator
+                lods: RAMP.GEO.defaultLODs(RAMP.GEO.defaultTileSchemas()[1]), // idx 1 = mercator
                 basemaps: [
                     {
                         id: 'esriImagery',

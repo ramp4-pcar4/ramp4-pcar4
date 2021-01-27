@@ -1,9 +1,7 @@
-import { FixtureInstance } from '@/api';
-import { LegendConfig } from '../store';
-import { LegendStore } from '../store';
+import { FixtureInstance, LayerInstance } from '@/api';
+import { LegendConfig, LegendStore } from '../store';
 import { LegendItem, LegendEntry, LegendGroup, LegendSet } from '../store/legend-defs';
 import { LayerStore } from '@/store/modules/layer';
-import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
 
 export class LegendAPI extends FixtureInstance {
     /**
@@ -29,7 +27,7 @@ export class LegendAPI extends FixtureInstance {
             return;
         }
 
-        const layers: BaseLayer[] | undefined = this.$vApp.$store.get(LayerStore.layers);
+        const layers: LayerInstance[] | undefined = this.$vApp.$store.get(LayerStore.layers);
         let legendEntries: Array<LegendItem> = [];
         let stack: Array<any> = [];
         // initialize stack with all legend elements listed in config
@@ -81,17 +79,17 @@ export class LegendAPI extends FixtureInstance {
 
     /**
      * Legend generation for layers.
-     * 
+     *
      * @param {BaseLayer} [layer]
      * @returns
      * @memberOf LegendFixture
      */
-    generateDefaultLegend(layer: BaseLayer | undefined, parent: LegendGroup | undefined) {
+    generateDefaultLegend(layer: LayerInstance | undefined, parent: LegendGroup | undefined) {
         // return if input is invalid
         if (!layer) {
             return;
         }
-        
+
         // create LegendEntry from layer
         let config = {
             layerId: layer.id,
