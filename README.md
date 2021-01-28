@@ -29,23 +29,25 @@ Add the following extensions to VS Code:
 
 #### Start container and connect
 
-Run `docker-compose up` to start the container. Navigate to the [Visual Studio Code Remote - Containers Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) you installed in VS Code and right-click the `app` folder selecting the `Open Container` option.
+Run `docker-compose run r4mp` to start a container and launch its bash terminal. Append a `-d` flag to the command to run the container process in the background. Navigate to the [Visual Studio Code Remote - Containers Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) you installed in VS Code and right-click the `r4mp` container selecting the `Open Container` option.
+
+Source code is located in the `/home/node/r4mp` directory.
 
 ### Workflows
 
 #### Stopping a container
 
-Run `docker-compose down` to shutdown the container.
+Run `docker-compose down -v --remove-orphans` to shutdown/delete the container and its volumes.
 
 #### Keeping the image up-to-date
 
-Run `docker-compose pull` whenever you pull updates from the upstream base branch like `develop`. This ensures you have an up-to-date image of the latest develop environment.
+Run `docker-compose pull` whenever you pull updates from the upstream base branch like `master`. This ensures you have an up-to-date image of the latest develop environment.
 
 #### Changing the default image
 
-By default the latest image from `ghcr.io/ramp4-pcar4/r4mp` tagged `develop` is used. You can define optional parameters `owner` and `branch` before `docker-compose` to change which image is used, like `owner=my_repo branch=my-branch docker-compose up`.
+By default the latest image from `ghcr.io/ramp4-pcar4/r4mp` tagged `master` is used. You can define optional parameters `owner` and `branch` before `docker-compose` to change which image is used, like `owner=my_repo branch=my-branch docker-compose up`.
 
-The `branch` parameter can also be the short form SHA8 of the commit your branch is based on. This is useful if you're working off an older version of a base branch like `develop`.
+The `branch` parameter can also be the short form SHA8 of the commit your branch is based on. This is useful if you're working off an older version of a base branch like `master`.
 
 #### Working inside vs outside a container
 
