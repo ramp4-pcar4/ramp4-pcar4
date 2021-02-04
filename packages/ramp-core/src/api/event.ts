@@ -32,7 +32,7 @@ export enum GlobalEvents {
     MAP_KEYDOWN = 'map/keydown',
     MAP_KEYUP = 'map/keyup',
     MAP_BLUR = 'map/blur',
-    SETTINGS_TOGGLE = 'settings/open',
+    SETTINGS_TOGGLE = 'settings/toggle',
     DETAILS_OPEN = 'details/open',
     HELP_TOGGLE = 'help/toggle',
     GRID_TOGGLE = 'grid/toggle'
@@ -51,7 +51,7 @@ enum DefEH {
     MAP_KEYDOWN = 'ramp_map_keydown',
     MAP_KEYUP = 'ramp_map_keyup',
     MAP_BLUR = 'ramp_map_blur',
-    TOGGLE_SETTINGS = 'ramp_SETTINGS_TOGGLEs_panel',
+    TOGGLE_SETTINGS = 'ramp_settings_toggles_panel',
     OPEN_DETAILS = 'opens_feature_details',
     TOGGLE_HELP = 'toggles_help_panel',
     TOGGLE_GRID = 'opens_grid_panel'
