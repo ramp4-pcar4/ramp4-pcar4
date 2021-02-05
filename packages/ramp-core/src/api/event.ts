@@ -353,10 +353,10 @@ export class EventAPI extends APIScope {
                 this.$iApi.event.on(GlobalEvents.HELP_TOGGLE, zeHandler, handlerName);
                 break;
             case DefEH.TOGGLE_GRID:
-                zeHandler = (payload: string) => {
+                zeHandler = (uid: string, open?: boolean) => {
                     const gridFixture: GridAPI = this.$iApi.fixture.get('grid');
                     if (gridFixture) {
-                        gridFixture.toggleGrid(payload);
+                        gridFixture.toggleGrid(uid, open);
                     }
                 };
                 this.$iApi.event.on(GlobalEvents.GRID_TOGGLE, zeHandler, handlerName);

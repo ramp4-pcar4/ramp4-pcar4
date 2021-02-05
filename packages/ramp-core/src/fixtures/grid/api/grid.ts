@@ -7,9 +7,10 @@ export class GridAPI extends FixtureInstance {
      * Open the grid for the layer with the given uid.
      *
      * @param {string} uid
+     * @param {boolean} [open] force panel open or closed
      * @memberof GridAPI
      */
-    toggleGrid(uid: string): void {
+    toggleGrid(uid: string, open?: boolean): void {
         // get GridConfig for specified uid
         let gridSettings: GridConfig | undefined = this.$vApp.$store.get(`grid/grids@${uid}`);
 
@@ -32,10 +33,17 @@ export class GridAPI extends FixtureInstance {
         this.$vApp.$store.set('grid/currentUid', uid ? uid : null);
 
         const panel = this.$iApi.panel.get('grid-panel');
+
+        if (open === false) {
+            // force close
+            panel.close();
+            return;
+        }
+
         if (!panel.isOpen) {
             this.$iApi.panel.open('grid-panel');
-        } else if (prevUid !== uid) {
-            // don't toggle off if different layer, use key prop to force rerender
+        } else if (prevUid !== uid || open === true) {
+            // don't toggle off if different layer or force open, use key prop to force rerender
             panel.show({ screen: 'grid-screen', props: { key: uid } });
         } else {
             panel.close();

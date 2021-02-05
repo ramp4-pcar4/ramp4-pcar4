@@ -102,9 +102,10 @@ TODO add stuff as we make events that core fixtures raise
 
 | Event Name | Payload | Event Announces |
 | ---------- | ---------- | ---------- |
-| SETTINGS_OPEN<br>'settings/open' | BaseLayer object | A layer's settings was requested |
+| SETTINGS_TOGGLE<br>'settings/toggle' | layer uid | Settings panel toggle was requested for a layer |
 | DETAILS_OPEN<br>'details/open' | *identifyItem*: IdentifyItem object<br>*uid*: layer uid | A feature's details was requested |
 | HELP_TOGGLE<br>'help/toggle' | boolean (optional) | Help panel toggle was requested with optional force open/close |
+| GRID_TOGGLE<br>'grid/toggle' | *uid*: layer uid<br>*open*: boolean (optional) | Grid panel toggle was requested with optional force open/close |
 
 
 ## Default Events Handlers
