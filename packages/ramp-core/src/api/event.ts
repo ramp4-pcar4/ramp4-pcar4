@@ -54,7 +54,7 @@ enum DefEH {
     TOGGLE_SETTINGS = 'ramp_settings_toggles_panel',
     OPEN_DETAILS = 'opens_feature_details',
     TOGGLE_HELP = 'toggles_help_panel',
-    TOGGLE_GRID = 'opens_grid_panel'
+    TOGGLE_GRID = 'toggles_grid_panel'
 }
 
 // private for EventBus internals, so don't export
@@ -353,10 +353,10 @@ export class EventAPI extends APIScope {
                 this.$iApi.event.on(GlobalEvents.HELP_TOGGLE, zeHandler, handlerName);
                 break;
             case DefEH.TOGGLE_GRID:
-                zeHandler = (payload: string) => {
+                zeHandler = (uid: string, open?: boolean) => {
                     const gridFixture: GridAPI = this.$iApi.fixture.get('grid');
                     if (gridFixture) {
-                        gridFixture.toggleGrid(payload);
+                        gridFixture.toggleGrid(uid, open);
                     }
                 };
                 this.$iApi.event.on(GlobalEvents.GRID_TOGGLE, zeHandler, handlerName);
