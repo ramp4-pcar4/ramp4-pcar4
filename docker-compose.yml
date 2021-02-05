@@ -1,21 +1,25 @@
 version: '3.9'
 services:
     r4mp:
-        image: 'ghcr.io/${owner:-ramp4-pcar4}/r4mp:${branch:-develop}'
-        command: tail -F /dev/null
+        image: ghcr.io/${owner:-ramp4-pcar4}/r4mp:${branch:-master}
+        user: '1000'
+        stdin_open: true
+        tty: true
+        working_dir: /home/node/r4mp
         ports:
             - '8080:8080'
         volumes:
-            - ./:/app
-            - /app/common/temp
-            - /app/packages/ramp-core/node_modules
-            - /app/packages/ramp-geoapi/node_modules
-            - /app/packages/ramp-locale-loader/node_modules
-            - /app/packages/ramp-sample-fixtures/node_modules
-            - /app/packages/ramp-core/.rush
-            - /app/packages/ramp-geoapi/.rush
-            - /app/packages/ramp-locale-loader/.rush
-            - /app/packages/ramp-sample-fixtures/.rush
+            - ./:/home/node/r4mp
+            - /home/node/r4mp/common/temp
+            - /home/node/r4mp/packages/ramp-core/node_modules
+            - /home/node/r4mp/packages/ramp-geoapi/node_modules
+            - /home/node/r4mp/packages/ramp-locale-loader/node_modules
+            - /home/node/r4mp/packages/ramp-sample-fixtures/node_modules
+
+            - /home/node/r4mp/packages/ramp-core/.rush
+            - /home/node/r4mp/packages/ramp-geoapi/.rush
+            - /home/node/r4mp/packages/ramp-locale-loader/.rush
+            - /home/node/r4mp/packages/ramp-sample-fixtures/.rush
         environment:
             - CHOKIDAR_USEPOLLING=true
             - GIT_DISCOVERY_ACROSS_FILESYSTEM=1
