@@ -3,6 +3,7 @@ import { APIScope, InstanceAPI } from './internal';
 import { DetailsAPI } from '@/fixtures/details/api/details';
 import { SettingsAPI} from '@/fixtures/settings/api/settings'
 import { HelpAPI } from '@/fixtures/help/api/help'
+import { GridAPI } from '@/fixtures/grid/api/grid'
 import { IdentifyResult, IdentifyResultSet, MapClick } from 'ramp-geoapi';
 
 export enum GlobalEvents {
@@ -31,9 +32,10 @@ export enum GlobalEvents {
     MAP_KEYDOWN = 'map/keydown',
     MAP_KEYUP = 'map/keyup',
     MAP_BLUR = 'map/blur',
-    SETTINGS_OPEN = 'settings/open',
+    SETTINGS_TOGGLE = 'settings/toggle',
     DETAILS_OPEN = 'details/open',
-    HELP_TOGGLE = 'help/toggle'
+    HELP_TOGGLE = 'help/toggle',
+    GRID_TOGGLE = 'grid/toggle'
 }
 
 // TODO export this enum?
@@ -49,9 +51,10 @@ enum DefEH {
     MAP_KEYDOWN = 'ramp_map_keydown',
     MAP_KEYUP = 'ramp_map_keyup',
     MAP_BLUR = 'ramp_map_blur',
-    OPEN_SETTINGS = 'ramp_settings_opens_panel',
+    TOGGLE_SETTINGS = 'ramp_settings_toggles_panel',
     OPEN_DETAILS = 'opens_feature_details',
-    TOGGLE_HELP = 'toggles_help_panel'
+    TOGGLE_HELP = 'toggles_help_panel',
+    TOGGLE_GRID = 'toggles_grid_panel'
 }
 
 // private for EventBus internals, so don't export
@@ -283,7 +286,7 @@ export class EventAPI extends APIScope {
             // TODO the enum-values-to-array logic we use in the event names list
             //      fails a bit here. we could make it work if we force every default
             //      handler name to being with a specific prefix. Alternately use object, not enum.
-            eventHandlerNames = [DefEH.MAP_IDENTIFY, DefEH.MAP_KEYDOWN, DefEH.MAP_KEYUP, DefEH.MAP_BLUR, DefEH.IDENTIFY_DETAILS, DefEH.OPEN_SETTINGS, DefEH.OPEN_DETAILS, DefEH.TOGGLE_HELP];
+            eventHandlerNames = [DefEH.MAP_IDENTIFY, DefEH.MAP_KEYDOWN, DefEH.MAP_KEYUP, DefEH.MAP_BLUR, DefEH.IDENTIFY_DETAILS, DefEH.TOGGLE_SETTINGS, DefEH.OPEN_DETAILS, DefEH.TOGGLE_HELP, DefEH.TOGGLE_GRID];
         }
 
         // add all the requested default event handlers.
@@ -321,15 +324,15 @@ export class EventAPI extends APIScope {
                 };
                 this.on(GlobalEvents.MAP_IDENTIFY, zeHandler, handlerName);
                 break;
-            case DefEH.OPEN_SETTINGS:
+            case DefEH.TOGGLE_SETTINGS:
                 zeHandler = (payload: any) => {
                     const settingsFixture: SettingsAPI = this.$iApi.fixture.get('settings');
                     if (settingsFixture) {
-                        settingsFixture.open(payload);
+                        settingsFixture.toggleSettings(payload);
                     }
                 };
                 // Create a new event: opens the settings panel and hooks it up to the requested layer.
-                this.$iApi.event.on(GlobalEvents.SETTINGS_OPEN, zeHandler, handlerName);
+                this.$iApi.event.on(GlobalEvents.SETTINGS_TOGGLE, zeHandler, handlerName);
                 break;
             case DefEH.OPEN_DETAILS:
                 zeHandler = (payload: any) => {
@@ -348,6 +351,15 @@ export class EventAPI extends APIScope {
                     }
                 };
                 this.$iApi.event.on(GlobalEvents.HELP_TOGGLE, zeHandler, handlerName);
+                break;
+            case DefEH.TOGGLE_GRID:
+                zeHandler = (uid: string, open?: boolean) => {
+                    const gridFixture: GridAPI = this.$iApi.fixture.get('grid');
+                    if (gridFixture) {
+                        gridFixture.toggleGrid(uid, open);
+                    }
+                };
+                this.$iApi.event.on(GlobalEvents.GRID_TOGGLE, zeHandler, handlerName);
                 break;
             case DefEH.MAP_KEYDOWN:
                 zeHandler = (payload: KeyboardEvent) => {

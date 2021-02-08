@@ -95,30 +95,31 @@ import SettingsComponent from './SettingsComponentV.vue';
 export default class SettingsV extends Vue {
     @Prop() panel!: PanelInstance;
     @Prop() layer!: BaseLayer;
+    @Prop() uid!: string;
 
     // Models.
-    visibilityModel: boolean = this.layer.getVisibility();
-    opacityModel: number = this.layer.getOpacity() * 100;
+    visibilityModel: boolean = this.layer.getVisibility(this.uid);
+    opacityModel: number = this.layer.getOpacity(this.uid) * 100;
     snapshotToggle: boolean = false;
 
     mounted() {
         // Listen for a layer load event. Some of these values may change when the layer fully loads.
         this.layer.stateChanged.listen(payload => {
-            this.visibilityModel = this.layer.getVisibility();
-            this.opacityModel = this.layer.getOpacity() * 100;
+            this.visibilityModel = this.layer.getVisibility(this.uid);
+            this.opacityModel = this.layer.getOpacity(this.uid) * 100;
         });
     }
 
     // Update the layer visibility.
     updateVisibility(val: any) {
         this.visibilityModel = val.value;
-        this.layer.setVisibility(this.visibilityModel);
+        this.layer.setVisibility(this.visibilityModel, this.uid);
     }
 
     // Update the layer opacity.
     updateOpacity(val: number) {
         this.opacityModel = val;
-        this.layer.setOpacity(this.opacityModel / 100);
+        this.layer.setOpacity(this.opacityModel / 100, this.uid);
     }
 
     // Toggle snapshot mode for the layer.

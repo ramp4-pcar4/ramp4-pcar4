@@ -33,7 +33,8 @@ export class LegendItem {
                       Controls.Reload,
                       Controls.Remove,
                       Controls.Datatable,
-                      Controls.Settings
+                      Controls.Settings,
+                      Controls.Symbology
                   ];
         this._hidden = legendItem.hidden !== undefined ? legendItem.hidden : false;
         this._itemConfig = legendItem;
@@ -196,43 +197,6 @@ export class LegendEntry extends LegendItem {
                     });
                 }
             }
-        }
-    }
-
-    /**
-     * Expand/collapses symbology stack.
-     * TODO: check if `LegendEntry` is an `InfoSection`
-     */
-    toggleSymbologyStack(): void {
-        if (this._controls.includes(Controls.Symbology)) {
-            this._symbologyStack.expanded = !this._symbologyStack.expanded;
-        }
-    }
-
-    /**
-     * Toggles metadata panel to open/close for the LegendItem.
-     */
-    toggleMetadata(): void {
-        if (this._controlAvailable(Controls.Metadata)) {
-            // TODO: toggle metadata panel through API/store call
-        }
-    }
-
-    /**
-     * Toggles settings panel to open/close type for the LegendItem.
-     */
-    toggleSettings(): void {
-        if (this._controlAvailable(Controls.Settings)) {
-            // TODO: toggle settings panel through API/store call
-        }
-    }
-
-    /**
-     * Toggles data table panel to open/close for the LegendItem.
-     */
-    toggleDataTable(): any {
-        if (this._controlAvailable(Controls.Datatable)) {
-            // TODO: toggle datatable through API using uid
         }
     }
 }
@@ -416,7 +380,7 @@ export enum LegendTypes {
     Placeholder = 'Placeholder'
 }
 
-enum Controls {
+export enum Controls {
     Opacity = 'opacity',
     Visibility = 'visibility',
     Boundingbox = 'boundingBox',

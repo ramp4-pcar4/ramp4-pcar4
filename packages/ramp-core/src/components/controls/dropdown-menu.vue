@@ -3,12 +3,6 @@
         <button class="relative text-gray-500 hover:text-black p-8" @click="open = !open">
             <slot name="header"></slot>
         </button>
-        <button
-            v-if="open"
-            @click="open = false"
-            tabindex="-1"
-            class="fixed inset-0 h-full w-full bg-black opacity-0 cursor-default"
-        ></button>
         <div
             v-if="open"
             @blur="open = false"
@@ -27,10 +21,14 @@ import { Get, Sync, Call } from 'vuex-pathify';
 @Component
 export default class MenuV extends Vue {
     @Prop({ default: 'bottom-right' }) position!: string;
-    data() {
-        return {
-            open: false
-        };
+    open: boolean = false;
+
+    mounted() {
+        window.addEventListener('click', event => {
+            if (event.target instanceof HTMLElement && !this.$el.contains(event.target)) {
+                this.open = false;
+            }
+        }, { capture: true });
     }
 }
 </script>
@@ -41,7 +39,7 @@ export default class MenuV extends Vue {
     padding: 0.5rem 1rem 0.5rem 1rem;
     color: #2d3748;
 }
-.rv-dropdown > *:hover {
+.rv-dropdown > *:hover:not(.disabled) {
     background-color: #eee;
 }
 .rv-dropdown {
