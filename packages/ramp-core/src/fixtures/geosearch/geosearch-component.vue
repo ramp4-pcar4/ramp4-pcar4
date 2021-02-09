@@ -9,43 +9,45 @@
         </template>
 
         <template #content>
-            <geosearch-top-filters></geosearch-top-filters>
-            <loading-bar class="mb-2" v-if="loadingResults"></loading-bar>
-            <div class="px-5 mb-10 truncate">
-                <span class="relative h-48" v-if="searchVal && searchResults.length === 0 && !loadingResults"
-                    >{{ $t('geosearch.noResults') }}<span class="font-bold text-blue-600">"{{ searchVal }}"</span></span
-                >
-            </div>
-            <ul
-                class="rv-results-list h-500 mb-5 border-t border-b border-gray-600 overflow-hidden overflow-y-auto"
-                v-focus-list
-                v-if="searchResults.length > 0"
-            >
-                <li class="relative h-48" v-for="(result, idx) in searchResults" v-bind:key="idx">
-                    <button
-                        class="absolute inset-0 h-full w-full hover:bg-gray-300 default-focus-style"
-                        @click="zoomIn(result)"
-                        v-focus-item
+            <div class="flex flex-col h-full">
+                <geosearch-top-filters></geosearch-top-filters>
+                <loading-bar class="mb-2" v-if="loadingResults"></loading-bar>
+                <div class="px-5 mb-10 truncate">
+                    <span class="relative h-48" v-if="searchVal && searchResults.length === 0 && !loadingResults"
+                        >{{ $t('geosearch.noResults') }}<span class="font-bold text-blue-600">"{{ searchVal }}"</span></span
                     >
-                        <div class="rv-result-description flex px-8">
-                            <div class="flex-1 text-left truncate">
-                                <span v-html="highlightSearchTerm(result.name, result.location.province)"></span>
-                                <span v-if="result.location.province" class="text-gray-600 text-sm">
-                                    {{
-                                        result.location.city
-                                            ? result.location.city + ', ' + result.location.province.abbr
-                                            : result.location.province.abbr
-                                    }}</span
-                                >
+                </div>
+                <ul
+                    class="rv-results-list flex-grow mb-5 border-t border-b border-gray-600 overflow-hidden overflow-y-auto"
+                    v-focus-list
+                    v-if="searchResults.length > 0"
+                >
+                    <li class="relative h-48" v-for="(result, idx) in searchResults" v-bind:key="idx">
+                        <button
+                            class="absolute inset-0 h-full w-full hover:bg-gray-300 default-focus-style"
+                            @click="zoomIn(result)"
+                            v-focus-item
+                        >
+                            <div class="rv-result-description flex px-8">
+                                <div class="flex-1 text-left truncate">
+                                    <span v-html="highlightSearchTerm(result.name, result.location.province)"></span>
+                                    <span v-if="result.location.province" class="text-gray-600 text-sm">
+                                        {{
+                                            result.location.city
+                                                ? result.location.city + ', ' + result.location.province.abbr
+                                                : result.location.province.abbr
+                                        }}</span
+                                    >
+                                </div>
+                                <span class="flex-2 text-right font-bold truncate" v-if="result.type" style="max-width: 50%">{{
+                                    result.type
+                                }}</span>
                             </div>
-                            <span class="flex-2 text-right font-bold truncate" v-if="result.type" style="max-width: 50%">{{
-                                result.type
-                            }}</span>
-                        </div>
-                    </button>
-                </li>
-            </ul>
-            <geosearch-bottom-filters class="absolute bottom-10"></geosearch-bottom-filters>
+                        </button>
+                    </li>
+                </ul>
+                <geosearch-bottom-filters class="mt-auto"></geosearch-bottom-filters>
+            </div>
         </template>
     </panel-screen>
 </template>
