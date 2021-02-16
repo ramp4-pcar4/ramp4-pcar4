@@ -3,5 +3,6 @@
   "testFiles": [
     "./tests/e2e/specs/*.*",
     "./src/fixtures/**/tests/e2e/**/*.*"
-  ]
+  ],
+  "defaultCommandTimeout": 6000
 }

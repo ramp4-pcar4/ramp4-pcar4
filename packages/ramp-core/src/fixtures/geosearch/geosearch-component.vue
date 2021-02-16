@@ -11,7 +11,7 @@
         <template #content>
             <div class="flex flex-col h-full">
                 <geosearch-top-filters></geosearch-top-filters>
-                <loading-bar class="mb-2" v-if="loadingResults"></loading-bar>
+                <loading-bar class="flex-none" :class="{ invisible: !loadingResults }"></loading-bar>
                 <div class="px-5 mb-10 truncate">
                     <span class="relative h-48" v-if="searchVal && searchResults.length === 0 && !loadingResults"
                         >{{ $t('geosearch.noResults') }}<span class="font-bold text-blue-600">"{{ searchVal }}"</span></span
