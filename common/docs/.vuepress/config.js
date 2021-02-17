@@ -6,20 +6,8 @@ module.exports = {
         displayAllHeaders: true,
         nav: [
             {
-                text: 'API',
-                link: '/api/events.md'
-            },
-            {
-                text: 'App',
-                link: '/app/appbar.md'
-            },
-            {
-                text: 'Config',
-                link: '/configuration/config-language.md'
-            },
-            {
-                text: 'GeoAPI',
-                link: '/geoapi/layers.md'
+                text: 'Current',
+                link: '/'
             }
         ],
         sidebar: {
@@ -52,6 +40,20 @@ module.exports = {
                     title: 'GeoAPI',
                     collapsable: false,
                     children: ['layers']
+                }
+            ],
+            '/': [
+                {
+                    title: 'Version 1.0.0',
+                    collapsable: true,
+                    sidebarDepth: 0,
+                    children: [
+                        '', 
+                        ['/api/events', 'API'],
+                        ['/app/appbar', 'Application'],
+                        ['/configuration/config-language.md', 'Configuration'],
+                        ['/geoapi/layers', 'GeoAPI']
+                    ]
                 }
             ]
         }
