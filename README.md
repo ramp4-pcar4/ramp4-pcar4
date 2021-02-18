@@ -128,3 +128,12 @@ RAMP.umd.snowman-snowman.js
 If you host a production build, only `RAMP.umd.snowman.js` is loaded, as it should be because the `snowman` fixture doesn't use any dynamic imports. Contents of `RAMP.umd.snowman-appbar-button.js` and `RAMP.umd.snowman-snowman.js` are included in `RAMP.umd.snowman.js` that's why it's enough to just load this one. The other two files are generated because it's impossible for the build tool to tell that they are not dynamically imported as well.
 
 This issue is annoying, but not harmful (apart from consuming extra storage space with unused files). Maybe it's possible to use tree-shaking to manually specify for which files chunks should not be created to reduce the number of files. See here: https://webpack.js.org/guides/tree-shaking/
+
+
+## Contributing
+
+### Demo Builds
+
+Demo builds are available at: http://ramp4-app.azureedge.net/demo
+
+Contact a project maintainer for credentials to have your pushed code automatically built and available at the above URL. You'll need to set the provided credentials as secrets in your forked repo (`AZ_LOGIN_NAME`, `AZ_PASSWORD`, `AZ_STORAGE_ACCOUNT`, and `AZ_TENANT`).
