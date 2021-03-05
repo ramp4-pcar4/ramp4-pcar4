@@ -1,5 +1,5 @@
 <template>
-    <div class="shadow-tm bg-white h-full xs:mr-0 sm:mr-12 last:mr-0 pointer-events-auto" :style="panel.style">
+    <div class="shadow-tm bg-white h-full xs:mr-0 sm:mr-12 last:mr-0 pointer-events-auto" :style="panel.style" :data-cy="panel.id">
         <!-- this renders a panel screen which is currently in view -->
 
         <!-- only perform transition on screen components that are not loaded yet; if already loaded, switch right away -->

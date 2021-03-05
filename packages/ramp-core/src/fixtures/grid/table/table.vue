@@ -385,7 +385,7 @@ export default class TableComponent extends Vue {
                 onCellClicked: (cell: any) => {
                     const fakeIdentifyItem = deepmerge({}, { data: cell.data });
                     delete fakeIdentifyItem['data']['rvInteractive'];
-                    delete fakeIdentifyItem['data']['rvSymbol']; 
+                    delete fakeIdentifyItem['data']['rvSymbol'];
                     this.$iApi.event.emit(GlobalEvents.DETAILS_OPEN, { identifyItem: fakeIdentifyItem, uid: this.layerUid });
                 }
             };
@@ -511,3 +511,9 @@ interface ColumnDefinition {
     lockPosition: Boolean;
 }
 </script>
+
+<style scoped>
+::v-deep .ag-header-cell-sortable {
+    cursor: default;
+}
+</style>
