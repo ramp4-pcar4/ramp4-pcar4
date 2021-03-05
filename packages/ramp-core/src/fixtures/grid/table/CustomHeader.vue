@@ -1,7 +1,7 @@
 <template>
-    <div class="ag-custom-header flex flex-1 items-center">
-        <div class="flex flex-1 items-center">
-            <span @click="onSortRequested('asc', $event)" class="customHeaderLabel">{{ params.displayName }}</span>
+    <div class="ag-custom-header flex flex-1 items-center w-full">
+        <div @click="onSortRequested('asc', $event)" class="flex flex-1 items-center min-w-0">
+            <span class="customHeaderLabel truncate" role="columnheader">{{ params.displayName }}</span>
             <span v-if="params.enableSorting && sort === 1" class="customSortDownLabel">
                 <div class="md-icon-small">
                     <svg height="24" width="24">
