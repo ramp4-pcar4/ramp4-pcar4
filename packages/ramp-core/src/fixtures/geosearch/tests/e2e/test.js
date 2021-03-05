@@ -7,14 +7,13 @@ const search = query => {
 
 // checks that center of current view is at a certain lat/long
 const viewIsAt = (long, lat, delta = 0.1) => {
+    // wait for zoom animation to finish
+    cy.wait(1000);
     cy.window().then(window => {
         const map = window.rInstance.map;
-        // wait for zoom animation to finish
-        cy.wrap(map._innerView.animation.when()).then(() => {
-            cy.wrap(map.gapi.utils.proj.projectGeometry(4326, map.getExtent().center())).should((point) => {
-                expect(point.x).closeTo(long, delta);
-                expect(point.y).closeTo(lat, delta);
-            });
+        cy.wrap(map.gapi.utils.proj.projectGeometry(4326, map.getExtent().center())).should((point) => {
+            expect(point.x).closeTo(long, delta);
+            expect(point.y).closeTo(lat, delta);
         });
     });
 }

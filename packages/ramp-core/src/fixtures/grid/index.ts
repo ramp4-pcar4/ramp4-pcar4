@@ -22,9 +22,6 @@ class GridFixture extends GridAPI {
         );
 
         this.$vApp.$store.registerModule('grid', grid());
-
-        // temporarily throw the InstanceAPI in console for testing purposes.
-        console.log(this.$iApi);
     }
 
     removed() {
