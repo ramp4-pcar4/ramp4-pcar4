@@ -1,7 +1,9 @@
 <template>
-    <div class="ag-custom-header flex flex-1 items-center">
-        <div class="flex flex-1 items-center">
-            <span @click="onSortRequested('asc', $event)" class="customHeaderLabel">{{ params.displayName }}</span>
+    <div class="ag-custom-header flex flex-1 items-center h-full w-full">
+        <div v-if="sortable"  class="flex flex-1 items-center min-w-0">
+            <button @click="onSortRequested('asc', $event)" class="customHeaderLabel truncate hover:bg-gray-300 font-bold p-8" role="columnheader">
+                {{ params.displayName }}
+            </button>
             <span v-if="params.enableSorting && sort === 1" class="customSortDownLabel">
                 <div class="md-icon-small">
                     <svg height="24" width="24">
@@ -17,22 +19,23 @@
                 </div>
             </span>
         </div>
+        <span v-else class="customHeaderLabel truncate" role="columnheader">{{ params.displayName }}</span>
 
         <div v-if="sortable">
-            <span @click="moveLeft()">
+            <button @click="moveLeft()" class="hover:opacity-50">
                 <div class="inline-block">
                     <svg height="24" width="24">
                         <g id="keyboard_arrow_left"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" /></g>
                     </svg>
                 </div>
-            </span>
-            <span @click="moveRight()">
+            </button>
+            <button @click="moveRight()" class="hover:opacity-50">
                 <div class="inline-block">
                     <svg height="24" width="24">
                         <g id="keyboard_arrow_right"><path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" /></g>
                     </svg>
                 </div>
-            </span>
+            </button>
         </div>
     </div>
 </template>
@@ -42,12 +45,9 @@ import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 
 @Component
 export default class CustomHeader extends Vue {
-    data(): Object {
-        return {
-            sort: 0,
-            sortable: false
-        };
-    }
+
+    sort: number = 0;
+    sortable: boolean = false;
 
     mounted(): void {
         this.gridApi = this.params.api;
