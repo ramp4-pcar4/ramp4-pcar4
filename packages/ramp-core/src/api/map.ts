@@ -135,7 +135,8 @@ export class MapAPI extends APIScope {
      * @returns {boolean} - true if any pan/zoom keys are active
      */
     get keysActive(): boolean {
-        return this._activeKeys.length !== 0;
+        const keys = ['-', '=', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowUp'];
+        return this._activeKeys.some(k => keys.includes(k));
     }
 
     /**
@@ -202,11 +203,13 @@ export class MapAPI extends APIScope {
 
         const scale = this.$iApi.map.getScale();
 
-        this._panInterval = setInterval(() => {
-            center.x += multiplier * dx;
-            center.y += multiplier * dy;
-            this.$iApi.map.zoomMapTo(center, scale, false);
-        }, 25)
+        if (dx !== 0 || dy !== 0) {
+            this._panInterval = setInterval(() => {
+                center.x += multiplier * dx;
+                center.y += multiplier * dy;
+                this.$iApi.map.zoomMapTo(center, scale, false);
+            }, 25);
+        }
     }
 }
 
