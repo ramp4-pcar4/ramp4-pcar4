@@ -18,6 +18,31 @@
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
 }
 
+/* styling for rectangle when Shift+Left-click+Drag zooming */
+.ramp-app .esri-zoom-box__container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.ramp-app .esri-zoom-box__overlay {
+    width: 100%;
+    height: 100%;
+}
+
+.ramp-app .esri-zoom-box__overlay-background {
+    fill: rgba(0,0,0,.1);
+}
+
+.ramp-app .esri-zoom-box__outline {
+    fill: transparent;
+    stroke: #1e90ff;
+    stroke-dasharray: 1,1;
+    stroke-width: 2px;
+}
+
 @font-face {
     font-family: 'Montserrat';
     src: url('font/Montserrat-Reg-webfont.woff2') format('woff2');
