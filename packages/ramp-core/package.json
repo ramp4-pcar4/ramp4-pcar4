@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "serve": "vue-cli-service serve",
-        "build": "cross-env VUE_APP_BUILD_TARGET=lib vue-cli-service build --target lib --formats umd --name RAMP src/main-build.ts 2>&1",
+        "build": "cross-env VUE_APP_BUILD_TARGET=lib vue-cli-service build --target lib --formats umd --name RAMP src/main-build.ts 2>&1 && rm ./dist/demo.html",
         "test:unit": "vue-cli-service test:unit",
         "test:e2e": "vue-cli-service test:e2e",
         "host": "http-server . -p 3001",
