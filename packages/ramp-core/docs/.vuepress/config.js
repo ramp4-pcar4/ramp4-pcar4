@@ -7,8 +7,46 @@ module.exports = {
         displayAllHeaders: true,
         nav: [
             {
-                text: 'Home',
-                link: '/'
+                text: 'API',
+                items: [
+                    { text: 'Events', link: '/api/events'},
+                    { text: 'Geometry', link: '/api/geometry'},
+                    { text: 'Migration', link: '/api/migration'},
+                ]
+            },
+            {
+                text: 'Application',
+                items: [
+                    { text: 'Appbar', link: '/app/appbar'},
+                    { text: 'Core Classes', link: '/app/core-classes'},
+                    { text: 'Datatable', link: '/app/datatable'},
+                    { text: 'Defaults', link: '/app/defaults'},
+                    { text: 'Details', link: '/app/details'},
+                    { text: 'Fixtures', link: '/app/fixtures'},
+                    { text: 'Focus List', link: '/app/focus-list'},
+                    { text: 'Geosearch', link: '/app/geosearch'},
+                    { text: 'Panels', link: '/app/panels'},
+                    { text: 'Store', link: '/app/store'},
+                    { text: 'Tooltips', link: '/app/tooltips'}
+                ]
+            },
+            {
+                text: 'Configuration',
+                items: [
+                    { text: 'Config Language', link: '/configuration/config-language'},
+                    { text: 'Migration', link: '/configuration/migration'},
+                ]
+            },
+            {
+                text: 'GeoAPI',
+                items: [
+                    { text: 'Layers', link: '/geoapi/layers'}
+                ]
+            },
+            {
+                text: 'Annotated Source Code',
+                link: '/code/', 
+                target: '_blank'
             }
         ],
         sidebar: {
@@ -16,7 +54,7 @@ module.exports = {
                 {
                     title: 'API',
                     collapsable: false,
-                    children: ['events','geometry','migration']
+                    children: ['events', 'geometry', 'migration']
                 }
             ],
             '/app/': [
@@ -24,8 +62,8 @@ module.exports = {
                     title: 'Application',
                     collapsable: false,
                     children: [
-                        'appbar','core-classes','datatable','defaults','details','fixtures','focus-list',
-                        'geosearch','panels','store','tooltips'
+                        'appbar', 'core-classes', 'datatable', 'defaults', 'details', 'fixtures', 'focus-list',
+                        'geosearch', 'panels', 'store', 'tooltips'
                     ]
                 }
             ],
