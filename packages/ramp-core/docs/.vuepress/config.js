@@ -3,10 +3,11 @@ module.exports = {
     description: 'documentation site',
     base: '/ramp4-pcar4/',
     themeConfig: {
+        repo: 'ramp4-pcar4/ramp4-pcar4',
         displayAllHeaders: true,
         nav: [
             {
-                text: 'Current',
+                text: 'Home',
                 link: '/'
             }
         ],
@@ -40,20 +41,6 @@ module.exports = {
                     title: 'GeoAPI',
                     collapsable: false,
                     children: ['layers']
-                }
-            ],
-            '/': [
-                {
-                    title: 'Version 1.0.0',
-                    collapsable: true,
-                    sidebarDepth: 0,
-                    children: [
-                        '', 
-                        ['/api/events', 'API'],
-                        ['/app/appbar', 'Application'],
-                        ['/configuration/config-language.md', 'Configuration'],
-                        ['/geoapi/layers', 'GeoAPI']
-                    ]
                 }
             ]
         }

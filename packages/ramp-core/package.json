@@ -8,7 +8,9 @@
         "test:unit": "vue-cli-service test:unit",
         "test:e2e": "vue-cli-service test:e2e",
         "host": "http-server . -p 3001",
-        "lint": "vue-cli-service lint"
+        "lint": "vue-cli-service lint",
+        "docs:dev": "typedoc && vuepress dev docs",
+        "docs:build": "typedoc && vuepress build docs"
     },
     "dependencies": {
         "ag-grid-community": "^22.1.1",
@@ -66,8 +68,10 @@
         "sass-loader": "^8.0.0",
         "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
         "tslib": "~1.10.0",
+        "typedoc": "^0.20.34",
         "typescript": "~3.8.3",
         "vue-template-compiler": "^2.6.10",
-        "wrapper-webpack-plugin": "2.1.0"
+        "wrapper-webpack-plugin": "2.1.0",
+        "vuepress": "~1.8.2"
     }
 }

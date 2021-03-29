@@ -5,7 +5,6 @@ import { InstanceAPI, AppVersion } from './internal';
 import mixin from './mixin';
 
 export * from './internal';
-
 declare const __VERSION__: AppVersion;
 
 // install/register mixin plugin with Vue, so it's available on all Vue instances
