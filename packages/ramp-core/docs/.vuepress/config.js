@@ -45,7 +45,7 @@ module.exports = {
             },
             {
                 text: 'Annotated Source Code',
-                link: '/code/', 
+                link: '/ramp4-pcar4/code/',
                 target: '_blank'
             }
         ],
