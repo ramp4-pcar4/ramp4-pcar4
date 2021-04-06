@@ -153,7 +153,8 @@ function initRAMP() {
                         'legend',
                         'geosearch',
                         'basemap',
-                        'divider'
+                        'divider',
+                        'export-v1'
                     ]
                 },
                 mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
@@ -168,6 +169,9 @@ function initRAMP() {
                             template: 'WFSLayer-Custom'
                         }
                     ]
+                },
+                'export-v1-title': {
+                    text: 'All Your Base are Belong to Us'
                 }
             }
         },
@@ -228,7 +232,8 @@ function initRAMP() {
                         'legend',
                         'geosearch',
                         'basemap',
-                        'divider'
+                        'divider',
+                        'export-v1'
                     ]
                 },
                 mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
@@ -243,6 +248,9 @@ function initRAMP() {
                             template: 'WFSLayer-Custom'
                         }
                     ]
+                },
+                'export-v1-title': {
+                    text: 'All Your Base are Belong to Us'
                 }
             }
         }
@@ -404,10 +412,13 @@ function initRAMP() {
     rInstance.fixture.add('diligord', window.hostFixtures.diligord);
     rInstance.fixture.add('mouruge', window.hostFixtures.mouruge);
 
+    // add export-v1 fixtures
+    rInstance.fixture.add('export-v1');
+
     // sample event declared by the page
 
     // interesting race condition here. we could use rInstance.availableEvents to find the name,
-    // but given the asynch nature of fixture.add, the name will not be registered yet.
+    // but given the async nature of fixture.add, the name will not be registered yet.
     var gazeboEventName = 'gazebo/beholdMyText';
 
     // a handler to react to a gazebo event
@@ -420,13 +431,13 @@ function initRAMP() {
         }
         diligord.doAThing(text);
     };
-    rInstance.event.on(gazeboEventName, handler, 'SAMPLE_HANLDER');
+    rInstance.event.on(gazeboEventName, handler, 'SAMPLE_HANDLER');
 
     // a one time handler. clicking "see a cat" many times should only result in one console log
     var onceHandler = function(text) {
         console.log('EVENTS API SAMPLE: a one time event : ' + text);
     };
-    rInstance.event.once(gazeboEventName, onceHandler, 'SAMPLE_HANLDER_ONCE');
+    rInstance.event.once(gazeboEventName, onceHandler, 'SAMPLE_HANDLER_ONCE');
 }
 
 function switchLang() {
@@ -439,10 +450,10 @@ function switchLang() {
 }
 
 function animateToggle() {
-    if (rInstance.$vApp.$el.classList.contains("animation-enabled")) {
-        rInstance.$vApp.$el.classList.remove("animation-enabled");
+    if (rInstance.$vApp.$el.classList.contains('animation-enabled')) {
+        rInstance.$vApp.$el.classList.remove('animation-enabled');
     } else {
-        rInstance.$vApp.$el.classList.add("animation-enabled");
+        rInstance.$vApp.$el.classList.add('animation-enabled');
     }
-    document.getElementById('animate-status').innerText = "Animate: " + rInstance.animate;
+    document.getElementById('animate-status').innerText = 'Animate: ' + rInstance.animate;
 }

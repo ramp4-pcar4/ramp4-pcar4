@@ -1,5 +1,6 @@
 <template>
     <transition-group @enter="enter" @leave="leave" name="panel-container" tag="div">
+        <!-- TODO: pass a corresponding fixture instance to the panel component as it can be useful -->
         <panel-container v-for="panel in visible($iApi.screenSize)" :key="`${panel.id}`" :panel="panel"></panel-container>
     </transition-group>
 </template>

@@ -14,6 +14,10 @@
         <div v-if="content" class="p-8 flex-grow default-focus-style overflow-y-auto" v-focus-item>
             <slot name="content"></slot>
         </div>
+
+        <div v-if="footer" class="px-16 py-16 border-t border-gray-400 default-focus-style" v-focus-item>
+            <slot name="footer"></slot>
+        </div>
     </div>
 </template>
 
@@ -33,6 +37,11 @@ export default class PanelScreenV extends Vue {
      * A prop indicating if the `content` slot should be rendered.
      */
     @Prop({ default: true }) content!: boolean;
+
+    /**
+     * A prop indicating if the `footer` slot should be rendered.
+     */
+    @Prop({ default: false }) footer!: boolean;
 
     @Prop() panel!: PanelInstance;
 }
