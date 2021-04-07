@@ -82,8 +82,9 @@ export class LegendAPI extends FixtureInstance {
     /**
      * Legend generation for layers.
      * 
-     * input: BaseLayer
-     * output: none
+     * @param {BaseLayer} [layer]
+     * @returns
+     * @memberOf LegendFixture
      */
     generateLegend(layer: BaseLayer | undefined) {
         // return if input is invalid
@@ -105,7 +106,7 @@ export class LegendAPI extends FixtureInstance {
                         type: layer.layerType,
                         layers: layers});
 
-        // add LegendEntry to LegendStore.children
+        // add entry to store
         let entries: LegendEntry[] | undefined = this.$vApp.$store.get(LegendStore.children);
         if (!entries) {
             entries = [];
