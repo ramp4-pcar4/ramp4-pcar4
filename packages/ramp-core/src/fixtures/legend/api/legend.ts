@@ -78,4 +78,39 @@ export class LegendAPI extends FixtureInstance {
         this.$vApp.$store.set(LegendStore.children, legendEntries);
         // TODO: validate legend items?
     }
+
+    /**
+     * Legend generation for layers.
+     * 
+     * input: BaseLayer
+     * output: none
+     */
+    generateLegend(layer: BaseLayer | undefined) {
+        // return if input is invalid
+        if (!layer) {
+            return;
+        }
+        // add layer to store
+        let layers: BaseLayer[] | undefined = this.$vApp.$store.get(LayerStore.layers);
+        if (!layers) {
+            layers = [];
+        }
+        layers.push(layer);
+
+        // create LegendEntry from layer
+        let uid = layer.uid;
+        let entry = new LegendEntry({
+                        layerId: layer.id,
+                        name: layer.getName(uid)? layer.getName(uid) : "",
+                        type: layer.layerType,
+                        layers: layers});
+
+        // add LegendEntry to LegendStore.children
+        let entries: LegendEntry[] | undefined = this.$vApp.$store.get(LegendStore.children);
+        if (!entries) {
+            entries = [];
+        }
+        entries.push(entry);
+    }
+
 }

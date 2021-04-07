@@ -418,6 +418,9 @@ export default class BaseLayer extends BaseBase {
      * @returns {String} name of the layer/sublayer
      */
     getName(layerIdx: number | string = undefined): string {
+        if (!this.getFC(layerIdx)) {
+            return;
+        }
         return this.getFC(layerIdx).name;
     }
 
