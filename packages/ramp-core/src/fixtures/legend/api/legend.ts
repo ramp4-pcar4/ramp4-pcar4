@@ -86,7 +86,7 @@ export class LegendAPI extends FixtureInstance {
      * @returns
      * @memberOf LegendFixture
      */
-    generateLegend(layer: BaseLayer | undefined, name: string | undefined) {
+    generateDefaultLegend(layer: BaseLayer | undefined, name: string | undefined) {
         // return if input is invalid
         if (!layer) {
             return;
@@ -108,17 +108,13 @@ export class LegendAPI extends FixtureInstance {
         // create LegendEntry from layer
         let config = {
             layerId: layer.id,
-            name: name? name : "",
+            name: name ? name : '',
             type: layer.layerType,
             layers: layers}
         let entry = new LegendEntry(config);
 
         // add entry to store
         entries.push(entry);
-
-        if (!this.config) {
-            return;
-        }
     }
 
 }
