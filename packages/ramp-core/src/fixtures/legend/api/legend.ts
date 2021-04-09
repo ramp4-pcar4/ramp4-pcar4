@@ -86,7 +86,7 @@ export class LegendAPI extends FixtureInstance {
      * @returns
      * @memberOf LegendFixture
      */
-    generateLegend(layer: BaseLayer | undefined) {
+    generateLegend(layer: BaseLayer | undefined, name: string | undefined) {
         // return if input is invalid
         if (!layer) {
             return;
@@ -98,20 +98,27 @@ export class LegendAPI extends FixtureInstance {
         }
         layers.push(layer);
 
-        // create LegendEntry from layer
-        let uid = layer.uid;
-        let entry = new LegendEntry({
-                        layerId: layer.id,
-                        name: layer.getName(uid)? layer.getName(uid) : "",
-                        type: layer.layerType,
-                        layers: layers});
+        // todo case Map Image Layer: create LegendGroup from layer
 
-        // add entry to store
-        let entries: LegendEntry[] | undefined = this.$vApp.$store.get(LegendStore.children);
+        let entries: any[] | undefined = this.$vApp.$store.get(LegendStore.children);
         if (!entries) {
             entries = [];
         }
+
+        // create LegendEntry from layer
+        let config = {
+            layerId: layer.id,
+            name: name? name : "",
+            type: layer.layerType,
+            layers: layers}
+        let entry = new LegendEntry(config);
+
+        // add entry to store
         entries.push(entry);
+
+        if (!this.config) {
+            return;
+        }
     }
 
 }
