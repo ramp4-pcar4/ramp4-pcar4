@@ -86,35 +86,22 @@ export class LegendAPI extends FixtureInstance {
      * @returns
      * @memberOf LegendFixture
      */
-    generateDefaultLegend(layer: BaseLayer | undefined, name: string | undefined) {
+    generateDefaultLegend(layer: BaseLayer | undefined, parent: LegendGroup | undefined) {
         // return if input is invalid
         if (!layer) {
             return;
         }
-        // add layer to store
-        let layers: BaseLayer[] | undefined = this.$vApp.$store.get(LayerStore.layers);
-        if (!layers) {
-            layers = [];
-        }
-        layers.push(layer);
-
-        // todo case Map Image Layer: create LegendGroup from layer
-
-        let entries: any[] | undefined = this.$vApp.$store.get(LegendStore.children);
-        if (!entries) {
-            entries = [];
-        }
-
-        // create LegendEntry from layer
+        
+        // create LegendEntry from layer, todo case MapImageLayer: create LegendGroup from layer
         let config = {
             layerId: layer.id,
-            name: name ? name : '',
+            name: layer.getName(layer.uid) ? layer.getName(layer.uid) : '',
             type: layer.layerType,
-            layers: layers}
-        let entry = new LegendEntry(config);
+            layers: this.$vApp.$store.get(LayerStore.layers)}
+        let entry = new LegendEntry(config, parent);
 
         // add entry to store
-        entries.push(entry);
+        this.$vApp.$store.set(LegendStore.addEntry, entry);
     }
 
 }

@@ -20,7 +20,11 @@ const getters = {
     }
 };
 
-const mutations = {};
+const mutations = {
+    ADD_ITEM: (state: LegendState, value: LegendEntry) => {
+        state.children = [...state.children, value];
+    }
+};
 
 const actions = {
     /** Expand all legend groups */
@@ -46,6 +50,10 @@ const actions = {
         context.state.children.forEach((entry: LegendEntry | LegendGroup) => {
             toggle(entry, { visibility: false });
         });
+    },
+    /** Add legend entry to store */
+    addEntry: (context: LegendContext, item: LegendEntry) => {
+        context.commit('ADD_ITEM', item);
     }
 };
 
@@ -145,7 +153,11 @@ export enum LegendStore {
     /**
      * (Action) hideAll - turn off visibility for all legend entries
      */
-    hideAll = 'legend/hideAll'
+    hideAll = 'legend/hideAll',
+    /**
+     * (Action) addEntry - add entry to legend store
+     */
+    addEntry = 'legend/addEntry!'
 }
 
 export function legend() {
