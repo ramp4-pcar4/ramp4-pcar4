@@ -14,7 +14,7 @@ class GridFixture extends GridAPI {
                         'grid-screen': GridV
                     },
                     style: {
-                        width: '900px'
+                        'max-width': '900px'
                     }
                 }
             },

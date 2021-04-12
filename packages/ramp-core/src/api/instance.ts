@@ -1,6 +1,6 @@
 import Vue, { VueConstructor } from 'vue';
 import { RampMap } from 'ramp-geoapi';
-import { RampConfigs } from '@/types';
+import { RampConfig, RampConfigs } from '@/types';
 import { Store } from 'vuex';
 import { i18n } from '@/lang';
 import screenfull from 'screenfull';
@@ -140,9 +140,9 @@ export class InstanceAPI {
      *
      * @memberof InstanceAPI
      */
-    getConfig(): void {
+    getConfig() {
         const language = this.$vApp.$i18n.locale;
-        return this.$vApp.$store.get(ConfigStore.getActiveConfig, language);
+        return this.$vApp.$store.get(ConfigStore.getActiveConfig, language) as RampConfig;
     }
 
     /**
@@ -171,16 +171,16 @@ export class InstanceAPI {
 
     /**
      * The current animation status.
-     * 
+     *
      * @readonly
      * @type string
      * @memberof InstanceAPI
      */
     get animate(): string {
-        if (this.$vApp.$el.classList.contains("animation-enabled")) {
-            return "on"
+        if (this.$vApp.$el.classList.contains('animation-enabled')) {
+            return 'on';
         }
-        return "off"
+        return 'off';
     }
 
     /**

@@ -722,7 +722,7 @@ class UrlWrapper {
      * Updates the query part of the url with passed in values.
      *
      * For example:
-     *  - orginal url: http://example?flag=red&demohell=true
+     *  - original url: http://example?flag=red&demohell=true
      *  - queryMapUpdate: {
      *     flag: undefined,
      *     demohell: false,
