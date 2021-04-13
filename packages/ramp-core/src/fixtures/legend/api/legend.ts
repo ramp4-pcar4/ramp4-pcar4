@@ -92,11 +92,10 @@ export class LegendAPI extends FixtureInstance {
             return;
         }
         
-        // create LegendEntry from layer, todo case MapImageLayer: create LegendGroup from layer
+        // create LegendEntry from layer
         let config = {
             layerId: layer.id,
             name: layer.getName(layer.uid) ? layer.getName(layer.uid) : '',
-            type: layer.layerType,
             layers: this.$vApp.$store.get(LayerStore.layers)}
         let entry = new LegendEntry(config, parent);
 
