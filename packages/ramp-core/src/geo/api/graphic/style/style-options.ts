@@ -1,6 +1,6 @@
 // TODO add proper documentation
 
-import { StyleParams, ColourParams } from '@/geo/internal';
+import { StyleParams, ColourParams } from '@/geo/api/api-internal';
 
 export class StyleOptions {
 

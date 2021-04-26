@@ -1,6 +1,6 @@
 // TODO add proper documentation
 
-import { BaseGeometry, GeometryType, LinearRing, LineString, MultiLineString, MultiPoint, Point, Polygon, SrDef, IdDef } from '@/geo/internal';
+import { BaseGeometry, GeometryType, LinearRing, LineString, MultiLineString, MultiPoint, Point, Polygon, SrDef, IdDef } from '@/geo/api/api-internal';
 
 export class MultiPolygon extends BaseGeometry {
 

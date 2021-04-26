@@ -1,6 +1,6 @@
 // TODO I don't love this class / file name. Rename if better suggestion
 
-import { Extent, LinearRing, LineString, MultiLineString, MultiPoint, MultiPolygon, Point, Polygon,  RampLodConfig, SpatialReference } from '@/geo/internal';
+import { Extent, LinearRing, LineString, MultiLineString, MultiPoint, MultiPolygon, Point, Polygon, RampLodConfig, SpatialReference } from '@/geo/api/api-internal';
 
 export class GeoCommonAPI  {
 

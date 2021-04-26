@@ -1,6 +1,6 @@
 // TODO add proper documentation
 
-import { BaseGeometry, GeometryType, Point, SrDef, IdDef } from '@/geo/internal';
+import { BaseGeometry, GeometryType, Point, SrDef, IdDef } from '@/geo/api/api-internal';
 
 export class MultiPoint extends BaseGeometry {
 

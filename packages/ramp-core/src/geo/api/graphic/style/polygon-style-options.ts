@@ -1,6 +1,6 @@
 // TODO add proper documentation
 
-import { FillStyle, LineStyleOptions, LineStyleParams, PolygonStyleParams, StyleOptions } from '@/geo/internal';
+import { FillStyle, LineStyleOptions, LineStyleParams, PolygonStyleParams, StyleOptions } from '@/geo/api/api-internal';
 
 export class PolygonStyleOptions extends StyleOptions {
 

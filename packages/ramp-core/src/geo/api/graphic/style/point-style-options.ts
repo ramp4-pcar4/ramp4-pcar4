@@ -1,6 +1,6 @@
 // TODO add proper documentation
 
-import { PointStyle, PointStyleParams, StyleOptions } from '@/geo/internal';
+import { PointStyle, PointStyleParams, StyleOptions } from '@/geo/api/api-internal';
 
 export class PointStyleOptions extends StyleOptions {
 
