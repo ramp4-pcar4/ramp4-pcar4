@@ -4,6 +4,7 @@
 //      we want types here to be available before the instance is generated,
 //      so don't want some weird dependency loop.
 import { BaseGeometry, Extent, FileLayer, Point, SpatialReference } from './internal';
+import { RampLodConfig } from './api/geo-common';
 
 // NOTE: some values have changed since RAMP2.
 //       this is due to esri api 4 using different constants, and working exclusively in the
@@ -358,6 +359,9 @@ export enum CoreFilterKey {
 
 // ----------------------- CLIENT CONFIG INTERFACES -----------------------------------
 
+// TODO migrate these to /geo/api/geo-common ? if we need config interfaces before creating an instance,
+//      having them defined here might cause circular reference.
+
 export interface RampSpatialReference {
     wkid?: number;
     latestWkid?: number;
@@ -434,11 +438,7 @@ export interface RampExtentConfig {
     spatialReference: RampSpatialReference;
 }
 
-export interface RampLodConfig {
-    level: number;
-    resolution: number;
-    scale: number;
-}
+
 
 export interface RampBasemapLayerConfig {
     layerType: string;

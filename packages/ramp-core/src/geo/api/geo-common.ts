@@ -1,6 +1,23 @@
 // TODO I don't love this class / file name. Rename if better suggestion
 
-import { Extent, LinearRing, LineString, MultiLineString, MultiPoint, MultiPolygon, Point, Polygon,  RampLodConfig, SpatialReference } from '@/geo/internal';
+// Do not import from '@/geo/internal';
+// stuff from this file needs to be able to run without an instance. /geo/internal is riddled with instance references.
+
+import { Extent } from './graphic/geometry/extent';
+import { LinearRing } from './graphic/geometry/linear-ring';
+import { LineString } from './graphic/geometry/line-string';
+import { MultiLineString } from './graphic/geometry/multi-line-string';
+import { MultiPoint } from './graphic/geometry/multi-point';
+import { MultiPolygon } from './graphic/geometry/multi-polygon';
+import { Point } from './graphic/geometry/point';
+import { Polygon } from './graphic/geometry/polygon';
+import { SpatialReference } from './graphic/geometry/spatial-reference';
+
+export interface RampLodConfig {
+    level: number;
+    resolution: number;
+    scale: number;
+}
 
 export class GeoCommonAPI  {
 
