@@ -30,9 +30,8 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 import { DetailsStore } from './store';
 
-import { PanelInstance } from '@/api';
-import { IdentifyResult } from 'ramp-geoapi';
-import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
+import { LayerInstance, PanelInstance } from '@/api';
+import { IdentifyResult } from '@/geo/api';
 
 @Component({})
 export default class DetailsResultV extends Vue {
@@ -40,7 +39,7 @@ export default class DetailsResultV extends Vue {
     @Prop() resultIndex!: number;
 
     @Get(DetailsStore.payload) payload!: IdentifyResult[];
-    @Get('layer/getLayerByUid') getLayerByUid!: (uid: string) => BaseLayer | undefined;
+    @Get('layer/getLayerByUid') getLayerByUid!: (uid: string) => LayerInstance | undefined;
 
     icon: string[] = [];
 
@@ -53,13 +52,13 @@ export default class DetailsResultV extends Vue {
 
     /**
      * Updates the value of icon[idx] with the svg string of the item.
-     * 
+     *
      * @param {any} data data of item in identifyResult.items
      * @param {number} idx index of item in identifyResult.items
      */
     itemIcon(data: any, idx: number) {
         const uid = this.identifyResult.uid;
-        const layer: BaseLayer | undefined = this.getLayerByUid(uid);
+        const layer: LayerInstance | undefined = this.getLayerByUid(uid);
         if (layer === undefined) {
             console.warn(`could not find layer for uid ${uid} during icon lookup`);
             return;
@@ -81,7 +80,7 @@ export default class DetailsResultV extends Vue {
     get nameField() {
         const layerInfo = this.payload[this.resultIndex];
         const uid = layerInfo?.uid;
-        const layer: BaseLayer | undefined = this.getLayerByUid(uid);
+        const layer: LayerInstance | undefined = this.getLayerByUid(uid);
         return layer?.getNameField(uid);
     }
 }

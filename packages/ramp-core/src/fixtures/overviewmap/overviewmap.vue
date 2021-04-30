@@ -21,25 +21,36 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
-import { RampMap, ApiBundle, RampMapConfig } from 'ramp-geoapi'
+import { Extent, Graphic, RampMapConfig } from '@/geo/api';
+import { EsriGraphic } from '@/geo/esri'; // TODO bad bad bad! convert to graphic layer or something and avoid this.
 import { ConfigStore } from '@/store/modules/config';
 import { GlobalEvents } from '../../api/internal';
 import { OverviewmapStore } from './store';
 import defaultConfig from './default-config';
 import { debounce } from 'debounce';
 
+// TODO this file was ignored through most of the dojo removal migration and no longer works.
+//      the MapAPI is now too tightly bundled with the API, global events, and other stuff,
+//      so we just can't spin off another instance for the overview map (e.g. if we did, extent
+//      changes in the overview would start triggering false filter events, etc).
+//      Need to build up something else, I'm thinking a custom overview map class that
+//      wraps the esri stuff and exposes what we need.
+//      It should also wrap all the esri code that is currently hardcoded here.
+
 @Component({})
 export default class OverviewmapV extends Vue {
     @Get(OverviewmapStore.mapConfig) mapConfig!: RampMapConfig;
     @Get(OverviewmapStore.startMinimized) startMinimized!: boolean;
 
-    overviewMap!: RampMap;
+    overviewMap!: any; // RampMap; // TODO update after fix
     minimized: boolean = true;
 
     mounted() {
+
+        /*
         let config = this.mapConfig || defaultConfig;
-        this.overviewMap = RAMP.geoapi.maps.createMap(config, this.$el.querySelector('.overviewmap') as HTMLDivElement);
-        this.overviewMap._innerView.ui.components = [];
+        this.overviewMap = this.$iApi.geo.maps.createMap(config, this.$el.querySelector('.overviewmap') as HTMLDivElement);
+        this.overviewMap.esriView.ui.components = [];
         this.minimized = this.startMinimized;
 
         // TODO update extent highlighting code to use ramp graphics once GraphicsLayer is implemented
@@ -48,21 +59,26 @@ export default class OverviewmapV extends Vue {
             color: [0, 0, 0, 0.5],
             outline: null
         };
-        let g = new RAMP.geoapi.esriBundle.Graphic({ symbol: symbol, visible: true })
-        this.overviewMap._innerView.graphics.add(g)
+        let g = new EsriGraphic({ symbol: symbol, visible: true }); // BAD!
+        this.overviewMap.esriView.graphics.add(g)
 
-        if (this.$iApi.map._innerView.ready) {
-            this.updateOverview(this.$iApi.map.getExtent());
+        if (this.$iApi.map.esriView.ready) {
+            this.updateOverview(this.$iApi.geo.map.getExtent());
         }
         this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, debounce(this.updateOverview, 300));
+        */
     }
 
-    updateOverview(newExtent: ApiBundle.Extent) {
-        const hRatio = this.$iApi.map.getPixelHeight() / 200;
-        const wRatio = this.$iApi.map.getPixelWidth() / 200;
-        const overviewScale = this.$iApi.map.getScale() * 1.5 * Math.max(hRatio, wRatio);
+    updateOverview(newExtent: Extent) {
+        const map = this.$iApi.geo.map;
+        const hRatio = map.getPixelHeight() / 200;
+        const wRatio = map.getPixelWidth() / 200;
+        const overviewScale = map.getScale() * 1.5 * Math.max(hRatio, wRatio);
         this.overviewMap.zoomMapTo(newExtent.center(), overviewScale);
-        this.overviewMap._innerView.graphics.getItemAt(0).geometry = this.$iApi.map._innerView.extent;
+
+        // this draws the outline of the main map extent.
+        // TODO figure out a way to accomplish without using esri internals
+        this.overviewMap.esriView.graphics.getItemAt(0).geometry = map.esriView?.extent;
     }
 
     get mapStyle() {

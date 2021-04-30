@@ -25,14 +25,14 @@ export default class CrosshairsV extends Vue {
     visible: boolean = false;
 
     mounted() {
-        this.$iApi.map._innerView.when(() => {
-            this.left = (this.$iApi.map.getPixelWidth() - this.$el.getBoundingClientRect().width) / 2;
-            this.top = (this.$iApi.map.getPixelHeight() - this.$el.getBoundingClientRect().height) / 2;
+        this.$iApi.geo.map.viewPromise.getPromise().then(() => {
+            this.left = (this.$iApi.geo.map.getPixelWidth() - this.$el.getBoundingClientRect().width) / 2;
+            this.top = (this.$iApi.geo.map.getPixelHeight() - this.$el.getBoundingClientRect().height) / 2;
         });
 
         this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, () => {
             // display crosshairs if pan/zoom keys are active
-            if (this.$iApi.mapActions.keysActive) {
+            if (this.$iApi.geo.map.keysActive) {
                 this.visible = true;
             }
         });

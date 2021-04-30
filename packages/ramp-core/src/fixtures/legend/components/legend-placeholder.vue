@@ -31,7 +31,7 @@ import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
 import { LayerStore, layer } from '@/store/modules/layer';
-import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
+import { LayerInstance } from '@/api/internal';
 
 import { LegendStore } from '../store';
 import { LegendEntry, LegendTypes } from '../store/legend-defs';
@@ -48,13 +48,13 @@ import SymbologyStack from './symbology-stack.vue';
 export default class LegendPlaceholderV extends Vue {
     @Prop() legendItem!: LegendEntry;
     @Prop() props!: any;
-    @Get(LayerStore.layers) layers!: BaseLayer[];
+    @Get(LayerStore.layers) layers!: LayerInstance[];
 
-    layer: BaseLayer | undefined = undefined;
+    layer: LayerInstance | undefined = undefined;
 
     @Watch('layers')
-    layerAdded(newValue: BaseLayer[], oldValue: BaseLayer[]) {
-        this.layer = newValue.find((layer: BaseLayer) => layer.id === this.legendItem.id);
+    layerAdded(newValue: LayerInstance[], oldValue: LayerInstance[]) {
+        this.layer = newValue.find((layer: LayerInstance) => layer.id === this.legendItem.id);
 
         if (this.layer !== undefined) {
             this.layer.isLayerLoaded().then(r => {

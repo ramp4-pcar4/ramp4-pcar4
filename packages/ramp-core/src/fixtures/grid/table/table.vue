@@ -51,7 +51,7 @@
             :rowData="rowData"
             :frameworkComponents="frameworkComponents"
             @grid-ready="onGridReady"
-            @keydown.native="stopArrowKeyProp" 
+            @keydown.native="stopArrowKeyProp"
             @firstDataRendered="gridRendered"
         >
         </ag-grid-vue>
@@ -61,11 +61,10 @@
 <script lang="ts">
 import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
-import { GlobalEvents } from '../../../api/internal';
+import { GlobalEvents, LayerInstance } from '@/api/internal';
 import deepmerge from 'deepmerge';
 
 import { LayerStore, layer } from '@/store/modules/layer';
-import BaseLayer from 'ramp-geoapi/dist/layer/BaseLayer';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
@@ -99,7 +98,7 @@ const TEXT_TYPE: string = 'string';
 })
 export default class TableComponent extends Vue {
     @Prop() layerUid!: string;
-    @Get('layer/getLayerByUid') getLayerByUid!: (uid: string) => BaseLayer | undefined;
+    @Get('layer/getLayerByUid') getLayerByUid!: (uid: string) => LayerInstance | undefined;
     @Sync('grid/grids') grids!: { [uid: string]: GridConfig };
 
     columnApi: any = null;
@@ -138,7 +137,7 @@ export default class TableComponent extends Vue {
             suppressColumnVirtualisation: true
         };
 
-        const fancyLayer: BaseLayer | undefined = this.getLayerByUid(this.layerUid);
+        const fancyLayer: LayerInstance | undefined = this.getLayerByUid(this.layerUid);
         if (fancyLayer === undefined) {
             // this really shouldn't happen unless the wrong API call is made, but maybe we should
             // do something else here anyway.
@@ -410,7 +409,7 @@ export default class TableComponent extends Vue {
                     };
                 },
                 onCellClicked: (cell: any) => {
-                    const layer: BaseLayer | undefined = this.getLayerByUid(this.layerUid);
+                    const layer: LayerInstance | undefined = this.getLayerByUid(this.layerUid);
                     if (layer === undefined) return;
                     const oid = cell.data[this.oidField];
                     const opts = { getGeom: true };
@@ -418,7 +417,7 @@ export default class TableComponent extends Vue {
                         if (g.geometry === undefined) {
                             console.error(`Could not find graphic for objectid ${oid}`);
                         } else {
-                            this.$iApi.map.zoomMapTo(g.geometry, 50000);
+                            this.$iApi.geo.map.zoomMapTo(g.geometry, 50000);
                         }
                     });
                 }
@@ -435,7 +434,7 @@ export default class TableComponent extends Vue {
                 isStatic: true,
                 maxWidth: 82,
                 cellRenderer: (cell: any) => {
-                    const layer: BaseLayer | undefined = this.getLayerByUid(this.layerUid);
+                    const layer: LayerInstance | undefined = this.getLayerByUid(this.layerUid);
                     if (layer === undefined) return;
                     const iconContainer = document.createElement('span');
                     const oid = cell.data[this.oidField];

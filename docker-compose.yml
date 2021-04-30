@@ -12,12 +12,10 @@ services:
             - ./:/home/node/r4mp
             - /home/node/r4mp/common/temp
             - /home/node/r4mp/packages/ramp-core/node_modules
-            - /home/node/r4mp/packages/ramp-geoapi/node_modules
             - /home/node/r4mp/packages/ramp-locale-loader/node_modules
             - /home/node/r4mp/packages/ramp-sample-fixtures/node_modules
 
             - /home/node/r4mp/packages/ramp-core/.rush
-            - /home/node/r4mp/packages/ramp-geoapi/.rush
             - /home/node/r4mp/packages/ramp-locale-loader/.rush
             - /home/node/r4mp/packages/ramp-sample-fixtures/.rush
         environment:

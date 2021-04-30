@@ -9,7 +9,7 @@
             <close @click="panel.close()"></close>
         </template>
 
-        <template #content>    
+        <template #content>
             <help-section v-for="(section, idx) in helpSections" :helpSection="section" :key="idx"></help-section>
         </template>
     </panel-screen>
@@ -25,6 +25,7 @@ import { HelpStore } from './store';
 import { ConfigStore } from '@/store/modules/config';
 import HelpSectionV from './help-section.vue';
 
+// TODO check if we actually need this library. Does vue have its own internal web request library?
 import axios from 'axios';
 import marked from 'marked';
 
@@ -64,7 +65,7 @@ export default class HelpV extends Vue {
                         // followed by the section header, exactly 2 newlines, then up to but not including a double newline
                         // note that the {2,} below is used as the double line deparator since each double new line is actually 6
                         // but we'll also accept more than a double space
-                        const reg = /^#\s(.*)\n{2}(?:.+|\n(?!\n{2,}))*/gm;  
+                        const reg = /^#\s(.*)\n{2}(?:.+|\n(?!\n{2,}))*/gm;
                         // remove new line character ASCII (13) so that above regex is compatible with all
                         // operating systems (markdown file varies by OS new line preference)
                         let helpMd = r.data.replace(new RegExp(String.fromCharCode(13), 'g'), '');
@@ -74,7 +75,7 @@ export default class HelpV extends Vue {
                             this.helpSections.push({
                                 header: section[1],
                                 // parse markdown on info section, split/splice/join removes the header
-                                // since we can't put info section into its own regex grouping 
+                                // since we can't put info section into its own regex grouping
                                 info: marked(
                                     section[0]
                                         .split('\n')

@@ -364,10 +364,6 @@
             "projectFolder": "packages/ramp-core"
         },
         {
-            "packageName": "ramp-geoapi",
-            "projectFolder": "packages/ramp-geoapi"
-        },
-        {
             "packageName": "ramp-sample-fixtures",
             "projectFolder": "packages/ramp-sample-fixtures"
         },

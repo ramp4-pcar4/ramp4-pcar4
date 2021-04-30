@@ -8,7 +8,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
 import { PanelInstance } from '@/api';
-import { IdentifyItem } from 'ramp-geoapi';
+import { IdentifyItem } from '@/geo/api';
 
 @Component({})
 export default class HTMLDefaultV extends Vue {

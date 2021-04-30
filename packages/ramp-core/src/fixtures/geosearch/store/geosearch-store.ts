@@ -124,7 +124,7 @@ const actions = {
      * Toggle map extent filter.
      *
      * @function setMapExtent
-     * @param   {any}    mapExtent   current map extent info
+     * @param   {any}    mapExtent   current map extent info // TODO what is this? add strong types? has .visible and .extent
      */
     setMapExtent: function(context: GeosearchContext, mapExtent: any): void {
         // if results should be filtered by current map view
@@ -132,11 +132,18 @@ const actions = {
             context.commit('SET_RESULTS_VISIBLE', mapExtent.visible);
         }
         // re-project current extent object with lat/lon WKID number
-        RAMP.geoapi.utils.proj.projectExtent(4326, mapExtent.extent).then((projExtent: any) => {
-            context.commit('SET_EXTENT', projExtent);
-            // run query after toggling map extent filters
-            context.dispatch('runQuery');
-        });
+        // NOTE: after removal of geoapi, the projection code is now accessed via the instance api.
+        //       since no one could answer if we are allowed to reference the api in the store, we instead
+        //       have the caller pre-project to lat long and add a rule that only lat long extents
+        //       can be provided to the store.
+
+        if (mapExtent.extent.sr.wkid !== 4326) {
+            throw new Error('an extent that was not projected to wkid 4326 was passed to the geosearch store');
+        }
+        context.commit('SET_EXTENT', mapExtent.extent);
+        // run query after toggling map extent filters
+        context.dispatch('runQuery');
+
     }
 };
 

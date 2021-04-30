@@ -5,6 +5,5 @@
 !common/scripts/docker-entrypoint.sh
 
 !packages/ramp-core/package.json
-!packages/ramp-geoapi/package.json
 !packages/ramp-locale-loader/package.json
 !packages/ramp-sample-fixtures/package.json
