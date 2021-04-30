@@ -38,9 +38,9 @@ module.exports = {
                 ]
             },
             {
-                text: 'GeoAPI',
+                text: 'Geo',
                 items: [
-                    { text: 'Layers', link: '/geoapi/layers'}
+                    { text: 'Layers', link: '/geo/layers'}
                 ]
             },
             {
@@ -74,9 +74,9 @@ module.exports = {
                     children: ['config-language', 'migration']
                 }
             ],
-            '/geoapi/': [
+            '/geo/': [
                 {
-                    title: 'GeoAPI',
+                    title: 'Geo',
                     collapsable: false,
                     children: ['layers']
                 }
