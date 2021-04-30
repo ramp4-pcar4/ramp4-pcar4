@@ -297,6 +297,7 @@ export class AttribLayer extends CommonLayer {
 
     protected notLoadedErr(): void {
         console.error('Attempted to manipulate the layer before it was loaded');
+        console.trace();
     }
 
 }
