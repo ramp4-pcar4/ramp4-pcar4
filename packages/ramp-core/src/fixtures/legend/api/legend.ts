@@ -1,4 +1,5 @@
 import { FixtureInstance, LayerInstance } from '@/api';
+import { TreeNode } from '@/geo/api';
 import { LegendConfig, LegendStore } from '../store';
 import { LegendItem, LegendEntry, LegendGroup, LegendSet } from '../store/legend-defs';
 import { LayerStore } from '@/store/modules/layer';
@@ -90,15 +91,37 @@ export class LegendAPI extends FixtureInstance {
             return;
         }
 
-        // create LegendEntry from layer
-        let config = {
-            layerId: layer.id,
-            name: layer.getName(layer.uid) ? layer.getName(layer.uid) : '',
-            layers: this.$vApp.$store.get(LayerStore.layers)}
-        let entry = new LegendEntry(config, parent);
+        // Creates legend config from layer tree children
+        const parseLayerTreeChildren = (children: Array<TreeNode>): any => {
+            return children.map((node: TreeNode) => {
+                if (!node.isLayer) {
+                    return { name: node.name, children: parseLayerTreeChildren(node.children) }
+                }
+                return { name: node.name, layerId: layer.id, entryIndex: node.layerIdx };
+            });
+        };
+
+        const tree: TreeNode = layer.getLayerTree();
+        let entry: LegendEntry | LegendGroup;
+        if (tree.children.length === 1 && tree.children[0].isLayer) {
+            // create LegendEntry from layer
+            const config = {
+                name: layer.getName(),
+                layers: this.$vApp.$store.get(LayerStore.layers),
+                layerId: layer.id
+            };
+            entry = new LegendEntry(config, parent);
+        } else {
+            // create LegendGroup
+            const config = {
+                name: layer.getName(),
+                layers: this.$vApp.$store.get(LayerStore.layers),
+                children: parseLayerTreeChildren(tree.children)
+            };
+            entry = new LegendGroup(config, parent);
+        }
 
         // add entry to store
         this.$vApp.$store.set(LegendStore.addEntry, entry);
     }
-
 }

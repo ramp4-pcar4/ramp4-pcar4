@@ -1,18 +1,27 @@
 <template>
     <div class="relative legend-header flex">
-        <dropdown-menu position="left">
+        <!-- open import wizard -->
+        <button @click="openWizard" class="mr-auto text-gray-500 hover:text-black p-8">
+            <div class="flex">
+                <svg class="fill-current w-18 h-18 mx-8" viewBox="0 0 23 21">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
+                </svg>
+            </div>
+        </button>
+        <!-- groups toggle -->
+        <dropdown-menu position="right">
             <template #header>
                 <div class="flex">
                     <svg class="fill-current w-18 h-18 mx-8" viewBox="0 0 23 21">
                         <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
                     </svg>
                 </div>
-                <tooltip class="mx-5" v-if="!showGroup" position="right"> {{ $t('legend.header.groups') }} </tooltip>
+                <tooltip class="mx-5" position="left"> {{ $t('legend.header.groups') }} </tooltip>
             </template>
             <a href="#" class="flex leading-snug items-center w-116" @click="expand"> {{ $t('legend.header.groups.expand') }} </a>
             <a href="#" class="flex leading-snug items-center w-116" @click="collapse"> {{ $t('legend.header.groups.collapse') }} </a>
         </dropdown-menu>
-        <span class="flex-grow"></span>
+        <!-- visibility toggle -->
         <dropdown-menu position="right">
             <template #header>
                 <div class="flex">
@@ -22,7 +31,7 @@
                         />
                     </svg>
                 </div>
-                <tooltip class="mx-5" v-if="!showVisible" position="left"> {{ $t('legend.header.visible') }} </tooltip>
+                <tooltip class="mx-5" position="left"> {{ $t('legend.header.visible') }} </tooltip>
             </template>
             <a href="#" class="flex leading-snug items-center w-100" @click="show"> {{ $t('legend.header.visible.show') }} </a>
             <a href="#" class="flex leading-snug items-center w-100" @click="hide"> {{ $t('legend.header.visible.hide') }} </a>
@@ -35,6 +44,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
 import { LegendStore } from './store';
+import { GlobalEvents } from '../../api/internal';
 
 @Component
 export default class LegendHeaderV extends Vue {
@@ -43,17 +53,8 @@ export default class LegendHeaderV extends Vue {
     @Call(LegendStore.expandGroups) expand!: () => void;
     @Call(LegendStore.collapseGroups) collapse!: () => void;
 
-    showGroup: Boolean = false;
-    showVisible: Boolean = false;
-
-    // toggle dropdown menu for expand/collapse button
-    toggleGroups(): void {
-        this.showGroup = !this.showGroup;
-    }
-
-    // toggle dropdown menu for visibility button
-    toggleVisibility(): void {
-        this.showVisible = !this.showVisible;
+    openWizard() {
+        this.$iApi.event.emit(GlobalEvents.WIZARD_OPEN);
     }
 }
 </script>

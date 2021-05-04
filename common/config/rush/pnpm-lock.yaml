@@ -4,6 +4,7 @@ importers:
   ../../packages/ramp-core:
     dependencies:
       '@arcgis/core': 4.19.1
+      '@braid/vue-formulate': 2.5.2
       ag-grid-community: 22.1.1
       ag-grid-vue: 22.1.1_4f5a95a77bad3f3a7df09d8e6767e56d
       animejs: 3.2.1
@@ -20,6 +21,7 @@ importers:
       ramp-sample-fixtures: link:../ramp-sample-fixtures
       raw-loader: 4.0.2_webpack@4.41.3
       screenfull: 5.0.2
+      shpjs: 3.6.3
       svg.js: 2.7.1
       terraformer: 1.0.9
       terraformer-arcgis-parser: 1.1.0
@@ -34,6 +36,7 @@ importers:
       webpack: 4.41.3
       webpack-cli: 3.3.10_webpack@4.41.3
       webpack-dev-server: 3.9.0_webpack@4.41.3
+      xml-js: 1.6.11
     devDependencies:
       '@tailwindcss/forms': 0.2.1
       '@tailwindcss/postcss7-compat': 2.1.0
@@ -80,6 +83,7 @@ importers:
       wrapper-webpack-plugin: 2.1.0_webpack@4.41.3
     specifiers:
       '@arcgis/core': 4.19.1
+      '@braid/vue-formulate': ~2.5.2
       '@tailwindcss/forms': ^0.2.1
       '@tailwindcss/postcss7-compat': ^2.0.2
       '@types/animejs': ~3.1.0
@@ -130,6 +134,7 @@ importers:
       sass: ^1.23.7
       sass-loader: ^8.0.0
       screenfull: ~5.0.2
+      shpjs: ~3.6.3
       svg.js: 2.7.1
       tailwindcss: npm:@tailwindcss/postcss7-compat@^2.0.2
       terraformer: 1.0.9
@@ -153,6 +158,7 @@ importers:
       webpack-cli: 3.3.10
       webpack-dev-server: 3.9.0
       wrapper-webpack-plugin: 2.1.0
+      xml-js: ~1.6.11
   ../../packages/ramp-locale-loader:
     dependencies:
       d3-dsv: 1.2.0
@@ -1196,6 +1202,19 @@ packages:
     dev: true
     resolution:
       integrity: sha512-RawydLgxbOPDlTLJNtoIypwdmAy//uQIzlKt2+iBiJaRlVuI6QLUxVAyWGNfOzp8Yu4L4lLIacoCyTNtpb4wiA==
+  /@braid/vue-formulate-i18n/1.16.0:
+    dev: false
+    resolution:
+      integrity: sha512-CuX1kN7bWg4ukynnTS3LGsmPKrUvS2Wh75zKatIe+nHQQy0gSvfmggQsCz4QZey7Ois+pGYmOIgrE1SvX+zQTw==
+  /@braid/vue-formulate/2.5.2:
+    dependencies:
+      '@braid/vue-formulate-i18n': 1.16.0
+      is-plain-object: 3.0.1
+      is-url: 1.2.4
+      nanoid: 2.1.11
+    dev: false
+    resolution:
+      integrity: sha512-0LWKp3Rjq2a+WwA4y49VaXqQOVClJGy6mmdivxJJyRvNB0aUcTOKOINLumeU/XHf7/c0HNhtbZih2vs6hMDyvQ==
   /@cnakazawa/watch/1.0.4:
     dependencies:
       exec-sh: 0.3.6
@@ -7372,6 +7391,10 @@ packages:
       node: '>= 4'
     resolution:
       integrity: sha512-cyFDKrqc/YdcWFniJhzI42+AzS+gNwmUzOSFcRCQYwySuBBBy/KjuxWLZ/FHEH6Moq1NizMOBWyTcv8O4OZIMg==
+  /immediate/3.0.6:
+    dev: false
+    resolution:
+      integrity: sha1-nbHb0Pr43m++D13V5Wu2BigN5ps=
   /immediate/3.3.0:
     dev: true
     resolution:
@@ -7933,6 +7956,12 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha512-h5PpgXkWitc38BBMYawTYMWJHFZJVnBquFE57xFpjB8pJFiF6gZ+bU+WyI/yqXiFR5mdLsgYNaPe8uao6Uv9Og==
+  /is-plain-object/3.0.1:
+    dev: false
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha512-Xnpx182SBMrr/aBik8y+GuR4U1L9FqMSojwDQwPMmxyC6bvEqly9UBCxhauBF5vNh2gwWJNX6oDV7O+OM4z34g==
   /is-posix-bracket/0.1.1:
     dev: true
     engines:
@@ -7995,6 +8024,10 @@ packages:
       node: '>=10'
     resolution:
       integrity: sha512-knxG2q4UC3u8stRGyAVJCOdxFmv5DZiRcdlIaAQXAbSfJya+OhopNotLQrstBhququ4ZpuKbDc/8S6mgXgPFPw==
+  /is-url/1.2.4:
+    dev: false
+    resolution:
+      integrity: sha512-ITvGim8FhRiYe4IQ5uHSkj7pVaPDrCTkNd3yq3cV7iZAcJdHTUMPMEHcqSOy9xZ9qFenQCvi+2wjH9a1nXqHww==
   /is-utf8/0.2.1:
     dev: true
     resolution:
@@ -9156,6 +9189,12 @@ packages:
       '0': node >=0.6.0
     resolution:
       integrity: sha1-MT5mvB5cwG5Di8G3SZwuXFastqI=
+  /jszip/2.6.1:
+    dependencies:
+      pako: 1.0.11
+    dev: false
+    resolution:
+      integrity: sha1-uI86ey5noqBIFSmCx6N1bZxIKPA=
   /keyv/3.1.0:
     dependencies:
       json-buffer: 3.0.0
@@ -9268,6 +9307,12 @@ packages:
       node: '>= 0.8.0'
     resolution:
       integrity: sha1-OwmSTt+fCDwEkP3UwLxEIeBHZO4=
+  /lie/3.3.0:
+    dependencies:
+      immediate: 3.0.6
+    dev: false
+    resolution:
+      integrity: sha512-UaiMJzeWRlEujzAuw5LokY1L5ecNQYZKfmyZ9L7wDHb/p5etKaxXhohBcrw0EYby+G/NA52vRSN4N39dxHAIwQ==
   /lines-and-columns/1.1.6:
     dev: true
     resolution:
@@ -9568,6 +9613,10 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-tqNXrS78oMOE73NMxK4EMLQsQowWf8jKooH9g7xPavRT706R6bkQJ6DY2Te7QukaZsulxa30wQ7bk0pm4XiHmA==
+  /lru-cache/2.7.3:
+    dev: false
+    resolution:
+      integrity: sha1-bUUk6LlV+V1PW1iFHOId1y+06VI=
   /lru-cache/4.1.5:
     dependencies:
       pseudomap: 1.0.2
@@ -10109,6 +10158,10 @@ packages:
     optional: true
     resolution:
       integrity: sha512-M2ufzIiINKCuDfBSAUr1vWQ+vuVcA9kqx8JJUsbQi6yf1uGRyb7HfpdfUr5qLXf3B/t8dPvcjhKMmlfnP47EzQ==
+  /nanoid/2.1.11:
+    dev: false
+    resolution:
+      integrity: sha512-s/snB+WGm6uwi0WjsZdaVcuf3KJXlfGl2LcxgwkEwJF0D/BWzVWAZW/XY4bFaiR7s0Jk3FPvlnepg1H1b1UwlA==
   /nanoid/3.1.22:
     dev: true
     engines:
@@ -10935,6 +10988,13 @@ packages:
     dev: true
     resolution:
       integrity: sha512-Ofn/CTFzRGTTxwpNEs9PP93gXShHcTq255nzRYSKe8AkVpZY7e1fpmTfOyoIvjP5HG7Z2ZM7VS9PPhQGW2pOpw==
+  /parsedbf/1.1.1:
+    dependencies:
+      iconv-lite: 0.4.24
+      text-encoding-polyfill: 0.6.7
+    dev: false
+    resolution:
+      integrity: sha512-jndFmhcrzSAGCMccM4za+3bIRxqV6L2doQjYN8Xgz0kZUpyBT5I8Gs6Y6hL5GcO2rih9OBkPcLlx2uBoLi8R8Q==
   /parseurl/1.3.3:
     engines:
       node: '>= 0.8'
@@ -12768,6 +12828,16 @@ packages:
     dev: true
     resolution:
       integrity: sha512-NEjg1mVbAUrzRv2eIcUt3TG7X9svX7l3n3F5/3OdFq+/BxUdmBOeKGiH4icZJBLHy354Shnj6sfBTemea2e7XA==
+  /shpjs/3.6.3:
+    dependencies:
+      jszip: 2.6.1
+      lie: 3.3.0
+      lru-cache: 2.7.3
+      parsedbf: 1.1.1
+      proj4: 2.6.0
+    dev: false
+    resolution:
+      integrity: sha512-wcR2S3WL/7RnEIm+YO+H/mZR9z9FCV46op+SZt+W5PtPs26Omb9U93f+EPI1DOpNKBuAIrWjHWh0SxlnBahJkg==
   /side-channel/1.0.4:
     dependencies:
       call-bind: 1.0.2
@@ -13529,6 +13599,10 @@ packages:
       node: '>=6'
     resolution:
       integrity: sha512-M+oxtseCFO3EDtAaGH7iiej3CBkzXqFMbzqYAACdzKui4eZA+pq3tZEwChvOdNfa7xxy8BfbmgJSIr43cC/+2g==
+  /text-encoding-polyfill/0.6.7:
+    dev: false
+    resolution:
+      integrity: sha512-/DZ1XJqhbqRkCop6s9ZFu8JrFRwmVuHg4quIRm+ziFkR3N3ec6ck6yBvJ1GYeEQZhLVwRW0rZE+C3SSJpy0RTg==
   /text-table/0.2.0:
     dev: true
     resolution:
@@ -15118,6 +15192,13 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-PSNhEJDejZYV7h50BohL09Er9VaIefr2LMAf3OEmpCkjOi34eYyQYAXUTjEQtZJTKcF0E2UKTh+osDLsgNim9Q==
+  /xml-js/1.6.11:
+    dependencies:
+      sax: 1.2.4
+    dev: false
+    hasBin: true
+    resolution:
+      integrity: sha512-7rVi2KMfwfWFl+GpPg6m80IVMWXLRjO+PxTq7V2CDhoGak0wzYzFgUY2m4XJ47OGdXd8eLE8EmwfAmdjw7lC1g==
   /xml-name-validator/3.0.0:
     resolution:
       integrity: sha512-A5CUptxDsvxKJEU3yO6DuWBSJz/qizqzJKOMIfUJHETbBw/sFaDxgd6fxm1ewUaM0jZ444Fc5vC5ROYurg/4Pw==

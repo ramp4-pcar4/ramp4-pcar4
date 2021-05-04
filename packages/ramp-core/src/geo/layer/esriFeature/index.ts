@@ -62,7 +62,7 @@ class FeatureLayer extends AttribLayer {
 
         // attempt to set custom renderer here. if fails, we can attempt on client but prefer it here
         // as this doesnt care where the layer came from
-        if (this.origRampConfig.customRenderer.type) {
+        if (this.origRampConfig?.customRenderer.type) {
             // TODO implement custom renderers
             // TODO try and do this in the constructor for the esri layer; API4 might accomodate that.
             //      since GeoJsonLayer would use this too, maybe abstarct the creation part to a util module
