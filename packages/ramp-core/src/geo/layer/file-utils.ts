@@ -2,7 +2,9 @@ import { APIScope } from '@/api/internal';
 import defaultRenderers from './defaultRenderers.json';
 import ArcGIS from 'terraformer-arcgis-parser';
 // @ts-ignore
-import { csv2geojson } from 'csv2geojson';
+import { csv2geojson, dsv } from 'csv2geojson';
+// @ts-ignore
+import shp from 'shpjs';
 
 import { EsriColour, EsriSimpleRenderer, EsriSpatialReference } from '@/geo/esri';
 
@@ -78,27 +80,6 @@ function assignIds(geoJson: any): void {
     }
 }
 
-
-/**
- * Extracts fields from the first feature in the feature collection, does no
- * guesswork on property types and calls everything a string.
- */
-function extractFields(geoJson: any) {
-    // TODO attempt to strong type input parameter.  GeoJSON.FeatureCollection wants us to pass in other types so avoiding it for now.
-    if (geoJson.features.length < 1) {
-        throw new Error('GeoJSON field extraction requires at least one feature');
-    }
-
-    // TODO investigate if a value can be of numeric type in GeoJSON schema. if so, try to detect, change type to number
-    if (geoJson.features[0].properties) {
-        return Object.keys(geoJson.features[0].properties).map(function (prop) {
-            return { name: prop, type: 'string' };
-        });
-    } else {
-        return [];
-    }
-}
-
 /**
  * Rename any fields with invalid names. Both parameters are modified in place.
  *
@@ -143,6 +124,36 @@ function cleanUpFields(geoJson: any, configPackage: __esri.FeatureLayerPropertie
 }
 
 export class FileUtils extends APIScope {
+
+    /**
+     * Extracts fields from the first feature in the feature collection, does no
+     * guesswork on property types and calls everything a string.
+     */
+    extractGeoJsonFields(geoJson: any) {
+        // TODO attempt to strong type input parameter.  GeoJSON.FeatureCollection wants us to pass in other types so avoiding it for now.
+        if (geoJson.features.length < 1) {
+            throw new Error('GeoJSON field extraction requires at least one feature');
+        }
+
+        // TODO investigate if a value can be of numeric type in GeoJSON schema. if so, try to detect, change type to number
+        if (geoJson.features[0].properties) {
+            return Object.keys(geoJson.features[0].properties).map(function (prop) {
+                return { name: prop, type: 'string' };
+            });
+        } else {
+            return [];
+        }
+    }
+
+    /**
+     * Extracts fields from csv file does noguesswork on property types and calls everything a string.
+     */
+    extractCsvFields(csvData: string, delimiter: string = ',') {
+        const fields: Array<string> = dsv.dsvFormat(delimiter).parseRows(csvData)[0];
+        return fields.map(field => {
+            return { name: field, type: 'string' }
+        });
+    }
 
     // TODO general type cleanup. just trying to make it work for now
     async geoJsonToEsriJson(geoJson: any, options: any): Promise<__esri.FeatureLayerProperties> {
@@ -204,7 +215,7 @@ export class FileUtils extends APIScope {
         //      maybe we should be applying that here. Alternately it will be in layer constructor that is overriding that property
         //      (it might happen after layer load.).  Alternatley it could be in ESRI 4 we can set it upfront on regular feature layers.
         configPackage.renderer = EsriSimpleRenderer.fromJSON(defRender.renderer);
-        configPackage.fields = (configPackage.fields || []).concat(extractFields(geoJson));
+        configPackage.fields = (configPackage.fields || []).concat(this.extractGeoJsonFields(geoJson));
 
         // clean the fields. in particular, CSV files can be loaded with spaces in
         // the field names
@@ -305,7 +316,7 @@ export class FileUtils extends APIScope {
         }
 
         return new Promise((resolve, reject) => {
-            csv2geojson.csv2geojson(csvData, csvOpts, (err: any, data: any) => {
+            csv2geojson(csvData, csvOpts, (err: any, data: any) => {
                 if (err) {
                     console.error('csv conversion error');
                     console.error(err);
@@ -332,19 +343,8 @@ export class FileUtils extends APIScope {
      * @param {ArrayBuffer} shapeData an ArrayBuffer of the Shapefile in zip format
      * @returns {Promise} a promise resolving with geojson
      */
-    async shapefileToGeoJson(shapeData: any): Promise<any> {
-
-        // TODO need to fix our shapefile library as it wont work in our current rush build
-        // package.json entry:
-        // "shpjs": "github:fgpv-vpgf/shapefile-js#v3.6.0",
-
-        // suggest we make a new repo in the ramp4 organization, so we don't end up breaking ramp2
-
-        // turn shape into geojson
-        // import shp from 'shpjs';  // <-- top of file
-        // return shp(shapeData);
-
-        return 'error not implemented';
+    async shapefileToGeoJson(shapeData: ArrayBuffer): Promise<any> {
+        return shp(shapeData);
     };
 
 }

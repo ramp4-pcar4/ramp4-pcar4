@@ -43,7 +43,10 @@
         "vuex": "^3.1.2",
         "webpack": "4.41.3",
         "webpack-cli": "3.3.10",
-        "webpack-dev-server": "3.9.0"
+        "webpack-dev-server": "3.9.0",
+        "@braid/vue-formulate": "~2.5.2",
+        "shpjs": "~3.6.3",
+        "xml-js": "~1.6.11"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.2.1",

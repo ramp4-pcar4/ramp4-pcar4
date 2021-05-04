@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import { FormulateGlobalInstance } from '@braid/vue-formulate';
 
 import { RampLayerConfig, RampMapConfig } from './geo/api';
 import { APIInterface, InstanceAPI } from './api';
@@ -26,6 +27,14 @@ declare module 'vue/types/vue' {
          * @memberof Vue
          */
         $iApi: InstanceAPI;
+
+        /**
+         * vue-formulate plugin
+         *
+         * @type {FormulateGlobalInstance}
+         * @memberof Vue
+         */
+        $formulate: FormulateGlobalInstance;
     }
 }
 

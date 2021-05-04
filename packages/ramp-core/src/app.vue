@@ -18,6 +18,9 @@ Vue.directive('focus-item', FocusItem);
 import TooltipV from '@/components/util/tooltip.vue';
 Vue.component('tooltip', TooltipV);
 
+import VueFormulate from '@braid/vue-formulate';
+Vue.use(VueFormulate);
+
 @Component({
     components: {
         Shell
