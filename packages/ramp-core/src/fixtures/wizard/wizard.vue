@@ -148,13 +148,14 @@ import { Get, Sync, Call } from 'vuex-pathify';
 
 import { PanelInstance } from '@/api';
 import { LayerStore } from '@/store/modules/layer';
+import { LayerType } from '@/geo/api';
+import { GlobalEvents } from '@/api/internal';
 import { WizardStore, WizardStep } from './store';
-import  LayerSource, { LayerInfo } from './store/layer-source'
+import { LayerSource, LayerInfo } from './store/layer-source'
+
 import WizardFormFooterV from './form-footer.vue'
 import StepperItemV from './stepper-item.vue'
 import StepperV from './stepper.vue'
-import { LayerType } from '@/geo/api';
-import { GlobalEvents } from '@/api/internal';
 
 @Component({
     components: {
@@ -177,22 +178,36 @@ export default class WizardV extends Vue {
 
     formulateFile: any = null;
 
-    mounted() {
-        console.log("eeee");
-    }
+    // service layer formats
+    serviceTypeOptions = [
+        { value: LayerType.FEATURE, label: this.$t('wizard.layerType.esriFeature') },
+        { value: LayerType.MAPIMAGE, label: this.$t('wizard.layerType.esriMapImage') },
+        { value: LayerType.TILE, label: this.$t('wizard.layerType.esriTile') },
+        { value: LayerType.IMAGERY, label: this.$t('wizard.layerType.esriImagery') },
+        { value: LayerType.WMS, label: this.$t('wizard.layerType.ogcWms') },
+        { value: LayerType.WFS, label: this.$t('wizard.layerType.ogcWfs') }
+    ];
+
+    // file layer formats
+    fileTypeOptions = [
+        { value: 'geojson', label: this.$t('wizard.fileType.geojson') },
+        { value: 'shapefile', label: this.$t('wizard.fileType.shapefile') },
+        { value: 'csv', label: this.$t('wizard.fileType.csv') }
+    ];
 
     // reads uploaded file
     async uploadFile(file: File, progress: Function) {
         const reader = new FileReader();
 
         reader.onerror = () => {
-            this.setError('upload', 'file', 'File upload failed');
+            this.formulateFile.files[0].removeFile();
+            this.setError('upload', 'file', this.$t('wizard.upload.file.error.failed') as string);
         };
 
         reader.onload = () => {
             this.fileData = reader.result as ArrayBuffer;
             this.url = file.name;
-            this.onFileUploaded();
+            this.onUploadContinue();
         };
 
         reader.onprogress = event => {
@@ -202,39 +217,34 @@ export default class WizardV extends Vue {
         reader.readAsArrayBuffer(file);
     }
 
-    // this lifecycle hook captures errors that occur on the vue template
+    // lifecycle hook captures errors from child components
     errorCaptured(err: Error, vm: Vue.Component, info: string) {
-        this.setError('format', 'type', 'Invalid file or service type' );
-        if (this.step === WizardStep.SELECT || this.step === WizardStep.CONFIGURE) {
-            this.goToStep(WizardStep.SELECT);
+        if (this.step === WizardStep.FORMAT || this.step === WizardStep.CONFIGURE) {
+            this.setError('format', 'type', this.$t('wizard.format.type.error.invalid') as string);
+            this.goToStep(WizardStep.FORMAT);
         }
-    }
-
-    onFileUploaded() {
-        setTimeout(() => {
-            // reset upload file
-            this.formulateFile.files[0].removeFile();
-        }, 500);
-
-        this.typeSelection = this.layerSource.guessFileType(this.url);
-        this.goToStep(WizardStep.SELECT);
     }
 
     onUploadContinue() {
-        if (this.isFileLayer) {
-            this.typeSelection = this.layerSource.guessFileType(this.url);
-        } else {
-            this.typeSelection = this.layerSource.guessServiceType(this.url);
+        if (this.fileData) {
+            setTimeout(() => {
+                // reset upload file
+                this.formulateFile.files[0].removeFile();
+            }, 500);
         }
 
-        this.goToStep(WizardStep.SELECT);
+        this.typeSelection = this.layerSource.guessFormatFromURL(this.url);
+        this.goToStep(WizardStep.FORMAT);
     }
 
     async onSelectContinue() {
-        if (this.isFileLayer) {
-            this.layerInfo = await this.layerSource.fetchFileInfo(this.url, this.typeSelection, this.fileData);
-        } else {
-            this.layerInfo = await this.layerSource.fetchServiceInfo(this.url, this.typeSelection);
+        this.layerInfo = this.isFileLayer
+            ? await this.layerSource.fetchFileInfo(this.url, this.typeSelection, this.fileData)
+            : await this.layerSource.fetchServiceInfo(this.url, this.typeSelection)
+
+        if (!this.layerInfo) {
+            this.setError('format', 'type', this.$t('wizard.format.type.error.invalid') as string);
+            return;
         }
 
         this.goToStep(WizardStep.CONFIGURE);
@@ -250,15 +260,15 @@ export default class WizardV extends Vue {
         const layer = await this.$iApi.geo.layer.createLayer(config);
         await layer.initiate();
 
-        // add layer ot map
+        // add layer to map
         this.$iApi.geo.map.addLayer(layer);
         this.$iApi.$vApp.$store.set(LayerStore.addLayers, [layer]);
+        // TODO get rid of this when default legend maker supports loading layers
+        await layer.isLayerLoaded();
 
         // add layer to legend and reset wizard
-        layer.isLayerLoaded().then(() => {
-            this.$iApi.event.emit(GlobalEvents.LEGEND_DEFAULT, layer);
-            this.goToStep(WizardStep.UPLOAD);
-        });
+        this.$iApi.event.emit(GlobalEvents.LEGEND_DEFAULT, layer);
+        this.goToStep(WizardStep.UPLOAD);
     }
 
     // options for fields selectors
@@ -302,28 +312,6 @@ export default class WizardV extends Vue {
         }
     }
 
-    // service layer formats
-    get serviceTypeOptions() {
-        return  [
-            { value: LayerType.FEATURE, label: this.$t('wizard.layerType.esriFeature') },
-            { value: LayerType.MAPIMAGE, label: this.$t('wizard.layerType.esriMapImage') },
-            { value: LayerType.TILE, label: this.$t('wizard.layerType.esriTile') },
-            { value: LayerType.IMAGERY, label: this.$t('wizard.layerType.esriImagery') },
-            { value: LayerType.WMS, label: this.$t('wizard.layerType.ogcWms') },
-            { value: LayerType.WFS, label: this.$t('wizard.layerType.ogcWfs') }
-        ];
-    }
-
-    // file layer formats
-    get fileTypeOptions() {
-        return [
-            { value: 'geojson', label: this.$t('wizard.fileType.geojson') },
-            { value: 'shapefile', label: this.$t('wizard.fileType.shapefile') },
-            { value: 'csv', label: this.$t('wizard.fileType.csv') }
-        ];
-    }
-
-    // returns if file layer
     get isFileLayer() {
         return this.fileData || this.url.match(/\.(zip|csv|json|geojson)$/);
     }
@@ -338,8 +326,8 @@ export default class WizardV extends Vue {
 }
 
 </script>
-<style lang="scss" scoped>
 
+<style lang="scss" scoped>
 ::v-deep {
     @import '@braid/vue-formulate/themes/snow/snow.scss';
 
@@ -356,7 +344,7 @@ export default class WizardV extends Vue {
 
        &[data-classification='select'] {
             .formulate-input-element::before {
-                @apply hidden;  // use only default select dropdown arrow
+                @apply hidden;  // hide second selector arrow
             }
 
             select {

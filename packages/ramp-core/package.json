@@ -14,6 +14,7 @@
     },
     "dependencies": {
         "@arcgis/core": "4.19.1",
+        "@braid/vue-formulate": "~2.5.2",
         "ag-grid-community": "^22.1.1",
         "ag-grid-vue": "^22.1.1",
         "animejs": "~3.2.0",
@@ -30,6 +31,7 @@
         "ramp-sample-fixtures": "workspace:*",
         "raw-loader": "^4.0.1",
         "screenfull": "~5.0.2",
+        "shpjs": "~3.6.3",
         "svg.js": "2.7.1",
         "terraformer": "1.0.9",
         "terraformer-arcgis-parser": "1.1.0",
@@ -43,10 +45,7 @@
         "vuex": "^3.1.2",
         "webpack": "4.41.3",
         "webpack-cli": "3.3.10",
-        "webpack-dev-server": "3.9.0",
-        "@braid/vue-formulate": "~2.5.2",
-        "shpjs": "~3.6.3",
-        "xml-js": "~1.6.11"
+        "webpack-dev-server": "3.9.0"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.2.1",

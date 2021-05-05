@@ -14,12 +14,12 @@ const actions = {
             case WizardStep.UPLOAD:
                 if (step === WizardStep.UPLOAD) {
                     context.commit('SET_URL', '');
-                } else if (step === WizardStep.SELECT) {
+                } else if (step === WizardStep.FORMAT) {
                     // go to next step
-                    context.commit('SET_STEP', WizardStep.SELECT);
+                    context.commit('SET_STEP', WizardStep.FORMAT);
                 }
                 break;
-            case WizardStep.SELECT:
+            case WizardStep.FORMAT:
                 if (step === WizardStep.UPLOAD) {
                     // go to previous step
                     if (context.state.fileData) {
@@ -42,18 +42,17 @@ const actions = {
                     context.commit('SET_FILE_DATA', null);
                     context.commit('SET_LAYER_INFO', { config: null, configOptions: [] });
                     context.commit('SET_STEP', WizardStep.UPLOAD);
-                } else if (step === WizardStep.SELECT) {
+                } else if (step === WizardStep.FORMAT) {
                     // go to previous step
                     context.commit('SET_LAYER_INFO', { config: null, configOptions: [] });
-                    context.commit('SET_STEP', WizardStep.SELECT);
+                    context.commit('SET_STEP', WizardStep.FORMAT);
                 }
                 break;
         }
     }
 };
 
-const mutations = {
-};
+const mutations = {};
 
 export enum WizardStore {
     layerSource = 'wizard/layerSource',

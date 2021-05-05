@@ -1,12 +1,13 @@
 <template>
     <div class="relative legend-header flex">
         <!-- open import wizard -->
-        <button @click="openWizard" class="mr-auto text-gray-500 hover:text-black p-8">
+        <button @click="openWizard" class="relative mr-auto text-gray-500 hover:text-black p-8">
             <div class="flex">
                 <svg class="fill-current w-18 h-18 mx-8" viewBox="0 0 23 21">
                     <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
                 </svg>
             </div>
+            <tooltip class="mx-5" position="right"> {{ $t('legend.header.addlayer') }} </tooltip>
         </button>
         <!-- groups toggle -->
         <dropdown-menu position="right">

@@ -146,7 +146,7 @@ export class FileUtils extends APIScope {
     }
 
     /**
-     * Extracts fields from csv file does noguesswork on property types and calls everything a string.
+     * Extracts fields from csv file does no guesswork on property types and calls everything a string.
      */
     extractCsvFields(csvData: string, delimiter: string = ',') {
         const fields: Array<string> = dsv.dsvFormat(delimiter).parseRows(csvData)[0];

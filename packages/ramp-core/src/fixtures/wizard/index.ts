@@ -1,7 +1,7 @@
 import { WizardAPI } from './api/wizard';
 import WizardV from './wizard.vue';
 import { wizard } from './store/index';
-import LayerSource from './store/layer-source';
+import { LayerSource } from './store/layer-source';
 import messages from './lang/lang.csv';
 
 class WizardFixture extends WizardAPI {
@@ -23,7 +23,6 @@ class WizardFixture extends WizardAPI {
                 i18n: { messages }
             }
         );
-        this.$iApi.panel.open('wizard-panel');
 
         this.$vApp.$store.registerModule('wizard', wizard());
         this.$vApp.$store.set('wizard/layerSource', new LayerSource(this.$iApi));

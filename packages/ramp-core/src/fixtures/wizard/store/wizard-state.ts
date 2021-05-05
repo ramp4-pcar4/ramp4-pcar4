@@ -1,9 +1,9 @@
-import LayerSource, { LayerInfo } from './layer-source';
+import { LayerSource, LayerInfo } from './layer-source';
 
 export class WizardState {
 
     /**
-     * Service for retreiving layer config info given a file or url
+     * Service for retreiving layer config info given a file or URL
      *
      * @type {LayerSource}
      * @memberof WizardState
@@ -35,7 +35,7 @@ export class WizardState {
     typeSelection: string = '';
 
     /**
-     * Layer configuration informatino
+     * Layer configuration information
      *
      * @type {LayerInfo}
      * @memberof WizardState
@@ -54,6 +54,6 @@ export class WizardState {
 
 export enum WizardStep {
     UPLOAD = 0,
-    SELECT = 1,
+    FORMAT = 1,
     CONFIGURE = 2
 }
