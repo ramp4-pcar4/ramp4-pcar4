@@ -1,7 +1,7 @@
 import { WizardAPI } from './api/wizard';
 import WizardV from './wizard.vue';
 import { wizard } from './store/index';
-import LayerSource from './store/layer-source';
+import { LayerSource } from './store/layer-source';
 import messages from './lang/lang.csv';
 
 class WizardFixture extends WizardAPI {
