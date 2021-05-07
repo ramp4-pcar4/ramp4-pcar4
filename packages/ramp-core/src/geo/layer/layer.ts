@@ -1,7 +1,7 @@
 // layers api and other public, general layer things.
 
 import { APIScope, FileUtils, InstanceAPI, OgcUtils } from '@/api/internal';
-import { AttributeSet, FieldDefinition, GetGraphicParams, GetGraphicResult, IdentifyParameters, IdentifyResultSet,
+import { AttributeSet, Extent, FieldDefinition, GetGraphicParams, GetGraphicResult, IdentifyParameters, IdentifyResultSet,
     LayerBase, LayerState, LegendSymbology, ScaleSet, TabularAttributeSet, TreeNode } from '@/geo/api';
 
 // TODO strongly type the config param? might be pointless, as we want custom layers to have any config they like
@@ -319,6 +319,8 @@ export class LayerInstance extends APIScope implements LayerBase {
 
     state: LayerState;
 
+    isFile: boolean;
+
     /**
      * Creates an instance of LayerInstance.
      *
@@ -333,6 +335,7 @@ export class LayerInstance extends APIScope implements LayerBase {
         this.supportsIdentify = false; // this is updated by subclasses as they will know the real deal.
         this.state = LayerState.NEW;
         this.config = config;
+        this.isFile = false;
     }
 
     /*
@@ -639,6 +642,50 @@ export class LayerInstance extends APIScope implements LayerBase {
      */
     getFeatureCount (layerIdx: number | string | undefined = undefined): number {
         return -1;
+    }
+
+    /**
+     * Returns the value of a named SQL filter for a given sublayer.
+     *
+     * @param {String} filterKey the filter key / named filter to view
+     * @param {Integer | String} [layerIdx] targets a layer index or uid that has the filter. Uses first/only if omitted.
+     * @returns {String} the value of the where clause for the filter. Empty string if not defined.
+     */
+    getSqlFilter(filterKey: string, layerIdx: number | string | undefined = undefined): string {
+        return '';
+    }
+
+    /**
+     * Applies an SQL filter to the layer. Will overwrite any existing filter for the given key.
+     * Use `1=2` for a "hide all" where clause.
+     *
+     * @param {String} filterKey the filter key / named filter to apply the SQL to
+     * @param {String} whereClause the WHERE clause of the filter
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to apply the filter to. Uses first/only if omitted.
+     */
+    setSqlFilter(filterKey: string, whereClause: string, layerIdx: number | string | undefined = undefined): void {
+    }
+
+    /**
+     * Applies the current filter settings to the physical map layer.
+     *
+     * @function applySqlFilter
+     * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all keys
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to update. Uses first/only if omitted.
+     */
+    applySqlFilter (exclusions: Array<string> = [], layerIdx: number | string | undefined = undefined): void {
+    }
+
+    /**
+     * Gets array of object ids that currently pass any filters for the given sublayer
+     *
+     * @param {Array} [exclusions] list of any filters keys to exclude from the result. omission includes all filters
+     * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to inspect. Uses first/only if omitted.
+     * @returns {Promise} resolves with array of object ids that pass the filter. if no filters are active, resolves with undefined.
+     */
+    getFilterOIDs(exclusions: Array<string> = [], extent: Extent | undefined = undefined, layerIdx: number | string | undefined = undefined): Promise<Array<number> | undefined> {
+        return Promise.resolve(undefined);
     }
 
     /**

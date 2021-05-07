@@ -117,6 +117,10 @@ export type IdDef = string | number | undefined;
 
 export interface Attributes { [key: string]: any; }
 
+// TODO revisit what this actually means now. Is the .layerType value on a layer config?
+//      or is it the type of ESRI layer that lives in the map.
+//      if the first, we might need to be careful as we can have custom values now.
+//      will enum cause a problem?
 export enum LayerType {
     // ESRI
     FEATURE = 'esriFeature',

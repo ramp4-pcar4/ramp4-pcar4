@@ -1,4 +1,6 @@
-# GeoAPI Layer Classes
+# Geo Layer Classes
+
+In this doc, `Layer` refers to any class that implements the `LayerBase` interface.
 
 ## Conceptual Fun - Physical vs Logical
 
@@ -8,7 +10,7 @@ Layers can be viewed in two different ways due to how they are constructed.
 
 This represents one slice in the map stack as it is drawn on the page. The slice can be a collection of vector geometries, or an image (also known as a raster). The image can be composed of pictures (e.g. a satellite image) or the rasterization of vector geometries.
 
-The `Layer` objects from GeoAPI maintain a one-to-one relationship with a physical layer in the map.
+The `Layer` objects maintain a one-to-one relationship with a physical layer in the map.
 
 ### Logical Layer
 
@@ -90,7 +92,7 @@ There are two ways to reference parts of the layer structure.
 
 Most methods on the `Layer` objects support an optional parameter to target the logical layer to use in the method. This parameter can be the `layerIdx` (integer), the `uid` (string), or can be left blank in most cases.
 
-If a layer is not a Map Image Layer, leaving the parameter blank will cause the layer to use the one and only logical layer. For a Map Image Layer, the blank parameter will target the layer's root (e.g. to set the visibility of the entire layer image instead of adjusting one of the component logical sublayers). If the method makes no sense on the layer root (e.g. asking for a record count), an error will be thrown.
+If a layer is not a Map Image Layer, leaving the parameter blank will cause the layer to use the one and only logical layer. For a Map Image Layer, the blank parameter will target the layer's root (e.g. to set the visibility of the entire layer image instead of adjusting one of the component logical sublayers). If the method makes no sense on the layer root (e.g. asking for a record count), the first sublayer will be used. TODO THIS IS CURRENTLY IN DESIGN DEBATE. Using the first helps avoid crashing errors, but can also give an unexpected result without it being obvious. Switching to a hard error will force stricter param use, but might cause more runtime fails.
 
 Examples
 
@@ -108,10 +110,12 @@ restoLayer.getName('ABCDskipafewYbecauseihavetogo4aP&Z4U'); // "Restaurants"
 restoLayer.getName(7); // "Burger Joints"
 restoLayer.getName('988rubbishasdfsdfad'); // "Pizza Parlours"
 restoLayer.getFeatureCount(7); // 324
-restoLayer.getFeatureCount(); // Error
+restoLayer.getFeatureCount(); // 871 (count for index 4, default first index)
 ```
 
 ## Supported Layer Types
+
+The following formats have support built in the codebase.
 
 - ESRI Feature Layer (ArcGIS Server)
 - ESRI Map Image Layer (ArcGIS Server) (formerly known as Dynamic Layer)
@@ -128,37 +132,24 @@ restoLayer.getFeatureCount(); // Error
 
 ## Layer Creation
 
-Layers are created by providing a configuration object (and layer data if the layer is not sourced from a supported web service) to a creation function in the GeoAPI.
+Layers are created by providing a configuration object to the creation function in the `geo` API.
 
 ```js
-var simpleConfig = { id: "funlayer", url: "http://maptown.com/maps/rest/fancyService/4" };
-var featureLayer = geoapi.layers.createFeatureLayer(simpleConfig));
+var simpleConfig = { id: "funlayer", layerType: "esriFeature", url: "http://maptown.com/maps/rest/fancyService/4" };
+var featureLayer = await instanceApi.geo.layers.createLayer(simpleConfig));
 ```
 
-### Creation Functions
+### Inner Layer Management
 
-- `layers.createFeatureLayer(config)`
-- `layers.createMapImageLayer(config)`
-- `layers.createGeoJSONLayer(config, geoJson, options)`
-
-*Coming Soon*
-
-- `layers.createLayer(config)` (general purpose, will read the `.layerType` property and return the appropriate flavour of layer)
-- `layers.createTileLayer(config)`
-- `layers.createWmsLayer(config)`
-- `layers.createCsvLayer(config)`
-- `layers.createShapeFileLayer(config)`
-- `layers.createImageryLayer(config)`
-- `layers.createHighlightLayer(config)`
+The creation of the layer just generates the controlling object. To generate an ESRI layer (which the mapping API uses to render stuff on the map), use the `initiate()` method on the layer. To remove/trash the ESRI layer, use `terminate()`. These functions can be used to orchestrate things like layer reloads, projection changes, etc.
 
 ## Common Operations
 
 In general, these items should only be accessed after the layer has loaded. Attempts to use prior to that may result in the data not existing. The perscribed way to do this is as follows. Of course, you can gate areas of logic so that code only runs after the layer is known to be loaded, and then you don't need to continually check the status.
 
 ```js
-myLayer.isLayerLoaded().then(() => {
-    // access layer data
-});
+await myLayer.isLayerLoaded();
+myLayer.dostuff();
 ```
 
 **Supports:** All Layer types
@@ -243,7 +234,6 @@ Options parameter object:
 ```js
 {
    geometry,       // The geometry to query. A RAMP API Geometry. Intersecting features will be returned.
-   map,            // the current GeoAPI map object. This is used to provide metadata about the current view.
    returnGeometry, // an optional boolean to indicate the geometry of the result features should also be downloaded. Defaults to `false`
    tolerance       // an optional integer number to buffer the query geometry. Is only useful if the geometry is a point.
                    // The number represents pixels to buffer by (so 5 would be a 10x10 pixel square around the point at the current map scale level).
@@ -279,9 +269,8 @@ Example call
 ```js
 var opts = { geometry: myPoint, tolerance: 3 };
 var result = myLayer.identify(opts);
-result.done.then(() => {
-    result.results.forEach(r => processResults(r));
-});
+await result.done
+result.results.forEach(r => processResults(r));
 ```
 
 ## Attribute Related Operations
@@ -290,7 +279,7 @@ result.done.then(() => {
 
 Note that Map Image Layers can have sublayers that are Raster in nature. These sublayers will not return any meaningful results for Attribute related calls.
 
-Attribute operations always target a logical layer. Attempts to call operations against a Map Image Layer while targeting the layer root or not providing a sublayer identifier will result in errors thrown.
+Attribute operations always target a logical layer. Attempts to call operations against a Map Image Layer while targeting the layer root or not providing a sublayer identifier will result in using the first child (for now!).
 
 Get the total number of features in a logical layer.
 
@@ -328,25 +317,21 @@ Request the attributes in a tabular format with column metadata, suitable for gr
 myLayer.getTabularAttributes('uid'); // Promise resolving with tabular attribute object.
 ```
 
-Request an individual graphic. This can include the geometry, the attributes, or both. The `map` option only needs to be provided if `getGeom` is set to `true`. The function uses a caching strategy so multiple requests for the same data will be server friendly. TODO flush out details.
+Request an individual graphic. This can include the geometry, the attributes, or both. The function uses a caching strategy so multiple requests for the same data will be server friendly. TODO flush out details.
 
 ```js
-var opts = { getGeom: true, getAttribs: true, map: myMap };
+var opts = { getGeom: true, getAttribs: true };
 var objectId = 61;
-var result = myLayer.getGraphic(objectId, opts, 'guid');
-result.then(g => {
-    console.log(g.attributes, g.geometry);
-});
+var result = await myLayer.getGraphic(objectId, opts, 'guid');
+console.log(g.attributes, g.geometry);
 ```
 
 Request the icon symbol for a specific feature. The icon corresponds to the legend representation of how the layer renderer would display this feature. The icon is encoded as an SVG string.
 
 ```js
 var objectId = 61;
-var result = myLayer.getIcon(objectId, 'guid');
-result.then(svg => {
-    console.log(svg);
-});
+var svg = await myLayer.getIcon(objectId, 'guid');
+console.log(svg);
 ```
 
 ### Filters
@@ -369,10 +354,8 @@ Requests for OIDs use a caching strategy, so multiple requests when nothing has 
 
 ```js
 // exclude our dog filter. respect all dogs
-var result = myLayer.getFilterOIDs(['dogfilter'], myMap.extent, 'guid');
-result.then(oids => {
-    oids.forEach(oid => console.log('matched this object id', oid));
-});
+var oids = await myLayer.getFilterOIDs(['dogfilter'], myMap.extent, 'guid');
+oids.forEach(oid => console.log('matched this object id', oid));
 
 // sample call without any fancy parameters
 var fullFilterResult = myLayer.getFilterOIDs(undefined, undefined, 'guid');
@@ -390,3 +373,7 @@ myLayer.applySqlFilter(undefined, 'uid');
 // ignore the grid filters
 myLayer.applySqlFilter(['grid'], 'uid');
 ```
+## Custom Layers
+
+TODO flush out as part of issue ###
+Provide an example (e.g. a pre-cooked layer that always loads the happy json)
