@@ -47,25 +47,23 @@ export interface LayerBase {
     identify(options: IdentifyParameters): IdentifyResultSet;
 
     // attribute layer props. layers that do not support attributes can just return dummy values
-    // TODO make these ? optional, so implementer doesn't need to write garbage? ensure the .updateBaseToInstance()
-    //      can still work with them missing on the incoming layer. LayerInstance will have dummy value stubs.
-    getFeatureCount(layerIdx: number | string | undefined): number;
-    getGraphic(objectId: number, options: GetGraphicParams, layerIdx: number | string | undefined): Promise<GetGraphicResult>;
-    getIcon(objectId: number, layerIdx: number | string | undefined): Promise<string>;
+    getFeatureCount?(layerIdx: number | string | undefined): number;
+    getGraphic?(objectId: number, options: GetGraphicParams, layerIdx: number | string | undefined): Promise<GetGraphicResult>;
+    getIcon?(objectId: number, layerIdx: number | string | undefined): Promise<string>;
 
-    getOidField(layerIdx: number | string | undefined): string;
-    getNameField(layerIdx: number | string | undefined): string;
-    getGeomType(layerIdx: number | string | undefined): string;
-    getFields(layerIdx: number | string | undefined): Array<FieldDefinition>;
+    getOidField?(layerIdx: number | string | undefined): string;
+    getNameField?(layerIdx: number | string | undefined): string;
+    getGeomType?(layerIdx: number | string | undefined): string;
+    getFields?(layerIdx: number | string | undefined): Array<FieldDefinition>;
 
-    getAttributes(layerIdx: number | string | undefined): Promise<AttributeSet>;
-    getTabularAttributes(layerIdx: number | string | undefined): Promise<TabularAttributeSet>;
-    abortAttributeLoad(layerIdx: number | string | undefined): void;
-    destroyAttributes(layerIdx: number | string | undefined): void;
+    getAttributes?(layerIdx: number | string | undefined): Promise<AttributeSet>;
+    getTabularAttributes?(layerIdx: number | string | undefined): Promise<TabularAttributeSet>;
+    abortAttributeLoad?(layerIdx: number | string | undefined): void;
+    destroyAttributes?(layerIdx: number | string | undefined): void;
 
-    applySqlFilter(exclusions: Array<string>, layerIdx: number | string | undefined): void;
-    getFilterOIDs(exclusions: Array<string>, extent: Extent | undefined, layerIdx: number | string | undefined): Promise<Array<number> | undefined>;
-    getSqlFilter(filterKey: string, layerIdx: number | string | undefined): string;
-    setSqlFilter(filterKey: string, whereClause: string, layerIdx: number | string | undefined): void ;
+    applySqlFilter?(exclusions: Array<string>, layerIdx: number | string | undefined): void;
+    getFilterOIDs?(exclusions: Array<string>, extent: Extent | undefined, layerIdx: number | string | undefined): Promise<Array<number> | undefined>;
+    getSqlFilter?(filterKey: string, layerIdx: number | string | undefined): string;
+    setSqlFilter?(filterKey: string, whereClause: string, layerIdx: number | string | undefined): void ;
 
 }
