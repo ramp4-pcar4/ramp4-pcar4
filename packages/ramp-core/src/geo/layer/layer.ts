@@ -281,8 +281,6 @@ export class LayerInstance extends APIScope implements LayerBase {
     static updateBaseToInstance(value: LayerBase, config: any, $iApi: InstanceAPI): LayerInstance {
         const instance = new LayerInstance(config, $iApi);
 
-        // TODO add all the properties and methods required
-
         Object.defineProperties(value, {
             config: { value: config },
             $iApi: { value: $iApi },
@@ -291,6 +289,21 @@ export class LayerInstance extends APIScope implements LayerBase {
                     return instance.$vApp;
                 }
             },
+            getFeatureCount: { value: value.getFeatureCount ? value.getFeatureCount : instance.getFeatureCount }, 
+            getGraphic: { value: value.getGraphic ? value.getGraphic : instance.getGraphic },
+            getIcon: { value: value.getIcon ? value.getIcon : instance.getIcon },
+            getOidField: { value: value.getOidField ? value.getOidField : instance.getOidField },
+            getNameField: { value: value.getNameField ? value.getNameField : instance.getNameField },
+            getGeomType: { value: value.getGeomType ? value.getGeomType : instance.getGeomType },
+            getFields: { value: value.getFields ? value.getFields : instance.getFields },      
+            getAttributes: { value: value.getAttributes ? value.getAttributes : instance.getAttributes },
+            getTabularAttributes: { value: value.getTabularAttributes ? value.getTabularAttributes : instance.getTabularAttributes },
+            abortAttributeLoad: { value: value.abortAttributeLoad ? value.abortAttributeLoad : instance.abortAttributeLoad },
+            destroyAttributes: { value: value.destroyAttributes ? value.destroyAttributes : instance.destroyAttributes },    
+            applySqlFilter: { value: value.applySqlFilter ? value.applySqlFilter : instance.applySqlFilter },
+            getFilterOIDs: { value: value.getFilterOIDs ? value.getFilterOIDs : instance.getFilterOIDs },
+            getSqlFilter: { value: value.getSqlFilter ? value.getSqlFilter : instance.getSqlFilter },
+            setSqlFilter: { value: value.setSqlFilter ? value.setSqlFilter : instance.setSqlFilter },
             // remove: { value: instance.remove },
             // extend: { value: instance.extend },
             /*
