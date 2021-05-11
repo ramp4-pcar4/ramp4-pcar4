@@ -14,8 +14,7 @@ You can run a full developer environment using Docker containers on Windows, mac
 - [Git](https://git-scm.com/downloads)
 - [VS Code](https://code.visualstudio.com/Download)
 
-*These dependencies are free to use.*
-
+_These dependencies are free to use._
 
 ### Installation
 
@@ -24,6 +23,7 @@ You can run a full developer environment using Docker containers on Windows, mac
 Follow the instructions to download and install Docker for Windows: https://hub.docker.com/editions/community/docker-ce-desktop-windows.
 
 Add the following extensions to VS Code:
+
 - [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
 - [Visual Studio Code Remote - Containers Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 
@@ -70,18 +70,27 @@ Install Rush if you don't already have it:
 $ npm install -g @microsoft/rush
 ```
 
+## Local development
+
+### Install build tools
+
+Download and install [Node.js v14.15.4](https://nodejs.org/dist/v14.15.1/node-v14.15.1-x64.msi).
+
+Install [Rushjs](https://rushjs.io) globally with the command `npm install -g @microsoft/rush`.
+
 ### Installing dependencies
 
 Use Rush to install dependencies:
 
 ```
-$ rush update
+$ rush install
 ```
 
-To completely clear and reinstall all dependencies, run `rush update -p --full`:
+For a list of optional arguments see the [help page](https://rushjs.io/pages/commands/rush_install/).
 
--   `-p` for purge, to remove all the installed packages
--   `--full` just because it looks important
+Avoid using `rush update` unless you need to update the shrinkwrap file (like when a dependency is added/modified in a `package.json` file).
+
+Do not use `rush update --full` unless you are tasked with bumping up all dependencies to the latest SemVer-compatible version.
 
 ### Running a development build
 
@@ -128,7 +137,6 @@ RAMP.umd.snowman-snowman.js
 If you host a production build, only `RAMP.umd.snowman.js` is loaded, as it should be because the `snowman` fixture doesn't use any dynamic imports. Contents of `RAMP.umd.snowman-appbar-button.js` and `RAMP.umd.snowman-snowman.js` are included in `RAMP.umd.snowman.js` that's why it's enough to just load this one. The other two files are generated because it's impossible for the build tool to tell that they are not dynamically imported as well.
 
 This issue is annoying, but not harmful (apart from consuming extra storage space with unused files). Maybe it's possible to use tree-shaking to manually specify for which files chunks should not be created to reduce the number of files. See here: https://webpack.js.org/guides/tree-shaking/
-
 
 ## Contributing
 
