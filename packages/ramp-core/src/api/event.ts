@@ -1,9 +1,11 @@
 import Vue from 'vue';
-import { APIScope, InstanceAPI } from './internal';
+import { APIScope, InstanceAPI, LayerInstance } from './internal';
 import { DetailsAPI } from '@/fixtures/details/api/details';
-import { SettingsAPI} from '@/fixtures/settings/api/settings'
-import { HelpAPI } from '@/fixtures/help/api/help'
-import { GridAPI } from '@/fixtures/grid/api/grid'
+import { SettingsAPI} from '@/fixtures/settings/api/settings';
+import { HelpAPI } from '@/fixtures/help/api/help';
+import { GridAPI } from '@/fixtures/grid/api/grid';
+import { WizardAPI } from '@/fixtures/wizard/api/wizard';
+import { LegendAPI } from '@/fixtures/legend/api/legend';
 import { MapClick } from '@/geo/api';
 
 export enum GlobalEvents {
@@ -45,7 +47,9 @@ export enum GlobalEvents {
     SETTINGS_TOGGLE = 'settings/toggle',
     DETAILS_OPEN = 'details/open',
     HELP_TOGGLE = 'help/toggle',
-    GRID_TOGGLE = 'grid/toggle'
+    GRID_TOGGLE = 'grid/toggle',
+    WIZARD_OPEN = 'wizard/open',
+    LEGEND_DEFAULT = 'legend/generate'
 }
 
 // TODO export this enum?
@@ -64,7 +68,9 @@ enum DefEH {
     TOGGLE_SETTINGS = 'ramp_settings_toggles_panel',
     OPEN_DETAILS = 'opens_feature_details',
     TOGGLE_HELP = 'toggles_help_panel',
-    TOGGLE_GRID = 'toggles_grid_panel'
+    TOGGLE_GRID = 'toggles_grid_panel',
+    OPEN_WIZARD = 'opens_wizard_panel',
+    GENERATE_LEGEND = 'generates_default_legend_entry'
 }
 
 // private for EventBus internals, so don't export
@@ -296,7 +302,7 @@ export class EventAPI extends APIScope {
             // TODO the enum-values-to-array logic we use in the event names list
             //      fails a bit here. we could make it work if we force every default
             //      handler name to being with a specific prefix. Alternately use object, not enum.
-            eventHandlerNames = [DefEH.MAP_IDENTIFY, DefEH.MAP_KEYDOWN, DefEH.MAP_KEYUP, DefEH.MAP_BLUR, DefEH.IDENTIFY_DETAILS, DefEH.TOGGLE_SETTINGS, DefEH.OPEN_DETAILS, DefEH.TOGGLE_HELP, DefEH.TOGGLE_GRID];
+            eventHandlerNames = [DefEH.MAP_IDENTIFY, DefEH.MAP_KEYDOWN, DefEH.MAP_KEYUP, DefEH.MAP_BLUR, DefEH.IDENTIFY_DETAILS, DefEH.TOGGLE_SETTINGS, DefEH.OPEN_DETAILS, DefEH.TOGGLE_HELP, DefEH.TOGGLE_GRID, DefEH.OPEN_WIZARD, DefEH.GENERATE_LEGEND];
         }
 
         // add all the requested default event handlers.
@@ -371,6 +377,24 @@ export class EventAPI extends APIScope {
                     }
                 };
                 this.$iApi.event.on(GlobalEvents.GRID_TOGGLE, zeHandler, handlerName);
+                break;
+            case DefEH.OPEN_WIZARD:
+                zeHandler = () => {
+                    const wizardFixture: WizardAPI = this.$iApi.fixture.get('wizard');
+                    if (wizardFixture) {
+                        wizardFixture.openWizard();
+                    }
+                };
+                this.$iApi.event.on(GlobalEvents.WIZARD_OPEN, zeHandler, handlerName);
+                break;
+            case DefEH.GENERATE_LEGEND:
+                zeHandler = (layer: LayerInstance, parent?: any) => {
+                    const legendFixture: LegendAPI = this.$iApi.fixture.get('legend');
+                    if (legendFixture) {
+                        legendFixture.generateDefaultLegend(layer, parent);
+                    }
+                };
+                this.$iApi.event.on(GlobalEvents.LEGEND_DEFAULT, zeHandler, handlerName);
                 break;
             case DefEH.MAP_KEYDOWN:
                 zeHandler = (payload: KeyboardEvent) => {
