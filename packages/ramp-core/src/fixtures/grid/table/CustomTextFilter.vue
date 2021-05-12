@@ -5,7 +5,7 @@
             type="text"
             @keyup="valueChanged()"
             v-model="filterValue"
-            :placeholder="$t('filters.column.label.text')"
+            :placeholder="$t('grid.filters.column.label.text')"
         />
     </div>
 </template>
