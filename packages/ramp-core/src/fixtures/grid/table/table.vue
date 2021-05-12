@@ -3,14 +3,14 @@
         <div class="flex items-center">
             <span class="truncate w-full text-sm mb-0">
                 {{
-                    $t('filters.label.info', {
+                    $t('grid.filters.label.info', {
                         range: `${this.filterInfo.firstRow} - ${this.filterInfo.lastRow}`,
                         total: this.filterInfo.visibleRows
                     })
                 }}
 
                 <span v-if="this.filterInfo.visibleRows !== this.rowData.length">{{
-                    $t('filters.label.filtered', { max: this.rowData.length })
+                    $t('grid.filters.label.filtered', { max: this.rowData.length })
                 }}</span>
             </span>
             <div class="flex-grow"></div>
@@ -37,7 +37,7 @@
                             ></path>
                         </g>
                     </svg>
-                    {{ $t('label.filters') }}
+                    {{ $t('grid.label.filters') }}
                 </button>
             </div>
         </div>

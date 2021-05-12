@@ -18,7 +18,7 @@
                         ></path>
                     </g>
                 </svg>
-                {{ $t('label.columns') }}
+                {{ $t('grid.label.columns') }}
             </div>
         </template>
         <a

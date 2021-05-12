@@ -7,7 +7,7 @@
                 v-model="quicksearch"
                 class="rv-global-search rv-input"
                 aria-invalid="false"
-                :placeholder="$t('filters.label.global')"
+                :placeholder="$t('grid.filters.label.global')"
             />
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -38,7 +38,7 @@
                 ></path>
             </svg>
             <panel-options-menu>
-                <a href="#" @click="clearFilters()">{{ $t('filters.clear') }}</a>
+                <a href="#" @click="clearFilters()">{{ $t('grid.filters.clear') }}</a>
             </panel-options-menu>
             <pin @click="panel.pin()" :active="panel.isPinned"></pin>
             <close @click="panel.close()"></close>
