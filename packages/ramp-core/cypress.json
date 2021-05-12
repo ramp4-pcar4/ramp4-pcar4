@@ -2,7 +2,8 @@
   "pluginsFile": "tests/e2e/plugins/index.js",
   "testFiles": [
     "./tests/e2e/specs/*.*",
-    "./src/fixtures/**/tests/e2e/**/*.*"
+    "./src/fixtures/**/tests/e2e/**/*.*",
+    "./src/geo/**/tests/e2e/**/*.*"
   ],
   "defaultCommandTimeout": 6000,
   "viewportWidth": 1600,
