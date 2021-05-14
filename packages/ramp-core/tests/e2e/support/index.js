@@ -18,3 +18,7 @@ import "./commands";
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+
+// Add package for cypress tab support:
+require('cypress-plugin-tab')

@@ -90,6 +90,7 @@
         "typescript": "~3.8.3",
         "vue-template-compiler": "^2.6.10",
         "wrapper-webpack-plugin": "2.1.0",
-        "vuepress": "~1.8.2"
+        "vuepress": "~1.8.2",
+        "cypress-plugin-tab": "~1.0.5"
     }
 }
