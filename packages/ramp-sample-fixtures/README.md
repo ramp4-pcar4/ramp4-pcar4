@@ -30,7 +30,7 @@ The resulting bundle includes more of external code as Vue decorators will be in
 
 > **Note:**
 >
-> Since this fixture uses `Vue` class directly and `Vue` runtime is not bundled in, the fixture expects `Vue` to be available on the global scope. So, it must be loaded after `Vue` runtime is loaded, but before `RAMP` is loaded, to ensure `initRAMP` function hasn't been executed yet.
+> Since this fixture uses `Vue` class directly and `Vue` runtime is not bundled in, the fixture expects `Vue` to be available on the global scope. So, it must be loaded after `Vue` runtime is loaded, but before `RAMP` is loaded, to ensure `RAMP` has not been instantiated yet.
 >
 > ```html
 > <!-- load Vue since RAMP doesn't bundle it -->
@@ -65,10 +65,8 @@ window.hostFixtures['diligord'] = DiligordFixture;
 <script src="../dist/RAMP.umd.js"></script>
 
 <script>
-    function initRAMP() {
-        const rInstance = new RAMP.Instance(document.getElementById('app'), ...);
-        rInstance.fixture.add('diligord', window.hostFixtures.diligord);
-    }
+    const rInstance = new RAMP.Instance(document.getElementById('app'), ...);
+    rInstance.fixture.add('diligord', window.hostFixtures.diligord);
 </script>
 ```
 
@@ -76,7 +74,7 @@ Diligord and Mouruge sample fixtures are loaded this way. This is the ideal scen
 
 ### The Other (Rare) Way
 
-Sometimes, the preferred way doesn't work. Specifically, it won't work when it's not possible to load a fixture (like **Iklob**) that relies on global `Vue` before `RAMP` is loaded, and therefore it's not guaranteed that `initRAMP` callback function won't be executed earlier (before the fixture can add itself to the global scope).
+Sometimes, the preferred way doesn't work. Specifically, it won't work when it's not possible to load a fixture (like **Iklob**) that relies on global `Vue` before `RAMP` is loaded, and therefore it's not guaranteed that `RAMP` won't be instantiated earlier (before the fixture can add itself to the global scope).
 
 The following method is more cumbersome since it requires watching a global variable. However, this situation demanding it seems to be an exception (right now this only happens when `serve`ing the build since Vue is bundled together with RAMP; otherwise it should be easy to load **Iklob** after Vue but before RAMP).
 
@@ -106,9 +104,7 @@ const handle = setInterval(() => {
 
 <script>
     var rInstance;
-    function initRAMP() {
-        rInstance = new RAMP.Instance(document.getElementById('app'), ...);
-    }
+    rInstance = new RAMP.Instance(document.getElementById('app'), ...);
 </script>
 ```
 

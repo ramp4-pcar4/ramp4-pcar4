@@ -14,8 +14,10 @@ class MourugeFixture {
     }
 }
 
-// this is the preferred way to add fixtures to R4MP (the fixture file needs to be loaded before the main RAMP file--`RAMP.umd.js`)
-// add the fixture class to the global variable and then added it to the R4MP instance in the `initRAMP` callback function on the host page
+// this is the preferred way to add fixtures to R4MP (the fixture file needs 
+    // to be loaded before the main RAMP file--`RAMP.umd.js`)
+// add the fixture class to the global variable and then add it to the R4MP 
+    // instance when R4MP is instantiated on the host page
 const ew = window as any;
 
 ew.hostFixtures = ew.hostFixtures || {};
