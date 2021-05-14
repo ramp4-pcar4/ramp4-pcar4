@@ -39,15 +39,7 @@ const api: APIInterface = {
 
     version: __VERSION__, // this is populated by the build process; see `vue.config.js`
 
-    get GEO(): GeoCommonAPI {
-        // TODO we might not need this check anymore, since there is no longer a geoapi promise
-        if (typeof geocommon === 'undefined') {
-            throw new Error("Attempting to access `GEO` before it's resolved. Use `initRamp` global function instead.");
-        }
-
-        return geocommon;
-    }
-
+    get GEO(): GeoCommonAPI { return geocommon }
 };
 
 // export `InstanceApi` as `Instance` on global RAMP interface

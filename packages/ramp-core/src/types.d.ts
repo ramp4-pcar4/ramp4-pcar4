@@ -38,7 +38,7 @@ declare module 'vue/types/vue' {
     }
 }
 
-// extend `window` to expose `RAMP` and `initRAMP`
+// extend `window` to expose `RAMP`
 declare global {
     // this is a convenience shortcut to, so it's possible to use `RAMP.[something]` instead of `window.RAMP.[something]`
     /**
@@ -56,13 +56,6 @@ declare global {
          * @memberof Window
          */
         RAMP: APIInterface;
-
-        /**
-         * An optional callback function defined by the host page to be run when RAMP is fully loaded and geoapi is available.
-         *
-         * @memberof Window
-         */
-        initRAMP?: () => void;
 
         Vue: typeof Vue;
     }
