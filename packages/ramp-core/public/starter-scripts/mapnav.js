@@ -30,7 +30,7 @@ let config = {
             initialBasemapId: 'esriImagery'
         },
         fixtures: {
-            mapnav: { items: ['fullscreen'] },
+            mapnav: { items: ['fullscreen', 'help', 'home'] },
         }
     }
 }
