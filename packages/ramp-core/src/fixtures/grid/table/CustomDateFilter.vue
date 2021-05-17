@@ -16,9 +16,9 @@ import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 export default class CustomNumberFilter extends Vue {
     beforeMount() {
         // Load previously stored values (if saved in table state manager)
-        this.minVal = this.params.stateManager.getColumnFilter(this.params.column.colDef.field + ' min');
-        this.maxVal = this.params.stateManager.getColumnFilter(this.params.column.colDef.field + ' max');
-
+        this.minVal = this.params.stateManager.getColumnFilter(this.params.column.colDef.field + ' min') || '';
+        this.maxVal = this.params.stateManager.getColumnFilter(this.params.column.colDef.field + ' max') || '';
+        
         // Apply the default values to the column filter.
         this.minValChanged();
         this.maxValChanged();
@@ -52,8 +52,12 @@ export default class CustomNumberFilter extends Vue {
         // This is the earliest date supported by JavaScript.
         let minPossibleDate: Date | String = new Date(0);
         minPossibleDate = `${minPossibleDate.getFullYear()}-${minPossibleDate.getMonth() + 1}-${minPossibleDate.getDate()}`;
-
-        if (this.maxVal !== '' && this.minVal !== '') {
+        
+        if (this.maxVal === '' && this.minVal === '') {
+            // If neither value is set, clear the date filter.
+            instance.setModel(null);
+        }
+        else if (this.maxVal !== '' && this.minVal !== '') {
             // If both values are set, display all items that occur between the two dates.
             instance.setModel({
                 filterType: 'date',
@@ -77,9 +81,6 @@ export default class CustomNumberFilter extends Vue {
                 dateFrom: this.minVal,
                 dateTo: maxPossibleDate
             });
-        } else {
-            // If neither value is set, clear the date filter.
-            instance.setModel(null);
         }
         this.params.api.onFilterChanged();
     }
