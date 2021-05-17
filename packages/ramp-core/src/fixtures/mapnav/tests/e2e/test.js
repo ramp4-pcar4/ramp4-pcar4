@@ -6,28 +6,60 @@ describe('Mapnav', () => {
     });
 
     it('has zoom buttons', () => {
-        cy.get('.mapnav .zoom-in');
+        cy.get('.mapnav .mapnav-section .w-full').eq(0);
+        cy.get('.mapnav .mapnav-section .w-full').eq(1);
     });
 
     it('has other buttons', () => {
-        cy.get('.mapnav .mapnav-section');
+        cy.get('.mapnav .mapnav-section .w-full').eq(2);
+        cy.get('.mapnav .mapnav-section .w-full').eq(3);
     });
 
     it('zoom-in button works', () => {
         cy.window().then(window => {
-            cy.get('.mapnav .zoom-in').click();
-            /* cy.wrap(window.rInstance.map.esriView)
+            cy.get('.mapnav .mapnav-section .w-full')
+                .eq(0)
+                .click();
+            cy.wait(1000);
+            cy.wrap(window.rInstance.geo.map.esriView)
                 .its('zoom')
-                .should('change'); */
+                .should('eq', 1);
         });
     });
 
     it('zoom-out button works', () => {
         cy.window().then(window => {
-            cy.get('.mapnav .zoom-out').click();
-            cy.wrap(window.rInstance.map.esriView)
+            cy.get('.mapnav .mapnav-section .w-full')
+                .eq(1)
+                .click();
+            cy.wait(1000);
+            cy.wrap(window.rInstance.geo.map.esriView)
                 .its('zoom')
                 .should('eq', 0);
+        });
+    });
+
+    it('home button works', () => {
+        cy.window().then(window => {
+            cy.get('.mapnav .mapnav-section .w-full')
+                .eq(3)
+                .click();
+            cy.wait(1000);
+            cy.wrap(window.rInstance.geo.map.getExtent())
+                .its('xmin')
+                .should('eq', -16632697.354854);
+
+            cy.wrap(window.rInstance.geo.map.getExtent())
+                .its('xmax')
+                .should('eq', -5007771.626060756);
+
+            cy.wrap(window.rInstance.geo.map.getExtent())
+                .its('ymin')
+                .should('eq', 5022907.964742964);
+
+            cy.wrap(window.rInstance.geo.map.getExtent())
+                .its('ymax')
+                .should('eq', 10015875.184845109);
         });
     });
 });
