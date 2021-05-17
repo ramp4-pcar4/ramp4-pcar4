@@ -136,23 +136,19 @@ TODO keep updating the list, make new subsections as appropriate. Maybe move to 
 Creating a default instance of RAMP. No special action is required.
 
 ```js
-function initRAMP() {
-    var rInstance = new RAMP.Instance(domElement, configs);
-}
+var rInstance = new RAMP.Instance(domElement, configs);
 ```
 
 Create a default instance the long-winded way.
 
 ```js
-function initRAMP() {
-    var options = {
-        loadDefaultFixtures: false,
-        loadDefaultEvents: false
-    };
-    var rInstance = new RAMP.Instance(domElement, configs, options);
-    rInstance.fixtures.addDefaultFixtures();
-    rInstance.event.addDefaultEvents();
-}
+var options = {
+    loadDefaultFixtures: false,
+    loadDefaultEvents: false
+};
+var rInstance = new RAMP.Instance(domElement, configs, options);
+rInstance.fixtures.addDefaultFixtures();
+rInstance.event.addDefaultEvents();
 ```
 
 ### Replacing Default Fixtures
@@ -160,14 +156,12 @@ function initRAMP() {
 Replacing a default fixture with a custom fixture of the same name and interface. Note that we can just call `addDefaultFixtures()` without any special parameters; when it attempts to load the default `help` fixture, it will see the already loaded fixture and use that.
 
 ```js
-function initRAMP() {
-    var options = {
-        loadDefaultFixtures: false
-    };
-    var rInstance = new RAMP.Instance(domElement, configs, options);
-    rInstance.fixtures.add('help', CustomHelpFixtureClass);
-    rInstance.fixtures.addDefaultFixtures();
-}
+var options = {
+    loadDefaultFixtures: false
+};
+var rInstance = new RAMP.Instance(domElement, configs, options);
+rInstance.fixtures.add('help', CustomHelpFixtureClass);
+rInstance.fixtures.addDefaultFixtures();
 ```
 
 Note that if the default fixture exposes any methods on its API, a replacement fixture must also implement the method signature. Otherwise runtime errors will likely occur, or some adjustments on the default event handlers will be required to remove any calls to the methods (in which case it is likely easier to just give the fixture a unique name and remove the default fixture).
@@ -177,12 +171,10 @@ Note that if the default fixture exposes any methods on its API, a replacement f
 Adding a subset of default fixtures. This map does very little! Note we could also suppress and then selectively add the neccessary default event handlers. This would be slightly more efficient (we would not have handlers reacting and then realizing there is nothing to do), but also requires one to figure out what event handlers are still needed.
 
 ```js
-function initRAMP() {
-    var options = {
-        loadDefaultFixtures: false
-    };
-    var rInstance = new RAMP.Instance(domElement, configs, options);
-    rInstance.fixtures.add('help', CustomHelpFixtureClass);
-    rInstance.fixtures.addDefaultFixtures(['help', 'appbar', 'mapnav']);
-}
+var options = {
+    loadDefaultFixtures: false
+};
+var rInstance = new RAMP.Instance(domElement, configs, options);
+rInstance.fixtures.add('help', CustomHelpFixtureClass);
+rInstance.fixtures.addDefaultFixtures(['help', 'appbar', 'mapnav']);
 ```
