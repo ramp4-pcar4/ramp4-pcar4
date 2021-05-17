@@ -1,6 +1,6 @@
 // TODO add proper documentation
 
-import { BaseGeometry, GeometryType, Point, Polygon, SrDef, IdDef } from '@/geo/api';
+import { BaseGeometry, GeometryType, Point, Polygon, SpatialReference, SrDef, IdDef, RampExtentConfig } from '@/geo/api';
 
 export class Extent extends BaseGeometry {
 
@@ -85,6 +85,13 @@ export class Extent extends BaseGeometry {
         ymax: string | number,
         sr?: SrDef): Extent {
         return new Extent(id, [xmin, ymin], [xmax, ymax], sr);
+    }
+
+    static fromConfig(id: IdDef, configExtent: RampExtentConfig): Extent {
+        return new Extent(id,
+            [configExtent.xmin, configExtent.ymin],
+            [configExtent.xmax, configExtent.ymax],
+            SpatialReference.fromConfig(configExtent.spatialReference));
     }
 
     isEqual(e: Extent | undefined): boolean {
