@@ -1,6 +1,6 @@
 import { NortharrowAPI } from './api/northarrow';
 import { northarrow } from './store/index';
-import NortharrowV from './northarrow.vue'; 
+import NortharrowV from './northarrow.vue';
 
 class NortharrowFixture extends NortharrowAPI {
    async added() {
@@ -20,7 +20,7 @@ class NortharrowFixture extends NortharrowAPI {
     }
 
     removed(): void {
-        console.log(`[fixture] ${this.id} removed`); 
+        console.log(`[fixture] ${this.id} removed`);
         this.$vApp.$store.unregisterModule('northarrow');
     }
 }

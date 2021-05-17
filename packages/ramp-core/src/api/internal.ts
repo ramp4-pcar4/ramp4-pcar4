@@ -10,6 +10,7 @@ export * from './instance';
 // that.
 export * from '@/geo/map/basemap';
 export * from '@/geo/map/common-map';
+export * from '@/geo/map/overview-map';
 export * from '@/geo/map/ramp-map';
 export * from '@/geo/layer/file-utils';
 export * from '@/geo/layer/ogc-utils';
