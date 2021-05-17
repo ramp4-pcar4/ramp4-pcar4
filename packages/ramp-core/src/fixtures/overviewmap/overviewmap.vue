@@ -2,11 +2,13 @@
     <div class="relative">
         <div :style="mapStyle" class="pointer-events-auto absolute top-0 right-0 mt-12 mr-12 shadow-tm border-4 border-solid border-white bg-white transition-all duration-300 ease-out">
             <!-- map -->
-            <div class="overviewmap pointer-events-none h-full w-full"></div>
+            <div class="relative h-full w-full overflow-hidden">
+                <div class="overviewmap absolute top-0 right-0 h-192 w-192" :class="{ 'cursor-move': hoverOnExtent }" @mousemove="cursorHitTest"></div>
+            </div>
             <!-- toggle -->
             <div class="absolute h-30 w-30 top-0 right-0">
                 <button tabindex="0" class="cursor-pointer absolute h-full w-full" @click="minimized=!minimized">
-                    <svg class="absolute  fill-current text-gray-500 transition-all duration-300 ease-out" :style="toggleStyle" xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" focusable="false">
+                    <svg class="absolute fill-current text-gray-500 transition-all duration-300 ease-out" :style="toggleStyle" xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" focusable="false">
                         <g id="apple-keyboard-control">
                             <path d="M 19.7782,11.7782L 18.364,13.1924L 12,6.82843L 5.63604,13.1924L 4.22183,11.7782L 12,4L 19.7782,11.7782 Z "></path>
                         </g>
@@ -21,71 +23,56 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
-import { Extent, Graphic, RampMapConfig } from '@/geo/api';
-import { EsriGraphic } from '@/geo/esri'; // TODO bad bad bad! convert to graphic layer or something and avoid this.
-import { ConfigStore } from '@/store/modules/config';
-import { GlobalEvents } from '../../api/internal';
+import { Extent, RampMapConfig } from '@/geo/api';
+import { GlobalEvents, OverviewMapAPI } from '@/api/internal';
 import { OverviewmapStore } from './store';
-import defaultConfig from './default-config';
-import { debounce } from 'debounce';
-
-// TODO this file was ignored through most of the dojo removal migration and no longer works.
-//      the MapAPI is now too tightly bundled with the API, global events, and other stuff,
-//      so we just can't spin off another instance for the overview map (e.g. if we did, extent
-//      changes in the overview would start triggering false filter events, etc).
-//      Need to build up something else, I'm thinking a custom overview map class that
-//      wraps the esri stuff and exposes what we need.
-//      It should also wrap all the esri code that is currently hardcoded here.
+import { defaultMercator, defaultLambert } from './default-config';
 
 @Component({})
 export default class OverviewmapV extends Vue {
     @Get(OverviewmapStore.mapConfig) mapConfig!: RampMapConfig;
     @Get(OverviewmapStore.startMinimized) startMinimized!: boolean;
 
-    overviewMap!: any; // RampMap; // TODO update after fix
+    overviewMap!: OverviewMapAPI;
     minimized: boolean = true;
+    hoverOnExtent: boolean = false;
 
-    mounted() {
-
-        /*
-        let config = this.mapConfig || defaultConfig;
-        this.overviewMap = this.$iApi.geo.maps.createMap(config, this.$el.querySelector('.overviewmap') as HTMLDivElement);
-        this.overviewMap.esriView.ui.components = [];
-        this.minimized = this.startMinimized;
-
-        // TODO update extent highlighting code to use ramp graphics once GraphicsLayer is implemented
-        let symbol = {
-            type: "simple-fill",
-            color: [0, 0, 0, 0.5],
-            outline: null
-        };
-        let g = new EsriGraphic({ symbol: symbol, visible: true }); // BAD!
-        this.overviewMap.esriView.graphics.add(g)
-
-        if (this.$iApi.map.esriView.ready) {
-            this.updateOverview(this.$iApi.geo.map.getExtent());
-        }
-        this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, debounce(this.updateOverview, 300));
-        */
+    created() {
+        this.overviewMap = new OverviewMapAPI(this.$iApi);
     }
 
-    updateOverview(newExtent: Extent) {
-        const map = this.$iApi.geo.map;
-        const hRatio = map.getPixelHeight() / 200;
-        const wRatio = map.getPixelWidth() / 200;
-        const overviewScale = map.getScale() * 1.5 * Math.max(hRatio, wRatio);
-        this.overviewMap.zoomMapTo(newExtent.center(), overviewScale);
+    mounted() {
+        const config = this.mapConfig || this.defaultConfig;
+        this.overviewMap.createMap(config, this.$el.querySelector('.overviewmap') as HTMLDivElement);
+        this.minimized = this.startMinimized;
 
-        // this draws the outline of the main map extent.
-        // TODO figure out a way to accomplish without using esri internals
-        this.overviewMap.esriView.graphics.getItemAt(0).geometry = map.esriView?.extent;
+        this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, (newExtent: Extent) => {
+            this.overviewMap.updateOverview(newExtent);
+        });
+    }
+
+    async cursorHitTest(e: MouseEvent) {
+        this.hoverOnExtent = !this.minimized && await this.overviewMap.cursorHitTest(e);
+    }
+
+    get defaultConfig() {
+        const mercator = [900913, 3587, 54004, 41001, 102113, 102100, 3785];
+        const sr = this.$iApi.geo.map.getSR();
+        if ((sr.wkid && mercator.includes(sr.wkid)) || (sr.latestWkid && mercator.includes(sr.latestWkid))) {
+            return defaultMercator;
+        } else if (sr.wkid === 3978 || sr.latestWkid === 3978) {
+            return defaultLambert;
+        }
+
+        console.error('No default overviewmap for current map projection');
+        return {};
     }
 
     get mapStyle() {
         return {
             height: `${this.minimized ? 48 : 200}px`,
             width: `${this.minimized ? 48 : 200}px`
-        }
+        };
     }
 
     get toggleStyle() {
@@ -93,7 +80,7 @@ export default class OverviewmapV extends Vue {
             top: `${this.minimized ? -6 : -3}px`,
             right: `${this.minimized ? -6 : -3}px`,
             transform: `rotate(${this.minimized ? 225 : 45}deg)`
-        }
+        };
     }
 }
 </script>
