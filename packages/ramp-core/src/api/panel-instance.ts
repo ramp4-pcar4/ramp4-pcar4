@@ -238,6 +238,32 @@ export class PanelInstance extends APIScope {
     }
 
     /**
+     * Minimize this panel.
+     * This is a proxy to `RAMP.panel.minimize(...)`.
+     *
+     * @returns {this}
+     * @memberof PanelInstance
+     */
+    minimize(): this {
+        this.$iApi.panel.minimize(this);
+
+        return this;
+    }
+
+    /**
+     * Re-open this panel. This is the reverse of minimizing a panel.
+     * This is a proxy to `RAMP.panel.reopen(...)`.
+     *
+     * @returns {this}
+     * @memberof PanelInstance
+     */
+    reopen(): this {
+        this.$iApi.panel.reopen(this);
+
+        return this;
+    }
+
+    /**
      * Toggle panel.
      * This is a proxy to `RAMP.panel.toggle(...)`.
      *
@@ -263,6 +289,34 @@ export class PanelInstance extends APIScope {
                 typeof value.toggle !== 'undefined'
                     ? value.toggle
                     : !this.isOpen
+            );
+        }
+
+        return this;
+    }
+
+    /**
+     * Toggle panel's minimize state.
+     * This is a proxy to `RAMP.panel.toggleMinimize(...)`.
+     *
+     * @param {(boolean | { screen: string; props?: object; toggle?: boolean })} [value]
+     * @returns {this}
+     * @memberof PanelInstance
+     */
+    toggleMinimize(value?: boolean | { screen: string; props?: object; toggle?: boolean }): this {
+        // toggle panel if no value provided, force toggle panel if value specified, or toggle panel on specified screen if provided
+        // ensure that a toggle value must be provided to panel API toggle if called
+        if (typeof value === 'undefined') {
+            this.$iApi.panel.toggleMinimize(this, !this.isOpen);
+        } else if (typeof value === 'boolean') {
+            // only call forced toggle if it is possible to do so
+            if (value !== this.isOpen) {
+                this.$iApi.panel.toggleMinimize(this, value);
+            }
+        } else {
+            this.$iApi.panel.toggleMinimize(
+                { id: this.id, screen: value.screen, props: value.props },
+                typeof value.toggle !== 'undefined' ? value.toggle : !this.isOpen
             );
         }
 
@@ -312,6 +366,7 @@ export class PanelInstance extends APIScope {
      */
     show(value: string | PanelConfigRoute): this {
         const route = typeof value === 'string' ? { screen: value } : value;
+        this.route = route;
 
         this.$iApi.panel.show(this, route);
 

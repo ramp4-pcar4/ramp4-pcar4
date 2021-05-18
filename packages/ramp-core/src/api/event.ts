@@ -58,7 +58,19 @@ export enum GlobalEvents {
     HELP_TOGGLE = 'help/toggle',
     GRID_TOGGLE = 'grid/toggle',
     WIZARD_OPEN = 'wizard/open',
-    LEGEND_DEFAULT = 'legend/generate'
+    LEGEND_DEFAULT = 'legend/generate',
+
+    /**
+     * Fires when a panel opens
+     * Payload: the panel that opened (PanelInstance)
+     */
+    PANEL_OPENED = 'panel/opened',
+
+    /**
+     * Fires when a panel is closed
+     * Payload: the panel that closed (PanelInstance)
+     */
+    PANEL_CLOSED = 'panel/closed'
 }
 
 // TODO export this enum?

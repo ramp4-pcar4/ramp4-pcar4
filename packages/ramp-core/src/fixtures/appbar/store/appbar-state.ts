@@ -1,6 +1,6 @@
 export class AppbarState {
     /**
-     * A set of all open (visible and hidden) panels.
+     * A set of all fixed appbar buttons.
      *
      * @type {AppbarItem[]}
      * @memberof AppbarState
@@ -8,12 +8,17 @@ export class AppbarState {
     items: AppbarItemSet = {};
 
     /**
-     * An ordered list of appbar item ids.
+     * An ordered list of fixed appbar item ids.
      *
      * @type {string[]}
      * @memberof AppbarState
      */
     order: string[] = [];
+
+    /**
+     * An ordered list of appbar items to show in the bottom temporary panel section
+     */
+    temporary: AppbarItemInstance[] = [];
 }
 
 export type AppbarItemSet = { [name: string]: AppbarItemInstance };

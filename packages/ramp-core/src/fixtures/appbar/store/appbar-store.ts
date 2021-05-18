@@ -6,11 +6,16 @@ import { RootState } from '@/store/state';
 
 type AppbarContext = ActionContext<AppbarState, RootState>;
 
-export enum AppbarAction {}
+export enum AppbarAction {
+    ADD_TEMP_BUTTON = 'addTempButton',
+    REMOVE_TEMP_BUTTON = 'removeTempButton'
+}
 
 export enum AppbarMutation {
     ADD_ITEM = 'ADD_ITEM',
-    REMOVE_ITEM = 'REMOVE_ITEM'
+    REMOVE_ITEM = 'REMOVE_ITEM',
+    ADD_TEMP_BUTTON = 'ADD_TEMP_BUTTON',
+    REMOVE_TEMP_BUTTON = 'REMOVE_TEMP_BUTTON'
 }
 
 const getters = {
@@ -27,9 +32,28 @@ const getters = {
     }
 };
 
-const actions = {};
+const actions = {
+    [AppbarAction.ADD_TEMP_BUTTON](context: AppbarContext, value: AppbarItemInstance) {
+        if (!context.state.temporary.find(button => button.id === value.id)) {
+            context.commit(AppbarMutation.ADD_TEMP_BUTTON, value);
+        }
+    },
+    [AppbarAction.REMOVE_TEMP_BUTTON](context: AppbarContext, value: string) {
+        const button = context.state.temporary.find(button => button.id === value);
+        if (button) {
+            context.commit(AppbarMutation.REMOVE_TEMP_BUTTON, button);
+        }
+    }
+};
 
-const mutations = {};
+const mutations = {
+    [AppbarMutation.ADD_TEMP_BUTTON](state: AppbarState, value: AppbarItemInstance) {
+        state.temporary.push(value);
+    },
+    [AppbarMutation.REMOVE_TEMP_BUTTON](state: AppbarState, value: AppbarItemInstance) {
+        state.temporary.splice(state.temporary.indexOf(value), 1);
+    }
+};
 
 export function appbar() {
     const state = new AppbarState();
@@ -39,6 +63,6 @@ export function appbar() {
         state,
         getters: { ...getters },
         actions: { ...actions },
-        mutations: { ...mutations, ...make.mutations(['items', 'order']) }
+        mutations: { ...mutations, ...make.mutations(['items', 'order', 'temporary']) }
     };
 }
