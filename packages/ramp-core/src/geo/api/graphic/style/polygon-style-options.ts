@@ -3,7 +3,6 @@
 import { FillStyle, LineStyleOptions, LineStyleParams, PolygonStyleParams, StyleOptions } from '@/geo/api';
 
 export class PolygonStyleOptions extends StyleOptions {
-
     protected _outlineStyle: LineStyleOptions;
     protected _fillColor: Array<number>;
     protected _fillStyle: string;
@@ -47,7 +46,5 @@ export class PolygonStyleOptions extends StyleOptions {
             paramooo.width = opts.outlineWidth;
         }
         this._outlineStyle = new LineStyleOptions(paramooo);
-
     }
-
 }

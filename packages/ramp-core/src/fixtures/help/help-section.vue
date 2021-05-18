@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div >
+        <div>
             <div class="help-section-header flex items-center p-15 hover:bg-gray-200 cursor-pointer select-none" @click="toggleExpanded()">
                 <!-- name -->
                 <span class="text-lg flex-grow">{{ helpSection.header }}</span>

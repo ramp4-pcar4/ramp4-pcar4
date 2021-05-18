@@ -3,7 +3,6 @@ import { ArcGisServerUrl } from '@/geo/api';
 import deepmerge from 'deepmerge';
 
 export class SharedUtilsAPI {
-
     /**
      * Get a 'good enough' uuid. For backup purposes if client does not supply its own
      * unique layer id
@@ -96,7 +95,7 @@ export class SharedUtilsAPI {
      * @param  {String} url    an indexed map server url
      * @returns {Object}  the url split into the server root and the index.
      */
-    parseUrlIndex (url: string): ArcGisServerUrl {
+    parseUrlIndex(url: string): ArcGisServerUrl {
         // break url into root and index
 
         // note we are returning index as a string for now.
@@ -121,7 +120,6 @@ export class SharedUtilsAPI {
 
         return result;
     }
-
 }
 
 type QueryMap = { [name: string]: string };

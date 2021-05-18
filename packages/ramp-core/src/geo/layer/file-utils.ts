@@ -67,14 +67,14 @@ function assignIds(geoJson: any): void {
 
     // remove ID_FILE if all empty
     if (emptyID) {
-        geoJson.features.forEach(function (val: any) {
+        geoJson.features.forEach(function(val: any) {
             delete val.properties.ID_FILE;
         });
     }
 
     // remove OBJECTID_FILE if all empty
     if (emptyObjID) {
-        geoJson.features.forEach(function (val: any) {
+        geoJson.features.forEach(function(val: any) {
             delete val.properties.OBJECTID_FILE;
         });
     }
@@ -120,11 +120,9 @@ function cleanUpFields(geoJson: any, configPackage: __esri.FeatureLayerPropertie
             });
         }
     });
-
 }
 
 export class FileUtils extends APIScope {
-
     /**
      * Extracts fields from the first feature in the feature collection, does no
      * guesswork on property types and calls everything a string.
@@ -137,7 +135,7 @@ export class FileUtils extends APIScope {
 
         // TODO investigate if a value can be of numeric type in GeoJSON schema. if so, try to detect, change type to number
         if (geoJson.features[0].properties) {
-            return Object.keys(geoJson.features[0].properties).map(function (prop) {
+            return Object.keys(geoJson.features[0].properties).map(function(prop) {
                 return { name: prop, type: 'string' };
             });
         } else {
@@ -151,13 +149,12 @@ export class FileUtils extends APIScope {
     extractCsvFields(csvData: string, delimiter: string = ',') {
         const fields: Array<string> = dsv.dsvFormat(delimiter).parseRows(csvData)[0];
         return fields.map(field => {
-            return { name: field, type: 'string' }
+            return { name: field, type: 'string' };
         });
     }
 
     // TODO general type cleanup. just trying to make it work for now
     async geoJsonToEsriJson(geoJson: any, options: any): Promise<__esri.FeatureLayerProperties> {
-
         let targetSR: any;
         let srcProj = 'EPSG:4326'; // 4326 is the default for GeoJSON with no projection defined
         let layerId: string;
@@ -206,7 +203,6 @@ export class FileUtils extends APIScope {
             }
 
             // TODO add support for renderer option, or drop the option
-
         } else {
             throw new Error('geoJsonToEsriJson - missing opts arguement');
         }
@@ -284,7 +280,6 @@ export class FileUtils extends APIScope {
         configPackage.id = layerId;
 
         return configPackage;
-
     }
 
     // TODO make strong types for option parameter
@@ -294,7 +289,8 @@ export class FileUtils extends APIScope {
     //     - lonfield: a string identifying the field containing longitude values ('Long' by default)
     //     - delimiter: a string defining the delimiter character of the file (',' by default)
     async csvToGeoJson(csvData: string, opts: any): Promise<any> {
-        const csvOpts = { // default values
+        const csvOpts = {
+            // default values
             latfield: 'Lat',
             lonfield: 'Long',
             delimiter: ','
@@ -333,7 +329,6 @@ export class FileUtils extends APIScope {
 
                     resolve(data);
                 }
-
             });
         });
     }
@@ -345,6 +340,5 @@ export class FileUtils extends APIScope {
      */
     async shapefileToGeoJson(shapeData: ArrayBuffer): Promise<any> {
         return shp(shapeData);
-    };
-
+    }
 }

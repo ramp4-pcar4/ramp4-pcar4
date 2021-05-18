@@ -15,7 +15,7 @@ class WizardFixture extends WizardAPI {
                         'wizard-screen': WizardV
                     },
                     style: {
-                        'width': '350px'
+                        width: '350px'
                     }
                 }
             },

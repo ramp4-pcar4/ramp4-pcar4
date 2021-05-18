@@ -13,12 +13,11 @@ import { RampMapConfig } from '@/geo/api';
 // We also use "Base" for our vuex state classes so want to avoid naming overlaps.
 // Do not add any event emits or listeners that would be tied to a specific map
 export class CommonMapAPI extends APIScope {
-
     esriMap: EsriMap | undefined;
 
     _basemapStore: Array<Basemap>;
 
-    protected constructor (iApi: InstanceAPI) {
+    protected constructor(iApi: InstanceAPI) {
         super(iApi);
 
         this.esriMap = undefined;
@@ -74,5 +73,4 @@ export class CommonMapAPI extends APIScope {
 
     // TODO shared Map (not view-based) functions could go here.
     //      Includes passthrough things. Could also include addLayer (assuming the LayerView gets handled automagically in 3D case?)
-
 }

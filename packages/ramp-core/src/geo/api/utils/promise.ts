@@ -16,7 +16,6 @@
 // yes, yes, very bad and all -- show me a better solution and I'll consider it.
 
 export class DefPromise {
-
     protected realPromise: Promise<void>;
 
     resolveMe(): void {
@@ -31,7 +30,7 @@ export class DefPromise {
         return this.realPromise;
     }
 
-    constructor () {
+    constructor() {
         this.realPromise = new Promise((resolve, reject) => {
             // we map the internal functions to our external methods, allowing outsiders to call them.
             this.resolveMe = resolve;

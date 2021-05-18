@@ -39,7 +39,9 @@ const api: APIInterface = {
 
     version: __VERSION__, // this is populated by the build process; see `vue.config.js`
 
-    get GEO(): GeoCommonAPI { return geocommon }
+    get GEO(): GeoCommonAPI {
+        return geocommon;
+    }
 };
 
 // export `InstanceApi` as `Instance` on global RAMP interface

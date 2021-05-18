@@ -45,7 +45,7 @@ export default class DetailsLayersV extends Vue {
     openResult(index: number) {
         if (this.getLayerByUid(this.payload[index].uid)!.layerType === 'ogcWms') {
             // skip results screen for wms layers
-            this.panel.show({ screen: 'details-screen-item', props: { resultIndex: index, layerType: 'ogcWms' , itemIndex: 0} });
+            this.panel.show({ screen: 'details-screen-item', props: { resultIndex: index, layerType: 'ogcWms', itemIndex: 0 } });
         } else {
             this.panel.show({ screen: 'details-screen-result', props: { resultIndex: index } });
         }
@@ -77,7 +77,7 @@ export default class DetailsLayersV extends Vue {
      * Calculates the total number of results received by identify.
      */
     get payloadResults(): number {
-       return this.payload.map(r => r.items.length).reduce((a, b) => a + b, 0);
+        return this.payload.map(r => r.items.length).reduce((a, b) => a + b, 0);
     }
 }
 </script>

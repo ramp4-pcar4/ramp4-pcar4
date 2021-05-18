@@ -65,11 +65,12 @@ export default class MapCaptionV extends Vue {
         this.$iApi.event.on(GlobalEvents.MAP_CREATED, () => {
             this.updateScale();
             // Listen for scale changes, debounce so that zoom animations don't rapidly call update
-            this.$iApi.event.on(GlobalEvents.MAP_SCALECHANGE,
+            this.$iApi.event.on(
+                GlobalEvents.MAP_SCALECHANGE,
                 () => {
                     debounce(() => {
                         this.updateScale();
-                    }, 300)
+                    }, 300);
                 },
                 'update_scale_display' // TODO document event handler name, possibly rename to align to standards
             );
@@ -84,7 +85,6 @@ export default class MapCaptionV extends Vue {
                 'a_name_to_be_decided_later'
             );
         });
-
     }
 
     onScaleClick() {
@@ -96,7 +96,6 @@ export default class MapCaptionV extends Vue {
      * Calculates a scale bar for the current resolution.
      */
     updateScale(): void {
-
         // the starting length of the scale line in pixels
         // reduce the length of the bar on extra small layouts
         const factor = window.innerWidth > 600 ? 70 : 35;

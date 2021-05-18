@@ -6,10 +6,7 @@
             :checked="value"
             @click.stop="legendItem.toggleVisibility()"
             @keyup.enter.stop="legendItem.toggleVisibility()"
-            :class="[
-                isRadio ? 'form-radio' : 'form-checkbox rounded-none',
-                disabled ? 'text-gray-400 ' : 'text-black cursor-pointer'
-            ]"
+            :class="[isRadio ? 'form-radio' : 'form-checkbox rounded-none', disabled ? 'text-gray-400 ' : 'text-black cursor-pointer']"
             class="mx-5 h-15 w-15 border-gray-500 hover:border-black"
             tabindex="-1"
             :disabled="disabled"

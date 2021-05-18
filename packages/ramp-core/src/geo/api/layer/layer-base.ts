@@ -9,13 +9,24 @@
 // they probably won't have access to "class" LayerInstance when using compiled RAMP (raw javascript).
 // this pattern is stolen from the fixture class model.
 
-import { AttributeSet, Extent, FieldDefinition, GetGraphicParams, GetGraphicResult, IdentifyParameters, IdentifyResultSet,
-    LayerState, LegendSymbology, ScaleSet, TabularAttributeSet, TreeNode } from '@/geo/api';
+import {
+    AttributeSet,
+    Extent,
+    FieldDefinition,
+    GetGraphicParams,
+    GetGraphicResult,
+    IdentifyParameters,
+    IdentifyResultSet,
+    LayerState,
+    LegendSymbology,
+    ScaleSet,
+    TabularAttributeSet,
+    TreeNode
+} from '@/geo/api';
 
 // TODO consider making a number of these things optional with ? markup.
 // TODO add all the stuff from layer instance
 export interface LayerBase {
-
     id: string;
     uid: string;
     layerType: string;
@@ -62,8 +73,11 @@ export interface LayerBase {
     destroyAttributes?(layerIdx: number | string | undefined): void;
 
     applySqlFilter?(exclusions: Array<string>, layerIdx: number | string | undefined): void;
-    getFilterOIDs?(exclusions: Array<string>, extent: Extent | undefined, layerIdx: number | string | undefined): Promise<Array<number> | undefined>;
+    getFilterOIDs?(
+        exclusions: Array<string>,
+        extent: Extent | undefined,
+        layerIdx: number | string | undefined
+    ): Promise<Array<number> | undefined>;
     getSqlFilter?(filterKey: string, layerIdx: number | string | undefined): string;
-    setSqlFilter?(filterKey: string, whereClause: string, layerIdx: number | string | undefined): void ;
-
+    setSqlFilter?(filterKey: string, whereClause: string, layerIdx: number | string | undefined): void;
 }

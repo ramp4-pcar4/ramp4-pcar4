@@ -5,17 +5,15 @@ import { LayerType, RampLayerConfig, TreeNode } from '@/geo/api';
 import { EsriTileLayer } from '@/geo/esri';
 
 class TileLayer extends CommonLayer {
-
     esriLayer: EsriTileLayer | undefined;
 
-    constructor (rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
+    constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.supportsIdentify = false;
         this._layerType = LayerType.TILE;
     }
 
     async initiate(): Promise<void> {
-
         this.esriLayer = new EsriTileLayer(this.makeEsriLayerConfig(this.origRampConfig));
         await super.initiate();
     }
@@ -38,7 +36,7 @@ class TileLayer extends CommonLayer {
      *
      * @function onLoadActions
      */
-    onLoadActions (): Array<Promise<void>> {
+    onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
         const tileFC = new CommonFC(this, 0);
@@ -61,7 +59,6 @@ class TileLayer extends CommonLayer {
 
         return loadPromises;
     }
-
 }
 
 export default TileLayer;

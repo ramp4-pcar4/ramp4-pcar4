@@ -3,16 +3,37 @@
 
 // TODO add proper comments
 
-import { ArcServerAttributeLoader, AttribLayer, AttributeLoaderBase, AttributeLoaderDetails, BaseRenderer,
-    CommonFC, GlobalEvents, QuickCache } from '@/api/internal';
-import {  Attributes, BaseGeometry, CoreFilterKey, DataFormat, Extent, FieldDefinition, Filter, GeometryType,
-    GetGraphicParams, GetGraphicResult, GetGraphicServiceDetails, QueryFeaturesArcServerParams, QueryFeaturesParams,
-    RampLayerFieldMetadataConfig, TabularAttributeSet } from '@/geo/api';
+import {
+    ArcServerAttributeLoader,
+    AttribLayer,
+    AttributeLoaderBase,
+    AttributeLoaderDetails,
+    BaseRenderer,
+    CommonFC,
+    GlobalEvents,
+    QuickCache
+} from '@/api/internal';
+import {
+    Attributes,
+    BaseGeometry,
+    CoreFilterKey,
+    DataFormat,
+    Extent,
+    FieldDefinition,
+    Filter,
+    GeometryType,
+    GetGraphicParams,
+    GetGraphicResult,
+    GetGraphicServiceDetails,
+    QueryFeaturesArcServerParams,
+    QueryFeaturesParams,
+    RampLayerFieldMetadataConfig,
+    TabularAttributeSet
+} from '@/geo/api';
 import { EsriExtent, EsriField, EsriRendererUtils, EsriRequest } from '@/geo/esri';
 import deepmerge from 'deepmerge';
 
 export class AttribFC extends CommonFC {
-
     // property does get initialized in the super. typescript just being grousy
     // @ts-ignore
     protected parentLayer: AttribLayer;
@@ -29,7 +50,7 @@ export class AttribFC extends CommonFC {
     protected quickCache: QuickCache | undefined;
     protected filter: Filter;
 
-    constructor (parent: AttribLayer, layerIdx: number = 0) {
+    constructor(parent: AttribLayer, layerIdx: number = 0) {
         super(parent, layerIdx);
 
         this.geomType = GeometryType.UNKNOWN;
@@ -49,7 +70,6 @@ export class AttribFC extends CommonFC {
     //      might not be worth it; the "shared" part is effectively the one line web request.
     // TODO strongly type the options param?
     async loadLayerMetadata(options: any = {}): Promise<void> {
-
         // given all the error handlers, leaving this as a non-async function
 
         if (!this.serviceUrl) {
@@ -97,15 +117,22 @@ export class AttribFC extends CommonFC {
                 if (noFieldDefOid) {
                     // we encountered a service that does not mark a field as the object id.
                     // attempt to use alternate definition. if neither exists, we are toast.
-                    this.oidField = sData.objectIdField ||
-                        (() => { console.error(`Encountered service with no OID defined: ${this.serviceUrl}`); return ''; })();
+                    this.oidField =
+                        sData.objectIdField ||
+                        (() => {
+                            console.error(`Encountered service with no OID defined: ${this.serviceUrl}`);
+                            return '';
+                        })();
                 }
 
                 // TODO add in renderer and legend magic
                 // add renderer and legend
-                const sourceRenderer = (options && options.customRenderer && options.customRenderer.type) ?
-                    options.customRenderer : sData.drawingInfo.renderer;
-                this.renderer = this.parentLayer.$iApi.geo.utils.symbology.makeRenderer(EsriRendererUtils.fromJSON(sourceRenderer), this.fields);
+                const sourceRenderer =
+                    options && options.customRenderer && options.customRenderer.type ? options.customRenderer : sData.drawingInfo.renderer;
+                this.renderer = this.parentLayer.$iApi.geo.utils.symbology.makeRenderer(
+                    EsriRendererUtils.fromJSON(sourceRenderer),
+                    this.fields
+                );
 
                 // this array will have a set of promises that resolve when all the legend svg has drawn.
                 // for now, will not include that set (promise.all'd) on the layer load blocker;
@@ -128,7 +155,6 @@ export class AttribFC extends CommonFC {
                 this.dataFormat = DataFormat.ESRI_RASTER;
                 this.fields = [];
             }
-
         } else {
             // case where service request was successful but no data appeared in result
             console.warn('Service metadata load error');
@@ -140,7 +166,6 @@ export class AttribFC extends CommonFC {
         // TODO investigate if this is proper location where EsriErrorDetails will appear
         // console.warn('Service metadata load error : ' + error.EsriErrorDetails || error);
         // reject promise; with asynch we should throw an error with error details
-
     }
 
     /**
@@ -199,7 +224,6 @@ export class AttribFC extends CommonFC {
     }
 
     async loadFeatureCount(): Promise<void> {
-
         if (!this.serviceUrl) {
             // case where a non-server subclass ends up calling this via .super magic.
             // will avoid failed attempts at reading a non-existing service.
@@ -227,7 +251,6 @@ export class AttribFC extends CommonFC {
         // TODO have discussion about error case. app shouldnt bomb without count. but how to handle? ignore? show error? console error? special error count val e.g. -2
 
         if (serviceResult.data) {
-
             // TODO old geoApi had logic to execute web request twice; comment indicated first request could fail.
             //      re-apply this if we notice the same thing. sounds like garbage server problem tbh.
             // TODO need to decide on placeholder for unknown count.
@@ -249,7 +272,7 @@ export class AttribFC extends CommonFC {
      *
      * @returns {Array} list of field definitions
      */
-    getFields (): Array<FieldDefinition> {
+    getFields(): Array<FieldDefinition> {
         // extra fancy so we dont have to expose the ESRI field class
         return this.fields.map(f => {
             return {
@@ -270,7 +293,7 @@ export class AttribFC extends CommonFC {
      * Retrieves attributes from a layer for a specified feature index
      * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
      */
-    async getTabularAttributes (): Promise<TabularAttributeSet> {
+    async getTabularAttributes(): Promise<TabularAttributeSet> {
         // redundant checks to shut up typescript
         if (!this.attLoader) {
             throw new Error('getTabularAttributes call with missing attribute loader');
@@ -286,7 +309,7 @@ export class AttribFC extends CommonFC {
         return this.attLoader.tabularAttributesCache;
     }
 
-    private async getTabularAttributesGuts (): Promise<TabularAttributeSet> {
+    private async getTabularAttributesGuts(): Promise<TabularAttributeSet> {
         // this does the heavy lifting. it is abstracted from getTabularAttributes()
         // because async format is not conductive to grabbing and caching the promise halfway
         // through the function execution.
@@ -312,10 +335,10 @@ export class AttribFC extends CommonFC {
         // the grid handles it seperately.
         const columns = this.fields
             .filter(field =>
-
                 // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
                 // filter out fields where there is no corresponding attribute data
-                attSet.features[0].hasOwnProperty(field.name))
+                attSet.features[0].hasOwnProperty(field.name)
+            )
             .map(field => ({
                 data: field.name, // TODO calling this data is really unintuitive. consider global rename to fieldName, name, attribName, etc.
                 title: field.alias || field.name
@@ -388,7 +411,7 @@ export class AttribFC extends CommonFC {
      *                 - getAttribs    boolean. indicates if return value should have attributes included. default to false
      * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .layerFC for convenience
      */
-    async getGraphic (objectId: number, opts: GetGraphicParams): Promise<GetGraphicResult> {
+    async getGraphic(objectId: number, opts: GetGraphicParams): Promise<GetGraphicResult> {
         // NOTE RAMP2 version of this included the FC object. we want to keep those hidden, so
         //      for now will just return the graphic structure and if we need more stuff we
         //      will figure out a proper way to do that.
@@ -430,7 +453,6 @@ export class AttribFC extends CommonFC {
                 // since attributes come from a promise, reset the wait promise to the attribute promise
                 const atSet = await this.attLoader.getAttribs();
                 resultFeat.attributes = atSet.features[atSet.oidIndex[objectId]];
-
             } else {
                 // we will need to download data from the service
                 needWebAttr = true;
@@ -447,7 +469,7 @@ export class AttribFC extends CommonFC {
             if (gCache) {
                 resultFeat.geometry = gCache;
 
-            /*
+                /*
             // TODO / NOTE: at first glance it looks like ESRI 4 is hiding the guts of server-based feature layers.
             //              when there is time, can take a look to see if any hidden/system caches are there on
             //              the esri layer object to exploit.
@@ -520,7 +542,7 @@ export class AttribFC extends CommonFC {
      * @param {Integer} objectId the object id of the feature to find
      * @returns {Promise} resolves with an svg string encoding of the icon
      */
-    async getIcon (objectId: number): Promise<string> {
+    async getIcon(objectId: number): Promise<string> {
         if (!this.renderer) {
             throw new Error('getIcon called before renderer is defined');
         }
@@ -595,7 +617,6 @@ export class AttribFC extends CommonFC {
         };
         const cacheQueue: Array<Promise<GetGraphicResult>> = oids.map(oid => this.getGraphic(oid, p));
         return Promise.all(cacheQueue);
-
     }
 
     /**
@@ -648,10 +669,11 @@ export class AttribFC extends CommonFC {
      * @param {String} whereClause the WHERE clause of the filter
      */
     setSqlFilter(filterKey: string, whereClause: string): void {
-
         // dirty test
         const currentFilter = this.filter.getSql(filterKey);
-        if (whereClause === currentFilter) { return; }
+        if (whereClause === currentFilter) {
+            return;
+        }
 
         this.filter.setSql(filterKey, whereClause);
 
@@ -674,7 +696,6 @@ export class AttribFC extends CommonFC {
         };
 
         setTimeout(refreshCheck, 100);
-
     }
 
     /**
@@ -694,7 +715,9 @@ export class AttribFC extends CommonFC {
      * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all keys
      */
     applySqlFilter(exclusions: Array<string> = []): void {
-        throw new Error('attempted to apply sql filter to a layer not equipped for it. likely a new subclass of AttribFC did not override applySqlFilter');
+        throw new Error(
+            'attempted to apply sql filter to a layer not equipped for it. likely a new subclass of AttribFC did not override applySqlFilter'
+        );
     }
 
     // TODO decide if we want this

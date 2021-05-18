@@ -64,7 +64,9 @@ export default class DetailsResultV extends Vue {
             return;
         }
         const oidField = layer.getOidField(uid);
-        layer.getIcon(data[oidField], uid).then(value => {if (this.icon[idx] !== value) this.$set(this.icon, idx, value)});
+        layer.getIcon(data[oidField], uid).then(value => {
+            if (this.icon[idx] !== value) this.$set(this.icon, idx, value);
+        });
     }
 
     /**

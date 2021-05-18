@@ -1,11 +1,6 @@
 <template>
     <div class="flex justify-end mb-20">
-
-        <button
-            class="hover:bg-gray-200 text-gray-600 font-bold py-8 px-16 m-2"
-            type="button"
-            @click="$emit('cancel')"
-        >
+        <button class="hover:bg-gray-200 text-gray-600 font-bold py-8 px-16 m-2" type="button" @click="$emit('cancel')">
             {{ $t('wizard.step.cancel') }}
         </button>
 
@@ -17,7 +12,6 @@
         >
             {{ $t('wizard.step.continue') }}
         </button>
-
     </div>
 </template>
 

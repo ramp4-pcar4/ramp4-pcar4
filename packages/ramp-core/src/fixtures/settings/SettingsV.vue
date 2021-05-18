@@ -107,7 +107,7 @@ export default class SettingsV extends Vue {
         this.layer.isLayerLoaded().then(() => {
             this.visibilityModel = this.layer.getVisibility(this.uid);
             this.opacityModel = this.layer.getOpacity(this.uid) * 100;
-        })
+        });
     }
 
     // Update the layer visibility.

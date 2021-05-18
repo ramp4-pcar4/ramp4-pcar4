@@ -3,7 +3,6 @@
 import { StyleParams, ColourParams } from '@/geo/api';
 
 export class StyleOptions {
-
     protected _width: number;
     protected _colour: Array<number>;
     protected _style: string;
@@ -38,7 +37,6 @@ export class StyleOptions {
     }
 
     static parseColour(c: Array<number> | Array<string> | string | ColourParams | undefined): Array<number> {
-
         if (!c) {
             return [0, 0, 0, 255];
         }
@@ -50,7 +48,6 @@ export class StyleOptions {
                 arr.push(255); // no opacity given. make opaque
             }
         } else if (typeof c === 'string') {
-
             // trim # if its there
             let s: string = c.substr(0, 1) === '#' ? c.substr(1) : c;
             arr = [0, 2, 4, 6].map(i => {
@@ -62,7 +59,6 @@ export class StyleOptions {
         }
 
         return arr;
-
     }
 
     protected static colourToHex(colourArray: Array<number>): string {
@@ -73,5 +69,4 @@ export class StyleOptions {
 
         return `#${colourArray.map(i => toHex(i)).join('')}`;
     }
-
 }

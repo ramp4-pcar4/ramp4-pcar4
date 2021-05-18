@@ -19,18 +19,20 @@ import { EsriGraphic, EsriGraphicsLayer, EsriPictureMarkerSymbol } from '@/geo/e
  *                         layerId - id to use for the highlight layer. defaults to rv_highlight
  *                         markerSymbol - esri symbol in server json format to symbolize the click marker. defaults to a red pin
  */
- export default class HighlightLayer extends CommonLayer {
-
+export default class HighlightLayer extends CommonLayer {
     esriLayer: EsriGraphicsLayer | undefined;
     protected markerSymbol: __esri.PictureMarkerSymbol;
 
     // TODO make types for options. might need to meld with ramp config type?
-    constructor (options: any, $iApi: InstanceAPI) {
-        super({
-            id: options?.layerId || 'rv_highlight',
-            url: '',
-            layerType: 'highlight'
-        }, $iApi);
+    constructor(options: any, $iApi: InstanceAPI) {
+        super(
+            {
+                id: options?.layerId || 'rv_highlight',
+                url: '',
+                layerType: 'highlight'
+            },
+            $iApi
+        );
 
         let markerSymbol = EsriPictureMarkerSymbol.fromJSON(defaultSymbols.markerSymbol);
 
@@ -53,10 +55,10 @@ import { EsriGraphic, EsriGraphicsLayer, EsriPictureMarkerSymbol } from '@/geo/e
 
         this.esriLayer = new EsriGraphicsLayer({
             id: this.origRampConfig.id,
-            visible: true });
+            visible: true
+        });
         await super.initiate();
     }
-
 
     /**
      * Add a graphic to indicate where user clicked.
@@ -64,7 +66,7 @@ import { EsriGraphic, EsriGraphicsLayer, EsriPictureMarkerSymbol } from '@/geo/e
      * @param {Point} point          an ESRI point object to use as the graphic location
      * @param {Boolean} clearLayer   indicates any previous graphics in the highlight layer should be removed. defaults to false
      */
-    addMarker (point: Point, clearLayer: boolean = false): void {
+    addMarker(point: Point, clearLayer: boolean = false): void {
         if (!this.esriLayer) {
             console.error('attempted to add marker to graphic layer before initiate');
             return;
@@ -91,7 +93,7 @@ import { EsriGraphic, EsriGraphicsLayer, EsriPictureMarkerSymbol } from '@/geo/e
      * @param {Graphic|Array} graphic  an ESRI graphic, or array of ESRI graphics. Should be in map spatialReference, and not bound to a layer
      * @param {Boolean} clearLayer   indicates any previous graphics in the highlight layer should be removed. defaults to false
      */
-    addHighlight (graphic: __esri.Graphic | Array<__esri.Graphic>, clearLayer: boolean = false): void {
+    addHighlight(graphic: __esri.Graphic | Array<__esri.Graphic>, clearLayer: boolean = false): void {
         if (!this.esriLayer) {
             console.error('attempted to add marker to graphic layer before initiate');
             return;
@@ -103,7 +105,7 @@ import { EsriGraphic, EsriGraphicsLayer, EsriPictureMarkerSymbol } from '@/geo/e
         const graphics = Array.isArray(graphic) ? graphic : [graphic];
 
         // add new highlight graphics
-       this.esriLayer.addMany(graphics);
+        this.esriLayer.addMany(graphics);
     }
 
     /**
@@ -113,5 +115,4 @@ import { EsriGraphic, EsriGraphicsLayer, EsriPictureMarkerSymbol } from '@/geo/e
     clearHighlight(): void {
         this.esriLayer?.removeAll();
     }
-
 }

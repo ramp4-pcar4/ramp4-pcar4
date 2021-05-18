@@ -15,7 +15,6 @@ type WFSData = { type: string; features: any[] };
 type QueryMap = { [name: string]: string };
 
 export class OgcUtils extends APIScope {
-
     // TODO update logic in this function to get changes done in https://github.com/fgpv-vpgf/fgpv-vpgf/pull/3858
     // TODO consider changing the long list of functon params into one options param object
     /**
@@ -32,7 +31,7 @@ export class OgcUtils extends APIScope {
      * @returns {Promise<any>} a promise resolving with the layer GeoJSON
      * @memberof WFSServiceSource
      */
-     async loadWfsData(
+    async loadWfsData(
         url: string,
         totalCount: number = -1,
         startindex: number = 0,
@@ -126,8 +125,7 @@ export class OgcUtils extends APIScope {
      * @param {string} wmsEndpoint a URL pointing to a WMS server (it must not include a query string)
      * @return {Promise} a promise resolving with a metadata object (as specified above)
      */
-    parseCapabilities (wmsEndpoint: string): Promise<any> {
-
+    parseCapabilities(wmsEndpoint: string): Promise<any> {
         // TODO needs robust testing once something is using it
 
         // this executes a get capabilities and returns the XML
@@ -151,7 +149,8 @@ export class OgcUtils extends APIScope {
         const gcPromise: Promise<any> = new Promise(resolve => {
             getCapabilities()
                 .then((data: any) => resolve(data)) // if successful, pass straight back
-                .catch(() => { // if errors, try again; see fgpv-vpgf/fgpv-vpgf#908 issue
+                .catch(() => {
+                    // if errors, try again; see fgpv-vpgf/fgpv-vpgf#908 issue
                     console.error('Get capabilities failed; trying the second time;');
                     resolve(getCapabilities());
                 });
@@ -238,5 +237,4 @@ export class OgcUtils extends APIScope {
         }));
         */
     }
-
 }

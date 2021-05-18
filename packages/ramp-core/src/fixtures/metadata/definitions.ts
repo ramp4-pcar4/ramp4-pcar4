@@ -1,15 +1,15 @@
 export interface MetadataPayload {
-  type: string; // 'xml' or 'html'
-  layer: string;
-  url: string;
+    type: string; // 'xml' or 'html'
+    layer: string;
+    url: string;
 }
 
 export interface MetadataState {
-  status: string;
-  response: DocumentFragment | string | null;
+    status: string;
+    response: DocumentFragment | string | null;
 }
 
 export interface MetadataResult {
-  status: string;
-  response: string;
+    status: string;
+    response: string;
 }

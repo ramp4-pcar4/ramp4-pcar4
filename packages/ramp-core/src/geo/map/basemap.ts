@@ -4,14 +4,11 @@ import { LayerType, RampBasemapConfig } from '@/geo/api';
 import { EsriBasemap, EsriMapImageLayer, EsriTileLayer } from '@/geo/esri';
 
 export class Basemap {
-
     innerBasemap: EsriBasemap;
     id: string;
     tileSchemaId: string;
 
-    constructor (rampConfig: RampBasemapConfig) {
-
-
+    constructor(rampConfig: RampBasemapConfig) {
         this.id = rampConfig.id;
         this.tileSchemaId = rampConfig.tileSchemaId;
 

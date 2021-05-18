@@ -3,7 +3,6 @@
 import { PointStyle, PointStyleParams, StyleOptions } from '@/geo/api';
 
 export class PointStyleOptions extends StyleOptions {
-
     // TODO support outlines? can we even do that, or is that a composite symbol?
 
     protected _height: number;
@@ -26,23 +25,22 @@ export class PointStyleOptions extends StyleOptions {
         this._width = opts.width || 16.5;
     }
 
-        /** Returns the specified height */
-        get height(): number {
-            return this._height;
-        }
+    /** Returns the specified height */
+    get height(): number {
+        return this._height;
+    }
 
-        /** Returns the specified x offset */
-        get xOffset(): number {
-            return this._xOffset;
-        }
+    /** Returns the specified x offset */
+    get xOffset(): number {
+        return this._xOffset;
+    }
 
-        /** Returns the specified y offset */
-        get yOffset(): number {
-            return this._yOffset;
-        }
+    /** Returns the specified y offset */
+    get yOffset(): number {
+        return this._yOffset;
+    } // TODO figure out format, document format
 
-        /** Returns the specified icon */ // TODO figure out format, document format
-        get icon(): string {
-            return this._icon;
-        }
+    /** Returns the specified icon */ get icon(): string {
+        return this._icon;
+    }
 }

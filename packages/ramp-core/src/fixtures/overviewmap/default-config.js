@@ -146,7 +146,7 @@ export const defaultMercator = {
     initialBasemapId: 'esriTopo'
 };
 
-export const defaultLambert =  {
+export const defaultLambert = {
     extent: {
         xmax: 3549492,
         xmin: -2681457,

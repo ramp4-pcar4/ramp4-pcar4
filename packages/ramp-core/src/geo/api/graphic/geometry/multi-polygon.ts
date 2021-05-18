@@ -3,7 +3,6 @@
 import { BaseGeometry, GeometryType, LinearRing, LineString, MultiLineString, MultiPoint, Point, Polygon, SrDef, IdDef } from '@/geo/api';
 
 export class MultiPolygon extends BaseGeometry {
-
     protected rawArray: Array<Array<Array<Array<number>>>>;
 
     /**
@@ -15,22 +14,22 @@ export class MultiPolygon extends BaseGeometry {
      * @param {Boolean} [raw] An efficiency flag. If set, it means the verticies is in the pure format of [[[number, number],...,[samenumber, samenumber]],...] and we can skip data validations and parsing.
      */
     // from existing geometry that can be interpreted as a multi polygon
-    constructor(id: IdDef, multiPolygon: MultiPolygon)
+    constructor(id: IdDef, multiPolygon: MultiPolygon);
     // from existing geometry that can be interpreted as a single polygon
-    constructor(id: IdDef, polygon: Polygon)
-    constructor(id: IdDef, multiLine: MultiLineString)
-    constructor(id: IdDef, linearRing: LinearRing)
-    constructor(id: IdDef, line: LineString)
-    constructor(id: IdDef, multiPoint: MultiPoint)
+    constructor(id: IdDef, polygon: Polygon);
+    constructor(id: IdDef, multiLine: MultiLineString);
+    constructor(id: IdDef, linearRing: LinearRing);
+    constructor(id: IdDef, line: LineString);
+    constructor(id: IdDef, multiPoint: MultiPoint);
     // from arrays of arrays of single line structures that can be interpreted as a multi polygon
-    constructor(id: IdDef, listOflistOfListOfCoords: Array<Array<Array<Array<number>>>>, sr?: SrDef, raw?: boolean)
-    constructor(id: IdDef, listOflistOfListOfPoints: Array<Array<Array<Point>>>, sr?: SrDef)
-    constructor(id: IdDef, listOflistOfListOfXY: Array<Array<Array<object>>>, sr?: SrDef)
-    constructor(id: IdDef, listOfPolygons: Array<Polygon>, sr?: SrDef)
-    constructor(id: IdDef, listOflistOfLinearRings: Array<Array<LinearRing>>, sr?: SrDef)
-    constructor(id: IdDef, listOflistOfLines: Array<Array<LineString>>, sr?: SrDef)
-    constructor(id: IdDef, listOflistOfMultiPoints: Array<Array<MultiPoint>>, sr?: SrDef)
-    constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef)
+    constructor(id: IdDef, listOflistOfListOfCoords: Array<Array<Array<Array<number>>>>, sr?: SrDef, raw?: boolean);
+    constructor(id: IdDef, listOflistOfListOfPoints: Array<Array<Array<Point>>>, sr?: SrDef);
+    constructor(id: IdDef, listOflistOfListOfXY: Array<Array<Array<object>>>, sr?: SrDef);
+    constructor(id: IdDef, listOfPolygons: Array<Polygon>, sr?: SrDef);
+    constructor(id: IdDef, listOflistOfLinearRings: Array<Array<LinearRing>>, sr?: SrDef);
+    constructor(id: IdDef, listOflistOfLines: Array<Array<LineString>>, sr?: SrDef);
+    constructor(id: IdDef, listOflistOfMultiPoints: Array<Array<MultiPoint>>, sr?: SrDef);
+    constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef);
     constructor(id: IdDef, geometry: any, sr?: SrDef, raw?: boolean) {
         super(id, geometry.sr || sr);
 
@@ -69,14 +68,13 @@ export class MultiPolygon extends BaseGeometry {
     }
 
     static parseMultiPolygon(input: any): Array<Array<Array<Array<number>>>> {
-
         if (input instanceof MultiPolygon) {
             // fast return, it's already pure
             return input.toArray();
         } else if (input instanceof Polygon) {
             // fast return, it's already pure
             return [input.toArray()];
-        } else if ((input instanceof MultiLineString) || (input instanceof MultiPoint)) {
+        } else if (input instanceof MultiLineString || input instanceof MultiPoint) {
             // MultiPoint will also be true for LineString and LinearRing
             // use polygon parser to ensure rings are closed
             return [Polygon.parsePolygon(input)];
@@ -88,7 +86,6 @@ export class MultiPolygon extends BaseGeometry {
         } else {
             throw new Error('invalid input format for parseMultiPolygon');
         }
-
     }
 
     // sing this function definition. epic chorus.
@@ -97,5 +94,4 @@ export class MultiPolygon extends BaseGeometry {
         // array of polyGons to array of Lines(rings) to array of Points, copy each point
         return a.map(g => g.map(l => l.map(p => p.slice())));
     }
-
 }

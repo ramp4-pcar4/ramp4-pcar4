@@ -1,6 +1,6 @@
 export class NortharrowState {
-    arrowIcon: string = "";
-    poleIcon: string = "";
+    arrowIcon: string = '';
+    poleIcon: string = '';
 }
 
 export interface NortharrowConfig {

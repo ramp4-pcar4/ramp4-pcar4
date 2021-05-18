@@ -100,7 +100,7 @@ export default class Screen1 extends Vue {
             this.layer = this.grid.getLayerByUid(this.grid.layerUid);
             return this.layer.getName(this.grid.layerUid);
         }
-        return '' ;
+        return '';
     }
 }
 </script>

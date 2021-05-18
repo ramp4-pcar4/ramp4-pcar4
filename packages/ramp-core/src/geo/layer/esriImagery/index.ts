@@ -5,17 +5,15 @@ import { LayerType, RampLayerConfig, TreeNode } from '@/geo/api';
 import { EsriImageryLayer } from '@/geo/esri';
 
 class ImageryLayer extends CommonLayer {
-
     esriLayer: EsriImageryLayer | undefined;
 
-    constructor (rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
+    constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.supportsIdentify = false;
         this._layerType = LayerType.IMAGERY;
     }
 
     async initiate(): Promise<void> {
-
         this.esriLayer = new EsriImageryLayer(this.makeEsriLayerConfig(this.origRampConfig));
         await super.initiate();
     }
@@ -38,7 +36,7 @@ class ImageryLayer extends CommonLayer {
      *
      * @function onLoadActions
      */
-    onLoadActions (): Array<Promise<void>> {
+    onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
         const imgFC = new CommonFC(this, 0);
@@ -61,7 +59,6 @@ class ImageryLayer extends CommonLayer {
 
         return loadPromises;
     }
-
 }
 
 export default ImageryLayer;

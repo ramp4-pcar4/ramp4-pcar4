@@ -1,19 +1,5 @@
 # R4MP
 
-## Developing locally
-
-### Node.js
-
-Install Node.js `v14.15.4`.
-
-### Rush
-
-Install Rush if you don't already have it:
-
-```
-$ npm install -g @microsoft/rush
-```
-
 ## Local development
 
 ### Install build tools

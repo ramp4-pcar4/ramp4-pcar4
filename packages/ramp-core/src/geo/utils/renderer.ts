@@ -4,11 +4,19 @@
 // we can add more classes to support more renderer types if we need to
 
 import { Attributes, RendererType } from '@/geo/api';
-import { EsriClassBreakInfo, EsriClassBreaksRenderer, EsriField, EsriRenderer, EsriSimpleMarkerSymbol,
-    EsriSimpleRenderer, EsriSymbol, EsriUniqueValueInfo, EsriUniqueValueRenderer } from '@/geo/esri';
+import {
+    EsriClassBreakInfo,
+    EsriClassBreaksRenderer,
+    EsriField,
+    EsriRenderer,
+    EsriSimpleMarkerSymbol,
+    EsriSimpleRenderer,
+    EsriSymbol,
+    EsriUniqueValueInfo,
+    EsriUniqueValueRenderer
+} from '@/geo/esri';
 
 export class BaseRenderer {
-
     innerRenderer: EsriRenderer;
     symbolUnits: Array<BaseSymbolUnit>;
     defaultUnit: BaseSymbolUnit | undefined;
@@ -17,7 +25,7 @@ export class BaseRenderer {
 
     // falseRenderer is set to true when we are creating a fake renderer to facilitate generating a legend from
     // a non-feature service, like a tile layer or imagery layer.
-    constructor (esriRenderer: EsriRenderer, layerFields: Array<EsriField>, falseRenderer: boolean = false) {
+    constructor(esriRenderer: EsriRenderer, layerFields: Array<EsriField>, falseRenderer: boolean = false) {
         this.innerRenderer = esriRenderer;
         this.symbolUnits = [];
         this.falseRenderer = falseRenderer;
@@ -63,7 +71,6 @@ export class BaseRenderer {
     // worker function. determines if a field value should be wrapped in
     // any character and returns the character. E.g. string would return ', numbers return empty string.
     protected getFieldDelimiter(fieldName: string, fields: Array<EsriField>): string {
-
         let delim = `'`;
 
         // no field definition means we assume strings.
@@ -117,13 +124,10 @@ export class BaseRenderer {
             return '';
         }
 
-        const elseClauseGuts = this.symbolUnits
-            .map(pl => pl.definitionClause)
-            .join(' OR ');
+        const elseClauseGuts = this.symbolUnits.map(pl => pl.definitionClause).join(' OR ');
 
         return `(NOT (${elseClauseGuts}))`;
     }
-
 }
 
 export class BaseSymbolUnit {
@@ -134,7 +138,7 @@ export class BaseSymbolUnit {
     label: string = '';
     parent: BaseRenderer;
 
-    constructor (parent: BaseRenderer) {
+    constructor(parent: BaseRenderer) {
         this.parent = parent;
         this.symbol = new EsriSimpleMarkerSymbol(); // throwaway value to stop typescript from whining about undefineds.
     }
@@ -143,12 +147,10 @@ export class BaseSymbolUnit {
         // lazy, avoids us making a class for simple renderer symbol unit
         return true;
     }
-
 }
 
 export class SimpleRenderer extends BaseRenderer {
-
-    constructor (esriRenderer: EsriSimpleRenderer,  layerFields: Array<EsriField>) {
+    constructor(esriRenderer: EsriSimpleRenderer, layerFields: Array<EsriField>) {
         super(esriRenderer, layerFields);
 
         this.type = RendererType.Simple;
@@ -158,17 +160,14 @@ export class SimpleRenderer extends BaseRenderer {
         su.definitionClause = '1=1';
 
         this.symbolUnits.push(su);
-
     }
-
 }
 
 export class UniqueValueRenderer extends BaseRenderer {
-
     private delim: string;
     private keyFields: Array<string>;
 
-    constructor (esriRenderer: EsriUniqueValueRenderer, layerFields: Array<EsriField>, falseRenderer: boolean = false) {
+    constructor(esriRenderer: EsriUniqueValueRenderer, layerFields: Array<EsriField>, falseRenderer: boolean = false) {
         super(esriRenderer, layerFields, falseRenderer);
 
         this.type = RendererType.Unique;
@@ -180,9 +179,9 @@ export class UniqueValueRenderer extends BaseRenderer {
             return inStr.replace(/'/g, `''`);
         };
 
-        this.keyFields = [esriRenderer.field, esriRenderer.field2, esriRenderer.field3]  // extract field names
-            .filter(fn => fn)                                                            // remove any undefined names
-            .map((fn: string) => this.cleanFieldName(fn, layerFields));                  // correct any mismatched case of field names
+        this.keyFields = [esriRenderer.field, esriRenderer.field2, esriRenderer.field3] // extract field names
+            .filter(fn => fn) // remove any undefined names
+            .map((fn: string) => this.cleanFieldName(fn, layerFields)); // correct any mismatched case of field names
 
         const fieldDelims: Array<string> = this.keyFields.map((fn: string) => this.getFieldDelimiter(fn, layerFields));
 
@@ -195,7 +194,7 @@ export class UniqueValueRenderer extends BaseRenderer {
             if (!this.falseRenderer) {
                 const defClauseKeyValues: Array<string> = su.matchValue.split(this.delim);
                 const defClause: string = this.keyFields
-                    .map((kf: string, i: number) =>  `${kf} = ${fieldDelims[i]}${quoter(defClauseKeyValues[i])}${fieldDelims[i]}`)
+                    .map((kf: string, i: number) => `${kf} = ${fieldDelims[i]}${quoter(defClauseKeyValues[i])}${fieldDelims[i]}`)
                     .join(' AND ');
                 su.definitionClause = `(${defClause})`;
             }
@@ -212,31 +211,30 @@ export class UniqueValueRenderer extends BaseRenderer {
             su.definitionClause = this.makeElseClause();
             this.defaultUnit = su;
         }
-
     }
 
     protected makeSearchParams(attributes: Attributes): any {
         // make a key value for the graphic in question, using delimiter if multiple fields
         // put an empty string when key value is null
 
-        return this.keyFields.map((fn: string) => {
-            let graphicKey = attributes[fn] === null ? '' : attributes[fn];
+        return this.keyFields
+            .map((fn: string) => {
+                let graphicKey = attributes[fn] === null ? '' : attributes[fn];
 
-            // all key values are stored as strings.  if the attribute is in a numeric column, we must convert it to a string to ensure the === operator still works.
-            if (typeof graphicKey !== 'string') {
-                graphicKey = graphicKey.toString();
-            }
-            return graphicKey;
-        }).join(this.delim);
+                // all key values are stored as strings.  if the attribute is in a numeric column, we must convert it to a string to ensure the === operator still works.
+                if (typeof graphicKey !== 'string') {
+                    graphicKey = graphicKey.toString();
+                }
+                return graphicKey;
+            })
+            .join(this.delim);
     }
-
 }
 
 export class UniqueValueSymbolUnit extends BaseSymbolUnit {
-
     matchValue: string;
 
-    constructor (parent: BaseRenderer, value: string | number) {
+    constructor(parent: BaseRenderer, value: string | number) {
         super(parent);
 
         // sometimes values can be defined in number form.
@@ -255,10 +253,9 @@ export class UniqueValueSymbolUnit extends BaseSymbolUnit {
 }
 
 export class ClassBreaksRenderer extends BaseRenderer {
-
     private valField: string;
 
-    constructor (esriRenderer: EsriClassBreaksRenderer, layerFields: Array<EsriField>, falseRenderer: boolean = false) {
+    constructor(esriRenderer: EsriClassBreaksRenderer, layerFields: Array<EsriField>, falseRenderer: boolean = false) {
         super(esriRenderer, layerFields, falseRenderer);
 
         this.valField = this.cleanFieldName(esriRenderer.field, layerFields);
@@ -287,7 +284,6 @@ export class ClassBreaksRenderer extends BaseRenderer {
             su.definitionClause = this.makeElseClause();
             this.defaultUnit = su;
         }
-
     }
 
     protected makeSearchParams(attributes: Attributes): any {
@@ -297,11 +293,10 @@ export class ClassBreaksRenderer extends BaseRenderer {
 }
 
 export class ClassBreaksSymbolUnit extends BaseSymbolUnit {
-
     minValue: number; // min is exclusive
     maxValue: number; // max is inclusive
 
-    constructor (parent: BaseRenderer, minValue: number, maxValue: number) {
+    constructor(parent: BaseRenderer, minValue: number, maxValue: number) {
         super(parent);
 
         this.minValue = minValue;
@@ -310,6 +305,6 @@ export class ClassBreaksSymbolUnit extends BaseSymbolUnit {
 
     match(searchParams: any): boolean {
         // param will be a numeric value
-        return (this.minValue < searchParams) && (this.maxValue >= searchParams);
+        return this.minValue < searchParams && this.maxValue >= searchParams;
     }
 }

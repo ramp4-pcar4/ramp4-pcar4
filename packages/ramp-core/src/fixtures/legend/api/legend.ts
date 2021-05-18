@@ -93,9 +93,10 @@ export class LegendAPI extends FixtureInstance {
 
         // Creates legend config from layer tree children
         const parseLayerTreeChildren = (children: Array<TreeNode>): any => {
-            return children.map((node: TreeNode) => node.isLayer
-                ? { name: node.name, layerId: layer.id, entryIndex: node.layerIdx }
-                : { name: node.name, children: parseLayerTreeChildren(node.children) }
+            return children.map((node: TreeNode) =>
+                node.isLayer
+                    ? { name: node.name, layerId: layer.id, entryIndex: node.layerIdx }
+                    : { name: node.name, children: parseLayerTreeChildren(node.children) }
             );
         };
 

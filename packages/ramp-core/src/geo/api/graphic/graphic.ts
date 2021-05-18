@@ -12,7 +12,6 @@
 import { Attributes, BaseGeometry, Hover, Point, StyleOptions } from '@/geo/api';
 
 export class Graphic {
-
     attributes: Attributes = {};
     geometry: BaseGeometry = new Point(undefined, [0, 0], undefined, true); // dumb default to shut up whining typescript
     style: StyleOptions | undefined;
@@ -44,5 +43,4 @@ export class Graphic {
             this._hover = undefined;
         }
     }
-
 }

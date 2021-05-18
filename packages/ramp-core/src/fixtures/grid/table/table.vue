@@ -183,7 +183,7 @@ export default class TableComponent extends Vue {
                             col.cellRenderer = (cell: any) => {
                                 // get YYYY-MM-DD from date
                                 return new Date(cell.value).toISOString().slice(0, 10);
-                            }
+                            };
                         } else if (fieldInfo.type === TEXT_TYPE) {
                             if (col.isSelector) {
                                 // set up a selector filter instead of a text filter if the `isSelector` flag is true.

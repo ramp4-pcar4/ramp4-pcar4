@@ -1,9 +1,8 @@
 // the structure of the geo element of the RAMP API
 
-import { APIScope, InstanceAPI, LayerAPI, MapAPI, UtilsAPI  } from '@/api/internal';
+import { APIScope, InstanceAPI, LayerAPI, MapAPI, UtilsAPI } from '@/api/internal';
 
 export class GeoAPI extends APIScope {
-
     map: MapAPI;
     layer: LayerAPI;
     utils: UtilsAPI;
@@ -19,7 +18,7 @@ export class GeoAPI extends APIScope {
      * @constructor
      * @param {InstanceAPI} iApi the RAMP instance
      */
-    constructor (iApi: InstanceAPI) {
+    constructor(iApi: InstanceAPI) {
         super(iApi);
 
         this.map = new MapAPI(iApi);

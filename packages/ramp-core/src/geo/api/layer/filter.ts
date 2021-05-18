@@ -252,5 +252,4 @@ export class Filter {
         return `${this._parent.oidField} IN (${array.join(',')})`;
     }
     */
-
 }

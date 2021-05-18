@@ -1,5 +1,12 @@
-import { APIScope, BaseRenderer, BaseSymbolUnit, ClassBreaksRenderer, InstanceAPI,
-    SimpleRenderer, UniqueValueRenderer } from '@/api/internal';
+import {
+    APIScope,
+    BaseRenderer,
+    BaseSymbolUnit,
+    ClassBreaksRenderer,
+    InstanceAPI,
+    SimpleRenderer,
+    UniqueValueRenderer
+} from '@/api/internal';
 import { Attributes, LegendSymbology, LineStyle } from '@/geo/api';
 import { EsriRendererUtils, EsriRequest } from '@/geo/esri';
 import svgjs from 'svg.js';
@@ -10,8 +17,7 @@ import svgjs from 'svg.js';
 // a renderer
 
 export class SymbologyAPI extends APIScope {
-
-    constructor (iApi: InstanceAPI) {
+    constructor(iApi: InstanceAPI) {
         super(iApi);
     }
 
@@ -214,8 +220,7 @@ export class SymbologyAPI extends APIScope {
             .center(this.CONTAINER_CENTER, this.CONTAINER_CENTER)
             .fill(colour);
 
-        draw
-            .text(name[0].toUpperCase()) // take the first letter
+        draw.text(name[0].toUpperCase()) // take the first letter
             .size(23)
             .fill('#fff')
             .attr({
@@ -231,7 +236,9 @@ export class SymbologyAPI extends APIScope {
     }
 
     async generateBlankSymbology(): Promise<string> {
-        return svgjs(window.document.createElement('div')).size(this.CONTAINER_SIZE, this.CONTAINER_SIZE).svg();
+        return svgjs(window.document.createElement('div'))
+            .size(this.CONTAINER_SIZE, this.CONTAINER_SIZE)
+            .svg();
     }
 
     /**
@@ -272,31 +279,38 @@ export class SymbologyAPI extends APIScope {
         // jscs:disable requireSpacesInAnonymousFunctionExpression
         const esriSimpleMarkerSimbol = {
             // @ts-ignore
-            path({ size, path }) { // esriSMSPath
+            path({ size, path }) {
+                // esriSMSPath
                 return draw.path(path).size(size * pts2Pxl);
             },
             // @ts-ignore
-            circle({ size }) { // esriSMSCircle
+            circle({ size }) {
+                // esriSMSCircle
                 return draw.circle(size * pts2Pxl);
             },
             // @ts-ignore
-            cross({ size }) { // esriSMSCross
+            cross({ size }) {
+                // esriSMSCross
                 return draw.path('M 0,10 L 20,10 M 10,0 L 10,20').size(size * pts2Pxl);
             },
             // @ts-ignore
-            x({ size }) { // esriSMSX
+            x({ size }) {
+                // esriSMSX
                 return draw.path('M 0,0 L 20,20 M 20,0 L 0,20').size(size * pts2Pxl);
             },
             // @ts-ignore
-            triangle({ size }) { // esriSMSTriangle
+            triangle({ size }) {
+                // esriSMSTriangle
                 return draw.path('M 20,20 L 10,0 0,20 Z').size(size * pts2Pxl);
             },
             // @ts-ignore
-            diamond({ size }) { // esriSMSDiamond
+            diamond({ size }) {
+                // esriSMSDiamond
                 return draw.path('M 20,10 L 10,0 0,10 10,20 Z').size(size * pts2Pxl);
             },
             // @ts-ignore
-            square({ size }) { // esriSMSSquare
+            square({ size }) {
+                // esriSMSSquare
                 return draw.path('M 0,0 20,0 20,20 0,20 Z').size(size * pts2Pxl);
             }
         };
@@ -339,48 +353,60 @@ export class SymbologyAPI extends APIScope {
 
         // 5x5 px patter with coloured diagonal lines
         const esriSFSFills = {
-            solid: (symbolColour: any) => { // esriSFSSolid
+            solid: (symbolColour: any) => {
+                // esriSFSSolid
                 return {
                     color: symbolColour.colour,
                     opacity: symbolColour.opacity
                 };
             },
             none: () => 'transparent', // esriSFSNull
-            horizontal: (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => { // esriSFSHorizontal
+            horizontal: (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => {
+                // esriSFSHorizontal
                 const cellSize = 5;
 
                 // patter fill: horizonal line in a 5x5 px square
-                return draw.pattern(cellSize, cellSize, add =>
-                    add.line(0, cellSize / 2, cellSize, cellSize / 2)).stroke(symbolStroke);
+                return draw.pattern(cellSize, cellSize, add => add.line(0, cellSize / 2, cellSize, cellSize / 2)).stroke(symbolStroke);
             },
-            vertical: (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => { // esriSFSVertical
+            vertical: (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => {
+                // esriSFSVertical
                 const cellSize = 5;
 
                 // patter fill: vertical line in a 5x5 px square
-                return draw.pattern(cellSize, cellSize, add =>
-                    add.line(cellSize / 2, 0, cellSize / 2, cellSize)).stroke(symbolStroke);
+                return draw.pattern(cellSize, cellSize, add => add.line(cellSize / 2, 0, cellSize / 2, cellSize)).stroke(symbolStroke);
             },
-            'forward-diagonal': (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => { // esriSFSForwardDiagonal
+            'forward-diagonal': (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => {
+                // esriSFSForwardDiagonal
                 const cellSize = 5;
 
                 // patter fill: forward diagonal line in a 5x5 px square; two more diagonal lines offset to cover the corners when the main line is cut off
                 return draw.pattern(cellSize, cellSize, add => {
                     add.line(0, 0, cellSize, cellSize).stroke(symbolStroke);
-                    add.line(0, 0, cellSize, cellSize).move(0, cellSize).stroke(symbolStroke);
-                    add.line(0, 0, cellSize, cellSize).move(cellSize, 0).stroke(symbolStroke);
+                    add.line(0, 0, cellSize, cellSize)
+                        .move(0, cellSize)
+                        .stroke(symbolStroke);
+                    add.line(0, 0, cellSize, cellSize)
+                        .move(cellSize, 0)
+                        .stroke(symbolStroke);
                 });
             },
-            'backward-diagonal': (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => { // esriSFSBackwardDiagonal
+            'backward-diagonal': (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => {
+                // esriSFSBackwardDiagonal
                 const cellSize = 5;
 
                 // patter fill: backward diagonal line in a 5x5 px square; two more diagonal lines offset to cover the corners when the main line is cut off
                 return draw.pattern(cellSize, cellSize, add => {
                     add.line(cellSize, 0, 0, cellSize).stroke(symbolStroke);
-                    add.line(cellSize, 0, 0, cellSize).move(cellSize / 2, cellSize / 2).stroke(symbolStroke);
-                    add.line(cellSize, 0, 0, cellSize).move(-cellSize / 2, -cellSize / 2).stroke(symbolStroke);
+                    add.line(cellSize, 0, 0, cellSize)
+                        .move(cellSize / 2, cellSize / 2)
+                        .stroke(symbolStroke);
+                    add.line(cellSize, 0, 0, cellSize)
+                        .move(-cellSize / 2, -cellSize / 2)
+                        .stroke(symbolStroke);
                 });
             },
-            cross: (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => { // esriSFSCross
+            cross: (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => {
+                // esriSFSCross
                 const cellSize = 5;
 
                 // patter fill: horizonal and vertical lines in a 5x5 px square
@@ -389,7 +415,8 @@ export class SymbologyAPI extends APIScope {
                     add.line(0, cellSize / 2, cellSize, cellSize / 2).stroke(symbolStroke);
                 });
             },
-            'diagonal-cross': (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => { // esriSFSDiagonalCross
+            'diagonal-cross': (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => {
+                // esriSFSDiagonalCross
                 const cellSize = 7;
 
                 // patter fill: crossing diagonal lines in a 7x7 px square
@@ -403,7 +430,8 @@ export class SymbologyAPI extends APIScope {
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
         const symbolTypes = {
-            'simple-marker'() { // ESRI Simple Marker Symbol esriSMS
+            'simple-marker'() {
+                // ESRI Simple Marker Symbol esriSMS
                 const symbolColour: any = parseEsriColour(symbol.color);
 
                 symbol.outline = symbol.outline || DEFAULT_OUTLINE;
@@ -429,7 +457,8 @@ export class SymbologyAPI extends APIScope {
 
                 _this.fitInto(marker, _this.CONTENT_SIZE);
             },
-            'simple-line'() { // ESRI Simple Line Symbol esriSLS
+            'simple-line'() {
+                // ESRI Simple Line Symbol esriSLS
                 const lineColour: any = parseEsriColour(symbol.color);
                 const lineStroke = makeStroke({
                     color: lineColour.colour,
@@ -442,14 +471,15 @@ export class SymbologyAPI extends APIScope {
 
                 const min = _this.CONTENT_PADDING;
                 const max = _this.CONTAINER_SIZE - _this.CONTENT_PADDING;
-                draw.line(min, min, max, max)
-                    .stroke(lineStroke);
+                draw.line(min, min, max, max).stroke(lineStroke);
             },
             // TODO find new equivalent for this. CLS was cartographic line style. can run test using fromJSON to see what this spits out.
-            esriCLS() {  // ESRI Fancy Line Symbol
+            esriCLS() {
+                // ESRI Fancy Line Symbol
                 this['simple-line']();
             },
-            'simple-fill'() { // ESRI Simple Fill Symbol esriSFS
+            'simple-fill'() {
+                // ESRI Simple Fill Symbol esriSFS
                 const symbolColour: any = parseEsriColour(symbol.color);
                 const symbolStroke = makeStroke({
                     color: symbolColour.colour,
@@ -475,11 +505,13 @@ export class SymbologyAPI extends APIScope {
                     .stroke(outlineStroke);
             },
 
-            text() { // esriTS
+            text() {
+                // esriTS
                 console.error('no support for feature service legend of text symbols');
             },
 
-            'picture-fill'() { // ESRI Picture Fill Symbol esriPFS
+            'picture-fill'() {
+                // ESRI Picture Fill Symbol esriPFS
                 // imageUri can be just an image url is specified or a dataUri string
                 const imageUri = symbol.imageData ? `data:${symbol.contentType};base64,${symbol.imageData}` : symbol.url;
 
@@ -496,36 +528,34 @@ export class SymbologyAPI extends APIScope {
                     dasharray: ESRI_DASH_MAPS[symbol.outline.style]
                 });
 
-                const picturePromise = _this.$iApi.geo.utils.shared.convertImagetoDataURL(imageUri)
-                    .then((imageUri: string) => {
-                        // make a fill from a tiled image
-                        const symbolFill = draw.pattern(imageWidth, imageHeight, add =>
+                const picturePromise = _this.$iApi.geo.utils.shared.convertImagetoDataURL(imageUri).then((imageUri: string) => {
+                    // make a fill from a tiled image
+                    const symbolFill = draw.pattern(imageWidth, imageHeight, add =>
+                        // there was a 4th argument 'true' here before, but maximum 3 are accepted. may need to look into this
+                        add.image(imageUri, imageWidth, imageHeight)
+                    );
 
-                            // there was a 4th argument 'true' here before, but maximum 3 are accepted. may need to look into this
-                            add.image(imageUri, imageWidth, imageHeight));
-
-                        draw.rect(_this.CONTENT_SIZE, _this.CONTENT_SIZE)
-                            .center(_this.CONTAINER_CENTER, _this.CONTAINER_CENTER)
-                            .fill(symbolFill)
-                            .stroke(outlineStroke);
-                    });
+                    draw.rect(_this.CONTENT_SIZE, _this.CONTENT_SIZE)
+                        .center(_this.CONTAINER_CENTER, _this.CONTAINER_CENTER)
+                        .fill(symbolFill)
+                        .stroke(outlineStroke);
+                });
 
                 return picturePromise;
             },
 
-            'picture-marker'() { // ESRI PMS? Picture Marker Symbol esriPMS
+            'picture-marker'() {
+                // ESRI PMS? Picture Marker Symbol esriPMS
                 // imageUri can be just an image url is specified or a dataUri string
                 const sSrc = symbol.source;
-                const imageUri = (sSrc && sSrc.imageData ) ? `data:${sSrc.contentType};base64,${sSrc.imageData}` : symbol.url;
+                const imageUri = sSrc && sSrc.imageData ? `data:${sSrc.contentType};base64,${sSrc.imageData}` : symbol.url;
 
                 // need to draw the image to get its size (technically not needed if we have a url, but this is simpler)
-                const picturePromise = _this.$iApi.geo.utils.shared.convertImagetoDataURL(imageUri)
-                    .then((imageUri: string) =>
-                        _this.svgDrawImage(draw, imageUri))
+                const picturePromise = _this.$iApi.geo.utils.shared
+                    .convertImagetoDataURL(imageUri)
+                    .then((imageUri: string) => _this.svgDrawImage(draw, imageUri))
                     .then(({ image }) => {
-                        image
-                            .center(_this.CONTAINER_CENTER, _this.CONTAINER_CENTER)
-                            .rotate(symbol.angle || 0);
+                        image.center(_this.CONTAINER_CENTER, _this.CONTAINER_CENTER).rotate(symbol.angle || 0);
 
                         // scale image to fit into the symbology item container
                         _this.fitInto(image, _this.CONTENT_IMAGE_SIZE);
@@ -547,8 +577,7 @@ export class SymbologyAPI extends APIScope {
             // remove element from the page
             window.document.body.removeChild(container);
             return draw.svg();
-        }
-        catch (error) {
+        } catch (error) {
             console.log(error);
             return this.generateBlankSymbology(); // TODO create a warning icon instead?
         }
@@ -599,9 +628,9 @@ export class SymbologyAPI extends APIScope {
     svgDrawImage(draw: any, imageUri: string, width: number = 0, height: number = 0, crossOrigin: boolean = true): Promise<any> {
         // TODO enhance to some proper types? make this async?
         const promise = new Promise((resolve, reject) => {
-            const image = draw.image(imageUri, width, height, crossOrigin)
-                .loaded((loader: any) =>
-                    resolve({ image, loader }))
+            const image = draw
+                .image(imageUri, width, height, crossOrigin)
+                .loaded((loader: any) => resolve({ image, loader }))
                 .error((err: any) => {
                     reject(err);
                     console.error(err);
@@ -634,7 +663,6 @@ export class SymbologyAPI extends APIScope {
      * @return {Array} list of legend symbologies
      */
     rendererToLegend(renderer: BaseRenderer): Array<LegendSymbology> {
-
         let finalSymbols: Array<Array<BaseSymbolUnit>>;
         // put all symbol units from the renderer in one nice array
         const allRendererSUs: Array<BaseSymbolUnit> = renderer.symbolUnits.slice(0); // make a copy
@@ -689,7 +717,6 @@ export class SymbologyAPI extends APIScope {
             };
             return legendSym;
         });
-
     }
 
     /**
@@ -711,17 +738,16 @@ export class SymbologyAPI extends APIScope {
         };
         const serviceRequest = EsriRequest(`${layerUrl}/legend`, reqParams);
 
-        return serviceRequest.then(srvResult => {
-
-           return srvResult.data;
-
-        }).catch((error: any) => {
-            console.error('error loading legend', error);
-            // TODO might want to not error. missing legend is not catastrophic.
-            //      instead, may want to generate fake json that will create an empty legend / error legend and return that.
-            throw new Error('problem loading legend from server, details on console');
-        });
-
+        return serviceRequest
+            .then(srvResult => {
+                return srvResult.data;
+            })
+            .catch((error: any) => {
+                console.error('error loading legend', error);
+                // TODO might want to not error. missing legend is not catastrophic.
+                //      instead, may want to generate fake json that will create an empty legend / error legend and return that.
+                throw new Error('problem loading legend from server, details on console');
+            });
     }
 
     /**
@@ -766,7 +792,6 @@ export class SymbologyAPI extends APIScope {
 
             // ok to pass empty array. this renderer will only be used to generate a legend; no symbol lookups
             return this.makeRenderer(EsriRendererUtils.fromJSON(renderer), [], true);
-
         } else {
             // TODO does this case ever exist? need to figure out a way to encode this in our official renderer objects
             // renderer = { type: this.NONE };
@@ -787,7 +812,6 @@ export class SymbologyAPI extends APIScope {
      * @returns {Object} a fake unique value renderer based off the legend
      */
     private mapServerLegendToRendererAll(serverLegend: any): BaseRenderer {
-
         // TODO potential problem. if we have multiple layers with same label but different
         //      symbols, they will get combined in the legend making process.
         //      the esri Renderer.fromJSON might also get snarky at having two identical values
@@ -829,8 +853,10 @@ export class SymbologyAPI extends APIScope {
      * @returns {Promise} resolves in a viewer-compatible legend for the given server and layer index
      *
      */
-    async mapServerToLocalLegend(mapServerUrl: string, layerIndex: number | string | undefined = undefined): Promise<Array<LegendSymbology>> {
-
+    async mapServerToLocalLegend(
+        mapServerUrl: string,
+        layerIndex: number | string | undefined = undefined
+    ): Promise<Array<LegendSymbology>> {
         // get esri legend from server
 
         const serverLegendData = await this.getMapServerLegend(mapServerUrl);
@@ -840,13 +866,11 @@ export class SymbologyAPI extends APIScope {
         if (typeof layerIndex === 'undefined') {
             intIndex = 0;
             fakeRenderer = this.mapServerLegendToRendererAll(serverLegendData);
-        }
-        else {
-            intIndex = parseInt((<string>layerIndex)); // sometimes a stringified value comes in. careful now.
+        } else {
+            intIndex = parseInt(<string>layerIndex); // sometimes a stringified value comes in. careful now.
             fakeRenderer = this.mapServerLegendToRenderer(serverLegendData, intIndex);
         }
         // convert renderer to viewer specific legend
         return this.rendererToLegend(fakeRenderer);
-
     }
 }

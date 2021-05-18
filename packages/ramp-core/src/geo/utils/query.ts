@@ -2,8 +2,16 @@
 // TODO change all the 'any' in this file to more strict types if possible
 
 import { APIScope, FileLayer, InstanceAPI } from '@/api/internal';
-import { BaseGeometry, Extent, GeometryType, GetGraphicResult, Point, QueryFeaturesArcServerParams,
-    QueryFeaturesParams, SpatialReference } from '@/geo/api';
+import {
+    BaseGeometry,
+    Extent,
+    GeometryType,
+    GetGraphicResult,
+    Point,
+    QueryFeaturesArcServerParams,
+    QueryFeaturesParams,
+    SpatialReference
+} from '@/geo/api';
 import { EsriQuery, EsriQueryTask } from '@/geo/esri';
 
 // this exists here instead of our main definitions file because it uses `FileLayer` type.
@@ -13,8 +21,7 @@ export interface QueryFeaturesFileParams extends QueryFeaturesParams {
 }
 
 export class QueryAPI extends APIScope {
-
-    constructor (iApi: InstanceAPI) {
+    constructor(iApi: InstanceAPI) {
         super(iApi);
     }
 
@@ -51,7 +58,6 @@ export class QueryAPI extends APIScope {
      * @returns resolves with array of graphic result objects.
      */
     async geoJsonQuery(options: QueryFeaturesFileParams): Promise<Array<GetGraphicResult>> {
-
         const query = new EsriQuery();
         query.returnGeometry = !!options.includeGeometry;
         query.outFields = ['*']; // TODO look into using the options value. test it well, as the .where gets wonky with outfields
@@ -106,7 +112,12 @@ export class QueryAPI extends APIScope {
      * @param {SpatialReference} [sourceSR] optional spatial reference of the layer being queried to help detect problem situations
      * @return {Geometry} returns the input geometry in the most appropriate form based on the inputs
      */
-    protected queryGeometryHelper(geometry: BaseGeometry, isFileLayer: boolean, mapScale?: number, sourceSR?: SpatialReference): __esri.Geometry {
+    protected queryGeometryHelper(
+        geometry: BaseGeometry,
+        isFileLayer: boolean,
+        mapScale?: number,
+        sourceSR?: SpatialReference
+    ): __esri.Geometry {
         // TODO consider casting sourceSR to our API SR class?
         let finalGeom: __esri.Geometry;
 
@@ -118,7 +129,7 @@ export class QueryAPI extends APIScope {
             // first check for case of very large extent in Lambert against a LatLong layer.
             // in this case, we tend to get better results keeping things in an Extent form
             // as it handles the north pole/180meridan crossage better.
-            if (mapScale && sourceSR && mapScale > 20000000 &&  geometry.sr.wkid === 3978 && sourceSR.wkid === 4326) {
+            if (mapScale && sourceSR && mapScale > 20000000 && geometry.sr.wkid === 3978 && sourceSR.wkid === 4326) {
                 finalGeom = this.$iApi.geo.utils.geom.geomRampToEsri(geometry);
             } else {
                 // convert extent to polygon to avoid issues when a service in a different projection
@@ -145,11 +156,9 @@ export class QueryAPI extends APIScope {
         // take pixel tolerance, convert to map units at current scale.
         const map = this.$iApi.geo.map;
         const mapExt = map.getExtent();
-        const buffSize = tolerance * (mapExt.xmax - mapExt.xmin) / map.getPixelWidth();
+        const buffSize = (tolerance * (mapExt.xmax - mapExt.xmin)) / map.getPixelWidth();
 
         // Build tolerance envelope of correct size
-        return new Extent('ze_buffer', [point.x - buffSize, point.y - buffSize],
-            [point.x + buffSize, point.y + buffSize], point.sr);
+        return new Extent('ze_buffer', [point.x - buffSize, point.y - buffSize], [point.x + buffSize, point.y + buffSize], point.sr);
     }
-
 }

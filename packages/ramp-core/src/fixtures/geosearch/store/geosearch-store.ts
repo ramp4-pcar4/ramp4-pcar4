@@ -143,7 +143,6 @@ const actions = {
         context.commit('SET_EXTENT', mapExtent.extent);
         // run query after toggling map extent filters
         context.dispatch('runQuery');
-
     }
 };
 

@@ -166,7 +166,7 @@ describe('Grid', () => {
                             cy.wrap(window.rInstance.$vApp.$store.get('layer/getLayerById', 'CleanAir'))
                                 .invoke('getGraphic', $oid.text(), { getGeom: true })
                                 .then(g => {
-                                    const center = window.rInstance.geo.map.getExtent().center();
+                                    const center = window.rInstance.map.getExtent().center();
                                     expect(center.x).to.equal(g.geometry.x);
                                     expect(center.y).to.equal(g.geometry.y);
                                 });
@@ -358,33 +358,7 @@ describe('Grid', () => {
             toggleGrid('Clean Air');
         });
 
-        it('filters numbers lower bound', () => {
-            toggleGrid('Carbon monoxide');
-            // filter "OBJECTID" field
-            cy.get('[aria-rowindex="2"] [aria-colindex="4"] .rv-min').type('4848');
-
-            cy.get('.ag-center-cols-container .ag-cell[col-id="OBJECTID"]').each($cell => {
-                cy.wrap(parseInt($cell.text().trim())).should('gte', 4848);
-            });
-
-            clearFilters();
-            toggleGrid('Carbon monoxide');
-        });
-
-        it('filters numbers upper bound', () => {
-            toggleGrid('Carbon monoxide');
-            // filter "OBJECTID" field
-            cy.get('[aria-rowindex="2"] [aria-colindex="4"] .rv-max').type('4860');
-
-            cy.get('.ag-center-cols-container .ag-cell[col-id="OBJECTID"]').each($cell => {
-                cy.wrap(parseInt($cell.text().trim())).should('lte', 4860);
-            });
-
-            clearFilters();
-            toggleGrid('Carbon monoxide');
-        });
-
-        it('filters numbers both bounds', () => {
+        it('filters numbers', () => {
             toggleGrid('Carbon monoxide');
             // filter "OBJECTID" field
             cy.get('[aria-rowindex="2"] [aria-colindex="4"] .rv-min').type('4848');
@@ -400,114 +374,22 @@ describe('Grid', () => {
             toggleGrid('Carbon monoxide');
         });
 
-        it('filters numbers single value', () => {
-            toggleGrid('Carbon monoxide');
-            // filter "OBJECTID" field
-            cy.get('[aria-rowindex="2"] [aria-colindex="4"] .rv-min').type('30');
-            cy.get('[aria-rowindex="2"] [aria-colindex="4"] .rv-max').type('30');
-
-            cy.get('.ag-center-cols-container .ag-cell[col-id="OBJECTID"]').each($cell => {
-                cy.wrap(parseInt($cell.text().trim())).should('eq', 30);
-            });
-
-            cy.get('.ag-center-cols-container .ag-cell[col-id="OBJECTID"]').should('have.length', 1);
-
-            clearFilters();
-            toggleGrid('Carbon monoxide');
-        });
-
-        it('filters numbers both bounds with tab support', () => {
-            toggleGrid('Carbon monoxide');
-            // filter "OBJECTID" field
-            cy.get('[aria-rowindex="2"] [aria-colindex="4"] .rv-min')
-                .type('4848')
-                .tab()
-                .type('4860')
-                .blur();
-
-            cy.get('.ag-center-cols-container .ag-cell[col-id="OBJECTID"]').each($cell => {
-                cy.wrap(parseInt($cell.text().trim()))
-                    .should('gte', 4848)
-                    .and('lte', 4860);
-            });
-
-            clearFilters();
-            toggleGrid('Carbon monoxide');
-        });
-
-        it('filters text exact', () => {
+        it('filters text', () => {
             toggleGrid('Carbon monoxide');
             // filter "Facility" field
-            cy.get('[aria-rowindex="2"] [aria-colindex="6"] .rv-input').type('Edmonton Site');
+            cy.get('[aria-rowindex="2"] [aria-colindex="6"] .rv-input').type('wester');
 
             cy.get('.ag-center-cols-container .ag-cell[col-id="GridColumn1"]').each($cell => {
-                cy.wrap($cell.text().trim()).should('eq', 'Edmonton Site');
+                cy.wrap($cell).contains('wester', { matchCase: false });
             });
 
             clearFilters();
             toggleGrid('Carbon monoxide');
         });
 
-        it('filters text is case insensitive', () => {
-            toggleGrid('Carbon monoxide');
-            // filter "Facility" field
-            cy.get('[aria-rowindex="2"] [aria-colindex="6"] .rv-input').type('toro');
-
-            cy.get('.ag-center-cols-container .ag-cell[col-id="GridColumn1"]').each($cell => {
-                cy.wrap($cell.text().trim()).should('contain', 'Toronto');
-            });
-
-            clearFilters();
-            toggleGrid('Carbon monoxide');
-        });
-
-        // TODO: Add tests for wildcard formats once it is implemented
-
-        // TODO: Fix bug: #455
-        it('filters date start date only', () => {
+        it('filters date', () => {
             toggleGrid('Shellfish');
-            // filter "RISC_DATE" field start date
-            cy.get('[aria-rowindex="2"] [aria-colindex="7"] .rv-input')
-                .eq(0)
-                .type('2003-05-07')
-                .blur();
-
-            // need to wait for date filter
-            cy.contains('entries shown').contains('filtered from');
-            cy.get('.ag-center-cols-container .ag-cell[col-id="risc_date"]').each($cell => {
-                // compare lexicographically since dates are yyyy-MM-dd
-                const dateStr = $cell.text().trim();
-                expect(dateStr >= '2003-05-07').to.be.true;
-            });
-
-            clearFilters();
-            toggleGrid('Shellfish');
-        });
-
-        // TODO: Fix bug: #455
-        it('filters date end date only', () => {
-            toggleGrid('Shellfish');
-            // filter "RISC_DATE" field end date
-            cy.get('[aria-rowindex="2"] [aria-colindex="7"] .rv-input')
-                .eq(1)
-                .type('2004-09-25')
-                .blur();
-
-            // need to wait for date filter
-            cy.contains('entries shown').contains('filtered from');
-            cy.get('.ag-center-cols-container .ag-cell[col-id="risc_date"]').each($cell => {
-                // compare lexicographically since dates are yyyy-MM-dd
-                const dateStr = $cell.text().trim();
-                expect(dateStr <= '2004-09-25').to.be.true;
-            });
-
-            clearFilters();
-            toggleGrid('Shellfish');
-        });
-
-        it('filters date both bounds', () => {
-            toggleGrid('Shellfish');
-            // filter "RISC_DATE" field start and end date
+            // filter "RISC_DATE" field
             cy.get('[aria-rowindex="2"] [aria-colindex="7"] .rv-input')
                 .eq(0)
                 .type('2003-05-07');
@@ -515,7 +397,6 @@ describe('Grid', () => {
                 .eq(1)
                 .type('2004-09-25')
                 .blur();
-
             // need to wait for date filter
             cy.contains('entries shown').contains('filtered from');
             cy.get('.ag-center-cols-container .ag-cell[col-id="risc_date"]').each($cell => {
@@ -528,134 +409,17 @@ describe('Grid', () => {
             clearFilters();
             toggleGrid('Shellfish');
         });
-
-        it('filters date both bounds with tab support', () => {
-            toggleGrid('Shellfish');
-            // filter "RISC_DATE" field start and end date
-            cy.get('[aria-rowindex="2"] [aria-colindex="7"] .rv-input')
-                .eq(0)
-                .type('2003-05-07')
-                .tab()
-                .type('2004-09-25')
-                .blur();
-
-            // need to wait for date filter
-            cy.contains('entries shown').contains('filtered from');
-            cy.get('.ag-center-cols-container .ag-cell[col-id="risc_date"]').each($cell => {
-                // compare lexicographically since dates are yyyy-MM-dd
-                const dateStr = $cell.text().trim();
-                expect(dateStr >= '2003-05-07').to.be.true;
-                expect(dateStr <= '2004-09-25').to.be.true;
-            });
-
-            clearFilters();
-            toggleGrid('Shellfish');
-        });
-
-        // TODO: Fix bug: #454
-        it('filters date single date value', () => {
-            toggleGrid('Shellfish');
-            // filter "RISC_DATE" field
-            cy.get('[aria-rowindex="2"] [aria-colindex="7"] .rv-input')
-                .eq(0)
-                .type('2014-04-30');
-            cy.get('[aria-rowindex="2"] [aria-colindex="7"] .rv-input')
-                .eq(1)
-                .type('2014-04-30')
-                .blur();
-
-            // need to wait for date filter
-            cy.contains('entries shown').contains('filtered from');
-            cy.get('.ag-center-cols-container .ag-cell[col-id="risc_date"]').each($cell => {
-                // compare lexicographically since dates are yyyy-MM-dd
-                const dateStr = $cell.text().trim();
-                expect(dateStr == '2014-04-30').to.be.true;
-            });
-
-            // There are 4 records with this date
-            cy.get('.ag-center-cols-container .ag-cell[col-id="risc_date"]').should('have.length', 4);
-
-            clearFilters();
-            toggleGrid('Shellfish');
-        });
-
-        // TODO: Open the date widget and press tab to highlight today's date
-        // This is part of ensuring the calendar widget works with keyboard
-        // However the date widget does not open because it is not part of the html source (it can't be inspected)
-
-        // it('filters date calendar keyboard support (today date)', () => {
-        //     toggleGrid('Shellfish');
-        //     // filter "RISC_DATE" field and open calendar
-        //     // select todays date
-        //     cy.get('[aria-rowindex="2"] [aria-colindex="7"] .rv-input')
-        //         .eq(0)
-        //         .click()
-        //         .tab()
-        //         .type('{enter}');
-
-        //     // check if its today's date
-        //     var today = new Date();
-        //     var dd = String(today.getDate()).padStart(2, '0');
-        //     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-        //     var yyyy = today.getFullYear();
-
-        //     today = yyyy + '-' + mm + '-' + dd;
-        //     cy.get('[aria-rowindex="2"] [aria-colindex="7"] .rv-input').eq(0).invoke('val').should('eq', today);
-
-        //     clearFilters();
-        //     toggleGrid('Shellfish');
-        // });
 
         it('filters multiple columns', () => {
             toggleGrid('Carbon monoxide');
-            // filter "Facility", "City", and "OBJECTID" fields
-            // need to force because not all fields will be visible
-            cy.get('[aria-rowindex="2"] [aria-colindex="6"] .rv-input').type('plant', { force: true });
-            cy.get('[aria-rowindex="2"] [aria-colindex="9"] .rv-input').type('toronto', { force: true });
-            cy.get('[aria-rowindex="2"] [aria-colindex="4"] .rv-min').type('300', { force: true });
+            // filter "Facility" and "Company" fields
+            cy.get('[aria-rowindex="2"] [aria-colindex="6"] .rv-input').type('alberta');
+            cy.get('[aria-rowindex="2"] [aria-colindex="7"] .rv-input').type('ltd');
 
             cy.get('.ag-center-cols-container .ag-row').each($row => {
-                cy.wrap($row).contains('[col-id="GridColumn1"]', 'plant', { matchCase: false });
-                cy.wrap($row).contains('[col-id="GridColumn2"]', 'toronto', { matchCase: false });
+                cy.wrap($row).contains('[col-id="GridColumn1"]', 'alberta', { matchCase: false });
+                cy.wrap($row).contains('[col-id="Company_Name"]', 'ltd', { matchCase: false });
             });
-
-            cy.get('.ag-center-cols-container .ag-cell[col-id="OBJECTID"]').each($cell => {
-                cy.wrap(parseInt($cell.text().trim())).should('gte', 300);
-            });
-
-            // Only 2 records satisfy this filter
-            cy.get('.ag-center-cols-container .ag-row').should('have.length', 3);
-
-            clearFilters();
-            toggleGrid('Carbon monoxide');
-        });
-
-        it('filters multiple columns with tab support', () => {
-            toggleGrid('Carbon monoxide');
-            // filter "Facility", "City", and "OBJECTID" fields
-            // use tabs to navigate columns
-            cy.get('[aria-rowindex="2"] [aria-colindex="4"] .rv-min')
-                .type('300')
-                .tab()
-                .tab()
-                .tab()
-                .type('plant')
-                .tab()
-                .tab()
-                .tab()
-                .type('toronto');
-
-            cy.get('.ag-center-cols-container .ag-row').each($row => {
-                cy.wrap($row).contains('[col-id="GridColumn1"]', 'plant', { matchCase: false });
-                cy.wrap($row).contains('[col-id="GridColumn2"]', 'toronto', { matchCase: false });
-            });
-
-            cy.get('.ag-center-cols-container .ag-cell[col-id="OBJECTID"]').each($cell => {
-                cy.wrap(parseInt($cell.text().trim())).should('gte', 300);
-            });
-
-            // Only 2 records satisfy this filter
-            cy.get('.ag-center-cols-container .ag-row').should('have.length', 3);
 
             clearFilters();
             toggleGrid('Carbon monoxide');
@@ -663,64 +427,10 @@ describe('Grid', () => {
 
         it('filters globally', () => {
             toggleGrid('Carbon monoxide');
-            cy.get('[data-cy="grid-panel"] header .rv-global-search').type('geo');
+            cy.get('[data-cy="grid-panel"] header .rv-global-search').type('dav');
             cy.get('.ag-center-cols-container .ag-row').each($row => {
-                cy.wrap($row).contains('geo', { matchCase: false });
+                cy.wrap($row).contains('dav', { matchCase: false });
             });
-
-            clearFilters();
-            toggleGrid('Carbon monoxide');
-        });
-
-        // TODO: Add tests for global filter with wildcard formats once it is implemented
-
-        it('filters multiple columns with global field', () => {
-            toggleGrid('Carbon monoxide');
-            cy.get('[data-cy="grid-panel"] header .rv-global-search').type('geo');
-            // filter "Facility", "Company", and "Symbol" fields
-            // need to force because not all fields will be visible
-            cy.get('[aria-rowindex="2"] [aria-colindex="6"] .rv-input').type('prince', { force: true });
-            cy.get('[aria-rowindex="2"] [aria-colindex="9"] .rv-input').type('prince', { force: true });
-            cy.get('[aria-rowindex="2"] [aria-colindex="17"] .rv-min').type('3', { force: true });
-
-            cy.get('.ag-center-cols-container .ag-row').each($row => {
-                cy.wrap($row).contains('[col-id="GridColumn1"]', 'prince', { matchCase: false });
-                cy.wrap($row).contains('[col-id="GridColumn2"]', 'prince', { matchCase: false });
-                cy.wrap($row).contains('geo', { matchCase: false });
-            });
-
-            cy.get('.ag-center-cols-container .ag-cell[col-id="CO_Symbol"]').each($cell => {
-                cy.wrap(parseInt($cell.text().trim())).should('gte', 3);
-            });
-
-            // There are 3 records that satisfy the filter
-            cy.get('.ag-center-cols-container .ag-row').should('have.length', 3);
-
-            clearFilters();
-            toggleGrid('Carbon monoxide');
-        });
-
-        it('filters that produce no rows (numeric)', () => {
-            toggleGrid('Carbon monoxide');
-            // filter "OBJECTID" fields
-            // upper bound < lower bound, so no records
-            cy.get('[aria-rowindex="2"] [aria-colindex="4"] .rv-min').type('5');
-            cy.get('[aria-rowindex="2"] [aria-colindex="4"] .rv-max').type('4');
-
-            // if there are no rows, this does not exist
-            cy.get('.ag-center-cols-container .ag-row').should('not.exist');
-
-            clearFilters();
-            toggleGrid('Carbon monoxide');
-        });
-
-        it('filters that produce no rows (text)', () => {
-            toggleGrid('Carbon monoxide');
-            // filter "Facility" fields
-            cy.get('[aria-rowindex="2"] [aria-colindex="6"] .rv-input').type('giberishsirebig');
-
-            // if there are no rows, this does not exist
-            cy.get('.ag-center-cols-container .ag-row').should('not.exist');
 
             clearFilters();
             toggleGrid('Carbon monoxide');

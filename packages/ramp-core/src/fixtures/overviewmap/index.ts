@@ -19,7 +19,7 @@ class OverviewmapFixture extends OverviewmapAPI {
 
         const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         const overviewInstance = this.extend(OverviewmapV, { store: this.$vApp.$store, i18n: this.$vApp.$i18n });
-        innerShell.append(overviewInstance.$el)
+        innerShell.append(overviewInstance.$el);
     }
 
     removed() {

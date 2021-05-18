@@ -45,7 +45,9 @@ const actions = {
         //      undefined layerConfigs. kicking out for now to make demos work.
         //      possibly this is evil in vue state land. if so, then someone figure out
         //      the root cause and fix that.
-        if (!Array.isArray(layerConfigs)) { return; }
+        if (!Array.isArray(layerConfigs)) {
+            return;
+        }
         layerConfigs.forEach(lc => {
             context.commit('ADD_LAYER_CONFIG', lc);
         });
@@ -55,7 +57,9 @@ const actions = {
         //      undefined layerConfigs. kicking out for now to make demos work.
         //      possibly this is evil in vue state land. if so, then someone figure out
         //      the root cause and fix that.
-        if (!Array.isArray(layers)) { return; }
+        if (!Array.isArray(layers)) {
+            return;
+        }
 
         layers.forEach(l => {
             context.commit('ADD_LAYER', l);
@@ -98,11 +102,11 @@ const actions = {
 const mutations = {
     ADD_LAYER_CONFIG: (state: LayerState, value: RampLayerConfig) => {
         // copy to new array so watchers will have a reference to the old value
-        state.layerConfigs = [...state.layerConfigs, value]
+        state.layerConfigs = [...state.layerConfigs, value];
     },
     ADD_LAYER: (state: LayerState, value: LayerInstance) => {
         // copy to new array so watchers will have a reference to the old value
-        state.layers = [...state.layers, value]
+        state.layers = [...state.layers, value];
     }
 };
 
@@ -131,7 +135,6 @@ export enum LayerStore {
      * (Action) addLayerConfigs: (layerConfigs: RampLayerConfig[])
      */
     addLayerConfigs = 'layer/addLayerConfigs!'
-
 }
 
 export function layer() {

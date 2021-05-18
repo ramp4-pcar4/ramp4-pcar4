@@ -3,7 +3,6 @@ import { BaseGeometry, DefPromise, Extent, GeometryType, RampMapConfig, SpatialR
 import { EsriLOD, EsriMapView, EsriGraphic } from '@/geo/esri';
 
 export class OverviewMapAPI extends CommonMapAPI {
-
     /**
      * The internal esri map view. Avoid referencing outside of geoapi.
      * @private
@@ -22,7 +21,7 @@ export class OverviewMapAPI extends CommonMapAPI {
      * @constructor
      * @param {InstanceAPI} iApi the RAMP instance
      */
-    constructor (iApi: InstanceAPI) {
+    constructor(iApi: InstanceAPI) {
         super(iApi);
 
         this.viewPromise = new DefPromise();
@@ -55,7 +54,7 @@ export class OverviewMapAPI extends CommonMapAPI {
         // initialize extent rectangle graphic
         const graphic = {
             symbol: {
-                type: "simple-fill",
+                type: 'simple-fill',
                 color: [0, 0, 0, 0.25],
                 outline: null
             },
@@ -82,7 +81,7 @@ export class OverviewMapAPI extends CommonMapAPI {
         this.esriView.on('drag', esriDrag => {
             esriDrag.stopPropagation();
             this.mapDrag(esriDrag);
-        })
+        });
 
         this.esriView.container.addEventListener('touchmove', e => {
             // need this for panning and zooming to work on mobile devices / touchscreens
@@ -195,12 +194,10 @@ export class OverviewMapAPI extends CommonMapAPI {
             if (this.esriView) {
                 return this.esriView.goTo(zoomP, opts);
             }
-
         } else {
             this.noMapErr();
         }
     }
-
 
     /**
      * Provides the scale of the map (the scale denominator as integer)

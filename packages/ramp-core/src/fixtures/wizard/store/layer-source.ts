@@ -4,14 +4,13 @@ import { UrlWrapper } from '@/geo/api';
 import axios from 'axios';
 
 export interface LayerInfo {
-    config: RampLayerConfig | null,
-    configOptions: Array<string>,
-    fields?: any,
-    layers?: any
+    config: RampLayerConfig | null;
+    configOptions: Array<string>;
+    fields?: any;
+    layers?: any;
 }
 
 export class LayerSource extends APIScope {
-
     layerCount: number = 0;
 
     constructor($iApi: InstanceAPI) {
@@ -29,7 +28,7 @@ export class LayerSource extends APIScope {
     async fetchFileInfo(url: string, fileType: string, fileData?: ArrayBuffer): Promise<LayerInfo | undefined> {
         if (!fileData) {
             // if given a url, load data so we can get fields
-            const response = await axios.get(url, { responseType: 'arraybuffer'});
+            const response = await axios.get(url, { responseType: 'arraybuffer' });
             fileData = response.data;
         }
 
@@ -122,7 +121,7 @@ export class LayerSource extends APIScope {
             nameField: response.data.displayField,
             tooltipField: response.data.displayField,
             state: { opacity: 1, visibility: true }
-        }
+        };
 
         return {
             config,
@@ -191,7 +190,7 @@ export class LayerSource extends APIScope {
         const wfsJson = await this.$iApi.geo.layer.ogc.loadWfsData(url, -1, parseInt(startindex) || 0, parseInt(limit) || 1000);
 
         return this.getGeojsonInfo(url.match(/\/([^/]+)\/items/)?.[1] || 'Layer', wfsJson);
-    };
+    }
 
     // TODO: WMS layer support
     // async getWmsInfo(url: string): Promise<LayerInfo> {

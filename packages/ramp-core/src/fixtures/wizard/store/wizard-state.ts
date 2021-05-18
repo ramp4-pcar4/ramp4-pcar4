@@ -1,7 +1,6 @@
 import { LayerSource, LayerInfo } from './layer-source';
 
 export class WizardState {
-
     /**
      * Service for retreiving layer config info given a file or URL
      *
@@ -40,7 +39,7 @@ export class WizardState {
      * @type {LayerInfo}
      * @memberof WizardState
      */
-    layerInfo: LayerInfo =  { config: null, configOptions: [] };
+    layerInfo: LayerInfo = { config: null, configOptions: [] };
 
     /**
      * Current wizard form step
@@ -49,7 +48,6 @@ export class WizardState {
      * @memberof WizardState
      */
     step: WizardStep = WizardStep.UPLOAD;
-
 }
 
 export enum WizardStep {

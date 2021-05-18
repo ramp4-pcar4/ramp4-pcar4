@@ -3,9 +3,7 @@
 import { FileLayer } from '@/api/internal';
 
 class ShapefileLayer extends FileLayer {
-
     async initiate(): Promise<void> {
-
         // TODO check if .sourceGeoJson is already populated?
         //      if this initiate is a reload, do we want to re-use it, or re-download? decide.
 
@@ -41,7 +39,6 @@ class ShapefileLayer extends FileLayer {
 
             // temp line to warn people
             shapefileData = 'error remote file shapefile loader not yet implemented';
-
         } else {
             throw new Error('shapefile file config contains no raw data or url');
         }

@@ -9,11 +9,8 @@
         </template>
 
         <template #content>
-            <stepper :activeStep="step" >
-                <stepper-item
-                    :title="$t('wizard.upload.title')"
-                    :summary="url"
-                >
+            <stepper :activeStep="step">
+                <stepper-item :title="$t('wizard.upload.title')" :summary="url">
                     <FormulateForm
                         name="upload"
                         @submit="onUploadContinue"
@@ -38,17 +35,18 @@
                             validation="bail|required|url"
                             :validation-messages="{
                                 required: $t('wizard.upload.url.error.required'),
-                                url:  $t('wizard.upload.url.error.url')
+                                url: $t('wizard.upload.url.error.url')
                             }"
                         />
-                        <wizard-form-footer @submit="$formulate.submit('upload')" @cancel="goToStep(0)" :disabled="hasErrors"></wizard-form-footer>
+                        <wizard-form-footer
+                            @submit="$formulate.submit('upload')"
+                            @cancel="goToStep(0)"
+                            :disabled="hasErrors"
+                        ></wizard-form-footer>
                     </FormulateForm>
                 </stepper-item>
 
-                <stepper-item
-                    :title="$t('wizard.format.title')"
-                    :summary="typeSelection"
-                >
+                <stepper-item :title="$t('wizard.format.title')" :summary="typeSelection">
                     <FormulateForm
                         name="format"
                         #default="{ hasErrors }"
@@ -68,7 +66,11 @@
                             }"
                             @keydown.stop
                         />
-                        <wizard-form-footer @submit="$formulate.submit('format')" @cancel="goToStep(0)" :disabled="hasErrors"></wizard-form-footer>
+                        <wizard-form-footer
+                            @submit="$formulate.submit('format')"
+                            @cancel="goToStep(0)"
+                            :disabled="hasErrors"
+                        ></wizard-form-footer>
                     </FormulateForm>
                 </stepper-item>
 
@@ -134,7 +136,11 @@
                             validation="required"
                             @keydown.stop
                         />
-                        <wizard-form-footer @submit="$formulate.submit('configure')" @cancel="goToStep(1)" :disabled="hasErrors"></wizard-form-footer>
+                        <wizard-form-footer
+                            @submit="$formulate.submit('configure')"
+                            @cancel="goToStep(1)"
+                            :disabled="hasErrors"
+                        ></wizard-form-footer>
                     </FormulateForm>
                 </stepper-item>
             </stepper>
@@ -151,17 +157,17 @@ import { LayerStore } from '@/store/modules/layer';
 import { LayerType } from '@/geo/api';
 import { GlobalEvents } from '@/api/internal';
 import { WizardStore, WizardStep } from './store';
-import { LayerSource, LayerInfo } from './store/layer-source'
+import { LayerSource, LayerInfo } from './store/layer-source';
 
-import WizardFormFooterV from './form-footer.vue'
-import StepperItemV from './stepper-item.vue'
-import StepperV from './stepper.vue'
+import WizardFormFooterV from './form-footer.vue';
+import StepperItemV from './stepper-item.vue';
+import StepperV from './stepper.vue';
 
 @Component({
     components: {
         'wizard-form-footer': WizardFormFooterV,
         'stepper-item': StepperItemV,
-        'stepper': StepperV
+        stepper: StepperV
     }
 })
 export default class WizardV extends Vue {
@@ -240,7 +246,7 @@ export default class WizardV extends Vue {
     async onSelectContinue() {
         this.layerInfo = this.isFileLayer
             ? await this.layerSource.fetchFileInfo(this.url, this.typeSelection, this.fileData)
-            : await this.layerSource.fetchServiceInfo(this.url, this.typeSelection)
+            : await this.layerSource.fetchServiceInfo(this.url, this.typeSelection);
 
         if (!this.layerInfo) {
             this.setError('format', 'type', this.$t('wizard.format.type.error.invalid') as string);
@@ -318,13 +324,15 @@ export default class WizardV extends Vue {
 
     // sets an error message on an input field
     setError(form: string, field: string, msg: string) {
-        this.$formulate.handle({
-            inputErrors: { [field]: [msg] },
-            formErrors: []
-        }, form);
+        this.$formulate.handle(
+            {
+                inputErrors: { [field]: [msg] },
+                formErrors: []
+            },
+            form
+        );
     }
 }
-
 </script>
 
 <style lang="scss" scoped>
@@ -342,9 +350,9 @@ export default class WizardV extends Vue {
             }
         }
 
-       &[data-classification='select'] {
+        &[data-classification='select'] {
             .formulate-input-element::before {
-                @apply hidden;  // hide second selector arrow
+                @apply hidden; // hide second selector arrow
             }
 
             select {

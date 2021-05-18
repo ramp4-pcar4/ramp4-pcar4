@@ -144,7 +144,9 @@ export class LegendEntry extends LegendItem {
 
             // toggle off visibility if entry is part of a visibility set with a set entry already toggled on
             if (this._parent instanceof LegendGroup && this._parent.type === LegendTypes.Set) {
-                this._parent.children.some(entry => entry.visibility && entry.id !== this._id) ? this._layer?.setVisibility(false, this.uid) : null;
+                this._parent.children.some(entry => entry.visibility && entry.id !== this._id)
+                    ? this._layer?.setVisibility(false, this.uid)
+                    : null;
             }
         });
     }
@@ -184,7 +186,9 @@ export class LegendEntry extends LegendItem {
             if (this.visibility === visibility) {
                 return;
             }
-            visibility !== undefined ? this._layer?.setVisibility(visibility, this.uid) : this._layer?.setVisibility(!this.visibility, this.uid);
+            visibility !== undefined
+                ? this._layer?.setVisibility(visibility, this.uid)
+                : this._layer?.setVisibility(!this.visibility, this.uid);
             // update parent visibility if current legend entry is part of a group or set
             if (this._parent instanceof LegendGroup && updateParent) {
                 this._parent.checkVisibility(this);

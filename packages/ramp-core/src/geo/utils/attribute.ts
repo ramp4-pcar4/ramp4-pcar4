@@ -20,8 +20,7 @@ export interface AttributeLoaderDetails {
 }
 
 export class AttributeAPI extends APIScope {
-
-    constructor (iApi: InstanceAPI) {
+    constructor(iApi: InstanceAPI) {
         super(iApi);
     }
 
@@ -33,7 +32,7 @@ export class AttributeAPI extends APIScope {
         });
     }
 
-    private async arcGisBatchLoad (details: AttributeLoaderDetails, controller: AsynchAttribController): Promise<Array<any>> {
+    private async arcGisBatchLoad(details: AttributeLoaderDetails, controller: AsynchAttribController): Promise<Array<any>> {
         if (controller.loadAbortFlag) {
             // stop that stop that
             return [];
@@ -68,7 +67,7 @@ export class AttributeAPI extends APIScope {
                         // this is our first batch. set the max batch size to this batch size
                         details.batchSize = len;
                     }
-                    moreDataToLoad = (len >= details.batchSize);
+                    moreDataToLoad = len >= details.batchSize;
                 }
 
                 if (moreDataToLoad) {
@@ -79,8 +78,6 @@ export class AttributeAPI extends APIScope {
                     const futureFeats = await this.arcGisBatchLoad(details, controller);
                     // take our current batch, append on everything the recursive call loaded, and return
                     return feats.concat(futureFeats);
-
-
                 } else {
                     // done thanks
                     return feats;
@@ -89,7 +86,6 @@ export class AttributeAPI extends APIScope {
                 // no more data.  we are done
                 return [];
             }
-
         } else {
             // TODO nothing came back, handle appropriately with error party rejectorama
             throw new Error('whoooops');
@@ -178,7 +174,6 @@ export class AttributeAPI extends APIScope {
         if (serviceResult.data && serviceResult.data.features) {
             const feats: Array<any> = serviceResult.data.features;
             if (feats.length > 0) {
-
                 const feat = feats[0];
                 const result: GetGraphicResult = {
                     attributes: feat.attributes // attributes are always there, so we always return them. letter caller decide to discard them or not.
@@ -214,7 +209,6 @@ export class AsynchAttribController {
 }
 
 export class AttributeLoaderBase extends APIScope {
-
     // TODO need to specificy either load url or load source (a file, a layer with baked attributes)
 
     protected aac: AsynchAttribController;
@@ -222,7 +216,7 @@ export class AttributeLoaderBase extends APIScope {
     protected details: AttributeLoaderDetails;
     tabularAttributesCache: Promise<any> | undefined; // TODO enhance type
 
-    protected constructor (iApi: InstanceAPI, details: AttributeLoaderDetails) {
+    protected constructor(iApi: InstanceAPI, details: AttributeLoaderDetails) {
         super(iApi);
         this.aac = new AsynchAttribController();
         this.details = details;
@@ -276,12 +270,10 @@ export class AttributeLoaderBase extends APIScope {
         // this should never run
         return Promise.reject(new Error('Subclass of AttributeLoaderBase did not implement loadPromiseGenerator'));
     }
-
 }
 
 export class ArcServerAttributeLoader extends AttributeLoaderBase {
-
-    constructor (iApi: InstanceAPI, details: AttributeLoaderDetails) {
+    constructor(iApi: InstanceAPI, details: AttributeLoaderDetails) {
         super(iApi, details);
     }
 
@@ -289,19 +281,16 @@ export class ArcServerAttributeLoader extends AttributeLoaderBase {
         // TODO call arcgis loader
         return this.$iApi.geo.utils.attributes.loadArcGisServerAttributes(this.details, this.aac);
     }
-
 }
 
 export class FileLayerAttributeLoader extends AttributeLoaderBase {
-
-    constructor (iApi: InstanceAPI, details: AttributeLoaderDetails) {
+    constructor(iApi: InstanceAPI, details: AttributeLoaderDetails) {
         super(iApi, details);
     }
 
     protected loadPromiseGenerator(): Promise<AttributeSet> {
         return this.$iApi.geo.utils.attributes.loadGraphicsAttributes(this.details, this.aac);
     }
-
 }
 
 // manages the quick-lookup of attributes.
@@ -309,7 +298,7 @@ export class FileLayerAttributeLoader extends AttributeLoaderBase {
 export class QuickCache {
     // TODO if we come up with nice types for attribs or geoms, apply them
 
-    private attribs: {[key: number]: Attributes};
+    private attribs: { [key: number]: Attributes };
 
     // the "any" type here is funny. for points, its BaseGeometry, for line/poly based, it's an object indexed by scale,
     // which then containts an object indexed by key (likely oid) and returns BaseGeometry.

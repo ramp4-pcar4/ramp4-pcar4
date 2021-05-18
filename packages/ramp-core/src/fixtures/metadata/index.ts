@@ -32,8 +32,7 @@ class MetadataFixture extends MetadataAPI {
         this.$iApi.event.emit('metadata/open', {
             type: 'html',
             layer: 'Sample Layer Name',
-            url:
-                'https://ryan-coulson.com/RAMPMetadataDemo.html'
+            url: 'https://ryan-coulson.com/RAMPMetadataDemo.html'
         });
     }
 }

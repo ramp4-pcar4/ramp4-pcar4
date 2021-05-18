@@ -5,7 +5,7 @@ export class HelpState {
      * @type {string}
      * @memberof HelpState
      */
-    folderName: string = "";
+    folderName: string = '';
 }
 
 export interface HelpConfig {

@@ -12,7 +12,6 @@ import OgcService from './OgcService';
 */
 
 export class UtilsAPI extends APIScope {
-
     attributes: AttributeAPI;
     geom: GeometryAPI;
     proj: ProjectionAPI;
@@ -20,7 +19,7 @@ export class UtilsAPI extends APIScope {
     shared: SharedUtilsAPI;
     symbology: SymbologyAPI;
 
-    constructor (iApi: InstanceAPI, epsgFunction: EpsgLookup | undefined = undefined) {
+    constructor(iApi: InstanceAPI, epsgFunction: EpsgLookup | undefined = undefined) {
         super(iApi);
 
         this.attributes = new AttributeAPI(iApi);
@@ -34,5 +33,4 @@ export class UtilsAPI extends APIScope {
         this.highlight = new HighlightService(infoBundle);
         */
     }
-
 }

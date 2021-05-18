@@ -3,7 +3,6 @@
 import { BaseGeometry, GeometryType, LineString, MultiPoint, Point, SrDef, IdDef } from '@/geo/api';
 
 export class MultiLineString extends BaseGeometry {
-
     protected rawArray: Array<Array<Array<number>>>;
 
     /**
@@ -15,17 +14,17 @@ export class MultiLineString extends BaseGeometry {
      * @param {Boolean} [raw] An efficiency flag. If set, it means the verticies is in the pure format of [[[number, number],...],...] and we can skip data validations and parsing.
      */
     // from existing geometry that can be interpreted as a set of lines
-    constructor(id: IdDef, multiLine: MultiLineString)
+    constructor(id: IdDef, multiLine: MultiLineString);
     // from existing geometry that can be interpreted as a single-line set
-    constructor(id: IdDef, line: LineString)
-    constructor(id: IdDef, multiPoint: MultiPoint)
+    constructor(id: IdDef, line: LineString);
+    constructor(id: IdDef, multiPoint: MultiPoint);
     // from arrays of lines that can be interpreted as a set of lines
-    constructor(id: IdDef, listOfListOfCoords: Array<Array<Array<number>>>, sr?: SrDef, raw?: boolean)
-    constructor(id: IdDef, listOfLines: Array<LineString>, sr?: SrDef)
-    constructor(id: IdDef, listOfMultiPoints: Array<MultiPoint>, sr?: SrDef)
-    constructor(id: IdDef, listOfListOfPoints: Array<Array<Point>>, sr?: SrDef)
-    constructor(id: IdDef, listOfListOfXY: Array<Array<object>>, sr?: SrDef)
-    constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef)
+    constructor(id: IdDef, listOfListOfCoords: Array<Array<Array<number>>>, sr?: SrDef, raw?: boolean);
+    constructor(id: IdDef, listOfLines: Array<LineString>, sr?: SrDef);
+    constructor(id: IdDef, listOfMultiPoints: Array<MultiPoint>, sr?: SrDef);
+    constructor(id: IdDef, listOfListOfPoints: Array<Array<Point>>, sr?: SrDef);
+    constructor(id: IdDef, listOfListOfXY: Array<Array<object>>, sr?: SrDef);
+    constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef);
     constructor(id: IdDef, geometry: any, sr?: SrDef, raw?: boolean) {
         super(id, geometry.sr || sr);
 
@@ -39,14 +38,11 @@ export class MultiLineString extends BaseGeometry {
 
         if (raw) {
             this.rawArray = MultiLineString.arrayDeepCopy(geometry);
-
         } else if (geometry instanceof MultiLineString) {
             this.rawArray = geometry.toArray();
-
         } else if (geometry instanceof MultiPoint) {
             // will also handle LineString
             this.rawArray = [geometry.toArray()];
-
         } else if (Array.isArray(geometry)) {
             if (geometry.length === 0) {
                 throw new Error('no lines provided');
@@ -54,11 +50,9 @@ export class MultiLineString extends BaseGeometry {
 
             // process each element, as they could be any format of varying quality
             this.rawArray = geometry.map(l => MultiPoint.parsePointSet(l));
-
         } else {
             throw new Error('invalid lines format for MulitLineString');
         }
-
     }
 
     /** Returns an array of the contained lines formatted as API LineString objects. A new array is returned each time this is called. */
@@ -98,5 +92,4 @@ export class MultiLineString extends BaseGeometry {
         // speed tests show loops & slice is 3x faster than JSON parse/stringify
         return a.map(l => l.map(p => p.slice()));
     }
-
 }

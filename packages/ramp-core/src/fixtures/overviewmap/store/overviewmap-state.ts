@@ -10,6 +10,6 @@ export interface OverviewmapConfig {
         lods: RampLodConfig;
         basemap: RampBasemapConfig;
         spatialReference: RampSpatialReference;
-    },
+    };
     startMinimized: boolean;
 }

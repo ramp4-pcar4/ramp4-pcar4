@@ -2,16 +2,30 @@
 // TODO add proper comments
 
 import { CommonMapAPI, GlobalEvents, InstanceAPI, LayerInstance } from '@/api/internal';
-import { BaseGeometry, CoreFilterKey, DefPromise, Extent, GeometryType, IdentifyMode,IdentifyParameters,
-    IdentifyResult, IdentifyResultSet, MapClick, MapMove, Point,RampMapConfig, ScreenPoint, ScaleSet,
-    SpatialReference } from '@/geo/api';
+import {
+    BaseGeometry,
+    CoreFilterKey,
+    DefPromise,
+    Extent,
+    GeometryType,
+    IdentifyMode,
+    IdentifyParameters,
+    IdentifyResult,
+    IdentifyResultSet,
+    MapClick,
+    MapMove,
+    Point,
+    RampMapConfig,
+    ScreenPoint,
+    ScaleSet,
+    SpatialReference
+} from '@/geo/api';
 import { EsriLOD, EsriMapView } from '@/geo/esri';
 import { LayerStore } from '@/store/modules/layer';
 
 // TODO bring in the map actions code
 
 export class MapAPI extends CommonMapAPI {
-
     // NOTE unlike ESRI3, the map view doesnt have a custom event, it uses property watches.
     //      so if we want to detect scale change we'll need to have another event, it won't be
     //      a big bundle of properties like ESRI3 provided
@@ -36,7 +50,7 @@ export class MapAPI extends CommonMapAPI {
      * @constructor
      * @param {InstanceAPI} iApi the RAMP instance
      */
-    constructor (iApi: InstanceAPI) {
+    constructor(iApi: InstanceAPI) {
         super(iApi);
 
         this.viewPromise = new DefPromise();
@@ -90,7 +104,10 @@ export class MapAPI extends CommonMapAPI {
         });
 
         this.esriView.on('double-click', esriClick => {
-            this.$iApi.event.emit(GlobalEvents.MAP_DOUBLECLICK, this.$iApi.geo.utils.geom.esriMapClickToRamp(esriClick, 'map_doubleclick_point'));
+            this.$iApi.event.emit(
+                GlobalEvents.MAP_DOUBLECLICK,
+                this.$iApi.geo.utils.geom.esriMapClickToRamp(esriClick, 'map_doubleclick_point')
+            );
         });
 
         this.esriView.on('pointer-move', esriMouseMove => {
@@ -127,8 +144,7 @@ export class MapAPI extends CommonMapAPI {
         });
 
         this.viewPromise.resolveMe();
-
-     }
+    }
 
     /**
      * Projects a geometry to the map's spatial reference
@@ -206,7 +222,6 @@ export class MapAPI extends CommonMapAPI {
             if (this.esriView) {
                 return this.esriView.goTo(zoomP, opts);
             }
-
         } else {
             this.noMapErr();
         }
@@ -271,7 +286,9 @@ export class MapAPI extends CommonMapAPI {
 
         const offStatus = scaleSet.isOffScale(this.getScale());
 
-        if (!offStatus.offScale) { return; }
+        if (!offStatus.offScale) {
+            return;
+        }
 
         const lods = this.esriView.constraints.lods;
 
@@ -285,11 +302,11 @@ export class MapAPI extends CommonMapAPI {
         const modLods = offStatus.zoomIn ? lods : [...lods].reverse();
 
         // scan for appropriate LOD that will make scale set visible, or pick last LOD if no boundary was found
-        const scaleLod = modLods.find(currentLod => offStatus.zoomIn ? currentLod.scale < scaleSet.minScale :
-                currentLod.scale > scaleSet.maxScale) || modLods[modLods.length - 1];
+        const scaleLod =
+            modLods.find(currentLod => (offStatus.zoomIn ? currentLod.scale < scaleSet.minScale : currentLod.scale > scaleSet.maxScale)) ||
+            modLods[modLods.length - 1];
 
         return this.zoomToLevel(scaleLod.level);
-
     }
 
     /**
@@ -385,7 +402,7 @@ export class MapAPI extends CommonMapAPI {
      */
     screenPointToMapPoint(screenX: number, screenY: number): Point {
         if (this.esriView) {
-            return this.$iApi.geo.utils.geom._convEsriPointToRamp(this.esriView.toMap({x: screenX, y: screenY}), 'mappoint');
+            return this.$iApi.geo.utils.geom._convEsriPointToRamp(this.esriView.toMap({ x: screenX, y: screenY }), 'mappoint');
         } else {
             this.noMapErr();
             return new Point('i_am_error', [0, 0], undefined, true); //  default fake value. avoids us having undefined checks everywhere.
@@ -399,13 +416,12 @@ export class MapAPI extends CommonMapAPI {
      * @returns {ScreenPoint} the screen point analagous to the map point
      */
     mapPointToScreenPoint(mapPoint: Point): ScreenPoint {
-
         if (this.esriView) {
-            const esriPoint = this.esriView.toScreen(this.$iApi.geo.utils.geom._convPointToEsri(mapPoint))
+            const esriPoint = this.esriView.toScreen(this.$iApi.geo.utils.geom._convPointToEsri(mapPoint));
             return { screenX: esriPoint.x, screenY: esriPoint.y };
         } else {
             this.noMapErr();
-            return { screenX: 1, screenY: 1}; //  default fake value. avoids us having undefined checks everywhere.
+            return { screenX: 1, screenY: 1 }; //  default fake value. avoids us having undefined checks everywhere.
         }
     }
 
@@ -477,9 +493,7 @@ export class MapAPI extends CommonMapAPI {
 
         // TODO make the event payload an interface? should there be a public area with all event payload interfaces?
         this.$iApi.event.emit(GlobalEvents.MAP_IDENTIFY, { results: identifyResults, click: mapClick });
-
     }
-
 
     // list of keys that are currently pressed
     private _activeKeys: string[] = [];
@@ -609,7 +623,7 @@ export class MapAPI extends CommonMapAPI {
                 case 'Shift':
                     multiplier = 2;
                     break;
-            };
+            }
         }
 
         const scale = this.getScale();

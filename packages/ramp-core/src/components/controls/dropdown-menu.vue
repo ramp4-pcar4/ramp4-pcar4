@@ -24,11 +24,15 @@ export default class MenuV extends Vue {
     open: boolean = false;
 
     mounted() {
-        window.addEventListener('click', event => {
-            if (event.target instanceof HTMLElement && !this.$el.contains(event.target)) {
-                this.open = false;
-            }
-        }, { capture: true });
+        window.addEventListener(
+            'click',
+            event => {
+                if (event.target instanceof HTMLElement && !this.$el.contains(event.target)) {
+                    this.open = false;
+                }
+            },
+            { capture: true }
+        );
     }
 }
 </script>

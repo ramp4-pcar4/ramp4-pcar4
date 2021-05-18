@@ -17,7 +17,7 @@ import { Vue } from 'vue-property-decorator';
 export default class HomeNavV extends Vue {
     goToHome(): void {
         // Get extent from config and convert it to extent object
-        const homeExtent = Extent.fromConfig("home_extent", this.$iApi.getConfig().map.extent);
+        const homeExtent = Extent.fromConfig('home_extent', this.$iApi.getConfig().map.extent);
         // apply extent
         this.$iApi.geo.map.zoomMapTo(homeExtent);
     }

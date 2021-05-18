@@ -1,21 +1,29 @@
 import { AttribLayer, InstanceAPI } from '@/api/internal';
-import { GeometryType, IdentifyParameters, IdentifyResult, IdentifyResultFormat, IdentifyResultSet,
-    LayerType, Point, QueryFeaturesParams, RampLayerConfig, TreeNode } from '@/geo/api';
+import {
+    GeometryType,
+    IdentifyParameters,
+    IdentifyResult,
+    IdentifyResultFormat,
+    IdentifyResultSet,
+    LayerType,
+    Point,
+    QueryFeaturesParams,
+    RampLayerConfig,
+    TreeNode
+} from '@/geo/api';
 import { EsriFeatureLayer } from '@/geo/esri';
 import { FeatureFC } from './feature-fc';
 
 class FeatureLayer extends AttribLayer {
-
     esriLayer: EsriFeatureLayer | undefined;
 
-    constructor (rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
+    constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.supportsIdentify = true;
         this._layerType = LayerType.FEATURE;
     }
 
     async initiate(): Promise<void> {
-
         this.esriLayer = new EsriFeatureLayer(this.makeEsriLayerConfig(this.origRampConfig));
         await super.initiate();
     }
@@ -26,7 +34,7 @@ class FeatureLayer extends AttribLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-     protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.FeatureLayerProperties {
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.FeatureLayerProperties {
         // TODO flush out
         // NOTE: it would be nice to put esri.LayerProperties as the return type, but since we are cheating with refreshInterval it wont work
         //       we can make our own interface if it needs to happen (or can extent the esri one)
@@ -47,7 +55,7 @@ class FeatureLayer extends AttribLayer {
      *
      * @function onLoadActions
      */
-    onLoadActions (): Array<Promise<void>> {
+    onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
         if (!this.layerTree) {
@@ -87,7 +95,7 @@ class FeatureLayer extends AttribLayer {
         // const layerUrl: string = (<esri.FeatureLayer>this._innerLayer).url;
         const layerUrl: string = (<any>this.esriLayer).parsedUrl.path;
         const urlData = this.$iApi.geo.utils.shared.parseUrlIndex(layerUrl);
-        const featIdx: number =  urlData.index || 0; // we're going to have an index. feature layer wont load without one.
+        const featIdx: number = urlData.index || 0; // we're going to have an index. feature layer wont load without one.
 
         // feature has only one layer
         const featFC = new FeatureFC(this, featIdx);
@@ -155,7 +163,6 @@ class FeatureLayer extends AttribLayer {
 
         const pFC = featFC.loadFeatureCount();
 
-
         // if file based (or server extent was fried), calculate extent based on geometry
         // TODO implement this. may need a manual loop to calculate graphicsExtent since ESRI torpedo'd the function
         /*
@@ -173,15 +180,15 @@ class FeatureLayer extends AttribLayer {
     // ----------- LAYER ACTIONS -----------
 
     identify(options: IdentifyParameters): IdentifyResultSet {
-
         const myFC: FeatureFC = <FeatureFC>this.getFC(undefined); // undefined will get the first/only
 
         // early kickout check. not loaded/error; not visible; not queryable; off scale
-        if (!this.isValidState() ||
+        if (
+            !this.isValidState() ||
             !myFC.getVisibility() ||
             // !this.isQueryable() || // TODO implement when we have this flag created
-            myFC.scaleSet.isOffScale(this.$iApi.geo.map.getScale()).offScale) {
-
+            myFC.scaleSet.isOffScale(this.$iApi.geo.map.getScale()).offScale
+        ) {
             // return empty result.
             return super.identify(options);
         }
@@ -235,8 +242,6 @@ class FeatureLayer extends AttribLayer {
 
         return result;
     }
-
-
 }
 
 export default FeatureLayer;
