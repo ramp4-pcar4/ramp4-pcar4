@@ -15,7 +15,9 @@ type ConfigContext = ActionContext<ConfigState, RootState>;
 const getters = {
     getActiveConfig: (state: ConfigState) => (lang: string): RampConfig => {
         if (state.registeredConfigs[lang] === undefined) {
-            throw new Error('Unsupported language or no registered config exists for requested language');
+            throw new Error(
+                'Unsupported language or no registered config exists for requested language'
+            );
         }
         return state.registeredConfigs[lang];
     },
@@ -30,18 +32,29 @@ const getters = {
 };
 
 const actions = {
-    newConfig: function(this: any, context: ConfigContext, config: RampConfig): void {
+    newConfig: function(
+        this: any,
+        context: ConfigContext,
+        config: RampConfig
+    ): void {
         const newConfig = merge(context.state.config, config);
         context.commit('SET_CONFIG', newConfig);
         console.log('new config adding layers', newConfig.layers);
         this.set(LayerStore.addLayerConfigs, newConfig.layers);
     },
-    registerConfig: function(this: any, context: ConfigContext, configInfo: any): void {
+    registerConfig: function(
+        this: any,
+        context: ConfigContext,
+        configInfo: any
+    ): void {
         const langs = configInfo.langs;
         const config = configInfo.config;
         if (langs !== undefined && langs.length > 0) {
             // register config for specified languages
-            langs.forEach((lang: string) => (context.state.registeredConfigs[lang] = config));
+            langs.forEach(
+                (lang: string) =>
+                    (context.state.registeredConfigs[lang] = config)
+            );
         } else {
             // register config for all available languages
             for (const lang in i18n.messages) {
@@ -49,14 +62,22 @@ const actions = {
             }
         }
     },
-    overrideConfig: function(this: any, context: ConfigContext, newConfig: RampConfig): void {
+    overrideConfig: function(
+        this: any,
+        context: ConfigContext,
+        newConfig: RampConfig
+    ): void {
         this.set(LayerStore.addLayers, newConfig.layers);
         // save and override registered and main config
         context.dispatch('registerConfig', newConfig);
         context.commit('SET_CONFIG', newConfig);
         // TODO: trigger map reload?
     },
-    updateConfig: function(this: any, context: ConfigContext, fixtureConfig: any): void {
+    updateConfig: function(
+        this: any,
+        context: ConfigContext,
+        fixtureConfig: any
+    ): void {
         // TODO: verify config snippet to be applied over config is valid
         // shallow merge to override any identical existing fixtures properties
         const newFixtureConfig = {

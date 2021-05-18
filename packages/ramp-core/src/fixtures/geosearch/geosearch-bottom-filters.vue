@@ -32,7 +32,11 @@ export default class GeosearchBottomFilters extends Vue {
         // TODO decide if this event handler should go into the default ramp events, or remain as hard-bound to geosearch.
         //      hard-bound means no one outside can un-hook and replace with a different reaction.
         //      going default means the handler function needs to be public / on the geosearch api.
-        this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, this.onMapExtentChange, 'geosearch_map_extent');
+        this.$iApi.event.on(
+            GlobalEvents.MAP_EXTENTCHANGE,
+            this.onMapExtentChange,
+            'geosearch_map_extent'
+        );
     }
 
     /**
@@ -49,7 +53,10 @@ export default class GeosearchBottomFilters extends Vue {
             return ext;
         } else {
             // var needed to get around casting complaints with async syntax
-            const pExt = await this.$iApi.geo.utils.proj.projectGeometry(4326, ext);
+            const pExt = await this.$iApi.geo.utils.proj.projectGeometry(
+                4326,
+                ext
+            );
             return pExt as Extent;
         }
     }

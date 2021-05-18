@@ -1,6 +1,12 @@
 import Vue, { Component, VueConstructor } from 'vue';
 
-import { APIScope, InstanceAPI, isVueConstructor, isComponentOptions, isTypeofImportVue } from './internal';
+import {
+    APIScope,
+    InstanceAPI,
+    isVueConstructor,
+    isComponentOptions,
+    isTypeofImportVue
+} from './internal';
 
 import {
     PanelConfig,
@@ -77,7 +83,9 @@ export class PanelInstance extends APIScope {
             let asyncComponent: Promise<AsyncComponentEh>;
 
             if (typeof screen === 'string') {
-                asyncComponent = import(/* webpackChunkName: "[request]" */ `./../../src/fixtures/${screen}`);
+                asyncComponent = import(
+                    /* webpackChunkName: "[request]" */ `./../../src/fixtures/${screen}`
+                );
             } else {
                 asyncComponent = screen(); // execute the async component function to get the promise
             }
@@ -158,7 +166,11 @@ export class PanelInstance extends APIScope {
         super(iApi);
 
         // copy values from the config adding `style` default
-        ({ id: this.id, screens: this.screens, style: this.style } = { id, style: {}, ...config });
+        ({ id: this.id, screens: this.screens, style: this.style } = {
+            id,
+            style: {},
+            ...config
+        });
 
         // check if this panel has at least a single screen
         if (Object.keys(this.screens).length === 0) {
@@ -192,7 +204,10 @@ export class PanelInstance extends APIScope {
             this.$iApi.panel.open(this);
         } else {
             // pass the screen id and props, if given, to the `open` function
-            this.$iApi.panel.open({ id: this.id, ...(typeof value === 'string' ? { screen: value } : value) });
+            this.$iApi.panel.open({
+                id: this.id,
+                ...(typeof value === 'string' ? { screen: value } : value)
+            });
         }
 
         return this;
@@ -230,7 +245,9 @@ export class PanelInstance extends APIScope {
      * @returns {this}
      * @memberof PanelInstance
      */
-    toggle(value?: boolean | { screen: string; props?: object; toggle?: boolean }): this {
+    toggle(
+        value?: boolean | { screen: string; props?: object; toggle?: boolean }
+    ): this {
         // toggle panel if no value provided, force toggle panel if value specified, or toggle panel on specified screen if provided
         // ensure that a toggle value must be provided to panel API toggle if called
         if (typeof value === 'undefined') {
@@ -243,7 +260,9 @@ export class PanelInstance extends APIScope {
         } else {
             this.$iApi.panel.toggle(
                 { id: this.id, screen: value.screen, props: value.props },
-                typeof value.toggle !== 'undefined' ? value.toggle : !this.isOpen
+                typeof value.toggle !== 'undefined'
+                    ? value.toggle
+                    : !this.isOpen
             );
         }
 
@@ -277,7 +296,10 @@ export class PanelInstance extends APIScope {
      * @memberof PanelInstance
      */
     get isPinned(): boolean {
-        return this.$iApi.panel.pinned !== null && this.$iApi.panel.pinned.id === this.id;
+        return (
+            this.$iApi.panel.pinned !== null &&
+            this.$iApi.panel.pinned.id === this.id
+        );
     }
 
     /**

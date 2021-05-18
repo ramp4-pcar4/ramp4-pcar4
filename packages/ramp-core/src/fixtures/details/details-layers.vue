@@ -7,7 +7,14 @@
             <close @click="panel.close()"></close>
         </template>
         <template #content>
-            <div class="p-5">{{ $t('details.layers.found', { numResults: payloadResults, numLayers: payload.length }) }}</div>
+            <div class="p-5">
+                {{
+                    $t('details.layers.found', {
+                        numResults: payloadResults,
+                        numLayers: payload.length
+                    })
+                }}
+            </div>
             <div
                 class="px-20 py-10 text-md flex hover:bg-gray-200 cursor-pointer"
                 v-for="(item, idx) in payload"
@@ -36,18 +43,28 @@ import { IdentifyResult } from '@/geo/api';
 export default class DetailsLayersV extends Vue {
     @Prop() panel!: PanelInstance;
     @Get(DetailsStore.payload) payload!: IdentifyResult[];
-    @Get('layer/getLayerByUid') getLayerByUid!: (uid: string) => LayerInstance | undefined;
+    @Get('layer/getLayerByUid') getLayerByUid!: (
+        uid: string
+    ) => LayerInstance | undefined;
     @Get('layer/layers') layers!: LayerInstance[];
 
     /**
      * Switches the panel screen to display the data for a given result.
      */
     openResult(index: number) {
-        if (this.getLayerByUid(this.payload[index].uid)!.layerType === 'ogcWms') {
+        if (
+            this.getLayerByUid(this.payload[index].uid)!.layerType === 'ogcWms'
+        ) {
             // skip results screen for wms layers
-            this.panel.show({ screen: 'details-screen-item', props: { resultIndex: index, layerType: 'ogcWms' , itemIndex: 0} });
+            this.panel.show({
+                screen: 'details-screen-item',
+                props: { resultIndex: index, layerType: 'ogcWms', itemIndex: 0 }
+            });
         } else {
-            this.panel.show({ screen: 'details-screen-result', props: { resultIndex: index } });
+            this.panel.show({
+                screen: 'details-screen-result',
+                props: { resultIndex: index }
+            });
         }
     }
 
@@ -77,7 +94,7 @@ export default class DetailsLayersV extends Vue {
      * Calculates the total number of results received by identify.
      */
     get payloadResults(): number {
-       return this.payload.map(r => r.items.length).reduce((a, b) => a + b, 0);
+        return this.payload.map(r => r.items.length).reduce((a, b) => a + b, 0);
     }
 }
 </script>

@@ -5,12 +5,19 @@
             <!-- the :class line calculates margin-left for each of the 3 symbols, and gives a margin-top to symbols that arent the first -->
             <div
                 class="relative"
-                :class="['ml-' + idx * 3, idx > 0 ? '-mt-32' : '', 'symbol-' + idx]"
+                :class="[
+                    'ml-' + idx * 3,
+                    idx > 0 ? '-mt-32' : '',
+                    'symbol-' + idx
+                ]"
                 :style="{ 'z-index': 3 - idx }"
                 v-for="(item, idx) in stack.slice(0, 3).reverse()"
                 :key="idx"
             >
-                <span class="symbologyIcon w-28 h-28" v-html="stack[idx].svgcode"></span>
+                <span
+                    class="symbologyIcon w-28 h-28"
+                    v-html="stack[idx].svgcode"
+                ></span>
             </div>
         </div>
 
@@ -22,7 +29,11 @@
 
     <!-- If the symbology stack is already open, display an X in the place of the stack. -->
     <div v-else class="h-32 w-32 inline-flex justify-center items-center">
-        <svg class="fill-current w-16 h-16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512">
+        <svg
+            class="fill-current w-16 h-16"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 352 512"
+        >
             <path
                 d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
             />
@@ -58,7 +69,9 @@ export default class SymbologyStack extends Vue {
      * Retrieves the symbology stack. Waits on all symbols in the stack to finish loading before displaying.
      */
     getSymbologyStack(): any {
-        Promise.all(this.layer.getLegend(this.uid).map((l: any) => l.drawPromise)).then((r: any) => {
+        Promise.all(
+            this.layer.getLegend(this.uid).map((l: any) => l.drawPromise)
+        ).then((r: any) => {
             this.stack = this.layer.getLegend(this.uid);
         });
     }

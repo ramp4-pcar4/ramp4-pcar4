@@ -21,7 +21,10 @@ export class DetailsAPI extends FixtureInstance {
 
         // Open the details panel.
         if (!panel.isOpen) {
-            this.$iApi.panel.open({ id: 'details-panel', screen: 'details-screen-layers' });
+            this.$iApi.panel.open({
+                id: 'details-panel',
+                screen: 'details-screen-layers'
+            });
         } else {
             panel.show('details-screen-layers');
         }
@@ -49,7 +52,11 @@ export class DetailsAPI extends FixtureInstance {
         if (panel.isOpen) {
             this.$iApi.panel.close(panel);
         }
-        this.$iApi.panel.open({ id: 'details-panel', screen: 'details-screen-item', props: { isFeature: true, resultIndex: 0, itemIndex: 0 } });
+        this.$iApi.panel.open({
+            id: 'details-panel',
+            screen: 'details-screen-item',
+            props: { isFeature: true, resultIndex: 0, itemIndex: 0 }
+        });
     }
 
     /**
@@ -61,7 +68,9 @@ export class DetailsAPI extends FixtureInstance {
     _parseConfig(config?: DetailsConfig) {
         if (!config) return;
 
-        const detailsItems = config.items.map((item: any) => new DetailsItemInstance(item));
+        const detailsItems = config.items.map(
+            (item: any) => new DetailsItemInstance(item)
+        );
 
         // save the items in the store
         this.$vApp.$store.set(
@@ -81,9 +90,14 @@ export class DetailsAPI extends FixtureInstance {
      * @memberof DetailsAPI
      */
     _validateItems() {
-        Object.values(this.$vApp.$store.get<DetailsItemInstance[]>('details/items')!).forEach(item => {
+        Object.values(
+            this.$vApp.$store.get<DetailsItemInstance[]>('details/items')!
+        ).forEach(item => {
             if (item.template in this.$vApp.$options.components!) {
-                this.$vApp.$store.set(`details/items@${item.id}.componentId`, item.template);
+                this.$vApp.$store.set(
+                    `details/items@${item.id}.componentId`,
+                    item.template
+                );
             }
         });
     }

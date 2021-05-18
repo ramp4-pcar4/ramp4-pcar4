@@ -7,7 +7,6 @@ import { DataFormat, LegendSymbology, ScaleSet } from '@/geo/api';
 
 // TODO decide if this needs APIScope base or not. Since we have reference to parent layer, could grab via that.
 export class CommonFC {
-
     protected parentLayer: CommonLayer;
     dataFormat: DataFormat;
     layerIdx: number; // final name TBD
@@ -20,9 +19,7 @@ export class CommonFC {
     //      not really seeing a reason to keep the outer structure. if we find we need it, can change back or to something better
     legend: Array<LegendSymbology>;
 
-
-    constructor (parent: CommonLayer, layerIdx: number = 0) {
-
+    constructor(parent: CommonLayer, layerIdx: number = 0) {
         this.parentLayer = parent;
         this.layerIdx = layerIdx;
         this.uid = this.parentLayer.bestUid(layerIdx);
@@ -34,7 +31,9 @@ export class CommonFC {
     }
 
     protected noLayerErr(): void {
-        console.error('Attempted to manipulate the layer before it was generated');
+        console.error(
+            'Attempted to manipulate the layer before it was generated'
+        );
     }
 
     /**
@@ -43,7 +42,7 @@ export class CommonFC {
      * @function getVisibility
      * @returns {Boolean} visibility of the feature class
      */
-    getVisibility (): boolean {
+    getVisibility(): boolean {
         // basic case - fc vis === layer vis
         if (this.parentLayer.esriLayer) {
             return this.parentLayer.esriLayer.visible;
@@ -59,7 +58,7 @@ export class CommonFC {
      * @function setVisibility
      * @param {Boolean} value the new visibility setting
      */
-    setVisibility (value: boolean): void {
+    setVisibility(value: boolean): void {
         // basic case - set layer visibility
         if (this.parentLayer.esriLayer) {
             this.parentLayer.esriLayer.visible = value;
@@ -74,7 +73,7 @@ export class CommonFC {
      * @function getOpacity
      * @returns {Boolean} opacity of the feature class
      */
-    getOpacity (): number {
+    getOpacity(): number {
         // basic case - fc opac === layer opac
         if (this.parentLayer.esriLayer) {
             return this.parentLayer.esriLayer.opacity;
@@ -90,7 +89,7 @@ export class CommonFC {
      * @function setOpacity
      * @param {Boolean} value the new opacity setting
      */
-    setOpacity (value: number): void {
+    setOpacity(value: number): void {
         // basic case - set layer opacity
         if (this.parentLayer.esriLayer) {
             this.parentLayer.esriLayer.opacity = value;
@@ -98,5 +97,4 @@ export class CommonFC {
             this.noLayerErr();
         }
     }
-
 }

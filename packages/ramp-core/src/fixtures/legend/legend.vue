@@ -12,7 +12,11 @@
         <template #content>
             <legend-header></legend-header>
             <div v-focus-list>
-                <legend-component v-for="(item, idx) in children" :legendItem="item" :key="idx"></legend-component>
+                <legend-component
+                    v-for="(item, idx) in children"
+                    :legendItem="item"
+                    :key="idx"
+                ></legend-component>
             </div>
         </template>
     </panel-screen>

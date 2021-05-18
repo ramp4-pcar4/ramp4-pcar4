@@ -3,7 +3,13 @@
         <div class="legend-item-header">
             <!-- smiley face. very important that we migrate this -->
             <div class="flex pr-10">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" width="24px" height="24px">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="black"
+                    width="24px"
+                    height="24px"
+                >
                     <path d="M0 0h24v24H0V0z" fill="none" />
                     <path d="M0 0h24v24H0V0z" fill="none" />
                     <circle cx="15.5" cy="9.5" r="1.5" />
@@ -54,13 +60,18 @@ export default class LegendPlaceholderV extends Vue {
 
     @Watch('layers')
     layerAdded(newValue: LayerInstance[], oldValue: LayerInstance[]) {
-        this.layer = newValue.find((layer: LayerInstance) => layer.id === this.legendItem.id);
+        this.layer = newValue.find(
+            (layer: LayerInstance) => layer.id === this.legendItem.id
+        );
 
         if (this.layer !== undefined) {
             this.layer.isLayerLoaded().then(r => {
                 this.legendItem._layer = this.layer;
                 this.legendItem._type = LegendTypes.Entry;
-                this.legendItem._uid = this.layer!.getLayerTree().findChildByIdx(this.legendItem._layerIndex!)?.uid || this.layer!.uid;
+                this.legendItem._uid =
+                    this.layer!.getLayerTree().findChildByIdx(
+                        this.legendItem._layerIndex!
+                    )?.uid || this.layer!.uid;
             });
         }
     }

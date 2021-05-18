@@ -3,7 +3,7 @@ import { northarrow } from './store/index';
 import NortharrowV from './northarrow.vue';
 
 class NortharrowFixture extends NortharrowAPI {
-   async added() {
+    async added() {
         console.log(`[fixture] ${this.id} added`);
 
         this.$vApp.$store.registerModule('northarrow', northarrow());
@@ -14,9 +14,13 @@ class NortharrowFixture extends NortharrowAPI {
             value => this._parseConfig(value)
         );
 
-        const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
-        const northarrowInstance = this.extend(NortharrowV, { store: this.$vApp.$store });
-        innerShell.append(northarrowInstance.$el)
+        const innerShell = this.$vApp.$el.getElementsByClassName(
+            'inner-shell'
+        )[0];
+        const northarrowInstance = this.extend(NortharrowV, {
+            store: this.$vApp.$store
+        });
+        innerShell.append(northarrowInstance.$el);
     }
 
     removed(): void {

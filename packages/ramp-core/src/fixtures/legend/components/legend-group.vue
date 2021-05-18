@@ -7,10 +7,20 @@
                 v-focus-item
             >
                 <!-- dropdown icon -->
-                <div class="expand-toggle mr-10" :class="{ 'rotate-180': legendItem.expanded }">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                <div
+                    class="expand-toggle mr-10"
+                    :class="{ 'rotate-180': legendItem.expanded }"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        width="24"
+                    >
                         <path d="M0 0h24v24H0V0z" fill="none" />
-                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+                        <path
+                            d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"
+                        />
                     </svg>
                 </div>
 
@@ -20,14 +30,28 @@
                 </div>
 
                 <!-- visibility -->
-                <checkbox :value="legendItem.visibility" :isRadio="props && props.isVisibilitySet" :legendItem="legendItem" />
+                <checkbox
+                    :value="legendItem.visibility"
+                    :isRadio="props && props.isVisibilitySet"
+                    :legendItem="legendItem"
+                />
             </div>
-            <tooltip position="top-left">{{ $t(legendItem.expanded ? 'legend.group.collapse' : 'legend.group.expand') }}</tooltip>
+            <tooltip position="top-left">{{
+                $t(
+                    legendItem.expanded
+                        ? 'legend.group.collapse'
+                        : 'legend.group.expand'
+                )
+            }}</tooltip>
         </div>
 
         <!-- Display children of the group -->
         <div class="legend-group pl-5" v-if="legendItem.expanded">
-            <legend-component v-for="(item, idx) in legendItem.children" :legendItem="item" :key="idx"></legend-component>
+            <legend-component
+                v-for="(item, idx) in legendItem.children"
+                :legendItem="item"
+                :key="idx"
+            ></legend-component>
         </div>
     </div>
 </template>

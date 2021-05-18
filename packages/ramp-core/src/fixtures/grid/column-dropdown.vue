@@ -22,7 +22,9 @@
             </div>
         </template>
         <a
-            v-for="col in columnDefs.filter(c => c.headerName && c.headerName.length > 0)"
+            v-for="col in columnDefs.filter(
+                c => c.headerName && c.headerName.length > 0
+            )"
             :key="col.headerName"
             v-on:click="
                 columnApi.setColumnVisible(col.field, col.hide);
@@ -35,7 +37,11 @@
             <div class="flex-auto"></div>
             <div class="md-icon-small inline" v-if="!col.hide">
                 <svg height="18" width="18" viewBox="0 0 24 24" class="inline">
-                    <g id="done"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" /></g>
+                    <g id="done">
+                        <path
+                            d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+                        />
+                    </g>
                 </svg>
             </div>
         </a>

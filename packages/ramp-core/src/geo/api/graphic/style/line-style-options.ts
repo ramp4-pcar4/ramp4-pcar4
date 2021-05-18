@@ -3,7 +3,6 @@
 import { LineStyle, LineStyleParams, StyleOptions } from '@/geo/api';
 
 export class LineStyleOptions extends StyleOptions {
-
     constructor(opts?: LineStyleParams) {
         opts = opts || {}; // If opts is undefined set it to an empty obj
         super(opts);
@@ -16,6 +15,5 @@ export class LineStyleOptions extends StyleOptions {
         if (!opts.width || opts.width < 0) {
             this._width = 2;
         }
-
     }
 }

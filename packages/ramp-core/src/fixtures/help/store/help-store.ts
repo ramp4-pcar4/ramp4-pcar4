@@ -4,7 +4,6 @@ import { make } from 'vuex-pathify';
 import { HelpState } from './help-state';
 import { RootState } from '@/store/state';
 
-
 const getters = {};
 
 const mutations = {};

@@ -1,22 +1,32 @@
 import { AttribLayer, InstanceAPI } from '@/api/internal';
-import { GeometryType, IdentifyParameters, IdentifyResult, IdentifyResultFormat, IdentifyResultSet,
-    LayerType, Point, QueryFeaturesParams, RampLayerConfig, TreeNode } from '@/geo/api';
+import {
+    GeometryType,
+    IdentifyParameters,
+    IdentifyResult,
+    IdentifyResultFormat,
+    IdentifyResultSet,
+    LayerType,
+    Point,
+    QueryFeaturesParams,
+    RampLayerConfig,
+    TreeNode
+} from '@/geo/api';
 import { EsriFeatureLayer } from '@/geo/esri';
 import { FeatureFC } from './feature-fc';
 
 class FeatureLayer extends AttribLayer {
-
     esriLayer: EsriFeatureLayer | undefined;
 
-    constructor (rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
+    constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.supportsIdentify = true;
         this._layerType = LayerType.FEATURE;
     }
 
     async initiate(): Promise<void> {
-
-        this.esriLayer = new EsriFeatureLayer(this.makeEsriLayerConfig(this.origRampConfig));
+        this.esriLayer = new EsriFeatureLayer(
+            this.makeEsriLayerConfig(this.origRampConfig)
+        );
         await super.initiate();
     }
 
@@ -26,18 +36,23 @@ class FeatureLayer extends AttribLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-     protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.FeatureLayerProperties {
+    protected makeEsriLayerConfig(
+        rampLayerConfig: RampLayerConfig
+    ): __esri.FeatureLayerProperties {
         // TODO flush out
         // NOTE: it would be nice to put esri.LayerProperties as the return type, but since we are cheating with refreshInterval it wont work
         //       we can make our own interface if it needs to happen (or can extent the esri one)
-        const esriConfig: __esri.FeatureLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
+        const esriConfig: __esri.FeatureLayerProperties = super.makeEsriLayerConfig(
+            rampLayerConfig
+        );
 
         // TODO add any extra properties for attrib-based layers here
         // if we have a definition at load, apply it here to avoid cancellation errors on
         if (rampLayerConfig.initialFilteredQuery) {
             // TODO do we need to add something to the .filter? or is this
             //      a fixed query never goes away?
-            esriConfig.definitionExpression = rampLayerConfig.initialFilteredQuery;
+            esriConfig.definitionExpression =
+                rampLayerConfig.initialFilteredQuery;
         }
         return esriConfig;
     }
@@ -47,7 +62,7 @@ class FeatureLayer extends AttribLayer {
      *
      * @function onLoadActions
      */
-    onLoadActions (): Array<Promise<void>> {
+    onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
         if (!this.layerTree) {
@@ -87,13 +102,15 @@ class FeatureLayer extends AttribLayer {
         // const layerUrl: string = (<esri.FeatureLayer>this._innerLayer).url;
         const layerUrl: string = (<any>this.esriLayer).parsedUrl.path;
         const urlData = this.$iApi.geo.utils.shared.parseUrlIndex(layerUrl);
-        const featIdx: number =  urlData.index || 0; // we're going to have an index. feature layer wont load without one.
+        const featIdx: number = urlData.index || 0; // we're going to have an index. feature layer wont load without one.
 
         // feature has only one layer
         const featFC = new FeatureFC(this, featIdx);
         this.fcs[featIdx] = featFC;
         featFC.serviceUrl = layerUrl;
-        this.layerTree.children.push(new TreeNode(featIdx, featFC.uid, this.name)); // TODO verify name is populated at this point
+        this.layerTree.children.push(
+            new TreeNode(featIdx, featFC.uid, this.name)
+        ); // TODO verify name is populated at this point
         featFC.name = this.name; // feature layer is flat, so the FC and layer share their name
 
         // TODO see if we need to re-synch the parent name
@@ -103,12 +120,16 @@ class FeatureLayer extends AttribLayer {
         // TODO check if we have custom renderer, add to options parameter here
         const pLD: Promise<void> = featFC.loadLayerMetadata().then(() => {
             if (!featFC.attLoader) {
-                throw new Error('layer metadata loader did not create attribute loader');
+                throw new Error(
+                    'layer metadata loader did not create attribute loader'
+                );
             }
 
             // apply any config based overrides to the data we just downloaded
-            featFC.nameField = this.origRampConfig.nameField || featFC.nameField || '';
-            featFC.tooltipField = this.origRampConfig.tooltipField || featFC.nameField;
+            featFC.nameField =
+                this.origRampConfig.nameField || featFC.nameField || '';
+            featFC.tooltipField =
+                this.origRampConfig.tooltipField || featFC.nameField;
 
             featFC.processFieldMetadata(this.origRampConfig.fieldMetadata);
             featFC.attLoader.updateFieldList(featFC.fieldList);
@@ -155,7 +176,6 @@ class FeatureLayer extends AttribLayer {
 
         const pFC = featFC.loadFeatureCount();
 
-
         // if file based (or server extent was fried), calculate extent based on geometry
         // TODO implement this. may need a manual loop to calculate graphicsExtent since ESRI torpedo'd the function
         /*
@@ -173,15 +193,15 @@ class FeatureLayer extends AttribLayer {
     // ----------- LAYER ACTIONS -----------
 
     identify(options: IdentifyParameters): IdentifyResultSet {
-
         const myFC: FeatureFC = <FeatureFC>this.getFC(undefined); // undefined will get the first/only
 
         // early kickout check. not loaded/error; not visible; not queryable; off scale
-        if (!this.isValidState() ||
+        if (
+            !this.isValidState() ||
             !myFC.getVisibility() ||
             // !this.isQueryable() || // TODO implement when we have this flag created
-            myFC.scaleSet.isOffScale(this.$iApi.geo.map.getScale()).offScale) {
-
+            myFC.scaleSet.isOffScale(this.$iApi.geo.map.getScale()).offScale
+        ) {
             // return empty result.
             return super.identify(options);
         }
@@ -206,9 +226,15 @@ class FeatureLayer extends AttribLayer {
             includeGeometry: false
         };
 
-        if (myFC.geomType !== GeometryType.POLYGON && options.geometry.type === GeometryType.POINT) {
+        if (
+            myFC.geomType !== GeometryType.POLYGON &&
+            options.geometry.type === GeometryType.POINT
+        ) {
             // if our layer is not polygon, and our identify input is a point, make a point buffer
-            qOpts.filterGeometry = this.$iApi.geo.utils.query.makeClickBuffer(<Point>options.geometry, options.tolerance);
+            qOpts.filterGeometry = this.$iApi.geo.utils.query.makeClickBuffer(
+                <Point>options.geometry,
+                options.tolerance
+            );
         } else {
             qOpts.filterGeometry = options.geometry;
         }
@@ -235,8 +261,6 @@ class FeatureLayer extends AttribLayer {
 
         return result;
     }
-
-
 }
 
 export default FeatureLayer;

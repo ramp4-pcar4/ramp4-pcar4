@@ -14,7 +14,11 @@
             tabindex="-1"
             :disabled="disabled"
         />
-        <tooltip position="top-right"> {{ $t(value ? 'legend.visibility.hide' : 'legend.visibility.show') }} </tooltip>
+        <tooltip position="top-right">
+            {{
+                $t(value ? 'legend.visibility.hide' : 'legend.visibility.show')
+            }}
+        </tooltip>
     </div>
 </template>
 

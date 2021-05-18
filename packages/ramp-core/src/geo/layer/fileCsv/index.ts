@@ -5,9 +5,7 @@ import { FileLayer } from '@/api/internal';
 // NOTE this is currently 100% untested
 
 class CsvLayer extends FileLayer {
-
     async initiate(): Promise<void> {
-
         // TODO check if .sourceGeoJson is already populated?
         //      if this initiate is a reload, do we want to re-use it, or re-download? decide.
 
@@ -35,23 +33,23 @@ class CsvLayer extends FileLayer {
             //   2. any parsing required to get web result into string format
             //   3. store parsed result in local var csvData
 
-
             // temp line to warn people
             csvData = 'error remote file csv loader not yet implemented';
-
         } else {
             throw new Error('Csv file config contains no raw data or url');
         }
 
         // convert csv to geojson, store in property for FileLayer to consume.
-        this.sourceGeoJson = await this.$iApi.geo.layer.files.csvToGeoJson(csvData, {
-            latfield: this.origRampConfig.latField,
-            lonfield: this.origRampConfig.longField
-        });
+        this.sourceGeoJson = await this.$iApi.geo.layer.files.csvToGeoJson(
+            csvData,
+            {
+                latfield: this.origRampConfig.latField,
+                lonfield: this.origRampConfig.longField
+            }
+        );
 
         await super.initiate();
     }
-
 }
 
 export default CsvLayer;

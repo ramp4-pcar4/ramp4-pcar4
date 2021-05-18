@@ -12,7 +12,9 @@ export class GridAPI extends FixtureInstance {
      */
     toggleGrid(uid: string, open?: boolean): void {
         // get GridConfig for specified uid
-        let gridSettings: GridConfig | undefined = this.$vApp.$store.get(`grid/grids@${uid}`);
+        let gridSettings: GridConfig | undefined = this.$vApp.$store.get(
+            `grid/grids@${uid}`
+        );
 
         // if no GridConfig exists for the given uid, create it.
         if (gridSettings === undefined) {
@@ -29,7 +31,10 @@ export class GridAPI extends FixtureInstance {
             this.$vApp.$store.set('grid/addGrid!', gridSettings);
         }
 
-        const prevUid = this.$vApp.$store.get('grid/currentUid', uid ? uid : null);
+        const prevUid = this.$vApp.$store.get(
+            'grid/currentUid',
+            uid ? uid : null
+        );
         this.$vApp.$store.set('grid/currentUid', uid ? uid : null);
 
         const panel = this.$iApi.panel.get('grid-panel');

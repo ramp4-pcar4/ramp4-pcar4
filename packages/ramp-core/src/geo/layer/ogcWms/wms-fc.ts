@@ -54,11 +54,10 @@ function getWMSLayerTitle(wmsLayer: EsriWMSLayer, wmsLayerId: string): string {
 */
 
 export class WmsFC extends CommonFC {
-
     // @ts-ignore
     protected parentLayer: WmsLayer;
 
-    constructor (parent: WmsLayer, layerIdx: number = 0) {
+    constructor(parent: WmsLayer, layerIdx: number = 0) {
         super(parent, layerIdx);
         this.dataFormat = DataFormat.OGC_RASTER;
     }

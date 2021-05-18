@@ -1,5 +1,10 @@
 <template>
-    <component class="select-none" :is="templates[legendItem.type]" :legendItem="legendItem" :props="props"></component>
+    <component
+        class="select-none"
+        :is="templates[legendItem.type]"
+        :legendItem="legendItem"
+        :props="props"
+    ></component>
 </template>
 
 <script lang="ts">

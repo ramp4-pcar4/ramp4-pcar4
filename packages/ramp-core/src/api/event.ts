@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import { APIScope, InstanceAPI, LayerInstance } from './internal';
 import { DetailsAPI } from '@/fixtures/details/api/details';
-import { SettingsAPI} from '@/fixtures/settings/api/settings';
+import { SettingsAPI } from '@/fixtures/settings/api/settings';
 import { HelpAPI } from '@/fixtures/help/api/help';
 import { GridAPI } from '@/fixtures/grid/api/grid';
 import { WizardAPI } from '@/fixtures/wizard/api/wizard';
@@ -81,7 +81,7 @@ class EventHandler {
     handlerName: string;
     handlerFunc: Function;
 
-    constructor (eName: string, hName: string, handler: Function) {
+    constructor(eName: string, hName: string, handler: Function) {
         this.eventName = eName;
         this.handlerName = hName;
         this.handlerFunc = handler;
@@ -89,7 +89,6 @@ class EventHandler {
 }
 
 export class EventAPI extends APIScope {
-
     /**
      * A vue instance that provides an event bus for all events.
      *
@@ -118,8 +117,9 @@ export class EventAPI extends APIScope {
         // add the public enum items here, as they will always exist.
         // getting enum values is a mess. this code does it but assumes
         // all event names in global events use the slash format
-        this._nameRegister = Object.values(GlobalEvents)
-            .filter(e => (typeof e === 'string') && (e.indexOf('/') > -1));
+        this._nameRegister = Object.values(GlobalEvents).filter(
+            e => typeof e === 'string' && e.indexOf('/') > -1
+        );
     }
 
     /**
@@ -160,7 +160,7 @@ export class EventAPI extends APIScope {
             if (this._nameRegister.indexOf(n) === -1) {
                 this._nameRegister.push(n);
             }
-        })
+        });
     }
 
     /**
@@ -188,7 +188,9 @@ export class EventAPI extends APIScope {
         // check if name already registered
         if (this.findHandler(handlerName)) {
             // TODO decide if we are replacing, erroring, do nothing + console warn?
-            throw new Error('Duplicate handler name registration: ' + handlerName);
+            throw new Error(
+                'Duplicate handler name registration: ' + handlerName
+            );
         }
 
         if (!handlerName) {
@@ -252,7 +254,6 @@ export class EventAPI extends APIScope {
      * @memberof EventAPI
      */
     once(event: string, callback: Function, handlerName: string = ''): string {
-
         // need to do this here and upfront, so we have the name for the unregistration.
         // otherwise we would let the .on() call do its naming thing
         if (!handlerName) {
@@ -281,7 +282,9 @@ export class EventAPI extends APIScope {
         if (event === '') {
             return this._eventRegister.map(eh => eh.handlerName);
         }
-        return this._eventRegister.filter(eh => eh.eventName === event).map(eh => eh.handlerName);
+        return this._eventRegister
+            .filter(eh => eh.eventName === event)
+            .map(eh => eh.handlerName);
     }
 
     /**
@@ -297,12 +300,27 @@ export class EventAPI extends APIScope {
      * @memberof EventAPI
      */
     addDefaultEvents(eventHandlerNames?: Array<string>): Array<string> {
-        if (!Array.isArray(eventHandlerNames) || eventHandlerNames.length === 0) {
+        if (
+            !Array.isArray(eventHandlerNames) ||
+            eventHandlerNames.length === 0
+        ) {
             // use all the default event handlers
             // TODO the enum-values-to-array logic we use in the event names list
             //      fails a bit here. we could make it work if we force every default
             //      handler name to being with a specific prefix. Alternately use object, not enum.
-            eventHandlerNames = [DefEH.MAP_IDENTIFY, DefEH.MAP_KEYDOWN, DefEH.MAP_KEYUP, DefEH.MAP_BLUR, DefEH.IDENTIFY_DETAILS, DefEH.TOGGLE_SETTINGS, DefEH.OPEN_DETAILS, DefEH.TOGGLE_HELP, DefEH.TOGGLE_GRID, DefEH.OPEN_WIZARD, DefEH.GENERATE_LEGEND];
+            eventHandlerNames = [
+                DefEH.MAP_IDENTIFY,
+                DefEH.MAP_KEYDOWN,
+                DefEH.MAP_KEYUP,
+                DefEH.MAP_BLUR,
+                DefEH.IDENTIFY_DETAILS,
+                DefEH.TOGGLE_SETTINGS,
+                DefEH.OPEN_DETAILS,
+                DefEH.TOGGLE_HELP,
+                DefEH.TOGGLE_GRID,
+                DefEH.OPEN_WIZARD,
+                DefEH.GENERATE_LEGEND
+            ];
         }
 
         // add all the requested default event handlers.
@@ -322,7 +340,6 @@ export class EventAPI extends APIScope {
 
         switch (handlerName) {
             case DefEH.MAP_IDENTIFY:
-
                 // when map clicks, run the identify action
                 zeHandler = (clickParam: MapClick) => {
                     if (clickParam.button === 0) {
@@ -334,31 +351,48 @@ export class EventAPI extends APIScope {
             case DefEH.IDENTIFY_DETAILS:
                 // when identify runs, open details fixture and show the results
                 zeHandler = (identifyParam: any) => {
-                    const detailFix: DetailsAPI = this.$iApi.fixture.get('details');
+                    const detailFix: DetailsAPI = this.$iApi.fixture.get(
+                        'details'
+                    );
                     if (detailFix) {
-                        detailFix.openDetails(identifyParam.results)
+                        detailFix.openDetails(identifyParam.results);
                     }
                 };
                 this.on(GlobalEvents.MAP_IDENTIFY, zeHandler, handlerName);
                 break;
             case DefEH.TOGGLE_SETTINGS:
                 zeHandler = (payload: any) => {
-                    const settingsFixture: SettingsAPI = this.$iApi.fixture.get('settings');
+                    const settingsFixture: SettingsAPI = this.$iApi.fixture.get(
+                        'settings'
+                    );
                     if (settingsFixture) {
                         settingsFixture.toggleSettings(payload);
                     }
                 };
                 // Create a new event: opens the settings panel and hooks it up to the requested layer.
-                this.$iApi.event.on(GlobalEvents.SETTINGS_TOGGLE, zeHandler, handlerName);
+                this.$iApi.event.on(
+                    GlobalEvents.SETTINGS_TOGGLE,
+                    zeHandler,
+                    handlerName
+                );
                 break;
             case DefEH.OPEN_DETAILS:
                 zeHandler = (payload: any) => {
-                    const detailsFixture: DetailsAPI = this.$iApi.fixture.get('details');
+                    const detailsFixture: DetailsAPI = this.$iApi.fixture.get(
+                        'details'
+                    );
                     if (detailsFixture) {
-                        detailsFixture.openFeature(payload.identifyItem, payload.uid);
+                        detailsFixture.openFeature(
+                            payload.identifyItem,
+                            payload.uid
+                        );
                     }
                 };
-                this.$iApi.event.on(GlobalEvents.DETAILS_OPEN, zeHandler, handlerName);
+                this.$iApi.event.on(
+                    GlobalEvents.DETAILS_OPEN,
+                    zeHandler,
+                    handlerName
+                );
                 break;
             case DefEH.TOGGLE_HELP:
                 zeHandler = (payload?: boolean) => {
@@ -367,7 +401,11 @@ export class EventAPI extends APIScope {
                         helpFixture.toggleHelp(payload);
                     }
                 };
-                this.$iApi.event.on(GlobalEvents.HELP_TOGGLE, zeHandler, handlerName);
+                this.$iApi.event.on(
+                    GlobalEvents.HELP_TOGGLE,
+                    zeHandler,
+                    handlerName
+                );
                 break;
             case DefEH.TOGGLE_GRID:
                 zeHandler = (uid: string, open?: boolean) => {
@@ -376,51 +414,79 @@ export class EventAPI extends APIScope {
                         gridFixture.toggleGrid(uid, open);
                     }
                 };
-                this.$iApi.event.on(GlobalEvents.GRID_TOGGLE, zeHandler, handlerName);
+                this.$iApi.event.on(
+                    GlobalEvents.GRID_TOGGLE,
+                    zeHandler,
+                    handlerName
+                );
                 break;
             case DefEH.OPEN_WIZARD:
                 zeHandler = () => {
-                    const wizardFixture: WizardAPI = this.$iApi.fixture.get('wizard');
+                    const wizardFixture: WizardAPI = this.$iApi.fixture.get(
+                        'wizard'
+                    );
                     if (wizardFixture) {
                         wizardFixture.openWizard();
                     }
                 };
-                this.$iApi.event.on(GlobalEvents.WIZARD_OPEN, zeHandler, handlerName);
+                this.$iApi.event.on(
+                    GlobalEvents.WIZARD_OPEN,
+                    zeHandler,
+                    handlerName
+                );
                 break;
             case DefEH.GENERATE_LEGEND:
                 zeHandler = (layer: LayerInstance, parent?: any) => {
-                    const legendFixture: LegendAPI = this.$iApi.fixture.get('legend');
+                    const legendFixture: LegendAPI = this.$iApi.fixture.get(
+                        'legend'
+                    );
                     if (legendFixture) {
                         legendFixture.generateDefaultLegend(layer, parent);
                     }
                 };
-                this.$iApi.event.on(GlobalEvents.LEGEND_DEFAULT, zeHandler, handlerName);
+                this.$iApi.event.on(
+                    GlobalEvents.LEGEND_DEFAULT,
+                    zeHandler,
+                    handlerName
+                );
                 break;
             case DefEH.MAP_KEYDOWN:
                 zeHandler = (payload: KeyboardEvent) => {
                     this.$iApi.geo.map.mapKeyDown(payload);
                 };
-                this.$iApi.event.on(GlobalEvents.MAP_KEYDOWN, zeHandler, handlerName);
+                this.$iApi.event.on(
+                    GlobalEvents.MAP_KEYDOWN,
+                    zeHandler,
+                    handlerName
+                );
                 break;
             case DefEH.MAP_KEYUP:
                 zeHandler = (payload: KeyboardEvent) => {
                     this.$iApi.geo.map.mapKeyUp(payload);
                 };
-                this.$iApi.event.on(GlobalEvents.MAP_KEYUP, zeHandler, handlerName);
+                this.$iApi.event.on(
+                    GlobalEvents.MAP_KEYUP,
+                    zeHandler,
+                    handlerName
+                );
                 break;
             case DefEH.MAP_BLUR:
                 zeHandler = (payload: FocusEvent) => {
                     this.$iApi.geo.map.stopKeyPan();
                 };
-                this.$iApi.event.on(GlobalEvents.MAP_BLUR, zeHandler, handlerName);
+                this.$iApi.event.on(
+                    GlobalEvents.MAP_BLUR,
+                    zeHandler,
+                    handlerName
+                );
                 break;
             default:
-                console.error(`Unrecognized default event handler name encountered: ${handlerName}`);
+                console.error(
+                    `Unrecognized default event handler name encountered: ${handlerName}`
+                );
                 return `ERROR_NOT_REGISTERED__${handlerName}`;
         }
 
         return handlerName;
-
     }
-
 }

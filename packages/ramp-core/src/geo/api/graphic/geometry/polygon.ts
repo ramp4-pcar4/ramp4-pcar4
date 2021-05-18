@@ -1,9 +1,18 @@
 // TODO add proper documentation
 
-import { BaseGeometry, GeometryType, LinearRing, LineString, MultiLineString, MultiPoint, Point, SrDef, IdDef } from '@/geo/api';
+import {
+    BaseGeometry,
+    GeometryType,
+    LinearRing,
+    LineString,
+    MultiLineString,
+    MultiPoint,
+    Point,
+    SrDef,
+    IdDef
+} from '@/geo/api';
 
 export class Polygon extends BaseGeometry {
-
     protected rawArray: Array<Array<Array<number>>>;
 
     /**
@@ -15,20 +24,25 @@ export class Polygon extends BaseGeometry {
      * @param {Boolean} [raw] An efficiency flag. If set, it means the verticies is in the pure format of [[[number, number],...,[samenumber, samenumber]],...] and we can skip data validations and parsing.
      */
     // from existing geometry that can be interpreted as a multi-ring polygon
-    constructor(id: IdDef, polygon: Polygon)
-    constructor(id: IdDef, multiLine: MultiLineString)
+    constructor(id: IdDef, polygon: Polygon);
+    constructor(id: IdDef, multiLine: MultiLineString);
     // from existing geometry that can be interpreted as a single-ring polygon
-    constructor(id: IdDef, linearRing: LinearRing)
-    constructor(id: IdDef, line: LineString)
-    constructor(id: IdDef, multiPoint: MultiPoint)
+    constructor(id: IdDef, linearRing: LinearRing);
+    constructor(id: IdDef, line: LineString);
+    constructor(id: IdDef, multiPoint: MultiPoint);
     // from arrays of single line structures that can be interpreted as a multi-ring polygon
-    constructor(id: IdDef, listOfListOfCoords: Array<Array<Array<number>>>, sr?: SrDef, raw?: boolean)
-    constructor(id: IdDef, listOfListOfPoints: Array<Array<Point>>, sr?: SrDef)
-    constructor(id: IdDef, listOfListOfXY: Array<Array<object>>, sr?: SrDef)
-    constructor(id: IdDef, listOfLinearRings: Array<LinearRing>, sr?: SrDef)
-    constructor(id: IdDef, listOfLines: Array<LineString>, sr?: SrDef)
-    constructor(id: IdDef, listOfMultiPoints: Array<MultiPoint>, sr?: SrDef)
-    constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef)
+    constructor(
+        id: IdDef,
+        listOfListOfCoords: Array<Array<Array<number>>>,
+        sr?: SrDef,
+        raw?: boolean
+    );
+    constructor(id: IdDef, listOfListOfPoints: Array<Array<Point>>, sr?: SrDef);
+    constructor(id: IdDef, listOfListOfXY: Array<Array<object>>, sr?: SrDef);
+    constructor(id: IdDef, listOfLinearRings: Array<LinearRing>, sr?: SrDef);
+    constructor(id: IdDef, listOfLines: Array<LineString>, sr?: SrDef);
+    constructor(id: IdDef, listOfMultiPoints: Array<MultiPoint>, sr?: SrDef);
+    constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef);
     // from arrays of verticies (i.e. one line) that can be interpreted as a single-ring polygon
     // TODO for now, not allowing these as it increases parsing logic quite a bit.
     // constructor(id: IdDef, polygon: Array<Point>, sr?: SpatialReference)
@@ -54,7 +68,10 @@ export class Polygon extends BaseGeometry {
 
     /** Returns an array of the contained rings. A new array is returned each time this is called. */
     get ringArray(): Array<LinearRing> {
-        return this.rawArray.map((lra, i) => new LinearRing(this.childIdGenerator(i), lra, this.sr, true));
+        return this.rawArray.map(
+            (lra, i) =>
+                new LinearRing(this.childIdGenerator(i), lra, this.sr, true)
+        );
     }
 
     /** Returns the string 'Polygon'. */
@@ -70,7 +87,6 @@ export class Polygon extends BaseGeometry {
     }
 
     static parsePolygon(input: any): Array<Array<Array<number>>> {
-
         let arrOfLines = [];
 
         if (input instanceof Polygon) {
@@ -97,9 +113,10 @@ export class Polygon extends BaseGeometry {
         return arrOfLines;
     }
 
-    static arrayDeepCopy(a: Array<Array<Array<number>>>): Array<Array<Array<number>>> {
+    static arrayDeepCopy(
+        a: Array<Array<Array<number>>>
+    ): Array<Array<Array<number>>> {
         // speed tests show loops & slice is 3x faster than JSON parse/stringify
         return a.map(l => l.map(p => p.slice()));
     }
-
 }

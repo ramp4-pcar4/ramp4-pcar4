@@ -4,14 +4,13 @@ import { UrlWrapper } from '@/geo/api';
 import axios from 'axios';
 
 export interface LayerInfo {
-    config: RampLayerConfig | null,
-    configOptions: Array<string>,
-    fields?: any,
-    layers?: any
+    config: RampLayerConfig | null;
+    configOptions: Array<string>;
+    fields?: any;
+    layers?: any;
 }
 
 export class LayerSource extends APIScope {
-
     layerCount: number = 0;
 
     constructor($iApi: InstanceAPI) {
@@ -26,10 +25,16 @@ export class LayerSource extends APIScope {
      * @param {ArrayBuffer} [fileData] raw file data buffer
      * @returns {Promise<LayerInfo | undefined>} LayerInfo object
      */
-    async fetchFileInfo(url: string, fileType: string, fileData?: ArrayBuffer): Promise<LayerInfo | undefined> {
+    async fetchFileInfo(
+        url: string,
+        fileType: string,
+        fileData?: ArrayBuffer
+    ): Promise<LayerInfo | undefined> {
         if (!fileData) {
             // if given a url, load data so we can get fields
-            const response = await axios.get(url, { responseType: 'arraybuffer'});
+            const response = await axios.get(url, {
+                responseType: 'arraybuffer'
+            });
             fileData = response.data;
         }
 
@@ -43,9 +48,14 @@ export class LayerSource extends APIScope {
         }
     }
 
-    async getGeojsonInfo(url: string, fileData: ArrayBuffer | object): Promise<LayerInfo> {
+    async getGeojsonInfo(
+        url: string,
+        fileData: ArrayBuffer | object
+    ): Promise<LayerInfo> {
         if (fileData instanceof ArrayBuffer) {
-            fileData = JSON.parse(new TextDecoder('utf-8').decode(new Uint8Array(fileData)));
+            fileData = JSON.parse(
+                new TextDecoder('utf-8').decode(new Uint8Array(fileData))
+            );
         }
 
         const config = {
@@ -59,13 +69,17 @@ export class LayerSource extends APIScope {
 
         return {
             config,
-            fields: [{ name: 'OBJECTID', type: 'oid' }].concat(this.$iApi.geo.layer.files.extractGeoJsonFields(fileData)),
+            fields: [{ name: 'OBJECTID', type: 'oid' }].concat(
+                this.$iApi.geo.layer.files.extractGeoJsonFields(fileData)
+            ),
             configOptions: ['name', 'nameField', 'tooltipField']
         };
     }
 
     async getCsvInfo(url: string, fileData: ArrayBuffer): Promise<LayerInfo> {
-        const formattedData = new TextDecoder('utf-8').decode(new Uint8Array(fileData));
+        const formattedData = new TextDecoder('utf-8').decode(
+            new Uint8Array(fileData)
+        );
 
         const config = {
             id: `csv#${++this.layerCount}`,
@@ -78,13 +92,26 @@ export class LayerSource extends APIScope {
 
         return {
             config,
-            fields: [{ name: 'OBJECTID', type: 'oid' }].concat(this.$iApi.geo.layer.files.extractCsvFields(formattedData)),
-            configOptions: ['name', 'nameField', 'tooltipField', 'latField', 'longField']
+            fields: [{ name: 'OBJECTID', type: 'oid' }].concat(
+                this.$iApi.geo.layer.files.extractCsvFields(formattedData)
+            ),
+            configOptions: [
+                'name',
+                'nameField',
+                'tooltipField',
+                'latField',
+                'longField'
+            ]
         };
     }
 
-    async getShapfileInfo(url: string, fileData: ArrayBuffer): Promise<LayerInfo> {
-        const jsonData = await this.$iApi.geo.layer.files.shapefileToGeoJson(fileData);
+    async getShapfileInfo(
+        url: string,
+        fileData: ArrayBuffer
+    ): Promise<LayerInfo> {
+        const jsonData = await this.$iApi.geo.layer.files.shapefileToGeoJson(
+            fileData
+        );
 
         return this.getGeojsonInfo(url, jsonData);
     }
@@ -96,7 +123,10 @@ export class LayerSource extends APIScope {
      * @param {string} serviceType type of layer
      * @returns {Promise<LayerInfo | undefined>} LayerInfo object
      */
-    async fetchServiceInfo(url: string, serviceType: string): Promise<LayerInfo | undefined> {
+    async fetchServiceInfo(
+        url: string,
+        serviceType: string
+    ): Promise<LayerInfo | undefined> {
         switch (serviceType) {
             case LayerType.FEATURE:
                 return this.getFeatureInfo(url);
@@ -122,7 +152,7 @@ export class LayerSource extends APIScope {
             nameField: response.data.displayField,
             tooltipField: response.data.displayField,
             state: { opacity: 1, visibility: true }
-        }
+        };
 
         return {
             config,
@@ -188,10 +218,18 @@ export class LayerSource extends APIScope {
         // get wfs data here then load as geojson layer so we can get fields
         const wrapper = new UrlWrapper(url);
         const { startindex, limit } = wrapper.queryMap;
-        const wfsJson = await this.$iApi.geo.layer.ogc.loadWfsData(url, -1, parseInt(startindex) || 0, parseInt(limit) || 1000);
+        const wfsJson = await this.$iApi.geo.layer.ogc.loadWfsData(
+            url,
+            -1,
+            parseInt(startindex) || 0,
+            parseInt(limit) || 1000
+        );
 
-        return this.getGeojsonInfo(url.match(/\/([^/]+)\/items/)?.[1] || 'Layer', wfsJson);
-    };
+        return this.getGeojsonInfo(
+            url.match(/\/([^/]+)\/items/)?.[1] || 'Layer',
+            wfsJson
+        );
+    }
 
     // TODO: WMS layer support
     // async getWmsInfo(url: string): Promise<LayerInfo> {

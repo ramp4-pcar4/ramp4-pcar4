@@ -1,7 +1,21 @@
 <template>
     <div>
-        <input class="rv-min" style="width: 45%;" type="text" v-model="minVal" @keyup="minValChanged()" placeholder="min" />
-        <input class="rv-max" style="width: 45%;" type="text" v-model="maxVal" @keyup="maxValChanged()" placeholder="max" />
+        <input
+            class="rv-min"
+            style="width: 45%;"
+            type="text"
+            v-model="minVal"
+            @keyup="minValChanged()"
+            placeholder="min"
+        />
+        <input
+            class="rv-max"
+            style="width: 45%;"
+            type="text"
+            v-model="maxVal"
+            @keyup="maxValChanged()"
+            placeholder="max"
+        />
     </div>
 </template>
 
@@ -12,8 +26,12 @@ import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 export default class CustomNumberFilter extends Vue {
     beforeMount() {
         // Load previously stored values (if saved in table state manager)
-        this.minVal = this.params.stateManager.getColumnFilter(this.params.column.colDef.field + ' min');
-        this.maxVal = this.params.stateManager.getColumnFilter(this.params.column.colDef.field + ' max');
+        this.minVal = this.params.stateManager.getColumnFilter(
+            this.params.column.colDef.field + ' min'
+        );
+        this.maxVal = this.params.stateManager.getColumnFilter(
+            this.params.column.colDef.field + ' max'
+        );
 
         // Apply the default values to the column filter.
         this.minValChanged();
@@ -21,24 +39,32 @@ export default class CustomNumberFilter extends Vue {
     }
 
     minValChanged() {
-        this.minVal = this.minVal !== '' && !isNaN(this.minVal) ? this.minVal : null;
+        this.minVal =
+            this.minVal !== '' && !isNaN(this.minVal) ? this.minVal : null;
         this.params.parentFilterInstance((instance: any) => {
             this.setFilterModel(instance);
 
             // Save the new filter value in the state manager. Allows for quick recovery if the grid is
             // closed and re-opened.
-            this.params.stateManager.setColumnFilter(this.params.column.colDef.field + ' min', this.minVal);
+            this.params.stateManager.setColumnFilter(
+                this.params.column.colDef.field + ' min',
+                this.minVal
+            );
         });
     }
 
     maxValChanged() {
-        this.maxVal = this.maxVal !== '' && !isNaN(this.maxVal) ? this.maxVal : null;
+        this.maxVal =
+            this.maxVal !== '' && !isNaN(this.maxVal) ? this.maxVal : null;
         this.params.parentFilterInstance((instance: any) => {
             this.setFilterModel(instance);
 
             // Save the new filter value in the state manager. Allows for quick recovery if the grid is
             // closed and re-opened.
-            this.params.stateManager.setColumnFilter(this.params.column.colDef.field + ' max', this.maxVal);
+            this.params.stateManager.setColumnFilter(
+                this.params.column.colDef.field + ' max',
+                this.maxVal
+            );
         });
     }
 

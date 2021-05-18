@@ -16,7 +16,6 @@ type WFSData = { type: string; features: any[] };
 type QueryMap = { [name: string]: string };
 
 export class OgcUtils extends APIScope {
-
     // TODO update logic in this function to get changes done in https://github.com/fgpv-vpgf/fgpv-vpgf/pull/3858
     // TODO consider changing the long list of functon params into one options param object
     /**
@@ -33,7 +32,7 @@ export class OgcUtils extends APIScope {
      * @returns {Promise<any>} a promise resolving with the layer GeoJSON
      * @memberof WFSServiceSource
      */
-     async loadWfsData(
+    async loadWfsData(
         url: string,
         totalCount: number = -1,
         startindex: number = 0,
@@ -44,7 +43,10 @@ export class OgcUtils extends APIScope {
         },
         xyInAttribs: boolean = false
     ): Promise<any> {
-        let newQueryMap: QueryMap = { startindex: startindex.toString(), limit: limit.toString() };
+        let newQueryMap: QueryMap = {
+            startindex: startindex.toString(),
+            limit: limit.toString()
+        };
 
         // it seems that some WFS services do not return the number of matched records with every request
         // so, we need to get that explicitly first
@@ -75,7 +77,14 @@ export class OgcUtils extends APIScope {
         if (totalCount === -1) {
             totalCount = response.data.numberMatched;
             // note we pass url and not requestUrl here, becuase requestUrl is currently a count request
-            return this.loadWfsData(url, totalCount, startindex, limit, wfsData, xyInAttribs);
+            return this.loadWfsData(
+                url,
+                totalCount,
+                startindex,
+                limit,
+                wfsData,
+                xyInAttribs
+            );
         }
 
         wfsData.features = [...wfsData.features, ...data.features]; // update the received features array
@@ -83,10 +92,24 @@ export class OgcUtils extends APIScope {
         // check if all the requested features are downloaded
         if (data.features.length < totalCount - startindex) {
             // the limit is either 1k or the number of remaining features
-            const limit = Math.min(1000, totalCount - startindex - data.features.length);
-            return this.loadWfsData(requestUrl, totalCount, data.features.length + startindex, limit, wfsData, xyInAttribs);
+            const limit = Math.min(
+                1000,
+                totalCount - startindex - data.features.length
+            );
+            return this.loadWfsData(
+                requestUrl,
+                totalCount,
+                data.features.length + startindex,
+                limit,
+                wfsData,
+                xyInAttribs
+            );
         } else {
-            if (xyInAttribs && wfsData.features.length > 0 && wfsData.features[0].geometry.type === 'Point') {
+            if (
+                xyInAttribs &&
+                wfsData.features.length > 0 &&
+                wfsData.features[0].geometry.type === 'Point'
+            ) {
                 // attempt copy of points to attributes.
                 // if we extend this logic to all feature based layers (not just wfs),
                 // suggest porting this block to geoApi.
@@ -127,8 +150,7 @@ export class OgcUtils extends APIScope {
      * @param {string} wmsEndpoint a URL pointing to a WMS server (it must not include a query string)
      * @return {Promise} a promise resolving with a metadata object (as specified above)
      */
-    parseCapabilities (wmsEndpoint: string): Promise<any> {
-
+    parseCapabilities(wmsEndpoint: string): Promise<any> {
         // TODO needs robust testing once something is using it
 
         // this executes a get capabilities and returns the XML
@@ -158,8 +180,11 @@ export class OgcUtils extends APIScope {
         const gcPromise: Promise<any> = new Promise(resolve => {
             getCapabilities()
                 .then((data: any) => resolve(data)) // if successful, pass straight back
-                .catch(() => { // if errors, try again; see fgpv-vpgf/fgpv-vpgf#908 issue
-                    console.error('Get capabilities failed; trying the second time;');
+                .catch(() => {
+                    // if errors, try again; see fgpv-vpgf/fgpv-vpgf#908 issue
+                    console.error(
+                        'Get capabilities failed; trying the second time;'
+                    );
                     resolve(getCapabilities());
                 });
         });
@@ -228,7 +253,7 @@ export class OgcUtils extends APIScope {
             if (!Array.isArray(formats)) {
                 formats = [formats];
             }
-           return formats;
+            return formats;
         };
 
         return gcPromise.then((xmlNode: any): any => {
@@ -236,12 +261,14 @@ export class OgcUtils extends APIScope {
             if (!xmlNode) {
                 return [];
             }
-            const xmlData: string = new XMLSerializer().serializeToString(xmlNode);
+            const xmlData: string = new XMLSerializer().serializeToString(
+                xmlNode
+            );
             const options: Object = {
                 ignoreAttributes: false // check for tag attributes
             };
             const jsonObj: any = parse(xmlData, options);
-            // We get an XML with a <ServiceExceptionReport> tag back 
+            // We get an XML with a <ServiceExceptionReport> tag back
             // when something goes wrong with the request.
             // Might be able to get rid of this now that we are appending
             // missing parameters to the URL.
@@ -253,7 +280,7 @@ export class OgcUtils extends APIScope {
             return {
                 layers: getLayers(capability.Layer),
                 queryTypes: getQueryTypes(capability.Request.GetFeatureInfo)
-            }
+            };
         });
     }
 }

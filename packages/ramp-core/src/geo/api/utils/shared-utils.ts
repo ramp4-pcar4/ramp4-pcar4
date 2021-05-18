@@ -3,7 +3,6 @@ import { ArcGisServerUrl } from '@/geo/api';
 import deepmerge from 'deepmerge';
 
 export class SharedUtilsAPI {
-
     /**
      * Get a 'good enough' uuid. For backup purposes if client does not supply its own
      * unique layer id
@@ -32,7 +31,11 @@ export class SharedUtilsAPI {
      * @param {Boolean} crossOrigin [optional = true] when set, tries to fetch an image with crossOrigin = anonymous
      * @return {Promise} conversion promise resolving into a canvas of the image
      */
-    convertImageToCanvas(url: string, canvas: any = null, crossOrigin: boolean = true): Promise<any> {
+    convertImageToCanvas(
+        url: string,
+        canvas: any = null,
+        crossOrigin: boolean = true
+    ): Promise<any> {
         // TODO canvas param was initially typed as HTMLCanvasElement
         //      find out where that type was getting imported in old GeoAPI,
         //      decide if we want to import and use here
@@ -71,7 +74,10 @@ export class SharedUtilsAPI {
      * @param {String} imageType [optional = 'image/png'] format of the image representation
      * @return {Promise} promise resolving with the dataURL of the image
      */
-    async convertImagetoDataURL(imageUri: string, imageType: string = 'image/png'): Promise<string> {
+    async convertImagetoDataURL(
+        imageUri: string,
+        imageType: string = 'image/png'
+    ): Promise<string> {
         // this is already a dataUrl, just return
         if (imageUri.startsWith('data')) {
             return imageUri;
@@ -83,7 +89,11 @@ export class SharedUtilsAPI {
                 return canvas.toDataURL(imageType);
             })
             .catch(error => {
-                console.error('Failed to load crossorigin image', imageUri, error);
+                console.error(
+                    'Failed to load crossorigin image',
+                    imageUri,
+                    error
+                );
                 return imageUri;
             });
     }
@@ -96,7 +106,7 @@ export class SharedUtilsAPI {
      * @param  {String} url    an indexed map server url
      * @returns {Object}  the url split into the server root and the index.
      */
-    parseUrlIndex (url: string): ArcGisServerUrl {
+    parseUrlIndex(url: string): ArcGisServerUrl {
         // break url into root and index
 
         // note we are returning index as a string for now.
@@ -110,7 +120,9 @@ export class SharedUtilsAPI {
 
         if (matches) {
             const idxStr: string = matches[1];
-            result.index = isNaN(parseInt(idxStr)) ? undefined : parseInt(idxStr);
+            result.index = isNaN(parseInt(idxStr))
+                ? undefined
+                : parseInt(idxStr);
             result.rootUrl = url.substr(0, url.length - matches[0].length); // will drop trailing slash
         } else {
             // give up, dont crash with error.
@@ -121,7 +133,6 @@ export class SharedUtilsAPI {
 
         return result;
     }
-
 }
 
 type QueryMap = { [name: string]: string };
@@ -143,11 +154,13 @@ export class UrlWrapper {
         [this._base, this._query] = url.split('?').concat('');
 
         // convert the query part into a mapped object
-        this._queryMap = this._query.split('&').reduce((map: QueryMap, parameter: string) => {
-            const [key, value] = parameter.split('=');
-            map[key] = value;
-            return map;
-        }, {});
+        this._queryMap = this._query
+            .split('&')
+            .reduce((map: QueryMap, parameter: string) => {
+                const [key, value] = parameter.split('=');
+                map[key] = value;
+                return map;
+            }, {});
     }
 
     get query(): string {
@@ -180,10 +193,15 @@ export class UrlWrapper {
      * @memberof UrlWrapper
      */
     updateQuery(queryMapUpdate: QueryMap): string {
-        const requestQueryMap: QueryMap = <QueryMap>deepmerge.all([{}, this.queryMap, queryMapUpdate]);
+        const requestQueryMap: QueryMap = <QueryMap>(
+            deepmerge.all([{}, this.queryMap, queryMapUpdate])
+        );
         const requestUrl = `${this.base}${Object.entries(requestQueryMap)
             .filter(([_, value]) => value !== undefined)
-            .map(([key, value], index) => `${index === 0 ? '?' : ''}${key}=${value}`)
+            .map(
+                ([key, value], index) =>
+                    `${index === 0 ? '?' : ''}${key}=${value}`
+            )
             .join('&')}`;
 
         return requestUrl;

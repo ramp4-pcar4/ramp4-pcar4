@@ -3,9 +3,7 @@
 import { FileLayer } from '@/api/internal';
 
 class ShapefileLayer extends FileLayer {
-
     async initiate(): Promise<void> {
-
         // TODO check if .sourceGeoJson is already populated?
         //      if this initiate is a reload, do we want to re-use it, or re-download? decide.
 
@@ -15,7 +13,9 @@ class ShapefileLayer extends FileLayer {
         // then initiate the FileLayer
 
         if (!this.origRampConfig.latField || !this.origRampConfig.longField) {
-            throw new Error('shapefile file config missing lat or long field names');
+            throw new Error(
+                'shapefile file config missing lat or long field names'
+            );
         }
 
         let shapefileData: any; // i believe this needs to be an ArrayBuffer
@@ -40,14 +40,18 @@ class ShapefileLayer extends FileLayer {
             // might make sense to put those steps in geo.layers.files module for re-use
 
             // temp line to warn people
-            shapefileData = 'error remote file shapefile loader not yet implemented';
-
+            shapefileData =
+                'error remote file shapefile loader not yet implemented';
         } else {
-            throw new Error('shapefile file config contains no raw data or url');
+            throw new Error(
+                'shapefile file config contains no raw data or url'
+            );
         }
 
         // convert shapefile to geojson, store in property for FileLayer to consume.
-        this.sourceGeoJson = await this.$iApi.geo.layer.files.shapefileToGeoJson(shapefileData);
+        this.sourceGeoJson = await this.$iApi.geo.layer.files.shapefileToGeoJson(
+            shapefileData
+        );
 
         await super.initiate();
     }

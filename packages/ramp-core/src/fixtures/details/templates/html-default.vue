@@ -1,5 +1,9 @@
 <template>
-    <div class="whitespace-pre-wrap break-words h-full overflow-auto" v-if="identifyData" v-html="identifyData.data"></div>
+    <div
+        class="whitespace-pre-wrap break-words h-full overflow-auto"
+        v-if="identifyData"
+        v-html="identifyData.data"
+    ></div>
     <div v-else>{{ $t('details.results.empty') }}</div>
 </template>
 

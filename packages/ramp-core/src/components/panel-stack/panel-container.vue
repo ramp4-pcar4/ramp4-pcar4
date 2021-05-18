@@ -1,10 +1,25 @@
 <template>
-    <div class="shadow-tm bg-white h-full xs:mr-0 sm:mr-12 last:mr-0 pointer-events-auto" :style="panel.style" :data-cy="panel.id">
+    <div
+        class="shadow-tm bg-white h-full xs:mr-0 sm:mr-12 last:mr-0 pointer-events-auto"
+        :style="panel.style"
+        :data-cy="panel.id"
+    >
         <!-- this renders a panel screen which is currently in view -->
 
         <!-- only perform transition on screen components that are not loaded yet; if already loaded, switch right away -->
-        <transition mode="out-in" :css="false" @before-leave="beforeLeave" @leave="leave" @enter="enter">
-            <component :is="panel.route.screen" v-bind="panel.route.props" :panel="panel" v-focus-list></component>
+        <transition
+            mode="out-in"
+            :css="false"
+            @before-leave="beforeLeave"
+            @leave="leave"
+            @enter="enter"
+        >
+            <component
+                :is="panel.route.screen"
+                v-bind="panel.route.props"
+                :panel="panel"
+                v-focus-list
+            ></component>
         </transition>
     </div>
 </template>
@@ -51,11 +66,17 @@ export default class PanelContainerV extends Vue {
         }
 
         // if the screen component is already loaded; if so, skip the transition
-        this.skipTransition = this.panel.isScreenLoaded(this.panel.route.screen);
+        this.skipTransition = this.panel.isScreenLoaded(
+            this.panel.route.screen
+        );
 
         // with transition, even if it's instanteneous, there is that annoying flicker when the focus ring is set
         // just before the component is removed from DOM; supress the focus ring on the screen component just before `leave` event
-        this.$el.querySelectorAll('[focus-item').forEach(element => element.classList.remove('default-focus-style'));
+        this.$el
+            .querySelectorAll('[focus-item')
+            .forEach(element =>
+                element.classList.remove('default-focus-style')
+            );
     }
 
     leave(el: HTMLElement, done: () => void): void {
@@ -65,7 +86,11 @@ export default class PanelContainerV extends Vue {
     /**
      * Animate transition between panel screen components by fading them in/out.
      */
-    animateTransition(el: HTMLElement, done: () => void, value: number[]): void {
+    animateTransition(
+        el: HTMLElement,
+        done: () => void,
+        value: number[]
+    ): void {
         if (this.skipTransition) {
             return done();
         }

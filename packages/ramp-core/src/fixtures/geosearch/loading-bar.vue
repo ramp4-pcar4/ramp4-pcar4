@@ -1,6 +1,10 @@
 <template>
     <div class="w-full h-6 relative overflow-hidden rounded-full indeterminate">
-        <div class="h-full progressbar bg-blue-800 rounded-full top-0" aria-valuemin="0" aria-valuemax="100">
+        <div
+            class="h-full progressbar bg-blue-800 rounded-full top-0"
+            aria-valuemin="0"
+            aria-valuemax="100"
+        >
             <span class="flex items-center h-full">
                 <slot></slot>
             </span>

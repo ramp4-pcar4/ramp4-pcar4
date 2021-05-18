@@ -5,20 +5,20 @@ import { DataFormat } from '@/geo/api';
 import MapImageLayer from './index';
 
 export class MapImageFC extends AttribFC {
-
     // @ts-ignore
     protected parentLayer: MapImageLayer;
     protected esriSubLayer: __esri.Sublayer;
     tooltipField: string;
 
-
-    constructor (parent: MapImageLayer, layerIdx: number = 0) {
+    constructor(parent: MapImageLayer, layerIdx: number = 0) {
         super(parent, layerIdx);
         this.dataFormat = DataFormat.ESRI_FEATURE;
         this.tooltipField = '';
 
         if (!parent.esriLayer) {
-            throw new Error('Map Image Layer with no internal esri layer encountered in FC creation');
+            throw new Error(
+                'Map Image Layer with no internal esri layer encountered in FC creation'
+            );
         }
 
         // TODO not found check?
@@ -33,7 +33,7 @@ export class MapImageFC extends AttribFC {
      * @function getVisibility
      * @returns {Boolean} visibility of the feature class
      */
-    getVisibility (): boolean {
+    getVisibility(): boolean {
         return this.esriSubLayer.visible;
     }
 
@@ -43,7 +43,7 @@ export class MapImageFC extends AttribFC {
      * @function setVisibility
      * @param {Boolean} value the new visibility setting
      */
-    setVisibility (value: boolean): void {
+    setVisibility(value: boolean): void {
         // TODO we might need to trigger a sublayer visibilty event on the event api here.
         //      see comments in common-layer initialize()
         this.esriSubLayer.visible = value;
@@ -55,7 +55,7 @@ export class MapImageFC extends AttribFC {
      * @function getOpacity
      * @returns {Boolean} opacity of the feature class
      */
-    getOpacity (): number {
+    getOpacity(): number {
         return this.esriSubLayer.opacity;
     }
 
@@ -65,7 +65,7 @@ export class MapImageFC extends AttribFC {
      * @function setOpacity
      * @param {Boolean} value the new opacity setting
      */
-    setOpacity (value: number): void {
+    setOpacity(value: number): void {
         // TODO should we make warning check on parent.isDynamic? currently parent code should manage this
         this.esriSubLayer.opacity = value;
     }
@@ -76,7 +76,7 @@ export class MapImageFC extends AttribFC {
      * @function applySqlFilter
      * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all keys
      */
-     applySqlFilter (exclusions: Array<string> = []): void {
+    applySqlFilter(exclusions: Array<string> = []): void {
         if (!this.parentLayer.esriLayer) {
             this.noLayerErr();
             return;
@@ -86,5 +86,4 @@ export class MapImageFC extends AttribFC {
         const sql = this.filter.getCombinedSql(exclusions);
         this.esriSubLayer.definitionExpression = sql;
     }
-
 }

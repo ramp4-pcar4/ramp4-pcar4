@@ -4,8 +4,18 @@
 // custom pre-processing of data to massage it into geojson for this class to process.
 
 import { AttribLayer, FileFC, InstanceAPI } from '@/api/internal';
-import { GeometryType, IdentifyParameters, IdentifyResult, IdentifyResultFormat, IdentifyResultSet,
-    LayerType, Point, QueryFeaturesParams, RampLayerConfig, TreeNode } from '@/geo/api';
+import {
+    GeometryType,
+    IdentifyParameters,
+    IdentifyResult,
+    IdentifyResultFormat,
+    IdentifyResultSet,
+    LayerType,
+    Point,
+    QueryFeaturesParams,
+    RampLayerConfig,
+    TreeNode
+} from '@/geo/api';
 import { EsriFeatureLayer, EsriField } from '@/geo/esri';
 
 // util function to manage trickery. file layer can have field names that are bad keys.
@@ -22,7 +32,9 @@ function fieldValidator(fields: Array<EsriField>, targetName: string): string {
         } else {
             // give warning and return OBJECTID, which is guaranteed to exist in file layer.
             // Issue is not critical enough to blow up the app with an error
-            console.warn(`Cannot find name field in layer field list: ${targetName}`);
+            console.warn(
+                `Cannot find name field in layer field list: ${targetName}`
+            );
             return 'OBJECTID';
         }
     } else {
@@ -32,7 +44,6 @@ function fieldValidator(fields: Array<EsriField>, targetName: string): string {
 }
 
 export class FileLayer extends AttribLayer {
-
     esriLayer: EsriFeatureLayer | undefined;
     esriView: __esri.FeatureLayerView | undefined;
 
@@ -40,7 +51,7 @@ export class FileLayer extends AttribLayer {
 
     sourceGeoJson: string | object | undefined; // TODO property for now. need to make final decison of how source geojson gets provided for initiate() to consume.
 
-    constructor (rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
+    constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.supportsIdentify = true;
         this.isFile = true;
@@ -55,7 +66,10 @@ export class FileLayer extends AttribLayer {
         // TODO figure out how the geojson is supplied.
         // another protected property? a permananent property to support reloads? part of rampConfig?
 
-        const realJson: any = typeof this.sourceGeoJson === 'string' ? JSON.parse(this.sourceGeoJson) : this.sourceGeoJson;
+        const realJson: any =
+            typeof this.sourceGeoJson === 'string'
+                ? JSON.parse(this.sourceGeoJson)
+                : this.sourceGeoJson;
 
         // esri 4: https://developers.arcgis.com/javascript/latest/sample-code/layers-featurelayer-collection/index.html
         // might need to change our terraformer call to just create a set of graphics? need to inspect terrafomer outputs
@@ -69,9 +83,14 @@ export class FileLayer extends AttribLayer {
             targetSR: this.$iApi.geo.map.getSR()
         };
 
-        this.esriJson = await this.$iApi.geo.layer.files.geoJsonToEsriJson(realJson, opts);
+        this.esriJson = await this.$iApi.geo.layer.files.geoJsonToEsriJson(
+            realJson,
+            opts
+        );
 
-        this.esriLayer = new EsriFeatureLayer(this.makeEsriLayerConfig(this.origRampConfig));
+        this.esriLayer = new EsriFeatureLayer(
+            this.makeEsriLayerConfig(this.origRampConfig)
+        );
 
         this.esriJson = undefined;
 
@@ -84,9 +103,13 @@ export class FileLayer extends AttribLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-     protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.FeatureLayerProperties {
+    protected makeEsriLayerConfig(
+        rampLayerConfig: RampLayerConfig
+    ): __esri.FeatureLayerProperties {
         // TODO might want to add an extra paremter here, as we will be passing in fields, source graphics, renderer, etc.
-        const esriConfig: __esri.FeatureLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
+        const esriConfig: __esri.FeatureLayerProperties = super.makeEsriLayerConfig(
+            rampLayerConfig
+        );
 
         // TEMP CHECKLIST OF PROPERTIES
         // source - converter
@@ -97,7 +120,6 @@ export class FileLayer extends AttribLayer {
         // spatialReference - converter
         // geometryType - converter
         // definitionExpression - TODO need to test / figure out. likely need to port to our filter framework and not set on the layer. might also be handled by AttribLayer plumbing
-
 
         // TODO add any extra properties for geoJson layers here
         //      in none, delete this function and let super get called automatically
@@ -116,7 +138,11 @@ export class FileLayer extends AttribLayer {
             esriConfig[p] = this.esriJson[p];
         });
 
-        esriConfig.displayField = fieldValidator(<Array<EsriField>>esriConfig.fields, this.origRampConfig.nameField || '') || 'OBJECTID';
+        esriConfig.displayField =
+            fieldValidator(
+                <Array<EsriField>>esriConfig.fields,
+                this.origRampConfig.nameField || ''
+            ) || 'OBJECTID';
         esriConfig.outFields = ['*']; // TODO eventually will want this overridable by the config.
 
         // TODO inspect rampLayerConfig for any config field alias overrides or field restrictions. apply them to esriConfig.fields
@@ -133,7 +159,7 @@ export class FileLayer extends AttribLayer {
      *
      * @function onLoadActions
      */
-    onLoadActions (): Array<Promise<void>> {
+    onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
         if (!this.layerTree) {
@@ -177,7 +203,10 @@ export class FileLayer extends AttribLayer {
         fFC.extractLayerMetadata();
         // NOTE name field overrides from config have already been applied by this point
         if (this.origRampConfig.tooltipField) {
-            fFC.tooltipField = fieldValidator(fFC.fields, this.origRampConfig.tooltipField);
+            fFC.tooltipField = fieldValidator(
+                fFC.fields,
+                this.origRampConfig.tooltipField
+            );
         } else {
             fFC.tooltipField = fFC.nameField;
         }
@@ -221,11 +250,12 @@ export class FileLayer extends AttribLayer {
         const map = this.$iApi.geo.map;
 
         // early kickout check. not loaded/error; not visible; not queryable; off scale
-        if (!this.isValidState() ||
+        if (
+            !this.isValidState() ||
             !myFC.getVisibility() ||
             // !this.isQueryable() || // TODO implement when we have this flag created
-            myFC.scaleSet.isOffScale(map.getScale()).offScale) {
-
+            myFC.scaleSet.isOffScale(map.getScale()).offScale
+        ) {
             // return empty result.
             return super.identify(options);
         }
@@ -254,9 +284,15 @@ export class FileLayer extends AttribLayer {
         //      needed a buffer when running against local feature layers (file based, WFS, etc)
         //      this never made much sense, re-test against ESRI 4.x api
 
-        if (myFC.geomType !== GeometryType.POLYGON && options.geometry.type === GeometryType.POINT) {
+        if (
+            myFC.geomType !== GeometryType.POLYGON &&
+            options.geometry.type === GeometryType.POINT
+        ) {
             // if our layer is not polygon, and our identify input is a point, make a point buffer
-            qOpts.filterGeometry = this.$iApi.geo.utils.query.makeClickBuffer(<Point>options.geometry, options.tolerance);
+            qOpts.filterGeometry = this.$iApi.geo.utils.query.makeClickBuffer(
+                <Point>options.geometry,
+                options.tolerance
+            );
         } else {
             qOpts.filterGeometry = options.geometry;
         }
@@ -269,7 +305,7 @@ export class FileLayer extends AttribLayer {
                     //      if we do, our "ESRI" format will need to include field metadata.
                     //      if we dont, we need to ensure an outside fixture can access field metadata via uid easily.
                     data: gr.attributes, // this.attributesToDetails(vAtt.attributes, layerData.fields),
-                    format: IdentifyResultFormat.ESRI,
+                    format: IdentifyResultFormat.ESRI
 
                     // See comments on IdentifyItem interface definition; we may decide to not keep these properties
                     // id:  gr.attributes[myFC.oidField].toString(),
@@ -283,5 +319,4 @@ export class FileLayer extends AttribLayer {
 
         return result;
     }
-
 }

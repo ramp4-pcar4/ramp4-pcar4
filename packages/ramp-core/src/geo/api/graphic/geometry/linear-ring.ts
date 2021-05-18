@@ -1,9 +1,15 @@
 // TODO add proper documentation
 
-import { GeometryType, LineString, MultiPoint, Point, SrDef, IdDef } from '@/geo/api';
+import {
+    GeometryType,
+    LineString,
+    MultiPoint,
+    Point,
+    SrDef,
+    IdDef
+} from '@/geo/api';
 
 export class LinearRing extends LineString {
-
     /**
      * Constructs a LinearRing from the given source of a line. Will close the line if it's not already closed
      *
@@ -13,16 +19,20 @@ export class LinearRing extends LineString {
      * @param {Boolean} [raw] An efficiency flag. If set, it means the verticies is in the pure format of [[number, number],...,[samenumber, samenumber]] and we can skip data validations and parsing.
      */
     // from existing geometry that can be interpreted as a ring
-    constructor(id: IdDef, linearRing: LinearRing)
-    constructor(id: IdDef, line: LineString)
-    constructor(id: IdDef, multiPoint: MultiPoint)
+    constructor(id: IdDef, linearRing: LinearRing);
+    constructor(id: IdDef, line: LineString);
+    constructor(id: IdDef, multiPoint: MultiPoint);
     // from arrays of verticies that can be interpreted as a ring
-    constructor(id: IdDef, listOfCoords: Array<Array<number>>, sr?: SrDef, raw?: boolean)
-    constructor(id: IdDef, listOfPoints: Array<Point>, sr?: SrDef)
-    constructor(id: IdDef, listOfXY: Array<object>, sr?: SrDef)
-    constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef)
+    constructor(
+        id: IdDef,
+        listOfCoords: Array<Array<number>>,
+        sr?: SrDef,
+        raw?: boolean
+    );
+    constructor(id: IdDef, listOfPoints: Array<Point>, sr?: SrDef);
+    constructor(id: IdDef, listOfXY: Array<object>, sr?: SrDef);
+    constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef);
     constructor(id: IdDef, geometry: any, sr?: SrDef, raw?: boolean) {
-
         if (raw) {
             // the first IF here is a bit silly; required to satisfy typescript (as we are extending LineString).
             // we could adjust the constructor guides to avoid it, but then would confuse users of IDEs in thinking the raw flag
@@ -39,7 +49,9 @@ export class LinearRing extends LineString {
         LinearRing.closeRing(this.rawArray);
 
         if (this.length < 4) {
-            throw new Error('Linear Ring must have at least 3 distinct vertices.');
+            throw new Error(
+                'Linear Ring must have at least 3 distinct vertices.'
+            );
         }
     }
 
@@ -78,9 +90,9 @@ export class LinearRing extends LineString {
     static closeRing(points: Array<Array<number>>): void {
         const first = points[0];
         const last = points[points.length - 1];
-        if (first[0] !== last[0] || first[1] !== last[1]) { // 0 = x, 1 = y
+        if (first[0] !== last[0] || first[1] !== last[1]) {
+            // 0 = x, 1 = y
             points.push(first.slice());
         }
     }
-
 }

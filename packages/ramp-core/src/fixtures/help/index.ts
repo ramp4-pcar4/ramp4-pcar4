@@ -36,7 +36,6 @@ class HelpFixture extends HelpAPI {
             () => this.config,
             value => this._parseConfig(value)
         );
-
     }
 
     removed() {

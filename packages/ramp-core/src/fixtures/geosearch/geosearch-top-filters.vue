@@ -6,8 +6,13 @@
                 :value="queryParams.province"
                 v-on:change="setProvince($event.target.value)"
             >
-                <option value="" disabled hidden>{{ $t('geosearch.filters.province') }}</option>
-                <option v-for="province in provinces" v-bind:key="province.code">
+                <option value="" disabled hidden>{{
+                    $t('geosearch.filters.province')
+                }}</option>
+                <option
+                    v-for="province in provinces"
+                    v-bind:key="province.code"
+                >
                     {{ province.name }}
                 </option>
             </select>
@@ -18,7 +23,9 @@
                 :value="queryParams.type"
                 v-on:change="setType($event.target.value)"
             >
-                <option value="" disabled hidden>{{ $t('geosearch.filters.type') }}</option>
+                <option value="" disabled hidden>{{
+                    $t('geosearch.filters.type')
+                }}</option>
                 <option v-for="type in types" v-bind:key="type.code">
                     {{ type.name }}
                 </option>

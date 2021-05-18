@@ -9,7 +9,6 @@ import { GeometryType, SpatialReference, SrDef, IdDef } from '@/geo/api';
  * Baseclass of all geometries. All geometry types must derive from this class. Not intented to be instantiated on its own.
  */
 export class BaseGeometry {
-
     // TODO make this readonly? overkill?
     /** Spatial Reference of the geometry */
     sr: SpatialReference;
@@ -33,5 +32,4 @@ export class BaseGeometry {
     protected childIdGenerator(idx: number): string {
         return `${this.id}-${idx}`;
     }
-
 }

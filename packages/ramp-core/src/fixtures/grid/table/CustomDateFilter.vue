@@ -1,10 +1,22 @@
 <template>
     <div>
         <div class="inline float-left text-xs w-1/2">
-            <input class="rv-input" type="date" placeholder="date min" v-model="minVal" @change="minValChanged()" />
+            <input
+                class="rv-input"
+                type="date"
+                placeholder="date min"
+                v-model="minVal"
+                @change="minValChanged()"
+            />
         </div>
         <div class="inline float-left w-1/2">
-            <input class="rv-input" type="date" placeholder="date max" v-model="maxVal" @change="maxValChanged()" />
+            <input
+                class="rv-input"
+                type="date"
+                placeholder="date max"
+                v-model="maxVal"
+                @change="maxValChanged()"
+            />
         </div>
     </div>
 </template>
@@ -16,8 +28,14 @@ import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 export default class CustomNumberFilter extends Vue {
     beforeMount() {
         // Load previously stored values (if saved in table state manager)
-        this.minVal = this.params.stateManager.getColumnFilter(this.params.column.colDef.field + ' min') || '';
-        this.maxVal = this.params.stateManager.getColumnFilter(this.params.column.colDef.field + ' max') || '';
+        this.minVal =
+            this.params.stateManager.getColumnFilter(
+                this.params.column.colDef.field + ' min'
+            ) || '';
+        this.maxVal =
+            this.params.stateManager.getColumnFilter(
+                this.params.column.colDef.field + ' max'
+            ) || '';
         // Apply the default values to the column filter.
         this.minValChanged();
         this.maxValChanged();
@@ -28,7 +46,10 @@ export default class CustomNumberFilter extends Vue {
             this.setFilterModel(instance);
             // Save the new filter value in the state manager. Allows for quick recovery if the grid is
             // closed and re-opened.
-            this.params.stateManager.setColumnFilter(this.params.column.colDef.field + ' min', this.minVal);
+            this.params.stateManager.setColumnFilter(
+                this.params.column.colDef.field + ' min',
+                this.minVal
+            );
         });
     }
 
@@ -37,17 +58,22 @@ export default class CustomNumberFilter extends Vue {
             this.setFilterModel(instance);
             // Save the new filter value in the state manager. Allows for quick recovery if the grid is
             // closed and re-opened.
-            this.params.stateManager.setColumnFilter(this.params.column.colDef.field + ' max', this.maxVal);
+            this.params.stateManager.setColumnFilter(
+                this.params.column.colDef.field + ' max',
+                this.maxVal
+            );
         });
     }
 
     setFilterModel(instance: any) {
         // This is the furthest date supported by JavaScript.
         let maxPossibleDate: Date | String = new Date(8640000000000000);
-        maxPossibleDate = `${maxPossibleDate.getFullYear()}-${maxPossibleDate.getMonth() + 1}-${maxPossibleDate.getDate()}`;
+        maxPossibleDate = `${maxPossibleDate.getFullYear()}-${maxPossibleDate.getMonth() +
+            1}-${maxPossibleDate.getDate()}`;
         // This is the earliest date supported by JavaScript.
         let minPossibleDate: Date | String = new Date(0);
-        minPossibleDate = `${minPossibleDate.getFullYear()}-${minPossibleDate.getMonth() + 1}-${minPossibleDate.getDate()}`;
+        minPossibleDate = `${minPossibleDate.getFullYear()}-${minPossibleDate.getMonth() +
+            1}-${minPossibleDate.getDate()}`;
         if (this.maxVal === '' && this.minVal === '') {
             // If neither value is set, clear the date filter.
             instance.setModel(null);

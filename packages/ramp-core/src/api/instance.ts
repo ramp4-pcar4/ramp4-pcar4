@@ -8,7 +8,13 @@ import App from '@/app.vue';
 import { createStore, RootState } from '@/store';
 import { ConfigStore } from '@/store/modules/config';
 
-import { EventAPI, FixtureAPI, GeoAPI, GlobalEvents, PanelAPI } from './internal';
+import {
+    EventAPI,
+    FixtureAPI,
+    GeoAPI,
+    GlobalEvents,
+    PanelAPI
+} from './internal';
 
 interface RampOptions {
     loadDefaultFixtures?: boolean;
@@ -31,7 +37,11 @@ export class InstanceAPI {
 
     private _isFullscreen: boolean;
 
-    constructor(element: HTMLElement, configs?: RampConfigs, options?: RampOptions) {
+    constructor(
+        element: HTMLElement,
+        configs?: RampConfigs,
+        options?: RampOptions
+    ) {
         this.event = new EventAPI(this);
 
         this.$vApp = createApp(element, this);
@@ -44,12 +54,20 @@ export class InstanceAPI {
         // TODO: store a reference to the even bus in the global store [?]
         if (configs !== undefined) {
             const defaultConfig = configs[Object.keys(configs)[0]];
-            this.$vApp.$store.set(ConfigStore.newConfig, defaultConfig !== undefined ? defaultConfig : undefined);
+            this.$vApp.$store.set(
+                ConfigStore.newConfig,
+                defaultConfig !== undefined ? defaultConfig : undefined
+            );
 
             // register first config for all available languages and then overwrite configs per language as needed
-            this.$vApp.$store.set(ConfigStore.registerConfig, { config: defaultConfig });
+            this.$vApp.$store.set(ConfigStore.registerConfig, {
+                config: defaultConfig
+            });
             for (let lang in configs) {
-                this.$vApp.$store.set(ConfigStore.registerConfig, { config: configs[lang], langs: [lang] });
+                this.$vApp.$store.set(ConfigStore.registerConfig, {
+                    config: configs[lang],
+                    langs: [lang]
+                });
             }
 
             // disable animations if needed
@@ -58,12 +76,18 @@ export class InstanceAPI {
             }
         }
 
-        this._isFullscreen = screenfull.isEnabled && screenfull.isFullscreen && screenfull.element === this.$vApp.$root.$el;
+        this._isFullscreen =
+            screenfull.isEnabled &&
+            screenfull.isFullscreen &&
+            screenfull.element === this.$vApp.$root.$el;
         if (screenfull.isEnabled) {
             // update fullscreen flag as needed (getters don't work right with screenfull)
             screenfull.onchange(() => {
                 // screnfull decrees a second enabled check
-                this._isFullscreen = screenfull.isEnabled && screenfull.isFullscreen && screenfull.element === this.$vApp.$root.$el;
+                this._isFullscreen =
+                    screenfull.isEnabled &&
+                    screenfull.isFullscreen &&
+                    screenfull.element === this.$vApp.$root.$el;
             });
         }
 
@@ -141,7 +165,10 @@ export class InstanceAPI {
      */
     getConfig() {
         const language = this.$vApp.$i18n.locale;
-        return this.$vApp.$store.get(ConfigStore.getActiveConfig, language) as RampConfig;
+        return this.$vApp.$store.get(
+            ConfigStore.getActiveConfig,
+            language
+        ) as RampConfig;
     }
 
     /**

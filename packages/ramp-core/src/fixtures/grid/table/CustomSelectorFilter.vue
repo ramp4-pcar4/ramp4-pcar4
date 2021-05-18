@@ -1,6 +1,10 @@
 <template>
     <div>
-        <select class="rv-input w-full" v-model="selectedOption" @change="selectionChanged()">
+        <select
+            class="rv-input w-full"
+            v-model="selectedOption"
+            @change="selectionChanged()"
+        >
             <option v-for="option in options" :value="option" :key="option">
                 {{ option }}
             </option>
@@ -15,13 +19,17 @@ import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 export default class CustomSelectorFilter extends Vue {
     beforeMount() {
         // Load previously stored value (if saved in table state manager)
-        this.selectedOption = this.params.stateManager.getColumnFilter(this.params.column.colDef.field);
+        this.selectedOption = this.params.stateManager.getColumnFilter(
+            this.params.column.colDef.field
+        );
 
         let rowData = this.params.rowData;
 
         // obtain row data and filter out duplicates for selector list
         rowData = rowData.map((row: any) => row[this.params.column.colId]);
-        this.options = rowData.filter((item: any, idx: any) => rowData.indexOf(item) === idx);
+        this.options = rowData.filter(
+            (item: any, idx: any) => rowData.indexOf(item) === idx
+        );
 
         // add the '...' option to allow clearing the selector
         this.options.unshift('...');
@@ -50,7 +58,10 @@ export default class CustomSelectorFilter extends Vue {
 
             // Save the new filter value in the state manager. Allows for quick recovery if the grid is
             // closed and re-opened.
-            this.params.stateManager.setColumnFilter(this.params.column.colDef.field, this.selectedOption);
+            this.params.stateManager.setColumnFilter(
+                this.params.column.colDef.field,
+                this.selectedOption
+            );
 
             this.params.api.onFilterChanged();
         });

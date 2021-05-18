@@ -25,12 +25,14 @@ export class BasemapState {
                 name: 'Canada Base Map - Transportation (CBMT)',
                 description:
                     'The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.',
-                altText: 'altText - The Canada Base Map - Transportation (CBMT)',
+                altText:
+                    'altText - The Canada Base Map - Transportation (CBMT)',
                 layers: [
                     {
                         id: 'CBMT',
                         layerType: 'esriFeature',
-                        url: 'http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer'
+                        url:
+                            'http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer'
                     }
                 ],
                 tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
@@ -45,7 +47,8 @@ export class BasemapState {
                     {
                         id: 'SMR',
                         layerType: 'esriFeature',
-                        url: 'http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer'
+                        url:
+                            'http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer'
                     }
                 ],
                 tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
@@ -61,7 +64,8 @@ export class BasemapState {
                     {
                         id: 'CBME_CBCE_HS_RO_3978',
                         layerType: 'esriFeature',
-                        url: 'http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
+                        url:
+                            'http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
                     }
                 ],
                 tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
@@ -77,7 +81,8 @@ export class BasemapState {
                     {
                         id: 'CBMT_CBCT_GEOM_3978',
                         layerType: 'esriFeature',
-                        url: 'http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
+                        url:
+                            'http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
                     }
                 ],
                 tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
@@ -93,10 +98,12 @@ export class BasemapState {
                     {
                         id: 'World_Imagery',
                         layerType: 'esriFeature',
-                        url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                        url:
+                            'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                     }
                 ],
-                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                tileSchemaId:
+                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                 wkid: 102100
             },
             {
@@ -109,10 +116,12 @@ export class BasemapState {
                     {
                         id: 'World_Physical_Map',
                         layerType: 'esriFeature',
-                        url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer'
+                        url:
+                            'http://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer'
                     }
                 ],
-                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                tileSchemaId:
+                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                 wkid: 102100
             },
             {
@@ -125,25 +134,30 @@ export class BasemapState {
                     {
                         id: 'World_Shaded_Relief',
                         layerType: 'esriFeature',
-                        url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer'
+                        url:
+                            'http://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer'
                     }
                 ],
-                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                tileSchemaId:
+                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                 wkid: 102100
             },
             {
                 id: 'baseEsriStreet',
                 name: 'World Street Map',
-                description: 'This worldwide street map presents highway-level data for the world.',
+                description:
+                    'This worldwide street map presents highway-level data for the world.',
                 altText: 'altText - ESWorld Street Map',
                 layers: [
                     {
                         id: 'World_Street_Map',
                         layerType: 'esriFeature',
-                        url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer'
+                        url:
+                            'http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer'
                     }
                 ],
-                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                tileSchemaId:
+                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                 wkid: 102100
             },
             {
@@ -156,25 +170,30 @@ export class BasemapState {
                     {
                         id: 'World_Terrain_Base',
                         layerType: 'esriFeature',
-                        url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer'
+                        url:
+                            'http://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer'
                     }
                 ],
-                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                tileSchemaId:
+                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                 wkid: 102100
             },
             {
                 id: 'baseEsriTopo',
                 name: 'World Topographic Map',
-                description: 'This map is designed to be used as a basemap by GIS professionals and as a reference map by anyone.',
+                description:
+                    'This map is designed to be used as a basemap by GIS professionals and as a reference map by anyone.',
                 altText: 'altText - World Topographic Map',
                 layers: [
                     {
                         id: 'World_Topo_Map',
                         layerType: 'esriFeature',
-                        url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
+                        url:
+                            'http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
                     }
                 ],
-                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                tileSchemaId:
+                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                 wkid: 102100
             }
         ];

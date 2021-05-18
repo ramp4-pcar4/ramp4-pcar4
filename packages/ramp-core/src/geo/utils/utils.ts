@@ -3,7 +3,14 @@
 // this makes the module that gets exposed on GeoAPI under .util(s)
 // TODO add proper comments
 
-import { APIScope, AttributeAPI, InstanceAPI, ProjectionAPI, QueryAPI, SymbologyAPI } from '@/api/internal';
+import {
+    APIScope,
+    AttributeAPI,
+    InstanceAPI,
+    ProjectionAPI,
+    QueryAPI,
+    SymbologyAPI
+} from '@/api/internal';
 import { EpsgLookup, GeometryAPI, SharedUtilsAPI } from '@/geo/api';
 
 /*
@@ -12,7 +19,6 @@ import OgcService from './OgcService';
 */
 
 export class UtilsAPI extends APIScope {
-
     attributes: AttributeAPI;
     geom: GeometryAPI;
     proj: ProjectionAPI;
@@ -20,7 +26,10 @@ export class UtilsAPI extends APIScope {
     shared: SharedUtilsAPI;
     symbology: SymbologyAPI;
 
-    constructor (iApi: InstanceAPI, epsgFunction: EpsgLookup | undefined = undefined) {
+    constructor(
+        iApi: InstanceAPI,
+        epsgFunction: EpsgLookup | undefined = undefined
+    ) {
         super(iApi);
 
         this.attributes = new AttributeAPI(iApi);
@@ -34,5 +43,4 @@ export class UtilsAPI extends APIScope {
         this.highlight = new HighlightService(infoBundle);
         */
     }
-
 }

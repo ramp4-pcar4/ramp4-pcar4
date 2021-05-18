@@ -3,7 +3,13 @@
 // TODO add proper comments
 
 import { APIScope, InstanceAPI } from '@/api/internal';
-import { Attributes, AttributeSet, BaseGeometry, GetGraphicResult, GetGraphicServiceDetails } from '@/geo/api';
+import {
+    Attributes,
+    AttributeSet,
+    BaseGeometry,
+    GetGraphicResult,
+    GetGraphicServiceDetails
+} from '@/geo/api';
 import { EsriGeometryJsonUtils, EsriRequest } from '@/geo/esri';
 
 // NOTE has an esri type, which is bad, but this interface lives within the geo section so will permit it.
@@ -20,8 +26,7 @@ export interface AttributeLoaderDetails {
 }
 
 export class AttributeAPI extends APIScope {
-
-    constructor (iApi: InstanceAPI) {
+    constructor(iApi: InstanceAPI) {
         super(iApi);
     }
 
@@ -33,7 +38,10 @@ export class AttributeAPI extends APIScope {
         });
     }
 
-    private async arcGisBatchLoad (details: AttributeLoaderDetails, controller: AsynchAttribController): Promise<Array<any>> {
+    private async arcGisBatchLoad(
+        details: AttributeLoaderDetails,
+        controller: AsynchAttribController
+    ): Promise<Array<any>> {
         if (controller.loadAbortFlag) {
             // stop that stop that
             return [];
@@ -51,7 +59,10 @@ export class AttributeAPI extends APIScope {
 
         // TODO possibly put a .catch on the end of the esri request? see commented error handler at bottom
         //      consider using   import to from 'await-to-js';
-        const serviceResult = await EsriRequest(details.serviceUrl + '/query', params);
+        const serviceResult = await EsriRequest(
+            details.serviceUrl + '/query',
+            params
+        );
 
         if (serviceResult.data && serviceResult.data.features) {
             const feats: Array<any> = serviceResult.data.features;
@@ -68,7 +79,7 @@ export class AttributeAPI extends APIScope {
                         // this is our first batch. set the max batch size to this batch size
                         details.batchSize = len;
                     }
-                    moreDataToLoad = (len >= details.batchSize);
+                    moreDataToLoad = len >= details.batchSize;
                 }
 
                 if (moreDataToLoad) {
@@ -76,11 +87,12 @@ export class AttributeAPI extends APIScope {
                     // max id becomes last object id in the current batch
 
                     details.maxId = feats[len - 1].attributes[details.oidField];
-                    const futureFeats = await this.arcGisBatchLoad(details, controller);
+                    const futureFeats = await this.arcGisBatchLoad(
+                        details,
+                        controller
+                    );
                     // take our current batch, append on everything the recursive call loaded, and return
                     return feats.concat(futureFeats);
-
-
                 } else {
                     // done thanks
                     return feats;
@@ -89,7 +101,6 @@ export class AttributeAPI extends APIScope {
                 // no more data.  we are done
                 return [];
             }
-
         } else {
             // TODO nothing came back, handle appropriately with error party rejectorama
             throw new Error('whoooops');
@@ -104,11 +115,17 @@ export class AttributeAPI extends APIScope {
         */
     }
 
-    async loadArcGisServerAttributes(details: AttributeLoaderDetails, controller: AsynchAttribController): Promise<AttributeSet> {
+    async loadArcGisServerAttributes(
+        details: AttributeLoaderDetails,
+        controller: AsynchAttribController
+    ): Promise<AttributeSet> {
         details.maxId = -1;
         details.batchSize = -1;
 
-        const serverResult: Array<any> = await this.arcGisBatchLoad(details, controller);
+        const serverResult: Array<any> = await this.arcGisBatchLoad(
+            details,
+            controller
+        );
 
         // hoist the attributes from the .attributes property
         const attSet: AttributeSet = {
@@ -123,19 +140,26 @@ export class AttributeAPI extends APIScope {
         return attSet;
     }
 
-    async loadGraphicsAttributes(details: AttributeLoaderDetails, controller: AsynchAttribController): Promise<AttributeSet> {
+    async loadGraphicsAttributes(
+        details: AttributeLoaderDetails,
+        controller: AsynchAttribController
+    ): Promise<AttributeSet> {
         if (!details.sourceGraphics) {
-            throw new Error('No .sourceGraphics provided to file layer attribute loader');
+            throw new Error(
+                'No .sourceGraphics provided to file layer attribute loader'
+            );
         }
 
-        const pluckedAttributes = details.sourceGraphics.map((g: __esri.Graphic) => {
-            // TODO we may need to strip off attributes here based on what we decide to do.
-            //      there is no network traffic advantage for files (all data is already loaded).
-            //      but we may need to do it for stuff like populating a grid with reduced columns.
-            //      if we do this, we may need to clone the attribute objects then remove properties;
-            //      we don't want to mess with the original source in the layer.
-            return g.attributes;
-        });
+        const pluckedAttributes = details.sourceGraphics.map(
+            (g: __esri.Graphic) => {
+                // TODO we may need to strip off attributes here based on what we decide to do.
+                //      there is no network traffic advantage for files (all data is already loaded).
+                //      but we may need to do it for stuff like populating a grid with reduced columns.
+                //      if we do this, we may need to clone the attribute objects then remove properties;
+                //      we don't want to mess with the original source in the layer.
+                return g.attributes;
+            }
+        );
 
         const attSet: AttributeSet = {
             features: pluckedAttributes.toArray(),
@@ -148,7 +172,9 @@ export class AttributeAPI extends APIScope {
         return attSet;
     }
 
-    async loadSingleFeature(details: GetGraphicServiceDetails): Promise<GetGraphicResult> {
+    async loadSingleFeature(
+        details: GetGraphicServiceDetails
+    ): Promise<GetGraphicResult> {
         const params: __esri.RequestOptions = {
             query: {
                 f: 'json',
@@ -173,12 +199,14 @@ export class AttributeAPI extends APIScope {
 
         // TODO error handling?
         //      consider using   import to from 'await-to-js';
-        const serviceResult = await EsriRequest(details.serviceUrl + '/query', params);
+        const serviceResult = await EsriRequest(
+            details.serviceUrl + '/query',
+            params
+        );
 
         if (serviceResult.data && serviceResult.data.features) {
             const feats: Array<any> = serviceResult.data.features;
             if (feats.length > 0) {
-
                 const feat = feats[0];
                 const result: GetGraphicResult = {
                     attributes: feat.attributes // attributes are always there, so we always return them. letter caller decide to discard them or not.
@@ -186,9 +214,14 @@ export class AttributeAPI extends APIScope {
 
                 if (details.includeGeometry) {
                     // server result omits spatial reference
-                    feat.geometry.spatialReference = serviceResult.data.spatialReference;
-                    const localEsriGeom = EsriGeometryJsonUtils.fromJSON(feat.geometry);
-                    result.geometry = this.$iApi.geo.utils.geom.geomEsriToRamp(localEsriGeom);
+                    feat.geometry.spatialReference =
+                        serviceResult.data.spatialReference;
+                    const localEsriGeom = EsriGeometryJsonUtils.fromJSON(
+                        feat.geometry
+                    );
+                    result.geometry = this.$iApi.geo.utils.geom.geomEsriToRamp(
+                        localEsriGeom
+                    );
                 }
 
                 return result;
@@ -196,7 +229,9 @@ export class AttributeAPI extends APIScope {
         }
 
         // if we got this far, we failed to get something
-        throw new Error(`Could not locate feature ${details.oid} for layer ${details.serviceUrl}`);
+        throw new Error(
+            `Could not locate feature ${details.oid} for layer ${details.serviceUrl}`
+        );
     }
 }
 
@@ -214,7 +249,6 @@ export class AsynchAttribController {
 }
 
 export class AttributeLoaderBase extends APIScope {
-
     // TODO need to specificy either load url or load source (a file, a layer with baked attributes)
 
     protected aac: AsynchAttribController;
@@ -222,7 +256,7 @@ export class AttributeLoaderBase extends APIScope {
     protected details: AttributeLoaderDetails;
     tabularAttributesCache: Promise<any> | undefined; // TODO enhance type
 
-    protected constructor (iApi: InstanceAPI, details: AttributeLoaderDetails) {
+    protected constructor(iApi: InstanceAPI, details: AttributeLoaderDetails) {
         super(iApi);
         this.aac = new AsynchAttribController();
         this.details = details;
@@ -274,34 +308,39 @@ export class AttributeLoaderBase extends APIScope {
     // so one function for arcgis server. another for baked featurelayer. another for json file source
     protected loadPromiseGenerator(): Promise<AttributeSet> {
         // this should never run
-        return Promise.reject(new Error('Subclass of AttributeLoaderBase did not implement loadPromiseGenerator'));
+        return Promise.reject(
+            new Error(
+                'Subclass of AttributeLoaderBase did not implement loadPromiseGenerator'
+            )
+        );
     }
-
 }
 
 export class ArcServerAttributeLoader extends AttributeLoaderBase {
-
-    constructor (iApi: InstanceAPI, details: AttributeLoaderDetails) {
+    constructor(iApi: InstanceAPI, details: AttributeLoaderDetails) {
         super(iApi, details);
     }
 
     protected loadPromiseGenerator(): Promise<AttributeSet> {
         // TODO call arcgis loader
-        return this.$iApi.geo.utils.attributes.loadArcGisServerAttributes(this.details, this.aac);
+        return this.$iApi.geo.utils.attributes.loadArcGisServerAttributes(
+            this.details,
+            this.aac
+        );
     }
-
 }
 
 export class FileLayerAttributeLoader extends AttributeLoaderBase {
-
-    constructor (iApi: InstanceAPI, details: AttributeLoaderDetails) {
+    constructor(iApi: InstanceAPI, details: AttributeLoaderDetails) {
         super(iApi, details);
     }
 
     protected loadPromiseGenerator(): Promise<AttributeSet> {
-        return this.$iApi.geo.utils.attributes.loadGraphicsAttributes(this.details, this.aac);
+        return this.$iApi.geo.utils.attributes.loadGraphicsAttributes(
+            this.details,
+            this.aac
+        );
     }
-
 }
 
 // manages the quick-lookup of attributes.
@@ -309,7 +348,7 @@ export class FileLayerAttributeLoader extends AttributeLoaderBase {
 export class QuickCache {
     // TODO if we come up with nice types for attribs or geoms, apply them
 
-    private attribs: {[key: number]: Attributes};
+    private attribs: { [key: number]: Attributes };
 
     // the "any" type here is funny. for points, its BaseGeometry, for line/poly based, it's an object indexed by scale,
     // which then containts an object indexed by key (likely oid) and returns BaseGeometry.
@@ -336,7 +375,9 @@ export class QuickCache {
         return this.geoms[scale];
     }
 
-    private getGeomStore(scale: number | undefined = undefined): { [key: number]: BaseGeometry } {
+    private getGeomStore(
+        scale: number | undefined = undefined
+    ): { [key: number]: BaseGeometry } {
         // polygon and line layers have to also cache their geometry by scale level, as the
         // geometry can be simplified at smaller scales
 
@@ -344,7 +385,9 @@ export class QuickCache {
             return this.geoms;
         } else {
             if (typeof scale === 'undefined') {
-                throw new Error('Attempted to access geometry store for non-point layer without providing a map scale');
+                throw new Error(
+                    'Attempted to access geometry store for non-point layer without providing a map scale'
+                );
             }
             return this.getScaleStore(scale);
         }
@@ -364,7 +407,11 @@ export class QuickCache {
         return this.getGeomStore(scale)[key];
     }
 
-    setGeom(key: number, geom: BaseGeometry, scale: number | undefined = undefined): void {
+    setGeom(
+        key: number,
+        geom: BaseGeometry,
+        scale: number | undefined = undefined
+    ): void {
         const store = this.getGeomStore(scale);
         store[key] = geom;
     }

@@ -7,6 +7,9 @@ export class MetadataAPI extends FixtureInstance {
      * @param payload
      */
     openMetadata(payload: MetadataPayload): void {
-        this.$iApi.panel.open({ id: 'metadata-panel', props: { payload: payload } });
+        this.$iApi.panel.open({
+            id: 'metadata-panel',
+            props: { payload: payload }
+        });
     }
 }

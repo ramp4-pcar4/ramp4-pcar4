@@ -1,20 +1,14 @@
 # R4MP
 
-## Developing locally
-
-### Node.js
-
-Install Node.js `v14.15.4`.
-
-### Rush
-
-Install Rush if you don't already have it:
-
-```
-$ npm install -g @microsoft/rush
-```
-
 ## Local development
+
+### Editor
+
+[Visual Studio Code](https://code.visualstudio.com) is the recommended editor.
+
+Install the [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) extension and set it as your default formatter with "Format on save" enabled.
+
+You can also format your code manually by running the command `rush lint`.
 
 ### Install build tools
 
