@@ -2,6 +2,7 @@ import { APIScope, PanelInstance } from './internal';
 import { PanelConfig, PanelConfigRoute, PanelMutation, PanelAction } from '@/store/modules/panel';
 
 import { I18nComponentOptions } from '@/lang';
+import { GlobalEvents } from './event';
 
 export class PanelAPI extends APIScope {
     /**
@@ -109,6 +110,7 @@ export class PanelAPI extends APIScope {
         this.show(panel, { screen, props });
 
         this.$vApp.$store.set(`panel/${PanelAction.openPanel}!`, { panel });
+        this.$vApp.$emit(GlobalEvents.PANEL_OPENED, panel);
 
         return panel;
     }
@@ -140,7 +142,47 @@ export class PanelAPI extends APIScope {
         }
 
         this.$vApp.$store.set(`panel/${PanelAction.closePanel}!`, { panel });
+        this.$vApp.$emit(GlobalEvents.PANEL_CLOSED, panel);
 
+        return panel;
+    }
+
+    /**
+     * Minimizes the panel specified, mechanically the same as closing however it does not emit the close event so that temporary appbar buttons stay.
+     *
+     * @param {(string | PanelInstance)} value
+     * @returns {PanelInstance}
+     * @memberof PanelAPI
+     */
+    minimize(value: string | PanelInstance): PanelInstance {
+        const panel = this.get(value);
+
+        if (panel.isPinned) {
+            panel.pin(false);
+        }
+
+        this.$vApp.$store.set(`panel/${PanelAction.closePanel}!`, { panel });
+
+        return panel;
+    }
+
+    /**
+     * Calls open on the Panel given in `value` or with id of `value` using the currently stored route.
+     * 
+     * @param {{ string | PanelInstance}} value
+     * @returns {PanelInstance}
+     * @memberof PanelAPI
+     */
+    reopen(value: string | PanelInstance): PanelInstance {
+        const panel = this.get(value);
+
+        // Grab the currently stored route from the store
+        // TODO: I think theres a better way to do this if we refactor the route check in open/show... 
+        //       it sets the route to the new thing so if no route it should just use the current one, my attempts got very complicated though
+        //       If we do that we shouldn't need `reopen` at all.
+        const route = this.$vApp.$store.get(`panel/items@${panel.id}.route`) as PanelConfigRoute;
+
+        this.open({id: panel.id, ...route })
         return panel;
     }
 
@@ -166,6 +208,33 @@ export class PanelAPI extends APIScope {
         toggle = typeof toggle !== 'undefined' ? toggle : !panel.isOpen;
         if (toggle !== panel.isOpen) {
             toggle ? this.open(value) : this.close(panel);
+        }
+
+        return panel;
+    }
+
+    /**
+     * Toggle panel's minimized state
+     *
+     * @param {string | PanelInstance | PanelInstancePath} [value]
+     * @param {boolean} toggle
+     * @returns {PanelInstance}
+     * @memberof PanelAPI
+     */
+    toggleMinimize(value: string | PanelInstance | PanelInstancePath, toggle?: boolean): PanelInstance {
+        let panel: PanelInstance;
+
+        // figure out what is passed to the function, retrieve the panel object and make call to open or close function
+        if (typeof value === 'string' || value instanceof PanelInstance) {
+            panel = this.get(value);
+        } else {
+            panel = this.get(value.id);
+        }
+
+        // use specified toggle value if provided + check if toggle value is possible
+        toggle = typeof toggle !== 'undefined' ? toggle : !panel.isOpen;
+        if (toggle !== panel.isOpen) {
+            toggle ? this.reopen(panel) : this.minimize(panel);
         }
 
         return panel;

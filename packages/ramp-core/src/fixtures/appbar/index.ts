@@ -1,7 +1,7 @@
 import AppbarV from './appbar.vue';
 import { AppbarAPI } from './api/appbar';
-import { appbar } from './store';
-import { GlobalEvents } from '@/api';
+import { appbar, AppbarItemInstance } from './store';
+import { GlobalEvents, PanelInstance } from '@/api';
 
 // "It's a trap!" -- Admiral Appbar
 
@@ -24,8 +24,17 @@ class AppbarFixture extends AppbarAPI {
             value => this._parseConfig(value)
         );
 
+        this.$vApp.$on(GlobalEvents.PANEL_OPENED, (panel: PanelInstance) => {
+            console.log(panel);
+            this.$vApp.$store.dispatch('appbar/addTempButton', new AppbarItemInstance({ id: panel.id, options: { panel: panel } }));
+        });
+
+        this.$vApp.$on(GlobalEvents.PANEL_CLOSED, (panel: PanelInstance) => {
+            this.$vApp.$store.dispatch('appbar/removeTempButton', panel.id);
+        });
+
         // since components used in appbar can be registered after this point, listen to the global component registration event and re-validate items
-        // TODO revisit. this seems to be self-contained to the appbar fixture, so ideally can stay as is and not worry about events api.
+        // TODO revist. this seems to be self-contained to the appbar fixture, so ideally can stay as is and not worry about events api.
         this.$iApi.event.on(GlobalEvents.COMPONENT, this._validateItems.bind(this));
     }
 

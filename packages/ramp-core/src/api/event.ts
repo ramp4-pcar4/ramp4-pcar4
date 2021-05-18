@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import { APIScope, InstanceAPI, LayerInstance } from './internal';
 import { DetailsAPI } from '@/fixtures/details/api/details';
-import { SettingsAPI} from '@/fixtures/settings/api/settings';
+import { SettingsAPI } from '@/fixtures/settings/api/settings';
 import { HelpAPI } from '@/fixtures/help/api/help';
 import { GridAPI } from '@/fixtures/grid/api/grid';
 import { WizardAPI } from '@/fixtures/wizard/api/wizard';
@@ -49,7 +49,19 @@ export enum GlobalEvents {
     HELP_TOGGLE = 'help/toggle',
     GRID_TOGGLE = 'grid/toggle',
     WIZARD_OPEN = 'wizard/open',
-    LEGEND_DEFAULT = 'legend/generate'
+    LEGEND_DEFAULT = 'legend/generate',
+
+    /**
+     * Fires when a panel opens
+     * Payload: the panel that opened (PanelInstance)
+     */
+    PANEL_OPENED = 'panel/opened',
+
+    /**
+     * Fires when a panel is closed
+     * Payload: the panel that closed (PanelInstance)
+     */
+    PANEL_CLOSED = 'panel/closed'
 }
 
 // TODO export this enum?
@@ -81,7 +93,7 @@ class EventHandler {
     handlerName: string;
     handlerFunc: Function;
 
-    constructor (eName: string, hName: string, handler: Function) {
+    constructor(eName: string, hName: string, handler: Function) {
         this.eventName = eName;
         this.handlerName = hName;
         this.handlerFunc = handler;
@@ -89,7 +101,6 @@ class EventHandler {
 }
 
 export class EventAPI extends APIScope {
-
     /**
      * A vue instance that provides an event bus for all events.
      *
@@ -118,8 +129,7 @@ export class EventAPI extends APIScope {
         // add the public enum items here, as they will always exist.
         // getting enum values is a mess. this code does it but assumes
         // all event names in global events use the slash format
-        this._nameRegister = Object.values(GlobalEvents)
-            .filter(e => (typeof e === 'string') && (e.indexOf('/') > -1));
+        this._nameRegister = Object.values(GlobalEvents).filter(e => typeof e === 'string' && e.indexOf('/') > -1);
     }
 
     /**
@@ -160,7 +170,7 @@ export class EventAPI extends APIScope {
             if (this._nameRegister.indexOf(n) === -1) {
                 this._nameRegister.push(n);
             }
-        })
+        });
     }
 
     /**
@@ -252,7 +262,6 @@ export class EventAPI extends APIScope {
      * @memberof EventAPI
      */
     once(event: string, callback: Function, handlerName: string = ''): string {
-
         // need to do this here and upfront, so we have the name for the unregistration.
         // otherwise we would let the .on() call do its naming thing
         if (!handlerName) {
@@ -302,7 +311,19 @@ export class EventAPI extends APIScope {
             // TODO the enum-values-to-array logic we use in the event names list
             //      fails a bit here. we could make it work if we force every default
             //      handler name to being with a specific prefix. Alternately use object, not enum.
-            eventHandlerNames = [DefEH.MAP_IDENTIFY, DefEH.MAP_KEYDOWN, DefEH.MAP_KEYUP, DefEH.MAP_BLUR, DefEH.IDENTIFY_DETAILS, DefEH.TOGGLE_SETTINGS, DefEH.OPEN_DETAILS, DefEH.TOGGLE_HELP, DefEH.TOGGLE_GRID, DefEH.OPEN_WIZARD, DefEH.GENERATE_LEGEND];
+            eventHandlerNames = [
+                DefEH.MAP_IDENTIFY,
+                DefEH.MAP_KEYDOWN,
+                DefEH.MAP_KEYUP,
+                DefEH.MAP_BLUR,
+                DefEH.IDENTIFY_DETAILS,
+                DefEH.TOGGLE_SETTINGS,
+                DefEH.OPEN_DETAILS,
+                DefEH.TOGGLE_HELP,
+                DefEH.TOGGLE_GRID,
+                DefEH.OPEN_WIZARD,
+                DefEH.GENERATE_LEGEND
+            ];
         }
 
         // add all the requested default event handlers.
@@ -322,7 +343,6 @@ export class EventAPI extends APIScope {
 
         switch (handlerName) {
             case DefEH.MAP_IDENTIFY:
-
                 // when map clicks, run the identify action
                 zeHandler = (clickParam: MapClick) => {
                     if (clickParam.button === 0) {
@@ -336,7 +356,7 @@ export class EventAPI extends APIScope {
                 zeHandler = (identifyParam: any) => {
                     const detailFix: DetailsAPI = this.$iApi.fixture.get('details');
                     if (detailFix) {
-                        detailFix.openDetails(identifyParam.results)
+                        detailFix.openDetails(identifyParam.results);
                     }
                 };
                 this.on(GlobalEvents.MAP_IDENTIFY, zeHandler, handlerName);
@@ -420,7 +440,5 @@ export class EventAPI extends APIScope {
         }
 
         return handlerName;
-
     }
-
 }

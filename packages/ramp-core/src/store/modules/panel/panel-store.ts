@@ -14,8 +14,8 @@ export enum PanelAction {
     openPanel = 'openPanel',
     closePanel = 'removePanel',
     setWidth = 'setWidth',
-    updateVisible = 'updateVisible',
-    setStackWidth = 'setStackWidth'
+    setStackWidth = 'setStackWidth',
+    updateVisible = 'updateVisible'
 }
 
 export enum PanelMutation {

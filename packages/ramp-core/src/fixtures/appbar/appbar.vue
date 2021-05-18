@@ -11,6 +11,14 @@
             :class="{ 'h-48': item.id !== 'divider' }"
             :options="item.options"
         ></component>
+        <divider></divider>
+        <temp-appbar-button
+            v-for="(item, index) in temporaryItems"
+            :key="index + Math.random()"
+            class="my-4 text-gray-400 first:mt-8 hover:text-white h-48"
+            :options="item.options"
+        >
+        </temp-appbar-button>
     </div>
 </template>
 
@@ -20,13 +28,19 @@ import { Get, Sync, Call } from 'vuex-pathify';
 import { AppbarItemInstance } from './store';
 import DividerV from './divider.vue';
 import AppbarButtonV from './button.vue';
+import TempAppbarButtonV from './temp-button.vue';
 
 Vue.component('divider', DividerV);
 Vue.component('appbar-button', AppbarButtonV);
 
-@Component
+@Component({
+    components: {
+        'temp-appbar-button': TempAppbarButtonV
+    }
+})
 export default class AppbarV extends Vue {
     @Get('appbar/visible') items!: AppbarItemInstance[];
+    @Get('appbar/temporary') temporaryItems!: AppbarItemInstance[];
 }
 </script>
 
