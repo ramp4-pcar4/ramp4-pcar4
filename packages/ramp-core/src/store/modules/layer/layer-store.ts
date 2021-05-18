@@ -31,21 +31,33 @@ import api from '@/api'; // this is the external ramp api, not the instance api
 type LayerContext = ActionContext<LayerState, RootState>;
 
 const getters = {
-    getLayerByUid: (state: LayerState) => (uid: string): LayerInstance | undefined => {
-        return state.layers.find((layer: LayerInstance) => layer.getLayerTree().findChildByUid(uid) !== undefined);
+    getLayerByUid: (state: LayerState) => (
+        uid: string
+    ): LayerInstance | undefined => {
+        return state.layers.find(
+            (layer: LayerInstance) =>
+                layer.getLayerTree().findChildByUid(uid) !== undefined
+        );
     },
-    getLayerById: (state: LayerState) => (id: string): LayerInstance | undefined => {
+    getLayerById: (state: LayerState) => (
+        id: string
+    ): LayerInstance | undefined => {
         return state.layers.find((layer: LayerInstance) => layer.id === id);
     }
 };
 
 const actions = {
-    addLayerConfigs: (context: LayerContext, layerConfigs: RampLayerConfig[]) => {
+    addLayerConfigs: (
+        context: LayerContext,
+        layerConfigs: RampLayerConfig[]
+    ) => {
         // TODO we are getting frequent errors at startup; something passes in an
         //      undefined layerConfigs. kicking out for now to make demos work.
         //      possibly this is evil in vue state land. if so, then someone figure out
         //      the root cause and fix that.
-        if (!Array.isArray(layerConfigs)) { return; }
+        if (!Array.isArray(layerConfigs)) {
+            return;
+        }
         layerConfigs.forEach(lc => {
             context.commit('ADD_LAYER_CONFIG', lc);
         });
@@ -55,7 +67,9 @@ const actions = {
         //      undefined layerConfigs. kicking out for now to make demos work.
         //      possibly this is evil in vue state land. if so, then someone figure out
         //      the root cause and fix that.
-        if (!Array.isArray(layers)) { return; }
+        if (!Array.isArray(layers)) {
+            return;
+        }
 
         layers.forEach(l => {
             context.commit('ADD_LAYER', l);
@@ -98,11 +112,11 @@ const actions = {
 const mutations = {
     ADD_LAYER_CONFIG: (state: LayerState, value: RampLayerConfig) => {
         // copy to new array so watchers will have a reference to the old value
-        state.layerConfigs = [...state.layerConfigs, value]
+        state.layerConfigs = [...state.layerConfigs, value];
     },
     ADD_LAYER: (state: LayerState, value: LayerInstance) => {
         // copy to new array so watchers will have a reference to the old value
-        state.layers = [...state.layers, value]
+        state.layers = [...state.layers, value];
     }
 };
 
@@ -131,7 +145,6 @@ export enum LayerStore {
      * (Action) addLayerConfigs: (layerConfigs: RampLayerConfig[])
      */
     addLayerConfigs = 'layer/addLayerConfigs!'
-
 }
 
 export function layer() {

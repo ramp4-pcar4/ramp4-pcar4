@@ -40,18 +40,26 @@ export class ExportV1API extends FixtureInstance {
      * @memberof ExportV1API
      */
     async make(canvas: HTMLCanvasElement, panelWidth: number): Promise<void> {
-        this.fcFabric = new fabric.StaticCanvas(canvas, { backgroundColor: '#fff' });
+        this.fcFabric = new fabric.StaticCanvas(canvas, {
+            backgroundColor: '#fff'
+        });
 
         this.options.runningHeight = 0;
 
-        const fbTitle = await this.getSubFixture('export-v1-title').make({ /* text: '😸🤖🧙‍♂️🤦‍♀️🎶', */ top: this.options.runningHeight });
+        const fbTitle = await this.getSubFixture('export-v1-title').make({
+            /* text: '😸🤖🧙‍♂️🤦‍♀️🎶', */ top: this.options.runningHeight
+        });
         this.options.runningHeight += fbTitle.height! + 40;
 
-        const fbMap = await this.getSubFixture('export-v1-map').make({ top: this.options.runningHeight });
+        const fbMap = await this.getSubFixture('export-v1-map').make({
+            top: this.options.runningHeight
+        });
         fbTitle.left = fbMap.width! / 2; // center title after we know the width of the group
         this.options.runningHeight += fbMap.height! + 40;
 
-        this.options.scale = (panelWidth - GLOBAL_MARGIN.LEFT - GLOBAL_MARGIN.RIGHT) / fbMap.width!;
+        this.options.scale =
+            (panelWidth - GLOBAL_MARGIN.LEFT - GLOBAL_MARGIN.RIGHT) /
+            fbMap.width!;
 
         const fbLegend = await this.getSubFixture('export-v1-legend').make();
 
@@ -69,7 +77,10 @@ export class ExportV1API extends FixtureInstance {
 
         this.fcFabric.setDimensions({
             width: panelWidth,
-            height: this.options.runningHeight * this.options.scale + GLOBAL_MARGIN.TOP + GLOBAL_MARGIN.BOTTOM
+            height:
+                this.options.runningHeight * this.options.scale +
+                GLOBAL_MARGIN.TOP +
+                GLOBAL_MARGIN.BOTTOM
         });
         this.fcFabric.renderAll();
 
@@ -89,7 +100,14 @@ export class ExportV1API extends FixtureInstance {
             return;
         }
 
-        FileSaver.saveAs(this.fcFabric.toDataURL({ format: 'png', quality: 1, multiplier: 1 / this.options.scale }), 'export-image.png');
+        FileSaver.saveAs(
+            this.fcFabric.toDataURL({
+                format: 'png',
+                quality: 1,
+                multiplier: 1 / this.options.scale
+            }),
+            'export-image.png'
+        );
     }
 }
 

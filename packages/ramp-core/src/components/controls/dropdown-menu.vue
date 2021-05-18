@@ -1,6 +1,9 @@
 <template>
     <div class="relative">
-        <button class="relative text-gray-500 hover:text-black p-8" @click="open = !open">
+        <button
+            class="relative text-gray-500 hover:text-black p-8"
+            @click="open = !open"
+        >
             <slot name="header"></slot>
         </button>
         <div
@@ -24,11 +27,18 @@ export default class MenuV extends Vue {
     open: boolean = false;
 
     mounted() {
-        window.addEventListener('click', event => {
-            if (event.target instanceof HTMLElement && !this.$el.contains(event.target)) {
-                this.open = false;
-            }
-        }, { capture: true });
+        window.addEventListener(
+            'click',
+            event => {
+                if (
+                    event.target instanceof HTMLElement &&
+                    !this.$el.contains(event.target)
+                ) {
+                    this.open = false;
+                }
+            },
+            { capture: true }
+        );
     }
 }
 </script>

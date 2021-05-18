@@ -40,10 +40,17 @@ export class Query {
     }
 
     search(): Promise<defs.NameResultList> {
-        return (<Promise<defs.RawNameResult>>this.jsonRequest(this.getUrl())).then(r => this.normalizeNameItems(r.items));
+        return (<Promise<defs.RawNameResult>>(
+            this.jsonRequest(this.getUrl())
+        )).then(r => this.normalizeNameItems(r.items));
     }
 
-    private getUrl(useLocate?: boolean, restrict?: number[], lat?: number, lon?: number): string {
+    private getUrl(
+        useLocate?: boolean,
+        restrict?: number[],
+        lat?: number,
+        lon?: number
+    ): string {
         let url = '';
         if (useLocate) {
             // URL for FSA and NFA search
@@ -80,7 +87,10 @@ export class Query {
             xobj.responseType = 'json';
             xobj.onload = () => {
                 if (xobj.status === 200) {
-                    const rawResponse = typeof xobj.response === 'string' ? JSON.parse(xobj.response) : xobj.response;
+                    const rawResponse =
+                        typeof xobj.response === 'string'
+                            ? JSON.parse(xobj.response)
+                            : xobj.response;
                     // TODO: sort query results?
                     resolve(rawResponse);
                 } else {
@@ -92,11 +102,15 @@ export class Query {
     }
 
     locateByQuery(): Promise<defs.LocateResponseList> {
-        return <Promise<defs.LocateResponseList>>this.jsonRequest(this.getUrl(true, undefined));
+        return <Promise<defs.LocateResponseList>>(
+            this.jsonRequest(this.getUrl(true, undefined))
+        );
     }
 
     nameByLatLon(lat: number, lon: number, restrict?: number[]): any {
-        return (<Promise<defs.RawNameResult>>this.jsonRequest(this.getUrl(false, restrict, lat, lon))).then(r => {
+        return (<Promise<defs.RawNameResult>>(
+            this.jsonRequest(this.getUrl(false, restrict, lat, lon))
+        )).then(r => {
             return this.normalizeNameItems(r.items);
         });
     }
@@ -117,7 +131,12 @@ export class LatLongQuery extends Query {
 
         // apply buffer to create bbox from point coordinates
         const buff = 0.015;
-        const boundingBox = [coords[1] - buff, coords[0] - buff, coords[1] + buff, coords[0] + buff];
+        const boundingBox = [
+            coords[1] - buff,
+            coords[0] - buff,
+            coords[1] + buff,
+            coords[0] + buff
+        ];
         // prep the lat/long result that needs to be generated along with name based results
         this.latLongResult = {
             name: `${coords[0]},${coords[1]}`,
@@ -172,7 +191,9 @@ export class FSAQuery extends Query {
         return this.locateByQuery().then(locateResponseList => {
             // query check added since it can be null but will never be in this case (make TS happy)
             if (locateResponseList.length === 1 && this.query) {
-                const provList = this.config.provinces.fsaToProvinces(this.query);
+                const provList = this.config.provinces.fsaToProvinces(
+                    this.query
+                );
                 return <defs.FSAResult>{
                     fsa: this.query,
                     code: 'FSA',
@@ -181,7 +202,10 @@ export class FSAQuery extends Query {
                         .map(i => provList[i])
                         .join(','),
                     _provinces: provList,
-                    LatLon: { lat: locateResponseList[0].geometry.coordinates[1], lon: locateResponseList[0].geometry.coordinates[0] }
+                    LatLon: {
+                        lat: locateResponseList[0].geometry.coordinates[1],
+                        lon: locateResponseList[0].geometry.coordinates[0]
+                    }
                 };
             }
         });
@@ -225,7 +249,10 @@ export class NTSQuery extends Query {
 
                     this.featureResults = this.unit;
 
-                    this.nameByLatLon(this.unit.LatLon.lat, this.unit.LatLon.lon).then((r: any) => {
+                    this.nameByLatLon(
+                        this.unit.LatLon.lat,
+                        this.unit.LatLon.lon
+                    ).then((r: any) => {
                         this.results = r;
                         resolve(this);
                     });
@@ -244,7 +271,10 @@ export class NTSQuery extends Query {
                 location: title.join(' '), // "NUMABIN BAY"
                 code: 'NTS', // "NTS"
                 desc: this.config.types.allTypes.NTS, // "National Topographic System"
-                LatLon: { lat: ls.geometry.coordinates[1], lon: ls.geometry.coordinates[0] },
+                LatLon: {
+                    lat: ls.geometry.coordinates[1],
+                    lon: ls.geometry.coordinates[0]
+                },
                 bbox: <number[]>ls.bbox
             };
         });

@@ -138,7 +138,8 @@ export const defaultMercator = {
             layers: [
                 {
                     layerType: 'esriTile',
-                    url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
+                    url:
+                        'http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
                 }
             ]
         }
@@ -146,7 +147,7 @@ export const defaultMercator = {
     initialBasemapId: 'esriTopo'
 };
 
-export const defaultLambert =  {
+export const defaultLambert = {
     extent: {
         xmax: 3549492,
         xmin: -2681457,
@@ -265,7 +266,8 @@ export const defaultLambert =  {
             layers: [
                 {
                     layerType: 'esriTile',
-                    url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBCT3978/MapServer'
+                    url:
+                        'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBCT3978/MapServer'
                 }
             ]
         }

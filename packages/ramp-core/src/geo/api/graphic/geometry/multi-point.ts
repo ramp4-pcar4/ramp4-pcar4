@@ -3,7 +3,6 @@
 import { BaseGeometry, GeometryType, Point, SrDef, IdDef } from '@/geo/api';
 
 export class MultiPoint extends BaseGeometry {
-
     // for now, keeping raw for efficiency (not having object padding around every vertex)
     // TODO think later on pros/cons of changing this to Array<Point>
     protected rawArray: Array<Array<number>>;
@@ -17,12 +16,17 @@ export class MultiPoint extends BaseGeometry {
      * @param {Boolean} [raw] An efficiency flag. If set, it means the verticies is in the pure format of [[number, number],...] and we can skip data validations and parsing.
      */
     // from existing geometry that can be interpreted as a set of points
-    constructor(id: IdDef, multiPoint: MultiPoint)
+    constructor(id: IdDef, multiPoint: MultiPoint);
     // from arrays of verticies that can be interpreted as a set of points
-    constructor(id: IdDef, listOfCoords: Array<Array<number>>, sr?: SrDef, raw?: boolean)
-    constructor(id: IdDef, listOfPoints: Array<Point>, sr?: SrDef)
-    constructor(id: IdDef, listOfXY: Array<object>, sr?: SrDef)
-    constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef)
+    constructor(
+        id: IdDef,
+        listOfCoords: Array<Array<number>>,
+        sr?: SrDef,
+        raw?: boolean
+    );
+    constructor(id: IdDef, listOfPoints: Array<Point>, sr?: SrDef);
+    constructor(id: IdDef, listOfXY: Array<object>, sr?: SrDef);
+    constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef);
     constructor(id: IdDef, geometry: any, sr?: SrDef, raw?: boolean) {
         super(id, geometry.sr || sr);
 
@@ -54,12 +58,19 @@ export class MultiPoint extends BaseGeometry {
 
     /** Returns an array of the contained lines formatted as API Point objects. A new array is returned each time this is called. */
     get pointArray(): Array<Point> {
-        return this.rawArray.map((p, i) => new Point(this.childIdGenerator(i), p, this.sr, true));
+        return this.rawArray.map(
+            (p, i) => new Point(this.childIdGenerator(i), p, this.sr, true)
+        );
     }
 
     /** Returns a copy of the n-th contained point. */
     getAt(n: number): Point {
-        return new Point(this.childIdGenerator(n), this.rawArray[n], this.sr, true);
+        return new Point(
+            this.childIdGenerator(n),
+            this.rawArray[n],
+            this.sr,
+            true
+        );
     }
 
     /** Will update the n-th contained point with the values of the point parameter. It is assumed the point is in the same spatial reference as the Multipoint */
@@ -105,9 +116,10 @@ export class MultiPoint extends BaseGeometry {
         }
     }
 
-    private static arrayDeepCopy(a: Array<Array<number>>): Array<Array<number>> {
+    private static arrayDeepCopy(
+        a: Array<Array<number>>
+    ): Array<Array<number>> {
         // speed tests show loops & slice is 3x faster than JSON parse/stringify
-        return a.map((p => p.slice()));
+        return a.map(p => p.slice());
     }
-
 }

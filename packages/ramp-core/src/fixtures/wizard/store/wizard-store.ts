@@ -40,11 +40,17 @@ const actions = {
                     context.commit('SET_URL', '');
                     context.commit('SET_TYPE_SELECTION', '');
                     context.commit('SET_FILE_DATA', null);
-                    context.commit('SET_LAYER_INFO', { config: null, configOptions: [] });
+                    context.commit('SET_LAYER_INFO', {
+                        config: null,
+                        configOptions: []
+                    });
                     context.commit('SET_STEP', WizardStep.UPLOAD);
                 } else if (step === WizardStep.FORMAT) {
                     // go to previous step
-                    context.commit('SET_LAYER_INFO', { config: null, configOptions: [] });
+                    context.commit('SET_LAYER_INFO', {
+                        config: null,
+                        configOptions: []
+                    });
                     context.commit('SET_STEP', WizardStep.FORMAT);
                 }
                 break;

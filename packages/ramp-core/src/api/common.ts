@@ -59,7 +59,9 @@ export interface AppVersion {
  * @param {(VueConstructor | any)} value
  * @returns {value is VueConstructor}
  */
-export function isVueConstructor(value: VueConstructor | any): value is VueConstructor {
+export function isVueConstructor(
+    value: VueConstructor | any
+): value is VueConstructor {
     // check if the value itself is a function (it's not possible to tell if it's a constructor function or not)
     // check if value's prototype is an instance of Vue--this is the important check
     return typeof value === 'function' && value.prototype instanceof Vue;
@@ -71,13 +73,30 @@ export function isVueConstructor(value: VueConstructor | any): value is VueConst
  * @param {(ComponentOptions<Vue> | any)} value
  * @returns {value is ComponentOptions<Vue>}
  */
-export function isComponentOptions(value: ComponentOptions<Vue> | any): value is ComponentOptions<Vue> {
+export function isComponentOptions(
+    value: ComponentOptions<Vue> | any
+): value is ComponentOptions<Vue> {
     // `ComponentOptions` is just an object with all optional properties
     // check for the most common ones to see if any are present
     // functional component are ignored since a panel screen shouldn't not be a functional component
-    const names = ['data', 'props', 'propsData', 'computed', 'methods', 'watch', 'template', 'render', 'components', 'model'];
+    const names = [
+        'data',
+        'props',
+        'propsData',
+        'computed',
+        'methods',
+        'watch',
+        'template',
+        'render',
+        'components',
+        'model'
+    ];
 
-    return typeof value === 'object' && !value.functional && names.some(name => value[name] !== undefined);
+    return (
+        typeof value === 'object' &&
+        !value.functional &&
+        names.some(name => value[name] !== undefined)
+    );
 }
 
 /**
@@ -86,6 +105,8 @@ export function isComponentOptions(value: ComponentOptions<Vue> | any): value is
  * @param {(typeof import('*.vue') | any)} value
  * @returns {value is typeof import('*.vue')}
  */
-export function isTypeofImportVue(value: typeof import('*.vue') | any): value is typeof import('*.vue') {
+export function isTypeofImportVue(
+    value: typeof import('*.vue') | any
+): value is typeof import('*.vue') {
     return typeof value === 'object' && value.default !== undefined;
 }

@@ -8,9 +8,26 @@
 
         <!-- TODO: find out if any ARIA attributes are needed for the map scale -->
 
-        <span class="flex-shrink-0 relative top-1 pr-14" v-if="latLongCursor.lat !== 0 || latLongCursor.long !== 0">
-            {{ cursorPointDMS.y }} {{ $t(`map.coordinates.${latLongCursor.lat > 0 ? 'north' : 'south'}`) }} | {{ cursorPointDMS.x }}
-            {{ $t(`map.coordinates.${0 > latLongCursor.long ? 'west' : 'east'}`) }}
+        <span
+            class="flex-shrink-0 relative top-1 pr-14"
+            v-if="latLongCursor.lat !== 0 || latLongCursor.long !== 0"
+        >
+            {{ cursorPointDMS.y }}
+            {{
+                $t(
+                    `map.coordinates.${
+                        latLongCursor.lat > 0 ? 'north' : 'south'
+                    }`
+                )
+            }}
+            | {{ cursorPointDMS.x }}
+            {{
+                $t(
+                    `map.coordinates.${
+                        0 > latLongCursor.long ? 'west' : 'east'
+                    }`
+                )
+            }}
         </span>
 
         <button
@@ -19,7 +36,10 @@
             :aria-pressed="isImperialScale"
             :aria-label="$t('map.toggleScaleUnits')"
         >
-            <span class="border-solid border-2 border-white border-t-0 h-5 mr-2 inline-block" :style="{ width: scale.width }"></span>
+            <span
+                class="border-solid border-2 border-white border-t-0 h-5 mr-2 inline-block"
+                :style="{ width: scale.width }"
+            ></span>
             {{ scale.label }}
         </button>
     </div>
@@ -46,7 +66,10 @@ export default class MapCaptionV extends Vue {
      * Uses the 'formatLatLong' utils function
      */
     get cursorPointDMS(): { x: string; y: string } {
-        return this.formatLatLong(this.latLongCursor.long, this.latLongCursor.lat);
+        return this.formatLatLong(
+            this.latLongCursor.long,
+            this.latLongCursor.lat
+        );
     }
 
     mounted() {
@@ -65,11 +88,12 @@ export default class MapCaptionV extends Vue {
         this.$iApi.event.on(GlobalEvents.MAP_CREATED, () => {
             this.updateScale();
             // Listen for scale changes, debounce so that zoom animations don't rapidly call update
-            this.$iApi.event.on(GlobalEvents.MAP_SCALECHANGE,
+            this.$iApi.event.on(
+                GlobalEvents.MAP_SCALECHANGE,
                 () => {
                     debounce(() => {
                         this.updateScale();
-                    }, 300)
+                    }, 300);
                 },
                 'update_scale_display' // TODO document event handler name, possibly rename to align to standards
             );
@@ -84,7 +108,6 @@ export default class MapCaptionV extends Vue {
                 'a_name_to_be_decided_later'
             );
         });
-
     }
 
     onScaleClick() {
@@ -96,7 +119,6 @@ export default class MapCaptionV extends Vue {
      * Calculates a scale bar for the current resolution.
      */
     updateScale(): void {
-
         // the starting length of the scale line in pixels
         // reduce the length of the bar on extra small layouts
         const factor = window.innerWidth > 600 ? 70 : 35;
@@ -109,7 +131,9 @@ export default class MapCaptionV extends Vue {
         const metersInAMile = 1609.34;
 
         // get the distance in units, either miles or kilometers
-        const units = (mapResolution * factor) / (this.isImperialScale ? metersInAMile : 1000);
+        const units =
+            (mapResolution * factor) /
+            (this.isImperialScale ? metersInAMile : 1000);
         const unit = this.isImperialScale ? 'mi' : 'km';
 
         // length of the distance number
@@ -122,7 +146,9 @@ export default class MapCaptionV extends Vue {
         const distance = Math.ceil(units / div) * div;
 
         // calcualte length of the scale line in pixels based on the round distance
-        const pixels = (distance * (this.isImperialScale ? metersInAMile : 1000)) / mapResolution;
+        const pixels =
+            (distance * (this.isImperialScale ? metersInAMile : 1000)) /
+            mapResolution;
 
         this.scale = {
             width: `${pixels}px`,
@@ -140,15 +166,20 @@ export default class MapCaptionV extends Vue {
      */
     private updateCursorPoint(screenX: number, screenY: number): void {
         // get map point from cursor location
-        const mapCursorPoint = this.$iApi.geo.map.screenPointToMapPoint(screenX, screenY);
+        const mapCursorPoint = this.$iApi.geo.map.screenPointToMapPoint(
+            screenX,
+            screenY
+        );
 
         // project from map co-ords to lat long.
-        this.$iApi.geo.utils.proj.projectGeometry(4326, mapCursorPoint).then((llPoint: any) => {
-            // update our private property
-            const castPoint: Point = llPoint;
-            this.latLongCursor.lat = castPoint.y;
-            this.latLongCursor.long = castPoint.x;
-        });
+        this.$iApi.geo.utils.proj
+            .projectGeometry(4326, mapCursorPoint)
+            .then((llPoint: any) => {
+                // update our private property
+                const castPoint: Point = llPoint;
+                this.latLongCursor.lat = castPoint.y;
+                this.latLongCursor.long = castPoint.x;
+            });
     }
 
     /**
@@ -170,8 +201,12 @@ export default class MapCaptionV extends Vue {
         const mx = Math.floor(Math.abs((long - dx) * 60));
         const sx = Math.round((Math.abs(long) - Math.abs(dx) - mx / 60) * 3600);
 
-        const newY = `${Math.abs(dy)}${degreeSymbol} ${padZero(my)}' ${padZero(sy)}"`;
-        const newX = `${Math.abs(dx)}${degreeSymbol} ${padZero(mx)}' ${padZero(sx)}"`;
+        const newY = `${Math.abs(dy)}${degreeSymbol} ${padZero(my)}' ${padZero(
+            sy
+        )}"`;
+        const newX = `${Math.abs(dx)}${degreeSymbol} ${padZero(mx)}' ${padZero(
+            sx
+        )}"`;
 
         return { x: newX, y: newY };
 

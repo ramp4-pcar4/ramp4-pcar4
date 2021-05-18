@@ -67,12 +67,17 @@ function syncTabIndex(element: HTMLElement) {
         // make sure its not part of a sub-list
         if (
             el.closest(`[${LIST_ATTR}]`) === element ||
-            (el.closest(`[${LIST_ATTR}]`) === el && el.parentElement!.closest(`[${LIST_ATTR}]`) === element)
+            (el.closest(`[${LIST_ATTR}]`) === el &&
+                el.parentElement!.closest(`[${LIST_ATTR}]`) === element)
         ) {
             // if this element is under a `focused` element in this class list then we dont want to set tabindex to -1
             // this checks if an ancestor with the class `focused` comes before an ancestor that is a `focus-list`
             // ELSE if it is under a `focused` element, set it to 0 in case it was just added to the list
-            if (!el.closest(`[${LIST_ATTR}],.${FOCUSED_CLASS}`)!.classList.contains(FOCUSED_CLASS)) {
+            if (
+                !el
+                    .closest(`[${LIST_ATTR}],.${FOCUSED_CLASS}`)!
+                    .classList.contains(FOCUSED_CLASS)
+            ) {
                 el.setAttribute('tabindex', '-1');
                 return;
             } else {
@@ -134,8 +139,12 @@ class FocusListManager {
             if (
                 value === -1 ||
                 el.closest(`[${LIST_ATTR}]`) === this.element ||
-                (el.closest(`[${LIST_ATTR}]`) === el && el.parentElement!.closest(`[${LIST_ATTR}]`) === this.element) ||
-                el.closest(`[${LIST_ATTR}],.${FOCUSED_CLASS}`)!.classList.contains(FOCUSED_CLASS)
+                (el.closest(`[${LIST_ATTR}]`) === el &&
+                    el.parentElement!.closest(`[${LIST_ATTR}]`) ===
+                        this.element) ||
+                el
+                    .closest(`[${LIST_ATTR}],.${FOCUSED_CLASS}`)!
+                    .classList.contains(FOCUSED_CLASS)
             ) {
                 el.setAttribute('tabindex', value.toString());
             }
@@ -169,7 +178,10 @@ class FocusListManager {
      * @param item The element that should be the active descendant
      */
     setAriaActiveDescendant(item: HTMLElement) {
-        this.element.setAttribute('aria-activedescendant', item.getAttribute('id')!);
+        this.element.setAttribute(
+            'aria-activedescendant',
+            item.getAttribute('id')!
+        );
     }
 
     /**
@@ -186,8 +198,13 @@ class FocusListManager {
             if (this.highlightedItem === this.element) {
                 this.highlightedItem = listOfItems[listOfItems.length - 1];
             } else {
-                let index = Array.prototype.indexOf.call(listOfItems, this.highlightedItem);
-                this.highlightedItem = listOfItems[index - 1] || listOfItems[listOfItems.length - 1];
+                let index = Array.prototype.indexOf.call(
+                    listOfItems,
+                    this.highlightedItem
+                );
+                this.highlightedItem =
+                    listOfItems[index - 1] ||
+                    listOfItems[listOfItems.length - 1];
             }
         } else {
             // if the main element is highlighted, move it to the first sub-item
@@ -195,7 +212,10 @@ class FocusListManager {
             if (this.highlightedItem === this.element) {
                 this.highlightedItem = listOfItems[0];
             } else {
-                let index = Array.prototype.indexOf.call(listOfItems, this.highlightedItem);
+                let index = Array.prototype.indexOf.call(
+                    listOfItems,
+                    this.highlightedItem
+                );
                 this.highlightedItem = listOfItems[index + 1] || listOfItems[0];
             }
         }
@@ -211,9 +231,14 @@ class FocusListManager {
      */
     onKeydown(event: KeyboardEvent) {
         const tempFocusManager = this;
-        const listOfItems: HTMLElement[] = Array.prototype.filter.call(this.element.querySelectorAll(`[${ITEM_ATTR}]`), (el: Element) => {
-            return el.closest(`[${LIST_ATTR}]`) === tempFocusManager.element;
-        });
+        const listOfItems: HTMLElement[] = Array.prototype.filter.call(
+            this.element.querySelectorAll(`[${ITEM_ATTR}]`),
+            (el: Element) => {
+                return (
+                    el.closest(`[${LIST_ATTR}]`) === tempFocusManager.element
+                );
+            }
+        );
 
         if (listOfItems.length === 0) {
             return;
@@ -283,7 +308,10 @@ class FocusListManager {
                 // if the the list is the target then it has focus, meaning the user is traversing this list
                 // and not a list farther down the tree (or a tabbable button, etc.)
                 // however if the list is the highlighted item we let the default behaviour through (as it has regular focus)
-                if ((event.target as HTMLElement) === this.element && this.highlightedItem !== this.element) {
+                if (
+                    (event.target as HTMLElement) === this.element &&
+                    this.highlightedItem !== this.element
+                ) {
                     // dont click on the list
                     event.preventDefault();
                     event.stopPropagation();
@@ -304,7 +332,10 @@ class FocusListManager {
         this.defocusItem(this.highlightedItem);
 
         const targetElement = event.target as HTMLElement;
-        this.highlightedItem = (targetElement.closest(`[${ITEM_ATTR}],[${LIST_ATTR}]`) as HTMLElement) || this.highlightedItem;
+        this.highlightedItem =
+            (targetElement.closest(
+                `[${ITEM_ATTR}],[${LIST_ATTR}]`
+            ) as HTMLElement) || this.highlightedItem;
 
         // if target element is a focus item then focus the list
         if (targetElement.hasAttribute(`${ITEM_ATTR}`)) {
@@ -326,7 +357,10 @@ class FocusListManager {
      */
     onFocus() {
         // if the element already has the attribute, or the highlighted element is the list there is nothing to do
-        if (this.element.hasAttribute('aria-activedescendant') || this.highlightedItem === this.element) {
+        if (
+            this.element.hasAttribute('aria-activedescendant') ||
+            this.highlightedItem === this.element
+        ) {
             return;
         }
         // otherwise set the active descendant

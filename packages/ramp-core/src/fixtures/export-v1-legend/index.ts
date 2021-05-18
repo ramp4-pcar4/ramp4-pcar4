@@ -1,7 +1,11 @@
 import { FixtureInstance, LayerInstance } from '@/api/internal';
 import { ExportV1SubFixture } from '@/fixtures/export-v1';
 import { fabric } from 'fabric';
-import { LegendSymbology, RampLayerConfig, RampLayerMapImageLayerEntryConfig } from '@/geo/api';
+import {
+    LegendSymbology,
+    RampLayerConfig,
+    RampLayerMapImageLayerEntryConfig
+} from '@/geo/api';
 
 /**
  * Represents a map layer.
@@ -39,19 +43,24 @@ const ITEM_MARGIN = 8;
 const ROW_HEIGHT = 32;
 const ICON_WIDTH = 32;
 
-const DEFAULT_FONT = 'Montserrat, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif';
+const DEFAULT_FONT =
+    'Montserrat, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif';
 
-class ExportV1LegendFixture extends FixtureInstance implements ExportV1SubFixture {
+class ExportV1LegendFixture extends FixtureInstance
+    implements ExportV1SubFixture {
     async make(options: any): Promise<fabric.Group> {
         const columns = 3;
 
         // read layers config directly from the global config and also get a lits of layer objects
         const layerConfigs = this.$iApi.getConfig().layers;
-        const layers = this.$vApp.$store.get<LayerInstance[]>('layer/layers') || [];
+        const layers =
+            this.$vApp.$store.get<LayerInstance[]>('layer/layers') || [];
 
         let runningHeight = 0;
 
-        const segments = await Promise.all(this._makeSegments(layers, layerConfigs));
+        const segments = await Promise.all(
+            this._makeSegments(layers, layerConfigs)
+        );
 
         //TODO: write logic to shoehorn legend into columns
 
@@ -65,28 +74,37 @@ class ExportV1LegendFixture extends FixtureInstance implements ExportV1SubFixtur
                 segmentTitle.top = runningHeight;
                 runningHeight += segmentTitle.height! + SEGMENT_BOTTOM_MARGIN;
 
-                const allChunkItems = chunks.map(({ title: chunkTitle, items: chunkItems }, chunkIndex) => {
-                    const result = [];
+                const allChunkItems = chunks.map(
+                    ({ title: chunkTitle, items: chunkItems }, chunkIndex) => {
+                        const result = [];
 
-                    // if a single chunk shares the title wit its parent segment, skip the chunk title
-                    if (chunkTitle && !(chunks.length === 1 && chunkTitle.text === segmentTitle.text)) {
-                        if (chunkIndex > 0) {
-                            runningHeight += CHUNK_TOP_MARGIN;
+                        // if a single chunk shares the title wit its parent segment, skip the chunk title
+                        if (
+                            chunkTitle &&
+                            !(
+                                chunks.length === 1 &&
+                                chunkTitle.text === segmentTitle.text
+                            )
+                        ) {
+                            if (chunkIndex > 0) {
+                                runningHeight += CHUNK_TOP_MARGIN;
+                            }
+
+                            chunkTitle.top = runningHeight;
+                            runningHeight +=
+                                chunkTitle.height! + CHUNK_BOTTOM_MARGIN;
+
+                            result.push(chunkTitle);
                         }
 
-                        chunkTitle.top = runningHeight;
-                        runningHeight += chunkTitle.height! + CHUNK_BOTTOM_MARGIN;
+                        chunkItems.forEach(item => {
+                            item.top = runningHeight;
+                            runningHeight += ROW_HEIGHT + ITEM_MARGIN;
+                        });
 
-                        result.push(chunkTitle);
+                        return [...result, ...chunkItems].filter(a => a);
                     }
-
-                    chunkItems.forEach(item => {
-                        item.top = runningHeight;
-                        runningHeight += ROW_HEIGHT + ITEM_MARGIN;
-                    });
-
-                    return [...result, ...chunkItems].filter(a => a);
-                });
+                );
 
                 return [segmentTitle, ...allChunkItems.flat()];
             })
@@ -106,7 +124,10 @@ class ExportV1LegendFixture extends FixtureInstance implements ExportV1SubFixtur
      * @returns {Promise<Segment>[]}
      * @memberof ExportV1LegendFixture
      */
-    private _makeSegments(layers: LayerInstance[], layerConfigs: RampLayerConfig[]): Promise<Segment>[] {
+    private _makeSegments(
+        layers: LayerInstance[],
+        layerConfigs: RampLayerConfig[]
+    ): Promise<Segment>[] {
         return layers.map(async (layer, index) => {
             // TODO: exclude invisible layers
 
@@ -120,11 +141,14 @@ class ExportV1LegendFixture extends FixtureInstance implements ExportV1SubFixtur
             // TODO: WMS layers are ignored right now
             const ids: number[] | string[] = layerConfig.layerEntries
                 ? (layerConfig.layerEntries as RampLayerMapImageLayerEntryConfig[]).map(
-                      (le: RampLayerMapImageLayerEntryConfig) => le.index as number
+                      (le: RampLayerMapImageLayerEntryConfig) =>
+                          le.index as number
                   )
                 : [layer.uid];
 
-            const items = await Promise.all(this._makeSegmentChunks(ids, layer));
+            const items = await Promise.all(
+                this._makeSegmentChunks(ids, layer)
+            );
 
             return { title, items };
         });
@@ -139,7 +163,10 @@ class ExportV1LegendFixture extends FixtureInstance implements ExportV1SubFixtur
      * @returns {Promise<SegmentChunk>[]}
      * @memberof ExportV1LegendFixture
      */
-    private _makeSegmentChunks(ids: (number | string)[], layer: LayerInstance): Promise<SegmentChunk>[] {
+    private _makeSegmentChunks(
+        ids: (number | string)[],
+        layer: LayerInstance
+    ): Promise<SegmentChunk>[] {
         return ids.map<Promise<SegmentChunk>>(async (idx: number | string) => {
             // TODO: exclude invisible layer entries
 
@@ -151,7 +178,9 @@ class ExportV1LegendFixture extends FixtureInstance implements ExportV1SubFixtur
                 fontFamily: DEFAULT_FONT
             });
 
-            const items = await Promise.all(this._makeChunkItems(symbologyStack));
+            const items = await Promise.all(
+                this._makeChunkItems(symbologyStack)
+            );
 
             return {
                 title,
@@ -168,9 +197,13 @@ class ExportV1LegendFixture extends FixtureInstance implements ExportV1SubFixtur
      * @returns {Promise<fabric.Group>[]}
      * @memberof ExportV1LegendFixture
      */
-    private _makeChunkItems(symbologyStack: LegendSymbology[]): Promise<fabric.Group>[] {
+    private _makeChunkItems(
+        symbologyStack: LegendSymbology[]
+    ): Promise<fabric.Group>[] {
         return symbologyStack.map(async symbol => {
-            const fbSymbol = (await promisify(fabric.loadSVGFromString)(symbol.svgcode))[0];
+            const fbSymbol = (
+                await promisify(fabric.loadSVGFromString)(symbol.svgcode)
+            )[0];
 
             fbSymbol.originY = 'center';
             fbSymbol.top = ROW_HEIGHT / 2;
@@ -183,7 +216,9 @@ class ExportV1LegendFixture extends FixtureInstance implements ExportV1SubFixtur
                 top: ROW_HEIGHT / 2
             });
 
-            return new fabric.Group([fbSymbol, fbLabel], { height: ROW_HEIGHT });
+            return new fabric.Group([fbSymbol, fbLabel], {
+                height: ROW_HEIGHT
+            });
         });
     }
 }
@@ -197,7 +232,9 @@ type Callback<A> = (args: A) => void;
  * @param fn A
  * @returns
  */
-const promisify = <T, A>(fn: (args: T, cb: Callback<A>) => void): ((args: T) => Promise<A>) => {
+const promisify = <T, A>(
+    fn: (args: T, cb: Callback<A>) => void
+): ((args: T) => Promise<A>) => {
     return (args: T) =>
         new Promise(resolve => {
             fn(args, callbackArgs => {

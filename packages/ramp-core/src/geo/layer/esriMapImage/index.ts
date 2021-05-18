@@ -1,18 +1,28 @@
 import { AttribLayer, GlobalEvents, InstanceAPI } from '@/api/internal';
-import { Extent, GeometryType, IdentifyParameters, IdentifyResult, IdentifyResultFormat, IdentifyResultSet,
-    LayerType, Point, QueryFeaturesParams, RampLayerConfig, RampLayerMapImageLayerEntryConfig,
-    TreeNode } from '@/geo/api';
+import {
+    Extent,
+    GeometryType,
+    IdentifyParameters,
+    IdentifyResult,
+    IdentifyResultFormat,
+    IdentifyResultSet,
+    LayerType,
+    Point,
+    QueryFeaturesParams,
+    RampLayerConfig,
+    RampLayerMapImageLayerEntryConfig,
+    TreeNode
+} from '@/geo/api';
 import { EsriMapImageLayer, EsriRequest } from '@/geo/esri';
 import { MapImageFC } from './map-image-fc';
 
 // Formerly known as DynamicLayer
 class MapImageLayer extends AttribLayer {
-
     // indicates if sublayers can have opacity adjusted
     isDynamic: boolean;
     esriLayer: EsriMapImageLayer | undefined;
 
-    constructor (rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
+    constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.supportsIdentify = true;
         this._layerType = LayerType.MAPIMAGE;
@@ -20,8 +30,9 @@ class MapImageLayer extends AttribLayer {
     }
 
     async initiate(): Promise<void> {
-
-        this.esriLayer = new EsriMapImageLayer(this.makeEsriLayerConfig(this.origRampConfig));
+        this.esriLayer = new EsriMapImageLayer(
+            this.makeEsriLayerConfig(this.origRampConfig)
+        );
         await super.initiate();
     }
 
@@ -31,11 +42,15 @@ class MapImageLayer extends AttribLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-     protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.MapImageLayerProperties {
+    protected makeEsriLayerConfig(
+        rampLayerConfig: RampLayerConfig
+    ): __esri.MapImageLayerProperties {
         // TODO flush out
         // NOTE: it would be nice to put esri.LayerProperties as the return type, but since we are cheating with refreshInterval it wont work
         //       we can make our own interface if it needs to happen (or can extent the esri one)
-        const esriConfig: __esri.MapImageLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
+        const esriConfig: __esri.MapImageLayerProperties = super.makeEsriLayerConfig(
+            rampLayerConfig
+        );
 
         // TODO add any extra properties for attrib-based layers here
         // if we have a definition at load, apply it here to avoid cancellation errors on
@@ -75,7 +90,7 @@ class MapImageLayer extends AttribLayer {
      *
      * @function onLoadActions
      */
-    onLoadActions (): Array<Promise<void>> {
+    onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
         if (!this.esriLayer) {
@@ -175,9 +190,13 @@ class MapImageLayer extends AttribLayer {
         */
 
         // collate any relevant overrides from the config.
-        const subConfigs: {[key: number]: RampLayerMapImageLayerEntryConfig} = {};
+        const subConfigs: {
+            [key: number]: RampLayerMapImageLayerEntryConfig;
+        } = {};
 
-        (<Array<RampLayerMapImageLayerEntryConfig>>this.origRampConfig.layerEntries).forEach((le: RampLayerMapImageLayerEntryConfig) => {
+        (<Array<RampLayerMapImageLayerEntryConfig>>(
+            this.origRampConfig.layerEntries
+        )).forEach((le: RampLayerMapImageLayerEntryConfig) => {
             // TODO the || 0 is there to handle missing index. probably will never happen. add an error check?
             subConfigs[le.index || 0] = le;
         });
@@ -229,7 +248,10 @@ class MapImageLayer extends AttribLayer {
         // it will generate FCs for all leafs under the sublayer
         // we also generate a tree structure of our layer that is in a format
         // that makes the client happy
-        const processSublayer = (subLayer: __esri.Sublayer, parentTreeNode: TreeNode): void => {
+        const processSublayer = (
+            subLayer: __esri.Sublayer,
+            parentTreeNode: TreeNode
+        ): void => {
             const sid: number = subLayer.id;
             const subC = subConfigs[sid];
 
@@ -243,18 +265,23 @@ class MapImageLayer extends AttribLayer {
                 subLayer.sublayers.forEach((subSubLayer: __esri.Sublayer) => {
                     processSublayer(subSubLayer, treeGroup);
                 });
-
             } else {
                 // leaf sublayer. make placeholders, add leaf to the tree
                 if (!this.fcs[sid]) {
                     const miFC = new MapImageFC(this, sid);
-                    const lName = (subC ? subC.name : '') || subLayer.title || ''; // config if exists, else server, else none
+                    const lName =
+                        (subC ? subC.name : '') || subLayer.title || ''; // config if exists, else server, else none
                     miFC.name = lName;
                     this.fcs[sid] = miFC;
                     leafsToInit.push(miFC);
                 }
 
-                const treeLeaf = new TreeNode(sid, this.fcs[sid].uid, this.fcs[sid].name, true);
+                const treeLeaf = new TreeNode(
+                    sid,
+                    this.fcs[sid].uid,
+                    this.fcs[sid].name,
+                    true
+                );
                 parentTreeNode.children.push(treeLeaf);
 
                 subLayer.watch('visible', () => {
@@ -263,12 +290,14 @@ class MapImageLayer extends AttribLayer {
                         visibility: this.getVisibility(),
                         uid: this.uid
                     });
-                })
+                });
             }
         };
 
         // process the child layers our config is interested in, and all their children.
-        (<Array<RampLayerMapImageLayerEntryConfig>>this.origRampConfig.layerEntries).forEach(le => {
+        (<Array<RampLayerMapImageLayerEntryConfig>>(
+            this.origRampConfig.layerEntries
+        )).forEach(le => {
             if (!le.stateOnly) {
                 // TODO add a check instead of 0 default on the index?
                 const rootSub = findSublayer(le.index || 0);
@@ -281,7 +310,6 @@ class MapImageLayer extends AttribLayer {
 
         // process each leaf FC we walked to in the sublayer tree crawl above
         leafsToInit.forEach((mlFC: MapImageFC) => {
-
             // NOTE: can consider alternates, like esriLayer.url + / + layerIdx
             mlFC.serviceUrl = findSublayer(mlFC.layerIdx).url;
 
@@ -307,7 +335,9 @@ class MapImageLayer extends AttribLayer {
                 // do any things that are specific to feature or raster subtypes
                 if (mlFC.supportsFeatures) {
                     if (!mlFC.attLoader) {
-                        throw new Error('Map Image FC - expected attLoader to exist');
+                        throw new Error(
+                            'Map Image FC - expected attLoader to exist'
+                        );
                     }
                     mlFC.attLoader.updateFieldList(mlFC.fieldList);
                     return mlFC.loadFeatureCount();
@@ -321,13 +351,15 @@ class MapImageLayer extends AttribLayer {
             // loadPromises.push(dFC.loadSymbology());
 
             loadPromises.push(pLMD);
-
         });
 
         // any sublayers not in our tree, we need to turn off.
         this.esriLayer.allSublayers.forEach(s => {
             // find sublayers that are not groups, and dont exist in our initilazation array
-            if (!s.sublayers && !leafsToInit.find((fc: MapImageFC) => fc.layerIdx === s.id)) {
+            if (
+                !s.sublayers &&
+                !leafsToInit.find((fc: MapImageFC) => fc.layerIdx === s.id)
+            ) {
                 s.visible = false;
             }
         });
@@ -360,7 +392,7 @@ class MapImageLayer extends AttribLayer {
     // so for properties that fall into this category, we intercept the common routies, and treat an undefined
     // layerIdx as targeting the layer proper (in other layers, undefined means take the default child)
 
-    getName (layerIdx: number | string | undefined = undefined): string {
+    getName(layerIdx: number | string | undefined = undefined): string {
         const fc = this.getFC(layerIdx, true);
         if (!fc) {
             return this.name;
@@ -377,7 +409,7 @@ class MapImageLayer extends AttribLayer {
      * @param {Integer} [layerIdx] targets a layer index to get visibility for. Layer visibility is used if omitted.
      * @returns {Boolean} visibility of the layer/sublayer
      */
-    getVisibility (layerIdx: number | string | undefined = undefined): boolean {
+    getVisibility(layerIdx: number | string | undefined = undefined): boolean {
         const fc = this.getFC(layerIdx, true);
         if (!fc) {
             return !!this.esriLayer?.visible;
@@ -394,7 +426,10 @@ class MapImageLayer extends AttribLayer {
      * @param {Boolean} value the new visibility setting
      * @param {Integer} [layerIdx] targets a layer index to set visibility for. Layer visibility is set if omitted.
      */
-    setVisibility (value: boolean, layerIdx: number | string | undefined = undefined): void {
+    setVisibility(
+        value: boolean,
+        layerIdx: number | string | undefined = undefined
+    ): void {
         const fc = this.getFC(layerIdx, true);
         if (!fc) {
             if (this.esriLayer) {
@@ -413,7 +448,7 @@ class MapImageLayer extends AttribLayer {
      * @param {Integer | String} [layerIdx] targets a layer index or uid to get opacity for. Layer opacity is used if omitted.
      * @returns {Boolean} opacity of the layer/sublayer
      */
-    getOpacity (layerIdx: number | string | undefined = undefined): number {
+    getOpacity(layerIdx: number | string | undefined = undefined): number {
         const fc = this.getFC(layerIdx, true);
         if (!fc || !this.isDynamic) {
             return this.esriLayer?.opacity || 0;
@@ -426,7 +461,6 @@ class MapImageLayer extends AttribLayer {
             // this will apply to most of othe other things here that are doing "parent or fc"
             return super.getOpacity(fc.layerIdx);
         }
-
     }
 
     /**
@@ -436,7 +470,10 @@ class MapImageLayer extends AttribLayer {
      * @param {Decimal} value the new opacity setting. Valid value is anything between 0 and 1, inclusive.
      * @param {Integer} [layerIdx] targets a layer index to get opacity for. Layer opacity is set if omitted.
      */
-    setOpacity (value: number, layerIdx: number | string | undefined = undefined): void {
+    setOpacity(
+        value: number,
+        layerIdx: number | string | undefined = undefined
+    ): void {
         const fc = this.getFC(layerIdx, true);
         if (!fc || !this.isDynamic) {
             if (this.esriLayer) {
@@ -490,11 +527,15 @@ class MapImageLayer extends AttribLayer {
 
         const map = this.$iApi.geo.map;
 
-        const activeFCs: Array<MapImageFC> = (<Array<MapImageFC>>this.fcs).filter(fc => {
-            return fc.getVisibility() &&
+        const activeFCs: Array<MapImageFC> = (<Array<MapImageFC>>(
+            this.fcs
+        )).filter(fc => {
+            return (
+                fc.getVisibility() &&
                 fc.supportsFeatures &&
-                !fc.scaleSet.isOffScale(map.getScale()).offScale;
-                // && fc.getQuery() // TODO add in query check once implemented
+                !fc.scaleSet.isOffScale(map.getScale()).offScale
+            );
+            // && fc.getQuery() // TODO add in query check once implemented
         });
 
         // early kickout check. all sublayers are one of: not visible; not queryable; off scale; a raster layer
@@ -518,56 +559,58 @@ class MapImageLayer extends AttribLayer {
 
         let pointBuffer: Extent;
         if (options.geometry.type === GeometryType.POINT) {
-            pointBuffer = this.$iApi.geo.utils.query.makeClickBuffer(<Point>options.geometry, options.tolerance);
+            pointBuffer = this.$iApi.geo.utils.query.makeClickBuffer(
+                <Point>options.geometry,
+                options.tolerance
+            );
         }
 
         // loop over active FCs. call query on each. prepare a geometry
-        result.done = Promise.all(activeFCs.map(fc => {
-            const innerResult: IdentifyResult = {
-                uid: fc.uid,
-                isLoading: true,
-                items: []
-            };
-            result.results.push(innerResult);
+        result.done = Promise.all(
+            activeFCs.map(fc => {
+                const innerResult: IdentifyResult = {
+                    uid: fc.uid,
+                    isLoading: true,
+                    items: []
+                };
+                result.results.push(innerResult);
 
-            if (fc.geomType !== GeometryType.POLYGON && pointBuffer) {
-                // we want to use a point buffer if
-                // - a point was used as identify input (aka a pointBuffer exists in the var)
-                // - the sublayer is not a polygon layer
-                qOpts.filterGeometry = pointBuffer;
-            } else {
-                qOpts.filterGeometry = options.geometry;
-            }
+                if (fc.geomType !== GeometryType.POLYGON && pointBuffer) {
+                    // we want to use a point buffer if
+                    // - a point was used as identify input (aka a pointBuffer exists in the var)
+                    // - the sublayer is not a polygon layer
+                    qOpts.filterGeometry = pointBuffer;
+                } else {
+                    qOpts.filterGeometry = options.geometry;
+                }
 
-            qOpts.outFields = fc.fieldList;
+                qOpts.outFields = fc.fieldList;
 
-            return fc.queryFeatures(qOpts).then(results => {
-                // TODO might be a problem overwriting the array if something is watching/binding to the original
-                innerResult.items = results.map(gr => {
-                    return {
-                        // TODO this block is the same as in featurelayer. might want to abstract to a shared function. really depends if we keep the extra params
-                        // TODO decide if we want to handle alias mapping here or not.
-                        //      if we do, our "ESRI" format will need to include field metadata.
-                        //      if we dont, we need to ensure an outside fixture can access field metadata via uid easily.
-                        data: gr.attributes, // this.attributesToDetails(vAtt.attributes, layerData.fields),
-                        format: IdentifyResultFormat.ESRI
+                return fc.queryFeatures(qOpts).then(results => {
+                    // TODO might be a problem overwriting the array if something is watching/binding to the original
+                    innerResult.items = results.map(gr => {
+                        return {
+                            // TODO this block is the same as in featurelayer. might want to abstract to a shared function. really depends if we keep the extra params
+                            // TODO decide if we want to handle alias mapping here or not.
+                            //      if we do, our "ESRI" format will need to include field metadata.
+                            //      if we dont, we need to ensure an outside fixture can access field metadata via uid easily.
+                            data: gr.attributes, // this.attributesToDetails(vAtt.attributes, layerData.fields),
+                            format: IdentifyResultFormat.ESRI
 
-                        // See comments on IdentifyItem interface definition; we may decide to not keep these properties
-                        // id:  gr.attributes[fc.oidField].toString(),
-                        // symbol: this.gapi.utils.symbology.getGraphicIcon(gr.attributes, fc.renderer) // TODO use fc.getIcon instead
-                        // name: this.getFeatureName(vAtt.oid.toString(), vAtt.attributes),
-                    };
+                            // See comments on IdentifyItem interface definition; we may decide to not keep these properties
+                            // id:  gr.attributes[fc.oidField].toString(),
+                            // symbol: this.gapi.utils.symbology.getGraphicIcon(gr.attributes, fc.renderer) // TODO use fc.getIcon instead
+                            // name: this.getFeatureName(vAtt.oid.toString(), vAtt.attributes),
+                        };
+                    });
+
+                    innerResult.isLoading = false;
                 });
-
-                innerResult.isLoading = false;
-            });
-
-        })).then(() => Promise.resolve()); // just to stop typescript from crying about array result of .all()
+            })
+        ).then(() => Promise.resolve()); // just to stop typescript from crying about array result of .all()
 
         return result;
     }
-
-
 }
 
 export default MapImageLayer;

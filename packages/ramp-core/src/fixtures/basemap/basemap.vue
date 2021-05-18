@@ -5,31 +5,63 @@
         </template>
 
         <template #controls>
-            <pin @click="panel.pin()" :active="isPinned" v-if="!$iApi.screenSize !== 'xs'"></pin>
-            <close @click="panel.close()" v-if="$iApi.screenSize !== 'xs'"></close>
+            <pin
+                @click="panel.pin()"
+                :active="isPinned"
+                v-if="!$iApi.screenSize !== 'xs'"
+            ></pin>
+            <close
+                @click="panel.close()"
+                v-if="$iApi.screenSize !== 'xs'"
+            ></close>
         </template>
 
         <template #content>
             <div class="h-600 overflow-y-auto">
-                <div class="mx-5" v-for="tileSchema in tileSchemas" v-bind:key="tileSchema.id">
+                <div
+                    class="mx-5"
+                    v-for="tileSchema in tileSchemas"
+                    v-bind:key="tileSchema.id"
+                >
                     <div class="mt-10 mb-5 flex">
                         <h3>
                             {{ tileSchema.name }}
                         </h3>
                         <!-- TODO: check if current basemap matches projection, if not need "Map Refresh required" warning here -->
-                        <div class="flex truncate px-5 ml-auto" v-if="tileSchema.id !== selectedBasemap.tileSchemaId">
-                            <svg class="fill-current w-16 h-16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <div
+                            class="flex truncate px-5 ml-auto"
+                            v-if="
+                                tileSchema.id !== selectedBasemap.tileSchemaId
+                            "
+                        >
+                            <svg
+                                class="fill-current w-16 h-16"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                            >
                                 <path
                                     d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
                                 />
                             </svg>
-                            <span class="text-blue-600 pl-5">{{ $t('basemap.refresh') }}</span>
+                            <span class="text-blue-600 pl-5">{{
+                                $t('basemap.refresh')
+                            }}</span>
                         </div>
                     </div>
 
-                    <ul class="border-t border-b border-gray-600" v-focus-list v-if="basemaps.length > 0">
-                        <li v-for="basemap in filterBasemaps(tileSchema.id)" v-bind:key="basemap.id">
-                            <basemap-item :basemap="basemap" class="block relative overflow-hidden"></basemap-item>
+                    <ul
+                        class="border-t border-b border-gray-600"
+                        v-focus-list
+                        v-if="basemaps.length > 0"
+                    >
+                        <li
+                            v-for="basemap in filterBasemaps(tileSchema.id)"
+                            v-bind:key="basemap.id"
+                        >
+                            <basemap-item
+                                :basemap="basemap"
+                                class="block relative overflow-hidden"
+                            ></basemap-item>
                         </li>
                     </ul>
                 </div>
@@ -64,7 +96,9 @@ export default class BasemapComponent extends Vue {
 
     // filter out all the basemaps that match the current schema
     filterBasemaps(schemaId: string) {
-        return this.basemaps.filter(basemap => basemap.tileSchemaId === schemaId);
+        return this.basemaps.filter(
+            basemap => basemap.tileSchemaId === schemaId
+        );
     }
 }
 </script>

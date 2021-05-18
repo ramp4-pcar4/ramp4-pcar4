@@ -3,7 +3,6 @@
 import { BaseGeometry, GeometryType, SrDef, IdDef } from '@/geo/api';
 
 export class Point extends BaseGeometry {
-
     // storing raw geometry in array format.
     // it will be in native format for geojson and for feeding into other
     // ramp geometry types (i.e. arrays of points like [[x1,y1],[x2,y2]])
@@ -17,9 +16,9 @@ export class Point extends BaseGeometry {
      * @param {SpatialReference | number | string} [sr] A spatial reference for the co-ordinates. Defaults to Lat/Long if not provided
      * @param {Boolean} [raw] An efficiency flag. If set, it means the xy value is in the pure format of [number, number] and we can skip data validations and parsing.
      */
-    constructor(id: IdDef, point: Point)
-    constructor(id: IdDef, coords: Array<number>, sr?: SrDef, raw?: boolean)
-    constructor(id: IdDef, xy: object, sr?: SrDef)
+    constructor(id: IdDef, point: Point);
+    constructor(id: IdDef, coords: Array<number>, sr?: SrDef, raw?: boolean);
+    constructor(id: IdDef, xy: object, sr?: SrDef);
     constructor(id: IdDef, geometry: any, sr?: SrDef, raw?: boolean) {
         super(id, geometry.sr || sr);
 
@@ -59,7 +58,6 @@ export class Point extends BaseGeometry {
     }
 
     static parseXY(input: any): Array<number> {
-
         let buffer: Array<any>;
 
         // test for various supported formats
@@ -67,7 +65,6 @@ export class Point extends BaseGeometry {
         if (Array.isArray(input) && input.length === 2) {
             // two element array
             buffer = input;
-
         } else if (input instanceof Point) {
             // fast return, it's already pure
             return input.toArray();
@@ -78,7 +75,9 @@ export class Point extends BaseGeometry {
 
         // check that point values are numeric
         if (isNaN(buffer[0]) || isNaN(buffer[1])) {
-            throw new Error('Unsupported point format detected. Supported formats are two element array of numbers, or object with x and y properties containing numbers');
+            throw new Error(
+                'Unsupported point format detected. Supported formats are two element array of numbers, or object with x and y properties containing numbers'
+            );
         } else {
             // TODO if we find things are slow, consider dropping the "text number to number number" casting we provide here. add more errors
             // TODO see if testing if buffer val is string first prior to parseFloating it is more efficient than parseFloating everything

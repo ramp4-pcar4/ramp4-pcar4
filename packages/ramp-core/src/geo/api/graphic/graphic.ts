@@ -9,10 +9,15 @@
 
 // makes a bit more sense, also helps make the geometry more memory-friendly (i.e. not having space allocated for null pointers to styles and hovers in big point chains)
 
-import { Attributes, BaseGeometry, Hover, Point, StyleOptions } from '@/geo/api';
+import {
+    Attributes,
+    BaseGeometry,
+    Hover,
+    Point,
+    StyleOptions
+} from '@/geo/api';
 
 export class Graphic {
-
     attributes: Attributes = {};
     geometry: BaseGeometry = new Point(undefined, [0, 0], undefined, true); // dumb default to shut up whining typescript
     style: StyleOptions | undefined;
@@ -44,5 +49,4 @@ export class Graphic {
             this._hover = undefined;
         }
     }
-
 }

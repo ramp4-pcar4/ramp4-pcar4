@@ -1,7 +1,16 @@
 <template>
-    <transition-group @enter="enter" @leave="leave" name="panel-container" tag="div">
+    <transition-group
+        @enter="enter"
+        @leave="leave"
+        name="panel-container"
+        tag="div"
+    >
         <!-- TODO: pass a corresponding fixture instance to the panel component as it can be useful -->
-        <panel-container v-for="panel in visible($iApi.screenSize)" :key="`${panel.id}`" :panel="panel"></panel-container>
+        <panel-container
+            v-for="panel in visible($iApi.screenSize)"
+            :key="`${panel.id}`"
+            :panel="panel"
+        ></panel-container>
     </transition-group>
 </template>
 
@@ -28,7 +37,9 @@ declare class ResizeObserver {
     }
 })
 export default class PanelStackV extends Vue {
-    @Get('panel/getVisible!') visible!: (extraSmallScreen: boolean) => PanelInstance[];
+    @Get('panel/getVisible!') visible!: (
+        extraSmallScreen: boolean
+    ) => PanelInstance[];
     @Sync('panel/stackWidth') stackWidth!: number;
 
     mounted(): void {
@@ -48,7 +59,10 @@ export default class PanelStackV extends Vue {
     }
 
     leave(el: HTMLElement, done: () => {}): void {
-        const [bbox, pbbox] = [el.getBoundingClientRect(), el.parentElement!.getBoundingClientRect()];
+        const [bbox, pbbox] = [
+            el.getBoundingClientRect(),
+            el.parentElement!.getBoundingClientRect()
+        ];
 
         // the panel will be positioned `absolute` and it will screw up its dimensions
         // to prevent this, set width/height/left manually before detaching the panel
@@ -68,7 +82,11 @@ export default class PanelStackV extends Vue {
     /**
      * Animate transition between panel screen components by fading them in/out.
      */
-    animateTransition(el: HTMLElement, done: () => void, values: number[][]): void {
+    animateTransition(
+        el: HTMLElement,
+        done: () => void,
+        values: number[][]
+    ): void {
         anime({
             targets: el,
             duration: 300,

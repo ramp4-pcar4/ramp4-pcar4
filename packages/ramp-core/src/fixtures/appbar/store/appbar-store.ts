@@ -21,7 +21,9 @@ const getters = {
      * @returns {AppbarItemInstance[]}
      */
     visible(state: AppbarState): AppbarItemInstance[] {
-        return state.order.map<AppbarItemInstance>(id => state.items[id]).filter(item => item.componentId);
+        return state.order
+            .map<AppbarItemInstance>(id => state.items[id])
+            .filter(item => item.componentId);
     }
 };
 

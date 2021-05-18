@@ -11,7 +11,7 @@ import { Get, Sync, Call } from 'vuex-pathify';
 @Component
 export default class StepperV extends Vue {
     @Prop({ default: 0 }) activeStep!: number;
-    @Provide() stepper = { activeIndex: this.activeStep, numSteps: 0 }
+    @Provide() stepper = { activeIndex: this.activeStep, numSteps: 0 };
 
     @Watch('activeStep')
     updateStep() {
@@ -20,5 +20,4 @@ export default class StepperV extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

@@ -77,7 +77,13 @@ export type AsyncComponentFactoryEh = () => {
  * - `VueConstructor`: a regular Vue constructor function
  * - `AsyncComponentFunction`: a function returning a promise which resolves into a Vue component
  */
-export type PanelConfigScreens = { [key: string]: string | ComponentOptions<Vue> | VueConstructor | AsyncComponentFunctionEh };
+export type PanelConfigScreens = {
+    [key: string]:
+        | string
+        | ComponentOptions<Vue>
+        | VueConstructor
+        | AsyncComponentFunctionEh;
+};
 export type PanelConfigRoute = { screen: string; props?: object };
 export type PanelConfigStyle = { [key: string]: string };
 

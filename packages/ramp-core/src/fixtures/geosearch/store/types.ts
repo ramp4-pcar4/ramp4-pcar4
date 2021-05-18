@@ -33,5 +33,7 @@ class Types {
 }
 
 export default function(language: string): defs.Types {
-    return (typeObj[language] = typeObj[language] ? typeObj[language] : new Types(language));
+    return (typeObj[language] = typeObj[language]
+        ? typeObj[language]
+        : new Types(language));
 }

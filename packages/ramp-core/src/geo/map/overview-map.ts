@@ -1,9 +1,15 @@
 import { CommonMapAPI, InstanceAPI } from '@/api/internal';
-import { BaseGeometry, DefPromise, Extent, GeometryType, RampMapConfig, SpatialReference } from '@/geo/api';
+import {
+    BaseGeometry,
+    DefPromise,
+    Extent,
+    GeometryType,
+    RampMapConfig,
+    SpatialReference
+} from '@/geo/api';
 import { EsriLOD, EsriMapView, EsriGraphic } from '@/geo/esri';
 
 export class OverviewMapAPI extends CommonMapAPI {
-
     /**
      * The internal esri map view. Avoid referencing outside of geoapi.
      * @private
@@ -22,7 +28,7 @@ export class OverviewMapAPI extends CommonMapAPI {
      * @constructor
      * @param {InstanceAPI} iApi the RAMP instance
      */
-    constructor (iApi: InstanceAPI) {
+    constructor(iApi: InstanceAPI) {
         super(iApi);
 
         this.viewPromise = new DefPromise();
@@ -36,7 +42,9 @@ export class OverviewMapAPI extends CommonMapAPI {
     createMap(config: RampMapConfig, targetDiv: string | HTMLDivElement): void {
         super.createMap(config, targetDiv);
 
-        this._rampSR = SpatialReference.fromConfig(config.extent.spatialReference);
+        this._rampSR = SpatialReference.fromConfig(
+            config.extent.spatialReference
+        );
 
         const esriViewConfig: __esri.MapViewProperties = {
             map: this.esriMap,
@@ -45,7 +53,9 @@ export class OverviewMapAPI extends CommonMapAPI {
                 lods: <Array<EsriLOD>>config.lods,
                 rotationEnabled: false
             },
-            spatialReference: this.$iApi.geo.utils.geom._convSrToEsri(this._rampSR), // internal, so we will sneak an internal call
+            spatialReference: this.$iApi.geo.utils.geom._convSrToEsri(
+                this._rampSR
+            ), // internal, so we will sneak an internal call
             extent: config.extent
         };
 
@@ -55,7 +65,7 @@ export class OverviewMapAPI extends CommonMapAPI {
         // initialize extent rectangle graphic
         const graphic = {
             symbol: {
-                type: "simple-fill",
+                type: 'simple-fill',
                 color: [0, 0, 0, 0.25],
                 outline: null
             },
@@ -82,7 +92,7 @@ export class OverviewMapAPI extends CommonMapAPI {
         this.esriView.on('drag', esriDrag => {
             esriDrag.stopPropagation();
             this.mapDrag(esriDrag);
-        })
+        });
 
         this.esriView.container.addEventListener('touchmove', e => {
             // need this for panning and zooming to work on mobile devices / touchscreens
@@ -110,18 +120,25 @@ export class OverviewMapAPI extends CommonMapAPI {
         if (esriDrag.action === 'start') {
             // check if drag hits graphic, if so set start extent
             if (await this.cursorHitTest(esriDrag)) {
-                this.startExtent = this.esriView!.graphics.getItemAt(0).geometry as __esri.Extent;
+                this.startExtent = this.esriView!.graphics.getItemAt(0)
+                    .geometry as __esri.Extent;
             }
         } else if (this.startExtent) {
             // determine delta in map coords from drag origin to current drag point and update extent graphic
             const origin = this.esriView!.toMap(esriDrag.origin);
             const pos = this.esriView!.toMap({ x: esriDrag.x, y: esriDrag.y });
-            const newExtent = this.startExtent.clone().offset(pos.x - origin.x, pos.y - origin.y, 0);
+            const newExtent = this.startExtent
+                .clone()
+                .offset(pos.x - origin.x, pos.y - origin.y, 0);
             this.esriView!.graphics.getItemAt(0).geometry = newExtent;
 
             if (esriDrag.action === 'end') {
                 // zoom main map once drag is done
-                this.$iApi.geo.map.zoomMapTo(this.$iApi.geo.utils.geom.geomEsriToRamp(newExtent), undefined, false);
+                this.$iApi.geo.map.zoomMapTo(
+                    this.$iApi.geo.utils.geom.geomEsriToRamp(newExtent),
+                    undefined,
+                    false
+                );
                 this.startExtent = null;
             }
         }
@@ -133,13 +150,18 @@ export class OverviewMapAPI extends CommonMapAPI {
      * @param {Extent} newExtent new main map extent
      */
     updateOverview(newExtent: Extent) {
-        const hRatio = this.$iApi.geo.map.getPixelHeight() / this.getPixelHeight();
-        const wRatio = this.$iApi.geo.map.getPixelWidth() / this.getPixelWidth();
-        const overviewScale = this.$iApi.geo.map.getScale() * 1.5 * Math.max(hRatio, wRatio);
+        const hRatio =
+            this.$iApi.geo.map.getPixelHeight() / this.getPixelHeight();
+        const wRatio =
+            this.$iApi.geo.map.getPixelWidth() / this.getPixelWidth();
+        const overviewScale =
+            this.$iApi.geo.map.getScale() * 1.5 * Math.max(hRatio, wRatio);
         this.zoomMapTo(newExtent.center(), overviewScale, false);
 
         // this draws the outline of the main map extent
-        this.esriView!.graphics.getItemAt(0).geometry = this.$iApi.geo.map.esriView!.extent;
+        this.esriView!.graphics.getItemAt(
+            0
+        ).geometry = this.$iApi.geo.map.esriView!.extent;
     }
 
     /**
@@ -148,7 +170,9 @@ export class OverviewMapAPI extends CommonMapAPI {
      * @param {MouseEvent} e
      * @returns {Promise<boolean>}
      */
-    async cursorHitTest(e: MouseEvent | __esri.MapViewScreenPoint): Promise<boolean> {
+    async cursorHitTest(
+        e: MouseEvent | __esri.MapViewScreenPoint
+    ): Promise<boolean> {
         const hitTestResult = await this.esriView!.hitTest(e);
         return hitTestResult.results.length > 0;
     }
@@ -162,12 +186,17 @@ export class OverviewMapAPI extends CommonMapAPI {
      */
     private geomToMapSR(geom: BaseGeometry): Promise<BaseGeometry> {
         if (!this._rampSR) {
-            throw new Error('call to map.geomToMapSR before the map spatial ref was created');
+            throw new Error(
+                'call to map.geomToMapSR before the map spatial ref was created'
+            );
         }
         if (this._rampSR.isEqual(geom.sr)) {
             return Promise.resolve(geom);
         } else {
-            return this.$iApi.geo.utils.proj.projectGeometry(this._rampSR, geom);
+            return this.$iApi.geo.utils.proj.projectGeometry(
+                this._rampSR,
+                geom
+            );
         }
     }
 
@@ -179,7 +208,11 @@ export class OverviewMapAPI extends CommonMapAPI {
      * @param {boolean} [animate] An optional animation setting. On by default
      * @returns {Promise<void>} A promise that resolves when the map has finished zooming
      */
-    async zoomMapTo(geom: BaseGeometry, scale?: number, animate: boolean = true): Promise<void> {
+    async zoomMapTo(
+        geom: BaseGeometry,
+        scale?: number,
+        animate: boolean = true
+    ): Promise<void> {
         // TODO technically this can accept any geometry. should we open up the suggested signatures to allow various things?
         if (this.esriView) {
             const g = await this.geomToMapSR(geom);
@@ -195,12 +228,10 @@ export class OverviewMapAPI extends CommonMapAPI {
             if (this.esriView) {
                 return this.esriView.goTo(zoomP, opts);
             }
-
         } else {
             this.noMapErr();
         }
     }
-
 
     /**
      * Provides the scale of the map (the scale denominator as integer)
@@ -237,7 +268,9 @@ export class OverviewMapAPI extends CommonMapAPI {
      */
     getExtent(): Extent {
         if (this.esriView) {
-            return this.$iApi.geo.utils.geom._convEsriExtentToRamp(this.esriView.extent);
+            return this.$iApi.geo.utils.geom._convEsriExtentToRamp(
+                this.esriView.extent
+            );
         } else {
             this.noMapErr();
             return Extent.fromParams('i_am_error', 0, 1, 0, 1); // default fake value. avoids us having undefined checks everywhere.

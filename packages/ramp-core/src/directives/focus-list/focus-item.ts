@@ -17,7 +17,9 @@ const ITEM_ATTR = 'focus-item';
  * ```
  */
 export const FocusItem: Vue.DirectiveOptions = {
-    bind(el: HTMLElement /*, binding: Vue.VNodeDirective , vnode: Vue.VNode */) {
+    bind(
+        el: HTMLElement /*, binding: Vue.VNodeDirective , vnode: Vue.VNode */
+    ) {
         if (!el.hasAttribute('id')) {
             el.setAttribute('id', generateID());
         }

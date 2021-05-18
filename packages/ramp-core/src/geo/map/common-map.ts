@@ -13,12 +13,11 @@ import { RampMapConfig } from '@/geo/api';
 // We also use "Base" for our vuex state classes so want to avoid naming overlaps.
 // Do not add any event emits or listeners that would be tied to a specific map
 export class CommonMapAPI extends APIScope {
-
     esriMap: EsriMap | undefined;
 
     _basemapStore: Array<Basemap>;
 
-    protected constructor (iApi: InstanceAPI) {
+    protected constructor(iApi: InstanceAPI) {
         super(iApi);
 
         this.esriMap = undefined;
@@ -29,17 +28,23 @@ export class CommonMapAPI extends APIScope {
     createMap(config: RampMapConfig, targetDiv: string | HTMLDivElement): void {
         // TODO if .esriMap exists, do we want to do any cleanup on it? E.g. remove event handlers?
 
-        this._basemapStore = config.basemaps.map(bmConfig => new Basemap(bmConfig));
+        this._basemapStore = config.basemaps.map(
+            bmConfig => new Basemap(bmConfig)
+        );
 
         const esriConfig: __esri.MapProperties = {};
         if (config.initialBasemapId) {
-            esriConfig.basemap = this.findBasemap(config.initialBasemapId).innerBasemap;
+            esriConfig.basemap = this.findBasemap(
+                config.initialBasemapId
+            ).innerBasemap;
         }
         this.esriMap = new EsriMap(esriConfig);
     }
 
     protected findBasemap(id: string): Basemap {
-        const bm: Basemap | undefined = this._basemapStore.find(bms => bms.id === id);
+        const bm: Basemap | undefined = this._basemapStore.find(
+            bms => bms.id === id
+        );
         if (bm) {
             return bm;
         } else {
@@ -69,10 +74,11 @@ export class CommonMapAPI extends APIScope {
     }
 
     protected noMapErr(): void {
-        console.error('Attempted to manipulate the map before calling createMap()');
+        console.error(
+            'Attempted to manipulate the map before calling createMap()'
+        );
     }
 
     // TODO shared Map (not view-based) functions could go here.
     //      Includes passthrough things. Could also include addLayer (assuming the LayerView gets handled automagically in 3D case?)
-
 }

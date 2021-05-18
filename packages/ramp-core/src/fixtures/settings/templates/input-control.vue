@@ -4,10 +4,16 @@
             {{ name }}
         </div>
         <div class="flex flex-row">
-            <input class="rv-input text-md w-full" type="number" :value="config.value" min="0" max="100" />
+            <input
+                class="rv-input text-md w-full"
+                type="number"
+                :value="config.value"
+                min="0"
+                max="100"
+            />
         </div>
         <div class="text-xs pt-10 text-gray-600 mb-20">
-            {{ $t('settings.label.refreshOff')}}
+            {{ $t('settings.label.refreshOff') }}
         </div>
     </div>
 </template>

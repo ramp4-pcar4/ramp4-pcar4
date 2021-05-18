@@ -1,6 +1,10 @@
 import { FixtureInstance } from '@/api';
 
-import { AppbarFixtureConfig, AppbarItemInstance, AppbarItemSet } from '../store';
+import {
+    AppbarFixtureConfig,
+    AppbarItemInstance,
+    AppbarItemSet
+} from '../store';
 
 export class AppbarAPI extends FixtureInstance {
     /**
@@ -26,7 +30,9 @@ export class AppbarAPI extends FixtureInstance {
             return;
         }
 
-        const appbarItems = appbarConfig.items.map(item => new AppbarItemInstance(item));
+        const appbarItems = appbarConfig.items.map(
+            item => new AppbarItemInstance(item)
+        );
 
         // save appbar items as a collection to the store
         // they are saves as a set for easy by-id access

@@ -1,6 +1,8 @@
 <template>
     <panel-screen>
-        <template #header> {{ $t('settings.title') }}: {{ layer.getName() }} </template>
+        <template #header>
+            {{ $t('settings.title') }}: {{ layer.getName() }}
+        </template>
 
         <template #controls>
             <close @click="panel.close()" />
@@ -8,7 +10,9 @@
 
         <template #content>
             <div class="flex flex-col justify-center">
-                <span class="rv-subheader">{{ $t('settings.label.display') }}</span>
+                <span class="rv-subheader">{{
+                    $t('settings.label.display')
+                }}</span>
 
                 <div class="rv-settings-divider"></div>
 
@@ -17,7 +21,10 @@
                     type="toggle"
                     :name="$t('settings.label.visibility')"
                     icon="visibility"
-                    :config="{ onChange: updateVisibility, value: visibilityModel }"
+                    :config="{
+                        onChange: updateVisibility,
+                        value: visibilityModel
+                    }"
                 ></settings-component>
 
                 <div class="rv-settings-divider"></div>
@@ -37,14 +44,20 @@
                     type="toggle"
                     :name="$t('settings.label.boundingBox')"
                     icon="box"
-                    :config="{ onChange: () => {}, value: false, disabled: true }"
+                    :config="{
+                        onChange: () => {},
+                        value: false,
+                        disabled: true
+                    }"
                 ></settings-component>
 
                 <div class="rv-settings-divider"></div>
             </div>
 
             <div class="flex flex-col justify-center">
-                <span class="rv-subheader">{{ $t('settings.label.data') }}</span>
+                <span class="rv-subheader">{{
+                    $t('settings.label.data')
+                }}</span>
 
                 <div class="rv-settings-divider"></div>
 
@@ -53,14 +66,20 @@
                     type="toggle"
                     :name="$t('settings.label.query')"
                     icon="location"
-                    :config="{ onChange: () => {}, value: false, disabled: true }"
+                    :config="{
+                        onChange: () => {},
+                        value: false,
+                        disabled: true
+                    }"
                 ></settings-component>
 
                 <div class="rv-settings-divider"></div>
             </div>
 
             <div class="flex flex-col justify-center">
-                <span class="rv-subheader">{{ $t('settings.label.interval') }}</span>
+                <span class="rv-subheader">{{
+                    $t('settings.label.interval')
+                }}</span>
 
                 <div class="rv-settings-divider"></div>
 
@@ -107,7 +126,7 @@ export default class SettingsV extends Vue {
         this.layer.isLayerLoaded().then(() => {
             this.visibilityModel = this.layer.getVisibility(this.uid);
             this.opacityModel = this.layer.getOpacity(this.uid) * 100;
-        })
+        });
     }
 
     // Update the layer visibility.

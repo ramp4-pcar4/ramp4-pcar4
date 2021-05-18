@@ -3,9 +3,7 @@
 import { FileLayer } from '@/api/internal';
 
 class GeoJsonLayer extends FileLayer {
-
     async initiate(): Promise<void> {
-
         // TODO check if .sourceGeoJson is already populated?
         //      if this initiate is a reload, do we want to re-use it, or re-download? decide.
 
@@ -53,18 +51,14 @@ class GeoJsonLayer extends FileLayer {
             });
             */
             // temp line to warn people
-            this.sourceGeoJson = 'error remote file geojson loader not yet implemented';
-
+            this.sourceGeoJson =
+                'error remote file geojson loader not yet implemented';
         } else {
             throw new Error('GeoJson layer config contains no raw data or url');
         }
 
         await super.initiate();
     }
-
-
-
-
 }
 
 export default GeoJsonLayer;

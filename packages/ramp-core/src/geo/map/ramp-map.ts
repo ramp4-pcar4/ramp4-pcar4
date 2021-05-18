@@ -1,17 +1,36 @@
 // wraps and represents a 2D esri map
 // TODO add proper comments
 
-import { CommonMapAPI, GlobalEvents, InstanceAPI, LayerInstance } from '@/api/internal';
-import { BaseGeometry, CoreFilterKey, DefPromise, Extent, GeometryType, IdentifyMode,IdentifyParameters,
-    IdentifyResult, IdentifyResultSet, MapClick, MapMove, Point,RampMapConfig, ScreenPoint, ScaleSet,
-    SpatialReference } from '@/geo/api';
+import {
+    CommonMapAPI,
+    GlobalEvents,
+    InstanceAPI,
+    LayerInstance
+} from '@/api/internal';
+import {
+    BaseGeometry,
+    CoreFilterKey,
+    DefPromise,
+    Extent,
+    GeometryType,
+    IdentifyMode,
+    IdentifyParameters,
+    IdentifyResult,
+    IdentifyResultSet,
+    MapClick,
+    MapMove,
+    Point,
+    RampMapConfig,
+    ScreenPoint,
+    ScaleSet,
+    SpatialReference
+} from '@/geo/api';
 import { EsriLOD, EsriMapView } from '@/geo/esri';
 import { LayerStore } from '@/store/modules/layer';
 
 // TODO bring in the map actions code
 
 export class MapAPI extends CommonMapAPI {
-
     // NOTE unlike ESRI3, the map view doesnt have a custom event, it uses property watches.
     //      so if we want to detect scale change we'll need to have another event, it won't be
     //      a big bundle of properties like ESRI3 provided
@@ -36,7 +55,7 @@ export class MapAPI extends CommonMapAPI {
      * @constructor
      * @param {InstanceAPI} iApi the RAMP instance
      */
-    constructor (iApi: InstanceAPI) {
+    constructor(iApi: InstanceAPI) {
         super(iApi);
 
         this.viewPromise = new DefPromise();
@@ -52,7 +71,9 @@ export class MapAPI extends CommonMapAPI {
 
         // TODO if .esriMap or .esriView exists, do we want to do any cleanup on it? E.g. remove event handlers?
 
-        this._rampSR = SpatialReference.fromConfig(config.extent.spatialReference);
+        this._rampSR = SpatialReference.fromConfig(
+            config.extent.spatialReference
+        );
 
         const esriViewConfig: __esri.MapViewProperties = {
             map: this.esriMap,
@@ -61,7 +82,9 @@ export class MapAPI extends CommonMapAPI {
                 lods: <Array<EsriLOD>>config.lods,
                 rotationEnabled: false // TODO make rotation a config option?
             },
-            spatialReference: this.$iApi.geo.utils.geom._convSrToEsri(this._rampSR), // internal, so we will sneak an internal call
+            spatialReference: this.$iApi.geo.utils.geom._convSrToEsri(
+                this._rampSR
+            ), // internal, so we will sneak an internal call
             extent: config.extent
         };
 
@@ -73,7 +96,12 @@ export class MapAPI extends CommonMapAPI {
             //       want to have two event handlers (one on filter, one on extent change) and synch
             //       between them. They can subscribe to the filter event and get all the info they need.
 
-            const newExtent = <Extent>this.$iApi.geo.utils.geom.geomEsriToRamp(newval, 'map_extent_event');
+            const newExtent = <Extent>(
+                this.$iApi.geo.utils.geom.geomEsriToRamp(
+                    newval,
+                    'map_extent_event'
+                )
+            );
             this.$iApi.event.emit(GlobalEvents.MAP_EXTENTCHANGE, newExtent);
             this.$iApi.event.emit(GlobalEvents.FILTER_CHANGE, {
                 extent: newExtent,
@@ -86,21 +114,39 @@ export class MapAPI extends CommonMapAPI {
         });
 
         this.esriView.on('click', esriClick => {
-            this.$iApi.event.emit(GlobalEvents.MAP_CLICK, this.$iApi.geo.utils.geom.esriMapClickToRamp(esriClick, 'map_click_point'));
+            this.$iApi.event.emit(
+                GlobalEvents.MAP_CLICK,
+                this.$iApi.geo.utils.geom.esriMapClickToRamp(
+                    esriClick,
+                    'map_click_point'
+                )
+            );
         });
 
         this.esriView.on('double-click', esriClick => {
-            this.$iApi.event.emit(GlobalEvents.MAP_DOUBLECLICK, this.$iApi.geo.utils.geom.esriMapClickToRamp(esriClick, 'map_doubleclick_point'));
+            this.$iApi.event.emit(
+                GlobalEvents.MAP_DOUBLECLICK,
+                this.$iApi.geo.utils.geom.esriMapClickToRamp(
+                    esriClick,
+                    'map_doubleclick_point'
+                )
+            );
         });
 
         this.esriView.on('pointer-move', esriMouseMove => {
             // TODO debounce here? the map event fires pretty much every change in pixel value.
-            this.$iApi.event.emit(GlobalEvents.MAP_MOUSEMOVE, this.$iApi.geo.utils.geom.esriMapMouseToRamp(esriMouseMove));
+            this.$iApi.event.emit(
+                GlobalEvents.MAP_MOUSEMOVE,
+                this.$iApi.geo.utils.geom.esriMapMouseToRamp(esriMouseMove)
+            );
         });
 
         this.esriView.on('pointer-down', esriMouseDown => {
             // .native is a DOM pointer event
-            this.$iApi.event.emit(GlobalEvents.MAP_MOUSEDOWN, esriMouseDown.native);
+            this.$iApi.event.emit(
+                GlobalEvents.MAP_MOUSEDOWN,
+                esriMouseDown.native
+            );
         });
 
         this.esriView.on('key-down', esriKeyDown => {
@@ -127,8 +173,7 @@ export class MapAPI extends CommonMapAPI {
         });
 
         this.viewPromise.resolveMe();
-
-     }
+    }
 
     /**
      * Projects a geometry to the map's spatial reference
@@ -139,12 +184,17 @@ export class MapAPI extends CommonMapAPI {
      */
     private geomToMapSR(geom: BaseGeometry): Promise<BaseGeometry> {
         if (!this._rampSR) {
-            throw new Error('call to map.geomToMapSR before the map spatial ref was created');
+            throw new Error(
+                'call to map.geomToMapSR before the map spatial ref was created'
+            );
         }
         if (this._rampSR.isEqual(geom.sr)) {
             return Promise.resolve(geom);
         } else {
-            return this.$iApi.geo.utils.proj.projectGeometry(this._rampSR, geom);
+            return this.$iApi.geo.utils.proj.projectGeometry(
+                this._rampSR,
+                geom
+            );
         }
     }
 
@@ -164,7 +214,9 @@ export class MapAPI extends CommonMapAPI {
             this.esriMap.add(layer.esriLayer);
         } else {
             // TODO maybe we should call layer.initiate() and block? Could be a nice shortcut. But also might have unintended effects.
-            console.error('Layer added to map without an esri layer. Likely layer.initiate() was not called or had not finished.');
+            console.error(
+                'Layer added to map without an esri layer. Likely layer.initiate() was not called or had not finished.'
+            );
         }
     }
 
@@ -190,7 +242,11 @@ export class MapAPI extends CommonMapAPI {
      * @param {boolean} [animate] An optional animation setting. On by default
      * @returns {Promise<void>} A promise that resolves when the map has finished zooming
      */
-    async zoomMapTo(geom: BaseGeometry, scale?: number, animate: boolean = true): Promise<void> {
+    async zoomMapTo(
+        geom: BaseGeometry,
+        scale?: number,
+        animate: boolean = true
+    ): Promise<void> {
         // TODO technically this can accept any geometry. should we open up the suggested signatures to allow various things?
         if (this.esriView) {
             const g = await this.geomToMapSR(geom);
@@ -206,7 +262,6 @@ export class MapAPI extends CommonMapAPI {
             if (this.esriView) {
                 return this.esriView.goTo(zoomP, opts);
             }
-
         } else {
             this.noMapErr();
         }
@@ -271,13 +326,18 @@ export class MapAPI extends CommonMapAPI {
 
         const offStatus = scaleSet.isOffScale(this.getScale());
 
-        if (!offStatus.offScale) { return; }
+        if (!offStatus.offScale) {
+            return;
+        }
 
         const lods = this.esriView.constraints.lods;
 
         if (!lods) {
             // handle case with no tiles / lods
-            return this.zoomMapTo(this.getExtent().center(), offStatus.zoomIn ? scaleSet.minScale : scaleSet.minScale);
+            return this.zoomMapTo(
+                this.getExtent().center(),
+                offStatus.zoomIn ? scaleSet.minScale : scaleSet.minScale
+            );
         }
 
         // the lods array is ordered largest scale to smallest scale.  e.g. world view to city view
@@ -285,11 +345,14 @@ export class MapAPI extends CommonMapAPI {
         const modLods = offStatus.zoomIn ? lods : [...lods].reverse();
 
         // scan for appropriate LOD that will make scale set visible, or pick last LOD if no boundary was found
-        const scaleLod = modLods.find(currentLod => offStatus.zoomIn ? currentLod.scale < scaleSet.minScale :
-                currentLod.scale > scaleSet.maxScale) || modLods[modLods.length - 1];
+        const scaleLod =
+            modLods.find(currentLod =>
+                offStatus.zoomIn
+                    ? currentLod.scale < scaleSet.minScale
+                    : currentLod.scale > scaleSet.maxScale
+            ) || modLods[modLods.length - 1];
 
         return this.zoomToLevel(scaleLod.level);
-
     }
 
     /**
@@ -327,7 +390,9 @@ export class MapAPI extends CommonMapAPI {
      */
     getExtent(): Extent {
         if (this.esriView) {
-            return this.$iApi.geo.utils.geom._convEsriExtentToRamp(this.esriView.extent);
+            return this.$iApi.geo.utils.geom._convEsriExtentToRamp(
+                this.esriView.extent
+            );
         } else {
             this.noMapErr();
             return Extent.fromParams('i_am_error', 0, 1, 0, 1); // default fake value. avoids us having undefined checks everywhere.
@@ -385,7 +450,10 @@ export class MapAPI extends CommonMapAPI {
      */
     screenPointToMapPoint(screenX: number, screenY: number): Point {
         if (this.esriView) {
-            return this.$iApi.geo.utils.geom._convEsriPointToRamp(this.esriView.toMap({x: screenX, y: screenY}), 'mappoint');
+            return this.$iApi.geo.utils.geom._convEsriPointToRamp(
+                this.esriView.toMap({ x: screenX, y: screenY }),
+                'mappoint'
+            );
         } else {
             this.noMapErr();
             return new Point('i_am_error', [0, 0], undefined, true); //  default fake value. avoids us having undefined checks everywhere.
@@ -399,13 +467,14 @@ export class MapAPI extends CommonMapAPI {
      * @returns {ScreenPoint} the screen point analagous to the map point
      */
     mapPointToScreenPoint(mapPoint: Point): ScreenPoint {
-
         if (this.esriView) {
-            const esriPoint = this.esriView.toScreen(this.$iApi.geo.utils.geom._convPointToEsri(mapPoint))
+            const esriPoint = this.esriView.toScreen(
+                this.$iApi.geo.utils.geom._convPointToEsri(mapPoint)
+            );
             return { screenX: esriPoint.x, screenY: esriPoint.y };
         } else {
             this.noMapErr();
-            return { screenX: 1, screenY: 1}; //  default fake value. avoids us having undefined checks everywhere.
+            return { screenX: 1, screenY: 1 }; //  default fake value. avoids us having undefined checks everywhere.
         }
     }
 
@@ -441,7 +510,9 @@ export class MapAPI extends CommonMapAPI {
      */
 
     identify(payload: MapClick | Point) {
-        let layers: LayerInstance[] | undefined = this.$vApp.$store.get(LayerStore.layers);
+        let layers: LayerInstance[] | undefined = this.$vApp.$store.get(
+            LayerStore.layers
+        );
 
         // Don't perform an identify request if the layers array hasn't been established yet.
         if (layers === undefined) return;
@@ -458,7 +529,9 @@ export class MapAPI extends CommonMapAPI {
             });
 
         // Merge all results received by the identify into one array.
-        const identifyResults: IdentifyResult[] = ([] as IdentifyResult[]).concat(...identifyInstances.map(({ results }) => results));
+        const identifyResults: IdentifyResult[] = ([] as IdentifyResult[]).concat(
+            ...identifyInstances.map(({ results }) => results)
+        );
 
         let mapClick: MapClick;
         if (payload instanceof Point) {
@@ -476,10 +549,11 @@ export class MapAPI extends CommonMapAPI {
         }
 
         // TODO make the event payload an interface? should there be a public area with all event payload interfaces?
-        this.$iApi.event.emit(GlobalEvents.MAP_IDENTIFY, { results: identifyResults, click: mapClick });
-
+        this.$iApi.event.emit(GlobalEvents.MAP_IDENTIFY, {
+            results: identifyResults,
+            click: mapClick
+        });
     }
-
 
     // list of keys that are currently pressed
     private _activeKeys: string[] = [];
@@ -495,15 +569,27 @@ export class MapAPI extends CommonMapAPI {
      */
     mapKeyDown(payload: KeyboardEvent) {
         const zoomKeys = ['=', '-'];
-        const panKeys = ['Shift', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowUp'];
+        const panKeys = [
+            'Shift',
+            'ArrowDown',
+            'ArrowLeft',
+            'ArrowRight',
+            'ArrowUp'
+        ];
 
-        if (panKeys.includes(payload.key) && !this._activeKeys.includes(payload.key)) {
+        if (
+            panKeys.includes(payload.key) &&
+            !this._activeKeys.includes(payload.key)
+        ) {
             this._activeKeys.push(payload.key);
             // don't pan in middle of zoom animation
             if (!this._activeKeys.some(k => zoomKeys.includes(k))) {
                 this.keyPan();
             }
-        } else if (zoomKeys.includes(payload.key) && !this._activeKeys.includes(payload.key)) {
+        } else if (
+            zoomKeys.includes(payload.key) &&
+            !this._activeKeys.includes(payload.key)
+        ) {
             this._activeKeys.push(payload.key);
             this.keyZoom(payload);
         } else if (payload.key === 'Enter') {
@@ -521,7 +607,10 @@ export class MapAPI extends CommonMapAPI {
         const zoomKeys = ['=', '-'];
 
         // ignore zoom keys, manually deactivate them when zoom finishes so keyup won't interrupt zoom animation
-        if (this._activeKeys.includes(payload.key) && !zoomKeys.includes(payload.key)) {
+        if (
+            this._activeKeys.includes(payload.key) &&
+            !zoomKeys.includes(payload.key)
+        ) {
             this._activeKeys.splice(this._activeKeys.indexOf(payload.key), 1);
             // don't pan in middle of zoom animation
             if (!this._activeKeys.some(k => zoomKeys.includes(k))) {
@@ -584,7 +673,10 @@ export class MapAPI extends CommonMapAPI {
 
         // calculate pan velocity based on constant pixel value that won't change based on zoom
         const screenCenter = this.mapPointToScreenPoint(center);
-        const p = this.screenPointToMapPoint(screenCenter.screenX + 5, screenCenter.screenY + 5);
+        const p = this.screenPointToMapPoint(
+            screenCenter.screenX + 5,
+            screenCenter.screenY + 5
+        );
         const xDiff = Math.abs(p.x - center.x);
         const yDiff = Math.abs(p.y - center.y);
 
@@ -609,7 +701,7 @@ export class MapAPI extends CommonMapAPI {
                 case 'Shift':
                     multiplier = 2;
                     break;
-            };
+            }
         }
 
         const scale = this.getScale();

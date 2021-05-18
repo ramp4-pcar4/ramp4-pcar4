@@ -1,32 +1,46 @@
 // TODO add proper comments
 
-import { AttribFC, AttributeLoaderDetails, FileLayer, FileLayerAttributeLoader, QueryFeaturesFileParams, QuickCache } from '@/api/internal';
-import { DataFormat, GetGraphicParams, GetGraphicResult, QueryFeaturesParams } from '@/geo/api';
+import {
+    AttribFC,
+    AttributeLoaderDetails,
+    FileLayer,
+    FileLayerAttributeLoader,
+    QueryFeaturesFileParams,
+    QuickCache
+} from '@/api/internal';
+import {
+    DataFormat,
+    GetGraphicParams,
+    GetGraphicResult,
+    QueryFeaturesParams
+} from '@/geo/api';
 import { EsriFeatureFilter } from '@/geo/esri';
 
 export class FileFC extends AttribFC {
-
     // @ts-ignore
     protected parentLayer: FileLayer;
     tooltipField: string; // TODO if we end up having more things that are shared with FeatureFC, consider making a FeatureBaseFC class for both to inherit from
 
-    constructor (parent: FileLayer, layerIdx: number = 0) {
+    constructor(parent: FileLayer, layerIdx: number = 0) {
         super(parent, layerIdx);
         this.dataFormat = DataFormat.ESRI_FEATURE;
         this.tooltipField = '';
     }
 
     extractLayerMetadata(): void {
-
         const l = this.parentLayer.esriLayer;
         if (!l) {
-            throw new Error('file layer attempted to extract data from esri layer, esri layer did not exist');
+            throw new Error(
+                'file layer attempted to extract data from esri layer, esri layer did not exist'
+            );
         }
 
         // properties for all endpoints
         this.supportsFeatures = true;
 
-        this.geomType = this.parentLayer.$iApi.geo.utils.geom.clientGeomTypeToRampGeomType(l.geometryType);
+        this.geomType = this.parentLayer.$iApi.geo.utils.geom.clientGeomTypeToRampGeomType(
+            l.geometryType
+        );
         this.quickCache = new QuickCache(this.geomType);
 
         // TODO if we ever make config override for scale, would need to apply on the layer constructor, will end up here
@@ -43,13 +57,18 @@ export class FileFC extends AttribFC {
 
         // if there was a custom renderer in the config, it would have been applied when the
         // layer was constructed. no need to check here.
-        this.renderer = this.parentLayer.$iApi.geo.utils.symbology.makeRenderer(l.renderer, this.fields);
+        this.renderer = this.parentLayer.$iApi.geo.utils.symbology.makeRenderer(
+            l.renderer,
+            this.fields
+        );
 
         // this array will have a set of promises that resolve when all the legend svg has drawn.
         // for now, will not include that set (promise.all'd) on the layer load blocker;
         // don't want to stop a layer from loading just because an icon won't draw.
         // ideally we'll have placeholder symbol (white square, loading symbol, caution symbol, etc)
-        this.legend = this.parentLayer.$iApi.geo.utils.symbology.rendererToLegend(this.renderer);
+        this.legend = this.parentLayer.$iApi.geo.utils.symbology.rendererToLegend(
+            this.renderer
+        );
 
         const loadData: AttributeLoaderDetails = {
             sourceGraphics: l.source,
@@ -57,8 +76,10 @@ export class FileFC extends AttribFC {
             attribs: '*', // * as default. layer loader may update after processing config overrides
             batchSize: -1
         };
-        this.attLoader = new FileLayerAttributeLoader(this.parentLayer.$iApi, loadData);
-
+        this.attLoader = new FileLayerAttributeLoader(
+            this.parentLayer.$iApi,
+            loadData
+        );
     }
 
     /**
@@ -73,8 +94,10 @@ export class FileFC extends AttribFC {
      *                 - getAttribs       boolean. indicates if return value should have attributes included. default to false
      * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .layerFC for convenience
      */
-     async getGraphic (objectId: number, opts: GetGraphicParams): Promise<GetGraphicResult> {
-
+    async getGraphic(
+        objectId: number,
+        opts: GetGraphicParams
+    ): Promise<GetGraphicResult> {
         const gjOpt: QueryFeaturesParams = {
             filterSql: `${this.oidField}=${objectId}`,
             includeGeometry: !!opts.getGeom
@@ -89,10 +112,11 @@ export class FileFC extends AttribFC {
         if (resultArr.length === 0) {
             throw new Error(`Could not find object id ${objectId}`);
         } else if (resultArr.length !== 1) {
-            console.warn('did not get a single result on a query for a specific object id');
+            console.warn(
+                'did not get a single result on a query for a specific object id'
+            );
         }
         return resultArr[0];
-
     }
 
     // TODO we are using the getgraphic type as it's an unbound loosely typed feature
@@ -110,8 +134,9 @@ export class FileFC extends AttribFC {
      * @param options {Object} options to provide filters and helpful information.
      * @returns {Promise} resolves with an array of features that satisfy the criteria
      */
-     async queryFeatures(options: QueryFeaturesParams): Promise<Array<GetGraphicResult>> {
-
+    async queryFeatures(
+        options: QueryFeaturesParams
+    ): Promise<Array<GetGraphicResult>> {
         const gjOpt: QueryFeaturesFileParams = {
             layer: this.parentLayer,
             ...options
@@ -123,7 +148,6 @@ export class FileFC extends AttribFC {
     // TODO this is more of a utility function. leaving it public as it might be useful, revist when
     //      the app is mature.
     async queryOIDs(options: QueryFeaturesParams): Promise<Array<number>> {
-
         const gjOpt: QueryFeaturesFileParams = {
             layer: this.parentLayer,
             ...options
@@ -131,8 +155,12 @@ export class FileFC extends AttribFC {
 
         // run the query. since geojson is local, the util always returns everything.
         // iterate through the results and strip out the OIDs
-        const gjFeats = await this.parentLayer.$iApi.geo.utils.query.geoJsonQuery(gjOpt);
-        return gjFeats.map(feat => feat.attributes ? feat.attributes[this.oidField] : -1);
+        const gjFeats = await this.parentLayer.$iApi.geo.utils.query.geoJsonQuery(
+            gjOpt
+        );
+        return gjFeats.map(feat =>
+            feat.attributes ? feat.attributes[this.oidField] : -1
+        );
     }
 
     /**
@@ -141,7 +169,7 @@ export class FileFC extends AttribFC {
      * @function applySqlFilter
      * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all keys
      */
-    applySqlFilter (exclusions: Array<string> = []): void {
+    applySqlFilter(exclusions: Array<string> = []): void {
         if (!this.parentLayer.esriView) {
             this.noLayerErr();
             return;

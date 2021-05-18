@@ -64,7 +64,8 @@ module.exports = {
                 'grey-test': 'rgba(150,150,150,0.7);'
             },
             boxShadow: {
-                tm: '0 0 0 1px rgba(0, 0, 0, 0.05), 0 2px 3px 0 rgba(0, 0, 0, 0.1)'
+                tm:
+                    '0 0 0 1px rgba(0, 0, 0, 0.05), 0 2px 3px 0 rgba(0, 0, 0, 0.1)'
             }
         }
     },
@@ -75,7 +76,14 @@ module.exports = {
             alignSelf: ['responsive', 'container-query'],
             appearance: ['responsive', 'container-query'],
             backgroundAttachment: ['responsive', 'container-query'],
-            backgroundColor: ['responsive', 'container-query', 'hover', 'focus', 'even', 'disabled'],
+            backgroundColor: [
+                'responsive',
+                'container-query',
+                'hover',
+                'focus',
+                'even',
+                'disabled'
+            ],
             backgroundPosition: ['responsive', 'container-query'],
             backgroundRepeat: ['responsive', 'container-query'],
             backgroundSize: ['responsive', 'container-query'],
@@ -124,7 +132,13 @@ module.exports = {
             stroke: ['responsive', 'container-query'],
             tableLayout: ['responsive', 'container-query'],
             textAlign: ['responsive', 'container-query'],
-            textColor: ['responsive', 'container-query', 'hover', 'focus', 'disabled'],
+            textColor: [
+                'responsive',
+                'container-query',
+                'hover',
+                'focus',
+                'disabled'
+            ],
             textDecoration: ['responsive', 'container-query', 'hover', 'focus'],
             textTransform: ['responsive', 'container-query'],
             userSelect: ['responsive', 'container-query'],
@@ -151,7 +165,9 @@ module.exports = {
 
                         // prefix shell size selector to the rule; slice the dot from the rule selector
                         // resulting class name is of the form `.[xs|sm|md|lg]:{selector}`
-                        newRule.selector = `&.${shellSize} .${shellSize}\\:${newRule.selector.slice(1)}`;
+                        newRule.selector = `&.${shellSize} .${shellSize}\\:${newRule.selector.slice(
+                            1
+                        )}`;
                         newRules.push(newRule);
                     });
                 });

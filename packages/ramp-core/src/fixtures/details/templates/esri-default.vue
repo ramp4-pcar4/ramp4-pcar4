@@ -1,6 +1,10 @@
 <template>
     <div>
-        <div class="p-5 pl-3 flex justify-end flex-wrap even:bg-gray-300" v-for="(val, name, itemIdx) in itemData" :key="itemIdx">
+        <div
+            class="p-5 pl-3 flex justify-end flex-wrap even:bg-gray-300"
+            v-for="(val, name, itemIdx) in itemData"
+            :key="itemIdx"
+        >
             <span class="inline font-bold">{{ name }}</span>
             <span class="flex-auto"></span>
             <span class="inline" v-html="val"></span>
@@ -13,7 +17,12 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
 import { PanelInstance } from '@/api';
-import { IdentifyItem, IdentifyResult, IdentifyResultFormat, IdentifyResultSet } from '@/geo/api';
+import {
+    IdentifyItem,
+    IdentifyResult,
+    IdentifyResultFormat,
+    IdentifyResultSet
+} from '@/geo/api';
 
 @Component({})
 export default class ESRIDefaultV extends Vue {
