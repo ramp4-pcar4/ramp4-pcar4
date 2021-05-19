@@ -198,7 +198,8 @@ rInstance = new RAMP.Instance(document.getElementById('app'), {
             'export-v1-title': {
                 text: 'All Your Base are Belong to Us'
             }
-        }
+        },
+        animate: true
     },
     fr: {
         map: {
@@ -277,7 +278,8 @@ rInstance = new RAMP.Instance(document.getElementById('app'), {
             'export-v1-title': {
                 text: 'All Your Base are Belong to Us'
             }
-        }
+        },
+        animate: true
     }
 });
 

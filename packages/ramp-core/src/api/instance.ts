@@ -51,6 +51,11 @@ export class InstanceAPI {
             for (let lang in configs) {
                 this.$vApp.$store.set(ConfigStore.registerConfig, { config: configs[lang], langs: [lang] });
             }
+
+            // disable animations if needed
+            if (!configs[this.$vApp.$i18n.locale].animate) {
+                this.$vApp.$el.classList.remove('animation-enabled');
+            }
         }
 
         this._isFullscreen = screenfull.isEnabled && screenfull.isFullscreen && screenfull.element === this.$vApp.$root.$el;

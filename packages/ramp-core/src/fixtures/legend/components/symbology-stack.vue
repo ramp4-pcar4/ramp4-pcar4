@@ -66,15 +66,28 @@ export default class SymbologyStack extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.symbol-2 {
+.symbol-1 {
     transition-property: margin-left margin-top;
-    transition-duration: 0.2s;
-
     :hover > & {
         @apply ml-8;
         margin-top: -32px;
         margin-bottom: -2px;
         margin-right: -2px;
     }
+}
+.symbol-2 {
+    transition-property: margin-left margin-top;
+    :hover > & {
+        @apply ml-12;
+        margin-top: -30px;
+        margin-bottom: -2px;
+        margin-right: -2px;
+    }
+}
+.ramp-app.animation-enabled .symbol-1 {
+    transition-duration: 0.2s;
+}
+.ramp-app.animation-enabled .symbol-2 {
+    transition-duration: 0.2s;
 }
 </style>
