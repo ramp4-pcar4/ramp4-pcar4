@@ -15,7 +15,9 @@
                 </div>
 
                 <!-- name -->
-                <span class="flex-1">{{ legendItem.name }}</span>
+                <div class="flex-1 truncate">
+                    <span>{{ legendItem.name }}</span>
+                </div>
 
                 <!-- visibility -->
                 <checkbox :value="legendItem.visibility" :isRadio="props && props.isVisibilitySet" :legendItem="legendItem" />
