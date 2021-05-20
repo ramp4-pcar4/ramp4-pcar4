@@ -17,7 +17,7 @@ import {
  * @property featureTypeToRenderer {Object}
  * @private
  */
-const featureTypeToRenderer: { [key: string]: string } = {
+const featureTypeToRenderer = {
     Point: 'circlePoint',
     MultiPoint: 'circlePoint',
     LineString: 'solidLine',
@@ -189,6 +189,7 @@ export class FileUtils extends APIScope {
         // ensure our features have ids
         assignIds(geoJson);
 
+        // @ts-ignore
         const value = featureTypeToRenderer[geoJson.features[0].geometry.type];
         // @ts-ignore
         const defRender: any = defaultRenderers[value];
