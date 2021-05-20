@@ -236,19 +236,6 @@ export class PanelInstance extends APIScope {
     }
 
     /**
-     * Re-open this panel. This is the reverse of minimizing a panel.
-     * This is a proxy to `RAMP.panel.reopen(...)`.
-     *
-     * @returns {this}
-     * @memberof PanelInstance
-     */
-    reopen(): this {
-        this.$iApi.panel.reopen(this);
-
-        return this;
-    }
-
-    /**
      * Toggle panel.
      * This is a proxy to `RAMP.panel.toggle(...)`.
      *

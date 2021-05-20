@@ -1,8 +1,7 @@
-import { APIScope, PanelInstance } from './internal';
+import { APIScope, GlobalEvents, PanelInstance } from './internal';
 import { PanelConfig, PanelConfigRoute, PanelMutation, PanelAction } from '@/store/modules/panel';
 
 import { I18nComponentOptions } from '@/lang';
-import { GlobalEvents } from './event';
 
 export class PanelAPI extends APIScope {
     /**
@@ -102,15 +101,22 @@ export class PanelAPI extends APIScope {
             ({ screen, props } = value);
         }
 
-        // if the screen route is not defined, the default is the first screen component
+        // Panel opening requires a screen, check if last opened or default makes more sense
         if (!screen) {
-            screen = Object.keys(panel.screens).pop()!;
+            if (panel.route && !props) {
+                // Use the last route if there is one and there are no props given
+                // props imply an opening of the panel with new info
+                ({ screen, props } = panel.route);
+            } else {
+                // Either first time opening panel or there are props, use default
+                screen = Object.keys(panel.screens).pop()!;
+            }
         }
 
         this.show(panel, { screen, props });
 
         this.$vApp.$store.set(`panel/${PanelAction.openPanel}!`, { panel });
-        this.$vApp.$emit(GlobalEvents.PANEL_OPENED, panel);
+        this.$iApi.event.emit(GlobalEvents.PANEL_OPENED, panel);
 
         return panel;
     }
@@ -142,7 +148,7 @@ export class PanelAPI extends APIScope {
         }
 
         this.$vApp.$store.set(`panel/${PanelAction.closePanel}!`, { panel });
-        this.$vApp.$emit(GlobalEvents.PANEL_CLOSED, panel);
+        this.$iApi.event.emit(GlobalEvents.PANEL_CLOSED, panel);
 
         return panel;
     }
@@ -163,26 +169,6 @@ export class PanelAPI extends APIScope {
 
         this.$vApp.$store.set(`panel/${PanelAction.closePanel}!`, { panel });
 
-        return panel;
-    }
-
-    /**
-     * Calls open on the Panel given in `value` or with id of `value` using the currently stored route.
-     * 
-     * @param {{ string | PanelInstance}} value
-     * @returns {PanelInstance}
-     * @memberof PanelAPI
-     */
-    reopen(value: string | PanelInstance): PanelInstance {
-        const panel = this.get(value);
-
-        // Grab the currently stored route from the store
-        // TODO: I think theres a better way to do this if we refactor the route check in open/show... 
-        //       it sets the route to the new thing so if no route it should just use the current one, my attempts got very complicated though
-        //       If we do that we shouldn't need `reopen` at all.
-        const route = this.$vApp.$store.get(`panel/items@${panel.id}.route`) as PanelConfigRoute;
-
-        this.open({id: panel.id, ...route })
         return panel;
     }
 
@@ -234,7 +220,7 @@ export class PanelAPI extends APIScope {
         // use specified toggle value if provided + check if toggle value is possible
         toggle = typeof toggle !== 'undefined' ? toggle : !panel.isOpen;
         if (toggle !== panel.isOpen) {
-            toggle ? this.reopen(panel) : this.minimize(panel);
+            toggle ? this.open(panel) : this.minimize(panel);
         }
 
         return panel;
