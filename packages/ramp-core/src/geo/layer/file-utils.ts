@@ -189,9 +189,10 @@ export class FileUtils extends APIScope {
         // ensure our features have ids
         assignIds(geoJson);
 
-        // @ts-ignore
         const defRender: any =
+            // @ts-ignore
             defaultRenderers[
+                // @ts-ignore
                 featureTypeToRenderer[geoJson.features[0].geometry.type]
             ];
 

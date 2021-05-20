@@ -23,6 +23,10 @@ jobs:
         shell: bash
         run: node common/scripts/install-run-rush.js install
 
+      - name: Check everything builds without errors
+        shell: bash
+        run: node common/scripts/install-run-rush.js build
+
       - name: Check ramp-core has been linted
         shell: bash
         run: node common/scripts/install-run-rush.js lint:check
