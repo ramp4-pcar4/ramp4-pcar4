@@ -48,6 +48,7 @@ importers:
       eslint-plugin-prettier: ^3.1.1
       eslint-plugin-vue: ^6.0.0
       fabric: ^4.3.1
+      fast-xml-parser: ~3.19.0
       file-saver: ~2.0.5
       http-server: ^0.12.0
       marked: ^1.2.2
@@ -96,6 +97,7 @@ importers:
       debounce: 1.2.1
       deepmerge: 4.2.2
       fabric: 4.4.0
+      fast-xml-parser: 3.19.0
       file-saver: 2.0.5
       marked: 1.2.9
       proj4: 2.6.0
@@ -6142,6 +6144,11 @@ packages:
 
   /fast-levenshtein/2.0.6:
     resolution: {integrity: sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=}
+
+  /fast-xml-parser/3.19.0:
+    resolution: {integrity: sha512-4pXwmBplsCPv8FOY1WRakF970TjNGnGnfbOnLqjlYvMiF1SR3yOHyxMR/YCXpPTOspNF5gwudqktIP4VsWkvBg==}
+    hasBin: true
+    dev: false
 
   /fastq/1.11.0:
     resolution: {integrity: sha512-7Eczs8gIPDrVzT+EksYBcupqMyxSHXXrHOLRRxU2/DicV8789MRBRR8+Hc2uWzUupOs4YS4JzBmBxjjCVBxD/g==}
