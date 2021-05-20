@@ -7,6 +7,8 @@ import { EsriRequest } from '@/geo/esri';
 import axios from 'axios';
 import to from 'await-to-js';
 
+const xmlParser = require('fast-xml-parser');
+
 type WFSResponse = {
     data: { numberMatched: number; features: any[] };
 };
@@ -133,15 +135,22 @@ export class OgcUtils extends APIScope {
         // this executes a get capabilities and returns the XML
         const getCapabilities = (): any => {
             let url = wmsEndpoint;
-
-            // TODO can probably improve this. i.e. if they have a ? but are missing
-            //      any of the three required items, can add the items
-
-            // if url has a '?' do not append to avoid errors, user must add this manually
             if (wmsEndpoint.indexOf('?') === -1) {
                 url += '?service=WMS&version=1.3&request=GetCapabilities';
+            } else {
+                // Assuming that at least one of the 3 parameters are present
+                // if there is a '?' in the URL. Otherwise would need to do
+                // another check to see if we need '&' before the parameter.
+                if (wmsEndpoint.toUpperCase().indexOf('SERVICE') === -1) {
+                    url += '&service=WMS';
+                }
+                if (wmsEndpoint.toUpperCase().indexOf('VERSION') === -1) {
+                    url += '&version=1.3';
+                }
+                if (wmsEndpoint.toUpperCase().indexOf('REQUEST') === -1) {
+                    url += '&request=GetCapabilities';
+                }
             }
-
             return EsriRequest(url, {
                 responseType: 'xml'
             }).then(result => result.data);
@@ -161,69 +170,50 @@ export class OgcUtils extends APIScope {
         //      am not finding a nice generic type, and not worth the
         //      effort to keep searching.
 
-        // there might already be a way to do this in the parsing API
-        // I don't know XML parsing well enough (and I don't want to)
-        // this has now been ported from RAMP to FGPV and I still, happily,
-        // do not know any more about XML parsing now
-        const getImmediateChild = (node: any, childName: string) => {
-            for (let i = 0; i < node.childNodes.length; ++i) {
-                if (node.childNodes[i].nodeName === childName) {
-                    return node.childNodes[i];
-                }
-            }
-            return undefined;
-        };
-
-        const getImmediateChildren = (node: any, childName: string) => {
-            let children = [];
-            for (let i = 0; i < node.childNodes.length; ++i) {
-                if (node.childNodes[i].nodeName === childName) {
-                    children.push(node.childNodes[i]);
-                }
-            }
-            return children;
-        };
-
         // find all <Layer> nodes under the given XML node
         // pick title, name and queryable nodes/attributes
         // also have a list of all styles and the current style
-        // recursively called on all child <Layer> nodes
-
-        // TODO this block of code needs migration.
-        //      we no longer have DOJO involved, so the dojo/query library for navigating
-        //      and parsing XML is not available.
-        //      1. determine if our new wizard needs this function (probably?)
-        //      2. find a new, lightweight library to use
-        //      3. migrate this nasty code.
-        return Promise.reject('i am not yet implemented');
-
-        /*
+        // recursively called on all child <Layer> nodes        
         const getLayers = (xmlNode: any): any => {
-            if (! xmlNode) {
+            let layers: any = xmlNode['Layer'];
+            // Check if the current layer has any child layers.
+            // In the previous implementation, this case may have returned
+            // undefined rather than [].
+            if (!layers) {
                 return [];
+            } 
+            // If there was only 1 Layer tag in the XML, then the parser would
+            // have made 'Layer' a single Object. Otherwise, it would be an
+            // array of Objects.
+            // Make this check to avoid having to write almost the exact same
+            // logic twice to accomodate for both situations.
+            if (!Array.isArray(layers)) {
+                layers = [layers];
             }
-            return this.esriBundle.dojoQuery('> Layer', xmlNode).map((layer: any) => {
-                const nameNode = getImmediateChild(layer, 'Name');
-                const titleNode = getImmediateChild(layer, 'Title');
-
-                const allStyles = [];
-                const styleToURL = {};
-                const styles = getImmediateChildren(layer, 'Style');
-                styles.forEach(style => {
-                    const name = getImmediateChild(style, 'Name').textContent;
-                    allStyles.push(name);
-
-                    const legendURL = getImmediateChild(style, 'LegendURL');
-                    if (legendURL) {
-                        const url = getImmediateChild(legendURL, 'OnlineResource').getAttribute('xlink:href');
-                        styleToURL[name] = url;
+            return layers.map((layer: any): any => {
+                const nameNode: String = layer['Name'];
+                const titleNode: String = layer['Title'];
+                let styles: any = layer['Style'];
+                const allStyles: any = [];
+                const styleToURL: any = {};
+                if (styles) {
+                    // Same idea as above. To avoid writing the same code twice.
+                    if (!Array.isArray(styles)) {
+                        styles = [styles];
                     }
-                });
-
+                    styles.forEach((style: any) => {
+                        const styleName = style['Name'];
+                        allStyles.push(styleName);
+                        if (style['LegendURL']) {
+                            const styleURL = style['LegendURL']['OnlineResource']['@_xlink:href'];
+                            styleToURL[styleName] = styleURL;
+                        }
+                    });
+                }
                 return {
-                    name: nameNode ? nameNode.textContent : null,
-                    desc: titleNode.textContent,
-                    queryable: layer.getAttribute('queryable') === '1',
+                    name: nameNode ? nameNode : null,
+                    desc: titleNode,
+                    queryable: layer['@_queryable'] === '1',
                     layers: getLayers(layer),
                     allStyles: allStyles,
                     styleToURL,
@@ -232,11 +222,37 @@ export class OgcUtils extends APIScope {
             });
         };
 
-        return gcPromise.then(data => ({
-            layers: getLayers(this.esriBundle.dojoQuery('Capability', data)[0]),
-            queryTypes: this.esriBundle.dojoQuery('GetFeatureInfo > Format', data).map(node => node.textContent)
-        }));
-        */
-    }
+        const getQueryTypes = (xmlNode: any): any => {
+            let formats: any = xmlNode['Format'];
+            // See comment for layers above for reasoning for this check.
+            if (!Array.isArray(formats)) {
+                formats = [formats];
+            }
+           return formats;
+        };
 
+        return gcPromise.then((xmlNode: any): any => {
+            // Not sure if this check is still needed here.
+            if (!xmlNode) { 
+                return [];
+            }
+            const xmlData: String = new XMLSerializer().serializeToString(xmlNode);
+            const options: Object = {
+                ignoreAttributes: false // check for tag attributes
+            };
+            const jsonObj: any = xmlParser.parse(xmlData, options);
+            // We get an XML with a <ServiceExceptionReport> tag back 
+            // when something goes wrong with the request.
+            // Might be able to get rid of this now that we are appending
+            // missing parameters to the URL.
+            if ('ServiceExceptionReport' in jsonObj) {
+                return [];
+            }
+            const capability: any = jsonObj["WMS_Capabilities"]["Capability"];
+            return {
+                layers: getLayers(capability['Layer']),
+                queryTypes: getQueryTypes(capability['Request']['GetFeatureInfo'])
+            }
+        }); 
+    }
 }
