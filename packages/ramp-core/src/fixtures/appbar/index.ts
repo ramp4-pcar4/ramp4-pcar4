@@ -29,12 +29,12 @@ class AppbarFixture extends AppbarAPI {
             value => this._parseConfig(value)
         );
 
-        this.$vApp.$on(GlobalEvents.PANEL_OPENED, (panel: PanelInstance) => {
+        this.$iApi.event.on(GlobalEvents.PANEL_OPENED, (panel: PanelInstance) => {
             console.log(panel);
             this.$vApp.$store.dispatch('appbar/addTempButton', new AppbarItemInstance({ id: panel.id, options: { panel: panel } }));
         });
 
-        this.$vApp.$on(GlobalEvents.PANEL_CLOSED, (panel: PanelInstance) => {
+        this.$iApi.event.on(GlobalEvents.PANEL_CLOSED, (panel: PanelInstance) => {
             this.$vApp.$store.dispatch('appbar/removeTempButton', panel.id);
         });
 
