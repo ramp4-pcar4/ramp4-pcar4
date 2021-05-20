@@ -4,6 +4,7 @@
             {{ $t('details.title') }}
         </template>
         <template #controls>
+            <minimize @click="panel.minimize()"></minimize>
             <back @click="panel.show('details-screen-layers')"></back>
             <close @click="panel.close()"></close>
         </template>
