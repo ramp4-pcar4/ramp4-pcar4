@@ -4,6 +4,7 @@
             {{ $t('details.title') }}
         </template>
         <template #controls>
+            <minimize @click="panel.minimize()"></minimize>
             <back @click="panel.show({ screen: 'details-screen-result', props: { resultIndex: resultIndex } })" v-if="!isFeature && layerType !== 'ogcWms'"></back>
             <back @click="panel.show({ screen: 'details-screen-layers' })" v-if="layerType === 'ogcWms'"></back>
             <close @click="panel.close()"></close>
