@@ -346,6 +346,12 @@ class MapImageLayer extends AttribLayer {
                     this.name = serviceResult.data.mapName || '';
                     // @ts-ignore
                     this.layerTree.name = this.name;
+                } else {
+                    this.name = '[server error]';
+                    // @ts-ignore
+                    this.layerTree.name = '[server error]';
+                    // @ts-ignore
+                    console.error(`Get map name service failed: ${this.esriLayer.url}`);
                 }
             });
             loadPromises.push(setTitle);
