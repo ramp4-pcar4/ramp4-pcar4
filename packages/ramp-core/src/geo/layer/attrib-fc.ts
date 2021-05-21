@@ -37,6 +37,7 @@ import {
     EsriRequest
 } from '@/geo/esri';
 import deepmerge from 'deepmerge';
+import to from 'await-to-js';
 
 export class AttribFC extends CommonFC {
     // property does get initialized in the super. typescript just being grousy
@@ -85,109 +86,108 @@ export class AttribFC extends CommonFC {
         }
 
         // extract info for this service
-        // TODO revisit error handling. might need a try-catch? could also try then().error() to clean up.
-        //      see commented code block at bottom of this function.
-        //      consider using   import to from 'await-to-js';
-        const serviceResult = await EsriRequest(this.serviceUrl, {
-            query: { f: 'json' }
-        });
-
-        if (serviceResult.data) {
-            const sData: any = serviceResult.data;
-
-            // properties for all endpoints
-
-            // TODO need to decide what propert default is. Raster Layer has null gt.
-            this.geomType = this.parentLayer.$iApi.geo.utils.geom.serverGeomTypeToRampGeomType(
-                sData.geometryType
+        const [err, serviceResult] = await to<__esri.RequestResponse>(
+            EsriRequest(this.serviceUrl, { query: { f: 'json' } })
+        );
+        if (!serviceResult) {
+            // case where service request was unsuccessful
+            console.error(
+                `Service metadata load error: ${this.serviceUrl}`,
+                err
             );
-            this.quickCache = new QuickCache(this.geomType);
-            this.scaleSet.minScale = sData.effectiveMinScale || sData.minScale;
-            this.scaleSet.maxScale = sData.effectiveMaxScale || sData.maxScale;
-            this.supportsFeatures = false; // saves us from having to keep comparing type to 'Feature Layer' on the client
-            this.extent = sData.extent; // TODO might need to cast/fromJson to a proper esri object
-
-            if (sData.type === 'Feature Layer') {
-                this.supportsFeatures = true;
-                this.dataFormat = DataFormat.ESRI_FEATURE;
-                this.fields = sData.fields.map((f: any) =>
-                    EsriField.fromJSON(f)
-                ); // TODO need to use Field.fromJSON() to make things correct
-                this.nameField = sData.displayField;
-
-                // find object id field
-                const noFieldDefOid: boolean = this.fields.every(elem => {
-                    if (elem.type === 'oid') {
-                        this.oidField = elem.name;
-                        return false; // break the loop
-                    }
-
-                    return true; // keep looping
-                });
-
-                if (noFieldDefOid) {
-                    // we encountered a service that does not mark a field as the object id.
-                    // attempt to use alternate definition. if neither exists, we are toast.
-                    this.oidField =
-                        sData.objectIdField ||
-                        (() => {
-                            console.error(
-                                `Encountered service with no OID defined: ${this.serviceUrl}`
-                            );
-                            return '';
-                        })();
-                }
-
-                // TODO add in renderer and legend magic
-                // add renderer and legend
-                const sourceRenderer =
-                    options &&
-                    options.customRenderer &&
-                    options.customRenderer.type
-                        ? options.customRenderer
-                        : sData.drawingInfo.renderer;
-                this.renderer = this.parentLayer.$iApi.geo.utils.symbology.makeRenderer(
-                    EsriRendererUtils.fromJSON(sourceRenderer),
-                    this.fields
-                );
-
-                // this array will have a set of promises that resolve when all the legend svg has drawn.
-                // for now, will not include that set (promise.all'd) on the layer load blocker;
-                // don't want to stop a layer from loading just because an icon won't draw.
-                // ideally we'll have placeholder symbol (white square, loading symbol, caution symbol, etc)
-                this.legend = this.parentLayer.$iApi.geo.utils.symbology.rendererToLegend(
-                    this.renderer
-                );
-
-                // temporarily store things for delayed attributes
-                const loadData: AttributeLoaderDetails = {
-                    // version number is only provided on 10.0 SP1 servers and up.
-                    // servers 10.1 and higher support the query limit flag
-                    supportsLimit: (sData.currentVersion || 1) >= 10.1,
-                    serviceUrl: this.serviceUrl,
-                    oidField: this.oidField,
-                    batchSize: -1,
-                    attribs: '*' // NOTE we set to * here for generic case. loader may override later once config settings are applied
-                };
-                this.attLoader = new ArcServerAttributeLoader(
-                    this.parentLayer.$iApi,
-                    loadData
-                );
-            } else {
-                this.dataFormat = DataFormat.ESRI_RASTER;
-                this.fields = [];
-            }
-        } else {
-            // case where service request was successful but no data appeared in result
-            console.warn('Service metadata load error');
-            throw new Error('Unknown error loading service metadata');
+            return Promise.reject(
+                new Error(`Service metadata load error: ${this.serviceUrl}`)
+            );
         }
 
-        // THIS IS OLD ERROR HANDLING BLOCK FROM EsriRequest FAILING
-        // failed to load service info. reject with error
-        // TODO investigate if this is proper location where EsriErrorDetails will appear
-        // console.warn('Service metadata load error : ' + error.EsriErrorDetails || error);
-        // reject promise; with asynch we should throw an error with error details
+        if (!serviceResult.data) {
+            // case where service request was successful but no data appeared in result
+            console.error(`Service metadata load error: ${this.serviceUrl}`);
+            return Promise.reject(
+                new Error(`Service metadata load error: ${this.serviceUrl}`)
+            );
+        }
+
+        const sData: any = serviceResult.data;
+
+        // properties for all endpoints
+
+        // TODO need to decide what propert default is. Raster Layer has null gt.
+        this.geomType = this.parentLayer.$iApi.geo.utils.geom.serverGeomTypeToRampGeomType(
+            sData.geometryType
+        );
+        this.quickCache = new QuickCache(this.geomType);
+        this.scaleSet.minScale = sData.effectiveMinScale || sData.minScale;
+        this.scaleSet.maxScale = sData.effectiveMaxScale || sData.maxScale;
+        this.supportsFeatures = false; // saves us from having to keep comparing type to 'Feature Layer' on the client
+        this.extent = sData.extent; // TODO might need to cast/fromJson to a proper esri object
+
+        if (sData.type === 'Feature Layer') {
+            this.supportsFeatures = true;
+            this.dataFormat = DataFormat.ESRI_FEATURE;
+            this.fields = sData.fields.map((f: any) => EsriField.fromJSON(f)); // TODO need to use Field.fromJSON() to make things correct
+            this.nameField = sData.displayField;
+
+            // find object id field
+            const noFieldDefOid: boolean = this.fields.every(elem => {
+                if (elem.type === 'oid') {
+                    this.oidField = elem.name;
+                    return false; // break the loop
+                }
+
+                return true; // keep looping
+            });
+
+            if (noFieldDefOid) {
+                // we encountered a service that does not mark a field as the object id.
+                // attempt to use alternate definition. if neither exists, we are toast.
+                this.oidField =
+                    sData.objectIdField ||
+                    (() => {
+                        console.error(
+                            `Encountered service with no OID defined: ${this.serviceUrl}`
+                        );
+                        return '';
+                    })();
+            }
+
+            // TODO add in renderer and legend magic
+            // add renderer and legend
+            const sourceRenderer =
+                options && options.customRenderer && options.customRenderer.type
+                    ? options.customRenderer
+                    : sData.drawingInfo.renderer;
+            this.renderer = this.parentLayer.$iApi.geo.utils.symbology.makeRenderer(
+                EsriRendererUtils.fromJSON(sourceRenderer),
+                this.fields
+            );
+
+            // this array will have a set of promises that resolve when all the legend svg has drawn.
+            // for now, will not include that set (promise.all'd) on the layer load blocker;
+            // don't want to stop a layer from loading just because an icon won't draw.
+            // ideally we'll have placeholder symbol (white square, loading symbol, caution symbol, etc)
+            this.legend = this.parentLayer.$iApi.geo.utils.symbology.rendererToLegend(
+                this.renderer
+            );
+
+            // temporarily store things for delayed attributes
+            const loadData: AttributeLoaderDetails = {
+                // version number is only provided on 10.0 SP1 servers and up.
+                // servers 10.1 and higher support the query limit flag
+                supportsLimit: (sData.currentVersion || 1) >= 10.1,
+                serviceUrl: this.serviceUrl,
+                oidField: this.oidField,
+                batchSize: -1,
+                attribs: '*' // NOTE we set to * here for generic case. loader may override later once config settings are applied
+            };
+            this.attLoader = new ArcServerAttributeLoader(
+                this.parentLayer.$iApi,
+                loadData
+            );
+        } else {
+            this.dataFormat = DataFormat.ESRI_RASTER;
+            this.fields = [];
+        }
     }
 
     /**
@@ -272,30 +272,29 @@ export class AttribFC extends CommonFC {
             }
         };
 
-        const serviceResult = await EsriRequest(
-            `${this.serviceUrl}/query`,
-            restParam
+        const [err, serviceResult] = await to<__esri.RequestResponse>(
+            EsriRequest(`${this.serviceUrl}/query`, restParam)
         );
 
-        // TODO revisit error handling. might need a try-catch?
-        //      consider using   import to from 'await-to-js';
-        // TODO have discussion about error case. app shouldnt bomb without count. but how to handle? ignore? show error? console error? special error count val e.g. -2
-
-        if (serviceResult.data) {
-            // TODO old geoApi had logic to execute web request twice; comment indicated first request could fail.
-            //      re-apply this if we notice the same thing. sounds like garbage server problem tbh.
-            // TODO need to decide on placeholder for unknown count.
-            this.featureCount = serviceResult.data.count;
-        } else {
+        // Throw console warnings, don't crash the app
+        if (!serviceResult) {
+            // case where service request was unsuccessful
+            console.warn(
+                `Feature count request unsuccessful: ${this.serviceUrl}`,
+                err
+            );
+            return;
+        }
+        if (!serviceResult.data) {
             // case where service request was successful but no data appeared in result
-            console.warn('Unable to load feature count: ' + this.serviceUrl);
+            console.warn(`Unable to load feature count: ${this.serviceUrl}`);
+            return;
         }
 
-        // TODO figure out how to do a "catch" with async functions. might need try/catch wrapper
-        // failed to load service info. reject with error
-        // TODO investigate if this is proper location where EsriErrorDetails will appear
-        // console.warn('Unable to load feature count: ' + this.serviceUrl, error);
-        // return;
+        // TODO old geoApi had logic to execute web request twice; comment indicated first request could fail.
+        //      re-apply this if we notice the same thing. sounds like garbage server problem tbh.
+        // TODO need to decide on placeholder for unknown count.
+        this.featureCount = serviceResult.data.count;
     }
 
     /**

@@ -11,6 +11,7 @@ import {
     GetGraphicServiceDetails
 } from '@/geo/api';
 import { EsriGeometryJsonUtils, EsriRequest } from '@/geo/esri';
+import to from 'await-to-js';
 
 // NOTE has an esri type, which is bad, but this interface lives within the geo section so will permit it.
 //      alternative would be swapping back and fourth between ramp and esri graphics which seems a waste
@@ -57,62 +58,68 @@ export class AttributeAPI extends APIScope {
             }
         };
 
-        // TODO possibly put a .catch on the end of the esri request? see commented error handler at bottom
-        //      consider using   import to from 'await-to-js';
-        const serviceResult = await EsriRequest(
-            details.serviceUrl + '/query',
-            params
+        const [err, serviceResult] = await to<__esri.RequestResponse>(
+            EsriRequest(details.serviceUrl + '/query', params)
         );
-
-        if (serviceResult.data && serviceResult.data.features) {
-            const feats: Array<any> = serviceResult.data.features;
-            const len = feats.length;
-
-            if (len > 0) {
-                // figure out if we hit the end of the data. different logic for newer vs older servers.
-                controller.loadedCount += len;
-                let moreDataToLoad: boolean;
-                if (details.supportsLimit) {
-                    moreDataToLoad = serviceResult.data.exceededTransferLimit;
-                } else {
-                    if (details.batchSize === -1) {
-                        // this is our first batch. set the max batch size to this batch size
-                        details.batchSize = len;
-                    }
-                    moreDataToLoad = len >= details.batchSize;
-                }
-
-                if (moreDataToLoad) {
-                    // call the service again for the next batch of data.
-                    // max id becomes last object id in the current batch
-
-                    details.maxId = feats[len - 1].attributes[details.oidField];
-                    const futureFeats = await this.arcGisBatchLoad(
-                        details,
-                        controller
-                    );
-                    // take our current batch, append on everything the recursive call loaded, and return
-                    return feats.concat(futureFeats);
-                } else {
-                    // done thanks
-                    return feats;
-                }
-            } else {
-                // no more data.  we are done
-                return [];
-            }
-        } else {
-            // TODO nothing came back, handle appropriately with error party rejectorama
-            throw new Error('whoooops');
+        if (!serviceResult) {
+            // case where service request was unsuccessful
+            console.error(
+                `ArcGIS batch load error: ${details.serviceUrl}`,
+                err
+            );
+            return Promise.reject(
+                new Error(`ArcGIS batch load error: ${details.serviceUrl}`)
+            );
         }
 
-        /*
-        }, (e: any) => {
-            // TODO handle errors properly
-            // TODO investigate if this is proper location where EsriErrorDetails will appear
-            throw new Error('Service attribute load error : ' + e.EsriErrorDetails || e);
-        });
-        */
+        if (!serviceResult.data || !serviceResult.data.features) {
+            // case where service request was successful, but missing data
+            console.error(
+                `ArcGIS batch load gave no data/features: ${details.serviceUrl}`
+            );
+            return Promise.reject(
+                new Error(
+                    `ArcGIS batch load gave no data/features: ${details.serviceUrl}`
+                )
+            );
+        }
+
+        const feats: Array<any> = serviceResult.data.features;
+        const len = feats.length;
+
+        if (len > 0) {
+            // figure out if we hit the end of the data. different logic for newer vs older servers.
+            controller.loadedCount += len;
+            let moreDataToLoad: boolean;
+            if (details.supportsLimit) {
+                moreDataToLoad = serviceResult.data.exceededTransferLimit;
+            } else {
+                if (details.batchSize === -1) {
+                    // this is our first batch. set the max batch size to this batch size
+                    details.batchSize = len;
+                }
+                moreDataToLoad = len >= details.batchSize;
+            }
+
+            if (moreDataToLoad) {
+                // call the service again for the next batch of data.
+                // max id becomes last object id in the current batch
+
+                details.maxId = feats[len - 1].attributes[details.oidField];
+                const futureFeats = await this.arcGisBatchLoad(
+                    details,
+                    controller
+                );
+                // take our current batch, append on everything the recursive call loaded, and return
+                return feats.concat(futureFeats);
+            } else {
+                // done thanks
+                return feats;
+            }
+        } else {
+            // no more data.  we are done
+            return [];
+        }
     }
 
     async loadArcGisServerAttributes(
@@ -197,40 +204,61 @@ export class AttributeAPI extends APIScope {
         //      could add this to the tile schema object of our config. if missing we omit, but allow
         //      author to define a precision for better performance. could we apply that elsewhere? (e.g. featurelayers?)
 
-        // TODO error handling?
-        //      consider using   import to from 'await-to-js';
-        const serviceResult = await EsriRequest(
-            details.serviceUrl + '/query',
-            params
+        const [err, serviceResult] = await to<__esri.RequestResponse>(
+            EsriRequest(details.serviceUrl + '/query', params)
         );
-
-        if (serviceResult.data && serviceResult.data.features) {
-            const feats: Array<any> = serviceResult.data.features;
-            if (feats.length > 0) {
-                const feat = feats[0];
-                const result: GetGraphicResult = {
-                    attributes: feat.attributes // attributes are always there, so we always return them. letter caller decide to discard them or not.
-                };
-
-                if (details.includeGeometry) {
-                    // server result omits spatial reference
-                    feat.geometry.spatialReference =
-                        serviceResult.data.spatialReference;
-                    const localEsriGeom = EsriGeometryJsonUtils.fromJSON(
-                        feat.geometry
-                    );
-                    result.geometry = this.$iApi.geo.utils.geom.geomEsriToRamp(
-                        localEsriGeom
-                    );
-                }
-
-                return result;
-            }
+        if (!serviceResult) {
+            // case where service request was unsuccessful
+            console.error(
+                `ArcGIS single feature load error: ${details.serviceUrl}`,
+                err
+            );
+            return Promise.reject(
+                new Error(
+                    `ArcGIS single feature load error: ${details.serviceUrl}`
+                )
+            );
         }
 
-        // if we got this far, we failed to get something
-        throw new Error(
-            `Could not locate feature ${details.oid} for layer ${details.serviceUrl}`
+        if (!serviceResult.data || !serviceResult.data.features) {
+            // case where service request was successful, but missing data
+            console.error(
+                `Could not locate feature ${details.oid} for layer ${details.serviceUrl}`
+            );
+            return Promise.reject(
+                new Error(
+                    `Could not locate feature ${details.oid} for layer ${details.serviceUrl}`
+                )
+            );
+        }
+
+        const feats: Array<any> = serviceResult.data.features;
+        if (feats.length > 0) {
+            const feat = feats[0];
+            const result: GetGraphicResult = {
+                attributes: feat.attributes // attributes are always there, so we always return them. letter caller decide to discard them or not.
+            };
+
+            if (details.includeGeometry) {
+                // server result omits spatial reference
+                feat.geometry.spatialReference =
+                    serviceResult.data.spatialReference;
+                const localEsriGeom = EsriGeometryJsonUtils.fromJSON(
+                    feat.geometry
+                );
+                result.geometry = this.$iApi.geo.utils.geom.geomEsriToRamp(
+                    localEsriGeom
+                );
+            }
+
+            return result;
+        }
+
+        // We got no features, so throw error
+        return Promise.reject(
+            new Error(
+                `Could not locate feature ${details.oid} for layer ${details.serviceUrl}`
+            )
         );
     }
 }
