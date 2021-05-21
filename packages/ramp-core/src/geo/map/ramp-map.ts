@@ -293,6 +293,20 @@ export class MapAPI extends CommonMapAPI {
     }
 
     /**
+     * Provides the zoom level of the map
+     *
+     * @returns {number} the map zoom level
+     */
+    getZoomLevel(): number {
+        if (this.esriView) {
+            return this.esriView.zoom;
+        } else {
+            this.noMapErr();
+            return 1; // avoid returning zero, could cause divide-by-zero error in caller.
+        }
+    }
+
+    /**
      * Provides the scale of the map (the scale denominator as integer)
      *
      * @returns {number} the map scale
