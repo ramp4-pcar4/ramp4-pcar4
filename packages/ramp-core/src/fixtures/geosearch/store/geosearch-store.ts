@@ -19,7 +19,9 @@ const getters = {
     getProvinces: (state: GeosearchState): [] => {
         const provs = state.GSservice.fetchProvinces();
         // sort the province filters in alphabetical order
-        provs.sort((provA: any, provB: any) => (provA.name > provB.name ? 1 : -1));
+        provs.sort((provA: any, provB: any) =>
+            provA.name > provB.name ? 1 : -1
+        );
         return provs;
     },
 
@@ -34,7 +36,9 @@ const getters = {
     getTypes: (state: GeosearchState): [] => {
         const types = state.GSservice.fetchTypes();
         // sort the type filters in alphabetical order
-        types.sort((typeA: any, typeB: any) => (typeA.name > typeB.name ? 1 : -1));
+        types.sort((typeA: any, typeB: any) =>
+            typeA.name > typeB.name ? 1 : -1
+        );
         return types;
     }
 };
@@ -67,20 +71,36 @@ const actions = {
             context.commit('SET_LOADING_RESULTS', false);
         } else {
             // run new query if different search term is entered
-            if (context.state.searchVal && context.state.searchVal !== context.state.lastSearchVal) {
-                context.state.GSservice.query(`${context.state.searchVal}*`).then((data: any) => {
+            if (
+                context.state.searchVal &&
+                context.state.searchVal !== context.state.lastSearchVal
+            ) {
+                context.state.GSservice.query(
+                    `${context.state.searchVal}*`
+                ).then((data: any) => {
                     // store data for current search term
-                    context.commit('SET_LAST_SEARCH_VAL', context.state.searchVal);
+                    context.commit(
+                        'SET_LAST_SEARCH_VAL',
+                        context.state.searchVal
+                    );
                     context.commit('SET_SAVED_RESULTS', data);
 
                     // replace old saved results
-                    let filteredData = filter(context.state.resultsVisible, context.state.queryParams, context.state.savedResults);
+                    let filteredData = filter(
+                        context.state.resultsVisible,
+                        context.state.queryParams,
+                        context.state.savedResults
+                    );
                     context.commit('SET_SEARCH_RESULTS', filteredData || []);
                     context.commit('SET_LOADING_RESULTS', false);
                 });
             } else {
                 // otherwise no new search term so we only need to filter on query param values
-                let filteredData = filter(context.state.resultsVisible, context.state.queryParams, context.state.savedResults);
+                let filteredData = filter(
+                    context.state.resultsVisible,
+                    context.state.queryParams,
+                    context.state.savedResults
+                );
                 context.commit('SET_SEARCH_RESULTS', filteredData || []);
                 context.commit('SET_LOADING_RESULTS', false);
             }
@@ -93,7 +113,10 @@ const actions = {
      * @param   {string}    province   the province code all results must be in
      */
     setProvince: function(context: GeosearchContext, province: string): void {
-        context.commit('SET_PROVINCE', typeof province === 'undefined' ? '' : province);
+        context.commit(
+            'SET_PROVINCE',
+            typeof province === 'undefined' ? '' : province
+        );
         // run query after province filter changes
         context.dispatch('runQuery');
     },
@@ -138,12 +161,13 @@ const actions = {
         //       can be provided to the store.
 
         if (mapExtent.extent.sr.wkid !== 4326) {
-            throw new Error('an extent that was not projected to wkid 4326 was passed to the geosearch store');
+            throw new Error(
+                'an extent that was not projected to wkid 4326 was passed to the geosearch store'
+            );
         }
         context.commit('SET_EXTENT', mapExtent.extent);
         // run query after toggling map extent filters
         context.dispatch('runQuery');
-
     }
 };
 
@@ -167,7 +191,11 @@ function filter(visibleOnly: boolean, queryParams: any, data: Array<any>) {
         );
     }
     if (queryParams.province && queryParams.province !== '...') {
-        data = data.filter(r => r.location.province.name && r.location.province.name === queryParams.province);
+        data = data.filter(
+            r =>
+                r.location.province.name &&
+                r.location.province.name === queryParams.province
+        );
     }
     if (queryParams.type && queryParams.type !== '...') {
         data = data.filter(r => r.type === queryParams.type);

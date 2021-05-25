@@ -60,7 +60,10 @@ export class AppbarItemInstance implements AppbarItemConfig {
     componentId?: string;
 
     constructor(value: string | AppbarItemConfig) {
-        const params = { options: {}, ...(typeof value === 'string' ? { id: value } : value) };
+        const params = {
+            options: {},
+            ...(typeof value === 'string' ? { id: value } : value)
+        };
         ({ id: this.id, options: this.options } = params);
 
         // this should work too, but it doesn't;

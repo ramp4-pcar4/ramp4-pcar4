@@ -1,5 +1,10 @@
 import { PanelConfig } from '@/store/modules/panel';
-import { IdentifyItem, IdentifyResult, IdentifyResultFormat, IdentifyResultSet } from '@/geo/api';
+import {
+    IdentifyItem,
+    IdentifyResult,
+    IdentifyResultFormat,
+    IdentifyResultSet
+} from '@/geo/api';
 
 export type DetailsItemSet = { [name: string]: DetailsItemInstance };
 
@@ -33,7 +38,9 @@ export class DetailsItemInstance implements DetailsConfigItem {
     componentId?: string;
 
     constructor(value: string | DetailsConfigItem) {
-        const params = { ...(typeof value === 'string' ? { id: value, template: '' } : value) };
+        const params = {
+            ...(typeof value === 'string' ? { id: value, template: '' } : value)
+        };
         ({ template: this.template, id: this.id } = params);
     }
 }

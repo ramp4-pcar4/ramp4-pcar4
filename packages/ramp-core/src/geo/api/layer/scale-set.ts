@@ -1,4 +1,3 @@
-
 // TODO add proper comments
 
 // TODO move to main gapi types file?
@@ -8,11 +7,10 @@ interface OffScaleStatus {
 }
 
 export class ScaleSet {
-
     minScale: number;
     maxScale: number;
 
-    constructor (minScale: number = 0, maxScale: number = 0) {
+    constructor(minScale: number = 0, maxScale: number = 0) {
         this.minScale = minScale;
         this.maxScale = maxScale;
     }
@@ -25,8 +23,7 @@ export class ScaleSet {
      * @param {Integer}  mapScale the scale to test against
      * @returns {Object} has boolean properties `offScale` and `zoomIn`
      */
-    isOffScale (mapScale: number): OffScaleStatus {
-
+    isOffScale(mapScale: number): OffScaleStatus {
         // GIS for dummies.
         // scale increases as you zoom out, decreases as you zoom in
         // minScale means if you zoom out beyond this number, hide the layer
@@ -49,8 +46,4 @@ export class ScaleSet {
 
         return result;
     }
-
 }
-
-
-

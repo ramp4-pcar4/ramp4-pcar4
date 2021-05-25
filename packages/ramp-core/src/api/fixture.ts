@@ -1,7 +1,11 @@
 import Vue, { VueConstructor, ComponentOptions } from 'vue';
 
 import { APIScope, InstanceAPI } from './internal';
-import { FixtureBase, FixtureMutation, FixtureBaseSet } from '@/store/modules/fixture';
+import {
+    FixtureBase,
+    FixtureMutation,
+    FixtureBaseSet
+} from '@/store/modules/fixture';
 
 // TODO: implement the same `internal.ts` pattern in store, so can import from a single place;
 
@@ -40,11 +44,18 @@ export class FixtureAPI extends APIScope {
             }
 
             // run the provided constructor and update the resulting object with FixtureInstance functions/properties
-            fixture = FixtureInstance.updateBaseToInstance(new constructor(), id, this.$iApi);
+            fixture = FixtureInstance.updateBaseToInstance(
+                new constructor(),
+                id,
+                this.$iApi
+            );
         } else {
             // perform a dynamic webpack import of a internal fixture (allows for code splitting)
-            const instanceConstructor: IFixtureInstance = (await import(/* webpackChunkName: "[request]" */ `@/fixtures/${id}/index.ts`))
-                .default;
+            const instanceConstructor: IFixtureInstance = (
+                await import(
+                    /* webpackChunkName: "[request]" */ `@/fixtures/${id}/index.ts`
+                )
+            ).default;
 
             fixture = new instanceConstructor(id, this.$iApi);
         }
@@ -52,7 +63,9 @@ export class FixtureAPI extends APIScope {
         // TODO: calling `ADD_FIXTURE` mutation directly here; might want to switch to calling the action `addFixture`
         // TODO: using this horrible concatenated mixture `fixture/${FixtureMutation.ADD_FIXTURE}!` all the time doesn't seem like a good idea;
         // fixtures are always stored as objects implementing `FixtureBase` interfaces;
-        this.$vApp.$store.set(`fixture/${FixtureMutation.ADD_FIXTURE}!`, { value: fixture });
+        this.$vApp.$store.set(`fixture/${FixtureMutation.ADD_FIXTURE}!`, {
+            value: fixture
+        });
 
         return fixture;
     }
@@ -65,10 +78,14 @@ export class FixtureAPI extends APIScope {
      * @returns {T}
      * @memberof FixtureAPI
      */
-    remove<T extends FixtureBase = FixtureBase>(fixtureOrId: FixtureBase | string): T {
+    remove<T extends FixtureBase = FixtureBase>(
+        fixtureOrId: FixtureBase | string
+    ): T {
         const fixture = this.get<T>(fixtureOrId);
 
-        this.$vApp.$store.set(`fixture/${FixtureMutation.REMOVE_FIXTURE}!`, { value: fixture });
+        this.$vApp.$store.set(`fixture/${FixtureMutation.REMOVE_FIXTURE}!`, {
+            value: fixture
+        });
 
         return fixture;
     }
@@ -95,7 +112,9 @@ export class FixtureAPI extends APIScope {
      * @memberof FixtureAPI
      */
     get<T extends FixtureBase = FixtureBase>(item: string[]): T[];
-    get<T extends FixtureBase = FixtureBase>(item: string | FixtureBase | string[]): T | T[] {
+    get<T extends FixtureBase = FixtureBase>(
+        item: string | FixtureBase | string[]
+    ): T | T[] {
         const ids: string[] = [];
 
         // parse the input and figure our what it is
@@ -131,9 +150,26 @@ export class FixtureAPI extends APIScope {
      * @returns {Promise<Array<FixtureBase>>} resolves with array of default fixtures
      * @memberof FixtureAPI
      */
-    addDefaultFixtures(fixtureNames?: Array<string>): Promise<Array<FixtureBase>> {
+    addDefaultFixtures(
+        fixtureNames?: Array<string>
+    ): Promise<Array<FixtureBase>> {
         if (!Array.isArray(fixtureNames) || fixtureNames.length === 0) {
-            fixtureNames = ['appbar', 'basemap', 'crosshairs', 'details', 'geosearch', 'grid', 'help', 'legend', 'mapnav', 'metadata', 'northarrow', 'overviewmap', 'settings', 'wizard'];
+            fixtureNames = [
+                'appbar',
+                'basemap',
+                'crosshairs',
+                'details',
+                'geosearch',
+                'grid',
+                'help',
+                'legend',
+                'mapnav',
+                'metadata',
+                'northarrow',
+                'overviewmap',
+                'settings',
+                'wizard'
+            ];
         }
 
         // add all the requested default promises.
@@ -165,7 +201,11 @@ export class FixtureInstance extends APIScope implements FixtureBase {
      * @returns {FixtureInstance}
      * @memberof FixtureInstance
      */
-    static updateBaseToInstance(value: FixtureBase, id: string, $iApi: InstanceAPI): FixtureInstance {
+    static updateBaseToInstance(
+        value: FixtureBase,
+        id: string,
+        $iApi: InstanceAPI
+    ): FixtureInstance {
         const instance = new FixtureInstance(id, $iApi);
 
         Object.defineProperties(value, {
@@ -230,7 +270,11 @@ export class FixtureInstance extends APIScope implements FixtureBase {
      * @returns {Vue}
      * @memberof FixtureInstance
      */
-    extend(vueConstructor: VueConstructor<Vue>, options: ComponentOptions<Vue> = {}, mount: boolean = true): Vue {
+    extend(
+        vueConstructor: VueConstructor<Vue>,
+        options: ComponentOptions<Vue> = {},
+        mount: boolean = true
+    ): Vue {
         const component = new (Vue.extend(vueConstructor))({
             iApi: this.$iApi,
             ...options,

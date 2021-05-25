@@ -9,14 +9,22 @@
                     })
                 }}
 
-                <span v-if="this.filterInfo.visibleRows !== this.rowData.length">{{
-                    $t('grid.filters.label.filtered', { max: this.rowData.length })
-                }}</span>
+                <span
+                    v-if="this.filterInfo.visibleRows !== this.rowData.length"
+                    >{{
+                        $t('grid.filters.label.filtered', {
+                            max: this.rowData.length
+                        })
+                    }}</span
+                >
             </span>
             <div class="flex-grow"></div>
 
             <!-- show/hide columns -->
-            <column-dropdown :columnApi="columnApi" :columnDefs="columnDefs"></column-dropdown>
+            <column-dropdown
+                :columnApi="columnApi"
+                :columnDefs="columnDefs"
+            ></column-dropdown>
 
             <!-- toggle column filters -->
             <div>
@@ -98,7 +106,9 @@ const TEXT_TYPE: string = 'string';
 })
 export default class TableComponent extends Vue {
     @Prop() layerUid!: string;
-    @Get('layer/getLayerByUid') getLayerByUid!: (uid: string) => LayerInstance | undefined;
+    @Get('layer/getLayerByUid') getLayerByUid!: (
+        uid: string
+    ) => LayerInstance | undefined;
     @Sync('grid/grids') grids!: { [uid: string]: GridConfig };
 
     columnApi: any = null;
@@ -137,7 +147,9 @@ export default class TableComponent extends Vue {
             suppressColumnVirtualisation: true
         };
 
-        const fancyLayer: LayerInstance | undefined = this.getLayerByUid(this.layerUid);
+        const fancyLayer: LayerInstance | undefined = this.getLayerByUid(
+            this.layerUid
+        );
         if (fancyLayer === undefined) {
             // this really shouldn't happen unless the wrong API call is made, but maybe we should
             // do something else here anyway.
@@ -146,12 +158,18 @@ export default class TableComponent extends Vue {
         }
 
         fancyLayer.isLayerLoaded().then(() => {
-            const tableAttributePromise = fancyLayer.getTabularAttributes(this.layerUid);
+            const tableAttributePromise = fancyLayer.getTabularAttributes(
+                this.layerUid
+            );
 
             tableAttributePromise.then((tableAttributes: any) => {
                 // Iterate through table columns and set up column definitions and column filter stuff.
                 // Also adds the `rvSymbol` and `rvInteractive` columns to the table.
-                ['rvSymbol', 'rvInteractive', ...tableAttributes.columns].forEach((column: any) => {
+                [
+                    'rvSymbol',
+                    'rvInteractive',
+                    ...tableAttributes.columns
+                ].forEach((column: any) => {
                     let col: ColumnDefinition = {
                         headerName: column.title || '',
                         field: column.data || column,
@@ -167,7 +185,9 @@ export default class TableComponent extends Vue {
                     };
 
                     // retrieve the field info for the column
-                    let fieldInfo = tableAttributes.fields.find((field: any) => field.name === col.field);
+                    let fieldInfo = tableAttributes.fields.find(
+                        (field: any) => field.name === col.field
+                    );
 
                     if (column === 'rvSymbol' || column === 'rvInteractive') {
                         this.setUpSymbolsAndInteractive(col, this.columnDefs);
@@ -182,12 +202,18 @@ export default class TableComponent extends Vue {
                             col.minWidth = 400;
                             col.cellRenderer = (cell: any) => {
                                 // get YYYY-MM-DD from date
-                                return new Date(cell.value).toISOString().slice(0, 10);
-                            }
+                                return new Date(cell.value)
+                                    .toISOString()
+                                    .slice(0, 10);
+                            };
                         } else if (fieldInfo.type === TEXT_TYPE) {
                             if (col.isSelector) {
                                 // set up a selector filter instead of a text filter if the `isSelector` flag is true.
-                                this.setUpSelectorFilter(col, tableAttributes.rows, this.config.state);
+                                this.setUpSelectorFilter(
+                                    col,
+                                    tableAttributes.rows,
+                                    this.config.state
+                                );
                             } else {
                                 this.setUpTextFilter(col, this.config.state);
                             }
@@ -264,11 +290,20 @@ export default class TableComponent extends Vue {
 
     setUpDateFilter(colDef: any, state: TableStateManager) {
         // Retrieve stored filter values from the state manager if it exists.
-        let minVal = state.getColumnFilter(colDef.field + ' min') !== undefined ? state.getColumnFilter(colDef.field + ' min') : '';
-        let maxVal = state.getColumnFilter(colDef.field + ' max') !== undefined ? state.getColumnFilter(colDef.field + ' max') : '';
+        let minVal =
+            state.getColumnFilter(colDef.field + ' min') !== undefined
+                ? state.getColumnFilter(colDef.field + ' min')
+                : '';
+        let maxVal =
+            state.getColumnFilter(colDef.field + ' max') !== undefined
+                ? state.getColumnFilter(colDef.field + ' max')
+                : '';
 
         colDef.floatingFilterComponent = 'dateFloatingFilter';
-        colDef.filterParams.comparator = function(filterDate: any, entryDate: any) {
+        colDef.filterParams.comparator = function(
+            filterDate: any,
+            entryDate: any
+        ) {
             let entry = new Date(entryDate);
             if (entry > filterDate) {
                 return 1;
@@ -287,7 +322,10 @@ export default class TableComponent extends Vue {
 
     setUpSelectorFilter(colDef: any, rowData: any, state: TableStateManager) {
         // Retrieve stored filter value from the state manager if it exists.
-        let value = state.getColumnFilter(colDef.field) !== undefined ? state.getColumnFilter(colDef.field) : '';
+        let value =
+            state.getColumnFilter(colDef.field) !== undefined
+                ? state.getColumnFilter(colDef.field)
+                : '';
 
         colDef.floatingFilterComponent = 'selectorFloatingFilter';
         colDef.filterParams.inRangeInclusive = true;
@@ -300,8 +338,14 @@ export default class TableComponent extends Vue {
 
     setUpNumberFilter(colDef: any, state: TableStateManager) {
         // Retrieve stored filter values from the state manager if it exists.
-        let minVal = state.getColumnFilter(colDef.field + ' min') !== undefined ? state.getColumnFilter(colDef.field + ' min') : '';
-        let maxVal = state.getColumnFilter(colDef.field + ' max') !== undefined ? state.getColumnFilter(colDef.field + ' max') : '';
+        let minVal =
+            state.getColumnFilter(colDef.field + ' min') !== undefined
+                ? state.getColumnFilter(colDef.field + ' min')
+                : '';
+        let maxVal =
+            state.getColumnFilter(colDef.field + ' max') !== undefined
+                ? state.getColumnFilter(colDef.field + ' max')
+                : '';
 
         colDef.floatingFilterComponent = 'numberFloatingFilter';
         colDef.filterParams.inRangeInclusive = true;
@@ -313,7 +357,10 @@ export default class TableComponent extends Vue {
 
     setUpTextFilter(colDef: any, state: TableStateManager) {
         // Retrieve stored filter value from the state manager if it exists.
-        let value = state.getColumnFilter(colDef.field) !== undefined ? state.getColumnFilter(colDef.field) : '';
+        let value =
+            state.getColumnFilter(colDef.field) !== undefined
+                ? state.getColumnFilter(colDef.field)
+                : '';
 
         colDef.floatingFilterComponent = 'textFloatingFilter';
         colDef.floatingFilterComponentParams = {
@@ -325,7 +372,11 @@ export default class TableComponent extends Vue {
         // see: https://github.com/ramp4-pcar4/ramp4-pcar4/pull/57#pullrequestreview-377999397
 
         // default to regex filtering for text columns
-        colDef.filterParams.textCustomComparator = function(filter: any, gridValue: any, filterText: any) {
+        colDef.filterParams.textCustomComparator = function(
+            filter: any,
+            gridValue: any,
+            filterText: any
+        ) {
             // treat * as a regular special character
             const newFilterText = filterText.replace(/\*/, '\\*');
             // surround filter text with .* to match anything before and after
@@ -385,7 +436,10 @@ export default class TableComponent extends Vue {
                     const fakeIdentifyItem = deepmerge({}, { data: cell.data });
                     delete fakeIdentifyItem['data']['rvInteractive'];
                     delete fakeIdentifyItem['data']['rvSymbol'];
-                    this.$iApi.event.emit(GlobalEvents.DETAILS_OPEN, { identifyItem: fakeIdentifyItem, uid: this.layerUid });
+                    this.$iApi.event.emit(GlobalEvents.DETAILS_OPEN, {
+                        identifyItem: fakeIdentifyItem,
+                        uid: this.layerUid
+                    });
                 }
             };
             colDef.push(detailsDef);
@@ -409,13 +463,17 @@ export default class TableComponent extends Vue {
                     };
                 },
                 onCellClicked: (cell: any) => {
-                    const layer: LayerInstance | undefined = this.getLayerByUid(this.layerUid);
+                    const layer: LayerInstance | undefined = this.getLayerByUid(
+                        this.layerUid
+                    );
                     if (layer === undefined) return;
                     const oid = cell.data[this.oidField];
                     const opts = { getGeom: true };
                     layer.getGraphic(oid, opts, this.layerUid).then(g => {
                         if (g.geometry === undefined) {
-                            console.error(`Could not find graphic for objectid ${oid}`);
+                            console.error(
+                                `Could not find graphic for objectid ${oid}`
+                            );
                         } else {
                             this.$iApi.geo.map.zoomMapTo(g.geometry, 50000);
                         }
@@ -434,7 +492,9 @@ export default class TableComponent extends Vue {
                 isStatic: true,
                 maxWidth: 82,
                 cellRenderer: (cell: any) => {
-                    const layer: LayerInstance | undefined = this.getLayerByUid(this.layerUid);
+                    const layer: LayerInstance | undefined = this.getLayerByUid(
+                        this.layerUid
+                    );
                     if (layer === undefined) return;
                     const iconContainer = document.createElement('span');
                     const oid = cell.data[this.oidField];
@@ -466,7 +526,16 @@ export default class TableComponent extends Vue {
     }
 
     stopArrowKeyProp(event: KeyboardEvent) {
-        const arrowKeys = ['ArrowDown', 'Down', 'ArrowLeft', 'Left', 'ArrowUp', 'Up', 'ArrowRight', 'Right'];
+        const arrowKeys = [
+            'ArrowDown',
+            'Down',
+            'ArrowLeft',
+            'Left',
+            'ArrowUp',
+            'Up',
+            'ArrowRight',
+            'Right'
+        ];
         if (arrowKeys.includes(event.key)) {
             event.stopPropagation();
         }

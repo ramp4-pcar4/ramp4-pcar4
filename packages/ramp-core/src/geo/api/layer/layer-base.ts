@@ -9,13 +9,24 @@
 // they probably won't have access to "class" LayerInstance when using compiled RAMP (raw javascript).
 // this pattern is stolen from the fixture class model.
 
-import { AttributeSet, Extent, FieldDefinition, GetGraphicParams, GetGraphicResult, IdentifyParameters, IdentifyResultSet,
-    LayerState, LegendSymbology, ScaleSet, TabularAttributeSet, TreeNode } from '@/geo/api';
+import {
+    AttributeSet,
+    Extent,
+    FieldDefinition,
+    GetGraphicParams,
+    GetGraphicResult,
+    IdentifyParameters,
+    IdentifyResultSet,
+    LayerState,
+    LegendSymbology,
+    ScaleSet,
+    TabularAttributeSet,
+    TreeNode
+} from '@/geo/api';
 
 // TODO consider making a number of these things optional with ? markup.
 // TODO add all the stuff from layer instance
 export interface LayerBase {
-
     id: string;
     uid: string;
     layerType: string;
@@ -41,29 +52,56 @@ export interface LayerBase {
     setOpacity(value: number, layerIdx: number | string | undefined): void;
     zoomToVisibleScale(layerIdx: number | string | undefined): Promise<void>;
     getScaleSet(layerIdx: number | string | undefined): ScaleSet;
-    isOffscale(layerIdx: number | string | undefined, testScale: number | undefined): boolean;
+    isOffscale(
+        layerIdx: number | string | undefined,
+        testScale: number | undefined
+    ): boolean;
 
     getLegend(layerIdx: number | string | undefined): Array<LegendSymbology>;
     identify(options: IdentifyParameters): IdentifyResultSet;
 
     // attribute layer props. layers that do not support attributes can just return dummy values
     getFeatureCount?(layerIdx: number | string | undefined): number;
-    getGraphic?(objectId: number, options: GetGraphicParams, layerIdx: number | string | undefined): Promise<GetGraphicResult>;
-    getIcon?(objectId: number, layerIdx: number | string | undefined): Promise<string>;
+    getGraphic?(
+        objectId: number,
+        options: GetGraphicParams,
+        layerIdx: number | string | undefined
+    ): Promise<GetGraphicResult>;
+    getIcon?(
+        objectId: number,
+        layerIdx: number | string | undefined
+    ): Promise<string>;
 
     getOidField?(layerIdx: number | string | undefined): string;
     getNameField?(layerIdx: number | string | undefined): string;
     getGeomType?(layerIdx: number | string | undefined): string;
     getFields?(layerIdx: number | string | undefined): Array<FieldDefinition>;
 
-    getAttributes?(layerIdx: number | string | undefined): Promise<AttributeSet>;
-    getTabularAttributes?(layerIdx: number | string | undefined): Promise<TabularAttributeSet>;
+    getAttributes?(
+        layerIdx: number | string | undefined
+    ): Promise<AttributeSet>;
+    getTabularAttributes?(
+        layerIdx: number | string | undefined
+    ): Promise<TabularAttributeSet>;
     abortAttributeLoad?(layerIdx: number | string | undefined): void;
     destroyAttributes?(layerIdx: number | string | undefined): void;
 
-    applySqlFilter?(exclusions: Array<string>, layerIdx: number | string | undefined): void;
-    getFilterOIDs?(exclusions: Array<string>, extent: Extent | undefined, layerIdx: number | string | undefined): Promise<Array<number> | undefined>;
-    getSqlFilter?(filterKey: string, layerIdx: number | string | undefined): string;
-    setSqlFilter?(filterKey: string, whereClause: string, layerIdx: number | string | undefined): void ;
-
+    applySqlFilter?(
+        exclusions: Array<string>,
+        layerIdx: number | string | undefined
+    ): void;
+    getFilterOIDs?(
+        exclusions: Array<string>,
+        extent: Extent | undefined,
+        layerIdx: number | string | undefined
+    ): Promise<Array<number> | undefined>;
+    getSqlFilter?(
+        filterKey: string,
+        layerIdx: number | string | undefined
+    ): string;
+    setSqlFilter?(
+        filterKey: string,
+        whereClause: string,
+        layerIdx: number | string | undefined
+    ): void;
 }

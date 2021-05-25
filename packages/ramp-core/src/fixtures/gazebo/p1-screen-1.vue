@@ -12,14 +12,21 @@
                     <a href="#">Option 2</a>
                     <a href="#">Option 3</a>
                 </panel-options-menu>
-                <pin :active="pinned && pinned.id === 'p1'" @click="pinPanel" v-if="$iApi.screenSize !== 'xs'"></pin>
+                <pin
+                    :active="pinned && pinned.id === 'p1'"
+                    @click="pinPanel"
+                    v-if="$iApi.screenSize !== 'xs'"
+                ></pin>
             </div>
         </template>
 
         <template #content>
             <div class="flex flex-col items-center">
                 <!-- setting panel route directly in the store will not work ❌  -->
-                <button @click="route = { screen: 'p-1-screen-2' }" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-8 px-16">
+                <button
+                    @click="route = { screen: 'p-1-screen-2' }"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-8 px-16"
+                >
                     See Gazebo 2
                 </button>
 
@@ -46,12 +53,16 @@ export default class P1Screen1V extends Vue {
     // ❌ also don't do this for the reasons above 👇
     @Sync('panel/pinned') pinned!: PanelInstance | null;
 
-    url: string = 'https://i2.wp.com/freepngimages.com/wp-content/uploads/2017/08/wooden-garden-gazebo.png?w=860';
+    url: string =
+        'https://i2.wp.com/freepngimages.com/wp-content/uploads/2017/08/wooden-garden-gazebo.png?w=860';
 
     pinPanel(): void {
         // this is fine, but the name of the panel is hardcoded there, so you wouldn't need to update it if it ever changes
         const panel = this.$store.get<PanelInstance>(`panel/items@p1`)!;
-        this.pinned = this.pinned === null || (this.pinned && this.pinned.id) !== 'p1' ? panel : null;
+        this.pinned =
+            this.pinned === null || (this.pinned && this.pinned.id) !== 'p1'
+                ? panel
+                : null;
     }
 }
 </script>

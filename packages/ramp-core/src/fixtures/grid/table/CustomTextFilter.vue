@@ -17,7 +17,9 @@ import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
 export default class CustomTextFilter extends Vue {
     beforeMount() {
         // Load previously stored value (if saved in table state manager)
-        this.filterValue = this.params.stateManager.getColumnFilter(this.params.column.colDef.field);
+        this.filterValue = this.params.stateManager.getColumnFilter(
+            this.params.column.colDef.field
+        );
 
         // Apply the default value to the column filter.
         this.valueChanged();
@@ -35,7 +37,10 @@ export default class CustomTextFilter extends Vue {
 
             // Save the new filter value in the state manager. Allows for quick recovery if the grid is
             // closed and re-opened.
-            this.params.stateManager.setColumnFilter(this.params.column.colDef.field, this.filterValue);
+            this.params.stateManager.setColumnFilter(
+                this.params.column.colDef.field,
+                this.filterValue
+            );
 
             this.params.api.onFilterChanged();
         });

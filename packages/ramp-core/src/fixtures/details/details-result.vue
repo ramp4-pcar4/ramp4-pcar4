@@ -16,8 +16,15 @@
                     @click="openResult(idx)"
                     v-focus-item
                 >
-                    <span v-html="icon[idx]" class="flex-none symbologyIcon"> {{ itemIcon(item.data, idx) }} </span>
-                    <span class="flex-initial py-5 px-10 truncate"> {{ item.data[nameField] || 'Identify Result ' + (idx + 1) }} </span>
+                    <span v-html="icon[idx]" class="flex-none symbologyIcon">
+                        {{ itemIcon(item.data, idx) }}
+                    </span>
+                    <span class="flex-initial py-5 px-10 truncate">
+                        {{
+                            item.data[nameField] ||
+                                'Identify Result ' + (idx + 1)
+                        }}
+                    </span>
                 </div>
             </div>
             <div v-else>{{ $t('details.results.empty') }}</div>
@@ -39,7 +46,9 @@ export default class DetailsResultV extends Vue {
     @Prop() resultIndex!: number;
 
     @Get(DetailsStore.payload) payload!: IdentifyResult[];
-    @Get('layer/getLayerByUid') getLayerByUid!: (uid: string) => LayerInstance | undefined;
+    @Get('layer/getLayerByUid') getLayerByUid!: (
+        uid: string
+    ) => LayerInstance | undefined;
 
     icon: string[] = [];
 
@@ -47,7 +56,10 @@ export default class DetailsResultV extends Vue {
      * Switches the panel screen to display the data for a given result. Provides the currently selected layer index and the currently selected feature index as props.
      */
     openResult(itemIndex: number) {
-        this.panel.show({ screen: 'details-screen-item', props: { resultIndex: this.resultIndex, itemIndex: itemIndex } });
+        this.panel.show({
+            screen: 'details-screen-item',
+            props: { resultIndex: this.resultIndex, itemIndex: itemIndex }
+        });
     }
 
     /**
@@ -60,11 +72,15 @@ export default class DetailsResultV extends Vue {
         const uid = this.identifyResult.uid;
         const layer: LayerInstance | undefined = this.getLayerByUid(uid);
         if (layer === undefined) {
-            console.warn(`could not find layer for uid ${uid} during icon lookup`);
+            console.warn(
+                `could not find layer for uid ${uid} during icon lookup`
+            );
             return;
         }
         const oidField = layer.getOidField(uid);
-        layer.getIcon(data[oidField], uid).then(value => {if (this.icon[idx] !== value) this.$set(this.icon, idx, value)});
+        layer.getIcon(data[oidField], uid).then(value => {
+            if (this.icon[idx] !== value) this.$set(this.icon, idx, value);
+        });
     }
 
     /**

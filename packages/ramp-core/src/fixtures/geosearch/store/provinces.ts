@@ -37,7 +37,9 @@ class Provinces {
     fsaToProvinces(fsa: string): defs.GenericObjectType {
         const genericObj: defs.GenericObjectType = {};
         // either a provincial code, or an array of them
-        let provCodes = <number[] | number>fsaToProv[fsa.substring(0, 1).toUpperCase()];
+        let provCodes = <number[] | number>(
+            fsaToProv[fsa.substring(0, 1).toUpperCase()]
+        );
         if (typeof provCodes === 'number') {
             provCodes = [provCodes];
         }
@@ -49,5 +51,7 @@ class Provinces {
 }
 
 export default function(language: string): defs.Provinces {
-    return (provinceObj[language] = provinceObj[language] ? provinceObj[language] : new Provinces(language));
+    return (provinceObj[language] = provinceObj[language]
+        ? provinceObj[language]
+        : new Provinces(language));
 }

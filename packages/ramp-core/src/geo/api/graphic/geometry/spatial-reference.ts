@@ -6,7 +6,6 @@ import { SrDef } from '@/geo/api';
  * Represents a geographical spatial reference.
  */
 export class SpatialReference {
-
     /** Well known id. This generally corresponds to an EPSG code or an ESRI wkid number */
     wkid: number | undefined;
 
@@ -16,9 +15,9 @@ export class SpatialReference {
     /** Well known type. */
     wkt: string | undefined;
 
-    constructor(wkid: number)
-    constructor(wkid: number, latestWkid: number)
-    constructor(wkt: string)
+    constructor(wkid: number);
+    constructor(wkid: number, latestWkid: number);
+    constructor(wkt: string);
     constructor(wkidOrWkt: number | string, latestWkid?: number) {
         if (typeof wkidOrWkt === 'string') {
             this.wkt = wkidOrWkt;
@@ -42,9 +41,11 @@ export class SpatialReference {
         // TODO consider improving this logic. might make more sense to do
         //      some type of cross-matching against wkid and latestWkid.
         //      e.g. 102100 and 3857 should effectively be considered equal
-        return (this.wkid === otherSR.wkid) &&
-            (this.wkt === otherSR.wkt) &&
-            (this.latestWkid === otherSR.latestWkid);
+        return (
+            this.wkid === otherSR.wkid &&
+            this.wkt === otherSR.wkt &&
+            this.latestWkid === otherSR.latestWkid
+        );
     }
 
     clone(): SpatialReference {
@@ -100,7 +101,7 @@ export class SpatialReference {
 
     static parseSR(sr?: SrDef): SpatialReference {
         if (!sr) {
-             // default to lat long if no SR is provided
+            // default to lat long if no SR is provided
             return SpatialReference.latLongSR();
         } else if (sr instanceof SpatialReference) {
             return sr.clone();
@@ -109,5 +110,4 @@ export class SpatialReference {
             return new SpatialReference(<any>sr);
         }
     }
-
 }

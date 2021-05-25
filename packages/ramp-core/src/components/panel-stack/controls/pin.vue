@@ -1,6 +1,10 @@
 <template>
     <div class="relative" tabindex="-1">
-        <button class="text-gray-500 hover:text-black p-8" :class="{ 'text-gray-700': active }" @click="$emit('click')">
+        <button
+            class="text-gray-500 hover:text-black p-8"
+            :class="{ 'text-gray-700': active }"
+            @click="$emit('click')"
+        >
             <svg
                 class="fill-current w-16 h-16"
                 xmlns="http://www.w3.org/2000/svg"
@@ -12,7 +16,9 @@
                 />
             </svg>
         </button>
-        <tooltip position="bottom">{{ $t(this.active ? 'panels.controls.unpin' : 'panels.controls.pin') }}</tooltip>
+        <tooltip position="bottom">{{
+            $t(this.active ? 'panels.controls.unpin' : 'panels.controls.pin')
+        }}</tooltip>
     </div>
 </template>
 

@@ -1,9 +1,14 @@
 // TODO add proper documentation
 
-import { FillStyle, LineStyleOptions, LineStyleParams, PolygonStyleParams, StyleOptions } from '@/geo/api';
+import {
+    FillStyle,
+    LineStyleOptions,
+    LineStyleParams,
+    PolygonStyleParams,
+    StyleOptions
+} from '@/geo/api';
 
 export class PolygonStyleOptions extends StyleOptions {
-
     protected _outlineStyle: LineStyleOptions;
     protected _fillColor: Array<number>;
     protected _fillStyle: string;
@@ -30,7 +35,9 @@ export class PolygonStyleOptions extends StyleOptions {
                 // we take a risk if someone sets value of 1 being 1 of 255 opacity. WHO PICKS 1/255th OPACITY???
                 this._fillColor[3] = Math.floor(opts.fillOpacity * 255.0);
             } else {
-                this._fillColor[3] = Math.min((Math.floor(opts.fillOpacity), 255));
+                this._fillColor[3] = Math.min(
+                    (Math.floor(opts.fillOpacity), 255)
+                );
             }
         }
 
@@ -47,7 +54,5 @@ export class PolygonStyleOptions extends StyleOptions {
             paramooo.width = opts.outlineWidth;
         }
         this._outlineStyle = new LineStyleOptions(paramooo);
-
     }
-
 }

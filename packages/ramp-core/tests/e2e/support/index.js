@@ -14,11 +14,10 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import "./commands";
+import './commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-
 // Add package for cypress tab support:
-require('cypress-plugin-tab')
+require('cypress-plugin-tab');

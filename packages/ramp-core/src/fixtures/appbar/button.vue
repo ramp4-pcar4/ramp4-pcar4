@@ -1,6 +1,10 @@
 <template>
     <div class="relative" tabindex="-1">
-        <button class="py-6 w-full h-full focus:outline-none" @click="onClickFunction()" v-focus-item>
+        <button
+            class="py-6 w-full h-full focus:outline-none"
+            @click="onClickFunction()"
+            v-focus-item
+        >
             <slot name="icon"></slot>
         </button>
         <tooltip position="right">

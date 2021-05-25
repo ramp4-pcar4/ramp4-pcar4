@@ -38,13 +38,19 @@
                 ></path>
             </svg>
             <panel-options-menu>
-                <a href="#" @click="clearFilters()">{{ $t('grid.filters.clear') }}</a>
+                <a href="#" @click="clearFilters()">{{
+                    $t('grid.filters.clear')
+                }}</a>
             </panel-options-menu>
             <pin @click="panel.pin()" :active="panel.isPinned"></pin>
             <close @click="panel.close()"></close>
         </template>
         <template #content>
-            <TableComponent class="rv-grid" ref="rvGrid" :layerUid="currentUid"></TableComponent>
+            <TableComponent
+                class="rv-grid"
+                ref="rvGrid"
+                :layerUid="currentUid"
+            ></TableComponent>
         </template>
     </panel-screen>
 </template>
@@ -100,7 +106,7 @@ export default class Screen1 extends Vue {
             this.layer = this.grid.getLayerByUid(this.grid.layerUid);
             return this.layer.getName(this.grid.layerUid);
         }
-        return '' ;
+        return '';
     }
 }
 </script>

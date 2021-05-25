@@ -5,7 +5,14 @@
             {{ name }}
         </div>
         <div class="flex flex-row pl-30">
-            <vue-slider class="mr-16" @change="config.onChange" :value="config.value" :width="250" :min="0" :max="100" />
+            <vue-slider
+                class="mr-16"
+                @change="config.onChange"
+                :value="config.value"
+                :width="250"
+                :min="0"
+                :max="100"
+            />
             {{ config.value }}%
         </div>
     </div>

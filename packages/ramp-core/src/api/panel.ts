@@ -1,5 +1,10 @@
 import { APIScope, PanelInstance } from './internal';
-import { PanelConfig, PanelConfigRoute, PanelMutation, PanelAction } from '@/store/modules/panel';
+import {
+    PanelConfig,
+    PanelConfigRoute,
+    PanelMutation,
+    PanelAction
+} from '@/store/modules/panel';
 
 import { I18nComponentOptions } from '@/lang';
 
@@ -13,7 +18,10 @@ export class PanelAPI extends APIScope {
      * @returns {PanelInstance}
      * @memberof PanelAPI
      */
-    register(value: PanelConfigPair, options?: PanelRegistrationOptions): PanelInstance;
+    register(
+        value: PanelConfigPair,
+        options?: PanelRegistrationOptions
+    ): PanelInstance;
     /**
      * Registers a set of provided panel objects and returns the resulting `PanelInstance` object set.
      * When the panel is registered, all its screens are added to the Vue as components right away.
@@ -23,9 +31,17 @@ export class PanelAPI extends APIScope {
      * @returns {PanelInstanceSet}
      * @memberof PanelAPI
      */
-    register(value: PanelConfigSet, options?: PanelRegistrationOptions): PanelInstanceSet;
-    register(value: PanelConfigPair | PanelConfigSet, options?: PanelRegistrationOptions): PanelInstance | PanelInstanceSet {
-        const panelConfigs = isPanelConfigPair(value) ? { [value.id]: value.config } : value;
+    register(
+        value: PanelConfigSet,
+        options?: PanelRegistrationOptions
+    ): PanelInstanceSet;
+    register(
+        value: PanelConfigPair | PanelConfigSet,
+        options?: PanelRegistrationOptions
+    ): PanelInstance | PanelInstanceSet {
+        const panelConfigs = isPanelConfigPair(value)
+            ? { [value.id]: value.config }
+            : value;
 
         if (options) {
             const i18n = options.i18n || {};
@@ -33,20 +49,32 @@ export class PanelAPI extends APIScope {
 
             // merge `messages`, `dateTimeFormats` and  `numberFormats` into the global locale
             // ignore `sharedMessages` prop as it makes no sense to use it here
-            Object.entries(i18n.messages || {}).forEach(value => $i18n.mergeLocaleMessage(...value));
-            Object.entries(i18n.dateTimeFormats || {}).forEach(value => $i18n.mergeDateTimeFormat(...value));
-            Object.entries(i18n.numberFormats || {}).forEach(value => $i18n.mergeNumberFormat(...value));
+            Object.entries(i18n.messages || {}).forEach(value =>
+                $i18n.mergeLocaleMessage(...value)
+            );
+            Object.entries(i18n.dateTimeFormats || {}).forEach(value =>
+                $i18n.mergeDateTimeFormat(...value)
+            );
+            Object.entries(i18n.numberFormats || {}).forEach(value =>
+                $i18n.mergeNumberFormat(...value)
+            );
         }
 
         // TODO: check if the panel with the same id already exist and don't create a new one
         // create panel instances
-        const panels: PanelInstance[] = Object.entries(panelConfigs).reduce<PanelInstance[]>((map, [id, config]) => {
+        const panels: PanelInstance[] = Object.entries(panelConfigs).reduce<
+            PanelInstance[]
+        >((map, [id, config]) => {
             map.push(new PanelInstance(this.$iApi, id, config));
             return map;
         }, []);
 
         // register all the panels with the store
-        panels.forEach(panel => this.$vApp.$store.set(`panel/${PanelMutation.REGISTER_PANEL}!`, { panel }));
+        panels.forEach(panel =>
+            this.$vApp.$store.set(`panel/${PanelMutation.REGISTER_PANEL}!`, {
+                panel
+            })
+        );
 
         // return either a single panel or a set of panels, depending on the function input
         if (panels.length === 1) {
@@ -91,7 +119,9 @@ export class PanelAPI extends APIScope {
      * @memberof PanelAPI
      */
     open(value: string | PanelInstance | PanelInstancePath): PanelInstance {
-        let panel: PanelInstance, screen: string | undefined, props: object | undefined;
+        let panel: PanelInstance,
+            screen: string | undefined,
+            props: object | undefined;
 
         // figure out what is passed to the function and retrieve the panel object
         if (typeof value === 'string' || value instanceof PanelInstance) {
@@ -152,7 +182,10 @@ export class PanelAPI extends APIScope {
      * @returns {PanelInstance}
      * @memberof PanelAPI
      */
-    toggle(value: string | PanelInstance | PanelInstancePath, toggle?: boolean): PanelInstance {
+    toggle(
+        value: string | PanelInstance | PanelInstancePath,
+        toggle?: boolean
+    ): PanelInstance {
         let panel: PanelInstance;
 
         // figure out what is passed to the function, retrieve the panel object and make call to open or close function
@@ -218,7 +251,10 @@ export class PanelAPI extends APIScope {
      * @memberof PanelAPI
      */
     // TODO: implement panel route history
-    show(value: string | PanelInstance, route: PanelConfigRoute): PanelInstance {
+    show(
+        value: string | PanelInstance,
+        route: PanelConfigRoute
+    ): PanelInstance {
         const panel = this.get(value);
 
         // register all the panel screen components globally
@@ -241,10 +277,17 @@ export class PanelAPI extends APIScope {
      * @returns {(PanelInstance | null)}
      * @memberof PanelAPI
      */
-    setStyle(value: string | PanelInstance, style: object, replace: boolean = false): PanelInstance | null {
+    setStyle(
+        value: string | PanelInstance,
+        style: object,
+        replace: boolean = false
+    ): PanelInstance | null {
         const panel = this.get(value);
 
-        this.$vApp.$store.set(`panel/items@${panel.id}.style`, replace ? style : { ...panel.style, ...style });
+        this.$vApp.$store.set(
+            `panel/items@${panel.id}.style`,
+            replace ? style : { ...panel.style, ...style }
+        );
 
         return panel;
     }
@@ -256,8 +299,14 @@ export class PanelAPI extends APIScope {
  * @param {(PanelConfigPair | PanelConfigSet)} value
  * @returns {value is PanelConfigPair}
  */
-function isPanelConfigPair(value: PanelConfigPair | PanelConfigSet): value is PanelConfigPair {
-    return value.id !== undefined && typeof value.id === 'string' && value.config !== undefined;
+function isPanelConfigPair(
+    value: PanelConfigPair | PanelConfigSet
+): value is PanelConfigPair {
+    return (
+        value.id !== undefined &&
+        typeof value.id === 'string' &&
+        value.config !== undefined
+    );
 }
 
 /**

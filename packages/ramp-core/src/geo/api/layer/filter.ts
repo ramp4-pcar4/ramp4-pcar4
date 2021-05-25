@@ -130,9 +130,14 @@ export class Filter {
      * @param {Boolean} includeExtent if the cache includes extent based filters
      * @returns {String} the cache key to use
      */
-    private getCacheKey(sqlFilters: Array<string>, includeExtent: boolean): string {
+    private getCacheKey(
+        sqlFilters: Array<string>,
+        includeExtent: boolean
+    ): string {
         const sqlKey = sqlFilters.sort().join('$');
-        return `_cache$${sqlKey}${includeExtent ? '$' + CoreFilter.EXTENT : ''}$`;
+        return `_cache$${sqlKey}${
+            includeExtent ? '$' + CoreFilter.EXTENT : ''
+        }$`;
     }
 
     /**
@@ -143,7 +148,10 @@ export class Filter {
      * @param {Boolean} includeExtent if the cache includes extent based filters
      * @returns {Promise} resolves in a filter result appropriate for the parameters. returns undefined if no cache exists.
      */
-    getCache(sqlFilters: Array<string>, includeExtent: boolean): Promise<Array<number>> {
+    getCache(
+        sqlFilters: Array<string>,
+        includeExtent: boolean
+    ): Promise<Array<number>> {
         const key = this.getCacheKey(sqlFilters, includeExtent);
         return this.cache[key];
     }
@@ -156,7 +164,11 @@ export class Filter {
      * @param {Array} sqlFilters list of filter keys influencing this cache
      * @param {Boolean} includeExtent if the cache includes extent based filters
      */
-    setCache(queryPromise: Promise<Array<number>>, sqlFilters: Array<string>, includeExtent: boolean): void {
+    setCache(
+        queryPromise: Promise<Array<number>>,
+        sqlFilters: Array<string>,
+        includeExtent: boolean
+    ): void {
         const key = this.getCacheKey(sqlFilters, includeExtent);
         this.cache[key] = queryPromise;
     }
@@ -252,5 +264,4 @@ export class Filter {
         return `${this._parent.oidField} IN (${array.join(',')})`;
     }
     */
-
 }

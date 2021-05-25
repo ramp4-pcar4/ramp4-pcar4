@@ -3,7 +3,6 @@
 import { GeometryType, MultiPoint, Point, SrDef, IdDef } from '@/geo/api';
 
 export class LineString extends MultiPoint {
-
     /**
      * Constructs a LineString from the given source of a line
      *
@@ -13,15 +12,19 @@ export class LineString extends MultiPoint {
      * @param {Boolean} [raw] An efficiency flag. If set, it means the verticies is in the pure format of [[number, number],...] and we can skip data validations and parsing.
      */
     // from existing geometry that can be interpreted as a line
-    constructor(id: IdDef, line: LineString)
-    constructor(id: IdDef, multiPoint: MultiPoint)
+    constructor(id: IdDef, line: LineString);
+    constructor(id: IdDef, multiPoint: MultiPoint);
     // from arrays of verticies that can be interpreted as a line
-    constructor(id: IdDef, listOfCoords: Array<Array<number>>, sr?: SrDef, raw?: boolean)
-    constructor(id: IdDef, listOfPoints: Array<Point>, sr?: SrDef)
-    constructor(id: IdDef, listOfXY: Array<object>, sr?: SrDef)
-    constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef)
+    constructor(
+        id: IdDef,
+        listOfCoords: Array<Array<number>>,
+        sr?: SrDef,
+        raw?: boolean
+    );
+    constructor(id: IdDef, listOfPoints: Array<Point>, sr?: SrDef);
+    constructor(id: IdDef, listOfXY: Array<object>, sr?: SrDef);
+    constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef);
     constructor(id: IdDef, geometry: any, sr?: SrDef, raw?: boolean) {
-
         if (raw) {
             // the first IF here is a bit silly; required to satisfy typescript (as we are extending MultiPoint).
             // we could adjust the constructor guides to avoid it, but then would confuse users of IDEs in thinking the raw flag

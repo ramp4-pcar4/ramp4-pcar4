@@ -17,7 +17,9 @@ const getters = {
      * @returns {MapnavItemInstance[]}
      */
     visible(state: MapnavState): MapnavItemInstance[] {
-        return state.order.map<MapnavItemInstance>(id => state.items[id]).filter(item => item.componentId);
+        return state.order
+            .map<MapnavItemInstance>(id => state.items[id])
+            .filter(item => item.componentId);
     }
 };
 

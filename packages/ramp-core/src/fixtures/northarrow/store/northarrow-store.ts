@@ -4,7 +4,6 @@ import { make } from 'vuex-pathify';
 import { NortharrowState } from './northarrow-state';
 import { RootState } from '@/store/state';
 
-
 const getters = {};
 
 const mutations = {};

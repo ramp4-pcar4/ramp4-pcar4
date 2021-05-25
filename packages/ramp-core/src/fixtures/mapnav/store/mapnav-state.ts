@@ -60,7 +60,10 @@ export class MapnavItemInstance implements MapnavItemConfig {
     componentId?: string;
 
     constructor(value: string | MapnavItemConfig) {
-        const params = { options: {}, ...(typeof value === 'string' ? { id: value } : value) };
+        const params = {
+            options: {},
+            ...(typeof value === 'string' ? { id: value } : value)
+        };
         ({ id: this.id, options: this.options } = params);
 
         // this should work too, but it doesn't;

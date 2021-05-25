@@ -14,7 +14,9 @@ if ('ResizeObserver' in self) {
         entries.forEach(function(entry) {
             // If breakpoints are defined on the observed element,
             // use them. Otherwise use the defaults.
-            var breakpoints = entry.target.dataset.breakpoints ? JSON.parse(entry.target.dataset.breakpoints) : defaultBreakpoints;
+            var breakpoints = entry.target.dataset.breakpoints
+                ? JSON.parse(entry.target.dataset.breakpoints)
+                : defaultBreakpoints;
 
             // Update the matching breakpoints on the observed element.
             Object.keys(breakpoints).forEach(function(breakpoint) {

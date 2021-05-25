@@ -15,7 +15,7 @@ class WizardFixture extends WizardAPI {
                         'wizard-screen': WizardV
                     },
                     style: {
-                        'width': '350px'
+                        width: '350px'
                     }
                 }
             },
@@ -25,7 +25,10 @@ class WizardFixture extends WizardAPI {
         );
 
         this.$vApp.$store.registerModule('wizard', wizard());
-        this.$vApp.$store.set('wizard/layerSource', new LayerSource(this.$iApi));
+        this.$vApp.$store.set(
+            'wizard/layerSource',
+            new LayerSource(this.$iApi)
+        );
     }
 
     removed() {

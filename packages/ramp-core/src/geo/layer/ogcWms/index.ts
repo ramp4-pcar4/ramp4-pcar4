@@ -1,16 +1,25 @@
 import { CommonLayer, InstanceAPI } from '@/api/internal';
-import { GeometryType, IdentifyParameters, IdentifyResult, IdentifyResultFormat, IdentifyResultSet, LayerType,
-    Point, RampLayerConfig, RampLayerWmsLayerEntryConfig, TreeNode } from '@/geo/api';
+import {
+    GeometryType,
+    IdentifyParameters,
+    IdentifyResult,
+    IdentifyResultFormat,
+    IdentifyResultSet,
+    LayerType,
+    Point,
+    RampLayerConfig,
+    RampLayerWmsLayerEntryConfig,
+    TreeNode
+} from '@/geo/api';
 import { EsriRequest, EsriWMSLayer } from '@/geo/esri';
 import { WmsFC } from './wms-fc';
 
 export default class WmsLayer extends CommonLayer {
-
     esriLayer: EsriWMSLayer | undefined;
     sublayerNames: Array<string>;
     readonly mimeType: string;
 
-    constructor (rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
+    constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.supportsIdentify = true;
         this._layerType = LayerType.WMS;
@@ -19,8 +28,9 @@ export default class WmsLayer extends CommonLayer {
     }
 
     async initiate(): Promise<void> {
-
-        this.esriLayer = new EsriWMSLayer(this.makeEsriLayerConfig(this.origRampConfig));
+        this.esriLayer = new EsriWMSLayer(
+            this.makeEsriLayerConfig(this.origRampConfig)
+        );
         await super.initiate();
     }
 
@@ -30,13 +40,19 @@ export default class WmsLayer extends CommonLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-     protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.WMSLayerProperties {
+    protected makeEsriLayerConfig(
+        rampLayerConfig: RampLayerConfig
+    ): __esri.WMSLayerProperties {
         // TODO flush out
         // NOTE: it would be nice to put esri.LayerProperties as the return type, but since we are cheating with refreshInterval it wont work
         //       we can make our own interface if it needs to happen (or can extent the esri one)
-        const esriConfig: __esri.WMSLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
+        const esriConfig: __esri.WMSLayerProperties = super.makeEsriLayerConfig(
+            rampLayerConfig
+        );
 
-        const lEntries = <Array<RampLayerWmsLayerEntryConfig>>rampLayerConfig.layerEntries;
+        const lEntries = <Array<RampLayerWmsLayerEntryConfig>>(
+            rampLayerConfig.layerEntries
+        );
         this.sublayerNames = lEntries.map(le => le.id || 'error_no_wms_id');
 
         // reminder: unlike MapImageLayer, we do not allow tweaking visibility
@@ -89,9 +105,8 @@ export default class WmsLayer extends CommonLayer {
      *
      * @function onLoadActions
      */
-    onLoadActions (): Array<Promise<void>> {
+    onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
-
 
         if (!this.layerTree) {
             throw new Error('superclass did not create layer tree');
@@ -164,11 +179,13 @@ export default class WmsLayer extends CommonLayer {
         const map = this.$iApi.geo.map;
 
         // early kickout check. not loaded/error
-        if (!this.isValidState() ||
+        if (
+            !this.isValidState() ||
             !myFC.getVisibility() ||
             // !this.isQueryable() || // TODO implement when we have this flag created
             // !infoMap[this.config.featureInfoMimeType] || // TODO implement once config is defined
-            myFC.scaleSet.isOffScale(map.getScale()).offScale) {
+            myFC.scaleSet.isOffScale(map.getScale()).offScale
+        ) {
             // return empty result.
             return super.identify(options);
         }
@@ -187,32 +204,37 @@ export default class WmsLayer extends CommonLayer {
             parentUid: this.uid
         };
 
-        result.done = this.getFeatureInfo(this.sublayerNames, <Point>options.geometry, this.mimeType)
-            .then(response => {
-
-                // check if a result is returned by the service. If not, do not add to the array of data
-                // TODO verify we want empty .items array
-                // TODO is is possible to have more than one item as a result? check how this works
-                if (response) {
-                    if (typeof response !== 'string') {
-                        // likely json or an image
-                        // TODO improve the dection (maybe use the this.mimeType?)
-                        innerResult.items.push({
-                            format: IdentifyResultFormat.JSON,
-                            data: response
-                        });
-                    } else if (response.indexOf('Search returned no results') === -1 && response !== '') {
-                        // TODO if service is french, will the "no results" message be different?
-                        // TODO consider utilizing the infoMap variable above to detect HTML format.
-                        innerResult.items.push({
-                            format: IdentifyResultFormat.TEXT,
-                            data: response
-                        });
-                    }
+        result.done = this.getFeatureInfo(
+            this.sublayerNames,
+            <Point>options.geometry,
+            this.mimeType
+        ).then(response => {
+            // check if a result is returned by the service. If not, do not add to the array of data
+            // TODO verify we want empty .items array
+            // TODO is is possible to have more than one item as a result? check how this works
+            if (response) {
+                if (typeof response !== 'string') {
+                    // likely json or an image
+                    // TODO improve the dection (maybe use the this.mimeType?)
+                    innerResult.items.push({
+                        format: IdentifyResultFormat.JSON,
+                        data: response
+                    });
+                } else if (
+                    response.indexOf('Search returned no results') === -1 &&
+                    response !== ''
+                ) {
+                    // TODO if service is french, will the "no results" message be different?
+                    // TODO consider utilizing the infoMap variable above to detect HTML format.
+                    innerResult.items.push({
+                        format: IdentifyResultFormat.TEXT,
+                        data: response
+                    });
                 }
+            }
 
-                innerResult.isLoading = false;
-            });
+            innerResult.isLoading = false;
+        });
 
         return result;
     }
@@ -225,7 +247,11 @@ export default class WmsLayer extends CommonLayer {
      * @param {String} value value of the key
      * @param {Boolean} forceRefresh show the new fancy version of the layer or not
      */
-    setCustomParameter(key: string, value: string, forceRefresh: boolean = true): void {
+    setCustomParameter(
+        key: string,
+        value: string,
+        forceRefresh: boolean = true
+    ): void {
         if (!this.esriLayer) {
             this.noLayerErr();
         } else {
@@ -245,12 +271,18 @@ export default class WmsLayer extends CommonLayer {
      * @param {String} mimeType the format to be requested for the response
      * @returns {Promise} a promise which resolves with the GetFeatureInfo response
      */
-        getFeatureInfo(layerList: Array<string>, point: Point, mimeType: string): Promise<any> {
+    getFeatureInfo(
+        layerList: Array<string>,
+        point: Point,
+        mimeType: string
+    ): Promise<any> {
         const map = this.$iApi.geo.map;
         const esriLayer = this.esriLayer;
 
         if (!map.esriView) {
-            throw new Error('WMS get feature, no map view exists. Cannot derive click coords');
+            throw new Error(
+                'WMS get feature, no map view exists. Cannot derive click coords'
+            );
         }
         if (!esriLayer) {
             this.noLayerErr();
@@ -264,7 +296,9 @@ export default class WmsLayer extends CommonLayer {
         const layers = layerList.join(',');
 
         // tear off any decimals from the screenpoint coords.
-        const screenPoint = map.esriView.toScreen(this.$iApi.geo.utils.geom._convPointToEsri(point));
+        const screenPoint = map.esriView.toScreen(
+            this.$iApi.geo.utils.geom._convPointToEsri(point)
+        );
         const intX = Math.floor(screenPoint.x);
         const intY = Math.floor(screenPoint.y);
 
@@ -296,24 +330,38 @@ export default class WmsLayer extends CommonLayer {
         } else {
             // hail mary. if anything will generate an empty result instead of an error bomb
             wkid = 4326;
-            console.error('Map is likely in a WKT projection. WMS Identify request will likely fail.');
+            console.error(
+                'Map is likely in a WKT projection. WMS Identify request will likely fail.'
+            );
         }
 
         if (srList && srList.length > 1) {
             if (srList.indexOf(wkid) === -1) {
-                if (mapSR.latestWkid && (srList.indexOf(mapSR.latestWkid) > -1)) {
+                if (mapSR.latestWkid && srList.indexOf(mapSR.latestWkid) > -1) {
                     wkid = mapSR.latestWkid;
                 } else {
-                    console.error('WMS service does not support the maps projection. Identify request will likely fail.');
+                    console.error(
+                        'WMS service does not support the maps projection. Identify request will likely fail.'
+                    );
                 }
             }
         } else {
-            console.error('No supported wkid/epsg code found for WMS service. Identify request will likely fail.');
+            console.error(
+                'No supported wkid/epsg code found for WMS service. Identify request will likely fail.'
+            );
         }
 
         if (esriLayer.version === '1.3' || esriLayer.version === '1.3.0') {
-            req = { CRS: 'EPSG:' + wkid, I: intX, J: intY, STYLES: '', FORMAT: esriLayer.imageFormat };
-            if (this.$iApi.geo.layer.ogc.reversedAxisWKIDs().indexOf(wkid) > -1) {
+            req = {
+                CRS: 'EPSG:' + wkid,
+                I: intX,
+                J: intY,
+                STYLES: '',
+                FORMAT: esriLayer.imageFormat
+            };
+            if (
+                this.$iApi.geo.layer.ogc.reversedAxisWKIDs().indexOf(wkid) > -1
+            ) {
                 req.BBOX = `${ext.ymin},${ext.xmin},${ext.ymax},${ext.xmax}`;
             }
         } else {
@@ -345,7 +393,7 @@ export default class WmsLayer extends CommonLayer {
         }
 
         // @ts-ignore
-        Object.keys(settings).forEach(key => req[key] = settings[key]);
+        Object.keys(settings).forEach(key => (req[key] = settings[key]));
 
         return EsriRequest(esriLayer.url.split('?')[0], {
             query: req,
@@ -366,7 +414,9 @@ export default class WmsLayer extends CommonLayer {
      * @param {Array} layerList a list of objects identifying the WMS layers to be queried
      * @returns {Array} a list of strings containing URLs for specified layers (order is preserved)
      */
-     getLegendUrls(layerList: Array<RampLayerWmsLayerEntryConfig>): Array<string> {
+    getLegendUrls(
+        layerList: Array<RampLayerWmsLayerEntryConfig>
+    ): Array<string> {
         // TODO needs robust testing once something is using it
 
         if (!this.esriLayer) {
@@ -375,7 +425,10 @@ export default class WmsLayer extends CommonLayer {
         }
 
         // util to find all them legends
-        const crawlSublayers = (sublayers: __esri.Collection<__esri.WMSSublayer>, urlMap: Map<any, any>) => {
+        const crawlSublayers = (
+            sublayers: __esri.Collection<__esri.WMSSublayer>,
+            urlMap: Map<any, any>
+        ) => {
             sublayers.forEach(sl => {
                 if (sl.name) {
                     urlMap.set(sl.name, sl.legendUrl);
@@ -394,7 +447,9 @@ export default class WmsLayer extends CommonLayer {
         //      might be generated by ramp core?
         const legendURLs = layerList.map(l =>
             // @ts-ignore
-            typeof l.styleToURL !== 'undefined' ? l.styleToURL[l.currentStyle] : undefined
+            typeof l.styleToURL !== 'undefined'
+                ? l.styleToURL[l.currentStyle]
+                : undefined
         );
 
         // this appears to be finding items with no legend urls, and assigning

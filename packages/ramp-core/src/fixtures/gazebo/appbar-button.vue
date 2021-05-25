@@ -1,7 +1,9 @@
 <template>
     <appbar-button :onClickFunction="onClick">
         <template #icon>
-            <span :style="{ fontWeight: 'bold', color: options.colour }">G</span>
+            <span :style="{ fontWeight: 'bold', color: options.colour }"
+                >G</span
+            >
         </template>
         <template #tooltip>Gazebo</template>
     </appbar-button>

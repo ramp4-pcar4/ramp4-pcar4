@@ -21,9 +21,12 @@ export class OverviewmapAPI extends FixtureInstance {
             lods: overviewmapConfig.map.lods,
             basemaps: [overviewmapConfig.map.basemap],
             initialBasemapId: overviewmapConfig.map.basemap.id
-        }
+        };
         this.$vApp.$store.set(OverviewmapStore.mapConfig, mapConfig);
-        this.$vApp.$store.set(OverviewmapStore.startMinimized, overviewmapConfig.startMinimized);
+        this.$vApp.$store.set(
+            OverviewmapStore.startMinimized,
+            overviewmapConfig.startMinimized
+        );
     }
 
     get config(): OverviewmapConfig {

@@ -9,16 +9,26 @@
         <template #content>
             <div class="flex justify-center">
                 <!-- Loading Screen -->
-                <div v-if="state.status == 'loading'" class="flex flex-col justify-center text-center">
+                <div
+                    v-if="state.status == 'loading'"
+                    class="flex flex-col justify-center text-center"
+                >
                     Loading...
                 </div>
 
                 <!-- Found Screen, XML -->
-                <div v-else-if="payload.type === 'xml' && state.status == 'success'" class="flex flex-col justify-center"></div>
+                <div
+                    v-else-if="
+                        payload.type === 'xml' && state.status == 'success'
+                    "
+                    class="flex flex-col justify-center"
+                ></div>
 
                 <!-- Found Screen, HTML -->
                 <div
-                    v-else-if="payload.type === 'html' && state.status == 'success'"
+                    v-else-if="
+                        payload.type === 'html' && state.status == 'success'
+                    "
                     v-html="state.response"
                     class="flex flex-col justify-center"
                 ></div>
@@ -27,7 +37,10 @@
                 <div v-else class="flex flex-col justify-center text-center">
                     <img src="https://i.imgur.com/fA5EqV6.png" />
 
-                    <span class="text-xl mt-20">There was an error retrieving this resource. Please try again.</span>
+                    <span class="text-xl mt-20"
+                        >There was an error retrieving this resource. Please try
+                        again.</span
+                    >
                 </div>
             </div>
         </template>
@@ -59,7 +72,10 @@ export default class MetadataV extends Vue {
     mounted() {
         if (this.payload.type === 'xml') {
             // This site prevents CORS errors. Helpful for testing purposes.
-            this.loadFromURL('https://cors-anywhere.herokuapp.com/' + this.payload.url, []).then(r => {
+            this.loadFromURL(
+                'https://cors-anywhere.herokuapp.com/' + this.payload.url,
+                []
+            ).then(r => {
                 this.state.status = 'success';
 
                 // Append the content to the panel.
@@ -68,7 +84,9 @@ export default class MetadataV extends Vue {
                 }
             });
         } else if (this.payload.type === 'html') {
-            this.requestContent('https://cors-anywhere.herokuapp.com/' + this.payload.url).then(r => {
+            this.requestContent(
+                'https://cors-anywhere.herokuapp.com/' + this.payload.url
+            ).then(r => {
                 this.state.status = 'success';
                 this.state.response = (r as MetadataResult).response;
             });
@@ -87,7 +105,9 @@ export default class MetadataV extends Vue {
         let XSLT = this.$iApi.language === 'en' ? XSLT_en : XSLT_fr;
 
         // Translate headers.
-        XSLT = XSLT.replace(/\{\{([\w.]+)\}\}/g, (_: string, tag: string) => this.$t(tag));
+        XSLT = XSLT.replace(/\{\{([\w.]+)\}\}/g, (_: string, tag: string) =>
+            this.$t(tag)
+        );
 
         if (!this.cache[xmlUrl]) {
             return this.requestContent(xmlUrl).then(xmlData => {
@@ -95,7 +115,9 @@ export default class MetadataV extends Vue {
                 return this.applyXSLT(this.cache[xmlUrl], XSLT, params);
             });
         } else {
-            return Promise.resolve(this.applyXSLT(this.cache[xmlUrl], XSLT, params));
+            return Promise.resolve(
+                this.applyXSLT(this.cache[xmlUrl], XSLT, params)
+            );
         }
     }
 
@@ -121,21 +143,27 @@ export default class MetadataV extends Vue {
             xsltProc.importStylesheet(xslDoc);
             // [patched from ECDMP] Add parameters to xsl document (setParameter = Chrome/FF/Others)
             if (params) {
-                params.forEach(p => xsltProc.setParameter('', p.key, p.value || ''));
+                params.forEach(p =>
+                    xsltProc.setParameter('', p.key, p.value || '')
+                );
             }
             output = xsltProc.transformToFragment(xmlDoc, document);
         } else if (window.hasOwnProperty('ActiveXObject')) {
             // IE11 (╯°□°）╯︵ ┻━┻
             const xslt = new window.ActiveXObject('Msxml2.XSLTemplate');
             const xmlDoc = new window.ActiveXObject('Msxml2.DOMDocument');
-            const xslDoc = new window.ActiveXObject('Msxml2.FreeThreadedDOMDocument');
+            const xslDoc = new window.ActiveXObject(
+                'Msxml2.FreeThreadedDOMDocument'
+            );
             xmlDoc.loadXML(xmlString);
             xslDoc.loadXML(xslString);
             xslt.stylesheet = xslDoc;
             const xsltProc = xslt.createProcessor();
             xsltProc.input = xmlDoc;
             xsltProc.transform();
-            output = document.createRange().createContextualFragment(xsltProc.output);
+            output = document
+                .createRange()
+                .createContextualFragment(xsltProc.output);
         }
 
         return output;
@@ -153,11 +181,17 @@ export default class MetadataV extends Vue {
                 if (xobj.status === 200) {
                     resolve({ status: 'success', response: xobj.response });
                 } else {
-                    resolve({ status: 'error', response: 'Could not load results from remote service.' });
+                    resolve({
+                        status: 'error',
+                        response: 'Could not load results from remote service.'
+                    });
                 }
             };
             xobj.onerror = () => {
-                resolve({ status: 'error', response: 'Could not load results from remote service.' });
+                resolve({
+                    status: 'error',
+                    response: 'Could not load results from remote service.'
+                });
             };
             xobj.send();
         });

@@ -115,7 +115,9 @@ export type SrDef = SpatialReference | string | number;
 
 export type IdDef = string | number | undefined;
 
-export interface Attributes { [key: string]: any; }
+export interface Attributes {
+    [key: string]: any;
+}
 
 // TODO revisit what this actually means now. Is the .layerType value on a layer config?
 //      or is it the type of ESRI layer that lives in the map.
@@ -146,7 +148,6 @@ export enum DataFormat {
 }
 
 export enum IdentifyMode {
-
     /**
      * Runs the identify query and pipes the available results through the `identify` API endpoint.
      */
@@ -188,7 +189,7 @@ export interface EpsgLookup {
 }
 
 export interface DojoWindow extends Window {
-    require?: any;  // require is both a function, and has event handlers. probably a way to define in typescript interface, not going to right now.
+    require?: any; // require is both a function, and has event handlers. probably a way to define in typescript interface, not going to right now.
 }
 
 export enum LayerState { // these are used as css classes; hence the `rv` prefix
@@ -239,7 +240,7 @@ export interface ScreenPoint {
 //      aligned with the word "feature"
 export interface AttributeSet {
     features: Array<Attributes>;
-    oidIndex: {[key: number]: number};
+    oidIndex: { [key: number]: number };
 }
 
 export interface FieldDefinition {
@@ -250,7 +251,7 @@ export interface FieldDefinition {
 }
 
 export interface TabularAttributeSet {
-    columns: Array<{ data: string; title: string; }>;
+    columns: Array<{ data: string; title: string }>;
     rows: Array<Attributes>;
     fields: Array<FieldDefinition>;
     oidField: string;
@@ -308,8 +309,6 @@ export interface QueryFeaturesArcServerParams extends QueryFeaturesParams {
     url: string;
 }
 
-
-
 export interface IdentifyParameters {
     geometry: BaseGeometry;
     // unboundMap?: any; TODO do we still need this? if map is part of api, we can just direct reference it from anywhere?
@@ -334,7 +333,6 @@ export interface IdentifyResult {
     items: Array<IdentifyItem>;
     uid: string; // this would match to the FC. TODO might want to name the property something more specific to that, like sublayerUid? indexUid? childUid? might be ok with uid as the parentUid is different name
     isLoading: boolean; // TODO confirm we still need this. the .done of IdentifyResultSet should provide the same information. maybe it's a binding thing (bind to bool > bind to promise?)
-
 }
 
 export interface IdentifyResultSet {
@@ -358,7 +356,6 @@ export enum CoreFilterKey {
     EXTENT = 'extent',
     API = 'api'
 }
-
 
 // ----------------------- CLIENT CONFIG INTERFACES -----------------------------------
 
@@ -387,7 +384,8 @@ export interface RampLayerFieldMetadataConfig {
 }
 
 // i.e. a dynamic layer child
-export interface RampLayerMapImageLayerEntryConfig { // A+ name
+export interface RampLayerMapImageLayerEntryConfig {
+    // A+ name
     index?: number;
     name?: string;
     nameField?: string;
@@ -395,9 +393,9 @@ export interface RampLayerMapImageLayerEntryConfig { // A+ name
     state?: RampLayerStateConfig;
     // following items need to be flushed out
     extent?: any;
-    controls?:  any;
-    stateOnly?:  any;
-    table?:  any;
+    controls?: any;
+    stateOnly?: any;
+    table?: any;
     fieldMetadata?: RampLayerFieldMetadataConfig;
 }
 
@@ -407,7 +405,7 @@ export interface RampLayerWmsLayerEntryConfig {
     name?: string; // this is display name in ramp. would override "title" on the service
     state?: RampLayerStateConfig;
     // following items need to be flushed out
-    controls?:  any;
+    controls?: any;
     currentStyle?: string;
     styleToURL?: string; // are we migrating this functionality?
     // more...
@@ -427,7 +425,9 @@ export interface RampLayerConfig {
     nameField?: string;
     tooltipField?: string;
     featureInfoMimeType?: string;
-    layerEntries?: Array<RampLayerMapImageLayerEntryConfig> | Array<RampLayerWmsLayerEntryConfig>;
+    layerEntries?:
+        | Array<RampLayerMapImageLayerEntryConfig>
+        | Array<RampLayerWmsLayerEntryConfig>;
     rawData?: any; // used for static data, like geojson string, shapefile guts
     latField?: string; // csv coord field
     longField?: string; // csv coord field

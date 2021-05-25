@@ -6,13 +6,11 @@ import { DataFormat } from '@/geo/api';
 import FeatureLayer from './index';
 
 export class FeatureFC extends AttribFC {
-
     // @ts-ignore
     protected parentLayer: FeatureLayer;
     tooltipField: string;
 
-
-    constructor (parent: FeatureLayer, layerIdx: number = 0) {
+    constructor(parent: FeatureLayer, layerIdx: number = 0) {
         super(parent, layerIdx);
         this.dataFormat = DataFormat.ESRI_FEATURE;
         this.tooltipField = '';
@@ -24,7 +22,7 @@ export class FeatureFC extends AttribFC {
      * @function applySqlFilter
      * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all keys
      */
-    applySqlFilter (exclusions: Array<string> = []): void {
+    applySqlFilter(exclusions: Array<string> = []): void {
         if (!this.parentLayer.esriLayer) {
             this.noLayerErr();
             return;
@@ -34,5 +32,4 @@ export class FeatureFC extends AttribFC {
         // feature layer on a server
         this.parentLayer.esriLayer.definitionExpression = sql;
     }
-
 }
