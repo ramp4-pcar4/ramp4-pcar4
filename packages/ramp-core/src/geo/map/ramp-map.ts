@@ -22,6 +22,7 @@ import {
     Point,
     RampMapConfig,
     ScreenPoint,
+    Screenshot,
     ScaleSet,
     SpatialReference
 } from '@/geo/api';
@@ -353,6 +354,27 @@ export class MapAPI extends CommonMapAPI {
             ) || modLods[modLods.length - 1];
 
         return this.zoomToLevel(scaleLod.level);
+    }
+
+    /**
+     * Create a screenshot of the current view.
+     *
+     * @param {number} quality the quality of the image (when encoding as jpg)
+     * @param {'png' | 'jpg' | undefined} format the format of the resulting data url
+     * @returns {Promise<Screenshot>} a promise that resolves with a Screenshot
+     */
+    async takeScreenshot(
+        quality: number,
+        format: 'png' | 'jpg' | undefined
+    ): Promise<Screenshot> {
+        if (this.esriView) {
+            return this.esriView.takeScreenshot({
+                quality: quality,
+                format: format
+            });
+        } else {
+            throw new Error('Export attempted without a map view available');
+        }
     }
 
     /**
