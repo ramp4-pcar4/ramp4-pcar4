@@ -362,6 +362,18 @@ export enum CoreFilterKey {
     API = 'api'
 }
 
+// Attribution interface that contains all the core attributes of the attribution node
+export interface Attribution {
+    text: { enabled: boolean; value?: string };
+    logo: { enabled: boolean; altText?: string; value?: string; link?: string };
+}
+
+// MapCaption interface for all elements in the map-caption bar
+// If more elements are added to the map-caption, they can be added here
+export interface MapCaption {
+    attribution: Attribution;
+}
+
 // ----------------------- CLIENT CONFIG INTERFACES -----------------------------------
 
 // TODO migrate these to /geo/api/geo-common ? if we need config interfaces before creating an instance,
@@ -458,7 +470,7 @@ export interface RampBasemapConfig {
     name?: string;
     description?: string;
     altText?: string;
-    attribution?: any; // TODO flush out object later
+    attribution?: Attribution;
     layers: Array<RampBasemapLayerConfig>;
 }
 

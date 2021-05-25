@@ -182,6 +182,8 @@ export class InstanceAPI {
         const activeConfig = this.getConfig();
         console.log('active config: ', activeConfig);
         // TODO: do something with active config - reload map?
+
+        this.$vApp.$iApi.event.emit(GlobalEvents.CONFIG_CHANGE, activeConfig);
     }
 
     /**
