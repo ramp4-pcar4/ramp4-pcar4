@@ -21,9 +21,7 @@ describe('Mapnav', () => {
                 .eq(0)
                 .click();
             cy.wait(1000);
-            cy.wrap(window.rInstance.geo.map.esriView)
-                .its('zoom')
-                .should('eq', 1);
+            expect(window.rInstance.geo.map.getZoomLevel()).to.eq(1);
         });
     });
 
@@ -33,9 +31,7 @@ describe('Mapnav', () => {
                 .eq(1)
                 .click();
             cy.wait(1000);
-            cy.wrap(window.rInstance.geo.map.esriView)
-                .its('zoom')
-                .should('eq', 0);
+            expect(window.rInstance.geo.map.getZoomLevel()).to.eq(0);
         });
     });
 
