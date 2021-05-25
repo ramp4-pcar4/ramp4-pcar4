@@ -1,7 +1,7 @@
 <template>
     <div class="relative legend-header flex">
         <!-- open import wizard -->
-        <button @click="openWizard" class="relative mr-auto text-gray-500 hover:text-black p-8">
+        <button @click="openWizard" class="relative mr-auto text-gray-500 hover:text-black p-8" v-show="wizardExists">
             <div class="flex">
                 <svg class="fill-current w-18 h-18 mx-8" viewBox="0 0 23 21">
                     <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
@@ -9,6 +9,9 @@
             </div>
             <tooltip class="mx-5" position="right"> {{ $t('legend.header.addlayer') }} </tooltip>
         </button>
+        <div class="relative mr-auto p-8" v-show="!wizardExists">
+            <!-- keep header spacing -->
+        </div>
         <!-- groups toggle -->
         <dropdown-menu position="right">
             <template #header>
@@ -56,6 +59,14 @@ export default class LegendHeaderV extends Vue {
 
     openWizard() {
         this.$iApi.event.emit(GlobalEvents.WIZARD_OPEN);
+    }
+
+    get wizardExists(): boolean {
+        try {
+            return !!this.$iApi.fixture.get('wizard');
+        } catch (e) {
+            return false;
+        }
     }
 }
 </script>
