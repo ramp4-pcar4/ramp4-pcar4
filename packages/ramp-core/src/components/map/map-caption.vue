@@ -2,7 +2,29 @@
     <div
         class="map-caption absolute bottom-0 flex justify-center pointer-events-none text-gray-400 bg-black-75 left-32 sm:left-64 right-0 py-2"
     >
-        <span class="relative ml-10 truncate top-1">Attribution goes here</span>
+        <span
+            class="relative ml-10 truncate top-1"
+            v-if="!attribution.logo.disabled"
+        >
+            <a
+                class="pointer-events-auto cursor-pointer"
+                :href="attribution.logo.link"
+                target="_blank"
+            >
+                <img
+                    class="object-contain h-24"
+                    :src="attribution.logo.value"
+                    :alt="attribution.logo.altText"
+                />
+            </a>
+        </span>
+
+        <span
+            class="relative ml-10 truncate top-1"
+            v-if="!attribution.text.disabled"
+        >
+            {{ attribution.text.value }}
+        </span>
 
         <span class="flex-grow w-15"></span>
 
@@ -47,19 +69,26 @@
 
 <script lang="ts">
 import { Vue, Component, Watch, Prop, Inject } from 'vue-property-decorator';
+import { Get, Sync, Call } from 'vuex-pathify';
 import { debounce } from 'debounce';
-import { MapMove, Point } from '@/geo/api';
+import { Attribution, MapMove, Point } from '@/geo/api';
 import { GlobalEvents } from '@/api';
+import { MapCaptionStore } from '@/store/modules/mapcaption';
 
 @Component
 export default class MapCaptionV extends Vue {
     isImperialScale: boolean = false;
 
+    // TODO: Move into MapCaptionStore
     scale: { label: string; width: string } = { label: '0km', width: '0px' };
 
+    // TODO: Move into MapCaptionStore
     // since calculation of latlong is asynch, we cannot directly calculate it
     // in cursorPointDMS property. we calculate and update this private property.
     private latLongCursor: { lat: number; long: number } = { lat: 0, long: 0 };
+
+    // The current attribution
+    @Get(MapCaptionStore.attribution) attribution!: Attribution;
 
     /**
      * Convert lat/long in decimal degree to degree, minute, second.
@@ -115,6 +144,7 @@ export default class MapCaptionV extends Vue {
         this.updateScale();
     }
 
+    // TODO: Move to MapAPI
     /**
      * Calculates a scale bar for the current resolution.
      */
@@ -156,6 +186,7 @@ export default class MapCaptionV extends Vue {
         };
     }
 
+    // TODO: Move to MapAPI
     /**
      * Will convert a screen co-ord to lat long and update our property
      * after the coversion finishes (asynch)
