@@ -66,6 +66,7 @@ export class CommonMapAPI extends APIScope {
             //      detect here.
 
             this.esriMap.basemap = bm.innerBasemap;
+            this.$iApi.event.emit('map/basemapchanged', id);
         } else {
             // blank basemap case
             // TODO validate this works. the map api spec does not allow setting to undefined.

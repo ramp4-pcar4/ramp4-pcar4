@@ -23,6 +23,12 @@ export enum GlobalEvents {
     LAYER_VISIBILITYCHANGE = 'layer/visibilitychange',
 
     /**
+     * Fires when the config file changes
+     * Payload: `(config: RampConfig)`
+     */
+    CONFIG_CHANGE = 'config/configchanged',
+
+    /**
      * Fires when the map is created
      * Payload: (map)
      */
@@ -38,6 +44,7 @@ export enum GlobalEvents {
     MAP_KEYDOWN = 'map/keydown',
     MAP_KEYUP = 'map/keyup',
     MAP_BLUR = 'map/blur',
+    MAP_BASEMAPCHANGE = 'map/basemapchanged', // payload is the new basemap id (map)
 
     /**
      * Fires when the map scale changes.
