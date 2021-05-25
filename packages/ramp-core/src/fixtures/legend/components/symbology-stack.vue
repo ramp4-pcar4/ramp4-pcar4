@@ -5,10 +5,7 @@
             <!-- the :class line calculates margin-left for each of the 3 symbols, and gives a margin-top to symbols that arent the first -->
             <div
                 class="absolute"
-                :class="[
-                    idx > 0 ? 'ml-' + idx * 3 : '',
-                    'symbol-' + idx
-                ]"
+                :class="[idx > 0 ? 'ml-' + idx * 3 : '', 'symbol-' + idx]"
                 :style="{ 'z-index': 3 - idx }"
                 v-for="(item, idx) in stack.slice(0, 3).reverse()"
                 :key="idx"
