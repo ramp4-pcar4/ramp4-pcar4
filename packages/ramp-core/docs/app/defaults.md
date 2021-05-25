@@ -4,7 +4,7 @@ The RAMP instance provides APIs to set up fixtures and events, allowing a high d
 
 ## Default Fixtures
 
-The following fixtures are included in the default setup.  Any special interfaces they support is also noted; this information is relevant when replacing defaults fixtures, as discussed in the Examples section below.
+The following fixtures are included in the default setup. Any special interfaces they support is also noted; this information is relevant when replacing defaults fixtures, as discussed in the Examples section below.
 
 TODO maybe these lists go in separate pages, like reference pages.
 
@@ -78,21 +78,22 @@ These events will always be present, regardless of what fixtures are active. Eve
 
 TODO if we have API docs that expose the payload interfaces, link to those definitions. Otherwise we'll need to put the interface specs here
 
-| Event Name | Payload | Event Announces |
-| ---------- | ---------- | ---------- |
-| COMPONENT<br>'ramp/component' | *id*: component id | A vue component registered |
-| FILTER_CHANGE<br>'filter/change' | FilterEventParam object| A filter has changed |
-| MAP_BLUR<br>'map/blur' | FocusEvent object | The map lost focus |
-| MAP_CLICK<br>'map/click' | MapClick object | The map was clicked |
-| MAP_CREATED<br>'map/created' | Map API object| The map was created |
-| MAP_DOUBLECLICK<br>'map/doubleclick' | MapClick object | The map was double clicked |
-| MAP_EXTENTCHANGE<br>'map/extentchanged' | RAMP Extent object | The map extent changed |
-| MAP_IDENTIFY<br>'map/identify' | *results*: Array of IdentifyResult<br>*click*: MapClick object | A map identify was requested |
-| MAP_KEYDOWN<br>'map/keydown' | KeyboardEvent object | A key was pressed |
-| MAP_KEYUP<br>'map/keyup' | KeyboardEvent object | A key was released |
-| MAP_MOUSEDOWN<br>'map/mousedown' | PointerEvent object | A mouse button was depressed |
-| MAP_MOUSEMOVE<br>'map/mousemove' | MapMove object | The mouse moved over the map |
-
+| Event Name                              | Payload                                                        | Event Announces              |
+| --------------------------------------- | -------------------------------------------------------------- | ---------------------------- |
+| COMPONENT<br>'ramp/component'           | _id_: component id                                             | A vue component registered   |
+| FILTER_CHANGE<br>'filter/change'        | FilterEventParam object                                        | A filter has changed         |
+| MAP_BLUR<br>'map/blur'                  | FocusEvent object                                              | The map lost focus           |
+| MAP_CLICK<br>'map/click'                | MapClick object                                                | The map was clicked          |
+| MAP_CREATED<br>'map/created'            | Map API object                                                 | The map was created          |
+| MAP_DOUBLECLICK<br>'map/doubleclick'    | MapClick object                                                | The map was double clicked   |
+| MAP_EXTENTCHANGE<br>'map/extentchanged' | RAMP Extent object                                             | The map extent changed       |
+| MAP_IDENTIFY<br>'map/identify'          | _results_: Array of IdentifyResult<br>_click_: MapClick object | A map identify was requested |
+| MAP_KEYDOWN<br>'map/keydown'            | KeyboardEvent object                                           | A key was pressed            |
+| MAP_KEYUP<br>'map/keyup'                | KeyboardEvent object                                           | A key was released           |
+| MAP_MOUSEDOWN<br>'map/mousedown'        | PointerEvent object                                            | A mouse button was depressed |
+| MAP_MOUSEMOVE<br>'map/mousemove'        | MapMove object                                                 | The mouse moved over the map |
+| MAP_BASEMAPCHANGE                       | basemapId: string                                              | The basemap was changed      |
+| CONFIG_CHANGE                           | RampConfig object                                              | The config was changed       |
 
 ### Core Fixture Events
 
@@ -100,13 +101,12 @@ These events will be present if the associated core fixtures are running
 
 TODO add stuff as we make events that core fixtures raise
 
-| Event Name | Payload | Event Announces |
-| ---------- | ---------- | ---------- |
-| SETTINGS_TOGGLE<br>'settings/toggle' | layer uid | Settings panel toggle was requested for a layer |
-| DETAILS_OPEN<br>'details/open' | *identifyItem*: IdentifyItem object<br>*uid*: layer uid | A feature's details was requested |
-| HELP_TOGGLE<br>'help/toggle' | boolean (optional) | Help panel toggle was requested with optional force open/close |
-| GRID_TOGGLE<br>'grid/toggle' | *uid*: layer uid<br>*open*: boolean (optional) | Grid panel toggle was requested with optional force open/close |
-
+| Event Name                           | Payload                                                 | Event Announces                                                |
+| ------------------------------------ | ------------------------------------------------------- | -------------------------------------------------------------- |
+| SETTINGS_TOGGLE<br>'settings/toggle' | layer uid                                               | Settings panel toggle was requested for a layer                |
+| DETAILS_OPEN<br>'details/open'       | _identifyItem_: IdentifyItem object<br>_uid_: layer uid | A feature's details was requested                              |
+| HELP_TOGGLE<br>'help/toggle'         | boolean (optional)                                      | Help panel toggle was requested with optional force open/close |
+| GRID_TOGGLE<br>'grid/toggle'         | _uid_: layer uid<br>_open_: boolean (optional)          | Grid panel toggle was requested with optional force open/close |
 
 ## Default Events Handlers
 
@@ -116,18 +116,23 @@ TODO keep updating the list, make new subsections as appropriate. Maybe move to 
 
 ### Map Handlers
 
-- `ramp_map_click_runs_identify` causes the identify process to start when the map is clicked
-- `ramp_identify_opens_details` causes the details fixture to open, displaying the result of an identify request.
-- `ramp_map_keydown` causes a key press to be processed on the map
-- `ramp_map_keyup` causes a key release to be processed on the map
-- `ramp_map_blur` causes keyboard navigation to stop when the map loses focus
+-   `ramp_map_click_runs_identify` causes the identify process to start when the map is clicked
+-   `ramp_identify_opens_details` causes the details fixture to open, displaying the result of an identify request.
+-   `ramp_map_keydown` causes a key press to be processed on the map
+-   `ramp_map_keyup` causes a key release to be processed on the map
+-   `ramp_map_blur` causes keyboard navigation to stop when the map loses focus
 
 ### Fixture Handlers
 
-- `ramp_settings_toggles_panel` causes the settings fixture to toggle the settings panel
-- `opens_feature_details` causes the details fixture to open for a single feature
-- `toggles_help_panel` causes the help fixture to toggle the help panel
-- `toggles_grid_panel` causes the grid fixture to toggle the grid panel
+-   `ramp_settings_toggles_panel` causes the settings fixture to toggle the settings panel
+-   `opens_feature_details` causes the details fixture to open for a single feature
+-   `toggles_help_panel` causes the help fixture to toggle the help panel
+-   `toggles_grid_panel` causes the grid fixture to toggle the grid panel
+
+### Component Handlers
+
+-   `updates_map_caption_attribution_basemap` updates the attribution in the map-caption by retrieving it from the current basemap config when the basemap changes
+-   `updates_map_caption_attribution_config` updates the attribution in the map-caption by retrieving it from the current basemap config when the config changes
 
 ## Examples
 
