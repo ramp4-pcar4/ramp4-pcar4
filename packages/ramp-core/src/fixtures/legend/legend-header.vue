@@ -4,6 +4,7 @@
         <button
             @click="openWizard"
             class="relative mr-auto text-gray-500 hover:text-black p-8"
+            v-show="wizardExists"
         >
             <div class="flex">
                 <svg class="fill-current w-18 h-18 mx-8" viewBox="0 0 23 21">
@@ -14,6 +15,7 @@
                 {{ $t('legend.header.addlayer') }}
             </tooltip>
         </button>
+        <span class="flex-1"></span>
         <!-- groups toggle -->
         <dropdown-menu position="right">
             <template #header>
@@ -97,6 +99,14 @@ export default class LegendHeaderV extends Vue {
 
     openWizard() {
         this.$iApi.event.emit(GlobalEvents.WIZARD_OPEN);
+    }
+
+    get wizardExists(): boolean {
+        try {
+            return !!this.$iApi.fixture.get('wizard');
+        } catch (e) {
+            return false;
+        }
     }
 }
 </script>
