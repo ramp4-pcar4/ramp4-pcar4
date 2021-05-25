@@ -25,7 +25,7 @@ import {
     ScaleSet,
     SpatialReference
 } from '@/geo/api';
-import { EsriLOD, EsriMapView } from '@/geo/esri';
+import { EsriBasemap, EsriLOD, EsriMapView } from '@/geo/esri';
 import { LayerStore } from '@/store/modules/layer';
 
 // TODO bring in the map actions code
@@ -173,6 +173,12 @@ export class MapAPI extends CommonMapAPI {
         });
 
         this.viewPromise.resolveMe();
+
+        // emit basemap changed event
+        this.$iApi.event.emit(
+            GlobalEvents.MAP_BASEMAPCHANGE,
+            config.initialBasemapId
+        );
     }
 
     /**
@@ -452,6 +458,19 @@ export class MapAPI extends CommonMapAPI {
         } else {
             this.noMapErr();
             return 1; // avoid returning zero, could cause divide-by-zero error in caller.
+        }
+    }
+
+    /**
+     * Get the id of the currently used basemap
+     * Returns undefined if there is no map
+     * @returns {string | undefined} current basemap id
+     */
+    getCurrentBasemapId(): string | undefined {
+        if (this.esriMap) {
+            return this.esriMap.basemap.id;
+        } else {
+            this.noMapErr();
         }
     }
 
