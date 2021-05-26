@@ -15,9 +15,11 @@ const viewIsAt = (long, lat, delta = 0.1) => {
     // wait for zoom animation to finish
     cy.wait(1000);
     cy.window().then(window => {
-        const map = window.rInstance.map;
         cy.wrap(
-            map.gapi.utils.proj.projectGeometry(4326, map.getExtent().center())
+            window.rInstance.geo.utils.proj.projectGeometry(
+                4326,
+                window.rInstance.geo.map.getExtent().center()
+            )
         ).should(point => {
             expect(point.x).closeTo(long, delta);
             expect(point.y).closeTo(lat, delta);
@@ -163,7 +165,7 @@ describe('Geosearch', () => {
         it('filters to visible extent', () => {
             // zoom to a smaller extent
             cy.window()
-                .its('rInstance.map._innerView')
+                .its('rInstance.geo.map.esriView')
                 .invoke(
                     'goTo',
                     { center: [-90, 49], zoom: 4 },
@@ -174,10 +176,12 @@ describe('Geosearch', () => {
             cy.get('.rv-geosearch-bottom-filters [type="checkbox"]').check();
             search('t');
             cy.window().then(window => {
-                const map = window.rInstance.map;
                 // project extent to lat/long
                 cy.wrap(
-                    map.gapi.utils.proj.projectExtent(4326, map.getExtent())
+                    window.rInstance.geo.utils.proj.projectExtent(
+                        4326,
+                        window.rInstance.geo.map.getExtent()
+                    )
                 ).then(extent => {
                     // check that each result is inside extent
                     window.rInstance.$vApp.$store
