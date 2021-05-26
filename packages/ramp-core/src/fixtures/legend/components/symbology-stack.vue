@@ -1,14 +1,16 @@
 <template>
     <div v-if="!visible">
         <!-- Multiple icons to display -->
-        <div v-if="stack.length > 1" class="-ml-2">
+        <div v-if="stack.length > 1" class="relative left-3">
             <!-- the :class line calculates margin-left for each of the 3 symbols, and gives a margin-top to symbols that arent the first -->
             <div
-                class="relative"
+                class="absolute"
                 :class="[
-                    'ml-' + idx * 3,
-                    idx > 0 ? '-mt-32' : '',
-                    'symbol-' + idx
+                    idx == 0
+                        ? 'symbol-0'
+                        : idx == 1
+                        ? 'left-3 symbol-1'
+                        : 'left-6 symbol-2'
                 ]"
                 :style="{ 'z-index': 3 - idx }"
                 v-for="(item, idx) in stack.slice(0, 3).reverse()"
@@ -79,19 +81,19 @@ export default class SymbologyStack extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.symbol-1 {
-    transition-property: margin-left margin-top;
+.symbol-0 {
     :hover > & {
-        @apply ml-8 -mt-32 -mb-2 -mr-2;
+        transform: rotate(-10deg);
+        transform-origin: bottom center;
     }
 }
 .symbol-2 {
-    transition-property: margin-left margin-top;
     :hover > & {
-        @apply ml-12 -mt-30 -mb-2 -mr-2;
+        transform: rotate(10deg);
+        transform-origin: bottom center;
     }
 }
-.ramp-app.animation-enabled .symbol-1 {
+.ramp-app.animation-enabled .symbol-0 {
     transition-duration: 0.2s;
 }
 .ramp-app.animation-enabled .symbol-2 {
