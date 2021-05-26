@@ -448,7 +448,8 @@ export default class WmsLayer extends CommonLayer {
         const legendURLs = layerList.map(l =>
             // @ts-ignore
             typeof l.styleToURL !== 'undefined'
-                ? l.styleToURL[l.currentStyle]
+                ? // @ts-ignore
+                  l.styleToURL[l.currentStyle]
                 : undefined
         );
 
