@@ -407,7 +407,7 @@ export interface RampLayerWmsLayerEntryConfig {
     // following items need to be flushed out
     controls?: any;
     currentStyle?: string;
-    styleToURL?: string; // are we migrating this functionality?
+    styleToURL?: { [key: string]: string }; // are we migrating this functionality?
     // more...
 }
 
