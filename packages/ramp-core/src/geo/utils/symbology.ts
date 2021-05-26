@@ -10,6 +10,7 @@ import {
 import { Attributes, LegendSymbology, LineStyle } from '@/geo/api';
 import { EsriRendererUtils, EsriRequest } from '@/geo/esri';
 import svgjs from 'svg.js';
+import to from 'await-to-js';
 
 // Functions for turning ESRI Renderers into images
 // Specifically, converting ESRI "Simple" symbols into images,
@@ -853,28 +854,28 @@ export class SymbologyAPI extends APIScope {
      * @returns {Promise} resolves in an array of legend data in arcgis server json format
      *
      */
-    private getMapServerLegend(layerUrl: string): Promise<any> {
-        // TODO make async? handle error properly if so.
-        //      consider using   import to from 'await-to-js';
-
+    private async getMapServerLegend(layerUrl: string): Promise<any> {
         // standard json request with error checking
         const reqParams: __esri.RequestOptions = {
             query: { f: 'json' }
         };
-        const serviceRequest = EsriRequest(`${layerUrl}/legend`, reqParams);
 
-        return serviceRequest
-            .then(srvResult => {
-                return srvResult.data;
-            })
-            .catch((error: any) => {
-                console.error('error loading legend', error);
-                // TODO might want to not error. missing legend is not catastrophic.
-                //      instead, may want to generate fake json that will create an empty legend / error legend and return that.
-                throw new Error(
-                    'problem loading legend from server, details on console'
-                );
-            });
+        const fakeData = { layers: [] };
+        const [err, serviceResult] = await to<__esri.RequestResponse>(
+            EsriRequest(`${layerUrl}/legend`, reqParams)
+        );
+
+        // Not a catastrophic error, return empty data on error
+        if (!serviceResult) {
+            console.error(`Error loading legend for ${layerUrl}`, err);
+            return fakeData;
+        }
+        if (!serviceResult.data) {
+            console.error(`Error loading legend data for ${layerUrl}`);
+            return fakeData;
+        }
+
+        return serviceResult.data;
     }
 
     /**
