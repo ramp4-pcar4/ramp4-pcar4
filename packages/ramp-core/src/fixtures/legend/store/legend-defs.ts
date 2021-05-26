@@ -112,6 +112,7 @@ export class LegendEntry extends LegendItem {
     _layerTree: TreeNode | undefined;
     _isLoaded: boolean;
     _symbologyStack: any;
+    _isDefault: boolean | undefined;
 
     /**
      * Creates a new single legend entry.
@@ -124,6 +125,7 @@ export class LegendEntry extends LegendItem {
                 ? legendEntry.type
                 : LegendTypes.Entry;
         this._parent = parent;
+        this._isDefault = legendEntry.isDefault;
 
         // find matching BaseLayer in layer store to the layerId in config
         this._layer = legendEntry.layers.find(
@@ -192,6 +194,11 @@ export class LegendEntry extends LegendItem {
     /** Returns if layer is done loading. */
     get isLoaded(): boolean {
         return this._layer !== undefined ? this._layer.isValidState() : true;
+    }
+
+    /** Returns true if entry is not from config. */
+    get isDefault(): boolean | undefined {
+        return this._isDefault;
     }
 
     /**

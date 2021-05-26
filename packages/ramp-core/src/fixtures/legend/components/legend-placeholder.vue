@@ -53,7 +53,6 @@ import SymbologyStack from './symbology-stack.vue';
 })
 export default class LegendPlaceholderV extends Vue {
     @Prop() legendItem!: LegendEntry;
-    @Prop() props!: any;
     @Get(LayerStore.layers) layers!: LayerInstance[];
 
     layer: LayerInstance | undefined = undefined;
@@ -72,6 +71,12 @@ export default class LegendPlaceholderV extends Vue {
                     this.layer!.getLayerTree().findChildByIdx(
                         this.legendItem._layerIndex!
                     )?.uid || this.layer!.uid;
+                if (this.legendItem.isDefault) {
+                    this.$store.set(
+                        LegendStore.updateDefaultEntry,
+                        this.legendItem.id
+                    );
+                }
             });
         }
     }
