@@ -1,11 +1,17 @@
 <template>
     <div v-if="!visible">
         <!-- Multiple icons to display -->
-        <div v-if="stack.length > 1" class="relative ml-2">
+        <div v-if="stack.length > 1" class="relative left-3">
             <!-- the :class line calculates margin-left for each of the 3 symbols, and gives a margin-top to symbols that arent the first -->
             <div
                 class="absolute"
-                :class="[idx > 0 ? 'ml-' + idx * 3 : '', 'symbol-' + idx]"
+                :class="[
+                    idx == 0
+                        ? 'symbol-0'
+                        : idx == 1
+                        ? 'left-3 symbol-1'
+                        : 'left-6 symbol-2'
+                ]"
                 :style="{ 'z-index': 3 - idx }"
                 v-for="(item, idx) in stack.slice(0, 3).reverse()"
                 :key="idx"
