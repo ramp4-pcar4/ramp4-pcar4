@@ -12,7 +12,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
 import { LegendStore } from '../store';
-import { LegendItem } from '../store/legend-defs';
+import { LegendItem, LegendTypes } from '../store/legend-defs';
 
 import LayerEntryV from './legend-entry.vue';
 import LegendGroupV from './legend-group.vue';
@@ -26,10 +26,10 @@ export default class LegendComponentV extends Vue {
 
     // Binds each type to its respective Vue component.
     templates = {
-        VisibilitySet: LegendVisibilitySetV,
-        LegendGroup: LegendGroupV,
-        LegendEntry: LayerEntryV,
-        Placeholder: LegendPlaceholderV
+        [LegendTypes.Set]: LegendVisibilitySetV,
+        [LegendTypes.Group]: LegendGroupV,
+        [LegendTypes.Entry]: LayerEntryV,
+        [LegendTypes.Placeholder]: LegendPlaceholderV
     };
 }
 </script>

@@ -327,8 +327,6 @@ export default class WizardV extends Vue {
         // add layer to map
         this.$iApi.geo.map.addLayer(layer);
         this.$iApi.$vApp.$store.set(LayerStore.addLayers, [layer]);
-        // TODO get rid of this when default legend maker supports loading layers
-        await layer.isLayerLoaded();
 
         // add layer to legend and reset wizard
         this.$iApi.event.emit(GlobalEvents.LEGEND_DEFAULT, layer);

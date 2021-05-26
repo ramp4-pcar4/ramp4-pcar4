@@ -1,9 +1,12 @@
 import { ActionContext, Action } from 'vuex';
 import { make } from 'vuex-pathify';
+import Vue from 'vue';
 
 import { LegendState } from './legend-state';
 import { LegendItem, LegendEntry, LegendGroup } from './legend-defs';
 import { RootState } from '@/store';
+import { TreeNode } from '@/geo/api';
+import { LayerInstance } from '@/api';
 
 // use for actions
 type LegendContext = ActionContext<LegendState, RootState>;
@@ -30,32 +33,39 @@ const getters = {
 };
 
 const mutations = {
-    ADD_ITEM: (state: LegendState, value: LegendEntry) => {
+    ADD_ITEM: (state: LegendState, value: LegendEntry | LegendGroup) => {
         state.children = [...state.children, value];
+    },
+    SET_DEFAULT_ITEM: (
+        state: LegendState,
+        { id, entry }: { id: string; entry: LegendEntry | LegendGroup }
+    ) => {
+        const index = state.children.findIndex(child => child.id === id);
+        Vue.set(state.children, index, entry);
     }
 };
 
 const actions = {
     /** Expand all legend groups */
-    expandGroups: function(context: LegendContext): void {
+    expandGroups: (context: LegendContext): void => {
         context.state.children.forEach((entry: LegendEntry | LegendGroup) => {
             toggle(entry, { expand: true });
         });
     },
     /** Collapse all legend groups */
-    collapseGroups: function(context: LegendContext): void {
+    collapseGroups: (context: LegendContext): void => {
         context.state.children.forEach((entry: LegendEntry | LegendGroup) => {
             toggle(entry, { expand: false });
         });
     },
     /** Turn visibility on for all legend entries */
-    showAll: function(context: LegendContext): void {
+    showAll: (context: LegendContext): void => {
         context.state.children.forEach((entry: LegendEntry | LegendGroup) => {
             toggle(entry, { visibility: true });
         });
     },
     /** Turn visibility off for all legend entries */
-    hideAll: function(context: LegendContext): void {
+    hideAll: (context: LegendContext): void => {
         context.state.children.forEach((entry: LegendEntry | LegendGroup) => {
             toggle(entry, { visibility: false });
         });
@@ -63,6 +73,48 @@ const actions = {
     /** Add legend entry to store */
     addEntry: (context: LegendContext, item: LegendEntry) => {
         context.commit('ADD_ITEM', item);
+    },
+    /** Replaces default placeholder after layer is loaded */
+    updateDefaultEntry: (context: LegendContext, id: string) => {
+        const entry: LegendEntry = <LegendEntry>(
+            context.state.children.find(child => child.id === id)
+        );
+        const layer: LayerInstance = entry.layer!;
+
+        // creates legend config from layer tree children
+        const parseLayerTreeChildren = (children: Array<TreeNode>): any => {
+            return children.map((node: TreeNode) =>
+                node.isLayer
+                    ? {
+                          name: node.name,
+                          layerId: layer.id,
+                          entryIndex: node.layerIdx
+                      }
+                    : {
+                          name: node.name,
+                          children: parseLayerTreeChildren(node.children)
+                      }
+            );
+        };
+
+        const layerTree: TreeNode = layer.getLayerTree();
+
+        const config: any = {
+            name: layerTree.name,
+            layers: entry._itemConfig.layers!
+        };
+
+        // create single entry if only 1 layer, otherwise create a group
+        const newEntry: LegendEntry | LegendGroup =
+            layerTree.children.length === 1 && layerTree.children[0].isLayer
+                ? new LegendEntry({ ...config, layerId: layer.id })
+                : new LegendGroup({
+                      ...config,
+                      children: parseLayerTreeChildren(layerTree.children)
+                  });
+
+        // replace default placeholder with real entry
+        context.commit('SET_DEFAULT_ITEM', { id: entry.id, entry: newEntry });
     }
 };
 
@@ -177,7 +229,11 @@ export enum LegendStore {
     /**
      * (Action) addEntry - add entry to legend store
      */
-    addEntry = 'legend/addEntry!'
+    addEntry = 'legend/addEntry!',
+    /**
+     * (Action) updateDefaultEntry - replaces default placeholder after layer has loaded
+     */
+    updateDefaultEntry = 'legend/updateDefaultEntry!'
 }
 
 export function legend() {
