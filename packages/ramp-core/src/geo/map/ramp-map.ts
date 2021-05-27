@@ -22,6 +22,7 @@ import {
     Point,
     RampMapConfig,
     ScreenPoint,
+    Screenshot,
     ScaleSet,
     SpatialReference
 } from '@/geo/api';
@@ -353,6 +354,32 @@ export class MapAPI extends CommonMapAPI {
             ) || modLods[modLods.length - 1];
 
         return this.zoomToLevel(scaleLod.level);
+    }
+
+    /**
+     * Create a screenshot of the current view.
+     *
+     * Possible ESRI takeScreenshot() options:
+     * https://developers.arcgis.com/javascript/latest/api-reference/esri-views-MapView.html#takeScreenshot
+     * Will default to quality = 1 and format = 'png'.
+     *
+     * @param {__esri.MapViewTakeScreenshotOptions} options ESRI takeScreenshot() options
+     * @returns {Promise<Screenshot>} a promise that resolves with a Screenshot
+     */
+    async takeScreenshot(
+        options: __esri.MapViewTakeScreenshotOptions
+    ): Promise<Screenshot> {
+        if (this.esriView) {
+            if (!options.quality) {
+                options.quality = 1;
+            }
+            if (!options.format) {
+                options.format = 'png';
+            }
+            return this.esriView.takeScreenshot(options);
+        } else {
+            throw new Error('Export attempted without a map view available');
+        }
     }
 
     /**
