@@ -9,7 +9,7 @@
                 v-if="$iApi.screenSize === 'xs'"
                 @click="panel.close()"
             ></back>
-            <h2 class="flex-grow text-lg py-16 pl-8">
+            <h2 class="flex-grow text-lg py-16 pl-8 truncate min-w-0">
                 <slot name="header"></slot>
             </h2>
 

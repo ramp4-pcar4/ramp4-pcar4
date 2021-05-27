@@ -15,7 +15,7 @@
                 preserveAspectRatio="xMidYMid meet"
                 viewBox="0 0 24 24"
                 focusable="false"
-                class="fill-current w-24 h-24"
+                class="fill-current w-24 h-24 flex-shrink-0"
                 v-if="quicksearch.length < 3"
             >
                 <g id="search_cache224">
