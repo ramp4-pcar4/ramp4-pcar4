@@ -11,7 +11,8 @@
         "@types/node": "~13.11.0",
         "prettier": "^1.19.1",
         "tslib": "~1.10.0",
-        "typescript": "~3.8.3"
+        "typescript": "~3.8.3",
+        "webpack-cli": "~4.7.0"
     },
     "scripts": {
         "build": "tsc",

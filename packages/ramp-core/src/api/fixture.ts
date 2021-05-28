@@ -6,6 +6,7 @@ import {
     FixtureMutation,
     FixtureBaseSet
 } from '@/store/modules/fixture';
+import { i18n } from '@/lang';
 
 // TODO: implement the same `internal.ts` pattern in store, so can import from a single place;
 
@@ -167,6 +168,7 @@ export class FixtureAPI extends APIScope {
                 'metadata',
                 'northarrow',
                 'overviewmap',
+                'scrollguard',
                 'settings',
                 'wizard'
             ];
@@ -281,7 +283,8 @@ export class FixtureInstance extends APIScope implements FixtureBase {
             propsData: {
                 ...options.propsData,
                 fixture: this
-            }
+            },
+            i18n
         });
 
         component.$mount();

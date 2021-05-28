@@ -449,7 +449,7 @@ export default class WmsLayer extends CommonLayer {
             // @ts-ignore
             typeof l.styleToURL !== 'undefined' &&
             typeof l.currentStyle !== 'undefined'
-                ? l.styleToURL[l.currentStyle]
+                ? l.styleToURL[<number>(<unknown>l.currentStyle)] // TODO: this is a type workaround since @ts-ignore isn't working with our linter
                 : undefined
         );
 
@@ -462,7 +462,7 @@ export default class WmsLayer extends CommonLayer {
             }
         });
 
-        //@ts-ignore
+        // @ts-ignore
         return legendURLs;
     }
 }
