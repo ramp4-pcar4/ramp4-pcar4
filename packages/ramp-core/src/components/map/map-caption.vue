@@ -70,7 +70,6 @@
 <script lang="ts">
 import { Vue, Component, Watch, Prop, Inject } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
-import { debounce } from 'debounce';
 import { Attribution, MapMove, Point } from '@/geo/api';
 import { GlobalEvents } from '@/api';
 import { MapCaptionStore } from '@/store/modules/mapcaption';
@@ -79,15 +78,11 @@ import { MapCaptionStore } from '@/store/modules/mapcaption';
 export default class MapCaptionV extends Vue {
     isImperialScale: boolean = false;
 
-    // TODO: Move into MapCaptionStore
-    scale: { label: string; width: string } = { label: '0km', width: '0px' };
-
-    // TODO: Move into MapCaptionStore
     // since calculation of latlong is asynch, we cannot directly calculate it
     // in cursorPointDMS property. we calculate and update this private property.
     private latLongCursor: { lat: number; long: number } = { lat: 0, long: 0 };
 
-    // The current attribution
+    @Get(MapCaptionStore.scale) scale!: any;
     @Get(MapCaptionStore.attribution) attribution!: Attribution;
 
     /**
@@ -115,20 +110,7 @@ export default class MapCaptionV extends Vue {
         //      we would not want to re-add them back during a projection change -- want to respect the new custom handlers.
 
         this.$iApi.event.on(GlobalEvents.MAP_CREATED, () => {
-            this.updateScale();
-            // Listen for scale changes, debounce so that zoom animations don't rapidly call update
-            this.$iApi.event.on(
-                GlobalEvents.MAP_SCALECHANGE,
-                () => {
-                    debounce(() => {
-                        this.updateScale();
-                    }, 300);
-                },
-                'update_scale_display' // TODO document event handler name, possibly rename to align to standards
-            );
-
-            // for demonstration. will decide the best way to wire this up. i.e. where.
-            // and possibly with a named event that is not part of the "defaults", but is documented so it can be removed/edited
+            this.$iApi.event.emit(GlobalEvents.MAP_SCALECHANGE); // Default handler will update scale
             this.$iApi.event.on(
                 GlobalEvents.MAP_MOUSEMOVE,
                 (mmm: MapMove) => {
@@ -140,53 +122,15 @@ export default class MapCaptionV extends Vue {
     }
 
     onScaleClick() {
-        this.isImperialScale = !this.isImperialScale;
-        this.updateScale();
+        this.$iApi.$vApp.$store.set(MapCaptionStore.setScale, {
+            width: this.scale.width,
+            label: this.scale.label,
+            isImperialScale: !this.scale.isImperialScale
+        });
+
+        this.$iApi.geo.map.updateScale();
     }
 
-    // TODO: Move to MapAPI
-    /**
-     * Calculates a scale bar for the current resolution.
-     */
-    updateScale(): void {
-        // the starting length of the scale line in pixels
-        // reduce the length of the bar on extra small layouts
-        const factor = window.innerWidth > 600 ? 70 : 35;
-        const mapResolution = this.$iApi.geo.map.getResolution();
-
-        // distance in meters
-        const meters = mapResolution * factor;
-        console.log(mapResolution, 'resolution');
-        console.log(this.$iApi.geo.map.getScale(), 'scale');
-        const metersInAMile = 1609.34;
-
-        // get the distance in units, either miles or kilometers
-        const units =
-            (mapResolution * factor) /
-            (this.isImperialScale ? metersInAMile : 1000);
-        const unit = this.isImperialScale ? 'mi' : 'km';
-
-        // length of the distance number
-        const len = Math.round(units).toString().length;
-        const div = Math.pow(10, len - 1);
-
-        // we want to round the distance to the ceiling of the highest position and display a nice number
-        // 45.637km => 50.00km; 4.368km => 5.00km
-        // 28.357mi => 30.00mi; 2.714mi => 3.00mi
-        const distance = Math.ceil(units / div) * div;
-
-        // calcualte length of the scale line in pixels based on the round distance
-        const pixels =
-            (distance * (this.isImperialScale ? metersInAMile : 1000)) /
-            mapResolution;
-
-        this.scale = {
-            width: `${pixels}px`,
-            label: `${distance}${unit}`
-        };
-    }
-
-    // TODO: Move to MapAPI
     /**
      * Will convert a screen co-ord to lat long and update our property
      * after the coversion finishes (asynch)

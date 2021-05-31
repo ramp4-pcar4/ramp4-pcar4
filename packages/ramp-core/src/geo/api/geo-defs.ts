@@ -373,12 +373,6 @@ export interface Attribution {
     };
 }
 
-// MapCaption interface for all elements in the map-caption bar
-// If more elements are added to the map-caption, they can be added here
-export interface MapCaption {
-    attribution: Attribution;
-}
-
 // ----------------------- CLIENT CONFIG INTERFACES -----------------------------------
 
 // TODO migrate these to /geo/api/geo-common ? if we need config interfaces before creating an instance,
