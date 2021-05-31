@@ -88,7 +88,10 @@ export class MapAPI extends CommonMapAPI {
             spatialReference: this.$iApi.geo.utils.geom._convSrToEsri(
                 this._rampSR
             ), // internal, so we will sneak an internal call
-            extent: config.extent
+            extent: config.extent,
+            navigation: {
+                browserTouchPanEnabled: false
+            }
         };
 
         // TODO extract more from config and set appropriate view properties (e.g. intial extent, initial projection, LODs)
