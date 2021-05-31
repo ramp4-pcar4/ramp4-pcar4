@@ -5,7 +5,7 @@
 
 // TODO add proper comments
 
-import { APIScope, Basemap, InstanceAPI } from '@/api/internal';
+import { APIScope, Basemap, GlobalEvents, InstanceAPI } from '@/api/internal';
 import { EsriMap } from '@/geo/esri';
 import { RampMapConfig } from '@/geo/api';
 
@@ -66,6 +66,7 @@ export class CommonMapAPI extends APIScope {
             //      detect here.
 
             this.esriMap.basemap = bm.innerBasemap;
+            this.$iApi.event.emit(GlobalEvents.MAP_BASEMAPCHANGE, id);
         } else {
             // blank basemap case
             // TODO validate this works. the map api spec does not allow setting to undefined.

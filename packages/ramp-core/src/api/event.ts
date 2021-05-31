@@ -6,7 +6,8 @@ import { HelpAPI } from '@/fixtures/help/api/help';
 import { GridAPI } from '@/fixtures/grid/api/grid';
 import { WizardAPI } from '@/fixtures/wizard/api/wizard';
 import { LegendAPI } from '@/fixtures/legend/api/legend';
-import { MapClick } from '@/geo/api';
+import { MapClick, RampBasemapConfig } from '@/geo/api';
+import { RampConfig } from '@/types';
 
 export enum GlobalEvents {
     /**
@@ -21,6 +22,12 @@ export enum GlobalEvents {
     LAYER_OPACITYCHANGE = 'layer/opacitychange',
     LAYER_STATECHANGE = 'layer/statechange',
     LAYER_VISIBILITYCHANGE = 'layer/visibilitychange',
+
+    /**
+     * Fires when the config file changes
+     * Payload: `(config: RampConfig)`
+     */
+    CONFIG_CHANGE = 'config/configchanged',
 
     /**
      * Fires when the map is created
@@ -38,6 +45,7 @@ export enum GlobalEvents {
     MAP_KEYDOWN = 'map/keydown',
     MAP_KEYUP = 'map/keyup',
     MAP_BLUR = 'map/blur',
+    MAP_BASEMAPCHANGE = 'map/basemapchanged', // payload is the new basemap id (string)
 
     /**
      * Fires when the map scale changes.
@@ -70,7 +78,9 @@ enum DefEH {
     TOGGLE_HELP = 'toggles_help_panel',
     TOGGLE_GRID = 'toggles_grid_panel',
     OPEN_WIZARD = 'opens_wizard_panel',
-    GENERATE_LEGEND = 'generates_default_legend_entry'
+    GENERATE_LEGEND = 'generates_default_legend_entry',
+    MAP_BASEMAPCHANGE_ATTRIBUTION = 'updates_map_caption_attribution_basemap',
+    CONFIG_CHANGE_ATTRIBUTION = 'updates_map_caption_attribution_config'
 }
 
 // private for EventBus internals, so don't export
@@ -319,7 +329,9 @@ export class EventAPI extends APIScope {
                 DefEH.TOGGLE_HELP,
                 DefEH.TOGGLE_GRID,
                 DefEH.OPEN_WIZARD,
-                DefEH.GENERATE_LEGEND
+                DefEH.GENERATE_LEGEND,
+                DefEH.MAP_BASEMAPCHANGE_ATTRIBUTION,
+                DefEH.CONFIG_CHANGE_ATTRIBUTION
             ];
         }
 
@@ -337,7 +349,6 @@ export class EventAPI extends APIScope {
      */
     private defaultHandlerFactory(handlerName: string): string {
         let zeHandler: Function;
-
         switch (handlerName) {
             case DefEH.MAP_IDENTIFY:
                 // when map clicks, run the identify action
@@ -476,6 +487,57 @@ export class EventAPI extends APIScope {
                 };
                 this.$iApi.event.on(
                     GlobalEvents.MAP_BLUR,
+                    zeHandler,
+                    handlerName
+                );
+                break;
+            case DefEH.MAP_BASEMAPCHANGE_ATTRIBUTION:
+                zeHandler = (payload: string) => {
+                    let currentBasemapConfig:
+                        | RampBasemapConfig
+                        | undefined = this.$iApi
+                        .getConfig()
+                        .map.basemaps.find(bms => bms.id === payload);
+
+                    if (
+                        !currentBasemapConfig ||
+                        !currentBasemapConfig.attribution
+                    ) {
+                        return;
+                    }
+
+                    this.$iApi.geo.map.updateAttribution(
+                        currentBasemapConfig.attribution
+                    );
+                };
+                this.$iApi.event.on(
+                    GlobalEvents.MAP_BASEMAPCHANGE,
+                    zeHandler,
+                    handlerName
+                );
+                break;
+            case DefEH.CONFIG_CHANGE_ATTRIBUTION:
+                zeHandler = (payload: RampConfig) => {
+                    let currentBasemapConfig:
+                        | RampBasemapConfig
+                        | undefined = payload.map.basemaps.find(
+                        bms =>
+                            bms.id === this.$iApi.geo.map.getCurrentBasemapId()
+                    );
+
+                    if (
+                        !currentBasemapConfig ||
+                        !currentBasemapConfig.attribution
+                    ) {
+                        return;
+                    }
+
+                    this.$iApi.geo.map.updateAttribution(
+                        currentBasemapConfig.attribution
+                    );
+                };
+                this.$iApi.event.on(
+                    GlobalEvents.CONFIG_CHANGE,
                     zeHandler,
                     handlerName
                 );

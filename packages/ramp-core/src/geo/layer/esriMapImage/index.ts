@@ -382,9 +382,9 @@ class MapImageLayer extends AttribLayer {
                     this.name = '[server error]';
                     // @ts-ignore
                     this.layerTree.name = '[server error]';
-                    // @ts-ignore
                     console.error(
-                        `Get map name service failed: ${this.esriLayer!.url}`
+                        // @ts-ignore
+                        `Get map name service failed: ${this.esriLayer.url}`
                     );
                 }
             });

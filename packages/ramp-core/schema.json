@@ -96,7 +96,7 @@
                                         "description": "Optional additional properties to customize the appbar component.",
                                         "additionalProperties": true
                                     }
-                                } 
+                                }
                             }
                         ]
                     },
@@ -220,13 +220,13 @@
                         "oneOf": [
                             {
                                 "$ref": "#/$defs/entry"
-                            }, 
+                            },
                             {
                                 "$ref": "#/$defs/entryGroup"
                             },
                             {
                                 "$ref": "#/$defs/infoSection"
-                            }, 
+                            },
                             {
                                 "$ref": "#/$defs/visibilitySet"
                             }
@@ -1041,7 +1041,7 @@
                                 "default": "",
                                 "description": "Specifies the field title. If missing, attempts to use the service alias, then defaults to the field name."
                             }
-                        }  
+                        }
                     },
                     "required": ["data"]
                 },
@@ -1308,26 +1308,25 @@
                 "text": {
                     "type": "object",
                     "properties": {
-                        "enabled": {
+                        "disabled": {
                             "type": "boolean",
-                            "default": true,
-                            "description": "Specifies if basemap attribution text is enabled."
+                            "default": false,
+                            "description": "Specifies if basemap attribution text is disabled."
                         },
                         "value": {
                             "type": "string",
                             "default": "",
                             "description": "Contains the attribution value. If empty, it will use copyright text from the server."
                         }
-                    },
-                    "required": ["enabled"]
+                    }
                 },
                 "logo": {
                     "type": "object",
                     "properties": {
-                        "enabled": {
+                        "disabled": {
                             "type": "boolean",
-                            "default": true,
-                            "description": "Specifies if basemap attribution logo is enabled."
+                            "default": false,
+                            "description": "Specifies if basemap attribution logo is disabled."
                         },
                         "altText": {
                             "type": "string",
@@ -1344,8 +1343,7 @@
                             "default": "",
                             "description": "URL to go to when clicked."
                         }
-                    },
-                    "required": ["enabled"]
+                    }
                 }
             },
             "required": ["text", "logo"],
@@ -1540,9 +1538,9 @@
                     "default": {
                         "zoom": "buttons",
                         "items": [
-                            "fullscreen", 
-                            "home", 
-                            "help", 
+                            "fullscreen",
+                            "home",
+                            "help",
                             "basemap"
                         ]
                     },

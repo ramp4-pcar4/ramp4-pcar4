@@ -35,9 +35,21 @@ rInstance = new RAMP.Instance(document.getElementById('app'), {
                     layers: [
                         {
                             layerType: 'esriTile',
-                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                            url:
+                                'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                         }
-                    ]
+                    ],
+                    attribution: {
+                        text: {
+                            value: 'Custom attribution thanks'
+                        },
+                        logo: {
+                            altText: 'custom logo alt text',
+                            value:
+                                'https://cdn.iconscout.com/icon/free/png-256/google-2981831-2476479.png',
+                            link: 'https://www.google.ca/'
+                        }
+                    }
                 }
             ],
             initialBasemapId: 'esriImagery'
@@ -46,7 +58,8 @@ rInstance = new RAMP.Instance(document.getElementById('app'), {
             {
                 id: 'WaterQuantity',
                 layerType: 'esriMapImage',
-                url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                url:
+                    'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                 layerEntries: [
                     {
                         index: 1,
@@ -65,7 +78,8 @@ rInstance = new RAMP.Instance(document.getElementById('app'), {
             {
                 id: 'WaterQuality',
                 layerType: 'esriMapImage',
-                url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                url:
+                    'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                 layerEntries: [
                     {
                         index: 5,
@@ -84,7 +98,8 @@ rInstance = new RAMP.Instance(document.getElementById('app'), {
             {
                 id: 'CleanAir',
                 layerType: 'esriFeature',
-                url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
+                url:
+                    'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
                 state: {
                     opacity: 0.8,
                     visibility: true
@@ -94,7 +109,8 @@ rInstance = new RAMP.Instance(document.getElementById('app'), {
             {
                 id: 'WFSLayer',
                 layerType: 'ogcWfs',
-                url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
+                url:
+                    'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
                 state: {
                     visibility: true
                 },
@@ -104,7 +120,8 @@ rInstance = new RAMP.Instance(document.getElementById('app'), {
                 id: 'Happy',
                 layerType: 'esriFeature',
                 fileType: 'geojson',
-                url: 'https://fgpv-app.azureedge.net/demo/assets/sample_data/happy.json',
+                url:
+                    'https://fgpv-app.azureedge.net/demo/assets/sample_data/happy.json',
                 state: {
                     visibility: true
                 },
@@ -153,11 +170,13 @@ rInstance = new RAMP.Instance(document.getElementById('app'), {
                                     children: [
                                         {
                                             layerId: 'WaterQuantity',
-                                            name: 'Water Quantity in Nested Group'
+                                            name:
+                                                'Water Quantity in Nested Group'
                                         },
                                         {
                                             layerId: 'WaterQuality',
-                                            name: 'Water Quality in Nested Group'
+                                            name:
+                                                'Water Quality in Nested Group'
                                         }
                                     ]
                                 }
@@ -221,9 +240,21 @@ rInstance = new RAMP.Instance(document.getElementById('app'), {
                     layers: [
                         {
                             layerType: 'esriTile',
-                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                            url:
+                                'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                         }
-                    ]
+                    ],
+                    attribution: {
+                        text: {
+                            value: 'Merci d’attribution personnalisés'
+                        },
+                        logo: {
+                            altText: 'custom logo alt text',
+                            value:
+                                'https://cdn.iconscout.com/icon/free/png-256/google-2981831-2476479.png',
+                            link: 'https://www.google.ca/'
+                        }
+                    }
                 }
             ],
             initialBasemapId: 'esriImagery'
@@ -232,7 +263,8 @@ rInstance = new RAMP.Instance(document.getElementById('app'), {
             {
                 id: 'CleanWater',
                 layerType: 'esriFeature',
-                url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/3',
+                url:
+                    'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/3',
                 state: {
                     opacity: 0.8,
                     visibility: true
@@ -242,7 +274,8 @@ rInstance = new RAMP.Instance(document.getElementById('app'), {
             {
                 id: 'WFSLayer',
                 layerType: 'ogcWfs',
-                url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=6000',
+                url:
+                    'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=6000',
                 state: {
                     visibility: true
                 },
@@ -291,7 +324,9 @@ Vue.component('WFSLayer-Custom', {
         return h('div', [
             h('span', 'This is an example template that contains an image.'),
             h('span', {
-                domProps: { innerHTML: '<img src="https://i.imgur.com/WtY0tdC.gif" />' }
+                domProps: {
+                    innerHTML: '<img src="https://i.imgur.com/WtY0tdC.gif" />'
+                }
             })
         ]);
     }
@@ -327,7 +362,8 @@ Vue.component('Water-Quantity-Template', {
             return h(
                 'div',
                 {
-                    style: 'display: flex; flex-direction: column; font-size: .875rem; padding-top: 5px;'
+                    style:
+                        'display: flex; flex-direction: column; font-size: .875rem; padding-top: 5px;'
                 },
                 [
                     h(
@@ -345,7 +381,8 @@ Vue.component('Water-Quantity-Template', {
         return h(
             'div',
             {
-                style: 'align-items: center; justify-content: center; font-size: .875rem; font-family: "Arial", sans-serif;'
+                style:
+                    'align-items: center; justify-content: center; font-size: .875rem; font-family: "Arial", sans-serif;'
             },
             [
                 renderHeader(),
@@ -355,7 +392,8 @@ Vue.component('Water-Quantity-Template', {
                 h(
                     'div',
                     {
-                        style: 'display: flex; flex-direction: row; color: #a0aec0; font-weight: bold; padding-top: 5px;'
+                        style:
+                            'display: flex; flex-direction: row; color: #a0aec0; font-weight: bold; padding-top: 5px;'
                     },
                     [
                         h(
@@ -399,7 +437,8 @@ Vue.component('Water-Quantity-Template', {
                 h(
                     'div',
                     {
-                        style: 'display: flex; flex-direction: column; padding-top: 5px; color: #4299e1;'
+                        style:
+                            'display: flex; flex-direction: column; padding-top: 5px; color: #4299e1;'
                     },
                     [
                         h(
@@ -411,17 +450,23 @@ Vue.component('Water-Quantity-Template', {
                         ),
                         h('span', {
                             domProps: {
-                                innerHTML: this.identifyData.data['E_DetailPageURL']
+                                innerHTML: this.identifyData.data[
+                                    'E_DetailPageURL'
+                                ]
                             }
                         }),
                         h('span', {
                             domProps: {
-                                innerHTML: this.identifyData.data['E_URL_Historical']
+                                innerHTML: this.identifyData.data[
+                                    'E_URL_Historical'
+                                ]
                             }
                         }),
                         h('span', {
                             domProps: {
-                                innerHTML: this.identifyData.data['E_URL_RealTime']
+                                innerHTML: this.identifyData.data[
+                                    'E_URL_RealTime'
+                                ]
                             }
                         })
                     ]
@@ -481,5 +526,6 @@ function animateToggle() {
     } else {
         rInstance.$vApp.$el.classList.add('animation-enabled');
     }
-    document.getElementById('animate-status').innerText = 'Animate: ' + rInstance.animate;
+    document.getElementById('animate-status').innerText =
+        'Animate: ' + rInstance.animate;
 }
