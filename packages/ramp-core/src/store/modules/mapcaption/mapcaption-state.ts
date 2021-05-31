@@ -1,10 +1,11 @@
 import { Attribution } from '@/geo/api';
 
 export class MapCaptionState {
-    // TODO: Make attribution into a defined type and update all instances (including config)
     attribution: Attribution;
+    scale: { label: string; width: string; isImperialScale: boolean };
 
-    constructor(attrib: Attribution) {
+    constructor(attrib: Attribution, scale: any) {
         this.attribution = attrib;
+        this.scale = scale;
     }
 }
