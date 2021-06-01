@@ -26,19 +26,19 @@ Most layers have one single logical component and a basic tree. The structure is
 
 ```json
 {
-    layerIdx: -1,
-    name: "Fancy Layer",
-    children: [
+    "layerIdx": -1,
+    "name": "Fancy Layer",
+    "children": [
         {
-            layerIdx: 4,
-            name: "Fancy Layer",
-            children: [],
-            isLayer: true,
-            uid: "432rubbishasdfsdfad"
+            "layerIdx": 4,
+            "name": "Fancy Layer",
+            "children": [],
+            "isLayer": true,
+            "uid": "432rubbishasdfsdfad"
         }
     ],
-    isLayer: false,
-    uid: "ABCDskipafewYbecauseihavetogo4aP&Z4U"
+    "isLayer": false,
+    "uid": "ABCDskipafewYbecauseihavetogo4aP&Z4U"
 }
 ```
 
@@ -46,41 +46,41 @@ A Map Image Layer composed of multiple sources could have a more structured resu
 
 ```json
 {
-    layerIdx: -1,
-    name: "Restaurants",
-    children: [
+    "layerIdx": -1,
+    "name": "Restaurants",
+    "children": [
         {
-            layerIdx: 4,
-            name: "Fine Dining",
-            children: [],
-            isLayer: true,
-            uid: "432rubbishasdfsdfad"
+            "layerIdx": 4,
+            "name": "Fine Dining",
+            "children": [],
+            "isLayer": true,
+            "uid": "432rubbishasdfsdfad"
         },
         {
-            layerIdx: 6,
-            name: "Fast Food",
-            children: [
+            "layerIdx": 6,
+            "name": "Fast Food",
+            "children": [
                 {
-                    layerIdx: 7,
-                    name: "Burger Joints",
-                    children: [],
-                    isLayer: true,
-                    uid: "765rubbishasdfsdfad"
+                    "layerIdx": 7,
+                    "name": "Burger Joints",
+                    "children": [],
+                    "isLayer": true,
+                    "uid": "765rubbishasdfsdfad"
                 },
                 {
-                    layerIdx: 9,
-                    name: "Pizza Parlours",
-                    children: [],
-                    isLayer: true,
-                    uid: "988rubbishasdfsdfad"
+                    "layerIdx": 9,
+                    "name": "Pizza Parlours",
+                    "children": [],
+                    "isLayer": true,
+                    "uid": "988rubbishasdfsdfad"
                 }
             ],
-            isLayer: false,
-            uid: ""
+            "isLayer": false,
+            "uid": ""
         }
     ],
-    isLayer: false,
-    uid: "ABCDskipafewYbecauseihavetogo4aP&Z4U"
+    "isLayer": false,
+    "uid": "ABCDskipafewYbecauseihavetogo4aP&Z4U"
 }
 ```
 
@@ -117,18 +117,18 @@ restoLayer.getFeatureCount(); // 871 (count for index 4, default first index)
 
 The following formats have support built in the codebase.
 
-- ESRI Feature Layer (ArcGIS Server)
-- ESRI Map Image Layer (ArcGIS Server) (formerly known as Dynamic Layer)
-- GeoJSON
-- WFS 3.0
+-   ESRI Feature Layer (ArcGIS Server)
+-   ESRI Map Image Layer (ArcGIS Server) (formerly known as Dynamic Layer)
+-   GeoJSON
+-   WFS 3.0
 
-*Planned Additional Support*
+_Planned Additional Support_
 
-- ESRI Tile Layer
-- ESRI Image Service
-- WMS
-- CSV
-- Shapefile
+-   ESRI Tile Layer
+-   ESRI Image Service
+-   WMS
+-   CSV
+-   Shapefile
 
 ## Layer Creation
 
@@ -166,7 +166,7 @@ myMapImgLayer.setVisibility(false, 'sublayeruid');
 myLayer.setOpacity(0.6);
 myLayer.getOpacity(); // 0.6
 myMapImgLayer.setOpacity(0.4, 3); // using index 3 instead of uid
-myMapImgLayer.setOpacity(0.7);    // setting opacity of entire layer image
+myMapImgLayer.setOpacity(0.7); // setting opacity of entire layer image
 ```
 
 ### Layer Metadata
@@ -227,17 +227,19 @@ Determine if the layer supports the identify function. This property does not ap
 myLayer.supportsIdentify; // true
 ```
 
-Run an identify on the layer. Identify is not directly called on logical sublayers. COMING SOON the ability to omit sublayers from the request.
+Run an identify on the layer. Identify is not directly called on logical sublayers. RAMP's sublayer filter can be overridden using the below options parameter object.
 
 Options parameter object:
 
+<!-- prettier-ignore -->
 ```js
 {
-   geometry,       // The geometry to query. A RAMP API Geometry. Intersecting features will be returned.
-   returnGeometry, // an optional boolean to indicate the geometry of the result features should also be downloaded. Defaults to `false`
-   tolerance       // an optional integer number to buffer the query geometry. Is only useful if the geometry is a point.
-                   // The number represents pixels to buffer by (so 5 would be a 10x10 pixel square around the point at the current map scale level).
-                   // TODO if there is a default, list it here.
+    geometry,       // The geometry to query. A RAMP API Geometry. Intersecting features will be returned.
+    returnGeometry, // An optional boolean to indicate the geometry of the result features should also be downloaded. Defaults to `false`
+    sublayerUids,   // An optional array of sublayer uids (strings) that indicate which sublayers to query for.
+    tolerance;      // An optional integer number to buffer the query geometry. Is only useful if the geometry is a point.
+                    // The number represents pixels to buffer by (so 5 would be a 10x10 pixel square around the point at the current map scale level).
+                    // TODO if there is a default, list it here.\
 }
 ```
 
@@ -269,7 +271,7 @@ Example call
 ```js
 var opts = { geometry: myPoint, tolerance: 3 };
 var result = myLayer.identify(opts);
-await result.done
+await result.done;
 result.results.forEach(r => processResults(r));
 ```
 
@@ -373,6 +375,7 @@ myLayer.applySqlFilter(undefined, 'uid');
 // ignore the grid filters
 myLayer.applySqlFilter(['grid'], 'uid');
 ```
+
 ## Custom Layers
 
 TODO flush out as part of issue ###
