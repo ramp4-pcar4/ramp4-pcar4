@@ -133,6 +133,7 @@ TODO keep updating the list, make new subsections as appropriate. Maybe move to 
 
 -   `updates_map_caption_attribution_basemap` updates the attribution in the map-caption by retrieving it from the current basemap config when the basemap changes
 -   `updates_map_caption_attribution_config` updates the attribution in the map-caption by retrieving it from the current basemap config when the config changes
+-   `updates_map_caption_scale` updates the scale bar in the map-caption when the map scale changes
 
 ## Examples
 

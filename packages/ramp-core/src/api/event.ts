@@ -8,6 +8,7 @@ import { WizardAPI } from '@/fixtures/wizard/api/wizard';
 import { LegendAPI } from '@/fixtures/legend/api/legend';
 import { MapClick, RampBasemapConfig } from '@/geo/api';
 import { RampConfig } from '@/types';
+import { debounce } from 'debounce';
 
 export enum GlobalEvents {
     /**
@@ -80,7 +81,8 @@ enum DefEH {
     OPEN_WIZARD = 'opens_wizard_panel',
     GENERATE_LEGEND = 'generates_default_legend_entry',
     MAP_BASEMAPCHANGE_ATTRIBUTION = 'updates_map_caption_attribution_basemap',
-    CONFIG_CHANGE_ATTRIBUTION = 'updates_map_caption_attribution_config'
+    CONFIG_CHANGE_ATTRIBUTION = 'updates_map_caption_attribution_config',
+    MAP_SCALECHANGE_SCALEBAR = 'updates_map_caption_scale'
 }
 
 // private for EventBus internals, so don't export
@@ -331,7 +333,8 @@ export class EventAPI extends APIScope {
                 DefEH.OPEN_WIZARD,
                 DefEH.GENERATE_LEGEND,
                 DefEH.MAP_BASEMAPCHANGE_ATTRIBUTION,
-                DefEH.CONFIG_CHANGE_ATTRIBUTION
+                DefEH.CONFIG_CHANGE_ATTRIBUTION,
+                DefEH.MAP_SCALECHANGE_SCALEBAR
             ];
         }
 
@@ -539,6 +542,13 @@ export class EventAPI extends APIScope {
                 this.$iApi.event.on(
                     GlobalEvents.CONFIG_CHANGE,
                     zeHandler,
+                    handlerName
+                );
+                break;
+            case DefEH.MAP_SCALECHANGE_SCALEBAR:
+                this.$iApi.event.on(
+                    GlobalEvents.MAP_SCALECHANGE,
+                    debounce(() => this.$iApi.geo.map.updateScale(), 300),
                     handlerName
                 );
                 break;

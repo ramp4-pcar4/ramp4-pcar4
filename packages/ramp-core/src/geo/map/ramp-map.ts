@@ -390,7 +390,15 @@ export class MapAPI extends CommonMapAPI {
         }
     }
 
-    updateAttribution(newAttribution: Attribution) {
+    /**
+     * Updates the attribution on the map-caption bar
+     * Applies default ESRI attribution if incoming attribution is disabled or has undefined elements
+     *
+     * Updates map-caption store to notify map-caption component observer
+     *
+     * @param newAttribution incoming new attribution
+     */
+    updateAttribution(newAttribution: Attribution): void {
         if (!newAttribution) {
             return;
         }
@@ -427,6 +435,65 @@ export class MapAPI extends CommonMapAPI {
             MapCaptionStore.setAttribution,
             attribution
         );
+    }
+
+    /**
+     * Calculates a scale bar for the current resolution
+     * Updates map-caption store to notify map-caption component observer
+     */
+    updateScale(): void {
+        const currScale: any = this.$iApi.$vApp.$store.get(
+            MapCaptionStore.scale
+        );
+
+        // the starting length of the scale line in pixels
+        // reduce the length of the bar on extra small layouts
+        const factor = window.innerWidth > 600 ? 70 : 35;
+        const mapResolution = this.$iApi.geo.map.getResolution();
+
+        // distance in meters
+        const meters = mapResolution * factor;
+        const metersInAMile = 1609.34;
+        const metersInAFoot = 3.28084;
+
+        let distance, pixels, unit;
+
+        // If meters < 1Km, then use different scaling
+        if (meters > 1000) {
+            // get the distance in units, either miles or kilometers
+            const units =
+                (mapResolution * factor) /
+                (currScale.isImperialScale ? metersInAMile : 1000);
+            unit = currScale.isImperialScale ? 'mi' : 'km';
+
+            // length of the distance number
+            const len = Math.round(units).toString().length;
+            const div = Math.pow(10, len - 1);
+
+            // we want to round the distance to the ceiling of the highest position and display a nice number
+            // 45.637km => 50.00km; 4.368km => 5.00km
+            // 28.357mi => 30.00mi; 2.714mi => 3.00mi
+            distance = Math.ceil(units / div) * div;
+
+            // calcualte length of the scale line in pixels based on the round distance
+            pixels =
+                (distance *
+                    (currScale.isImperialScale ? metersInAMile : 1000)) /
+                mapResolution;
+        } else {
+            // Round the meters up
+            distance = Math.ceil(
+                currScale.isImperialScale ? meters * metersInAFoot : meters
+            );
+            pixels = meters / mapResolution;
+            unit = currScale.isImperialScale ? 'ft' : 'm';
+        }
+
+        this.$iApi.$vApp.$store.set(MapCaptionStore.setScale, {
+            width: `${pixels}px`,
+            label: `${distance}${unit}`,
+            isImperialScale: currScale.isImperialScale
+        });
     }
 
     /**
