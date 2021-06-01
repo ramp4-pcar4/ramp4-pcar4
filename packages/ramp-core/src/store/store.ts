@@ -6,7 +6,6 @@ import { config } from '@/store/modules/config';
 import { fixture } from '@/store/modules/fixture';
 import { layer } from '@/store/modules/layer';
 import { mapcaption } from '@/store/modules/mapcaption';
-// import { legend } from '@/store/modules/legend';
 import { panel } from '@/store/modules/panel';
 import { RootState } from '@/store/state';
 
@@ -22,7 +21,6 @@ export const createStore = () =>
             fixture: fixture(),
             layer: layer(),
             mapcaption: mapcaption(),
-            // legend: legend(),
             panel: panel()
         }
     });

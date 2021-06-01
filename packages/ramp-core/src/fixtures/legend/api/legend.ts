@@ -112,43 +112,15 @@ export class LegendAPI extends FixtureInstance {
             return;
         }
 
-        // Creates legend config from layer tree children
-        const parseLayerTreeChildren = (children: Array<TreeNode>): any => {
-            return children.map((node: TreeNode) =>
-                node.isLayer
-                    ? {
-                          name: node.name,
-                          layerId: layer.id,
-                          entryIndex: node.layerIdx
-                      }
-                    : {
-                          name: node.name,
-                          children: parseLayerTreeChildren(node.children)
-                      }
-            );
-        };
-
-        const layerTree: TreeNode = layer.getLayerTree();
-        let entry: LegendEntry | LegendGroup;
-        if (layerTree.children.length === 1 && layerTree.children[0].isLayer) {
-            // create LegendEntry from layer
-            const config = {
-                name: layerTree.name,
-                layers: this.$vApp.$store.get(LayerStore.layers),
-                layerId: layer.id
-            };
-            entry = new LegendEntry(config, parent);
-        } else {
-            // create LegendGroup
-            const config = {
-                name: layerTree.name,
-                layers: this.$vApp.$store.get(LayerStore.layers),
-                children: parseLayerTreeChildren(layerTree.children)
-            };
-            entry = new LegendGroup(config, parent);
-        }
-
-        // add entry to store
+        // TODO add name when #439 is done
+        const entry = new LegendEntry(
+            {
+                layerId: layer.id,
+                isDefault: true,
+                layers: this.$vApp.$store.get(LayerStore.layers)
+            },
+            parent
+        );
         this.$vApp.$store.set(LegendStore.addEntry, entry);
     }
 }
