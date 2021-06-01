@@ -316,11 +316,9 @@ export interface QueryFeaturesArcServerParams extends QueryFeaturesParams {
 
 export interface IdentifyParameters {
     geometry: BaseGeometry;
-    // unboundMap?: any; TODO do we still need this? if map is part of api, we can just direct reference it from anywhere?
     tolerance?: number;
     returnGeometry?: boolean; // TODO revisit this. might make more sense to offload geom to a followup request. if we keep, we may need to add property to IdentifyItem for the geom to live in
-    // TODO think about adding more options to facilitate more flexible identification.
-    //      e.g. for MapImageLayer, an overriding list of child layers to query
+    sublayerIds?: Array<string | number>; // Optional array of sublayer uids or server indices. When defined, the given sublayers are queried for instead of the default (visible, queryable, on-scale sublayers)
 }
 
 // TODO for the identify structure, currently using uid to tie back to layers/sublayers. should we also include layerid / layerindex for completeness?

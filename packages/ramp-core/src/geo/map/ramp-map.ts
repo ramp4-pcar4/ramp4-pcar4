@@ -624,7 +624,8 @@ export class MapAPI extends CommonMapAPI {
 
         // Perform an identify request on each layer. Does not perform the request on layers that do not have an identify function (layers that do not support identify).
         const identifyInstances: IdentifyResultSet[] = layers
-            .filter(layer => layer.supportsIdentify)
+            // This will filter out all MapImageLayers that are not visible, regardless of the visibility of the MapImageFCs (sublayers)
+            .filter(layer => layer.supportsIdentify && layer.getVisibility())
             .map(layer => {
                 return layer.identify(p);
             });
