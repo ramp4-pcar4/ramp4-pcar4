@@ -535,16 +535,32 @@ class MapImageLayer extends AttribLayer {
 
         const map = this.$iApi.geo.map;
 
-        const activeFCs: Array<MapImageFC> = (<Array<MapImageFC>>(
-            this.fcs
-        )).filter(fc => {
-            return (
-                fc.getVisibility() &&
-                fc.supportsFeatures &&
-                !fc.scaleSet.isOffScale(map.getScale()).offScale
+        // change any sublayer ids that are server indices to sublayer uids.
+        if (options.sublayerIds) {
+            options.sublayerIds = options.sublayerIds.map(
+                (id: number | string) => {
+                    if (typeof id === 'number') {
+                        return <string>this.layerTree?.findChildByIdx(id)?.uid;
+                    }
+                    return id;
+                }
             );
-            // && fc.getQuery() // TODO add in query check once implemented
-        });
+        }
+
+        const activeFCs: Array<MapImageFC> = options.sublayerIds
+            ? (<Array<MapImageFC>>this.fcs).filter((fc: MapImageFC) => {
+                  // query for only the given sublayers
+                  return options.sublayerIds?.includes(fc.uid);
+              })
+            : (<Array<MapImageFC>>this.fcs).filter((fc: MapImageFC) => {
+                  // query for visible, queryable, on-scale sublayers
+                  return (
+                      fc.getVisibility() &&
+                      fc.supportsFeatures &&
+                      !fc.scaleSet.isOffScale(map.getScale()).offScale
+                  );
+                  // && fc.getQuery() // TODO add in query check once implemented
+              });
 
         // early kickout check. all sublayers are one of: not visible; not queryable; off scale; a raster layer
         if (activeFCs.length === 0) {
