@@ -230,6 +230,28 @@ export class MapAPI extends CommonMapAPI {
     }
 
     /**
+     * Reorders a layer on the map
+     *
+     * @param {LayerInstance} layer the Ramp layer to be moved
+     * @param {number} index the index for placing the layer
+     */
+    reorder(layer: LayerInstance, index: number): void {
+        if (!this.esriMap) {
+            this.noMapErr();
+            return;
+        }
+        // await layer.isReadyForMap();
+        if (layer.esriLayer) {
+            this.esriMap.reorder(layer.esriLayer, index);
+        } else {
+            // TODO maybe we should call layer.initiate() and block? Could be a nice shortcut. But also might have unintended effects.
+            console.error(
+                'Attempted reorder without an esri layer. Likely layer.initiate() was not called or had not finished.'
+            );
+        }
+    }
+
+    /**
      * Adds a highlight layer to the map
      *
      * @param {HighlightLayer} highlightLayer the highlight
