@@ -345,33 +345,22 @@ export default class WizardV extends Vue {
 
     // options for sublayers selector
     get sublayerOptions() {
-        const layers = this.layerInfo!.layers;
-        return layers.map((layer: any) => {
-            const level = calculateLevel(layer, layers);
-
-            layer.level = level;
-            layer.indent = Array.from(Array(level))
-                .fill('-')
-                .join('');
-            layer.index = layer.id;
-
+        return this.layerInfo!.layers.map((layer: any) => {
             return {
                 label: `${layer.indent}${layer.name}`,
-                value: {
-                    index: layer.id,
-                    state: { opacity: 1, visibility: true }
-                },
+                value:
+                    this.typeSelection === LayerType.MAPIMAGE
+                        ? {
+                              index: layer.id,
+                              state: { opacity: 1, visibility: true }
+                          }
+                        : // wms
+                          {
+                              id: layer.id
+                          },
                 id: layer.id
             };
         });
-
-        function calculateLevel(layer: any, layers: any): number {
-            if (layer.parentLayerId === -1) {
-                return 0;
-            } else {
-                return calculateLevel(layers[layer.parentLayerId], layers) + 1;
-            }
-        }
     }
 
     get isFileLayer() {

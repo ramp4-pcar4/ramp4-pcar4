@@ -278,7 +278,7 @@ export class OgcUtils extends APIScope {
             }
             const capability: any = jsonObj.WMS_Capabilities.Capability;
             return {
-                layers: getLayers(capability.Layer),
+                layers: getLayers(capability),
                 queryTypes: getQueryTypes(capability.Request.GetFeatureInfo)
             };
         });

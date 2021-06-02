@@ -132,12 +132,14 @@ export class LayerSource extends APIScope {
                 return this.getFeatureInfo(url);
             case LayerType.MAPIMAGE:
                 return this.getMapImageInfo(url);
-            case LayerType.WFS:
-                return this.getWfsInfo(url);
             case LayerType.TILE:
                 return this.getTileInfo(url);
             case LayerType.IMAGERY:
                 return this.getImageryInfo(url);
+            case LayerType.WFS:
+                return this.getWfsInfo(url);
+            case LayerType.WMS:
+                return this.getWmsInfo(url);
         }
     }
 
@@ -175,9 +177,33 @@ export class LayerSource extends APIScope {
 
         return {
             config,
-            layers: response.data.layers,
+            layers: flattenMapImageLayerList(response.data.layers),
             configOptions: ['name', 'layerEntries']
         };
+
+        function flattenMapImageLayerList(layers: any) {
+            return layers.map((layer: any) => {
+                const level = calculateLevel(layer, layers);
+
+                layer.level = level;
+                layer.indent = Array.from(Array(level))
+                    .fill('-')
+                    .join('');
+                layer.index = layer.id;
+
+                return layer;
+            });
+
+            function calculateLevel(layer: any, layers: any): number {
+                if (layer.parentLayerId === -1) {
+                    return 0;
+                } else {
+                    return (
+                        calculateLevel(layers[layer.parentLayerId], layers) + 1
+                    );
+                }
+            }
+        }
     }
 
     async getTileInfo(url: string): Promise<LayerInfo> {
@@ -231,25 +257,54 @@ export class LayerSource extends APIScope {
         );
     }
 
-    // TODO: WMS layer support
-    // async getWmsInfo(url: string): Promise<LayerInfo> {
-    //     const capabilities = await this.$iApi.geo.layer.ogc.parseCapabilities(url);
-    //
-    //     const config = {
-    //         id: `${LayerType.WMS}#${++this.layerCount}`,
-    //         url: url,
-    //         layerType: LayerType.WMS,
-    //         name: "wms",
-    //         featureInfoMimeType: capabilities.queryTypes[0],
-    //         state: { opacity: 1, visibility: true }
-    //     };
-    //
-    //     return {
-    //         config,
-    //         layers: capabilities.layers,
-    //         configOptions: ['name', 'layerEntries']
-    //     };
-    // }
+    async getWmsInfo(url: string): Promise<LayerInfo> {
+        const capabilities = await this.$iApi.geo.layer.ogc.parseCapabilities(
+            url
+        );
+
+        const config = {
+            id: `${LayerType.WMS}#${++this.layerCount}`,
+            url: url,
+            layerType: LayerType.WMS,
+            name: url,
+            featureInfoMimeType: capabilities.queryTypes[0],
+            state: { opacity: 1, visibility: true }
+        };
+
+        return {
+            config,
+            layers: flattenWmsLayerList(capabilities.layers),
+            configOptions: ['name', 'layerEntries']
+        };
+
+        function flattenWmsLayerList(layers: any, level: number = 0) {
+            return [].concat.apply(
+                [],
+                layers.map((layer: any) => {
+                    layer.level = level;
+                    layer.indent = Array.from(Array(level))
+                        .fill('-')
+                        .join('');
+                    layer.id = layer.name;
+
+                    if (layer.layers.length > 0) {
+                        // ignore sublayers with no id
+                        return layer.id
+                            ? [].concat(
+                                  layer,
+                                  flattenWmsLayerList(layer.layers, level + 1)
+                              )
+                            : [].concat(
+                                  [],
+                                  flattenWmsLayerList(layer.layers, level)
+                              );
+                    } else {
+                        return layer.id ? layer : [];
+                    }
+                })
+            );
+        }
+    }
 
     /**
      * Guesses type of file or service given a URL
@@ -287,6 +342,11 @@ export class LayerSource extends APIScope {
             }
 
             return LayerType.MAPIMAGE;
+        }
+
+        // probably wms layer if contains service= or verison= or /wms
+        if (url.match(/service=|version=|\/wms/gi)) {
+            return LayerType.WMS;
         }
 
         return '';
