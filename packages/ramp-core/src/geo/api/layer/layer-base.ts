@@ -34,8 +34,10 @@ export interface LayerBase {
     esriLayer: __esri.Layer | undefined;
     esriView: __esri.LayerView | undefined;
 
+    initialized: boolean;
     initiate(): Promise<void>;
     terminate(): Promise<void>;
+    reload(): Promise<void>;
 
     supportsIdentify: boolean;
     state: LayerState;

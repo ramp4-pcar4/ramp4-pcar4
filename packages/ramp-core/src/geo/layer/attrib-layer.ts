@@ -11,17 +11,12 @@ import {
     GetGraphicParams,
     GeometryType,
     RampLayerConfig,
-    TabularAttributeSet,
-    TreeNode
+    TabularAttributeSet
 } from '@/geo/api';
 
 export class AttribLayer extends CommonLayer {
-    protected constructor(
-        rampConfig: RampLayerConfig,
-        $iApi: InstanceAPI,
-        reloadTree?: TreeNode
-    ) {
-        super(rampConfig, $iApi, reloadTree);
+    protected constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
+        super(rampConfig, $iApi);
         this.supportsIdentify = true;
     }
 

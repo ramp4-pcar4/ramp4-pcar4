@@ -15,7 +15,7 @@ import { EsriRequest, EsriWMSLayer } from '@/geo/esri';
 import { WmsFC } from './wms-fc';
 
 export default class WmsLayer extends CommonLayer {
-    esriLayer: EsriWMSLayer | undefined;
+    declare esriLayer: EsriWMSLayer | undefined;
     sublayerNames: Array<string>;
     readonly mimeType: string;
 

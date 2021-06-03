@@ -34,14 +34,6 @@ export class CommonLayer extends LayerInstance {
     uid: string;
     id: string;
 
-    // TODO can probably just use $api.geo.map
-    // hostMap: RampMap; // will be undefined until layer is added to a map
-
-    // NOTE while having this var be protected makes sense, there are also cases where other parts of the geoapi need to access this.
-    //      being public will also to allow hacking, which can be useful in a pinch. use underscore to make it clear this in not for playtimes.
-    esriLayer: __esri.Layer | undefined;
-    esriView: __esri.LayerView | undefined;
-
     // used to manage debouncing when applying filter updates against a layer. Private! but needs to be seen by FCs.
     _lastFilterUpdate: string = '';
 
@@ -49,6 +41,7 @@ export class CommonLayer extends LayerInstance {
     state: LayerState;
     supportsIdentify: boolean;
     isFile: boolean;
+    initialized: boolean;
 
     /**
      * Indicates layer had loaded and achieved one sucessful update. I.e. layer has been drawn on the map once.
@@ -66,7 +59,6 @@ export class CommonLayer extends LayerInstance {
     // TODO consider also having a loaded boolean property, allowing a synch check if layer has loaded or not. state can flip around to update, etc.
     //      alternately implement something like function layerLoaded() from old geoApi
     protected loadPromise: DefPromise; // a promise that resolves when layer is fully ready and safe to use. for convenience of caller
-    // protected esriPromise: DefPromise; // a promise that resolves when esri layer object has been created
     protected viewPromise: DefPromise; // a promise that resolves when a layer view has been created on the map. helps bridge the view handler with the layer load handler
 
     // FC management
@@ -74,28 +66,26 @@ export class CommonLayer extends LayerInstance {
     protected layerTree: TreeNode | undefined;
     protected reloadTree: TreeNode | undefined;
 
+    protected watches: Array<__esri.WatchHandle>;
+
     // ----------- LAYER CONSTRUCTION AND INITIALIZAION -----------
 
     // NOTE since constructor needs to be called first, we might want to push a lot of initialization to an .init() function
     //      that actual implementer classes call in their constructors. e.g. for a file layer, might need to process file parts prior to running LayerBase stuff
     // TODO if layer is now self-containing the reload stuff, we can internalize the reload tree.
-    protected constructor(
-        rampConfig: RampLayerConfig,
-        $iApi: InstanceAPI,
-        reloadTree?: TreeNode
-    ) {
+    protected constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
-        this.reloadTree = reloadTree; // this needs to be set before doing uid calculations
         this.uid = this.bestUid(-1);
 
         this.state = LayerState.LOADING;
         this.supportsIdentify = false; // default state.
         this.isFile = false; // default state.
+        this.initialized = false;
         this.sawLoad = false;
         this.sawRefresh = false;
         this.loadPromise = new DefPromise();
-        // this.esriPromise = new DefPromise();
         this.viewPromise = new DefPromise();
+        this.watches = [];
 
         this.fcs = [];
         this.origRampConfig = rampConfig;
@@ -138,36 +128,17 @@ export class CommonLayer extends LayerInstance {
     }
 
     async initiate(): Promise<void> {
-        // TODO add note about this being a superclass and it should be called via
-        //      super.initiate() in subclass.initiate() at appropriate time
-
-        // TODO add event handlers.  basic stuff here, super classes can add more.
-        // TODO clean up comment mass after design is settled and working
+        // NOTE CommonLayer a superclass and this method should be called via super.initiate()
+        //      in subclass.initiate() at the appropriate time. A general rule is that at
+        //      minimum the subclass should instantiate the Esri layer object and assign it
+        //      to .esriLayer before calling this.
 
         // loading stuff
         // https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-FeatureLayer.html#loadStatus
         // https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-FeatureLayer.html#loaded
 
-        // updateing (is now on the layer view)
-        // need to figure out best way to do this. if we decide to support multiple map views, the updating flag
-        // will be different on each map (i.e. map 1 pans, shows layer updating; map 2 chills, no animation).
-        // at minimum we need to include the view id or map id on the event so client can inspect
-        // and know it is dealing with an event it cares about
-        // https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-LayerView.html#updating
-
-        // this also affects visible, opacity,etc. NO IT IS NOT. WRONG
-        // so maybe need a bigger deal. NO. JUST THE UPDATEs apparently. I'm fine with other views showing updates.
-
-        // https://developers.arcgis.com/javascript/latest/api-reference/esri-views-MapView.html#allLayerViews
-        // map (the view specifically) might need to be aware of layers registered to it
-        // and have a way of passing the view to the layer once it's been created. then this can wire up events.
-
-        // alternately we can try to use this event
-        // https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-Layer.html#event-layerview-create
-        // could do e.layerView.watch(updating).then(this.raiseEvent.visible({this.layerId, findGeoAPIMapId(e.view)}))
-        //       would need a way to make IDs on views or link them to GeoAPI map object           ^
-
-        // think i need to put this to the refactor chat proposal: do we support mutiple views, or always one
+        // NOTE current limitation: the event setup here only support one layer view. Any attempt to make
+        //      RAMP have two map views rendering the same Layer will require some major refactoring.
 
         // TODO consider putting lots of info on the events.  e.g. instead of just state changed, have .state, .layerid
         //      visibility might need an optional FC index (whatever we're calling that)
@@ -178,79 +149,144 @@ export class CommonLayer extends LayerInstance {
             return;
         }
 
-        this.esriLayer.watch('visible', (newval: boolean) => {
-            // TODO re-evaluate the event parameter. This is common routine. Need to think about how sublayer would factor in to this.
-            //      might need a secondary sublayer event, triggered on the FC? Sublayer visibility can change without affecting
-            //      overall layer. TRICKY.
-            //      also might want some redundant params, like layer id.
-            this.$iApi.event.emit(GlobalEvents.LAYER_VISIBILITYCHANGE, {
-                visibility: newval,
-                uid: this.uid
-            });
-        });
+        if (this.initialized) {
+            console.error(
+                `Encountered layer initialize while already initialized, layer id ${this.id}`
+            );
+        }
 
-        this.esriLayer.watch('opacity', (newval: number) => {
-            // TODO re-evaluate the event parameter. This is common routine. Need to think about how sublayer would factor in to this.
-            //      might need a secondary sublayer event, triggered on the FC? Sublayer opacity can change without affecting
-            //      overall layer opacity. TRICKY.
-            //      also might want some redundant params, like layer id.
-            this.$iApi.event.emit(GlobalEvents.LAYER_OPACITYCHANGE, {
-                opacity: newval,
-                uid: this.uid
-            });
-        });
+        this.watches.push(
+            this.esriLayer.watch('visible', (newval: boolean) => {
+                // TODO re-evaluate the event parameter. This is common routine. Need to think about how sublayer would factor in to this.
+                //      might need a secondary sublayer event, triggered on the FC? Sublayer visibility can change without affecting
+                //      overall layer. TRICKY.
+                //      also might want some redundant params, like layer id.
+                this.$iApi.event.emit(GlobalEvents.LAYER_VISIBILITYCHANGE, {
+                    visibility: newval,
+                    uid: this.uid
+                });
+            })
+        );
 
-        // TODO for state stuff, do we need to also synch this.state?
-        //      if so probably want a protected worker changeMyState function that sets prop and fires event.
+        this.watches.push(
+            this.esriLayer.watch('opacity', (newval: number) => {
+                // TODO re-evaluate the event parameter. This is common routine. Need to think about how sublayer would factor in to this.
+                //      might need a secondary sublayer event, triggered on the FC? Sublayer opacity can change without affecting
+                //      overall layer opacity. TRICKY.
+                //      also might want some redundant params, like layer id.
+                this.$iApi.event.emit(GlobalEvents.LAYER_OPACITYCHANGE, {
+                    opacity: newval,
+                    uid: this.uid
+                });
+            })
+        );
 
-        this.esriLayer.watch('loadStatus', (newval: string) => {
-            const statemap: any = {
-                'not-loaded': LayerState.LOADING,
-                loading: LayerState.LOADING,
-                loaded: LayerState.LOADED,
-                failed: LayerState.ERROR
-            };
+        this.watches.push(
+            this.esriLayer.watch('loadStatus', (newval: string) => {
+                const statemap: any = {
+                    'not-loaded': LayerState.LOADING,
+                    loading: LayerState.LOADING,
+                    loaded: LayerState.LOADED,
+                    failed: LayerState.ERROR
+                };
 
-            if (newval === 'loaded') {
-                // loaded is a special case. the Layer object (subclasses of BaseLayer) need to do
-                // additional asynch work to fully set things up, so we delay firing the event until
-                // that is done.
-                this.onLoad();
-            } else {
-                this.updateState(statemap[newval]);
-            }
-        });
+                if (newval === 'loaded') {
+                    // loaded is a special case. the Layer object (subclasses of BaseLayer) need to do
+                    // additional asynch work to fully set things up, so we delay firing the event until
+                    // that is done.
+                    this.onLoad();
+                } else {
+                    this.updateState(statemap[newval]);
+                }
+            })
+        );
 
         this.esriLayer.on(
             'layerview-create',
             (e: __esri.LayerLayerviewCreateEvent) => {
                 this.esriView = e.layerView;
-                e.layerView.watch('updating', (newval: boolean) => {
-                    this.updateState(
-                        newval ? LayerState.REFRESH : LayerState.LOADED
-                    );
-                    if (newval) {
-                        this.sawRefresh = true;
-                    }
-                });
+                this.watches.push(
+                    e.layerView.watch('updating', (newval: boolean) => {
+                        this.updateState(
+                            newval ? LayerState.REFRESH : LayerState.LOADED
+                        );
+                        if (newval) {
+                            this.sawRefresh = true;
+                        }
+                    })
+                );
                 this.viewPromise.resolveMe();
             }
         );
 
-        // this.esriPromise.resolveMe();
-        return Promise.resolve();
+        this.initialized = true;
     }
 
     async terminate(): Promise<void> {
-        // TODO undo any listeners / on() / event madness.
-        //      preserve layer tree if it's not done automatically.
-        //      reset statuses.
-        //      reset deferred promises?
-        //      null out layer objects? clear FC array? call cleanup on FCs first?
+        // TODO null out esrilayer objects? or make orchestrator handle that stuff.
+        // Note: attributes are stored in the FCs, so clearing the array
+        //       erases any downloaded/cached attribute data.
 
+        this.fcs = [];
+        this.loadPromise = new DefPromise();
+        this.viewPromise = new DefPromise();
+        this.watches.forEach(w => w.remove());
+        this.watches = [];
         this.updateState(LayerState.NEW);
 
-        return Promise.resolve();
+        this.initialized = false;
+    }
+
+    async reload(): Promise<void> {
+        if (!this.$iApi.geo.map.esriMap) {
+            console.error('Attempted layer reload when no map exists');
+            return;
+        }
+
+        // TODO should we consider a "reload start" event? Could be useful for animations.
+        //      that said, .terminate() should cycle the layer state values so animations
+        //      are probably already keying on that.
+
+        let mapStackPosition: number = 0; // TODO verify best default if we can't find actual old position. top of the stack seems correct? top of data layer stack (to avoid covering north arrow)?
+
+        if (this.initialized) {
+            if (this.esriLayer) {
+                // attempt to find esri layer in esri map
+                const tempPosition = this.$iApi.geo.map.esriMap.layers.findIndex(
+                    l => l.id === this.id
+                );
+                if (tempPosition > -1) {
+                    mapStackPosition = tempPosition;
+
+                    this.$iApi.geo.map.esriMap.layers.remove(this.esriLayer);
+
+                    // TODO add an ELSE clause here. attempt to derive the position from the layer store (which is ordered).
+                    //      do this after discussion 474 is figured out; it will probably put graphics layers into the layer
+                    //      store, making the position calculation much easier than it currently is.
+                }
+            }
+
+            // TODO might need to store layer state. If we want layer to look the same as it was prior to re-loading,
+            //      could do that here. Alternative is to not, and let whomever is calling this save state before
+            //      and restore state after. Might be more flexible.
+
+            await this.terminate();
+        }
+
+        await this.initiate();
+
+        if (!this.esriLayer) {
+            // TODO this might not warrent a console. A busted map server could fail, and the layer status would
+            //      already give the error indication.
+            console.error('ESRI layer failed to re-create during reload.');
+            return;
+        }
+
+        this.$iApi.geo.map.esriMap.layers.add(this.esriLayer, mapStackPosition);
+
+        // if we did any state storage above, would restore here.
+
+        this.$iApi.event.emit(GlobalEvents.LAYER_RELOADED, this);
     }
 
     // TODO strongly type if it makes sense. unsure if we want client config definitions in here
@@ -290,6 +326,7 @@ export class CommonLayer extends LayerInstance {
         Promise.all(loadPromises).then(() => {
             this.updateState(LayerState.LOADED);
             this.sawLoad = true;
+            this.reloadTree = this.layerTree;
             this.loadPromise.resolveMe();
         });
     }

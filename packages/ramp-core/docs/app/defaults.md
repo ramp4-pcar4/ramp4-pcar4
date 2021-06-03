@@ -81,7 +81,13 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | Event Name                              | Payload                                                        | Event Announces              |
 | --------------------------------------- | -------------------------------------------------------------- | ---------------------------- |
 | COMPONENT<br>'ramp/component'           | _id_: component id                                             | A vue component registered   |
+| CONFIG_CHANGE                           | RampConfig object                                              | The config was changed       |
 | FILTER_CHANGE<br>'filter/change'        | FilterEventParam object                                        | A filter has changed         |
+| LAYER_OPACITYCHANGE<br>'layer/opacitychange' | _opacity_: new value, _uid_: affected uid                 | The layer opacity changed    |
+| LAYER_RELOADED<br>'layer/reloaded'      | LayerInstance object                                           | The layer was reloaded       |
+| LAYER_REMOVE<br>'layer/remove'          | LayerInstance object                                           | The layer was removed from the map |
+| LAYER_STATECHANGE<br>'layer/statechange' | _state_: new value, _uid_: affected uid                       | The layer state changed      |
+| LAYER_VISIBILITYCHANGE<br>'layer/visibilitychange' | _visibility_: new value, _uid_: affected uid        | The layer visibility changed |
 | MAP_BLUR<br>'map/blur'                  | FocusEvent object                                              | The map lost focus           |
 | MAP_CLICK<br>'map/click'                | MapClick object                                                | The map was clicked          |
 | MAP_CREATED<br>'map/created'            | Map API object                                                 | The map was created          |
@@ -93,7 +99,6 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | MAP_MOUSEDOWN<br>'map/mousedown'        | PointerEvent object                                            | A mouse button was depressed |
 | MAP_MOUSEMOVE<br>'map/mousemove'        | MapMove object                                                 | The mouse moved over the map |
 | MAP_BASEMAPCHANGE                       | basemapId: string                                              | The basemap was changed      |
-| CONFIG_CHANGE                           | RampConfig object                                              | The config was changed       |
 
 ### Core Fixture Events
 

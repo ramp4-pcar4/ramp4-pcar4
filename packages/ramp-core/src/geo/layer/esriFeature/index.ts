@@ -15,7 +15,7 @@ import { EsriFeatureLayer } from '@/geo/esri';
 import { FeatureFC } from './feature-fc';
 
 class FeatureLayer extends AttribLayer {
-    esriLayer: EsriFeatureLayer | undefined;
+    declare esriLayer: EsriFeatureLayer | undefined;
 
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);

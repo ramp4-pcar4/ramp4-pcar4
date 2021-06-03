@@ -55,7 +55,7 @@ export default class CrosshairsV extends Vue {
     visible: boolean = false;
 
     mounted() {
-        this.$iApi.geo.map.viewPromise.getPromise().then(() => {
+        this.$iApi.geo.map.viewPromise.then(() => {
             this.left =
                 (this.$iApi.geo.map.getPixelWidth() -
                     this.$el.getBoundingClientRect().width) /
