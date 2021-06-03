@@ -576,7 +576,6 @@ describe('Grid', () => {
 
         // TODO: Add tests for wildcard formats once it is implemented
 
-        // TODO: Fix bug: #455
         it('filters date start date only', () => {
             toggleGrid('Shellfish');
             // filter "RISC_DATE" field start date
@@ -599,7 +598,6 @@ describe('Grid', () => {
             toggleGrid('Shellfish');
         });
 
-        // TODO: Fix bug: #455
         it('filters date end date only', () => {
             toggleGrid('Shellfish');
             // filter "RISC_DATE" field end date
@@ -627,13 +625,15 @@ describe('Grid', () => {
             // filter "RISC_DATE" field start and end date
             cy.get('[aria-rowindex="2"] [aria-colindex="7"] .rv-input')
                 .eq(0)
-                .type('2003-05-07');
+                .type('2003-05-07')
+                .blur();
             cy.get('[aria-rowindex="2"] [aria-colindex="7"] .rv-input')
                 .eq(1)
                 .type('2004-09-25')
                 .blur();
 
             // need to wait for date filter
+            cy.wait(5000);
             cy.contains('entries shown').contains('filtered from');
             cy.get(
                 '.ag-center-cols-container .ag-cell[col-id="risc_date"]'
@@ -659,12 +659,14 @@ describe('Grid', () => {
                 .blur();
 
             // need to wait for date filter
+            cy.wait(5000);
             cy.contains('entries shown').contains('filtered from');
             cy.get(
                 '.ag-center-cols-container .ag-cell[col-id="risc_date"]'
             ).each($cell => {
                 // compare lexicographically since dates are yyyy-MM-dd
                 const dateStr = $cell.text().trim();
+                cy.log(dateStr);
                 expect(dateStr >= '2003-05-07').to.be.true;
                 expect(dateStr <= '2004-09-25').to.be.true;
             });
@@ -673,32 +675,33 @@ describe('Grid', () => {
             toggleGrid('Shellfish');
         });
 
-        // TODO: Fix bug: #454
         it('filters date single date value', () => {
             toggleGrid('Shellfish');
             // filter "RISC_DATE" field
             cy.get('[aria-rowindex="2"] [aria-colindex="7"] .rv-input')
                 .eq(0)
-                .type('2014-04-30');
+                .type('2000-12-05')
+                .blur();
             cy.get('[aria-rowindex="2"] [aria-colindex="7"] .rv-input')
                 .eq(1)
-                .type('2014-04-30')
+                .type('2000-12-05')
                 .blur();
 
             // need to wait for date filter
+            cy.wait(5000);
             cy.contains('entries shown').contains('filtered from');
             cy.get(
                 '.ag-center-cols-container .ag-cell[col-id="risc_date"]'
             ).each($cell => {
                 // compare lexicographically since dates are yyyy-MM-dd
                 const dateStr = $cell.text().trim();
-                expect(dateStr == '2014-04-30').to.be.true;
+                expect(dateStr == '2000-12-05').to.be.true;
             });
 
-            // There are 4 records with this date
+            // There are 3 records with this date
             cy.get(
                 '.ag-center-cols-container .ag-cell[col-id="risc_date"]'
-            ).should('have.length', 4);
+            ).should('have.length', 3);
 
             clearFilters();
             toggleGrid('Shellfish');

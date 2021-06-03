@@ -305,13 +305,29 @@ export default class TableComponent extends Vue {
             entryDate: any
         ) {
             let entry = new Date(entryDate);
-            if (entry > filterDate) {
+
+            // We need to specifically compare the UTC year, month, and date because
+            // directly comparing the dates returns the wrong value due to timezone differences
+            // Thus both dates need to be converted to UTC before comparing
+
+            // Check year
+            if (entry.getUTCFullYear() > filterDate.getUTCFullYear()) {
                 return 1;
-            } else if (entry < filterDate) {
+            } else if (entry.getUTCFullYear() < filterDate.getUTCFullYear()) {
                 return -1;
-            } else {
-                return 0;
             }
+
+            // At this point year is the same
+            // Check month
+            if (entry.getUTCMonth() > filterDate.getUTCMonth()) {
+                return 1;
+            } else if (entry.getUTCMonth() < filterDate.getUTCMonth()) {
+                return -1;
+            }
+
+            // At this point month is the same
+            // Now return the sign based on the date difference
+            return entry.getUTCDate() - filterDate.getUTCDate();
         };
         colDef.filterParams.inRangeInclusive = true;
         colDef.floatingFilterComponentParams = {
