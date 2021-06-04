@@ -2,6 +2,7 @@ import { GridAPI } from './api/grid';
 import { grid } from './store/index';
 
 import GridV from './grid.vue';
+import GridAppbarButtonV from'./appbar-button.vue';
 
 import messages from './lang/lang.csv';
 
@@ -21,6 +22,7 @@ class GridFixture extends GridAPI {
             { i18n: { messages } }
         );
 
+        this.$iApi.component('grid-appbar-button', GridAppbarButtonV);
         this.$vApp.$store.registerModule('grid', grid());
     }
 

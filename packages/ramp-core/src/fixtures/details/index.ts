@@ -1,5 +1,6 @@
 import { DetailsAPI } from './api/details';
 import { details } from './store';
+import DetailsAppbarButtonV from './appbar-button.vue';
 import DetailsLayerV from './details-layers.vue';
 import DetailsResultV from './details-result.vue';
 import DetailsItemV from './details-item.vue';
@@ -24,6 +25,8 @@ class DetailsFixture extends DetailsAPI {
         );
 
         this.$vApp.$store.registerModule('details', details());
+
+        this.$iApi.component('details-appbar-button', DetailsAppbarButtonV);
 
         // Parse the details portion of the configuration file and save any custom
         // template bindings in the details store.

@@ -1,4 +1,5 @@
 import { MetadataAPI } from './api/metadata';
+import MetadataAppbarButtonV from './appbar-button.vue';
 
 import ScreenV from './screen.vue';
 
@@ -26,6 +27,8 @@ class MetadataFixture extends MetadataAPI {
             );
             metadataFixture.openMetadata(payload);
         };
+
+        this.$iApi.component('metadata-appbar-button', MetadataAppbarButtonV);
 
         this.$iApi.event.on(
             'metadata/open',

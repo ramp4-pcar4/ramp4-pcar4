@@ -199,6 +199,12 @@ rInstance = new RAMP.Instance(document.getElementById('app'), {
                     'basemap',
                     'divider',
                     'export-v1'
+                ],
+                temporaryButtons: [
+                    'details',
+                    'metadata',
+                    'settings',
+                    'grid'
                 ]
             },
             mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },

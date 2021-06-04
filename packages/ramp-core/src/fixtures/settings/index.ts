@@ -1,4 +1,5 @@
 import { SettingsAPI } from './api/settings';
+import SettingsAppbarButtonV from './appbar-button.vue';
 
 import ScreenV from './SettingsV.vue';
 
@@ -19,6 +20,9 @@ class SettingsFixture extends SettingsAPI {
             },
             { i18n: { messages } }
         );
+
+
+        this.$iApi.component('settings-appbar-button', SettingsAppbarButtonV);
     }
 }
 
