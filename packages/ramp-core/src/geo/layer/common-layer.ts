@@ -107,7 +107,7 @@ export class CommonLayer extends LayerInstance {
         console.error(
             'Attempted to manipulate the layer before .initiate() finished'
         );
-        console.trace();
+        // console.trace();
     }
 
     // will give a new uid to use. if appropriate, will recycle same uid from a previous
@@ -507,7 +507,12 @@ export class CommonLayer extends LayerInstance {
      * @returns {String} name of the layer/sublayer
      */
     getName(layerIdx: number | string | undefined = undefined): string {
-        return this.getFC(layerIdx)?.name || '';
+        if (!this.sawLoad) {
+            // layer has not been loaded yet
+            // if the config has a name defined, this.name will be set
+            return this.name || this.id || 'The layer is loading...';
+        }
+        return this.getFC(layerIdx)?.name || this.id || '';
     }
 
     /**

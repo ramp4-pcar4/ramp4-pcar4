@@ -87,7 +87,9 @@ export default class DetailsLayersV extends Vue {
 
         if (!item) return;
 
-        return item.getName() ? item.getName() : item.id;
+        return item.getName(layerInfo.uid)
+            ? item.getName(layerInfo.uid)
+            : item.id;
     }
 
     /**

@@ -63,6 +63,7 @@ rInstance = new RAMP.Instance(document.getElementById('app'), {
                 layerEntries: [
                     {
                         index: 1,
+                        name: 'Water quantity child',
                         state: {
                             opacity: 1,
                             visibility: true
