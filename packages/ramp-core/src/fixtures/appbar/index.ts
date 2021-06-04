@@ -30,13 +30,19 @@ class AppbarFixture extends AppbarAPI {
         );
 
         // Add and remove temp appbar buttons when panels are opened and close
-        this.$iApi.event.on(GlobalEvents.PANEL_OPENED, (panel: PanelInstance) => {
-            this.$vApp.$store.dispatch('appbar/addTempButton', panel.id);
-        });
+        this.$iApi.event.on(
+            GlobalEvents.PANEL_OPENED,
+            (panel: PanelInstance) => {
+                this.$vApp.$store.dispatch('appbar/addTempButton', panel.id);
+            }
+        );
 
-        this.$iApi.event.on(GlobalEvents.PANEL_CLOSED, (panel: PanelInstance) => {
-            this.$vApp.$store.dispatch('appbar/removeTempButton', panel.id);
-        });
+        this.$iApi.event.on(
+            GlobalEvents.PANEL_CLOSED,
+            (panel: PanelInstance) => {
+                this.$vApp.$store.dispatch('appbar/removeTempButton', panel.id);
+            }
+        );
 
         // since components used in appbar can be registered after this point, listen to the global component registration event and re-validate items
         // TODO revisit. this seems to be self-contained to the appbar fixture, so ideally can stay as is and not worry about events api.

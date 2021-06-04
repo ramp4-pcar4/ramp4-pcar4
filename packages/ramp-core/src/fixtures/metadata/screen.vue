@@ -1,6 +1,8 @@
 <template>
     <panel-screen>
-        <template #header> {{$t('metadata.title')}}: {{ payload.layer }} </template>
+        <template #header>
+            {{ $t('metadata.title') }}: {{ payload.layer }}
+        </template>
 
         <template #controls>
             <minimize @click="panel.minimize()" />

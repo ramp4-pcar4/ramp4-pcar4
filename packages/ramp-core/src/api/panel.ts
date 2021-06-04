@@ -240,7 +240,10 @@ export class PanelAPI extends APIScope {
      * @returns {PanelInstance}
      * @memberof PanelAPI
      */
-    toggleMinimize(value: string | PanelInstance | PanelInstancePath, toggle?: boolean): PanelInstance {
+    toggleMinimize(
+        value: string | PanelInstance | PanelInstancePath,
+        toggle?: boolean
+    ): PanelInstance {
         let panel: PanelInstance;
 
         // figure out what is passed to the function, retrieve the panel object and make call to open or close function

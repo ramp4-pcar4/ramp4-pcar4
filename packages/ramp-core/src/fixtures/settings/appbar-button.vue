@@ -2,7 +2,11 @@
     <appbar-button :onClickFunction="onClick">
         <template #icon>
             <!-- https://fonts.google.com/icons?selected=Material%20Icons%3Asettings -->
-            <svg class="fill-current w-24 h-24 ml-8 sm:ml-20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <svg
+                class="fill-current w-24 h-24 ml-8 sm:ml-20"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+            >
                 <g>
                     <path d="M0,0h24v24H0V0z" fill="none" />
                     <path

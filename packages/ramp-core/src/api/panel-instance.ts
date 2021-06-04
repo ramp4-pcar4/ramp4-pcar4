@@ -290,7 +290,9 @@ export class PanelInstance extends APIScope {
      * @returns {this}
      * @memberof PanelInstance
      */
-    toggleMinimize(value?: boolean | { screen: string; props?: object; toggle?: boolean }): this {
+    toggleMinimize(
+        value?: boolean | { screen: string; props?: object; toggle?: boolean }
+    ): this {
         // toggle panel if no value provided, force toggle panel if value specified, or toggle panel on specified screen if provided
         // ensure that a toggle value must be provided to panel API toggle if called
         if (typeof value === 'undefined') {
@@ -303,7 +305,9 @@ export class PanelInstance extends APIScope {
         } else {
             this.$iApi.panel.toggleMinimize(
                 { id: this.id, screen: value.screen, props: value.props },
-                typeof value.toggle !== 'undefined' ? value.toggle : !this.isOpen
+                typeof value.toggle !== 'undefined'
+                    ? value.toggle
+                    : !this.isOpen
             );
         }
 

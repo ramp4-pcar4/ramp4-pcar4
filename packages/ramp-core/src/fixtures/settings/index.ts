@@ -21,7 +21,6 @@ class SettingsFixture extends SettingsAPI {
             { i18n: { messages } }
         );
 
-
         this.$iApi.component('settings-appbar-button', SettingsAppbarButtonV);
     }
 }

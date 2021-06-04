@@ -27,7 +27,7 @@ export default class AppbarButtonV extends Vue {
     @Prop() id!: any;
 
     onClick() {
-        //TODO: change fixtures to use this instead of click handlers is <fixture>-appbar-button?
+        //TODO: change fixtures to use this instead of click handlers in <fixture>-appbar-button?
         this.$iApi.event.emit('appbar/click', this.id);
     }
 }

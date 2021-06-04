@@ -2,7 +2,7 @@ import { GridAPI } from './api/grid';
 import { grid } from './store/index';
 
 import GridV from './grid.vue';
-import GridAppbarButtonV from'./appbar-button.vue';
+import GridAppbarButtonV from './appbar-button.vue';
 
 import messages from './lang/lang.csv';
 
