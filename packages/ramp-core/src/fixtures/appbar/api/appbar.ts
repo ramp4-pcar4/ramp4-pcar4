@@ -84,12 +84,12 @@ export class AppbarAPI extends FixtureInstance {
             });
         });
 
+        // check the list of temp appbar buttons as well
         const tempButtonDict = this.$vApp.$store.get<any>(
             'appbar/tempButtonDict'
         );
         Object.keys(tempButtonDict).forEach(key => {
             const id = tempButtonDict[key].id;
-            console.log(id);
             [`${id}-appbar-button`, id].some(v => {
                 if (v in this.$vApp.$options.components!) {
                     // if an item is registered globally, save the name of the registered component

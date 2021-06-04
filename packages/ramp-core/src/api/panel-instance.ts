@@ -225,6 +225,17 @@ export class PanelInstance extends APIScope {
     }
 
     /**
+     * true iff the panel is currently visible
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof PanelInstance
+     */
+    get isVisible(): boolean {
+        return this.$iApi.panel.visible.indexOf(this) !== -1;
+    }
+
+    /**
      * Close this panel.
      * This is a proxy to `RAMP.panel.close(...)`.
      *

@@ -131,6 +131,11 @@ export class PanelAPI extends APIScope {
             ({ screen, props } = value);
         }
 
+        // if panel is hidden off screen minimize it first so it is able to reopen
+        if (panel.isOpen && !panel.isVisible) {
+            panel.minimize();
+        }
+
         // Panel opening requires a screen, check if last opened or default makes more sense
         if (!screen) {
             if (panel.route && !props) {
@@ -160,6 +165,18 @@ export class PanelAPI extends APIScope {
      */
     get opened(): PanelInstance[] {
         return this.$vApp.$store.get<PanelInstance[]>('panel/orderedItems')!;
+    }
+
+    /**
+     * Returns an array of visible `PanelInstance` object.
+     * This is not every *open* panel, only the ones currently visible to the user.
+     *
+     * @readonly
+     * @type {PanelInstance[]}
+     * @memberof PanelAPI
+     */
+    get visible(): PanelInstance[] {
+        return this.$vApp.$store.get<PanelInstance[]>('panel/visible')!;
     }
 
     /**
@@ -224,8 +241,8 @@ export class PanelAPI extends APIScope {
         }
 
         // use specified toggle value if provided + check if toggle value is possible
-        toggle = typeof toggle !== 'undefined' ? toggle : !panel.isOpen;
-        if (toggle !== panel.isOpen) {
+        toggle = typeof toggle !== 'undefined' ? toggle : !panel.isVisible;
+        if (toggle !== panel.isVisible) {
             toggle ? this.open(value) : this.close(panel);
         }
 
@@ -254,8 +271,8 @@ export class PanelAPI extends APIScope {
         }
 
         // use specified toggle value if provided + check if toggle value is possible
-        toggle = typeof toggle !== 'undefined' ? toggle : !panel.isOpen;
-        if (toggle !== panel.isOpen) {
+        toggle = typeof toggle !== 'undefined' ? toggle : !panel.isVisible;
+        if (toggle !== panel.isVisible) {
             toggle ? this.open(panel) : this.minimize(panel);
         }
 
