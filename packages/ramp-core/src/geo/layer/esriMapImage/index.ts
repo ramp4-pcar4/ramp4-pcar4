@@ -400,10 +400,47 @@ class MapImageLayer extends AttribLayer {
     // so for properties that fall into this category, we intercept the common routies, and treat an undefined
     // layerIdx as targeting the layer proper (in other layers, undefined means take the default child)
 
+    /**
+     * Returns the name of the layer/sublayer.
+     *
+     * @function getName
+     * @param {Integer | String} [layerIdx] targets a layer index or uid to get the name for. Uses first/only if omitted.
+     * @returns {String} name of the layer/sublayer
+     */
     getName(layerIdx: number | string | undefined = undefined): string {
+        if (!this.sawLoad) {
+            // layer has not been loaded yet
+
+            // if the layer was added through the wizard, this.name will be defined
+            if (this.name) {
+                return this.name;
+            }
+
+            if (typeof layerIdx === 'string') {
+                // no uids at this point so we have no idea what's being requested
+                return '';
+            } else if (typeof layerIdx === 'number') {
+                // layerIdx is a layer index
+                const layerEntries: Array<RampLayerMapImageLayerEntryConfig> =
+                    this.origRampConfig.layerEntries || [];
+                const layer = (<Array<RampLayerMapImageLayerEntryConfig>>(
+                    layerEntries
+                )).filter((layer: any) => {
+                    return layer.index === layerIdx;
+                })[0];
+                if (layer && layer.name) {
+                    return layer.name;
+                } else {
+                    return this.id + '-' + layerIdx;
+                }
+            } else {
+                return this.origRampConfig.name || '';
+            }
+        }
         const fc = this.getFC(layerIdx, true);
         if (!fc) {
-            return this.name;
+            // layerIdx belongs to the parent layer
+            return this.name || this.id;
         } else {
             // see comment in getOpacity
             return super.getName(fc.layerIdx);

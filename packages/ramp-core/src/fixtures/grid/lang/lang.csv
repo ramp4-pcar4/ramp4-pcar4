@@ -1,5 +1,6 @@
 key,enValue,enValid,frValue,frValid
 grid.title,Features,1,Éléments,1
+grid.layer.loading,The layer is loading...,1,La couche est le chargement...,0
 grid.label.columns,Columns,1,Colonnes,0
 grid.label.filters,Filters,1,Filtres,0
 grid.filters.label.global,Search table,1,Tableau de recherche,0

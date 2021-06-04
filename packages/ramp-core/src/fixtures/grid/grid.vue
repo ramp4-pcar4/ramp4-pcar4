@@ -1,6 +1,8 @@
 <template>
     <panel-screen>
-        <template #header>{{ $t('grid.title') }}: {{ head }} </template>
+        <template #header
+            >{{ $t('grid.title') }}: {{ head || $t('grid.layer.loading') }}
+        </template>
         <template #controls>
             <input
                 @keyup="updateQuickSearch()"

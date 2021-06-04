@@ -57,12 +57,14 @@ rInstance = new RAMP.Instance(document.getElementById('app'), {
         layers: [
             {
                 id: 'WaterQuantity',
+                name: 'Water quantity parent',
                 layerType: 'esriMapImage',
                 url:
                     'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                 layerEntries: [
                     {
                         index: 1,
+                        name: 'Water quantity child',
                         state: {
                             opacity: 1,
                             visibility: true
