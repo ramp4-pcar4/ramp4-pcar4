@@ -33,13 +33,18 @@ const getters = {
 };
 
 const actions = {
-    [AppbarAction.ADD_TEMP_BUTTON](context: AppbarContext, value: AppbarItemInstance) {
-        if (!context.state.temporary.find(button => button.id === value.id)) {
-            context.commit(AppbarMutation.ADD_TEMP_BUTTON, value);
+    [AppbarAction.ADD_TEMP_BUTTON](context: AppbarContext, value: string) {
+        const item = context.state.tempButtonDict[value];
+        if (item && !context.state.temporary.find(button => button.id === item.id)) {
+            context.commit(AppbarMutation.ADD_TEMP_BUTTON, item);
         }
     },
     [AppbarAction.REMOVE_TEMP_BUTTON](context: AppbarContext, value: string) {
-        const button = context.state.temporary.find(button => button.id === value);
+        const item = context.state.tempButtonDict[value];
+        if (!item) {
+            return;
+        }
+        const button = context.state.temporary.find(button => button.id === item.id);
         if (button) {
             context.commit(AppbarMutation.REMOVE_TEMP_BUTTON, button);
         }
@@ -63,6 +68,6 @@ export function appbar() {
         state,
         getters: { ...getters },
         actions: { ...actions },
-        mutations: { ...mutations, ...make.mutations(['items', 'order', 'temporary']) }
+        mutations: { ...mutations, ...make.mutations(['items', 'order', 'temporary', 'tempButtonDict']) }
     };
 }

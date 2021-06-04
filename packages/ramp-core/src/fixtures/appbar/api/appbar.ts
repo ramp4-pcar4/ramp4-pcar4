@@ -50,6 +50,17 @@ export class AppbarAPI extends FixtureInstance {
             appbarItems.map(item => item.id)
         );
 
+        // appbarTempItems = appbarConfig.temp(?).map ( item => new AppbarTempItem)
+        const appbarTempItems = Object.fromEntries(appbarConfig.temporaryButtons.map(item => {
+            if (typeof item === 'string') {
+                return [`${item}-panel`, new AppbarItemInstance(item)];
+            }
+
+            return [item.panelId, new AppbarItemInstance(item.appbarItem)];
+        }));
+
+        this.$vApp.$store.set('appbar/tempButtonDict', appbarTempItems);
+
         this._validateItems();
     }
 
@@ -70,5 +81,17 @@ export class AppbarAPI extends FixtureInstance {
                 }
             });
         });
+
+        const tempButtonDict = this.$vApp.$store.get<any>('appbar/tempButtonDict');
+        Object.keys(tempButtonDict).forEach(key => {
+            const id = tempButtonDict[key].id;
+            console.log(id);
+            [`${id}-appbar-button`, id].some(v => {
+                if (v in this.$vApp.$options.components!) {
+                    // if an item is registered globally, save the name of the registered component
+                    this.$vApp.$store.set(`appbar/tempButtonDict@${key}.componentId`, v);
+                }
+            });
+        })
     }
 }
