@@ -232,19 +232,35 @@ export class MapAPI extends CommonMapAPI {
     /**
      * Reorders a layer on the map
      *
-     * @param {LayerInstance} layer the Ramp layer to be moved
-     * @param {number} index the index for placing the layer
+     * @param {LayerInstance} layer the RAMP layer to be moved
+     * @param {number} index the RAMP layer index for placing the layer
      */
     reorder(layer: LayerInstance, index: number): void {
         if (!this.esriMap) {
             this.noMapErr();
             return;
         }
-        // await layer.isReadyForMap();
+
         if (layer.esriLayer) {
-            this.esriMap.reorder(layer.esriLayer, index);
+            const layers = this.$vApp.$store.get<LayerInstance[]>(
+                LayerStore.layers
+            )!;
+
+            // we need to account for map layers that are not in the store (e.g. pole marker layer)
+            const esriLayerIndex =
+                index +
+                this.esriMap.layers
+                    .slice(0, index + 1)
+                    .filter(
+                        esriLayer => !layers.find(l => l.id === esriLayer.id)
+                    ).length;
+
+            // set map order
+            this.esriMap.reorder(layer.esriLayer, esriLayerIndex);
+
+            // sync layer store order with map order
+            this.$vApp.$store.set(LayerStore.reorderLayer, { layer, index });
         } else {
-            // TODO maybe we should call layer.initiate() and block? Could be a nice shortcut. But also might have unintended effects.
             console.error(
                 'Attempted reorder without an esri layer. Likely layer.initiate() was not called or had not finished.'
             );

@@ -62,6 +62,12 @@ const actions = {
             context.commit('ADD_LAYER_CONFIG', lc);
         });
     },
+    reorderLayer: (
+        context: LayerContext,
+        { layer, index }: { layer: LayerInstance; index: number }
+    ) => {
+        context.commit('REORDER_LAYER', { layer, index });
+    },
     addLayers: (context: LayerContext, layers: LayerInstance[]) => {
         // TODO we are getting frequent errors at startup; something passes in an
         //      undefined layerConfigs. kicking out for now to make demos work.
@@ -117,6 +123,16 @@ const mutations = {
     ADD_LAYER: (state: LayerState, value: LayerInstance) => {
         // copy to new array so watchers will have a reference to the old value
         state.layers = [...state.layers, value];
+    },
+    REORDER_LAYER: (
+        state: LayerState,
+        {
+            layer,
+            index = state.layers.length
+        }: { layer: LayerInstance; index: number }
+    ) => {
+        state.layers.splice(state.layers.indexOf(layer), 1);
+        state.layers.splice(index, 0, layer);
     }
 };
 
@@ -133,6 +149,10 @@ export enum LayerStore {
      * (State) layers: LayerInstance[]
      */
     layers = 'layer/layers',
+    /**
+     * (Action) reorderLayer: ({ layer: LayerInstance, index: number })
+     */
+    reorderLayer = 'layer/reorderLayer!',
     /**
      * (Action) addLayers: (layers: LayerInstance[])
      */
