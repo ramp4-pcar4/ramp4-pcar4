@@ -23,6 +23,7 @@ export enum GlobalEvents {
     LAYER_OPACITYCHANGE = 'layer/opacitychange',
     LAYER_STATECHANGE = 'layer/statechange',
     LAYER_VISIBILITYCHANGE = 'layer/visibilitychange',
+    LAYER_REMOVE = 'layer/remove', // Payload: `(layer: LayerInstance)`
 
     /**
      * Fires when the config file changes

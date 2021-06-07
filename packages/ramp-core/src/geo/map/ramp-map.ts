@@ -233,6 +233,69 @@ export class MapAPI extends CommonMapAPI {
     }
 
     /**
+     * Removes a layer from the map and fires the LAYER_REMOVE event
+     *
+     * @param {LayerInstance | string} layer the Ramp layer or layer id/uid to remove
+     * @returns {Promise<void>} a promise that resolves when the layer has been removed from the map
+     */
+    removeLayer(layer: LayerInstance | string): void {
+        if (!this.esriMap) {
+            this.noMapErr();
+            return;
+        }
+
+        let layerInstance: LayerInstance | undefined = undefined;
+
+        if (layer instanceof LayerInstance) {
+            layerInstance = layer;
+        } else {
+            // Layer is a string id
+            layerInstance = this.$iApi.$vApp.$store.get(
+                LayerStore.getLayerById,
+                layer
+            );
+            if (!layerInstance) {
+                // Check if layer is a string uid
+                layerInstance = this.$iApi.$vApp.$store.get(
+                    LayerStore.getLayerByUid,
+                    layer
+                );
+            }
+        }
+
+        // Error checking
+        if (!layerInstance) {
+            console.error('Layer could not be found for removal.');
+            return;
+        }
+        if (!layerInstance.esriLayer) {
+            console.error(
+                'Attempted to remove layer from the map without an esri layer. Likely layer.initiate() was not called or had not finished.'
+            );
+            return;
+        }
+
+        // Now we start the layer removal process
+        // Clean up layer
+        layerInstance.terminate();
+
+        // Clean up the layer store
+        this.$iApi.$vApp.$store.set(LayerStore.removeLayer, layerInstance);
+
+        // Clean up the layer config store
+        this.$iApi.$vApp.$store.set(
+            LayerStore.removeLayerConfig,
+            layerInstance.id
+        );
+
+        // Remove the layer from the map
+        this.esriMap.remove(layerInstance.esriLayer);
+
+        // Fire the layer removal event
+        this.$iApi.event.emit(GlobalEvents.LAYER_REMOVE, layerInstance);
+    }
+
+    /**
      * Adds a highlight layer to the map
      *
      * @param {HighlightLayer} highlightLayer the highlight
