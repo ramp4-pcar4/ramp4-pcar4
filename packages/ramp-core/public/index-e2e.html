@@ -5,7 +5,7 @@
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-        <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
+        <link rel="icon" href="<%= BASE_URL %>favicon.svg" />
         <title>Test Page</title>
 
         <!-- Vue is loaded in dev builds as well because of an issue with Cypress and external fixtures -->
@@ -21,21 +21,21 @@
         <script>
             // get RAMP "starter" script from url param
             const params = new URLSearchParams(document.location.search);
-            let script = document.createElement("script");
-            let starterParam = params.get("script");
+            let script = document.createElement('script');
+            let starterParam = params.get('script');
             if (starterParam) {
                 // html-webpack-plugin doesn't like template strings
-                script.src = "./starter-scripts/" + starterParam + ".js";
+                script.src = './starter-scripts/' + starterParam + '.js';
             } else {
-                script.src = "./ramp-starter.js";
+                script.src = './ramp-starter.js';
             }
             document.body.appendChild(script);
             // log an error msg if script doesn't exist / is broken
             window.onerror = (msg, src) => {
                 if (src === script.src) {
-                    console.log("invalid script")
+                    console.log('invalid script');
                 }
-            }
+            };
         </script>
     </body>
 </html>
