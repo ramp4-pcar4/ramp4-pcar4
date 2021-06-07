@@ -22,12 +22,26 @@ An item can be supplied as simply a component name or as an object indicating th
 
 The `-appbar-button` suffix is optional and can be omitted. If a `gazebo` id is provided, the Appbar will automatically check if a `gazebo-appbar-button` component exist and use that one instead. This is a convenience feature to make config less verbose:
 
-````json
+```json
 {
     "items": [
         "gazebo"
     ]
 }
+```
+
+There is also the ability to configure temporary appbar buttons, these buttons are shown when a panel is opened and disappear when the related panel is closed. The config is used as follows:
+
+```json
+{
+    "temporaryButtons": [
+        "legend",
+        ["details-panel", { "id": "details"}]
+    ]
+}
+```
+
+The first item in the array above (`legend`) will link `legend-panel` to `legend-appbar-button`. The second item links `details-panel` (panel-id) to the appbar-item described like it would in `items` in this case `details` or `details-appbar-button`.
 
 Using what we've learned, the whole config for an appbar could be:
 
