@@ -1,5 +1,5 @@
 key,enValue,enValid,frValue,frValid
-metadata.title,Metadata,1,Métadonnées ,1
+metadata.title,Metadata,1,Métadonnées ,0
 metadata.xslt.Abstract,Abstract,1,Résumé,1
 metadata.xslt.Scope,Scope,1,Portée,1
 metadata.xslt.hereBeScope,here be scope,1,la portée jusqu'ici,1

@@ -6,6 +6,7 @@ import { GlobalEvents, PanelInstance } from '@/api';
 // "It's a trap!" -- Admiral Appbar
 
 class AppbarFixture extends AppbarAPI {
+    eventHandlers: string[] = [];
     async added() {
         console.log(`[fixture] ${this.id} added`);
 
@@ -30,30 +31,46 @@ class AppbarFixture extends AppbarAPI {
         );
 
         // Add and remove temp appbar buttons when panels are opened and close
-        this.$iApi.event.on(
-            GlobalEvents.PANEL_OPENED,
-            (panel: PanelInstance) => {
-                this.$vApp.$store.dispatch('appbar/addTempButton', panel.id);
-            }
+        this.eventHandlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.PANEL_OPENED,
+                (panel: PanelInstance) => {
+                    this.$vApp.$store.dispatch(
+                        'appbar/addTempButton',
+                        panel.id
+                    );
+                }
+            )
         );
 
-        this.$iApi.event.on(
-            GlobalEvents.PANEL_CLOSED,
-            (panel: PanelInstance) => {
-                this.$vApp.$store.dispatch('appbar/removeTempButton', panel.id);
-            }
+        this.eventHandlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.PANEL_CLOSED,
+                (panel: PanelInstance) => {
+                    this.$vApp.$store.dispatch(
+                        'appbar/removeTempButton',
+                        panel.id
+                    );
+                }
+            )
         );
 
         // since components used in appbar can be registered after this point, listen to the global component registration event and re-validate items
         // TODO revisit. this seems to be self-contained to the appbar fixture, so ideally can stay as is and not worry about events api.
-        this.$iApi.event.on(
-            GlobalEvents.COMPONENT,
-            this._validateItems.bind(this)
+        this.eventHandlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.COMPONENT,
+                this._validateItems.bind(this)
+            )
         );
     }
 
     removed() {
         this.$vApp.$store.unregisterModule('appbar');
+
+        this.eventHandlers.forEach(eventHandler =>
+            this.$iApi.event.off(eventHandler)
+        );
     }
 }
 

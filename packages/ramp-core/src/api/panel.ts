@@ -223,7 +223,7 @@ export class PanelAPI extends APIScope {
      * Toggle panel.
      *
      * @param {string | PanelInstance | PanelInstancePath} [value]
-     * @param {boolean} toggle
+     * @param {boolean} toggle Optional param. True forces a panel open, false forces the panel to close.
      * @returns {PanelInstance}
      * @memberof PanelAPI
      */
@@ -253,7 +253,7 @@ export class PanelAPI extends APIScope {
      * Toggle panel's minimized state
      *
      * @param {string | PanelInstance | PanelInstancePath} [value]
-     * @param {boolean} toggle
+     * @param {boolean} toggle Optional param. True forces a panel open, false forces the panel to minimize.
      * @returns {PanelInstance}
      * @memberof PanelAPI
      */
