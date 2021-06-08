@@ -7,6 +7,7 @@
                 v-model="quicksearch"
                 class="rv-global-search rv-input"
                 aria-invalid="false"
+                :aria-label="$t('grid.filters.label.global')"
                 :placeholder="$t('grid.filters.label.global')"
             />
             <svg
@@ -115,7 +116,7 @@ export default class Screen1 extends Vue {
 .ag-floating-filter-full-body input,
 .ag-floating-filter-full-body select,
 .rv-global-search {
-    @apply bg-transparent text-black-75 h-24 pb-8 border-0 border-b-2;
+    @apply bg-transparent text-black-75 h-24 pb-8 border-0 border-b-2 min-w-0;
 }
 .rv-input {
     @apply m-0 py-1;
