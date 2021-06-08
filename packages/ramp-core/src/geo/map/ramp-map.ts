@@ -246,25 +246,33 @@ export class MapAPI extends CommonMapAPI {
                 LayerStore.layers
             )!;
 
-            // we need to account for map layers that are not in the store (e.g. pole marker layer)
-            const esriLayerIndex =
-                index +
+            // number of layers in store but not on map, probably errored (up to target index)
+            const notLoaded: number = layers
+                .slice(0, index + 1)
+                .filter(
+                    layer => !this.esriMap!.layers.find(l => l.id === layer.id)
+                ).length;
+
+            // calculate corresponding map layer index
+            const esriLayerIndex: number = this.esriMap.layers.indexOf(
                 this.esriMap.layers
-                    .slice(0, index + 1)
                     .filter(
-                        esriLayer => !layers.find(l => l.id === esriLayer.id)
-                    ).length;
+                        esrilayer => !!layers.find(l => l.id === esrilayer.id) // ignore layers not in store (e.g. pole marker)
+                    )
+                    .slice(0, index + 1 - notLoaded) // adjust for layers not on map
+                    .pop()
+            );
 
             // set map order
             this.esriMap.reorder(layer.esriLayer, esriLayerIndex);
-
-            // sync layer store order with map order
-            this.$vApp.$store.set(LayerStore.reorderLayer, { layer, index });
         } else {
             console.error(
                 'Attempted reorder without an esri layer. Likely layer.initiate() was not called or had not finished.'
             );
         }
+
+        // sync layer store order with map order
+        this.$vApp.$store.set(LayerStore.reorderLayer, { layer, index });
     }
 
     /**

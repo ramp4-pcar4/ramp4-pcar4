@@ -7,10 +7,11 @@ import { Vue, Watch, Component } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 import { RampLayerConfig, RampMapConfig } from '@/geo/api';
 import { GlobalEvents, LayerInstance, MapAPI } from '@/api/internal';
-// import { window } from '@/main';
 
 import { ConfigStore } from '@/store/modules/config';
 import { LayerStore, layer } from '@/store/modules/layer';
+
+import to from 'await-to-js';
 
 @Component
 export default class EsriMap extends Vue {
@@ -46,7 +47,7 @@ export default class EsriMap extends Vue {
             newValue
                 .filter(lc => !oldValue.includes(lc))
                 .map(layerConfig => {
-                    return new Promise<LayerInstance>(async resolve => {
+                    return new Promise<LayerInstance | null>(async resolve => {
                         let defLoadProm: Promise<string>;
 
                         // check if we need to load the layer class
@@ -70,14 +71,25 @@ export default class EsriMap extends Vue {
                         // wait for definition to load, or ride the resolve if already loaded
                         await defLoadProm;
                         // create the layer instantiation
-                        const layer = await this.$iApi.geo.layer.createLayer(
-                            layerConfig
+                        const [createErr, layer] = await to(
+                            this.$iApi.geo.layer.createLayer(layerConfig)
                         );
+
+                        if (createErr) {
+                            console.error(createErr);
+                            resolve(null);
+                            return;
+                        }
+
                         // TODO call the new layer load method.
                         //      might need to wait on that (think file layers that are making asynch calls prior to creating esri layer)
                         //      see if layers are going to expose an "esri layer exists" promise, leverage that if they do
-                        await layer.initiate();
-                        this.map.addLayer(layer);
+                        const [initiateErr] = await to(layer!.initiate());
+                        if (initiateErr) {
+                            console.error(initiateErr);
+                        } else {
+                            this.map.addLayer(layer!);
+                        }
 
                         // add layers to layer store
                         // TODO need to revisit https://github.com/ramp4-pcar4/ramp4-pcar4/discussions/328
@@ -86,16 +98,18 @@ export default class EsriMap extends Vue {
                             layer
                         ]);
 
-                        resolve(layer);
+                        resolve(layer!);
                     });
                 })
         );
 
         // need to wait for all layers before reordering since esri reorder does
         // not allow reordering/inserting into arbitrary indices (i.e. no holes)
-        layers.forEach((layer: LayerInstance, index: number) => {
-            this.$iApi.geo.map.reorder(layer, oldValue.length + index);
-        });
+        layers
+            .filter(Boolean)
+            .forEach((layer: LayerInstance | null, index: number) => {
+                this.$iApi.geo.map.reorder(layer!, oldValue.length + index);
+            });
     }
 
     @Watch('mapConfig')
