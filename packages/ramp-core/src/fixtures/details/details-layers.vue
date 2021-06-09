@@ -22,7 +22,7 @@
                 @click="openResult(idx)"
             >
                 <div class="truncate">
-                    {{ layerInfo(idx) }}
+                    {{ layerInfo(idx) || $t('details.layers.loading') }}
                 </div>
                 <div class="flex-auto"></div>
                 <div class="px-5">{{ item.items.length }}</div>
@@ -87,7 +87,7 @@ export default class DetailsLayersV extends Vue {
 
         if (!item) return;
 
-        return item.getName() ? item.getName() : item.id;
+        return item.getName(layerInfo.uid);
     }
 
     /**

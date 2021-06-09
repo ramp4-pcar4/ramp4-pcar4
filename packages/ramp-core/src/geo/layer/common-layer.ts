@@ -216,7 +216,6 @@ export class CommonLayer extends LayerInstance {
                 // additional asynch work to fully set things up, so we delay firing the event until
                 // that is done.
                 this.onLoad();
-                this.sawLoad = true; // TODO investigate if we need to push this to the same location that the event is fired
             } else {
                 this.updateState(statemap[newval]);
             }
@@ -290,6 +289,7 @@ export class CommonLayer extends LayerInstance {
         const loadPromises: Array<Promise<void>> = this.onLoadActions();
         Promise.all(loadPromises).then(() => {
             this.updateState(LayerState.LOADED);
+            this.sawLoad = true;
             this.loadPromise.resolveMe();
         });
     }
@@ -507,7 +507,13 @@ export class CommonLayer extends LayerInstance {
      * @returns {String} name of the layer/sublayer
      */
     getName(layerIdx: number | string | undefined = undefined): string {
-        return this.getFC(layerIdx)?.name || '';
+        if (!this.sawLoad) {
+            // layer has not been loaded yet
+            // if the config has a name defined, this.name will be set
+            // empty string will indicate the layer has not loaded and has no name defined
+            return this.name || '';
+        }
+        return this.getFC(layerIdx)?.name || this.id;
     }
 
     /**
