@@ -233,6 +233,52 @@ export class MapAPI extends CommonMapAPI {
     }
 
     /**
+     * Reorders a layer on the map
+     *
+     * @param {LayerInstance} layer the RAMP layer to be moved
+     * @param {number} index the RAMP layer index for placing the layer
+     */
+    reorder(layer: LayerInstance, index: number): void {
+        if (!this.esriMap) {
+            this.noMapErr();
+            return;
+        }
+
+        if (layer.esriLayer) {
+            const layers = this.$vApp.$store.get<LayerInstance[]>(
+                LayerStore.layers
+            )!;
+
+            // number of layers in store but not on map, probably errored (up to target index)
+            const notLoaded: number = layers
+                .slice(0, index + 1)
+                .filter(
+                    layer => !this.esriMap!.layers.find(l => l.id === layer.id)
+                ).length;
+
+            // calculate corresponding map layer index
+            const esriLayerIndex: number = this.esriMap.layers.indexOf(
+                this.esriMap.layers
+                    .filter(
+                        esrilayer => !!layers.find(l => l.id === esrilayer.id) // ignore layers not in store (e.g. pole marker)
+                    )
+                    .slice(0, index + 1 - notLoaded) // adjust for layers not on map
+                    .pop()
+            );
+
+            // set map order
+            this.esriMap.reorder(layer.esriLayer, esriLayerIndex);
+        } else {
+            console.error(
+                'Attempted reorder without an esri layer. Likely layer.initiate() was not called or had not finished.'
+            );
+        }
+
+        // sync layer store order with map order
+        this.$vApp.$store.set(LayerStore.reorderLayer, { layer, index });
+    }
+
+    /**
      * Adds a highlight layer to the map
      *
      * @param {HighlightLayer} highlightLayer the highlight

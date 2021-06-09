@@ -7,10 +7,11 @@ import { Vue, Watch, Component } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 import { RampLayerConfig, RampMapConfig } from '@/geo/api';
 import { GlobalEvents, LayerInstance, MapAPI } from '@/api/internal';
-// import { window } from '@/main';
 
 import { ConfigStore } from '@/store/modules/config';
 import { LayerStore, layer } from '@/store/modules/layer';
+
+import to from 'await-to-js';
 
 @Component
 export default class EsriMap extends Vue {
@@ -28,7 +29,7 @@ export default class EsriMap extends Vue {
     }
 
     @Watch('layerConfigs')
-    onLayerConfigArrayChange(
+    async onLayerConfigArrayChange(
         newValue: RampLayerConfig[],
         oldValue: RampLayerConfig[]
     ) {
@@ -42,50 +43,72 @@ export default class EsriMap extends Vue {
             return;
         }
 
-        newValue
-            .filter(lc => !oldValue.includes(lc))
-            .forEach(layerConfig => {
-                let defLoadProm: Promise<string>;
+        const layers = await Promise.all(
+            newValue
+                .filter(lc => !oldValue.includes(lc))
+                .map(layerConfig => {
+                    return new Promise<LayerInstance | null>(async resolve => {
+                        let defLoadProm: Promise<string>;
 
-                // check if we need to load the layer class
-                if (
-                    this.$iApi.geo.layer.layerDefExists(layerConfig.layerType)
-                ) {
-                    defLoadProm = Promise.resolve(layerConfig.layerType);
-                } else {
-                    // if the definition is a custom number, the site host would have had to add the
-                    // definition already. this block should only run for layer types that are bundled
-                    // in the ramp core codebase.
-                    defLoadProm = this.$iApi.geo.layer.addLayerDef(
-                        layerConfig.layerType
-                    );
-                }
+                        // check if we need to load the layer class
+                        if (
+                            this.$iApi.geo.layer.layerDefExists(
+                                layerConfig.layerType
+                            )
+                        ) {
+                            defLoadProm = Promise.resolve(
+                                layerConfig.layerType
+                            );
+                        } else {
+                            // if the definition is a custom number, the site host would have had to add the
+                            // definition already. this block should only run for layer types that are bundled
+                            // in the ramp core codebase.
+                            defLoadProm = this.$iApi.geo.layer.addLayerDef(
+                                layerConfig.layerType
+                            );
+                        }
 
-                // wait for definition to load, or ride the resolve if already loaded
-                defLoadProm.then(() => {
-                    // create the layer instantiation
-                    this.$iApi.geo.layer
-                        .createLayer(layerConfig)
-                        .then(layer => {
-                            // TODO call the new layer load method.
-                            //      might need to wait on that (think file layers that are making asynch calls prior to creating esri layer)
-                            //      see if layers are going to expose an "esri layer exists" promise, leverage that if they do
-                            layer.initiate().then(() => {
-                                // TODO do we need to care about map layer order?
-                                this.map.addLayer(layer);
-                            });
+                        // wait for definition to load, or ride the resolve if already loaded
+                        await defLoadProm;
+                        // create the layer instantiation
+                        const [createErr, layer] = await to(
+                            this.$iApi.geo.layer.createLayer(layerConfig)
+                        );
 
-                            // add layer to layer store
-                            // TODO need to revisit https://github.com/ramp4-pcar4/ramp4-pcar4/discussions/328
-                            //      as we may be causing lots of problems putting these objects in vuex store.
-                            this.$iApi.$vApp.$store.set(LayerStore.addLayers, [
-                                layer
-                            ]);
-                        });
-                });
+                        if (createErr) {
+                            console.error(createErr);
+                            resolve(null);
+                            return;
+                        }
 
-                // a bit dangerous but ideally https://github.com/ramp4-pcar4/ramp4-pcar4/issues/126 and https://github.com/ramp4-pcar4/ramp4-pcar4/issues/173
-                // will make this more seamless and not need to worry about having multiple listeners.
+                        // TODO call the new layer load method.
+                        //      might need to wait on that (think file layers that are making asynch calls prior to creating esri layer)
+                        //      see if layers are going to expose an "esri layer exists" promise, leverage that if they do
+                        const [initiateErr] = await to(layer!.initiate());
+                        if (initiateErr) {
+                            console.error(initiateErr);
+                        } else {
+                            this.map.addLayer(layer!);
+                        }
+
+                        // add layers to layer store
+                        // TODO need to revisit https://github.com/ramp4-pcar4/ramp4-pcar4/discussions/328
+                        //      as we may be causing lots of problems putting these objects in vuex store.
+                        this.$iApi.$vApp.$store.set(LayerStore.addLayers, [
+                            layer
+                        ]);
+
+                        resolve(layer!);
+                    });
+                })
+        );
+
+        // need to wait for all layers before reordering since esri reorder does
+        // not allow reordering/inserting into arbitrary indices (i.e. no holes)
+        layers
+            .filter(Boolean)
+            .forEach((layer: LayerInstance | null, index: number) => {
+                this.$iApi.geo.map.reorder(layer!, oldValue.length + index);
             });
     }
 
