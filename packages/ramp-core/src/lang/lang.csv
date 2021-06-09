@@ -14,3 +14,4 @@ panels.controls.pin,Pin,1,Épingler,0
 panels.controls.unpin,Unpin,1,Détacher,0
 panels.controls.back,Back,1,Retourner,0
 panels.controls.optionsMenu,More,1,Plus,0
+panels.controls.minimize,Minimize,1,Réduire au minimum,0

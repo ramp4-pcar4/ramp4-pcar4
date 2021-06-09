@@ -5,6 +5,7 @@
         </template>
 
         <template #controls>
+            <minimize @click="panel.minimize()" />
             <close @click="panel.close()" />
         </template>
 

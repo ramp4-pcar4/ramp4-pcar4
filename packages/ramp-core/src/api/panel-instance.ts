@@ -188,7 +188,7 @@ export class PanelInstance extends APIScope {
 
     /**
      * Opens a registered panel in the panel stack.
-     * This is a proxy to `RAMP.panel.open(...)`.
+     * This is a proxy to `InstanceAPI.panel.open(...)`.
      *
      *  - `somePanel.open()` -- opens the panel on the first screen in the set
      *  - `somePanel.open('screen-id')` -- opens the panel on the 'screen-id' screen
@@ -225,8 +225,19 @@ export class PanelInstance extends APIScope {
     }
 
     /**
+     * true iff the panel is currently visible
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof PanelInstance
+     */
+    get isVisible(): boolean {
+        return this.$iApi.panel.visible.indexOf(this) !== -1;
+    }
+
+    /**
      * Close this panel.
-     * This is a proxy to `RAMP.panel.close(...)`.
+     * This is a proxy to `InstanceAPI.panel.close(...)`.
      *
      * @returns {this}
      * @memberof PanelInstance
@@ -238,8 +249,21 @@ export class PanelInstance extends APIScope {
     }
 
     /**
+     * Minimize this panel.
+     * This is a proxy to `InstanceAPI.panel.minimize(...)`.
+     *
+     * @returns {this}
+     * @memberof PanelInstance
+     */
+    minimize(): this {
+        this.$iApi.panel.minimize(this);
+
+        return this;
+    }
+
+    /**
      * Toggle panel.
-     * This is a proxy to `RAMP.panel.toggle(...)`.
+     * This is a proxy to `InstanceAPI.panel.toggle(...)`.
      *
      * @param {(boolean | { screen: string; props?: object; toggle?: boolean })} [value]
      * @returns {this}
@@ -270,8 +294,35 @@ export class PanelInstance extends APIScope {
     }
 
     /**
+     * Toggle panel's minimize state.
+     * This is a proxy to `InstanceAPI.panel.toggleMinimize(...)`.
+     *
+     * @param {(boolean | { screen: string; props?: object; toggle?: boolean })} [value]
+     * @returns {this}
+     * @memberof PanelInstance
+     */
+    toggleMinimize(
+        value?: boolean | { screen: string; props?: object; toggle?: boolean }
+    ): this {
+        if (typeof value === 'undefined' || typeof value === 'boolean') {
+            // value is a toggle so we pass it through
+            this.$iApi.panel.toggleMinimize(this, value);
+        } else {
+            // value is not a toggle, split into what panel.toggleMinimize is expecting
+            this.$iApi.panel.toggleMinimize(
+                { id: this.id, screen: value.screen, props: value.props },
+                typeof value.toggle !== 'undefined'
+                    ? value.toggle
+                    : !this.isOpen
+            );
+        }
+
+        return this;
+    }
+
+    /**
      * Pin/unpin/toggle (if no value provided) pin status of this panel. When pinning, automatically unpins any previous pinned panel if exists.
-     * This is a proxy to `RAMP.panel.pin(...)`.
+     * This is a proxy to `InstanceAPI.panel.pin(...)`.
      *
      *
      * @param {boolean} [value]
@@ -304,7 +355,7 @@ export class PanelInstance extends APIScope {
 
     /**
      * Sets route to the specified screen id and pass props to the panel screen components.
-     * This is a proxy to `RAMP.panel.route(...)`.
+     * This is a proxy to `InstanceAPI.panel.route(...)`.
      *
      * @param {(string | PanelConfigRoute)} value
      * @returns {this}
@@ -312,6 +363,7 @@ export class PanelInstance extends APIScope {
      */
     show(value: string | PanelConfigRoute): this {
         const route = typeof value === 'string' ? { screen: value } : value;
+        this.route = route;
 
         this.$iApi.panel.show(this, route);
 
@@ -320,7 +372,7 @@ export class PanelInstance extends APIScope {
 
     /**
      * Sets the styles of the specified panel by using a provided CSS styles object.
-     * This is a proxy to `RAMP.panel.setStyles(...)`.
+     * This is a proxy to `InstanceAPI.panel.setStyles(...)`.
      *
      * @param {object} style
      * @param {boolean} [replace=false]

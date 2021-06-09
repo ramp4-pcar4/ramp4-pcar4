@@ -1,4 +1,4 @@
-import { APIScope, PanelInstance } from './internal';
+import { APIScope, GlobalEvents, PanelInstance } from './internal';
 import {
     PanelConfig,
     PanelConfigRoute,
@@ -131,14 +131,27 @@ export class PanelAPI extends APIScope {
             ({ screen, props } = value);
         }
 
-        // if the screen route is not defined, the default is the first screen component
+        // if panel is hidden off screen minimize it first so it is able to reopen
+        if (panel.isOpen && !panel.isVisible) {
+            panel.minimize();
+        }
+
+        // Panel opening requires a screen, check if last opened or default makes more sense
         if (!screen) {
-            screen = Object.keys(panel.screens).pop()!;
+            if (panel.route && !props) {
+                // Use the last route if there is one and there are no props given
+                // props imply an opening of the panel with new info
+                ({ screen, props } = panel.route);
+            } else {
+                // Either first time opening panel or there are props, use default
+                screen = Object.keys(panel.screens).pop()!;
+            }
         }
 
         this.show(panel, { screen, props });
 
         this.$vApp.$store.set(`panel/${PanelAction.openPanel}!`, { panel });
+        this.$iApi.event.emit(GlobalEvents.PANEL_OPENED, panel);
 
         return panel;
     }
@@ -152,6 +165,18 @@ export class PanelAPI extends APIScope {
      */
     get opened(): PanelInstance[] {
         return this.$vApp.$store.get<PanelInstance[]>('panel/orderedItems')!;
+    }
+
+    /**
+     * Returns an array of visible `PanelInstance` object.
+     * This is not every *open* panel, only the ones currently visible to the user.
+     *
+     * @readonly
+     * @type {PanelInstance[]}
+     * @memberof PanelAPI
+     */
+    get visible(): PanelInstance[] {
+        return this.$vApp.$store.get<PanelInstance[]>('panel/visible')!;
     }
 
     /**
@@ -170,6 +195,26 @@ export class PanelAPI extends APIScope {
         }
 
         this.$vApp.$store.set(`panel/${PanelAction.closePanel}!`, { panel });
+        this.$iApi.event.emit(GlobalEvents.PANEL_CLOSED, panel);
+
+        return panel;
+    }
+
+    /**
+     * Minimizes the panel specified, mechanically the same as closing however it does not emit the close event so that temporary appbar buttons stay.
+     *
+     * @param {(string | PanelInstance)} value
+     * @returns {PanelInstance}
+     * @memberof PanelAPI
+     */
+    minimize(value: string | PanelInstance): PanelInstance {
+        const panel = this.get(value);
+
+        if (panel.isPinned) {
+            panel.pin(false);
+        }
+
+        this.$vApp.$store.set(`panel/${PanelAction.closePanel}!`, { panel });
 
         return panel;
     }
@@ -178,7 +223,7 @@ export class PanelAPI extends APIScope {
      * Toggle panel.
      *
      * @param {string | PanelInstance | PanelInstancePath} [value]
-     * @param {boolean} toggle
+     * @param {boolean} toggle Optional param. True forces a panel open, false forces the panel to close.
      * @returns {PanelInstance}
      * @memberof PanelAPI
      */
@@ -196,9 +241,39 @@ export class PanelAPI extends APIScope {
         }
 
         // use specified toggle value if provided + check if toggle value is possible
-        toggle = typeof toggle !== 'undefined' ? toggle : !panel.isOpen;
-        if (toggle !== panel.isOpen) {
+        toggle = typeof toggle !== 'undefined' ? toggle : !panel.isVisible;
+        if (toggle !== panel.isVisible) {
             toggle ? this.open(value) : this.close(panel);
+        }
+
+        return panel;
+    }
+
+    /**
+     * Toggle panel's minimized state
+     *
+     * @param {string | PanelInstance | PanelInstancePath} [value]
+     * @param {boolean} toggle Optional param. True forces a panel open, false forces the panel to minimize.
+     * @returns {PanelInstance}
+     * @memberof PanelAPI
+     */
+    toggleMinimize(
+        value: string | PanelInstance | PanelInstancePath,
+        toggle?: boolean
+    ): PanelInstance {
+        let panel: PanelInstance;
+
+        // figure out what is passed to the function, retrieve the panel object and make call to open or close function
+        if (typeof value === 'string' || value instanceof PanelInstance) {
+            panel = this.get(value);
+        } else {
+            panel = this.get(value.id);
+        }
+
+        // use specified toggle value if provided + check if toggle value is possible
+        toggle = typeof toggle !== 'undefined' ? toggle : !panel.isVisible;
+        if (toggle !== panel.isVisible) {
+            toggle ? this.open(panel) : this.minimize(panel);
         }
 
         return panel;

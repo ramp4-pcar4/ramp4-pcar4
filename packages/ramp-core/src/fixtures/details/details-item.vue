@@ -4,6 +4,7 @@
             {{ $t('details.title') }}
         </template>
         <template #controls>
+            <minimize @click="panel.minimize()" />
             <back
                 @click="
                     panel.show({
@@ -17,7 +18,7 @@
                 @click="panel.show({ screen: 'details-screen-layers' })"
                 v-if="layerType === 'ogcWms'"
             ></back>
-            <close @click="panel.close()"></close>
+            <close @click="panel.close()" />
         </template>
         <template #content>
             <div class="flex py-8" v-if="layerType !== 'ogcWms'">

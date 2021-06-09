@@ -44,8 +44,9 @@
                     $t('grid.filters.clear')
                 }}</a>
             </panel-options-menu>
-            <pin @click="panel.pin()" :active="panel.isPinned"></pin>
-            <close @click="panel.close()"></close>
+            <pin @click="panel.pin()" :active="panel.isPinned" />
+            <minimize @click="panel.minimize()" />
+            <close @click="panel.close()" />
         </template>
         <template #content>
             <TableComponent

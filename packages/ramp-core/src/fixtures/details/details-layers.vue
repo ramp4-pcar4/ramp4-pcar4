@@ -4,6 +4,7 @@
             {{ $t('details.title') }}
         </template>
         <template #controls>
+            <minimize @click="panel.minimize()"></minimize>
             <close @click="panel.close()"></close>
         </template>
         <template #content>
