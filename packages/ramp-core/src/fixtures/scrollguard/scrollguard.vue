@@ -10,14 +10,11 @@ import { Vue, Component } from 'vue-property-decorator';
 @Component
 export default class MapScrollguard extends Vue {
     mounted(): void {
-        // set a mouse-wheel listener to on the map node
-        (this.$iApi.$vApp.$el! as HTMLElement).addEventListener(
-            'wheel',
-            this.wheelHandler,
-            {
-                capture: true
-            }
-        );
+        (this.$iApi.$vApp.$el.querySelector(
+            '.inner-shell + .esri-view'
+        )! as HTMLElement).addEventListener('wheel', this.wheelHandler, {
+            capture: true
+        });
     }
 
     wheelHandler(event: WheelEvent): void {
