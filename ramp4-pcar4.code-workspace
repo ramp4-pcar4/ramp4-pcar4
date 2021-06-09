@@ -1,0 +1,33 @@
+{
+    "folders": [
+        {
+            "path": ".",
+            "name": "root"
+        },
+        {
+            "path": "packages/ramp-core"
+        },
+        {
+            "path": "packages/ramp-geoapi"
+        },
+        {
+            "path": "packages/ramp-locale-loader"
+        },
+        {
+            "path": "packages/ramp-sample-fixtures"
+        }
+    ],
+    "settings": {
+        "editor.formatOnSave": true
+    },
+    "extensions": {
+        "recommendations": [
+            "octref.vetur",
+            "bradlc.vscode-tailwindcss",
+            "esbenp.prettier-vscode",
+            "dariofuzinato.vue-peek",
+            "austenc.tailwind-docs",
+            "gruntfuggly.todo-tree"
+        ]
+    }
+}
