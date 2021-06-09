@@ -112,6 +112,12 @@ const actions = {
             });
         });
         */
+    },
+    removeLayer: (context: LayerContext, layer: LayerInstance) => {
+        context.commit('REMOVE_LAYER', layer);
+    },
+    removeLayerConfig: (context: LayerContext, layerId: string) => {
+        context.commit('REMOVE_LAYER_CONFIG', layerId);
     }
 };
 
@@ -133,6 +139,20 @@ const mutations = {
     ) => {
         state.layers.splice(state.layers.indexOf(layer), 1);
         state.layers.splice(index, 0, layer);
+    },
+    REMOVE_LAYER: (state: LayerState, value: LayerInstance) => {
+        // copy to new array so watchers will have a reference to the old value
+        const filteredLayers = state.layers.filter(layer => {
+            return layer.id !== value.id || layer.uid !== value.uid;
+        });
+        state.layers = filteredLayers;
+    },
+    REMOVE_LAYER_CONFIG: (state: LayerState, layerId: string) => {
+        // copy to new array so watchers will have a reference to the old value
+        const filteredLayerConfigs = state.layerConfigs.filter(layerConfig => {
+            return layerConfig.id !== layerId;
+        });
+        state.layerConfigs = filteredLayerConfigs;
     }
 };
 
@@ -158,13 +178,21 @@ export enum LayerStore {
      */
     addLayers = 'layer/addLayers!',
     /**
+     * (Action) removeLayer: (layer: LayerInstance)
+     */
+    removeLayer = 'layer/removeLayer!',
+    /**
      * (State) layerConfigs: RampLayerConfig[]
      */
     layerConfigs = 'layer/layerConfigs',
     /**
      * (Action) addLayerConfigs: (layerConfigs: RampLayerConfig[])
      */
-    addLayerConfigs = 'layer/addLayerConfigs!'
+    addLayerConfigs = 'layer/addLayerConfigs!',
+    /**
+     * (Action) removeLayerConfig: (layerId: string)
+     */
+    removeLayerConfig = 'layer/removeLayerConfig!'
 }
 
 export function layer() {
