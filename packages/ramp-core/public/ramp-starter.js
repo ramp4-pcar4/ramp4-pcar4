@@ -161,12 +161,14 @@ rInstance = new RAMP.Instance(document.getElementById('app'), {
                                         {
                                             layerId: 'WaterQuantity',
                                             name:
-                                                'Water Quantity in Nested Group'
+                                                'Water Quantity in Nested Group',
+                                            entryIndex: 1
                                         },
                                         {
                                             layerId: 'WaterQuality',
                                             name:
-                                                'Water Quality in Nested Group'
+                                                'Water Quality in Nested Group',
+                                            entryIndex: 5
                                         }
                                     ]
                                 }
