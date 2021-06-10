@@ -9,7 +9,10 @@
                 <span class="text-lg flex-grow">{{ helpSection.header }}</span>
 
                 <!-- dropdown icon -->
-                <div id="icon" :class="{ 'transform -rotate-180': expanded }">
+                <div
+                    class="icon"
+                    :class="{ 'transform -rotate-180': expanded }"
+                >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         height="24"
@@ -55,7 +58,7 @@ export default class HelpSectionV extends Vue {
         @apply mb-10;
     }
 }
-.help-section-header #icon {
+.help-section-header .icon {
     transition: transform 0.3s cubic-bezier(0.35, 0, 0.25, 1);
 }
 </style>

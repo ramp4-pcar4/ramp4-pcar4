@@ -3,6 +3,8 @@
         <button
             class="relative text-gray-500 hover:text-black p-8"
             @click="open = !open"
+            :content="tooltip"
+            v-tippy="{ placement: tooltipPlacement }"
         >
             <slot name="header"></slot>
         </button>
@@ -24,6 +26,8 @@ import { Get, Sync, Call } from 'vuex-pathify';
 @Component
 export default class MenuV extends Vue {
     @Prop({ default: 'bottom-right' }) position!: string;
+    @Prop() tooltip?: string;
+    @Prop({ default: 'bottom' }) tooltipPlacement?: string;
     open: boolean = false;
 
     mounted() {

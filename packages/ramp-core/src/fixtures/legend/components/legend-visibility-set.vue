@@ -5,10 +5,18 @@
                 class="legend-group-header flex items-center px-5 py-10 cursor-pointer default-focus-style hover:bg-gray-200"
                 @click="legendItem.toggleExpanded()"
                 v-focus-item
+                :content="
+                    $t(
+                        legendItem.expanded
+                            ? 'legend.group.collapse'
+                            : 'legend.group.expand'
+                    )
+                "
+                v-tippy="{ placement: 'top-start', aria: 'describedby' }"
             >
                 <!-- dropdown icon -->
                 <div
-                    class="expand-toggle mr-10"
+                    class="expand-toggle mr-10 pointer-events-none"
                     :class="{ 'rotate-180': legendItem.expanded }"
                 >
                     <svg
@@ -25,7 +33,7 @@
                 </div>
 
                 <!-- name -->
-                <div class="flex-1 truncate">
+                <div class="flex-1 truncate pointer-events-none">
                     <span>{{ legendItem.name }}</span>
                 </div>
 
@@ -36,13 +44,6 @@
                     :legendItem="legendItem"
                 />
             </div>
-            <tooltip position="top-left">{{
-                $t(
-                    legendItem.expanded
-                        ? 'legend.group.collapse'
-                        : 'legend.group.expand'
-                )
-            }}</tooltip>
         </div>
 
         <!-- Display the children of the group -->

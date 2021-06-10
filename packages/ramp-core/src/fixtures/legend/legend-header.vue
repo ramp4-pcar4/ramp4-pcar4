@@ -5,33 +5,24 @@
             @click="openWizard"
             class="relative mr-auto text-gray-500 hover:text-black p-8"
             v-show="wizardExists"
+            :content="$t('legend.header.addlayer')"
+            v-tippy="{ placement: 'right' }"
         >
-            <div class="flex">
-                <svg class="fill-current w-18 h-18 mx-8" viewBox="0 0 23 21">
-                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
-                </svg>
-            </div>
-            <tooltip class="mx-5" position="right">
-                {{ $t('legend.header.addlayer') }}
-            </tooltip>
+            <svg class="fill-current w-18 h-18 mx-8" viewBox="0 0 23 21">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
+            </svg>
         </button>
         <span class="flex-1"></span>
         <!-- groups toggle -->
-        <dropdown-menu position="right">
+        <dropdown-menu
+            position="right"
+            :tooltip="$t('legend.header.groups')"
+            tooltip-placement="left"
+        >
             <template #header>
-                <div class="flex">
-                    <svg
-                        class="fill-current w-18 h-18 mx-8"
-                        viewBox="0 0 23 21"
-                    >
-                        <path
-                            d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"
-                        />
-                    </svg>
-                </div>
-                <tooltip class="mx-5" position="left">
-                    {{ $t('legend.header.groups') }}
-                </tooltip>
+                <svg class="fill-current w-18 h-18 mx-8" viewBox="0 0 23 21">
+                    <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
+                </svg>
             </template>
             <a
                 href="#"
@@ -49,7 +40,11 @@
             </a>
         </dropdown-menu>
         <!-- visibility toggle -->
-        <dropdown-menu position="right">
+        <dropdown-menu
+            position="right"
+            :tooltip="$t('legend.header.visible')"
+            tooltip-placement="left"
+        >
             <template #header>
                 <div class="flex">
                     <svg
@@ -61,9 +56,6 @@
                         />
                     </svg>
                 </div>
-                <tooltip class="mx-5" position="left">
-                    {{ $t('legend.header.visible') }}
-                </tooltip>
             </template>
             <a
                 href="#"

@@ -23,6 +23,10 @@ $focus-outline-width: 2px;
             [focus-item].focused.default-focus-style {
                 @include blue-outline;
             }
+
+            [focus-list] [focus-item].focused.default-focus-style {
+                @include grey-outline();
+            }
         }
     }
 }

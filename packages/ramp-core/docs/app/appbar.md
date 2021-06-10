@@ -89,13 +89,8 @@ Most things on the appbar will want a button that has an icon, a tooltip, and do
 
 ```html
 <template>
-    <appbar-button :onClickFunction="yourFunctionHere">
-        <template #icon>
-            <!-- whatever you want the button to show goes here, it will usually be an svg -->
-        </template>
-        <template #tooltip>
-            <!-- what you want the tooltip to say (don't forget translations!) -->
-        </template>
+    <appbar-button :onClickFunction="yourFunctionHere" :tooltip="Tooltip text here, can be a string in 'quotes' or javascript that returns a string">
+        <!-- whatever you want the button to show goes here, it will usually be an svg -->
     </appbar-button>
 </template>
 ```

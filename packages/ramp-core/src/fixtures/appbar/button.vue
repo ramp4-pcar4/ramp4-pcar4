@@ -9,12 +9,11 @@
                 }
             "
             v-focus-item
+            :content="tooltip"
+            v-tippy="{ placement: 'right' }"
         >
-            <slot name="icon"></slot>
+            <slot></slot>
         </button>
-        <tooltip position="right">
-            <slot name="tooltip"></slot>
-        </tooltip>
     </div>
 </template>
 
@@ -25,6 +24,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 export default class AppbarButtonV extends Vue {
     @Prop() onClickFunction!: any;
     @Prop() id!: any;
+    @Prop() tooltip?: string;
 
     onClick() {
         //TODO: change fixtures to use this instead of click handlers in <fixture>-appbar-button?

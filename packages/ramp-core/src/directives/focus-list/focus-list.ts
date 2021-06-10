@@ -123,6 +123,13 @@ class FocusListManager {
         element.addEventListener('focus', function(event: FocusEvent) {
             focusManager.onFocus();
         });
+        element.addEventListener('blur', function(event: FocusEvent) {
+            focusManager.onBlur();
+        });
+        element.addEventListener('mousedown', function(event: MouseEvent) {
+            // prevent `focus` events occuring from clicking on the list
+            event.preventDefault();
+        });
     }
 
     /**
@@ -159,6 +166,9 @@ class FocusListManager {
     defocusItem(item: Element) {
         item.classList.remove(FOCUSED_CLASS);
         this.setTabIndex(-1, item);
+        if ((item as any)._tippy) {
+            (item as any)._tippy.hide();
+        }
     }
 
     /**
@@ -170,6 +180,9 @@ class FocusListManager {
         item.classList.add(FOCUSED_CLASS);
         this.setAriaActiveDescendant(item);
         this.setTabIndex(0, item);
+        if ((item as any)._tippy) {
+            (item as any)._tippy.show();
+        }
     }
 
     /**
@@ -356,6 +369,10 @@ class FocusListManager {
      * This is used to pull back the `focusedItem` id and the aria-activedescendant attribute when a list is focused
      */
     onFocus() {
+        // If the highlighted item has a tooltip then show it
+        if (this.highlightedItem && (this.highlightedItem as any)._tippy) {
+            (this.highlightedItem as any)._tippy.show();
+        }
         // if the element already has the attribute, or the highlighted element is the list there is nothing to do
         if (
             this.element.hasAttribute('aria-activedescendant') ||
@@ -366,5 +383,17 @@ class FocusListManager {
         // otherwise set the active descendant
         this.setAriaActiveDescendant(this.highlightedItem);
         this.setTabIndex(0, this.highlightedItem);
+    }
+
+    /**
+     * Callback for the BLUR event listener on the focus list element.
+     * NOTE: this is only called when the list element stops being focused, not a descendant
+     */
+    onBlur() {
+        // If the highlighted item has a tooltip hide it since focus is going away from the list
+        if (this.highlightedItem && (this.highlightedItem as any)._tippy) {
+            console.log('ON BLUR');
+            (this.highlightedItem as any)._tippy.hide();
+        }
     }
 }

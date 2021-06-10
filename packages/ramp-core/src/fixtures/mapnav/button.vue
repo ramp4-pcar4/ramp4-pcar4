@@ -7,12 +7,11 @@
             class="w-full h-full default-focus-style focus:outline-none"
             @click="onClickFunction()"
             v-focus-item
+            :content="tooltip"
+            v-tippy="{ placement: 'left' }"
         >
             <slot name="icon"></slot>
         </button>
-        <tooltip position="left">
-            <slot name="tooltip"></slot>
-        </tooltip>
     </div>
 </template>
 
@@ -22,6 +21,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 @Component
 export default class MapnavButtonV extends Vue {
     @Prop() onClickFunction!: any;
+    @Prop() tooltip?: string;
 }
 </script>
 
