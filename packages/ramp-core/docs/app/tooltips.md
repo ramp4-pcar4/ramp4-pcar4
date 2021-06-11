@@ -1,16 +1,13 @@
 # Tooltips
 
-The `tooltip` component will show the desired text in a bubble, on hover or on navigation with the keyboard. It is also used as `aria-labelledby` to help with accessibility.
-
-## Use
-
-The component only needs the text you want to show, and optionally a position. Position can be `top`, `bottom`, `left` or `right`. By default the position is `top`.
-
-The tooltip should be the next sibling of the button/control/etc.
+We use [vue-tippy](https://github.com/KABBOUCHI/vue-tippy) for tooltips. All the documentation is there but for a basic use case:
 
 ```html
-<div class="relative">
-    <button>X</button>
-    <tooltip position="bottom">Close</tooltip>
-</div>
+<button content="Tooltip content" v-tippy>Hello</button>
+```
+
+or
+
+```html
+<button :content="$t('translation.string.path')" v-tippy="{placement: 'left'}">Hello</button>
 ```

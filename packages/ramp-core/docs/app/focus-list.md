@@ -67,7 +67,7 @@ An example in plain css:
 [focus-item].focused.custom-focus-style {
     color: red;
 }
-[focus-list]:focus [focus-item.focused.custom-focus-style] {
+[focus-list]:focus [focus-item].focused.custom-focus-style {
     color: blue;
 }
 ```
