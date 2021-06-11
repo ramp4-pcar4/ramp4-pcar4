@@ -1,4 +1,5 @@
 import { FixtureInstance, LayerInstance } from '@/api/internal';
+import { TreeNode } from '@/geo/api';
 import { ExportV1SubFixture } from '@/fixtures/export-v1';
 import { fabric } from 'fabric';
 import {
@@ -51,21 +52,18 @@ class ExportV1LegendFixture extends FixtureInstance
     async make(options: any): Promise<fabric.Group> {
         const columns = 3;
 
-        // read layers config directly from the global config and also get a lits of layer objects
-        const layerConfigs = this.$iApi.getConfig().layers;
         const layers =
             this.$vApp.$store.get<LayerInstance[]>('layer/layers') || [];
 
         let runningHeight = 0;
 
-        const segments = await Promise.all(
-            this._makeSegments(layers, layerConfigs)
-        );
+        const segments = await Promise.all(this._makeSegments(layers));
 
         //TODO: write logic to shoehorn legend into columns
 
         // string all the graphic legend elements together adding margins between them
         const fbAllItems = segments
+            .filter(segment => segment.items.length > 0)
             .map(({ title: segmentTitle, items: chunks }, segmentIndex) => {
                 if (segmentIndex > 0) {
                     runningHeight += SEGMENT_TOP_MARGIN;
@@ -78,7 +76,7 @@ class ExportV1LegendFixture extends FixtureInstance
                     ({ title: chunkTitle, items: chunkItems }, chunkIndex) => {
                         const result = [];
 
-                        // if a single chunk shares the title wit its parent segment, skip the chunk title
+                        // if a single chunk shares the title with its parent segment, skip the chunk title
                         if (
                             chunkTitle &&
                             !(
@@ -124,34 +122,36 @@ class ExportV1LegendFixture extends FixtureInstance
      * @returns {Promise<Segment>[]}
      * @memberof ExportV1LegendFixture
      */
-    private _makeSegments(
-        layers: LayerInstance[],
-        layerConfigs: RampLayerConfig[]
-    ): Promise<Segment>[] {
-        return layers.map(async (layer, index) => {
-            // TODO: exclude invisible layers
+    private _makeSegments(layers: LayerInstance[]): Promise<Segment>[] {
+        return layers
+            .filter(layer => layer.isValidState() && layer.getVisibility())
+            .map(async (layer: LayerInstance) => {
+                const title = new fabric.Text(layer.getName(layer.uid), {
+                    fontSize: 24,
+                    fontFamily: DEFAULT_FONT
+                });
 
-            const layerConfig = layerConfigs[index];
+                // traverse layer tree to get flattened array of ids
+                const getLayerTreeIds = (node: TreeNode): number[] => {
+                    return ([] as number[]).concat.apply(
+                        [],
+                        node.isLayer
+                            ? [node.layerIdx]
+                            : node.children.map(getLayerTreeIds)
+                    );
+                };
 
-            const title = new fabric.Text(layer.getName(layer.uid), {
-                fontSize: 24,
-                fontFamily: DEFAULT_FONT
+                // filter out invisible layer entries
+                const ids = getLayerTreeIds(layer.getLayerTree()).filter(id =>
+                    layer.getVisibility(id)
+                );
+
+                const items = await Promise.all(
+                    this._makeSegmentChunks(ids, layer)
+                );
+
+                return { title, items };
             });
-
-            // TODO: WMS layers are ignored right now
-            const ids: number[] | string[] = layerConfig.layerEntries
-                ? (layerConfig.layerEntries as RampLayerMapImageLayerEntryConfig[]).map(
-                      (le: RampLayerMapImageLayerEntryConfig) =>
-                          le.index as number
-                  )
-                : [layer.uid];
-
-            const items = await Promise.all(
-                this._makeSegmentChunks(ids, layer)
-            );
-
-            return { title, items };
-        });
     }
 
     /**
@@ -168,8 +168,6 @@ class ExportV1LegendFixture extends FixtureInstance
         layer: LayerInstance
     ): Promise<SegmentChunk>[] {
         return ids.map<Promise<SegmentChunk>>(async (idx: number | string) => {
-            // TODO: exclude invisible layer entries
-
             await Promise.all(layer.getLegend(idx).map(lg => lg.drawPromise));
             const symbologyStack = layer.getLegend(idx);
 
