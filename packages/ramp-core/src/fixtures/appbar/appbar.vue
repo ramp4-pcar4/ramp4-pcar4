@@ -1,6 +1,6 @@
 <template>
     <div
-        class="absolute top-0 left-0 z-50 flex flex-col items-stretch w-40 h-full pointer-events-auto appbar bg-black-75 sm:w-64"
+        class="absolute top-0 left-0 bottom-28 z-50 flex flex-col items-stretch w-40 pointer-events-auto appbar bg-black-75 sm:w-64"
         v-focus-list
     >
         <component

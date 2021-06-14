@@ -1,6 +1,6 @@
 <template>
     <div
-        class="map-caption absolute bottom-0 flex justify-center pointer-events-none text-gray-400 bg-black-75 left-32 sm:left-64 right-0 py-2"
+        class="map-caption absolute bottom-0 flex justify-center pointer-events-none text-gray-400 bg-black-75 left-0 right-0 py-2"
     >
         <span
             class="relative ml-10 truncate top-1"
