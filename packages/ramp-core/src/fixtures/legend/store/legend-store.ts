@@ -42,6 +42,9 @@ const mutations = {
     ) => {
         const index = state.children.findIndex(child => child.id === id);
         Vue.set(state.children, index, entry);
+    },
+    REMOVE_ITEM: (state: LegendState, layer: LayerInstance) => {
+        state.children = removeEntry(state.children, layer);
     }
 };
 
@@ -73,6 +76,10 @@ const actions = {
     /** Add legend entry to store */
     addEntry: (context: LegendContext, item: LegendEntry) => {
         context.commit('ADD_ITEM', item);
+    },
+    /** Add legend entry to store */
+    removeLayer: (context: LegendContext, layer: LayerInstance) => {
+        context.commit('REMOVE_ITEM', layer);
     },
     /** Replaces default placeholder after layer is loaded */
     updateDefaultEntry: (context: LegendContext, id: string) => {
@@ -205,6 +212,21 @@ function toggle(child: LegendEntry | LegendGroup, options: any) {
     }
 }
 
+function removeEntry(
+    children: (LegendEntry | LegendGroup)[],
+    layer: LayerInstance
+) {
+    children = children.filter(
+        entry => entry instanceof LegendGroup || entry.layer !== layer
+    );
+    children
+        .filter(entry => entry instanceof LegendGroup)
+        .forEach(
+            group => (group.children = removeEntry(group.children, layer))
+        );
+    return children;
+}
+
 export enum LegendStore {
     /**
      * (State) children: Array<LegendItem>
@@ -230,6 +252,10 @@ export enum LegendStore {
      * (Action) addEntry - add entry to legend store
      */
     addEntry = 'legend/addEntry!',
+    /**
+     * (Action) removeLayer - remove layer's corresponding entry from the store
+     */
+    removeLayer = 'legend/removeLayer',
     /**
      * (Action) updateDefaultEntry - replaces default placeholder after layer has loaded
      */
