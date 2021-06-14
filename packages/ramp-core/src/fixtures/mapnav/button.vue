@@ -10,7 +10,7 @@
             :content="tooltip"
             v-tippy="{ placement: 'left' }"
         >
-            <slot name="icon"></slot>
+            <slot></slot>
         </button>
     </div>
 </template>
