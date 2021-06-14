@@ -71,6 +71,11 @@ export class LegendItem {
         return this._children;
     }
 
+    /** Sets children of the legend entry */
+    set children(children: Array<LegendGroup | LegendEntry>) {
+        this._children = children;
+    }
+
     /**
      * Removes element from legend and removes layer if it's the last reference to it.
      */
