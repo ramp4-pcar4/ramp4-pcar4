@@ -48,6 +48,7 @@
                             :visible="displaySymbology"
                             :layer="legendItem.layer"
                             :uid="legendItem.uid"
+                            :key="legendItem.uid"
                         />
                     </button>
                 </div>
@@ -168,6 +169,27 @@
                                 />
                             </svg>
                             {{ $t('legend.entry.controls.symbology') }}
+                        </a>
+                        <!-- Remove -->
+                        <a
+                            href="#"
+                            class="flex leading-snug items-center w-auto"
+                            :class="{
+                                disabled: !legendItem._controlAvailable(
+                                    `remove`
+                                )
+                            }"
+                            @click="removeLayer"
+                        >
+                            <svg
+                                class="fill-current w-18 h-18 mr-10"
+                                viewBox="0 0 23 21"
+                            >
+                                <path
+                                    d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+                                ></path>
+                            </svg>
+                            {{ 'remove' }}
                         </a>
                     </dropdown-menu>
                 </div>
@@ -300,6 +322,10 @@ export default class LegendEntryV extends Vue {
 
     get shellEl() {
         return this.$refs.shell;
+    }
+
+    removeLayer() {
+        this.$iApi.geo.map.removeLayer(this.legendItem.uid!);
     }
 }
 </script>
