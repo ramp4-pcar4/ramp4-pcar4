@@ -1,13 +1,14 @@
 <template>
     <div @click.stop @mouseover.stop class="options hidden cursor-auto">
         <dropdown-menu
+            class="relative"
             position="right"
             :tooltip="$t('legend.entry.options')"
             tooltip-placement="left"
             :key="legendItem.uid"
         >
             <template #header>
-                <div class="flex">
+                <div class="flex p-8">
                     <svg
                         class="fill-current w-18 h-18 mx-8"
                         viewBox="0 0 23 21"
