@@ -1,5 +1,8 @@
 <template>
-    <dropdown-menu :tooltip="$t('panels.controls.optionsMenu')">
+    <dropdown-menu
+        class="relative"
+        :tooltip="$t('panels.controls.optionsMenu')"
+    >
         <template #header>
             <svg
                 xmlns="http://www.w3.org/2000/svg"

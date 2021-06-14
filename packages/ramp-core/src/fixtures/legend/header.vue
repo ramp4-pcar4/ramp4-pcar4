@@ -15,6 +15,7 @@
         <span class="flex-1"></span>
         <!-- groups toggle -->
         <dropdown-menu
+            class="relative"
             position="right"
             :tooltip="$t('legend.header.groups')"
             tooltip-placement="left"
@@ -41,6 +42,7 @@
         </dropdown-menu>
         <!-- visibility toggle -->
         <dropdown-menu
+            class="relative"
             position="right"
             :tooltip="$t('legend.header.visible')"
             tooltip-placement="left"

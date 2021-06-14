@@ -1,5 +1,6 @@
 <template>
     <dropdown-menu
+        class="relative"
         position="bottom-right"
         :tooltip="$t('grid.label.columns')"
         :tooltip-placement="'bottom'"
