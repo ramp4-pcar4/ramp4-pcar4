@@ -1,6 +1,6 @@
 <template>
     <div
-        class="map-caption absolute bottom-0 flex justify-center pointer-events-none text-gray-400 bg-black-75 left-0 right-0 py-2"
+        class="map-caption absolute bottom-0 flex justify-center pointer-events-none text-gray-400 bg-black-75 left-0 right-0 py-2 z-50"
     >
         <span
             class="relative ml-10 truncate top-1"
@@ -46,6 +46,25 @@
             ></span>
             {{ scale.label }}
         </button>
+
+        <dropdown-menu
+            class="relative pointer-events-auto focus:outline-none px-4 mr-4"
+            position="top-right"
+            :tooltip="$t('map.changeLanguage')"
+            tooltip-placement="top"
+        >
+            <template #header>
+                <span class="fill-current text-gray-400 hover:text-white">
+                    {{ $t('map.language.short') }}
+                </span>
+            </template>
+            <a href="#" class="flex-auto items-center" @click="changeEN">
+                {{ $t('map.language.en') }}
+            </a>
+            <a href="#" class="flex-auto items-center" @click="changeFR">
+                {{ $t('map.language.fr') }}
+            </a>
+        </dropdown-menu>
     </div>
 </template>
 
@@ -78,6 +97,18 @@ export default class MapCaptionV extends Vue {
         this.$iApi.event.on(GlobalEvents.MAP_CREATED, () => {
             this.$iApi.geo.map.updateScale();
         });
+    }
+
+    changeEN() {
+        if (this.$iApi.$vApp.$i18n.locale == 'fr') {
+            this.$iApi.setLanguage('en');
+        }
+    }
+
+    changeFR() {
+        if (this.$iApi.$vApp.$i18n.locale == 'en') {
+            this.$iApi.setLanguage('fr');
+        }
     }
 
     /**
