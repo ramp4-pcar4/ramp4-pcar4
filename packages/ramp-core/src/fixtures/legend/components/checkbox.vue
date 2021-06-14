@@ -1,5 +1,5 @@
 <template>
-    <div class="relative">
+    <div class="relative" @mouseover.stop>
         <!-- TODO: see if getting this to use v-model works; children wouldnt update properly on initial try -->
         <input
             :type="isRadio ? 'radio' : 'checkbox'"
@@ -13,12 +13,11 @@
             class="mx-5 h-15 w-15 border-gray-500 hover:border-black"
             tabindex="-1"
             :disabled="disabled"
-        />
-        <tooltip position="top-right">
-            {{
+            :content="
                 $t(value ? 'legend.visibility.hide' : 'legend.visibility.show')
-            }}
-        </tooltip>
+            "
+            v-tippy="{ placement: 'top-end' }"
+        />
     </div>
 </template>
 

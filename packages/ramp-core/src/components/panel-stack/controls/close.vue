@@ -4,6 +4,8 @@
             class="text-gray-500 hover:text-black p-8"
             :class="{ 'text-gray-700': active }"
             @click="$emit('click')"
+            :content="$t('panels.controls.close')"
+            v-tippy="{ placement: 'bottom' }"
         >
             <svg
                 class="fill-current w-16 h-16"
@@ -15,7 +17,6 @@
                 />
             </svg>
         </button>
-        <tooltip position="bottom">{{ $t('panels.controls.close') }}</tooltip>
     </div>
 </template>
 
@@ -23,13 +24,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
-import TooltipV from '@/components/util/tooltip.vue';
-
-@Component({
-    components: {
-        tooltip: TooltipV
-    }
-})
+@Component({})
 export default class CloseV extends Vue {
     @Prop() active!: boolean;
 }

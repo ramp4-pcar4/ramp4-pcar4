@@ -15,11 +15,20 @@ import { FocusList, FocusItem } from '@/directives/focus-list';
 Vue.directive('focus-list', FocusList);
 Vue.directive('focus-item', FocusItem);
 
-import TooltipV from '@/components/util/tooltip.vue';
-Vue.component('tooltip', TooltipV);
-
+//FORMS
 import VueFormulate from '@braid/vue-formulate';
 Vue.use(VueFormulate);
+
+//TOOLTIPS
+//@ts-ignore
+import VueTippy, { TippyComponent } from 'vue-tippy';
+Vue.use(VueTippy, {
+    aria: 'labelledby',
+    a11y: false,
+    theme: 'ramp',
+    trigger: 'mouseenter manual focus'
+});
+Vue.component('tippy', TippyComponent);
 
 @Component({
     components: {

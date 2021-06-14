@@ -1,9 +1,6 @@
 <template>
-    <appbar-button :onClickFunction="togglePanel">
-        <template #icon>
-            <span class="block h-24">⛄</span>
-        </template>
-        <template #tooltip>⛄</template>
+    <appbar-button :onClickFunction="togglePanel" tooltip="⛄">
+        <span class="block h-24">⛄</span>
     </appbar-button>
 </template>
 <script lang="ts">

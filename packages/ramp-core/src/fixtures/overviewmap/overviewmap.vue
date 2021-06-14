@@ -18,6 +18,14 @@
                     tabindex="0"
                     class="cursor-pointer absolute h-full w-full"
                     @click="minimized = !minimized"
+                    :content="
+                        $t(
+                            minimized
+                                ? 'overviewmap.expand'
+                                : 'overviewmap.minimize'
+                        )
+                    "
+                    v-tippy="{ placement: 'left' }"
                 >
                     <svg
                         class="absolute fill-current text-gray-500 transition-all duration-300 ease-out"
@@ -37,13 +45,6 @@
                         </g>
                     </svg>
                 </button>
-                <tooltip position="left">{{
-                    $t(
-                        minimized
-                            ? 'overviewmap.expand'
-                            : 'overviewmap.minimize'
-                    )
-                }}</tooltip>
             </div>
         </div>
     </div>

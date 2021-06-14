@@ -5,6 +5,14 @@
                 class="default-focus-style p-5 flex items-center hover:bg-gray-200 cursor-pointer h-44"
                 @click="toggleGrid"
                 v-focus-item
+                @mouseover.stop="$event.currentTarget._tippy.show()"
+                @mouseout.self="$event.currentTarget._tippy.hide()"
+                :content="$t('legend.entry.data')"
+                v-tippy="{
+                    placement: 'top-start',
+                    trigger: 'manual focus',
+                    aria: 'describedby'
+                }"
             >
                 <!-- symbology stack toggle-->
                 <div class="relative w-32 h-32">
@@ -17,6 +25,15 @@
                             )
                         }"
                         :disabled="!legendItem._controlAvailable('symbology')"
+                        :content="
+                            displaySymbology
+                                ? $t('legend.symbology.hide')
+                                : $t('legend.symbology.expand')
+                        "
+                        v-tippy="{
+                            placement: 'top-start'
+                        }"
+                        @mouseover.stop
                     >
                         <symbology-stack
                             :class="{
@@ -30,23 +47,24 @@
                             :uid="legendItem.uid"
                         />
                     </button>
-                    <tooltip position="top-left">
-                        {{
-                            displaySymbology
-                                ? $t('legend.symbology.hide')
-                                : $t('legend.symbology.expand')
-                        }}
-                    </tooltip>
                 </div>
 
                 <!-- name -->
-                <div class="flex-1 truncate ml-15">
+                <div class="flex-1 truncate ml-15 pointer-events-none">
                     <span>{{ legendItem.name }}</span>
                 </div>
 
                 <!-- options dropdown menu -->
-                <div @click.stop class="options hidden cursor-auto">
-                    <dropdown-menu position="right">
+                <div
+                    @click.stop
+                    @mouseover.stop
+                    class="options hidden cursor-auto"
+                >
+                    <dropdown-menu
+                        position="right"
+                        :tooltip="$t('legend.entry.options')"
+                        tooltip-placement="left"
+                    >
                         <template #header>
                             <div class="flex">
                                 <svg
@@ -58,9 +76,6 @@
                                     />
                                 </svg>
                             </div>
-                            <tooltip class="mx-5" position="left">
-                                {{ $t('legend.entry.options') }}
-                            </tooltip>
                         </template>
                         <!-- metadata -->
                         <a
@@ -159,7 +174,6 @@
                     :disabled="!legendItem._controlAvailable('visibility')"
                 />
             </div>
-            <tooltip position="top-left">{{ $t('legend.entry.data') }}</tooltip>
         </div>
 
         <!-- Symbology Stack Section -->

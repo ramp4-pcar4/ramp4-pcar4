@@ -4,6 +4,8 @@
             class="text-gray-500 hover:text-black p-8"
             :class="{ 'text-gray-700': active }"
             @click="$emit('click')"
+            :content="$t('panels.controls.back')"
+            v-tippy="{ placement: 'bottom' }"
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -16,7 +18,6 @@
                 />
             </svg>
         </button>
-        <tooltip position="bottom">{{ $t('panels.controls.back') }}</tooltip>
     </div>
 </template>
 
