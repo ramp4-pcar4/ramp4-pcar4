@@ -1,5 +1,5 @@
 window.rInstance = null;
-document.title = "Help";
+document.title = 'Help';
 
 let config = {
     en: {
@@ -22,7 +22,8 @@ let config = {
                     layers: [
                         {
                             layerType: 'esriTile',
-                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                            url:
+                                'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                         }
                     ]
                 }
@@ -37,7 +38,7 @@ let config = {
             }
         }
     }
-}
+};
 
 let options = {
     loadDefaultFixtures: false,
@@ -45,5 +46,7 @@ let options = {
 };
 
 rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
-rInstance.fixture.addDefaultFixtures(['mapnav', 'help']);
+rInstance.fixture.addDefaultFixtures(['mapnav', 'help']).then(() => {
+    rInstance.panel.open('help-panel');
+});
 rInstance.event.addDefaultEvents(['toggles_help_panel']);

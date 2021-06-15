@@ -35,14 +35,6 @@ class MetadataFixture extends MetadataAPI {
             handler,
             'metadata_opened_handler'
         );
-
-        // TODO: remove this. Temporarily emits an event to open the metadata panel. In the future, this will be done by
-        // any fixture that wants the metadata panel to open.
-        this.$iApi.event.emit('metadata/open', {
-            type: 'html',
-            layer: 'Sample Layer Name',
-            url: 'https://ryan-coulson.com/RAMPMetadataDemo.html'
-        });
     }
 }
 

@@ -168,7 +168,7 @@
             document.querySelector('.ramp-app').after(component.$el);
 
             // this life hook is called when the fixture is added to R4MP, and now it's possible to open our panel
-            this.$iApi.panel.register(dpanel).open();
+            this.$iApi.panel.register(dpanel);
         }
 
         // TEMP CODE FOR SAMPLE

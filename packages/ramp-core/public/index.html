@@ -11,16 +11,9 @@
         <!-- Vue is loaded in dev builds as well because of an issue with Cypress and external fixtures -->
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
-        <!-- these two fixtures will load before either RAMP is loaded -->
-        <script src="../sample-fixtures/mouruge-fixture.js"></script>
-        <script src="../sample-fixtures/diligord-fixture.js"></script>
-
         <!-- RAMP will be injected here -->
     </head>
     <body>
-        <!-- this fixture will load after RAMP (and Vue) are loaded (since Vue is bundled with RAMP in `dev`); `iklob` requires Vue to be exposed on the global scope -->
-        <script src="../sample-fixtures/iklob-fixture.js"></script>
-
         <style>
             #instance-language {
                 margin-left: 20px;

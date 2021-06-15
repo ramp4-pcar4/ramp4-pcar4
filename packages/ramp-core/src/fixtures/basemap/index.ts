@@ -24,8 +24,6 @@ class BasemapFixture extends BasemapAPI {
             },
             { i18n: { messages } }
         );
-
-        this.$iApi.panel.open('basemap-panel');
     }
 
     removed() {

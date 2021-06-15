@@ -1,5 +1,5 @@
 window.rInstance = null;
-document.title = "WMS Layers";
+document.title = 'WMS Layers';
 
 let config = {
     en: {
@@ -22,7 +22,8 @@ let config = {
                     layers: [
                         {
                             layerType: 'esriTile',
-                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                            url:
+                                'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                         }
                     ]
                 }
@@ -31,18 +32,18 @@ let config = {
         },
         layers: [
             {
-                id: "ahocevar",
-                layerType: "ogcWms",
-                url: "https://ahocevar.com/geoserver/wms",
+                id: 'ahocevar',
+                layerType: 'ogcWms',
+                url: 'https://ahocevar.com/geoserver/wms',
                 state: {
                     visibility: true
                 },
                 layerEntries: [
                     {
-                        id: "ne:ne"
+                        id: 'ne:ne'
                     }
                 ],
-                featureInfoMimeType: "text/plain"
+                featureInfoMimeType: 'text/plain'
             },
             {
                 id: 'RailwayNetwork',
@@ -52,32 +53,33 @@ let config = {
                     visibility: true
                 },
                 layerEntries: [
-                    { id: "railway" },
-                    { id: "railway.structure.line" },
-                    { id: "railway.structure.point" },
-                    { id: "railway.track" },
-                    { id: "railway.ferry" },
-                    { id: "railway.subdivision" },
-                    { id: "railway.station" },
-                    { id: "railway.marker_post" },
-                    { id: "railway.crossing" }
+                    { id: 'railway' },
+                    { id: 'railway.structure.line' },
+                    { id: 'railway.structure.point' },
+                    { id: 'railway.track' },
+                    { id: 'railway.ferry' },
+                    { id: 'railway.subdivision' },
+                    { id: 'railway.station' },
+                    { id: 'railway.marker_post' },
+                    { id: 'railway.crossing' }
                 ],
-                featureInfoMimeType: "text/html"
+                featureInfoMimeType: 'text/html'
             },
             {
-                id: "GeoMet",
-                layerType: "ogcWms",
-                url: "http://geo.weather.gc.ca/geomet/?lang=E&service=WMS&request=GetCapabilities",
+                id: 'GeoMet',
+                layerType: 'ogcWms',
+                url:
+                    'http://geo.weather.gc.ca/geomet/?lang=E&service=WMS&request=GetCapabilities',
                 state: {
                     visibility: true,
                     opacity: 0.5
                 },
                 layerEntries: [
-                {
-                    id: "GDPS.ETA_NT"
-                }
+                    {
+                        id: 'GDPS.ETA_NT'
+                    }
                 ],
-                featureInfoMimeType: "text/plain"
+                featureInfoMimeType: 'text/plain'
             }
         ],
         fixtures: {
@@ -101,9 +103,7 @@ let config = {
                 }
             },
             appbar: {
-                items: [
-                    'legend'
-                ]
+                items: ['legend']
             },
             mapnav: { items: ['fullscreen', 'legend', 'home', 'basemap'] },
             details: {
@@ -116,7 +116,7 @@ let config = {
             }
         }
     }
-}
+};
 
 let options = {
     loadDefaultFixtures: false,
@@ -130,7 +130,7 @@ Vue.component('GeoMet-Template', {
         let parseText = text => {
             let obj = {};
             let rx = /(\w+) = '(?:"([^"]*)"|([^']*))/g;
-            while((m = rx.exec(text)) !== null) {
+            while ((m = rx.exec(text)) !== null) {
                 if (m[2]) {
                     obj[m[1]] = m[2];
                 } else {
@@ -138,14 +138,15 @@ Vue.component('GeoMet-Template', {
                 }
             }
             return obj;
-        }
+        };
 
         let data = parseText(this.identifyData.data);
 
         return h(
             'div',
             {
-                style: 'align-items: center; justify-content: center; font-size: .875rem; font-family: "Arial", sans-serif;'
+                style:
+                    'align-items: center; justify-content: center; font-size: .875rem; font-family: "Arial", sans-serif;'
             },
             [
                 h(
@@ -159,7 +160,8 @@ Vue.component('GeoMet-Template', {
                 h(
                     'div',
                     {
-                        style: 'display: flex; flex-direction: column; font-size: .875rem; padding-top: 5px;'
+                        style:
+                            'display: flex; flex-direction: column; font-size: .875rem; padding-top: 5px;'
                     },
                     [
                         h(
@@ -175,7 +177,8 @@ Vue.component('GeoMet-Template', {
                 h(
                     'div',
                     {
-                        style: 'display: flex; flex-direction: row; color: #a0aec0; font-weight: bold; padding-top: 5px;'
+                        style:
+                            'display: flex; flex-direction: row; color: #a0aec0; font-weight: bold; padding-top: 5px;'
                     },
                     [
                         h(
@@ -222,4 +225,8 @@ Vue.component('GeoMet-Template', {
 });
 
 rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
-rInstance.fixture.addDefaultFixtures(['mapnav', 'legend', 'appbar', 'grid', 'details']);
+rInstance.fixture
+    .addDefaultFixtures(['mapnav', 'legend', 'appbar', 'grid', 'details'])
+    .then(() => {
+        rInstance.panel.open('legend-panel');
+    });

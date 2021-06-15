@@ -28,8 +28,6 @@ class HelpFixture extends HelpAPI {
                 i18n: { messages }
             }
         );
-        this.$iApi.panel.open('help-panel');
-
         // parse help section of config and store information in help store
         this._parseConfig(this.config);
         this.$vApp.$watch(

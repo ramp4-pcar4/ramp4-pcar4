@@ -1,5 +1,5 @@
 window.rInstance = null;
-document.title = "Map Image Layer";
+document.title = 'Map Image Layer';
 
 let config = {
     en: {
@@ -22,7 +22,8 @@ let config = {
                     layers: [
                         {
                             layerType: 'esriTile',
-                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                            url:
+                                'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                         }
                     ]
                 }
@@ -33,7 +34,8 @@ let config = {
             {
                 id: 'AirEmissions',
                 layerType: 'esriMapImage',
-                url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                url:
+                    'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                 layerEntries: [
                     {
                         index: 9,
@@ -67,7 +69,8 @@ let config = {
                             children: [
                                 {
                                     layerId: 'AirEmissions',
-                                    name: 'Carbon monoxide emissions by facility',
+                                    name:
+                                        'Carbon monoxide emissions by facility',
                                     entryIndex: 9
                                 },
                                 {
@@ -81,15 +84,13 @@ let config = {
                 }
             },
             appbar: {
-                items: [
-                    'legend'
-                ]
+                items: ['legend']
             },
             mapnav: { items: ['fullscreen', 'legend', 'home', 'basemap'] },
             details: { items: [] }
         }
     }
-}
+};
 
 let options = {
     loadDefaultFixtures: false,
@@ -97,4 +98,8 @@ let options = {
 };
 
 rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
-rInstance.fixture.addDefaultFixtures(['mapnav', 'legend', 'appbar', 'grid', 'details']);
+rInstance.fixture
+    .addDefaultFixtures(['mapnav', 'legend', 'appbar', 'grid', 'details'])
+    .then(() => {
+        rInstance.panel.open('legend-panel');
+    });
