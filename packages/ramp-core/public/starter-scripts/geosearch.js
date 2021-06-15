@@ -21,7 +21,8 @@ let config = {
                     layers: [
                         {
                             layerType: 'esriTile',
-                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                            url:
+                                'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                         }
                     ]
                 }
@@ -31,13 +32,11 @@ let config = {
         layers: [],
         fixtures: {
             appbar: {
-                items: [
-                    'geosearch'
-                ]
+                items: ['geosearch']
             }
         }
     }
-}
+};
 
 let options = {
     loadDefaultFixtures: false,
@@ -45,4 +44,6 @@ let options = {
 };
 
 rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
-rInstance.fixture.addDefaultFixtures(['appbar', 'geosearch']);
+rInstance.fixture.addDefaultFixtures(['appbar', 'geosearch']).then(() => {
+    rInstance.panel.open('geosearch-panel');
+});

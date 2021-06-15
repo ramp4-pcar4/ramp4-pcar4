@@ -23,8 +23,6 @@ class GeosearchFixture extends GeosearchAPI {
             },
             { i18n: { messages } }
         );
-
-        this.$iApi.panel.open('geosearch-panel');
     }
 
     removed() {

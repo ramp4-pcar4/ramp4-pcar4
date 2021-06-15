@@ -74,11 +74,6 @@ class GazeboFixture extends FixtureInstance {
             },
             { i18n: { messages } }
         );
-
-        this.$iApi.panel
-            .get('p2')
-            .open({ screen: 'p-2-screen-2' })
-            .pin();
     }
 }
 
