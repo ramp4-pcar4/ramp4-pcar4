@@ -19,7 +19,6 @@ import {
     IdentifyResult,
     IdentifyResultSet,
     MapClick,
-    MapMove,
     Point,
     RampMapConfig,
     ScreenPoint,
@@ -27,9 +26,10 @@ import {
     ScaleSet,
     SpatialReference
 } from '@/geo/api';
-import { EsriBasemap, EsriLOD, EsriMapView } from '@/geo/esri';
-import { LayerStore } from '@/store/modules/layer';
+import { EsriBasemap, EsriGraphic, EsriLOD, EsriMapView } from '@/geo/esri';
+import { layer, LayerStore } from '@/store/modules/layer';
 import { MapCaptionStore } from '@/store/modules/mapcaption';
+import { MaptipStore } from '@/store/modules/maptip';
 
 // TODO bring in the map actions code
 
@@ -498,7 +498,7 @@ export class MapAPI extends CommonMapAPI {
      *
      * Updates map-caption store to notify map-caption component observer
      *
-     * @param newAttribution incoming new attribution
+     * @param {Attribution} newAttribution incoming new attribution
      */
     updateAttribution(newAttribution: Attribution): void {
         if (!newAttribution) {
@@ -714,14 +714,16 @@ export class MapAPI extends CommonMapAPI {
     /**
      * Get a point in map co-ordinates corresponding to a pixel in screen co-ordinates.
      *
-     * @param {Number} screenX pixel co-ord of the point on the map, x-axis.
-     * @param {Number} screenY pixel co-ord of the point on the map, y-axis.
+     * @param {ScreenPoint} screenPoint pixel screen co-ord of the point on the map
      * @returns {Point} the map point analagous to the screen point
      */
-    screenPointToMapPoint(screenX: number, screenY: number): Point {
+    screenPointToMapPoint(screenPoint: ScreenPoint): Point {
         if (this.esriView) {
             return this.$iApi.geo.utils.geom._convEsriPointToRamp(
-                this.esriView.toMap({ x: screenX, y: screenY }),
+                this.esriView.toMap({
+                    x: screenPoint.screenX,
+                    y: screenPoint.screenY
+                }),
                 'mappoint'
             );
         } else {
@@ -824,6 +826,183 @@ export class MapAPI extends CommonMapAPI {
             results: identifyResults,
             click: mapClick
         });
+    }
+
+    /**
+     * Get the top-most graphic at the given screen point with respect to the layer store order.
+     * Returns undefined if there is not point.
+     *
+     * @param {ScreenPoint} screenPoint The screen coordinates
+     * @returns {Promise<EsriGraphic | undefined>} a promise that resolves when a graphic is hit (undefined if no graphic was hit)
+     */
+    async getGraphicAtPoint(
+        screenPoint: ScreenPoint
+    ): Promise<EsriGraphic | undefined> {
+        if (!this.esriView) {
+            this.noMapErr();
+            return;
+        }
+
+        const response: __esri.HitTestResult = await this.esriView.hitTest({
+            x: screenPoint.screenX,
+            y: screenPoint.screenY
+        });
+
+        if (response.results.length === 0) {
+            // No features hit
+            return;
+        }
+
+        let graphic: EsriGraphic | undefined = undefined;
+
+        // Sync with layer store to get the top-most layer with respect to order of layers in the store
+        const layers: LayerInstance[] = this.$vApp.$store.get<LayerInstance[]>(
+            LayerStore.layers
+        )!;
+        layers.some(layer => {
+            // breaks in the first match hit, preserving the layer order
+            const matchedResult: any = response.results.find(result => {
+                return result.graphic.layer.id === layer.id;
+            });
+            if (matchedResult) {
+                graphic = matchedResult.graphic;
+            }
+            return matchedResult !== undefined;
+        });
+
+        return graphic;
+    }
+
+    /**
+     * Displays a map tip at the given screen point if it is over a feature graphic.
+     * Removes the map tip if there is no graphic.
+     *
+     * @param {ScreenPoint} screenPoint The screen coordinates for the hitTest
+     * @returns {Promise<void>} a promise that resolves when the maptip has been updated/removed
+     */
+    async updateMaptipAtCoord(screenPoint: ScreenPoint): Promise<void> {
+        if (!this.esriView) {
+            this.noMapErr();
+            return;
+        }
+
+        // Get the graphic object
+        const graphic: EsriGraphic | undefined = await this.getGraphicAtPoint(
+            screenPoint
+        );
+
+        if (!graphic) {
+            this.setMaptipProperties(undefined);
+            return;
+        }
+
+        const graphicOID: number = graphic.getObjectId() || -1;
+        const layerId: string = graphic.layer.id;
+
+        // Check if the same maptip already exists
+        const currentMaptip: any = this.getMaptipProperties();
+        if (
+            currentMaptip &&
+            currentMaptip.graphic.layer.id === layerId &&
+            currentMaptip.graphic.getObjectId() === graphicOID
+        ) {
+            // Same maptip, no need for changes
+            // This keeps the maptip in place and saves some trips to Vuex store
+            return;
+        }
+
+        // Get the layer
+        const layerInstance:
+            | LayerInstance
+            | undefined = this.$iApi.geo.layer.getLayer(layerId);
+        if (!layerInstance) {
+            // Something seriously wrong here because esri gave us a non-existent layerID
+            return;
+        }
+
+        // Get the graphic
+        const graphicIconSVG: string = await layerInstance.getIcon(
+            graphicOID,
+            layerInstance.uid
+        );
+
+        // Update the properties
+        this.setMaptipProperties({
+            screenPoint: screenPoint,
+            mapPoint: this.screenPointToMapPoint(screenPoint),
+            graphic: graphic
+        });
+
+        // Update the template
+        this.setMaptipTemplate(
+            `<b style="color: yellow">✨ FEATURE HOVERTIP CUSTOM TEMPLATE ✨</b><br>${graphicIconSVG}<br>OID: ${graphicOID}<br>LayerID: ${layerId}`
+        );
+    }
+
+    /**
+     * Set the current maptip properties
+     * Removes the current maptip if the given properties are undefined
+     *
+     * @param maptipProperties The maptip object
+     */
+    setMaptipProperties(maptipProperties: any) {
+        this.$iApi.$vApp.$store.set(
+            MaptipStore.setMaptipProperties,
+            maptipProperties
+        );
+    }
+
+    /**
+     * Get the current properties of the maptip
+     *
+     * @returns the current maptip properties
+     */
+    getMaptipProperties(): any {
+        return this.$iApi.$vApp.$store.get(MaptipStore.maptipProperties);
+    }
+
+    /**
+     * Get the `tippy` maptip instance
+     * Documentation: https://kabbouchi.github.io/tippyjs-v4-docs/tippy-instance/
+     *
+     * @returns the `tippy` tooltip instance
+     */
+    getMaptipInstance(): any {
+        return this.$iApi.$vApp.$store.get(MaptipStore.maptipInstance);
+    }
+
+    /**
+     * Set the `tippy` maptip instance
+     * Documentation: https://kabbouchi.github.io/tippyjs-v4-docs/tippy-instance/
+     *
+     * @param {any} instance the `tippy` instance
+     * @param {any} defaultProperties? the default properties for`tippy` instance
+     */
+    setMaptipInstance(instance: any, defaultProperties?: any): void {
+        if (defaultProperties) {
+            instance.set(defaultProperties);
+        }
+        this.$iApi.$vApp.$store.set(MaptipStore.setMaptipInstance, instance);
+    }
+
+    /**
+     * Get current template for maptips
+     *
+     * @returns the maptip template
+     */
+    getMaptipTemplate(): any {
+        return this.$iApi.$vApp.$store.get(MaptipStore.template)!;
+    }
+
+    /**
+     *
+     * Set the html string for the maptip
+     * If empty string is provided, the maptip will use the default template
+     *
+     * @param template the new maptip html string
+     */
+    setMaptipTemplate(template: string): void {
+        this.$iApi.$vApp.$store.set(MaptipStore.setMaptipTemplate, template);
     }
 
     // list of keys that are currently pressed
@@ -940,14 +1119,19 @@ export class MapAPI extends CommonMapAPI {
             return;
         }
 
+        // if shift is the only key held down, return
+        if (this._activeKeys.length === 1 && this._activeKeys[0] == 'Shift') {
+            return;
+        }
+
         const center = this.getExtent().center();
 
         // calculate pan velocity based on constant pixel value that won't change based on zoom
         const screenCenter = this.mapPointToScreenPoint(center);
-        const p = this.screenPointToMapPoint(
-            screenCenter.screenX + 5,
-            screenCenter.screenY + 5
-        );
+        const p = this.screenPointToMapPoint({
+            screenX: screenCenter.screenX + 5,
+            screenY: screenCenter.screenY + 5
+        });
         const xDiff = Math.abs(p.x - center.x);
         const yDiff = Math.abs(p.y - center.y);
 

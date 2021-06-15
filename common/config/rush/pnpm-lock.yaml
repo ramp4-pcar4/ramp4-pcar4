@@ -22,6 +22,7 @@ importers:
       '@types/marked': ^1.1.0
       '@types/node': ~13.11.0
       '@types/proj4': 2.5.0
+      '@types/throttle-debounce': ~2.1.0
       '@vue/cli-plugin-babel': ^4.1.0
       '@vue/cli-plugin-e2e-cypress': ^5.0.0-alpha.3
       '@vue/cli-plugin-eslint': ^4.1.0
@@ -66,6 +67,7 @@ importers:
       tailwindcss: npm:@tailwindcss/postcss7-compat@^2.0.2
       terraformer: 1.0.9
       terraformer-arcgis-parser: 1.1.0
+      throttle-debounce: ~3.0.1
       tslib: ~1.10.0
       tslint: 5.17.0
       tslint-loader: 3.6.0
@@ -110,6 +112,7 @@ importers:
       svg.js: 2.7.1
       terraformer: 1.0.9
       terraformer-arcgis-parser: 1.1.0
+      throttle-debounce: 3.0.1
       vue: 2.6.12
       vue-class-component: 7.2.6_vue@2.6.12
       vue-i18n: 8.16.0
@@ -136,6 +139,7 @@ importers:
       '@types/marked': 1.2.2
       '@types/node': 13.11.1
       '@types/proj4': 2.5.0
+      '@types/throttle-debounce': 2.1.0
       '@vue/cli-plugin-babel': 4.5.12_08f6923167e8915a6e44610899c9e3f1
       '@vue/cli-plugin-e2e-cypress': 5.0.0-beta.0_efbde80c16cab3be7c6367f6ec957399
       '@vue/cli-plugin-eslint': 4.5.12_efbde80c16cab3be7c6367f6ec957399
@@ -1971,6 +1975,10 @@ packages:
 
   /@types/tapable/1.0.7:
     resolution: {integrity: sha512-0VBprVqfgFD7Ehb2vd8Lh9TG3jP98gvr8rgehQqzztZNI7o8zS8Ad4jyZneKELphpuE212D8J70LnSNQSyO6bQ==}
+    dev: true
+
+  /@types/throttle-debounce/2.1.0:
+    resolution: {integrity: sha512-5eQEtSCoESnh2FsiLTxE121IiE60hnMqcb435fShf4bpLRjEu1Eoekht23y6zXS9Ts3l+Szu3TARnTsA0GkOkQ==}
     dev: true
 
   /@types/uglify-js/3.13.0:
@@ -13193,6 +13201,11 @@ packages:
   /throat/4.1.0:
     resolution: {integrity: sha1-iQN8vJLFarGJJua6TLsgDhVnKmo=}
     dev: true
+
+  /throttle-debounce/3.0.1:
+    resolution: {integrity: sha512-dTEWWNu6JmeVXY0ZYoPuH5cRIwc0MeGbJwah9KUNYSJwommQpCzTySTpEe8Gs1J23aeWEuAobe4Ag7EHVt/LOg==}
+    engines: {node: '>=10'}
+    dev: false
 
   /throttleit/1.0.0:
     resolution: {integrity: sha1-nnhYNtr0Z0MUWlmEtiaNgoUorGw=}
