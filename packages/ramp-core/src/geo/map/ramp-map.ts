@@ -19,7 +19,6 @@ import {
     IdentifyResult,
     IdentifyResultSet,
     MapClick,
-    MapMove,
     Point,
     RampMapConfig,
     ScreenPoint,
@@ -30,6 +29,7 @@ import {
 import { EsriBasemap, EsriLOD, EsriMapView } from '@/geo/esri';
 import { LayerStore } from '@/store/modules/layer';
 import { MapCaptionStore } from '@/store/modules/mapcaption';
+import { FeatureTooltipStore } from '@/store/modules/featuretooltip';
 
 // TODO bring in the map actions code
 
@@ -498,7 +498,7 @@ export class MapAPI extends CommonMapAPI {
      *
      * Updates map-caption store to notify map-caption component observer
      *
-     * @param newAttribution incoming new attribution
+     * @param {Attribution} newAttribution incoming new attribution
      */
     updateAttribution(newAttribution: Attribution): void {
         if (!newAttribution) {
@@ -714,14 +714,16 @@ export class MapAPI extends CommonMapAPI {
     /**
      * Get a point in map co-ordinates corresponding to a pixel in screen co-ordinates.
      *
-     * @param {Number} screenX pixel co-ord of the point on the map, x-axis.
-     * @param {Number} screenY pixel co-ord of the point on the map, y-axis.
+     * @param {ScreenPoint} screenPoint pixel co-ord of the point on the map, x-axis.
      * @returns {Point} the map point analagous to the screen point
      */
-    screenPointToMapPoint(screenX: number, screenY: number): Point {
+    screenPointToMapPoint(screenPoint: ScreenPoint): Point {
         if (this.esriView) {
             return this.$iApi.geo.utils.geom._convEsriPointToRamp(
-                this.esriView.toMap({ x: screenX, y: screenY }),
+                this.esriView.toMap({
+                    x: screenPoint.screenX,
+                    y: screenPoint.screenY
+                }),
                 'mappoint'
             );
         } else {
@@ -823,6 +825,104 @@ export class MapAPI extends CommonMapAPI {
         this.$iApi.event.emit(GlobalEvents.MAP_IDENTIFY, {
             results: identifyResults,
             click: mapClick
+        });
+    }
+
+    /**
+     * Perform a EsriMapView hitTest at the given coordinates and update the FeatureTooltipStore if
+     * a feature was hit
+     *
+     * @param {ScreenPoint} screenPoint The screen coordinates for the hitTest
+     * @returns {Promise<void>} a promise that resolves when the tooltip has been updated
+     */
+    async displayFeatureTooltipAtCoord(
+        screenPoint: ScreenPoint
+    ): Promise<void> {
+        if (!this.esriView) {
+            this.noMapErr();
+            return;
+        }
+
+        const response: any = await this.esriView.hitTest({
+            x: screenPoint.screenX,
+            y: screenPoint.screenY
+        });
+
+        if (response.results.length === 0) {
+            // No features hit
+            this.$iApi.$vApp.$store.set(
+                FeatureTooltipStore.setTooltip,
+                undefined
+            );
+            return;
+        }
+
+        // Get feature info
+        let graphicOID: number = -1;
+        let layerId: string = '';
+        // Sync with layer store to get the top-most layer with respect to order of layers in the store
+        const layers: LayerInstance[] = this.$vApp.$store.get<LayerInstance[]>(
+            LayerStore.layers
+        )!;
+        for (let i = 0; i < layers.length; i++) {
+            let foundLayer: boolean = false;
+            for (let j = 0; j < response.results.length; j++) {
+                if (layers[i].id === response.results[j].graphic.layer.id) {
+                    graphicOID =
+                        response.results[j].graphic.getObjectId() || -1;
+                    layerId = response.results[j].graphic.layer.id;
+                    foundLayer = true;
+                }
+            }
+            if (foundLayer) {
+                break;
+            }
+        }
+
+        // Check if the same tooltip already exists
+        const currentTooltip: any | undefined = this.$iApi.$vApp.$store.get(
+            FeatureTooltipStore.getTooltip
+        );
+        if (
+            currentTooltip &&
+            currentTooltip.layerId === layerId &&
+            currentTooltip.graphicOID === graphicOID
+        ) {
+            // Same tooltip, no need for changes
+            // This keeps the tooltip in place and saves some trips to Vuex store
+            return;
+        }
+
+        // Get the layer
+        const layerInstance:
+            | LayerInstance
+            | undefined = this.$iApi.geo.layer.getLayer(layerId);
+        if (!layerInstance) {
+            // Something seriously wrong here because esri gave us a non-existent layerID
+            return;
+        }
+
+        // Get the graphic
+        const graphicIconSVG: string = await layerInstance.getIcon(
+            graphicOID,
+            layerInstance.uid
+        );
+
+        // Calculate tooltip offset
+        let offsetX, offsetY: number;
+        const originX: number = this.getPixelWidth() / 2;
+        const originY: number = 0;
+        offsetX = screenPoint.screenX - originX;
+        offsetY = originY - screenPoint.screenY;
+
+        // Update the store
+        this.$iApi.$vApp.$store.set(FeatureTooltipStore.setTooltip, {
+            screenPoint: screenPoint,
+            mapPoint: this.screenPointToMapPoint(screenPoint),
+            graphicOID: graphicOID,
+            layerId: layerId,
+            template: `<b style="color: yellow">✨ FEATURE HOVERTIP CUSTOM TEMPLATE ✨</b><br>${graphicIconSVG}<br>OID: ${graphicOID}<br>LayerID: ${layerId}`,
+            offsetString: `${offsetX}, ${offsetY}`
         });
     }
 
@@ -940,14 +1040,19 @@ export class MapAPI extends CommonMapAPI {
             return;
         }
 
+        // if shift is the only key held down, return
+        if (this._activeKeys.length === 1 && this._activeKeys[0] == 'Shift') {
+            return;
+        }
+
         const center = this.getExtent().center();
 
         // calculate pan velocity based on constant pixel value that won't change based on zoom
         const screenCenter = this.mapPointToScreenPoint(center);
-        const p = this.screenPointToMapPoint(
-            screenCenter.screenX + 5,
-            screenCenter.screenY + 5
-        );
+        const p = this.screenPointToMapPoint({
+            screenX: screenCenter.screenX + 5,
+            screenY: screenCenter.screenY + 5
+        });
         const xDiff = Math.abs(p.x - center.x);
         const yDiff = Math.abs(p.y - center.y);
 
