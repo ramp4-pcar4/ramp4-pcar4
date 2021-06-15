@@ -6,9 +6,12 @@ import { HelpAPI } from '@/fixtures/help/api/help';
 import { GridAPI } from '@/fixtures/grid/api/grid';
 import { WizardAPI } from '@/fixtures/wizard/api/wizard';
 import { LegendAPI } from '@/fixtures/legend/api/legend';
-import { MapClick, RampBasemapConfig } from '@/geo/api';
+import { MapClick, MapMove, RampBasemapConfig, ScreenPoint } from '@/geo/api';
 import { RampConfig } from '@/types';
 import { debounce } from 'debounce';
+//@ts-ignore
+import { throttle } from 'throttle-debounce';
+import { FeatureTooltipStore } from '@/store/modules/featuretooltip';
 
 export enum GlobalEvents {
     /**
@@ -96,7 +99,9 @@ enum DefEH {
     GENERATE_LEGEND = 'generates_default_legend_entry',
     MAP_BASEMAPCHANGE_ATTRIBUTION = 'updates_map_caption_attribution_basemap',
     CONFIG_CHANGE_ATTRIBUTION = 'updates_map_caption_attribution_config',
-    MAP_SCALECHANGE_SCALEBAR = 'updates_map_caption_scale'
+    MAP_SCALECHANGE_SCALEBAR = 'updates_map_caption_scale',
+    OPEN_MAP_FEATURE_HOVERTIP = 'open_feature_hovertip',
+    EXTENT_CHANGE_FEATURE_HOVERTIP = 'updates_feature_hovertip_extent_change'
 }
 
 // private for EventBus internals, so don't export
@@ -348,7 +353,9 @@ export class EventAPI extends APIScope {
                 DefEH.GENERATE_LEGEND,
                 DefEH.MAP_BASEMAPCHANGE_ATTRIBUTION,
                 DefEH.CONFIG_CHANGE_ATTRIBUTION,
-                DefEH.MAP_SCALECHANGE_SCALEBAR
+                DefEH.MAP_SCALECHANGE_SCALEBAR,
+                DefEH.OPEN_MAP_FEATURE_HOVERTIP,
+                DefEH.EXTENT_CHANGE_FEATURE_HOVERTIP
             ];
         }
 
@@ -563,6 +570,43 @@ export class EventAPI extends APIScope {
                 this.$iApi.event.on(
                     GlobalEvents.MAP_SCALECHANGE,
                     debounce(() => this.$iApi.geo.map.updateScale(), 300),
+                    handlerName
+                );
+                break;
+            case DefEH.OPEN_MAP_FEATURE_HOVERTIP:
+                zeHandler = (mapMove: MapMove) => {
+                    this.$iApi.geo.map.displayFeatureTooltipAtCoord({
+                        screenX: mapMove.screenX,
+                        screenY: mapMove.screenY
+                    });
+                };
+                this.$iApi.event.on(
+                    GlobalEvents.MAP_MOUSEMOVE,
+                    throttle(200, (mapMove: MapMove) => zeHandler(mapMove)),
+                    handlerName
+                );
+                break;
+            case DefEH.EXTENT_CHANGE_FEATURE_HOVERTIP:
+                zeHandler = () => {
+                    if (this.$iApi.geo.map.keysActive) {
+                        // The user is using the crosshairs, perform hit-test using center of screens
+                        let screenCenter: ScreenPoint = this.$iApi.geo.map.mapPointToScreenPoint(
+                            this.$iApi.geo.map.getExtent().center()
+                        );
+                        this.$iApi.geo.map.displayFeatureTooltipAtCoord(
+                            screenCenter
+                        );
+                    } else {
+                        // regular extent change, hide tooltip
+                        this.$iApi.$vApp.$store.set(
+                            FeatureTooltipStore.setTooltip,
+                            undefined
+                        );
+                    }
+                };
+                this.$iApi.event.on(
+                    GlobalEvents.MAP_EXTENTCHANGE,
+                    throttle(50, true, () => zeHandler()), // Smaller throttle because extent change is intervalled
                     handlerName
                 );
                 break;
