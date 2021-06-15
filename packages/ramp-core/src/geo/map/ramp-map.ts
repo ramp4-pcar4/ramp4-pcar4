@@ -5,7 +5,8 @@ import {
     CommonMapAPI,
     GlobalEvents,
     InstanceAPI,
-    LayerInstance
+    LayerInstance,
+    MaptipAPI
 } from '@/api/internal';
 import {
     Attribution,
@@ -14,12 +15,12 @@ import {
     DefPromise,
     Extent,
     GeometryType,
+    GraphicHitResult,
     IdentifyMode,
     IdentifyParameters,
     IdentifyResult,
     IdentifyResultSet,
     MapClick,
-    MapMove,
     Point,
     RampMapConfig,
     ScreenPoint,
@@ -27,7 +28,7 @@ import {
     ScaleSet,
     SpatialReference
 } from '@/geo/api';
-import { EsriBasemap, EsriLOD, EsriMapView } from '@/geo/esri';
+import { EsriGraphic, EsriLOD, EsriMapView } from '@/geo/esri';
 import { LayerStore } from '@/store/modules/layer';
 import { MapCaptionStore } from '@/store/modules/mapcaption';
 
@@ -59,6 +60,9 @@ export class MapAPI extends CommonMapAPI {
      */
     private _rampSR: SpatialReference | undefined;
 
+    // API for managing the maptip
+    maptip: MaptipAPI;
+
     /**
      * @constructor
      * @param {InstanceAPI} iApi the RAMP instance
@@ -66,6 +70,7 @@ export class MapAPI extends CommonMapAPI {
     constructor(iApi: InstanceAPI) {
         super(iApi);
 
+        this.maptip = new MaptipAPI(iApi);
         this._viewPromise = new DefPromise();
     }
 
@@ -498,7 +503,7 @@ export class MapAPI extends CommonMapAPI {
      *
      * Updates map-caption store to notify map-caption component observer
      *
-     * @param newAttribution incoming new attribution
+     * @param {Attribution} newAttribution incoming new attribution
      */
     updateAttribution(newAttribution: Attribution): void {
         if (!newAttribution) {
@@ -714,14 +719,16 @@ export class MapAPI extends CommonMapAPI {
     /**
      * Get a point in map co-ordinates corresponding to a pixel in screen co-ordinates.
      *
-     * @param {Number} screenX pixel co-ord of the point on the map, x-axis.
-     * @param {Number} screenY pixel co-ord of the point on the map, y-axis.
+     * @param {ScreenPoint} screenPoint pixel screen co-ord of the point on the map
      * @returns {Point} the map point analagous to the screen point
      */
-    screenPointToMapPoint(screenX: number, screenY: number): Point {
+    screenPointToMapPoint(screenPoint: ScreenPoint): Point {
         if (this.esriView) {
             return this.$iApi.geo.utils.geom._convEsriPointToRamp(
-                this.esriView.toMap({ x: screenX, y: screenY }),
+                this.esriView.toMap({
+                    x: screenPoint.screenX,
+                    y: screenPoint.screenY
+                }),
                 'mappoint'
             );
         } else {
@@ -824,6 +831,64 @@ export class MapAPI extends CommonMapAPI {
             results: identifyResults,
             click: mapClick
         });
+    }
+
+    /**
+     * Get the top-most graphic at the given screen point
+     * Returns undefined if there is no point
+     *
+     * @param {ScreenPoint} screenPoint The screen coordinates
+     * @returns {Promise<GraphicHitResult | undefined>} a promise that resolves when a graphic is hit (undefined if no graphic was hit)
+     */
+    async getGraphicAtCoord(
+        screenPoint: ScreenPoint
+    ): Promise<GraphicHitResult | undefined> {
+        if (!this.esriView) {
+            this.noMapErr();
+            return;
+        }
+
+        // Sync with layer store to get the top-most layer with respect to order of layers in the store
+        const layers: LayerInstance[] | undefined = this.$vApp.$store.get<
+            LayerInstance[]
+        >(LayerStore.layers);
+
+        // Don't perform a hittest request if the layers array hasn't been established yet.
+        if (layers === undefined) return;
+
+        const response: __esri.HitTestResult = await this.esriView.hitTest({
+            x: screenPoint.screenX,
+            y: screenPoint.screenY
+        });
+
+        if (response.results.length === 0) return;
+
+        let esriGraphic: EsriGraphic | undefined;
+        let hitLayer: LayerInstance | undefined;
+
+        layers.some(layer => {
+            // breaks in the first match hit, preserving the layer order
+            const matchedResult: any = response.results.find(result => {
+                return result.graphic.layer.id === layer.id;
+            });
+            if (matchedResult) {
+                hitLayer = layer;
+                esriGraphic = matchedResult.graphic;
+            }
+            return matchedResult !== undefined;
+        });
+        if (esriGraphic && hitLayer) {
+            if (hitLayer.getLayerTree().children.length > 1) {
+                console.warn(
+                    'Found layer with more than one child during hitTest'
+                );
+            }
+            return {
+                oid: esriGraphic.getObjectId(),
+                layerId: esriGraphic.layer.id,
+                layerIdx: hitLayer.getLayerTree().children[0].layerIdx
+            };
+        }
     }
 
     // list of keys that are currently pressed
@@ -940,14 +1005,19 @@ export class MapAPI extends CommonMapAPI {
             return;
         }
 
+        // if shift is the only key held down, return
+        if (this._activeKeys.length === 1 && this._activeKeys[0] == 'Shift') {
+            return;
+        }
+
         const center = this.getExtent().center();
 
         // calculate pan velocity based on constant pixel value that won't change based on zoom
         const screenCenter = this.mapPointToScreenPoint(center);
-        const p = this.screenPointToMapPoint(
-            screenCenter.screenX + 5,
-            screenCenter.screenY + 5
-        );
+        const p = this.screenPointToMapPoint({
+            screenX: screenCenter.screenX + 5,
+            screenY: screenCenter.screenY + 5
+        });
         const xDiff = Math.abs(p.x - center.x);
         const yDiff = Math.abs(p.y - center.y);
 

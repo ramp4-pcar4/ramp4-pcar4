@@ -344,6 +344,19 @@ export interface IdentifyResultSet {
     parentUid: string; // this would be the parent layer's uid.
 }
 
+//TODO: Enhance this when a RAMP Graphic is properly defined
+export interface GraphicHitResult {
+    oid: number; // graphic OBJECTID
+    layerIdx: number; // layer index of the graphic
+    layerId: string; // graphic layer id
+}
+
+export interface MaptipProperties {
+    screenPoint: ScreenPoint; // screen xy coords
+    mapPoint: Point; // map xy coords
+    graphicHit: GraphicHitResult; // the graphic object the maptip is hovering over
+}
+
 export interface FilterEventParam {
     filterKey: string;
     uid?: string;
