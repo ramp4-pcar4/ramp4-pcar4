@@ -42,13 +42,15 @@ export default class LegendV extends Vue {
     @Prop() panel!: PanelInstance;
     // fetch store properties/data
     @Get(LegendStore.children) children!: Array<LegendEntry | LegendGroup>;
-    @Call(LegendStore.removeLayer) removeLayer!: (layer: LayerInstance) => void;
+    @Call(LegendStore.removeLayerEntry) removeLayerEntry!: (
+        uid: string
+    ) => void;
 
     mounted() {
         this.$iApi.event.on(
             GlobalEvents.LAYER_REMOVE,
             (layer: LayerInstance) => {
-                this.removeLayer(layer);
+                this.removeLayerEntry(layer.uid);
             }
         );
     }
