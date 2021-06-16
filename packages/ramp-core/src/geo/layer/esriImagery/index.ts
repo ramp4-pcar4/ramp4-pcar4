@@ -5,7 +5,7 @@ import { LayerType, RampLayerConfig, TreeNode } from '@/geo/api';
 import { EsriImageryLayer } from '@/geo/esri';
 
 class ImageryLayer extends CommonLayer {
-    esriLayer: EsriImageryLayer | undefined;
+    declare esriLayer: EsriImageryLayer | undefined;
 
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);

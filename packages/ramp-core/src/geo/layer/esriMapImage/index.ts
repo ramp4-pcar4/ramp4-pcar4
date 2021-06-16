@@ -20,7 +20,7 @@ import { MapImageFC } from './map-image-fc';
 class MapImageLayer extends AttribLayer {
     // indicates if sublayers can have opacity adjusted
     isDynamic: boolean;
-    esriLayer: EsriMapImageLayer | undefined;
+    declare esriLayer: EsriMapImageLayer | undefined;
 
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);

@@ -15,7 +15,12 @@ export class OverviewMapAPI extends CommonMapAPI {
      * @private
      */
     esriView: __esri.MapView | undefined;
-    viewPromise: DefPromise; // a promise that resolves when a layer view has been created on the map. helps bridge the view handler with the layer load handler
+    protected _viewPromise: DefPromise;
+
+    // a promise that resolves when a layer view has been created on the map. helps bridge the view handler with the layer load handler
+    get viewPromise(): Promise<void> {
+        return this._viewPromise.getPromise();
+    }
 
     /**
      * The map spatial reference in RAMP API Spatial Reference format.
@@ -31,7 +36,7 @@ export class OverviewMapAPI extends CommonMapAPI {
     constructor(iApi: InstanceAPI) {
         super(iApi);
 
-        this.viewPromise = new DefPromise();
+        this._viewPromise = new DefPromise();
     }
 
     /**
@@ -100,7 +105,7 @@ export class OverviewMapAPI extends CommonMapAPI {
             e.preventDefault();
         });
 
-        this.viewPromise.resolveMe();
+        this._viewPromise.resolveMe();
     }
 
     /**

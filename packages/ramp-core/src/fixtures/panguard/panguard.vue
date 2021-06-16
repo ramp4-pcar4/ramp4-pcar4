@@ -16,7 +16,7 @@ export default class MapPanguard extends Vue {
         const pointers = new Map();
 
         // prevent possible issues with esri event registration if this fixture runs before the map has built itself
-        this.$iApi.geo.map.viewPromise.getPromise().then(() => {
+        this.$iApi.geo.map.viewPromise.then(() => {
             // TODO: when projection change is implemented check that the below events track any changes to
             // the esriView or update MapAPI to be raising pointer events on the EventAPI, and this will listen to for those events
             this.$iApi.geo.map.esriView!.on('pointer-down', e => {

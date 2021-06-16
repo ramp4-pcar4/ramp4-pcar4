@@ -16,6 +16,7 @@ import {
     TabularAttributeSet,
     TreeNode
 } from '@/geo/api';
+import { LayerStore } from '@/store/modules/layer';
 
 // TODO strongly type the config param? might be pointless, as we want custom layers to have any config they like
 /**
@@ -173,6 +174,40 @@ export class LayerAPI extends APIScope {
     }
 
     /**
+     * Access an instantiated layer object.
+     *
+     * @param layerId layer id or uid of the layer
+     */
+    getLayer(layerId: string): LayerInstance {
+        // since this would be a fairly common thing to want to do via the instance API,
+        // this function acts as a nice / obvious endpoint and saves caller
+        // from figuring out how to use the store.
+
+        let layer: LayerInstance | undefined;
+
+        // test if param is layer id
+        layer = this.$iApi.$vApp.$store.get(LayerStore.getLayerById, layerId);
+        if (!layer) {
+            // test if layer is a string uid
+            layer = this.$iApi.$vApp.$store.get(
+                LayerStore.getLayerByUid,
+                layerId
+            );
+        }
+
+        if (!layer) {
+            // TODO better to return undefined and console.error?
+            //      Returning undefined means function has two return types,
+            //      and makes caller always validate/cast to shut up typescript.
+            throw new Error(
+                `Could not find layer associated with '${layerId}'`
+            );
+        }
+
+        return layer;
+    }
+
+    /**
      * Removes the specified fixture from R4MP instance.
      *
      * @template T
@@ -189,55 +224,6 @@ export class LayerAPI extends APIScope {
         this.$vApp.$store.set(`fixture/${FixtureMutation.REMOVE_FIXTURE}!`, { value: fixture });
 
         return fixture;
-    }
-    */
-
-    // TODO consider if we need a "get". The common use case would be to do a create layer
-    /**
-     * Finds and returns a `FixtureBase` object with the id specified.
-     *
-     * @template T subclass of the `FixtureBase`; defaults to `FixtureBase`
-     * @param {(string | FixtureBase)} item fixture id or `FixtureBase` item
-     * @returns {T}
-     * @memberof FixtureAPI
-     */
-    // get<T extends FixtureBase = FixtureBase>(item: string | FixtureBase): T;
-    /**
-     * Finds and returns a collection of `FixtureBase` objects given a list of ids.
-     * This can be useful when retrieving several fixtures at one time as follows:
-     * ```ts
-     * const [one, two, three] = RAMP.fixture.get(['fixture-one', 'fixture-two', 'fixture-three']);
-     * ```
-     *
-     * @template T subclass of the `FixtureBase`; defaults to `FixtureBase`
-     * @param {string[]} item a list of fixture ids
-     * @returns {T[]}
-     * @memberof FixtureAPI
-     */
-    /*
-    get<T extends FixtureBase = FixtureBase>(item: string[]): T[];
-    get<T extends FixtureBase = FixtureBase>(item: string | FixtureBase | string[]): T | T[] {
-        const ids: string[] = [];
-
-        // parse the input and figure our what it is
-        if (typeof item === 'string') {
-            ids.push(item);
-        } else if (Array.isArray(item)) {
-            ids.push(...item);
-        } else {
-            ids.push(item.id);
-        }
-
-        const fixtures = ids.map(id => {
-            const fixture = this.$vApp.$store.get<T>(`fixture/items@${id}`);
-            if (!fixture) {
-                throw new Error("fixture doesn't exist");
-            }
-
-            return fixture;
-        });
-
-        return fixtures.length === 1 ? fixtures[0] : fixtures;
     }
     */
 
@@ -416,6 +402,8 @@ export class LayerInstance extends APIScope implements LayerBase {
 
     isFile: boolean;
 
+    initialized: boolean;
+
     /**
      * Creates an instance of LayerInstance.
      *
@@ -431,17 +419,8 @@ export class LayerInstance extends APIScope implements LayerBase {
         this.state = LayerState.NEW;
         this.config = config;
         this.isFile = false;
+        this.initialized = false;
     }
-
-    /*
-    isReadyForMap(): Promise<void> {
-        // TODO revist the intelligence of this. it should get overwritten,
-        //      but i guess auto-resolve is best thing for 3rd party if they
-        //      don't care; otherwise will never get added to the map.
-        // TODO will probably not be needed, the initiate function will provide the promise
-        return Promise.resolve();
-    }
-    */
 
     esriLayer: __esri.Layer | undefined;
     esriView: __esri.LayerView | undefined;
@@ -463,6 +442,14 @@ export class LayerInstance extends APIScope implements LayerBase {
      * Note this does not remove any layers from the map stack, that must be done by the caller.
      */
     async terminate(): Promise<void> {
+        return Promise.resolve();
+    }
+
+    /**
+     * Attempts to reload the internal layer object (ESRI).
+     * Effectively doing a terminate then initiate, and removing/re-adding layer to the map.
+     */
+    async reload(): Promise<void> {
         return Promise.resolve();
     }
 

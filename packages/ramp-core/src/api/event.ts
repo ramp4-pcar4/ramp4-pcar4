@@ -21,9 +21,10 @@ export enum GlobalEvents {
     FILTER_CHANGE = 'filter/change',
 
     LAYER_OPACITYCHANGE = 'layer/opacitychange',
+    LAYER_RELOADED = 'layer/reloaded', // Payload: `(layer: LayerInstance)`
+    LAYER_REMOVE = 'layer/remove', // Payload: `(layer: LayerInstance)`
     LAYER_STATECHANGE = 'layer/statechange',
     LAYER_VISIBILITYCHANGE = 'layer/visibilitychange',
-    LAYER_REMOVE = 'layer/remove', // Payload: `(layer: LayerInstance)`
 
     /**
      * Fires when the config file changes
