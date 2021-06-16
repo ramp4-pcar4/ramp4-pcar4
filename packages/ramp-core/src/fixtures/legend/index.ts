@@ -23,9 +23,6 @@ class LegendFixture extends LegendAPI {
                 i18n: { messages }
             }
         );
-
-        this.$iApi.panel.open('legend-panel');
-
         // TODO: register legend panel
         this.$iApi.component('legend-appbar-button', LegendAppbarButtonV);
         this.$vApp.$store.registerModule('legend', legend());

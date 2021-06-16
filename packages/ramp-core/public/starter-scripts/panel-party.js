@@ -1,6 +1,5 @@
 window.rInstance = null;
-
-console.log('RAMP has loaded.');
+document.title = 'Panel Party';
 
 document.getElementById('ramp-version').innerText =
     'v.' +
@@ -183,6 +182,9 @@ let config = {
             },
             appbar: {
                 items: [
+                    { id: 'gazebo', options: { colour: '#54a0ff' } },
+                    'divider',
+                    'snowman-appbar-button',
                     'legend',
                     'geosearch',
                     'basemap',
@@ -192,6 +194,18 @@ let config = {
                 temporaryButtons: ['details', 'metadata', 'settings', 'grid']
             },
             mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
+            details: {
+                items: [
+                    {
+                        id: 'WaterQuantity',
+                        template: 'Water-Quantity-Template'
+                    },
+                    {
+                        id: 'WFSLayer',
+                        template: 'WFSLayer-Custom'
+                    }
+                ]
+            },
             'export-v1-title': {
                 text: 'All Your Base are Belong to Us'
             }
@@ -263,6 +277,9 @@ let config = {
         fixtures: {
             appbar: {
                 items: [
+                    { id: 'gazebo', options: { colour: '#54a0ff' } },
+                    'divider',
+                    'snowman-appbar-button',
                     'legend',
                     'geosearch',
                     'basemap',
@@ -271,6 +288,18 @@ let config = {
                 ]
             },
             mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
+            details: {
+                items: [
+                    {
+                        id: 'WaterQuantity',
+                        template: 'Water-Quantity-Template'
+                    },
+                    {
+                        id: 'WFSLayer',
+                        template: 'WFSLayer-Custom'
+                    }
+                ]
+            },
             'export-v1-title': {
                 text: 'All Your Base are Belong to Us'
             }
@@ -286,11 +315,224 @@ let options = {
 
 rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
 rInstance.fixture.addDefaultFixtures().then(() => {
+    rInstance.panel.open('geosearch-panel');
+    rInstance.panel.open('basemap-panel');
     rInstance.panel.open('legend-panel');
+    rInstance.panel.open('help-panel');
+    // Emits an event to open the metadata panel. Usually, this is be done by any fixture that wants the metadata panel to open.
+    rInstance.event.emit('metadata/open', {
+        type: 'html',
+        layer: 'Sample Layer Name',
+        url: 'https://ryan-coulson.com/RAMPMetadataDemo.html'
+    });
 });
+
+// Load custom templates.
+
+Vue.component('WFSLayer-Custom', {
+    props: ['identifyData'],
+    render: function(h) {
+        return h('div', [
+            h('span', 'This is an example template that contains an image.'),
+            h('span', {
+                domProps: {
+                    innerHTML: '<img src="https://i.imgur.com/WtY0tdC.gif" />'
+                }
+            })
+        ]);
+    }
+});
+
+Vue.component('Water-Quantity-Template', {
+    props: ['identifyData'],
+    render: function(h) {
+        // Demonstrates that you can display different components in a template depending on an attribute value.
+        let renderHeader = () => {
+            if (this.identifyData.data['Symbol'] === '3') {
+                return h(
+                    'span',
+                    {
+                        style:
+                            'display: flex; font-size: 1.25rem; background-color: #e53e3e; color: white; padding: 4px; text-align: center;'
+                    },
+                    this.identifyData.data['StationName']
+                );
+            } else {
+                return h(
+                    'span',
+                    {
+                        style:
+                            'display: flex; font-size: 1.25rem; background-color: #3182ce; color: white; padding: 4px; text-align: center;'
+                    },
+                    this.identifyData.data['StationName']
+                );
+            }
+        };
+
+        let createSection = (title, id) => {
+            return h(
+                'div',
+                {
+                    style:
+                        'display: flex; flex-direction: column; font-size: .875rem; padding-top: 5px;'
+                },
+                [
+                    h(
+                        'span',
+                        {
+                            style: 'color: #a0aec0; font-weight: bold;'
+                        },
+                        title
+                    ),
+                    h('span', this.identifyData.data[id])
+                ]
+            );
+        };
+
+        return h(
+            'div',
+            {
+                style:
+                    'align-items: center; justify-content: center; font-size: .875rem; font-family: "Arial", sans-serif;'
+            },
+            [
+                renderHeader(),
+                createSection('Station ID', 'StationID'),
+                createSection('Province', 'E_Province'),
+                createSection('Report Year', 'Report_Year'),
+                h(
+                    'div',
+                    {
+                        style:
+                            'display: flex; flex-direction: row; color: #a0aec0; font-weight: bold; padding-top: 5px;'
+                    },
+                    [
+                        h(
+                            'div',
+                            {
+                                style: 'flex: 1 1 0%; width: 100%;'
+                            },
+                            'Latitude'
+                        ),
+                        h(
+                            'div',
+                            {
+                                style: 'flex: 1 1 0%; width: 100%;'
+                            },
+                            'Longitude'
+                        )
+                    ]
+                ),
+                h(
+                    'div',
+                    {
+                        style: 'display: flex; flex-direction: row;'
+                    },
+                    [
+                        h(
+                            'div',
+                            {
+                                style: 'flex: 1 1 0%; width: 100%;'
+                            },
+                            this.identifyData.data['Latitude']
+                        ),
+                        h(
+                            'div',
+                            {
+                                style: 'flex: 1 1 0%; width: 100%;'
+                            },
+                            this.identifyData.data['Longitude']
+                        )
+                    ]
+                ),
+                h(
+                    'div',
+                    {
+                        style:
+                            'display: flex; flex-direction: column; padding-top: 5px; color: #4299e1;'
+                    },
+                    [
+                        h(
+                            'span',
+                            {
+                                style: 'font-weight: bold; color: #a0aec0;'
+                            },
+                            'Links'
+                        ),
+                        h('span', {
+                            domProps: {
+                                innerHTML: this.identifyData.data[
+                                    'E_DetailPageURL'
+                                ]
+                            }
+                        }),
+                        h('span', {
+                            domProps: {
+                                innerHTML: this.identifyData.data[
+                                    'E_URL_Historical'
+                                ]
+                            }
+                        }),
+                        h('span', {
+                            domProps: {
+                                innerHTML: this.identifyData.data[
+                                    'E_URL_RealTime'
+                                ]
+                            }
+                        })
+                    ]
+                )
+            ]
+        );
+    }
+});
+
+// start loading non-default fixtures; this is just an example
+rInstance.fixture.add('snowman');
+rInstance.fixture.add('gazebo').then(() => {
+    rInstance.panel
+        .get('p2')
+        .open({ screen: 'p-2-screen-2' })
+        .pin();
+});
+rInstance.fixture.add('diligord', window.hostFixtures.diligord).then(() => {
+    rInstance.panel.open('diligord-p1');
+});
+rInstance.fixture.add('mouruge', window.hostFixtures.mouruge).then(() => {
+    rInstance.panel.open('mouruge-p1');
+});
+
+// TODO: temp fix since iklob is added after the instance is instantiated. replace once we have a 'fixture added' event.
+setTimeout(() => {
+    rInstance.panel.open('iklob-p1');
+}, 5000);
 
 // add export-v1 fixtures
 rInstance.fixture.add('export-v1');
+
+// sample event declared by the page
+
+// interesting race condition here. we could use rInstance.availableEvents to find the name,
+// but given the async nature of fixture.add, the name will not be registered yet.
+var gazeboEventName = 'gazebo/beholdMyText';
+
+// a handler to react to a gazebo event
+// click "see a cat" button to trigger console output
+var handler = function(text) {
+    // important to use get here, as the fixture might have been removed later on
+    var diligord = rInstance.fixture.get('diligord');
+    if (!diligord) {
+        return;
+    }
+    diligord.doAThing(text);
+};
+rInstance.event.on(gazeboEventName, handler, 'SAMPLE_HANDLER');
+
+// a one time handler. clicking "see a cat" many times should only result in one console log
+var onceHandler = function(text) {
+    console.log('EVENTS API SAMPLE: a one time event : ' + text);
+};
+rInstance.event.once(gazeboEventName, onceHandler, 'SAMPLE_HANDLER_ONCE');
 
 function switchLang() {
     if (rInstance.language === 'en') {
