@@ -41,7 +41,10 @@
                 <!-- visibility -->
                 <checkbox
                     :value="legendItem.visibility"
-                    :isRadio="props && props.isVisibilitySet"
+                    :isRadio="
+                        legendItem.parent &&
+                            legendItem.parent.type === 'VisibilitySet'
+                    "
                     :legendItem="legendItem"
                 />
             </div>
@@ -74,7 +77,6 @@ import CheckboxV from './checkbox.vue';
 })
 export default class LegendGroupV extends Vue {
     @Prop() legendItem!: LegendGroup;
-    @Prop() props!: any;
 }
 </script>
 

@@ -25,7 +25,7 @@ const getters = {
                 checkExpanded(entry, expanded)
         );
     },
-    getAllVisibility: function(state: LegendState, visible: boolean): boolean {
+    getAllVisibility: (state: LegendState, visible: boolean): boolean => {
         return state.children.every((entry: LegendEntry | LegendGroup) =>
             checkVisibility(entry, visible)
         );
@@ -43,8 +43,8 @@ const mutations = {
         const index = state.children.findIndex(child => child.id === id);
         Vue.set(state.children, index, entry);
     },
-    REMOVE_ITEM: (state: LegendState, layer: LayerInstance) => {
-        state.children = removeEntry(state.children, layer);
+    REMOVE_LAYER_ENTRY: (state: LegendState, uid: string) => {
+        state.children = removeLayerEntry(state.children, uid);
     }
 };
 
@@ -77,9 +77,9 @@ const actions = {
     addEntry: (context: LegendContext, item: LegendEntry) => {
         context.commit('ADD_ITEM', item);
     },
-    /** Add legend entry to store */
-    removeLayer: (context: LegendContext, layer: LayerInstance) => {
-        context.commit('REMOVE_ITEM', layer);
+    /** Remove layer's corresponding entry from the store */
+    removeLayerEntry: (context: LegendContext, uid: string) => {
+        context.commit('REMOVE_LAYER_ENTRY', uid);
     },
     /** Replaces default placeholder after layer is loaded */
     updateDefaultEntry: (context: LegendContext, id: string) => {
@@ -212,17 +212,19 @@ function toggle(child: LegendEntry | LegendGroup, options: any) {
     }
 }
 
-function removeEntry(
+function removeLayerEntry(
     children: (LegendEntry | LegendGroup)[],
-    layer: LayerInstance
+    uid: string
 ) {
     children = children.filter(
-        entry => entry instanceof LegendGroup || entry.layer !== layer
+        entry =>
+            entry instanceof LegendGroup ||
+            (entry.layer!.uid !== uid && entry.uid !== uid)
     );
     children
         .filter(entry => entry instanceof LegendGroup)
         .forEach(
-            group => (group.children = removeEntry(group.children, layer))
+            group => (group.children = removeLayerEntry(group.children, uid))
         );
     return children;
 }
@@ -255,7 +257,7 @@ export enum LegendStore {
     /**
      * (Action) removeLayer - remove layer's corresponding entry from the store
      */
-    removeLayer = 'legend/removeLayer',
+    removeLayerEntry = 'legend/removeLayerEntry',
     /**
      * (Action) updateDefaultEntry - replaces default placeholder after layer has loaded
      */
