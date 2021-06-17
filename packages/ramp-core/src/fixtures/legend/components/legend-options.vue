@@ -98,7 +98,7 @@
                         d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
                     ></path>
                 </svg>
-                {{ 'remove' }}
+                {{ $t('legend.entry.controls.remove') }}
             </a>
         </dropdown-menu>
     </div>
@@ -170,22 +170,27 @@ export default class LegendOptionsV extends Vue {
     }
 
     /**
-     * Removes layer.
+     * Removes layer from map.
      */
     removeLayer() {
-        const layerTree = this.legendItem.layer!.getLayerTree();
-        if (
-            !(layerTree.children.length === 1 && layerTree.children[0].isLayer)
-        ) {
-            // cheap hack for MIL with multiple children - set visibility to false and remove legend entry
-            // TODO get rid of this when/if MIL children can be removed for real
-            this.removeLayerEntry(this.legendItem.uid!);
-            this.legendItem.layer!.setVisibility(
-                false,
-                this.legendItem._layerIndex
-            );
-        } else {
-            this.$iApi.geo.map.removeLayer(this.legendItem.uid!);
+        if (this.legendItem._controlAvailable(Controls.Remove)) {
+            const layerTree = this.legendItem.layer!.getLayerTree();
+            if (
+                !(
+                    layerTree.children.length === 1 &&
+                    layerTree.children[0].isLayer
+                )
+            ) {
+                // cheap hack for MIL with multiple children - set visibility to false and remove legend entry
+                // TODO get rid of this when/if MIL sublayers can be removed for real
+                this.removeLayerEntry(this.legendItem.uid!);
+                this.legendItem.layer!.setVisibility(
+                    false,
+                    this.legendItem._layerIndex
+                );
+            } else {
+                this.$iApi.geo.map.removeLayer(this.legendItem.uid!);
+            }
         }
     }
 }
@@ -193,7 +198,6 @@ export default class LegendOptionsV extends Vue {
 
 <style lang="scss" scoped>
 .disabled {
-    @apply text-gray-400;
-    cursor: default;
+    @apply text-gray-400 cursor-default;
 }
 </style>

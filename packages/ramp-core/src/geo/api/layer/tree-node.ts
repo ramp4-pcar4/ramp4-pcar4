@@ -24,7 +24,7 @@ export class TreeNode {
         if (this.uid === uid) {
             return this;
         } else {
-            return this.children.map(c => c.findChildByUid(uid)).find(Boolean);
+            return this.children.map(t => t.findChildByUid(uid)).find(Boolean);
         }
     }
 
@@ -34,7 +34,7 @@ export class TreeNode {
         if (this.layerIdx === idx) {
             return this;
         } else {
-            return this.children.map(c => c.findChildByIdx(idx)).find(Boolean);
+            return this.children.map(t => t.findChildByIdx(idx)).find(Boolean);
         }
     }
 }

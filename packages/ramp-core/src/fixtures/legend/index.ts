@@ -1,7 +1,8 @@
 import { LegendAPI } from './api/legend';
-import { legend } from './store/index';
+import { LegendStore, legend } from './store';
 import LegendV from './legend.vue';
 import LegendAppbarButtonV from './appbar-button.vue';
+import { GlobalEvents, LayerInstance } from '@/api';
 
 import messages from './lang/lang.csv';
 
@@ -33,10 +34,23 @@ class LegendFixture extends LegendAPI {
             () => this.config,
             (value: any) => this._parseConfig(value)
         );
+
+        this.$iApi.event.on(
+            GlobalEvents.LAYER_REMOVE,
+            (layer: LayerInstance) => {
+                this.$iApi.$vApp.$store.dispatch(
+                    LegendStore.removeLayerEntry,
+                    layer.uid
+                );
+            },
+            'legend_removes_layer_entry'
+        );
     }
 
     removed() {
         this.$vApp.$store.unregisterModule('legend');
+
+        this.$iApi.event.off('legend_removes_layer_entry');
     }
 }
 

@@ -43,7 +43,7 @@
                     :value="legendItem.visibility"
                     :isRadio="
                         legendItem.parent &&
-                            legendItem.parent.type === 'VisibilitySet'
+                            legendItem.parent.type === LegendTypes.Set
                     "
                     :legendItem="legendItem"
                 />
@@ -66,7 +66,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
 import { LegendStore } from '../store';
-import { LegendGroup } from '../store/legend-defs';
+import { LegendGroup, LegendTypes } from '../store/legend-defs';
 import CheckboxV from './checkbox.vue';
 
 @Component({
@@ -77,6 +77,9 @@ import CheckboxV from './checkbox.vue';
 })
 export default class LegendGroupV extends Vue {
     @Prop() legendItem!: LegendGroup;
+
+    // make vue stop hating enums
+    LegendTypes = LegendTypes;
 }
 </script>
 

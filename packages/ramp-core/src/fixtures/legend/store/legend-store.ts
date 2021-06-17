@@ -44,7 +44,31 @@ const mutations = {
         Vue.set(state.children, index, entry);
     },
     REMOVE_LAYER_ENTRY: (state: LegendState, uid: string) => {
-        state.children = removeLayerEntry(state.children, uid);
+        const removeLayerEntry = (children: (LegendEntry | LegendGroup)[]) => {
+            // remove entry if uid corresponds to entry or parent layer
+            children = children.filter(
+                entry =>
+                    entry instanceof LegendGroup ||
+                    (entry.layer!.uid !== uid && entry.uid !== uid)
+            );
+
+            // recursively check child legend groups
+            children
+                .filter(entry => entry instanceof LegendGroup)
+                .forEach(group => {
+                    group.children = removeLayerEntry(group.children);
+                });
+
+            // remove groups with no children
+            children = children.filter(
+                item =>
+                    item instanceof LegendEntry || item.children.length !== 0
+            );
+
+            return children;
+        };
+
+        state.children = removeLayerEntry(state.children);
     }
 };
 
@@ -212,23 +236,6 @@ function toggle(child: LegendEntry | LegendGroup, options: any) {
     }
 }
 
-function removeLayerEntry(
-    children: (LegendEntry | LegendGroup)[],
-    uid: string
-) {
-    children = children.filter(
-        entry =>
-            entry instanceof LegendGroup ||
-            (entry.layer!.uid !== uid && entry.uid !== uid)
-    );
-    children
-        .filter(entry => entry instanceof LegendGroup)
-        .forEach(
-            group => (group.children = removeLayerEntry(group.children, uid))
-        );
-    return children;
-}
-
 export enum LegendStore {
     /**
      * (State) children: Array<LegendItem>
@@ -255,7 +262,7 @@ export enum LegendStore {
      */
     addEntry = 'legend/addEntry!',
     /**
-     * (Action) removeLayer - remove layer's corresponding entry from the store
+     * (Action) removeLayerEntry - remove layer's corresponding entry from the store
      */
     removeLayerEntry = 'legend/removeLayerEntry',
     /**
