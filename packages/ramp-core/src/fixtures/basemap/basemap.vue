@@ -29,10 +29,11 @@
                         </h3>
                         <!-- TODO: check if current basemap matches projection, if not need "Map Refresh required" warning here -->
                         <div
-                            class="flex truncate px-5 ml-auto"
+                            class="flex px-5 ml-auto"
                             v-if="
                                 tileSchema.id !== selectedBasemap.tileSchemaId
                             "
+                            v-truncate
                         >
                             <svg
                                 class="fill-current w-16 h-16"

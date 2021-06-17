@@ -3,13 +3,13 @@
         <header
             v-if="header"
             class="flex flex-shrink-0 items-center border-b border-solid border-gray-600 px-8 h-48 default-focus-style"
-            v-focus-item
+            v-focus-item="'show-truncate'"
         >
             <back
                 v-if="$iApi.screenSize === 'xs'"
                 @click="panel.close()"
             ></back>
-            <h2 class="flex-grow text-lg py-16 pl-8 truncate min-w-0">
+            <h2 class="flex-grow text-lg py-16 pl-8 min-w-0" v-truncate>
                 <slot name="header"></slot>
             </h2>
 

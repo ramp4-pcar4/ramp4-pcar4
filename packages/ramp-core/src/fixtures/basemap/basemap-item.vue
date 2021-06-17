@@ -47,7 +47,7 @@
             <div
                 class="absolute flex w-full bg-black opacity-75 text-white h-30 bottom-0 items-center"
             >
-                <div class="pl-5 truncate">
+                <div class="pl-5" v-truncate>
                     <span>{{ basemap.name }}</span>
                 </div>
 

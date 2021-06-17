@@ -1,6 +1,10 @@
 <template>
     <div class="legend-item">
-        <div class="legend-item-header">
+        <div
+            class="legend-item-header"
+            v-focus-item="'show-truncate'"
+            truncate-trigger
+        >
             <!-- smiley face. very important that we migrate this -->
             <div class="flex pr-10">
                 <svg
@@ -23,7 +27,7 @@
             </div>
 
             <!-- name -->
-            <div class="truncate">
+            <div v-truncate="{ externalTrigger: true }">
                 <span>{{ legendItem.name }}</span>
             </div>
         </div>

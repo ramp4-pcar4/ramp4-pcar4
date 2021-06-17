@@ -4,7 +4,7 @@
             <div
                 class="legend-group-header flex items-center px-5 py-10 cursor-pointer default-focus-style hover:bg-gray-200"
                 @click="legendItem.toggleExpanded()"
-                v-focus-item
+                v-focus-item="'show-truncate'"
                 :content="
                     $t(
                         legendItem.expanded
@@ -13,6 +13,7 @@
                     )
                 "
                 v-tippy="{ placement: 'top-start', aria: 'describedby' }"
+                truncate-trigger
             >
                 <!-- dropdown icon -->
                 <div
@@ -33,7 +34,7 @@
                 </div>
 
                 <!-- name -->
-                <div class="flex-1 truncate pointer-events-none">
+                <div class="flex-1 pointer-events-none" v-truncate>
                     <span>{{ legendItem.name }}</span>
                 </div>
 

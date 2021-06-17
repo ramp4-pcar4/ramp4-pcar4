@@ -15,6 +15,8 @@ enum KEYS {
 
 const LIST_ATTR = 'focus-list';
 const ITEM_ATTR = 'focus-item';
+const TRUNCATE_ATTR = 'truncate-text';
+const SHOW_TRUNCATE = 'show-truncate';
 const FOCUSED_CLASS = 'focused';
 const TABBABLE_TAGS = `button,input,select,a,textarea,[contenteditable],[${LIST_ATTR}]`;
 
@@ -97,6 +99,7 @@ class FocusListManager {
     element: HTMLElement;
     highlightedItem: HTMLElement;
     isHorizontal: boolean;
+    isClicked: boolean;
 
     /**
      * Creates an instance of FocusListManager
@@ -109,6 +112,8 @@ class FocusListManager {
         this.highlightedItem = this.element;
 
         this.isHorizontal = attributeValue === 'horizontal';
+
+        this.isClicked = false;
 
         // remove the ability to tab to sub-items
         this.setTabIndex(-1);
@@ -127,8 +132,7 @@ class FocusListManager {
             focusManager.onBlur();
         });
         element.addEventListener('mousedown', function(event: MouseEvent) {
-            // prevent `focus` events occuring from clicking on the list
-            event.preventDefault();
+            focusManager.onMousedown();
         });
     }
 
@@ -169,6 +173,9 @@ class FocusListManager {
         if ((item as any)._tippy) {
             (item as any)._tippy.hide();
         }
+        if (item.getAttribute(ITEM_ATTR) === SHOW_TRUNCATE) {
+            (item.querySelector(`[${TRUNCATE_ATTR}]`)! as any)._tippy.hide();
+        }
     }
 
     /**
@@ -182,6 +189,9 @@ class FocusListManager {
         this.setTabIndex(0, item);
         if ((item as any)._tippy) {
             (item as any)._tippy.show();
+        }
+        if (item.getAttribute(ITEM_ATTR) === SHOW_TRUNCATE) {
+            (item.querySelector(`[${TRUNCATE_ATTR}]`)! as any)._tippy.show();
         }
     }
 
@@ -370,9 +380,23 @@ class FocusListManager {
      */
     onFocus() {
         // If the highlighted item has a tooltip then show it
-        if (this.highlightedItem && (this.highlightedItem as any)._tippy) {
-            (this.highlightedItem as any)._tippy.show();
+        // Don't show if the list was clicked, it will cause the tooltip to flicker
+        if (this.highlightedItem && !this.isClicked) {
+            if ((this.highlightedItem as any)._tippy) {
+                (this.highlightedItem as any)._tippy.show();
+            }
+
+            if (
+                this.highlightedItem.getAttribute(ITEM_ATTR) === SHOW_TRUNCATE
+            ) {
+                (this.highlightedItem.querySelector(
+                    `[${TRUNCATE_ATTR}]`
+                )! as any)._tippy.show();
+            }
         }
+
+        this.isClicked = false;
+
         // if the element already has the attribute, or the highlighted element is the list there is nothing to do
         if (
             this.element.hasAttribute('aria-activedescendant') ||
@@ -391,9 +415,26 @@ class FocusListManager {
      */
     onBlur() {
         // If the highlighted item has a tooltip hide it since focus is going away from the list
-        if (this.highlightedItem && (this.highlightedItem as any)._tippy) {
-            console.log('ON BLUR');
-            (this.highlightedItem as any)._tippy.hide();
+        if (this.highlightedItem) {
+            if ((this.highlightedItem as any)._tippy) {
+                (this.highlightedItem as any)._tippy.hide();
+            }
+
+            if (
+                this.highlightedItem.getAttribute(ITEM_ATTR) === SHOW_TRUNCATE
+            ) {
+                (this.highlightedItem.querySelector(
+                    `[${TRUNCATE_ATTR}]`
+                )! as any)._tippy.hide();
+            }
         }
+    }
+
+    /**
+     * Callback for the MOUSEDOWN event listener on the focus list element.
+     */
+    onMousedown() {
+        // set clicked flag so focus event knows its been triggered by a click and isn't currently being traversed by keyboard
+        this.isClicked = true;
     }
 }

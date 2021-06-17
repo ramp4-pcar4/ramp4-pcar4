@@ -15,6 +15,9 @@ import { FocusList, FocusItem } from '@/directives/focus-list';
 Vue.directive('focus-list', FocusList);
 Vue.directive('focus-item', FocusItem);
 
+import { Truncate } from '@/directives/truncate/truncate';
+Vue.directive('truncate', Truncate);
+
 //FORMS
 import VueFormulate from '@braid/vue-formulate';
 Vue.use(VueFormulate);

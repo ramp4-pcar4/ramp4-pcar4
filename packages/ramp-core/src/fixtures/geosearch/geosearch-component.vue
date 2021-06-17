@@ -49,9 +49,12 @@
                         <button
                             class="absolute inset-0 h-full w-full hover:bg-gray-300 default-focus-style"
                             @click="zoomIn(result)"
-                            v-focus-item
+                            v-focus-item="'show-truncate'"
                         >
-                            <div class="rv-result-description flex px-8">
+                            <div
+                                class="rv-result-description flex px-8"
+                                v-truncate
+                            >
                                 <div class="flex-1 text-left truncate">
                                     <span
                                         v-html="
