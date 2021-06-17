@@ -89,7 +89,7 @@
                                 "properties": {
                                     "id": {
                                         "type": "string",
-                                        "description": "Identification for the component."
+                                        "description": "Id of the appbar component."
                                     },
                                     "options": {
                                         "type": "object",
@@ -101,6 +101,33 @@
                         ]
                     },
                     "minItems": 1
+                },
+                "temporaryButtons": {
+                    "type": "array",
+                    "default": [],
+                    "description": "Temporary buttons displayed on the appbar. They are shown when the related panel is opened and disappear when it is closed.",
+                    "items": {
+                        "oneOf": [
+                            {
+                                "type": "string",
+                                "description": "Id of the appbar component. The related panel's id should be 'id-panel'."
+                            },
+                            {
+                                "type": "object",
+                                "description": "Specifies a temporary appbar button. The id of the related panel and appbar component do not need to match.",
+                                "properties": {
+                                    "panelId": {
+                                        "type": "string",
+                                        "description": "Id of the related panel."
+                                    },
+                                    "appbarItem": {
+                                        "type": "string",
+                                        "description": "Id of the appbar component."
+                                    }
+                                }
+                            }
+                        ]
+                    }
                 }
             },
             "required": ["items"],
@@ -161,7 +188,12 @@
                             "description": "Endpoint url for types service."
                         }
                     },
-                    "required": ["geoNames", "geoLocation", "provinces", "types"]
+                    "required": [
+                        "geoNames",
+                        "geoLocation",
+                        "provinces",
+                        "types"
+                    ]
                 }
             },
             "unevaluatedProperties": false
@@ -208,7 +240,15 @@
                 },
                 "controls": {
                     "$ref": "#/$defs/legendGroupControls",
-                    "default": ["opacity", "visibility", "symbology", "query", "reload", "remove", "settings"]
+                    "default": [
+                        "opacity",
+                        "visibility",
+                        "symbology",
+                        "query",
+                        "reload",
+                        "remove",
+                        "settings"
+                    ]
                 },
                 "disabledControls": {
                     "$ref": "#/$defs/legendGroupControls",
@@ -394,11 +434,14 @@
                     "type": "array",
                     "description": "A list of legend elements forming the visibility set.",
                     "items": {
-                        "oneOf": [{
-                            "$ref": "#/$defs/entryGroup"
-                        }, {
-                            "$ref": "#/$defs/entry"
-                        }]
+                        "oneOf": [
+                            {
+                                "$ref": "#/$defs/entryGroup"
+                            },
+                            {
+                                "$ref": "#/$defs/entry"
+                            }
+                        ]
                     },
                     "minItems": 1
                 }
@@ -422,7 +465,16 @@
                     "description": "Map navigation buttons displayed on navbar.",
                     "items": {
                         "type": "string",
-                        "enum": ["geoLocator", "zoom", "home", "basemap", "help", "fullscreen", "geosearch", "legend"]
+                        "enum": [
+                            "geoLocator",
+                            "zoom",
+                            "home",
+                            "basemap",
+                            "help",
+                            "fullscreen",
+                            "geosearch",
+                            "legend"
+                        ]
                     },
                     "uniqueItems": true
                 }
@@ -504,7 +556,18 @@
                 },
                 "controls": {
                     "$ref": "#/$defs/legendEntryControls",
-                    "default": ["opacity", "visibility", "boundingBox", "query", "metadata", "boundaryZoom", "refresh", "reload", "remove", "settings"]
+                    "default": [
+                        "opacity",
+                        "visibility",
+                        "boundingBox",
+                        "query",
+                        "metadata",
+                        "boundaryZoom",
+                        "refresh",
+                        "reload",
+                        "remove",
+                        "settings"
+                    ]
                 },
                 "disabledControls": {
                     "$ref": "#/$defs/legendEntryControls",
@@ -584,7 +647,18 @@
                 },
                 "controls": {
                     "$ref": "#/$defs/legendEntryControls",
-                    "default": ["opacity", "visibility", "boundingBox", "query", "metadata", "boundaryZoom", "refresh", "reload", "remove", "settings"]
+                    "default": [
+                        "opacity",
+                        "visibility",
+                        "boundingBox",
+                        "query",
+                        "metadata",
+                        "boundaryZoom",
+                        "refresh",
+                        "reload",
+                        "remove",
+                        "settings"
+                    ]
                 },
                 "disabledControls": {
                     "$ref": "#/$defs/legendEntryControls",
@@ -595,7 +669,17 @@
                 },
                 "imageFormat": {
                     "type": "string",
-                    "enum": ["png", "png8", "png24", "png32", "jpg", "pdf", "bmp", "gif", "svg"],
+                    "enum": [
+                        "png",
+                        "png8",
+                        "png24",
+                        "png32",
+                        "jpg",
+                        "pdf",
+                        "bmp",
+                        "gif",
+                        "svg"
+                    ],
                     "default": "png32",
                     "description": "The format of the layer image output."
                 }
@@ -712,7 +796,18 @@
                 },
                 "controls": {
                     "$ref": "#/$defs/legendEntryControls",
-                    "default": ["opacity", "visibility", "boundingBox", "query", "metadata", "boundaryZoom", "refresh", "reload", "remove", "settings"]
+                    "default": [
+                        "opacity",
+                        "visibility",
+                        "boundingBox",
+                        "query",
+                        "metadata",
+                        "boundaryZoom",
+                        "refresh",
+                        "reload",
+                        "remove",
+                        "settings"
+                    ]
                 },
                 "disabledControls": {
                     "$ref": "#/$defs/legendEntryControls",
@@ -797,7 +892,18 @@
                 },
                 "controls": {
                     "$ref": "#/$defs/legendEntryControls",
-                    "default": ["opacity", "visibility", "boundingBox", "query", "metadata", "boundaryZoom", "refresh", "reload", "remove", "settings"]
+                    "default": [
+                        "opacity",
+                        "visibility",
+                        "boundingBox",
+                        "query",
+                        "metadata",
+                        "boundaryZoom",
+                        "refresh",
+                        "reload",
+                        "remove",
+                        "settings"
+                    ]
                 },
                 "disabledControls": {
                     "$ref": "#/$defs/legendEntryControls",
@@ -868,7 +974,18 @@
                 },
                 "controls": {
                     "$ref": "#/$defs/legendEntryControls",
-                    "default": ["opacity", "visibility", "boundingBox", "query", "metadata", "boundaryZoom", "refresh", "reload", "remove", "settings"]
+                    "default": [
+                        "opacity",
+                        "visibility",
+                        "boundingBox",
+                        "query",
+                        "metadata",
+                        "boundaryZoom",
+                        "refresh",
+                        "reload",
+                        "remove",
+                        "settings"
+                    ]
                 },
                 "disabledControls": {
                     "$ref": "#/$defs/legendEntryControls",
@@ -960,12 +1077,23 @@
                 },
                 "featureInfoMimeType": {
                     "type": "string",
-                    "enum": ["text/html;fgpv=summary", "text/html", "text/plain", "application/json"],
+                    "enum": [
+                        "text/html;fgpv=summary",
+                        "text/html",
+                        "text/plain",
+                        "application/json"
+                    ],
                     "description": "Specifies if GetFeatureInfo should be enabled for this WMS and indicates the format that should be requested."
                 },
                 "legendMimeType": {
                     "type": "string",
-                    "enum": ["image/png", "image/gif", "image/jpeg", "image/svg", "image/svg+xml"],
+                    "enum": [
+                        "image/png",
+                        "image/gif",
+                        "image/jpeg",
+                        "image/svg",
+                        "image/svg+xml"
+                    ],
                     "description": "Specifies if GetLegendGraphic should be enabled for this WMS and indicates the format that should be requested."
                 },
                 "extent": {
@@ -973,7 +1101,18 @@
                 },
                 "controls": {
                     "$ref": "#/$defs/legendEntryControls",
-                    "default": ["opacity", "visibility", "boundingBox", "query", "metadata", "boundaryZoom", "refresh", "reload", "remove", "settings"]
+                    "default": [
+                        "opacity",
+                        "visibility",
+                        "boundingBox",
+                        "query",
+                        "metadata",
+                        "boundaryZoom",
+                        "refresh",
+                        "reload",
+                        "remove",
+                        "settings"
+                    ]
                 },
                 "disabledControls": {
                     "$ref": "#/$defs/legendEntryControls",
@@ -1298,7 +1437,14 @@
                     "$ref": "#/$defs/attributionNode"
                 }
             },
-            "required": ["id", "name", "description", "layers", "altText", "tileSchemaId"],
+            "required": [
+                "id",
+                "name",
+                "description",
+                "layers",
+                "altText",
+                "tileSchemaId"
+            ],
             "unevaluatedProperties": false
         },
         "attributionNode": {
@@ -1525,11 +1671,7 @@
                 "appbar": {
                     "$ref": "#/$defs/appbar",
                     "default": {
-                        "items": [
-                            "legend",
-                            "geosearch",
-                            "basemap"
-                        ]
+                        "items": ["legend", "geosearch", "basemap"]
                     },
                     "description": "Provides configuration to the appbar. If not supplied, default appbar controls are displayed."
                 },
@@ -1537,12 +1679,7 @@
                     "$ref": "#/$defs/navbar",
                     "default": {
                         "zoom": "buttons",
-                        "items": [
-                            "fullscreen",
-                            "home",
-                            "help",
-                            "basemap"
-                        ]
+                        "items": ["fullscreen", "home", "help", "basemap"]
                     },
                     "description": "Provides configuration to the appbar. If not supplied, default appbar controls are displayed."
                 },
