@@ -25,7 +25,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
-import { PanelInstance, GlobalEvents, LayerInstance } from '@/api';
+import { PanelInstance } from '@/api';
 
 import { LegendStore } from './store';
 import { LegendItem, LegendEntry, LegendGroup } from './store/legend-defs';
@@ -42,18 +42,6 @@ export default class LegendV extends Vue {
     @Prop() panel!: PanelInstance;
     // fetch store properties/data
     @Get(LegendStore.children) children!: Array<LegendEntry | LegendGroup>;
-    @Call(LegendStore.removeLayerEntry) removeLayerEntry!: (
-        uid: string
-    ) => void;
-
-    mounted() {
-        this.$iApi.event.on(
-            GlobalEvents.LAYER_REMOVE,
-            (layer: LayerInstance) => {
-                this.removeLayerEntry(layer.uid);
-            }
-        );
-    }
 
     get isPinned(): boolean {
         return this.panel.isPinned;
