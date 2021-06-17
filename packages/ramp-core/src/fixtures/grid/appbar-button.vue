@@ -22,7 +22,7 @@ import { Vue, Component } from 'vue-property-decorator';
 @Component
 export default class GridAppbarButtonV extends Vue {
     onClick() {
-        this.$iApi.panel.toggle('grid-panel');
+        this.$iApi.panel.toggleMinimize('grid-panel');
     }
 }
 </script>
