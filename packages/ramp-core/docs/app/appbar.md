@@ -30,13 +30,13 @@ The `-appbar-button` suffix is optional and can be omitted. If a `gazebo` id is 
 }
 ```
 
-There is also the ability to configure temporary appbar buttons, these buttons are shown when a panel is opened and disappear when the related panel is closed. The config is used as follows:
+There is also the ability to configure temporary appbar buttons, these buttons are shown when a panel is opened and disappear when the related panel is closed. Again, the `-appbar-button` suffix is optional and can be omitted when specifying the appbar component id. The config is used as follows:
 
 ```json
 {
     "temporaryButtons": [
         "legend",
-        ["details-panel", { "id": "details"}]
+        { "panelId": "details-panel", "appbarItem": "details" }
     ]
 }
 ```
