@@ -36,7 +36,7 @@ There is also the ability to configure temporary appbar buttons, these buttons a
 {
     "temporaryButtons": [
         "legend",
-        ["details-panel", { "id": "details"}]
+        { "panelId": "details-panel", "appbarItem": "details" }
     ]
 }
 ```
