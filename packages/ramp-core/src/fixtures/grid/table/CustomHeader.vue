@@ -3,8 +3,9 @@
         <div v-if="sortable" class="flex flex-1 items-center min-w-0">
             <button
                 @click="onSortRequested('asc', $event)"
-                class="customHeaderLabel truncate hover:bg-gray-300 font-bold p-8"
+                class="customHeaderLabel hover:bg-gray-300 font-bold p-8"
                 role="columnheader"
+                v-truncate
             >
                 {{ params.displayName }}
             </button>
@@ -37,7 +38,7 @@
                 </div>
             </span>
         </div>
-        <span v-else class="customHeaderLabel truncate" role="columnheader">{{
+        <span v-else class="customHeaderLabel" role="columnheader" v-truncate>{{
             params.displayName
         }}</span>
 

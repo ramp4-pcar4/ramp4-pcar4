@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col w-full h-full bg-white">
         <div class="flex items-center">
-            <span class="truncate w-full text-sm mb-0">
+            <span class="w-full text-sm mb-0" v-truncate>
                 {{
                     $t('grid.filters.label.info', {
                         range: `${this.filterInfo.firstRow} - ${this.filterInfo.lastRow}`,

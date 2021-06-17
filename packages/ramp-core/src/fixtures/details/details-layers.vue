@@ -22,7 +22,7 @@
                 :key="idx"
                 @click="openResult(idx)"
             >
-                <div class="truncate">
+                <div v-truncate>
                     {{ layerInfo(idx) || $t('details.layers.loading') }}
                 </div>
                 <div class="flex-auto"></div>
