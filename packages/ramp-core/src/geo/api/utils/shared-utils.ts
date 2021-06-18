@@ -1,5 +1,5 @@
 import { G } from 'svg.js';
-import { ArcGisServerUrl } from '@/geo/api';
+import { ArcGisServerUrl, Point } from '@/geo/api';
 import deepmerge from 'deepmerge';
 
 export class SharedUtilsAPI {
@@ -132,6 +132,67 @@ export class SharedUtilsAPI {
         }
 
         return result;
+    }
+
+    /**
+     * Formats a lat/long DMS string using mouse map point coordinates
+     * Returns empty string if no map point is provided
+     *
+     * @param {Point | undefined} mapPoint the cursor map point
+     * @returns { lat: string; lon: string } the formatted string using given cursor map coordinates
+     */
+    async formatLatLongDMSString(
+        mapPoint: Point | undefined
+    ): Promise<{ lat: string; lon: string }> {
+        if (!mapPoint) {
+            return { lat: '', lon: '' };
+        }
+
+        const latLongPoint: any = await RAMP.GEO.proj.projectGeometry(
+            4326,
+            mapPoint
+        );
+
+        const lat = latLongPoint.y;
+        const lon = latLongPoint.x;
+
+        if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+            console.warn(
+                `formatLatLongDMSString received invalid lat/long coordinates: (${lat}, ${lon})`
+            );
+            return { lat: '', lon: '' };
+        }
+
+        const degreeSymbol = String.fromCharCode(176);
+
+        const dy = Math.floor(Math.abs(lat)) * (lat < 0 ? -1 : 1);
+        const my = Math.floor(Math.abs((lat - dy) * 60));
+        const sy = Math.floor((Math.abs(lat) - Math.abs(dy) - my / 60) * 3600);
+
+        const dx = Math.floor(Math.abs(lon)) * (lon < 0 ? -1 : 1);
+        const mx = Math.floor(Math.abs((lon - dx) * 60));
+        const sx = Math.floor((Math.abs(lon) - Math.abs(dx) - mx / 60) * 3600);
+
+        const newY = `${Math.abs(dy)}${degreeSymbol} ${padZero(my)}' ${padZero(
+            sy
+        )}"`;
+        const newX = `${Math.abs(dx)}${degreeSymbol} ${padZero(mx)}' ${padZero(
+            sx
+        )}"`;
+
+        return { lat: newY, lon: newX };
+
+        /**
+         * Pad value with leading 0 to make sure there is always 2 digits if number is below 10.
+         *
+         * @function padZero
+         * @private
+         * @param {Number} val value to pad with 0
+         * @return {String} string with always 2 characters
+         */
+        function padZero(val: number) {
+            return val >= 10 ? `${val}` : `0${val}`;
+        }
     }
 }
 

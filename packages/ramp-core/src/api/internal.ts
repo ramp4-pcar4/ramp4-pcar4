@@ -23,13 +23,12 @@ export * from '@/geo/layer/attrib-layer';
 export * from '@/geo/layer/file-fc';
 export * from '@/geo/layer/file-layer';
 export * from '@/geo/utils/attribute';
+export * from '@/geo/api/projection';
 export * from '@/geo/utils/renderer';
 export * from '@/geo/utils/symbology';
 export * from '@/geo/utils/query';
-export * from '@/geo/utils/projection';
 export * from '@/geo/utils/utils';
 export * from '@/geo/geo';
-
 export * from './fixture';
 export * from './panel';
 export * from './panel-instance';

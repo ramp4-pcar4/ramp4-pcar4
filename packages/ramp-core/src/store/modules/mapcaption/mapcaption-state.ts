@@ -1,11 +1,18 @@
-import { Attribution } from '@/geo/api';
+import { Attribution, Point, ScaleBarProperties } from '@/geo/api';
 
 export class MapCaptionState {
     attribution: Attribution;
-    scale: { label: string; width: string; isImperialScale: boolean };
+    scale: ScaleBarProperties;
+    cursorPoint: Point | undefined;
 
-    constructor(attrib: Attribution, scale: any) {
+    constructor(
+        attrib: Attribution,
+        scale: ScaleBarProperties,
+        cursorPoint: Point | undefined
+    ) {
         this.attribution = attrib;
         this.scale = scale;
+        this.scale = scale;
+        this.cursorPoint = cursorPoint;
     }
 }

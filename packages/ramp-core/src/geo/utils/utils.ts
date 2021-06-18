@@ -11,7 +11,7 @@ import {
     QueryAPI,
     SymbologyAPI
 } from '@/api/internal';
-import { EpsgLookup, GeometryAPI, SharedUtilsAPI } from '@/geo/api';
+import { GeometryAPI, SharedUtilsAPI } from '@/geo/api';
 
 /*
 import HighlightService from './HighlightService';
@@ -26,17 +26,17 @@ export class UtilsAPI extends APIScope {
     shared: SharedUtilsAPI;
     symbology: SymbologyAPI;
 
-    constructor(
-        iApi: InstanceAPI,
-        epsgFunction: EpsgLookup | undefined = undefined
-    ) {
+    constructor(iApi: InstanceAPI) {
         super(iApi);
 
         this.attributes = new AttributeAPI(iApi);
-        this.geom = new GeometryAPI();
-        this.proj = new ProjectionAPI(iApi, epsgFunction);
+
+        // Refer to same instance
+        this.geom = RAMP.GEO.geom;
+        this.proj = RAMP.GEO.proj;
+        this.shared = RAMP.GEO.sharedUtils;
+
         this.query = new QueryAPI(iApi);
-        this.shared = new SharedUtilsAPI();
         this.symbology = new SymbologyAPI(iApi);
 
         /*

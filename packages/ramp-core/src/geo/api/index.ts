@@ -27,5 +27,6 @@ export * from './layer/scale-set';
 export * from './layer/filter';
 export * from './utils/promise';
 export * from './utils/shared-utils';
+export * from './projection';
 export * from './geo-defs';
 export * from './layer/layer-base';

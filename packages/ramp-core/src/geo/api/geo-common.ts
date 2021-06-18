@@ -2,6 +2,8 @@
 
 import {
     Extent,
+    EpsgLookup,
+    GeometryAPI,
     LinearRing,
     LineString,
     MultiLineString,
@@ -9,7 +11,9 @@ import {
     MultiPolygon,
     Point,
     Polygon,
+    ProjectionAPI,
     RampLodConfig,
+    SharedUtilsAPI,
     SpatialReference
 } from '@/geo/api';
 
@@ -35,6 +39,16 @@ export class GeoCommonAPI {
 
     protected DEFAULT_MERCATOR: string = 'DEFAULT_ESRI_World_AuxMerc_3857';
     protected DEFAULT_LAMBERT: string = 'DEFAULT_NRCAN_Lambert_3978';
+
+    proj: ProjectionAPI;
+    geom: GeometryAPI;
+    sharedUtils: SharedUtilsAPI;
+
+    constructor(epsgFunction: EpsgLookup | undefined = undefined) {
+        this.proj = new ProjectionAPI(epsgFunction);
+        this.geom = new GeometryAPI();
+        this.sharedUtils = new SharedUtilsAPI();
+    }
 
     defaultTileSchemas(): Array<string> {
         return [this.DEFAULT_LAMBERT, this.DEFAULT_MERCATOR];
