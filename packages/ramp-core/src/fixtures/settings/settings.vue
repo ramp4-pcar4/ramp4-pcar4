@@ -1,7 +1,8 @@
 <template>
     <panel-screen>
         <template #header>
-            {{ $t('settings.title') }}: {{ layer.getName() }}
+            {{ $t('settings.title') }}:
+            {{ layerName || $t('settings.layer.loading') }}
         </template>
 
         <template #controls>
@@ -100,7 +101,6 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
 
 import { PanelInstance } from '@/api';
 
@@ -146,6 +146,13 @@ export default class SettingsV extends Vue {
     toggleSnapshot() {
         this.snapshotToggle = !this.snapshotToggle;
         // TODO: make necessary changes to layer
+    }
+
+    get layerName() {
+        if (this.layer) {
+            return this.layer.getName(this.uid);
+        }
+        return '';
     }
 }
 </script>

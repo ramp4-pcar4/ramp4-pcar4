@@ -1,7 +1,7 @@
 import { SettingsAPI } from './api/settings';
 import SettingsAppbarButtonV from './appbar-button.vue';
 
-import ScreenV from './SettingsV.vue';
+import ScreenV from './settings.vue';
 
 import messages from './lang/lang.csv';
 
