@@ -1,2 +1,2 @@
-export * from './mapcaption-state';
-export * from './mapcaption-store';
+export * from './map-caption-state';
+export * from './map-caption-store';
