@@ -1,5 +1,6 @@
 key,enValue,enValid,frValue,frValid
 settings.title,Settings,1,Paramètres,1
+settings.layer.loading,The layer is loading...,1,La couche est le chargement...,0
 settings.label.display,Display,1,Affichage,1
 settings.label.visibility,Show layer,1,Afficher la couche,1
 settings.label.opacity,Opacity,1,Opacité,1

@@ -1,7 +1,8 @@
 <template>
     <panel-screen>
         <template #header>
-            {{ $t('settings.title') }}: {{ layer.getName() }}
+            {{ $t('settings.title') }}:
+            {{ name || $t('settings.layer.loading') }}
         </template>
 
         <template #controls>
@@ -100,7 +101,6 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
 
 import { PanelInstance } from '@/api';
 
@@ -121,6 +121,7 @@ export default class SettingsV extends Vue {
     visibilityModel: boolean = this.layer.getVisibility(this.uid);
     opacityModel: number = this.layer.getOpacity(this.uid) * 100;
     snapshotToggle: boolean = false;
+    name: String = '';
 
     mounted() {
         // Listen for a layer load event. Some of these values may change when the layer fully loads.
@@ -128,6 +129,7 @@ export default class SettingsV extends Vue {
             this.visibilityModel = this.layer.getVisibility(this.uid);
             this.opacityModel = this.layer.getOpacity(this.uid) * 100;
         });
+        this.name = this.layerName;
     }
 
     // Update the layer visibility.
@@ -146,6 +148,13 @@ export default class SettingsV extends Vue {
     toggleSnapshot() {
         this.snapshotToggle = !this.snapshotToggle;
         // TODO: make necessary changes to layer
+    }
+
+    get layerName() {
+        if (this.layer) {
+            return this.layer.getName(this.uid);
+        }
+        return '';
     }
 }
 </script>
