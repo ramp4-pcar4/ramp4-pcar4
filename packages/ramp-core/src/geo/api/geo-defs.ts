@@ -384,6 +384,13 @@ export interface Attribution {
     };
 }
 
+// Contains properties needed to display scale on the map-caption bar
+export interface ScaleBarProperties {
+    label: string;
+    width: string;
+    isImperialScale: boolean;
+}
+
 // ----------------------- CLIENT CONFIG INTERFACES -----------------------------------
 
 // TODO migrate these to /geo/api/geo-common ? if we need config interfaces before creating an instance,

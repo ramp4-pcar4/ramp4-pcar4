@@ -32,7 +32,7 @@ export interface APIInterface {
 // Load geoapi
 // moved from `main-build` since it was being attached to the api object anyways
 // TODO revist this after no-dojo migration. this approach might be dumb without geoapi promise
-let geocommon: GeoCommonAPI = new GeoCommonAPI();
+let geocommon: GeoCommonAPI = new GeoCommonAPI(); // TODO: pass in EpsgLookup function here if there is one
 
 const api: APIInterface = {
     Instance: InstanceAPI,
