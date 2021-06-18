@@ -50,19 +50,20 @@ export class AppbarAPI extends FixtureInstance {
             appbarItems.map(item => item.id)
         );
 
-        // appbarTempItems = appbarConfig.temp(?).map ( item => new AppbarTempItem)
-        const appbarTempItems = Object.fromEntries(
-            appbarConfig.temporaryButtons.map(item => {
-                if (typeof item === 'string') {
-                    return [`${item}-panel`, new AppbarItemInstance(item)];
-                }
-
-                return [item.panelId, new AppbarItemInstance(item.appbarItem)];
-            })
-        );
-
-        this.$vApp.$store.set('appbar/tempButtonDict', appbarTempItems);
-
+        if (appbarConfig.temporaryButtons) {
+            const appbarTempItems = Object.fromEntries(
+                appbarConfig.temporaryButtons.map(item => {
+                    if (typeof item === 'string') {
+                        return [`${item}-panel`, new AppbarItemInstance(item)];
+                    }
+                    return [
+                        item.panelId,
+                        new AppbarItemInstance(item.appbarItem)
+                    ];
+                })
+            );
+            this.$vApp.$store.set('appbar/tempButtonDict', appbarTempItems);
+        }
         this._validateItems();
     }
 

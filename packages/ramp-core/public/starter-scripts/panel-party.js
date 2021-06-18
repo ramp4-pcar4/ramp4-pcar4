@@ -191,7 +191,12 @@ let config = {
                     'divider',
                     'export-v1'
                 ],
-                temporaryButtons: ['details', 'metadata', 'settings', 'grid']
+                temporaryButtons: [
+                    { panelId: 'details-panel', appbarItem: 'details' },
+                    'metadata',
+                    'settings',
+                    'grid'
+                ]
             },
             mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
             details: {
@@ -285,6 +290,12 @@ let config = {
                     'basemap',
                     'divider',
                     'export-v1'
+                ],
+                temporaryButtons: [
+                    { panelId: 'details-panel', appbarItem: 'details' },
+                    'metadata',
+                    'settings',
+                    'grid'
                 ]
             },
             mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
