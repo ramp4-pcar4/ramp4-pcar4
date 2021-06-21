@@ -141,10 +141,10 @@ export default class MapCaptionV extends Vue {
      */
     private updateCursorPoint(screenX: number, screenY: number): void {
         // get map point from cursor location
-        const mapCursorPoint = this.$iApi.geo.map.screenPointToMapPoint(
-            screenX,
-            screenY
-        );
+        const mapCursorPoint = this.$iApi.geo.map.screenPointToMapPoint({
+            screenX: screenX,
+            screenY: screenY
+        });
 
         // project from map co-ords to lat long.
         this.$iApi.geo.utils.proj

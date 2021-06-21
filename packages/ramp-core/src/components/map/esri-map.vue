@@ -1,5 +1,18 @@
 <template>
-    <div class="h-full"></div>
+    <div
+        name="esriMap"
+        class="h-full"
+        v-tippy="{
+            flip: false,
+            allowHTML: true,
+            zIndex: 5,
+            theme: 'ramp',
+            trigger: 'manual',
+            arrow: false,
+            delay: 200,
+            duration: [200, 200]
+        }"
+    ></div>
 </template>
 
 <script lang="ts">
@@ -12,6 +25,7 @@ import { ConfigStore } from '@/store/modules/config';
 import { LayerStore, layer } from '@/store/modules/layer';
 
 import to from 'await-to-js';
+import { MaptipStore } from '@/store/modules/maptip';
 
 @Component
 export default class EsriMap extends Vue {
@@ -21,11 +35,35 @@ export default class EsriMap extends Vue {
 
     @Get(LayerStore.layerConfigs) layerConfigs!: RampLayerConfig[];
 
+    @Get(MaptipStore.maptipProperties) maptipProperties!: any;
+    @Get(MaptipStore.maptipInstance) maptipInstance!: any;
+
     map!: MapAPI; // TODO assuming we need this as a local property for vue binding. if we don't, remove it and just use $iApi.geo.map
 
     created() {
         // temporarily print out loaded layers to console for grid testing purposes.
         console.log(this.layers);
+    }
+
+    @Watch('maptipProperties')
+    onMaptipChange() {
+        if (this.maptipProperties) {
+            // Calculate offset from mappoint
+            let offsetX, offsetY: number;
+            const originX: number = this.$iApi.geo.map.getPixelWidth() / 2;
+            const originY: number = 0;
+            const screenPointFromMapPoint = this.$iApi.geo.map.mapPointToScreenPoint(
+                this.maptipProperties.mapPoint
+            );
+            offsetX = screenPointFromMapPoint.screenX - originX;
+            offsetY = originY - screenPointFromMapPoint.screenY;
+            this.maptipInstance.set({
+                offset: `${offsetX}, ${offsetY}`
+            });
+            this.maptipInstance.show();
+        } else {
+            this.maptipInstance.hide();
+        }
     }
 
     @Watch('layerConfigs')
@@ -118,12 +156,23 @@ export default class EsriMap extends Vue {
             return;
         }
 
+        const mapViewElement: Element | null = this.$el;
+
         this.$iApi.geo.map.createMap(
             this.mapConfig,
-            this.$el as HTMLDivElement
+            mapViewElement as HTMLDivElement
         );
         this.map = this.$iApi.geo.map;
         this.$iApi.event.emit(GlobalEvents.MAP_CREATED, this.$iApi.geo.map);
+
+        // Hide hovertip on map creation
+        //@ts-ignore
+        mapViewElement._tippy.hide(0);
+        this.$iApi.$vApp.$store.set(
+            MaptipStore.setMaptipInstance,
+            //@ts-ignore
+            mapViewElement._tippy
+        );
 
         // TODO see if we still need this. map config should trigger the array watcher due to the store.
         //      possibly layer config is processed before map config is done creating map?
