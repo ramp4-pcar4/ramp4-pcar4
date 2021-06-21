@@ -907,6 +907,7 @@ export class MapAPI extends CommonMapAPI {
         const zoomKeys = ['=', '-'];
         const panKeys = [
             'Shift',
+            'Control',
             'ArrowDown',
             'ArrowLeft',
             'ArrowRight',
@@ -1041,6 +1042,9 @@ export class MapAPI extends CommonMapAPI {
                     break;
                 case 'Shift':
                     multiplier = 2;
+                    break;
+                case 'Control':
+                    multiplier = 0.25;
                     break;
             }
         }
