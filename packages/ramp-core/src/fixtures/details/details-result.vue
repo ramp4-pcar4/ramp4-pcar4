@@ -11,16 +11,17 @@
         <template #content>
             <div v-if="identifyResult.items.length > 0">
                 <div
-                    class="flex px-10 py-10 text-md truncate hover:bg-gray-200 cursor-pointer"
+                    class="flex px-10 py-10 text-md hover:bg-gray-200 cursor-pointer"
                     v-for="(item, idx) in identifyResult.items"
                     :key="idx"
                     @click="openResult(idx)"
                     v-focus-item
+                    v-truncate
                 >
                     <span v-html="icon[idx]" class="flex-none symbologyIcon">
                         {{ itemIcon(item.data, idx) }}
                     </span>
-                    <span class="flex-initial py-5 px-10 truncate">
+                    <span class="flex-initial py-5 px-10" v-truncate>
                         {{
                             item.data[nameField] ||
                                 'Identify Result ' + (idx + 1)

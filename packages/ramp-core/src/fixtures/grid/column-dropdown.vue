@@ -1,5 +1,9 @@
 <template>
-    <dropdown-menu position="bottom-right">
+    <dropdown-menu
+        position="bottom-right"
+        :tooltip="$t('grid.label.columns')"
+        :tooltip-placement="'bottom'"
+    >
         <template #header>
             <div class="flex text-black">
                 <svg

@@ -4,15 +4,18 @@
             <div
                 class="default-focus-style p-5 flex items-center hover:bg-gray-200 cursor-pointer h-44"
                 @click="toggleGrid"
-                v-focus-item
+                v-focus-item="'show-truncate'"
                 @mouseover.stop="$event.currentTarget._tippy.show()"
                 @mouseout.self="$event.currentTarget._tippy.hide()"
                 :content="$t('legend.entry.data')"
                 v-tippy="{
                     placement: 'top-start',
                     trigger: 'manual focus',
-                    aria: 'describedby'
+                    aria: 'describedby',
+                    multiple: true
                 }"
+                truncate-trigger
+                :aria-label="legendItem.name"
             >
                 <!-- symbology stack toggle-->
                 <div class="relative w-32 h-32">
@@ -50,7 +53,10 @@
                 </div>
 
                 <!-- name -->
-                <div class="flex-1 truncate ml-15 pointer-events-none">
+                <div
+                    class="flex-1 ml-15 pointer-events-none"
+                    v-truncate="{ externalTrigger: true }"
+                >
                     <span>{{ legendItem.name }}</span>
                 </div>
 
@@ -190,7 +196,7 @@
                     <span v-html="item.svgcode"></span>
                 </div>
 
-                <div class="flex-1 truncate ml-15">{{ item.label }}</div>
+                <div class="flex-1 ml-15" v-truncate>{{ item.label }}</div>
 
                 <!-- TODO: add visibility button functionality. It should toggle each symbol individually. -->
                 <checkbox :value="visibility" :legendItem="legendItem" />
@@ -290,6 +296,10 @@ export default class LegendEntryV extends Vue {
             //         'https://ryan-coulson.com/RAMPMetadataDemo.html'
             // });
         }
+    }
+
+    get shellEl() {
+        return this.$refs.shell;
     }
 }
 </script>
