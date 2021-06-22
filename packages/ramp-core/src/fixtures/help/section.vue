@@ -1,12 +1,14 @@
 <template>
     <div>
         <div>
-            <div
-                class="help-section-header flex items-center p-15 hover:bg-gray-200 cursor-pointer select-none"
+            <button
+                class="help-section-header flex items-center py-15 px-25 hover:bg-gray-200 cursor-pointer select-none w-full"
                 @click="toggleExpanded()"
             >
                 <!-- name -->
-                <span class="text-lg flex-grow">{{ helpSection.header }}</span>
+                <span class="text-lg text-left flex-grow">{{
+                    helpSection.header
+                }}</span>
 
                 <!-- dropdown icon -->
                 <div
@@ -25,12 +27,14 @@
                         />
                     </svg>
                 </div>
-            </div>
-            <div
-                v-if="expanded"
-                v-html="helpSection.info"
-                class="section-body px-5 pt-5"
-            ></div>
+            </button>
+            <transition name="help-item" mode="out-in">
+                <div
+                    v-show="expanded"
+                    v-html="helpSection.info"
+                    class="section-body px-20 pt-5 overflow-hidden"
+                ></div>
+            </transition>
         </div>
     </div>
 </template>
@@ -52,11 +56,30 @@ export default class HelpSectionV extends Vue {
 
 <style lang="scss" scoped>
 .section-body {
-    ::v-deep p {
-        @apply mb-10;
+    ::v-deep {
+        table,
+        p {
+            @apply mb-15;
+        }
+        th,
+        td {
+            @apply px-5;
+        }
     }
 }
 .help-section-header .icon {
     transition: transform 0.3s cubic-bezier(0.35, 0, 0.25, 1);
+}
+.help-item-leave-active,
+.help-item-enter-active {
+    @apply max-h-500;
+    transition: all 0.3s;
+}
+.help-item-enter-active {
+    transition-delay: 0.1s;
+}
+.help-item-leave-to,
+.help-item-enter {
+    @apply max-h-0 opacity-0;
 }
 </style>
