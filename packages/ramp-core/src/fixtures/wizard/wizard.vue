@@ -345,7 +345,7 @@ export default class WizardV extends Vue {
 
     // options for sublayers selector
     get sublayerOptions() {
-        return this.layerInfo!.layers.map((layer: any) => {
+        return this.layerInfo!.layers.map((layer: any, idx: number) => {
             return {
                 label: `${layer.indent}${layer.name}`,
                 value:
@@ -358,7 +358,7 @@ export default class WizardV extends Vue {
                           {
                               id: layer.id
                           },
-                id: layer.id
+                id: idx
             };
         });
     }
