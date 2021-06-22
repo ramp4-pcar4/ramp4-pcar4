@@ -1,9 +1,9 @@
 import { DetailsAPI } from './api/details';
 import { details } from './store';
 import DetailsAppbarButtonV from './appbar-button.vue';
-import DetailsLayerV from './details-layers.vue';
-import DetailsResultV from './details-result.vue';
-import DetailsItemV from './details-item.vue';
+import DetailsLayerScreenV from './layers-screen.vue';
+import DetailsResultScreenV from './result-screen.vue';
+import DetailsItemScreenV from './item-screen.vue';
 import messages from './lang/lang.csv';
 
 class DetailsFixture extends DetailsAPI {
@@ -12,9 +12,9 @@ class DetailsFixture extends DetailsAPI {
             {
                 'details-panel': {
                     screens: {
-                        'details-screen-layers': DetailsLayerV,
-                        'details-screen-result': DetailsResultV,
-                        'details-screen-item': DetailsItemV
+                        'details-screen-layers': DetailsLayerScreenV,
+                        'details-screen-result': DetailsResultScreenV,
+                        'details-screen-item': DetailsItemScreenV
                     },
                     style: {
                         width: '350px'

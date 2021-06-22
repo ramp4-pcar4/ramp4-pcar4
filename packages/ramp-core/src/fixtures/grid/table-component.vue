@@ -72,26 +72,24 @@
 </template>
 
 <script lang="ts">
-import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Get, Sync } from 'vuex-pathify';
 import { GlobalEvents, LayerInstance } from '@/api/internal';
 import deepmerge from 'deepmerge';
-
-import { LayerStore, layer } from '@/store/modules/layer';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
 import { AgGridVue } from 'ag-grid-vue';
-import ColumnDropdown from '../column-dropdown.vue';
-import { GridStore, GridConfig, GridState } from '../store';
-import TableStateManager from '../store/table-state-manager';
+import GridColumnDropdownV from './column-dropdown.vue';
+import { GridConfig } from './store';
+import TableStateManager from './store/table-state-manager';
 
 // custom filter templates
-import CustomNumberFilter from './CustomNumberFilter.vue';
-import CustomTextFilter from './CustomTextFilter.vue';
-import CustomSelectorFilter from './CustomSelectorFilter.vue';
-import CustomDateFilter from './CustomDateFilter.vue';
-import CustomHeader from './CustomHeader.vue';
+import GridCustomNumberFilterV from './templates/custom-number-filter.vue';
+import GridCustomTextFilterV from './templates/custom-text-filter.vue';
+import GridCustomSelectorFilterV from './templates/custom-selector-filter.vue';
+import GridCustomDateFilterV from './templates/custom-date-filter.vue';
+import GridCustomHeaderV from './templates/custom-header.vue';
 
 // these should match up with the `type` value returned by the attribute promise.
 const NUM_TYPES: string[] = ['oid', 'double', 'integer'];
@@ -100,16 +98,16 @@ const TEXT_TYPE: string = 'string';
 
 @Component({
     components: {
-        'column-dropdown': ColumnDropdown,
+        'column-dropdown': GridColumnDropdownV,
         AgGridVue,
-        CustomNumberFilter,
-        CustomSelectorFilter,
-        CustomDateFilter,
-        CustomTextFilter,
-        CustomHeader
+        GridCustomNumberFilterV,
+        GridCustomSelectorFilterV,
+        GridCustomDateFilterV,
+        GridCustomTextFilterV,
+        GridCustomHeaderV
     }
 })
-export default class TableComponent extends Vue {
+export default class GridTableComponentV extends Vue {
     @Prop() layerUid!: string;
     @Get('layer/getLayerByUid') getLayerByUid!: (
         uid: string
@@ -135,11 +133,11 @@ export default class TableComponent extends Vue {
 
         // imported separate components
         this.frameworkComponents = {
-            agColumnHeader: CustomHeader,
-            numberFloatingFilter: CustomNumberFilter,
-            textFloatingFilter: CustomTextFilter,
-            selectorFloatingFilter: CustomSelectorFilter,
-            dateFloatingFilter: CustomDateFilter
+            agColumnHeader: GridCustomHeaderV,
+            numberFloatingFilter: GridCustomNumberFilterV,
+            textFloatingFilter: GridCustomTextFilterV,
+            selectorFloatingFilter: GridCustomSelectorFilterV,
+            dateFloatingFilter: GridCustomDateFilterV
         };
 
         // set up grid options

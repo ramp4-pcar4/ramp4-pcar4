@@ -23,12 +23,11 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
 
 import { LegendEntry } from '../store/legend-defs';
 
 @Component
-export default class CheckboxV extends Vue {
+export default class LegendCheckboxV extends Vue {
     @Prop() value!: boolean;
     @Prop() isRadio!: boolean;
     @Prop() legendItem!: LegendEntry;

@@ -20,14 +20,12 @@
 </template>
 
 <script lang="ts">
-import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Get } from 'vuex-pathify';
 
 import { PanelInstance } from '@/api';
-import { RampConfig } from '@/types';
 import { HelpStore } from './store';
-import { ConfigStore } from '@/store/modules/config';
-import HelpSectionV from './help-section.vue';
+import HelpSectionV from './section.vue';
 
 // TODO check if we actually need this library. Does vue have its own internal web request library?
 import axios from 'axios';
@@ -38,7 +36,7 @@ import marked from 'marked';
         'help-section': HelpSectionV
     }
 })
-export default class HelpV extends Vue {
+export default class HelpScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     @Get(HelpStore.folderName) folderName!: string;
 

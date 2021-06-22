@@ -1,6 +1,6 @@
 import { LegendAPI } from './api/legend';
-import { LegendStore, legend } from './store';
-import LegendV from './legend.vue';
+import { LegendStore, legend } from './store/index';
+import LegendScreenV from './screen.vue';
 import LegendAppbarButtonV from './appbar-button.vue';
 import { GlobalEvents, LayerInstance } from '@/api';
 
@@ -13,7 +13,7 @@ class LegendFixture extends LegendAPI {
             {
                 'legend-panel': {
                     screens: {
-                        'legend-screen': LegendV
+                        'legend-screen': LegendScreenV
                     },
                     style: {
                         width: '350px'

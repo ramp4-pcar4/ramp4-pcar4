@@ -1,13 +1,13 @@
 import { FixtureInstance } from '@/api';
 
-import GazeboAppbarButton from './appbar-button.vue';
+import GazeboAppbarButtonV from './appbar-button.vue';
 
-import P1Screen1V from './p1-screen-1.vue';
-import P1Screen2V from './p1-screen-2.vue';
+import GazeboP1Screen1V from './p1-screen-1.vue';
+import GazeboP1Screen2V from './p1-screen-2.vue';
 
-/* import P2Screen1V from './p2-screen-1.vue';
-import P2Screen2V from './p2-screen-2.vue'; */
-import P2Screen3V from './p2-screen-3.vue';
+// import GazeboP2Screen1V from './p2-screen-1.vue';
+// import GazeboP2Screen2V from './p2-screen-2.vue';
+import GazeboP2Screen3V from './p2-screen-3.vue';
 
 import { AsyncComponentEh } from '@/store/modules/panel';
 
@@ -21,7 +21,7 @@ class GazeboFixture extends FixtureInstance {
 
         this.$iApi.event.registerEventName(BEHOLD_TEXT_EVENT);
 
-        this.$iApi.component('gazebo-appbar-button', GazeboAppbarButton);
+        this.$iApi.component('gazebo-appbar-button', GazeboAppbarButtonV);
 
         this.$iApi.panel.register(
             {
@@ -29,8 +29,8 @@ class GazeboFixture extends FixtureInstance {
                 // it generally avoids using API and goes straight to the store; fixtures/panels/screens should not do that;
                 p1: {
                     screens: {
-                        'p-1-screen-1': P1Screen1V,
-                        'p-1-screen-2': P1Screen2V
+                        'p-1-screen-1': GazeboP1Screen1V,
+                        'p-1-screen-2': GazeboP1Screen2V
                     }
                 },
                 // panel-2 has examples of how properly bind things and interact with stuff; good panel ✔
@@ -59,11 +59,11 @@ class GazeboFixture extends FixtureInstance {
                         'p-2-screen-2': 'gazebo/p2-screen-2.vue',
 
                         // importing directly; no lazy-loading
-                        'p-2-screen-3': P2Screen3V
+                        'p-2-screen-3': GazeboP2Screen3V
 
                         // returning a `VueConstructor` in a promise also works
                         // 'p-2-screen-3': () => {
-                        //     return new Promise<AsyncComponentEh>(resolve => resolve(P2Screen3V));
+                        //     return new Promise<AsyncComponentEh>(resolve => resolve(GazeboP2Screen3V));
                         // }
                     },
                     style: {

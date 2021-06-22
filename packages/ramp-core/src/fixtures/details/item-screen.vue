@@ -54,16 +54,11 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Get } from 'vuex-pathify';
 import { DetailsStore, DetailsItemInstance } from './store';
 
 import { LayerInstance, PanelInstance } from '@/api/internal';
-import {
-    IdentifyItem,
-    IdentifyResult,
-    IdentifyResultFormat,
-    IdentifyResultSet
-} from '@/geo/api';
+import { IdentifyResult, IdentifyResultFormat } from '@/geo/api';
 
 import ESRIDefaultV from './templates/esri-default.vue';
 import HTMLDefaultV from './templates/html-default.vue';
@@ -74,7 +69,7 @@ import HTMLDefaultV from './templates/html-default.vue';
         'html-default': HTMLDefaultV
     }
 })
-export default class DetailsItemV extends Vue {
+export default class DetailsItemScreenV extends Vue {
     @Get('details/items') templateBindings!: {
         [id: string]: DetailsItemInstance;
     };

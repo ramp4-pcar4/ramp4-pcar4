@@ -11,10 +11,10 @@
 </template>
 
 <script lang="ts">
-import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component } from 'vue-property-decorator';
 
 @Component
-export default class CustomTextFilter extends Vue {
+export default class GridCustomTextFilterV extends Vue {
     beforeMount() {
         // Load previously stored value (if saved in table state manager)
         this.filterValue = this.params.stateManager.getColumnFilter(
@@ -61,7 +61,7 @@ export default class CustomTextFilter extends Vue {
     }
 }
 
-export default interface CustomTextFilter {
+export default interface GridCustomTextFilter {
     filterValue: string;
     colDef: any;
     params: any;

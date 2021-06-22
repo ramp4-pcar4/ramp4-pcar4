@@ -8,8 +8,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Vue, Component } from 'vue-property-decorator';
 
 @Component
 export default class ScreenSpinnerV extends Vue {}

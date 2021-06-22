@@ -37,14 +37,14 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Vue, Component } from 'vue-property-decorator';
+import { Sync } from 'vuex-pathify';
 
 import { PanelConfigRoute } from '@/store/modules/panel';
 import { PanelInstance } from '../../api';
 
 @Component
-export default class P1Screen1V extends Vue {
+export default class GazeboP1Screen1V extends Vue {
     // ❌ this is a horrible way, don't do that! this is directly tapping into the store and two-way binds `route` property fro a specific panel
     // this will work, but all possible interactions should go through the API, because the store implementation might change and this will break
     // 👇

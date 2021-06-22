@@ -18,7 +18,7 @@ import { Vue, Component } from 'vue-property-decorator';
 import { GlobalEvents } from '../../api/internal';
 
 @Component
-export default class HelpNavV extends Vue {
+export default class HelpNavButtonV extends Vue {
     onClick() {
         this.$iApi.event.emit(GlobalEvents.HELP_TOGGLE);
     }

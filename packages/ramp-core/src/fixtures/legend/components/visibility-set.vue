@@ -34,7 +34,10 @@
                 </div>
 
                 <!-- name -->
-                <div class="flex-1 pointer-events-none" v-truncate>
+                <div
+                    class="flex-1 pointer-events-none"
+                    v-truncate="{ externalTrigger: true }"
+                >
                     <span>{{ legendItem.name }}</span>
                 </div>
 
@@ -50,7 +53,7 @@
             </div>
         </div>
 
-        <!-- Display children of the group -->
+        <!-- Display the children of the group -->
         <div class="legend-group pl-5" v-if="legendItem.expanded">
             <legend-component
                 v-for="(item, idx) in legendItem.children"
@@ -63,20 +66,18 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
 
-import { LegendStore } from '../store';
-import { LegendGroup, LegendTypes } from '../store/legend-defs';
-import CheckboxV from './checkbox.vue';
+import { LegendSet, LegendTypes } from '../store/legend-defs';
+import LegendCheckboxV from './checkbox.vue';
 
 @Component({
     components: {
-        LegendComponent: () => import('./legend-component.vue'),
-        checkbox: CheckboxV
+        LegendComponent: () => import('./component.vue'),
+        checkbox: LegendCheckboxV
     }
 })
-export default class LegendGroupV extends Vue {
-    @Prop() legendItem!: LegendGroup;
+export default class LegendVisibilitySetV extends Vue {
+    @Prop() legendItem!: LegendSet;
 
     // make vue stop hating enums
     LegendTypes = LegendTypes;

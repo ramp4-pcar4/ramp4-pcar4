@@ -8,8 +8,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Vue, Component } from 'vue-property-decorator';
+import { Get } from 'vuex-pathify';
 import { NortharrowStore } from './store';
 import { GlobalEvents } from '@/api/internal';
 import { Extent, Point } from '@/geo/api';

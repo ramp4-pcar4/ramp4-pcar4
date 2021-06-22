@@ -1,7 +1,7 @@
 import { GridAPI } from './api/grid';
 import { grid } from './store/index';
 
-import GridV from './grid.vue';
+import GridScreenV from './screen.vue';
 import GridAppbarButtonV from './appbar-button.vue';
 
 import messages from './lang/lang.csv';
@@ -12,7 +12,7 @@ class GridFixture extends GridAPI {
             {
                 'grid-panel': {
                     screens: {
-                        'grid-screen': GridV
+                        'grid-screen': GridScreenV
                     },
                     style: {
                         'flex-grow': '1',

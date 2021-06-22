@@ -1,5 +1,5 @@
 import { WizardAPI } from './api/wizard';
-import WizardV from './wizard.vue';
+import WizardScreenV from './screen.vue';
 import { wizard } from './store/index';
 import { LayerSource } from './store/layer-source';
 import messages from './lang/lang.csv';
@@ -12,7 +12,7 @@ class WizardFixture extends WizardAPI {
             {
                 'wizard-panel': {
                     screens: {
-                        'wizard-screen': WizardV
+                        'wizard-screen': WizardScreenV
                     },
                     style: {
                         width: '350px'

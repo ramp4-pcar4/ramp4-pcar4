@@ -31,11 +31,10 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
 import { PanelInstance } from '../../api';
 
 @Component({})
-export default class P1Scree2V extends Vue {
+export default class GazeboP1Scree2V extends Vue {
     url: string =
         'https://i2.wp.com/freepngimages.com/wp-content/uploads/2016/02/garden-shed-transparent-image-2.png?w=693';
 

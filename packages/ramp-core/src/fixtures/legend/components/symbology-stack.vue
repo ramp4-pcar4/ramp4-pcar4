@@ -45,13 +45,11 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
 
-import { LegendItem } from '../store/legend-defs';
 import { LayerInstance } from '@/api/internal';
 
 @Component
-export default class SymbologyStack extends Vue {
+export default class LegendSymbologyStackV extends Vue {
     @Prop() visible!: boolean;
     @Prop() layer!: LayerInstance;
     @Prop() uid!: string;

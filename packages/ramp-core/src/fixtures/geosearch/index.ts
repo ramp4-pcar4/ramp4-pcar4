@@ -1,4 +1,4 @@
-import GeosearchComponent from './geosearch-component.vue';
+import GeosearchScreenV from './screen.vue';
 import { GeosearchAPI } from './api/geosearch';
 import { geosearch } from './store/index';
 import GeosearchAppbarButtonV from './appbar-button.vue';
@@ -18,7 +18,7 @@ class GeosearchFixture extends GeosearchAPI {
             {
                 id: 'geosearch-panel',
                 config: {
-                    screens: { 'geosearch-component': GeosearchComponent }
+                    screens: { 'geosearch-component': GeosearchScreenV }
                 }
             },
             { i18n: { messages } }

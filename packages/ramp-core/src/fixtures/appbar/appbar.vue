@@ -26,8 +26,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Watch, Component } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Vue, Component } from 'vue-property-decorator';
+import { Get } from 'vuex-pathify';
 import { AppbarItemInstance } from './store';
 import DividerV from './divider.vue';
 import AppbarButtonV from './button.vue';

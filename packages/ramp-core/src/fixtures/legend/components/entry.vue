@@ -107,19 +107,17 @@
 <script lang="ts">
 import { GlobalEvents } from '@/api';
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
 
-import { LegendStore } from '../store';
 import { LegendEntry, Controls } from '../store/legend-defs';
 
-import CheckboxV from './checkbox.vue';
-import SymbologyStack from './symbology-stack.vue';
+import LegendCheckboxV from './checkbox.vue';
+import LegendSymbologyStackV from './symbology-stack.vue';
 import LegendOptionsV from './legend-options.vue';
 
 @Component({
     components: {
-        checkbox: CheckboxV,
-        'symbology-stack': SymbologyStack,
+        checkbox: LegendCheckboxV,
+        'symbology-stack': LegendSymbologyStackV,
         options: LegendOptionsV
     }
 })

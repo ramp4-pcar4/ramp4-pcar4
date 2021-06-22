@@ -9,15 +9,13 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
 
-import { LegendStore } from '../store';
 import { LegendItem, LegendTypes } from '../store/legend-defs';
 
-import LayerEntryV from './legend-entry.vue';
-import LegendGroupV from './legend-group.vue';
-import LegendVisibilitySetV from './legend-visibility-set.vue';
-import LegendPlaceholderV from './legend-placeholder.vue';
+import LayerEntryV from './entry.vue';
+import LegendGroupV from './group.vue';
+import LegendVisibilitySetV from './visibility-set.vue';
+import LegendPlaceholderV from './placeholder.vue';
 
 @Component
 export default class LegendComponentV extends Vue {

@@ -16,13 +16,13 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Get, Sync } from 'vuex-pathify';
 
 import anime from 'animejs';
 
 import { PanelInstance } from '@/api';
 
-import PanelV from './panel-container.vue';
+import PanelContainerV from './panel-container.vue';
 
 declare class ResizeObserver {
     constructor(callback: Function);
@@ -33,7 +33,7 @@ declare class ResizeObserver {
 
 @Component({
     components: {
-        'panel-container': PanelV
+        'panel-container': PanelContainerV
     }
 })
 export default class PanelStackV extends Vue {

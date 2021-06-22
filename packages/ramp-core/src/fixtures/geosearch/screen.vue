@@ -97,25 +97,25 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Get } from 'vuex-pathify';
 import { PanelInstance } from '@/api';
 
 import { GeosearchStore } from './store';
 
-import GeosearchBar from './geosearch-bar.vue';
-import GeosearchTopFilters from './geosearch-top-filters.vue';
-import GeosearchBottomFilters from './geosearch-bottom-filters.vue';
-import LoadingBar from './loading-bar.vue';
+import GeosearchSearchBarV from './search-bar.vue';
+import GeosearchTopFiltersV from './top-filters.vue';
+import GeosearchBottomFiltersV from './bottom-filters.vue';
+import GeosearchLoadingBarV from './loading-bar.vue';
 
 @Component({
     components: {
-        GeosearchBar,
-        GeosearchTopFilters,
-        GeosearchBottomFilters,
-        LoadingBar
+        'geosearch-bar': GeosearchSearchBarV,
+        'geosearch-top-filters': GeosearchTopFiltersV,
+        'geosearch-bottom-filters': GeosearchBottomFiltersV,
+        'loading-bar': GeosearchLoadingBarV
     }
 })
-export default class GeosearchComponent extends Vue {
+export default class GeosearchScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     // fetch store properties/data
     @Get(GeosearchStore.searchVal) searchVal!: string;

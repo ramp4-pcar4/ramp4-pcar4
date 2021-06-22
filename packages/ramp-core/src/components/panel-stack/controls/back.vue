@@ -23,10 +23,9 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
 
 @Component
-export default class CloseV extends Vue {
+export default class BackV extends Vue {
     @Prop() active!: boolean;
 }
 </script>

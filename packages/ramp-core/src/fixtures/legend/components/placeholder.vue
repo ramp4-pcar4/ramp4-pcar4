@@ -38,21 +38,21 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Get } from 'vuex-pathify';
 
-import { LayerStore, layer } from '@/store/modules/layer';
+import { LayerStore } from '@/store/modules/layer';
 import { LayerInstance } from '@/api/internal';
 
 import { LegendStore } from '../store';
 import { LegendEntry, LegendTypes } from '../store/legend-defs';
 
-import CheckboxV from './checkbox.vue';
-import SymbologyStack from './symbology-stack.vue';
+import LegendCheckboxV from './checkbox.vue';
+import LegendSymbologyStackV from './symbology-stack.vue';
 
 @Component({
     components: {
-        checkbox: CheckboxV,
-        'symbology-stack': SymbologyStack
+        checkbox: LegendCheckboxV,
+        'symbology-stack': LegendSymbologyStackV
     }
 })
 export default class LegendPlaceholderV extends Vue {

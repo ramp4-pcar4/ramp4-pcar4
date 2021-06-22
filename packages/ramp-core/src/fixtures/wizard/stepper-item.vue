@@ -51,10 +51,10 @@
 </template>
 
 <script lang="ts">
-import { Vue, Watch, Component, Prop, Inject } from 'vue-property-decorator';
+import { Vue, Component, Prop, Inject } from 'vue-property-decorator';
 
 @Component
-export default class StepperItemV extends Vue {
+export default class WizardStepperItemV extends Vue {
     @Prop() title!: string;
     @Prop() summary!: string;
 

@@ -8,7 +8,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 
 @Component
-export default class MapPanguard extends Vue {
+export default class MapPanguardV extends Vue {
     timeoutID: number | undefined = undefined;
 
     mounted(): void {
