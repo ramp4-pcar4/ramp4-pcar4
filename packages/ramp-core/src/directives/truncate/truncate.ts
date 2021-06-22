@@ -69,9 +69,6 @@ export const Truncate: Vue.DirectiveOptions = {
  * @returns false IFF the text is not being truncated and the tooltip should not be shown
  */
 function onShow(instance: any) {
-    if (instance.content === undefined || instance.content === '') {
-        return false;
-    }
     // cancel showing the tooltip if the text isn't truncated
     // clientWidth is the visible width of the element, scrollWidth is the width of the content
     if (instance.reference.clientWidth >= instance.reference.scrollWidth) {
