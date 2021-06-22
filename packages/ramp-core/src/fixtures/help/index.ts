@@ -20,7 +20,8 @@ class HelpFixture extends HelpAPI {
                         'help-screen': HelpScreenV
                     },
                     style: {
-                        width: '350px'
+                        'flex-grow': '1',
+                        'max-width': '750px'
                     }
                 }
             },

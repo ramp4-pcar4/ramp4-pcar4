@@ -4,32 +4,29 @@ Navigation controls are used for changing the viewing extent of the map.
 
 The following navigation controls can be found in the bottom right corner of the map:
 
-|Symbol|Name|
-|-------|----|
-|![](navigation/fullscreen.png)| Fullscreen |
-|![](navigation/help.png)| Help |
+|Symbol|Name|Key Binding|Description|
+|----|----|----|----|
+|![](navigation/zoomin.png)| Zoom in | Plus (+) | Zoom in one level on the map to see more detailed content |
+|![](navigation/zoomout.png)| Zoom out | Minus (-) | Zoom out one level on the map to see less detailed content  |
+|![](navigation/fullscreen.png)| Fullscreen | | Full screen presents map content using the entire page. Full screen option is only available when the map is embedded into another page  |
+|![](navigation/help.png)| Help | | Open the help panel |
+|![](navigation/home.png)| Home | | Zoom and pan map such that initial extent is visible |
+|![](navigation/basemaps.png)| Basemap | | Opens the basemap selection panel |
 
-Note that the map __must be__ focused for key binding to work. The map has focus when there is a blue border around it.
+You can also pan the map by using your left, right, up and down arrow keys, or by click-holding on the map and dragging. Using the mouse scroll wheel while hovering over the map will zoom the map in/out.
+
+If you are panning the map using arrow keys, you can press SHIFT or CTRL to pan the map faster or slower (respectively).
 
 
 # Navigation Information
 
-The navigation information is located in the lower right corner of the map and includes map scale and mouse cursor positioning coordinates.
-The positioning coordinates can be in degrees minutes seconds (DMS), decimal degrees or meters depending on the projection and configuration used.
+
 
 
 # Basemap Selector
 
-The basemap selector modifies the underlying basemap to provide a variety of geographical contexts.
 
-__To open the basemap selector:__
-
-First open the layers panel by selecting the layer button (shown above in red). You will then see the basemap selector appear to the left of the layer button (shown above in blue). You can also open the basemap selector from within the main menu.
-
-You'll be presented with one or more basemaps to choose from, separated by their projection types (mercator vs lambert). The map will reload if you change projections, but won't if you switch basemaps within the same projection.
 
 
 # Overview Map
-
-The overview map displays a generalised view of the main map at a smaller scale. It can be found in the top right corner of the map.
 
