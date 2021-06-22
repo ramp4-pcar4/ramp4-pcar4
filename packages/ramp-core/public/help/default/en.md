@@ -13,9 +13,12 @@ The following navigation controls can be found in the bottom right corner of the
 |![](navigation/home.png)| Home | | Zoom and pan map such that initial extent is visible |
 |![](navigation/basemaps.png)| Basemap | | Opens the basemap selection panel |
 
-You can also pan the map by using your left, right, up and down arrow keys, or by click-holding on the map and dragging. Using the mouse scroll wheel while hovering over the map will zoom the map in/out.
+You can also pan the map by using your left, right, up and down arrow keys, or by click-holding on the map and dragging. Holding CTRL and using the mouse scroll wheel while hovering over the map will zoom the map in/out.
 
 If you are panning the map using arrow keys, you can press SHIFT or CTRL to pan the map faster or slower (respectively).
+
+Note that the map __must be__ focused for key binding to work.
+
 
 
 # Navigation Information
