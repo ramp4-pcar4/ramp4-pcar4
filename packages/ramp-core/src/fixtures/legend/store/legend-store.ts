@@ -25,7 +25,7 @@ const getters = {
                 checkExpanded(entry, expanded)
         );
     },
-    getAllVisibility: function(state: LegendState, visible: boolean): boolean {
+    getAllVisibility: (state: LegendState, visible: boolean): boolean => {
         return state.children.every((entry: LegendEntry | LegendGroup) =>
             checkVisibility(entry, visible)
         );
@@ -42,6 +42,33 @@ const mutations = {
     ) => {
         const index = state.children.findIndex(child => child.id === id);
         Vue.set(state.children, index, entry);
+    },
+    REMOVE_LAYER_ENTRY: (state: LegendState, uid: string) => {
+        const removeLayerEntry = (children: (LegendEntry | LegendGroup)[]) => {
+            // remove entry if uid corresponds to entry or parent layer
+            children = children.filter(
+                entry =>
+                    entry instanceof LegendGroup ||
+                    (entry.layer!.uid !== uid && entry.uid !== uid)
+            );
+
+            // recursively check child legend groups
+            children
+                .filter(entry => entry instanceof LegendGroup)
+                .forEach(group => {
+                    group.children = removeLayerEntry(group.children);
+                });
+
+            // remove groups with no children
+            children = children.filter(
+                item =>
+                    item instanceof LegendEntry || item.children.length !== 0
+            );
+
+            return children;
+        };
+
+        state.children = removeLayerEntry(state.children);
     }
 };
 
@@ -73,6 +100,10 @@ const actions = {
     /** Add legend entry to store */
     addEntry: (context: LegendContext, item: LegendEntry) => {
         context.commit('ADD_ITEM', item);
+    },
+    /** Remove layer's corresponding entry from the store */
+    removeLayerEntry: (context: LegendContext, uid: string) => {
+        context.commit('REMOVE_LAYER_ENTRY', uid);
     },
     /** Replaces default placeholder after layer is loaded */
     updateDefaultEntry: (context: LegendContext, id: string) => {
@@ -230,6 +261,10 @@ export enum LegendStore {
      * (Action) addEntry - add entry to legend store
      */
     addEntry = 'legend/addEntry!',
+    /**
+     * (Action) removeLayerEntry - remove layer's corresponding entry from the store
+     */
+    removeLayerEntry = 'legend/removeLayerEntry',
     /**
      * (Action) updateDefaultEntry - replaces default placeholder after layer has loaded
      */

@@ -71,6 +71,11 @@ export class LegendItem {
         return this._children;
     }
 
+    /** Sets children of the legend entry */
+    set children(children: Array<LegendGroup | LegendEntry>) {
+        this._children = children;
+    }
+
     /**
      * Removes element from legend and removes layer if it's the last reference to it.
      */
@@ -113,6 +118,7 @@ export class LegendEntry extends LegendItem {
     _isLoaded: boolean;
     _symbologyStack: any;
     _isDefault: boolean | undefined;
+    _displaySymbology: boolean;
 
     /**
      * Creates a new single legend entry.
@@ -135,6 +141,8 @@ export class LegendEntry extends LegendItem {
 
         this._isLoaded =
             this._layer !== undefined ? this._layer.isValidState() : true;
+
+        this._displaySymbology = false;
 
         // check if a layer has been bound to this entry and is done loading. If not, set the type to "placeholder".
         if (this._layer === undefined || !this._isLoaded) {
@@ -199,6 +207,16 @@ export class LegendEntry extends LegendItem {
     /** Returns true if entry is not from config. */
     get isDefault(): boolean | undefined {
         return this._isDefault;
+    }
+
+    /** Returns true if symbology stack is expanded. */
+    get displaySymbology(): boolean {
+        return this._displaySymbology;
+    }
+
+    /** Sets state of symbology stack. */
+    set displaySymbology(display: boolean) {
+        this._displaySymbology = display;
     }
 
     /**

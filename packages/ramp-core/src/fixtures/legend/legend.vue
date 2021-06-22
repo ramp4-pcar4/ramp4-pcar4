@@ -28,7 +28,7 @@ import { Get, Sync, Call } from 'vuex-pathify';
 import { PanelInstance } from '@/api';
 
 import { LegendStore } from './store';
-import { LegendItem } from './store/legend-defs';
+import { LegendItem, LegendEntry, LegendGroup } from './store/legend-defs';
 import LegendHeaderV from './legend-header.vue';
 import LegendComponentV from './components/legend-component.vue';
 
@@ -41,7 +41,7 @@ import LegendComponentV from './components/legend-component.vue';
 export default class LegendV extends Vue {
     @Prop() panel!: PanelInstance;
     // fetch store properties/data
-    @Get(LegendStore.children) children!: Array<LegendItem>;
+    @Get(LegendStore.children) children!: Array<LegendEntry | LegendGroup>;
 
     get isPinned(): boolean {
         return this.panel.isPinned;
