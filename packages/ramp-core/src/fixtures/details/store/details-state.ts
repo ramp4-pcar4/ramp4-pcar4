@@ -52,6 +52,12 @@ export class DetailsState {
      * @type IdentifyResult[]
      * @memberof DetailsState
      */
-
     payload: IdentifyResult[] = [];
+
+    /**
+     * Details config templates
+     *
+     * @memberof DetailsState
+     */
+    templates: { [id: string]: DetailsItemInstance } = {};
 }

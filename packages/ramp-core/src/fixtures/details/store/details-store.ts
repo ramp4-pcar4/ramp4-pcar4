@@ -28,7 +28,8 @@ const mutations = {
 };
 
 export enum DetailsStore {
-    payload = 'details/payload'
+    payload = 'details/payload',
+    templates = 'details/templates'
 }
 
 export function details() {
@@ -39,6 +40,6 @@ export function details() {
         state,
         getters: { ...getters },
         actions: { ...actions },
-        mutations: { ...mutations, ...make.mutations(['items']) }
+        mutations: { ...mutations, ...make.mutations(state) }
     };
 }

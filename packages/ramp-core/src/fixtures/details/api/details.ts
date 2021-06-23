@@ -1,6 +1,11 @@
 import { FixtureInstance } from '@/api';
 import { IdentifyItem, IdentifyResult } from '@/geo/api';
-import { DetailsConfig, DetailsItemSet, DetailsItemInstance } from '../store';
+import {
+    DetailsConfig,
+    DetailsItemSet,
+    DetailsItemInstance,
+    DetailsStore
+} from '../store';
 
 export class DetailsAPI extends FixtureInstance {
     get config(): DetailsConfig | undefined {
@@ -46,7 +51,7 @@ export class DetailsAPI extends FixtureInstance {
         };
 
         // Save the provided identify result in the store.
-        this.$vApp.$store.set('details/setPayload!', [identifyResult]);
+        this.$vApp.$store.set(DetailsStore.payload, [identifyResult]);
         // Open the details panel.
         const panel = this.$iApi.panel.get('details-panel');
         if (panel.isOpen) {
@@ -74,7 +79,7 @@ export class DetailsAPI extends FixtureInstance {
 
         // save the items in the store
         this.$vApp.$store.set(
-            'details/items',
+            DetailsStore.templates,
             detailsItems.reduce<DetailsItemSet>((map, item) => {
                 map[item.id] = item;
                 return map;
@@ -91,11 +96,13 @@ export class DetailsAPI extends FixtureInstance {
      */
     _validateItems() {
         Object.values(
-            this.$vApp.$store.get<DetailsItemInstance[]>('details/items')!
+            this.$vApp.$store.get<DetailsItemInstance[]>(
+                DetailsStore.templates
+            )!
         ).forEach(item => {
             if (item.template in this.$vApp.$options.components!) {
                 this.$vApp.$store.set(
-                    `details/items@${item.id}.componentId`,
+                    `${DetailsStore.templates}@${item.id}.componentId`,
                     item.template
                 );
             }
