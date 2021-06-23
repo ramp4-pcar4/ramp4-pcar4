@@ -28,7 +28,6 @@ import VueTippy, { TippyComponent } from 'vue-tippy';
 Vue.use(VueTippy, {
     aria: 'labelledby',
     a11y: false,
-    theme: 'ramp',
     trigger: 'mouseenter manual focus'
 });
 Vue.component('tippy', TippyComponent);
