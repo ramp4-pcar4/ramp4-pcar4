@@ -32,3 +32,6 @@ Notez que la carte doit être la zone active (avoir le « focus ») pour que les
 
 # Carte d'aperçu
 
+La carte d'aperçu affiche une vue générale de la carte principale à une plus petite échelle. Elle se trouve dans le coin supérieur droit de la carte.
+
+Cliquez sur la carte d'aperçu et faites-la glisser pour modifier l'étendue de la carte principale. En cliquant sur l'icône de bascule (![](overview/toggle.png)) dans le coin supérieur droit de la carte d'aperçu, vous pouvez l'afficher ou la masquer.

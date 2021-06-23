@@ -33,3 +33,6 @@ Note that the map __must be__ focused for key binding to work.
 
 # Overview Map
 
+The overview map displays a generalised view of the main map at a smaller scale. It can be found in the top right corner of the map.
+
+Click-hold on the overview map and drag it to change the extent of the main map. Clicking on the toggle icon (![](overview/toggle.png)) in the top right corner of the overview map will expand or contract it.

@@ -65,6 +65,9 @@ export default class HelpSectionV extends Vue {
         td {
             @apply px-5;
         }
+        img {
+            @apply inline;
+        }
     }
 }
 .help-section-header .icon {
