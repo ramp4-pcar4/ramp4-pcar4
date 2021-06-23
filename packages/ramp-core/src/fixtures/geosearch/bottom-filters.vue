@@ -14,15 +14,15 @@
 </template>
 
 <script lang="ts">
-import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Vue, Component } from 'vue-property-decorator';
+import { Get, Call } from 'vuex-pathify';
 import { GlobalEvents } from '@/api/internal';
 import { Extent } from '@/geo/api';
 import { GeosearchStore } from './store';
 import { debounce } from 'debounce';
 
 @Component
-export default class GeosearchBottomFilters extends Vue {
+export default class GeosearchBottomFiltersV extends Vue {
     @Get(GeosearchStore.resultsVisible) resultsVisible!: any;
 
     // import required geosearch store actions

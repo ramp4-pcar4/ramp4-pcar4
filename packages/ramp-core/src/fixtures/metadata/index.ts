@@ -1,7 +1,7 @@
 import { MetadataAPI } from './api/metadata';
 import MetadataAppbarButtonV from './appbar-button.vue';
 
-import ScreenV from './screen.vue';
+import MetadataScreenV from './screen.vue';
 
 import messages from './lang/lang.csv';
 
@@ -11,7 +11,7 @@ class MetadataFixture extends MetadataAPI {
             {
                 'metadata-panel': {
                     screens: {
-                        'metadata-screen-content': ScreenV
+                        'metadata-screen-content': MetadataScreenV
                     },
                     style: {
                         width: '350px'

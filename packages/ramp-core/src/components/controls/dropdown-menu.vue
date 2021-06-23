@@ -21,10 +21,9 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
 
 @Component
-export default class MenuV extends Vue {
+export default class DropdownMenuV extends Vue {
     @Prop({ default: 'bottom-right' }) position!: string;
     @Prop() tooltip?: string;
     @Prop({ default: 'bottom' }) tooltipPlacement?: string;

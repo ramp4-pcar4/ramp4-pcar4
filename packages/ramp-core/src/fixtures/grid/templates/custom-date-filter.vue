@@ -22,10 +22,10 @@
 </template>
 
 <script lang="ts">
-import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component } from 'vue-property-decorator';
 
 @Component
-export default class CustomNumberFilter extends Vue {
+export default class GridCustomNumberFilterV extends Vue {
     beforeMount() {
         // Load previously stored values (if saved in table state manager)
         this.minVal =
@@ -122,7 +122,7 @@ export default class CustomNumberFilter extends Vue {
     }
 }
 
-export default interface CustomNumberFilter {
+export default interface GridCustomNumberFilter {
     minVal: any;
     maxVal: any;
     colDef: any;

@@ -13,10 +13,10 @@
 </template>
 
 <script>
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component } from 'vue-property-decorator';
 
 @Component
-export default class LoadingBar extends Vue {}
+export default class GeosearchLoadingBarV extends Vue {}
 </script>
 
 <style scoped>

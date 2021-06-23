@@ -6,7 +6,6 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
 import { FixtureInstance } from '@/api';
 
 // this is an example of a on-map component (doesn't use panels)

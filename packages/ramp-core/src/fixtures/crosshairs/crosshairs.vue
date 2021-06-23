@@ -44,9 +44,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
-import { FixtureInstance, GlobalEvents } from '@/api';
+import { Vue, Component } from 'vue-property-decorator';
+import { GlobalEvents } from '@/api';
 
 @Component({})
 export default class CrosshairsV extends Vue {

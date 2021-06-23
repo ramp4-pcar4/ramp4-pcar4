@@ -1,4 +1,4 @@
-import BasemapComponent from './basemap.vue';
+import BasemapScreenV from './screen.vue';
 import { BasemapAPI } from './api/basemap';
 import { basemap } from './store/index';
 import BasemapAppbarButtonV from './appbar-button.vue';
@@ -19,7 +19,7 @@ class BasemapFixture extends BasemapAPI {
             {
                 id: 'basemap-panel',
                 config: {
-                    screens: { 'basemap-component': BasemapComponent }
+                    screens: { 'basemap-component': BasemapScreenV }
                 }
             },
             { i18n: { messages } }

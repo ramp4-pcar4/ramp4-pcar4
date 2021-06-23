@@ -1,5 +1,5 @@
 import messages from './lang/lang.csv';
-import PanguardV from './panguard.vue';
+import PanguardV from './map-panguard.vue';
 import { FixtureInstance } from '@/api';
 
 class PanguardFixture extends FixtureInstance {

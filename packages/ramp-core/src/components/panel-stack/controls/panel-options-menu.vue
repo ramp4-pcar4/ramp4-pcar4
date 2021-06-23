@@ -16,8 +16,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Vue, Component } from 'vue-property-decorator';
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 
 @Component({
@@ -25,7 +24,7 @@ import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
         'dropdown-menu': DropdownMenuV
     }
 })
-export default class MenuV extends Vue {
+export default class PanelOptionsMenuV extends Vue {
     data() {
         return {
             open: false

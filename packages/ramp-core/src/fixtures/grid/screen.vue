@@ -50,30 +50,30 @@
             <close @click="panel.close()" />
         </template>
         <template #content>
-            <TableComponent
+            <table-component
                 class="rv-grid"
                 ref="rvGrid"
                 :layerUid="currentUid"
-            ></TableComponent>
+            ></table-component>
         </template>
     </panel-screen>
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Get } from 'vuex-pathify';
 
 import { LayerInstance, PanelInstance } from '@/api';
-import TableComponent from '@/fixtures/grid/table/table.vue';
+import GridTableComponentV from '@/fixtures/grid/table-component.vue';
 
-import { LayerStore, layer } from '@/store/modules/layer';
+import { LayerStore } from '@/store/modules/layer';
 
 @Component({
     components: {
-        TableComponent
+        'table-component': GridTableComponentV
     }
 })
-export default class Screen1 extends Vue {
+export default class GridScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     @Prop() header!: String;
 

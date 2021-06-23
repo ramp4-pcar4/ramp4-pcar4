@@ -70,10 +70,10 @@
 </template>
 
 <script lang="ts">
-import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component } from 'vue-property-decorator';
 
 @Component
-export default class CustomHeader extends Vue {
+export default class GridCustomHeaderV extends Vue {
     sort: number = 0;
     sortable: boolean = false;
 
@@ -132,7 +132,7 @@ export default class CustomHeader extends Vue {
     }
 }
 
-export default interface CustomHeader {
+export default interface GridCustomHeader {
     sort: number;
     sortable: boolean;
     gridApi: any;

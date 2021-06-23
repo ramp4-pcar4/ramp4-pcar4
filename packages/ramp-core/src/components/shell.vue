@@ -16,15 +16,14 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
 
-import EsriMap from '@/components/map/esri-map.vue';
+import EsriMapV from '@/components/map/esri-map.vue';
 import PanelStackV from '@/components/panel-stack/panel-stack.vue';
 import MapCaptionV from '@/components/map/map-caption.vue';
 
 @Component({
     components: {
-        EsriMap,
+        'esri-map': EsriMapV,
         'panel-stack': PanelStackV,
         'map-caption': MapCaptionV
     }

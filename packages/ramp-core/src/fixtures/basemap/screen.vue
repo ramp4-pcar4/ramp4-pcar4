@@ -72,19 +72,19 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Get } from 'vuex-pathify';
 import { PanelInstance } from '@/api';
 
 import { BasemapStore } from './store';
-import BasemapItem from './basemap-item.vue';
+import BasemapItemV from './item.vue';
 
 @Component({
     components: {
-        BasemapItem
+        'basemap-item': BasemapItemV
     }
 })
-export default class BasemapComponent extends Vue {
+export default class BasemapScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     // fetch basemap store properties/data
     @Get(BasemapStore.tileSchemas) tileSchemas!: Array<any>;

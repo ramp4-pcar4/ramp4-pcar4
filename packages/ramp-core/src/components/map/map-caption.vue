@@ -68,8 +68,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch, Prop, Inject } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Vue, Component } from 'vue-property-decorator';
+import { Get } from 'vuex-pathify';
 import { Attribution, MapMove, Point } from '@/geo/api';
 import { GlobalEvents } from '@/api';
 import { MapCaptionStore } from '@/store/modules/mapcaption';

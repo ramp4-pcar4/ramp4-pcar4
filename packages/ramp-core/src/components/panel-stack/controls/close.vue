@@ -22,7 +22,6 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
 
 @Component({})
 export default class CloseV extends Vue {

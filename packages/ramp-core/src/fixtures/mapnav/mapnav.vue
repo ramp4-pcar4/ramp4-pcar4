@@ -23,10 +23,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from 'vue-property-decorator';
-import { Get, Call } from 'vuex-pathify';
-
-import { GlobalEvents } from '@/api';
+import { Vue, Component } from 'vue-property-decorator';
+import { Get } from 'vuex-pathify';
 
 import FullscreenNavV from './buttons/fullscreen-nav.vue';
 import HomeNavV from './buttons/home-nav.vue';

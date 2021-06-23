@@ -8,7 +8,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 
 @Component
-export default class MapScrollguard extends Vue {
+export default class MapScrollguardV extends Vue {
     mounted(): void {
         (this.$iApi.$vApp.$el.querySelector(
             '.inner-shell + .esri-view'

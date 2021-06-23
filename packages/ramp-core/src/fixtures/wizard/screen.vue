@@ -174,7 +174,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
 import { PanelInstance } from '@/api';
@@ -195,7 +195,7 @@ import StepperV from './stepper.vue';
         stepper: StepperV
     }
 })
-export default class WizardV extends Vue {
+export default class WizardScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     @Get(WizardStore.layerSource) layerSource!: LayerSource;
 

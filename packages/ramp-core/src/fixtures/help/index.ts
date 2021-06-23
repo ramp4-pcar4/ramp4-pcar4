@@ -1,7 +1,7 @@
 import { HelpAPI } from './api/help';
 import { help } from './store/index';
-import HelpV from './help.vue';
-import HelpNavV from './nav-button.vue';
+import HelpScreenV from './screen.vue';
+import HelpNavButtonV from './nav-button.vue';
 
 import messages from './lang/lang.csv';
 
@@ -9,7 +9,7 @@ class HelpFixture extends HelpAPI {
     added() {
         console.log(`[fixture] ${this.id} added`);
 
-        this.$iApi.component('help-nav-button', HelpNavV);
+        this.$iApi.component('help-nav-button', HelpNavButtonV);
 
         this.$vApp.$store.registerModule('help', help());
 
@@ -17,7 +17,7 @@ class HelpFixture extends HelpAPI {
             {
                 'help-panel': {
                     screens: {
-                        'help-screen': HelpV
+                        'help-screen': HelpScreenV
                     },
                     style: {
                         width: '350px'

@@ -13,10 +13,10 @@
 </template>
 
 <script lang="ts">
-import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component } from 'vue-property-decorator';
 
 @Component
-export default class CustomSelectorFilter extends Vue {
+export default class GridCustomSelectorFilterV extends Vue {
     beforeMount() {
         // Load previously stored value (if saved in table state manager)
         this.selectedOption = this.params.stateManager.getColumnFilter(
@@ -82,7 +82,7 @@ export default class CustomSelectorFilter extends Vue {
     }
 }
 
-export default interface CustomSelectorFilter {
+export default interface GridCustomSelectorFilter {
     selectedOption: string;
     colDef: any;
     options: any;

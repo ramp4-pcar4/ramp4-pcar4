@@ -1,7 +1,7 @@
 import { SettingsAPI } from './api/settings';
 import SettingsAppbarButtonV from './appbar-button.vue';
 
-import ScreenV from './settings.vue';
+import SettingsScreenV from './screen.vue';
 
 import messages from './lang/lang.csv';
 
@@ -11,7 +11,7 @@ class SettingsFixture extends SettingsAPI {
             {
                 'settings-panel': {
                     screens: {
-                        'settings-screen-content': ScreenV
+                        'settings-screen-content': SettingsScreenV
                     },
                     style: {
                         width: '350px'

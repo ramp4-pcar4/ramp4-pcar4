@@ -53,11 +53,10 @@
 </template>
 
 <script lang="ts">
-import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 
 @Component
-export default class ColumnDropdown extends Vue {
+export default class GridColumnDropdownV extends Vue {
     @Prop() columnDefs!: Array<Object>;
     @Prop() columnApi!: Object;
 }

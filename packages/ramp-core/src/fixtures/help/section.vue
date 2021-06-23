@@ -37,8 +37,6 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
-import { PanelInstance } from '@/api';
 
 @Component({})
 export default class HelpSectionV extends Vue {

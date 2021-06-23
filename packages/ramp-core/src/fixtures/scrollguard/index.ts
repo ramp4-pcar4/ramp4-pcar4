@@ -1,5 +1,5 @@
 import messages from './lang/lang.csv';
-import ScrollguardV from './scrollguard.vue';
+import ScrollguardV from './map-scrollguard.vue';
 import { FixtureInstance } from '@/api';
 
 class ScrollguardFixture extends FixtureInstance {

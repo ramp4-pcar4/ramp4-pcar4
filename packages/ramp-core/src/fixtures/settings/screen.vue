@@ -104,15 +104,15 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 
 import { PanelInstance } from '@/api';
 
-import SettingsComponent from './SettingsComponentV.vue';
+import SettingsComponentV from './component.vue';
 import { LayerInstance } from '@/api/internal';
 
 @Component({
     components: {
-        'settings-component': SettingsComponent
+        'settings-component': SettingsComponentV
     }
 })
-export default class SettingsV extends Vue {
+export default class SettingsScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     @Prop() layer!: LayerInstance;
     @Prop() uid!: string;

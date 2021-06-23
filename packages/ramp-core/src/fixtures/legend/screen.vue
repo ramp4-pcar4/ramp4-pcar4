@@ -24,13 +24,13 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Get } from 'vuex-pathify';
 import { PanelInstance } from '@/api';
 
 import { LegendStore } from './store';
-import { LegendItem, LegendEntry, LegendGroup } from './store/legend-defs';
-import LegendHeaderV from './legend-header.vue';
-import LegendComponentV from './components/legend-component.vue';
+import { LegendEntry, LegendGroup } from './store/legend-defs';
+import LegendHeaderV from './header.vue';
+import LegendComponentV from './components/component.vue';
 
 @Component({
     components: {
@@ -38,7 +38,7 @@ import LegendComponentV from './components/legend-component.vue';
         'legend-component': LegendComponentV
     }
 })
-export default class LegendV extends Vue {
+export default class LegendScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     // fetch store properties/data
     @Get(LegendStore.children) children!: Array<LegendEntry | LegendGroup>;

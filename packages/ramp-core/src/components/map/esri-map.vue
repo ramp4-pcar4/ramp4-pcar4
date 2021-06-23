@@ -17,18 +17,18 @@
 
 <script lang="ts">
 import { Vue, Watch, Component } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Get } from 'vuex-pathify';
 import { RampLayerConfig, RampMapConfig } from '@/geo/api';
 import { GlobalEvents, LayerInstance, MapAPI } from '@/api/internal';
 
 import { ConfigStore } from '@/store/modules/config';
-import { LayerStore, layer } from '@/store/modules/layer';
+import { LayerStore } from '@/store/modules/layer';
 
 import to from 'await-to-js';
 import { MaptipStore } from '@/store/modules/maptip';
 
 @Component
-export default class EsriMap extends Vue {
+export default class EsriMapV extends Vue {
     @Get(ConfigStore.getMapConfig) mapConfig!: RampMapConfig;
 
     @Get(LayerStore.layers) layers!: LayerInstance[];

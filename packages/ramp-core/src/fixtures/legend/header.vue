@@ -76,8 +76,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Vue, Component } from 'vue-property-decorator';
+import { Call } from 'vuex-pathify';
 
 import { LegendStore } from './store';
 import { GlobalEvents } from '../../api/internal';
