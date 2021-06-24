@@ -17,11 +17,7 @@ import { EsriRequest } from '@/geo/esri';
 // If things start to get squirrly, consider instantiating proj4 at geoApi startup and adding it to the infoBundle to make it available.
 import proj4 from 'proj4';
 
-// this was old way, might need to do this?
-/*
-let proj4 = require('proj4');
-proj4 = proj4.default ? proj4.default : proj4;
-*/
+const latLongProj = 'EPSG:4326';
 
 export class ProjectionAPI {
     protected espgWorker: EpsgLookup;
@@ -135,62 +131,6 @@ export class ProjectionAPI {
         );
     }
 
-    // TODO probably need to make this return a promise, and do epsgLookups on the proj codes.
-    //      at the moment we're safe, as the function calling this is dong the lookups. depends how robust/reusable we want this to be
-    // TODO given how rough this function is (no promise, modifying input object in place, incorrect .crs on output)
-    //      we may want to make it private and use it strictly as a utility within this service module.
-    //      public functions can use it, and they can ensure all the nonsense is being handled.
-    //      alternative is we strengthen this by doing object copies and spatial reference correcting in this function
-    /**
-     * Reproject a GeoJSON object in place.
-     * Note the .crs of the object will not be updated or corrected.
-     *
-     * @param {Object} geojson the GeoJSON to be reprojected, this will be modified in place
-     * @param {String|Number} outputSpatialReference the target spatial reference,
-     * 'EPSG:4326' is used by default; if a number is suppied it will be used as an EPSG code
-     * @param {String|Number} inputSpatialReference same rules as outputSpatialReference if suppied
-     * if missing it will attempt to find it encoded in the GeoJSON
-     * @returns {Object} projected geoJson
-     */
-    projectGeoJson(
-        geoJson: any,
-        inputSR: string | number,
-        outputSR: string | number
-    ): any {
-        // TODO revist the types on the SR params. figure out what we're really supporting, and what terraformer can support
-
-        let inSr: string = this.normalizeProj(inputSR);
-        let outSr: string = this.normalizeProj(outputSR);
-
-        if (!inSr && geoJson.crs && geoJson.crs.type === 'name') {
-            inSr = RAMP.GEO.geom._parseGeoJsonCrs(geoJson.crs);
-        }
-
-        if (!inSr) {
-            inSr = 'EPSG:4326';
-        } else if (!proj4.defs(inSr)) {
-            throw new Error(
-                `Projection: ${inSr} could not be found in proj4.defs`
-            );
-        }
-
-        if (!outSr) {
-            outSr = 'EPSG:4326';
-        } else if (!proj4.defs(outSr)) {
-            throw new Error(
-                `Projection: ${outSr} could not be found in proj4.defs`
-            );
-        }
-
-        if (outSr === inSr) {
-            return geoJson;
-        }
-
-        const projFunc = proj4(inSr, outSr).forward;
-
-        return Tools.applyConverter(geoJson, projFunc);
-    }
-
     /**
      * Check whether or not a spatialReference is supported by proj4 library. Attempt to load from epsg source if not.
      *
@@ -288,6 +228,52 @@ export class ProjectionAPI {
     }
 
     /**
+     * Reproject a GeoJSON object in place.
+     * Note the .crs of the object will not be updated or corrected.
+     *
+     * @param {Object} geojson the GeoJSON to be reprojected, this will be modified in place
+     * @param {String|Number} outputSpatialReference the target spatial reference,
+     * 'EPSG:4326' (lat-long) is used by default; if a number is suppied it will be used as an EPSG code
+     * @param {String|Number} inputSpatialReference same rules as outputSpatialReference if suppied
+     * if missing it will attempt to find it encoded in the GeoJSON
+     * @returns {Promise<Object>} resolves with projected geoJson
+     */
+    async projectGeoJson(
+        geoJson: any,
+        inputSR: string | number,
+        outputSR: string | number
+    ): Promise<any> {
+        // TODO revist the types on the SR params. figure out what we're really supporting, and what terraformer can support
+
+        let inSr: string = this.normalizeProj(inputSR);
+        let outSr: string = this.normalizeProj(outputSR);
+
+        if (!inSr && geoJson.crs && geoJson.crs.type === 'name') {
+            inSr = RAMP.GEO.geom._parseGeoJsonCrs(geoJson.crs);
+        }
+
+        if (!inSr) {
+            inSr = latLongProj;
+        }
+
+        if (!outSr) {
+            outSr = latLongProj;
+        }
+
+        if (outSr === inSr) {
+            return geoJson;
+        }
+
+        // ensure we have projection math. this will attempt to download math if we don't already have it.
+        // if not possible to get the math, will error out.
+        await this.checkProjBomber([inSr, outSr]);
+
+        const projFunc = proj4(inSr, outSr).forward;
+
+        return Tools.applyConverter(geoJson, projFunc);
+    }
+
+    /**
      * Project a geometry using local calculations (proj4)
      *
      * @param {SpatialReference | Integer | String} destProj the spatial reference of the result (as SpatialReference, integer WKID or an EPSG string)
@@ -316,7 +302,7 @@ export class ProjectionAPI {
         const preGJ = RAMP.GEO.geom.geomRampToGeoJson(geometry);
 
         // project geojson
-        const postGJ = this.projectGeoJson(
+        const postGJ = await this.projectGeoJson(
             preGJ,
             this.normalizeProj(geometry.sr),
             this.normalizeProj(destProj)

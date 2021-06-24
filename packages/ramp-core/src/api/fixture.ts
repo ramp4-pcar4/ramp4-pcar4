@@ -1,13 +1,12 @@
 import Vue, { VueConstructor, ComponentOptions } from 'vue';
 
-import { APIScope, InstanceAPI } from './internal';
+import { APIScope, GlobalEvents, InstanceAPI } from './internal';
 import {
     FixtureBase,
     FixtureMutation,
     FixtureBaseSet
 } from '@/store/modules/fixture';
 import { i18n } from '@/lang';
-import { GlobalEvents } from './event';
 
 // TODO: implement the same `internal.ts` pattern in store, so can import from a single place;
 
