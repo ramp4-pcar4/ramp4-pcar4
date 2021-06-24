@@ -325,6 +325,14 @@ let options = {
 };
 
 rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
+
+var iklobLoad = rInstance.event.on('fixture/added', fixture => {
+    if (fixture.id === 'iklob') {
+        rInstance.event.off(iklobLoad);
+        rInstance.panel.open('iklob-p1');
+    }
+});
+
 rInstance.fixture.addDefaultFixtures().then(() => {
     rInstance.panel.open('geosearch-panel');
     rInstance.panel.open('basemap-panel');
@@ -512,11 +520,6 @@ rInstance.fixture.add('diligord', window.hostFixtures.diligord).then(() => {
 rInstance.fixture.add('mouruge', window.hostFixtures.mouruge).then(() => {
     rInstance.panel.open('mouruge-p1');
 });
-
-// TODO: temp fix since iklob is added after the instance is instantiated. replace once we have a 'fixture added' event.
-setTimeout(() => {
-    rInstance.panel.open('iklob-p1');
-}, 5000);
 
 // add export-v1 fixtures
 rInstance.fixture.add('export-v1');

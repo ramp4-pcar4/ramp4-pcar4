@@ -7,6 +7,7 @@ import {
     FixtureBaseSet
 } from '@/store/modules/fixture';
 import { i18n } from '@/lang';
+import { GlobalEvents } from './event';
 
 // TODO: implement the same `internal.ts` pattern in store, so can import from a single place;
 
@@ -67,6 +68,8 @@ export class FixtureAPI extends APIScope {
         this.$vApp.$store.set(`fixture/${FixtureMutation.ADD_FIXTURE}!`, {
             value: fixture
         });
+
+        this.$iApi.event.emit(GlobalEvents.FIXTURE_ADDED, fixture);
 
         return fixture;
     }

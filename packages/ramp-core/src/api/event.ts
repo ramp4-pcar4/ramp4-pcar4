@@ -22,6 +22,8 @@ export enum GlobalEvents {
     // TODO document payload
     FILTER_CHANGE = 'filter/change',
 
+    FIXTURE_ADDED = 'fixture/added', // Payload is FixtureInstance
+
     LAYER_OPACITYCHANGE = 'layer/opacitychange',
     LAYER_RELOADED = 'layer/reloaded', // Payload: `(layer: LayerInstance)`
     LAYER_REMOVE = 'layer/remove', // Payload: `(layer: LayerInstance)`
