@@ -1,34 +1,37 @@
-# Commandes de navigation
+# Contrôles de navigation
 
-Les commandes de navigation sont utilisées pour modifier l'étendue de visualisation de la carte.
+Les contrôles de navigation servent à modifier la taille de l’affichage de la carte.
 
 Les commandes de navigation suivantes se trouvent dans le coin inférieur droit de la carte:
 
-| Symbole | Nom |
-|-------|----|
-|![](navigation/fullscreen.png)| Plein écran |
-|![](navigation/help.png)| Aide  |
+|Symbol|Nom|Touche clavier|Description|
+|----|----|----|----|
+|![](navigation/zoomin.png)| Zoom avant | Plus (+) | Zoom avant d'un niveau sur la carte pour afficher un contenu plus détaillé |
+|![](navigation/zoomout.png)| Zoom arrière | Moins (-) | Zoom arrière d'un niveau sur la carte pour afficher un contenu moins  |
+|![](navigation/fullscreen.png)| Plein écran | | Le plein écran présente le contenu de la carte en utilisant la page entière. L'option « Plein écran » n'est disponible que lorsque la carte est incorporée dans une autre page  |
+|![](navigation/help.png)| Aide | | Ouvre le panneau d'aide |
+|![](navigation/home.png)| Étendue initiale | | Zoom et déplace la carte afin que l'étendue initiale soit visible |
+|![](navigation/basemaps.png)| Cartes de base | | Ouvre le panneau de sélection des cartes de base |
 
-Notez que la map __doit être__ focalisée pour que la liaison de clé fonctionne. La carte a le focus lorsqu'il y a une bordure bleue autour d'elle.
+Vous pouvez également parcourir la carte en utilisant les touches fléchées gauche, droite, haut et bas ou en cliquant sur la carte et en la faisant glisser. Tenir la touche CTRL enfoncée et en utilisant la roulette de défilement de la souris pendant que le curseur de la souris sur la carte sera zoom de la carte de sortie.
 
+Si vous êtes panoramique de la carte en utilisant les touches fléchées, vous pouvez appuyer sur « SHIFT » ou « CTRL » pour déplacer la carte plus rapidement ou plus lentement, respectivement.
 
-# Informations de navigation
-
-Les informations de navigation sont situées dans le coin inférieur droit de la carte et comprennent l'échelle de la carte et les coordonnées de positionnement du curseur de la souris.
-Les coordonnées de positionnement peuvent être en degrés minutes secondes (DMS), en degrés décimaux ou en mètres selon la projection et la configuration utilisées.
-
-
-# Sélecteur de fond de carte
-
-Le sélecteur de fond de carte modifie le fond de carte sous-jacent pour fournir une variété de contextes géographiques.
-
-__Pour ouvrir le sélecteur de fond de carte:__
-
-Ouvrez d'abord le panneau Calques en sélectionnant le bouton Calque (illustré ci-dessus en rouge). Vous verrez alors le sélecteur de fond de carte apparaître à gauche du bouton de couche (illustré ci-dessus en bleu). Vous pouvez également ouvrir le sélecteur de fond de carte à partir du menu principal.
-
-Vous serez présenté avec un ou plusieurs fonds de carte parmi lesquels choisir, séparés par leurs types de projection (mercator vs lambert). La carte se rechargera si vous modifiez les projections, mais pas si vous changez de fonds de carte dans la même projection.
+Notez que la carte doit être la zone active (avoir le « focus ») pour que les touches clavier fonctionnent.
 
 
-# Carte générale
+# Information de navigation
 
-La carte générale affiche une vue généralisée de la carte principale à une plus petite échelle. Il se trouve dans le coin supérieur droit de la carte.
+
+
+
+# Cartes de base
+
+
+
+
+# Carte d'aperçu
+
+La carte d'aperçu affiche une vue générale de la carte principale à une plus petite échelle. Elle se trouve dans le coin supérieur droit de la carte.
+
+Cliquez sur la carte d'aperçu et faites-la glisser pour modifier l'étendue de la carte principale. En cliquant sur l'icône de bascule (![](overview/toggle.png)) dans le coin supérieur droit de la carte d'aperçu, vous pouvez l'afficher ou la masquer.
