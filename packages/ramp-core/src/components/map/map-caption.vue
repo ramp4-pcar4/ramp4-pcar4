@@ -30,32 +30,14 @@
 
         <!-- TODO: find out if any ARIA attributes are needed for the map scale -->
 
-        <span
-            class="flex-shrink-0 relative top-1 pr-14"
-            v-if="latLongCursor.lat !== 0 || latLongCursor.long !== 0"
-        >
-            {{ cursorPointDMS.y }}
-            {{
-                $t(
-                    `map.coordinates.${
-                        latLongCursor.lat > 0 ? 'north' : 'south'
-                    }`
-                )
-            }}
-            | {{ cursorPointDMS.x }}
-            {{
-                $t(
-                    `map.coordinates.${
-                        0 > latLongCursor.long ? 'west' : 'east'
-                    }`
-                )
-            }}
+        <span class="flex-shrink-0 relative top-1 pr-14">
+            {{ cursorCoords }}
         </span>
 
         <button
             class="flex-shrink-0 mx-10 px-4 pointer-events-auto h-20 cursor-pointer border-none"
             @click="onScaleClick"
-            :aria-pressed="isImperialScale"
+            :aria-pressed="scale.isImperialScale"
             :aria-label="$t('map.toggleScaleUnits')"
         >
             <span
@@ -70,31 +52,15 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
-import { Attribution, MapMove, Point } from '@/geo/api';
+import { Attribution, ScaleBarProperties } from '@/geo/api';
 import { GlobalEvents } from '@/api';
-import { MapCaptionStore } from '@/store/modules/mapcaption';
+import { MapCaptionStore } from '@/store/modules/map-caption';
 
 @Component
 export default class MapCaptionV extends Vue {
-    isImperialScale: boolean = false;
-
-    // since calculation of latlong is asynch, we cannot directly calculate it
-    // in cursorPointDMS property. we calculate and update this private property.
-    private latLongCursor: { lat: number; long: number } = { lat: 0, long: 0 };
-
-    @Get(MapCaptionStore.scale) scale!: any;
+    @Get(MapCaptionStore.scale) scale!: ScaleBarProperties;
     @Get(MapCaptionStore.attribution) attribution!: Attribution;
-
-    /**
-     * Convert lat/long in decimal degree to degree, minute, second.
-     * Uses the 'formatLatLong' utils function
-     */
-    get cursorPointDMS(): { x: string; y: string } {
-        return this.formatLatLong(
-            this.latLongCursor.long,
-            this.latLongCursor.lat
-        );
-    }
+    @Get(MapCaptionStore.cursorCoords) cursorCoords!: string;
 
     mounted() {
         // When map is created update scale
@@ -110,92 +76,16 @@ export default class MapCaptionV extends Vue {
         //      we would not want to re-add them back during a projection change -- want to respect the new custom handlers.
 
         this.$iApi.event.on(GlobalEvents.MAP_CREATED, () => {
-            this.$iApi.event.emit(GlobalEvents.MAP_SCALECHANGE); // Default handler will update scale
-            this.$iApi.event.on(
-                GlobalEvents.MAP_MOUSEMOVE,
-                (mmm: MapMove) => {
-                    this.updateCursorPoint(mmm.screenX, mmm.screenY);
-                },
-                'a_name_to_be_decided_later'
-            );
+            this.$iApi.geo.map.updateScale();
         });
     }
 
+    /**
+     * Toggle the scale units
+     */
     onScaleClick() {
-        this.$iApi.$vApp.$store.set(MapCaptionStore.setScale, {
-            width: this.scale.width,
-            label: this.scale.label,
-            isImperialScale: !this.scale.isImperialScale
-        });
-
+        this.$iApi.$vApp.$store.set(MapCaptionStore.toggleScale, {});
         this.$iApi.geo.map.updateScale();
-    }
-
-    /**
-     * Will convert a screen co-ord to lat long and update our property
-     * after the coversion finishes (asynch)
-     *
-     * @private
-     * @param screenX pixel position in x-axis
-     * @param screenY pixel position in y-axis
-     */
-    private updateCursorPoint(screenX: number, screenY: number): void {
-        // get map point from cursor location
-        const mapCursorPoint = this.$iApi.geo.map.screenPointToMapPoint({
-            screenX: screenX,
-            screenY: screenY
-        });
-
-        // project from map co-ords to lat long.
-        this.$iApi.geo.utils.proj
-            .projectGeometry(4326, mapCursorPoint)
-            .then((llPoint: any) => {
-                // update our private property
-                const castPoint: Point = llPoint;
-                this.latLongCursor.lat = castPoint.y;
-                this.latLongCursor.long = castPoint.x;
-            });
-    }
-
-    /**
-     * Formats a latlong into degrees minutes seconds
-     *
-     * Taken from RAMP source
-     *
-     * @param long longitude coordinate
-     * @param lat latitude coordinate
-     */
-    formatLatLong(long: number, lat: number): { x: string; y: string } {
-        const degreeSymbol = String.fromCharCode(176);
-
-        const dy = Math.floor(Math.abs(lat)) * (lat < 0 ? -1 : 1);
-        const my = Math.floor(Math.abs((lat - dy) * 60));
-        const sy = Math.round((Math.abs(lat) - Math.abs(dy) - my / 60) * 3600);
-
-        const dx = Math.floor(Math.abs(long)) * (long < 0 ? -1 : 1);
-        const mx = Math.floor(Math.abs((long - dx) * 60));
-        const sx = Math.round((Math.abs(long) - Math.abs(dx) - mx / 60) * 3600);
-
-        const newY = `${Math.abs(dy)}${degreeSymbol} ${padZero(my)}' ${padZero(
-            sy
-        )}"`;
-        const newX = `${Math.abs(dx)}${degreeSymbol} ${padZero(mx)}' ${padZero(
-            sx
-        )}"`;
-
-        return { x: newX, y: newY };
-
-        /**
-         * Pad value with leading 0 to make sure there is always 2 digits if number is below 10.
-         *
-         * @function padZero
-         * @private
-         * @param {Number} val value to pad with 0
-         * @return {String} string with always 2 characters
-         */
-        function padZero(val: number) {
-            return val >= 10 ? `${val}` : `0${val}`;
-        }
     }
 }
 </script>

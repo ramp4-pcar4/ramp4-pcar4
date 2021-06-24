@@ -5,7 +5,7 @@ import pathify from 'vuex-pathify';
 import { config } from '@/store/modules/config';
 import { fixture } from '@/store/modules/fixture';
 import { layer } from '@/store/modules/layer';
-import { mapcaption } from '@/store/modules/mapcaption';
+import { mapcaption } from '@/store/modules/map-caption';
 import { panel } from '@/store/modules/panel';
 import { maptip } from '@/store/modules/maptip';
 import { RootState } from '@/store/state';

@@ -25,12 +25,13 @@ import {
     RampMapConfig,
     ScreenPoint,
     Screenshot,
+    ScaleBarProperties,
     ScaleSet,
     SpatialReference
 } from '@/geo/api';
 import { EsriGraphic, EsriLOD, EsriMapView } from '@/geo/esri';
 import { LayerStore } from '@/store/modules/layer';
-import { MapCaptionStore } from '@/store/modules/mapcaption';
+import { MapCaptionStore } from '@/store/modules/map-caption';
 
 // TODO bring in the map actions code
 
@@ -549,9 +550,9 @@ export class MapAPI extends CommonMapAPI {
      * Updates map-caption store to notify map-caption component observer
      */
     updateScale(): void {
-        const currScale: any = this.$iApi.$vApp.$store.get(
+        const isImperialScale: boolean = (this.$iApi.$vApp.$store.get(
             MapCaptionStore.scale
-        );
+        ) as ScaleBarProperties).isImperialScale;
 
         // the starting length of the scale line in pixels
         // reduce the length of the bar on extra small layouts
@@ -570,8 +571,8 @@ export class MapAPI extends CommonMapAPI {
             // get the distance in units, either miles or kilometers
             const units =
                 (mapResolution * factor) /
-                (currScale.isImperialScale ? metersInAMile : 1000);
-            unit = currScale.isImperialScale ? 'mi' : 'km';
+                (isImperialScale ? metersInAMile : 1000);
+            unit = isImperialScale ? 'mi' : 'km';
 
             // length of the distance number
             const len = Math.round(units).toString().length;
@@ -584,22 +585,21 @@ export class MapAPI extends CommonMapAPI {
 
             // calcualte length of the scale line in pixels based on the round distance
             pixels =
-                (distance *
-                    (currScale.isImperialScale ? metersInAMile : 1000)) /
+                (distance * (isImperialScale ? metersInAMile : 1000)) /
                 mapResolution;
         } else {
             // Round the meters up
             distance = Math.ceil(
-                currScale.isImperialScale ? meters * metersInAFoot : meters
+                isImperialScale ? meters * metersInAFoot : meters
             );
             pixels = meters / mapResolution;
-            unit = currScale.isImperialScale ? 'ft' : 'm';
+            unit = isImperialScale ? 'ft' : 'm';
         }
 
         this.$iApi.$vApp.$store.set(MapCaptionStore.setScale, {
             width: `${pixels}px`,
             label: `${distance}${unit}`,
-            isImperialScale: currScale.isImperialScale
+            isImperialScale: isImperialScale
         });
     }
 

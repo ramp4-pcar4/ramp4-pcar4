@@ -10,6 +10,7 @@ import { MapClick, MapMove, RampBasemapConfig, ScreenPoint } from '@/geo/api';
 import { RampConfig } from '@/types';
 import { debounce } from 'debounce';
 import { throttle } from 'throttle-debounce';
+import { MapCaptionStore } from '@/store/modules/map-caption';
 
 export enum GlobalEvents {
     /**
@@ -99,7 +100,8 @@ enum DefEH {
     CONFIG_CHANGE_ATTRIBUTION = 'updates_map_caption_attribution_config',
     MAP_SCALECHANGE_SCALEBAR = 'updates_map_caption_scale',
     OPEN_MAP_FEATURE_MAPTIP = 'open_feature_maptip',
-    EXTENT_CHANGE_FEATURE_MAPTIP = 'updates_feature_maptip_extent_change'
+    EXTENT_CHANGE_FEATURE_MAPTIP = 'updates_feature_maptip_extent_change',
+    MAP_UPDATE_CAPTION_COORDS = 'updates_map_caption_coords'
 }
 
 // private for EventBus internals, so don't export
@@ -353,7 +355,8 @@ export class EventAPI extends APIScope {
                 DefEH.CONFIG_CHANGE_ATTRIBUTION,
                 DefEH.MAP_SCALECHANGE_SCALEBAR,
                 DefEH.OPEN_MAP_FEATURE_MAPTIP,
-                DefEH.EXTENT_CHANGE_FEATURE_MAPTIP
+                DefEH.EXTENT_CHANGE_FEATURE_MAPTIP,
+                DefEH.MAP_UPDATE_CAPTION_COORDS
             ];
         }
 
@@ -600,6 +603,26 @@ export class EventAPI extends APIScope {
                 this.$iApi.event.on(
                     GlobalEvents.MAP_EXTENTCHANGE,
                     throttle(50, true, () => zeHandler()), // Smaller throttle because extent change is intervalled
+                    handlerName
+                );
+                break;
+            case DefEH.MAP_UPDATE_CAPTION_COORDS:
+                this.$iApi.event.on(
+                    GlobalEvents.MAP_MOUSEMOVE,
+                    throttle(200, (mapMove: MapMove) => {
+                        this.$iApi.geo.utils
+                            .formatLatLongDMSString(
+                                this.$iApi.geo.map.screenPointToMapPoint(
+                                    mapMove
+                                )
+                            )
+                            .then(llstring => {
+                                this.$iApi.$vApp.$store.set(
+                                    MapCaptionStore.setCursorCoords,
+                                    llstring
+                                );
+                            });
+                    }),
                     handlerName
                 );
                 break;

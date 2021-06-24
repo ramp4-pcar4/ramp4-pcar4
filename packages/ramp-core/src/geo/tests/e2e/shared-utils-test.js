@@ -1,4 +1,7 @@
 // GEO API TESTS
+
+import { Point, SpatialReference } from '@/geo/api';
+
 describe('GeoAPI SharedUtils', () => {
     before(() => {
         // Since most tests are in backend, can just use grid starter script
@@ -154,4 +157,66 @@ describe('GeoAPI SharedUtils', () => {
     // });
 
     // TODO: Add more tests for SharedUtils through adding layers through the wizard
+
+    it('formatLatLongDMSString undefined point', () => {
+        cy.window().then(window => {
+            const sharedUtils = window.rInstance.geo.utils.shared;
+            const xyformat = sharedUtils
+                .formatLatLongDMSString(undefined)
+                .then(xyformat => {
+                    expect(xyformat).to.deep.equal({ lat: '', lon: '' });
+                });
+        });
+    });
+
+    it('formatLatLongDMSString invalid map point latitude coordinate', () => {
+        cy.window().then(window => {
+            const sharedUtils = window.rInstance.geo.utils.shared;
+            sharedUtils.formatLatLongDMSString(undefined);
+            const point = new Point(
+                999,
+                [11131949.079, 32316213801.068],
+                undefined,
+                true
+            );
+            sharedUtils.formatLatLongDMSString(point).then(xyformat => {
+                expect(xyformat).to.deep.equal({ lat: '', lon: '' });
+            });
+        });
+    });
+
+    it('formatLatLongDMSString invalid map point longitude coordinate', () => {
+        cy.window().then(window => {
+            const sharedUtils = window.rInstance.geo.utils.shared;
+            sharedUtils.formatLatLongDMSString(undefined);
+            const point = new Point(
+                999,
+                [-18924313.435, 16213801.068],
+                undefined,
+                true
+            );
+            sharedUtils.formatLatLongDMSString(point).then(xyformat => {
+                expect(xyformat).to.deep.equal({ lat: '', lon: '' });
+            });
+        });
+    });
+
+    it('formatLatLongDMSString valid map point', () => {
+        cy.window().then(window => {
+            const sharedUtils = window.rInstance.geo.utils.shared;
+            sharedUtils.formatLatLongDMSString(undefined);
+            const point = new Point(
+                999,
+                [11131949.0799, 16213801.068],
+                new SpatialReference(102100),
+                true
+            );
+            sharedUtils.formatLatLongDMSString(point).then(xyformat => {
+                expect(xyformat).to.deep.equal({
+                    lat: '81° 00\' 00"',
+                    lon: '100° 00\' 00"'
+                });
+            });
+        });
+    });
 });

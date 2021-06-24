@@ -1,6 +1,5 @@
 import { Tools } from 'terraformer';
 import GeoJson from 'geojson';
-import { APIScope, InstanceAPI } from '@/api/internal';
 import {
     BaseGeometry,
     EpsgLookup,
@@ -24,15 +23,10 @@ let proj4 = require('proj4');
 proj4 = proj4.default ? proj4.default : proj4;
 */
 
-export class ProjectionAPI extends APIScope {
+export class ProjectionAPI {
     protected espgWorker: EpsgLookup;
 
-    constructor(
-        iApi: InstanceAPI,
-        epsgFunction: EpsgLookup | undefined = undefined
-    ) {
-        super(iApi);
-
+    constructor(epsgFunction: EpsgLookup | undefined = undefined) {
         if (epsgFunction) {
             this.espgWorker = epsgFunction; // override with client-defined function
         } else {
@@ -169,7 +163,7 @@ export class ProjectionAPI extends APIScope {
         let outSr: string = this.normalizeProj(outputSR);
 
         if (!inSr && geoJson.crs && geoJson.crs.type === 'name') {
-            inSr = this.$iApi.geo.utils.geom._parseGeoJsonCrs(geoJson.crs);
+            inSr = RAMP.GEO.geom._parseGeoJsonCrs(geoJson.crs);
         }
 
         if (!inSr) {
@@ -319,7 +313,7 @@ export class ProjectionAPI extends APIScope {
         await this.checkProjBomber([destProj, geometry.sr]);
 
         // convert to geojson
-        const preGJ = this.$iApi.geo.utils.geom.geomRampToGeoJson(geometry);
+        const preGJ = RAMP.GEO.geom.geomRampToGeoJson(geometry);
 
         // project geojson
         const postGJ = this.projectGeoJson(
@@ -329,7 +323,7 @@ export class ProjectionAPI extends APIScope {
         );
 
         // convert back to RAMP geometry
-        const projectedRampGeom = this.$iApi.geo.utils.geom.geomGeoJsonToRamp(
+        const projectedRampGeom = RAMP.GEO.geom.geomGeoJsonToRamp(
             postGJ,
             geometry.id
         );
