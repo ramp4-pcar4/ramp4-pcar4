@@ -283,7 +283,11 @@ export class FileUtils extends APIScope {
         // project data and convert to esri json format
         const fancySR = new EsriSpatialReference(targetSR);
 
-        this.$iApi.geo.utils.proj.projectGeoJson(geoJson, srcProj, destProj);
+        await this.$iApi.geo.utils.proj.projectGeoJson(
+            geoJson,
+            srcProj,
+            destProj
+        );
 
         // terraformer has no support for non-wkid layers. can also do funny things if source is 102100.
         // use 8888 as placehold then adjust below

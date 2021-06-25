@@ -78,27 +78,28 @@ These events will always be present, regardless of what fixtures are active. Eve
 
 TODO if we have API docs that expose the payload interfaces, link to those definitions. Otherwise we'll need to put the interface specs here
 
-| Event Name                              | Payload                                                        | Event Announces              |
-| --------------------------------------- | -------------------------------------------------------------- | ---------------------------- |
-| COMPONENT<br>'ramp/component'           | _id_: component id                                             | A vue component registered   |
-| CONFIG_CHANGE                           | RampConfig object                                              | The config was changed       |
-| FILTER_CHANGE<br>'filter/change'        | FilterEventParam object                                        | A filter has changed         |
-| LAYER_OPACITYCHANGE<br>'layer/opacitychange' | _opacity_: new value, _uid_: affected uid                 | The layer opacity changed    |
-| LAYER_RELOADED<br>'layer/reloaded'      | LayerInstance object                                           | The layer was reloaded       |
-| LAYER_REMOVE<br>'layer/remove'          | LayerInstance object                                           | The layer was removed from the map |
-| LAYER_STATECHANGE<br>'layer/statechange' | _state_: new value, _uid_: affected uid                       | The layer state changed      |
-| LAYER_VISIBILITYCHANGE<br>'layer/visibilitychange' | _visibility_: new value, _uid_: affected uid        | The layer visibility changed |
-| MAP_BLUR<br>'map/blur'                  | FocusEvent object                                              | The map lost focus           |
-| MAP_CLICK<br>'map/click'                | MapClick object                                                | The map was clicked          |
-| MAP_CREATED<br>'map/created'            | Map API object                                                 | The map was created          |
-| MAP_DOUBLECLICK<br>'map/doubleclick'    | MapClick object                                                | The map was double clicked   |
-| MAP_EXTENTCHANGE<br>'map/extentchanged' | RAMP Extent object                                             | The map extent changed       |
-| MAP_IDENTIFY<br>'map/identify'          | _results_: Array of IdentifyResult<br>_click_: MapClick object | A map identify was requested |
-| MAP_KEYDOWN<br>'map/keydown'            | KeyboardEvent object                                           | A key was pressed            |
-| MAP_KEYUP<br>'map/keyup'                | KeyboardEvent object                                           | A key was released           |
-| MAP_MOUSEDOWN<br>'map/mousedown'        | PointerEvent object                                            | A mouse button was depressed |
-| MAP_MOUSEMOVE<br>'map/mousemove'        | MapMove object                                                 | The mouse moved over the map |
-| MAP_BASEMAPCHANGE                       | basemapId: string                                              | The basemap was changed      |
+| Event Name                                         | Payload                                                        | Event Announces                    |
+| -------------------------------------------------- | -------------------------------------------------------------- | ---------------------------------- |
+| COMPONENT<br>'ramp/component'                      | _id_: component id                                             | A vue component registered         |
+| CONFIG_CHANGE                                      | RampConfig object                                              | The config was changed             |
+| FILTER_CHANGE<br>'filter/change'                   | FilterEventParam object                                        | A filter has changed               |
+| FIXTURE_ADDED<br>'fixture/added'                   | FixtureInstance object                                         | A fixture has been added           |
+| LAYER_OPACITYCHANGE<br>'layer/opacitychange'       | _opacity_: new value, _uid_: affected uid                      | The layer opacity changed          |
+| LAYER_RELOADED<br>'layer/reloaded'                 | LayerInstance object                                           | The layer was reloaded             |
+| LAYER_REMOVE<br>'layer/remove'                     | LayerInstance object                                           | The layer was removed from the map |
+| LAYER_STATECHANGE<br>'layer/statechange'           | _state_: new value, _uid_: affected uid                        | The layer state changed            |
+| LAYER_VISIBILITYCHANGE<br>'layer/visibilitychange' | _visibility_: new value, _uid_: affected uid                   | The layer visibility changed       |
+| MAP_BLUR<br>'map/blur'                             | FocusEvent object                                              | The map lost focus                 |
+| MAP_CLICK<br>'map/click'                           | MapClick object                                                | The map was clicked                |
+| MAP_CREATED<br>'map/created'                       | Map API object                                                 | The map was created                |
+| MAP_DOUBLECLICK<br>'map/doubleclick'               | MapClick object                                                | The map was double clicked         |
+| MAP_EXTENTCHANGE<br>'map/extentchanged'            | RAMP Extent object                                             | The map extent changed             |
+| MAP_IDENTIFY<br>'map/identify'                     | _results_: Array of IdentifyResult<br>_click_: MapClick object | A map identify was requested       |
+| MAP_KEYDOWN<br>'map/keydown'                       | KeyboardEvent object                                           | A key was pressed                  |
+| MAP_KEYUP<br>'map/keyup'                           | KeyboardEvent object                                           | A key was released                 |
+| MAP_MOUSEDOWN<br>'map/mousedown'                   | PointerEvent object                                            | A mouse button was depressed       |
+| MAP_MOUSEMOVE<br>'map/mousemove'                   | MapMove object                                                 | The mouse moved over the map       |
+| MAP_BASEMAPCHANGE                                  | basemapId: string                                              | The basemap was changed            |
 
 ### Core Fixture Events
 

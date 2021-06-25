@@ -1,6 +1,6 @@
 import Vue, { VueConstructor, ComponentOptions } from 'vue';
 
-import { APIScope, InstanceAPI } from './internal';
+import { APIScope, GlobalEvents, InstanceAPI } from './internal';
 import {
     FixtureBase,
     FixtureMutation,
@@ -67,6 +67,8 @@ export class FixtureAPI extends APIScope {
         this.$vApp.$store.set(`fixture/${FixtureMutation.ADD_FIXTURE}!`, {
             value: fixture
         });
+
+        this.$iApi.event.emit(GlobalEvents.FIXTURE_ADDED, fixture);
 
         return fixture;
     }

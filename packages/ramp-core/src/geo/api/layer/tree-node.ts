@@ -24,7 +24,15 @@ export class TreeNode {
         if (this.uid === uid) {
             return this;
         } else {
-            return this.children.map(t => t.findChildByUid(uid)).find(Boolean);
+            let hit: TreeNode | undefined;
+
+            // using .some will cause the loop to stop when it gets a hit
+            this.children.some(t => {
+                return (hit = t.findChildByUid(uid));
+            });
+
+            // return nothing, or the bubbled up tree node, not the child (t) that was being iterated on
+            return hit;
         }
     }
 
@@ -34,7 +42,15 @@ export class TreeNode {
         if (this.layerIdx === idx) {
             return this;
         } else {
-            return this.children.map(t => t.findChildByIdx(idx)).find(Boolean);
+            let hit: TreeNode | undefined;
+
+            // using .some will cause the loop to stop when it gets a hit
+            this.children.some(t => {
+                return (hit = t.findChildByIdx(idx));
+            });
+
+            // return nothing, or the bubbled up tree node, not the child (t) that was being iterated on
+            return hit;
         }
     }
 }
