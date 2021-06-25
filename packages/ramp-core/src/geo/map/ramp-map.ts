@@ -973,7 +973,10 @@ export class MapAPI extends CommonMapAPI {
      * @returns {boolean} - true if any pan/zoom keys are active
      */
     get keysActive(): boolean {
-        return this._activeKeys.length !== 0;
+        return (
+            this._activeKeys.filter(k => !['Control', 'Shift'].includes(k))
+                .length !== 0
+        );
     }
 
     /**
@@ -1002,12 +1005,7 @@ export class MapAPI extends CommonMapAPI {
      */
     private keyPan() {
         clearInterval(this._panInterval);
-        if (this._activeKeys.length === 0) {
-            return;
-        }
-
-        // if shift is the only key held down, return
-        if (this._activeKeys.length === 1 && this._activeKeys[0] == 'Shift') {
+        if (!this.keysActive) {
             return;
         }
 
