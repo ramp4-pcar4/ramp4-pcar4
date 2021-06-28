@@ -70,7 +70,7 @@ import HTMLDefaultV from './templates/html-default.vue';
     }
 })
 export default class DetailsItemScreenV extends Vue {
-    @Get('details/items') templateBindings!: {
+    @Get(DetailsStore.templates) templateBindings!: {
         [id: string]: DetailsItemInstance;
     };
 
