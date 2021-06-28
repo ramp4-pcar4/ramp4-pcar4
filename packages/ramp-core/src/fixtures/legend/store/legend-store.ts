@@ -3,7 +3,12 @@ import { make } from 'vuex-pathify';
 import Vue from 'vue';
 
 import { LegendState } from './legend-state';
-import { LegendItem, LegendEntry, LegendGroup } from './legend-defs';
+import {
+    LegendItem,
+    LegendEntry,
+    LegendGroup,
+    LegendTypes
+} from './legend-defs';
 import { RootState } from '@/store';
 import { TreeNode } from '@/geo/api';
 import { LayerInstance } from '@/api';
@@ -69,6 +74,31 @@ const mutations = {
         };
 
         state.children = removeLayerEntry(state.children);
+    },
+    RELOAD_LAYER_ENTRY: (state: LegendState, uid: string) => {
+        const reloadLayerEntry = (children: (LegendEntry | LegendGroup)[]) => {
+            // reload entry (set to placeholder) if uid corresponds to entry or parent layer
+            children
+                .filter(
+                    entry =>
+                        entry instanceof LegendEntry &&
+                        (entry.layer!.uid === uid || entry.uid === uid)
+                )
+                .forEach(entry => {
+                    entry._type = LegendTypes.Placeholder;
+                });
+
+            // recursively check child legend groups
+            children
+                .filter(entry => entry instanceof LegendGroup)
+                .forEach(group => {
+                    group.children = reloadLayerEntry(group.children);
+                });
+
+            return children;
+        };
+
+        state.children = reloadLayerEntry(state.children);
     }
 };
 
@@ -104,6 +134,10 @@ const actions = {
     /** Remove layer's corresponding entry from the store */
     removeLayerEntry: (context: LegendContext, uid: string) => {
         context.commit('REMOVE_LAYER_ENTRY', uid);
+    },
+    /** Reload layer's corresponding entry from the store */
+    reloadLayerEntry: (context: LegendContext, uid: string) => {
+        context.commit('RELOAD_LAYER_ENTRY', uid);
     },
     /** Replaces default placeholder after layer is loaded */
     updateDefaultEntry: (context: LegendContext, id: string) => {
@@ -265,6 +299,10 @@ export enum LegendStore {
      * (Action) removeLayerEntry - remove layer's corresponding entry from the store
      */
     removeLayerEntry = 'legend/removeLayerEntry',
+    /**
+     * (Action) reloadLayerEntry - set layer's corresponding entry to reload (placeholder) state
+     */
+    reloadLayerEntry = 'legend/reloadLayerEntry',
     /**
      * (Action) updateDefaultEntry - replaces default placeholder after layer has loaded
      */

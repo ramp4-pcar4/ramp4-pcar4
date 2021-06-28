@@ -45,6 +45,16 @@ class LegendFixture extends LegendAPI {
             },
             'legend_removes_layer_entry'
         );
+
+        this.$iApi.event.on(
+            GlobalEvents.LAYER_RELOADED,
+            (layer: LayerInstance) => {
+                this.$iApi.$vApp.$store.dispatch(
+                    LegendStore.reloadLayerEntry,
+                    layer.uid
+                );
+            }
+        );
     }
 
     removed() {
