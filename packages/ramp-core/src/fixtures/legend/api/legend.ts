@@ -112,10 +112,10 @@ export class LegendAPI extends FixtureInstance {
             return;
         }
 
-        // TODO add name when #439 is done
         const entry = new LegendEntry(
             {
                 layerId: layer.id,
+                name: layer.getName(),
                 isDefault: true,
                 layers: this.$vApp.$store.get(LayerStore.layers)
             },
