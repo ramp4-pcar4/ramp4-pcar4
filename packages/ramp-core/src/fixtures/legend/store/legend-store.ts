@@ -135,7 +135,7 @@ const actions = {
     removeLayerEntry: (context: LegendContext, uid: string) => {
         context.commit('REMOVE_LAYER_ENTRY', uid);
     },
-    /** Reload layer's corresponding entry from the store */
+    /** Reload layer's corresponding legend entry */
     reloadLayerEntry: (context: LegendContext, uid: string) => {
         context.commit('RELOAD_LAYER_ENTRY', uid);
     },
