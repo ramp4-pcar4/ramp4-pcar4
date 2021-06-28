@@ -14,7 +14,7 @@ import { NortharrowStore } from './store';
 import { GlobalEvents } from '@/api/internal';
 import { Extent, Point } from '@/geo/api';
 import flag from './flag.json';
-import { debounce } from 'debounce';
+import { debounce } from 'throttle-debounce';
 
 @Component({})
 export default class NortharrowV extends Vue {
@@ -46,7 +46,7 @@ export default class NortharrowV extends Vue {
         }
         this.$iApi.event.on(
             GlobalEvents.MAP_EXTENTCHANGE,
-            debounce(this.updateNortharrow, 300)
+            debounce(300, this.updateNortharrow)
         );
     }
 

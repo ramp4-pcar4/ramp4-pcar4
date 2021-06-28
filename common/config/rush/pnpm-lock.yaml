@@ -43,7 +43,6 @@ importers:
       csv2geojson: 5.1.1
       cypress: ^6.4.0
       cypress-plugin-tab: ~1.0.5
-      debounce: ^1.2.0
       deepmerge: ~4.2.2
       eslint: ^5.16.0
       eslint-plugin-prettier: ^3.1.1
@@ -97,7 +96,6 @@ importers:
       await-to-js: 3.0.0
       axios: 0.19.2
       csv2geojson: 5.1.1
-      debounce: 1.2.1
       deepmerge: 4.2.2
       fabric: 4.4.0
       fast-xml-parser: 3.19.0
@@ -5064,10 +5062,6 @@ packages:
       bindings: 1.5.0
       node-addon-api: 1.7.2
     dev: true
-
-  /debounce/1.2.1:
-    resolution: {integrity: sha512-XRRe6Glud4rd/ZGQfiV1ruXSfbvfJedlV9Y6zOlP+2K04vBYiJEte6stfFkCP03aMnY5tsipamumUjL14fofug==}
-    dev: false
 
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
