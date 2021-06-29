@@ -19,7 +19,7 @@ import { Get, Call } from 'vuex-pathify';
 import { GlobalEvents } from '@/api/internal';
 import { Extent } from '@/geo/api';
 import { GeosearchStore } from './store';
-import { debounce } from 'debounce';
+import { debounce } from 'throttle-debounce';
 
 @Component
 export default class GeosearchBottomFiltersV extends Vue {
@@ -72,14 +72,14 @@ export default class GeosearchBottomFiltersV extends Vue {
     }
 
     // update store map extent and geosearch results on map view change with debounce
-    onMapExtentChange = debounce((newExtent: Extent) => {
+    onMapExtentChange = debounce(300, (newExtent: Extent) => {
         this.latLongExtent(newExtent).then(e => {
             this.setMapExtent({
                 extent: e,
                 visible: this.resultsVisible
             });
         });
-    }, 300);
+    });
 }
 </script>
 

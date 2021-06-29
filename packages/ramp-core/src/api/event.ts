@@ -8,8 +8,7 @@ import { WizardAPI } from '@/fixtures/wizard/api/wizard';
 import { LegendAPI } from '@/fixtures/legend/api/legend';
 import { MapClick, MapMove, RampBasemapConfig, ScreenPoint } from '@/geo/api';
 import { RampConfig } from '@/types';
-import { debounce } from 'debounce';
-import { throttle } from 'throttle-debounce';
+import { debounce, throttle } from 'throttle-debounce';
 import { MapCaptionStore } from '@/store/modules/map-caption';
 
 export enum GlobalEvents {
@@ -572,7 +571,7 @@ export class EventAPI extends APIScope {
             case DefEH.MAP_SCALECHANGE_SCALEBAR:
                 this.$iApi.event.on(
                     GlobalEvents.MAP_SCALECHANGE,
-                    debounce(() => this.$iApi.geo.map.updateScale(), 300),
+                    debounce(300, () => this.$iApi.geo.map.updateScale()),
                     handlerName
                 );
                 break;

@@ -15,7 +15,7 @@ import { Vue, Component } from 'vue-property-decorator';
 import { Get, Call } from 'vuex-pathify';
 
 import { GeosearchStore } from './store';
-import { debounce } from 'debounce';
+import { debounce } from 'throttle-debounce';
 
 @Component
 export default class GeosearchSearchBarV extends Vue {
@@ -28,9 +28,9 @@ export default class GeosearchSearchBarV extends Vue {
     ) => void;
 
     // debounce function for search term change
-    onSearchTermChange = debounce((searchTerm: string) => {
+    onSearchTermChange = debounce(500, (searchTerm: string) => {
         this.setSearchTerm(searchTerm);
-    }, 500);
+    });
 }
 </script>
 
