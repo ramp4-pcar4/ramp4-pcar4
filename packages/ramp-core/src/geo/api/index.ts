@@ -29,4 +29,6 @@ export * from './utils/promise';
 export * from './utils/shared-utils';
 export * from './utils/projection';
 export * from './geo-defs';
-export * from './layer/layer-base';
+
+// CUSTOM-LAYER
+// export * from './layer/layer-base';

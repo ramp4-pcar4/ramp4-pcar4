@@ -9,7 +9,6 @@ import {
     GetGraphicResult,
     IdentifyParameters,
     IdentifyResultSet,
-    LayerBase,
     LayerState,
     LegendSymbology,
     ScaleSet,
@@ -18,14 +17,13 @@ import {
 } from '@/geo/api';
 import { LayerStore } from '@/store/modules/layer';
 
-// TODO strongly type the config param? might be pointless, as we want custom layers to have any config they like
-/**
- * A constructor returning an object implementing LayerBase interface.
- */
-type ILayerBase = new (config: any, iApi: InstanceAPI) => LayerBase;
+// CUSTOM-LAYER
+// A constructor returning an object implementing LayerBase interface.
+// type ILayerBase = new (config: any, iApi: InstanceAPI) => LayerBase;
 
 // TODO revist how useful this is. LayerInstance implements LayerBase so its very similar to ILayerBase.
 //      look at the Base vs Instance stuff in the fixtures section. does it still make sense?
+//      This TODO becomes irrelevant if we don't go forward with custom layers and drop LayerBase for good.
 /**
  * A constructor returning an instance of LayerInstance class.
  */
@@ -34,7 +32,7 @@ type ILayerInstance = new (config: any, iApi: InstanceAPI) => LayerInstance;
 // this probably becomes the vuex store object if we convert?
 // metadata to store and track our layer definitions
 class LayerDef {
-    layerConstructor: ILayerBase | undefined;
+    // layerConstructor: ILayerBase | undefined; // CUSTOM-LAYER
     strongLayerConstructor: ILayerInstance | undefined; // would be a layer def from inside RAMP
     rawBase: boolean = false; // true if constructor is from outside the core and requires updateBaseToInstance
     loadPromise: Promise<any> | undefined; // resolves when layer definition has loaded
@@ -52,13 +50,17 @@ class LayerDef {
     async generateLayer(config: any): Promise<LayerInstance> {
         await this.loadPromise;
 
+        // CUSTOM-LAYER
+        /*
         if (this.rawBase && this.layerConstructor) {
             return LayerInstance.updateBaseToInstance(
                 new this.layerConstructor(config, this.api),
                 this.id,
                 this.api
             );
-        } else if (this.strongLayerConstructor) {
+        } else */
+
+        if (this.strongLayerConstructor) {
             return new this.strongLayerConstructor(config, this.api);
         } else {
             throw new Error(
@@ -88,19 +90,26 @@ export class LayerAPI extends APIScope {
     //      when we request a new layer, would be good to be able to see if a definition request
     //      is pending, instead of just failing on a "no definition found" case.
 
+    // CUSTOM-LAYER
+    // stuff removed from addLayerDef params & jsdoc
+    //
+    // * Loads a (built-in) layer definition or adds supplied layer definition into the R4MP instance.
+    // * @param {ILayereBase} [constructor]
+    // async addLayerDef(id: string, constructor?: ILayerBase): Promise<string> {
+
     /**
-     * Loads a (built-in) fixture or adds supplied fixture into the R4MP Vue instance.
+     * Loads a (built-in) layer definition into the R4MP instance.
      *
      * @param {string} id
-     * @param {IFixtureBase} [constructor]
-     * @returns {Promise<FixtureBase>}
-     * @memberof FixtureAPI
+     * @returns {Promise<string>} the id, resolves after definition is loaded
+     * @memberof LayerAPI
      */
-    async addLayerDef(id: string, constructor?: ILayerBase): Promise<string> {
+    async addLayerDef(id: string): Promise<string> {
         // TODO revisit if the return value should be LayerBase. This is registering a layer definition
         //      (i.e. a blueprint), so the layer id might be more appropriate, or void. Person would
         //      use the create layer on LayerAPI to make an actual layer.
         //      Also might consider changing the type to ILayerBase, as returning the constructor makes a bit more sense.
+        //      This TODO would become irrelevant if custom layers are not implemented.
 
         // if the layer def already exist, do nothing and just return it
         // TODO in vuex world, would be a store check
@@ -112,7 +121,9 @@ export class LayerAPI extends APIScope {
 
         const layerDef = new LayerDef(id, this.$iApi);
 
+        // CUSTOM-LAYER
         // only need to provide fixture constructors for external fixtures since internal ones are loaded automatically
+        /*
         if (constructor) {
             if (typeof constructor !== 'function') {
                 throw new Error('malformed layer definition constructor');
@@ -123,25 +134,14 @@ export class LayerAPI extends APIScope {
             layerDef.loadPromise = Promise.resolve();
             this._layerDefStore[id] = layerDef;
 
-            // NOTE we no longer do this here. this would take place on the new layer function.
-            //      We might need to also store a flag indicating this def requires the .baseToInstance wrapper
+        } else { */
 
-            // run the provided constructor and update the resulting object with FixtureInstance functions/properties
-            // layerDef = FixtureInstance.updateBaseToInstance(new constructor(), id, this.$iApi);
-        } else {
-            // trickery. when the promise resolves, we know layerDef.layerConstructor will have a value.
-            layerDef.loadPromise = this.magicLoader(layerDef);
+        // trickery. when the promise resolves, we know layerDef.layerConstructor will have a value.
+        layerDef.loadPromise = this.magicLoader(layerDef);
 
-            // store the def in the registry before blocking
-            this._layerDefStore[id] = layerDef;
-            await layerDef.loadPromise;
-        }
-
-        // TODO: calling `ADD_FIXTURE` mutation directly here; might want to switch to calling the action `addFixture`
-        // TODO: using this horrible concatenated mixture `fixture/${FixtureMutation.ADD_FIXTURE}!` all the time doesn't seem like a good idea;
-        // fixtures are always stored as objects implementing `FixtureBase` interfaces;
-        // this.$vApp.$store.set(`fixture/${FixtureMutation.ADD_FIXTURE}!`, { value: fixture });
-        // this._layerDefStore[id] = layerDef;
+        // store the def in the registry before blocking
+        this._layerDefStore[id] = layerDef;
+        await layerDef.loadPromise;
 
         return id;
     }
@@ -207,56 +207,20 @@ export class LayerAPI extends APIScope {
         return layer;
     }
 
-    /**
-     * Removes the specified fixture from R4MP instance.
-     *
-     * @template T
-     * @param {(FixtureBase | string)} fixtureOrId
-     * @returns {T}
-     * @memberof FixtureAPI
-     */
-    // TODO consider if we need the ability to remove a definition. Possible use case:
-    //      someone wants to override a core layer class with a custom (like, hotswapping anything that is feature layer)
-    /*
-    remove<T extends FixtureBase = FixtureBase>(fixtureOrId: FixtureBase | string): T {
-        const fixture = this.get<T>(fixtureOrId);
-
-        this.$vApp.$store.set(`fixture/${FixtureMutation.REMOVE_FIXTURE}!`, { value: fixture });
-
-        return fixture;
-    }
-    */
-
     // TODO consider if we need a defaulting scenario. This might tie in with
     //      people wanting to override core layer types; they would omit then provide
     //      the custom layer definition class.
-    /**
-     * Loads the set of standard, built-in fixtures to the R4MP Vue instance.
-     * This will quickly set up the vanilla version of RAMP.
-     * Note this function is automatically run by the instance startup unless the loadDefaultFixtures option is
-     * set to false. The function is exposed to allow custom pages the ability to call it at a different point
-     * in the startup. Also, a subset of standard fixtures can be provided on the optional parameter if one
-     * wishes to omit some of the standard fixtures.
-     *
-     * @param {Array<string>} [fixtureNames] list of built-in fixtures names to add. omission means all built-in fixtures will be added
-     * @returns {Promise<Array<FixtureBase>>} resolves with array of default fixtures
-     * @memberof FixtureAPI
-     */
-    /*
-    addDefaultFixtures(fixtureNames?: Array<string>): Promise<Array<FixtureBase>> {
-        if (!Array.isArray(fixtureNames) || fixtureNames.length === 0) {
-            fixtureNames = ['appbar', 'basemap', 'crosshairs', 'details', 'geosearch', 'grid', 'help', 'legend', 'mapnav', 'metadata', 'northarrow', 'overviewmap', 'settings'];
-        }
-
-        // add all the requested default promises.
-        // return the promise-all of all the add fixture promises
-        // TODO alterately, don't do a promise.all, and just return the array of promises. not sure which is more useful.
-        return Promise.all(fixtureNames.map(fn => this.add(fn)));
-    }
-    */
+    //      see fixture api, addDefaultFixtures method
 }
 
 // TODO put in a separate file?
+
+// CUSTOM-LAYER
+// stuff removed from class doc and signature
+//
+//  * @implements {LayerBase}
+// export class LayerInstance extends APIScope implements LayerBase {
+
 /**
  * A base class for Layer subclasses. It provides some utility functions to Layer and also gives access to `$iApi` and `$vApp` globals.
  * Mostly it exposes stub methods on LayerBase; this is because layer subclasses can be wildly different, so we don't
@@ -267,14 +231,14 @@ export class LayerAPI extends APIScope {
  * @export
  * @class LayerInstance
  * @extends {APIScope}
- * @implements {LayerBase}
  */
-export class LayerInstance extends APIScope implements LayerBase {
+export class LayerInstance extends APIScope {
     get layerType(): string {
         return '';
     }
     config: any = {};
 
+    // CUSTOM-LAYER
     /**
      * Adds missing functions and properties to the object implementing FixtureBase interface.
      * This is only needed for external fixtures as they can't inherit from FixtureInstance.
@@ -288,6 +252,7 @@ export class LayerInstance extends APIScope implements LayerBase {
      * @returns {LayerInstance}
      * @memberof LayerInstance
      */
+    /*
     static updateBaseToInstance(
         value: LayerBase,
         config: any,
@@ -374,17 +339,11 @@ export class LayerInstance extends APIScope implements LayerBase {
             }
             // remove: { value: instance.remove },
             // extend: { value: instance.extend },
-            /*
-            config: {
-                get(): any {
-                    return instance.config;
-                }
-            }
-            */
         });
 
         return value as LayerInstance;
     }
+    */
 
     /**
      * ID of this fixture.

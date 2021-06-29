@@ -9,6 +9,9 @@
 // they probably won't have access to "class" LayerInstance when using compiled RAMP (raw javascript).
 // this pattern is stolen from the fixture class model.
 
+// CUSTOM-LAYER
+
+/*
 import {
     AttributeSet,
     Extent,
@@ -107,3 +110,4 @@ export interface LayerBase {
         layerIdx: number | string | undefined
     ): void;
 }
+*/
