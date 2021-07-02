@@ -6,6 +6,7 @@ import { HelpAPI } from '@/fixtures/help/api/help';
 import { GridAPI } from '@/fixtures/grid/api/grid';
 import { WizardAPI } from '@/fixtures/wizard/api/wizard';
 import { LegendAPI } from '@/fixtures/legend/api/legend';
+import { LegendStore } from '@/fixtures/legend/store';
 import { MapClick, MapMove, RampBasemapConfig, ScreenPoint } from '@/geo/api';
 import { RampConfig } from '@/types';
 import { debounce, throttle } from 'throttle-debounce';
@@ -102,7 +103,9 @@ enum DefEH {
     MAP_SCALECHANGE_SCALEBAR = 'updates_map_caption_scale',
     OPEN_MAP_FEATURE_MAPTIP = 'open_feature_maptip',
     EXTENT_CHANGE_FEATURE_MAPTIP = 'updates_feature_maptip_extent_change',
-    MAP_UPDATE_CAPTION_COORDS = 'updates_map_caption_coords'
+    MAP_UPDATE_CAPTION_COORDS = 'updates_map_caption_coords',
+    LEGEND_REMOVES_LAYER_ENTRY = 'legend_removes_layer_entry',
+    LEGEND_RELOADS_LAYER_ENTRY = 'legend_reloads_layer_entry'
 }
 
 // private for EventBus internals, so don't export
@@ -357,7 +360,9 @@ export class EventAPI extends APIScope {
                 DefEH.MAP_SCALECHANGE_SCALEBAR,
                 DefEH.OPEN_MAP_FEATURE_MAPTIP,
                 DefEH.EXTENT_CHANGE_FEATURE_MAPTIP,
-                DefEH.MAP_UPDATE_CAPTION_COORDS
+                DefEH.MAP_UPDATE_CAPTION_COORDS,
+                DefEH.LEGEND_REMOVES_LAYER_ENTRY,
+                DefEH.LEGEND_RELOADS_LAYER_ENTRY
             ];
         }
 
@@ -624,6 +629,36 @@ export class EventAPI extends APIScope {
                                 );
                             });
                     }),
+                    handlerName
+                );
+                break;
+            case DefEH.LEGEND_REMOVES_LAYER_ENTRY:
+                zeHandler = (layer: LayerInstance) => {
+                    if (this.$iApi.$vApp.$store.hasModule('legend')) {
+                        this.$iApi.$vApp.$store.dispatch(
+                            LegendStore.removeLayerEntry,
+                            layer.uid
+                        );
+                    }
+                };
+                this.$iApi.event.on(
+                    GlobalEvents.LAYER_REMOVE,
+                    zeHandler,
+                    handlerName
+                );
+                break;
+            case DefEH.LEGEND_RELOADS_LAYER_ENTRY:
+                zeHandler = (layer: LayerInstance) => {
+                    if (this.$iApi.$vApp.$store.hasModule('legend')) {
+                        this.$iApi.$vApp.$store.dispatch(
+                            LegendStore.reloadLayerEntry,
+                            layer.uid
+                        );
+                    }
+                };
+                this.$iApi.event.on(
+                    GlobalEvents.LAYER_RELOADED,
+                    zeHandler,
                     handlerName
                 );
                 break;
