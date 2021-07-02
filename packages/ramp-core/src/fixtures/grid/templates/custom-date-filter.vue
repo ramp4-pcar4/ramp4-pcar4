@@ -25,7 +25,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 
 @Component
-export default class GridCustomNumberFilterV extends Vue {
+export default class GridCustomDateFilterV extends Vue {
     beforeMount() {
         // Load previously stored values (if saved in table state manager)
         this.minVal =
@@ -122,7 +122,7 @@ export default class GridCustomNumberFilterV extends Vue {
     }
 }
 
-export default interface GridCustomNumberFilter {
+export default interface GridCustomDateFilter {
     minVal: any;
     maxVal: any;
     colDef: any;
