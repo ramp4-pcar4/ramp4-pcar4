@@ -174,7 +174,7 @@ class FocusListManager {
             (item as any)._tippy.hide();
         }
         if (item.getAttribute(ITEM_ATTR) === SHOW_TRUNCATE) {
-            (item.querySelector(`[${TRUNCATE_ATTR}]`)! as any)._tippy.hide();
+            (item.querySelector(`[${TRUNCATE_ATTR}]`)! as any)?._tippy?.hide();
         }
     }
 
@@ -191,7 +191,7 @@ class FocusListManager {
             (item as any)._tippy.show();
         }
         if (item.getAttribute(ITEM_ATTR) === SHOW_TRUNCATE) {
-            (item.querySelector(`[${TRUNCATE_ATTR}]`)! as any)._tippy.show();
+            (item.querySelector(`[${TRUNCATE_ATTR}]`)! as any)?._tippy?.show();
         }
     }
 
@@ -391,7 +391,7 @@ class FocusListManager {
             ) {
                 (this.highlightedItem.querySelector(
                     `[${TRUNCATE_ATTR}]`
-                )! as any)._tippy.show();
+                )! as any)?._tippy?.show();
             }
         }
 
@@ -425,7 +425,7 @@ class FocusListManager {
             ) {
                 (this.highlightedItem.querySelector(
                     `[${TRUNCATE_ATTR}]`
-                )! as any)._tippy.hide();
+                )! as any)?._tippy?.hide();
             }
         }
     }
