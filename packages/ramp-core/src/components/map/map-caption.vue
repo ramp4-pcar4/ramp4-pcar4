@@ -64,7 +64,7 @@
                 class="flex-auto items-center"
                 @click="changeLang(item)"
             >
-                {{ $t('map.language.'+item) }}
+                {{ $t('map.language.' + item) }}
             </a>
         </dropdown-menu>
     </div>
