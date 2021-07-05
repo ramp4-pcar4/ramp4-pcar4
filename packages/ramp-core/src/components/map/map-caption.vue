@@ -48,21 +48,23 @@
         </button>
 
         <dropdown-menu
-            class="relative pointer-events-auto focus:outline-none px-4 mr-4"
+            class="relative pointer-events-auto h-20 focus:outline-none px-4 mr-4"
             position="top-right"
             :tooltip="$t('map.changeLanguage')"
             tooltip-placement="top"
         >
             <template #header>
-                <span class="fill-current text-gray-400 hover:text-white">
+                <span class="text-gray-400 hover:text-white">
                     {{ $t('map.language.short') }}
                 </span>
             </template>
-            <a href="#" class="flex-auto items-center" @click="changeEN">
-                {{ $t('map.language.en') }}
-            </a>
-            <a href="#" class="flex-auto items-center" @click="changeFR">
-                {{ $t('map.language.fr') }}
+            <a
+                v-for="(item, index) in lang"
+                :key="`${item}-${index}`"
+                class="flex-auto items-center"
+                @click="changeLang(item)"
+            >
+                {{ $t('map.language.'+item) }}
             </a>
         </dropdown-menu>
     </div>
@@ -80,6 +82,7 @@ export default class MapCaptionV extends Vue {
     @Get(MapCaptionStore.scale) scale!: ScaleBarProperties;
     @Get(MapCaptionStore.attribution) attribution!: Attribution;
     @Get(MapCaptionStore.cursorCoords) cursorCoords!: string;
+    lang: string[] = [];
 
     mounted() {
         // When map is created update scale
@@ -99,15 +102,15 @@ export default class MapCaptionV extends Vue {
         });
     }
 
-    changeEN() {
-        if (this.$iApi.$vApp.$i18n.locale == 'fr') {
-            this.$iApi.setLanguage('en');
+    updated() {
+        if (this.$iApi.$vApp.$i18n && this.lang.length == 0) {
+            this.lang = this.$iApi.$vApp.$i18n.availableLocales;
         }
     }
 
-    changeFR() {
-        if (this.$iApi.$vApp.$i18n.locale == 'en') {
-            this.$iApi.setLanguage('fr');
+    changeLang(lang: string) {
+        if (this.$iApi.$vApp.$i18n.locale != lang) {
+            this.$iApi.setLanguage(lang);
         }
     }
 

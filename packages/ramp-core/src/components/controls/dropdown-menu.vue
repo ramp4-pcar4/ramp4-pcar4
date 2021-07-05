@@ -1,7 +1,7 @@
 <template>
     <div>
         <button
-            class="text-gray-500 hover:text-black p-8"
+            class="text-gray-500 hover:text-black"
             @click="open = !open"
             :content="tooltip"
             v-tippy="{ placement: tooltipPlacement }"

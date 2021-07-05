@@ -21,9 +21,11 @@
             tooltip-placement="left"
         >
             <template #header>
-                <svg class="fill-current w-18 h-18 mx-8" viewBox="0 0 23 21">
-                    <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
-                </svg>
+                <div class="p-8">
+                    <svg class="fill-current w-18 h-18 mx-8" viewBox="0 0 23 21">
+                        <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
+                    </svg>
+                </div>
             </template>
             <a
                 href="#"
@@ -48,7 +50,7 @@
             tooltip-placement="left"
         >
             <template #header>
-                <div class="flex">
+                <div class="flex p-8">
                     <svg
                         class="fill-current w-18 h-18 mx-5"
                         viewBox="0 0 23 21"
