@@ -34,13 +34,13 @@
         <more-button id="more" v-if="overflow()" :queue="queue"></more-button>
         <dropdown-menu
             id="nav"
-            class="absolute inset-x-0 bottom-8 h-48 w-full text-center focus:outline-none"
+            class="absolute inset-x-0 bottom-0 h-48 w-full text-center focus:outline-none"
             position="left-top"
             :tooltip="$t('appbar.navigation')"
             tooltip-placement="right"
         >
             <template #header>
-                <div class="text-gray-400 w-full h-full hover:text-white">
+                <div class="text-gray-400 w-full h-full hover:text-white p-8">
                     <svg
                         class="fill-current w-24 h-24 m-auto"
                         xmlns="http://www.w3.org/2000/svg"
@@ -102,7 +102,7 @@ export default class AppbarV extends Vue {
             //@ts-ignore
             if (
                 bound &&
-                item.getBoundingClientRect().bottom >= bound &&
+                item.getBoundingClientRect().bottom + 48 >= bound &&
                 item.id !== 'nav' &&
                 item.id !== 'more'
             ) {
@@ -114,6 +114,8 @@ export default class AppbarV extends Vue {
                 item.remove();
             }
         });
+        //console.log("items", this.items);
+        //console.log("temp items", this.temporaryItems);
     }
 
     overflow() {

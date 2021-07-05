@@ -6,7 +6,7 @@
         :tooltip-placement="'bottom'"
     >
         <template #header>
-            <div class="flex text-black">
+            <div class="flex text-black p-8">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fit=""
