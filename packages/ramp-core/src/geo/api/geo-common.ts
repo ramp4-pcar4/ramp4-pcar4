@@ -2,7 +2,6 @@
 
 import {
     Extent,
-    EpsgLookup,
     GeometryAPI,
     LinearRing,
     LineString,
@@ -44,8 +43,8 @@ export class GeoCommonAPI {
     geom: GeometryAPI;
     sharedUtils: SharedUtilsAPI;
 
-    constructor(epsgFunction: EpsgLookup | undefined = undefined) {
-        this.proj = new ProjectionAPI(epsgFunction);
+    constructor() {
+        this.proj = new ProjectionAPI();
         this.geom = new GeometryAPI();
         this.sharedUtils = new SharedUtilsAPI();
     }

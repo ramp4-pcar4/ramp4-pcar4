@@ -28,7 +28,7 @@ export class GeoAPI extends APIScope {
         super(iApi);
 
         this.map = new MapAPI(iApi);
-        this.utils = new UtilsAPI(iApi); // TODO add the EPSG function parameter here. probably needs to get passed to GeoAPI constructor
+        this.utils = new UtilsAPI(iApi);
         this.layer = new LayerAPI(iApi);
     }
 }
