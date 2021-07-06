@@ -7,7 +7,13 @@ import { GridAPI } from '@/fixtures/grid/api/grid';
 import { WizardAPI } from '@/fixtures/wizard/api/wizard';
 import { LegendAPI } from '@/fixtures/legend/api/legend';
 import { LegendStore } from '@/fixtures/legend/store';
-import { MapClick, MapMove, RampBasemapConfig, ScreenPoint } from '@/geo/api';
+import {
+    Attribution,
+    MapClick,
+    MapMove,
+    RampBasemapConfig,
+    ScreenPoint
+} from '@/geo/api';
 import { RampConfig } from '@/types';
 import { debounce, throttle } from 'throttle-debounce';
 import { MapCaptionStore } from '@/store/modules/map-caption';
@@ -530,15 +536,8 @@ export class EventAPI extends APIScope {
                         .getConfig()
                         .map.basemaps.find(bms => bms.id === payload);
 
-                    if (
-                        !currentBasemapConfig ||
-                        !currentBasemapConfig.attribution
-                    ) {
-                        return;
-                    }
-
                     this.$iApi.geo.map.updateAttribution(
-                        currentBasemapConfig.attribution
+                        currentBasemapConfig?.attribution
                     );
                 };
                 this.$iApi.event.on(
@@ -556,15 +555,8 @@ export class EventAPI extends APIScope {
                             bms.id === this.$iApi.geo.map.getCurrentBasemapId()
                     );
 
-                    if (
-                        !currentBasemapConfig ||
-                        !currentBasemapConfig.attribution
-                    ) {
-                        return;
-                    }
-
                     this.$iApi.geo.map.updateAttribution(
-                        currentBasemapConfig.attribution
+                        currentBasemapConfig?.attribution
                     );
                 };
                 this.$iApi.event.on(
