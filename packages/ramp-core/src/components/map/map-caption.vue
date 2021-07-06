@@ -30,7 +30,7 @@
 
         <!-- TODO: find out if any ARIA attributes are needed for the map scale -->
 
-        <span class="flex-shrink-0 relative top-1 pr-14">
+        <span class="flex-shrink-0 relative top-1 pr-14 pl-14">
             {{ cursorCoords }}
         </span>
 

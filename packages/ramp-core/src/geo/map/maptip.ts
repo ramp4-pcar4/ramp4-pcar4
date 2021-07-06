@@ -74,13 +74,9 @@ export class MaptipAPI extends APIScope {
         // Update the content
         // TODO: Update to custom templates when they are implemented
         this.setContent(
-            `<b style="color: yellow">✨ ${layerInstance.getName(
+            `${graphicIconSVG}<br><b>${layerInstance.getName(
                 graphicHit.layerIdx
-            )} ✨</b><br>${graphicIconSVG}<br><b>OID: ${
-                graphicHit.oid
-            }</b> | <b>LayerID: ${graphicHit.layerId}</b> | <b>LayerIdx: ${
-                graphicHit.layerIdx
-            }</b>`
+            )}</b><br>ObjectID: ${graphicHit.oid}`
         );
     }
 

@@ -2,17 +2,18 @@ window.rInstance = null;
 
 console.log('RAMP has loaded.');
 
-document.getElementById('ramp-version').innerText =
-    'v.' +
-    RAMP.version.major +
-    '.' +
-    RAMP.version.minor +
-    '.' +
-    RAMP.version.patch +
-    ' [#' +
-    RAMP.version.hash.slice(0, 6) +
-    ']  -  built on ' +
-    new Date(RAMP.version.timestamp).toLocaleDateString();
+// TODO: Location for version string needs to be finalized
+// document.getElementById('ramp-version').innerText =
+//     'v.' +
+//     RAMP.version.major +
+//     '.' +
+//     RAMP.version.minor +
+//     '.' +
+//     RAMP.version.patch +
+//     ' [#' +
+//     RAMP.version.hash.slice(0, 6) +
+//     ']  -  built on ' +
+//     new Date(RAMP.version.timestamp).toLocaleDateString();
 
 let config = {
     en: {
@@ -41,13 +42,10 @@ let config = {
                     ],
                     attribution: {
                         text: {
-                            value: 'Custom attribution thanks'
+                            disabled: true
                         },
                         logo: {
-                            altText: 'custom logo alt text',
-                            value:
-                                'https://cdn.iconscout.com/icon/free/png-256/google-2981831-2476479.png',
-                            link: 'https://www.google.ca/'
+                            disabled: true
                         }
                     }
                 }
@@ -224,13 +222,10 @@ let config = {
                     ],
                     attribution: {
                         text: {
-                            value: 'Merci d’attribution personnalisés'
+                            disabled: true
                         },
                         logo: {
-                            altText: 'custom logo alt text',
-                            value:
-                                'https://cdn.iconscout.com/icon/free/png-256/google-2981831-2476479.png',
-                            link: 'https://www.google.ca/'
+                            disabled: true
                         }
                     }
                 }

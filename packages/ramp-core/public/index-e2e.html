@@ -17,13 +17,11 @@
 
         <!-- RAMP will be injected here -->
     </head>
-    <body>
+    <body style="margin: 0;">
         <!-- this fixture will load after RAMP (and Vue) are loaded (since Vue is bundled with RAMP in `dev`); `iklob` requires Vue to be exposed on the global scope -->
         <script src="../sample-fixtures/iklob-fixture.js"></script>
 
         <div id="app"></div>
-
-        <span id="ramp-version"></span>
 
         <script>
             // get RAMP "starter" script from url param
