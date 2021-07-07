@@ -31,8 +31,12 @@
                 <button
                     class="w-64"
                     @click="toggleShowFilters()"
-                    :content="$t('grid.label.filters')"
-                    v-tippy="{ placement: 'bottom' }"
+                    :content="
+                        gridOptions.floatingFilter
+                            ? $t('grid.label.filters.hide')
+                            : $t('grid.label.filters.show')
+                    "
+                    v-tippy="{ placement: 'bottom', hideOnClick: false }"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -50,7 +54,6 @@
                             ></path>
                         </g>
                     </svg>
-                    {{ $t('grid.label.filters') }}
                 </button>
             </div>
         </div>
@@ -74,8 +77,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync } from 'vuex-pathify';
-import { GlobalEvents, LayerInstance } from '@/api/internal';
-import deepmerge from 'deepmerge';
+import { LayerInstance } from '@/api/internal';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
@@ -91,8 +93,9 @@ import GridCustomSelectorFilterV from './templates/custom-selector-filter.vue';
 import GridCustomDateFilterV from './templates/custom-date-filter.vue';
 import GridCustomHeaderV from './templates/custom-header.vue';
 
-import DetailsButtonRenderer from './templates/details-button-renderer.vue';
-import ZoomButtonRenderer from './templates/zoom-button-renderer.vue';
+// grid button templates
+import DetailsButtonRendererV from './templates/details-button-renderer.vue';
+import ZoomButtonRendererV from './templates/zoom-button-renderer.vue';
 
 // these should match up with the `type` value returned by the attribute promise.
 const NUM_TYPES: string[] = ['oid', 'double', 'integer'];
@@ -442,12 +445,12 @@ export default class GridTableComponentV extends Vue {
                 lockPosition: true,
                 isStatic: true,
                 maxWidth: 40,
-                cellStyle: (cell: any) => {
+                cellStyle: () => {
                     return {
                         padding: '0px'
                     };
                 },
-                cellRendererFramework: DetailsButtonRenderer,
+                cellRendererFramework: DetailsButtonRendererV,
                 cellRendererParams: {
                     uid: this.layerUid,
                     $iApi: this.$iApi
@@ -461,12 +464,12 @@ export default class GridTableComponentV extends Vue {
                 lockPosition: true,
                 isStatic: true,
                 maxWidth: 40,
-                cellStyle: (cell: any) => {
+                cellStyle: () => {
                     return {
                         padding: '0px'
                     };
                 },
-                cellRendererFramework: ZoomButtonRenderer,
+                cellRendererFramework: ZoomButtonRendererV,
                 cellRendererParams: {
                     uid: this.layerUid,
                     $iApi: this.$iApi,

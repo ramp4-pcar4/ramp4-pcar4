@@ -29,7 +29,12 @@
                 <span class="flex-grow my-auto text-lg px-8">
                     {{ itemName }}
                 </span>
-                <button @click="zoomToFeature()" class="text-gray-600 m-8">
+                <button
+                    :content="$t('details.item.zoom')"
+                    v-tippy="{ placement: 'bottom' }"
+                    @click="zoomToFeature()"
+                    class="text-gray-600 m-8"
+                >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         height="20"

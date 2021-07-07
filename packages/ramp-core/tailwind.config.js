@@ -123,7 +123,13 @@ module.exports = {
             minWidth: ['responsive', 'container-query'],
             objectFit: ['responsive', 'container-query'],
             objectPosition: ['responsive', 'container-query'],
-            opacity: ['responsive', 'container-query', 'hover', 'focus'],
+            opacity: [
+                'responsive',
+                'container-query',
+                'hover',
+                'focus',
+                'disabled'
+            ],
             order: ['responsive', 'container-query'],
             outline: ['responsive', 'container-query', 'focus'],
             overflow: ['responsive', 'container-query'],

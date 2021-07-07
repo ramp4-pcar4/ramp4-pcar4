@@ -1,8 +1,8 @@
 <template>
     <button
         class="w-38 h-48"
-        :content="`zume 2 feechure`"
-        v-tippy="{ placement: 'right' }"
+        :content="$t('grid.cells.zoom')"
+        v-tippy="{ placement: 'top' }"
         @click="buttonClicked()"
     >
         <svg
@@ -50,7 +50,6 @@ export default class ZoomButtonRendererV extends Vue {
         });
     }
 }
-
 </script>
 
 <style lang="scss" scoped></style>
