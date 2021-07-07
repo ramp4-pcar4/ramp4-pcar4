@@ -8,9 +8,6 @@
             "path": "packages/ramp-core"
         },
         {
-            "path": "packages/ramp-geoapi"
-        },
-        {
             "path": "packages/ramp-locale-loader"
         },
         {

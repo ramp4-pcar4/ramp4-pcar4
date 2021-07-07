@@ -22,12 +22,8 @@ const latLongProj = 'EPSG:4326';
 export class ProjectionAPI {
     protected espgWorker: EpsgLookup;
 
-    constructor(epsgFunction: EpsgLookup | undefined = undefined) {
-        if (epsgFunction) {
-            this.espgWorker = epsgFunction; // override with client-defined function
-        } else {
-            this.espgWorker = this.defaultEpsgLookup;
-        }
+    constructor() {
+        this.espgWorker = this.defaultEpsgLookup;
 
         // cook in useful things to proj4 that won't be available via epsgLookup
         proj4.defs(
@@ -102,8 +98,27 @@ export class ProjectionAPI {
         });
     }
 
+    /**
+     * Fetch a projection string from an EPSG service
+     * @param { String | Number } code an EPSG projection code to look up
+     * @returns { Promise<String> } resolves with proj4 projection string, or rejects if not found
+     */
     epsgLookup(code: string | number): Promise<string> {
         return this.espgWorker(code);
+    }
+
+    /**
+     * Provide an alternate lookup function to find proj4 projection strings based off EPSG codes. Be aware this setting
+     * is page-wide, and will impact any instance of RAMP running.
+     * Function signature should be `f(code: string | number): Promise<string>`.
+     * The function should be able to parse codes that are
+     * - just the integer part of an EPSG code (e.g. 1234)
+     * - a string in EPSG format (e.g. 'EPSG:1234')
+     * - a string in URN format (e.g. 'urn:ogc:def:crs:EPSG::1234')
+     * @param lookupFunction
+     */
+    setEpsgLookup(lookupFunction: EpsgLookup): void {
+        this.espgWorker = lookupFunction;
     }
 
     /**
