@@ -1,8 +1,8 @@
 <template>
     <button
         class="w-38 h-48"
-        :content="`open details`"
-        v-tippy="{ placement: 'right' }"
+        :content="$t('grid.cells.details')"
+        v-tippy="{ placement: 'top' }"
         @click="buttonClicked()"
     >
         <svg
@@ -39,7 +39,6 @@ export default class DetailsButtonRendererV extends Vue {
         });
     }
 }
-
 </script>
 
 <style lang="scss" scoped></style>

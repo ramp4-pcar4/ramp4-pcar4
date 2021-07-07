@@ -25,7 +25,7 @@
                                 : 'overviewmap.minimize'
                         )
                     "
-                    v-tippy="{ placement: 'left' }"
+                    v-tippy="{ placement: 'left', hideOnClick: false }"
                 >
                     <svg
                         class="absolute fill-current text-gray-500 transition-all duration-300 ease-out"

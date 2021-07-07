@@ -22,7 +22,6 @@
                         ></path>
                     </g>
                 </svg>
-                {{ $t('grid.label.columns') }}
             </div>
         </template>
         <a

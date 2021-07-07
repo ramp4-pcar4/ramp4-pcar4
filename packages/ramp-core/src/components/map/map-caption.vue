@@ -39,6 +39,8 @@
             @click="onScaleClick"
             :aria-pressed="scale.isImperialScale"
             :aria-label="$t('map.toggleScaleUnits')"
+            v-tippy="{ placement: 'top', hideOnClick: false }"
+            :content="$t('map.toggleScaleUnits')"
         >
             <span
                 class="border-solid border-2 border-white border-t-0 h-5 mr-2 inline-block"

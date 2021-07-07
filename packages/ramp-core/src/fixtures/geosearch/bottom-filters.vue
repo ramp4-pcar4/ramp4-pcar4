@@ -1,10 +1,10 @@
 <template>
     <div class="rv-geosearch-bottom-filters">
         <div class="bg-white">
-            <label class="ml-8"
+            <label class="ml-8 cursor-pointer"
                 ><input
                     type="checkbox"
-                    class="form-checkbox border-2 mx-8 border-gray-600"
+                    class="form-checkbox border-2 mx-8 border-gray-600 cursor-pointer"
                     :checked="resultsVisible"
                     @change="updateMapExtent($event.target.checked)"
                 />{{ $t('geosearch.visible') }}</label
