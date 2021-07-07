@@ -1,5 +1,5 @@
 <template>
-    <div class="more relative inset-x-0 w-full h-48 text-center">
+    <div class="relative inset-x-0 w-full h-48 text-center">
         <button
             class="text-gray-400 w-full h-full focus:outline-none hover:text-white"
             @click="open = !open"
@@ -18,26 +18,26 @@
             </svg>
         </button>
         <div
-            v-if="open"
+            v-show="open"
             @blur="open = false"
             :position="position"
+            id="dropdown"
             class="dropdown shadow-md border border-gray:200 absolute py-8 w-64 bg-white rounded text-center z-10"
-        ></div>
+        >
+            <slot></slot>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
-import { Vue, Watch, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 
 @Component
 export default class MoreAppbarButtonV extends Vue {
     @Prop({ default: 'bottom-right' }) position!: string;
     @Prop() tooltip?: string;
     @Prop({ default: 'bottom' }) tooltipPlacement?: string;
-    @Prop() queue!: Element[];
-    previous: Element[] = [];
     open: boolean = false;
-    queueChanged: boolean = false;
 
     mounted() {
         window.addEventListener(
@@ -52,29 +52,6 @@ export default class MoreAppbarButtonV extends Vue {
             },
             { capture: true }
         );
-    }
-
-    @Watch('queue')
-    onQueueChange() {
-        if (!this.queueChanged) this.queueChanged = true;
-    }
-
-    updated() {
-        if (this.open) {
-            let dropdown = this.$el.lastElementChild;
-            this.queue.forEach(item => {
-                //@ts-ignore
-                let found = [...dropdown.children].find(
-                    i =>
-                        i.firstElementChild?.innerHTML.toString() ===
-                        item.firstElementChild?.innerHTML.toString()
-                );
-                if (dropdown && !found) {
-                    dropdown?.append(item);
-                }
-            });
-            this.queueChanged = false;
-        }
     }
 }
 </script>
