@@ -16,6 +16,11 @@ module.exports = {
             entry: 'src/main.ts',
             template: 'public/index-e2e.html',
             filename: 'index-e2e.html'
+        },
+        wet: {
+            entry: 'src/main.ts',
+            template: 'public/index-wet.html',
+            filename: 'index-wet.html'
         }
     },
     configureWebpack: {
