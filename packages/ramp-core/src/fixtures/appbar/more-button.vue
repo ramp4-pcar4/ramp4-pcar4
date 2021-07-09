@@ -3,6 +3,7 @@
         <button
             class="text-gray-400 w-full h-full focus:outline-none hover:text-white"
             @click="open = !open"
+            v-focus-item
             :content="$t('appbar.more')"
             v-tippy="{ placement: 'right' }"
         >

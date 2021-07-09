@@ -1,6 +1,7 @@
 <template>
     <dropdown-menu
         class="absolute inset-x-0 bottom-0 h-48 w-full text-center focus:outline-none"
+        v-focus-item
         position="left-top"
         :tooltip="$t('appbar.navigation')"
         tooltip-placement="right"
@@ -21,7 +22,13 @@
                 </svg>
             </div>
         </template>
-        <a href="#" class="w-160 flex" @click="exportToggle">
+        <a
+            href="#"
+            class="w-160 inline-flex"
+            @click="exportToggle"
+            :content="$t('navigation.export-v1')"
+            v-tippy="{ placement: 'right' }"
+        >
             <!-- https://fonts.google.com/icons?selected=Material+Icons:layers&icon.query=export -->
             <svg
                 class="w-24 h-24 flex-auto"
@@ -31,7 +38,7 @@
                 <path d="M0 0h24v24H0z" fill="none" />
                 <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
             </svg>
-            <span class="flex-none ml-8">
+            <span class="flex-auto ml-8">
                 {{ $t('map.export') }}
             </span>
         </a>
