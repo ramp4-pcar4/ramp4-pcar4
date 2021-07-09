@@ -14,8 +14,6 @@ map.language.short,EN-CA,1,FR-CA,0
 map.language.en,English (current),1,English,1
 map.language.fr,Français,1,Français (actuel),0
 map.export,export map,1,exporter la carte,0
-appbar.navigation,Navigation,1,La Navigation,0
-appbar.more,More,1,Plus,0
 panels.controls.close,Close,1,Fermer,1
 panels.controls.pin,Pin,1,Épingler,0
 panels.controls.unpin,Unpin,1,Détacher,0
