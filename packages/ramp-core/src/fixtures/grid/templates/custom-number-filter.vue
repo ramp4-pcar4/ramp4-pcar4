@@ -1,7 +1,7 @@
 <template>
     <div>
         <input
-            class="rv-min"
+            class="rv-min rv-input"
             style="width: 45%;"
             type="text"
             v-model="minVal"
@@ -9,7 +9,7 @@
             placeholder="min"
         />
         <input
-            class="rv-max"
+            class="rv-max rv-input"
             style="width: 45%;"
             type="text"
             v-model="maxVal"
