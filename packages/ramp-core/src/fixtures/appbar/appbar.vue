@@ -13,14 +13,6 @@
             :id="item.id"
         ></component>
         <divider></divider>
-        <temp-button>A</temp-button>
-        <temp-button>B</temp-button>
-        <temp-button>C</temp-button>
-        <temp-button>D</temp-button>
-        <temp-button>E</temp-button>
-        <temp-button>F</temp-button>
-        <temp-button>G</temp-button>
-        <temp-button>H</temp-button>
         <component
             v-for="item in temporaryItems"
             :is="item.componentId"
@@ -41,13 +33,11 @@ import { Get } from 'vuex-pathify';
 import { AppbarItemInstance } from './store';
 import DividerV from './divider.vue';
 import AppbarButtonV from './button.vue';
-import TempAppbarButton from './temp-button.vue';
 import MoreAppbarButtonV from './more-button.vue';
 import NavAppbarButtonV from './nav-button.vue';
 
 Vue.component('divider', DividerV);
 Vue.component('appbar-button', AppbarButtonV);
-Vue.component('temp-button', TempAppbarButton);
 Vue.component('more-button', MoreAppbarButtonV);
 Vue.component('nav-button', NavAppbarButtonV);
 
