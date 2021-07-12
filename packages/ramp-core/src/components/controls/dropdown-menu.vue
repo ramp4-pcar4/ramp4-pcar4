@@ -1,7 +1,7 @@
 <template>
-    <div class="relative">
+    <div>
         <button
-            class="relative text-gray-500 hover:text-black p-8"
+            class="text-gray-500 hover:text-black"
             @click="open = !open"
             :content="tooltip"
             v-tippy="{ placement: tooltipPlacement }"
@@ -61,6 +61,18 @@ export default class DropdownMenuV extends Vue {
     }
     &[position='left'] {
         @apply left-full top-0 ml-2;
+    }
+    &[position='top-right'] {
+        @apply right-0 bottom-full;
+    }
+    &[position='top-left'] {
+        @apply left-0 bottom-full;
+    }
+    &[position='right-top'] {
+        @apply right-full bottom-0;
+    }
+    &[position='left-top'] {
+        @apply left-full bottom-0;
     }
     &[position='bottom-right'] {
         @apply right-0 top-full;

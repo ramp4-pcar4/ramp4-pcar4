@@ -2,6 +2,7 @@ import AppbarV from './appbar.vue';
 import { AppbarAPI } from './api/appbar';
 import { appbar, AppbarItemInstance } from './store';
 import { GlobalEvents, PanelInstance } from '@/api';
+import messages from './lang/lang.csv';
 
 // "It's a trap!" -- Admiral Appbar
 
@@ -12,6 +13,11 @@ class AppbarFixture extends AppbarAPI {
 
         // TODO: registering a fixture store module seems like a common action almost every fixture needs; check if this can be automated somehow
         this.$vApp.$store.registerModule('appbar', appbar());
+
+        // merge in translations since this has no panel
+        Object.entries(messages).forEach(value =>
+            this.$vApp.$i18n.mergeLocaleMessage(...value)
+        );
 
         const appbarInstance = this.extend(AppbarV, {
             store: this.$vApp.$store,

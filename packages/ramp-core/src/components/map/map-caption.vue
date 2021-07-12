@@ -1,6 +1,6 @@
 <template>
     <div
-        class="map-caption absolute bottom-0 flex justify-center pointer-events-none text-gray-400 bg-black-75 left-0 right-0 py-2"
+        class="map-caption absolute bottom-0 flex justify-center pointer-events-none text-gray-400 bg-black-75 left-0 right-0 py-2 z-50"
     >
         <span
             class="relative ml-10 truncate top-1"
@@ -46,6 +46,27 @@
             ></span>
             {{ scale.label }}
         </button>
+
+        <dropdown-menu
+            class="relative pointer-events-auto h-20 focus:outline-none px-4 mr-4"
+            position="top-right"
+            :tooltip="$t('map.changeLanguage')"
+            tooltip-placement="top"
+        >
+            <template #header>
+                <span class="text-gray-400 hover:text-white">
+                    {{ $t('map.language.short') }}
+                </span>
+            </template>
+            <a
+                v-for="(item, index) in lang"
+                :key="`${item}-${index}`"
+                class="flex-auto items-center"
+                @click="changeLang(item)"
+            >
+                {{ $t('map.language.' + item) }}
+            </a>
+        </dropdown-menu>
     </div>
 </template>
 
@@ -61,6 +82,7 @@ export default class MapCaptionV extends Vue {
     @Get(MapCaptionStore.scale) scale!: ScaleBarProperties;
     @Get(MapCaptionStore.attribution) attribution!: Attribution;
     @Get(MapCaptionStore.cursorCoords) cursorCoords!: string;
+    lang: string[] = [];
 
     mounted() {
         // When map is created update scale
@@ -78,6 +100,18 @@ export default class MapCaptionV extends Vue {
         this.$iApi.event.on(GlobalEvents.MAP_CREATED, () => {
             this.$iApi.geo.map.updateScale();
         });
+    }
+
+    updated() {
+        if (this.$iApi.$vApp.$i18n && this.lang.length == 0) {
+            this.lang = this.$iApi.$vApp.$i18n.availableLocales;
+        }
+    }
+
+    changeLang(lang: string) {
+        if (this.$iApi.$vApp.$i18n.locale != lang) {
+            this.$iApi.setLanguage(lang);
+        }
     }
 
     /**
