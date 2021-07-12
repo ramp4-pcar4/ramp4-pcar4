@@ -6,7 +6,6 @@
             flip: false,
             allowHTML: true,
             zIndex: 5,
-            theme: 'ramp',
             trigger: 'manual',
             arrow: false,
             delay: 200,

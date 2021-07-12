@@ -45,7 +45,8 @@
     stroke-width: 2px;
 }
 
-.tippy-tooltip.ramp-theme {
+/* Keep the name dark-theme since tippy insists on using this theme for prod builds */
+.tippy-tooltip.dark-theme {
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI,
         Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
 }
