@@ -81,6 +81,9 @@ module.exports = {
             config
                 .plugin('html-test')
                 .tap(args => [{ ...args[0], inject: 'head' }]);
+            config
+                .plugin('html-wet')
+                .tap(args => [{ ...args[0], inject: 'head' }]);
         });
 
         // PROD-specific configuration
