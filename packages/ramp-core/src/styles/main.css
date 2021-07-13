@@ -50,6 +50,10 @@
         Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
 }
 
+.tippy-tooltip.ramp-theme svg {
+    display: inline;
+}
+
 @font-face {
     font-family: 'Montserrat';
     src: url('font/Montserrat-Reg-webfont.woff2') format('woff2');

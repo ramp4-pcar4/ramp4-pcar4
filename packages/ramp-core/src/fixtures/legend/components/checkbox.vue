@@ -16,7 +16,7 @@
             :content="
                 $t(value ? 'legend.visibility.hide' : 'legend.visibility.show')
             "
-            v-tippy="{ placement: 'top-end' }"
+            v-tippy="{ placement: 'top-end', hideOnClick: false }"
         />
     </div>
 </template>
