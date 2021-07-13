@@ -184,8 +184,6 @@ let config = {
                     'legend',
                     'geosearch',
                     'basemap',
-                    'divider',
-                    'export-v1'
                 ],
                 temporaryButtons: ['details', 'grid']
             },
@@ -261,8 +259,6 @@ let config = {
                     'legend',
                     'geosearch',
                     'basemap',
-                    'divider',
-                    'export-v1'
                 ],
                 temporaryButtons: ['details', 'grid']
             },
