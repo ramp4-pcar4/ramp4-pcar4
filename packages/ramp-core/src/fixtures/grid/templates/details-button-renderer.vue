@@ -3,7 +3,7 @@
         class="w-38 h-48"
         :content="$t('grid.cells.details')"
         v-tippy="{ placement: 'top' }"
-        @click="buttonClicked()"
+        @click="openDetails"
     >
         <svg
             class="m-auto"
@@ -29,7 +29,25 @@ import { GlobalEvents } from '@/api/internal';
 export default class DetailsButtonRendererV extends Vue {
     params: any;
 
-    buttonClicked() {
+    mounted() {
+        // need to hoist events to top level cell wrapper to be keyboard accessible
+        this.params.eGridCell.addEventListener(
+            'keydown',
+            (e: KeyboardEvent) => {
+                if (e.key === 'Enter') {
+                    this.openDetails();
+                }
+            }
+        );
+        this.params.eGridCell.addEventListener('focus', () => {
+            (this.$el as any)._tippy.show();
+        });
+        this.params.eGridCell.addEventListener('blur', () => {
+            (this.$el as any)._tippy.hide();
+        });
+    }
+
+    openDetails() {
         const fakeIdentifyItem = deepmerge({}, { data: this.params.data });
         delete fakeIdentifyItem['data']['rvInteractive'];
         delete fakeIdentifyItem['data']['rvSymbol'];

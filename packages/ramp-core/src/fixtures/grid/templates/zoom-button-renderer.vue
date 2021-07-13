@@ -3,7 +3,7 @@
         class="w-38 h-48"
         :content="$t('grid.cells.zoom')"
         v-tippy="{ placement: 'top' }"
-        @click="buttonClicked()"
+        @click="zoomToFeature"
     >
         <svg
             class="m-auto"
@@ -34,7 +34,25 @@ export default class ZoomButtonRendererV extends Vue {
 
     params: any;
 
-    buttonClicked() {
+    mounted() {
+        // need to hoist events to top level cell wrapper to be keyboard accessible
+        this.params.eGridCell.addEventListener(
+            'keydown',
+            (e: KeyboardEvent) => {
+                if (e.key === 'Enter') {
+                    this.zoomToFeature();
+                }
+            }
+        );
+        this.params.eGridCell.addEventListener('focus', () => {
+            (this.$el as any)._tippy.show();
+        });
+        this.params.eGridCell.addEventListener('blur', () => {
+            (this.$el as any)._tippy.hide();
+        });
+    }
+
+    zoomToFeature() {
         const layer: LayerInstance | undefined = this.getLayerByUid(
             this.params.uid
         );
