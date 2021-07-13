@@ -5,7 +5,7 @@
                 @click="onSortRequested('asc', $event)"
                 :content="$t(`grid.header.sort.${sort}`)"
                 v-tippy="{ placement: 'top', hideOnClick: false }"
-                class="customHeaderLabel hover:bg-gray-300 font-bold p-8"
+                class="customHeaderLabel hover:bg-gray-300 font-bold p-8 max-w-full"
                 role="columnheader"
                 truncate-trigger
             >
@@ -13,6 +13,12 @@
                     {{ params.displayName }}
                 </div>
             </button>
+        </div>
+        <span v-else class="customHeaderLabel" role="columnheader" v-truncate>{{
+            params.displayName
+        }}</span>
+
+        <div v-if="sortable" class="flex">
             <span
                 v-if="params.enableSorting && sort === 1"
                 class="customSortDownLabel"
@@ -41,12 +47,6 @@
                     </svg>
                 </div>
             </span>
-        </div>
-        <span v-else class="customHeaderLabel" role="columnheader" v-truncate>{{
-            params.displayName
-        }}</span>
-
-        <div v-if="sortable">
             <button
                 :content="$t(`grid.header.reorder.left`)"
                 v-tippy="{ placement: 'top' }"
