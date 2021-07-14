@@ -50,6 +50,9 @@ export default class App extends Vue {
             // needed to have tooltips in fullscreen, by default it appends to document.body
             appendTo: this.$el
         });
+
+        let parent = this.$el.parentElement;
+        parent?.style.setProperty('overflow', 'hidden');
     }
 }
 </script>
