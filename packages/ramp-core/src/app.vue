@@ -43,6 +43,9 @@ export default class App extends Vue {
         // let ResizeObserver observe the app div
         // it applies 'xs' 'sm' 'md' and 'lg' classes to the div depending on the size
         ro.observe(this.$el);
+
+        let parent = this.$el.parentElement;
+        parent?.style.setProperty('overflow', 'hidden');
     }
 }
 </script>
