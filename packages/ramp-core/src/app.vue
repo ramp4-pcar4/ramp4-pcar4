@@ -24,13 +24,8 @@ Vue.use(VueFormulate);
 
 //TOOLTIPS
 //@ts-ignore
-import VueTippy, { TippyComponent } from 'vue-tippy';
-Vue.use(VueTippy, {
-    aria: 'labelledby',
-    a11y: false,
-    theme: 'ramp',
-    trigger: 'mouseenter manual focus'
-});
+import VueTippy, { TippyComponent, tippy } from 'vue-tippy';
+Vue.use(VueTippy);
 Vue.component('tippy', TippyComponent);
 
 @Component({
@@ -43,6 +38,18 @@ export default class App extends Vue {
         // let ResizeObserver observe the app div
         // it applies 'xs' 'sm' 'md' and 'lg' classes to the div depending on the size
         ro.observe(this.$el);
+
+        // Set tooltip defaults, theme does not get applied properly in prod builds if setting the defaults using vue-tippy
+        // This bypasses the wrapper and sets the defaults at the tippy.js level
+        tippy.setDefaults({
+            aria: 'labelledby',
+            // keeps tooltips from changing tabindex
+            a11y: false,
+            theme: 'ramp',
+            trigger: 'mouseenter manual focus',
+            // needed to have tooltips in fullscreen, by default it appends to document.body
+            appendTo: this.$el
+        });
     }
 }
 </script>

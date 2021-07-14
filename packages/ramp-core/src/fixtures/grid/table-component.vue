@@ -31,8 +31,12 @@
                 <button
                     class="w-64"
                     @click="toggleShowFilters()"
-                    :content="$t('grid.label.filters')"
-                    v-tippy="{ placement: 'bottom' }"
+                    :content="
+                        gridOptions.floatingFilter
+                            ? $t('grid.label.filters.hide')
+                            : $t('grid.label.filters.show')
+                    "
+                    v-tippy="{ placement: 'bottom', hideOnClick: false }"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -50,7 +54,6 @@
                             ></path>
                         </g>
                     </svg>
-                    {{ $t('grid.label.filters') }}
                 </button>
             </div>
         </div>
@@ -74,8 +77,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync } from 'vuex-pathify';
-import { GlobalEvents, LayerInstance } from '@/api/internal';
-import deepmerge from 'deepmerge';
+import { LayerInstance } from '@/api/internal';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
@@ -90,6 +92,10 @@ import GridCustomTextFilterV from './templates/custom-text-filter.vue';
 import GridCustomSelectorFilterV from './templates/custom-selector-filter.vue';
 import GridCustomDateFilterV from './templates/custom-date-filter.vue';
 import GridCustomHeaderV from './templates/custom-header.vue';
+
+// grid button templates
+import DetailsButtonRendererV from './templates/details-button-renderer.vue';
+import ZoomButtonRendererV from './templates/zoom-button-renderer.vue';
 
 // these should match up with the `type` value returned by the attribute promise.
 const NUM_TYPES: string[] = ['oid', 'double', 'integer'];
@@ -439,26 +445,15 @@ export default class GridTableComponentV extends Vue {
                 lockPosition: true,
                 isStatic: true,
                 maxWidth: 40,
-                cellRenderer: (cell: any) => {
-                    return '<button><svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16"><path d="M0 0h24v24H0z" fill="none"/><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></button>';
-                },
-                cellStyle: (cell: any) => {
+                cellStyle: () => {
                     return {
-                        padding: '0px',
-                        paddingTop: '3px',
-                        textAlign: 'center',
-                        justifyContent: 'center',
-                        alignItems: 'center'
+                        padding: '0px'
                     };
                 },
-                onCellClicked: (cell: any) => {
-                    const fakeIdentifyItem = deepmerge({}, { data: cell.data });
-                    delete fakeIdentifyItem['data']['rvInteractive'];
-                    delete fakeIdentifyItem['data']['rvSymbol'];
-                    this.$iApi.event.emit(GlobalEvents.DETAILS_OPEN, {
-                        identifyItem: fakeIdentifyItem,
-                        uid: this.layerUid
-                    });
+                cellRendererFramework: DetailsButtonRendererV,
+                cellRendererParams: {
+                    uid: this.layerUid,
+                    $iApi: this.$iApi
                 }
             };
             colDef.push(detailsDef);
@@ -469,34 +464,16 @@ export default class GridTableComponentV extends Vue {
                 lockPosition: true,
                 isStatic: true,
                 maxWidth: 40,
-                cellRenderer: (cell: any) => {
-                    return '<button class="text-gray-600"><svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"/></svg></button>';
-                },
-                cellStyle: (cell: any) => {
+                cellStyle: () => {
                     return {
-                        padding: '0px',
-                        paddingTop: '3px',
-                        textAlign: 'center',
-                        justifyContent: 'center',
-                        alignItems: 'center'
+                        padding: '0px'
                     };
                 },
-                onCellClicked: (cell: any) => {
-                    const layer: LayerInstance | undefined = this.getLayerByUid(
-                        this.layerUid
-                    );
-                    if (layer === undefined) return;
-                    const oid = cell.data[this.oidField];
-                    const opts = { getGeom: true };
-                    layer.getGraphic(oid, opts, this.layerUid).then(g => {
-                        if (g.geometry === undefined) {
-                            console.error(
-                                `Could not find graphic for objectid ${oid}`
-                            );
-                        } else {
-                            this.$iApi.geo.map.zoomMapTo(g.geometry, 50000);
-                        }
-                    });
+                cellRendererFramework: ZoomButtonRendererV,
+                cellRendererParams: {
+                    uid: this.layerUid,
+                    $iApi: this.$iApi,
+                    oidField: this.oidField
                 }
             };
             colDef.push(zoomDef);

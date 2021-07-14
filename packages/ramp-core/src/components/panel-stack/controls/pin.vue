@@ -11,7 +11,7 @@
                         : 'panels.controls.pin'
                 )
             "
-            v-tippy="{ placement: 'bottom' }"
+            v-tippy="{ placement: 'bottom', hideOnClick: false }"
         >
             <svg
                 class="fill-current w-16 h-16"
