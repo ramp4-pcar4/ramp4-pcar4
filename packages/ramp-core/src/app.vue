@@ -59,6 +59,8 @@ export default class App extends Vue {
 .ramp-app {
     @include focus-list.default-focused-styling;
     height: 100vh;
+    position: relative;
+    overflow: hidden;
 }
 .symbologyIcon {
     @apply bg-white inline-flex justify-center items-center overflow-hidden;

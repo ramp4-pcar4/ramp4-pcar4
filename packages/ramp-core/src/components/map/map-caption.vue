@@ -60,8 +60,6 @@
             @click="onScaleClick"
             :aria-pressed="scale.isImperialScale"
             :aria-label="$t('map.toggleScaleUnits')"
-            v-tippy="{ placement: 'top', hideOnClick: false }"
-            :content="$t('map.toggleScaleUnits')"
         >
             <span
                 class="
@@ -86,7 +84,7 @@
             "
             position="top-right"
             :tooltip="$t('map.changeLanguage')"
-            tooltip-placement="top"
+            tooltip-placement="top-end"
         >
             <template #header>
                 <span class="text-gray-400 hover:text-white">
