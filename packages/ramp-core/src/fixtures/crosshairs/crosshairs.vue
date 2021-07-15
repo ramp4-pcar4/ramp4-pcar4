@@ -1,5 +1,8 @@
 <template>
-    <div class="absolute duration-150" :style="crosshairsStyle">
+    <div
+        class="crosshairs absolute duration-150 top-1/2 left-1/2 h-230 w-230"
+        :class="{ 'opacity-0': !visible }"
+    >
         <svg
             xmlns="http://www.w3.org/2000/svg"
             fit=""
@@ -49,22 +52,9 @@ import { GlobalEvents } from '@/api';
 
 @Component({})
 export default class CrosshairsV extends Vue {
-    top: number = 0;
-    left: number = 0;
     visible: boolean = false;
 
     mounted() {
-        this.$iApi.geo.map.viewPromise.then(() => {
-            this.left =
-                (this.$iApi.geo.map.getPixelWidth() -
-                    this.$el.getBoundingClientRect().width) /
-                2;
-            this.top =
-                (this.$iApi.geo.map.getPixelHeight() -
-                    this.$el.getBoundingClientRect().height) /
-                2;
-        });
-
         this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, () => {
             // display crosshairs if pan/zoom keys are active
             if (this.$iApi.geo.map.keysActive) {
@@ -80,17 +70,11 @@ export default class CrosshairsV extends Vue {
             this.visible = false;
         });
     }
-
-    get crosshairsStyle() {
-        return {
-            opacity: this.visible ? `1` : `0`,
-            top: `${this.top}px`,
-            left: `${this.left}px`,
-            width: `230px`,
-            height: `230px`
-        };
-    }
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.crosshairs {
+    transform: translate(-50%, -50%);
+}
+</style>

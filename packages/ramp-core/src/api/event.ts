@@ -65,6 +65,7 @@ export enum GlobalEvents {
      * Payload: the scale denominator integer.
      */
     MAP_SCALECHANGE = 'map/scalechanged',
+    MAP_RESIZE = 'map/resized',
     SETTINGS_TOGGLE = 'settings/toggle',
     DETAILS_OPEN = 'details/open',
     HELP_TOGGLE = 'help/toggle',
