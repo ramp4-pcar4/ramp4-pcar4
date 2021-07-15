@@ -642,6 +642,7 @@ class MapImageLayer extends AttribLayer {
                 }
 
                 qOpts.outFields = fc.fieldList;
+                qOpts.filterSql = fc.getCombinedSqlFilter();
 
                 return fc.queryFeatures(qOpts).then(results => {
                     // TODO might be a problem overwriting the array if something is watching/binding to the original

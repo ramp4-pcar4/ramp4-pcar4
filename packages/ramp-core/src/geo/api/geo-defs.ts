@@ -269,6 +269,8 @@ export interface LegendSymbology {
     definitionClause: string;
     svgcode: string;
     drawPromise: Promise<void>;
+    visibility: boolean; // Used by the checkbox in the legend
+    definitionVisibility: boolean; // Used to create SQL definition and remembers the visibility value even after the parent layer is toggled off
     // TODO might need to add something to support image-based legends we find in WMS or custom stacks from the config
 }
 
