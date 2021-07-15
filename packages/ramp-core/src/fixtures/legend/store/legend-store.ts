@@ -17,11 +17,22 @@ import { LayerInstance } from '@/api';
 type LegendContext = ActionContext<LegendState, RootState>;
 
 const getters = {
-    getChildById: (state: LegendState, id: string): LegendItem | undefined => {
-        return state.children.find(
-            (entry: LegendItem) =>
-                entry instanceof LegendEntry && entry.uid === id
-        );
+    getChildById: (state: LegendState) => (
+        id: string
+    ): LegendItem | undefined => {
+        const searchTree = function(root: any, id: string) {
+            if (root.id === id) {
+                return root;
+            } else {
+                let result: LegendItem | undefined;
+                root.children.some((child: LegendItem) => {
+                    result = searchTree(child, id);
+                    return result !== undefined;
+                });
+                return result;
+            }
+        };
+        return searchTree(state, id);
     },
     getAllExpanded: (state: LegendState, expanded: boolean): boolean => {
         return state.children.every(
@@ -54,7 +65,7 @@ const mutations = {
             children = children.filter(
                 entry =>
                     entry instanceof LegendGroup ||
-                    (entry.layer!.uid !== uid && entry.uid !== uid)
+                    (entry.layer!.uid !== uid && entry.layerUID !== uid)
             );
 
             // recursively check child legend groups
@@ -82,7 +93,7 @@ const mutations = {
                 .filter(
                     entry =>
                         entry instanceof LegendEntry &&
-                        (entry.layer!.uid === uid || entry.uid === uid)
+                        (entry.layer!.uid === uid || entry.layerUID === uid)
                 )
                 .forEach(entry => {
                     entry._type = LegendTypes.Placeholder;
@@ -275,6 +286,10 @@ export enum LegendStore {
      * (State) children: Array<LegendItem>
      */
     children = 'legend/children',
+    /**
+     * (Getter) getChildById: (id: string) => LegendItem | undefined
+     */
+    getChildById = 'legend/getChildById',
     /**
      * (Action) expandGroups - expand all possible legend groups
      */
