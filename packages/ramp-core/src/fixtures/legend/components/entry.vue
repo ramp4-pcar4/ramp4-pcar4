@@ -47,7 +47,7 @@
                             class="w-32 h-32"
                             :visible="legendItem.displaySymbology"
                             :layer="legendItem.layer"
-                            :uid="legendItem.uid"
+                            :legendItem="legendItem"
                             :key="legendItem.uid"
                         />
                     </button>
@@ -66,7 +66,8 @@
 
                 <!-- visibility -->
                 <checkbox
-                    :value="visibility"
+                    :checked="legendItem.visibility"
+                    :value="legendItem"
                     :isRadio="
                         legendItem.parent &&
                             legendItem.parent.type === 'VisibilitySet'
@@ -87,7 +88,7 @@
             <div
                 class="p-5 flex items-center"
                 v-for="(item, idx) in legendItem.layer.getLegend(
-                    legendItem.uid
+                    legendItem.layerUID
                 )"
                 :key="idx"
             >
@@ -97,8 +98,15 @@
 
                 <div class="flex-1 ml-15" v-truncate>{{ item.label }}</div>
 
-                <!-- TODO: add visibility button functionality. It should toggle each symbol individually. -->
-                <checkbox :value="visibility" :legendItem="legendItem" />
+                <checkbox
+                    v-if="
+                        legendItem.layer.getLegend(legendItem.layerUID).length >
+                            1
+                    "
+                    :checked="item.visibility"
+                    :value="item"
+                    :legendItem="legendItem"
+                />
             </div>
         </div>
     </div>
@@ -124,29 +132,6 @@ import LegendOptionsV from './legend-options.vue';
 export default class LegendEntryV extends Vue {
     @Prop() legendItem!: LegendEntry;
 
-    visibility: boolean | undefined = this.legendItem.visibility;
-
-    mounted(): void {
-        // TODO figure out a strong type for the payload?
-        const visHandler = this.$iApi.event.on(
-            GlobalEvents.LAYER_VISIBILITYCHANGE,
-            (payload: any) => {
-                if (
-                    this.legendItem.layer &&
-                    this.legendItem.layer
-                        .getLayerTree()
-                        .findChildByUid(payload.uid)
-                ) {
-                    // the event is related to this layer.
-                    // TODO likely need to refine logic for child layers. see comments in common-layer initiate().
-                    //      we could have case where layer turns on but child remains off. in this case additional logic needed.
-                    // TODO verify we still use logic below, and not payload.visibility
-                    this.visibility = this.legendItem.visibility;
-                }
-            }
-        );
-    }
-
     /**
      * Display symbology stack for the layer.
      */
@@ -164,7 +149,7 @@ export default class LegendEntryV extends Vue {
         if (this.legendItem._controlAvailable(Controls.Datatable)) {
             this.$iApi.event.emit(
                 GlobalEvents.GRID_TOGGLE,
-                this.legendItem.uid
+                this.legendItem.layerUID
             );
         }
     }
@@ -176,7 +161,7 @@ export default class LegendEntryV extends Vue {
         if (this.legendItem._controlAvailable(Controls.Settings)) {
             this.$iApi.event.emit(
                 GlobalEvents.SETTINGS_TOGGLE,
-                this.legendItem.uid
+                this.legendItem.layerUID
             );
         }
     }
@@ -201,7 +186,7 @@ export default class LegendEntryV extends Vue {
     }
 
     removeLayer() {
-        this.$iApi.geo.map.removeLayer(this.legendItem.uid!);
+        this.$iApi.geo.map.removeLayer(this.legendItem.layerUID!);
     }
 }
 </script>

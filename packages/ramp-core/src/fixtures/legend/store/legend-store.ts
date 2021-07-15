@@ -54,7 +54,7 @@ const mutations = {
             children = children.filter(
                 entry =>
                     entry instanceof LegendGroup ||
-                    (entry.layer!.uid !== uid && entry.uid !== uid)
+                    (entry.layer!.uid !== uid && entry.layerUID !== uid)
             );
 
             // recursively check child legend groups
@@ -82,7 +82,7 @@ const mutations = {
                 .filter(
                     entry =>
                         entry instanceof LegendEntry &&
-                        (entry.layer!.uid === uid || entry.uid === uid)
+                        (entry.layer!.uid === uid || entry.layerUID === uid)
                 )
                 .forEach(entry => {
                     entry._type = LegendTypes.Placeholder;
