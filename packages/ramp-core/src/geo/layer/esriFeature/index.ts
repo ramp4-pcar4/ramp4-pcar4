@@ -239,6 +239,8 @@ class FeatureLayer extends AttribLayer {
             qOpts.filterGeometry = options.geometry;
         }
 
+        qOpts.filterSql = myFC.getCombinedSqlFilter();
+
         result.done = myFC.queryFeatures(qOpts).then(results => {
             // TODO might be a problem overwriting the array if something is watching/binding to the original
             innerResult.items = results.map(gr => {

@@ -297,6 +297,9 @@ export class FileLayer extends AttribLayer {
             qOpts.filterGeometry = options.geometry;
         }
 
+        // TODO: Test if works after #206 is implemented
+        qOpts.filterSql = myFC.getCombinedSqlFilter();
+
         result.done = myFC.queryFeatures(qOpts).then(results => {
             // TODO might be a problem overwriting the array if something is watching/binding to the original
             innerResult.items = results.map(gr => {

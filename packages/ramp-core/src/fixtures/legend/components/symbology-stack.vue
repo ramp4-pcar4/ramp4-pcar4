@@ -44,15 +44,16 @@
 </template>
 
 <script lang="ts">
+import { LayerInstance } from '@/api';
 import { Vue, Component, Prop } from 'vue-property-decorator';
 
-import { LayerInstance } from '@/api/internal';
+import { LegendEntry } from '../store/legend-defs';
 
 @Component
 export default class LegendSymbologyStackV extends Vue {
     @Prop() visible!: boolean;
+    @Prop() legendItem!: LegendEntry;
     @Prop() layer!: LayerInstance;
-    @Prop() uid!: string;
 
     stack: any = [];
 
@@ -60,7 +61,7 @@ export default class LegendSymbologyStackV extends Vue {
         // TODO ramp2 would create a placeholder stack if the layer wasn't loaded. Icon would be first letter of layer
         //      see if we should be doing that here as well, or if we are fine with empty icons.
         // When the layer is loaded, get the icon.
-        this.layer.isLayerLoaded().then(() => {
+        this.legendItem.loadPromise.then(() => {
             this.getSymbologyStack();
         });
     }
@@ -69,11 +70,15 @@ export default class LegendSymbologyStackV extends Vue {
      * Retrieves the symbology stack. Waits on all symbols in the stack to finish loading before displaying.
      */
     getSymbologyStack(): any {
-        Promise.all(
-            this.layer.getLegend(this.uid).map((l: any) => l.drawPromise)
-        ).then((r: any) => {
-            this.stack = this.layer.getLegend(this.uid);
-        });
+        if (this.legendItem.layerUID) {
+            Promise.all(
+                this.layer
+                    .getLegend(this.legendItem.layerUID)
+                    .map((l: any) => l.drawPromise)
+            ).then((r: any) => {
+                this.stack = this.layer.getLegend(this.legendItem.layerUID);
+            });
+        }
     }
 }
 </script>

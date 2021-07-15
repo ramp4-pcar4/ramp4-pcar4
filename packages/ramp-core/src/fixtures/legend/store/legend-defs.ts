@@ -1,10 +1,12 @@
-import { TreeNode } from '@/geo/api';
+import { LegendSymbology, TreeNode } from '@/geo/api';
 import { LayerInstance } from '@/api/internal';
+
 /**
  * Function definitions for legend item wrapper objects.
  */
 export class LegendItem {
     _id: string;
+    _uid: string; // Used as unique identifier in v-for when rendering legend
     _name: string;
     _type: LegendTypes;
     _controls: Array<string>;
@@ -39,11 +41,18 @@ export class LegendItem {
         this._hidden =
             legendItem.hidden !== undefined ? legendItem.hidden : false;
         this._itemConfig = legendItem;
+
+        this._uid = RAMP.GEO.sharedUtils.generateUUID();
     }
 
     /** Returns the item's id. */
     get id(): string {
         return this._id;
+    }
+
+    /** Returns the item's uid. */
+    get uid(): string {
+        return this._uid;
     }
 
     /** Returns the item's name. */
@@ -111,14 +120,15 @@ export class LegendItem {
  * `LegendEntry` can either be a single legend entry or an info section (no link to layer).
  */
 export class LegendEntry extends LegendItem {
-    _uid: string | undefined;
     _layer: LayerInstance | undefined;
+    _layerUID: string | undefined;
     _layerIndex: number | undefined;
     _layerTree: TreeNode | undefined;
     _isLoaded: boolean;
     _symbologyStack: any;
     _isDefault: boolean | undefined;
     _displaySymbology: boolean;
+    _loadPromise: Promise<void>;
 
     /**
      * Creates a new single legend entry.
@@ -126,67 +136,79 @@ export class LegendEntry extends LegendItem {
      */
     constructor(legendEntry: any, parent: LegendGroup | undefined = undefined) {
         super(legendEntry);
-        this._type =
-            legendEntry.type !== undefined
-                ? legendEntry.type
-                : LegendTypes.Entry;
-        this._parent = parent;
-        this._isDefault = legendEntry.isDefault;
 
-        // find matching BaseLayer in layer store to the layerId in config
-        this._layer = legendEntry.layers.find(
-            (layer: LayerInstance) => layer.id === this._id
-        );
-        this._layerIndex = legendEntry.entryIndex;
-
-        this._isLoaded =
-            this._layer !== undefined ? this._layer.isValidState() : true;
-
+        this._isLoaded = false;
         this._displaySymbology = false;
 
-        // check if a layer has been bound to this entry and is done loading. If not, set the type to "placeholder".
-        if (this._layer === undefined || !this._isLoaded) {
-            this._type = LegendTypes.Placeholder;
-        }
+        this._loadPromise = new Promise((resolve, _) => {
+            this._type =
+                legendEntry.type !== undefined
+                    ? legendEntry.type
+                    : LegendTypes.Entry;
+            this._parent = parent;
+            this._isDefault = legendEntry.isDefault;
 
-        // initialize more layer properties after layer loads
-        this._waitLayerLoad();
+            // find matching BaseLayer in layer store to the layerId in config
+            this._layer = legendEntry.layers.find(
+                (layer: LayerInstance) => layer.id === this._id
+            );
+            this._layerIndex = legendEntry.entryIndex;
+
+            this._isLoaded =
+                this._layer !== undefined ? this._layer.isValidState() : true;
+
+            this._displaySymbology = false;
+
+            // check if a layer has been bound to this entry and is done loading. If not, set the type to "placeholder".
+            if (this._layer === undefined || !this._isLoaded) {
+                this._type = LegendTypes.Placeholder;
+            }
+
+            // initialize more layer properties after layer loads
+            this._waitLayerLoad().then(resolve);
+        });
     }
 
     /**
      * Waits for layer to load before fetching layer properties - uid, tree structure, and more as needed.
      */
-    _waitLayerLoad(): void {
+    async _waitLayerLoad(): Promise<void> {
         // wait for layer to finish loading
-        this._layer?.isLayerLoaded().then(() => {
-            // obtain uid and layer tree structure
-            this._layerTree = this._layer?.getLayerTree();
-            this._uid =
-                this._layerTree?.findChildByIdx(this._layerIndex!)?.uid ||
-                this._layer?.uid;
+        await this._layer?.isLayerLoaded();
 
-            // toggle off visibility if entry is part of a visibility set with a set entry already toggled on
-            if (
-                this._parent instanceof LegendGroup &&
-                this._parent.type === LegendTypes.Set
-            ) {
-                this._parent.children.some(
-                    entry => entry.visibility && entry.id !== this._id
-                )
-                    ? this._layer?.setVisibility(false, this.uid)
-                    : null;
-            }
-        });
+        // obtain uid and layer tree structure
+        this._layerTree = this._layer?.getLayerTree();
+
+        this._layerUID =
+            this._layerTree?.findChildByIdx(this._layerIndex!)?.uid ||
+            this._layer?.uid;
+
+        // toggle off visibility if entry is part of a visibility set with a set entry already toggled on
+        if (
+            this._parent instanceof LegendGroup &&
+            this._parent.type === LegendTypes.Set
+        ) {
+            this._parent.children.some(
+                entry => entry.visibility && entry.id !== this._id
+            )
+                ? this._layer?.setVisibility(false, this.layerUID)
+                : null;
+        }
+    }
+
+    /** Returns the load promise for this legend entry */
+    get loadPromise(): Promise<void> {
+        return this._loadPromise;
+    }
+
+    /** Returns the UID of the layer */
+    get layerUID(): string | undefined {
+        return this._layerUID || this._layer?.uid;
     }
 
     /** Returns visibility of layer. */
     get visibility(): boolean | undefined {
-        return this._layer?.getVisibility(this.uid);
-    }
-
-    /** Returns uid associated with BaseLayer. */
-    get uid(): string | undefined {
-        return this._uid;
+        return this._layer?.getVisibility(this.layerUID);
     }
 
     /** Returns BaseLayer associated with legend entry. */
@@ -233,8 +255,26 @@ export class LegendEntry extends LegendItem {
                 return;
             }
             visibility !== undefined
-                ? this._layer?.setVisibility(visibility, this.uid)
-                : this._layer?.setVisibility(!this.visibility, this.uid);
+                ? this._layer?.setVisibility(visibility, this.layerUID)
+                : this._layer?.setVisibility(!this.visibility, this.layerUID);
+
+            // Check if some of the child symbols have their definition visibility on
+            const noDefinitionsVisible: boolean = !this._layer
+                ?.getLegend()
+                .some((item: LegendSymbology) => item.lastVisbility);
+
+            if (noDefinitionsVisible) {
+                // If there are no definitions visible and we toggled the parent layer on
+                // then we set all the children to visible
+                this._layer?.getLegend().forEach((item: LegendSymbology) => {
+                    item.lastVisbility = true;
+                });
+            }
+
+            this._layer?.getLegend().forEach((item: LegendSymbology) => {
+                item.visibility = this.visibility ? item.lastVisbility : false;
+            });
+
             // update parent visibility if current legend entry is part of a group or set
             if (this._parent instanceof LegendGroup && updateParent) {
                 this._parent.checkVisibility(this);
@@ -247,6 +287,8 @@ export class LegendEntry extends LegendItem {
                     });
                 }
             }
+
+            this._uid = RAMP.GEO.sharedUtils.generateUUID();
         }
     }
 }
@@ -449,6 +491,8 @@ export class LegendGroup extends LegendItem {
                 });
             }
         }
+
+        this._uid = RAMP.GEO.sharedUtils.generateUUID();
     }
 }
 
