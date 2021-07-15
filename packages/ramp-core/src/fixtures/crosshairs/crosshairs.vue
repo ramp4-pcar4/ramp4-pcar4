@@ -72,6 +72,17 @@ export default class CrosshairsV extends Vue {
             }
         });
 
+        this.$iApi.event.on(
+            GlobalEvents.MAP_RESIZE,
+            ({ height, width }: { height: number; width: number }) => {
+                // update crosshairs position when map is resized
+                this.left =
+                    (width - this.$el.getBoundingClientRect().width) / 2;
+                this.top =
+                    (height - this.$el.getBoundingClientRect().height) / 2;
+            }
+        );
+
         this.$iApi.event.on(GlobalEvents.MAP_MOUSEDOWN, () => {
             this.visible = false;
         });
