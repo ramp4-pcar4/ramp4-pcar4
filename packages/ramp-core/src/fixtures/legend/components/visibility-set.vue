@@ -43,7 +43,7 @@
 
                 <!-- visibility -->
                 <checkbox
-                    :value="legendItem.visibility"
+                    :value="legendItem"
                     :isRadio="
                         legendItem.parent &&
                             legendItem.parent.type === LegendTypes.Set
@@ -56,9 +56,9 @@
         <!-- Display the children of the group -->
         <div class="legend-group pl-5" v-if="legendItem.expanded">
             <legend-component
-                v-for="(item, idx) in legendItem.children"
+                v-for="item in legendItem.children"
                 :legendItem="item"
-                :key="idx"
+                :key="item.uid"
             ></legend-component>
         </div>
     </div>

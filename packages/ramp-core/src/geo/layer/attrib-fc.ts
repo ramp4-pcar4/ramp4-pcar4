@@ -771,6 +771,17 @@ export class AttribFC extends CommonFC {
     }
 
     /**
+     * Returns a SQL WHERE condition that is combination of active filters.
+     *
+     * @method getCombinedSqlFilter
+     * @param {Array} [exclusions] list of any filter keys to exclude from the result. omission includes all filters
+     * @returns {String} all non-excluded sql statements connected with AND operators.
+     */
+    getCombinedSqlFilter(exclusions?: string[]): string {
+        return this.filter.getCombinedSql(exclusions);
+    }
+
+    /**
      * Applies the current filter settings to the physical map layer.
      *
      * @function applySqlFilter

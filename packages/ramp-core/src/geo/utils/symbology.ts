@@ -831,6 +831,8 @@ export class SymbologyAPI extends APIScope {
                               .map(su => su.definitionClause)
                               .join(' OR ')})`,
                 svgcode: '', // TODO is '' ok? maybe we need white square svg? or some loading icon?
+                visibility: true,
+                lastVisbility: true,
                 drawPromise: this.symbolToSvg(firstSu.symbol).then(svg => {
                     // update the legend symbol object
                     legendSym.svgcode = svg;
