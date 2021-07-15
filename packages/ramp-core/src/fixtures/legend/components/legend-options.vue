@@ -154,7 +154,7 @@ export default class LegendOptionsV extends Vue {
         if (this.legendItem._controlAvailable(Controls.Datatable)) {
             this.$iApi.event.emit(
                 GlobalEvents.GRID_TOGGLE,
-                this.legendItem.uid
+                this.legendItem.layerUID
             );
         }
     }
@@ -166,7 +166,7 @@ export default class LegendOptionsV extends Vue {
         if (this.legendItem._controlAvailable(Controls.Settings)) {
             this.$iApi.event.emit(
                 GlobalEvents.SETTINGS_TOGGLE,
-                this.legendItem.uid
+                this.legendItem.layerUID
             );
         }
     }
@@ -200,13 +200,13 @@ export default class LegendOptionsV extends Vue {
             ) {
                 // cheap hack for MIL with multiple children - set visibility to false and remove legend entry
                 // TODO get rid of this when/if MIL sublayers can be removed for real
-                this.removeLayerEntry(this.legendItem.uid!);
+                this.removeLayerEntry(this.legendItem.layerUID!);
                 this.legendItem.layer!.setVisibility(
                     false,
                     this.legendItem._layerIndex
                 );
             } else {
-                this.$iApi.geo.map.removeLayer(this.legendItem.uid!);
+                this.$iApi.geo.map.removeLayer(this.legendItem.layerUID!);
             }
         }
     }
