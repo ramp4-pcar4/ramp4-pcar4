@@ -1,6 +1,19 @@
 <template>
     <div
-        class="map-caption absolute bottom-0 flex justify-center pointer-events-none text-gray-400 bg-black-75 left-0 right-0 py-2 z-50"
+        class="
+            map-caption
+            absolute
+            bottom-0
+            flex
+            justify-center
+            pointer-events-none
+            text-gray-400
+            bg-black-75
+            left-0
+            right-0
+            py-2
+            z-50
+        "
     >
         <span
             class="relative ml-10 truncate top-1"
@@ -35,7 +48,15 @@
         </span>
 
         <button
-            class="flex-shrink-0 mx-10 px-4 pointer-events-auto h-20 cursor-pointer border-none"
+            class="
+                flex-shrink-0
+                mx-10
+                px-4
+                pointer-events-auto
+                h-20
+                cursor-pointer
+                border-none
+            "
             @click="onScaleClick"
             :aria-pressed="scale.isImperialScale"
             :aria-label="$t('map.toggleScaleUnits')"
@@ -43,14 +64,26 @@
             :content="$t('map.toggleScaleUnits')"
         >
             <span
-                class="border-solid border-2 border-white border-t-0 h-5 mr-2 inline-block"
+                class="
+                    border-solid border-2 border-white border-t-0
+                    h-5
+                    mr-2
+                    inline-block
+                "
                 :style="{ width: scale.width }"
             ></span>
             {{ scale.label }}
         </button>
 
         <dropdown-menu
-            class="relative pointer-events-auto h-20 focus:outline-none px-4 mr-4"
+            class="
+                flex-shrink-0
+                pointer-events-auto
+                h-20
+                focus:outline-none
+                px-4
+                mr-4
+            "
             position="top-right"
             :tooltip="$t('map.changeLanguage')"
             tooltip-placement="top"
