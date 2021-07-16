@@ -133,6 +133,13 @@ export class MapAPI extends CommonMapAPI {
             this.$iApi.event.emit(GlobalEvents.MAP_SCALECHANGE, newval);
         });
 
+        this.esriView.on('resize', esriResize => {
+            this.$iApi.event.emit(GlobalEvents.MAP_RESIZE, {
+                height: esriResize.height,
+                width: esriResize.width
+            });
+        });
+
         this.esriView.on('click', esriClick => {
             this.$iApi.event.emit(
                 GlobalEvents.MAP_CLICK,
