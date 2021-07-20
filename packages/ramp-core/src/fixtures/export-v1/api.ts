@@ -61,7 +61,9 @@ export class ExportV1API extends FixtureInstance {
             (panelWidth - GLOBAL_MARGIN.LEFT - GLOBAL_MARGIN.RIGHT) /
             fbMap.width!;
 
-        const fbLegend = await this.getSubFixture('export-v1-legend').make();
+        const fbLegend = await this.getSubFixture('export-v1-legend').make({
+            width: fbMap.width
+        });
 
         fbLegend.top = this.options.runningHeight;
         this.options.runningHeight += fbLegend.height!;

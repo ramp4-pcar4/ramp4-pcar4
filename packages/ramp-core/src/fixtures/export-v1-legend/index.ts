@@ -1,5 +1,6 @@
 import { FixtureInstance, LayerInstance } from '@/api/internal';
 import { TreeNode } from '@/geo/api';
+import { LayerStore } from '@/store/modules/layer';
 import { ExportV1SubFixture } from '@/fixtures/export-v1';
 import { fabric } from 'fabric';
 import {
@@ -44,26 +45,45 @@ const ITEM_MARGIN = 8;
 const ROW_HEIGHT = 32;
 const ICON_WIDTH = 32;
 
+const MIN_COLUMN_WIDTH = 350;
+const COLUMN_SPACING = 20;
+
 const DEFAULT_FONT =
     'Montserrat, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif';
 
 class ExportV1LegendFixture extends FixtureInstance
     implements ExportV1SubFixture {
     async make(options: any): Promise<fabric.Group> {
-        const columns = 3;
+        // filter out loading/errored and invisible layers
+        const layers = this.$vApp.$store
+            .get<LayerInstance[]>(LayerStore.layers)!
+            .filter(
+                layer =>
+                    layer.isValidState() &&
+                    layer.getVisibility() &&
+                    !this._getLayerTreeIds(layer.getLayerTree()).every(
+                        id => !layer.getVisibility(id)
+                    )
+            );
 
-        const layers =
-            this.$vApp.$store.get<LayerInstance[]>('layer/layers') || [];
+        // number of columns based on export width and min col width
+        const columns = Math.min(
+            layers.length,
+            Math.floor(options.width / (MIN_COLUMN_WIDTH + COLUMN_SPACING))
+        );
+
+        // calculate column width such that columns are even spaced across entire export width
+        const columnWidth =
+            (options.width - (columns - 1) * COLUMN_SPACING) / columns;
 
         let runningHeight = 0;
 
-        const segments = await Promise.all(this._makeSegments(layers));
-
-        //TODO: write logic to shoehorn legend into columns
+        const segments = await Promise.all(
+            this._makeSegments(layers, columnWidth)
+        );
 
         // string all the graphic legend elements together adding margins between them
         const fbAllItems = segments
-            .filter(segment => segment.items.length > 0)
             .map(({ title: segmentTitle, items: chunks }, segmentIndex) => {
                 if (segmentIndex > 0) {
                     runningHeight += SEGMENT_TOP_MARGIN;
@@ -104,13 +124,77 @@ class ExportV1LegendFixture extends FixtureInstance
                     }
                 );
 
-                return [segmentTitle, ...allChunkItems.flat()];
+                // create a group for each config layer
+                return new fabric.Group(
+                    [segmentTitle, ...allChunkItems.flat()],
+                    { objectCaching: false }
+                );
             })
             .flat();
 
-        const fbLegend = new fabric.Group(fbAllItems);
+        const fbLegend = this._makeColumns(fbAllItems, columnWidth, columns);
 
         return Promise.resolve(fbLegend);
+    }
+
+    /**
+     * Breaks up legend layers into columns
+     *
+     * @private
+     * @param {fabric.Group[]} items
+     * @param {number} columnWidth
+     * @param {number} columns
+     * @returns {fabric.Group}
+     * @memberof ExportV1LegendFixture
+     */
+    private _makeColumns(
+        items: fabric.Group[],
+        columnWidth: number,
+        columns: number
+    ) {
+        let curColumn: number = 0;
+        let curTop: number = 0;
+        let accumLength: number = 0;
+        // target column height is the total length of all items divided by number of columns
+        const targetHeight: number =
+            items[items.length - 1].aCoords!.bl.y / columns;
+
+        items.forEach((group, index) => {
+            const height: number =
+                index !== items.length - 1
+                    ? items[index + 1].top! - group.top!
+                    : group.height!;
+
+            // reached end of column, try to evently split items
+            const columnFull: boolean =
+                accumLength > targetHeight * (curColumn + 1);
+            // don't allow column to go over target if layer is very long
+            const longLayer: boolean = curTop !== 0 && height > targetHeight;
+            // ensure there are no empty columns on the right
+            const fillColumns: boolean =
+                columns - curColumn > items.length - index;
+
+            if (
+                (columnFull || longLayer || fillColumns) &&
+                curColumn < columns
+            ) {
+                // move to next column
+                ++curColumn;
+                curTop = 0;
+            }
+
+            // update layer position in legend export
+            group.left = curColumn * (columnWidth + COLUMN_SPACING);
+            group.top = curTop;
+
+            curTop += height;
+            accumLength += height;
+        });
+
+        return new fabric.Group(items, {
+            originX: 'center',
+            objectCaching: false
+        });
     }
 
     /**
@@ -122,36 +206,29 @@ class ExportV1LegendFixture extends FixtureInstance
      * @returns {Promise<Segment>[]}
      * @memberof ExportV1LegendFixture
      */
-    private _makeSegments(layers: LayerInstance[]): Promise<Segment>[] {
-        return layers
-            .filter(layer => layer.isValidState() && layer.getVisibility())
-            .map(async (layer: LayerInstance) => {
-                const title = new fabric.Text(layer.getName(layer.uid), {
-                    fontSize: 24,
-                    fontFamily: DEFAULT_FONT
-                });
-
-                // traverse layer tree to get flattened array of ids
-                const getLayerTreeIds = (node: TreeNode): number[] => {
-                    return ([] as number[]).concat.apply(
-                        [],
-                        node.isLayer
-                            ? [node.layerIdx]
-                            : node.children.map(getLayerTreeIds)
-                    );
-                };
-
-                // filter out invisible layer entries
-                const ids = getLayerTreeIds(layer.getLayerTree()).filter(id =>
-                    layer.getVisibility(id)
-                );
-
-                const items = await Promise.all(
-                    this._makeSegmentChunks(ids, layer)
-                );
-
-                return { title, items };
+    private _makeSegments(
+        layers: LayerInstance[],
+        segmentWidth: number
+    ): Promise<Segment>[] {
+        return layers.map(async (layer: LayerInstance) => {
+            const title = new fabric.Textbox(layer.getName(layer.uid), {
+                fontSize: 24,
+                fontFamily: DEFAULT_FONT,
+                width: segmentWidth,
+                objectCaching: false
             });
+
+            // filter out invisible layer entries
+            const ids = this._getLayerTreeIds(layer.getLayerTree()).filter(id =>
+                layer.getVisibility(id)
+            );
+
+            const items = await Promise.all(
+                this._makeSegmentChunks(ids, layer, segmentWidth)
+            );
+
+            return { title, items };
+        });
     }
 
     /**
@@ -165,19 +242,22 @@ class ExportV1LegendFixture extends FixtureInstance
      */
     private _makeSegmentChunks(
         ids: (number | string)[],
-        layer: LayerInstance
+        layer: LayerInstance,
+        segmentWidth: number
     ): Promise<SegmentChunk>[] {
         return ids.map<Promise<SegmentChunk>>(async (idx: number | string) => {
             await Promise.all(layer.getLegend(idx).map(lg => lg.drawPromise));
             const symbologyStack = layer.getLegend(idx);
 
-            const title = new fabric.Text(layer.getName(idx), {
+            const title = new fabric.Textbox(layer.getName(idx), {
                 fontSize: 20,
-                fontFamily: DEFAULT_FONT
+                fontFamily: DEFAULT_FONT,
+                width: segmentWidth,
+                objectCaching: false
             });
 
             const items = await Promise.all(
-                this._makeChunkItems(symbologyStack)
+                this._makeChunkItems(symbologyStack, segmentWidth)
             );
 
             return {
@@ -196,7 +276,8 @@ class ExportV1LegendFixture extends FixtureInstance
      * @memberof ExportV1LegendFixture
      */
     private _makeChunkItems(
-        symbologyStack: LegendSymbology[]
+        symbologyStack: LegendSymbology[],
+        segmentWidth: number
     ): Promise<fabric.Group>[] {
         return symbologyStack.map(async symbol => {
             const fbSymbol = (
@@ -206,18 +287,38 @@ class ExportV1LegendFixture extends FixtureInstance
             fbSymbol.originY = 'center';
             fbSymbol.top = ROW_HEIGHT / 2;
 
-            const fbLabel = new fabric.Text(symbol.label, {
+            const fbLabel = new fabric.Textbox(symbol.label, {
                 fontSize: 12,
                 fontFamily: DEFAULT_FONT,
                 originY: 'center',
                 left: ICON_WIDTH + 20,
-                top: ROW_HEIGHT / 2
+                top: ROW_HEIGHT / 2,
+                width: segmentWidth - ICON_WIDTH - 20,
+                objectCaching: false
             });
 
             return new fabric.Group([fbSymbol, fbLabel], {
-                height: ROW_HEIGHT
+                height: ROW_HEIGHT,
+                objectCaching: false
             });
         });
+    }
+
+    /**
+     * Gets flattened array of ids from layer tree
+     *
+     * @private
+     * @param {TreeNode} node
+     * @returns {number[]}
+     * @memberof ExportV1LegendFixture
+     */
+    private _getLayerTreeIds(node: TreeNode): number[] {
+        return ([] as number[]).concat.apply(
+            [],
+            node.isLayer
+                ? [node.layerIdx]
+                : node.children.map(c => this._getLayerTreeIds(c))
+        );
     }
 }
 
