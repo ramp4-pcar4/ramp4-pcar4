@@ -39,6 +39,23 @@ module.exports = {
         }
     },
     chainWebpack: config => {
+        // setup alias to @vue/compat and enable in build options
+        config.resolve.alias.set('vue', '@vue/compat');
+
+        config.module
+            .rule('vue')
+            .use('vue-loader')
+            .tap(options => {
+                return {
+                    ...options,
+                    compilerOptions: {
+                        compatConfig: {
+                            MODE: 2
+                        }
+                    }
+                }
+            });
+
         config.performance.hints(false);
 
         // remove the prefetch plugin: stops downloading split code chunks until they are needed
