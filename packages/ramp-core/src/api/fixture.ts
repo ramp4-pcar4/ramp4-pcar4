@@ -117,7 +117,7 @@ export class FixtureAPI extends APIScope {
     get<T extends FixtureBase = FixtureBase>(item: string[]): T[];
     get<T extends FixtureBase = FixtureBase>(
         item: string | FixtureBase | string[]
-    ): T | T[] {
+    ): T | undefined | (T | undefined)[] {
         const ids: string[] = [];
 
         // parse the input and figure our what it is
@@ -132,7 +132,7 @@ export class FixtureAPI extends APIScope {
         const fixtures = ids.map(id => {
             const fixture = this.$vApp.$store.get<T>(`fixture/items@${id}`);
             if (!fixture) {
-                throw new Error("fixture doesn't exist");
+                return undefined;
             }
 
             return fixture;

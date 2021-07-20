@@ -2,7 +2,7 @@
     <appbar-button :onClickFunction="onClick" :tooltip="$t('basemap.title')">
         <!-- Basemap icon -->
         <svg
-            class="fill-current w-24 h-24 ml-8 md:ml-20"
+            class="fill-current w-24 h-24 ml-8 sm:ml-20"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
         >
