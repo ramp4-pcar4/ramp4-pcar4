@@ -187,6 +187,7 @@ class FocusListManager {
         item.classList.add(FOCUSED_CLASS);
         this.setAriaActiveDescendant(item);
         this.setTabIndex(0, item);
+        item.scrollIntoView({ block: 'nearest' });
         if ((item as any)._tippy) {
             (item as any)._tippy.show();
         }
@@ -256,9 +257,11 @@ class FocusListManager {
         const tempFocusManager = this;
         const listOfItems: HTMLElement[] = Array.prototype.filter.call(
             this.element.querySelectorAll(`[${ITEM_ATTR}]`),
-            (el: Element) => {
+            (el: HTMLElement) => {
+                // !!el.offsetParent == true if the element is visible
                 return (
-                    el.closest(`[${LIST_ATTR}]`) === tempFocusManager.element
+                    el.closest(`[${LIST_ATTR}]`) === tempFocusManager.element &&
+                    !!el.offsetParent
                 );
             }
         );
