@@ -266,10 +266,11 @@ export interface TabularAttributeSet {
 
 export interface LegendSymbology {
     label: string;
-    definitionClause: string;
+    definitionClause?: string;
     svgcode: string;
-    drawPromise: Promise<void>;
-    // TODO might need to add something to support image-based legends we find in WMS or custom stacks from the config
+    drawPromise?: Promise<void>;
+    imgHeight?: string; // height of the original legend graphic (for wms layers)
+    imgWidth?: string; // width of the original legend graphic (for wms layers)
 }
 
 export interface ArcGisServerUrl {
@@ -440,8 +441,8 @@ export interface RampLayerWmsLayerEntryConfig {
     state?: RampLayerStateConfig;
     // following items need to be flushed out
     controls?: any;
-    currentStyle?: string;
-    styleToURL?: { [key: string]: string }; // are we migrating this functionality?
+    currentStyle?: string; // style to be used
+    styleToUrl?: { [key: string]: string }; // map of styles to legend graphic url
     // more...
 }
 

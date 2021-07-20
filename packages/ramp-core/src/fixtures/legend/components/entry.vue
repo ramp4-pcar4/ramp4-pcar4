@@ -85,20 +85,41 @@
         >
             <!-- display each symbol -->
             <div
-                class="p-5 flex items-center"
+                class="m-5"
                 v-for="(item, idx) in legendItem.layer.getLegend(
                     legendItem.uid
                 )"
                 :key="idx"
             >
-                <div class="symbologyIcon">
-                    <span v-html="item.svgcode"></span>
+                <!-- for WMS layers -->
+                <div
+                    v-if="layerType === 'wms'"
+                    class="items-center grid-cols-1"
+                >
+                    <div
+                        v-if="item.imgHeight"
+                        class="symbologyIcon w-full p-5"
+                        v-html="getLegendGraphic(item)"
+                    ></div>
+                    <div
+                        v-if="item.label"
+                        class="flex-1 p-5 bg-black-75 text-white"
+                        v-truncate
+                    >
+                        {{ item.label }}
+                    </div>
                 </div>
-
-                <div class="flex-1 ml-15" v-truncate>{{ item.label }}</div>
-
-                <!-- TODO: add visibility button functionality. It should toggle each symbol individually. -->
-                <checkbox :value="visibility" :legendItem="legendItem" />
+                <!-- for non-WMS layers -->
+                <div v-else class="flex items-center">
+                    <div class="symbologyIcon">
+                        <span v-html="item.svgcode"></span>
+                    </div>
+                    <div class="flex-1 ml-15" v-truncate>
+                        {{ item.label }}
+                    </div>
+                    <!-- TODO: add visibility button functionality. It should toggle each symbol individually. -->
+                    <checkbox :value="visibility" :legendItem="legendItem" />
+                </div>
             </div>
         </div>
     </div>
@@ -198,6 +219,27 @@ export default class LegendEntryV extends Vue {
 
     get shellEl() {
         return this.$refs.shell;
+    }
+
+    get layerType() {
+        return this.legendItem.layer?.esriLayer?.type;
+    }
+
+    /**
+     * Returns a span containing the resized legend graphic.
+     */
+    getLegendGraphic(item: any): string | undefined {
+        const span = document.createElement('span');
+        span.innerHTML = item.svgcode;
+        const svg = span.firstElementChild;
+        // Take the min width between the image and the legenditem in case the image is very large.
+        // Use legendItem width*0.8 so that there's some whitespace on the sides (r2 does this).
+        const w = Math.min(item.imgWidth, this.$el.clientWidth * 0.8);
+        // Calculating height manually because scaling svgs is a bit finnicky and I'm not an expert.
+        const h = (item.imgHeight / item.imgWidth) * w;
+        svg?.setAttribute('height', h.toString());
+        svg?.setAttribute('width', w.toString());
+        return span.outerHTML;
     }
 
     removeLayer() {
