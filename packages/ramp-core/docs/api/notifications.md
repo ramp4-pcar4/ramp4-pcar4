@@ -2,7 +2,7 @@
 
 ## Overview
 
-The notification API provides the ability to alert users to errors, warnings or general info about what is happening in the app.
+The notifications API provides the ability to alert users to errors, warnings or general info about what is happening in the app.
 
 
 
@@ -12,9 +12,9 @@ As stated above there are three types of notifications; `error`, `warning` and `
 
 ```js
 var rInstance = new RAMP.Instance(domElement, configs);
-rInstance.notification.showInfo("The map has been created!");
-rInstance.notification.showError("Could not connect to the server for fixture A, try reloading the page");
-rInstance.notification.showWarning("Slow response times from the server");
+rInstance.notifications.showInfo("The map has been created!");
+rInstance.notifications.showError("Could not connect to the server for fixture A, try reloading the page");
+rInstance.notifications.showWarning("Slow response times from the server");
 ```
 
 In real cases errors and warnings would probably not be right after the instance creation and would be in a callback or some error handling code.
@@ -23,10 +23,10 @@ In real cases errors and warnings would probably not be right after the instance
 
 ## Grouping notifications
 
-The notification API allows the creation of groups
+The notifications API also allows the creation of groups
 
 ```js
-let serverErrors = rInstance.notification.addGroup('server-errors', 'error', 'Some servers seem to be having issues');
+let serverErrors = rInstance.notifications.addGroup('server-errors', 'error', 'Some servers seem to be having issues');
 ```
 
 After creating a group you can show messages in them
