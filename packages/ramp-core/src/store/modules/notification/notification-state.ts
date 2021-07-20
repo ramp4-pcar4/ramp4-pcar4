@@ -1,14 +1,5 @@
 export class NotificationState {
-    notificationStack: (Notification | NotificationGroup)[] = [
-        {
-            message: 'hello',
-            type: 'info'
-        },
-        {
-            message: 'AHHH',
-            type: 'error'
-        }
-    ];
+    notificationStack: (Notification | NotificationGroup)[] = [];
 
     groups: { [id: string]: NotificationGroup } = {};
 }
