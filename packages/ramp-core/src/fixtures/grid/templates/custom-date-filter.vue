@@ -22,9 +22,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue } from 'vue-property-decorator';
 
-@Component
 export default class GridCustomDateFilterV extends Vue {
     beforeMount() {
         // Load previously stored values (if saved in table state manager)

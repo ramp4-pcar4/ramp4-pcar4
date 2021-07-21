@@ -16,9 +16,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Prop } from 'vue-property-decorator';
 
-@Component
 export default class MapnavButtonV extends Vue {
     @Prop() onClickFunction!: any;
     @Prop() tooltip?: string;

@@ -14,9 +14,8 @@
     </appbar-button>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue } from 'vue-property-decorator';
 
-@Component
 export default class GeosearchAppbarButtonV extends Vue {
     onClick() {
         this.$iApi.panel.toggle('geosearch-panel');

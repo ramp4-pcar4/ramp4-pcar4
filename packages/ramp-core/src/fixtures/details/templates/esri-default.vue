@@ -13,11 +13,10 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Prop } from 'vue-property-decorator';
 
 import { IdentifyItem } from '@/geo/api';
 
-@Component({})
 export default class ESRIDefaultV extends Vue {
     // passed in by the details panel. Contains all of the identify data.
     @Prop() identifyData!: IdentifyItem;

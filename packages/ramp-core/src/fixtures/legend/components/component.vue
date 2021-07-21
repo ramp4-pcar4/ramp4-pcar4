@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Prop } from 'vue-property-decorator';
 
 import { LegendItem, LegendTypes } from '../store/legend-defs';
 
@@ -17,7 +17,6 @@ import LegendGroupV from './group.vue';
 import LegendVisibilitySetV from './visibility-set.vue';
 import LegendPlaceholderV from './placeholder.vue';
 
-@Component
 export default class LegendComponentV extends Vue {
     @Prop() legendItem!: LegendItem;
     @Prop() props!: any;

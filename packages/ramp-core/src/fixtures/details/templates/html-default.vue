@@ -8,11 +8,10 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Prop } from 'vue-property-decorator';
 
 import { IdentifyItem } from '@/geo/api';
 
-@Component({})
 export default class HTMLDefaultV extends Vue {
     @Prop() identifyData!: IdentifyItem;
 }

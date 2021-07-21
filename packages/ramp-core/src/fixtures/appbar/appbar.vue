@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Options } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 
 import { AppbarItemInstance } from './store';
@@ -45,7 +45,7 @@ import NotificationsAppbarButtonV from '@/components/notification-center/appbar-
 Vue.component('divider', DividerV);
 Vue.component('appbar-button', AppbarButtonV);
 
-@Component({
+@Options({
     components: {
         'more-button': MoreAppbarButtonV,
         'nav-button': NavAppbarButtonV,

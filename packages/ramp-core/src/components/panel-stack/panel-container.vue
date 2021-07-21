@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Prop } from 'vue-property-decorator';
 
 import anime from 'animejs';
 
@@ -47,7 +47,6 @@ Vue.component('minimize', MinimizeV);
 
 import { PanelInstance } from '@/api';
 
-@Component
 export default class PanelContainerV extends Vue {
     @Prop() panel!: PanelInstance;
 

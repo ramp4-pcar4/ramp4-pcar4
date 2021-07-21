@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Watch, Component } from 'vue-property-decorator';
+import { Vue, Watch } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { RampLayerConfig, RampMapConfig } from '@/geo/api';
 import { GlobalEvents, LayerInstance, MapAPI } from '@/api/internal';
@@ -27,7 +27,6 @@ import { LayerStore } from '@/store/modules/layer';
 import to from 'await-to-js';
 import { MaptipStore } from '@/store/modules/maptip';
 
-@Component
 export default class EsriMapV extends Vue {
     @Get(ConfigStore.getMapConfig) mapConfig!: RampMapConfig;
 

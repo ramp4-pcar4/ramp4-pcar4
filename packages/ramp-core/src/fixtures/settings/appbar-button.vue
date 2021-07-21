@@ -16,9 +16,8 @@
     </appbar-button>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue } from 'vue-property-decorator';
 
-@Component
 export default class SettingsAppbarButtonV extends Vue {
     onClick() {
         this.$iApi.panel.toggleMinimize('settings-panel');

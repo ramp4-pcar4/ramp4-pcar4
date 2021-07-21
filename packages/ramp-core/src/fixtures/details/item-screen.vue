@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { DetailsStore, DetailsItemInstance } from './store';
 
@@ -68,7 +68,7 @@ import { IdentifyResult, IdentifyResultFormat } from '@/geo/api';
 import ESRIDefaultV from './templates/esri-default.vue';
 import HTMLDefaultV from './templates/html-default.vue';
 
-@Component({
+@Options({
     components: {
         'esri-default': ESRIDefaultV,
         'html-default': HTMLDefaultV

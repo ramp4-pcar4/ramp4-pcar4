@@ -33,14 +33,13 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { DetailsStore } from './store';
 
 import { LayerInstance, PanelInstance } from '@/api';
 import { IdentifyResult } from '@/geo/api';
 
-@Component({})
 export default class DetailsLayersScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     @Get(DetailsStore.payload) payload!: IdentifyResult[];

@@ -85,7 +85,7 @@ Additionally, it's possible to provide locale messages directly to the screen co
 
 ```ts
 // screen-component.vue
-@Component({
+@Options({
     i18n: {
         messages: {
             en: {
@@ -102,7 +102,7 @@ The above requires hardcoding locale string into the component file. If using a 
 // screen-component.vue
 import messages from './lang.csv'
 
-@Component({
+@Options({
     i18n: {
         messages
     }

@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Options } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 
 import FullscreenNavV from './buttons/fullscreen-nav.vue';
@@ -36,7 +36,7 @@ Vue.component('fullscreen-nav-button', FullscreenNavV);
 Vue.component('home-nav-button', HomeNavV);
 Vue.component('mapnav-button', MapnavButtonV);
 
-@Component({
+@Options({
     components: {
         'divider-nav': DividerNavV,
         'zoom-nav-section': ZoomNavV

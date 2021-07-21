@@ -51,14 +51,13 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { Extent, RampMapConfig } from '@/geo/api';
 import { GlobalEvents, OverviewMapAPI } from '@/api/internal';
 import { OverviewmapStore } from './store';
 import { defaultMercator, defaultLambert } from './default-config';
 
-@Component({})
 export default class OverviewmapV extends Vue {
     @Get(OverviewmapStore.mapConfig) mapConfig!: RampMapConfig;
     @Get(OverviewmapStore.startMinimized) startMinimized!: boolean;

@@ -100,7 +100,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Options, Prop } from 'vue-property-decorator';
 
 import { PanelInstance } from '@/api';
 
@@ -109,7 +109,7 @@ import { GlobalEvents, LayerInstance } from '@/api/internal';
 import { LegendEntry } from '../legend/store/legend-defs';
 import { LayerType } from '@/geo/api';
 
-@Component({
+@Options({
     components: {
         'settings-component': SettingsComponentV
     }

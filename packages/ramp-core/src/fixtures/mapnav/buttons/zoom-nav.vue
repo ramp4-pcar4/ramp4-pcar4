@@ -28,11 +28,11 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Options } from 'vue-property-decorator';
 import { throttle } from 'throttle-debounce';
 import DividerNavV from './divider-nav.vue';
 
-@Component({
+@Options({
     components: {
         'divider-nav': DividerNavV
     }

@@ -19,10 +19,9 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
-@Component
 export default class SliderControl extends Vue {
     @Prop() config!: any;
     @Prop() name!: string;

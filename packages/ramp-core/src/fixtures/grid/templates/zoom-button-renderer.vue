@@ -23,11 +23,10 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { LayerInstance } from '@/api/internal';
 
-@Component
 export default class ZoomButtonRendererV extends Vue {
     @Get('layer/getLayerByUid') getLayerByUid!: (
         uid: string

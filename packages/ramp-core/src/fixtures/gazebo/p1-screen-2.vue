@@ -30,10 +30,9 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue } from 'vue-property-decorator';
 import { PanelInstance } from '../../api';
 
-@Component({})
 export default class GazeboP1Scree2V extends Vue {
     url: string =
         'https://i2.wp.com/freepngimages.com/wp-content/uploads/2016/02/garden-shed-transparent-image-2.png?w=693';

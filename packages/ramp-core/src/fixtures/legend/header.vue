@@ -85,13 +85,12 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue } from 'vue-property-decorator';
 import { Call } from 'vuex-pathify';
 
 import { LegendStore } from './store';
 import { GlobalEvents } from '../../api/internal';
 
-@Component
 export default class LegendHeaderV extends Vue {
     @Call(LegendStore.showAll) show!: () => void;
     @Call(LegendStore.hideAll) hide!: () => void;

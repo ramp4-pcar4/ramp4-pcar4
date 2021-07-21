@@ -75,12 +75,11 @@
 
 <script lang="ts">
 import { RampBasemapConfig, RampTileSchemaConfig } from '@/geo/api';
-import { Vue, Prop, Component } from 'vue-property-decorator';
+import { Vue, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 
 import { BasemapStore } from './store';
 
-@Component
 export default class BasemapItemV extends Vue {
     @Prop() basemap!: RampBasemapConfig;
     @Prop() tileSchema!: RampTileSchemaConfig;

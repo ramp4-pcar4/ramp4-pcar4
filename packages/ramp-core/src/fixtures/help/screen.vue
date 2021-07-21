@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 
 import { PanelInstance } from '@/api';
@@ -31,7 +31,7 @@ import HelpSectionV from './section.vue';
 import axios from 'axios';
 import marked from 'marked';
 
-@Component({
+@Options({
     components: {
         'help-section': HelpSectionV
     }

@@ -27,10 +27,9 @@
 
 <script lang="ts">
 import { CoreFilter, LayerType } from '@/geo/api';
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Prop } from 'vue-property-decorator';
 import { LegendEntry, LegendItem } from '../store/legend-defs';
 
-@Component
 export default class CheckboxV extends Vue {
     @Prop() value!: any;
     @Prop() legendItem!: LegendEntry;

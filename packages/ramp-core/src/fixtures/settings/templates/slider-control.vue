@@ -19,13 +19,13 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
 import VueSlider from 'vue-slider-component';
 import 'vue-slider-component/theme/default.css';
 
-@Component({
+@Options({
     components: { VueSlider }
 })
 export default class SliderControl extends Vue {

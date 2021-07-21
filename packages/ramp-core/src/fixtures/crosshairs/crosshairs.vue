@@ -47,10 +47,9 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue } from 'vue-property-decorator';
 import { GlobalEvents } from '@/api';
 
-@Component({})
 export default class CrosshairsV extends Vue {
     visible: boolean = false;
 

@@ -148,14 +148,14 @@
 
 <script lang="ts">
 import { GlobalEvents } from '@/api';
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Options, Prop } from 'vue-property-decorator';
 import { LegendEntry, Controls, LegendGroup } from '../store/legend-defs';
 import LegendCheckboxV from './checkbox.vue';
 import LegendSymbologyStackV from './symbology-stack.vue';
 import LegendOptionsV from './legend-options.vue';
 import { LegendSymbology } from '@/geo/api';
 
-@Component({
+@Options({
     components: {
         checkbox: LegendCheckboxV,
         'symbology-stack': LegendSymbologyStackV,

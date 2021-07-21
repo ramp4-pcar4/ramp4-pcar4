@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Prop } from 'vue-property-decorator';
 
 // Import control templates.
 import SliderControl from './templates/slider-control.vue';
@@ -17,7 +17,6 @@ import ToggleButtonControl from './templates/toggle-button-control.vue';
 import InputControl from './templates/input-control.vue';
 import { svgIcons } from './templates/icons';
 
-@Component
 export default class SettingsComponentV extends Vue {
     @Prop() type!: string;
     @Prop() config!: any;

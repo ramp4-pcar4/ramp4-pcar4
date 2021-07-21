@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Options } from 'vue-class-component';
 
 import Shell from '@/components/shell.vue';
 
@@ -28,7 +28,7 @@ import VueTippy, { TippyComponent, tippy } from 'vue-tippy';
 Vue.use(VueTippy);
 Vue.component('tippy', TippyComponent);
 
-@Component({
+@Options({
     components: {
         Shell
     }

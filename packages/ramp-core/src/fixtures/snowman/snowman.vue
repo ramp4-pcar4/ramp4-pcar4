@@ -5,12 +5,11 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Prop } from 'vue-property-decorator';
 import { FixtureInstance } from '@/api';
 
 // this is an example of a on-map component (doesn't use panels)
 
-@Component({})
 export default class SnowmanV extends Vue {
     @Prop() fixture!: FixtureInstance; // this prop is passed to this component by its fixture main class
     @Prop() message!: string;

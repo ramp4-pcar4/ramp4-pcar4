@@ -174,7 +174,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
 import { PanelInstance } from '@/api';
@@ -188,7 +188,7 @@ import WizardFormFooterV from './form-footer.vue';
 import StepperItemV from './stepper-item.vue';
 import StepperV from './stepper.vue';
 
-@Component({
+@Options({
     components: {
         'wizard-form-footer': WizardFormFooterV,
         'stepper-item': StepperItemV,

@@ -21,11 +21,10 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
+import { Vue, Prop, Watch } from 'vue-property-decorator';
 //@ts-ignore
 import { createPopper, Placement } from '@popperjs/core';
 
-@Component
 export default class DropdownMenuV extends Vue {
     @Prop({ default: 'bottom' }) position!: Placement;
     @Prop() tooltip?: string;

@@ -20,9 +20,8 @@
 // use Vue decorators for a more complex example
 // this will results in a somewhat larger bundles since Vue decorators will be included in the bundle
 
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Prop } from 'vue-property-decorator';
 
-@Component
 export default class IklobFixtureV extends Vue {
     @Prop() panel!: any; /* PanelInstance ;*/ // TODO: import `PanelInstance` type
 }

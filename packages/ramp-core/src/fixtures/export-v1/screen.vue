@@ -32,14 +32,13 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Prop } from 'vue-property-decorator';
 
 import { PanelInstance } from '@/api';
 import { ExportV1API } from './api';
 
 import { debounce } from 'throttle-debounce';
 
-@Component({})
 export default class ExportV1ScreenV extends Vue {
     @Prop() panel!: PanelInstance;
 

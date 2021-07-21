@@ -18,9 +18,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Prop } from 'vue-property-decorator';
 
-@Component
 export default class AppbarButtonV extends Vue {
     @Prop() onClickFunction!: any;
     @Prop() id!: any;

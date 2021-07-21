@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { PanelInstance } from '@/api';
 
@@ -32,7 +32,7 @@ import { LegendEntry, LegendGroup } from './store/legend-defs';
 import LegendHeaderV from './header.vue';
 import LegendComponentV from './components/component.vue';
 
-@Component({
+@Options({
     components: {
         'legend-header': LegendHeaderV,
         'legend-component': LegendComponentV

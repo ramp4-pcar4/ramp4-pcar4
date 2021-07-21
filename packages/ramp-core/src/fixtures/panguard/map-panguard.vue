@@ -5,9 +5,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue } from 'vue-property-decorator';
 
-@Component
 export default class MapPanguardV extends Vue {
     timeoutID: number | undefined = undefined;
 

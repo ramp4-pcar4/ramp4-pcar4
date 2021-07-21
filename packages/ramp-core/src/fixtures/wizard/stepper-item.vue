@@ -51,9 +51,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Inject } from 'vue-property-decorator';
+import { Vue, Prop, Inject } from 'vue-property-decorator';
 
-@Component
 export default class WizardStepperItemV extends Vue {
     @Prop() title!: string;
     @Prop() summary!: string;

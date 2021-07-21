@@ -5,9 +5,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch, Prop, Provide } from 'vue-property-decorator';
+import { Vue, Watch, Prop, Provide } from 'vue-property-decorator';
 
-@Component
 export default class WizardStepperV extends Vue {
     @Prop({ default: 0 }) activeStep!: number;
     @Provide() stepper = { activeIndex: this.activeStep, numSteps: 0 };

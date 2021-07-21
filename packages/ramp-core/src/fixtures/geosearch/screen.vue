@@ -96,7 +96,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { PanelInstance } from '@/api';
 
@@ -107,7 +107,7 @@ import GeosearchTopFiltersV from './top-filters.vue';
 import GeosearchBottomFiltersV from './bottom-filters.vue';
 import GeosearchLoadingBarV from './loading-bar.vue';
 
-@Component({
+@Options({
     components: {
         'geosearch-bar': GeosearchSearchBarV,
         'geosearch-top-filters': GeosearchTopFiltersV,

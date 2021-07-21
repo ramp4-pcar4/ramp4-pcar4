@@ -63,12 +63,12 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Options, Prop } from 'vue-property-decorator';
 
 import { LegendGroup, LegendTypes } from '../store/legend-defs';
 import LegendCheckboxV from './checkbox.vue';
 
-@Component({
+@Options({
     components: {
         LegendComponent: () => import('./component.vue'),
         checkbox: LegendCheckboxV

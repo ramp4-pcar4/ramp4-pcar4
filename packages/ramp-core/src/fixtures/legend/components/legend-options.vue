@@ -124,13 +124,12 @@
 <script lang="ts">
 import { GlobalEvents } from '@/api';
 import { LayerType } from '@/geo/api';
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
 import { LegendStore } from '../store';
 import { LegendEntry, Controls } from '../store/legend-defs';
 
-@Component({})
 export default class LegendOptionsV extends Vue {
     @Prop() legendItem!: LegendEntry;
     @Call(LegendStore.removeLayerEntry) removeLayerEntry!: (

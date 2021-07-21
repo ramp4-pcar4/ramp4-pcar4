@@ -11,13 +11,12 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue } from 'vue-property-decorator';
 import { Get, Call } from 'vuex-pathify';
 
 import { GeosearchStore } from './store';
 import { debounce } from 'throttle-debounce';
 
-@Component
 export default class GeosearchSearchBarV extends Vue {
     // fetch geosearch search value from store
     @Get(GeosearchStore.searchVal) searchVal!: string;

@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { NortharrowStore } from './store';
 import { GlobalEvents } from '@/api/internal';
@@ -16,7 +16,6 @@ import { Extent, Point } from '@/geo/api';
 import flag from './flag.json';
 import { debounce } from 'throttle-debounce';
 
-@Component({})
 export default class NortharrowV extends Vue {
     @Get(NortharrowStore.arrowIcon) arrowIcon!: string;
     @Get(NortharrowStore.poleIcon) poleIcon!: string;

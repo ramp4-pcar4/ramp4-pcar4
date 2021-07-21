@@ -46,9 +46,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue } from 'vue-property-decorator';
 
-@Component
 export default class NavAppbarButtonV extends Vue {
     exportToggle() {
         this.$iApi.panel.toggle('export-v1-panel');

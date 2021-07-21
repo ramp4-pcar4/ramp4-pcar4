@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Prop } from 'vue-property-decorator';
 
 import { PanelInstance } from '@/api';
 import { MetadataPayload, MetadataResult, MetadataState } from './definitions';
@@ -59,7 +59,6 @@ import { MetadataPayload, MetadataResult, MetadataState } from './definitions';
 import XSLT_en from './files/xstyle_default_en.xsl';
 import XSLT_fr from './files/xstyle_default_fr.xsl';
 
-@Component
 export default class MetadataScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     @Prop() payload!: MetadataPayload;

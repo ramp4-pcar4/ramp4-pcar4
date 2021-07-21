@@ -21,10 +21,10 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Options } from 'vue-property-decorator';
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 
-@Component({
+@Options({
     components: {
         'dropdown-menu': DropdownMenuV
     }

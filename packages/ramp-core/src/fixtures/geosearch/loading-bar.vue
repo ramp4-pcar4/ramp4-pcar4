@@ -13,9 +13,8 @@
 </template>
 
 <script>
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue } from 'vue-property-decorator';
 
-@Component
 export default class GeosearchLoadingBarV extends Vue {}
 </script>
 
