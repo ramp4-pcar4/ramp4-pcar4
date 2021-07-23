@@ -1138,12 +1138,21 @@
                     "default": "",
                     "description": "A descriptive name for the layer. To be used in the legend."
                 },
-                "allStyles": {
+                "styleLegends": {
                     "type": "array",
-                    "default": [],
-                    "description": "All styles for layer entry in the WMS.",
+                    "description": "List of map of all styles to legend graphic URL for layer entry in the WMS. Overrides the URLs from the WMS service.",
                     "items": {
-                        "type": "string"
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "The name of the style."
+                            },
+                            "url": {
+                                "type": "string",
+                                "description": "The URL to the legend graphic."
+                            }
+                        }
                     }
                 },
                 "currentStyle": {

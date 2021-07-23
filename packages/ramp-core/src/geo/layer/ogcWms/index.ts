@@ -11,7 +11,7 @@ import {
     RampLayerWmsLayerEntryConfig,
     TreeNode
 } from '@/geo/api';
-import { EsriRequest, EsriWMSLayer } from '@/geo/esri';
+import { EsriRequest, EsriWMSLayer, EsriWMSSublayer } from '@/geo/esri';
 import { WmsFC } from './wms-fc';
 
 export default class WmsLayer extends CommonLayer {
@@ -61,21 +61,20 @@ export default class WmsLayer extends CommonLayer {
         //           out WmsFCs for each active sublayer and wire up a visibility
         //           pipeline similar to MapImageLayer
 
-        // this is how the very basic example on esri api page recommends doing it.
-        // is it possible to have nested sublayer structures on the server?
-        // if so, will this type of flat initialization appropriately map itself
-        // to the tree upon layer load event?
-        esriConfig.sublayers = this.sublayerNames.map(sln => {
-            return {
-                name: sln
-            };
-        });
-
+        // NOTE: Using a style name that does not exist on the service is allowed, but will result in an (non-fatal) error on the console.
+        // The legend graphic provided in the config will display, and the default style for the GetMap call will be used.
         const styles = lEntries.map(e => e.currentStyle).join();
 
-        esriConfig.customLayerParameters = {
+        // TODO: Setting the style doesn't work right now - at least not for the GetLegendGraphic call. Need further investigation on this.
+        esriConfig.customParameters = {
             styles: styles
         };
+
+        // do a GetCapabilities call for only the specified layer if it is a geomet layer
+        if (rampLayerConfig.url.indexOf('/geomet') !== -1) {
+            // multiple values for layer/layers parameter currently not supported by geomet
+            esriConfig.customParameters.layers = lEntries[0].id;
+        }
 
         // TODO need to test the .suppressGetCapabilities functionality.
         //      we no longer have .resourceInfo on the layer constructor.
@@ -85,6 +84,8 @@ export default class WmsLayer extends CommonLayer {
         //      was a flat array.
         //      also, the ESRI doc as of 4.14 seems to indicate it always makes
         //      a getcapabilities call so this might be a lost cause
+
+        // looks like the GetCapabilities call is always made: https://community.esri.com/t5/arcgis-api-for-javascript/create-wms-layer-without-getcapabilities-request/td-p/1002080
 
         // old code:
 
@@ -119,26 +120,27 @@ export default class WmsLayer extends CommonLayer {
         // TODO see if we need to re-synch the parent name
         // this.layerTree.name = this.name;
 
-        /*
-        // Attempt to set visibility of the sublayers we want. Doesn't work; the esri api definitions
-        // and what we get from a raw initialized layer seem totally off. That said we may not need this
-        // unless we encounter some weird nested layer service.
-        const crawlSublayers = (sublayers: esri.Collection<esri.WMSSublayer>): void => {
+        // Set visibility of sublayers based on presence in the config
+        const crawlSublayers = (
+            sublayers: __esri.Collection<EsriWMSSublayer>
+        ): void => {
             sublayers.forEach(sl => {
-                // set visibility based on presence in the config
                 sl.visible = this.sublayerNames.indexOf(sl.name) > -1;
-                // recurse the tree
-                if (sl.sublayers.length > 0) {
-                    crawlSublayers(sl.sublayers);
+                // if this sublayer is visible, then all of its sublayers should remain visible as well
+                if (!sl.visible) {
+                    if (sl.sublayers && sl.sublayers.length > 0) {
+                        crawlSublayers(sl.sublayers);
+                    }
                 }
             });
         };
+        if (this.esriLayer) {
+            crawlSublayers(this.esriLayer.sublayers);
+        } else {
+            this.noLayerErr();
+        }
 
-        crawlSublayers(this._innerLayer.sublayers);
-        */
-
-        // TODO implement symbology load
-        // loadPromises.push(wmsFC.loadSymbology());
+        loadPromises.push(wmsFC.loadSymbology());
 
         // TODO check out whats going on with layer extent. is it set and donethanks?
 
@@ -401,68 +403,42 @@ export default class WmsLayer extends CommonLayer {
         });
     }
 
-    // TODO this needs to be revisted once config schema is settle.
-    //      in particular, if the param is wms config sublayers,
-    //      and if we still have the style magic going on.
-    //      it could be an object coming from parseCapabilities above.
-    //      or its a mix between that result and the config object
-    // NOTE this function totally untested
     /**
      * Finds the appropriate legend URLs for WMS layers.
      *
-     * @param {WMSLayer} wmsLayer a RAMP WMSLayer object to be queried
      * @param {Array} layerList a list of objects identifying the WMS layers to be queried
      * @returns {Array} a list of strings containing URLs for specified layers (order is preserved)
      */
-    getLegendUrls(
-        layerList: Array<RampLayerWmsLayerEntryConfig>
-    ): Array<string> {
+    getLegendUrls(layerList: Array<any>): Array<string> {
         // TODO needs robust testing once something is using it
 
         if (!this.esriLayer) {
             this.noLayerErr();
-            return []; // blank svg might be better?
+            return [];
         }
 
-        // util to find all them legends
-        const crawlSublayers = (
-            sublayers: __esri.Collection<__esri.WMSSublayer>,
-            urlMap: Map<any, any>
-        ) => {
-            sublayers.forEach(sl => {
-                if (sl.name) {
-                    urlMap.set(sl.name, sl.legendUrl);
-                }
-                if (sl.sublayers.length > 0) {
-                    crawlSublayers(sl.sublayers, urlMap);
-                }
-            });
-        };
-
         const slMap = new Map();
-        crawlSublayers(this.esriLayer.sublayers, slMap);
+        // .allSublayers is a flat collection of all sublayers
+        this.esriLayer.allSublayers.forEach((sl: any) => {
+            slMap.set(sl.name, sl.legendUrl);
+        });
 
-        // NOTE currently this logic (from ramp 2) seems out of sycnh with the config schema
-        //      WMSLayerEntryNode does not appear to have .styleToURL or .currentStyle
-        //      might be generated by ramp core?
+        // get any legendUrls that were defined in the config
         const legendURLs = layerList.map(l =>
-            // @ts-ignore
-            typeof l.styleToURL !== 'undefined' &&
-            typeof l.currentStyle !== 'undefined'
-                ? l.styleToURL[<number>(<unknown>l.currentStyle)] // TODO: this is a type workaround since @ts-ignore isn't working with our linter
+            l.styleLegends && l.currentStyle
+                ? l.styleLegends.find((style: any) => {
+                      return style.name === l.currentStyle;
+                  }).url
                 : undefined
         );
 
-        // this appears to be finding items with no legend urls, and assigning
-        // the layer id instead. so i guess this just puts the text in the legend?
-        // solved it comes from the parsecapabilities function in this file
+        // this gets legendURLs in slMap (if it exists) for layers with undefined legendUrls
         legendURLs.forEach((entry, index) => {
             if (!entry) {
                 legendURLs[index] = slMap.get(layerList[index].id);
             }
         });
 
-        // @ts-ignore
         return legendURLs;
     }
 }

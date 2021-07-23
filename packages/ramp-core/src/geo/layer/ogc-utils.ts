@@ -231,13 +231,17 @@ export class OgcUtils extends APIScope {
                             const resource = style.LegendURL.OnlineResource;
                             // Yucky naming means no dot notation
                             const styleURL = resource['@_xlink:href'];
-                            styleToURL[styleName] = styleURL;
+                            // decode '&amp;' -> '&', which was encoded by XMLSerializer
+                            styleToURL[styleName] = styleURL.replaceAll(
+                                '&amp;',
+                                '&'
+                            );
                         }
                     });
                 }
                 return {
                     name: nameNode ? nameNode : null,
-                    desc: titleNode,
+                    title: titleNode,
                     queryable: layer['@_queryable'] === '1',
                     layers: getLayers(layer),
                     allStyles: allStyles,
@@ -268,10 +272,8 @@ export class OgcUtils extends APIScope {
                 ignoreAttributes: false // check for tag attributes
             };
             const jsonObj: any = parse(xmlData, options);
-            // We get an XML with a <ServiceExceptionReport> tag back
-            // when something goes wrong with the request.
-            // Might be able to get rid of this now that we are appending
-            // missing parameters to the URL.
+            // We get an XML with a <ServiceExceptionReport> tag back when something goes wrong with the request.
+            // Might be able to get rid of this now that we are appending missing parameters to the URL.
             if ('ServiceExceptionReport' in jsonObj) {
                 console.error(jsonObj.ServiceExceptionReport.ServiceException);
                 return [];
