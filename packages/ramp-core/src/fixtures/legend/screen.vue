@@ -13,9 +13,9 @@
             <legend-header></legend-header>
             <div v-focus-list>
                 <legend-component
-                    v-for="(item, idx) in children"
+                    v-for="item in children"
                     :legendItem="item"
-                    :key="idx"
+                    :key="item.uid"
                 ></legend-component>
             </div>
         </template>

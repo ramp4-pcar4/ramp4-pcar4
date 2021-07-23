@@ -105,7 +105,8 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import { PanelInstance } from '@/api';
 
 import SettingsComponentV from './component.vue';
-import { LayerInstance } from '@/api/internal';
+import { GlobalEvents, LayerInstance } from '@/api/internal';
+import { LegendEntry } from '../legend/store/legend-defs';
 
 @Component({
     components: {
@@ -116,6 +117,7 @@ export default class SettingsScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     @Prop() layer!: LayerInstance;
     @Prop() uid!: string;
+    @Prop() legendItem!: LegendEntry;
 
     // Models.
     visibilityModel: boolean = this.layer.getVisibility(this.uid);
@@ -128,12 +130,21 @@ export default class SettingsScreenV extends Vue {
             this.visibilityModel = this.layer.getVisibility(this.uid);
             this.opacityModel = this.layer.getOpacity(this.uid) * 100;
         });
+
+        this.$iApi.event.on(
+            GlobalEvents.LAYER_VISIBILITYCHANGE,
+            (newVisibility: any) => {
+                if (this.uid === newVisibility.uid) {
+                    this.visibilityModel = newVisibility.visibility;
+                }
+            }
+        );
     }
 
     // Update the layer visibility.
     updateVisibility(val: any) {
+        this.legendItem.toggleVisibility(val.value);
         this.visibilityModel = val.value;
-        this.layer.setVisibility(this.visibilityModel, this.uid);
     }
 
     // Update the layer opacity.
