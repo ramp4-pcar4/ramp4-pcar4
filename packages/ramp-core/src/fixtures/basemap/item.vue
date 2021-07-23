@@ -1,14 +1,15 @@
 <template>
     <div class="mb-10">
         <button
-            class="bg-gray-300"
+            class="basemap-item-button bg-gray-300"
             :aria-label="$t('basemap.select')"
             @click="selectBasemap(basemap)"
+            v-focus-item
         >
             <div>
                 <div v-if="basemap.wkid === 3978">
                     <div
-                        class="flex h-180 hover:opacity-50"
+                        class="flex h-180 hover:opacity-50 basemap-item-image"
                         v-for="layer in basemap.layers"
                         v-bind:key="layer.id"
                     >
@@ -26,7 +27,7 @@
                 </div>
                 <div v-else-if="basemap.wkid === 102100">
                     <div
-                        class="flex h-180 hover:opacity-50"
+                        class="flex h-180 hover:opacity-50 basemap-item-image"
                         v-for="layer in basemap.layers"
                         v-bind:key="layer.id"
                     >
@@ -45,7 +46,7 @@
             </div>
 
             <div
-                class="absolute flex w-full bg-black opacity-75 text-white h-30 bottom-0 items-center"
+                class="absolute flex w-full bg-black opacity-75 text-white h-30 bottom-6 items-center"
             >
                 <div class="pl-5" v-truncate>
                     <span>{{ basemap.name }}</span>
@@ -100,6 +101,16 @@ export default class BasemapItemV extends Vue {
 </script>
 
 <style lang="scss" scoped>
+[focus-list]:focus [focus-item].focused.basemap-item-button {
+    border: solid black 2px;
+}
+
+[focus-list]:focus
+    [focus-item].focused.basemap-item-button
+    .basemap-item-image {
+    opacity: 0.5;
+}
+
 .rv-basemap-check {
     &::before {
         content: '';
