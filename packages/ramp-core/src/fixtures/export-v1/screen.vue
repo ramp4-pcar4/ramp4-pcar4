@@ -37,6 +37,8 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import { PanelInstance } from '@/api';
 import { ExportV1API } from './api';
 
+import { debounce } from 'throttle-debounce';
+
 @Component({})
 export default class ExportV1ScreenV extends Vue {
     @Prop() panel!: PanelInstance;
@@ -46,10 +48,14 @@ export default class ExportV1ScreenV extends Vue {
     mounted() {
         this.fixture = this.$iApi.fixture.get('export-v1') as ExportV1API;
 
-        this.make();
+        const resizeObserver = new ResizeObserver(() => {
+            this.make();
+        });
+
+        resizeObserver.observe(this.$el);
     }
 
-    make() {
+    make = debounce(300, function(this: ExportV1ScreenV) {
         if (!this.fixture) {
             return;
         }
@@ -60,7 +66,7 @@ export default class ExportV1ScreenV extends Vue {
 
         // TODO: detect size of the canvas container properly
         this.fixture.make(canvasElement, this.$el.clientWidth - 16);
-    }
+    });
 }
 </script>
 

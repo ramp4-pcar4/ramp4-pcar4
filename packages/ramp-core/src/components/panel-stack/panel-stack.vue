@@ -24,13 +24,6 @@ import { PanelInstance } from '@/api';
 
 import PanelContainerV from './panel-container.vue';
 
-declare class ResizeObserver {
-    constructor(callback: Function);
-    observe(target: Element): void;
-    unobserve(target: Element): void;
-    disconnect(): void;
-}
-
 @Component({
     components: {
         'panel-container': PanelContainerV

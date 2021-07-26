@@ -125,10 +125,10 @@ class ExportV1LegendFixture extends FixtureInstance
                 );
 
                 // create a group for each config layer
-                return new fabric.Group(
-                    [segmentTitle, ...allChunkItems.flat()],
-                    { objectCaching: false }
-                );
+                return new fabric.Group([
+                    segmentTitle,
+                    ...allChunkItems.flat()
+                ]);
             })
             .flat();
 
@@ -192,8 +192,7 @@ class ExportV1LegendFixture extends FixtureInstance
         });
 
         return new fabric.Group(items, {
-            originX: 'center',
-            objectCaching: false
+            originX: 'center'
         });
     }
 
@@ -214,8 +213,7 @@ class ExportV1LegendFixture extends FixtureInstance
             const title = new fabric.Textbox(layer.getName(layer.uid), {
                 fontSize: 24,
                 fontFamily: DEFAULT_FONT,
-                width: segmentWidth,
-                objectCaching: false
+                width: segmentWidth
             });
 
             // filter out invisible layer entries
@@ -252,8 +250,7 @@ class ExportV1LegendFixture extends FixtureInstance
             const title = new fabric.Textbox(layer.getName(idx), {
                 fontSize: 20,
                 fontFamily: DEFAULT_FONT,
-                width: segmentWidth,
-                objectCaching: false
+                width: segmentWidth
             });
 
             const items = await Promise.all(
@@ -293,13 +290,11 @@ class ExportV1LegendFixture extends FixtureInstance
                 originY: 'center',
                 left: ICON_WIDTH + 20,
                 top: ROW_HEIGHT / 2,
-                width: segmentWidth - ICON_WIDTH - 20,
-                objectCaching: false
+                width: segmentWidth - ICON_WIDTH - 20
             });
 
             return new fabric.Group([fbSymbol, fbLabel], {
-                height: ROW_HEIGHT,
-                objectCaching: false
+                height: ROW_HEIGHT
             });
         });
     }
