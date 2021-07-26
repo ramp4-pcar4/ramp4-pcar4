@@ -51,6 +51,7 @@ export class InstanceAPI {
         this.fixture = new FixtureAPI(this); // pass the iApi reference to the FixtureAPI
         this.panel = new PanelAPI(this);
         this.geo = new GeoAPI(this);
+        //TODO before 1.0: is 'notifications' too long of a name? maybe 'log' or 'notify'
         this.notifications = new NotificationAPI(this);
 
         // TODO: decide whether to move to src/main.ts:createApp

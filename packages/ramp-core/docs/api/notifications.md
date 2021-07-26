@@ -12,9 +12,9 @@ As stated above there are three types of notifications; `error`, `warning` and `
 
 ```js
 var rInstance = new RAMP.Instance(domElement, configs);
-rInstance.notifications.showInfo("The map has been created!");
-rInstance.notifications.showError("Could not connect to the server for fixture A, try reloading the page");
-rInstance.notifications.showWarning("Slow response times from the server");
+rInstance.notifications.show("info", "The map has been created!");
+rInstance.notifications.show("error", "Could not connect to the server for fixture A, try reloading the page");
+rInstance.notifications.show("warning", "Slow response times from the server");
 ```
 
 In real cases errors and warnings would probably not be right after the instance creation and would be in a callback or some error handling code.
