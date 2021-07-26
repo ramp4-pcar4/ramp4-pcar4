@@ -4,7 +4,6 @@ import { make } from 'vuex-pathify';
 import { Notification, NotificationState } from './notification-state';
 import { NotificationGroup } from '@/api';
 import { RootState } from '@/store/state';
-import { Context } from 'ag-grid-community';
 
 type NotificationContext = ActionContext<NotificationState, RootState>;
 
@@ -15,7 +14,8 @@ export enum NotificationAction {
     showNotification = 'showNotification',
     removeNotification = 'removeNotification',
     registerGroup = 'registerGroup',
-    addToGroup = 'addToGroup'
+    addToGroup = 'addToGroup',
+    clearAll = 'clearAll'
 }
 
 export enum NotificationMutation {
@@ -24,16 +24,19 @@ export enum NotificationMutation {
     ADD_TO_GROUP = 'ADD_TO_GROUP',
     SHOW_GROUP = 'SHOW_GROUP',
     REMOVE_GROUP = 'REMOVE_GROUP',
-    REGISTER_GROUP = 'REGISTER_GROUP'
+    REGISTER_GROUP = 'REGISTER_GROUP',
+    CLEAR_ALL = 'CLEAR_ALL'
 }
 
 const getters = {
     notificationNumber: (state: NotificationState): Number => {
-        return state.notificationStack.length;
+        return state.notificationStack.length >= 99
+            ? 99
+            : state.notificationStack.length;
     }
 };
 
-const actions = {
+const actions: StoreActions = {
     [NotificationAction.showNotification](
         context: NotificationContext,
         notification: Notification
@@ -72,10 +75,17 @@ const actions = {
                 context.commit('SHOW_GROUP', value.id);
             }
         }
+    },
+    [NotificationAction.clearAll](context: NotificationContext) {
+        Object.values(context.state.groups).forEach(group =>
+            context.commit(NotificationMutation.REMOVE_GROUP, group)
+        );
+
+        context.commit('CLEAR_ALL');
     }
 };
 
-const mutations = {
+const mutations: StoreMutations = {
     [NotificationMutation.SHOW_NOTIFICATION](
         state: NotificationState,
         notification: Notification
@@ -118,9 +128,10 @@ const mutations = {
         state: NotificationState,
         group: NotificationGroup
     ) {
-        console.log(group);
-        console.log(group.id);
         state.groups[group.id] = group;
+    },
+    [NotificationMutation.CLEAR_ALL](state: NotificationState) {
+        state.notificationStack = [];
     }
 };
 
