@@ -65,6 +65,8 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Call } from 'vuex-pathify';
 
+import { NotificationType } from '@/api/notifications';
+
 @Component({})
 export default class NotificationListV extends Vue {
     @Prop() notification!: any;
@@ -75,9 +77,9 @@ export default class NotificationListV extends Vue {
     open: boolean = false;
 
     icons = {
-        warning: '⚠',
-        info: '☑',
-        error: '❌'
+        [NotificationType.WARNING]: '⚠',
+        [NotificationType.INFO]: '☑',
+        [NotificationType.ERROR]: '❌'
     };
 
     tooltipShow() {

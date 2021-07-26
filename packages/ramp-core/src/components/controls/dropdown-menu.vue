@@ -15,7 +15,7 @@
             class="rv-dropdown shadow-md border border-gray:200 py-8 bg-white rounded text-center z-10"
             ref="dropdown"
         >
-            <slot></slot>
+            <slot v-bind:close="closeDropdown"></slot>
         </div>
     </div>
 </template>
@@ -33,6 +33,10 @@ export default class DropdownMenuV extends Vue {
 
     open: boolean = false;
     popper: any;
+
+    closeDropdown() {
+        this.open = false;
+    }
 
     @Watch('open')
     updatePopperPositioning() {

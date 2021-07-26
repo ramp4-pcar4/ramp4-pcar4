@@ -1,3 +1,5 @@
+import { NotificationType } from '@/api';
+
 export class NotificationState {
     notificationStack: (Notification | NotificationGroup)[] = [];
 
@@ -6,12 +8,12 @@ export class NotificationState {
 
 export interface Notification {
     message: string;
-    type: string;
+    type: NotificationType;
 }
 
 export interface NotificationGroup {
     message: string;
-    type: string;
+    type: NotificationType;
     id: string;
     messageList: string[];
 }

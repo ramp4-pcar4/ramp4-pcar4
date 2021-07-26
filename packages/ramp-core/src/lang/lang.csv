@@ -19,6 +19,7 @@ notifications.empty,No new notifications.,1,Aucun nouvel avis.,0
 notifications.controls.dismiss,Dismiss,1,Rejeter,0
 notifications.controls.expand,Expand,1,Élargir,0
 notifications.controls.collapse,Collapse,1,Réduire,0
+notifications.controls.clearAll,Clear All,1,Tout effacer,0
 panels.controls.close,Close,1,Fermer,1
 panels.controls.pin,Pin,1,Épingler,0
 panels.controls.unpin,Unpin,1,Détacher,0

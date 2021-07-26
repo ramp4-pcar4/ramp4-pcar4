@@ -2,6 +2,12 @@ import { APIScope, InstanceAPI } from './internal';
 
 import NotificationsScreenV from '@/components/notification-center/screen.vue';
 
+export enum NotificationType {
+    ERROR = 'error',
+    INFO = 'info',
+    WARNING = 'warning'
+}
+
 export class NotificationAPI extends APIScope {
     /**
      * Creates an instance of Notification API
@@ -20,56 +26,33 @@ export class NotificationAPI extends APIScope {
     }
 
     /**
-     * Shows an error notification with the message provided
+     * Shows a notification with the type and message provided
      *
-     *
+     * @param {NotificationType} type The type of notification to display
      * @param {string} message The message to display in the notification
      * @memberof NotificationAPI
      */
-    showError(message: string) {
+    show(type: NotificationType, message: string) {
         this.$vApp.$store.dispatch('notification/showNotification', {
-            type: 'error',
+            type,
             message
         });
     }
 
     /**
-     * Shows an warning notification with the message provided
-     *
-     *
-     * @param {string} message The message to display in the notification
-     * @memberof NotificationAPI
-     */
-    showWarning(message: string) {
-        this.$vApp.$store.dispatch('notification/showNotification', {
-            type: 'warning',
-            message
-        });
-    }
-
-    /**
-     * Shows an info notification with the message provided
-     *
-     *
-     * @param {string} message The message to display in the notification
-     * @memberof NotificationAPI
-     */
-    showInfo(message: string) {
-        this.$vApp.$store.dispatch('notification/showNotification', {
-            type: 'info',
-            message
-        });
-    }
-
-    /**
-     * Adds a notification group, which can be used to hold multiple messages
+     * Adds a notification group, which can be used to hold multiple messages.
      *
      * @param {string} id The id for the group
-     * @param {string} type The type of notification the group will hold, 'error' 'warning' or 'info'
+     * @param {NotificationType} type The type of notification the group will hold, 'error' 'warning' or 'info'
      * @param {string} message The "main" message for the notification, describing the grouped messages
      * @memberof NotificationAPI
      */
-    addGroup(id: string, type: string, message: string) {
+    addGroup(id: string, type: NotificationType, message: string) {
+        if (this.getGroup(id)) {
+            throw new Error(
+                'Duplicate notification group id registration: ' + id
+            );
+        }
         const group = new NotificationGroup(this.$iApi, id, type, message);
 
         this.$vApp.$store.dispatch('notification/registerGroup', group);
@@ -80,7 +63,7 @@ export class NotificationAPI extends APIScope {
      * Returns the group with the id provided, returns `undefined` if there is no such group
      *
      * @param {string} id The id of the group wanted
-     * @returns {Notification Group | undefined}
+     * @returns {NotificationGroup | undefined}
      * @memberof NotificationAPI
      */
     getGroup(id: string) {
@@ -95,7 +78,7 @@ export class NotificationAPI extends APIScope {
 export class NotificationGroup extends APIScope {
     readonly id: string;
     readonly message: string;
-    readonly type: string;
+    readonly type: NotificationType;
 
     messageList: string[] = [];
 
@@ -107,7 +90,12 @@ export class NotificationGroup extends APIScope {
      * @param type The type of notification the group will show
      * @param message The main message for the group
      */
-    constructor($iApi: InstanceAPI, id: string, type: string, message: string) {
+    constructor(
+        $iApi: InstanceAPI,
+        id: string,
+        type: NotificationType,
+        message: string
+    ) {
         super($iApi);
 
         this.id = id;

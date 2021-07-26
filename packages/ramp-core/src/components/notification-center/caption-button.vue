@@ -24,20 +24,45 @@
                 >
             </div>
         </template>
-        <div
-            class="notification-dropdown pointer-events-auto bg-white rounded text-center text-black w-500 h-256 flex flex-col p-0"
-        >
-            <h4 class="pb-8 border-b border-gray-600">
-                {{ $t('notifications.title') }}
-            </h4>
-            <notification-list class="overflow-y-auto"></notification-list>
-        </div>
+        <template v-slot:default="scope">
+            <div
+                class="notification-dropdown pointer-events-auto bg-white rounded text-center text-black w-500 h-256 flex flex-col p-0"
+            >
+                <div>
+                    <h4 class="pb-8 border-b border-gray-600">
+                        {{ $t('notifications.title') }}
+                    </h4>
+                    <div class="absolute flex right-3 top-3">
+                        <button
+                            @click="clearAll"
+                            class="text-gray-500 hover:text-black p-4 mr-6"
+                            :content="$t('notifications.controls.clearAll')"
+                            v-tippy="{ placement: 'bottom' }"
+                        >
+                            <!-- https://fonts.google.com/icons?selected=Material%20Icons%3Aclear_all -->
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                class="fill-current h-24 w-24"
+                            >
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path
+                                    d="M5 13h14v-2H5v2zm-2 4h14v-2H3v2zM7 7v2h14V7H7z"
+                                />
+                            </svg>
+                        </button>
+                        <close @click="scope.close"></close>
+                    </div>
+                </div>
+                <notification-list class="overflow-y-auto"></notification-list>
+            </div>
+        </template>
     </dropdown-menu>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
+import { Call, Get } from 'vuex-pathify';
 
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 import NotificationListV from './notification-list.vue';
@@ -50,6 +75,7 @@ import NotificationListV from './notification-list.vue';
 })
 export default class NotificationsCaptionButtonV extends Vue {
     @Get('notification/notificationNumber') number!: Number;
+    @Call('notification/clearAll') clearAll!: () => void;
 }
 </script>
 
