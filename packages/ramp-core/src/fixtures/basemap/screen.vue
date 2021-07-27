@@ -20,34 +20,34 @@
             <div class="h-600 overflow-y-auto">
                 <div
                     class="mx-5"
-                    v-for="tileSchema in tileSchemas"
-                    v-bind:key="tileSchema.id"
+                    v-for="(tileSchema, idx) in tileSchemas"
+                    :key="tileSchema.id"
                 >
-                    <div class="mt-10 mb-5 flex">
-                        <h3>
+                    <!-- use mt-5 if it's the first basemap title schema, use mt-36 otherwise -->
+                    <div :class="(idx === 0 ? 'mt-5' : 'mt-36') + ' flex mb-5'">
+                        <h3 class="font-bold text-xl" v-truncate>
                             {{ tileSchema.name }}
                         </h3>
                         <!-- TODO: check if current basemap matches projection, if not need "Map Refresh required" warning here -->
-                        <div
-                            class="flex px-5 ml-auto"
-                            v-if="
-                                tileSchema.id !== selectedBasemap.tileSchemaId
-                            "
-                            v-truncate
+                    </div>
+
+                    <div
+                        class="flex"
+                        v-if="tileSchema.id !== selectedBasemap.tileSchemaId"
+                        v-truncate
+                    >
+                        <svg
+                            class="fill-current w-20 h-20"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
                         >
-                            <svg
-                                class="fill-current w-16 h-16"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
-                                />
-                            </svg>
-                            <span class="text-blue-600 pl-5">{{
-                                $t('basemap.refresh')
-                            }}</span>
-                        </div>
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
+                            />
+                        </svg>
+                        <span class="text-blue-600 pl-5" v-truncate>{{
+                            $t('basemap.refresh')
+                        }}</span>
                     </div>
 
                     <ul
@@ -57,7 +57,7 @@
                     >
                         <li
                             v-for="basemap in filterBasemaps(tileSchema.id)"
-                            v-bind:key="basemap.id"
+                            :key="basemap.id"
                         >
                             <basemap-item
                                 :basemap="basemap"
