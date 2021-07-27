@@ -85,7 +85,8 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | FILTER_CHANGE<br>'filter/change'                   | FilterEventParam object                                        | A filter has changed               |
 | FIXTURE_ADDED<br>'fixture/added'                   | FixtureInstance object                                         | A fixture has been added           |
 | LAYER_OPACITYCHANGE<br>'layer/opacitychange'       | _opacity_: new value, _uid_: affected uid                      | The layer opacity changed          |
-| LAYER_RELOADED<br>'layer/reloaded'                 | LayerInstance object                                           | The layer was reloaded             |
+| LAYER_RELOAD_END<br>'layer/reloadend'              | LayerInstance object                                           | The layer finished reloading       |
+| LAYER_RELOAD_START<br>'layer/reloadstart'          | LayerInstance object                                           | The layer started reloading        |
 | LAYER_REMOVE<br>'layer/remove'                     | LayerInstance object                                           | The layer was removed from the map |
 | LAYER_STATECHANGE<br>'layer/statechange'           | _state_: new value, _uid_: affected uid                        | The layer state changed            |
 | LAYER_VISIBILITYCHANGE<br>'layer/visibilitychange' | _visibility_: new value, _uid_: affected uid                   | The layer visibility changed       |
