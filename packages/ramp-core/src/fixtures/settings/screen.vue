@@ -107,6 +107,7 @@ import { PanelInstance } from '@/api';
 import SettingsComponentV from './component.vue';
 import { GlobalEvents, LayerInstance } from '@/api/internal';
 import { LegendEntry } from '../legend/store/legend-defs';
+import { LayerType } from '@/geo/api';
 
 @Component({
     components: {
@@ -139,6 +140,20 @@ export default class SettingsScreenV extends Vue {
                 }
             }
         );
+
+        this.$iApi.event.on(
+            GlobalEvents.LAYER_RELOAD_END,
+            (reloadedLayer: LayerInstance) => {
+                if (reloadedLayer.layerType === LayerType.MAPIMAGE) {
+                    // Check if this.uid is a child of reloadedLayer
+                    if (reloadedLayer.getLayerTree().findChildByUid(this.uid)) {
+                        this.visibilityModel = true;
+                    }
+                } else if (this.uid === reloadedLayer.uid) {
+                    this.visibilityModel = true;
+                }
+            }
+        );
     }
 
     // Update the layer visibility.
@@ -161,7 +176,7 @@ export default class SettingsScreenV extends Vue {
 
     get layerName() {
         if (this.layer) {
-            return this.layer.getName(this.uid);
+            return this.legendItem.name;
         }
         return '';
     }
