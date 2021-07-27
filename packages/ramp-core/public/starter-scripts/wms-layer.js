@@ -53,7 +53,7 @@ let config = {
                     visibility: true
                 },
                 layerEntries: [
-                    { id: 'railway' },
+                    { id: 'railway', name: 'Railway' },
                     { id: 'railway.structure.line' },
                     { id: 'railway.structure.point' },
                     { id: 'railway.track' },
@@ -76,7 +76,8 @@ let config = {
                 },
                 layerEntries: [
                     {
-                        id: 'GDPS.ETA_NT'
+                        id: 'RDPA.24F_PR',
+                        currentStyle: 'PRECIPMM'
                     }
                 ],
                 featureInfoMimeType: 'text/plain'
@@ -226,7 +227,14 @@ Vue.component('GeoMet-Template', {
 
 rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
 rInstance.fixture
-    .addDefaultFixtures(['mapnav', 'legend', 'appbar', 'grid', 'details'])
+    .addDefaultFixtures([
+        'mapnav',
+        'legend',
+        'appbar',
+        'grid',
+        'details',
+        'wizard'
+    ])
     .then(() => {
         rInstance.panel.open('legend-panel');
     });

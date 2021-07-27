@@ -86,27 +86,48 @@
         >
             <!-- display each symbol -->
             <div
-                class="p-5 flex items-center"
+                class="m-5"
                 v-for="(item, idx) in legendItem.layer.getLegend(
                     legendItem.layerUID
                 )"
                 :key="idx"
             >
-                <div class="symbologyIcon">
-                    <span v-html="item.svgcode"></span>
+                <!-- for WMS layers -->
+                <div
+                    v-if="layerType === 'ogcWms'"
+                    class="items-center grid-cols-1"
+                >
+                    <div
+                        v-if="item.imgHeight"
+                        class="symbologyIcon w-full p-5"
+                        v-html="getLegendGraphic(item)"
+                    ></div>
+                    <div
+                        v-if="item.label"
+                        class="flex-1 p-5 bg-black-75 text-white"
+                        v-truncate
+                    >
+                        {{ item.label }}
+                    </div>
                 </div>
-
-                <div class="flex-1 ml-15" v-truncate>{{ item.label }}</div>
-
-                <checkbox
-                    v-if="
-                        legendItem.layer.getLegend(legendItem.layerUID).length >
-                            1
-                    "
-                    :checked="item.visibility"
-                    :value="item"
-                    :legendItem="legendItem"
-                />
+                <!-- for non-WMS layers -->
+                <div v-else class="flex items-center">
+                    <div class="symbologyIcon">
+                        <span v-html="item.svgcode"></span>
+                    </div>
+                    <div class="flex-1 ml-15" v-truncate>
+                        {{ item.label }}
+                    </div>
+                    <checkbox
+                        v-if="
+                            legendItem.layer.getLegend(legendItem.layerUID)
+                                .length > 1
+                        "
+                        :checked="item.visibility"
+                        :value="item"
+                        :legendItem="legendItem"
+                    />
+                </div>
             </div>
         </div>
     </div>
@@ -183,6 +204,25 @@ export default class LegendEntryV extends Vue {
 
     get shellEl() {
         return this.$refs.shell;
+    }
+
+    get layerType() {
+        return this.legendItem.layer?.layerType;
+    }
+
+    /**
+     * Returns a span containing the resized legend graphic.
+     */
+    getLegendGraphic(item: any): string | undefined {
+        const span = document.createElement('span');
+        span.innerHTML = item.svgcode;
+        const svg = span.firstElementChild;
+        // The legend graphic will display either in its original size, or resized to fit the width of the legend item.
+        svg?.classList.add('max-w-full');
+        svg?.classList.add('h-full');
+        svg?.setAttribute('height', item.imgHeight);
+        svg?.setAttribute('width', item.imgWidth);
+        return span.outerHTML;
     }
 
     removeLayer() {
