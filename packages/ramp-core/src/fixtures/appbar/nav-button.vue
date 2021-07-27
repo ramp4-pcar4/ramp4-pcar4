@@ -2,7 +2,7 @@
     <dropdown-menu
         class="absolute inset-x-0 bottom-0 h-48 w-full text-center focus:outline-none"
         v-focus-item
-        position="left-top"
+        position="right-end"
         :tooltip="$t('appbar.navigation')"
         tooltip-placement="right"
     >

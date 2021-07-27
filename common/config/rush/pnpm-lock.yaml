@@ -9,6 +9,7 @@ importers:
     specifiers:
       '@arcgis/core': 4.19.3
       '@braid/vue-formulate': ~2.5.2
+      '@popperjs/core': ~2.9.2
       '@tailwindcss/forms': ^0.2.1
       '@tailwindcss/postcss7-compat': ^2.0.2
       '@types/animejs': ~3.1.0
@@ -90,6 +91,7 @@ importers:
     dependencies:
       '@arcgis/core': 4.19.3
       '@braid/vue-formulate': 2.5.2
+      '@popperjs/core': 2.9.2
       ag-grid-community: 22.1.1
       ag-grid-vue: 22.1.1_4f5a95a77bad3f3a7df09d8e6767e56d
       animejs: 3.2.1
@@ -1647,6 +1649,10 @@ packages:
 
   /@popperjs/core/2.6.0:
     resolution: {integrity: sha512-cPqjjzuFWNK3BSKLm0abspP0sp/IGOli4p5I5fKFAzdS8fvjdOwDCfZqAaIiXd9lPkOWi3SUUfZof3hEb7J/uw==}
+    dev: false
+
+  /@popperjs/core/2.9.2:
+    resolution: {integrity: sha512-VZMYa7+fXHdwIq1TDhSXoVmSPEGM/aa+6Aiq3nVVJ9bXr24zScr+NlKFKC3iPljA7ho/GAZr+d2jOf5GIRC30Q==}
     dev: false
 
   /@samverschueren/stream-to-observable/0.3.1_rxjs@6.6.7:

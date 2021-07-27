@@ -13,7 +13,8 @@ import {
     FixtureAPI,
     GeoAPI,
     GlobalEvents,
-    PanelAPI
+    PanelAPI,
+    NotificationAPI
 } from './internal';
 
 interface RampOptions {
@@ -26,6 +27,7 @@ export class InstanceAPI {
     readonly panel: PanelAPI;
     readonly event: EventAPI;
     readonly geo: GeoAPI;
+    readonly notifications: NotificationAPI;
 
     /**
      * The instance of Vue R4MP application controlled by this InstanceAPI.
@@ -49,6 +51,8 @@ export class InstanceAPI {
         this.fixture = new FixtureAPI(this); // pass the iApi reference to the FixtureAPI
         this.panel = new PanelAPI(this);
         this.geo = new GeoAPI(this);
+        //TODO before 1.0: is 'notifications' too long of a name? maybe 'log' or 'notify'
+        this.notifications = new NotificationAPI(this);
 
         // TODO: decide whether to move to src/main.ts:createApp
         // TODO: store a reference to the even bus in the global store [?]

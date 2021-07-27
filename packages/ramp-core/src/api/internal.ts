@@ -31,3 +31,4 @@ export * from '@/geo/geo';
 export * from './fixture';
 export * from './panel';
 export * from './panel-instance';
+export * from './notifications';

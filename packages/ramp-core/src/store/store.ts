@@ -6,8 +6,9 @@ import { config } from '@/store/modules/config';
 import { fixture } from '@/store/modules/fixture';
 import { layer } from '@/store/modules/layer';
 import { mapcaption } from '@/store/modules/map-caption';
-import { panel } from '@/store/modules/panel';
 import { maptip } from '@/store/modules/maptip';
+import { notification } from '@/store/modules/notification';
+import { panel } from '@/store/modules/panel';
 import { RootState } from '@/store/state';
 
 Vue.use(Vuex);
@@ -23,6 +24,7 @@ export const createStore = () =>
             layer: layer(),
             mapcaption: mapcaption(),
             maptip: maptip(),
+            notification: notification(),
             panel: panel()
         }
     });

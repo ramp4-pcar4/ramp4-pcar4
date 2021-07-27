@@ -1,0 +1,118 @@
+import { APIScope, InstanceAPI } from './internal';
+
+import NotificationsScreenV from '@/components/notification-center/screen.vue';
+
+export enum NotificationType {
+    ERROR = 'error',
+    INFO = 'info',
+    WARNING = 'warning'
+}
+
+export class NotificationAPI extends APIScope {
+    /**
+     * Creates an instance of Notification API
+     *
+     * @param iApi The instance API for the RAMP that this should be associated with.
+     */
+    constructor(iApi: InstanceAPI) {
+        super(iApi);
+
+        this.$iApi.panel.register({
+            id: 'notifications-panel',
+            config: {
+                screens: { 'notifications-screen': NotificationsScreenV }
+            }
+        });
+    }
+
+    /**
+     * Shows a notification with the type and message provided
+     *
+     * @param {NotificationType} type The type of notification to display
+     * @param {string} message The message to display in the notification
+     * @memberof NotificationAPI
+     */
+    show(type: NotificationType, message: string) {
+        this.$vApp.$store.dispatch('notification/showNotification', {
+            type,
+            message
+        });
+    }
+
+    /**
+     * Adds a notification group, which can be used to hold multiple messages.
+     *
+     * @param {string} id The id for the group
+     * @param {NotificationType} type The type of notification the group will hold, 'error' 'warning' or 'info'
+     * @param {string} message The "main" message for the notification, describing the grouped messages
+     * @memberof NotificationAPI
+     */
+    addGroup(id: string, type: NotificationType, message: string) {
+        if (this.getGroup(id)) {
+            throw new Error(
+                'Duplicate notification group id registration: ' + id
+            );
+        }
+        const group = new NotificationGroup(this.$iApi, id, type, message);
+
+        this.$vApp.$store.dispatch('notification/registerGroup', group);
+        return group;
+    }
+
+    /**
+     * Returns the group with the id provided, returns `undefined` if there is no such group
+     *
+     * @param {string} id The id of the group wanted
+     * @returns {NotificationGroup | undefined}
+     * @memberof NotificationAPI
+     */
+    getGroup(id: string) {
+        const group: NotificationGroup | undefined = this.$vApp.$store.get(
+            `notification/groups@${id}`
+        );
+
+        return group;
+    }
+}
+
+export class NotificationGroup extends APIScope {
+    readonly id: string;
+    readonly message: string;
+    readonly type: NotificationType;
+
+    messageList: string[] = [];
+
+    /**
+     * Creates an instance of Notification Group
+     *
+     * @param $iApi
+     * @param id The id for the group
+     * @param type The type of notification the group will show
+     * @param message The main message for the group
+     */
+    constructor(
+        $iApi: InstanceAPI,
+        id: string,
+        type: NotificationType,
+        message: string
+    ) {
+        super($iApi);
+
+        this.id = id;
+        this.type = type;
+        this.message = message;
+    }
+
+    /**
+     * Shows a message under the group
+     *
+     * @param {string} message The message to show
+     * @memberof NotificationGroup
+     */
+    show(message: string) {
+        this.$vApp.$store.dispatch('notification/addToGroup', {
+            id: this.id,
+            message
+        });
+    }
+}

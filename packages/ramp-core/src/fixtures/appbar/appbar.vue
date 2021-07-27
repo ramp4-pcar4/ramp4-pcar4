@@ -7,22 +7,25 @@
             v-for="(item, index) in items"
             :is="item.componentId"
             :key="`${item}-${index}`"
-            class="my-4 text-gray-400 first:mt-8 hover:text-white"
+            class="appbar-item"
             :class="{ 'h-48': item.id !== 'divider' }"
             :options="item.options"
             :id="item.id"
         ></component>
-        <divider></divider>
+        <divider class="appbar-item"></divider>
         <component
             v-for="item in temporaryItems"
             :is="item.componentId"
             :key="`${item.id}-temp`"
-            class="my-4 text-gray-400 first:mt-8 hover:text-white h-48"
+            class="appbar-item h-48"
             :options="item.options"
             :id="item.id"
         >
         </component>
         <more-button id="more" v-show="overflow"></more-button>
+        <notifications-appbar-button
+            class="appbar-item bottom-48 h-48 sm:hidden"
+        ></notifications-appbar-button>
         <nav-button id="nav"></nav-button>
     </div>
 </template>
@@ -30,18 +33,25 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
+
 import { AppbarItemInstance } from './store';
-import DividerV from './divider.vue';
+
 import AppbarButtonV from './button.vue';
+import DividerV from './divider.vue';
 import MoreAppbarButtonV from './more-button.vue';
 import NavAppbarButtonV from './nav-button.vue';
+import NotificationsAppbarButtonV from '@/components/notification-center/appbar-button.vue';
 
 Vue.component('divider', DividerV);
 Vue.component('appbar-button', AppbarButtonV);
-Vue.component('more-button', MoreAppbarButtonV);
-Vue.component('nav-button', NavAppbarButtonV);
 
-@Component
+@Component({
+    components: {
+        'more-button': MoreAppbarButtonV,
+        'nav-button': NavAppbarButtonV,
+        'notifications-appbar-button': NotificationsAppbarButtonV
+    }
+})
 export default class AppbarV extends Vue {
     @Get('appbar/visible') items!: AppbarItemInstance[];
     @Get('appbar/temporary') temporaryItems!: AppbarItemInstance[];
@@ -111,5 +121,9 @@ export default class AppbarV extends Vue {
 <style lang="scss">
 .appbar {
     backdrop-filter: blur(5px);
+
+    .appbar-item {
+        @apply my-4 text-gray-400 first:mt-8 hover:text-white;
+    }
 }
 </style>

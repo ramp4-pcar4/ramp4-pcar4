@@ -12,7 +12,6 @@
             left-0
             right-0
             py-2
-            z-50
         "
     >
         <span
@@ -38,6 +37,10 @@
         >
             {{ attribution.text.value }}
         </span>
+
+        <notifications-caption-button
+            class="sm:block hidden"
+        ></notifications-caption-button>
 
         <span class="flex-grow w-15"></span>
 
@@ -84,9 +87,9 @@
                 px-4
                 mr-4
             "
-            position="top-right"
+            position="top-end"
             :tooltip="$t('map.changeLanguage')"
-            tooltip-placement="top"
+            tooltip-placement="top-end"
         >
             <template #header>
                 <span class="text-gray-400 hover:text-white">
@@ -112,7 +115,13 @@ import { Attribution, ScaleBarProperties } from '@/geo/api';
 import { GlobalEvents } from '@/api';
 import { MapCaptionStore } from '@/store/modules/map-caption';
 
-@Component
+import NotificationsCaptionButtonV from '@/components/notification-center/caption-button.vue';
+
+@Component({
+    components: {
+        'notifications-caption-button': NotificationsCaptionButtonV
+    }
+})
 export default class MapCaptionV extends Vue {
     @Get(MapCaptionStore.scale) scale!: ScaleBarProperties;
     @Get(MapCaptionStore.attribution) attribution!: Attribution;

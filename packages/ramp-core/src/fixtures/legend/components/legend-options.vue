@@ -2,7 +2,7 @@
     <div @click.stop @mouseover.stop class="options hidden cursor-auto">
         <dropdown-menu
             class="relative"
-            position="right"
+            position="left-start"
             :tooltip="$t('legend.entry.options')"
             tooltip-placement="left"
             :key="legendItem.uid"
