@@ -114,6 +114,9 @@ let config = {
                         template: 'GeoMet-Template'
                     }
                 ]
+            },
+            'export-v1-title': {
+                text: 'WMS'
             }
         }
     }
@@ -233,7 +236,8 @@ rInstance.fixture
         'appbar',
         'grid',
         'details',
-        'wizard'
+        'wizard',
+        'export-v1'
     ])
     .then(() => {
         rInstance.panel.open('legend-panel');
