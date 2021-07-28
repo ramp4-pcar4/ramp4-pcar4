@@ -1,14 +1,10 @@
 import Vue from 'vue';
 import { InstanceAPI, AppVersion } from './internal';
 import { GeoCommonAPI } from '@/geo/api/geo-common';
-import mixin from './mixin';
 
 export * from './internal';
 
 declare const __VERSION__: AppVersion;
-
-// install/register mixin plugin with Vue, so it's available on all Vue instances
-Vue.use(mixin);
 
 export interface APIInterface {
     Instance: typeof InstanceAPI;

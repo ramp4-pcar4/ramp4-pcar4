@@ -119,7 +119,7 @@ export class PanelInstance extends APIScope {
             });
         }
 
-        Vue.component(id, payload);
+        this.$iApi.$element.component(id, payload);
     }
 
     /**
@@ -269,9 +269,7 @@ export class PanelInstance extends APIScope {
      * @returns {this}
      * @memberof PanelInstance
      */
-    toggle(
-        value?: boolean | { screen: string; props?: object; toggle?: boolean }
-    ): this {
+    toggle(value?: boolean | { screen: string; props?: object; toggle?: boolean }): this {
         // toggle panel if no value provided, force toggle panel if value specified, or toggle panel on specified screen if provided
         // ensure that a toggle value must be provided to panel API toggle if called
         if (typeof value === 'undefined') {
@@ -284,9 +282,7 @@ export class PanelInstance extends APIScope {
         } else {
             this.$iApi.panel.toggle(
                 { id: this.id, screen: value.screen, props: value.props },
-                typeof value.toggle !== 'undefined'
-                    ? value.toggle
-                    : !this.isOpen
+                typeof value.toggle !== 'undefined' ? value.toggle : !this.isOpen
             );
         }
 
@@ -301,9 +297,7 @@ export class PanelInstance extends APIScope {
      * @returns {this}
      * @memberof PanelInstance
      */
-    toggleMinimize(
-        value?: boolean | { screen: string; props?: object; toggle?: boolean }
-    ): this {
+    toggleMinimize(value?: boolean | { screen: string; props?: object; toggle?: boolean }): this {
         if (typeof value === 'undefined' || typeof value === 'boolean') {
             // value is a toggle so we pass it through
             this.$iApi.panel.toggleMinimize(this, value);
@@ -311,9 +305,7 @@ export class PanelInstance extends APIScope {
             // value is not a toggle, split into what panel.toggleMinimize is expecting
             this.$iApi.panel.toggleMinimize(
                 { id: this.id, screen: value.screen, props: value.props },
-                typeof value.toggle !== 'undefined'
-                    ? value.toggle
-                    : !this.isOpen
+                typeof value.toggle !== 'undefined' ? value.toggle : !this.isOpen
             );
         }
 
@@ -347,10 +339,7 @@ export class PanelInstance extends APIScope {
      * @memberof PanelInstance
      */
     get isPinned(): boolean {
-        return (
-            this.$iApi.panel.pinned !== null &&
-            this.$iApi.panel.pinned.id === this.id
-        );
+        return this.$iApi.panel.pinned !== null && this.$iApi.panel.pinned.id === this.id;
     }
 
     /**

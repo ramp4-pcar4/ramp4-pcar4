@@ -13,9 +13,7 @@ class MapnavFixture extends MapnavAPI {
 
         // since this has no panel we need to merge in translations ourselves
         // TODO?: see if giving fixtures a nicer way to merge translations w/o panel makes sense
-        Object.entries(messages).forEach(value =>
-            this.$vApp.$i18n.mergeLocaleMessage(...value)
-        );
+        Object.entries(messages).forEach(value => this.$vApp.$i18n.mergeLocaleMessage(...value));
 
         const mapnavInstance = this.extend(MapnavV, {
             store: this.$vApp.$store,
@@ -23,9 +21,7 @@ class MapnavFixture extends MapnavAPI {
         });
 
         // TODO: the `innerShell` reference will probably get used more than once; consider creating a dedicated ref on `$iApi`;
-        const innerShell = this.$vApp.$el.getElementsByClassName(
-            'inner-shell'
-        )[0];
+        const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         innerShell.append(mapnavInstance.$el); /**, innerShell.children[0]);*/
         console.log(innerShell);
 
@@ -37,10 +33,7 @@ class MapnavFixture extends MapnavAPI {
 
         // since components used in appbar can be registered after this point, listen to the global component registration event and re-validate items
         // TODO revist. this seems to be self-contained to the mapnav fixture, so ideally can stay as is and not worry about events api.
-        this.$iApi.event.on(
-            GlobalEvents.COMPONENT,
-            this._validateItems.bind(this)
-        );
+        this.$iApi.event.on(GlobalEvents.COMPONENT, this._validateItems.bind(this));
     }
 
     removed() {

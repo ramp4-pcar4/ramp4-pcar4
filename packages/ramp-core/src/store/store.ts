@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import Vuex from 'vuex';
+import { createStore as vuexCreateStore, Store as vuexStore } from 'vuex';
 import pathify from 'vuex-pathify';
 
 import { config } from '@/store/modules/config';
@@ -11,23 +11,22 @@ import { notification } from '@/store/modules/notification';
 import { panel } from '@/store/modules/panel';
 import { RootState } from '@/store/state';
 
-Vue.use(Vuex);
-
 // pathify.options.deep = 2;
 
-export const createStore = () =>
-    new Vuex.Store<RootState>({
-        plugins: [pathify.plugin],
-        modules: {
-            config: config(),
-            fixture: fixture(),
-            layer: layer(),
-            mapcaption: mapcaption(),
-            maptip: maptip(),
-            notification: notification(),
-            panel: panel()
-        }
-    });
+export const store = vuexCreateStore(<RootState>{
+    plugins: [pathify.plugin],
+    modules: {
+        config: config(),
+        fixture: fixture(),
+        layer: layer(),
+        mapcaption: mapcaption(),
+        maptip: maptip(),
+        notification: notification(),
+        panel: panel()
+    }
+});
+
+export type storeType = vuexStore<Record<string, unknown>>;
 
 declare module 'vuex' {
     // declare augmentation for Vuex store for Pathify

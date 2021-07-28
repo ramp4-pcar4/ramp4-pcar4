@@ -42,14 +42,13 @@ import MoreAppbarButtonV from './more-button.vue';
 import NavAppbarButtonV from './nav-button.vue';
 import NotificationsAppbarButtonV from '@/components/notification-center/appbar-button.vue';
 
-Vue.component('divider', DividerV);
-Vue.component('appbar-button', AppbarButtonV);
-
 @Options({
     components: {
         'more-button': MoreAppbarButtonV,
         'nav-button': NavAppbarButtonV,
-        'notifications-appbar-button': NotificationsAppbarButtonV
+        'notifications-appbar-button': NotificationsAppbarButtonV,
+        divider: DividerV,
+        'appbar-button': AppbarButtonV
     }
 })
 export default class AppbarV extends Vue {
@@ -59,10 +58,7 @@ export default class AppbarV extends Vue {
 
     updated() {
         let children: Element[] = [...this.$el.children];
-        let bound:
-            | number
-            | undefined = this.$el.lastElementChild?.getBoundingClientRect()
-            .top;
+        let bound: number | undefined = this.$el.lastElementChild?.getBoundingClientRect().top;
         let dropdown: Element | null = document.getElementById('dropdown');
 
         // check positions of appbar buttons
@@ -71,14 +67,9 @@ export default class AppbarV extends Vue {
                 bound &&
                 dropdown &&
                 (children[i].getBoundingClientRect().bottom >= bound ||
-                    (this.overflow &&
-                        children[i].getBoundingClientRect().bottom + 48 >=
-                            bound))
+                    (this.overflow && children[i].getBoundingClientRect().bottom + 48 >= bound))
             ) {
-                children[i].classList.remove(
-                    'hover:text-white',
-                    'text-gray-400'
-                );
+                children[i].classList.remove('hover:text-white', 'text-gray-400');
                 children[i].classList.add('text-black', 'hover:bg-gray-100');
 
                 this.$el.removeChild(children[i]);
@@ -97,8 +88,7 @@ export default class AppbarV extends Vue {
             more &&
             dropdown &&
             more.getBoundingClientRect().bottom !== 0 &&
-            (more.getBoundingClientRect().bottom <= bound - 48 ||
-                dropdown.childElementCount == 1)
+            (more.getBoundingClientRect().bottom <= bound - 48 || dropdown.childElementCount == 1)
         ) {
             while (
                 more.getBoundingClientRect().bottom <= bound - 48 ||

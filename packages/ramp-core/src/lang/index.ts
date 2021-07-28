@@ -1,24 +1,24 @@
-import Vue from 'vue';
-import VueI18n from 'vue-i18n';
+import {
+    IntlDateTimeFormats,
+    IntlNumberFormats,
+    LocaleMessages,
+    VueMessageType,
+    createI18n
+} from 'vue-i18n';
 import messages from './lang.csv';
 
-Vue.use(VueI18n);
-
 export type I18nComponentOptions = {
-    messages?: VueI18n.LocaleMessages;
-    dateTimeFormats?: VueI18n.DateTimeFormats;
-    numberFormats?: VueI18n.NumberFormats;
-    sharedMessages?: VueI18n.LocaleMessages;
+    messages?: LocaleMessages<VueMessageType>;
+    dateTimeFormats?: IntlDateTimeFormats;
+    numberFormats?: IntlNumberFormats;
+    sharedMessages?: LocaleMessages<VueMessageType>;
 };
 
-const fallbackLocale: string = 'en';
+const lang = 'en';
 
-// get the language of the page from the root `html` node
-const locale: string =
-    document.documentElement!.getAttribute('lang') || fallbackLocale;
-
-export const i18n: VueI18n = new VueI18n({
-    locale,
-    fallbackLocale,
-    messages
+export const i18n = createI18n({
+    // get the language of the page from the root `html` node
+    locale: document.documentElement!.getAttribute('lang') || lang,
+    fallbackLocale: lang,
+    messages: messages
 });

@@ -50,10 +50,10 @@ module.exports = {
                     ...options,
                     compilerOptions: {
                         compatConfig: {
-                            MODE: 2
+                            MODE: 3
                         }
                     }
-                }
+                };
             });
 
         config.performance.hints(false);
@@ -101,21 +101,20 @@ module.exports = {
             config
                 .plugin('html-wet')
                 .tap(args => [{ ...args[0], inject: 'head' }]);
+        config.when(process.env.NODE_ENV === 'development', config => {
+            // modify the default injection point from 'body' to 'head', so it's easier to orchestrate the loading order; only when `serve`ing
+            config.plugin('html-index').tap(args => [{ ...args[0], inject: 'head' }]);
+            config.plugin('html-test').tap(args => [{ ...args[0], inject: 'head' }]);
+            config.plugin('html-wet').tap(args => [{ ...args[0], inject: 'head' }]);
         });
 
         // PROD-specific configuration
         config.when(process.env.NODE_ENV === 'production', config => {
             // copy `ramp-starter.js` to `dist` folder when building prod build
+            config.plugin('webpack-copy-plugin').tap(args => [[...args[0], { from: 'public/alternate.js', to: '' }]]);
             config
                 .plugin('webpack-copy-plugin')
-                .tap(args => [
-                    [...args[0], { from: 'public/alternate.js', to: '' }]
-                ]);
-            config
-                .plugin('webpack-copy-plugin')
-                .tap(args => [
-                    [...args[0], { from: 'public/ramp-starter.js', to: '' }]
-                ]);
+                .tap(args => [[...args[0], { from: 'public/ramp-starter.js', to: '' }]]);
             config.plugin('webpack-copy-plugin').tap(args => [
                 [
                     ...args[0],
@@ -125,11 +124,7 @@ module.exports = {
                     }
                 ]
             ]);
-            config
-                .plugin('webpack-copy-plugin')
-                .tap(args => [
-                    [...args[0], { from: 'public/help', to: 'help' }]
-                ]);
+            config.plugin('webpack-copy-plugin').tap(args => [[...args[0], { from: 'public/help', to: 'help' }]]);
         });
 
         // get version numbers

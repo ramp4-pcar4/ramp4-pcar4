@@ -102,7 +102,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Watch } from 'vue-property-decorator';
+import { Vue, Options, Watch } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { Attribution, MouseCoords, RampMapConfig, ScaleBar } from '@/geo/api';
 import { MapCaptionStore } from '@/store/modules/map-caption';

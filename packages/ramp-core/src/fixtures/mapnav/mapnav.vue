@@ -1,9 +1,7 @@
 <template>
     <div class="mapnav absolute right-0 bottom-0 pb-36 pr-12">
         <div class="flex flex-col" v-focus-list>
-            <zoom-nav-section
-                class="mapnav-section bg-white-75 hover:bg-white"
-            ></zoom-nav-section>
+            <zoom-nav-section class="mapnav-section bg-white-75 hover:bg-white"></zoom-nav-section>
             <span class="py-1"></span>
             <div class="mapnav-section bg-white-75 hover:bg-white">
                 <template v-for="(button, index) in visible">
@@ -32,14 +30,13 @@ import ZoomNavV from './buttons/zoom-nav.vue';
 import DividerNavV from './buttons/divider-nav.vue';
 import MapnavButtonV from './button.vue';
 
-Vue.component('fullscreen-nav-button', FullscreenNavV);
-Vue.component('home-nav-button', HomeNavV);
-Vue.component('mapnav-button', MapnavButtonV);
-
 @Options({
     components: {
         'divider-nav': DividerNavV,
-        'zoom-nav-section': ZoomNavV
+        'zoom-nav-section': ZoomNavV,
+        'fullscreen-nav-button': FullscreenNavV,
+        'home-nav-button': HomeNavV,
+        'mapnav-button': MapnavButtonV
     }
 })
 export default class MapNavV extends Vue {

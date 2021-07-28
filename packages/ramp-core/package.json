@@ -76,6 +76,7 @@
         "@vue/eslint-config-prettier": "^5.0.0",
         "@vue/eslint-config-typescript": "^4.0.0",
         "@vue/test-utils": "1.0.0-beta.29",
+        "@vue/runtime-core": "^3.1.5",
         "autoprefixer": "^9.8.6",
         "cross-env": "^7.0.2",
         "cypress": "^8.3.0",

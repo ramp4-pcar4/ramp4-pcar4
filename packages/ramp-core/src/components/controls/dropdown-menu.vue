@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import { Vue, Prop, Watch } from 'vue-property-decorator';
-//@ts-ignore
+// @ts-ignore
 import { createPopper, Placement } from '@popperjs/core';
 
 export default class DropdownMenuV extends Vue {

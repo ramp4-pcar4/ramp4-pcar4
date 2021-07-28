@@ -57,7 +57,7 @@ const actions = {
             );
         } else {
             // register config for all available languages
-            for (const lang in i18n.messages) {
+            for (const lang in i18n.global.messages) {
                 context.state.registeredConfigs[lang] = config;
             }
         }

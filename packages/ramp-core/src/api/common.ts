@@ -1,4 +1,10 @@
-import Vue, { ComponentOptions, VueConstructor } from 'vue';
+import {
+    ComponentPublicInstance,
+    ComponentCustomProperties,
+    ComponentOptions,
+    App,
+    createApp
+} from 'vue';
 import { InstanceAPI } from './internal';
 
 /**
@@ -24,8 +30,12 @@ export class APIScope {
      * @type {Vue}
      * @memberof APIScope
      */
-    get $vApp(): Vue {
+    get $vApp(): ComponentPublicInstance {
         return this.$iApi.$vApp;
+    }
+
+    get $element(): App<Element> {
+        return this.$iApi.$element;
     }
 
     /**
@@ -59,12 +69,10 @@ export interface AppVersion {
  * @param {(VueConstructor | any)} value
  * @returns {value is VueConstructor}
  */
-export function isVueConstructor(
-    value: VueConstructor | any
-): value is VueConstructor {
+export function isVueConstructor(value: typeof createApp | unknown): value is typeof createApp {
     // check if the value itself is a function (it's not possible to tell if it's a constructor function or not)
     // check if value's prototype is an instance of Vue--this is the important check
-    return typeof value === 'function' && value.prototype instanceof Vue;
+    return typeof value === 'function';
 }
 
 /**
@@ -73,9 +81,7 @@ export function isVueConstructor(
  * @param {(ComponentOptions<Vue> | any)} value
  * @returns {value is ComponentOptions<Vue>}
  */
-export function isComponentOptions(
-    value: ComponentOptions<Vue> | any
-): value is ComponentOptions<Vue> {
+export function isComponentOptions(value: any): value is ComponentOptions {
     // `ComponentOptions` is just an object with all optional properties
     // check for the most common ones to see if any are present
     // functional component are ignored since a panel screen shouldn't not be a functional component
