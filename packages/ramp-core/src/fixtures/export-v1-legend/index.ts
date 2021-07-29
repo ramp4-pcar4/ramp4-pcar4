@@ -3,11 +3,7 @@ import { TreeNode } from '@/geo/api';
 import { LayerStore } from '@/store/modules/layer';
 import { ExportV1SubFixture } from '@/fixtures/export-v1';
 import { fabric } from 'fabric';
-import {
-    LegendSymbology,
-    RampLayerConfig,
-    RampLayerMapImageLayerEntryConfig
-} from '@/geo/api';
+import { LegendSymbology } from '@/geo/api';
 
 /**
  * Represents a map layer.
@@ -117,7 +113,7 @@ class ExportV1LegendFixture extends FixtureInstance
 
                         chunkItems.forEach(item => {
                             item.top = runningHeight;
-                            runningHeight += ROW_HEIGHT + ITEM_MARGIN;
+                            runningHeight += item.height! + ITEM_MARGIN;
                         });
 
                         return [...result, ...chunkItems].filter(a => a);
@@ -125,10 +121,10 @@ class ExportV1LegendFixture extends FixtureInstance
                 );
 
                 // create a group for each config layer
-                return new fabric.Group(
-                    [segmentTitle, ...allChunkItems.flat()],
-                    { objectCaching: false }
-                );
+                return new fabric.Group([
+                    segmentTitle,
+                    ...allChunkItems.flat()
+                ]);
             })
             .flat();
 
@@ -192,8 +188,7 @@ class ExportV1LegendFixture extends FixtureInstance
         });
 
         return new fabric.Group(items, {
-            originX: 'center',
-            objectCaching: false
+            originX: 'center'
         });
     }
 
@@ -214,8 +209,7 @@ class ExportV1LegendFixture extends FixtureInstance
             const title = new fabric.Textbox(layer.getName(layer.uid), {
                 fontSize: 24,
                 fontFamily: DEFAULT_FONT,
-                width: segmentWidth,
-                objectCaching: false
+                width: segmentWidth
             });
 
             // filter out invisible layer entries
@@ -252,8 +246,7 @@ class ExportV1LegendFixture extends FixtureInstance
             const title = new fabric.Textbox(layer.getName(idx), {
                 fontSize: 20,
                 fontFamily: DEFAULT_FONT,
-                width: segmentWidth,
-                objectCaching: false
+                width: segmentWidth
             });
 
             const items = await Promise.all(
@@ -284,23 +277,50 @@ class ExportV1LegendFixture extends FixtureInstance
                 await promisify(fabric.loadSVGFromString)(symbol.svgcode)
             )[0];
 
-            fbSymbol.originY = 'center';
-            fbSymbol.top = ROW_HEIGHT / 2;
+            if (symbol.hasOwnProperty('imgHeight')) {
+                // WMS legend
+                const fbLabel = new fabric.Textbox(symbol.label, {
+                    fontSize: 12,
+                    fontFamily: DEFAULT_FONT,
+                    originY: 'center',
+                    left: 0,
+                    top: ROW_HEIGHT / 2,
+                    width: segmentWidth
+                });
 
-            const fbLabel = new fabric.Textbox(symbol.label, {
-                fontSize: 12,
-                fontFamily: DEFAULT_FONT,
-                originY: 'center',
-                left: ICON_WIDTH + 20,
-                top: ROW_HEIGHT / 2,
-                width: segmentWidth - ICON_WIDTH - 20,
-                objectCaching: false
-            });
+                const symbolWidth = Number(symbol.imgWidth!);
+                const symbolHeight = Number(symbol.imgHeight!);
 
-            return new fabric.Group([fbSymbol, fbLabel], {
-                height: ROW_HEIGHT,
-                objectCaching: false
-            });
+                // scale down image if wider than column
+                const scale = Math.min(1, segmentWidth / symbolWidth);
+
+                if (fbSymbol) {
+                    fbSymbol.originY = 'center';
+                    fbSymbol.top = (symbolHeight * scale) / 2 + ROW_HEIGHT;
+                    fbSymbol.scaleToHeight(symbolHeight * scale);
+                    fbSymbol.scaleToWidth(symbolWidth * scale);
+                }
+
+                return new fabric.Group([fbLabel, fbSymbol].filter(Boolean), {
+                    height: symbolHeight * scale + ROW_HEIGHT
+                });
+            } else {
+                fbSymbol.originY = 'center';
+                fbSymbol.top = ROW_HEIGHT / 2;
+
+                const fbLabel = new fabric.Textbox(symbol.label, {
+                    fontSize: 12,
+                    fontFamily: DEFAULT_FONT,
+                    originY: 'center',
+                    left: ICON_WIDTH + 20,
+                    top: ROW_HEIGHT / 2,
+                    width: segmentWidth - ICON_WIDTH - 20
+                });
+
+                return new fabric.Group([fbSymbol, fbLabel], {
+                    height: ROW_HEIGHT
+                });
+            }
         });
     }
 

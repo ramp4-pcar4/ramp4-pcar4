@@ -42,3 +42,10 @@ declare module '@braid/vue-formulate' {
     const VueFormulate: PluginObject<{}>;
     export default VueFormulate;
 }
+
+declare class ResizeObserver {
+    constructor(callback: Function);
+    observe(target: Element): void;
+    unobserve(target: Element): void;
+    disconnect(): void;
+}

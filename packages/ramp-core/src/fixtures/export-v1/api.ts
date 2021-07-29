@@ -1,18 +1,22 @@
 import { FixtureInstance } from '@/api/internal';
 
 import { fabric } from 'fabric';
+// prevents blurriness <https://stackoverflow.com/questions/47513180/fabricjs-lines-in-group-become-blurry>
+fabric.Object.prototype.objectCaching = false;
 
 import FileSaver from 'file-saver';
 
 const GLOBAL_MARGIN = {
-    TOP: 20,
-    RIGHT: 20,
-    BOTTOM: 20,
-    LEFT: 20
+    TOP: 40,
+    RIGHT: 40,
+    BOTTOM: 40,
+    LEFT: 40
 };
 
 export class ExportV1API extends FixtureInstance {
     fcFabric: fabric.StaticCanvas | null = null;
+    // download canvas will remain unscaled and only be used for download
+    fcFabricDownload: fabric.StaticCanvas | null = null;
 
     options = {
         runningHeight: 0,
@@ -44,6 +48,10 @@ export class ExportV1API extends FixtureInstance {
             backgroundColor: '#fff'
         });
 
+        this.fcFabricDownload = new fabric.StaticCanvas(null, {
+            backgroundColor: '#fff'
+        });
+
         this.options.runningHeight = 0;
 
         const fbTitle = await this.getSubFixture('export-v1-title').make({
@@ -58,8 +66,8 @@ export class ExportV1API extends FixtureInstance {
         this.options.runningHeight += fbMap.height! + 40;
 
         this.options.scale =
-            (panelWidth - GLOBAL_MARGIN.LEFT - GLOBAL_MARGIN.RIGHT) /
-            fbMap.width!;
+            panelWidth /
+            (fbMap.width! + GLOBAL_MARGIN.LEFT + GLOBAL_MARGIN.RIGHT);
 
         const fbLegend = await this.getSubFixture('export-v1-legend').make({
             width: fbMap.width
@@ -69,31 +77,42 @@ export class ExportV1API extends FixtureInstance {
         this.options.runningHeight += fbLegend.height!;
 
         const fbGroup = new fabric.Group([fbTitle, fbMap, fbLegend], {
-            top: GLOBAL_MARGIN.TOP,
-            left: GLOBAL_MARGIN.LEFT,
-            objectCaching: false // prevents blurriness <https://stackoverflow.com/questions/47513180/fabricjs-lines-in-group-become-blurry>
+            top: GLOBAL_MARGIN.TOP * this.options.scale,
+            left: GLOBAL_MARGIN.LEFT * this.options.scale
         });
 
+        // clone items for download canvas
+        const fbGroupDownload: fabric.Group = await new Promise(resolve => {
+            fbGroup!.clone((g: fabric.Group) => {
+                resolve(g);
+            });
+        });
+        fbGroupDownload.top = GLOBAL_MARGIN.TOP;
+        fbGroupDownload.left = GLOBAL_MARGIN.LEFT;
+        this.fcFabricDownload.add(fbGroupDownload);
+
+        // scale down items for panel canvas
         fbGroup.scale(this.options.scale);
         this.fcFabric.add(fbGroup);
 
         this.fcFabric.setDimensions({
             width: panelWidth,
             height:
-                this.options.runningHeight * this.options.scale +
-                GLOBAL_MARGIN.TOP +
-                GLOBAL_MARGIN.BOTTOM
+                (this.options.runningHeight +
+                    GLOBAL_MARGIN.TOP +
+                    GLOBAL_MARGIN.BOTTOM) *
+                this.options.scale
         });
         this.fcFabric.renderAll();
 
-        // TODO: to make the best possible canvas quality, make two canvases, scale down and show one; keep other for export
-        // if scale ratio is too small, the images comes out a bit blurry; using two separate canvases will avoid this problem
-        // rescale up the canvas
-        /* fbGroup.scale(1);
-        fcFabric.setDimensions({
-            width: panelWidth / this.options.scale - GLOBAL_MARGIN.LEFT - GLOBAL_MARGIN.RIGHT,
-            height: this.options.runningHeight + GLOBAL_MARGIN.TOP + GLOBAL_MARGIN.BOTTOM
-        }); */
+        this.fcFabricDownload!.setDimensions({
+            width: fbMap.width! + GLOBAL_MARGIN.LEFT + GLOBAL_MARGIN.RIGHT,
+            height:
+                this.options.runningHeight +
+                GLOBAL_MARGIN.TOP +
+                GLOBAL_MARGIN.BOTTOM
+        });
+        this.fcFabricDownload.renderAll();
     }
 
     export(): void {
@@ -103,10 +122,9 @@ export class ExportV1API extends FixtureInstance {
         }
 
         FileSaver.saveAs(
-            this.fcFabric.toDataURL({
+            this.fcFabricDownload!.toDataURL({
                 format: 'png',
-                quality: 1,
-                multiplier: 1 / this.options.scale
+                quality: 1
             }),
             'export-image.png'
         );
