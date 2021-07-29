@@ -31,7 +31,8 @@ export enum GlobalEvents {
     FIXTURE_ADDED = 'fixture/added', // Payload is FixtureInstance
 
     LAYER_OPACITYCHANGE = 'layer/opacitychange',
-    LAYER_RELOADED = 'layer/reloaded', // Payload: `(layer: LayerInstance)`
+    LAYER_RELOAD_END = 'layer/reloadend', // Payload: `(layer: LayerInstance)`
+    LAYER_RELOAD_START = 'layer/reloadstart', // Payload: `(layer: LayerInstance)`
     LAYER_REMOVE = 'layer/remove', // Payload: `(layer: LayerInstance)`
     LAYER_STATECHANGE = 'layer/statechange',
     LAYER_VISIBILITYCHANGE = 'layer/visibilitychange',
@@ -650,7 +651,7 @@ export class EventAPI extends APIScope {
                     }
                 };
                 this.$iApi.event.on(
-                    GlobalEvents.LAYER_RELOADED,
+                    GlobalEvents.LAYER_RELOAD_START,
                     zeHandler,
                     handlerName
                 );

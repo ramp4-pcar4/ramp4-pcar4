@@ -134,7 +134,7 @@
 </template>
 
 <script lang="ts">
-import { GlobalEvents } from '@/api';
+import { GlobalEvents, LayerInstance } from '@/api';
 import { Vue, Component, Prop } from 'vue-property-decorator';
 
 import { LegendEntry, Controls } from '../store/legend-defs';
@@ -142,6 +142,7 @@ import { LegendEntry, Controls } from '../store/legend-defs';
 import LegendCheckboxV from './checkbox.vue';
 import LegendSymbologyStackV from './symbology-stack.vue';
 import LegendOptionsV from './legend-options.vue';
+import { LayerType } from '@/geo/api';
 
 @Component({
     components: {
@@ -152,6 +153,46 @@ import LegendOptionsV from './legend-options.vue';
 })
 export default class LegendEntryV extends Vue {
     @Prop() legendItem!: LegendEntry;
+
+    // Making handlers a list in case more are added in the future
+    handlers: Array<string> = [];
+
+    mounted() {
+        // Update checkbox value when the layer reloads
+        this.handlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.LAYER_RELOAD_END,
+                (reloadedLayer: LayerInstance) => {
+                    let updateVisibilityFlag: boolean = false;
+                    if (reloadedLayer.layerType === LayerType.MAPIMAGE) {
+                        // Check if this.uid is a child of reloadedLayer
+                        if (
+                            this.legendItem.layerUID &&
+                            reloadedLayer
+                                .getLayerTree()
+                                .findChildByUid(this.legendItem.layerUID)
+                        ) {
+                            updateVisibilityFlag = true;
+                        }
+                    } else if (this.legendItem.layerUID === reloadedLayer.uid) {
+                        updateVisibilityFlag = true;
+                    }
+
+                    if (updateVisibilityFlag) {
+                        // Wait for layer to fully load
+                        this.legendItem.layer?.isLayerLoaded().then(() => {
+                            this.legendItem.toggleVisibility(true);
+                        });
+                    }
+                }
+            )
+        );
+    }
+
+    unmounted() {
+        // Remove all event handlers for this component
+        this.handlers.forEach(handler => this.$iApi.event.off(handler));
+    }
 
     /**
      * Display symbology stack for the layer.

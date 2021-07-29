@@ -107,6 +107,7 @@ import { PanelInstance } from '@/api';
 import SettingsComponentV from './component.vue';
 import { GlobalEvents, LayerInstance } from '@/api/internal';
 import { LegendEntry } from '../legend/store/legend-defs';
+import { LayerType } from '@/geo/api';
 
 @Component({
     components: {
@@ -123,6 +124,7 @@ export default class SettingsScreenV extends Vue {
     visibilityModel: boolean = this.layer.getVisibility(this.uid);
     opacityModel: number = this.layer.getOpacity(this.uid) * 100;
     snapshotToggle: boolean = false;
+    handlers: Array<string> = [];
 
     mounted() {
         // Listen for a layer load event. Some of these values may change when the layer fully loads.
@@ -131,14 +133,41 @@ export default class SettingsScreenV extends Vue {
             this.opacityModel = this.layer.getOpacity(this.uid) * 100;
         });
 
-        this.$iApi.event.on(
-            GlobalEvents.LAYER_VISIBILITYCHANGE,
-            (newVisibility: any) => {
-                if (this.uid === newVisibility.uid) {
-                    this.visibilityModel = newVisibility.visibility;
+        this.handlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.LAYER_VISIBILITYCHANGE,
+                (newVisibility: any) => {
+                    if (this.uid === newVisibility.uid) {
+                        this.visibilityModel = newVisibility.visibility;
+                    }
                 }
-            }
+            )
         );
+
+        this.handlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.LAYER_RELOAD_END,
+                (reloadedLayer: LayerInstance) => {
+                    if (reloadedLayer.layerType === LayerType.MAPIMAGE) {
+                        // Check if this.uid is a child of reloadedLayer
+                        if (
+                            reloadedLayer
+                                .getLayerTree()
+                                .findChildByUid(this.uid)
+                        ) {
+                            this.visibilityModel = true;
+                        }
+                    } else if (this.uid === reloadedLayer.uid) {
+                        this.visibilityModel = true;
+                    }
+                }
+            )
+        );
+    }
+
+    unmounted() {
+        // Remove all event handlers for this component
+        this.handlers.forEach(handler => this.$iApi.event.off(handler));
     }
 
     // Update the layer visibility.

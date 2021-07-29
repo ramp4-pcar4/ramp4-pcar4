@@ -270,6 +270,7 @@ export class CommonLayer extends LayerInstance {
             //      could do that here. Alternative is to not, and let whomever is calling this save state before
             //      and restore state after. Might be more flexible.
 
+            this.$iApi.event.emit(GlobalEvents.LAYER_RELOAD_START, this);
             await this.terminate();
         }
 
@@ -286,7 +287,7 @@ export class CommonLayer extends LayerInstance {
 
         // if we did any state storage above, would restore here.
 
-        this.$iApi.event.emit(GlobalEvents.LAYER_RELOADED, this);
+        this.$iApi.event.emit(GlobalEvents.LAYER_RELOAD_END, this);
     }
 
     // TODO strongly type if it makes sense. unsure if we want client config definitions in here

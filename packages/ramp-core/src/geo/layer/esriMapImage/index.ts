@@ -285,10 +285,15 @@ class MapImageLayer extends AttribLayer {
                 parentTreeNode.children.push(treeLeaf);
 
                 subLayer.watch('visible', () => {
-                    // TODO implementing same as pre-no-dojo. might want to add a sublayer vis change event as well.
+                    // Parent layer visibility
                     this.$iApi.event.emit(GlobalEvents.LAYER_VISIBILITYCHANGE, {
                         visibility: this.getVisibility(),
                         uid: this.uid
+                    });
+                    // Sublayer visibility
+                    this.$iApi.event.emit(GlobalEvents.LAYER_VISIBILITYCHANGE, {
+                        visibility: this.fcs[sid].getVisibility(),
+                        uid: this.fcs[sid].uid
                     });
                 });
             }
