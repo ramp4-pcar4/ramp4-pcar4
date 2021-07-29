@@ -61,13 +61,13 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Options } from 'vue-property-decorator';
 import { Call, Get } from 'vuex-pathify';
 
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 import NotificationListV from './notification-list.vue';
 
-@Component({
+@Options({
     components: {
         'dropdown-menu': DropdownMenuV,
         'notification-list': NotificationListV

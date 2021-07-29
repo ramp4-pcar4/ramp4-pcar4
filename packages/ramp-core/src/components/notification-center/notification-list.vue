@@ -34,12 +34,12 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Options } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
 import NotificationItemV from './notification-item.vue';
 
-@Component({
+@Options({
     components: {
         'notification-item': NotificationItemV
     }

@@ -62,12 +62,11 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Prop } from 'vue-property-decorator';
 import { Call } from 'vuex-pathify';
 
 import { NotificationType } from '@/api/notifications';
 
-@Component({})
 export default class NotificationListV extends Vue {
     @Prop() notification!: any;
     @Call('notification/removeNotification') removeNotification!: (

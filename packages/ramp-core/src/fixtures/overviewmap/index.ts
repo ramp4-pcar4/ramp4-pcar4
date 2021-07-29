@@ -1,5 +1,5 @@
 import { OverviewmapAPI } from './api/overviewmap';
-import { overviewmap } from './store/index';
+import { overviewmap, OverviewmapConfig } from './store/index';
 import OverviewmapV from './overviewmap.vue';
 import messages from './lang/lang.csv';
 
@@ -10,13 +10,13 @@ class OverviewmapFixture extends OverviewmapAPI {
         this.$vApp.$store.registerModule('overviewmap', overviewmap());
 
         Object.entries(messages).forEach(value =>
-            this.$vApp.$i18n.mergeLocaleMessage(...value)
+            (<any>this.$vApp.$i18n).mergeLocaleMessage(...value)
         );
 
         this._parseConfig(this.config);
         this.$vApp.$watch(
             () => this.config,
-            value => this._parseConfig(value)
+            (value: OverviewmapConfig | undefined) => this._parseConfig(value)
         );
     }
 
@@ -25,15 +25,15 @@ class OverviewmapFixture extends OverviewmapAPI {
         this.$vApp.$store.unregisterModule('overviewmap');
     }
 
-    initialized() {
-        const innerShell = this.$vApp.$el.getElementsByClassName(
-            'inner-shell'
-        )[0];
-        const overviewInstance = this.extend(OverviewmapV, {
-            store: this.$vApp.$store,
-            i18n: this.$vApp.$i18n
-        });
-        innerShell.append(overviewInstance.$el);
+        this.$element.component('OverviewmapV', OverviewmapV);
+        // const innerShell = this.$vApp.$el.getElementsByClassName(
+        //     'inner-shell'
+        // )[0];
+        // const overviewInstance = this.extend(OverviewmapV, {
+        //     store: this.$vApp.$store,
+        //     i18n: this.$vApp.$i18n
+        // });
+        // innerShell.append(overviewInstance.$el);
     }
 }
 

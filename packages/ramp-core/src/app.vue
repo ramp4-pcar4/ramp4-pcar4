@@ -11,13 +11,6 @@ import Shell from '@/components/shell.vue';
 
 import ro from '@/scripts/resize-observer.js';
 
-import { FocusList, FocusItem } from '@/directives/focus-list';
-Vue.directive('focus-list', FocusList);
-Vue.directive('focus-item', FocusItem);
-
-import { Truncate } from '@/directives/truncate/truncate';
-Vue.directive('truncate', Truncate);
-
 //TOOLTIPS
 //@ts-ignore
 import VueTippy, { tippy } from 'vue-tippy';

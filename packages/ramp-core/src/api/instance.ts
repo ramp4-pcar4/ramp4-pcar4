@@ -1,4 +1,4 @@
-import { ComponentPublicInstance, createApp as createRampApp, App as VueApp } from 'vue';
+import { ComponentPublicInstance, createApp as createRampApp, App as VueApp, DefineComponent } from 'vue';
 import { RampConfig, RampConfigs } from '@/types';
 import { i18n } from '@/lang';
 import screenfull from 'screenfull';
@@ -10,9 +10,19 @@ import { ConfigStore } from '@/store/modules/config';
 import VueFormulate from '@braid/vue-formulate';
 
 //@ts-ignore
+import { FocusList, FocusItem } from '@/directives/focus-list';
+import { Truncate } from '@/directives/truncate/truncate';
 import VueTippy, { TippyComponent, tippy } from 'vue-tippy';
 
 import { EventAPI, FixtureAPI, GeoAPI, GlobalEvents, PanelAPI, NotificationAPI } from './internal';
+
+import PanelScreenV from '@/components/panel-stack/panel-screen.vue';
+import PinV from '@/components/panel-stack/controls/pin.vue';
+import CloseV from '@/components/panel-stack/controls/close.vue';
+import BackV from '@/components/panel-stack/controls/back.vue';
+import PanelOptionsMenuV from '@/components/panel-stack/controls/panel-options-menu.vue';
+import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
+import MinimizeV from '@/components/controls/dropdown-menu.vue';
 
 interface RampOptions {
     loadDefaultFixtures?: boolean;
@@ -278,7 +288,21 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
         .use(VueTippy)
         .use(mixin);
 
+    // ported from app.vue
+    vueElement.directive('focus-list', FocusList);
+    vueElement.directive('focus-item', FocusItem);
+    vueElement.directive('truncate', Truncate);
+
     vueElement.component('tippy', TippyComponent);
+
+    // ported from panel-container.vue
+    vueElement.component('panel-screen', PanelScreenV);
+    vueElement.component('pin', PinV);
+    vueElement.component('close', CloseV);
+    vueElement.component('back', BackV);
+    vueElement.component('panel-options-menu', PanelOptionsMenuV);
+    vueElement.component('dropdown-menu', DropdownMenuV);
+    vueElement.component('minimize', MinimizeV);
 
     vueElement.config.globalProperties.$store = store;
     vueElement.config.globalProperties.$iApi = iApi;

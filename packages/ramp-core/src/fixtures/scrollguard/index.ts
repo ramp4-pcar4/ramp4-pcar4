@@ -7,7 +7,7 @@ class ScrollguardFixture extends FixtureInstance {
         console.log(`[fixture] ${this.id} added`);
         // Manually add lang entries to i18n
         Object.entries(messages).forEach(value =>
-            this.$vApp.$i18n.mergeLocaleMessage(...value)
+            (<any>this.$vApp.$i18n).mergeLocaleMessage(...value)
         );
     }
 
@@ -15,11 +15,11 @@ class ScrollguardFixture extends FixtureInstance {
         console.log(`[fixture] ${this.id} removed`);
     }
 
-    initialized(): void {
-        const scrollguard = this.extend(ScrollguardV);
-        this.$vApp.$root.$el
-            .getElementsByClassName('inner-shell')[0]
-            .prepend(scrollguard.$el);
+        // const scrollguard = this.extend(ScrollguardV);
+        // this.$vApp.$root.$el
+        //     .getElementsByClassName('inner-shell')[0]
+        //     .prepend(scrollguard.$el);
+        this.$element.component('ScrollguardV', ScrollguardV);
     }
 }
 

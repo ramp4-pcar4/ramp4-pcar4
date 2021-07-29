@@ -1,5 +1,5 @@
 import { DetailsAPI } from './api/details';
-import { details } from './store';
+import { details, DetailsConfig } from './store';
 import DetailsAppbarButtonV from './appbar-button.vue';
 import DetailsLayerScreenV from './layers-screen.vue';
 import DetailsResultScreenV from './result-screen.vue';
@@ -33,7 +33,7 @@ class DetailsFixture extends DetailsAPI {
         this._parseConfig(this.config);
         this.$vApp.$watch(
             () => this.config,
-            value => this._parseConfig(value)
+            (value: DetailsConfig | undefined) => this._parseConfig(value)
         );
     }
 

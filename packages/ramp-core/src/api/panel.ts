@@ -37,13 +37,13 @@ export class PanelAPI extends APIScope {
             // merge `messages`, `dateTimeFormats` and  `numberFormats` into the global locale
             // ignore `sharedMessages` prop as it makes no sense to use it here
             Object.entries(i18n.messages || {}).forEach(value =>
-                $i18n.mergeLocaleMessage(...value)
+                (<any>$i18n).mergeLocaleMessage(...value)
             );
             Object.entries(i18n.dateTimeFormats || {}).forEach(value =>
-                $i18n.mergeDateTimeFormat(...value)
+                (<any>$i18n).mergeDateTimeFormat(...value)
             );
             Object.entries(i18n.numberFormats || {}).forEach(value =>
-                $i18n.mergeNumberFormat(...value)
+                (<any>$i18n).mergeNumberFormat(...value)
             );
         }
 
