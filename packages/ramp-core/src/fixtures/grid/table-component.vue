@@ -69,6 +69,8 @@
             @grid-ready="onGridReady"
             @keydown.native="stopArrowKeyProp"
             @firstDataRendered="gridRendered"
+            :doesExternalFilterPass="doesExternalFilterPass"
+            :isExternalFilterPresent="isExternalFilterPresent"
         >
         </ag-grid-vue>
     </div>
@@ -77,13 +79,14 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get, Sync } from 'vuex-pathify';
-import { LayerInstance } from '@/api/internal';
+import { LayerInstance, GlobalEvents } from '@/api/internal';
+import { LayerStore } from '@/store/modules/layer';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
 import { AgGridVue } from 'ag-grid-vue';
 import GridColumnDropdownV from './column-dropdown.vue';
-import { GridConfig } from './store';
+import { GridConfig, GridStore } from './store';
 import TableStateManager from './store/table-state-manager';
 import GridAccessibilityManager from './accessibility';
 
@@ -117,10 +120,10 @@ const TEXT_TYPE: string = 'string';
 })
 export default class GridTableComponentV extends Vue {
     @Prop() layerUid!: string;
-    @Get('layer/getLayerByUid') getLayerByUid!: (
+    @Get(LayerStore.getLayerByUid) getLayerByUid!: (
         uid: string
     ) => LayerInstance | undefined;
-    @Sync('grid/grids') grids!: { [uid: string]: GridConfig };
+    @Sync(GridStore.grids) grids!: { [uid: string]: GridConfig };
 
     columnApi: any = null;
     columnDefs: any = [];
@@ -135,9 +138,10 @@ export default class GridTableComponentV extends Vue {
         lastRow: 0,
         visibleRows: 0
     };
-    filterStatus = '';
 
-    beforeMount() {
+    filteredOids: number[] | undefined;
+
+    async beforeMount() {
         // load the grid config for this layer
         this.config = this.grids[this.layerUid];
 
@@ -274,6 +278,54 @@ export default class GridTableComponentV extends Vue {
         if (this.rowData.length > 0) {
             this.columnApi.autoSizeAllColumns();
         }
+
+        // listen for layer filter and visibility events and update grid appropriately
+        this.$iApi.event.on(
+            GlobalEvents.FILTER_CHANGE,
+            ({ uid, filterKey }: { uid: string; filterKey: string }) => {
+                if (uid === this.layerUid) {
+                    this.applyLayerFilters();
+                }
+            }
+        );
+        this.$iApi.event.on(
+            GlobalEvents.LAYER_VISIBILITYCHANGE,
+            ({ visibility, uid }: { visibility: boolean; uid: string }) => {
+                if (
+                    uid === this.layerUid ||
+                    uid === this.getLayerByUid(this.layerUid)!.uid
+                ) {
+                    this.applyLayerFilters();
+                }
+            }
+        );
+        this.applyLayerFilters();
+    }
+
+    // checks if any external (layer) filters are applied
+    isExternalFilterPresent() {
+        return this.filteredOids !== undefined;
+    }
+
+    // filters row based on layer filter
+    doesExternalFilterPass(node: any) {
+        return this.filteredOids!.includes(node.data[this.oidField]);
+    }
+
+    // updates external grid filter based on layer filter and rerenders grid
+    async applyLayerFilters() {
+        const layer = this.getLayerByUid(this.layerUid)!;
+        if (!layer.getVisibility(this.layerUid)) {
+            this.filteredOids = [];
+        } else {
+            this.filteredOids = await layer.getFilterOIDs(
+                undefined,
+                undefined,
+                this.layerUid
+            );
+        }
+        this.gridApi.onFilterChanged();
+        this.columnApi.autoSizeAllColumns();
     }
 
     gridRendered() {
