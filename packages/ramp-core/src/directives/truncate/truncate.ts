@@ -1,5 +1,6 @@
 //@ts-ignore
 import { tippy } from 'vue-tippy';
+import { Directive, DirectiveBinding } from 'vue';
 
 const TRUNCATE_ATTR = 'truncate-text';
 const TRIGGER_ATTR = 'truncate-trigger';
@@ -19,15 +20,15 @@ const TRIGGER_ATTR = 'truncate-trigger';
  * if externalTrigger is present you must put the attribute `truncate-trigger` on the element you wish to be the tooltip trigger (this element must be an ancestor of the element with v-truncate)
  *
  */
-export const Truncate: Vue.DirectiveOptions = {
-    bind(el: HTMLElement) {
+export const Truncate: Directive = {
+    beforeMount(el: HTMLElement) {
         if (!el.classList.contains('truncate')) {
             el.classList.add('truncate');
         }
 
         el.toggleAttribute(TRUNCATE_ATTR, true);
     },
-    inserted(el: HTMLElement, binding: Vue.VNodeDirective) {
+    mounted(el: HTMLElement, binding: DirectiveBinding) {
         let triggerElement;
         if (binding.value && binding.value.externalTrigger) {
             // el.closest gets closes ancestor that maches the selector (moves up the parent chain)
@@ -47,14 +48,14 @@ export const Truncate: Vue.DirectiveOptions = {
             (el as any)._tippy.set(binding.value.options);
         }
     },
-    componentUpdated(el: HTMLElement, binding: Vue.VNodeDirective) {
+    updated(el: HTMLElement, binding: DirectiveBinding) {
         // update content and options
         (el as any)._tippy.setContent(el.textContent);
         if (binding.value && binding.value.options) {
             (el as any)._tippy.set(binding.value.options);
         }
     },
-    unbind(el: HTMLElement) {
+    unmounted(el: HTMLElement) {
         // destroy tippy instance
         if ((el as any)._tippy) {
             (el as any)._tippy.destroy();
