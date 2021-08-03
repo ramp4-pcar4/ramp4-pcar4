@@ -151,7 +151,7 @@ export class InstanceAPI {
      * @returns {VC}
      * @memberof InstanceAPI
      */
-    component<VC extends DefineComponent>(id: string, vueConstructor: VC): VC;
+    component<VC extends DefineComponent>(id: string, vueConstructor: any): VC;
     component(id: string, definition?: any) {
         if (definition) {
             const vc = this.$element.component(id, definition);
