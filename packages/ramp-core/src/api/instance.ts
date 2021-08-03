@@ -1,4 +1,9 @@
-import { ComponentPublicInstance, createApp as createRampApp, App as VueApp, DefineComponent } from 'vue';
+import {
+    ComponentPublicInstance,
+    createApp as createRampApp,
+    App as VueApp,
+    DefineComponent
+} from 'vue';
 import { RampConfig, RampConfigs } from '@/types';
 import { i18n } from '@/lang';
 import screenfull from 'screenfull';
@@ -10,9 +15,9 @@ import { ConfigStore } from '@/store/modules/config';
 import VueFormulate from '@braid/vue-formulate';
 
 //@ts-ignore
+import VueTippy, { TippyComponent, tippy } from 'vue-tippy';
 import { FocusList, FocusItem } from '@/directives/focus-list';
 import { Truncate } from '@/directives/truncate/truncate';
-import VueTippy, { TippyComponent, tippy } from 'vue-tippy';
 
 import { EventAPI, FixtureAPI, GeoAPI, GlobalEvents, PanelAPI, NotificationAPI } from './internal';
 

@@ -1,5 +1,3 @@
-import Vue, { ComponentOptions, VueConstructor } from 'vue';
-
 export default {
     /**
      * This function runs automatically by Vue when the mixin is registered using `Vue.use(...)` and allows to inject components options at different points in an instance life cycle.
@@ -9,8 +7,8 @@ export default {
      * @param {VueConstructor} Vue
      * @param {ComponentOptions<Vue>} options
      */
-    install(Vue: VueConstructor, options: ComponentOptions<Vue>) {
-        Vue.mixin({
+    install(app: any, options: any) {
+        app.mixin({
             beforeCreate() {
                 const options = this.$options;
 

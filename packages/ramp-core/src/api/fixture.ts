@@ -1,7 +1,11 @@
 import Vue, { ComponentOptions } from 'vue';
 
 import { APIScope, GlobalEvents, InstanceAPI } from './internal';
-import { FixtureBase, FixtureMutation, FixtureBaseSet } from '@/store/modules/fixture';
+import {
+    FixtureBase,
+    FixtureMutation,
+    FixtureBaseSet
+} from '@/store/modules/fixture';
 import { i18n } from '@/lang';
 
 // TODO: implement the same `internal.ts` pattern in store, so can import from a single place;
@@ -41,11 +45,17 @@ export class FixtureAPI extends APIScope {
             }
 
             // run the provided constructor and update the resulting object with FixtureInstance functions/properties
-            fixture = FixtureInstance.updateBaseToInstance(new constructor(), id, this.$iApi);
+            fixture = FixtureInstance.updateBaseToInstance(
+                new constructor(),
+                id,
+                this.$iApi
+            );
         } else {
             // perform a dynamic webpack import of a internal fixture (allows for code splitting)
             const instanceConstructor: IFixtureInstance = (
-                await import(/* webpackChunkName: "[request]" */ `@/fixtures/${id}/index.ts`)
+                await import(
+                    /* webpackChunkName: "[request]" */ `@/fixtures/${id}/index.ts`
+                )
             ).default;
 
             fixture = new instanceConstructor(id, this.$iApi);
@@ -71,7 +81,9 @@ export class FixtureAPI extends APIScope {
      * @returns {T}
      * @memberof FixtureAPI
      */
-    remove<T extends FixtureBase = FixtureBase>(fixtureOrId: FixtureBase | string): T {
+    remove<T extends FixtureBase = FixtureBase>(
+        fixtureOrId: FixtureBase | string
+    ): T {
         const fixture = this.get<T>(fixtureOrId);
 
         this.$vApp.$store.set(`fixture/${FixtureMutation.REMOVE_FIXTURE}!`, {
@@ -141,7 +153,9 @@ export class FixtureAPI extends APIScope {
      * @returns {Promise<Array<FixtureBase>>} resolves with array of default fixtures
      * @memberof FixtureAPI
      */
-    addDefaultFixtures(fixtureNames?: Array<string>): Promise<Array<FixtureBase>> {
+    addDefaultFixtures(
+        fixtureNames?: Array<string>
+    ): Promise<Array<FixtureBase>> {
         if (!Array.isArray(fixtureNames) || fixtureNames.length === 0) {
             fixtureNames = [
                 'appbar',
@@ -208,7 +222,7 @@ export class FixtureInstance extends APIScope implements FixtureBase {
                 }
             },
             remove: { value: instance.remove },
-            extend: { value: instance.extend },
+            // extend: { value: instance.extend },
             config: {
                 get(): any {
                     return instance.config;
