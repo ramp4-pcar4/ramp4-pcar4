@@ -3,43 +3,22 @@
         <button
             class="basemap-item-button bg-gray-300"
             :aria-label="$t('basemap.select')"
-            @click="selectBasemap(basemap)"
+            @click="selectBasemap"
             v-focus-item
         >
             <div>
-                <div v-if="basemap.wkid === 3978">
+                <div>
                     <div
                         class="flex h-180 hover:opacity-50 basemap-item-image"
                         v-for="layer in basemap.layers"
-                        v-bind:key="layer.id"
+                        :key="layer.id"
                     >
                         <img
+                            v-for="(url, idx) in tileSchema.thumbnailUrls"
                             class="w-full"
                             alt=""
-                            :src="layer.url + '/tile/8/285/268'"
-                        />
-                        <img
-                            class="w-full"
-                            alt=""
-                            :src="layer.url + '/tile/8/285/269'"
-                        />
-                    </div>
-                </div>
-                <div v-else-if="basemap.wkid === 102100">
-                    <div
-                        class="flex h-180 hover:opacity-50 basemap-item-image"
-                        v-for="layer in basemap.layers"
-                        v-bind:key="layer.id"
-                    >
-                        <img
-                            class="w-full"
-                            alt=""
-                            :src="layer.url + '/tile/8/91/74'"
-                        />
-                        <img
-                            class="w-full"
-                            alt=""
-                            :src="layer.url + '/tile/8/91/75'"
+                            :src="layer.url + url"
+                            :key="idx"
                         />
                     </div>
                 </div>
@@ -85,18 +64,22 @@
 </template>
 
 <script lang="ts">
+import { RampBasemapConfig, RampTileSchemaConfig } from '@/geo/api';
 import { Vue, Prop, Component } from 'vue-property-decorator';
-import { Get, Call } from 'vuex-pathify';
+import { Get } from 'vuex-pathify';
 
 import { BasemapStore } from './store';
 
 @Component
 export default class BasemapItemV extends Vue {
-    @Prop() basemap!: any;
-    @Get(BasemapStore.selectedBasemap) selectedBasemap!: any;
+    @Prop() basemap!: RampBasemapConfig;
+    @Prop() tileSchema!: RampTileSchemaConfig;
+    // @ts-ignore
+    @Get(BasemapStore.selectedBasemap) selectedBasemap: RampBasemapConfig;
 
-    // import required basemap store actions
-    @Call(BasemapStore.selectBasemap) selectBasemap!: (basemap: any) => void;
+    selectBasemap() {
+        this.$iApi.$vApp.$store.set(BasemapStore.selectBasemap, this.basemap);
+    }
 }
 </script>
 
