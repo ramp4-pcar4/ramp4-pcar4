@@ -58,7 +58,7 @@ export default class PanelContainerV extends Vue {
         // just before the component is removed from DOM; supress the focus ring on the screen component just before `leave` event
         this.$el
             .querySelectorAll('[focus-item')
-            .forEach(element =>
+            .forEach((element: HTMLElement) =>
                 element.classList.remove('default-focus-style')
             );
     }

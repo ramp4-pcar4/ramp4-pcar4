@@ -46,7 +46,7 @@ export default class HelpScreenV extends Vue {
         // make help request when fixture loads or locale changes
         this.$watch(
             '$i18n.locale',
-            (newLocale, oldLocale) => {
+            (newLocale: any, oldLocale: any) => {
                 if (newLocale === oldLocale) return;
                 // path to where HELP is hosted is different if RAMP is built as prod library
                 const base =
