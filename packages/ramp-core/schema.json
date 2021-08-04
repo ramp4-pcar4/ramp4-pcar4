@@ -1379,9 +1379,6 @@
                     "type": "string",
                     "description": "Optional identification link to lod set data defined in map.lodSets. This can be used to override hardcoded default value."
                 },
-                "spatialReference": {
-                    "$ref": "#/$defs/spatialReferenceNode"
-                },
                 "thumbnailUrls": {
                     "type": "array",
                     "description": "The list of tile urls used as the thumbnail preview image. At least two consecutive tile urls are required to ensure it displays correctly.",

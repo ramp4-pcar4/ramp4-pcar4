@@ -501,7 +501,6 @@ export interface RampTileSchemaConfig {
     name: string;
     extentSetId: string;
     lodSetId: string;
-    spatialReference: RampSpatialReference;
     thumbnailUrls: Array<string>;
     hasNorthPole?: boolean;
 }
