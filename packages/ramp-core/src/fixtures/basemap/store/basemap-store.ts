@@ -3,22 +3,33 @@ import { make } from 'vuex-pathify';
 
 import { BasemapState } from './basemap-state';
 import { RootState } from '@/store/state';
+import { RampBasemapConfig } from '@/geo/api';
 
 type BasemapContext = ActionContext<BasemapState, RootState>;
 
 const getters = {};
 
-const mutations = {};
-
 const actions = {
     /**
      * Update map projection with newly selected basemap (trigger map reload?).
      *
-     * @function selectBasemap
+     * @function setSelectedBasemap
      */
-    selectBasemap: function(context: BasemapContext, basemap: any): void {
-        // TODO: reloading map with new basemap projection
+    selectBasemap: function(
+        context: BasemapContext,
+        basemap: RampBasemapConfig | undefined
+    ): void {
+        if (!basemap) {
+            return;
+        }
         context.commit('SET_SELECTED_BASEMAP', basemap);
+    }
+};
+
+const mutations = {
+    SET_SELECTED_BASEMAP: (state: BasemapState, basemap: RampBasemapConfig) => {
+        // TODO: reload map with new basemap
+        state.selectedBasemap = basemap;
     }
 };
 
@@ -36,9 +47,9 @@ export enum BasemapStore {
      */
     selectedBasemap = 'basemap/selectedBasemap',
     /**
-     * (Action) selectBasemap: () => void
+     * (Action) selectBasemap: (basemap: RampBasemapConfig)
      */
-    selectBasemap = 'basemap/selectBasemap'
+    selectBasemap = 'basemap/selectBasemap!'
 }
 
 export function basemap() {
