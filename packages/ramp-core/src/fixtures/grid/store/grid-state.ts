@@ -24,7 +24,7 @@ export class GridState {
      * @type {(string | null)}
      * @memberof GridState
      */
-    currentUid: String | null = null;
+    currentUid: string | null = null;
 }
 
 export interface GridConfig {

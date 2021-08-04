@@ -10,8 +10,8 @@
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fit=""
-                    height="16px"
-                    width="16px"
+                    height="24px"
+                    width="24px"
                     preserveAspectRatio="xMidYMid meet"
                     viewBox="0 0 24 24"
                     focusable="false"

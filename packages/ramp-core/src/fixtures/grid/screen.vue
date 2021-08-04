@@ -65,6 +65,7 @@ import { Get } from 'vuex-pathify';
 
 import { LayerInstance, PanelInstance } from '@/api';
 import GridTableComponentV from '@/fixtures/grid/table-component.vue';
+import { GridStore } from './store';
 
 import { LayerStore } from '@/store/modules/layer';
 
@@ -75,40 +76,40 @@ import { LayerStore } from '@/store/modules/layer';
 })
 export default class GridScreenV extends Vue {
     @Prop() panel!: PanelInstance;
-    @Prop() header!: String;
+    @Prop() header!: string;
 
     @Get(LayerStore.layers) layers!: LayerInstance[];
-    @Get('grid/currentUid') currentUid: any;
+    @Get(GridStore.currentUid) currentUid!: string;
 
-    quicksearch: String = '';
-    grid: any = undefined;
-    head: String = '';
-    layer: any = undefined;
+    quicksearch: string = '';
+    grid: GridTableComponentV | undefined;
+    head: string = '';
+    layer: LayerInstance | undefined = undefined;
 
     mounted() {
-        this.grid = this.$refs.rvGrid;
+        this.grid = this.$refs.rvGrid as GridTableComponentV;
         this.head = this.layerName;
     }
 
     updateQuickSearch(): void {
-        this.grid.quicksearch = this.quicksearch;
-        this.grid.updateQuickSearch();
+        this.grid!.quicksearch = this.quicksearch;
+        this.grid!.updateQuickSearch();
     }
 
     resetQuickSearch(): void {
-        this.grid.quicksearch = this.quicksearch = '';
-        this.grid.updateQuickSearch();
+        this.grid!.quicksearch = this.quicksearch = '';
+        this.grid!.updateQuickSearch();
     }
 
     clearFilters(): void {
         this.resetQuickSearch();
-        this.grid.clearFilters();
+        this.grid!.clearFilters();
     }
 
     get layerName() {
         if (this.grid) {
             this.layer = this.grid.getLayerByUid(this.grid.layerUid);
-            return this.layer.getName(this.grid.layerUid);
+            return this.layer!.getName(this.grid.layerUid);
         }
         return '';
     }

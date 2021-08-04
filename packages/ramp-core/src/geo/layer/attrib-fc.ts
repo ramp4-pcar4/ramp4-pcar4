@@ -16,7 +16,7 @@ import {
 import {
     Attributes,
     BaseGeometry,
-    CoreFilterKey,
+    CoreFilter,
     DataFormat,
     Extent,
     FieldDefinition,
