@@ -1411,6 +1411,10 @@
                     "default": null,
                     "description": "Path to image file to display in the basemap selector."
                 },
+                "wkid": {
+                    "type": "string",
+                    "description": "A well known ESRI id denoting a projection."
+                },
                 "tileSchemaId": {
                     "type": "string",
                     "description": "The tile schema associated with this basemap."

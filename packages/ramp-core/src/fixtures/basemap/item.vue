@@ -3,7 +3,7 @@
         <button
             class="basemap-item-button bg-gray-300"
             :aria-label="$t('basemap.select')"
-            @click="selectBasemap(basemap)"
+            @click="selectBasemap"
             v-focus-item
         >
             <div>
@@ -11,7 +11,7 @@
                     <div
                         class="flex h-180 hover:opacity-50 basemap-item-image"
                         v-for="layer in basemap.layers"
-                        v-bind:key="layer.id"
+                        :key="layer.id"
                     >
                         <img
                             class="w-full"
@@ -29,7 +29,7 @@
                     <div
                         class="flex h-180 hover:opacity-50 basemap-item-image"
                         v-for="layer in basemap.layers"
-                        v-bind:key="layer.id"
+                        :key="layer.id"
                     >
                         <img
                             class="w-full"
@@ -85,18 +85,21 @@
 </template>
 
 <script lang="ts">
+import { RampBasemapConfig } from '@/geo/api';
 import { Vue, Prop, Component } from 'vue-property-decorator';
-import { Get, Call } from 'vuex-pathify';
+import { Get } from 'vuex-pathify';
 
 import { BasemapStore } from './store';
 
 @Component
 export default class BasemapItemV extends Vue {
-    @Prop() basemap!: any;
-    @Get(BasemapStore.selectedBasemap) selectedBasemap!: any;
+    @Prop() basemap!: RampBasemapConfig;
+    // @ts-ignore
+    @Get(BasemapStore.selectedBasemap) selectedBasemap: RampBasemapConfig;
 
-    // import required basemap store actions
-    @Call(BasemapStore.selectBasemap) selectBasemap!: (basemap: any) => void;
+    selectBasemap() {
+        this.$iApi.$vApp.$store.set(BasemapStore.selectBasemap, this.basemap);
+    }
 }
 </script>
 

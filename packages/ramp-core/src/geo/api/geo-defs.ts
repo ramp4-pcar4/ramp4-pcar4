@@ -493,6 +493,15 @@ export interface RampBasemapConfig {
     altText?: string;
     attribution?: Attribution;
     layers: Array<RampBasemapLayerConfig>;
+    wkid?: number;
+}
+
+export interface RampTileSchemaConfig {
+    id: string;
+    name: string;
+    extentSetId: string;
+    lodSetId: string;
+    hasNorthPole?: boolean; // TODO: Determine this from the spatial reference (or other tileSchema info) rather then using a config flag
 }
 
 // TODO actual ramp config is kinda wonky, split over lots of classes
@@ -501,5 +510,6 @@ export interface RampMapConfig {
     lods: Array<RampLodConfig>;
     extent: RampExtentConfig;
     basemaps: Array<RampBasemapConfig>;
+    tileSchemas: Array<RampTileSchemaConfig>;
     initialBasemapId: string;
 }
