@@ -493,6 +493,16 @@ export interface RampBasemapConfig {
     altText?: string;
     attribution?: Attribution;
     layers: Array<RampBasemapLayerConfig>;
+    wkid?: number;
+}
+
+export interface RampTileSchemaConfig {
+    id: string;
+    name: string;
+    extentSetId: string;
+    lodSetId: string;
+    thumbnailTileUrls: Array<string>;
+    hasNorthPole?: boolean;
 }
 
 // TODO actual ramp config is kinda wonky, split over lots of classes
@@ -501,5 +511,6 @@ export interface RampMapConfig {
     lods: Array<RampLodConfig>;
     extent: RampExtentConfig;
     basemaps: Array<RampBasemapConfig>;
+    tileSchemas: Array<RampTileSchemaConfig>;
     initialBasemapId: string;
 }
