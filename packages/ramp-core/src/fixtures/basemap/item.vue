@@ -7,39 +7,18 @@
             v-focus-item
         >
             <div>
-                <div v-if="basemap.wkid === 3978">
+                <div>
                     <div
                         class="flex h-180 hover:opacity-50 basemap-item-image"
                         v-for="layer in basemap.layers"
                         :key="layer.id"
                     >
                         <img
+                            v-for="(url, idx) in tileSchema.thumbnailUrls"
                             class="w-full"
                             alt=""
-                            :src="layer.url + '/tile/8/285/268'"
-                        />
-                        <img
-                            class="w-full"
-                            alt=""
-                            :src="layer.url + '/tile/8/285/269'"
-                        />
-                    </div>
-                </div>
-                <div v-else-if="basemap.wkid === 102100">
-                    <div
-                        class="flex h-180 hover:opacity-50 basemap-item-image"
-                        v-for="layer in basemap.layers"
-                        :key="layer.id"
-                    >
-                        <img
-                            class="w-full"
-                            alt=""
-                            :src="layer.url + '/tile/8/91/74'"
-                        />
-                        <img
-                            class="w-full"
-                            alt=""
-                            :src="layer.url + '/tile/8/91/75'"
+                            :src="layer.url + url"
+                            :key="idx"
                         />
                     </div>
                 </div>
@@ -85,7 +64,7 @@
 </template>
 
 <script lang="ts">
-import { RampBasemapConfig } from '@/geo/api';
+import { RampBasemapConfig, RampTileSchemaConfig } from '@/geo/api';
 import { Vue, Prop, Component } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 
@@ -94,6 +73,7 @@ import { BasemapStore } from './store';
 @Component
 export default class BasemapItemV extends Vue {
     @Prop() basemap!: RampBasemapConfig;
+    @Prop() tileSchema!: RampTileSchemaConfig;
     // @ts-ignore
     @Get(BasemapStore.selectedBasemap) selectedBasemap: RampBasemapConfig;
 

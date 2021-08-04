@@ -501,7 +501,9 @@ export interface RampTileSchemaConfig {
     name: string;
     extentSetId: string;
     lodSetId: string;
-    hasNorthPole?: boolean; // TODO: Determine this from the spatial reference (or other tileSchema info) rather then using a config flag
+    spatialReference: RampSpatialReference;
+    thumbnailUrls: Array<string>;
+    hasNorthPole?: boolean;
 }
 
 // TODO actual ramp config is kinda wonky, split over lots of classes

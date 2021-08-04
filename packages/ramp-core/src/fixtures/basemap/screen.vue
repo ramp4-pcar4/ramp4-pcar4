@@ -61,6 +61,7 @@
                         >
                             <basemap-item
                                 :basemap="basemap"
+                                :tileSchema="tileSchema"
                                 class="block relative overflow-hidden"
                             ></basemap-item>
                         </li>

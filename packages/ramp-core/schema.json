@@ -1378,9 +1378,20 @@
                 "lodSetId": {
                     "type": "string",
                     "description": "Optional identification link to lod set data defined in map.lodSets. This can be used to override hardcoded default value."
+                },
+                "spatialReference": {
+                    "$ref": "#/$defs/spatialReferenceNode"
+                },
+                "thumbnailUrls": {
+                    "type": "array",
+                    "description": "The list of tile urls used as the thumbnail preview image. At least two consecutive tile urls are required to ensure it displays correctly.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 2
                 }
             },
-            "required": ["id", "name", "default"],
+            "required": ["id", "name", "default", "spatialReference"],
             "additionalProperties": false
         },
         "basemapNode": {
@@ -1410,10 +1421,6 @@
                     "type": "string",
                     "default": null,
                     "description": "Path to image file to display in the basemap selector."
-                },
-                "wkid": {
-                    "type": "string",
-                    "description": "A well known ESRI id denoting a projection."
                 },
                 "tileSchemaId": {
                     "type": "string",
