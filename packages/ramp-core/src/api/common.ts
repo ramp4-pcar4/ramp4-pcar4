@@ -1,10 +1,4 @@
-import {
-    ComponentPublicInstance,
-    ComponentCustomProperties,
-    ComponentOptions,
-    App,
-    createApp
-} from 'vue';
+import { ComponentPublicInstance, ComponentOptions, App, createApp } from 'vue';
 import { InstanceAPI } from './internal';
 
 /**
@@ -69,7 +63,9 @@ export interface AppVersion {
  * @param {(VueConstructor | any)} value
  * @returns {value is VueConstructor}
  */
-export function isVueConstructor(value: typeof createApp | unknown): value is typeof createApp {
+export function isVueConstructor(
+    value: typeof createApp | unknown
+): value is typeof createApp {
     // check if the value itself is a function (it's not possible to tell if it's a constructor function or not)
     // check if value's prototype is an instance of Vue--this is the important check
     return typeof value === 'function';

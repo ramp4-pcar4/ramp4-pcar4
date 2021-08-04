@@ -264,7 +264,7 @@ export default class WizardScreenV extends Vue {
     }
 
     // lifecycle hook captures errors from child components
-    errorCaptured(err: Error, info: string) {
+    errorCaptured(err: Error, vm: Vue, info: string) {
         if (
             this.step === WizardStep.FORMAT ||
             this.step === WizardStep.CONFIGURE
@@ -276,6 +276,10 @@ export default class WizardScreenV extends Vue {
             );
             this.goToStep(WizardStep.FORMAT);
         }
+
+        // TODO: look into the Vue lifecycle function errorCaptured. Not sure what the
+        // return value should be here. Expected return value is boolean or undefined.
+        return undefined;
     }
 
     onUploadContinue() {
