@@ -1,5 +1,5 @@
 import { FixtureInstance } from '@/api';
-import { GridConfig } from '../store';
+import { GridConfig, GridStore } from '../store';
 import TableStateManager from '../store/table-state-manager';
 
 export class GridAPI extends FixtureInstance {
@@ -13,7 +13,7 @@ export class GridAPI extends FixtureInstance {
     toggleGrid(uid: string, open?: boolean): void {
         // get GridConfig for specified uid
         let gridSettings: GridConfig | undefined = this.$vApp.$store.get(
-            `grid/grids@${uid}`
+            `${GridStore.grids}@${uid}`
         );
 
         // if no GridConfig exists for the given uid, create it.
@@ -32,10 +32,10 @@ export class GridAPI extends FixtureInstance {
         }
 
         const prevUid = this.$vApp.$store.get(
-            'grid/currentUid',
+            GridStore.currentUid,
             uid ? uid : null
         );
-        this.$vApp.$store.set('grid/currentUid', uid ? uid : null);
+        this.$vApp.$store.set(GridStore.currentUid, uid ? uid : null);
 
         const panel = this.$iApi.panel.get('grid-panel');
 

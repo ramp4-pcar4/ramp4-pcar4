@@ -32,7 +32,8 @@ const mutations = {
 };
 
 export enum GridStore {
-    grids = 'grid/grids'
+    grids = 'grid/grids',
+    currentUid = 'grid/currentUid'
 }
 
 export function grid() {
