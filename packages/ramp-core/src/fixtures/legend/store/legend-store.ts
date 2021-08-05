@@ -57,7 +57,7 @@ const mutations = {
         { id, entry }: { id: string; entry: LegendEntry | LegendGroup }
     ) => {
         const index = state.children.findIndex(child => child.id === id);
-        Vue.set(state.children, index, entry);
+        state.children[index] = entry;
     },
     REMOVE_LAYER_ENTRY: (state: LegendState, uid: string) => {
         const removeLayerEntry = (children: (LegendEntry | LegendGroup)[]) => {

@@ -14,7 +14,7 @@ export default class SnowmanV extends Vue {
     @Prop() fixture!: FixtureInstance; // this prop is passed to this component by its fixture main class
     @Prop() message!: string;
 
-    url: string = 'https://i.ya-webdesign.com/images/evil-snowman-png-1.png';
+    url = 'https://i.ya-webdesign.com/images/evil-snowman-png-1.png';
 
     mounted(): void {
         // this is the proper way of accessing the API instance of the R4MP map the fixture is running in,
@@ -31,7 +31,7 @@ export default class SnowmanV extends Vue {
 
             // removes the snowman from DOM and destroys the instance
             // TODO: this should be called in the `terminated` life hook; it's called in the timeout just for display
-            this.$destroy(); // destroy Vue component
+            // this.$destroy(); // destroy Vue component (no longer supported in Vue 3)
             this.$el.parentNode!.removeChild(this.$el); // remove DOM nodes
             // you can also do it like this 👉 this.$iApi.$vApp.$el.removeChild(this.$el);
 

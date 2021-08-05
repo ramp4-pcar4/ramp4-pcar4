@@ -80,7 +80,9 @@ export default class DetailsResultScreenV extends Vue {
         }
         const oidField = layer.getOidField(uid);
         layer.getIcon(data[oidField], uid).then(value => {
-            if (this.icon[idx] !== value) this.$set(this.icon, idx, value);
+            if (this.icon[idx] !== value) {
+                this.icon[idx] = value;
+            }
         });
     }
 

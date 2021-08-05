@@ -275,25 +275,24 @@ export class FixtureInstance extends APIScope implements FixtureBase {
      * @returns {Vue}
      * @memberof FixtureInstance
      */
-    // extend(
-    //     vueConstructor: VueConstructor<Vue>,
-    //     options: ComponentOptions<Vue> = {},
-    //     mount: boolean = true
-    // ): Vue {
-    //     const component = new (this.$iApi.$vApp.extend(vueConstructor))({
-    //         iApi: this.$iApi,
-    //         ...options,
-    //         propsData: {
-    //             ...options.propsData,
-    //             fixture: this
-    //         },
-    //         i18n
-    //     });
+    extend(
+        vueConstructor: Record<string, any>,
+        options: ComponentOptions<any> = {}
+    ): any {
+        const component = Object.assign(vueConstructor, {
+            iApi: this.$iApi,
+            ...options,
+            propsData: {
+                ...options.propsData,
+                fixture: this
+            },
+            i18n
+        });
 
-    //     component.$mount();
+        component.$mount();
 
-    //     return component;
-    // }
+        return component;
+    }
 
     added?(): void;
     removed?(): void;
