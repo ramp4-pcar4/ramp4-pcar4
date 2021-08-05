@@ -7,13 +7,18 @@ import BasemapNavButtonV from './nav-button.vue';
 import messages from './lang/lang.csv';
 
 class BasemapFixture extends BasemapAPI {
-    async added() {
+    added() {
         console.log(`[fixture] ${this.id} added`);
 
         this.$iApi.component('basemap-appbar-button', BasemapAppbarButtonV);
         this.$iApi.component('basemap-nav-button', BasemapNavButtonV);
 
         this.$vApp.$store.registerModule('basemap', basemap());
+        this._parseConfig(this.config);
+        this.$vApp.$watch(
+            () => this.config,
+            value => this._parseConfig(value)
+        );
 
         this.$iApi.panel.register(
             {

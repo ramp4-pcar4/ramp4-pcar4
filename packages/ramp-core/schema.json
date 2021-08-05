@@ -1378,6 +1378,14 @@
                 "lodSetId": {
                     "type": "string",
                     "description": "Optional identification link to lod set data defined in map.lodSets. This can be used to override hardcoded default value."
+                },
+                "thumbnailTileUrls": {
+                    "type": "array",
+                    "description": "The list of two horizontally-adjacent tile URLs used to create the basemap thumbnail. URLs take the form of '/tile/<LOD_ID>/<VERTICAL_TILE_INDEX>/<HORIZONTAL_TILE_INDEX>'.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 2
                 }
             },
             "required": ["id", "name", "default"],

@@ -61,6 +61,7 @@
                         >
                             <basemap-item
                                 :basemap="basemap"
+                                :tileSchema="tileSchema"
                                 class="block relative overflow-hidden"
                             ></basemap-item>
                         </li>
@@ -78,6 +79,7 @@ import { PanelInstance } from '@/api';
 
 import { BasemapStore } from './store';
 import BasemapItemV from './item.vue';
+import { RampBasemapConfig, RampTileSchemaConfig } from '@/geo/api';
 
 @Component({
     components: {
@@ -87,9 +89,9 @@ import BasemapItemV from './item.vue';
 export default class BasemapScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     // fetch basemap store properties/data
-    @Get(BasemapStore.tileSchemas) tileSchemas!: Array<any>;
-    @Get(BasemapStore.basemaps) basemaps!: Array<any>;
-    @Get(BasemapStore.selectedBasemap) selectedBasemap!: any;
+    @Get(BasemapStore.tileSchemas) tileSchemas!: Array<RampTileSchemaConfig>;
+    @Get(BasemapStore.basemaps) basemaps!: Array<RampBasemapConfig>;
+    @Get(BasemapStore.selectedBasemap) selectedBasemap!: RampBasemapConfig;
 
     get isPinned(): boolean {
         return this.panel.isPinned;
