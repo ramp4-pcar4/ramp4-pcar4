@@ -1,14 +1,12 @@
 <template>
     <!-- Yes Notifications -->
     <ul v-if="notificationStack.length > 0" v-focus-list>
-        <template v-for="(notification, index) in notificationStack">
-            <div
-                v-if="index > 0"
-                class="w-full border-b border-black"
-                :key="notification.message + index + 'divider'"
-            />
+        <template
+            v-for="(notification, index) in notificationStack"
+            :key="notification.message + index"
+        >
+            <div v-if="index > 0" class="w-full border-b border-black" />
             <notification-item
-                :key="notification.message + index + 'list-item'"
                 :class="[notification.type]"
                 :notification="notification"
                 v-focus-item

@@ -8,6 +8,6 @@ import api from '@/api';
 import '@/styles/main.css';
 
 // turn off production warnings as they tend to break Travis builds
-Vue.config.productionTip = false;
+//Vue.config.productionTip = false;
 
 export default api;

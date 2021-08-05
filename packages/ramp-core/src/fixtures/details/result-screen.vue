@@ -19,7 +19,7 @@
                     v-truncate
                 >
                     <span v-html="icon[idx]" class="flex-none symbologyIcon">
-                        {{ itemIcon(item.data, idx) }}
+                        <!--{{ itemIcon(item.data, idx) }} TODO: fix -->
                     </span>
                     <span class="flex-initial py-5 px-10" v-truncate>
                         {{
