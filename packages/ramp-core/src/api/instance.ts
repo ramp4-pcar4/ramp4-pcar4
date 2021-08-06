@@ -283,22 +283,22 @@ export class InstanceAPI {
 function createApp(element: HTMLElement, iApi: InstanceAPI) {
     // passing the `iApi` reference to the root Vue component will propagate it to all the child component in this instance of R4MP Vue application
     // if several R4MP apps are created, each will contain a reference of its own API instance
-    const vueElement = createRampApp({
-        iApi,
-        render: (h: any) => h(App)
+    const vueElement = createRampApp(App, {
+        iApi
     })
         .use(store)
         .use(i18n)
-        .use(VueFormulate)
-        .use(VueTippy)
+        //.use(VueFormulate)
+        .use(VueTippy, {
+            directive: 'tippy', // => v-tippy
+            component: 'tippy' // => <tippy/>
+        })
         .use(mixin);
 
     // ported from app.vue
     vueElement.directive('focus-list', FocusList);
     vueElement.directive('focus-item', FocusItem);
     vueElement.directive('truncate', Truncate);
-
-    vueElement.component('tippy', TippyComponent);
 
     // ported from panel-container.vue
     vueElement.component('panel-screen', PanelScreenV);

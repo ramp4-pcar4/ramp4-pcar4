@@ -39,20 +39,13 @@ module.exports = {
         }
     },
     chainWebpack: config => {
-        // setup alias to @vue/compat and enable in build options
-        config.resolve.alias.set('vue', '@vue/compat');
-
         config.module
             .rule('vue')
             .use('vue-loader')
+            .loader('vue-loader')
             .tap(options => {
                 return {
-                    ...options,
-                    compilerOptions: {
-                        compatConfig: {
-                            MODE: 3
-                        }
-                    }
+                    ...options
                 };
             });
 

@@ -13,7 +13,7 @@ import ro from '@/scripts/resize-observer.js';
 
 //TOOLTIPS
 //@ts-ignore
-import VueTippy, { tippy } from 'vue-tippy';
+import VueTippy, { setDefaultProps, tippy } from 'vue-tippy';
 
 @Options({
     components: {
@@ -28,10 +28,11 @@ export default class App extends Vue {
 
         // Set tooltip defaults, theme does not get applied properly in prod builds if setting the defaults using vue-tippy
         // This bypasses the wrapper and sets the defaults at the tippy.js level
-        tippy.setDefaults({
-            aria: 'labelledby',
-            // keeps tooltips from changing tabindex
-            a11y: false,
+        setDefaultProps({
+            aria: {
+                content: 'labelledby'
+            },
+            // a11y: false, // can't find a replacement for Vue 3
             theme: 'ramp',
             trigger: 'mouseenter manual focus',
             // needed to have tooltips in fullscreen, by default it appends to document.body
@@ -70,7 +71,8 @@ $font-list: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica
 }
 .symbologyIcon {
     @apply bg-white inline-flex justify-center items-center overflow-hidden;
-    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14),
+    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
+        0px 1px 1px 0px rgba(0, 0, 0, 0.14),
         0px 2px 1px -1px rgba(0, 0, 0, 0.12);
 }
 </style>

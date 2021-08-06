@@ -1,5 +1,5 @@
 //@ts-ignore
-import { tippy } from 'vue-tippy';
+import { TippyContent, useTippy } from 'vue-tippy';
 import { Directive, DirectiveBinding } from 'vue';
 
 const TRUNCATE_ATTR = 'truncate-text';
@@ -34,13 +34,13 @@ export const Truncate: Directive = {
             // el.closest gets closes ancestor that maches the selector (moves up the parent chain)
             triggerElement = el.closest(`[${TRIGGER_ATTR}]`);
         }
-        tippy(el, {
-            content: el.textContent,
+        useTippy(el, {
+            content: <TippyContent>el.textContent,
             onShow: onShow,
             placement: 'bottom-start',
-            flip: false,
-            boundary: 'window',
-            multiple: true,
+            //flip: false, // can't find a replacement for Vue3
+            //boundary: 'window',
+            //multiple: true,
             triggerTarget: triggerElement
         });
 
