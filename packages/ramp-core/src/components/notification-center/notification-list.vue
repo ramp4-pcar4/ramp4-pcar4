@@ -33,7 +33,8 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 
 import NotificationItemV from './notification-item.vue';
 
@@ -43,7 +44,8 @@ import NotificationItemV from './notification-item.vue';
     }
 })
 export default class NotificationListV extends Vue {
-    @Get('notification/notificationStack') notificationStack!: any[];
+    notificationStack: any[] = get('notification/notificationStack');
+    // @Get('notification/notificationStack') notificationStack!: any[];
 }
 </script>
 

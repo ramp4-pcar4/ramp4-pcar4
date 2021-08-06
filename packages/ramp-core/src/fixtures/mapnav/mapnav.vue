@@ -21,6 +21,7 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 
 import FullscreenNavV from './buttons/fullscreen-nav.vue';
 import HomeNavV from './buttons/home-nav.vue';
@@ -38,7 +39,8 @@ import MapnavButtonV from './button.vue';
     }
 })
 export default class MapNavV extends Vue {
-    @Get('mapnav/visible') visible!: any[];
+    visible: any[] = get('mapnav/visible');
+    // @Get('mapnav/visible') visible!: any[];
 }
 </script>
 

@@ -78,10 +78,11 @@ export class AppbarAPI extends FixtureInstance {
         this.$vApp.$store.get<string[]>('appbar/order')!.forEach(id => {
             // appbar check components with the literal id and with a `-appbar-button` suffix;
             [`${id}-appbar-button`, id].some(v => {
-                if (v in this.$vApp.$options.components!) {
-                    // if an item is registered globally, save the name of the registered component
-                    this.$vApp.$store.set(`appbar/items@${id}.componentId`, v);
-                }
+                // TODO: fix this if needed
+                // if (v in this.$vApp.$options.components!) {
+                // if an item is registered globally, save the name of the registered component
+                this.$vApp.$store.set(`appbar/items@${id}.componentId`, v);
+                // }
             });
         });
 
@@ -92,13 +93,14 @@ export class AppbarAPI extends FixtureInstance {
         Object.keys(tempButtonDict).forEach(key => {
             const id = tempButtonDict[key].id;
             [`${id}-appbar-button`, id].some(v => {
-                if (v in this.$vApp.$options.components!) {
-                    // if an item is registered globally, save the name of the registered component
-                    this.$vApp.$store.set(
-                        `appbar/tempButtonDict@${key}.componentId`,
-                        v
-                    );
-                }
+                // TODO: fix this if needed
+                // if (v in this.$vApp.$options.components!) {
+                // if an item is registered globally, save the name of the registered component
+                this.$vApp.$store.set(
+                    `appbar/tempButtonDict@${key}.componentId`,
+                    v
+                );
+                // }
             });
         });
     }

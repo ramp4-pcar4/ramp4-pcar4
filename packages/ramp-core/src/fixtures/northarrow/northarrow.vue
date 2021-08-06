@@ -7,6 +7,7 @@
 <script lang="ts">
 import { Vue } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 import { NortharrowStore } from './store';
 import { GlobalEvents } from '@/api/internal';
 import { Extent, Point } from '@/geo/api';
@@ -14,8 +15,10 @@ import flag from './flag.json';
 import { debounce } from 'throttle-debounce';
 
 export default class NortharrowV extends Vue {
-    @Get(NortharrowStore.arrowIcon) arrowIcon!: string;
-    @Get(NortharrowStore.poleIcon) poleIcon!: string;
+    arrowIcon: string = get(NortharrowStore.arrowIcon);
+    poleIcon: string = get(NortharrowStore.poleIcon);
+    // @Get(NortharrowStore.arrowIcon) arrowIcon!: string;
+    // @Get(NortharrowStore.poleIcon) poleIcon!: string;
 
     angle: number = 0;
     arrowLeft: number = 0;

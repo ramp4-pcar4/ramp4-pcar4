@@ -35,6 +35,7 @@
 <script lang="ts">
 import { Vue, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 import { DetailsStore } from './store';
 
 import { LayerInstance, PanelInstance } from '@/api';
@@ -42,11 +43,16 @@ import { IdentifyResult } from '@/geo/api';
 
 export default class DetailsLayersScreenV extends Vue {
     @Prop() panel!: PanelInstance;
-    @Get(DetailsStore.payload) payload!: IdentifyResult[];
-    @Get('layer/getLayerByUid') getLayerByUid!: (
-        uid: string
-    ) => LayerInstance | undefined;
-    @Get('layer/layers') layers!: LayerInstance[];
+    payload: IdentifyResult[] = get(DetailsStore.payload);
+    // @Get(DetailsStore.payload) payload!: IdentifyResult[];
+    getLayerByUid: (uid: string) => LayerInstance | undefined = get(
+        'layer/getLayerByUid'
+    );
+    // @Get('layer/getLayerByUid') getLayerByUid!: (
+    //     uid: string
+    // ) => LayerInstance | undefined;
+    layers: LayerInstance[] = get('layer/layers');
+    // @Get('layer/layers') layers!: LayerInstance[];
 
     /**
      * Switches the panel screen to display the data for a given result.

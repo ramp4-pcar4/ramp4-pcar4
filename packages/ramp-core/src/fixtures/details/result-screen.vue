@@ -39,6 +39,7 @@
 <script lang="ts">
 import { Vue, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 import { DetailsStore } from './store';
 
 import { LayerInstance, PanelInstance } from '@/api';
@@ -48,10 +49,14 @@ export default class DetailsResultScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     @Prop() resultIndex!: number;
 
-    @Get(DetailsStore.payload) payload!: IdentifyResult[];
-    @Get('layer/getLayerByUid') getLayerByUid!: (
-        uid: string
-    ) => LayerInstance | undefined;
+    payload: IdentifyResult[] = get(DetailsStore.payload);
+    // @Get(DetailsStore.payload) payload!: IdentifyResult[];
+    getLayerByUid: (uid: string) => LayerInstance | undefined = get(
+        'layer/getLayerByUid'
+    );
+    // @Get('layer/getLayerByUid') getLayerByUid!: (
+    //     uid: string
+    // ) => LayerInstance | undefined;
 
     icon: string[] = [];
 

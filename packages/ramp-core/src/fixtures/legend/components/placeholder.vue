@@ -39,6 +39,7 @@
 <script lang="ts">
 import { Vue, Options, Prop, Watch } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 
 import { LayerStore } from '@/store/modules/layer';
 import { LayerInstance } from '@/api/internal';
@@ -58,7 +59,8 @@ import { LegendSymbology } from '@/geo/api';
 })
 export default class LegendPlaceholderV extends Vue {
     @Prop() legendItem!: LegendEntry;
-    @Get(LayerStore.layers) layers!: LayerInstance[];
+    layers: LayerInstance[] = get(LayerStore.layers);
+    // @Get(LayerStore.layers) layers!: LayerInstance[];
 
     layer: LayerInstance | undefined = undefined;
 

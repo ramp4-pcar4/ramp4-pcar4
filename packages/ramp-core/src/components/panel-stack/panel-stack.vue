@@ -17,6 +17,7 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-property-decorator';
 import { Get, Sync } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 
 import anime from 'animejs';
 
@@ -37,9 +38,13 @@ declare class ResizeObserver {
     }
 })
 export default class PanelStackV extends Vue {
-    @Get('panel/getVisible!') visible!: (
-        extraSmallScreen: boolean
-    ) => PanelInstance[];
+    visible: (extraSmallScreen: boolean) => PanelInstance[] = get(
+        'panel/getVisible'
+    );
+
+    // @Get('panel/getVisible!') visible!: (
+    //     extraSmallScreen: boolean
+    // ) => PanelInstance[];
     @Sync('panel/stackWidth') stackWidth!: number;
 
     mounted(): void {

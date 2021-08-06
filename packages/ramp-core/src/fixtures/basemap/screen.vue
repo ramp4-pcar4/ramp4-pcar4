@@ -75,6 +75,7 @@
 <script lang="ts">
 import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 import { PanelInstance } from '@/api';
 
 import { BasemapStore } from './store';
@@ -89,9 +90,12 @@ import { RampBasemapConfig, RampTileSchemaConfig } from '@/geo/api';
 export default class BasemapScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     // fetch basemap store properties/data
-    @Get(BasemapStore.tileSchemas) tileSchemas!: Array<RampTileSchemaConfig>;
-    @Get(BasemapStore.basemaps) basemaps!: Array<RampBasemapConfig>;
-    @Get(BasemapStore.selectedBasemap) selectedBasemap!: RampBasemapConfig;
+    tileSchemas: Array<RampTileSchemaConfig> = get(BasemapStore.tileSchemas);
+    basemaps: Array<RampBasemapConfig> = get(BasemapStore.basemaps);
+    selectedBasemap: RampBasemapConfig = get(BasemapStore.selectedBasemap);
+    // @Get(BasemapStore.tileSchemas) tileSchemas!: Array<any>;
+    // @Get(BasemapStore.basemaps) basemaps!: Array<any>;
+    // @Get(BasemapStore.selectedBasemap) selectedBasemap!: any;
 
     get isPinned(): boolean {
         return this.panel.isPinned;

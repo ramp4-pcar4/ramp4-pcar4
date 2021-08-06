@@ -62,6 +62,7 @@
 <script lang="ts">
 import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 
 import { LayerInstance, PanelInstance } from '@/api';
 import GridTableComponentV from '@/fixtures/grid/table-component.vue';
@@ -78,8 +79,10 @@ export default class GridScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     @Prop() header!: string;
 
-    @Get(LayerStore.layers) layers!: LayerInstance[];
-    @Get(GridStore.currentUid) currentUid!: string;
+    layers: LayerInstance[] = get(LayerStore.layers);
+    currentUid: string = get(GridStore.currentUid);
+    // @Get(LayerStore.layers) layers!: LayerInstance[];
+    // @Get('grid/currentUid') currentUid: any;
 
     quicksearch: string = '';
     grid: GridTableComponentV | undefined;

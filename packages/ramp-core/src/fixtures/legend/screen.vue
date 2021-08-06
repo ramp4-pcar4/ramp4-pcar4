@@ -25,6 +25,7 @@
 <script lang="ts">
 import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 import { PanelInstance } from '@/api';
 
 import { LegendStore } from './store';
@@ -41,7 +42,8 @@ import LegendComponentV from './components/component.vue';
 export default class LegendScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     // fetch store properties/data
-    @Get(LegendStore.children) children!: Array<LegendEntry | LegendGroup>;
+    children: Array<LegendEntry | LegendGroup> = get(LegendStore.children);
+    // @Get(LegendStore.children) children!: Array<LegendEntry | LegendGroup>;
 
     get isPinned(): boolean {
         return this.panel.isPinned;

@@ -76,7 +76,8 @@
 <script lang="ts">
 import { RampBasemapConfig, RampTileSchemaConfig } from '@/geo/api';
 import { Vue, Prop } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
+import { Get, Call } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 
 import { BasemapStore } from './store';
 
@@ -84,7 +85,8 @@ export default class BasemapItemV extends Vue {
     @Prop() basemap!: RampBasemapConfig;
     @Prop() tileSchema!: RampTileSchemaConfig;
     // @ts-ignore
-    @Get(BasemapStore.selectedBasemap) selectedBasemap: RampBasemapConfig;
+    selectedBasemap: any = get(BasemapStore.selectedBasemap);
+    // @Get(BasemapStore.selectedBasemap) selectedBasemap!: any;
 
     selectBasemap() {
         this.$iApi.$vApp.$store.set(BasemapStore.selectBasemap, this.basemap);

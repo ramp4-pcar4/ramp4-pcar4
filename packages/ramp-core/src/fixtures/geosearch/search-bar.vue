@@ -13,13 +13,15 @@
 <script lang="ts">
 import { Vue } from 'vue-property-decorator';
 import { Get, Call } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 
 import { GeosearchStore } from './store';
 import { debounce } from 'throttle-debounce';
 
 export default class GeosearchSearchBarV extends Vue {
     // fetch geosearch search value from store
-    @Get(GeosearchStore.searchVal) searchVal!: string;
+    searchVal: string = get(GeosearchStore.searchVal);
+    // @Get(GeosearchStore.searchVal) searchVal!: string;
 
     // import required geosearch actions
     @Call(GeosearchStore.setSearchTerm) setSearchTerm!: (

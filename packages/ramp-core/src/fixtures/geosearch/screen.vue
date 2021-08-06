@@ -98,6 +98,7 @@
 <script lang="ts">
 import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 import { PanelInstance } from '@/api';
 
 import { GeosearchStore } from './store';
@@ -118,9 +119,12 @@ import GeosearchLoadingBarV from './loading-bar.vue';
 export default class GeosearchScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     // fetch store properties/data
-    @Get(GeosearchStore.searchVal) searchVal!: string;
-    @Get(GeosearchStore.searchResults) searchResults!: Array<any>;
-    @Get(GeosearchStore.loadingResults) loadingResults!: boolean;
+    searchVal: string = get(GeosearchStore.searchVal);
+    searchResults: Array<any> = get(GeosearchStore.searchResults);
+    loadingResults: boolean = get(GeosearchStore.loadingResults);
+    // @Get(GeosearchStore.searchVal) searchVal!: string;
+    // @Get(GeosearchStore.searchResults) searchResults!: Array<any>;
+    // @Get(GeosearchStore.loadingResults) loadingResults!: boolean;
 
     get isPinned(): boolean {
         return this.panel.isPinned;

@@ -22,6 +22,7 @@
 <script lang="ts">
 import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 
 import { PanelInstance } from '@/api';
 import { HelpStore } from './store';
@@ -38,7 +39,8 @@ import marked from 'marked';
 })
 export default class HelpScreenV extends Vue {
     @Prop() panel!: PanelInstance;
-    @Get(HelpStore.folderName) folderName!: string;
+    folderName: string = get(HelpStore.folderName);
+    // @Get(HelpStore.folderName) folderName!: string;
 
     helpSections: any = [];
 

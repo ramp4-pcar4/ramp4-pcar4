@@ -63,6 +63,7 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-property-decorator';
 import { Call, Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 import NotificationListV from './notification-list.vue';
@@ -74,7 +75,8 @@ import NotificationListV from './notification-list.vue';
     }
 })
 export default class NotificationsCaptionButtonV extends Vue {
-    @Get('notification/notificationNumber') number!: Number;
+    number: Number = get('notification/notificationNumber');
+    // @Get('notification/notificationNumber') number!: Number;
     @Call('notification/clearAll') clearAll!: () => void;
 }
 </script>

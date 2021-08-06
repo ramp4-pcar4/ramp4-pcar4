@@ -104,6 +104,7 @@ import { Get, Sync } from 'vuex-pathify';
 import { LayerInstance, GlobalEvents } from '@/api/internal';
 import { LayerStore } from '@/store/modules/layer';
 import { CoreFilter } from '@/geo/api';
+import { get } from '@/store/pathify-helper';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
@@ -145,9 +146,12 @@ const TEXT_TYPE: string = 'string';
 })
 export default class GridTableComponentV extends Vue {
     @Prop() layerUid!: string;
-    @Get(LayerStore.getLayerByUid) getLayerByUid!: (
-        uid: string
-    ) => LayerInstance | undefined;
+    getLayerByUid: (uid: string) => LayerInstance | undefined = get(
+        LayerStore.getLayerByUid
+    );
+    // @Get(LayerStore.getLayerByUid) getLayerByUid!: (
+    //     uid: string
+    // ) => LayerInstance | undefined;
     @Sync(GridStore.grids) grids!: { [uid: string]: GridConfig };
 
     handlers: Array<string> = [];

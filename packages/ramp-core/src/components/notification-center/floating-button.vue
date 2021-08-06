@@ -25,9 +25,11 @@
 <script lang="ts">
 import { Vue } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 
 export default class NotificationsFloatingButtonV extends Vue {
-    @Get('notification/notificationNumber') number!: Number;
+    number: Number = get('notification/notificationNumber');
+    // @Get('notification/notificationNumber') number!: Number;
 }
 </script>
 

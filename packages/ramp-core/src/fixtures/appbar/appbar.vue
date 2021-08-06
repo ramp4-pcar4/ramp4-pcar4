@@ -33,6 +33,7 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 
 import { AppbarItemInstance } from './store';
 
@@ -52,8 +53,10 @@ import NotificationsAppbarButtonV from '@/components/notification-center/appbar-
     }
 })
 export default class AppbarV extends Vue {
-    @Get('appbar/visible') items!: AppbarItemInstance[];
-    @Get('appbar/temporary') temporaryItems!: AppbarItemInstance[];
+    items: AppbarItemInstance[] = get('appbar/visible');
+    temporaryItems: AppbarItemInstance[] = get('appbar/temporary');
+    // @Get('appbar/visible') items!: AppbarItemInstance[];
+    // @Get('appbar/temporary') temporaryItems!: AppbarItemInstance[];
     overflow: boolean = false;
 
     updated() {

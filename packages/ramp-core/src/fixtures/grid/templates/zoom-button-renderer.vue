@@ -25,12 +25,16 @@
 <script lang="ts">
 import { Vue } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 import { LayerInstance } from '@/api/internal';
 
 export default class ZoomButtonRendererV extends Vue {
-    @Get('layer/getLayerByUid') getLayerByUid!: (
-        uid: string
-    ) => LayerInstance | undefined;
+    getLayerByUid: (uid: string) => LayerInstance | undefined = get(
+        'layer/getLayerByUid'
+    );
+    // @Get('layer/getLayerByUid') getLayerByUid!: (
+    //     uid: string
+    // ) => LayerInstance | undefined;
 
     params: any;
 

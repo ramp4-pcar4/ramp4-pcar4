@@ -18,6 +18,7 @@
 <script lang="ts">
 import { Vue, Watch } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 import { RampLayerConfig, RampMapConfig } from '@/geo/api';
 import { GlobalEvents, LayerInstance, MapAPI } from '@/api/internal';
 
@@ -28,14 +29,19 @@ import to from 'await-to-js';
 import { MaptipStore } from '@/store/modules/maptip';
 
 export default class EsriMapV extends Vue {
-    @Get(ConfigStore.getMapConfig) mapConfig!: RampMapConfig;
+    mapConfig: RampMapConfig = get(ConfigStore.getMapConfig);
+    // @Get(ConfigStore.getMapConfig) mapConfig!: RampMapConfig;
 
-    @Get(LayerStore.layers) layers!: LayerInstance[];
+    layers: LayerInstance[] = get(LayerStore.layers);
+    // @Get(LayerStore.layers) layers!: LayerInstance[];
 
-    @Get(LayerStore.layerConfigs) layerConfigs!: RampLayerConfig[];
+    layerConfigs: RampLayerConfig[] = get(LayerStore.layerConfigs);
+    // @Get(LayerStore.layerConfigs) layerConfigs!: RampLayerConfig[];
 
-    @Get(MaptipStore.maptipProperties) maptipProperties!: any;
-    @Get(MaptipStore.maptipInstance) maptipInstance!: any;
+    maptipProperties: any = get(MaptipStore.maptipProperties);
+    // @Get(MaptipStore.maptipProperties) maptipProperties!: any;
+    maptipInstance: any = get(MaptipStore.maptipInstance);
+    // @Get(MaptipStore.maptipInstance) maptipInstance!: any;
 
     map!: MapAPI; // TODO assuming we need this as a local property for vue binding. if we don't, remove it and just use $iApi.geo.map
 

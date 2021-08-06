@@ -176,6 +176,7 @@
 <script lang="ts">
 import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 
 import { PanelInstance } from '@/api';
 import { LayerStore } from '@/store/modules/layer';
@@ -197,14 +198,16 @@ import StepperV from './stepper.vue';
 })
 export default class WizardScreenV extends Vue {
     @Prop() panel!: PanelInstance;
-    @Get(WizardStore.layerSource) layerSource!: LayerSource;
+    layerSource: LayerSource = get(WizardStore.layerSource);
+    // @Get(WizardStore.layerSource) layerSource!: LayerSource;
 
     @Sync(WizardStore.url) url!: string;
     @Sync(WizardStore.fileData) fileData!: ArrayBuffer | undefined;
     @Sync(WizardStore.typeSelection) typeSelection!: string;
     @Sync(WizardStore.layerInfo) layerInfo!: LayerInfo | undefined;
 
-    @Get(WizardStore.step) step!: WizardStep;
+    step: WizardStep = get(WizardStore.step);
+    // @Get(WizardStore.step) step!: WizardStep;
     @Call(WizardStore.goToStep) goToStep!: (step: WizardStep) => void;
 
     formulateFile: any = null;

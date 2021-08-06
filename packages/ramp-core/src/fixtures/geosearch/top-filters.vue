@@ -52,14 +52,18 @@
 <script lang="ts">
 import { Vue } from 'vue-property-decorator';
 import { Get, Call } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 
 import { GeosearchStore } from './store';
 
 export default class GeosearchTopFiltersV extends Vue {
     // fetch defined province/type filters + filter params from store
-    @Get(GeosearchStore.getProvinces) provinces!: Array<any>;
-    @Get(GeosearchStore.getTypes) types!: Array<any>;
-    @Get(GeosearchStore.queryParams) queryParams!: any;
+    provinces: Array<any> = get(GeosearchStore.getProvinces);
+    types: Array<any> = get(GeosearchStore.getTypes);
+    queryParams: any = get(GeosearchStore.queryParams);
+    // @Get(GeosearchStore.getProvinces) provinces!: Array<any>;
+    // @Get(GeosearchStore.getTypes) types!: Array<any>;
+    // @Get(GeosearchStore.queryParams) queryParams!: any;
 
     // import required geosearch store actions
     @Call(GeosearchStore.setProvince) setProvince!: (prov: any) => void;

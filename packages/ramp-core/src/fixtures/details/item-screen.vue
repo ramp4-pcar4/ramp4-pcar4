@@ -60,6 +60,7 @@
 <script lang="ts">
 import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 import { DetailsStore, DetailsItemInstance } from './store';
 
 import { LayerInstance, PanelInstance } from '@/api/internal';
@@ -75,9 +76,12 @@ import HTMLDefaultV from './templates/html-default.vue';
     }
 })
 export default class DetailsItemScreenV extends Vue {
-    @Get(DetailsStore.templates) templateBindings!: {
+    templateBindings: {
         [id: string]: DetailsItemInstance;
-    };
+    } = get(DetailsStore.templates);
+    // @Get(DetailsStore.templates) templateBindings!: {
+    //     [id: string]: DetailsItemInstance;
+    // };
 
     @Prop() panel!: PanelInstance;
 
@@ -90,10 +94,14 @@ export default class DetailsItemScreenV extends Vue {
     @Prop() isFeature!: boolean;
 
     // retrieve the identify payload from the store
-    @Get(DetailsStore.payload) payload!: IdentifyResult[];
-    @Get('layer/getLayerByUid') getLayerByUid!: (
-        uid: string
-    ) => LayerInstance | undefined;
+    payload: IdentifyResult[] = get(DetailsStore.payload);
+    // @Get(DetailsStore.payload) payload!: IdentifyResult[];
+    getLayerByUid: (uid: string) => LayerInstance | undefined = get(
+        'layer/getLayerByUid'
+    );
+    // @Get('layer/getLayerByUid') getLayerByUid!: (
+    //     uid: string
+    // ) => LayerInstance | undefined;
 
     identifyTypes: IdentifyResultFormat = IdentifyResultFormat.UNKNOWN;
     icon: string = '';

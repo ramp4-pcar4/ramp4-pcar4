@@ -24,9 +24,7 @@
             <panel-stack
                 class="panel-stack sm:flex absolute inset-0 overflow-hidden xs:pl-40 sm:p-12 sm:pl-80 z-10 sm:pb-36 xs:pb-28"
             ></panel-stack>
-            <notification-floating-button
-                v-if="!appbarFixture"
-            ></notification-floating-button>
+            <notification-floating-button v-if="!appbarFixture"></notification-floating-button>
             <map-caption class="z-10"></map-caption>
         </div>
 
@@ -46,6 +44,7 @@ import MapCaptionV from '@/components/map/map-caption.vue';
 import NotificationsFloatingButtonV from '@/components/notification-center/floating-button.vue';
 import KeyboardInstructionsModalV from './keyboard-instructions.vue';
 import { Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 import { FixtureInstance } from '@/api';
 import { GlobalEvents } from '@/api';
 
@@ -59,7 +58,7 @@ import { GlobalEvents } from '@/api';
     }
 })
 export default class Shell extends Vue {
-    @Get(`fixture/items@appbar`) appbarFixture?: FixtureInstance;
+    appbarFixture?: FixtureInstance = get(`fixture/items@appbar`);
     start: boolean = false;
 
     created() {

@@ -16,13 +16,15 @@
 <script lang="ts">
 import { Vue } from 'vue-property-decorator';
 import { Get, Call } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 import { GlobalEvents } from '@/api/internal';
 import { Extent } from '@/geo/api';
 import { GeosearchStore } from './store';
 import { debounce } from 'throttle-debounce';
 
 export default class GeosearchBottomFiltersV extends Vue {
-    @Get(GeosearchStore.resultsVisible) resultsVisible!: any;
+    resultsVisible: any = get(GeosearchStore.resultsVisible);
+    // @Get(GeosearchStore.resultsVisible) resultsVisible!: any;
 
     // import required geosearch store actions
     @Call(GeosearchStore.setMapExtent) setMapExtent!: (mapExtent: any) => void;

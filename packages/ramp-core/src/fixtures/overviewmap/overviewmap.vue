@@ -53,14 +53,17 @@
 <script lang="ts">
 import { Vue } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 import { Extent, RampMapConfig } from '@/geo/api';
 import { GlobalEvents, OverviewMapAPI } from '@/api/internal';
 import { OverviewmapStore } from './store';
 import { defaultMercator, defaultLambert } from './default-config';
 
 export default class OverviewmapV extends Vue {
-    @Get(OverviewmapStore.mapConfig) mapConfig!: RampMapConfig;
-    @Get(OverviewmapStore.startMinimized) startMinimized!: boolean;
+    mapConfig: RampMapConfig = get(OverviewmapStore.mapConfig);
+    startMinimized: boolean = get(OverviewmapStore.startMinimized);
+    // @Get(OverviewmapStore.mapConfig) mapConfig!: RampMapConfig;
+    // @Get(OverviewmapStore.startMinimized) startMinimized!: boolean;
 
     overviewMap!: OverviewMapAPI;
     minimized: boolean = true;
