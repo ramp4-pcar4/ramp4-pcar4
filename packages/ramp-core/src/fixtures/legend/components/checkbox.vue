@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { LayerType } from '@/geo/api';
+import { CoreFilter, LayerType } from '@/geo/api';
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { LegendEntry, LegendItem } from '../store/legend-defs';
 
@@ -88,7 +88,7 @@ export default class CheckboxV extends Vue {
         // WMS layers do not have child symbology
         if (this.legendItem.layer?.layerType !== LayerType.WMS) {
             this.legendItem.layer?.setSqlFilter(
-                'symbol',
+                CoreFilter.SYMBOL,
                 this.legendItem.layer
                     ?.getLegend()
                     .filter(item => item.lastVisbility === true)

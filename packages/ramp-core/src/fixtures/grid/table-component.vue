@@ -167,8 +167,8 @@ export default class GridTableComponentV extends Vue {
             return;
         }
 
-        if (fancyLayer.layerType === LayerType.WMS) {
-            // Table does not support WMS layers
+        if (!fancyLayer.supportsFeatures(this.layerUid)) {
+            // This layer does not support features, hence no support for data table
             return;
         }
 
