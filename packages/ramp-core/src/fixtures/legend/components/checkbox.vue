@@ -26,13 +26,9 @@
 </template>
 
 <script lang="ts">
+import { CoreFilter, LayerType } from '@/geo/api';
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import {
-    LegendEntry,
-    LegendGroup,
-    LegendItem,
-    LegendSet
-} from '../store/legend-defs';
+import { LegendEntry, LegendItem } from '../store/legend-defs';
 
 @Component
 export default class CheckboxV extends Vue {
@@ -89,14 +85,17 @@ export default class CheckboxV extends Vue {
         }
 
         // Update the layer definition to filter child symbols
-        this.legendItem.layer?.setSqlFilter(
-            'symbol',
-            this.legendItem.layer
-                ?.getLegend()
-                .filter(item => item.lastVisbility === true)
-                .map(item => item.definitionClause)
-                .join(' OR ')
-        );
+        // WMS layers do not have child symbology
+        if (this.legendItem.layer?.layerType !== LayerType.WMS) {
+            this.legendItem.layer?.setSqlFilter(
+                CoreFilter.SYMBOL,
+                this.legendItem.layer
+                    ?.getLegend()
+                    .filter(item => item.lastVisbility === true)
+                    .map(item => item.definitionClause)
+                    .join(' OR ')
+            );
+        }
     }
 }
 </script>
