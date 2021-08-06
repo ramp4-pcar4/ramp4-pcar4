@@ -96,6 +96,7 @@ import GridCustomHeaderV from './templates/custom-header.vue';
 // grid button templates
 import DetailsButtonRendererV from './templates/details-button-renderer.vue';
 import ZoomButtonRendererV from './templates/zoom-button-renderer.vue';
+import { LayerType } from '@/geo/api';
 
 // these should match up with the `type` value returned by the attribute promise.
 const NUM_TYPES: string[] = ['oid', 'double', 'integer'];
@@ -163,6 +164,11 @@ export default class GridTableComponentV extends Vue {
             // this really shouldn't happen unless the wrong API call is made, but maybe we should
             // do something else here anyway.
             console.error(`Could not find layer with uid ${this.layerUid}.`);
+            return;
+        }
+
+        if (!fancyLayer.supportsFeatures(this.layerUid)) {
+            // This layer does not support features, hence no support for data table
             return;
         }
 
