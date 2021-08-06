@@ -44,10 +44,11 @@ import { LayerStore } from '@/store/modules/layer';
 import { LayerInstance } from '@/api/internal';
 
 import { LegendStore } from '../store';
-import { LegendEntry, LegendTypes } from '../store/legend-defs';
+import { LegendEntry, LegendGroup, LegendTypes } from '../store/legend-defs';
 
 import LegendCheckboxV from './checkbox.vue';
 import LegendSymbologyStackV from './symbology-stack.vue';
+import { LegendSymbology } from '@/geo/api';
 
 @Component({
     components: {
@@ -68,7 +69,8 @@ export default class LegendPlaceholderV extends Vue {
         );
 
         if (this.layer !== undefined) {
-            this.layer.isLayerLoaded().then(r => {
+            this.layer.isLayerLoaded().then(() => {
+                // Wait for symbology to load too
                 this.legendItem._layer = this.layer;
                 this.legendItem._type = LegendTypes.Entry;
                 this.legendItem._uid =
