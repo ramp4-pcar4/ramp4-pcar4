@@ -18,8 +18,11 @@
                     v-focus-item
                     v-truncate
                 >
-                    <span v-html="icon[idx]" class="flex-none symbologyIcon">
-                    </span>
+                    <!-- TODO: test if itemIcon() call works as intended -->
+                    <span
+                        v-html="itemIcon(item.data, idx)"
+                        class="flex-none symbologyIcon"
+                    ></span>
                     <span class="flex-initial py-5 px-10" v-truncate>
                         {{
                             item.data[nameField] ||
@@ -77,12 +80,15 @@ export default class DetailsResultScreenV extends Vue {
             );
             return;
         }
+
         const oidField = layer.getOidField(uid);
         layer.getIcon(data[oidField], uid).then(value => {
             if (this.icon[idx] !== value) {
                 this.icon[idx] = value;
             }
         });
+
+        return this.icon[idx];
     }
 
     /**
