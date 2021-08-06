@@ -44,10 +44,11 @@ import { LayerStore } from '@/store/modules/layer';
 import { LayerInstance } from '@/api/internal';
 
 import { LegendStore } from '../store';
-import { LegendEntry, LegendTypes } from '../store/legend-defs';
+import { LegendEntry, LegendGroup, LegendTypes } from '../store/legend-defs';
 
 import LegendCheckboxV from './checkbox.vue';
 import LegendSymbologyStackV from './symbology-stack.vue';
+import { LegendSymbology } from '@/geo/api';
 
 @Component({
     components: {
@@ -68,19 +69,30 @@ export default class LegendPlaceholderV extends Vue {
         );
 
         if (this.layer !== undefined) {
-            this.layer.isLayerLoaded().then(r => {
-                this.legendItem._layer = this.layer;
-                this.legendItem._type = LegendTypes.Entry;
-                this.legendItem._uid =
-                    this.layer!.getLayerTree().findChildByIdx(
-                        this.legendItem._layerIndex!
-                    )?.uid || this.layer!.uid;
-                if (this.legendItem.isDefault) {
-                    this.$store.set(
-                        LegendStore.updateDefaultEntry,
-                        this.legendItem.id
-                    );
-                }
+            this.layer.isLayerLoaded().then(() => {
+                // Wait for symbology to load too
+                Promise.all(
+                    this.layer!.getLegend().map(
+                        (item: LegendSymbology) => item.drawPromise
+                    )
+                ).then(() => {
+                    this.legendItem._layer = this.layer;
+                    this.legendItem._type = LegendTypes.Entry;
+                    this.legendItem._uid =
+                        this.layer!.getLayerTree().findChildByIdx(
+                            this.legendItem._layerIndex!
+                        )?.uid || this.layer!.uid;
+                    if (this.legendItem.isDefault) {
+                        this.$store.set(
+                            LegendStore.updateDefaultEntry,
+                            this.legendItem.id
+                        );
+                    }
+
+                    if (this.legendItem.parent instanceof LegendGroup) {
+                        this.legendItem.parent.checkVisibility(this.legendItem);
+                    }
+                });
             });
         }
     }
