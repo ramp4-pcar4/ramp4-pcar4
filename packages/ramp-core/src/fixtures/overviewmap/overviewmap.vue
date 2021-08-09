@@ -51,6 +51,7 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
@@ -60,8 +61,8 @@ import { OverviewmapStore } from './store';
 import { defaultMercator, defaultLambert } from './default-config';
 
 export default class OverviewmapV extends Vue {
-    mapConfig: RampMapConfig = get(OverviewmapStore.mapConfig);
-    startMinimized: boolean = get(OverviewmapStore.startMinimized);
+    mapConfig: ComputedRef<RampMapConfig> = get(OverviewmapStore.mapConfig);
+    startMinimized: ComputedRef<boolean> = get(OverviewmapStore.startMinimized);
     // @Get(OverviewmapStore.mapConfig) mapConfig!: RampMapConfig;
     // @Get(OverviewmapStore.startMinimized) startMinimized!: boolean;
 
@@ -74,12 +75,12 @@ export default class OverviewmapV extends Vue {
     }
 
     mounted() {
-        const config = this.mapConfig || this.defaultConfig;
+        const config = this.mapConfig.value || this.defaultConfig;
         this.overviewMap.createMap(
             config,
             this.$el.querySelector('.overviewmap') as HTMLDivElement
         );
-        this.minimized = this.startMinimized;
+        this.minimized = this.startMinimized.value;
 
         this.$iApi.event.on(
             GlobalEvents.MAP_EXTENTCHANGE,

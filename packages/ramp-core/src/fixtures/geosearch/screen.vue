@@ -96,6 +96,7 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
@@ -119,9 +120,9 @@ import GeosearchLoadingBarV from './loading-bar.vue';
 export default class GeosearchScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     // fetch store properties/data
-    searchVal: string = get(GeosearchStore.searchVal);
-    searchResults: Array<any> = get(GeosearchStore.searchResults);
-    loadingResults: boolean = get(GeosearchStore.loadingResults);
+    searchVal: ComputedRef<string> = get(GeosearchStore.searchVal);
+    searchResults: ComputedRef<Array<any>> = get(GeosearchStore.searchResults);
+    loadingResults: ComputedRef<boolean> = get(GeosearchStore.loadingResults);
     // @Get(GeosearchStore.searchVal) searchVal!: string;
     // @Get(GeosearchStore.searchResults) searchResults!: Array<any>;
     // @Get(GeosearchStore.loadingResults) loadingResults!: boolean;
@@ -140,7 +141,7 @@ export default class GeosearchScreenV extends Vue {
     highlightSearchTerm(name: string, province: any) {
         // wrap matched search term in results inside span with styling
         const highlightedResult = name.replace(
-            new RegExp(`${this.searchVal}`, 'gi'),
+            new RegExp(`${this.searchVal.value}`, 'gi'),
             match =>
                 '<span class="font-bold text-blue-600">' + match + '</span>'
         );

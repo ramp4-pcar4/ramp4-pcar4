@@ -5,6 +5,7 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
@@ -15,8 +16,8 @@ import flag from './flag.json';
 import { debounce } from 'throttle-debounce';
 
 export default class NortharrowV extends Vue {
-    arrowIcon: string = get(NortharrowStore.arrowIcon);
-    poleIcon: string = get(NortharrowStore.poleIcon);
+    arrowIcon: ComputedRef<string> = get(NortharrowStore.arrowIcon);
+    poleIcon: ComputedRef<string> = get(NortharrowStore.poleIcon);
     // @Get(NortharrowStore.arrowIcon) arrowIcon!: string;
     // @Get(NortharrowStore.poleIcon) poleIcon!: string;
 
@@ -36,8 +37,8 @@ export default class NortharrowV extends Vue {
     poleMarkerAdded: boolean = false;
 
     mounted() {
-        if (this.arrowIcon) {
-            this.arrow = `<img width='25' src='${this.arrowIcon}'>`;
+        if (this.arrowIcon.value) {
+            this.arrow = `<img width='25' src='${this.arrowIcon.value}'>`;
         }
         // don't think this condition should be needed but sometimes errors at startup without it
         if (this.$iApi.geo.map.esriView?.ready) {
@@ -92,9 +93,9 @@ export default class NortharrowV extends Vue {
                     this.poleMarkerAdded = true;
                     // TODO update to use RAMP API Styles once Highlight Layer implements an api that accepts RAMP Graphics. Get rid of all ESRI stuff when that happens
                     let markerSymbol: any = flag;
-                    if (this.poleIcon) {
+                    if (this.poleIcon.value) {
                         // convert data uri to esri symbol json
-                        const [, contentType, , imageData] = this.poleIcon.split(/[:;,]/);
+                        const [, contentType, , imageData] = this.poleIcon.value.split(/[:;,]/);
                         markerSymbol = {
                             width: 16.5,
                             height: 16.5,

@@ -73,6 +73,7 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
@@ -90,9 +91,9 @@ import { RampBasemapConfig, RampTileSchemaConfig } from '@/geo/api';
 export default class BasemapScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     // fetch basemap store properties/data
-    tileSchemas: Array<RampTileSchemaConfig> = get(BasemapStore.tileSchemas);
-    basemaps: Array<RampBasemapConfig> = get(BasemapStore.basemaps);
-    selectedBasemap: RampBasemapConfig = get(BasemapStore.selectedBasemap);
+    tileSchemas: ComputedRef<Array<RampTileSchemaConfig>> = get(BasemapStore.tileSchemas);
+    basemaps: ComputedRef<Array<RampBasemapConfig>> = get(BasemapStore.basemaps);
+    selectedBasemap: ComputedRef<RampBasemapConfig> = get(BasemapStore.selectedBasemap);
     // @Get(BasemapStore.tileSchemas) tileSchemas!: Array<any>;
     // @Get(BasemapStore.basemaps) basemaps!: Array<any>;
     // @Get(BasemapStore.selectedBasemap) selectedBasemap!: any;
@@ -103,7 +104,7 @@ export default class BasemapScreenV extends Vue {
 
     // filter out all the basemaps that match the current schema
     filterBasemaps(schemaId: string) {
-        return this.basemaps.filter(
+        return this.basemaps.value.filter(
             basemap => basemap.tileSchemaId === schemaId
         );
     }

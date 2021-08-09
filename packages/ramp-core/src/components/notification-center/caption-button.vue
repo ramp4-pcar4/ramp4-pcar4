@@ -61,6 +61,7 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue, Options } from 'vue-property-decorator';
 import { Call, Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
@@ -75,7 +76,7 @@ import NotificationListV from './notification-list.vue';
     }
 })
 export default class NotificationsCaptionButtonV extends Vue {
-    number: Number = get('notification/notificationNumber');
+    number: ComputedRef<Number> = get('notification/notificationNumber');
     // @Get('notification/notificationNumber') number!: Number;
     @Call('notification/clearAll') clearAll!: () => void;
 }

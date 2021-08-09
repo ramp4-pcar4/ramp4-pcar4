@@ -60,6 +60,7 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
@@ -79,8 +80,8 @@ export default class GridScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     @Prop() header!: string;
 
-    layers: LayerInstance[] = get(LayerStore.layers);
-    currentUid: string = get(GridStore.currentUid);
+    layers: ComputedRef<LayerInstance[]> = get(LayerStore.layers);
+    currentUid: ComputedRef<string> = get(GridStore.currentUid);
     // @Get(LayerStore.layers) layers!: LayerInstance[];
     // @Get('grid/currentUid') currentUid: any;
 

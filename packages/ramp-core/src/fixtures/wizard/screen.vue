@@ -174,6 +174,7 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
@@ -198,7 +199,7 @@ import StepperV from './stepper.vue';
 })
 export default class WizardScreenV extends Vue {
     @Prop() panel!: PanelInstance;
-    layerSource: LayerSource = get(WizardStore.layerSource);
+    layerSource: ComputedRef<LayerSource> = get(WizardStore.layerSource);
     // @Get(WizardStore.layerSource) layerSource!: LayerSource;
 
     @Sync(WizardStore.url) url!: string;
@@ -206,7 +207,7 @@ export default class WizardScreenV extends Vue {
     @Sync(WizardStore.typeSelection) typeSelection!: string;
     @Sync(WizardStore.layerInfo) layerInfo!: LayerInfo | undefined;
 
-    step: WizardStep = get(WizardStore.step);
+    step: ComputedRef<WizardStep> = get(WizardStore.step);
     // @Get(WizardStore.step) step!: WizardStep;
     @Call(WizardStore.goToStep) goToStep!: (step: WizardStep) => void;
 
@@ -269,8 +270,8 @@ export default class WizardScreenV extends Vue {
     // lifecycle hook captures errors from child components
     errorCaptured(err: Error, vm: Vue, info: string) {
         if (
-            this.step === WizardStep.FORMAT ||
-            this.step === WizardStep.CONFIGURE
+            this.step.value === WizardStep.FORMAT ||
+            this.step.value === WizardStep.CONFIGURE
         ) {
             this.setError(
                 'format',
@@ -293,18 +294,18 @@ export default class WizardScreenV extends Vue {
             }, 500);
         }
 
-        this.typeSelection = this.layerSource.guessFormatFromURL(this.url);
+        this.typeSelection = this.layerSource.value.guessFormatFromURL(this.url);
         this.goToStep(WizardStep.FORMAT);
     }
 
     async onSelectContinue() {
         this.layerInfo = this.isFileLayer
-            ? await this.layerSource.fetchFileInfo(
+            ? await this.layerSource.value.fetchFileInfo(
                   this.url,
                   this.typeSelection,
                   this.fileData
               )
-            : await this.layerSource.fetchServiceInfo(
+            : await this.layerSource.value.fetchServiceInfo(
                   this.url,
                   this.typeSelection
               );

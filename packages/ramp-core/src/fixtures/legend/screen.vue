@@ -23,6 +23,7 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
@@ -42,7 +43,9 @@ import LegendComponentV from './components/component.vue';
 export default class LegendScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     // fetch store properties/data
-    children: Array<LegendEntry | LegendGroup> = get(LegendStore.children);
+    children: ComputedRef<Array<LegendEntry | LegendGroup>> = get(
+        LegendStore.children
+    );
     // @Get(LegendStore.children) children!: Array<LegendEntry | LegendGroup>;
 
     get isPinned(): boolean {

@@ -19,6 +19,7 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue, Options } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
@@ -39,7 +40,7 @@ import MapnavButtonV from './button.vue';
     }
 })
 export default class MapNavV extends Vue {
-    visible: any[] = get('mapnav/visible');
+    visible: ComputedRef<any[]> = get('mapnav/visible');
     // @Get('mapnav/visible') visible!: any[];
 }
 </script>

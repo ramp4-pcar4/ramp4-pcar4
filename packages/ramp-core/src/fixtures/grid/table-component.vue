@@ -99,6 +99,7 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get, Sync } from 'vuex-pathify';
 import { LayerInstance, GlobalEvents } from '@/api/internal';
@@ -146,10 +147,10 @@ const TEXT_TYPE: string = 'string';
 })
 export default class GridTableComponentV extends Vue {
     @Prop() layerUid!: string;
-    getLayerByUid: (uid: string) => LayerInstance | undefined = get(
-        LayerStore.getLayerByUid
-    );
-    // @Get(LayerStore.getLayerByUid) getLayerByUid!: (
+    getLayerByUid: ComputedRef<
+        (uid: string) => LayerInstance | undefined
+    > = get(LayerStore.getLayerByUid);
+    // @Get('layer/getLayerByUid') getLayerByUid!: (
     //     uid: string
     // ) => LayerInstance | undefined;
     @Sync(GridStore.grids) grids!: { [uid: string]: GridConfig };
@@ -208,7 +209,7 @@ export default class GridTableComponentV extends Vue {
             )
         };
 
-        const fancyLayer: LayerInstance | undefined = this.getLayerByUid(
+        const fancyLayer: LayerInstance | undefined = this.getLayerByUid.value(
             this.layerUid
         );
         if (fancyLayer === undefined) {
@@ -589,9 +590,9 @@ export default class GridTableComponentV extends Vue {
                 isStatic: true,
                 maxWidth: 82,
                 cellRenderer: (cell: any) => {
-                    const layer: LayerInstance | undefined = this.getLayerByUid(
-                        this.layerUid
-                    );
+                    const layer:
+                        | LayerInstance
+                        | undefined = this.getLayerByUid.value(this.layerUid);
                     if (layer === undefined) return;
                     const iconContainer = document.createElement('span');
                     const oid = cell.data[this.oidField];

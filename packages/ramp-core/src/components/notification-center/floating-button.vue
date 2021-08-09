@@ -23,12 +23,13 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
 
 export default class NotificationsFloatingButtonV extends Vue {
-    number: Number = get('notification/notificationNumber');
+    number: ComputedRef<Number> = get('notification/notificationNumber');
     // @Get('notification/notificationNumber') number!: Number;
 }
 </script>

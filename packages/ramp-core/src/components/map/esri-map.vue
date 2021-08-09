@@ -16,6 +16,7 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue, Watch } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
@@ -29,45 +30,45 @@ import to from 'await-to-js';
 import { MaptipStore } from '@/store/modules/maptip';
 
 export default class EsriMapV extends Vue {
-    mapConfig: RampMapConfig = get(ConfigStore.getMapConfig);
+    mapConfig: ComputedRef<RampMapConfig> = get(ConfigStore.getMapConfig);
     // @Get(ConfigStore.getMapConfig) mapConfig!: RampMapConfig;
 
-    layers: LayerInstance[] = get(LayerStore.layers);
+    layers: ComputedRef<LayerInstance[]> = get(LayerStore.layers);
     // @Get(LayerStore.layers) layers!: LayerInstance[];
 
-    layerConfigs: RampLayerConfig[] = get(LayerStore.layerConfigs);
+    layerConfigs: ComputedRef<RampLayerConfig[]> = get(LayerStore.layerConfigs);
     // @Get(LayerStore.layerConfigs) layerConfigs!: RampLayerConfig[];
 
-    maptipProperties: any = get(MaptipStore.maptipProperties);
+    maptipProperties: ComputedRef<any> = get(MaptipStore.maptipProperties);
     // @Get(MaptipStore.maptipProperties) maptipProperties!: any;
-    maptipInstance: any = get(MaptipStore.maptipInstance);
+    maptipInstance: ComputedRef<any> = get(MaptipStore.maptipInstance);
     // @Get(MaptipStore.maptipInstance) maptipInstance!: any;
 
     map!: MapAPI; // TODO assuming we need this as a local property for vue binding. if we don't, remove it and just use $iApi.geo.map
 
     created() {
         // temporarily print out loaded layers to console for grid testing purposes.
-        console.log(this.layers);
+        console.log(this.layers, this.mapConfig);
     }
 
     @Watch('maptipProperties')
     onMaptipChange() {
-        if (this.maptipProperties) {
+        if (this.maptipProperties.value) {
             // Calculate offset from mappoint
             let offsetX, offsetY: number;
             const originX: number = this.$iApi.geo.map.getPixelWidth() / 2;
             const originY: number = 0;
             const screenPointFromMapPoint = this.$iApi.geo.map.mapPointToScreenPoint(
-                this.maptipProperties.mapPoint
+                this.maptipProperties.value.mapPoint
             );
             offsetX = screenPointFromMapPoint.screenX - originX;
             offsetY = originY - screenPointFromMapPoint.screenY;
-            this.maptipInstance.set({
+            this.maptipInstance.value.set({
                 offset: `${offsetX}, ${offsetY}`
             });
-            this.maptipInstance.show();
+            this.maptipInstance.value.show();
         } else {
-            this.maptipInstance.hide();
+            this.maptipInstance.value.hide();
         }
     }
 
@@ -82,7 +83,7 @@ export default class EsriMapV extends Vue {
         //      change before map exists. kicking out for now to make demos work.
         //      possibly this is evil in vue state land. if so, then someone figure out
         //      the root cause and fix that.
-        if (!this.map) {
+        if (!this.map || !newValue) {
             return;
         }
 
@@ -157,6 +158,7 @@ export default class EsriMapV extends Vue {
 
     @Watch('mapConfig')
     onMapConfigChange(newValue: RampMapConfig, oldValue: RampMapConfig) {
+        console.log("new map config change: ", newValue, this.mapConfig);
         if (newValue === oldValue) {
             return;
         }
@@ -164,7 +166,7 @@ export default class EsriMapV extends Vue {
         const mapViewElement: Element | null = this.$el;
 
         this.$iApi.geo.map.createMap(
-            this.mapConfig,
+            newValue,
             mapViewElement as HTMLDivElement
         );
         this.map = this.$iApi.geo.map;
@@ -181,7 +183,7 @@ export default class EsriMapV extends Vue {
 
         // TODO see if we still need this. map config should trigger the array watcher due to the store.
         //      possibly layer config is processed before map config is done creating map?
-        this.onLayerConfigArrayChange(this.layerConfigs, []);
+        this.onLayerConfigArrayChange(this.layerConfigs.value, []);
     }
 }
 </script>

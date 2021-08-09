@@ -32,6 +32,7 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue, Options } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
@@ -44,7 +45,9 @@ import NotificationItemV from './notification-item.vue';
     }
 })
 export default class NotificationListV extends Vue {
-    notificationStack: any[] = get('notification/notificationStack');
+    notificationStack: ComputedRef<any[]> = get(
+        'notification/notificationStack'
+    );
     // @Get('notification/notificationStack') notificationStack!: any[];
 }
 </script>

@@ -36,6 +36,7 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue, Options } from 'vue-property-decorator';
 
 import EsriMapV from '@/components/map/esri-map.vue';

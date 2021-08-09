@@ -23,15 +23,16 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
 import { LayerInstance } from '@/api/internal';
 
 export default class ZoomButtonRendererV extends Vue {
-    getLayerByUid: (uid: string) => LayerInstance | undefined = get(
-        'layer/getLayerByUid'
-    );
+    getLayerByUid: ComputedRef<
+        (uid: string) => LayerInstance | undefined
+    > = get('layer/getLayerByUid');
     // @Get('layer/getLayerByUid') getLayerByUid!: (
     //     uid: string
     // ) => LayerInstance | undefined;
@@ -57,7 +58,7 @@ export default class ZoomButtonRendererV extends Vue {
     }
 
     zoomToFeature() {
-        const layer: LayerInstance | undefined = this.getLayerByUid(
+        const layer: LayerInstance | undefined = this.getLayerByUid.value(
             this.params.uid
         );
         if (layer === undefined) return;

@@ -102,7 +102,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Options, Watch } from 'vue-property-decorator';
+import { ComputedRef } from 'vue';
+import { Vue, Options } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { Attribution, MouseCoords, RampMapConfig, ScaleBar, ScaleBarProperties } from '@/geo/api';
 import { get } from '@/store/pathify-helper';
@@ -121,6 +122,7 @@ export default class MapCaptionV extends Vue {
     attribution: Attribution = get(MapCaptionStore.attribution);
     cursorCoords: string = get(MapCaptionStore.cursorCoords);
     mapConfig!: RampMapConfig = get(ConfigStore.getMapConfig);
+    lang: string[] = [];
 
     @Watch('mapConfig')
     onMapConfigChange(newValue: RampMapConfig, oldValue: RampMapConfig) {

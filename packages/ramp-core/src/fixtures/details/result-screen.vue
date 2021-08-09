@@ -37,6 +37,7 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
@@ -49,11 +50,11 @@ export default class DetailsResultScreenV extends Vue {
     @Prop() panel!: PanelInstance;
     @Prop() resultIndex!: number;
 
-    payload: IdentifyResult[] = get(DetailsStore.payload);
+    payload: ComputedRef<IdentifyResult[]> = get(DetailsStore.payload);
     // @Get(DetailsStore.payload) payload!: IdentifyResult[];
-    getLayerByUid: (uid: string) => LayerInstance | undefined = get(
-        'layer/getLayerByUid'
-    );
+    getLayerByUid: ComputedRef<
+        (uid: string) => LayerInstance | undefined
+    > = get('layer/getLayerByUid');
     // @Get('layer/getLayerByUid') getLayerByUid!: (
     //     uid: string
     // ) => LayerInstance | undefined;
@@ -78,7 +79,7 @@ export default class DetailsResultScreenV extends Vue {
      */
     itemIcon(data: any, idx: number) {
         const uid = this.identifyResult.uid;
-        const layer: LayerInstance | undefined = this.getLayerByUid(uid);
+        const layer: LayerInstance | undefined = this.getLayerByUid.value(uid);
         if (layer === undefined) {
             console.warn(
                 `could not find layer for uid ${uid} during icon lookup`
@@ -100,16 +101,16 @@ export default class DetailsResultScreenV extends Vue {
      * Returns the identify information for the layer specified by resultIndex.
      */
     get identifyResult() {
-        return this.payload[this.resultIndex];
+        return this.payload.value[this.resultIndex];
     }
 
     /**
      * Returns the name field for the layer specified by resultIndex.
      */
     get nameField() {
-        const layerInfo = this.payload[this.resultIndex];
+        const layerInfo = this.payload.value[this.resultIndex];
         const uid = layerInfo?.uid;
-        const layer: LayerInstance | undefined = this.getLayerByUid(uid);
+        const layer: LayerInstance | undefined = this.getLayerByUid.value(uid);
         return layer?.getNameField(uid);
     }
 }

@@ -50,6 +50,7 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue } from 'vue-property-decorator';
 import { Get, Call } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
@@ -58,9 +59,9 @@ import { GeosearchStore } from './store';
 
 export default class GeosearchTopFiltersV extends Vue {
     // fetch defined province/type filters + filter params from store
-    provinces: Array<any> = get(GeosearchStore.getProvinces);
-    types: Array<any> = get(GeosearchStore.getTypes);
-    queryParams: any = get(GeosearchStore.queryParams);
+    provinces: ComputedRef<Array<any>> = get(GeosearchStore.getProvinces);
+    types: ComputedRef<Array<any>> = get(GeosearchStore.getTypes);
+    queryParams: ComputedRef<any> = get(GeosearchStore.queryParams);
     // @Get(GeosearchStore.getProvinces) provinces!: Array<any>;
     // @Get(GeosearchStore.getTypes) types!: Array<any>;
     // @Get(GeosearchStore.queryParams) queryParams!: any;

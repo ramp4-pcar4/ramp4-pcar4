@@ -11,6 +11,7 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue } from 'vue-property-decorator';
 import { Get, Call } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
@@ -20,7 +21,7 @@ import { debounce } from 'throttle-debounce';
 
 export default class GeosearchSearchBarV extends Vue {
     // fetch geosearch search value from store
-    searchVal: string = get(GeosearchStore.searchVal);
+    searchVal: ComputedRef<string> = get(GeosearchStore.searchVal);
     // @Get(GeosearchStore.searchVal) searchVal!: string;
 
     // import required geosearch actions

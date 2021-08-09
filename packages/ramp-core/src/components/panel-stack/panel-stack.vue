@@ -15,6 +15,7 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue, Options } from 'vue-property-decorator';
 import { Get, Sync } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
@@ -38,7 +39,7 @@ declare class ResizeObserver {
     }
 })
 export default class PanelStackV extends Vue {
-    visible: (extraSmallScreen: boolean) => PanelInstance[] = get(
+    visible: ComputedRef<(extraSmallScreen: boolean) => PanelInstance[]> = get(
         'panel/getVisible'
     );
 

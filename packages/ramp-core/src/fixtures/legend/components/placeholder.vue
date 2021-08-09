@@ -37,6 +37,7 @@
 </template>
 
 <script lang="ts">
+import { ComputedRef } from 'vue';
 import { Vue, Options, Prop, Watch } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
@@ -59,7 +60,7 @@ import { LegendSymbology } from '@/geo/api';
 })
 export default class LegendPlaceholderV extends Vue {
     @Prop() legendItem!: LegendEntry;
-    layers: LayerInstance[] = get(LayerStore.layers);
+    layers: ComputedRef<LayerInstance[]> = get(LayerStore.layers);
     // @Get(LayerStore.layers) layers!: LayerInstance[];
 
     layer: LayerInstance | undefined = undefined;
@@ -91,7 +92,7 @@ export default class LegendPlaceholderV extends Vue {
 
     mounted() {
         // in case layer is added while placeholder component is dead
-        this.layerAdded(this.layers, []);
+        this.layerAdded(this.layers.value, []);
     }
 }
 </script>
