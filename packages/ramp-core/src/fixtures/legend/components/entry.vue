@@ -137,7 +137,8 @@
                         viewBox="0 0 24 24"
                     ></svg>
                     <div class="flex-1" v-truncate>
-                        <span>Loading...</span>
+                        <!-- TODO: add official translation -->
+                        <span>{{ $t('legend.symbology.loading') }}</span>
                     </div>
                 </div>
             </div>
