@@ -83,10 +83,6 @@ export default class LegendPlaceholderV extends Vue {
                         this.legendItem.id
                     );
                 }
-
-                if (this.legendItem.parent instanceof LegendGroup) {
-                    this.legendItem.parent.checkVisibility(this.legendItem);
-                }
             });
         }
     }

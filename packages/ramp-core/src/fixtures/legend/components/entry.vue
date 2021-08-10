@@ -132,11 +132,11 @@
             <div v-else>
                 <!-- display loading text -->
                 <div class="flex p-5 ml-48" v-truncate>
-                    <svg
-                        class="relative animate-spin spinner h-20 w-20 mr-10 mb-1"
-                        viewBox="0 0 24 24"
-                    ></svg>
-                    <div class="flex-1" v-truncate>
+                    <div
+                        class="relative animate-spin spinner h-20 w-20 mr-10 pt-2"
+                        v-if="this.$iApi.animate === 'on'"
+                    ></div>
+                    <div class="flex-1 text-gray-500" v-truncate>
                         <!-- TODO: add official translation -->
                         <span>{{ $t('legend.symbology.loading') }}</span>
                     </div>
@@ -149,9 +149,7 @@
 <script lang="ts">
 import { GlobalEvents } from '@/api';
 import { Vue, Component, Prop } from 'vue-property-decorator';
-
-import { LegendEntry, Controls } from '../store/legend-defs';
-
+import { LegendEntry, Controls, LegendGroup } from '../store/legend-defs';
 import LegendCheckboxV from './checkbox.vue';
 import LegendSymbologyStackV from './symbology-stack.vue';
 import LegendOptionsV from './legend-options.vue';
@@ -179,6 +177,10 @@ export default class LegendEntryV extends Vue {
                 'Attempted to mount legend entry component with undefined layer'
             );
             return;
+        }
+
+        if (this.legendItem.parent instanceof LegendGroup) {
+            this.legendItem.parent.checkVisibility(this.legendItem);
         }
 
         Promise.all(
