@@ -4,6 +4,7 @@
         :content="$t('grid.cells.details')"
         v-tippy="{ placement: 'top' }"
         @click="openDetails"
+        tabindex="-1"
     >
         <svg
             class="m-auto"

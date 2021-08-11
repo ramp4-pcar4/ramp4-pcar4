@@ -95,7 +95,7 @@ function syncTabIndex(element: HTMLElement) {
  * Each instance of this class is tied to an element. These are created in the bind function for the `FocusList` directive.
  * This class manages the focus within the element, mainly moving between `focus-item`s with arrow keys.
  */
-class FocusListManager {
+export class FocusListManager {
     element: HTMLElement;
     highlightedItem: HTMLElement;
     isHorizontal: boolean;

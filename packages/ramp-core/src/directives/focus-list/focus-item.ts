@@ -32,7 +32,7 @@ export const FocusItem: Vue.DirectiveOptions = {
     }
 };
 
-function generateID(): string {
+export function generateID(): string {
     let newID;
     do {
         newID =

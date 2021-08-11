@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="h-full flex items-center justify-center">
         <input
             class="rv-input w-full"
             type="text"
