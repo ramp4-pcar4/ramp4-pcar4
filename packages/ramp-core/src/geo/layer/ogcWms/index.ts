@@ -13,6 +13,7 @@ import {
 } from '@/geo/api';
 import { EsriRequest, EsriWMSLayer, EsriWMSSublayer } from '@/geo/esri';
 import { WmsFC } from './wms-fc';
+import { UrlWrapper } from '@/geo/api';
 
 export default class WmsLayer extends CommonLayer {
     declare esriLayer: EsriWMSLayer | undefined;
@@ -61,11 +62,12 @@ export default class WmsLayer extends CommonLayer {
         //           out WmsFCs for each active sublayer and wire up a visibility
         //           pipeline similar to MapImageLayer
 
-        // NOTE: Using a style name that does not exist on the service is allowed, but will result in an (non-fatal) error on the console.
-        // The legend graphic provided in the config will display, and the default style for the GetMap call will be used.
+        // NOTE: Currently, we do not disallow using style names in the config that do not exist on the service (for defining custom legend graphics),
+        // but because both GetMap and GetLegendGraphic use the currentStyle property, the GetMap request would fail. See #630.
         const styles = lEntries.map(e => e.currentStyle).join();
 
-        // TODO: Setting the style doesn't work right now - at least not for the GetLegendGraphic call. Need further investigation on this.
+        // This sets the style for the GetMap request.
+        // NOTE: This does NOT set the style for GetLegendGraphic requests. See #603.
         esriConfig.customParameters = {
             styles: styles
         };
@@ -123,16 +125,28 @@ export default class WmsLayer extends CommonLayer {
         // Set visibility of sublayers based on presence in the config
         const crawlSublayers = (
             sublayers: __esri.Collection<EsriWMSSublayer>
-        ): void => {
+        ): boolean => {
+            let anySlVis = false;
             sublayers.forEach(sl => {
-                sl.visible = this.sublayerNames.indexOf(sl.name) > -1;
-                // if this sublayer is visible, then all of its sublayers should remain visible as well
-                if (!sl.visible) {
+                const visible = this.sublayerNames.indexOf(sl.name) > -1;
+                if (visible) {
+                    // if this sublayer is visible, then all of its sublayers should remain visible as well
+                    anySlVis = true;
+                } else {
                     if (sl.sublayers && sl.sublayers.length > 0) {
-                        crawlSublayers(sl.sublayers);
+                        const slVisibile = crawlSublayers(sl.sublayers);
+                        if (slVisibile) {
+                            // if any of this sublayer's sublayers are visible, then this sublayer should be visible too
+                            anySlVis = true;
+                        } else {
+                            sl.visible = false;
+                        }
+                    } else {
+                        sl.visible = false;
                     }
                 }
             });
+            return anySlVis;
         };
         if (this.esriLayer) {
             crawlSublayers(this.esriLayer.sublayers);
@@ -420,7 +434,34 @@ export default class WmsLayer extends CommonLayer {
         const slMap = new Map();
         // .allSublayers is a flat collection of all sublayers
         this.esriLayer.allSublayers.forEach((sl: any) => {
-            slMap.set(sl.name, sl.legendUrl);
+            if (sl.visible) {
+                // NOTE: currently, the ESRI WMSLayer constructor does not seem to be building a legendUrl using the correct style parameter.
+                // this is a temp fix until we figure out what is going wrong there. See #603.
+                if (sl.legendUrl) {
+                    // check if the style matches that in the config.
+                    // need to use forEach here and not find/filter because the layerEntries properties are not always the same
+                    this.origRampConfig.layerEntries?.forEach(
+                        (le: RampLayerWmsLayerEntryConfig) => {
+                            if (le.id && le.currentStyle && le.id === sl.name) {
+                                const wrapper = new UrlWrapper(sl.legendUrl);
+                                // assuming here that STYLE is always appended in all caps to avoid using .toUpperCase() above.
+                                // if the assumption is wrong, might need to rework some logic so that no case-sensitive parts of the URL get changed. e.g., 'geomet' in geomet layers
+                                if ('STYLE' in wrapper.queryMap) {
+                                    if (
+                                        wrapper.queryMap.STYLE !==
+                                        le.currentStyle
+                                    ) {
+                                        sl.legendUrl = wrapper.updateQuery({
+                                            STYLE: le.currentStyle
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    );
+                }
+                slMap.set(sl.name, sl.legendUrl);
+            }
         });
 
         // get any legendUrls that were defined in the config
