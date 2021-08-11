@@ -77,7 +77,7 @@ export default class DropdownMenuV extends Vue {
         });
     }
 
-    unmounted() {
+    beforeDestroy() {
         window.removeEventListener(
             'click',
             event => {

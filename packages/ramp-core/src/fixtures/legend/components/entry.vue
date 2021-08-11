@@ -189,7 +189,7 @@ export default class LegendEntryV extends Vue {
         );
     }
 
-    unmounted() {
+    beforeDestroy() {
         // Remove all event handlers for this component
         this.handlers.forEach(handler => this.$iApi.event.off(handler));
     }
