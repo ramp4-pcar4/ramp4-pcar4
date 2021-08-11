@@ -15,6 +15,7 @@ import {
 } from '@/geo/api';
 import { EsriMapImageLayer, EsriRequest } from '@/geo/esri';
 import { MapImageFC } from './map-image-fc';
+import { markRaw } from 'vue';
 
 // Formerly known as DynamicLayer
 class MapImageLayer extends AttribLayer {
@@ -30,8 +31,8 @@ class MapImageLayer extends AttribLayer {
     }
 
     async initiate(): Promise<void> {
-        this.esriLayer = new EsriMapImageLayer(
-            this.makeEsriLayerConfig(this.origRampConfig)
+        this.esriLayer = markRaw(
+            new EsriMapImageLayer(this.makeEsriLayerConfig(this.origRampConfig))
         );
         await super.initiate();
     }
@@ -457,6 +458,7 @@ class MapImageLayer extends AttribLayer {
      */
     getVisibility(layerIdx: number | string | undefined = undefined): boolean {
         const fc = this.getFC(layerIdx, true);
+        console.log('GETVIS', fc, this.esriLayer);
         if (!fc) {
             return !!this.esriLayer?.visible;
         } else {

@@ -15,10 +15,10 @@
 </template>
 
 <script lang="ts">
-import { ComputedRef } from 'vue';
 import { Vue, Options } from 'vue-property-decorator';
 import { Get, Sync } from 'vuex-pathify';
-import { get } from '@/store/pathify-helper';
+import { get, sync } from '@/store/pathify-helper';
+import { ComputedRef, WritableComputedRef } from 'vue';
 
 import anime from 'animejs';
 
@@ -46,7 +46,7 @@ export default class PanelStackV extends Vue {
     // @Get('panel/getVisible!') visible!: (
     //     extraSmallScreen: boolean
     // ) => PanelInstance[];
-    @Sync('panel/stackWidth') stackWidth!: number;
+    stackWidth: WritableComputedRef<number> = sync('panel/stackWidth');
 
     mounted(): void {
         // sync the `panel-stack` width into the store so that visible can get calculated

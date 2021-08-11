@@ -16,6 +16,7 @@ import {
     EsriGraphicsLayer,
     EsriPictureMarkerSymbol
 } from '@/geo/esri';
+import { markRaw } from 'vue';
 
 /**
  * Generate a graphic layer to handle feature highlighting.
@@ -61,10 +62,12 @@ export default class HighlightLayer extends CommonLayer {
     async initiate(): Promise<void> {
         // TODO determine if we are setting a layer type for highlight layers.
 
-        this.esriLayer = new EsriGraphicsLayer({
-            id: this.origRampConfig.id,
-            visible: true
-        });
+        this.esriLayer = markRaw(
+            new EsriGraphicsLayer({
+                id: this.origRampConfig.id,
+                visible: true
+            })
+        );
         await super.initiate();
     }
 

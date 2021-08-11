@@ -3,6 +3,7 @@
 import { CommonFC, CommonLayer, InstanceAPI } from '@/api/internal';
 import { LayerType, RampLayerConfig, TreeNode } from '@/geo/api';
 import { EsriTileLayer } from '@/geo/esri';
+import { markRaw } from 'vue';
 
 class TileLayer extends CommonLayer {
     declare esriLayer: EsriTileLayer | undefined;
@@ -14,8 +15,8 @@ class TileLayer extends CommonLayer {
     }
 
     async initiate(): Promise<void> {
-        this.esriLayer = new EsriTileLayer(
-            this.makeEsriLayerConfig(this.origRampConfig)
+        this.esriLayer = markRaw(
+            new EsriTileLayer(this.makeEsriLayerConfig(this.origRampConfig))
         );
         await super.initiate();
     }

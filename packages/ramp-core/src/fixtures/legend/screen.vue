@@ -23,11 +23,11 @@
 </template>
 
 <script lang="ts">
-import { ComputedRef } from 'vue';
 import { Vue, Options, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
 import { PanelInstance } from '@/api';
+import { ComputedRef } from 'vue';
 
 import { LegendStore } from './store';
 import { LegendEntry, LegendGroup } from './store/legend-defs';

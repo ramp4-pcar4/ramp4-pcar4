@@ -158,7 +158,7 @@ export default class EsriMapV extends Vue {
 
     @Watch('mapConfig')
     onMapConfigChange(newValue: RampMapConfig, oldValue: RampMapConfig) {
-        console.log("new map config change: ", newValue, this.mapConfig);
+        console.log('new map config change: ', newValue, this.mapConfig);
         if (newValue === oldValue) {
             return;
         }

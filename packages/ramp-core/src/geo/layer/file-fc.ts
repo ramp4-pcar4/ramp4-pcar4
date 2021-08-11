@@ -15,6 +15,7 @@ import {
     QueryFeaturesParams
 } from '@/geo/api';
 import { EsriFeatureFilter } from '@/geo/esri';
+import { toRaw } from 'vue';
 
 export class FileFC extends AttribFC {
     // @ts-ignore
@@ -179,7 +180,7 @@ export class FileFC extends AttribFC {
 
         // NOTE this can be expanded to have spatial filters as well. if we head to that,
         //      will will need to ensure any spatial elements get included in the new FeatureFilter
-        this.parentLayer.esriView.filter = new EsriFeatureFilter({
+        toRaw(this.parentLayer.esriView).filter = new EsriFeatureFilter({
             where: sql
         });
     }

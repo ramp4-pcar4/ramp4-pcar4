@@ -17,6 +17,7 @@ import {
     TreeNode
 } from '@/geo/api';
 import { EsriFeatureLayer, EsriField } from '@/geo/esri';
+import { markRaw } from 'vue';
 
 // util function to manage trickery. file layer can have field names that are bad keys.
 // our file loader will have corrected them, but ramp layer config .nameField and .tooltipField may
@@ -88,8 +89,8 @@ export class FileLayer extends AttribLayer {
             opts
         );
 
-        this.esriLayer = new EsriFeatureLayer(
-            this.makeEsriLayerConfig(this.origRampConfig)
+        this.esriLayer = markRaw(
+            new EsriFeatureLayer(this.makeEsriLayerConfig(this.origRampConfig))
         );
 
         this.esriJson = undefined;

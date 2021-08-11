@@ -36,6 +36,7 @@ export class LegendAPI extends FixtureInstance {
         const layers: LayerInstance[] | undefined = this.$vApp.$store.get(
             LayerStore.layers
         );
+
         let legendEntries: Array<LegendItem> = [];
         let stack: Array<any> = [];
         // initialize stack with all legend elements listed in config

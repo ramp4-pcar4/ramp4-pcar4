@@ -13,6 +13,7 @@ import {
 } from '@/geo/api';
 import { EsriFeatureLayer } from '@/geo/esri';
 import { FeatureFC } from './feature-fc';
+import { markRaw } from 'vue';
 
 class FeatureLayer extends AttribLayer {
     declare esriLayer: EsriFeatureLayer | undefined;
@@ -24,8 +25,8 @@ class FeatureLayer extends AttribLayer {
     }
 
     async initiate(): Promise<void> {
-        this.esriLayer = new EsriFeatureLayer(
-            this.makeEsriLayerConfig(this.origRampConfig)
+        this.esriLayer = markRaw(
+            new EsriFeatureLayer(this.makeEsriLayerConfig(this.origRampConfig))
         );
         await super.initiate();
     }

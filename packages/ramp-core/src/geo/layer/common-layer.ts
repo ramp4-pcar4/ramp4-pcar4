@@ -30,6 +30,8 @@ import {
     TreeNode
 } from '@/geo/api';
 
+import { toRaw } from 'vue';
+
 export class CommonLayer extends LayerInstance {
     uid: string;
     id: string;
@@ -576,8 +578,9 @@ export class CommonLayer extends LayerInstance {
      */
     getVisibility(layerIdx: number | string | undefined = undefined): boolean {
         const fc = this.getFC(layerIdx);
+
         if (fc) {
-            return fc.getVisibility();
+            return toRaw(fc).getVisibility();
         } else {
             this.noLayerErr();
             return false;

@@ -3,6 +3,7 @@
 import { AttribFC } from '@/api/internal';
 import { DataFormat } from '@/geo/api';
 import MapImageLayer from './index';
+import { markRaw } from 'vue';
 
 export class MapImageFC extends AttribFC {
     // @ts-ignore
@@ -22,9 +23,11 @@ export class MapImageFC extends AttribFC {
         }
 
         // TODO not found check?
-        this.esriSubLayer = parent.esriLayer.allSublayers.find(s => {
-            return s.id === layerIdx;
-        });
+        this.esriSubLayer = markRaw(
+            parent.esriLayer.allSublayers.find(s => {
+                return s.id === layerIdx;
+            })
+        );
     }
 
     /**

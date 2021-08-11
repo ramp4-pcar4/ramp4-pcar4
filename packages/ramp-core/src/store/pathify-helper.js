@@ -8,7 +8,7 @@ export function get(path) {
         path in store.getters
             ? computed(() => store.getters[path])
             : computed(() => store.get(path));
-    console.log("store: ", store, path, property);
+    console.log('store: ', store, path, property);
     return property;
 }
 

@@ -14,6 +14,7 @@ import {
 import { EsriRequest, EsriWMSLayer, EsriWMSSublayer } from '@/geo/esri';
 import { WmsFC } from './wms-fc';
 import { UrlWrapper } from '@/geo/api';
+import { markRaw } from 'vue';
 
 export default class WmsLayer extends CommonLayer {
     declare esriLayer: EsriWMSLayer | undefined;
@@ -29,8 +30,8 @@ export default class WmsLayer extends CommonLayer {
     }
 
     async initiate(): Promise<void> {
-        this.esriLayer = new EsriWMSLayer(
-            this.makeEsriLayerConfig(this.origRampConfig)
+        this.esriLayer = markRaw(
+            new EsriWMSLayer(this.makeEsriLayerConfig(this.origRampConfig))
         );
         await super.initiate();
     }
