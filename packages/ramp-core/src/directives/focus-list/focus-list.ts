@@ -354,14 +354,28 @@ export class FocusListManager {
      * @param {MouseEvent} event click event
      */
     onClick(event: MouseEvent) {
-        event.stopPropagation();
         this.defocusItem(this.highlightedItem);
 
-        const targetElement = event.target as HTMLElement;
+        let targetElement = event.target as HTMLElement;
+
+        // This block restricts the search space to valid choices.
+        if (!targetElement.hasAttribute(LIST_ATTR)) {
+            // if we're in a sublist => loop
+            while (
+                targetElement.parentElement!.closest(`[${LIST_ATTR}]`) !==
+                this.element
+            ) {
+                targetElement = targetElement.parentElement!.closest(
+                    `[${LIST_ATTR}]`
+                )! as HTMLElement;
+            }
+            // targetElement is now the root of the closest sublist to *this* focus list
+        }
+
         this.highlightedItem =
-            (targetElement.closest(
-                `[${ITEM_ATTR}],[${LIST_ATTR}]`
-            ) as HTMLElement) || this.highlightedItem;
+            (targetElement.closest(`[${ITEM_ATTR}]`) as HTMLElement) ||
+            (targetElement.closest(`[${LIST_ATTR}]`) as HTMLElement) ||
+            this.highlightedItem;
 
         // if target element is a focus item then focus the list
         if (targetElement.hasAttribute(`${ITEM_ATTR}`)) {
