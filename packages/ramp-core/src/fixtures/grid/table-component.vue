@@ -259,7 +259,7 @@ export default class GridTableComponentV extends Vue {
         });
     }
 
-    unmounted() {
+    beforeDestroy() {
         this.gridAccessibilityManager?.removeAccessibilityListeners();
     }
 

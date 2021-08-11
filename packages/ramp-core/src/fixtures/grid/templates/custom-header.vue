@@ -106,7 +106,7 @@ export default class GridCustomHeaderV extends Vue {
         });
     }
 
-    unmounted() {
+    beforeDestroy() {
         this.params.column.removeEventListener('leftChanged', () => {
             this.onColumnReorder();
         });
