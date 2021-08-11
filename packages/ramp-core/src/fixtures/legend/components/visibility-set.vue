@@ -65,6 +65,7 @@
 </template>
 
 <script lang="ts">
+import { defineAsyncComponent } from 'vue';
 import { Vue, Options, Prop } from 'vue-property-decorator';
 
 import { LegendSet, LegendTypes } from '../store/legend-defs';
@@ -72,7 +73,7 @@ import LegendCheckboxV from './checkbox.vue';
 
 @Options({
     components: {
-        LegendComponent: () => import('./component.vue'),
+        LegendComponent: defineAsyncComponent(() => import('./component.vue')),
         checkbox: LegendCheckboxV
     }
 })
