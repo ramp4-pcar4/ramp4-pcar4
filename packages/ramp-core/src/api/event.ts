@@ -538,7 +538,7 @@ export class EventAPI extends APIScope {
                         .getConfig()
                         .map.basemaps.find(bms => bms.id === payload);
 
-                    this.$iApi.geo.map.updateAttribution(
+                    this.$iApi.geo.map.caption.updateAttribution(
                         currentBasemapConfig?.attribution
                     );
                 };
@@ -557,7 +557,7 @@ export class EventAPI extends APIScope {
                             bms.id === this.$iApi.geo.map.getCurrentBasemapId()
                     );
 
-                    this.$iApi.geo.map.updateAttribution(
+                    this.$iApi.geo.map.caption.updateAttribution(
                         currentBasemapConfig?.attribution
                     );
                 };
@@ -570,7 +570,9 @@ export class EventAPI extends APIScope {
             case DefEH.MAP_SCALECHANGE_SCALEBAR:
                 this.$iApi.event.on(
                     GlobalEvents.MAP_SCALECHANGE,
-                    debounce(300, () => this.$iApi.geo.map.updateScale()),
+                    debounce(300, () =>
+                        this.$iApi.geo.map.caption.updateScale()
+                    ),
                     handlerName
                 );
                 break;
@@ -610,16 +612,16 @@ export class EventAPI extends APIScope {
                 this.$iApi.event.on(
                     GlobalEvents.MAP_MOUSEMOVE,
                     throttle(200, (mapMove: MapMove) => {
-                        this.$iApi.geo.utils
-                            .formatLatLongDMSString(
+                        this.$iApi.geo.map.caption
+                            .formatPoint(
                                 this.$iApi.geo.map.screenPointToMapPoint(
                                     mapMove
                                 )
                             )
-                            .then(llstring => {
+                            .then(formattedString => {
                                 this.$iApi.$vApp.$store.set(
                                     MapCaptionStore.setCursorCoords,
-                                    llstring
+                                    formattedString
                                 );
                             });
                     }),
