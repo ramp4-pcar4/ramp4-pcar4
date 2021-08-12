@@ -84,49 +84,62 @@
             v-focus-item
             class="default-focus-style"
         >
-            <!-- display each symbol -->
-            <div
-                class="m-5"
-                v-for="(item, idx) in legendItem.layer.getLegend(
-                    legendItem.layerUID
-                )"
-                :key="idx"
-            >
-                <!-- for WMS layers -->
+            <div v-if="symbologyStack.length > 0">
+                <!-- display each symbol -->
                 <div
-                    v-if="layerType === 'ogcWms'"
-                    class="items-center grid-cols-1"
+                    class="m-5"
+                    v-for="(item, idx) in symbologyStack"
+                    :key="idx"
                 >
+                    <!-- for WMS layers -->
                     <div
-                        v-if="item.imgHeight"
-                        class="symbologyIcon w-full p-5"
-                        v-html="getLegendGraphic(item)"
-                    ></div>
-                    <div
-                        v-if="item.label"
-                        class="flex-1 p-5 bg-black-75 text-white"
-                        v-truncate
+                        v-if="layerType === 'ogcWms'"
+                        class="items-center grid-cols-1"
                     >
-                        {{ item.label }}
+                        <div
+                            v-if="item.imgHeight"
+                            class="symbologyIcon w-full p-5"
+                            v-html="getLegendGraphic(item)"
+                        ></div>
+                        <div
+                            v-if="item.label"
+                            class="flex-1 p-5 bg-black-75 text-white"
+                            v-truncate
+                        >
+                            {{ item.label }}
+                        </div>
+                    </div>
+                    <!-- for non-WMS layers -->
+                    <div v-else class="flex items-center">
+                        <div class="symbologyIcon">
+                            <span v-html="item.svgcode"></span>
+                        </div>
+                        <div class="flex-1 ml-15" v-truncate>
+                            {{ item.label }}
+                        </div>
+                        <checkbox
+                            v-if="
+                                legendItem.layer.getLegend(legendItem.layerUID)
+                                    .length > 1
+                            "
+                            :checked="item.visibility"
+                            :value="item"
+                            :legendItem="legendItem"
+                        />
                     </div>
                 </div>
-                <!-- for non-WMS layers -->
-                <div v-else class="flex items-center">
-                    <div class="symbologyIcon">
-                        <span v-html="item.svgcode"></span>
+            </div>
+            <div v-else>
+                <!-- display loading text -->
+                <div class="flex p-5 ml-48" v-truncate>
+                    <div
+                        class="relative animate-spin spinner h-20 w-20 mr-10 pt-2"
+                        v-if="this.$iApi.animate === 'on'"
+                    ></div>
+                    <div class="flex-1 text-gray-500" v-truncate>
+                        <!-- TODO: add official translation -->
+                        <span>{{ $t('legend.symbology.loading') }}</span>
                     </div>
-                    <div class="flex-1 ml-15" v-truncate>
-                        {{ item.label }}
-                    </div>
-                    <checkbox
-                        v-if="
-                            legendItem.layer.getLegend(legendItem.layerUID)
-                                .length > 1
-                        "
-                        :checked="item.visibility"
-                        :value="item"
-                        :legendItem="legendItem"
-                    />
                 </div>
             </div>
         </div>
@@ -134,15 +147,13 @@
 </template>
 
 <script lang="ts">
-import { GlobalEvents, LayerInstance } from '@/api';
+import { GlobalEvents } from '@/api';
 import { Vue, Component, Prop } from 'vue-property-decorator';
-
-import { LegendEntry, Controls } from '../store/legend-defs';
-
+import { LegendEntry, Controls, LegendGroup } from '../store/legend-defs';
 import LegendCheckboxV from './checkbox.vue';
 import LegendSymbologyStackV from './symbology-stack.vue';
 import LegendOptionsV from './legend-options.vue';
-import { LayerType } from '@/geo/api';
+import { LegendSymbology } from '@/geo/api';
 
 @Component({
     components: {
@@ -154,44 +165,31 @@ import { LayerType } from '@/geo/api';
 export default class LegendEntryV extends Vue {
     @Prop() legendItem!: LegendEntry;
 
-    // Making handlers a list in case more are added in the future
-    handlers: Array<string> = [];
+    // list of all symbology items in the layer's legend
+    // Use local variable to avoid any reactivity issues
+    symbologyStack: Array<LegendSymbology> = [];
 
     mounted() {
-        // Update checkbox value when the layer reloads
-        this.handlers.push(
-            this.$iApi.event.on(
-                GlobalEvents.LAYER_RELOAD_END,
-                (reloadedLayer: LayerInstance) => {
-                    let updateVisibilityFlag: boolean = false;
-                    if (reloadedLayer.layerType === LayerType.MAPIMAGE) {
-                        // Check if this.uid is a child of reloadedLayer
-                        if (
-                            this.legendItem.layerUID &&
-                            reloadedLayer
-                                .getLayerTree()
-                                .findChildByUid(this.legendItem.layerUID)
-                        ) {
-                            updateVisibilityFlag = true;
-                        }
-                    } else if (this.legendItem.layerUID === reloadedLayer.uid) {
-                        updateVisibilityFlag = true;
-                    }
+        // Wait for symbology to load
+        if (!this.legendItem.layer) {
+            // This should never happen because the layer is loaded before the legend entry component is mounted
+            console.warn(
+                'Attempted to mount legend entry component with undefined layer'
+            );
+            return;
+        }
 
-                    if (updateVisibilityFlag) {
-                        // Wait for layer to fully load
-                        this.legendItem.layer?.isLayerLoaded().then(() => {
-                            this.legendItem.toggleVisibility(true);
-                        });
-                    }
-                }
-            )
-        );
-    }
+        if (this.legendItem.parent instanceof LegendGroup) {
+            this.legendItem.parent.checkVisibility(this.legendItem);
+        }
 
-    unmounted() {
-        // Remove all event handlers for this component
-        this.handlers.forEach(handler => this.$iApi.event.off(handler));
+        Promise.all(
+            this.legendItem.layer
+                .getLegend()
+                .map((item: LegendSymbology) => item.drawPromise)
+        ).then(() => {
+            this.symbologyStack = this.legendItem.layer!.getLegend();
+        });
     }
 
     /**
@@ -282,5 +280,11 @@ export default class LegendEntryV extends Vue {
 .disabled {
     @apply text-gray-400;
     cursor: default;
+}
+.spinner {
+    border: 2px solid rgba(0, 0, 0, 0.158);
+    border-top: 2px solid #3f51b5;
+    border-right: 2px solid #3f51b5;
+    border-radius: 50%;
 }
 </style>

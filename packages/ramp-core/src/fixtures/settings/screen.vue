@@ -121,6 +121,7 @@ export default class SettingsScreenV extends Vue {
     @Prop() legendItem!: LegendEntry;
 
     // Models.
+    layerName: string = '';
     visibilityModel: boolean = this.layer.getVisibility(this.uid);
     opacityModel: number = this.layer.getOpacity(this.uid) * 100;
     snapshotToggle: boolean = false;
@@ -131,6 +132,7 @@ export default class SettingsScreenV extends Vue {
         this.layer.isLayerLoaded().then(() => {
             this.visibilityModel = this.layer.getVisibility(this.uid);
             this.opacityModel = this.layer.getOpacity(this.uid) * 100;
+            this.layerName = this.layer.getName(this.uid);
         });
 
         this.handlers.push(
@@ -186,13 +188,6 @@ export default class SettingsScreenV extends Vue {
     toggleSnapshot() {
         this.snapshotToggle = !this.snapshotToggle;
         // TODO: make necessary changes to layer
-    }
-
-    get layerName() {
-        if (this.layer) {
-            return this.layer.getName(this.uid);
-        }
-        return '';
     }
 }
 </script>
