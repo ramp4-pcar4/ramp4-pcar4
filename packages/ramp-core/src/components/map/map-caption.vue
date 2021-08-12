@@ -142,7 +142,7 @@ export default class MapCaptionV extends Vue {
         //      we would not want to re-add them back during a projection change -- want to respect the new custom handlers.
 
         this.$iApi.event.on(GlobalEvents.MAP_CREATED, () => {
-            this.$iApi.geo.map.updateScale();
+            this.$iApi.geo.map.caption.updateScale();
         });
     }
 
@@ -163,7 +163,7 @@ export default class MapCaptionV extends Vue {
      */
     onScaleClick() {
         this.$iApi.$vApp.$store.set(MapCaptionStore.toggleScale, {});
-        this.$iApi.geo.map.updateScale();
+        this.$iApi.geo.map.caption.updateScale();
     }
 }
 </script>
