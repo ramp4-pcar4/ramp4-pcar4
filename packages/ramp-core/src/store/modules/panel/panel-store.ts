@@ -172,10 +172,12 @@ const mutations = {
         { panel }: { panel: PanelInstance }
     ): void {
         const index = state.orderedItems.indexOf(panel);
-        state.orderedItems = [
-            ...state.orderedItems.slice(0, index),
-            ...state.orderedItems.slice(index + 1)
-        ];
+        if (index !== -1) {
+            state.orderedItems = [
+                ...state.orderedItems.slice(0, index),
+                ...state.orderedItems.slice(index + 1)
+            ];
+        }
     }
 };
 
