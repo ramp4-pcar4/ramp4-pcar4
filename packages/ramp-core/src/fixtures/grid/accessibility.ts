@@ -34,6 +34,13 @@ export default class GridAccessibilityManager {
             this.element.querySelectorAll(HEADER_ROW_SELECTOR)
         ) as HTMLElement[];
 
+        this.element
+            .querySelector('.ag-center-cols-viewport')
+            ?.classList.add('overflow-hidden');
+        this.element
+            .querySelector('.ag-body-horizontal-scroll-viewport')
+            ?.setAttribute('tabindex', '-1');
+
         this.observer = new MutationObserver(mutations => {
             const el = mutations[0].target as HTMLElement;
             this.manageHeaderScrolling(el);
