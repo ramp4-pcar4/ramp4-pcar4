@@ -20,5 +20,6 @@ export const i18n = createI18n({
     // get the language of the page from the root `html` node
     locale: document.documentElement!.getAttribute('lang') || lang,
     fallbackLocale: lang,
+    globalInjection: true,
     messages: messages
 });

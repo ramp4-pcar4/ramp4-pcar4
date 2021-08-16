@@ -10,14 +10,14 @@ import screenfull from 'screenfull';
 import mixin from './mixin';
 
 import App from '@/app.vue';
-import { store } from '@/store';
+import { store, storeType } from '@/store';
 import { ConfigStore } from '@/store/modules/config';
-import VueFormulate from '@braid/vue-formulate';
 
 //@ts-ignore
 import VueTippy, { TippyComponent, tippy } from 'vue-tippy';
 import { FocusList, FocusItem } from '@/directives/focus-list';
 import { Truncate } from '@/directives/truncate/truncate';
+import { VueI18n } from 'vue-i18n';
 
 import { EventAPI, FixtureAPI, GeoAPI, GlobalEvents, PanelAPI, NotificationAPI } from './internal';
 
@@ -28,6 +28,13 @@ import BackV from '@/components/panel-stack/controls/back.vue';
 import PanelOptionsMenuV from '@/components/panel-stack/controls/panel-options-menu.vue';
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 import MinimizeV from '@/components/controls/dropdown-menu.vue';
+
+import FullscreenNavV from '@/fixtures/mapnav/buttons/fullscreen-nav.vue';
+import HomeNavV from '@/fixtures/mapnav/buttons/home-nav.vue';
+import MapnavButtonV from '@/fixtures/mapnav/button.vue';
+
+import DividerV from '@/fixtures/appbar/divider.vue';
+import AppbarButtonV from '@/fixtures/appbar/button.vue';
 
 interface RampOptions {
     loadDefaultFixtures?: boolean;
@@ -283,9 +290,7 @@ export class InstanceAPI {
 function createApp(element: HTMLElement, iApi: InstanceAPI) {
     // passing the `iApi` reference to the root Vue component will propagate it to all the child component in this instance of R4MP Vue application
     // if several R4MP apps are created, each will contain a reference of its own API instance
-    const vueElement = createRampApp(App, {
-        iApi
-    })
+    const vueElement = createRampApp(App)
         .use(store)
         .use(i18n)
         //.use(VueFormulate)
@@ -308,6 +313,14 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
     vueElement.component('panel-options-menu', PanelOptionsMenuV);
     vueElement.component('dropdown-menu', DropdownMenuV);
     vueElement.component('minimize', MinimizeV);
+
+    // ported from mapnav.vue
+    vueElement.component('fullscreen-nav-button', FullscreenNavV);
+    vueElement.component('home-nav-button', HomeNavV);
+    vueElement.component('mapnav-button', MapnavButtonV);
+
+    vueElement.component('divider', DividerV);
+    vueElement.component('appbar-button', AppbarButtonV);
 
     vueElement.config.globalProperties.$store = store;
     vueElement.config.globalProperties.$iApi = iApi;

@@ -12,7 +12,6 @@ export function get(path) {
     return property;
 }
 
-// have not tested this yet (don't use) since @Sync appears to not be giving any console errors
 export function sync(path) {
     return computed({
         get() {

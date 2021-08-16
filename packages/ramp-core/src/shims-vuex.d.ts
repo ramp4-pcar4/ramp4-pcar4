@@ -9,6 +9,8 @@ declare module '@vue/runtime-core' {
 
         $iApi: InstanceAPI;
 
+        iApi: InstanceAPI;
+
         $formulate: FormulateGlobalInstance;
     }
 }

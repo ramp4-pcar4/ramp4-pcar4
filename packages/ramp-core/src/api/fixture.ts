@@ -1,4 +1,4 @@
-import Vue, { ComponentOptions } from 'vue';
+import Vue, { ComponentOptions, createApp, defineComponent } from 'vue';
 
 import { APIScope, GlobalEvents, InstanceAPI } from './internal';
 import {
@@ -6,7 +6,6 @@ import {
     FixtureMutation,
     FixtureBaseSet
 } from '@/store/modules/fixture';
-import { i18n } from '@/lang';
 
 // TODO: implement the same `internal.ts` pattern in store, so can import from a single place;
 
@@ -269,29 +268,28 @@ export class FixtureInstance extends APIScope implements FixtureBase {
     /**
      * A helper function to create a "subclass" of the base Vue constructor
      *
-     * @param {VueConstructor<Vue>} vueConstructor
+     * @param {VueConstructor<Vue>} vueComponent
      * @param {ComponentOptions<Vue>} [options={}]
      * @param {boolean} [mount=true]
      * @returns {Vue}
      * @memberof FixtureInstance
      */
-    extend(
-        vueConstructor: Record<string, any>,
-        options: ComponentOptions<any> = {}
-    ): any {
-        const component = Object.assign(vueConstructor, {
-            iApi: this.$iApi,
-            ...options,
-            propsData: {
-                ...options.propsData,
-                fixture: this
-            },
-            i18n
+    extend(vueComponent: Record<string, any>, options: ComponentOptions = {}) {
+        const component = defineComponent({
+            extends: vueComponent,
+            data() {
+                return {
+                    ...options,
+                    propsData: {
+                        ...options.propsData,
+                        fixture: this
+                    }
+                };
+            }
         });
 
-        component.$mount();
-
-        return component;
+        const componentApp = createApp(component);
+        return componentApp;
     }
 
     added?(): void;

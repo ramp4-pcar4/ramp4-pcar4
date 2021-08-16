@@ -16,7 +16,7 @@ class SnowmanFixture extends FixtureInstance {
             propsData: { message: "I'm snowman prop." }
         });
 
-        this.$vApp.$el.appendChild(snowman.$el);
+        this.$vApp.$el.appendChild(snowman);
 
         // snowman self-terminates from its own component
 
