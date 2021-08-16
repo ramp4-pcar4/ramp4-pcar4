@@ -1,3 +1,4 @@
+import { createApp } from 'vue';
 import { NortharrowAPI } from './api/northarrow';
 import { northarrow, NortharrowConfig } from './store/index';
 import NortharrowV from './northarrow.vue';
@@ -15,13 +16,24 @@ class NortharrowFixture extends NortharrowAPI {
         );
 
         this.$element.component('NortharrowV', NortharrowV);
-        // const innerShell = this.$vApp.$el.getElementsByClassName(
-        //     'inner-shell'
-        // )[0];
-        // const northarrowInstance = this.extend(NortharrowV, {
-        //     store: this.$vApp.$store
-        // });
-        // innerShell.append(northarrowInstance.$el);
+
+        const wrapper = document.createElement('div');
+        const northarrowInstance = this.extend(
+            NortharrowV,
+            this.$element._context.components,
+            this.$element._context.directives,
+            {
+                iApi: this.$iApi,
+                store: this.$vApp.$store,
+                i18n: <any>this.$vApp.$i18n
+            }
+        );
+        const innerShell = this.$vApp.$el.getElementsByClassName(
+            'inner-shell'
+        )[0];
+        innerShell.appendChild(wrapper);
+        northarrowInstance.mount(wrapper);
+        console.log('adding north arrow to shell...', innerShell, wrapper);
     }
 
     removed(): void {
