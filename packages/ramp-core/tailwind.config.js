@@ -60,6 +60,7 @@ module.exports = {
                 '64': '64px',
                 '200': '200px',
                 '1/2': '50%',
+                '9/20': '45%',
                 full: '100%'
             },
             colors: {
@@ -161,7 +162,7 @@ module.exports = {
         }
     },
     plugins: [
-        function({ addVariant, e }) {
+        function ({ addVariant, e }) {
             addVariant('container-query', ({ container, separator }) => {
                 // this is a list of possible ramp shell sizes; pixel sizes TBD
                 const shellSizes = ['xs', 'sm', 'md', 'lg'];

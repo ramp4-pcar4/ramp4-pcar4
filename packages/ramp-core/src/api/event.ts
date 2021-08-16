@@ -60,6 +60,7 @@ export enum GlobalEvents {
     MAP_KEYUP = 'map/keyup',
     MAP_BLUR = 'map/blur',
     MAP_BASEMAPCHANGE = 'map/basemapchanged', // payload is the new basemap id (string)
+    MAP_START = 'map/start',
 
     /**
      * Fires when the map scale changes.
@@ -535,8 +536,8 @@ export class EventAPI extends APIScope {
                     let currentBasemapConfig:
                         | RampBasemapConfig
                         | undefined = this.$iApi
-                        .getConfig()
-                        .map.basemaps.find(bms => bms.id === payload);
+                            .getConfig()
+                            .map.basemaps.find(bms => bms.id === payload);
 
                     this.$iApi.geo.map.updateAttribution(
                         currentBasemapConfig?.attribution
@@ -553,9 +554,9 @@ export class EventAPI extends APIScope {
                     let currentBasemapConfig:
                         | RampBasemapConfig
                         | undefined = payload.map.basemaps.find(
-                        bms =>
-                            bms.id === this.$iApi.geo.map.getCurrentBasemapId()
-                    );
+                            bms =>
+                                bms.id === this.$iApi.geo.map.getCurrentBasemapId()
+                        );
 
                     this.$iApi.geo.map.updateAttribution(
                         currentBasemapConfig?.attribution
