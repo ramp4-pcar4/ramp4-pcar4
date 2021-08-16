@@ -60,6 +60,7 @@ export enum GlobalEvents {
     MAP_KEYUP = 'map/keyup',
     MAP_BLUR = 'map/blur',
     MAP_BASEMAPCHANGE = 'map/basemapchanged', // payload is the new basemap id (string)
+    MAP_START = 'map/start',
 
     /**
      * Fires when the map scale changes.
