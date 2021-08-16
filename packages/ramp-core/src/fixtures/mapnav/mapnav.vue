@@ -3,11 +3,20 @@
         <div class="flex flex-col" v-focus-list>
             <zoom-nav-section
                 class="mapnav-section bg-white-75 hover:bg-white"
+                :t="i18n.t"
+                :iApi="iApi"
             ></zoom-nav-section>
             <span class="py-1"></span>
             <div class="mapnav-section bg-white-75 hover:bg-white">
-                <template v-for="(button, index) in visible" :key="button.id">
-                    <component :is="button.id + '-nav-button'"></component>
+                <template
+                    v-for="(button, index) in visible"
+                    :key="button.id + 'button'"
+                >
+                    <component
+                        :is="button.id + '-nav-button'"
+                        :t="i18n.t"
+                        :iApi="iApi"
+                    ></component>
                     <divider-nav
                         class="mapnav-divider"
                         v-if="index !== visible.length - 1"
@@ -19,30 +28,34 @@
 </template>
 
 <script lang="ts">
-import { ComputedRef } from 'vue';
+import { ComputedRef, defineComponent } from 'vue';
 import { Vue, Options } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
 
-import FullscreenNavV from './buttons/fullscreen-nav.vue';
-import HomeNavV from './buttons/home-nav.vue';
+// TODO: try to fix registered components/directives not working for child components (v-focus-list, nav-buttons, etc.)
+// NOTE: global app properties like $t, $iApi, $store are currently passed as t, iApi, store
 import ZoomNavV from './buttons/zoom-nav.vue';
 import DividerNavV from './buttons/divider-nav.vue';
-import MapnavButtonV from './button.vue';
 
-@Options({
+export default defineComponent({
+    name: 'MapnavV',
     components: {
         'divider-nav': DividerNavV,
-        'zoom-nav-section': ZoomNavV,
-        'fullscreen-nav-button': FullscreenNavV,
-        'home-nav-button': HomeNavV,
-        'mapnav-button': MapnavButtonV
+        'zoom-nav-section': ZoomNavV
+    },
+
+    data() {
+        return {
+            visible: get('mapnav/visible')
+            // @Get('mapnav/visible') visible!: any[];
+        };
+    },
+
+    created() {
+        console.log('mapnav instantiation: ', this);
     }
-})
-export default class MapNavV extends Vue {
-    visible: ComputedRef<any[]> = get('mapnav/visible');
-    // @Get('mapnav/visible') visible!: any[];
-}
+});
 </script>
 
 <style lang="scss" scoped>

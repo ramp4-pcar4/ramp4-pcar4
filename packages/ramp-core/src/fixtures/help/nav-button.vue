@@ -1,5 +1,5 @@
 <template>
-    <mapnav-button :onClickFunction="onClick" :tooltip="$t('help.title')">
+    <mapnav-button :onClickFunction="onClick" :tooltip="t('help.title')">
         <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -14,14 +14,25 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
 import { Vue } from 'vue-property-decorator';
 import { GlobalEvents } from '../../api/internal';
+// this should not need to be imported
+import MapnavButtonV from '@/fixtures/mapnav/button.vue';
 
-export default class HelpNavButtonV extends Vue {
-    onClick() {
-        this.$iApi.event.emit(GlobalEvents.HELP_TOGGLE);
+export default defineComponent({
+    name: 'HelpNavButtonV',
+    props: ['t', 'iApi'],
+    components: {
+        'mapnav-button': MapnavButtonV
+    },
+
+    methods: {
+        onClick() {
+            this.iApi.event.emit(GlobalEvents.HELP_TOGGLE);
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

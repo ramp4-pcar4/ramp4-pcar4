@@ -1,5 +1,5 @@
 <template>
-    <mapnav-button :onClickFunction="goToHome" :tooltip="$t('mapnav.home')">
+    <mapnav-button :onClickFunction="goToHome" :tooltip="t('mapnav.home')">
         <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -12,20 +12,31 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
 import { Extent } from '@/geo/api';
 import { Vue } from 'vue-property-decorator';
+// this should not need to be imported
+import MapnavButtonV from '../button.vue';
 
-export default class HomeNavV extends Vue {
-    goToHome(): void {
-        // Get extent from config and convert it to extent object
-        const homeExtent = Extent.fromConfig(
-            'home_extent',
-            this.$iApi.getConfig().map.extent
-        );
-        // apply extent
-        this.$iApi.geo.map.zoomMapTo(homeExtent);
+export default defineComponent({
+    name: 'HomeNavV',
+    props: ['t', 'iApi'],
+    components: {
+        'mapnav-button': MapnavButtonV
+    },
+
+    methods: {
+        goToHome() {
+            // Get extent from config and convert it to extent object
+            const homeExtent = Extent.fromConfig(
+                'home_extent',
+                this.iApi.getConfig().map.extent
+            );
+            // apply extent
+            this.iApi.geo.map.zoomMapTo(homeExtent);
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

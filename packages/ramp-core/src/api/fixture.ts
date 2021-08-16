@@ -269,14 +269,23 @@ export class FixtureInstance extends APIScope implements FixtureBase {
      * A helper function to create a "subclass" of the base Vue constructor
      *
      * @param {VueConstructor<Vue>} vueComponent
+     * @param {any} components
+     * @param {any} directives
      * @param {ComponentOptions<Vue>} [options={}]
      * @param {boolean} [mount=true]
      * @returns {Vue}
      * @memberof FixtureInstance
      */
-    extend(vueComponent: Record<string, any>, options: ComponentOptions = {}) {
+    extend(
+        vueComponent: Record<string, any>,
+        components?: any,
+        directives?: any,
+        options: ComponentOptions = {}
+    ) {
         const component = defineComponent({
             extends: vueComponent,
+            components: components,
+            directives: directives,
             data() {
                 return {
                     ...options,

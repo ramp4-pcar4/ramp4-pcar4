@@ -1,8 +1,5 @@
 <template>
-    <mapnav-button
-        :onClickFunction="togglePanel"
-        :tooltip="$t('basemap.title')"
-    >
+    <mapnav-button :onClickFunction="togglePanel" :tooltip="t('basemap.title')">
         <svg
             class="fill-current w-32 h-20"
             xmlns="http://www.w3.org/2000/svg"
@@ -17,13 +14,24 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
 import { Vue } from 'vue-property-decorator';
+// this should not need to be imported
+import MapnavButtonV from '@/fixtures/mapnav/button.vue';
 
-export default class BasemapNavButtonV extends Vue {
-    togglePanel(): void {
-        const panel = this.$iApi.panel.toggle('basemap-panel');
+export default defineComponent({
+    name: 'BasemapNavButtonV',
+    props: ['t', 'iApi'],
+    components: {
+        'mapnav-button': MapnavButtonV
+    },
+
+    methods: {
+        togglePanel() {
+            const panel = this.iApi.panel.toggle('basemap-panel');
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

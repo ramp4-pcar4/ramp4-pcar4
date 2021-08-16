@@ -3,12 +3,17 @@
         class="relative w-32 h-32 text-gray-600 hover:text-black"
         tabindex="-1"
     >
-        <button
+        <!-- <button
             class="w-full h-full default-focus-style focus:outline-none"
             @click="onClickFunction()"
             v-focus-item
             :content="tooltip"
             v-tippy="{ placement: 'left' }"
+        > -->
+        <button
+            class="w-full h-full default-focus-style focus:outline-none"
+            @click="onClickFunction()"
+            :content="tooltip"
         >
             <slot></slot>
         </button>
