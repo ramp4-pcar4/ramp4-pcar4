@@ -255,9 +255,8 @@ export class InstanceAPI {
                 this.started = true;
             }, 6000);
         } else {
-            console.warn("start has already been called");
+            console.warn('start has already been called');
         }
-
     }
 }
 
