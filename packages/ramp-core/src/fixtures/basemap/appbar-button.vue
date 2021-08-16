@@ -1,5 +1,9 @@
 <template>
-    <appbar-button :onClickFunction="onClick" :tooltip="$t('basemap.title')">
+    <appbar-button
+        :onClickFunction="onClick"
+        :tooltip="t('basemap.title')"
+        :iApi="iApi"
+    >
         <!-- Basemap icon -->
         <svg
             class="fill-current w-24 h-24 ml-8 sm:ml-20"
@@ -15,13 +19,24 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
 import { Vue } from 'vue-property-decorator';
+// this should not need to be imported
+import AppbarButtonV from '@/fixtures/appbar/button.vue';
 
-export default class BasemapAppbarButtonV extends Vue {
-    onClick() {
-        this.$iApi.panel.toggle('basemap-panel');
+export default defineComponent({
+    name: 'BasemapAppbarButtonV',
+    props: ['t', 'iApi'],
+    components: {
+        'appbar-button': AppbarButtonV
+    },
+
+    methods: {
+        onClick() {
+            this.iApi.panel.toggle('basemap-panel');
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

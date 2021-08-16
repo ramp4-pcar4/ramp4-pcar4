@@ -1,7 +1,7 @@
 <template>
     <appbar-button
         :onClickFunction="onClick"
-        :tooltip="$t('notifications.title')"
+        :tooltip="t('notifications.title')"
         class="notification-button"
     >
         <!-- https://fonts.google.com/icons?selected=Material%20Icons%3Anotifications -->
@@ -23,19 +23,33 @@
 </template>
 
 <script lang="ts">
-import { ComputedRef } from 'vue';
+import { ComputedRef, defineComponent } from 'vue';
 import { Vue, Options } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
+// this should not need to be imported
+import AppbarButtonV from '@/fixtures/appbar/button.vue';
 
-export default class NotificationsAppbarButtonV extends Vue {
-    number: ComputedRef<Number> = get('notification/notificationNumber');
-    // @Get('notification/notificationNumber') number!: Number;
+export default defineComponent({
+    name: 'NotificationsAppbarButtonV',
+    props: ['t', 'iApi'],
+    components: {
+        'appbar-button': AppbarButtonV
+    },
 
-    onClick() {
-        this.$iApi.panel.toggle('notifications-panel');
+    data() {
+        return {
+            number: get('notification/notificationNumber')
+            // @Get('notification/notificationNumber') number!: Number;
+        };
+    },
+
+    methods: {
+        onClick() {
+            this.iApi.panel.toggle('notifications-panel');
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped>

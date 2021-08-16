@@ -1,10 +1,16 @@
 <template>
     <div>
-        <button
+        <!-- <button
             class="text-gray-500 hover:text-black dropdown-button"
             @click="open = !open"
             :content="tooltip"
             v-tippy="{ placement: tooltipPlacement }"
+            ref="dropdown-trigger"
+        > -->
+        <button
+            class="text-gray-500 hover:text-black dropdown-button"
+            @click="open = !open"
+            :content="tooltip"
             ref="dropdown-trigger"
         >
             <slot name="header"></slot>

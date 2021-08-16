@@ -1,6 +1,7 @@
+import { createApp } from 'vue';
 import AppbarV from './appbar.vue';
 import { AppbarAPI } from './api/appbar';
-import { appbar, AppbarItemInstance, AppbarFixtureConfig } from './store';
+import { appbar, AppbarFixtureConfig } from './store';
 import { GlobalEvents, PanelInstance } from '@/api';
 import messages from './lang/lang.csv';
 
@@ -20,16 +21,24 @@ class AppbarFixture extends AppbarAPI {
         );
 
         this.$element.component('AppbarV', AppbarV);
-        // const appbarInstance = this.extend(AppbarV, {
-        //     store: this.$vApp.$store,
-        //     i18n: this.$vApp.$i18n
-        // });
 
-        // TODO: the `innerShell` reference will probably get used more than once; consider creating a dedicated ref on `$iApi`;
-        // const innerShell = this.$vApp.$el.getElementsByClassName(
-        //     'inner-shell'
-        // )[0];
-        // innerShell.insertBefore(appbarInstance.$el, innerShell.children[0]);
+        const appbarInstance = this.extend(
+            AppbarV,
+            this.$element._context.components,
+            this.$element._context.directives,
+            {
+                iApi: this.$iApi,
+                store: this.$vApp.$store,
+                i18n: <any>this.$vApp.$i18n
+            }
+        );
+        const wrapper = document.createElement('div');
+        const innerShell = this.$vApp.$el.getElementsByClassName(
+            'inner-shell'
+        )[0];
+        innerShell.appendChild(wrapper);
+        appbarInstance.mount(wrapper);
+        console.log('adding appbar to shell...', appbarInstance, wrapper);
 
         this._parseConfig(this.config);
         this.$vApp.$watch(

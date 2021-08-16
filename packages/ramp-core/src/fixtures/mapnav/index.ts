@@ -35,12 +35,7 @@ class MapnavFixture extends MapnavAPI {
         )[0];
         innerShell.appendChild(wrapper);
         mapnavInstance.mount(wrapper);
-        console.log(
-            'adding mapnav to shell...',
-            this.$element._context,
-            mapnavInstance,
-            wrapper
-        );
+        console.log('adding mapnav to shell...', mapnavInstance, wrapper);
 
         this._parseConfig(this.config);
         this.$vApp.$watch(

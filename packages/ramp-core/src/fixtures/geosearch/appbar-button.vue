@@ -1,5 +1,9 @@
 <template>
-    <appbar-button :onClickFunction="onClick" :tooltip="$t('geosearch.title')">
+    <appbar-button
+        :onClickFunction="onClick"
+        :tooltip="t('geosearch.title')"
+        :iApi="iApi"
+    >
         <!-- Geosearch icon -->
         <svg
             class="fill-current w-24 h-24 ml-8 sm:ml-20"
@@ -14,13 +18,24 @@
     </appbar-button>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue';
 import { Vue } from 'vue-property-decorator';
+// this should not need to be imported
+import AppbarButtonV from '@/fixtures/appbar/button.vue';
 
-export default class GeosearchAppbarButtonV extends Vue {
-    onClick() {
-        this.$iApi.panel.toggle('geosearch-panel');
+export default defineComponent({
+    name: 'GeosearchAppbarButtonV',
+    props: ['t', 'iApi'],
+    components: {
+        'appbar-button': AppbarButtonV
+    },
+
+    methods: {
+        onClick() {
+            this.iApi.panel.toggle('geosearch-panel');
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>
