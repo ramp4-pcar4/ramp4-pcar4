@@ -26,14 +26,23 @@ class OverviewmapFixture extends OverviewmapAPI {
     }
 
         this.$element.component('OverviewmapV', OverviewmapV);
-        // const innerShell = this.$vApp.$el.getElementsByClassName(
-        //     'inner-shell'
-        // )[0];
-        // const overviewInstance = this.extend(OverviewmapV, {
-        //     store: this.$vApp.$store,
-        //     i18n: this.$vApp.$i18n
-        // });
-        // innerShell.append(overviewInstance.$el);
+
+        const innerShell = this.$vApp.$el.getElementsByClassName(
+            'inner-shell'
+        )[0];
+        const overviewInstance = this.extend(
+            OverviewmapV,
+            this.$element._context.components,
+            this.$element._context.directives,
+            {
+                iApi: this.$iApi,
+                store: this.$vApp.$store,
+                i18n: <any>this.$vApp.$i18n
+            }
+        );
+        const wrapper = document.createElement('div');
+        overviewInstance.mount(wrapper);
+        innerShell.appendChild(wrapper);
     }
 }
 

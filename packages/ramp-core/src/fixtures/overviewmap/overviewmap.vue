@@ -1,7 +1,7 @@
 <template>
     <div class="relative">
         <div
-            :style="mapStyle"
+            :style="mapStyle()"
             class="pointer-events-auto absolute top-0 right-0 mt-12 mr-12 shadow-tm border-4 border-solid border-white bg-white transition-all duration-300 ease-out"
         >
             <!-- map -->
@@ -14,7 +14,7 @@
             </div>
             <!-- toggle -->
             <div class="absolute h-30 w-30 top-0 right-0">
-                <button
+                <!-- <button
                     tabindex="0"
                     class="cursor-pointer absolute h-full w-full"
                     @click="minimized = !minimized"
@@ -26,10 +26,22 @@
                         )
                     "
                     v-tippy="{ placement: 'left', hideOnClick: false }"
+                > -->
+                <button
+                    tabindex="0"
+                    class="cursor-pointer absolute h-full w-full"
+                    @click="minimized = !minimized"
+                    :content="
+                        i18n.t(
+                            minimized
+                                ? 'overviewmap.expand'
+                                : 'overviewmap.minimize'
+                        )
+                    "
                 >
                     <svg
                         class="absolute fill-current text-gray-500 transition-all duration-300 ease-out"
-                        :style="toggleStyle"
+                        :style="toggleStyle()"
                         xmlns="http://www.w3.org/2000/svg"
                         fit=""
                         height="100%"
@@ -51,7 +63,7 @@
 </template>
 
 <script lang="ts">
-import { ComputedRef } from 'vue';
+import { ComputedRef, defineComponent } from 'vue';
 import { Vue } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
@@ -60,72 +72,81 @@ import { GlobalEvents, OverviewMapAPI } from '@/api/internal';
 import { OverviewmapStore } from './store';
 import { defaultMercator, defaultLambert } from './default-config';
 
-export default class OverviewmapV extends Vue {
-    mapConfig: ComputedRef<RampMapConfig> = get(OverviewmapStore.mapConfig);
-    startMinimized: ComputedRef<boolean> = get(OverviewmapStore.startMinimized);
-    // @Get(OverviewmapStore.mapConfig) mapConfig!: RampMapConfig;
-    // @Get(OverviewmapStore.startMinimized) startMinimized!: boolean;
+export default defineComponent({
+    name: 'OverviewmapV',
+    data() {
+        return {
+            mapConfig: get(OverviewmapStore.mapConfig),
+            startMinimized: get(OverviewmapStore.startMinimized),
+            // @Get(OverviewmapStore.mapConfig) mapConfig!: RampMapConfig,
+            // @Get(OverviewmapStore.startMinimized) startMinimized!: boolean,
 
-    overviewMap!: OverviewMapAPI;
-    minimized: boolean = true;
-    hoverOnExtent: boolean = false;
+            // TODO: pls find a way to fix this (should be something like overviewMap: OverviewMapAPI but that gave a compile error)
+            overviewMap: new OverviewMapAPI(this.iApi),
+            minimized: true,
+            hoverOnExtent: false
+        };
+    },
 
     created() {
-        this.overviewMap = new OverviewMapAPI(this.$iApi);
-    }
+        console.log('overviewmap instantiated: ', this);
+        this.overviewMap = new OverviewMapAPI(this.iApi);
+    },
 
     mounted() {
-        const config = this.mapConfig.value || this.defaultConfig;
+        const config = this.mapConfig ? this.mapConfig : this.defaultConfig();
         this.overviewMap.createMap(
             config,
             this.$el.querySelector('.overviewmap') as HTMLDivElement
         );
-        this.minimized = this.startMinimized.value;
+        this.minimized = this.startMinimized;
 
-        this.$iApi.event.on(
+        this.iApi.event.on(
             GlobalEvents.MAP_EXTENTCHANGE,
             (newExtent: Extent) => {
                 this.overviewMap.updateOverview(newExtent);
             }
         );
-    }
+    },
 
-    async cursorHitTest(e: MouseEvent) {
-        this.hoverOnExtent =
-            !this.minimized && (await this.overviewMap.cursorHitTest(e));
-    }
+    methods: {
+        async cursorHitTest(e: MouseEvent) {
+            this.hoverOnExtent =
+                !this.minimized && (await this.overviewMap.cursorHitTest(e));
+        },
 
-    get defaultConfig() {
-        const mercator = [900913, 3587, 54004, 41001, 102113, 102100, 3785];
-        const sr = this.$iApi.geo.map.getSR();
-        if (
-            (sr.wkid && mercator.includes(sr.wkid)) ||
-            (sr.latestWkid && mercator.includes(sr.latestWkid))
-        ) {
-            return defaultMercator;
-        } else if (sr.wkid === 3978 || sr.latestWkid === 3978) {
-            return defaultLambert;
+        defaultConfig() {
+            const mercator = [900913, 3587, 54004, 41001, 102113, 102100, 3785];
+            const sr = this.iApi.geo.map.getSR();
+            if (
+                (sr.wkid && mercator.includes(sr.wkid)) ||
+                (sr.latestWkid && mercator.includes(sr.latestWkid))
+            ) {
+                return defaultMercator;
+            } else if (sr.wkid === 3978 || sr.latestWkid === 3978) {
+                return defaultLambert;
+            }
+
+            console.error('No default overviewmap for current map projection');
+            return {};
+        },
+
+        mapStyle() {
+            return {
+                height: `${this.minimized ? 48 : 200}px`,
+                width: `${this.minimized ? 48 : 200}px`
+            };
+        },
+
+        toggleStyle() {
+            return {
+                top: `${this.minimized ? -6 : -3}px`,
+                right: `${this.minimized ? -6 : -3}px`,
+                transform: `rotate(${this.minimized ? 225 : 45}deg)`
+            };
         }
-
-        console.error('No default overviewmap for current map projection');
-        return {};
     }
-
-    get mapStyle() {
-        return {
-            height: `${this.minimized ? 48 : 200}px`,
-            width: `${this.minimized ? 48 : 200}px`
-        };
-    }
-
-    get toggleStyle() {
-        return {
-            top: `${this.minimized ? -6 : -3}px`,
-            right: `${this.minimized ? -6 : -3}px`,
-            transform: `rotate(${this.minimized ? 225 : 45}deg)`
-        };
-    }
-}
+});
 </script>
 
 <style lang="scss" scoped>

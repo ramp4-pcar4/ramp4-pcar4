@@ -1,3 +1,4 @@
+import { markRaw } from 'vue';
 import { CommonMapAPI, InstanceAPI } from '@/api/internal';
 import {
     BaseGeometry,
@@ -64,7 +65,7 @@ export class OverviewMapAPI extends CommonMapAPI {
             extent: config.extent
         };
 
-        this.esriView = new EsriMapView(esriViewConfig);
+        this.esriView = markRaw(new EsriMapView(esriViewConfig));
         this.esriView.ui.components = [];
 
         // initialize extent rectangle graphic
@@ -125,8 +126,9 @@ export class OverviewMapAPI extends CommonMapAPI {
         if (esriDrag.action === 'start') {
             // check if drag hits graphic, if so set start extent
             if (await this.cursorHitTest(esriDrag)) {
-                this.startExtent = this.esriView!.graphics.getItemAt(0)
-                    .geometry as __esri.Extent;
+                this.startExtent = markRaw(
+                    this.esriView!.graphics.getItemAt(0).geometry
+                ) as __esri.Extent;
             }
         } else if (this.startExtent) {
             // determine delta in map coords from drag origin to current drag point and update extent graphic

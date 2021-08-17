@@ -44,7 +44,6 @@ export default defineComponent({
     },
 
     mounted() {
-        console.log('northarrow mounted: ', this);
         if (this.arrowIcon.value) {
             this.arrow = `<img width='25' src='${this.arrowIcon.value}'>`;
         }

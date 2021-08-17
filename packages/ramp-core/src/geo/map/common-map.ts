@@ -5,6 +5,7 @@
 
 // TODO add proper comments
 
+import { toRaw, markRaw } from 'vue';
 import { APIScope, Basemap, GlobalEvents, InstanceAPI } from '@/api/internal';
 import { EsriMap } from '@/geo/esri';
 import { RampMapConfig } from '@/geo/api';
@@ -27,18 +28,22 @@ export class CommonMapAPI extends APIScope {
     // will generate the actual Map control objects, put it on the page
     createMap(config: RampMapConfig, targetDiv: string | HTMLDivElement): void {
         // TODO if .esriMap exists, do we want to do any cleanup on it? E.g. remove event handlers?
-
-        this._basemapStore = config.basemaps.map(bmConfig => new Basemap(bmConfig));
-
+        this._basemapStore = config.basemaps.map(
+            bmConfig => new Basemap(bmConfig)
+        );
         const esriConfig: __esri.MapProperties = {};
         if (config.initialBasemapId) {
-            esriConfig.basemap = this.findBasemap(config.initialBasemapId).innerBasemap;
+            esriConfig.basemap = toRaw(
+                this.findBasemap(config.initialBasemapId).innerBasemap
+            );
         }
-        this.esriMap = new EsriMap(esriConfig);
+        this.esriMap = markRaw(new EsriMap(esriConfig));
     }
 
     protected findBasemap(id: string): Basemap {
-        const bm: Basemap | undefined = this._basemapStore.find(bms => bms.id === id);
+        const bm: Basemap | undefined = this._basemapStore.find(
+            bms => bms.id === id
+        );
         if (bm) {
             return bm;
         } else {
@@ -69,7 +74,9 @@ export class CommonMapAPI extends APIScope {
     }
 
     protected noMapErr(): void {
-        console.error('Attempted to manipulate the map before calling createMap()');
+        console.error(
+            'Attempted to manipulate the map before calling createMap()'
+        );
     }
 
     // TODO shared Map (not view-based) functions could go here.
