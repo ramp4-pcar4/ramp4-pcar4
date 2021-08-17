@@ -43,6 +43,7 @@ class OverviewmapFixture extends OverviewmapAPI {
         const wrapper = document.createElement('div');
         overviewInstance.mount(wrapper);
         innerShell.appendChild(wrapper);
+        console.log('adding overview map to shell...', innerShell, wrapper);
     }
 }
 
