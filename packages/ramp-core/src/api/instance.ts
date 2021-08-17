@@ -180,7 +180,7 @@ export class InstanceAPI {
         if (!this.$element || !this.$element._container) {
             return null;
         }
-        const classList = this.$element._container.classList;
+        const classList = this.$element._container.children[0].classList;
         if (classList.contains('lg')) {
             return 'lg';
         } else if (classList.contains('md')) {

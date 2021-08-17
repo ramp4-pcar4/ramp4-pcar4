@@ -734,8 +734,6 @@ export class MapAPI extends CommonMapAPI {
             mapClick = payload;
         }
 
-        console.log('Results', identifyResults);
-
         // TODO make the event payload an interface? should there be a public area with all event payload interfaces?
         this.$iApi.event.emit(GlobalEvents.MAP_IDENTIFY, {
             results: identifyResults,

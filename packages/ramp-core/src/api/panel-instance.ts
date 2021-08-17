@@ -1,4 +1,4 @@
-import Vue, { Component } from 'vue';
+import Vue, { Component, defineAsyncComponent } from 'vue';
 
 import {
     APIScope,
@@ -77,14 +77,13 @@ export class PanelInstance extends APIScope {
 
         if (isComponentOptions(screen) || isVueConstructor(screen)) {
             payload = screen;
-
             this.loadedScreens.push(id); // mark this screen immediately as loaded
         } else {
             let asyncComponent: Promise<AsyncComponentEh>;
 
             if (typeof screen === 'string') {
-                asyncComponent = import(
-                    /* webpackChunkName: "[request]" */ `./../../src/fixtures/${screen}`
+                asyncComponent = defineAsyncComponent(
+                    require(`./../../src/fixtures/${screen}`)
                 );
             } else {
                 asyncComponent = screen(); // execute the async component function to get the promise

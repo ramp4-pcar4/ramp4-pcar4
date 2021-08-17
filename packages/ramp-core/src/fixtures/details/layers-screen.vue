@@ -33,7 +33,6 @@
 </template>
 
 <script lang="ts">
-import { ComputedRef } from 'vue';
 import { Vue, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
@@ -44,15 +43,16 @@ import { IdentifyResult } from '@/geo/api';
 
 export default class DetailsLayersScreenV extends Vue {
     @Prop() panel!: PanelInstance;
-    payload: ComputedRef<IdentifyResult[]> = get(DetailsStore.payload);
+    payload: any = get(DetailsStore.payload);
+
     // @Get(DetailsStore.payload) payload!: IdentifyResult[];
-    getLayerByUid: ComputedRef<
-        (uid: string) => LayerInstance | undefined
-    > = get('layer/getLayerByUid');
+
+    getLayerByUid: any = get('layer/getLayerByUid');
+
     // @Get('layer/getLayerByUid') getLayerByUid!: (
     //     uid: string
     // ) => LayerInstance | undefined;
-    layers: ComputedRef<LayerInstance[]> = get('layer/layers');
+    layers: LayerInstance[] = <LayerInstance[]>(<unknown>get('layer/layers'));
     // @Get('layer/layers') layers!: LayerInstance[];
 
     /**
@@ -60,8 +60,7 @@ export default class DetailsLayersScreenV extends Vue {
      */
     openResult(index: number) {
         if (
-            this.getLayerByUid.value(this.payload.value[index].uid)!
-                .layerType === 'ogcWms'
+            this.getLayerByUid(this.payload[index].uid)!.layerType === 'ogcWms'
         ) {
             // skip results screen for wms layers
             this.panel.show({
@@ -77,10 +76,9 @@ export default class DetailsLayersScreenV extends Vue {
     }
 
     layerInfo(idx: number) {
-        const layerInfo = this.payload.value[idx];
-
+        const layerInfo = this.payload[idx];
         // Check to see if there is a custom template defined for the selected layer.
-        let item: LayerInstance | undefined = this.layers.value
+        let item: LayerInstance | undefined = this.layers
             .map(layer => {
                 let layerNode = layer.getLayerTree();
 
@@ -102,9 +100,9 @@ export default class DetailsLayersScreenV extends Vue {
      * Calculates the total number of results received by identify.
      */
     get payloadResults(): number {
-        return this.payload.value
-            .map(r => r.items.length)
-            .reduce((a, b) => a + b, 0);
+        return this.payload
+            .map((r: IdentifyResult) => r.items.length)
+            .reduce((a: number, b: number) => a + b, 0);
     }
 }
 </script>

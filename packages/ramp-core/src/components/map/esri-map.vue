@@ -39,9 +39,9 @@ export default class EsriMapV extends Vue {
     layerConfigs: ComputedRef<RampLayerConfig[]> = get(LayerStore.layerConfigs);
     // @Get(LayerStore.layerConfigs) layerConfigs!: RampLayerConfig[];
 
-    maptipProperties: ComputedRef<any> = get(MaptipStore.maptipProperties);
+    maptipProperties: any = get(MaptipStore.maptipProperties);
     // @Get(MaptipStore.maptipProperties) maptipProperties!: any;
-    maptipInstance: ComputedRef<any> = get(MaptipStore.maptipInstance);
+    maptipInstance: any = get(MaptipStore.maptipInstance);
     // @Get(MaptipStore.maptipInstance) maptipInstance!: any;
 
     map!: MapAPI; // TODO assuming we need this as a local property for vue binding. if we don't, remove it and just use $iApi.geo.map
@@ -53,22 +53,22 @@ export default class EsriMapV extends Vue {
 
     @Watch('maptipProperties')
     onMaptipChange() {
-        if (this.maptipProperties.value) {
+        if (this.maptipProperties) {
             // Calculate offset from mappoint
             let offsetX, offsetY: number;
             const originX: number = this.$iApi.geo.map.getPixelWidth() / 2;
             const originY: number = 0;
             const screenPointFromMapPoint = this.$iApi.geo.map.mapPointToScreenPoint(
-                this.maptipProperties.value.mapPoint
+                this.maptipProperties.mapPoint
             );
             offsetX = screenPointFromMapPoint.screenX - originX;
             offsetY = originY - screenPointFromMapPoint.screenY;
-            this.maptipInstance.value.set({
+            this.maptipInstance.setProps({
                 offset: `${offsetX}, ${offsetY}`
             });
-            this.maptipInstance.value.show();
+            this.maptipInstance.show();
         } else {
-            this.maptipInstance.value.hide();
+            this.maptipInstance.hide();
         }
     }
 

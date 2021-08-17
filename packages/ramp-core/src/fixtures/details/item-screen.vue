@@ -77,9 +77,7 @@ import HTMLDefaultV from './templates/html-default.vue';
     }
 })
 export default class DetailsItemScreenV extends Vue {
-    templateBindings: ComputedRef<{
-        [id: string]: DetailsItemInstance;
-    }> = get(DetailsStore.templates);
+    templateBindings: any = get(DetailsStore.templates);
     // @Get(DetailsStore.templates) templateBindings!: {
     //     [id: string]: DetailsItemInstance;
     // };
@@ -95,11 +93,9 @@ export default class DetailsItemScreenV extends Vue {
     @Prop() isFeature!: boolean;
 
     // retrieve the identify payload from the store
-    payload: ComputedRef<IdentifyResult[]> = get(DetailsStore.payload);
+    payload: any = get(DetailsStore.payload);
     // @Get(DetailsStore.payload) payload!: IdentifyResult[];
-    getLayerByUid: ComputedRef<
-        (uid: string) => LayerInstance | undefined
-    > = get('layer/getLayerByUid');
+    getLayerByUid: any = get('layer/getLayerByUid');
     // @Get('layer/getLayerByUid') getLayerByUid!: (
     //     uid: string
     // ) => LayerInstance | undefined;
@@ -117,13 +113,13 @@ export default class DetailsItemScreenV extends Vue {
      * Returns the information for a single identify result, given the layer and item offsets.
      */
     get identifyItem() {
-        return this.payload.value[this.resultIndex].items[this.itemIndex];
+        return this.payload[this.resultIndex].items[this.itemIndex];
     }
 
     get itemName() {
-        const layerInfo = this.payload.value[this.resultIndex];
+        const layerInfo = this.payload[this.resultIndex];
         const uid = layerInfo.uid;
-        const layer: LayerInstance | undefined = this.getLayerByUid.value(uid);
+        const layer: LayerInstance | undefined = this.getLayerByUid(uid);
         const nameField = layer?.getNameField(uid);
         return nameField
             ? this.identifyItem.data[nameField]
@@ -131,9 +127,9 @@ export default class DetailsItemScreenV extends Vue {
     }
 
     fetchIcon() {
-        const layerInfo = this.payload.value[this.resultIndex];
+        const layerInfo = this.payload[this.resultIndex];
         const uid = layerInfo.uid;
-        const layer: LayerInstance | undefined = this.getLayerByUid.value(uid);
+        const layer: LayerInstance | undefined = this.getLayerByUid(uid);
         if (layer === undefined) {
             console.warn(
                 `could not find layer for uid ${uid} during icon lookup`
@@ -147,8 +143,8 @@ export default class DetailsItemScreenV extends Vue {
     }
 
     get detailsTemplate() {
-        const layerInfo = this.payload.value[this.resultIndex];
-        const layer: LayerInstance | undefined = this.getLayerByUid.value(
+        const layerInfo = this.payload[this.resultIndex];
+        const layer: LayerInstance | undefined = this.getLayerByUid(
             layerInfo.uid
         );
 
@@ -156,10 +152,10 @@ export default class DetailsItemScreenV extends Vue {
         // return its name.
         if (
             layer &&
-            this.templateBindings.value[layer.id] &&
-            this.templateBindings.value[layer.id].componentId
+            this.templateBindings[layer.id] &&
+            this.templateBindings[layer.id].template
         ) {
-            return this.templateBindings.value[layer.id].componentId;
+            return this.templateBindings[layer.id].template;
         }
 
         // If nothing is found, use a default template.
@@ -171,9 +167,9 @@ export default class DetailsItemScreenV extends Vue {
     }
 
     zoomToFeature() {
-        const layerInfo = this.payload.value[this.resultIndex];
+        const layerInfo = this.payload[this.resultIndex];
         const uid = layerInfo.uid;
-        const layer: LayerInstance | undefined = this.getLayerByUid.value(uid);
+        const layer: LayerInstance | undefined = this.getLayerByUid(uid);
 
         if (layer === undefined) {
             console.warn(

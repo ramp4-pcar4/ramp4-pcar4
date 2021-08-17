@@ -334,10 +334,9 @@ export class PanelAPI extends APIScope {
 
         // register all the panel screen components globally
         // only register if it hasn't been registered before
-        // TODO: fix this if needed
-        // if (!(route.screen in this.$vApp.$options.components!)) {
-        panel.registerScreen(route.screen);
-        // }
+        if (!(route.screen in this.$element._context.components!)) {
+            panel.registerScreen(route.screen);
+        }
 
         this.$vApp.$store.set(`panel/items@${panel.id}.route`, route);
 

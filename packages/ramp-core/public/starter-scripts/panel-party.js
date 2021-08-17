@@ -817,8 +817,7 @@ rInstance.fixture.addDefaultFixtures().then(() => {
 });
 
 // Load custom templates.
-
-Vue.component('WFSLayer-Custom', {
+rInstance.$element.component('WFSLayer-Custom', {
     props: ['identifyData'],
     render: function(h) {
         return h('div', [

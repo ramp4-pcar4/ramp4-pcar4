@@ -7,13 +7,7 @@
         <!-- this renders a panel screen which is currently in view -->
 
         <!-- only perform transition on screen components that are not loaded yet; if already loaded, switch right away -->
-        <transition
-            mode="out-in"
-            :css="false"
-            @before-leave="beforeLeave"
-            @leave="leave"
-            @enter="enter"
-        >
+        <transition @before-leave="beforeLeave" @leave="leave" @enter="enter">
             <component
                 :is="panel.route.screen"
                 v-bind="panel.route.props"

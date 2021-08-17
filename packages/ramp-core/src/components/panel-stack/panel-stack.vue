@@ -66,7 +66,7 @@ export default class PanelStackV extends Vue {
 
     leave(el: HTMLElement, done: () => {}): void {
         const [bbox, pbbox] = [
-            el.getBoundingClientRect(),
+            el.children[0].getBoundingClientRect(),
             el.parentElement!.getBoundingClientRect()
         ];
 
