@@ -106,6 +106,12 @@ export default class GridCustomHeaderV extends Vue {
         });
     }
 
+    beforeDestroy() {
+        this.params.column.removeEventListener('leftChanged', () => {
+            this.onColumnReorder();
+        });
+    }
+
     onColumnReorder() {
         const columns: any = this.columnApi.getAllDisplayedColumns();
         const columnIdx: number = columns.indexOf(this.params.column);
@@ -165,3 +171,5 @@ export default interface GridCustomHeader {
     params: any;
 }
 </script>
+
+<style lang="scss" scoped></style>

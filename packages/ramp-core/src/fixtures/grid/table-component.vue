@@ -85,6 +85,7 @@ import { AgGridVue } from 'ag-grid-vue';
 import GridColumnDropdownV from './column-dropdown.vue';
 import { GridConfig } from './store';
 import TableStateManager from './store/table-state-manager';
+import GridAccessibilityManager from './accessibility';
 
 // custom filter templates
 import GridCustomNumberFilterV from './templates/custom-number-filter.vue';
@@ -126,6 +127,8 @@ export default class GridTableComponentV extends Vue {
     rowData: any = [];
     oidField: string = 'OBJECTID';
 
+    gridAccessibilityManager: GridAccessibilityManager | undefined;
+
     quicksearch = '';
     filterInfo = {
         firstRow: 0,
@@ -149,12 +152,18 @@ export default class GridTableComponentV extends Vue {
 
         // set up grid options
         this.gridOptions = {
+            // lets header navigation be predictable, otherwise focus lists will be out of sync as soon as a column is shifted
+            ensureDomOrder: true,
             floatingFilter: this.config.state.colFilter,
             suppressRowTransform: true,
             onFilterChanged: this.updateFilterInfo,
             onBodyScroll: this.updateFilterInfo,
             rowBuffer: 0,
-            suppressColumnVirtualisation: true
+            suppressColumnVirtualisation: true,
+            // remove tab navigation between cells
+            tabToNextCell: () => {
+                return null;
+            }
         };
 
         const fancyLayer: LayerInstance | undefined = this.getLayerByUid(
@@ -250,6 +259,10 @@ export default class GridTableComponentV extends Vue {
         });
     }
 
+    beforeDestroy() {
+        this.gridAccessibilityManager?.removeAccessibilityListeners();
+    }
+
     onGridReady(params: any) {
         this.gridApi = params.api;
         this.columnApi = params.columnApi;
@@ -266,6 +279,12 @@ export default class GridTableComponentV extends Vue {
     gridRendered() {
         // size grid columns
         this.columnApi.autoSizeAllColumns();
+
+        this.gridAccessibilityManager = new GridAccessibilityManager(
+            this.$el as HTMLElement,
+            this.gridApi,
+            this.columnApi
+        );
     }
 
     // Updates the global search value.
@@ -585,5 +604,10 @@ interface ColumnDefinition {
 <style scoped>
 ::v-deep .ag-header-cell-sortable {
     cursor: default;
+}
+
+::v-deep .ag-header-cell {
+    background: none;
+    border: none;
 }
 </style>

@@ -4,6 +4,7 @@
         :content="$t('grid.cells.zoom')"
         v-tippy="{ placement: 'top' }"
         @click="zoomToFeature"
+        tabindex="-1"
     >
         <svg
             class="m-auto"

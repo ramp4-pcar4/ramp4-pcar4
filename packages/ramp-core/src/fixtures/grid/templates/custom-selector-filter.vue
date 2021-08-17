@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="h-full flex items-center justify-center">
         <select
             class="rv-input w-full"
             v-model="selectedOption"
