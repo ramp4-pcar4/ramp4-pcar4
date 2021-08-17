@@ -177,13 +177,6 @@ export enum IdentifyMode {
     Haze = 'haze'
 }
 
-export enum CoreFilter {
-    SYMBOL = 'symbol',
-    GRID = 'grid',
-    EXTENT = 'extent',
-    API = 'api' // this would be a default api key. e.g. if someone just does an API filter set with no key parameter, it would use this.
-}
-
 export interface EpsgLookup {
     (code: string | number): Promise<string>;
 }
@@ -370,11 +363,11 @@ export interface FilterEventParam {
 
 // these represent filter keys that the core reserves. the above interface does not use it for typing as
 // 3rd parties can define their own keys.
-export enum CoreFilterKey {
+export enum CoreFilter {
     SYMBOL = 'symbol',
     GRID = 'grid',
     EXTENT = 'extent',
-    API = 'api'
+    API = 'api' // this would be a default api key. e.g. if someone just does an API filter set with no key parameter, it would use this.
 }
 
 // Attribution interface that contains all the core attributes of the attribution node

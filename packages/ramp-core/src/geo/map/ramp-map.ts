@@ -11,7 +11,7 @@ import {
 import {
     Attribution,
     BaseGeometry,
-    CoreFilterKey,
+    CoreFilter,
     DefPromise,
     Extent,
     GeometryType,
@@ -122,7 +122,7 @@ export class MapAPI extends CommonMapAPI {
             this.$iApi.event.emit(GlobalEvents.MAP_EXTENTCHANGE, newExtent);
             this.$iApi.event.emit(GlobalEvents.FILTER_CHANGE, {
                 extent: newExtent,
-                filterKey: CoreFilterKey.EXTENT
+                filterKey: CoreFilter.EXTENT
             });
         });
 

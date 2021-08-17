@@ -4,6 +4,7 @@ grid.layer.loading,The layer is loading...,1,La couche est le chargement...,0
 grid.label.columns,Hide columns,1,Masquer les colonnes,0
 grid.label.filters.show,Show filters,1,Afficher les filtres,1
 grid.label.filters.hide,Hide filters,1,Cacher les filtres,0
+grid.label.filters.apply,Apply filters to map,1,Appliquer des filtres à la carte,0
 grid.header.sort.0,Sort ascending,1,Trier par ordre ascendant,0
 grid.header.sort.1,Sort descending,1,Le tri descendant,0
 grid.header.sort.2,Sort default,1,Trier par défaut,0

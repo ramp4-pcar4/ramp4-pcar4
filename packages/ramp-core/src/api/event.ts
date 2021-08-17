@@ -7,6 +7,7 @@ import { GridAPI } from '@/fixtures/grid/api/grid';
 import { WizardAPI } from '@/fixtures/wizard/api/wizard';
 import { LegendAPI } from '@/fixtures/legend/api/legend';
 import { LegendStore } from '@/fixtures/legend/store';
+import { GridStore, GridAction } from '@/fixtures/grid/store';
 import {
     Attribution,
     MapClick,
@@ -17,6 +18,7 @@ import {
 import { RampConfig } from '@/types';
 import { debounce, throttle } from 'throttle-debounce';
 import { MapCaptionStore } from '@/store/modules/map-caption';
+import { LayerStore } from '@/store/modules/layer';
 
 export enum GlobalEvents {
     /**
@@ -113,7 +115,8 @@ enum DefEH {
     EXTENT_CHANGE_FEATURE_MAPTIP = 'updates_feature_maptip_extent_change',
     MAP_UPDATE_CAPTION_COORDS = 'updates_map_caption_coords',
     LEGEND_REMOVES_LAYER_ENTRY = 'legend_removes_layer_entry',
-    LEGEND_RELOADS_LAYER_ENTRY = 'legend_reloads_layer_entry'
+    LEGEND_RELOADS_LAYER_ENTRY = 'legend_reloads_layer_entry',
+    GRID_REMOVES_LAYER_GRID = 'grid_removes_layer_grid'
 }
 
 // private for EventBus internals, so don't export
@@ -370,7 +373,8 @@ export class EventAPI extends APIScope {
                 DefEH.EXTENT_CHANGE_FEATURE_MAPTIP,
                 DefEH.MAP_UPDATE_CAPTION_COORDS,
                 DefEH.LEGEND_REMOVES_LAYER_ENTRY,
-                DefEH.LEGEND_RELOADS_LAYER_ENTRY
+                DefEH.LEGEND_RELOADS_LAYER_ENTRY,
+                DefEH.GRID_REMOVES_LAYER_GRID
             ];
         }
 
@@ -652,6 +656,33 @@ export class EventAPI extends APIScope {
                 };
                 this.$iApi.event.on(
                     GlobalEvents.LAYER_RELOAD_START,
+                    zeHandler,
+                    handlerName
+                );
+                break;
+            case DefEH.GRID_REMOVES_LAYER_GRID:
+                zeHandler = (layer: LayerInstance) => {
+                    // remove cached grid state for layer from grid store
+                    this.$vApp.$store.dispatch(
+                        `grid/${GridAction.removeGrid}`,
+                        layer.uid
+                    );
+                    // close grid panel if open or minimized with removed layer
+                    const currentUid = this.$vApp.$store.get(
+                        GridStore.currentUid
+                    );
+                    if (
+                        !this.$vApp.$store.get(
+                            LayerStore.getLayerByUid,
+                            currentUid
+                        )
+                    ) {
+                        const panel = this.$iApi.panel.get('grid-panel');
+                        this.$iApi.panel.close(panel);
+                    }
+                };
+                this.$iApi.event.on(
+                    GlobalEvents.LAYER_REMOVE,
                     zeHandler,
                     handlerName
                 );
