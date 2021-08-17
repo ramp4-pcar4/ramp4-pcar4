@@ -42,7 +42,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .sg {
     transition: opacity ease-in-out;
     background-color: rgba(0, 0, 0, 0.45);

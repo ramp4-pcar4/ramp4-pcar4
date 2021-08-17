@@ -149,7 +149,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .overviewmap::before {
     @apply absolute w-0 h-0 top-0 right-0 border-solid;
     border-width: 0 40px 40px 0;

@@ -32,7 +32,7 @@ class ScrollguardFixture extends FixtureInstance {
         );
         const wrapper = document.createElement('div');
         scrollguardInstance.mount(wrapper);
-        innerShell.appendChild(wrapper);
+        innerShell.appendChild(wrapper.childNodes[0]);
         console.log('adding scrollguard to shell...', innerShell, wrapper);
     }
 }

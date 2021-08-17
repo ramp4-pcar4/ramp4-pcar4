@@ -78,7 +78,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .crosshairs {
     transform: translate(-50%, -50%);
 }

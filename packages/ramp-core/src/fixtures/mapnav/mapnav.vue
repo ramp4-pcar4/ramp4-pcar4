@@ -58,7 +58,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .mapnav-section {
     @apply flex-col flex shadow-tm pointer-events-auto;
 

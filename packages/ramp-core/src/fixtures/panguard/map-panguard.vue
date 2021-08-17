@@ -1,29 +1,37 @@
 <template>
     <div class="pan-guard" ref="panGuard">
-        <p class="label">{{ $t('panguard.instructions') }}</p>
+        <p class="label">{{ i18n.t('panguard.instructions') }}</p>
     </div>
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
 import { Vue } from 'vue-property-decorator';
 
-export default class MapPanguardV extends Vue {
-    timeoutID: number | undefined = undefined;
+export default defineComponent({
+    name: 'MapPanguardV',
+    data(): {
+        timeoutID: number | undefined;
+    } {
+        return {
+            timeoutID: undefined
+        };
+    },
 
-    mounted(): void {
+    mounted() {
         // keep track of how many concurrent pointers are on the screen and their initial positions. This is a javascript map, not a map-map
         const pointers = new Map();
 
         // prevent possible issues with esri event registration if this fixture runs before the map has built itself
-        this.$iApi.geo.map.viewPromise.then(() => {
+        this.iApi.geo.map.viewPromise.then(() => {
             // TODO: when projection change is implemented check that the below events track any changes to
             // the esriView or update MapAPI to be raising pointer events on the EventAPI, and this will listen to for those events
-            this.$iApi.geo.map.esriView!.on('pointer-down', e => {
+            this.iApi.geo.map.esriView!.on('pointer-down', e => {
                 if (e.pointerType !== 'touch') return;
                 pointers.set(e.pointerId, { x: e.x, y: e.y });
             });
 
-            this.$iApi.geo.map.esriView!.on(
+            this.iApi.geo.map.esriView!.on(
                 ['pointer-up', 'pointer-leave'],
                 e => {
                     if (e.pointerType !== 'touch') return;
@@ -31,7 +39,7 @@ export default class MapPanguardV extends Vue {
                 }
             );
 
-            this.$iApi.geo.map.esriView!.on('pointer-move', e => {
+            this.iApi.geo.map.esriView!.on('pointer-move', e => {
                 const { pointerId, pointerType, x, y } = e;
                 const pointer = pointers.get(pointerId);
 
@@ -56,10 +64,10 @@ export default class MapPanguardV extends Vue {
             });
         });
     }
-}
+});
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .pan-guard {
     transition: opacity ease-in-out;
     background-color: rgba(0, 0, 0, 0.45);

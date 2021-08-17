@@ -21,7 +21,7 @@ class CrosshairsFixture extends FixtureInstance {
         );
         const wrapper = document.createElement('div');
         crosshairsInstance.mount(wrapper);
-        innerShell.appendChild(wrapper);
+        innerShell.appendChild(wrapper.childNodes[0]);
         console.log('adding crosshairs to shell...', innerShell, wrapper);
     }
 
