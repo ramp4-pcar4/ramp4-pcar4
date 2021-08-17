@@ -249,12 +249,12 @@ export class InstanceAPI {
 
     start(): void {
         // delay map loading
-        if (!this.started) {
+        if (!this.started && this.startRequired) {
             setTimeout(() => {
                 this.event.emit(GlobalEvents.MAP_START);
                 this.started = true;
             }, 6000);
-        } else {
+        } else if (this.started) {
             console.warn('start has already been called');
         }
     }

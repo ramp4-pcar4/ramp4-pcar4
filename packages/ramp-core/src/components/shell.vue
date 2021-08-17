@@ -64,7 +64,7 @@ export default class Shell extends Vue {
 
     created() {
         if (this.$iApi.startRequired) {
-            this.$iApi.event.on(GlobalEvents.MAP_START, () => {
+            this.$iApi.event.once(GlobalEvents.MAP_START, () => {
                 this.start = true;
             });
         } else {
