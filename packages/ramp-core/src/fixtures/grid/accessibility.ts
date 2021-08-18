@@ -185,10 +185,12 @@ export default class GridAccessibilityManager {
                 this.gridApi.ensureIndexVisible(0);
                 this.gridApi.ensureColumnVisible(firstCol);
             } else {
-                this.gridApi.setFocusedCell(
-                    focusedCell.rowIndex,
-                    focusedCell.column
-                );
+                if (focusedCell) {
+                    this.gridApi.setFocusedCell(
+                        focusedCell.rowIndex,
+                        focusedCell.column
+                    );
+                }
             }
         }
     }

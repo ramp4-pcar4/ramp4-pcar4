@@ -36,7 +36,8 @@ const mutations = {
         state.grids = { ...state.grids, [value.uid]: value };
     },
     [GridMutation.REMOVE_GRID](state: GridState, uid: string): void {
-        Vue.delete(state.grids, uid);
+        // TODO: fix this
+        //Vue.delete(state.grids, uid);
     }
 };
 

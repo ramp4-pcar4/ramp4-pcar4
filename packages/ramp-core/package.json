@@ -38,7 +38,7 @@
         "terraformer-arcgis-parser": "1.1.0",
         "throttle-debounce": "~3.0.1",
         "tiny-emitter": "^2.1.0",
-        "vue": "^3.1.0",
+        "vue": "3.1.5",
         "vue-loader": "next",
         "vue-class-component": "^8.0.0-rc.1",
         "vue-i18n": "^9.1.7",
@@ -77,7 +77,7 @@
         "@vue/eslint-config-prettier": "^5.0.0",
         "@vue/eslint-config-typescript": "^4.0.0",
         "@vue/test-utils": "1.0.0-beta.29",
-        "@vue/runtime-core": "^3.1.5",
+        "@vue/runtime-core": "3.1.5",
         "autoprefixer": "^9.8.6",
         "cross-env": "^7.0.2",
         "cypress": "^8.3.0",
@@ -96,7 +96,7 @@
         "tslint-loader": "3.6.0",
         "typedoc": "^0.20.34",
         "typescript": "~3.8.3",
-        "@vue/compiler-sfc": "^3.1.0",
+        "@vue/compiler-sfc": "3.1.5",
         "vuepress": "~1.8.2",
         "wrapper-webpack-plugin": "2.1.0"
     }

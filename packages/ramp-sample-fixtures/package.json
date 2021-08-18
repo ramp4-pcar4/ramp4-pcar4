@@ -4,7 +4,7 @@
     "description": "A sample repo of R4MP external fixtures.",
     "main": "index.js",
     "dependencies": {
-        "vue": "^3.1.0",
+        "vue": "3.1.5",
         "vue-class-component": "^8.0.0-rc.1",
         "vue-property-decorator": "^10.0.0-rc.2"
     },
@@ -12,7 +12,7 @@
         "@types/jest": "^24.0.19",
         "@vue/test-utils": "1.0.0-beta.29",
         "css-loader": "^3.5.2",
-        "@vue/compiler-sfc": "^3.1.0",
+        "@vue/compiler-sfc": "3.1.5",
         "jest": "^23.6.0",
         "prettier": "^1.19.1",
         "ts-jest": "^23.10.3",

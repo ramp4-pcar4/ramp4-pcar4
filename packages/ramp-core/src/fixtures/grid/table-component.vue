@@ -147,9 +147,7 @@ const TEXT_TYPE: string = 'string';
 })
 export default class GridTableComponentV extends Vue {
     @Prop() layerUid!: string;
-    getLayerByUid: ComputedRef<
-        (uid: string) => LayerInstance | undefined
-    > = get(LayerStore.getLayerByUid);
+    getLayerByUid: any = get(LayerStore.getLayerByUid);
     // @Get('layer/getLayerByUid') getLayerByUid!: (
     //     uid: string
     // ) => LayerInstance | undefined;

@@ -17,7 +17,7 @@ class BasemapFixture extends BasemapAPI {
         this._parseConfig(this.config);
         this.$vApp.$watch(
             () => this.config,
-            value => this._parseConfig(value)
+            (value: any) => this._parseConfig(value)
         );
 
         this.$iApi.panel.register(

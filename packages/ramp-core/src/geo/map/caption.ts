@@ -355,9 +355,9 @@ export class MapCaptionAPI extends APIScope {
             mx
         )}' ${this.padZero(sx)}"`;
 
-        return `${newY} ${this.$iApi.$vApp.$i18n.t(
+        return `${newY} ${this.$iApi.$vApp.$t(
             'map.coordinates.' + (lat > 0 ? 'north' : 'south')
-        )} | ${newX} ${this.$iApi.$vApp.$i18n.t(
+        )} | ${newX} ${this.$iApi.$vApp.$t(
             'map.coordinates.' + (0 > lon ? 'west' : 'east')
         )}`;
     }
@@ -389,9 +389,9 @@ export class MapCaptionAPI extends APIScope {
         const mx = Math.abs((lon - dx) * 60).toFixed(2);
         const newX = `${Math.abs(dx)}${degreeSymbol} ${this.padZero(mx)}'`;
 
-        return `${newY} ${this.$iApi.$vApp.$i18n.t(
+        return `${newY} ${this.$iApi.$vApp.$t(
             'map.coordinates.' + (lat > 0 ? 'north' : 'south')
-        )} | ${newX} ${this.$iApi.$vApp.$i18n.t(
+        )} | ${newX} ${this.$iApi.$vApp.$t(
             'map.coordinates.' + (0 > lon ? 'west' : 'east')
         )}`;
     }
@@ -418,9 +418,9 @@ export class MapCaptionAPI extends APIScope {
         const dy = Math.abs(lat).toFixed(3);
         const dx = Math.abs(lon).toFixed(3);
 
-        return `${dy}${degreeSymbol} ${this.$iApi.$vApp.$i18n.t(
+        return `${dy}${degreeSymbol} ${this.$iApi.$vApp.$t(
             'map.coordinates.' + (lat > 0 ? 'north' : 'south')
-        )} | ${dx}${degreeSymbol} ${this.$iApi.$vApp.$i18n.t(
+        )} | ${dx}${degreeSymbol} ${this.$iApi.$vApp.$t(
             'map.coordinates.' + (0 > lon ? 'west' : 'east')
         )}`;
     }
@@ -441,11 +441,9 @@ export class MapCaptionAPI extends APIScope {
 
         return `${Math.abs(
             Math.floor(projectedPoint.x)
-        )} m ${this.$iApi.$vApp.$i18n.t(
+        )} m ${this.$iApi.$vApp.$t(
             'map.coordinates.' + (0 > projectedPoint.x ? 'west' : 'east')
-        )} | ${Math.abs(
-            Math.floor(projectedPoint.y)
-        )} m ${this.$iApi.$vApp.$i18n.t(
+        )} | ${Math.abs(Math.floor(projectedPoint.y))} m ${this.$iApi.$vApp.$t(
             'map.coordinates.' + (projectedPoint.y > 0 ? 'north' : 'south')
         )}`;
     }
@@ -466,11 +464,9 @@ export class MapCaptionAPI extends APIScope {
 
         return `${Math.abs(
             Math.floor(projectedPoint.x)
-        )} m ${this.$iApi.$vApp.$i18n.t(
+        )} m ${this.$iApi.$vApp.$t(
             'map.coordinates.' + (0 > projectedPoint.x ? 'west' : 'east')
-        )} | ${Math.abs(
-            Math.floor(projectedPoint.y)
-        )} m ${this.$iApi.$vApp.$i18n.t(
+        )} | ${Math.abs(Math.floor(projectedPoint.y))} m ${this.$iApi.$vApp.$t(
             'map.coordinates.' + (projectedPoint.y > 0 ? 'north' : 'south')
         )}`;
     }
@@ -500,13 +496,13 @@ export class MapCaptionAPI extends APIScope {
             p
         );
 
-        return `${zone} ${this.$iApi.$vApp.$i18n.t(
+        return `${zone} ${this.$iApi.$vApp.$t(
             'map.coordinates.' + (lat > 0 ? 'north' : 'south')
-        )} ${Math.floor(projectedPoint.x)} m${this.$iApi.$vApp.$i18n.t(
+        )} ${Math.floor(projectedPoint.x)} m${this.$iApi.$vApp.$t(
             'map.coordinates.east'
-        )} | ${Math.abs(
-            Math.floor(projectedPoint.y)
-        )} m${this.$iApi.$vApp.$i18n.t('map.coordinates.north')}`;
+        )} | ${Math.abs(Math.floor(projectedPoint.y))} m${this.$iApi.$vApp.$t(
+            'map.coordinates.north'
+        )}`;
     }
 
     /**
