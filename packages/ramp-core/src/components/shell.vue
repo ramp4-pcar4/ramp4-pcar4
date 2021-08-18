@@ -68,6 +68,7 @@ export default class Shell extends Vue {
                 this.start = true;
             });
         } else {
+            this.$iApi.event.emit(GlobalEvents.MAP_START);
             this.start = true;
         }
     }
