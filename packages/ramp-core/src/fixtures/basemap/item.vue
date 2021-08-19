@@ -3,7 +3,7 @@
         <button
             class="basemap-item-button bg-gray-300"
             :aria-label="$t('basemap.select')"
-            @click="selectBasemap"
+            @click="selectBasemap(basemap)"
             v-focus-item
         >
             <div>
@@ -64,9 +64,7 @@
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                 >
-                    <path
-                        d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
-                    />
+                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
                 </svg>
             </div>
         </button>
@@ -74,24 +72,25 @@
 </template>
 
 <script lang="ts">
-import { RampBasemapConfig, RampTileSchemaConfig } from '@/geo/api';
-import { Vue, Prop } from 'vue-property-decorator';
-import { Get, Call } from 'vuex-pathify';
-import { get } from '@/store/pathify-helper';
-
+import { defineComponent } from 'vue';
+import { RampBasemapConfig } from '@/geo/api';
+import { get, call } from '@/store/pathify-helper';
 import { BasemapStore } from './store';
 
-export default class BasemapItemV extends Vue {
-    @Prop() basemap!: RampBasemapConfig;
-    @Prop() tileSchema!: RampTileSchemaConfig;
-    // @ts-ignore
-    selectedBasemap: any = get(BasemapStore.selectedBasemap);
-    // @Get(BasemapStore.selectedBasemap) selectedBasemap!: any;
-
-    selectBasemap() {
-        this.$iApi.$vApp.$store.set(BasemapStore.selectBasemap, this.basemap);
+export default defineComponent({
+    name: 'BasemapItemV',
+    props: ['basemap', 'tileSchema'],
+    data() {
+        return {
+            selectedBasemap: get(BasemapStore.selectedBasemap)
+        };
+    },
+    methods: {
+        selectBasemap(basemap: RampBasemapConfig) {
+            call(BasemapStore.selectBasemap, basemap);
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped>
@@ -99,9 +98,7 @@ export default class BasemapItemV extends Vue {
     border: solid black 2px;
 }
 
-[focus-list]:focus
-    [focus-item].focused.basemap-item-button
-    .basemap-item-image {
+[focus-list]:focus [focus-item].focused.basemap-item-button .basemap-item-image {
     opacity: 0.5;
 }
 

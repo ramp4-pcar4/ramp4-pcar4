@@ -7,22 +7,15 @@
         <template #controls>
             <pin
                 @click="panel.pin()"
-                :active="isPinned"
+                :active="panel.isPinned"
                 v-if="!$iApi.screenSize !== 'xs'"
             ></pin>
-            <close
-                @click="panel.close()"
-                v-if="$iApi.screenSize !== 'xs'"
-            ></close>
+            <close @click="panel.close()" v-if="$iApi.screenSize !== 'xs'"></close>
         </template>
 
         <template #content>
             <div class="h-600 overflow-y-auto">
-                <div
-                    class="mx-5"
-                    v-for="(tileSchema, idx) in tileSchemas"
-                    :key="tileSchema.id"
-                >
+                <div class="mx-5" v-for="(tileSchema, idx) in tileSchemas" :key="tileSchema.id">
                     <!-- use mt-5 if it's the first basemap title schema, use mt-36 otherwise -->
                     <div :class="(idx === 0 ? 'mt-5' : 'mt-36') + ' flex mb-5'">
                         <h3 class="font-bold text-xl" v-truncate>
@@ -55,10 +48,7 @@
                         v-focus-list
                         v-if="basemaps.length > 0"
                     >
-                        <li
-                            v-for="basemap in filterBasemaps(tileSchema.id)"
-                            :key="basemap.id"
-                        >
+                        <li v-for="basemap in filterBasemaps(tileSchema.id)" :key="basemap.id">
                             <basemap-item
                                 :basemap="basemap"
                                 :tileSchema="tileSchema"
@@ -73,42 +63,34 @@
 </template>
 
 <script lang="ts">
-import { ComputedRef } from 'vue';
-import { Vue, Options, Prop } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
+import { defineComponent } from 'vue';
 import { get } from '@/store/pathify-helper';
-import { PanelInstance } from '@/api';
-
 import { BasemapStore } from './store';
 import BasemapItemV from './item.vue';
-import { RampBasemapConfig, RampTileSchemaConfig } from '@/geo/api';
+import { RampBasemapConfig } from '@/geo/api';
 
-@Options({
+export default defineComponent({
+    name: 'BasemapScreenV',
+    props: ['panel'],
     components: {
         'basemap-item': BasemapItemV
+    },
+    data() {
+        return {
+            tileSchemas: get(BasemapStore.tileSchemas),
+            basemaps: get(BasemapStore.basemaps),
+            selectedBasemap: get(BasemapStore.selectedBasemap)
+        };
+    },
+    methods: {
+        filterBasemaps(schemaId: string) {
+            // filter out all the basemaps that match the current schema
+            return this.basemaps.filter(
+                (basemap: RampBasemapConfig) => basemap.tileSchemaId === schemaId
+            );
+        }
     }
-})
-export default class BasemapScreenV extends Vue {
-    @Prop() panel!: PanelInstance;
-    // fetch basemap store properties/data
-    tileSchemas: ComputedRef<Array<RampTileSchemaConfig>> = get(BasemapStore.tileSchemas);
-    basemaps: ComputedRef<Array<RampBasemapConfig>> = get(BasemapStore.basemaps);
-    selectedBasemap: ComputedRef<RampBasemapConfig> = get(BasemapStore.selectedBasemap);
-    // @Get(BasemapStore.tileSchemas) tileSchemas!: Array<any>;
-    // @Get(BasemapStore.basemaps) basemaps!: Array<any>;
-    // @Get(BasemapStore.selectedBasemap) selectedBasemap!: any;
-
-    get isPinned(): boolean {
-        return this.panel.isPinned;
-    }
-
-    // filter out all the basemaps that match the current schema
-    filterBasemaps(schemaId: string) {
-        return this.basemaps.value.filter(
-            basemap => basemap.tileSchemaId === schemaId
-        );
-    }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

@@ -26,20 +26,13 @@ export class BasemapAPI extends FixtureInstance {
         if (!basemapConfig) {
             return;
         }
-        this.$iApi.$vApp.$store.set(
-            BasemapStore.basemaps,
-            basemapConfig.basemaps
-        );
-        this.$iApi.$vApp.$store.set(
-            BasemapStore.tileSchemas,
-            basemapConfig.tileSchemas
-        );
+        this.$iApi.$vApp.$store.set(BasemapStore.basemaps, basemapConfig.basemaps);
+        this.$iApi.$vApp.$store.set(BasemapStore.tileSchemas, basemapConfig.tileSchemas);
 
         this.$iApi.$vApp.$store.set(
             BasemapStore.selectedBasemap,
-            basemapConfig.basemaps.find(
-                basemap => basemap.id === basemapConfig.initialBasemapId
-            ) || null
+            basemapConfig.basemaps.find(basemap => basemap.id === basemapConfig.initialBasemapId) ||
+                null
         );
     }
 }
