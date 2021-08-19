@@ -11,29 +11,27 @@
 </template>
 
 <script lang="ts">
-import { ComputedRef } from 'vue';
+import { defineComponent } from 'vue';
 import { Vue } from 'vue-property-decorator';
 import { Get, Call } from 'vuex-pathify';
-import { get } from '@/store/pathify-helper';
-
+import { get, call } from '@/store/pathify-helper';
 import { GeosearchStore } from './store';
 import { debounce } from 'throttle-debounce';
 
-export default class GeosearchSearchBarV extends Vue {
-    // fetch geosearch search value from store
-    searchVal: ComputedRef<string> = get(GeosearchStore.searchVal);
-    // @Get(GeosearchStore.searchVal) searchVal!: string;
+export default defineComponent({
+    data() {
+        return {
+            // fetch search value and actions from store
+            searchVal: get(GeosearchStore.searchVal),
+            setSearchTerm: call(GeosearchStore.setSearchTerm),
 
-    // import required geosearch actions
-    @Call(GeosearchStore.setSearchTerm) setSearchTerm!: (
-        searchTerm: string
-    ) => void;
-
-    // debounce function for search term change
-    onSearchTermChange = debounce(500, (searchTerm: string) => {
-        this.setSearchTerm(searchTerm);
-    });
-}
+            // debounce function for search term change
+            onSearchTermChange: debounce(500, (searchTerm: string) => {
+                this.setSearchTerm(searchTerm);
+            })
+        };
+    }
+});
 </script>
 
 <style lang="scss" scoped></style>

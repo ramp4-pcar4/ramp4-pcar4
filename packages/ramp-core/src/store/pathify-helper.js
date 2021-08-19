@@ -23,6 +23,6 @@ export function sync(path) {
     });
 }
 
-export function call(path, payload) {
-    return store.dispatch(path, payload);
+export function call(path) {
+    return payload => computed(store.dispatch(path, payload));
 }

@@ -82,13 +82,9 @@ export default defineComponent({
     props: ['basemap', 'tileSchema'],
     data() {
         return {
-            selectedBasemap: get(BasemapStore.selectedBasemap)
+            selectedBasemap: get(BasemapStore.selectedBasemap),
+            selectBasemap: call(BasemapStore.selectBasemap)
         };
-    },
-    methods: {
-        selectBasemap(basemap: RampBasemapConfig) {
-            call(BasemapStore.selectBasemap, basemap);
-        }
     }
 });
 </script>

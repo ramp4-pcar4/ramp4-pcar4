@@ -19,9 +19,7 @@ const getters = {
     getProvinces: (state: GeosearchState): [] => {
         const provs = state.GSservice.fetchProvinces();
         // sort the province filters in alphabetical order
-        provs.sort((provA: any, provB: any) =>
-            provA.name > provB.name ? 1 : -1
-        );
+        provs.sort((provA: any, provB: any) => (provA.name > provB.name ? 1 : -1));
         return provs;
     },
 
@@ -36,9 +34,7 @@ const getters = {
     getTypes: (state: GeosearchState): [] => {
         const types = state.GSservice.fetchTypes();
         // sort the type filters in alphabetical order
-        types.sort((typeA: any, typeB: any) =>
-            typeA.name > typeB.name ? 1 : -1
-        );
+        types.sort((typeA: any, typeB: any) => (typeA.name > typeB.name ? 1 : -1));
         return types;
     }
 };
@@ -75,14 +71,9 @@ const actions = {
                 context.state.searchVal &&
                 context.state.searchVal !== context.state.lastSearchVal
             ) {
-                context.state.GSservice.query(
-                    `${context.state.searchVal}*`
-                ).then((data: any) => {
+                context.state.GSservice.query(`${context.state.searchVal}*`).then((data: any) => {
                     // store data for current search term
-                    context.commit(
-                        'SET_LAST_SEARCH_VAL',
-                        context.state.searchVal
-                    );
+                    context.commit('SET_LAST_SEARCH_VAL', context.state.searchVal);
                     context.commit('SET_SAVED_RESULTS', data);
 
                     // replace old saved results
@@ -113,10 +104,7 @@ const actions = {
      * @param   {string}    province   the province code all results must be in
      */
     setProvince: function(context: GeosearchContext, province: string): void {
-        context.commit(
-            'SET_PROVINCE',
-            typeof province === 'undefined' ? '' : province
-        );
+        context.commit('SET_PROVINCE', typeof province === 'undefined' ? '' : province);
         // run query after province filter changes
         context.dispatch('runQuery');
     },
@@ -192,9 +180,7 @@ function filter(visibleOnly: boolean, queryParams: any, data: Array<any>) {
     }
     if (queryParams.province && queryParams.province !== '...') {
         data = data.filter(
-            r =>
-                r.location.province.name &&
-                r.location.province.name === queryParams.province
+            r => r.location.province.name && r.location.province.name === queryParams.province
         );
     }
     if (queryParams.type && queryParams.type !== '...') {

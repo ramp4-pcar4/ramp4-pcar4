@@ -4,15 +4,8 @@
             <geosearch-bar></geosearch-bar>
         </template>
         <template #controls>
-            <pin
-                @click="panel.pin()"
-                :active="isPinned"
-                v-if="$iApi.screenSize !== 'xs'"
-            ></pin>
-            <close
-                @click="panel.close()"
-                v-if="$iApi.screenSize !== 'xs'"
-            ></close>
+            <pin @click="panel.pin()" :active="isPinned" v-if="$iApi.screenSize !== 'xs'"></pin>
+            <close @click="panel.close()" v-if="$iApi.screenSize !== 'xs'"></close>
         </template>
 
         <template #content>
@@ -25,15 +18,9 @@
                 <div class="px-5 mb-10 truncate">
                     <span
                         class="relative h-48"
-                        v-if="
-                            searchVal &&
-                                searchResults.length === 0 &&
-                                !loadingResults
-                        "
+                        v-if="searchVal && searchResults.length === 0 && !loadingResults"
                         >{{ $t('geosearch.noResults')
-                        }}<span class="font-bold text-blue-600"
-                            >"{{ searchVal }}"</span
-                        ></span
+                        }}<span class="font-bold text-blue-600">"{{ searchVal }}"</span></span
                     >
                 </div>
                 <ul
@@ -51,10 +38,7 @@
                             @click="zoomIn(result)"
                             v-focus-item="'show-truncate'"
                         >
-                            <div
-                                class="rv-result-description flex px-8"
-                                v-truncate
-                            >
+                            <div class="rv-result-description flex px-8" v-truncate>
                                 <div class="flex-1 text-left truncate">
                                     <span
                                         v-html="
@@ -87,18 +71,14 @@
                         </button>
                     </li>
                 </ul>
-                <geosearch-bottom-filters
-                    class="mt-auto"
-                ></geosearch-bottom-filters>
+                <geosearch-bottom-filters class="mt-auto"></geosearch-bottom-filters>
             </div>
         </template>
     </panel-screen>
 </template>
 
 <script lang="ts">
-import { ComputedRef } from 'vue';
-import { Vue, Options, Prop } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
+import { defineComponent } from 'vue';
 import { get } from '@/store/pathify-helper';
 import { PanelInstance } from '@/api';
 
@@ -109,46 +89,51 @@ import GeosearchTopFiltersV from './top-filters.vue';
 import GeosearchBottomFiltersV from './bottom-filters.vue';
 import GeosearchLoadingBarV from './loading-bar.vue';
 
-@Options({
+export default defineComponent({
+    name: 'GeosearchScreenV',
+
+    props: ['panel'],
+
+    // Import required components.
     components: {
         'geosearch-bar': GeosearchSearchBarV,
         'geosearch-top-filters': GeosearchTopFiltersV,
         'geosearch-bottom-filters': GeosearchBottomFiltersV,
         'loading-bar': GeosearchLoadingBarV
-    }
-})
-export default class GeosearchScreenV extends Vue {
-    @Prop() panel!: PanelInstance;
+    },
+
     // fetch store properties/data
-    searchVal: ComputedRef<string> = get(GeosearchStore.searchVal);
-    searchResults: ComputedRef<Array<any>> = get(GeosearchStore.searchResults);
-    loadingResults: ComputedRef<boolean> = get(GeosearchStore.loadingResults);
-    // @Get(GeosearchStore.searchVal) searchVal!: string;
-    // @Get(GeosearchStore.searchResults) searchResults!: Array<any>;
-    // @Get(GeosearchStore.loadingResults) loadingResults!: boolean;
+    data() {
+        return {
+            searchVal: get(GeosearchStore.searchVal),
+            searchResults: get(GeosearchStore.searchResults),
+            loadingResults: get(GeosearchStore.loadingResults)
+        };
+    },
 
-    get isPinned(): boolean {
-        return this.panel.isPinned;
-    }
+    methods: {
+        isPinned(): boolean {
+            return this.panel.isPinned;
+        },
 
-    // zoom in to a clicked result
-    zoomIn(result: any): void {
-        let zoomPoint = new RAMP.GEO.Point('zoomies', result.position);
-        this.$iApi.geo.map.zoomMapTo(zoomPoint, 50000);
-    }
+        // zoom in to a clicked result
+        zoomIn(result: any): void {
+            let zoomPoint = new RAMP.GEO.Point('zoomies', result.position);
+            this.$iApi.geo.map.zoomMapTo(zoomPoint, 50000);
+        },
 
-    // highlight the search term in each listed geosearch result
-    highlightSearchTerm(name: string, province: any) {
-        // wrap matched search term in results inside span with styling
-        const highlightedResult = name.replace(
-            new RegExp(`${this.searchVal.value}`, 'gi'),
-            match =>
-                '<span class="font-bold text-blue-600">' + match + '</span>'
-        );
-        // add comma to new highlighted result if a province/location is provided
-        return province ? highlightedResult + ',' : highlightedResult;
+        // highlight the search term in each listed geosearch result
+        highlightSearchTerm(name: string, province: any) {
+            // wrap matched search term in results inside span with styling
+            const highlightedResult = name.replace(
+                new RegExp(`${this.searchVal.value}`, 'gi'),
+                match => '<span class="font-bold text-blue-600">' + match + '</span>'
+            );
+            // add comma to new highlighted result if a province/location is provided
+            return province ? highlightedResult + ',' : highlightedResult;
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

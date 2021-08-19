@@ -6,13 +6,8 @@
                 :value="queryParams.province"
                 v-on:change="setProvince($event.target.value)"
             >
-                <option value="" disabled hidden>{{
-                    $t('geosearch.filters.province')
-                }}</option>
-                <option
-                    v-for="province in provinces"
-                    v-bind:key="province.code"
-                >
+                <option value="" disabled hidden>{{ $t('geosearch.filters.province') }}</option>
+                <option v-for="province in provinces" v-bind:key="province.code">
                     {{ province.name }}
                 </option>
             </select>
@@ -23,9 +18,7 @@
                 :value="queryParams.type"
                 v-on:change="setType($event.target.value)"
             >
-                <option value="" disabled hidden>{{
-                    $t('geosearch.filters.type')
-                }}</option>
+                <option value="" disabled hidden>{{ $t('geosearch.filters.type') }}</option>
                 <option v-for="type in types" v-bind:key="type.code">
                     {{ type.name }}
                 </option>
@@ -50,32 +43,31 @@
 </template>
 
 <script lang="ts">
-import { ComputedRef } from 'vue';
-import { Vue } from 'vue-property-decorator';
-import { Get, Call } from 'vuex-pathify';
-import { get } from '@/store/pathify-helper';
-
+import { defineComponent } from 'vue';
+import { get, call } from '@/store/pathify-helper';
 import { GeosearchStore } from './store';
 
-export default class GeosearchTopFiltersV extends Vue {
+export default defineComponent({
+    name: 'GeosearchTopFiltersV',
+
     // fetch defined province/type filters + filter params from store
-    provinces: ComputedRef<Array<any>> = get(GeosearchStore.getProvinces);
-    types: ComputedRef<Array<any>> = get(GeosearchStore.getTypes);
-    queryParams: ComputedRef<any> = get(GeosearchStore.queryParams);
-    // @Get(GeosearchStore.getProvinces) provinces!: Array<any>;
-    // @Get(GeosearchStore.getTypes) types!: Array<any>;
-    // @Get(GeosearchStore.queryParams) queryParams!: any;
-
-    // import required geosearch store actions
-    @Call(GeosearchStore.setProvince) setProvince!: (prov: any) => void;
-    @Call(GeosearchStore.setType) setType!: (type: any) => void;
-
-    // clear filters by setting filters to undefined
-    clearFilters(): void {
-        this.setProvince(undefined);
-        this.setType(undefined);
+    data() {
+        return {
+            provinces: get(GeosearchStore.getProvinces),
+            types: get(GeosearchStore.getTypes),
+            queryParams: get(GeosearchStore.queryParams),
+            setProvince: call(GeosearchStore.setProvince),
+            setType: call(GeosearchStore.setType)
+        };
+    },
+    methods: {
+        // Called when the `clear filters` button is clicked. Clears province and type filters.
+        clearFilters(): void {
+            this.setProvince(undefined);
+            this.setType(undefined);
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>
