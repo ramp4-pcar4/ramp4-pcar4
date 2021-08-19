@@ -12,10 +12,7 @@ export class SettingsAPI extends FixtureInstance {
             uid
         );
         const panel = this.$iApi.panel.get('settings-panel');
-        const legendItem = this.$iApi.$vApp.$store.get(
-            LegendStore.getChildById,
-            layer?.id
-        );
+        const legendItem = this.$iApi.$vApp.$store.get(LegendStore.getChildById, layer?.id);
         if (!panel.isOpen) {
             this.$iApi.panel.open({
                 id: 'settings-panel',

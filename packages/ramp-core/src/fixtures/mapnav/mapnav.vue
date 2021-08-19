@@ -8,15 +8,8 @@
             ></zoom-nav-section>
             <span class="py-1"></span>
             <div class="mapnav-section bg-white-75 hover:bg-white">
-                <template
-                    v-for="(button, index) in visible"
-                    :key="button.id + 'button'"
-                >
-                    <component
-                        :is="button.id + '-nav-button'"
-                        :t="i18n.t"
-                        :iApi="iApi"
-                    ></component>
+                <template v-for="(button, index) in visible" :key="button.id + 'button'">
+                    <component :is="button.id + '-nav-button'" :t="i18n.t" :iApi="iApi"></component>
                     <divider-nav
                         class="mapnav-divider"
                         v-if="index !== visible.length - 1"
@@ -50,10 +43,6 @@ export default defineComponent({
             visible: get('mapnav/visible')
             // @Get('mapnav/visible') visible!: any[];
         };
-    },
-
-    created() {
-        console.log('mapnav instantiation: ', this);
     }
 });
 </script>

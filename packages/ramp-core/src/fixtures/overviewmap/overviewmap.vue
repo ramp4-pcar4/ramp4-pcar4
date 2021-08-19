@@ -31,13 +31,7 @@
                     tabindex="0"
                     class="cursor-pointer absolute h-full w-full"
                     @click="minimized = !minimized"
-                    :content="
-                        i18n.t(
-                            minimized
-                                ? 'overviewmap.expand'
-                                : 'overviewmap.minimize'
-                        )
-                    "
+                    :content="i18n.t(minimized ? 'overviewmap.expand' : 'overviewmap.minimize')"
                 >
                     <svg
                         class="absolute fill-current text-gray-500 transition-all duration-300 ease-out"
@@ -89,7 +83,6 @@ export default defineComponent({
     },
 
     created() {
-        console.log('overviewmap instantiated: ', this);
         this.overviewMap = new OverviewMapAPI(this.iApi);
     },
 
@@ -101,18 +94,14 @@ export default defineComponent({
         );
         this.minimized = this.startMinimized;
 
-        this.iApi.event.on(
-            GlobalEvents.MAP_EXTENTCHANGE,
-            (newExtent: Extent) => {
-                this.overviewMap.updateOverview(newExtent);
-            }
-        );
+        this.iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, (newExtent: Extent) => {
+            this.overviewMap.updateOverview(newExtent);
+        });
     },
 
     methods: {
         async cursorHitTest(e: MouseEvent) {
-            this.hoverOnExtent =
-                !this.minimized && (await this.overviewMap.cursorHitTest(e));
+            this.hoverOnExtent = !this.minimized && (await this.overviewMap.cursorHitTest(e));
         },
 
         defaultConfig() {

@@ -33,12 +33,9 @@ class AppbarFixture extends AppbarAPI {
             }
         );
         const wrapper = document.createElement('div');
-        const innerShell = this.$vApp.$el.getElementsByClassName(
-            'inner-shell'
-        )[0];
+        const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         appbarInstance.mount(wrapper);
         innerShell.appendChild(wrapper.childNodes[0]);
-        console.log('adding appbar to shell...', appbarInstance, wrapper);
 
         this._parseConfig(this.config);
         this.$vApp.$watch(

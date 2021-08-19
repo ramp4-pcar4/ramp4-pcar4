@@ -6,11 +6,7 @@
             {{ name }}
         </div>
         <div class="flex-1"></div>
-        <button
-            @click="config.onChange"
-            :disabled="!!config.disabled"
-            class="rv-button"
-        >
+        <button @click="config.onChange" :disabled="!!config.disabled" class="rv-button">
             {{ config.value ? 'Enable' : 'Disable' }}
         </button>
     </div>
@@ -19,7 +15,7 @@
 <script lang="ts">
 import { Vue, Prop } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
-import { ToggleButton } from 'vue-js-toggle-button';
+import Toggle from '@vueform/toggle';
 
 export default class ToggleButtonControl extends Vue {
     @Prop() config: any;

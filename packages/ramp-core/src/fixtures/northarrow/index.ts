@@ -28,12 +28,9 @@ class NortharrowFixture extends NortharrowAPI {
                 i18n: <any>this.$vApp.$i18n
             }
         );
-        const innerShell = this.$vApp.$el.getElementsByClassName(
-            'inner-shell'
-        )[0];
+        const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         northarrowInstance.mount(wrapper);
         innerShell.appendChild(wrapper.childNodes[0]);
-        console.log('adding north arrow to shell...', innerShell, wrapper);
     }
 
     removed(): void {

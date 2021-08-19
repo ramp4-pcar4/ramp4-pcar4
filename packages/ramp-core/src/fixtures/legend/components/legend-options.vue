@@ -9,10 +9,7 @@
         >
             <template #header>
                 <div class="flex p-8">
-                    <svg
-                        class="fill-current w-18 h-18 mx-8"
-                        viewBox="0 0 23 21"
-                    >
+                    <svg class="fill-current w-18 h-18 mx-8" viewBox="0 0 23 21">
                         <path
                             d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
                         />
@@ -132,17 +129,14 @@ import { LegendEntry, Controls } from '../store/legend-defs';
 
 export default class LegendOptionsV extends Vue {
     @Prop() legendItem!: LegendEntry;
-    @Call(LegendStore.removeLayerEntry) removeLayerEntry!: (
-        entry: string
-    ) => void;
+    @Call(LegendStore.removeLayerEntry) removeLayerEntry!: (entry: string) => void;
 
     /**
      * Display symbology stack for the layer.
      */
     toggleSymbology(): void {
         if (this.legendItem._controlAvailable(Controls.Symbology)) {
-            this.legendItem.displaySymbology = !this.legendItem
-                .displaySymbology;
+            this.legendItem.displaySymbology = !this.legendItem.displaySymbology;
         }
     }
 
@@ -151,10 +145,7 @@ export default class LegendOptionsV extends Vue {
      */
     toggleGrid() {
         if (this.legendItem._controlAvailable(Controls.Datatable)) {
-            this.$iApi.event.emit(
-                GlobalEvents.GRID_TOGGLE,
-                this.legendItem.layerUID
-            );
+            this.$iApi.event.emit(GlobalEvents.GRID_TOGGLE, this.legendItem.layerUID);
         }
     }
 
@@ -163,10 +154,7 @@ export default class LegendOptionsV extends Vue {
      */
     toggleSettings() {
         if (this.legendItem._controlAvailable(Controls.Settings)) {
-            this.$iApi.event.emit(
-                GlobalEvents.SETTINGS_TOGGLE,
-                this.legendItem.layerUID
-            );
+            this.$iApi.event.emit(GlobalEvents.SETTINGS_TOGGLE, this.legendItem.layerUID);
         }
     }
 
@@ -191,19 +179,11 @@ export default class LegendOptionsV extends Vue {
     removeLayer() {
         if (this.legendItem._controlAvailable(Controls.Remove)) {
             const layerTree = this.legendItem.layer!.getLayerTree();
-            if (
-                !(
-                    layerTree.children.length === 1 &&
-                    layerTree.children[0].isLayer
-                )
-            ) {
+            if (!(layerTree.children.length === 1 && layerTree.children[0].isLayer)) {
                 // cheap hack for MIL with multiple children - set visibility to false and remove legend entry
                 // TODO get rid of this when/if MIL sublayers can be removed for real
                 this.removeLayerEntry(this.legendItem.layerUID!);
-                this.legendItem.layer!.setVisibility(
-                    false,
-                    this.legendItem._layerIndex
-                );
+                this.legendItem.layer!.setVisibility(false, this.legendItem._layerIndex);
             } else {
                 this.$iApi.geo.map.removeLayer(this.legendItem.layerUID!);
             }

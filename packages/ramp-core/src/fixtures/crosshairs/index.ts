@@ -8,9 +8,7 @@ class CrosshairsFixture extends FixtureInstance {
 
         this.$element.component('CrosshairsV', CrosshairsV);
 
-        const innerShell = this.$vApp.$el.getElementsByClassName(
-            'inner-shell'
-        )[0];
+        const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         const crosshairsInstance = this.extend(
             CrosshairsV,
             this.$element._context.components,
@@ -22,7 +20,6 @@ class CrosshairsFixture extends FixtureInstance {
         const wrapper = document.createElement('div');
         crosshairsInstance.mount(wrapper);
         innerShell.appendChild(wrapper.childNodes[0]);
-        console.log('adding crosshairs to shell...', innerShell, wrapper);
     }
 
     removed(): void {

@@ -27,9 +27,7 @@ class OverviewmapFixture extends OverviewmapAPI {
 
         this.$element.component('OverviewmapV', OverviewmapV);
 
-        const innerShell = this.$vApp.$el.getElementsByClassName(
-            'inner-shell'
-        )[0];
+        const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         const overviewInstance = this.extend(
             OverviewmapV,
             this.$element._context.components,
@@ -43,7 +41,6 @@ class OverviewmapFixture extends OverviewmapAPI {
         const wrapper = document.createElement('div');
         overviewInstance.mount(wrapper);
         innerShell.appendChild(wrapper.childNodes[0]);
-        console.log('adding overview map to shell...', innerShell, wrapper);
     }
 }
 

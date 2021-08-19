@@ -17,9 +17,7 @@ class ScrollguardFixture extends FixtureInstance {
 
         this.$element.component('ScrollguardV', ScrollguardV);
 
-        const innerShell = this.$vApp.$el.getElementsByClassName(
-            'inner-shell'
-        )[0];
+        const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         const scrollguardInstance = this.extend(
             ScrollguardV,
             this.$element._context.components,
@@ -33,7 +31,6 @@ class ScrollguardFixture extends FixtureInstance {
         const wrapper = document.createElement('div');
         scrollguardInstance.mount(wrapper);
         innerShell.appendChild(wrapper.childNodes[0]);
-        console.log('adding scrollguard to shell...', innerShell, wrapper);
     }
 }
 

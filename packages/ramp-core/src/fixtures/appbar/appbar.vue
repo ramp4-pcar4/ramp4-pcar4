@@ -75,10 +75,6 @@ export default defineComponent({
             // @Get('appbar/temporary') temporaryItems!: AppbarItemInstance[];
             overflow: false
         };
-    },
-
-    created() {
-        console.log('appbar instantiation: ', this);
     }
 
     // TODO: update this after (issue with getBoundingClientRect)

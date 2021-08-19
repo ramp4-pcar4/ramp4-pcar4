@@ -30,12 +30,9 @@ class MapnavFixture extends MapnavAPI {
                 i18n: <any>this.$vApp.$i18n
             }
         );
-        const innerShell = this.$vApp.$el.getElementsByClassName(
-            'inner-shell'
-        )[0];
+        const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         mapnavInstance.mount(wrapper);
         innerShell.appendChild(wrapper.childNodes[0]);
-        console.log('adding mapnav to shell...', mapnavInstance, wrapper);
 
         this._parseConfig(this.config);
         this.$vApp.$watch(
@@ -45,10 +42,7 @@ class MapnavFixture extends MapnavAPI {
 
         // since components used in appbar can be registered after this point, listen to the global component registration event and re-validate items
         // TODO revist. this seems to be self-contained to the mapnav fixture, so ideally can stay as is and not worry about events api.
-        this.$iApi.event.on(
-            GlobalEvents.COMPONENT,
-            this._validateItems.bind(this)
-        );
+        this.$iApi.event.on(GlobalEvents.COMPONENT, this._validateItems.bind(this));
     }
 
     removed() {

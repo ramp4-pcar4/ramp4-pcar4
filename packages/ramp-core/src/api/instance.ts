@@ -17,7 +17,6 @@ import { ConfigStore } from '@/store/modules/config';
 import VueTippy, { TippyComponent, tippy } from 'vue-tippy';
 import { FocusList, FocusItem } from '@/directives/focus-list';
 import { Truncate } from '@/directives/truncate/truncate';
-import { VueI18n } from 'vue-i18n';
 
 import { EventAPI, FixtureAPI, GeoAPI, GlobalEvents, PanelAPI, NotificationAPI } from './internal';
 
@@ -35,6 +34,7 @@ import MapnavButtonV from '@/fixtures/mapnav/button.vue';
 
 import DividerV from '@/fixtures/appbar/divider.vue';
 import AppbarButtonV from '@/fixtures/appbar/button.vue';
+import Toggle from '@vueform/toggle';
 
 interface RampOptions {
     loadDefaultFixtures?: boolean;
@@ -300,7 +300,6 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
         })
         .use(mixin);
 
-    // ported from app.vue
     vueElement.directive('focus-list', FocusList);
     vueElement.directive('focus-item', FocusItem);
     vueElement.directive('truncate', Truncate);
@@ -321,6 +320,7 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
 
     vueElement.component('divider', DividerV);
     vueElement.component('appbar-button', AppbarButtonV);
+    vueElement.component('toggle-button', Toggle);
 
     vueElement.config.globalProperties.$store = store;
     vueElement.config.globalProperties.$iApi = iApi;

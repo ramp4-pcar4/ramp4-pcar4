@@ -23,9 +23,7 @@
                         @click.stop="toggleSymbology"
                         tabindex="-1"
                         :class="{
-                            'cursor-default': !legendItem._controlAvailable(
-                                'symbology'
-                            )
+                            'cursor-default': !legendItem._controlAvailable('symbology')
                         }"
                         :disabled="!legendItem._controlAvailable('symbology')"
                         :content="
@@ -40,9 +38,7 @@
                     >
                         <symbology-stack
                             :class="{
-                                'pointer-events-none': !legendItem._controlAvailable(
-                                    'symbology'
-                                )
+                                'pointer-events-none': !legendItem._controlAvailable('symbology')
                             }"
                             class="w-32 h-32"
                             :visible="legendItem.displaySymbology"
@@ -68,10 +64,7 @@
                 <checkbox
                     :checked="legendItem.visibility"
                     :value="legendItem"
-                    :isRadio="
-                        legendItem.parent &&
-                            legendItem.parent.type === 'VisibilitySet'
-                    "
+                    :isRadio="legendItem.parent && legendItem.parent.type === 'VisibilitySet'"
                     :legendItem="legendItem"
                     :disabled="!legendItem._controlAvailable('visibility')"
                 />
@@ -79,33 +72,18 @@
         </div>
 
         <!-- Symbology Stack Section -->
-        <div
-            v-if="legendItem.displaySymbology"
-            v-focus-item
-            class="default-focus-style"
-        >
+        <div v-if="legendItem.displaySymbology" v-focus-item class="default-focus-style">
             <div v-if="symbologyStack.length > 0">
                 <!-- display each symbol -->
-                <div
-                    class="m-5"
-                    v-for="(item, idx) in symbologyStack"
-                    :key="idx"
-                >
+                <div class="m-5" v-for="(item, idx) in symbologyStack" :key="idx">
                     <!-- for WMS layers -->
-                    <div
-                        v-if="layerType === 'ogcWms'"
-                        class="items-center grid-cols-1"
-                    >
+                    <div v-if="layerType === 'ogcWms'" class="items-center grid-cols-1">
                         <div
                             v-if="item.imgHeight"
                             class="symbologyIcon w-full p-5"
                             v-html="getLegendGraphic(item)"
                         ></div>
-                        <div
-                            v-if="item.label"
-                            class="flex-1 p-5 bg-black-75 text-white"
-                            v-truncate
-                        >
+                        <div v-if="item.label" class="flex-1 p-5 bg-black-75 text-white" v-truncate>
                             {{ item.label }}
                         </div>
                     </div>
@@ -118,10 +96,7 @@
                             {{ item.label }}
                         </div>
                         <checkbox
-                            v-if="
-                                legendItem.layer.getLegend(legendItem.layerUID)
-                                    .length > 1
-                            "
+                            v-if="legendItem.layer.getLegend(legendItem.layerUID).length > 1"
                             :checked="item.visibility"
                             :value="item"
                             :legendItem="legendItem"
@@ -173,9 +148,7 @@ export default class LegendEntryV extends Vue {
         // Wait for symbology to load
         if (!this.legendItem.layer) {
             // This should never happen because the layer is loaded before the legend entry component is mounted
-            console.warn(
-                'Attempted to mount legend entry component with undefined layer'
-            );
+            console.warn('Attempted to mount legend entry component with undefined layer');
             return;
         }
 
@@ -184,9 +157,7 @@ export default class LegendEntryV extends Vue {
         }
 
         Promise.all(
-            this.legendItem.layer
-                .getLegend()
-                .map((item: LegendSymbology) => item.drawPromise)
+            this.legendItem.layer.getLegend().map((item: LegendSymbology) => item.drawPromise)
         ).then(() => {
             this.symbologyStack = this.legendItem.layer!.getLegend();
         });
@@ -197,8 +168,7 @@ export default class LegendEntryV extends Vue {
      */
     toggleSymbology(): void {
         if (this.legendItem._controlAvailable(Controls.Symbology)) {
-            this.legendItem.displaySymbology = !this.legendItem
-                .displaySymbology;
+            this.legendItem.displaySymbology = !this.legendItem.displaySymbology;
         }
     }
 
@@ -207,10 +177,7 @@ export default class LegendEntryV extends Vue {
      */
     toggleGrid() {
         if (this.legendItem._controlAvailable(Controls.Datatable)) {
-            this.$iApi.event.emit(
-                GlobalEvents.GRID_TOGGLE,
-                this.legendItem.layerUID
-            );
+            this.$iApi.event.emit(GlobalEvents.GRID_TOGGLE, this.legendItem.layerUID);
         }
     }
 
@@ -219,10 +186,7 @@ export default class LegendEntryV extends Vue {
      */
     toggleSettings() {
         if (this.legendItem._controlAvailable(Controls.Settings)) {
-            this.$iApi.event.emit(
-                GlobalEvents.SETTINGS_TOGGLE,
-                this.legendItem.layerUID
-            );
+            this.$iApi.event.emit(GlobalEvents.SETTINGS_TOGGLE, this.legendItem.layerUID);
         }
     }
 

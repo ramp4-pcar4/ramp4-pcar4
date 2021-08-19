@@ -12,9 +12,7 @@ class PanguardFixture extends FixtureInstance {
 
         this.$element.component('PanguardV', PanguardV);
 
-        const innerShell = this.$vApp.$el.getElementsByClassName(
-            'inner-shell'
-        )[0];
+        const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         const panguardInstance = this.extend(
             PanguardV,
             this.$element._context.components,
@@ -28,7 +26,6 @@ class PanguardFixture extends FixtureInstance {
         const wrapper = document.createElement('div');
         panguardInstance.mount(wrapper);
         innerShell.appendChild(wrapper.childNodes[0]);
-        console.log('adding panguard to shell...', this.$element, wrapper);
     }
 
     removed(): void {

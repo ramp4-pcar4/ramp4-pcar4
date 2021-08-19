@@ -9,27 +9,53 @@
         <toggle-button
             @change="config.onChange"
             :disabled="!!config.disabled"
-            :value="config.value"
-            :sync="true"
-            color="#3498DB"
-            :labels="false"
+            v-model="config.value"
+            :classes="{
+                container:
+                    'inline-block rounded-full outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-30',
+                toggle:
+                    'flex w-40 h-15 rounded-full relative cursor-pointer transition items-center box-content border-2',
+                toggleOn: 'bg-blue-500 border-blue-500 text-white',
+                toggleOff: 'bg-gray-200 border-gray-200 text-gray-700',
+                toggleOnDisabled:
+                    'bg-gray-300 border-gray-300 justify-start text-gray-400 cursor-not-allowed',
+                toggleOffDisabled:
+                    'bg-gray-200 border-gray-200 justify-end text-gray-400 cursor-not-allowed',
+                handle: 'inline-block bg-white w-15 h-15 rounded-full absolute transition-all',
+                handleOn: 'left-full transform -translate-x-full',
+                handleOff: 'left-0'
+            }"
         ></toggle-button>
     </div>
 </template>
 
 <script lang="ts">
-import { Vue, Options, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
-import { ToggleButton } from 'vue-js-toggle-button';
+import { defineComponent } from 'vue';
+import { Vue, Prop } from 'vue-property-decorator';
 
-@Options({
-    components: { 'toggle-button': ToggleButton }
-})
 export default class ToggleSwitchControl extends Vue {
     @Prop() config: any;
     @Prop() name!: string;
     @Prop() icon!: string;
 }
+
+// export default defineComponent({
+//     name: 'ToggleSwitchControl',
+//     components: {
+//         'toggle-button': Toggle
+//     },
+//     props: {
+//         config: Object,
+//         name: String,
+//         icon: String
+//     },
+
+//     data() {
+//         return {
+//             value: this.config?.value
+//         };
+//     }
+// });
 </script>
 
 <style lang="scss" scoped>

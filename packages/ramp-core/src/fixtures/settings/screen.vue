@@ -12,9 +12,7 @@
 
         <template #content>
             <div class="flex flex-col justify-center">
-                <span class="rv-subheader">{{
-                    $t('settings.label.display')
-                }}</span>
+                <span class="rv-subheader">{{ $t('settings.label.display') }}</span>
 
                 <div class="rv-settings-divider"></div>
 
@@ -57,9 +55,7 @@
             </div>
 
             <div class="flex flex-col justify-center">
-                <span class="rv-subheader">{{
-                    $t('settings.label.data')
-                }}</span>
+                <span class="rv-subheader">{{ $t('settings.label.data') }}</span>
 
                 <div class="rv-settings-divider"></div>
 
@@ -79,9 +75,7 @@
             </div>
 
             <div class="flex flex-col justify-center">
-                <span class="rv-subheader">{{
-                    $t('settings.label.interval')
-                }}</span>
+                <span class="rv-subheader">{{ $t('settings.label.interval') }}</span>
 
                 <div class="rv-settings-divider"></div>
 
@@ -136,34 +130,24 @@ export default class SettingsScreenV extends Vue {
         });
 
         this.handlers.push(
-            this.$iApi.event.on(
-                GlobalEvents.LAYER_VISIBILITYCHANGE,
-                (newVisibility: any) => {
-                    if (this.uid === newVisibility.uid) {
-                        this.visibilityModel = newVisibility.visibility;
-                    }
+            this.$iApi.event.on(GlobalEvents.LAYER_VISIBILITYCHANGE, (newVisibility: any) => {
+                if (this.uid === newVisibility.uid) {
+                    this.visibilityModel = newVisibility.visibility;
                 }
-            )
+            })
         );
 
         this.handlers.push(
-            this.$iApi.event.on(
-                GlobalEvents.LAYER_RELOAD_END,
-                (reloadedLayer: LayerInstance) => {
-                    if (reloadedLayer.layerType === LayerType.MAPIMAGE) {
-                        // Check if this.uid is a child of reloadedLayer
-                        if (
-                            reloadedLayer
-                                .getLayerTree()
-                                .findChildByUid(this.uid)
-                        ) {
-                            this.visibilityModel = true;
-                        }
-                    } else if (this.uid === reloadedLayer.uid) {
+            this.$iApi.event.on(GlobalEvents.LAYER_RELOAD_END, (reloadedLayer: LayerInstance) => {
+                if (reloadedLayer.layerType === LayerType.MAPIMAGE) {
+                    // Check if this.uid is a child of reloadedLayer
+                    if (reloadedLayer.getLayerTree().findChildByUid(this.uid)) {
                         this.visibilityModel = true;
                     }
+                } else if (this.uid === reloadedLayer.uid) {
+                    this.visibilityModel = true;
                 }
-            )
+            })
         );
     }
 
