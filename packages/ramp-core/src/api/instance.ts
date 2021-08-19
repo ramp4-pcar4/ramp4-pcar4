@@ -20,6 +20,7 @@ import {
 interface RampOptions {
     loadDefaultFixtures?: boolean;
     loadDefaultEvents?: boolean;
+    startRequired?: boolean;
 }
 
 export class InstanceAPI {
@@ -28,6 +29,8 @@ export class InstanceAPI {
     readonly event: EventAPI;
     readonly geo: GeoAPI;
     readonly notifications: NotificationAPI;
+    readonly startRequired: boolean;
+    started: boolean = false;
 
     /**
      * The instance of Vue R4MP application controlled by this InstanceAPI.
@@ -44,6 +47,12 @@ export class InstanceAPI {
         configs?: RampConfigs,
         options?: RampOptions
     ) {
+        if (options?.startRequired) {
+            this.startRequired = true;
+        } else {
+            this.startRequired = false;
+        }
+
         this.event = new EventAPI(this);
 
         this.$vApp = createApp(element, this);
@@ -236,6 +245,16 @@ export class InstanceAPI {
      */
     get isFullscreen(): boolean {
         return this._isFullscreen;
+    }
+
+    start(): void {
+        // delay map loading
+        if (!this.started && this.startRequired) {
+            this.event.emit(GlobalEvents.MAP_START);
+            this.started = true;
+        } else if (this.started) {
+            console.warn('start has already been called');
+        }
     }
 }
 
