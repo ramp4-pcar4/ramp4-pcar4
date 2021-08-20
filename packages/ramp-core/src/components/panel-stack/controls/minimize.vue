@@ -3,7 +3,6 @@
         <button
             class="text-gray-500 hover:text-black p-6"
             :class="{ 'text-gray-700': active }"
-            @click="$emit('click')"
             :content="$t('panels.controls.minimize')"
             v-tippy="{ placement: 'bottom' }"
         >

@@ -3,8 +3,13 @@
         <template #header>
             <geosearch-bar></geosearch-bar>
         </template>
+
         <template #controls>
-            <pin @click="panel.pin()" :active="isPinned" v-if="$iApi.screenSize !== 'xs'"></pin>
+            <pin
+                @click="panel.pin()"
+                :active="panel.isPinned"
+                v-if="$iApi.screenSize !== 'xs'"
+            ></pin>
             <close @click="panel.close()" v-if="$iApi.screenSize !== 'xs'"></close>
         </template>
 
@@ -110,12 +115,7 @@ export default defineComponent({
             loadingResults: get(GeosearchStore.loadingResults)
         };
     },
-
     methods: {
-        isPinned(): boolean {
-            return this.panel.isPinned;
-        },
-
         // zoom in to a clicked result
         zoomIn(result: any): void {
             let zoomPoint = new RAMP.GEO.Point('zoomies', result.position);
