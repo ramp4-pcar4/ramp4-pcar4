@@ -164,12 +164,11 @@ export default class LegendOptionsV extends Vue {
     toggleMetadata() {
         if (this.legendItem._controlAvailable(Controls.Metadata)) {
             // TODO: toggle metadata panel through API/store call
-            // this.$iApi.event.emit('metadata/open', {
-            //     type: 'html',
-            //     layer: 'Sample Layer Name',
-            //     url:
-            //         'https://ryan-coulson.com/RAMPMetadataDemo.html'
-            // });
+            this.$iApi.event.emit('metadata/open', {
+                type: 'html',
+                layer: 'Sample Layer Name',
+                url: 'https://ryan-coulson.com/RAMPMetadataDemo.html'
+            });
         }
     }
 
