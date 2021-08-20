@@ -120,84 +120,91 @@
 
 <script lang="ts">
 import { GlobalEvents } from '@/api';
-import { LayerType } from '@/geo/api';
-import { Vue, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { defineComponent, toRaw } from 'vue';
+import { call } from '@/store/pathify-helper';
 
 import { LegendStore } from '../store';
 import { LegendEntry, Controls } from '../store/legend-defs';
 
-export default class LegendOptionsV extends Vue {
-    @Prop() legendItem!: LegendEntry;
-    @Call(LegendStore.removeLayerEntry) removeLayerEntry!: (entry: string) => void;
+export default defineComponent({
+    name: 'LegendOptionsV',
+    props: {
+        legendItem: LegendEntry
+    },
+    data() {
+        return {
+            removeLayerEntry: call(LegendStore.removeLayerEntry)
+        };
+    },
+    methods: {
+        /**
+         * Display symbology stack for the layer.
+         */
+        toggleSymbology(): void {
+            if (this.legendItem!._controlAvailable(Controls.Symbology)) {
+                this.legendItem!.displaySymbology = !this.legendItem!.displaySymbology;
+            }
+        },
 
-    /**
-     * Display symbology stack for the layer.
-     */
-    toggleSymbology(): void {
-        if (this.legendItem._controlAvailable(Controls.Symbology)) {
-            this.legendItem.displaySymbology = !this.legendItem.displaySymbology;
-        }
-    }
+        /**
+         * Toggles data table panel to open/close for the LegendItem.
+         */
+        toggleGrid() {
+            if (this.legendItem!._controlAvailable(Controls.Datatable)) {
+                this.$iApi.event.emit(GlobalEvents.GRID_TOGGLE, this.legendItem!.layerUID);
+            }
+        },
 
-    /**
-     * Toggles data table panel to open/close for the LegendItem.
-     */
-    toggleGrid() {
-        if (this.legendItem._controlAvailable(Controls.Datatable)) {
-            this.$iApi.event.emit(GlobalEvents.GRID_TOGGLE, this.legendItem.layerUID);
-        }
-    }
+        /**
+         * Toggles settings panel to open/close type for the LegendItem.
+         */
+        toggleSettings() {
+            if (this.legendItem!._controlAvailable(Controls.Settings)) {
+                this.$iApi.event.emit(GlobalEvents.SETTINGS_TOGGLE, this.legendItem!.layerUID);
+            }
+        },
 
-    /**
-     * Toggles settings panel to open/close type for the LegendItem.
-     */
-    toggleSettings() {
-        if (this.legendItem._controlAvailable(Controls.Settings)) {
-            this.$iApi.event.emit(GlobalEvents.SETTINGS_TOGGLE, this.legendItem.layerUID);
-        }
-    }
+        /**
+         * Toggles metadata panel to open/close for the LegendItem.
+         */
+        toggleMetadata() {
+            if (this.legendItem!._controlAvailable(Controls.Metadata)) {
+                // TODO: toggle metadata panel through API/store call
+                this.$iApi.event.emit('metadata/open', {
+                    type: 'html',
+                    layer: 'Sample Layer Name',
+                    url: 'https://ryan-coulson.com/RAMPMetadataDemo.html'
+                });
+            }
+        },
 
-    /**
-     * Toggles metadata panel to open/close for the LegendItem.
-     */
-    toggleMetadata() {
-        if (this.legendItem._controlAvailable(Controls.Metadata)) {
-            // TODO: toggle metadata panel through API/store call
-            this.$iApi.event.emit('metadata/open', {
-                type: 'html',
-                layer: 'Sample Layer Name',
-                url: 'https://ryan-coulson.com/RAMPMetadataDemo.html'
-            });
-        }
-    }
+        /**
+         * Removes layer from map.
+         */
+        removeLayer() {
+            if (this.legendItem!._controlAvailable(Controls.Remove)) {
+                const layerTree = toRaw(this.legendItem!.layer!).getLayerTree();
+                if (!(layerTree.children.length === 1 && layerTree.children[0].isLayer)) {
+                    // cheap hack for MIL with multiple children - set visibility to false and remove legend entry
+                    // TODO get rid of this when/if MIL sublayers can be removed for real
+                    this.removeLayerEntry(this.legendItem!.layerUID!);
+                    this.legendItem!.layer!.setVisibility(false, this.legendItem!._layerIndex);
+                } else {
+                    this.$iApi.geo.map.removeLayer(this.legendItem!.layerUID!);
+                }
+            }
+        },
 
-    /**
-     * Removes layer from map.
-     */
-    removeLayer() {
-        if (this.legendItem._controlAvailable(Controls.Remove)) {
-            const layerTree = this.legendItem.layer!.getLayerTree();
-            if (!(layerTree.children.length === 1 && layerTree.children[0].isLayer)) {
-                // cheap hack for MIL with multiple children - set visibility to false and remove legend entry
-                // TODO get rid of this when/if MIL sublayers can be removed for real
-                this.removeLayerEntry(this.legendItem.layerUID!);
-                this.legendItem.layer!.setVisibility(false, this.legendItem._layerIndex);
-            } else {
-                this.$iApi.geo.map.removeLayer(this.legendItem.layerUID!);
+        /**
+         * Reloads a layer on the map.
+         */
+        reloadLayer() {
+            if (this.legendItem!._controlAvailable(Controls.Reload)) {
+                toRaw(this.legendItem!.layer!).reload();
             }
         }
     }
-
-    /**
-     * Reloads a layer on the map.
-     */
-    reloadLayer() {
-        if (this.legendItem._controlAvailable(Controls.Reload)) {
-            this.legendItem.layer!.reload();
-        }
-    }
-}
+});
 </script>
 
 <style lang="scss" scoped>
