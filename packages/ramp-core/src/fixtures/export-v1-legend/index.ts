@@ -148,6 +148,10 @@ class ExportV1LegendFixture extends FixtureInstance
         columnWidth: number,
         columns: number
     ) {
+        if (items.length === 0) {
+            return new fabric.Group();
+        }
+
         let curColumn: number = 0;
         let curTop: number = 0;
         let accumLength: number = 0;
