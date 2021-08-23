@@ -93,7 +93,7 @@ export default class DropdownMenuV extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .rv-dropdown > * {
     display: block;
     padding: 0.5rem 1rem 0.5rem 1rem;

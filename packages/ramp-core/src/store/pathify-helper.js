@@ -1,6 +1,6 @@
 /* temporary solution to get vuex-pathify functionality working until it is supported for Vue 3 */
 // TODO: convert to TS (there was some complex typing errors going on)
-import { computed, ref, reactive } from 'vue';
+import { computed } from 'vue';
 import { store } from '@/store/store';
 
 export function get(path) {
@@ -15,7 +15,7 @@ export function get(path) {
 export function sync(path) {
     return computed({
         get() {
-            store.get(path);
+            return store.get(path);
         },
         set(value) {
             store.set(path, value);

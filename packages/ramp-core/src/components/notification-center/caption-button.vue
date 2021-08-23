@@ -17,11 +17,9 @@
                         d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"
                     />
                 </svg>
-                <span
-                    v-if="number && number > 0"
-                    class="number rounded-full w-18 text-white"
-                    >{{ number }}</span
-                >
+                <span v-if="number && number > 0" class="number rounded-full w-18 text-white">{{
+                    number
+                }}</span>
             </div>
         </template>
         <template v-slot:default="scope">
@@ -46,9 +44,7 @@
                                 class="fill-current h-24 w-24"
                             >
                                 <path d="M0 0h24v24H0z" fill="none" />
-                                <path
-                                    d="M5 13h14v-2H5v2zm-2 4h14v-2H3v2zM7 7v2h14V7H7z"
-                                />
+                                <path d="M5 13h14v-2H5v2zm-2 4h14v-2H3v2zM7 7v2h14V7H7z" />
                             </svg>
                         </button>
                         <close @click="scope.close"></close>
@@ -63,8 +59,7 @@
 <script lang="ts">
 import { ComputedRef } from 'vue';
 import { Vue, Options } from 'vue-property-decorator';
-import { Call, Get } from 'vuex-pathify';
-import { get } from '@/store/pathify-helper';
+import { get, call } from '@/store/pathify-helper';
 
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 import NotificationListV from './notification-list.vue';
@@ -77,8 +72,7 @@ import NotificationListV from './notification-list.vue';
 })
 export default class NotificationsCaptionButtonV extends Vue {
     number: ComputedRef<Number> = get('notification/notificationNumber');
-    // @Get('notification/notificationNumber') number!: Number;
-    @Call('notification/clearAll') clearAll!: () => void;
+    clearAll: () => void = call('notification/clearAll');
 }
 </script>
 

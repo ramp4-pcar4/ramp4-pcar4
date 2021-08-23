@@ -48,19 +48,13 @@ const getters = {
 };
 
 const actions = {
-    [PanelAction.openPanel](
-        context: PanelContext,
-        value: { panel: PanelInstance }
-    ): void {
+    [PanelAction.openPanel](context: PanelContext, value: { panel: PanelInstance }): void {
         context.commit(PanelMutation.OPEN_PANEL, value);
         context.commit(PanelMutation.SET_PRIORITY, value);
         context.dispatch(PanelAction.updateVisible);
     },
 
-    [PanelAction.closePanel](
-        context: PanelContext,
-        value: { panel: PanelConfig }
-    ): void {
+    [PanelAction.closePanel](context: PanelContext, value: { panel: PanelConfig }): void {
         if (context.state.priority === value.panel) {
             context.commit(PanelMutation.SET_PRIORITY, null);
         }
@@ -93,8 +87,7 @@ const actions = {
         // add panels until theres no space in the stack
         for (
             let i = context.state.orderedItems.length - 1;
-            i >= 0 &&
-            remainingWidth >= (context.state.orderedItems[i].width || 350);
+            i >= 0 && remainingWidth >= (context.state.orderedItems[i].width || 350);
             i--
         ) {
             remainingWidth -= context.state.orderedItems[i].width || 350;
@@ -102,17 +95,13 @@ const actions = {
         }
 
         // if pinned isn't visible we need to change the order of the panels (to make it visible)
-        if (
-            context.state.pinned &&
-            !nowVisible.includes(context.state.pinned)
-        ) {
+        if (context.state.pinned && !nowVisible.includes(context.state.pinned)) {
             let lastElement: PanelInstance;
 
             // remove elements from visible until theres room for pinned
             for (
                 let i = 0;
-                i < nowVisible.length - 1 &&
-                remainingWidth < (context.state.pinned.width || 350);
+                i < nowVisible.length - 1 && remainingWidth < (context.state.pinned.width || 350);
                 i++
             ) {
                 lastElement = nowVisible.shift()!;
@@ -132,12 +121,8 @@ const actions = {
                 }
             }
 
-            const pinnedIndex = context.state.orderedItems.indexOf(
-                context.state.pinned
-            );
-            const lastRemovedIndex = context.state.orderedItems.indexOf(
-                lastElement!
-            );
+            const pinnedIndex = context.state.orderedItems.indexOf(context.state.pinned);
+            const lastRemovedIndex = context.state.orderedItems.indexOf(lastElement!);
             // clone the current order, splice out the pinned item, insert it back in after the last element we removed from visible
             const newPanelOrder = context.state.orderedItems.slice();
             newPanelOrder.splice(pinnedIndex, 1);
@@ -153,24 +138,15 @@ const actions = {
 };
 
 const mutations = {
-    [PanelMutation.REGISTER_PANEL](
-        state: PanelState,
-        { panel }: { panel: PanelInstance }
-    ): void {
+    [PanelMutation.REGISTER_PANEL](state: PanelState, { panel }: { panel: PanelInstance }): void {
         state.items = { ...state.items, [panel.id]: panel };
     },
 
-    [PanelMutation.OPEN_PANEL](
-        state: PanelState,
-        { panel }: { panel: PanelInstance }
-    ): void {
+    [PanelMutation.OPEN_PANEL](state: PanelState, { panel }: { panel: PanelInstance }): void {
         state.orderedItems = [...state.orderedItems, panel];
     },
 
-    [PanelMutation.CLOSE_PANEL](
-        state: PanelState,
-        { panel }: { panel: PanelInstance }
-    ): void {
+    [PanelMutation.CLOSE_PANEL](state: PanelState, { panel }: { panel: PanelInstance }): void {
         const index = state.orderedItems.indexOf(panel);
         if (index !== -1) {
             state.orderedItems = [

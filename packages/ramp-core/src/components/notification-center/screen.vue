@@ -25,9 +25,7 @@
                             class="fill-current h-24 w-24"
                         >
                             <path d="M0 0h24v24H0z" fill="none" />
-                            <path
-                                d="M5 13h14v-2H5v2zm-2 4h14v-2H3v2zM7 7v2h14V7H7z"
-                            />
+                            <path d="M5 13h14v-2H5v2zm-2 4h14v-2H3v2zM7 7v2h14V7H7z" />
                         </svg>
                     </button>
                 </div>
@@ -39,7 +37,7 @@
 
 <script lang="ts">
 import { Vue, Options, Prop } from 'vue-property-decorator';
-import { Call } from 'vuex-pathify';
+import { call } from '@/store/pathify-helper';
 
 import { PanelInstance } from '@/api';
 
@@ -53,7 +51,7 @@ import NotificationListV from './notification-list.vue';
 export default class NotificationsScreenV extends Vue {
     @Prop() panel!: PanelInstance;
 
-    @Call('notification/clearAll') clearAll!: () => void;
+    clearAll: () => void = call('notification/clearAll');
 
     get isPinned(): boolean {
         return this.panel.isPinned;

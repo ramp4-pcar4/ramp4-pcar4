@@ -293,7 +293,6 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
     const vueElement = createRampApp(App)
         .use(store)
         .use(i18n)
-        //.use(VueFormulate)
         .use(VueTippy, {
             directive: 'tippy', // => v-tippy
             component: 'tippy' // => <tippy/>

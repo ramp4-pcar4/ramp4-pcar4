@@ -1,21 +1,13 @@
 <template>
     <li
         class="flex-col default-focus-style px-4"
-        :content="
-            $t(
-                open
-                    ? 'notifications.controls.collapse'
-                    : 'notifications.controls.expand'
-            )
-        "
+        :content="$t(open ? 'notifications.controls.collapse' : 'notifications.controls.expand')"
         v-tippy="{ onShow: tooltipShow }"
         @click="open = !open"
         :class="notification.messageList ? 'cursor-pointer' : ''"
     >
         <div class="flex items-center h-32">
-            <span
-                >{{ icons[notification.type] }} {{ notification.message }}</span
-            >
+            <span>{{ icons[notification.type] }} {{ notification.message }}</span>
             <span class="flex-grow"></span>
             <div
                 class="mx-4 p-4 pointer-events-none"
@@ -28,9 +20,7 @@
                     class="fill-current w-16 h-16"
                 >
                     <path d="M0 0h24v24H0V0z" fill="none" />
-                    <path
-                        d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"
-                    />
+                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
                 </svg>
             </div>
             <button
@@ -63,15 +53,13 @@
 
 <script lang="ts">
 import { Vue, Prop } from 'vue-property-decorator';
-import { Call } from 'vuex-pathify';
+import { call } from '@/store/pathify-helper';
 
 import { NotificationType } from '@/api/notifications';
 
 export default class NotificationListV extends Vue {
     @Prop() notification!: any;
-    @Call('notification/removeNotification') removeNotification!: (
-        notification: any
-    ) => void;
+    removeNotification: (notification: any) => void = call('notification/removeNotification');
 
     open: boolean = false;
 

@@ -9,14 +9,11 @@
                     })
                 }}
 
-                <span
-                    v-if="this.filterInfo.visibleRows !== this.rowData.length"
-                    >{{
-                        $t('grid.filters.label.filtered', {
-                            max: this.rowData.length
-                        })
-                    }}</span
-                >
+                <span v-if="this.filterInfo.visibleRows !== this.rowData.length">{{
+                    $t('grid.filters.label.filtered', {
+                        max: this.rowData.length
+                    })
+                }}</span>
             </span>
             <div class="flex-grow"></div>
 
@@ -45,10 +42,7 @@
             </button>
 
             <!-- show/hide columns -->
-            <column-dropdown
-                :columnApi="columnApi"
-                :columnDefs="columnDefs"
-            ></column-dropdown>
+            <column-dropdown :columnApi="columnApi" :columnDefs="columnDefs"></column-dropdown>
 
             <!-- toggle column filters -->
             <button
@@ -101,11 +95,10 @@
 <script lang="ts">
 import { ComputedRef } from 'vue';
 import { Vue, Options, Prop } from 'vue-property-decorator';
-import { Get, Sync } from 'vuex-pathify';
 import { LayerInstance, GlobalEvents } from '@/api/internal';
 import { LayerStore } from '@/store/modules/layer';
 import { CoreFilter } from '@/geo/api';
-import { get } from '@/store/pathify-helper';
+import { get, sync } from '@/store/pathify-helper';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
@@ -148,10 +141,7 @@ const TEXT_TYPE: string = 'string';
 export default class GridTableComponentV extends Vue {
     @Prop() layerUid!: string;
     getLayerByUid: any = get(LayerStore.getLayerByUid);
-    // @Get('layer/getLayerByUid') getLayerByUid!: (
-    //     uid: string
-    // ) => LayerInstance | undefined;
-    @Sync(GridStore.grids) grids!: { [uid: string]: GridConfig };
+    grids: any = sync(GridStore.grids);
 
     handlers: Array<string> = [];
 
@@ -202,14 +192,10 @@ export default class GridTableComponentV extends Vue {
             tabToNextCell: () => {
                 return null;
             },
-            onModelUpdated: debounce(300, () =>
-                this.columnApi.autoSizeAllColumns()
-            )
+            onModelUpdated: debounce(300, () => this.columnApi.autoSizeAllColumns())
         };
 
-        const fancyLayer: LayerInstance | undefined = this.getLayerByUid.value(
-            this.layerUid
-        );
+        const fancyLayer: LayerInstance | undefined = this.getLayerByUid.value(this.layerUid);
         if (fancyLayer === undefined) {
             // this really shouldn't happen unless the wrong API call is made, but maybe we should
             // do something else here anyway.
@@ -223,18 +209,12 @@ export default class GridTableComponentV extends Vue {
         }
 
         fancyLayer.isLayerLoaded().then(() => {
-            const tableAttributePromise = fancyLayer.getTabularAttributes(
-                this.layerUid
-            );
+            const tableAttributePromise = fancyLayer.getTabularAttributes(this.layerUid);
 
             tableAttributePromise.then((tableAttributes: any) => {
                 // Iterate through table columns and set up column definitions and column filter stuff.
                 // Also adds the `rvSymbol` and `rvInteractive` columns to the table.
-                [
-                    'rvSymbol',
-                    'rvInteractive',
-                    ...tableAttributes.columns
-                ].forEach((column: any) => {
+                ['rvSymbol', 'rvInteractive', ...tableAttributes.columns].forEach((column: any) => {
                     let col: ColumnDefinition = {
                         headerName: column.title || '',
                         field: column.data || column,
@@ -267,9 +247,7 @@ export default class GridTableComponentV extends Vue {
                             col.minWidth = 400;
                             col.cellRenderer = (cell: any) => {
                                 // get YYYY-MM-DD from date
-                                return new Date(cell.value)
-                                    .toISOString()
-                                    .slice(0, 10);
+                                return new Date(cell.value).toISOString().slice(0, 10);
                             };
                         } else if (fieldInfo.type === TEXT_TYPE) {
                             if (col.isSelector) {
@@ -326,8 +304,7 @@ export default class GridTableComponentV extends Vue {
                     if (
                         filterKey !== CoreFilter.GRID &&
                         uid &&
-                        (uid === this.layerUid ||
-                            this.getLayerByUid(uid)!.uid == this.layerUid)
+                        (uid === this.layerUid || this.getLayerByUid(uid)!.uid == this.layerUid)
                     ) {
                         this.applyLayerFilters();
                     }
@@ -340,8 +317,7 @@ export default class GridTableComponentV extends Vue {
                 ({ visibility, uid }: { visibility: boolean; uid: string }) => {
                     if (
                         uid &&
-                        (uid === this.layerUid ||
-                            uid === this.getLayerByUid(this.layerUid)!.uid)
+                        (uid === this.layerUid || uid === this.getLayerByUid(this.layerUid)!.uid)
                     ) {
                         this.applyLayerFilters();
                     }
@@ -409,10 +385,7 @@ export default class GridTableComponentV extends Vue {
                 : '';
 
         colDef.floatingFilterComponent = 'dateFloatingFilter';
-        colDef.filterParams.comparator = function(
-            filterDate: any,
-            entryDate: any
-        ) {
+        colDef.filterParams.comparator = function(filterDate: any, entryDate: any) {
             let entry = new Date(entryDate);
 
             // We need to specifically compare the UTC year, month, and date because
@@ -588,9 +561,9 @@ export default class GridTableComponentV extends Vue {
                 isStatic: true,
                 maxWidth: 82,
                 cellRenderer: (cell: any) => {
-                    const layer:
-                        | LayerInstance
-                        | undefined = this.getLayerByUid.value(this.layerUid);
+                    const layer: LayerInstance | undefined = this.getLayerByUid.value(
+                        this.layerUid
+                    );
                     if (layer === undefined) return;
                     const iconContainer = document.createElement('span');
                     const oid = cell.data[this.oidField];
@@ -712,8 +685,7 @@ export default class GridTableComponentV extends Vue {
                         let sqlWhere = `UPPER(${col}) LIKE \'${newVal
                             .replace(/\*/g, '%')
                             .toUpperCase()}%\'`;
-                        return sqlWhere.includes('ௌ%') ||
-                            sqlWhere.includes('ௌ_')
+                        return sqlWhere.includes('ௌ%') || sqlWhere.includes('ௌ_')
                             ? `${sqlWhere} ESCAPE \'ௌ\'`
                             : sqlWhere;
                     }
@@ -723,12 +695,10 @@ export default class GridTableComponentV extends Vue {
                 const dateFrom = new Date(colFilter.dateFrom);
                 const dateTo = new Date(colFilter.dateTo);
                 const from = dateFrom
-                    ? `${dateFrom.getMonth() +
-                          1}/${dateFrom.getDate()}/${dateFrom.getFullYear()}`
+                    ? `${dateFrom.getMonth() + 1}/${dateFrom.getDate()}/${dateFrom.getFullYear()}`
                     : undefined;
                 const to = dateTo
-                    ? `${dateTo.getMonth() +
-                          1}/${dateTo.getDate()}/${dateTo.getFullYear()}`
+                    ? `${dateTo.getMonth() + 1}/${dateTo.getDate()}/${dateTo.getFullYear()}`
                     : undefined;
                 switch (colFilter.type) {
                     case 'greaterThanOrEqual':
@@ -788,10 +758,7 @@ export default class GridTableComponentV extends Vue {
                             row.data[column.colId] === null
                                 ? null
                                 : row.data[column.colId].toString();
-                        if (
-                            cellData !== null &&
-                            re.test(cellData.toUpperCase())
-                        ) {
+                        if (cellData !== null && re.test(cellData.toUpperCase())) {
                             rowSql
                                 ? (rowSql = rowSql.concat(
                                       ' AND ',
@@ -807,23 +774,16 @@ export default class GridTableComponentV extends Vue {
                                 : (foundVal = true);
                             break;
                         }
-                    } else if (
-                        column.colDef.filter === 'agNumberColumnFilter'
-                    ) {
+                    } else if (column.colDef.filter === 'agNumberColumnFilter') {
                         const cellData =
-                            row.data[column.colId] === null
-                                ? null
-                                : row.data[column.colId];
+                            row.data[column.colId] === null ? null : row.data[column.colId];
                         if (cellData !== null && re.test(cellData)) {
                             rowSql
                                 ? (rowSql = rowSql.concat(
                                       ' AND ',
                                       `(${column.colId} = ${cellData})`
                                   ))
-                                : (rowSql = rowSql.concat(
-                                      '(',
-                                      `(${column.colId} = ${cellData})`
-                                  ));
+                                : (rowSql = rowSql.concat('(', `(${column.colId} = ${cellData})`));
                             filteredColumns.includes(rowSql + ')')
                                 ? (foundVal = false)
                                 : (foundVal = true);
