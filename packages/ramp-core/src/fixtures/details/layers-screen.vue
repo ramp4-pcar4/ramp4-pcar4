@@ -11,7 +11,7 @@
             <div class="p-5">
                 {{
                     $t('details.layers.found', {
-                        numResults: payloadResults,
+                        numResults: getPayloadResults(),
                         numLayers: payload.length
                     })
                 }}
@@ -33,78 +33,138 @@
 </template>
 
 <script lang="ts">
-import { Vue, Prop } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
+import { defineComponent } from 'vue';
 import { get } from '@/store/pathify-helper';
 import { DetailsStore } from './store';
 
 import { LayerInstance, PanelInstance } from '@/api';
 import { IdentifyResult } from '@/geo/api';
 
-export default class DetailsLayersScreenV extends Vue {
-    @Prop() panel!: PanelInstance;
-    payload: any = get(DetailsStore.payload);
+export default defineComponent({
+    name: 'DetailsLayersScreenV',
+    props: {
+        panel: PanelInstance
+    },
+    data() {
+        return {
+            payload: get(DetailsStore.payload),
+            getLayerByUid: get('layer/getLayerByUid'),
+            layers: get('layer/layers')
+        };
+    },
+    methods: {
+        /**
+         * Switches the panel screen to display the data for a given result.
+         */
+        openResult(index: number) {
+            if (this.getLayerByUid(this.payload[index].uid)!.layerType === 'ogcWms') {
+                // skip results screen for wms layers
+                this.panel!.show({
+                    screen: 'details-screen-item',
+                    props: { resultIndex: index, layerType: 'ogcWms', itemIndex: 0 }
+                });
+            } else {
+                this.panel!.show({
+                    screen: 'details-screen-result',
+                    props: { resultIndex: index }
+                });
+            }
+        },
 
-    // @Get(DetailsStore.payload) payload!: IdentifyResult[];
+        layerInfo(idx: number) {
+            const layerInfo = this.payload[idx];
+            // Check to see if there is a custom template defined for the selected layer.
+            let item: LayerInstance | undefined = this.layers
+                .map((layer: any) => {
+                    let layerNode = layer.getLayerTree();
 
-    getLayerByUid: any = get('layer/getLayerByUid');
+                    if (!layerNode) return;
 
-    // @Get('layer/getLayerByUid') getLayerByUid!: (
-    //     uid: string
-    // ) => LayerInstance | undefined;
-    layers: LayerInstance[] = <LayerInstance[]>(<unknown>get('layer/layers'));
-    // @Get('layer/layers') layers!: LayerInstance[];
+                    // Determine if the selected UID is a child of this layer.
+                    if (layerNode.findChildByUid(layerInfo.uid) !== undefined) {
+                        return layer;
+                    }
+                })
+                .filter((node: any) => node !== undefined)[0];
 
-    /**
-     * Switches the panel screen to display the data for a given result.
-     */
-    openResult(index: number) {
-        if (
-            this.getLayerByUid(this.payload[index].uid)!.layerType === 'ogcWms'
-        ) {
-            // skip results screen for wms layers
-            this.panel.show({
-                screen: 'details-screen-item',
-                props: { resultIndex: index, layerType: 'ogcWms', itemIndex: 0 }
-            });
-        } else {
-            this.panel.show({
-                screen: 'details-screen-result',
-                props: { resultIndex: index }
-            });
+            if (!item) return;
+
+            return item.getName(layerInfo.uid);
+        },
+
+        /**
+         * Calculates the total number of results received by identify.
+         */
+        getPayloadResults(): number {
+            return this.payload
+                .map((r: IdentifyResult) => r.items.length)
+                .reduce((a: number, b: number) => a + b, 0);
         }
     }
+});
 
-    layerInfo(idx: number) {
-        const layerInfo = this.payload[idx];
-        // Check to see if there is a custom template defined for the selected layer.
-        let item: LayerInstance | undefined = this.layers
-            .map(layer => {
-                let layerNode = layer.getLayerTree();
+// export default class DetailsLayersScreenV extends Vue {
+//     @Prop() panel!: PanelInstance;
+//     payload: any = get(DetailsStore.payload);
 
-                if (!layerNode) return;
+//     // @Get(DetailsStore.payload) payload!: IdentifyResult[];
 
-                // Determine if the selected UID is a child of this layer.
-                if (layerNode.findChildByUid(layerInfo.uid) !== undefined) {
-                    return layer;
-                }
-            })
-            .filter(node => node !== undefined)[0];
+//     getLayerByUid: any = get('layer/getLayerByUid');
 
-        if (!item) return;
+//     // @Get('layer/getLayerByUid') getLayerByUid!: (
+//     //     uid: string
+//     // ) => LayerInstance | undefined;
+//     layers: LayerInstance[] = <LayerInstance[]>(<unknown>get('layer/layers'));
+//     // @Get('layer/layers') layers!: LayerInstance[];
 
-        return item.getName(layerInfo.uid);
-    }
+//     /**
+//      * Switches the panel screen to display the data for a given result.
+//      */
+//     openResult(index: number) {
+//         if (this.getLayerByUid(this.payload[index].uid)!.layerType === 'ogcWms') {
+//             // skip results screen for wms layers
+//             this.panel.show({
+//                 screen: 'details-screen-item',
+//                 props: { resultIndex: index, layerType: 'ogcWms', itemIndex: 0 }
+//             });
+//         } else {
+//             this.panel.show({
+//                 screen: 'details-screen-result',
+//                 props: { resultIndex: index }
+//             });
+//         }
+//     }
 
-    /**
-     * Calculates the total number of results received by identify.
-     */
-    get payloadResults(): number {
-        return this.payload
-            .map((r: IdentifyResult) => r.items.length)
-            .reduce((a: number, b: number) => a + b, 0);
-    }
-}
+//     layerInfo(idx: number) {
+//         const layerInfo = this.payload[idx];
+//         // Check to see if there is a custom template defined for the selected layer.
+//         let item: LayerInstance | undefined = this.layers
+//             .map(layer => {
+//                 let layerNode = layer.getLayerTree();
+
+//                 if (!layerNode) return;
+
+//                 // Determine if the selected UID is a child of this layer.
+//                 if (layerNode.findChildByUid(layerInfo.uid) !== undefined) {
+//                     return layer;
+//                 }
+//             })
+//             .filter(node => node !== undefined)[0];
+
+//         if (!item) return;
+
+//         return item.getName(layerInfo.uid);
+//     }
+
+//     /**
+//      * Calculates the total number of results received by identify.
+//      */
+//     get payloadResults(): number {
+//         return this.payload
+//             .map((r: IdentifyResult) => r.items.length)
+//             .reduce((a: number, b: number) => a + b, 0);
+//     }
+// }
 </script>
 
 <style lang="scss"></style>
