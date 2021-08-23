@@ -5,7 +5,6 @@
             position="left-start"
             :tooltip="$t('legend.entry.options')"
             tooltip-placement="left"
-            :key="legendItem.uid"
         >
             <template #header>
                 <div class="flex p-8">

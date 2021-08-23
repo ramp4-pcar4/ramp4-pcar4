@@ -1,10 +1,6 @@
 <template>
     <div class="legend-item">
-        <div
-            class="legend-item-header"
-            v-focus-item="'show-truncate'"
-            truncate-trigger
-        >
+        <div class="legend-item-header" v-focus-item="'show-truncate'" truncate-trigger>
             <!-- smiley face. very important that we migrate this -->
             <div class="flex pr-10">
                 <svg
@@ -37,68 +33,54 @@
 </template>
 
 <script lang="ts">
-import { ComputedRef } from 'vue';
-import { Vue, Options, Prop, Watch } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
+import { defineComponent, PropType } from 'vue';
 import { get } from '@/store/pathify-helper';
-
 import { LayerStore } from '@/store/modules/layer';
 import { LayerInstance } from '@/api/internal';
-
 import { LegendStore } from '../store';
-import { LegendEntry, LegendGroup, LegendTypes } from '../store/legend-defs';
+import { LegendEntry } from '../store/legend-defs';
 
-import LegendCheckboxV from './checkbox.vue';
-import LegendSymbologyStackV from './symbology-stack.vue';
-import { LegendSymbology } from '@/geo/api';
-
-@Options({
-    components: {
-        checkbox: LegendCheckboxV,
-        'symbology-stack': LegendSymbologyStackV
-    }
-})
-export default class LegendPlaceholderV extends Vue {
-    @Prop() legendItem!: LegendEntry;
-    layers: ComputedRef<LayerInstance[]> = get(LayerStore.layers);
-    // @Get(LayerStore.layers) layers!: LayerInstance[];
-
-    layer: LayerInstance | undefined = undefined;
-
-    @Watch('layers')
-    layerAdded(newValue: LayerInstance[], oldValue: LayerInstance[]) {
-        if (newValue === undefined) {
-            return;
-        }
-
-        this.layer = newValue.find(
-            (layer: LayerInstance) => layer.id === this.legendItem.id
-        );
-
-        if (this.layer !== undefined) {
-            this.layer.isLayerLoaded().then(() => {
-                // Wait for symbology to load too
-                this.legendItem._layer = this.layer;
-                this.legendItem._type = LegendTypes.Entry;
-                this.legendItem._uid =
-                    this.layer!.getLayerTree().findChildByIdx(
-                        this.legendItem._layerIndex!
-                    )?.uid || this.layer!.uid;
-                if (this.legendItem.isDefault) {
-                    this.$store.set(
-                        LegendStore.updateDefaultEntry,
-                        this.legendItem.id
-                    );
-                }
-            });
-        }
-    }
-
+export default defineComponent({
+    name: 'LegendPlaceholderV',
+    props: {
+        legendItem: { type: Object as PropType<LegendEntry>, required: true }
+    },
+    data() {
+        return {
+            layers: get(LayerStore.layers)
+        };
+    },
     mounted() {
-        // in case layer is added while placeholder component is dead
-        this.layerAdded(<LayerInstance[]>(<unknown>this.layers), []);
+        this.layerAdded(<LayerInstance[]>(<unknown>this.layers));
+    },
+    watch: {
+        layers(newValue: LayerInstance[], _: LayerInstance[]) {
+            this.layerAdded(newValue);
+        }
+    },
+    methods: {
+        /**
+         * Add a new legend entry to the legend
+         */
+        layerAdded(newLayers: LayerInstance[]) {
+            if (newLayers === undefined) {
+                return;
+            }
+            const layer: LayerInstance | undefined = newLayers.find(
+                (layer: LayerInstance) => layer.id === this.legendItem.id
+            );
+            if (layer !== undefined) {
+                layer.isLayerLoaded().then(() => {
+                    // Wait for symbology to load too
+                    this.legendItem.reloadEntry(layer);
+                    if (this.legendItem.isDefault) {
+                        this.$store.set(LegendStore.updateDefaultEntry, this.legendItem.id);
+                    }
+                });
+            }
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped>

@@ -63,6 +63,7 @@ export class WmsFC extends CommonFC {
                     this.getWMSLayerTitle(configLayerEntries[idx].id) ||
                     configLayerEntries[idx].id;
                 const symbologyItem: LegendSymbology = {
+                    uid: RAMP.GEO.sharedUtils.generateUUID(),
                     label: name,
                     svgcode: '',
                     drawPromise: this.parentLayer.$iApi.geo.utils.symbology

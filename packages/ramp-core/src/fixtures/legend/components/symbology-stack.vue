@@ -5,21 +5,12 @@
             <!-- the :class line calculates margin-left for each of the 3 symbols, and gives a margin-top to symbols that arent the first -->
             <div
                 class="absolute"
-                :class="[
-                    idx == 0
-                        ? 'symbol-0'
-                        : idx == 1
-                        ? 'left-3 symbol-1'
-                        : 'left-6 symbol-2'
-                ]"
+                :class="[idx == 0 ? 'symbol-0' : idx == 1 ? 'left-3 symbol-1' : 'left-6 symbol-2']"
                 :style="{ 'z-index': 3 - idx }"
                 v-for="(item, idx) in stack.slice(0, 3).reverse()"
                 :key="idx"
             >
-                <span
-                    class="symbologyIcon w-28 h-28"
-                    v-html="stack[idx].svgcode"
-                ></span>
+                <span class="symbologyIcon w-28 h-28" v-html="stack[idx].svgcode"></span>
             </div>
         </div>
 
@@ -45,17 +36,22 @@
 
 <script lang="ts">
 import { LayerInstance } from '@/api';
-import { Vue, Prop } from 'vue-property-decorator';
-
+import { LegendSymbology } from '@/geo/api';
+import { defineComponent, PropType, toRaw } from 'vue';
 import { LegendEntry } from '../store/legend-defs';
 
-export default class LegendSymbologyStackV extends Vue {
-    @Prop() visible!: boolean;
-    @Prop() legendItem!: LegendEntry;
-    @Prop() layer!: LayerInstance;
-
-    stack: any = [];
-
+export default defineComponent({
+    name: 'LegendSymbologyStackV',
+    props: {
+        visible: { type: Boolean, required: true },
+        legendItem: { type: Object as PropType<LegendEntry>, required: true },
+        layer: { type: Object as PropType<LayerInstance>, required: true }
+    },
+    data() {
+        return {
+            stack: [] as Array<LegendSymbology>
+        };
+    },
     mounted() {
         // TODO ramp2 would create a placeholder stack if the layer wasn't loaded. Icon would be first letter of layer
         //      see if we should be doing that here as well, or if we are fine with empty icons.
@@ -63,23 +59,24 @@ export default class LegendSymbologyStackV extends Vue {
         this.legendItem.loadPromise.then(() => {
             this.getSymbologyStack();
         });
-    }
-
-    /**
-     * Retrieves the symbology stack. Waits on all symbols in the stack to finish loading before displaying.
-     */
-    getSymbologyStack(): any {
-        if (this.legendItem.layerUID) {
-            Promise.all(
-                this.layer
-                    .getLegend(this.legendItem.layerUID)
-                    .map((l: any) => l.drawPromise)
-            ).then((r: any) => {
-                this.stack = this.layer.getLegend(this.legendItem.layerUID);
-            });
+    },
+    methods: {
+        /**
+         * Retrieves the symbology stack. Waits on all symbols in the stack to finish loading before displaying.
+         */
+        getSymbologyStack(): any {
+            if (this.legendItem.layerUID) {
+                Promise.all(
+                    toRaw(this.layer)
+                        .getLegend(this.legendItem.layerUID)
+                        .map((l: any) => l.drawPromise)
+                ).then((r: any) => {
+                    this.stack = toRaw(this.layer).getLegend(this.legendItem.layerUID);
+                });
+            }
         }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped>

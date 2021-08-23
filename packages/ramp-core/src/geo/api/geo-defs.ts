@@ -258,6 +258,7 @@ export interface TabularAttributeSet {
 }
 
 export interface LegendSymbology {
+    uid: string;
     label: string;
     definitionClause?: string;
     svgcode: string;
@@ -463,9 +464,7 @@ export interface RampLayerConfig {
     nameField?: string;
     tooltipField?: string;
     featureInfoMimeType?: string;
-    layerEntries?:
-        | Array<RampLayerMapImageLayerEntryConfig>
-        | Array<RampLayerWmsLayerEntryConfig>;
+    layerEntries?: Array<RampLayerMapImageLayerEntryConfig> | Array<RampLayerWmsLayerEntryConfig>;
     rawData?: any; // used for static data, like geojson string, shapefile guts
     latField?: string; // csv coord field
     longField?: string; // csv coord field

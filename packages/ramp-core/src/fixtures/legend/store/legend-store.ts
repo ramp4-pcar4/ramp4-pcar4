@@ -3,12 +3,7 @@ import { make } from 'vuex-pathify';
 import Vue from 'vue';
 
 import { LegendState } from './legend-state';
-import {
-    LegendItem,
-    LegendEntry,
-    LegendGroup,
-    LegendTypes
-} from './legend-defs';
+import { LegendItem, LegendEntry, LegendGroup, LegendTypes } from './legend-defs';
 import { RootState } from '@/store';
 import { TreeNode } from '@/geo/api';
 import { LayerInstance } from '@/api';
@@ -17,9 +12,7 @@ import { LayerInstance } from '@/api';
 type LegendContext = ActionContext<LegendState, RootState>;
 
 const getters = {
-    getChildById: (state: LegendState) => (
-        id: string
-    ): LegendItem | undefined => {
+    getChildById: (state: LegendState) => (id: string): LegendItem | undefined => {
         const searchTree = function(root: any, id: string) {
             if (root.id === id) {
                 return root;
@@ -36,9 +29,7 @@ const getters = {
     },
     getAllExpanded: (state: LegendState, expanded: boolean): boolean => {
         return state.children.every(
-            (entry: LegendItem) =>
-                !(entry instanceof LegendGroup) ||
-                checkExpanded(entry, expanded)
+            (entry: LegendItem) => !(entry instanceof LegendGroup) || checkExpanded(entry, expanded)
         );
     },
     getAllVisibility: (state: LegendState, visible: boolean): boolean => {
@@ -77,8 +68,7 @@ const mutations = {
 
             // remove groups with no children
             children = children.filter(
-                item =>
-                    item instanceof LegendEntry || item.children.length !== 0
+                item => item instanceof LegendEntry || item.children.length !== 0
             );
 
             return children;
@@ -93,7 +83,7 @@ const mutations = {
                 .filter(
                     entry =>
                         entry instanceof LegendEntry &&
-                        (entry.layer!.uid === uid || entry.layerUID === uid)
+                        (entry.layer?.uid === uid || entry.layerUID === uid)
                 )
                 .forEach(entry => {
                     entry._type = LegendTypes.Placeholder;
@@ -201,10 +191,7 @@ const actions = {
  * @param {LegendElement}   child Current legend item that is being checked
  * @param {boolean}         visible Specifies whether visibility or expand/collapse functionality is to be changed
  */
-function checkVisibility(
-    child: LegendEntry | LegendGroup,
-    visible: boolean
-): boolean {
+function checkVisibility(child: LegendEntry | LegendGroup, visible: boolean): boolean {
     // traverse tree to check if all legend items have visibility toggled on/off
     if (child.children && child.children.length > 0) {
         child.children.forEach(ch => {
@@ -214,10 +201,7 @@ function checkVisibility(
         });
     }
     // visibility set edge case: entry must be toggled on or must be part of a visbiility set and there is another entry in the set toggled on
-    if (
-        !child.visibility &&
-        !(child.parent instanceof LegendGroup && child.parent.visibility)
-    ) {
+    if (!child.visibility && !(child.parent instanceof LegendGroup && child.parent.visibility)) {
         return false;
     } else if (child.visibility !== visible) {
         return false;
@@ -260,12 +244,7 @@ function toggle(child: LegendEntry | LegendGroup, options: any) {
     // for current legend child toggle properties if possible, check for appropriate legend element type
     if (visibility !== undefined) {
         // visibility set edge case
-        if (
-            !(
-                child.parent instanceof LegendGroup &&
-                child.parent.visibility === visibility
-            )
-        ) {
+        if (!(child.parent instanceof LegendGroup && child.parent.visibility === visibility)) {
             child.toggleVisibility(visibility);
         }
     }

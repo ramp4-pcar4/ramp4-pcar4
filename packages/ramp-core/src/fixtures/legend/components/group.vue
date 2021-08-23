@@ -5,13 +5,7 @@
                 class="legend-group-header flex items-center px-5 py-10 cursor-pointer default-focus-style hover:bg-gray-200"
                 @click="legendItem.toggleExpanded()"
                 v-focus-item="'show-truncate'"
-                :content="
-                    $t(
-                        legendItem.expanded
-                            ? 'legend.group.collapse'
-                            : 'legend.group.expand'
-                    )
-                "
+                :content="$t(legendItem.expanded ? 'legend.group.collapse' : 'legend.group.expand')"
                 v-tippy="{ placement: 'top-start', aria: 'describedby' }"
                 truncate-trigger
             >
@@ -27,9 +21,7 @@
                         width="24"
                     >
                         <path d="M0 0h24v24H0V0z" fill="none" />
-                        <path
-                            d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"
-                        />
+                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
                     </svg>
                 </div>
 
@@ -42,10 +34,7 @@
                 <checkbox
                     :checked="legendItem.visibility"
                     :value="legendItem"
-                    :isRadio="
-                        legendItem.parent &&
-                            legendItem.parent.type === LegendTypes.Set
-                    "
+                    :isRadio="legendItem.parent && legendItem.parent.type === LegendTypes.Set"
                     :legendItem="legendItem"
                 />
             </div>
@@ -63,24 +52,23 @@
 </template>
 
 <script lang="ts">
-import { Vue, Options, Prop, Watch } from 'vue-property-decorator';
-import { defineAsyncComponent } from 'vue';
-
+import { defineComponent, defineAsyncComponent, PropType } from 'vue';
 import { LegendGroup, LegendTypes } from '../store/legend-defs';
 import LegendCheckboxV from './checkbox.vue';
 
-@Options({
+export default defineComponent({
+    name: 'LegendGroupV',
+    props: {
+        legendItem: { type: Object as PropType<LegendGroup>, required: true }
+    },
     components: {
         LegendComponent: defineAsyncComponent(() => import('./component.vue')),
         checkbox: LegendCheckboxV
+    },
+    data() {
+        return { LegendTypes: LegendTypes };
     }
-})
-export default class LegendGroupV extends Vue {
-    @Prop() legendItem!: LegendGroup;
-
-    // make vue stop hating enums
-    LegendTypes = LegendTypes;
-}
+});
 </script>
 
 <style lang="scss" scoped>
