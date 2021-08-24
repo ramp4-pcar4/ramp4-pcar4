@@ -52,10 +52,7 @@ export default class DropdownMenuV extends Vue {
         window.addEventListener(
             'click',
             event => {
-                if (
-                    event.target instanceof HTMLElement &&
-                    !this.$el.contains(event.target)
-                ) {
+                if (event.target instanceof HTMLElement && !this.$el.contains(event.target)) {
                     this.open = false;
                 }
             },
@@ -86,10 +83,7 @@ export default class DropdownMenuV extends Vue {
         window.removeEventListener(
             'click',
             event => {
-                if (
-                    event.target instanceof HTMLElement &&
-                    !this.$el.contains(event.target)
-                ) {
+                if (event.target instanceof HTMLElement && !this.$el.contains(event.target)) {
                     this.open = false;
                 }
             },

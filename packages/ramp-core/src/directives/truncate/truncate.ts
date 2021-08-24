@@ -34,6 +34,7 @@ export const Truncate: Directive = {
             // el.closest gets closes ancestor that maches the selector (moves up the parent chain)
             triggerElement = el.closest(`[${TRIGGER_ATTR}]`);
         }
+
         useTippy(el, {
             content: <TippyContent>el.textContent,
             onShow: onShow,
@@ -44,15 +45,17 @@ export const Truncate: Directive = {
             triggerTarget: triggerElement
         });
 
-        if (binding.value && binding.value.options) {
-            (el as any)._tippy.set(binding.value.options);
-        }
+        // if (binding.value && binding.value.options) {
+        //     (el as any)._tippy.set(binding.value.options);
+        // }
     },
     updated(el: HTMLElement, binding: DirectiveBinding) {
         // update content and options
-        (el as any)._tippy.setContent(el.textContent);
-        if (binding.value && binding.value.options) {
-            (el as any)._tippy.set(binding.value.options);
+        if ((el as any)._tippy) {
+            (el as any)._tippy.setContent(el.textContent);
+            if (binding.value && binding.value.options) {
+                (el as any)._tippy.set(binding.value.options);
+            }
         }
     },
     unmounted(el: HTMLElement) {

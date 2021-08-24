@@ -6,7 +6,7 @@
             flip: false,
             allowHTML: true,
             zIndex: 5,
-            theme: 'ramp',
+            theme: 'ramp4',
             trigger: 'manual',
             arrow: false,
             delay: 200,
@@ -64,7 +64,7 @@ export default class EsriMapV extends Vue {
             offsetX = screenPointFromMapPoint.screenX - originX;
             offsetY = originY - screenPointFromMapPoint.screenY;
             this.maptipInstance.setProps({
-                offset: `${offsetX}, ${offsetY}`
+                offset: [offsetX, offsetY]
             });
             this.maptipInstance.show();
         } else {
@@ -73,10 +73,7 @@ export default class EsriMapV extends Vue {
     }
 
     @Watch('layerConfigs')
-    async onLayerConfigArrayChange(
-        newValue: RampLayerConfig[],
-        oldValue: RampLayerConfig[]
-    ) {
+    async onLayerConfigArrayChange(newValue: RampLayerConfig[], oldValue: RampLayerConfig[]) {
         console.log('Saw layer config change', oldValue, newValue, !!this.map);
 
         // TODO we are getting frequent errors at startup; something reacts to layer array
@@ -95,21 +92,13 @@ export default class EsriMapV extends Vue {
                         let defLoadProm: Promise<string>;
 
                         // check if we need to load the layer class
-                        if (
-                            this.$iApi.geo.layer.layerDefExists(
-                                layerConfig.layerType
-                            )
-                        ) {
-                            defLoadProm = Promise.resolve(
-                                layerConfig.layerType
-                            );
+                        if (this.$iApi.geo.layer.layerDefExists(layerConfig.layerType)) {
+                            defLoadProm = Promise.resolve(layerConfig.layerType);
                         } else {
                             // if the definition is a custom number, the site host would have had to add the
                             // definition already. this block should only run for layer types that are bundled
                             // in the ramp core codebase.
-                            defLoadProm = this.$iApi.geo.layer.addLayerDef(
-                                layerConfig.layerType
-                            );
+                            defLoadProm = this.$iApi.geo.layer.addLayerDef(layerConfig.layerType);
                         }
 
                         // wait for definition to load, or ride the resolve if already loaded
@@ -138,9 +127,7 @@ export default class EsriMapV extends Vue {
                         // add layers to layer store
                         // TODO need to revisit https://github.com/ramp4-pcar4/ramp4-pcar4/discussions/328
                         //      as we may be causing lots of problems putting these objects in vuex store.
-                        this.$iApi.$vApp.$store.set(LayerStore.addLayers, [
-                            layer
-                        ]);
+                        this.$iApi.$vApp.$store.set(LayerStore.addLayers, [layer]);
 
                         resolve(layer!);
                     });
@@ -149,11 +136,9 @@ export default class EsriMapV extends Vue {
 
         // need to wait for all layers before reordering since esri reorder does
         // not allow reordering/inserting into arbitrary indices (i.e. no holes)
-        layers
-            .filter(Boolean)
-            .forEach((layer: LayerInstance | null, index: number) => {
-                this.$iApi.geo.map.reorder(layer!, oldValue.length + index);
-            });
+        layers.filter(Boolean).forEach((layer: LayerInstance | null, index: number) => {
+            this.$iApi.geo.map.reorder(layer!, oldValue.length + index);
+        });
     }
 
     @Watch('mapConfig')
@@ -165,10 +150,7 @@ export default class EsriMapV extends Vue {
 
         const mapViewElement: Element | null = this.$el;
 
-        this.$iApi.geo.map.createMap(
-            newValue,
-            mapViewElement as HTMLDivElement
-        );
+        this.$iApi.geo.map.createMap(newValue, mapViewElement as HTMLDivElement);
         this.map = this.$iApi.geo.map;
         this.$iApi.event.emit(GlobalEvents.MAP_CREATED, this.$iApi.geo.map);
 

@@ -33,7 +33,8 @@ export default class App extends Vue {
                 content: 'labelledby'
             },
             // a11y: false, // can't find a replacement for Vue 3
-            theme: 'ramp',
+            theme: 'ramp4',
+            inertia: true,
             trigger: 'mouseenter manual focus',
             // needed to have tooltips in fullscreen, by default it appends to document.body
             appendTo: this.$el
@@ -71,8 +72,7 @@ $font-list: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica
 }
 .symbologyIcon {
     @apply bg-white inline-flex justify-center items-center overflow-hidden;
-    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
-        0px 1px 1px 0px rgba(0, 0, 0, 0.14),
+    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14),
         0px 2px 1px -1px rgba(0, 0, 0, 0.12);
 }
 </style>

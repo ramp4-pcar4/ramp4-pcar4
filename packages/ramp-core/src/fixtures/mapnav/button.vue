@@ -1,8 +1,5 @@
 <template>
-    <div
-        class="relative w-32 h-32 text-gray-600 hover:text-black"
-        tabindex="-1"
-    >
+    <div class="relative w-32 h-32 text-gray-600 hover:text-black" tabindex="-1">
         <!-- <button
             class="w-full h-full default-focus-style focus:outline-none"
             @click="onClickFunction()"
