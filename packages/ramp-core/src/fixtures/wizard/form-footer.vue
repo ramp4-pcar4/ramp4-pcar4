@@ -20,11 +20,17 @@
 </template>
 
 <script lang="ts">
-import { Vue, Prop } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-export default class WizardFormFooterV extends Vue {
-    @Prop({ default: true }) disabled!: boolean;
-}
+export default defineComponent({
+    name: 'WizardFormFooterV',
+    props: {
+        disabled: {
+            type: Boolean,
+            default: true
+        }
+    }
+});
 </script>
 
 <style lang="scss" scoped></style>

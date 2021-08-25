@@ -48,14 +48,9 @@ export class LayerSource extends APIScope {
         }
     }
 
-    async getGeojsonInfo(
-        url: string,
-        fileData: ArrayBuffer | object
-    ): Promise<LayerInfo> {
+    async getGeojsonInfo(url: string, fileData: ArrayBuffer | object): Promise<LayerInfo> {
         if (fileData instanceof ArrayBuffer) {
-            fileData = JSON.parse(
-                new TextDecoder('utf-8').decode(new Uint8Array(fileData))
-            );
+            fileData = JSON.parse(new TextDecoder('utf-8').decode(new Uint8Array(fileData)));
         }
 
         const config = {
@@ -77,9 +72,7 @@ export class LayerSource extends APIScope {
     }
 
     async getCsvInfo(url: string, fileData: ArrayBuffer): Promise<LayerInfo> {
-        const formattedData = new TextDecoder('utf-8').decode(
-            new Uint8Array(fileData)
-        );
+        const formattedData = new TextDecoder('utf-8').decode(new Uint8Array(fileData));
 
         const config = {
             id: `csv#${++this.layerCount}`,
@@ -95,23 +88,12 @@ export class LayerSource extends APIScope {
             fields: [{ name: 'OBJECTID', type: 'oid' }].concat(
                 this.$iApi.geo.layer.files.extractCsvFields(formattedData)
             ),
-            configOptions: [
-                'name',
-                'nameField',
-                'tooltipField',
-                'latField',
-                'longField'
-            ]
+            configOptions: ['name', 'nameField', 'tooltipField', 'latField', 'longField']
         };
     }
 
-    async getShapfileInfo(
-        url: string,
-        fileData: ArrayBuffer
-    ): Promise<LayerInfo> {
-        const jsonData = await this.$iApi.geo.layer.files.shapefileToGeoJson(
-            fileData
-        );
+    async getShapfileInfo(url: string, fileData: ArrayBuffer): Promise<LayerInfo> {
+        const jsonData = await this.$iApi.geo.layer.files.shapefileToGeoJson(fileData);
 
         return this.getGeojsonInfo(url, jsonData);
     }
@@ -123,10 +105,7 @@ export class LayerSource extends APIScope {
      * @param {string} serviceType type of layer
      * @returns {Promise<LayerInfo | undefined>} LayerInfo object
      */
-    async fetchServiceInfo(
-        url: string,
-        serviceType: string
-    ): Promise<LayerInfo | undefined> {
+    async fetchServiceInfo(url: string, serviceType: string): Promise<LayerInfo | undefined> {
         switch (serviceType) {
             case LayerType.FEATURE:
                 return this.getFeatureInfo(url);
@@ -198,9 +177,7 @@ export class LayerSource extends APIScope {
                 if (layer.parentLayerId === -1) {
                     return 0;
                 } else {
-                    return (
-                        calculateLevel(layers[layer.parentLayerId], layers) + 1
-                    );
+                    return calculateLevel(layers[layer.parentLayerId], layers) + 1;
                 }
             }
         }
@@ -251,16 +228,11 @@ export class LayerSource extends APIScope {
             parseInt(limit) || 1000
         );
 
-        return this.getGeojsonInfo(
-            url.match(/\/([^/]+)\/items/)?.[1] || 'Layer',
-            wfsJson
-        );
+        return this.getGeojsonInfo(url.match(/\/([^/]+)\/items/)?.[1] || 'Layer', wfsJson);
     }
 
     async getWmsInfo(url: string): Promise<LayerInfo> {
-        const capabilities = await this.$iApi.geo.layer.ogc.parseCapabilities(
-            url
-        );
+        const capabilities = await this.$iApi.geo.layer.ogc.parseCapabilities(url);
 
         const config = {
             id: `${LayerType.WMS}#${++this.layerCount}`,
@@ -290,14 +262,8 @@ export class LayerSource extends APIScope {
                     if (layer.layers.length > 0) {
                         // ignore sublayers with no id
                         return layer.id
-                            ? [].concat(
-                                  layer,
-                                  flattenWmsLayerList(layer.layers, level + 1)
-                              )
-                            : [].concat(
-                                  [],
-                                  flattenWmsLayerList(layer.layers, level)
-                              );
+                            ? [].concat(layer, flattenWmsLayerList(layer.layers, level + 1))
+                            : [].concat([], flattenWmsLayerList(layer.layers, level));
                     } else {
                         return layer.id ? layer : [];
                     }
