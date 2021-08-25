@@ -14,7 +14,7 @@ You can also format your code manually by running the command `rush lint`.
 
 ### Install build tools
 
-Download and install [Node.js v14.15.4](https://nodejs.org/dist/v14.15.1/node-v14.15.1-x64.msi).
+Download and install [Node.js v14.15.4](https://nodejs.org/dist/v14.15.4/node-v14.15.4-x64.msi).
 
 Install [Rushjs](https://rushjs.io) globally with the command `npm install -g @microsoft/rush`.
 
