@@ -73,8 +73,8 @@ module.exports = {
         ]);
 
         // DEV-specific configuration
-        config.when(process.env.NODE_ENV === 'development', config => {
-            // modify the default injection point from 'body' to 'head', so it's easier to orchestrate the loading order; only when `serve`ing
+        config.when(process.env.VUE_APP_BUILD_TARGET !== 'lib', config => {
+            // modify the default injection point from 'body' to 'head', so it's easier to orchestrate the loading order; only when `serve`ing or `test`ing
             config
                 .plugin('html-index')
                 .tap(args => [{ ...args[0], inject: 'head' }]);
