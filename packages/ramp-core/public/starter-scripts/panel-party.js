@@ -38,8 +38,7 @@ let config = {
                     hasNorthPole: true
                 },
                 {
-                    id:
-                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    id: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     name: 'Web Mercator Maps',
                     extentSetId: 'EXT_ESRI_World_AuxMerc_3857',
                     lodSetId: 'LOD_ESRI_World_AuxMerc_3857',
@@ -61,8 +60,7 @@ let config = {
                                 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                    tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
                     wkid: 3978
                 },
                 {
@@ -78,8 +76,7 @@ let config = {
                                 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                    tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
                     wkid: 3978
                 },
                 {
@@ -96,8 +93,7 @@ let config = {
                                 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                    tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
                     wkid: 3978
                 },
                 {
@@ -114,8 +110,7 @@ let config = {
                                 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                    tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
                     wkid: 3978
                 },
                 {
@@ -132,8 +127,7 @@ let config = {
                                 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100,
                     attribution: {
                         text: {
@@ -158,8 +152,7 @@ let config = {
                                 'https://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 },
                 {
@@ -176,8 +169,7 @@ let config = {
                                 'https://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 },
                 {
@@ -194,8 +186,7 @@ let config = {
                                 'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 },
                 {
@@ -212,8 +203,7 @@ let config = {
                                 'https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 },
                 {
@@ -230,8 +220,7 @@ let config = {
                                 'https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 }
             ],
@@ -242,8 +231,7 @@ let config = {
                 id: 'WaterQuantity',
                 name: 'Water quantity parent',
                 layerType: 'esriMapImage',
-                url:
-                    'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                 layerEntries: [
                     {
                         index: 1,
@@ -263,8 +251,7 @@ let config = {
             {
                 id: 'WaterQuality',
                 layerType: 'esriMapImage',
-                url:
-                    'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                 layerEntries: [
                     {
                         index: 5,
@@ -283,8 +270,7 @@ let config = {
             {
                 id: 'CleanAir',
                 layerType: 'esriFeature',
-                url:
-                    'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
+                url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
                 state: {
                     opacity: 0.8,
                     visibility: true
@@ -343,14 +329,12 @@ let config = {
                                     children: [
                                         {
                                             layerId: 'WaterQuantity',
-                                            name:
-                                                'Water Quantity in Nested Group',
+                                            name: 'Water Quantity in Nested Group',
                                             entryIndex: 1
                                         },
                                         {
                                             layerId: 'WaterQuality',
-                                            name:
-                                                'Water Quality in Nested Group',
+                                            name: 'Water Quality in Nested Group',
                                             entryIndex: 5
                                         }
                                     ]
@@ -424,8 +408,7 @@ let config = {
                     hasNorthPole: true
                 },
                 {
-                    id:
-                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    id: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     name: 'Web Mercator Maps',
                     extentSetId: 'EXT_ESRI_World_AuxMerc_3857',
                     lodSetId: 'LOD_ESRI_World_AuxMerc_3857',
@@ -447,8 +430,7 @@ let config = {
                                 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                    tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
                     wkid: 3978
                 },
                 {
@@ -464,8 +446,7 @@ let config = {
                                 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                    tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
                     wkid: 3978
                 },
                 {
@@ -482,8 +463,7 @@ let config = {
                                 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                    tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
                     wkid: 3978
                 },
                 {
@@ -500,8 +480,7 @@ let config = {
                                 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                    tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
                     wkid: 3978
                 },
                 {
@@ -518,8 +497,7 @@ let config = {
                                 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100,
                     attribution: {
                         text: {
@@ -544,8 +522,7 @@ let config = {
                                 'https://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 },
                 {
@@ -562,8 +539,7 @@ let config = {
                                 'https://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 },
                 {
@@ -580,8 +556,7 @@ let config = {
                                 'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 },
                 {
@@ -598,8 +573,7 @@ let config = {
                                 'https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 },
                 {
@@ -616,8 +590,7 @@ let config = {
                                 'https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
                         }
                     ],
-                    tileSchemaId:
-                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 }
             ],
@@ -628,8 +601,7 @@ let config = {
                 id: 'WaterQuantity',
                 name: 'Water quantity parent',
                 layerType: 'esriMapImage',
-                url:
-                    'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                 layerEntries: [
                     {
                         index: 1,
@@ -649,8 +621,7 @@ let config = {
             {
                 id: 'WaterQuality',
                 layerType: 'esriMapImage',
-                url:
-                    'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                 layerEntries: [
                     {
                         index: 5,
@@ -669,8 +640,7 @@ let config = {
             {
                 id: 'CleanAir',
                 layerType: 'esriFeature',
-                url:
-                    'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
+                url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
                 state: {
                     opacity: 0.8,
                     visibility: true
@@ -729,14 +699,12 @@ let config = {
                                     children: [
                                         {
                                             layerId: 'WaterQuantity',
-                                            name:
-                                                'Water Quantity in Nested Group',
+                                            name: 'Water Quantity in Nested Group',
                                             entryIndex: 1
                                         },
                                         {
                                             layerId: 'WaterQuality',
-                                            name:
-                                                'Water Quality in Nested Group',
+                                            name: 'Water Quality in Nested Group',
                                             entryIndex: 5
                                         }
                                     ]
@@ -796,12 +764,13 @@ let options = {
 
 rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
 
-var iklobLoad = rInstance.event.on('fixture/added', fixture => {
-    if (fixture.id === 'iklob') {
-        rInstance.event.off(iklobLoad);
-        rInstance.panel.open('iklob-p1');
-    }
-});
+// TODO: fix console errors
+// var iklobLoad = rInstance.event.on('fixture/added', fixture => {
+//     if (fixture.id === 'iklob') {
+//         rInstance.event.off(iklobLoad);
+//         rInstance.panel.open('iklob-p1');
+//     }
+// });
 
 rInstance.fixture.addDefaultFixtures().then(() => {
     rInstance.panel.open('geosearch-panel');
@@ -819,176 +788,229 @@ rInstance.fixture.addDefaultFixtures().then(() => {
 // Load custom templates.
 rInstance.$element.component('WFSLayer-Custom', {
     props: ['identifyData'],
-    render: function(h) {
-        return h('div', [
-            h('span', 'This is an example template that contains an image.'),
-            h('span', {
-                domProps: {
-                    innerHTML: '<img src="https://i.imgur.com/WtY0tdC.gif" />'
-                }
-            })
-        ]);
-    }
+    template: `
+        <div>
+            <span>This is an example template that contains an image.</span>
+            <img src="https://i.imgur.com/WtY0tdC.gif" />
+        </div>
+    `
 });
 
-Vue.component('Water-Quantity-Template', {
+rInstance.$element.component('Water-Quantity-Template', {
     props: ['identifyData'],
-    render: function(h) {
-        // Demonstrates that you can display different components in a template depending on an attribute value.
-        let renderHeader = () => {
+    template: `
+        <div style="align-items: center; justify-content: center; font-size: .875rem; font-family: Arial, sans-serif;">
+            ${renderHeader()}
+            ${createSection('Station ID', 'StationID')}
+            ${createSection('Province', 'E_Province')}
+            ${createSection('Report Year', 'Report_Year')}
+            <div style="display: flex; flex-direction: row; color: #a0aec0; font-weight: bold; padding-top: 5px;">
+                <div style="flex: 1 1 0%; width: 100%;">,
+                    {{Latitude}}
+                </div>
+                <div style="flex: 1 1 0%; width: 100%;">,
+                    {{Longitude}}
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: row;">
+                <div style="flex: 1 1 0%; width: 100%;">
+                    ${this.identifyData.data['Latitude']}
+                </div>
+                <div style="flex: 1 1 0%; width: 100%;">
+                    ${this.identifyData.data['Longitude']}
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: column; padding-top: 5px; color: #4299e1;">
+                <span style="font-weight: bold; color: #a0aec0;">
+                    {{Links}}
+                    <span>${this.identifyData.data['E_DetailPageURL']}</span>
+                    <span>${this.identifyData.data['E_URL_Historical']}</span>
+                    <span>${this.identifyData.data['E_URL_RealTime']}</span>
+                </span>
+            </div>
+        </div>
+    `,
+    methods: {
+        renderHeader() {
             if (this.identifyData.data['Symbol'] === '3') {
-                return h(
-                    'span',
-                    {
-                        style:
-                            'display: flex; font-size: 1.25rem; background-color: #e53e3e; color: white; padding: 4px; text-align: center;'
-                    },
-                    this.identifyData.data['StationName']
-                );
+                return `
+                    <span style="display: flex; font-size: 1.25rem; background-color: #e53e3e; color: white; padding: 4px; text-align: center;">
+                        ${this.identifyData.data['StationName']}
+                    </span>
+                `;
             } else {
-                return h(
-                    'span',
-                    {
-                        style:
-                            'display: flex; font-size: 1.25rem; background-color: #3182ce; color: white; padding: 4px; text-align: center;'
-                    },
-                    this.identifyData.data['StationName']
-                );
+                return `
+                    <span style="display: flex; font-size: 1.25rem; background-color: #3182ce; color: white; padding: 4px; text-align: center;">
+                        ${this.identifyData.data['StationName']}
+                    </span>
+                `;
             }
-        };
-
-        let createSection = (title, id) => {
-            return h(
-                'div',
-                {
-                    style:
-                        'display: flex; flex-direction: column; font-size: .875rem; padding-top: 5px;'
-                },
-                [
-                    h(
-                        'span',
-                        {
-                            style: 'color: #a0aec0; font-weight: bold;'
-                        },
-                        title
-                    ),
-                    h('span', this.identifyData.data[id])
-                ]
-            );
-        };
-
-        return h(
-            'div',
-            {
-                style:
-                    'align-items: center; justify-content: center; font-size: .875rem; font-family: "Arial", sans-serif;'
-            },
-            [
-                renderHeader(),
-                createSection('Station ID', 'StationID'),
-                createSection('Province', 'E_Province'),
-                createSection('Report Year', 'Report_Year'),
-                h(
-                    'div',
-                    {
-                        style:
-                            'display: flex; flex-direction: row; color: #a0aec0; font-weight: bold; padding-top: 5px;'
-                    },
-                    [
-                        h(
-                            'div',
-                            {
-                                style: 'flex: 1 1 0%; width: 100%;'
-                            },
-                            'Latitude'
-                        ),
-                        h(
-                            'div',
-                            {
-                                style: 'flex: 1 1 0%; width: 100%;'
-                            },
-                            'Longitude'
-                        )
-                    ]
-                ),
-                h(
-                    'div',
-                    {
-                        style: 'display: flex; flex-direction: row;'
-                    },
-                    [
-                        h(
-                            'div',
-                            {
-                                style: 'flex: 1 1 0%; width: 100%;'
-                            },
-                            this.identifyData.data['Latitude']
-                        ),
-                        h(
-                            'div',
-                            {
-                                style: 'flex: 1 1 0%; width: 100%;'
-                            },
-                            this.identifyData.data['Longitude']
-                        )
-                    ]
-                ),
-                h(
-                    'div',
-                    {
-                        style:
-                            'display: flex; flex-direction: column; padding-top: 5px; color: #4299e1;'
-                    },
-                    [
-                        h(
-                            'span',
-                            {
-                                style: 'font-weight: bold; color: #a0aec0;'
-                            },
-                            'Links'
-                        ),
-                        h('span', {
-                            domProps: {
-                                innerHTML: this.identifyData.data[
-                                    'E_DetailPageURL'
-                                ]
-                            }
-                        }),
-                        h('span', {
-                            domProps: {
-                                innerHTML: this.identifyData.data[
-                                    'E_URL_Historical'
-                                ]
-                            }
-                        }),
-                        h('span', {
-                            domProps: {
-                                innerHTML: this.identifyData.data[
-                                    'E_URL_RealTime'
-                                ]
-                            }
-                        })
-                    ]
-                )
-            ]
-        );
+        },
+        createSection(title, id) {
+            return `
+            <div style="display: flex; flex-direction: column; font-size: .875rem; padding-top: 5px;">
+                <span style="color: #a0aec0; font-weight: bold;">
+                    ${title}
+                </span>
+                <span>
+                    ${this.identifyData.data[id]}
+                </span>
+            </div>
+            `;
+        }
     }
+    // render: function(h) {
+    //     // Demonstrates that you can display different components in a template depending on an attribute value.
+    //     let renderHeader = () => {
+    //         if (this.identifyData.data['Symbol'] === '3') {
+    //             return h(
+    //                 'span',
+    //                 {
+    //                     style:
+    //                         'display: flex; font-size: 1.25rem; background-color: #e53e3e; color: white; padding: 4px; text-align: center;'
+    //                 },
+    //                 this.identifyData.data['StationName']
+    //             );
+    //         } else {
+    //             return h(
+    //                 'span',
+    //                 {
+    //                     style:
+    //                         'display: flex; font-size: 1.25rem; background-color: #3182ce; color: white; padding: 4px; text-align: center;'
+    //                 },
+    //                 this.identifyData.data['StationName']
+    //             );
+    //         }
+    //     };
+
+    //     let createSection = (title, id) => {
+    //         return h(
+    //             'div',
+    //             {
+    //                 style:
+    //                     'display: flex; flex-direction: column; font-size: .875rem; padding-top: 5px;'
+    //             },
+    //             [
+    //                 h(
+    //                     'span',
+    //                     {
+    //                         style: 'color: #a0aec0; font-weight: bold;'
+    //                     },
+    //                     title
+    //                 ),
+    //                 h('span', this.identifyData.data[id])
+    //             ]
+    //         );
+    //     };
+
+    //     return h(
+    //         'div',
+    //         {
+    //             style:
+    //                 'align-items: center; justify-content: center; font-size: .875rem; font-family: "Arial", sans-serif;'
+    //         },
+    //         [
+    //             renderHeader(),
+    //             createSection('Station ID', 'StationID'),
+    //             createSection('Province', 'E_Province'),
+    //             createSection('Report Year', 'Report_Year'),
+    //             h(
+    //                 'div',
+    //                 {
+    //                     style:
+    //                         'display: flex; flex-direction: row; color: #a0aec0; font-weight: bold; padding-top: 5px;'
+    //                 },
+    //                 [
+    //                     h(
+    //                         'div',
+    //                         {
+    //                             style: 'flex: 1 1 0%; width: 100%;'
+    //                         },
+    //                         'Latitude'
+    //                     ),
+    //                     h(
+    //                         'div',
+    //                         {
+    //                             style: 'flex: 1 1 0%; width: 100%;'
+    //                         },
+    //                         'Longitude'
+    //                     )
+    //                 ]
+    //             ),
+    //             h(
+    //                 'div',
+    //                 {
+    //                     style: 'display: flex; flex-direction: row;'
+    //                 },
+    //                 [
+    //                     h(
+    //                         'div',
+    //                         {
+    //                             style: 'flex: 1 1 0%; width: 100%;'
+    //                         },
+    //                         this.identifyData.data['Latitude']
+    //                     ),
+    //                     h(
+    //                         'div',
+    //                         {
+    //                             style: 'flex: 1 1 0%; width: 100%;'
+    //                         },
+    //                         this.identifyData.data['Longitude']
+    //                     )
+    //                 ]
+    //             ),
+    //             h(
+    //                 'div',
+    //                 {
+    //                     style:
+    //                         'display: flex; flex-direction: column; padding-top: 5px; color: #4299e1;'
+    //                 },
+    //                 [
+    //                     h(
+    //                         'span',
+    //                         {
+    //                             style: 'font-weight: bold; color: #a0aec0;'
+    //                         },
+    //                         'Links'
+    //                     ),
+    //                     h('span', {
+    //                         domProps: {
+    //                             innerHTML: this.identifyData.data['E_DetailPageURL']
+    //                         }
+    //                     }),
+    //                     h('span', {
+    //                         domProps: {
+    //                             innerHTML: this.identifyData.data['E_URL_Historical']
+    //                         }
+    //                     }),
+    //                     h('span', {
+    //                         domProps: {
+    //                             innerHTML: this.identifyData.data['E_URL_RealTime']
+    //                         }
+    //                     })
+    //                 ]
+    //             )
+    //         ]
+    //     );
+    // }
 });
 
 // start loading non-default fixtures; this is just an example
-rInstance.fixture.add('snowman');
-rInstance.fixture.add('gazebo').then(() => {
-    rInstance.panel
-        .get('p2')
-        .open({ screen: 'p-2-screen-2' })
-        .pin();
-});
-rInstance.fixture.add('diligord', window.hostFixtures.diligord).then(() => {
-    rInstance.panel.open('diligord-p1');
-});
-rInstance.fixture.add('mouruge', window.hostFixtures.mouruge).then(() => {
-    rInstance.panel.open('mouruge-p1');
-});
+
+// TODO: fix console errors
+// rInstance.fixture.add('snowman');
+// rInstance.fixture.add('gazebo').then(() => {
+//     rInstance.panel
+//         .get('p2')
+//         .open({ screen: 'p-2-screen-2' })
+//         .pin();
+// });
+// rInstance.fixture.add('diligord', window.hostFixtures.diligord).then(() => {
+//     rInstance.panel.open('diligord-p1');
+// });
+// rInstance.fixture.add('mouruge', window.hostFixtures.mouruge).then(() => {
+//     rInstance.panel.open('mouruge-p1');
+// });
 
 // add export-v1 fixtures
 rInstance.fixture.add('export-v1');
@@ -1032,6 +1054,5 @@ function animateToggle() {
     } else {
         rInstance.$vApp.$el.classList.add('animation-enabled');
     }
-    document.getElementById('animate-status').innerText =
-        'Animate: ' + rInstance.animate;
+    document.getElementById('animate-status').innerText = 'Animate: ' + rInstance.animate;
 }
