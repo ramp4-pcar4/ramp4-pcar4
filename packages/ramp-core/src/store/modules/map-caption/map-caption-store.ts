@@ -3,7 +3,7 @@ import { make } from 'vuex-pathify';
 
 import { MapCaptionState } from './map-caption-state';
 import { RootState } from '@/store';
-import { Attribution, ScaleBarProperties } from '@/geo/api';
+import { Attribution, MouseCoords, ScaleBar } from '@/geo/api';
 
 type MapCaptionContext = ActionContext<MapCaptionState, RootState>;
 
@@ -13,14 +13,17 @@ const actions = {
     setAttribution: (context: MapCaptionContext, attribution: Attribution) => {
         context.commit('SET_ATTRIBUTION', attribution);
     },
-    setCursorCoords: (context: MapCaptionContext, cursorCoords: string) => {
+    setCursorCoords: (
+        context: MapCaptionContext,
+        cursorCoords: MouseCoords
+    ) => {
         context.commit('SET_CURSOR_COORDS', cursorCoords);
     },
-    setScale: (context: MapCaptionContext, scale: ScaleBarProperties) => {
+    setScale: (context: MapCaptionContext, scale: ScaleBar) => {
         context.commit('SET_SCALE', scale);
     },
-    toggleScale: (context: MapCaptionContext) => {
-        context.commit('TOGGLE_SCALE');
+    toggleScale: (context: MapCaptionContext, useImperial?: boolean) => {
+        context.commit('TOGGLE_SCALE', useImperial);
     }
 };
 
@@ -28,14 +31,18 @@ const mutations = {
     SET_ATTRIBUTION: (state: MapCaptionState, value: Attribution) => {
         state.attribution = value;
     },
-    SET_CURSOR_COORDS: (state: MapCaptionState, value: string) => {
+    SET_CURSOR_COORDS: (state: MapCaptionState, value: MouseCoords) => {
         state.cursorCoords = value;
     },
-    SET_SCALE: (state: MapCaptionState, value: ScaleBarProperties) => {
+    SET_SCALE: (state: MapCaptionState, value: ScaleBar) => {
         state.scale = value;
     },
-    TOGGLE_SCALE: (state: MapCaptionState) => {
-        state.scale.isImperialScale = !state.scale.isImperialScale;
+    TOGGLE_SCALE: (state: MapCaptionState, value: boolean) => {
+        if (value !== undefined) {
+            state.scale.isImperialScale = value;
+        } else {
+            state.scale.isImperialScale = !state.scale.isImperialScale;
+        }
     }
 };
 
@@ -45,27 +52,27 @@ export enum MapCaptionStore {
      */
     attribution = 'mapcaption/attribution',
     /**
-     * (Action) setAttribution: (attribution: any)
+     * (Action) setAttribution: (attribution: Attribution)
      */
     setAttribution = 'mapcaption/setAttribution!',
     /**
-     * (State) cursorCoords: string
+     * (State) cursorCoords: MouseCoords
      */
     cursorCoords = 'mapcaption/cursorCoords',
     /**
-     * (Action) setCursorCoords: (cursorCoords: string)
+     * (Action) setCursorCoords: (cursorCoords: MouseCoords)
      */
     setCursorCoords = 'mapcaption/setCursorCoords!',
     /**
-     * (State) scale: any
+     * (State) scale: ScaleBar
      */
     scale = 'mapcaption/scale',
     /**
-     * (Action) setScale: (scale: any)
+     * (Action) setScale: (scale: ScaleBar)
      */
     setScale = 'mapcaption/setScale!',
     /**
-     * (Action) toggleScale: ()
+     * (Action) toggleScale: (useImperial?: boolean)
      */
     toggleScale = 'mapcaption/toggleScale!'
 }
@@ -73,11 +80,11 @@ export enum MapCaptionStore {
 export function mapcaption() {
     const state = new MapCaptionState(
         {
-            text: { disabled: true },
-            logo: { disabled: true }
+            text: {},
+            logo: {}
         },
-        { label: '0km', width: '0px', isImperialScale: false },
-        ''
+        {},
+        {}
     );
 
     return {

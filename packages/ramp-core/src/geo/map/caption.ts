@@ -1,6 +1,6 @@
 import { APIScope, InstanceAPI } from '@/api/internal';
 import { MapCaptionStore } from '@/store/modules/map-caption';
-import { Attribution, Point, ScaleBarProperties } from '@/geo/api';
+import { Attribution, MapCaptionConfig, Point, ScaleBar } from '@/geo/api';
 
 export class MapCaptionAPI extends APIScope {
     // Default point formatters
@@ -24,9 +24,55 @@ export class MapCaptionAPI extends APIScope {
     constructor(iApi: InstanceAPI) {
         super(iApi);
 
-        // default formatter
-        // TODO: Make this a config option?
+        // default formatter in case point formatter is not specified in the config
         this.pointFormatter = this.DEFAULT_POINT_FORMATTERS.LAT_LONG_DMS;
+    }
+
+    /**
+     * Configure the map caption using the given config
+     *
+     * @param captionConfig The map caption config
+     */
+    createCaption(captionConfig: MapCaptionConfig | undefined) {
+        if (!captionConfig) {
+            return;
+        }
+
+        // check if mouse coords has been disabled
+        if (captionConfig.mouseCoords.disabled) {
+            this.$iApi.$vApp.$store.set(MapCaptionStore.setCursorCoords, {
+                disabled: true
+            });
+        } else {
+            // get formatter specified in the config
+            const defaultFormatter: string | undefined =
+                captionConfig.mouseCoords.formatter;
+            if (defaultFormatter !== undefined) {
+                this.setPointFormatter(defaultFormatter);
+            }
+        }
+
+        // check if the scalebar has been disabled
+        if (captionConfig.scaleBar.disabled) {
+            this.$iApi.$vApp.$store.set(MapCaptionStore.setScale, {
+                disabled: true
+            });
+        } else {
+            // get the scalebar unit specified in the config
+            const useImperialUnits: boolean | undefined =
+                captionConfig.scaleBar.imperialScale;
+            if (useImperialUnits !== undefined) {
+                // update the value in the store
+                this.$iApi.$vApp.$store.set(
+                    MapCaptionStore.toggleScale,
+                    useImperialUnits
+                );
+                // wait for the map to load since updateScale needs map view resolution
+                this.$iApi.geo.map.viewPromise.then(() => {
+                    this.updateScale();
+                });
+            }
+        }
     }
 
     /**
@@ -141,9 +187,17 @@ export class MapCaptionAPI extends APIScope {
      * @function updateScale
      */
     updateScale(): void {
-        const isImperialScale: boolean = (this.$iApi.$vApp.$store.get(
-            MapCaptionStore.scale
-        ) as ScaleBarProperties).isImperialScale;
+        const currentScaleBar:
+            | ScaleBar
+            | undefined = this.$iApi.$vApp.$store.get(MapCaptionStore.scale);
+
+        // if the current scale bar is disabled, then do not update it
+        if (currentScaleBar?.disabled) {
+            return;
+        }
+
+        const isImperialScale: boolean =
+            currentScaleBar?.isImperialScale || false;
 
         // the starting length of the scale line in pixels
         // reduce the length of the bar on extra small layouts
@@ -211,6 +265,9 @@ export class MapCaptionAPI extends APIScope {
     /**
      * Sets the current point formatter
      * Will accept the string id of a default formatter, or a new formatter with the correct formatter signature
+     *
+     * If given string id is not valid, then the point formatter is not changed
+     *
      * @function setPointFormatter
      * @param {string | ((p: Point) => Promise<string>)} value
      */

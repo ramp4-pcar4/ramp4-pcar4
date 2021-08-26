@@ -28,6 +28,14 @@ let config = {
                     latestWkid: 3857
                 }
             },
+            caption: {
+                mouseCoords: {
+                    formatter: 'WEB_MERCATOR'
+                },
+                scaleBar: {
+                    imperialScale: true
+                }
+            },
             lods: RAMP.GEO.defaultLODs(RAMP.GEO.defaultTileSchemas()[1]), // idx 1 = mercator
             tileSchemas: [
                 {
