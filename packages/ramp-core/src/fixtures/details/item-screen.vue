@@ -24,7 +24,7 @@
             <div class="flex py-8" v-if="layerType !== 'ogcWms'">
                 <span class="flex-none m-auto symbologyIcon" v-html="icon"></span>
                 <span class="flex-grow my-auto text-lg px-8">
-                    {{ getItemName() }}
+                    {{ itemName }}
                 </span>
                 <button
                     :content="$t('details.item.zoom')"
@@ -46,7 +46,7 @@
                     </svg>
                 </button>
             </div>
-            <component :is="getDetailsTemplate()" :identifyData="getIdentifyItem()"></component>
+            <component :is="detailsTemplate" :identifyData="identifyItem"></component>
         </template>
     </panel-screen>
 </template>
@@ -61,13 +61,6 @@ import { IdentifyResultFormat } from '@/geo/api';
 
 import ESRIDefaultV from './templates/esri-default.vue';
 import HTMLDefaultV from './templates/html-default.vue';
-
-// @Options({
-//     components: {
-//         'esri-default': ESRIDefaultV,
-//         'html-default': HTMLDefaultV
-//     }
-// })
 
 export default defineComponent({
     name: 'DetailsItemScreenV',
@@ -93,37 +86,25 @@ export default defineComponent({
             icon: '' as String
         };
     },
-    methods: {
+    computed: {
         /**
          * Returns the information for a single identify result, given the layer and item offsets.
          */
-        getIdentifyItem(): any {
-            return this.payload[this.resultIndex!].items[this.itemIndex!];
+        identifyItem(): any {
+            const p = this.payload[this.resultIndex!].items[this.itemIndex!];
+            console.log(p);
+            return p;
         },
 
-        getItemName(): string {
+        itemName(): string {
             const layerInfo = this.payload[this.resultIndex!];
             const uid = layerInfo.uid;
             const layer: LayerInstance | undefined = this.getLayerByUid(uid);
             const nameField = layer?.getNameField(uid);
-            return nameField ? this.getIdentifyItem().data[nameField] : this.$t('details.title');
+            return nameField ? this.identifyItem.data[nameField] : this.$t('details.title');
         },
 
-        fetchIcon() {
-            const layerInfo = this.payload[this.resultIndex!];
-            const uid = layerInfo.uid;
-            const layer: LayerInstance | undefined = this.getLayerByUid(uid);
-            if (layer === undefined) {
-                console.warn(`could not find layer for uid ${uid} during icon lookup`);
-                return;
-            }
-            const oidField = layer.getOidField(uid);
-            layer.getIcon(this.getIdentifyItem().data[oidField], uid).then(value => {
-                this.icon = value;
-            });
-        },
-
-        getDetailsTemplate() {
+        detailsTemplate(): string {
             const layerInfo = this.payload[this.resultIndex!];
             const layer: LayerInstance | undefined = this.getLayerByUid(layerInfo.uid);
 
@@ -134,15 +115,31 @@ export default defineComponent({
                 this.templateBindings[layer.id] &&
                 this.templateBindings[layer.id].template
             ) {
+                console.log('template is custom....', this.templateBindings[layer.id]);
                 return this.templateBindings[layer.id].template;
             }
-
+            console.log('the template is not custom...');
             // If nothing is found, use a default template.
             if (this.layerType === 'ogcWms') {
                 return 'html-default';
             } else {
                 return 'esri-default';
             }
+        }
+    },
+    methods: {
+        fetchIcon() {
+            const layerInfo = this.payload[this.resultIndex!];
+            const uid = layerInfo.uid;
+            const layer: LayerInstance | undefined = this.getLayerByUid(uid);
+            if (layer === undefined) {
+                console.warn(`could not find layer for uid ${uid} during icon lookup`);
+                return;
+            }
+            const oidField = layer.getOidField(uid);
+            layer.getIcon(this.identifyItem.data[oidField], uid).then(value => {
+                this.icon = value;
+            });
         },
 
         zoomToFeature() {
@@ -154,7 +151,7 @@ export default defineComponent({
                 console.warn(`Could not find layer for uid ${uid} during zoom geometry lookup`);
                 return;
             }
-            const oid = this.getIdentifyItem().data[layer.getOidField(uid)];
+            const oid = this.identifyItem.data[layer.getOidField(uid)];
             const opts = { getGeom: true };
             layer.getGraphic(oid, opts, uid).then(g => {
                 if (g.geometry === undefined) {
@@ -171,107 +168,6 @@ export default defineComponent({
         }
     }
 });
-
-// export default class DetailsItemScreenV extends Vue {
-//     templateBindings: any = get(DetailsStore.templates);
-//     // @Get(DetailsStore.templates) templateBindings!: {
-//     //     [id: string]: DetailsItemInstance;
-//     // };
-
-//     @Prop() panel!: PanelInstance;
-
-//     // the index of the details item we want to display
-//     @Prop() resultIndex!: number;
-//     @Prop() itemIndex!: number;
-//     @Prop() layerType!: string;
-
-//     // true if the current payload is a single IdentifyItem
-//     @Prop() isFeature!: boolean;
-
-//     // retrieve the identify payload from the store
-//     payload: any = get(DetailsStore.payload);
-//     // @Get(DetailsStore.payload) payload!: IdentifyResult[];
-//     getLayerByUid: any = get('layer/getLayerByUid');
-//     // @Get('layer/getLayerByUid') getLayerByUid!: (
-//     //     uid: string
-//     // ) => LayerInstance | undefined;
-
-//     identifyTypes: IdentifyResultFormat = IdentifyResultFormat.UNKNOWN;
-//     icon: string = '';
-
-//     mounted() {
-//         if (this.layerType !== 'ogcWms') {
-//             this.fetchIcon();
-//         }
-//     }
-
-//     /**
-//      * Returns the information for a single identify result, given the layer and item offsets.
-//      */
-//     get identifyItem() {
-//         return this.payload[this.resultIndex].items[this.itemIndex];
-//     }
-
-//     get itemName() {
-//         const layerInfo = this.payload[this.resultIndex];
-//         const uid = layerInfo.uid;
-//         const layer: LayerInstance | undefined = this.getLayerByUid(uid);
-//         const nameField = layer?.getNameField(uid);
-//         return nameField ? this.identifyItem.data[nameField] : this.$t('details.title');
-//     }
-
-//     fetchIcon() {
-//         const layerInfo = this.payload[this.resultIndex];
-//         const uid = layerInfo.uid;
-//         const layer: LayerInstance | undefined = this.getLayerByUid(uid);
-//         if (layer === undefined) {
-//             console.warn(`could not find layer for uid ${uid} during icon lookup`);
-//             return;
-//         }
-//         const oidField = layer.getOidField(uid);
-//         layer.getIcon(this.identifyItem.data[oidField], uid).then(value => {
-//             this.icon = value;
-//         });
-//     }
-
-//     get detailsTemplate() {
-//         const layerInfo = this.payload[this.resultIndex];
-//         const layer: LayerInstance | undefined = this.getLayerByUid(layerInfo.uid);
-
-//         // If there is a custom template binding for this layer in the store, then
-//         // return its name.
-//         if (layer && this.templateBindings[layer.id] && this.templateBindings[layer.id].template) {
-//             return this.templateBindings[layer.id].template;
-//         }
-
-//         // If nothing is found, use a default template.
-//         if (this.layerType === 'ogcWms') {
-//             return 'html-default';
-//         } else {
-//             return 'esri-default';
-//         }
-//     }
-
-//     zoomToFeature() {
-//         const layerInfo = this.payload[this.resultIndex];
-//         const uid = layerInfo.uid;
-//         const layer: LayerInstance | undefined = this.getLayerByUid(uid);
-
-//         if (layer === undefined) {
-//             console.warn(`Could not find layer for uid ${uid} during zoom geometry lookup`);
-//             return;
-//         }
-//         const oid = this.identifyItem.data[layer.getOidField(uid)];
-//         const opts = { getGeom: true };
-//         layer.getGraphic(oid, opts, uid).then(g => {
-//             if (g.geometry === undefined) {
-//                 console.error(`Could not find graphic for objectid ${oid}`);
-//             } else {
-//                 this.$iApi.geo.map.zoomMapTo(g.geometry, 50000);
-//             }
-//         });
-//     }
-// }
 </script>
 
 <style lang="scss"></style>

@@ -7,10 +7,10 @@
             <close @click="panel.close()"></close>
         </template>
         <template #content>
-            <div v-if="getIdentifyResult().items.length > 0">
+            <div v-if="identifyResult.items.length > 0">
                 <div
                     class="flex px-10 py-10 text-md hover:bg-gray-200 cursor-pointer"
-                    v-for="(item, idx) in getIdentifyResult().items"
+                    v-for="(item, idx) in identifyResult.items"
                     :key="idx"
                     @click="openResult(idx)"
                     v-focus-item
@@ -19,7 +19,7 @@
                     <!-- TODO: test if itemIcon() call works as intended -->
                     <span v-html="itemIcon(item.data, idx)" class="flex-none symbologyIcon"></span>
                     <span class="flex-initial py-5 px-10" v-truncate>
-                        {{ item.data[getNameField()] || 'Identify Result ' + (idx + 1) }}
+                        {{ item.data[nameField] || 'Identify Result ' + (idx + 1) }}
                     </span>
                 </div>
             </div>
@@ -49,6 +49,24 @@ export default defineComponent({
             icon: [] as String[]
         };
     },
+    computed: {
+        /**
+         * Returns the identify information for the layer specified by resultIndex.
+         */
+        identifyResult(): IdentifyResult {
+            return this.payload[this.resultIndex!];
+        },
+
+        /**
+         * Returns the name field for the layer specified by resultIndex.
+         */
+        nameField(): string | undefined {
+            const layerInfo = this.payload[this.resultIndex!];
+            const uid = layerInfo?.uid;
+            const layer: LayerInstance | undefined = this.getLayerByUid(uid);
+            return layer?.getNameField(uid);
+        }
+    },
     methods: {
         /**
          * Switches the panel screen to display the data for a given result. Provides the currently selected layer index and the currently selected feature index as props.
@@ -67,7 +85,7 @@ export default defineComponent({
          * @param {number} idx index of item in identifyResult.items
          */
         itemIcon(data: any, idx: number) {
-            const uid = this.getIdentifyResult().uid;
+            const uid = this.identifyResult.uid;
             const layer: LayerInstance | undefined = this.getLayerByUid(uid);
             if (layer === undefined) {
                 console.warn(`could not find layer for uid ${uid} during icon lookup`);
@@ -82,91 +100,9 @@ export default defineComponent({
             });
 
             return this.icon[idx];
-        },
-
-        /**
-         * Returns the identify information for the layer specified by resultIndex.
-         */
-        getIdentifyResult(): IdentifyResult {
-            return this.payload[this.resultIndex!];
-        },
-
-        /**
-         * Returns the name field for the layer specified by resultIndex.
-         */
-        getNameField() {
-            const layerInfo = this.payload[this.resultIndex!];
-            const uid = layerInfo?.uid;
-            const layer: LayerInstance | undefined = this.getLayerByUid(uid);
-            return layer?.getNameField(uid);
         }
     }
 });
-
-// export default class DetailsResultScreenV extends Vue {
-//     @Prop() panel!: PanelInstance;
-//     @Prop() resultIndex!: number;
-
-//     payload: any = get(DetailsStore.payload);
-//     // @Get(DetailsStore.payload) payload!: IdentifyResult[];
-//     getLayerByUid: any = get('layer/getLayerByUid');
-//     // @Get('layer/getLayerByUid') getLayerByUid!: (
-//     //     uid: string
-//     // ) => LayerInstance | undefined;
-
-//     icon: string[] = [];
-
-//     /**
-//      * Switches the panel screen to display the data for a given result. Provides the currently selected layer index and the currently selected feature index as props.
-//      */
-//     openResult(itemIndex: number) {
-//         this.panel.show({
-//             screen: 'details-screen-item',
-//             props: { resultIndex: this.resultIndex, itemIndex: itemIndex }
-//         });
-//     }
-
-//     /**
-//      * Updates the value of icon[idx] with the svg string of the item.
-//      *
-//      * @param {any} data data of item in identifyResult.items
-//      * @param {number} idx index of item in identifyResult.items
-//      */
-//     itemIcon(data: any, idx: number) {
-//         const uid = this.identifyResult.uid;
-//         const layer: LayerInstance | undefined = this.getLayerByUid(uid);
-//         if (layer === undefined) {
-//             console.warn(`could not find layer for uid ${uid} during icon lookup`);
-//             return;
-//         }
-
-//         const oidField = layer.getOidField(uid);
-//         layer.getIcon(data[oidField], uid).then(value => {
-//             if (this.icon[idx] !== value) {
-//                 this.icon[idx] = value;
-//             }
-//         });
-
-//         return this.icon[idx];
-//     }
-
-//     /**
-//      * Returns the identify information for the layer specified by resultIndex.
-//      */
-//     get identifyResult() {
-//         return this.payload[this.resultIndex];
-//     }
-
-//     /**
-//      * Returns the name field for the layer specified by resultIndex.
-//      */
-//     get nameField() {
-//         const layerInfo = this.payload[this.resultIndex];
-//         const uid = layerInfo?.uid;
-//         const layer: LayerInstance | undefined = this.getLayerByUid(uid);
-//         return layer?.getNameField(uid);
-//     }
-// }
 </script>
 
 <style lang="scss"></style>
