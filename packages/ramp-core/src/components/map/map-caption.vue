@@ -46,11 +46,15 @@
 
         <!-- TODO: find out if any ARIA attributes are needed for the map scale -->
 
-        <span class="flex-shrink-0 relative top-1 pr-14 pl-14">
-            {{ cursorCoords }}
+        <span
+            v-if="!cursorCoords.disabled"
+            class="flex-shrink-0 relative top-1 pr-14 pl-14"
+        >
+            {{ cursorCoords.formattedString }}
         </span>
 
         <button
+            v-if="!scale.disabled"
             class="
                 flex-shrink-0
                 mx-10
@@ -109,12 +113,11 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Watch } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
-import { Attribution, ScaleBarProperties } from '@/geo/api';
-import { GlobalEvents } from '@/api';
+import { Attribution, MouseCoords, RampMapConfig, ScaleBar } from '@/geo/api';
 import { MapCaptionStore } from '@/store/modules/map-caption';
-
+import { ConfigStore } from '@/store/modules/config';
 import NotificationsCaptionButtonV from '@/components/notification-center/caption-button.vue';
 
 @Component({
@@ -123,27 +126,18 @@ import NotificationsCaptionButtonV from '@/components/notification-center/captio
     }
 })
 export default class MapCaptionV extends Vue {
-    @Get(MapCaptionStore.scale) scale!: ScaleBarProperties;
+    @Get(MapCaptionStore.scale) scale!: ScaleBar;
     @Get(MapCaptionStore.attribution) attribution!: Attribution;
-    @Get(MapCaptionStore.cursorCoords) cursorCoords!: string;
+    @Get(MapCaptionStore.cursorCoords) cursorCoords!: MouseCoords;
+    @Get(ConfigStore.getMapConfig) mapConfig!: RampMapConfig;
     lang: string[] = [];
 
-    mounted() {
-        // When map is created update scale
-
-        // TODO consider giving this handler a specific name and put in the document.
-        //      since it happens at map create, could be risky/tricky putting it in the "default" events
-        //      as odds are if there is any delay, the handler will miss the MAP_CREATED event.
-        //      But having a specific name means someone can remove it later at their lesiure.
-
-        // TODO consider what happens when a map is re-created. We might need to check if common handlers pre-exist.
-        //      or do some type of "one time only" boolean so we don't have double-handlers each time a projection changes.
-        //      we also need to be careful of the scenario where someone removes these default handlers after the map loads;
-        //      we would not want to re-add them back during a projection change -- want to respect the new custom handlers.
-
-        this.$iApi.event.on(GlobalEvents.MAP_CREATED, () => {
-            this.$iApi.geo.map.caption.updateScale();
-        });
+    @Watch('mapConfig')
+    onMapConfigChange(newValue: RampMapConfig, oldValue: RampMapConfig) {
+        if (newValue === oldValue) {
+            return;
+        }
+        this.$iApi.geo.map.caption.createCaption(this.mapConfig.caption);
     }
 
     updated() {
@@ -162,7 +156,8 @@ export default class MapCaptionV extends Vue {
      * Toggle the scale units
      */
     onScaleClick() {
-        this.$iApi.$vApp.$store.set(MapCaptionStore.toggleScale, {});
+        // undefined argument will toggle the scale unit
+        this.$iApi.$vApp.$store.set(MapCaptionStore.toggleScale, undefined);
         this.$iApi.geo.map.caption.updateScale();
     }
 }

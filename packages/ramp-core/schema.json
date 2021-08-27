@@ -1785,6 +1785,44 @@
                         "$ref": "#/$defs/basemapNode"
                     },
                     "minItems": 1
+                },
+                "caption": {
+                    "type": "object",
+                    "description": "Configuration for the components in the map caption bar",
+                    "properties": {
+                        "mouseCoords": {
+                            "type": "object",
+                            "description": "Configuration for mouse co-ords",
+                            "properties": {
+                                "disabled": {
+                                    "type": "boolean",
+                                    "default": false
+                                },
+                                "formatter": {
+                                    "type": "string",
+                                    "description": "ID of the initial mouse point formatter",
+                                    "default": "LAT_LONG_DMS",
+                                    "enum": ["LAT_LONG_DMS", "LAT_LONG_DD", "LAT_LONG_DDM", "WEB_MERCATOR", "CANADA_ATLAS_LAMBERT", "UTM", "BASEMAP"]
+                                }
+                            }
+                        },
+                        "scaleBar": {
+                            "type": "object",
+                            "description": "Configuration for the scale bar",
+                            "properties": {
+                                "disabled": {
+                                    "type": "boolean",
+                                    "default": false
+                                },
+                                "imperialScale": {
+                                    "type": "boolean",
+                                    "description": "Use imperial scale distance units",
+                                    "default": false
+                                }
+                            }
+                        }
+                    },
+                    "required": ["mouseCoords", "scaleBar"]
                 }
             },
             "required": ["tileSchemas", "baseMaps"],

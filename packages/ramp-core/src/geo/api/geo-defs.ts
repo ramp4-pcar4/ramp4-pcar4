@@ -382,10 +382,17 @@ export interface Attribution {
 }
 
 // Contains properties needed to display scale on the map-caption bar
-export interface ScaleBarProperties {
-    label: string;
-    width: string;
-    isImperialScale: boolean;
+export interface ScaleBar {
+    disabled?: boolean;
+    label?: string;
+    width?: string;
+    isImperialScale?: boolean;
+}
+
+// Contains properties needed to display mouse co-ords on the map-caption bar
+export interface MouseCoords {
+    disabled?: boolean;
+    formattedString?: string;
 }
 
 // ----------------------- CLIENT CONFIG INTERFACES -----------------------------------
@@ -498,6 +505,12 @@ export interface RampTileSchemaConfig {
     hasNorthPole?: boolean;
 }
 
+// Contains properties for compoents on the map caption bar
+export interface MapCaptionConfig {
+    mouseCoords: { disabled?: boolean; formatter?: string };
+    scaleBar: { disabled?: boolean; imperialScale?: boolean };
+}
+
 // TODO actual ramp config is kinda wonky, split over lots of classes
 //      for now this will just serve as a nice type for the config
 export interface RampMapConfig {
@@ -506,4 +519,5 @@ export interface RampMapConfig {
     basemaps: Array<RampBasemapConfig>;
     tileSchemas: Array<RampTileSchemaConfig>;
     initialBasemapId: string;
+    caption?: MapCaptionConfig;
 }
