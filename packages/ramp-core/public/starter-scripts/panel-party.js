@@ -800,33 +800,31 @@ rInstance.$element.component('Water-Quantity-Template', {
     props: ['identifyData'],
     template: `
         <div style="align-items: center; justify-content: center; font-size: .875rem; font-family: Arial, sans-serif;">
-            ${renderHeader()}
-            ${createSection('Station ID', 'StationID')}
-            ${createSection('Province', 'E_Province')}
-            ${createSection('Report Year', 'Report_Year')}
+            <div v-html="renderHeader()" />
+            <div v-html="createSection('Station ID', 'StationID')" />
+            <div v-html="createSection('Province', 'E_Province')" />
+            <div v-html="createSection('Report Year', 'Report_Year')" />
             <div style="display: flex; flex-direction: row; color: #a0aec0; font-weight: bold; padding-top: 5px;">
-                <div style="flex: 1 1 0%; width: 100%;">,
-                    {{Latitude}}
+                <div style="flex: 1 1 0%; width: 100%;">
+                    Latitude
                 </div>
-                <div style="flex: 1 1 0%; width: 100%;">,
-                    {{Longitude}}
+                <div style="flex: 1 1 0%; width: 100%;">
+                    Longitude
                 </div>
             </div>
             <div style="display: flex; flex-direction: row;">
                 <div style="flex: 1 1 0%; width: 100%;">
-                    ${this.identifyData.data['Latitude']}
+                    {{this.identifyData.data['Latitude']}}
                 </div>
                 <div style="flex: 1 1 0%; width: 100%;">
-                    ${this.identifyData.data['Longitude']}
+                    {{this.identifyData.data['Longitude']}}
                 </div>
             </div>
             <div style="display: flex; flex-direction: column; padding-top: 5px; color: #4299e1;">
-                <span style="font-weight: bold; color: #a0aec0;">
-                    {{Links}}
-                    <span>${this.identifyData.data['E_DetailPageURL']}</span>
-                    <span>${this.identifyData.data['E_URL_Historical']}</span>
-                    <span>${this.identifyData.data['E_URL_RealTime']}</span>
-                </span>
+                <span style="font-weight: bold; color: #a0aec0;">Links</span>
+                <span v-html="this.identifyData.data['E_DetailPageURL']"></span>
+                <span v-html="this.identifyData.data['E_URL_Historical']"></span>
+                <span v-html="this.identifyData.data['E_URL_RealTime']"></span>
             </div>
         </div>
     `,
@@ -859,140 +857,6 @@ rInstance.$element.component('Water-Quantity-Template', {
             `;
         }
     }
-    // render: function(h) {
-    //     // Demonstrates that you can display different components in a template depending on an attribute value.
-    //     let renderHeader = () => {
-    //         if (this.identifyData.data['Symbol'] === '3') {
-    //             return h(
-    //                 'span',
-    //                 {
-    //                     style:
-    //                         'display: flex; font-size: 1.25rem; background-color: #e53e3e; color: white; padding: 4px; text-align: center;'
-    //                 },
-    //                 this.identifyData.data['StationName']
-    //             );
-    //         } else {
-    //             return h(
-    //                 'span',
-    //                 {
-    //                     style:
-    //                         'display: flex; font-size: 1.25rem; background-color: #3182ce; color: white; padding: 4px; text-align: center;'
-    //                 },
-    //                 this.identifyData.data['StationName']
-    //             );
-    //         }
-    //     };
-
-    //     let createSection = (title, id) => {
-    //         return h(
-    //             'div',
-    //             {
-    //                 style:
-    //                     'display: flex; flex-direction: column; font-size: .875rem; padding-top: 5px;'
-    //             },
-    //             [
-    //                 h(
-    //                     'span',
-    //                     {
-    //                         style: 'color: #a0aec0; font-weight: bold;'
-    //                     },
-    //                     title
-    //                 ),
-    //                 h('span', this.identifyData.data[id])
-    //             ]
-    //         );
-    //     };
-
-    //     return h(
-    //         'div',
-    //         {
-    //             style:
-    //                 'align-items: center; justify-content: center; font-size: .875rem; font-family: "Arial", sans-serif;'
-    //         },
-    //         [
-    //             renderHeader(),
-    //             createSection('Station ID', 'StationID'),
-    //             createSection('Province', 'E_Province'),
-    //             createSection('Report Year', 'Report_Year'),
-    //             h(
-    //                 'div',
-    //                 {
-    //                     style:
-    //                         'display: flex; flex-direction: row; color: #a0aec0; font-weight: bold; padding-top: 5px;'
-    //                 },
-    //                 [
-    //                     h(
-    //                         'div',
-    //                         {
-    //                             style: 'flex: 1 1 0%; width: 100%;'
-    //                         },
-    //                         'Latitude'
-    //                     ),
-    //                     h(
-    //                         'div',
-    //                         {
-    //                             style: 'flex: 1 1 0%; width: 100%;'
-    //                         },
-    //                         'Longitude'
-    //                     )
-    //                 ]
-    //             ),
-    //             h(
-    //                 'div',
-    //                 {
-    //                     style: 'display: flex; flex-direction: row;'
-    //                 },
-    //                 [
-    //                     h(
-    //                         'div',
-    //                         {
-    //                             style: 'flex: 1 1 0%; width: 100%;'
-    //                         },
-    //                         this.identifyData.data['Latitude']
-    //                     ),
-    //                     h(
-    //                         'div',
-    //                         {
-    //                             style: 'flex: 1 1 0%; width: 100%;'
-    //                         },
-    //                         this.identifyData.data['Longitude']
-    //                     )
-    //                 ]
-    //             ),
-    //             h(
-    //                 'div',
-    //                 {
-    //                     style:
-    //                         'display: flex; flex-direction: column; padding-top: 5px; color: #4299e1;'
-    //                 },
-    //                 [
-    //                     h(
-    //                         'span',
-    //                         {
-    //                             style: 'font-weight: bold; color: #a0aec0;'
-    //                         },
-    //                         'Links'
-    //                     ),
-    //                     h('span', {
-    //                         domProps: {
-    //                             innerHTML: this.identifyData.data['E_DetailPageURL']
-    //                         }
-    //                     }),
-    //                     h('span', {
-    //                         domProps: {
-    //                             innerHTML: this.identifyData.data['E_URL_Historical']
-    //                         }
-    //                     }),
-    //                     h('span', {
-    //                         domProps: {
-    //                             innerHTML: this.identifyData.data['E_URL_RealTime']
-    //                         }
-    //                     })
-    //                 ]
-    //             )
-    //         ]
-    //     );
-    // }
 });
 
 // start loading non-default fixtures; this is just an example

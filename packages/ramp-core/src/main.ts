@@ -4,7 +4,8 @@
 // when compiled using the `serve` command, the code is treated as an app, not a library,
 // so we need to expose RAMP API on the window manually
 import api from '@/api';
-import Vue from 'vue';
+//@ts-ignore
+import Vue from 'vue/dist/vue.esm-bundler.js';
 import '@/styles/main.css';
 
 // assign RAMP api to global variable

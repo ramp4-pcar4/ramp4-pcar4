@@ -91,9 +91,7 @@ export default defineComponent({
          * Returns the information for a single identify result, given the layer and item offsets.
          */
         identifyItem(): any {
-            const p = this.payload[this.resultIndex!].items[this.itemIndex!];
-            console.log(p);
-            return p;
+            return this.payload[this.resultIndex!].items[this.itemIndex!];
         },
 
         itemName(): string {
@@ -115,10 +113,8 @@ export default defineComponent({
                 this.templateBindings[layer.id] &&
                 this.templateBindings[layer.id].template
             ) {
-                console.log('template is custom....', this.templateBindings[layer.id]);
                 return this.templateBindings[layer.id].template;
             }
-            console.log('the template is not custom...');
             // If nothing is found, use a default template.
             if (this.layerType === 'ogcWms') {
                 return 'html-default';

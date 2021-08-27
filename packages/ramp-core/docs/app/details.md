@@ -14,23 +14,32 @@ The details fixture consists of three screens:
 
 If you don't want to use the provided templates for your layer results, you can create your own. The process is simple. All you need to do is create a Vue component and then add the layer-to-template binding to the RAMP configuration file.
 
-
 The example below explains how to create a basic template for the details panel.
 
 ### Example: Creating a Custom Template
 
-__1.__ The first thing you should do is create the Vue component that you want to use as the template. You can do this in various ways, but this example will make use of [Vue render functions](https://vuejs.org/v2/guide/render-function.html).
+__1.__ The first thing you should do is create the Vue component that you want to use as the template. You can do this in various ways, but this example will make use of template literals. If you need to include Javascript that contains more than a single expression, use the `methods` option, as shown below.
 
-
-To keep this example simple, the template created here will just display the name of the point when it is clicked on.
+To keep this example simple, the template created here will display the name of the point when it is clicked on and call a method to display the point's symbol, if it has one.
 
 ```javascript=
-RAMP.component('My_Custom_Component', {
-    props: ['identifyData'],
-    render: function(h) {
-        return h('div', [
-            h('span', 'The feature name is: ' + this.identifyData.data['name'])
-        ])
+rInstance.$element.component('My_Custom_Component', {
+        props: ['identifyData'],
+        template: `
+            <div>
+                <span>The feature name is: {{this.identifyData.data['name']}}</span>
+                <div v-html="displaySymbol()"/>
+            </div>
+        `,
+        methods: {
+            displaySymbol() {
+                if (this.identifyData.data['Symbol']) {
+                    return `
+                        <span>The feature symbol is: ${this.identifyData.data['Symbol']}</span>
+                    `;
+                }
+            }
+        }
     }
 });
 ```
@@ -41,7 +50,7 @@ __Note:__ it is important that you include the `identifyData` prop in the compon
 __2.__ Once the custom component has been created, you will want to add your layer to RAMP and set the new component as a custom template in the details fixture. You can do both of these in the configuration file:
 
 ```javascript=
-const myMap = new RAMP.Instance(document.getElementById("map"), {
+const rInstance = new RAMP.Instance(document.getElementById("map"), {
     map: { ... },
     layers: [
         {
