@@ -30,14 +30,10 @@ import {
     RampLayerFieldMetadataConfig,
     TabularAttributeSet
 } from '@/geo/api';
-import {
-    EsriExtent,
-    EsriField,
-    EsriRendererUtils,
-    EsriRequest
-} from '@/geo/esri';
+import { EsriExtent, EsriField, EsriRendererUtils, EsriRequest } from '@/geo/esri';
 import deepmerge from 'deepmerge';
 import to from 'await-to-js';
+import { markRaw, toRaw } from 'vue';
 
 export class AttribFC extends CommonFC {
     // property does get initialized in the super. typescript just being grousy
@@ -91,21 +87,14 @@ export class AttribFC extends CommonFC {
         );
         if (!serviceResult) {
             // case where service request was unsuccessful
-            console.error(
-                `Service metadata load error: ${this.serviceUrl}`,
-                err
-            );
-            return Promise.reject(
-                new Error(`Service metadata load error: ${this.serviceUrl}`)
-            );
+            console.error(`Service metadata load error: ${this.serviceUrl}`, err);
+            return Promise.reject(new Error(`Service metadata load error: ${this.serviceUrl}`));
         }
 
         if (!serviceResult.data) {
             // case where service request was successful but no data appeared in result
             console.error(`Service metadata load error: ${this.serviceUrl}`);
-            return Promise.reject(
-                new Error(`Service metadata load error: ${this.serviceUrl}`)
-            );
+            return Promise.reject(new Error(`Service metadata load error: ${this.serviceUrl}`));
         }
 
         const sData: any = serviceResult.data;
@@ -125,7 +114,7 @@ export class AttribFC extends CommonFC {
         if (sData.type === 'Feature Layer') {
             this.supportsFeatures = true;
             this.dataFormat = DataFormat.ESRI_FEATURE;
-            this.fields = sData.fields.map((f: any) => EsriField.fromJSON(f)); // TODO need to use Field.fromJSON() to make things correct
+            this.fields = markRaw(sData.fields.map((f: any) => EsriField.fromJSON(f))); // TODO need to use Field.fromJSON() to make things correct
             this.nameField = sData.displayField;
 
             // find object id field
@@ -180,10 +169,7 @@ export class AttribFC extends CommonFC {
                 batchSize: -1,
                 attribs: '*' // NOTE we set to * here for generic case. loader may override later once config settings are applied
             };
-            this.attLoader = new ArcServerAttributeLoader(
-                this.parentLayer.$iApi,
-                loadData
-            );
+            this.attLoader = new ArcServerAttributeLoader(this.parentLayer.$iApi, loadData);
         } else {
             this.dataFormat = DataFormat.ESRI_RASTER;
             this.fields = [];
@@ -229,9 +215,7 @@ export class AttribFC extends CommonFC {
             //      "coreHidden" that indicates the field has to exist, but should not be shown
             //      on things like details panes or grids
 
-            this.fieldList = configMetadata.fieldInfo
-                .map(f => f.data)
-                .join(',');
+            this.fieldList = configMetadata.fieldInfo.map(f => f.data).join(',');
             const tempFI = configMetadata.fieldInfo; // required because typescript is throwing a fit about undefineds inside the .filter
             this.fields = this.fields.filter(origField => {
                 return tempFI.find(fInfo => fInfo.data === origField.name);
@@ -279,10 +263,7 @@ export class AttribFC extends CommonFC {
         // Throw console warnings, don't crash the app
         if (!serviceResult) {
             // case where service request was unsuccessful
-            console.warn(
-                `Feature count request unsuccessful: ${this.serviceUrl}`,
-                err
-            );
+            console.warn(`Feature count request unsuccessful: ${this.serviceUrl}`, err);
             return;
         }
         if (!serviceResult.data) {
@@ -305,6 +286,7 @@ export class AttribFC extends CommonFC {
     getFields(): Array<FieldDefinition> {
         // extra fancy so we dont have to expose the ESRI field class
         return this.fields.map(f => {
+            f = toRaw(f);
             return {
                 name: f.name,
                 alias: f.alias,
@@ -326,9 +308,7 @@ export class AttribFC extends CommonFC {
     async getTabularAttributes(): Promise<TabularAttributeSet> {
         // redundant checks to shut up typescript
         if (!this.attLoader) {
-            throw new Error(
-                'getTabularAttributes call with missing attribute loader'
-            );
+            throw new Error('getTabularAttributes call with missing attribute loader');
         }
 
         // TODO rethink how this works. is it better to read from attributes every time?
@@ -348,9 +328,7 @@ export class AttribFC extends CommonFC {
 
         // redundant checks to shut up typescript
         if (!this.attLoader) {
-            throw new Error(
-                'getTabularAttributesGuts call with missing attribute loader'
-            );
+            throw new Error('getTabularAttributesGuts call with missing attribute loader');
         }
 
         // TODO consider changing this to a warning and just return some dummy value
@@ -371,11 +349,11 @@ export class AttribFC extends CommonFC {
             .filter(field =>
                 // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
                 // filter out fields where there is no corresponding attribute data
-                attSet.features[0].hasOwnProperty(field.name)
+                attSet.features[0].hasOwnProperty(toRaw(field).name)
             )
             .map(field => ({
-                data: field.name, // TODO calling this data is really unintuitive. consider global rename to fieldName, name, attribName, etc.
-                title: field.alias || field.name
+                data: toRaw(field).name, // TODO calling this data is really unintuitive. consider global rename to fieldName, name, attribName, etc.
+                title: toRaw(field).alias || toRaw(field).name
             }));
 
         // derive the icon for the row
@@ -445,10 +423,7 @@ export class AttribFC extends CommonFC {
      *                 - getAttribs    boolean. indicates if return value should have attributes included. default to false
      * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .layerFC for convenience
      */
-    async getGraphic(
-        objectId: number,
-        opts: GetGraphicParams
-    ): Promise<GetGraphicResult> {
+    async getGraphic(objectId: number, opts: GetGraphicParams): Promise<GetGraphicResult> {
         // NOTE RAMP2 version of this included the FC object. we want to keep those hidden, so
         //      for now will just return the graphic structure and if we need more stuff we
         //      will figure out a proper way to do that.
@@ -489,8 +464,7 @@ export class AttribFC extends CommonFC {
                 // all attributes have been loaded (or is a file and are local). use that store.
                 // since attributes come from a promise, reset the wait promise to the attribute promise
                 const atSet = await this.attLoader.getAttribs();
-                resultFeat.attributes =
-                    atSet.features[atSet.oidIndex[objectId]];
+                resultFeat.attributes = atSet.features[atSet.oidIndex[objectId]];
             } else {
                 // we will need to download data from the service
                 needWebAttr = true;
@@ -556,25 +530,15 @@ export class AttribFC extends CommonFC {
             );
             if (needWebGeom) {
                 // save our result in the cache
-                this.quickCache.setGeom(
-                    objectId,
-                    <BaseGeometry>webFeat.geometry,
-                    scale
-                );
+                this.quickCache.setGeom(objectId, <BaseGeometry>webFeat.geometry, scale);
                 resultFeat.geometry = webFeat.geometry;
             }
 
-            if (
-                needWebAttr ||
-                typeof this.quickCache.getAttribs(objectId) === 'undefined'
-            ) {
+            if (needWebAttr || typeof this.quickCache.getAttribs(objectId) === 'undefined') {
                 // extra check in the if is for efficiency. attributes get downloaded in the request
                 // regardless if we wanted them. if we didn't want them, but didn't have them cached,
                 // will cache them anyways to save another hit later.
-                this.quickCache.setAttribs(
-                    objectId,
-                    <Attributes>webFeat.attributes
-                );
+                this.quickCache.setAttribs(objectId, <Attributes>webFeat.attributes);
 
                 if (needWebAttr) {
                     // only put attribs on the result if requester asked for them
@@ -622,9 +586,7 @@ export class AttribFC extends CommonFC {
             ...options
         };
 
-        return this.parentLayer.$iApi.geo.utils.query.arcGisServerQueryIds(
-            agsOpt
-        );
+        return this.parentLayer.$iApi.geo.utils.query.arcGisServerQueryIds(agsOpt);
     }
 
     // TODO we are using the getgraphic type as it's an unbound loosely typed feature
@@ -641,9 +603,7 @@ export class AttribFC extends CommonFC {
      * @param options {Object} options to provide filters and helpful information.
      * @returns {Promise} resolves with an array of features that satisfy the criteria
      */
-    async queryFeatures(
-        options: QueryFeaturesParams
-    ): Promise<Array<GetGraphicResult>> {
+    async queryFeatures(options: QueryFeaturesParams): Promise<Array<GetGraphicResult>> {
         // NOTE this assumes a server based layer
         //      local based layers should override this function
 

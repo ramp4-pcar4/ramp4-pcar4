@@ -1,11 +1,5 @@
 <template>
-    <button
-        class="w-38 h-48"
-        :content="$t('grid.cells.zoom')"
-        v-tippy="{ placement: 'top' }"
-        @click="zoomToFeature"
-        tabindex="-1"
-    >
+    <button class="w-38 h-48" :content="$t('grid.cells.zoom')" @click="zoomToFeature" tabindex="-1">
         <svg
             class="m-auto"
             xmlns="http://www.w3.org/2000/svg"
@@ -23,56 +17,51 @@
 </template>
 
 <script lang="ts">
-import { ComputedRef } from 'vue';
+import { defineComponent } from 'vue';
 import { Vue } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
 import { LayerInstance } from '@/api/internal';
 
-export default class ZoomButtonRendererV extends Vue {
-    getLayerByUid: ComputedRef<
-        (uid: string) => LayerInstance | undefined
-    > = get('layer/getLayerByUid');
-    // @Get('layer/getLayerByUid') getLayerByUid!: (
-    //     uid: string
-    // ) => LayerInstance | undefined;
-
-    params: any;
+export default defineComponent({
+    name: 'ZoomButtonRendererV',
+    props: ['params'],
+    data() {
+        return {
+            getLayerByUid: get('layer/getLayerByUid')
+        };
+    },
 
     mounted() {
         // need to hoist events to top level cell wrapper to be keyboard accessible
-        this.params.eGridCell.addEventListener(
-            'keydown',
-            (e: KeyboardEvent) => {
-                if (e.key === 'Enter') {
-                    this.zoomToFeature();
-                }
+        this.params.eGridCell.addEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === 'Enter') {
+                this.zoomToFeature();
             }
-        );
+        });
         this.params.eGridCell.addEventListener('focus', () => {
             (this.$el as any)._tippy.show();
         });
         this.params.eGridCell.addEventListener('blur', () => {
             (this.$el as any)._tippy.hide();
         });
-    }
+    },
 
-    zoomToFeature() {
-        const layer: LayerInstance | undefined = this.getLayerByUid.value(
-            this.params.uid
-        );
-        if (layer === undefined) return;
-        const oid = this.params.data[this.params.oidField];
-        const opts = { getGeom: true };
-        layer.getGraphic(oid, opts, this.params.uid).then(g => {
-            if (g.geometry === undefined) {
-                console.error(`Could not find graphic for objectid ${oid}`);
-            } else {
-                this.$iApi.geo.map.zoomMapTo(g.geometry, 50000);
-            }
-        });
+    methods: {
+        zoomToFeature() {
+            const layer: LayerInstance | undefined = this.getLayerByUid(this.params.uid);
+            if (layer === undefined) return;
+            const oid = this.params.data[this.params.oidField];
+            const opts = { getGeom: true };
+            layer.getGraphic(oid, opts, this.params.uid).then(g => {
+                if (g.geometry === undefined) {
+                    console.error(`Could not find graphic for objectid ${oid}`);
+                } else {
+                    this.$iApi.geo.map.zoomMapTo(g.geometry, 50000);
+                }
+            });
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

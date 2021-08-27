@@ -14,7 +14,7 @@ import { store, storeType } from '@/store';
 import { ConfigStore } from '@/store/modules/config';
 
 //@ts-ignore
-import VueTippy, { TippyComponent, tippy } from 'vue-tippy';
+import VueTippy from 'vue-tippy';
 import { FocusList, FocusItem } from '@/directives/focus-list';
 import { Truncate } from '@/directives/truncate/truncate';
 
@@ -321,6 +321,7 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
     vueElement.component('appbar-button', AppbarButtonV);
     vueElement.component('toggle-button', Toggle);
 
+    // Add the $store and $iApi instances to the Vue components.
     vueElement.config.globalProperties.$store = store;
     vueElement.config.globalProperties.$iApi = iApi;
 

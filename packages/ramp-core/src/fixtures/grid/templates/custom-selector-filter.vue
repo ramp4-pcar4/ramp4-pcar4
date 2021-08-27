@@ -1,10 +1,6 @@
 <template>
     <div class="h-full flex items-center justify-center">
-        <select
-            class="rv-input w-full"
-            v-model="selectedOption"
-            @change="selectionChanged()"
-        >
+        <select class="rv-input w-full" v-model="selectedOption" @change="selectionChanged()">
             <option v-for="option in options" :value="option" :key="option">
                 {{ option }}
             </option>
@@ -13,9 +9,18 @@
 </template>
 
 <script lang="ts">
-import { Vue } from 'vue-property-decorator';
+import { defineComponent, ref } from 'vue';
 
-export default class GridCustomSelectorFilterV extends Vue {
+export default defineComponent({
+    name: 'GridCustomSelectorFilterV',
+    props: ['params'],
+    data() {
+        return {
+            selectedOption: '' as String,
+            options: [] as Array<String>
+        };
+    },
+
     beforeMount() {
         // Load previously stored value (if saved in table state manager)
         this.selectedOption = this.params.stateManager.getColumnFilter(
@@ -26,60 +31,60 @@ export default class GridCustomSelectorFilterV extends Vue {
 
         // obtain row data and filter out duplicates for selector list
         rowData = rowData.map((row: any) => row[this.params.column.colId]);
-        this.options = rowData.filter(
-            (item: any, idx: any) => rowData.indexOf(item) === idx
-        );
+        this.options = rowData.filter((item: any, idx: any) => rowData.indexOf(item) === idx);
 
         // add the '...' option to allow clearing the selector
         this.options.unshift('...');
 
         // Apply the default value to the column filter.
         this.selectionChanged();
-    }
+    },
 
-    selectionChanged() {
-        this.selectedOption = this.selectedOption ? this.selectedOption : '';
+    methods: {
+        selectionChanged() {
+            this.selectedOption = this.selectedOption ? this.selectedOption : '';
 
-        this.params.parentFilterInstance((instance: any) => {
-            if (this.selectedOption === '...') {
-                // Clear the selector filter.
-                instance.setModel(null);
-                instance.onFilterChanged();
+            this.params.parentFilterInstance((instance: any) => {
+                if (this.selectedOption === '...') {
+                    // Clear the selector filter.
+                    instance.setModel(null);
+                    instance.onFilterChanged();
+                    this.selectedOption = '';
+                } else {
+                    // Filter by the selected option.
+                    instance.setModel({
+                        filterType: 'text',
+                        type: 'contains',
+                        filter: this.selectedOption
+                    });
+                }
+
+                // Save the new filter value in the state manager. Allows for quick recovery if the grid is
+                // closed and re-opened.
+                this.params.stateManager.setColumnFilter(
+                    this.params.column.colDef.field,
+                    this.selectedOption
+                );
+
+                this.params.api.onFilterChanged();
+            });
+        },
+
+        onParentModelChanged(parentModel: any) {
+            if (parentModel === {}) {
                 this.selectedOption = '';
-            } else {
-                // Filter by the selected option.
-                instance.setModel({
-                    filterType: 'text',
-                    type: 'contains',
-                    filter: this.selectedOption
-                });
             }
+        },
 
-            // Save the new filter value in the state manager. Allows for quick recovery if the grid is
-            // closed and re-opened.
-            this.params.stateManager.setColumnFilter(
-                this.params.column.colDef.field,
-                this.selectedOption
-            );
-
-            this.params.api.onFilterChanged();
-        });
-    }
-
-    onParentModelChanged(parentModel: any) {
-        if (parentModel === {}) {
-            this.selectedOption = '';
+        setModel() {
+            return {
+                filterType: 'text',
+                type: 'contains',
+                filter: this.selectedOption
+            };
         }
     }
-
-    setModel() {
-        return {
-            filterType: 'text',
-            type: 'contains',
-            filter: this.selectedOption
-        };
-    }
-}
+});
 
 export default interface GridCustomSelectorFilter {
     selectedOption: string;

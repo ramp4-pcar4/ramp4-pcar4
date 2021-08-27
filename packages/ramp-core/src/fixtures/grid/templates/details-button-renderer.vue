@@ -2,7 +2,6 @@
     <button
         class="w-38 h-48"
         :content="$t('grid.cells.details')"
-        v-tippy="{ placement: 'top' }"
         @click="openDetails"
         tabindex="-1"
     >
@@ -22,41 +21,43 @@
 </template>
 
 <script lang="ts">
-import { Vue } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
+
 import deepmerge from 'deepmerge';
 import { GlobalEvents } from '@/api/internal';
 
-export default class DetailsButtonRendererV extends Vue {
-    params: any;
+export default defineComponent({
+    name: 'DetailsButtonRendererV',
+    props: ['params'],
 
     mounted() {
         // need to hoist events to top level cell wrapper to be keyboard accessible
-        this.params.eGridCell.addEventListener(
-            'keydown',
-            (e: KeyboardEvent) => {
-                if (e.key === 'Enter') {
-                    this.openDetails();
-                }
+        this.params.eGridCell.addEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === 'Enter') {
+                this.openDetails();
             }
-        );
+        });
+
         this.params.eGridCell.addEventListener('focus', () => {
             (this.$el as any)._tippy.show();
         });
         this.params.eGridCell.addEventListener('blur', () => {
             (this.$el as any)._tippy.hide();
         });
-    }
+    },
 
-    openDetails() {
-        const fakeIdentifyItem = deepmerge({}, { data: this.params.data });
-        delete fakeIdentifyItem['data']['rvInteractive'];
-        delete fakeIdentifyItem['data']['rvSymbol'];
-        this.$iApi.event.emit(GlobalEvents.DETAILS_OPEN, {
-            identifyItem: fakeIdentifyItem,
-            uid: this.params.uid
-        });
+    methods: {
+        openDetails() {
+            const fakeIdentifyItem = deepmerge({}, { data: this.params.data });
+            delete fakeIdentifyItem['data']['rvInteractive'];
+            delete fakeIdentifyItem['data']['rvSymbol'];
+            this.$iApi.event.emit(GlobalEvents.DETAILS_OPEN, {
+                identifyItem: fakeIdentifyItem,
+                uid: this.params.uid
+            });
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

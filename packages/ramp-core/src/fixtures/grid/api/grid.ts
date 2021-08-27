@@ -31,10 +31,7 @@ export class GridAPI extends FixtureInstance {
             this.$vApp.$store.set('grid/addGrid!', gridSettings);
         }
 
-        const prevUid = this.$vApp.$store.get(
-            GridStore.currentUid,
-            uid ? uid : null
-        );
+        const prevUid = this.$vApp.$store.get(GridStore.currentUid, uid ? uid : null);
         this.$vApp.$store.set(GridStore.currentUid, uid ? uid : null);
 
         const panel = this.$iApi.panel.get('grid-panel');

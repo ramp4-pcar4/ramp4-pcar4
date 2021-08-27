@@ -1,8 +1,5 @@
 <template>
-    <appbar-button
-        :onClickFunction="onClick"
-        :tooltip="$t('grid.button.title')"
-    >
+    <appbar-button :onClickFunction="onClick" :tooltip="$t('grid.button.title')">
         <!-- https://fonts.google.com/icons?selected=Material%20Icons%3Atable_chart -->
         <svg
             class="fill-current w-24 h-24 ml-8 sm:ml-20"
@@ -17,13 +14,16 @@
     </appbar-button>
 </template>
 <script lang="ts">
-import { Vue } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-export default class GridAppbarButtonV extends Vue {
-    onClick() {
-        this.$iApi.panel.toggleMinimize('grid-panel');
+export default defineComponent({
+    name: 'GridAppbarButtonV',
+    methods: {
+        onClick() {
+            this.$iApi.panel.toggleMinimize('grid-panel');
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

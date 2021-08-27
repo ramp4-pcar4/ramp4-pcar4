@@ -25,8 +25,10 @@ class FeatureLayer extends AttribLayer {
     }
 
     async initiate(): Promise<void> {
-        this.esriLayer = markRaw(
-            new EsriFeatureLayer(this.makeEsriLayerConfig(this.origRampConfig))
+        markRaw(
+            (this.esriLayer = new EsriFeatureLayer(
+                this.makeEsriLayerConfig(this.origRampConfig)
+            ))
         );
         await super.initiate();
     }
