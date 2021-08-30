@@ -11,7 +11,7 @@ import {
 export class PolygonStyleOptions extends StyleOptions {
     protected _outlineStyle: LineStyleOptions;
     protected _fillColor: Array<number>;
-    protected _fillStyle: string;
+    protected _fillStyle: FillStyle;
 
     constructor(opts?: PolygonStyleParams) {
         opts = opts || {}; // If opts is undefined set it to an empty obj
@@ -41,7 +41,8 @@ export class PolygonStyleOptions extends StyleOptions {
             }
         }
 
-        this._fillStyle = opts.fillStyle || opts.style || FillStyle.SOLID;
+        this._fillStyle =
+            opts.fillStyle || (opts.style as FillStyle) || FillStyle.SOLID;
 
         // THE OUTLINE
         let paramooo: LineStyleParams;
@@ -54,5 +55,18 @@ export class PolygonStyleOptions extends StyleOptions {
             paramooo.width = opts.outlineWidth;
         }
         this._outlineStyle = new LineStyleOptions(paramooo);
+    }
+
+    /** Returns the specified colour */
+    get fillColour(): Array<number> {
+        return this._fillColor;
+    }
+
+    get fillStyle(): FillStyle {
+        return this._fillStyle;
+    }
+
+    get outlineStyleOptions(): LineStyleOptions {
+        return this._outlineStyle;
     }
 }

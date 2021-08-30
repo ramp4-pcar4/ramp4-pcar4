@@ -18,7 +18,10 @@ export class GeoAPI extends APIScope {
     //      put stuff right on the root?  e.g. api.geo.Point, api.geo.Graphic
     //      split things out? geo.geom for geometry, geo.graphic for others?
     //      everything under .geom?
+    //      note we have .geo.utils.geom already.
+    //      .shapes?
     //      we might need this stuff in an independent outside class with no ties to the instance.
+    //      probably utilize a hotlink to the stuff on RAMP.GEO , similar to what api.geo.utils.proj does.
 
     /**
      * @constructor

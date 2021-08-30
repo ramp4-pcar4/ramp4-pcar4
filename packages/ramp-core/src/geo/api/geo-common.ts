@@ -3,13 +3,17 @@
 import {
     Extent,
     GeometryAPI,
+    Graphic,
     LinearRing,
     LineString,
+    LineStyleOptions,
     MultiLineString,
     MultiPoint,
     MultiPolygon,
     Point,
+    PointStyleOptions,
     Polygon,
+    PolygonStyleOptions,
     ProjectionAPI,
     RampLodConfig,
     SharedUtilsAPI,
@@ -20,18 +24,18 @@ export class GeoCommonAPI {
     // exposing the open classes for quick reference on the RAMP API
 
     Extent = Extent;
-    // Graphic = Graphic;
+    Graphic = Graphic;
     // Hover = Hover;
     LineString = LineString;
-    // LineStyleOptions = LineStyleOptions;
+    LineStyleOptions = LineStyleOptions;
     LinearRing = LinearRing;
     MultiLineString = MultiLineString;
     MultiPoint = MultiPoint;
     MultiPolygon = MultiPolygon;
     Point = Point;
-    // PointStyleOptions = PointStyleOptions;
+    PointStyleOptions = PointStyleOptions;
     Polygon = Polygon;
-    // PolygonStyleOptions = PolygonStyleOptions;
+    PolygonStyleOptions = PolygonStyleOptions;
     SpatialReference = SpatialReference; // SpatialReference: typeof SpatialReference = SpatialReference // this is great code
 
     // useful functions

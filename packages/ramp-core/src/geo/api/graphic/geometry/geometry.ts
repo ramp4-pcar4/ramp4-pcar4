@@ -8,23 +8,36 @@ import {
     GeometryType,
     LinearRing,
     LineString,
+    LineStyleOptions,
     MapClick,
     MapMove,
     MultiLineString,
     MultiPoint,
     MultiPolygon,
     Point,
+    PointStyleOptions,
     Polygon,
-    SpatialReference
+    PolygonStyleOptions,
+    SpatialReference,
+    StyleOptions
 } from '@/geo/api';
 import {
+    EsriColour,
     EsriExtent,
+    EsriGraphic,
     EsriMultipoint,
+    EsriPictureMarkerSymbol,
     EsriPoint,
     EsriPolygon,
     EsriPolyline,
-    EsriSpatialReference
+    EsriSimpleFillSymbol,
+    EsriSimpleLineSymbol,
+    EsriSimpleMarkerSymbol,
+    EsriSpatialReference,
+    EsriSymbol,
+    EsriSymbolJsonUtils
 } from '@/geo/esri';
+import { PointStyle } from '../../geo-defs';
 
 // import * as RampAPI from '../api/api';
 // import BaseGeometry from '../api/geometry/BaseGeometry'; // this is a bit wonky. could expose on RampAPI, but dont want clients using the baseclass
@@ -245,6 +258,12 @@ export class GeometryAPI {
         }
     }
 
+    /**
+     * Converts any RAMP API Graphic to a GeoJson Feature. Any styles or ids will be excluded from the result.
+     *
+     * @param {Graphic} rampGraphic a RAMP API graphic
+     * @returns {any} a GeoJson Feature
+     */
     graphicRampToGeoJson(rampGraphic: Graphic): any {
         // the geojson Feature interface is being crabby.
         let typescriptIsDumb: any = {}; // freaks out assigning random keys to .properties without an explicit `any`
@@ -261,6 +280,13 @@ export class GeometryAPI {
         return f;
     }
 
+    /**
+     * Converts any GeoJson Feature to a RAMP API Graphic
+     *
+     * @param {any} geoJsonFeature a GeoJson Feature
+     * @param {number | string } [geomId] an id to apply to the geometry of the graphic
+     * @returns {Graphic} a RAMP API Graphic
+     */
     graphicGeoJsonToRamp(
         geoJsonFeature: any,
         geomId?: number | string
@@ -270,6 +296,9 @@ export class GeometryAPI {
                 'Expected input parameter of graphicGeoJsonToRamp to be a GeoJson feature'
             );
         }
+
+        // TODO we are just using default id for the graphic. do we want a second optional function
+        //      param to set this as well? double optionals are messy. Caller can override the result.
         const g = new Graphic();
         g.geometry = this.geomGeoJsonToRamp(geoJsonFeature.geometry, geomId);
         Object.keys(geoJsonFeature.properties).forEach(
@@ -277,6 +306,51 @@ export class GeometryAPI {
         );
 
         return g;
+    }
+
+    /**
+     * Converts any RAMP API Graphic to an ESRI Graphic
+     * @param {Graphic} rampGraphic a RAMP API Graphic
+     * @returns {EsriGraphic} an ESRI Graphic
+     */
+    graphicRampToEsri(rampGraphic: Graphic): EsriGraphic {
+        // would be nice to use __esri.GraphicProperties as the type, but since we
+        // need to tack on an id, that would anger the interface.
+        let gConf: any = {
+            attributes: {},
+            id: rampGraphic.id
+        };
+
+        gConf.geometry = this.geomRampToEsri(rampGraphic.geometry);
+
+        Object.keys(rampGraphic.attributes).forEach(
+            k => (gConf.attributes[k] = rampGraphic.attributes[k])
+        );
+
+        if (rampGraphic.style) {
+            // convert style to esri style
+            gConf.symbol = this.styleRampToEsri(rampGraphic.style);
+        } else {
+            // TODO default? check if a raw new class has defaults. would need to check geom and pick correct class
+            // or don't style and let caller figure it out. have warning on graphic layer.
+            // COUDL BE that esri makes a default symbol if none is provided, thats best choice.
+        }
+
+        return new EsriGraphic(gConf);
+    }
+
+    styleRampToEsri(rampStyle: StyleOptions): EsriSymbol {
+        if (rampStyle instanceof PointStyleOptions) {
+            return this._convRampPointStyleToEsri(rampStyle);
+        } else if (rampStyle instanceof LineStyleOptions) {
+            return this._convRampLineStyleToEsri(rampStyle);
+        } else if (rampStyle instanceof PolygonStyleOptions) {
+            return this._convRampPolygonStyleToEsri(rampStyle);
+        } else {
+            throw new Error(
+                'RAMP graphic has generic StyleOptions. Needs to be Point, Line, or Polygon option'
+            );
+        }
     }
 
     // converts an arcgis server geometry type to ramp geometry type
@@ -708,6 +782,106 @@ export class GeometryAPI {
             geoJsonMultiPoint.coordinates,
             this._convGeoJsonSrToSr(geoJsonMultiPoint.crs),
             true
+        );
+    }
+
+    _convRampPointStyleToEsri(
+        rampPointStyle: PointStyleOptions
+    ): EsriSimpleMarkerSymbol | EsriPictureMarkerSymbol {
+        let symbol: EsriSimpleMarkerSymbol | EsriPictureMarkerSymbol;
+
+        if (rampPointStyle.style === 'ICON') {
+            if (this.isImageUrl(rampPointStyle.icon)) {
+                // TODO: discuss how to handle the width / height issue when passing in an icon
+                symbol = new EsriPictureMarkerSymbol();
+                symbol.url = rampPointStyle.icon;
+                symbol.width = rampPointStyle.width;
+                symbol.height = rampPointStyle.height;
+                symbol.xoffset = rampPointStyle.xOffset;
+                symbol.yoffset = rampPointStyle.yOffset;
+            } else {
+                symbol = new EsriSimpleMarkerSymbol();
+
+                // TODO decide if we want to add PATH style support
+                // symbol.path= rampPointStyle.icon;
+
+                symbol.color = new EsriColour(rampPointStyle.colour);
+                symbol.size = rampPointStyle.width;
+                symbol.xoffset = rampPointStyle.xOffset;
+                symbol.yoffset = rampPointStyle.yOffset;
+            }
+        } else {
+            const options = {
+                color: rampPointStyle.colour,
+                size: rampPointStyle.width,
+                xoffset: rampPointStyle.xOffset,
+                yoffset: rampPointStyle.yOffset,
+                type: 'esriSMS',
+                style: rampPointStyle.style as PointStyle,
+                outline: {
+                    color: [0, 0, 0],
+                    width: 1,
+                    type: 'esriSLS',
+                    style: 'esriSLSSolid'
+                }
+            };
+            symbol = EsriSymbolJsonUtils.fromJSON(
+                options
+            ) as EsriSimpleMarkerSymbol;
+        }
+
+        return symbol;
+    }
+
+    _convRampLineStyleToEsri(
+        rampLineStyle: LineStyleOptions
+    ): EsriSimpleLineSymbol {
+        const symbol = {
+            width: rampLineStyle.width,
+            type: 'esriSLS',
+            color: rampLineStyle.colour,
+            style: rampLineStyle.style,
+            outline: {
+                color: [0, 0, 0],
+                width: 1,
+                type: 'esriSLS',
+                style: 'esriSLSSolid'
+            }
+        };
+        return EsriSymbolJsonUtils.fromJSON(symbol) as EsriSimpleLineSymbol;
+    }
+
+    _convRampPolygonStyleToEsri(
+        rampPolyStyle: PolygonStyleOptions
+    ): EsriSimpleFillSymbol {
+        const lineSymbol = new EsriSimpleLineSymbol();
+        lineSymbol.color = new EsriColour(rampPolyStyle.colour);
+        lineSymbol.width = rampPolyStyle.width;
+        lineSymbol.style = rampPolyStyle.outlineStyleOptions.style;
+
+        const fillColor = new EsriColour(rampPolyStyle.fillColour);
+
+        const fillSymbol = new EsriSimpleFillSymbol();
+        fillSymbol.style = rampPolyStyle.fillStyle;
+        fillSymbol.color = fillColor;
+        fillSymbol.outline = lineSymbol;
+
+        return fillSymbol;
+    }
+
+    /**
+     * Check to see if text provided is a valid image / data URL based on extension type or format.
+     *
+     * @function isImageUrl
+     * @param {String} text                      string to be matched against valid image types / data url format
+     * @returns {Boolean}                        true if valid image extension
+     */
+    isImageUrl(text: string): boolean {
+        return (
+            !!text.match(/\.(jpeg|jpg|gif|png|swf|svg)$/) ||
+            !!text.match(
+                /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i
+            )
         );
     }
 }

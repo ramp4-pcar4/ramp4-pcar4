@@ -21,6 +21,17 @@ export class Graphic {
     attributes: Attributes = {};
     geometry: BaseGeometry = new Point(undefined, [0, 0], undefined, true); // dumb default to shut up whining typescript
     style: StyleOptions | undefined;
+    id: string;
+
+    //constructor();
+    //constructor(id: string);
+    constructor(id?: string | undefined) {
+        if (id) {
+            this.id = id;
+        } else {
+            this.id = RAMP.GEO.sharedUtils.generateUUID();
+        }
+    }
 
     private _hover: Hover | undefined;
 

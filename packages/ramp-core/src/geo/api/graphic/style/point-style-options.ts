@@ -40,7 +40,8 @@ export class PointStyleOptions extends StyleOptions {
         return this._yOffset;
     } // TODO figure out format, document format
 
-    /** Returns the specified icon */ get icon(): string {
+    /** Returns the specified icon. Can be image url, svg image */
+    get icon(): string {
         return this._icon;
     }
 }
