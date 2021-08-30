@@ -20,6 +20,7 @@ export * from '@/geo/layer/common-fc';
 export * from '@/geo/layer/common-layer';
 export * from '@/geo/layer/attrib-fc';
 export * from '@/geo/layer/attrib-layer';
+export * from '@/geo/layer/common-graphic-layer';
 export * from '@/geo/layer/file-fc';
 export * from '@/geo/layer/file-layer';
 export * from '@/geo/utils/attribute';

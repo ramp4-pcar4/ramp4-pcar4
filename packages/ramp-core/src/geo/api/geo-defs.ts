@@ -129,6 +129,7 @@ export enum LayerType {
     MAPIMAGE = 'esriMapImage',
     TILE = 'esriTile',
     IMAGERY = 'esriImagery',
+    GRAPHIC = 'esriGraphic',
 
     // OGS
     WMS = 'ogcWms',
