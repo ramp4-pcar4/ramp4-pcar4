@@ -32,7 +32,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Vue, Prop } from 'vue-property-decorator';
 
 export default defineComponent({
     name: 'MoreAppbarButtonV',
