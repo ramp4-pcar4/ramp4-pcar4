@@ -1,11 +1,14 @@
-import Vue, { ComponentOptions, createApp, defineComponent } from 'vue';
+import Vue, {
+    Component,
+    ComponentOptions,
+    createApp,
+    defineComponent,
+    createVNode,
+    render
+} from 'vue';
 
 import { APIScope, GlobalEvents, InstanceAPI } from './internal';
-import {
-    FixtureBase,
-    FixtureMutation,
-    FixtureBaseSet
-} from '@/store/modules/fixture';
+import { FixtureBase, FixtureMutation, FixtureBaseSet } from '@/store/modules/fixture';
 
 // TODO: implement the same `internal.ts` pattern in store, so can import from a single place;
 
@@ -44,17 +47,11 @@ export class FixtureAPI extends APIScope {
             }
 
             // run the provided constructor and update the resulting object with FixtureInstance functions/properties
-            fixture = FixtureInstance.updateBaseToInstance(
-                new constructor(),
-                id,
-                this.$iApi
-            );
+            fixture = FixtureInstance.updateBaseToInstance(new constructor(), id, this.$iApi);
         } else {
             // perform a dynamic webpack import of a internal fixture (allows for code splitting)
             const instanceConstructor: IFixtureInstance = (
-                await import(
-                    /* webpackChunkName: "[request]" */ `@/fixtures/${id}/index.ts`
-                )
+                await import(/* webpackChunkName: "[request]" */ `@/fixtures/${id}/index.ts`)
             ).default;
 
             fixture = new instanceConstructor(id, this.$iApi);
@@ -80,9 +77,7 @@ export class FixtureAPI extends APIScope {
      * @returns {T}
      * @memberof FixtureAPI
      */
-    remove<T extends FixtureBase = FixtureBase>(
-        fixtureOrId: FixtureBase | string
-    ): T {
+    remove<T extends FixtureBase = FixtureBase>(fixtureOrId: FixtureBase | string): T {
         const fixture = this.get<T>(fixtureOrId);
 
         this.$vApp.$store.set(`fixture/${FixtureMutation.REMOVE_FIXTURE}!`, {
@@ -152,9 +147,7 @@ export class FixtureAPI extends APIScope {
      * @returns {Promise<Array<FixtureBase>>} resolves with array of default fixtures
      * @memberof FixtureAPI
      */
-    addDefaultFixtures(
-        fixtureNames?: Array<string>
-    ): Promise<Array<FixtureBase>> {
+    addDefaultFixtures(fixtureNames?: Array<string>): Promise<Array<FixtureBase>> {
         if (!Array.isArray(fixtureNames) || fixtureNames.length === 0) {
             fixtureNames = [
                 'appbar',
@@ -221,7 +214,7 @@ export class FixtureInstance extends APIScope implements FixtureBase {
                 }
             },
             remove: { value: instance.remove },
-            // extend: { value: instance.extend },
+            extend: { value: instance.extend },
             config: {
                 get(): any {
                     return instance.config;
@@ -269,8 +262,6 @@ export class FixtureInstance extends APIScope implements FixtureBase {
      * A helper function to create a "subclass" of the base Vue constructor
      *
      * @param {VueConstructor<Vue>} vueComponent
-     * @param {any} components
-     * @param {any} directives
      * @param {ComponentOptions<Vue>} [options={}]
      * @param {boolean} [mount=true]
      * @returns {Vue}
@@ -299,6 +290,37 @@ export class FixtureInstance extends APIScope implements FixtureBase {
 
         const componentApp = createApp(component);
         return componentApp;
+    }
+
+    /**
+     * Helper with programatically creating a component in Vue 3 (replaces the deprecated Vue.extend)
+     *
+     * @param {Component} component
+     * @param {object} props
+     * @param {any} children
+     * @param {HTMLElement} element
+     * @param {App} app
+     * @returns {VNode, function, HTMLElement}
+     * @memberof FixtureInstance
+     */
+    mount(component: Component, { props, children, element, app }: any = {}) {
+        let el = element;
+
+        let vNode: any = createVNode(component, props, children);
+        if (app && app._context) {
+            vNode.appContext = app._context;
+        }
+        el ? render(vNode, el) : render(vNode, (el = document.createElement('div')));
+
+        const destroy = () => {
+            if (el) {
+                render(null, el);
+            }
+            el = null;
+            vNode = null;
+        };
+
+        return { vNode, destroy, el };
     }
 
     added?(): void;
