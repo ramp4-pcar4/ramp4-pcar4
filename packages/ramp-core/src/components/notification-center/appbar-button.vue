@@ -3,6 +3,7 @@
         :onClickFunction="onClick"
         :tooltip="$t('notifications.title')"
         class="notification-button"
+        id=""
     >
         <!-- https://fonts.google.com/icons?selected=Material%20Icons%3Anotifications -->
         <svg

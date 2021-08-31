@@ -16,13 +16,16 @@
     </appbar-button>
 </template>
 <script lang="ts">
-import { Vue } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-export default class SettingsAppbarButtonV extends Vue {
-    onClick() {
-        this.$iApi.panel.toggleMinimize('settings-panel');
+export default defineComponent({
+    name: 'SettingsAppbarButtonV',
+    methods: {
+        onClick() {
+            this.$iApi.panel.toggleMinimize('settings-panel');
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

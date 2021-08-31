@@ -1,5 +1,5 @@
 <template>
-    <appbar-button :onClickFunction="onClick" :tooltip="$t('details.title')" :iApi="iApi">
+    <appbar-button :onClickFunction="onClick" :tooltip="$t('details.title')">
         <!-- https://fonts.google.com/icons?selected=Material+Icons:place -->
         <svg
             class="fill-current w-24 h-24 ml-8 sm:ml-20"
@@ -15,18 +15,12 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
-import AppbarButtonV from '@/fixtures/appbar/button.vue';
 
 export default defineComponent({
     name: 'DetailsAppbarButtonV',
-    props: ['t', 'iApi'],
-    components: {
-        'appbar-button': AppbarButtonV
-    },
     methods: {
         onClick() {
-            console.log('TOGLIG');
-            this.$iApi.panel.toggle('details-panel');
+            this.$iApi.panel.toggleMinimize('details-panel');
         }
     }
 });

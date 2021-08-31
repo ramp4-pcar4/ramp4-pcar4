@@ -1,8 +1,5 @@
 <template>
-    <appbar-button
-        :onClickFunction="onClick"
-        :tooltip="$t('export-v1.appbarButton')"
-    >
+    <appbar-button :onClickFunction="onClick" :tooltip="$t('export-v1.appbarButton')">
         <!-- https://fonts.google.com/icons?selected=Material+Icons:layers&icon.query=export -->
         <svg
             class="fill-current w-24 h-24 ml-8 sm:ml-20"
@@ -15,15 +12,16 @@
     </appbar-button>
 </template>
 <script lang="ts">
-import { Vue, Prop } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-export default class ExportV1AppbarButtonV extends Vue {
-    @Prop({ default: { colour: 'auto' } }) options!: { colour: string };
-
-    onClick() {
-        this.$iApi.panel.toggle('export-v1-panel');
+export default defineComponent({
+    name: 'ExportV1AppbarButtonV',
+    methods: {
+        onClick() {
+            this.$iApi.panel.toggle('export-v1-panel');
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

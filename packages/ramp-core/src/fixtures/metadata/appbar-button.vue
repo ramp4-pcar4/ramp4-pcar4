@@ -14,13 +14,16 @@
     </appbar-button>
 </template>
 <script lang="ts">
-import { Vue } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-export default class MetadataAppbarButtonV extends Vue {
-    onClick() {
-        this.$iApi.panel.toggleMinimize('metadata-panel');
+export default defineComponent({
+    name: 'MetadataAppbarButtonV',
+    methods: {
+        onClick() {
+            this.$iApi.panel.toggleMinimize('metadata-panel');
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

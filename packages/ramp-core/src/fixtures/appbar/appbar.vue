@@ -6,7 +6,7 @@
     >
         <component
             v-for="(item, index) in items"
-            :is="item.componentId"
+            :is="addComponentIdSuffix(item.componentId)"
             :key="`${item}-${index}`"
             class="appbar-item"
             :class="{ 'h-48': item.id !== 'divider' }"
@@ -16,7 +16,7 @@
         <divider class="appbar-item"></divider>
         <component
             v-for="item in temporaryItems"
-            :is="item.componentId"
+            :is="addComponentIdSuffix(item.componentId)"
             :key="`${item.id}-temp`"
             class="appbar-item h-48"
             :options="item.options"
@@ -38,19 +38,13 @@ import { get } from '@/store/pathify-helper';
 import MoreAppbarButtonV from './more-button.vue';
 import NavAppbarButtonV from './nav-button.vue';
 import NotificationsAppbarButtonV from '@/components/notification-center/appbar-button.vue';
-import LegendAppbarButtonV from '@/fixtures/legend/appbar-button.vue';
-import BasemapAppbarButtonV from '@/fixtures/basemap/appbar-button.vue';
-import GeosearchAppbarButtonV from '@/fixtures/geosearch/appbar-button.vue';
 
 export default defineComponent({
     name: 'AppbarV',
     components: {
         'more-button': MoreAppbarButtonV,
         'nav-button': NavAppbarButtonV,
-        'notifications-appbar-button': NotificationsAppbarButtonV,
-        legend: LegendAppbarButtonV,
-        basemap: BasemapAppbarButtonV,
-        geosearch: GeosearchAppbarButtonV
+        'notifications-appbar-button': NotificationsAppbarButtonV
     },
 
     data() {
@@ -62,7 +56,6 @@ export default defineComponent({
             overflow: false
         };
     },
-    // TODO: update this after (issue with getBoundingClientRect)
     updated() {
         this.$nextTick(() => {
             const element: any = this.$refs.el;
@@ -117,6 +110,18 @@ export default defineComponent({
                 if (dropdown.childElementCount == 0) this.overflow = false;
             }
         });
+    },
+    methods: {
+        /**
+         * Checks if the component id has the "-appbar-button" suffix
+         * Returns the component id with the suffix added
+         */
+        addComponentIdSuffix(componentId: string): string {
+            if (componentId.includes('-appbar-button')) {
+                return componentId;
+            }
+            return `${componentId}-appbar-button`;
+        }
     }
 });
 </script>

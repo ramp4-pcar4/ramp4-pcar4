@@ -43,14 +43,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-// this should not need to be imported
-import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 
 export default defineComponent({
     name: 'NavAppbarButtonV',
-    components: {
-        'dropdown-menu': DropdownMenuV
-    },
     methods: {
         exportToggle() {
             this.$iApi.panel.toggle('export-v1-panel');

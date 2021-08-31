@@ -4,15 +4,17 @@
     </appbar-button>
 </template>
 <script lang="ts">
-import { Vue, Prop } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-export default class GazeboAppbarButtonV extends Vue {
-    @Prop({ default: { colour: 'auto' } }) options!: { colour: string };
-
-    onClick() {
-        this.$iApi.panel.toggle({ id: 'p2', screen: 'p-2-screen-2' });
+export default defineComponent({
+    name: 'GazeboAppbarButtonV',
+    props: ['options'],
+    methods: {
+        onClick() {
+            this.$iApi.panel.toggle({ id: 'p2', screen: 'p-2-screen-2' });
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>
