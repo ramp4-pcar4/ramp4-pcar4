@@ -1,6 +1,6 @@
 <template>
     <div class="relative" tabindex="-1">
-        <!-- <button
+        <button
             class="py-6 w-full h-full focus:outline-none"
             @click="
                 () => {
@@ -11,16 +11,6 @@
             v-focus-item
             :content="tooltip"
             v-tippy="{ placement: 'right' }"
-        > -->
-        <button
-            class="py-6 w-full h-full focus:outline-none"
-            @click="
-                () => {
-                    onClickFunction();
-                    onClick();
-                }
-            "
-            :content="tooltip"
         >
             <slot></slot>
         </button>
@@ -33,11 +23,24 @@ import { Vue, Prop } from 'vue-property-decorator';
 
 export default defineComponent({
     name: 'AppbarButtonV',
-    props: ['onClickFunction', 'id', 'tooltip', 'iApi'],
+    props: {
+        onClickFunction: {
+            type: Function,
+            required: true
+        },
+        id: {
+            type: String,
+            required: true
+        },
+        tooltip: {
+            type: [String, Boolean],
+            default: false
+        }
+    },
     methods: {
         onClick() {
-            //TODO: change fixtures to use this instead of click handlers in <fixture>-appbar-button?
-            this.iApi.event.emit('appbar/click', this.id);
+            // TODO: change fixtures to use this instead of click handlers in <fixture>-appbar-button?
+            this.$iApi.event.emit('appbar/click', this.id);
         }
     }
 });

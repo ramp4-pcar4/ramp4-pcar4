@@ -3,9 +3,11 @@
 </template>
 
 <script lang="ts">
-import { Vue } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-export default class DividerNavV extends Vue {}
+export default defineComponent({
+    name: 'DividerNavV'
+});
 </script>
 
 <style lang="scss" scoped></style>

@@ -11,8 +11,6 @@
             :class="{ 'h-48': item.id !== 'divider' }"
             :options="item.options"
             :id="item.id"
-            :t="i18n.t"
-            :iApi="iApi"
         ></component>
         <divider class="appbar-item"></divider>
         <component
@@ -24,11 +22,11 @@
             :id="item.id"
         >
         </component>
-        <more-button id="more" v-show="overflow" :t="i18n.t"></more-button>
+        <more-button id="more" v-show="overflow"></more-button>
         <notifications-appbar-button
             class="appbar-item bottom-48 h-48 sm:display-none"
         ></notifications-appbar-button>
-        <nav-button id="nav" :t="i18n.t" :iApi="iApi"></nav-button>
+        <nav-button id="nav"></nav-button>
     </div>
 </template>
 
@@ -43,18 +41,9 @@ import { AppbarItemInstance } from './store';
 import MoreAppbarButtonV from './more-button.vue';
 import NavAppbarButtonV from './nav-button.vue';
 import NotificationsAppbarButtonV from '@/components/notification-center/appbar-button.vue';
-// maybe these should not be needed?
 import LegendAppbarButtonV from '@/fixtures/legend/appbar-button.vue';
 import BasemapAppbarButtonV from '@/fixtures/basemap/appbar-button.vue';
 import GeosearchAppbarButtonV from '@/fixtures/geosearch/appbar-button.vue';
-
-// @Options({
-//     components: {
-//         'more-button': MoreAppbarButtonV,
-//         'nav-button': NavAppbarButtonV,
-//         'notifications-appbar-button': NotificationsAppbarButtonV
-//     }
-// })
 
 export default defineComponent({
     name: 'AppbarV',

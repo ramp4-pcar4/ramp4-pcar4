@@ -1,16 +1,11 @@
 <template>
-    <div
-        class="absolute transition-all duration-300 ease-out"
-        :style="getArrowStyle()"
-    >
+    <div class="absolute transition-all duration-300 ease-out" :style="getArrowStyle()">
         <span class="northarrow" v-html="arrow"></span>
     </div>
 </template>
 
 <script lang="ts">
-import { ComputedRef, defineComponent } from 'vue';
-import { Vue } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
+import { defineComponent } from 'vue';
 import { get } from '@/store/pathify-helper';
 import { NortharrowStore } from './store';
 import { GlobalEvents } from '@/api/internal';
@@ -48,23 +43,17 @@ export default defineComponent({
             this.arrow = `<img width='25' src='${this.arrowIcon.value}'>`;
         }
         // don't think this condition should be needed but sometimes errors at startup without it
-        if (this.iApi.geo.map.esriView?.ready) {
-            this.updateNortharrow(this.iApi.geo.map.getExtent());
+        if (this.$iApi.geo.map.esriView?.ready) {
+            this.updateNortharrow(this.$iApi.geo.map.getExtent());
         }
-        this.iApi.event.on(
-            GlobalEvents.MAP_EXTENTCHANGE,
-            debounce(300, this.updateNortharrow)
-        );
+        this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, debounce(300, this.updateNortharrow));
     },
 
     methods: {
         async updateNortharrow(newExtent: Extent) {
             const innerShell = document.querySelector('.inner-shell')!;
-            const arrowWidth = this.$el
-                .querySelector('.northarrow')!
-                .getBoundingClientRect().width;
-            const appbarWidth =
-                document.querySelector('.appbar')?.clientWidth || 0;
+            const arrowWidth = this.$el.querySelector('.northarrow')!.getBoundingClientRect().width;
+            const appbarWidth = document.querySelector('.appbar')?.clientWidth || 0;
             const sr = newExtent.sr;
             const mercator = [900913, 3587, 54004, 41001, 102113, 102100, 3785];
             if (
@@ -75,18 +64,15 @@ export default defineComponent({
                 this.displayArrow = true;
                 this.angle = 0;
                 this.arrowLeft =
-                    appbarWidth +
-                    (innerShell.clientWidth - appbarWidth - arrowWidth) / 2;
+                    appbarWidth + (innerShell.clientWidth - appbarWidth - arrowWidth) / 2;
             } else {
                 // north value (set longitude to be half of Canada extent (141° W, 52° W))
                 const pole: Point = new Point('pole', { x: -96, y: 90 });
-                const projPole = (await this.iApi.geo.utils.proj.projectGeometry(
+                const projPole = (await this.$iApi.geo.utils.proj.projectGeometry(
                     sr,
                     pole
                 )) as Point;
-                const poleScreenPos = this.iApi.geo.map.mapPointToScreenPoint(
-                    projPole
-                );
+                const poleScreenPos = this.$iApi.geo.map.mapPointToScreenPoint(projPole);
                 if (poleScreenPos.screenY < 0) {
                     // draw arrow if pole not visibile
                     this.displayArrow = true;
@@ -104,14 +90,13 @@ export default defineComponent({
                         Math.PI;
                     this.arrowLeft =
                         innerShell.clientWidth / 2 +
-                        innerShell.clientHeight *
-                            Math.tan((this.angle * Math.PI) / 180) -
+                        innerShell.clientHeight * Math.tan((this.angle * Math.PI) / 180) -
                         arrowWidth / 2;
                     // make sure arrow is within visible part of map
                     this.arrowLeft = Math.max(
                         appbarWidth - arrowWidth / 2,
                         Math.min(
-                            this.iApi.geo.map.getPixelWidth() - arrowWidth / 2,
+                            this.$iApi.geo.map.getPixelWidth() - arrowWidth / 2,
                             this.arrowLeft
                         )
                     );
@@ -124,12 +109,7 @@ export default defineComponent({
                         let markerSymbol: any = flag;
                         if (this.poleIcon.value) {
                             // convert data uri to esri symbol json
-                            const [
-                                ,
-                                contentType,
-                                ,
-                                imageData
-                            ] = this.poleIcon.value.split(/[:;,]/);
+                            const [, contentType, , imageData] = this.poleIcon.value.split(/[:;,]/);
                             markerSymbol = {
                                 width: 16.5,
                                 height: 16.5,
@@ -146,19 +126,17 @@ export default defineComponent({
 
                         // check if we need to load the layer class
                         const lType = 'highlight';
-                        if (!this.iApi.geo.layer.layerDefExists(lType)) {
-                            await this.iApi.geo.layer.addLayerDef(lType);
+                        if (!this.$iApi.geo.layer.layerDefExists(lType)) {
+                            await this.$iApi.geo.layer.addLayerDef(lType);
                         }
-                        const poleLayer = await this.iApi.geo.layer.createLayer(
-                            {
-                                layerId: 'PoleMarker',
-                                markerSymbol: markerSymbol,
-                                layerType: 'highlight'
-                            }
-                        );
+                        const poleLayer = await this.$iApi.geo.layer.createLayer({
+                            layerId: 'PoleMarker',
+                            markerSymbol: markerSymbol,
+                            layerType: 'highlight'
+                        });
                         await poleLayer.initiate();
                         (poleLayer as any).addMarker(projPole); // since addMarker is not a standard layer interface function, we need to cast as any.
-                        this.iApi.geo.map.addLayer(poleLayer);
+                        this.$iApi.geo.map.addLayer(poleLayer);
                     }
                 }
             }

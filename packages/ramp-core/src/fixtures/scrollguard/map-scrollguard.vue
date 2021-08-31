@@ -1,17 +1,16 @@
 <template>
     <div class="sg" ref="scrollGuard">
-        <p class="sg-label">{{ i18n.t('scrollguard.instructions') }}</p>
+        <p class="sg-label">{{ $t('scrollguard.instructions') }}</p>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Vue } from 'vue-property-decorator';
 
 export default defineComponent({
     name: 'MapScrollguardV',
     mounted() {
-        (this.iApi.$vApp.$el.querySelector(
+        (this.$iApi.$vApp.$el.querySelector(
             '.inner-shell + .esri-view'
         )! as HTMLElement).addEventListener('wheel', this.wheelHandler, {
             capture: true
@@ -29,10 +28,7 @@ export default defineComponent({
                 scrollGuardClassList.add('sg-active');
 
                 // remove scroll guard notification after two seconds
-                window.setTimeout(
-                    () => scrollGuardClassList.remove('sg-active'),
-                    2000
-                );
+                window.setTimeout(() => scrollGuardClassList.remove('sg-active'), 2000);
             } else {
                 scrollGuardClassList.remove('sg-active');
                 scrollGuardClassList.add('sg-scrolling');

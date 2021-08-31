@@ -22,20 +22,17 @@ class AppbarFixture extends AppbarAPI {
 
         this.$element.component('AppbarV', AppbarV);
 
-        const appbarInstance = this.extend(
-            AppbarV,
-            this.$element._context.components,
-            this.$element._context.directives,
-            {
-                iApi: this.$iApi,
-                store: this.$vApp.$store,
-                i18n: <any>this.$vApp.$i18n
-            }
-        );
-        const wrapper = document.createElement('div');
+        // const appbarInstance = this.extend(AppbarV, {
+        //     iApi: this.$iApi,
+        //     store: this.$vApp.$store,
+        //     i18n: <any>this.$vApp.$i18n
+        // });
+        // const wrapper = document.createElement('div');
+        // appbarInstance.mount(wrapper);
+
+        const { vNode, destroy, el } = this.mount(AppbarV, { app: this.$element });
         const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
-        appbarInstance.mount(wrapper);
-        innerShell.appendChild(wrapper.childNodes[0]);
+        innerShell.appendChild(el.childNodes[0]);
 
         this._parseConfig(this.config);
         this.$vApp.$watch(

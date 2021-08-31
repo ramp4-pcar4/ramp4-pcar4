@@ -19,20 +19,20 @@ class MapnavFixture extends MapnavAPI {
 
         this.$element.component('MapnavV', MapnavV);
 
-        const wrapper = document.createElement('div');
-        const mapnavInstance = this.extend(
-            MapnavV,
-            this.$element._context.components,
-            this.$element._context.directives,
-            {
-                iApi: this.$iApi,
-                store: this.$vApp.$store,
-                i18n: <any>this.$vApp.$i18n
-            }
-        );
+        // const wrapper = document.createElement('div');
+        // const mapnavInstance = this.extend(
+        //     MapnavV,
+        //     {
+        //         iApi: this.$iApi,
+        //         store: this.$vApp.$store,
+        //         i18n: <any>this.$vApp.$i18n
+        //     };
+        // );
+        // mapnavInstance.mount(wrapper);
+
+        const { vNode, destroy, el } = this.mount(MapnavV, { app: this.$element });
         const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
-        mapnavInstance.mount(wrapper);
-        innerShell.appendChild(wrapper.childNodes[0]);
+        innerShell.appendChild(el.childNodes[0]);
 
         this._parseConfig(this.config);
         this.$vApp.$watch(

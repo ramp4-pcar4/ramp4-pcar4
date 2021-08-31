@@ -12,20 +12,17 @@ class PanguardFixture extends FixtureInstance {
 
         this.$element.component('PanguardV', PanguardV);
 
+        // const panguardInstance = this.extend(PanguardV, {
+        //     iApi: this.$iApi,
+        //     store: this.$vApp.$store,
+        //     i18n: <any>this.$vApp.$i18n
+        // });
+        // const wrapper = document.createElement('div');
+        // panguardInstance.mount(wrapper);
+
+        const { vNode, destroy, el } = this.mount(PanguardV, { app: this.$element });
         const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
-        const panguardInstance = this.extend(
-            PanguardV,
-            this.$element._context.components,
-            this.$element._context.directives,
-            {
-                iApi: this.$iApi,
-                store: this.$vApp.$store,
-                i18n: <any>this.$vApp.$i18n
-            }
-        );
-        const wrapper = document.createElement('div');
-        panguardInstance.mount(wrapper);
-        innerShell.appendChild(wrapper.childNodes[0]);
+        innerShell.appendChild(el.childNodes[0]);
     }
 
     removed(): void {

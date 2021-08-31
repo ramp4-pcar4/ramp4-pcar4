@@ -14,24 +14,12 @@
             </div>
             <!-- toggle -->
             <div class="absolute h-30 w-30 top-0 right-0">
-                <!-- <button
-                    tabindex="0"
-                    class="cursor-pointer absolute h-full w-full"
-                    @click="minimized = !minimized"
-                    :content="
-                        $t(
-                            minimized
-                                ? 'overviewmap.expand'
-                                : 'overviewmap.minimize'
-                        )
-                    "
-                    v-tippy="{ placement: 'left', hideOnClick: false }"
-                > -->
                 <button
                     tabindex="0"
                     class="cursor-pointer absolute h-full w-full"
                     @click="minimized = !minimized"
-                    :content="i18n.t(minimized ? 'overviewmap.expand' : 'overviewmap.minimize')"
+                    :content="$t(minimized ? 'overviewmap.expand' : 'overviewmap.minimize')"
+                    v-tippy="{ placement: 'left', hideOnClick: false }"
                 >
                     <svg
                         class="absolute fill-current text-gray-500 transition-all duration-300 ease-out"
@@ -57,9 +45,7 @@
 </template>
 
 <script lang="ts">
-import { ComputedRef, defineComponent } from 'vue';
-import { Vue } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
+import { defineComponent } from 'vue';
 import { get } from '@/store/pathify-helper';
 import { Extent, RampMapConfig } from '@/geo/api';
 import { GlobalEvents, OverviewMapAPI } from '@/api/internal';
@@ -75,15 +61,15 @@ export default defineComponent({
             // @Get(OverviewmapStore.mapConfig) mapConfig!: RampMapConfig,
             // @Get(OverviewmapStore.startMinimized) startMinimized!: boolean,
 
-            // TODO: pls find a way to fix this (should be something like overviewMap: OverviewMapAPI but that gave a compile error)
-            overviewMap: new OverviewMapAPI(this.iApi),
+            // TODO: find a way to fix this declaration (should be something like overviewMap: OverviewMapAPI but that gave a compile error)
+            overviewMap: new OverviewMapAPI(this.$iApi),
             minimized: true,
             hoverOnExtent: false
         };
     },
 
     created() {
-        this.overviewMap = new OverviewMapAPI(this.iApi);
+        this.overviewMap = new OverviewMapAPI(this.$iApi);
     },
 
     mounted() {
@@ -94,7 +80,7 @@ export default defineComponent({
         );
         this.minimized = this.startMinimized;
 
-        this.iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, (newExtent: Extent) => {
+        this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, (newExtent: Extent) => {
             this.overviewMap.updateOverview(newExtent);
         });
     },
@@ -106,7 +92,7 @@ export default defineComponent({
 
         defaultConfig() {
             const mercator = [900913, 3587, 54004, 41001, 102113, 102100, 3785];
-            const sr = this.iApi.geo.map.getSR();
+            const sr = this.$iApi.geo.map.getSR();
             if (
                 (sr.wkid && mercator.includes(sr.wkid)) ||
                 (sr.latestWkid && mercator.includes(sr.latestWkid))

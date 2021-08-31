@@ -1,6 +1,6 @@
 <template>
     <div>
-        <mapnav-button :onClickFunction="zoomIn" :tooltip="t('mapnav.zoomIn')">
+        <mapnav-button :onClickFunction="zoomIn" :tooltip="$t('mapnav.zoomIn')">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -11,10 +11,7 @@
             </svg>
         </mapnav-button>
         <divider-nav></divider-nav>
-        <mapnav-button
-            :onClickFunction="zoomOut"
-            :tooltip="t('mapnav.zoomOut')"
-        >
+        <mapnav-button :onClickFunction="zoomOut" :tooltip="$t('mapnav.zoomOut')">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -32,27 +29,17 @@ import { defineComponent } from 'vue';
 import { Vue, Options } from 'vue-property-decorator';
 import { throttle } from 'throttle-debounce';
 import DividerNavV from './divider-nav.vue';
-// this should not need to be imported
-import MapnavButtonV from '../button.vue';
-
-// @Options({
-//     components: {
-//         'divider-nav': DividerNavV
-//     }
-// })
 
 export default defineComponent({
     name: 'ZoomNavV',
-    props: ['t', 'iApi'],
     components: {
-        'divider-nav': DividerNavV,
-        'mapnav-button': MapnavButtonV
+        'divider-nav': DividerNavV
     },
 
     data() {
         return {
-            zoomIn: throttle(400, true, () => this.iApi.geo.map.zoomIn()),
-            zoomOut: throttle(400, true, () => this.iApi.geo.map.zoomOut())
+            zoomIn: throttle(400, true, () => this.$iApi.geo.map.zoomIn()),
+            zoomOut: throttle(400, true, () => this.$iApi.geo.map.zoomOut())
         };
     }
 });

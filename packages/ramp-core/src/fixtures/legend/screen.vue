@@ -34,12 +34,17 @@ import LegendComponentV from './components/component.vue';
 export default defineComponent({
     name: 'LegendScreenV',
     props: {
-        panel: { type: Object as PropType<PanelInstance>, required: true }
+        panel: {
+            type: Object as PropType<PanelInstance>,
+            required: true
+        }
     },
+
     components: {
         'legend-header': LegendHeaderV,
         'legend-component': LegendComponentV
     },
+
     data() {
         return { children: get(LegendStore.children) };
     }

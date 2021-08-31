@@ -1,12 +1,11 @@
 <template>
     <div class="pan-guard" ref="panGuard">
-        <p class="label">{{ i18n.t('panguard.instructions') }}</p>
+        <p class="label">{{ $t('panguard.instructions') }}</p>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Vue } from 'vue-property-decorator';
 
 export default defineComponent({
     name: 'MapPanguardV',
@@ -23,33 +22,27 @@ export default defineComponent({
         const pointers = new Map();
 
         // prevent possible issues with esri event registration if this fixture runs before the map has built itself
-        this.iApi.geo.map.viewPromise.then(() => {
+        this.$iApi.geo.map.viewPromise.then(() => {
             // TODO: when projection change is implemented check that the below events track any changes to
             // the esriView or update MapAPI to be raising pointer events on the EventAPI, and this will listen to for those events
-            this.iApi.geo.map.esriView!.on('pointer-down', e => {
+            this.$iApi.geo.map.esriView!.on('pointer-down', e => {
                 if (e.pointerType !== 'touch') return;
                 pointers.set(e.pointerId, { x: e.x, y: e.y });
             });
 
-            this.iApi.geo.map.esriView!.on(
-                ['pointer-up', 'pointer-leave'],
-                e => {
-                    if (e.pointerType !== 'touch') return;
-                    pointers.delete(e.pointerId);
-                }
-            );
+            this.$iApi.geo.map.esriView!.on(['pointer-up', 'pointer-leave'], e => {
+                if (e.pointerType !== 'touch') return;
+                pointers.delete(e.pointerId);
+            });
 
-            this.iApi.geo.map.esriView!.on('pointer-move', e => {
+            this.$iApi.geo.map.esriView!.on('pointer-move', e => {
                 const { pointerId, pointerType, x, y } = e;
                 const pointer = pointers.get(pointerId);
 
-                if (!pointer || pointerType !== 'touch' || pointers.size !== 1)
-                    return;
+                if (!pointer || pointerType !== 'touch' || pointers.size !== 1) return;
 
                 // ignore very small movements to avoid scrolling when someone is tapping the screen
-                const distance = Math.sqrt(
-                    Math.pow(x - pointer.x, 2) + Math.pow(y - pointer.y, 2)
-                );
+                const distance = Math.sqrt(Math.pow(x - pointer.x, 2) + Math.pow(y - pointer.y, 2));
                 if (distance < 20) return;
 
                 // show the text on screen and remove after 2 seconds of no movement

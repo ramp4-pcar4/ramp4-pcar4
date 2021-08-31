@@ -1,7 +1,7 @@
 <template>
-    <mapnav-button :onClickFunction="onClick" :tooltip="t('mapnav.fullscreen')">
+    <mapnav-button :onClickFunction="onClick" :tooltip="$t('mapnav.fullscreen')">
         <svg
-            v-if="iApi.isFullscreen"
+            v-if="$iApi.isFullscreen"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             class="fill-current w-32 h-20"
@@ -28,19 +28,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { Vue } from 'vue-property-decorator';
-// this should not need to be imported
-import MapnavButtonV from '../button.vue';
 
 export default defineComponent({
     name: 'FullscreenNavV',
-    props: ['t', 'iApi'],
-    components: {
-        'mapnav-button': MapnavButtonV
-    },
-
     methods: {
         onClick() {
-            this.iApi.toggleFullscreen();
+            this.$iApi.toggleFullscreen();
         }
     }
 });

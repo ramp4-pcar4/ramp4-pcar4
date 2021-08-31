@@ -8,18 +8,15 @@ class CrosshairsFixture extends FixtureInstance {
 
         this.$element.component('CrosshairsV', CrosshairsV);
 
+        // const crosshairsInstance = this.extend(CrosshairsV, {
+        //     iApi: this.$iApi
+        // });
+        // const wrapper = document.createElement('div');
+        // crosshairsInstance.mount(wrapper);
+
+        const { vNode, destroy, el } = this.mount(CrosshairsV, { app: this.$element });
         const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
-        const crosshairsInstance = this.extend(
-            CrosshairsV,
-            this.$element._context.components,
-            this.$element._context.directives,
-            {
-                iApi: this.$iApi
-            }
-        );
-        const wrapper = document.createElement('div');
-        crosshairsInstance.mount(wrapper);
-        innerShell.appendChild(wrapper.childNodes[0]);
+        innerShell.appendChild(el.childNodes[0]);
     }
 
     removed(): void {

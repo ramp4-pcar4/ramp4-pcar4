@@ -1,15 +1,9 @@
 <template>
-    <!-- <dropdown-menu
+    <dropdown-menu
         class="absolute inset-x-0 bottom-0 h-48 w-full text-center focus:outline-none"
         v-focus-item
         position="right-end"
         :tooltip="$t('appbar.navigation')"
-        tooltip-placement="right"
-    > -->
-    <dropdown-menu
-        class="absolute inset-x-0 bottom-0 h-48 w-full text-center focus:outline-none"
-        position="right-end"
-        :tooltip="t('appbar.navigation')"
         tooltip-placement="right"
     >
         <template #header>
@@ -28,30 +22,20 @@
                 </svg>
             </div>
         </template>
-        <!-- <a
+        <a
             href="#"
             class="w-160 inline-flex"
             @click="exportToggle"
             :content="$t('navigation.export-v1')"
             v-tippy="{ placement: 'right' }"
-        > -->
-        <a
-            href="#"
-            class="w-160 inline-flex"
-            @click="exportToggle"
-            :content="t('navigation.export-v1')"
         >
             <!-- https://fonts.google.com/icons?selected=Material+Icons:layers&icon.query=export -->
-            <svg
-                class="w-24 h-24 flex-auto"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-            >
+            <svg class="w-24 h-24 flex-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path d="M0 0h24v24H0z" fill="none" />
                 <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
             </svg>
             <span class="flex-auto ml-8">
-                {{ t('map.export') }}
+                {{ $t('map.export') }}
             </span>
         </a>
     </dropdown-menu>
@@ -60,19 +44,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { Vue } from 'vue-property-decorator';
-// this should not need to be imported
-import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 
 export default defineComponent({
     name: 'NavAppbarButtonV',
-    props: ['t', 'iApi'],
-    components: {
-        'dropdown-menu': DropdownMenuV
-    },
-
     methods: {
         exportToggle() {
-            this.iApi.panel.toggle('export-v1-panel');
+            this.$iApi.panel.toggle('export-v1-panel');
         }
     }
 });

@@ -56,22 +56,22 @@ export default defineComponent({
     data() {
         return {
             visible: false
-        }
+        };
     },
 
     mounted() {
-        this.iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, () => {
+        this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, () => {
             // display crosshairs if pan/zoom keys are active
-            if (this.iApi.geo.map.keysActive) {
+            if (this.$iApi.geo.map.keysActive) {
                 this.visible = true;
             }
         });
 
-        this.iApi.event.on(GlobalEvents.MAP_MOUSEDOWN, () => {
+        this.$iApi.event.on(GlobalEvents.MAP_MOUSEDOWN, () => {
             this.visible = false;
         });
 
-        this.iApi.event.on(GlobalEvents.MAP_BLUR, () => {
+        this.$iApi.event.on(GlobalEvents.MAP_BLUR, () => {
             this.visible = false;
         });
     }

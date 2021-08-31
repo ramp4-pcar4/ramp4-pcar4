@@ -1,16 +1,11 @@
 <template>
     <div class="relative inset-x-0 w-full h-48 text-center">
-        <!-- <button
+        <button
             class="text-gray-400 w-full h-full focus:outline-none hover:text-white"
             @click="open = !open"
             v-focus-item
             :content="$t('appbar.more')"
             v-tippy="{ placement: 'right' }"
-        > -->
-        <button
-            class="text-gray-400 w-full h-full focus:outline-none hover:text-white"
-            @click="open = !open"
-            :content="t('appbar.more')"
         >
             <svg
                 class="fill-current w-24 h-24 m-auto"
@@ -46,12 +41,14 @@ export default defineComponent({
             type: String,
             default: 'bottom-right'
         },
-        tooltip: String,
+        tooltip: {
+            type: [String, Boolean],
+            default: false
+        },
         tooltipPlacement: {
             type: String,
             default: 'bottom'
-        },
-        t: Function
+        }
     },
 
     data() {
@@ -64,10 +61,7 @@ export default defineComponent({
         window.addEventListener(
             'click',
             event => {
-                if (
-                    event.target instanceof HTMLElement &&
-                    !this.$el.contains(event.target)
-                ) {
+                if (event.target instanceof HTMLElement && !this.$el.contains(event.target)) {
                     this.open = false;
                 }
             },

@@ -1,9 +1,5 @@
 <template>
-    <appbar-button
-        :onClickFunction="onClick"
-        :tooltip="t('legend.title')"
-        :iApi="iApi"
-    >
+    <appbar-button :onClickFunction="onClick" :tooltip="$t('legend.title')">
         <!-- https://material.io/resources/icons/?icon=layers&style=baseline -->
         <svg
             class="fill-current w-24 h-24 ml-8 sm:ml-20"
@@ -17,22 +13,15 @@
         </svg>
     </appbar-button>
 </template>
+
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Vue } from 'vue-property-decorator';
-// this should not need to be imported
-import AppbarButtonV from '@/fixtures/appbar/button.vue';
 
 export default defineComponent({
     name: 'LegendAppbarButtonV',
-    props: ['t', 'iApi'],
-    components: {
-        'appbar-button': AppbarButtonV
-    },
-
     methods: {
         onClick() {
-            this.iApi.panel.toggle('legend-panel');
+            this.$iApi.panel.toggle('legend-panel');
         }
     }
 });
