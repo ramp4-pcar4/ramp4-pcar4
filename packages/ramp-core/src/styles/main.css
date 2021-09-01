@@ -129,8 +129,3 @@
 .tippy-box[data-theme~='ramp4'] svg {
     display: inline;
 }
-
-.tippy-box[data-inertia][data-state='visible'] {
-    transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
-    transition-duration: 300ms;
-}

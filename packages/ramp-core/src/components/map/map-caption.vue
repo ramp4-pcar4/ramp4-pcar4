@@ -32,7 +32,7 @@
             {{ attribution.text.value }}
         </span>
 
-        <notifications-caption-button class="sm:block display-none"></notifications-caption-button>
+        <notifications-caption-button class="sm:block hidden"></notifications-caption-button>
 
         <span class="flex-grow w-15"></span>
 
@@ -56,7 +56,7 @@
             @click="onScaleClick"
             :aria-pressed="scale.isImperialScale"
             :aria-label="$t('map.toggleScaleUnits')"
-            v-tippy="{ placement: 'top', hideOnClick: false }"
+            v-tippy="{ placement: 'top', hideOnClick: false, theme: 'ramp4', animation: 'scale' }"
             :content="$t('map.toggleScaleUnits')"
         >
             <span
@@ -102,60 +102,59 @@
 </template>
 
 <script lang="ts">
-import { ComputedRef } from 'vue';
-import { Vue, Options } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
-import { Attribution, MouseCoords, RampMapConfig, ScaleBar, ScaleBarProperties } from '@/geo/api';
+import { defineComponent, PropType } from 'vue';
 import { get } from '@/store/pathify-helper';
-import { GlobalEvents } from '@/api';
+import { Attribution, MouseCoords, RampMapConfig, ScaleBar } from '@/geo/api';
 import { MapCaptionStore } from '@/store/modules/map-caption';
 import { ConfigStore } from '@/store/modules/config';
 import NotificationsCaptionButtonV from '@/components/notification-center/caption-button.vue';
-
-@Options({
+export default defineComponent({
+    data() {
+        return {
+            scale: get(MapCaptionStore.scale),
+            attribution: get(MapCaptionStore.attribution),
+            cursorCoords: get(MapCaptionStore.cursorCoords),
+            mapConfig: get(ConfigStore.getMapConfig),
+            lang: [] as string[]
+        };
+    },
     components: {
         'notifications-caption-button': NotificationsCaptionButtonV
-    }
-})
-export default class MapCaptionV extends Vue {
-    scale: ScaleBarProperties = get(MapCaptionStore.scale);
-    attribution: Attribution = get(MapCaptionStore.attribution);
-    cursorCoords: string = get(MapCaptionStore.cursorCoords);
-    mapConfig!: RampMapConfig = get(ConfigStore.getMapConfig);
-    lang: string[] = [];
-
-    @Watch('mapConfig')
-    onMapConfigChange(newValue: RampMapConfig, oldValue: RampMapConfig) {
-        if (newValue === oldValue) {
-            return;
+    },
+    watch: {
+        mapConfig(newConfig: RampMapConfig, oldConfig: RampMapConfig) {
+            if (newConfig === oldConfig) {
+                return;
+            }
+            this.$iApi.geo.map.caption.createCaption(this.mapConfig.caption);
         }
-        this.$iApi.geo.map.caption.createCaption(this.mapConfig.caption);
-    }
-
+    },
     updated() {
-        if (this.$iApi.$vApp.$i18n && this.lang.length == 0) {
-            this.lang = this.$iApi.$vApp.$i18n.availableLocales;
+        this.$nextTick(function() {
+            if (this.$iApi.$vApp.$i18n && this.lang.length == 0) {
+                this.lang = this.$iApi.$vApp.$i18n.availableLocales;
+            }
+        });
+    },
+    methods: {
+        changeLang(lang: string) {
+            if (this.$iApi.$vApp.$i18n.locale != lang) {
+                this.$iApi.setLanguage(lang);
+            }
+        },
+        /**
+         * Toggle the scale units
+         */
+        onScaleClick() {
+            // undefined argument will toggle the scale unit
+            this.$iApi.$vApp.$store.set(MapCaptionStore.toggleScale, undefined);
+            this.$iApi.geo.map.caption.updateScale();
         }
     }
-
-    changeLang(lang: string) {
-        if (this.$iApi.$vApp.$i18n.locale != lang) {
-            this.$iApi.setLanguage(lang);
-        }
-    }
-
-    /**
-     * Toggle the scale units
-     */
-    onScaleClick() {
-        // undefined argument will toggle the scale unit
-        this.$iApi.$vApp.$store.set(MapCaptionStore.toggleScale, undefined);
-        this.$iApi.geo.map.caption.updateScale();
-    }
-}
+});
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .map-caption {
     backdrop-filter: blur(5px);
 }

@@ -46,6 +46,7 @@
         "vue-property-decorator": "^10.0.0-rc.2",
         "vue-slider-component": "next",
         "vue-tippy": "next",
+        "tippy.js": "next",
         "vuex": "^4.0.0",
         "vuex-pathify": "~1.4.1",
         "webpack": "4.41.3",

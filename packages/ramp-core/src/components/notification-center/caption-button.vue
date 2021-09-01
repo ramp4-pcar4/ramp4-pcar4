@@ -35,7 +35,7 @@
                             @click="clearAll"
                             class="text-gray-500 hover:text-black p-4 mr-6"
                             :content="$t('notifications.controls.clearAll')"
-                            v-tippy="{ placement: 'bottom' }"
+                            v-tippy="{ placement: 'bottom', theme: 'ramp4', animation: 'scale' }"
                         >
                             <!-- https://fonts.google.com/icons?selected=Material%20Icons%3Aclear_all -->
                             <svg

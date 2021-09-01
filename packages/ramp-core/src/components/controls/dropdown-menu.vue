@@ -4,7 +4,11 @@
             class="text-gray-500 hover:text-black dropdown-button"
             @click="open = !open"
             :content="tooltip"
-            v-tippy="{ placement: tooltipPlacement }"
+            v-tippy="{
+                placement: tooltipPlacement,
+                theme: tooltipTheme,
+                animation: tooltipAnimation
+            }"
             ref="dropdown-trigger"
         >
             <slot name="header"></slot>
@@ -29,6 +33,8 @@ export default class DropdownMenuV extends Vue {
     @Prop({ default: 'bottom' }) position!: Placement;
     @Prop() tooltip?: string;
     @Prop({ default: 'bottom' }) tooltipPlacement?: string;
+    @Prop({ default: 'ramp4' }) tooltipTheme?: string;
+    @Prop({ default: 'scale' }) tooltipAnimation?: string;
 
     open: boolean = false;
     popper: any;

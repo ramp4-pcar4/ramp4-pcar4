@@ -5,22 +5,21 @@
 </template>
 
 <script lang="ts">
-import { Vue, Options } from 'vue-class-component';
-
+import { defineComponent } from 'vue';
 import Shell from '@/components/shell.vue';
 
 import ro from '@/scripts/resize-observer.js';
+import 'tippy.js/animations/scale.css';
 
 //TOOLTIPS
 //@ts-ignore
-import VueTippy, { setDefaultProps, tippy } from 'vue-tippy';
+import { setDefaultProps } from 'vue-tippy';
 
-@Options({
+export default defineComponent({
     components: {
         Shell
-    }
-})
-export default class App extends Vue {
+    },
+
     mounted() {
         // let ResizeObserver observe the app div
         // it applies 'xs' 'sm' 'md' and 'lg' classes to the div depending on the size
@@ -34,6 +33,7 @@ export default class App extends Vue {
             },
             // a11y: false, // can't find a replacement for Vue 3
             theme: 'ramp4',
+            animation: 'scale',
             inertia: true,
             trigger: 'mouseenter manual focus',
             // needed to have tooltips in fullscreen, by default it appends to document.body
@@ -43,7 +43,7 @@ export default class App extends Vue {
         let parent = this.$el.parentElement;
         parent?.style.setProperty('overflow', 'hidden');
     }
-}
+});
 </script>
 
 <style lang="scss">
