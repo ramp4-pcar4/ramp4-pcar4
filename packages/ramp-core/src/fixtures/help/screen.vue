@@ -52,10 +52,7 @@ export default class HelpScreenV extends Vue {
             (newLocale: any, oldLocale: any) => {
                 if (newLocale === oldLocale) return;
                 // path to where HELP is hosted is different if RAMP is built as prod library
-                const base =
-                    process.env.VUE_APP_BUILD_TARGET === 'lib'
-                        ? '../dist/'
-                        : '/';
+                const base = process.env.VUE_APP_BUILD_TARGET === 'lib' ? '../dist/' : '/';
                 const folder = this.folderName || 'default';
                 const renderer = new marked.Renderer();
                 // make it easier to use images in markdown by prepending path to href if href is not an external source
@@ -74,10 +71,7 @@ export default class HelpScreenV extends Vue {
                     const reg = /^#\s(.*)\n{2}(?:.+|\n(?!\n{2,}))*/gm;
                     // remove new line character ASCII (13) so that above regex is compatible with all
                     // operating systems (markdown file varies by OS new line preference)
-                    let helpMd = r.data.replace(
-                        new RegExp(String.fromCharCode(13), 'g'),
-                        ''
-                    );
+                    let helpMd = r.data.replace(new RegExp(String.fromCharCode(13), 'g'), '');
                     this.helpSections = [];
                     let section;
                     while ((section = reg.exec(helpMd))) {

@@ -1,4 +1,3 @@
-import { createApp } from 'vue';
 import AppbarV from './appbar.vue';
 import { AppbarAPI } from './api/appbar';
 import { appbar, AppbarFixtureConfig } from './store';

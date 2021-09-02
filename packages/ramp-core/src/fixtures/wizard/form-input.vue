@@ -43,8 +43,16 @@
                     type="url"
                     name="url"
                     :value="modelValue"
-                    @input="$emit('link', $event.target.value)"
+                    @change="
+                        event => {
+                            validUrl(event.target.value);
+                            $emit('link', event.target.value, !urlError);
+                        }
+                    "
                 />
+            </div>
+            <div v-if="urlError" class="text-red-900 text-xs">
+                {{ modelValue ? validationMessages.url : validationMessages.required }}
             </div>
         </div>
         <div v-else-if="type === 'select'">
@@ -55,7 +63,7 @@
                     v-bind:class="size && 'configure-select'"
                     :size="size ? size : null"
                     :value="modelValue"
-                    @input="$emit('update:modelValue', $event.target.value)"
+                    @input="$emit('select', $event.target.value)"
                 >
                     <option
                         class="p-6"
@@ -66,6 +74,9 @@
                         {{ option.label }}
                     </option>
                 </select>
+            </div>
+            <div v-if="validation && formatError" class="text-red-900 text-xs">
+                {{ validationMessages.required }}
             </div>
         </div>
         <div v-else>
@@ -98,8 +109,8 @@ interface SelectionOption {
 export default defineComponent({
     name: 'WizardInputV',
     props: {
-        formulateFile: {
-            type: [Object, Boolean],
+        formatError: {
+            type: Boolean,
             default: false
         },
         help: {
@@ -126,6 +137,10 @@ export default defineComponent({
             type: [Number, Boolean],
             default: false
         },
+        multiple: {
+            type: Boolean,
+            default: false
+        },
         type: {
             type: String,
             default: 'text'
@@ -134,7 +149,34 @@ export default defineComponent({
             type: [String, Boolean],
             default: false
         },
-        validationMessages: Object as PropType<ValidationMsgs>
+        validation: {
+            type: Boolean,
+            default: false
+        },
+        validationMessages: {
+            type: Object as PropType<ValidationMsgs>
+        }
+    },
+
+    data() {
+        return {
+            urlError: false
+        };
+    },
+
+    methods: {
+        validUrl(url: string) {
+            let newUrl;
+            try {
+                newUrl = new URL(url);
+            } catch (_) {
+                this.urlError = true;
+                return false;
+            }
+
+            const valid = newUrl.protocol === 'http:' || newUrl.protocol === 'https:';
+            valid ? (this.urlError = false) : (this.urlError = true);
+        }
     }
 });
 </script>
