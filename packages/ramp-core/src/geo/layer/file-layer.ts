@@ -5,6 +5,7 @@
 
 import { AttribLayer, FileFC, InstanceAPI } from '@/api/internal';
 import {
+    DefPromise,
     GeometryType,
     IdentifyParameters,
     IdentifyResult,
@@ -33,9 +34,7 @@ function fieldValidator(fields: Array<EsriField>, targetName: string): string {
         } else {
             // give warning and return OBJECTID, which is guaranteed to exist in file layer.
             // Issue is not critical enough to blow up the app with an error
-            console.warn(
-                `Cannot find name field in layer field list: ${targetName}`
-            );
+            console.warn(`Cannot find name field in layer field list: ${targetName}`);
             return 'OBJECTID';
         }
     } else {
@@ -84,10 +83,7 @@ export class FileLayer extends AttribLayer {
             targetSR: this.$iApi.geo.map.getSR()
         };
 
-        this.esriJson = await this.$iApi.geo.layer.files.geoJsonToEsriJson(
-            realJson,
-            opts
-        );
+        this.esriJson = await this.$iApi.geo.layer.files.geoJsonToEsriJson(realJson, opts);
 
         this.esriLayer = markRaw(
             new EsriFeatureLayer(this.makeEsriLayerConfig(this.origRampConfig))
@@ -104,9 +100,7 @@ export class FileLayer extends AttribLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(
-        rampLayerConfig: RampLayerConfig
-    ): __esri.FeatureLayerProperties {
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.FeatureLayerProperties {
         // TODO might want to add an extra paremter here, as we will be passing in fields, source graphics, renderer, etc.
         const esriConfig: __esri.FeatureLayerProperties = super.makeEsriLayerConfig(
             rampLayerConfig
@@ -204,10 +198,7 @@ export class FileLayer extends AttribLayer {
         fFC.extractLayerMetadata();
         // NOTE name field overrides from config have already been applied by this point
         if (this.origRampConfig.tooltipField) {
-            fFC.tooltipField = fieldValidator(
-                fFC.fields,
-                this.origRampConfig.tooltipField
-            );
+            fFC.tooltipField = fieldValidator(fFC.fields, this.origRampConfig.tooltipField);
         } else {
             fFC.tooltipField = fFC.nameField;
         }
@@ -261,9 +252,12 @@ export class FileLayer extends AttribLayer {
             return super.identify(options);
         }
 
+        let loadResolve: any;
         const innerResult: IdentifyResult = {
             uid: myFC.uid,
-            isLoading: true,
+            loadPromise: new Promise(resolve => {
+                loadResolve = resolve;
+            }),
             items: []
         };
 
@@ -318,7 +312,8 @@ export class FileLayer extends AttribLayer {
                 };
             });
 
-            innerResult.isLoading = false;
+            // Resolve the load promise
+            loadResolve();
         });
 
         return result;

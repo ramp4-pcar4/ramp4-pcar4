@@ -1,11 +1,6 @@
 import { FixtureInstance } from '@/api';
 import { IdentifyItem, IdentifyResult } from '@/geo/api';
-import {
-    DetailsConfig,
-    DetailsItemSet,
-    DetailsItemInstance,
-    DetailsStore
-} from '../store';
+import { DetailsConfig, DetailsItemSet, DetailsItemInstance, DetailsStore } from '../store';
 
 export class DetailsAPI extends FixtureInstance {
     get config(): DetailsConfig | undefined {
@@ -47,7 +42,7 @@ export class DetailsAPI extends FixtureInstance {
         const identifyResult: IdentifyResult = {
             items: [identifyItem],
             uid: uid,
-            isLoading: false
+            loadPromise: Promise.resolve()
         };
 
         // Save the provided identify result in the store.
@@ -73,9 +68,7 @@ export class DetailsAPI extends FixtureInstance {
     _parseConfig(config?: DetailsConfig) {
         if (!config) return;
 
-        const detailsItems = config.items.map(
-            (item: any) => new DetailsItemInstance(item)
-        );
+        const detailsItems = config.items.map((item: any) => new DetailsItemInstance(item));
 
         // save the items in the store
         this.$vApp.$store.set(
@@ -96,9 +89,7 @@ export class DetailsAPI extends FixtureInstance {
      */
     _validateItems() {
         Object.values(
-            this.$vApp.$store.get<DetailsItemInstance[]>(
-                DetailsStore.templates
-            )!
+            this.$vApp.$store.get<DetailsItemInstance[]>(DetailsStore.templates)!
         ).forEach(item => {
             if (item.template in this.$vApp.$options.components!) {
                 this.$vApp.$store.set(

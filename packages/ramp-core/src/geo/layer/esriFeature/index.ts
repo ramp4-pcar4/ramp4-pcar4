@@ -26,9 +26,7 @@ class FeatureLayer extends AttribLayer {
 
     async initiate(): Promise<void> {
         markRaw(
-            (this.esriLayer = new EsriFeatureLayer(
-                this.makeEsriLayerConfig(this.origRampConfig)
-            ))
+            (this.esriLayer = new EsriFeatureLayer(this.makeEsriLayerConfig(this.origRampConfig)))
         );
         await super.initiate();
     }
@@ -39,9 +37,7 @@ class FeatureLayer extends AttribLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(
-        rampLayerConfig: RampLayerConfig
-    ): __esri.FeatureLayerProperties {
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.FeatureLayerProperties {
         // TODO flush out
         // NOTE: it would be nice to put esri.LayerProperties as the return type, but since we are cheating with refreshInterval it wont work
         //       we can make our own interface if it needs to happen (or can extent the esri one)
@@ -54,8 +50,7 @@ class FeatureLayer extends AttribLayer {
         if (rampLayerConfig.initialFilteredQuery) {
             // TODO do we need to add something to the .filter? or is this
             //      a fixed query never goes away?
-            esriConfig.definitionExpression =
-                rampLayerConfig.initialFilteredQuery;
+            esriConfig.definitionExpression = rampLayerConfig.initialFilteredQuery;
         }
         return esriConfig;
     }
@@ -111,9 +106,7 @@ class FeatureLayer extends AttribLayer {
         const featFC = new FeatureFC(this, featIdx);
         this.fcs[featIdx] = featFC;
         featFC.serviceUrl = layerUrl;
-        this.layerTree.children.push(
-            new TreeNode(featIdx, featFC.uid, this.name)
-        ); // TODO verify name is populated at this point
+        this.layerTree.children.push(new TreeNode(featIdx, featFC.uid, this.name)); // TODO verify name is populated at this point
         featFC.name = this.name; // feature layer is flat, so the FC and layer share their name
 
         // TODO see if we need to re-synch the parent name
@@ -123,16 +116,12 @@ class FeatureLayer extends AttribLayer {
         // TODO check if we have custom renderer, add to options parameter here
         const pLD: Promise<void> = featFC.loadLayerMetadata().then(() => {
             if (!featFC.attLoader) {
-                throw new Error(
-                    'layer metadata loader did not create attribute loader'
-                );
+                throw new Error('layer metadata loader did not create attribute loader');
             }
 
             // apply any config based overrides to the data we just downloaded
-            featFC.nameField =
-                this.origRampConfig.nameField || featFC.nameField || '';
-            featFC.tooltipField =
-                this.origRampConfig.tooltipField || featFC.nameField;
+            featFC.nameField = this.origRampConfig.nameField || featFC.nameField || '';
+            featFC.tooltipField = this.origRampConfig.tooltipField || featFC.nameField;
 
             featFC.processFieldMetadata(this.origRampConfig.fieldMetadata);
             featFC.attLoader.updateFieldList(featFC.fieldList);
@@ -209,9 +198,12 @@ class FeatureLayer extends AttribLayer {
             return super.identify(options);
         }
 
+        let loadResolve: any;
         const innerResult: IdentifyResult = {
             uid: myFC.uid,
-            isLoading: true,
+            loadPromise: new Promise(resolve => {
+                loadResolve = resolve;
+            }),
             items: []
         };
 
@@ -261,7 +253,8 @@ class FeatureLayer extends AttribLayer {
                 };
             });
 
-            innerResult.isLoading = false;
+            // Resolve the load promise
+            loadResolve();
         });
 
         return result;

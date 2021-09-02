@@ -195,12 +195,12 @@ class MapImageLayer extends AttribLayer {
             [key: number]: RampLayerMapImageLayerEntryConfig;
         } = {};
 
-        (<Array<RampLayerMapImageLayerEntryConfig>>(
-            this.origRampConfig.layerEntries
-        )).forEach((le: RampLayerMapImageLayerEntryConfig) => {
-            // TODO the || 0 is there to handle missing index. probably will never happen. add an error check?
-            subConfigs[le.index || 0] = le;
-        });
+        (<Array<RampLayerMapImageLayerEntryConfig>>this.origRampConfig.layerEntries).forEach(
+            (le: RampLayerMapImageLayerEntryConfig) => {
+                // TODO the || 0 is there to handle missing index. probably will never happen. add an error check?
+                subConfigs[le.index || 0] = le;
+            }
+        );
 
         // subfunction to return a subconfig object.
         // if it does not exist or is not defaulted, will do that first
@@ -249,10 +249,7 @@ class MapImageLayer extends AttribLayer {
         // it will generate FCs for all leafs under the sublayer
         // we also generate a tree structure of our layer that is in a format
         // that makes the client happy
-        const processSublayer = (
-            subLayer: __esri.Sublayer,
-            parentTreeNode: TreeNode
-        ): void => {
+        const processSublayer = (subLayer: __esri.Sublayer, parentTreeNode: TreeNode): void => {
             const sid: number = subLayer.id;
             const subC = subConfigs[sid];
 
@@ -270,19 +267,13 @@ class MapImageLayer extends AttribLayer {
                 // leaf sublayer. make placeholders, add leaf to the tree
                 if (!this.fcs[sid]) {
                     const miFC = new MapImageFC(this, sid);
-                    const lName =
-                        (subC ? subC.name : '') || subLayer.title || ''; // config if exists, else server, else none
+                    const lName = (subC ? subC.name : '') || subLayer.title || ''; // config if exists, else server, else none
                     miFC.name = lName;
                     this.fcs[sid] = miFC;
                     leafsToInit.push(miFC);
                 }
 
-                const treeLeaf = new TreeNode(
-                    sid,
-                    this.fcs[sid].uid,
-                    this.fcs[sid].name,
-                    true
-                );
+                const treeLeaf = new TreeNode(sid, this.fcs[sid].uid, this.fcs[sid].name, true);
                 parentTreeNode.children.push(treeLeaf);
 
                 subLayer.watch('visible', () => {
@@ -301,9 +292,7 @@ class MapImageLayer extends AttribLayer {
         };
 
         // process the child layers our config is interested in, and all their children.
-        (<Array<RampLayerMapImageLayerEntryConfig>>(
-            this.origRampConfig.layerEntries
-        )).forEach(le => {
+        (<Array<RampLayerMapImageLayerEntryConfig>>this.origRampConfig.layerEntries).forEach(le => {
             if (!le.stateOnly) {
                 // TODO add a check instead of 0 default on the index?
                 const rootSub = findSublayer(le.index || 0);
@@ -341,9 +330,7 @@ class MapImageLayer extends AttribLayer {
                 // do any things that are specific to feature or raster subtypes
                 if (mlFC.supportsFeatures) {
                     if (!mlFC.attLoader) {
-                        throw new Error(
-                            'Map Image FC - expected attLoader to exist'
-                        );
+                        throw new Error('Map Image FC - expected attLoader to exist');
                     }
                     mlFC.attLoader.updateFieldList(mlFC.fieldList);
                     return mlFC.loadFeatureCount();
@@ -362,10 +349,7 @@ class MapImageLayer extends AttribLayer {
         // any sublayers not in our tree, we need to turn off.
         this.esriLayer.allSublayers.forEach(s => {
             // find sublayers that are not groups, and dont exist in our initilazation array
-            if (
-                !s.sublayers &&
-                !leafsToInit.find((fc: MapImageFC) => fc.layerIdx === s.id)
-            ) {
+            if (!s.sublayers && !leafsToInit.find((fc: MapImageFC) => fc.layerIdx === s.id)) {
                 s.visible = false;
             }
         });
@@ -424,11 +408,11 @@ class MapImageLayer extends AttribLayer {
                 // layerIdx is a layer index
                 const layerEntries: Array<RampLayerMapImageLayerEntryConfig> =
                     this.origRampConfig.layerEntries || [];
-                const layer = (<Array<RampLayerMapImageLayerEntryConfig>>(
-                    layerEntries
-                )).filter((layer: any) => {
-                    return layer.index === layerIdx;
-                })[0];
+                const layer = (<Array<RampLayerMapImageLayerEntryConfig>>layerEntries).filter(
+                    (layer: any) => {
+                        return layer.index === layerIdx;
+                    }
+                )[0];
                 if (layer && layer.name) {
                     return layer.name;
                 } else {
@@ -474,10 +458,7 @@ class MapImageLayer extends AttribLayer {
      * @param {Boolean} value the new visibility setting
      * @param {Integer} [layerIdx] targets a layer index to set visibility for. Layer visibility is set if omitted.
      */
-    setVisibility(
-        value: boolean,
-        layerIdx: number | string | undefined = undefined
-    ): void {
+    setVisibility(value: boolean, layerIdx: number | string | undefined = undefined): void {
         const fc = this.getFC(layerIdx, true);
         if (!fc) {
             if (this.esriLayer) {
@@ -518,10 +499,7 @@ class MapImageLayer extends AttribLayer {
      * @param {Decimal} value the new opacity setting. Valid value is anything between 0 and 1, inclusive.
      * @param {Integer} [layerIdx] targets a layer index to get opacity for. Layer opacity is set if omitted.
      */
-    setOpacity(
-        value: number,
-        layerIdx: number | string | undefined = undefined
-    ): void {
+    setOpacity(value: number, layerIdx: number | string | undefined = undefined): void {
         const fc = this.getFC(layerIdx, true);
         if (!fc || !this.isDynamic) {
             if (this.esriLayer) {
@@ -577,14 +555,12 @@ class MapImageLayer extends AttribLayer {
 
         // change any sublayer ids that are server indices to sublayer uids.
         if (options.sublayerIds) {
-            options.sublayerIds = options.sublayerIds.map(
-                (id: number | string) => {
-                    if (typeof id === 'number') {
-                        return <string>this.layerTree?.findChildByIdx(id)?.uid;
-                    }
-                    return id;
+            options.sublayerIds = options.sublayerIds.map((id: number | string) => {
+                if (typeof id === 'number') {
+                    return <string>this.layerTree?.findChildByIdx(id)?.uid;
                 }
-            );
+                return id;
+            });
         }
 
         const activeFCs: Array<MapImageFC> = options.sublayerIds
@@ -632,9 +608,12 @@ class MapImageLayer extends AttribLayer {
         // loop over active FCs. call query on each. prepare a geometry
         result.done = Promise.all(
             activeFCs.map(fc => {
+                let loadResolve: any;
                 const innerResult: IdentifyResult = {
                     uid: fc.uid,
-                    isLoading: true,
+                    loadPromise: new Promise(resolve => {
+                        loadResolve = resolve;
+                    }),
                     items: []
                 };
                 result.results.push(innerResult);
@@ -669,7 +648,8 @@ class MapImageLayer extends AttribLayer {
                         };
                     });
 
-                    innerResult.isLoading = false;
+                    // Resolve the load promise
+                    loadResolve();
                 });
             })
         ).then(() => Promise.resolve()); // just to stop typescript from crying about array result of .all()

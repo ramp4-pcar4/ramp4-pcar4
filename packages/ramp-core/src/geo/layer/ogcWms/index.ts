@@ -30,9 +30,7 @@ export default class WmsLayer extends CommonLayer {
     }
 
     async initiate(): Promise<void> {
-        this.esriLayer = markRaw(
-            new EsriWMSLayer(this.makeEsriLayerConfig(this.origRampConfig))
-        );
+        this.esriLayer = markRaw(new EsriWMSLayer(this.makeEsriLayerConfig(this.origRampConfig)));
         await super.initiate();
     }
 
@@ -42,19 +40,13 @@ export default class WmsLayer extends CommonLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(
-        rampLayerConfig: RampLayerConfig
-    ): __esri.WMSLayerProperties {
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.WMSLayerProperties {
         // TODO flush out
         // NOTE: it would be nice to put esri.LayerProperties as the return type, but since we are cheating with refreshInterval it wont work
         //       we can make our own interface if it needs to happen (or can extent the esri one)
-        const esriConfig: __esri.WMSLayerProperties = super.makeEsriLayerConfig(
-            rampLayerConfig
-        );
+        const esriConfig: __esri.WMSLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
 
-        const lEntries = <Array<RampLayerWmsLayerEntryConfig>>(
-            rampLayerConfig.layerEntries
-        );
+        const lEntries = <Array<RampLayerWmsLayerEntryConfig>>rampLayerConfig.layerEntries;
         this.sublayerNames = lEntries.map(le => le.id || 'error_no_wms_id');
 
         // reminder: unlike MapImageLayer, we do not allow tweaking visibility
@@ -124,9 +116,7 @@ export default class WmsLayer extends CommonLayer {
         // this.layerTree.name = this.name;
 
         // Set visibility of sublayers based on presence in the config
-        const crawlSublayers = (
-            sublayers: __esri.Collection<EsriWMSSublayer>
-        ): boolean => {
+        const crawlSublayers = (sublayers: __esri.Collection<EsriWMSSublayer>): boolean => {
             let anySlVis = false;
             sublayers.forEach(sl => {
                 const visible = this.sublayerNames.indexOf(sl.name) > -1;
@@ -209,9 +199,12 @@ export default class WmsLayer extends CommonLayer {
 
         // TODO prolly need to flush out the config interfaces for this badboy
 
+        let loadResolve: any;
         const innerResult: IdentifyResult = {
             uid: myFC.uid,
-            isLoading: true,
+            loadPromise: new Promise(resolve => {
+                loadResolve = resolve;
+            }),
             items: []
         };
 
@@ -250,7 +243,8 @@ export default class WmsLayer extends CommonLayer {
                 }
             }
 
-            innerResult.isLoading = false;
+            // Resolve the load promise
+            loadResolve();
         });
 
         return result;
@@ -264,11 +258,7 @@ export default class WmsLayer extends CommonLayer {
      * @param {String} value value of the key
      * @param {Boolean} forceRefresh show the new fancy version of the layer or not
      */
-    setCustomParameter(
-        key: string,
-        value: string,
-        forceRefresh: boolean = true
-    ): void {
+    setCustomParameter(key: string, value: string, forceRefresh: boolean = true): void {
         if (!this.esriLayer) {
             this.noLayerErr();
         } else {
@@ -288,18 +278,12 @@ export default class WmsLayer extends CommonLayer {
      * @param {String} mimeType the format to be requested for the response
      * @returns {Promise} a promise which resolves with the GetFeatureInfo response
      */
-    getFeatureInfo(
-        layerList: Array<string>,
-        point: Point,
-        mimeType: string
-    ): Promise<any> {
+    getFeatureInfo(layerList: Array<string>, point: Point, mimeType: string): Promise<any> {
         const map = this.$iApi.geo.map;
         const esriLayer = this.esriLayer;
 
         if (!map.esriView) {
-            throw new Error(
-                'WMS get feature, no map view exists. Cannot derive click coords'
-            );
+            throw new Error('WMS get feature, no map view exists. Cannot derive click coords');
         }
         if (!esriLayer) {
             this.noLayerErr();
@@ -376,9 +360,7 @@ export default class WmsLayer extends CommonLayer {
                 STYLES: '',
                 FORMAT: esriLayer.imageFormat
             };
-            if (
-                this.$iApi.geo.layer.ogc.reversedAxisWKIDs().indexOf(wkid) > -1
-            ) {
+            if (this.$iApi.geo.layer.ogc.reversedAxisWKIDs().indexOf(wkid) > -1) {
                 req.BBOX = `${ext.ymin},${ext.xmin},${ext.ymax},${ext.xmax}`;
             }
         } else {
@@ -448,10 +430,7 @@ export default class WmsLayer extends CommonLayer {
                                 // assuming here that STYLE is always appended in all caps to avoid using .toUpperCase() above.
                                 // if the assumption is wrong, might need to rework some logic so that no case-sensitive parts of the URL get changed. e.g., 'geomet' in geomet layers
                                 if ('STYLE' in wrapper.queryMap) {
-                                    if (
-                                        wrapper.queryMap.STYLE !==
-                                        le.currentStyle
-                                    ) {
+                                    if (wrapper.queryMap.STYLE !== le.currentStyle) {
                                         sl.legendUrl = wrapper.updateQuery({
                                             STYLE: le.currentStyle
                                         });
