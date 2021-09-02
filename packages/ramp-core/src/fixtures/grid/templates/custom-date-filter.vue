@@ -26,9 +26,9 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
     name: 'GridCustomDateFilterV',
-    props: ['params'],
-    data() {
+    data(props) {
         return {
+            params: props.params as any,
             minVal: '' as any,
             maxVal: '' as any
         };

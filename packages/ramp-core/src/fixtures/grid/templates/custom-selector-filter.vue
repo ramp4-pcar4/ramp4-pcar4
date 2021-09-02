@@ -13,9 +13,9 @@ import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
     name: 'GridCustomSelectorFilterV',
-    props: ['params'],
-    data() {
+    data(props) {
         return {
+            params: props.params as any,
             selectedOption: '' as String,
             options: [] as Array<String>
         };

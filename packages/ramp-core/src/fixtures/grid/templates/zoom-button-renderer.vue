@@ -24,13 +24,12 @@ import { LayerInstance } from '@/api/internal';
 
 export default defineComponent({
     name: 'ZoomButtonRendererV',
-    props: ['params'],
-    data() {
+    data(props) {
         return {
+            params: props.params as any,
             getLayerByUid: get('layer/getLayerByUid')
         };
     },
-
     mounted() {
         // need to hoist events to top level cell wrapper to be keyboard accessible
         this.params.eGridCell.addEventListener('keydown', (e: KeyboardEvent) => {

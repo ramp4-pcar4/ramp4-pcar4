@@ -93,10 +93,9 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
     name: 'GridCustomHeaderV',
-    props: ['params'],
-
-    data() {
+    data(props) {
         return {
+            params: props.params as any,
             sort: 0 as number,
             sortable: false as boolean,
             canMoveLeft: false as boolean,

@@ -1,5 +1,6 @@
 import { GridAPI } from './api/grid';
 import { grid } from './store/index';
+import { markRaw } from 'vue';
 
 import GridScreenV from './screen.vue';
 import GridAppbarButtonV from './appbar-button.vue';
@@ -12,7 +13,7 @@ class GridFixture extends GridAPI {
             {
                 'grid-panel': {
                     screens: {
-                        'grid-screen': GridScreenV
+                        'grid-screen': markRaw(GridScreenV)
                     },
                     style: {
                         'flex-grow': '1',

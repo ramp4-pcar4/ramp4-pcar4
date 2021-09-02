@@ -15,9 +15,9 @@ import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
     name: 'GridCustomTextFilterV',
-    props: ['params'],
-    data() {
+    data(props) {
         return {
+            params: props.params as any,
             filterValue: ''
         };
     },

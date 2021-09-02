@@ -28,8 +28,11 @@ import { GlobalEvents } from '@/api/internal';
 
 export default defineComponent({
     name: 'DetailsButtonRendererV',
-    props: ['params'],
-
+    data(props) {
+        return {
+            params: props.params as any
+        };
+    },
     mounted() {
         // need to hoist events to top level cell wrapper to be keyboard accessible
         this.params.eGridCell.addEventListener('keydown', (e: KeyboardEvent) => {
