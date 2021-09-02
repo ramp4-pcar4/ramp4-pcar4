@@ -4,6 +4,12 @@ lang-dir,ltr,1,ltr,1
 lang-en,English,1,French,1
 lang-fr,anglais,1,français,1
 lang-native,English,1,Français,1
+keyboardInstructions.title,Keyboard Instructions,1,Les instructions du clavier,0
+keyboardInstructions.open,Open keyboard instructions,1,Ouvrir les instructions du clavier,0
+keyboardInstructions.app,"Use 'Tab' to navigate between sections of the application.",1,"Utiliser « Tab » pour naviguer entre les différentes sections de l’application",0
+keyboardInstructions.lists,"Use the arrow keys to move between items in lists. With a list item selected you can press 'Space' or 'Enter' to click the item. You can also navigate within the list item using 'Tab'.",1,"Utilisez les touches fléchées pour déplacer entre les articles dans les listes. Avec un élément de la liste sélectionnée, vous pouvez appuyer sur « espace » ou « entrer ». Cliquer sur le poste. Vous pouvez aussi naviguer dans l’élément de la liste en utilisant « Tab ».",0
+keyboardInstructions.map,"When the map is selected, use the arrow keys to move around and 'Enter' to select a point.",1,"Lorsque la carte est sélectionnée, utilisez les touches fléchées pour déplacer et la touche « entrer » pour sélectionner un point.",0
+keyboardInstructions.OK,OK,1,OK,0
 map.toggleScaleUnits,Toggle between imperial and metric map scale,1,Basculer entre les échelles métriques et impériales pour la carte,1
 map.coordinates.east,E,1,E,1
 map.coordinates.west,W,1,O,1
