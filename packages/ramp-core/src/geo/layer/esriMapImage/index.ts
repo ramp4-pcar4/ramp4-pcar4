@@ -579,7 +579,7 @@ class MapImageLayer extends AttribLayer {
               });
 
         // early kickout check. all sublayers are one of: not visible; not queryable; off scale; a raster layer
-        if (activeFCs.length === 0) {
+        if (activeFCs.length === 0 || !this.getVisibility()) {
             // return empty result.
             return super.identify(options);
         }
