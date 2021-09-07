@@ -1,7 +1,7 @@
 <template>
     <div class="h-full flex items-center justify-center">
         <input
-            class="rv-input w-full"
+            class="rv-input w-full bg-transparent text-black-75 h-24 pb-8 border-0 border-b-2"
             type="text"
             @keyup="valueChanged()"
             v-model="filterValue"
@@ -76,7 +76,7 @@ export default interface GridCustomTextFilter {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .ag-floating-filter-full-body input,
 .ag-floating-filter-full-body select,
 .rv-global-search {

@@ -1,6 +1,10 @@
 <template>
     <div class="h-full flex items-center justify-center">
-        <select class="rv-input w-full" v-model="selectedOption" @change="selectionChanged()">
+        <select
+            class="rv-input w-full bg-transparent text-black-75 h-24 pb-8 border-0 border-b-2"
+            v-model="selectedOption"
+            @change="selectionChanged()"
+        >
             <option v-for="option in options" :value="option" :key="option">
                 {{ option }}
             </option>

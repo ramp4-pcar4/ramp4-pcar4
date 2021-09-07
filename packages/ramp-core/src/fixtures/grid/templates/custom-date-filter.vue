@@ -1,23 +1,20 @@
 <template>
-    <div class="h-full flex items-center justify-center">
-        <div class="inline float-left text-xs w-1/2">
-            <input
-                class="rv-input"
-                type="date"
-                placeholder="date min"
-                v-model="minVal"
-                @change="minValChanged()"
-            />
-        </div>
-        <div class="inline float-left w-1/2">
-            <input
-                class="rv-input"
-                type="date"
-                placeholder="date max"
-                v-model="maxVal"
-                @change="maxValChanged()"
-            />
-        </div>
+    <div class="h-full flex items-center justify-center w-full">
+        <input
+            class="m-0 py-1 w-1/2 rv-input bg-transparent text-black-75 h-24 pb-8 border-0 border-b-2 pl-3"
+            type="date"
+            placeholder="date min"
+            v-model="minVal"
+            @change="minValChanged()"
+        />
+
+        <input
+            class="m-0 py-1 w-1/2 rv-input bg-transparent text-black-75 h-24 pb-8 border-0 border-b-2 pl-3"
+            type="date"
+            placeholder="date max"
+            v-model="maxVal"
+            @change="maxValChanged()"
+        />
     </div>
 </template>
 

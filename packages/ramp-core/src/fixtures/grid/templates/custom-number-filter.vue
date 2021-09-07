@@ -1,7 +1,7 @@
 <template>
     <div class="h-full flex items-center justify-center">
         <input
-            class="rv-min rv-input"
+            class="rv-min rv-input bg-transparent text-black-75 h-24 pb-8 border-0 border-b-2"
             style="width: 45%;"
             type="text"
             v-model="minVal"
@@ -9,7 +9,7 @@
             placeholder="min"
         />
         <input
-            class="rv-max rv-input"
+            class="rv-max rv-input bg-transparent text-black-75 h-24 pb-8 border-0 border-b-2"
             style="width: 45%;"
             type="text"
             v-model="maxVal"
