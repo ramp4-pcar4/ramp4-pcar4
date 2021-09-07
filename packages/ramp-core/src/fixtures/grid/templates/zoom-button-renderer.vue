@@ -1,5 +1,11 @@
 <template>
-    <button class="w-38 h-48" :content="$t('grid.cells.zoom')" @click="zoomToFeature" tabindex="-1">
+    <button
+        class="w-38 h-48"
+        :content="$t('grid.cells.zoom')"
+        v-tippy="{ placement: 'top' }"
+        @click="zoomToFeature"
+        tabindex="-1"
+    >
         <svg
             class="m-auto"
             xmlns="http://www.w3.org/2000/svg"
@@ -21,9 +27,13 @@ import { defineComponent } from 'vue';
 import { Vue } from 'vue-property-decorator';
 import { get } from '@/store/pathify-helper';
 import { LayerInstance } from '@/api/internal';
+import { directive as tippyDirective } from 'vue-tippy';
 
 export default defineComponent({
     name: 'ZoomButtonRendererV',
+    directives: {
+        tippy: tippyDirective
+    },
     data(props) {
         return {
             params: props.params as any,

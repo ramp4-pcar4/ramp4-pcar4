@@ -2,6 +2,7 @@
     <button
         class="w-38 h-48"
         :content="$t('grid.cells.details')"
+        v-tippy="{ placement: 'top' }"
         @click="openDetails"
         tabindex="-1"
     >
@@ -25,9 +26,13 @@ import { defineComponent } from 'vue';
 
 import deepmerge from 'deepmerge';
 import { GlobalEvents } from '@/api/internal';
+import { directive as tippyDirective } from 'vue-tippy';
 
 export default defineComponent({
     name: 'DetailsButtonRendererV',
+    directives: {
+        tippy: tippyDirective
+    },
     data(props) {
         return {
             params: props.params as any

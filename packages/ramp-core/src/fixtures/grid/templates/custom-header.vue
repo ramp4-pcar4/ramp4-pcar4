@@ -1,18 +1,13 @@
 <template>
     <div class="ag-custom-header flex flex-1 items-center h-full w-full">
         <div v-if="sortable" class="flex flex-1 items-center min-w-0">
-            <!-- <button
+            <button
                 @click="onSortRequested('asc', $event)"
                 :content="$t(`grid.header.sort.${sort}`)"
                 v-tippy="{ placement: 'top', hideOnClick: false }"
                 class="customHeaderLabel hover:bg-gray-300 font-bold p-8 max-w-full"
                 role="columnheader"
                 truncate-trigger
-            > -->
-            <button
-                @click="onSortRequested('asc', $event)"
-                class="customHeaderLabel hover:bg-gray-300 font-bold p-8 max-w-full"
-                role="columnheader"
             >
                 <!-- <div v-truncate="{ externalTrigger: true }"> -->
                 <div>
@@ -44,14 +39,9 @@
                     </svg>
                 </div>
             </span>
-            <!-- <button
+            <button
                 :content="$t(`grid.header.reorder.left`)"
                 v-tippy="{ placement: 'top' }"
-                @click="moveLeft()"
-                class="opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
-                :disabled="!canMoveLeft"
-            > -->
-            <button
                 @click="moveLeft()"
                 class="opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
                 :disabled="!canMoveLeft"
@@ -64,14 +54,9 @@
                     </svg>
                 </div>
             </button>
-            <!-- <button
+            <button
                 :content="$t(`grid.header.reorder.right`)"
                 v-tippy="{ placement: 'top' }"
-                @click="moveRight()"
-                class="opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
-                :disabled="!canMoveRight"
-            > -->
-            <button
                 @click="moveRight()"
                 class="opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
                 :disabled="!canMoveRight"
@@ -90,9 +75,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { directive as tippyDirective } from 'vue-tippy';
 
 export default defineComponent({
     name: 'GridCustomHeaderV',
+    directives: {
+        tippy: tippyDirective
+    },
     data(props) {
         return {
             params: props.params as any,
