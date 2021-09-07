@@ -25,29 +25,27 @@
 </template>
 
 <script lang="ts">
-import { Vue, Prop, Watch } from 'vue-property-decorator';
-// @ts-ignore
+import { defineComponent } from 'vue';
 import { createPopper, Placement } from '@popperjs/core';
 
-export default class DropdownMenuV extends Vue {
-    @Prop({ default: 'bottom' }) position!: Placement;
-    @Prop() tooltip?: string;
-    @Prop({ default: 'bottom' }) tooltipPlacement?: string;
-    @Prop({ default: 'ramp4' }) tooltipTheme?: string;
-    @Prop({ default: 'scale' }) tooltipAnimation?: string;
-
-    open: boolean = false;
-    popper: any;
-
-    closeDropdown() {
-        this.open = false;
-    }
-
-    @Watch('open')
-    updatePopperPositioning() {
-        this.popper.update();
-    }
-
+export default defineComponent({
+    name: 'DropdownMenuV',
+    props: {
+        position: {
+            type: String,
+            default: 'bottom'
+        },
+        tooltip: { type: String },
+        tooltipPlacement: { type: String, default: 'bottom' },
+        tooltipTheme: { type: String, default: 'ramp4' },
+        tooltipAnimation: { type: String, default: 'scale' }
+    },
+    data() {
+        return {
+            open: false,
+            popper: null as any
+        };
+    },
     mounted() {
         window.addEventListener(
             'click',
@@ -65,7 +63,7 @@ export default class DropdownMenuV extends Vue {
                 this.$refs['dropdown-trigger'] as Element,
                 this.$refs['dropdown'] as HTMLElement,
                 {
-                    placement: this.position || 'bottom',
+                    placement: (this.position || 'bottom') as Placement,
                     modifiers: [
                         {
                             name: 'offset',
@@ -77,9 +75,8 @@ export default class DropdownMenuV extends Vue {
                 }
             );
         });
-    }
-
-    beforeDestroy() {
+    },
+    beforeUnmount() {
         window.removeEventListener(
             'click',
             event => {
@@ -89,8 +86,18 @@ export default class DropdownMenuV extends Vue {
             },
             { capture: true }
         );
+    },
+    watch: {
+        open() {
+            this.popper.update();
+        }
+    },
+    methods: {
+        closeDropdown() {
+            this.open = false;
+        }
     }
-}
+});
 </script>
 
 <style lang="scss">
