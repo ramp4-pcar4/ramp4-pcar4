@@ -27,9 +27,10 @@
                             v-model="url"
                             :label="$t('wizard.upload.url.label')"
                             @link="updateUrl"
+                            :validation="true"
                             :validation-messages="{
                                 required: $t('wizard.upload.url.error.required'),
-                                url: $t('wizard.upload.url.error.url')
+                                invalid: $t('wizard.upload.url.error.url')
                             }"
                         >
                         </wizard-input>
@@ -98,7 +99,8 @@
                             :formatError="formatError"
                             :validation="true"
                             :validation-messages="{
-                                required: $t('wizard.format.type.error.required')
+                                required: $t('wizard.format.type.error.required'),
+                                invalid: $t('wizard.format.type.error.invalid')
                             }"
                             @keydown.stop
                         >
@@ -147,7 +149,9 @@
                             type="text"
                             name="name"
                             v-model="layerInfo.config.name"
+                            @text="updateLayerName"
                             :label="$t('wizard.configure.name.label')"
+                            :validation="true"
                             :validation-messages="{
                                 required: $t('wizard.configure.name.error.required')
                             }"
@@ -193,17 +197,23 @@
                             v-if="layerInfo.configOptions.includes(`layerEntries`)"
                             type="select"
                             name="layerEntries"
+                            v-model="layerInfo.config.layerEntries"
+                            @select="updateLayerEntries"
                             :label="$t('wizard.configure.layerEntries.label')"
                             :help="$t('wizard.configure.layerEntries.help')"
                             :options="sublayerOptions()"
                             :multiple="true"
+                            :validation="true"
+                            :validation-messages="{
+                                required: $t('wizard.configure.layerEntries.error.required')
+                            }"
                             @keydown.stop
                         >
                         </wizard-input>
                         <wizard-form-footer
                             @submit="onConfigureContinue"
                             @cancel="goToStep(1)"
-                            :disabled="false"
+                            :disabled="!finishStep"
                         ></wizard-form-footer>
                     </form>
                     <!-- <FormulateForm
@@ -326,6 +336,7 @@ export default defineComponent({
             formulateFile: {},
             formatError: false,
             goNext: false,
+            finishStep: false,
 
             // service layer formats
             serviceTypeOptions: [
@@ -395,12 +406,10 @@ export default defineComponent({
 
         // lifecycle hook captures errors from child components
         errorCaptured(err: Error, instance: Component, info: string) {
+            console.log('error captured!', this.step, WizardStep.FORMAT);
             if (this.step === WizardStep.FORMAT || this.step === WizardStep.CONFIGURE) {
-                this.setError(
-                    'format',
-                    'type',
-                    this.$t('wizard.format.type.error.invalid') as string
-                );
+                this.formatError = true;
+                // this.setError('format', 'type', this.$t('wizard.format.type.error.invalid') as string);
                 this.goToStep(WizardStep.FORMAT);
             }
 
@@ -431,7 +440,16 @@ export default defineComponent({
                           this.fileData
                       )
                     : await this.layerSource.fetchServiceInfo(this.url, this.typeSelection);
-                if (this.layerInfo) this.goToStep(WizardStep.CONFIGURE);
+
+                if (!this.layerInfo) {
+                    this.formatError = true;
+                    return;
+                }
+
+                this.goToStep(WizardStep.CONFIGURE);
+                this.layerInfo.configOptions.includes(`layerEntries`)
+                    ? (this.finishStep = false)
+                    : (this.finishStep = true);
             } catch (_) {
                 this.formatError = true;
                 return;
@@ -527,6 +545,16 @@ export default defineComponent({
         updateTypeSelection(type: string) {
             this.typeSelection = type;
             this.formatError = false;
+        },
+
+        updateLayerName(name: string) {
+            this.layerInfo.config.name = name;
+            name ? (this.finishStep = true) : (this.finishStep = false);
+        },
+
+        updateLayerEntries(le: Array<any>) {
+            this.layerInfo.config.layerEntries = le;
+            le.length > 0 ? (this.finishStep = true) : (this.finishStep = false);
         }
     }
 });

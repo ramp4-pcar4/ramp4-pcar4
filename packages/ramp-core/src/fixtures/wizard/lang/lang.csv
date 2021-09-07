@@ -29,6 +29,7 @@ wizard.configure.nameField.label,Primary Field,1,Champ clé,1
 wizard.configure.tooltipField.label,Tooltip Field,1,Champ infobulle,1
 wizard.configure.latField.label,Latitude Field,1,Champ latitude,1
 wizard.configure.longField.label,Longitude Field,1,Champ longitude,1
+wizard.configure.layerEntries.error.required,LayerEntries is required,1,LayerEntries sont obligatoires,0
 wizard.configure.layerEntries.label,Layers,1,Couches,1
 wizard.configure.layerEntries.help,Hold Ctrl to select multiple layers,1,Maintenez la touche Ctrl enfoncée pour sélectionner de multiples couches,0
 wizard.step.cancel,Cancel,1,Annuler,1
