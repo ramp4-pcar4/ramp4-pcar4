@@ -1,6 +1,8 @@
 // this is a plain JS sample fixture that doesn't require a compilation step since it doesn't use Vue templates
 // instead, templates need to be written as a render function directly
 // consequently, this makes for a smallest fixture bundle
+import { h } from 'vue';
+
 (function() {
     const messages = {
         en: {
@@ -54,7 +56,7 @@
                 count: 0
             };
         },
-        render: function(h) {
+        render() {
             // using built-in `pin` panel header control; can use either `this.isPinned` getter method or the `this.panel.isPinned` panel getter
             const pin =
                 this.$iApi.screenSize === 'xs'

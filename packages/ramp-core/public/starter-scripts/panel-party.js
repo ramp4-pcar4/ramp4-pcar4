@@ -352,7 +352,7 @@ let config = {
                 items: [
                     { id: 'gazebo', options: { colour: '#54a0ff' } },
                     'divider',
-                    'snowman-appbar-button',
+                    'snowman',
                     'legend',
                     'geosearch',
                     'basemap',
@@ -862,7 +862,7 @@ rInstance.$element.component('Water-Quantity-Template', {
 // start loading non-default fixtures; this is just an example
 
 // TODO: fix console errors
-// rInstance.fixture.add('snowman');
+rInstance.fixture.add('snowman');
 // rInstance.fixture.add('gazebo').then(() => {
 //     rInstance.panel
 //         .get('p2')

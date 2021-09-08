@@ -1,4 +1,5 @@
 import screen from './screen.vue';
+import { markRaw } from 'vue';
 
 class MourugeFixture {
     added(): void {
@@ -6,7 +7,7 @@ class MourugeFixture {
         (this as any).$iApi.panel.register({
             id: 'mouruge-p1',
             config: {
-                screens: { 'mouruge-s1': screen }
+                screens: { 'mouruge-s1': markRaw(screen) }
             }
         });
     }

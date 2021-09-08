@@ -13,7 +13,7 @@ class SnowmanFixture extends FixtureInstance {
         // instantiate it a new instance of the Snowman component using a helper function which will add `$iApi` to the component automatically
         // the component will be auto-mounted as well unless you pass `false` to the `extend` function
         const snowman = this.extend(SnowmanV, {
-            propsData: { message: "I'm snowman prop." }
+            propsData: { message: "I'm snowman prop.", fixture: this }
         });
 
         this.$vApp.$el.appendChild(snowman);
@@ -21,9 +21,9 @@ class SnowmanFixture extends FixtureInstance {
         // snowman self-terminates from its own component
 
         // NOTE: right now Snowman terminates from inside its own component, but it can be done here as well 👇
-        // svInstance.$destroy();
-        // this.$vApp.$el.removeChild(this.$el);
-        // this.$iApi.fixture.remove(fixture);
+        // svInstance.$destroy(); // no longer supported in Vue 3
+        // this.$vApp.$el.removeChild(snowman);
+        // this.$iApi.fixture.remove(this);
     }
 
     removed(): void {
