@@ -274,12 +274,12 @@ export default class LegendEntryV extends Vue {
 .legend-item:hover,
 .legend-item:focus-within {
     .options {
-        display: block;
+        // !important added to override WET's hidden class
+        @apply block #{!important};
     }
 }
 .disabled {
-    @apply text-gray-400;
-    cursor: default;
+    @apply text-gray-400 cursor-default;
 }
 .spinner {
     border: 2px solid rgba(0, 0, 0, 0.158);
