@@ -8,7 +8,7 @@
             <vue-slider
                 class="mr-16"
                 @change="config.onChange"
-                :value="config.value"
+                v-model="value"
                 :width="250"
                 :min="0"
                 :max="100"
@@ -19,20 +19,24 @@
 </template>
 
 <script lang="ts">
-import { Vue, Options, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { defineComponent } from 'vue';
 
 import VueSlider from 'vue-slider-component';
 import 'vue-slider-component/theme/default.css';
 
-@Options({
-    components: { VueSlider }
-})
-export default class SliderControl extends Vue {
-    @Prop() config!: any;
-    @Prop() name!: string;
-    @Prop() icon!: string;
-}
+export default defineComponent({
+    components: { VueSlider },
+    props: {
+        name: String,
+        icon: String,
+        config: Object
+    },
+    data() {
+        return {
+            value: this.config?.value
+        };
+    }
+});
 </script>
 
 <style lang="scss" scoped>

@@ -28,7 +28,7 @@
                 <div class="flex-auto"></div>
                 <!-- Display the count if item exists, else display the loading spinner -->
                 <div v-if="item" class="px-5">{{ item.items.length }}</div>
-                <div v-else class="animate-spin custom-spinner h-20 w-20 px-5"></div>
+                <div v-else class="animate-spin spinner h-20 w-20 px-5"></div>
             </div>
         </template>
     </panel-screen>
@@ -130,11 +130,4 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
-.custom-spinner {
-    border: 2px solid rgba(0, 0, 0, 0.158);
-    border-top: 2px solid #3f51b5;
-    border-right: 2px solid #3f51b5;
-    border-radius: 50%;
-}
-</style>
+<style lang="scss"></style>

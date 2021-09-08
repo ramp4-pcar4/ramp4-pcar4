@@ -129,3 +129,10 @@
 .tippy-box[data-theme~='ramp4'] svg {
     display: inline;
 }
+
+.spinner {
+    border: 2px solid rgba(0, 0, 0, 0.158);
+    border-top: 2px solid #3f51b5;
+    border-right: 2px solid #3f51b5;
+    border-radius: 50%;
+}

@@ -30,32 +30,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, reactive } from 'vue';
 import { Vue, Prop } from 'vue-property-decorator';
 
-export default class ToggleSwitchControl extends Vue {
-    @Prop() config: any;
-    @Prop() name!: string;
-    @Prop() icon!: string;
-}
-
-// export default defineComponent({
-//     name: 'ToggleSwitchControl',
-//     components: {
-//         'toggle-button': Toggle
-//     },
-//     props: {
-//         config: Object,
-//         name: String,
-//         icon: String
-//     },
-
-//     data() {
-//         return {
-//             value: this.config?.value
-//         };
-//     }
-// });
+export default defineComponent({
+    name: 'ToggleSwitchControl',
+    props: {
+        config: Object,
+        name: String,
+        icon: String
+    }
+});
 </script>
 
 <style lang="scss" scoped>
