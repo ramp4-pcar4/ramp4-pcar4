@@ -28,7 +28,10 @@ class AppbarFixture extends AppbarAPI {
         const innerShell = this.$vApp.$el.getElementsByClassName(
             'inner-shell'
         )[0];
-        innerShell.insertBefore(appbarInstance.$el, innerShell.children[0]);
+        innerShell.insertBefore(
+            appbarInstance.$el,
+            innerShell.querySelector('.panel-stack')
+        );
 
         this._parseConfig(this.config);
         this.$vApp.$watch(
