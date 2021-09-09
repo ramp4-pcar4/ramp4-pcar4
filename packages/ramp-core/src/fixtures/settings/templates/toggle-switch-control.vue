@@ -9,7 +9,7 @@
         <toggle-button
             @change="config.onChange"
             :disabled="!!config.disabled"
-            v-model="config.value"
+            v-model="selected"
             :classes="{
                 container:
                     'inline-block rounded-full outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-30',
@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, watch } from 'vue';
 import { Vue, Prop } from 'vue-property-decorator';
 
 export default defineComponent({
@@ -39,6 +39,23 @@ export default defineComponent({
         config: Object,
         name: String,
         icon: String
+    },
+    data() {
+        return {
+            selected: Boolean
+        };
+    },
+    mounted() {
+        // Set the toggle switch to the default visibility of the layer.
+        this.selected = this.config?.value;
+
+        // Watch for a change in layer visibility.
+        watch(
+            () => this.config?.value,
+            (newVal, oldVal) => {
+                this.selected = newVal;
+            }
+        );
     }
 });
 </script>
