@@ -107,7 +107,13 @@
                         </wizard-input>
                         <wizard-form-footer
                             @submit="onSelectContinue"
-                            @cancel="goToStep(0)"
+                            @cancel="
+                                () => {
+                                    formatError = false;
+                                    url ? (goNext = true) : (goNext = false);
+                                    goToStep(0);
+                                }
+                            "
                             :disabled="false"
                         ></wizard-form-footer>
                     </form>
@@ -375,6 +381,18 @@ export default defineComponent({
         };
     },
 
+    // lifecycle hook captures errors from child components
+    errorCaptured(err, instance, info) {
+        if (this.step === WizardStep.FORMAT || this.step === WizardStep.CONFIGURE) {
+            this.formatError = true;
+            // this.setError('format', 'type', this.$t('wizard.format.type.error.invalid') as string);
+            this.goToStep(WizardStep.FORMAT);
+        }
+
+        // return value needs to be false to prevent bubbling up to parent component errorCaptured
+        return false;
+    },
+
     methods: {
         // reads uploaded file
         async uploadFile(file: File, progress?: Function) {
@@ -404,20 +422,6 @@ export default defineComponent({
             reader.readAsArrayBuffer(file);
         },
 
-        // lifecycle hook captures errors from child components
-        errorCaptured(err: Error, instance: Component, info: string) {
-            console.log('error captured!', this.step, WizardStep.FORMAT);
-            if (this.step === WizardStep.FORMAT || this.step === WizardStep.CONFIGURE) {
-                this.formatError = true;
-                // this.setError('format', 'type', this.$t('wizard.format.type.error.invalid') as string);
-                this.goToStep(WizardStep.FORMAT);
-            }
-
-            // TODO: look into the Vue lifecycle function errorCaptured. Not sure what the
-            // return value should be here. Expected return value is boolean or undefined.
-            return undefined;
-        },
-
         onUploadContinue() {
             if (this.fileData) {
                 setTimeout(() => {
@@ -432,39 +436,30 @@ export default defineComponent({
         },
 
         async onSelectContinue() {
-            try {
-                this.layerInfo = this.isFileLayer()
-                    ? await this.layerSource.fetchFileInfo(
-                          this.url,
-                          this.typeSelection,
-                          this.fileData
-                      )
-                    : await this.layerSource.fetchServiceInfo(this.url, this.typeSelection);
+            this.layerInfo = this.isFileLayer()
+                ? await this.layerSource.fetchFileInfo(this.url, this.typeSelection, this.fileData)
+                : await this.layerSource.fetchServiceInfo(this.url, this.typeSelection);
+            // check for incorrect feature service type
+            const featureError =
+                this.typeSelection === LayerType.FEATURE &&
+                !(this.layerInfo && this.layerInfo.fields);
 
-                if (!this.layerInfo) {
-                    this.formatError = true;
-                    return;
-                }
-
-                this.goToStep(WizardStep.CONFIGURE);
-                this.layerInfo.configOptions.includes(`layerEntries`)
-                    ? (this.finishStep = false)
-                    : (this.finishStep = true);
-            } catch (_) {
+            if (!this.layerInfo || featureError) {
                 this.formatError = true;
+                // this.setError(
+                //     'format',
+                //     'type',
+                //     this.$t('wizard.format.type.error.invalid') as string
+                // );
+                // placeholder value for layerInfo to prevent prod build errors
+                this.layerInfo = { config: null, configOptions: [] };
                 return;
             }
-            // if (!this.layerInfo) {
-            //     this.formatError = true;
-            //     this.setError(
-            //         'format',
-            //         'type',
-            //         this.$t('wizard.format.type.error.invalid') as string
-            //     );
-            //     return;
-            // }
 
-            // this.goToStep(WizardStep.CONFIGURE);
+            this.goToStep(WizardStep.CONFIGURE);
+            this.layerInfo.configOptions.includes(`layerEntries`)
+                ? (this.finishStep = false)
+                : (this.finishStep = true);
         },
 
         async onConfigureContinue(data: object) {
@@ -549,12 +544,16 @@ export default defineComponent({
 
         updateLayerName(name: string) {
             this.layerInfo.config.name = name;
-            name ? (this.finishStep = true) : (this.finishStep = false);
+            const le = this.layerInfo.config.layerEntries;
+            const canFinish = le ? name && le.length > 0 : name;
+            canFinish ? (this.finishStep = true) : (this.finishStep = false);
         },
 
         updateLayerEntries(le: Array<any>) {
             this.layerInfo.config.layerEntries = le;
-            le.length > 0 ? (this.finishStep = true) : (this.finishStep = false);
+            le.length > 0 && this.layerInfo.config.name
+                ? (this.finishStep = true)
+                : (this.finishStep = false);
         }
     }
 });

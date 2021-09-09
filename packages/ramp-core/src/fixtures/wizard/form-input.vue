@@ -160,8 +160,8 @@ export default defineComponent({
             default: false
         },
         modelValue: {
-            type: [String, Boolean],
-            default: false
+            type: [String, Array],
+            default: ''
         },
         name: {
             type: [String, Boolean],
