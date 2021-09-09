@@ -18,6 +18,7 @@ import {
 } from '@/store/modules/panel';
 
 import ScreenSpinnerV from '@/components/panel-stack/screen-spinner.vue';
+import { resolve } from 'path';
 
 export class PanelInstance extends APIScope {
     /**
@@ -79,24 +80,34 @@ export class PanelInstance extends APIScope {
             payload = screen;
             this.loadedScreens.push(id); // mark this screen immediately as loaded
         } else {
-            let asyncComponent: Promise<AsyncComponentEh>;
+            let loadResolve: any;
+            let componentData: Promise<any> = new Promise(resolve => {
+                loadResolve = resolve;
+            });
 
             if (typeof screen === 'string') {
-                asyncComponent = defineAsyncComponent(require(`./../../src/fixtures/${screen}`));
+                defineAsyncComponent(() =>
+                    import(`./../../src/fixtures/${screen}`).then((data: any) => {
+                        loadResolve(data);
+                        return data;
+                    })
+                );
             } else {
-                asyncComponent = screen(); // execute the async component function to get the promise
+                screen().then((data: any) => {
+                    loadResolve(data);
+                });
             }
 
             // for async components, wait until they are resolved and patch in panel's i18n messages
             const component = new Promise<Component>((resolve, reject) => {
-                asyncComponent.then(data => {
+                componentData.then(data => {
                     // wait until the component promise is resolved and mark it as loaded
                     this.loadedScreens.push(id);
 
                     // if data is a `*.vue` file, use its `default` export
                     resolve(isTypeofImportVue(data) ? data.default : data);
                 });
-                asyncComponent.catch(error => reject(error));
+                componentData.catch(error => reject(error));
             });
 
             payload = () => ({

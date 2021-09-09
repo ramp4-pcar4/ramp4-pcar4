@@ -863,12 +863,12 @@ rInstance.$element.component('Water-Quantity-Template', {
 
 // TODO: fix console errors
 rInstance.fixture.add('snowman');
-// rInstance.fixture.add('gazebo').then(() => {
-//     rInstance.panel
-//         .get('p2')
-//         .open({ screen: 'p-2-screen-2' })
-//         .pin();
-// });
+rInstance.fixture.add('gazebo').then(() => {
+    rInstance.panel
+        .get('p2')
+        .open({ screen: 'p-2-screen-2' })
+        .pin();
+});
 // rInstance.fixture.add('diligord', window.hostFixtures.diligord).then(() => {
 //     rInstance.panel.open('diligord-p1');
 // });

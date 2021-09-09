@@ -8,11 +8,7 @@
             <!-- <pin> is a global button component that any fixture/panel/screen can reuse -->
 
             <!-- ✔ this is the correct way to pin a panel and bind the button active state whether this panel is pinned or not 👇 -->
-            <pin
-                @click="panel.pin(!isPinned)"
-                :active="isPinned"
-                v-if="$iApi.screenSize !== 'xs'"
-            ></pin>
+            <pin @click="panel.pin(!isPinned)" :active="isPinned" v-if="checkScreenSize"></pin>
 
             <!-- ✔ this will also work 👇 -->
             <!-- <pin @click="panel.pin(!panel.isPinned)" :active="panel.isPinned"></pin> -->
@@ -49,26 +45,26 @@
 </template>
 
 <script lang="ts">
-import { Vue, Prop } from 'vue-property-decorator';
-
+import { defineComponent, PropType } from 'vue';
 import { PanelInstance } from '@/api';
 
-export default class GazeboP2Screen1V extends Vue {
-    // ✔ this prop is always present and it's set by the panel-container component
-    @Prop() panel!: PanelInstance;
-
-    // ✔ this prop is passed to this component as part of the `route` property when switching/rendering this screen
-    @Prop() greeting?: string;
-
-    // ✔ create a computer property from the `pinned` value exposed on the API
-    // TODO: if there many similar pieces of code that repeat often, we can pull them out into a mixin
-    get isPinned(): boolean {
-        return this.panel.isPinned;
-
-        // ✔ this also works 👇
-        // return this.$iApi.panel.pinned !== null && this.$iApi.panel.pinned.id === this.panel.id;
+export default defineComponent({
+    name: 'GazeboP2Screen1V',
+    props: {
+        panel: { type: Object as PropType<PanelInstance>, required: true },
+        greeting: { type: String }
+    },
+    computed: {
+        isPinned(): boolean {
+            return this.panel.isPinned;
+            // ✔ this also works 👇
+            // return this.$iApi.panel.pinned !== null && this.$iApi.panel.pinned.id === this.panel.id;
+        },
+        checkScreenSize(): boolean {
+            return this.$iApi.screenSize !== 'xs';
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>
