@@ -1,4 +1,4 @@
-// TODO add proper documentation
+// Style for RAMP Line Graphic
 
 import { LineStyle, LineStyleParams, StyleOptions } from '@/geo/api';
 
@@ -19,7 +19,7 @@ export class LineStyleOptions extends StyleOptions {
         }
     }
 
-    /** Returns the specified style */
+    /** Returns the specified style (e.g. solid, dashed, dotted) */
     get style(): LineStyle {
         return this._style;
     }

@@ -16,6 +16,7 @@ import {
     TreeNode
 } from '@/geo/api';
 import { LayerStore } from '@/store/modules/layer';
+import to from 'await-to-js';
 
 // CUSTOM-LAYER
 // A constructor returning an object implementing LayerBase interface.
@@ -97,6 +98,10 @@ export class LayerAPI extends APIScope {
     // * @param {ILayereBase} [constructor]
     // async addLayerDef(id: string, constructor?: ILayerBase): Promise<string> {
 
+    // made private until we decide we are supporting custom layer definitions. createLayer
+    // will now automatically manage the layer definition loading, simplifying the number
+    // of things that need to be called.
+
     /**
      * Loads a (built-in) layer definition into the R4MP instance.
      *
@@ -104,7 +109,7 @@ export class LayerAPI extends APIScope {
      * @returns {Promise<string>} the id, resolves after definition is loaded
      * @memberof LayerAPI
      */
-    async addLayerDef(id: string): Promise<string> {
+    private async addLayerDef(id: string): Promise<string> {
         // TODO revisit if the return value should be LayerBase. This is registering a layer definition
         //      (i.e. a blueprint), so the layer id might be more appropriate, or void. Person would
         //      use the create layer on LayerAPI to make an actual layer.
@@ -157,18 +162,33 @@ export class LayerAPI extends APIScope {
         ).default;
     }
 
-    layerDefExists(id: string): boolean {
+    // made private until we decide we are supporting custom layer definitions. createLayer
+    // will now automatically manage the layer definition loading, simplifying the number
+    // of things that need to be called.
+
+    private layerDefExists(id: string): boolean {
         return !!this._layerDefStore[id];
     }
 
+    /**
+     * Will generate a RAMP Layer based on the supplied config object.
+     *
+     * @param {Object} config a valid layer configuration object
+     * @returns {Promise<LayerInstance>} resolves with Layer in uninitialted state
+     */
     async createLayer(config: any): Promise<LayerInstance> {
         // TODO update the type of config? want to type it as RampLayerConfig but we could have 3rd party random thing passed in
         if (!this.layerDefExists(config.layerType)) {
-            throw new Error(
-                `No layer definition loaded for layer type ${config.layerType}`
+            const [defLoadErr, layer] = await to(
+                this.addLayerDef(config.layerType)
             );
+
+            if (defLoadErr) {
+                throw new Error(
+                    `Could not find or load layer definition for layer type ${config.layerType}`
+                );
+            }
         }
-        // console.log('CreateLayer - this is the layer def from the store')
 
         return this._layerDefStore[config.layerType].generateLayer(config);
     }

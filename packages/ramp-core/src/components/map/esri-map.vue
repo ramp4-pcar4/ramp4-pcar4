@@ -86,6 +86,9 @@ export default class EsriMapV extends Vue {
                 .filter(lc => !oldValue.includes(lc))
                 .map(layerConfig => {
                     return new Promise<LayerInstance | null>(async resolve => {
+
+                        // CUSTOM-LAYER
+                        /*
                         let defLoadProm: Promise<string>;
 
                         // check if we need to load the layer class
@@ -108,6 +111,8 @@ export default class EsriMapV extends Vue {
 
                         // wait for definition to load, or ride the resolve if already loaded
                         await defLoadProm;
+                        */
+
                         // create the layer instantiation
                         const [createErr, layer] = await to(
                             this.$iApi.geo.layer.createLayer(layerConfig)

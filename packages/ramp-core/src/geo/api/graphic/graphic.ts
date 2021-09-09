@@ -23,8 +23,6 @@ export class Graphic {
     style: StyleOptions | undefined;
     id: string;
 
-    //constructor();
-    //constructor(id: string);
     constructor(id?: string | undefined) {
         if (id) {
             this.id = id;
