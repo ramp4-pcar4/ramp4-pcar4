@@ -1,4 +1,4 @@
-// TODO add proper documentation
+// Style for RAMP Point Graphic
 
 import { PointStyle, PointStyleParams, StyleOptions } from '@/geo/api';
 

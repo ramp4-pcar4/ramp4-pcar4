@@ -1,4 +1,4 @@
-// TODO add proper documentation
+// Baseclass for RAMP Graphic styles
 
 import { StyleParams, ColourParams } from '@/geo/api';
 
@@ -36,6 +36,13 @@ export class StyleOptions {
         return this._style;
     }
 
+    /**
+     * Parse and convert various colour formats to RGBA values. Formats include RGB array, hexstring,
+     * or RAMP ColourParameter object
+     *
+     * @param c a colour defined in a supported format
+     * @returns {Array<number>} an array of RGBA integer values
+     */
     static parseColour(
         c: Array<number> | Array<string> | string | ColourParams | undefined
     ): Array<number> {
@@ -63,6 +70,7 @@ export class StyleOptions {
         return arr;
     }
 
+    /** Converts RGBA integer array to #rrggbbaa hex string */
     protected static colourToHex(colourArray: Array<number>): string {
         const toHex = (i: number) => {
             let s: string = i.toString(16);

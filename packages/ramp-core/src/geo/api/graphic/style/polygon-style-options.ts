@@ -1,4 +1,4 @@
-// TODO add proper documentation
+// Style for RAMP Polygon Graphic
 
 import {
     FillStyle,
@@ -62,10 +62,12 @@ export class PolygonStyleOptions extends StyleOptions {
         return this._fillColor;
     }
 
+    /** Returns the fill style (solid, transparent, hatching, etc) */
     get fillStyle(): FillStyle {
         return this._fillStyle;
     }
 
+    /** Returns the outline style options */
     get outlineStyleOptions(): LineStyleOptions {
         return this._outlineStyle;
     }

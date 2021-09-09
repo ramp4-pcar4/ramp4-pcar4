@@ -136,21 +136,14 @@ export default defineComponent({
                         //      layer config / config store / etc, we are duplicating a lot of normal layer loading
                         //      here. hack city for now.
 
-                        // check if we need to load the layer class
-                        const lType = 'highlight';
-                        if (!this.$iApi.geo.layer.layerDefExists(lType)) {
-                            await this.$iApi.geo.layer.addLayerDef(lType);
-                        }
-                        const poleLayer =
-                            await this.$iApi.geo.layer.createLayer({
-                                layerId: 'PoleMarker',
-                                markerSymbol: markerSymbol,
-                                layerType: 'highlight'
-                            });
-                        await poleLayer.initiate();
-                        (poleLayer as any).addMarker(projPole); // since addMarker is not a standard layer interface function, we need to cast as any.
-                        this.$iApi.geo.map.addLayer(poleLayer);
-                    }
+                    const poleLayer = await this.$iApi.geo.layer.createLayer({
+                        layerId: 'PoleMarker',
+                        markerSymbol: markerSymbol,
+                        layerType: 'highlight'
+                    });
+                    await poleLayer.initiate();
+                    (poleLayer as any).addMarker(projPole); // since addMarker is not a standard layer interface function, we need to cast as any.
+                    this.$iApi.geo.map.addLayer(poleLayer);
                 }
             }
         },
