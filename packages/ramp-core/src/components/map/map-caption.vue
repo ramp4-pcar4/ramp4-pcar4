@@ -167,7 +167,4 @@ export default class MapCaptionV extends Vue {
 .map-caption {
     backdrop-filter: blur(5px);
 }
-
-notification-caption-button {
-}
 </style>
