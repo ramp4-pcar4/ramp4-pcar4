@@ -1,4 +1,5 @@
 import { FixtureInstance } from '@/api';
+import { AsyncComponentEh } from '@/store/modules/panel';
 
 import GazeboAppbarButtonV from './appbar-button.vue';
 
@@ -59,43 +60,39 @@ class GazeboFixture extends FixtureInstance {
                          * // TODO: This should work:
                          * manually lazy-loading a screen component
                          */
-                        // 'p-2-screen-1': () => import(/* webpackChunkName: "p-2-screen-1" */ `./p2-screen-1.vue`),
+                        //'p-2-screen-1': () => import(/* webpackChunkName: "p-2-screen-1" */ `./p2-screen-1.vue`),
 
                         /**
                          * // TODO: This should work:
                          * for the demo purposes, delay resolution of a component by 2 seconds
                          */
-                        // 'p-2-screen-1': () => {
-                        //     return new Promise<AsyncComponentEh>(resolve =>
-                        //         setTimeout(
-                        //             () =>
-                        //                 import(
-                        //                     /* webpackChunkName: "p-2-screen-1" */ `./p2-screen-1.vue`
-                        //                 ).then(data => {
-                        //                     resolve(data);
-                        //                 }),
-                        //             2000
-                        //         )
-                        //     );
-                        // },
+                        'p-2-screen-1': () => {
+                            return new Promise<AsyncComponentEh>(resolve =>
+                                setTimeout(
+                                    () =>
+                                        import(/* webpackChunkName: "p-2-screen-1" */ `./p2-screen-1.vue`).then(
+                                            data => {
+                                                resolve(data);
+                                            }
+                                        ),
+                                    2000
+                                )
+                            );
+                        },
 
                         /**
                          * // TODO: This should work:
                          * letting the core to lazy-load a screen component; need to provide a path relative to the fixtures home folder
                          */
-                        // 'p-2-screen-2': 'gazebo/p2-screen-2.vue',
-
-                        'p-2-screen-1': GazeboP2Screen1V,
-                        'p-2-screen-2': GazeboP2Screen2V,
-                        'p-2-screen-3': GazeboP2Screen3V
+                        'p-2-screen-2': 'gazebo/p2-screen-2.vue',
 
                         /**
                          * // TODO: This should work:
                          * returning a `VueConstructor` in a promise
                          */
-                        // 'p-2-screen-3': () => {
-                        //     return new Promise<AsyncComponentEh>(resolve => resolve(GazeboP2Screen3V));
-                        // }
+                        'p-2-screen-3': () => {
+                            return new Promise<AsyncComponentEh>(resolve => resolve(GazeboP2Screen3V));
+                        }
                     },
                     style: {
                         'flex-grow': '1',

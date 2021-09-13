@@ -1,12 +1,6 @@
 import Vue, { Component, defineAsyncComponent } from 'vue';
 
-import {
-    APIScope,
-    InstanceAPI,
-    isVueConstructor,
-    isComponentOptions,
-    isTypeofImportVue
-} from './internal';
+import { APIScope, InstanceAPI, isVueConstructor, isComponentOptions, isTypeofImportVue } from './internal';
 
 import {
     PanelConfig,
@@ -75,46 +69,35 @@ export class PanelInstance extends APIScope {
         // - `string` => load fixture file, pass as `component` in `AsyncComponentFactory` function
         // - `AsyncComponentFunction` => execute as it returns a promise, pass the output as `component` in `AsyncComponentFactory` function
         // https://vuejs.org/v2/guide/components-dynamic-async.html#Handling-Loading-State
-
         if (isComponentOptions(screen) || isVueConstructor(screen)) {
             payload = screen;
             this.loadedScreens.push(id); // mark this screen immediately as loaded
         } else {
-            let loadResolve: any;
-            let componentData: Promise<any> = new Promise(resolve => {
-                loadResolve = resolve;
-            });
+            let asyncComponent: Promise<AsyncComponentEh>;
 
             if (typeof screen === 'string') {
-                defineAsyncComponent(() =>
-                    import(`./../../src/fixtures/${screen}`).then((data: any) => {
-                        loadResolve(data);
-                        return data;
-                    })
-                );
+                asyncComponent = import(/* webpackChunkName: "[request]" */ `./../../src/fixtures/${screen}`);
             } else {
-                screen().then((data: any) => {
-                    loadResolve(data);
-                });
+                asyncComponent = screen(); // execute the async component function to get the promise
             }
 
             // for async components, wait until they are resolved and patch in panel's i18n messages
             const component = new Promise<Component>((resolve, reject) => {
-                componentData.then(data => {
+                asyncComponent.then(data => {
                     // wait until the component promise is resolved and mark it as loaded
                     this.loadedScreens.push(id);
 
                     // if data is a `*.vue` file, use its `default` export
                     resolve(isTypeofImportVue(data) ? data.default : data);
                 });
-                componentData.catch(error => reject(error));
+                asyncComponent.catch(error => reject(error));
             });
 
-            payload = () => ({
+            payload = defineAsyncComponent({
                 // The component to load (should be a Promise)
-                component,
+                loader: () => component,
                 // A component to use while the async component is loading
-                loading: ScreenSpinnerV,
+                loadingComponent: ScreenSpinnerV,
                 // A component to use if the load fails
                 // TODO: add error component
                 // error: ErrorComponent,
@@ -123,10 +106,9 @@ export class PanelInstance extends APIScope {
                 // The error component will be displayed if a timeout is
                 // provided and exceeded. Default: Infinity.
                 // TODO: restore the error timeout
-                // timeout: 3000
+                // timeout: 3000,
             });
         }
-
         this.$iApi.$element.component(id, payload);
     }
 
