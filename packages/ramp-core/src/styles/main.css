@@ -6,6 +6,14 @@
     @import 'tailwindcss/base';
     @import 'tailwindcss/components';
     @import 'tailwindcss/utilities';
+
+    @layer utilities {
+        @variants container-query {
+            .display-none {
+                display: none;
+            }
+        }
+    }
 }
 
 .ramp-app button:focus {

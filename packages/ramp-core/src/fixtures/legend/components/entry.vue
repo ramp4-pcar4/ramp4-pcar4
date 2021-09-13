@@ -274,8 +274,7 @@ export default class LegendEntryV extends Vue {
 .legend-item:hover,
 .legend-item:focus-within {
     .options {
-        // !important added to override WET's hidden class
-        @apply block #{!important};
+        @apply block;
     }
 }
 .disabled {

@@ -39,7 +39,7 @@
         </span>
 
         <notifications-caption-button
-            class="sm:block hidden"
+            class="sm:block display-none"
         ></notifications-caption-button>
 
         <span class="flex-grow w-15"></span>
@@ -166,5 +166,8 @@ export default class MapCaptionV extends Vue {
 <style lang="scss" scoped>
 .map-caption {
     backdrop-filter: blur(5px);
+}
+
+notification-caption-button {
 }
 </style>

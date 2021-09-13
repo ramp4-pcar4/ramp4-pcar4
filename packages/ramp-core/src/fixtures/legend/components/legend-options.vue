@@ -1,5 +1,5 @@
 <template>
-    <div @click.stop @mouseover.stop class="options hidden cursor-auto">
+    <div @click.stop @mouseover.stop class="options display-none cursor-auto">
         <dropdown-menu
             class="relative"
             position="left-start"

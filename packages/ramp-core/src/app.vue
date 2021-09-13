@@ -78,6 +78,7 @@ $font-list: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica
     .h5,
     .h6 {
         font-family: $font-list;
+        line-height: 1.5;
     }
 }
 .symbologyIcon {
