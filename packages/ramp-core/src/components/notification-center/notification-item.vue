@@ -52,29 +52,40 @@
 </template>
 
 <script lang="ts">
-import { Vue, Prop } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 import { call } from '@/store/pathify-helper';
 
 import { NotificationType } from '@/api/notifications';
 
-export default class NotificationListV extends Vue {
-    @Prop() notification!: any;
-    removeNotification: (notification: any) => void = call('notification/removeNotification');
+export default defineComponent({
+    name: 'NotificationListV',
+    props: {
+        notification: {
+            type: Object,
+            required: true
+        }
+    },
 
-    open: boolean = false;
+    data() {
+        return {
+            removeNotification: call('notification/removeNotification'),
+            open: false,
+            icons: {
+                [NotificationType.WARNING]: '⚠',
+                [NotificationType.INFO]: '☑',
+                [NotificationType.ERROR]: '❌'
+            }
+        };
+    },
 
-    icons = {
-        [NotificationType.WARNING]: '⚠',
-        [NotificationType.INFO]: '☑',
-        [NotificationType.ERROR]: '❌'
-    };
-
-    tooltipShow() {
-        if (!this.notification.messageList) {
-            return false;
+    methods: {
+        tooltipShow() {
+            if (!this.notification.messageList) {
+                return false;
+            }
         }
     }
-}
+});
 </script>
 
 <style lang="scss"></style>

@@ -28,27 +28,30 @@
 </template>
 
 <script lang="ts">
-import { Vue, Prop } from 'vue-property-decorator';
+import { defineComponent, PropType } from 'vue';
 import { PanelInstance } from '@/api';
 
-export default class PanelScreenV extends Vue {
-    /**
-     * A prop indicating if the `header` slot should be rendered.
-     */
-    @Prop({ default: true }) header!: boolean;
-
-    /**
-     * A prop indicating if the `content` slot should be rendered.
-     */
-    @Prop({ default: true }) content!: boolean;
-
-    /**
-     * A prop indicating if the `footer` slot should be rendered.
-     */
-    @Prop({ default: false }) footer!: boolean;
-
-    @Prop() panel!: PanelInstance;
-}
+export default defineComponent({
+    name: 'PanelScreenV',
+    props: {
+        // prop indicating if the `header` slot should be rendered
+        header: {
+            type: Boolean,
+            default: true
+        },
+        // prop indicating if the `content` slot should be rendered
+        content: {
+            type: Boolean,
+            default: true
+        },
+        // prop indicating if the `footer` slot should be rendered
+        footer: {
+            type: Boolean,
+            default: false
+        },
+        panel: Object as PropType<PanelInstance>
+    }
+});
 </script>
 
 <style lang="scss" scoped></style>

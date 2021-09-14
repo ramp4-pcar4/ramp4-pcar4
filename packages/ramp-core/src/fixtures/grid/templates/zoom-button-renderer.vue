@@ -24,7 +24,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Vue } from 'vue-property-decorator';
 import { get } from '@/store/pathify-helper';
 import { LayerInstance } from '@/api/internal';
 import { directive as tippyDirective } from 'vue-tippy';

@@ -8,9 +8,11 @@
 </template>
 
 <script lang="ts">
-import { Vue } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-export default class ScreenSpinnerV extends Vue {}
+export default defineComponent({
+    name: 'ScreenSpinnerV'
+});
 </script>
 
 <style lang="scss" scoped>

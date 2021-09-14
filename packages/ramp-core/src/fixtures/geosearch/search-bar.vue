@@ -12,8 +12,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Vue } from 'vue-property-decorator';
-import { Get, Call } from 'vuex-pathify';
 import { get, call } from '@/store/pathify-helper';
 import { GeosearchStore } from './store';
 import { debounce } from 'throttle-debounce';

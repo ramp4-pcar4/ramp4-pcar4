@@ -18,7 +18,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Vue, Options } from 'vue-property-decorator';
 import { get } from '@/store/pathify-helper';
 
 import ZoomNavV from './buttons/zoom-nav.vue';

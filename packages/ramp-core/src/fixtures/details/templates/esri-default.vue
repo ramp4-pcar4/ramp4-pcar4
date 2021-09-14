@@ -2,7 +2,7 @@
     <div>
         <div
             class="p-5 pl-3 flex justify-end flex-wrap even:bg-gray-300"
-            v-for="(val, name, itemIdx) in itemData"
+            v-for="(val, name, itemIdx) in itemData()"
             :key="itemIdx"
         >
             <span class="inline font-bold">{{ name }}</span>
@@ -13,22 +13,29 @@
 </template>
 
 <script lang="ts">
-import { Vue, Prop } from 'vue-property-decorator';
+import { defineComponent, PropType } from 'vue';
 
 import { IdentifyItem } from '@/geo/api';
 
-export default class ESRIDefaultV extends Vue {
-    // passed in by the details panel. Contains all of the identify data.
-    @Prop() identifyData!: IdentifyItem;
+export default defineComponent({
+    name: 'ESRIDefaultV',
+    props: {
+        identifyData: {
+            type: Object as PropType<IdentifyItem>,
+            required: true
+        }
+    },
 
-    // clone identifyData and remove unwanted data
-    get itemData() {
-        const helper: any = {};
-        Object.assign(helper, this.identifyData.data);
-        if (helper.Symbol !== undefined) delete helper.Symbol;
-        return helper;
+    methods: {
+        // clone identifyData and remove unwanted data
+        itemData() {
+            const helper: any = {};
+            Object.assign(helper, this.identifyData.data);
+            if (helper.Symbol !== undefined) delete helper.Symbol;
+            return helper;
+        }
     }
-}
+});
 </script>
 
 <style lang="scss"></style>

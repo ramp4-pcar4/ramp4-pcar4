@@ -5,7 +5,7 @@
         </template>
 
         <template #controls>
-            <pin @click="panel.pin()" :active="isPinned"></pin>
+            <pin @click="panel.pin()" :active="isPinned()"></pin>
             <close @click="panel.close()"></close>
         </template>
 
@@ -20,9 +20,7 @@
 </template>
 
 <script lang="ts">
-import { ComputedRef } from 'vue';
-import { Vue, Options, Prop } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
+import { defineComponent, PropType } from 'vue';
 import { get } from '@/store/pathify-helper';
 
 import { PanelInstance } from '@/api';
@@ -33,17 +31,25 @@ import HelpSectionV from './section.vue';
 import axios from 'axios';
 import marked from 'marked';
 
-@Options({
+export default defineComponent({
+    name: 'HelpScreenV',
     components: {
         'help-section': HelpSectionV
-    }
-})
-export default class HelpScreenV extends Vue {
-    @Prop() panel!: PanelInstance;
-    folderName: ComputedRef<string> = get(HelpStore.folderName);
-    // @Get(HelpStore.folderName) folderName!: string;
+    },
 
-    helpSections: any = [];
+    props: {
+        panel: {
+            type: Object as PropType<PanelInstance>,
+            required: true
+        }
+    },
+
+    data() {
+        return {
+            folderName: get(HelpStore.folderName),
+            helpSections: [] as Array<any>
+        };
+    },
 
     mounted() {
         // make help request when fixture loads or locale changes
@@ -92,12 +98,14 @@ export default class HelpScreenV extends Vue {
             },
             { immediate: true }
         );
-    }
+    },
 
-    get isPinned(): boolean {
-        return this.panel.isPinned;
+    methods: {
+        isPinned(): boolean {
+            return this.panel.isPinned;
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

@@ -10,7 +10,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { Extent } from '@/geo/api';
-import { Vue } from 'vue-property-decorator';
 
 export default defineComponent({
     name: 'HomeNavV',

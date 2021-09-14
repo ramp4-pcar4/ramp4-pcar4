@@ -21,11 +21,17 @@
 </template>
 
 <script lang="ts">
-import { Vue, Prop } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-export default class BackV extends Vue {
-    @Prop() active!: boolean;
-}
+export default defineComponent({
+    name: 'BackV',
+    props: {
+        active: {
+            type: Boolean,
+            required: true
+        }
+    }
+});
 </script>
 
 <style lang="scss" scoped></style>

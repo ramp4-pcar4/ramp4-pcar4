@@ -21,11 +21,17 @@
 </template>
 
 <script lang="ts">
-import { Vue, Prop } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-export default class PinV extends Vue {
-    @Prop() active!: boolean;
-}
+export default defineComponent({
+    name: 'PinV',
+    props: {
+        active: {
+            type: Boolean,
+            required: true
+        }
+    }
+});
 </script>
 
 <style lang="scss" scoped></style>

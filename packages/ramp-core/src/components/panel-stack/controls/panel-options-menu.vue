@@ -1,8 +1,5 @@
 <template>
-    <dropdown-menu
-        class="relative"
-        :tooltip="$t('panels.controls.optionsMenu')"
-    >
+    <dropdown-menu class="relative" :tooltip="$t('panels.controls.optionsMenu')">
         <template #header>
             <div class="p-8">
                 <svg
@@ -21,21 +18,21 @@
 </template>
 
 <script lang="ts">
-import { Vue, Options } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 
-@Options({
+export default defineComponent({
+    name: 'PanelOptionsMenuV',
     components: {
         'dropdown-menu': DropdownMenuV
-    }
-})
-export default class PanelOptionsMenuV extends Vue {
+    },
+
     data() {
         return {
             open: false
         };
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

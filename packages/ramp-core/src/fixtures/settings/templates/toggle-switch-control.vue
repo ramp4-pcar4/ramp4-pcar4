@@ -31,7 +31,6 @@
 
 <script lang="ts">
 import { defineComponent, watch } from 'vue';
-import { Vue, Prop } from 'vue-property-decorator';
 
 export default defineComponent({
     name: 'ToggleSwitchControl',

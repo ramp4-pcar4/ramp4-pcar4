@@ -20,11 +20,14 @@
 </template>
 
 <script lang="ts">
-import { Vue, Prop } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-export default class CloseV extends Vue {
-    @Prop() active!: boolean;
-}
+export default defineComponent({
+    name: 'CloseV',
+    props: {
+        active: Boolean
+    }
+});
 </script>
 
 <style lang="scss" scoped></style>

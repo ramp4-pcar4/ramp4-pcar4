@@ -53,8 +53,6 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { Vue, Options, Prop } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
 
 import { LayerInstance, PanelInstance } from '@/api';

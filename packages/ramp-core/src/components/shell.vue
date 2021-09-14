@@ -37,7 +37,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Vue, Options } from 'vue-property-decorator';
 
 import EsriMapV from '@/components/map/esri-map.vue';
 import PanelStackV from '@/components/panel-stack/panel-stack.vue';

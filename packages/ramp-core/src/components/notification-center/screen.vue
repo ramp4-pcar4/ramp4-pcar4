@@ -5,7 +5,7 @@
         </template>
 
         <template #controls>
-            <pin @click="panel.pin()" :active="isPinned"></pin>
+            <pin @click="panel.pin()" :active="isPinned()"></pin>
             <close @click="panel.close()"></close>
         </template>
 
@@ -36,27 +36,38 @@
 </template>
 
 <script lang="ts">
-import { Vue, Options, Prop } from 'vue-property-decorator';
+import { defineComponent, PropType } from 'vue';
 import { call } from '@/store/pathify-helper';
 
 import { PanelInstance } from '@/api';
 
 import NotificationListV from './notification-list.vue';
 
-@Options({
+export default defineComponent({
+    name: 'NotificationsScreenV',
+    props: {
+        panel: {
+            type: Object as PropType<PanelInstance>,
+            required: true
+        }
+    },
+
     components: {
         'notification-list': NotificationListV
-    }
-})
-export default class NotificationsScreenV extends Vue {
-    @Prop() panel!: PanelInstance;
+    },
 
-    clearAll: () => void = call('notification/clearAll');
+    data() {
+        return {
+            clearAll: call('notification/clearAll')
+        };
+    },
 
-    get isPinned(): boolean {
-        return this.panel.isPinned;
+    methods: {
+        isPinned(): boolean {
+            return this.panel.isPinned;
+        }
     }
-}
+});
 </script>
 
 <style lang="scss"></style>

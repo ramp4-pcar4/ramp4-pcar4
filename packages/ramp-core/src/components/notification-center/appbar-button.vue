@@ -32,7 +32,6 @@ export default defineComponent({
     data() {
         return {
             number: get('notification/notificationNumber')
-            // @Get('notification/notificationNumber') number!: Number;
         };
     },
 

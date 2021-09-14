@@ -58,8 +58,6 @@ export default defineComponent({
         return {
             mapConfig: get(OverviewmapStore.mapConfig),
             startMinimized: get(OverviewmapStore.startMinimized),
-            // @Get(OverviewmapStore.mapConfig) mapConfig!: RampMapConfig,
-            // @Get(OverviewmapStore.startMinimized) startMinimized!: boolean,
 
             // TODO: find a way to fix this declaration (should be something like overviewMap: OverviewMapAPI but that gave a compile error)
             overviewMap: new OverviewMapAPI(this.$iApi),

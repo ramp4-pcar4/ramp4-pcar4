@@ -52,6 +52,7 @@
 
 <script lang="ts">
 import { Vue, Prop, Inject } from 'vue-property-decorator';
+// import { defineComponent, inject } from 'vue';
 
 export default class WizardStepperItemV extends Vue {
     @Prop() title!: string;
@@ -73,6 +74,40 @@ export default class WizardStepperItemV extends Vue {
         return this.stepper.activeIndex === this.index;
     }
 }
+// export default defineComponent({
+//     name: 'WizardStepperItemV',
+//     props: {
+//         title: {
+//             type: String,
+//             required: true
+//         },
+//         summary: {
+//             type: String,
+//             required: true
+//         }
+//     },
+//     inject: ['stepper'],
+
+//     data() {
+//         return {
+//             index: -1
+//         };
+//     },
+
+//     mounted() {
+//         this.index = this.stepper.numSteps++;
+//     },
+
+//     methods: {
+//         done() {
+//             return this.stepper.activeIndex > this.index;
+//         },
+
+//         active() {
+//             return this.stepper.activeIndex === this.index;
+//         }
+//     }
+// });
 </script>
 
 <style lang="scss" scoped>

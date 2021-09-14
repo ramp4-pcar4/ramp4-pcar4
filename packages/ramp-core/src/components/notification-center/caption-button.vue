@@ -57,23 +57,26 @@
 </template>
 
 <script lang="ts">
-import { ComputedRef } from 'vue';
-import { Vue, Options } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 import { get, call } from '@/store/pathify-helper';
 
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 import NotificationListV from './notification-list.vue';
 
-@Options({
+export default defineComponent({
+    name: 'NotificationsCaptionButtonV',
     components: {
         'dropdown-menu': DropdownMenuV,
         'notification-list': NotificationListV
+    },
+
+    data() {
+        return {
+            number: get('notification/notificationNumber'),
+            clearAll: call('notification/clearAll')
+        };
     }
-})
-export default class NotificationsCaptionButtonV extends Vue {
-    number: ComputedRef<Number> = get('notification/notificationNumber');
-    clearAll: () => void = call('notification/clearAll');
-}
+});
 </script>
 
 <style lang="scss" scoped>

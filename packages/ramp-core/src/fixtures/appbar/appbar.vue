@@ -51,8 +51,6 @@ export default defineComponent({
         return {
             items: get('appbar/visible'),
             temporaryItems: get('appbar/temporary'),
-            // @Get('appbar/visible') items!: AppbarItemInstance[];
-            // @Get('appbar/temporary') temporaryItems!: AppbarItemInstance[];
             overflow: false
         };
     },

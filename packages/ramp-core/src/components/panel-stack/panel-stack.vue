@@ -1,10 +1,5 @@
 <template>
-    <transition-group
-        @enter="enter"
-        @leave="leave"
-        name="panel-container"
-        tag="div"
-    >
+    <transition-group @enter="enter" @leave="leave" name="panel-container" tag="div">
         <!-- TODO: pass a corresponding fixture instance to the panel component as it can be useful -->
         <panel-container
             v-for="panel in visible($iApi.screenSize)"
@@ -15,10 +10,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Options } from 'vue-property-decorator';
-import { Get, Sync } from 'vuex-pathify';
+import { defineComponent } from 'vue';
 import { get, sync } from '@/store/pathify-helper';
-import { ComputedRef, WritableComputedRef } from 'vue';
 
 import anime from 'animejs';
 
@@ -33,20 +26,18 @@ declare class ResizeObserver {
     disconnect(): void;
 }
 
-@Options({
+export default defineComponent({
+    name: 'PanelStackV',
     components: {
         'panel-container': PanelContainerV
-    }
-})
-export default class PanelStackV extends Vue {
-    visible: ComputedRef<(extraSmallScreen: boolean) => PanelInstance[]> = get(
-        'panel/getVisible'
-    );
+    },
 
-    // @Get('panel/getVisible!') visible!: (
-    //     extraSmallScreen: boolean
-    // ) => PanelInstance[];
-    stackWidth: WritableComputedRef<number> = sync('panel/stackWidth');
+    data() {
+        return {
+            visible: get('panel/getVisible'),
+            stackWidth: sync('panel/stackWidth')
+        };
+    },
 
     mounted(): void {
         // sync the `panel-stack` width into the store so that visible can get calculated
@@ -55,60 +46,58 @@ export default class PanelStackV extends Vue {
         });
 
         resizeObserver.observe(this.$el);
+    },
+
+    methods: {
+        enter(el: HTMLElement, done: () => void): void {
+            this.animateTransition(el, done, [
+                [6, 0],
+                [0, 1]
+            ]);
+        },
+
+        leave(el: HTMLElement, done: () => {}): void {
+            const [bbox, pbbox] = [
+                el.children[0].getBoundingClientRect(),
+                el.parentElement!.getBoundingClientRect()
+            ];
+
+            // the panel will be positioned `absolute` and it will screw up its dimensions
+            // to prevent this, set width/height/left manually before detaching the panel
+            el.style.width = `${bbox.width}px`;
+            el.style.height = `${bbox.height}px`;
+            el.style.left = `${bbox.left - pbbox.left}px`;
+
+            // without this, the FLIP transition won't work
+            el.style.position = 'absolute';
+
+            this.animateTransition(el, done, [
+                [0, -6],
+                [1, 0]
+            ]);
+        },
+
+        /**
+         * Animate transition between panel screen components by fading them in/out.
+         */
+        animateTransition(el: HTMLElement, done: () => void, values: number[][]): void {
+            anime({
+                targets: el,
+                duration: 300,
+                translateY: {
+                    value: values[0],
+                    easing: 'cubicBezier(.5, .05, .1, .3)'
+                },
+                opacity: {
+                    value: values[1],
+                    duration: 250,
+                    easing: 'cubicBezier(.5, .05, .1, .3)'
+                },
+                complete: done
+            });
+        }
     }
-
-    enter(el: HTMLElement, done: () => void): void {
-        this.animateTransition(el, done, [
-            [6, 0],
-            [0, 1]
-        ]);
-    }
-
-    leave(el: HTMLElement, done: () => {}): void {
-        const [bbox, pbbox] = [
-            el.children[0].getBoundingClientRect(),
-            el.parentElement!.getBoundingClientRect()
-        ];
-
-        // the panel will be positioned `absolute` and it will screw up its dimensions
-        // to prevent this, set width/height/left manually before detaching the panel
-        el.style.width = `${bbox.width}px`;
-        el.style.height = `${bbox.height}px`;
-        el.style.left = `${bbox.left - pbbox.left}px`;
-
-        // without this, the FLIP transition won't work
-        el.style.position = 'absolute';
-
-        this.animateTransition(el, done, [
-            [0, -6],
-            [1, 0]
-        ]);
-    }
-
-    /**
-     * Animate transition between panel screen components by fading them in/out.
-     */
-    animateTransition(
-        el: HTMLElement,
-        done: () => void,
-        values: number[][]
-    ): void {
-        anime({
-            targets: el,
-            duration: 300,
-            translateY: {
-                value: values[0],
-                easing: 'cubicBezier(.5, .05, .1, .3)'
-            },
-            opacity: {
-                value: values[1],
-                duration: 250,
-                easing: 'cubicBezier(.5, .05, .1, .3)'
-            },
-            complete: done
-        });
-    }
-}
+});
 </script>
 
 <style lang="scss" scoped>

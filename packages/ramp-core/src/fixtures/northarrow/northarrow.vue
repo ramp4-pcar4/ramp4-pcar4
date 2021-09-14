@@ -19,8 +19,6 @@ export default defineComponent({
         return {
             arrowIcon: get(NortharrowStore.arrowIcon),
             poleIcon: get(NortharrowStore.poleIcon),
-            // @Get(NortharrowStore.arrowIcon) arrowIcon!: string;
-            // @Get(NortharrowStore.poleIcon) poleIcon!: string;
             angle: 0,
             arrowLeft: 0,
             displayArrow: false,

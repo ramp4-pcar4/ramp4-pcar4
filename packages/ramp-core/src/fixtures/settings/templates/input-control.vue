@@ -19,14 +19,25 @@
 </template>
 
 <script lang="ts">
-import { Vue, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
+import { defineComponent } from 'vue';
 
-export default class SliderControl extends Vue {
-    @Prop() config!: any;
-    @Prop() name!: string;
-    @Prop() icon!: string;
-}
+export default defineComponent({
+    name: 'SliderControl',
+    props: {
+        config: {
+            type: Object,
+            required: true
+        },
+        name: {
+            type: String,
+            required: true
+        },
+        icon: {
+            type: String,
+            required: true
+        }
+    }
+});
 </script>
 
 <style lang="scss" scoped>

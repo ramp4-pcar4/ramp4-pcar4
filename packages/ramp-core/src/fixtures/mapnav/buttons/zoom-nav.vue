@@ -26,7 +26,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Vue, Options } from 'vue-property-decorator';
 import { throttle } from 'throttle-debounce';
 import DividerNavV from './divider-nav.vue';
 
