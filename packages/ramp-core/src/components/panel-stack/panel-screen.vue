@@ -28,8 +28,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
 import { PanelInstance } from '@/api';
+import { defineComponent, PropType } from 'vue';
 
 export default defineComponent({
     name: 'PanelScreenV',

@@ -15,11 +15,12 @@
         <script src="../sample-fixtures/mouruge-fixture.js"></script>
         <script src="../sample-fixtures/diligord-fixture.js"></script>
 
+        <!-- this fixture will load after Vue is loaded; `iklob` requires Vue to be exposed on the global scope -->
+        <script src="../sample-fixtures/iklob-fixture.js"></script>
+
         <!-- RAMP will be injected here -->
     </head>
     <body style="margin: 0;">
-        <!-- this fixture will load after RAMP (and Vue) are loaded (since Vue is bundled with RAMP in `dev`); `iklob` requires Vue to be exposed on the global scope -->
-        <script src="../sample-fixtures/iklob-fixture.js"></script>
 
         <div id="app"></div>
 

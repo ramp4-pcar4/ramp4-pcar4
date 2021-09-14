@@ -764,13 +764,12 @@ let options = {
 
 rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
 
-// TODO: fix console errors
-// var iklobLoad = rInstance.event.on('fixture/added', fixture => {
-//     if (fixture.id === 'iklob') {
-//         rInstance.event.off(iklobLoad);
-//         rInstance.panel.open('iklob-p1');
-//     }
-// });
+var iklobLoad = rInstance.event.on('fixture/added', fixture => {
+    if (fixture.id === 'iklob') {
+        rInstance.event.off(iklobLoad);
+        rInstance.panel.open('iklob-p1');
+    }
+});
 
 rInstance.fixture.addDefaultFixtures().then(() => {
     rInstance.panel.open('geosearch-panel');

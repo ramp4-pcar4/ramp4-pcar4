@@ -5,7 +5,8 @@
 // so we need to expose RAMP API on the window manually
 import api from '@/api';
 //@ts-ignore
-import Vue from 'vue/dist/vue.esm-bundler.js';
+// import Vue from 'vue/dist/vue.esm-bundler.js';
+import Vue from 'vue/dist/vue.global.js';
 import '@/styles/main.css';
 
 // assign RAMP api to global variable

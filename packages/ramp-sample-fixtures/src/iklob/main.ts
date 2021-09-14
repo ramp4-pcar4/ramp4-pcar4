@@ -1,14 +1,16 @@
 import screen from './screen.vue';
-
 class IklobFixture {
     added(): void {
         // TODO: import `FixtureInstance` types
-        (this as any).$iApi.panel.register({
-            id: 'iklob-p1',
-            config: {
-                screens: { 'iklob-s1': screen }
-            }
-        });
+        (this as any).$iApi.panel.register(
+            {
+                id: 'iklob-p1',
+                config: {
+                    screens: { 'iklob-s1': screen }
+                }
+            },
+            {}
+        );
     }
 }
 
@@ -24,8 +26,6 @@ const handle = setInterval(() => {
     if (!rInstance) {
         return;
     }
-
     rInstance.fixture.add('iklob', IklobFixture);
-
     clearInterval(handle);
-}, 1000);
+}, 5000);

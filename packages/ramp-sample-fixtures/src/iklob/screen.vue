@@ -1,5 +1,5 @@
 <template>
-    <panel-screen>
+    <panel-screen :panel="panel">
         <template #header>
             Iklob Fixture
         </template>
@@ -17,14 +17,14 @@
 </template>
 
 <script lang="ts">
-// use Vue decorators for a more complex example
-// this will results in a somewhat larger bundles since Vue decorators will be included in the bundle
+import { defineComponent } from 'vue';
 
-import { Vue, Prop } from 'vue-property-decorator';
-
-export default class IklobFixtureV extends Vue {
-    @Prop() panel!: any; /* PanelInstance ;*/ // TODO: import `PanelInstance` type
-}
+export default defineComponent({
+    name: 'IklobFixtureV',
+    props: {
+        panel: Object
+    }
+});
 </script>
 
 <style scoped></style>
