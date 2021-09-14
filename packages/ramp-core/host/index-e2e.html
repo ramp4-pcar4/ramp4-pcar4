@@ -10,12 +10,12 @@
 
         <link rel="stylesheet" href="./../dist/RAMP.css" />
 
+        <!-- the host page must load Vue since RAMP doesn't bundle it -->
+        <script src="https://unpkg.com/vue@3.1.5/dist/vue.global.js"></script>
+
         <!-- these two fixtures will load before either RAMP is loaded -->
         <script src="./../dist/sample-fixtures/mouruge-fixture.js"></script>
         <script src="./../dist/sample-fixtures/diligord-fixture.js"></script>
-
-        <!-- the host page must load Vue since RAMP doesn't bundle it -->
-        <script src="https://unpkg.com/vue@3.1.5/dist/vue.global.js"></script>
 
         <!-- this fixture will load after Vue is loaded; `iklob` requires Vue to be exposed on the global scope -->
         <script src="./../dist/sample-fixtures/iklob-fixture.js"></script>
@@ -33,8 +33,7 @@
             let starterParam = params.get('script');
             if (starterParam) {
                 // html-webpack-plugin doesn't like template strings
-                script.src =
-                    './../dist/starter-scripts/' + starterParam + '.js';
+                script.src = './../dist/starter-scripts/' + starterParam + '.js';
             } else {
                 script.src = './../dist/ramp-starter.js';
             }

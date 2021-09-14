@@ -1,7 +1,6 @@
 import { markRaw } from 'vue';
 import { MetadataAPI } from './api/metadata';
 import MetadataAppbarButtonV from './appbar-button.vue';
-
 import MetadataScreenV from './screen.vue';
 
 import messages from './lang/lang.csv';

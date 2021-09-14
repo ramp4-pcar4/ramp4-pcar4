@@ -868,12 +868,12 @@ rInstance.fixture.add('gazebo').then(() => {
         .open({ screen: 'p-2-screen-2' })
         .pin();
 });
-// rInstance.fixture.add('diligord', window.hostFixtures.diligord).then(() => {
-//     rInstance.panel.open('diligord-p1');
-// });
-// rInstance.fixture.add('mouruge', window.hostFixtures.mouruge).then(() => {
-//     rInstance.panel.open('mouruge-p1');
-// });
+rInstance.fixture.add('diligord', window.hostFixtures.diligord).then(() => {
+    rInstance.panel.open('diligord-p1');
+});
+rInstance.fixture.add('mouruge', window.hostFixtures.mouruge).then(() => {
+    rInstance.panel.open('mouruge-p1');
+});
 
 // add export-v1 fixtures
 rInstance.fixture.add('export-v1');

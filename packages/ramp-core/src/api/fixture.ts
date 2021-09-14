@@ -1,11 +1,4 @@
-import Vue, {
-    Component,
-    ComponentOptions,
-    createApp,
-    defineComponent,
-    createVNode,
-    render
-} from 'vue';
+import Vue, { Component, ComponentOptions, createApp, defineComponent, h, render } from 'vue';
 
 import { APIScope, GlobalEvents, InstanceAPI } from './internal';
 import { FixtureBase, FixtureMutation, FixtureBaseSet } from '@/store/modules/fixture';
@@ -219,7 +212,8 @@ export class FixtureInstance extends APIScope implements FixtureBase {
                 get(): any {
                     return instance.config;
                 }
-            }
+            },
+            mount: { value: instance.mount }
         });
 
         return value as FixtureInstance;
@@ -301,7 +295,7 @@ export class FixtureInstance extends APIScope implements FixtureBase {
     mount(component: Component, { props, children, element, app }: any = {}) {
         let el = element;
 
-        let vNode: any = createVNode(component, props, children);
+        let vNode: any = h(component, props, children);
         if (app && app._context) {
             vNode.appContext = app._context;
         }
