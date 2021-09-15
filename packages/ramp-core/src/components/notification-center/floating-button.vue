@@ -3,7 +3,7 @@
         @click="$iApi.panel.get('notifications-panel').open()"
         class="pointer-events-auto 
                flex items-center absolute left-8 bottom-36 p-6 
-               block sm:hidden 
+               block sm:display-none 
                bg-black-75 rounded-full text-gray-400 hover:text-white"
         :content="$t('notifications.title')"
         v-tippy

@@ -39,7 +39,7 @@
         </span>
 
         <notifications-caption-button
-            class="sm:block hidden"
+            class="sm:block display-none"
         ></notifications-caption-button>
 
         <span class="flex-grow w-15"></span>

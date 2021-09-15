@@ -24,7 +24,7 @@
         </component>
         <more-button id="more" v-show="overflow"></more-button>
         <notifications-appbar-button
-            class="appbar-item bottom-48 h-48 sm:hidden"
+            class="appbar-item bottom-48 h-48 sm:display-none"
         ></notifications-appbar-button>
         <nav-button id="nav"></nav-button>
     </div>

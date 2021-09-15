@@ -1,13 +1,40 @@
 .ramp-app {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI,
-        Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
     font-size: 16px;
     line-height: 1.5;
     word-wrap: break-word;
 
     @import 'tailwindcss/base';
+
+    @layer base {
+        [type='text'],
+        [type='email'],
+        [type='url'],
+        [type='password'],
+        [type='number'],
+        [type='date'],
+        [type='datetime-local'],
+        [type='month'],
+        [type='search'],
+        [type='tel'],
+        [type='time'],
+        [type='week'],
+        [multiple],
+        textarea,
+        select {
+            font-size: 16px;
+        }
+    }
+
     @import 'tailwindcss/components';
     @import 'tailwindcss/utilities';
+
+    @layer utilities {
+        @variants container-query {
+            .display-none {
+                display: none;
+            }
+        }
+    }
 }
 
 .ramp-app button:focus {
@@ -48,6 +75,7 @@
 .tippy-tooltip.ramp-theme {
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI,
         Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+    font-size: 14px;
 }
 
 .tippy-tooltip.ramp-theme svg {
