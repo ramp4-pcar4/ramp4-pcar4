@@ -86,7 +86,6 @@ export default class EsriMapV extends Vue {
                 .filter(lc => !oldValue.includes(lc))
                 .map(layerConfig => {
                     return new Promise<LayerInstance | null>(async resolve => {
-
                         // CUSTOM-LAYER
                         /*
                         let defLoadProm: Promise<string>;

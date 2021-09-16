@@ -125,10 +125,8 @@ export class CommonGraphicLayer extends CommonLayer {
 
         const esriGraphics = validGraphics.map((g, i) => {
             // being a bit sloppy with pointers, but these projGraphic items are temporary just generate the ESRI graphics
-            const projGraphic = new Graphic(g.id);
+            const projGraphic = new Graphic(projGeoms[i], g.id, g.attributes);
             projGraphic.style = g.style;
-            projGraphic.attributes = g.attributes;
-            projGraphic.geometry = projGeoms[i];
 
             // TODO add in hover after we figure out what we want
 

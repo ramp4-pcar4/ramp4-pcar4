@@ -297,13 +297,15 @@ export class GeometryAPI {
             );
         }
 
-        // TODO we are just using default id for the graphic. do we want a second optional function
-        //      param to set this as well? double optionals are messy. Caller can override the result.
-        const g = new Graphic();
-        g.geometry = this.geomGeoJsonToRamp(geoJsonFeature.geometry, geomId);
-        Object.keys(geoJsonFeature.properties).forEach(
+        const geom = this.geomGeoJsonToRamp(geoJsonFeature.geometry, geomId);
+        const attrib = {};
+        Object.keys(attrib).forEach(
             k => (g.attributes[k] = geoJsonFeature.properties[k])
         );
+
+        // TODO we are just using default id for the graphic. do we want a second optional function
+        //      param to set this as well? double optionals are messy. Caller can override the result.
+        const g = new Graphic(geom, '', attrib);
 
         return g;
     }
@@ -855,15 +857,17 @@ export class GeometryAPI {
         rampPolyStyle: PolygonStyleOptions
     ): EsriSimpleFillSymbol {
         const lineSymbol = new EsriSimpleLineSymbol();
-        lineSymbol.color = new EsriColour(rampPolyStyle.colour);
-        lineSymbol.width = rampPolyStyle.width;
+        lineSymbol.color = new EsriColour(
+            rampPolyStyle.outlineStyleOptions.colour
+        );
+        lineSymbol.width = rampPolyStyle.outlineStyleOptions.width;
         lineSymbol.style = rampPolyStyle.outlineStyleOptions.style;
 
-        const fillColor = new EsriColour(rampPolyStyle.fillColour);
+        const fillColour = new EsriColour(rampPolyStyle.fillColour);
 
         const fillSymbol = new EsriSimpleFillSymbol();
         fillSymbol.style = rampPolyStyle.fillStyle;
-        fillSymbol.color = fillColor;
+        fillSymbol.color = fillColour;
         fillSymbol.outline = lineSymbol;
 
         return fillSymbol;
@@ -880,7 +884,7 @@ export class GeometryAPI {
         return (
             !!text.match(/\.(jpeg|jpg|gif|png|swf|svg)$/) ||
             !!text.match(
-                /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i
+                /^\s*data:([a-z]+\/[a-z0-9\-\+]+(;[a-z\-]+\=[a-z0-9\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i
             )
         );
     }

@@ -99,6 +99,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Get } from 'vuex-pathify';
 import { PanelInstance } from '@/api';
+import { Point } from '@/geo/api';
 
 import { GeosearchStore } from './store';
 
@@ -128,7 +129,7 @@ export default class GeosearchScreenV extends Vue {
 
     // zoom in to a clicked result
     zoomIn(result: any): void {
-        let zoomPoint = new RAMP.GEO.Point('zoomies', result.position);
+        let zoomPoint = new Point('zoomies', result.position);
         this.$iApi.geo.map.zoomMapTo(zoomPoint, 50000);
     }
 
