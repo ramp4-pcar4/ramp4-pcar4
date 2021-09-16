@@ -13,7 +13,7 @@ import LayerEntryV from './entry.vue';
 import LegendGroupV from './group.vue';
 import LegendVisibilitySetV from './visibility-set.vue';
 import LegendPlaceholderV from './placeholder.vue';
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, PropType, markRaw } from 'vue';
 import { LegendItem, LegendTypes } from '../store/legend-defs';
 
 export default defineComponent({
@@ -25,10 +25,10 @@ export default defineComponent({
     methods: {
         getCurrentTemplate(): string {
             const templates: any = {
-                [LegendTypes.Set]: LegendVisibilitySetV,
-                [LegendTypes.Group]: LegendGroupV,
-                [LegendTypes.Entry]: LayerEntryV,
-                [LegendTypes.Placeholder]: LegendPlaceholderV
+                [LegendTypes.Set]: markRaw(LegendVisibilitySetV),
+                [LegendTypes.Group]: markRaw(LegendGroupV),
+                [LegendTypes.Entry]: markRaw(LayerEntryV),
+                [LegendTypes.Placeholder]: markRaw(LegendPlaceholderV)
             };
             return templates[this.legendItem.type];
         }

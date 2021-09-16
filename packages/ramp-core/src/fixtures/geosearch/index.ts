@@ -1,3 +1,4 @@
+import { markRaw } from 'vue';
 import GeosearchScreenV from './screen.vue';
 import { GeosearchAPI } from './api/geosearch';
 import { geosearch } from './store/index';
@@ -18,7 +19,7 @@ class GeosearchFixture extends GeosearchAPI {
             {
                 id: 'geosearch-panel',
                 config: {
-                    screens: { 'geosearch-component': GeosearchScreenV }
+                    screens: { 'geosearch-component': markRaw(GeosearchScreenV) }
                 }
             },
             { i18n: { messages } }

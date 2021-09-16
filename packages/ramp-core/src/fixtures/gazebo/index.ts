@@ -1,3 +1,4 @@
+import { markRaw } from 'vue';
 import { FixtureInstance } from '@/api';
 import { AsyncComponentEh } from '@/store/modules/panel';
 
@@ -37,8 +38,8 @@ class GazeboFixture extends FixtureInstance {
                 id: 'p1',
                 config: {
                     screens: {
-                        'p-1-screen-1': GazeboP1Screen1V,
-                        'p-1-screen-2': GazeboP1Screen2V
+                        'p-1-screen-1': markRaw(GazeboP1Screen1V),
+                        'p-1-screen-2': markRaw(GazeboP1Screen2V)
                     },
                     style: {
                         'flex-grow': '1',
@@ -70,11 +71,11 @@ class GazeboFixture extends FixtureInstance {
                             return new Promise<AsyncComponentEh>(resolve =>
                                 setTimeout(
                                     () =>
-                                        import(/* webpackChunkName: "p-2-screen-1" */ `./p2-screen-1.vue`).then(
-                                            data => {
-                                                resolve(data);
-                                            }
-                                        ),
+                                        import(
+                                            /* webpackChunkName: "p-2-screen-1" */ `./p2-screen-1.vue`
+                                        ).then(data => {
+                                            resolve(data);
+                                        }),
                                     2000
                                 )
                             );
@@ -91,7 +92,9 @@ class GazeboFixture extends FixtureInstance {
                          * returning a `VueConstructor` in a promise
                          */
                         'p-2-screen-3': () => {
-                            return new Promise<AsyncComponentEh>(resolve => resolve(GazeboP2Screen3V));
+                            return new Promise<AsyncComponentEh>(resolve =>
+                                resolve(markRaw(GazeboP2Screen3V))
+                            );
                         }
                     },
                     style: {

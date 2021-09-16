@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, markRaw } from 'vue';
 
 // Import control templates.
 import SliderControl from './templates/slider-control.vue';
@@ -38,10 +38,10 @@ export default defineComponent({
             icons: svgIcons,
             // binds each type to its respective Vue component.
             templates: {
-                slider: SliderControl,
-                toggle: ToggleSwitchControl,
-                'toggle-button': ToggleButtonControl,
-                input: InputControl
+                slider: markRaw(SliderControl),
+                toggle: markRaw(ToggleSwitchControl),
+                'toggle-button': markRaw(ToggleButtonControl),
+                input: markRaw(InputControl)
             }
         };
     }

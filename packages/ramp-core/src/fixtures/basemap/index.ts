@@ -1,3 +1,4 @@
+import { markRaw } from 'vue';
 import BasemapScreenV from './screen.vue';
 import { BasemapAPI } from './api/basemap';
 import { basemap } from './store/index';
@@ -24,7 +25,7 @@ class BasemapFixture extends BasemapAPI {
             {
                 id: 'basemap-panel',
                 config: {
-                    screens: { 'basemap-component': BasemapScreenV }
+                    screens: { 'basemap-component': markRaw(BasemapScreenV) }
                 }
             },
             { i18n: { messages } }

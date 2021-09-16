@@ -1,3 +1,4 @@
+import { markRaw } from 'vue';
 import screen from './screen.vue';
 class IklobFixture {
     added(): void {
@@ -6,7 +7,7 @@ class IklobFixture {
             {
                 id: 'iklob-p1',
                 config: {
-                    screens: { 'iklob-s1': screen }
+                    screens: { 'iklob-s1': markRaw(screen) }
                 }
             },
             {}
