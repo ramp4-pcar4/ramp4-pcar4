@@ -2,19 +2,9 @@
 // used for layer types defined by Core RAMP.
 // TODO add proper comments
 
-import { CommonFC, CommonLayer, InstanceAPI } from '@/api/internal';
+import { CommonLayer, InstanceAPI } from '@/api/internal';
 import { EsriGraphicsLayer } from '@/geo/esri';
-import {
-    AttributeSet,
-    BaseGeometry,
-    Extent,
-    FieldDefinition,
-    GetGraphicResult,
-    GetGraphicParams,
-    GeometryType,
-    Graphic,
-    RampLayerConfig
-} from '@/geo/api';
+import { Graphic, RampLayerConfig } from '@/geo/api';
 
 export class CommonGraphicLayer extends CommonLayer {
     protected constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
@@ -125,10 +115,8 @@ export class CommonGraphicLayer extends CommonLayer {
 
         const esriGraphics = validGraphics.map((g, i) => {
             // being a bit sloppy with pointers, but these projGraphic items are temporary just generate the ESRI graphics
-            const projGraphic = new Graphic(g.id);
+            const projGraphic = new Graphic(projGeoms[i], g.id, g.attributes);
             projGraphic.style = g.style;
-            projGraphic.attributes = g.attributes;
-            projGraphic.geometry = projGeoms[i];
 
             // TODO add in hover after we figure out what we want
 
