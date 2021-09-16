@@ -97,7 +97,7 @@ export interface LineStyleParams extends StyleParams {
 // TODO document the funnybusiness of this.
 // because we extend interfaces, this param object has an extra set of things
 export interface PolygonStyleParams extends StyleParams {
-    outlineColor?: Array<number> | string | ColourParams;
+    outlineColour?: Array<number> | string | ColourParams;
     outlineWidth?: number;
     outlineStyle?: LineStyle;
 
@@ -106,7 +106,7 @@ export interface PolygonStyleParams extends StyleParams {
 
     // again, mostly for backwards compatibility. opacity can now be provided on the colour itself. and we can use inherited style and colour for the fills as default
     // (these params will have priority)
-    fillColor?: Array<number> | string | ColourParams;
+    fillColour?: Array<number> | string | ColourParams;
     fillOpacity?: number;
     fillStyle?: FillStyle;
 }

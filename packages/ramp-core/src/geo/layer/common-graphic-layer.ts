@@ -2,19 +2,9 @@
 // used for layer types defined by Core RAMP.
 // TODO add proper comments
 
-import { CommonFC, CommonLayer, InstanceAPI } from '@/api/internal';
+import { CommonLayer, InstanceAPI } from '@/api/internal';
 import { EsriGraphicsLayer } from '@/geo/esri';
-import {
-    AttributeSet,
-    BaseGeometry,
-    Extent,
-    FieldDefinition,
-    GetGraphicResult,
-    GetGraphicParams,
-    GeometryType,
-    Graphic,
-    RampLayerConfig
-} from '@/geo/api';
+import { Graphic, RampLayerConfig } from '@/geo/api';
 
 export class CommonGraphicLayer extends CommonLayer {
     protected constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
@@ -69,7 +59,7 @@ export class CommonGraphicLayer extends CommonLayer {
      * @returns {Graphic} the graphic, undefined if no matching id is found.
      */
     getLocalGraphic(graphicId: string): Graphic | undefined {
-        return this._graphics.find(g => g.id === graphicId);
+        return this._graphics.find((g) => g.id === graphicId);
     }
 
     protected notLoadedErr(): void {
@@ -102,8 +92,8 @@ export class CommonGraphicLayer extends CommonLayer {
             gs = [graphics];
         }
 
-        const validGraphics = gs.filter(g => {
-            const index = this._graphics.findIndex(gg => gg.id === g.id);
+        const validGraphics = gs.filter((g) => {
+            const index = this._graphics.findIndex((gg) => gg.id === g.id);
 
             if (index === -1) {
                 this._graphics.push(g);
@@ -117,7 +107,7 @@ export class CommonGraphicLayer extends CommonLayer {
         });
 
         const mapSR = this.$iApi.geo.map.getSR();
-        const projGeomsProms = validGraphics.map(g =>
+        const projGeomsProms = validGraphics.map((g) =>
             this.$iApi.geo.utils.proj.projectGeometry(mapSR, g.geometry)
         );
 
@@ -125,10 +115,8 @@ export class CommonGraphicLayer extends CommonLayer {
 
         const esriGraphics = validGraphics.map((g, i) => {
             // being a bit sloppy with pointers, but these projGraphic items are temporary just generate the ESRI graphics
-            const projGraphic = new Graphic(g.id);
+            const projGraphic = new Graphic(projGeoms[i], g.id, g.attributes);
             projGraphic.style = g.style;
-            projGraphic.attributes = g.attributes;
-            projGraphic.geometry = projGeoms[i];
 
             // TODO add in hover after we figure out what we want
 
@@ -164,7 +152,7 @@ export class CommonGraphicLayer extends CommonLayer {
             inArr = [graphics];
         }
 
-        const ids = inArr.map(x => {
+        const ids = inArr.map((x) => {
             if (typeof x === 'string') {
                 return x;
             } else {
@@ -173,14 +161,14 @@ export class CommonGraphicLayer extends CommonLayer {
         });
 
         const targets: Array<__esri.Graphic> = [];
-        ids.forEach(id => {
+        ids.forEach((id) => {
             // need to tag the param as `any` because .id is something we manually added
             const target = this.esriLayer?.graphics.find(
                 (g: any) => g.id === id
             );
             if (target) {
                 targets.push(target);
-                const rampIdx = this._graphics.findIndex(g => g.id === id);
+                const rampIdx = this._graphics.findIndex((g) => g.id === id);
                 if (rampIdx) {
                     this._graphics.splice(rampIdx, 1);
                 }

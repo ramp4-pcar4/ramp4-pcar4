@@ -153,9 +153,12 @@ export default defineComponent({
                                 await defLoadProm;
                                 */
 
-                               // create the layer instantiation
+                                // create the layer instantiation
                                 const [createErr, layer] = await to(
-                                    this.$iApi.geo.layer.createLayer(layerConfig));
+                                    this.$iApi.geo.layer.createLayer(
+                                        layerConfig
+                                    )
+                                );
 
                                 if (createErr) {
                                     console.error(createErr);

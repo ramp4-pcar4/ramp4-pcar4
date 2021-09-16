@@ -11,8 +11,8 @@
 import { defineComponent } from 'vue';
 import { get } from '@/store/pathify-helper';
 import { NortharrowStore } from './store';
-import { GlobalEvents } from '@/api/internal';
-import { Extent, Point } from '@/geo/api';
+import { GlobalEvents, CommonGraphicLayer } from '@/api/internal';
+import { Graphic, Extent, Point, PointStyleOptions } from '@/geo/api';
 import flag from './flag.json';
 import { debounce } from 'throttle-debounce';
 
@@ -116,34 +116,47 @@ export default defineComponent({
                     this.displayArrow = false;
                     if (!this.poleMarkerAdded) {
                         this.poleMarkerAdded = true;
-                        // TODO update to use RAMP API Styles once Highlight Layer implements an api that accepts RAMP Graphics. Get rid of all ESRI stuff when that happens
-                        let markerSymbol: any = flag;
-                        if (this.poleIcon.value) {
-                            // convert data uri to esri symbol json
-                            const [, contentType, , imageData] =
-                                this.poleIcon.value.split(/[:;,]/);
-                            markerSymbol = {
-                                width: 16.5,
+
+                        let poleStyleParams;
+                        if (this.poleIcon) {
+                            // fixture config has provided a custom image.
+                            // TODO do we need to parmatarize the additonal options?
+                            poleStyleParams = {
+                                icon: this.poleIcon,
                                 height: 16.5,
-                                type: 'esriPMS',
-                                contentType: contentType,
-                                imageData: imageData
+                                width: 16.5
+                            };
+                        } else {
+                            // grab data from our default in flag.json
+                            poleStyleParams = {
+                                icon: flag.url,
+                                height: flag.height,
+                                width: flag.width,
+                                xOffset: flag.xoffset,
+                                yOffset: flag.yoffset
                             };
                         }
-                        // add pole marker to a highlight layer
-                        // TODO the whole highlight layer needs to be revisited after the no-dojo migration.
-                        //      it is currently acting like a normal layer. since highlights do not go into the
-                        //      layer config / config store / etc, we are duplicating a lot of normal layer loading
-                        //      here. hack city for now.
 
-                    const poleLayer = await this.$iApi.geo.layer.createLayer({
-                        layerId: 'PoleMarker',
-                        markerSymbol: markerSymbol,
-                        layerType: 'highlight'
-                    });
-                    await poleLayer.initiate();
-                    (poleLayer as any).addMarker(projPole); // since addMarker is not a standard layer interface function, we need to cast as any.
-                    this.$iApi.geo.map.addLayer(poleLayer);
+                        const poleLayer =
+                            await this.$iApi.geo.layer.createLayer({
+                                layerId: 'PoleMarker',
+                                layerType: 'esriGraphic'
+                            });
+                        await poleLayer.initiate();
+
+                        // TODO deal with offsets?
+
+                        const poleGraphic = new Graphic(projPole, 'northpole');
+                        const poleStyle = new PointStyleOptions(
+                            poleStyleParams
+                        );
+                        poleGraphic.style = poleStyle;
+
+                        (poleLayer as CommonGraphicLayer).addGraphic(
+                            poleGraphic
+                        );
+                        this.$iApi.geo.map.addLayer(poleLayer);
+                    }
                 }
             }
         },

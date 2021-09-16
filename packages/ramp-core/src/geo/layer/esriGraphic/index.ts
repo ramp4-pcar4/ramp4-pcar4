@@ -1,6 +1,7 @@
 import { CommonFC, CommonGraphicLayer, InstanceAPI } from '@/api/internal';
-import { LayerType, Point, RampLayerConfig, TreeNode } from '@/geo/api';
+import { LayerType, RampLayerConfig, TreeNode } from '@/geo/api';
 import { EsriGraphicsLayer } from '@/geo/esri';
+import { markRaw } from 'vue';
 
 // NOTE this class is fairly meh, but gives a vanilla implementation of the common graphic layer base.
 //      lets us make fancier versions later, and this remains as the vanilla without colliding with
@@ -13,8 +14,8 @@ class GraphicLayer extends CommonGraphicLayer {
     }
 
     async initiate(): Promise<void> {
-        this.esriLayer = new EsriGraphicsLayer(
-            this.makeEsriLayerConfig(this.origRampConfig)
+        this.esriLayer = markRaw(
+            new EsriGraphicsLayer(this.makeEsriLayerConfig(this.origRampConfig))
         );
         await super.initiate();
     }
@@ -31,9 +32,8 @@ class GraphicLayer extends CommonGraphicLayer {
         // TODO flush out
         // NOTE: it would be nice to put esri.LayerProperties as the return type, but since we are cheating with refreshInterval it wont work
         //       we can make our own interface if it needs to happen (or can extent the esri one)
-        const esriConfig: __esri.GraphicsLayerProperties = super.makeEsriLayerConfig(
-            rampLayerConfig
-        );
+        const esriConfig: __esri.GraphicsLayerProperties =
+            super.makeEsriLayerConfig(rampLayerConfig);
 
         return esriConfig;
     }

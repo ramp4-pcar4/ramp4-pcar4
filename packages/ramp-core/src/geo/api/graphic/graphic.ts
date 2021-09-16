@@ -9,25 +9,25 @@
 
 // makes a bit more sense, also helps make the geometry more memory-friendly (i.e. not having space allocated for null pointers to styles and hovers in big point chains)
 
-import {
-    Attributes,
-    BaseGeometry,
-    Hover,
-    Point,
-    StyleOptions
-} from '@/geo/api';
+import { Attributes, BaseGeometry, Hover, StyleOptions } from '@/geo/api';
 
 export class Graphic {
-    attributes: Attributes = {};
-    geometry: BaseGeometry = new Point(undefined, [0, 0], undefined, true); // dumb default to shut up whining typescript
+    attributes: Attributes;
+    geometry: BaseGeometry;
     style: StyleOptions | undefined;
     id: string;
 
-    constructor(id?: string | undefined) {
+    constructor(geom: BaseGeometry, id?: string, attribs?: Attributes) {
+        this.geometry = geom;
         if (id) {
             this.id = id;
         } else {
             this.id = RAMP.GEO.sharedUtils.generateUUID();
+        }
+        if (attribs) {
+            this.attributes = attribs;
+        } else {
+            this.attributes = {};
         }
     }
 
