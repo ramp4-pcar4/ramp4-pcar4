@@ -31,6 +31,15 @@ export default defineComponent({
         icon: String,
         config: Object
     },
+    watch: {
+        // watch the config for changes to the opacity value
+        config: {
+            handler(newConfig) {
+                this.value = newConfig.value;
+            },
+            deep: true
+        }
+    },
     data() {
         return {
             value: this.config?.value
