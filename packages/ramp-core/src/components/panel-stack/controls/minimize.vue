@@ -25,8 +25,7 @@ export default defineComponent({
     name: 'MinimizeV',
     props: {
         active: {
-            type: Boolean,
-            required: true
+            type: Boolean
         }
     }
 });

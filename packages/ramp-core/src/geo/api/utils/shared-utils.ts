@@ -98,11 +98,7 @@ export class SharedUtilsAPI {
                 return canvas.toDataURL(imageType);
             })
             .catch(error => {
-                console.error(
-                    'Failed to load crossorigin image',
-                    imageUri,
-                    error
-                );
+                console.error('Failed to load crossorigin image', imageUri, error);
                 return imageUri;
             });
     }
@@ -129,9 +125,7 @@ export class SharedUtilsAPI {
 
         if (matches) {
             const idxStr: string = matches[1];
-            result.index = isNaN(parseInt(idxStr))
-                ? undefined
-                : parseInt(idxStr);
+            result.index = isNaN(parseInt(idxStr)) ? undefined : parseInt(idxStr);
             result.rootUrl = url.substr(0, url.length - matches[0].length); // will drop trailing slash
         } else {
             // give up, dont crash with error.
@@ -163,13 +157,11 @@ export class UrlWrapper {
         [this._base, this._query] = url.split('?').concat('');
 
         // convert the query part into a mapped object
-        this._queryMap = this._query
-            .split('&')
-            .reduce((map: QueryMap, parameter: string) => {
-                const [key, value] = parameter.split('=');
-                map[key] = value;
-                return map;
-            }, {});
+        this._queryMap = this._query.split('&').reduce((map: QueryMap, parameter: string) => {
+            const [key, value] = parameter.split('=');
+            map[key] = value;
+            return map;
+        }, {});
     }
 
     get query(): string {
@@ -207,10 +199,7 @@ export class UrlWrapper {
         );
         const requestUrl = `${this.base}${Object.entries(requestQueryMap)
             .filter(([_, value]) => value !== undefined)
-            .map(
-                ([key, value], index) =>
-                    `${index === 0 ? '?' : ''}${key}=${value}`
-            )
+            .map(([key, value], index) => `${index === 0 ? '?' : ''}${key}=${value}`)
             .join('&')}`;
 
         return requestUrl;

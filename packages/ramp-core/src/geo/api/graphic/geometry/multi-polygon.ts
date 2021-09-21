@@ -39,32 +39,12 @@ export class MultiPolygon extends BaseGeometry {
         sr?: SrDef,
         raw?: boolean
     );
-    constructor(
-        id: IdDef,
-        listOflistOfListOfPoints: Array<Array<Array<Point>>>,
-        sr?: SrDef
-    );
-    constructor(
-        id: IdDef,
-        listOflistOfListOfXY: Array<Array<Array<object>>>,
-        sr?: SrDef
-    );
+    constructor(id: IdDef, listOflistOfListOfPoints: Array<Array<Array<Point>>>, sr?: SrDef);
+    constructor(id: IdDef, listOflistOfListOfXY: Array<Array<Array<object>>>, sr?: SrDef);
     constructor(id: IdDef, listOfPolygons: Array<Polygon>, sr?: SrDef);
-    constructor(
-        id: IdDef,
-        listOflistOfLinearRings: Array<Array<LinearRing>>,
-        sr?: SrDef
-    );
-    constructor(
-        id: IdDef,
-        listOflistOfLines: Array<Array<LineString>>,
-        sr?: SrDef
-    );
-    constructor(
-        id: IdDef,
-        listOflistOfMultiPoints: Array<Array<MultiPoint>>,
-        sr?: SrDef
-    );
+    constructor(id: IdDef, listOflistOfLinearRings: Array<Array<LinearRing>>, sr?: SrDef);
+    constructor(id: IdDef, listOflistOfLines: Array<Array<LineString>>, sr?: SrDef);
+    constructor(id: IdDef, listOflistOfMultiPoints: Array<Array<MultiPoint>>, sr?: SrDef);
     constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef);
     constructor(id: IdDef, geometry: any, sr?: SrDef, raw?: boolean) {
         super(id, geometry.sr || sr);
@@ -88,9 +68,7 @@ export class MultiPolygon extends BaseGeometry {
 
     /** Returns an array of the contained polygons. A new array is returned each time this is called. */
     get polygonArray(): Array<Polygon> {
-        return this.rawArray.map(
-            (p, i) => new Polygon(this.childIdGenerator(i), p, this.sr, true)
-        );
+        return this.rawArray.map((p, i) => new Polygon(this.childIdGenerator(i), p, this.sr, true));
     }
 
     /** Returns the string 'MultiPolygon'. */
@@ -112,10 +90,7 @@ export class MultiPolygon extends BaseGeometry {
         } else if (input instanceof Polygon) {
             // fast return, it's already pure
             return [input.toArray()];
-        } else if (
-            input instanceof MultiLineString ||
-            input instanceof MultiPoint
-        ) {
+        } else if (input instanceof MultiLineString || input instanceof MultiPoint) {
             // MultiPoint will also be true for LineString and LinearRing
             // use polygon parser to ensure rings are closed
             return [Polygon.parsePolygon(input)];

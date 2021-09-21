@@ -40,13 +40,10 @@ class CsvLayer extends FileLayer {
         }
 
         // convert csv to geojson, store in property for FileLayer to consume.
-        this.sourceGeoJson = await this.$iApi.geo.layer.files.csvToGeoJson(
-            csvData,
-            {
-                latfield: this.origRampConfig.latField,
-                lonfield: this.origRampConfig.longField
-            }
-        );
+        this.sourceGeoJson = await this.$iApi.geo.layer.files.csvToGeoJson(csvData, {
+            latfield: this.origRampConfig.latField,
+            lonfield: this.origRampConfig.longField
+        });
 
         await super.initiate();
     }

@@ -52,10 +52,7 @@ describe('Geosearch', () => {
 
         it('zooms to correct location', () => {
             search('giants tomb isl');
-            cy.contains(
-                '.rv-results-list > li:first',
-                'Giants Tomb Island'
-            ).click();
+            cy.contains('.rv-results-list > li:first', 'Giants Tomb Island').click();
             viewIsAt(-80.0, 44.91);
         });
 
@@ -101,10 +98,7 @@ describe('Geosearch', () => {
 
         it('zooms to correct location', () => {
             search('54.3733, -91.7417');
-            cy.contains(
-                '.rv-results-list > li:first',
-                '54.3733,-91.7417'
-            ).click();
+            cy.contains('.rv-results-list > li:first', '54.3733,-91.7417').click();
             viewIsAt(-91.7417, 54.3733);
         });
     });
@@ -166,12 +160,7 @@ describe('Geosearch', () => {
             // zoom to a smaller extent
             cy.window()
                 .its('rInstance.geo.map.esriView')
-                .invoke(
-                    'goTo',
-                    { center: [-90, 49], zoom: 4 },
-                    { animate: false },
-                    4
-                );
+                .invoke('goTo', { center: [-90, 49], zoom: 4 }, { animate: false }, 4);
             // check checkbox
             cy.get('.rv-geosearch-bottom-filters [type="checkbox"]').check();
             search('t');
@@ -184,22 +173,12 @@ describe('Geosearch', () => {
                     )
                 ).then(extent => {
                     // check that each result is inside extent
-                    window.rInstance.$vApp.$store
-                        .get('geosearch/searchResults')
-                        .forEach(result => {
-                            expect(result.position[0]).to.be.lessThan(
-                                extent.xmax
-                            );
-                            expect(result.position[0]).to.be.greaterThan(
-                                extent.xmin
-                            );
-                            expect(result.position[1]).to.be.lessThan(
-                                extent.ymax
-                            );
-                            expect(result.position[1]).to.be.greaterThan(
-                                extent.ymin
-                            );
-                        });
+                    window.rInstance.$vApp.$store.get('geosearch/searchResults').forEach(result => {
+                        expect(result.position[0]).to.be.lessThan(extent.xmax);
+                        expect(result.position[0]).to.be.greaterThan(extent.xmin);
+                        expect(result.position[1]).to.be.lessThan(extent.ymax);
+                        expect(result.position[1]).to.be.greaterThan(extent.ymin);
+                    });
                 });
             });
             cy.get('.rv-geosearch-bottom-filters [type="checkbox"]').uncheck();

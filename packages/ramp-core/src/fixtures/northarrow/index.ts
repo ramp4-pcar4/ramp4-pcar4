@@ -1,4 +1,3 @@
-import { createApp } from 'vue';
 import { NortharrowAPI } from './api/northarrow';
 import { northarrow, NortharrowConfig } from './store/index';
 import NortharrowV from './northarrow.vue';

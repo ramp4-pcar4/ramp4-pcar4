@@ -1,8 +1,6 @@
-import { ActionContext } from 'vuex';
 import { make } from 'vuex-pathify';
 
 import { NortharrowState } from './northarrow-state';
-import { RootState } from '@/store/state';
 
 const getters = {};
 

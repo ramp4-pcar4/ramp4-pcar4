@@ -51,8 +51,7 @@ class GeoJsonLayer extends FileLayer {
             });
             */
             // temp line to warn people
-            this.sourceGeoJson =
-                'error remote file geojson loader not yet implemented';
+            this.sourceGeoJson = 'error remote file geojson loader not yet implemented';
         } else {
             throw new Error('GeoJson layer config contains no raw data or url');
         }

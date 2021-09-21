@@ -40,17 +40,12 @@ export class Query {
     }
 
     search(): Promise<defs.NameResultList> {
-        return (<Promise<defs.RawNameResult>>(
-            this.jsonRequest(this.getUrl())
-        )).then(r => this.normalizeNameItems(r.items));
+        return (<Promise<defs.RawNameResult>>this.jsonRequest(this.getUrl())).then(r =>
+            this.normalizeNameItems(r.items)
+        );
     }
 
-    private getUrl(
-        useLocate?: boolean,
-        restrict?: number[],
-        lat?: number,
-        lon?: number
-    ): string {
+    private getUrl(useLocate?: boolean, restrict?: number[], lat?: number, lon?: number): string {
         let url = '';
         if (useLocate) {
             // URL for FSA and NFA search
@@ -102,9 +97,7 @@ export class Query {
     }
 
     locateByQuery(): Promise<defs.LocateResponseList> {
-        return <Promise<defs.LocateResponseList>>(
-            this.jsonRequest(this.getUrl(true, undefined))
-        );
+        return <Promise<defs.LocateResponseList>>this.jsonRequest(this.getUrl(true, undefined));
     }
 
     nameByLatLon(lat: number, lon: number, restrict?: number[]): any {
@@ -191,9 +184,7 @@ export class FSAQuery extends Query {
         return this.locateByQuery().then(locateResponseList => {
             // query check added since it can be null but will never be in this case (make TS happy)
             if (locateResponseList.length === 1 && this.query) {
-                const provList = this.config.provinces.fsaToProvinces(
-                    this.query
-                );
+                const provList = this.config.provinces.fsaToProvinces(this.query);
                 return <defs.FSAResult>{
                     fsa: this.query,
                     code: 'FSA',
@@ -249,10 +240,7 @@ export class NTSQuery extends Query {
 
                     this.featureResults = this.unit;
 
-                    this.nameByLatLon(
-                        this.unit.LatLon.lat,
-                        this.unit.LatLon.lon
-                    ).then((r: any) => {
+                    this.nameByLatLon(this.unit.LatLon.lat, this.unit.LatLon.lon).then((r: any) => {
                         this.results = r;
                         resolve(this);
                     });

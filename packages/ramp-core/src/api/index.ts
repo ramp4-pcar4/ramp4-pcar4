@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import { InstanceAPI, AppVersion } from './internal';
 import { GeoCommonAPI } from '@/geo/api/geo-common';
 

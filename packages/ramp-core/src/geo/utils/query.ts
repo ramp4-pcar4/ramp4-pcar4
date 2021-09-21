@@ -31,9 +31,7 @@ export class QueryAPI extends APIScope {
      * @param options contains properties that define the query and specificy request particulars.
      * @returns resolves with array of object ids.
      */
-    async arcGisServerQueryIds(
-        options: QueryFeaturesArcServerParams
-    ): Promise<Array<number>> {
+    async arcGisServerQueryIds(options: QueryFeaturesArcServerParams): Promise<Array<number>> {
         // create and set the esri query parameters
 
         const query = new EsriQuery();
@@ -64,18 +62,13 @@ export class QueryAPI extends APIScope {
      * @param options contains properties that define the query and specificy request particulars.
      * @returns resolves with array of graphic result objects.
      */
-    async geoJsonQuery(
-        options: QueryFeaturesFileParams
-    ): Promise<Array<GetGraphicResult>> {
+    async geoJsonQuery(options: QueryFeaturesFileParams): Promise<Array<GetGraphicResult>> {
         const query = new EsriQuery();
         query.returnGeometry = !!options.includeGeometry;
         query.outFields = ['*']; // TODO look into using the options value. test it well, as the .where gets wonky with outfields
 
         if (options.filterGeometry) {
-            query.geometry = this.queryGeometryHelper(
-                options.filterGeometry,
-                true
-            );
+            query.geometry = this.queryGeometryHelper(options.filterGeometry, true);
             query.spatialRelationship = 'intersects';
         }
 
@@ -181,8 +174,7 @@ export class QueryAPI extends APIScope {
         // take pixel tolerance, convert to map units at current scale.
         const map = this.$iApi.geo.map;
         const mapExt = map.getExtent();
-        const buffSize =
-            (tolerance * (mapExt.xmax - mapExt.xmin)) / map.getPixelWidth();
+        const buffSize = (tolerance * (mapExt.xmax - mapExt.xmin)) / map.getPixelWidth();
 
         // Build tolerance envelope of correct size
         return new Extent(

@@ -35,9 +35,7 @@ export class PolygonStyleOptions extends StyleOptions {
                 // we take a risk if someone sets value of 1 being 1 of 255 opacity. WHO PICKS 1/255th OPACITY???
                 this._fillColor[3] = Math.floor(opts.fillOpacity * 255.0);
             } else {
-                this._fillColor[3] = Math.min(
-                    (Math.floor(opts.fillOpacity), 255)
-                );
+                this._fillColor[3] = Math.min((Math.floor(opts.fillOpacity), 255));
             }
         }
 

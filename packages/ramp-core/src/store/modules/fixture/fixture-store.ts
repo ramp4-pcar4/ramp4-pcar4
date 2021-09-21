@@ -30,10 +30,7 @@ const mutations: StoreMutations = {
      * @param {FixtureState} state
      * @param {{ value: FixtureBase }} { value }
      */
-    [FixtureMutation.ADD_FIXTURE](
-        state: FixtureState,
-        { value }: { value: FixtureBase }
-    ): void {
+    [FixtureMutation.ADD_FIXTURE](state: FixtureState, { value }: { value: FixtureBase }): void {
         state.items = { ...state.items, [value.id]: value };
 
         // call the `added` life hook if available
@@ -48,10 +45,7 @@ const mutations: StoreMutations = {
      * @param {FixtureState} state
      * @param {{ value: FixtureBase }} { value }
      */
-    [FixtureMutation.REMOVE_FIXTURE](
-        state: FixtureState,
-        { value }: { value: FixtureBase }
-    ): void {
+    [FixtureMutation.REMOVE_FIXTURE](state: FixtureState, { value }: { value: FixtureBase }): void {
         delete state.items[value.id];
         state.items = { ...state.items };
 

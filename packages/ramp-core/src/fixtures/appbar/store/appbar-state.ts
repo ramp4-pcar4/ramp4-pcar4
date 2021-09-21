@@ -37,10 +37,7 @@ export type AppbarItemSet = { [name: string]: AppbarItemInstance };
 export interface AppbarFixtureConfig {
     items: (string | AppbarItemConfig)[];
 
-    temporaryButtons?: (
-        | string
-        | { panelId: string; appbarItem: string | AppbarItemConfig }
-    )[];
+    temporaryButtons?: (string | { panelId: string; appbarItem: string | AppbarItemConfig })[];
 }
 
 export interface AppbarItemConfig {

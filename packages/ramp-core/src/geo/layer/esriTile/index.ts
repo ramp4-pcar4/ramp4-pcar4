@@ -15,9 +15,7 @@ class TileLayer extends CommonLayer {
     }
 
     async initiate(): Promise<void> {
-        this.esriLayer = markRaw(
-            new EsriTileLayer(this.makeEsriLayerConfig(this.origRampConfig))
-        );
+        this.esriLayer = markRaw(new EsriTileLayer(this.makeEsriLayerConfig(this.origRampConfig)));
         await super.initiate();
     }
 
@@ -27,13 +25,9 @@ class TileLayer extends CommonLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(
-        rampLayerConfig: RampLayerConfig
-    ): __esri.TileLayerProperties {
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.TileLayerProperties {
         // TODO flush out
-        const esriConfig: __esri.TileLayerProperties = super.makeEsriLayerConfig(
-            rampLayerConfig
-        );
+        const esriConfig: __esri.TileLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
 
         return esriConfig;
     }

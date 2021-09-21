@@ -84,8 +84,7 @@ module.exports = {
                 'grey-test': 'rgba(150,150,150,0.7);'
             },
             boxShadow: {
-                tm:
-                    '0 0 0 1px rgba(0, 0, 0, 0.05), 0 2px 3px 0 rgba(0, 0, 0, 0.1)'
+                tm: '0 0 0 1px rgba(0, 0, 0, 0.05), 0 2px 3px 0 rgba(0, 0, 0, 0.1)'
             }
         }
     },
@@ -141,13 +140,7 @@ module.exports = {
             minWidth: ['responsive', 'container-query'],
             objectFit: ['responsive', 'container-query'],
             objectPosition: ['responsive', 'container-query'],
-            opacity: [
-                'responsive',
-                'container-query',
-                'hover',
-                'focus',
-                'disabled'
-            ],
+            opacity: ['responsive', 'container-query', 'hover', 'focus', 'disabled'],
             order: ['responsive', 'container-query'],
             outline: ['responsive', 'container-query', 'focus'],
             overflow: ['responsive', 'container-query'],
@@ -158,13 +151,7 @@ module.exports = {
             stroke: ['responsive', 'container-query'],
             tableLayout: ['responsive', 'container-query'],
             textAlign: ['responsive', 'container-query'],
-            textColor: [
-                'responsive',
-                'container-query',
-                'hover',
-                'focus',
-                'disabled'
-            ],
+            textColor: ['responsive', 'container-query', 'hover', 'focus', 'disabled'],
             textDecoration: ['responsive', 'container-query', 'hover', 'focus'],
             textTransform: ['responsive', 'container-query'],
             userSelect: ['responsive', 'container-query'],

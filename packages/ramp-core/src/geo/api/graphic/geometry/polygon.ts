@@ -69,8 +69,7 @@ export class Polygon extends BaseGeometry {
     /** Returns an array of the contained rings. A new array is returned each time this is called. */
     get ringArray(): Array<LinearRing> {
         return this.rawArray.map(
-            (lra, i) =>
-                new LinearRing(this.childIdGenerator(i), lra, this.sr, true)
+            (lra, i) => new LinearRing(this.childIdGenerator(i), lra, this.sr, true)
         );
     }
 
@@ -113,9 +112,7 @@ export class Polygon extends BaseGeometry {
         return arrOfLines;
     }
 
-    static arrayDeepCopy(
-        a: Array<Array<Array<number>>>
-    ): Array<Array<Array<number>>> {
+    static arrayDeepCopy(a: Array<Array<Array<number>>>): Array<Array<Array<number>>> {
         // speed tests show loops & slice is 3x faster than JSON parse/stringify
         return a.map(l => l.map(p => p.slice()));
     }

@@ -78,10 +78,7 @@ export class ProjectionAPI {
             const params: __esri.RequestOptions = {
                 responseType: 'text'
             };
-            const restReq: IPromise<__esri.RequestResponse> = EsriRequest(
-                epsgUrl,
-                params
-            ); // TODO since this is outside of esri api, consider using the vue web request lib here
+            const restReq: IPromise<__esri.RequestResponse> = EsriRequest(epsgUrl, params); // TODO since this is outside of esri api, consider using the vue web request lib here
 
             restReq.then(
                 (serviceResult: __esri.RequestResponse) => {
@@ -207,9 +204,7 @@ export class ProjectionAPI {
 
         // check the latestWkid first, if it exists (as that wkid is usally the EPSG friendly one)
         // otherwise make a dummy promise that will just cause the standard wkid promise to run.
-        const latestLookup = latestProj
-            ? doLookup(latestProj)
-            : Promise.resolve(false);
+        const latestLookup = latestProj ? doLookup(latestProj) : Promise.resolve(false);
 
         const latestSuccess = await latestLookup;
         if (latestSuccess) {
@@ -235,9 +230,7 @@ export class ProjectionAPI {
                     'Unable to parse or locate projection information for this item:',
                     prj
                 );
-                throw new Error(
-                    'Could not find projection information, see console for details'
-                );
+                throw new Error('Could not find projection information, see console for details');
             }
         }
     }
@@ -295,10 +288,7 @@ export class ProjectionAPI {
      * @param {BaseGeometry} geometry a RAMP API Geometry object
      * @return {Promise} resolve in a RAMP API Geometry object with co-ordinates in the destination projection
      */
-    async projectGeometry(
-        destProj: SrDef,
-        geometry: BaseGeometry
-    ): Promise<BaseGeometry> {
+    async projectGeometry(destProj: SrDef, geometry: BaseGeometry): Promise<BaseGeometry> {
         // NOTES: a few significant changes to this function from RAMP2
         //        Making the result asynch. due to us now validating the projection and possibly
         //        downloading a new formula if the we dont have an existing solution.
@@ -324,10 +314,7 @@ export class ProjectionAPI {
         );
 
         // convert back to RAMP geometry
-        const projectedRampGeom = RAMP.GEO.geom.geomGeoJsonToRamp(
-            postGJ,
-            geometry.id
-        );
+        const projectedRampGeom = RAMP.GEO.geom.geomGeoJsonToRamp(postGJ, geometry.id);
 
         // fix up the spatial reference, as the GeoJSON projection library doesn't really handle it well.
         projectedRampGeom.sr = SpatialReference.parseSR(destProj);
@@ -378,8 +365,7 @@ export class ProjectionAPI {
         // TODO original code is constructing point array in counter-clockwise manner (see commented logic below)
         //      the poly array will be clockwise.
         //      if we run into issues, might need to do a reverse on the array, or just stick with original hardcoded approach
-        const points: Array<Array<number>> =
-            extent.toPolygonArray().pop() || [];
+        const points: Array<Array<number>> = extent.toPolygonArray().pop() || [];
 
         // [ [extent.xmin, extent.ymin], [extent.xmax, extent.ymin],
         // [extent.xmax, extent.ymax], [extent.xmin, extent.ymax],
@@ -392,17 +378,9 @@ export class ProjectionAPI {
             .map(i => interpolate(points[i], points[i + 1], 3).slice(1))
             .forEach(seg => (interpolatedPoly = interpolatedPoly.concat(seg)));
 
-        const iPoly: Polygon = new Polygon(
-            'warpy',
-            [interpolatedPoly],
-            extent.sr,
-            true
-        );
+        const iPoly: Polygon = new Polygon('warpy', [interpolatedPoly], extent.sr, true);
 
-        const iWarped = (await this.projectGeometry(
-            destProj,
-            iPoly
-        )) as Polygon;
+        const iWarped = (await this.projectGeometry(destProj, iPoly)) as Polygon;
 
         // take our projected interpolated polygon, strip out the co-ords for X and Y
         const rawWarp = iWarped.toArray().pop() || [];
@@ -414,13 +392,6 @@ export class ProjectionAPI {
         const x1 = Math.max.apply(null, xvals);
         const y0 = Math.min.apply(null, yvals);
         const y1 = Math.max.apply(null, yvals);
-        return Extent.fromParams(
-            extent.id + '_projected',
-            x0,
-            y0,
-            x1,
-            y1,
-            iWarped.sr
-        );
+        return Extent.fromParams(extent.id + '_projected', x0, y0, x1, y1, iWarped.sr);
     }
 }

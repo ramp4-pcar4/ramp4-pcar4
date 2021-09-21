@@ -50,9 +50,7 @@ export class BaseRenderer {
 
     protected searchRenderer(attributes: any): BaseSymbolUnit {
         const sParams: any = this.makeSearchParams(attributes);
-        const targetSU = this.symbolUnits.find((su: BaseSymbolUnit) =>
-            su.match(sParams)
-        );
+        const targetSU = this.symbolUnits.find((su: BaseSymbolUnit) => su.match(sParams));
         if (targetSU) {
             return targetSU;
         } else if (this.defaultUnit) {
@@ -76,10 +74,7 @@ export class BaseRenderer {
 
     // worker function. determines if a field value should be wrapped in
     // any character and returns the character. E.g. string would return ', numbers return empty string.
-    protected getFieldDelimiter(
-        fieldName: string,
-        fields: Array<EsriField>
-    ): string {
+    protected getFieldDelimiter(fieldName: string, fields: Array<EsriField>): string {
         let delim = `'`;
 
         // no field definition means we assume strings.
@@ -99,10 +94,7 @@ export class BaseRenderer {
 
     // worker function
     // corrects for any character-case discrepancy for field names in the renderer vs on the layer
-    protected cleanFieldName(
-        fieldName: string,
-        fields: Array<EsriField>
-    ): string {
+    protected cleanFieldName(fieldName: string, fields: Array<EsriField>): string {
         if (!fieldName) {
             // testing an undefined/unused field. return original value.
             return fieldName;
@@ -136,9 +128,7 @@ export class BaseRenderer {
             return '';
         }
 
-        const elseClauseGuts = this.symbolUnits
-            .map(pl => pl.definitionClause)
-            .join(' OR ');
+        const elseClauseGuts = this.symbolUnits.map(pl => pl.definitionClause).join(' OR ');
 
         return `(NOT (${elseClauseGuts}))`;
     }
@@ -164,10 +154,7 @@ export class BaseSymbolUnit {
 }
 
 export class SimpleRenderer extends BaseRenderer {
-    constructor(
-        esriRenderer: EsriSimpleRenderer,
-        layerFields: Array<EsriField>
-    ) {
+    constructor(esriRenderer: EsriSimpleRenderer, layerFields: Array<EsriField>) {
         super(esriRenderer, layerFields);
 
         this.type = RendererType.Simple;
@@ -200,11 +187,7 @@ export class UniqueValueRenderer extends BaseRenderer {
             return inStr.replace(/'/g, `''`);
         };
 
-        this.keyFields = [
-            esriRenderer.field,
-            esriRenderer.field2,
-            esriRenderer.field3
-        ] // extract field names
+        this.keyFields = [esriRenderer.field, esriRenderer.field2, esriRenderer.field3] // extract field names
             .filter(fn => fn) // remove any undefined names
             .map((fn: string) => this.cleanFieldName(fn, layerFields)); // correct any mismatched case of field names
 
@@ -219,15 +202,13 @@ export class UniqueValueRenderer extends BaseRenderer {
 
             // convert fields/values into sql clause
             if (!this.falseRenderer) {
-                const defClauseKeyValues: Array<string> = su.matchValue.split(
-                    this.delim
-                );
+                const defClauseKeyValues: Array<string> = su.matchValue.split(this.delim);
                 const defClause: string = this.keyFields
                     .map(
                         (kf: string, i: number) =>
-                            `${kf} = ${fieldDelims[i]}${quoter(
-                                defClauseKeyValues[i]
-                            )}${fieldDelims[i]}`
+                            `${kf} = ${fieldDelims[i]}${quoter(defClauseKeyValues[i])}${
+                                fieldDelims[i]
+                            }`
                     )
                     .join(' AND ');
                 su.definitionClause = `(${defClause})`;
@@ -300,11 +281,7 @@ export class ClassBreaksRenderer extends BaseRenderer {
         esriRenderer.classBreakInfos.forEach((cbi: EsriClassBreakInfo) => {
             // TODO see if it's possible to have an undefined min/max value that represents inf or -inf
 
-            const su = new ClassBreaksSymbolUnit(
-                this,
-                cbi.minValue,
-                cbi.maxValue
-            );
+            const su = new ClassBreaksSymbolUnit(this, cbi.minValue, cbi.maxValue);
             su.label = cbi.label || '';
             su.symbol = cbi.symbol;
 

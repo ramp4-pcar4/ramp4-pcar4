@@ -28,12 +28,7 @@ export class Extent extends BaseGeometry {
      */
     // from two things that can be interpreted as points
     constructor(id: IdDef, minPoint: Point, maxPoint: Point, sr?: SrDef);
-    constructor(
-        id: IdDef,
-        minCoords: Array<number>,
-        maxCoords: Array<number>,
-        sr?: SrDef
-    );
+    constructor(id: IdDef, minCoords: Array<number>, maxCoords: Array<number>, sr?: SrDef);
     constructor(id: IdDef, minXY: object, maxXY: object, sr?: SrDef);
     constructor(id: IdDef, minAnyFormat: any, maxAnyFormat: any, sr?: SrDef);
     constructor(id: IdDef, minGeometry: any, maxGeometry: any, sr?: SrDef) {
@@ -69,10 +64,7 @@ export class Extent extends BaseGeometry {
     center(): Point {
         return new Point(
             this.id + '_centerPoint',
-            [
-                (this.xmax - this.xmin) / 2.0 + this.xmin,
-                (this.ymax - this.ymin) / 2.0 + this.ymin
-            ],
+            [(this.xmax - this.xmin) / 2.0 + this.xmin, (this.ymax - this.ymin) / 2.0 + this.ymin],
             this.sr,
             true
         );

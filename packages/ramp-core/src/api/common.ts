@@ -92,7 +92,11 @@ export function isComponentOptions(value: any): value is ComponentOptions {
         'model'
     ];
 
-    return typeof value === 'object' && !value.functional && names.some(name => value[name] !== undefined);
+    return (
+        typeof value === 'object' &&
+        !value.functional &&
+        names.some(name => value[name] !== undefined)
+    );
 }
 
 /**
@@ -101,6 +105,8 @@ export function isComponentOptions(value: any): value is ComponentOptions {
  * @param {(typeof import('*.vue') | any)} value
  * @returns {value is typeof import('*.vue')}
  */
-export function isTypeofImportVue(value: typeof import('*.vue') | any): value is typeof import('*.vue') {
+export function isTypeofImportVue(
+    value: typeof import('*.vue') | any
+): value is typeof import('*.vue') {
     return typeof value === 'object' && value.default !== undefined;
 }

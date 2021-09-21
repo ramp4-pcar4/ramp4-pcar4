@@ -82,8 +82,7 @@ describe('GeoAPI SharedUtils', () => {
             for (i = 0; i < 10000; i++) {
                 uuids.push(sharedUtils.generateUUID());
             }
-            let findDuplicates = arr =>
-                arr.filter((item, index) => arr.indexOf(item) != index);
+            let findDuplicates = arr => arr.filter((item, index) => arr.indexOf(item) != index);
             let duplicates = findDuplicates(uuids);
             expect(duplicates).to.be.empty;
         });
@@ -161,11 +160,9 @@ describe('GeoAPI SharedUtils', () => {
     it('formatLatLongDMSString undefined point', () => {
         cy.window().then(window => {
             const sharedUtils = window.rInstance.geo.utils.shared;
-            const xyformat = sharedUtils
-                .formatLatLongDMSString(undefined)
-                .then(xyformat => {
-                    expect(xyformat).to.deep.equal({ lat: '', lon: '' });
-                });
+            const xyformat = sharedUtils.formatLatLongDMSString(undefined).then(xyformat => {
+                expect(xyformat).to.deep.equal({ lat: '', lon: '' });
+            });
         });
     });
 
@@ -173,12 +170,7 @@ describe('GeoAPI SharedUtils', () => {
         cy.window().then(window => {
             const sharedUtils = window.rInstance.geo.utils.shared;
             sharedUtils.formatLatLongDMSString(undefined);
-            const point = new Point(
-                999,
-                [11131949.079, 32316213801.068],
-                undefined,
-                true
-            );
+            const point = new Point(999, [11131949.079, 32316213801.068], undefined, true);
             sharedUtils.formatLatLongDMSString(point).then(xyformat => {
                 expect(xyformat).to.deep.equal({ lat: '', lon: '' });
             });
@@ -189,12 +181,7 @@ describe('GeoAPI SharedUtils', () => {
         cy.window().then(window => {
             const sharedUtils = window.rInstance.geo.utils.shared;
             sharedUtils.formatLatLongDMSString(undefined);
-            const point = new Point(
-                999,
-                [-18924313.435, 16213801.068],
-                undefined,
-                true
-            );
+            const point = new Point(999, [-18924313.435, 16213801.068], undefined, true);
             sharedUtils.formatLatLongDMSString(point).then(xyformat => {
                 expect(xyformat).to.deep.equal({ lat: '', lon: '' });
             });

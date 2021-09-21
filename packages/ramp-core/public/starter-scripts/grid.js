@@ -33,8 +33,7 @@ let config = {
             {
                 id: 'CarbonMonoxide',
                 layerType: 'esriFeature',
-                url:
-                    'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer/9',
+                url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer/9',
                 state: {
                     opacity: 1,
                     visibility: true
@@ -44,8 +43,7 @@ let config = {
             {
                 id: 'CleanAir',
                 layerType: 'esriFeature',
-                url:
-                    'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
+                url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
                 state: {
                     opacity: 0.8,
                     visibility: true
@@ -98,8 +96,6 @@ let options = {
 };
 
 rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
-rInstance.fixture
-    .addDefaultFixtures(['legend', 'appbar', 'grid', 'details'])
-    .then(() => {
-        rInstance.panel.open('legend-panel');
-    });
+rInstance.fixture.addDefaultFixtures(['legend', 'appbar', 'grid', 'details']).then(() => {
+    rInstance.panel.open('legend-panel');
+});

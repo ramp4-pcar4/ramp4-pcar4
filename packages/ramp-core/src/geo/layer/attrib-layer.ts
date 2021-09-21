@@ -53,9 +53,7 @@ export class AttribLayer extends CommonLayer {
      * @param {Integer | String} [layerIdx] targets a layer index or uid to get attributes for. Uses first/only if omitted.
      * @returns {Promise} resolves with set of attribute values
      */
-    getAttributes(
-        layerIdx: number | string | undefined = undefined
-    ): Promise<AttributeSet> {
+    getAttributes(layerIdx: number | string | undefined = undefined): Promise<AttributeSet> {
         const fc = this.getFC(layerIdx);
         if (fc && fc.attLoader) {
             return fc.attLoader.getAttribs();
@@ -71,9 +69,7 @@ export class AttribLayer extends CommonLayer {
      * @param {Integer | String} [layerIdx] targets a layer index or uid to get fields for. Uses first/only if omitted.
      * @returns {Array} list of field definitions
      */
-    getFields(
-        layerIdx: number | string | undefined = undefined
-    ): Array<FieldDefinition> {
+    getFields(layerIdx: number | string | undefined = undefined): Array<FieldDefinition> {
         const fc = this.getFC(layerIdx);
         if (fc) {
             return fc.getFields();
@@ -136,9 +132,7 @@ export class AttribLayer extends CommonLayer {
      *
      * @param {Integer | String} [layerIdx] targets a layer index or uid to stop loading attributes for. Uses first/only if omitted.
      */
-    abortAttributeLoad(
-        layerIdx: number | string | undefined = undefined
-    ): void {
+    abortAttributeLoad(layerIdx: number | string | undefined = undefined): void {
         const fc = this.getFC(layerIdx);
         if (fc && fc.attLoader) {
             fc.attLoader.abortAttribLoad();
@@ -236,10 +230,7 @@ export class AttribLayer extends CommonLayer {
      * @param {Integer | String} [layerIdx] targets a layer index or uid to find the icon in. Uses first/only if omitted.
      * @returns {Promise} resolves with an svg string encoding of the icon
      */
-    getIcon(
-        objectId: number,
-        layerIdx: number | string | undefined = undefined
-    ): Promise<string> {
+    getIcon(objectId: number, layerIdx: number | string | undefined = undefined): Promise<string> {
         const fc = this.getFC(layerIdx);
         if (fc) {
             return fc.getIcon(objectId);
@@ -277,10 +268,7 @@ export class AttribLayer extends CommonLayer {
      * @param {Integer | String} [layerIdx] targets a layer index or uid that has the filter. Uses first/only if omitted.
      * @returns {String} the value of the where clause for the filter. Empty string if not defined.
      */
-    getSqlFilter(
-        filterKey: string,
-        layerIdx: number | string | undefined = undefined
-    ): string {
+    getSqlFilter(filterKey: string, layerIdx: number | string | undefined = undefined): string {
         const fc = this.getFC(layerIdx);
         if (fc) {
             return fc.getSqlFilter(filterKey);

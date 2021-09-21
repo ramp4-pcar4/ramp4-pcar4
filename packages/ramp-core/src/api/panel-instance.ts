@@ -1,6 +1,12 @@
-import Vue, { Component, defineAsyncComponent } from 'vue';
+import { Component, defineAsyncComponent } from 'vue';
 
-import { APIScope, InstanceAPI, isVueConstructor, isComponentOptions, isTypeofImportVue } from './internal';
+import {
+    APIScope,
+    InstanceAPI,
+    isVueConstructor,
+    isComponentOptions,
+    isTypeofImportVue
+} from './internal';
 
 import {
     PanelConfig,
@@ -76,7 +82,9 @@ export class PanelInstance extends APIScope {
             let asyncComponent: Promise<AsyncComponentEh>;
 
             if (typeof screen === 'string') {
-                asyncComponent = import(/* webpackChunkName: "[request]" */ `./../../src/fixtures/${screen}`);
+                asyncComponent = import(
+                    /* webpackChunkName: "[request]" */ `./../../src/fixtures/${screen}`
+                );
             } else {
                 asyncComponent = screen(); // execute the async component function to get the promise
             }

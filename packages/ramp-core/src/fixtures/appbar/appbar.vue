@@ -59,7 +59,6 @@ export default defineComponent({
             const element: any = this.$refs.el;
 
             let children: Element[] = [...element.childNodes];
-            console.log('appbar updated: ', this);
 
             let bound: number | undefined = children[children.length - 2].clientTop;
             let dropdown: Element | null = document.getElementById('dropdown');

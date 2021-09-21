@@ -31,9 +31,7 @@ export class CommonFC {
     }
 
     protected noLayerErr(): void {
-        console.error(
-            'Attempted to manipulate the layer before it was generated'
-        );
+        console.error('Attempted to manipulate the layer before it was generated');
     }
 
     /**

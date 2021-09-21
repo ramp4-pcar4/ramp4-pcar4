@@ -151,9 +151,7 @@ export class LayerAPI extends APIScope {
         //      we might also need to structure our layers folder to be by-id
         // perform a dynamic webpack import of a internal fixture (allows for code splitting)
         layerDef.strongLayerConstructor = (
-            await import(
-                /* webpackChunkName: "[request]" */ `@/geo/layer/${layerDef.id}/index.ts`
-            )
+            await import(/* webpackChunkName: "[request]" */ `@/geo/layer/${layerDef.id}/index.ts`)
         ).default;
     }
 
@@ -164,9 +162,7 @@ export class LayerAPI extends APIScope {
     async createLayer(config: any): Promise<LayerInstance> {
         // TODO update the type of config? want to type it as RampLayerConfig but we could have 3rd party random thing passed in
         if (!this.layerDefExists(config.layerType)) {
-            throw new Error(
-                `No layer definition loaded for layer type ${config.layerType}`
-            );
+            throw new Error(`No layer definition loaded for layer type ${config.layerType}`);
         }
         // console.log('CreateLayer - this is the layer def from the store')
 
@@ -189,19 +185,14 @@ export class LayerAPI extends APIScope {
         layer = this.$iApi.$vApp.$store.get(LayerStore.getLayerById, layerId);
         if (!layer) {
             // test if layer is a string uid
-            layer = this.$iApi.$vApp.$store.get(
-                LayerStore.getLayerByUid,
-                layerId
-            );
+            layer = this.$iApi.$vApp.$store.get(LayerStore.getLayerByUid, layerId);
         }
 
         if (!layer) {
             // TODO better to return undefined and console.error?
             //      Returning undefined means function has two return types,
             //      and makes caller always validate/cast to shut up typescript.
-            throw new Error(
-                `Could not find layer associated with '${layerId}'`
-            );
+            throw new Error(`Could not find layer associated with '${layerId}'`);
         }
 
         return layer;
@@ -431,11 +422,7 @@ export class LayerInstance extends APIScope {
      * @returns {TreeNode} the root of the layer tree
      */
     getLayerTree(): TreeNode {
-        return new TreeNode(
-            0,
-            'Fake tree',
-            'getLayerTree() was not implemented in layer'
-        );
+        return new TreeNode(0, 'Fake tree', 'getLayerTree() was not implemented in layer');
     }
 
     /**
@@ -478,10 +465,7 @@ export class LayerInstance extends APIScope {
      * @param {Boolean} value the new visibility setting
      * @param {Integer | String} [layerIdx] targets a layer index or uid to get visibility for. Uses first/only if omitted.
      */
-    setVisibility(
-        value: boolean,
-        layerIdx: number | string | undefined = undefined
-    ): void {}
+    setVisibility(value: boolean, layerIdx: number | string | undefined = undefined): void {}
 
     /**
      * Returns the opacity of the layer/sublayer.
@@ -501,10 +485,7 @@ export class LayerInstance extends APIScope {
      * @param {Decimal} value the new opacity setting. Valid value is anything between 0 and 1, inclusive.
      * @param {Integer | String} [layerIdx] targets a layer index or uid to get opacity for. Uses first/only if omitted.
      */
-    setOpacity(
-        value: number,
-        layerIdx: number | string | undefined = undefined
-    ): void {}
+    setOpacity(value: number, layerIdx: number | string | undefined = undefined): void {}
 
     /**
      * Returns the scale set (min and max visible scale) of the layer/sublayer.
@@ -538,9 +519,7 @@ export class LayerInstance extends APIScope {
      * @param {Integer | String} [layerIdx] targets a layer index or uid to check offscale status for. Uses first/only if omitted.
      * @returns {Promise} resolves when map has finished zooming
      */
-    zoomToVisibleScale(
-        layerIdx: number | string | undefined = undefined
-    ): Promise<void> {
+    zoomToVisibleScale(layerIdx: number | string | undefined = undefined): Promise<void> {
         return Promise.resolve();
     }
 
@@ -551,15 +530,11 @@ export class LayerInstance extends APIScope {
      * @param {Integer | String} [layerIdx] targets a layer index or uid to get visibility for. Uses first/only if omitted.
      * @returns {Boolean} if the layer/sublayer supports features
      */
-    supportsFeatures(
-        layerIdx: number | string | undefined = undefined
-    ): boolean {
+    supportsFeatures(layerIdx: number | string | undefined = undefined): boolean {
         return false;
     }
 
-    getLegend(
-        layerIdx: number | string | undefined = undefined
-    ): Array<LegendSymbology> {
+    getLegend(layerIdx: number | string | undefined = undefined): Array<LegendSymbology> {
         return [];
     }
 
@@ -603,10 +578,7 @@ export class LayerInstance extends APIScope {
      * @param {Integer | String} [layerIdx] targets a layer index or uid to find the icon in. Uses first/only if omitted.
      * @returns {Promise} resolves with an svg string encoding of the icon
      */
-    getIcon(
-        objectId: number,
-        layerIdx: number | string | undefined = undefined
-    ): Promise<string> {
+    getIcon(objectId: number, layerIdx: number | string | undefined = undefined): Promise<string> {
         return Promise.resolve('');
     }
 
@@ -617,9 +589,7 @@ export class LayerInstance extends APIScope {
      * @param {Integer | String} [layerIdx] targets a layer index or uid to get attributes for. Uses first/only if omitted.
      * @returns {Promise} resolves with set of attribute values
      */
-    getAttributes(
-        layerIdx: number | string | undefined = undefined
-    ): Promise<AttributeSet> {
+    getAttributes(layerIdx: number | string | undefined = undefined): Promise<AttributeSet> {
         return Promise.resolve({
             features: [],
             oidIndex: {}
@@ -632,9 +602,7 @@ export class LayerInstance extends APIScope {
      * @param {Integer | String} [layerIdx] targets a layer index or uid to get fields for. Uses first/only if omitted.
      * @returns {Array} list of field definitions
      */
-    getFields(
-        layerIdx: number | string | undefined = undefined
-    ): Array<FieldDefinition> {
+    getFields(layerIdx: number | string | undefined = undefined): Array<FieldDefinition> {
         return [];
     }
 
@@ -673,18 +641,14 @@ export class LayerInstance extends APIScope {
      *
      * @param {Integer | String} [layerIdx] targets a layer index or uid to stop loading attributes for. Uses first/only if omitted.
      */
-    abortAttributeLoad(
-        layerIdx: number | string | undefined = undefined
-    ): void {}
+    abortAttributeLoad(layerIdx: number | string | undefined = undefined): void {}
 
     /**
      * Requests that any downloaded attribute sets be removed from memory. The next getAttributes request will pull from the server again.
      *
      * @param {Integer | String} [layerIdx] targets a layer index or uid to detroy attributes for. Uses first/only if omitted.
      */
-    destroyAttributes(
-        layerIdx: number | string | undefined = undefined
-    ): void {}
+    destroyAttributes(layerIdx: number | string | undefined = undefined): void {}
 
     // formerly known as getFormattedAttributes
     /**
@@ -724,10 +688,7 @@ export class LayerInstance extends APIScope {
      * @param {Integer | String} [layerIdx] targets a layer index or uid that has the filter. Uses first/only if omitted.
      * @returns {String} the value of the where clause for the filter. Empty string if not defined.
      */
-    getSqlFilter(
-        filterKey: string,
-        layerIdx: number | string | undefined = undefined
-    ): string {
+    getSqlFilter(filterKey: string, layerIdx: number | string | undefined = undefined): string {
         return '';
     }
 

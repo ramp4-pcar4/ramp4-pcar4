@@ -17,8 +17,7 @@ interface ExportV1TitleConfig {
 
 const DEFAULT_CONFIG: ExportV1TitleConfig = {
     text: '',
-    fontFamily:
-        'Montserrat, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif',
+    fontFamily: 'Montserrat, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif',
     fill: '#000',
     fontSize: 30,
     top: 0,
@@ -27,17 +26,13 @@ const DEFAULT_CONFIG: ExportV1TitleConfig = {
     originY: 'top'
 };
 
-class ExportV1TitleFixture extends FixtureInstance
-    implements ExportV1SubFixture {
+class ExportV1TitleFixture extends FixtureInstance implements ExportV1SubFixture {
     get config(): ExportV1TitleConfig | undefined {
         return merge(DEFAULT_CONFIG, super.config);
     }
 
     make(options?: ExportV1TitleConfig): Promise<fabric.Object> {
-        const config = merge<ExportV1TitleConfig>(
-            this.config || {},
-            options || {}
-        );
+        const config = merge<ExportV1TitleConfig>(this.config || {}, options || {});
 
         const fbTitle = new fabric.Text(config.text, config);
 

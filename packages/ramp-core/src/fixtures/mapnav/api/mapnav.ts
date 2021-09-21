@@ -1,10 +1,6 @@
 import { FixtureInstance } from '@/api';
 
-import {
-    MapnavFixtureConfig,
-    MapnavItemInstance,
-    MapnavItemSet
-} from '../store';
+import { MapnavFixtureConfig, MapnavItemInstance, MapnavItemSet } from '../store';
 
 export class MapnavAPI extends FixtureInstance {
     /**
@@ -30,9 +26,7 @@ export class MapnavAPI extends FixtureInstance {
             return;
         }
 
-        const mapnavItems = mapnavConfig.items.map(
-            (item: any) => new MapnavItemInstance(item)
-        );
+        const mapnavItems = mapnavConfig.items.map((item: any) => new MapnavItemInstance(item));
 
         // save mapnav items as a collection to the store
         // they are saves as a set for easy by-id access

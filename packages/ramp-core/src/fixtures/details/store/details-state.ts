@@ -1,10 +1,4 @@
-import { PanelConfig } from '@/store/modules/panel';
-import {
-    IdentifyItem,
-    IdentifyResult,
-    IdentifyResultFormat,
-    IdentifyResultSet
-} from '@/geo/api';
+import { IdentifyResult } from '@/geo/api';
 
 export type DetailsItemSet = { [name: string]: DetailsItemInstance };
 

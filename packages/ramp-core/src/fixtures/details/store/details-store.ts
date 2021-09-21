@@ -1,4 +1,4 @@
-import { ActionContext, Action, Mutation } from 'vuex';
+import { ActionContext } from 'vuex';
 import { make } from 'vuex-pathify';
 
 import { DetailsState } from './details-state';

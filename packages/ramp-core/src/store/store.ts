@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import { createStore as vuexCreateStore, Store as vuexStore } from 'vuex';
 import pathify from 'vuex-pathify';
 

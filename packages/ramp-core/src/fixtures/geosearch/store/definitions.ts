@@ -89,8 +89,4 @@ export interface LocateResponse {
 export type LocateResponseList = LocateResponse[];
 export type NameResultList = NameResult[];
 export type NTSResultList = NTSResult[];
-export type queryFeatureResults =
-    | FSAResult
-    | NTSResult
-    | LatLongResult
-    | undefined;
+export type queryFeatureResults = FSAResult | NTSResult | LatLongResult | undefined;

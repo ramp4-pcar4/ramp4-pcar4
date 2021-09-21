@@ -1,6 +1,5 @@
-import { ActionContext, Action } from 'vuex';
+import { ActionContext } from 'vuex';
 import { make } from 'vuex-pathify';
-import Vue from 'vue';
 
 import { LegendState } from './legend-state';
 import { LegendItem, LegendEntry, LegendGroup, LegendTypes } from './legend-defs';

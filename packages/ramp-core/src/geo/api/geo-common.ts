@@ -114,9 +114,7 @@ export class GeoCommonAPI {
 
             return lodGrinder(mercatorLods);
         } else {
-            throw new Error(
-                `Unknown tile schema key passed to LOD defaulter ${keycode}`
-            );
+            throw new Error(`Unknown tile schema key passed to LOD defaulter ${keycode}`);
         }
     }
 }

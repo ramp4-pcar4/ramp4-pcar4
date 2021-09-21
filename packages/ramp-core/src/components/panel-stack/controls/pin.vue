@@ -27,8 +27,7 @@ export default defineComponent({
     name: 'PinV',
     props: {
         active: {
-            type: Boolean,
-            required: true
+            type: Boolean
         }
     }
 });

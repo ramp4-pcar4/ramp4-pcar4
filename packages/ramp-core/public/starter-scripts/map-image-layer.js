@@ -34,8 +34,7 @@ let config = {
             {
                 id: 'AirEmissions',
                 layerType: 'esriMapImage',
-                url:
-                    'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                 layerEntries: [
                     {
                         index: 9,
@@ -69,8 +68,7 @@ let config = {
                             children: [
                                 {
                                     layerId: 'AirEmissions',
-                                    name:
-                                        'Carbon monoxide emissions by facility',
+                                    name: 'Carbon monoxide emissions by facility',
                                     entryIndex: 9
                                 },
                                 {
@@ -98,8 +96,6 @@ let options = {
 };
 
 rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
-rInstance.fixture
-    .addDefaultFixtures(['mapnav', 'legend', 'appbar', 'grid', 'details'])
-    .then(() => {
-        rInstance.panel.open('legend-panel');
-    });
+rInstance.fixture.addDefaultFixtures(['mapnav', 'legend', 'appbar', 'grid', 'details']).then(() => {
+    rInstance.panel.open('legend-panel');
+});

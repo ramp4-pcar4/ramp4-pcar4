@@ -27,16 +27,12 @@ export default class GridAccessibilityManager {
         this.element = element;
         this.gridApi = gridApi;
         this.columnApi = columnApi;
-        this.gridBody = this.element.querySelector(
-            GRID_BODY_SELECTOR
-        )! as HTMLElement;
+        this.gridBody = this.element.querySelector(GRID_BODY_SELECTOR)! as HTMLElement;
         this.headerRows = Array.prototype.slice.call(
             this.element.querySelectorAll(HEADER_ROW_SELECTOR)
         ) as HTMLElement[];
 
-        this.element
-            .querySelector('.ag-center-cols-viewport')
-            ?.classList.add('overflow-hidden');
+        this.element.querySelector('.ag-center-cols-viewport')?.classList.add('overflow-hidden');
         this.element
             .querySelector('.ag-body-horizontal-scroll-viewport')
             ?.setAttribute('tabindex', '-1');
@@ -186,10 +182,7 @@ export default class GridAccessibilityManager {
                 this.gridApi.ensureColumnVisible(firstCol);
             } else {
                 if (focusedCell) {
-                    this.gridApi.setFocusedCell(
-                        focusedCell.rowIndex,
-                        focusedCell.column
-                    );
+                    this.gridApi.setFocusedCell(focusedCell.rowIndex, focusedCell.column);
                 }
             }
         }
@@ -206,19 +199,15 @@ export default class GridAccessibilityManager {
 
         const id = row.getAttribute('aria-activedescendant');
         if (id) {
-            row.querySelectorAll(`[${FOCUS_ITEM_ATTR}]`).forEach(
-                (cell: Element, index: number) => {
-                    if (cell.id === id) {
-                        this.gridApi.ensureColumnVisible(
-                            this.columnApi.getAllDisplayedColumns()[index]
-                        );
-                    }
+            row.querySelectorAll(`[${FOCUS_ITEM_ATTR}]`).forEach((cell: Element, index: number) => {
+                if (cell.id === id) {
+                    this.gridApi.ensureColumnVisible(
+                        this.columnApi.getAllDisplayedColumns()[index]
+                    );
                 }
-            );
+            });
         } else {
-            this.gridApi.ensureColumnVisible(
-                this.columnApi.getAllDisplayedColumns()[0]
-            );
+            this.gridApi.ensureColumnVisible(this.columnApi.getAllDisplayedColumns()[0]);
         }
     }
 
