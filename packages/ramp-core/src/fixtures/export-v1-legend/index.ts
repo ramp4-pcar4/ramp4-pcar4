@@ -131,11 +131,11 @@ class ExportV1LegendFixture extends FixtureInstance implements ExportV1SubFixtur
      * @returns {fabric.Group}
      * @memberof ExportV1LegendFixture
      */
-    private _makeColumns(items: fabric.Group[], columnWidth: number, columns: number) {
-        if (items.length === 0) {
-            return new fabric.Group();
-        }
-
+    private _makeColumns(
+        items: fabric.Group[],
+        columnWidth: number,
+        columns: number
+    ) {
         let curColumn: number = 0;
         let curTop: number = 0;
         let accumLength: number = 0;
