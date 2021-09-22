@@ -17,19 +17,6 @@ class MapnavFixture extends MapnavAPI {
             (<any>this.$vApp.$i18n).mergeLocaleMessage(...value)
         );
 
-        this.$element.component('MapnavV', MapnavV);
-
-        // const wrapper = document.createElement('div');
-        // const mapnavInstance = this.extend(
-        //     MapnavV,
-        //     {
-        //         iApi: this.$iApi,
-        //         store: this.$vApp.$store,
-        //         i18n: <any>this.$vApp.$i18n
-        //     };
-        // );
-        // mapnavInstance.mount(wrapper);
-
         const { vNode, destroy, el } = this.mount(MapnavV, { app: this.$element });
         const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         innerShell.appendChild(el.childNodes[0]);

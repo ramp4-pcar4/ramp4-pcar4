@@ -15,16 +15,6 @@ class ScrollguardFixture extends FixtureInstance {
         console.log(`[fixture] ${this.id} removed`);
     }
 
-        this.$element.component('ScrollguardV', ScrollguardV);
-
-        // const scrollguardInstance = this.extend(ScrollguardV, {
-        //     iApi: this.$iApi,
-        //     store: this.$vApp.$store,
-        //     i18n: <any>this.$vApp.$i18n
-        // });
-        // const wrapper = document.createElement('div');
-        // scrollguardInstance.mount(wrapper);
-
         const { vNode, destroy, el } = this.mount(ScrollguardV, { app: this.$element });
         const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         innerShell.appendChild(el.childNodes[0]);

@@ -14,16 +14,6 @@ class NortharrowFixture extends NortharrowAPI {
             (value: NortharrowConfig | undefined) => this._parseConfig(value)
         );
 
-        this.$element.component('NortharrowV', NortharrowV);
-
-        // const wrapper = document.createElement('div');
-        // const northarrowInstance = this.extend(NortharrowV, {
-        //     iApi: this.$iApi,
-        //     store: this.$vApp.$store,
-        //     i18n: <any>this.$vApp.$i18n
-        // });
-        // northarrowInstance.mount(wrapper);
-
         const { vNode, destroy, el } = this.mount(NortharrowV, { app: this.$element });
         const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         innerShell.appendChild(el.childNodes[0]);

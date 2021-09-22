@@ -24,9 +24,9 @@ import PanelScreenV from '@/components/panel-stack/panel-screen.vue';
 import PinV from '@/components/panel-stack/controls/pin.vue';
 import CloseV from '@/components/panel-stack/controls/close.vue';
 import BackV from '@/components/panel-stack/controls/back.vue';
+import MinimizeV from '@/components/panel-stack/controls/minimize.vue';
 import PanelOptionsMenuV from '@/components/panel-stack/controls/panel-options-menu.vue';
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
-import MinimizeV from '@/components/controls/dropdown-menu.vue';
 
 import FullscreenNavV from '@/fixtures/mapnav/buttons/fullscreen-nav.vue';
 import HomeNavV from '@/fixtures/mapnav/buttons/home-nav.vue';

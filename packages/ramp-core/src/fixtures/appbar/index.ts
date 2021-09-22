@@ -19,16 +19,6 @@ class AppbarFixture extends AppbarAPI {
             (<any>this.$vApp.$i18n).mergeLocaleMessage(...value)
         );
 
-        this.$element.component('AppbarV', AppbarV);
-
-        // const appbarInstance = this.extend(AppbarV, {
-        //     iApi: this.$iApi,
-        //     store: this.$vApp.$store,
-        //     i18n: <any>this.$vApp.$i18n
-        // });
-        // const wrapper = document.createElement('div');
-        // appbarInstance.mount(wrapper);
-
         const { vNode, destroy, el } = this.mount(AppbarV, { app: this.$element });
         const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         innerShell.appendChild(el.childNodes[0]);
