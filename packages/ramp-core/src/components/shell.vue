@@ -37,7 +37,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-
 import EsriMapV from '@/components/map/esri-map.vue';
 import PanelStackV from '@/components/panel-stack/panel-stack.vue';
 import MapCaptionV from '@/components/map/map-caption.vue';
@@ -47,7 +46,6 @@ import { Get } from 'vuex-pathify';
 import { get } from '@/store/pathify-helper';
 import { FixtureInstance } from '@/api';
 import { GlobalEvents } from '@/api';
-
 export default defineComponent({
     name: 'Shell',
     components: {
@@ -57,13 +55,22 @@ export default defineComponent({
         'notification-floating-button': NotificationsFloatingButtonV,
         'keyboard-instructions-modal': KeyboardInstructionsModalV
     },
-
     data() {
         return {
-            appbarFixture: get(`fixture/items@appbar`)
+            appbarFixture: get(`fixture/items@appbar`),
+            start: false
         };
     },
-
+    created() {
+        if (this.$iApi.startRequired) {
+            this.$iApi.event.once(GlobalEvents.MAP_START, () => {
+                this.start = true;
+            });
+        } else {
+            this.$iApi.event.emit(GlobalEvents.MAP_START);
+            this.start = true;
+        }
+    },
     methods: {
         openKeyboardInstructions() {
             this.$iApi.event.emit('openKeyboardInstructions');

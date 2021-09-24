@@ -45,8 +45,7 @@ export class MapCaptionAPI extends APIScope {
             });
         } else {
             // get formatter specified in the config
-            const defaultFormatter: string | undefined =
-                captionConfig.mouseCoords.formatter;
+            const defaultFormatter: string | undefined = captionConfig.mouseCoords.formatter;
             if (defaultFormatter !== undefined) {
                 this.setPointFormatter(defaultFormatter);
             }
@@ -59,14 +58,10 @@ export class MapCaptionAPI extends APIScope {
             });
         } else {
             // get the scalebar unit specified in the config
-            const useImperialUnits: boolean | undefined =
-                captionConfig.scaleBar.imperialScale;
+            const useImperialUnits: boolean | undefined = captionConfig.scaleBar.imperialScale;
             if (useImperialUnits !== undefined) {
                 // update the value in the store
-                this.$iApi.$vApp.$store.set(
-                    MapCaptionStore.toggleScale,
-                    useImperialUnits
-                );
+                this.$iApi.$vApp.$store.set(MapCaptionStore.toggleScale, useImperialUnits);
                 // wait for the map to load since updateScale needs map view resolution
                 this.$iApi.geo.map.viewPromise.then(() => {
                     this.updateScale();
@@ -173,17 +168,16 @@ export class MapCaptionAPI extends APIScope {
      * @function updateScale
      */
     updateScale(): void {
-        const currentScaleBar:
-            | ScaleBar
-            | undefined = this.$iApi.$vApp.$store.get(MapCaptionStore.scale);
+        const currentScaleBar: ScaleBar | undefined = this.$iApi.$vApp.$store.get(
+            MapCaptionStore.scale
+        );
 
         // if the current scale bar is disabled, then do not update it
         if (currentScaleBar?.disabled) {
             return;
         }
 
-        const isImperialScale: boolean =
-            currentScaleBar?.isImperialScale || false;
+        const isImperialScale: boolean = currentScaleBar?.isImperialScale || false;
 
         // the starting length of the scale line in pixels
         // reduce the length of the bar on extra small layouts

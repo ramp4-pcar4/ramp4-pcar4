@@ -13,10 +13,7 @@ const actions = {
     setAttribution: (context: MapCaptionContext, attribution: Attribution) => {
         context.commit('SET_ATTRIBUTION', attribution);
     },
-    setCursorCoords: (
-        context: MapCaptionContext,
-        cursorCoords: MouseCoords
-    ) => {
+    setCursorCoords: (context: MapCaptionContext, cursorCoords: MouseCoords) => {
         context.commit('SET_CURSOR_COORDS', cursorCoords);
     },
     setScale: (context: MapCaptionContext, scale: ScaleBar) => {

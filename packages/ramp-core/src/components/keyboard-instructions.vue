@@ -34,14 +34,11 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
-
-@Component
+import { Vue, Options } from 'vue-property-decorator';
+@Options({})
 export default class KeyboardInstructionsModalV extends Vue {
     open: boolean = false;
-
     instructionSections: string[] = ['app', 'lists', 'map'];
-
     mounted() {
         this.$iApi.event.on('openKeyboardInstructions', () => {
             this.open = true;
@@ -50,7 +47,6 @@ export default class KeyboardInstructionsModalV extends Vue {
             });
         });
     }
-
     onKeydown(event: KeyboardEvent) {
         if (event.key === 'Tab') {
             if (event.shiftKey && event.target === this.$refs.firstEl) {

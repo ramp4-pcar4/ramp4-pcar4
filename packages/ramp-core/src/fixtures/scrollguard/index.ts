@@ -9,15 +9,14 @@ class ScrollguardFixture extends FixtureInstance {
         Object.entries(messages).forEach(value =>
             (<any>this.$vApp.$i18n).mergeLocaleMessage(...value)
         );
-    }
-
-    removed(): void {
-        console.log(`[fixture] ${this.id} removed`);
-    }
 
         const { vNode, destroy, el } = this.mount(ScrollguardV, { app: this.$element });
         const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         innerShell.appendChild(el.childNodes[0]);
+    }
+
+    removed(): void {
+        console.log(`[fixture] ${this.id} removed`);
     }
 }
 

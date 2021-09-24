@@ -21,10 +21,9 @@ describe('Settings', () => {
         });
 
         // wait for settings panel to open
-        cy.contains(
-            '[data-cy="settings-panel"] .rv-subsection',
-            'Show layer'
-        ).find('.vue-js-switch');
+        cy.contains('[data-cy="settings-panel"] .rv-subsection', 'Show layer').find(
+            '.vue-js-switch'
+        );
 
         // layer visibility toggle should be off
         cy.contains('[data-cy="settings-panel"] .rv-subsection', 'Show layer')
@@ -32,9 +31,7 @@ describe('Settings', () => {
             .should('not.have.class', 'toggled');
 
         // close settings
-        cy.get(
-            '[data-cy="settings-panel"] header button[content="Close"]'
-        ).click();
+        cy.get('[data-cy="settings-panel"] header button[content="Close"]').click();
 
         // wait for panel to close
         cy.get('[data-cy="settings-panel"]').should('not.exist');
@@ -61,9 +58,7 @@ describe('Settings', () => {
             .and('equal', '43');
 
         // close settings
-        cy.get(
-            '[data-cy="settings-panel"] header button[content="Close"]'
-        ).click();
+        cy.get('[data-cy="settings-panel"] header button[content="Close"]').click();
         cy.get('[data-cy="settings-panel"]').should('not.exist');
     });
 
@@ -103,9 +98,7 @@ describe('Settings', () => {
             .should('equal', 0.68);
 
         // close settings
-        cy.get(
-            '[data-cy="settings-panel"] header button[content="Close"]'
-        ).click();
+        cy.get('[data-cy="settings-panel"] header button[content="Close"]').click();
         cy.get('[data-cy="settings-panel"]').should('not.exist');
     });
 
@@ -128,10 +121,9 @@ describe('Settings', () => {
         });
 
         // wait for settings panel to open
-        cy.contains(
-            '[data-cy="settings-panel"] .rv-subsection',
-            'Show layer'
-        ).find('.vue-js-switch');
+        cy.contains('[data-cy="settings-panel"] .rv-subsection', 'Show layer').find(
+            '.vue-js-switch'
+        );
 
         // toggle visibility and set opacity
         cy.get('@layer').invoke('setVisibility', true);
@@ -149,9 +141,7 @@ describe('Settings', () => {
         //     .and('equal', '43');
 
         // close settings
-        cy.get(
-            '[data-cy="settings-panel"] header button[content="Close"]'
-        ).click();
+        cy.get('[data-cy="settings-panel"] header button[content="Close"]').click();
         cy.get('[data-cy="settings-panel"]').should('not.exist');
     });
 });

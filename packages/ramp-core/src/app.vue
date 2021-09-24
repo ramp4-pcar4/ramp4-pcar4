@@ -47,8 +47,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-$font-list: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica,
-    Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+$font-list: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+    Apple Color Emoji, Segoe UI Emoji;
 @use 'directives/focus-list/focus-list';
 .ramp-app {
     @include focus-list.default-focused-styling;
