@@ -2,7 +2,15 @@
     <div class="legend-item">
         <div class="relative">
             <div
-                class="default-focus-style p-5 flex items-center hover:bg-gray-200 cursor-pointer h-44"
+                class="
+                    default-focus-style
+                    p-5
+                    flex
+                    items-center
+                    hover:bg-gray-200
+                    cursor-pointer
+                    h-44
+                "
                 @click="toggleGrid"
                 v-focus-item="'show-truncate'"
                 @mouseover.stop="$event.currentTarget._tippy.show()"
@@ -23,7 +31,8 @@
                         @click.stop="toggleSymbology"
                         tabindex="-1"
                         :class="{
-                            'cursor-default': !legendItem._controlAvailable('symbology')
+                            'cursor-default':
+                                !legendItem._controlAvailable('symbology')
                         }"
                         :disabled="!legendItem._controlAvailable('symbology')"
                         :content="
@@ -38,7 +47,8 @@
                     >
                         <symbology-stack
                             :class="{
-                                'pointer-events-none': !legendItem._controlAvailable('symbology')
+                                'pointer-events-none':
+                                    !legendItem._controlAvailable('symbology')
                             }"
                             class="w-32 h-32"
                             :visible="legendItem.displaySymbology"
@@ -63,7 +73,10 @@
                 <checkbox
                     :checked="legendItem.visibility"
                     :value="legendItem"
-                    :isRadio="legendItem.parent && legendItem.parent.type === 'VisibilitySet'"
+                    :isRadio="
+                        legendItem.parent &&
+                        legendItem.parent.type === 'VisibilitySet'
+                    "
                     :legendItem="legendItem"
                     :disabled="!legendItem._controlAvailable('visibility')"
                 />
@@ -71,18 +84,29 @@
         </div>
 
         <!-- Symbology Stack Section -->
-        <div v-if="legendItem.displaySymbology" v-focus-item class="default-focus-style">
+        <div
+            v-if="legendItem.displaySymbology"
+            v-focus-item
+            class="default-focus-style"
+        >
             <div v-if="symbologyStack.length > 0">
                 <!-- display each symbol -->
                 <div class="m-5" v-for="item in symbologyStack" :key="item.uid">
                     <!-- for WMS layers -->
-                    <div v-if="layerType === 'ogcWms'" class="items-center grid-cols-1">
+                    <div
+                        v-if="layerType === 'ogcWms'"
+                        class="items-center grid-cols-1"
+                    >
                         <div
                             v-if="item.imgHeight"
                             class="symbologyIcon w-full p-5"
                             v-html="getLegendGraphic(item)"
                         ></div>
-                        <div v-if="item.label" class="flex-1 p-5 bg-black-75 text-white" v-truncate>
+                        <div
+                            v-if="item.label"
+                            class="flex-1 p-5 bg-black-75 text-white"
+                            v-truncate
+                        >
                             {{ item.label }}
                         </div>
                     </div>
@@ -107,7 +131,15 @@
                 <!-- display loading text -->
                 <div class="flex p-5 ml-48" v-truncate>
                     <div
-                        class="relative animate-spin spinner h-20 w-20 mr-10 pt-2"
+                        class="
+                            relative
+                            animate-spin
+                            spinner
+                            h-20
+                            w-20
+                            mr-10
+                            pt-2
+                        "
                         v-if="isAnimationEnabled"
                     ></div>
                     <div class="flex-1 text-gray-500" v-truncate>
@@ -176,7 +208,9 @@ export default defineComponent({
         // Wait for symbology to load
         if (!this.legendItem!.layer) {
             // This should never happen because the layer is loaded before the legend entry component is mounted
-            console.warn('Attempted to mount legend entry component with undefined layer');
+            console.warn(
+                'Attempted to mount legend entry component with undefined layer'
+            );
             return;
         }
 
@@ -184,7 +218,9 @@ export default defineComponent({
             this.legendItem!.parent.checkVisibility(this.legendItem!);
         }
 
-        Promise.all(this._getLegend().map((item: LegendSymbology) => item.drawPromise)).then(() => {
+        Promise.all(
+            this._getLegend().map((item: LegendSymbology) => item.drawPromise)
+        ).then(() => {
             this.symbologyStack = this._getLegend();
         });
     },
@@ -203,7 +239,10 @@ export default defineComponent({
          */
         toggleGrid(): void {
             if (this.legendItem!._controlAvailable(Controls.Datatable)) {
-                this.$iApi.event.emit(GlobalEvents.GRID_TOGGLE, this.legendItem!.layerUID);
+                this.$iApi.event.emit(
+                    GlobalEvents.GRID_TOGGLE,
+                    this.legendItem!.layerUID
+                );
             }
         },
 
@@ -212,7 +251,10 @@ export default defineComponent({
          */
         toggleSettings(): void {
             if (this.legendItem!._controlAvailable(Controls.Settings)) {
-                this.$iApi.event.emit(GlobalEvents.SETTINGS_TOGGLE, this.legendItem!.layerUID);
+                this.$iApi.event.emit(
+                    GlobalEvents.SETTINGS_TOGGLE,
+                    this.legendItem!.layerUID
+                );
             }
         },
 

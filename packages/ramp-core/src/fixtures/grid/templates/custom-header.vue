@@ -5,7 +5,13 @@
                 @click="onSortRequested('asc', $event)"
                 :content="$t(`grid.header.sort.${sort}`)"
                 v-tippy="{ placement: 'top', hideOnClick: false }"
-                class="customHeaderLabel hover:bg-gray-300 font-bold p-8 max-w-full"
+                class="
+                    customHeaderLabel
+                    hover:bg-gray-300
+                    font-bold
+                    p-8
+                    max-w-full
+                "
                 role="columnheader"
                 truncate-trigger
             >
@@ -16,19 +22,29 @@
             </button>
         </div>
         <!-- <span v-else class="customHeaderLabel" role="columnheader" v-truncate>{{ -->
-        <span v-else class="customHeaderLabel" role="columnheader">{{ params.displayName }}</span>
+        <span v-else class="customHeaderLabel" role="columnheader">{{
+            params.displayName
+        }}</span>
 
         <div v-if="sortable" class="flex">
-            <span v-if="params.enableSorting && sort === 1" class="customSortDownLabel">
+            <span
+                v-if="params.enableSorting && sort === 1"
+                class="customSortDownLabel"
+            >
                 <div class="md-icon-small">
                     <svg height="24" width="24">
                         <g id="arrow_upward">
-                            <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z" />
+                            <path
+                                d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"
+                            />
                         </g>
                     </svg>
                 </div>
             </span>
-            <span v-if="params.enableSorting && sort === 2" class="customSortUpLabel">
+            <span
+                v-if="params.enableSorting && sort === 2"
+                class="customSortUpLabel"
+            >
                 <div class="md-icon-small">
                     <svg height="24" width="24">
                         <g id="arrow_downward">
@@ -43,13 +59,19 @@
                 :content="$t(`grid.header.reorder.left`)"
                 v-tippy="{ placement: 'top' }"
                 @click="moveLeft()"
-                class="opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
+                class="
+                    opacity-60
+                    hover:opacity-90
+                    disabled:opacity-30 disabled:cursor-default
+                "
                 :disabled="!canMoveLeft"
             >
                 <div class="inline-block">
                     <svg height="24" width="24">
                         <g id="keyboard_arrow_left">
-                            <path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" />
+                            <path
+                                d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"
+                            />
                         </g>
                     </svg>
                 </div>
@@ -58,13 +80,19 @@
                 :content="$t(`grid.header.reorder.right`)"
                 v-tippy="{ placement: 'top' }"
                 @click="moveRight()"
-                class="opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
+                class="
+                    opacity-60
+                    hover:opacity-90
+                    disabled:opacity-30 disabled:cursor-default
+                "
                 :disabled="!canMoveRight"
             >
                 <div class="inline-block">
                     <svg height="24" width="24">
                         <g id="keyboard_arrow_right">
-                            <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
+                            <path
+                                d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"
+                            />
                         </g>
                     </svg>
                 </div>
@@ -114,9 +142,11 @@ export default defineComponent({
         onColumnReorder() {
             const columns: any = this.columnApi.getAllDisplayedColumns();
             const columnIdx: number = columns.indexOf(this.params.column);
-            this.canMoveLeft = columnIdx > 3 && !columns[columnIdx - 1].colDef.isStatic;
+            this.canMoveLeft =
+                columnIdx > 3 && !columns[columnIdx - 1].colDef.isStatic;
             this.canMoveRight =
-                columnIdx < columns.length - 1 && !columns[columnIdx + 1].colDef.isStatic;
+                columnIdx < columns.length - 1 &&
+                !columns[columnIdx + 1].colDef.isStatic;
         },
 
         // Swap the position of a column with it's left neighbor. If the neighboring column is static,

@@ -14,7 +14,10 @@
             py-2
         "
     >
-        <span class="relative ml-10 truncate top-1" v-if="!attribution.logo.disabled">
+        <span
+            class="relative ml-10 truncate top-1"
+            v-if="!attribution.logo.disabled"
+        >
             <a
                 class="pointer-events-auto cursor-pointer"
                 :href="attribution.logo.link"
@@ -28,17 +31,25 @@
             </a>
         </span>
 
-        <span class="relative ml-10 truncate top-1" v-if="!attribution.text.disabled">
+        <span
+            class="relative ml-10 truncate top-1"
+            v-if="!attribution.text.disabled"
+        >
             {{ attribution.text.value }}
         </span>
 
-        <notifications-caption-button class="sm:block hidden"></notifications-caption-button>
+        <notifications-caption-button
+            class="sm:block display-none"
+        ></notifications-caption-button>
 
         <span class="flex-grow w-15"></span>
 
         <!-- TODO: find out if any ARIA attributes are needed for the map scale -->
 
-        <span v-if="!cursorCoords.disabled" class="flex-shrink-0 relative top-1 pr-14 pl-14">
+        <span
+            v-if="!cursorCoords.disabled"
+            class="flex-shrink-0 relative top-1 pr-14 pl-14"
+        >
             {{ cursorCoords.formattedString }}
         </span>
 
@@ -56,7 +67,12 @@
             @click="onScaleClick"
             :aria-pressed="scale.isImperialScale"
             :aria-label="$t('map.toggleScaleUnits')"
-            v-tippy="{ placement: 'top', hideOnClick: false, theme: 'ramp4', animation: 'scale' }"
+            v-tippy="{
+                placement: 'top',
+                hideOnClick: false,
+                theme: 'ramp4',
+                animation: 'scale'
+            }"
             :content="$t('map.toggleScaleUnits')"
         >
             <span
@@ -130,7 +146,7 @@ export default defineComponent({
         }
     },
     updated() {
-        this.$nextTick(function() {
+        this.$nextTick(function () {
             if (this.$iApi.$vApp.$i18n && this.lang.length == 0) {
                 this.lang = this.$iApi.$vApp.$i18n.availableLocales;
             }
@@ -154,7 +170,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .map-caption {
     backdrop-filter: blur(5px);
 }

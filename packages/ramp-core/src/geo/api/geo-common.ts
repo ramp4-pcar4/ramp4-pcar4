@@ -55,7 +55,7 @@ export class GeoCommonAPI {
 
     defaultLODs(keycode: string): Array<RampLodConfig> {
         const lodGrinder = (a: Array<Array<number>>) => {
-            return a.map(lod => {
+            return a.map((lod) => {
                 return {
                     level: lod[0],
                     resolution: lod[1],
@@ -114,7 +114,9 @@ export class GeoCommonAPI {
 
             return lodGrinder(mercatorLods);
         } else {
-            throw new Error(`Unknown tile schema key passed to LOD defaulter ${keycode}`);
+            throw new Error(
+                `Unknown tile schema key passed to LOD defaulter ${keycode}`
+            );
         }
     }
 }

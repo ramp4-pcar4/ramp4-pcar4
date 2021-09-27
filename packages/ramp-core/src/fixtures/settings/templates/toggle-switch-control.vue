@@ -13,8 +13,7 @@
             :classes="{
                 container:
                     'inline-block rounded-full outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-30',
-                toggle:
-                    'flex w-40 h-15 rounded-full relative cursor-pointer transition items-center box-content border-2',
+                toggle: 'flex w-40 h-15 rounded-full relative cursor-pointer transition items-center box-content border-2',
                 toggleOn: 'bg-blue-500 border-blue-500 text-white',
                 toggleOff: 'bg-gray-200 border-gray-200 text-gray-700',
                 toggleOnDisabled:

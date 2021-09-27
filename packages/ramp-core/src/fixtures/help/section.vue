@@ -2,16 +2,37 @@
     <div>
         <div>
             <button
-                class="help-section-header flex items-center py-15 px-25 hover:bg-gray-200 cursor-pointer select-none w-full"
+                class="
+                    help-section-header
+                    flex
+                    items-center
+                    py-15
+                    px-25
+                    hover:bg-gray-200
+                    cursor-pointer
+                    select-none
+                    w-full
+                "
                 @click="toggleExpanded()"
-                :content="$t(expanded ? 'help.section.collapse' : 'help.section.expand')"
+                :content="
+                    $t(
+                        expanded
+                            ? 'help.section.collapse'
+                            : 'help.section.expand'
+                    )
+                "
                 v-tippy="{ placement: 'top-end', hideOnClick: false }"
             >
                 <!-- name -->
-                <span class="text-lg text-left flex-grow">{{ helpSection.header }}</span>
+                <span class="text-lg text-left flex-grow">{{
+                    helpSection.header
+                }}</span>
 
                 <!-- dropdown icon -->
-                <div class="icon" :class="{ 'transform -rotate-180': expanded }">
+                <div
+                    class="icon"
+                    :class="{ 'transform -rotate-180': expanded }"
+                >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         height="24"
@@ -19,7 +40,9 @@
                         width="24"
                     >
                         <path d="M0 0h24v24H0V0z" fill="none" />
-                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+                        <path
+                            d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"
+                        />
                     </svg>
                 </div>
             </button>

@@ -9,14 +9,22 @@
                     name="file"
                     accept=".geojson,.json,.csv,.zip"
                     @input="
-                        event => {
+                        (event) => {
                             $emit('upload', event.target.files[0]);
                             event.target.value = null;
                         }
                     "
                 />
                 <div
-                    class="upload-mask absolute inset-0 flex border-dashed border-2 border-gray-400 pointer-events-none justify-center"
+                    class="
+                        upload-mask
+                        absolute
+                        inset-0
+                        flex
+                        border-dashed border-2 border-gray-400
+                        pointer-events-none
+                        justify-center
+                    "
                 >
                     <svg
                         class="w-30 h-30 m-auto"
@@ -39,13 +47,20 @@
             <label class="text-base font-bold">{{ label }}</label>
             <div class="mb-0.5" data-type="url">
                 <input
-                    class="text-sm w-full border-solid border-gray-300 mb-5 leading-5 focus:border-green-500"
+                    class="
+                        text-sm
+                        w-full
+                        border-solid border-gray-300
+                        mb-5
+                        leading-5
+                        focus:border-green-500
+                    "
                     type="url"
                     name="url"
                     :value="modelValue"
                     @change="valid ? (urlError = false) : (urlError = true)"
                     @input="
-                        event => {
+                        (event) => {
                             validUrl(event.target.value);
                             $emit('link', event.target.value, valid);
                             urlError = false;
@@ -54,7 +69,11 @@
                 />
             </div>
             <div v-if="urlError" class="text-red-900 text-xs">
-                {{ modelValue ? validationMessages.invalid : validationMessages.required }}
+                {{
+                    modelValue
+                        ? validationMessages.invalid
+                        : validationMessages.required
+                }}
             </div>
         </div>
         <div v-else-if="type === 'select'">
@@ -62,12 +81,18 @@
             <div class="relative mb-0.5" data-type="select">
                 <div v-if="multiple">
                     <select
-                        class="block border-solid border-gray-300 w-full p-3 overflow-y-auto"
+                        class="
+                            block
+                            border-solid border-gray-300
+                            w-full
+                            p-3
+                            overflow-y-auto
+                        "
                         multiple
                         :value="modelValue"
                         v-model="selected"
                         @change="
-                            event => {
+                            (event) => {
                                 $emit('select', selected);
                                 checkMultiSelectError(selected);
                             }
@@ -83,20 +108,32 @@
                         </option>
                     </select>
                     <div class="text-gray-400 text-xs mb-1">{{ help }}</div>
-                    <div v-if="validation && layerEntriesError" class="text-red-900 text-xs">
+                    <div
+                        v-if="validation && layerEntriesError"
+                        class="text-red-900 text-xs"
+                    >
                         {{ validationMessages.required }}
                     </div>
                 </div>
                 <div v-else>
                     <select
-                        class="block border-solid border-gray-300 w-full p-3 overflow-y-auto"
+                        class="
+                            block
+                            border-solid border-gray-300
+                            w-full
+                            p-3
+                            overflow-y-auto
+                        "
                         v-bind:class="size && 'configure-select'"
                         :size="size ? size : null"
                         :value="modelValue"
                         @input="
                             size
                                 ? $emit('select', $event.target.value)
-                                : $emit('update:modelValue', $event.target.value)
+                                : $emit(
+                                      'update:modelValue',
+                                      $event.target.value
+                                  )
                         "
                     >
                         <option
@@ -108,7 +145,10 @@
                             {{ option.label }}
                         </option>
                     </select>
-                    <div v-if="validation && formatError" class="text-red-900 text-xs">
+                    <div
+                        v-if="validation && formatError"
+                        class="text-red-900 text-xs"
+                    >
                         {{ validationMessages.invalid }}
                     </div>
                 </div>
@@ -215,7 +255,8 @@ export default defineComponent({
                 return false;
             }
 
-            const link = newUrl.protocol === 'http:' || newUrl.protocol === 'https:';
+            const link =
+                newUrl.protocol === 'http:' || newUrl.protocol === 'https:';
             link ? (this.valid = true) : (this.valid = false);
         },
 

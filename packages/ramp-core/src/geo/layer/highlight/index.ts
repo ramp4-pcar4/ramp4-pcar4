@@ -11,7 +11,11 @@
 import defaultSymbols from './../defaulthighlightSymbols.json';
 import { CommonFC, CommonLayer, InstanceAPI } from '@/api/internal';
 import { LayerType, Point, RampLayerConfig, TreeNode } from '@/geo/api';
-import { EsriGraphic, EsriGraphicsLayer, EsriPictureMarkerSymbol } from '@/geo/esri';
+import {
+    EsriGraphic,
+    EsriGraphicsLayer,
+    EsriPictureMarkerSymbol
+} from '@/geo/esri';
 import { markRaw } from 'vue';
 
 /**
@@ -35,7 +39,9 @@ export default class HighlightLayer extends CommonLayer {
             $iApi
         );
 
-        let markerSymbol = EsriPictureMarkerSymbol.fromJSON(defaultSymbols.markerSymbol);
+        let markerSymbol = EsriPictureMarkerSymbol.fromJSON(
+            defaultSymbols.markerSymbol
+        );
 
         if (options) {
             if (options.markerSymbol) {
@@ -43,7 +49,9 @@ export default class HighlightLayer extends CommonLayer {
                 // might need to use general baseclass as declaration; see if there is a 'fromJSON' that parses any type.
                 // else we might need to inspect the payload and determine the marker type, call appropriate constructor.
                 // OR we banhammer all markers except picture markers (supporting SimpleMarker could be useful)
-                markerSymbol = EsriPictureMarkerSymbol.fromJSON(options.markerSymbol);
+                markerSymbol = EsriPictureMarkerSymbol.fromJSON(
+                    options.markerSymbol
+                );
             }
         }
 
@@ -71,13 +79,17 @@ export default class HighlightLayer extends CommonLayer {
      */
     addMarker(point: Point, clearLayer: boolean = false): void {
         if (!this.esriLayer) {
-            console.error('attempted to add marker to graphic layer before initiate');
+            console.error(
+                'attempted to add marker to graphic layer before initiate'
+            );
             return;
         }
         if (clearLayer) {
             this.esriLayer.removeAll();
         }
-        const esriPoint = this.$iApi.geo.utils.geom.geomRampToEsri(point) as __esri.Point;
+        const esriPoint = this.$iApi.geo.utils.geom.geomRampToEsri(
+            point
+        ) as __esri.Point;
 
         const marker = new EsriGraphic({
             geometry: esriPoint,
@@ -104,7 +116,9 @@ export default class HighlightLayer extends CommonLayer {
         clearLayer: boolean = false
     ): void {
         if (!this.esriLayer) {
-            console.error('attempted to add marker to graphic layer before initiate');
+            console.error(
+                'attempted to add marker to graphic layer before initiate'
+            );
             return;
         }
         if (clearLayer) {
