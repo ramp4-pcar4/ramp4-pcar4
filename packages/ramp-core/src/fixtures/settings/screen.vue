@@ -12,7 +12,9 @@
 
         <template #content>
             <div class="flex flex-col justify-center">
-                <span class="rv-subheader">{{ $t('settings.label.display') }}</span>
+                <span class="rv-subheader">{{
+                    $t('settings.label.display')
+                }}</span>
 
                 <div class="rv-settings-divider"></div>
 
@@ -55,7 +57,9 @@
             </div>
 
             <div class="flex flex-col justify-center">
-                <span class="rv-subheader">{{ $t('settings.label.data') }}</span>
+                <span class="rv-subheader">{{
+                    $t('settings.label.data')
+                }}</span>
 
                 <div class="rv-settings-divider"></div>
 
@@ -75,7 +79,9 @@
             </div>
 
             <div class="flex flex-col justify-center">
-                <span class="rv-subheader">{{ $t('settings.label.interval') }}</span>
+                <span class="rv-subheader">{{
+                    $t('settings.label.interval')
+                }}</span>
 
                 <div class="rv-settings-divider"></div>
 
@@ -130,33 +136,49 @@ export default defineComponent({
         });
 
         this.handlers.push(
-            this.$iApi.event.on(GlobalEvents.LAYER_VISIBILITYCHANGE, (newVisibility: any) => {
-                if (this.uid === newVisibility.uid) {
-                    this.visibilityModel = newVisibility.visibility;
+            this.$iApi.event.on(
+                GlobalEvents.LAYER_VISIBILITYCHANGE,
+                (newVisibility: any) => {
+                    if (this.uid === newVisibility.uid) {
+                        this.visibilityModel = newVisibility.visibility;
+                    }
                 }
-            })
+            )
         );
 
         this.handlers.push(
-            this.$iApi.event.on(GlobalEvents.LAYER_RELOAD_END, (reloadedLayer: LayerInstance) => {
-                reloadedLayer.isLayerLoaded().then(() => {
-                    if (reloadedLayer.layerType === LayerType.MAPIMAGE) {
-                        // Check if this.uid is a child of reloadedLayer
-                        if (reloadedLayer.getLayerTree().findChildByUid(this.uid)) {
-                            this.visibilityModel = this.layer.getVisibility(this.uid);
-                            this.opacityModel = this.layer.getOpacity(this.uid) * 100;
+            this.$iApi.event.on(
+                GlobalEvents.LAYER_RELOAD_END,
+                (reloadedLayer: LayerInstance) => {
+                    reloadedLayer.isLayerLoaded().then(() => {
+                        if (reloadedLayer.layerType === LayerType.MAPIMAGE) {
+                            // Check if this.uid is a child of reloadedLayer
+                            if (
+                                reloadedLayer
+                                    .getLayerTree()
+                                    .findChildByUid(this.uid)
+                            ) {
+                                this.visibilityModel = this.layer.getVisibility(
+                                    this.uid
+                                );
+                                this.opacityModel =
+                                    this.layer.getOpacity(this.uid) * 100;
+                            }
+                        } else if (this.uid === reloadedLayer.uid) {
+                            this.visibilityModel = this.layer.getVisibility(
+                                this.uid
+                            );
+                            this.opacityModel =
+                                this.layer.getOpacity(this.uid) * 100;
                         }
-                    } else if (this.uid === reloadedLayer.uid) {
-                        this.visibilityModel = this.layer.getVisibility(this.uid);
-                        this.opacityModel = this.layer.getOpacity(this.uid) * 100;
-                    }
-                });
-            })
+                    });
+                }
+            )
         );
     },
     beforeUnmount() {
         // Remove all event handlers for this component
-        this.handlers.forEach(handler => this.$iApi.event.off(handler));
+        this.handlers.forEach((handler) => this.$iApi.event.off(handler));
     },
     methods: {
         // Update the layer visibility.

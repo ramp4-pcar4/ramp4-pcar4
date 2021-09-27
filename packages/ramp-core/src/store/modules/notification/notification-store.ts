@@ -30,7 +30,9 @@ export enum NotificationMutation {
 
 const getters = {
     notificationNumber: (state: NotificationState): Number => {
-        return state.notificationStack.length >= 99 ? 99 : state.notificationStack.length;
+        return state.notificationStack.length >= 99
+            ? 99
+            : state.notificationStack.length;
     }
 };
 
@@ -52,7 +54,10 @@ const actions: StoreActions = {
             context.commit('REMOVE_NOTIFICATION', notification);
         }
     },
-    [NotificationAction.registerGroup](context: NotificationContext, group: NotificationGroup) {
+    [NotificationAction.registerGroup](
+        context: NotificationContext,
+        group: NotificationGroup
+    ) {
         context.commit('REGISTER_GROUP', group);
     },
     [NotificationAction.addToGroup](
@@ -62,13 +67,17 @@ const actions: StoreActions = {
         if (context.state.groups[value.id]) {
             context.commit('ADD_TO_GROUP', value);
 
-            if (!context.state.notificationStack.includes(context.state.groups[value.id])) {
+            if (
+                !context.state.notificationStack.includes(
+                    context.state.groups[value.id]
+                )
+            ) {
                 context.commit('SHOW_GROUP', value.id);
             }
         }
     },
     [NotificationAction.clearAll](context: NotificationContext) {
-        Object.values(context.state.groups).forEach(group =>
+        Object.values(context.state.groups).forEach((group) =>
             context.commit(NotificationMutation.REMOVE_GROUP, group)
         );
 
@@ -77,7 +86,10 @@ const actions: StoreActions = {
 };
 
 const mutations: StoreMutations = {
-    [NotificationMutation.SHOW_NOTIFICATION](state: NotificationState, notification: Notification) {
+    [NotificationMutation.SHOW_NOTIFICATION](
+        state: NotificationState,
+        notification: Notification
+    ) {
         state.notificationStack = [notification, ...state.notificationStack];
     },
     [NotificationMutation.REMOVE_NOTIFICATION](
@@ -96,9 +108,15 @@ const mutations: StoreMutations = {
         state.groups[value.id].messageList.push(value.message);
     },
     [NotificationMutation.SHOW_GROUP](state: NotificationState, id: string) {
-        state.notificationStack = [state.groups[id], ...state.notificationStack];
+        state.notificationStack = [
+            state.groups[id],
+            ...state.notificationStack
+        ];
     },
-    [NotificationMutation.REMOVE_GROUP](state: NotificationState, group: NotificationGroup) {
+    [NotificationMutation.REMOVE_GROUP](
+        state: NotificationState,
+        group: NotificationGroup
+    ) {
         const index = state.notificationStack.indexOf(group);
         if (index > -1) {
             state.notificationStack.splice(index, 1);
@@ -106,7 +124,10 @@ const mutations: StoreMutations = {
 
         group.messageList = [];
     },
-    [NotificationMutation.REGISTER_GROUP](state: NotificationState, group: NotificationGroup) {
+    [NotificationMutation.REGISTER_GROUP](
+        state: NotificationState,
+        group: NotificationGroup
+    ) {
         state.groups[group.id] = group;
     },
     [NotificationMutation.CLEAR_ALL](state: NotificationState) {

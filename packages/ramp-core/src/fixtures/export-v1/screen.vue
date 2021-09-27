@@ -1,8 +1,6 @@
 <template>
     <panel-screen :panel="panel" :footer="true">
-        <template #header>
-            Export
-        </template>
+        <template #header> Export </template>
 
         <template #controls>
             <close @click="panel.close()"></close>
@@ -18,7 +16,15 @@
             <div class="flex">
                 <button
                     @click="fixture.export()"
-                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-8 px-16 mr-16"
+                    class="
+                        bg-green-500
+                        hover:bg-green-700
+                        text-white
+                        font-bold
+                        py-8
+                        px-16
+                        mr-16
+                    "
                 >
                     {{ $t('export-v1.download') }}
                 </button>
@@ -54,12 +60,14 @@ export default defineComponent({
     } {
         return {
             fixture: null,
-            make: debounce(300, function(this: any) {
+            make: debounce(300, function (this: any) {
                 if (!this.fixture) {
                     return;
                 }
 
-                const canvasElement = this.$el.querySelector('.export-canvas') as HTMLCanvasElement;
+                const canvasElement = this.$el.querySelector(
+                    '.export-canvas'
+                ) as HTMLCanvasElement;
 
                 // TODO: detect size of the canvas container properly
                 this.fixture.make(canvasElement, this.$el.clientWidth - 16);

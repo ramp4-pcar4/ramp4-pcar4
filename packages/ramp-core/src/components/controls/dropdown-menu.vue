@@ -16,7 +16,17 @@
         <div
             v-show="open"
             @blur="open = false"
-            class="rv-dropdown shadow-md border border-gray:200 py-8 bg-white rounded text-center z-10"
+            class="
+                rv-dropdown
+                shadow-md
+                border
+                border-gray:200
+                py-8
+                bg-white
+                rounded
+                text-center
+                z-10
+            "
             ref="dropdown"
         >
             <slot v-bind:close="closeDropdown"></slot>
@@ -49,8 +59,11 @@ export default defineComponent({
     mounted() {
         window.addEventListener(
             'click',
-            event => {
-                if (event.target instanceof HTMLElement && !this.$el.contains(event.target)) {
+            (event) => {
+                if (
+                    event.target instanceof HTMLElement &&
+                    !this.$el.contains(event.target)
+                ) {
                     this.open = false;
                 }
             },
@@ -79,8 +92,11 @@ export default defineComponent({
     beforeUnmount() {
         window.removeEventListener(
             'click',
-            event => {
-                if (event.target instanceof HTMLElement && !this.$el.contains(event.target)) {
+            (event) => {
+                if (
+                    event.target instanceof HTMLElement &&
+                    !this.$el.contains(event.target)
+                ) {
                     this.open = false;
                 }
             },

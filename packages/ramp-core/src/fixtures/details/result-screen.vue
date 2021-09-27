@@ -9,7 +9,14 @@
         <template #content>
             <div v-if="identifyResult.items.length > 0">
                 <div
-                    class="flex px-10 py-10 text-md hover:bg-gray-200 cursor-pointer"
+                    class="
+                        flex
+                        px-10
+                        py-10
+                        text-md
+                        hover:bg-gray-200
+                        cursor-pointer
+                    "
                     v-for="(item, idx) in identifyResult.items"
                     :key="idx"
                     @click="openResult(idx)"
@@ -17,9 +24,15 @@
                     v-truncate
                 >
                     <!-- TODO: test if itemIcon() call works as intended -->
-                    <span v-html="itemIcon(item.data, idx)" class="flex-none symbologyIcon"></span>
+                    <span
+                        v-html="itemIcon(item.data, idx)"
+                        class="flex-none symbologyIcon"
+                    ></span>
                     <span class="flex-initial py-5 px-10" v-truncate>
-                        {{ item.data[nameField] || 'Identify Result ' + (idx + 1) }}
+                        {{
+                            item.data[nameField] ||
+                            'Identify Result ' + (idx + 1)
+                        }}
                     </span>
                 </div>
             </div>
@@ -88,12 +101,14 @@ export default defineComponent({
             const uid = this.identifyResult.uid;
             const layer: LayerInstance | undefined = this.getLayerByUid(uid);
             if (layer === undefined) {
-                console.warn(`could not find layer for uid ${uid} during icon lookup`);
+                console.warn(
+                    `could not find layer for uid ${uid} during icon lookup`
+                );
                 return;
             }
 
             const oidField = layer.getOidField(uid);
-            layer.getIcon(data[oidField], uid).then(value => {
+            layer.getIcon(data[oidField], uid).then((value) => {
                 if (this.icon[idx] !== value) {
                     this.icon[idx] = value;
                 }

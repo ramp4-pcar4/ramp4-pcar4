@@ -16,7 +16,11 @@
                         @click="clearAll"
                         class="text-gray-500 hover:text-black p-4 ml-auto"
                         :content="$t('notifications.controls.clearAll')"
-                        v-tippy="{ placement: 'bottom', theme: 'ramp4', animation: 'scale' }"
+                        v-tippy="{
+                            placement: 'bottom',
+                            theme: 'ramp4',
+                            animation: 'scale'
+                        }"
                     >
                         <!-- https://fonts.google.com/icons?selected=Material%20Icons%3Aclear_all -->
                         <svg
@@ -25,7 +29,9 @@
                             class="fill-current h-24 w-24"
                         >
                             <path d="M0 0h24v24H0z" fill="none" />
-                            <path d="M5 13h14v-2H5v2zm-2 4h14v-2H3v2zM7 7v2h14V7H7z" />
+                            <path
+                                d="M5 13h14v-2H5v2zm-2 4h14v-2H3v2zM7 7v2h14V7H7z"
+                            />
                         </svg>
                     </button>
                 </div>

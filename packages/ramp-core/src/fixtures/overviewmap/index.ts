@@ -9,7 +9,7 @@ class OverviewmapFixture extends OverviewmapAPI {
 
         this.$vApp.$store.registerModule('overviewmap', overviewmap());
 
-        Object.entries(messages).forEach(value =>
+        Object.entries(messages).forEach((value) =>
             (<any>this.$vApp.$i18n).mergeLocaleMessage(...value)
         );
 
@@ -19,8 +19,11 @@ class OverviewmapFixture extends OverviewmapAPI {
             (value: OverviewmapConfig | undefined) => this._parseConfig(value)
         );
 
-        const { vNode, destroy, el } = this.mount(OverviewmapV, { app: this.$element });
-        const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
+        const { vNode, destroy, el } = this.mount(OverviewmapV, {
+            app: this.$element
+        });
+        const innerShell =
+            this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         innerShell.appendChild(el.childNodes[0]);
     }
 
