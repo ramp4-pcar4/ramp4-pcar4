@@ -42,7 +42,10 @@
             </button>
 
             <!-- show/hide columns -->
-            <column-dropdown :columnApi="columnApi" :columnDefs="columnDefs"></column-dropdown>
+            <column-dropdown
+                :columnApi="columnApi"
+                :columnDefs="columnDefs"
+            ></column-dropdown>
 
             <!-- toggle column filters -->
             <button
@@ -148,7 +151,9 @@ export default defineComponent({
             rowData: [],
             oidField: 'OBJECTID',
 
-            gridAccessibilityManager: undefined as GridAccessibilityManager | undefined,
+            gridAccessibilityManager: undefined as
+                | GridAccessibilityManager
+                | undefined,
 
             // Filter variables.
             quicksearch: '',
@@ -196,10 +201,14 @@ export default defineComponent({
             tabToNextCell: () => {
                 return null;
             },
-            onModelUpdated: debounce(300, () => this.columnApi.autoSizeAllColumns())
+            onModelUpdated: debounce(300, () =>
+                this.columnApi.autoSizeAllColumns()
+            )
         };
 
-        const fancyLayer: LayerInstance | undefined = this.getLayerByUid(this.layerUid);
+        const fancyLayer: LayerInstance | undefined = this.getLayerByUid(
+            this.layerUid
+        );
 
         if (fancyLayer === undefined) {
             // this really shouldn't happen unless the wrong API call is made, but maybe we should
@@ -214,12 +223,18 @@ export default defineComponent({
         }
 
         fancyLayer.isLayerLoaded().then(() => {
-            const tableAttributePromise = markRaw(fancyLayer).getTabularAttributes(this.layerUid);
+            const tableAttributePromise = markRaw(
+                fancyLayer
+            ).getTabularAttributes(this.layerUid);
 
             tableAttributePromise.then((tableAttributes: any) => {
                 // Iterate through table columns and set up column definitions and column filter stuff.
                 // Also adds the `rvSymbol` and `rvInteractive` columns to the table.
-                ['rvSymbol', 'rvInteractive', ...tableAttributes.columns].forEach((column: any) => {
+                [
+                    'rvSymbol',
+                    'rvInteractive',
+                    ...tableAttributes.columns
+                ].forEach((column: any) => {
                     let col: ColumnDefinition = {
                         headerName: column.title || '',
                         field: column.data || column,
@@ -253,7 +268,9 @@ export default defineComponent({
                             col.minWidth = 400;
                             col.cellRenderer = (cell: any) => {
                                 // get YYYY-MM-DD from date
-                                return new Date(cell.value).toISOString().slice(0, 10);
+                                return new Date(cell.value)
+                                    .toISOString()
+                                    .slice(0, 10);
                             };
                         } else if (fieldInfo.type === TEXT_TYPE) {
                             if (col.isSelector) {
@@ -288,7 +305,7 @@ export default defineComponent({
 
     beforeUnmount() {
         // Remove all event handlers for this component
-        this.handlers.forEach(handler => this.$iApi.event.off(handler));
+        this.handlers.forEach((handler) => this.$iApi.event.off(handler));
         this.gridAccessibilityManager?.removeAccessibilityListeners();
     },
 
@@ -309,11 +326,18 @@ export default defineComponent({
             this.handlers.push(
                 this.$iApi.event.on(
                     GlobalEvents.FILTER_CHANGE,
-                    ({ uid, filterKey }: { uid: string; filterKey: string }) => {
+                    ({
+                        uid,
+                        filterKey
+                    }: {
+                        uid: string;
+                        filterKey: string;
+                    }) => {
                         if (
                             filterKey !== CoreFilter.GRID &&
                             uid &&
-                            (uid === this.layerUid || this.getLayerByUid(uid)!.uid == this.layerUid)
+                            (uid === this.layerUid ||
+                                this.getLayerByUid(uid)!.uid == this.layerUid)
                         ) {
                             this.applyLayerFilters();
                         }
@@ -323,7 +347,13 @@ export default defineComponent({
             this.handlers.push(
                 this.$iApi.event.on(
                     GlobalEvents.LAYER_VISIBILITYCHANGE,
-                    ({ visibility, uid }: { visibility: boolean; uid: string }) => {
+                    ({
+                        visibility,
+                        uid
+                    }: {
+                        visibility: boolean;
+                        uid: string;
+                    }) => {
                         if (
                             uid &&
                             (uid === this.layerUid ||
@@ -369,9 +399,12 @@ export default defineComponent({
         // Updates the current status of the filter.
         updateFilterInfo() {
             if (this.gridApi) {
-                this.filterInfo.firstRow = this.gridApi.getFirstDisplayedRow() + 1;
-                this.filterInfo.lastRow = this.gridApi.getLastDisplayedRow() + 1;
-                this.filterInfo.visibleRows = this.gridApi.getDisplayedRowCount();
+                this.filterInfo.firstRow =
+                    this.gridApi.getFirstDisplayedRow() + 1;
+                this.filterInfo.lastRow =
+                    this.gridApi.getLastDisplayedRow() + 1;
+                this.filterInfo.visibleRows =
+                    this.gridApi.getDisplayedRowCount();
             }
         },
 
@@ -401,7 +434,10 @@ export default defineComponent({
                     : '';
 
             colDef.floatingFilterComponent = 'dateFloatingFilter';
-            colDef.filterParams.comparator = function(filterDate: any, entryDate: any) {
+            colDef.filterParams.comparator = function (
+                filterDate: any,
+                entryDate: any
+            ) {
                 let entry = new Date(entryDate);
 
                 // We need to specifically compare the UTC year, month, and date because
@@ -411,7 +447,9 @@ export default defineComponent({
                 // Check year
                 if (entry.getUTCFullYear() > filterDate.getUTCFullYear()) {
                     return 1;
-                } else if (entry.getUTCFullYear() < filterDate.getUTCFullYear()) {
+                } else if (
+                    entry.getUTCFullYear() < filterDate.getUTCFullYear()
+                ) {
                     return -1;
                 }
 
@@ -434,7 +472,11 @@ export default defineComponent({
             };
         },
 
-        setUpSelectorFilter(colDef: any, rowData: any, state: TableStateManager) {
+        setUpSelectorFilter(
+            colDef: any,
+            rowData: any,
+            state: TableStateManager
+        ) {
             // Retrieve stored filter value from the state manager if it exists.
             let value =
                 state.getColumnFilter(colDef.field) !== undefined
@@ -486,7 +528,7 @@ export default defineComponent({
             // see: https://github.com/ramp4-pcar4/ramp4-pcar4/pull/57#pullrequestreview-377999397
 
             // default to regex filtering for text columns
-            colDef.filterParams.textCustomComparator = function(
+            colDef.filterParams.textCustomComparator = function (
                 filter: any,
                 gridValue: any,
                 filterText: any
@@ -499,7 +541,7 @@ export default defineComponent({
             };
 
             // modified from: https://www.ag-grid.com/javascript-grid-filter-text/#text-formatter
-            let disregardAccents = function(s: any) {
+            let disregardAccents = function (s: any) {
                 if (isNaN(s)) {
                     // check if s is a number before trying to convert it to lowercase (otherwise throws error)
                     let r = s.toLowerCase();
@@ -519,7 +561,7 @@ export default defineComponent({
             };
 
             // for individual columns
-            colDef.filterParams.textFormatter = function(s: any) {
+            colDef.filterParams.textFormatter = function (s: any) {
                 return disregardAccents(s);
             };
         },
@@ -578,11 +620,12 @@ export default defineComponent({
                     isStatic: true,
                     maxWidth: 82,
                     cellRenderer: (cell: any) => {
-                        const layer: LayerInstance | undefined = this.getLayerByUid(this.layerUid);
+                        const layer: LayerInstance | undefined =
+                            this.getLayerByUid(this.layerUid);
                         if (layer === undefined) return;
                         const iconContainer = document.createElement('span');
                         const oid = cell.data[this.oidField];
-                        layer.getIcon(oid, this.layerUid).then(i => {
+                        layer.getIcon(oid, this.layerUid).then((i) => {
                             iconContainer.innerHTML = i;
                         });
                         return iconContainer;
@@ -640,7 +683,7 @@ export default defineComponent({
         getFiltersQuery() {
             const filterModel = this.gridApi.getFilterModel();
             let colStrs: any = [];
-            Object.keys(filterModel).forEach(col => {
+            Object.keys(filterModel).forEach((col) => {
                 colStrs.push(this.filterToSql(col, filterModel[col]));
             });
             if (this.quicksearch && this.quicksearch.length > 0) {
@@ -676,7 +719,8 @@ export default defineComponent({
                         let val = colFilter.filter.replace(/'/g, /''/);
                         if (val !== '') {
                             // following code is to UNESCAPE all special chars for ESRI and geoApi SQL to parse properly (remove the backslash)
-                            const escRegex = /\\[(!"#$&'+,.\\/:;<=>?@[\]^`{|}~)]/g;
+                            const escRegex =
+                                /\\[(!"#$&'+,.\\/:;<=>?@[\]^`{|}~)]/g;
                             // remVal stores the remaining string text after the last special char (or the entire string, if there are no special chars at all)
                             let remVal = val;
                             let newVal = '';
@@ -687,7 +731,10 @@ export default defineComponent({
                                 // update all variables after finding an escaped special char, preserving all text except the backslash
                                 newVal =
                                     newVal +
-                                    val.substr(lastIdx, escMatch.index - lastIdx) +
+                                    val.substr(
+                                        lastIdx,
+                                        escMatch.index - lastIdx
+                                    ) +
                                     escMatch[0].slice(-1);
                                 lastIdx = escMatch.index + 2;
                                 remVal = val.substr(escMatch.index + 2);
@@ -705,7 +752,8 @@ export default defineComponent({
                             let sqlWhere = `UPPER(${col}) LIKE \'${newVal
                                 .replace(/\*/g, '%')
                                 .toUpperCase()}%\'`;
-                            return sqlWhere.includes('ௌ%') || sqlWhere.includes('ௌ_')
+                            return sqlWhere.includes('ௌ%') ||
+                                sqlWhere.includes('ௌ_')
                                 ? `${sqlWhere} ESCAPE \'ௌ\'`
                                 : sqlWhere;
                         }
@@ -715,11 +763,14 @@ export default defineComponent({
                     const dateFrom = new Date(colFilter.dateFrom);
                     const dateTo = new Date(colFilter.dateTo);
                     const from = dateFrom
-                        ? `${dateFrom.getMonth() +
-                              1}/${dateFrom.getDate()}/${dateFrom.getFullYear()}`
+                        ? `${
+                              dateFrom.getMonth() + 1
+                          }/${dateFrom.getDate()}/${dateFrom.getFullYear()}`
                         : undefined;
                     const to = dateTo
-                        ? `${dateTo.getMonth() + 1}/${dateTo.getDate()}/${dateTo.getFullYear()}`
+                        ? `${
+                              dateTo.getMonth() + 1
+                          }/${dateTo.getDate()}/${dateTo.getFullYear()}`
                         : undefined;
                     switch (colFilter.type) {
                         case 'greaterThanOrEqual':
@@ -760,10 +811,7 @@ export default defineComponent({
                 // each row must contain all of the split search values
                 for (let searchVal of searchVals) {
                     const re = new RegExp(
-                        `.*${searchVal
-                            .split(' ')
-                            .join('.*')
-                            .toUpperCase()}`
+                        `.*${searchVal.split(' ').join('.*').toUpperCase()}`
                     );
                     const filterVal = `%${searchVal
                         .replace(/\*/g, '%')
@@ -779,7 +827,10 @@ export default defineComponent({
                                 row.data[column.colId] === null
                                     ? null
                                     : row.data[column.colId].toString();
-                            if (cellData !== null && re.test(cellData.toUpperCase())) {
+                            if (
+                                cellData !== null &&
+                                re.test(cellData.toUpperCase())
+                            ) {
                                 rowSql
                                     ? (rowSql = rowSql.concat(
                                           ' AND ',
@@ -795,9 +846,13 @@ export default defineComponent({
                                     : (foundVal = true);
                                 break;
                             }
-                        } else if (column.colDef.filter === 'agNumberColumnFilter') {
+                        } else if (
+                            column.colDef.filter === 'agNumberColumnFilter'
+                        ) {
                             const cellData =
-                                row.data[column.colId] === null ? null : row.data[column.colId];
+                                row.data[column.colId] === null
+                                    ? null
+                                    : row.data[column.colId];
                             if (cellData !== null && re.test(cellData)) {
                                 rowSql
                                     ? (rowSql = rowSql.concat(
@@ -833,7 +888,10 @@ export default defineComponent({
         gridFiltersApplied() {
             const gridQuery = this.getFiltersQuery();
             const layer = this.getLayerByUid(this.layerUid);
-            const layerQuery = layer!.getSqlFilter(CoreFilter.GRID, this.layerUid);
+            const layerQuery = layer!.getSqlFilter(
+                CoreFilter.GRID,
+                this.layerUid
+            );
             return gridQuery === layerQuery;
         },
 

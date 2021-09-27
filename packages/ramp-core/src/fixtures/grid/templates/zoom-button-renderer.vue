@@ -41,11 +41,14 @@ export default defineComponent({
     },
     mounted() {
         // need to hoist events to top level cell wrapper to be keyboard accessible
-        this.params.eGridCell.addEventListener('keydown', (e: KeyboardEvent) => {
-            if (e.key === 'Enter') {
-                this.zoomToFeature();
+        this.params.eGridCell.addEventListener(
+            'keydown',
+            (e: KeyboardEvent) => {
+                if (e.key === 'Enter') {
+                    this.zoomToFeature();
+                }
             }
-        });
+        );
         this.params.eGridCell.addEventListener('focus', () => {
             (this.$el as any)._tippy.show();
         });
@@ -56,11 +59,13 @@ export default defineComponent({
 
     methods: {
         zoomToFeature() {
-            const layer: LayerInstance | undefined = this.getLayerByUid(this.params.uid);
+            const layer: LayerInstance | undefined = this.getLayerByUid(
+                this.params.uid
+            );
             if (layer === undefined) return;
             const oid = this.params.data[this.params.oidField];
             const opts = { getGeom: true };
-            layer.getGraphic(oid, opts, this.params.uid).then(g => {
+            layer.getGraphic(oid, opts, this.params.uid).then((g) => {
                 if (g.geometry === undefined) {
                     console.error(`Could not find graphic for objectid ${oid}`);
                 } else {

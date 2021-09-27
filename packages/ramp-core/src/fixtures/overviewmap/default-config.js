@@ -138,8 +138,7 @@ export const defaultMercator = {
             layers: [
                 {
                     layerType: 'esriTile',
-                    url:
-                        'http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
+                    url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
                 }
             ]
         }
@@ -266,8 +265,7 @@ export const defaultLambert = {
             layers: [
                 {
                     layerType: 'esriTile',
-                    url:
-                        'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBCT3978/MapServer'
+                    url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBCT3978/MapServer'
                 }
             ]
         }

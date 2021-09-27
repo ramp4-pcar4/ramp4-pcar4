@@ -18,7 +18,12 @@ export class MultiPoint extends BaseGeometry {
     // from existing geometry that can be interpreted as a set of points
     constructor(id: IdDef, multiPoint: MultiPoint);
     // from arrays of verticies that can be interpreted as a set of points
-    constructor(id: IdDef, listOfCoords: Array<Array<number>>, sr?: SrDef, raw?: boolean);
+    constructor(
+        id: IdDef,
+        listOfCoords: Array<Array<number>>,
+        sr?: SrDef,
+        raw?: boolean
+    );
     constructor(id: IdDef, listOfPoints: Array<Point>, sr?: SrDef);
     constructor(id: IdDef, listOfXY: Array<object>, sr?: SrDef);
     constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef);
@@ -53,12 +58,19 @@ export class MultiPoint extends BaseGeometry {
 
     /** Returns an array of the contained lines formatted as API Point objects. A new array is returned each time this is called. */
     get pointArray(): Array<Point> {
-        return this.rawArray.map((p, i) => new Point(this.childIdGenerator(i), p, this.sr, true));
+        return this.rawArray.map(
+            (p, i) => new Point(this.childIdGenerator(i), p, this.sr, true)
+        );
     }
 
     /** Returns a copy of the n-th contained point. */
     getAt(n: number): Point {
-        return new Point(this.childIdGenerator(n), this.rawArray[n], this.sr, true);
+        return new Point(
+            this.childIdGenerator(n),
+            this.rawArray[n],
+            this.sr,
+            true
+        );
     }
 
     /** Will update the n-th contained point with the values of the point parameter. It is assumed the point is in the same spatial reference as the Multipoint */
@@ -98,14 +110,16 @@ export class MultiPoint extends BaseGeometry {
             if (input.length === 0) {
                 throw new Error('no verticies provided');
             }
-            return input.map(v => Point.parseXY(v));
+            return input.map((v) => Point.parseXY(v));
         } else {
             throw new Error('invalid input format for parsePointSet');
         }
     }
 
-    private static arrayDeepCopy(a: Array<Array<number>>): Array<Array<number>> {
+    private static arrayDeepCopy(
+        a: Array<Array<number>>
+    ): Array<Array<number>> {
         // speed tests show loops & slice is 3x faster than JSON parse/stringify
-        return a.map(p => p.slice());
+        return a.map((p) => p.slice());
     }
 }

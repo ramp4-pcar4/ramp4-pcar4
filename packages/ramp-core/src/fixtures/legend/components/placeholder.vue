@@ -1,6 +1,10 @@
 <template>
     <div class="legend-item">
-        <div class="legend-item-header" v-focus-item="'show-truncate'" truncate-trigger>
+        <div
+            class="legend-item-header"
+            v-focus-item="'show-truncate'"
+            truncate-trigger
+        >
             <!-- smiley face. very important that we migrate this -->
             <div class="flex pr-10">
                 <svg
@@ -74,7 +78,10 @@ export default defineComponent({
                     // Wait for symbology to load too
                     this.legendItem.reloadEntry(layer);
                     if (this.legendItem.isDefault) {
-                        this.$store.set(LegendStore.updateDefaultEntry, this.legendItem.id);
+                        this.$store.set(
+                            LegendStore.updateDefaultEntry,
+                            this.legendItem.id
+                        );
                     }
                 });
             }
