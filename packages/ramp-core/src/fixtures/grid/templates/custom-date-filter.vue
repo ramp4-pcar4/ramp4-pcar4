@@ -1,7 +1,18 @@
 <template>
     <div class="h-full flex items-center justify-center w-full">
         <input
-            class="m-0 py-1 w-1/2 rv-input bg-transparent text-black-75 h-24 pb-8 border-0 border-b-2 pl-3"
+            class="
+                m-0
+                py-1
+                w-1/2
+                rv-input
+                bg-transparent
+                text-black-75
+                h-24
+                pb-8
+                border-0 border-b-2
+                pl-3
+            "
             type="date"
             placeholder="date min"
             v-model="minVal"
@@ -9,7 +20,18 @@
         />
 
         <input
-            class="m-0 py-1 w-1/2 rv-input bg-transparent text-black-75 h-24 pb-8 border-0 border-b-2 pl-3"
+            class="
+                m-0
+                py-1
+                w-1/2
+                rv-input
+                bg-transparent
+                text-black-75
+                h-24
+                pb-8
+                border-0 border-b-2
+                pl-3
+            "
             type="date"
             placeholder="date max"
             v-model="maxVal"
@@ -34,11 +56,13 @@ export default defineComponent({
     beforeMount() {
         // Load previously stored values (if saved in table state manager)
         this.minVal =
-            this.params.stateManager.getColumnFilter(this.params.column.colDef.field + ' min') ||
-            '';
+            this.params.stateManager.getColumnFilter(
+                this.params.column.colDef.field + ' min'
+            ) || '';
         this.maxVal =
-            this.params.stateManager.getColumnFilter(this.params.column.colDef.field + ' max') ||
-            '';
+            this.params.stateManager.getColumnFilter(
+                this.params.column.colDef.field + ' max'
+            ) || '';
         // Apply the default values to the column filter.
         this.minValChanged();
         this.maxValChanged();
@@ -72,12 +96,14 @@ export default defineComponent({
         setFilterModel(instance: any) {
             // This is the furthest date supported by JavaScript.
             let maxPossibleDate: Date | String = new Date(8640000000000000);
-            maxPossibleDate = `${maxPossibleDate.getFullYear()}-${maxPossibleDate.getMonth() +
-                1}-${maxPossibleDate.getDate()}`;
+            maxPossibleDate = `${maxPossibleDate.getFullYear()}-${
+                maxPossibleDate.getMonth() + 1
+            }-${maxPossibleDate.getDate()}`;
             // This is the earliest date supported by JavaScript.
             let minPossibleDate: Date | String = new Date(0);
-            minPossibleDate = `${minPossibleDate.getFullYear()}-${minPossibleDate.getMonth() +
-                1}-${minPossibleDate.getDate()}`;
+            minPossibleDate = `${minPossibleDate.getFullYear()}-${
+                minPossibleDate.getMonth() + 1
+            }-${minPossibleDate.getDate()}`;
             if (this.maxVal === '' && this.minVal === '') {
                 // If neither value is set, clear the date filter.
                 instance.setModel(null);

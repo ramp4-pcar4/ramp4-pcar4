@@ -6,7 +6,11 @@
             <!-- <pin> is a global button component that any fixture/panel/screen can reuse -->
 
             <!-- ✔ this is the correct way to pin a panel and bind the button active state whether this panel is pinned or not 👇 -->
-            <pin @click="panel.pin()" :active="panel.isPinned" v-if="checkScreenSize"></pin>
+            <pin
+                @click="panel.pin()"
+                :active="panel.isPinned"
+                v-if="checkScreenSize"
+            ></pin>
 
             <!-- ✔ this will also work 👇 -->
             <!-- <pin @click="panel.pin()" :active="panel.isPinned"></pin> -->
@@ -23,7 +27,14 @@
                             props: { greeting: 'Greeting from Screen C' }
                         })
                     "
-                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-8 px-16"
+                    class="
+                        bg-green-500
+                        hover:bg-green-700
+                        text-white
+                        font-bold
+                        py-8
+                        px-16
+                    "
                 >
                     Switch to Screen A
                 </button>

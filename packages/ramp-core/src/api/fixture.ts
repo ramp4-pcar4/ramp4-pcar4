@@ -1,7 +1,18 @@
-import Vue, { Component, ComponentOptions, createApp, defineComponent, h, render } from 'vue';
+import Vue, {
+    Component,
+    ComponentOptions,
+    createApp,
+    defineComponent,
+    h,
+    render
+} from 'vue';
 
 import { APIScope, GlobalEvents, InstanceAPI } from './internal';
-import { FixtureBase, FixtureMutation, FixtureBaseSet } from '@/store/modules/fixture';
+import {
+    FixtureBase,
+    FixtureMutation,
+    FixtureBaseSet
+} from '@/store/modules/fixture';
 
 // TODO: implement the same `internal.ts` pattern in store, so can import from a single place;
 
@@ -40,11 +51,17 @@ export class FixtureAPI extends APIScope {
             }
 
             // run the provided constructor and update the resulting object with FixtureInstance functions/properties
-            fixture = FixtureInstance.updateBaseToInstance(new constructor(), id, this.$iApi);
+            fixture = FixtureInstance.updateBaseToInstance(
+                new constructor(),
+                id,
+                this.$iApi
+            );
         } else {
             // perform a dynamic webpack import of a internal fixture (allows for code splitting)
             const instanceConstructor: IFixtureInstance = (
-                await import(/* webpackChunkName: "[request]" */ `@/fixtures/${id}/index.ts`)
+                await import(
+                    /* webpackChunkName: "[request]" */ `@/fixtures/${id}/index.ts`
+                )
             ).default;
 
             fixture = new instanceConstructor(id, this.$iApi);
@@ -70,7 +87,9 @@ export class FixtureAPI extends APIScope {
      * @returns {T}
      * @memberof FixtureAPI
      */
-    remove<T extends FixtureBase = FixtureBase>(fixtureOrId: FixtureBase | string): T {
+    remove<T extends FixtureBase = FixtureBase>(
+        fixtureOrId: FixtureBase | string
+    ): T {
         const fixture = this.get<T>(fixtureOrId);
 
         this.$vApp.$store.set(`fixture/${FixtureMutation.REMOVE_FIXTURE}!`, {
@@ -116,7 +135,7 @@ export class FixtureAPI extends APIScope {
             ids.push(item.id);
         }
 
-        const fixtures = ids.map(id => {
+        const fixtures = ids.map((id) => {
             const fixture = this.$vApp.$store.get<T>(`fixture/items@${id}`);
             if (!fixture) {
                 return undefined;
@@ -140,7 +159,9 @@ export class FixtureAPI extends APIScope {
      * @returns {Promise<Array<FixtureBase>>} resolves with array of default fixtures
      * @memberof FixtureAPI
      */
-    addDefaultFixtures(fixtureNames?: Array<string>): Promise<Array<FixtureBase>> {
+    addDefaultFixtures(
+        fixtureNames?: Array<string>
+    ): Promise<Array<FixtureBase>> {
         if (!Array.isArray(fixtureNames) || fixtureNames.length === 0) {
             fixtureNames = [
                 'appbar',
@@ -165,7 +186,7 @@ export class FixtureAPI extends APIScope {
         // add all the requested default promises.
         // return the promise-all of all the add fixture promises
         // TODO alterately, don't do a promise.all, and just return the array of promises. not sure which is more useful.
-        return Promise.all(fixtureNames.map(fn => this.add(fn)));
+        return Promise.all(fixtureNames.map((fn) => this.add(fn)));
     }
 }
 
@@ -299,7 +320,9 @@ export class FixtureInstance extends APIScope implements FixtureBase {
         if (app && app._context) {
             vNode.appContext = app._context;
         }
-        el ? render(vNode, el) : render(vNode, (el = document.createElement('div')));
+        el
+            ? render(vNode, el)
+            : render(vNode, (el = document.createElement('div')));
 
         const destroy = () => {
             if (el) {

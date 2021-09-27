@@ -31,7 +31,6 @@ export default defineComponent({
             aria: {
                 content: 'labelledby'
             },
-            // a11y: false, // can't find a replacement for Vue 3
             theme: 'ramp4',
             animation: 'scale',
             inertia: true,
@@ -47,8 +46,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-$font-list: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
-    Apple Color Emoji, Segoe UI Emoji;
+$font-list: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica,
+    Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
 @use 'directives/focus-list/focus-list';
 .ramp-app {
     @include focus-list.default-focused-styling;
@@ -72,7 +71,8 @@ $font-list: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica
 }
 .symbologyIcon {
     @apply bg-white inline-flex justify-center items-center overflow-hidden;
-    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14),
+    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
+        0px 1px 1px 0px rgba(0, 0, 0, 0.14),
         0px 2px 1px -1px rgba(0, 0, 0, 0.12);
 }
 </style>

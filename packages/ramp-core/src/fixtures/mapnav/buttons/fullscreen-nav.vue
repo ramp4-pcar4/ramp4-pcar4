@@ -1,5 +1,8 @@
 <template>
-    <mapnav-button :onClickFunction="onClick" :tooltip="$t('mapnav.fullscreen')">
+    <mapnav-button
+        :onClickFunction="onClick"
+        :tooltip="$t('mapnav.fullscreen')"
+    >
         <svg
             v-if="$iApi.isFullscreen"
             xmlns="http://www.w3.org/2000/svg"

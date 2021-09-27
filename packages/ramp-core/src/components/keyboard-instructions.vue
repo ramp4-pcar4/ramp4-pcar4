@@ -1,12 +1,28 @@
 <template>
     <div
-        class="absolute inset-0 flex justify-center items-center bg-opacity-30 bg-black z-50 pointer-events-auto"
+        class="
+            absolute
+            inset-0
+            flex
+            justify-center
+            items-center
+            bg-opacity-30 bg-black
+            z-50
+            pointer-events-auto
+        "
         v-if="open"
         @click="open = false"
         @keydown="onKeydown"
     >
         <div
-            class="bg-white w-500 pointer-events-auto shadow-2xl p-20 flex flex-col"
+            class="
+                bg-white
+                w-500
+                pointer-events-auto
+                shadow-2xl
+                p-20
+                flex flex-col
+            "
             @click.stop.prevent
             tabindex="0"
             ref="firstEl"

@@ -1,5 +1,10 @@
 <template>
-    <component :is="templates[type]" :icon="icons[icon]" :name="name" :config="config" />
+    <component
+        :is="templates[type]"
+        :icon="icons[icon]"
+        :name="name"
+        :config="config"
+    />
 </template>
 
 <script lang="ts">

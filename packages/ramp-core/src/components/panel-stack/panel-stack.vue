@@ -1,5 +1,10 @@
 <template>
-    <transition-group @enter="enter" @leave="leave" name="panel-container" tag="div">
+    <transition-group
+        @enter="enter"
+        @leave="leave"
+        name="panel-container"
+        tag="div"
+    >
         <!-- TODO: pass a corresponding fixture instance to the panel component as it can be useful -->
         <panel-container
             v-for="panel in visible($iApi.screenSize)"
@@ -80,7 +85,11 @@ export default defineComponent({
         /**
          * Animate transition between panel screen components by fading them in/out.
          */
-        animateTransition(el: HTMLElement, done: () => void, values: number[][]): void {
+        animateTransition(
+            el: HTMLElement,
+            done: () => void,
+            values: number[][]
+        ): void {
             anime({
                 targets: el,
                 duration: 300,

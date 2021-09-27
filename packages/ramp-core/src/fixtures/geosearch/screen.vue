@@ -10,7 +10,10 @@
                 :active="panel.isPinned"
                 v-if="$iApi.screenSize !== 'xs'"
             ></pin>
-            <close @click="panel.close()" v-if="$iApi.screenSize !== 'xs'"></close>
+            <close
+                @click="panel.close()"
+                v-if="$iApi.screenSize !== 'xs'"
+            ></close>
         </template>
 
         <template #content>
@@ -23,13 +26,25 @@
                 <div class="px-5 mb-10 truncate">
                     <span
                         class="relative h-48"
-                        v-if="searchVal && searchResults.length === 0 && !loadingResults"
+                        v-if="
+                            searchVal &&
+                            searchResults.length === 0 &&
+                            !loadingResults
+                        "
                         >{{ $t('geosearch.noResults')
-                        }}<span class="font-bold text-blue-600">"{{ searchVal }}"</span></span
+                        }}<span class="font-bold text-blue-600"
+                            >"{{ searchVal }}"</span
+                        ></span
                     >
                 </div>
                 <ul
-                    class="rv-results-list flex-grow mb-5 border-t border-b border-gray-600 overflow-hidden overflow-y-auto"
+                    class="
+                        rv-results-list
+                        flex-grow
+                        mb-5
+                        border-t border-b border-gray-600
+                        overflow-hidden overflow-y-auto
+                    "
                     v-focus-list
                     v-if="searchResults.length > 0"
                 >
@@ -39,11 +54,21 @@
                         v-bind:key="idx"
                     >
                         <button
-                            class="absolute inset-0 h-full w-full hover:bg-gray-300 default-focus-style"
+                            class="
+                                absolute
+                                inset-0
+                                h-full
+                                w-full
+                                hover:bg-gray-300
+                                default-focus-style
+                            "
                             @click="zoomIn(result)"
                             v-focus-item="'show-truncate'"
                         >
-                            <div class="rv-result-description flex px-8" v-truncate>
+                            <div
+                                class="rv-result-description flex px-8"
+                                v-truncate
+                            >
                                 <div class="flex-1 text-left truncate">
                                     <span
                                         v-html="
@@ -76,7 +101,9 @@
                         </button>
                     </li>
                 </ul>
-                <geosearch-bottom-filters class="mt-auto"></geosearch-bottom-filters>
+                <geosearch-bottom-filters
+                    class="mt-auto"
+                ></geosearch-bottom-filters>
             </div>
         </template>
     </panel-screen>
@@ -127,7 +154,8 @@ export default defineComponent({
             // wrap matched search term in results inside span with styling
             const highlightedResult = name.replace(
                 new RegExp(`${this.searchVal.value}`, 'gi'),
-                match => '<span class="font-bold text-blue-600">' + match + '</span>'
+                (match) =>
+                    '<span class="font-bold text-blue-600">' + match + '</span>'
             );
             // add comma to new highlighted result if a province/location is provided
             return province ? highlightedResult + ',' : highlightedResult;

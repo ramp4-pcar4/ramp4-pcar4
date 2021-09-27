@@ -18,9 +18,11 @@ export enum GridMutation {
 }
 
 const getters = {
-    get: (state: GridState) => (id: string): GridConfig | null => {
-        return state.grids[id];
-    }
+    get:
+        (state: GridState) =>
+        (id: string): GridConfig | null => {
+            return state.grids[id];
+        }
 };
 
 const actions = {

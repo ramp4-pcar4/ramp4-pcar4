@@ -1,7 +1,12 @@
 import { FixtureInstance, LayerInstance } from '@/api';
 import { TreeNode } from '@/geo/api';
 import { LegendConfig, LegendStore } from '../store';
-import { LegendItem, LegendEntry, LegendGroup, LegendSet } from '../store/legend-defs';
+import {
+    LegendItem,
+    LegendEntry,
+    LegendGroup,
+    LegendSet
+} from '../store/legend-defs';
 import { LayerStore } from '@/store/modules/layer';
 
 export class LegendAPI extends FixtureInstance {
@@ -28,13 +33,17 @@ export class LegendAPI extends FixtureInstance {
             return;
         }
 
-        const layers: LayerInstance[] | undefined = this.$vApp.$store.get(LayerStore.layers);
+        const layers: LayerInstance[] | undefined = this.$vApp.$store.get(
+            LayerStore.layers
+        );
 
         let legendEntries: Array<LegendItem> = [];
         let stack: Array<any> = [];
         // initialize stack with all legend elements listed in config
 
-        legendConfig.root.children.forEach(legendItem => stack.push(legendItem));
+        legendConfig.root.children.forEach((legendItem) =>
+            stack.push(legendItem)
+        );
 
         // parse children from legend root structure through traversal
         while (stack.length > 0) {
@@ -43,7 +52,10 @@ export class LegendAPI extends FixtureInstance {
             lastEntry.layers = layers;
 
             // (assuming visibility sets and groups will specify in config `exclusiveVisibility` or `children` properties, respectively)
-            if (lastEntry.children !== undefined || lastEntry.exclusiveVisibility !== undefined) {
+            if (
+                lastEntry.children !== undefined ||
+                lastEntry.exclusiveVisibility !== undefined
+            ) {
                 // create a wrapper legend object for group or visibility set
                 let legendGroup;
                 if (lastEntry.exclusiveVisibility) {
@@ -67,9 +79,15 @@ export class LegendAPI extends FixtureInstance {
                 //         stack.push(setChild);
                 //     });
                 // }
-            } else if (lastEntry.layerId !== undefined && layers !== undefined) {
+            } else if (
+                lastEntry.layerId !== undefined &&
+                layers !== undefined
+            ) {
                 // create a wrapper legend object for single legend entry
-                const legendEntry = new LegendEntry(lastEntry, lastEntry.parent);
+                const legendEntry = new LegendEntry(
+                    lastEntry,
+                    lastEntry.parent
+                );
                 legendEntries.push(legendEntry);
             }
         }
@@ -86,7 +104,10 @@ export class LegendAPI extends FixtureInstance {
      * @returns
      * @memberOf LegendFixture
      */
-    generateDefaultLegend(layer: LayerInstance | undefined, parent: LegendGroup | undefined) {
+    generateDefaultLegend(
+        layer: LayerInstance | undefined,
+        parent: LegendGroup | undefined
+    ) {
         // return if input is invalid
         if (!layer) {
             return;

@@ -15,7 +15,10 @@ const actions = {
      *
      * @function setSelectedBasemap
      */
-    selectBasemap: function(context: BasemapContext, basemap: RampBasemapConfig | undefined): void {
+    selectBasemap: function (
+        context: BasemapContext,
+        basemap: RampBasemapConfig | undefined
+    ): void {
         if (!basemap) {
             return;
         }
