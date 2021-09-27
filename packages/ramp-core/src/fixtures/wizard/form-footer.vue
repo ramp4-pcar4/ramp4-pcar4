@@ -9,7 +9,18 @@
         </button>
 
         <button
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-8 px-16 m-2 disabled:bg-gray-200 disabled:cursor-default disabled:text-gray-400"
+            class="
+                bg-blue-500
+                hover:bg-blue-700
+                text-white
+                font-bold
+                py-8
+                px-16
+                m-2
+                disabled:bg-gray-200
+                disabled:cursor-default
+                disabled:text-gray-400
+            "
             type="button"
             :disabled="disabled"
             @click="$emit('submit')"

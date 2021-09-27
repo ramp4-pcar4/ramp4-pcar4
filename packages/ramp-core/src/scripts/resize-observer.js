@@ -6,12 +6,12 @@ if ('ResizeObserver' in self) {
     // container elements. The instance is created with a callback,
     // which is invoked as soon as an element is observed as well
     // as any time that element's size changes.
-    var ro = new ResizeObserver(function(entries) {
+    var ro = new ResizeObserver(function (entries) {
         // Default breakpoints that should apply to all observed
         // elements that don't define their own custom breakpoints.
         var defaultBreakpoints = { xs: 384, sm: 576, md: 768, lg: 960 };
 
-        entries.forEach(function(entry) {
+        entries.forEach(function (entry) {
             // If breakpoints are defined on the observed element,
             // use them. Otherwise use the defaults.
             var breakpoints = entry.target.dataset.breakpoints
@@ -19,7 +19,7 @@ if ('ResizeObserver' in self) {
                 : defaultBreakpoints;
 
             // Update the matching breakpoints on the observed element.
-            Object.keys(breakpoints).forEach(function(breakpoint) {
+            Object.keys(breakpoints).forEach(function (breakpoint) {
                 var minWidth = breakpoints[breakpoint];
                 if (entry.contentRect.width >= minWidth) {
                     entry.target.classList.add(breakpoint);

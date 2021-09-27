@@ -1,7 +1,15 @@
 <template>
     <div class="h-full flex items-center justify-center">
         <input
-            class="rv-input w-full bg-transparent text-black-75 h-24 pb-8 border-0 border-b-2"
+            class="
+                rv-input
+                w-full
+                bg-transparent
+                text-black-75
+                h-24
+                pb-8
+                border-0 border-b-2
+            "
             type="text"
             @keyup="valueChanged()"
             v-model="filterValue"

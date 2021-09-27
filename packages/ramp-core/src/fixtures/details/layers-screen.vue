@@ -17,7 +17,14 @@
                 }}
             </div>
             <div
-                class="px-20 py-10 text-md flex hover:bg-gray-200 cursor-pointer"
+                class="
+                    px-20
+                    py-10
+                    text-md
+                    flex
+                    hover:bg-gray-200
+                    cursor-pointer
+                "
                 v-for="(item, idx) in layerResults"
                 :key="`${item ? item.uid : 'loading'}-${idx}`"
                 @click="item && openResult(idx)"
@@ -58,7 +65,9 @@ export default defineComponent({
     computed: {
         getPayloadTotalCount(): any {
             return this.layerResults
-                .map((r: IdentifyResult | undefined) => (r ? r.items.length : 0))
+                .map((r: IdentifyResult | undefined) =>
+                    r ? r.items.length : 0
+                )
                 .reduce((a: number, b: number) => a + b, 0);
         }
     },
@@ -89,11 +98,18 @@ export default defineComponent({
          * Switches the panel screen to display the data for a given result.
          */
         openResult(index: number) {
-            if (this.getLayerByUid(this.payload[index].uid)!.layerType === 'ogcWms') {
+            if (
+                this.getLayerByUid(this.payload[index].uid)!.layerType ===
+                'ogcWms'
+            ) {
                 // skip results screen for wms layers
                 this.panel!.show({
                     screen: 'details-screen-item',
-                    props: { resultIndex: index, layerType: 'ogcWms', itemIndex: 0 }
+                    props: {
+                        resultIndex: index,
+                        layerType: 'ogcWms',
+                        itemIndex: 0
+                    }
                 });
             } else {
                 this.panel!.show({

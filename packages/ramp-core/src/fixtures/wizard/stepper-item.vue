@@ -4,7 +4,17 @@
             <!-- step number -->
             <div
                 v-if="!done"
-                class="w-24 h-24 bg-gray-400 rounded-full flex justify-center items-center text-white text-xs font-semibold"
+                class="
+                    w-24
+                    h-24
+                    bg-gray-400
+                    rounded-full
+                    flex
+                    justify-center
+                    items-center
+                    text-white text-xs
+                    font-semibold
+                "
                 :class="{ 'bg-blue-500': active }"
             >
                 {{ index + 1 }}
@@ -34,7 +44,13 @@
                 <!-- step summary -->
                 <div
                     v-show="!active"
-                    class="pl-12 text-xs transition-opacity duration-1000 ease-out"
+                    class="
+                        pl-12
+                        text-xs
+                        transition-opacity
+                        duration-1000
+                        ease-out
+                    "
                     v-truncate
                 >
                     {{ summary }}
@@ -42,7 +58,7 @@
             </div>
         </div>
         <transition name="step" mode="out-in">
-            <div class="pl-36 " v-show="active">
+            <div class="pl-36" v-show="active">
                 <!-- step content -->
                 <slot></slot>
             </div>

@@ -19,7 +19,9 @@ class GeosearchFixture extends GeosearchAPI {
             {
                 id: 'geosearch-panel',
                 config: {
-                    screens: { 'geosearch-component': markRaw(GeosearchScreenV) }
+                    screens: {
+                        'geosearch-component': markRaw(GeosearchScreenV)
+                    }
                 }
             },
             { i18n: { messages } }
