@@ -17,14 +17,26 @@
                         d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"
                     />
                 </svg>
-                <span v-if="number && number > 0" class="number rounded-full w-18 text-white">{{
-                    number
-                }}</span>
+                <span
+                    v-if="number && number > 0"
+                    class="number rounded-full w-18 text-white"
+                    >{{ number }}</span
+                >
             </div>
         </template>
         <template v-slot:default="scope">
             <div
-                class="notification-dropdown pointer-events-auto bg-white rounded text-center text-black w-500 h-256 flex flex-col p-0"
+                class="
+                    notification-dropdown
+                    pointer-events-auto
+                    bg-white
+                    rounded
+                    text-center text-black
+                    w-500
+                    h-256
+                    flex flex-col
+                    p-0
+                "
             >
                 <div>
                     <h4 class="pb-8 border-b border-gray-600">
@@ -35,7 +47,11 @@
                             @click="clearAll"
                             class="text-gray-500 hover:text-black p-4 mr-6"
                             :content="$t('notifications.controls.clearAll')"
-                            v-tippy="{ placement: 'bottom', theme: 'ramp4', animation: 'scale' }"
+                            v-tippy="{
+                                placement: 'bottom',
+                                theme: 'ramp4',
+                                animation: 'scale'
+                            }"
                         >
                             <!-- https://fonts.google.com/icons?selected=Material%20Icons%3Aclear_all -->
                             <svg
@@ -44,7 +60,9 @@
                                 class="fill-current h-24 w-24"
                             >
                                 <path d="M0 0h24v24H0z" fill="none" />
-                                <path d="M5 13h14v-2H5v2zm-2 4h14v-2H3v2zM7 7v2h14V7H7z" />
+                                <path
+                                    d="M5 13h14v-2H5v2zm-2 4h14v-2H3v2zM7 7v2h14V7H7z"
+                                />
                             </svg>
                         </button>
                         <close @click="scope.close"></close>

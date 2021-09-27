@@ -5,12 +5,21 @@
             <!-- the :class line calculates margin-left for each of the 3 symbols, and gives a margin-top to symbols that arent the first -->
             <div
                 class="absolute"
-                :class="[idx == 0 ? 'symbol-0' : idx == 1 ? 'left-3 symbol-1' : 'left-6 symbol-2']"
+                :class="[
+                    idx == 0
+                        ? 'symbol-0'
+                        : idx == 1
+                        ? 'left-3 symbol-1'
+                        : 'left-6 symbol-2'
+                ]"
                 :style="{ 'z-index': 3 - idx }"
                 v-for="(item, idx) in stack.slice(0, 3).reverse()"
                 :key="idx"
             >
-                <span class="symbologyIcon w-28 h-28" v-html="stack[idx].svgcode"></span>
+                <span
+                    class="symbologyIcon w-28 h-28"
+                    v-html="stack[idx].svgcode"
+                ></span>
             </div>
         </div>
 
@@ -71,7 +80,9 @@ export default defineComponent({
                         .getLegend(this.legendItem.layerUID)
                         .map((l: any) => l.drawPromise)
                 ).then((r: any) => {
-                    this.stack = toRaw(this.layer).getLegend(this.legendItem.layerUID);
+                    this.stack = toRaw(this.layer).getLegend(
+                        this.legendItem.layerUID
+                    );
                 });
             }
         }

@@ -5,7 +5,12 @@
 // import { InfoBundle, LayerState, RampLayerConfig, LegendSymbology, IdentifyParameters, IdentifyResultSet,
 //    FilterEventParam, AttributeSet, FieldDefinition, TabularAttributeSet, GetGraphicResult, GetGraphicParams } from '../gapiTypes';
 
-import { CommonFC, GlobalEvents, InstanceAPI, LayerInstance } from '@/api/internal';
+import {
+    CommonFC,
+    GlobalEvents,
+    InstanceAPI,
+    LayerInstance
+} from '@/api/internal';
 import {
     AttributeSet,
     DataFormat,
@@ -91,14 +96,19 @@ export class CommonLayer extends LayerInstance {
     }
 
     protected noLayerErr(): void {
-        console.error('Attempted to manipulate the layer before .initiate() finished');
+        console.error(
+            'Attempted to manipulate the layer before .initiate() finished'
+        );
         console.trace();
     }
 
     // will give a new uid to use. if appropriate, will recycle same uid from a previous
     // incarnation of a layer to preserve continuity during a reload
     bestUid(idx?: number): string {
-        if (typeof idx !== 'undefined' && typeof this.reloadTree !== 'undefined') {
+        if (
+            typeof idx !== 'undefined' &&
+            typeof this.reloadTree !== 'undefined'
+        ) {
             // we have the ingredients for a reload scenario.
             // if we find an old uid from the last incarnation, use it.
             const t = this.reloadTree.findChildByIdx(idx);
@@ -193,18 +203,23 @@ export class CommonLayer extends LayerInstance {
             })
         );
 
-        this.esriLayer.on('layerview-create', (e: __esri.LayerLayerviewCreateEvent) => {
-            this.esriView = e.layerView;
-            this.watches.push(
-                e.layerView.watch('updating', (newval: boolean) => {
-                    this.updateState(newval ? LayerState.REFRESH : LayerState.LOADED);
-                    if (newval) {
-                        this.sawRefresh = true;
-                    }
-                })
-            );
-            this.viewPromise.resolveMe();
-        });
+        this.esriLayer.on(
+            'layerview-create',
+            (e: __esri.LayerLayerviewCreateEvent) => {
+                this.esriView = e.layerView;
+                this.watches.push(
+                    e.layerView.watch('updating', (newval: boolean) => {
+                        this.updateState(
+                            newval ? LayerState.REFRESH : LayerState.LOADED
+                        );
+                        if (newval) {
+                            this.sawRefresh = true;
+                        }
+                    })
+                );
+                this.viewPromise.resolveMe();
+            }
+        );
 
         this.initialized = true;
     }
@@ -217,7 +232,7 @@ export class CommonLayer extends LayerInstance {
         this.fcs = [];
         this.loadPromise = new DefPromise();
         this.viewPromise = new DefPromise();
-        this.watches.forEach(w => w.remove());
+        this.watches.forEach((w) => w.remove());
         this.watches = [];
         this.updateState(LayerState.NEW);
 
@@ -239,9 +254,10 @@ export class CommonLayer extends LayerInstance {
         if (this.initialized) {
             if (this.esriLayer) {
                 // attempt to find esri layer in esri map
-                const tempPosition = this.$iApi.geo.map.esriMap.layers.findIndex(
-                    l => l.id === this.id
-                );
+                const tempPosition =
+                    this.$iApi.geo.map.esriMap.layers.findIndex(
+                        (l) => l.id === this.id
+                    );
                 if (tempPosition > -1) {
                     mapStackPosition = tempPosition;
 
@@ -375,7 +391,10 @@ export class CommonLayer extends LayerInstance {
      * @returns {Boolean} true if layer is in an interactive state
      */
     isValidState(): boolean {
-        return this.state === LayerState.LOADED || this.state === LayerState.REFRESH;
+        return (
+            this.state === LayerState.LOADED ||
+            this.state === LayerState.REFRESH
+        );
     }
 
     /**
@@ -413,7 +432,11 @@ export class CommonLayer extends LayerInstance {
             return this.layerTree;
         } else {
             this.noLayerErr();
-            return new TreeNode(0, 'YOU DID AN ERROR', 'Error, check your console pls');
+            return new TreeNode(
+                0,
+                'YOU DID AN ERROR',
+                'Error, check your console pls'
+            );
         }
     }
 
@@ -429,7 +452,7 @@ export class CommonLayer extends LayerInstance {
         if (uid === this.uid) {
             return -1;
         } else {
-            const fcIdx: number = this.fcs.findIndex(fc => fc?.uid === uid);
+            const fcIdx: number = this.fcs.findIndex((fc) => fc?.uid === uid);
             if (fcIdx === -1) {
                 // no match
                 throw new Error(
@@ -572,7 +595,10 @@ export class CommonLayer extends LayerInstance {
      * @param {Boolean} value the new visibility setting
      * @param {Integer | String} [layerIdx] targets a layer index or uid to get visibility for. Uses first/only if omitted.
      */
-    setVisibility(value: boolean, layerIdx: number | string | undefined = undefined): void {
+    setVisibility(
+        value: boolean,
+        layerIdx: number | string | undefined = undefined
+    ): void {
         const fc = this.getFC(layerIdx);
         if (fc) {
             fc.setVisibility(value);
@@ -605,7 +631,10 @@ export class CommonLayer extends LayerInstance {
      * @param {Decimal} value the new opacity setting. Valid value is anything between 0 and 1, inclusive.
      * @param {Integer | String} [layerIdx] targets a layer index or uid to get opacity for. Uses first/only if omitted.
      */
-    setOpacity(value: number, layerIdx: number | string | undefined = undefined): void {
+    setOpacity(
+        value: number,
+        layerIdx: number | string | undefined = undefined
+    ): void {
         const fc = this.getFC(layerIdx);
         if (fc) {
             fc.setOpacity(value);
@@ -660,7 +689,9 @@ export class CommonLayer extends LayerInstance {
      * @param {Integer | String} [layerIdx] targets a layer index or uid to check offscale status for. Uses first/only if omitted.
      * @returns {Promise} resolves when map has finished zooming
      */
-    zoomToVisibleScale(layerIdx: number | string | undefined = undefined): Promise<void> {
+    zoomToVisibleScale(
+        layerIdx: number | string | undefined = undefined
+    ): Promise<void> {
         this.mapCheck();
 
         // TODO consider enhancing to bring in the old "pan to data" step from RAMP2.
@@ -669,7 +700,9 @@ export class CommonLayer extends LayerInstance {
         //      inside the layer extent. if not, pan the map to layer extent center.
         //      would need to add an extra boolean flag parameter to indicate if we do the pan or not.
         //      alternate idea is make a separate pan-to-extent function and let caller make two calls. hmmm. nice.
-        return this.$iApi.geo.map.zoomToVisibleScale(this.getScaleSet(layerIdx));
+        return this.$iApi.geo.map.zoomToVisibleScale(
+            this.getScaleSet(layerIdx)
+        );
     }
 
     /**
@@ -679,7 +712,9 @@ export class CommonLayer extends LayerInstance {
      * @param {Integer | String} [layerIdx] targets a layer index or uid to get visibility for. Uses first/only if omitted.
      * @returns {Boolean} if the layer/sublayer supports features
      */
-    supportsFeatures(layerIdx: number | string | undefined = undefined): boolean {
+    supportsFeatures(
+        layerIdx: number | string | undefined = undefined
+    ): boolean {
         const fc = this.getFC(layerIdx);
         if (fc) {
             return fc.supportsFeatures;
@@ -689,7 +724,9 @@ export class CommonLayer extends LayerInstance {
         }
     }
 
-    getLegend(layerIdx: number | string | undefined = undefined): Array<LegendSymbology> {
+    getLegend(
+        layerIdx: number | string | undefined = undefined
+    ): Array<LegendSymbology> {
         const fc = this.getFC(layerIdx);
         if (fc) {
             return fc.legend;
@@ -726,7 +763,9 @@ export class CommonLayer extends LayerInstance {
     // methods will override the stubs.
 
     protected stubError(): void {
-        throw new Error(`Attempted to use a method not valid for ${this.layerType}`);
+        throw new Error(
+            `Attempted to use a method not valid for ${this.layerType}`
+        );
     }
 
     /**
@@ -736,7 +775,9 @@ export class CommonLayer extends LayerInstance {
      * @param {Integer | String} [layerIdx] targets a layer index or uid to get attributes for. Uses first/only if omitted.
      * @returns {Promise} resolves with set of attribute values
      */
-    getAttributes(layerIdx: number | string | undefined = undefined): Promise<AttributeSet> {
+    getAttributes(
+        layerIdx: number | string | undefined = undefined
+    ): Promise<AttributeSet> {
         this.stubError();
         return Promise.resolve({
             features: [],
@@ -750,7 +791,9 @@ export class CommonLayer extends LayerInstance {
      * @param {Integer | String} [layerIdx] targets a layer index or uid to get fields for. Uses first/only if omitted.
      * @returns {Array} list of field definitions
      */
-    getFields(layerIdx: number | string | undefined = undefined): Array<FieldDefinition> {
+    getFields(
+        layerIdx: number | string | undefined = undefined
+    ): Array<FieldDefinition> {
         this.stubError();
         return [];
     }
@@ -793,7 +836,9 @@ export class CommonLayer extends LayerInstance {
      *
      * @param {Integer | String} [layerIdx] targets a layer index or uid to stop loading attributes for. Uses first/only if omitted.
      */
-    abortAttributeLoad(layerIdx: number | string | undefined = undefined): void {
+    abortAttributeLoad(
+        layerIdx: number | string | undefined = undefined
+    ): void {
         this.stubError();
     }
 
@@ -869,7 +914,10 @@ export class CommonLayer extends LayerInstance {
      * @param {Integer | String} [layerIdx] targets a layer index or uid to find the icon in. Uses first/only if omitted.
      * @returns {Promise} resolves with an svg string encoding of the icon
      */
-    getIcon(objectId: number, layerIdx: number | string | undefined = undefined): Promise<string> {
+    getIcon(
+        objectId: number,
+        layerIdx: number | string | undefined = undefined
+    ): Promise<string> {
         this.stubError();
         return Promise.resolve('');
     }
@@ -897,7 +945,10 @@ export class CommonLayer extends LayerInstance {
      * @param {Integer | String} [layerIdx] targets a layer index or uid that has the filter. Uses first/only if omitted.
      * @returns {String} the value of the where clause for the filter. Empty string if not defined.
      */
-    getSqlFilter(filterKey: string, layerIdx: number | string | undefined = undefined): string {
+    getSqlFilter(
+        filterKey: string,
+        layerIdx: number | string | undefined = undefined
+    ): string {
         this.stubError();
         return '';
     }
@@ -944,7 +995,11 @@ export class CommonLayer extends LayerInstance {
      * @param {String} value value of the key
      * @param {Boolean} forceRefresh show the new fancy version of the layer or not
      */
-    setCustomParameter(key: string, value: string, forceRefresh: boolean = true): void {
+    setCustomParameter(
+        key: string,
+        value: string,
+        forceRefresh: boolean = true
+    ): void {
         this.stubError();
     }
 }

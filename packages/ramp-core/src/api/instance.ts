@@ -18,7 +18,14 @@ import VueTippy from 'vue-tippy';
 import { FocusList, FocusItem } from '@/directives/focus-list';
 import { Truncate } from '@/directives/truncate/truncate';
 
-import { EventAPI, FixtureAPI, GeoAPI, GlobalEvents, PanelAPI, NotificationAPI } from './internal';
+import {
+    EventAPI,
+    FixtureAPI,
+    GeoAPI,
+    GlobalEvents,
+    PanelAPI,
+    NotificationAPI
+} from './internal';
 
 import PanelScreenV from '@/components/panel-stack/panel-screen.vue';
 import PinV from '@/components/panel-stack/controls/pin.vue';
@@ -62,7 +69,11 @@ export class InstanceAPI {
 
     private _isFullscreen: boolean;
 
-    constructor(element: HTMLElement, configs?: RampConfigs, options?: RampOptions) {
+    constructor(
+        element: HTMLElement,
+        configs?: RampConfigs,
+        options?: RampOptions
+    ) {
         if (options?.startRequired) {
             this.startRequired = true;
         } else {
@@ -103,7 +114,10 @@ export class InstanceAPI {
             }
 
             // disable animations if needed
-            if (!configs[this.$vApp.$i18n.locale].animate && this.$element._container) {
+            if (
+                !configs[this.$vApp.$i18n.locale].animate &&
+                this.$element._container
+            ) {
                 this.$element._container.classList.remove('animation-enabled');
             }
         }
@@ -200,7 +214,10 @@ export class InstanceAPI {
     getConfig() {
         const language = this.$vApp.$i18n.locale;
 
-        return this.$vApp.$store.get(ConfigStore.getActiveConfig, language) as RampConfig;
+        return this.$vApp.$store.get(
+            ConfigStore.getActiveConfig,
+            language
+        ) as RampConfig;
     }
 
     /**

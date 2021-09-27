@@ -13,7 +13,13 @@
             class="mx-5 h-15 w-15 border-gray-500 hover:border-black"
             tabindex="-1"
             :disabled="disabled"
-            :content="$t(checked ? 'legend.visibility.hide' : 'legend.visibility.show')"
+            :content="
+                $t(
+                    checked
+                        ? 'legend.visibility.hide'
+                        : 'legend.visibility.show'
+                )
+            "
             v-tippy="{ placement: 'top-end', hideOnClick: false }"
         />
     </div>
@@ -27,7 +33,10 @@ import { LegendEntry, LegendItem } from '../store/legend-defs';
 export default defineComponent({
     name: 'CheckboxV',
     props: {
-        value: { type: Object as PropType<LegendEntry | LegendSymbology>, required: true },
+        value: {
+            type: Object as PropType<LegendEntry | LegendSymbology>,
+            required: true
+        },
         legendItem: { type: Object as PropType<LegendEntry>, required: true },
         checked: { type: Boolean },
         isRadio: { type: Boolean },
@@ -59,11 +68,19 @@ export default defineComponent({
                     // since we toggled on one of the child symbols and set all other
                     // symbols to invisible (except for the one that is toggled on)
 
-                    this.legendItem._layer?.getLegend().forEach((item: LegendSymbology) => {
-                        this.legendItem.setChildSymbologyVisibility(item.uid, false);
-                    });
+                    this.legendItem._layer
+                        ?.getLegend()
+                        .forEach((item: LegendSymbology) => {
+                            this.legendItem.setChildSymbologyVisibility(
+                                item.uid,
+                                false
+                            );
+                        });
 
-                    this.legendItem.setChildSymbologyVisibility(this.value.uid, true);
+                    this.legendItem.setChildSymbologyVisibility(
+                        this.value.uid,
+                        true
+                    );
 
                     if (!this.legendItem.visibility) {
                         this.legendItem.toggleVisibility(true);
@@ -89,7 +106,10 @@ export default defineComponent({
                     CoreFilter.SYMBOL,
                     this.legendItem.layer
                         ?.getLegend()
-                        .filter((item: LegendSymbology) => item.lastVisbility === true)
+                        .filter(
+                            (item: LegendSymbology) =>
+                                item.lastVisbility === true
+                        )
                         .map((item: LegendSymbology) => item.definitionClause)
                         .join(' OR ')
                 );

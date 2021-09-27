@@ -45,14 +45,14 @@ export class StyleOptions {
 
         let arr: Array<number>;
         if (Array.isArray(c)) {
-            arr = (<Array<any>>c).map(n => parseInt(n));
+            arr = (<Array<any>>c).map((n) => parseInt(n));
             if (arr.length === 3) {
                 arr.push(255); // no opacity given. make opaque
             }
         } else if (typeof c === 'string') {
             // trim # if its there
             let s: string = c.substr(0, 1) === '#' ? c.substr(1) : c;
-            arr = [0, 2, 4, 6].map(i => {
+            arr = [0, 2, 4, 6].map((i) => {
                 const hex = s.substr(i, 2);
                 return hex.length === 0 ? 255 : parseInt(hex, 16);
             });
@@ -69,6 +69,6 @@ export class StyleOptions {
             return s.length === 1 ? `0${s}` : s;
         };
 
-        return `#${colourArray.map(i => toHex(i)).join('')}`;
+        return `#${colourArray.map((i) => toHex(i)).join('')}`;
     }
 }

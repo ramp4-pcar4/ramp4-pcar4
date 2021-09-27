@@ -3,7 +3,13 @@
         <button
             class="text-gray-500 hover:text-black p-8"
             :class="{ 'text-gray-700': active }"
-            :content="$t(this.active ? 'panels.controls.unpin' : 'panels.controls.pin')"
+            :content="
+                $t(
+                    this.active
+                        ? 'panels.controls.unpin'
+                        : 'panels.controls.pin'
+                )
+            "
             v-tippy="{ placement: 'bottom', hideOnClick: false }"
         >
             <svg
