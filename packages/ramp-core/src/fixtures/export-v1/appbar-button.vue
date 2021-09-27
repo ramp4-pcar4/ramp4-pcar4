@@ -1,5 +1,8 @@
 <template>
-    <appbar-button :onClickFunction="onClick" :tooltip="$t('export-v1.appbarButton')">
+    <appbar-button
+        :onClickFunction="onClick"
+        :tooltip="$t('export-v1.appbarButton')"
+    >
         <!-- https://fonts.google.com/icons?selected=Material+Icons:layers&icon.query=export -->
         <svg
             class="fill-current w-24 h-24 ml-8 sm:ml-20"

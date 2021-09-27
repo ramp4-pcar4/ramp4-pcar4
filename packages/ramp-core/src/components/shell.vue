@@ -14,7 +14,14 @@
         >
             <div class="absolute top-8 w-full flex justify-center">
                 <button
-                    class="bg-white opacity-0 focus:opacity-100 z-50 shadow-md px-10"
+                    class="
+                        bg-white
+                        opacity-0
+                        focus:opacity-100
+                        z-50
+                        shadow-md
+                        px-10
+                    "
                     @click="openKeyboardInstructions"
                 >
                     {{ $t('keyboardInstructions.open') }}
@@ -22,9 +29,22 @@
             </div>
             <keyboard-instructions-modal></keyboard-instructions-modal>
             <panel-stack
-                class="panel-stack sm:flex absolute inset-0 overflow-hidden xs:pl-40 sm:p-12 sm:pl-80 z-10 sm:pb-36 xs:pb-28"
+                class="
+                    panel-stack
+                    sm:flex
+                    absolute
+                    inset-0
+                    overflow-hidden
+                    xs:pl-40
+                    sm:p-12 sm:pl-80
+                    z-10
+                    sm:pb-36
+                    xs:pb-28
+                "
             ></panel-stack>
-            <notification-floating-button v-if="!appbarFixture"></notification-floating-button>
+            <notification-floating-button
+                v-if="!appbarFixture"
+            ></notification-floating-button>
             <map-caption class="z-10"></map-caption>
         </div>
 

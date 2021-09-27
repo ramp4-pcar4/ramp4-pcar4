@@ -30,7 +30,12 @@ import {
     RampLayerFieldMetadataConfig,
     TabularAttributeSet
 } from '@/geo/api';
-import { EsriExtent, EsriField, EsriRendererUtils, EsriRequest } from '@/geo/esri';
+import {
+    EsriExtent,
+    EsriField,
+    EsriRendererUtils,
+    EsriRequest
+} from '@/geo/esri';
 import deepmerge from 'deepmerge';
 import to from 'await-to-js';
 import { markRaw, toRaw } from 'vue';
@@ -87,14 +92,21 @@ export class AttribFC extends CommonFC {
         );
         if (!serviceResult) {
             // case where service request was unsuccessful
-            console.error(`Service metadata load error: ${this.serviceUrl}`, err);
-            return Promise.reject(new Error(`Service metadata load error: ${this.serviceUrl}`));
+            console.error(
+                `Service metadata load error: ${this.serviceUrl}`,
+                err
+            );
+            return Promise.reject(
+                new Error(`Service metadata load error: ${this.serviceUrl}`)
+            );
         }
 
         if (!serviceResult.data) {
             // case where service request was successful but no data appeared in result
             console.error(`Service metadata load error: ${this.serviceUrl}`);
-            return Promise.reject(new Error(`Service metadata load error: ${this.serviceUrl}`));
+            return Promise.reject(
+                new Error(`Service metadata load error: ${this.serviceUrl}`)
+            );
         }
 
         const sData: any = serviceResult.data;
@@ -102,9 +114,10 @@ export class AttribFC extends CommonFC {
         // properties for all endpoints
 
         // TODO need to decide what propert default is. Raster Layer has null gt.
-        this.geomType = this.parentLayer.$iApi.geo.utils.geom.serverGeomTypeToRampGeomType(
-            sData.geometryType
-        );
+        this.geomType =
+            this.parentLayer.$iApi.geo.utils.geom.serverGeomTypeToRampGeomType(
+                sData.geometryType
+            );
         this.quickCache = new QuickCache(this.geomType);
         this.scaleSet.minScale = sData.effectiveMinScale || sData.minScale;
         this.scaleSet.maxScale = sData.effectiveMaxScale || sData.maxScale;
@@ -114,11 +127,13 @@ export class AttribFC extends CommonFC {
         if (sData.type === 'Feature Layer') {
             this.supportsFeatures = true;
             this.dataFormat = DataFormat.ESRI_FEATURE;
-            this.fields = markRaw(sData.fields.map((f: any) => EsriField.fromJSON(f))); // TODO need to use Field.fromJSON() to make things correct
+            this.fields = markRaw(
+                sData.fields.map((f: any) => EsriField.fromJSON(f))
+            ); // TODO need to use Field.fromJSON() to make things correct
             this.nameField = sData.displayField;
 
             // find object id field
-            const noFieldDefOid: boolean = this.fields.every(elem => {
+            const noFieldDefOid: boolean = this.fields.every((elem) => {
                 if (elem.type === 'oid') {
                     this.oidField = elem.name;
                     return false; // break the loop
@@ -146,18 +161,20 @@ export class AttribFC extends CommonFC {
                 options && options.customRenderer && options.customRenderer.type
                     ? options.customRenderer
                     : sData.drawingInfo.renderer;
-            this.renderer = this.parentLayer.$iApi.geo.utils.symbology.makeRenderer(
-                EsriRendererUtils.fromJSON(sourceRenderer),
-                this.fields
-            );
+            this.renderer =
+                this.parentLayer.$iApi.geo.utils.symbology.makeRenderer(
+                    EsriRendererUtils.fromJSON(sourceRenderer),
+                    this.fields
+                );
 
             // this array will have a set of promises that resolve when all the legend svg has drawn.
             // for now, will not include that set (promise.all'd) on the layer load blocker;
             // don't want to stop a layer from loading just because an icon won't draw.
             // ideally we'll have placeholder symbol (white square, loading symbol, caution symbol, etc)
-            this.legend = this.parentLayer.$iApi.geo.utils.symbology.rendererToLegend(
-                this.renderer
-            );
+            this.legend =
+                this.parentLayer.$iApi.geo.utils.symbology.rendererToLegend(
+                    this.renderer
+                );
 
             // temporarily store things for delayed attributes
             const loadData: AttributeLoaderDetails = {
@@ -169,7 +186,10 @@ export class AttribFC extends CommonFC {
                 batchSize: -1,
                 attribs: '*' // NOTE we set to * here for generic case. loader may override later once config settings are applied
             };
-            this.attLoader = new ArcServerAttributeLoader(this.parentLayer.$iApi, loadData);
+            this.attLoader = new ArcServerAttributeLoader(
+                this.parentLayer.$iApi,
+                loadData
+            );
         } else {
             this.dataFormat = DataFormat.ESRI_RASTER;
             this.fields = [];
@@ -202,7 +222,9 @@ export class AttribFC extends CommonFC {
         // if exlusive fields, only respect fields in the field info array
         if (configMetadata.exclusiveFields) {
             // ensure object id field is included
-            if (!configMetadata.fieldInfo.find(f => f.data === this.oidField)) {
+            if (
+                !configMetadata.fieldInfo.find((f) => f.data === this.oidField)
+            ) {
                 configMetadata.fieldInfo.push({ data: this.oidField });
             }
 
@@ -215,19 +237,21 @@ export class AttribFC extends CommonFC {
             //      "coreHidden" that indicates the field has to exist, but should not be shown
             //      on things like details panes or grids
 
-            this.fieldList = configMetadata.fieldInfo.map(f => f.data).join(',');
+            this.fieldList = configMetadata.fieldInfo
+                .map((f) => f.data)
+                .join(',');
             const tempFI = configMetadata.fieldInfo; // required because typescript is throwing a fit about undefineds inside the .filter
-            this.fields = this.fields.filter(origField => {
-                return tempFI.find(fInfo => fInfo.data === origField.name);
+            this.fields = this.fields.filter((origField) => {
+                return tempFI.find((fInfo) => fInfo.data === origField.name);
             });
         } else {
             this.fieldList = '*';
         }
 
         // if any aliases overrides, apply them
-        configMetadata.fieldInfo.forEach(cf => {
+        configMetadata.fieldInfo.forEach((cf) => {
             if (cf.alias) {
-                const ff = this.fields.find(fff => fff.name === cf.data);
+                const ff = this.fields.find((fff) => fff.name === cf.data);
                 if (ff) {
                     ff.alias = cf.alias;
                 }
@@ -263,7 +287,10 @@ export class AttribFC extends CommonFC {
         // Throw console warnings, don't crash the app
         if (!serviceResult) {
             // case where service request was unsuccessful
-            console.warn(`Feature count request unsuccessful: ${this.serviceUrl}`, err);
+            console.warn(
+                `Feature count request unsuccessful: ${this.serviceUrl}`,
+                err
+            );
             return;
         }
         if (!serviceResult.data) {
@@ -285,7 +312,7 @@ export class AttribFC extends CommonFC {
      */
     getFields(): Array<FieldDefinition> {
         // extra fancy so we dont have to expose the ESRI field class
-        return this.fields.map(f => {
+        return this.fields.map((f) => {
             f = toRaw(f);
             return {
                 name: f.name,
@@ -308,14 +335,17 @@ export class AttribFC extends CommonFC {
     async getTabularAttributes(): Promise<TabularAttributeSet> {
         // redundant checks to shut up typescript
         if (!this.attLoader) {
-            throw new Error('getTabularAttributes call with missing attribute loader');
+            throw new Error(
+                'getTabularAttributes call with missing attribute loader'
+            );
         }
 
         // TODO rethink how this works. is it better to read from attributes every time?
         //      if we allow attribute value updates via API, then we probably have to do that.
         if (!this.attLoader.tabularAttributesCache) {
             // do not use await here. we want to store the promise and pass it on, not block until the promise resolves.
-            this.attLoader.tabularAttributesCache = this.getTabularAttributesGuts();
+            this.attLoader.tabularAttributesCache =
+                this.getTabularAttributesGuts();
         }
 
         return this.attLoader.tabularAttributesCache;
@@ -328,7 +358,9 @@ export class AttribFC extends CommonFC {
 
         // redundant checks to shut up typescript
         if (!this.attLoader) {
-            throw new Error('getTabularAttributesGuts call with missing attribute loader');
+            throw new Error(
+                'getTabularAttributesGuts call with missing attribute loader'
+            );
         }
 
         // TODO consider changing this to a warning and just return some dummy value
@@ -346,12 +378,12 @@ export class AttribFC extends CommonFC {
         // create columns array consumable by datables. We don't include the alias defined in the config here as
         // the grid handles it seperately.
         const columns = this.fields
-            .filter(field =>
+            .filter((field) =>
                 // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
                 // filter out fields where there is no corresponding attribute data
                 attSet.features[0].hasOwnProperty(toRaw(field).name)
             )
-            .map(field => ({
+            .map((field) => ({
                 data: toRaw(field).name, // TODO calling this data is really unintuitive. consider global rename to fieldName, name, attribName, etc.
                 title: toRaw(field).alias || toRaw(field).name
             }));
@@ -360,7 +392,7 @@ export class AttribFC extends CommonFC {
         // TODO figure out if we want to change the system attributes. making a copy for now with deepmerge.
         // if we add rv properties to the feature in the attribute set, we may see those fields showing up in details panes, API outputs, etc.
         // that said, copying means we double the size of attributes in memory.
-        const rows = attSet.features.map(feature => {
+        const rows = attSet.features.map((feature) => {
             const att = deepmerge({}, feature);
             att.rvInteractive = '';
             att.rvSymbol = this.renderer?.getGraphicIcon(feature);
@@ -370,17 +402,17 @@ export class AttribFC extends CommonFC {
         // if a field name resembles a function, the data table will treat it as one.
         // to get around this, we add a function with the same name that returns the value,
         // tricking that silly datagrid.
-        columns.forEach(c => {
+        columns.forEach((c) => {
             if (c.data.substr(-2) === '()') {
                 // have to use function() to get .this to reference the row.
                 // arrow notation will reference the attribFC class.
-                const secretFunc = function() {
+                const secretFunc = function () {
                     // @ts-ignore
                     return this[c.data];
                 };
 
                 const stub = c.data.substr(0, c.data.length - 2); // function without brackets
-                rows.forEach(r => {
+                rows.forEach((r) => {
                     r[stub] = secretFunc;
                 });
             }
@@ -423,7 +455,10 @@ export class AttribFC extends CommonFC {
      *                 - getAttribs    boolean. indicates if return value should have attributes included. default to false
      * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .layerFC for convenience
      */
-    async getGraphic(objectId: number, opts: GetGraphicParams): Promise<GetGraphicResult> {
+    async getGraphic(
+        objectId: number,
+        opts: GetGraphicParams
+    ): Promise<GetGraphicResult> {
         // NOTE RAMP2 version of this included the FC object. we want to keep those hidden, so
         //      for now will just return the graphic structure and if we need more stuff we
         //      will figure out a proper way to do that.
@@ -464,7 +499,8 @@ export class AttribFC extends CommonFC {
                 // all attributes have been loaded (or is a file and are local). use that store.
                 // since attributes come from a promise, reset the wait promise to the attribute promise
                 const atSet = await this.attLoader.getAttribs();
-                resultFeat.attributes = atSet.features[atSet.oidIndex[objectId]];
+                resultFeat.attributes =
+                    atSet.features[atSet.oidIndex[objectId]];
             } else {
                 // we will need to download data from the service
                 needWebAttr = true;
@@ -525,20 +561,31 @@ export class AttribFC extends CommonFC {
                 }
             }
 
-            const webFeat = await this.parentLayer.$iApi.geo.utils.attributes.loadSingleFeature(
-                serviceParams
-            );
+            const webFeat =
+                await this.parentLayer.$iApi.geo.utils.attributes.loadSingleFeature(
+                    serviceParams
+                );
             if (needWebGeom) {
                 // save our result in the cache
-                this.quickCache.setGeom(objectId, <BaseGeometry>webFeat.geometry, scale);
+                this.quickCache.setGeom(
+                    objectId,
+                    <BaseGeometry>webFeat.geometry,
+                    scale
+                );
                 resultFeat.geometry = webFeat.geometry;
             }
 
-            if (needWebAttr || typeof this.quickCache.getAttribs(objectId) === 'undefined') {
+            if (
+                needWebAttr ||
+                typeof this.quickCache.getAttribs(objectId) === 'undefined'
+            ) {
                 // extra check in the if is for efficiency. attributes get downloaded in the request
                 // regardless if we wanted them. if we didn't want them, but didn't have them cached,
                 // will cache them anyways to save another hit later.
-                this.quickCache.setAttribs(objectId, <Attributes>webFeat.attributes);
+                this.quickCache.setAttribs(
+                    objectId,
+                    <Attributes>webFeat.attributes
+                );
 
                 if (needWebAttr) {
                     // only put attribs on the result if requester asked for them
@@ -586,7 +633,9 @@ export class AttribFC extends CommonFC {
             ...options
         };
 
-        return this.parentLayer.$iApi.geo.utils.query.arcGisServerQueryIds(agsOpt);
+        return this.parentLayer.$iApi.geo.utils.query.arcGisServerQueryIds(
+            agsOpt
+        );
     }
 
     // TODO we are using the getgraphic type as it's an unbound loosely typed feature
@@ -603,7 +652,9 @@ export class AttribFC extends CommonFC {
      * @param options {Object} options to provide filters and helpful information.
      * @returns {Promise} resolves with an array of features that satisfy the criteria
      */
-    async queryFeatures(options: QueryFeaturesParams): Promise<Array<GetGraphicResult>> {
+    async queryFeatures(
+        options: QueryFeaturesParams
+    ): Promise<Array<GetGraphicResult>> {
         // NOTE this assumes a server based layer
         //      local based layers should override this function
 
@@ -632,7 +683,7 @@ export class AttribFC extends CommonFC {
             getAttribs: true
             // unboundMap: options.map
         };
-        const cacheQueue: Array<Promise<GetGraphicResult>> = oids.map(oid =>
+        const cacheQueue: Array<Promise<GetGraphicResult>> = oids.map((oid) =>
             this.getGraphic(oid, p)
         );
         return Promise.all(cacheQueue);

@@ -11,7 +11,10 @@
             </svg>
         </mapnav-button>
         <divider-nav></divider-nav>
-        <mapnav-button :onClickFunction="zoomOut" :tooltip="$t('mapnav.zoomOut')">
+        <mapnav-button
+            :onClickFunction="zoomOut"
+            :tooltip="$t('mapnav.zoomOut')"
+        >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"

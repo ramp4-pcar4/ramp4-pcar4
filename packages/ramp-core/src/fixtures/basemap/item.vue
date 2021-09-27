@@ -35,7 +35,17 @@
             </div>
 
             <div
-                class="absolute flex w-full bg-black opacity-75 text-white h-30 bottom-6 items-center"
+                class="
+                    absolute
+                    flex
+                    w-full
+                    bg-black
+                    opacity-75
+                    text-white
+                    h-30
+                    bottom-6
+                    items-center
+                "
             >
                 <div class="pl-5" v-truncate>
                     <span>{{ basemap.name }}</span>
@@ -64,7 +74,9 @@
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                 >
-                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                    <path
+                        d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+                    />
                 </svg>
             </div>
         </button>
@@ -72,14 +84,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { RampBasemapConfig } from '@/geo/api';
+import { defineComponent, PropType } from 'vue';
+import { RampBasemapConfig, RampTileSchemaConfig } from '@/geo/api';
 import { get, call } from '@/store/pathify-helper';
 import { BasemapStore } from './store';
 
 export default defineComponent({
     name: 'BasemapItemV',
-    props: ['basemap', 'tileSchema'],
+    props: {
+        basemap: {
+            type: Object as PropType<RampBasemapConfig>,
+            required: true
+        },
+        tileSchema: {
+            type: Object as PropType<RampTileSchemaConfig>,
+            required: true
+        }
+    },
     data() {
         return {
             selectedBasemap: get(BasemapStore.selectedBasemap),
@@ -94,7 +115,9 @@ export default defineComponent({
     border: solid black 2px;
 }
 
-[focus-list]:focus [focus-item].focused.basemap-item-button .basemap-item-image {
+[focus-list]:focus
+    [focus-item].focused.basemap-item-button
+    .basemap-item-image {
     opacity: 0.5;
 }
 

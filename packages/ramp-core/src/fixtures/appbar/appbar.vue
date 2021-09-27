@@ -1,6 +1,19 @@
 <template>
     <div
-        class="absolute top-0 left-0 bottom-28 z-50 flex flex-col items-stretch w-40 pointer-events-auto appbar bg-black-75 sm:w-64"
+        class="
+            absolute
+            top-0
+            left-0
+            bottom-28
+            z-50
+            flex flex-col
+            items-stretch
+            w-40
+            pointer-events-auto
+            appbar
+            bg-black-75
+            sm:w-64
+        "
         v-focus-list
         ref="el"
     >
@@ -60,12 +73,14 @@ export default defineComponent({
 
             let children: Element[] = [...element.childNodes];
 
-            let bound: number | undefined = children[children.length - 2].clientTop;
+            let bound: number | undefined =
+                children[children.length - 2].clientTop;
             let dropdown: Element | null = document.getElementById('dropdown');
 
             // check positions of appbar buttons
             for (let i = children.length - 3; i >= 0; i--) {
-                let bottom: number = children[i].clientTop + children[i].clientHeight;
+                let bottom: number =
+                    children[i].clientTop + children[i].clientHeight;
                 if (
                     bound &&
                     dropdown &&
@@ -73,8 +88,14 @@ export default defineComponent({
                 ) {
                     console.log(`[${i}]`, children[i].getBoundingClientRect());
 
-                    children[i].classList.remove('hover:text-white', 'text-gray-400');
-                    children[i].classList.add('text-black', 'hover:bg-gray-100');
+                    children[i].classList.remove(
+                        'hover:text-white',
+                        'text-gray-400'
+                    );
+                    children[i].classList.add(
+                        'text-black',
+                        'hover:bg-gray-100'
+                    );
 
                     element.removeChild(children[i]);
                     dropdown.appendChild(children[i]);
@@ -95,10 +116,16 @@ export default defineComponent({
                 moreBottom !== 0 &&
                 (moreBottom <= bound - 48 || dropdown.childElementCount == 1)
             ) {
-                while (moreBottom <= bound - 48 || dropdown.childElementCount == 1) {
+                while (
+                    moreBottom <= bound - 48 ||
+                    dropdown.childElementCount == 1
+                ) {
                     let item: Element | null = dropdown.firstElementChild;
                     if (item) {
-                        item.classList.remove('text-black', 'hover:bg-gray-100');
+                        item.classList.remove(
+                            'text-black',
+                            'hover:bg-gray-100'
+                        );
                         item.classList.add('text-gray-400', 'hover:text-white');
                         dropdown.removeChild(item);
                         element.insertBefore(item, more);

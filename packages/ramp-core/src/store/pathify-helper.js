@@ -24,5 +24,5 @@ export function sync(path) {
 }
 
 export function call(path) {
-    return payload => computed(store.dispatch(path, payload));
+    return (payload) => computed(store.dispatch(path, payload));
 }

@@ -4,7 +4,11 @@
             class="text-gray-500 hover:text-black p-6"
             :class="{ 'text-gray-700': active }"
             :content="$t('panels.controls.minimize')"
-            v-tippy="{ placement: 'bottom', theme: 'ramp4', animation: 'scale' }"
+            v-tippy="{
+                placement: 'bottom',
+                theme: 'ramp4',
+                animation: 'scale'
+            }"
         >
             <svg
                 class="fill-current w-20 h-20"

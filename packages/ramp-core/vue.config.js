@@ -38,12 +38,12 @@ module.exports = {
             minimize: false // to build an unminified production build, uncomment the following
         }
     },
-    chainWebpack: config => {
+    chainWebpack: (config) => {
         config.module
             .rule('vue')
             .use('vue-loader')
             .loader('vue-loader')
-            .tap(options => {
+            .tap((options) => {
                 return {
                     ...options
                 };
@@ -83,23 +83,33 @@ module.exports = {
         ]);
 
         // DEV-specific configuration
-        config.when(process.env.VUE_APP_BUILD_TARGET !== 'lib', config => {
+        config.when(process.env.VUE_APP_BUILD_TARGET !== 'lib', (config) => {
             // modify the default injection point from 'body' to 'head', so it's easier to orchestrate the loading order; only when `serve`ing or `test`ing
-            config.plugin('html-index').tap(args => [{ ...args[0], inject: 'head' }]);
-            config.plugin('html-test').tap(args => [{ ...args[0], inject: 'head' }]);
-            config.plugin('html-wet').tap(args => [{ ...args[0], inject: 'head' }]);
+            config
+                .plugin('html-index')
+                .tap((args) => [{ ...args[0], inject: 'head' }]);
+            config
+                .plugin('html-test')
+                .tap((args) => [{ ...args[0], inject: 'head' }]);
+            config
+                .plugin('html-wet')
+                .tap((args) => [{ ...args[0], inject: 'head' }]);
         });
 
         // PROD-specific configuration
-        config.when(process.env.NODE_ENV === 'production', config => {
+        config.when(process.env.NODE_ENV === 'production', (config) => {
             // copy `ramp-starter.js` to `dist` folder when building prod build
             config
                 .plugin('webpack-copy-plugin')
-                .tap(args => [[...args[0], { from: 'public/alternate.js', to: '' }]]);
+                .tap((args) => [
+                    [...args[0], { from: 'public/alternate.js', to: '' }]
+                ]);
             config
                 .plugin('webpack-copy-plugin')
-                .tap(args => [[...args[0], { from: 'public/ramp-starter.js', to: '' }]]);
-            config.plugin('webpack-copy-plugin').tap(args => [
+                .tap((args) => [
+                    [...args[0], { from: 'public/ramp-starter.js', to: '' }]
+                ]);
+            config.plugin('webpack-copy-plugin').tap((args) => [
                 [
                     ...args[0],
                     {
@@ -110,17 +120,16 @@ module.exports = {
             ]);
             config
                 .plugin('webpack-copy-plugin')
-                .tap(args => [[...args[0], { from: 'public/help', to: 'help' }]]);
+                .tap((args) => [
+                    [...args[0], { from: 'public/help', to: 'help' }]
+                ]);
         });
 
         // get version numbers
         const [major, minor, patch] = pkg.version.split('.');
         // get the hash of the current commit
         const hash = JSON.stringify(
-            childProcess
-                .execSync('git rev-parse HEAD')
-                .toString()
-                .trim()
+            childProcess.execSync('git rev-parse HEAD').toString().trim()
         );
 
         // inject version information into the bundle

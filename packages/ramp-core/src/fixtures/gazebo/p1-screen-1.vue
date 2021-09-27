@@ -1,8 +1,6 @@
 <template>
     <panel-screen :panel="panel">
-        <template #header>
-            Gazebo/Panel 1/Screen A
-        </template>
+        <template #header> Gazebo/Panel 1/Screen A </template>
 
         <template #controls>
             <div class="flex">
@@ -25,7 +23,14 @@
                 <!-- setting panel route directly in the store will not work ❌  -->
                 <button
                     @click="route = { screen: 'p-1-screen-2' }"
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-8 px-16"
+                    class="
+                        bg-blue-500
+                        hover:bg-blue-700
+                        text-white
+                        font-bold
+                        py-8
+                        px-16
+                    "
                 >
                     See Gazebo 2
                 </button>
@@ -47,8 +52,7 @@ export default defineComponent({
         return {
             route: sync('panel/items@p1.route'),
             pinned: sync('panel/pinned'),
-            url:
-                'https://i2.wp.com/freepngimages.com/wp-content/uploads/2017/08/wooden-garden-gazebo.png?w=860'
+            url: 'https://i2.wp.com/freepngimages.com/wp-content/uploads/2017/08/wooden-garden-gazebo.png?w=860'
         };
     },
     computed: {
@@ -61,7 +65,9 @@ export default defineComponent({
             // this is fine, but the name of the panel is hardcoded there, so you wouldn't need to update it if it ever changes
             const panel = this.$store.get<PanelInstance>(`panel/items@p1`)!;
             this.pinned =
-                this.pinned === null || (this.pinned && this.pinned.id) !== 'p1' ? panel : null;
+                this.pinned === null || (this.pinned && this.pinned.id) !== 'p1'
+                    ? panel
+                    : null;
         }
     }
 });

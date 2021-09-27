@@ -1,7 +1,13 @@
 <template>
     <div class="relative inset-x-0 w-full h-48 text-center">
         <button
-            class="text-gray-400 w-full h-full focus:outline-none hover:text-white"
+            class="
+                text-gray-400
+                w-full
+                h-full
+                focus:outline-none
+                hover:text-white
+            "
             @click="open = !open"
             v-focus-item
             :content="$t('appbar.more')"
@@ -23,7 +29,19 @@
             @blur="open = false"
             :position="position"
             id="dropdown"
-            class="dropdown shadow-md border border-gray:200 absolute py-8 w-64 bg-white rounded text-center z-10"
+            class="
+                dropdown
+                shadow-md
+                border
+                border-gray:200
+                absolute
+                py-8
+                w-64
+                bg-white
+                rounded
+                text-center
+                z-10
+            "
         >
             <slot></slot>
         </div>
@@ -59,8 +77,11 @@ export default defineComponent({
     mounted() {
         window.addEventListener(
             'click',
-            event => {
-                if (event.target instanceof HTMLElement && !this.$el.contains(event.target)) {
+            (event) => {
+                if (
+                    event.target instanceof HTMLElement &&
+                    !this.$el.contains(event.target)
+                ) {
                     this.open = false;
                 }
             },

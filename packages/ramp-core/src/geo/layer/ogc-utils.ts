@@ -77,7 +77,14 @@ export class OgcUtils extends APIScope {
         if (totalCount === -1) {
             totalCount = response.data.numberMatched;
             // note we pass url and not requestUrl here, becuase requestUrl is currently a count request
-            return this.loadWfsData(url, totalCount, startindex, limit, wfsData, xyInAttribs);
+            return this.loadWfsData(
+                url,
+                totalCount,
+                startindex,
+                limit,
+                wfsData,
+                xyInAttribs
+            );
         }
 
         wfsData.features = [...wfsData.features, ...data.features]; // update the received features array
@@ -85,7 +92,10 @@ export class OgcUtils extends APIScope {
         // check if all the requested features are downloaded
         if (data.features.length < totalCount - startindex) {
             // the limit is either 1k or the number of remaining features
-            const limit = Math.min(1000, totalCount - startindex - data.features.length);
+            const limit = Math.min(
+                1000,
+                totalCount - startindex - data.features.length
+            );
             return this.loadWfsData(
                 requestUrl,
                 totalCount,
@@ -105,7 +115,7 @@ export class OgcUtils extends APIScope {
                 // suggest porting this block to geoApi.
                 // for now, easier to modify as early as possible in the transformation
 
-                wfsData.features.forEach(f => {
+                wfsData.features.forEach((f) => {
                     const p = f.geometry.coordinates;
                     f.properties.rvInternalCoordX = p[0];
                     f.properties.rvInternalCoordY = p[1];
@@ -163,16 +173,18 @@ export class OgcUtils extends APIScope {
             }
             return EsriRequest(url, {
                 responseType: 'xml'
-            }).then(result => result.data);
+            }).then((result) => result.data);
         };
 
         // this promise attempts two tries at get capabilities
-        const gcPromise: Promise<any> = new Promise(resolve => {
+        const gcPromise: Promise<any> = new Promise((resolve) => {
             getCapabilities()
                 .then((data: any) => resolve(data)) // if successful, pass straight back
                 .catch(() => {
                     // if errors, try again; see fgpv-vpgf/fgpv-vpgf#908 issue
-                    console.error('Get capabilities failed; trying the second time;');
+                    console.error(
+                        'Get capabilities failed; trying the second time;'
+                    );
                     resolve(getCapabilities());
                 });
         });
@@ -220,7 +232,10 @@ export class OgcUtils extends APIScope {
                             // Yucky naming means no dot notation
                             const styleURL = resource['@_xlink:href'];
                             // decode '&amp;' -> '&', which was encoded by XMLSerializer
-                            styleToURL[styleName] = styleURL.replaceAll('&amp;', '&');
+                            styleToURL[styleName] = styleURL.replaceAll(
+                                '&amp;',
+                                '&'
+                            );
                         }
                     });
                 }
@@ -250,7 +265,9 @@ export class OgcUtils extends APIScope {
             if (!xmlNode) {
                 return [];
             }
-            const xmlData: string = new XMLSerializer().serializeToString(xmlNode);
+            const xmlData: string = new XMLSerializer().serializeToString(
+                xmlNode
+            );
             const options: Object = {
                 ignoreAttributes: false // check for tag attributes
             };

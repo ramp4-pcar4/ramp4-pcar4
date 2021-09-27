@@ -10,12 +10,19 @@
                 :active="panel.isPinned"
                 v-if="!$iApi.screenSize !== 'xs'"
             ></pin>
-            <close @click="panel.close()" v-if="$iApi.screenSize !== 'xs'"></close>
+            <close
+                @click="panel.close()"
+                v-if="$iApi.screenSize !== 'xs'"
+            ></close>
         </template>
 
         <template #content>
             <div class="h-600 overflow-y-auto">
-                <div class="mx-5" v-for="(tileSchema, idx) in tileSchemas" :key="tileSchema.id">
+                <div
+                    class="mx-5"
+                    v-for="(tileSchema, idx) in tileSchemas"
+                    :key="tileSchema.id"
+                >
                     <!-- use mt-5 if it's the first basemap title schema, use mt-36 otherwise -->
                     <div :class="(idx === 0 ? 'mt-5' : 'mt-36') + ' flex mb-5'">
                         <h3 class="font-bold text-xl" v-truncate>
@@ -48,7 +55,10 @@
                         v-focus-list
                         v-if="basemaps.length > 0"
                     >
-                        <li v-for="basemap in filterBasemaps(tileSchema.id)" :key="basemap.id">
+                        <li
+                            v-for="basemap in filterBasemaps(tileSchema.id)"
+                            :key="basemap.id"
+                        >
                             <basemap-item
                                 :basemap="basemap"
                                 :tileSchema="tileSchema"
@@ -63,15 +73,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
 import { get } from '@/store/pathify-helper';
 import { BasemapStore } from './store';
 import BasemapItemV from './item.vue';
 import { RampBasemapConfig } from '@/geo/api';
+import { PanelInstance } from '@/api';
 
 export default defineComponent({
     name: 'BasemapScreenV',
-    props: ['panel'],
+    props: {
+        panel: {
+            type: Object as PropType<PanelInstance>
+        }
+    },
     components: {
         'basemap-item': BasemapItemV
     },
@@ -86,7 +101,8 @@ export default defineComponent({
         filterBasemaps(schemaId: string) {
             // filter out all the basemaps that match the current schema
             return this.basemaps.filter(
-                (basemap: RampBasemapConfig) => basemap.tileSchemaId === schemaId
+                (basemap: RampBasemapConfig) =>
+                    basemap.tileSchemaId === schemaId
             );
         }
     }

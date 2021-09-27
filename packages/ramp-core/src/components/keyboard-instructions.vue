@@ -1,12 +1,28 @@
 <template>
     <div
-        class="absolute inset-0 flex justify-center items-center bg-opacity-30 bg-black z-50 pointer-events-auto"
+        class="
+            absolute
+            inset-0
+            flex
+            justify-center
+            items-center
+            bg-opacity-30 bg-black
+            z-50
+            pointer-events-auto
+        "
         v-if="open"
         @click="open = false"
         @keydown="onKeydown"
     >
         <div
-            class="bg-white w-500 pointer-events-auto shadow-2xl p-20 flex flex-col"
+            class="
+                bg-white
+                w-500
+                pointer-events-auto
+                shadow-2xl
+                p-20
+                flex flex-col
+            "
             @click.stop.prevent
             tabindex="0"
             ref="firstEl"
@@ -34,11 +50,17 @@
 </template>
 
 <script lang="ts">
-import { Vue, Options } from 'vue-property-decorator';
-@Options({})
-export default class KeyboardInstructionsModalV extends Vue {
-    open: boolean = false;
-    instructionSections: string[] = ['app', 'lists', 'map'];
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+    name: 'KeyboardInstructionsModalV',
+    data() {
+        return {
+            open: false,
+            instructionSections: ['app', 'lists', 'map']
+        };
+    },
+
     mounted() {
         this.$iApi.event.on('openKeyboardInstructions', () => {
             this.open = true;
@@ -46,22 +68,28 @@ export default class KeyboardInstructionsModalV extends Vue {
                 (this.$refs.firstEl as HTMLElement)?.focus();
             });
         });
-    }
-    onKeydown(event: KeyboardEvent) {
-        if (event.key === 'Tab') {
-            if (event.shiftKey && event.target === this.$refs.firstEl) {
+    },
+
+    methods: {
+        onKeydown(event: KeyboardEvent) {
+            if (event.key === 'Tab') {
+                if (event.shiftKey && event.target === this.$refs.firstEl) {
+                    event.preventDefault();
+                    (this.$refs.lastEl as HTMLElement).focus();
+                } else if (
+                    !event.shiftKey &&
+                    event.target == this.$refs.lastEl
+                ) {
+                    event.preventDefault();
+                    (this.$refs.firstEl as HTMLElement).focus();
+                }
+            } else if (event.key === 'Escape') {
                 event.preventDefault();
-                (this.$refs.lastEl as HTMLElement).focus();
-            } else if (!event.shiftKey && event.target == this.$refs.lastEl) {
-                event.preventDefault();
-                (this.$refs.firstEl as HTMLElement).focus();
+                this.open = false;
             }
-        } else if (event.key === 'Escape') {
-            event.preventDefault();
-            this.open = false;
         }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

@@ -5,7 +5,11 @@ export class MapCaptionState {
     scale: ScaleBar;
     cursorCoords: MouseCoords;
 
-    constructor(attrib: Attribution, scale: ScaleBar, cursorCoords: MouseCoords) {
+    constructor(
+        attrib: Attribution,
+        scale: ScaleBar,
+        cursorCoords: MouseCoords
+    ) {
         this.attribution = attrib;
         this.scale = scale;
         this.cursorCoords = cursorCoords;

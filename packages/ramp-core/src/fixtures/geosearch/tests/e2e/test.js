@@ -1,8 +1,6 @@
-const search = query => {
+const search = (query) => {
     // types into search bar
-    cy.get('.rv-geosearch-bar input')
-        .clear()
-        .type(query);
+    cy.get('.rv-geosearch-bar input').clear().type(query);
     // waits for search to update
     cy.window()
         .its('rInstance.$vApp.$store')
@@ -14,13 +12,13 @@ const search = query => {
 const viewIsAt = (long, lat, delta = 0.1) => {
     // wait for zoom animation to finish
     cy.wait(1000);
-    cy.window().then(window => {
+    cy.window().then((window) => {
         cy.wrap(
             window.rInstance.geo.utils.proj.projectGeometry(
                 4326,
                 window.rInstance.geo.map.getExtent().center()
             )
-        ).should(point => {
+        ).should((point) => {
             expect(point.x).closeTo(long, delta);
             expect(point.y).closeTo(lat, delta);
         });
@@ -52,7 +50,10 @@ describe('Geosearch', () => {
 
         it('zooms to correct location', () => {
             search('giants tomb isl');
-            cy.contains('.rv-results-list > li:first', 'Giants Tomb Island').click();
+            cy.contains(
+                '.rv-results-list > li:first',
+                'Giants Tomb Island'
+            ).click();
             viewIsAt(-80.0, 44.91);
         });
 
@@ -72,9 +73,7 @@ describe('Geosearch', () => {
 
         it('zooms to correct location', () => {
             search('030M13');
-            cy.get('.rv-results-list > li:first')
-                .contains('030M13')
-                .click();
+            cy.get('.rv-results-list > li:first').contains('030M13').click();
             viewIsAt(-79.7, 43.8);
         });
     });
@@ -98,7 +97,10 @@ describe('Geosearch', () => {
 
         it('zooms to correct location', () => {
             search('54.3733, -91.7417');
-            cy.contains('.rv-results-list > li:first', '54.3733,-91.7417').click();
+            cy.contains(
+                '.rv-results-list > li:first',
+                '54.3733,-91.7417'
+            ).click();
             viewIsAt(-91.7417, 54.3733);
         });
     });
@@ -109,25 +111,19 @@ describe('Geosearch', () => {
                 .eq(0)
                 .select('British Columbia');
             search('qu');
-            cy.get('.rv-results-list > li').each($el => {
+            cy.get('.rv-results-list > li').each(($el) => {
                 cy.wrap($el).contains('BC');
             });
-            cy.get('.rv-geosearch-top-filters select')
-                .eq(0)
-                .select('...');
+            cy.get('.rv-geosearch-top-filters select').eq(0).select('...');
         });
 
         it('filters type', () => {
-            cy.get('.rv-geosearch-top-filters select')
-                .eq(1)
-                .select('City');
+            cy.get('.rv-geosearch-top-filters select').eq(1).select('City');
             search('ba');
-            cy.get('.rv-results-list > li').each($el => {
+            cy.get('.rv-results-list > li').each(($el) => {
                 cy.wrap($el).contains('City');
             });
-            cy.get('.rv-geosearch-top-filters select')
-                .eq(1)
-                .select('...');
+            cy.get('.rv-geosearch-top-filters select').eq(1).select('...');
         });
 
         it('clears filters', () => {
@@ -160,25 +156,40 @@ describe('Geosearch', () => {
             // zoom to a smaller extent
             cy.window()
                 .its('rInstance.geo.map.esriView')
-                .invoke('goTo', { center: [-90, 49], zoom: 4 }, { animate: false }, 4);
+                .invoke(
+                    'goTo',
+                    { center: [-90, 49], zoom: 4 },
+                    { animate: false },
+                    4
+                );
             // check checkbox
             cy.get('.rv-geosearch-bottom-filters [type="checkbox"]').check();
             search('t');
-            cy.window().then(window => {
+            cy.window().then((window) => {
                 // project extent to lat/long
                 cy.wrap(
                     window.rInstance.geo.utils.proj.projectExtent(
                         4326,
                         window.rInstance.geo.map.getExtent()
                     )
-                ).then(extent => {
+                ).then((extent) => {
                     // check that each result is inside extent
-                    window.rInstance.$vApp.$store.get('geosearch/searchResults').forEach(result => {
-                        expect(result.position[0]).to.be.lessThan(extent.xmax);
-                        expect(result.position[0]).to.be.greaterThan(extent.xmin);
-                        expect(result.position[1]).to.be.lessThan(extent.ymax);
-                        expect(result.position[1]).to.be.greaterThan(extent.ymin);
-                    });
+                    window.rInstance.$vApp.$store
+                        .get('geosearch/searchResults')
+                        .forEach((result) => {
+                            expect(result.position[0]).to.be.lessThan(
+                                extent.xmax
+                            );
+                            expect(result.position[0]).to.be.greaterThan(
+                                extent.xmin
+                            );
+                            expect(result.position[1]).to.be.lessThan(
+                                extent.ymax
+                            );
+                            expect(result.position[1]).to.be.greaterThan(
+                                extent.ymin
+                            );
+                        });
                 });
             });
             cy.get('.rv-geosearch-bottom-filters [type="checkbox"]').uncheck();

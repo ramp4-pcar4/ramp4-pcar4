@@ -1,7 +1,15 @@
 <template>
     <div class="h-full flex items-center justify-center">
         <select
-            class="rv-input w-full bg-transparent text-black-75 h-24 pb-8 border-0 border-b-2"
+            class="
+                rv-input
+                w-full
+                bg-transparent
+                text-black-75
+                h-24
+                pb-8
+                border-0 border-b-2
+            "
             v-model="selectedOption"
             @change="selectionChanged()"
         >
@@ -35,7 +43,9 @@ export default defineComponent({
 
         // obtain row data and filter out duplicates for selector list
         rowData = rowData.map((row: any) => row[this.params.column.colId]);
-        this.options = rowData.filter((item: any, idx: any) => rowData.indexOf(item) === idx);
+        this.options = rowData.filter(
+            (item: any, idx: any) => rowData.indexOf(item) === idx
+        );
 
         // add the '...' option to allow clearing the selector
         this.options.unshift('...');
@@ -46,7 +56,9 @@ export default defineComponent({
 
     methods: {
         selectionChanged() {
-            this.selectedOption = this.selectedOption ? this.selectedOption : '';
+            this.selectedOption = this.selectedOption
+                ? this.selectedOption
+                : '';
 
             this.params.parentFilterInstance((instance: any) => {
                 if (this.selectedOption === '...') {

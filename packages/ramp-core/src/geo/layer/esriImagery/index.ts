@@ -27,11 +27,12 @@ class ImageryLayer extends CommonLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.ImageryLayerProperties {
+    protected makeEsriLayerConfig(
+        rampLayerConfig: RampLayerConfig
+    ): __esri.ImageryLayerProperties {
         // TODO flush out
-        const esriConfig: __esri.ImageryLayerProperties = super.makeEsriLayerConfig(
-            rampLayerConfig
-        );
+        const esriConfig: __esri.ImageryLayerProperties =
+            super.makeEsriLayerConfig(rampLayerConfig);
 
         return esriConfig;
     }
@@ -54,7 +55,7 @@ class ImageryLayer extends CommonLayer {
 
         const legendPromise = this.$iApi.geo.utils.symbology
             .mapServerToLocalLegend(this.origRampConfig.url)
-            .then(legArray => {
+            .then((legArray) => {
                 imgFC.legend = legArray;
             });
 

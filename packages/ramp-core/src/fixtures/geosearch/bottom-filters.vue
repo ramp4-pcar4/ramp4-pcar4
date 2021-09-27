@@ -4,7 +4,13 @@
             <label class="ml-8 cursor-pointer"
                 ><input
                     type="checkbox"
-                    class="form-checkbox border-2 mx-8 border-gray-600 cursor-pointer"
+                    class="
+                        form-checkbox
+                        border-2
+                        mx-8
+                        border-gray-600
+                        cursor-pointer
+                    "
                     :checked="resultsVisible"
                     @change="updateMapExtent($event.target.checked)"
                 />{{ $t('geosearch.visible') }}</label
@@ -69,14 +75,17 @@ export default defineComponent({
                 return ext;
             } else {
                 // var needed to get around casting complaints with async syntax
-                const pExt = await this.$iApi.geo.utils.proj.projectGeometry(4326, ext);
+                const pExt = await this.$iApi.geo.utils.proj.projectGeometry(
+                    4326,
+                    ext
+                );
                 return pExt as Extent;
             }
         },
 
         // Called when the checkbox is pressed. Updates the geosearch extent.
         updateMapExtent(visible: boolean): void {
-            this.latLongExtent(this.$iApi.geo.map.getExtent()).then(e => {
+            this.latLongExtent(this.$iApi.geo.map.getExtent()).then((e) => {
                 this.setMapExtent({
                     extent: e,
                     visible: visible

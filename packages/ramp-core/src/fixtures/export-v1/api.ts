@@ -65,7 +65,9 @@ export class ExportV1API extends FixtureInstance {
         fbTitle.left = fbMap.width! / 2; // center title after we know the width of the group
         this.options.runningHeight += fbMap.height! + 40;
 
-        this.options.scale = panelWidth / (fbMap.width! + GLOBAL_MARGIN.LEFT + GLOBAL_MARGIN.RIGHT);
+        this.options.scale =
+            panelWidth /
+            (fbMap.width! + GLOBAL_MARGIN.LEFT + GLOBAL_MARGIN.RIGHT);
 
         const fbLegend = await this.getSubFixture('export-v1-legend').make({
             width: fbMap.width
@@ -80,7 +82,7 @@ export class ExportV1API extends FixtureInstance {
         });
 
         // clone items for download canvas
-        const fbGroupDownload: fabric.Group = await new Promise(resolve => {
+        const fbGroupDownload: fabric.Group = await new Promise((resolve) => {
             fbGroup!.clone((g: fabric.Group) => {
                 resolve(g);
             });
@@ -96,14 +98,19 @@ export class ExportV1API extends FixtureInstance {
         this.fcFabric.setDimensions({
             width: panelWidth,
             height:
-                (this.options.runningHeight + GLOBAL_MARGIN.TOP + GLOBAL_MARGIN.BOTTOM) *
+                (this.options.runningHeight +
+                    GLOBAL_MARGIN.TOP +
+                    GLOBAL_MARGIN.BOTTOM) *
                 this.options.scale
         });
         this.fcFabric.renderAll();
 
         this.fcFabricDownload!.setDimensions({
             width: fbMap.width! + GLOBAL_MARGIN.LEFT + GLOBAL_MARGIN.RIGHT,
-            height: this.options.runningHeight + GLOBAL_MARGIN.TOP + GLOBAL_MARGIN.BOTTOM
+            height:
+                this.options.runningHeight +
+                GLOBAL_MARGIN.TOP +
+                GLOBAL_MARGIN.BOTTOM
         });
         this.fcFabricDownload.renderAll();
     }

@@ -40,11 +40,14 @@ export default defineComponent({
     },
     mounted() {
         // need to hoist events to top level cell wrapper to be keyboard accessible
-        this.params.eGridCell.addEventListener('keydown', (e: KeyboardEvent) => {
-            if (e.key === 'Enter') {
-                this.openDetails();
+        this.params.eGridCell.addEventListener(
+            'keydown',
+            (e: KeyboardEvent) => {
+                if (e.key === 'Enter') {
+                    this.openDetails();
+                }
             }
-        });
+        );
 
         this.params.eGridCell.addEventListener('focus', () => {
             (this.$el as any)._tippy.show();

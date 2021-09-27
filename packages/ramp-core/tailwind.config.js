@@ -26,54 +26,54 @@ module.exports = {
             '-32': '-32px',
             '-30': '-30px',
             '-2': '-2px',
-            '0': '0px',
-            '1': '1px',
-            '2': '2px',
-            '3': '3px',
-            '4': '4px',
-            '5': '5px',
-            '6': '6px',
-            '7': '7px',
-            '8': '8px',
-            '9': '9px',
-            '10': '10px',
-            '12': '12px',
-            '14': '14px',
-            '15': '15px',
-            '16': '16px',
-            '18': '18px',
-            '20': '20px',
-            '24': '24px',
-            '25': '25px',
-            '26': '26px',
-            '28': '28px',
-            '30': '30px',
-            '32': '32px',
-            '36': '36px',
-            '38': '38px',
-            '40': '40px',
-            '44': '44px',
-            '48': '48px',
-            '56': '56px',
-            '64': '64px',
-            '75': '75px',
-            '80': '80px',
-            '100': '100px',
-            '116': '116px',
-            '160': '160px',
-            '180': '180px',
-            '192': '192px',
-            '230': '230px',
-            '256': '256px',
-            '500': '500px'
+            0: '0px',
+            1: '1px',
+            2: '2px',
+            3: '3px',
+            4: '4px',
+            5: '5px',
+            6: '6px',
+            7: '7px',
+            8: '8px',
+            9: '9px',
+            10: '10px',
+            12: '12px',
+            14: '14px',
+            15: '15px',
+            16: '16px',
+            18: '18px',
+            20: '20px',
+            24: '24px',
+            25: '25px',
+            26: '26px',
+            28: '28px',
+            30: '30px',
+            32: '32px',
+            36: '36px',
+            38: '38px',
+            40: '40px',
+            44: '44px',
+            48: '48px',
+            56: '56px',
+            64: '64px',
+            75: '75px',
+            80: '80px',
+            100: '100px',
+            116: '116px',
+            160: '160px',
+            180: '180px',
+            192: '192px',
+            230: '230px',
+            256: '256px',
+            500: '500px'
         },
         extend: {
             inset: {
                 '-9': '-9px',
-                '1': '1px',
-                '32': '32px',
-                '64': '64px',
-                '200': '200px',
+                1: '1px',
+                32: '32px',
+                64: '64px',
+                200: '200px',
                 '1/2': '50%',
                 '9/20': '45%',
                 full: '100%'
@@ -140,7 +140,13 @@ module.exports = {
             minWidth: ['responsive', 'container-query'],
             objectFit: ['responsive', 'container-query'],
             objectPosition: ['responsive', 'container-query'],
-            opacity: ['responsive', 'container-query', 'hover', 'focus', 'disabled'],
+            opacity: [
+                'responsive',
+                'container-query',
+                'hover',
+                'focus',
+                'disabled'
+            ],
             order: ['responsive', 'container-query'],
             outline: ['responsive', 'container-query', 'focus'],
             overflow: ['responsive', 'container-query'],
@@ -151,7 +157,13 @@ module.exports = {
             stroke: ['responsive', 'container-query'],
             tableLayout: ['responsive', 'container-query'],
             textAlign: ['responsive', 'container-query'],
-            textColor: ['responsive', 'container-query', 'hover', 'focus', 'disabled'],
+            textColor: [
+                'responsive',
+                'container-query',
+                'hover',
+                'focus',
+                'disabled'
+            ],
             textDecoration: ['responsive', 'container-query', 'hover', 'focus'],
             textTransform: ['responsive', 'container-query'],
             userSelect: ['responsive', 'container-query'],
@@ -164,7 +176,7 @@ module.exports = {
         }
     },
     plugins: [
-        function({ addVariant, e }) {
+        function ({ addVariant, e }) {
             addVariant('container-query', ({ container, separator }) => {
                 // this is a list of possible ramp shell sizes; pixel sizes TBD
                 const shellSizes = ['xs', 'sm', 'md', 'lg'];
@@ -172,8 +184,8 @@ module.exports = {
                 const newRules = [];
 
                 // `container` is itself a clone; thanks Tailwind :/
-                container.walkRules(rule => {
-                    shellSizes.forEach(shellSize => {
+                container.walkRules((rule) => {
+                    shellSizes.forEach((shellSize) => {
                         const newRule = rule.clone(); // clone a rule so not to modify the original clone
 
                         // prefix shell size selector to the rule; slice the dot from the rule selector

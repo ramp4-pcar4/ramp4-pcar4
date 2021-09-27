@@ -1,6 +1,13 @@
 // TODO add proper documentation
 
-import { GeometryType, LineString, MultiPoint, Point, SrDef, IdDef } from '@/geo/api';
+import {
+    GeometryType,
+    LineString,
+    MultiPoint,
+    Point,
+    SrDef,
+    IdDef
+} from '@/geo/api';
 
 export class LinearRing extends LineString {
     /**
@@ -16,7 +23,12 @@ export class LinearRing extends LineString {
     constructor(id: IdDef, line: LineString);
     constructor(id: IdDef, multiPoint: MultiPoint);
     // from arrays of verticies that can be interpreted as a ring
-    constructor(id: IdDef, listOfCoords: Array<Array<number>>, sr?: SrDef, raw?: boolean);
+    constructor(
+        id: IdDef,
+        listOfCoords: Array<Array<number>>,
+        sr?: SrDef,
+        raw?: boolean
+    );
     constructor(id: IdDef, listOfPoints: Array<Point>, sr?: SrDef);
     constructor(id: IdDef, listOfXY: Array<object>, sr?: SrDef);
     constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef);
@@ -37,7 +49,9 @@ export class LinearRing extends LineString {
         LinearRing.closeRing(this.rawArray);
 
         if (this.length < 4) {
-            throw new Error('Linear Ring must have at least 3 distinct vertices.');
+            throw new Error(
+                'Linear Ring must have at least 3 distinct vertices.'
+            );
         }
     }
 

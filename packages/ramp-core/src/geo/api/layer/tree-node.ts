@@ -5,7 +5,12 @@ export class TreeNode {
     isLayer: boolean; // false for groups. effectively a shortcut for `children.length === 0`
     uid: string;
 
-    constructor(idx: number, uid: string, name: string = '', isLayer: boolean = true) {
+    constructor(
+        idx: number,
+        uid: string,
+        name: string = '',
+        isLayer: boolean = true
+    ) {
         this.layerIdx = idx;
         this.name = name;
         this.isLayer = isLayer;
@@ -22,7 +27,7 @@ export class TreeNode {
             let hit: TreeNode | undefined;
 
             // using .some will cause the loop to stop when it gets a hit
-            this.children.some(t => {
+            this.children.some((t) => {
                 return (hit = t.findChildByUid(uid));
             });
 
@@ -40,7 +45,7 @@ export class TreeNode {
             let hit: TreeNode | undefined;
 
             // using .some will cause the loop to stop when it gets a hit
-            this.children.some(t => {
+            this.children.some((t) => {
                 return (hit = t.findChildByIdx(idx));
             });
 

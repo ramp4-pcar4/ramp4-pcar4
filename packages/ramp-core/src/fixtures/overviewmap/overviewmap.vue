@@ -2,7 +2,20 @@
     <div class="relative">
         <div
             :style="mapStyle()"
-            class="pointer-events-auto absolute top-0 right-0 mt-12 mr-12 shadow-tm border-4 border-solid border-white bg-white transition-all duration-300 ease-out"
+            class="
+                pointer-events-auto
+                absolute
+                top-0
+                right-0
+                mt-12
+                mr-12
+                shadow-tm
+                border-4 border-solid border-white
+                bg-white
+                transition-all
+                duration-300
+                ease-out
+            "
         >
             <!-- map -->
             <div class="relative h-full w-full overflow-hidden">
@@ -18,11 +31,24 @@
                     tabindex="0"
                     class="cursor-pointer absolute h-full w-full"
                     @click="minimized = !minimized"
-                    :content="$t(minimized ? 'overviewmap.expand' : 'overviewmap.minimize')"
+                    :content="
+                        $t(
+                            minimized
+                                ? 'overviewmap.expand'
+                                : 'overviewmap.minimize'
+                        )
+                    "
                     v-tippy="{ placement: 'left', hideOnClick: false }"
                 >
                     <svg
-                        class="absolute fill-current text-gray-500 transition-all duration-300 ease-out"
+                        class="
+                            absolute
+                            fill-current
+                            text-gray-500
+                            transition-all
+                            duration-300
+                            ease-out
+                        "
                         :style="toggleStyle()"
                         xmlns="http://www.w3.org/2000/svg"
                         fit=""
@@ -78,14 +104,18 @@ export default defineComponent({
         );
         this.minimized = this.startMinimized;
 
-        this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, (newExtent: Extent) => {
-            this.overviewMap.updateOverview(newExtent);
-        });
+        this.$iApi.event.on(
+            GlobalEvents.MAP_EXTENTCHANGE,
+            (newExtent: Extent) => {
+                this.overviewMap.updateOverview(newExtent);
+            }
+        );
     },
 
     methods: {
         async cursorHitTest(e: MouseEvent) {
-            this.hoverOnExtent = !this.minimized && (await this.overviewMap.cursorHitTest(e));
+            this.hoverOnExtent =
+                !this.minimized && (await this.overviewMap.cursorHitTest(e));
         },
 
         defaultConfig() {
@@ -122,7 +152,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .overviewmap::before {
     @apply absolute w-0 h-0 top-0 right-0 border-solid;
     border-width: 0 40px 40px 0;

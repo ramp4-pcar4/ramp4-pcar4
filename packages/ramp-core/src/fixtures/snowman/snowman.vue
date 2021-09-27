@@ -19,7 +19,9 @@ export default defineComponent({
         message: String
     },
     data() {
-        return { url: 'https://i.ya-webdesign.com/images/evil-snowman-png-1.png' };
+        return {
+            url: 'https://i.ya-webdesign.com/images/evil-snowman-png-1.png'
+        };
     },
     mounted() {
         // this is the proper way of accessing the API instance of the R4MP map the fixture is running in,

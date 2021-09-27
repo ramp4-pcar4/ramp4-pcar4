@@ -28,7 +28,7 @@
                 />
             </svg>
             <span>{{ $t('notifications.empty') }}</span>
-            <span style="flex-grow: 6;" />
+            <span style="flex-grow: 6" />
         </div>
     </div>
 </template>

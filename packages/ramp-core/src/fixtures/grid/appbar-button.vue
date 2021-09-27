@@ -1,5 +1,8 @@
 <template>
-    <appbar-button :onClickFunction="onClick" :tooltip="$t('grid.button.title')">
+    <appbar-button
+        :onClickFunction="onClick"
+        :tooltip="$t('grid.button.title')"
+    >
         <!-- https://fonts.google.com/icons?selected=Material%20Icons%3Atable_chart -->
         <svg
             class="fill-current w-24 h-24 ml-8 sm:ml-20"

@@ -66,7 +66,11 @@ export interface AppVersion {
 export function isVueConstructor(value: any): any {
     // check if the value itself is a function (it's not possible to tell if it's a constructor function or not)
     // check if the value has a render function. May not be foolproof, but there doesn't seem like a better way.
-    return typeof value === 'function' && value.render && typeof value.render === 'function';
+    return (
+        typeof value === 'function' &&
+        value.render &&
+        typeof value.render === 'function'
+    );
 }
 
 /**
@@ -95,7 +99,7 @@ export function isComponentOptions(value: any): value is ComponentOptions {
     return (
         typeof value === 'object' &&
         !value.functional &&
-        names.some(name => value[name] !== undefined)
+        names.some((name) => value[name] !== undefined)
     );
 }
 

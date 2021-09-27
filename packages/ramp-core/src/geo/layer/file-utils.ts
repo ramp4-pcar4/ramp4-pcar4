@@ -6,7 +6,11 @@ import { csv2geojson, dsv } from 'csv2geojson';
 // @ts-ignore
 import shp from 'shpjs';
 
-import { EsriColour, EsriSimpleRenderer, EsriSpatialReference } from '@/geo/esri';
+import {
+    EsriColour,
+    EsriSimpleRenderer,
+    EsriSpatialReference
+} from '@/geo/esri';
 
 /**
  * Maps GeoJSON geometry types to a set of default renders defined in GlobalStorage.DefaultRenders
@@ -67,14 +71,14 @@ function assignIds(geoJson: any): void {
 
     // remove ID_FILE if all empty
     if (emptyID) {
-        geoJson.features.forEach(function(val: any) {
+        geoJson.features.forEach(function (val: any) {
             delete val.properties.ID_FILE;
         });
     }
 
     // remove OBJECTID_FILE if all empty
     if (emptyObjID) {
-        geoJson.features.forEach(function(val: any) {
+        geoJson.features.forEach(function (val: any) {
             delete val.properties.OBJECTID_FILE;
         });
     }
@@ -87,13 +91,16 @@ function assignIds(geoJson: any): void {
  * @param {Object} geoJson           layer data in geoJson format
  * @param {Object} layerDefinition   layer definition of feature layer not yet created
  */
-function cleanUpFields(geoJson: any, configPackage: __esri.FeatureLayerProperties) {
+function cleanUpFields(
+    geoJson: any,
+    configPackage: __esri.FeatureLayerProperties
+) {
     const badField = (name: string) => {
         // basic for now. check for spaces.
         return name.indexOf(' ') > -1;
     };
 
-    configPackage.fields?.forEach(f => {
+    configPackage.fields?.forEach((f) => {
         if (f.name && badField(f.name)) {
             const oldField: string = f.name;
             let newField: string;
@@ -103,7 +110,9 @@ function cleanUpFields(geoJson: any, configPackage: __esri.FeatureLayerPropertie
             // determine a new field name that is not bad and is unique, then update the field definition
             do {
                 newField = oldField.replace(/ /g, underscore);
-                badNewName = configPackage.fields?.find(f2 => f2.name === newField);
+                badNewName = configPackage.fields?.find(
+                    (f2) => f2.name === newField
+                );
                 if (badNewName) {
                     // new field already exists. enhance it
                     underscore += '_';
@@ -130,12 +139,16 @@ export class FileUtils extends APIScope {
     extractGeoJsonFields(geoJson: any) {
         // TODO attempt to strong type input parameter.  GeoJSON.FeatureCollection wants us to pass in other types so avoiding it for now.
         if (geoJson.features.length < 1) {
-            throw new Error('GeoJSON field extraction requires at least one feature');
+            throw new Error(
+                'GeoJSON field extraction requires at least one feature'
+            );
         }
 
         // TODO investigate if a value can be of numeric type in GeoJSON schema. if so, try to detect, change type to number
         if (geoJson.features[0].properties) {
-            return Object.keys(geoJson.features[0].properties).map(function(prop) {
+            return Object.keys(geoJson.features[0].properties).map(function (
+                prop
+            ) {
                 return { name: prop, type: 'string' };
             });
         } else {
@@ -147,14 +160,19 @@ export class FileUtils extends APIScope {
      * Extracts fields from csv file does no guesswork on property types and calls everything a string.
      */
     extractCsvFields(csvData: string, delimiter: string = ',') {
-        const fields: Array<string> = dsv.dsvFormat(delimiter).parseRows(csvData)[0];
-        return fields.map(field => {
+        const fields: Array<string> = dsv
+            .dsvFormat(delimiter)
+            .parseRows(csvData)[0];
+        return fields.map((field) => {
             return { name: field, type: 'string' };
         });
     }
 
     // TODO general type cleanup. just trying to make it work for now
-    async geoJsonToEsriJson(geoJson: any, options: any): Promise<__esri.FeatureLayerProperties> {
+    async geoJsonToEsriJson(
+        geoJson: any,
+        options: any
+    ): Promise<__esri.FeatureLayerProperties> {
         let targetSR: any;
         let srcProj = 'EPSG:4326'; // 4326 is the default for GeoJSON with no projection defined
         let layerId: string;
@@ -190,7 +208,9 @@ export class FileUtils extends APIScope {
             if (options.targetSR) {
                 targetSR = options.targetSR;
             } else {
-                throw new Error('geoJsonToEsriJson - missing opts.targetSR arguement');
+                throw new Error(
+                    'geoJsonToEsriJson - missing opts.targetSR arguement'
+                );
             }
 
             if (options.layerId) {
@@ -201,7 +221,9 @@ export class FileUtils extends APIScope {
 
             // due to grousyness of esri typescript, we mangle the colour pre-fromJSON
             if (options.colour) {
-                defRender.renderer.symbol.color = new EsriColour(options.colour).toRgba();
+                defRender.renderer.symbol.color = new EsriColour(
+                    options.colour
+                ).toRgba();
             }
 
             // TODO add support for renderer option, or drop the option
@@ -212,7 +234,9 @@ export class FileUtils extends APIScope {
         // TODO this code only allows for simple renderers as default. Need to examine how the custom renderer from the config gets applied.
         //      maybe we should be applying that here. Alternately it will be in layer constructor that is overriding that property
         //      (it might happen after layer load.).  Alternatley it could be in ESRI 4 we can set it upfront on regular feature layers.
-        configPackage.renderer = EsriSimpleRenderer.fromJSON(defRender.renderer);
+        configPackage.renderer = EsriSimpleRenderer.fromJSON(
+            defRender.renderer
+        );
         configPackage.fields = (configPackage.fields || []).concat(
             this.extractGeoJsonFields(geoJson)
         );
@@ -227,7 +251,7 @@ export class FileUtils extends APIScope {
         if (options) {
             if (options.latfield) {
                 const latField = configPackage.fields.find(
-                    field => field.name === options.latfield
+                    (field) => field.name === options.latfield
                 );
                 if (latField) {
                     latField.type = 'double';
@@ -235,7 +259,7 @@ export class FileUtils extends APIScope {
             }
             if (options.lonfield) {
                 const longField = configPackage.fields.find(
-                    field => field.name === options.lonfield
+                    (field) => field.name === options.lonfield
                 );
                 if (longField) {
                     longField.type = 'double';
@@ -259,7 +283,11 @@ export class FileUtils extends APIScope {
         // project data and convert to esri json format
         const fancySR = new EsriSpatialReference(targetSR);
 
-        await this.$iApi.geo.utils.proj.projectGeoJson(geoJson, srcProj, destProj);
+        await this.$iApi.geo.utils.proj.projectGeoJson(
+            geoJson,
+            srcProj,
+            destProj
+        );
 
         // terraformer has no support for non-wkid layers. can also do funny things if source is 102100.
         // use 8888 as placehold then adjust below
@@ -276,7 +304,7 @@ export class FileUtils extends APIScope {
 
             // TEMPORARY hunt any complex datatypes and replace with a string
             // TODO figure out how to actually handle arrays or objects as attribute values
-            Object.keys(gr.attributes).forEach(attName => {
+            Object.keys(gr.attributes).forEach((attName) => {
                 if (
                     Array.isArray(gr.attributes[attName]) ||
                     typeof gr.attributes[attName] === 'object'
@@ -334,8 +362,10 @@ export class FileUtils extends APIScope {
                     // csv2geojson will not include the lat and long in the feature
                     data.features.map((feature: any) => {
                         // add new property Long and Lat before layer is generated
-                        feature.properties[csvOpts.lonfield] = feature.geometry.coordinates[0];
-                        feature.properties[csvOpts.latfield] = feature.geometry.coordinates[1];
+                        feature.properties[csvOpts.lonfield] =
+                            feature.geometry.coordinates[0];
+                        feature.properties[csvOpts.latfield] =
+                            feature.geometry.coordinates[1];
                     });
 
                     resolve(data);

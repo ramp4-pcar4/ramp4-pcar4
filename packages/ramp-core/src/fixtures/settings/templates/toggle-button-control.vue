@@ -6,7 +6,11 @@
             {{ name }}
         </div>
         <div class="flex-1"></div>
-        <button @click="config.onChange" :disabled="!!config.disabled" class="rv-button">
+        <button
+            @click="config.onChange"
+            :disabled="!!config.disabled"
+            class="rv-button"
+        >
             {{ config.value ? 'Enable' : 'Disable' }}
         </button>
     </div>

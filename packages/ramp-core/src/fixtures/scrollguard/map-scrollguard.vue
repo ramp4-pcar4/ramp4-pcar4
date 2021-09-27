@@ -10,9 +10,11 @@ import { defineComponent } from 'vue';
 export default defineComponent({
     name: 'MapScrollguardV',
     mounted() {
-        (this.$iApi.$vApp.$el.querySelector(
-            '.inner-shell + .esri-view'
-        )! as HTMLElement).addEventListener('wheel', this.wheelHandler, {
+        (
+            this.$iApi.$vApp.$el.querySelector(
+                '.inner-shell + .esri-view'
+            )! as HTMLElement
+        ).addEventListener('wheel', this.wheelHandler, {
             capture: true
         });
     },
@@ -28,7 +30,10 @@ export default defineComponent({
                 scrollGuardClassList.add('sg-active');
 
                 // remove scroll guard notification after two seconds
-                window.setTimeout(() => scrollGuardClassList.remove('sg-active'), 2000);
+                window.setTimeout(
+                    () => scrollGuardClassList.remove('sg-active'),
+                    2000
+                );
             } else {
                 scrollGuardClassList.remove('sg-active');
                 scrollGuardClassList.add('sg-scrolling');
@@ -38,7 +43,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .sg {
     transition: opacity ease-in-out;
     background-color: rgba(0, 0, 0, 0.45);

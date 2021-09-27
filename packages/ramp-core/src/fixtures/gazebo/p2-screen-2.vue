@@ -1,14 +1,16 @@
 <template>
     <panel-screen :panel="panel">
-        <template #header>
-            Gazebo/Panel 2/Screen B
-        </template>
+        <template #header> Gazebo/Panel 2/Screen B </template>
 
         <template #controls>
             <!-- <pin> is a global button component that any fixture/panel/screen can reuse -->
 
             <!-- ✔ this is the correct way to pin a panel and bind the button active state whether this panel is pinned or not 👇 -->
-            <pin @click="panel.pin()" :active="isPinned" v-if="checkScreenSize"></pin>
+            <pin
+                @click="panel.pin()"
+                :active="isPinned"
+                v-if="checkScreenSize"
+            ></pin>
 
             <!-- ✔ this will also work 👇 -->
             <!-- <pin @click="panel.pin()" :active="panel.isPinned"></pin> -->
@@ -27,14 +29,29 @@
                             props: { greeting: 'Greeting from Screen B' }
                         })
                     "
-                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-8 px-16"
+                    class="
+                        bg-green-500
+                        hover:bg-green-700
+                        text-white
+                        font-bold
+                        py-8
+                        px-16
+                    "
                 >
                     Switch to Screen A
                 </button>
 
                 <button
                     @click="enhancedCatActivities()"
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-8 px-16 m-2"
+                    class="
+                        bg-blue-500
+                        hover:bg-blue-700
+                        text-white
+                        font-bold
+                        py-8
+                        px-16
+                        m-2
+                    "
                 >
                     See a cat
                 </button>

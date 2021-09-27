@@ -1,6 +1,8 @@
 <template>
     <panel-screen>
-        <template #header> {{ $t('metadata.title') }}: {{ payload.layer }} </template>
+        <template #header>
+            {{ $t('metadata.title') }}: {{ payload.layer }}
+        </template>
 
         <template #controls>
             <minimize @click="panel.minimize()" />
@@ -19,13 +21,17 @@
 
                 <!-- Found Screen, XML -->
                 <div
-                    v-else-if="payload.type === 'xml' && state.status == 'success'"
+                    v-else-if="
+                        payload.type === 'xml' && state.status == 'success'
+                    "
                     class="flex flex-col justify-center"
                 ></div>
 
                 <!-- Found Screen, HTML -->
                 <div
-                    v-else-if="payload.type === 'html' && state.status == 'success'"
+                    v-else-if="
+                        payload.type === 'html' && state.status == 'success'
+                    "
                     v-html="state.response"
                     class="flex flex-col justify-center"
                 ></div>
@@ -35,7 +41,8 @@
                     <img src="https://i.imgur.com/fA5EqV6.png" />
 
                     <span class="text-xl mt-20"
-                        >There was an error retrieving this resource. Please try again.</span
+                        >There was an error retrieving this resource. Please try
+                        again.</span
                     >
                 </div>
             </div>
@@ -44,10 +51,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
 
 import { PanelInstance } from '@/api';
-import { MetadataPayload, MetadataResult, MetadataState, MetadataCache } from './definitions';
+import {
+    MetadataPayload,
+    MetadataResult,
+    MetadataState,
+    MetadataCache
+} from './definitions';
 
 import XSLT_en from './files/xstyle_default_en.xsl';
 import XSLT_fr from './files/xstyle_default_fr.xsl';
@@ -55,7 +67,15 @@ import XSLT_fr from './files/xstyle_default_fr.xsl';
 export default defineComponent({
     name: 'MetadataScreenV',
 
-    props: ['panel', 'payload'],
+    props: {
+        panel: {
+            type: Object as PropType<PanelInstance>
+        },
+        payload: {
+            type: Object as PropType<MetadataPayload>,
+            required: true
+        }
+    },
 
     data() {
         return {
@@ -67,23 +87,24 @@ export default defineComponent({
     mounted() {
         if (this.payload.type === 'xml') {
             // This site prevents CORS errors. Helpful for testing purposes.
-            this.loadFromURL('https://cors-anywhere.herokuapp.com/' + this.payload.url, []).then(
-                r => {
-                    this.state.status = 'success';
+            this.loadFromURL(
+                'https://cors-anywhere.herokuapp.com/' + this.payload.url,
+                []
+            ).then((r) => {
+                this.state.status = 'success';
 
-                    // Append the content to the panel.
-                    if (r !== null) {
-                        this.$el.childNodes[1].appendChild(r);
-                    }
+                // Append the content to the panel.
+                if (r !== null) {
+                    this.$el.childNodes[1].appendChild(r);
                 }
-            );
+            });
         } else if (this.payload.type === 'html') {
-            this.requestContent('https://cors-anywhere.herokuapp.com/' + this.payload.url).then(
-                r => {
-                    this.state.status = 'success';
-                    this.state.response = (r as MetadataResult).response;
-                }
-            );
+            this.requestContent(
+                'https://cors-anywhere.herokuapp.com/' + this.payload.url
+            ).then((r) => {
+                this.state.status = 'success';
+                this.state.response = (r as MetadataResult).response;
+            });
         }
     },
 
@@ -100,15 +121,19 @@ export default defineComponent({
             let XSLT = this.$iApi.language === 'en' ? XSLT_en : XSLT_fr;
 
             // Translate headers.
-            XSLT = XSLT.replace(/\{\{([\w.]+)\}\}/g, (_: string, tag: string) => this.$t(tag));
+            XSLT = XSLT.replace(/\{\{([\w.]+)\}\}/g, (_: string, tag: string) =>
+                this.$t(tag)
+            );
 
             if (!this.cache[xmlUrl]) {
-                return this.requestContent(xmlUrl).then(xmlData => {
+                return this.requestContent(xmlUrl).then((xmlData) => {
                     this.cache[xmlUrl] = (xmlData as MetadataResult).response;
                     return this.applyXSLT(this.cache[xmlUrl], XSLT, params);
                 });
             } else {
-                return Promise.resolve(this.applyXSLT(this.cache[xmlUrl], XSLT, params));
+                return Promise.resolve(
+                    this.applyXSLT(this.cache[xmlUrl], XSLT, params)
+                );
             }
         },
 
@@ -134,21 +159,27 @@ export default defineComponent({
                 xsltProc.importStylesheet(xslDoc);
                 // [patched from ECDMP] Add parameters to xsl document (setParameter = Chrome/FF/Others)
                 if (params) {
-                    params.forEach(p => xsltProc.setParameter('', p.key, p.value || ''));
+                    params.forEach((p) =>
+                        xsltProc.setParameter('', p.key, p.value || '')
+                    );
                 }
                 output = xsltProc.transformToFragment(xmlDoc, document);
             } else if (window.hasOwnProperty('ActiveXObject')) {
                 // IE11 (╯°□°）╯︵ ┻━┻
                 const xslt = new window.ActiveXObject('Msxml2.XSLTemplate');
                 const xmlDoc = new window.ActiveXObject('Msxml2.DOMDocument');
-                const xslDoc = new window.ActiveXObject('Msxml2.FreeThreadedDOMDocument');
+                const xslDoc = new window.ActiveXObject(
+                    'Msxml2.FreeThreadedDOMDocument'
+                );
                 xmlDoc.loadXML(xmlString);
                 xslDoc.loadXML(xslString);
                 xslt.stylesheet = xslDoc;
                 const xsltProc = xslt.createProcessor();
                 xsltProc.input = xmlDoc;
                 xsltProc.transform();
-                output = document.createRange().createContextualFragment(xsltProc.output);
+                output = document
+                    .createRange()
+                    .createContextualFragment(xsltProc.output);
             }
 
             return output;
@@ -168,7 +199,8 @@ export default defineComponent({
                     } else {
                         resolve({
                             status: 'error',
-                            response: 'Could not load results from remote service.'
+                            response:
+                                'Could not load results from remote service.'
                         });
                     }
                 };

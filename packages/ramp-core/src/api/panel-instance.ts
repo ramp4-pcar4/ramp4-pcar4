@@ -91,14 +91,14 @@ export class PanelInstance extends APIScope {
 
             // for async components, wait until they are resolved and patch in panel's i18n messages
             const component = new Promise<Component>((resolve, reject) => {
-                asyncComponent.then(data => {
+                asyncComponent.then((data) => {
                     // wait until the component promise is resolved and mark it as loaded
                     this.loadedScreens.push(id);
 
                     // if data is a `*.vue` file, use its `default` export
                     resolve(isTypeofImportVue(data) ? data.default : data);
                 });
-                asyncComponent.catch(error => reject(error));
+                asyncComponent.catch((error) => reject(error));
             });
 
             payload = defineAsyncComponent({
@@ -164,7 +164,11 @@ export class PanelInstance extends APIScope {
         super(iApi);
 
         // copy values from the config adding `style` default
-        ({ id: this.id, screens: this.screens, style: this.style } = {
+        ({
+            id: this.id,
+            screens: this.screens,
+            style: this.style
+        } = {
             id,
             style: {},
             ...config
@@ -267,7 +271,9 @@ export class PanelInstance extends APIScope {
      * @returns {this}
      * @memberof PanelInstance
      */
-    toggle(value?: boolean | { screen: string; props?: object; toggle?: boolean }): this {
+    toggle(
+        value?: boolean | { screen: string; props?: object; toggle?: boolean }
+    ): this {
         // toggle panel if no value provided, force toggle panel if value specified, or toggle panel on specified screen if provided
         // ensure that a toggle value must be provided to panel API toggle if called
         if (typeof value === 'undefined') {
@@ -280,7 +286,9 @@ export class PanelInstance extends APIScope {
         } else {
             this.$iApi.panel.toggle(
                 { id: this.id, screen: value.screen, props: value.props },
-                typeof value.toggle !== 'undefined' ? value.toggle : !this.isOpen
+                typeof value.toggle !== 'undefined'
+                    ? value.toggle
+                    : !this.isOpen
             );
         }
 
@@ -295,7 +303,9 @@ export class PanelInstance extends APIScope {
      * @returns {this}
      * @memberof PanelInstance
      */
-    toggleMinimize(value?: boolean | { screen: string; props?: object; toggle?: boolean }): this {
+    toggleMinimize(
+        value?: boolean | { screen: string; props?: object; toggle?: boolean }
+    ): this {
         if (typeof value === 'undefined' || typeof value === 'boolean') {
             // value is a toggle so we pass it through
             this.$iApi.panel.toggleMinimize(this, value);
@@ -303,7 +313,9 @@ export class PanelInstance extends APIScope {
             // value is not a toggle, split into what panel.toggleMinimize is expecting
             this.$iApi.panel.toggleMinimize(
                 { id: this.id, screen: value.screen, props: value.props },
-                typeof value.toggle !== 'undefined' ? value.toggle : !this.isOpen
+                typeof value.toggle !== 'undefined'
+                    ? value.toggle
+                    : !this.isOpen
             );
         }
 
@@ -337,7 +349,10 @@ export class PanelInstance extends APIScope {
      * @memberof PanelInstance
      */
     get isPinned(): boolean {
-        return this.$iApi.panel.pinned !== null && this.$iApi.panel.pinned.id === this.id;
+        return (
+            this.$iApi.panel.pinned !== null &&
+            this.$iApi.panel.pinned.id === this.id
+        );
     }
 
     /**

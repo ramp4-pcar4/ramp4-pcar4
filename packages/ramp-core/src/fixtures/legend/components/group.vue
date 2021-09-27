@@ -2,10 +2,25 @@
     <div class="legend-group-container">
         <div class="relative">
             <div
-                class="legend-group-header flex items-center px-5 py-10 cursor-pointer default-focus-style hover:bg-gray-200"
+                class="
+                    legend-group-header
+                    flex
+                    items-center
+                    px-5
+                    py-10
+                    cursor-pointer
+                    default-focus-style
+                    hover:bg-gray-200
+                "
                 @click="legendItem.toggleExpanded()"
                 v-focus-item="'show-truncate'"
-                :content="$t(legendItem.expanded ? 'legend.group.collapse' : 'legend.group.expand')"
+                :content="
+                    $t(
+                        legendItem.expanded
+                            ? 'legend.group.collapse'
+                            : 'legend.group.expand'
+                    )
+                "
                 v-tippy="{ placement: 'top-start', aria: 'describedby' }"
                 truncate-trigger
             >
@@ -21,7 +36,9 @@
                         width="24"
                     >
                         <path d="M0 0h24v24H0V0z" fill="none" />
-                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+                        <path
+                            d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"
+                        />
                     </svg>
                 </div>
 
@@ -34,7 +51,10 @@
                 <checkbox
                     :checked="legendItem.visibility"
                     :value="legendItem"
-                    :isRadio="legendItem.parent && legendItem.parent.type === LegendTypes.Set"
+                    :isRadio="
+                        legendItem.parent &&
+                        legendItem.parent.type === LegendTypes.Set
+                    "
                     :legendItem="legendItem"
                 />
             </div>

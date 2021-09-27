@@ -1,16 +1,30 @@
 <template>
     <div class="h-full flex items-center justify-center">
         <input
-            class="rv-min rv-input bg-transparent text-black-75 h-24 pb-8 border-0 border-b-2"
-            style="width: 45%;"
+            class="
+                rv-min rv-input
+                bg-transparent
+                text-black-75
+                h-24
+                pb-8
+                border-0 border-b-2
+            "
+            style="width: 45%"
             type="text"
             v-model="minVal"
             @keyup="minValChanged()"
             placeholder="min"
         />
         <input
-            class="rv-max rv-input bg-transparent text-black-75 h-24 pb-8 border-0 border-b-2"
-            style="width: 45%;"
+            class="
+                rv-max rv-input
+                bg-transparent
+                text-black-75
+                h-24
+                pb-8
+                border-0 border-b-2
+            "
+            style="width: 45%"
             type="text"
             v-model="maxVal"
             @keyup="maxValChanged()"
@@ -48,7 +62,8 @@ export default defineComponent({
 
     methods: {
         minValChanged() {
-            this.minVal = this.minVal !== '' && !isNaN(this.minVal) ? this.minVal : null;
+            this.minVal =
+                this.minVal !== '' && !isNaN(this.minVal) ? this.minVal : null;
             this.params.parentFilterInstance((instance: any) => {
                 this.setFilterModel(instance);
 
@@ -62,7 +77,8 @@ export default defineComponent({
         },
 
         maxValChanged() {
-            this.maxVal = this.maxVal !== '' && !isNaN(this.maxVal) ? this.maxVal : null;
+            this.maxVal =
+                this.maxVal !== '' && !isNaN(this.maxVal) ? this.maxVal : null;
             this.params.parentFilterInstance((instance: any) => {
                 this.setFilterModel(instance);
 

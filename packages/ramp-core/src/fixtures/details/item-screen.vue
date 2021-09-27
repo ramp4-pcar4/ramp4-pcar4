@@ -22,7 +22,10 @@
         </template>
         <template #content>
             <div class="flex py-8" v-if="layerType !== 'ogcWms'">
-                <span class="flex-none m-auto symbologyIcon" v-html="icon"></span>
+                <span
+                    class="flex-none m-auto symbologyIcon"
+                    v-html="icon"
+                ></span>
                 <span class="flex-grow my-auto text-lg px-8">
                     {{ itemName }}
                 </span>
@@ -46,7 +49,10 @@
                     </svg>
                 </button>
             </div>
-            <component :is="detailsTemplate" :identifyData="identifyItem"></component>
+            <component
+                :is="detailsTemplate"
+                :identifyData="identifyItem"
+            ></component>
         </template>
     </panel-screen>
 </template>
@@ -99,12 +105,16 @@ export default defineComponent({
             const uid = layerInfo.uid;
             const layer: LayerInstance | undefined = this.getLayerByUid(uid);
             const nameField = layer?.getNameField(uid);
-            return nameField ? this.identifyItem.data[nameField] : this.$t('details.title');
+            return nameField
+                ? this.identifyItem.data[nameField]
+                : this.$t('details.title');
         },
 
         detailsTemplate(): string {
             const layerInfo = this.payload[this.resultIndex!];
-            const layer: LayerInstance | undefined = this.getLayerByUid(layerInfo.uid);
+            const layer: LayerInstance | undefined = this.getLayerByUid(
+                layerInfo.uid
+            );
 
             // If there is a custom template binding for this layer in the store, then
             // return its name.
@@ -129,13 +139,17 @@ export default defineComponent({
             const uid = layerInfo.uid;
             const layer: LayerInstance | undefined = this.getLayerByUid(uid);
             if (layer === undefined) {
-                console.warn(`could not find layer for uid ${uid} during icon lookup`);
+                console.warn(
+                    `could not find layer for uid ${uid} during icon lookup`
+                );
                 return;
             }
             const oidField = layer.getOidField(uid);
-            layer.getIcon(this.identifyItem.data[oidField], uid).then(value => {
-                this.icon = value;
-            });
+            layer
+                .getIcon(this.identifyItem.data[oidField], uid)
+                .then((value) => {
+                    this.icon = value;
+                });
         },
 
         zoomToFeature() {
@@ -144,12 +158,14 @@ export default defineComponent({
             const layer: LayerInstance | undefined = this.getLayerByUid(uid);
 
             if (layer === undefined) {
-                console.warn(`Could not find layer for uid ${uid} during zoom geometry lookup`);
+                console.warn(
+                    `Could not find layer for uid ${uid} during zoom geometry lookup`
+                );
                 return;
             }
             const oid = this.identifyItem.data[layer.getOidField(uid)];
             const opts = { getGeom: true };
-            layer.getGraphic(oid, opts, uid).then(g => {
+            layer.getGraphic(oid, opts, uid).then((g) => {
                 if (g.geometry === undefined) {
                     console.error(`Could not find graphic for objectid ${oid}`);
                 } else {

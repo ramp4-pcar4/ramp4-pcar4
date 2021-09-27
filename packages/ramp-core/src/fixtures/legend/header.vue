@@ -22,15 +22,28 @@
         >
             <template #header>
                 <div class="p-8">
-                    <svg class="fill-current w-18 h-18 mx-8" viewBox="0 0 23 21">
-                        <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
+                    <svg
+                        class="fill-current w-18 h-18 mx-8"
+                        viewBox="0 0 23 21"
+                    >
+                        <path
+                            d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"
+                        />
                     </svg>
                 </div>
             </template>
-            <a href="#" class="flex leading-snug items-center w-116" @click="expand">
+            <a
+                href="#"
+                class="flex leading-snug items-center w-116"
+                @click="expand"
+            >
                 {{ $t('legend.header.groups.expand') }}
             </a>
-            <a href="#" class="flex leading-snug items-center w-116" @click="collapse">
+            <a
+                href="#"
+                class="flex leading-snug items-center w-116"
+                @click="collapse"
+            >
                 {{ $t('legend.header.groups.collapse') }}
             </a>
         </dropdown-menu>
@@ -43,17 +56,28 @@
         >
             <template #header>
                 <div class="flex p-8">
-                    <svg class="fill-current w-18 h-18 mx-5" viewBox="0 0 23 21">
+                    <svg
+                        class="fill-current w-18 h-18 mx-5"
+                        viewBox="0 0 23 21"
+                    >
                         <path
                             d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
                         />
                     </svg>
                 </div>
             </template>
-            <a href="#" class="flex leading-snug items-center w-100" @click="show">
+            <a
+                href="#"
+                class="flex leading-snug items-center w-100"
+                @click="show"
+            >
                 {{ $t('legend.header.visible.show') }}
             </a>
-            <a href="#" class="flex leading-snug items-center w-100" @click="hide">
+            <a
+                href="#"
+                class="flex leading-snug items-center w-100"
+                @click="hide"
+            >
                 {{ $t('legend.header.visible.hide') }}
             </a>
         </dropdown-menu>

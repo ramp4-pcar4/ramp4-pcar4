@@ -26,15 +26,17 @@ import { markRaw } from 'vue';
 // This function will return a valid field name for a given field name. First attempts at
 // direct match, then attempts to reverse any bad field renaming logic.
 function fieldValidator(fields: Array<EsriField>, targetName: string): string {
-    if (fields.findIndex(f => f.name === targetName) === -1) {
+    if (fields.findIndex((f) => f.name === targetName) === -1) {
         // no direct match found.
-        const validField = fields.find(f => f.alias === targetName);
+        const validField = fields.find((f) => f.alias === targetName);
         if (validField) {
             return validField.name;
         } else {
             // give warning and return OBJECTID, which is guaranteed to exist in file layer.
             // Issue is not critical enough to blow up the app with an error
-            console.warn(`Cannot find name field in layer field list: ${targetName}`);
+            console.warn(
+                `Cannot find name field in layer field list: ${targetName}`
+            );
             return 'OBJECTID';
         }
     } else {
@@ -83,7 +85,10 @@ export class FileLayer extends AttribLayer {
             targetSR: this.$iApi.geo.map.getSR()
         };
 
-        this.esriJson = await this.$iApi.geo.layer.files.geoJsonToEsriJson(realJson, opts);
+        this.esriJson = await this.$iApi.geo.layer.files.geoJsonToEsriJson(
+            realJson,
+            opts
+        );
 
         this.esriLayer = markRaw(
             new EsriFeatureLayer(this.makeEsriLayerConfig(this.origRampConfig))
@@ -100,11 +105,12 @@ export class FileLayer extends AttribLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.FeatureLayerProperties {
+    protected makeEsriLayerConfig(
+        rampLayerConfig: RampLayerConfig
+    ): __esri.FeatureLayerProperties {
         // TODO might want to add an extra paremter here, as we will be passing in fields, source graphics, renderer, etc.
-        const esriConfig: __esri.FeatureLayerProperties = super.makeEsriLayerConfig(
-            rampLayerConfig
-        );
+        const esriConfig: __esri.FeatureLayerProperties =
+            super.makeEsriLayerConfig(rampLayerConfig);
 
         // TEMP CHECKLIST OF PROPERTIES
         // source - converter
@@ -198,7 +204,10 @@ export class FileLayer extends AttribLayer {
         fFC.extractLayerMetadata();
         // NOTE name field overrides from config have already been applied by this point
         if (this.origRampConfig.tooltipField) {
-            fFC.tooltipField = fieldValidator(fFC.fields, this.origRampConfig.tooltipField);
+            fFC.tooltipField = fieldValidator(
+                fFC.fields,
+                this.origRampConfig.tooltipField
+            );
         } else {
             fFC.tooltipField = fFC.nameField;
         }
@@ -255,7 +264,7 @@ export class FileLayer extends AttribLayer {
         let loadResolve: any;
         const innerResult: IdentifyResult = {
             uid: myFC.uid,
-            loadPromise: new Promise(resolve => {
+            loadPromise: new Promise((resolve) => {
                 loadResolve = resolve;
             }),
             items: []
@@ -295,9 +304,9 @@ export class FileLayer extends AttribLayer {
         // TODO: Test if works after #206 is implemented
         qOpts.filterSql = myFC.getCombinedSqlFilter();
 
-        result.done = myFC.queryFeatures(qOpts).then(results => {
+        result.done = myFC.queryFeatures(qOpts).then((results) => {
             // TODO might be a problem overwriting the array if something is watching/binding to the original
-            innerResult.items = results.map(gr => {
+            innerResult.items = results.map((gr) => {
                 return {
                     // TODO decide if we want to handle alias mapping here or not.
                     //      if we do, our "ESRI" format will need to include field metadata.

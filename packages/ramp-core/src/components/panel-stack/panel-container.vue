@@ -1,6 +1,15 @@
 <template>
     <div
-        class="shadow-tm bg-white h-full xs:mr-0 sm:mr-12 last:mr-0 pointer-events-auto min-w-0"
+        class="
+            shadow-tm
+            bg-white
+            h-full
+            xs:mr-0
+            sm:mr-12
+            last:mr-0
+            pointer-events-auto
+            min-w-0
+        "
         :style="panel.style"
         :data-cy="panel.id"
     >
@@ -53,13 +62,17 @@ export default defineComponent({
             }
 
             // if the screen component is already loaded; if so, skip the transition
-            this.skipTransition = this.panel.isScreenLoaded(this.panel.route.screen);
+            this.skipTransition = this.panel.isScreenLoaded(
+                this.panel.route.screen
+            );
 
             // with transition, even if it's instanteneous, there is that annoying flicker when the focus ring is set
             // just before the component is removed from DOM; supress the focus ring on the screen component just before `leave` event
             this.$el
                 .querySelectorAll('[focus-item')
-                .forEach((element: HTMLElement) => element.classList.remove('default-focus-style'));
+                .forEach((element: HTMLElement) =>
+                    element.classList.remove('default-focus-style')
+                );
         },
 
         leave(el: HTMLElement, done: () => void): void {
@@ -69,7 +82,11 @@ export default defineComponent({
         /**
          * Animate transition between panel screen components by fading them in/out.
          */
-        animateTransition(el: HTMLElement, done: () => void, value: number[]): void {
+        animateTransition(
+            el: HTMLElement,
+            done: () => void,
+            value: number[]
+        ): void {
             if (this.skipTransition) {
                 return done();
             }

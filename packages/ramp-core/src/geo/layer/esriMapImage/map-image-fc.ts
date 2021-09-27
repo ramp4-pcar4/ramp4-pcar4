@@ -24,7 +24,7 @@ export class MapImageFC extends AttribFC {
 
         // TODO not found check?
         this.esriSubLayer = markRaw(
-            parent.esriLayer.allSublayers.find(s => {
+            parent.esriLayer.allSublayers.find((s) => {
                 return s.id === layerIdx;
             })
         );

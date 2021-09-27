@@ -1,6 +1,8 @@
 <template>
     <panel-screen>
-        <template #header>{{ $t('grid.title') }}: {{ head || $t('grid.layer.loading') }} </template>
+        <template #header
+            >{{ $t('grid.title') }}: {{ head || $t('grid.layer.loading') }}
+        </template>
         <template #controls>
             <input
                 @keyup="updateQuickSearch()"
@@ -39,14 +41,20 @@
                 ></path>
             </svg>
             <panel-options-menu>
-                <a href="#" @click="clearFilters()">{{ $t('grid.filters.clear') }}</a>
+                <a href="#" @click="clearFilters()">{{
+                    $t('grid.filters.clear')
+                }}</a>
             </panel-options-menu>
             <pin @click="panel.pin()" :active="panel.isPinned" />
             <minimize @click="panel.minimize()" />
             <close @click="panel.close()" />
         </template>
         <template #content>
-            <table-component class="rv-grid" ref="rvGrid" :layerUid="currentUid"></table-component>
+            <table-component
+                class="rv-grid"
+                ref="rvGrid"
+                :layerUid="currentUid"
+            ></table-component>
         </template>
     </panel-screen>
 </template>

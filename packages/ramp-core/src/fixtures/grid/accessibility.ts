@@ -27,17 +27,21 @@ export default class GridAccessibilityManager {
         this.element = element;
         this.gridApi = gridApi;
         this.columnApi = columnApi;
-        this.gridBody = this.element.querySelector(GRID_BODY_SELECTOR)! as HTMLElement;
+        this.gridBody = this.element.querySelector(
+            GRID_BODY_SELECTOR
+        )! as HTMLElement;
         this.headerRows = Array.prototype.slice.call(
             this.element.querySelectorAll(HEADER_ROW_SELECTOR)
         ) as HTMLElement[];
 
-        this.element.querySelector('.ag-center-cols-viewport')?.classList.add('overflow-hidden');
+        this.element
+            .querySelector('.ag-center-cols-viewport')
+            ?.classList.add('overflow-hidden');
         this.element
             .querySelector('.ag-body-horizontal-scroll-viewport')
             ?.setAttribute('tabindex', '-1');
 
-        this.observer = new MutationObserver(mutations => {
+        this.observer = new MutationObserver((mutations) => {
             const el = mutations[0].target as HTMLElement;
             this.manageHeaderScrolling(el);
         });
@@ -51,7 +55,7 @@ export default class GridAccessibilityManager {
      * Set up the listeners for the grid
      */
     private initAccessibilityListeners() {
-        this.gridBody.addEventListener('keydown', event => {
+        this.gridBody.addEventListener('keydown', (event) => {
             this.onKeydown(event);
         });
         this.gridBody.addEventListener(
@@ -89,7 +93,7 @@ export default class GridAccessibilityManager {
             const headerCells = Array.prototype.slice.call(
                 row.querySelectorAll('.ag-header-cell')
             ) as HTMLElement[];
-            headerCells.forEach(cell => {
+            headerCells.forEach((cell) => {
                 cell.toggleAttribute('focus-item', true);
                 cell.id = generateID();
                 cell.classList.add('default-focus-style');
@@ -103,7 +107,7 @@ export default class GridAccessibilityManager {
      * Remove all accessibility listeners from the grid
      */
     removeAccessibilityListeners() {
-        this.gridBody.removeEventListener('keydown', event => {
+        this.gridBody.removeEventListener('keydown', (event) => {
             this.onKeydown(event);
         });
         this.gridBody.removeEventListener(
@@ -121,7 +125,7 @@ export default class GridAccessibilityManager {
         });
         this.observer.disconnect();
 
-        this.headerRows.forEach(row => {
+        this.headerRows.forEach((row) => {
             row.removeEventListener('focus', () => {
                 this.manageHeaderScrolling(row);
             });
@@ -182,7 +186,10 @@ export default class GridAccessibilityManager {
                 this.gridApi.ensureColumnVisible(firstCol);
             } else {
                 if (focusedCell) {
-                    this.gridApi.setFocusedCell(focusedCell.rowIndex, focusedCell.column);
+                    this.gridApi.setFocusedCell(
+                        focusedCell.rowIndex,
+                        focusedCell.column
+                    );
                 }
             }
         }
@@ -199,15 +206,19 @@ export default class GridAccessibilityManager {
 
         const id = row.getAttribute('aria-activedescendant');
         if (id) {
-            row.querySelectorAll(`[${FOCUS_ITEM_ATTR}]`).forEach((cell: Element, index: number) => {
-                if (cell.id === id) {
-                    this.gridApi.ensureColumnVisible(
-                        this.columnApi.getAllDisplayedColumns()[index]
-                    );
+            row.querySelectorAll(`[${FOCUS_ITEM_ATTR}]`).forEach(
+                (cell: Element, index: number) => {
+                    if (cell.id === id) {
+                        this.gridApi.ensureColumnVisible(
+                            this.columnApi.getAllDisplayedColumns()[index]
+                        );
+                    }
                 }
-            });
+            );
         } else {
-            this.gridApi.ensureColumnVisible(this.columnApi.getAllDisplayedColumns()[0]);
+            this.gridApi.ensureColumnVisible(
+                this.columnApi.getAllDisplayedColumns()[0]
+            );
         }
     }
 

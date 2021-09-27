@@ -29,11 +29,11 @@ export class Filter {
     sqlActiveFilters(exclusions: Array<string> = []): Array<string> {
         const s = this.sql;
         // find filter keys that have content
-        const rawActive = Object.keys(s).filter(k => s[k]);
+        const rawActive = Object.keys(s).filter((k) => s[k]);
         if (exclusions.length === 0) {
             return rawActive;
         } else {
-            return rawActive.filter(k => exclusions.indexOf(k) === -1);
+            return rawActive.filter((k) => exclusions.indexOf(k) === -1);
         }
     }
 
@@ -68,7 +68,7 @@ export class Filter {
             return this.sql[keys[0]];
         } else {
             // wrap each nugget in bracket, connect with AND
-            return keys.map(k => `(${this.sql[k]})`).join(' AND ');
+            return keys.map((k) => `(${this.sql[k]})`).join(' AND ');
         }
     }
 
@@ -130,9 +130,14 @@ export class Filter {
      * @param {Boolean} includeExtent if the cache includes extent based filters
      * @returns {String} the cache key to use
      */
-    private getCacheKey(sqlFilters: Array<string>, includeExtent: boolean): string {
+    private getCacheKey(
+        sqlFilters: Array<string>,
+        includeExtent: boolean
+    ): string {
         const sqlKey = sqlFilters.sort().join('$');
-        return `_cache$${sqlKey}${includeExtent ? '$' + CoreFilter.EXTENT : ''}$`;
+        return `_cache$${sqlKey}${
+            includeExtent ? '$' + CoreFilter.EXTENT : ''
+        }$`;
     }
 
     /**
@@ -143,7 +148,10 @@ export class Filter {
      * @param {Boolean} includeExtent if the cache includes extent based filters
      * @returns {Promise} resolves in a filter result appropriate for the parameters. returns undefined if no cache exists.
      */
-    getCache(sqlFilters: Array<string>, includeExtent: boolean): Promise<Array<number>> {
+    getCache(
+        sqlFilters: Array<string>,
+        includeExtent: boolean
+    ): Promise<Array<number>> {
         const key = this.getCacheKey(sqlFilters, includeExtent);
         return this.cache[key];
     }
@@ -173,7 +181,7 @@ export class Filter {
      */
     private cacheActiveKeys(): Array<string> {
         const c = this.cache;
-        return Object.keys(c).filter(k => c[k]);
+        return Object.keys(c).filter((k) => c[k]);
     }
 
     /**
@@ -195,7 +203,7 @@ export class Filter {
     private clearCacheSet(filterName: string): void {
         // the keys are wrapped in $ chars to avoid matching similarly named filter keys.
         // e.g. 'plugin' would also match 'plugin1' in an indexOf call, but '$plugin$' won't match '$plugin1$'
-        this.cacheActiveKeys().forEach(c => {
+        this.cacheActiveKeys().forEach((c) => {
             if (c.indexOf(`$${filterName}$`) > -1) {
                 delete this.cache[c];
             }
