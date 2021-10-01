@@ -1,3 +1,5 @@
+import { Directive, DirectiveBinding } from 'vue';
+
 enum KEYS {
     ArrowDown = 'ArrowDown',
     ArrowDownIE = 'Down',
@@ -38,8 +40,11 @@ const TABBABLE_TAGS = `button,input,select,a,textarea,[contenteditable],[${LIST_
  * </div>
  * ```
  */
-export const FocusList: Vue.DirectiveOptions = {
-    bind(el: HTMLElement, binding: Vue.VNodeDirective /*, vnode: Vue.VNode */) {
+export const FocusList: Directive = {
+    mounted(
+        el: HTMLElement,
+        binding: DirectiveBinding /*, vnode: Vue.VNode */
+    ) {
         // make it tabbable if it isn't
         // NOTE: +<string> = the string as a number, +<null> = 0
         if (+el.getAttribute('tabindex')! <= 0) {
@@ -52,7 +57,7 @@ export const FocusList: Vue.DirectiveOptions = {
         // before the element is on screen and populated, etc. etc.
         new FocusListManager(el, binding.value);
     },
-    componentUpdated(el: HTMLElement) {
+    updated(el: HTMLElement) {
         syncTabIndex(el);
     }
 };
@@ -119,19 +124,19 @@ export class FocusListManager {
         this.setTabIndex(-1);
 
         const focusManager = this;
-        element.addEventListener('keydown', function(event: KeyboardEvent) {
+        element.addEventListener('keydown', function (event: KeyboardEvent) {
             focusManager.onKeydown(event);
         });
-        element.addEventListener('click', function(event: MouseEvent) {
+        element.addEventListener('click', function (event: MouseEvent) {
             focusManager.onClick(event);
         });
-        element.addEventListener('focus', function(event: FocusEvent) {
+        element.addEventListener('focus', function (event: FocusEvent) {
             focusManager.onFocus();
         });
-        element.addEventListener('blur', function(event: FocusEvent) {
+        element.addEventListener('blur', function (event: FocusEvent) {
             focusManager.onBlur();
         });
-        element.addEventListener('mousedown', function(event: MouseEvent) {
+        element.addEventListener('mousedown', function (event: MouseEvent) {
             focusManager.onMousedown();
         });
     }
@@ -406,9 +411,11 @@ export class FocusListManager {
             if (
                 this.highlightedItem.getAttribute(ITEM_ATTR) === SHOW_TRUNCATE
             ) {
-                (this.highlightedItem.querySelector(
-                    `[${TRUNCATE_ATTR}]`
-                )! as any)?._tippy?.show();
+                (
+                    this.highlightedItem.querySelector(
+                        `[${TRUNCATE_ATTR}]`
+                    )! as any
+                )?._tippy?.show();
             }
         }
 
@@ -440,9 +447,11 @@ export class FocusListManager {
             if (
                 this.highlightedItem.getAttribute(ITEM_ATTR) === SHOW_TRUNCATE
             ) {
-                (this.highlightedItem.querySelector(
-                    `[${TRUNCATE_ATTR}]`
-                )! as any)?._tippy?.hide();
+                (
+                    this.highlightedItem.querySelector(
+                        `[${TRUNCATE_ATTR}]`
+                    )! as any
+                )?._tippy?.hide();
             }
         }
     }

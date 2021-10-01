@@ -5,13 +5,19 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-@Component
-export default class MapPanguardV extends Vue {
-    timeoutID: number | undefined = undefined;
+export default defineComponent({
+    name: 'MapPanguardV',
+    data(): {
+        timeoutID: number | undefined;
+    } {
+        return {
+            timeoutID: undefined
+        };
+    },
 
-    mounted(): void {
+    mounted() {
         // keep track of how many concurrent pointers are on the screen and their initial positions. This is a javascript map, not a map-map
         const pointers = new Map();
 
@@ -19,20 +25,20 @@ export default class MapPanguardV extends Vue {
         this.$iApi.geo.map.viewPromise.then(() => {
             // TODO: when projection change is implemented check that the below events track any changes to
             // the esriView or update MapAPI to be raising pointer events on the EventAPI, and this will listen to for those events
-            this.$iApi.geo.map.esriView!.on('pointer-down', e => {
+            this.$iApi.geo.map.esriView!.on('pointer-down', (e) => {
                 if (e.pointerType !== 'touch') return;
                 pointers.set(e.pointerId, { x: e.x, y: e.y });
             });
 
             this.$iApi.geo.map.esriView!.on(
                 ['pointer-up', 'pointer-leave'],
-                e => {
+                (e) => {
                     if (e.pointerType !== 'touch') return;
                     pointers.delete(e.pointerId);
                 }
             );
 
-            this.$iApi.geo.map.esriView!.on('pointer-move', e => {
+            this.$iApi.geo.map.esriView!.on('pointer-move', (e) => {
                 const { pointerId, pointerType, x, y } = e;
                 const pointer = pointers.get(pointerId);
 
@@ -57,7 +63,7 @@ export default class MapPanguardV extends Vue {
             });
         });
     }
-}
+});
 </script>
 
 <style lang="scss" scoped>

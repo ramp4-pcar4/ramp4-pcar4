@@ -4,7 +4,11 @@
             class="text-gray-500 hover:text-black dropdown-button"
             @click="open = !open"
             :content="tooltip"
-            v-tippy="{ placement: tooltipPlacement }"
+            v-tippy="{
+                placement: tooltipPlacement,
+                theme: tooltipTheme,
+                animation: tooltipAnimation
+            }"
             ref="dropdown-trigger"
         >
             <slot name="header"></slot>
@@ -12,7 +16,17 @@
         <div
             v-show="open"
             @blur="open = false"
-            class="rv-dropdown shadow-md border border-gray:200 py-8 bg-white rounded text-center z-10"
+            class="
+                rv-dropdown
+                shadow-md
+                border
+                border-gray:200
+                py-8
+                bg-white
+                rounded
+                text-center
+                z-10
+            "
             ref="dropdown"
         >
             <slot v-bind:close="closeDropdown"></slot>
@@ -21,32 +35,31 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
-//@ts-ignore
+import { defineComponent } from 'vue';
 import { createPopper, Placement } from '@popperjs/core';
 
-@Component
-export default class DropdownMenuV extends Vue {
-    @Prop({ default: 'bottom' }) position!: Placement;
-    @Prop() tooltip?: string;
-    @Prop({ default: 'bottom' }) tooltipPlacement?: string;
-
-    open: boolean = false;
-    popper: any;
-
-    closeDropdown() {
-        this.open = false;
-    }
-
-    @Watch('open')
-    updatePopperPositioning() {
-        this.popper.update();
-    }
-
+export default defineComponent({
+    name: 'DropdownMenuV',
+    props: {
+        position: {
+            type: String,
+            default: 'bottom'
+        },
+        tooltip: { type: String },
+        tooltipPlacement: { type: String, default: 'bottom' },
+        tooltipTheme: { type: String, default: 'ramp4' },
+        tooltipAnimation: { type: String, default: 'scale' }
+    },
+    data() {
+        return {
+            open: false,
+            popper: null as any
+        };
+    },
     mounted() {
         window.addEventListener(
             'click',
-            event => {
+            (event) => {
                 if (
                     event.target instanceof HTMLElement &&
                     !this.$el.contains(event.target)
@@ -63,7 +76,7 @@ export default class DropdownMenuV extends Vue {
                 this.$refs['dropdown-trigger'] as Element,
                 this.$refs['dropdown'] as HTMLElement,
                 {
-                    placement: this.position || 'bottom',
+                    placement: (this.position || 'bottom') as Placement,
                     modifiers: [
                         {
                             name: 'offset',
@@ -75,12 +88,11 @@ export default class DropdownMenuV extends Vue {
                 }
             );
         });
-    }
-
-    beforeDestroy() {
+    },
+    beforeUnmount() {
         window.removeEventListener(
             'click',
-            event => {
+            (event) => {
                 if (
                     event.target instanceof HTMLElement &&
                     !this.$el.contains(event.target)
@@ -90,11 +102,21 @@ export default class DropdownMenuV extends Vue {
             },
             { capture: true }
         );
+    },
+    watch: {
+        open() {
+            this.popper.update();
+        }
+    },
+    methods: {
+        closeDropdown() {
+            this.open = false;
+        }
     }
-}
+});
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .rv-dropdown > * {
     display: block;
     padding: 0.5rem 1rem 0.5rem 1rem;

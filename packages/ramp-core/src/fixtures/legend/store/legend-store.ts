@@ -1,6 +1,5 @@
-import { ActionContext, Action } from 'vuex';
+import { ActionContext } from 'vuex';
 import { make } from 'vuex-pathify';
-import Vue from 'vue';
 
 import { LegendState } from './legend-state';
 import {
@@ -17,23 +16,23 @@ import { LayerInstance } from '@/api';
 type LegendContext = ActionContext<LegendState, RootState>;
 
 const getters = {
-    getChildById: (state: LegendState) => (
-        id: string
-    ): LegendItem | undefined => {
-        const searchTree = function(root: any, id: string) {
-            if (root.id === id) {
-                return root;
-            } else {
-                let result: LegendItem | undefined;
-                root.children.some((child: LegendItem) => {
-                    result = searchTree(child, id);
-                    return result !== undefined;
-                });
-                return result;
-            }
-        };
-        return searchTree(state, id);
-    },
+    getChildById:
+        (state: LegendState) =>
+        (id: string): LegendItem | undefined => {
+            const searchTree = function (root: any, id: string) {
+                if (root.id === id) {
+                    return root;
+                } else {
+                    let result: LegendItem | undefined;
+                    root.children.some((child: LegendItem) => {
+                        result = searchTree(child, id);
+                        return result !== undefined;
+                    });
+                    return result;
+                }
+            };
+            return searchTree(state, id);
+        },
     getAllExpanded: (state: LegendState, expanded: boolean): boolean => {
         return state.children.every(
             (entry: LegendItem) =>
@@ -56,28 +55,28 @@ const mutations = {
         state: LegendState,
         { id, entry }: { id: string; entry: LegendEntry | LegendGroup }
     ) => {
-        const index = state.children.findIndex(child => child.id === id);
-        Vue.set(state.children, index, entry);
+        const index = state.children.findIndex((child) => child.id === id);
+        state.children[index] = entry;
     },
     REMOVE_LAYER_ENTRY: (state: LegendState, uid: string) => {
         const removeLayerEntry = (children: (LegendEntry | LegendGroup)[]) => {
             // remove entry if uid corresponds to entry or parent layer
             children = children.filter(
-                entry =>
+                (entry) =>
                     entry instanceof LegendGroup ||
                     (entry.layer!.uid !== uid && entry.layerUID !== uid)
             );
 
             // recursively check child legend groups
             children
-                .filter(entry => entry instanceof LegendGroup)
-                .forEach(group => {
+                .filter((entry) => entry instanceof LegendGroup)
+                .forEach((group) => {
                     group.children = removeLayerEntry(group.children);
                 });
 
             // remove groups with no children
             children = children.filter(
-                item =>
+                (item) =>
                     item instanceof LegendEntry || item.children.length !== 0
             );
 
@@ -91,18 +90,18 @@ const mutations = {
             // reload entry (set to placeholder) if uid corresponds to entry or parent layer
             children
                 .filter(
-                    entry =>
+                    (entry) =>
                         entry instanceof LegendEntry &&
-                        (entry.layer!.uid === uid || entry.layerUID === uid)
+                        (entry.layer?.uid === uid || entry.layerUID === uid)
                 )
-                .forEach(entry => {
+                .forEach((entry) => {
                     entry._type = LegendTypes.Placeholder;
                 });
 
             // recursively check child legend groups
             children
-                .filter(entry => entry instanceof LegendGroup)
-                .forEach(group => {
+                .filter((entry) => entry instanceof LegendGroup)
+                .forEach((group) => {
                     group.children = reloadLayerEntry(group.children);
                 });
 
@@ -153,7 +152,7 @@ const actions = {
     /** Replaces default placeholder after layer is loaded */
     updateDefaultEntry: (context: LegendContext, id: string) => {
         const entry: LegendEntry = <LegendEntry>(
-            context.state.children.find(child => child.id === id)
+            context.state.children.find((child) => child.id === id)
         );
         const layer: LayerInstance = entry.layer!;
 
@@ -207,7 +206,7 @@ function checkVisibility(
 ): boolean {
     // traverse tree to check if all legend items have visibility toggled on/off
     if (child.children && child.children.length > 0) {
-        child.children.forEach(ch => {
+        child.children.forEach((ch) => {
             if (!checkVisibility(ch, visible)) {
                 return false;
             }
@@ -235,7 +234,7 @@ function checkVisibility(
 function checkExpanded(child: LegendItem, expanded: boolean): boolean {
     // traverse tree to check if all legend groups are expanded/collapsed
     if (child.children && child.children.length > 0) {
-        child.children.forEach(ch => {
+        child.children.forEach((ch) => {
             if (!checkExpanded(ch, expanded)) {
                 return false;
             }
@@ -274,7 +273,7 @@ function toggle(child: LegendEntry | LegendGroup, options: any) {
     }
     // traverse the tree and make recursive calls
     if (child.children && child.children.length > 0) {
-        child.children.forEach(ch => {
+        child.children.forEach((ch) => {
             // level order traversal
             toggle(ch, options);
         });

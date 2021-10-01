@@ -15,6 +15,7 @@ import {
     QueryFeaturesParams
 } from '@/geo/api';
 import { EsriFeatureFilter } from '@/geo/esri';
+import { toRaw } from 'vue';
 
 export class FileFC extends AttribFC {
     // @ts-ignore
@@ -38,9 +39,10 @@ export class FileFC extends AttribFC {
         // properties for all endpoints
         this.supportsFeatures = true;
 
-        this.geomType = this.parentLayer.$iApi.geo.utils.geom.clientGeomTypeToRampGeomType(
-            l.geometryType
-        );
+        this.geomType =
+            this.parentLayer.$iApi.geo.utils.geom.clientGeomTypeToRampGeomType(
+                l.geometryType
+            );
         this.quickCache = new QuickCache(this.geomType);
 
         // TODO if we ever make config override for scale, would need to apply on the layer constructor, will end up here
@@ -66,9 +68,10 @@ export class FileFC extends AttribFC {
         // for now, will not include that set (promise.all'd) on the layer load blocker;
         // don't want to stop a layer from loading just because an icon won't draw.
         // ideally we'll have placeholder symbol (white square, loading symbol, caution symbol, etc)
-        this.legend = this.parentLayer.$iApi.geo.utils.symbology.rendererToLegend(
-            this.renderer
-        );
+        this.legend =
+            this.parentLayer.$iApi.geo.utils.symbology.rendererToLegend(
+                this.renderer
+            );
 
         const loadData: AttributeLoaderDetails = {
             sourceGraphics: l.source,
@@ -155,10 +158,9 @@ export class FileFC extends AttribFC {
 
         // run the query. since geojson is local, the util always returns everything.
         // iterate through the results and strip out the OIDs
-        const gjFeats = await this.parentLayer.$iApi.geo.utils.query.geoJsonQuery(
-            gjOpt
-        );
-        return gjFeats.map(feat =>
+        const gjFeats =
+            await this.parentLayer.$iApi.geo.utils.query.geoJsonQuery(gjOpt);
+        return gjFeats.map((feat) =>
             feat.attributes ? feat.attributes[this.oidField] : -1
         );
     }
@@ -179,7 +181,7 @@ export class FileFC extends AttribFC {
 
         // NOTE this can be expanded to have spatial filters as well. if we head to that,
         //      will will need to ensure any spatial elements get included in the new FeatureFilter
-        this.parentLayer.esriView.filter = new EsriFeatureFilter({
+        toRaw(this.parentLayer.esriView).filter = new EsriFeatureFilter({
             where: sql
         });
     }

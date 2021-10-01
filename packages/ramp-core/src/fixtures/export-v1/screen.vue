@@ -1,8 +1,6 @@
 <template>
     <panel-screen :panel="panel" :footer="true">
-        <template #header>
-            Export
-        </template>
+        <template #header> Export </template>
 
         <template #controls>
             <close @click="panel.close()"></close>
@@ -18,7 +16,15 @@
             <div class="flex">
                 <button
                     @click="fixture.export()"
-                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-8 px-16 mr-16"
+                    class="
+                        bg-green-500
+                        hover:bg-green-700
+                        text-white
+                        font-bold
+                        py-8
+                        px-16
+                        mr-16
+                    "
                 >
                     {{ $t('export-v1.download') }}
                 </button>
@@ -32,18 +38,42 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { defineComponent, PropType } from 'vue';
 
 import { PanelInstance } from '@/api';
 import { ExportV1API } from './api';
 
 import { debounce } from 'throttle-debounce';
 
-@Component({})
-export default class ExportV1ScreenV extends Vue {
-    @Prop() panel!: PanelInstance;
+export default defineComponent({
+    name: 'ExportV1ScreenV',
+    props: {
+        panel: {
+            type: Object as PropType<PanelInstance>,
+            required: true
+        }
+    },
 
-    fixture: ExportV1API | null = null;
+    data(): {
+        fixture: ExportV1API | null;
+        make: Function;
+    } {
+        return {
+            fixture: null,
+            make: debounce(300, function (this: any) {
+                if (!this.fixture) {
+                    return;
+                }
+
+                const canvasElement = this.$el.querySelector(
+                    '.export-canvas'
+                ) as HTMLCanvasElement;
+
+                // TODO: detect size of the canvas container properly
+                this.fixture.make(canvasElement, this.$el.clientWidth - 16);
+            })
+        };
+    },
 
     mounted() {
         this.fixture = this.$iApi.fixture.get('export-v1') as ExportV1API;
@@ -54,20 +84,7 @@ export default class ExportV1ScreenV extends Vue {
 
         resizeObserver.observe(this.$el);
     }
-
-    make = debounce(300, function(this: ExportV1ScreenV) {
-        if (!this.fixture) {
-            return;
-        }
-
-        const canvasElement = this.$el.querySelector(
-            '.export-canvas'
-        ) as HTMLCanvasElement;
-
-        // TODO: detect size of the canvas container properly
-        this.fixture.make(canvasElement, this.$el.clientWidth - 16);
-    });
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

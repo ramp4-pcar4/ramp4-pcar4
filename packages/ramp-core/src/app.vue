@@ -5,35 +5,21 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
-
+import { defineComponent } from 'vue';
 import Shell from '@/components/shell.vue';
 
 import ro from '@/scripts/resize-observer.js';
-
-import { FocusList, FocusItem } from '@/directives/focus-list';
-Vue.directive('focus-list', FocusList);
-Vue.directive('focus-item', FocusItem);
-
-import { Truncate } from '@/directives/truncate/truncate';
-Vue.directive('truncate', Truncate);
-
-//FORMS
-import VueFormulate from '@braid/vue-formulate';
-Vue.use(VueFormulate);
+import 'tippy.js/animations/scale.css';
 
 //TOOLTIPS
 //@ts-ignore
-import VueTippy, { TippyComponent, tippy } from 'vue-tippy';
-Vue.use(VueTippy);
-Vue.component('tippy', TippyComponent);
+import { setDefaultProps } from 'vue-tippy';
 
-@Component({
+export default defineComponent({
     components: {
         Shell
-    }
-})
-export default class App extends Vue {
+    },
+
     mounted() {
         // let ResizeObserver observe the app div
         // it applies 'xs' 'sm' 'md' and 'lg' classes to the div depending on the size
@@ -41,11 +27,13 @@ export default class App extends Vue {
 
         // Set tooltip defaults, theme does not get applied properly in prod builds if setting the defaults using vue-tippy
         // This bypasses the wrapper and sets the defaults at the tippy.js level
-        tippy.setDefaults({
-            aria: 'labelledby',
-            // keeps tooltips from changing tabindex
-            a11y: false,
-            theme: 'ramp',
+        setDefaultProps({
+            aria: {
+                content: 'labelledby'
+            },
+            theme: 'ramp4',
+            animation: 'scale',
+            inertia: true,
             trigger: 'mouseenter manual focus',
             // needed to have tooltips in fullscreen, by default it appends to document.body
             appendTo: this.$el
@@ -54,7 +42,7 @@ export default class App extends Vue {
         let parent = this.$el.parentElement;
         parent?.style.setProperty('overflow', 'hidden');
     }
-}
+});
 </script>
 
 <style lang="scss">

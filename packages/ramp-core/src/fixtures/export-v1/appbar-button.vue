@@ -15,16 +15,16 @@
     </appbar-button>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-@Component
-export default class ExportV1AppbarButtonV extends Vue {
-    @Prop({ default: { colour: 'auto' } }) options!: { colour: string };
-
-    onClick() {
-        this.$iApi.panel.toggle('export-v1-panel');
+export default defineComponent({
+    name: 'ExportV1AppbarButtonV',
+    methods: {
+        onClick() {
+            this.$iApi.panel.toggle('export-v1-panel');
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

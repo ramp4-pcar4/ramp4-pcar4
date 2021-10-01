@@ -1,3 +1,4 @@
+import { markRaw } from 'vue';
 import BasemapScreenV from './screen.vue';
 import { BasemapAPI } from './api/basemap';
 import { basemap } from './store/index';
@@ -17,14 +18,14 @@ class BasemapFixture extends BasemapAPI {
         this._parseConfig(this.config);
         this.$vApp.$watch(
             () => this.config,
-            value => this._parseConfig(value)
+            (value: any) => this._parseConfig(value)
         );
 
         this.$iApi.panel.register(
             {
                 id: 'basemap-panel',
                 config: {
-                    screens: { 'basemap-component': BasemapScreenV }
+                    screens: { 'basemap-component': markRaw(BasemapScreenV) }
                 }
             },
             { i18n: { messages } }

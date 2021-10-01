@@ -1,7 +1,7 @@
 {
     "entryPoints": ["./src"],
     "out": "./docs/.vuepress/public/code",
-    "exclude": ["**/tests/**/*.js", "**/tests/**/*.ts", "**/shims-vue.d.ts"],
+    "exclude": ["**/tests/**/*.js", "**/tests/**/*.ts", "**/shims-vue.d.ts", "**/shims-vuex.d.ts"],
     "disableOutputCheck": true,
     "gitRemote": "upstream"
 }

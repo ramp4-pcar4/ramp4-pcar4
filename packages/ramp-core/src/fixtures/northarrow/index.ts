@@ -1,5 +1,5 @@
 import { NortharrowAPI } from './api/northarrow';
-import { northarrow } from './store/index';
+import { northarrow, NortharrowConfig } from './store/index';
 import NortharrowV from './northarrow.vue';
 
 class NortharrowFixture extends NortharrowAPI {
@@ -11,16 +11,15 @@ class NortharrowFixture extends NortharrowAPI {
         this._parseConfig(this.config);
         this.$vApp.$watch(
             () => this.config,
-            value => this._parseConfig(value)
+            (value: NortharrowConfig | undefined) => this._parseConfig(value)
         );
 
-        const innerShell = this.$vApp.$el.getElementsByClassName(
-            'inner-shell'
-        )[0];
-        const northarrowInstance = this.extend(NortharrowV, {
-            store: this.$vApp.$store
+        const { vNode, destroy, el } = this.mount(NortharrowV, {
+            app: this.$element
         });
-        innerShell.append(northarrowInstance.$el);
+        const innerShell =
+            this.$vApp.$el.getElementsByClassName('inner-shell')[0];
+        innerShell.appendChild(el.childNodes[0]);
     }
 
     removed(): void {

@@ -1,7 +1,15 @@
 <template>
     <div class="h-full flex items-center justify-center">
         <input
-            class="rv-input w-full"
+            class="
+                rv-input
+                w-full
+                bg-transparent
+                text-black-75
+                h-24
+                pb-8
+                border-0 border-b-2
+            "
             type="text"
             @keyup="valueChanged()"
             v-model="filterValue"
@@ -11,10 +19,16 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { defineComponent, ref } from 'vue';
 
-@Component
-export default class GridCustomTextFilterV extends Vue {
+export default defineComponent({
+    name: 'GridCustomTextFilterV',
+    data(props) {
+        return {
+            params: props.params as any,
+            filterValue: ''
+        };
+    },
     beforeMount() {
         // Load previously stored value (if saved in table state manager)
         this.filterValue = this.params.stateManager.getColumnFilter(
@@ -23,43 +37,45 @@ export default class GridCustomTextFilterV extends Vue {
 
         // Apply the default value to the column filter.
         this.valueChanged();
-    }
+    },
 
-    valueChanged(): void {
-        this.params.parentFilterInstance((instance: any) => {
-            this.filterValue = this.filterValue ? this.filterValue : '';
+    methods: {
+        valueChanged(): void {
+            this.params.parentFilterInstance((instance: any) => {
+                this.filterValue = this.filterValue ? this.filterValue : '';
 
-            instance.setModel({
+                instance.setModel({
+                    filterType: 'text',
+                    type: 'contains',
+                    filter: this.filterValue
+                });
+
+                // Save the new filter value in the state manager. Allows for quick recovery if the grid is
+                // closed and re-opened.
+                this.params.stateManager.setColumnFilter(
+                    this.params.column.colDef.field,
+                    this.filterValue
+                );
+
+                this.params.api.onFilterChanged();
+            });
+        },
+
+        onParentModelChanged(parentModel: any): void {
+            if (parentModel === {}) {
+                this.filterValue = '';
+            }
+        },
+
+        setModel() {
+            return {
                 filterType: 'text',
                 type: 'contains',
                 filter: this.filterValue
-            });
-
-            // Save the new filter value in the state manager. Allows for quick recovery if the grid is
-            // closed and re-opened.
-            this.params.stateManager.setColumnFilter(
-                this.params.column.colDef.field,
-                this.filterValue
-            );
-
-            this.params.api.onFilterChanged();
-        });
-    }
-
-    onParentModelChanged(parentModel: any): void {
-        if (parentModel === {}) {
-            this.filterValue = '';
+            };
         }
     }
-
-    setModel() {
-        return {
-            filterType: 'text',
-            type: 'contains',
-            filter: this.filterValue
-        };
-    }
-}
+});
 
 export default interface GridCustomTextFilter {
     filterValue: string;
@@ -68,7 +84,7 @@ export default interface GridCustomTextFilter {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .ag-floating-filter-full-body input,
 .ag-floating-filter-full-body select,
 .rv-global-search {

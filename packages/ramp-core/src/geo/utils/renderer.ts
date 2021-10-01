@@ -88,7 +88,7 @@ export class BaseRenderer {
         }
 
         // attempt to find our field, and a data type for it.
-        const f = fields.find(ff => ff.name === fieldName);
+        const f = fields.find((ff) => ff.name === fieldName);
         if (f && f.type && f.type !== 'string') {
             // we found a field, with a type on it, but it's not a string. remove the delimiters
             delim = '';
@@ -107,14 +107,14 @@ export class BaseRenderer {
             // testing an undefined/unused field. return original value.
             return fieldName;
         }
-        let myField = fields.find(f => f.name === fieldName);
+        let myField = fields.find((f) => f.name === fieldName);
         if (myField) {
             // field is valid. donethanks.
             return fieldName;
         } else {
             // do case-insensitive search
             const lowName: string = fieldName.toLowerCase();
-            myField = fields.find(f => f.name.toLowerCase() === lowName);
+            myField = fields.find((f) => f.name.toLowerCase() === lowName);
             if (myField) {
                 // use the field definition casing
                 return myField.name;
@@ -137,7 +137,7 @@ export class BaseRenderer {
         }
 
         const elseClauseGuts = this.symbolUnits
-            .map(pl => pl.definitionClause)
+            .map((pl) => pl.definitionClause)
             .join(' OR ');
 
         return `(NOT (${elseClauseGuts}))`;
@@ -205,7 +205,7 @@ export class UniqueValueRenderer extends BaseRenderer {
             esriRenderer.field2,
             esriRenderer.field3
         ] // extract field names
-            .filter(fn => fn) // remove any undefined names
+            .filter((fn) => fn) // remove any undefined names
             .map((fn: string) => this.cleanFieldName(fn, layerFields)); // correct any mismatched case of field names
 
         const fieldDelims: Array<string> = this.keyFields.map((fn: string) =>

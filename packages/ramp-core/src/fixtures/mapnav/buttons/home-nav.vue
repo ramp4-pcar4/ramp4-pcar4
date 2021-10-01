@@ -12,20 +12,23 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
 import { Extent } from '@/geo/api';
-import { Vue } from 'vue-property-decorator';
 
-export default class HomeNavV extends Vue {
-    goToHome(): void {
-        // Get extent from config and convert it to extent object
-        const homeExtent = Extent.fromConfig(
-            'home_extent',
-            this.$iApi.getConfig().map.extent
-        );
-        // apply extent
-        this.$iApi.geo.map.zoomMapTo(homeExtent);
+export default defineComponent({
+    name: 'HomeNavV',
+    methods: {
+        goToHome() {
+            // Get extent from config and convert it to extent object
+            const homeExtent = Extent.fromConfig(
+                'home_extent',
+                this.$iApi.getConfig().map.extent
+            );
+            // apply extent
+            this.$iApi.geo.map.zoomMapTo(homeExtent);
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

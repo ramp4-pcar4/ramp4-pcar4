@@ -1,3 +1,4 @@
+import { markRaw } from 'vue';
 import { SettingsAPI } from './api/settings';
 import SettingsAppbarButtonV from './appbar-button.vue';
 
@@ -11,7 +12,7 @@ class SettingsFixture extends SettingsAPI {
             {
                 'settings-panel': {
                     screens: {
-                        'settings-screen-content': SettingsScreenV
+                        'settings-screen-content': markRaw(SettingsScreenV)
                     },
                     style: {
                         width: '350px'

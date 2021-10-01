@@ -17,14 +17,16 @@
     </appbar-button>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-@Component
-export default class GridAppbarButtonV extends Vue {
-    onClick() {
-        this.$iApi.panel.toggleMinimize('grid-panel');
+export default defineComponent({
+    name: 'GridAppbarButtonV',
+    methods: {
+        onClick() {
+            this.$iApi.panel.toggleMinimize('grid-panel');
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

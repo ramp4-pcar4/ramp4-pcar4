@@ -61,13 +61,14 @@ export class MapnavAPI extends FixtureInstance {
      */
     _validateItems() {
         // get the ordered list of items and see if any of them are registered
-        this.$vApp.$store.get<string[]>('mapnav/order')!.forEach(id => {
+        this.$vApp.$store.get<string[]>('mapnav/order')!.forEach((id) => {
             // check components with the literal id and with a `-nav-button` suffix;
-            [`${id}-nav-button`, id].some(v => {
-                if (v in this.$vApp.$options.components!) {
-                    // if an item is registered globally, save the name of the registered component
-                    this.$vApp.$store.set(`mapnav/items@${id}.componentId`, v);
-                }
+            [`${id}-nav-button`, id].some((v) => {
+                // TODO: fix this if needed
+                // if (v in this.$vApp.$options.components!) {
+                // if an item is registered globally, save the name of the registered component
+                this.$vApp.$store.set(`mapnav/items@${id}.componentId`, v);
+                // }
             });
         });
     }

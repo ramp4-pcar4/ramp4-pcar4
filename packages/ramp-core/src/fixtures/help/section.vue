@@ -2,7 +2,17 @@
     <div>
         <div>
             <button
-                class="help-section-header flex items-center py-15 px-25 hover:bg-gray-200 cursor-pointer select-none w-full"
+                class="
+                    help-section-header
+                    flex
+                    items-center
+                    py-15
+                    px-25
+                    hover:bg-gray-200
+                    cursor-pointer
+                    select-none
+                    w-full
+                "
                 @click="toggleExpanded()"
                 :content="
                     $t(
@@ -48,18 +58,29 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-@Component({})
-export default class HelpSectionV extends Vue {
-    @Prop() helpSection!: any;
+export default defineComponent({
+    name: 'HelpSectionV',
+    props: {
+        helpSection: {
+            type: Object,
+            required: true
+        }
+    },
 
-    expanded: boolean = false;
+    data() {
+        return {
+            expanded: false
+        };
+    },
 
-    toggleExpanded() {
-        this.expanded = !this.expanded;
+    methods: {
+        toggleExpanded() {
+            this.expanded = !this.expanded;
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped>

@@ -5,6 +5,7 @@
 
 import { AttribLayer, FileFC, InstanceAPI } from '@/api/internal';
 import {
+    DefPromise,
     GeometryType,
     IdentifyParameters,
     IdentifyResult,
@@ -17,6 +18,7 @@ import {
     TreeNode
 } from '@/geo/api';
 import { EsriFeatureLayer, EsriField } from '@/geo/esri';
+import { markRaw } from 'vue';
 
 // util function to manage trickery. file layer can have field names that are bad keys.
 // our file loader will have corrected them, but ramp layer config .nameField and .tooltipField may
@@ -24,9 +26,9 @@ import { EsriFeatureLayer, EsriField } from '@/geo/esri';
 // This function will return a valid field name for a given field name. First attempts at
 // direct match, then attempts to reverse any bad field renaming logic.
 function fieldValidator(fields: Array<EsriField>, targetName: string): string {
-    if (fields.findIndex(f => f.name === targetName) === -1) {
+    if (fields.findIndex((f) => f.name === targetName) === -1) {
         // no direct match found.
-        const validField = fields.find(f => f.alias === targetName);
+        const validField = fields.find((f) => f.alias === targetName);
         if (validField) {
             return validField.name;
         } else {
@@ -88,8 +90,8 @@ export class FileLayer extends AttribLayer {
             opts
         );
 
-        this.esriLayer = new EsriFeatureLayer(
-            this.makeEsriLayerConfig(this.origRampConfig)
+        this.esriLayer = markRaw(
+            new EsriFeatureLayer(this.makeEsriLayerConfig(this.origRampConfig))
         );
 
         this.esriJson = undefined;
@@ -107,9 +109,8 @@ export class FileLayer extends AttribLayer {
         rampLayerConfig: RampLayerConfig
     ): __esri.FeatureLayerProperties {
         // TODO might want to add an extra paremter here, as we will be passing in fields, source graphics, renderer, etc.
-        const esriConfig: __esri.FeatureLayerProperties = super.makeEsriLayerConfig(
-            rampLayerConfig
-        );
+        const esriConfig: __esri.FeatureLayerProperties =
+            super.makeEsriLayerConfig(rampLayerConfig);
 
         // TEMP CHECKLIST OF PROPERTIES
         // source - converter
@@ -260,9 +261,12 @@ export class FileLayer extends AttribLayer {
             return super.identify(options);
         }
 
+        let loadResolve: any;
         const innerResult: IdentifyResult = {
             uid: myFC.uid,
-            isLoading: true,
+            loadPromise: new Promise((resolve) => {
+                loadResolve = resolve;
+            }),
             items: []
         };
 
@@ -300,9 +304,9 @@ export class FileLayer extends AttribLayer {
         // TODO: Test if works after #206 is implemented
         qOpts.filterSql = myFC.getCombinedSqlFilter();
 
-        result.done = myFC.queryFeatures(qOpts).then(results => {
+        result.done = myFC.queryFeatures(qOpts).then((results) => {
             // TODO might be a problem overwriting the array if something is watching/binding to the original
-            innerResult.items = results.map(gr => {
+            innerResult.items = results.map((gr) => {
                 return {
                     // TODO decide if we want to handle alias mapping here or not.
                     //      if we do, our "ESRI" format will need to include field metadata.
@@ -317,7 +321,8 @@ export class FileLayer extends AttribLayer {
                 };
             });
 
-            innerResult.isLoading = false;
+            // Resolve the load promise
+            loadResolve();
         });
 
         return result;

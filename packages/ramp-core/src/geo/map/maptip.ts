@@ -20,11 +20,8 @@ export class MaptipAPI extends APIScope {
      */
     async updateAtCoord(screenPoint: ScreenPoint): Promise<void> {
         // Get the graphic object
-        const graphicHit:
-            | GraphicHitResult
-            | undefined = await this.$iApi.geo.map.getGraphicAtCoord(
-            screenPoint
-        );
+        const graphicHit: GraphicHitResult | undefined =
+            await this.$iApi.geo.map.getGraphicAtCoord(screenPoint);
 
         if (!graphicHit) {
             this.clear();
@@ -32,9 +29,8 @@ export class MaptipAPI extends APIScope {
         }
 
         // Check if the same maptip already exists
-        const currentMaptip:
-            | MaptipProperties
-            | undefined = this.getProperties();
+        const currentMaptip: MaptipProperties | undefined =
+            this.getProperties();
         if (
             currentMaptip &&
             currentMaptip.graphicHit.layerId === graphicHit.layerId &&
@@ -47,9 +43,8 @@ export class MaptipAPI extends APIScope {
         }
 
         // Get the layer
-        const layerInstance:
-            | LayerInstance
-            | undefined = this.$iApi.geo.layer.getLayer(graphicHit.layerId);
+        const layerInstance: LayerInstance | undefined =
+            this.$iApi.geo.layer.getLayer(graphicHit.layerId);
         if (!layerInstance) {
             // Something seriously wrong here because esri gave us a non-existent layerID
             console.error(

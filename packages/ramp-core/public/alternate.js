@@ -6,6 +6,7 @@ function isIE() {
 }
 
 if (isIE()) {
-    document.getElementById('IE').className = "notification";
-    document.getElementById('IE').innerHTML = "Internet Explorer is not a supported browser, please use a different browser.";
-} 
+    document.getElementById('IE').className = 'notification';
+    document.getElementById('IE').innerHTML =
+        'Internet Explorer is not a supported browser, please use a different browser.';
+}

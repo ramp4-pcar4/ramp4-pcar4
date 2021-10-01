@@ -186,9 +186,7 @@ export class LayerSource extends APIScope {
                 const level = calculateLevel(layer, layers);
 
                 layer.level = level;
-                layer.indent = Array.from(Array(level))
-                    .fill('-')
-                    .join('');
+                layer.indent = Array.from(Array(level)).fill('-').join('');
                 layer.index = layer.id;
 
                 return layer;
@@ -282,9 +280,7 @@ export class LayerSource extends APIScope {
                 [],
                 layers.map((layer: any) => {
                     layer.level = level;
-                    layer.indent = Array.from(Array(level))
-                        .fill('-')
-                        .join('');
+                    layer.indent = Array.from(Array(level)).fill('-').join('');
                     layer.id = layer.name;
 
                     if (layer.layers.length > 0) {

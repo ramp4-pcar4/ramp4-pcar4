@@ -2,7 +2,19 @@
     <div class="rv-geosearch-bar flex h-16 pb-4">
         <input
             type="search"
-            class="flex-grow border-b text-base px-12 py-8 outline-none focus:shadow-outline border-gray-600 mx-8 h-8 min-w-0"
+            class="
+                flex-grow
+                border-b
+                text-base
+                px-12
+                py-8
+                outline-none
+                focus:shadow-outline
+                border-gray-600
+                mx-8
+                h-8
+                min-w-0
+            "
             :placeholder="$t('geosearch.searchText')"
             :value="searchVal"
             @input="onSearchTermChange($event.target.value)"
@@ -11,27 +23,25 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
-import { Get, Call } from 'vuex-pathify';
-
+import { defineComponent } from 'vue';
+import { get, call } from '@/store/pathify-helper';
 import { GeosearchStore } from './store';
 import { debounce } from 'throttle-debounce';
 
-@Component
-export default class GeosearchSearchBarV extends Vue {
-    // fetch geosearch search value from store
-    @Get(GeosearchStore.searchVal) searchVal!: string;
+export default defineComponent({
+    data() {
+        return {
+            // fetch search value and actions from store
+            searchVal: get(GeosearchStore.searchVal),
+            setSearchTerm: call(GeosearchStore.setSearchTerm),
 
-    // import required geosearch actions
-    @Call(GeosearchStore.setSearchTerm) setSearchTerm!: (
-        searchTerm: string
-    ) => void;
-
-    // debounce function for search term change
-    onSearchTermChange = debounce(500, (searchTerm: string) => {
-        this.setSearchTerm(searchTerm);
-    });
-}
+            // debounce function for search term change
+            onSearchTermChange: debounce(500, (searchTerm: string) => {
+                this.setSearchTerm(searchTerm);
+            })
+        };
+    }
+});
 </script>
 
 <style lang="scss" scoped></style>

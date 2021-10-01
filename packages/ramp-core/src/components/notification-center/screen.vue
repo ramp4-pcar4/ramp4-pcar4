@@ -5,7 +5,7 @@
         </template>
 
         <template #controls>
-            <pin @click="panel.pin()" :active="isPinned"></pin>
+            <pin @click="panel.pin()" :active="isPinned()"></pin>
             <close @click="panel.close()"></close>
         </template>
 
@@ -16,7 +16,11 @@
                         @click="clearAll"
                         class="text-gray-500 hover:text-black p-4 ml-auto"
                         :content="$t('notifications.controls.clearAll')"
-                        v-tippy="{ placement: 'bottom' }"
+                        v-tippy="{
+                            placement: 'bottom',
+                            theme: 'ramp4',
+                            animation: 'scale'
+                        }"
                     >
                         <!-- https://fonts.google.com/icons?selected=Material%20Icons%3Aclear_all -->
                         <svg
@@ -38,27 +42,38 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Call } from 'vuex-pathify';
+import { defineComponent, PropType } from 'vue';
+import { call } from '@/store/pathify-helper';
 
 import { PanelInstance } from '@/api';
 
 import NotificationListV from './notification-list.vue';
 
-@Component({
+export default defineComponent({
+    name: 'NotificationsScreenV',
+    props: {
+        panel: {
+            type: Object as PropType<PanelInstance>,
+            required: true
+        }
+    },
+
     components: {
         'notification-list': NotificationListV
-    }
-})
-export default class NotificationsScreenV extends Vue {
-    @Prop() panel!: PanelInstance;
+    },
 
-    @Call('notification/clearAll') clearAll!: () => void;
+    data() {
+        return {
+            clearAll: call('notification/clearAll')
+        };
+    },
 
-    get isPinned(): boolean {
-        return this.panel.isPinned;
+    methods: {
+        isPinned(): boolean {
+            return this.panel.isPinned;
+        }
     }
-}
+});
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss"></style>

@@ -47,18 +47,20 @@ const COLUMN_SPACING = 20;
 const DEFAULT_FONT =
     'Montserrat, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif';
 
-class ExportV1LegendFixture extends FixtureInstance
-    implements ExportV1SubFixture {
+class ExportV1LegendFixture
+    extends FixtureInstance
+    implements ExportV1SubFixture
+{
     async make(options: any): Promise<fabric.Group> {
         // filter out loading/errored and invisible layers
         const layers = this.$vApp.$store
             .get<LayerInstance[]>(LayerStore.layers)!
             .filter(
-                layer =>
+                (layer) =>
                     layer.isValidState() &&
                     layer.getVisibility() &&
                     !this._getLayerTreeIds(layer.getLayerTree()).every(
-                        id => !layer.getVisibility(id)
+                        (id) => !layer.getVisibility(id)
                     )
             );
 
@@ -111,12 +113,12 @@ class ExportV1LegendFixture extends FixtureInstance
                             result.push(chunkTitle);
                         }
 
-                        chunkItems.forEach(item => {
+                        chunkItems.forEach((item) => {
                             item.top = runningHeight;
                             runningHeight += item.height! + ITEM_MARGIN;
                         });
 
-                        return [...result, ...chunkItems].filter(a => a);
+                        return [...result, ...chunkItems].filter((a) => a);
                     }
                 );
 
@@ -148,10 +150,6 @@ class ExportV1LegendFixture extends FixtureInstance
         columnWidth: number,
         columns: number
     ) {
-        if (items.length === 0) {
-            return new fabric.Group();
-        }
-
         let curColumn: number = 0;
         let curTop: number = 0;
         let accumLength: number = 0;
@@ -217,8 +215,8 @@ class ExportV1LegendFixture extends FixtureInstance
             });
 
             // filter out invisible layer entries
-            const ids = this._getLayerTreeIds(layer.getLayerTree()).filter(id =>
-                layer.getVisibility(id)
+            const ids = this._getLayerTreeIds(layer.getLayerTree()).filter(
+                (id) => layer.getVisibility(id)
             );
 
             const items = await Promise.all(
@@ -244,7 +242,7 @@ class ExportV1LegendFixture extends FixtureInstance
         segmentWidth: number
     ): Promise<SegmentChunk>[] {
         return ids.map<Promise<SegmentChunk>>(async (idx: number | string) => {
-            await Promise.all(layer.getLegend(idx).map(lg => lg.drawPromise));
+            await Promise.all(layer.getLegend(idx).map((lg) => lg.drawPromise));
             const symbologyStack = layer.getLegend(idx);
 
             const title = new fabric.Textbox(layer.getName(idx), {
@@ -276,7 +274,7 @@ class ExportV1LegendFixture extends FixtureInstance
         symbologyStack: LegendSymbology[],
         segmentWidth: number
     ): Promise<fabric.Group>[] {
-        return symbologyStack.map(async symbol => {
+        return symbologyStack.map(async (symbol) => {
             const fbSymbol = (
                 await promisify(fabric.loadSVGFromString)(symbol.svgcode)
             )[0];
@@ -341,7 +339,7 @@ class ExportV1LegendFixture extends FixtureInstance
             [],
             node.isLayer
                 ? [node.layerIdx]
-                : node.children.map(c => this._getLayerTreeIds(c))
+                : node.children.map((c) => this._getLayerTreeIds(c))
         );
     }
 }
@@ -359,8 +357,8 @@ const promisify = <T, A>(
     fn: (args: T, cb: Callback<A>) => void
 ): ((args: T) => Promise<A>) => {
     return (args: T) =>
-        new Promise(resolve => {
-            fn(args, callbackArgs => {
+        new Promise((resolve) => {
+            fn(args, (callbackArgs) => {
                 resolve(callbackArgs);
             });
         });

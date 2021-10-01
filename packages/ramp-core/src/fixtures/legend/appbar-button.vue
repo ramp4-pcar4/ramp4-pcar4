@@ -13,15 +13,18 @@
         </svg>
     </appbar-button>
 </template>
-<script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
 
-@Component
-export default class LegendAppbarButtonV extends Vue {
-    onClick() {
-        this.$iApi.panel.toggle('legend-panel');
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+    name: 'LegendAppbarButtonV',
+    methods: {
+        onClick() {
+            this.$iApi.panel.toggle('legend-panel');
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

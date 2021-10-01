@@ -14,7 +14,7 @@ export class Basemap {
 
         this.innerBasemap = new EsriBasemap({
             // TODO split by type if we have to populate referenceLayers
-            baseLayers: rampConfig.layers.map(layerConfig => {
+            baseLayers: rampConfig.layers.map((layerConfig) => {
                 if (layerConfig.layerType === LayerType.TILE) {
                     return new EsriTileLayer({
                         url: layerConfig.url

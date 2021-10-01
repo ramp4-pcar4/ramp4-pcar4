@@ -100,33 +100,33 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-
+import { defineComponent, PropType } from 'vue';
 import { PanelInstance } from '@/api';
-
 import SettingsComponentV from './component.vue';
 import { GlobalEvents, LayerInstance } from '@/api/internal';
 import { LegendEntry } from '../legend/store/legend-defs';
 import { LayerType } from '@/geo/api';
 
-@Component({
+export default defineComponent({
+    name: 'SettingsScreenV',
+    props: {
+        panel: { type: Object as PropType<PanelInstance>, required: true },
+        layer: { type: Object as PropType<LayerInstance>, required: true },
+        uid: { type: String, required: true },
+        legendItem: { type: Object as PropType<LegendEntry>, required: true }
+    },
     components: {
         'settings-component': SettingsComponentV
-    }
-})
-export default class SettingsScreenV extends Vue {
-    @Prop() panel!: PanelInstance;
-    @Prop() layer!: LayerInstance;
-    @Prop() uid!: string;
-    @Prop() legendItem!: LegendEntry;
-
-    // Models.
-    layerName: string = '';
-    visibilityModel: boolean = this.layer.getVisibility(this.uid);
-    opacityModel: number = this.layer.getOpacity(this.uid) * 100;
-    snapshotToggle: boolean = false;
-    handlers: Array<string> = [];
-
+    },
+    data() {
+        return {
+            layerName: '',
+            visibilityModel: this.layer.getVisibility(this.uid),
+            opacityModel: this.layer.getOpacity(this.uid) * 100,
+            snapshotToggle: false,
+            handlers: [] as Array<string>
+        };
+    },
     mounted() {
         // Listen for a layer load event. Some of these values may change when the layer fully loads.
         this.layer.isLayerLoaded().then(() => {
@@ -150,46 +150,56 @@ export default class SettingsScreenV extends Vue {
             this.$iApi.event.on(
                 GlobalEvents.LAYER_RELOAD_END,
                 (reloadedLayer: LayerInstance) => {
-                    if (reloadedLayer.layerType === LayerType.MAPIMAGE) {
-                        // Check if this.uid is a child of reloadedLayer
-                        if (
-                            reloadedLayer
-                                .getLayerTree()
-                                .findChildByUid(this.uid)
-                        ) {
-                            this.visibilityModel = true;
+                    reloadedLayer.isLayerLoaded().then(() => {
+                        if (reloadedLayer.layerType === LayerType.MAPIMAGE) {
+                            // Check if this.uid is a child of reloadedLayer
+                            if (
+                                reloadedLayer
+                                    .getLayerTree()
+                                    .findChildByUid(this.uid)
+                            ) {
+                                this.visibilityModel = this.layer.getVisibility(
+                                    this.uid
+                                );
+                                this.opacityModel =
+                                    this.layer.getOpacity(this.uid) * 100;
+                            }
+                        } else if (this.uid === reloadedLayer.uid) {
+                            this.visibilityModel = this.layer.getVisibility(
+                                this.uid
+                            );
+                            this.opacityModel =
+                                this.layer.getOpacity(this.uid) * 100;
                         }
-                    } else if (this.uid === reloadedLayer.uid) {
-                        this.visibilityModel = true;
-                    }
+                    });
                 }
             )
         );
-    }
-
-    beforeDestroy() {
+    },
+    beforeUnmount() {
         // Remove all event handlers for this component
-        this.handlers.forEach(handler => this.$iApi.event.off(handler));
-    }
+        this.handlers.forEach((handler) => this.$iApi.event.off(handler));
+    },
+    methods: {
+        // Update the layer visibility.
+        updateVisibility(val: any) {
+            this.legendItem.toggleVisibility(val.value);
+            this.visibilityModel = val.value;
+        },
 
-    // Update the layer visibility.
-    updateVisibility(val: any) {
-        this.legendItem.toggleVisibility(val.value);
-        this.visibilityModel = val.value;
-    }
+        // Update the layer opacity.
+        updateOpacity(val: number) {
+            this.opacityModel = val;
+            this.layer.setOpacity(this.opacityModel / 100, this.uid);
+        },
 
-    // Update the layer opacity.
-    updateOpacity(val: number) {
-        this.opacityModel = val;
-        this.layer.setOpacity(this.opacityModel / 100, this.uid);
+        // Toggle snapshot mode for the layer.
+        toggleSnapshot() {
+            this.snapshotToggle = !this.snapshotToggle;
+            // TODO: make necessary changes to layer
+        }
     }
-
-    // Toggle snapshot mode for the layer.
-    toggleSnapshot() {
-        this.snapshotToggle = !this.snapshotToggle;
-        // TODO: make necessary changes to layer
-    }
-}
+});
 </script>
 
 <style lang="scss" scoped>

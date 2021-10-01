@@ -21,21 +21,21 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 
-@Component({
+export default defineComponent({
+    name: 'PanelOptionsMenuV',
     components: {
         'dropdown-menu': DropdownMenuV
-    }
-})
-export default class PanelOptionsMenuV extends Vue {
+    },
+
     data() {
         return {
             open: false
         };
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

@@ -31,7 +31,7 @@ export class AppbarAPI extends FixtureInstance {
         }
 
         const appbarItems = appbarConfig.items.map(
-            item => new AppbarItemInstance(item)
+            (item) => new AppbarItemInstance(item)
         );
 
         // save appbar items as a collection to the store
@@ -47,12 +47,12 @@ export class AppbarAPI extends FixtureInstance {
         // save an ordered list of item ids to use when rendering components
         this.$vApp.$store.set(
             'appbar/order',
-            appbarItems.map(item => item.id)
+            appbarItems.map((item) => item.id)
         );
 
         if (appbarConfig.temporaryButtons) {
             const appbarTempItems = Object.fromEntries(
-                appbarConfig.temporaryButtons.map(item => {
+                appbarConfig.temporaryButtons.map((item) => {
                     if (typeof item === 'string') {
                         return [`${item}-panel`, new AppbarItemInstance(item)];
                     }
@@ -75,10 +75,10 @@ export class AppbarAPI extends FixtureInstance {
      */
     _validateItems() {
         // get the ordered list of items and see if any of them are registered
-        this.$vApp.$store.get<string[]>('appbar/order')!.forEach(id => {
+        this.$vApp.$store.get<string[]>('appbar/order')!.forEach((id) => {
             // appbar check components with the literal id and with a `-appbar-button` suffix;
-            [`${id}-appbar-button`, id].some(v => {
-                if (v in this.$vApp.$options.components!) {
+            [`${id}-appbar-button`, id].some((v) => {
+                if (this.$iApi.fixture.get(v)) {
                     // if an item is registered globally, save the name of the registered component
                     this.$vApp.$store.set(`appbar/items@${id}.componentId`, v);
                 }
@@ -89,10 +89,10 @@ export class AppbarAPI extends FixtureInstance {
         const tempButtonDict = this.$vApp.$store.get<any>(
             'appbar/tempButtonDict'
         );
-        Object.keys(tempButtonDict).forEach(key => {
+        Object.keys(tempButtonDict).forEach((key) => {
             const id = tempButtonDict[key].id;
-            [`${id}-appbar-button`, id].some(v => {
-                if (v in this.$vApp.$options.components!) {
+            [`${id}-appbar-button`, id].some((v) => {
+                if (this.$iApi.fixture.get(v)) {
                     // if an item is registered globally, save the name of the registered component
                     this.$vApp.$store.set(
                         `appbar/tempButtonDict@${key}.componentId`,

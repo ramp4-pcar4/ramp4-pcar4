@@ -60,60 +60,78 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
+import { defineComponent, ref } from 'vue';
+import { get } from '@/store/pathify-helper';
 
 import { LayerInstance, PanelInstance } from '@/api';
 import GridTableComponentV from '@/fixtures/grid/table-component.vue';
+import MinimizeV from '@/components/panel-stack/controls/minimize.vue';
 import { GridStore } from './store';
 
 import { LayerStore } from '@/store/modules/layer';
 
-@Component({
+export default defineComponent({
+    props: {
+        panel: PanelInstance,
+        header: String
+    },
+
     components: {
-        'table-component': GridTableComponentV
-    }
-})
-export default class GridScreenV extends Vue {
-    @Prop() panel!: PanelInstance;
-    @Prop() header!: string;
+        'table-component': GridTableComponentV,
+        minimize: MinimizeV
+    },
 
-    @Get(LayerStore.layers) layers!: LayerInstance[];
-    @Get(GridStore.currentUid) currentUid!: string;
+    data() {
+        return {
+            layers: get(LayerStore.layers),
+            currentUid: get(GridStore.currentUid),
+            quicksearch: '',
+            head: '',
+            layer: ref()
+        };
+    },
 
-    quicksearch: string = '';
-    grid: GridTableComponentV | undefined;
-    head: string = '';
-    layer: LayerInstance | undefined = undefined;
+    setup() {
+        const rvGrid = ref();
+
+        return { rvGrid };
+    },
 
     mounted() {
-        this.grid = this.$refs.rvGrid as GridTableComponentV;
-        this.head = this.layerName;
-    }
+        // Set the panel name to the name of the layer.
+        this.head = this.layerName();
+    },
 
-    updateQuickSearch(): void {
-        this.grid!.quicksearch = this.quicksearch;
-        this.grid!.updateQuickSearch();
-    }
+    methods: {
+        updateQuickSearch(): void {
+            if (this.rvGrid != null) {
+                this.rvGrid.quicksearch = this.quicksearch;
+                this.rvGrid.updateQuickSearch();
+            }
+        },
 
-    resetQuickSearch(): void {
-        this.grid!.quicksearch = this.quicksearch = '';
-        this.grid!.updateQuickSearch();
-    }
+        resetQuickSearch(): void {
+            this.rvGrid.quicksearch = this.quicksearch = '';
+            this.rvGrid.updateQuickSearch();
+        },
 
-    clearFilters(): void {
-        this.resetQuickSearch();
-        this.grid!.clearFilters();
-    }
+        clearFilters(): void {
+            this.resetQuickSearch();
+            this.rvGrid.clearFilters();
+        },
 
-    get layerName() {
-        if (this.grid) {
-            this.layer = this.grid.getLayerByUid(this.grid.layerUid);
-            return this.layer!.getName(this.grid.layerUid);
+        layerName(): string {
+            if (this.rvGrid) {
+                this.layer = this.rvGrid.getLayerByUid(this.rvGrid.layerUid);
+
+                if (this.layer !== undefined) {
+                    return this.layer.getName(this.rvGrid.layerUid);
+                }
+            }
+            return '';
         }
-        return '';
     }
-}
+});
 </script>
 
 <style lang="scss" scoped>

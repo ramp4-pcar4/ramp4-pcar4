@@ -27,7 +27,7 @@
         </template>
         <a
             v-for="col in columnDefs.filter(
-                c => c.headerName && c.headerName.length > 0
+                (c) => c.headerName && c.headerName.length > 0
             )"
             :key="col.headerName"
             v-on:click="
@@ -53,11 +53,13 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-@Component
-export default class GridColumnDropdownV extends Vue {
-    @Prop() columnDefs!: Array<Object>;
-    @Prop() columnApi!: Object;
-}
+export default defineComponent({
+    name: 'GridColumnDropdownV',
+    props: {
+        columnDefs: Array,
+        columnApi: Object
+    }
+});
 </script>

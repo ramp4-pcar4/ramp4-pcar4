@@ -8,7 +8,7 @@
                     : 'notifications.controls.expand'
             )
         "
-        v-tippy="{ onShow: tooltipShow }"
+        v-tippy="{ onShow: tooltipShow, theme: 'ramp4', animation: 'scale' }"
         @click="open = !open"
         :class="notification.messageList ? 'cursor-pointer' : ''"
     >
@@ -37,7 +37,7 @@
                 @click.stop="removeNotification(notification)"
                 class="mx-4 p-4"
                 :content="$t('notifications.controls.dismiss')"
-                v-tippy
+                v-tippy="{ theme: 'ramp4', animation: 'scale' }"
             >
                 <svg
                     class="fill-current w-16 h-16"
@@ -62,32 +62,40 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Call } from 'vuex-pathify';
+import { defineComponent } from 'vue';
+import { call } from '@/store/pathify-helper';
 
 import { NotificationType } from '@/api/notifications';
 
-@Component({})
-export default class NotificationListV extends Vue {
-    @Prop() notification!: any;
-    @Call('notification/removeNotification') removeNotification!: (
-        notification: any
-    ) => void;
+export default defineComponent({
+    name: 'NotificationListV',
+    props: {
+        notification: {
+            type: Object,
+            required: true
+        }
+    },
 
-    open: boolean = false;
+    data() {
+        return {
+            removeNotification: call('notification/removeNotification'),
+            open: false,
+            icons: {
+                [NotificationType.WARNING]: '⚠',
+                [NotificationType.INFO]: '☑',
+                [NotificationType.ERROR]: '❌'
+            }
+        };
+    },
 
-    icons = {
-        [NotificationType.WARNING]: '⚠',
-        [NotificationType.INFO]: '☑',
-        [NotificationType.ERROR]: '❌'
-    };
-
-    tooltipShow() {
-        if (!this.notification.messageList) {
-            return false;
+    methods: {
+        tooltipShow() {
+            if (!this.notification.messageList) {
+                return false;
+            }
         }
     }
-}
+});
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss"></style>

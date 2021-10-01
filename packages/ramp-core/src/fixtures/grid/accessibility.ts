@@ -41,7 +41,7 @@ export default class GridAccessibilityManager {
             .querySelector('.ag-body-horizontal-scroll-viewport')
             ?.setAttribute('tabindex', '-1');
 
-        this.observer = new MutationObserver(mutations => {
+        this.observer = new MutationObserver((mutations) => {
             const el = mutations[0].target as HTMLElement;
             this.manageHeaderScrolling(el);
         });
@@ -55,7 +55,7 @@ export default class GridAccessibilityManager {
      * Set up the listeners for the grid
      */
     private initAccessibilityListeners() {
-        this.gridBody.addEventListener('keydown', event => {
+        this.gridBody.addEventListener('keydown', (event) => {
             this.onKeydown(event);
         });
         this.gridBody.addEventListener(
@@ -93,7 +93,7 @@ export default class GridAccessibilityManager {
             const headerCells = Array.prototype.slice.call(
                 row.querySelectorAll('.ag-header-cell')
             ) as HTMLElement[];
-            headerCells.forEach(cell => {
+            headerCells.forEach((cell) => {
                 cell.toggleAttribute('focus-item', true);
                 cell.id = generateID();
                 cell.classList.add('default-focus-style');
@@ -107,7 +107,7 @@ export default class GridAccessibilityManager {
      * Remove all accessibility listeners from the grid
      */
     removeAccessibilityListeners() {
-        this.gridBody.removeEventListener('keydown', event => {
+        this.gridBody.removeEventListener('keydown', (event) => {
             this.onKeydown(event);
         });
         this.gridBody.removeEventListener(
@@ -125,7 +125,7 @@ export default class GridAccessibilityManager {
         });
         this.observer.disconnect();
 
-        this.headerRows.forEach(row => {
+        this.headerRows.forEach((row) => {
             row.removeEventListener('focus', () => {
                 this.manageHeaderScrolling(row);
             });
@@ -185,10 +185,12 @@ export default class GridAccessibilityManager {
                 this.gridApi.ensureIndexVisible(0);
                 this.gridApi.ensureColumnVisible(firstCol);
             } else {
-                this.gridApi.setFocusedCell(
-                    focusedCell.rowIndex,
-                    focusedCell.column
-                );
+                if (focusedCell) {
+                    this.gridApi.setFocusedCell(
+                        focusedCell.rowIndex,
+                        focusedCell.column
+                    );
+                }
             }
         }
     }

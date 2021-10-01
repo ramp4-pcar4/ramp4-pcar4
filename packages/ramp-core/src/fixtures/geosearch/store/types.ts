@@ -10,7 +10,7 @@ class Types {
     filterComplete: boolean = false;
 
     constructor(language: string) {
-        Object.keys(types[language]).forEach(typeKey => {
+        Object.keys(types[language]).forEach((typeKey) => {
             this.allTypes[typeKey] = (<any>types[language])[typeKey];
             this.validTypes[typeKey] = (<any>types[language])[typeKey];
         });
@@ -32,7 +32,7 @@ class Types {
     }
 }
 
-export default function(language: string): defs.Types {
+export default function (language: string): defs.Types {
     return (typeObj[language] = typeObj[language]
         ? typeObj[language]
         : new Types(language));

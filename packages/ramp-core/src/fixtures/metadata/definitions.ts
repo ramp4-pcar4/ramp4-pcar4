@@ -4,6 +4,10 @@ export interface MetadataPayload {
     url: string;
 }
 
+export interface MetadataCache {
+    [key: string]: string;
+}
+
 export interface MetadataState {
     status: string;
     response: DocumentFragment | string | null;

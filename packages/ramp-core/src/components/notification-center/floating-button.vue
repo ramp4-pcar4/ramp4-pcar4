@@ -1,10 +1,21 @@
 <template>
     <button
         @click="$iApi.panel.get('notifications-panel').open()"
-        class="pointer-events-auto 
-               flex items-center absolute left-8 bottom-36 p-6 
-               block sm:display-none 
-               bg-black-75 rounded-full text-gray-400 hover:text-white"
+        class="
+            pointer-events-auto
+            flex
+            items-center
+            absolute
+            left-8
+            bottom-36
+            p-6
+            block
+            sm:display-none
+            bg-black-75
+            rounded-full
+            text-gray-400
+            hover:text-white
+        "
         :content="$t('notifications.title')"
         v-tippy
     >
@@ -27,13 +38,17 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
+import { defineComponent } from 'vue';
+import { get } from '@/store/pathify-helper';
 
-@Component
-export default class NotificationsFloatingButtonV extends Vue {
-    @Get('notification/notificationNumber') number!: Number;
-}
+export default defineComponent({
+    name: 'NotificationsFloatingButtonV',
+    data() {
+        return {
+            number: get('notification/notificationNumber')
+        };
+    }
+});
 </script>
 
 <style lang="scss" scoped>

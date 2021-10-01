@@ -3,6 +3,7 @@
         :onClickFunction="onClick"
         :tooltip="$t('notifications.title')"
         class="notification-button"
+        id=""
     >
         <!-- https://fonts.google.com/icons?selected=Material%20Icons%3Anotifications -->
         <svg
@@ -23,17 +24,23 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
+import { defineComponent } from 'vue';
+import { get } from '@/store/pathify-helper';
 
-@Component
-export default class NotificationsAppbarButtonV extends Vue {
-    @Get('notification/notificationNumber') number!: Number;
+export default defineComponent({
+    name: 'NotificationsAppbarButtonV',
+    data() {
+        return {
+            number: get('notification/notificationNumber')
+        };
+    },
 
-    onClick() {
-        this.$iApi.panel.toggle('notifications-panel');
+    methods: {
+        onClick() {
+            this.$iApi.panel.toggle('notifications-panel');
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped>

@@ -1,5 +1,5 @@
 window.rInstance = null;
-document.title = "Lambert Projection";
+document.title = 'Lambert Projection';
 
 let config = {
     en: {

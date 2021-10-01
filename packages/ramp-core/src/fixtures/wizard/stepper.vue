@@ -5,18 +5,34 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch, Prop, Provide } from 'vue-property-decorator';
+import { defineComponent, provide, reactive } from 'vue';
 
-@Component
-export default class WizardStepperV extends Vue {
-    @Prop({ default: 0 }) activeStep!: number;
-    @Provide() stepper = { activeIndex: this.activeStep, numSteps: 0 };
+export default defineComponent({
+    name: 'WizardStepperV',
+    props: {
+        activeStep: {
+            type: Number,
+            default: 0
+        }
+    },
 
-    @Watch('activeStep')
-    updateStep() {
-        this.stepper.activeIndex = this.activeStep;
+    setup(props) {
+        const stepper = reactive({
+            activeIndex: props.activeStep,
+            numSteps: 0
+        });
+
+        provide('stepper', stepper);
+
+        return { stepper };
+    },
+
+    watch: {
+        activeStep() {
+            this.stepper.activeIndex = this.activeStep;
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

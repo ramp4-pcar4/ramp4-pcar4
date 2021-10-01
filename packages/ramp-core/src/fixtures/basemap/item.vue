@@ -3,7 +3,7 @@
         <button
             class="basemap-item-button bg-gray-300"
             :aria-label="$t('basemap.select')"
-            @click="selectBasemap"
+            @click="selectBasemap(basemap)"
             v-focus-item
         >
             <div>
@@ -35,7 +35,17 @@
             </div>
 
             <div
-                class="absolute flex w-full bg-black opacity-75 text-white h-30 bottom-6 items-center"
+                class="
+                    absolute
+                    flex
+                    w-full
+                    bg-black
+                    opacity-75
+                    text-white
+                    h-30
+                    bottom-6
+                    items-center
+                "
             >
                 <div class="pl-5" v-truncate>
                     <span>{{ basemap.name }}</span>
@@ -74,23 +84,30 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, PropType } from 'vue';
 import { RampBasemapConfig, RampTileSchemaConfig } from '@/geo/api';
-import { Vue, Prop, Component } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
-
+import { get, call } from '@/store/pathify-helper';
 import { BasemapStore } from './store';
 
-@Component
-export default class BasemapItemV extends Vue {
-    @Prop() basemap!: RampBasemapConfig;
-    @Prop() tileSchema!: RampTileSchemaConfig;
-    // @ts-ignore
-    @Get(BasemapStore.selectedBasemap) selectedBasemap: RampBasemapConfig;
-
-    selectBasemap() {
-        this.$iApi.$vApp.$store.set(BasemapStore.selectBasemap, this.basemap);
+export default defineComponent({
+    name: 'BasemapItemV',
+    props: {
+        basemap: {
+            type: Object as PropType<RampBasemapConfig>,
+            required: true
+        },
+        tileSchema: {
+            type: Object as PropType<RampTileSchemaConfig>,
+            required: true
+        }
+    },
+    data() {
+        return {
+            selectedBasemap: get(BasemapStore.selectedBasemap),
+            selectBasemap: call(BasemapStore.selectBasemap)
+        };
     }
-}
+});
 </script>
 
 <style lang="scss" scoped>

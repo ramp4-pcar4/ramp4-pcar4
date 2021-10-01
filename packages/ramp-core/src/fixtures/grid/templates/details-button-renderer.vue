@@ -22,14 +22,22 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
+
 import deepmerge from 'deepmerge';
 import { GlobalEvents } from '@/api/internal';
+import { directive as tippyDirective } from 'vue-tippy';
 
-@Component
-export default class DetailsButtonRendererV extends Vue {
-    params: any;
-
+export default defineComponent({
+    name: 'DetailsButtonRendererV',
+    directives: {
+        tippy: tippyDirective
+    },
+    data(props) {
+        return {
+            params: props.params as any
+        };
+    },
     mounted() {
         // need to hoist events to top level cell wrapper to be keyboard accessible
         this.params.eGridCell.addEventListener(
@@ -40,24 +48,27 @@ export default class DetailsButtonRendererV extends Vue {
                 }
             }
         );
+
         this.params.eGridCell.addEventListener('focus', () => {
             (this.$el as any)._tippy.show();
         });
         this.params.eGridCell.addEventListener('blur', () => {
             (this.$el as any)._tippy.hide();
         });
-    }
+    },
 
-    openDetails() {
-        const fakeIdentifyItem = deepmerge({}, { data: this.params.data });
-        delete fakeIdentifyItem['data']['rvInteractive'];
-        delete fakeIdentifyItem['data']['rvSymbol'];
-        this.$iApi.event.emit(GlobalEvents.DETAILS_OPEN, {
-            identifyItem: fakeIdentifyItem,
-            uid: this.params.uid
-        });
+    methods: {
+        openDetails() {
+            const fakeIdentifyItem = deepmerge({}, { data: this.params.data });
+            delete fakeIdentifyItem['data']['rvInteractive'];
+            delete fakeIdentifyItem['data']['rvSymbol'];
+            this.$iApi.event.emit(GlobalEvents.DETAILS_OPEN, {
+                identifyItem: fakeIdentifyItem,
+                uid: this.params.uid
+            });
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

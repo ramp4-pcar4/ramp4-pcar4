@@ -12,6 +12,7 @@ import {
 } from '@/geo/api';
 import { EsriGeometryJsonUtils, EsriRequest } from '@/geo/esri';
 import to from 'await-to-js';
+import { toRaw } from 'vue';
 
 // NOTE has an esri type, which is bad, but this interface lives within the geo section so will permit it.
 //      alternative would be swapping back and fourth between ramp and esri graphics which seems a waste
@@ -136,7 +137,7 @@ export class AttributeAPI extends APIScope {
 
         // hoist the attributes from the .attributes property
         const attSet: AttributeSet = {
-            features: serverResult.map(aa => aa.attributes),
+            features: serverResult.map((aa) => aa.attributes),
             oidIndex: {}
         };
 
@@ -164,7 +165,7 @@ export class AttributeAPI extends APIScope {
                 //      but we may need to do it for stuff like populating a grid with reduced columns.
                 //      if we do this, we may need to clone the attribute objects then remove properties;
                 //      we don't want to mess with the original source in the layer.
-                return g.attributes;
+                return toRaw(g).attributes;
             }
         );
 
@@ -246,9 +247,8 @@ export class AttributeAPI extends APIScope {
                 const localEsriGeom = EsriGeometryJsonUtils.fromJSON(
                     feat.geometry
                 );
-                result.geometry = this.$iApi.geo.utils.geom.geomEsriToRamp(
-                    localEsriGeom
-                );
+                result.geometry =
+                    this.$iApi.geo.utils.geom.geomEsriToRamp(localEsriGeom);
             }
 
             return result;
@@ -403,9 +403,9 @@ export class QuickCache {
         return this.geoms[scale];
     }
 
-    private getGeomStore(
-        scale: number | undefined = undefined
-    ): { [key: number]: BaseGeometry } {
+    private getGeomStore(scale: number | undefined = undefined): {
+        [key: number]: BaseGeometry;
+    } {
         // polygon and line layers have to also cache their geometry by scale level, as the
         // geometry can be simplified at smaller scales
 

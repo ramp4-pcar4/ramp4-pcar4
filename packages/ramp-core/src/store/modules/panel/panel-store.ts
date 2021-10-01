@@ -38,13 +38,15 @@ const getters = {
      * @param screenSize the size of the app's screen as a string
      * @returns {PanelConfig[]}
      */
-    getVisible: (state: PanelState) => (screenSize: string): PanelConfig[] => {
-        if (screenSize === 'xs' && state.visible.length > 0) {
-            return [state.visible.slice().pop()!];
-        }
+    getVisible:
+        (state: PanelState) =>
+        (screenSize: string): PanelConfig[] => {
+            if (screenSize === 'xs' && state.visible.length > 0) {
+                return [state.visible.slice().pop()!];
+            }
 
-        return state.visible;
-    }
+            return state.visible;
+        }
 };
 
 const actions = {

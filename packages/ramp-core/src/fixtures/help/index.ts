@@ -1,3 +1,4 @@
+import { markRaw } from 'vue';
 import { HelpAPI } from './api/help';
 import { help } from './store/index';
 import HelpScreenV from './screen.vue';
@@ -17,7 +18,7 @@ class HelpFixture extends HelpAPI {
             {
                 'help-panel': {
                     screens: {
-                        'help-screen': HelpScreenV
+                        'help-screen': markRaw(HelpScreenV)
                     },
                     style: {
                         'flex-grow': '1',
@@ -33,7 +34,7 @@ class HelpFixture extends HelpAPI {
         this._parseConfig(this.config);
         this.$vApp.$watch(
             () => this.config,
-            value => this._parseConfig(value)
+            (value: any) => this._parseConfig(value)
         );
     }
 

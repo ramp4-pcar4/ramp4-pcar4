@@ -5,8 +5,8 @@ import { LayerInstance } from '@/api/internal';
  * Function definitions for legend item wrapper objects.
  */
 export class LegendItem {
+    _uid: string;
     _id: string;
-    _uid: string; // Used as unique identifier in v-for when rendering legend
     _name: string;
     _type: LegendTypes;
     _controls: Array<string>;
@@ -189,7 +189,7 @@ export class LegendEntry extends LegendItem {
             this._parent.type === LegendTypes.Set
         ) {
             this._parent.children.some(
-                entry => entry.visibility && entry.id !== this._id
+                (entry) => entry.visibility && entry.id !== this._id
             )
                 ? this._layer?.setVisibility(false, this.layerUID)
                 : null;
@@ -241,6 +241,40 @@ export class LegendEntry extends LegendItem {
         this._displaySymbology = display;
     }
 
+    /** Toggles state of symbology stack.
+     * Seperate function is required to avoid mutation errors from Vue3
+     */
+    toggleDisplaySymbology() {
+        this._displaySymbology = !this._displaySymbology;
+    }
+
+    /**
+     * Sets the visibility of the child symbology with the given uid
+     *
+     * @param uid UID of the child legend symbology
+     * @param value The new visibility value
+     */
+    setChildSymbologyVisibility(uid: string, value: boolean) {
+        const filteredSymbology: Array<LegendSymbology> | undefined =
+            this._layer
+                ?.getLegend()
+                .filter((item: LegendSymbology) => item.uid === uid);
+
+        if (!filteredSymbology) {
+            return;
+        }
+
+        if (filteredSymbology?.length === 0) {
+            console.warn(
+                `Could not find child symbology in layer ${this._layer?.getName()} with uid: ${uid}`
+            );
+            return;
+        }
+
+        filteredSymbology[0].visibility = value;
+        filteredSymbology[0].lastVisbility = value;
+    }
+
     /**
      * Sets visibility of the Legend Entry - needs to verify parent visibility is updated.
      * @param visibility - true if visible, false if invisible, undefined means toggle visibility
@@ -280,16 +314,24 @@ export class LegendEntry extends LegendItem {
                 this._parent.checkVisibility(this);
 
                 // if its a set turn off the visibility of all other children
-                if (this.parent instanceof LegendSet) {
-                    this.parent.children.forEach(child => {
+                if (this._parent instanceof LegendSet) {
+                    this._parent.children.forEach((child) => {
                         if (child !== this && child.visibility)
                             child.toggleVisibility(false);
                     });
                 }
             }
-
-            this._uid = RAMP.GEO.sharedUtils.generateUUID();
         }
+
+        this._uid = RAMP.GEO.sharedUtils.generateUUID();
+    }
+
+    /**
+     * Used by the placeholder component to set the legend entry to a loaded state
+     */
+    reloadEntry(layer: LayerInstance) {
+        this._layer = layer;
+        this._type = LegendTypes.Entry;
     }
 }
 
@@ -399,19 +441,19 @@ export class LegendGroup extends LegendItem {
     checkVisibility(toggledChild: LegendEntry | LegendGroup): void {
         if (this._type === LegendTypes.Group) {
             // if any children entries are toggled on group must be toggled on, else if all children entries are toggled off, group must be toggled off
-            if (this._children.some(entry => entry.visibility)) {
+            if (this._children.some((entry) => entry.visibility)) {
                 this._visibility = true;
                 // save all entries with visibility on
                 this._visibleEntries = this._children.filter(
-                    entry => entry.visibility
+                    (entry) => entry.visibility
                 );
-            } else if (this._children.every(entry => !entry.visibility)) {
+            } else if (this._children.every((entry) => !entry.visibility)) {
                 this._visibility = false;
                 this._visibleEntries = [];
             }
         } else if (toggledChild.visibility) {
             // turn off all child entries except for the last one toggled on, mark that as the last visible entry in the set
-            this.children.forEach(entry => {
+            this.children.forEach((entry) => {
                 if (entry.visibility && entry.id !== toggledChild.id) {
                     entry instanceof LegendEntry
                         ? entry.layer?.setVisibility(false)
@@ -451,15 +493,15 @@ export class LegendGroup extends LegendItem {
             // for legend groups, if group is toggled on turn on visibility for all children that are saved, and all children if none are saved
             if (this._visibility) {
                 this._visibleEntries.length > 0
-                    ? this._visibleEntries.forEach(entry =>
+                    ? this._visibleEntries.forEach((entry) =>
                           entry.toggleVisibility(this._visibility, false)
                       )
-                    : this._children.forEach(entry =>
+                    : this._children.forEach((entry) =>
                           entry.toggleVisibility(this.visibility, false)
                       );
             } else {
                 // otherewise turn off visibility for all children
-                this._children.forEach(entry =>
+                this._children.forEach((entry) =>
                     entry.toggleVisibility(this._visibility, false)
                 );
             }
@@ -473,7 +515,7 @@ export class LegendGroup extends LegendItem {
             } else {
                 // turn off visibility for all child entries and save/update the last legend entry
                 this._lastVisible = this._children.find(
-                    entry => entry.visibility
+                    (entry) => entry.visibility
                 );
                 this._lastVisible?.toggleVisibility(false);
             }
@@ -485,7 +527,7 @@ export class LegendGroup extends LegendItem {
 
             // if its a set turn off the visibility of all other children
             if (this.parent instanceof LegendSet) {
-                this.parent.children.forEach(child => {
+                this.parent.children.forEach((child) => {
                     if (child !== this && child.visibility)
                         child.toggleVisibility(false);
                 });

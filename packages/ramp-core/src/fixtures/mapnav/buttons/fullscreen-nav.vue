@@ -29,14 +29,16 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-@Component
-export default class FullscreenNavV extends Vue {
-    onClick() {
-        this.$iApi.toggleFullscreen();
+export default defineComponent({
+    name: 'FullscreenNavV',
+    methods: {
+        onClick() {
+            this.$iApi.toggleFullscreen();
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

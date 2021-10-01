@@ -1,4 +1,6 @@
 .ramp-app {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial,
+        sans-serif, Apple Color Emoji, Segoe UI Emoji;
     font-size: 16px;
     line-height: 1.5;
     word-wrap: break-word;
@@ -43,8 +45,8 @@
 
 /* Change ag-grid theme default font (Roboto) to match the rest of the page. */
 .ramp-app .ag-theme-material * {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI,
-        Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial,
+        sans-serif, Apple Color Emoji, Segoe UI Emoji;
 }
 
 /* styling for rectangle when Shift+Left-click+Drag zooming */
@@ -73,8 +75,8 @@
 }
 
 .tippy-tooltip.ramp-theme {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI,
-        Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial,
+        sans-serif, Apple Color Emoji, Segoe UI Emoji;
     font-size: 14px;
 }
 
@@ -110,4 +112,27 @@
     border: 2px solid red;
     font-size: x-large;
     background-color: white;
+}
+
+.tippy-box[data-theme~='ramp4'] {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial,
+        sans-serif, Apple Color Emoji, Segoe UI Emoji;
+    color: white;
+    background: #222;
+    opacity: 0.9;
+    font-size: 14px;
+    padding: 3px 8px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.tippy-box[data-theme~='ramp4'] svg {
+    display: inline;
+}
+
+.spinner {
+    border: 2px solid rgba(0, 0, 0, 0.158);
+    border-top: 2px solid #3f51b5;
+    border-right: 2px solid #3f51b5;
+    border-radius: 50%;
 }

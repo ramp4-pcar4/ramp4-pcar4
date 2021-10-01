@@ -3,9 +3,12 @@
         <button
             class="text-gray-500 hover:text-black p-6"
             :class="{ 'text-gray-700': active }"
-            @click="$emit('click')"
             :content="$t('panels.controls.minimize')"
-            v-tippy="{ placement: 'bottom' }"
+            v-tippy="{
+                placement: 'bottom',
+                theme: 'ramp4',
+                animation: 'scale'
+            }"
         >
             <svg
                 class="fill-current w-20 h-20"
@@ -20,12 +23,16 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-@Component({})
-export default class MinimizeV extends Vue {
-    @Prop() active!: boolean;
-}
+export default defineComponent({
+    name: 'MinimizeV',
+    props: {
+        active: {
+            type: Boolean
+        }
+    }
+});
 </script>
 
 <style lang="scss" scoped></style>

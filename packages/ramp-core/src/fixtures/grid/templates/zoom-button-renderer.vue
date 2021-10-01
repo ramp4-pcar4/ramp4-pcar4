@@ -23,18 +23,22 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
+import { defineComponent } from 'vue';
+import { get } from '@/store/pathify-helper';
 import { LayerInstance } from '@/api/internal';
+import { directive as tippyDirective } from 'vue-tippy';
 
-@Component
-export default class ZoomButtonRendererV extends Vue {
-    @Get('layer/getLayerByUid') getLayerByUid!: (
-        uid: string
-    ) => LayerInstance | undefined;
-
-    params: any;
-
+export default defineComponent({
+    name: 'ZoomButtonRendererV',
+    directives: {
+        tippy: tippyDirective
+    },
+    data(props) {
+        return {
+            params: props.params as any,
+            getLayerByUid: get('layer/getLayerByUid')
+        };
+    },
     mounted() {
         // need to hoist events to top level cell wrapper to be keyboard accessible
         this.params.eGridCell.addEventListener(
@@ -51,24 +55,26 @@ export default class ZoomButtonRendererV extends Vue {
         this.params.eGridCell.addEventListener('blur', () => {
             (this.$el as any)._tippy.hide();
         });
-    }
+    },
 
-    zoomToFeature() {
-        const layer: LayerInstance | undefined = this.getLayerByUid(
-            this.params.uid
-        );
-        if (layer === undefined) return;
-        const oid = this.params.data[this.params.oidField];
-        const opts = { getGeom: true };
-        layer.getGraphic(oid, opts, this.params.uid).then(g => {
-            if (g.geometry === undefined) {
-                console.error(`Could not find graphic for objectid ${oid}`);
-            } else {
-                this.$iApi.geo.map.zoomMapTo(g.geometry, 50000);
-            }
-        });
+    methods: {
+        zoomToFeature() {
+            const layer: LayerInstance | undefined = this.getLayerByUid(
+                this.params.uid
+            );
+            if (layer === undefined) return;
+            const oid = this.params.data[this.params.oidField];
+            const opts = { getGeom: true };
+            layer.getGraphic(oid, opts, this.params.uid).then((g) => {
+                if (g.geometry === undefined) {
+                    console.error(`Could not find graphic for objectid ${oid}`);
+                } else {
+                    this.$iApi.geo.map.zoomMapTo(g.geometry, 50000);
+                }
+            });
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

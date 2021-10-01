@@ -2,7 +2,15 @@
     <div class="legend-item">
         <div class="relative">
             <div
-                class="default-focus-style p-5 flex items-center hover:bg-gray-200 cursor-pointer h-44"
+                class="
+                    default-focus-style
+                    p-5
+                    flex
+                    items-center
+                    hover:bg-gray-200
+                    cursor-pointer
+                    h-44
+                "
                 @click="toggleGrid"
                 v-focus-item="'show-truncate'"
                 @mouseover.stop="$event.currentTarget._tippy.show()"
@@ -23,9 +31,8 @@
                         @click.stop="toggleSymbology"
                         tabindex="-1"
                         :class="{
-                            'cursor-default': !legendItem._controlAvailable(
-                                'symbology'
-                            )
+                            'cursor-default':
+                                !legendItem._controlAvailable('symbology')
                         }"
                         :disabled="!legendItem._controlAvailable('symbology')"
                         :content="
@@ -40,15 +47,13 @@
                     >
                         <symbology-stack
                             :class="{
-                                'pointer-events-none': !legendItem._controlAvailable(
-                                    'symbology'
-                                )
+                                'pointer-events-none':
+                                    !legendItem._controlAvailable('symbology')
                             }"
                             class="w-32 h-32"
                             :visible="legendItem.displaySymbology"
                             :layer="legendItem.layer"
                             :legendItem="legendItem"
-                            :key="legendItem.uid"
                         />
                     </button>
                 </div>
@@ -70,7 +75,7 @@
                     :value="legendItem"
                     :isRadio="
                         legendItem.parent &&
-                            legendItem.parent.type === 'VisibilitySet'
+                        legendItem.parent.type === 'VisibilitySet'
                     "
                     :legendItem="legendItem"
                     :disabled="!legendItem._controlAvailable('visibility')"
@@ -86,11 +91,7 @@
         >
             <div v-if="symbologyStack.length > 0">
                 <!-- display each symbol -->
-                <div
-                    class="m-5"
-                    v-for="(item, idx) in symbologyStack"
-                    :key="idx"
-                >
+                <div class="m-5" v-for="item in symbologyStack" :key="item.uid">
                     <!-- for WMS layers -->
                     <div
                         v-if="layerType === 'ogcWms'"
@@ -118,13 +119,10 @@
                             {{ item.label }}
                         </div>
                         <checkbox
-                            v-if="
-                                legendItem.layer.getLegend(legendItem.layerUID)
-                                    .length > 1
-                            "
-                            :checked="item.visibility"
+                            v-if="symbologyStack.length > 1"
                             :value="item"
                             :legendItem="legendItem"
+                            :checked="item.visibility"
                         />
                     </div>
                 </div>
@@ -133,8 +131,16 @@
                 <!-- display loading text -->
                 <div class="flex p-5 ml-48" v-truncate>
                     <div
-                        class="relative animate-spin spinner h-20 w-20 mr-10 pt-2"
-                        v-if="this.$iApi.animate === 'on'"
+                        class="
+                            relative
+                            animate-spin
+                            spinner
+                            h-20
+                            w-20
+                            mr-10
+                            pt-2
+                        "
+                        v-if="isAnimationEnabled"
                     ></div>
                     <div class="flex-1 text-gray-500" v-truncate>
                         <!-- TODO: add official translation -->
@@ -147,31 +153,60 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, PropType, toRaw } from 'vue';
 import { GlobalEvents } from '@/api';
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import { LegendEntry, Controls, LegendGroup } from '../store/legend-defs';
+import { Controls, LegendEntry, LegendGroup } from '../store/legend-defs';
 import LegendCheckboxV from './checkbox.vue';
 import LegendSymbologyStackV from './symbology-stack.vue';
 import LegendOptionsV from './legend-options.vue';
 import { LegendSymbology } from '@/geo/api';
 
-@Component({
+export default defineComponent({
+    name: 'LegendEntryV',
+    props: {
+        legendItem: { type: Object as PropType<LegendEntry>, required: true }
+    },
     components: {
         checkbox: LegendCheckboxV,
         'symbology-stack': LegendSymbologyStackV,
         options: LegendOptionsV
-    }
-})
-export default class LegendEntryV extends Vue {
-    @Prop() legendItem!: LegendEntry;
+    },
+    // setup(props) {
+    //     const visibility = ref(props.legendItem.visibility);
+    //     return { visibility };
+    // },
+    data() {
+        return {
+            symbologyStack: [] as Array<LegendSymbology>
+        };
+    },
+    computed: {
+        /**
+         * Get the type of layer
+         */
+        layerType(): string | undefined {
+            return toRaw(this.legendItem!.layer)?.layerType;
+        },
 
-    // list of all symbology items in the layer's legend
-    // Use local variable to avoid any reactivity issues
-    symbologyStack: Array<LegendSymbology> = [];
+        /**
+         * Get the visibility of the legend item
+         */
+        getLegendItemVisibility(): Boolean {
+            return this.legendItem.visibility || false;
+        },
 
+        /**
+         * Get animation enabled status
+         */
+        isAnimationEnabled(): Boolean {
+            return this.$iApi.animate === 'on';
+        }
+    },
     mounted() {
+        this.symbologyStack = [];
+
         // Wait for symbology to load
-        if (!this.legendItem.layer) {
+        if (!this.legendItem!.layer) {
             // This should never happen because the layer is loaded before the legend entry component is mounted
             console.warn(
                 'Attempted to mount legend entry component with undefined layer'
@@ -179,95 +214,93 @@ export default class LegendEntryV extends Vue {
             return;
         }
 
-        if (this.legendItem.parent instanceof LegendGroup) {
-            this.legendItem.parent.checkVisibility(this.legendItem);
+        if (this.legendItem!.parent instanceof LegendGroup) {
+            this.legendItem!.parent.checkVisibility(this.legendItem!);
         }
 
         Promise.all(
-            this.legendItem.layer
-                .getLegend()
-                .map((item: LegendSymbology) => item.drawPromise)
+            this._getLegend().map((item: LegendSymbology) => item.drawPromise)
         ).then(() => {
-            this.symbologyStack = this.legendItem.layer!.getLegend();
+            this.symbologyStack = this._getLegend();
         });
-    }
+    },
+    methods: {
+        /**
+         * Display symbology stack for the layer.
+         */
+        toggleSymbology(): void {
+            if (this.legendItem!._controlAvailable(Controls.Symbology)) {
+                this.legendItem!.toggleDisplaySymbology();
+            }
+        },
 
-    /**
-     * Display symbology stack for the layer.
-     */
-    toggleSymbology(): void {
-        if (this.legendItem._controlAvailable(Controls.Symbology)) {
-            this.legendItem.displaySymbology = !this.legendItem
-                .displaySymbology;
+        /**
+         * Toggles data table panel to open/close for the LegendItem.
+         */
+        toggleGrid(): void {
+            if (this.legendItem!._controlAvailable(Controls.Datatable)) {
+                this.$iApi.event.emit(
+                    GlobalEvents.GRID_TOGGLE,
+                    this.legendItem!.layerUID
+                );
+            }
+        },
+
+        /**
+         * Toggles settings panel to open/close type for the LegendItem.
+         */
+        toggleSettings(): void {
+            if (this.legendItem!._controlAvailable(Controls.Settings)) {
+                this.$iApi.event.emit(
+                    GlobalEvents.SETTINGS_TOGGLE,
+                    this.legendItem!.layerUID
+                );
+            }
+        },
+
+        /**
+         * Toggles metadata panel to open/close for the legendItem!.
+         */
+        toggleMetadata(): void {
+            if (this.legendItem!._controlAvailable(Controls.Metadata)) {
+                this.$iApi.event.emit('metadata/open', {
+                    type: 'html',
+                    layer: 'Sample Layer Name',
+                    url: 'https://ryan-coulson.com/RAMPMetadataDemo.html'
+                });
+            }
+        },
+
+        /**
+         * Returns a span containing the resized legend graphic.
+         */
+        getLegendGraphic(item: any): string | undefined {
+            const span = document.createElement('span');
+            span.innerHTML = item.svgcode;
+            const svg = span.firstElementChild;
+            // The legend graphic will display either in its original size, or resized to fit the width of the legend item.
+            svg?.classList.add('max-w-full');
+            svg?.classList.add('h-full');
+            svg?.setAttribute('height', item.imgHeight);
+            svg?.setAttribute('width', item.imgWidth);
+            return span.outerHTML;
+        },
+
+        /**
+         * Remove layer from the map
+         */
+        removeLayer(): void {
+            this.$iApi.geo.map.removeLayer(this.legendItem!.layerUID!);
+        },
+
+        /**
+         * Wrapper to safely get the legend from layer while avoiding ArcGIS and Vue3 conflict
+         */
+        _getLegend(): LegendSymbology[] {
+            return toRaw(this.legendItem!.layer!).getLegend();
         }
     }
-
-    /**
-     * Toggles data table panel to open/close for the LegendItem.
-     */
-    toggleGrid() {
-        if (this.legendItem._controlAvailable(Controls.Datatable)) {
-            this.$iApi.event.emit(
-                GlobalEvents.GRID_TOGGLE,
-                this.legendItem.layerUID
-            );
-        }
-    }
-
-    /**
-     * Toggles settings panel to open/close type for the LegendItem.
-     */
-    toggleSettings() {
-        if (this.legendItem._controlAvailable(Controls.Settings)) {
-            this.$iApi.event.emit(
-                GlobalEvents.SETTINGS_TOGGLE,
-                this.legendItem.layerUID
-            );
-        }
-    }
-
-    /**
-     * Toggles metadata panel to open/close for the LegendItem.
-     */
-    toggleMetadata() {
-        if (this.legendItem._controlAvailable(Controls.Metadata)) {
-            // TODO: toggle metadata panel through API/store call
-            // this.$iApi.event.emit('metadata/open', {
-            //     type: 'html',
-            //     layer: 'Sample Layer Name',
-            //     url:
-            //         'https://ryan-coulson.com/RAMPMetadataDemo.html'
-            // });
-        }
-    }
-
-    get shellEl() {
-        return this.$refs.shell;
-    }
-
-    get layerType() {
-        return this.legendItem.layer?.layerType;
-    }
-
-    /**
-     * Returns a span containing the resized legend graphic.
-     */
-    getLegendGraphic(item: any): string | undefined {
-        const span = document.createElement('span');
-        span.innerHTML = item.svgcode;
-        const svg = span.firstElementChild;
-        // The legend graphic will display either in its original size, or resized to fit the width of the legend item.
-        svg?.classList.add('max-w-full');
-        svg?.classList.add('h-full');
-        svg?.setAttribute('height', item.imgHeight);
-        svg?.setAttribute('width', item.imgWidth);
-        return span.outerHTML;
-    }
-
-    removeLayer() {
-        this.$iApi.geo.map.removeLayer(this.legendItem.layerUID!);
-    }
-}
+});
 </script>
 
 <style lang="scss" scoped>
@@ -279,11 +312,5 @@ export default class LegendEntryV extends Vue {
 }
 .disabled {
     @apply text-gray-400 cursor-default;
-}
-.spinner {
-    border: 2px solid rgba(0, 0, 0, 0.158);
-    border-top: 2px solid #3f51b5;
-    border-right: 2px solid #3f51b5;
-    border-radius: 50%;
 }
 </style>

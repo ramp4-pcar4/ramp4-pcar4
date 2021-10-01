@@ -5,7 +5,8 @@ module.exports = {
     // compile fixture separately
     entry: {
         mouruge: './src/mouruge/main.ts',
-        iklob: './src/iklob/main.ts'
+        iklob: './src/iklob/main.ts',
+        diligord: './src/diligord/diligord-fixture.js'
     },
     output: {
         publicPath: '/dist/',

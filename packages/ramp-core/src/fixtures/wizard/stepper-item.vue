@@ -3,8 +3,18 @@
         <div class="stepper-header flex pb-24">
             <!-- step number -->
             <div
-                v-if="!done"
-                class="w-24 h-24 bg-gray-400 rounded-full flex justify-center items-center text-white text-xs font-semibold"
+                v-if="!done()"
+                class="
+                    w-24
+                    h-24
+                    bg-gray-400
+                    rounded-full
+                    flex
+                    justify-center
+                    items-center
+                    text-white text-xs
+                    font-semibold
+                "
                 :class="{ 'bg-blue-500': active }"
             >
                 {{ index + 1 }}
@@ -33,8 +43,14 @@
                 </div>
                 <!-- step summary -->
                 <div
-                    v-show="!active"
-                    class="pl-12 text-xs transition-opacity duration-1000 ease-out"
+                    v-show="!active()"
+                    class="
+                        pl-12
+                        text-xs
+                        transition-opacity
+                        duration-1000
+                        ease-out
+                    "
                     v-truncate
                 >
                     {{ summary }}
@@ -42,7 +58,7 @@
             </div>
         </div>
         <transition name="step" mode="out-in">
-            <div class="pl-36 " v-show="active">
+            <div class="pl-36" v-show="active()">
                 <!-- step content -->
                 <slot></slot>
             </div>
@@ -51,29 +67,47 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Inject } from 'vue-property-decorator';
+import { defineComponent, inject } from 'vue';
 
-@Component
-export default class WizardStepperItemV extends Vue {
-    @Prop() title!: string;
-    @Prop() summary!: string;
+export default defineComponent({
+    name: 'WizardStepperItemV',
+    props: {
+        title: {
+            type: String,
+            required: true
+        },
+        summary: {
+            type: String,
+            required: true
+        }
+    },
 
-    @Inject() stepper!: any;
+    data() {
+        return {
+            index: -1
+        };
+    },
 
-    index: number = -1;
+    setup() {
+        const stepper = inject('stepper') as any;
+
+        return { stepper };
+    },
 
     mounted() {
         this.index = this.stepper.numSteps++;
-    }
+    },
 
-    get done() {
-        return this.stepper.activeIndex > this.index;
-    }
+    methods: {
+        done() {
+            return this.stepper.activeIndex > this.index;
+        },
 
-    get active() {
-        return this.stepper.activeIndex === this.index;
+        active() {
+            return this.stepper.activeIndex === this.index;
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped>

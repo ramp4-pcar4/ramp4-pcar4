@@ -1,5 +1,5 @@
 window.rInstance = null;
-document.title = "Basemap";
+document.title = 'Basemap';
 
 let config = {
     en: {
@@ -22,7 +22,8 @@ let config = {
                     layers: [
                         {
                             layerType: 'esriTile',
-                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                            url:
+                                'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                         }
                     ]
                 }

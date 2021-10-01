@@ -5,7 +5,7 @@
         </template>
 
         <template #controls>
-            <pin @click="panel.pin()" :active="isPinned"></pin>
+            <pin @click="panel.pin()" :active="this.panel.isPinned"></pin>
             <close @click="panel.close()"></close>
         </template>
 
@@ -23,30 +23,32 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
+import { get } from '@/store/pathify-helper';
 import { PanelInstance } from '@/api';
+import { defineComponent, PropType } from 'vue';
 
 import { LegendStore } from './store';
-import { LegendEntry, LegendGroup } from './store/legend-defs';
 import LegendHeaderV from './header.vue';
 import LegendComponentV from './components/component.vue';
 
-@Component({
+export default defineComponent({
+    name: 'LegendScreenV',
+    props: {
+        panel: {
+            type: Object as PropType<PanelInstance>,
+            required: true
+        }
+    },
+
     components: {
         'legend-header': LegendHeaderV,
         'legend-component': LegendComponentV
-    }
-})
-export default class LegendScreenV extends Vue {
-    @Prop() panel!: PanelInstance;
-    // fetch store properties/data
-    @Get(LegendStore.children) children!: Array<LegendEntry | LegendGroup>;
+    },
 
-    get isPinned(): boolean {
-        return this.panel.isPinned;
+    data() {
+        return { children: get(LegendStore.children) };
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

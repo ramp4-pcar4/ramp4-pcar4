@@ -1,3 +1,4 @@
+import { markRaw } from 'vue';
 import { APIScope, InstanceAPI } from './internal';
 
 import NotificationsScreenV from '@/components/notification-center/screen.vue';
@@ -20,7 +21,9 @@ export class NotificationAPI extends APIScope {
         this.$iApi.panel.register({
             id: 'notifications-panel',
             config: {
-                screens: { 'notifications-screen': NotificationsScreenV }
+                screens: {
+                    'notifications-screen': markRaw(NotificationsScreenV)
+                }
             }
         });
     }

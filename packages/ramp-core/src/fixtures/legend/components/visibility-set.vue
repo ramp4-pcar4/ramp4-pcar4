@@ -2,7 +2,16 @@
     <div class="legend-group-container">
         <div class="relative">
             <div
-                class="legend-group-header flex items-center px-5 py-10 cursor-pointer default-focus-style hover:bg-gray-200"
+                class="
+                    legend-group-header
+                    flex
+                    items-center
+                    px-5
+                    py-10
+                    cursor-pointer
+                    default-focus-style
+                    hover:bg-gray-200
+                "
                 @click="legendItem.toggleExpanded()"
                 v-focus-item="'show-truncate'"
                 :content="
@@ -46,7 +55,7 @@
                     :value="legendItem"
                     :isRadio="
                         legendItem.parent &&
-                            legendItem.parent.type === LegendTypes.Set
+                        legendItem.parent.type === LegendTypes.Set
                     "
                     :legendItem="legendItem"
                 />
@@ -65,23 +74,23 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-
+import { defineComponent, defineAsyncComponent, PropType } from 'vue';
 import { LegendSet, LegendTypes } from '../store/legend-defs';
 import LegendCheckboxV from './checkbox.vue';
 
-@Component({
+export default defineComponent({
+    name: 'LegendVisibilitySetV',
+    props: {
+        legendItem: { type: Object as PropType<LegendSet>, required: true }
+    },
     components: {
-        LegendComponent: () => import('./component.vue'),
+        LegendComponent: defineAsyncComponent(() => import('./component.vue')),
         checkbox: LegendCheckboxV
+    },
+    data() {
+        return { LegendTypes: LegendTypes };
     }
-})
-export default class LegendVisibilitySetV extends Vue {
-    @Prop() legendItem!: LegendSet;
-
-    // make vue stop hating enums
-    LegendTypes = LegendTypes;
-}
+});
 </script>
 
 <style lang="scss" scoped>

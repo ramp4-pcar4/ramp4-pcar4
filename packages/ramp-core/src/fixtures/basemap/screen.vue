@@ -7,7 +7,7 @@
         <template #controls>
             <pin
                 @click="panel.pin()"
-                :active="isPinned"
+                :active="panel.isPinned"
                 v-if="!$iApi.screenSize !== 'xs'"
             ></pin>
             <close
@@ -73,37 +73,40 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
-import { PanelInstance } from '@/api';
-
+import { defineComponent, PropType } from 'vue';
+import { get } from '@/store/pathify-helper';
 import { BasemapStore } from './store';
 import BasemapItemV from './item.vue';
-import { RampBasemapConfig, RampTileSchemaConfig } from '@/geo/api';
+import { RampBasemapConfig } from '@/geo/api';
+import { PanelInstance } from '@/api';
 
-@Component({
+export default defineComponent({
+    name: 'BasemapScreenV',
+    props: {
+        panel: {
+            type: Object as PropType<PanelInstance>
+        }
+    },
     components: {
         'basemap-item': BasemapItemV
+    },
+    data() {
+        return {
+            tileSchemas: get(BasemapStore.tileSchemas),
+            basemaps: get(BasemapStore.basemaps),
+            selectedBasemap: get(BasemapStore.selectedBasemap)
+        };
+    },
+    methods: {
+        filterBasemaps(schemaId: string) {
+            // filter out all the basemaps that match the current schema
+            return this.basemaps.filter(
+                (basemap: RampBasemapConfig) =>
+                    basemap.tileSchemaId === schemaId
+            );
+        }
     }
-})
-export default class BasemapScreenV extends Vue {
-    @Prop() panel!: PanelInstance;
-    // fetch basemap store properties/data
-    @Get(BasemapStore.tileSchemas) tileSchemas!: Array<RampTileSchemaConfig>;
-    @Get(BasemapStore.basemaps) basemaps!: Array<RampBasemapConfig>;
-    @Get(BasemapStore.selectedBasemap) selectedBasemap!: RampBasemapConfig;
-
-    get isPinned(): boolean {
-        return this.panel.isPinned;
-    }
-
-    // filter out all the basemaps that match the current schema
-    filterBasemaps(schemaId: string) {
-        return this.basemaps.filter(
-            basemap => basemap.tileSchemaId === schemaId
-        );
-    }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

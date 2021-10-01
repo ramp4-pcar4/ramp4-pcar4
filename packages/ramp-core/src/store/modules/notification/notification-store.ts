@@ -77,7 +77,7 @@ const actions: StoreActions = {
         }
     },
     [NotificationAction.clearAll](context: NotificationContext) {
-        Object.values(context.state.groups).forEach(group =>
+        Object.values(context.state.groups).forEach((group) =>
             context.commit(NotificationMutation.REMOVE_GROUP, group)
         );
 

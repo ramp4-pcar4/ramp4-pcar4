@@ -4,6 +4,12 @@ import { FormulateGlobalInstance } from '@braid/vue-formulate';
 import { RampLayerConfig, RampMapConfig } from './geo/api';
 import { APIInterface, InstanceAPI } from './api';
 
+// Fixes "'vue' has no exported member 'PluginObject' error"
+// See: https://github.com/robinrodricks/vue3-touch-events/issues/2
+declare module 'vue' {
+    export type PluginObject<T> = (app: Vue.App, ...options: any[]) => any;
+}
+
 // extend `ComponentOptions` to accept `iApi` as one of the component options
 declare module 'vue/types/options' {
     interface ComponentOptions<V extends Vue> {

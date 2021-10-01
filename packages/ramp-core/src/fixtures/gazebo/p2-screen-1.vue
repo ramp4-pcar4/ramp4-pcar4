@@ -1,8 +1,6 @@
 <template>
     <panel-screen :panel="panel">
-        <template #header>
-            Gazebo/Panel 2/Screen A
-        </template>
+        <template #header> Gazebo/Panel 2/Screen A </template>
 
         <template #controls>
             <!-- <pin> is a global button component that any fixture/panel/screen can reuse -->
@@ -11,7 +9,7 @@
             <pin
                 @click="panel.pin(!isPinned)"
                 :active="isPinned"
-                v-if="$iApi.screenSize !== 'xs'"
+                v-if="checkScreenSize"
             ></pin>
 
             <!-- ✔ this will also work 👇 -->
@@ -30,14 +28,30 @@
                             props: { greeting: 'Howdy?' }
                         })
                     "
-                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-8 px-16 m-2"
+                    class="
+                        bg-green-500
+                        hover:bg-green-700
+                        text-white
+                        font-bold
+                        py-8
+                        px-16
+                        m-2
+                    "
                 >
                     Go back to B
                 </button>
 
                 <button
                     @click="panel.show('p-2-screen-3')"
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-8 px-16 m-2"
+                    class="
+                        bg-blue-500
+                        hover:bg-blue-700
+                        text-white
+                        font-bold
+                        py-8
+                        px-16
+                        m-2
+                    "
                 >
                     Go to C
                 </button>
@@ -49,27 +63,26 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-
+import { defineComponent, PropType } from 'vue';
 import { PanelInstance } from '@/api';
 
-@Component
-export default class GazeboP2Screen1V extends Vue {
-    // ✔ this prop is always present and it's set by the panel-container component
-    @Prop() panel!: PanelInstance;
-
-    // ✔ this prop is passed to this component as part of the `route` property when switching/rendering this screen
-    @Prop() greeting?: string;
-
-    // ✔ create a computer property from the `pinned` value exposed on the API
-    // TODO: if there many similar pieces of code that repeat often, we can pull them out into a mixin
-    get isPinned(): boolean {
-        return this.panel.isPinned;
-
-        // ✔ this also works 👇
-        // return this.$iApi.panel.pinned !== null && this.$iApi.panel.pinned.id === this.panel.id;
+export default defineComponent({
+    name: 'GazeboP2Screen1V',
+    props: {
+        panel: { type: Object as PropType<PanelInstance>, required: true },
+        greeting: { type: String }
+    },
+    computed: {
+        isPinned(): boolean {
+            return this.panel.isPinned;
+            // ✔ this also works 👇
+            // return this.$iApi.panel.pinned !== null && this.$iApi.panel.pinned.id === this.panel.id;
+        },
+        checkScreenSize(): boolean {
+            return this.$iApi.screenSize !== 'xs';
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

@@ -1,3 +1,4 @@
+import { markRaw } from 'vue';
 import { WizardAPI } from './api/wizard';
 import WizardScreenV from './screen.vue';
 import { wizard } from './store/index';
@@ -12,7 +13,7 @@ class WizardFixture extends WizardAPI {
             {
                 'wizard-panel': {
                     screens: {
-                        'wizard-screen': WizardScreenV
+                        'wizard-screen': markRaw(WizardScreenV)
                     },
                     style: {
                         width: '350px'

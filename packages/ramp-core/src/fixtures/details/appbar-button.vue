@@ -14,14 +14,16 @@
     </appbar-button>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-@Component
-export default class DetailsAppbarButtonV extends Vue {
-    onClick() {
-        this.$iApi.panel.toggleMinimize('details-panel');
+export default defineComponent({
+    name: 'DetailsAppbarButtonV',
+    methods: {
+        onClick() {
+            this.$iApi.panel.toggleMinimize('details-panel');
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

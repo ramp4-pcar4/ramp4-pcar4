@@ -9,15 +9,12 @@
             <pin
                 @click="panel.pin()"
                 :active="panel.isPinned"
-                v-if="$iApi.screenSize !== 'xs'"
+                v-if="checkScreenSize"
             ></pin>
 
             <!-- ✔ this will also work 👇 -->
             <!-- <pin @click="panel.pin()" :active="panel.isPinned"></pin> -->
-            <close
-                @click="panel.close()"
-                v-if="$iApi.screenSize !== 'xs'"
-            ></close>
+            <close @click="panel.close()" v-if="checkScreenSize"></close>
         </template>
 
         <template #content>
@@ -30,13 +27,19 @@
                             props: { greeting: 'Greeting from Screen C' }
                         })
                     "
-                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-8 px-16"
+                    class="
+                        bg-green-500
+                        hover:bg-green-700
+                        text-white
+                        font-bold
+                        py-8
+                        px-16
+                    "
                 >
                     Switch to Screen A
                 </button>
 
                 <img
-                    width="250px"
                     class="my-16"
                     src="https://media.giphy.com/media/iWkHDNtcHpB5e/giphy.gif"
                     alt=""
@@ -46,7 +49,7 @@
                 <p>Locale merging:</p>
                 <dl>
                     <dt>global locale:</dt>
-                    <dd class="ml-32 font-bold">{{ $t('lang-native') }}</dd>
+                    <dd class="ml-32 font-bold">{{ $t('lang_native') }}</dd>
                     <dt>fixture locale:</dt>
                     <dd class="ml-32 font-bold">{{ $t('gz.hello') }}</dd>
                     <dt>common panels locale:</dt>
@@ -58,23 +61,32 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-
+import { defineComponent, PropType } from 'vue';
 import { PanelInstance } from '@/api';
 
-@Component({
+export default defineComponent({
+    name: 'GazeboP2Screen3V',
+    props: {
+        panel: { type: Object as PropType<PanelInstance>, required: true }
+    },
     i18n: {
         messages: {
             en: {
+                lang_native: 'En',
                 who: '[me cat]'
+            },
+            fr: {
+                lang_native: 'Fr',
+                who: '[moi chat]'
             }
         }
+    },
+    computed: {
+        checkScreenSize(): boolean {
+            return this.$iApi.screenSize !== 'xs';
+        }
     }
-})
-export default class GazeboP2Screen3V extends Vue {
-    // ✔ this prop is always present and it's set by the panel-container component
-    @Prop() panel!: PanelInstance;
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

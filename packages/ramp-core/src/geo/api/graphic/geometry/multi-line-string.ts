@@ -62,7 +62,7 @@ export class MultiLineString extends BaseGeometry {
             }
 
             // process each element, as they could be any format of varying quality
-            this.rawArray = geometry.map(l => MultiPoint.parsePointSet(l));
+            this.rawArray = geometry.map((l) => MultiPoint.parsePointSet(l));
         } else {
             throw new Error('invalid lines format for MulitLineString');
         }
@@ -120,6 +120,6 @@ export class MultiLineString extends BaseGeometry {
         a: Array<Array<Array<number>>>
     ): Array<Array<Array<number>>> {
         // speed tests show loops & slice is 3x faster than JSON parse/stringify
-        return a.map(l => l.map(p => p.slice()));
+        return a.map((l) => l.map((p) => p.slice()));
     }
 }

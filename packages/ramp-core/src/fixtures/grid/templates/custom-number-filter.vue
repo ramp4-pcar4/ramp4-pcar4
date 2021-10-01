@@ -1,16 +1,30 @@
 <template>
     <div class="h-full flex items-center justify-center">
         <input
-            class="rv-min rv-input"
-            style="width: 45%;"
+            class="
+                rv-min rv-input
+                bg-transparent
+                text-black-75
+                h-24
+                pb-8
+                border-0 border-b-2
+            "
+            style="width: 45%"
             type="text"
             v-model="minVal"
             @keyup="minValChanged()"
             placeholder="min"
         />
         <input
-            class="rv-max rv-input"
-            style="width: 45%;"
+            class="
+                rv-max rv-input
+                bg-transparent
+                text-black-75
+                h-24
+                pb-8
+                border-0 border-b-2
+            "
+            style="width: 45%"
             type="text"
             v-model="maxVal"
             @keyup="maxValChanged()"
@@ -20,10 +34,18 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-@Component
-export default class GridCustomNumberFilterV extends Vue {
+export default defineComponent({
+    name: 'GridCustomNumberFilterV',
+    data(props) {
+        return {
+            params: props.params as any,
+            minVal: '' as any,
+            maxVal: '' as any
+        };
+    },
+
     beforeMount() {
         // Load previously stored values (if saved in table state manager)
         this.minVal = this.params.stateManager.getColumnFilter(
@@ -36,91 +58,93 @@ export default class GridCustomNumberFilterV extends Vue {
         // Apply the default values to the column filter.
         this.minValChanged();
         this.maxValChanged();
-    }
+    },
 
-    minValChanged() {
-        this.minVal =
-            this.minVal !== '' && !isNaN(this.minVal) ? this.minVal : null;
-        this.params.parentFilterInstance((instance: any) => {
-            this.setFilterModel(instance);
+    methods: {
+        minValChanged() {
+            this.minVal =
+                this.minVal !== '' && !isNaN(this.minVal) ? this.minVal : null;
+            this.params.parentFilterInstance((instance: any) => {
+                this.setFilterModel(instance);
 
-            // Save the new filter value in the state manager. Allows for quick recovery if the grid is
-            // closed and re-opened.
-            this.params.stateManager.setColumnFilter(
-                this.params.column.colDef.field + ' min',
-                this.minVal
-            );
-        });
-    }
+                // Save the new filter value in the state manager. Allows for quick recovery if the grid is
+                // closed and re-opened.
+                this.params.stateManager.setColumnFilter(
+                    this.params.column.colDef.field + ' min',
+                    this.minVal
+                );
+            });
+        },
 
-    maxValChanged() {
-        this.maxVal =
-            this.maxVal !== '' && !isNaN(this.maxVal) ? this.maxVal : null;
-        this.params.parentFilterInstance((instance: any) => {
-            this.setFilterModel(instance);
+        maxValChanged() {
+            this.maxVal =
+                this.maxVal !== '' && !isNaN(this.maxVal) ? this.maxVal : null;
+            this.params.parentFilterInstance((instance: any) => {
+                this.setFilterModel(instance);
 
-            // Save the new filter value in the state manager. Allows for quick recovery if the grid is
-            // closed and re-opened.
-            this.params.stateManager.setColumnFilter(
-                this.params.column.colDef.field + ' max',
-                this.maxVal
-            );
-        });
-    }
+                // Save the new filter value in the state manager. Allows for quick recovery if the grid is
+                // closed and re-opened.
+                this.params.stateManager.setColumnFilter(
+                    this.params.column.colDef.field + ' max',
+                    this.maxVal
+                );
+            });
+        },
 
-    setFilterModel(instance: any) {
-        // If the value is not a number, or is null, set its value to the empty string.
-        if (isNaN(this.minVal) || this.minVal === null) this.minVal = '';
-        if (isNaN(this.maxVal) || this.maxVal === null) this.maxVal = '';
+        setFilterModel(instance: any) {
+            // If the value is not a number, or is null, set its value to the empty string.
+            if (isNaN(this.minVal) || this.minVal === null) this.minVal = '';
+            if (isNaN(this.maxVal) || this.maxVal === null) this.maxVal = '';
 
-        if (this.maxVal !== '' && this.minVal !== '') {
-            // If both min and max values are set, set the filter to display
-            // all items in between the two numbers.
-            instance.setModel({
+            if (this.maxVal !== '' && this.minVal !== '') {
+                // If both min and max values are set, set the filter to display
+                // all items in between the two numbers.
+                instance.setModel({
+                    filterType: 'number',
+                    type: 'inRange',
+                    filter: this.minVal,
+                    filterTo: this.maxVal
+                });
+            } else if (this.minVal === '') {
+                // If only the maximum value is set, set the filter to display all items
+                // that are lower than it.
+                instance.setModel({
+                    filterType: 'number',
+                    type: 'lessThanOrEqual',
+                    filter: this.maxVal
+                });
+            } else if (this.maxVal === '') {
+                // If only the minimum value is set, set the filter to display all items
+                // that are higher than it.
+                instance.setModel({
+                    filterType: 'number',
+                    type: 'greaterThanOrEqual',
+                    filter: this.minVal
+                });
+            } else {
+                // Clear the filter if neither value is set.
+                instance.setModel(null);
+            }
+            this.params.api.onFilterChanged();
+        },
+
+        onParentModelChanged(parentModel: any) {
+            if (parentModel === {}) {
+                this.minVal = '';
+                this.maxVal = '';
+            }
+        },
+
+        setModel() {
+            return {
                 filterType: 'number',
                 type: 'inRange',
                 filter: this.minVal,
                 filterTo: this.maxVal
-            });
-        } else if (this.minVal === '') {
-            // If only the maximum value is set, set the filter to display all items
-            // that are lower than it.
-            instance.setModel({
-                filterType: 'number',
-                type: 'lessThanOrEqual',
-                filter: this.maxVal
-            });
-        } else if (this.maxVal === '') {
-            // If only the minimum value is set, set the filter to display all items
-            // that are higher than it.
-            instance.setModel({
-                filterType: 'number',
-                type: 'greaterThanOrEqual',
-                filter: this.minVal
-            });
-        } else {
-            // Clear the filter if neither value is set.
-            instance.setModel(null);
-        }
-        this.params.api.onFilterChanged();
-    }
-
-    onParentModelChanged(parentModel: any) {
-        if (parentModel === {}) {
-            this.minVal = '';
-            this.maxVal = '';
+            };
         }
     }
-
-    setModel() {
-        return {
-            filterType: 'number',
-            type: 'inRange',
-            filter: this.minVal,
-            filterTo: this.maxVal
-        };
-    }
-}
+});
 
 export default interface GridCustomNumberFilter {
     minVal: any;

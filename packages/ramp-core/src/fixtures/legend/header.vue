@@ -4,7 +4,7 @@
         <button
             @click="openWizard"
             class="relative mr-auto text-gray-500 hover:text-black p-8"
-            v-show="wizardExists"
+            v-show="getWizardExists"
             :content="$t('legend.header.addlayer')"
             v-tippy="{ placement: 'right' }"
         >
@@ -85,31 +85,35 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
-import { Call } from 'vuex-pathify';
+import { defineComponent } from 'vue';
+import { call } from '@/store/pathify-helper';
 
 import { LegendStore } from './store';
 import { GlobalEvents } from '../../api/internal';
 
-@Component
-export default class LegendHeaderV extends Vue {
-    @Call(LegendStore.showAll) show!: () => void;
-    @Call(LegendStore.hideAll) hide!: () => void;
-    @Call(LegendStore.expandGroups) expand!: () => void;
-    @Call(LegendStore.collapseGroups) collapse!: () => void;
-
-    openWizard() {
-        this.$iApi.event.emit(GlobalEvents.WIZARD_OPEN);
-    }
-
-    get wizardExists(): boolean {
-        try {
-            return !!this.$iApi.fixture.get('wizard');
-        } catch (e) {
-            return false;
+export default defineComponent({
+    name: 'LegendHeaderV',
+    data() {
+        return {
+            show: call(LegendStore.showAll),
+            hide: call(LegendStore.hideAll),
+            expand: call(LegendStore.expandGroups),
+            collapse: call(LegendStore.collapseGroups)
+        };
+    },
+    methods: {
+        openWizard() {
+            this.$iApi.event.emit(GlobalEvents.WIZARD_OPEN);
+        },
+        getWizardExists(): boolean {
+            try {
+                return !!this.$iApi.fixture.get('wizard');
+            } catch (e) {
+                return false;
+            }
         }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

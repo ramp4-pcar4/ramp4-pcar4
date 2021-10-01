@@ -5,7 +5,7 @@
         </template>
 
         <template #controls>
-            <pin @click="panel.pin()" :active="isPinned"></pin>
+            <pin @click="panel.pin()" :active="isPinned()"></pin>
             <close @click="panel.close()"></close>
         </template>
 
@@ -20,8 +20,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
+import { defineComponent, PropType } from 'vue';
+import { get } from '@/store/pathify-helper';
 
 import { PanelInstance } from '@/api';
 import { HelpStore } from './store';
@@ -31,22 +31,31 @@ import HelpSectionV from './section.vue';
 import axios from 'axios';
 import marked from 'marked';
 
-@Component({
+export default defineComponent({
+    name: 'HelpScreenV',
     components: {
         'help-section': HelpSectionV
-    }
-})
-export default class HelpScreenV extends Vue {
-    @Prop() panel!: PanelInstance;
-    @Get(HelpStore.folderName) folderName!: string;
+    },
 
-    helpSections: any = [];
+    props: {
+        panel: {
+            type: Object as PropType<PanelInstance>,
+            required: true
+        }
+    },
+
+    data() {
+        return {
+            folderName: get(HelpStore.folderName),
+            helpSections: [] as Array<any>
+        };
+    },
 
     mounted() {
         // make help request when fixture loads or locale changes
         this.$watch(
             '$i18n.locale',
-            (newLocale, oldLocale) => {
+            (newLocale: any, oldLocale: any) => {
                 if (newLocale === oldLocale) return;
                 // path to where HELP is hosted is different if RAMP is built as prod library
                 const base =
@@ -63,7 +72,7 @@ export default class HelpScreenV extends Vue {
                     }
                     return `<img src="${href}" alt="${title}">`;
                 };
-                axios.get(`${base}help/${folder}/${newLocale}.md`).then(r => {
+                axios.get(`${base}help/${folder}/${newLocale}.md`).then((r) => {
                     // matches help sections from markdown file where each section begins with one hashbang and a space
                     // followed by the section header, exactly 2 newlines, then up to but not including a double newline
                     // note that the {2,} below is used as the double line deparator since each double new line is actually 6
@@ -83,10 +92,7 @@ export default class HelpScreenV extends Vue {
                             // parse markdown on info section, split/splice/join removes the header
                             // since we can't put info section into its own regex grouping
                             info: marked(
-                                section[0]
-                                    .split('\n')
-                                    .splice(2)
-                                    .join('\n'),
+                                section[0].split('\n').splice(2).join('\n'),
                                 { renderer }
                             )
                         });
@@ -95,12 +101,14 @@ export default class HelpScreenV extends Vue {
             },
             { immediate: true }
         );
-    }
+    },
 
-    get isPinned(): boolean {
-        return this.panel.isPinned;
+    methods: {
+        isPinned(): boolean {
+            return this.panel.isPinned;
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

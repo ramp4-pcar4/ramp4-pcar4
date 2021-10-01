@@ -68,8 +68,7 @@ let config = {
             {
                 id: 'GeoMet',
                 layerType: 'ogcWms',
-                url:
-                    'http://geo.weather.gc.ca/geomet/?lang=E&service=WMS&request=GetCapabilities',
+                url: 'http://geo.weather.gc.ca/geomet/?lang=E&service=WMS&request=GetCapabilities',
                 state: {
                     visibility: true,
                     opacity: 0.5
@@ -126,12 +125,13 @@ let options = {
     loadDefaultFixtures: false,
     loadDefaultEvents: true
 };
+rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
 
-Vue.component('GeoMet-Template', {
+rInstance.$element.component('GeoMet-Template', {
     props: ['identifyData'],
-    render: function(h) {
-        if (!this.identifyData) return;
-        let parseText = text => {
+    template: `<div v-html="createTemplate()" />`,
+    methods: {
+        parseText(text) {
             let obj = {};
             let rx = /(\w+) = '(?:"([^"]*)"|([^']*))/g;
             while ((m = rx.exec(text)) !== null) {
@@ -142,103 +142,47 @@ Vue.component('GeoMet-Template', {
                 }
             }
             return obj;
-        };
-
-        let data = parseText(this.identifyData.data);
-
-        return h(
-            'div',
-            {
-                style:
-                    'align-items: center; justify-content: center; font-size: .875rem; font-family: "Arial", sans-serif;'
-            },
-            [
-                h(
-                    'span',
-                    {
-                        style:
-                            'display: flex; font-size: 1.25rem; background-color: #3182ce; color: white; padding: 4px; text-align: center;'
-                    },
-                    'GDPS.ETA_NT - Cloud Coverage (%)'
-                ),
-                h(
-                    'div',
-                    {
-                        style:
-                            'display: flex; flex-direction: column; font-size: .875rem; padding-top: 5px;'
-                    },
-                    [
-                        h(
-                            'span',
-                            {
-                                style: 'color: #a0aec0; font-weight: bold;'
-                            },
-                            'Coverage'
-                        ),
-                        h('span', data.value_0)
-                    ]
-                ),
-                h(
-                    'div',
-                    {
-                        style:
-                            'display: flex; flex-direction: row; color: #a0aec0; font-weight: bold; padding-top: 5px;'
-                    },
-                    [
-                        h(
-                            'div',
-                            {
-                                style: 'flex: 1 1 0%; width: 100%;'
-                            },
-                            'x'
-                        ),
-                        h(
-                            'div',
-                            {
-                                style: 'flex: 1 1 0%; width: 100%;'
-                            },
-                            'y'
-                        )
-                    ]
-                ),
-                h(
-                    'div',
-                    {
-                        style: 'display: flex; flex-direction: row;'
-                    },
-                    [
-                        h(
-                            'div',
-                            {
-                                style: 'flex: 1 1 0%; width: 100%;'
-                            },
-                            data.x
-                        ),
-                        h(
-                            'div',
-                            {
-                                style: 'flex: 1 1 0%; width: 100%;'
-                            },
-                            data.y
-                        )
-                    ]
-                )
-            ]
-        );
+        },
+        createTemplate() {
+            if (!this.identifyData) return;
+            let data = this.parseText(this.identifyData.data.data);
+            return `
+            <div style="align-items: center; justify-content: center; font-size: .875rem; font-family: Arial, sans-serif;">
+                <span style="display: flex; font-size: 1.25rem; background-color: #3182ce; color: white; padding: 4px; text-align: center;">
+                    GDPS.ETA_NT - Cloud Coverage (%)
+                </span>
+                <div style="display: flex; flex-direction: column; font-size: .875rem; padding-top: 5px;">
+                    <span style="color: #a0aec0; font-weight: bold;">
+                        Coverage
+                    </span>
+                    <span>
+                        ${data.value_0}
+                    </span>
+                </div>
+                <div style="display: flex; flex-direction: row; color: #a0aec0; font-weight: bold; padding-top: 5px;">
+                    <div style="flex: 1 1 0%; width: 100%;">
+                        x
+                    </div>
+                    <div style="flex: 1 1 0%; width: 100%;">
+                        y
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: row;">
+                    <div style="flex: 1 1 0%; width: 100%;">
+                        ${data.x}
+                    </div>
+                    <div style="flex: 1 1 0%; width: 100%;">
+                        ${data.y}
+                    </div>
+                </div>
+            </div>
+            `;
+        }
     }
 });
 
-rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
 rInstance.fixture
-    .addDefaultFixtures([
-        'mapnav',
-        'legend',
-        'appbar',
-        'grid',
-        'details',
-        'wizard',
-        'export-v1'
-    ])
+    .addDefaultFixtures(['mapnav', 'legend', 'appbar', 'grid', 'details', 'wizard', 'export-v1'])
     .then(() => {
         rInstance.panel.open('legend-panel');
     });

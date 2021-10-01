@@ -26,7 +26,17 @@
         </template>
         <template v-slot:default="scope">
             <div
-                class="notification-dropdown pointer-events-auto bg-white rounded text-center text-black w-500 h-256 flex flex-col p-0"
+                class="
+                    notification-dropdown
+                    pointer-events-auto
+                    bg-white
+                    rounded
+                    text-center text-black
+                    w-500
+                    h-256
+                    flex flex-col
+                    p-0
+                "
             >
                 <div>
                     <h4 class="pb-8 border-b border-gray-600">
@@ -37,7 +47,11 @@
                             @click="clearAll"
                             class="text-gray-500 hover:text-black p-4 mr-6"
                             :content="$t('notifications.controls.clearAll')"
-                            v-tippy="{ placement: 'bottom' }"
+                            v-tippy="{
+                                placement: 'bottom',
+                                theme: 'ramp4',
+                                animation: 'scale'
+                            }"
                         >
                             <!-- https://fonts.google.com/icons?selected=Material%20Icons%3Aclear_all -->
                             <svg
@@ -61,22 +75,26 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
-import { Call, Get } from 'vuex-pathify';
+import { defineComponent } from 'vue';
+import { get, call } from '@/store/pathify-helper';
 
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 import NotificationListV from './notification-list.vue';
 
-@Component({
+export default defineComponent({
+    name: 'NotificationsCaptionButtonV',
     components: {
         'dropdown-menu': DropdownMenuV,
         'notification-list': NotificationListV
+    },
+
+    data() {
+        return {
+            number: get('notification/notificationNumber'),
+            clearAll: call('notification/clearAll')
+        };
     }
-})
-export default class NotificationsCaptionButtonV extends Vue {
-    @Get('notification/notificationNumber') number!: Number;
-    @Call('notification/clearAll') clearAll!: () => void;
-}
+});
 </script>
 
 <style lang="scss" scoped>

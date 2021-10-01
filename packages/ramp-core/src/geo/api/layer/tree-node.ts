@@ -27,7 +27,7 @@ export class TreeNode {
             let hit: TreeNode | undefined;
 
             // using .some will cause the loop to stop when it gets a hit
-            this.children.some(t => {
+            this.children.some((t) => {
                 return (hit = t.findChildByUid(uid));
             });
 
@@ -45,7 +45,7 @@ export class TreeNode {
             let hit: TreeNode | undefined;
 
             // using .some will cause the loop to stop when it gets a hit
-            this.children.some(t => {
+            this.children.some((t) => {
                 return (hit = t.findChildByIdx(idx));
             });
 

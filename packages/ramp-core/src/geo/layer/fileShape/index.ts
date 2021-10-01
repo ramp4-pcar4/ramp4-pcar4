@@ -49,9 +49,8 @@ class ShapefileLayer extends FileLayer {
         }
 
         // convert shapefile to geojson, store in property for FileLayer to consume.
-        this.sourceGeoJson = await this.$iApi.geo.layer.files.shapefileToGeoJson(
-            shapefileData
-        );
+        this.sourceGeoJson =
+            await this.$iApi.geo.layer.files.shapefileToGeoJson(shapefileData);
 
         await super.initiate();
     }

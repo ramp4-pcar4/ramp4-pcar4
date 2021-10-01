@@ -27,8 +27,10 @@ const DEFAULT_CONFIG: ExportV1TitleConfig = {
     originY: 'top'
 };
 
-class ExportV1TitleFixture extends FixtureInstance
-    implements ExportV1SubFixture {
+class ExportV1TitleFixture
+    extends FixtureInstance
+    implements ExportV1SubFixture
+{
     get config(): ExportV1TitleConfig | undefined {
         return merge(DEFAULT_CONFIG, super.config);
     }

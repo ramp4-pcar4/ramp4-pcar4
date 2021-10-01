@@ -1,6 +1,6 @@
+import { markRaw } from 'vue';
 import { MetadataAPI } from './api/metadata';
 import MetadataAppbarButtonV from './appbar-button.vue';
-
 import MetadataScreenV from './screen.vue';
 
 import messages from './lang/lang.csv';
@@ -11,7 +11,7 @@ class MetadataFixture extends MetadataAPI {
             {
                 'metadata-panel': {
                     screens: {
-                        'metadata-screen-content': MetadataScreenV
+                        'metadata-screen-content': markRaw(MetadataScreenV)
                     },
                     style: {
                         width: '350px'
@@ -22,9 +22,8 @@ class MetadataFixture extends MetadataAPI {
         );
 
         let handler = (payload: any) => {
-            const metadataFixture: MetadataAPI = this.$iApi.fixture.get(
-                'metadata'
-            );
+            const metadataFixture: MetadataAPI =
+                this.$iApi.fixture.get('metadata');
             metadataFixture.openMetadata(payload);
         };
 

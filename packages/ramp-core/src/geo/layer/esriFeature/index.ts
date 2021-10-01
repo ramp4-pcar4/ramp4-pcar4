@@ -13,6 +13,7 @@ import {
 } from '@/geo/api';
 import { EsriFeatureLayer } from '@/geo/esri';
 import { FeatureFC } from './feature-fc';
+import { markRaw } from 'vue';
 
 class FeatureLayer extends AttribLayer {
     declare esriLayer: EsriFeatureLayer | undefined;
@@ -24,8 +25,10 @@ class FeatureLayer extends AttribLayer {
     }
 
     async initiate(): Promise<void> {
-        this.esriLayer = new EsriFeatureLayer(
-            this.makeEsriLayerConfig(this.origRampConfig)
+        markRaw(
+            (this.esriLayer = new EsriFeatureLayer(
+                this.makeEsriLayerConfig(this.origRampConfig)
+            ))
         );
         await super.initiate();
     }
@@ -42,9 +45,8 @@ class FeatureLayer extends AttribLayer {
         // TODO flush out
         // NOTE: it would be nice to put esri.LayerProperties as the return type, but since we are cheating with refreshInterval it wont work
         //       we can make our own interface if it needs to happen (or can extent the esri one)
-        const esriConfig: __esri.FeatureLayerProperties = super.makeEsriLayerConfig(
-            rampLayerConfig
-        );
+        const esriConfig: __esri.FeatureLayerProperties =
+            super.makeEsriLayerConfig(rampLayerConfig);
 
         // TODO add any extra properties for attrib-based layers here
         // if we have a definition at load, apply it here to avoid cancellation errors on
@@ -206,9 +208,12 @@ class FeatureLayer extends AttribLayer {
             return super.identify(options);
         }
 
+        let loadResolve: any;
         const innerResult: IdentifyResult = {
             uid: myFC.uid,
-            isLoading: true,
+            loadPromise: new Promise((resolve) => {
+                loadResolve = resolve;
+            }),
             items: []
         };
 
@@ -241,9 +246,9 @@ class FeatureLayer extends AttribLayer {
 
         qOpts.filterSql = myFC.getCombinedSqlFilter();
 
-        result.done = myFC.queryFeatures(qOpts).then(results => {
+        result.done = myFC.queryFeatures(qOpts).then((results) => {
             // TODO might be a problem overwriting the array if something is watching/binding to the original
-            innerResult.items = results.map(gr => {
+            innerResult.items = results.map((gr) => {
                 return {
                     // TODO decide if we want to handle alias mapping here or not.
                     //      if we do, our "ESRI" format will need to include field metadata.
@@ -258,7 +263,8 @@ class FeatureLayer extends AttribLayer {
                 };
             });
 
-            innerResult.isLoading = false;
+            // Resolve the load promise
+            loadResolve();
         });
 
         return result;

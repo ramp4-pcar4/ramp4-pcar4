@@ -47,7 +47,7 @@ export class DetailsAPI extends FixtureInstance {
         const identifyResult: IdentifyResult = {
             items: [identifyItem],
             uid: uid,
-            isLoading: false
+            loadPromise: Promise.resolve()
         };
 
         // Save the provided identify result in the store.
@@ -99,7 +99,7 @@ export class DetailsAPI extends FixtureInstance {
             this.$vApp.$store.get<DetailsItemInstance[]>(
                 DetailsStore.templates
             )!
-        ).forEach(item => {
+        ).forEach((item) => {
             if (item.template in this.$vApp.$options.components!) {
                 this.$vApp.$store.set(
                     `${DetailsStore.templates}@${item.id}.componentId`,

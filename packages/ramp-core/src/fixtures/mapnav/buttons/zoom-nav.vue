@@ -28,19 +28,23 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 import { throttle } from 'throttle-debounce';
 import DividerNavV from './divider-nav.vue';
 
-@Component({
+export default defineComponent({
+    name: 'ZoomNavV',
     components: {
         'divider-nav': DividerNavV
+    },
+
+    data() {
+        return {
+            zoomIn: throttle(400, true, () => this.$iApi.geo.map.zoomIn()),
+            zoomOut: throttle(400, true, () => this.$iApi.geo.map.zoomOut())
+        };
     }
-})
-export default class FullscreenNavV extends Vue {
-    zoomIn = throttle(400, true, () => this.$iApi.geo.map.zoomIn());
-    zoomOut = throttle(400, true, () => this.$iApi.geo.map.zoomOut());
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

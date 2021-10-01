@@ -16,13 +16,21 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-@Component
-export default class MapnavButtonV extends Vue {
-    @Prop() onClickFunction!: any;
-    @Prop() tooltip?: string;
-}
+export default defineComponent({
+    name: 'MapnavButtonV',
+    props: {
+        onClickFunction: {
+            type: Function,
+            required: true
+        },
+        tooltip: {
+            type: [String, Boolean],
+            default: false
+        }
+    }
+});
 </script>
 
 <style lang="scss" scoped></style>

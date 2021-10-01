@@ -241,9 +241,8 @@ export class SymbologyAPI extends APIScope {
         }
 
         // need to draw the image to get its size (technically not needed if we have a url, but this is simpler)
-        const convertedUrl = await this.$iApi.geo.utils.shared.convertImagetoDataURL(
-            imageUri
-        );
+        const convertedUrl =
+            await this.$iApi.geo.utils.shared.convertImagetoDataURL(imageUri);
 
         const { image } = await this.svgDrawImage(draw, convertedUrl);
 
@@ -436,7 +435,7 @@ export class SymbologyAPI extends APIScope {
 
                 // patter fill: horizonal line in a 5x5 px square
                 return draw
-                    .pattern(cellSize, cellSize, add =>
+                    .pattern(cellSize, cellSize, (add) =>
                         add.line(0, cellSize / 2, cellSize, cellSize / 2)
                     )
                     .stroke(symbolStroke);
@@ -450,7 +449,7 @@ export class SymbologyAPI extends APIScope {
 
                 // patter fill: vertical line in a 5x5 px square
                 return draw
-                    .pattern(cellSize, cellSize, add =>
+                    .pattern(cellSize, cellSize, (add) =>
                         add.line(cellSize / 2, 0, cellSize / 2, cellSize)
                     )
                     .stroke(symbolStroke);
@@ -463,7 +462,7 @@ export class SymbologyAPI extends APIScope {
                 const cellSize = 5;
 
                 // patter fill: forward diagonal line in a 5x5 px square; two more diagonal lines offset to cover the corners when the main line is cut off
-                return draw.pattern(cellSize, cellSize, add => {
+                return draw.pattern(cellSize, cellSize, (add) => {
                     add.line(0, 0, cellSize, cellSize).stroke(symbolStroke);
                     add.line(0, 0, cellSize, cellSize)
                         .move(0, cellSize)
@@ -481,7 +480,7 @@ export class SymbologyAPI extends APIScope {
                 const cellSize = 5;
 
                 // patter fill: backward diagonal line in a 5x5 px square; two more diagonal lines offset to cover the corners when the main line is cut off
-                return draw.pattern(cellSize, cellSize, add => {
+                return draw.pattern(cellSize, cellSize, (add) => {
                     add.line(cellSize, 0, 0, cellSize).stroke(symbolStroke);
                     add.line(cellSize, 0, 0, cellSize)
                         .move(cellSize / 2, cellSize / 2)
@@ -496,7 +495,7 @@ export class SymbologyAPI extends APIScope {
                 const cellSize = 5;
 
                 // patter fill: horizonal and vertical lines in a 5x5 px square
-                return draw.pattern(cellSize, cellSize, add => {
+                return draw.pattern(cellSize, cellSize, (add) => {
                     add.line(cellSize / 2, 0, cellSize / 2, cellSize).stroke(
                         symbolStroke
                     );
@@ -513,7 +512,7 @@ export class SymbologyAPI extends APIScope {
                 const cellSize = 7;
 
                 // patter fill: crossing diagonal lines in a 7x7 px square
-                return draw.pattern(cellSize, cellSize, add => {
+                return draw.pattern(cellSize, cellSize, (add) => {
                     add.line(0, 0, cellSize, cellSize).stroke(symbolStroke);
                     add.line(cellSize, 0, 0, cellSize).stroke(symbolStroke);
                 });
@@ -641,7 +640,7 @@ export class SymbologyAPI extends APIScope {
                         const symbolFill = draw.pattern(
                             imageWidth,
                             imageHeight,
-                            add =>
+                            (add) =>
                                 // there was a 4th argument 'true' here before, but maximum 3 are accepted. may need to look into this
                                 add.image(imageUri, imageWidth, imageHeight)
                         );
@@ -796,9 +795,8 @@ export class SymbologyAPI extends APIScope {
     rendererToLegend(renderer: BaseRenderer): Array<LegendSymbology> {
         let finalSymbols: Array<Array<BaseSymbolUnit>>;
         // put all symbol units from the renderer in one nice array
-        const allRendererSUs: Array<BaseSymbolUnit> = renderer.symbolUnits.slice(
-            0
-        ); // make a copy
+        const allRendererSUs: Array<BaseSymbolUnit> =
+            renderer.symbolUnits.slice(0); // make a copy
         if (renderer.defaultUnit) {
             allRendererSUs.push(renderer.defaultUnit);
         }
@@ -807,7 +805,7 @@ export class SymbologyAPI extends APIScope {
             // we don't need to do any key collation.
             // this renderer was created from a server legend, so just do a 1-to-1
             // recreation.
-            finalSymbols = allRendererSUs.map(rsu => [rsu]);
+            finalSymbols = allRendererSUs.map((rsu) => [rsu]);
         } else {
             // collate the symbol units by the label. this collapses complex definitions into a nice looking legend.
             // e.g. a renderer has SU for 'type=X' and 'type=Y', both with label 'Fun Stuff'. This merges the logic into
@@ -816,7 +814,7 @@ export class SymbologyAPI extends APIScope {
             // using Map will preserve the order things were encountered
             const legendCollater = new Map<string, Array<BaseSymbolUnit>>();
 
-            allRendererSUs.forEach(su => {
+            allRendererSUs.forEach((su) => {
                 const lblArray = legendCollater.get(su.label);
                 if (lblArray) {
                     // not the first time we hit this label. add to the list
@@ -828,29 +826,30 @@ export class SymbologyAPI extends APIScope {
 
             // iterate through the unique keys in the collater. process each legend item
             finalSymbols = [];
-            legendCollater.forEach(lblArray => finalSymbols.push(lblArray));
+            legendCollater.forEach((lblArray) => finalSymbols.push(lblArray));
         }
 
         // iterate through the final symbol array. process each legend item
-        return finalSymbols.map(suSet => {
+        return finalSymbols.map((suSet) => {
             const firstSu: BaseSymbolUnit = suSet[0];
             const legendSym: LegendSymbology = {
+                uid: this.$iApi.geo.utils.shared.generateUUID(),
                 label: firstSu.label || '',
                 definitionClause:
                     suSet.length === 1
                         ? firstSu.definitionClause
                         : `(${suSet
-                              .map(su => su.definitionClause)
+                              .map((su) => su.definitionClause)
                               .join(' OR ')})`,
                 svgcode: '', // TODO is '' ok? maybe we need white square svg? or some loading icon?
                 visibility: true,
                 lastVisbility: true,
-                drawPromise: this.symbolToSvg(firstSu.symbol).then(svg => {
+                drawPromise: this.symbolToSvg(firstSu.symbol).then((svg) => {
                     // update the legend symbol object
                     legendSym.svgcode = svg;
 
                     // update the renderer symbol units
-                    suSet.forEach(su => {
+                    suSet.forEach((su) => {
                         su.svgCode = svg;
                     });
                 })

@@ -5,16 +5,24 @@
                 @click="onSortRequested('asc', $event)"
                 :content="$t(`grid.header.sort.${sort}`)"
                 v-tippy="{ placement: 'top', hideOnClick: false }"
-                class="customHeaderLabel hover:bg-gray-300 font-bold p-8 max-w-full"
+                class="
+                    customHeaderLabel
+                    hover:bg-gray-300
+                    font-bold
+                    p-8
+                    max-w-full
+                "
                 role="columnheader"
                 truncate-trigger
             >
-                <div v-truncate="{ externalTrigger: true }">
+                <!-- <div v-truncate="{ externalTrigger: true }"> -->
+                <div>
                     {{ params.displayName }}
                 </div>
             </button>
         </div>
-        <span v-else class="customHeaderLabel" role="columnheader" v-truncate>{{
+        <!-- <span v-else class="customHeaderLabel" role="columnheader" v-truncate>{{ -->
+        <span v-else class="customHeaderLabel" role="columnheader">{{
             params.displayName
         }}</span>
 
@@ -51,7 +59,11 @@
                 :content="$t(`grid.header.reorder.left`)"
                 v-tippy="{ placement: 'top' }"
                 @click="moveLeft()"
-                class="opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
+                class="
+                    opacity-60
+                    hover:opacity-90
+                    disabled:opacity-30 disabled:cursor-default
+                "
                 :disabled="!canMoveLeft"
             >
                 <div class="inline-block">
@@ -68,7 +80,11 @@
                 :content="$t(`grid.header.reorder.right`)"
                 v-tippy="{ placement: 'top' }"
                 @click="moveRight()"
-                class="opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
+                class="
+                    opacity-60
+                    hover:opacity-90
+                    disabled:opacity-30 disabled:cursor-default
+                "
                 :disabled="!canMoveRight"
             >
                 <div class="inline-block">
@@ -86,87 +102,98 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
+import { directive as tippyDirective } from 'vue-tippy';
 
-@Component
-export default class GridCustomHeaderV extends Vue {
-    sort: number = 0;
-    sortable: boolean = false;
-    canMoveLeft = false;
-    canMoveRight = false;
+export default defineComponent({
+    name: 'GridCustomHeaderV',
+    directives: {
+        tippy: tippyDirective
+    },
+    data(props) {
+        return {
+            params: props.params as any,
+            sort: 0 as number,
+            sortable: false as boolean,
+            canMoveLeft: false as boolean,
+            canMoveRight: false as boolean,
+            columnApi: null as any
+        };
+    },
 
     mounted(): void {
-        this.gridApi = this.params.api;
-        this.columnApi = this.params.columnApi;
         this.sortable = this.params.column.colDef.sortable;
+        this.columnApi = this.params.columnApi;
+
         this.onColumnReorder();
         // update move state when column has moved
         this.params.column.addEventListener('leftChanged', () => {
             this.onColumnReorder();
         });
-    }
+    },
 
-    beforeDestroy() {
+    beforeUnmount() {
         this.params.column.removeEventListener('leftChanged', () => {
             this.onColumnReorder();
         });
-    }
+    },
 
-    onColumnReorder() {
-        const columns: any = this.columnApi.getAllDisplayedColumns();
-        const columnIdx: number = columns.indexOf(this.params.column);
-        this.canMoveLeft =
-            columnIdx > 3 && !columns[columnIdx - 1].colDef.isStatic;
-        this.canMoveRight =
-            columnIdx < columns.length - 1 &&
-            !columns[columnIdx + 1].colDef.isStatic;
-    }
+    methods: {
+        onColumnReorder() {
+            const columns: any = this.columnApi.getAllDisplayedColumns();
+            const columnIdx: number = columns.indexOf(this.params.column);
+            this.canMoveLeft =
+                columnIdx > 3 && !columns[columnIdx - 1].colDef.isStatic;
+            this.canMoveRight =
+                columnIdx < columns.length - 1 &&
+                !columns[columnIdx + 1].colDef.isStatic;
+        },
 
-    // Swap the position of a column with it's left neighbor. If the neighboring column is static,
-    // or if there is no left neighbor, don't move it.
-    moveLeft(): void {
-        const columns: any = this.columnApi.getAllDisplayedColumns();
-        const allColumns: any = this.columnApi.getAllGridColumns();
-        const index: number = allColumns.indexOf(
-            columns[columns.indexOf(this.params.column) - 1]
-        );
+        // Swap the position of a column with it's left neighbor. If the neighboring column is static,
+        // or if there is no left neighbor, don't move it.
+        moveLeft(): void {
+            const columns: any = this.columnApi.getAllDisplayedColumns();
+            const allColumns: any = this.columnApi.getAllGridColumns();
+            const index: number = allColumns.indexOf(
+                columns[columns.indexOf(this.params.column) - 1]
+            );
 
-        if (this.canMoveLeft) {
-            this.columnApi.moveColumn(this.params.column, index);
+            if (this.canMoveLeft) {
+                this.columnApi.moveColumn(this.params.column, index);
+            }
+        },
+
+        // Swap the position of a column with it's right neighbor. If the neighboring column is static,
+        // or if there is no right neighbor, don't move it.
+        moveRight(): void {
+            const columns: any = this.columnApi.getAllDisplayedColumns();
+            const allColumns: any = this.columnApi.getAllGridColumns();
+            const index: number = allColumns.indexOf(
+                columns[columns.indexOf(this.params.column) + 1]
+            );
+
+            if (this.canMoveRight) {
+                this.columnApi.moveColumn(this.params.column, index);
+            }
+        },
+
+        // Switch between sorting the column by `ascending`, `descending` or `none`.
+        onSortRequested(order: any, event: any): void {
+            this.sort = (this.sort + 1) % 3;
+            if (this.sort == 1) {
+                this.params.setSort('asc', event.shiftKey);
+            } else if (this.sort == 2) {
+                this.params.setSort('desc', event.shiftKey);
+            } else {
+                this.params.setSort('', event.shiftKey);
+            }
         }
     }
-
-    // Swap the position of a column with it's right neighbor. If the neighboring column is static,
-    // or if there is no right neighbor, don't move it.
-    moveRight(): void {
-        const columns: any = this.columnApi.getAllDisplayedColumns();
-        const allColumns: any = this.columnApi.getAllGridColumns();
-        const index: number = allColumns.indexOf(
-            columns[columns.indexOf(this.params.column) + 1]
-        );
-
-        if (this.canMoveRight) {
-            this.columnApi.moveColumn(this.params.column, index);
-        }
-    }
-
-    // Switch between sorting the column by `ascending`, `descending` or `none`.
-    onSortRequested(order: any, event: any): void {
-        this.sort = (this.sort + 1) % 3;
-        if (this.sort == 1) {
-            this.params.setSort('asc', event.shiftKey);
-        } else if (this.sort == 2) {
-            this.params.setSort('desc', event.shiftKey);
-        } else {
-            this.params.setSort('', event.shiftKey);
-        }
-    }
-}
+});
 
 export default interface GridCustomHeader {
     sort: number;
     sortable: boolean;
-    gridApi: any;
     columnApi: any;
     params: any;
 }

@@ -2,7 +2,14 @@
     <div class="h-full flex flex-col items-stretch">
         <header
             v-if="header"
-            class="flex flex-shrink-0 items-center border-b border-solid border-gray-600 px-8 h-48 default-focus-style"
+            class="
+                flex flex-shrink-0
+                items-center
+                border-b border-solid border-gray-600
+                px-8
+                h-48
+                default-focus-style
+            "
             v-focus-item="'show-truncate'"
         >
             <back
@@ -35,28 +42,30 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
 import { PanelInstance } from '@/api';
+import { defineComponent, PropType } from 'vue';
 
-@Component
-export default class PanelScreenV extends Vue {
-    /**
-     * A prop indicating if the `header` slot should be rendered.
-     */
-    @Prop({ default: true }) header!: boolean;
-
-    /**
-     * A prop indicating if the `content` slot should be rendered.
-     */
-    @Prop({ default: true }) content!: boolean;
-
-    /**
-     * A prop indicating if the `footer` slot should be rendered.
-     */
-    @Prop({ default: false }) footer!: boolean;
-
-    @Prop() panel!: PanelInstance;
-}
+export default defineComponent({
+    name: 'PanelScreenV',
+    props: {
+        // prop indicating if the `header` slot should be rendered
+        header: {
+            type: Boolean,
+            default: true
+        },
+        // prop indicating if the `content` slot should be rendered
+        content: {
+            type: Boolean,
+            default: true
+        },
+        // prop indicating if the `footer` slot should be rendered
+        footer: {
+            type: Boolean,
+            default: false
+        },
+        panel: Object as PropType<PanelInstance>
+    }
+});
 </script>
 
 <style lang="scss" scoped></style>

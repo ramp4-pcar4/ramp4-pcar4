@@ -13,26 +13,30 @@ import { i18n } from '@/lang';
 type ConfigContext = ActionContext<ConfigState, RootState>;
 
 const getters = {
-    getActiveConfig: (state: ConfigState) => (lang: string): RampConfig => {
-        if (state.registeredConfigs[lang] === undefined) {
-            throw new Error(
-                'Unsupported language or no registered config exists for requested language'
-            );
-        }
-        return state.registeredConfigs[lang];
-    },
+    getActiveConfig:
+        (state: ConfigState) =>
+        (lang: string): RampConfig => {
+            if (state.registeredConfigs[lang] === undefined) {
+                throw new Error(
+                    'Unsupported language or no registered config exists for requested language'
+                );
+            }
+            return state.registeredConfigs[lang];
+        },
 
     getMapConfig: (state: ConfigState): RampMapConfig => {
         return state.config.map as RampMapConfig;
     },
 
-    getFixtureConfig: (state: ConfigState) => (key: string): any => {
-        return state.config.fixtures[key];
-    }
+    getFixtureConfig:
+        (state: ConfigState) =>
+        (key: string): any => {
+            return state.config.fixtures[key];
+        }
 };
 
 const actions = {
-    newConfig: function(
+    newConfig: function (
         this: any,
         context: ConfigContext,
         config: RampConfig
@@ -42,7 +46,7 @@ const actions = {
         console.log('new config adding layers', newConfig.layers);
         this.set(LayerStore.addLayerConfigs, newConfig.layers);
     },
-    registerConfig: function(
+    registerConfig: function (
         this: any,
         context: ConfigContext,
         configInfo: any
@@ -57,12 +61,12 @@ const actions = {
             );
         } else {
             // register config for all available languages
-            for (const lang in i18n.messages) {
+            for (const lang in i18n.global.messages) {
                 context.state.registeredConfigs[lang] = config;
             }
         }
     },
-    overrideConfig: function(
+    overrideConfig: function (
         this: any,
         context: ConfigContext,
         newConfig: RampConfig
@@ -73,7 +77,7 @@ const actions = {
         context.commit('SET_CONFIG', newConfig);
         // TODO: trigger map reload?
     },
-    updateConfig: function(
+    updateConfig: function (
         this: any,
         context: ConfigContext,
         fixtureConfig: any

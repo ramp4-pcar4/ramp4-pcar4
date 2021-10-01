@@ -17,14 +17,16 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-@Component
-export default class BasemapNavButtonV extends Vue {
-    togglePanel(): void {
-        const panel = this.$iApi.panel.toggle('basemap-panel');
+export default defineComponent({
+    name: 'BasemapNavButtonV',
+    methods: {
+        togglePanel() {
+            const panel = this.$iApi.panel.toggle('basemap-panel');
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

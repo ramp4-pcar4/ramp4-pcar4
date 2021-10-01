@@ -1,6 +1,6 @@
 import AppbarV from './appbar.vue';
 import { AppbarAPI } from './api/appbar';
-import { appbar, AppbarItemInstance } from './store';
+import { appbar, AppbarFixtureConfig } from './store';
 import { GlobalEvents, PanelInstance } from '@/api';
 import messages from './lang/lang.csv';
 
@@ -15,28 +15,24 @@ class AppbarFixture extends AppbarAPI {
         this.$vApp.$store.registerModule('appbar', appbar());
 
         // merge in translations since this has no panel
-        Object.entries(messages).forEach(value =>
-            this.$vApp.$i18n.mergeLocaleMessage(...value)
+        Object.entries(messages).forEach((value) =>
+            (<any>this.$vApp.$i18n).mergeLocaleMessage(...value)
         );
 
-        const appbarInstance = this.extend(AppbarV, {
-            store: this.$vApp.$store,
-            i18n: this.$vApp.$i18n
+        const { vNode, destroy, el } = this.mount(AppbarV, {
+            app: this.$element
         });
-
-        // TODO: the `innerShell` reference will probably get used more than once; consider creating a dedicated ref on `$iApi`;
-        const innerShell = this.$vApp.$el.getElementsByClassName(
-            'inner-shell'
-        )[0];
+        const innerShell =
+            this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         innerShell.insertBefore(
-            appbarInstance.$el,
+            el.childNodes[0],
             innerShell.querySelector('.panel-stack')
         );
 
         this._parseConfig(this.config);
         this.$vApp.$watch(
             () => this.config,
-            value => this._parseConfig(value)
+            (value: AppbarFixtureConfig | undefined) => this._parseConfig(value)
         );
 
         // Add and remove temp appbar buttons when panels are opened and close
@@ -77,7 +73,7 @@ class AppbarFixture extends AppbarAPI {
     removed() {
         this.$vApp.$store.unregisterModule('appbar');
 
-        this.eventHandlers.forEach(eventHandler =>
+        this.eventHandlers.forEach((eventHandler) =>
             this.$iApi.event.off(eventHandler)
         );
     }

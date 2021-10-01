@@ -3,10 +3,11 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-@Component
-export default class DividerNavV extends Vue {}
+export default defineComponent({
+    name: 'DividerNavV'
+});
 </script>
 
 <style lang="scss" scoped></style>

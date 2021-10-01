@@ -17,16 +17,26 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Get, Sync, Call } from 'vuex-pathify';
-import { ToggleButton } from 'vue-js-toggle-button';
+import { defineComponent } from 'vue';
+import Toggle from '@vueform/toggle';
 
-@Component
-export default class ToggleButtonControl extends Vue {
-    @Prop() config: any;
-    @Prop() name!: string;
-    @Prop() icon!: string;
-}
+export default defineComponent({
+    name: 'ToggleButtonControl',
+    props: {
+        config: {
+            type: Object,
+            required: true
+        },
+        name: {
+            type: String,
+            required: true
+        },
+        icon: {
+            type: String,
+            required: true
+        }
+    }
+});
 </script>
 
 <style lang="scss" scoped>

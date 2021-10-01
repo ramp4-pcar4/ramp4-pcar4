@@ -3,9 +3,12 @@
         <button
             class="text-gray-500 hover:text-black p-8"
             :class="{ 'text-gray-700': active }"
-            @click="$emit('click')"
             :content="$t('panels.controls.back')"
-            v-tippy="{ placement: 'bottom' }"
+            v-tippy="{
+                placement: 'bottom',
+                theme: 'ramp4',
+                animation: 'scale'
+            }"
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -22,12 +25,16 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-@Component
-export default class BackV extends Vue {
-    @Prop() active!: boolean;
-}
+export default defineComponent({
+    name: 'BackV',
+    props: {
+        active: {
+            type: Boolean
+        }
+    }
+});
 </script>
 
 <style lang="scss" scoped></style>

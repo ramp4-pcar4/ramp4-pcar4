@@ -1,6 +1,14 @@
 <template>
     <dropdown-menu
-        class="absolute inset-x-0 bottom-0 h-48 w-full text-center focus:outline-none"
+        class="
+            absolute
+            inset-x-0
+            bottom-0
+            h-48
+            w-full
+            text-center
+            focus:outline-none
+        "
         v-focus-item
         position="right-end"
         :tooltip="$t('appbar.navigation')"
@@ -46,14 +54,16 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-@Component
-export default class NavAppbarButtonV extends Vue {
-    exportToggle() {
-        this.$iApi.panel.toggle('export-v1-panel');
+export default defineComponent({
+    name: 'NavAppbarButtonV',
+    methods: {
+        exportToggle() {
+            this.$iApi.panel.toggle('export-v1-panel');
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped></style>

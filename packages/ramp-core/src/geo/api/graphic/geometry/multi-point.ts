@@ -110,7 +110,7 @@ export class MultiPoint extends BaseGeometry {
             if (input.length === 0) {
                 throw new Error('no verticies provided');
             }
-            return input.map(v => Point.parseXY(v));
+            return input.map((v) => Point.parseXY(v));
         } else {
             throw new Error('invalid input format for parsePointSet');
         }
@@ -120,6 +120,6 @@ export class MultiPoint extends BaseGeometry {
         a: Array<Array<number>>
     ): Array<Array<number>> {
         // speed tests show loops & slice is 3x faster than JSON parse/stringify
-        return a.map(p => p.slice());
+        return a.map((p) => p.slice());
     }
 }

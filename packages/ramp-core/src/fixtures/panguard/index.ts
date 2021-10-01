@@ -6,14 +6,16 @@ class PanguardFixture extends FixtureInstance {
     added(): void {
         console.log(`[fixture] ${this.id} added`);
         // Manually add lang entries to i18n
-        Object.entries(messages).forEach(value =>
-            this.$vApp.$i18n.mergeLocaleMessage(...value)
+        Object.entries(messages).forEach((value) =>
+            (<any>this.$vApp.$i18n).mergeLocaleMessage(...value)
         );
 
-        const panguard = this.extend(PanguardV);
-        this.$vApp.$root.$el
-            .getElementsByClassName('inner-shell')[0]
-            .prepend(panguard.$el);
+        const { vNode, destroy, el } = this.mount(PanguardV, {
+            app: this.$element
+        });
+        const innerShell =
+            this.$vApp.$el.getElementsByClassName('inner-shell')[0];
+        innerShell.appendChild(el.childNodes[0]);
     }
 
     removed(): void {

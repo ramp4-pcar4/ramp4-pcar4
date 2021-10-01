@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { defineComponent, markRaw } from 'vue';
 
 // Import control templates.
 import SliderControl from './templates/slider-control.vue';
@@ -17,21 +17,38 @@ import ToggleButtonControl from './templates/toggle-button-control.vue';
 import InputControl from './templates/input-control.vue';
 import { svgIcons } from './templates/icons';
 
-@Component
-export default class SettingsComponentV extends Vue {
-    @Prop() type!: string;
-    @Prop() config!: any;
-    @Prop() name!: string;
-    @Prop() icon!: string;
+export default defineComponent({
+    name: 'SettingsComponentV',
+    props: {
+        type: {
+            type: String,
+            required: true
+        },
+        config: {
+            type: Object,
+            required: true
+        },
+        name: {
+            type: String,
+            required: true
+        },
+        icon: {
+            type: String,
+            required: true
+        }
+    },
 
-    icons: any = svgIcons;
-
-    // Binds each type to its respective Vue component.
-    templates = {
-        slider: SliderControl,
-        toggle: ToggleSwitchControl,
-        'toggle-button': ToggleButtonControl,
-        input: InputControl
-    };
-}
+    data() {
+        return {
+            icons: svgIcons,
+            // binds each type to its respective Vue component.
+            templates: {
+                slider: markRaw(SliderControl),
+                toggle: markRaw(ToggleSwitchControl),
+                'toggle-button': markRaw(ToggleButtonControl),
+                input: markRaw(InputControl)
+            }
+        };
+    }
+});
 </script>

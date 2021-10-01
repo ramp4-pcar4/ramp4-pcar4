@@ -1,5 +1,5 @@
+import { markRaw } from 'vue';
 import { ExportV1API } from './api';
-
 import ExportV1AppbarButtonV from './appbar-button.vue';
 import ExportV1ScreenV from './screen.vue';
 
@@ -22,7 +22,7 @@ class ExportV1Fixture extends ExportV1API {
             {
                 id: 'export-v1-panel',
                 config: {
-                    screens: { 'export-v1-screen': ExportV1ScreenV },
+                    screens: { 'export-v1-screen': markRaw(ExportV1ScreenV) },
                     style: {
                         'flex-grow': '1',
                         'max-width': '800px'

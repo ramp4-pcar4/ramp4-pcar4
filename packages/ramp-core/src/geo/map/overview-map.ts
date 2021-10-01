@@ -1,3 +1,4 @@
+import { markRaw } from 'vue';
 import { CommonMapAPI, InstanceAPI } from '@/api/internal';
 import {
     BaseGeometry,
@@ -64,7 +65,7 @@ export class OverviewMapAPI extends CommonMapAPI {
             extent: config.extent
         };
 
-        this.esriView = new EsriMapView(esriViewConfig);
+        this.esriView = markRaw(new EsriMapView(esriViewConfig));
         this.esriView.ui.components = [];
 
         // initialize extent rectangle graphic
@@ -78,28 +79,28 @@ export class OverviewMapAPI extends CommonMapAPI {
         };
         this.esriView.graphics.add(new EsriGraphic(graphic));
 
-        this.esriView.on('mouse-wheel', esriMouseWheel => {
+        this.esriView.on('mouse-wheel', (esriMouseWheel) => {
             esriMouseWheel.stopPropagation();
         });
 
-        this.esriView.on('double-click', esriDoubleClick => {
+        this.esriView.on('double-click', (esriDoubleClick) => {
             esriDoubleClick.stopPropagation();
         });
 
-        this.esriView.on('key-down', esriKeyDown => {
+        this.esriView.on('key-down', (esriKeyDown) => {
             esriKeyDown.stopPropagation();
         });
 
-        this.esriView.on('key-up', esriKeyUp => {
+        this.esriView.on('key-up', (esriKeyUp) => {
             esriKeyUp.stopPropagation();
         });
 
-        this.esriView.on('drag', esriDrag => {
+        this.esriView.on('drag', (esriDrag) => {
             esriDrag.stopPropagation();
             this.mapDrag(esriDrag);
         });
 
-        this.esriView.container.addEventListener('touchmove', e => {
+        this.esriView.container.addEventListener('touchmove', (e) => {
             // need this for panning and zooming to work on mobile devices / touchscreens
             // touchmove stops the drag event (what the MapView reacts to) from firing properly
             e.preventDefault();
@@ -125,8 +126,9 @@ export class OverviewMapAPI extends CommonMapAPI {
         if (esriDrag.action === 'start') {
             // check if drag hits graphic, if so set start extent
             if (await this.cursorHitTest(esriDrag)) {
-                this.startExtent = this.esriView!.graphics.getItemAt(0)
-                    .geometry as __esri.Extent;
+                this.startExtent = markRaw(
+                    this.esriView!.graphics.getItemAt(0).geometry
+                ) as __esri.Extent;
             }
         } else if (this.startExtent) {
             // determine delta in map coords from drag origin to current drag point and update extent graphic
@@ -164,9 +166,8 @@ export class OverviewMapAPI extends CommonMapAPI {
         this.zoomMapTo(newExtent.center(), overviewScale, false);
 
         // this draws the outline of the main map extent
-        this.esriView!.graphics.getItemAt(
-            0
-        ).geometry = this.$iApi.geo.map.esriView!.extent;
+        this.esriView!.graphics.getItemAt(0).geometry =
+            this.$iApi.geo.map.esriView!.extent;
     }
 
     /**

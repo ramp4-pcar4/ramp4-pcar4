@@ -67,7 +67,12 @@
             @click="onScaleClick"
             :aria-pressed="scale.isImperialScale"
             :aria-label="$t('map.toggleScaleUnits')"
-            v-tippy="{ placement: 'top', hideOnClick: false }"
+            v-tippy="{
+                placement: 'top',
+                hideOnClick: false,
+                theme: 'ramp4',
+                animation: 'scale'
+            }"
             :content="$t('map.toggleScaleUnits')"
         >
             <span
@@ -113,54 +118,56 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from 'vue-property-decorator';
-import { Get } from 'vuex-pathify';
+import { defineComponent, PropType } from 'vue';
+import { get } from '@/store/pathify-helper';
 import { Attribution, MouseCoords, RampMapConfig, ScaleBar } from '@/geo/api';
 import { MapCaptionStore } from '@/store/modules/map-caption';
 import { ConfigStore } from '@/store/modules/config';
 import NotificationsCaptionButtonV from '@/components/notification-center/caption-button.vue';
-
-@Component({
+export default defineComponent({
+    data() {
+        return {
+            scale: get(MapCaptionStore.scale),
+            attribution: get(MapCaptionStore.attribution),
+            cursorCoords: get(MapCaptionStore.cursorCoords),
+            mapConfig: get(ConfigStore.getMapConfig),
+            lang: [] as string[]
+        };
+    },
     components: {
         'notifications-caption-button': NotificationsCaptionButtonV
-    }
-})
-export default class MapCaptionV extends Vue {
-    @Get(MapCaptionStore.scale) scale!: ScaleBar;
-    @Get(MapCaptionStore.attribution) attribution!: Attribution;
-    @Get(MapCaptionStore.cursorCoords) cursorCoords!: MouseCoords;
-    @Get(ConfigStore.getMapConfig) mapConfig!: RampMapConfig;
-    lang: string[] = [];
-
-    @Watch('mapConfig')
-    onMapConfigChange(newValue: RampMapConfig, oldValue: RampMapConfig) {
-        if (newValue === oldValue) {
-            return;
+    },
+    watch: {
+        mapConfig(newConfig: RampMapConfig, oldConfig: RampMapConfig) {
+            if (newConfig === oldConfig) {
+                return;
+            }
+            this.$iApi.geo.map.caption.createCaption(this.mapConfig.caption);
         }
-        this.$iApi.geo.map.caption.createCaption(this.mapConfig.caption);
-    }
-
+    },
     updated() {
-        if (this.$iApi.$vApp.$i18n && this.lang.length == 0) {
-            this.lang = this.$iApi.$vApp.$i18n.availableLocales;
+        this.$nextTick(function () {
+            if (this.$iApi.$vApp.$i18n && this.lang.length == 0) {
+                this.lang = this.$iApi.$vApp.$i18n.availableLocales;
+            }
+        });
+    },
+    methods: {
+        changeLang(lang: string) {
+            if (this.$iApi.$vApp.$i18n.locale != lang) {
+                this.$iApi.setLanguage(lang);
+            }
+        },
+        /**
+         * Toggle the scale units
+         */
+        onScaleClick() {
+            // undefined argument will toggle the scale unit
+            this.$iApi.$vApp.$store.set(MapCaptionStore.toggleScale, undefined);
+            this.$iApi.geo.map.caption.updateScale();
         }
     }
-
-    changeLang(lang: string) {
-        if (this.$iApi.$vApp.$i18n.locale != lang) {
-            this.$iApi.setLanguage(lang);
-        }
-    }
-
-    /**
-     * Toggle the scale units
-     */
-    onScaleClick() {
-        // undefined argument will toggle the scale unit
-        this.$iApi.$vApp.$store.set(MapCaptionStore.toggleScale, undefined);
-        this.$iApi.geo.map.caption.updateScale();
-    }
-}
+});
 </script>
 
 <style lang="scss" scoped>

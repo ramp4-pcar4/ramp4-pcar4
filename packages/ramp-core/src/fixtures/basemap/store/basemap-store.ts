@@ -15,7 +15,7 @@ const actions = {
      *
      * @function setSelectedBasemap
      */
-    selectBasemap: function(
+    selectBasemap: function (
         context: BasemapContext,
         basemap: RampBasemapConfig | undefined
     ): void {
@@ -49,7 +49,7 @@ export enum BasemapStore {
     /**
      * (Action) selectBasemap: (basemap: RampBasemapConfig)
      */
-    selectBasemap = 'basemap/selectBasemap!'
+    selectBasemap = 'basemap/selectBasemap'
 }
 
 export function basemap() {

@@ -18,19 +18,31 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-@Component
-export default class AppbarButtonV extends Vue {
-    @Prop() onClickFunction!: any;
-    @Prop() id!: any;
-    @Prop() tooltip?: string;
-
-    onClick() {
-        //TODO: change fixtures to use this instead of click handlers in <fixture>-appbar-button?
-        this.$iApi.event.emit('appbar/click', this.id);
+export default defineComponent({
+    name: 'AppbarButtonV',
+    props: {
+        onClickFunction: {
+            type: Function,
+            required: true
+        },
+        id: {
+            type: String,
+            required: true
+        },
+        tooltip: {
+            type: [String, Boolean],
+            default: false
+        }
+    },
+    methods: {
+        onClick() {
+            // TODO: change fixtures to use this instead of click handlers in <fixture>-appbar-button?
+            this.$iApi.event.emit('appbar/click', this.id);
+        }
     }
-}
+});
 </script>
 
 <style lang="scss" scoped>

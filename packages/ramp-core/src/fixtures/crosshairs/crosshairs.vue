@@ -47,12 +47,16 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 import { GlobalEvents } from '@/api';
 
-@Component({})
-export default class CrosshairsV extends Vue {
-    visible: boolean = false;
+export default defineComponent({
+    name: 'CrosshairsV',
+    data() {
+        return {
+            visible: false
+        };
+    },
 
     mounted() {
         this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, () => {
@@ -70,7 +74,7 @@ export default class CrosshairsV extends Vue {
             this.visible = false;
         });
     }
-}
+});
 </script>
 
 <style lang="scss" scoped>

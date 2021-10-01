@@ -3,7 +3,6 @@
         <button
             class="text-gray-500 hover:text-black p-8"
             :class="{ 'text-gray-700': active }"
-            @click="$emit('click')"
             :content="
                 $t(
                     this.active
@@ -28,12 +27,16 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { defineComponent } from 'vue';
 
-@Component
-export default class PinV extends Vue {
-    @Prop() active!: boolean;
-}
+export default defineComponent({
+    name: 'PinV',
+    props: {
+        active: {
+            type: Boolean
+        }
+    }
+});
 </script>
 
 <style lang="scss" scoped></style>

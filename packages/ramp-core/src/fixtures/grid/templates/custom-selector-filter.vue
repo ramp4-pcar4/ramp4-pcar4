@@ -1,7 +1,15 @@
 <template>
     <div class="h-full flex items-center justify-center">
         <select
-            class="rv-input w-full"
+            class="
+                rv-input
+                w-full
+                bg-transparent
+                text-black-75
+                h-24
+                pb-8
+                border-0 border-b-2
+            "
             v-model="selectedOption"
             @change="selectionChanged()"
         >
@@ -13,10 +21,18 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { defineComponent, ref } from 'vue';
 
-@Component
-export default class GridCustomSelectorFilterV extends Vue {
+export default defineComponent({
+    name: 'GridCustomSelectorFilterV',
+    data(props) {
+        return {
+            params: props.params as any,
+            selectedOption: '' as String,
+            options: [] as Array<String>
+        };
+    },
+
     beforeMount() {
         // Load previously stored value (if saved in table state manager)
         this.selectedOption = this.params.stateManager.getColumnFilter(
@@ -36,51 +52,55 @@ export default class GridCustomSelectorFilterV extends Vue {
 
         // Apply the default value to the column filter.
         this.selectionChanged();
-    }
+    },
 
-    selectionChanged() {
-        this.selectedOption = this.selectedOption ? this.selectedOption : '';
+    methods: {
+        selectionChanged() {
+            this.selectedOption = this.selectedOption
+                ? this.selectedOption
+                : '';
 
-        this.params.parentFilterInstance((instance: any) => {
-            if (this.selectedOption === '...') {
-                // Clear the selector filter.
-                instance.setModel(null);
-                instance.onFilterChanged();
+            this.params.parentFilterInstance((instance: any) => {
+                if (this.selectedOption === '...') {
+                    // Clear the selector filter.
+                    instance.setModel(null);
+                    instance.onFilterChanged();
+                    this.selectedOption = '';
+                } else {
+                    // Filter by the selected option.
+                    instance.setModel({
+                        filterType: 'text',
+                        type: 'contains',
+                        filter: this.selectedOption
+                    });
+                }
+
+                // Save the new filter value in the state manager. Allows for quick recovery if the grid is
+                // closed and re-opened.
+                this.params.stateManager.setColumnFilter(
+                    this.params.column.colDef.field,
+                    this.selectedOption
+                );
+
+                this.params.api.onFilterChanged();
+            });
+        },
+
+        onParentModelChanged(parentModel: any) {
+            if (parentModel === {}) {
                 this.selectedOption = '';
-            } else {
-                // Filter by the selected option.
-                instance.setModel({
-                    filterType: 'text',
-                    type: 'contains',
-                    filter: this.selectedOption
-                });
             }
+        },
 
-            // Save the new filter value in the state manager. Allows for quick recovery if the grid is
-            // closed and re-opened.
-            this.params.stateManager.setColumnFilter(
-                this.params.column.colDef.field,
-                this.selectedOption
-            );
-
-            this.params.api.onFilterChanged();
-        });
-    }
-
-    onParentModelChanged(parentModel: any) {
-        if (parentModel === {}) {
-            this.selectedOption = '';
+        setModel() {
+            return {
+                filterType: 'text',
+                type: 'contains',
+                filter: this.selectedOption
+            };
         }
     }
-
-    setModel() {
-        return {
-            filterType: 'text',
-            type: 'contains',
-            filter: this.selectedOption
-        };
-    }
-}
+});
 
 export default interface GridCustomSelectorFilter {
     selectedOption: string;

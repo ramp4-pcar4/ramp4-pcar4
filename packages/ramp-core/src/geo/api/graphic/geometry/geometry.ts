@@ -255,7 +255,7 @@ export class GeometryAPI {
         };
 
         Object.keys(rampGraphic.attributes).forEach(
-            k => (f.properties[k] = rampGraphic.attributes[k])
+            (k) => (f.properties[k] = rampGraphic.attributes[k])
         );
 
         return f;
@@ -273,7 +273,7 @@ export class GeometryAPI {
         const g = new Graphic();
         g.geometry = this.geomGeoJsonToRamp(geoJsonFeature.geometry, geomId);
         Object.keys(geoJsonFeature.properties).forEach(
-            k => (g.attributes[k] = geoJsonFeature.properties[k])
+            (k) => (g.attributes[k] = geoJsonFeature.properties[k])
         );
 
         return g;
@@ -419,8 +419,8 @@ export class GeometryAPI {
 
         // TODO is there a more efficient way to do this than with pushes? use concats?
         // concat will keep re-copying all known rings with each new polygon encountered, so probably worse
-        rampMultiPolygon.toArray().forEach(poly => {
-            poly.forEach(ring => ringMerger.push(ring));
+        rampMultiPolygon.toArray().forEach((poly) => {
+            poly.forEach((ring) => ringMerger.push(ring));
         });
         return this.polygonFactory(ringMerger, rampMultiPolygon.sr);
     }

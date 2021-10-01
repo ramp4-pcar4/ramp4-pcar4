@@ -1,3 +1,4 @@
+import { Directive, DirectiveBinding } from 'vue';
 const ITEM_ATTR = 'focus-item';
 
 /**
@@ -18,8 +19,11 @@ const ITEM_ATTR = 'focus-item';
  *
  * You can show the tooltips of truncated text when this is focussed by supplying the value 'show-truncate' to the directive.
  */
-export const FocusItem: Vue.DirectiveOptions = {
-    bind(el: HTMLElement, binding: Vue.VNodeDirective /*, vnode: Vue.VNode */) {
+export const FocusItem: Directive = {
+    beforeMount(
+        el: HTMLElement,
+        binding: DirectiveBinding /*, vnode: Vue.VNode */
+    ) {
         if (!el.hasAttribute('id')) {
             el.setAttribute('id', generateID());
         }
@@ -35,11 +39,7 @@ export const FocusItem: Vue.DirectiveOptions = {
 export function generateID(): string {
     let newID;
     do {
-        newID =
-            'focus-item-' +
-            Math.random()
-                .toString(36)
-                .substring(2, 9);
+        newID = 'focus-item-' + Math.random().toString(36).substring(2, 9);
     } while (document.getElementById(newID) !== null);
 
     return newID;

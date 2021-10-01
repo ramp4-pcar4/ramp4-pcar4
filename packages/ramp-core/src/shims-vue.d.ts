@@ -1,11 +1,12 @@
 declare module '*.vue' {
-    import Vue from 'vue';
-    export default Vue;
+    import type { DefineComponent } from 'vue';
+    const component: DefineComponent<{}, {}, any>;
+    export default component;
 }
 
 declare module '*lang.csv' {
-    import { LocaleMessages } from 'vue-i18n';
-    const content: LocaleMessages;
+    import { LocaleMessages, VueMessageType } from 'vue-i18n';
+    const content: LocaleMessages<VueMessageType>;
     export default content;
 }
 

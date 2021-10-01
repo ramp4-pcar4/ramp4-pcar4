@@ -1,10 +1,11 @@
 import { DetailsAPI } from './api/details';
-import { details } from './store';
+import { details, DetailsConfig } from './store';
 import DetailsAppbarButtonV from './appbar-button.vue';
 import DetailsLayerScreenV from './layers-screen.vue';
 import DetailsResultScreenV from './result-screen.vue';
 import DetailsItemScreenV from './item-screen.vue';
 import messages from './lang/lang.csv';
+import { markRaw } from 'vue';
 
 class DetailsFixture extends DetailsAPI {
     async added() {
@@ -12,9 +13,9 @@ class DetailsFixture extends DetailsAPI {
             {
                 'details-panel': {
                     screens: {
-                        'details-screen-layers': DetailsLayerScreenV,
-                        'details-screen-result': DetailsResultScreenV,
-                        'details-screen-item': DetailsItemScreenV
+                        'details-screen-layers': markRaw(DetailsLayerScreenV),
+                        'details-screen-result': markRaw(DetailsResultScreenV),
+                        'details-screen-item': markRaw(DetailsItemScreenV)
                     },
                     style: {
                         width: '350px'
@@ -33,7 +34,7 @@ class DetailsFixture extends DetailsAPI {
         this._parseConfig(this.config);
         this.$vApp.$watch(
             () => this.config,
-            value => this._parseConfig(value)
+            (value: DetailsConfig | undefined) => this._parseConfig(value)
         );
     }
 
