@@ -8,6 +8,7 @@
             zIndex: 5,
             theme: 'ramp4',
             trigger: 'manual',
+            appendTo: 'parent',
             arrow: false,
             delay: 200,
             duration: [200, 200]
@@ -47,15 +48,14 @@ export default defineComponent({
     },
 
     watch: {
-        maptipProperties() {
-            if (this.maptipProperties) {
+        maptipPoint() {
+            if (this.maptipPoint) {
                 // Calculate offset from mappoint
                 let offsetX, offsetY: number;
                 const originX: number = this.$iApi.geo.map.getPixelWidth() / 2;
                 const originY: number = 0;
-                const screenPointFromMapPoint = this.$iApi.geo.map.mapPointToScreenPoint(
-                    this.maptipProperties.mapPoint
-                );
+                const screenPointFromMapPoint =
+                    this.$iApi.geo.map.mapPointToScreenPoint(this.maptipPoint);
                 offsetX = screenPointFromMapPoint.screenX - originX;
                 offsetY = originY - screenPointFromMapPoint.screenY;
                 this.maptipInstance.setProps({
@@ -136,10 +136,10 @@ export default defineComponent({
 
             const layers = await Promise.all(
                 newValue
-                    .filter(lc => !oldValue.includes(lc))
-                    .map(layerConfig => {
+                    .filter((lc) => !oldValue.includes(lc))
+                    .map((layerConfig) => {
                         return new Promise<LayerInstance | null>(
-                            async resolve => {
+                            async (resolve) => {
                                 let defLoadProm: Promise<string>;
 
                                 // check if we need to load the layer class
@@ -155,9 +155,10 @@ export default defineComponent({
                                     // if the definition is a custom number, the site host would have had to add the
                                     // definition already. this block should only run for layer types that are bundled
                                     // in the ramp core codebase.
-                                    defLoadProm = this.$iApi.geo.layer.addLayerDef(
-                                        layerConfig.layerType
-                                    );
+                                    defLoadProm =
+                                        this.$iApi.geo.layer.addLayerDef(
+                                            layerConfig.layerType
+                                        );
                                 }
 
                                 // wait for definition to load, or ride the resolve if already loaded
