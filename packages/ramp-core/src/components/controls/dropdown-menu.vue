@@ -7,7 +7,8 @@
             v-tippy="{
                 placement: tooltipPlacement,
                 theme: tooltipTheme,
-                animation: tooltipAnimation
+                animation: tooltipAnimation,
+                appendTo: 'parent'
             }"
             ref="dropdown-trigger"
         >

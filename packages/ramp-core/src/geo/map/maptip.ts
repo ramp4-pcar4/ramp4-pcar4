@@ -28,11 +28,8 @@ export class MaptipAPI extends APIScope {
      */
     async checkAtCoord(screenPoint: ScreenPoint): Promise<void> {
         // Get the graphic object
-        const graphicHit:
-            | GraphicHitResult
-            | undefined = await this.$iApi.geo.map.getGraphicAtCoord(
-            screenPoint
-        );
+        const graphicHit: GraphicHitResult | undefined =
+            await this.$iApi.geo.map.getGraphicAtCoord(screenPoint);
 
         if (!graphicHit) {
             this.lastHit = undefined;
@@ -56,9 +53,8 @@ export class MaptipAPI extends APIScope {
         this.clear();
 
         // Get the layer
-        const layerInstance:
-            | LayerInstance
-            | undefined = this.$iApi.geo.layer.getLayer(graphicHit.layerId);
+        const layerInstance: LayerInstance | undefined =
+            this.$iApi.geo.layer.getLayer(graphicHit.layerId);
         if (!layerInstance) {
             // Something seriously wrong here because esri gave us a non-existent layerID
             console.error(
@@ -97,7 +93,7 @@ export class MaptipAPI extends APIScope {
         icon: string;
     }) {
         this.setContent(
-            `<div class="flex justify-center text-center">${info.icon} ${
+            `<div class="flex items-center">${info.icon} ${
                 info.attributes[
                     info.layer.config.tooltipField ||
                         info.layer.getNameField(info.graphicHit.layerIdx)
