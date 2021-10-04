@@ -16,10 +16,30 @@ export type I18nComponentOptions = {
 
 const lang = 'en';
 
+// default number localization
+// settings can be overidden when the $n is called
+const numberFormats = {
+    en: {
+        number: {
+            style: 'decimal',
+            useGrouping: false,
+            maximumFractionDigits: 2
+        }
+    },
+    fr: {
+        number: {
+            style: 'decimal',
+            useGrouping: false,
+            maximumFractionDigits: 2
+        }
+    }
+};
+
 export const i18n = createI18n({
     // get the language of the page from the root `html` node
     locale: document.documentElement!.getAttribute('lang') || lang,
     fallbackLocale: lang,
     globalInjection: true,
-    messages: messages
+    messages: messages,
+    numberFormats
 });
