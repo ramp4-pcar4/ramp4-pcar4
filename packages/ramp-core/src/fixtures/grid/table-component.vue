@@ -267,6 +267,12 @@ export default defineComponent({
                         if (NUM_TYPES.indexOf(fieldInfo.type) > -1) {
                             this.setUpNumberFilter(col, this.config.state);
                             col.filter = 'agNumberColumnFilter';
+                            col.cellRenderer = (cell: any) => {
+                                return this.$iApi.$vApp.$n(
+                                    cell.value,
+                                    'number'
+                                );
+                            };
                         } else if (fieldInfo.type === DATE_TYPE) {
                             this.setUpDateFilter(col, this.config.state);
                             col.filter = 'agDateColumnFilter';
@@ -368,6 +374,14 @@ export default defineComponent({
                         }
                     }
                 )
+            );
+            this.handlers.push(
+                this.$iApi.event.on(GlobalEvents.CONFIG_CHANGE, () => {
+                    // Refresh the grid when the config changes (the language might have changed)
+                    this.gridApi.redrawRows({
+                        force: true
+                    });
+                })
             );
             this.applyLayerFilters();
         },
