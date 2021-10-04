@@ -169,7 +169,7 @@ export class EventAPI extends APIScope {
         // getting enum values is a mess. this code does it but assumes
         // all event names in global events use the slash format
         this._nameRegister = Object.values(GlobalEvents).filter(
-            e => typeof e === 'string' && e.indexOf('/') > -1
+            (e) => typeof e === 'string' && e.indexOf('/') > -1
         );
     }
 
@@ -182,7 +182,7 @@ export class EventAPI extends APIScope {
      * @private
      */
     private findHandler(handlerName: string): EventHandler | undefined {
-        return this._eventRegister.find(eh => eh.handlerName === handlerName);
+        return this._eventRegister.find((eh) => eh.handlerName === handlerName);
     }
 
     /**
@@ -206,7 +206,7 @@ export class EventAPI extends APIScope {
      */
     registerEventName(names: string | Array<string>): void {
         const arrr = Array.isArray(names) ? names : [names];
-        arrr.forEach(n => {
+        arrr.forEach((n) => {
             // don't add if name is already registered
             if (this._nameRegister.indexOf(n) === -1) {
                 this._nameRegister.push(n);
@@ -331,11 +331,11 @@ export class EventAPI extends APIScope {
         // TODO add a filter if we implement disabled events
 
         if (event === '') {
-            return this._eventRegister.map(eh => eh.handlerName);
+            return this._eventRegister.map((eh) => eh.handlerName);
         }
         return this._eventRegister
-            .filter(eh => eh.eventName === event)
-            .map(eh => eh.handlerName);
+            .filter((eh) => eh.eventName === event)
+            .map((eh) => eh.handlerName);
     }
 
     /**
@@ -385,7 +385,7 @@ export class EventAPI extends APIScope {
         }
 
         // add all the requested default event handlers.
-        return eventHandlerNames.map(hn => this.defaultHandlerFactory(hn));
+        return eventHandlerNames.map((hn) => this.defaultHandlerFactory(hn));
     }
 
     /**
@@ -411,9 +411,8 @@ export class EventAPI extends APIScope {
             case DefEH.IDENTIFY_DETAILS:
                 // when identify runs, open details fixture and show the results
                 zeHandler = (identifyParam: any) => {
-                    const detailFix: DetailsAPI = this.$iApi.fixture.get(
-                        'details'
-                    );
+                    const detailFix: DetailsAPI =
+                        this.$iApi.fixture.get('details');
                     if (detailFix) {
                         detailFix.openDetails(identifyParam.results);
                     }
@@ -422,9 +421,8 @@ export class EventAPI extends APIScope {
                 break;
             case DefEH.TOGGLE_SETTINGS:
                 zeHandler = (payload: any) => {
-                    const settingsFixture: SettingsAPI = this.$iApi.fixture.get(
-                        'settings'
-                    );
+                    const settingsFixture: SettingsAPI =
+                        this.$iApi.fixture.get('settings');
                     if (settingsFixture) {
                         settingsFixture.toggleSettings(payload);
                     }
@@ -438,9 +436,8 @@ export class EventAPI extends APIScope {
                 break;
             case DefEH.OPEN_DETAILS:
                 zeHandler = (payload: any) => {
-                    const detailsFixture: DetailsAPI = this.$iApi.fixture.get(
-                        'details'
-                    );
+                    const detailsFixture: DetailsAPI =
+                        this.$iApi.fixture.get('details');
                     if (detailsFixture) {
                         detailsFixture.openFeature(
                             payload.identifyItem,
@@ -482,9 +479,8 @@ export class EventAPI extends APIScope {
                 break;
             case DefEH.OPEN_WIZARD:
                 zeHandler = () => {
-                    const wizardFixture: WizardAPI = this.$iApi.fixture.get(
-                        'wizard'
-                    );
+                    const wizardFixture: WizardAPI =
+                        this.$iApi.fixture.get('wizard');
                     if (wizardFixture) {
                         wizardFixture.openWizard();
                     }
@@ -497,9 +493,8 @@ export class EventAPI extends APIScope {
                 break;
             case DefEH.GENERATE_LEGEND:
                 zeHandler = (layer: LayerInstance, parent?: any) => {
-                    const legendFixture: LegendAPI = this.$iApi.fixture.get(
-                        'legend'
-                    );
+                    const legendFixture: LegendAPI =
+                        this.$iApi.fixture.get('legend');
                     if (legendFixture) {
                         legendFixture.generateDefaultLegend(layer, parent);
                     }
@@ -542,11 +537,10 @@ export class EventAPI extends APIScope {
                 break;
             case DefEH.MAP_BASEMAPCHANGE_ATTRIBUTION:
                 zeHandler = (payload: string) => {
-                    let currentBasemapConfig:
-                        | RampBasemapConfig
-                        | undefined = this.$iApi
-                        .getConfig()
-                        .map.basemaps.find(bms => bms.id === payload);
+                    let currentBasemapConfig: RampBasemapConfig | undefined =
+                        this.$iApi
+                            .getConfig()
+                            .map.basemaps.find((bms) => bms.id === payload);
 
                     this.$iApi.geo.map.caption.updateAttribution(
                         currentBasemapConfig?.attribution
@@ -560,12 +554,12 @@ export class EventAPI extends APIScope {
                 break;
             case DefEH.CONFIG_CHANGE_ATTRIBUTION:
                 zeHandler = (payload: RampConfig) => {
-                    let currentBasemapConfig:
-                        | RampBasemapConfig
-                        | undefined = payload.map.basemaps.find(
-                        bms =>
-                            bms.id === this.$iApi.geo.map.getCurrentBasemapId()
-                    );
+                    let currentBasemapConfig: RampBasemapConfig | undefined =
+                        payload.map.basemaps.find(
+                            (bms) =>
+                                bms.id ===
+                                this.$iApi.geo.map.getCurrentBasemapId()
+                        );
 
                     this.$iApi.geo.map.caption.updateAttribution(
                         currentBasemapConfig?.attribution
@@ -603,9 +597,10 @@ export class EventAPI extends APIScope {
                 zeHandler = () => {
                     if (this.$iApi.geo.map.keysActive) {
                         // The user is using the crosshairs, perform hit-test using center of screens
-                        let screenCenter: ScreenPoint = this.$iApi.geo.map.mapPointToScreenPoint(
-                            this.$iApi.geo.map.getExtent().center()
-                        );
+                        let screenCenter: ScreenPoint =
+                            this.$iApi.geo.map.mapPointToScreenPoint(
+                                this.$iApi.geo.map.getExtent().center()
+                            );
                         this.$iApi.geo.map.maptip.checkAtCoord(screenCenter);
                     } else {
                         // regular extent change, hide maptip
@@ -636,11 +631,10 @@ export class EventAPI extends APIScope {
                     throttle(200, (mapMove: MapMove) => {
                         // check if cursor coords are disabled
                         // if it is, then do not update it
-                        const currentCursorCoords:
-                            | MouseCoords
-                            | undefined = this.$iApi.$vApp.$store.get(
-                            MapCaptionStore.cursorCoords
-                        );
+                        const currentCursorCoords: MouseCoords | undefined =
+                            this.$iApi.$vApp.$store.get(
+                                MapCaptionStore.cursorCoords
+                            );
                         if (currentCursorCoords?.disabled) {
                             return;
                         }
@@ -651,7 +645,7 @@ export class EventAPI extends APIScope {
                                     mapMove
                                 )
                             )
-                            .then(fs => {
+                            .then((fs) => {
                                 this.$iApi.$vApp.$store.set(
                                     MapCaptionStore.setCursorCoords,
                                     {
