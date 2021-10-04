@@ -71,6 +71,8 @@ export enum GlobalEvents {
      */
     MAP_SCALECHANGE = 'map/scalechanged',
     MAP_RESIZE = 'map/resized',
+
+    MAP_GRAPHICHIT = 'map/graphichit',
     SETTINGS_TOGGLE = 'settings/toggle',
     DETAILS_OPEN = 'details/open',
     HELP_TOGGLE = 'help/toggle',
@@ -113,8 +115,9 @@ enum DefEH {
     MAP_BASEMAPCHANGE_ATTRIBUTION = 'updates_map_caption_attribution_basemap',
     CONFIG_CHANGE_ATTRIBUTION = 'updates_map_caption_attribution_config',
     MAP_SCALECHANGE_SCALEBAR = 'updates_map_caption_scale',
-    OPEN_MAP_FEATURE_MAPTIP = 'open_feature_maptip',
-    EXTENT_CHANGE_FEATURE_MAPTIP = 'updates_feature_maptip_extent_change',
+    MOUSE_MOVE_MAPTIP_CHECK = 'open_feature_maptip',
+    EXTENT_CHANGE_MAPTIP_CHECK = 'updates_feature_maptip_extent_change',
+    SHOW_DEFAULT_MAPTIP = 'show_default_maptip',
     MAP_UPDATE_CAPTION_COORDS = 'updates_map_caption_coords',
     LEGEND_REMOVES_LAYER_ENTRY = 'legend_removes_layer_entry',
     LEGEND_RELOADS_LAYER_ENTRY = 'legend_reloads_layer_entry',
@@ -371,8 +374,9 @@ export class EventAPI extends APIScope {
                 DefEH.MAP_BASEMAPCHANGE_ATTRIBUTION,
                 DefEH.CONFIG_CHANGE_ATTRIBUTION,
                 DefEH.MAP_SCALECHANGE_SCALEBAR,
-                DefEH.OPEN_MAP_FEATURE_MAPTIP,
-                DefEH.EXTENT_CHANGE_FEATURE_MAPTIP,
+                DefEH.MOUSE_MOVE_MAPTIP_CHECK,
+                DefEH.EXTENT_CHANGE_MAPTIP_CHECK,
+                DefEH.SHOW_DEFAULT_MAPTIP,
                 DefEH.MAP_UPDATE_CAPTION_COORDS,
                 DefEH.LEGEND_REMOVES_LAYER_ENTRY,
                 DefEH.LEGEND_RELOADS_LAYER_ENTRY,
@@ -576,9 +580,9 @@ export class EventAPI extends APIScope {
                     handlerName
                 );
                 break;
-            case DefEH.OPEN_MAP_FEATURE_MAPTIP:
+            case DefEH.MOUSE_MOVE_MAPTIP_CHECK:
                 zeHandler = (mapMove: MapMove) => {
-                    this.$iApi.geo.map.maptip.updateAtCoord({
+                    this.$iApi.geo.map.maptip.checkAtCoord({
                         screenX: mapMove.screenX,
                         screenY: mapMove.screenY
                     });
@@ -589,7 +593,7 @@ export class EventAPI extends APIScope {
                     handlerName
                 );
                 break;
-            case DefEH.EXTENT_CHANGE_FEATURE_MAPTIP:
+            case DefEH.EXTENT_CHANGE_MAPTIP_CHECK:
                 zeHandler = () => {
                     if (this.$iApi.geo.map.keysActive) {
                         // The user is using the crosshairs, perform hit-test using center of screens
@@ -597,7 +601,7 @@ export class EventAPI extends APIScope {
                             this.$iApi.geo.map.mapPointToScreenPoint(
                                 this.$iApi.geo.map.getExtent().center()
                             );
-                        this.$iApi.geo.map.maptip.updateAtCoord(screenCenter);
+                        this.$iApi.geo.map.maptip.checkAtCoord(screenCenter);
                     } else {
                         // regular extent change, hide maptip
                         this.$iApi.geo.map.maptip.clear();
@@ -606,6 +610,18 @@ export class EventAPI extends APIScope {
                 this.$iApi.event.on(
                     GlobalEvents.MAP_EXTENTCHANGE,
                     throttle(50, true, () => zeHandler()), // Smaller throttle because extent change is intervalled
+                    handlerName
+                );
+                break;
+            case DefEH.SHOW_DEFAULT_MAPTIP:
+                zeHandler = (tooltipInfo: any) => {
+                    this.$iApi.geo.map.maptip.generateDefaultMaptip(
+                        tooltipInfo
+                    );
+                };
+                this.$iApi.event.on(
+                    GlobalEvents.MAP_GRAPHICHIT,
+                    zeHandler,
                     handlerName
                 );
                 break;
