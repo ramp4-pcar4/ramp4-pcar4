@@ -1,8 +1,7 @@
-import { MaptipProperties } from '@/geo/api';
+import { MaptipProperties, Point } from '@/geo/api';
 
 export class MaptipState {
     maptipInstance: any = undefined;
-    maptipProperties: MaptipProperties | undefined = undefined;
-    defaultContent: string = '';
+    maptipPoint: Point | undefined = undefined;
     content: string = '';
 }
