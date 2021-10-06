@@ -92,6 +92,11 @@ export default defineComponent({
             icon: '' as String
         };
     },
+    watch: {
+        payload() {
+            this.fetchIcon();
+        }
+    },
     computed: {
         /**
          * Returns the information for a single identify result, given the layer and item offsets.
