@@ -92,6 +92,15 @@ export default defineComponent({
             icon: '' as String
         };
     },
+    watch: {
+        payload(newPayload: any) {
+            Promise.all(newPayload.map((item: any) => item.loadPromise)).then(
+                () => {
+                    this.fetchIcon();
+                }
+            );
+        }
+    },
     computed: {
         /**
          * Returns the information for a single identify result, given the layer and item offsets.
@@ -135,6 +144,10 @@ export default defineComponent({
     },
     methods: {
         fetchIcon() {
+            if (!this.identifyItem) {
+                return;
+            }
+
             const layerInfo = this.payload[this.resultIndex!];
             const uid = layerInfo.uid;
             const layer: LayerInstance | undefined = this.getLayerByUid(uid);
