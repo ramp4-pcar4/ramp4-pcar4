@@ -133,7 +133,7 @@ export class AttribFC extends CommonFC {
             this.nameField = sData.displayField;
 
             // find object id field
-            const noFieldDefOid: boolean = this.fields.every((elem) => {
+            const noFieldDefOid: boolean = this.fields.every(elem => {
                 if (elem.type === 'oid') {
                     this.oidField = elem.name;
                     return false; // break the loop
@@ -222,9 +222,7 @@ export class AttribFC extends CommonFC {
         // if exlusive fields, only respect fields in the field info array
         if (configMetadata.exclusiveFields) {
             // ensure object id field is included
-            if (
-                !configMetadata.fieldInfo.find((f) => f.data === this.oidField)
-            ) {
+            if (!configMetadata.fieldInfo.find(f => f.data === this.oidField)) {
                 configMetadata.fieldInfo.push({ data: this.oidField });
             }
 
@@ -238,20 +236,20 @@ export class AttribFC extends CommonFC {
             //      on things like details panes or grids
 
             this.fieldList = configMetadata.fieldInfo
-                .map((f) => f.data)
+                .map(f => f.data)
                 .join(',');
             const tempFI = configMetadata.fieldInfo; // required because typescript is throwing a fit about undefineds inside the .filter
-            this.fields = this.fields.filter((origField) => {
-                return tempFI.find((fInfo) => fInfo.data === origField.name);
+            this.fields = this.fields.filter(origField => {
+                return tempFI.find(fInfo => fInfo.data === origField.name);
             });
         } else {
             this.fieldList = '*';
         }
 
         // if any aliases overrides, apply them
-        configMetadata.fieldInfo.forEach((cf) => {
+        configMetadata.fieldInfo.forEach(cf => {
             if (cf.alias) {
-                const ff = this.fields.find((fff) => fff.name === cf.data);
+                const ff = this.fields.find(fff => fff.name === cf.data);
                 if (ff) {
                     ff.alias = cf.alias;
                 }
@@ -312,7 +310,7 @@ export class AttribFC extends CommonFC {
      */
     getFields(): Array<FieldDefinition> {
         // extra fancy so we dont have to expose the ESRI field class
-        return this.fields.map((f) => {
+        return this.fields.map(f => {
             f = toRaw(f);
             return {
                 name: f.name,
@@ -378,12 +376,12 @@ export class AttribFC extends CommonFC {
         // create columns array consumable by datables. We don't include the alias defined in the config here as
         // the grid handles it seperately.
         const columns = this.fields
-            .filter((field) =>
+            .filter(field =>
                 // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
                 // filter out fields where there is no corresponding attribute data
                 attSet.features[0].hasOwnProperty(toRaw(field).name)
             )
-            .map((field) => ({
+            .map(field => ({
                 data: toRaw(field).name, // TODO calling this data is really unintuitive. consider global rename to fieldName, name, attribName, etc.
                 title: toRaw(field).alias || toRaw(field).name
             }));
@@ -392,7 +390,7 @@ export class AttribFC extends CommonFC {
         // TODO figure out if we want to change the system attributes. making a copy for now with deepmerge.
         // if we add rv properties to the feature in the attribute set, we may see those fields showing up in details panes, API outputs, etc.
         // that said, copying means we double the size of attributes in memory.
-        const rows = attSet.features.map((feature) => {
+        const rows = attSet.features.map(feature => {
             const att = deepmerge({}, feature);
             att.rvInteractive = '';
             att.rvSymbol = this.renderer?.getGraphicIcon(feature);
@@ -402,7 +400,7 @@ export class AttribFC extends CommonFC {
         // if a field name resembles a function, the data table will treat it as one.
         // to get around this, we add a function with the same name that returns the value,
         // tricking that silly datagrid.
-        columns.forEach((c) => {
+        columns.forEach(c => {
             if (c.data.substr(-2) === '()') {
                 // have to use function() to get .this to reference the row.
                 // arrow notation will reference the attribFC class.
@@ -412,7 +410,7 @@ export class AttribFC extends CommonFC {
                 };
 
                 const stub = c.data.substr(0, c.data.length - 2); // function without brackets
-                rows.forEach((r) => {
+                rows.forEach(r => {
                     r[stub] = secretFunc;
                 });
             }
@@ -683,7 +681,7 @@ export class AttribFC extends CommonFC {
             getAttribs: true
             // unboundMap: options.map
         };
-        const cacheQueue: Array<Promise<GetGraphicResult>> = oids.map((oid) =>
+        const cacheQueue: Array<Promise<GetGraphicResult>> = oids.map(oid =>
             this.getGraphic(oid, p)
         );
         return Promise.all(cacheQueue);

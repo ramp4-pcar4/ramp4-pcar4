@@ -178,7 +178,7 @@ export default defineComponent({
     },
     beforeUnmount() {
         // Remove all event handlers for this component
-        this.handlers.forEach((handler) => this.$iApi.event.off(handler));
+        this.handlers.forEach(handler => this.$iApi.event.off(handler));
     },
     methods: {
         // Update the layer visibility.

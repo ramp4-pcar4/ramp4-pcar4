@@ -79,28 +79,28 @@ export class OverviewMapAPI extends CommonMapAPI {
         };
         this.esriView.graphics.add(new EsriGraphic(graphic));
 
-        this.esriView.on('mouse-wheel', (esriMouseWheel) => {
+        this.esriView.on('mouse-wheel', esriMouseWheel => {
             esriMouseWheel.stopPropagation();
         });
 
-        this.esriView.on('double-click', (esriDoubleClick) => {
+        this.esriView.on('double-click', esriDoubleClick => {
             esriDoubleClick.stopPropagation();
         });
 
-        this.esriView.on('key-down', (esriKeyDown) => {
+        this.esriView.on('key-down', esriKeyDown => {
             esriKeyDown.stopPropagation();
         });
 
-        this.esriView.on('key-up', (esriKeyUp) => {
+        this.esriView.on('key-up', esriKeyUp => {
             esriKeyUp.stopPropagation();
         });
 
-        this.esriView.on('drag', (esriDrag) => {
+        this.esriView.on('drag', esriDrag => {
             esriDrag.stopPropagation();
             this.mapDrag(esriDrag);
         });
 
-        this.esriView.container.addEventListener('touchmove', (e) => {
+        this.esriView.container.addEventListener('touchmove', e => {
             // need this for panning and zooming to work on mobile devices / touchscreens
             // touchmove stops the drag event (what the MapView reacts to) from firing properly
             e.preventDefault();

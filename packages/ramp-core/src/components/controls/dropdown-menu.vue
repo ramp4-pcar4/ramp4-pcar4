@@ -59,7 +59,7 @@ export default defineComponent({
     mounted() {
         window.addEventListener(
             'click',
-            (event) => {
+            event => {
                 if (
                     event.target instanceof HTMLElement &&
                     !this.$el.contains(event.target)
@@ -92,7 +92,7 @@ export default defineComponent({
     beforeUnmount() {
         window.removeEventListener(
             'click',
-            (event) => {
+            event => {
                 if (
                     event.target instanceof HTMLElement &&
                     !this.$el.contains(event.target)

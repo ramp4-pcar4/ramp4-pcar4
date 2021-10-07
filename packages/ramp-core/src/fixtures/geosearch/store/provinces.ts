@@ -28,7 +28,7 @@ class Provinces {
     list: defs.GenericObjectType = {};
 
     constructor(language: string) {
-        Object.keys(provs[language]).forEach((provKey) => {
+        Object.keys(provs[language]).forEach(provKey => {
             this.list[provKey] = (<any>provs[language])[provKey];
         });
     }
@@ -43,7 +43,7 @@ class Provinces {
         if (typeof provCodes === 'number') {
             provCodes = [provCodes];
         }
-        provCodes.forEach((n) => {
+        provCodes.forEach(n => {
             genericObj[n] = this.list[n];
         });
         return genericObj;

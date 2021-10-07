@@ -232,7 +232,7 @@ export class CommonLayer extends LayerInstance {
         this.fcs = [];
         this.loadPromise = new DefPromise();
         this.viewPromise = new DefPromise();
-        this.watches.forEach((w) => w.remove());
+        this.watches.forEach(w => w.remove());
         this.watches = [];
         this.updateState(LayerState.NEW);
 
@@ -256,7 +256,7 @@ export class CommonLayer extends LayerInstance {
                 // attempt to find esri layer in esri map
                 const tempPosition =
                     this.$iApi.geo.map.esriMap.layers.findIndex(
-                        (l) => l.id === this.id
+                        l => l.id === this.id
                     );
                 if (tempPosition > -1) {
                     mapStackPosition = tempPosition;
@@ -452,7 +452,7 @@ export class CommonLayer extends LayerInstance {
         if (uid === this.uid) {
             return -1;
         } else {
-            const fcIdx: number = this.fcs.findIndex((fc) => fc?.uid === uid);
+            const fcIdx: number = this.fcs.findIndex(fc => fc?.uid === uid);
             if (fcIdx === -1) {
                 // no match
                 throw new Error(

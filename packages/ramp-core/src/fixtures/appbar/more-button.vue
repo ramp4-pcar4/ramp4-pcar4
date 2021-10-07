@@ -77,7 +77,7 @@ export default defineComponent({
     mounted() {
         window.addEventListener(
             'click',
-            (event) => {
+            event => {
                 if (
                     event.target instanceof HTMLElement &&
                     !this.$el.contains(event.target)

@@ -13,7 +13,7 @@ class MapnavFixture extends MapnavAPI {
 
         // since this has no panel we need to merge in translations ourselves
         // TODO?: see if giving fixtures a nicer way to merge translations w/o panel makes sense
-        Object.entries(messages).forEach((value) =>
+        Object.entries(messages).forEach(value =>
             (<any>this.$vApp.$i18n).mergeLocaleMessage(...value)
         );
 

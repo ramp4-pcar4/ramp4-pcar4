@@ -159,7 +159,7 @@ export default defineComponent({
             // wrap matched search term in results inside span with styling
             const highlightedResult = name.replace(
                 new RegExp(`${this.searchVal.value}`, 'gi'),
-                (match) =>
+                match =>
                     '<span class="font-bold text-blue-600">' + match + '</span>'
             );
             // add comma to new highlighted result if a province/location is provided
