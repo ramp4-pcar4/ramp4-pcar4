@@ -17,64 +17,66 @@
             </span>
             <div class="flex-grow"></div>
 
-            <button
-                class="p-8 disabled:opacity-30 disabled:cursor-default"
-                @click="applyFiltersToMap"
-                :content="$t('grid.label.filters.apply')"
-                v-tippy="{ placement: 'bottom', hideOnClick: false }"
-                :disabled="filterSync"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fit=""
-                    height="24px"
-                    width="24px"
-                    preserveAspectRatio="xMidYMid meet"
-                    viewBox="0 0 24 24"
-                    focusable="false"
+            <div class="pb-2 flex">
+                <button
+                    class="p-8 disabled:opacity-30 disabled:cursor-default"
+                    @click="applyFiltersToMap"
+                    :content="$t('grid.label.filters.apply')"
+                    v-tippy="{ placement: 'bottom', hideOnClick: false }"
+                    :disabled="filterSync"
                 >
-                    <g id="map-refresh">
-                        <path
-                            d="m 15.585999,21.223066 2.414,-2.414 v 1.811 A 3.616,3.616 0 0 0 21.2,15.309066 l 0.881,-0.881 a 4.82,4.82 0 0 1 -4.080001,7.4 v 1.811 z m -13.5859988,-9.224 a 10,10 0 1 1 19.9999998,0 c 0,0.172 0,0.346 -0.013,0.517 a 5.971,5.971 0 0 0 -2.014001,-1.184001 7.935,7.935 0 0 0 -4.973,-6.742999 v 0.41 a 2,2 0 0 1 -2,2 h -2 v 2 A 1,1 0 0 1 10,9.9990662 H 8.0000002 v 1.9999998 h 5.9999988 a 1,1 0 0 1 0.495,0.131 6,6 0 0 0 -0.184,9.6 10.009,10.009 0 0 1 -12.3109988,-9.731 z m 2,0 a 8,8 0 0 0 6.9999988,7.93 v -1.93 a 2,2 0 0 1 -1.9999988,-2 v -1 l -4.79,-4.79 a 8.07,8.07 0 0 0 -0.21,1.79 z m 9.1729988,5 a 4.827,4.827 0 0 1 4.827,-4.828 v -1.81 l 2.414,2.414 -2.414,2.413 v -1.809 a 3.623,3.623 0 0 0 -3.62,3.62 3.537,3.537 0 0 0 0.42,1.69 l -0.881,0.881 a 4.787,4.787 0 0 1 -0.746,-2.571 z"
-                        ></path>
-                    </g>
-                </svg>
-            </button>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fit=""
+                        height="24px"
+                        width="24px"
+                        preserveAspectRatio="xMidYMid meet"
+                        viewBox="0 0 24 24"
+                        focusable="false"
+                    >
+                        <g id="map-refresh">
+                            <path
+                                d="m 15.585999,21.223066 2.414,-2.414 v 1.811 A 3.616,3.616 0 0 0 21.2,15.309066 l 0.881,-0.881 a 4.82,4.82 0 0 1 -4.080001,7.4 v 1.811 z m -13.5859988,-9.224 a 10,10 0 1 1 19.9999998,0 c 0,0.172 0,0.346 -0.013,0.517 a 5.971,5.971 0 0 0 -2.014001,-1.184001 7.935,7.935 0 0 0 -4.973,-6.742999 v 0.41 a 2,2 0 0 1 -2,2 h -2 v 2 A 1,1 0 0 1 10,9.9990662 H 8.0000002 v 1.9999998 h 5.9999988 a 1,1 0 0 1 0.495,0.131 6,6 0 0 0 -0.184,9.6 10.009,10.009 0 0 1 -12.3109988,-9.731 z m 2,0 a 8,8 0 0 0 6.9999988,7.93 v -1.93 a 2,2 0 0 1 -1.9999988,-2 v -1 l -4.79,-4.79 a 8.07,8.07 0 0 0 -0.21,1.79 z m 9.1729988,5 a 4.827,4.827 0 0 1 4.827,-4.828 v -1.81 l 2.414,2.414 -2.414,2.413 v -1.809 a 3.623,3.623 0 0 0 -3.62,3.62 3.537,3.537 0 0 0 0.42,1.69 l -0.881,0.881 a 4.787,4.787 0 0 1 -0.746,-2.571 z"
+                            ></path>
+                        </g>
+                    </svg>
+                </button>
 
-            <!-- show/hide columns -->
-            <column-dropdown
-                :columnApi="columnApi"
-                :columnDefs="columnDefs"
-            ></column-dropdown>
+                <!-- show/hide columns -->
+                <column-dropdown
+                    :columnApi="columnApi"
+                    :columnDefs="columnDefs"
+                ></column-dropdown>
 
-            <!-- toggle column filters -->
-            <button
-                class="p-8"
-                @click="toggleShowFilters()"
-                :content="
-                    gridOptions.floatingFilter
-                        ? $t('grid.label.filters.hide')
-                        : $t('grid.label.filters.show')
-                "
-                v-tippy="{ placement: 'bottom', hideOnClick: false }"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fit=""
-                    height="24px"
-                    width="24px"
-                    preserveAspectRatio="xMidYMid meet"
-                    viewBox="0 0 24 24"
-                    focusable="false"
-                    class="inline"
+                <!-- toggle column filters -->
+                <button
+                    class="p-8"
+                    @click="toggleShowFilters()"
+                    :content="
+                        gridOptions.floatingFilter
+                            ? $t('grid.label.filters.hide')
+                            : $t('grid.label.filters.show')
+                    "
+                    v-tippy="{ placement: 'bottom', hideOnClick: false }"
                 >
-                    <g id="filter_cache958">
-                        <path
-                            d="M 3,2L 20.9888,2L 21,2L 21,2.01122L 21,3.99999L 20.9207,3.99999L 14,10.9207L 14,22.909L 9.99999,18.909L 10,10.906L 3.09405,3.99999L 3,3.99999L 3,2 Z "
-                        ></path>
-                    </g>
-                </svg>
-            </button>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fit=""
+                        height="24px"
+                        width="24px"
+                        preserveAspectRatio="xMidYMid meet"
+                        viewBox="0 0 24 24"
+                        focusable="false"
+                        class="inline"
+                    >
+                        <g id="filter_cache958">
+                            <path
+                                d="M 3,2L 20.9888,2L 21,2L 21,2.01122L 21,3.99999L 20.9207,3.99999L 14,10.9207L 14,22.909L 9.99999,18.909L 10,10.906L 3.09405,3.99999L 3,3.99999L 3,2 Z "
+                            ></path>
+                        </g>
+                    </svg>
+                </button>
+            </div>
         </div>
 
         <!-- main grid component -->
