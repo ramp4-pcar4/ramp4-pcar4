@@ -145,11 +145,9 @@ export default defineComponent({
                 return;
             }
             const oidField = layer.getOidField(uid);
-            layer
-                .getIcon(this.identifyItem.data[oidField], uid)
-                .then((value) => {
-                    this.icon = value;
-                });
+            layer.getIcon(this.identifyItem.data[oidField], uid).then(value => {
+                this.icon = value;
+            });
         },
 
         zoomToFeature() {
@@ -165,7 +163,7 @@ export default defineComponent({
             }
             const oid = this.identifyItem.data[layer.getOidField(uid)];
             const opts = { getGeom: true };
-            layer.getGraphic(oid, opts, uid).then((g) => {
+            layer.getGraphic(oid, opts, uid).then(g => {
                 if (g.geometry === undefined) {
                     console.error(`Could not find graphic for objectid ${oid}`);
                 } else {

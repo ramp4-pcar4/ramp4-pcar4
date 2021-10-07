@@ -136,14 +136,14 @@ export class MapAPI extends CommonMapAPI {
             this.$iApi.event.emit(GlobalEvents.MAP_SCALECHANGE, newval);
         });
 
-        this.esriView.on('resize', (esriResize) => {
+        this.esriView.on('resize', esriResize => {
             this.$iApi.event.emit(GlobalEvents.MAP_RESIZE, {
                 height: esriResize.height,
                 width: esriResize.width
             });
         });
 
-        this.esriView.on('click', (esriClick) => {
+        this.esriView.on('click', esriClick => {
             this.$iApi.event.emit(
                 GlobalEvents.MAP_CLICK,
                 this.$iApi.geo.utils.geom.esriMapClickToRamp(
@@ -153,7 +153,7 @@ export class MapAPI extends CommonMapAPI {
             );
         });
 
-        this.esriView.on('double-click', (esriClick) => {
+        this.esriView.on('double-click', esriClick => {
             this.$iApi.event.emit(
                 GlobalEvents.MAP_DOUBLECLICK,
                 this.$iApi.geo.utils.geom.esriMapClickToRamp(
@@ -163,7 +163,7 @@ export class MapAPI extends CommonMapAPI {
             );
         });
 
-        this.esriView.on('pointer-move', (esriMouseMove) => {
+        this.esriView.on('pointer-move', esriMouseMove => {
             // TODO debounce here? the map event fires pretty much every change in pixel value.
             this.$iApi.event.emit(
                 GlobalEvents.MAP_MOUSEMOVE,
@@ -171,7 +171,7 @@ export class MapAPI extends CommonMapAPI {
             );
         });
 
-        this.esriView.on('pointer-down', (esriMouseDown) => {
+        this.esriView.on('pointer-down', esriMouseDown => {
             // .native is a DOM pointer event
             this.$iApi.event.emit(
                 GlobalEvents.MAP_MOUSEDOWN,
@@ -179,24 +179,24 @@ export class MapAPI extends CommonMapAPI {
             );
         });
 
-        this.esriView.on('key-down', (esriKeyDown) => {
+        this.esriView.on('key-down', esriKeyDown => {
             // .native is a DOM keyboard event
             this.$iApi.event.emit(GlobalEvents.MAP_KEYDOWN, esriKeyDown.native);
             esriKeyDown.stopPropagation();
         });
 
-        this.esriView.on('key-up', (esriKeyUp) => {
+        this.esriView.on('key-up', esriKeyUp => {
             // .native is a DOM keyboard event
             this.$iApi.event.emit(GlobalEvents.MAP_KEYUP, esriKeyUp.native);
             esriKeyUp.stopPropagation();
         });
 
-        this.esriView.on('blur', (esriBlur) => {
+        this.esriView.on('blur', esriBlur => {
             // .native is a DOM keyboard event
             this.$iApi.event.emit(GlobalEvents.MAP_BLUR, esriBlur.native);
         });
 
-        this.esriView.container.addEventListener('touchmove', (e) => {
+        this.esriView.container.addEventListener('touchmove', e => {
             // need this for panning and zooming to work on mobile devices / touchscreens
             // touchmove stops the drag event (what the MapView reacts to) from firing properly
             e.preventDefault();
@@ -275,15 +275,13 @@ export class MapAPI extends CommonMapAPI {
             const notLoaded: number = layers
                 .slice(0, index + 1)
                 .filter(
-                    (layer) =>
-                        !this.esriMap!.layers.find((l) => l.id === layer.id)
+                    layer => !this.esriMap!.layers.find(l => l.id === layer.id)
                 ).length;
             // calculate corresponding map layer index
             const esriLayerIndex: number = this.esriMap.layers.indexOf(
                 this.esriMap.layers
                     .filter(
-                        (esrilayer) =>
-                            !!layers.find((l) => l.id === esrilayer.id) // ignore layers not in store (e.g. pole marker)
+                        esrilayer => !!layers.find(l => l.id === esrilayer.id) // ignore layers not in store (e.g. pole marker)
                     )
                     .slice(0, index + 1 - notLoaded) // adjust for layers not on map
                     .pop()
@@ -478,7 +476,7 @@ export class MapAPI extends CommonMapAPI {
 
         // scan for appropriate LOD that will make scale set visible, or pick last LOD if no boundary was found
         const scaleLod =
-            modLods.find((currentLod) =>
+            modLods.find(currentLod =>
                 offStatus.zoomIn
                     ? currentLod.scale < scaleSet.minScale
                     : currentLod.scale > scaleSet.maxScale
@@ -711,8 +709,8 @@ export class MapAPI extends CommonMapAPI {
         // Perform an identify request on each layer. Does not perform the request on layers that do not have an identify function (layers that do not support identify).
         const identifyInstances: IdentifyResultSet[] = layers
             // This will filter out all MapImageLayers that are not visible, regardless of the visibility of the MapImageFCs (sublayers)
-            .filter((layer) => layer.supportsIdentify)
-            .map((layer) => {
+            .filter(layer => layer.supportsIdentify)
+            .map(layer => {
                 return layer.identify(p);
             });
 
@@ -778,9 +776,9 @@ export class MapAPI extends CommonMapAPI {
         let esriGraphic: EsriGraphic | undefined;
         let hitLayer: LayerInstance | undefined;
 
-        layers.some((layer) => {
+        layers.some(layer => {
             // breaks in the first match hit, preserving the layer order
-            const matchedResult: any = response.results.find((result) => {
+            const matchedResult: any = response.results.find(result => {
                 return result.graphic.layer.id === layer.id;
             });
             if (matchedResult) {
@@ -832,7 +830,7 @@ export class MapAPI extends CommonMapAPI {
         ) {
             this._activeKeys.push(payload.key);
             // don't pan in middle of zoom animation
-            if (!this._activeKeys.some((k) => zoomKeys.includes(k))) {
+            if (!this._activeKeys.some(k => zoomKeys.includes(k))) {
                 this.keyPan();
             }
         } else if (
@@ -862,7 +860,7 @@ export class MapAPI extends CommonMapAPI {
         ) {
             this._activeKeys.splice(this._activeKeys.indexOf(payload.key), 1);
             // don't pan in middle of zoom animation
-            if (!this._activeKeys.some((k) => zoomKeys.includes(k))) {
+            if (!this._activeKeys.some(k => zoomKeys.includes(k))) {
                 this.keyPan();
             }
         }
@@ -886,7 +884,7 @@ export class MapAPI extends CommonMapAPI {
      */
     get keysActive(): boolean {
         return (
-            this._activeKeys.filter((k) => !['Control', 'Shift'].includes(k))
+            this._activeKeys.filter(k => !['Control', 'Shift'].includes(k))
                 .length !== 0
         );
     }

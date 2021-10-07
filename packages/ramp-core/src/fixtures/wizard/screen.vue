@@ -435,7 +435,7 @@ export default defineComponent({
                 // );
             };
 
-            reader.onload = (e) => {
+            reader.onload = e => {
                 this.fileData = reader.result as ArrayBuffer;
                 this.url = file.name;
                 this.onUploadContinue(e);

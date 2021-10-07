@@ -55,7 +55,7 @@ export default class WmsLayer extends CommonLayer {
         const lEntries = <Array<RampLayerWmsLayerEntryConfig>>(
             rampLayerConfig.layerEntries
         );
-        this.sublayerNames = lEntries.map((le) => le.id || 'error_no_wms_id');
+        this.sublayerNames = lEntries.map(le => le.id || 'error_no_wms_id');
 
         // reminder: unlike MapImageLayer, we do not allow tweaking visibility
         //           of sublayers at runtime.
@@ -65,7 +65,7 @@ export default class WmsLayer extends CommonLayer {
 
         // NOTE: Currently, we do not disallow using style names in the config that do not exist on the service (for defining custom legend graphics),
         // but because both GetMap and GetLegendGraphic use the currentStyle property, the GetMap request would fail. See #630.
-        const styles = lEntries.map((e) => e.currentStyle).join();
+        const styles = lEntries.map(e => e.currentStyle).join();
 
         // This sets the style for the GetMap request.
         // NOTE: This does NOT set the style for GetLegendGraphic requests. See #603.
@@ -128,7 +128,7 @@ export default class WmsLayer extends CommonLayer {
             sublayers: __esri.Collection<EsriWMSSublayer>
         ): boolean => {
             let anySlVis = false;
-            sublayers.forEach((sl) => {
+            sublayers.forEach(sl => {
                 const visible = this.sublayerNames.indexOf(sl.name) > -1;
                 if (visible) {
                     // if this sublayer is visible, then all of its sublayers should remain visible as well
@@ -212,7 +212,7 @@ export default class WmsLayer extends CommonLayer {
         let loadResolve: any;
         const innerResult: IdentifyResult = {
             uid: myFC.uid,
-            loadPromise: new Promise((resolve) => {
+            loadPromise: new Promise(resolve => {
                 loadResolve = resolve;
             }),
             items: []
@@ -228,7 +228,7 @@ export default class WmsLayer extends CommonLayer {
             this.sublayerNames,
             <Point>options.geometry,
             this.mimeType
-        ).then((response) => {
+        ).then(response => {
             // check if a result is returned by the service. If not, do not add to the array of data
             // TODO verify we want empty .items array
             // TODO is is possible to have more than one item as a result? check how this works
@@ -405,7 +405,7 @@ export default class WmsLayer extends CommonLayer {
         // apply any custom parameters (ignore styles for the moment)
         const clp = esriLayer.customLayerParameters;
         if (clp) {
-            Object.keys(clp).forEach((key) => {
+            Object.keys(clp).forEach(key => {
                 if (key.toLowerCase() !== 'styles') {
                     // @ts-ignore
                     settings[key] = clp[key];
@@ -414,7 +414,7 @@ export default class WmsLayer extends CommonLayer {
         }
 
         // @ts-ignore
-        Object.keys(settings).forEach((key) => (req[key] = settings[key]));
+        Object.keys(settings).forEach(key => (req[key] = settings[key]));
 
         return EsriRequest(esriLayer.url.split('?')[0], {
             query: req,
@@ -470,7 +470,7 @@ export default class WmsLayer extends CommonLayer {
         });
 
         // get any legendUrls that were defined in the config
-        const legendURLs = layerList.map((l) =>
+        const legendURLs = layerList.map(l =>
             l.styleLegends && l.currentStyle
                 ? l.styleLegends.find((style: any) => {
                       return style.name === l.currentStyle;

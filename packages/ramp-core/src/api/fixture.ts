@@ -135,7 +135,7 @@ export class FixtureAPI extends APIScope {
             ids.push(item.id);
         }
 
-        const fixtures = ids.map((id) => {
+        const fixtures = ids.map(id => {
             const fixture = this.$vApp.$store.get<T>(`fixture/items@${id}`);
             if (!fixture) {
                 return undefined;
@@ -186,7 +186,7 @@ export class FixtureAPI extends APIScope {
         // add all the requested default promises.
         // return the promise-all of all the add fixture promises
         // TODO alterately, don't do a promise.all, and just return the array of promises. not sure which is more useful.
-        return Promise.all(fixtureNames.map((fn) => this.add(fn)));
+        return Promise.all(fixtureNames.map(fn => this.add(fn)));
     }
 }
 

@@ -58,7 +58,7 @@ const actions = {
         if (!Array.isArray(layerConfigs)) {
             return;
         }
-        layerConfigs.forEach((lc) => {
+        layerConfigs.forEach(lc => {
             context.commit('ADD_LAYER_CONFIG', lc);
         });
     },
@@ -77,7 +77,7 @@ const actions = {
             return;
         }
 
-        layers.forEach((l) => {
+        layers.forEach(l => {
             context.commit('ADD_LAYER', l);
         });
 
@@ -142,18 +142,16 @@ const mutations = {
     },
     REMOVE_LAYER: (state: LayerState, value: LayerInstance) => {
         // copy to new array so watchers will have a reference to the old value
-        const filteredLayers = state.layers.filter((layer) => {
+        const filteredLayers = state.layers.filter(layer => {
             return layer.id !== value.id || layer.uid !== value.uid;
         });
         state.layers = filteredLayers;
     },
     REMOVE_LAYER_CONFIG: (state: LayerState, layerId: string) => {
         // copy to new array so watchers will have a reference to the old value
-        const filteredLayerConfigs = state.layerConfigs.filter(
-            (layerConfig) => {
-                return layerConfig.id !== layerId;
-            }
-        );
+        const filteredLayerConfigs = state.layerConfigs.filter(layerConfig => {
+            return layerConfig.id !== layerId;
+        });
         state.layerConfigs = filteredLayerConfigs;
     }
 };

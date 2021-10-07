@@ -7,14 +7,14 @@ describe('RAMP', () => {
     });
 
     it('has global and instance APIs', () => {
-        cy.window().then((window) => {
+        cy.window().then(window => {
             expect(window.RAMP);
             expect(window.rInstance);
         });
     });
 
     it('loads fixtures', () => {
-        cy.window().then((window) => {
+        cy.window().then(window => {
             expect(window.rInstance.fixture.get('appbar'));
         });
     });

@@ -316,7 +316,7 @@ export default defineComponent({
 
     beforeUnmount() {
         // Remove all event handlers for this component
-        this.handlers.forEach((handler) => this.$iApi.event.off(handler));
+        this.handlers.forEach(handler => this.$iApi.event.off(handler));
         this.gridAccessibilityManager?.removeAccessibilityListeners();
     },
 
@@ -644,7 +644,7 @@ export default defineComponent({
                         if (layer === undefined) return;
                         const iconContainer = document.createElement('span');
                         const oid = cell.data[this.oidField];
-                        layer.getIcon(oid, this.layerUid).then((i) => {
+                        layer.getIcon(oid, this.layerUid).then(i => {
                             iconContainer.innerHTML = i;
                         });
                         return iconContainer;
@@ -702,7 +702,7 @@ export default defineComponent({
         getFiltersQuery() {
             const filterModel = this.gridApi.getFilterModel();
             let colStrs: any = [];
-            Object.keys(filterModel).forEach((col) => {
+            Object.keys(filterModel).forEach(col => {
                 colStrs.push(this.filterToSql(col, filterModel[col]));
             });
             if (this.quicksearch && this.quicksearch.length > 0) {

@@ -389,10 +389,8 @@ export class ProjectionAPI {
         // interpolate each edge by splitting it in half 3 times (since lines are not guaranteed to project to lines we need to consider
         // max / min points in the middle of line segments)
         [0, 1, 2, 3]
-            .map((i) => interpolate(points[i], points[i + 1], 3).slice(1))
-            .forEach(
-                (seg) => (interpolatedPoly = interpolatedPoly.concat(seg))
-            );
+            .map(i => interpolate(points[i], points[i + 1], 3).slice(1))
+            .forEach(seg => (interpolatedPoly = interpolatedPoly.concat(seg)));
 
         const iPoly: Polygon = new Polygon(
             'warpy',
@@ -408,8 +406,8 @@ export class ProjectionAPI {
 
         // take our projected interpolated polygon, strip out the co-ords for X and Y
         const rawWarp = iWarped.toArray().pop() || [];
-        const xvals = rawWarp.map((p) => p[0]);
-        const yvals = rawWarp.map((p_1) => p_1[1]);
+        const xvals = rawWarp.map(p => p[0]);
+        const yvals = rawWarp.map(p_1 => p_1[1]);
 
         // find the bounding corners of our projected interpolated polygon
         const x0 = Math.min.apply(null, xvals);

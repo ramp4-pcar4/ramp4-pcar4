@@ -32,7 +32,7 @@ export default defineComponent({
             const helper: any = {};
             Object.assign(helper, this.identifyData.data);
             if (helper.Symbol !== undefined) delete helper.Symbol;
-            Object.keys(helper).map((key) => {
+            Object.keys(helper).map(key => {
                 if (typeof helper[key] === 'number') {
                     helper[key] = this.$iApi.$vApp.$n(helper[key], 'number');
                 }

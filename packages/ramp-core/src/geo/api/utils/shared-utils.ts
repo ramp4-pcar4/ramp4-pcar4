@@ -11,7 +11,7 @@ export class SharedUtilsAPI {
      */
     generateUUID(): string {
         let d = Date.now();
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
             /*
             // TODO: Come up with cheaper solution that doesn't use the crypto API and satifies CodeQL
             const r =
@@ -65,7 +65,7 @@ export class SharedUtilsAPI {
                 // return canvas
                 resolve(canvas);
             });
-            image.addEventListener('error', (error) => reject(error));
+            image.addEventListener('error', error => reject(error));
         });
 
         // set image source to the one generated from the print task
@@ -93,11 +93,11 @@ export class SharedUtilsAPI {
         }
 
         return this.convertImageToCanvas(imageUri)
-            .then((canvas) => {
+            .then(canvas => {
                 // Converting image to dataURL
                 return canvas.toDataURL(imageType);
             })
-            .catch((error) => {
+            .catch(error => {
                 console.error(
                     'Failed to load crossorigin image',
                     imageUri,

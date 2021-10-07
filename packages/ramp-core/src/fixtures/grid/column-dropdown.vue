@@ -27,7 +27,7 @@
         </template>
         <a
             v-for="col in columnDefs.filter(
-                (c) => c.headerName && c.headerName.length > 0
+                c => c.headerName && c.headerName.length > 0
             )"
             :key="col.headerName"
             v-on:click="

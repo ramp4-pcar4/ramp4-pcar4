@@ -19,7 +19,7 @@ export function make(config: defs.MainConfig, query: string): Query {
     } else {
         // name based search
         const q = new Query(config, query);
-        q.onComplete = q.search().then((results) => {
+        q.onComplete = q.search().then(results => {
             q.results = results;
             return q;
         });
@@ -43,7 +43,7 @@ export class Query {
     search(): Promise<defs.NameResultList> {
         return (<Promise<defs.RawNameResult>>(
             this.jsonRequest(this.getUrl())
-        )).then((r) => this.normalizeNameItems(r.items));
+        )).then(r => this.normalizeNameItems(r.items));
     }
 
     private getUrl(
@@ -68,8 +68,8 @@ export class Query {
 
     normalizeNameItems(items: defs.NameResponse[]): defs.NameResultList {
         return items
-            .filter((i) => this.config.types.validTypes[i.concise.code])
-            .map((i) => {
+            .filter(i => this.config.types.validTypes[i.concise.code])
+            .map(i => {
                 return {
                     name: i.name,
                     location: i.location,
@@ -111,7 +111,7 @@ export class Query {
     nameByLatLon(lat: number, lon: number, restrict?: number[]): any {
         return (<Promise<defs.RawNameResult>>(
             this.jsonRequest(this.getUrl(false, restrict, lat, lon))
-        )).then((r) => {
+        )).then(r => {
             return this.normalizeNameItems(r.items);
         });
     }
@@ -125,8 +125,8 @@ export class LatLongQuery extends Query {
         // remove extra spaces and delimiters (the filter). convert string numbers to floaty numbers
         const filteredQuery = query
             .split(/[\s|,|;|]/)
-            .filter((n) => !isNaN(n as any) && n !== '')
-            .map((n) => parseFloat(n));
+            .filter(n => !isNaN(n as any) && n !== '')
+            .map(n => parseFloat(n));
         coords = filteredQuery;
         // TODO: check and convert DMS format if applicable
 
@@ -170,13 +170,13 @@ export class FSAQuery extends Query {
         super(config, query);
 
         this.onComplete = new Promise((resolve, reject) => {
-            this.formatLocationResult().then((fLR) => {
+            this.formatLocationResult().then(fLR => {
                 if (fLR) {
                     this.featureResults = fLR;
                     this.nameByLatLon(
                         fLR.LatLon.lat,
                         fLR.LatLon.lon,
-                        Object.keys(fLR._provinces).map((x) => parseInt(x))
+                        Object.keys(fLR._provinces).map(x => parseInt(x))
                     ).then((r: any) => {
                         this.results = r;
                         resolve(this);
@@ -189,7 +189,7 @@ export class FSAQuery extends Query {
     }
 
     formatLocationResult(): Promise<defs.FSAResult | undefined> {
-        return this.locateByQuery().then((locateResponseList) => {
+        return this.locateByQuery().then(locateResponseList => {
             // query check added since it can be null but will never be in this case (make TS happy)
             if (locateResponseList.length === 1 && this.query) {
                 const provList = this.config.provinces.fsaToProvinces(
@@ -200,7 +200,7 @@ export class FSAQuery extends Query {
                     code: 'FSA',
                     desc: this.config.types.allTypes.FSA,
                     province: Object.keys(provList)
-                        .map((i) => provList[i])
+                        .map(i => provList[i])
                         .join(','),
                     _provinces: provList,
                     LatLon: {
@@ -241,7 +241,7 @@ export class NTSQuery extends Query {
         query = isNaN(parseInt(query[2])) ? '0' + query : query;
         this.unitName = query;
         this.onComplete = new Promise((resolve, reject) => {
-            this.locateByQuery().then((lr) => {
+            this.locateByQuery().then(lr => {
                 // query check added since it can be null but will never be in this case (make TS happy)
                 if (lr.length > 0 && this.query) {
                     const allSheets = this.locateToResult(lr);
@@ -265,7 +265,7 @@ export class NTSQuery extends Query {
     }
 
     locateToResult(lrl: defs.LocateResponseList): defs.NTSResultList {
-        const results = lrl.map((ls) => {
+        const results = lrl.map(ls => {
             const title = ls.title.split(' ');
             return <defs.NTSResult>{
                 nts: title.shift() || '', // 064D or 064D06

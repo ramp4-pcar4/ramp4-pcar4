@@ -25,20 +25,20 @@ export default defineComponent({
         this.$iApi.geo.map.viewPromise.then(() => {
             // TODO: when projection change is implemented check that the below events track any changes to
             // the esriView or update MapAPI to be raising pointer events on the EventAPI, and this will listen to for those events
-            this.$iApi.geo.map.esriView!.on('pointer-down', (e) => {
+            this.$iApi.geo.map.esriView!.on('pointer-down', e => {
                 if (e.pointerType !== 'touch') return;
                 pointers.set(e.pointerId, { x: e.x, y: e.y });
             });
 
             this.$iApi.geo.map.esriView!.on(
                 ['pointer-up', 'pointer-leave'],
-                (e) => {
+                e => {
                     if (e.pointerType !== 'touch') return;
                     pointers.delete(e.pointerId);
                 }
             );
 
-            this.$iApi.geo.map.esriView!.on('pointer-move', (e) => {
+            this.$iApi.geo.map.esriView!.on('pointer-move', e => {
                 const { pointerId, pointerType, x, y } = e;
                 const pointer = pointers.get(pointerId);
 

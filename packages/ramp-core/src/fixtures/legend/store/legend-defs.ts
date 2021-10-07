@@ -189,7 +189,7 @@ export class LegendEntry extends LegendItem {
             this._parent.type === LegendTypes.Set
         ) {
             this._parent.children.some(
-                (entry) => entry.visibility && entry.id !== this._id
+                entry => entry.visibility && entry.id !== this._id
             )
                 ? this._layer?.setVisibility(false, this.layerUID)
                 : null;
@@ -315,7 +315,7 @@ export class LegendEntry extends LegendItem {
 
                 // if its a set turn off the visibility of all other children
                 if (this._parent instanceof LegendSet) {
-                    this._parent.children.forEach((child) => {
+                    this._parent.children.forEach(child => {
                         if (child !== this && child.visibility)
                             child.toggleVisibility(false);
                     });
@@ -441,19 +441,19 @@ export class LegendGroup extends LegendItem {
     checkVisibility(toggledChild: LegendEntry | LegendGroup): void {
         if (this._type === LegendTypes.Group) {
             // if any children entries are toggled on group must be toggled on, else if all children entries are toggled off, group must be toggled off
-            if (this._children.some((entry) => entry.visibility)) {
+            if (this._children.some(entry => entry.visibility)) {
                 this._visibility = true;
                 // save all entries with visibility on
                 this._visibleEntries = this._children.filter(
-                    (entry) => entry.visibility
+                    entry => entry.visibility
                 );
-            } else if (this._children.every((entry) => !entry.visibility)) {
+            } else if (this._children.every(entry => !entry.visibility)) {
                 this._visibility = false;
                 this._visibleEntries = [];
             }
         } else if (toggledChild.visibility) {
             // turn off all child entries except for the last one toggled on, mark that as the last visible entry in the set
-            this.children.forEach((entry) => {
+            this.children.forEach(entry => {
                 if (entry.visibility && entry.id !== toggledChild.id) {
                     entry instanceof LegendEntry
                         ? entry.layer?.setVisibility(false)
@@ -493,15 +493,15 @@ export class LegendGroup extends LegendItem {
             // for legend groups, if group is toggled on turn on visibility for all children that are saved, and all children if none are saved
             if (this._visibility) {
                 this._visibleEntries.length > 0
-                    ? this._visibleEntries.forEach((entry) =>
+                    ? this._visibleEntries.forEach(entry =>
                           entry.toggleVisibility(this._visibility, false)
                       )
-                    : this._children.forEach((entry) =>
+                    : this._children.forEach(entry =>
                           entry.toggleVisibility(this.visibility, false)
                       );
             } else {
                 // otherewise turn off visibility for all children
-                this._children.forEach((entry) =>
+                this._children.forEach(entry =>
                     entry.toggleVisibility(this._visibility, false)
                 );
             }
@@ -515,7 +515,7 @@ export class LegendGroup extends LegendItem {
             } else {
                 // turn off visibility for all child entries and save/update the last legend entry
                 this._lastVisible = this._children.find(
-                    (entry) => entry.visibility
+                    entry => entry.visibility
                 );
                 this._lastVisible?.toggleVisibility(false);
             }
@@ -527,7 +527,7 @@ export class LegendGroup extends LegendItem {
 
             // if its a set turn off the visibility of all other children
             if (this.parent instanceof LegendSet) {
-                this.parent.children.forEach((child) => {
+                this.parent.children.forEach(child => {
                     if (child !== this && child.visibility)
                         child.toggleVisibility(false);
                 });

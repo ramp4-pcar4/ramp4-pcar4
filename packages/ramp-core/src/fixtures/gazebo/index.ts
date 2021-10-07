@@ -68,12 +68,12 @@ class GazeboFixture extends FixtureInstance {
                          * for the demo purposes, delay resolution of a component by 2 seconds
                          */
                         'p-2-screen-1': () => {
-                            return new Promise<AsyncComponentEh>((resolve) =>
+                            return new Promise<AsyncComponentEh>(resolve =>
                                 setTimeout(
                                     () =>
                                         import(
                                             /* webpackChunkName: "p-2-screen-1" */ `./p2-screen-1.vue`
-                                        ).then((data) => {
+                                        ).then(data => {
                                             resolve(data);
                                         }),
                                     2000
@@ -92,7 +92,7 @@ class GazeboFixture extends FixtureInstance {
                          * returning a `VueConstructor` in a promise
                          */
                         'p-2-screen-3': () => {
-                            return new Promise<AsyncComponentEh>((resolve) =>
+                            return new Promise<AsyncComponentEh>(resolve =>
                                 resolve(markRaw(GazeboP2Screen3V))
                             );
                         }

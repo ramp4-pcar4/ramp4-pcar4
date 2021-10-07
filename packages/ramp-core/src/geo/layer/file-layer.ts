@@ -26,9 +26,9 @@ import { markRaw } from 'vue';
 // This function will return a valid field name for a given field name. First attempts at
 // direct match, then attempts to reverse any bad field renaming logic.
 function fieldValidator(fields: Array<EsriField>, targetName: string): string {
-    if (fields.findIndex((f) => f.name === targetName) === -1) {
+    if (fields.findIndex(f => f.name === targetName) === -1) {
         // no direct match found.
-        const validField = fields.find((f) => f.alias === targetName);
+        const validField = fields.find(f => f.alias === targetName);
         if (validField) {
             return validField.name;
         } else {
@@ -264,7 +264,7 @@ export class FileLayer extends AttribLayer {
         let loadResolve: any;
         const innerResult: IdentifyResult = {
             uid: myFC.uid,
-            loadPromise: new Promise((resolve) => {
+            loadPromise: new Promise(resolve => {
                 loadResolve = resolve;
             }),
             items: []
@@ -304,9 +304,9 @@ export class FileLayer extends AttribLayer {
         // TODO: Test if works after #206 is implemented
         qOpts.filterSql = myFC.getCombinedSqlFilter();
 
-        result.done = myFC.queryFeatures(qOpts).then((results) => {
+        result.done = myFC.queryFeatures(qOpts).then(results => {
             // TODO might be a problem overwriting the array if something is watching/binding to the original
-            innerResult.items = results.map((gr) => {
+            innerResult.items = results.map(gr => {
                 return {
                     // TODO decide if we want to handle alias mapping here or not.
                     //      if we do, our "ESRI" format will need to include field metadata.

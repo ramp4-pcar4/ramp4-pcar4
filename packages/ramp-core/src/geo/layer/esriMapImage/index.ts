@@ -122,7 +122,7 @@ class MapImageLayer extends AttribLayer {
         };
 
         const findSublayer = (targetIndex: number): __esri.Sublayer => {
-            const finder = this.esriLayer?.allSublayers.find((s) => {
+            const finder = this.esriLayer?.allSublayers.find(s => {
                 return s.id === targetIndex;
             });
             if (!finder) {
@@ -303,7 +303,7 @@ class MapImageLayer extends AttribLayer {
         // process the child layers our config is interested in, and all their children.
         (<Array<RampLayerMapImageLayerEntryConfig>>(
             this.origRampConfig.layerEntries
-        )).forEach((le) => {
+        )).forEach(le => {
             if (!le.stateOnly) {
                 // TODO add a check instead of 0 default on the index?
                 const rootSub = findSublayer(le.index || 0);
@@ -360,7 +360,7 @@ class MapImageLayer extends AttribLayer {
         });
 
         // any sublayers not in our tree, we need to turn off.
-        this.esriLayer.allSublayers.forEach((s) => {
+        this.esriLayer.allSublayers.forEach(s => {
             // find sublayers that are not groups, and dont exist in our initilazation array
             if (
                 !s.sublayers &&
@@ -379,7 +379,7 @@ class MapImageLayer extends AttribLayer {
                     f: 'json'
                 }
             });
-            const setTitle = serviceRequest.then((serviceResult) => {
+            const setTitle = serviceRequest.then(serviceResult => {
                 if (serviceResult.data) {
                     this.name = serviceResult.data.mapName || '';
                     // @ts-ignore
@@ -631,11 +631,11 @@ class MapImageLayer extends AttribLayer {
 
         // loop over active FCs. call query on each. prepare a geometry
         result.done = Promise.all(
-            activeFCs.map((fc) => {
+            activeFCs.map(fc => {
                 let loadResolve: any;
                 const innerResult: IdentifyResult = {
                     uid: fc.uid,
-                    loadPromise: new Promise((resolve) => {
+                    loadPromise: new Promise(resolve => {
                         loadResolve = resolve;
                     }),
                     items: []
@@ -654,9 +654,9 @@ class MapImageLayer extends AttribLayer {
                 qOpts.outFields = fc.fieldList;
                 qOpts.filterSql = fc.getCombinedSqlFilter();
 
-                return fc.queryFeatures(qOpts).then((results) => {
+                return fc.queryFeatures(qOpts).then(results => {
                     // TODO might be a problem overwriting the array if something is watching/binding to the original
-                    innerResult.items = results.map((gr) => {
+                    innerResult.items = results.map(gr => {
                         return {
                             // TODO this block is the same as in featurelayer. might want to abstract to a shared function. really depends if we keep the extra params
                             // TODO decide if we want to handle alias mapping here or not.

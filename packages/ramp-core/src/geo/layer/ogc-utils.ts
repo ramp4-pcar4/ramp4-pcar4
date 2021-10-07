@@ -115,7 +115,7 @@ export class OgcUtils extends APIScope {
                 // suggest porting this block to geoApi.
                 // for now, easier to modify as early as possible in the transformation
 
-                wfsData.features.forEach((f) => {
+                wfsData.features.forEach(f => {
                     const p = f.geometry.coordinates;
                     f.properties.rvInternalCoordX = p[0];
                     f.properties.rvInternalCoordY = p[1];
@@ -173,11 +173,11 @@ export class OgcUtils extends APIScope {
             }
             return EsriRequest(url, {
                 responseType: 'xml'
-            }).then((result) => result.data);
+            }).then(result => result.data);
         };
 
         // this promise attempts two tries at get capabilities
-        const gcPromise: Promise<any> = new Promise((resolve) => {
+        const gcPromise: Promise<any> = new Promise(resolve => {
             getCapabilities()
                 .then((data: any) => resolve(data)) // if successful, pass straight back
                 .catch(() => {
