@@ -85,7 +85,7 @@ export default defineComponent({
 
         // Called when the checkbox is pressed. Updates the geosearch extent.
         updateMapExtent(visible: boolean): void {
-            this.latLongExtent(this.$iApi.geo.map.getExtent()).then((e) => {
+            this.latLongExtent(this.$iApi.geo.map.getExtent()).then(e => {
                 this.setMapExtent({
                     extent: e,
                     visible: visible

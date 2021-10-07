@@ -160,7 +160,7 @@ export class FileFC extends AttribFC {
         // iterate through the results and strip out the OIDs
         const gjFeats =
             await this.parentLayer.$iApi.geo.utils.query.geoJsonQuery(gjOpt);
-        return gjFeats.map((feat) =>
+        return gjFeats.map(feat =>
             feat.attributes ? feat.attributes[this.oidField] : -1
         );
     }

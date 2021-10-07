@@ -72,7 +72,7 @@ export default defineComponent({
                     }
                     return `<img src="${href}" alt="${title}">`;
                 };
-                axios.get(`${base}help/${folder}/${newLocale}.md`).then((r) => {
+                axios.get(`${base}help/${folder}/${newLocale}.md`).then(r => {
                     // matches help sections from markdown file where each section begins with one hashbang and a space
                     // followed by the section header, exactly 2 newlines, then up to but not including a double newline
                     // note that the {2,} below is used as the double line deparator since each double new line is actually 6

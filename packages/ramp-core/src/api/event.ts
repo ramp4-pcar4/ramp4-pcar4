@@ -166,7 +166,7 @@ export class EventAPI extends APIScope {
         // getting enum values is a mess. this code does it but assumes
         // all event names in global events use the slash format
         this._nameRegister = Object.values(GlobalEvents).filter(
-            (e) => typeof e === 'string' && e.indexOf('/') > -1
+            e => typeof e === 'string' && e.indexOf('/') > -1
         );
     }
 
@@ -179,7 +179,7 @@ export class EventAPI extends APIScope {
      * @private
      */
     private findHandler(handlerName: string): EventHandler | undefined {
-        return this._eventRegister.find((eh) => eh.handlerName === handlerName);
+        return this._eventRegister.find(eh => eh.handlerName === handlerName);
     }
 
     /**
@@ -203,7 +203,7 @@ export class EventAPI extends APIScope {
      */
     registerEventName(names: string | Array<string>): void {
         const arrr = Array.isArray(names) ? names : [names];
-        arrr.forEach((n) => {
+        arrr.forEach(n => {
             // don't add if name is already registered
             if (this._nameRegister.indexOf(n) === -1) {
                 this._nameRegister.push(n);
@@ -328,11 +328,11 @@ export class EventAPI extends APIScope {
         // TODO add a filter if we implement disabled events
 
         if (event === '') {
-            return this._eventRegister.map((eh) => eh.handlerName);
+            return this._eventRegister.map(eh => eh.handlerName);
         }
         return this._eventRegister
-            .filter((eh) => eh.eventName === event)
-            .map((eh) => eh.handlerName);
+            .filter(eh => eh.eventName === event)
+            .map(eh => eh.handlerName);
     }
 
     /**
@@ -381,7 +381,7 @@ export class EventAPI extends APIScope {
         }
 
         // add all the requested default event handlers.
-        return eventHandlerNames.map((hn) => this.defaultHandlerFactory(hn));
+        return eventHandlerNames.map(hn => this.defaultHandlerFactory(hn));
     }
 
     /**
@@ -536,7 +536,7 @@ export class EventAPI extends APIScope {
                     let currentBasemapConfig: RampBasemapConfig | undefined =
                         this.$iApi
                             .getConfig()
-                            .map.basemaps.find((bms) => bms.id === payload);
+                            .map.basemaps.find(bms => bms.id === payload);
 
                     this.$iApi.geo.map.caption.updateAttribution(
                         currentBasemapConfig?.attribution
@@ -552,7 +552,7 @@ export class EventAPI extends APIScope {
                 zeHandler = (payload: RampConfig) => {
                     let currentBasemapConfig: RampBasemapConfig | undefined =
                         payload.map.basemaps.find(
-                            (bms) =>
+                            bms =>
                                 bms.id ===
                                 this.$iApi.geo.map.getCurrentBasemapId()
                         );
@@ -629,7 +629,7 @@ export class EventAPI extends APIScope {
                                     mapMove
                                 )
                             )
-                            .then((fs) => {
+                            .then(fs => {
                                 this.$iApi.$vApp.$store.set(
                                     MapCaptionStore.setCursorCoords,
                                     {

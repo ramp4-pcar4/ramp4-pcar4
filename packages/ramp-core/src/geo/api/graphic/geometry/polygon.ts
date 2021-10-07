@@ -60,7 +60,7 @@ export class Polygon extends BaseGeometry {
 
     addLinearRings(linearRings: Array<LinearRing>): void {
         // TODO consider to make this of any of the wacky types and apply the parser
-        linearRings.forEach((lr) => this.rawArray.push(lr.toArray()));
+        linearRings.forEach(lr => this.rawArray.push(lr.toArray()));
     }
 
     // TODO make a .getAt, .updateAt for rings?
@@ -103,13 +103,13 @@ export class Polygon extends BaseGeometry {
             if (input.length === 0) {
                 throw new Error('no rings provided');
             }
-            arrOfLines = input.map((l) => MultiPoint.parsePointSet(l));
+            arrOfLines = input.map(l => MultiPoint.parsePointSet(l));
         } else {
             throw new Error('invalid input format for parsePolygon');
         }
 
         // ensure each line in our collection of lines is closed
-        arrOfLines.forEach((l) => LinearRing.closeRing(l));
+        arrOfLines.forEach(l => LinearRing.closeRing(l));
         return arrOfLines;
     }
 
@@ -117,6 +117,6 @@ export class Polygon extends BaseGeometry {
         a: Array<Array<Array<number>>>
     ): Array<Array<Array<number>>> {
         // speed tests show loops & slice is 3x faster than JSON parse/stringify
-        return a.map((l) => l.map((p) => p.slice()));
+        return a.map(l => l.map(p => p.slice()));
     }
 }

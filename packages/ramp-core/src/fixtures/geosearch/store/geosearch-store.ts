@@ -183,7 +183,7 @@ function filter(visibleOnly: boolean, queryParams: any, data: Array<any>) {
     if (visibleOnly && queryParams.extent) {
         // ensure bbox boundaries are within the current map extent properties
         data = data.filter(
-            (r) =>
+            r =>
                 r.bbox[0] <= queryParams.extent.xmax &&
                 r.bbox[1] <= queryParams.extent.ymax &&
                 r.bbox[2] >= queryParams.extent.xmin &&
@@ -192,13 +192,13 @@ function filter(visibleOnly: boolean, queryParams: any, data: Array<any>) {
     }
     if (queryParams.province && queryParams.province !== '...') {
         data = data.filter(
-            (r) =>
+            r =>
                 r.location.province.name &&
                 r.location.province.name === queryParams.province
         );
     }
     if (queryParams.type && queryParams.type !== '...') {
-        data = data.filter((r) => r.type === queryParams.type);
+        data = data.filter(r => r.type === queryParams.type);
     }
     return data;
 }

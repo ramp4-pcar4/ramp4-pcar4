@@ -211,7 +211,7 @@ class FeatureLayer extends AttribLayer {
         let loadResolve: any;
         const innerResult: IdentifyResult = {
             uid: myFC.uid,
-            loadPromise: new Promise((resolve) => {
+            loadPromise: new Promise(resolve => {
                 loadResolve = resolve;
             }),
             items: []
@@ -246,9 +246,9 @@ class FeatureLayer extends AttribLayer {
 
         qOpts.filterSql = myFC.getCombinedSqlFilter();
 
-        result.done = myFC.queryFeatures(qOpts).then((results) => {
+        result.done = myFC.queryFeatures(qOpts).then(results => {
             // TODO might be a problem overwriting the array if something is watching/binding to the original
-            innerResult.items = results.map((gr) => {
+            innerResult.items = results.map(gr => {
                 return {
                     // TODO decide if we want to handle alias mapping here or not.
                     //      if we do, our "ESRI" format will need to include field metadata.

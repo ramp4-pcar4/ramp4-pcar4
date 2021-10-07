@@ -99,7 +99,7 @@ export class DetailsAPI extends FixtureInstance {
             this.$vApp.$store.get<DetailsItemInstance[]>(
                 DetailsStore.templates
             )!
-        ).forEach((item) => {
+        ).forEach(item => {
             if (item.template in this.$vApp.$options.components!) {
                 this.$vApp.$store.set(
                     `${DetailsStore.templates}@${item.id}.componentId`,

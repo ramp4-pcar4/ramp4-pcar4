@@ -100,7 +100,7 @@ function cleanUpFields(
         return name.indexOf(' ') > -1;
     };
 
-    configPackage.fields?.forEach((f) => {
+    configPackage.fields?.forEach(f => {
         if (f.name && badField(f.name)) {
             const oldField: string = f.name;
             let newField: string;
@@ -111,7 +111,7 @@ function cleanUpFields(
             do {
                 newField = oldField.replace(/ /g, underscore);
                 badNewName = configPackage.fields?.find(
-                    (f2) => f2.name === newField
+                    f2 => f2.name === newField
                 );
                 if (badNewName) {
                     // new field already exists. enhance it
@@ -163,7 +163,7 @@ export class FileUtils extends APIScope {
         const fields: Array<string> = dsv
             .dsvFormat(delimiter)
             .parseRows(csvData)[0];
-        return fields.map((field) => {
+        return fields.map(field => {
             return { name: field, type: 'string' };
         });
     }
@@ -251,7 +251,7 @@ export class FileUtils extends APIScope {
         if (options) {
             if (options.latfield) {
                 const latField = configPackage.fields.find(
-                    (field) => field.name === options.latfield
+                    field => field.name === options.latfield
                 );
                 if (latField) {
                     latField.type = 'double';
@@ -259,7 +259,7 @@ export class FileUtils extends APIScope {
             }
             if (options.lonfield) {
                 const longField = configPackage.fields.find(
-                    (field) => field.name === options.lonfield
+                    field => field.name === options.lonfield
                 );
                 if (longField) {
                     longField.type = 'double';
@@ -304,7 +304,7 @@ export class FileUtils extends APIScope {
 
             // TEMPORARY hunt any complex datatypes and replace with a string
             // TODO figure out how to actually handle arrays or objects as attribute values
-            Object.keys(gr.attributes).forEach((attName) => {
+            Object.keys(gr.attributes).forEach(attName => {
                 if (
                     Array.isArray(gr.attributes[attName]) ||
                     typeof gr.attributes[attName] === 'object'

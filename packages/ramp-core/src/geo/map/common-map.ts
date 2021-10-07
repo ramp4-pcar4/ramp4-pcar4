@@ -29,7 +29,7 @@ export class CommonMapAPI extends APIScope {
     createMap(config: RampMapConfig, targetDiv: string | HTMLDivElement): void {
         // TODO if .esriMap exists, do we want to do any cleanup on it? E.g. remove event handlers?
         this._basemapStore = config.basemaps.map(
-            (bmConfig) => new Basemap(bmConfig)
+            bmConfig => new Basemap(bmConfig)
         );
         const esriConfig: __esri.MapProperties = {};
         if (config.initialBasemapId) {
@@ -42,7 +42,7 @@ export class CommonMapAPI extends APIScope {
 
     protected findBasemap(id: string): Basemap {
         const bm: Basemap | undefined = this._basemapStore.find(
-            (bms) => bms.id === id
+            bms => bms.id === id
         );
         if (bm) {
             return bm;

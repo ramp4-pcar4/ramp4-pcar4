@@ -10,7 +10,7 @@ describe('GeoAPI SharedUtils', () => {
     });
 
     it('parseUrlIndex works', () => {
-        cy.window().then((window) => {
+        cy.window().then(window => {
             const sharedUtils = window.rInstance.geo.utils.shared;
             expect(
                 sharedUtils.parseUrlIndex(
@@ -25,7 +25,7 @@ describe('GeoAPI SharedUtils', () => {
     });
 
     it('parseUrlIndex works with trailing slash', () => {
-        cy.window().then((window) => {
+        cy.window().then(window => {
             const sharedUtils = window.rInstance.geo.utils.shared;
             expect(
                 sharedUtils.parseUrlIndex(
@@ -40,7 +40,7 @@ describe('GeoAPI SharedUtils', () => {
     });
 
     it('parseUrlIndex no sublayer', () => {
-        cy.window().then((window) => {
+        cy.window().then(window => {
             const sharedUtils = window.rInstance.geo.utils.shared;
             // Expect the default result
             expect(
@@ -56,7 +56,7 @@ describe('GeoAPI SharedUtils', () => {
     });
 
     it('generateUUID uuid is valid format', () => {
-        cy.window().then((window) => {
+        cy.window().then(window => {
             const sharedUtils = window.rInstance.geo.utils.shared;
             var i;
             // Test 10 uuids
@@ -72,7 +72,7 @@ describe('GeoAPI SharedUtils', () => {
     });
 
     it('generateUUID no uuid collisions', () => {
-        cy.window().then((window) => {
+        cy.window().then(window => {
             const sharedUtils = window.rInstance.geo.utils.shared;
             var uuids = [];
             var i;
@@ -82,7 +82,7 @@ describe('GeoAPI SharedUtils', () => {
             for (i = 0; i < 10000; i++) {
                 uuids.push(sharedUtils.generateUUID());
             }
-            let findDuplicates = (arr) =>
+            let findDuplicates = arr =>
                 arr.filter((item, index) => arr.indexOf(item) != index);
             let duplicates = findDuplicates(uuids);
             expect(duplicates).to.be.empty;
@@ -90,12 +90,12 @@ describe('GeoAPI SharedUtils', () => {
     });
 
     it('convertImageToCanvas works with data url', () => {
-        cy.window().then((window) => {
+        cy.window().then(window => {
             const sharedUtils = window.rInstance.geo.utils.shared;
             const url =
                 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAz5JREFUSInF1luIVVUYwPHfMHIWtSvL4jAHDM0mjkJgD9E8lAn6oPSQmWQTZihEFvbSRSySnqKgF6NezIJAwnroJkRSDxZ0PWIQ2O3UiZgy9zCiBrWzNXI6Payt6Vx0Jo71wYLN2mt//+++1wz/scz434EDAwOdSqXSFeWjo6MajUbPpMBardZpNBpdgZ2qM8/zk9CTwHq93mk2m12FQZ7n+vv7O61Wq+c0YLVaNV1gQJzCuVqtptVqOQ04HenHTYGL8A3ejlMDTxtYx9VYHRjI6MWv5f5nkS9wpBvAOrYEFmf0SOvFgq+wEfdmbMiSl1sKdp3B47MCZ+HBwKKM3QU55uL5mJ4XBPYXHMUy3IPvJG//FfD2EtYoeDmm3PVhMPBG5IXSmwLtwJqMNTgaGToT8Px228bAcbxWxuPxwIqMP6X9xwLv4N3I4sDTgfckQyJGcKhgZcZS3B/5ZDJg7O31cWRtYHNIeVqe8UPB76jiuZiUXoZXIzXcEngosC3yVuRL3IjVGQ/glzgJMLTbjuHZyKrAXbgQM3FACt0NIbXEH8jwQbk/uwzpESmveyOXYknGdTjUbo8HztA2GLgcb0YOBCrYHFM4NwQO4tHIz9K59YFHAs+M8SJiL1ZIxhyeyMOit2J7ZHlgXUgHz8PCwLXKyoupiC7A19gRWYibAz+OaYW5Jfgo/poIOHN01NrA/shWCboMg9ghebk+sAffRxYFloYE3RZTSE/IEunbw0Uy8uLe3vHA3yoV+yJ3B/ZhZ0yj6/qMh9Eq2BT/6a9dkVV4IrA98gpWBu7DvIxjBU+V5xdN5OFxfIifykq9M6RQdKQRtlP6eBbml3mZF7gEt5X5vhWzMz4qUru8bryMa/wWnoxcgyvxLdZl3IFKSDlbKPVmX5aisABXSLndVvBSTBU70XibcNJENMoVIqNYiU1ZaomDRQJ+XvB+ZH5IUdgX+XQS0BmBY+FbYyrzqyTL90aGT3m/e6r/pqkATyjdgz3TUHxWYJ7nQghi7ILWUySEIM/z8cBWq9UzZ86czvDwcNegIQR9fX1O3GdOA8LQ0FBPvV7vVKvVrgBHRkY0m83Jr4nQbDZ7zsXtbVLguZa/AdMNKbe5EEnGAAAAAElFTkSuQmCC';
             cy.wrap(null).then(() => {
-                return sharedUtils.convertImageToCanvas(url).then((canvas) => {
+                return sharedUtils.convertImageToCanvas(url).then(canvas => {
                     expect(canvas.width).to.eq(28);
                     expect(canvas.height).to.eq(28);
                 });
@@ -104,12 +104,12 @@ describe('GeoAPI SharedUtils', () => {
     });
 
     it('convertImageToCanvas works with reqular url', () => {
-        cy.window().then((window) => {
+        cy.window().then(window => {
             const sharedUtils = window.rInstance.geo.utils.shared;
             const url =
                 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/BadDates/MapServer/0/images/eed7a82bfccb37a9c63f3dd221c02906';
             cy.wrap(null).then(() => {
-                return sharedUtils.convertImageToCanvas(url).then((canvas) => {
+                return sharedUtils.convertImageToCanvas(url).then(canvas => {
                     expect(canvas.width).to.eq(54);
                     expect(canvas.height).to.eq(54);
                 });
@@ -125,12 +125,12 @@ describe('GeoAPI SharedUtils', () => {
     }
 
     it('convertImagetoDataURL works with data url', () => {
-        cy.window().then((window) => {
+        cy.window().then(window => {
             const sharedUtils = window.rInstance.geo.utils.shared;
             const url =
                 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAMCAYAAAC9QufkAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAUJJREFUKJFjYcADIgwZFq84z1DFwMDwGJs8Cy6NpmrcdtUuAjb6Yk/bKncyxJKimSlKlaFEXZxNgUlfmmnz458Wx669OUGUZl89htRIU04rBgYGBlUxNrkw5Q+Vx64x+BOjmT9MiztCiIdXGCYQaixmuf/u/aiN1xiW4dWcZMhdGWAgZoksJsrDIBqgzR2/8drXtQwMDD9xaVaLNON0YmdhYEc3NMhQwGrnHYa8Fee/dmPVXOAgUmOnwmuKxSsMnGxsPBEGDF4rzjMsZGBgeIWiWZGBwSvVjN2UkRGbVghw1xSzTjF8VTrn/NdSZM2sSZ7cmapibBq4tTIwMDMxsCZac1pvfyWg+/Tp08ssDAwMDBbcDEW6kpx2F598xqeXgYGBgYGNhcHSRvhp78qnDG4sDAwMDCe+MnQGzHvTSVAnGgAAdRJMqBlhLeEAAAAASUVORK5CYII=';
             cy.wrap(null).then(() => {
-                return resolveDataURL(sharedUtils, url).then((dUrl) => {
+                return resolveDataURL(sharedUtils, url).then(dUrl => {
                     expect(dUrl).to.eq(url);
                 });
             });
@@ -159,18 +159,18 @@ describe('GeoAPI SharedUtils', () => {
     // TODO: Add more tests for SharedUtils through adding layers through the wizard
 
     it('formatLatLongDMSString undefined point', () => {
-        cy.window().then((window) => {
+        cy.window().then(window => {
             const sharedUtils = window.rInstance.geo.utils.shared;
             const xyformat = sharedUtils
                 .formatLatLongDMSString(undefined)
-                .then((xyformat) => {
+                .then(xyformat => {
                     expect(xyformat).to.deep.equal({ lat: '', lon: '' });
                 });
         });
     });
 
     it('formatLatLongDMSString invalid map point latitude coordinate', () => {
-        cy.window().then((window) => {
+        cy.window().then(window => {
             const sharedUtils = window.rInstance.geo.utils.shared;
             sharedUtils.formatLatLongDMSString(undefined);
             const point = new Point(
@@ -179,14 +179,14 @@ describe('GeoAPI SharedUtils', () => {
                 undefined,
                 true
             );
-            sharedUtils.formatLatLongDMSString(point).then((xyformat) => {
+            sharedUtils.formatLatLongDMSString(point).then(xyformat => {
                 expect(xyformat).to.deep.equal({ lat: '', lon: '' });
             });
         });
     });
 
     it('formatLatLongDMSString invalid map point longitude coordinate', () => {
-        cy.window().then((window) => {
+        cy.window().then(window => {
             const sharedUtils = window.rInstance.geo.utils.shared;
             sharedUtils.formatLatLongDMSString(undefined);
             const point = new Point(
@@ -195,14 +195,14 @@ describe('GeoAPI SharedUtils', () => {
                 undefined,
                 true
             );
-            sharedUtils.formatLatLongDMSString(point).then((xyformat) => {
+            sharedUtils.formatLatLongDMSString(point).then(xyformat => {
                 expect(xyformat).to.deep.equal({ lat: '', lon: '' });
             });
         });
     });
 
     it('formatLatLongDMSString valid map point', () => {
-        cy.window().then((window) => {
+        cy.window().then(window => {
             const sharedUtils = window.rInstance.geo.utils.shared;
             sharedUtils.formatLatLongDMSString(undefined);
             const point = new Point(
@@ -211,7 +211,7 @@ describe('GeoAPI SharedUtils', () => {
                 new SpatialReference(102100),
                 true
             );
-            sharedUtils.formatLatLongDMSString(point).then((xyformat) => {
+            sharedUtils.formatLatLongDMSString(point).then(xyformat => {
                 expect(xyformat).to.deep.equal({
                     lat: '81° 00\' 00"',
                     lon: '100° 00\' 00"'

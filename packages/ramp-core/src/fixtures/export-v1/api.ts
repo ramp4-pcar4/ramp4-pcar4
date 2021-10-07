@@ -82,7 +82,7 @@ export class ExportV1API extends FixtureInstance {
         });
 
         // clone items for download canvas
-        const fbGroupDownload: fabric.Group = await new Promise((resolve) => {
+        const fbGroupDownload: fabric.Group = await new Promise(resolve => {
             fbGroup!.clone((g: fabric.Group) => {
                 resolve(g);
             });
