@@ -137,7 +137,7 @@ export class AttributeAPI extends APIScope {
 
         // hoist the attributes from the .attributes property
         const attSet: AttributeSet = {
-            features: serverResult.map((aa) => aa.attributes),
+            features: serverResult.map(aa => aa.attributes),
             oidIndex: {}
         };
 

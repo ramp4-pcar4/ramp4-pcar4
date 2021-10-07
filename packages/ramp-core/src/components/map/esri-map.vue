@@ -123,10 +123,10 @@ export default defineComponent({
 
             const layers = await Promise.all(
                 newValue
-                    .filter((lc) => !oldValue.includes(lc))
-                    .map((layerConfig) => {
+                    .filter(lc => !oldValue.includes(lc))
+                    .map(layerConfig => {
                         return new Promise<LayerInstance | null>(
-                            async (resolve) => {
+                            async resolve => {
                                 let defLoadProm: Promise<string>;
 
                                 // check if we need to load the layer class

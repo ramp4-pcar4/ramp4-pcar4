@@ -38,7 +38,7 @@ export class BasemapAPI extends FixtureInstance {
         this.$iApi.$vApp.$store.set(
             BasemapStore.selectedBasemap,
             basemapConfig.basemaps.find(
-                (basemap) => basemap.id === basemapConfig.initialBasemapId
+                basemap => basemap.id === basemapConfig.initialBasemapId
             ) || null
         );
     }

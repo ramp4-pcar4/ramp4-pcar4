@@ -91,14 +91,14 @@ export class PanelInstance extends APIScope {
 
             // for async components, wait until they are resolved and patch in panel's i18n messages
             const component = new Promise<Component>((resolve, reject) => {
-                asyncComponent.then((data) => {
+                asyncComponent.then(data => {
                     // wait until the component promise is resolved and mark it as loaded
                     this.loadedScreens.push(id);
 
                     // if data is a `*.vue` file, use its `default` export
                     resolve(isTypeofImportVue(data) ? data.default : data);
                 });
-                asyncComponent.catch((error) => reject(error));
+                asyncComponent.catch(error => reject(error));
             });
 
             payload = defineAsyncComponent({

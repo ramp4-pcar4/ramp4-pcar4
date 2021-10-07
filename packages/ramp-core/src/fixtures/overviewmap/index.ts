@@ -9,7 +9,7 @@ class OverviewmapFixture extends OverviewmapAPI {
 
         this.$vApp.$store.registerModule('overviewmap', overviewmap());
 
-        Object.entries(messages).forEach((value) =>
+        Object.entries(messages).forEach(value =>
             (<any>this.$vApp.$i18n).mergeLocaleMessage(...value)
         );
 
