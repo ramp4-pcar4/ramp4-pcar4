@@ -123,7 +123,7 @@ export class MultiPolygon extends BaseGeometry {
             if (input.length === 0) {
                 throw new Error('no polygons provided');
             }
-            return input.map((p) => Polygon.parsePolygon(p));
+            return input.map(p => Polygon.parsePolygon(p));
         } else {
             throw new Error('invalid input format for parseMultiPolygon');
         }
@@ -135,6 +135,6 @@ export class MultiPolygon extends BaseGeometry {
     ): Array<Array<Array<Array<number>>>> {
         // speed tests show loops & slice is 3x faster than JSON parse/stringify
         // array of polyGons to array of Lines(rings) to array of Points, copy each point
-        return a.map((g) => g.map((l) => l.map((p) => p.slice())));
+        return a.map(g => g.map(l => l.map(p => p.slice())));
     }
 }

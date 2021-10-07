@@ -108,7 +108,7 @@ export default defineComponent({
             }
 
             const oidField = layer.getOidField(uid);
-            layer.getIcon(data[oidField], uid).then((value) => {
+            layer.getIcon(data[oidField], uid).then(value => {
                 if (this.icon[idx] !== value) {
                     this.icon[idx] = value;
                 }

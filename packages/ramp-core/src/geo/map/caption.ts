@@ -166,7 +166,7 @@ export class MapCaptionAPI extends APIScope {
                     .toArray();
 
             // Join all the copyright strings and update the attribution
-            Promise.all(baseLayerLoadPromises).then((baseLayers) => {
+            Promise.all(baseLayerLoadPromises).then(baseLayers => {
                 copyrightText = baseLayers
                     .filter((bl: any) => bl?.copyright)
                     .map((bl: any) => bl.copyright)

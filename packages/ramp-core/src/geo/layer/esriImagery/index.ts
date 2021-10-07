@@ -55,7 +55,7 @@ class ImageryLayer extends CommonLayer {
 
         const legendPromise = this.$iApi.geo.utils.symbology
             .mapServerToLocalLegend(this.origRampConfig.url)
-            .then((legArray) => {
+            .then(legArray => {
                 imgFC.legend = legArray;
             });
 

@@ -59,7 +59,7 @@ export class GeoCommonAPI {
 
     defaultLODs(keycode: string): Array<RampLodConfig> {
         const lodGrinder = (a: Array<Array<number>>) => {
-            return a.map((lod) => {
+            return a.map(lod => {
                 return {
                     level: lod[0],
                     resolution: lod[1],

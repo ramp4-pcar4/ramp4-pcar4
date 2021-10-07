@@ -9,7 +9,7 @@
                     name="file"
                     accept=".geojson,.json,.csv,.zip"
                     @input="
-                        (event) => {
+                        event => {
                             $emit('upload', event.target.files[0]);
                             event.target.value = null;
                         }
@@ -60,7 +60,7 @@
                     :value="modelValue"
                     @change="valid ? (urlError = false) : (urlError = true)"
                     @input="
-                        (event) => {
+                        event => {
                             validUrl(event.target.value);
                             $emit('link', event.target.value, valid);
                             urlError = false;
@@ -92,7 +92,7 @@
                         :value="modelValue"
                         v-model="selected"
                         @change="
-                            (event) => {
+                            event => {
                                 $emit('select', selected);
                                 checkMultiSelectError(selected);
                             }
