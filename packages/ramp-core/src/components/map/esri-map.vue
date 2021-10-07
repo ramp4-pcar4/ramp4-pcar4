@@ -127,6 +127,8 @@ export default defineComponent({
                     .map((layerConfig) => {
                         return new Promise<LayerInstance | null>(
                             async (resolve) => {
+                                // CUSTOM-LAYER
+                                /*
                                 let defLoadProm: Promise<string>;
 
                                 // check if we need to load the layer class
@@ -142,14 +144,15 @@ export default defineComponent({
                                     // if the definition is a custom number, the site host would have had to add the
                                     // definition already. this block should only run for layer types that are bundled
                                     // in the ramp core codebase.
-                                    defLoadProm =
-                                        this.$iApi.geo.layer.addLayerDef(
-                                            layerConfig.layerType
-                                        );
+                                    defLoadProm = this.$iApi.geo.layer.addLayerDef(
+                                        layerConfig.layerType
+                                    );
                                 }
 
                                 // wait for definition to load, or ride the resolve if already loaded
                                 await defLoadProm;
+                                */
+
                                 // create the layer instantiation
                                 const [createErr, layer] = await to(
                                     this.$iApi.geo.layer.createLayer(

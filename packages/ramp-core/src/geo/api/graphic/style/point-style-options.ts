@@ -1,4 +1,4 @@
-// TODO add proper documentation
+// Style for RAMP Point Graphic
 
 import { PointStyle, PointStyleParams, StyleOptions } from '@/geo/api';
 
@@ -40,7 +40,8 @@ export class PointStyleOptions extends StyleOptions {
         return this._yOffset;
     } // TODO figure out format, document format
 
-    /** Returns the specified icon */ get icon(): string {
+    /** Returns the specified icon. Can be image url, svg image */
+    get icon(): string {
         return this._icon;
     }
 }

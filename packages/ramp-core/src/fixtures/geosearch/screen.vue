@@ -113,6 +113,7 @@
 import { defineComponent, PropType } from 'vue';
 import { get } from '@/store/pathify-helper';
 import { PanelInstance } from '@/api';
+import { Point } from '@/geo/api';
 
 import { GeosearchStore } from './store';
 
@@ -149,7 +150,7 @@ export default defineComponent({
     methods: {
         // zoom in to a clicked result
         zoomIn(result: any): void {
-            let zoomPoint = new RAMP.GEO.Point('zoomies', result.position);
+            let zoomPoint = new Point('zoomies', result.position);
             this.$iApi.geo.map.zoomMapTo(zoomPoint, 50000);
         },
 
