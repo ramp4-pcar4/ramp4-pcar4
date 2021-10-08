@@ -42,6 +42,7 @@ import MapnavButtonV from '@/fixtures/mapnav/button.vue';
 import DividerV from '@/fixtures/appbar/divider.vue';
 import AppbarButtonV from '@/fixtures/appbar/button.vue';
 import Toggle from '@vueform/toggle';
+import { MaptipAPI } from '@/geo/map/maptip';
 
 interface RampOptions {
     loadDefaultFixtures?: boolean;
@@ -56,6 +57,7 @@ export class InstanceAPI {
     readonly geo: GeoAPI;
     readonly notifications: NotificationAPI;
     readonly startRequired: boolean;
+    readonly ui: { maptip: MaptipAPI };
     started: boolean = false;
 
     /**
@@ -90,6 +92,8 @@ export class InstanceAPI {
         this.fixture = new FixtureAPI(this); // pass the iApi reference to the FixtureAPI
         this.panel = new PanelAPI(this);
         this.geo = new GeoAPI(this);
+        //TODO before 1.0: does the ui namespace still make sense, should we just leave maptip under geo.map only?
+        this.ui = { maptip: this.geo.map.maptip };
         //TODO before 1.0: is 'notifications' too long of a name? maybe 'log' or 'notify'
         this.notifications = new NotificationAPI(this);
 

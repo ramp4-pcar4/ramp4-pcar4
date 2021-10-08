@@ -17,7 +17,10 @@ export class MaptipAPI extends APIScope {
         super(iApi);
     }
 
-    lastHit: GraphicHitResult | undefined = undefined;
+    // # makes variables private outside of typescript and lets us hide things on the API
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_class_fields
+    #lastHit: GraphicHitResult | undefined = undefined;
+    #currentCheck: ScreenPoint | undefined = undefined;
 
     /**
      * Checks for a graphic at the given screen coordinates.
@@ -27,29 +30,37 @@ export class MaptipAPI extends APIScope {
      * @returns {Promise<void>} resolves after the event is fired or no new graphic is hit.
      */
     async checkAtCoord(screenPoint: ScreenPoint): Promise<void> {
+        this.#currentCheck = screenPoint;
+
         // Get the graphic object
         const graphicHit: GraphicHitResult | undefined =
             await this.$iApi.geo.map.getGraphicAtCoord(screenPoint);
 
+        // cancel if new check came in while waiting for `getGraphicAtCoord`
+        // If the same point is checked twice technically it can get out of sync but then we're checking the same point anyways
+        if (this.#currentCheck !== screenPoint) {
+            return;
+        }
+
         if (!graphicHit) {
-            this.lastHit = undefined;
+            this.#lastHit = undefined;
             this.clear();
             return;
         }
 
         // Check if the same maptip already exists
         if (
-            this.lastHit &&
-            this.lastHit.layerId === graphicHit.layerId &&
-            this.lastHit.oid === graphicHit.oid &&
-            this.lastHit.layerIdx === graphicHit.layerIdx
+            this.#lastHit &&
+            this.#lastHit.layerId === graphicHit.layerId &&
+            this.#lastHit.oid === graphicHit.oid &&
+            this.#lastHit.layerIdx === graphicHit.layerIdx
         ) {
             // Same maptip, no need for changes
             // This keeps the maptip in place and saves some trips to Vuex store
             return;
         }
 
-        this.lastHit = graphicHit;
+        this.#lastHit = graphicHit;
         this.clear();
 
         // Get the layer
@@ -86,6 +97,11 @@ export class MaptipAPI extends APIScope {
         });
     }
 
+    /**
+     * Generates and sets the "default" maptip.
+     *
+     * @param info the tooltip info payload
+     */
     generateDefaultMaptip(info: {
         layer: LayerInstance;
         graphicHit: GraphicHitResult;
