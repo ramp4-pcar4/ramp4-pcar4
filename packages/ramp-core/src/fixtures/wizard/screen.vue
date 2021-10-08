@@ -435,10 +435,10 @@ export default defineComponent({
                 // );
             };
 
-            reader.onload = () => {
+            reader.onload = (e) => {
                 this.fileData = reader.result as ArrayBuffer;
                 this.url = file.name;
-                this.onUploadContinue();
+                this.onUploadContinue(e);
             };
 
             // this was used by vue-formulate previously
@@ -449,7 +449,10 @@ export default defineComponent({
             reader.readAsArrayBuffer(file);
         },
 
-        onUploadContinue() {
+        onUploadContinue(event: any) {
+            // Prevent the page from refreshing when pressing ENTER to submit the URL.
+            event?.preventDefault();
+
             if (this.fileData) {
                 setTimeout(() => {
                     // reset upload file
