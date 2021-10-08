@@ -18,8 +18,8 @@ const getters = {
      */
     visible(state: MapnavState): MapnavItemInstance[] {
         return state.order
-            .map<MapnavItemInstance>((id) => state.items[id])
-            .filter((item) => item.componentId);
+            .map<MapnavItemInstance>(id => state.items[id])
+            .filter(item => item.componentId);
     }
 };
 

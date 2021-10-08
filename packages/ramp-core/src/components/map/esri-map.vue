@@ -123,10 +123,10 @@ export default defineComponent({
 
             const layers = await Promise.all(
                 newValue
-                    .filter((lc) => !oldValue.includes(lc))
-                    .map((layerConfig) => {
+                    .filter(lc => !oldValue.includes(lc))
+                    .map(layerConfig => {
                         return new Promise<LayerInstance | null>(
-                            async (resolve) => {
+                            async resolve => {
                                 // CUSTOM-LAYER
                                 /*
                                 let defLoadProm: Promise<string>;

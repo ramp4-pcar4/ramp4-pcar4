@@ -56,11 +56,11 @@ class ExportV1LegendFixture
         const layers = this.$vApp.$store
             .get<LayerInstance[]>(LayerStore.layers)!
             .filter(
-                (layer) =>
+                layer =>
                     layer.isValidState() &&
                     layer.getVisibility() &&
                     !this._getLayerTreeIds(layer.getLayerTree()).every(
-                        (id) => !layer.getVisibility(id)
+                        id => !layer.getVisibility(id)
                     )
             );
 
@@ -113,12 +113,12 @@ class ExportV1LegendFixture
                             result.push(chunkTitle);
                         }
 
-                        chunkItems.forEach((item) => {
+                        chunkItems.forEach(item => {
                             item.top = runningHeight;
                             runningHeight += item.height! + ITEM_MARGIN;
                         });
 
-                        return [...result, ...chunkItems].filter((a) => a);
+                        return [...result, ...chunkItems].filter(a => a);
                     }
                 );
 
@@ -215,8 +215,8 @@ class ExportV1LegendFixture
             });
 
             // filter out invisible layer entries
-            const ids = this._getLayerTreeIds(layer.getLayerTree()).filter(
-                (id) => layer.getVisibility(id)
+            const ids = this._getLayerTreeIds(layer.getLayerTree()).filter(id =>
+                layer.getVisibility(id)
             );
 
             const items = await Promise.all(
@@ -242,7 +242,7 @@ class ExportV1LegendFixture
         segmentWidth: number
     ): Promise<SegmentChunk>[] {
         return ids.map<Promise<SegmentChunk>>(async (idx: number | string) => {
-            await Promise.all(layer.getLegend(idx).map((lg) => lg.drawPromise));
+            await Promise.all(layer.getLegend(idx).map(lg => lg.drawPromise));
             const symbologyStack = layer.getLegend(idx);
 
             const title = new fabric.Textbox(layer.getName(idx), {
@@ -274,7 +274,7 @@ class ExportV1LegendFixture
         symbologyStack: LegendSymbology[],
         segmentWidth: number
     ): Promise<fabric.Group>[] {
-        return symbologyStack.map(async (symbol) => {
+        return symbologyStack.map(async symbol => {
             const fbSymbol = (
                 await promisify(fabric.loadSVGFromString)(symbol.svgcode)
             )[0];
@@ -339,7 +339,7 @@ class ExportV1LegendFixture
             [],
             node.isLayer
                 ? [node.layerIdx]
-                : node.children.map((c) => this._getLayerTreeIds(c))
+                : node.children.map(c => this._getLayerTreeIds(c))
         );
     }
 }
@@ -357,8 +357,8 @@ const promisify = <T, A>(
     fn: (args: T, cb: Callback<A>) => void
 ): ((args: T) => Promise<A>) => {
     return (args: T) =>
-        new Promise((resolve) => {
-            fn(args, (callbackArgs) => {
+        new Promise(resolve => {
+            fn(args, callbackArgs => {
                 resolve(callbackArgs);
             });
         });

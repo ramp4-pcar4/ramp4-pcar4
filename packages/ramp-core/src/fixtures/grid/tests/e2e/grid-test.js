@@ -1,4 +1,4 @@
-const toggleGrid = (legendName) => {
+const toggleGrid = legendName => {
     // make sure legend entry is not still loading
     cy.contains('.legend-item', legendName)
         .find('.progress-line')
@@ -19,9 +19,9 @@ describe('Grid', () => {
                 .its('rInstance.$vApp.$store')
                 .invoke('get', 'layer/getLayerById', 'CleanAir')
                 .invoke('getAttributes')
-                .then((attributes) => {
+                .then(attributes => {
                     // check each row
-                    cy.get('.ag-center-cols-viewport .ag-row').each(($row) => {
+                    cy.get('.ag-center-cols-viewport .ag-row').each($row => {
                         const idx = parseInt($row.attr('row-id'));
                         for (attrib in attributes.features[idx]) {
                             // compare attribute value from layer with data in grid
@@ -57,7 +57,7 @@ describe('Grid', () => {
 
             cy.window()
                 .its('performance')
-                .then((p) => {
+                .then(p => {
                     // check that second grid loading is faster than first
                     p.measure('no-cache', 'first-opened', 'first-loaded');
                     p.measure('cache', 'second-opened', 'second-loaded');
@@ -79,13 +79,13 @@ describe('Grid', () => {
         it('has aria role attributes', () => {
             toggleGrid('Clean Air');
             cy.get('.ag-root').should('have.attr', 'role', 'grid');
-            cy.get('.customHeaderLabel').each(($el) => {
+            cy.get('.customHeaderLabel').each($el => {
                 expect($el).to.have.attr('role', 'columnheader');
             });
-            cy.get('.ag-row').each(($el) => {
+            cy.get('.ag-row').each($el => {
                 expect($el).to.have.attr('role', 'row');
             });
-            cy.get('.ag-cell-value').each(($el) => {
+            cy.get('.ag-cell-value').each($el => {
                 expect($el).to.have.attr('role', 'gridcell');
             });
             toggleGrid('Clean Air');
@@ -98,28 +98,28 @@ describe('Grid', () => {
             cy.window()
                 .its('rInstance.$vApp.$store')
                 .invoke('get', 'layer/getLayerById', 'CarbonMonoxide')
-                .then((layer) => {
+                .then(layer => {
                     cy.wrap(layer)
                         .invoke('getAttributes')
-                        .then((attributes) => {
+                        .then(attributes => {
                             // check icon of each row
                             cy.get('.ag-center-cols-viewport .ag-row').each(
-                                ($row) => {
+                                $row => {
                                     // get oid from row
                                     const oid = Object.keys(
                                         attributes.oidIndex
                                     ).find(
-                                        (key) =>
+                                        key =>
                                             attributes.oidIndex[key] ===
                                             parseInt($row.attr('row-id'))
                                     );
                                     // get icon from layer and compare with icon in grid
                                     cy.wrap(layer)
                                         .invoke('getIcon', oid)
-                                        .then((icon) => {
+                                        .then(icon => {
                                             cy.wrap($row)
                                                 .find('[col-id=0] svg')
-                                                .then((svg) => {
+                                                .then(svg => {
                                                     expect(
                                                         svg[0].outerHTML
                                                     ).to.equal(icon);
@@ -134,7 +134,7 @@ describe('Grid', () => {
 
         it('opens feature details', () => {
             toggleGrid('Clean Air');
-            cy.get('.ag-center-cols-container .ag-row').each(($row) => {
+            cy.get('.ag-center-cols-container .ag-row').each($row => {
                 // click details button
                 cy.wrap($row).find(`[col-id="1"]`).click();
                 // should open up the details panel
@@ -142,7 +142,7 @@ describe('Grid', () => {
                 // check that details panel contains row data
                 cy.wrap($row)
                     .find('.ag-cell-value')
-                    .each(($cell) => {
+                    .each($cell => {
                         if ($cell.attr('aria-colindex') > 3) {
                             cy.contains(
                                 '[data-cy="details-panel"]',
@@ -157,7 +157,7 @@ describe('Grid', () => {
 
         it('zooms to feature', () => {
             toggleGrid('Clean Air');
-            const zoom = (row) => {
+            const zoom = row => {
                 // click zoom button
                 cy.get(
                     `.ag-center-cols-container [row-id="${row}"] [col-id="2"]`
@@ -165,8 +165,8 @@ describe('Grid', () => {
                 // get oid
                 cy.get(`.ag-center-cols-container [row-id="${row}"]`)
                     .find('[col-id="OBJECTID"]')
-                    .then(($oid) => {
-                        cy.window().then((window) => {
+                    .then($oid => {
+                        cy.window().then(window => {
                             // wait for animation to finish
                             cy.wait(1000);
                             // get location from layer and compare with centre of visible extent
@@ -179,7 +179,7 @@ describe('Grid', () => {
                                 .invoke('getGraphic', $oid.text(), {
                                     getGeom: true
                                 })
-                                .then((g) => {
+                                .then(g => {
                                     const center = window.rInstance.geo.map
                                         .getExtent()
                                         .center();
@@ -208,7 +208,7 @@ describe('Grid', () => {
                 .its('rInstance.$vApp.$store')
                 .invoke('get', 'layer/getLayerById', 'CarbonMonoxide')
                 .invoke('getAttributes')
-                .then((attributes) => {
+                .then(attributes => {
                     // wait for status bar to update with correct value
                     cy.contains('entries shown').children().should('not.exist');
                     cy.contains('entries shown')
@@ -217,7 +217,7 @@ describe('Grid', () => {
 
                     cy.contains('entries shown')
                         .invoke('text')
-                        .then((txt) => {
+                        .then(txt => {
                             const [start, end, total] = txt
                                 .trim()
                                 .split(/\D+/)
@@ -305,11 +305,9 @@ describe('Grid', () => {
             toggleGrid('Clean Air');
             cy.contains('Columns').click();
             // check that dropdown contains all of the column headers
-            cy.get('.ag-header-cell-sortable .customHeaderLabel').each(
-                ($el) => {
-                    cy.contains('.rv-dropdown > a', $el.text()).find('#done'); // should all be checked initially
-                }
-            );
+            cy.get('.ag-header-cell-sortable .customHeaderLabel').each($el => {
+                cy.contains('.rv-dropdown > a', $el.text()).find('#done'); // should all be checked initially
+            });
             // unselect "Description" and "Group"
             cy.contains('.rv-dropdown > a', 'Description').click();
             cy.contains('.rv-dropdown > a', 'Group').click();
@@ -347,7 +345,7 @@ describe('Grid', () => {
             toggleGrid('Clean Air');
             // should sort ascending after clicking column header
             cy.contains('.customHeaderLabel', 'Name').click();
-            cy.get('.ag-center-cols-container .ag-row').then((r) => {
+            cy.get('.ag-center-cols-container .ag-row').then(r => {
                 // sort rows by row-index (how they appear on the screen)
                 let rows = Array.from(r);
                 rows.sort(
@@ -357,7 +355,7 @@ describe('Grid', () => {
                 );
 
                 let prevName;
-                rows.forEach((el) => {
+                rows.forEach(el => {
                     // extract name attribute from row and check they are lexicographically ascending
                     const name = el.children[3].innerText;
                     if (prevName) {
@@ -368,7 +366,7 @@ describe('Grid', () => {
             });
             // clicking again should sort descending
             cy.contains('.customHeaderLabel', 'Name').click();
-            cy.get('.ag-center-cols-container .ag-row').then((r) => {
+            cy.get('.ag-center-cols-container .ag-row').then(r => {
                 // sort rows by row-index (how they appear on the screen)
                 let rows = Array.from(r);
                 rows.sort(
@@ -378,7 +376,7 @@ describe('Grid', () => {
                 );
 
                 let prevName;
-                rows.forEach((el) => {
+                rows.forEach(el => {
                     // extract name attribute from row and check they are lexicographically descending
                     const name = el.children[3].innerText;
                     if (prevName) {
@@ -446,7 +444,7 @@ describe('Grid', () => {
 
             cy.get(
                 '.ag-center-cols-container .ag-cell[col-id="OBJECTID"]'
-            ).each(($cell) => {
+            ).each($cell => {
                 cy.wrap(parseInt($cell.text().trim())).should('gte', 4848);
             });
 
@@ -463,7 +461,7 @@ describe('Grid', () => {
 
             cy.get(
                 '.ag-center-cols-container .ag-cell[col-id="OBJECTID"]'
-            ).each(($cell) => {
+            ).each($cell => {
                 cy.wrap(parseInt($cell.text().trim())).should('lte', 4860);
             });
 
@@ -483,7 +481,7 @@ describe('Grid', () => {
 
             cy.get(
                 '.ag-center-cols-container .ag-cell[col-id="OBJECTID"]'
-            ).each(($cell) => {
+            ).each($cell => {
                 cy.wrap(parseInt($cell.text().trim()))
                     .should('gte', 4848)
                     .and('lte', 4860);
@@ -506,7 +504,7 @@ describe('Grid', () => {
             // eslint-disable-next-line prettier/prettier
             cy.get(
                 '.ag-center-cols-container .ag-cell[col-id="OBJECTID"]'
-            ).each(($cell) => {
+            ).each($cell => {
                 cy.wrap(parseInt($cell.text().trim())).should('eq', 30);
             });
 
@@ -529,7 +527,7 @@ describe('Grid', () => {
 
             cy.get(
                 '.ag-center-cols-container .ag-cell[col-id="OBJECTID"]'
-            ).each(($cell) => {
+            ).each($cell => {
                 cy.wrap(parseInt($cell.text().trim()))
                     .should('gte', 4848)
                     .and('lte', 4860);
@@ -548,7 +546,7 @@ describe('Grid', () => {
 
             cy.get(
                 '.ag-center-cols-container .ag-cell[col-id="GridColumn1"]'
-            ).each(($cell) => {
+            ).each($cell => {
                 cy.wrap($cell.text().trim()).should('eq', 'Edmonton Site');
             });
 
@@ -565,7 +563,7 @@ describe('Grid', () => {
 
             cy.get(
                 '.ag-center-cols-container .ag-cell[col-id="GridColumn1"]'
-            ).each(($cell) => {
+            ).each($cell => {
                 cy.wrap($cell.text().trim()).should('contain', 'Toronto');
             });
 
@@ -587,7 +585,7 @@ describe('Grid', () => {
             cy.contains('entries shown').contains('filtered from');
             cy.get(
                 '.ag-center-cols-container .ag-cell[col-id="risc_date"]'
-            ).each(($cell) => {
+            ).each($cell => {
                 // compare lexicographically since dates are yyyy-MM-dd
                 const dateStr = $cell.text().trim();
                 expect(dateStr >= '2003-05-07').to.be.true;
@@ -609,7 +607,7 @@ describe('Grid', () => {
             cy.contains('entries shown').contains('filtered from');
             cy.get(
                 '.ag-center-cols-container .ag-cell[col-id="risc_date"]'
-            ).each(($cell) => {
+            ).each($cell => {
                 // compare lexicographically since dates are yyyy-MM-dd
                 const dateStr = $cell.text().trim();
                 expect(dateStr <= '2004-09-25').to.be.true;
@@ -636,7 +634,7 @@ describe('Grid', () => {
             cy.contains('entries shown').contains('filtered from');
             cy.get(
                 '.ag-center-cols-container .ag-cell[col-id="risc_date"]'
-            ).each(($cell) => {
+            ).each($cell => {
                 // compare lexicographically since dates are yyyy-MM-dd
                 const dateStr = $cell.text().trim();
                 expect(dateStr >= '2003-05-07').to.be.true;
@@ -662,7 +660,7 @@ describe('Grid', () => {
             cy.contains('entries shown').contains('filtered from');
             cy.get(
                 '.ag-center-cols-container .ag-cell[col-id="risc_date"]'
-            ).each(($cell) => {
+            ).each($cell => {
                 // compare lexicographically since dates are yyyy-MM-dd
                 const dateStr = $cell.text().trim();
                 cy.log(dateStr);
@@ -691,7 +689,7 @@ describe('Grid', () => {
             cy.contains('entries shown').contains('filtered from');
             cy.get(
                 '.ag-center-cols-container .ag-cell[col-id="risc_date"]'
-            ).each(($cell) => {
+            ).each($cell => {
                 // compare lexicographically since dates are yyyy-MM-dd
                 const dateStr = $cell.text().trim();
                 expect(dateStr == '2000-12-05').to.be.true;
@@ -754,7 +752,7 @@ describe('Grid', () => {
                 { force: true }
             );
 
-            cy.get('.ag-center-cols-container .ag-row').each(($row) => {
+            cy.get('.ag-center-cols-container .ag-row').each($row => {
                 cy.wrap($row).contains('[col-id="GridColumn1"]', 'plant', {
                     matchCase: false
                 });
@@ -765,7 +763,7 @@ describe('Grid', () => {
 
             cy.get(
                 '.ag-center-cols-container .ag-cell[col-id="OBJECTID"]'
-            ).each(($cell) => {
+            ).each($cell => {
                 cy.wrap(parseInt($cell.text().trim())).should('gte', 300);
             });
 
@@ -794,7 +792,7 @@ describe('Grid', () => {
                 .tab()
                 .type('toronto');
 
-            cy.get('.ag-center-cols-container .ag-row').each(($row) => {
+            cy.get('.ag-center-cols-container .ag-row').each($row => {
                 cy.wrap($row).contains('[col-id="GridColumn1"]', 'plant', {
                     matchCase: false
                 });
@@ -805,7 +803,7 @@ describe('Grid', () => {
 
             cy.get(
                 '.ag-center-cols-container .ag-cell[col-id="OBJECTID"]'
-            ).each(($cell) => {
+            ).each($cell => {
                 cy.wrap(parseInt($cell.text().trim())).should('gte', 300);
             });
 
@@ -824,7 +822,7 @@ describe('Grid', () => {
             cy.get('[data-cy="grid-panel"] header .rv-global-search').type(
                 'geo'
             );
-            cy.get('.ag-center-cols-container .ag-row').each(($row) => {
+            cy.get('.ag-center-cols-container .ag-row').each($row => {
                 cy.wrap($row).contains('geo', { matchCase: false });
             });
 
@@ -858,7 +856,7 @@ describe('Grid', () => {
                 { force: true }
             );
 
-            cy.get('.ag-center-cols-container .ag-row').each(($row) => {
+            cy.get('.ag-center-cols-container .ag-row').each($row => {
                 cy.wrap($row).contains('[col-id="GridColumn1"]', 'prince', {
                     matchCase: false
                 });
@@ -870,7 +868,7 @@ describe('Grid', () => {
 
             cy.get(
                 '.ag-center-cols-container .ag-cell[col-id="CO_Symbol"]'
-            ).each(($cell) => {
+            ).each($cell => {
                 cy.wrap(parseInt($cell.text().trim())).should('gte', 3);
             });
 

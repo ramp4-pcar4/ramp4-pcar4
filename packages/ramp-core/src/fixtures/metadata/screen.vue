@@ -90,7 +90,7 @@ export default defineComponent({
             this.loadFromURL(
                 'https://cors-anywhere.herokuapp.com/' + this.payload.url,
                 []
-            ).then((r) => {
+            ).then(r => {
                 this.state.status = 'success';
 
                 // Append the content to the panel.
@@ -101,7 +101,7 @@ export default defineComponent({
         } else if (this.payload.type === 'html') {
             this.requestContent(
                 'https://cors-anywhere.herokuapp.com/' + this.payload.url
-            ).then((r) => {
+            ).then(r => {
                 this.state.status = 'success';
                 this.state.response = (r as MetadataResult).response;
             });
@@ -126,7 +126,7 @@ export default defineComponent({
             );
 
             if (!this.cache[xmlUrl]) {
-                return this.requestContent(xmlUrl).then((xmlData) => {
+                return this.requestContent(xmlUrl).then(xmlData => {
                     this.cache[xmlUrl] = (xmlData as MetadataResult).response;
                     return this.applyXSLT(this.cache[xmlUrl], XSLT, params);
                 });
@@ -159,7 +159,7 @@ export default defineComponent({
                 xsltProc.importStylesheet(xslDoc);
                 // [patched from ECDMP] Add parameters to xsl document (setParameter = Chrome/FF/Others)
                 if (params) {
-                    params.forEach((p) =>
+                    params.forEach(p =>
                         xsltProc.setParameter('', p.key, p.value || '')
                     );
                 }

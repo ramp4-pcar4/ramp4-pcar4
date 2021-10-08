@@ -15,7 +15,7 @@ class AppbarFixture extends AppbarAPI {
         this.$vApp.$store.registerModule('appbar', appbar());
 
         // merge in translations since this has no panel
-        Object.entries(messages).forEach((value) =>
+        Object.entries(messages).forEach(value =>
             (<any>this.$vApp.$i18n).mergeLocaleMessage(...value)
         );
 
@@ -73,7 +73,7 @@ class AppbarFixture extends AppbarAPI {
     removed() {
         this.$vApp.$store.unregisterModule('appbar');
 
-        this.eventHandlers.forEach((eventHandler) =>
+        this.eventHandlers.forEach(eventHandler =>
             this.$iApi.event.off(eventHandler)
         );
     }

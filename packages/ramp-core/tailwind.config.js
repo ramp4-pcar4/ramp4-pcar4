@@ -184,8 +184,8 @@ module.exports = {
                 const newRules = [];
 
                 // `container` is itself a clone; thanks Tailwind :/
-                container.walkRules((rule) => {
-                    shellSizes.forEach((shellSize) => {
+                container.walkRules(rule => {
+                    shellSizes.forEach(shellSize => {
                         const newRule = rule.clone(); // clone a rule so not to modify the original clone
 
                         // prefix shell size selector to the rule; slice the dot from the rule selector

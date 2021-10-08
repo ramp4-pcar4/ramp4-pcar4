@@ -16,7 +16,7 @@ describe('Mapnav', () => {
     });
 
     it('zoom-in button works', () => {
-        cy.window().then((window) => {
+        cy.window().then(window => {
             cy.get('.mapnav .mapnav-section .w-full').eq(0).click();
             cy.wait(1000);
             expect(window.rInstance.geo.map.getZoomLevel()).to.eq(1);
@@ -24,7 +24,7 @@ describe('Mapnav', () => {
     });
 
     it('zoom-out button works', () => {
-        cy.window().then((window) => {
+        cy.window().then(window => {
             cy.get('.mapnav .mapnav-section .w-full').eq(1).click();
             cy.wait(1000);
             expect(window.rInstance.geo.map.getZoomLevel()).to.eq(0);
@@ -32,7 +32,7 @@ describe('Mapnav', () => {
     });
 
     it('home button works', () => {
-        cy.window().then((window) => {
+        cy.window().then(window => {
             cy.get('.mapnav .mapnav-section .w-full').eq(3).click();
             cy.wait(1000);
             cy.wrap(window.rInstance.geo.map.getExtent())

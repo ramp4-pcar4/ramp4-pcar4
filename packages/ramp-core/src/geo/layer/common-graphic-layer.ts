@@ -59,7 +59,7 @@ export class CommonGraphicLayer extends CommonLayer {
      * @returns {Graphic} the graphic, undefined if no matching id is found.
      */
     getLocalGraphic(graphicId: string): Graphic | undefined {
-        return this._graphics.find((g) => g.id === graphicId);
+        return this._graphics.find(g => g.id === graphicId);
     }
 
     protected notLoadedErr(): void {
@@ -92,8 +92,8 @@ export class CommonGraphicLayer extends CommonLayer {
             gs = [graphics];
         }
 
-        const validGraphics = gs.filter((g) => {
-            const index = this._graphics.findIndex((gg) => gg.id === g.id);
+        const validGraphics = gs.filter(g => {
+            const index = this._graphics.findIndex(gg => gg.id === g.id);
 
             if (index === -1) {
                 this._graphics.push(g);
@@ -107,7 +107,7 @@ export class CommonGraphicLayer extends CommonLayer {
         });
 
         const mapSR = this.$iApi.geo.map.getSR();
-        const projGeomsProms = validGraphics.map((g) =>
+        const projGeomsProms = validGraphics.map(g =>
             this.$iApi.geo.utils.proj.projectGeometry(mapSR, g.geometry)
         );
 
@@ -152,7 +152,7 @@ export class CommonGraphicLayer extends CommonLayer {
             inArr = [graphics];
         }
 
-        const ids = inArr.map((x) => {
+        const ids = inArr.map(x => {
             if (typeof x === 'string') {
                 return x;
             } else {
@@ -161,14 +161,14 @@ export class CommonGraphicLayer extends CommonLayer {
         });
 
         const targets: Array<__esri.Graphic> = [];
-        ids.forEach((id) => {
+        ids.forEach(id => {
             // need to tag the param as `any` because .id is something we manually added
             const target = this.esriLayer?.graphics.find(
                 (g: any) => g.id === id
             );
             if (target) {
                 targets.push(target);
-                const rampIdx = this._graphics.findIndex((g) => g.id === id);
+                const rampIdx = this._graphics.findIndex(g => g.id === id);
                 if (rampIdx) {
                     this._graphics.splice(rampIdx, 1);
                 }

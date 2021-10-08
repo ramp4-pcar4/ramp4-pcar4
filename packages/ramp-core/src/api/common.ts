@@ -99,7 +99,7 @@ export function isComponentOptions(value: any): value is ComponentOptions {
     return (
         typeof value === 'object' &&
         !value.functional &&
-        names.some((name) => value[name] !== undefined)
+        names.some(name => value[name] !== undefined)
     );
 }
 

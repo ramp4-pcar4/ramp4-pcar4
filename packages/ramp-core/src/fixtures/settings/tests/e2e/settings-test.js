@@ -10,7 +10,7 @@ describe('Settings', () => {
             .invoke('get', 'layer/getLayerById', 'CleanAir')
             .as('layer');
 
-        cy.get('@layer').then((layer) => {
+        cy.get('@layer').then(layer => {
             // make layer invisible initially
             cy.wrap(layer).invoke('setVisibility', false);
             // open settings panel
@@ -39,7 +39,7 @@ describe('Settings', () => {
         // wait for panel to close
         cy.get('[data-cy="settings-panel"]').should('not.exist');
 
-        cy.get('@layer').then((layer) => {
+        cy.get('@layer').then(layer => {
             // make layer visible and set opacity
             cy.wrap(layer).invoke('setVisibility', true);
             cy.wrap(layer).invoke('setOpacity', 0.43);
@@ -73,7 +73,7 @@ describe('Settings', () => {
             .invoke('get', 'layer/getLayerById', 'CleanAir')
             .as('layer');
 
-        cy.get('@layer').then((layer) => {
+        cy.get('@layer').then(layer => {
             // make layer invisible  and full opacity initially
             cy.wrap(layer).invoke('setVisibility', false);
             cy.wrap(layer).invoke('setOpacity', 1);
@@ -111,7 +111,7 @@ describe('Settings', () => {
             .invoke('get', 'layer/getLayerById', 'CleanAir')
             .as('layer');
 
-        cy.get('@layer').then((layer) => {
+        cy.get('@layer').then(layer => {
             // make layer invisible  and full opacity initially
             cy.wrap(layer).invoke('setVisibility', false);
             cy.wrap(layer).invoke('setOpacity', 1);

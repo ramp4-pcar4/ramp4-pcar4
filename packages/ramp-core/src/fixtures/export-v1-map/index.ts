@@ -16,7 +16,7 @@ class ExportV1MapFixture extends FixtureInstance implements ExportV1SubFixture {
         img.src = screenshot.dataUrl;
 
         const esriImage = await new Promise<HTMLImageElement>(
-            (resolve) => (img.onload = () => resolve(img))
+            resolve => (img.onload = () => resolve(img))
         );
 
         return new fabric.Image(esriImage, options);
