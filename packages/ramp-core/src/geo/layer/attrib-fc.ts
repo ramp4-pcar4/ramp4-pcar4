@@ -33,7 +33,7 @@ import {
 import {
     EsriExtent,
     EsriField,
-    EsriRendererUtils,
+    EsriRendererFromJson,
     EsriRequest
 } from '@/geo/esri';
 import deepmerge from 'deepmerge';
@@ -163,7 +163,7 @@ export class AttribFC extends CommonFC {
                     : sData.drawingInfo.renderer;
             this.renderer =
                 this.parentLayer.$iApi.geo.utils.symbology.makeRenderer(
-                    EsriRendererUtils.fromJSON(sourceRenderer),
+                    EsriRendererFromJson(sourceRenderer),
                     this.fields
                 );
 

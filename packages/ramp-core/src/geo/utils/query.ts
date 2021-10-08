@@ -12,7 +12,7 @@ import {
     QueryFeaturesParams,
     SpatialReference
 } from '@/geo/api';
-import { EsriQuery, EsriQueryTask } from '@/geo/esri';
+import { EsriQuery, EsriQueryByIds } from '@/geo/esri';
 
 // this exists here instead of our main definitions file because it uses `FileLayer` type.
 // the layer inherits from APIScope, causing circular references in the public folder
@@ -52,9 +52,7 @@ export class QueryAPI extends APIScope {
             query.spatialRelationship = 'intersects';
         }
 
-        const queryTask = new EsriQueryTask({ url: options.url });
-
-        const oids = await queryTask.executeForIds(query);
+        const oids = await EsriQueryByIds(options.url, query);
         return Array.isArray(oids) ? oids : [];
     }
 

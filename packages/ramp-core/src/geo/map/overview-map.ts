@@ -119,10 +119,10 @@ export class OverviewMapAPI extends CommonMapAPI {
     /**
      * Moves graphic and zooms main map if extent graphic is dragged
      *
-     * @param {__esri.MapViewDragEvent} esriDrag
+     * @param {__esri.ViewDragEvent} esriDrag
      * @private
      */
-    private async mapDrag(esriDrag: __esri.MapViewDragEvent) {
+    private async mapDrag(esriDrag: __esri.ViewDragEvent) {
         if (esriDrag.action === 'start') {
             // check if drag hits graphic, if so set start extent
             if (await this.cursorHitTest(esriDrag)) {

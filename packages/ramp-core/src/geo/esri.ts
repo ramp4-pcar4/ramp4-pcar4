@@ -13,7 +13,7 @@ import EsriPoint from '@arcgis/core/geometry/Point';
 import EsriPolygon from '@arcgis/core/geometry/Polygon';
 import EsriPolyline from '@arcgis/core/geometry/Polyline';
 import EsriSpatialReference from '@arcgis/core/geometry/SpatialReference';
-import * as EsriGeometryJsonUtils from '@arcgis/core/geometry/support/jsonUtils';
+import { fromJSON as EsriGeometryFromJson } from '@arcgis/core/geometry/support/jsonUtils';
 import EsriGraphic from '@arcgis/core/Graphic';
 import EsriFeatureLayer from '@arcgis/core/layers/FeatureLayer';
 import EsriGraphicsLayer from '@arcgis/core/layers/GraphicsLayer';
@@ -32,24 +32,24 @@ import EsriRenderer from '@arcgis/core/renderers/Renderer';
 import EsriSimpleRenderer from '@arcgis/core/renderers/SimpleRenderer';
 import EsriUniqueValueRenderer from '@arcgis/core/renderers/UniqueValueRenderer';
 import EsriClassBreakInfo from '@arcgis/core/renderers/support/ClassBreakInfo';
-import * as EsriRendererUtils from '@arcgis/core/renderers/support/jsonUtils';
+import { fromJSON as EsriRendererFromJson } from '@arcgis/core/renderers/support/jsonUtils';
 import EsriUniqueValueInfo from '@arcgis/core/renderers/support/UniqueValueInfo';
 import EsriRequest from '@arcgis/core/request';
+// import EsriIdentify from '@arcgis/core/rest/identify';
+// import EsriPrint from '@arcgis/core/rest/print';
+import { executeForIds as EsriQueryByIds } from '@arcgis/core/rest/query';
+// import EsriIdentifyParameters from '@arcgis/core/rest/support/IdentifyParameters';
+// import EsriPrintParameters from '@arcgis/core/rest/support/PrintParameters';
+// import EsriPrintTemplate from '@arcgis/core/rest/support/PrintTemplate';
+// import EsriProjectParameters from '@arcgis/core/rest/support/ProjectParameters';
+import EsriQuery from '@arcgis/core/rest/support/Query';
 import EsriPictureMarkerSymbol from '@arcgis/core/symbols/PictureMarkerSymbol';
 import EsriSimpleFillSymbol from '@arcgis/core/symbols/SimpleFillSymbol';
 import EsriSimpleLineSymbol from '@arcgis/core/symbols/SimpleLineSymbol';
 import EsriSimpleMarkerSymbol from '@arcgis/core/symbols/SimpleMarkerSymbol';
 import EsriSymbol from '@arcgis/core/symbols/Symbol';
-import * as EsriSymbolJsonUtils from '@arcgis/core/symbols/support/jsonUtils';
+import { fromJSON as EsriSymbolFromJson } from '@arcgis/core/symbols/support/jsonUtils';
 import EsriGeometryService from '@arcgis/core/tasks/GeometryService';
-import EsriIdentifyTask from '@arcgis/core/tasks/IdentifyTask';
-import EsriPrintTask from '@arcgis/core/tasks/PrintTask';
-import EsriQueryTask from '@arcgis/core/tasks/QueryTask';
-import EsriIdentifyParameters from '@arcgis/core/tasks/support/IdentifyParameters';
-import EsriPrintParameters from '@arcgis/core/tasks/support/PrintParameters';
-import EsriPrintTemplate from '@arcgis/core/tasks/support/PrintTemplate';
-import EsriProjectParameters from '@arcgis/core/tasks/support/ProjectParameters';
-import EsriQuery from '@arcgis/core/tasks/support/Query';
 import EsriFeatureFilter from '@arcgis/core/views/layers/support/FeatureFilter';
 import EsriMapView from '@arcgis/core/views/MapView';
 import EsriBasemapGallery from '@arcgis/core/widgets/BasemapGallery';
@@ -66,12 +66,12 @@ export {
     EsriFeatureFilter,
     EsriFeatureLayer,
     EsriField,
-    EsriGeometryJsonUtils,
+    EsriGeometryFromJson,
     EsriGeometryService,
     EsriGraphic,
     EsriGraphicsLayer,
-    EsriIdentifyParameters,
-    EsriIdentifyTask,
+    // EsriIdentifyParameters,
+    // EsriIdentify,
     EsriImageParameters,
     EsriImageryLayer,
     EsriLOD,
@@ -80,17 +80,17 @@ export {
     EsriMapView,
     EsriMultipoint,
     EsriPictureMarkerSymbol,
-    EsriPrintParameters,
-    EsriPrintTask,
-    EsriPrintTemplate,
-    EsriProjectParameters,
+    // EsriPrintParameters,
+    // EsriPrint,
+    // EsriPrintTemplate,
+    // EsriProjectParameters,
     EsriPoint,
     EsriPolygon,
     EsriPolyline,
     EsriQuery,
-    EsriQueryTask,
+    EsriQueryByIds,
     EsriRenderer,
-    EsriRendererUtils,
+    EsriRendererFromJson,
     EsriRequest,
     EsriScaleBar,
     EsriSimpleFillSymbol,
@@ -100,7 +100,7 @@ export {
     EsriSpatialReference,
     EsriSymbol,
     EsriSublayer,
-    EsriSymbolJsonUtils,
+    EsriSymbolFromJson,
     EsriTileLayer,
     EsriUniqueValueInfo,
     EsriUniqueValueRenderer,
