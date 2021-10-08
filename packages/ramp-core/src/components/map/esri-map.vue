@@ -74,6 +74,7 @@ export default defineComponent({
                 this.maptipContent !== '' &&
                 this.maptipPoint
             ) {
+                this.maptipInstance.setContent(this.maptipContent);
                 this.maptipInstance.show();
             } else {
                 this.maptipInstance.hide();

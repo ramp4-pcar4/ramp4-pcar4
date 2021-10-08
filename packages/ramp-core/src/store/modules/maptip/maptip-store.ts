@@ -30,7 +30,6 @@ const mutations = {
     },
     SET_MAPTIP_CONTENT: (state: MaptipState, value: string) => {
         state.content = value;
-        state.maptipInstance.setContent(state.content);
     }
 };
 
