@@ -44,6 +44,14 @@ export default defineComponent({
         // temporarily print out loaded layers to console for grid testing purposes.
         console.log(this.layers, this.mapConfig);
     },
+    mounted() {
+        // Set config watcher up here to be able to call it immediately on mount
+        // regularly `immediate` makes it get called during `created`
+        this.$watch('mapConfig', this.onMapConfigChange, { immediate: true });
+        this.$watch('layerConfigs', this.onLayerConfigArrayChange, {
+            immediate: true
+        });
+    },
 
     watch: {
         maptipProperties() {
@@ -65,39 +73,6 @@ export default defineComponent({
             } else {
                 this.maptipInstance.hide();
             }
-        },
-
-        layerConfigs(newValue: RampLayerConfig[], oldValue: RampLayerConfig[]) {
-            this.onLayerConfigArrayChange(newValue, oldValue);
-        },
-
-        mapConfig(newValue: RampMapConfig, oldValue: RampMapConfig) {
-            console.log('new map config change: ', newValue, this.mapConfig);
-            if (newValue === oldValue) {
-                return;
-            }
-
-            const mapViewElement: Element | null = this.$el;
-
-            this.$iApi.geo.map.createMap(
-                newValue,
-                mapViewElement as HTMLDivElement
-            );
-            this.map = this.$iApi.geo.map;
-            this.$iApi.event.emit(GlobalEvents.MAP_CREATED, this.$iApi.geo.map);
-
-            // Hide hovertip on map creation
-            //@ts-ignore
-            mapViewElement._tippy.hide(0);
-            this.$iApi.$vApp.$store.set(
-                MaptipStore.setMaptipInstance,
-                //@ts-ignore
-                mapViewElement._tippy
-            );
-
-            // TODO see if we still need this. map config should trigger the array watcher due to the store.
-            //      possibly layer config is processed before map config is done creating map?
-            this.onLayerConfigArrayChange(this.layerConfigs.value, []);
         }
     },
 
@@ -123,7 +98,7 @@ export default defineComponent({
 
             const layers = await Promise.all(
                 newValue
-                    .filter(lc => !oldValue.includes(lc))
+                    .filter(lc => !oldValue || !oldValue.includes(lc))
                     .map(layerConfig => {
                         return new Promise<LayerInstance | null>(
                             async resolve => {
@@ -197,8 +172,40 @@ export default defineComponent({
             layers
                 .filter(Boolean)
                 .forEach((layer: LayerInstance | null, index: number) => {
-                    this.$iApi.geo.map.reorder(layer!, oldValue.length + index);
+                    this.$iApi.geo.map.reorder(
+                        layer!,
+                        oldValue ? oldValue.length + index : index
+                    );
                 });
+        },
+        onMapConfigChange(newValue: RampMapConfig, oldValue: RampMapConfig) {
+            console.log('new map config change: ', newValue, this.mapConfig);
+
+            if (newValue === oldValue) {
+                return;
+            }
+
+            const mapViewElement: Element | null = this.$el;
+
+            this.$iApi.geo.map.createMap(
+                newValue,
+                mapViewElement as HTMLDivElement
+            );
+            this.map = this.$iApi.geo.map;
+            this.$iApi.event.emit(GlobalEvents.MAP_CREATED, this.$iApi.geo.map);
+
+            // Hide hovertip on map creation
+            //@ts-ignore
+            mapViewElement._tippy.hide(0);
+            this.$iApi.$vApp.$store.set(
+                MaptipStore.setMaptipInstance,
+                //@ts-ignore
+                mapViewElement._tippy
+            );
+
+            // TODO see if we still need this. map config should trigger the array watcher due to the store.
+            //      possibly layer config is processed before map config is done creating map?
+            this.onLayerConfigArrayChange(this.layerConfigs.value, []);
         }
     }
 });
