@@ -50,7 +50,8 @@
                             v-tippy="{
                                 placement: 'bottom',
                                 theme: 'ramp4',
-                                animation: 'scale'
+                                animation: 'scale',
+                                appendTo: 'parent'
                             }"
                         >
                             <!-- https://fonts.google.com/icons?selected=Material%20Icons%3Aclear_all -->

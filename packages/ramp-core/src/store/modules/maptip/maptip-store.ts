@@ -3,7 +3,7 @@ import { make } from 'vuex-pathify';
 
 import { MaptipState } from './maptip-state';
 import { RootState } from '@/store';
-import { MaptipProperties } from '@/geo/api';
+import { MaptipProperties, Point } from '@/geo/api';
 
 type MaptipContext = ActionContext<MaptipState, RootState>;
 
@@ -13,14 +13,11 @@ const actions = {
     setMaptipInstance: (context: MaptipContext, maptipInstance: any) => {
         context.commit('SET_MAPTIP_INSTANCE', maptipInstance);
     },
-    setMaptipProperties: (context: MaptipContext, maptip: MaptipProperties) => {
-        context.commit('SET_MAPTIP_PROPERTIES', maptip);
+    setMaptipPoint: (context: MaptipContext, maptipPoint: Point) => {
+        context.commit('SET_MAPTIP_Point', maptipPoint);
     },
     setMaptipContent: (context: MaptipContext, content: string) => {
         context.commit('SET_MAPTIP_CONTENT', content);
-    },
-    setMaptipDefaultContent: (context: MaptipContext, content: string) => {
-        context.commit('SET_MAPTIP_CONTENT_DEFAULT', content);
     }
 };
 
@@ -28,23 +25,19 @@ const mutations = {
     SET_MAPTIP_INSTANCE: (state: MaptipState, value: any) => {
         state.maptipInstance = value;
     },
-    SET_MAPTIP_PROPERTIES: (state: MaptipState, value: MaptipProperties) => {
-        state.maptipProperties = value;
+    SET_MAPTIP_POINT: (state: MaptipState, value: Point) => {
+        state.maptipPoint = value;
     },
     SET_MAPTIP_CONTENT: (state: MaptipState, value: string) => {
-        state.content = value || state.defaultContent;
-        state.maptipInstance.setContent(state.content);
-    },
-    SET_MAPTIP_CONTENT_DEFAULT: (state: MaptipState, value: string) => {
-        state.defaultContent = value;
+        state.content = value;
     }
 };
 
 export enum MaptipStore {
     /**
-     * (State) maptipProperties: MaptipProperties
+     * (State) maptipPoint: Point
      */
-    maptipProperties = 'maptip/maptipProperties',
+    maptipPoint = 'maptip/maptipPoint',
     /**
      * (State) maptipInstance: any
      */
@@ -54,17 +47,13 @@ export enum MaptipStore {
      */
     content = 'maptip/content',
     /**
-     * (Action) setMaptipProperties: (maptip: MaptipProperties)
+     * (Action) setMaptipPoint: (maptip: Point)
      */
-    setMaptipProperties = 'maptip/setMaptipProperties!',
+    setMaptipPoint = 'maptip/setMaptipPoint!',
     /**
      * (Action) setMaptipContent: (content: string)
      */
     setMaptipContent = 'maptip/setMaptipContent!',
-    /**
-     * (Action) setMaptipDefaultContent: (content: string)
-     */
-    setMaptipDefaultContent = 'maptip/setMaptipDefaultContent!',
     /**
      * (Action) setMaptipInstance: (tooltipInstance: any)
      */

@@ -71,7 +71,8 @@
                 placement: 'top',
                 hideOnClick: false,
                 theme: 'ramp4',
-                animation: 'scale'
+                animation: 'scale',
+                appendTo: 'parent'
             }"
             :content="$t('map.toggleScaleUnits')"
         >

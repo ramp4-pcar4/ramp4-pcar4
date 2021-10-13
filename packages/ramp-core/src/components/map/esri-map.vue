@@ -8,6 +8,7 @@
             zIndex: 5,
             theme: 'ramp4',
             trigger: 'manual',
+            appendTo: 'parent',
             arrow: false,
             delay: 200,
             duration: [200, 200]
@@ -34,8 +35,9 @@ export default defineComponent({
             mapConfig: get(ConfigStore.getMapConfig),
             layers: get(LayerStore.layers),
             layerConfigs: get(LayerStore.layerConfigs),
-            maptipProperties: get(MaptipStore.maptipProperties),
+            maptipPoint: get(MaptipStore.maptipPoint),
             maptipInstance: get(MaptipStore.maptipInstance),
+            maptipContent: get(MaptipStore.content),
             map: ref() // TODO assuming we need this as a local property for vue binding. if we don't, remove it and just use $iApi.geo.map
         };
     },
@@ -54,21 +56,33 @@ export default defineComponent({
     },
 
     watch: {
-        maptipProperties() {
-            if (this.maptipProperties) {
+        maptipPoint() {
+            if (this.maptipPoint) {
                 // Calculate offset from mappoint
                 let offsetX, offsetY: number;
                 const originX: number = this.$iApi.geo.map.getPixelWidth() / 2;
                 const originY: number = 0;
                 const screenPointFromMapPoint =
-                    this.$iApi.geo.map.mapPointToScreenPoint(
-                        this.maptipProperties.mapPoint
-                    );
+                    this.$iApi.geo.map.mapPointToScreenPoint(this.maptipPoint);
                 offsetX = screenPointFromMapPoint.screenX - originX;
                 offsetY = originY - screenPointFromMapPoint.screenY;
                 this.maptipInstance.setProps({
                     offset: [offsetX, offsetY]
                 });
+                if (this.maptipContent && this.maptipContent !== '') {
+                    this.maptipInstance.show();
+                }
+            } else {
+                this.maptipInstance.hide();
+            }
+        },
+        maptipContent() {
+            if (
+                this.maptipContent &&
+                this.maptipContent !== '' &&
+                this.maptipPoint
+            ) {
+                this.maptipInstance.setContent(this.maptipContent);
                 this.maptipInstance.show();
             } else {
                 this.maptipInstance.hide();
@@ -119,9 +133,10 @@ export default defineComponent({
                                     // if the definition is a custom number, the site host would have had to add the
                                     // definition already. this block should only run for layer types that are bundled
                                     // in the ramp core codebase.
-                                    defLoadProm = this.$iApi.geo.layer.addLayerDef(
-                                        layerConfig.layerType
-                                    );
+                                    defLoadProm =
+                                        this.$iApi.geo.layer.addLayerDef(
+                                            layerConfig.layerType
+                                        );
                                 }
 
                                 // wait for definition to load, or ride the resolve if already loaded
