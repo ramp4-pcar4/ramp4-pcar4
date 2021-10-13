@@ -19,7 +19,6 @@ import { RampConfig } from '@/types';
 import { debounce, throttle } from 'throttle-debounce';
 import { MapCaptionStore } from '@/store/modules/map-caption';
 import { LayerStore } from '@/store/modules/layer';
-import { reactive } from 'vue';
 
 export enum GlobalEvents {
     /**
