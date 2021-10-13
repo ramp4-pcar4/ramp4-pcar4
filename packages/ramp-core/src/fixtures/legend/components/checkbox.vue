@@ -59,7 +59,6 @@ export default defineComponent({
         toggleVisibility(): void {
             if (this.value instanceof LegendItem) {
                 // Toggle parent symbology checkbox
-
                 this.legendItem.toggleVisibility();
             } else {
                 // Toggle child symbology checkbox
