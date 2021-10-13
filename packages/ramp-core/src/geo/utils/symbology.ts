@@ -8,7 +8,7 @@ import {
     UniqueValueRenderer
 } from '@/api/internal';
 import { Attributes, LegendSymbology, LineStyle } from '@/geo/api';
-import { EsriRendererUtils, EsriRequest } from '@/geo/esri';
+import { EsriRendererFromJson, EsriRequest } from '@/geo/esri';
 import svgjs from 'svg.js';
 import to from 'await-to-js';
 
@@ -935,11 +935,7 @@ export class SymbologyAPI extends APIScope {
             };
 
             // ok to pass empty array. this renderer will only be used to generate a legend; no symbol lookups
-            return this.makeRenderer(
-                EsriRendererUtils.fromJSON(renderer),
-                [],
-                true
-            );
+            return this.makeRenderer(EsriRendererFromJson(renderer), [], true);
         } else {
             // TODO does this case ever exist? need to figure out a way to encode this in our official renderer objects
             // renderer = { type: this.NONE };
@@ -987,11 +983,7 @@ export class SymbologyAPI extends APIScope {
             uniqueValueInfos: [].concat(...layerRenders)
         };
 
-        return this.makeRenderer(
-            EsriRendererUtils.fromJSON(fullRenderer),
-            [],
-            true
-        );
+        return this.makeRenderer(EsriRendererFromJson(fullRenderer), [], true);
     }
 
     /**

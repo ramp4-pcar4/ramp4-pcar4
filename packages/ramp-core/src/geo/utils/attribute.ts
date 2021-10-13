@@ -10,7 +10,7 @@ import {
     GetGraphicResult,
     GetGraphicServiceDetails
 } from '@/geo/api';
-import { EsriGeometryJsonUtils, EsriRequest } from '@/geo/esri';
+import { EsriGeometryFromJson, EsriRequest } from '@/geo/esri';
 import to from 'await-to-js';
 import { toRaw } from 'vue';
 
@@ -244,9 +244,7 @@ export class AttributeAPI extends APIScope {
                 // server result omits spatial reference
                 feat.geometry.spatialReference =
                     serviceResult.data.spatialReference;
-                const localEsriGeom = EsriGeometryJsonUtils.fromJSON(
-                    feat.geometry
-                );
+                const localEsriGeom = EsriGeometryFromJson(feat.geometry);
                 result.geometry =
                     this.$iApi.geo.utils.geom.geomEsriToRamp(localEsriGeom);
             }
