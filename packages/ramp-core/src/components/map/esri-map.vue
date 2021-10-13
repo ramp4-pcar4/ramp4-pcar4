@@ -181,6 +181,8 @@ export default defineComponent({
                         );
                     })
             );
+            // announce that all config layers have been loaded
+            this.$iApi.event.emit(GlobalEvents.LAYER_LOADED_ALL, layers);
 
             // need to wait for all layers before reordering since esri reorder does
             // not allow reordering/inserting into arbitrary indices (i.e. no holes)

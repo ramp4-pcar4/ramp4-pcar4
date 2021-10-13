@@ -19,7 +19,6 @@ import { RampConfig } from '@/types';
 import { debounce, throttle } from 'throttle-debounce';
 import { MapCaptionStore } from '@/store/modules/map-caption';
 import { LayerStore } from '@/store/modules/layer';
-import { reactive } from 'vue';
 
 export enum GlobalEvents {
     /**
@@ -39,6 +38,7 @@ export enum GlobalEvents {
     LAYER_REMOVE = 'layer/remove', // Payload: `(layer: LayerInstance)`
     LAYER_STATECHANGE = 'layer/statechange',
     LAYER_VISIBILITYCHANGE = 'layer/visibilitychange',
+    LAYER_LOADED_ALL = 'layer/loadedall',
 
     /**
      * Fires when the config file changes

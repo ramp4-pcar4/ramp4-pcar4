@@ -90,6 +90,7 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | LAYER_REMOVE<br>'layer/remove'                     | LayerInstance object                                           | The layer was removed from the map               |
 | LAYER_STATECHANGE<br>'layer/statechange'           | _state_: new value, _uid_: affected uid                        | The layer state changed                          |
 | LAYER_VISIBILITYCHANGE<br>'layer/visibilitychange' | _visibility_: new value, _uid_: affected uid                   | The layer visibility changed                     |
+| LAYER_LOADED_ALL<br>'layer/loadedall'              | _layers_: Array of LayerInstance objects                       | All config layers loaded                         |
 | MAP_BLUR<br>'map/blur'                             | FocusEvent object                                              | The map lost focus                               |
 | MAP_CLICK<br>'map/click'                           | MapClick object                                                | The map was clicked                              |
 | MAP_CREATED<br>'map/created'                       | Map API object                                                 | The map was created                              |

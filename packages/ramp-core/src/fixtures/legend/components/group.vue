@@ -85,8 +85,13 @@ export default defineComponent({
         LegendComponent: defineAsyncComponent(() => import('./component.vue')),
         checkbox: LegendCheckboxV
     },
+
     data() {
         return { LegendTypes: LegendTypes };
+    },
+
+    mounted() {
+        this.legendItem.checkVisibilityRules();
     }
 });
 </script>
