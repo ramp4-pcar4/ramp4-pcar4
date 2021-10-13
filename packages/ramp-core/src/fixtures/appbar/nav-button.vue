@@ -30,25 +30,15 @@
                 </svg>
             </div>
         </template>
+        <!-- TODO: Revisit this when designing the gear icon menu -->
         <a
             href="#"
             class="w-160 inline-flex"
-            @click="exportToggle"
-            :content="$t('navigation.export-v1')"
+            @click="doAThing"
+            content="PLACEHOLDER"
             v-tippy="{ placement: 'right' }"
         >
-            <!-- https://fonts.google.com/icons?selected=Material+Icons:layers&icon.query=export -->
-            <svg
-                class="w-24 h-24 flex-auto"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-            >
-                <path d="M0 0h24v24H0z" fill="none" />
-                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
-            </svg>
-            <span class="flex-auto ml-8">
-                {{ $t('map.export') }}
-            </span>
+            <span class="flex-auto ml-8 text-gray-500"> PLACEHOLDER </span>
         </a>
     </dropdown-menu>
 </template>
@@ -59,8 +49,9 @@ import { defineComponent } from 'vue';
 export default defineComponent({
     name: 'NavAppbarButtonV',
     methods: {
-        exportToggle() {
-            this.$iApi.panel.toggle('export-v1-panel');
+        // TODO: Revisit this when designing the gear icon menu
+        doAThing() {
+            console.log('PLACEHOLDER BUTTON CLICKED');
         }
     }
 });
