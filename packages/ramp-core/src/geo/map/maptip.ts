@@ -91,9 +91,10 @@ export class MaptipAPI extends APIScope {
 
         this.$iApi.event.emit('map/graphichit', {
             layer: layerInstance,
-            graphicHit: graphicHit,
+            graphicHit,
             attributes: graphic.attributes,
-            icon: icon
+            icon,
+            screenPoint
         });
     }
 
@@ -107,6 +108,7 @@ export class MaptipAPI extends APIScope {
         graphicHit: GraphicHitResult;
         attributes: Attributes;
         icon: string;
+        screenPoint: Point;
     }) {
         this.setContent(
             `<div class="flex items-center">${info.icon} ${

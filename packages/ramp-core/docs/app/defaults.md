@@ -101,7 +101,7 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | MAP_MOUSEDOWN<br>'map/mousedown'                   | PointerEvent object                                            | A mouse button was depressed                     |
 | MAP_MOUSEMOVE<br>'map/mousemove'                   | MapMove object                                                 | The mouse moved over the map                     |
 | MAP_BASEMAPCHANGE                                  | basemapId: string                                              | The basemap was changed                          |
-| MAP_GRAPHICHIT                                     | { layer, graphicHit, attributes, icon}                         | A graphic was found where the mouse/crosshair is |
+| MAP_GRAPHICHIT                                     | { layer, graphicHit, attributes, icon, screenPoint}            | A graphic was found where the mouse/crosshair is |
 
 ### Core Fixture Events
 
