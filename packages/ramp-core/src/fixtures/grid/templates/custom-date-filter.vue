@@ -170,8 +170,14 @@ export default interface GridCustomDateFilter {
 .rv-input {
     @apply m-0 py-1;
 }
+</style>
+<style lang="scss">
 .rv-input[type='date']::-webkit-inner-spin-button {
     -webkit-appearance: none;
     display: none;
+}
+
+.rv-input[type='date']::-webkit-calendar-picker-indicator {
+    margin: 0;
 }
 </style>
