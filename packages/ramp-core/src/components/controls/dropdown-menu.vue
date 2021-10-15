@@ -25,9 +25,9 @@
                 py-8
                 bg-white
                 rounded
-                text-center
                 z-10
             "
+            :class="{ 'text-center': centered }"
             ref="dropdown"
         >
             <slot v-bind:close="closeDropdown"></slot>
@@ -49,7 +49,8 @@ export default defineComponent({
         tooltip: { type: String },
         tooltipPlacement: { type: String, default: 'bottom' },
         tooltipTheme: { type: String, default: 'ramp4' },
-        tooltipAnimation: { type: String, default: 'scale' }
+        tooltipAnimation: { type: String, default: 'scale' },
+        centered: { type: Boolean, default: true }
     },
     data() {
         return {

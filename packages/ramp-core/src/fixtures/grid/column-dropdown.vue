@@ -4,6 +4,7 @@
         position="bottom-end"
         :tooltip="$t('grid.label.columns')"
         :tooltip-placement="'bottom'"
+        :centered="false"
     >
         <template #header>
             <div class="flex text-black p-8">
