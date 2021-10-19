@@ -123,20 +123,12 @@
 <script lang="ts">
 import { GlobalEvents } from '@/api';
 import { defineComponent, toRaw } from 'vue';
-import { call } from '@/store/pathify-helper';
-
-import { LegendStore } from '../store';
 import { LegendEntry, Controls } from '../store/legend-defs';
 
 export default defineComponent({
     name: 'LegendOptionsV',
     props: {
         legendItem: LegendEntry
-    },
-    data() {
-        return {
-            removeLayerEntry: call(LegendStore.removeLayerEntry)
-        };
     },
     methods: {
         /**
@@ -192,30 +184,8 @@ export default defineComponent({
          */
         removeLayer() {
             if (this.legendItem!._controlAvailable(Controls.Remove)) {
-                const layerTree = toRaw(this.legendItem!.layer!).getLayerTree();
-                if (
-                    !(
-                        layerTree.children.length === 1 &&
-                        layerTree.children[0].isLayer
-                    )
-                ) {
-                    this.removeLayerEntry(this.legendItem!.layerUID!);
-
-                    // remove MIL if all layer entries have been removed
-                    if (this.legendItem!.parent!.children?.length === 0) {
-                        this.$iApi.geo.map.removeLayer(layerTree.uid);
-                    } else {
-                        // cheap hack for MIL with multiple children - set visibility to false and remove legend entry
-                        // TODO get rid of this when/if MIL sublayers can be removed for real
-                        this.legendItem!.layer!.setVisibility(
-                            false,
-                            this.legendItem!._layerIndex
-                        );
-                    }
-                } else {
-                    this.legendItem!.toggleVisibility(false);
-                    this.$iApi.geo.map.removeLayer(this.legendItem!.layerUID!);
-                }
+                this.legendItem!.toggleVisibility(false);
+                this.$iApi.geo.map.removeLayer(this.legendItem!.layerUID!);
             }
         },
 

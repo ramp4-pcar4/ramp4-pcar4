@@ -65,7 +65,7 @@ export default defineComponent({
             if (layer === undefined) return;
             const oid = this.params.data[this.params.oidField];
             const opts = { getGeom: true };
-            layer.getGraphic(oid, opts, this.params.uid).then(g => {
+            layer.getGraphic(oid, opts).then(g => {
                 if (g.geometry === undefined) {
                     console.error(`Could not find graphic for objectid ${oid}`);
                 } else {

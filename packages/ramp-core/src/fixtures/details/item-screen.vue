@@ -112,7 +112,7 @@ export default defineComponent({
             const layerInfo = this.payload[this.resultIndex!];
             const uid = layerInfo.uid;
             const layer: LayerInstance | undefined = this.getLayerByUid(uid);
-            const nameField = layer?.getNameField(uid);
+            const nameField = layer?.nameField;
             return nameField
                 ? this.identifyItem.data[nameField]
                 : this.$t('details.title');
@@ -156,8 +156,8 @@ export default defineComponent({
                 );
                 return;
             }
-            const oidField = layer.getOidField(uid);
-            layer.getIcon(this.identifyItem.data[oidField], uid).then(value => {
+            const oidField = layer.oidField;
+            layer.getIcon(this.identifyItem.data[oidField]).then(value => {
                 this.icon = value;
             });
         },
@@ -173,9 +173,9 @@ export default defineComponent({
                 );
                 return;
             }
-            const oid = this.identifyItem.data[layer.getOidField(uid)];
+            const oid = this.identifyItem.data[layer.oidField];
             const opts = { getGeom: true };
-            layer.getGraphic(oid, opts, uid).then(g => {
+            layer.getGraphic(oid, opts).then(g => {
                 if (g.geometry === undefined) {
                     console.error(`Could not find graphic for objectid ${oid}`);
                 } else {

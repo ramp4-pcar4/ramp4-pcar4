@@ -67,7 +67,7 @@ export default defineComponent({
                 this.layer = this.rvGrid.getLayerByUid(this.rvGrid.layerUid);
 
                 if (this.layer !== undefined) {
-                    return this.layer.getName(this.rvGrid.layerUid);
+                    return this.layer.name;
                 }
             }
             return '';

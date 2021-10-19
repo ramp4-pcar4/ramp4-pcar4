@@ -75,17 +75,12 @@ export class MaptipAPI extends APIScope {
         }
 
         // Get the icon svg string for the graphic
-        const icon: string = await layerInstance.getIcon(
-            graphicHit.oid,
-            layerInstance.uid
-        );
+        const icon: string = await layerInstance.getIcon(graphicHit.oid);
 
         // get the attributes for the graphic
-        const graphic = await layerInstance.getGraphic(
-            graphicHit.oid,
-            { getAttribs: true },
-            graphicHit.layerIdx
-        );
+        const graphic = await layerInstance.getGraphic(graphicHit.oid, {
+            getAttribs: true
+        });
 
         this.setPoint(this.$iApi.geo.map.screenPointToMapPoint(screenPoint));
 
@@ -113,8 +108,7 @@ export class MaptipAPI extends APIScope {
         this.setContent(
             `<div class="flex items-center">${info.icon} ${
                 info.attributes[
-                    info.layer.config.tooltipField ||
-                        info.layer.getNameField(info.graphicHit.layerIdx)
+                    info.layer.config.tooltipField || info.layer.nameField
                 ]
             }</div>`
         );
