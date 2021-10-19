@@ -77,7 +77,7 @@ export default defineComponent({
             const layerInfo = this.payload[this.resultIndex!];
             const uid = layerInfo?.uid;
             const layer: LayerInstance | undefined = this.getLayerByUid(uid);
-            return layer?.getNameField(uid);
+            return layer?.nameField;
         }
     },
     methods: {
@@ -107,8 +107,8 @@ export default defineComponent({
                 return;
             }
 
-            const oidField = layer.getOidField(uid);
-            layer.getIcon(data[oidField], uid).then(value => {
+            const oidField = layer.oidField;
+            layer.getIcon(data[oidField]).then(value => {
                 if (this.icon[idx] !== value) {
                     this.icon[idx] = value;
                 }

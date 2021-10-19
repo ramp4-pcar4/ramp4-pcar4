@@ -3,9 +3,19 @@
 // most of the implementations will only change the initiate() code, which will have whatever
 // custom pre-processing of data to massage it into geojson for this class to process.
 
-import { AttribLayer, FileFC, InstanceAPI } from '@/api/internal';
 import {
+    AttribLayer,
+    AttributeLoaderDetails,
+    FileLayerAttributeLoader,
+    InstanceAPI,
+    QueryFeaturesFileParams,
+    QuickCache
+} from '@/api/internal';
+import {
+    DataFormat,
     GeometryType,
+    GetGraphicParams,
+    GetGraphicResult,
     IdentifyParameters,
     IdentifyResult,
     IdentifyResultFormat,
@@ -16,8 +26,13 @@ import {
     RampLayerConfig,
     TreeNode
 } from '@/geo/api';
-import { EsriFeatureLayer, EsriField, EsriRendererFromJson } from '@/geo/esri';
-import { markRaw } from 'vue';
+import {
+    EsriFeatureFilter,
+    EsriFeatureLayer,
+    EsriField,
+    EsriRendererFromJson
+} from '@/geo/esri';
+import { markRaw, toRaw } from 'vue';
 
 // util function to manage trickery. file layer can have field names that are bad keys.
 // our file loader will have corrected them, but ramp layer config .nameField and .tooltipField may
@@ -45,18 +60,22 @@ function fieldValidator(fields: Array<EsriField>, targetName: string): string {
 }
 
 export class FileLayer extends AttribLayer {
-    esriLayer: EsriFeatureLayer | undefined;
-    esriView: __esri.FeatureLayerView | undefined;
+    declare esriLayer: EsriFeatureLayer | undefined;
+    declare esriView: __esri.FeatureLayerView | undefined;
 
     protected esriJson: __esri.FeatureLayerProperties | undefined; // used as temp var to get around typescript parameter grousing. will be undefined after initLayer()
 
     sourceGeoJson: string | object | undefined; // TODO property for now. need to make final decison of how source geojson gets provided for initiate() to consume.
 
+    tooltipField: string; // TODO if we end up having more things that are shared with FeatureLayer, consider making a FeatureBaseLayer class for both to inherit from
+
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.supportsIdentify = true;
         this.isFile = true;
-        this._layerType = LayerType.FEATURE;
+        this.layerType = LayerType.FEATURE;
+        this.dataFormat = DataFormat.ESRI_FEATURE;
+        this.tooltipField = '';
     }
 
     async initiate(): Promise<void> {
@@ -175,34 +194,36 @@ export class FileLayer extends AttribLayer {
 
         // feature has only one layer
         const featIdx: number = 0; // GeoJSON is always 0
-        const fFC = new FileFC(this, featIdx);
-        fFC.name = this.name; // geojson layer is flat, so the FC and layer share their name. we do this here and not in extractMetaData because .name is private
-        this.fcs[featIdx] = fFC;
-        this.layerTree.children.push(new TreeNode(featIdx, fFC.uid, this.name));
+        // const fFC = new FileFC(this, featIdx);
+        // fFC.name = this.name; // geojson layer is flat, so the sublayer and layer share their name. we do this here and not in extractMetaData because .name is private
+        // this.fcs[featIdx] = fFC;
+        this.layerTree.children.push(
+            new TreeNode(featIdx, this.uid, this.name)
+        );
 
         // TODO implement symbology load
         // const pLS = aFC.loadSymbology();
 
         // NOTE: call extract, not load, as there is no service involved here
         // TODO figure out what do to with custom renderer here
-        fFC.extractLayerMetadata();
+        this.extractLayerMetadata();
         // NOTE name field overrides from config have already been applied by this point
         if (this.origRampConfig.tooltipField) {
-            fFC.tooltipField = fieldValidator(
-                fFC.fields,
+            this.tooltipField = fieldValidator(
+                this.esriFields,
                 this.origRampConfig.tooltipField
             );
         } else {
-            fFC.tooltipField = fFC.nameField;
+            this.tooltipField = this.nameField;
         }
 
-        fFC.processFieldMetadata(this.origRampConfig.fieldMetadata);
-        if (!fFC.attLoader) {
+        this.processFieldMetadata(this.origRampConfig.fieldMetadata);
+        if (!this.attLoader) {
             throw new Error('file fc did not have attribute loader object');
         }
-        fFC.attLoader.updateFieldList(fFC.fieldList);
+        this.attLoader.updateFieldList(this.fieldList);
 
-        fFC.featureCount = this.esriLayer?.source.length || 0;
+        this.featureCount = this.esriLayer?.source.length || 0;
 
         // if file based (or server extent was fried), calculate extent based on geometry
         // TODO implement this. may need a manual loop to calculate graphicsExtent since ESRI torpedo'd the function
@@ -226,20 +247,20 @@ export class FileLayer extends AttribLayer {
 
     identify(options: IdentifyParameters): IdentifyResultSet {
         // TODO this function is pretty much identical to FeatureLayer, now that we are using query for everything.
-        //      the queryFeatures on the FC will automatically go to the correct server/file instance due to the
+        //      the queryFeatures on the sublayer will automatically go to the correct server/file instance due to the
         //      overridden functions.
         //      once we figure out the tolerance/geometry and things are cooking, consider making this function
         //      the generic one on AttribLayer, and then MapImageLayer overrides it with the child variation.
 
-        const myFC: FileFC = <FileFC>this.getFC(undefined); // undefined will get the first/only
+        // const myFC: FileFC = <FileFC>this.getSublayer(undefined); // undefined will get the first/only
         const map = this.$iApi.geo.map;
 
         // early kickout check. not loaded/error; not visible; not queryable; off scale
         if (
-            !this.isValidState() ||
-            !myFC.getVisibility() ||
+            !this.isValidState ||
+            !this.visibility ||
             // !this.isQueryable() || // TODO implement when we have this flag created
-            myFC.scaleSet.isOffScale(map.getScale()).offScale
+            this.scaleSet.isOffScale(map.getScale()).offScale
         ) {
             // return empty result.
             return super.identify(options);
@@ -247,7 +268,7 @@ export class FileLayer extends AttribLayer {
 
         let loadResolve: any;
         const innerResult: IdentifyResult = {
-            uid: myFC.uid,
+            uid: this.uid,
             loadPromise: new Promise(resolve => {
                 loadResolve = resolve;
             }),
@@ -264,7 +285,7 @@ export class FileLayer extends AttribLayer {
 
         // run a spatial query
         const qOpts: QueryFeaturesParams = {
-            outFields: myFC.fieldList,
+            outFields: this.fieldList,
             includeGeometry: false
         };
 
@@ -273,7 +294,7 @@ export class FileLayer extends AttribLayer {
         //      this never made much sense, re-test against ESRI 4.x api
 
         if (
-            myFC.geomType !== GeometryType.POLYGON &&
+            this.geomType !== GeometryType.POLYGON &&
             options.geometry.type === GeometryType.POINT
         ) {
             // if our layer is not polygon, and our identify input is a point, make a point buffer
@@ -286,9 +307,9 @@ export class FileLayer extends AttribLayer {
         }
 
         // TODO: Test if works after #206 is implemented
-        qOpts.filterSql = myFC.getCombinedSqlFilter();
+        qOpts.filterSql = this.getCombinedSqlFilter();
 
-        result.done = myFC.queryFeatures(qOpts).then(results => {
+        result.done = this.queryFeatures(qOpts).then(results => {
             // TODO might be a problem overwriting the array if something is watching/binding to the original
             innerResult.items = results.map(gr => {
                 return {
@@ -310,5 +331,160 @@ export class FileLayer extends AttribLayer {
         });
 
         return result;
+    }
+
+    extractLayerMetadata(): void {
+        const l = this.esriLayer;
+        if (!l) {
+            throw new Error(
+                'file layer attempted to extract data from esri layer, esri layer did not exist'
+            );
+        }
+
+        // properties for all endpoints
+        this.supportsFeatures = true;
+
+        this.geomType = this.$iApi.geo.utils.geom.clientGeomTypeToRampGeomType(
+            l.geometryType
+        );
+        this.quickCache = new QuickCache(this.geomType);
+
+        // TODO if we ever make config override for scale, would need to apply on the layer constructor, will end up here
+        this.scaleSet.minScale = l.minScale || 0;
+        this.scaleSet.maxScale = l.maxScale || 0;
+
+        // TODO will need to calculate this as esri removed their library to calculate it
+        // TODO check if layer auto-gens this in .fullExtent
+        this.extent = this.$iApi.geo.utils.geom._convEsriExtentToRamp(
+            l.fullExtent,
+            this.id + '_extent'
+        );
+
+        this.esriFields = l.fields;
+        this.nameField = l.displayField;
+        this.oidField = l.objectIdField;
+
+        // if there was a custom renderer in the config, it would have been applied when the
+        // layer was constructed. no need to check here.
+        this.renderer = this.$iApi.geo.utils.symbology.makeRenderer(
+            l.renderer,
+            this.esriFields
+        );
+
+        // this array will have a set of promises that resolve when all the legend svg has drawn.
+        // for now, will not include that set (promise.all'd) on the layer load blocker;
+        // don't want to stop a layer from loading just because an icon won't draw.
+        // ideally we'll have placeholder symbol (white square, loading symbol, caution symbol, etc)
+        this.legend = this.$iApi.geo.utils.symbology.rendererToLegend(
+            this.renderer
+        );
+
+        const loadData: AttributeLoaderDetails = {
+            sourceGraphics: l.source,
+            oidField: this.oidField,
+            attribs: '*', // * as default. layer loader may update after processing config overrides
+            batchSize: -1
+        };
+        this.attLoader = new FileLayerAttributeLoader(this.$iApi, loadData);
+    }
+
+    /**
+     * Fetches a graphic from the given layer.
+     * This overrides the baseclass method, as we are all local and dont need quick caches or server hits
+     *
+     * @function getGraphic
+     * @param  {Integer} objectId      ID of object being searched for
+     * @param {Object} opts            object containing option parametrs
+     *                 - map           map wrapper object of current map. only required if requesting geometry
+     *                 - getGeom          boolean. indicates if return value should have geometry included. default to false
+     *                 - getAttribs       boolean. indicates if return value should have attributes included. default to false
+     * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .layerFC for convenience
+     */
+    async getGraphic(
+        objectId: number,
+        opts: GetGraphicParams
+    ): Promise<GetGraphicResult> {
+        const gjOpt: QueryFeaturesParams = {
+            filterSql: `${this.oidField}=${objectId}`,
+            includeGeometry: !!opts.getGeom
+        };
+
+        // TODO not sure how much we care about this. since local, result will always have attribs and geom,
+        //      regardless of what requester asked for.
+        //      if thats a problem, add some logic to pare off properties of the result (might need to clone
+        //      to avoid breaking original source in the layer)
+
+        const resultArr = await this.queryFeatures(gjOpt);
+        if (resultArr.length === 0) {
+            throw new Error(`Could not find object id ${objectId}`);
+        } else if (resultArr.length !== 1) {
+            console.warn(
+                'did not get a single result on a query for a specific object id'
+            );
+        }
+        return resultArr[0];
+    }
+
+    // TODO we are using the getgraphic type as it's an unbound loosely typed feature
+    //      may want to change name of the type to something more general
+
+    /**
+     * Requests a set of features for this layer that match the criteria of the options
+     * - filterGeometry : a RAMP API geometry to restrict results to
+     * - filterSql : a where clause to apply against feature attributes
+     * - includeGeometry : a boolean to indicate if result features should include the geometry
+     * - outFields : a string of comma separated field names. will restrict fields included in the output
+     * - sourceSR : a spatial reference indicating what the source layer is encoded in. providing can assist in result geometry being of a proper resolution
+     * - map : a Ramp map. required if geometry was requested and the layer is not on a map
+     *
+     * @param options {Object} options to provide filters and helpful information.
+     * @returns {Promise} resolves with an array of features that satisfy the criteria
+     */
+    async queryFeatures(
+        options: QueryFeaturesParams
+    ): Promise<Array<GetGraphicResult>> {
+        const gjOpt: QueryFeaturesFileParams = {
+            layer: this,
+            ...options
+        };
+
+        return this.$iApi.geo.utils.query.geoJsonQuery(gjOpt);
+    }
+
+    // TODO this is more of a utility function. leaving it public as it might be useful, revist when
+    //      the app is mature.
+    async queryOIDs(options: QueryFeaturesParams): Promise<Array<number>> {
+        const gjOpt: QueryFeaturesFileParams = {
+            layer: this,
+            ...options
+        };
+
+        // run the query. since geojson is local, the util always returns everything.
+        // iterate through the results and strip out the OIDs
+        const gjFeats = await this.$iApi.geo.utils.query.geoJsonQuery(gjOpt);
+        return gjFeats.map(feat =>
+            feat.attributes ? feat.attributes[this.oidField] : -1
+        );
+    }
+
+    /**
+     * Applies the current filter settings to the physical map layer.
+     *
+     * @function applySqlFilter
+     * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all keys
+     */
+    applySqlFilter(exclusions: Array<string> = []): void {
+        if (!this.esriView) {
+            this.noLayerErr();
+            return;
+        }
+
+        const sql = this.filter.getCombinedSql(exclusions);
+
+        // NOTE this can be expanded to have spatial filters as well. if we head to that,
+        //      will will need to ensure any spatial elements get included in the new FeatureFilter
+        toRaw(this.esriView).filter = new EsriFeatureFilter({
+            where: sql
+        });
     }
 }

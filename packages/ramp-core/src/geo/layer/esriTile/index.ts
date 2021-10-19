@@ -1,6 +1,6 @@
 // TODO add proper comments
 
-import { CommonFC, CommonLayer, InstanceAPI } from '@/api/internal';
+import { CommonLayer, InstanceAPI } from '@/api/internal';
 import { LayerType, RampLayerConfig, TreeNode } from '@/geo/api';
 import { EsriTileLayer } from '@/geo/esri';
 import { markRaw } from 'vue';
@@ -11,7 +11,7 @@ class TileLayer extends CommonLayer {
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.supportsIdentify = false;
-        this._layerType = LayerType.TILE;
+        this.layerType = LayerType.TILE;
     }
 
     async initiate(): Promise<void> {
@@ -45,10 +45,10 @@ class TileLayer extends CommonLayer {
     onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
-        const tileFC = new CommonFC(this, 0);
-        this.fcs[0] = tileFC;
+        // const tileFC = new CommonFC(this, 0);
+        // this.fcs[0] = tileFC;
 
-        this.layerTree?.children.push(new TreeNode(0, tileFC.uid, this.name));
+        this.layerTree?.children.push(new TreeNode(0, this.uid, this.name));
 
         // TODO see if we need to re-synch the parent name
         // this.layerTree.name = this.name;
@@ -56,7 +56,7 @@ class TileLayer extends CommonLayer {
         const legendPromise = this.$iApi.geo.utils.symbology
             .mapServerToLocalLegend(this.origRampConfig.url)
             .then(legArray => {
-                tileFC.legend = legArray;
+                this.legend = legArray;
             });
 
         loadPromises.push(legendPromise);
