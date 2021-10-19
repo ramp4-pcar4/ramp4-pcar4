@@ -238,7 +238,7 @@ let config = {
         layers: [
             {
                 id: 'WaterQuantity',
-                name: 'Water quantity parent',
+                name: 'Water quantity parent + CO2',
                 layerType: 'esriMapImage',
                 url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                 layerEntries: [
@@ -247,6 +247,14 @@ let config = {
                         name: 'Water quantity child',
                         state: {
                             opacity: 1,
+                            visibility: true
+                        }
+                    },
+                    {
+                        index: 9,
+                        name: 'Carbon monoxide emissions by facility',
+                        state: {
+                            opacity: 0.5,
                             visibility: true
                         }
                     }
@@ -339,6 +347,11 @@ let config = {
                                             layerId: 'WaterQuantity',
                                             name: 'Water Quantity in Nested Group',
                                             entryIndex: 1
+                                        },
+                                        {
+                                            layerId: 'WaterQuantity',
+                                            name: 'CO2 in Nested Group',
+                                            entryIndex: 9
                                         },
                                         {
                                             layerId: 'WaterQuality',

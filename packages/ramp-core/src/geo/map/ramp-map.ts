@@ -29,6 +29,7 @@ import {
 } from '@/geo/api';
 import { EsriGraphic, EsriLOD, EsriMapView } from '@/geo/esri';
 import { LayerStore } from '@/store/modules/layer';
+import { LegendStore } from '@/fixtures/legend/store';
 import { MapCaptionAPI } from './caption';
 import { markRaw } from 'vue';
 
@@ -298,6 +299,43 @@ export class MapAPI extends CommonMapAPI {
     }
 
     /**
+     * Removes a sublayer from the map
+     *
+     * @param {LayerInstance | string} layer the Ramp sublayer or sublayer id/uid to remove
+     * @returns {Promise<void>} a promise that resolves when the layer has been removed from the map
+     */
+    removeSublayer(sublayer: LayerInstance | string): void {
+        let uid: string;
+        let layer: LayerInstance;
+        if (typeof sublayer === 'string') {
+            uid = sublayer;
+            layer = this.$iApi.geo.layer.getLayer(uid);
+        } else {
+            if (!sublayer.isSublayer) {
+                throw new Error(
+                    `Attempted to call removeSublayer on a non-sublayer object: ${sublayer}`
+                );
+            }
+            uid = sublayer.uid;
+            layer = sublayer;
+        }
+        this.$iApi.event.emit(GlobalEvents.LAYER_REMOVE, sublayer);
+        layer.visibility = false; // make the sublayer invisible
+        layer.isRemoved = true; // mark sublayer as removed
+
+        // If this sublayer is the last removed layer, then remove the parent layer as well
+        if (
+            layer.parentLayer?.sublayers.every(
+                (sub: LayerInstance) => sub.isRemoved
+            )
+        ) {
+            // all sublayers have been marked for removal
+            // delete the parent
+            this.removeLayer(layer.parentLayer!);
+        }
+    }
+
+    /**
      * Removes a layer from the map and fires the LAYER_REMOVE event
      *
      * @param {LayerInstance | string} layer the Ramp layer or layer id/uid to remove
@@ -310,7 +348,6 @@ export class MapAPI extends CommonMapAPI {
         }
 
         let layerInstance: LayerInstance | undefined = undefined;
-
         if (layer instanceof LayerInstance) {
             layerInstance = layer;
         } else {
@@ -318,23 +355,26 @@ export class MapAPI extends CommonMapAPI {
             layerInstance = this.$iApi.geo.layer.getLayer(layer);
         }
 
-        // Error checking
-        if (!layerInstance) {
-            console.error('Layer could not be found for removal.');
+        // If layer is a sublayer, pass the call to removeSublayer
+        if (layerInstance.isSublayer) {
+            this.removeSublayer(layerInstance);
             return;
         }
+
+        // Error checking
+        if (!layerInstance) {
+            throw new Error('Layer could not be found for removal.');
+        }
         if (!layerInstance.esriLayer) {
-            console.error(
+            throw new Error(
                 'Attempted to remove layer from the map without an esri layer. Likely layer.initiate() was not called or had not finished.'
             );
-            return;
         }
 
         // Now we start the layer removal process
         // Clean up layer
         layerInstance.terminate();
 
-        // Clean up the layer store
         this.$iApi.$vApp.$store.set(LayerStore.removeLayer, layerInstance);
 
         // Clean up the layer config store

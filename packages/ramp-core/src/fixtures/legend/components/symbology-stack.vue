@@ -76,13 +76,9 @@ export default defineComponent({
         getSymbologyStack(): any {
             if (this.legendItem.layerUID) {
                 Promise.all(
-                    toRaw(this.layer)
-                        .getLegend(this.legendItem.layerUID)
-                        .map((l: any) => l.drawPromise)
+                    toRaw(this.layer).legend.map((l: any) => l.drawPromise)
                 ).then((r: any) => {
-                    this.stack = toRaw(this.layer).getLegend(
-                        this.legendItem.layerUID
-                    );
+                    this.stack = toRaw(this.layer).legend;
                 });
             }
         }

@@ -1,5 +1,4 @@
 import { FixtureInstance, LayerInstance } from '@/api/internal';
-import { TreeNode } from '@/geo/api';
 import { LayerStore } from '@/store/modules/layer';
 import { ExportV1SubFixture } from '@/fixtures/export-v1';
 import { fabric } from 'fabric';
@@ -55,14 +54,7 @@ class ExportV1LegendFixture
         // filter out loading/errored and invisible layers
         const layers = this.$vApp.$store
             .get<LayerInstance[]>(LayerStore.layers)!
-            .filter(
-                layer =>
-                    layer.isValidState() &&
-                    layer.getVisibility() &&
-                    !this._getLayerTreeIds(layer.getLayerTree()).every(
-                        id => !layer.getVisibility(id)
-                    )
-            );
+            .filter(layer => layer.isValidState && layer.visibility);
 
         // number of columns based on export width and min col width
         const columns = Math.min(
@@ -208,20 +200,23 @@ class ExportV1LegendFixture
         segmentWidth: number
     ): Promise<Segment>[] {
         return layers.map(async (layer: LayerInstance) => {
-            const title = new fabric.Textbox(layer.getName(layer.uid), {
+            const title = new fabric.Textbox(layer.name, {
                 fontSize: 24,
                 fontFamily: DEFAULT_FONT,
                 width: segmentWidth
             });
 
             // filter out invisible layer entries
-            const ids = this._getLayerTreeIds(layer.getLayerTree()).filter(id =>
-                layer.getVisibility(id)
-            );
+            const ids = this._getLayerTreeIds(layer);
 
-            const items = await Promise.all(
-                this._makeSegmentChunks(ids, layer, segmentWidth)
-            );
+            let items: any = [];
+            items = layer.supportsSublayers
+                ? await Promise.all(
+                      this._makeSegmentChunks(ids, layer, segmentWidth) // pass list of flatenned sublayer ids
+                  )
+                : await Promise.all(
+                      this._makeSegmentChunks([-1], layer, segmentWidth) // pass single -1 id so the root gets processed
+                  );
 
             return { title, items };
         });
@@ -230,6 +225,8 @@ class ExportV1LegendFixture
     /**
      * Creates segment chunks based on the provided layer and layer entry id.
      *
+     * Used for layers that support sublayers (e.g. MapImageLayers)
+     *
      * @private
      * @param {(number[] | string[])} ids
      * @param {LayerInstance} layer
@@ -237,15 +234,31 @@ class ExportV1LegendFixture
      * @memberof ExportV1LegendFixture
      */
     private _makeSegmentChunks(
-        ids: (number | string)[],
+        ids: number[],
         layer: LayerInstance,
         segmentWidth: number
     ): Promise<SegmentChunk>[] {
-        return ids.map<Promise<SegmentChunk>>(async (idx: number | string) => {
-            await Promise.all(layer.getLegend(idx).map(lg => lg.drawPromise));
-            const symbologyStack = layer.getLegend(idx);
+        const rootLayer: LayerInstance = layer;
+        return ids.map<Promise<SegmentChunk>>(async (idx: number) => {
+            let currLayer: LayerInstance | undefined =
+                idx === -1 ? rootLayer : rootLayer.getSublayer(idx, true);
 
-            const title = new fabric.Textbox(layer.getName(idx), {
+            if (!currLayer) {
+                // This should not happen, but if it does return an ERROR label
+                return {
+                    title: new fabric.Textbox('ERROR', {
+                        fontSize: 20,
+                        fontFamily: DEFAULT_FONT,
+                        width: segmentWidth
+                    }),
+                    items: []
+                };
+            }
+
+            await Promise.all(currLayer.legend.map(lg => lg.drawPromise));
+            const symbologyStack = currLayer.legend;
+
+            const title = new fabric.Textbox(currLayer.name, {
                 fontSize: 20,
                 fontFamily: DEFAULT_FONT,
                 width: segmentWidth
@@ -334,13 +347,21 @@ class ExportV1LegendFixture
      * @returns {number[]}
      * @memberof ExportV1LegendFixture
      */
-    private _getLayerTreeIds(node: TreeNode): number[] {
-        return ([] as number[]).concat.apply(
-            [],
-            node.isLayer
-                ? [node.layerIdx]
-                : node.children.map(c => this._getLayerTreeIds(c))
-        );
+    private _getLayerTreeIds(rootLayer: LayerInstance): number[] {
+        let ids: Array<number> = [];
+        let queue: Array<LayerInstance> = [...rootLayer.sublayers];
+
+        while (queue.length > 0) {
+            const sublayer: LayerInstance = queue.shift()!;
+            if (!sublayer) {
+                continue;
+            }
+
+            sublayer.visibility && ids.push(sublayer.layerIdx);
+            queue.push(...sublayer.sublayers);
+        }
+
+        return ids;
     }
 }
 

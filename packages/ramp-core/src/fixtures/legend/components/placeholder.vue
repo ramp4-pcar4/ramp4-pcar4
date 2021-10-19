@@ -70,13 +70,14 @@ export default defineComponent({
             if (newLayers === undefined) {
                 return;
             }
-            const layer: LayerInstance | undefined = newLayers.find(
-                (layer: LayerInstance) => layer.id === this.legendItem.id
+            let layer: LayerInstance | undefined = this.$iApi.$vApp.$store.get(
+                LayerStore.getLayerById,
+                this.legendItem.id
             );
+
             if (layer !== undefined) {
-                layer.isLayerLoaded().then(() => {
-                    // Wait for symbology to load too
-                    this.legendItem.reloadEntry(layer);
+                layer?.isLayerLoaded().then(() => {
+                    this.legendItem.setEntry(layer!);
                     if (this.legendItem.isDefault) {
                         this.$store.set(
                             LegendStore.updateDefaultEntry,

@@ -65,6 +65,10 @@ export class LegendAPI extends FixtureInstance {
                 legendEntries.push(legendGroup);
             } else if (lastEntry.layerId !== undefined) {
                 // create a wrapper legend object for single legend entry
+                // if the entry is a sublayer, override the entry id to the sublayers id
+                if (lastEntry.entryIndex !== undefined) {
+                    lastEntry.layerId = `${lastEntry.layerId}-${lastEntry.entryIndex}`;
+                }
                 const legendEntry = new LegendEntry(
                     lastEntry,
                     lastEntry.parent
@@ -96,9 +100,10 @@ export class LegendAPI extends FixtureInstance {
         const entry = new LegendEntry(
             {
                 layerId: layer.id,
-                name: layer.getName(),
+                name: layer.name,
                 isDefault: true,
-                layers: this.$vApp.$store.get(LayerStore.layers)
+                layers: this.$vApp.$store.get(LayerStore.layers),
+                entryIndex: layer.layerIdx
             },
             parent
         );
