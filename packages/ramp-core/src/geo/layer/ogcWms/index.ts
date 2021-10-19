@@ -1,18 +1,19 @@
 import { CommonLayer, InstanceAPI } from '@/api/internal';
 import {
+    DataFormat,
     GeometryType,
     IdentifyParameters,
     IdentifyResult,
     IdentifyResultFormat,
     IdentifyResultSet,
     LayerType,
+    LegendSymbology,
     Point,
     RampLayerConfig,
     RampLayerWmsLayerEntryConfig,
     TreeNode
 } from '@/geo/api';
 import { EsriRequest, EsriWMSLayer, EsriWMSSublayer } from '@/geo/esri';
-import { WmsFC } from './wms-fc';
 import { UrlWrapper } from '@/geo/api';
 import { markRaw } from 'vue';
 
@@ -24,9 +25,10 @@ export default class WmsLayer extends CommonLayer {
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.supportsIdentify = true;
-        this._layerType = LayerType.WMS;
+        this.layerType = LayerType.WMS;
         this.mimeType = rampConfig.featureInfoMimeType || ''; // TODO is there a default? will that be in the config defaulting?
         this.sublayerNames = [];
+        this.dataFormat = DataFormat.OGC_RASTER;
     }
 
     async initiate(): Promise<void> {
@@ -116,10 +118,10 @@ export default class WmsLayer extends CommonLayer {
             throw new Error('superclass did not create layer tree');
         }
 
-        const wmsFC = new WmsFC(this, 0);
-        this.fcs[0] = wmsFC;
+        // const wmsFC = new WmsFC(this, 0);
+        // this.fcs[0] = wmsFC;
 
-        this.layerTree.children.push(new TreeNode(0, wmsFC.uid, this.name));
+        this.layerTree.children.push(new TreeNode(0, this.uid, this.name));
         // TODO see if we need to re-synch the parent name
         // this.layerTree.name = this.name;
 
@@ -155,7 +157,7 @@ export default class WmsLayer extends CommonLayer {
             this.noLayerErr();
         }
 
-        loadPromises.push(wmsFC.loadSymbology());
+        loadPromises.push(this.loadSymbology());
 
         // TODO check out whats going on with layer extent. is it set and donethanks?
 
@@ -192,16 +194,16 @@ export default class WmsLayer extends CommonLayer {
             'application/json': 'EsriFeature'
         };
 
-        const myFC: WmsFC = <WmsFC>this.getFC(undefined); // undefined will get the first/only
+        // const myFC: WmsFC = <WmsFC>this.getSublayer(undefined); // undefined will get the first/only
         const map = this.$iApi.geo.map;
 
         // early kickout check. not loaded/error
         if (
-            !this.isValidState() ||
-            !myFC.getVisibility() ||
+            !this.isValidState ||
+            !this.visibility ||
             // !this.isQueryable() || // TODO implement when we have this flag created
             // !infoMap[this.config.featureInfoMimeType] || // TODO implement once config is defined
-            myFC.scaleSet.isOffScale(map.getScale()).offScale
+            this.scaleSet.isOffScale(map.getScale()).offScale
         ) {
             // return empty result.
             return super.identify(options);
@@ -211,7 +213,7 @@ export default class WmsLayer extends CommonLayer {
 
         let loadResolve: any;
         const innerResult: IdentifyResult = {
-            uid: myFC.uid,
+            uid: this.uid,
             loadPromise: new Promise(resolve => {
                 loadResolve = resolve;
             }),
@@ -486,5 +488,70 @@ export default class WmsLayer extends CommonLayer {
         });
 
         return legendURLs;
+    }
+
+    /**
+     * Searches for a layer title defined by a wms.
+     * @function getWMSLayerTitle
+     * @private
+     * @param  {String} wmsLayerId   layer id as defined in the wms (i.e. not wmsLayer.id)
+     * @return {String}              layer title as defined on the service, '' if no title defined
+     */
+    getWMSLayerTitle(wmsLayerId: string): string {
+        // TODO move this to ogc.js module?
+        if (!this.esriLayer) {
+            return '';
+        }
+        let targetEntry;
+        // we use .some to allow the search to stop when we find something
+        this.esriLayer.allSublayers.some((sl: any) => {
+            // wms ids are stored in .name
+            if (sl.name === wmsLayerId) {
+                targetEntry = sl.title;
+                return true;
+            }
+        });
+
+        return targetEntry || '';
+    }
+
+    /**
+     * Download or refresh the internal symbology for the sublayer.
+     *
+     * @function loadSymbology
+     * @returns {Promise}         resolves when symbology has been downloaded
+     */
+    loadSymbology() {
+        const configLayerEntries = this.config.layerEntries;
+        const legendArray = this.getLegendUrls(
+            configLayerEntries.map((le: any) => {
+                return {
+                    id: le.id,
+                    styleLegends: le.styleLegends,
+                    currentStyle: le.currentStyle
+                };
+            })
+        ).map((imageUri, idx) => {
+            // config specified name || server specified name || config id
+            const name =
+                configLayerEntries[idx].name ||
+                this.getWMSLayerTitle(configLayerEntries[idx].id) ||
+                configLayerEntries[idx].id;
+            const symbologyItem: LegendSymbology = {
+                uid: RAMP.GEO.sharedUtils.generateUUID(),
+                label: name,
+                svgcode: '',
+                drawPromise: this.$iApi.geo.utils.symbology
+                    .generateWMSSymbology(imageUri)
+                    .then((data: any) => {
+                        symbologyItem.svgcode = data.svgcode;
+                        symbologyItem.imgHeight = data.imgHeight;
+                        symbologyItem.imgWidth = data.imgWidth;
+                    })
+            };
+            return symbologyItem;
+        });
+        this.legend = legendArray;
+        return Promise.resolve();
     }
 }

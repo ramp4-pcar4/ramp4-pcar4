@@ -154,7 +154,21 @@ const actions = {
         const entry: LegendEntry = <LegendEntry>(
             context.state.children.find(child => child.id === id)
         );
-        const layer: LayerInstance = entry.layer!;
+
+        // If layer is a sublayer, we want to update the default entry using the parent layer
+        const layer: LayerInstance | undefined = entry.layer?.isSublayer
+            ? entry.layer?.parentLayer
+            : entry.layer;
+
+        if (!layer) {
+            // back out
+            console.error(
+                'Attempted to update default legend entry when layer is undefined'
+            );
+            return;
+        }
+
+        console.log('Context', context);
 
         // creates legend config from layer tree children
         const parseLayerTreeChildren = (children: Array<TreeNode>): any => {

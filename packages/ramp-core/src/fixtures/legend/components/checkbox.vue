@@ -60,9 +60,9 @@ export default defineComponent({
          * @returns {boolean} Boolean value that is true when no child symbols are visible
          */
         _noSymbolsVisible(): boolean {
-            return !this.legendItem.layer
-                ?.getLegend()
-                .some((item: LegendSymbology) => item.visibility);
+            return !this.legendItem.layer?.legend.some(
+                (item: LegendSymbology) => item.visibility
+            );
         },
 
         /**
@@ -79,14 +79,14 @@ export default defineComponent({
                     // since we toggled on one of the child symbols and set all other
                     // symbols to invisible (except for the one that is toggled on)
 
-                    this.legendItem._layer
-                        ?.getLegend()
-                        .forEach((item: LegendSymbology) => {
+                    this.legendItem._layer?.legend.forEach(
+                        (item: LegendSymbology) => {
                             this.legendItem.setChildSymbologyVisibility(
                                 item.uid,
                                 false
                             );
-                        });
+                        }
+                    );
 
                     this.legendItem.setChildSymbologyVisibility(
                         this.value.uid,
@@ -115,8 +115,7 @@ export default defineComponent({
             if (this.legendItem.layer?.layerType !== LayerType.WMS) {
                 this.legendItem.layer?.setSqlFilter(
                     CoreFilter.SYMBOL,
-                    this.legendItem.layer
-                        ?.getLegend()
+                    this.legendItem.layer?.legend
                         .filter(
                             (item: LegendSymbology) =>
                                 item.lastVisbility === true

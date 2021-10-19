@@ -279,16 +279,14 @@ export default defineComponent({
          * Remove layer from the map
          */
         removeLayer(): void {
-            this.$iApi.geo.map.removeLayer(this.legendItem!.layerUID!);
+            this.$iApi.geo.map.removeLayer(this.legendItem!.layer!);
         },
 
         /**
          * Wrapper to safely get the legend from layer while avoiding ArcGIS and Vue3 conflict
          */
         _getLegend(): LegendSymbology[] {
-            return toRaw(this.legendItem!.layer!).getLegend(
-                this.legendItem.layerUID
-            );
+            return toRaw(this.legendItem!.layer!).legend;
         }
     }
 });
