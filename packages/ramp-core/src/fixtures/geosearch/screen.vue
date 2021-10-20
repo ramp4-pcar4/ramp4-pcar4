@@ -49,7 +49,7 @@
                     v-if="searchResults.length > 0"
                 >
                     <li
-                        class="relative h-48"
+                        class="relative h-56"
                         v-for="(result, idx) in searchResults"
                         v-bind:key="idx"
                     >
@@ -64,12 +64,12 @@
                             "
                             @click="zoomIn(result)"
                             v-focus-item="'show-truncate'"
+                            style="border-bottom: 1px solid lightgray"
                         >
-                            <div
-                                class="rv-result-description flex px-8"
-                                v-truncate
-                            >
-                                <div class="flex-1 text-left truncate">
+                            <div class="rv-result-description px-8" v-truncate>
+                                <div
+                                    class="flex-1 text-left truncate font-bold"
+                                >
                                     <span
                                         v-html="
                                             highlightSearchTerm(
@@ -84,19 +84,21 @@
                                     >
                                         {{
                                             result.location.city
-                                                ? result.location.city +
+                                                ? ' ' +
+                                                  result.location.city +
                                                   ', ' +
                                                   result.location.province.abbr
-                                                : result.location.province.abbr
+                                                : ' ' +
+                                                  result.location.province.abbr
                                         }}</span
                                     >
                                 </div>
-                                <span
-                                    class="flex-2 text-right font-bold truncate"
+                                <div
+                                    class="flex-1 text-left truncate text-sm"
                                     v-if="result.type"
-                                    style="max-width: 50%"
-                                    >{{ result.type }}</span
                                 >
+                                    {{ result.type }}
+                                </div>
                             </div>
                         </button>
                     </li>
