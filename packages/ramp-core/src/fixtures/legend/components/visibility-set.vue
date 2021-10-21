@@ -52,6 +52,7 @@
 
                 <!-- visibility -->
                 <checkbox
+                    :checked="legendItem.visibility"
                     :value="legendItem"
                     :isRadio="
                         legendItem.parent &&
@@ -87,8 +88,13 @@ export default defineComponent({
         LegendComponent: defineAsyncComponent(() => import('./component.vue')),
         checkbox: LegendCheckboxV
     },
+
     data() {
         return { LegendTypes: LegendTypes };
+    },
+
+    mounted() {
+        this.legendItem.checkVisibilityRules();
     }
 });
 </script>

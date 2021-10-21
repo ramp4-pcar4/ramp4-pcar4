@@ -171,15 +171,13 @@ export default defineComponent({
         'symbology-stack': LegendSymbologyStackV,
         options: LegendOptionsV
     },
-    // setup(props) {
-    //     const visibility = ref(props.legendItem.visibility);
-    //     return { visibility };
-    // },
+
     data() {
         return {
             symbologyStack: [] as Array<LegendSymbology>
         };
     },
+
     computed: {
         /**
          * Get the type of layer
@@ -202,6 +200,7 @@ export default defineComponent({
             return this.$iApi.animate === 'on';
         }
     },
+
     mounted() {
         this.symbologyStack = [];
 
@@ -214,9 +213,7 @@ export default defineComponent({
             return;
         }
 
-        if (this.legendItem!.parent instanceof LegendGroup) {
-            this.legendItem!.parent.checkVisibility(this.legendItem!);
-        }
+        this.legendItem.checkVisibilityRules();
 
         Promise.all(
             this._getLegend().map((item: LegendSymbology) => item.drawPromise)
@@ -224,6 +221,7 @@ export default defineComponent({
             this.symbologyStack = this._getLegend();
         });
     },
+
     methods: {
         /**
          * Display symbology stack for the layer.

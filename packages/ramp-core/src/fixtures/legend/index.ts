@@ -31,6 +31,7 @@ class LegendFixture extends LegendAPI {
 
         // parse legend section of config and store information in legend store
         this._parseConfig(this.config);
+
         this.$vApp.$watch(
             () => this.config,
             (value: any) => this._parseConfig(value)

@@ -207,6 +207,7 @@ export default defineComponent({
                         this.legendItem!._layerIndex
                     );
                 } else {
+                    this.legendItem!.toggleVisibility(false);
                     this.$iApi.geo.map.removeLayer(this.legendItem!.layerUID!);
                 }
             }

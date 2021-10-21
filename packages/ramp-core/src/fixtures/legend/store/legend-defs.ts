@@ -182,17 +182,27 @@ export class LegendEntry extends LegendItem {
         this._layerUID =
             this._layerTree?.findChildByIdx(this._layerIndex!)?.uid ||
             this._layer?.uid;
+    }
 
-        // toggle off visibility if entry is part of a visibility set with a set entry already toggled on
-        if (
-            this._parent instanceof LegendGroup &&
-            this._parent.type === LegendTypes.Set
-        ) {
-            this._parent.children.some(
-                entry => entry.visibility && entry.id !== this._id
-            )
-                ? this._layer?.setVisibility(false, this.layerUID)
-                : null;
+    /**
+     * Ensures visibility rules are followed if legend entry nested in legend group/set on initialization.
+     */
+    checkVisibilityRules(): void {
+        if (!this.visibility) {
+            return;
+        }
+        // if parent is turned off turn layer entry visiblity off
+        if (this._parent !== undefined && !this._parent.visibility) {
+            this.toggleVisibility(false, false);
+        } else if (this._parent?.type === LegendTypes.Set) {
+            // toggle off visibility if entry is part of a visibility set with a set entry already toggled on
+            const childVisible = this._parent.children.some(
+                entry => entry.visibility && entry !== this
+            );
+
+            if (childVisible) {
+                this.toggleVisibility(false, false);
+            }
         }
     }
 
@@ -312,14 +322,6 @@ export class LegendEntry extends LegendItem {
             // update parent visibility if current legend entry is part of a group or set
             if (this._parent instanceof LegendGroup && updateParent) {
                 this._parent.checkVisibility(this);
-
-                // if its a set turn off the visibility of all other children
-                if (this._parent instanceof LegendSet) {
-                    this._parent.children.forEach(child => {
-                        if (child !== this && child.visibility)
-                            child.toggleVisibility(false);
-                    });
-                }
             }
         }
 
@@ -390,7 +392,25 @@ export class LegendGroup extends LegendItem {
                     this._children.push(new LegendEntry(entry, this));
                 }
             });
-        this._visibleEntries = this._children;
+    }
+
+    /**
+     * Ensures visibility rules are followed if legend group is nested in another group/set on initialization.
+     */
+    checkVisibilityRules(): void {
+        // if parent is turned off turn layer entry visiblity off
+        if (this._parent !== undefined && !this._parent.visibility) {
+            this.toggleVisibility(false, false);
+        } else if (this._parent?.type === LegendTypes.Set) {
+            // toggle off visibility if entry is part of a visibility set with a set entry already toggled on
+            const childVisible = this._parent.children.some(
+                entry => entry.visibility && entry !== this
+            );
+
+            if (childVisible) {
+                this.toggleVisibility(false, false);
+            }
+        }
     }
 
     /**
@@ -455,9 +475,7 @@ export class LegendGroup extends LegendItem {
             // turn off all child entries except for the last one toggled on, mark that as the last visible entry in the set
             this.children.forEach(entry => {
                 if (entry.visibility && entry.id !== toggledChild.id) {
-                    entry instanceof LegendEntry
-                        ? entry.layer?.setVisibility(false)
-                        : entry.toggleVisibility(false, false);
+                    entry.toggleVisibility(false, false);
                 }
             });
             this._lastVisible = toggledChild;
@@ -466,6 +484,7 @@ export class LegendGroup extends LegendItem {
             this._lastVisible = toggledChild;
             this._visibility = false;
         }
+
         // case for updating nested groups
         if (this.parent instanceof LegendGroup) {
             this.parent.checkVisibility(this);
@@ -524,14 +543,6 @@ export class LegendGroup extends LegendItem {
         // update parent visibility if current legend entry is part of a group or set
         if (this._parent instanceof LegendGroup && updateParent) {
             this._parent.checkVisibility(this);
-
-            // if its a set turn off the visibility of all other children
-            if (this.parent instanceof LegendSet) {
-                this.parent.children.forEach(child => {
-                    if (child !== this && child.visibility)
-                        child.toggleVisibility(false);
-                });
-            }
         }
 
         this._uid = RAMP.GEO.sharedUtils.generateUUID();
@@ -539,7 +550,7 @@ export class LegendGroup extends LegendItem {
 }
 
 /**
- * Create a legend group (which can also be visibility sets) which can contain children - providing nesting capability for Legends.
+ * Create a legend set which can contain children with only up to one child item toggled on at all times - providing nesting capability for Legends.
  */
 export class LegendSet extends LegendGroup {}
 
