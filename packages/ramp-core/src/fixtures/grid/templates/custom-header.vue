@@ -14,6 +14,7 @@
                 "
                 role="columnheader"
                 truncate-trigger
+                tabindex="-1"
             >
                 <!-- <div v-truncate="{ externalTrigger: true }"> -->
                 <div>
@@ -60,10 +61,12 @@
                 v-tippy="{ placement: 'top' }"
                 @click="moveLeft()"
                 class="
+                    move-left
                     opacity-60
                     hover:opacity-90
                     disabled:opacity-30 disabled:cursor-default
                 "
+                tabindex="-1"
                 :disabled="!canMoveLeft"
             >
                 <div class="inline-block">
@@ -81,10 +84,12 @@
                 v-tippy="{ placement: 'top' }"
                 @click="moveRight()"
                 class="
+                    move-right
                     opacity-60
                     hover:opacity-90
                     disabled:opacity-30 disabled:cursor-default
                 "
+                tabindex="-1"
                 :disabled="!canMoveRight"
             >
                 <div class="inline-block">
@@ -160,6 +165,18 @@ export default defineComponent({
 
             if (this.canMoveLeft) {
                 this.columnApi.moveColumn(this.params.column, index);
+
+                // Focus the "move left" button on the new column
+                // The same column index keeps this element so we can't just use a ref for the buttons;
+                // e.g. grid is A | B | C and this is B, if B moves left so the grid B | A | C this element is now A
+                (
+                    (this.$el as HTMLElement)
+                        .closest('.ag-header-row')
+                        ?.querySelectorAll('.ag-header-cell')
+                        [index].querySelector('.move-left') as HTMLElement
+                ).focus();
+
+                this.params.gridApi.ensureColumnVisible(allColumns[index]);
             }
         },
 
@@ -174,6 +191,7 @@ export default defineComponent({
 
             if (this.canMoveRight) {
                 this.columnApi.moveColumn(this.params.column, index);
+                this.params.gridApi.ensureColumnVisible(allColumns[index]);
             }
         },
 
