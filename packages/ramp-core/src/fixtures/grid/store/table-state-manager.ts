@@ -17,6 +17,7 @@ export default class TableStateManager {
         this._columnFilters = {};
         this._open = true;
         this._columnState = null;
+        this._filtered = true;
     }
 
     /**
@@ -43,6 +44,11 @@ export default class TableStateManager {
             const escRegex = /[(!"#$%&'+,.\\/:;<=>?@[\]^`{|}~)]/g;
             newFilterValue = filterValue.replace(escRegex, '\\$&');
         }
+        if (newFilterValue !== '') {
+            this._filtered = true;
+        } else {
+            this._checkFilters();
+        }
         this._columnFilters[colDefField] = newFilterValue;
     }
 
@@ -53,6 +59,17 @@ export default class TableStateManager {
      */
     clearFilters() {
         this._columnFilters = {};
+        this._filtered = false;
+    }
+
+    _checkFilters() {
+        this._filtered = Object.values(this._columnFilters).some(filter => {
+            return filter !== '';
+        });
+    }
+
+    get filtered() {
+        return this._filtered;
     }
 
     /**
@@ -117,4 +134,5 @@ export default interface TableStateManager {
     _columnFilters: any;
     _open: boolean;
     _columnState: any;
+    _filtered: boolean;
 }

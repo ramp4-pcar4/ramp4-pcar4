@@ -4,16 +4,22 @@
             class="
                 rv-input
                 w-full
-                bg-transparent
+                bg-white
                 text-black-75
                 h-24
-                pb-8
-                border-0 border-b-2
+                py-16
+                px-8
+                border-2
+                rounded
             "
             type="text"
             @keyup="valueChanged()"
             v-model="filterValue"
-            :placeholder="$t('grid.filters.column.label.text')"
+            :placeholder="
+                $t('grid.filters.column.label.text', [
+                    params.column.colDef.headerName
+                ])
+            "
         />
     </div>
 </template>

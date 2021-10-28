@@ -6,31 +6,33 @@
                 py-1
                 w-1/2
                 rv-input
-                bg-transparent
+                bg-white
                 text-black-75
                 h-24
-                pb-8
-                border-0 border-b-2
-                pl-3
+                py-16
+                px-8
+                border-2
+                rounded
             "
             type="date"
             placeholder="date min"
             v-model="minVal"
             @change="minValChanged()"
         />
-
+        <span class="w-12" />
         <input
             class="
                 m-0
                 py-1
                 w-1/2
                 rv-input
-                bg-transparent
+                bg-white
                 text-black-75
                 h-24
-                pb-8
-                border-0 border-b-2
-                pl-3
+                py-16
+                px-8
+                border-2
+                rounded
             "
             type="date"
             placeholder="date max"

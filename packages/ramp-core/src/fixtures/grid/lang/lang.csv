@@ -11,7 +11,7 @@ grid.header.sort.2,Sort default,1,Trier par défaut,0
 grid.header.reorder.left,Move left,1,Aller de gauche,0
 grid.header.reorder.right,Move right,1,Aller droit,0
 grid.filters.label.global,Search table,1,Tableau de recherche,0
-grid.filters.column.label.text,text,0,texte,0
+grid.filters.column.label.text,Search {0}...,1,texte,0
 grid.filters.clear,Clear filters,1,Effacer les filtres,0
 grid.filters.label.info,{range} of {total} entries shown,1,Affichage de l'élément {range} sur {total} éléments,0
 grid.filters.label.filtered,(filtered from {max} total entries),1,(filtrés de {max} éléments au total),0

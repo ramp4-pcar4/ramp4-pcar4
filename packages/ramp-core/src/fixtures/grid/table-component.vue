@@ -1,23 +1,46 @@
 <template>
     <div class="flex flex-col w-full h-full bg-white">
-        <div class="flex items-center">
-            <span class="w-full text-sm mb-0" v-truncate>
-                {{
-                    $t('grid.filters.label.info', {
-                        range: `${filterInfo.firstRow} - ${filterInfo.lastRow}`,
-                        total: filterInfo.visibleRows
-                    })
-                }}
+        <div class="flex items-center pl-8">
+            <input
+                @keyup="updateQuickSearch()"
+                v-model="quicksearch"
+                class="rv-global-search rv-input pr-32"
+                aria-invalid="false"
+                :aria-label="$t('grid.filters.label.global')"
+                :placeholder="$t('grid.filters.label.global')"
+            />
+            <div class="-ml-32">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fit=""
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 24 24"
+                    focusable="false"
+                    class="fill-current w-24 h-24 flex-shrink-0"
+                    v-if="quicksearch.length < 3"
+                >
+                    <g id="search_cache224">
+                        <path
+                            d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                        ></path>
+                    </g>
+                </svg>
+                <svg
+                    data-v-486a0302=""
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 352 512"
+                    class="fill-current w-18 h-18 ml-6 cursor-pointer"
+                    @click="resetQuickSearch()"
+                    v-else
+                >
+                    <path
+                        data-v-486a0302=""
+                        d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
+                    ></path>
+                </svg>
+            </div>
 
-                <span v-if="filterInfo.visibleRows !== rowData.length">{{
-                    $t('grid.filters.label.filtered', {
-                        max: rowData.length
-                    })
-                }}</span>
-            </span>
-            <div class="flex-grow"></div>
-
-            <div class="pb-2 flex">
+            <div class="pb-2 flex ml-auto">
                 <button
                     class="p-8 disabled:opacity-30 disabled:cursor-default"
                     @click="applyFiltersToMap"
@@ -47,6 +70,16 @@
                     :columnApi="columnApi"
                     :columnDefs="columnDefs"
                 ></column-dropdown>
+
+                <!-- <button
+                    class="p-8"
+                    :class="!config.state.filtered ? 'text-red-500' : ''"
+                    @click="clearFilters()"
+                    :content="'Clear Filters'"
+                    v-tippy="{ placement: 'bottom' }"
+                >
+                    A
+                </button> -->
 
                 <!-- toggle column filters -->
                 <button
@@ -78,6 +111,22 @@
                 </button>
             </div>
         </div>
+        <span class="w-full h-0 shadow-clip"></span>
+
+        <span class="w-full text-sm mb-0 pl-8 pt-8 pb-4 bg-gray-50" v-truncate>
+            {{
+                $t('grid.filters.label.info', {
+                    range: `${filterInfo.firstRow} - ${filterInfo.lastRow}`,
+                    total: filterInfo.visibleRows
+                })
+            }}
+
+            <span v-if="filterInfo.visibleRows !== rowData.length">{{
+                $t('grid.filters.label.filtered', {
+                    max: rowData.length
+                })
+            }}</span>
+        </span>
 
         <!-- main grid component -->
         <ag-grid-vue
@@ -119,6 +168,7 @@ import GridCustomNumberFilterV from './templates/custom-number-filter.vue';
 import GridCustomTextFilterV from './templates/custom-text-filter.vue';
 import GridCustomSelectorFilterV from './templates/custom-selector-filter.vue';
 import GridCustomDateFilterV from './templates/custom-date-filter.vue';
+import GridClearFilterV from './templates/clear-filter.vue';
 import GridCustomHeaderV from './templates/custom-header.vue';
 
 // grid button templates
@@ -193,7 +243,8 @@ export default defineComponent({
             numberFloatingFilter: GridCustomNumberFilterV,
             textFloatingFilter: GridCustomTextFilterV,
             selectorFloatingFilter: GridCustomSelectorFilterV,
-            dateFloatingFilter: GridCustomDateFilterV
+            dateFloatingFilter: GridCustomDateFilterV,
+            clearFloatingFilter: GridClearFilterV
         };
 
         // set up grid options
@@ -242,6 +293,7 @@ export default defineComponent({
                 // Iterate through table columns and set up column definitions and column filter stuff.
                 // Also adds the `rvSymbol` and `rvInteractive` columns to the table.
                 [
+                    'rvRowIndex',
                     'rvSymbol',
                     'rvInteractive',
                     ...tableAttributes.columns
@@ -281,8 +333,16 @@ export default defineComponent({
                         (field: any) => field.name === col.field
                     );
 
-                    if (column === 'rvSymbol' || column === 'rvInteractive') {
-                        this.setUpSymbolsAndInteractive(col, this.columnDefs);
+                    if (
+                        column === 'rvRowIndex' ||
+                        column === 'rvSymbol' ||
+                        column === 'rvInteractive'
+                    ) {
+                        this.setUpSpecialColumns(
+                            col,
+                            this.columnDefs,
+                            this.config.state
+                        );
                     } else {
                         // set up column filters according to their respective types
                         if (NUM_TYPES.indexOf(fieldInfo.type) > -1) {
@@ -421,6 +481,11 @@ export default defineComponent({
         // Updates the global search value.
         updateQuickSearch() {
             this.gridApi.setQuickFilter(this.quicksearch);
+        },
+
+        resetQuickSearch(): void {
+            this.quicksearch = '';
+            this.updateQuickSearch();
         },
 
         // Toggles the floating (column) filters on and off.
@@ -606,7 +671,37 @@ export default defineComponent({
             };
         },
 
-        setUpSymbolsAndInteractive(col: any, colDef: any) {
+        setUpSpecialColumns(col: any, colDef: any, state: TableStateManager) {
+            if (col.field === 'rvRowIndex') {
+                let indexDef = {
+                    sortable: false,
+                    lockPosition: true,
+                    valueGetter: 'node.rowIndex + 1',
+                    suppressMovable: true,
+                    suppressMenu: true,
+                    floatingFilter: true,
+                    pinned: 'left',
+                    maxWidth: 60,
+                    cellStyle: () => {
+                        return {
+                            'padding-left': '0px',
+                            'padding-right': '0px',
+                            display: 'flex',
+                            'justify-content': 'center'
+                        };
+                    },
+                    floatingFilterComponent: 'clearFloatingFilter',
+                    floatingFilterComponentParams: {
+                        stateManager: state,
+                        clearFilters: this.clearFilters,
+                        suppressFilterButton: true
+                    },
+                    filter: true
+                };
+
+                colDef.push(indexDef);
+            }
+
             // Set up the interactive column that contains the zoom and details button.
             // TODO: add details functionality.
             if (col.field === 'rvInteractive') {
@@ -997,9 +1092,23 @@ interface ColumnDefinition {
 ::v-deep .ag-header-cell-sortable {
     cursor: default;
 }
-
-/* ::v-deep .ag-header-cell {
-    background: none;
-    border: none;
-} */
+::v-deep .ag-pinned-left-cols-container .ag-row {
+    background-color: #f9f9f9;
+}
+::v-deep .ag-pinned-left-cols-container .ag-cell {
+    border-right: none !important;
+}
+::v-deep .ag-pinned-left-header .ag-header-cell {
+    padding: 0px !important;
+}
+::v-deep .ag-header-cell {
+    background: #f9f9f9;
+}
+::v-deep .rv-input::placeholder {
+    font-size: 12px;
+}
+.shadow-clip {
+    box-shadow: 0px 0px 15px 1px rgb(0 0 0 / 75%);
+    clip-path: inset(0px 0px -50px 0px);
+}
 </style>
