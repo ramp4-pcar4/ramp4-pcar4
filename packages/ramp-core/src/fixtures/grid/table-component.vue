@@ -108,7 +108,11 @@ import { AgGridVue } from 'ag-grid-vue3';
 import GridColumnDropdownV from './column-dropdown.vue';
 import { GridConfig, GridStore } from './store';
 import TableStateManager from './store/table-state-manager';
-import GridAccessibilityManager from './accessibility';
+import {
+    GridAccessibilityManager,
+    tabToNextCellHandler,
+    tabToNextHeaderHandler
+} from './accessibility';
 
 // custom filter templates
 import GridCustomNumberFilterV from './templates/custom-number-filter.vue';
@@ -204,10 +208,10 @@ export default defineComponent({
             onBodyScroll: this.updateFilterInfo,
             rowBuffer: 0,
             suppressColumnVirtualisation: true,
-            // remove tab navigation between cells
-            tabToNextCell: () => {
-                return null;
-            },
+            // shift tab -> header, tab -> out of grid
+            tabToNextCell: tabToNextCellHandler,
+            // tab vertically instead of horizontally
+            tabToNextHeader: tabToNextHeaderHandler,
             onModelUpdated: debounce(300, () =>
                 this.columnApi.autoSizeAllColumns()
             )
@@ -254,6 +258,21 @@ export default defineComponent({
                         maxWidth: 400,
                         cellRenderer: (cell: any) => {
                             return cell.value;
+                        },
+                        suppressHeaderKeyboardEvent: (params: any) => {
+                            const keyboardEvent = params.event as KeyboardEvent;
+                            //suppresses enter on header cells and tab when the cell is not focused (focus is on an inner button)
+                            if (
+                                params.headerRowIndex === 0 &&
+                                (keyboardEvent.key === 'Enter' ||
+                                    (!(
+                                        keyboardEvent.target as HTMLElement
+                                    ).classList.contains('ag-header-cell') &&
+                                        keyboardEvent.key === 'Tab'))
+                            ) {
+                                return true;
+                            }
+                            return false;
                         }
                     };
 
@@ -970,6 +989,7 @@ interface ColumnDefinition {
     hide: Boolean;
     isSelector: Boolean;
     lockPosition: Boolean;
+    suppressHeaderKeyboardEvent: Function;
 }
 </script>
 
@@ -978,8 +998,8 @@ interface ColumnDefinition {
     cursor: default;
 }
 
-::v-deep .ag-header-cell {
+/* ::v-deep .ag-header-cell {
     background: none;
     border: none;
-}
+} */
 </style>
