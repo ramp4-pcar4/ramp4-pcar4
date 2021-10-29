@@ -28,6 +28,16 @@ module.exports = {
             libraryExport: 'default'
         },
 
+        module: {
+            rules: [
+                {
+                    test: /\.mjs$/,
+                    include: /node_modules/,
+                    type: 'javascript/auto'
+                }
+            ]
+        },
+
         optimization: {
             splitChunks: {
                 // increase the minimum size of the chunk to 300kb

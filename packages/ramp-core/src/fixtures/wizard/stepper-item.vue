@@ -77,8 +77,7 @@ export default defineComponent({
             required: true
         },
         summary: {
-            type: String,
-            required: true
+            type: String
         }
     },
 

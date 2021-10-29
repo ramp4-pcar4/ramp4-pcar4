@@ -199,13 +199,19 @@ export default defineComponent({
                         layerTree.children[0].isLayer
                     )
                 ) {
-                    // cheap hack for MIL with multiple children - set visibility to false and remove legend entry
-                    // TODO get rid of this when/if MIL sublayers can be removed for real
                     this.removeLayerEntry(this.legendItem!.layerUID!);
-                    this.legendItem!.layer!.setVisibility(
-                        false,
-                        this.legendItem!._layerIndex
-                    );
+
+                    // remove MIL if all layer entries have been removed
+                    if (this.legendItem!.parent!.children?.length === 0) {
+                        this.$iApi.geo.map.removeLayer(layerTree.uid);
+                    } else {
+                        // cheap hack for MIL with multiple children - set visibility to false and remove legend entry
+                        // TODO get rid of this when/if MIL sublayers can be removed for real
+                        this.legendItem!.layer!.setVisibility(
+                            false,
+                            this.legendItem!._layerIndex
+                        );
+                    }
                 } else {
                     this.legendItem!.toggleVisibility(false);
                     this.$iApi.geo.map.removeLayer(this.legendItem!.layerUID!);
