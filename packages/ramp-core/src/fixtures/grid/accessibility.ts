@@ -1,9 +1,11 @@
 import { ColumnApi, GridApi } from 'ag-grid-community';
 
+const GRID_SELECTOR = '.ag-root';
 const HEADER_ROW_SELECTOR = '.ag-header-viewport .ag-header-row';
 
 export class GridAccessibilityManager {
     element: HTMLElement;
+    grid: HTMLElement;
     headerRows: HTMLElement[];
     gridApi: GridApi;
     columnApi: ColumnApi;
@@ -21,6 +23,7 @@ export class GridAccessibilityManager {
         this.element = element;
         this.gridApi = gridApi;
         this.columnApi = columnApi;
+        this.grid = this.element.querySelector(GRID_SELECTOR) as HTMLElement;
         this.headerRows = Array.prototype.slice.call(
             this.element.querySelectorAll(HEADER_ROW_SELECTOR)
         ) as HTMLElement[];
@@ -33,6 +36,7 @@ export class GridAccessibilityManager {
             ?.setAttribute('tabindex', '-1');
 
         this.initAccessibilityListeners();
+        this.initScrollListeners();
     }
 
     /**
@@ -177,6 +181,64 @@ export class GridAccessibilityManager {
                 item.setAttribute('tabindex', '-1');
             });
         }
+    }
+
+    //  **** CLICK & DRAG SCROLLING ****
+
+    /**
+     * Initializes the handlers needed for click + drag scrolling
+     */
+    private initScrollListeners() {
+        this.grid.style.cursor = 'grab';
+
+        this.grid.addEventListener('mousedown', (event: MouseEvent) => {
+            this.scrollMouseDownHandler(event);
+        });
+    }
+
+    /**
+     * Removes the handlers for click + drag scrolling
+     */
+    removeScrollListeners() {
+        this.grid.style.cursor = 'default';
+        this.grid.removeEventListener('mousedown', (event: MouseEvent) => {
+            this.scrollMouseDownHandler(event);
+        });
+    }
+
+    /**
+     * Handles starting click + drag scrolling on mousedown
+     *
+     * @param {MouseEvent} event The mousedown event
+     */
+    private scrollMouseDownHandler(event: MouseEvent) {
+        const scrollBar = this.element.querySelector(
+            '.ag-body-horizontal-scroll-viewport'
+        ) as HTMLElement;
+
+        const scrollStart = scrollBar.scrollLeft;
+        const mouseStart = event.clientX;
+
+        this.grid.style.cursor = 'grabbing';
+
+        // Handles mouse moving while click is held down
+        const scrollMouseMoveHandler = (event: MouseEvent) => {
+            const change = event.clientX - mouseStart;
+            scrollBar.scrollLeft = scrollStart - change;
+        };
+
+        // Removes the handlers that were set
+        // Scroll ends when click is let go or when the cursor leaves the element
+        const endDragScroll = () => {
+            this.grid.style.cursor = 'grab';
+            this.grid.removeEventListener('mousemove', scrollMouseMoveHandler);
+            this.grid.removeEventListener('mouseup', endDragScroll);
+            this.grid.removeEventListener('mouseleave', endDragScroll);
+        };
+
+        this.grid.addEventListener('mousemove', scrollMouseMoveHandler);
+        this.grid.addEventListener('mouseup', endDragScroll);
+        this.grid.addEventListener('mouseleave', endDragScroll);
     }
 }
 
