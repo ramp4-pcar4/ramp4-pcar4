@@ -7,7 +7,9 @@
             justify-center
             w-full
             h-full
-            disabled:opacity-30 disabled:cursor-default
+            disabled:opacity-30 disabled:cursor-grab
+            text-gray-500
+            hover:text-black
         "
         @click="clearFilters"
         :content="$t('grid.filters.clear')"

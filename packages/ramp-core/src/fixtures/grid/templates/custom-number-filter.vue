@@ -15,7 +15,7 @@
             type="text"
             v-model="minVal"
             @keyup="minValChanged()"
-            placeholder="min"
+            :placeholder="$t('grid.filters.number.min')"
         />
         <span class="w-12" />
         <input
@@ -33,7 +33,7 @@
             type="text"
             v-model="maxVal"
             @keyup="maxValChanged()"
-            placeholder="max"
+            :placeholder="$t('grid.filters.number.max')"
         />
     </div>
 </template>

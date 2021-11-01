@@ -4,11 +4,6 @@
             >{{ $t('grid.title') }}: {{ head || $t('grid.layer.loading') }}
         </template>
         <template #controls>
-            <panel-options-menu>
-                <a href="#" @click="clearFilters()">{{
-                    $t('grid.filters.clear')
-                }}</a>
-            </panel-options-menu>
             <pin @click="panel.pin()" :active="panel.isPinned" />
             <minimize @click="panel.minimize()" />
             <close @click="panel.close()" />
@@ -67,10 +62,6 @@ export default defineComponent({
     },
 
     methods: {
-        clearFilters(): void {
-            this.rvGrid.resetQuickSearch();
-            this.rvGrid.clearFilters();
-        },
         layerName(): string {
             if (this.rvGrid) {
                 this.layer = this.rvGrid.getLayerByUid(this.rvGrid.layerUid);

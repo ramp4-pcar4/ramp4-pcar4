@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col w-full h-full bg-white">
-        <div class="flex items-center pl-8">
+        <div class="flex items-center pl-8 pb-8">
             <input
                 @keyup="updateQuickSearch()"
                 v-model="quicksearch"
@@ -42,7 +42,13 @@
 
             <div class="pb-2 flex ml-auto">
                 <button
-                    class="p-8 disabled:opacity-30 disabled:cursor-default"
+                    class="
+                        p-8
+                        h-40
+                        disabled:opacity-30 disabled:cursor-default
+                        text-gray-500
+                        hover:text-black
+                    "
                     @click="applyFiltersToMap"
                     :content="$t('grid.label.filters.apply')"
                     v-tippy="{ placement: 'bottom', hideOnClick: false }"
@@ -83,7 +89,7 @@
 
                 <!-- toggle column filters -->
                 <button
-                    class="p-8"
+                    class="p-8 h-40 text-gray-500 hover:text-black"
                     @click="toggleShowFilters()"
                     :content="
                         gridOptions.floatingFilter
@@ -100,7 +106,7 @@
                         preserveAspectRatio="xMidYMid meet"
                         viewBox="0 0 24 24"
                         focusable="false"
-                        class="inline"
+                        class="inline fill-current"
                     >
                         <g id="filter_cache958">
                             <path
@@ -109,6 +115,29 @@
                         </g>
                     </svg>
                 </button>
+                <dropdown-menu
+                    class="h-40 w-40"
+                    :position="'bottom-end'"
+                    :tooltip="$t('panels.controls.optionsMenu')"
+                >
+                    <template #header
+                        ><svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            class="fill-current m-8 w-24 h-24"
+                        >
+                            <path
+                                d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+                            /></svg
+                    ></template>
+                    <button
+                        href="#"
+                        class="px-8"
+                        @click="clearSearchAndFilters()"
+                    >
+                        {{ $t('grid.clearAll') }}
+                    </button>
+                </dropdown-menu>
             </div>
         </div>
         <span class="w-full h-0 shadow-clip"></span>
@@ -489,6 +518,11 @@ export default defineComponent({
             this.updateQuickSearch();
         },
 
+        clearSearchAndFilters(): void {
+            this.resetQuickSearch();
+            this.clearFilters();
+        },
+
         // Toggles the floating (column) filters on and off.
         toggleShowFilters() {
             let colDefs = this.gridOptions.api.getColumnDefs();
@@ -685,8 +719,8 @@ export default defineComponent({
                     maxWidth: 60,
                     cellStyle: () => {
                         return {
-                            'padding-left': '0px',
-                            'padding-right': '0px',
+                            'padding-left': '2px',
+                            'padding-right': '2px',
                             display: 'flex',
                             'justify-content': 'center'
                         };
@@ -711,7 +745,7 @@ export default defineComponent({
                     filter: false,
                     lockPosition: true,
                     isStatic: true,
-                    maxWidth: 40,
+                    maxWidth: 48,
                     cellStyle: () => {
                         return {
                             padding: '0px'
@@ -731,7 +765,7 @@ export default defineComponent({
                     filter: false,
                     lockPosition: true,
                     isStatic: true,
-                    maxWidth: 40,
+                    maxWidth: 48,
                     cellStyle: () => {
                         return {
                             padding: '0px'
@@ -1105,7 +1139,7 @@ interface ColumnDefinition {
 ::v-deep .ag-header-cell {
     background: #f9f9f9;
 }
-::v-deep .rv-input::placeholder {
+::v-deep .ag-root .rv-input::placeholder {
     font-size: 12px;
 }
 .shadow-clip {

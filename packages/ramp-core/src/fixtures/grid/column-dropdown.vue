@@ -7,7 +7,7 @@
         :centered="false"
     >
         <template #header>
-            <div class="flex text-black p-8">
+            <div class="flex p-8">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fit=""
@@ -16,7 +16,7 @@
                     preserveAspectRatio="xMidYMid meet"
                     viewBox="0 0 24 24"
                     focusable="false"
-                    class="inline mr-1"
+                    class="inline mr-1 fill-current"
                 >
                     <g id="format-list-checks_cache966">
                         <path
