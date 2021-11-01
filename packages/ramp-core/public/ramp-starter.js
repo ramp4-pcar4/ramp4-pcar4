@@ -731,7 +731,12 @@ let options = {
 
 rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
 rInstance.fixture.addDefaultFixtures().then(() => {
-    rInstance.panel.open('legend-panel');
+    const legend = rInstance.panel.get('legend-panel');
+
+    // once all default fixtures are added, open the legend panel unless it has already been opened
+    if (!legend.isOpen) {
+        rInstance.panel.open('legend-panel');
+    }
 });
 
 rInstance.$element.component('WFSLayer-Custom', {
