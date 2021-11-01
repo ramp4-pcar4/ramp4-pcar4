@@ -44,12 +44,14 @@ export default class TableStateManager {
             const escRegex = /[(!"#$%&'+,.\\/:;<=>?@[\]^`{|}~)]/g;
             newFilterValue = filterValue.replace(escRegex, '\\$&');
         }
-        if (newFilterValue !== '') {
+
+        this._columnFilters[colDefField] = newFilterValue;
+
+        if (this._columnFilters[colDefField] !== '') {
             this._filtered = true;
         } else {
             this._checkFilters();
         }
-        this._columnFilters[colDefField] = newFilterValue;
     }
 
     /**
