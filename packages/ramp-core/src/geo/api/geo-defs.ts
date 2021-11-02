@@ -70,8 +70,8 @@ export enum GeometryType {
 
 export enum RendererType {
     Simple = 'simple',
-    Unique = 'uniqueValue',
-    ClassBreaks = 'classBreaks',
+    Unique = 'unique-value',
+    ClassBreaks = 'class-breaks',
     Unknown = 'unknown'
 }
 

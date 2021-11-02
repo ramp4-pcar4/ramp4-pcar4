@@ -8,7 +8,15 @@ import {
     UniqueValueRenderer
 } from '@/api/internal';
 import { Attributes, LegendSymbology, LineStyle } from '@/geo/api';
-import { EsriRendererFromJson, EsriRequest } from '@/geo/esri';
+import {
+    EsriRenderer,
+    EsriSimpleRenderer,
+    EsriUniqueValueRenderer,
+    EsriClassBreaksRenderer,
+    EsriRendererFromJson,
+    EsriField,
+    EsriRequest
+} from '@/geo/esri';
 import svgjs from 'svg.js';
 import to from 'await-to-js';
 
@@ -62,27 +70,27 @@ export class SymbologyAPI extends APIScope {
     }
 
     makeRenderer(
-        esriRenderer: __esri.Renderer,
-        fields: Array<__esri.Field>,
+        esriRenderer: EsriRenderer,
+        fields: Array<EsriField>,
         falseRenderer: boolean = false
     ): BaseRenderer {
         switch (esriRenderer.type) {
             case this.SIMPLE:
                 return new SimpleRenderer(
-                    <__esri.SimpleRenderer>esriRenderer,
+                    <EsriSimpleRenderer>esriRenderer,
                     fields
                 );
 
             case this.CLASS_BREAKS:
                 return new ClassBreaksRenderer(
-                    <__esri.ClassBreaksRenderer>esriRenderer,
+                    <EsriClassBreaksRenderer>esriRenderer,
                     fields,
                     falseRenderer
                 );
 
             case this.UNIQUE_VALUE:
                 return new UniqueValueRenderer(
-                    <__esri.UniqueValueRenderer>esriRenderer,
+                    <EsriUniqueValueRenderer>esriRenderer,
                     fields,
                     falseRenderer
                 );
@@ -856,6 +864,32 @@ export class SymbologyAPI extends APIScope {
             };
             return legendSym;
         });
+    }
+
+    /**
+     * Returns an EsriRenderer using a config provided custom renderer.
+     *
+     * @param configRenderer config provided renderer
+     * @returns an Esri Renderer
+     */
+    configToRenderer(configRenderer: any): EsriRenderer | undefined {
+        // we run into a lot of funny business with functions/constructors modifying parameters.
+        // this essentially clones an object to protect original objects against trickery.
+        const jsonCloner = (inputObject: any) => {
+            return JSON.parse(JSON.stringify(inputObject));
+        };
+        // renderer constructors apparently convert their input json from server style to client style.
+        // we dont want that. use a clone to protect config's property.
+        const cloneRenderer = jsonCloner(configRenderer);
+        // all renderers have a type field. if it's missing, no renderer was provided, or its garbage
+        switch (cloneRenderer.type) {
+            case 'simple':
+                return new EsriSimpleRenderer(cloneRenderer);
+            case 'class-breaks':
+                return new EsriClassBreaksRenderer(cloneRenderer);
+            case 'unique-value':
+                return new EsriUniqueValueRenderer(cloneRenderer);
+        }
     }
 
     /**
