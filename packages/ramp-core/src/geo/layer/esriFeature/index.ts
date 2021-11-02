@@ -11,7 +11,7 @@ import {
     RampLayerConfig,
     TreeNode
 } from '@/geo/api';
-import { EsriFeatureLayer } from '@/geo/esri';
+import { EsriFeatureLayer, EsriRendererFromJson } from '@/geo/esri';
 import { FeatureFC } from './feature-fc';
 import { markRaw } from 'vue';
 
@@ -71,32 +71,15 @@ class FeatureLayer extends AttribLayer {
             throw new Error('superclass did not create layer tree');
         }
 
-        // we run into a lot of funny business with functions/constructors modifying parameters.
-        // this essentially clones an object to protect original objects against trickery.
-        const jsonCloner = (inputObject: any) => {
-            return JSON.parse(JSON.stringify(inputObject));
-        };
-
-        // attempt to set custom renderer here. if fails, we can attempt on client but prefer it here
-        // as this doesnt care where the layer came from
-        if (this.origRampConfig.customRenderer?.type) {
-            // TODO implement custom renderers
-            // TODO try and do this in the constructor for the esri layer; API4 might accomodate that.
-            //      since GeoJsonLayer would use this too, maybe abstarct the creation part to a util module
-            /*
-            // all renderers have a type field. if it's missing, no renderer was provided, or its garbage
-            const classMapper = {
-                simple: this._apiRef.symbology.SimpleRenderer,
-                classBreaks: this._apiRef.symbology.ClassBreaksRenderer,
-                uniqueValue: this._apiRef.symbology.UniqueValueRenderer
-            }
-
-            // renderer constructors apparently convert their input json from server style to client style.
-            // we dont want that. use a clone to protect config's property.
-            const cloneRenderer = jsonCloner(this.config.customRenderer);
-            const custRend = classMapper[cloneRenderer.type](cloneRenderer);
-            this._layer.setRenderer(custRend);
-            */
+        // setting custom renderer here (if one is provided)
+        const hasCustRed =
+            this.esriLayer && this.origRampConfig.customRenderer?.type;
+        if (hasCustRed) {
+            // ts thinks that this.esriLayer might be undefined here
+            // @ts-ignore
+            this.esriLayer.renderer = EsriRendererFromJson(
+                this.config.customRenderer
+            );
         }
 
         // TODO .url seems to not have the /index ending.  there is parsedUrl.path, but thats not on official definition
@@ -119,23 +102,26 @@ class FeatureLayer extends AttribLayer {
         // this.layerTree.name = this.name;
 
         // update asynch data
-        // TODO check if we have custom renderer, add to options parameter here
-        const pLD: Promise<void> = featFC.loadLayerMetadata().then(() => {
-            if (!featFC.attLoader) {
-                throw new Error(
-                    'layer metadata loader did not create attribute loader'
-                );
-            }
+        const pLD: Promise<void> = featFC
+            .loadLayerMetadata(
+                hasCustRed ? { customRenderer: this.esriLayer?.renderer } : {}
+            )
+            .then(() => {
+                if (!featFC.attLoader) {
+                    throw new Error(
+                        'layer metadata loader did not create attribute loader'
+                    );
+                }
 
-            // apply any config based overrides to the data we just downloaded
-            featFC.nameField =
-                this.origRampConfig.nameField || featFC.nameField || '';
-            featFC.tooltipField =
-                this.origRampConfig.tooltipField || featFC.nameField;
+                // apply any config based overrides to the data we just downloaded
+                featFC.nameField =
+                    this.origRampConfig.nameField || featFC.nameField || '';
+                featFC.tooltipField =
+                    this.origRampConfig.tooltipField || featFC.nameField;
 
-            featFC.processFieldMetadata(this.origRampConfig.fieldMetadata);
-            featFC.attLoader.updateFieldList(featFC.fieldList);
-        });
+                featFC.processFieldMetadata(this.origRampConfig.fieldMetadata);
+                featFC.attLoader.updateFieldList(featFC.fieldList);
+            });
 
         /*
         const pLD = aFC.getLayerData().then(ld => {
