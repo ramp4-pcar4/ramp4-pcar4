@@ -17,7 +17,13 @@ import {
     RampLayerConfig,
     TreeNode
 } from '@/geo/api';
-import { EsriFeatureLayer, EsriField } from '@/geo/esri';
+import {
+    EsriFeatureLayer,
+    EsriField,
+    EsriSimpleRenderer,
+    EsriClassBreaksRenderer,
+    EsriUniqueValueRenderer
+} from '@/geo/esri';
 import { markRaw } from 'vue';
 
 // util function to manage trickery. file layer can have field names that are bad keys.
@@ -167,27 +173,38 @@ export class FileLayer extends AttribLayer {
             throw new Error('superclass did not create layer tree');
         }
 
+        const jsonCloner = (inputObject: any) => {
+            return JSON.parse(JSON.stringify(inputObject));
+        };
+
         // attempt to set custom renderer here. if fails, we can attempt on client but prefer it here
         // as this doesnt care where the layer came from
         // TODO implement custom renderers
         // TODO look at final implementation of FeatureLayer, will probably be similar
-        /*
-        if (this.origRampConfig.customRenderer.type) {
-            // all renderers have a type field. if it's missing, no renderer was provided, or its garbage
-            const classMapper = {
-                simple: this._apiRef.symbology.SimpleRenderer,
-                classBreaks: this._apiRef.symbology.ClassBreaksRenderer,
-                uniqueValue: this._apiRef.symbology.UniqueValueRenderer
-            }
 
-            // renderer constructors apparently convert their input json from server style to client style.
-            // we dont want that. use a clone to protect config's property.
+        if (this.origRampConfig.customRenderer?.type) {
             const cloneRenderer = jsonCloner(this.config.customRenderer);
-            const custRend = classMapper[cloneRenderer.type](cloneRenderer);
-            this._layer.setRenderer(custRend);
-
+            if (this.esriLayer) {
+                // all renderers have a type field. if it's missing, no renderer was provided, or its garbage
+                switch (cloneRenderer.type) {
+                    case 'simple':
+                        this.esriLayer.renderer = new EsriSimpleRenderer(
+                            cloneRenderer
+                        );
+                        break;
+                    case 'class-breaks':
+                        this.esriLayer.renderer = new EsriClassBreaksRenderer(
+                            cloneRenderer
+                        );
+                        break;
+                    case 'unique-value':
+                        this.esriLayer.renderer = new EsriUniqueValueRenderer(
+                            cloneRenderer
+                        );
+                        break;
+                }
+            }
         }
-        */
 
         // feature has only one layer
         const featIdx: number = 0; // GeoJSON is always 0

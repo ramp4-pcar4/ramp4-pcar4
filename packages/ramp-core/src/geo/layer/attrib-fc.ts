@@ -155,18 +155,20 @@ export class AttribFC extends CommonFC {
                     })();
             }
 
-            // TODO add in renderer and legend magic
-            // add renderer and legend
+            // options.customRenderer is a custom renderer from the config
             const sourceRenderer =
                 options && options.customRenderer && options.customRenderer.type
                     ? options.customRenderer
                     : sData.drawingInfo.renderer;
+            const renderer =
+                options && options.customRenderer && options.customRenderer.type
+                    ? sourceRenderer
+                    : EsriRendererFromJson(sourceRenderer);
             this.renderer =
                 this.parentLayer.$iApi.geo.utils.symbology.makeRenderer(
-                    EsriRendererFromJson(sourceRenderer),
+                    renderer,
                     this.fields
                 );
-
             // this array will have a set of promises that resolve when all the legend svg has drawn.
             // for now, will not include that set (promise.all'd) on the layer load blocker;
             // don't want to stop a layer from loading just because an icon won't draw.

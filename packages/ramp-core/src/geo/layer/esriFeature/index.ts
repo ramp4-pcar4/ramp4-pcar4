@@ -11,7 +11,12 @@ import {
     RampLayerConfig,
     TreeNode
 } from '@/geo/api';
-import { EsriFeatureLayer } from '@/geo/esri';
+import {
+    EsriFeatureLayer,
+    EsriSimpleRenderer,
+    EsriClassBreaksRenderer,
+    EsriUniqueValueRenderer
+} from '@/geo/esri';
 import { FeatureFC } from './feature-fc';
 import { markRaw } from 'vue';
 
@@ -83,20 +88,30 @@ class FeatureLayer extends AttribLayer {
             // TODO implement custom renderers
             // TODO try and do this in the constructor for the esri layer; API4 might accomodate that.
             //      since GeoJsonLayer would use this too, maybe abstarct the creation part to a util module
-            /*
-            // all renderers have a type field. if it's missing, no renderer was provided, or its garbage
-            const classMapper = {
-                simple: this._apiRef.symbology.SimpleRenderer,
-                classBreaks: this._apiRef.symbology.ClassBreaksRenderer,
-                uniqueValue: this._apiRef.symbology.UniqueValueRenderer
-            }
 
             // renderer constructors apparently convert their input json from server style to client style.
             // we dont want that. use a clone to protect config's property.
             const cloneRenderer = jsonCloner(this.config.customRenderer);
-            const custRend = classMapper[cloneRenderer.type](cloneRenderer);
-            this._layer.setRenderer(custRend);
-            */
+            if (this.esriLayer) {
+                // all renderers have a type field. if it's missing, no renderer was provided, or its garbage
+                switch (cloneRenderer.type) {
+                    case 'simple':
+                        this.esriLayer.renderer = new EsriSimpleRenderer(
+                            cloneRenderer
+                        );
+                        break;
+                    case 'class-breaks':
+                        this.esriLayer.renderer = new EsriClassBreaksRenderer(
+                            cloneRenderer
+                        );
+                        break;
+                    case 'unique-value':
+                        this.esriLayer.renderer = new EsriUniqueValueRenderer(
+                            cloneRenderer
+                        );
+                        break;
+                }
+            }
         }
 
         // TODO .url seems to not have the /index ending.  there is parsedUrl.path, but thats not on official definition
@@ -120,22 +135,24 @@ class FeatureLayer extends AttribLayer {
 
         // update asynch data
         // TODO check if we have custom renderer, add to options parameter here
-        const pLD: Promise<void> = featFC.loadLayerMetadata().then(() => {
-            if (!featFC.attLoader) {
-                throw new Error(
-                    'layer metadata loader did not create attribute loader'
-                );
-            }
+        const pLD: Promise<void> = featFC
+            .loadLayerMetadata({ customRenderer: this.esriLayer?.renderer })
+            .then(() => {
+                if (!featFC.attLoader) {
+                    throw new Error(
+                        'layer metadata loader did not create attribute loader'
+                    );
+                }
 
-            // apply any config based overrides to the data we just downloaded
-            featFC.nameField =
-                this.origRampConfig.nameField || featFC.nameField || '';
-            featFC.tooltipField =
-                this.origRampConfig.tooltipField || featFC.nameField;
+                // apply any config based overrides to the data we just downloaded
+                featFC.nameField =
+                    this.origRampConfig.nameField || featFC.nameField || '';
+                featFC.tooltipField =
+                    this.origRampConfig.tooltipField || featFC.nameField;
 
-            featFC.processFieldMetadata(this.origRampConfig.fieldMetadata);
-            featFC.attLoader.updateFieldList(featFC.fieldList);
-        });
+                featFC.processFieldMetadata(this.origRampConfig.fieldMetadata);
+                featFC.attLoader.updateFieldList(featFC.fieldList);
+            });
 
         /*
         const pLD = aFC.getLayerData().then(ld => {
