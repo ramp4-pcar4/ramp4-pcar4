@@ -8,7 +8,15 @@ import {
     UniqueValueRenderer
 } from '@/api/internal';
 import { Attributes, LegendSymbology, LineStyle } from '@/geo/api';
-import { EsriRendererFromJson, EsriRequest } from '@/geo/esri';
+import {
+    EsriRenderer,
+    EsriSimpleRenderer,
+    EsriUniqueValueRenderer,
+    EsriClassBreaksRenderer,
+    EsriRendererFromJson,
+    EsriField,
+    EsriRequest
+} from '@/geo/esri';
 import svgjs from 'svg.js';
 import to from 'await-to-js';
 
@@ -62,27 +70,27 @@ export class SymbologyAPI extends APIScope {
     }
 
     makeRenderer(
-        esriRenderer: __esri.Renderer,
-        fields: Array<__esri.Field>,
+        esriRenderer: EsriRenderer,
+        fields: Array<EsriField>,
         falseRenderer: boolean = false
     ): BaseRenderer {
         switch (esriRenderer.type) {
             case this.SIMPLE:
                 return new SimpleRenderer(
-                    <__esri.SimpleRenderer>esriRenderer,
+                    <EsriSimpleRenderer>esriRenderer,
                     fields
                 );
 
             case this.CLASS_BREAKS:
                 return new ClassBreaksRenderer(
-                    <__esri.ClassBreaksRenderer>esriRenderer,
+                    <EsriClassBreaksRenderer>esriRenderer,
                     fields,
                     falseRenderer
                 );
 
             case this.UNIQUE_VALUE:
                 return new UniqueValueRenderer(
-                    <__esri.UniqueValueRenderer>esriRenderer,
+                    <EsriUniqueValueRenderer>esriRenderer,
                     fields,
                     falseRenderer
                 );
