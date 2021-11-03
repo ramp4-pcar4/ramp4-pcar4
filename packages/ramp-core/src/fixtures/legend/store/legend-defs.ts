@@ -193,7 +193,7 @@ export class LegendEntry extends LegendItem {
         }
         // if parent is turned off turn layer entry visiblity off
         if (this._parent !== undefined && !this._parent.visibility) {
-            this.toggleVisibility(false, false);
+            this._layer?.setVisibility(false, this._layerUID);
         } else if (this._parent?.type === LegendTypes.Set) {
             // toggle off visibility if entry is part of a visibility set with a set entry already toggled on
             const childVisible = this._parent.children.some(
@@ -201,7 +201,7 @@ export class LegendEntry extends LegendItem {
             );
 
             if (childVisible) {
-                this.toggleVisibility(false, false);
+                this._layer?.setVisibility(false, this._layerUID);
             }
         }
     }
@@ -218,7 +218,9 @@ export class LegendEntry extends LegendItem {
 
     /** Returns visibility of layer. */
     get visibility(): boolean | undefined {
-        return this._layer?.getVisibility(this.layerUID);
+        return this._layer !== undefined
+            ? this._layer?.getVisibility(this._layerUID)
+            : false;
     }
 
     /** Returns BaseLayer associated with legend entry. */
@@ -299,8 +301,8 @@ export class LegendEntry extends LegendItem {
                 return;
             }
             visibility !== undefined
-                ? this._layer?.setVisibility(visibility, this.layerUID)
-                : this._layer?.setVisibility(!this.visibility, this.layerUID);
+                ? this._layer?.setVisibility(visibility, this._layerUID)
+                : this._layer?.setVisibility(!this.visibility, this._layerUID);
 
             // Check if some of the child symbols have their definition visibility on
             const noDefinitionsVisible: boolean = !this._layer
@@ -398,6 +400,9 @@ export class LegendGroup extends LegendItem {
      * Ensures visibility rules are followed if legend group is nested in another group/set on initialization.
      */
     checkVisibilityRules(): void {
+        if (!this._visibility) {
+            return;
+        }
         // if parent is turned off turn layer entry visiblity off
         if (this._parent !== undefined && !this._parent.visibility) {
             this.toggleVisibility(false, false);
@@ -516,7 +521,7 @@ export class LegendGroup extends LegendItem {
                           entry.toggleVisibility(this._visibility, false)
                       )
                     : this._children.forEach(entry =>
-                          entry.toggleVisibility(this.visibility, false)
+                          entry.toggleVisibility(this._visibility, false)
                       );
             } else {
                 // otherewise turn off visibility for all children

@@ -3,7 +3,7 @@
         <!-- TODO: see if getting this to use v-model works; children wouldnt update properly on initial try -->
         <input
             :type="isRadio ? 'radio' : 'checkbox'"
-            :checked="checked"
+            :checked="checked && initialChecked"
             @click.stop="toggleVisibility(value)"
             @keyup.enter.stop="toggleVisibility(value)"
             :class="[
@@ -42,6 +42,18 @@ export default defineComponent({
         isRadio: { type: Boolean },
         disabled: { type: Boolean }
     },
+
+    data() {
+        return {
+            initialChecked: this.legendItem.visibility
+        };
+    },
+
+    mounted() {
+        this.legendItem.checkVisibilityRules();
+        this.initialChecked = this.legendItem.visibility === this.checked;
+    },
+
     methods: {
         /**
          * Returns true if non of the child symbols are visible
@@ -113,6 +125,7 @@ export default defineComponent({
                         .join(' OR ')
                 );
             }
+            this.initialChecked = true;
         }
     }
 });

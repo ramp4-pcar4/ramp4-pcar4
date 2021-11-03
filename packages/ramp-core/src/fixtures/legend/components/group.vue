@@ -88,10 +88,6 @@ export default defineComponent({
 
     data() {
         return { LegendTypes: LegendTypes };
-    },
-
-    mounted() {
-        this.legendItem.checkVisibilityRules();
     }
 });
 </script>
