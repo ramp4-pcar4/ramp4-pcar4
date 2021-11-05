@@ -187,13 +187,6 @@ export default defineComponent({
         },
 
         /**
-         * Get the visibility of the legend item
-         */
-        getLegendItemVisibility(): Boolean {
-            return this.legendItem.visibility || false;
-        },
-
-        /**
          * Get animation enabled status
          */
         isAnimationEnabled(): Boolean {
@@ -212,8 +205,6 @@ export default defineComponent({
             );
             return;
         }
-
-        this.legendItem.checkVisibilityRules();
 
         Promise.all(
             this._getLegend().map((item: LegendSymbology) => item.drawPromise)
