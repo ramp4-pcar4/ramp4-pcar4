@@ -134,6 +134,9 @@ export class PanelAPI extends APIScope {
         // if panel is hidden off screen minimize it first so it is able to reopen
         if (panel.isOpen && !panel.isVisible) {
             panel.minimize();
+        } else if (panel.isOpen) {
+            // if panel is already open and is not hidden, don't do anything
+            return panel;
         }
 
         // Panel opening requires a screen, check if last opened or default makes more sense
