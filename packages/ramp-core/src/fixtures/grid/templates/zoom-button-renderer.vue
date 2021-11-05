@@ -1,6 +1,6 @@
 <template>
     <button
-        class="w-38 h-48"
+        class="flex items-center justify-center w-46 h-44"
         :content="$t('grid.cells.zoom')"
         v-tippy="{ placement: 'top' }"
         @click="zoomToFeature"

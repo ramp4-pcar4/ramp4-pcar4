@@ -53,6 +53,7 @@ module.exports = {
             38: '38px',
             40: '40px',
             44: '44px',
+            46: '46px',
             48: '48px',
             56: '56px',
             64: '64px',
@@ -85,6 +86,9 @@ module.exports = {
             },
             boxShadow: {
                 tm: '0 0 0 1px rgba(0, 0, 0, 0.05), 0 2px 3px 0 rgba(0, 0, 0, 0.1)'
+            },
+            cursor: {
+                grab: 'grab'
             }
         }
     },

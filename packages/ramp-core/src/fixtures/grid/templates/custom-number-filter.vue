@@ -3,32 +3,37 @@
         <input
             class="
                 rv-min rv-input
-                bg-transparent
+                bg-white
                 text-black-75
                 h-24
-                pb-8
-                border-0 border-b-2
+                py-16
+                px-8
+                border-2
+                rounded
             "
             style="width: 45%"
             type="text"
             v-model="minVal"
             @keyup="minValChanged()"
-            placeholder="min"
+            :placeholder="$t('grid.filters.number.min')"
         />
+        <span class="w-12" />
         <input
             class="
                 rv-max rv-input
-                bg-transparent
+                bg-white
                 text-black-75
                 h-24
-                pb-8
-                border-0 border-b-2
+                py-16
+                px-8
+                border-2
+                rounded
             "
             style="width: 45%"
             type="text"
             v-model="maxVal"
             @keyup="maxValChanged()"
-            placeholder="max"
+            :placeholder="$t('grid.filters.number.max')"
         />
     </div>
 </template>
