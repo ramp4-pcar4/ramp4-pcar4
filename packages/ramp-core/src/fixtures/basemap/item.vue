@@ -20,7 +20,7 @@
                             :alt="basemap.altText"
                             :src="basemap.thumbnailUrl"
                         />
-                        <!-- Else, Use tileSchema tile urls -->
+                        <!-- Else if, Use tileSchema tile urls -->
                         <img
                             v-else-if="tileSchema.thumbnailTileUrls"
                             v-for="(url, idx) in tileSchema.thumbnailTileUrls"
@@ -29,7 +29,13 @@
                             :src="layer.url + url"
                             :key="idx"
                         />
-                        <!-- TODO: Else, Use blank image? placeholder image? text only image? -->
+                        <!-- Else, Use placeholder image -->
+                        <img
+                            v-else
+                            class="w-full bg-white"
+                            :alt="basemap.altText"
+                            src="https://openclipart.org/image/800px/275366"
+                        />
                     </div>
                 </div>
             </div>
