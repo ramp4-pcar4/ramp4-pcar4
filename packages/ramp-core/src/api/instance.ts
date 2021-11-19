@@ -118,12 +118,16 @@ export class InstanceAPI {
                 });
             }
 
+            const langConfig = configs[this.$vApp.$i18n.locale];
+
             // disable animations if needed
-            if (
-                !configs[this.$vApp.$i18n.locale].animate &&
-                this.$element._container
-            ) {
+            if (!langConfig.animate && this.$element._container) {
                 this.$element._container.classList.remove('animation-enabled');
+            }
+
+            // process system configurations
+            if (langConfig.system?.proxyUrl) {
+                this.geo.proxy = langConfig.system.proxyUrl;
             }
         }
 

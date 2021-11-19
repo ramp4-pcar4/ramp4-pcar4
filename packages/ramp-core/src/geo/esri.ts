@@ -7,6 +7,7 @@
 // sorted by library path
 import EsriBasemap from '@arcgis/core/Basemap';
 import EsriColour from '@arcgis/core/Color';
+import EsriConfig from '@arcgis/core/config';
 import EsriExtent from '@arcgis/core/geometry/Extent';
 import EsriMultipoint from '@arcgis/core/geometry/Multipoint';
 import EsriPoint from '@arcgis/core/geometry/Point';
@@ -62,6 +63,7 @@ export {
     EsriClassBreakInfo,
     EsriClassBreaksRenderer,
     EsriColour,
+    EsriConfig,
     EsriExtent,
     EsriFeatureFilter,
     EsriFeatureLayer,
