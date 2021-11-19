@@ -41,8 +41,8 @@ let config = {
                     id: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     name: 'Web Mercator Maps',
                     extentSetId: 'EXT_ESRI_World_AuxMerc_3857',
-                    lodSetId: 'LOD_ESRI_World_AuxMerc_3857',
-                    thumbnailTileUrls: ['/tile/8/91/74', '/tile/8/91/75']
+                    lodSetId: 'LOD_ESRI_World_AuxMerc_3857'
+                    // thumbnailTileUrls: ['/tile/8/91/74', '/tile/8/91/75']
                 }
             ],
             basemaps: [
@@ -56,11 +56,11 @@ let config = {
                         {
                             id: 'CBMT',
                             layerType: 'esriTile',
-                            url:
-                                'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer'
+                            url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                    tileSchemaId:
+                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
                     wkid: 3978
                 },
                 {
@@ -72,11 +72,11 @@ let config = {
                         {
                             id: 'SMR',
                             layerType: 'esriTile',
-                            url:
-                                'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer'
+                            url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                    tileSchemaId:
+                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
                     wkid: 3978
                 },
                 {
@@ -89,11 +89,11 @@ let config = {
                         {
                             id: 'CBME_CBCE_HS_RO_3978',
                             layerType: 'esriTile',
-                            url:
-                                'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
+                            url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                    tileSchemaId:
+                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
                     wkid: 3978
                 },
                 {
@@ -106,11 +106,11 @@ let config = {
                         {
                             id: 'CBMT_CBCT_GEOM_3978',
                             layerType: 'esriTile',
-                            url:
-                                'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
+                            url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                    tileSchemaId:
+                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
                     wkid: 3978
                 },
                 {
@@ -123,11 +123,11 @@ let config = {
                         {
                             id: 'World_Imagery',
                             layerType: 'esriTile',
-                            url:
-                                'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId:
+                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100,
                     attribution: {
                         text: {
@@ -148,11 +148,11 @@ let config = {
                         {
                             id: 'World_Physical_Map',
                             layerType: 'esriTile',
-                            url:
-                                'https://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer'
+                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId:
+                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 },
                 {
@@ -165,11 +165,11 @@ let config = {
                         {
                             id: 'World_Shaded_Relief',
                             layerType: 'esriTile',
-                            url:
-                                'https://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer'
+                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId:
+                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 },
                 {
@@ -182,11 +182,11 @@ let config = {
                         {
                             id: 'World_Street_Map',
                             layerType: 'esriTile',
-                            url:
-                                'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer'
+                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId:
+                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 },
                 {
@@ -199,11 +199,11 @@ let config = {
                         {
                             id: 'World_Terrain_Base',
                             layerType: 'esriTile',
-                            url:
-                                'https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer'
+                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId:
+                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 },
                 {
@@ -216,11 +216,11 @@ let config = {
                         {
                             id: 'World_Topo_Map',
                             layerType: 'esriTile',
-                            url:
-                                'https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
+                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId:
+                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 }
             ],
@@ -280,8 +280,7 @@ let config = {
             {
                 id: 'WFSLayer',
                 layerType: 'ogcWfs',
-                url:
-                    'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
+                url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
                 state: {
                     visibility: true
                 },
@@ -411,8 +410,8 @@ let config = {
                     id: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     name: 'Web Mercator Maps',
                     extentSetId: 'EXT_ESRI_World_AuxMerc_3857',
-                    lodSetId: 'LOD_ESRI_World_AuxMerc_3857',
-                    thumbnailTileUrls: ['/tile/8/91/74', '/tile/8/91/75']
+                    lodSetId: 'LOD_ESRI_World_AuxMerc_3857'
+                    // thumbnailTileUrls: ['/tile/8/91/74', '/tile/8/91/75']
                 }
             ],
             basemaps: [
@@ -426,11 +425,11 @@ let config = {
                         {
                             id: 'CBMT',
                             layerType: 'esriTile',
-                            url:
-                                'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer'
+                            url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                    tileSchemaId:
+                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
                     wkid: 3978
                 },
                 {
@@ -442,11 +441,11 @@ let config = {
                         {
                             id: 'SMR',
                             layerType: 'esriTile',
-                            url:
-                                'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer'
+                            url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                    tileSchemaId:
+                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
                     wkid: 3978
                 },
                 {
@@ -459,11 +458,11 @@ let config = {
                         {
                             id: 'CBME_CBCE_HS_RO_3978',
                             layerType: 'esriTile',
-                            url:
-                                'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
+                            url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                    tileSchemaId:
+                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
                     wkid: 3978
                 },
                 {
@@ -476,11 +475,11 @@ let config = {
                         {
                             id: 'CBMT_CBCT_GEOM_3978',
                             layerType: 'esriTile',
-                            url:
-                                'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
+                            url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                    tileSchemaId:
+                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
                     wkid: 3978
                 },
                 {
@@ -493,11 +492,11 @@ let config = {
                         {
                             id: 'World_Imagery',
                             layerType: 'esriTile',
-                            url:
-                                'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId:
+                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100,
                     attribution: {
                         text: {
@@ -518,11 +517,11 @@ let config = {
                         {
                             id: 'World_Physical_Map',
                             layerType: 'esriTile',
-                            url:
-                                'https://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer'
+                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId:
+                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 },
                 {
@@ -535,11 +534,11 @@ let config = {
                         {
                             id: 'World_Shaded_Relief',
                             layerType: 'esriTile',
-                            url:
-                                'https://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer'
+                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId:
+                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 },
                 {
@@ -552,11 +551,11 @@ let config = {
                         {
                             id: 'World_Street_Map',
                             layerType: 'esriTile',
-                            url:
-                                'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer'
+                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId:
+                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 },
                 {
@@ -569,11 +568,11 @@ let config = {
                         {
                             id: 'World_Terrain_Base',
                             layerType: 'esriTile',
-                            url:
-                                'https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer'
+                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId:
+                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 },
                 {
@@ -586,11 +585,11 @@ let config = {
                         {
                             id: 'World_Topo_Map',
                             layerType: 'esriTile',
-                            url:
-                                'https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
+                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
                         }
                     ],
-                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                    tileSchemaId:
+                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                     wkid: 102100
                 }
             ],
@@ -650,8 +649,7 @@ let config = {
             {
                 id: 'WFSLayer',
                 layerType: 'ogcWfs',
-                url:
-                    'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
+                url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
                 state: {
                     visibility: true
                 },
@@ -863,10 +861,7 @@ rInstance.$element.component('Water-Quantity-Template', {
 // TODO: fix console errors
 rInstance.fixture.add('snowman');
 rInstance.fixture.add('gazebo').then(() => {
-    rInstance.panel
-        .get('p2')
-        .open({ screen: 'p-2-screen-2' })
-        .pin();
+    rInstance.panel.get('p2').open({ screen: 'p-2-screen-2' }).pin();
 });
 rInstance.fixture.add('diligord', window.hostFixtures.diligord).then(() => {
     rInstance.panel.open('diligord-p1');
@@ -886,7 +881,7 @@ var gazeboEventName = 'gazebo/beholdMyText';
 
 // a handler to react to a gazebo event
 // click "see a cat" button to trigger console output
-var handler = function(text) {
+var handler = function (text) {
     // important to use get here, as the fixture might have been removed later on
     var diligord = rInstance.fixture.get('diligord');
     if (!diligord) {
@@ -897,7 +892,7 @@ var handler = function(text) {
 rInstance.event.on(gazeboEventName, handler, 'SAMPLE_HANDLER');
 
 // a one time handler. clicking "see a cat" many times should only result in one console log
-var onceHandler = function(text) {
+var onceHandler = function (text) {
     console.log('EVENTS API SAMPLE: a one time event : ' + text);
 };
 rInstance.event.once(gazeboEventName, onceHandler, 'SAMPLE_HANDLER_ONCE');
@@ -917,5 +912,6 @@ function animateToggle() {
     } else {
         rInstance.$vApp.$el.classList.add('animation-enabled');
     }
-    document.getElementById('animate-status').innerText = 'Animate: ' + rInstance.animate;
+    document.getElementById('animate-status').innerText =
+        'Animate: ' + rInstance.animate;
 }
