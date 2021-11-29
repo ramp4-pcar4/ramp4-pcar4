@@ -52,6 +52,7 @@
             <component
                 :is="detailsTemplate"
                 :identifyData="identifyItem"
+                :fields="fieldsList"
             ></component>
         </template>
     </panel-screen>
@@ -63,7 +64,7 @@ import { get } from '@/store/pathify-helper';
 import { DetailsStore } from './store';
 
 import { LayerInstance, PanelInstance } from '@/api/internal';
-import { IdentifyResultFormat } from '@/geo/api';
+import { FieldDefinition, IdentifyResultFormat } from '@/geo/api';
 
 import ESRIDefaultV from './templates/esri-default.vue';
 import HTMLDefaultV from './templates/html-default.vue';
@@ -118,6 +119,19 @@ export default defineComponent({
                 : this.$t('details.title');
         },
 
+        fieldsList(): Array<FieldDefinition> {
+            // wms layers do not support fields
+            if (this.layerType === 'ogcWms') {
+                return [];
+            }
+
+            const layerInfo = this.payload[this.resultIndex!];
+            const uid = layerInfo.uid;
+            const layer: LayerInstance | undefined = this.getLayerByUid(uid);
+            const fields = layer?.getFields(uid);
+            return fields || [];
+        },
+
         detailsTemplate(): string {
             const layerInfo = this.payload[this.resultIndex!];
             const layer: LayerInstance | undefined = this.getLayerByUid(
@@ -156,10 +170,15 @@ export default defineComponent({
                 );
                 return;
             }
-            const oidField = layer.getOidField(uid);
-            layer.getIcon(this.identifyItem.data[oidField], uid).then(value => {
-                this.icon = value;
-            });
+
+            if (this.layerType !== 'ogcWms') {
+                const oidField = layer.getOidField(uid);
+                layer
+                    .getIcon(this.identifyItem.data[oidField], uid)
+                    .then(value => {
+                        this.icon = value;
+                    });
+            }
         },
 
         zoomToFeature() {
