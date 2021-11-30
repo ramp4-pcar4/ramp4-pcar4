@@ -380,14 +380,18 @@ export class MapCaptionAPI extends APIScope {
             Math.abs(dy),
             'number'
         )}${degreeSymbol} ${this.$iApi.$vApp.$n(my, 'number', {
-            minimumIntegerDigits: 2
+            minimumIntegerDigits: 2,
+            minimumFractionDigits: 5,
+            maximumFractionDigits: 5
         } as any)} ${this.$iApi.$vApp.$t(
             'map.coordinates.' + (lat > 0 ? 'north' : 'south')
         )} | ${this.$iApi.$vApp.$n(
             Math.abs(dx),
             'number'
         )}${degreeSymbol} ${this.$iApi.$vApp.$n(mx, 'number', {
-            minimumIntegerDigits: 2
+            minimumIntegerDigits: 2,
+            minimumFractionDigits: 5,
+            maximumFractionDigits: 5
         } as any)} ${this.$iApi.$vApp.$t(
             'map.coordinates.' + (0 > lon ? 'west' : 'east')
         )}`;
@@ -413,15 +417,17 @@ export class MapCaptionAPI extends APIScope {
         const dy = Math.abs(lat);
         const dx = Math.abs(lon);
 
-        return `${this.$iApi.$vApp.$n(
-            dy,
-            'number'
-        )}${degreeSymbol} ${this.$iApi.$vApp.$t(
+        return `${this.$iApi.$vApp.$n(dy, 'number', {
+            minimumIntegerDigits: 2,
+            minimumFractionDigits: 5,
+            maximumFractionDigits: 5
+        } as any)}${degreeSymbol} ${this.$iApi.$vApp.$t(
             'map.coordinates.' + (lat > 0 ? 'north' : 'south')
-        )} | ${this.$iApi.$vApp.$n(
-            dx,
-            'number'
-        )}${degreeSymbol} ${this.$iApi.$vApp.$t(
+        )} | ${this.$iApi.$vApp.$n(dx, 'number', {
+            minimumIntegerDigits: 2,
+            minimumFractionDigits: 5,
+            maximumFractionDigits: 5
+        } as any)}${degreeSymbol} ${this.$iApi.$vApp.$t(
             'map.coordinates.' + (0 > lon ? 'west' : 'east')
         )}`;
     }
@@ -530,10 +536,9 @@ export class MapCaptionAPI extends APIScope {
                 p
             );
 
-        return `${this.$iApi.$vApp.$n(projectedPoint.x, 'number', {
-            maximumFractionDigits: 6
-        } as any)} | ${this.$iApi.$vApp.$n(projectedPoint.y, 'number', {
-            maximumFractionDigits: 6
-        } as any)}`;
+        return `${this.$iApi.$vApp.$n(
+            projectedPoint.x,
+            'number'
+        )} | ${this.$iApi.$vApp.$n(projectedPoint.y, 'number')}`;
     }
 }

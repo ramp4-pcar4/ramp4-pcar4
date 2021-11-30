@@ -1,6 +1,7 @@
 # Configuration Language Switching
 
 The main configuration file in RAMP to use is determined by the current language of the app. Each language is restricted to being linked to a single config and is in the format of key-value pairings where the key is the language code with its associated formatted config object as the value.
+
 ```
 registeredConfigs = {
     en: enConfig,
@@ -28,6 +29,7 @@ new RAMP.Instance(document.getElementById('app'), { en: enConfig })
 If the user chooses to pass a single config like above, RAMP will take that config and populate it for all available app languages in `i18n.messages`.
 
 For example, if `i18n.messages` contains **en**, **fr** and **es**, then the registered configs by the end of the instance constructor will look like this:
+
 ```
 registeredConfigs = {
     'en': enConfig,
@@ -46,6 +48,7 @@ new RAMP.Instance(document.getElementById('app'), {
 ```
 
 If the user chooses to pass in more than one config file, each user specified language will be linked to its unique config, while any remaining languages in `i18n.messages` will default to the first config passed in the parameter. The registered configs will look like this at the end of the instance constructor:
+
 ```
 registeredConfigs = {
     'en': enConfig,
@@ -70,20 +73,24 @@ The default config for number localization can be found in the `numberFormats` o
 The localization options use the built-in Internalization API and the documentation for it can be found [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat).
 
 Example usage of number formatting:
+
 ```ts
 let value = 1000.119;
 let str = window.rInstance.$vApp.$n(value, 'number');
 console.log(str);
-// 1000.12 (for en)
-// 1000,12 (for fr)
+// 1000.119 (for en)
+// 1000,119(for fr)
 ```
 
 Localization options can also be passed in when the formatting function is called:
 
 ```ts
 let value = 1000.119;
-let str = window.rInstance.$vApp.$n(value, 'number', { maximumFractionDigits: 3, useGrouping: true } as any);
+let str = window.rInstance.$vApp.$n(value, 'number', {
+    maximumFractionDigits: 1,
+    useGrouping: true
+} as any);
 console.log(str);
-// 1,000.119 (for en)
-// 1 000,119 (for fr)
+// 1,000.1 (for en)
+// 1 000,1 (for fr)
 ```
