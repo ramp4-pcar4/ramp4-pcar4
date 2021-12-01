@@ -56,6 +56,7 @@ importers:
       file-saver: ~2.0.5
       http-server: ^0.12.0
       linkify-html: ~3.0.4
+      linkify-string: ~3.0.4
       linkifyjs: ~3.0.4
       marked: ^1.2.2
       postcss: ^7.0.35
@@ -110,6 +111,7 @@ importers:
       fast-xml-parser: 3.19.0
       file-saver: 2.0.5
       linkify-html: 3.0.4_linkifyjs@3.0.4
+      linkify-string: 3.0.4_linkifyjs@3.0.4
       linkifyjs: 3.0.4
       marked: 1.2.9
       proj4: 2.6.0
@@ -9528,6 +9530,14 @@ packages:
     dependencies:
       uc.micro: 1.0.6
     dev: true
+
+  /linkify-string/3.0.4_linkifyjs@3.0.4:
+    resolution: {integrity: sha512-OnNqqRjlYXaXipIAbBC8sDXsSumI1ftatzFg141Pw9HEXWjTVLFcMZoKbFupshqWRavtNJ6QHLa+u6AlxxgeRw==}
+    peerDependencies:
+      linkifyjs: ^3.0.0
+    dependencies:
+      linkifyjs: 3.0.4
+    dev: false
 
   /linkifyjs/3.0.4:
     resolution: {integrity: sha512-JWw1HHMx54g8mEsG7JwI8I/xh7qeJbF6L9u1dQOYW91RdRqDYpnTn1UaNXYkmLD967Vk0xGuyHzuRnkSApby3w==}

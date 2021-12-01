@@ -70,13 +70,22 @@ export default defineComponent({
             if (newLayers === undefined) {
                 return;
             }
-            let layer: LayerInstance | undefined = this.$iApi.$vApp.$store.get(
-                LayerStore.getLayerById,
-                this.legendItem.id
-            );
 
-            if (layer !== undefined) {
-                layer?.isLayerLoaded().then(() => {
+            let mainLayer: LayerInstance | undefined =
+                this.$iApi.$vApp.$store.get(
+                    LayerStore.getLayerById,
+                    this.legendItem.layerParentId || this.legendItem.id
+                );
+
+            if (mainLayer !== undefined) {
+                mainLayer?.isLayerLoaded().then(() => {
+                    // re-fetch the layer using the legend item id
+                    let layer: LayerInstance | undefined =
+                        this.$iApi.$vApp.$store.get(
+                            LayerStore.getLayerById,
+                            this.legendItem.id
+                        );
+
                     this.legendItem.setEntry(layer!);
                     if (this.legendItem.isDefault) {
                         this.$store.set(
