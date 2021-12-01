@@ -206,6 +206,7 @@ import ZoomButtonRendererV from './templates/zoom-button-renderer.vue';
 import { CoreFilter } from '@/geo/api';
 
 import { debounce } from 'throttle-debounce';
+import linkifyHtml from 'linkify-html';
 
 // these should match up with the `type` value returned by the attribute promise.
 const NUM_TYPES: string[] = ['oid', 'double', 'single', 'integer'];
@@ -403,6 +404,23 @@ export default defineComponent({
                             } else {
                                 this.setUpTextFilter(col, this.config.state);
                             }
+
+                            col.cellRenderer = (cell: any) => {
+                                // if value is falsey, return it
+                                if (!cell.value) {
+                                    return cell.value;
+                                }
+
+                                // test if the value already contains an anchor tag
+                                // if it does, just return the value
+                                if (/<a[^>]*>[^<]+<\/a>/g.test(cell.value)) {
+                                    return cell.value;
+                                }
+
+                                return linkifyHtml(cell.value, {
+                                    target: '_blank'
+                                });
+                            };
 
                             col.filter = 'agTextColumnFilter';
                         }
@@ -1153,6 +1171,13 @@ interface ColumnDefinition {
 ::v-deep .ag-root .rv-input::placeholder {
     font-size: 12px;
 }
+
+/* Need this for hyperlinked text in the grid */
+::v-deep a {
+    color: rgba(37, 99, 235, 1);
+    text-decoration: underline;
+}
+
 .shadow-clip {
     box-shadow: 0px 0px 15px 1px rgb(0 0 0 / 75%);
     clip-path: inset(0px 0px -50px 0px);
