@@ -32,3 +32,5 @@ panels.controls.unpin,Unpin,1,Détacher,0
 panels.controls.back,Back,1,Retourner,0
 panels.controls.optionsMenu,More,1,Plus,0
 panels.controls.minimize,Minimize,1,Réduire au minimum,0
+panels.controls.expand,Expand,1,Élargir,0
+panels.controls.collapse,Collapse,1,Réduire,0

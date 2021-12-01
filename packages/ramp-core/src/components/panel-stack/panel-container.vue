@@ -10,6 +10,7 @@
             pointer-events-auto
             min-w-0
         "
+        :class="panel.expanded ? 'flex-grow max-w-full' : ''"
         :style="panel.style"
         :data-cy="panel.id"
     >

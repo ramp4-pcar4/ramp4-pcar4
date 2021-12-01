@@ -369,6 +369,28 @@ export class PanelAPI extends APIScope {
 
         return panel;
     }
+
+    /**
+     * Expands/collapses the expand state of the panel. Toggles whether the panel expands if no expand value is given.
+     *
+     * @param {(string | PanelInstance)} value
+     * @param {boolean} expand Optional. Whether the panel should expand, toggles the value if not set
+     * @returns {(PanelInstance | null)}
+     * @memberof PanelAPI
+     */
+    expand(
+        value: string | PanelInstance,
+        expand?: boolean
+    ): PanelInstance | null {
+        const panel = this.get(value);
+
+        this.$vApp.$store.set(
+            `panel/items@${panel.id}.expanded`,
+            expand !== undefined ? expand! : !panel.expanded
+        );
+
+        return panel;
+    }
 }
 
 /**

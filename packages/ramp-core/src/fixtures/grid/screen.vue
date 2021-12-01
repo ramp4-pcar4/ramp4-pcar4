@@ -4,8 +4,9 @@
             >{{ $t('grid.title') }}: {{ head || $t('grid.layer.loading') }}
         </template>
         <template #controls>
-            <pin @click="panel.pin()" :active="panel.isPinned" />
             <minimize @click="panel.minimize()" />
+            <pin @click="panel.pin()" :active="panel.isPinned" />
+            <expand @click="panel.expand()" :active="panel.expanded" />
             <close @click="panel.close()" />
         </template>
         <template #content>

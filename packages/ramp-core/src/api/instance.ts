@@ -31,6 +31,7 @@ import PanelScreenV from '@/components/panel-stack/panel-screen.vue';
 import PinV from '@/components/panel-stack/controls/pin.vue';
 import CloseV from '@/components/panel-stack/controls/close.vue';
 import BackV from '@/components/panel-stack/controls/back.vue';
+import ExpandV from '@/components/panel-stack/controls/expand.vue';
 import MinimizeV from '@/components/panel-stack/controls/minimize.vue';
 import PanelOptionsMenuV from '@/components/panel-stack/controls/panel-options-menu.vue';
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
@@ -329,6 +330,7 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
     vueElement.component('pin', PinV);
     vueElement.component('close', CloseV);
     vueElement.component('back', BackV);
+    vueElement.component('expand', ExpandV);
     vueElement.component('panel-options-menu', PanelOptionsMenuV);
     vueElement.component('dropdown-menu', DropdownMenuV);
     vueElement.component('minimize', MinimizeV);
