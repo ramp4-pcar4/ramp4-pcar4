@@ -9,6 +9,7 @@ import { LegendAPI } from '@/fixtures/legend/api/legend';
 import { LegendStore } from '@/fixtures/legend/store';
 import { GridStore, GridAction } from '@/fixtures/grid/store';
 import {
+    IdentifyItem,
     MapClick,
     MapMove,
     MouseCoords,
@@ -413,7 +414,31 @@ export class EventAPI extends APIScope {
                     const detailFix: DetailsAPI =
                         this.$iApi.fixture.get('details');
                     if (detailFix) {
-                        detailFix.openDetails(identifyParam.results);
+                        let itemsFlat: Array<any> = new Array<any>();
+                        // wait for all identifys to finish
+                        Promise.all(
+                            identifyParam.results.map(
+                                (layer: any) => layer.loadPromise
+                            )
+                        ).then(() => {
+                            identifyParam.results?.forEach((layer: any) => {
+                                layer.items.forEach((item: IdentifyItem) => {
+                                    itemsFlat.push({
+                                        uid: layer.uid,
+                                        item: item
+                                    });
+                                });
+                            });
+                            // open an item-screen instead of the result-screen if there is only 1 result
+                            if (itemsFlat.length == 1) {
+                                detailFix.openFeature(
+                                    itemsFlat[0].item,
+                                    itemsFlat[0].uid
+                                );
+                            } else {
+                                detailFix.openDetails(identifyParam.results);
+                            }
+                        });
                     }
                 };
                 this.on(GlobalEvents.MAP_IDENTIFY, zeHandler, handlerName);
