@@ -135,7 +135,9 @@ export enum LayerType {
     WMS = 'ogcWms',
     WFS = 'ogcWfs', // TODO proposing this should not be a part of this enum. WFS = Feature
 
-    UNKNOWN = 'unknown'
+    UNKNOWN = 'unknown',
+
+    SUBLAYER = 'sublayer'
 }
 
 // Format indicates what form the spatial data is encoded in.
@@ -333,7 +335,7 @@ export interface IdentifyItem {
 
 export interface IdentifyResult {
     items: Array<IdentifyItem>;
-    uid: string; // this would match to the FC. TODO might want to name the property something more specific to that, like sublayerUid? indexUid? childUid? might be ok with uid as the parentUid is different name
+    uid: string; // this would match to the sublayer. TODO might want to name the property something more specific to that, like sublayerUid? indexUid? childUid? might be ok with uid as the parentUid is different name
     loadPromise: Promise<void>; // TODO confirm we still need this. the .done of IdentifyResultSet should provide the same information. maybe it's a binding thing (bind to bool > bind to promise?)
 }
 

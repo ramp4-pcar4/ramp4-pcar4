@@ -30,19 +30,39 @@ import api from '@/api'; // this is the external ramp api, not the instance api
 // use for actions
 type LayerContext = ActionContext<LayerState, RootState>;
 
+// searches layers and sublayers using BFS and returns the first layer to satisfy the given predicate
+const bfs = (
+    layers: Array<LayerInstance>,
+    predicate: (layer: LayerInstance | undefined) => boolean
+) => {
+    let queue = [...layers];
+    while (queue.length > 0) {
+        const layer = queue.shift();
+        if (predicate(layer)) {
+            return layer;
+        }
+        if (layer) {
+            queue.push(...layer.sublayers);
+        }
+    }
+};
+
 const getters = {
     getLayerByUid:
         (state: LayerState) =>
         (uid: string): LayerInstance | undefined => {
-            return state.layers.find(
-                (layer: LayerInstance) =>
-                    layer.getLayerTree().findChildByUid(uid) !== undefined
+            return bfs(
+                state.layers,
+                (layer: LayerInstance | undefined) => layer?.uid === uid
             );
         },
     getLayerById:
         (state: LayerState) =>
         (id: string): LayerInstance | undefined => {
-            return state.layers.find((layer: LayerInstance) => layer.id === id);
+            return bfs(
+                state.layers,
+                (layer: LayerInstance | undefined) => layer?.id === id
+            );
         }
 };
 

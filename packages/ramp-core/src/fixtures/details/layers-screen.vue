@@ -125,22 +125,12 @@ export default defineComponent({
         layerInfo(idx: number) {
             const layerInfo = this.payload[idx];
             // Check to see if there is a custom template defined for the selected layer.
-            let item: LayerInstance | undefined = this.layers
-                .map((layer: any) => {
-                    let layerNode = layer.getLayerTree();
-
-                    if (!layerNode) return;
-
-                    // Determine if the selected UID is a child of this layer.
-                    if (layerNode.findChildByUid(layerInfo.uid) !== undefined) {
-                        return layer;
-                    }
-                })
-                .filter((node: any) => node !== undefined)[0];
-
+            let item: LayerInstance | undefined = this.getLayerByUid(
+                layerInfo.uid
+            );
             if (!item) return;
 
-            return item.getName(layerInfo.uid);
+            return item.name;
         }
     }
 });

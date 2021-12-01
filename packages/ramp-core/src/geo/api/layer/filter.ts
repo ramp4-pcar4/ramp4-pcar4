@@ -221,7 +221,7 @@ export class Filter {
         this.clearAllCaches();
     }
 
-    // Current plan is to have this living at the FC level.
+    // Current plan is to have this living at the sublayer level.
     /**
      * Tells what object ids are currently passing the layer's filters.
      *
@@ -236,7 +236,7 @@ export class Filter {
     }
     */
 
-    // Current plan is to have events triggered in the FC when sql gets set
+    // Current plan is to have events triggered in the sublayer when sql gets set
     /**
      * Helper method for raising filter events
      *

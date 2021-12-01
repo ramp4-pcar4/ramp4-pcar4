@@ -308,15 +308,14 @@ export default defineComponent({
             return;
         }
 
-        if (!fancyLayer.supportsFeatures(this.layerUid)) {
+        if (!fancyLayer.supportsFeatures) {
             // This layer does not support features, hence no support for data table
             return;
         }
 
         fancyLayer.isLayerLoaded().then(() => {
-            const tableAttributePromise = markRaw(
-                fancyLayer
-            ).getTabularAttributes(this.layerUid);
+            const tableAttributePromise =
+                markRaw(fancyLayer).getTabularAttributes();
 
             tableAttributePromise.then((tableAttributes: any) => {
                 // Iterate through table columns and set up column definitions and column filter stuff.
@@ -483,6 +482,18 @@ export default defineComponent({
                         ) {
                             this.applyLayerFilters();
                         }
+                    }
+                )
+            );
+            this.handlers.push(
+                this.$iApi.event.on(
+                    GlobalEvents.LAYER_RELOAD_END,
+                    (reloadedLayer: LayerInstance) => {
+                        reloadedLayer.isLayerLoaded().then(() => {
+                            if (this.layerUid === reloadedLayer.uid) {
+                                this.applyLayerFilters();
+                            }
+                        });
                     }
                 )
             );
@@ -795,7 +806,7 @@ export default defineComponent({
                         if (layer === undefined) return;
                         const iconContainer = document.createElement('span');
                         const oid = cell.data[this.oidField];
-                        layer.getIcon(oid, this.layerUid).then(i => {
+                        layer.getIcon(oid).then(i => {
                             iconContainer.innerHTML = i;
                         });
                         return iconContainer;
@@ -830,7 +841,7 @@ export default defineComponent({
         // updates external grid filter based on layer filter and rerenders grid
         async applyLayerFilters() {
             const layer = this.getLayerByUid(this.layerUid)!;
-            if (!layer.getVisibility(this.layerUid)) {
+            if (!layer.visibility) {
                 this.filteredOids = [];
             } else {
                 this.filteredOids = await layer.getFilterOIDs(
