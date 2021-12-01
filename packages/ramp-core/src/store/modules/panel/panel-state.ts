@@ -103,4 +103,12 @@ export interface PanelConfig {
      * @memberof PanelConfig
      */
     style?: PanelConfigStyle;
+
+    /**
+     * Whether the panel should start expanded. Expanded panels fill empty space.
+     *
+     * @type {boolean}
+     * @memberof PanelConfig
+     */
+    expanded?: boolean;
 }

@@ -16,9 +16,9 @@ class GridFixture extends GridAPI {
                         'grid-screen': markRaw(GridScreenV)
                     },
                     style: {
-                        'flex-grow': '1',
-                        'max-width': '900px'
-                    }
+                        width: '450px'
+                    },
+                    expanded: true
                 }
             },
             { i18n: { messages } }

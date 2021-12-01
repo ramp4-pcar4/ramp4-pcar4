@@ -121,12 +121,20 @@ export class PanelInstance extends APIScope {
     }
 
     /**
-     * The style object to apply to the panel.
+     * The style object applied to the panel.
      *
      * @type {PanelConfigStyle}
-     * @memberof PanelConfig
+     * @memberof PanelInstance
      */
     style: PanelConfigStyle;
+
+    /**
+     * Whether the panel expands to fill empty space.
+     *
+     * @type {boolean}
+     * @memberof PanelInstance
+     */
+    expanded: boolean;
 
     /**
      * Returns the width of the panel in pixels or undefined if not set.
@@ -167,10 +175,12 @@ export class PanelInstance extends APIScope {
         ({
             id: this.id,
             screens: this.screens,
-            style: this.style
+            style: this.style,
+            expanded: this.expanded
         } = {
             id,
             style: {},
+            expanded: false,
             ...config
         });
 
@@ -383,6 +393,20 @@ export class PanelInstance extends APIScope {
      */
     setStyles(style: object, replace: boolean = false): this {
         this.$iApi.panel.setStyle(this, style, replace);
+
+        return this;
+    }
+
+    /**
+     * Expands/collapses/toggles the expand state of the panel. Panels set to expand fill empty space.
+     * This is a proxy to `InstanceAPI.panel.expand(...)`.
+     *
+     * @param {boolean} expand Optional. Whether the panel should expand. Toggles if no value is given.
+     * @returns {this}
+     * @memberof PanelInstance
+     */
+    expand(expand?: boolean): this {
+        this.$iApi.panel.expand(this, expand);
 
         return this;
     }
