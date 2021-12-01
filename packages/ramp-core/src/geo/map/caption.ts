@@ -381,8 +381,8 @@ export class MapCaptionAPI extends APIScope {
             'number'
         )}${degreeSymbol} ${this.$iApi.$vApp.$n(my, 'number', {
             minimumIntegerDigits: 2,
-            minimumFractionDigits: 3,
-            maximumFractionDigits: 3
+            minimumFractionDigits: 5,
+            maximumFractionDigits: 5
         } as any)} ${this.$iApi.$vApp.$t(
             'map.coordinates.' + (lat > 0 ? 'north' : 'south')
         )} | ${this.$iApi.$vApp.$n(
@@ -390,8 +390,8 @@ export class MapCaptionAPI extends APIScope {
             'number'
         )}${degreeSymbol} ${this.$iApi.$vApp.$n(mx, 'number', {
             minimumIntegerDigits: 2,
-            minimumFractionDigits: 3,
-            maximumFractionDigits: 3
+            minimumFractionDigits: 5,
+            maximumFractionDigits: 5
         } as any)} ${this.$iApi.$vApp.$t(
             'map.coordinates.' + (0 > lon ? 'west' : 'east')
         )}`;
@@ -419,14 +419,14 @@ export class MapCaptionAPI extends APIScope {
 
         return `${this.$iApi.$vApp.$n(dy, 'number', {
             minimumIntegerDigits: 2,
-            minimumFractionDigits: 3,
-            maximumFractionDigits: 3
+            minimumFractionDigits: 5,
+            maximumFractionDigits: 5
         } as any)}${degreeSymbol} ${this.$iApi.$vApp.$t(
             'map.coordinates.' + (lat > 0 ? 'north' : 'south')
         )} | ${this.$iApi.$vApp.$n(dx, 'number', {
             minimumIntegerDigits: 2,
-            minimumFractionDigits: 3,
-            maximumFractionDigits: 3
+            minimumFractionDigits: 5,
+            maximumFractionDigits: 5
         } as any)}${degreeSymbol} ${this.$iApi.$vApp.$t(
             'map.coordinates.' + (0 > lon ? 'west' : 'east')
         )}`;
