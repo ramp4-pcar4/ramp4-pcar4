@@ -7,15 +7,15 @@
         >
             <span class="inline font-bold">{{ val.alias }}</span>
             <span class="flex-auto"></span>
-            <span class="inline" v-html="val.value"></span>
+            <span class="inline" v-html="makeHtmlLink(val.value)"></span>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-
 import { FieldDefinition, IdentifyItem } from '@/geo/api';
+import linkifyHtml from 'linkify-html';
 
 export default defineComponent({
     name: 'ESRIDefaultV',
@@ -52,6 +52,27 @@ export default defineComponent({
                 };
             });
             return helper;
+        },
+        /**
+         * Make links look like links and work like links
+         */
+        makeHtmlLink(html: string): string {
+            const classes = 'underline text-blue-600 break-all';
+            const div = document.createElement('div');
+            div.innerHTML = html.trim();
+
+            // check if the html string is just an <a> tag
+            if (div.firstElementChild?.tagName == 'A') {
+                div.firstElementChild.className = classes;
+                return div.innerHTML;
+            } else {
+                // otherwise, look for any valid links
+                const options = {
+                    className: classes,
+                    target: '_blank'
+                };
+                return linkifyHtml(html, options);
+            }
         }
     }
 });
