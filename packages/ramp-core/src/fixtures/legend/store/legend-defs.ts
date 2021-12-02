@@ -138,7 +138,7 @@ export class LegendEntry extends LegendItem {
         super(legendEntry);
 
         this._isLoaded = false;
-        this._displaySymbology = false;
+        this._displaySymbology = legendEntry.symbologyExpanded || false;
 
         this._loadPromise = new Promise((resolve, _) => {
             this._type =
@@ -156,8 +156,6 @@ export class LegendEntry extends LegendItem {
 
             this._isLoaded =
                 this._layer !== undefined ? this._layer.isValidState : true;
-
-            this._displaySymbology = false;
 
             // check if a layer has been bound to this entry and is done loading. If not, set the type to "placeholder".
             if (this._layer === undefined || !this._isLoaded) {
