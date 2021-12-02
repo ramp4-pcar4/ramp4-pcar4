@@ -23,14 +23,14 @@ const numberFormats = {
         number: {
             style: 'decimal',
             useGrouping: false,
-            maximumFractionDigits: 2
+            maximumFractionDigits: 20
         }
     },
     fr: {
         number: {
             style: 'decimal',
             useGrouping: false,
-            maximumFractionDigits: 2
+            maximumFractionDigits: 20
         }
     }
 };
