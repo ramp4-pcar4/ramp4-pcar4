@@ -55,6 +55,8 @@ importers:
       fast-xml-parser: ~3.19.0
       file-saver: ~2.0.5
       http-server: ^0.12.0
+      linkify-html: ~3.0.4
+      linkifyjs: ~3.0.4
       marked: ^1.2.2
       postcss: ^7.0.35
       prettier: ^2.2.0
@@ -107,6 +109,8 @@ importers:
       fabric: 4.4.0
       fast-xml-parser: 3.19.0
       file-saver: 2.0.5
+      linkify-html: 3.0.4_linkifyjs@3.0.4
+      linkifyjs: 3.0.4
       marked: 1.2.9
       proj4: 2.6.0
       ramp-locale-loader: link:../ramp-locale-loader
@@ -123,10 +127,10 @@ importers:
       vue: 3.1.5
       vue-class-component: 8.0.0-rc.1_vue@3.1.5
       vue-i18n: 9.1.7_vue@3.1.5
-      vue-loader: 16.8.1_webpack@4.41.3
+      vue-loader: 16.8.3_webpack@4.41.3
       vue-property-decorator: 10.0.0-rc.3_02f8eea4846df4e4acf82e1a0ada6ce8
       vue-slider-component: 4.0.0-beta.4_02f8eea4846df4e4acf82e1a0ada6ce8
-      vue-tippy: 6.0.0-alpha.34_vue@3.1.5
+      vue-tippy: 6.0.0-alpha.36_vue@3.1.5
       vuex: 4.0.2_vue@3.1.5
       vuex-pathify: 1.4.5_vue@3.1.5+vuex@4.0.2
       webpack: 4.41.3
@@ -2594,7 +2598,7 @@ packages:
       webpack-dev-server: 3.11.2_777e958c1436af419002454c0780d0b4
       webpack-merge: 4.2.2
     optionalDependencies:
-      vue-loader-v16: /vue-loader/16.8.1_webpack@4.41.3
+      vue-loader-v16: /vue-loader/16.8.3_webpack@4.41.3
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -9511,11 +9515,23 @@ packages:
     resolution: {integrity: sha1-HADHQ7QzzQpOgHWPe2SldEDZ/wA=}
     dev: true
 
+  /linkify-html/3.0.4_linkifyjs@3.0.4:
+    resolution: {integrity: sha512-pQrMEkEaKfbVj/eCUyi+5lgmRwaCt1MOuzHexyCOZp40iLGEH6j/6kMqg2WLCGKYET70SvFGOoSe5aAnDsoJoQ==}
+    peerDependencies:
+      linkifyjs: ^3.0.0
+    dependencies:
+      linkifyjs: 3.0.4
+    dev: false
+
   /linkify-it/2.2.0:
     resolution: {integrity: sha512-GnAl/knGn+i1U/wjBz3akz2stz+HrHLsxMwHQGofCDfPvlf+gDKN58UtfmUquTY4/MXeE2x7k19KQmeoZi94Iw==}
     dependencies:
       uc.micro: 1.0.6
     dev: true
+
+  /linkifyjs/3.0.4:
+    resolution: {integrity: sha512-JWw1HHMx54g8mEsG7JwI8I/xh7qeJbF6L9u1dQOYW91RdRqDYpnTn1UaNXYkmLD967Vk0xGuyHzuRnkSApby3w==}
+    dev: false
 
   /listr-silent-renderer/1.1.1:
     resolution: {integrity: sha1-kktaN1cVN3C/Go4/v3S4u/P5JC4=}
@@ -14471,8 +14487,8 @@ packages:
       loader-utils: 2.0.0
     dev: true
 
-  /vue-loader/16.8.1_webpack@4.41.3:
-    resolution: {integrity: sha512-V53TJbHmzjBhCG5OYI2JWy/aYDspz4oVHKxS43Iy212GjGIG1T3EsB3+GWXFm/1z5VwjdjLmdZUFYM70y77vtQ==}
+  /vue-loader/16.8.3_webpack@4.41.3:
+    resolution: {integrity: sha512-7vKN45IxsKxe5GcVCbc2qFU5aWzyiLrYJyUuMz4BQLKctCj/fmCa0w6fGiiQ2cLFetNcek1ppGJQDCup0c1hpA==}
     peerDependencies:
       webpack: ^4.1.0 || ^5.0.0-0
     dependencies:
@@ -14546,8 +14562,8 @@ packages:
     resolution: {integrity: sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==}
     dev: true
 
-  /vue-tippy/6.0.0-alpha.34_vue@3.1.5:
-    resolution: {integrity: sha512-gotH7V2bObe6JayL+XgQL6BkkYACMPSUMGafNTUK5vNrQlbEcIRcKnP6Imy0XcTnP2AOeb+LzxPg+0nnC1qkyw==}
+  /vue-tippy/6.0.0-alpha.36_vue@3.1.5:
+    resolution: {integrity: sha512-C4Ox97eIYCBlYJlHzguu96JPW8gk7nST0lnMG4WQ8i2SKTgifiToJJ5qdX81TxpYj1iSHyQb7pVdvJzxcR8MfA==}
     peerDependencies:
       vue: ^3.0.0
     dependencies:
