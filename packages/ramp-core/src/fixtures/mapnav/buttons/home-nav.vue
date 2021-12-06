@@ -13,19 +13,16 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Extent } from '@/geo/api';
+import { ExtentSet } from '@/geo/api';
 
 export default defineComponent({
     name: 'HomeNavV',
     methods: {
         goToHome() {
-            // Get extent from config and convert it to extent object
-            const homeExtent = Extent.fromConfig(
-                'home_extent',
-                this.$iApi.getConfig().map.extent
-            );
-            // apply extent
-            this.$iApi.geo.map.zoomMapTo(homeExtent);
+            // Get extent from map
+            const extentSet: ExtentSet = this.$iApi.geo.map.getExtentSet();
+            // TODO: figure out which extent to zoom to. Maybe we want to add a start/home/init extent?
+            this.$iApi.geo.map.zoomMapTo(extentSet.fullExtent);
         }
     }
 });

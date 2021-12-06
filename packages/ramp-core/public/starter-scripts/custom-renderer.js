@@ -6,16 +6,33 @@ console.log('RAMP has loaded.');
 let config = {
     en: {
         map: {
-            extent: {
-                xmax: -5007771.626060756,
-                xmin: -16632697.354854,
-                ymax: 10015875.184845109,
-                ymin: 5022907.964742964,
-                spatialReference: {
-                    wkid: 102100,
-                    latestWkid: 3857
+            extentSets: [
+                {
+                    id: 'EXT_ESRI_World_AuxMerc_3857',
+                    default: {
+                        xmax: -5007771.626060756,
+                        xmin: -16632697.354854,
+                        ymax: 10015875.184845109,
+                        ymin: 5022907.964742964,
+                        spatialReference: {
+                            wkid: 102100,
+                            latestWkid: 3857
+                        }
+                    }
+                },
+                {
+                    id: 'EXT_NRCAN_Lambert_3978',
+                    default: {
+                        xmax: 3549492,
+                        xmin: -2681457,
+                        ymax: 3482193,
+                        ymin: -883440,
+                        spatialReference: {
+                            wkid: 3978
+                        }
+                    }
                 }
-            },
+            ],
             caption: {
                 mouseCoords: {
                     formatter: 'WEB_MERCATOR'
@@ -24,7 +41,16 @@ let config = {
                     imperialScale: true
                 }
             },
-            lods: RAMP.GEO.defaultLODs(RAMP.GEO.defaultTileSchemas()[1]), // idx 1 = mercator
+            lodSets: [
+                {
+                    id: 'LOD_NRCAN_Lambert_3978',
+                    lods: RAMP.GEO.defaultLODs(RAMP.GEO.defaultTileSchemas()[0])
+                },
+                {
+                    id: 'LOD_ESRI_World_AuxMerc_3857',
+                    lods: RAMP.GEO.defaultLODs(RAMP.GEO.defaultTileSchemas()[1])
+                }
+            ],
             tileSchemas: [
                 {
                     id: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
@@ -57,8 +83,7 @@ let config = {
                         }
                     ],
                     tileSchemaId:
-                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
-                    wkid: 3978
+                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                 },
                 {
                     id: 'baseSimple',
@@ -73,8 +98,7 @@ let config = {
                         }
                     ],
                     tileSchemaId:
-                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
-                    wkid: 3978
+                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                 },
                 {
                     id: 'baseCBME_CBCE_HS_RO_3978',
@@ -90,8 +114,7 @@ let config = {
                         }
                     ],
                     tileSchemaId:
-                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
-                    wkid: 3978
+                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                 },
                 {
                     id: 'baseCBMT_CBCT_GEOM_3978',
@@ -107,8 +130,7 @@ let config = {
                         }
                     ],
                     tileSchemaId:
-                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
-                    wkid: 3978
+                        'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                 },
                 {
                     id: 'baseEsriWorld',
@@ -125,7 +147,6 @@ let config = {
                     ],
                     tileSchemaId:
                         'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
-                    wkid: 102100,
                     attribution: {
                         text: {
                             disabled: true
@@ -149,8 +170,7 @@ let config = {
                         }
                     ],
                     tileSchemaId:
-                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
-                    wkid: 102100
+                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                 },
                 {
                     id: 'baseEsriRelief',
@@ -166,8 +186,7 @@ let config = {
                         }
                     ],
                     tileSchemaId:
-                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
-                    wkid: 102100
+                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                 },
                 {
                     id: 'baseEsriStreet',
@@ -183,8 +202,7 @@ let config = {
                         }
                     ],
                     tileSchemaId:
-                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
-                    wkid: 102100
+                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                 },
                 {
                     id: 'baseEsriTerrain',
@@ -200,8 +218,7 @@ let config = {
                         }
                     ],
                     tileSchemaId:
-                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
-                    wkid: 102100
+                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                 },
                 {
                     id: 'baseEsriTopo',
@@ -217,8 +234,7 @@ let config = {
                         }
                     ],
                     tileSchemaId:
-                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
-                    wkid: 102100
+                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                 }
             ],
             initialBasemapId: 'baseEsriWorld'

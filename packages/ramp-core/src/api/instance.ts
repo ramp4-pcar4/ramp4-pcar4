@@ -120,6 +120,14 @@ export class InstanceAPI {
 
             const langConfig = configs[this.$vApp.$i18n.locale];
 
+            // set the initial basemap
+            this.$vApp.$store.set(
+                ConfigStore.setActiveBasemap,
+                langConfig.map.basemaps.find(
+                    bm => bm.id === langConfig.map.initialBasemapId
+                )
+            );
+
             // disable animations if needed
             if (!langConfig.animate && this.$element._container) {
                 this.$element._container.classList.remove('animation-enabled');

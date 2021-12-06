@@ -5,12 +5,10 @@ import { EsriBasemap, EsriMapImageLayer, EsriTileLayer } from '@/geo/esri';
 
 export class Basemap {
     innerBasemap: EsriBasemap;
-    id: string;
-    tileSchemaId: string;
+    config: RampBasemapConfig;
 
     constructor(rampConfig: RampBasemapConfig) {
-        this.id = rampConfig.id;
-        this.tileSchemaId = rampConfig.tileSchemaId;
+        this.config = rampConfig;
 
         this.innerBasemap = new EsriBasemap({
             // TODO split by type if we have to populate referenceLayers

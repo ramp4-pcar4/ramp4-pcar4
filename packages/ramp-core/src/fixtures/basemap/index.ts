@@ -1,25 +1,16 @@
 import { markRaw } from 'vue';
 import BasemapScreenV from './screen.vue';
-import { BasemapAPI } from './api/basemap';
-import { basemap } from './store/index';
+import { FixtureInstance } from '@/api';
 import BasemapAppbarButtonV from './appbar-button.vue';
 import BasemapNavButtonV from './nav-button.vue';
-
 import messages from './lang/lang.csv';
 
-class BasemapFixture extends BasemapAPI {
+class BasemapFixture extends FixtureInstance {
     added() {
         console.log(`[fixture] ${this.id} added`);
 
         this.$iApi.component('basemap-appbar-button', BasemapAppbarButtonV);
         this.$iApi.component('basemap-nav-button', BasemapNavButtonV);
-
-        this.$vApp.$store.registerModule('basemap', basemap());
-        this._parseConfig(this.config);
-        this.$vApp.$watch(
-            () => this.config,
-            (value: any) => this._parseConfig(value)
-        );
 
         this.$iApi.panel.register(
             {
@@ -33,9 +24,7 @@ class BasemapFixture extends BasemapAPI {
         );
     }
 
-    removed() {
-        this.$vApp.$store.unregisterModule('basemap');
-    }
+    removed() {}
 }
 
 export default BasemapFixture;
