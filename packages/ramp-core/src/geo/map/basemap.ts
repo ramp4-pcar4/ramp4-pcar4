@@ -1,18 +1,16 @@
 // these are for actual basemap objects in the map
 
-import { LayerType, RampBasemapConfig } from '@/geo/api';
+import { Attribution, LayerType, RampBasemapConfig } from '@/geo/api';
 import { EsriBasemap, EsriMapImageLayer, EsriTileLayer } from '@/geo/esri';
 
 export class Basemap {
-    innerBasemap: EsriBasemap;
-    id: string;
-    tileSchemaId: string;
+    esriBasemap: EsriBasemap;
+    readonly config: RampBasemapConfig;
 
     constructor(rampConfig: RampBasemapConfig) {
-        this.id = rampConfig.id;
-        this.tileSchemaId = rampConfig.tileSchemaId;
+        this.config = rampConfig;
 
-        this.innerBasemap = new EsriBasemap({
+        this.esriBasemap = new EsriBasemap({
             // TODO split by type if we have to populate referenceLayers
             baseLayers: rampConfig.layers.map(layerConfig => {
                 if (layerConfig.layerType === LayerType.TILE) {
@@ -34,5 +32,47 @@ export class Basemap {
             title: rampConfig.name || '',
             id: rampConfig.id
         });
+    }
+
+    /**
+     * Returns the tile schema id from the config
+     */
+    get tileSchemaId(): string {
+        return this.config.tileSchemaId;
+    }
+
+    /**
+     * Returns the basemap id from the config
+     */
+    get id(): string {
+        return this.config.id;
+    }
+
+    /**
+     * Get this basemap's name from the config
+     */
+    get name(): string | undefined {
+        return this.config.name;
+    }
+
+    /**
+     * Get this basemap's description from the config
+     */
+    get description(): string | undefined {
+        return this.config.description;
+    }
+
+    /**
+     * Get this basemap's alt text from the config
+     */
+    get altText(): string | undefined {
+        return this.config.altText;
+    }
+
+    /**
+     * Get this basemap's attribution config
+     */
+    get attribution(): Attribution | undefined {
+        return this.config.attribution;
     }
 }

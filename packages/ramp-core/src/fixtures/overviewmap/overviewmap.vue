@@ -73,10 +73,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { get } from '@/store/pathify-helper';
-import { Extent, RampMapConfig } from '@/geo/api';
+import { Extent, RampBasemapConfig } from '@/geo/api';
 import { GlobalEvents, OverviewMapAPI } from '@/api/internal';
 import { OverviewmapStore } from './store';
-import { defaultMercator, defaultLambert } from './default-config';
+import { ConfigStore } from '@/store/modules/config';
 
 export default defineComponent({
     name: 'OverviewmapV',
@@ -97,41 +97,32 @@ export default defineComponent({
     },
 
     mounted() {
-        const config = this.mapConfig ? this.mapConfig : this.defaultConfig();
-        this.overviewMap.createMap(
-            config,
-            this.$el.querySelector('.overviewmap') as HTMLDivElement
-        );
-        this.minimized = this.startMinimized;
+        this.$iApi.geo.map.viewPromise.then(() => {
+            this._adaptBasemap();
+            this.overviewMap.createMap(
+                this.mapConfig,
+                this.$el.querySelector('.overviewmap') as HTMLDivElement
+            );
 
-        this.$iApi.event.on(
-            GlobalEvents.MAP_EXTENTCHANGE,
-            (newExtent: Extent) => {
-                this.overviewMap.updateOverview(newExtent);
-            }
-        );
+            this.minimized = this.startMinimized;
+
+            this.$iApi.event.on(
+                GlobalEvents.MAP_EXTENTCHANGE,
+                (newExtent: Extent) => {
+                    this.overviewMap.updateOverview(newExtent);
+                }
+            );
+
+            this.$iApi.event.on(GlobalEvents.MAP_REFRESH_END, () => {
+                this._adaptBasemap();
+            });
+        });
     },
 
     methods: {
         async cursorHitTest(e: MouseEvent) {
             this.hoverOnExtent =
                 !this.minimized && (await this.overviewMap.cursorHitTest(e));
-        },
-
-        defaultConfig() {
-            const mercator = [900913, 3587, 54004, 41001, 102113, 102100, 3785];
-            const sr = this.$iApi.geo.map.getSR();
-            if (
-                (sr.wkid && mercator.includes(sr.wkid)) ||
-                (sr.latestWkid && mercator.includes(sr.latestWkid))
-            ) {
-                return defaultMercator;
-            } else if (sr.wkid === 3978 || sr.latestWkid === 3978) {
-                return defaultLambert;
-            }
-
-            console.error('No default overviewmap for current map projection');
-            return {};
         },
 
         mapStyle() {
@@ -147,6 +138,82 @@ export default defineComponent({
                 right: `${this.minimized ? -6 : -3}px`,
                 transform: `rotate(${this.minimized ? 225 : 45}deg)`
             };
+        },
+
+        /**
+         * Adapts the overview map's basemap (and projection) to match that of the main map.
+         * Will run when the overview map is being set up for the first time, and then whenever the main map refreshes.
+         *
+         * When looking for a suitable basemap to use, this method will first check the overview map config for any
+         * provided basemaps that has a matching tile schema with the main map's basemap.
+         *
+         * If no suitable basemap could be found, it will use the same basemap as the main map.
+         */
+        _adaptBasemap() {
+            // try to find a suitable basemap
+            const currBm: RampBasemapConfig | undefined =
+                this.$iApi.$vApp.$store.get(ConfigStore.getActiveBasemapConfig);
+
+            if (!currBm) {
+                console.error(
+                    'Overview Map could not obtain the basemap config used by the main map'
+                );
+                return;
+            }
+
+            try {
+                const tileSchemaId: string | undefined = currBm?.tileSchemaId;
+
+                if (!tileSchemaId) {
+                    throw new Error(
+                        'Overview Map could not obtain the tile schema of the main map'
+                    );
+                }
+
+                // find a basemap in this tile schema
+                const basemap = this.mapConfig.basemaps.find(
+                    (bm: any) => bm.tileSchemaId === tileSchemaId
+                );
+
+                if (!basemap) {
+                    throw new Error(
+                        'Overview Map could not find a suitable basemap that matches the tile schema of the main map'
+                    );
+                }
+
+                // override the intial basemap id in the overview map config
+                if (!this.overviewMap.created) {
+                    this.$iApi.$vApp.$store.set(
+                        OverviewmapStore.updateIntialBasemap,
+                        basemap.id
+                    );
+                }
+
+                // set the basemap if the map has been created
+                if (this.overviewMap.created) {
+                    this.overviewMap.viewPromise.then(() =>
+                        this.overviewMap.setBasemap(basemap.id)
+                    );
+                }
+            } catch (err) {
+                // if we errored above, just use the main map's basemap
+
+                // TODO: do we want this warning? will throw on every map refresh if no basemaps have been provided in the config (which is valid)
+                console.warn(`${err}. Will default to the main map's basemap.`);
+
+                // override the intial basemap id in the overview map config
+                if (!this.overviewMap.created) {
+                    this.$iApi.$vApp.$store.set(
+                        OverviewmapStore.updateIntialBasemap,
+                        currBm.id
+                    );
+                }
+
+                // set the basemap once the map loads
+                this.overviewMap.viewPromise.then(() =>
+                    this.overviewMap.setBasemap(currBm.id)
+                );
+            }
         }
     }
 });

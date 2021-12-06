@@ -4,17 +4,60 @@ document.title = 'WMS Layers';
 let config = {
     en: {
         map: {
-            extent: {
-                xmax: -5007771.626060756,
-                xmin: -16632697.354854,
-                ymax: 10015875.184845109,
-                ymin: 5022907.964742964,
-                spatialReference: {
-                    wkid: 102100,
-                    latestWkid: 3857
+            extentSets: [
+                {
+                    id: 'EXT_ESRI_World_AuxMerc_3857',
+                    default: {
+                        xmax: -5007771.626060756,
+                        xmin: -16632697.354854,
+                        ymax: 10015875.184845109,
+                        ymin: 5022907.964742964,
+                        spatialReference: {
+                            wkid: 102100,
+                            latestWkid: 3857
+                        }
+                    }
+                },
+                {
+                    id: 'EXT_NRCAN_Lambert_3978',
+                    default: {
+                        xmax: 3549492,
+                        xmin: -2681457,
+                        ymax: 3482193,
+                        ymin: -883440,
+                        spatialReference: {
+                            wkid: 3978
+                        }
+                    }
                 }
-            },
-            lods: RAMP.GEO.defaultLODs(RAMP.GEO.defaultTileSchemas()[1]), // idx 1 = mercator
+            ],
+            lodSets: [
+                {
+                    id: 'LOD_NRCAN_Lambert_3978',
+                    lods: RAMP.GEO.defaultLODs(RAMP.GEO.defaultTileSchemas()[0])
+                },
+                {
+                    id: 'LOD_ESRI_World_AuxMerc_3857',
+                    lods: RAMP.GEO.defaultLODs(RAMP.GEO.defaultTileSchemas()[1])
+                }
+            ],
+            tileSchemas: [
+                {
+                    id: 'DEFAULT_NRCAN_Lambert_3978',
+                    name: 'Lambert Maps',
+                    extentSetId: 'EXT_NRCAN_Lambert_3978',
+                    lodSetId: 'LOD_NRCAN_Lambert_3978',
+                    thumbnailTileUrls: ['/tile/8/285/268', '/tile/8/285/269'],
+                    hasNorthPole: true
+                },
+                {
+                    id: 'DEFAULT_ESRI_World_AuxMerc_3857',
+                    name: 'Web Mercator Maps',
+                    extentSetId: 'EXT_ESRI_World_AuxMerc_3857',
+                    lodSetId: 'LOD_ESRI_World_AuxMerc_3857',
+                    thumbnailTileUrls: ['/tile/8/91/74', '/tile/8/91/75']
+                }
+            ],
             basemaps: [
                 {
                     id: 'esriImagery',
@@ -22,10 +65,24 @@ let config = {
                     layers: [
                         {
                             layerType: 'esriTile',
-                            url:
-                                'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                         }
                     ]
+                },
+                {
+                    id: 'baseNrCan',
+                    name: 'Canada Base Map - Transportation (CBMT)',
+                    description:
+                        'The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.',
+                    altText: 'The Canada Base Map - Transportation (CBMT)',
+                    layers: [
+                        {
+                            id: 'CBMT',
+                            layerType: 'esriTile',
+                            url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer'
+                        }
+                    ],
+                    tileSchemaId: 'DEFAULT_NRCAN_Lambert_3978'
                 }
             ],
             initialBasemapId: 'esriImagery'
@@ -182,7 +239,16 @@ rInstance.$element.component('GeoMet-Template', {
 });
 
 rInstance.fixture
-    .addDefaultFixtures(['mapnav', 'legend', 'appbar', 'grid', 'details', 'wizard', 'export-v1'])
+    .addDefaultFixtures([
+        'mapnav',
+        'legend',
+        'appbar',
+        'grid',
+        'details',
+        'wizard',
+        'export-v1',
+        'basemap'
+    ])
     .then(() => {
         rInstance.panel.open('legend-panel');
     });

@@ -8,19 +8,20 @@ import { WizardAPI } from '@/fixtures/wizard/api/wizard';
 import { LegendAPI } from '@/fixtures/legend/api/legend';
 import { LayerReorderAPI } from '@/fixtures/layer-reorder/api/layer-reorder';
 import { LegendStore } from '@/fixtures/legend/store';
-import { LegendGroup } from '@/fixtures/legend/store/legend-defs';
 import { GridStore, GridAction } from '@/fixtures/grid/store';
 import {
     MapClick,
     MapMove,
     MouseCoords,
     RampBasemapConfig,
+    RampMapConfig,
     ScreenPoint
 } from '@/geo/api';
 import { RampConfig } from '@/types';
 import { debounce, throttle } from 'throttle-debounce';
 import { MapCaptionStore } from '@/store/modules/map-caption';
 import { LayerStore } from '@/store/modules/layer';
+import { ConfigStore } from '@/store/modules/config';
 
 // TODO ensure some of the internal types used in the payload comments are published
 //      as part of our API doc generator. Would be ideal if doc output hyperlinked to
@@ -114,7 +115,7 @@ export enum GlobalEvents {
 
     /**
      * Fires when the basemap changes.
-     * Payload: `(basemapId: string)`
+     * Payload: `({ basemapId: string, schemaChanged: boolean })`
      */
     MAP_BASEMAPCHANGE = 'map/basemapchanged',
 
@@ -183,6 +184,18 @@ export enum GlobalEvents {
      * Payload: `(params: MapMove)`
      */
     MAP_MOUSEMOVE = 'map/mousemove',
+
+    /**
+     * Fires when the map view finishes refreshing.
+     * Payload: none
+     */
+    MAP_REFRESH_END = 'map/refreshend',
+
+    /**
+     * Fires when the map view starts refreshing.
+     * Payload: none
+     */
+    MAP_REFRESH_START = 'map/refreshstart',
 
     /**
      * Fires when the map view is resized.
@@ -263,6 +276,7 @@ enum DefEH {
     UPDATE_LEGEND_LAYER_RELOAD = 'updates_legend_layer_reload',
     MAP_BASEMAPCHANGE_ATTRIBUTION = 'updates_map_caption_attribution_basemap',
     CONFIG_CHANGE_ATTRIBUTION = 'updates_map_caption_attribution_config',
+    MAP_CREATED_ATTRIBUTION = 'updates_map_caption_attribution_map_created',
     MAP_SCALECHANGE_SCALEBAR = 'updates_map_caption_scale',
     MOUSE_MOVE_MAPTIP_CHECK = 'checks_maptip_mouse_move',
     EXTENT_CHANGE_MAPTIP_CHECK = 'checks_maptip_extent_change',
@@ -525,6 +539,7 @@ export class EventAPI extends APIScope {
                 DefEH.UPDATE_LEGEND_LAYER_RELOAD,
                 DefEH.MAP_BASEMAPCHANGE_ATTRIBUTION,
                 DefEH.CONFIG_CHANGE_ATTRIBUTION,
+                DefEH.MAP_CREATED_ATTRIBUTION,
                 DefEH.MAP_SCALECHANGE_SCALEBAR,
                 DefEH.MOUSE_MOVE_MAPTIP_CHECK,
                 DefEH.EXTENT_CHANGE_MAPTIP_CHECK,
@@ -730,14 +745,13 @@ export class EventAPI extends APIScope {
                 );
                 break;
             case DefEH.MAP_BASEMAPCHANGE_ATTRIBUTION:
-                zeHandler = (payload: string) => {
-                    let currentBasemapConfig: RampBasemapConfig | undefined =
-                        this.$iApi
-                            .getConfig()
-                            .map.basemaps.find(bms => bms.id === payload);
-
+                zeHandler = () => {
                     this.$iApi.geo.map.caption.updateAttribution(
-                        currentBasemapConfig?.attribution
+                        (
+                            this.$iApi.$vApp.$store.get(
+                                ConfigStore.getActiveBasemapConfig
+                            ) as RampBasemapConfig
+                        )?.attribution
                     );
                 };
                 this.$iApi.event.on(
@@ -761,6 +775,22 @@ export class EventAPI extends APIScope {
                 };
                 this.$iApi.event.on(
                     GlobalEvents.CONFIG_CHANGE,
+                    zeHandler,
+                    handlerName
+                );
+                break;
+            case DefEH.MAP_CREATED_ATTRIBUTION:
+                zeHandler = () => {
+                    this.$iApi.geo.map.caption.updateAttribution(
+                        (
+                            this.$iApi.$vApp.$store.get(
+                                ConfigStore.getActiveBasemapConfig
+                            ) as RampBasemapConfig
+                        )?.attribution
+                    );
+                };
+                this.$iApi.event.on(
+                    GlobalEvents.MAP_CREATED,
                     zeHandler,
                     handlerName
                 );
