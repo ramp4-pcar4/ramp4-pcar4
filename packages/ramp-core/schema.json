@@ -50,14 +50,26 @@
                     "type": "object",
                     "description": "Specifies the map of the overviewmap fixture",
                     "properties": {
-                        "lods": {
-                            "$ref": "#/defs/lodSetNode"
+                        "extentSets": {
+                            "type": "array",
+                            "description": "The default, full and maximum extents of the overviewmap.",
+                            "items": {
+                                "$ref": "#/$defs/extentSetNode"
+                            }
                         },
-                        "basemap": {
-                            "$ref": "#/defs/basemapNode"
+                        "lodSets": {
+                            "type": "array",
+                            "description": "The levels of detail (zoom scales) available for the overviewmap.",
+                            "items": {
+                                "$ref": "#/$defs/lodSetNode"
+                            }
                         },
-                        "spatialReference": {
-                            "$ref": "#/$defs/spatialReferenceNode"
+                        "basemaps": {
+                            "type": "array",
+                            "description": "A list of basemaps to be made available for the overview map. Can provide one basemap for each tile schema provided in the main map config.",
+                            "items": {
+                                "$ref": "#/$defs/basemapNode"
+                            }
                         }
                     }
                 },
@@ -1568,9 +1580,6 @@
                     "type": "string",
                     "description": "Identification for extent set that is mainly referenced by a tile schema."
                 },
-                "spatialReference": {
-                    "$ref": "#/$defs/spatialReferenceNode"
-                },
                 "default": {
                     "$ref": "#/$defs/extentNode",
                     "description": "The default (starting) extent."
@@ -1584,7 +1593,7 @@
                     "description": "The maximum extent; full or default extents will be used if not supplied."
                 }
             },
-            "required": ["id", "default", "spatialReference"],
+            "required": ["id", "default"],
             "unevaluatedProperties": false
         },
         "extentNode": {

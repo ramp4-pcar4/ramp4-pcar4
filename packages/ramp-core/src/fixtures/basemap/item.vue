@@ -92,8 +92,8 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { RampBasemapConfig, RampTileSchemaConfig } from '@/geo/api';
-import { get, call } from '@/store/pathify-helper';
-import { BasemapStore } from './store';
+import { get } from '@/store/pathify-helper';
+import { ConfigStore } from '@/store/modules/config';
 
 export default defineComponent({
     name: 'BasemapItemV',
@@ -109,20 +109,12 @@ export default defineComponent({
     },
     data() {
         return {
-            selectedBasemap: get(BasemapStore.selectedBasemap)
+            selectedBasemap: get(ConfigStore.getActiveBasemapConfig)
         };
     },
     methods: {
         selectBasemap(basemap: any) {
-            if (this.selectedBasemap.tileSchemaId !== basemap.tileSchemaId) {
-                console.warn(
-                    'Basemap switching between two different tile schemas has not been implemented yet.'
-                );
-                return;
-            }
-
             this.$iApi.geo.map.setBasemap(basemap.id);
-            this.$iApi.$vApp.$store.set(BasemapStore.setBasemap, basemap);
         }
     }
 });
