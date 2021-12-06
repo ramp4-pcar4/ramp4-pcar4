@@ -121,6 +121,7 @@ export class LegendItem {
  */
 export class LegendEntry extends LegendItem {
     _layer: LayerInstance | undefined;
+    _layerParentId: string | undefined;
     _layerUID: string | undefined;
     _layerIndex: number | undefined;
     _layerTree: TreeNode | undefined;
@@ -136,6 +137,8 @@ export class LegendEntry extends LegendItem {
      */
     constructor(legendEntry: any, parent: LegendGroup | undefined = undefined) {
         super(legendEntry);
+
+        this._layerParentId = legendEntry.layerParentId;
 
         this._isLoaded = false;
         this._displaySymbology = legendEntry.symbologyExpanded || false;
@@ -209,6 +212,11 @@ export class LegendEntry extends LegendItem {
     /** Returns the UID of the layer */
     get layerUID(): string | undefined {
         return this._layerUID || this._layer?.uid;
+    }
+
+    /** Returns the parent layer id for this layer. Only defined for sublayers */
+    get layerParentId(): string | undefined {
+        return this._layerParentId;
     }
 
     /** Returns the entry index of the layer */
@@ -346,7 +354,11 @@ export class LegendEntry extends LegendItem {
      */
     setEntry(layer: LayerInstance) {
         this._layer = layer;
-        this._type = LegendTypes.Entry;
+        this._layer.isLayerLoaded().then(() => {
+            this._layerTree = this._layer?.getLayerTree();
+            this._layerUID = this._layer?.uid;
+            this._type = LegendTypes.Entry;
+        });
     }
 }
 
@@ -404,6 +416,7 @@ export class LegendGroup extends LegendItem {
                 } else {
                     // if the entry is a sublayer, set the entry id to the sublayers id
                     if (entry.entryIndex !== undefined) {
+                        entry.layerParentId = entry.layerId;
                         entry.layerId = `${entry.layerId}-${entry.entryIndex}`;
                     }
                     this._children.push(new LegendEntry(entry, this));
