@@ -10,7 +10,7 @@
         "lint": "vue-cli-service lint",
         "docs:build": "typedoc && vuepress build docs",
         "docs:dev": "typedoc && vuepress dev docs",
-        "host": "http-server . -p 3001"
+        "host": "http-server . -p 3001 -c-1"
     },
     "dependencies": {
         "@arcgis/core": "4.21.2",
