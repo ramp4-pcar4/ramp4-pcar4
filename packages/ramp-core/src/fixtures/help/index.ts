@@ -23,7 +23,8 @@ class HelpFixture extends HelpAPI {
                     style: {
                         'flex-grow': '1',
                         'max-width': '750px'
-                    }
+                    },
+                    alertName: 'help.title'
                 }
             },
             {

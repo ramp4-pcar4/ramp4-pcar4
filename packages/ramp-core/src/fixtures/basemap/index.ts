@@ -25,7 +25,8 @@ class BasemapFixture extends BasemapAPI {
             {
                 id: 'basemap-panel',
                 config: {
-                    screens: { 'basemap-component': markRaw(BasemapScreenV) }
+                    screens: { 'basemap-component': markRaw(BasemapScreenV) },
+                    alertName: 'basemap.title'
                 }
             },
             { i18n: { messages } }

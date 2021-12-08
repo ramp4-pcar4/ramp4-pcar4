@@ -154,6 +154,11 @@ export class PanelAPI extends APIScope {
         this.show(panel, { screen, props });
 
         this.$vApp.$store.set(`panel/${PanelAction.openPanel}!`, { panel });
+        this.$iApi.updateAlert(
+            this.$vApp.$t(`panels.alert.open`, {
+                name: this.$vApp.$t(panel.alertName)
+            })
+        );
         this.$iApi.event.emit(GlobalEvents.PANEL_OPENED, panel);
 
         return panel;
@@ -198,6 +203,11 @@ export class PanelAPI extends APIScope {
         }
 
         this.$vApp.$store.set(`panel/${PanelAction.closePanel}!`, { panel });
+        this.$iApi.updateAlert(
+            this.$vApp.$t(`panels.alert.close`, {
+                name: this.$vApp.$t(panel.alertName)
+            })
+        );
         this.$iApi.event.emit(GlobalEvents.PANEL_CLOSED, panel);
 
         return panel;
@@ -218,6 +228,11 @@ export class PanelAPI extends APIScope {
         }
 
         this.$vApp.$store.set(`panel/${PanelAction.closePanel}!`, { panel });
+        this.$iApi.updateAlert(
+            this.$vApp.$t(`panels.alert.minimize`, {
+                name: this.$vApp.$t(panel.alertName)
+            })
+        );
 
         return panel;
     }

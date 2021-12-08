@@ -26,7 +26,8 @@ class ExportV1Fixture extends ExportV1API {
                     style: {
                         'flex-grow': '1',
                         'max-width': '800px'
-                    }
+                    },
+                    alertName: 'export-v1.alertName'
                 }
             },
             { i18n: { messages } }

@@ -22,3 +22,7 @@ legend.entry.controls.datatable,Datatable,1,Tableau de données,1
 legend.entry.controls.symbology,Legend,1,Légende,1
 legend.entry.controls.remove,Remove,1,Retirer,1
 legend.entry.controls.reload,Reload,1,Recharger,1
+legend.alert.symbologyExpanded,Layer legend expanded,1,Légende de la couche élargi,0
+legend.alert.symbologyCollapsed,Layer legend collapsed,1,Légende de la couche de fondre,0
+legend.alert.groupExpanded,Legend group expanded,1,Légende groupe élargi,0
+legend.alert.groupCollapsed,Legend group collapsed,1,Légende de fondre en groupe,0

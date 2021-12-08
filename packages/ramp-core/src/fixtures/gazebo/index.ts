@@ -44,7 +44,8 @@ class GazeboFixture extends FixtureInstance {
                     style: {
                         'flex-grow': '1',
                         'max-width': '500px'
-                    }
+                    },
+                    alertName: 'gz.alert1'
                 }
             },
             { i18n: { messages } }
@@ -100,7 +101,8 @@ class GazeboFixture extends FixtureInstance {
                     style: {
                         'flex-grow': '1',
                         'max-width': '500px'
-                    }
+                    },
+                    alertName: 'gz.alert2'
                 }
             },
             { i18n: { messages } }

@@ -1,5 +1,6 @@
 key,enValue,enValid,frValue,frValid
 grid.title,Features,1,Éléments,1
+grid.alertName,Grid,1,Grille,0
 grid.clearAll,Clear search and filters,1,Effacer la recherche et les filtres,0
 grid.layer.loading,The layer is loading...,1,La couche est le chargement...,0
 grid.label.columns,Hide columns,1,Masquer les colonnes,0

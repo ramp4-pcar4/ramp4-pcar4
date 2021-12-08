@@ -15,7 +15,8 @@ class MetadataFixture extends MetadataAPI {
                     },
                     style: {
                         width: '350px'
-                    }
+                    },
+                    alertName: 'metadata.title'
                 }
             },
             { i18n: { messages } }

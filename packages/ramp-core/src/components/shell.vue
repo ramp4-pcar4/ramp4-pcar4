@@ -12,6 +12,7 @@
                 pointer-events-none
             "
         >
+            <div class="sr-only screen-reader-alert"></div>
             <div class="absolute top-8 w-full flex justify-center">
                 <button
                     class="

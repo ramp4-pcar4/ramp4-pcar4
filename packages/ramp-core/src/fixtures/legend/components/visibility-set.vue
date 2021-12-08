@@ -12,7 +12,7 @@
                     default-focus-style
                     hover:bg-gray-200
                 "
-                @click="legendItem.toggleExpanded()"
+                @click="toggleExpand()"
                 v-focus-item="'show-truncate'"
                 :content="
                     $t(
@@ -91,6 +91,18 @@ export default defineComponent({
 
     data() {
         return { LegendTypes: LegendTypes };
+    },
+    methods: {
+        toggleExpand() {
+            this.legendItem.toggleExpanded();
+            this.$iApi.updateAlert(
+                this.$t(
+                    `legend.alert.group${
+                        this.legendItem.expanded ? 'Expanded' : 'Collapsed'
+                    }`
+                )
+            );
+        }
     }
 });
 </script>
