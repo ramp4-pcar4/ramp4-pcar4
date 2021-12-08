@@ -357,7 +357,17 @@ export class LegendEntry extends LegendItem {
         this._layer.isLayerLoaded().then(() => {
             this._layerTree = this._layer?.getLayerTree();
             this._layerUID = this._layer?.uid;
-            this._type = LegendTypes.Entry;
+            if (
+                this._layer?.layerType === 'esriMapImage' &&
+                !this._layerIndex
+            ) {
+                this._type = LegendTypes.Placeholder;
+                console.error(
+                    `MapImageLayer has no entryIndex defined - ${this._itemConfig.layerId} (${this._itemConfig.name})`
+                );
+            } else {
+                this._type = LegendTypes.Entry;
+            }
         });
     }
 }

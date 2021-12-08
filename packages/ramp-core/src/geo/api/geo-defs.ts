@@ -439,6 +439,7 @@ export interface RampLayerMapImageLayerEntryConfig {
     stateOnly?: any;
     table?: any;
     fieldMetadata?: RampLayerFieldMetadataConfig;
+    customRenderer?: any;
 }
 
 // i.e. a wms layer child
