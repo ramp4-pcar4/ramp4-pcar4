@@ -79,9 +79,7 @@ class FeatureLayer extends AttribLayer {
         const hasCustRed =
             this.esriLayer && this.origRampConfig.customRenderer?.type;
         if (hasCustRed) {
-            // ts thinks that this.esriLayer might be undefined here
-            // @ts-ignore
-            this.esriLayer.renderer = EsriRendererFromJson(
+            this.esriLayer!.renderer = EsriRendererFromJson(
                 this.config.customRenderer
             );
         }
