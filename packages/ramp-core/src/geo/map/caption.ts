@@ -442,19 +442,15 @@ export class MapCaptionAPI extends APIScope {
     async formatMercator(p: Point): Promise<string> {
         // project using Web-Mercator wkid
         const projectedPoint: any =
-            await this.$iApi.geo.utils.proj.projectGeometry(3857, p);
+            await this.$iApi.geo.utils.proj.projectGeometry(102100, p);
 
         return `${this.$iApi.$vApp.$n(
-            Math.abs(Math.floor(projectedPoint.x)),
+            Math.floor(projectedPoint.x),
             'number'
-        )} m ${this.$iApi.$vApp.$t(
-            'map.coordinates.' + (0 > projectedPoint.x ? 'west' : 'east')
-        )} | ${this.$iApi.$vApp.$n(
-            Math.abs(Math.floor(projectedPoint.y)),
+        )} m | ${this.$iApi.$vApp.$n(
+            Math.floor(projectedPoint.y),
             'number'
-        )} m ${this.$iApi.$vApp.$t(
-            'map.coordinates.' + (projectedPoint.y > 0 ? 'north' : 'south')
-        )}`;
+        )} m`;
     }
 
     /**
