@@ -57,6 +57,10 @@ export default defineComponent({
          * Make links look like links and work like links
          */
         makeHtmlLink(html: string): string {
+            if (!html) {
+                return html;
+            }
+
             const classes = 'underline text-blue-600 break-all';
             const div = document.createElement('div');
             div.innerHTML = html.trim();
