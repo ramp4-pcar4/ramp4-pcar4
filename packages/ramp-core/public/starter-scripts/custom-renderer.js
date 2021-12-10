@@ -225,7 +225,7 @@ let config = {
         },
         layers: [
             {
-                id: 'CleanAirSimple',
+                id: 'FeatureSimple',
                 layerType: 'esriFeature',
                 url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
                 customRenderer: {
@@ -243,10 +243,14 @@ let config = {
                             width: 4
                         }
                     }
+                },
+                state: {
+                    opacity: 1,
+                    visibility: false
                 }
             },
             {
-                id: 'CleanAirUniqueValue',
+                id: 'FeatureUniqueValue',
                 layerType: 'esriFeature',
                 url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
                 customRenderer: {
@@ -272,10 +276,14 @@ let config = {
                             }
                         }
                     ]
+                },
+                state: {
+                    opacity: 1,
+                    visibility: false
                 }
             },
             {
-                id: 'CleanAirClassBreaks',
+                id: 'FeatureClassBreaks',
                 layerType: 'esriFeature',
                 url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
                 customRenderer: {
@@ -296,7 +304,7 @@ let config = {
                                     width: 1
                                 }
                             },
-                            label: '0 to 100'
+                            label: 'OID 0 to 100'
                         },
                         {
                             classMaxValue: 300,
@@ -310,7 +318,7 @@ let config = {
                                     width: 1
                                 }
                             },
-                            label: '100 to 300'
+                            label: 'OID 100 to 300'
                         },
                         {
                             classMaxValue: 1000,
@@ -324,13 +332,17 @@ let config = {
                                     width: 1
                                 }
                             },
-                            label: '300 to 1000'
+                            label: 'OID 300 to 1000'
                         }
                     ]
+                },
+                state: {
+                    opacity: 1,
+                    visibility: true
                 }
             },
             {
-                id: 'WFSLayerSimple',
+                id: 'WFSSimple',
                 layerType: 'ogcWfs',
                 url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
                 customRenderer: {
@@ -348,10 +360,14 @@ let config = {
                             width: 0.5
                         }
                     }
+                },
+                state: {
+                    opacity: 1,
+                    visibility: false
                 }
             },
             {
-                id: 'WFSLayerUniqueValue',
+                id: 'WFSUniqueValue',
                 layerType: 'ogcWfs',
                 url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
                 customRenderer: {
@@ -408,10 +424,14 @@ let config = {
                             label: 'Active'
                         }
                     ]
+                },
+                state: {
+                    opacity: 1,
+                    visibility: true
                 }
             },
             {
-                id: 'WFSLayerClassBreaks',
+                id: 'WFSClassBreaks',
                 layerType: 'ogcWfs',
                 url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
                 customRenderer: {
@@ -449,7 +469,7 @@ let config = {
                                     width: 4
                                 }
                             },
-                            label: '0 to 50'
+                            label: 'OID 0 to 50'
                         },
                         {
                             classMaxValue: 100,
@@ -466,10 +486,184 @@ let config = {
                                     width: 4
                                 }
                             },
-                            label: '50 to 100'
+                            label: 'OID 50 to 100'
                         }
                     ]
+                },
+                state: {
+                    opacity: 1,
+                    visibility: false
                 }
+            },
+            {
+                id: 'MILSimple',
+                layerType: 'esriMapImage',
+                url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                layerEntries: [
+                    {
+                        index: 18,
+                        state: {
+                            opacity: 0.7,
+                            visibility: true
+                        },
+                        customRenderer: {
+                            type: 'simple',
+                            symbol: {
+                                type: 'esriSMS',
+                                style: 'esriSMSCircle',
+                                color: [169, 255, 112, 255],
+                                size: 6,
+                                outline: {
+                                    color: [71, 0, 24, 255],
+                                    width: 0.4
+                                }
+                            }
+                        }
+                    },
+                    {
+                        index: 1,
+                        state: {
+                            opacity: 0.7,
+                            visibility: true
+                        },
+                        customRenderer: {
+                            type: 'simple',
+                            symbol: {
+                                type: 'esriSMS',
+                                style: 'esriSMSCircle',
+                                color: [127, 112, 255, 255],
+                                size: 6,
+                                outline: {
+                                    color: [71, 0, 24, 255],
+                                    width: 0.4
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                id: 'MILUniqueValue',
+                layerType: 'esriMapImage',
+                url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                layerEntries: [
+                    {
+                        index: 18,
+                        state: {
+                            opacity: 0.8,
+                            visibility: false
+                        },
+                        customRenderer: {
+                            type: 'uniqueValue',
+                            field1: 'GridColumn3', // Province
+                            defaultSymbol: {
+                                type: 'esriSMS',
+                                style: 'esriSMSTriangle',
+                                color: [255, 128, 179, 255],
+                                size: 8,
+                                outline: {
+                                    color: [71, 0, 24, 255],
+                                    width: 1
+                                }
+                            },
+                            defaultLabel: 'Other',
+                            // all possible values must be covered or use defaultSymbol
+                            uniqueValueInfos: [
+                                {
+                                    value: 'Saskatchewan',
+                                    symbol: {
+                                        type: 'esriSMS',
+                                        style: 'esriSMSTriangle',
+                                        color: [255, 102, 51, 255],
+                                        size: 12,
+                                        angle: 180,
+                                        outline: {
+                                            color: [71, 0, 24, 255],
+                                            width: 1
+                                        }
+                                    },
+                                    label: 'Saskatchewan'
+                                },
+                                {
+                                    value: 'Quebec',
+                                    symbol: {
+                                        type: 'esriSMS',
+                                        style: 'esriSMSTriangle',
+                                        color: [255, 234, 0, 255],
+                                        size: 12,
+                                        angle: 180,
+                                        outline: {
+                                            color: [71, 0, 24, 255],
+                                            width: 1
+                                        }
+                                    },
+                                    label: 'Quebec'
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                id: 'MILClassBreaks',
+                layerType: 'esriMapImage',
+                url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                layerEntries: [
+                    {
+                        index: 18,
+                        state: {
+                            opacity: 0.7,
+                            visibility: false
+                        },
+                        customRenderer: {
+                            type: 'classBreaks',
+                            field: 'Longitude',
+                            defaultSymbol: {
+                                type: 'esriSMS',
+                                style: 'esriSMSSquare',
+                                color: [0, 0, 0, 255],
+                                size: 6,
+                                outline: {
+                                    color: [255, 255, 255, 255],
+                                    width: 1
+                                }
+                            },
+                            defaultLabel: 'Other',
+                            // all possible values must be covered
+                            minValue: -130,
+                            classBreakInfos: [
+                                {
+                                    classMaxValue: -85,
+                                    symbol: {
+                                        type: 'esriSMS',
+                                        style: 'esriSMSSquare',
+                                        color: [255, 61, 126, 255],
+                                        size: 6,
+                                        outline: {
+                                            color: [0, 0, 0, 255],
+                                            width: 1
+                                        }
+                                    },
+                                    label: 'Longitude -130 to -85'
+                                },
+                                {
+                                    classMaxValue: -40,
+                                    symbol: {
+                                        type: 'esriSMS',
+                                        style: 'esriSMSSquare',
+                                        color: [234, 77, 255, 255],
+                                        size: 6,
+                                        outline: {
+                                            color: [0, 0, 0, 255],
+                                            width: 1
+                                        }
+                                    },
+                                    label: 'Longitude -85 to -40'
+                                }
+                            ]
+                        }
+                    }
+                ]
             }
         ],
         fixtures: {
@@ -481,16 +675,16 @@ let config = {
                             name: 'Feature Layer',
                             exclusiveVisibility: [
                                 {
-                                    layerId: 'CleanAirSimple',
-                                    name: 'Clean Air - Simple'
+                                    layerId: 'FeatureSimple',
+                                    name: 'Simple'
                                 },
                                 {
-                                    layerId: 'CleanAirUniqueValue',
-                                    name: 'Clean Air - Unique Value'
+                                    layerId: 'FeatureUniqueValue',
+                                    name: 'Unique Value'
                                 },
                                 {
-                                    layerId: 'CleanAirClassBreaks',
-                                    name: 'Clean Air - Class Breaks'
+                                    layerId: 'FeatureClassBreaks',
+                                    name: 'Class Breaks'
                                 }
                             ]
                         },
@@ -498,16 +692,46 @@ let config = {
                             name: '(fake) File Layer',
                             exclusiveVisibility: [
                                 {
-                                    layerId: 'WFSLayerSimple',
-                                    name: 'WFS Layer - Simple'
+                                    layerId: 'WFSSimple',
+                                    name: 'Simple'
                                 },
                                 {
-                                    layerId: 'WFSLayerUniqueValue',
-                                    name: 'WFS Layer - Unique Value'
+                                    layerId: 'WFSUniqueValue',
+                                    name: 'Unique Value'
                                 },
                                 {
-                                    layerId: 'WFSLayerClassBreaks',
-                                    name: 'WFS Layer - Class Breaks'
+                                    layerId: 'WFSClassBreaks',
+                                    name: 'Class Breaks'
+                                }
+                            ]
+                        },
+                        {
+                            name: 'Map Image Layer',
+                            exclusiveVisibility: [
+                                {
+                                    name: 'Simple',
+                                    children: [
+                                        {
+                                            layerId: 'MILSimple',
+                                            name: 'Sulfur Oxide Emissions',
+                                            entryIndex: 18
+                                        },
+                                        {
+                                            layerId: 'MILSimple',
+                                            name: 'Water Quantity',
+                                            entryIndex: 1
+                                        }
+                                    ]
+                                },
+                                {
+                                    layerId: 'MILUniqueValue',
+                                    name: 'Unique Value',
+                                    entryIndex: 18
+                                },
+                                {
+                                    layerId: 'MILClassBreaks',
+                                    name: 'Class Breaks',
+                                    entryIndex: 18
                                 }
                             ]
                         }

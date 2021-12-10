@@ -18,7 +18,11 @@ import {
     RampLayerMapImageLayerEntryConfig,
     TreeNode
 } from '@/geo/api';
-import { EsriMapImageLayer, EsriRequest } from '@/geo/esri';
+import {
+    EsriMapImageLayer,
+    EsriRequest,
+    EsriRendererFromJson
+} from '@/geo/esri';
 import { MapImageSublayer } from './map-image-sublayer';
 import { markRaw } from 'vue';
 
@@ -120,12 +124,6 @@ class MapImageLayer extends AttribLayer {
 
         // TODO the whole "configIsComplete" logic in RAMP2 was never invoked by the client.
         //      Don't see the point in re-adding it here.
-
-        // we run into a lot of funny business with functions/constructors modifying parameters.
-        // this essentially clones an object to protect original objects against trickery.
-        const jsonCloner = (inputObject: any) => {
-            return JSON.parse(JSON.stringify(inputObject));
-        };
 
         const findSublayer = (targetIndex: number): __esri.Sublayer => {
             const finder = this.esriLayer?.allSublayers.find(s => {
@@ -335,7 +333,6 @@ class MapImageLayer extends AttribLayer {
             if (!le.stateOnly) {
                 // TODO add a check instead of 0 default on the index?
                 const rootSub = findSublayer(le.index || 0);
-
                 // TODO would need to validate layer tree every loop to shut up typescript. shutting it up with comment instead.
                 // @ts-ignore
                 processSublayer(rootSub, this.layerTree);
@@ -345,44 +342,60 @@ class MapImageLayer extends AttribLayer {
         // process each leaf sublayer we walked to in the sublayer tree crawl above
         leafsToInit.forEach((mlFC: MapImageSublayer) => {
             // NOTE: can consider alternates, like esriLayer.url + / + layerIdx
-            mlFC.serviceUrl = findSublayer(mlFC.layerIdx).url;
+            const sublayer = findSublayer(mlFC.layerIdx);
+            const config = subConfigs[mlFC.layerIdx];
+            mlFC.serviceUrl = sublayer.url;
 
             // the sublayer needs to be re-fetched because the initial sublayer was marked as "raw"
             mlFC.fetchEsriSublayer(this);
 
-            // TODO check if we have custom renderer, add to options parameter here
-            const pLMD: Promise<void> = mlFC.loadLayerMetadata().then(() => {
-                // apply any updates that were in the configuration snippets
-                const subC = subConfigs[mlFC.layerIdx];
-                if (subC) {
-                    mlFC.visibility = subC.state?.visibility || false;
-                    mlFC.opacity = subC.state?.opacity || 0;
-                    // mlFC.setQueryable(subC.state.query); // TODO uncomment when done
-                    mlFC.nameField = subC.nameField || mlFC.nameField || '';
-                    mlFC.processFieldMetadata(subC.fieldMetadata);
-                } else {
-                    // pulling from parent would be cool, but complex. all the promises would need to be resolved in tree-order
-                    // maybe put defaulting here for visible/opac/query
-                    mlFC.processFieldMetadata();
-                }
+            // setting custom renderer here (if one is provided)
+            const hasCustRed = mlFC.esriSubLayer && config.customRenderer?.type;
+            if (hasCustRed) {
+                mlFC.esriSubLayer!.renderer = EsriRendererFromJson(
+                    config.customRenderer
+                );
+            }
 
-                // do any things that are specific to feature or raster subtypes
-                if (mlFC.supportsFeatures) {
-                    if (!mlFC.attLoader) {
-                        throw new Error(
-                            'Map Image Sublayer - expected attLoader to exist'
-                        );
+            // TODO check if we have custom renderer, add to options parameter here
+            const pLMD: Promise<void> = mlFC
+                .loadLayerMetadata(
+                    hasCustRed
+                        ? { customRenderer: mlFC.esriSubLayer?.renderer }
+                        : {}
+                )
+                .then(() => {
+                    // apply any updates that were in the configuration snippets
+                    const subC = subConfigs[mlFC.layerIdx];
+                    if (subC) {
+                        mlFC.visibility = subC.state?.visibility || false;
+                        mlFC.opacity = subC.state?.opacity || 0;
+                        // mlFC.setQueryable(subC.state.query); // TODO uncomment when done
+                        mlFC.nameField = subC.nameField || mlFC.nameField || '';
+                        mlFC.processFieldMetadata(subC.fieldMetadata);
+                    } else {
+                        // pulling from parent would be cool, but complex. all the promises would need to be resolved in tree-order
+                        // maybe put defaulting here for visible/opac/query
+                        mlFC.processFieldMetadata();
                     }
-                    mlFC.attLoader.updateFieldList(mlFC.fieldList);
-                    return mlFC.loadFeatureCount();
-                } else {
-                    return Promise.resolve();
-                }
-            });
+
+                    // do any things that are specific to feature or raster subtypes
+                    if (mlFC.supportsFeatures) {
+                        if (!mlFC.attLoader) {
+                            throw new Error(
+                                'Map Image Sublayer - expected attLoader to exist'
+                            );
+                        }
+                        mlFC.attLoader.updateFieldList(mlFC.fieldList);
+                        return mlFC.loadFeatureCount();
+                    } else {
+                        return Promise.resolve();
+                    }
+                });
 
             // TODO.  might need to wait for renderer to finish loading first on this.
             // load real symbols into our source
-            // loadPromises.push(dFC.loadSymbology());
+            // loadPromises.push(mlFC.loadSymbology());
 
             loadPromises.push(pLMD);
         });
