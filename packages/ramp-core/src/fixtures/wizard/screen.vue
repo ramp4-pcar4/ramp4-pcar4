@@ -511,6 +511,7 @@ export default defineComponent({
 
             const layer = await this.$iApi.geo.layer.createLayer(config);
             await layer.initiate();
+            layer.userAdded = true;
 
             // add layer to map
             this.$iApi.geo.map.addLayer(layer);

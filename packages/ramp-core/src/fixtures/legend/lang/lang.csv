@@ -26,3 +26,5 @@ legend.alert.symbologyExpanded,Layer legend expanded,1,Légende de la couche él
 legend.alert.symbologyCollapsed,Layer legend collapsed,1,Légende de la couche de fondre,0
 legend.alert.groupExpanded,Legend group expanded,1,Légende groupe élargi,0
 legend.alert.groupCollapsed,Legend group collapsed,1,Légende de fondre en groupe,0
+legend.alert.layerAdded,{name} layer added to legend,1,{name} couche ajoutée à la légende,1
+legend.alert.layerRemoved,{name} layer removed from legend,1,Couche {name} retiré de la légende,1

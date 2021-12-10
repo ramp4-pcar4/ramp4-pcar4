@@ -663,6 +663,11 @@ export class EventAPI extends APIScope {
                             LegendStore.removeLayerEntry,
                             layer.uid
                         );
+                        this.$iApi.updateAlert(
+                            this.$vApp.$t('legend.alert.layerRemoved', {
+                                name: layer.name
+                            })
+                        );
                     }
                 };
                 this.$iApi.event.on(
