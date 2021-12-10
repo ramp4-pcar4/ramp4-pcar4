@@ -107,6 +107,11 @@ export class LegendAPI extends FixtureInstance {
             },
             parent
         );
+        if (layer.userAdded) {
+            this.$iApi.updateAlert(
+                this.$vApp.$t('legend.alert.layerAdded', { name: layer.name })
+            );
+        }
         this.$vApp.$store.set(LegendStore.addEntry, entry);
     }
 }

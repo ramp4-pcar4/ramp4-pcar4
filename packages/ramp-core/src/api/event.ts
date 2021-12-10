@@ -661,7 +661,12 @@ export class EventAPI extends APIScope {
                     if (this.$iApi.$vApp.$store.hasModule('legend')) {
                         this.$iApi.$vApp.$store.dispatch(
                             LegendStore.removeLayerEntry,
-                            layer.uid
+                            layer
+                        );
+                        this.$iApi.updateAlert(
+                            this.$vApp.$t('legend.alert.layerRemoved', {
+                                name: layer.name
+                            })
                         );
                     }
                 };
