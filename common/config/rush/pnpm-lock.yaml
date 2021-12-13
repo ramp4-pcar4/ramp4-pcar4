@@ -83,7 +83,7 @@ importers:
       vue: 3.1.5
       vue-class-component: ^8.0.0-rc.1
       vue-i18n: ^9.1.7
-      vue-loader: next
+      vue-loader: 16.8.3
       vue-property-decorator: ^10.0.0-rc.2
       vue-slider-component: next
       vue-tippy: next
@@ -130,7 +130,7 @@ importers:
       vue-loader: 16.8.3_webpack@4.41.3
       vue-property-decorator: 10.0.0-rc.3_02f8eea4846df4e4acf82e1a0ada6ce8
       vue-slider-component: 4.0.0-beta.4_02f8eea4846df4e4acf82e1a0ada6ce8
-      vue-tippy: 6.0.0-alpha.36_vue@3.1.5
+      vue-tippy: 6.0.0-alpha.37_vue@3.1.5
       vuex: 4.0.2_vue@3.1.5
       vuex-pathify: 1.4.5_vue@3.1.5+vuex@4.0.2
       webpack: 4.41.3
@@ -14562,8 +14562,8 @@ packages:
     resolution: {integrity: sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==}
     dev: true
 
-  /vue-tippy/6.0.0-alpha.36_vue@3.1.5:
-    resolution: {integrity: sha512-C4Ox97eIYCBlYJlHzguu96JPW8gk7nST0lnMG4WQ8i2SKTgifiToJJ5qdX81TxpYj1iSHyQb7pVdvJzxcR8MfA==}
+  /vue-tippy/6.0.0-alpha.37_vue@3.1.5:
+    resolution: {integrity: sha512-CDw8lCzNv5KxTJ22z787GsE8sFM2k04zD7UBZ/NvjMhlcgV2Kg6NDSoFbgcRdVm3xSuMbEq4ttG3+ao/TpdutQ==}
     peerDependencies:
       vue: ^3.0.0
     dependencies:

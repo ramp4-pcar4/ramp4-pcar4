@@ -50,3 +50,8 @@ declare class ResizeObserver {
     unobserve(target: Element): void;
     disconnect(): void;
 }
+
+declare module 'vue-tippy' {
+    export var directive: any;
+    export var install: any;
+}
