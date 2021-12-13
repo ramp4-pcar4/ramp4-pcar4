@@ -23,7 +23,8 @@ export class NotificationAPI extends APIScope {
             config: {
                 screens: {
                     'notifications-screen': markRaw(NotificationsScreenV)
-                }
+                },
+                alertName: 'notifications.title'
             }
         });
     }

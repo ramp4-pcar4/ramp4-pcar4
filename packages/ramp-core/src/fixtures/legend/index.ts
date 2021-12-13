@@ -17,7 +17,8 @@ class LegendFixture extends LegendAPI {
                     },
                     style: {
                         width: '350px'
-                    }
+                    },
+                    alertName: 'legend.title'
                 }
             },
             {

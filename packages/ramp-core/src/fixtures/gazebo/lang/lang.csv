@@ -1,3 +1,5 @@
 key,enValue,enValid,frValue,frValid
 gz.hello,"I'm a simple panel. but from a locale file",1,"Bonjour. Je suis un panel.",0
 gz.hello2,"I'm a simple panel.",1,"Bonjour. Je suis un panel.",0
+gz.alert1,Gazebo,1,Gazebo,0
+gz.alert2,Gazebo two,1,Gazebo deux,0

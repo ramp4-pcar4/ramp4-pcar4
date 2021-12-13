@@ -20,8 +20,6 @@ import { get, sync } from '@/store/pathify-helper';
 
 import anime from 'animejs';
 
-import { PanelInstance } from '@/api';
-
 import PanelContainerV from './panel-container.vue';
 
 declare class ResizeObserver {

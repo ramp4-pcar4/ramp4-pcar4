@@ -383,6 +383,7 @@ export class LayerInstance extends APIScope {
     isSublayer: boolean;
     isRemoved: boolean; // used to mark sublayers for removal
     isFile: boolean;
+    userAdded: boolean;
 
     esriLayer: __esri.Layer | undefined;
     esriSubLayer: __esri.Sublayer | undefined; // used only by sublayers
@@ -416,6 +417,7 @@ export class LayerInstance extends APIScope {
         this.isSublayer = false;
         this.isRemoved = false;
         this.isFile = false;
+        this.userAdded = false;
 
         this._sublayers = [];
     }

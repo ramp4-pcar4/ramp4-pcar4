@@ -34,3 +34,6 @@ panels.controls.optionsMenu,More,1,Plus,0
 panels.controls.minimize,Minimize,1,Réduire au minimum,0
 panels.controls.expand,Expand,1,Élargir,0
 panels.controls.collapse,Collapse,1,Réduire,0
+panels.alert.open,{name} panel opened,1,Panneau de {name} ouvert,0
+panels.alert.close,{name} panel closed,1,Panneau de {name} fermé,0
+panels.alert.minimize,{name} panel minimized,1,Panneau de {name} minimisé,0

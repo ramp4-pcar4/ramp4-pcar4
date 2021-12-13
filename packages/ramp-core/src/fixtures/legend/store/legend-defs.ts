@@ -264,6 +264,7 @@ export class LegendEntry extends LegendItem {
      */
     toggleDisplaySymbology() {
         this._displaySymbology = !this._displaySymbology;
+        return this._displaySymbology;
     }
 
     /**

@@ -19,7 +19,8 @@ class DetailsFixture extends DetailsAPI {
                     },
                     style: {
                         width: '350px'
-                    }
+                    },
+                    alertName: 'details.title'
                 }
             },
             { i18n: { messages } }

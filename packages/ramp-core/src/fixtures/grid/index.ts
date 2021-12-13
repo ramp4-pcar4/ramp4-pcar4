@@ -18,7 +18,8 @@ class GridFixture extends GridAPI {
                     style: {
                         width: '450px'
                     },
-                    expanded: true
+                    expanded: true,
+                    alertName: 'grid.alertName'
                 }
             },
             { i18n: { messages } }

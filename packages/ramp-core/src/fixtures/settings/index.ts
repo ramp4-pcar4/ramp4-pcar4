@@ -16,7 +16,8 @@ class SettingsFixture extends SettingsAPI {
                     },
                     style: {
                         width: '350px'
-                    }
+                    },
+                    alertName: 'settings.title'
                 }
             },
             { i18n: { messages } }

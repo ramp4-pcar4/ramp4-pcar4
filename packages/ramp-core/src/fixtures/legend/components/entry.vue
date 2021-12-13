@@ -219,7 +219,14 @@ export default defineComponent({
          */
         toggleSymbology(): void {
             if (this.legendItem!._controlAvailable(Controls.Symbology)) {
-                this.legendItem!.toggleDisplaySymbology();
+                const expanded = this.legendItem!.toggleDisplaySymbology();
+                this.$iApi.updateAlert(
+                    this.$t(
+                        `legend.alert.symbology${
+                            expanded ? 'Expanded' : 'Collapsed'
+                        }`
+                    )
+                );
             }
         },
 

@@ -17,7 +17,8 @@ class WizardFixture extends WizardAPI {
                     },
                     style: {
                         width: '350px'
-                    }
+                    },
+                    alertName: 'wizard.title'
                 }
             },
             {
