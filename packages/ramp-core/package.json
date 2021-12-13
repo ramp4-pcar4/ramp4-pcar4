@@ -42,7 +42,7 @@
         "throttle-debounce": "~3.0.1",
         "tiny-emitter": "^2.1.0",
         "vue": "3.1.5",
-        "vue-loader": "next",
+        "vue-loader": "16.8.3",
         "vue-class-component": "^8.0.0-rc.1",
         "vue-i18n": "^9.1.7",
         "vue-property-decorator": "^10.0.0-rc.2",
