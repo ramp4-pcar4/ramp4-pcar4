@@ -243,31 +243,6 @@ export default defineComponent({
         },
 
         /**
-         * Toggles settings panel to open/close type for the LegendItem.
-         */
-        toggleSettings(): void {
-            if (this.legendItem!._controlAvailable(Controls.Settings)) {
-                this.$iApi.event.emit(
-                    GlobalEvents.SETTINGS_TOGGLE,
-                    this.legendItem!.layerUID
-                );
-            }
-        },
-
-        /**
-         * Toggles metadata panel to open/close for the legendItem!.
-         */
-        toggleMetadata(): void {
-            if (this.legendItem!._controlAvailable(Controls.Metadata)) {
-                this.$iApi.event.emit('metadata/open', {
-                    type: 'html',
-                    layer: 'Sample Layer Name',
-                    url: 'https://ryan-coulson.com/RAMPMetadataDemo.html'
-                });
-            }
-        },
-
-        /**
          * Returns a span containing the resized legend graphic.
          */
         getLegendGraphic(item: any): string | undefined {
@@ -280,13 +255,6 @@ export default defineComponent({
             svg?.setAttribute('height', item.imgHeight);
             svg?.setAttribute('width', item.imgWidth);
             return span.outerHTML;
-        },
-
-        /**
-         * Remove layer from the map
-         */
-        removeLayer(): void {
-            this.$iApi.geo.map.removeLayer(this.legendItem!.layer!);
         },
 
         /**

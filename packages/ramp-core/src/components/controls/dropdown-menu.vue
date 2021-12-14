@@ -62,10 +62,7 @@ export default defineComponent({
         window.addEventListener(
             'click',
             event => {
-                if (
-                    event.target instanceof HTMLElement &&
-                    !this.$el.contains(event.target)
-                ) {
+                if (!this.$el.contains(event.target)) {
                     this.open = false;
                 }
             },
@@ -92,13 +89,11 @@ export default defineComponent({
         });
     },
     beforeUnmount() {
+        this.open = false;
         window.removeEventListener(
             'click',
             event => {
-                if (
-                    event.target instanceof HTMLElement &&
-                    !this.$el.contains(event.target)
-                ) {
+                if (!this.$el.contains(event.target)) {
                     this.open = false;
                 }
             },
