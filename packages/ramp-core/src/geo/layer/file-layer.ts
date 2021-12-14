@@ -289,10 +289,6 @@ export class FileLayer extends AttribLayer {
             includeGeometry: false
         };
 
-        // TODO in RAMP2, it was found that doing a point identify against a polygon layer
-        //      needed a buffer when running against local feature layers (file based, WFS, etc)
-        //      this never made much sense, re-test against ESRI 4.x api
-
         if (
             this.geomType !== GeometryType.POLYGON &&
             options.geometry.type === GeometryType.POINT
@@ -307,6 +303,7 @@ export class FileLayer extends AttribLayer {
         }
 
         // TODO: Test if works after #206 is implemented
+        // #206 is done but file layers are not fully tested yet due to CORS errors
         qOpts.filterSql = this.getCombinedSqlFilter();
 
         result.done = this.queryFeatures(qOpts).then(results => {
