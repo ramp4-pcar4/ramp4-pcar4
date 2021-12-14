@@ -17,6 +17,7 @@
         <div
             v-show="open"
             @blur="open = false"
+            @mouseleave="open = false"
             class="
                 rv-dropdown
                 shadow-md

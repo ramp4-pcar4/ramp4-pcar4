@@ -371,7 +371,7 @@ let config = {
             },
             appbar: {
                 items: ['legend', 'geosearch', 'basemap', 'export-v1'],
-                temporaryButtons: ['details', 'grid']
+                temporaryButtons: ['details', 'grid', 'settings']
             },
             details: {
                 items: [
@@ -725,7 +725,7 @@ let config = {
             },
             appbar: {
                 items: ['legend', 'geosearch', 'basemap', 'export-v1'],
-                temporaryButtons: ['details', 'grid']
+                temporaryButtons: ['details', 'grid', 'settings']
             },
             mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
             'export-v1-title': {
