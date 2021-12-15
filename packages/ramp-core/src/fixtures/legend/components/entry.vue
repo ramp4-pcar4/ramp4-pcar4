@@ -1,5 +1,5 @@
 <template>
-    <div class="legend-item">
+    <div class="legend-item" :key="legendItem.visibility">
         <div class="relative">
             <div
                 class="
@@ -36,7 +36,7 @@
                         }"
                         :disabled="!legendItem._controlAvailable('symbology')"
                         :content="
-                            legendItem.displaySymbology
+                            legendItem.symbologyExpanded
                                 ? $t('legend.symbology.hide')
                                 : $t('legend.symbology.expand')
                         "
@@ -51,7 +51,7 @@
                                     !legendItem._controlAvailable('symbology')
                             }"
                             class="w-32 h-32"
-                            :visible="legendItem.displaySymbology"
+                            :visible="legendItem.symbologyExpanded"
                             :layer="legendItem.layer"
                             :legendItem="legendItem"
                         />
@@ -85,7 +85,7 @@
 
         <!-- Symbology Stack Section -->
         <div
-            v-if="legendItem.displaySymbology"
+            v-if="legendItem.symbologyExpanded"
             v-focus-item
             class="default-focus-style"
         >
@@ -207,9 +207,11 @@ export default defineComponent({
         }
 
         Promise.all(
-            this._getLegend().map((item: LegendSymbology) => item.drawPromise)
+            toRaw(this.legendItem!.legend!).map(
+                (item: LegendSymbology) => item.drawPromise
+            )
         ).then(() => {
-            this.symbologyStack = this._getLegend();
+            this.symbologyStack = toRaw(this.legendItem!.legend!);
         });
     },
 
@@ -219,7 +221,7 @@ export default defineComponent({
          */
         toggleSymbology(): void {
             if (this.legendItem!._controlAvailable(Controls.Symbology)) {
-                const expanded = this.legendItem!.toggleDisplaySymbology();
+                const expanded = this.legendItem!.toggleSymbologyExpand();
                 this.$iApi.updateAlert(
                     this.$t(
                         `legend.alert.symbology${
@@ -255,13 +257,6 @@ export default defineComponent({
             svg?.setAttribute('height', item.imgHeight);
             svg?.setAttribute('width', item.imgWidth);
             return span.outerHTML;
-        },
-
-        /**
-         * Wrapper to safely get the legend from layer while avoiding ArcGIS and Vue3 conflict
-         */
-        _getLegend(): LegendSymbology[] {
-            return toRaw(this.legendItem!.layer!).legend;
         }
     }
 });

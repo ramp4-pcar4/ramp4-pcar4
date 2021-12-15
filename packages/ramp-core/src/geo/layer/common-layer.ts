@@ -272,7 +272,6 @@ export class CommonLayer extends LayerInstance {
             // TODO might need to store layer state. If we want layer to look the same as it was prior to re-loading,
             //      could do that here. Alternative is to not, and let whomever is calling this save state before
             //      and restore state after. Might be more flexible.
-
             this.$iApi.event.emit(GlobalEvents.LAYER_RELOAD_START, this);
             this.sublayers.forEach(sublayer =>
                 this.$iApi.event.emit(GlobalEvents.LAYER_RELOAD_START, sublayer)

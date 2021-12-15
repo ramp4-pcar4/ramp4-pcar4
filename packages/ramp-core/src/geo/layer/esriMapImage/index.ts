@@ -354,7 +354,8 @@ class MapImageLayer extends AttribLayer {
             mlFC.fetchEsriSublayer(this);
 
             // setting custom renderer here (if one is provided)
-            const hasCustRed = mlFC.esriSubLayer && config.customRenderer?.type;
+            const hasCustRed =
+                mlFC.esriSubLayer && config?.customRenderer?.type;
             if (hasCustRed) {
                 mlFC.esriSubLayer!.renderer = EsriRendererFromJson(
                     config.customRenderer

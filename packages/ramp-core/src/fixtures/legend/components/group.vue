@@ -1,5 +1,5 @@
 <template>
-    <div class="legend-group-container">
+    <div class="legend-group-container" :key="legendItem.visibility">
         <div class="relative">
             <div
                 class="
