@@ -10,7 +10,6 @@ import {
 
 import {
     Extent,
-    GeometryAPI,
     Graphic,
     LinearRing,
     LineString,
@@ -24,6 +23,8 @@ import {
     PolygonStyleOptions,
     SpatialReference
 } from '@/geo/api';
+
+import { EsriConfig } from '@/geo/esri';
 
 export class GeoAPI extends APIScope {
     map: MapAPI;
@@ -70,5 +71,21 @@ export class GeoAPI extends APIScope {
         this.map = new MapAPI(iApi);
         this.utils = new UtilsAPI(iApi);
         this.layer = new LayerAPI(iApi);
+    }
+
+    /**
+     * Set a proxy service to allow consumption of cross-domain non-CORS resources.
+     *
+     * @param {string} proxyUrl Url to proxy or empty string to clear. Must be relative url on host domain, or full url to CORS supported server
+     */
+    set proxy(proxyUrl: string) {
+        EsriConfig.request.proxyUrl = proxyUrl;
+    }
+
+    /**
+     * Read the current proxy setting, returns url string, empty string if no proxy
+     */
+    get proxy(): string {
+        return EsriConfig.request.proxyUrl || '';
     }
 }

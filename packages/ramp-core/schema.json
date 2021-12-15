@@ -1827,6 +1827,18 @@
             },
             "required": ["tileSchemas", "baseMaps"],
             "unevaluatedProperties": false
+        },
+        "system": {
+            "type": "object",
+            "description": "Configuration of ramp system properties.",
+            "properties": {
+                "proxyUrl": {
+                    "type": "string",
+                    "description": "An optional proxy to be used for dealing with same-origin issues.  URL must either be a relative path on the same server or an absolute path on a server which sets CORS headers."
+                }
+            },
+            "required": [],
+            "unevaluatedProperties": false
         }
     },
     "required": ["version"]
