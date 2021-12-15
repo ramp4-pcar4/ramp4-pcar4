@@ -136,8 +136,7 @@ export default defineComponent({
          */
         toggleSymbology(): void {
             if (this.legendItem!._controlAvailable(Controls.Symbology)) {
-                this.legendItem!.displaySymbology =
-                    !this.legendItem!.displaySymbology;
+                this.legendItem!.toggleSymbologyExpand();
             }
         },
 
@@ -184,7 +183,6 @@ export default defineComponent({
          */
         removeLayer() {
             if (this.legendItem!._controlAvailable(Controls.Remove)) {
-                this.legendItem!.toggleVisibility(false);
                 this.$iApi.geo.map.removeLayer(this.legendItem!.layerUID!);
             }
         },

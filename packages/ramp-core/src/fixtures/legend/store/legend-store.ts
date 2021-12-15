@@ -2,36 +2,35 @@ import { ActionContext } from 'vuex';
 import { make } from 'vuex-pathify';
 
 import { LegendState } from './legend-state';
-import {
-    LegendItem,
-    LegendEntry,
-    LegendGroup,
-    LegendTypes
-} from './legend-defs';
+import { LegendItem, LegendEntry, LegendGroup } from './legend-defs';
 import { RootState } from '@/store';
-import { TreeNode } from '@/geo/api';
-import { LayerInstance } from '@/api';
 
 // use for actions
 type LegendContext = ActionContext<LegendState, RootState>;
+
+const searchTree = function (root: any, predicate: (root: any) => boolean) {
+    if (predicate(root)) {
+        return root;
+    } else {
+        let result: LegendItem | undefined;
+        root.children.some((child: LegendItem) => {
+            result = searchTree(child, predicate);
+            return result !== undefined;
+        });
+        return result;
+    }
+};
 
 const getters = {
     getChildById:
         (state: LegendState) =>
         (id: string): LegendItem | undefined => {
-            const searchTree = function (root: any, id: string) {
-                if (root.id === id) {
-                    return root;
-                } else {
-                    let result: LegendItem | undefined;
-                    root.children.some((child: LegendItem) => {
-                        result = searchTree(child, id);
-                        return result !== undefined;
-                    });
-                    return result;
-                }
-            };
-            return searchTree(state, id);
+            return searchTree(state, (root: LegendItem) => root.id === id);
+        },
+    getChildByUid:
+        (state: LegendState) =>
+        (uid: string): LegendItem | undefined => {
+            return searchTree(state, (root: LegendItem) => root.uid === uid);
         },
     getAllExpanded: (state: LegendState, expanded: boolean): boolean => {
         return state.children.every(
@@ -51,21 +50,15 @@ const mutations = {
     ADD_ITEM: (state: LegendState, value: LegendEntry | LegendGroup) => {
         state.children = [...state.children, value];
     },
-    SET_DEFAULT_ITEM: (
-        state: LegendState,
-        { id, entry }: { id: string; entry: LegendEntry | LegendGroup }
-    ) => {
-        const index = state.children.findIndex(child => child.id === id);
-        state.children[index] = entry;
-    },
     REMOVE_LAYER_ENTRY: (state: LegendState, uid: string) => {
         const removeLayerEntry = (children: (LegendEntry | LegendGroup)[]) => {
             // remove entry if uid corresponds to entry or parent layer
-            children = children.filter(
-                entry =>
-                    entry instanceof LegendGroup ||
-                    (entry.layer!.uid !== uid && entry.layerUID !== uid)
-            );
+            children = children.filter(entry => {
+                if (entry instanceof LegendEntry && entry.layerUID === uid) {
+                    entry.remove();
+                }
+                return entry instanceof LegendGroup || entry.layerUID !== uid;
+            });
 
             // recursively check child legend groups
             children
@@ -91,11 +84,10 @@ const mutations = {
             children
                 .filter(
                     entry =>
-                        entry instanceof LegendEntry &&
-                        (entry.layer?.uid === uid || entry.layerUID === uid)
+                        entry instanceof LegendEntry && entry.layerUID === uid
                 )
                 .forEach(entry => {
-                    entry._type = LegendTypes.Placeholder;
+                    entry.reload();
                 });
 
             // recursively check child legend groups
@@ -138,7 +130,7 @@ const actions = {
         });
     },
     /** Add legend entry to store */
-    addEntry: (context: LegendContext, item: LegendEntry) => {
+    addItem: (context: LegendContext, item: LegendEntry) => {
         context.commit('ADD_ITEM', item);
     },
     /** Remove layer's corresponding entry from the store */
@@ -148,62 +140,6 @@ const actions = {
     /** Reload layer's corresponding legend entry */
     reloadLayerEntry: (context: LegendContext, uid: string) => {
         context.commit('RELOAD_LAYER_ENTRY', uid);
-    },
-    /** Replaces default placeholder after layer is loaded */
-    updateDefaultEntry: (context: LegendContext, id: string) => {
-        const entry: LegendEntry = <LegendEntry>(
-            context.state.children.find(child => child.id === id)
-        );
-
-        // If layer is a sublayer, we want to update the default entry using the parent layer
-        const layer: LayerInstance | undefined = entry.layer?.isSublayer
-            ? entry.layer?.parentLayer
-            : entry.layer;
-
-        if (!layer) {
-            // back out
-            console.error(
-                'Attempted to update default legend entry when layer is undefined'
-            );
-            return;
-        }
-
-        console.log('Context', context);
-
-        // creates legend config from layer tree children
-        const parseLayerTreeChildren = (children: Array<TreeNode>): any => {
-            return children.map((node: TreeNode) =>
-                node.isLayer
-                    ? {
-                          name: node.name,
-                          layerId: layer.id,
-                          entryIndex: node.layerIdx
-                      }
-                    : {
-                          name: node.name,
-                          children: parseLayerTreeChildren(node.children)
-                      }
-            );
-        };
-
-        const layerTree: TreeNode = layer.getLayerTree();
-
-        const config: any = {
-            name: layerTree.name,
-            layers: entry._itemConfig.layers!
-        };
-
-        // create single entry if only 1 layer, otherwise create a group
-        const newEntry: LegendEntry | LegendGroup =
-            layerTree.children.length === 1 && layerTree.children[0].isLayer
-                ? new LegendEntry({ ...config, layerId: layer.id })
-                : new LegendGroup({
-                      ...config,
-                      children: parseLayerTreeChildren(layerTree.children)
-                  });
-
-        // replace default placeholder with real entry
-        context.commit('SET_DEFAULT_ITEM', { id: entry.id, entry: newEntry });
     }
 };
 
@@ -320,9 +256,9 @@ export enum LegendStore {
      */
     hideAll = 'legend/hideAll',
     /**
-     * (Action) addEntry - add entry to legend store
+     * (Action) addItem - add entry to legend store
      */
-    addEntry = 'legend/addEntry!',
+    addItem = 'legend/addItem!',
     /**
      * (Action) removeLayerEntry - remove layer's corresponding entry from the store
      */
@@ -330,11 +266,11 @@ export enum LegendStore {
     /**
      * (Action) reloadLayerEntry - set layer's corresponding entry to reload (placeholder) state
      */
-    reloadLayerEntry = 'legend/reloadLayerEntry',
-    /**
-     * (Action) updateDefaultEntry - replaces default placeholder after layer has loaded
-     */
-    updateDefaultEntry = 'legend/updateDefaultEntry!'
+    reloadLayerEntry = 'legend/reloadLayerEntry'
+    // /**
+    //  * (Action) updateDefaultEntry - replaces default placeholder after layer has loaded
+    //  */
+    // updateDefaultEntry = 'legend/updateDefaultEntry!'
 }
 
 export function legend() {

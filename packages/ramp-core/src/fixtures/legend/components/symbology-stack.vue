@@ -62,26 +62,18 @@ export default defineComponent({
         };
     },
     mounted() {
-        // TODO ramp2 would create a placeholder stack if the layer wasn't loaded. Icon would be first letter of layer
-        //      see if we should be doing that here as well, or if we are fine with empty icons.
-        // When the layer is loaded, get the icon.
+        // wait for the layer entry to load
         this.legendItem.loadPromise.then(() => {
-            this.getSymbologyStack();
-        });
-    },
-    methods: {
-        /**
-         * Retrieves the symbology stack. Waits on all symbols in the stack to finish loading before displaying.
-         */
-        getSymbologyStack(): any {
-            if (this.legendItem.layerUID) {
+            if (this.legendItem.layerUID !== undefined) {
+                // retrieve the symbology stack
+                // waits on all symbols in the stack to finish loading before displaying.
                 Promise.all(
                     toRaw(this.layer).legend.map((l: any) => l.drawPromise)
                 ).then((r: any) => {
                     this.stack = toRaw(this.layer).legend;
                 });
             }
-        }
+        });
     }
 });
 </script>

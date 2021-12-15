@@ -7,6 +7,7 @@ import { GridAPI } from '@/fixtures/grid/api/grid';
 import { WizardAPI } from '@/fixtures/wizard/api/wizard';
 import { LegendAPI } from '@/fixtures/legend/api/legend';
 import { LegendStore } from '@/fixtures/legend/store';
+import { LegendGroup } from '@/fixtures/legend/store/legend-defs';
 import { GridStore, GridAction } from '@/fixtures/grid/store';
 import {
     MapClick,
@@ -33,6 +34,7 @@ export enum GlobalEvents {
     FIXTURE_ADDED = 'fixture/added', // Payload is FixtureInstance
 
     LAYER_OPACITYCHANGE = 'layer/opacitychange',
+    LAYER_REGISTERED = 'layer/registered', // Payload: `(layer: LayerInstance)`
     LAYER_RELOAD_END = 'layer/reloadend', // Payload: `(layer: LayerInstance)`
     LAYER_RELOAD_START = 'layer/reloadstart', // Payload: `(layer: LayerInstance)`
     LAYER_REMOVE = 'layer/remove', // Payload: `(layer: LayerInstance)`
@@ -64,6 +66,9 @@ export enum GlobalEvents {
     MAP_BASEMAPCHANGE = 'map/basemapchanged', // payload is the new basemap id (string)
     MAP_START = 'map/start',
 
+    // fires when a user adds a layer, generally through the wizard
+    USER_LAYER_ADDED = 'user/layeradded', // Payload is LayerInstance
+
     /**
      * Fires when the map scale changes.
      * Payload: the scale denominator integer.
@@ -77,7 +82,6 @@ export enum GlobalEvents {
     HELP_TOGGLE = 'help/toggle',
     GRID_TOGGLE = 'grid/toggle',
     WIZARD_OPEN = 'wizard/open',
-    LEGEND_DEFAULT = 'legend/generate',
 
     /**
      * Fires when a panel opens
@@ -110,7 +114,9 @@ enum DefEH {
     TOGGLE_HELP = 'toggles_help_panel',
     TOGGLE_GRID = 'toggles_grid_panel',
     OPEN_WIZARD = 'opens_wizard_panel',
-    GENERATE_LEGEND = 'generates_default_legend_entry',
+    UPDATE_LEGEND_LAYER_REGISTER = 'updates_legend_layer_register',
+    UPDATE_LEGEND_WIZARD_ADDED = 'updates_legend_wizard_added',
+    UPDATE_LEGEND_LAYER_RELOAD = 'updates_legend_layer_reload',
     MAP_BASEMAPCHANGE_ATTRIBUTION = 'updates_map_caption_attribution_basemap',
     CONFIG_CHANGE_ATTRIBUTION = 'updates_map_caption_attribution_config',
     MAP_SCALECHANGE_SCALEBAR = 'updates_map_caption_scale',
@@ -369,7 +375,9 @@ export class EventAPI extends APIScope {
                 DefEH.TOGGLE_HELP,
                 DefEH.TOGGLE_GRID,
                 DefEH.OPEN_WIZARD,
-                DefEH.GENERATE_LEGEND,
+                DefEH.UPDATE_LEGEND_LAYER_REGISTER,
+                DefEH.UPDATE_LEGEND_WIZARD_ADDED,
+                DefEH.UPDATE_LEGEND_LAYER_RELOAD,
                 DefEH.MAP_BASEMAPCHANGE_ATTRIBUTION,
                 DefEH.CONFIG_CHANGE_ATTRIBUTION,
                 DefEH.MAP_SCALECHANGE_SCALEBAR,
@@ -490,16 +498,44 @@ export class EventAPI extends APIScope {
                     handlerName
                 );
                 break;
-            case DefEH.GENERATE_LEGEND:
-                zeHandler = (layer: LayerInstance, parent?: any) => {
+            case DefEH.UPDATE_LEGEND_LAYER_REGISTER:
+                zeHandler = (layer: LayerInstance) => {
                     const legendFixture: LegendAPI =
                         this.$iApi.fixture.get('legend');
                     if (legendFixture) {
-                        legendFixture.generateDefaultLegend(layer, parent);
+                        legendFixture.updateLegend(layer);
                     }
                 };
                 this.$iApi.event.on(
-                    GlobalEvents.LEGEND_DEFAULT,
+                    GlobalEvents.LAYER_REGISTERED,
+                    zeHandler,
+                    handlerName
+                );
+                break;
+            case DefEH.UPDATE_LEGEND_WIZARD_ADDED:
+                zeHandler = (layer: LayerInstance) => {
+                    const legendFixture: LegendAPI =
+                        this.$iApi.fixture.get('legend');
+                    if (legendFixture) {
+                        legendFixture.generateLegend(layer);
+                    }
+                };
+                this.$iApi.event.on(
+                    GlobalEvents.USER_LAYER_ADDED,
+                    zeHandler,
+                    handlerName
+                );
+                break;
+            case DefEH.UPDATE_LEGEND_LAYER_RELOAD:
+                zeHandler = (layer: LayerInstance) => {
+                    const legendFixture: LegendAPI =
+                        this.$iApi.fixture.get('legend');
+                    if (legendFixture) {
+                        legendFixture.updateLegend(layer);
+                    }
+                };
+                this.$iApi.event.on(
+                    GlobalEvents.LAYER_RELOAD_END,
                     zeHandler,
                     handlerName
                 );
