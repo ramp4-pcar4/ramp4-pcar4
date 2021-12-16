@@ -134,12 +134,6 @@ export class QueryAPI extends APIScope {
         // TODO consider casting sourceSR to our API SR class?
         let finalGeom: __esri.Geometry;
 
-        if (isFileLayer && geometry.type !== GeometryType.EXTENT) {
-            // TODO verify this is still the case with new layerview queries.
-            throw new Error(
-                'Cannot use geometries other than Extents in queries against non-ArcGIS Server based layers'
-            );
-        }
         if (!isFileLayer && geometry.type === GeometryType.EXTENT) {
             // first check for case of very large extent in Lambert against a LatLong layer.
             // in this case, we tend to get better results keeping things in an Extent form
