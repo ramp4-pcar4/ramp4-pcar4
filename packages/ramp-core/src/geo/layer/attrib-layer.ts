@@ -355,34 +355,6 @@ export class AttribLayer extends CommonLayer {
         return this.attLoader.tabularAttributesCache;
     }
 
-    // // formerly known as getFormattedAttributes
-    // // TODO making this work for now same as old way. do we want to think about different ways?
-    // //      e.g. have consumer parse the raw data and format it?
-    // //      doing it here has advantage because layer metadata is also here (e.g. fields array, symbol renderer)
-    // // TODO fancy types
-    // /**
-    //  * Retrieves attributes from a layer for a specified feature index
-    //  * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
-    //  */
-    // async getTabularAttributes(): Promise<TabularAttributeSet> {
-    //     // redundant checks to shut up typescript
-    //     if (!this.attLoader) {
-    //         throw new Error(
-    //             'getTabularAttributes call with missing attribute loader'
-    //         );
-    //     }
-
-    //     // TODO rethink how this works. is it better to read from attributes every time?
-    //     //      if we allow attribute value updates via API, then we probably have to do that.
-    //     if (!this.attLoader.tabularAttributesCache) {
-    //         // do not use await here. we want to store the promise and pass it on, not block until the promise resolves.
-    //         this.attLoader.tabularAttributesCache =
-    //             this.getTabularAttributesGuts();
-    //     }
-
-    //     return this.attLoader.tabularAttributesCache;
-    // }
-
     private async getTabularAttributesGuts(): Promise<TabularAttributeSet> {
         // this does the heavy lifting. it is abstracted from getTabularAttributes()
         // because async format is not conductive to grabbing and caching the promise halfway
