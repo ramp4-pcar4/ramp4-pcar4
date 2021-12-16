@@ -105,7 +105,6 @@ import { PanelInstance } from '@/api';
 import SettingsComponentV from './component.vue';
 import { GlobalEvents, LayerInstance } from '@/api/internal';
 import { LegendEntry } from '../legend/store/legend-defs';
-import { LayerType } from '@/geo/api';
 
 export default defineComponent({
     name: 'SettingsScreenV',
@@ -127,13 +126,15 @@ export default defineComponent({
             handlers: [] as Array<string>
         };
     },
+    watch: {
+        uid(newUid: string, oldUid: string) {
+            if (newUid !== oldUid) {
+                this.loadLayerProperties();
+            }
+        }
+    },
     mounted() {
-        // Listen for a layer load event. Some of these values may change when the layer fully loads.
-        this.layer.isLayerLoaded().then(() => {
-            this.visibilityModel = this.layer.visibility;
-            this.opacityModel = this.layer.opacity * 100;
-            this.layerName = this.layer.name;
-        });
+        this.loadLayerProperties();
 
         this.handlers.push(
             this.$iApi.event.on(
@@ -152,8 +153,7 @@ export default defineComponent({
                 (reloadedLayer: LayerInstance) => {
                     reloadedLayer.isLayerLoaded().then(() => {
                         if (this.uid === reloadedLayer.uid) {
-                            this.visibilityModel = this.layer.visibility;
-                            this.opacityModel = this.layer.opacity * 100;
+                            this.loadLayerProperties();
                         }
                     });
                 }
@@ -181,6 +181,19 @@ export default defineComponent({
         toggleSnapshot() {
             this.snapshotToggle = !this.snapshotToggle;
             // TODO: make necessary changes to layer
+        },
+
+        // load property data from layer
+        loadLayerProperties() {
+            const oldUid = this.layer.uid;
+            this.layer.isLayerLoaded().then(() => {
+                if (oldUid === this.layer.uid) {
+                    // ensure that it's still the same layer
+                    this.visibilityModel = this.layer.visibility;
+                    this.opacityModel = this.layer.opacity * 100;
+                    this.layerName = this.layer.name;
+                }
+            });
         }
     }
 });
