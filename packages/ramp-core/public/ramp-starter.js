@@ -292,6 +292,7 @@ let config = {
                     opacity: 0.8,
                     visibility: true
                 },
+                tolerance: 10,
                 customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
             },
             {

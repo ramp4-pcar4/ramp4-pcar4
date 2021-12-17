@@ -642,6 +642,11 @@
                     },
                     "minItems": 1
                 },
+                "tolerance": {
+                    "type": "number",
+                    "default": 5,
+                    "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer"
+                },
                 "extent": {
                     "$ref": "#/$defs/extentWithReferenceNode"
                 },
@@ -791,6 +796,11 @@
                     "default": true,
                     "description": "Allows individual symbols to have visibility toggled on/off."
                 },
+                "tolerance": {
+                    "type": "number",
+                    "default": 5,
+                    "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer"
+                },
                 "extent": {
                     "$ref": "#/$defs/extentWithReferenceNode"
                 },
@@ -887,6 +897,11 @@
                     "type": "string",
                     "description": "The longitude field of the layer (only for CSVs)."
                 },
+                "tolerance": {
+                    "type": "number",
+                    "default": 5,
+                    "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer"
+                },
                 "extent": {
                     "$ref": "#/$defs/extentWithReferenceNode"
                 },
@@ -968,6 +983,11 @@
                     "enum": ["ogcWfs"],
                     "default": "ofcWfs",
                     "description": "Service type shorthand for WFS layers."
+                },
+                "tolerance": {
+                    "type": "number",
+                    "default": 5,
+                    "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer"
                 },
                 "extent": {
                     "$ref": "#/$defs/extentWithReferenceNode"
@@ -1802,7 +1822,15 @@
                                     "type": "string",
                                     "description": "ID of the initial mouse point formatter",
                                     "default": "LAT_LONG_DMS",
-                                    "enum": ["LAT_LONG_DMS", "LAT_LONG_DD", "LAT_LONG_DDM", "WEB_MERCATOR", "CANADA_ATLAS_LAMBERT", "UTM", "BASEMAP"]
+                                    "enum": [
+                                        "LAT_LONG_DMS",
+                                        "LAT_LONG_DD",
+                                        "LAT_LONG_DDM",
+                                        "WEB_MERCATOR",
+                                        "CANADA_ATLAS_LAMBERT",
+                                        "UTM",
+                                        "BASEMAP"
+                                    ]
                                 }
                             }
                         },

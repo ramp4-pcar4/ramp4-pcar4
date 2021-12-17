@@ -751,6 +751,7 @@ export class MapAPI extends CommonMapAPI {
             // This will filter out all MapImageLayers that are not visible, regardless of the visibility of the MapImageFCs (sublayers)
             .filter(layer => layer.supportsIdentify)
             .map(layer => {
+                p.tolerance = layer.config.tolerance || 5;
                 return layer.identify(p);
             });
 
