@@ -289,6 +289,7 @@ let config = {
                         }
                     }
                 ],
+                tolerance: 20,
                 state: {
                     opacity: 1,
                     visibility: true
