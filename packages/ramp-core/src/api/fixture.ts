@@ -112,7 +112,7 @@ export class FixtureAPI extends APIScope {
      * Finds and returns a collection of `FixtureBase` objects given a list of ids.
      * This can be useful when retrieving several fixtures at one time as follows:
      * ```ts
-     * const [one, two, three] = RAMP.fixture.get(['fixture-one', 'fixture-two', 'fixture-three']);
+     * const [one, two, three] = rInstance.fixture.get(['fixture-one', 'fixture-two', 'fixture-three']);
      * ```
      *
      * @template T subclass of the `FixtureBase`; defaults to `FixtureBase`
@@ -263,7 +263,7 @@ export class FixtureInstance extends APIScope implements FixtureBase {
 
     /**
      * Removes the specified fixture from R4MP instance.
-     * This is a proxy to `RAMP.fixture.remove(...)`.
+     * This is a proxy to `rInstance.fixture.remove(...)`.
      *
      * @returns {this}
      * @memberof FixtureInstance

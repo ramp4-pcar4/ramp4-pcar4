@@ -365,10 +365,10 @@ export class LayerInstance extends APIScope {
     */
 
     /**
-     * ID of this fixture.
+     * ID of this layer. Also known as the layerId.
      *
      * @type {string}
-     * @memberof FixtureInstance
+     * @memberof LayerInstance
      */
     id: string;
     uid: string;
@@ -649,6 +649,22 @@ export class LayerInstance extends APIScope {
      * @param {string} name the new OID field
      */
     set oidField(name: string) {}
+
+    /**
+     * Get the feature count for the given sublayer.
+     *
+     * @returns {Integer} number of features in the sublayer
+     */
+    get featureCount(): number {
+        return -1;
+    }
+
+    /**
+     * Set the feature count for the layer
+     *
+     * @param {Integer} count the new number of features in the layer
+     */
+    set featureCount(count: number) {}
 
     /**
      * Baseline identify function for layers that do not support identify.

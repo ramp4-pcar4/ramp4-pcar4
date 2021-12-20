@@ -64,7 +64,6 @@ import MapCaptionV from '@/components/map/map-caption.vue';
 import NotificationsFloatingButtonV from '@/components/notification-center/floating-button.vue';
 import KeyboardInstructionsModalV from './keyboard-instructions.vue';
 import { get } from '@/store/pathify-helper';
-import { FixtureInstance } from '@/api';
 import { GlobalEvents } from '@/api';
 export default defineComponent({
     name: 'Shell',
