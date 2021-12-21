@@ -2,6 +2,17 @@
 
 <p align="center"><img src="./assets/logo.svg"></p>
 
+RAMP - The Reusable Accessible Mapping Platform, is a Javascript based web mapping platform that provides a reusable, responsive and WCAG 2.1 AA compliant common viewer for the Government of Canada. The fourth major version embraces the following large-scale changes
+
+- Updating the UI framework from Angular 1 to Vue 3
+- Updating the ESRI Mapping API from v3 to v4
+- An application architecture and API that is more open and adjustable
+- UI re-design with mobile use in mind
+
+This project is currently in development. Incomplete features, bugs, and breaking changes to the API and configuration schema should be expected until the `v1.0.0` release. The previous version can be found [here](https://github.com/fgpv-vpgf/fgpv-vpgf).
+
+> This is an unsupported product. If you require a supported version please contact applicationsdecartographieweb-webmappingapplications@ec.gc.ca for a cost estimate. The software and code samples available on this website are provided "as is" without warranty of any kind, either express or implied. Use at your own risk. Access to this GitHub repository could become unavailable at any point in time.
+
 ## Local development
 
 ### Editor
