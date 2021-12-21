@@ -252,7 +252,6 @@ export class FileLayer extends AttribLayer {
         //      once we figure out the tolerance/geometry and things are cooking, consider making this function
         //      the generic one on AttribLayer, and then MapImageLayer overrides it with the child variation.
 
-        // const myFC: FileFC = <FileFC>this.getSublayer(undefined); // undefined will get the first/only
         const map = this.$iApi.geo.map;
 
         // early kickout check. not loaded/error; not visible; not queryable; off scale

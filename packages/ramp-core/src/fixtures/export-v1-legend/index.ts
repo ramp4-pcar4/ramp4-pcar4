@@ -241,7 +241,7 @@ class ExportV1LegendFixture
         const rootLayer: LayerInstance = layer;
         return ids.map<Promise<SegmentChunk>>(async (idx: number) => {
             let currLayer: LayerInstance | undefined =
-                idx === -1 ? rootLayer : rootLayer.getSublayer(idx, true);
+                idx === -1 ? rootLayer : rootLayer.getSublayer(idx);
 
             if (!currLayer) {
                 // This should not happen, but if it does return an ERROR label
