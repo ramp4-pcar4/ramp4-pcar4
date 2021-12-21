@@ -923,21 +923,12 @@ export class LayerInstance extends APIScope {
 
     /**
      * Attempts to get an sublayer based on the index or uid provided.
-     * Will return undefined if a valid root request is made.
-     * A missing layerIdx will be interpreted as root request if validRoot is true,
-     * otherwise it will interpret as a request for the first valid sublayer child.
-     * An index of -1 will be interpreted as a root request.
-     * Will throw error if specific parameters cannot be matched to items in the layer
      *
      * @private
      * @param {number | string} layerIdx the uid or numeric index of the item we are interested in
-     * @param {boolean} [validRoot=false] indicates if asking for the layer root is a valid request
-     * @returns {BaseFC} the matching feature class object, or undefined if the root was requested
+     * @returns {LayerInstance | undefined} the matching feature class object, or undefined if the root was requested
      */
-    getSublayer(
-        layerIdx: number | string | undefined,
-        validRoot: boolean = false
-    ): LayerInstance | undefined {
+    getSublayer(layerIdx: number | string): LayerInstance | undefined {
         // highscool cs IF party
 
         // check if this layer supports sublayers
@@ -948,21 +939,7 @@ export class LayerInstance extends APIScope {
             return undefined;
         }
 
-        // default request
-        if (typeof layerIdx === 'undefined') {
-            if (validRoot) {
-                // requesting the root layer
-                return this;
-            } else {
-                // find first sublayer (there could be indexes of nothing, thus the find)
-                return this._sublayers.find(
-                    (sublayer: LayerInstance) => sublayer
-                );
-            }
-        }
-
         let workingIdx: number;
-
         if (typeof layerIdx === 'string') {
             // uid request
             workingIdx = this.uidToIdx(layerIdx);
@@ -971,26 +948,13 @@ export class LayerInstance extends APIScope {
             workingIdx = layerIdx;
         }
 
-        if (workingIdx === -1) {
-            if (validRoot) {
-                // requesting the root layer
-                return this;
-            } else {
-                // asked for the root when not valid
-                // TODO would it be kinder/friendlier to return the first child sublayer?
-                // throw new Error(`Attempt to access a function on layer root that only applies to an index of the layer [layerid ${this.esriLayer.id}]`);
-                // TODO going with return first for the time being, revisit later
-                return this._sublayers.find(
-                    (sublayer: LayerInstance) => sublayer
-                );
-            }
-        } else if (typeof this._sublayers[workingIdx] === 'undefined') {
+        if (this._sublayers[workingIdx] === undefined) {
             // passed a non-existing index/uid
             throw new Error(
                 `Attempt to access non-existing layer index [layerid ${this.id}, lookup value ${layerIdx}]`
             );
-        } else {
-            return this._sublayers[workingIdx];
         }
+
+        return this._sublayers[workingIdx];
     }
 }
