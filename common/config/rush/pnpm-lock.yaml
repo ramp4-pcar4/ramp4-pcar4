@@ -42,7 +42,7 @@ importers:
       animejs: ~3.2.0
       autoprefixer: ^9.8.6
       await-to-js: ^3.0.0
-      axios: 0.19.2
+      axios: 0.21.2
       cross-env: ^7.0.2
       csv2geojson: 5.1.1
       cypress: ^8.3.0
@@ -57,7 +57,7 @@ importers:
       http-server: ^0.12.0
       linkify-html: ~3.0.4
       linkifyjs: ~3.0.4
-      marked: ^1.2.2
+      marked: ^2.0.0
       postcss: ^7.0.35
       prettier: ^2.2.0
       proj4: 2.6.0
@@ -103,7 +103,7 @@ importers:
       ag-grid-vue3: 26.0.0_6800db38983924182b3db8bddde4e787
       animejs: 3.2.1
       await-to-js: 3.0.0
-      axios: 0.19.2
+      axios: 0.21.2
       csv2geojson: 5.1.1
       deepmerge: 4.2.2
       fabric: 4.4.0
@@ -111,7 +111,7 @@ importers:
       file-saver: 2.0.5
       linkify-html: 3.0.4_linkifyjs@3.0.4
       linkifyjs: 3.0.4
-      marked: 1.2.9
+      marked: 2.0.3
       proj4: 2.6.0
       ramp-locale-loader: link:../ramp-locale-loader
       ramp-sample-fixtures: link:../ramp-sample-fixtures
@@ -130,7 +130,7 @@ importers:
       vue-loader: 16.8.3_webpack@4.41.3
       vue-property-decorator: 10.0.0-rc.3_02f8eea4846df4e4acf82e1a0ada6ce8
       vue-slider-component: 4.0.0-beta.4_02f8eea4846df4e4acf82e1a0ada6ce8
-      vue-tippy: 6.0.0-alpha.37_vue@3.1.5
+      vue-tippy: 6.0.0-alpha.39_vue@3.1.5
       vuex: 4.0.2_vue@3.1.5
       vuex-pathify: 1.4.5_vue@3.1.5+vuex@4.0.2
       webpack: 4.41.3
@@ -3492,11 +3492,12 @@ packages:
   /aws4/1.11.0:
     resolution: {integrity: sha512-xh1Rl34h6Fi1DC2WWKfxUTVqRsNnr6LsKz2+hfwDxQJWmrx8+c7ylaqBMcHfl1U1r2dsifOvKX3LQuLNZ+XSvA==}
 
-  /axios/0.19.2:
-    resolution: {integrity: sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==}
-    deprecated: Critical security vulnerability fixed in v0.21.1. For more information, see https://github.com/axios/axios/pull/3410
+  /axios/0.21.2:
+    resolution: {integrity: sha512-87otirqUw3e8CzHTMO+/9kh/FSgXt/eVDvipijwDtEuwbkySWZ9SBm6VEubmJ/kLKEoLQV/POhxXFb66bfekfg==}
     dependencies:
-      follow-redirects: 1.5.10
+      follow-redirects: 1.14.0
+    transitivePeerDependencies:
+      - debug
     dev: false
 
   /babel-code-frame/6.26.0:
@@ -5333,6 +5334,7 @@ packages:
     resolution: {integrity: sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==}
     dependencies:
       ms: 2.0.0
+    dev: true
 
   /debug/3.2.7:
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
@@ -6772,7 +6774,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dev: true
 
   /follow-redirects/1.14.0_debug@4.3.1:
     resolution: {integrity: sha512-0vRwd7RKQBTt+mgu87mtYeofLFZpTas2S9zY+jIeuLJMNvudIgF52nr19q40HOwH5RrhWIPuj9puybzSJiRrVg==}
@@ -6796,13 +6797,6 @@ packages:
     dependencies:
       debug: 4.3.2
     dev: true
-
-  /follow-redirects/1.5.10:
-    resolution: {integrity: sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==}
-    engines: {node: '>=4.0'}
-    dependencies:
-      debug: 3.1.0
-    dev: false
 
   /for-each/0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
@@ -9966,17 +9960,10 @@ packages:
       uc.micro: 1.0.6
     dev: true
 
-  /marked/1.2.9:
-    resolution: {integrity: sha512-H8lIX2SvyitGX+TRdtS06m1jHMijKN/XjfH6Ooii9fvxMlh8QdqBfBDkGUpMWH2kQNrtixjzYUa3SH8ROTgRRw==}
-    engines: {node: '>= 8.16.2'}
-    hasBin: true
-    dev: false
-
   /marked/2.0.3:
     resolution: {integrity: sha512-5otztIIcJfPc2qGTN8cVtOJEjNJZ0jwa46INMagrYfk0EvqtRuEHLsEe0LrFS0/q+ZRKT0+kXK7P2T1AN5lWRA==}
     engines: {node: '>= 8.16.2'}
     hasBin: true
-    dev: true
 
   /math-random/1.0.4:
     resolution: {integrity: sha512-rUxjysqif/BZQH2yhd5Aaq7vXMSx9NdEsQcyA07uEzIvxgI7zIr33gGsh+RU0/XjmQpCW7RsVof1vlkvQVCK5A==}
@@ -14567,8 +14554,8 @@ packages:
     resolution: {integrity: sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==}
     dev: true
 
-  /vue-tippy/6.0.0-alpha.37_vue@3.1.5:
-    resolution: {integrity: sha512-CDw8lCzNv5KxTJ22z787GsE8sFM2k04zD7UBZ/NvjMhlcgV2Kg6NDSoFbgcRdVm3xSuMbEq4ttG3+ao/TpdutQ==}
+  /vue-tippy/6.0.0-alpha.39_vue@3.1.5:
+    resolution: {integrity: sha512-o8QaoJ8+HRWNw//8mQuZlqSHCZ9jPis9Exl9EHVGRN0GV7SEazJZ5mW1CmYEBlH88/DPampPVwY6WlwCJ+G6iQ==}
     peerDependencies:
       vue: ^3.0.0
     dependencies:
