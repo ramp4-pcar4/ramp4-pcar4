@@ -5,8 +5,11 @@ import {
     InstanceAPI
 } from '@/api/internal';
 import {
+    AttributeSet,
     Extent,
     GeometryType,
+    GetGraphicResult,
+    GetGraphicParams,
     IdentifyParameters,
     IdentifyResult,
     IdentifyResultFormat,
@@ -16,6 +19,7 @@ import {
     QueryFeaturesParams,
     RampLayerConfig,
     RampLayerMapImageLayerEntryConfig,
+    TabularAttributeSet,
     TreeNode
 } from '@/geo/api';
 import {
@@ -571,6 +575,130 @@ class MapImageLayer extends AttribLayer {
         ).then(() => Promise.resolve()); // just to stop typescript from crying about array result of .all()
 
         return result;
+    }
+
+    private noFeaturesErr(): void {
+        console.error(
+            'This method targets features and must be called on a Sublayer.'
+        );
+        console.trace();
+    }
+
+    /**
+     * Invokes the process to get the full set of attribute values for the given sublayer.
+     * Repeat calls will re-use the downloaded values unless the values have been explicitly cleared.
+     *
+     * @returns {Promise} resolves with set of attribute values
+     */
+    getAttributes(): Promise<AttributeSet> {
+        this.noFeaturesErr();
+        return Promise.resolve({
+            features: [],
+            oidIndex: {}
+        });
+    }
+
+    /**
+     * Requests that an attribute load request be aborted. Useful when encountering a massive dataset or a runaway process.
+     *
+     */
+    abortAttributeLoad(): void {
+        this.noFeaturesErr();
+    }
+
+    /**
+     * Requests that any downloaded attribute sets be removed from memory. The next getAttributes request will pull from the server again.
+     *
+     */
+    destroyAttributes(): void {
+        this.noFeaturesErr();
+    }
+
+    // formerly known as getFormattedAttributes
+    /**
+     * Invokes the process to get the full set of attribute values for the given sublayer,
+     * formatted in a tabular format. Additional data properties are also included.
+     * Repeat calls will re-use the downloaded values unless the values have been explicitly cleared.
+     *
+     * @returns {Promise} resolves with set of tabular attribute values
+     */
+    getTabularAttributes(): Promise<TabularAttributeSet> {
+        this.noFeaturesErr();
+
+        // nonsense to shut up typescript
+        return Promise.resolve({
+            columns: [],
+            rows: [],
+            fields: [],
+            oidField: 'error',
+            oidIndex: 0 // TODO determine if we need this anymore
+        });
+    }
+
+    // TODO think about this name. using getGraphic for consistency.
+    /**
+     * Gets information on a graphic in the most efficient way possible. Options object properties:
+     * - getGeom ; a boolean to indicate if the result should include graphic geometry
+     * - getAttribs ; a boolean to indicate if the result should include graphic attributes
+     * - unboundMap ; an optional RampMap reference. Only required if geometry was requested and the layer has not been added to a map.
+     *
+     * @param {Integer} objectId the object id of the graphic to find
+     * @param {Object} options options object for the request, see above
+     * @returns {Promise} resolves with a fake graphic containing the requested information
+     */
+    getGraphic(
+        objectId: number,
+        options: GetGraphicParams
+    ): Promise<GetGraphicResult> {
+        this.noFeaturesErr();
+        return Promise.resolve({});
+    }
+
+    /**
+     * Gets the icon for a specific feature, as an SVG string.
+     *
+     * @param {Integer} objectId the object id of the feature to find
+     * @returns {Promise} resolves with an svg string encoding of the icon
+     */
+    getIcon(objectId: number): Promise<string> {
+        this.noFeaturesErr();
+        return Promise.resolve('');
+    }
+
+    /**
+     * Returns the value of a named SQL filter for a given sublayer.
+     *
+     * @param {String} filterKey the filter key / named filter to view
+     * @returns {String} the value of the where clause for the filter. Empty string if not defined.
+     */
+    getSqlFilter(filterKey: string): string {
+        this.noFeaturesErr();
+        return '';
+    }
+
+    /**
+     * Applies the current filter settings to the physical map layer.
+     *
+     * @function applySqlFilter
+     * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all keys
+     */
+    applySqlFilter(exclusions: Array<string> = []): void {
+        this.noFeaturesErr();
+    }
+
+    /**
+     * Gets array of object ids that currently pass any filters for the given sublayer
+     *
+     * @param {Array} [exclusions] list of any filters keys to exclude from the result. omission includes all filters
+     * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent
+     * @returns {Promise} resolves with array of object ids that pass the filter. if no filters are active, resolves with undefined.
+     */
+    getFilterOIDs(
+        exclusions: Array<string> = [],
+        extent: Extent | undefined = undefined
+    ): Promise<Array<number> | undefined> {
+        this.noFeaturesErr();
+        return Promise.resolve(undefined);
     }
 }
 
