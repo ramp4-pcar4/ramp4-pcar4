@@ -7,7 +7,7 @@ importers:
 
   ../../packages/ramp-core:
     specifiers:
-      '@arcgis/core': 4.22.0
+      '@arcgis/core': 4.22.2
       '@braid/vue-formulate': ~2.5.2
       '@popperjs/core': ~2.9.2
       '@tailwindcss/forms': ^0.2.1
@@ -95,7 +95,7 @@ importers:
       webpack-dev-server: 3.9.0
       wrapper-webpack-plugin: 2.1.0
     dependencies:
-      '@arcgis/core': 4.22.0
+      '@arcgis/core': 4.22.2
       '@braid/vue-formulate': 2.5.2
       '@popperjs/core': 2.9.2
       '@vueform/toggle': 2.0.0
@@ -248,8 +248,8 @@ packages:
     resolution: {integrity: sha512-3JOd6g+BALysWS8LNf0qdB8ltR651H/RCLAvUmfS0LIHwHO579XfjZUIZbURYiAZrcbp1CBAq4QZ2YwKNQZ1hw==}
     dev: false
 
-  /@arcgis/core/4.22.0:
-    resolution: {integrity: sha512-5FXgkJ0840PGJEYp83SLw9AT6ad5SXPKB3fBB3zAbja+Cg5n8RPG7FDY9x/BnMVk+sBVAYiBEShOL/SOV8H1Vw==}
+  /@arcgis/core/4.22.2:
+    resolution: {integrity: sha512-twx50yjKsMoeotgQfnYHmm4EIS57fC9rWNNrvGc2xERVUOY7p2fFPs2qemdyFnCmvrRNflZcnZkxrTZXeDCtow==}
     dependencies:
       '@esri/arcgis-html-sanitizer': 2.9.0
       '@esri/calcite-colors': 6.0.1

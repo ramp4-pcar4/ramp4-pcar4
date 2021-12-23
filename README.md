@@ -2,7 +2,7 @@
 
 <p align="center"><img src="./assets/logo.svg"></p>
 
-RAMP - The Reusable Accessible Mapping Platform, is a Javascript based web mapping platform that provides a reusable, responsive and WCAG 2.1 AA compliant common viewer for the Government of Canada. The fourth major version embraces the following large-scale changes
+RAMP - The Reusable Accessible Mapping Platform, is a Javascript based web mapping platform that provides a reusable, responsive and WCAG 2.1 AA compliant common viewer for the Government of Canada. The fourth incarnation embraces the following large-scale changes
 
 - Updating the UI framework from Angular 1 to Vue 3
 - Updating the ESRI Mapping API from v3 to v4
