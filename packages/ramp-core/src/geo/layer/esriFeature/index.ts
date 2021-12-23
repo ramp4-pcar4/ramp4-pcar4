@@ -181,8 +181,6 @@ class FeatureLayer extends AttribLayer {
     // ----------- LAYER ACTIONS -----------
 
     identify(options: IdentifyParameters): IdentifyResultSet {
-        // const myFC: FeatureFC = <FeatureFC>this.getSublayer(undefined); // undefined will get the first/only
-
         // early kickout check. not loaded/error; not visible; not queryable; off scale
         if (
             !this.isValidState ||

@@ -194,7 +194,6 @@ export default class WmsLayer extends CommonLayer {
             'application/json': 'EsriFeature'
         };
 
-        // const myFC: WmsFC = <WmsFC>this.getSublayer(undefined); // undefined will get the first/only
         const map = this.$iApi.geo.map;
 
         // early kickout check. not loaded/error
