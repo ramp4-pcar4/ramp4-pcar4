@@ -9,8 +9,8 @@
                 px-8
                 h-48
                 default-focus-style
+                overflow-y-hidden
             "
-            v-focus-item="'show-truncate'"
         >
             <back
                 v-if="$iApi.screenSize === 'xs'"
@@ -26,7 +26,6 @@
         <div
             v-if="content"
             class="p-8 flex-grow default-focus-style overflow-y-auto"
-            v-focus-item
         >
             <slot name="content"></slot>
         </div>

@@ -17,6 +17,8 @@ enum KEYS {
 
 const LIST_ATTR = 'focus-list';
 const ITEM_ATTR = 'focus-item';
+const CONTAINER_ATTR = 'focus-container';
+const FOCUS_ATTRS = `[${LIST_ATTR}],[${CONTAINER_ATTR}]`;
 const TRUNCATE_ATTR = 'truncate-text';
 const SHOW_TRUNCATE = 'show-truncate';
 const FOCUSED_CLASS = 'focused';
@@ -73,9 +75,9 @@ function syncTabIndex(element: HTMLElement) {
     tabbable.forEach((el: Element) => {
         // make sure its not part of a sub-list
         if (
-            el.closest(`[${LIST_ATTR}]`) === element ||
-            (el.closest(`[${LIST_ATTR}]`) === el &&
-                el.parentElement!.closest(`[${LIST_ATTR}]`) === element)
+            el.closest(FOCUS_ATTRS) === element ||
+            (el.closest(FOCUS_ATTRS) === el &&
+                el.parentElement!.closest(FOCUS_ATTRS) === element)
         ) {
             // if this element is under a `focused` element in this class list then we dont want to set tabindex to -1
             // this checks if an ancestor with the class `focused` comes before an ancestor that is a `focus-list`
@@ -154,10 +156,9 @@ export class FocusListManager {
             // always set tabindex to -1 if wanted (if focus moves away from an item you want sublists to all be untabbable as well)
             if (
                 value === -1 ||
-                el.closest(`[${LIST_ATTR}]`) === this.element ||
-                (el.closest(`[${LIST_ATTR}]`) === el &&
-                    el.parentElement!.closest(`[${LIST_ATTR}]`) ===
-                        this.element) ||
+                el.closest(FOCUS_ATTRS) === this.element ||
+                (el.closest(FOCUS_ATTRS) === el &&
+                    el.parentElement!.closest(FOCUS_ATTRS) === this.element) ||
                 el
                     .closest(`[${LIST_ATTR}],.${FOCUSED_CLASS}`)!
                     .classList.contains(FOCUSED_CLASS)
@@ -421,16 +422,16 @@ export class FocusListManager {
 
         this.isClicked = false;
 
-        // if the element already has the attribute, or the highlighted element is the list there is nothing to do
         if (
-            this.element.hasAttribute('aria-activedescendant') ||
-            this.highlightedItem === this.element
+            !(
+                this.element.hasAttribute('aria-activedescendant') ||
+                this.highlightedItem === this.element
+            )
         ) {
-            return;
+            this.setAriaActiveDescendant(this.highlightedItem);
         }
-        // otherwise set the active descendant
-        this.setAriaActiveDescendant(this.highlightedItem);
-        this.setTabIndex(0, this.highlightedItem);
+
+        syncTabIndex(this.element);
     }
 
     /**
