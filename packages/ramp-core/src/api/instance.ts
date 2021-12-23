@@ -15,7 +15,7 @@ import { ConfigStore } from '@/store/modules/config';
 
 //@ts-ignore
 import VueTippy from 'vue-tippy';
-import { FocusList, FocusItem } from '@/directives/focus-list';
+import { FocusList, FocusItem, FocusContainer } from '@/directives/focus-list';
 import { Truncate } from '@/directives/truncate/truncate';
 
 import {
@@ -346,6 +346,7 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
         })
         .use(mixin);
 
+    vueElement.directive('focus-container', FocusContainer);
     vueElement.directive('focus-list', FocusList);
     vueElement.directive('focus-item', FocusItem);
     vueElement.directive('truncate', Truncate);
