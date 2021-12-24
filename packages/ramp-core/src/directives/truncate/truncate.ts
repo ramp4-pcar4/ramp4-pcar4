@@ -41,7 +41,6 @@ export const Truncate: Directive = {
             placement: 'bottom-start',
             //flip: false, // can't find a replacement for Vue3
             //boundary: 'window',
-            //multiple: true,
             triggerTarget: triggerElement
         });
 

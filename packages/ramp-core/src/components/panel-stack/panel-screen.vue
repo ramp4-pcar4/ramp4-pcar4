@@ -1,5 +1,17 @@
 <template>
-    <div class="h-full flex flex-col items-stretch">
+    <div
+        class="h-full flex flex-col items-stretch"
+        :content="$t('panels.access')"
+        v-tippy="{
+            trigger: 'focus',
+            appendTo: 'parent',
+            popperOptions: {
+                modifiers: [
+                    { name: 'preventOverflow', options: { altAxis: true } }
+                ]
+            }
+        }"
+    >
         <header
             v-if="header"
             class="
