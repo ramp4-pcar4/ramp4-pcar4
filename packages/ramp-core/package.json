@@ -13,7 +13,7 @@
         "host": "http-server . -p 3001 -c-1"
     },
     "dependencies": {
-        "@arcgis/core": "4.22.0",
+        "@arcgis/core": "4.22.2",
         "@braid/vue-formulate": "~2.5.2",
         "@popperjs/core": "~2.9.2",
         "@vueform/toggle": "2.0.0",

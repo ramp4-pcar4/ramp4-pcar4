@@ -2,6 +2,14 @@
 
 A list things that have changed (as in, breaking change) from the RAMP2 API
 
+## Instance API
+
+In RAMP2, most things were accessed by retrieving the Map API object via the global `RAMP` object.
+
+`var myMap = RAMP.mapById('myMapId');`
+
+In RAMP4, there is an Instance API for each incarnation of RAMP. This is similar to the RAMP2 Map API, but it serves as the entry point for all API calls. TODO link to API docpages and/or relevant other markdown docs.
+
 ## GEOM
 
 - Geometries are no longer always in Lat-Long projection & co-ord values.
