@@ -26,6 +26,7 @@ notifications.controls.dismiss,Dismiss,1,Rejeter,1
 notifications.controls.expand,Expand,1,Développer,1
 notifications.controls.collapse,Collapse,1,Réduire,1
 notifications.controls.clearAll,Clear All,1,Effacer tout,1
+panels.access,Access the panel,1,Accéder au panneau,0
 panels.controls.close,Close,1,Fermer,1
 panels.controls.pin,Pin,1,Épingler,1
 panels.controls.unpin,Unpin,1,Désépingler,1

@@ -19,8 +19,7 @@
                 v-tippy="{
                     placement: 'top-start',
                     trigger: 'manual focus',
-                    aria: 'describedby',
-                    multiple: true
+                    aria: 'describedby'
                 }"
                 truncate-trigger
                 :aria-label="legendItem.name"
