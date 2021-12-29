@@ -1,5 +1,5 @@
 key,enValue,enValid,frValue,frValid
-appbar.navigation,Navigation,1,La Navigation,0
-appbar.more,More,1,Plus,0
-navigation.export-v1,Export,1,Exporter,0
-navigation.map.export,Export Map,1,Exporter la Carte,0
+appbar.navigation,Navigation,1,Navigation,1
+appbar.more,More,1,Plus,1
+navigation.export-v1,Export,1,Exporter,1
+navigation.map.export,Export Map,1,Exporter la Carte,1

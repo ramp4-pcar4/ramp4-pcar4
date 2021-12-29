@@ -1,4 +1,4 @@
 key,enValue,enValid,frValue,frValid
 help.title,Help,1,Aide,1
-help.section.expand,Expand section,1,Élargir la section,0
-help.section.collapse,Collapse section,1,L’effondrement de l’article,0
+help.section.expand,Expand section,1,Développer une section,1
+help.section.collapse,Collapse section,1,Réduire une section,1

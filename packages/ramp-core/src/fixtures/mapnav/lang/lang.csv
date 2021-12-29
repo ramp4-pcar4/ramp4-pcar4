@@ -1,5 +1,5 @@
 key,enValue,enValid,frValue,frValid
 mapnav.zoomIn,Zoom In,1,Zoom avant,1
 mapnav.zoomOut,Zoom Out,1,Zoom arrière,1
-mapnav.home,Home,1,[fr] Home,0
+mapnav.home,Home,1,Accueil,1
 mapnav.fullscreen,Full Screen,1,Plein Écran,1

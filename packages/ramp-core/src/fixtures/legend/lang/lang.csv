@@ -7,14 +7,14 @@ legend.header.groups.collapse,Collapse All,1,Réduire les groupes,1
 legend.header.visible,Toggle Visibility,1,Basculer la Visibilité,1
 legend.header.visible.show,Show All,1,Montrer tout,1
 legend.header.visible.hide,Hide All,1,Cacher tout,1
-legend.group.expand,Expand Group,1,Élargir la groupe,0
-legend.group.collapse,Collapse Group,1,Réduire la groupe,0
-legend.visibility.show,Show layer,1,Afficher la couche,0
-legend.visibility.hide,Hide layer,1,Masquer la couche,0
-legend.symbology.expand,Expand legend,1,Développer la légende,0
-legend.symbology.hide,Hide legend,1,Cacher la légende,0
-legend.symbology.loading,Loading...,1,Chargement...,0
-legend.entry.data,Show more data,1,Démontrer plus de données,0
+legend.group.expand,Expand Group,1,Développer un groupe,1
+legend.group.collapse,Collapse Group,1,Réduire un groupe,1
+legend.visibility.show,Show layer,1,Afficher la couche,1
+legend.visibility.hide,Hide layer,1,Masquer la couche,1
+legend.symbology.expand,Expand legend,1,Développer la légende,1
+legend.symbology.hide,Hide legend,1,Masquer la légende,1
+legend.symbology.loading,Loading...,1,Chargement en cours...,1
+legend.entry.data,Show more data,1,Afficher plus de données,1
 legend.entry.options,More options,1,Plus d'options,1
 legend.entry.controls.metadata,Metadata,1,Métadonnées,1
 legend.entry.controls.settings,Settings,1,Paramètres,1
