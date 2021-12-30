@@ -292,7 +292,7 @@ class ExportV1LegendFixture
                 await promisify(fabric.loadSVGFromString)(symbol.svgcode)
             )[0];
 
-            if (symbol.hasOwnProperty('imgHeight')) {
+            if (!symbol.esriStandard) {
                 // WMS legend
                 const fbLabel = new fabric.Textbox(symbol.label, {
                     fontSize: 12,
