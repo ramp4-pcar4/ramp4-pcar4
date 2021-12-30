@@ -1,6 +1,6 @@
 key,enValue,enValid,frValue,frValid
-details.title,Details,1,Détails,0
-details.layers.found,Found {numResults} results in {numLayers} layers,1,Figure {numResults} résultats en {numLayers} couches,0
-details.layers.loading,The layer is loading...,1,La couche est le chargement...,0
-details.results.empty,No results found for the selected layer.,1,Aucun résultat trouvé de la couche sélectionnée.,0
+details.title,Details,1,Détails,1
+details.layers.found,Found {numResults} results in {numLayers} layers,1,{numResults} résultats trouvés dans {numLayers} couches,1
+details.layers.loading,The layer is loading...,1,La couche est en cours de chargement...,1
+details.results.empty,No results found for the selected layer.,1,Aucun résultat trouvé pour la couche sélectionnée.,1
 details.item.zoom,Zoom to feature,1,Zoom à l'élément,1

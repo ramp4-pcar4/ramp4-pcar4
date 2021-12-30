@@ -1,24 +1,24 @@
 key,enValue,enValid,frValue,frValid
 grid.title,Features,1,Éléments,1
-grid.alertName,Grid,1,Grille,0
-grid.clearAll,Clear search and filters,1,Effacer la recherche et les filtres,0
-grid.layer.loading,The layer is loading...,1,La couche est le chargement...,0
-grid.label.columns,Hide columns,1,Masquer les colonnes,0
+grid.alertName,Grid,1,Grille,1
+grid.clearAll,Clear search and filters,1,Effacer la recherche et les filtres,1
+grid.layer.loading,The layer is loading...,1,La couche est en cours de téléchargement...,1
+grid.label.columns,Hide columns,1,Masquer les colonnes,1
 grid.label.filters.show,Show filters,1,Afficher les filtres,1
-grid.label.filters.hide,Hide filters,1,Cacher les filtres,0
-grid.label.filters.apply,Apply filters to map,1,Appliquer des filtres à la carte,0
-grid.header.sort.0,Sort ascending,1,Trier par ordre ascendant,0
-grid.header.sort.1,Sort descending,1,Le tri descendant,0
-grid.header.sort.2,Sort default,1,Trier par défaut,0
-grid.header.reorder.left,Move left,1,Aller de gauche,0
-grid.header.reorder.right,Move right,1,Aller droit,0
-grid.filters.label.global,Search table,1,Recherche dans le tableau,0
-grid.filters.column.label.text,Search {0}...,1,Rechercher {0}...,0
-grid.filters.clear,Clear filters,1,Effacer les filtres,0
-grid.filters.number.max,Max,1,Max,0
-grid.filters.number.min,Min,1,Min,0
-grid.filters.label.info,{range} of {total} entries shown,1,Affichage de l'élément {range} sur {total} éléments,0
-grid.filters.label.filtered,(filtered from {max} total entries),1,(filtrés de {max} éléments au total),0
+grid.label.filters.hide,Hide filters,1,Masquer les filtres,1
+grid.label.filters.apply,Apply filters to map,1,Appliquer les filtres à la carte,1
+grid.header.sort.0,Sort ascending,1,Tri ascendant,1
+grid.header.sort.1,Sort descending,1,Tri descendant,1
+grid.header.sort.2,Sort default,1,Tri par défaut,1
+grid.header.reorder.left,Move left,1,Déplacer vers la gauche,1
+grid.header.reorder.right,Move right,1,Déplacer vers la droite,1
+grid.filters.label.global,Search table,1,Tableau de recherche,1
+grid.filters.column.label.text,Search {0}...,1,Rechercher {0}...,1
+grid.filters.clear,Clear filters,1,Supprimer les filtres,1
+grid.filters.number.max,Max,1,Max,1
+grid.filters.number.min,Min,1,Min,1
+grid.filters.label.info,{range} of {total} entries shown,1,{range} de {total} saisies affichées,1
+grid.filters.label.filtered,(filtered from {max} total entries),1,(filtré à partir d’un total de {max} saisies),1
 grid.cells.zoom,Zoom to feature,1,Zoom à l'élément,1
 grid.cells.details,Details,1,Détails,1
-grid.button.title,Grid,1,Grille,0
+grid.button.title,Grid,1,Grille,1
