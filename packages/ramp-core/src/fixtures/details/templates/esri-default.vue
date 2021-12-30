@@ -73,7 +73,10 @@ export default defineComponent({
                 // otherwise, look for any valid links
                 const options = {
                     className: classes,
-                    target: '_blank'
+                    target: '_blank',
+                    validate: {
+                        url: (value: string) => /^https?:\/\//.test(value) // only links that begin with a protocol will be hyperlinked
+                    }
                 };
                 return linkifyHtml(html, options);
             }

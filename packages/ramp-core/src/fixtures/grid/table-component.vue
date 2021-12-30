@@ -418,7 +418,11 @@ export default defineComponent({
                                 }
 
                                 return linkifyHtml(cell.value, {
-                                    target: '_blank'
+                                    target: '_blank',
+                                    validate: {
+                                        url: (value: string) =>
+                                            /^https?:\/\//.test(value) // only links that begin with a protocol will be hyperlinked
+                                    }
                                 });
                             };
 
