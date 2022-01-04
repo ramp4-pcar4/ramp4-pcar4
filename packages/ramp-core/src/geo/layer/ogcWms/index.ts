@@ -540,6 +540,7 @@ export default class WmsLayer extends CommonLayer {
                 uid: RAMP.GEO.sharedUtils.generateUUID(),
                 label: name,
                 svgcode: '',
+                esriStandard: false, // is an image
                 drawPromise: this.$iApi.geo.utils.symbology
                     .generateWMSSymbology(imageUri)
                     .then((data: any) => {

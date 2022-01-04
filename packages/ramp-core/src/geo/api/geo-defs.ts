@@ -266,6 +266,7 @@ export interface LegendSymbology {
     definitionClause?: string;
     svgcode: string;
     drawPromise: Promise<string | void>;
+    esriStandard: boolean; // indicates if this symbol is ESRI standard symbology or an image
     imgHeight?: string; // height of the original legend graphic (for wms layers)
     imgWidth?: string; // width of the original legend graphic (for wms layers)
     // TODO: Reduce this to one visibility flag (or move visibility state management another place altogether)
