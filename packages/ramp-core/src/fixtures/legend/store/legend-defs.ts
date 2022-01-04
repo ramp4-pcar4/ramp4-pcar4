@@ -1,5 +1,6 @@
-import { LayerType, LegendSymbology, TreeNode } from '@/geo/api';
+import { DefPromise, LayerType, LegendSymbology, TreeNode } from '@/geo/api';
 import { LayerInstance } from '@/api/internal';
+import { legend } from '.';
 
 /**
  * Function definitions for legend item wrapper objects.
@@ -12,6 +13,7 @@ export class LegendItem {
     _controls: Array<string>;
     _children: Array<LegendEntry | LegendGroup> = [];
     _parent: LegendGroup | undefined = undefined; // can only be a legend group or visibility set
+    _loadPromise: DefPromise; // promise that resolves when legend item is loaded
 
     _hidden: boolean;
     _itemConfig: any;
@@ -20,6 +22,7 @@ export class LegendItem {
      * Create a new legend item with defaulting for all properties given config snippet, id is required.
      */
     constructor(legendItem: any) {
+        this._loadPromise = new DefPromise();
         this._id = legendItem.layerId;
         this._name = legendItem.name !== undefined ? legendItem.name : '';
         this._type =
@@ -75,36 +78,30 @@ export class LegendItem {
         return this._parent;
     }
 
-    /** Returns children of the legend entry, which is an empty array for single entries and and an array of legend groups (nested) or single legend entries for groups. */
+    /** Returns children of the legend item, which is an empty array for single entries and and an array of legend groups (nested) or single legend entries for groups. */
     get children(): Array<LegendGroup | LegendEntry> {
         return this._children;
     }
 
-    /** Sets children of the legend entry */
+    /** Sets children of the legend item */
     set children(children: Array<LegendGroup | LegendEntry>) {
         this._children = children;
+    }
+
+    /** Returns the load promise for this legend item */
+    get loadPromise(): Promise<void> {
+        return this._loadPromise.getPromise();
     }
 
     /**
      * Removes element from legend and removes layer if it's the last reference to it.
      */
-    remove(): void {
-        if (
-            this._controls.includes(Controls.Remove) ||
-            this.type === LegendTypes.Info
-        ) {
-            // TODO: implementation - involves removing from legend store property
-        }
-    }
+    remove(): void {}
 
     /**
      * Reloads element in legend.
      */
-    reload(): void {
-        if (this._controls.includes(Controls.Reload)) {
-            // TODO: implementation - related to https://github.com/ramp4-pcar4/ramp4-pcar4/issues/126
-        }
-    }
+    reload(): void {}
 
     /**
      * Check if a control is available for the legend item.
@@ -122,14 +119,8 @@ export class LegendItem {
 export class LegendEntry extends LegendItem {
     _layer: LayerInstance | undefined;
     _layerParentId: string | undefined;
-    _layerUID: string | undefined;
-    _layerIndex: number | undefined;
-    _layerTree: TreeNode | undefined;
-    _isLoaded: boolean;
-    _symbologyStack: any;
-    _isDefault: boolean | undefined;
-    _displaySymbology: boolean;
-    _loadPromise: Promise<void>;
+    _layerIdx: number | undefined;
+    _symbologyExpanded: boolean;
 
     /**
      * Creates a new single legend entry.
@@ -137,58 +128,148 @@ export class LegendEntry extends LegendItem {
      */
     constructor(legendEntry: any, parent: LegendGroup | undefined = undefined) {
         super(legendEntry);
+        this._parent = parent;
+        this._type = LegendTypes.Placeholder; // entry will be in a placeholder state by default
 
-        this._layerParentId = legendEntry.layerParentId;
+        this._layerParentId = legendEntry.layerParentId; // will only be defined for sublayers
+        this._layerIdx = legendEntry.entryIndex; // will only be defined for sublayers
+        this._symbologyExpanded = legendEntry.symbologyExpanded || false;
 
-        this._isLoaded = false;
-        this._displaySymbology = legendEntry.symbologyExpanded || false;
+        if (legendEntry.layer !== undefined) {
+            // the legend entry config provides a layer, load layer properties from it
+            this.loadLayer(legendEntry.layer);
+        }
+    }
 
-        this._loadPromise = new Promise((resolve, _) => {
-            this._type =
-                legendEntry.type !== undefined
-                    ? legendEntry.type
-                    : LegendTypes.Entry;
-            this._parent = parent;
-            this._isDefault = legendEntry.isDefault;
+    /** Returns the UID of the layer */
+    get layerUID(): string | undefined {
+        return this._layer?.uid;
+    }
 
-            // find matching BaseLayer in layer store to the layerId in config
-            this._layerIndex = legendEntry.entryIndex;
-            this._layer = legendEntry.layers.find(
-                (layer: LayerInstance) => layer.id === this._id
-            );
+    /** Returns the parent layer id for this layer. Only defined for sublayers */
+    get layerParentId(): string | undefined {
+        return this._layerParentId;
+    }
 
-            this._isLoaded =
-                this._layer !== undefined ? this._layer.isValidState : true;
+    /** Returns the entry index of the layer */
+    get entryIndex(): number | undefined {
+        return this._layerIdx;
+    }
 
-            // check if a layer has been bound to this entry and is done loading. If not, set the type to "placeholder".
-            if (this._layer === undefined || !this._isLoaded) {
+    /** Returns visibility of layer. */
+    get visibility(): boolean | undefined {
+        return this._layer?.visibility;
+    }
+
+    /** Returns BaseLayer associated with legend entry. */
+    get layer(): LayerInstance | undefined {
+        return this._layer;
+    }
+
+    /** Returns layer tree associated with legend entry. */
+    get layerTree(): TreeNode | undefined {
+        return this._layer?.getLayerTree();
+    }
+
+    /** Returns the layer's legend symbology */
+    get legend(): Array<LegendSymbology> | undefined {
+        return this._layer?.legend;
+    }
+
+    /** Returns true if symbology stack is expanded. */
+    get symbologyExpanded(): boolean {
+        return this._symbologyExpanded;
+    }
+
+    /**
+     * Sets entry back to a loading state
+     */
+    reload(): void {
+        // reset the entry to a placeholder state
+        this._type = LegendTypes.Placeholder;
+        this._loadPromise = new DefPromise();
+    }
+
+    /**
+     * Removes element from legend and removes layer if it's the last reference to it.
+     */
+    remove(): void {
+        // set it's visibility to false and update parent visibility
+        this.toggleVisibility(false, true);
+    }
+
+    /**
+     * Load the given layer into this entry
+     * Is either called in the constructor, or through the legend api
+     */
+    loadLayer(layer: LayerInstance): void {
+        this._layer = layer;
+        this._layer.isLayerLoaded().then(() => {
+            if (
+                this._layer?.layerType === LayerType.MAPIMAGE &&
+                !this._layerIdx
+            ) {
                 this._type = LegendTypes.Placeholder;
-            }
+                console.error(
+                    `MapImageLayer has no entryIndex defined - ${this._itemConfig.layerId} (${this._itemConfig.name})`
+                );
+                this._loadPromise.rejectMe();
+            } else {
+                this._type = LegendTypes.Entry;
+                // override config values with layer properties
+                this._id = layer.id;
+                this._layerIdx =
+                    layer.layerIdx === -1 ? undefined : layer.layerIdx;
+                this._layerParentId = layer.isSublayer
+                    ? layer.parentLayer!.id
+                    : undefined;
 
-            // initialize more layer properties after layer loads
-            this._waitLayerLoad().then(resolve);
+                this.checkVisibilityRules();
+                if (!layer.visibility) {
+                    // if the layer is invisible, set all child symbols to invisible
+                    this.setChildSymbologyVisibility(undefined, false);
+                }
+                this._loadPromise.resolveMe();
+            }
         });
     }
 
     /**
-     * Waits for layer to load before fetching layer properties - uid, tree structure, and more as needed.
+     * Toggles the symbology expand and returns the new value
+     *
+     * @param {boolean} expanded optional parameter to toggle expanded to a certain value
      */
-    async _waitLayerLoad(): Promise<void> {
-        // wait for layer to finish loading
-        await this._layer?.isLayerLoaded();
+    toggleSymbologyExpand(expanded: boolean | undefined = undefined): boolean {
+        this._symbologyExpanded =
+            expanded !== undefined ? expanded : !this._symbologyExpanded;
+        return this._symbologyExpanded;
+    }
 
-        // obtain uid and layer tree structure
-        this._layerTree = this._layer?.getLayerTree();
-        this._layerUID = this._layer?.uid;
+    /**
+     * Sets the visibility of the child symbology with the given uid
+     * If the provided UID is undefined, set the visibility of all symbols
+     *
+     * @param {uid | undefined} uid the uid of the child legend symbology
+     * @param value The new visibility value
+     */
+    setChildSymbologyVisibility(uid: string | undefined, value: boolean): void {
+        this._layer?.legend.some((item: LegendSymbology) => {
+            if (uid === undefined || item.uid === uid) {
+                item.visibility = value;
+                item.lastVisbility = value;
+            }
+            return uid !== undefined && item.uid === uid;
+        });
     }
 
     /**
      * Ensures visibility rules are followed if legend entry nested in legend group/set on initialization.
      */
     checkVisibilityRules(): void {
-        if (!this.visibility || !this._layer) {
+        if (!this._layer) {
             return;
         }
+
         // if parent is turned off turn layer entry visiblity off
         if (this._parent !== undefined && !this._parent.visibility) {
             this._layer.visibility = false;
@@ -204,96 +285,6 @@ export class LegendEntry extends LegendItem {
         }
     }
 
-    /** Returns the load promise for this legend entry */
-    get loadPromise(): Promise<void> {
-        return this._loadPromise;
-    }
-
-    /** Returns the UID of the layer */
-    get layerUID(): string | undefined {
-        return this._layerUID || this._layer?.uid;
-    }
-
-    /** Returns the parent layer id for this layer. Only defined for sublayers */
-    get layerParentId(): string | undefined {
-        return this._layerParentId;
-    }
-
-    /** Returns the entry index of the layer */
-    get entryIndex(): number | undefined {
-        return this._layerIndex;
-    }
-
-    /** Returns visibility of layer. */
-    get visibility(): boolean | undefined {
-        return this._layer?.visibility;
-    }
-
-    /** Returns BaseLayer associated with legend entry. */
-    get layer(): LayerInstance | undefined {
-        return this._layer;
-    }
-
-    /** Returns layer tree associated with legend entry. */
-    get layerTree(): TreeNode | undefined {
-        return this._layerTree;
-    }
-
-    /** Returns if layer is done loading. */
-    get isLoaded(): boolean {
-        return this._layer !== undefined ? this._layer.isValidState : true;
-    }
-
-    /** Returns true if entry is not from config. */
-    get isDefault(): boolean | undefined {
-        return this._isDefault;
-    }
-
-    /** Returns true if symbology stack is expanded. */
-    get displaySymbology(): boolean {
-        return this._displaySymbology;
-    }
-
-    /** Sets state of symbology stack. */
-    set displaySymbology(display: boolean) {
-        this._displaySymbology = display;
-    }
-
-    /** Toggles state of symbology stack.
-     * Seperate function is required to avoid mutation errors from Vue3
-     */
-    toggleDisplaySymbology() {
-        this._displaySymbology = !this._displaySymbology;
-        return this._displaySymbology;
-    }
-
-    /**
-     * Sets the visibility of the child symbology with the given uid
-     *
-     * @param uid UID of the child legend symbology
-     * @param value The new visibility value
-     */
-    setChildSymbologyVisibility(uid: string, value: boolean) {
-        const filteredSymbology: Array<LegendSymbology> | undefined =
-            this._layer?.legend.filter(
-                (item: LegendSymbology) => item.uid === uid
-            );
-
-        if (!filteredSymbology) {
-            return;
-        }
-
-        if (filteredSymbology?.length === 0) {
-            console.warn(
-                `Could not find child symbology in layer ${this._layer?.name} with uid: ${uid}`
-            );
-            return;
-        }
-
-        filteredSymbology[0].visibility = value;
-        filteredSymbology[0].lastVisbility = value;
-    }
-
     /**
      * Sets visibility of the Legend Entry - needs to verify parent visibility is updated.
      * @param visibility - true if visible, false if invisible, undefined means toggle visibility
@@ -304,27 +295,24 @@ export class LegendEntry extends LegendItem {
     ): void {
         if (this._controls.includes(Controls.Visibility)) {
             // do nothing if visibility of entry is already equal to the argument value
-            if (this.visibility === visibility || !this.layer) {
+            if (this.visibility === visibility || !this._layer) {
                 return;
             }
-            visibility !== undefined
-                ? (this._layer!.visibility = visibility)
-                : (this._layer!.visibility = !this.visibility);
+
+            this._layer.visibility =
+                visibility !== undefined ? visibility : !this.visibility;
 
             // Check if some of the child symbols have their definition visibility on
-            const noDefinitionsVisible: boolean = !this._layer?.legend.some(
+            const noDefinitionsVisible: boolean = !this._layer.legend.some(
                 (item: LegendSymbology) => item.lastVisbility
             );
 
-            if (noDefinitionsVisible) {
-                // If there are no definitions visible and we toggled the parent layer on
-                // then we set all the children to visible
-                this._layer?.legend.forEach((item: LegendSymbology) => {
+            this._layer.legend.forEach((item: LegendSymbology) => {
+                if (noDefinitionsVisible) {
+                    // If there are no definitions visible and we toggled the parent layer on
+                    // then we set all the children to visible
                     item.lastVisbility = true;
-                });
-            }
-
-            this._layer?.legend.forEach((item: LegendSymbology) => {
+                }
                 item.visibility = this.visibility ? item.lastVisbility : false;
             });
 
@@ -333,8 +321,6 @@ export class LegendEntry extends LegendItem {
                 this._parent.checkVisibility(this);
             }
         }
-
-        this._uid = RAMP.GEO.sharedUtils.generateUUID();
     }
 
     /**
@@ -343,33 +329,10 @@ export class LegendEntry extends LegendItem {
      *
      * @param opacity the new layer opacity
      */
-    setOpacity(opacity: number) {
-        if (!this._layer) {
-            return;
+    setOpacity(opacity: number): void {
+        if (this._layer) {
+            this._layer.opacity = opacity;
         }
-        this._layer.opacity = opacity;
-    }
-
-    /**
-     * Used by the placeholder component to set the legend entry to a loaded state
-     */
-    setEntry(layer: LayerInstance) {
-        this._layer = layer;
-        this._layer.isLayerLoaded().then(() => {
-            this._layerTree = this._layer?.getLayerTree();
-            this._layerUID = this._layer?.uid;
-            if (
-                this._layer?.layerType === LayerType.MAPIMAGE &&
-                !this._layerIndex
-            ) {
-                this._type = LegendTypes.Placeholder;
-                console.error(
-                    `MapImageLayer has no entryIndex defined - ${this._itemConfig.layerId} (${this._itemConfig.name})`
-                );
-            } else {
-                this._type = LegendTypes.Entry;
-            }
-        });
     }
 }
 
@@ -388,20 +351,43 @@ export class LegendGroup extends LegendItem {
      */
     constructor(legendGroup: any, parent: LegendGroup | undefined = undefined) {
         super(legendGroup);
-        this._expanded =
-            legendGroup.expanded !== undefined ? legendGroup.expanded : true;
-        this._visibility =
-            legendGroup.visibility !== undefined
-                ? legendGroup.visibility
-                : true;
-        this._type =
-            legendGroup.exclusiveVisibility !== undefined
-                ? LegendTypes.Set
-                : LegendTypes.Group;
         this._parent = parent;
+        this._type = LegendTypes.Placeholder; // group will be in a placeholder state by default
 
-        // initialize group children properties
-        this._initGroupProperties(legendGroup);
+        this._expanded = legendGroup.expanded || true;
+        this._visibility = legendGroup.visibility || true;
+
+        if (legendGroup.layer !== undefined) {
+            // if provided a layer object, wait for the layer to load before initializing
+            legendGroup.layer.isLayerLoaded().then(() => {
+                const parseLayers = (layers: Array<LayerInstance>): any => {
+                    return layers.map((layer: LayerInstance) =>
+                        layer.isSublayer
+                            ? {
+                                  // create legend entry config
+                                  layer: layer,
+                                  layerId: layer.id,
+                                  name: layer.name,
+                                  entryIndex:
+                                      layer.layerIdx === -1
+                                          ? undefined
+                                          : layer.layerIdx
+                              }
+                            : {
+                                  // create legend group config
+                                  name: layer.name,
+                                  children: parseLayers(layer.sublayers)
+                              }
+                    );
+                };
+                // map the sublayers of the given layer into legend entries/groups
+                legendGroup.children = parseLayers(legendGroup.layer.sublayers);
+                this._initGroupProperties(legendGroup);
+            });
+        } else {
+            // otherwise just initialize the group
+            this._initGroupProperties(legendGroup);
+        }
     }
 
     /**
@@ -409,6 +395,15 @@ export class LegendGroup extends LegendItem {
      * @param legendGroup config snippet for legend group
      */
     _initGroupProperties(legendGroup: any): void {
+        // update the type
+        if (legendGroup.exclusiveVisibility !== undefined) {
+            this._type = legendGroup.exclusiveVisibility
+                ? LegendTypes.Set
+                : LegendTypes.Group;
+        } else {
+            this._type = LegendTypes.Group;
+        }
+
         // initialize objects for all non-hidden group/set children entries
         const children =
             this._type === LegendTypes.Set
@@ -433,6 +428,8 @@ export class LegendGroup extends LegendItem {
                     this._children.push(new LegendEntry(entry, this));
                 }
             });
+
+        this._loadPromise.resolveMe();
     }
 
     /**
@@ -479,14 +476,6 @@ export class LegendGroup extends LegendItem {
      */
     set lastVisible(entry: LegendEntry | LegendGroup) {
         this._lastVisible = entry;
-    }
-
-    /**
-     * Save a child entry by adding it to visibleEntries.
-     * @param childEntry child entry to save as last toggled on
-     */
-    saveEntry(childEntry: LegendEntry | LegendGroup): void {
-        this._visibleEntries.push(childEntry);
     }
 
     /**
@@ -544,9 +533,7 @@ export class LegendGroup extends LegendItem {
         updateParent: boolean = true
     ): void {
         const oldVal = this._visibility;
-        visible !== undefined
-            ? (this._visibility = visible)
-            : (this._visibility = !this._visibility);
+        this._visibility = visible !== undefined ? visible : !this._visibility;
         // check if visibility value changes
         if (oldVal === this._visibility) {
             return;
@@ -588,15 +575,8 @@ export class LegendGroup extends LegendItem {
         if (this._parent instanceof LegendGroup && updateParent) {
             this._parent.checkVisibility(this);
         }
-
-        this._uid = RAMP.GEO.sharedUtils.generateUUID();
     }
 }
-
-/**
- * Create a legend set which can contain children with only up to one child item toggled on at all times - providing nesting capability for Legends.
- */
-export class LegendSet extends LegendGroup {}
 
 export enum LegendTypes {
     Group = 'LegendGroup',

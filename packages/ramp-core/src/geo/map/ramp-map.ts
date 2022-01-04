@@ -249,6 +249,9 @@ export class MapAPI extends CommonMapAPI {
         // await layer.isReadyForMap();
         if (layer.esriLayer) {
             this.esriMap.add(layer.esriLayer);
+
+            // layer has been added to the map, fire layer registered event
+            this.$iApi.event.emit(GlobalEvents.LAYER_REGISTERED, layer);
         } else {
             // TODO maybe we should call layer.initiate() and block? Could be a nice shortcut. But also might have unintended effects.
             console.error(

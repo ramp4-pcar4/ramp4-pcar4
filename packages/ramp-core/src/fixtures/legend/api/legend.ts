@@ -1,11 +1,6 @@
 import { FixtureInstance, LayerInstance } from '@/api';
 import { LegendConfig, LegendStore } from '../store';
-import {
-    LegendItem,
-    LegendEntry,
-    LegendGroup,
-    LegendSet
-} from '../store/legend-defs';
+import { LegendItem, LegendEntry, LegendGroup } from '../store/legend-defs';
 import { LayerStore } from '@/store/modules/layer';
 
 export class LegendAPI extends FixtureInstance {
@@ -56,12 +51,7 @@ export class LegendAPI extends FixtureInstance {
                 lastEntry.exclusiveVisibility !== undefined
             ) {
                 // create a wrapper legend object for group or visibility set
-                let legendGroup;
-                if (lastEntry.exclusiveVisibility) {
-                    legendGroup = new LegendSet(lastEntry, lastEntry.parent);
-                } else {
-                    legendGroup = new LegendGroup(lastEntry, lastEntry.parent);
-                }
+                let legendGroup = new LegendGroup(lastEntry, lastEntry.parent);
                 legendEntries.push(legendGroup);
             } else if (lastEntry.layerId !== undefined) {
                 // create a wrapper legend object for single legend entry
@@ -83,36 +73,69 @@ export class LegendAPI extends FixtureInstance {
     }
 
     /**
-     * Legend generation for layers.
+     * Generate a legend entry/group given a layer
      *
-     * @param {BaseLayer} [layer]
-     * @returns
+     * @param {LayerInstance} layer the layer to be used for the legend entry
+     * @param {LegendGroup | undefined} parent the parent legend group for this entry
      * @memberOf LegendFixture
      */
-    generateDefaultLegend(
-        layer: LayerInstance | undefined,
-        parent: LegendGroup | undefined
-    ) {
-        // return if input is invalid
-        if (!layer) {
-            return;
-        }
+    generateLegend(layer: LayerInstance, parent?: LegendGroup | undefined) {
+        // if layer supports sublayers, create a legend group
+        // else create a legend entry
+        const item: LegendEntry | LegendGroup = layer.supportsSublayers
+            ? new LegendGroup(
+                  {
+                      layer: layer,
+                      name: layer.name,
+                      layers: this.$vApp.$store.get(LayerStore.layers)
+                  },
+                  parent
+              )
+            : new LegendEntry(
+                  {
+                      layer: layer,
+                      name: layer.name,
+                      layerId: layer.id
+                  },
+                  parent
+              );
 
-        const entry = new LegendEntry(
-            {
-                layerId: layer.id,
-                name: layer.name,
-                isDefault: true,
-                layers: this.$vApp.$store.get(LayerStore.layers),
-                entryIndex: layer.layerIdx
-            },
-            parent
-        );
+        // add the legend entry/group to store
+        this.$vApp.$store.set(LegendStore.addItem, item);
+
         if (layer.userAdded) {
             this.$iApi.updateAlert(
-                this.$vApp.$t('legend.alert.layerAdded', { name: layer.name })
+                this.$vApp.$t('legend.alert.layerAdded', {
+                    name: layer.name
+                })
             );
         }
-        this.$vApp.$store.set(LegendStore.addEntry, entry);
+    }
+
+    /**
+     * Update an existing legend entry to load the given layer
+     * Does nothing if the legend entry is not found
+     *
+     * @param {LayerInstance} layer the layer to load into the legend entry
+     * @memberOf LegendFixture
+     */
+    updateLegend(layer: LayerInstance) {
+        // helper function to load a layer onto a legend entry
+        const updateEntry = (layer: LayerInstance) => {
+            const entry: LegendEntry | undefined = this.$vApp.$store.get(
+                LegendStore.getChildById,
+                layer.id
+            );
+            entry?.loadLayer(layer);
+        };
+
+        layer.isLayerLoaded().then(() => {
+            updateEntry(layer); // update the root entry first
+            if (layer.supportsSublayers) {
+                layer.sublayers.forEach((sublayer: LayerInstance) => {
+                    updateEntry(sublayer); // the legend entries will use the sublayer
+                });
+            }
+        });
     }
 }

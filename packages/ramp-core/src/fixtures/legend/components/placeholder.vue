@@ -38,64 +38,12 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { get } from '@/store/pathify-helper';
-import { LayerStore } from '@/store/modules/layer';
-import { LayerInstance } from '@/api/internal';
-import { LegendStore } from '../store';
 import { LegendEntry } from '../store/legend-defs';
 
 export default defineComponent({
     name: 'LegendPlaceholderV',
     props: {
         legendItem: { type: Object as PropType<LegendEntry>, required: true }
-    },
-    data() {
-        return {
-            layers: get(LayerStore.layers)
-        };
-    },
-    mounted() {
-        this.layerAdded(<LayerInstance[]>(<unknown>this.layers));
-    },
-    watch: {
-        layers(newValue: LayerInstance[], _: LayerInstance[]) {
-            this.layerAdded(newValue);
-        }
-    },
-    methods: {
-        /**
-         * Add a new legend entry to the legend
-         */
-        layerAdded(newLayers: LayerInstance[]) {
-            if (newLayers === undefined) {
-                return;
-            }
-
-            let mainLayer: LayerInstance | undefined =
-                this.$iApi.$vApp.$store.get(
-                    LayerStore.getLayerById,
-                    this.legendItem.layerParentId || this.legendItem.id
-                );
-
-            if (mainLayer !== undefined) {
-                mainLayer?.isLayerLoaded().then(() => {
-                    // re-fetch the layer using the legend item id
-                    let layer: LayerInstance | undefined =
-                        this.$iApi.$vApp.$store.get(
-                            LayerStore.getLayerById,
-                            this.legendItem.id
-                        );
-
-                    this.legendItem.setEntry(layer!);
-                    if (this.legendItem.isDefault) {
-                        this.$store.set(
-                            LegendStore.updateDefaultEntry,
-                            this.legendItem.id
-                        );
-                    }
-                });
-            }
-        }
     }
 });
 </script>

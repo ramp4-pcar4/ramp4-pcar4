@@ -513,12 +513,13 @@ export default defineComponent({
             await layer.initiate();
             layer.userAdded = true;
 
+            // notify the legend to prepare a legend item
+            this.$iApi.event.emit(GlobalEvents.USER_LAYER_ADDED, layer);
+
             // add layer to map
             this.$iApi.geo.map.addLayer(layer);
             this.$iApi.$vApp.$store.set(LayerStore.addLayers, [layer]);
 
-            // add layer to legend and reset wizard
-            this.$iApi.event.emit(GlobalEvents.LEGEND_DEFAULT, layer);
             this.goNext = false;
             this.goToStep(WizardStep.UPLOAD);
         },
