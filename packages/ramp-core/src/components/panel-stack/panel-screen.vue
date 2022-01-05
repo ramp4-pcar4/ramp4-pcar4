@@ -20,9 +20,9 @@
                 border-b border-solid border-gray-600
                 px-8
                 h-48
-                default-focus-style
                 overflow-y-hidden
             "
+            tabindex="-1"
         >
             <back
                 v-if="$iApi.screenSize === 'xs'"
@@ -35,10 +35,7 @@
             <slot name="controls"></slot>
         </header>
 
-        <div
-            v-if="content"
-            class="p-8 flex-grow default-focus-style overflow-y-auto"
-        >
+        <div v-if="content" class="p-8 flex-grow overflow-y-auto">
             <slot name="content"></slot>
         </div>
 

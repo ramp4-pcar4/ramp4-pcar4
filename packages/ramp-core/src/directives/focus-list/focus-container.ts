@@ -9,7 +9,7 @@ enum KEYS {
 const CONTAINER_ATTR = 'focus-container';
 const LIST_ATTR = 'focus-list';
 const FOCUS_ATTRS = `[${LIST_ATTR}],[${CONTAINER_ATTR}]`;
-const TABBABLE_TAGS = `button,input,select,a,textarea,[contenteditable],[${LIST_ATTR}],[${CONTAINER_ATTR}]`;
+const TABBABLE_TAGS = `button,input,select,a,textarea,[contenteditable],.ag-tab-guard,[${LIST_ATTR}],[${CONTAINER_ATTR}]`;
 
 let managers: FocusContainerManager[] = [];
 
