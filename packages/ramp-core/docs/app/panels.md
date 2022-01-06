@@ -6,6 +6,8 @@ Write other stuff.
 
 ## Localization
 
+TODO why is localization documentation in `panels.md`? I feel half of this file should exist in `config-language.md` and the rest should be massaged as as guide for how to use panels.
+
 ### Core
 
 [Vue-i18n](https://kazupon.github.io/vue-i18n/) is used to localize the application and the core messages are injected into the RAMP instance when it's first created. All messages are stored in a CSV file of the following format:

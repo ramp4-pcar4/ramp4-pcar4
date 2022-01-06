@@ -2,6 +2,8 @@
 
 In general, the constructors are very flexible in accepting the varying and mixed geometry formats. The geometry input is parsed recursively, so in almost all cases if it makes sense logically, the constructor will parse it.
 
+This document uses the global `RAMP.GEO` object as the source of geometry constructors. However they are also available on the Ramp Instance API, via the `.geo` object. So `RAMP.GEO.Point()` and `rInstance.geo.Point()` are the same. Use whichever source is most convenient.
+
 ## Spatial Reference
 
 This is fairly in-line with ESRI's format. It supports WKID and WKT, and optional latestWKID parameters.
