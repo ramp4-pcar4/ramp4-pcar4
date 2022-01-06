@@ -1,5 +1,7 @@
 # RAMP Instantiation
 
+TODO do we need a note about needing the Vue library script to be added before RAMP script? Are there any other dependencies? Should this type of "page setup" be it's own doc page?
+
 ## Creating An Instance
 
 A page script can create an instance of RAMP with the following call:
