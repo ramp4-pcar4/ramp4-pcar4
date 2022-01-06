@@ -20,7 +20,7 @@
                 border-b border-solid border-gray-600
                 px-8
                 h-48
-                overflow-y-hidden
+                overflow-hidden
             "
             tabindex="-1"
         >
