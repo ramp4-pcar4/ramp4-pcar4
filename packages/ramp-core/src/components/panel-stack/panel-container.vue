@@ -22,7 +22,7 @@
                 :is="panel.route.screen"
                 v-bind="panel.route.props"
                 :panel="panel"
-                v-focus-list
+                v-focus-container
             ></component>
         </transition>
     </div>

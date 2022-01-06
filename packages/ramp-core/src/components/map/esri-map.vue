@@ -3,7 +3,6 @@
         name="esriMap"
         class="h-full"
         v-tippy="{
-            flip: false,
             allowHTML: true,
             zIndex: 5,
             theme: 'ramp4',
