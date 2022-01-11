@@ -1,5 +1,7 @@
 # Details Fixture
 
+TODO revist after meeting with UI/UX team. Adjust page if we change the design.
+
 The details fixture adds a panel to RAMP that displays in-depth information about any specific data point on the map. It can be opened by performing an identify query either on the map or through the RAMP API.
 
 ## Panels
