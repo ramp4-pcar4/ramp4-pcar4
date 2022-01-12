@@ -28,7 +28,6 @@
                         <h3 class="font-bold text-xl" v-truncate>
                             {{ tileSchema.name }}
                         </h3>
-                        <!-- TODO: check if current basemap matches projection, if not need "Map Refresh required" warning here -->
                     </div>
 
                     <div
