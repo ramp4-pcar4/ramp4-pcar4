@@ -475,6 +475,7 @@ export interface RampLayerConfig {
     rawData?: any; // used for static data, like geojson string, shapefile guts
     latField?: string; // csv coord field
     longField?: string; // csv coord field
+    tolerance?: number; // click tolerance
 }
 
 export interface RampExtentConfig {

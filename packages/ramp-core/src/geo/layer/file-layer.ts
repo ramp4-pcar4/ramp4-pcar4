@@ -280,8 +280,6 @@ export class FileLayer extends AttribLayer {
             parentUid: this.uid
         };
 
-        const tolerance = options.tolerance || 0; // this.clickTolerance; // TODO remove the 0 and add the parameter once we implement clickTolerance from config constructor
-
         // run a spatial query
         const qOpts: QueryFeaturesParams = {
             outFields: this.fieldList,
