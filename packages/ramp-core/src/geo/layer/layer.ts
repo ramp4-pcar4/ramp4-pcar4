@@ -551,11 +551,11 @@ export class LayerInstance extends APIScope {
     set scaleSet(scaleSet: ScaleSet) {}
 
     /**
-     * Indicates if the layer/sublayer is not in a visible scale range.
+     * Indicates if the layer is not in a visible scale range.
      *
      * @function isOffscale
      * @param {Integer} [testScale] optional scale to test against. if not provided, current map scale is used.
-     * @returns {Boolean} true if the layer/sublayer is outside of a visible scale range
+     * @returns {Boolean} true if the layer is outside of a visible scale range
      */
     isOffscale(testScale: number | undefined = undefined): boolean {
         return false;
@@ -587,7 +587,7 @@ export class LayerInstance extends APIScope {
     set legend(legend: Array<LegendSymbology>) {}
 
     /**
-     * Returns an array of field definitions about the given sublayer's fields. Raster layers will have empty arrays.
+     * Returns an array of field definitions about the given layer's fields. Raster layers will have empty arrays.
      *
      * @returns {Array} list of field definitions
      */
@@ -603,7 +603,7 @@ export class LayerInstance extends APIScope {
     set fields(fields: Array<FieldDefinition>) {}
 
     /**
-     * Returns the geometry type of the given sublayer.
+     * Returns the geometry type of the given layer.
      *
      * @returns {Array} list of field definitions
      */
@@ -619,7 +619,7 @@ export class LayerInstance extends APIScope {
     set geomType(type: string) {}
 
     /**
-     * Returns the name field of the given sublayer.
+     * Returns the name field of the given layer.
      *
      * @returns {string} name field
      */
@@ -635,7 +635,7 @@ export class LayerInstance extends APIScope {
     set nameField(name: string) {}
 
     /**
-     * Returns the OID field of the given sublayer.
+     * Returns the OID field of the given layer.
      *
      * @returns {string} OID field
      */
@@ -651,9 +651,9 @@ export class LayerInstance extends APIScope {
     set oidField(name: string) {}
 
     /**
-     * Get the feature count for the given sublayer.
+     * Get the feature count for the given layer.
      *
-     * @returns {Integer} number of features in the sublayer
+     * @returns {Integer} number of features in the layer
      */
     get featureCount(): number {
         return -1;
@@ -665,6 +665,22 @@ export class LayerInstance extends APIScope {
      * @param {Integer} count the new number of features in the layer
      */
     set featureCount(count: number) {}
+
+    /**
+     * Get the click tolerance in pixels for this layer
+     *
+     * @returns {number} the click tolerance of this layer
+     */
+    get clickTolerance(): number {
+        return 0;
+    }
+
+    /**
+     * Set the click tolerance for this layer in pixels
+     *
+     * @param {Integer} tolerance the new click tolerance
+     */
+    set clickTolerance(tolerance: number) {}
 
     /**
      * Baseline identify function for layers that do not support identify.

@@ -30,6 +30,7 @@ export class CommonLayer extends LayerInstance {
     _name: string;
     _scaleSet: ScaleSet;
     _legend: Array<LegendSymbology>;
+    _clickTolerance: number;
     _featureCount: number;
     _fields: Array<FieldDefinition>;
     _geomType: string;
@@ -67,6 +68,8 @@ export class CommonLayer extends LayerInstance {
         this._scaleSet = new ScaleSet();
         this._legend = [];
         this._featureCount = -1;
+        this._clickTolerance =
+            rampConfig.tolerance != undefined ? rampConfig.tolerance : 5; // use default value of 5 if tolerance is undefined
         this._fields = [];
         this._geomType = 'error';
         this._nameField = 'error';
@@ -76,8 +79,7 @@ export class CommonLayer extends LayerInstance {
 
         this.origRampConfig = rampConfig;
         this.id = rampConfig.id || '';
-        // this.uid = this.bestUid(-1);
-        this.uid = this.$iApi.geo.utils.shared.generateUUID(); // TODO[Layer-Refactor]: every sublayer is now independent, so they get their own uid :)
+        this.uid = this.$iApi.geo.utils.shared.generateUUID();
         this.isRemoved = false;
         this.isSublayer = false;
         this.supportsIdentify = false; // default state.
@@ -534,12 +536,43 @@ export class CommonLayer extends LayerInstance {
     }
 
     /**
-     * Set the feature count for thelayer
+     * Set the feature count for this layer
      *
      * @param {Integer} count the new number of features in the layer
      */
     set featureCount(count: number) {
         this._featureCount = count;
+    }
+
+    /**
+     * Get the click tolerance in pixels for this layer
+     *
+     * @returns {number} the click tolerance of this layer
+     */
+    get clickTolerance() {
+        return this._clickTolerance;
+    }
+
+    /**
+     * Set the click tolerance for this layer in pixels
+     *
+     * @param {number} tolerance the new click tolerance
+     */
+    set clickTolerance(tolerance: number) {
+        if (!this.supportsIdentify) {
+            console.warn(
+                "Attempted to set click tolerance on a layer that doesn't support identify"
+            );
+            return;
+        }
+
+        // should not happen, but we never know
+        if (tolerance < 0) {
+            console.error('Attempted to set a negative click tolerance');
+            return;
+        }
+
+        this._clickTolerance = tolerance;
     }
 
     /**
