@@ -109,9 +109,21 @@ export default defineComponent({
     },
     data() {
         return {
-            selectedBasemap: get(BasemapStore.selectedBasemap),
-            selectBasemap: call(BasemapStore.selectBasemap)
+            selectedBasemap: get(BasemapStore.selectedBasemap)
         };
+    },
+    methods: {
+        selectBasemap(basemap: any) {
+            if (this.selectedBasemap.tileSchemaId !== basemap.tileSchemaId) {
+                console.warn(
+                    'Basemap switching between two different tile schemas has not been implemented yet.'
+                );
+                return;
+            }
+
+            this.$iApi.geo.map.setBasemap(basemap.id);
+            this.$iApi.$vApp.$store.set(BasemapStore.setBasemap, basemap);
+        }
     }
 });
 </script>
