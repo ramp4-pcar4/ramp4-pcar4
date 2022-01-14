@@ -137,7 +137,11 @@ export class MapImageSublayer extends AttribLayer {
             this.noLayerErr();
             return;
         }
-        // TODO should we make warning check on parent.isDynamic? currently parent code should manage this
+        if (!(this.parentLayer as MapImageLayer).isDynamic) {
+            console.warn(
+                `Opacity of a Map Image Sublayer was set. The service does not support sublayer opacity. LayerId ${this.id}`
+            );
+        }
         this.esriSubLayer.opacity = value;
     }
 

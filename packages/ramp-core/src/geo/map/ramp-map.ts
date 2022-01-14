@@ -20,6 +20,7 @@ import {
     IdentifyResult,
     IdentifyResultSet,
     MapClick,
+    MapIdentifyResult,
     Point,
     RampMapConfig,
     ScreenPoint,
@@ -138,7 +139,7 @@ export class MapAPI extends CommonMapAPI {
         });
 
         this.esriView.on('resize', esriResize => {
-            this.$iApi.event.emit(GlobalEvents.MAP_RESIZE, {
+            this.$iApi.event.emit(GlobalEvents.MAP_RESIZED, {
                 height: esriResize.height,
                 width: esriResize.width
             });
@@ -731,22 +732,40 @@ export class MapAPI extends CommonMapAPI {
     //      default event handlers, would be a mess.
 
     /**
-     * Performs an identify request on all layers that support identify, and combines the results into an object that is readable by the details panel.
+     * Performs an identify request on all layers that support identify, and combines the results.
      *
-     * @param {*} payload
-     * @memberof DetailsFixture
+     * @param {MapClick | Point} targetPoint the place on the map to execute the identify
+     * @memberof MapAPI
+     * @returns MapIdentifyResult
      */
 
-    identify(payload: MapClick | Point) {
+    identify(targetPoint: MapClick | Point): MapIdentifyResult {
         let layers: LayerInstance[] | undefined = this.$vApp.$store.get(
             LayerStore.layers
         );
 
+        let mapClick: MapClick;
+        if (targetPoint instanceof Point) {
+            // construct MapClick if only point is given
+            const screenPoint = this.mapPointToScreenPoint(targetPoint);
+            mapClick = {
+                mapPoint: targetPoint,
+                screenX: screenPoint.screenX,
+                screenY: screenPoint.screenY,
+                button: 0,
+                clickTime: Date.now()
+            };
+        } else {
+            mapClick = targetPoint;
+        }
+
         // Don't perform an identify request if the layers array hasn't been established yet.
-        if (layers === undefined) return;
+        if (layers === undefined) {
+            return { click: mapClick, results: [] };
+        }
 
         let p: IdentifyParameters = {
-            geometry: payload instanceof Point ? payload : payload.mapPoint
+            geometry: mapClick.mapPoint
         };
 
         // Perform an identify request on each layer. Does not perform the request on layers that do not have an identify function (layers that do not support identify).
@@ -763,26 +782,14 @@ export class MapAPI extends CommonMapAPI {
             [] as IdentifyResult[]
         ).concat(...identifyInstances.map(({ results }) => results));
 
-        let mapClick: MapClick;
-        if (payload instanceof Point) {
-            // construct MapClick if only point is given
-            const screenPoint = this.mapPointToScreenPoint(payload);
-            mapClick = {
-                mapPoint: payload,
-                screenX: screenPoint.screenX,
-                screenY: screenPoint.screenY,
-                button: 0,
-                clickTime: Date.now()
-            };
-        } else {
-            mapClick = payload;
-        }
-
-        // TODO make the event payload an interface? should there be a public area with all event payload interfaces?
-        this.$iApi.event.emit(GlobalEvents.MAP_IDENTIFY, {
+        const fullResult: MapIdentifyResult = {
             results: identifyResults,
             click: mapClick
-        });
+        };
+
+        this.$iApi.event.emit(GlobalEvents.MAP_IDENTIFY, fullResult);
+
+        return fullResult;
     }
 
     /**
