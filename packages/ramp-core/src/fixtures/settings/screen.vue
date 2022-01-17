@@ -173,7 +173,7 @@ export default defineComponent({
 
         // Update the layer opacity.
         updateOpacity(val: number) {
-            this.legendItem.setOpacity(this.opacityModel / 100);
+            this.legendItem.setOpacity(val / 100);
             this.opacityModel = val;
         },
 
@@ -190,7 +190,7 @@ export default defineComponent({
                 if (oldUid === this.layer.uid) {
                     // ensure that it's still the same layer
                     this.visibilityModel = this.layer.visibility;
-                    this.opacityModel = this.layer.opacity * 100;
+                    this.opacityModel = Math.round(this.layer.opacity * 100);
                     this.layerName = this.layer.name;
                 }
             });
