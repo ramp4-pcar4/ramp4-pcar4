@@ -346,6 +346,11 @@ export interface IdentifyResultSet {
     parentUid: string; // this would be the parent layer's uid.
 }
 
+export interface MapIdentifyResult {
+    results: IdentifyResult[];
+    click: MapClick;
+}
+
 //TODO: Enhance this when a RAMP Graphic is properly defined
 export interface GraphicHitResult {
     oid: number; // graphic OBJECTID

@@ -81,6 +81,8 @@ export default defineComponent({
         };
     },
     created() {
+        // the start property is used to prevent the esri-map component from instantiating
+        // until the property turns true. trickery!
         if (this.$iApi.startRequired) {
             this.$iApi.event.once(GlobalEvents.MAP_START, () => {
                 this.start = true;

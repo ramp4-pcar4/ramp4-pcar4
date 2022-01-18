@@ -206,7 +206,7 @@ export default defineComponent({
                 mapViewElement as HTMLDivElement
             );
             this.map = this.$iApi.geo.map;
-            this.$iApi.event.emit(GlobalEvents.MAP_CREATED, this.$iApi.geo.map);
+            this.$iApi.event.emit(GlobalEvents.MAP_CREATED);
 
             // Hide hovertip on map creation
             //@ts-ignore

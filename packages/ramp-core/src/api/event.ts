@@ -21,6 +21,11 @@ import { debounce, throttle } from 'throttle-debounce';
 import { MapCaptionStore } from '@/store/modules/map-caption';
 import { LayerStore } from '@/store/modules/layer';
 
+// TODO ensure some of the internal types used in the payload comments are published
+//      as part of our API doc generator. Would be ideal if doc output hyperlinked to
+//      those definitions. If not we might want to just write out object structures instead of names.
+//      Obviously something like LayerInstance is too massive to do that with.
+
 export enum GlobalEvents {
     /**
      * Fires when a Vue component is registered with `rInstance.component(...)`.
@@ -28,72 +33,203 @@ export enum GlobalEvents {
      */
     COMPONENT = 'ramp/component',
 
-    // TODO document payload
-    FILTER_CHANGE = 'filter/change',
-
-    FIXTURE_ADDED = 'fixture/added', // Payload is FixtureInstance
-
-    LAYER_OPACITYCHANGE = 'layer/opacitychange',
-    LAYER_REGISTERED = 'layer/registered', // Payload: `(layer: LayerInstance)`
-    LAYER_RELOAD_END = 'layer/reloadend', // Payload: `(layer: LayerInstance)`
-    LAYER_RELOAD_START = 'layer/reloadstart', // Payload: `(layer: LayerInstance)`
-    LAYER_REMOVE = 'layer/remove', // Payload: `(layer: LayerInstance)`
-    LAYER_STATECHANGE = 'layer/statechange',
-    LAYER_VISIBILITYCHANGE = 'layer/visibilitychange',
-
     /**
-     * Fires when the config file changes
+     * Fires when the config file changes.
      * Payload: `(config: RampConfig)`
      */
     CONFIG_CHANGE = 'config/configchanged',
 
     /**
-     * Fires when the map is created
-     * Payload: (map)
+     * Fires when a request is issued to show the details of an identify result.
+     * Payload: `({ identifyItem: IdentifyItem, uid: string })`
      */
-    MAP_CREATED = 'map/created', // TODO since map is now part of the api (i.e. rampapi.geo.map), is the payload redundant?
+    DETAILS_OPEN = 'details/open',
 
-    // TODO docs, determine the payloads
-    MAP_CLICK = 'map/click', // payload is interface MapClick (geo)
-    MAP_DOUBLECLICK = 'map/doubleclick', // payload is interface MapClick (geo)
-    MAP_EXTENTCHANGE = 'map/extentchanged', // payload is Extent (geo)
-    MAP_IDENTIFY = 'map/identify',
-    MAP_MOUSEMOVE = 'map/mousemove',
-    MAP_MOUSEDOWN = 'map/mousedown',
-    MAP_KEYDOWN = 'map/keydown',
-    MAP_KEYUP = 'map/keyup',
+    /**
+     * Fires when a filter is changed.
+     * Payload: `(params: FilterEventParam)`
+     */
+    FILTER_CHANGE = 'filter/change',
+
+    /**
+     * Fires when a fixture is added to the instance.
+     * Payload: `(fixture: FixtureInstance)`
+     */
+    FIXTURE_ADDED = 'fixture/added',
+
+    /**
+     * Fires when a request is issued to toggle (show if hidden, hide if showing) the grid of attributes.
+     * Payload: `(uid: string, force?: boolean)`
+     */
+    GRID_TOGGLE = 'grid/toggle',
+
+    /**
+     * Fires when a request is issued to toggle (show if hidden, hide if showing) help information.
+     * Payload: `(force?: boolean)`
+     */
+    HELP_TOGGLE = 'help/toggle',
+
+    /**
+     * Fires when the opacity of a layer changes.
+     * Payload: `({ uid: string, opacity: number })`
+     */
+    LAYER_OPACITYCHANGE = 'layer/opacitychange',
+
+    /**
+     * Fires when a layer is registered (added to the instance via the map).
+     * Payload: `(layer: LayerInstance)`
+     */
+    LAYER_REGISTERED = 'layer/registered',
+
+    /**
+     * Fires when a layer completes its reload process.
+     * Payload: `(layer: LayerInstance)`
+     */
+    LAYER_RELOAD_END = 'layer/reloadend',
+
+    /**
+     * Fires when a layer begins its reload process.
+     * Payload: `(layer: LayerInstance)`
+     */
+    LAYER_RELOAD_START = 'layer/reloadstart',
+
+    /**
+     * Fires when a layer is removed from the map.
+     * Payload: `(layer: LayerInstance)`
+     */
+    LAYER_REMOVE = 'layer/remove',
+
+    /**
+     * Fires when the state of a layer changes.
+     * Payload: `({ uid: string, state: string })`
+     */
+    LAYER_STATECHANGE = 'layer/statechange',
+
+    /**
+     * Fires when the visibility of a layer changes.
+     * Payload: `({ uid: string, visibility: boolean })`
+     */
+    LAYER_VISIBILITYCHANGE = 'layer/visibilitychange',
+
+    /**
+     * Fires when the basemap changes.
+     * Payload: `(basemapId: string)`
+     */
+    MAP_BASEMAPCHANGE = 'map/basemapchanged',
+
+    /**
+     * Fires when the map loses focus.
+     * Payload: `(params: KeyboardEvent)` (DOM Event)
+     */
     MAP_BLUR = 'map/blur',
-    MAP_BASEMAPCHANGE = 'map/basemapchanged', // payload is the new basemap id (string)
-    MAP_START = 'map/start',
 
-    // fires when a user adds a layer, generally through the wizard
-    USER_LAYER_ADDED = 'user/layeradded', // Payload is LayerInstance
+    /**
+     * Fires when the map is clicked.
+     * Payload: `(params: MapClick)`
+     */
+    MAP_CLICK = 'map/click',
+
+    /**
+     * Fires after the map is created.
+     * Payload: none
+     */
+    MAP_CREATED = 'map/created',
+
+    /**
+     * Fires when the map is double-clicked.
+     * Payload: `(params: MapClick)`
+     */
+    MAP_DOUBLECLICK = 'map/doubleclick',
+
+    /**
+     * Fires when the map extent changes.
+     * Payload: `(extent: Extent)`
+     */
+    MAP_EXTENTCHANGE = 'map/extentchanged',
+
+    /**
+     * Fires when the mouse enters the graphic of a vector layer symbol.
+     * Payload: TODO huge untyped object. Create type? Type it all out?
+     */
+    MAP_GRAPHICHIT = 'map/graphichit',
+
+    /**
+     * Fires when a map identify executes.
+     * Payload: `(results: MapIdentifyResult)`
+     */
+    MAP_IDENTIFY = 'map/identify',
+
+    /**
+     * Fires when a key is pressed down while the map has focus.
+     * Payload: `(params: KeyboardEvent)` (DOM Event)
+     */
+    MAP_KEYDOWN = 'map/keydown',
+
+    /**
+     * Fires when a key is released while the map has focus.
+     * Payload: `(params: KeyboardEvent)` (DOM Event)
+     */
+    MAP_KEYUP = 'map/keyup',
+
+    /**
+     * Fires when the mouse (or alternate pointer) enters the "down" state.
+     * Payload: `(params: PointerEvent)` (DOM Event)
+     */
+    MAP_MOUSEDOWN = 'map/mousedown',
+
+    /**
+     * Fires when the mouse moves while over the map.
+     * Payload: `(params: MapMove)`
+     */
+    MAP_MOUSEMOVE = 'map/mousemove',
+
+    /**
+     * Fires when the map view is resized.
+     * Payload: `({ height: number, width: number })`
+     */
+    MAP_RESIZED = 'map/resized',
 
     /**
      * Fires when the map scale changes.
-     * Payload: the scale denominator integer.
+     * Payload: `(scale_denominator: number)`
      */
     MAP_SCALECHANGE = 'map/scalechanged',
-    MAP_RESIZE = 'map/resized',
-
-    MAP_GRAPHICHIT = 'map/graphichit',
-    SETTINGS_TOGGLE = 'settings/toggle',
-    DETAILS_OPEN = 'details/open',
-    HELP_TOGGLE = 'help/toggle',
-    GRID_TOGGLE = 'grid/toggle',
-    WIZARD_OPEN = 'wizard/open',
 
     /**
-     * Fires when a panel opens
-     * Payload: the panel that opened (PanelInstance)
+     * Fires when the request to start the map is given.
+     * Payload: none
+     */
+    MAP_START = 'map/start',
+
+    /**
+     * Fires when a panel is closed.
+     * Payload: `(panel: PanelInstance)`
+     */
+    PANEL_CLOSED = 'panel/closed',
+
+    /**
+     * Fires when a panel opens.
+     * Payload: `(panel: PanelInstance)`
      */
     PANEL_OPENED = 'panel/opened',
 
     /**
-     * Fires when a panel is closed
-     * Payload: the panel that closed (PanelInstance)
+     * Fires when a request is issued to toggle (show if hidden, hide if showing) layer settings.
+     * Payload: `(uid: string)`
      */
-    PANEL_CLOSED = 'panel/closed'
+    SETTINGS_TOGGLE = 'settings/toggle',
+
+    /**
+     * Fires when a user adds a layer, generally through the wizard.
+     * Payload: `(layer: LayerInstance)`
+     */
+    USER_LAYER_ADDED = 'user/layeradded',
+
+    /**
+     * Fires when a request is issued to open the Add Layer Wizard.
+     * Payload: none
+     */
+    WIZARD_OPEN = 'wizard/open'
 }
 
 // TODO export this enum?

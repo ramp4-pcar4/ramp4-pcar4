@@ -44,6 +44,7 @@ export default defineComponent({
             this.arrow = `<img width='25' src='${this.arrowIcon.value}'>`;
         }
         // don't think this condition should be needed but sometimes errors at startup without it
+        // TODO could this type of thing be moved to the `initialized()` handler of the FixtureInstance, once implemented?
         if (this.$iApi.geo.map.esriView?.ready) {
             this.updateNortharrow(this.$iApi.geo.map.getExtent());
         }

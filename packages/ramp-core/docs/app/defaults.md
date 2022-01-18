@@ -81,27 +81,34 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | Event Name                                         | Payload                                                        | Event Announces                                  |
 | -------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------ |
 | COMPONENT<br>'ramp/component'                      | _id_: component id                                             | A vue component registered                       |
-| CONFIG_CHANGE                                      | RampConfig object                                              | The config was changed                           |
+| CONFIG_CHANGE<br>'config/change'                   | RampConfig object                                              | The config was changed                           |
 | FILTER_CHANGE<br>'filter/change'                   | FilterEventParam object                                        | A filter has changed                             |
 | FIXTURE_ADDED<br>'fixture/added'                   | FixtureInstance object                                         | A fixture has been added                         |
 | LAYER_OPACITYCHANGE<br>'layer/opacitychange'       | _opacity_: new value, _uid_: affected uid                      | The layer opacity changed                        |
+| LAYER_REGISTERED<br>'layer/registered'             | LayerInstance object                                           | The layer was added to the map                   |
 | LAYER_RELOAD_END<br>'layer/reloadend'              | LayerInstance object                                           | The layer finished reloading                     |
 | LAYER_RELOAD_START<br>'layer/reloadstart'          | LayerInstance object                                           | The layer started reloading                      |
 | LAYER_REMOVE<br>'layer/remove'                     | LayerInstance object                                           | The layer was removed from the map               |
 | LAYER_STATECHANGE<br>'layer/statechange'           | _state_: new value, _uid_: affected uid                        | The layer state changed                          |
 | LAYER_VISIBILITYCHANGE<br>'layer/visibilitychange' | _visibility_: new value, _uid_: affected uid                   | The layer visibility changed                     |
+| MAP_BASEMAPCHANGE<br>'map/basemapchanged'          | basemapId: string                                              | The basemap was changed                          |
 | MAP_BLUR<br>'map/blur'                             | FocusEvent object                                              | The map lost focus                               |
 | MAP_CLICK<br>'map/click'                           | MapClick object                                                | The map was clicked                              |
-| MAP_CREATED<br>'map/created'                       | Map API object                                                 | The map was created                              |
+| MAP_CREATED<br>'map/created'                       | none                                                           | The map was created                              |
 | MAP_DOUBLECLICK<br>'map/doubleclick'               | MapClick object                                                | The map was double clicked                       |
 | MAP_EXTENTCHANGE<br>'map/extentchanged'            | RAMP Extent object                                             | The map extent changed                           |
-| MAP_IDENTIFY<br>'map/identify'                     | _results_: Array of IdentifyResult<br>_click_: MapClick object | A map identify was requested                     |
+| MAP_GRAPHICHIT<br>'map/graphichit'                 | { layer, graphicHit, attributes, icon, screenPoint}            | A graphic was found where the mouse/crosshair is |
+| MAP_IDENTIFY<br>'map/identify'                     | MapIdentifyResult object                                       | A map identify was requested                     |
 | MAP_KEYDOWN<br>'map/keydown'                       | KeyboardEvent object                                           | A key was pressed                                |
 | MAP_KEYUP<br>'map/keyup'                           | KeyboardEvent object                                           | A key was released                               |
 | MAP_MOUSEDOWN<br>'map/mousedown'                   | PointerEvent object                                            | A mouse button was depressed                     |
 | MAP_MOUSEMOVE<br>'map/mousemove'                   | MapMove object                                                 | The mouse moved over the map                     |
-| MAP_BASEMAPCHANGE                                  | basemapId: string                                              | The basemap was changed                          |
-| MAP_GRAPHICHIT                                     | { layer, graphicHit, attributes, icon, screenPoint}            | A graphic was found where the mouse/crosshair is |
+| MAP_RESIZED<br>'map/resized'                       | { height: number, width: number }                              | The map view changed size                        |
+| MAP_SCALECHANGE<br>'map/scalechanged'              | scale denominator: number                                      | The map scale changed                            |
+| MAP_START<br>'map/start'                           | none                                                           | The map startup was requested                    |
+| PANEL_CLOSED<br>'panel/closed'                     | PanelInstance object                                           | A panel was closed                               |
+| PANEL_OPENED<br>'panel/opened'                     | PanelInstance object                                           | A panel was opened                               |
+| USER_LAYER_ADDED<br>'user/layeradded'              | LayerInstance object                                           | A layer was added during the session             |
 
 ### Core Fixture Events
 
@@ -111,10 +118,11 @@ TODO add stuff as we make events that core fixtures raise
 
 | Event Name                           | Payload                                                 | Event Announces                                                |
 | ------------------------------------ | ------------------------------------------------------- | -------------------------------------------------------------- |
-| SETTINGS_TOGGLE<br>'settings/toggle' | layer uid                                               | Settings panel toggle was requested for a layer                |
 | DETAILS_OPEN<br>'details/open'       | _identifyItem_: IdentifyItem object<br>_uid_: layer uid | A feature's details was requested                              |
-| HELP_TOGGLE<br>'help/toggle'         | boolean (optional)                                      | Help panel toggle was requested with optional force open/close |
 | GRID_TOGGLE<br>'grid/toggle'         | _uid_: layer uid<br>_open_: boolean (optional)          | Grid panel toggle was requested with optional force open/close |
+| HELP_TOGGLE<br>'help/toggle'         | boolean (optional)                                      | Help panel toggle was requested with optional force open/close |
+| SETTINGS_TOGGLE<br>'settings/toggle' | layer uid                                               | Settings panel toggle was requested for a layer                |
+| WIZARD_OPEN<br>'wizard/open'         | none                                                    | A request was made to add a layer                              |
 
 ## Default Events Handlers
 

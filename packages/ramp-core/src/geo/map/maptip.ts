@@ -1,4 +1,9 @@
-import { APIScope, InstanceAPI, LayerInstance } from '@/api/internal';
+import {
+    APIScope,
+    GlobalEvents,
+    InstanceAPI,
+    LayerInstance
+} from '@/api/internal';
 import { MaptipStore } from '@/store/modules/maptip';
 import {
     Attributes,
@@ -84,7 +89,7 @@ export class MaptipAPI extends APIScope {
 
         this.setPoint(this.$iApi.geo.map.screenPointToMapPoint(screenPoint));
 
-        this.$iApi.event.emit('map/graphichit', {
+        this.$iApi.event.emit(GlobalEvents.MAP_GRAPHICHIT, {
             layer: layerInstance,
             graphicHit,
             attributes: graphic.attributes,
