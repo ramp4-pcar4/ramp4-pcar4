@@ -507,6 +507,21 @@ export class CommonLayer extends LayerInstance {
     }
 
     /**
+     * Cause the map to zoom to this layer's boundary extent
+     *
+     * @returns {Promise} resolves when map has finished zooming
+     */
+    zoomToLayerBoundary(): Promise<void> {
+        if (!this.extent) {
+            throw new Error(
+                `Attempted to zoom to boundary of a layer with no extent (Layer Id: ${this.id})`
+            );
+        }
+        this.mapCheck();
+        return this.$iApi.geo.map.zoomMapTo(this.extent);
+    }
+
+    /**
      * Return the legend of the layer
      *
      * @returns {Array<LegendSymbology>} the legend of the layer

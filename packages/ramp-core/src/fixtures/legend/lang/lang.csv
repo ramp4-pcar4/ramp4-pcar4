@@ -20,6 +20,7 @@ legend.entry.controls.metadata,Metadata,1,Métadonnées,1
 legend.entry.controls.settings,Settings,1,Paramètres,1
 legend.entry.controls.datatable,Datatable,1,Tableau de données,1
 legend.entry.controls.symbology,Legend,1,Légende,1
+legend.entry.controls.boundaryzoom,Zoom to Layer Boundary,1,Zoomer à la limite,1
 legend.entry.controls.remove,Remove,1,Retirer,1
 legend.entry.controls.reload,Reload,1,Recharger,1
 legend.alert.symbologyExpanded,Layer legend expanded,1,Légende de la couche élargi,0
