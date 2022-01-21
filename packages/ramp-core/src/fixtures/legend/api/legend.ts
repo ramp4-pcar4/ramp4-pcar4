@@ -27,10 +27,6 @@ export class LegendAPI extends FixtureInstance {
             return;
         }
 
-        const layers: LayerInstance[] | undefined = this.$vApp.$store.get(
-            LayerStore.layers
-        );
-
         let legendEntries: Array<LegendItem> = [];
         let stack: Array<any> = [];
         // initialize stack with all legend elements listed in config
@@ -43,7 +39,6 @@ export class LegendAPI extends FixtureInstance {
         while (stack.length > 0) {
             // pop legend entry in stack and check if it has a corresponding layer
             const lastEntry = stack.pop();
-            lastEntry.layers = layers;
 
             // (assuming visibility sets and groups will specify in config `exclusiveVisibility` or `children` properties, respectively)
             if (
@@ -86,8 +81,7 @@ export class LegendAPI extends FixtureInstance {
             ? new LegendGroup(
                   {
                       layer: layer,
-                      name: layer.name,
-                      layers: this.$vApp.$store.get(LayerStore.layers)
+                      name: layer.name
                   },
                   parent
               )

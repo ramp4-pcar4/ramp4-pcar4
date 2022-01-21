@@ -413,7 +413,6 @@ export class LegendGroup extends LegendItem {
             .filter((entry: any) => !entry.hidden)
             .forEach((entry: any) => {
                 // create new LegendGroup/LegendEntry and push to child array
-                entry.layers = legendGroup.layers;
                 if (
                     entry.exclusiveVisibility !== undefined ||
                     entry.children !== undefined
