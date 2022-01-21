@@ -132,10 +132,7 @@ export class AttribLayer extends CommonLayer {
         this.scaleSet.maxScale = sData.effectiveMaxScale || sData.maxScale;
         this.supportsFeatures = false; // saves us from having to keep comparing type to 'Feature Layer' on the client
         this.extent = sData.extent
-            ? this.$iApi.geo.utils.geom._convEsriExtentToRamp(
-                  sData.extent,
-                  this.id + '_extent'
-              )
+            ? Extent.fromArcServer(sData.extent, this.id + '_extent')
             : undefined;
 
         if (sData.type === 'Feature Layer') {

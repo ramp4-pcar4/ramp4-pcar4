@@ -2,13 +2,18 @@
 
 import {
     BaseGeometry,
+    GeoJsonGeomType,
     GeometryType,
     LineString,
     MultiPoint,
     Point,
+    PointSet,
+    SpatialReference,
     SrDef,
     IdDef
 } from '@/geo/api';
+import { EsriPolyline } from '@/geo/esri';
+import GeoJson from 'geojson';
 
 export class MultiLineString extends BaseGeometry {
     protected rawArray: Array<Array<Array<number>>>;
@@ -53,8 +58,8 @@ export class MultiLineString extends BaseGeometry {
             this.rawArray = MultiLineString.arrayDeepCopy(geometry);
         } else if (geometry instanceof MultiLineString) {
             this.rawArray = geometry.toArray();
-        } else if (geometry instanceof MultiPoint) {
-            // will also handle LineString
+        } else if (geometry instanceof PointSet) {
+            // will handle LineString, MultiPoint, LinearRing
             this.rawArray = [geometry.toArray()];
         } else if (Array.isArray(geometry)) {
             if (geometry.length === 0) {
@@ -62,7 +67,7 @@ export class MultiLineString extends BaseGeometry {
             }
 
             // process each element, as they could be any format of varying quality
-            this.rawArray = geometry.map(l => MultiPoint.parsePointSet(l));
+            this.rawArray = geometry.map(l => PointSet.parsePointSet(l));
         } else {
             throw new Error('invalid lines format for MulitLineString');
         }
@@ -86,17 +91,17 @@ export class MultiLineString extends BaseGeometry {
         );
     }
 
-    /** Will update the n-th contained point with the values of the point parameter. It is assumed the point is in the same spatial reference as the Multipoint */
+    /** Will update the n-th contained line with the values of the line parameter. It is assumed the line is in the same spatial reference as the Multipoint */
     updateAt(
         line:
-            | LineString
+            | PointSet
             | Array<Array<Point>>
             | Array<Array<number>>
             | Array<Array<object>>,
         n: number
     ) {
         // TODO probably want some type of "my geometry has updated" event triggering on the multilinestring. if on a map would need to redraw itself.
-        this.rawArray[n] = MultiPoint.parsePointSet(line);
+        this.rawArray[n] = PointSet.parsePointSet(line);
     }
 
     /** Returns the number of contained lines. */
@@ -121,5 +126,42 @@ export class MultiLineString extends BaseGeometry {
     ): Array<Array<Array<number>>> {
         // speed tests show loops & slice is 3x faster than JSON parse/stringify
         return a.map(l => l.map(p => p.slice()));
+    }
+
+    static fromESRI(
+        esriLine: EsriPolyline,
+        id?: number | string
+    ): MultiLineString {
+        return new MultiLineString(
+            id,
+            esriLine.paths,
+            SpatialReference.fromESRI(esriLine.spatialReference),
+            true
+        );
+    }
+
+    toESRI(): EsriPolyline {
+        return new EsriPolyline({
+            paths: this.toArray(),
+            spatialReference: this.sr.toESRI()
+        });
+    }
+
+    static fromGeoJSON(
+        geoJsonMultiLine: GeoJson.MultiLineString,
+        id?: number | string
+    ): MultiLineString {
+        return new MultiLineString(
+            id,
+            geoJsonMultiLine.coordinates,
+            SpatialReference.fromGeoJSON(geoJsonMultiLine.crs),
+            true
+        );
+    }
+
+    toGeoJSON(): GeoJson.MultiLineString {
+        return <GeoJson.MultiLineString>(
+            this.geoJsonFactory(GeoJsonGeomType.MULTILINESTRING, this.toArray())
+        );
     }
 }

@@ -1,6 +1,15 @@
 // TODO add proper documentation
 
-import { BaseGeometry, GeometryType, SrDef, IdDef } from '@/geo/api';
+import {
+    BaseGeometry,
+    GeoJsonGeomType,
+    GeometryType,
+    SrDef,
+    IdDef
+} from '@/geo/api';
+import { EsriPoint } from '@/geo/esri';
+import { SpatialReference } from './spatial-reference';
+import GeoJson from 'geojson';
 
 export class Point extends BaseGeometry {
     // storing raw geometry in array format.
@@ -83,5 +92,40 @@ export class Point extends BaseGeometry {
             // TODO see if testing if buffer val is string first prior to parseFloating it is more efficient than parseFloating everything
             return [parseFloat(buffer[0]), parseFloat(buffer[1])];
         }
+    }
+
+    static fromESRI(esriPoint: EsriPoint, id?: number | string): Point {
+        return new Point(
+            id,
+            [esriPoint.x, esriPoint.y],
+            SpatialReference.fromESRI(esriPoint.spatialReference),
+            true
+        );
+    }
+
+    toESRI(): EsriPoint {
+        return new EsriPoint({
+            x: this.x,
+            y: this.y,
+            spatialReference: this.sr.toESRI()
+        });
+    }
+
+    static fromGeoJSON(
+        geoJsonPoint: GeoJson.Point,
+        id?: number | string
+    ): Point {
+        return new Point(
+            id,
+            geoJsonPoint.coordinates,
+            SpatialReference.fromGeoJSON(geoJsonPoint.crs),
+            true
+        );
+    }
+
+    toGeoJSON(): GeoJson.Point {
+        return <GeoJson.Point>(
+            this.geoJsonFactory(GeoJsonGeomType.POINT, this.toArray())
+        );
     }
 }

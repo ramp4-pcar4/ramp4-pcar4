@@ -1,6 +1,7 @@
 // Style for RAMP Line Graphic
 
 import { LineStyle, LineStyleParams, StyleOptions } from '@/geo/api';
+import { EsriSimpleLineSymbol, EsriSymbolFromJson } from '@/geo/esri';
 
 export class LineStyleOptions extends StyleOptions {
     protected declare _style: LineStyle;
@@ -22,5 +23,21 @@ export class LineStyleOptions extends StyleOptions {
     /** Returns the specified style (e.g. solid, dashed, dotted) */
     get style(): LineStyle {
         return this._style;
+    }
+
+    toESRI(): EsriSimpleLineSymbol {
+        const symbol = {
+            width: this.width,
+            type: 'esriSLS',
+            color: this.colour,
+            style: this.style,
+            outline: {
+                color: [0, 0, 0],
+                width: 1,
+                type: 'esriSLS',
+                style: 'esriSLSSolid'
+            }
+        };
+        return EsriSymbolFromJson(symbol) as EsriSimpleLineSymbol;
     }
 }

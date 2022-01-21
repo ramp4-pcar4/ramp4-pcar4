@@ -1,8 +1,17 @@
-// TODO add proper documentation
+import {
+    GeoJsonGeomType,
+    GeometryType,
+    MultiPoint,
+    Point,
+    PointSet,
+    SpatialReference,
+    SrDef,
+    IdDef
+} from '@/geo/api';
+import { EsriPolyline } from '@/geo/esri';
+import GeoJson from 'geojson';
 
-import { GeometryType, MultiPoint, Point, SrDef, IdDef } from '@/geo/api';
-
-export class LineString extends MultiPoint {
+export class LineString extends PointSet {
     /**
      * Constructs a LineString from the given source of a line
      *
@@ -25,24 +34,49 @@ export class LineString extends MultiPoint {
     constructor(id: IdDef, listOfXY: Array<object>, sr?: SrDef);
     constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef);
     constructor(id: IdDef, geometry: any, sr?: SrDef, raw?: boolean) {
-        if (raw) {
-            // the first IF here is a bit silly; required to satisfy typescript (as we are extending MultiPoint).
-            // we could adjust the constructor guides to avoid it, but then would confuse users of IDEs in thinking the raw flag
-            // is applicable to non-raw array vertex formats
-            super(id, <Array<Array<number>>>geometry, sr, true);
-        } else if (geometry instanceof MultiPoint) {
-            // LineString classes will also satisfy instanceof
-            super(id, geometry);
-        } else {
-            super(id, geometry, sr);
-            if (this.rawArray.length < 2) {
-                throw new Error('lines require at least two verticies');
-            }
+        super(id, geometry, sr, raw);
+        if (this.rawArray.length < 2) {
+            throw new Error('lines require at least two verticies');
         }
     }
 
     /** Returns the string 'LineString'. */
     get type(): GeometryType {
         return GeometryType.LINESTRING;
+    }
+
+    static fromESRI(esriLine: EsriPolyline, id?: number | string): LineString {
+        // TODO warn/error if mulitline is provided?
+        return new LineString(
+            id,
+            esriLine.paths[0],
+            SpatialReference.fromESRI(esriLine.spatialReference),
+            true
+        );
+    }
+
+    toESRI(): EsriPolyline {
+        return new EsriPolyline({
+            paths: [this.toArray()],
+            spatialReference: this.sr.toESRI()
+        });
+    }
+
+    static fromGeoJSON(
+        geoJsonLine: GeoJson.LineString,
+        id?: number | string
+    ): LineString {
+        return new LineString(
+            id,
+            geoJsonLine.coordinates,
+            SpatialReference.fromGeoJSON(geoJsonLine.crs),
+            true
+        );
+    }
+
+    toGeoJSON(): GeoJson.LineString {
+        return <GeoJson.LineString>(
+            this.geoJsonFactory(GeoJsonGeomType.LINESTRING, this.toArray())
+        );
     }
 }

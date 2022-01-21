@@ -9,6 +9,7 @@ import EsriBasemap from '@arcgis/core/Basemap';
 import EsriColour from '@arcgis/core/Color';
 import EsriConfig from '@arcgis/core/config';
 import EsriExtent from '@arcgis/core/geometry/Extent';
+import EsriGeometry from '@arcgis/core/geometry/Geometry';
 import EsriMultipoint from '@arcgis/core/geometry/Multipoint';
 import EsriPoint from '@arcgis/core/geometry/Point';
 import EsriPolygon from '@arcgis/core/geometry/Polygon';
@@ -68,6 +69,7 @@ export {
     EsriFeatureFilter,
     EsriFeatureLayer,
     EsriField,
+    EsriGeometry,
     EsriGeometryFromJson,
     EsriGeometryService,
     EsriGraphic,

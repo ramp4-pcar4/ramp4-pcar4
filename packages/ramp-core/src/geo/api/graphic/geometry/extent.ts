@@ -2,6 +2,7 @@
 
 import {
     BaseGeometry,
+    GeoJsonGeomType,
     GeometryType,
     Point,
     Polygon,
@@ -10,6 +11,8 @@ import {
     IdDef,
     RampExtentConfig
 } from '@/geo/api';
+import { EsriExtent } from '@/geo/esri';
+import GeoJson from 'geojson';
 
 export class Extent extends BaseGeometry {
     // doing things a bit different for Extents.
@@ -137,6 +140,75 @@ export class Extent extends BaseGeometry {
             this.ymin === e.ymin &&
             this.xmax === e.xmax &&
             this.ymax === e.ymax
+        );
+    }
+
+    static fromESRI(esriExtent: EsriExtent, id?: number | string): Extent {
+        return Extent.fromParams(
+            id,
+            esriExtent.xmin,
+            esriExtent.ymin,
+            esriExtent.xmax,
+            esriExtent.ymax,
+            SpatialReference.fromESRI(esriExtent.spatialReference)
+        );
+    }
+
+    toESRI(): EsriExtent {
+        return new EsriExtent({
+            xmin: this.xmin,
+            ymin: this.ymin,
+            xmax: this.xmax,
+            ymax: this.ymax,
+            spatialReference: this.sr.toESRI()
+        });
+    }
+
+    static fromArcServer(serverExtent: any, id?: number | string): Extent {
+        return Extent.fromESRI(EsriExtent.fromJSON(serverExtent), id);
+    }
+
+    // TODO for GeoJSON, we are converting to Polygon.
+    //      However the spec also supports bbox string
+    //      Not sure which is best. Have a second set of to/from functions?
+
+    static fromGeoJSON(
+        geoJsonExtent: GeoJson.Polygon,
+        id?: number | string
+    ): Extent {
+        if (geoJsonExtent.coordinates.length !== 5) {
+            throw new Error(
+                'Extent expected a four vertex polygon from GeoJSON'
+            );
+        }
+
+        // init min and max at start vertex, then update against other 3 verticies.
+        // vertex 4 == vertex 0
+        const pMin = geoJsonExtent.coordinates[0].slice();
+        const pMax = pMin.slice();
+        [1, 2, 3].forEach(i => {
+            [0, 1].forEach(j => {
+                const pt = geoJsonExtent.coordinates[i];
+                if (pMin[j] > pt[j]) {
+                    pMin[j] = pt[j];
+                }
+                if (pMax[j] < pt[j]) {
+                    pMax[j] = pt[j];
+                }
+            });
+        });
+
+        return new Extent(
+            id,
+            pMin,
+            pMax,
+            SpatialReference.fromGeoJSON(geoJsonExtent.crs)
+        );
+    }
+
+    toGeoJSON(): GeoJson.Polygon {
+        return <GeoJson.Polygon>(
+            this.geoJsonFactory(GeoJsonGeomType.POLYGON, this.toPolygonArray())
         );
     }
 }

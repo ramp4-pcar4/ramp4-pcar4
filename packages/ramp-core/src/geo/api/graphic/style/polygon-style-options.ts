@@ -7,6 +7,11 @@ import {
     PolygonStyleParams,
     StyleOptions
 } from '@/geo/api';
+import {
+    EsriColour,
+    EsriSimpleFillSymbol,
+    EsriSimpleLineSymbol
+} from '@/geo/esri';
 
 export class PolygonStyleOptions extends StyleOptions {
     protected _outlineStyle: LineStyleOptions;
@@ -70,5 +75,21 @@ export class PolygonStyleOptions extends StyleOptions {
     /** Returns the outline style options */
     get outlineStyleOptions(): LineStyleOptions {
         return this._outlineStyle;
+    }
+
+    toESRI(): EsriSimpleFillSymbol {
+        const lineSymbol = new EsriSimpleLineSymbol();
+        lineSymbol.color = new EsriColour(this.outlineStyleOptions.colour);
+        lineSymbol.width = this.outlineStyleOptions.width;
+        lineSymbol.style = this.outlineStyleOptions.style;
+
+        const fillColour = new EsriColour(this.fillColour);
+
+        const fillSymbol = new EsriSimpleFillSymbol();
+        fillSymbol.style = this.fillStyle;
+        fillSymbol.color = fillColour;
+        fillSymbol.outline = lineSymbol;
+
+        return fillSymbol;
     }
 }

@@ -1,15 +1,20 @@
 // TODO add proper documentation
 
 import {
+    GeoJsonGeomType,
     GeometryType,
     LineString,
     MultiPoint,
     Point,
+    PointSet,
+    SpatialReference,
     SrDef,
     IdDef
 } from '@/geo/api';
+import { EsriPolygon } from '@/geo/esri';
+import GeoJson from 'geojson';
 
-export class LinearRing extends LineString {
+export class LinearRing extends PointSet {
     /**
      * Constructs a LinearRing from the given source of a line. Will close the line if it's not already closed
      *
@@ -33,17 +38,7 @@ export class LinearRing extends LineString {
     constructor(id: IdDef, listOfXY: Array<object>, sr?: SrDef);
     constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef);
     constructor(id: IdDef, geometry: any, sr?: SrDef, raw?: boolean) {
-        if (raw) {
-            // the first IF here is a bit silly; required to satisfy typescript (as we are extending LineString).
-            // we could adjust the constructor guides to avoid it, but then would confuse users of IDEs in thinking the raw flag
-            // is applicable to non-raw array vertex formats
-            super(id, <Array<Array<number>>>geometry, sr, true);
-        } else if (geometry instanceof MultiPoint) {
-            // LineString & LinearRing classes will also satisfy instanceof
-            super(id, geometry);
-        } else {
-            super(id, geometry, sr);
-        }
+        super(id, geometry, sr, raw);
 
         // apply closing logic to the now-constructed internal geometry
         LinearRing.closeRing(this.rawArray);
@@ -94,5 +89,41 @@ export class LinearRing extends LineString {
             // 0 = x, 1 = y
             points.push(first.slice());
         }
+    }
+
+    static fromESRI(esriPoly: EsriPolygon, id?: number | string): LinearRing {
+        // TODO warn/error if poly has more than one ring?
+        return new LinearRing(
+            id,
+            esriPoly.rings[0],
+            SpatialReference.fromESRI(esriPoly.spatialReference),
+            true
+        );
+    }
+
+    toESRI(): EsriPolygon {
+        return new EsriPolygon({
+            rings: [this.toArray()],
+            spatialReference: this.sr.toESRI()
+        });
+    }
+
+    static fromGeoJSON(
+        geoJsonLine: GeoJson.LineString,
+        id?: number | string
+    ): LinearRing {
+        return new LinearRing(
+            id,
+            geoJsonLine.coordinates,
+            SpatialReference.fromGeoJSON(geoJsonLine.crs),
+            true
+        );
+    }
+
+    toGeoJSON(): GeoJson.Polygon {
+        // GeoJson has no Linear Ring.
+        return <GeoJson.Polygon>(
+            this.geoJsonFactory(GeoJsonGeomType.POLYGON, [this.toArray()])
+        );
     }
 }

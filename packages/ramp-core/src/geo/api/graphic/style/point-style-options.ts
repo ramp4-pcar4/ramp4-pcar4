@@ -1,6 +1,12 @@
 // Style for RAMP Point Graphic
 
 import { PointStyle, PointStyleParams, StyleOptions } from '@/geo/api';
+import {
+    EsriColour,
+    EsriPictureMarkerSymbol,
+    EsriSimpleMarkerSymbol,
+    EsriSymbolFromJson
+} from '@/geo/esri';
 
 export class PointStyleOptions extends StyleOptions {
     // TODO support outlines? can we even do that, or is that a composite symbol?
@@ -43,5 +49,65 @@ export class PointStyleOptions extends StyleOptions {
     /** Returns the specified icon. Can be image url, svg image */
     get icon(): string {
         return this._icon;
+    }
+
+    toESRI(): EsriSimpleMarkerSymbol | EsriPictureMarkerSymbol {
+        let symbol: EsriSimpleMarkerSymbol | EsriPictureMarkerSymbol;
+
+        if (this.style === 'ICON') {
+            if (PointStyleOptions.isImageUrl(this.icon)) {
+                // TODO: discuss how to handle the width / height issue when passing in an icon
+                symbol = new EsriPictureMarkerSymbol();
+                symbol.url = this.icon;
+                symbol.width = this.width;
+                symbol.height = this.height;
+                symbol.xoffset = this.xOffset;
+                symbol.yoffset = this.yOffset;
+            } else {
+                symbol = new EsriSimpleMarkerSymbol();
+
+                // TODO decide if we want to add PATH style support
+                // symbol.path= this.icon;
+
+                symbol.color = new EsriColour(this.colour);
+                symbol.size = this.width;
+                symbol.xoffset = this.xOffset;
+                symbol.yoffset = this.yOffset;
+            }
+        } else {
+            const options = {
+                color: this.colour,
+                size: this.width,
+                xoffset: this.xOffset,
+                yoffset: this.yOffset,
+                type: 'esriSMS',
+                style: this.style as PointStyle,
+                outline: {
+                    color: [0, 0, 0],
+                    width: 1,
+                    type: 'esriSLS',
+                    style: 'esriSLSSolid'
+                }
+            };
+            symbol = EsriSymbolFromJson(options) as EsriSimpleMarkerSymbol;
+        }
+
+        return symbol;
+    }
+
+    /**
+     * Check to see if text provided is a valid image / data URL based on extension type or format.
+     *
+     * @function isImageUrl
+     * @param {String} text                      string to be matched against valid image types / data url format
+     * @returns {Boolean}                        true if valid image extension
+     */
+    static isImageUrl(text: string): boolean {
+        return (
+            !!text.match(/\.(jpeg|jpg|gif|png|swf|svg)$/) ||
+            !!text.match(
+                /^\s*data:([a-z]+\/[a-z0-9\-\+]+(;[a-z\-]+\=[a-z0-9\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i
+            )
+        );
     }
 }

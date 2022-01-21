@@ -10,6 +10,7 @@ export * from './graphic/hover';
 export * from './graphic/geometry/spatial-reference';
 export * from './graphic/geometry/base-geometry';
 export * from './graphic/geometry/point';
+export * from './graphic/geometry/point-set';
 export * from './graphic/geometry/multi-point';
 export * from './graphic/geometry/line-string';
 export * from './graphic/geometry/multi-line-string';

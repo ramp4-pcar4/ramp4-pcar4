@@ -150,6 +150,16 @@ export enum DataFormat {
     UNKNOWN = 'unknown'
 }
 
+// GeoJson geometry types
+export enum GeoJsonGeomType {
+    POINT = 'Point',
+    MULTIPOINT = 'MultiPoint',
+    LINESTRING = 'LineString',
+    MULTILINESTRING = 'MultiLineString',
+    POLYGON = 'Polygon',
+    MULTIPOLYGON = 'MultiPolygon'
+}
+
 export enum IdentifyMode {
     /**
      * Runs the identify query and pipes the available results through the `identify` API endpoint.

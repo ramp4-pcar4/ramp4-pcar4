@@ -30,11 +30,8 @@ import {
 } from '@/geo/api';
 import { EsriGraphic, EsriLOD, EsriMapView } from '@/geo/esri';
 import { LayerStore } from '@/store/modules/layer';
-import { LegendStore } from '@/fixtures/legend/store';
 import { MapCaptionAPI } from './caption';
 import { markRaw } from 'vue';
-
-// TODO bring in the map actions code
 
 export class MapAPI extends CommonMapAPI {
     // NOTE unlike ESRI3, the map view doesnt have a custom event, it uses property watches.
@@ -101,9 +98,7 @@ export class MapAPI extends CommonMapAPI {
                 lods: <Array<EsriLOD>>config.lods,
                 rotationEnabled: false // TODO make rotation a config option?
             },
-            spatialReference: this.$iApi.geo.utils.geom._convSrToEsri(
-                this._rampSR
-            ), // internal, so we will sneak an internal call
+            spatialReference: this._rampSR.toESRI(),
             extent: config.extent,
             navigation: {
                 browserTouchPanEnabled: false
@@ -604,9 +599,7 @@ export class MapAPI extends CommonMapAPI {
      */
     getExtent(): Extent {
         if (this.esriView) {
-            return this.$iApi.geo.utils.geom._convEsriExtentToRamp(
-                this.esriView.extent
-            );
+            return Extent.fromESRI(this.esriView.extent);
         } else {
             this.noMapErr();
             return Extent.fromParams('i_am_error', 0, 1, 0, 1); // default fake value. avoids us having undefined checks everywhere.
@@ -676,7 +669,7 @@ export class MapAPI extends CommonMapAPI {
      */
     screenPointToMapPoint(screenPoint: ScreenPoint): Point {
         if (this.esriView) {
-            return this.$iApi.geo.utils.geom._convEsriPointToRamp(
+            return Point.fromESRI(
                 this.esriView.toMap({
                     x: screenPoint.screenX,
                     y: screenPoint.screenY
@@ -697,9 +690,7 @@ export class MapAPI extends CommonMapAPI {
      */
     mapPointToScreenPoint(mapPoint: Point): ScreenPoint {
         if (this.esriView) {
-            const esriPoint = this.esriView.toScreen(
-                this.$iApi.geo.utils.geom._convPointToEsri(mapPoint)
-            );
+            const esriPoint = this.esriView.toScreen(mapPoint.toESRI());
             return { screenX: esriPoint.x, screenY: esriPoint.y };
         } else {
             this.noMapErr();
