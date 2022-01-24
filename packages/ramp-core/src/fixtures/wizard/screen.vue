@@ -518,7 +518,6 @@ export default defineComponent({
 
             // add layer to map
             this.$iApi.geo.map.addLayer(layer);
-            this.$iApi.$vApp.$store.set(LayerStore.addLayers, [layer]);
 
             this.goNext = false;
             this.goToStep(WizardStep.UPLOAD);
