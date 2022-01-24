@@ -6,6 +6,7 @@ import { HelpAPI } from '@/fixtures/help/api/help';
 import { GridAPI } from '@/fixtures/grid/api/grid';
 import { WizardAPI } from '@/fixtures/wizard/api/wizard';
 import { LegendAPI } from '@/fixtures/legend/api/legend';
+import { LayerReorderAPI } from '@/fixtures/layer-reorder/api/layer-reorder';
 import { LegendStore } from '@/fixtures/legend/store';
 import { LegendGroup } from '@/fixtures/legend/store/legend-defs';
 import { GridStore, GridAction } from '@/fixtures/grid/store';
@@ -214,6 +215,12 @@ export enum GlobalEvents {
     PANEL_OPENED = 'panel/opened',
 
     /**
+     * Fires when a request is issued to open the Layer Reorder panel.
+     * Payload: none
+     */
+    REORDER_OPEN = 'reorder/open',
+
+    /**
      * Fires when a request is issued to toggle (show if hidden, hide if showing) layer settings.
      * Payload: `(uid: string)`
      */
@@ -250,6 +257,7 @@ enum DefEH {
     TOGGLE_HELP = 'toggles_help_panel',
     TOGGLE_GRID = 'toggles_grid_panel',
     OPEN_WIZARD = 'opens_wizard_panel',
+    OPEN_LAYER_REORDER = 'opens_layer_reorder_panel',
     UPDATE_LEGEND_LAYER_REGISTER = 'updates_legend_layer_register',
     UPDATE_LEGEND_WIZARD_ADDED = 'updates_legend_wizard_added',
     UPDATE_LEGEND_LAYER_RELOAD = 'updates_legend_layer_reload',
@@ -511,6 +519,7 @@ export class EventAPI extends APIScope {
                 DefEH.TOGGLE_HELP,
                 DefEH.TOGGLE_GRID,
                 DefEH.OPEN_WIZARD,
+                DefEH.OPEN_LAYER_REORDER,
                 DefEH.UPDATE_LEGEND_LAYER_REGISTER,
                 DefEH.UPDATE_LEGEND_WIZARD_ADDED,
                 DefEH.UPDATE_LEGEND_LAYER_RELOAD,
@@ -630,6 +639,20 @@ export class EventAPI extends APIScope {
                 };
                 this.$iApi.event.on(
                     GlobalEvents.WIZARD_OPEN,
+                    zeHandler,
+                    handlerName
+                );
+                break;
+            case DefEH.OPEN_LAYER_REORDER:
+                zeHandler = () => {
+                    const reorderFixture: LayerReorderAPI =
+                        this.$iApi.fixture.get('layer-reorder');
+                    if (reorderFixture) {
+                        reorderFixture.openLayerReorder();
+                    }
+                };
+                this.$iApi.event.on(
+                    GlobalEvents.REORDER_OPEN,
                     zeHandler,
                     handlerName
                 );

@@ -171,6 +171,7 @@ export class FixtureAPI extends APIScope {
                 'geosearch',
                 'grid',
                 'help',
+                'layer-reorder',
                 'legend',
                 'mapnav',
                 'metadata',

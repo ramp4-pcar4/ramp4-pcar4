@@ -87,6 +87,7 @@ importers:
       vue-property-decorator: ^10.0.0-rc.2
       vue-slider-component: next
       vue-tippy: next
+      vuedraggable: next
       vuepress: ~1.8.2
       vuex: ^4.0.0
       vuex-pathify: ~1.4.1
@@ -131,6 +132,7 @@ importers:
       vue-property-decorator: 10.0.0-rc.3_02f8eea4846df4e4acf82e1a0ada6ce8
       vue-slider-component: 4.0.0-beta.4_02f8eea4846df4e4acf82e1a0ada6ce8
       vue-tippy: 6.0.0-alpha.44_vue@3.1.5
+      vuedraggable: 4.1.0_vue@3.1.5
       vuex: 4.0.2_vue@3.1.5
       vuex-pathify: 1.4.5_vue@3.1.5+vuex@4.0.2
       webpack: 4.41.3
@@ -14580,6 +14582,15 @@ packages:
       '@vue/compiler-dom': 3.1.5
       '@vue/runtime-dom': 3.1.5
       '@vue/shared': 3.1.5
+    dev: false
+
+  /vuedraggable/4.1.0_vue@3.1.5:
+    resolution: {integrity: sha512-FU5HCWBmsf20GpP3eudURW3WdWTKIbEIQxh9/8GE806hydR9qZqRRxRE3RjqX7PkuLuMQG/A7n3cfj9rCEchww==}
+    peerDependencies:
+      vue: ^3.0.1
+    dependencies:
+      sortablejs: 1.14.0
+      vue: 3.1.5
     dev: false
 
   /vuepress-html-webpack-plugin/3.2.0_webpack@4.41.3:

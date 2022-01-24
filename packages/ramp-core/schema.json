@@ -575,6 +575,11 @@
                 },
                 "state": {
                     "$ref": "#/$defs/initialLayerSettings"
+                },
+                "cosmetic": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Indicates if this layer is a cosmetic supporting layer which will not be considered for general user interaction."
                 }
             },
             "required": ["id", "layerType", "url"],
