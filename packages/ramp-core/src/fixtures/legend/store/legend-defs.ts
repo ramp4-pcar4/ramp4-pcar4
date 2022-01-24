@@ -1,6 +1,5 @@
 import { DefPromise, LayerType, LegendSymbology, TreeNode } from '@/geo/api';
 import { LayerInstance } from '@/api/internal';
-import { legend } from '.';
 
 /**
  * Function definitions for legend item wrapper objects.
@@ -223,6 +222,21 @@ export class LegendEntry extends LegendItem {
                 this._layerParentId = layer.isSublayer
                     ? layer.parentLayer!.id
                     : undefined;
+
+                // remove controls if layer doesn't support them
+                let controlsToRemove: Array<string> = [];
+                if (!layer.supportsFeatures) {
+                    controlsToRemove.push(Controls.Datatable);
+                }
+                if (layer.extent === undefined) {
+                    controlsToRemove.push(Controls.BoundaryZoom);
+                }
+                controlsToRemove.forEach(control => {
+                    let idx: number = this._controls.indexOf(control);
+                    if (idx !== -1) {
+                        this._controls.splice(idx, 1);
+                    }
+                });
 
                 this.checkVisibilityRules();
                 if (!layer.visibility) {

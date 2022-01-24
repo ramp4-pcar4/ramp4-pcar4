@@ -41,7 +41,6 @@ export class AttribLayer extends CommonLayer {
     geomType: GeometryType;
     esriFields: Array<EsriField>;
     fieldList: string; // list of field names, useful for numerous esri api calls
-    extent: Extent | undefined;
     attLoader: AttributeLoaderBase | undefined;
     renderer: BaseRenderer | undefined;
     serviceUrl: string;
@@ -132,7 +131,12 @@ export class AttribLayer extends CommonLayer {
         this.scaleSet.minScale = sData.effectiveMinScale || sData.minScale;
         this.scaleSet.maxScale = sData.effectiveMaxScale || sData.maxScale;
         this.supportsFeatures = false; // saves us from having to keep comparing type to 'Feature Layer' on the client
-        this.extent = sData.extent; // TODO might need to cast/fromJson to a proper esri object
+        this.extent = sData.extent
+            ? this.$iApi.geo.utils.geom._convEsriExtentToRamp(
+                  sData.extent,
+                  this.id + '_extent'
+              )
+            : undefined;
 
         if (sData.type === 'Feature Layer') {
             this.supportsFeatures = true;

@@ -1,8 +1,8 @@
 <template>
     <div @click.stop @mouseover.stop class="options display-none cursor-auto">
         <dropdown-menu
-            class="relative"
-            position="left-start"
+            class="flex-shrink-0"
+            position="bottom-start"
             :tooltip="$t('legend.entry.options')"
             tooltip-placement="left"
         >
@@ -84,7 +84,25 @@
                 </svg>
                 {{ $t('legend.entry.controls.symbology') }}
             </a>
-            <!-- Remove -->
+            <!-- boundary zoom -->
+            <a
+                href="#"
+                class="flex leading-snug items-center w-auto"
+                :class="{
+                    disabled: !legendItem._controlAvailable(`boundaryZoom`)
+                }"
+                @click="zoomToLayerBoundary"
+            >
+                <svg class="fill-current w-18 h-18 mr-10" viewBox="0 0 24 24">
+                    <path
+                        d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                    />
+                    <path d="M0 0h24v24H0V0z" fill="none" />
+                    <path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z" />
+                </svg>
+                {{ $t('legend.entry.controls.boundaryzoom') }}
+            </a>
+            <!-- remove -->
             <a
                 href="#"
                 class="flex leading-snug items-center w-auto"
@@ -100,7 +118,7 @@
                 </svg>
                 {{ $t('legend.entry.controls.remove') }}
             </a>
-            <!-- Reload -->
+            <!-- reload -->
             <a
                 href="#"
                 class="flex leading-snug items-center w-auto"
@@ -175,6 +193,15 @@ export default defineComponent({
                     layer: 'Sample Layer Name',
                     url: 'https://ryan-coulson.com/RAMPMetadataDemo.html'
                 });
+            }
+        },
+
+        /**
+         * Zoom to the boundary of layer
+         */
+        zoomToLayerBoundary() {
+            if (this.legendItem!._controlAvailable(Controls.BoundaryZoom)) {
+                this.legendItem?.layer?.zoomToLayerBoundary();
             }
         },
 

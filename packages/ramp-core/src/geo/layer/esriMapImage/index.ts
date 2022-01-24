@@ -126,6 +126,11 @@ class MapImageLayer extends AttribLayer {
         this.isDynamic =
             this.esriLayer.capabilities.exportMap.supportsDynamicLayers;
 
+        this.extent = this.$iApi.geo.utils.geom._convEsriExtentToRamp(
+            this.esriLayer.fullExtent,
+            this.id + '_extent'
+        );
+
         // TODO the whole "configIsComplete" logic in RAMP2 was never invoked by the client.
         //      Don't see the point in re-adding it here.
 

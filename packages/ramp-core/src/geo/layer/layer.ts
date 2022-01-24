@@ -388,6 +388,7 @@ export class LayerInstance extends APIScope {
     esriLayer: __esri.Layer | undefined;
     esriSubLayer: __esri.Sublayer | undefined; // used only by sublayers
     esriView: __esri.LayerView | undefined;
+    extent: Extent | undefined; // layer extent
 
     protected _parentLayer: LayerInstance | undefined;
     protected _sublayers: Array<LayerInstance>;
@@ -567,6 +568,15 @@ export class LayerInstance extends APIScope {
      * @returns {Promise} resolves when map has finished zooming
      */
     zoomToVisibleScale(): Promise<void> {
+        return Promise.resolve();
+    }
+
+    /**
+     * Cause the map to zoom to this layer's boundary extent
+     *
+     * @returns {Promise} resolves when map has finished zooming
+     */
+    zoomToLayerBoundary(): Promise<void> {
         return Promise.resolve();
     }
 
