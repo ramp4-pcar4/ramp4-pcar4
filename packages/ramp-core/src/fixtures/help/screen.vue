@@ -29,7 +29,7 @@ import HelpSectionV from './section.vue';
 
 // TODO check if we actually need this library. Does vue have its own internal web request library?
 import axios from 'axios';
-import marked from 'marked';
+import { marked } from 'marked';
 
 export default defineComponent({
     name: 'HelpScreenV',
