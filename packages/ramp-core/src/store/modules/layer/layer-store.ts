@@ -159,6 +159,9 @@ const mutations = {
     ) => {
         state.layers.splice(state.layers.indexOf(layer), 1);
         state.layers.splice(index, 0, layer);
+
+        // need to reassign list to get reactivity to trigger
+        state.layers = [...state.layers];
     },
     REMOVE_LAYER: (state: LayerState, value: LayerInstance) => {
         // copy to new array so watchers will have a reference to the old value
