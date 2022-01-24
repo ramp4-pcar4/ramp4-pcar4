@@ -238,7 +238,6 @@ let config = {
         layers: [
             {
                 id: 'WaterQuantity',
-                name: 'Water quantity parent + CO2',
                 layerType: 'esriMapImage',
                 url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                 layerEntries: [
@@ -371,7 +370,13 @@ let config = {
                 }
             },
             appbar: {
-                items: ['legend', 'geosearch', 'basemap', 'export-v1'],
+                items: [
+                    'legend',
+                    'geosearch',
+                    'basemap',
+                    'export-v1',
+                    'layer-reorder'
+                ],
                 temporaryButtons: ['details', 'grid', 'settings']
             },
             details: {
@@ -402,6 +407,14 @@ let config = {
                 spatialReference: {
                     wkid: 102100,
                     latestWkid: 3857
+                }
+            },
+            caption: {
+                mouseCoords: {
+                    formatter: 'WEB_MERCATOR'
+                },
+                scaleBar: {
+                    imperialScale: true
                 }
             },
             lods: RAMP.GEO.defaultLODs(RAMP.GEO.defaultTileSchemas()[1]), // idx 1 = mercator
@@ -606,7 +619,6 @@ let config = {
         layers: [
             {
                 id: 'WaterQuantity',
-                name: 'Water quantity parent',
                 layerType: 'esriMapImage',
                 url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                 layerEntries: [
@@ -615,6 +627,14 @@ let config = {
                         name: 'Water quantity child',
                         state: {
                             opacity: 1,
+                            visibility: true
+                        }
+                    },
+                    {
+                        index: 9,
+                        name: 'Carbon monoxide emissions by facility',
+                        state: {
+                            opacity: 0.5,
                             visibility: true
                         }
                     }
@@ -652,6 +672,7 @@ let config = {
                     opacity: 0.8,
                     visibility: true
                 },
+                tolerance: 10,
                 customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
             },
             {
@@ -697,8 +718,7 @@ let config = {
                             name: 'Visibility Set',
                             exclusiveVisibility: [
                                 {
-                                    layerId: 'CleanAir',
-                                    name: 'Clean Air in Set'
+                                    layerId: 'CleanAir'
                                 },
                                 {
                                     name: 'Group in Set',
@@ -707,6 +727,11 @@ let config = {
                                             layerId: 'WaterQuantity',
                                             name: 'Water Quantity in Nested Group',
                                             entryIndex: 1
+                                        },
+                                        {
+                                            layerId: 'WaterQuantity',
+                                            name: 'CO2 in Nested Group',
+                                            entryIndex: 9
                                         },
                                         {
                                             layerId: 'WaterQuality',
@@ -725,8 +750,25 @@ let config = {
                 }
             },
             appbar: {
-                items: ['legend', 'geosearch', 'basemap', 'export-v1'],
+                items: [
+                    'legend',
+                    'geosearch',
+                    'basemap',
+                    'export-v1',
+                    'layer-reorder'
+                ],
                 temporaryButtons: ['details', 'grid', 'settings']
+            },
+            details: {
+                items: [
+                    {
+                        id: 'WaterQuantity'
+                    },
+                    {
+                        id: 'WFSLayer',
+                        template: 'WFSLayer-Custom'
+                    }
+                ]
             },
             mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
             'export-v1-title': {

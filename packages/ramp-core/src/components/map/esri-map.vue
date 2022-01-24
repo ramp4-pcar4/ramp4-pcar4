@@ -167,14 +167,6 @@ export default defineComponent({
                                     this.map.addLayer(layer!);
                                 }
 
-                                // add layers to layer store
-                                // TODO need to revisit https://github.com/ramp4-pcar4/ramp4-pcar4/discussions/328
-                                //      as we may be causing lots of problems putting these objects in vuex store.
-                                this.$iApi.$vApp.$store.set(
-                                    LayerStore.addLayers,
-                                    [layer]
-                                );
-
                                 resolve(layer!);
                             }
                         );
