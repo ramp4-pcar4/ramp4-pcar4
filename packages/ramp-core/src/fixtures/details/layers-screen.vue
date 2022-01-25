@@ -8,34 +8,39 @@
             <close @click="panel.close()"></close>
         </template>
         <template #content>
-            <div class="p-5">
-                {{
-                    $t('details.layers.found', {
-                        numResults: getPayloadTotalCount,
-                        numLayers: payload.length
-                    })
-                }}
-            </div>
-            <div
-                class="
-                    px-20
-                    py-10
-                    text-md
-                    flex
-                    hover:bg-gray-200
-                    cursor-pointer
-                "
-                v-for="(item, idx) in layerResults"
-                :key="`${item ? item.uid : 'loading'}-${idx}`"
-                @click="item && openResult(idx)"
-            >
-                <div v-truncate>
-                    {{ layerInfo(idx) || $t('details.layers.loading') }}
+            <div class="layer-results">
+                <div class="p-5">
+                    {{
+                        $t('details.layers.found', {
+                            numResults: getPayloadTotalCount,
+                            numLayers: payload.length
+                        })
+                    }}
                 </div>
-                <div class="flex-auto"></div>
-                <!-- Display the count if item exists, else display the loading spinner -->
-                <div v-if="item" class="px-5">{{ item.items.length }}</div>
-                <div v-else class="animate-spin spinner h-20 w-20 px-5"></div>
+                <button
+                    class="
+                        px-20
+                        py-10
+                        text-md
+                        flex
+                        hover:bg-gray-200
+                        cursor-pointer
+                    "
+                    v-for="(item, idx) in layerResults"
+                    :key="`${item ? item.uid : 'loading'}-${idx}`"
+                    @click="item && openResult(idx)"
+                >
+                    <div v-truncate>
+                        {{ layerInfo(idx) || $t('details.layers.loading') }}
+                    </div>
+                    <div class="flex-auto"></div>
+                    <!-- Display the count if item exists, else display the loading spinner -->
+                    <div v-if="item" class="px-5">{{ item.items.length }}</div>
+                    <div
+                        v-else
+                        class="animate-spin spinner h-20 w-20 px-5"
+                    ></div>
+                </button>
             </div>
         </template>
     </panel-screen>
@@ -136,4 +141,10 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+div.layer-results {
+    button {
+        width: 100%;
+    }
+}
+</style>

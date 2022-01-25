@@ -7,8 +7,11 @@
             <close @click="panel.close()"></close>
         </template>
         <template #content>
-            <div v-if="identifyResult.items.length > 0">
-                <div
+            <div
+                class="identify-results"
+                v-if="identifyResult.items.length > 0"
+            >
+                <button
                     class="
                         flex
                         px-10
@@ -34,7 +37,7 @@
                             'Identify Result ' + (idx + 1)
                         }}
                     </span>
-                </div>
+                </button>
             </div>
             <div v-else>{{ $t('details.results.empty') }}</div>
         </template>
@@ -120,4 +123,10 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+div.identify-results {
+    button {
+        width: 100%;
+    }
+}
+</style>
