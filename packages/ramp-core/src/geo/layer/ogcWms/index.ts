@@ -318,9 +318,7 @@ export default class WmsLayer extends CommonLayer {
         const layers = layerList.join(',');
 
         // tear off any decimals from the screenpoint coords.
-        const screenPoint = map.esriView.toScreen(
-            this.$iApi.geo.utils.geom._convPointToEsri(point)
-        );
+        const screenPoint = map.esriView.toScreen(point.toESRI());
         const intX = Math.floor(screenPoint.x);
         const intY = Math.floor(screenPoint.y);
 

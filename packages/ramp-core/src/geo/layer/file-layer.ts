@@ -13,6 +13,7 @@ import {
 } from '@/api/internal';
 import {
     DataFormat,
+    Extent,
     GeometryType,
     GetGraphicParams,
     GetGraphicResult,
@@ -347,10 +348,7 @@ export class FileLayer extends AttribLayer {
 
         // TODO will need to calculate this as esri removed their library to calculate it
         // TODO check if layer auto-gens this in .fullExtent
-        this.extent = this.$iApi.geo.utils.geom._convEsriExtentToRamp(
-            l.fullExtent,
-            this.id + '_extent'
-        );
+        this.extent = Extent.fromESRI(l.fullExtent, this.id + '_extent');
 
         this.esriFields = l.fields;
         this.nameField = l.displayField;

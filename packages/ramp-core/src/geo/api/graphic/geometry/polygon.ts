@@ -2,15 +2,20 @@
 
 import {
     BaseGeometry,
+    GeoJsonGeomType,
     GeometryType,
     LinearRing,
     LineString,
     MultiLineString,
     MultiPoint,
     Point,
+    PointSet,
+    SpatialReference,
     SrDef,
     IdDef
 } from '@/geo/api';
+import { EsriPolygon } from '@/geo/esri';
+import GeoJson from 'geojson';
 
 export class Polygon extends BaseGeometry {
     protected rawArray: Array<Array<Array<number>>>;
@@ -44,7 +49,7 @@ export class Polygon extends BaseGeometry {
     constructor(id: IdDef, listOfMultiPoints: Array<MultiPoint>, sr?: SrDef);
     constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef);
     // from arrays of verticies (i.e. one line) that can be interpreted as a single-ring polygon
-    // TODO for now, not allowing these as it increases parsing logic quite a bit.
+    // for now, not allowing these as it increases parsing logic quite a bit.
     // constructor(id: IdDef, polygon: Array<Point>, sr?: SpatialReference)
     // constructor(id: IdDef, polygon: Array<Array<number>>, sr?: SpatialReference)
     // constructor(id: IdDef, polygon: Array<object>, sr?: SpatialReference)
@@ -92,18 +97,16 @@ export class Polygon extends BaseGeometry {
         if (input instanceof Polygon) {
             // fast return, it's already pure
             return input.toArray();
-        } else if (input instanceof LinearRing) {
-            return [input.toArray()];
         } else if (input instanceof MultiLineString) {
             arrOfLines = input.toArray();
-        } else if (input instanceof MultiPoint) {
-            // will also handle LineString
+        } else if (input instanceof PointSet) {
+            // will also handle LineString, MultiPoint, LinearRing
             arrOfLines = [input.toArray()];
         } else if (Array.isArray(input)) {
             if (input.length === 0) {
                 throw new Error('no rings provided');
             }
-            arrOfLines = input.map(l => MultiPoint.parsePointSet(l));
+            arrOfLines = input.map(l => PointSet.parsePointSet(l));
         } else {
             throw new Error('invalid input format for parsePolygon');
         }
@@ -118,5 +121,39 @@ export class Polygon extends BaseGeometry {
     ): Array<Array<Array<number>>> {
         // speed tests show loops & slice is 3x faster than JSON parse/stringify
         return a.map(l => l.map(p => p.slice()));
+    }
+
+    static fromESRI(esriPoly: EsriPolygon, id?: number | string): Polygon {
+        return new Polygon(
+            id,
+            esriPoly.rings,
+            SpatialReference.fromESRI(esriPoly.spatialReference),
+            true
+        );
+    }
+
+    toESRI(): EsriPolygon {
+        return new EsriPolygon({
+            rings: this.toArray(),
+            spatialReference: this.sr.toESRI()
+        });
+    }
+
+    static fromGeoJSON(
+        geoJsonPoly: GeoJson.Polygon,
+        id?: number | string
+    ): Polygon {
+        return new Polygon(
+            id,
+            geoJsonPoly.coordinates,
+            SpatialReference.fromGeoJSON(geoJsonPoly.crs),
+            true
+        );
+    }
+
+    toGeoJSON(): GeoJson.Polygon {
+        return <GeoJson.Polygon>(
+            this.geoJsonFactory(GeoJsonGeomType.POLYGON, this.toArray())
+        );
     }
 }

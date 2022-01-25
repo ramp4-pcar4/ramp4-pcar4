@@ -2,16 +2,21 @@
 
 import {
     BaseGeometry,
+    GeoJsonGeomType,
     GeometryType,
     LinearRing,
     LineString,
     MultiLineString,
     MultiPoint,
     Point,
+    PointSet,
     Polygon,
+    SpatialReference,
     SrDef,
     IdDef
 } from '@/geo/api';
+import { EsriPolygon } from '@/geo/esri';
+import GeoJson from 'geojson';
 
 export class MultiPolygon extends BaseGeometry {
     protected rawArray: Array<Array<Array<Array<number>>>>;
@@ -114,9 +119,9 @@ export class MultiPolygon extends BaseGeometry {
             return [input.toArray()];
         } else if (
             input instanceof MultiLineString ||
-            input instanceof MultiPoint
+            input instanceof PointSet
         ) {
-            // MultiPoint will also be true for LineString and LinearRing
+            // PointSet will also be true for LineString, LinearRing, MultiPoint
             // use polygon parser to ensure rings are closed
             return [Polygon.parsePolygon(input)];
         } else if (Array.isArray(input)) {
@@ -136,5 +141,48 @@ export class MultiPolygon extends BaseGeometry {
         // speed tests show loops & slice is 3x faster than JSON parse/stringify
         // array of polyGons to array of Lines(rings) to array of Points, copy each point
         return a.map(g => g.map(l => l.map(p => p.slice())));
+    }
+
+    static fromESRI(esriPoly: EsriPolygon, id?: number | string): MultiPolygon {
+        return new MultiPolygon(
+            id,
+            [esriPoly.rings],
+            SpatialReference.fromESRI(esriPoly.spatialReference),
+            true
+        );
+    }
+
+    toESRI(): EsriPolygon {
+        // esri doesn't support multipolygons. instead all polygons become one polygon that has all the rings in it
+        const ringMerger: Array<Array<Array<number>>> = [];
+
+        // TODO is there a more efficient way to do this than with pushes? use concats?
+        // concat will keep re-copying all known rings with each new polygon encountered, so probably worse
+        this.toArray().forEach(poly => {
+            poly.forEach(ring => ringMerger.push(ring));
+        });
+
+        return new EsriPolygon({
+            rings: ringMerger,
+            spatialReference: this.sr.toESRI()
+        });
+    }
+
+    static fromGeoJSON(
+        geoJsonMultiPoly: GeoJson.MultiPolygon,
+        id?: number | string
+    ): MultiPolygon {
+        return new MultiPolygon(
+            id,
+            geoJsonMultiPoly.coordinates,
+            SpatialReference.fromGeoJSON(geoJsonMultiPoly.crs),
+            true
+        );
+    }
+
+    toGeoJSON(): GeoJson.MultiPolygon {
+        return <GeoJson.MultiPolygon>(
+            this.geoJsonFactory(GeoJsonGeomType.MULTIPOLYGON, this.toArray())
+        );
     }
 }

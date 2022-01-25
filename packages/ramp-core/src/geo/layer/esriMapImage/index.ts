@@ -126,7 +126,7 @@ class MapImageLayer extends AttribLayer {
         this.isDynamic =
             this.esriLayer.capabilities.exportMap.supportsDynamicLayers;
 
-        this.extent = this.$iApi.geo.utils.geom._convEsriExtentToRamp(
+        this.extent = Extent.fromESRI(
             this.esriLayer.fullExtent,
             this.id + '_extent'
         );

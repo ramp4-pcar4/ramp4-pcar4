@@ -1,6 +1,7 @@
 // Baseclass for RAMP Graphic styles
 
 import { StyleParams, ColourParams } from '@/geo/api';
+import { EsriSymbol } from '@/geo/esri';
 
 export class StyleOptions {
     protected _width: number;
@@ -78,5 +79,9 @@ export class StyleOptions {
         };
 
         return `#${colourArray.map(i => toHex(i)).join('')}`;
+    }
+
+    toESRI(): EsriSymbol {
+        throw new Error(`.toESRI not implemented on style type ${this.style}`);
     }
 }

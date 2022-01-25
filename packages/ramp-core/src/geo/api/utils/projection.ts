@@ -264,7 +264,7 @@ export class ProjectionAPI {
         let outSr: string = this.normalizeProj(outputSR);
 
         if (!inSr && geoJson.crs && geoJson.crs.type === 'name') {
-            inSr = RAMP.GEO.geom._parseGeoJsonCrs(geoJson.crs);
+            inSr = SpatialReference.parseGeoJsonCrs(geoJson.crs);
         }
 
         if (!inSr) {

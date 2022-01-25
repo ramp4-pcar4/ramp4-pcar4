@@ -59,9 +59,7 @@ export class OverviewMapAPI extends CommonMapAPI {
                 lods: <Array<EsriLOD>>config.lods,
                 rotationEnabled: false
             },
-            spatialReference: this.$iApi.geo.utils.geom._convSrToEsri(
-                this._rampSR
-            ), // internal, so we will sneak an internal call
+            spatialReference: this._rampSR.toESRI(),
             extent: config.extent
         };
 
@@ -274,9 +272,7 @@ export class OverviewMapAPI extends CommonMapAPI {
      */
     getExtent(): Extent {
         if (this.esriView) {
-            return this.$iApi.geo.utils.geom._convEsriExtentToRamp(
-                this.esriView.extent
-            );
+            return Extent.fromESRI(this.esriView.extent);
         } else {
             this.noMapErr();
             return Extent.fromParams('i_am_error', 0, 1, 0, 1); // default fake value. avoids us having undefined checks everywhere.

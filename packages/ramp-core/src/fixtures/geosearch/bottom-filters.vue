@@ -52,6 +52,8 @@ export default defineComponent({
         // TODO decide if this event handler should go into the default ramp events, or remain as hard-bound to geosearch.
         //      hard-bound means no one outside can un-hook and replace with a different reaction.
         //      going default means the handler function needs to be public / on the geosearch api.
+        //      ^ not entirely true. a person can still unhook the event, however our public documentation will
+        //        have no mention of the event handler name. A person would need to discover it.
         this.$iApi.event.on(
             GlobalEvents.MAP_EXTENTCHANGE,
             this.onMapExtentChange,
