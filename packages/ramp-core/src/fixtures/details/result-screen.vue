@@ -8,8 +8,9 @@
         </template>
         <template #content>
             <div v-if="identifyResult.items.length > 0">
-                <div
+                <button
                     class="
+                        w-full
                         flex
                         px-10
                         py-10
@@ -34,7 +35,7 @@
                             'Identify Result ' + (idx + 1)
                         }}
                     </span>
-                </div>
+                </button>
             </div>
             <div v-else>{{ $t('details.results.empty') }}</div>
         </template>
