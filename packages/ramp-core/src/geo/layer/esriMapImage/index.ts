@@ -85,7 +85,7 @@ class MapImageLayer extends AttribLayer {
             //      play with their online sandbox using a nested service if cant figure it out.
             // let us all stop to appreciate this line of code.
             esriConfig.sublayers = (<Array<RampLayerMapImageLayerEntryConfig>>rampLayerConfig.layerEntries).map((le: RampLayerMapImageLayerEntryConfig) => {
-                // the super call will set up the basics/common stuff like vis, opacity, def query
+                // the super call will set up the basics/common stuff like vis, opacity, def identify
                 // works because the sublayer property scheme is nearly identical to a normal layer
                 const subby: esri.SublayerProperties = super.makeEsriLayerConfig(le);
                 subby.id = le.index;
@@ -153,11 +153,11 @@ class MapImageLayer extends AttribLayer {
         const dummyState = {
             opacity: 1,
             visibility: false,
-            query: false
+            identify: false
         };
         */
 
-        // TODO take another look at the query flag coming in from the config. figure out how we track all identifiable layers
+        // TODO take another look at the identify flag coming in from the config. figure out how we track all identifiable layers
         //      and make sure they get turned off/on according to settings
 
         // subfunction to clone a layerEntries config object.
@@ -189,7 +189,7 @@ class MapImageLayer extends AttribLayer {
                 clone.state = {
                     visiblity: origConfig.visiblity,
                     opacity: origConfig.opacity,
-                    query: origConfig.query
+                    identify: origConfig.identify
                 };
             } else {
                 clone.state = Object.assign({}, dummyState);
@@ -380,12 +380,12 @@ class MapImageLayer extends AttribLayer {
                     if (subC) {
                         mlFC.visibility = subC.state?.visibility || false;
                         mlFC.opacity = subC.state?.opacity || 0;
-                        // mlFC.setQueryable(subC.state.query); // TODO uncomment when done
+                        // mlFC.setQueryable(subC.state.identify); // TODO uncomment when done
                         mlFC.nameField = subC.nameField || mlFC.nameField || '';
                         mlFC.processFieldMetadata(subC.fieldMetadata);
                     } else {
                         // pulling from parent would be cool, but complex. all the promises would need to be resolved in tree-order
-                        // maybe put defaulting here for visible/opac/query
+                        // maybe put defaulting here for visible/opac/identify
                         mlFC.processFieldMetadata();
                     }
 
@@ -457,7 +457,7 @@ class MapImageLayer extends AttribLayer {
     // ----------- LAYER ACTIONS -----------
 
     identify(options: IdentifyParameters): IdentifyResultSet {
-        // NOTE: we are looping over queries on each sublayer instead of running an identify on the entire layer.
+        // NOTE: we are looping over queryFeatures on each sublayer instead of running an identify on the entire layer.
         //       reasons:
         //         the queries allow us to only return OIDs. identify always pulls all the features.
         //         identify returns results defined by server aliases instead of server field names, requiring us to reverse-engineer them
@@ -494,17 +494,17 @@ class MapImageLayer extends AttribLayer {
               )
             : (<Array<MapImageSublayer>>this._sublayers).filter(
                   (sublayer: MapImageSublayer) => {
-                      // query for visible, queryable, on-scale sublayers
+                      // query for visible, identifiable, on-scale sublayers
                       return (
                           sublayer.visibility &&
                           sublayer.supportsFeatures &&
                           !sublayer.scaleSet.isOffScale(map.getScale()).offScale
                       );
-                      // && sublayer.getQuery() // TODO add in query check once implemented
+                      // && sublayer.getQuery() // TODO add in identify check once implemented
                   }
               );
 
-        // early kickout check. all sublayers are one of: not visible; not queryable; off scale; a raster layer
+        // early kickout check. all sublayers are one of: not visible; not identifiable; off scale; a raster layer
         if (activeSublayers.length === 0 || !this.visibility) {
             // return empty result.
             return super.identify(options);

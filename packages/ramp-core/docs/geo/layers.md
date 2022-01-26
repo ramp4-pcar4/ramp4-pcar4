@@ -260,10 +260,10 @@ Options parameter object:
 
 ```js
 {
-    geometry,       // The geometry to query. A RAMP API Geometry. Intersecting features will be returned.
+    geometry,       // The geometry to identify against. A RAMP API Geometry. Intersecting features will be returned.
     returnGeometry, // An optional boolean to indicate the geometry of the result features should also be downloaded. Defaults to `false`
-    sublayerIds,    // An optional array of sublayer uids (string) or server indicies (number) that indicate which sublayers to query for.
-    tolerance;      // An optional integer number to buffer the query geometry. Is only useful if the geometry is a point.
+    sublayerIds,    // An optional array of sublayer uids (string) or server indicies (number) that indicate which sublayers to include in the request.
+    tolerance;      // An optional integer number to buffer the geometry. Is generally only useful if the geometry is a point.
                     // The number represents pixels to buffer by (so 5 would be a 10x10 pixel square around the point at the current map scale level).
 }
 ```

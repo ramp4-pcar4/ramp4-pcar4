@@ -15,7 +15,7 @@ import {
     Extent,
     GeometryType,
     GraphicHitResult,
-    IdentifyMode,
+    // IdentifyMode,
     IdentifyParameters,
     IdentifyResult,
     IdentifyResultSet,
@@ -698,10 +698,9 @@ export class MapAPI extends CommonMapAPI {
         }
     }
 
-    // TODO function to allow a second Map to be shot out, that shares this map but has a different scene
-
-    // TODO basemap generation stuff (might need to be delayed due to lack of dojo dijit)
-
+    // pending https://github.com/ramp4-pcar4/ramp4-pcar4/issues/130
+    // commenting out to avoid any undecided constants being exposed
+    /*
     _identifyMode: IdentifyMode[] = [
         IdentifyMode.Query,
         IdentifyMode.Marker,
@@ -709,6 +708,7 @@ export class MapAPI extends CommonMapAPI {
         IdentifyMode.Haze,
         IdentifyMode.Details
     ];
+    */
 
     // a note about modes and events.
     // depending if we choose to implement the old modes are come up with a new scheme,

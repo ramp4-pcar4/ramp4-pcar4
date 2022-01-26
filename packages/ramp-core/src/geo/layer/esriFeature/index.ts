@@ -208,7 +208,6 @@ class FeatureLayer extends AttribLayer {
         };
 
         // run a spatial query
-        // const qry: esri.Query = new this.esriBundle.Query();
         // TODO investigate if we need the sourceSR param set here
         const qOpts: QueryFeaturesParams = {
             outFields: this.fieldList,
