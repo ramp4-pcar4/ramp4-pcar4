@@ -66,7 +66,7 @@
                 <settings-component
                     class="rv-subsection"
                     type="toggle"
-                    :name="$t('settings.label.query')"
+                    :name="$t('settings.label.identify')"
                     icon="location"
                     :config="{
                         onChange: () => {},

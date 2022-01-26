@@ -160,35 +160,38 @@ export enum GeoJsonGeomType {
     MULTIPOLYGON = 'MultiPolygon'
 }
 
-export enum IdentifyMode {
-    /**
-     * Runs the identify query and pipes the available results through the `identify` API endpoint.
-     */
-    Query = 'query',
+// pending https://github.com/ramp4-pcar4/ramp4-pcar4/issues/130
+// commenting out to avoid any undecided constants being exposed
 
-    /**
-     * Display the identify results in the details panel.
-     * This option only works in conjunction with the `Query` option. Without `Query`, there will be no results to display in the details panel.
-     */
-    Details = 'details',
-
-    /**
-     * Highlight the identify results on the map. If the `Marker` mode is set, highlighted features will replace the marker.
-     * Only works when `Query` is set.
-     */
-    Highlight = 'highlight',
-
-    /**
-     * Adds a graphic marker at the point of a mouse click. The marker will be set on the map even if the `Query` option is not set.
-     */
-    Marker = 'marker',
-
-    /**
-     * Dehighlights all other layers and features except the identify results (if `Highlight` is set) or the marker (if `Marker` is set`).
-     * The haze will not be applied if neither `Marker` nor `Highlight` is set.
-     */
-    Haze = 'haze'
-}
+//export enum IdentifyMode {
+//    /**
+//     * Runs the identify query and pipes the available results through the `identify` API endpoint.
+//     */
+//    Query = 'query',
+//
+//    /**
+//     * Display the identify results in the details panel.
+//     * This option only works in conjunction with the `Query` option. Without `Query`, there will be no results to display in the details panel.
+//     */
+//    Details = 'details',
+//
+//    /**
+//     * Highlight the identify results on the map. If the `Marker` mode is set, highlighted features will replace the marker.
+//     * Only works when `Query` is set.
+//     */
+//    Highlight = 'highlight',
+//
+//    /**
+//     * Adds a graphic marker at the point of a mouse click. The marker will be set on the map even if the `Query` option is not set.
+//     */
+//    Marker = 'marker',
+//
+//    /**
+//     * Dehighlights all other layers and features except the identify results (if `Highlight` is set) or the marker (if `Marker` is set`).
+//     * The haze will not be applied if neither `Marker` nor `Highlight` is set.
+//     */
+//    Haze = 'haze'
+//}
 
 export interface EpsgLookup {
     (code: string | number): Promise<string>;
@@ -317,9 +320,6 @@ export interface QueryFeaturesParams {
     includeGeometry?: boolean; // if geometry should be included in the result
     outFields?: string; // comma separated list of attributes to restrict what is downloaded
     sourceSR?: SpatialReference; // the spatial reference of the web service. providing helps avoid some reprojection issues
-
-    // don't think we need this anymore. map is now a singleton on the instance api
-    // map?: RampMap; // needed if querying geometry against a web service
 }
 
 export interface QueryFeaturesArcServerParams extends QueryFeaturesParams {

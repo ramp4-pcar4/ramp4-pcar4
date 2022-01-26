@@ -836,13 +836,6 @@ export class AttribLayer extends CommonLayer {
         //      we could trigger a getattributes call to bulk download them upfront.
         //      would be more efficient (way less web calls).
 
-        // TODO this is likely obsolete. delete when confirmed
-        /*
-        if (typeof options.map === 'undefined') {
-            options.map = this.parentLayer.$iApi.geo.map;
-        }
-        */
-
         if (!options.outFields) {
             options.outFields = this.fieldList;
         }
