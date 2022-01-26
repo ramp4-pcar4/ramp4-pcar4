@@ -16,8 +16,9 @@
                     })
                 }}
             </div>
-            <div
+            <button
                 class="
+                    w-full
                     px-20
                     py-10
                     text-md
@@ -36,7 +37,7 @@
                 <!-- Display the count if item exists, else display the loading spinner -->
                 <div v-if="item" class="px-5">{{ item.items.length }}</div>
                 <div v-else class="animate-spin spinner h-20 w-20 px-5"></div>
-            </div>
+            </button>
         </template>
     </panel-screen>
 </template>
