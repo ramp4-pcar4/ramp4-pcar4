@@ -604,7 +604,7 @@ export enum Controls {
     Visibility = 'visibility',
     Boundingbox = 'boundingBox',
     BoundaryZoom = 'boundaryZoom',
-    Query = 'query',
+    Identify = 'identify',
     Metadata = 'metadata',
     Refresh = 'refresh',
     Reload = 'reload',
