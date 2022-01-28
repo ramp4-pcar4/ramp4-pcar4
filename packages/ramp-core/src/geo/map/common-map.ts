@@ -15,7 +15,7 @@ import { RampMapConfig } from '@/geo/api';
 // Do not add any event emits or listeners that would be tied to a specific map
 export class CommonMapAPI extends APIScope {
     esriMap: EsriMap | undefined;
-
+    created = false;
     _basemapStore: Array<Basemap>;
 
     protected constructor(iApi: InstanceAPI) {

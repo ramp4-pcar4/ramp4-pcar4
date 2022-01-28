@@ -201,6 +201,8 @@ export class MapAPI extends CommonMapAPI {
 
         this._viewPromise.resolveMe();
 
+        this.created = true;
+
         // emit basemap changed event
         this.$iApi.event.emit(
             GlobalEvents.MAP_BASEMAPCHANGE,

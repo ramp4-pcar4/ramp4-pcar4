@@ -28,6 +28,26 @@ type IFixtureInstance = new (id: string, iApi: InstanceAPI) => FixtureInstance;
 
 export class FixtureAPI extends APIScope {
     /**
+     * Creates an instance of FixtureAPI.
+     *
+     * @param {InstanceAPI} iApi
+     * @memberof FixtureAPI
+     */
+    constructor(iApi: InstanceAPI) {
+        super(iApi);
+
+        // when the map is created call the initialized method (if defined) for each fixture
+        const onMapCreated = () => {
+            const fixtures =
+                this.$vApp.$store.get<FixtureBaseSet>(`fixture/items`)!;
+            Object.keys(fixtures).forEach(fId => {
+                fixtures[fId].initialized?.();
+            });
+        };
+        this.$iApi.event.on(GlobalEvents.MAP_CREATED, onMapCreated);
+    }
+
+    /**
      * Loads a (built-in) fixture or adds supplied fixture into the R4MP Vue instance.
      *
      * @param {string} id
@@ -75,6 +95,9 @@ export class FixtureAPI extends APIScope {
         });
 
         this.$iApi.event.emit(GlobalEvents.FIXTURE_ADDED, fixture);
+
+        // call the fixture initialized method if it's late to the party
+        if (this.$iApi.geo.map.created) fixture.initialized?.();
 
         return fixture;
     }
