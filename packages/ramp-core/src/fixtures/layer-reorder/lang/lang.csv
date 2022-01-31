@@ -1,0 +1,11 @@
+key,enValue,enValid,frValue,frValid
+layerreorder.title,Reorder Layers,1,Reorder Layers,0
+layerreorder.nolayers,No Layers,1,No Layers,0
+layerreorder.loading,Loading,1,Loading,0
+layerreorder.expand,Expand Sublayers,1,Expand Sublayers,0
+layerreorder.expanded,{name} sublayers expanded,1,{name} sublayers expanded,0
+layerreorder.collapse,Collapse Sublayers,1,Collapse Sublayers,0
+layerreorder.collapsed,{name} sublayers collapsed,1,{name} sublayers collapsed,0
+layerreorder.move.up,Move up,1,Move up,0
+layerreorder.move.down,Move down,1,Move down,0
+layerreorder.layermoved,{name} moved to index {index},1,{name} moved to index {index},0

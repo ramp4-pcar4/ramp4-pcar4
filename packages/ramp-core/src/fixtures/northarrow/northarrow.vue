@@ -141,7 +141,8 @@ export default defineComponent({
                         const poleLayer =
                             await this.$iApi.geo.layer.createLayer({
                                 layerId: 'PoleMarker',
-                                layerType: 'esriGraphic'
+                                layerType: 'esriGraphic',
+                                cosmetic: true // mark this layer as a cosmetic layer
                             });
                         await poleLayer.initiate();
 

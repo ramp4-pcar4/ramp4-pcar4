@@ -233,11 +233,16 @@ export class MapAPI extends CommonMapAPI {
 
     /**
      * Adds a layer to the map
+     * Optionally can specify the layer order index
      *
      * @param {LayerInstance} layer the Ramp layer to add
+     * @param {number | undefined} index optional order index to add the layer to
      * @returns {Promise<void>} a promise that resolves when the layer has been added to the map
      */
-    addLayer(layer: LayerInstance): void {
+    addLayer(
+        layer: LayerInstance,
+        index: number | undefined = undefined
+    ): void {
         if (!this.esriMap) {
             this.noMapErr();
             return;
@@ -245,6 +250,13 @@ export class MapAPI extends CommonMapAPI {
         // await layer.isReadyForMap();
         if (layer.esriLayer) {
             this.esriMap.add(layer.esriLayer);
+            this.$iApi.$vApp.$store.set(LayerStore.addLayers, [layer]);
+
+            // if index is provided, reorder the layer to the given index
+            // use the reorder method so that the esri map-stack and the layer store can stay in sync
+            if (index !== undefined) {
+                this.reorder(layer, index);
+            }
 
             // layer has been added to the map, fire layer registered event
             this.$iApi.event.emit(GlobalEvents.LAYER_REGISTERED, layer);
@@ -261,28 +273,43 @@ export class MapAPI extends CommonMapAPI {
      *
      * @param {LayerInstance} layer the RAMP layer to be moved
      * @param {number} index the RAMP layer index for placing the layer
+     * @param {boolean} ignoreCosmetic indicates if cosmetic layers should be ignored during reordering
      */
-    reorder(layer: LayerInstance, index: number): void {
+    reorder(
+        layer: LayerInstance,
+        index: number,
+        ignoreCosmetic: boolean = false
+    ): void {
         if (!this.esriMap) {
             this.noMapErr();
             return;
         }
         if (layer.esriLayer) {
+            if (ignoreCosmetic && layer.isCosmetic) {
+                // trying to reorder a cosmetic layer when ignore cosmetic is true
+                return;
+            }
+
             const layers = this.$vApp.$store.get<LayerInstance[]>(
                 LayerStore.layers
             )!;
+
             // number of layers in store but not on map, probably errored (up to target index)
             const notLoaded: number = layers
                 .slice(0, index + 1)
                 .filter(
                     layer => !this.esriMap!.layers.find(l => l.id === layer.id)
                 ).length;
+
             // calculate corresponding map layer index
             const esriLayerIndex: number = this.esriMap.layers.indexOf(
                 this.esriMap.layers
-                    .filter(
-                        esrilayer => !!layers.find(l => l.id === esrilayer.id) // ignore layers not in store (e.g. pole marker)
-                    )
+                    .filter(esrilayer => {
+                        const l: LayerInstance | undefined = layers.find(
+                            l => l.id === esrilayer.id
+                        );
+                        return !!l && !(ignoreCosmetic && l!.isCosmetic);
+                    })
                     .slice(0, index + 1 - notLoaded) // adjust for layers not on map
                     .pop()
             );
