@@ -8,6 +8,11 @@ import messages from './lang/lang.csv';
 
 class AppbarFixture extends AppbarAPI {
     eventHandlers: string[] = [];
+
+    initialized() {
+        console.log(`[fixture] ${this.id} initialized`);
+    }
+
     async added() {
         console.log(`[fixture] ${this.id} added`);
 
