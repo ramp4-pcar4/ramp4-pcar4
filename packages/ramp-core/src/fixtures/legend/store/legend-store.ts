@@ -236,6 +236,10 @@ export enum LegendStore {
      */
     children = 'legend/children',
     /**
+     * (State) headerContros: Array<string>
+     */
+    headerControls = 'legend/headerControls',
+    /**
      * (Getter) getChildById: (id: string) => LegendItem | undefined
      */
     getChildById = 'legend/getChildById',
