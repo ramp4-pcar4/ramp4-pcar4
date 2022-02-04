@@ -33,7 +33,7 @@
                         payload.type === 'html' && state.status == 'success'
                     "
                     v-html="state.response"
-                    class="flex flex-col justify-center"
+                    class="flex flex-col justify-center max-w-full"
                 ></div>
 
                 <!-- Error Screen -->
@@ -86,11 +86,7 @@ export default defineComponent({
 
     mounted() {
         if (this.payload.type === 'xml') {
-            // This site prevents CORS errors. Helpful for testing purposes.
-            this.loadFromURL(
-                'https://cors-anywhere.herokuapp.com/' + this.payload.url,
-                []
-            ).then(r => {
+            this.loadFromURL(this.payload.url, []).then(r => {
                 this.state.status = 'success';
 
                 // Append the content to the panel.
@@ -99,11 +95,9 @@ export default defineComponent({
                 }
             });
         } else if (this.payload.type === 'html') {
-            this.requestContent(
-                'https://cors-anywhere.herokuapp.com/' + this.payload.url
-            ).then(r => {
+            this.requestContent(this.payload.url).then(r => {
                 this.state.status = 'success';
-                this.state.response = (r as MetadataResult).response;
+                this.state.response = r.response;
             });
         }
     },
@@ -127,7 +121,7 @@ export default defineComponent({
 
             if (!this.cache[xmlUrl]) {
                 return this.requestContent(xmlUrl).then(xmlData => {
-                    this.cache[xmlUrl] = (xmlData as MetadataResult).response;
+                    this.cache[xmlUrl] = xmlData.response;
                     return this.applyXSLT(this.cache[xmlUrl], XSLT, params);
                 });
             } else {
@@ -188,7 +182,7 @@ export default defineComponent({
         /**
          * Sends a GET request to the provided URL. Returns a promise containing information received from the webpage.
          * */
-        requestContent(url: string) {
+        requestContent(url: string): Promise<MetadataResult> {
             return new Promise((resolve, reject) => {
                 const xobj = new XMLHttpRequest();
                 xobj.open('GET', url, true);

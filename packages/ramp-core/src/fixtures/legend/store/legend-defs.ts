@@ -32,7 +32,6 @@ export class LegendItem {
                 : [
                       Controls.Visibility,
                       Controls.BoundaryZoom,
-                      Controls.Metadata,
                       Controls.Refresh,
                       Controls.Reload,
                       Controls.Remove,
