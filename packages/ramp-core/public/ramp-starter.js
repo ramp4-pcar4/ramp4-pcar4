@@ -262,6 +262,10 @@ let config = {
                     opacity: 1,
                     visibility: true
                 },
+                metadata: {
+                    url: 'https://unicodesnowmanforyou.com/',
+                    name: 'SNOWMAN!!!'
+                },
                 customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
             },
             {
@@ -301,7 +305,8 @@ let config = {
                 state: {
                     visibility: true
                 },
-                customRenderer: {}
+                customRenderer: {},
+                metadata: { url: 'https://unicodesnowmanforyou.com/' }
             }
             /*
             {
@@ -346,7 +351,17 @@ let config = {
                                         {
                                             layerId: 'WaterQuantity',
                                             name: 'Water Quantity in Nested Group',
-                                            entryIndex: 1
+                                            entryIndex: 1,
+                                            controls: [
+                                                'metadata',
+                                                'boundaryZoom',
+                                                'refresh',
+                                                'reload',
+                                                'remove',
+                                                'datatable',
+                                                'settings',
+                                                'symbology'
+                                            ]
                                         },
                                         {
                                             layerId: 'WaterQuantity',
@@ -364,7 +379,17 @@ let config = {
                         },
                         {
                             layerId: 'WFSLayer',
-                            name: 'WFSLayer'
+                            name: 'WFSLayer',
+                            controls: [
+                                'metadata',
+                                'boundaryZoom',
+                                'refresh',
+                                'reload',
+                                'remove',
+                                'datatable',
+                                'settings',
+                                'symbology'
+                            ]
                         }
                     ]
                 }

@@ -491,6 +491,7 @@ export interface RampLayerConfig {
     latField?: string; // csv coord field
     longField?: string; // csv coord field
     tolerance?: number; // click tolerance
+    metadata?: { url: string; name?: string };
 }
 
 export interface RampExtentConfig {
