@@ -4,7 +4,7 @@
         <button
             @click="openWizard"
             class="relative mr-auto text-gray-500 hover:text-black p-8 mb-3"
-            v-show="getWizardExists()"
+            v-show="getWizardExists() && isControlAvailable('wizard')"
             :content="$t('legend.header.addlayer')"
             v-tippy="{ placement: 'right' }"
         >
@@ -16,7 +16,9 @@
         <button
             @click="openLayerReorder"
             class="relative mr-auto text-gray-500 hover:text-black p-8 mb-3"
-            v-show="getLayerReorderExists()"
+            v-show="
+                getLayerReorderExists() && isControlAvailable('layerReorder')
+            "
             :content="$t('legend.header.reorderlayers')"
             v-tippy="{ placement: 'right' }"
         >
@@ -37,6 +39,7 @@
             position="left-start"
             :tooltip="$t('legend.header.groups')"
             tooltip-placement="left"
+            v-show="isControlAvailable('groupToggle')"
         >
             <template #header>
                 <div class="p-8">
@@ -71,6 +74,7 @@
             position="left-start"
             :tooltip="$t('legend.header.visible')"
             tooltip-placement="left"
+            v-show="isControlAvailable('visibilityToggle')"
         >
             <template #header>
                 <div class="flex p-8">
@@ -139,6 +143,12 @@ export default defineComponent({
             } catch (e) {
                 return false;
             }
+        },
+        isControlAvailable(control: string): boolean {
+            const hc: Array<string> | undefined = this.$store.get(
+                LegendStore.headerControls
+            );
+            return hc!.includes(control);
         }
     }
 });

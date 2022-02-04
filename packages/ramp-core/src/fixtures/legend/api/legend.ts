@@ -64,6 +64,23 @@ export class LegendAPI extends FixtureInstance {
         }
 
         this.$vApp.$store.set(LegendStore.children, legendEntries);
+
+        let controls: Array<string> = [];
+        if (!legendConfig.headerControls) {
+            // use the default controls
+            controls = [
+                'wizard',
+                'layerReorder',
+                'groupToggle',
+                'visibilityToggle'
+            ];
+        } else {
+            legendConfig.headerControls.forEach(control => {
+                controls.push(control);
+            });
+        }
+        this.$vApp.$store.set(LegendStore.headerControls, controls);
+
         // TODO: validate legend items?
     }
 
