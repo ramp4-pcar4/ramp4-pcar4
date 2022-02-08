@@ -186,12 +186,21 @@ export default defineComponent({
          * Toggles metadata panel to open/close for the LegendItem.
          */
         toggleMetadata() {
-            if (this.legendItem!._controlAvailable(Controls.Metadata)) {
+            const metaConfig =
+                this.legendItem?.layer?.config.metadata ||
+                this.legendItem?.layer?.parentLayer?.config?.metadata ||
+                {};
+
+            const name = metaConfig?.name || this.legendItem?.layer?.name || '';
+            if (
+                this.legendItem!._controlAvailable(Controls.Metadata) &&
+                metaConfig.url
+            ) {
                 // TODO: toggle metadata panel through API/store call
                 this.$iApi.event.emit('metadata/open', {
                     type: 'html',
-                    layer: 'Sample Layer Name',
-                    url: 'https://ryan-coulson.com/RAMPMetadataDemo.html'
+                    layer: name,
+                    url: metaConfig.url
                 });
             }
         },
