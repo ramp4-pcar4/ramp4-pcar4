@@ -180,16 +180,16 @@ class FeatureLayer extends AttribLayer {
 
     // ----------- LAYER ACTIONS -----------
 
-    identify(options: IdentifyParameters): IdentifyResultSet {
+    runIdentify(options: IdentifyParameters): IdentifyResultSet {
         // early kickout check. not loaded/error; not visible; not queryable; off scale
         if (
             !this.isValidState ||
             !this.visibility ||
-            // !this.isQueryable() || // TODO implement when we have this flag created
+            !this.identify ||
             this.scaleSet.isOffScale(this.$iApi.geo.map.getScale()).offScale
         ) {
             // return empty result.
-            return super.identify(options);
+            return super.runIdentify(options);
         }
 
         let loadResolve: any;

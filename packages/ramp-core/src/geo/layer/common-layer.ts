@@ -353,6 +353,10 @@ export class CommonLayer extends LayerInstance {
             this.name = this.esriLayer?.title || '';
         }
 
+        this.identify = !(this.config.state.identify == undefined)
+            ? this.config.state.identify
+            : this.supportsIdentify;
+
         // make the root of the tree
         // TODO consider initializing the layer tree object in the constructor, then editing it here.
         //      would mean we can get rid of the undefined type on the property
@@ -807,7 +811,7 @@ export class CommonLayer extends LayerInstance {
      * @param options not used, present for nice signature of overrided function
      * @returns {IdentifyResultSet} an empty result set
      */
-    identify(options: IdentifyParameters): IdentifyResultSet {
+    runIdentify(options: IdentifyParameters): IdentifyResultSet {
         // returns an empty set.
         // serves as a fallback incase someone tries to identify on a non-identifiyable layer
         // (callers can use this.supportsIdentify to check for that)

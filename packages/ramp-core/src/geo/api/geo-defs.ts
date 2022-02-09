@@ -429,6 +429,7 @@ export interface RampSpatialReference {
 export interface RampLayerStateConfig {
     visibility?: boolean;
     opacity?: number;
+    identify?: boolean;
 }
 
 export interface RampLayerFieldInfoConfig {

@@ -284,7 +284,10 @@ class MapImageLayer extends AttribLayer {
                 // below will run only during first load
                 if (!this._sublayers[sid]) {
                     this._sublayers[sid] = new MapImageSublayer(
-                        { layerType: LayerType.SUBLAYER },
+                        {
+                            layerType: LayerType.SUBLAYER,
+                            state: subConfigs[sid].state
+                        },
                         this.$iApi,
                         this,
                         sid
@@ -456,7 +459,7 @@ class MapImageLayer extends AttribLayer {
 
     // ----------- LAYER ACTIONS -----------
 
-    identify(options: IdentifyParameters): IdentifyResultSet {
+    runIdentify(options: IdentifyParameters): IdentifyResultSet {
         // NOTE: we are looping over queryFeatures on each sublayer instead of running an identify on the entire layer.
         //       reasons:
         //         the queries allow us to only return OIDs. identify always pulls all the features.
@@ -468,7 +471,7 @@ class MapImageLayer extends AttribLayer {
         // early kickout check. not loaded/error
         if (!this.isValidState || !this.visibility) {
             // return empty result.
-            return super.identify(options);
+            return super.runIdentify(options);
         }
 
         const map = this.$iApi.geo.map;
@@ -498,16 +501,16 @@ class MapImageLayer extends AttribLayer {
                       return (
                           sublayer.visibility &&
                           sublayer.supportsFeatures &&
+                          sublayer.identify &&
                           !sublayer.scaleSet.isOffScale(map.getScale()).offScale
                       );
-                      // && sublayer.getQuery() // TODO add in identify check once implemented
                   }
               );
 
         // early kickout check. all sublayers are one of: not visible; not identifiable; off scale; a raster layer
         if (activeSublayers.length === 0 || !this.visibility) {
             // return empty result.
-            return super.identify(options);
+            return super.runIdentify(options);
         }
 
         const result: IdentifyResultSet = {

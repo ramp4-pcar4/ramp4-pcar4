@@ -173,7 +173,7 @@ export default class WmsLayer extends CommonLayer {
      * @param {Object} options     additional arguemets, see above.
      * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
      */
-    identify(options: IdentifyParameters): IdentifyResultSet {
+    runIdentify(options: IdentifyParameters): IdentifyResultSet {
         // TODO add full documentation for options parameter
 
         if (options.geometry.type !== GeometryType.POINT) {
@@ -200,12 +200,12 @@ export default class WmsLayer extends CommonLayer {
         if (
             !this.isValidState ||
             !this.visibility ||
-            // !this.isQueryable() || // TODO implement when we have this flag created
+            !this.identify ||
             // !infoMap[this.config.featureInfoMimeType] || // TODO implement once config is defined
             this.scaleSet.isOffScale(map.getScale()).offScale
         ) {
             // return empty result.
-            return super.identify(options);
+            return super.runIdentify(options);
         }
 
         // TODO prolly need to flush out the config interfaces for this badboy
