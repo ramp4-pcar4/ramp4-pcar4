@@ -1,4 +1,4 @@
-import { ArcGisServerUrl } from '@/geo/api';
+import { ArcGisServerUrl, UrlQueryMap } from '@/geo/api';
 import deepmerge from 'deepmerge';
 
 export class SharedUtilsAPI {
@@ -144,8 +144,6 @@ export class SharedUtilsAPI {
     }
 }
 
-type QueryMap = { [name: string]: string };
-
 /**
  * This is a helper class to handle getting and setting query parameters on a url easy.
  *
@@ -155,7 +153,7 @@ export class UrlWrapper {
     _url: string;
     _base: string;
     _query: string;
-    _queryMap: QueryMap = {};
+    _queryMap: UrlQueryMap = {};
 
     constructor(url: string) {
         this._url = url;
@@ -165,7 +163,7 @@ export class UrlWrapper {
         // convert the query part into a mapped object
         this._queryMap = this._query
             .split('&')
-            .reduce((map: QueryMap, parameter: string) => {
+            .reduce((map: UrlQueryMap, parameter: string) => {
                 const [key, value] = parameter.split('=');
                 map[key] = value;
                 return map;
@@ -180,7 +178,7 @@ export class UrlWrapper {
         return this._base;
     }
 
-    get queryMap(): QueryMap {
+    get queryMap(): UrlQueryMap {
         return this._queryMap;
     }
 
@@ -197,12 +195,12 @@ export class UrlWrapper {
      * - resulting url: http://example?demohell=false&acid=cat
      *
      *
-     * @param {QueryMap} queryMapUpdate an object of values to be added or replaced on the query of the url; if any values are undefined, their corresponding keys will be removed from the query.
+     * @param {UrlQueryMap} queryMapUpdate an object of values to be added or replaced on the query of the url; if any values are undefined, their corresponding keys will be removed from the query.
      * @returns {string} updated url
      * @memberof UrlWrapper
      */
-    updateQuery(queryMapUpdate: QueryMap): string {
-        const requestQueryMap: QueryMap = <QueryMap>(
+    updateQuery(queryMapUpdate: UrlQueryMap): string {
+        const requestQueryMap: UrlQueryMap = <UrlQueryMap>(
             deepmerge.all([{}, this.queryMap, queryMapUpdate])
         );
         const requestUrl = `${this.base}${Object.entries(requestQueryMap)

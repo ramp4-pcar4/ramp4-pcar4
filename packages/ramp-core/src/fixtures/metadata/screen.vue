@@ -1,7 +1,7 @@
 <template>
     <panel-screen>
         <template #header>
-            {{ $t('metadata.title') }}: {{ payload.layer }}
+            {{ $t('metadata.title') }}: {{ payload.layerName }}
         </template>
 
         <template #controls>

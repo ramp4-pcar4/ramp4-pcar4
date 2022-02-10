@@ -2,7 +2,7 @@ import { markRaw } from 'vue';
 import { MetadataAPI } from './api/metadata';
 import MetadataAppbarButtonV from './appbar-button.vue';
 import MetadataScreenV from './screen.vue';
-
+import { GlobalEvents } from '@/api';
 import messages from './lang/lang.csv';
 
 class MetadataFixture extends MetadataAPI {
@@ -31,7 +31,7 @@ class MetadataFixture extends MetadataAPI {
         this.$iApi.component('metadata-appbar-button', MetadataAppbarButtonV);
 
         this.$iApi.event.on(
-            'metadata/open',
+            GlobalEvents.METADATA_OPEN,
             handler,
             'metadata_opened_handler'
         );

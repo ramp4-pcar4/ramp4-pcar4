@@ -1,9 +1,7 @@
 import { APIScope } from '@/api/internal';
-import { UrlWrapper } from '@/geo/api';
+import { UrlQueryMap, UrlWrapper } from '@/geo/api';
 import yxList from './reversedAxis.json';
 import { EsriRequest } from '@/geo/esri';
-
-// TODO check if we actually need this library. Does vue have its own internal web request library?
 import axios from 'axios';
 import to from 'await-to-js';
 import { parse } from 'fast-xml-parser';
@@ -12,8 +10,6 @@ type WFSResponse = {
     data: { numberMatched: number; features: any[] };
 };
 type WFSData = { type: string; features: any[] };
-
-type QueryMap = { [name: string]: string };
 
 export class OgcUtils extends APIScope {
     // TODO update logic in this function to get changes done in https://github.com/fgpv-vpgf/fgpv-vpgf/pull/3858
@@ -43,7 +39,7 @@ export class OgcUtils extends APIScope {
         },
         xyInAttribs: boolean = false
     ): Promise<any> {
-        let newQueryMap: QueryMap = {
+        let newQueryMap: UrlQueryMap = {
             startindex: startindex.toString(),
             limit: limit.toString()
         };

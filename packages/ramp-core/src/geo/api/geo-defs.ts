@@ -415,6 +415,10 @@ export interface MouseCoords {
     formattedString?: string;
 }
 
+export interface UrlQueryMap {
+    [name: string]: string;
+}
+
 // ----------------------- CLIENT CONFIG INTERFACES -----------------------------------
 
 // TODO migrate these to /geo/api/geo-common ? if we need config interfaces before creating an instance,

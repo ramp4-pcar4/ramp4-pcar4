@@ -1,6 +1,6 @@
 export interface MetadataPayload {
     type: string; // 'xml' or 'html'
-    layer: string;
+    layerName: string;
     url: string;
 }
 

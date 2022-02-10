@@ -121,6 +121,8 @@ TODO add stuff as we make events that core fixtures raise
 | DETAILS_OPEN<br>'details/open'       | _identifyItem_: IdentifyItem object<br>_uid_: layer uid | A feature's details was requested                              |
 | GRID_TOGGLE<br>'grid/toggle'         | _uid_: layer uid<br>_open_: boolean (optional)          | Grid panel toggle was requested with optional force open/close |
 | HELP_TOGGLE<br>'help/toggle'         | boolean (optional)                                      | Help panel toggle was requested with optional force open/close |
+| METADATA_OPEN<br>'metadata/open'     | { type: string, layerName: string, url: string }        | A metadata view was requested                                  |
+| REORDER_OPEN<br>'reorder/open'       | none                                                    | The reorder panel was requested                                |
 | SETTINGS_TOGGLE<br>'settings/toggle' | layer uid                                               | Settings panel toggle was requested for a layer                |
 | WIZARD_OPEN<br>'wizard/open'         | none                                                    | A request was made to add a layer                              |
 
