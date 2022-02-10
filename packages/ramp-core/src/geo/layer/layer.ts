@@ -385,6 +385,7 @@ export class LayerInstance extends APIScope {
     isFile: boolean;
     isCosmetic: boolean;
     userAdded: boolean;
+    identify: boolean;
 
     esriLayer: __esri.Layer | undefined;
     esriSubLayer: __esri.Sublayer | undefined; // used only by sublayers
@@ -421,7 +422,7 @@ export class LayerInstance extends APIScope {
         this.isFile = false;
         this.isCosmetic = config.cosmetic || false;
         this.userAdded = false;
-
+        this.identify = false; // will be updated later based on config/supportsIdentify value
         this._sublayers = [];
     }
 
@@ -701,7 +702,7 @@ export class LayerInstance extends APIScope {
      * @param options not used, present for nice signature of overrided function
      * @returns {IdentifyResultSet} an empty result set
      */
-    identify(options: IdentifyParameters): IdentifyResultSet {
+    runIdentify(options: IdentifyParameters): IdentifyResultSet {
         return {
             results: [],
             done: Promise.resolve(),

@@ -347,6 +347,15 @@ export class LegendEntry extends LegendItem {
             this._layer.opacity = opacity;
         }
     }
+
+    /**
+     * Toggle the layer's identify
+     */
+    toggleIdentify(identify: boolean): void {
+        if (this._layer) {
+            this._layer.identify = identify;
+        }
+    }
 }
 
 /**

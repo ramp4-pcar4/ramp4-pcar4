@@ -40,19 +40,19 @@ Most layers have one single logical component and a basic tree. The structure is
 
 ```json
 {
-    layerIdx: -1,
-    name: "Fancy Layer",
-    children: [
+    "layerIdx": -1,
+    "name": "Fancy Layer",
+    "children": [
         {
-            layerIdx: 4,
-            name: "Fancy Layer",
-            children: [],
-            isLayer: true,
-            uid: "432rubbishasdfsdfad"
+            "layerIdx": 4,
+            "name": "Fancy Layer",
+            "children": [],
+            "isLayer": true,
+            "uid": "432rubbishasdfsdfad"
         }
     ],
-    isLayer: false,
-    uid: "ABCDskipafewYbecauseihavetogo4aP&Z4U"
+    "isLayer": false,
+    "uid": "ABCDskipafewYbecauseihavetogo4aP&Z4U"
 }
 ```
 
@@ -60,41 +60,41 @@ A Map Image Layer composed of multiple sources could have a more structured resu
 
 ```json
 {
-    layerIdx: -1,
-    name: "Restaurants",
-    children: [
+    "layerIdx": -1,
+    "name": "Restaurants",
+    "children": [
         {
-            layerIdx: 4,
-            name: "Fine Dining",
-            children: [],
-            isLayer: true,
-            uid: "432rubbishasdfsdfad"
+            "layerIdx": 4,
+            "name": "Fine Dining",
+            "children": [],
+            "isLayer": true,
+            "uid": "432rubbishasdfsdfad"
         },
         {
-            layerIdx: 6,
-            name: "Fast Food",
-            children: [
+            "layerIdx": 6,
+            "name": "Fast Food",
+            "children": [
                 {
-                    layerIdx: 7,
-                    name: "Burger Joints",
-                    children: [],
-                    isLayer: true,
-                    uid: "765rubbishasdfsdfad"
+                    "layerIdx": 7,
+                    "name": "Burger Joints",
+                    "children": [],
+                    "isLayer": true,
+                    "uid": "765rubbishasdfsdfad"
                 },
                 {
-                    layerIdx: 9,
-                    name: "Pizza Parlours",
-                    children: [],
-                    isLayer: true,
-                    uid: "988rubbishasdfsdfad"
+                    "layerIdx": 9,
+                    "name": "Pizza Parlours",
+                    "children": [],
+                    "isLayer": true,
+                    "uid": "988rubbishasdfsdfad"
                 }
             ],
-            isLayer: false,
-            uid: ""
+            "isLayer": false,
+            "uid": ""
         }
     ],
-    isLayer: false,
-    uid: "ABCDskipafewYbecauseihavetogo4aP&Z4U"
+    "isLayer": false,
+    "uid": "ABCDskipafewYbecauseihavetogo4aP&Z4U"
 }
 ```
 
@@ -102,16 +102,16 @@ A Map Image Layer composed of multiple sources could have a more structured resu
 
 The following formats have support built in the codebase. The ESRI formats assume being hosted on an ArcGIS Server `MapServer`. `FeatureServer` may work but with some functionality missing. The configuration `layerType` is provided in brackets.
 
-- ESRI Feature Layer (`esriFeature`)
-- ESRI Map Image Layer (formerly known as Dynamic Layer) (`esriMapImage`)
-- ESRI Tile Layer (`esriTile`)
-- ESRI Image Service (`esriImagery`)
-- ESRI Graphic Layer (`esriGraphic`)
-- OGC WFS 3.0 (`ogcWfs`)
-- OGC WMS (`ogcWms`)
-- GeoJSON (`fileGeoJson`)
-- CSV File (`fileCsv`)
-- Shapefile (`fileShape`)
+-   ESRI Feature Layer (`esriFeature`)
+-   ESRI Map Image Layer (formerly known as Dynamic Layer) (`esriMapImage`)
+-   ESRI Tile Layer (`esriTile`)
+-   ESRI Image Service (`esriImagery`)
+-   ESRI Graphic Layer (`esriGraphic`)
+-   OGC WFS 3.0 (`ogcWfs`)
+-   OGC WMS (`ogcWms`)
+-   GeoJSON (`fileGeoJson`)
+-   CSV File (`fileCsv`)
+-   Shapefile (`fileShape`)
 
 ## Layer Creation
 
@@ -254,17 +254,16 @@ myLayer.isRemoved; // false
 myLayer.supportsIdentify; // true
 ```
 
-The `.identify()` method will execute an identify request on the layer. Identify is not directly called on logical sublayers. RAMP's sublayer filter can be overridden using the below options parameter object.
+The `.runIdentify()` method will execute an identify request on the layer. Identify is not directly called on logical sublayers. RAMP's sublayer filter can be overridden using the below options parameter object.
 
 Options parameter object:
 
-```js
+```json
 {
     geometry,       // The geometry to identify against. A RAMP API Geometry. Intersecting features will be returned.
     returnGeometry, // An optional boolean to indicate the geometry of the result features should also be downloaded. Defaults to `false`
     sublayerIds,    // An optional array of sublayer uids (string) or server indicies (number) that indicate which sublayers to include in the request.
-    tolerance;      // An optional integer number to buffer the geometry. Is generally only useful if the geometry is a point.
-                    // The number represents pixels to buffer by (so 5 would be a 10x10 pixel square around the point at the current map scale level).
+    tolerance;      // An optional integer number to buffer the geometry. Is generally only useful if the geometry is a point. The number represents pixels to buffer by (so 5 would be a 10x10 pixel square around the point at the current map scale level).
 }
 ```
 
@@ -295,7 +294,7 @@ Example call
 
 ```js
 var opts = { geometry: myPoint, tolerance: 3 };
-var result = myLayer.identify(opts);
+var result = myLayer.runIdentify(opts);
 await result.done;
 result.results.forEach(r => processResults(r));
 ```
@@ -340,7 +339,7 @@ Remove any attributes that had been loaded. The end result of this request is th
 myLayer.destroyAttributes();
 ```
 
-Request the attributes in a tabular format with column metadata, suitable for grid or table consumption. This will use any pre-loaded attribute set, and if none exist, will execute the `getAttributes` request. 
+Request the attributes in a tabular format with column metadata, suitable for grid or table consumption. This will use any pre-loaded attribute set, and if none exist, will execute the `getAttributes` request.
 TODO flush out the return value
 
 ```js
@@ -401,4 +400,3 @@ myLayer.applySqlFilter();
 // ignore the grid filters
 myLayer.applySqlFilter(['grid']);
 ```
-

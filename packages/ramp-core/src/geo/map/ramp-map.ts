@@ -759,7 +759,7 @@ export class MapAPI extends CommonMapAPI {
      * @returns MapIdentifyResult
      */
 
-    identify(targetPoint: MapClick | Point): MapIdentifyResult {
+    runIdentify(targetPoint: MapClick | Point): MapIdentifyResult {
         let layers: LayerInstance[] | undefined = this.$vApp.$store.get(
             LayerStore.layers
         );
@@ -794,7 +794,7 @@ export class MapAPI extends CommonMapAPI {
             .filter(layer => layer.supportsIdentify)
             .map(layer => {
                 p.tolerance = layer.clickTolerance;
-                return layer.identify(p);
+                return layer.runIdentify(p);
             });
 
         // Merge all results received by the identify into one array.
@@ -911,7 +911,7 @@ export class MapAPI extends CommonMapAPI {
             this._activeKeys.push(payload.key);
             this.keyZoom(payload);
         } else if (payload.key === 'Enter') {
-            this.identify(this.getExtent().center());
+            this.runIdentify(this.getExtent().center());
         }
     }
 

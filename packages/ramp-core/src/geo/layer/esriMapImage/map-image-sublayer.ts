@@ -1,5 +1,11 @@
 import { AttribLayer, InstanceAPI } from '@/api/internal';
-import { DataFormat, LayerType, RampLayerConfig, TreeNode } from '@/geo/api';
+import {
+    DataFormat,
+    LayerType,
+    RampLayerConfig,
+    RampLayerStateConfig,
+    TreeNode
+} from '@/geo/api';
 import MapImageLayer from './index';
 import { markRaw } from 'vue';
 
@@ -7,7 +13,7 @@ export class MapImageSublayer extends AttribLayer {
     tooltipField: string;
 
     constructor(
-        config: { layerType: string },
+        config: { layerType: string; state?: RampLayerStateConfig },
         $iApi: InstanceAPI,
         parent: MapImageLayer,
         layerIdx: number = 0
@@ -61,6 +67,11 @@ export class MapImageSublayer extends AttribLayer {
         if (!this.layerTree) {
             this.layerTree = new TreeNode(this.layerIdx, this.uid, this.name);
         }
+
+        this.identify = !(this.config.state.identify == undefined)
+            ? this.config.state.identify
+            : this.supportsIdentify;
+
         return [];
     }
 

@@ -555,7 +555,7 @@ export class EventAPI extends APIScope {
                 // when map clicks, run the identify action
                 zeHandler = (clickParam: MapClick) => {
                     if (clickParam.button === 0) {
-                        this.$iApi.geo.map.identify(clickParam);
+                        this.$iApi.geo.map.runIdentify(clickParam);
                     }
                 };
                 this.on(GlobalEvents.MAP_CLICK, zeHandler, handlerName);

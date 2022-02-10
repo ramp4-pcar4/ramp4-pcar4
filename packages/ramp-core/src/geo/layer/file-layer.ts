@@ -246,7 +246,7 @@ export class FileLayer extends AttribLayer {
 
     // ----------- LAYER ACTIONS -----------
 
-    identify(options: IdentifyParameters): IdentifyResultSet {
+    runIdentify(options: IdentifyParameters): IdentifyResultSet {
         // TODO this function is pretty much identical to FeatureLayer, now that we are using query for everything.
         //      the queryFeatures on the sublayer will automatically go to the correct server/file instance due to the
         //      overridden functions.
@@ -259,11 +259,11 @@ export class FileLayer extends AttribLayer {
         if (
             !this.isValidState ||
             !this.visibility ||
-            // !this.isQueryable() || // TODO implement when we have this flag created
+            !this.identify ||
             this.scaleSet.isOffScale(map.getScale()).offScale
         ) {
             // return empty result.
-            return super.identify(options);
+            return super.runIdentify(options);
         }
 
         let loadResolve: any;

@@ -69,9 +69,8 @@
                     :name="$t('settings.label.identify')"
                     icon="location"
                     :config="{
-                        onChange: () => {},
-                        value: false,
-                        disabled: true
+                        onChange: updateIdentify,
+                        value: identifyModel
                     }"
                 ></settings-component>
 
@@ -122,6 +121,7 @@ export default defineComponent({
             layerName: '',
             visibilityModel: this.layer.visibility,
             opacityModel: this.layer.opacity * 100,
+            identifyModel: this.layer.identify,
             snapshotToggle: false,
             handlers: [] as Array<string>
         };
@@ -177,6 +177,12 @@ export default defineComponent({
             this.opacityModel = val;
         },
 
+        // Update the layer's toggle identify.
+        updateIdentify(val: any) {
+            this.legendItem.toggleIdentify(val);
+            this.identifyModel = val;
+        },
+
         // Toggle snapshot mode for the layer.
         toggleSnapshot() {
             this.snapshotToggle = !this.snapshotToggle;
@@ -191,6 +197,7 @@ export default defineComponent({
                     // ensure that it's still the same layer
                     this.visibilityModel = this.layer.visibility;
                     this.opacityModel = Math.round(this.layer.opacity * 100);
+                    this.identifyModel = this.layer.identify;
                     this.layerName = this.layer.name;
                 }
             });
