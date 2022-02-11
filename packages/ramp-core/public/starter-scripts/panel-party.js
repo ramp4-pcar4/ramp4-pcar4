@@ -777,7 +777,7 @@ rInstance.fixture.addDefaultFixtures().then(() => {
     // Emits an event to open the metadata panel. Usually, this is be done by any fixture that wants the metadata panel to open.
     rInstance.event.emit('metadata/open', {
         type: 'html',
-        layer: 'Sample Layer Name',
+        layerName: 'Sample Layer Name',
         url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/master/README.md'
     });
 });

@@ -203,6 +203,12 @@ export enum GlobalEvents {
     MAP_START = 'map/start',
 
     /**
+     * Fires when a request is issued to open the Metadata panel
+     * Payload: `({ type: string, layerName: string, url: string })`
+     */
+    METADATA_OPEN = 'metadata/open',
+
+    /**
      * Fires when a panel is closed.
      * Payload: `(panel: PanelInstance)`
      */

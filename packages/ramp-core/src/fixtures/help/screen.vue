@@ -26,8 +26,6 @@ import { get } from '@/store/pathify-helper';
 import { PanelInstance } from '@/api';
 import { HelpStore } from './store';
 import HelpSectionV from './section.vue';
-
-// TODO check if we actually need this library. Does vue have its own internal web request library?
 import axios from 'axios';
 import { marked } from 'marked';
 
