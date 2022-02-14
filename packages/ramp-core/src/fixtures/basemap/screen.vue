@@ -30,25 +30,6 @@
                         </h3>
                     </div>
 
-                    <div
-                        class="flex"
-                        v-if="tileSchema.id !== selectedBasemap.tileSchemaId"
-                        v-truncate
-                    >
-                        <svg
-                            class="fill-current w-20 h-20"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
-                            />
-                        </svg>
-                        <span class="text-blue-600 pl-5" v-truncate>{{
-                            $t('basemap.refresh')
-                        }}</span>
-                    </div>
-
                     <ul
                         class="border-t border-b border-gray-600"
                         v-focus-list
@@ -74,10 +55,14 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { get } from '@/store/pathify-helper';
-import { BasemapStore } from './store';
 import BasemapItemV from './item.vue';
-import { RampBasemapConfig } from '@/geo/api';
+import {
+    RampBasemapConfig,
+    RampMapConfig,
+    RampTileSchemaConfig
+} from '@/geo/api';
 import { PanelInstance } from '@/api';
+import { ConfigStore } from '@/store/modules/config';
 
 export default defineComponent({
     name: 'BasemapScreenV',
@@ -91,10 +76,17 @@ export default defineComponent({
     },
     data() {
         return {
-            tileSchemas: get(BasemapStore.tileSchemas),
-            basemaps: get(BasemapStore.basemaps),
-            selectedBasemap: get(BasemapStore.selectedBasemap)
+            tileSchemas: [] as Array<RampTileSchemaConfig>,
+            basemaps: [] as Array<RampBasemapConfig>,
+            selectedBasemap: get(ConfigStore.getActiveBasemapConfig)
         };
+    },
+    mounted() {
+        const mapConfig: RampMapConfig = this.$iApi.$vApp.$store.get(
+            ConfigStore.getMapConfig
+        )! as RampMapConfig;
+        this.tileSchemas = mapConfig.tileSchemas;
+        this.basemaps = mapConfig.basemaps;
     },
     methods: {
         filterBasemaps(schemaId: string) {

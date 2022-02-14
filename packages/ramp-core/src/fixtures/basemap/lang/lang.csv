@@ -1,4 +1,3 @@
 key,enValue,enValid,frValue,frValid
-basemap.refresh,Map refresh required,1,Actualiser la carte,1
 basemap.select,Select basemap,1,Sélectionner la carte de base,1
 basemap.title,Basemap,1,Carte de base,1

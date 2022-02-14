@@ -26,6 +26,7 @@ export * from './graphic/geometry/geometry';
 export * from './layer/tree-node';
 export * from './layer/scale-set';
 export * from './layer/filter';
+export * from './map/extent-set';
 export * from './utils/promise';
 export * from './utils/shared-utils';
 export * from './utils/projection';

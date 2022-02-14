@@ -6,10 +6,10 @@ import {
     GeometryType,
     Point,
     Polygon,
+    RampExtentConfig,
     SpatialReference,
     SrDef,
-    IdDef,
-    RampExtentConfig
+    IdDef
 } from '@/geo/api';
 import { EsriExtent } from '@/geo/esri';
 import GeoJson from 'geojson';

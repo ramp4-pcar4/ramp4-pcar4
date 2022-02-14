@@ -1,11 +1,5 @@
 import { BaseGeometry, Extent, Point, SpatialReference } from '@/geo/api';
 
-export interface RampLodConfig {
-    level: number;
-    resolution: number;
-    scale: number;
-}
-
 export interface ColourParams {
     r: number;
     g: number;
@@ -507,6 +501,13 @@ export interface RampExtentConfig {
     spatialReference: RampSpatialReference;
 }
 
+export interface RampExtentSetConfig {
+    id: string;
+    default: RampExtentConfig;
+    full?: RampExtentConfig;
+    maximum?: RampExtentConfig;
+}
+
 export interface RampBasemapLayerConfig {
     layerType: string;
     url: string;
@@ -521,7 +522,6 @@ export interface RampBasemapConfig {
     altText?: string;
     attribution?: Attribution;
     layers: Array<RampBasemapLayerConfig>;
-    wkid?: number;
 }
 
 export interface RampTileSchemaConfig {
@@ -533,6 +533,17 @@ export interface RampTileSchemaConfig {
     hasNorthPole?: boolean;
 }
 
+export interface RampLodSetConfig {
+    id: string;
+    lods: Array<RampLodConfig>;
+}
+
+export interface RampLodConfig {
+    level: number;
+    resolution: number;
+    scale: number;
+}
+
 // Contains properties for compoents on the map caption bar
 export interface MapCaptionConfig {
     mouseCoords: { disabled?: boolean; formatter?: string };
@@ -542,8 +553,8 @@ export interface MapCaptionConfig {
 // TODO actual ramp config is kinda wonky, split over lots of classes
 //      for now this will just serve as a nice type for the config
 export interface RampMapConfig {
-    lods: Array<RampLodConfig>;
-    extent: RampExtentConfig;
+    lodSets: Array<RampLodSetConfig>;
+    extentSets: Array<RampExtentSetConfig>;
     basemaps: Array<RampBasemapConfig>;
     tileSchemas: Array<RampTileSchemaConfig>;
     initialBasemapId: string;

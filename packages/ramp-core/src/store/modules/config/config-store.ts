@@ -1,7 +1,7 @@
 import { ActionContext, Action } from 'vuex';
 import { make } from 'vuex-pathify';
 import merge from 'deepmerge';
-import { RampMapConfig } from '@/geo/api';
+import { RampBasemapConfig, RampMapConfig } from '@/geo/api';
 
 import { ConfigState } from './config-state';
 import { RootState } from '@/store';
@@ -26,6 +26,10 @@ const getters = {
 
     getMapConfig: (state: ConfigState): RampMapConfig => {
         return state.config.map as RampMapConfig;
+    },
+
+    getActiveBasemapConfig: (state: ConfigState): RampBasemapConfig => {
+        return state.activeBasemapConfig!;
     },
 
     getFixtureConfig:
@@ -92,6 +96,14 @@ const actions = {
         const newConfig = { ...context.state.config, ...newFixtureConfig };
         context.dispatch('registerConfig', newConfig);
         context.commit('SET_CONFIG', newConfig);
+    },
+    setActiveBasemap: function (
+        this: any,
+        context: ConfigContext,
+        newBasemap: RampBasemapConfig
+    ): void {
+        // update the active basemap config
+        context.state.activeBasemapConfig = newBasemap;
     }
 };
 
@@ -144,6 +156,16 @@ export enum ConfigStore {
      */
     updateConfig = 'config/updateConfig!',
     /**
+     * `function setActiveBasemap(newBasemap: RampBasemapConfig) => void`
+     *
+     * Sets the active basemap config
+     *
+     * `@remarks` Action - use `@Call`
+     *
+     * `@param` newBasemap - the new basemap config
+     */
+    setActiveBasemap = 'config/setActiveBasemap!',
+    /**
      * Get active config based on the current map language
      *
      * `@remarks` Getter - use `@Get`
@@ -161,6 +183,14 @@ export enum ConfigStore {
      * `@returns` <RampMapConfig> The map portion of the current config
      */
     getMapConfig = 'config/getMapConfig',
+    /**
+     * getActiveBasemapConfig
+     *
+     * `@remarks` Getter - use `@Get`
+     *
+     * `@returns` <RampBasemapConfig> The config of the currently used basemap
+     */
+    getActiveBasemapConfig = 'config/getActiveBasemapConfig',
     /**
      * getFixtureConfig
      *
