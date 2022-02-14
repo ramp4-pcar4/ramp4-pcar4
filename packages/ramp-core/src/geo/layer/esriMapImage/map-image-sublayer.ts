@@ -63,10 +63,8 @@ export class MapImageSublayer extends AttribLayer {
      * Load actions for a MapImage sublayer
      */
     onLoadActions(): Array<Promise<void>> {
-        // create a leaf node for this sublayer
-        if (!this.layerTree) {
-            this.layerTree = new TreeNode(this.layerIdx, this.uid, this.name);
-        }
+        this.layerTree.name = this.name;
+        this.layerTree.layerIdx = this.layerIdx;
 
         this.identify = !(this.config.state.identify == undefined)
             ? this.config.state.identify

@@ -2,7 +2,7 @@ export class TreeNode {
     layerIdx: number;
     name: string;
     children: Array<TreeNode>;
-    isLayer: boolean; // false for groups. effectively a shortcut for `children.length === 0`
+    isLayer: boolean; // TODO: decide on the purpose of this flag post-layer-refactor?
     uid: string;
 
     constructor(
