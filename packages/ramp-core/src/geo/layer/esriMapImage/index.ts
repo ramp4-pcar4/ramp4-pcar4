@@ -42,6 +42,11 @@ class MapImageLayer extends AttribLayer {
         this.supportsSublayers = true;
         this.layerType = LayerType.MAPIMAGE;
         this.isDynamic = false; // will get updated after layer load.
+
+        // mark the root node of this layer as not layer
+        // TODO: revisit this once we decide on what `isLayer` should be
+        this.layerTree.isLayer = false;
+        this.layerTree.layerIdx = -1;
     }
 
     async initiate(): Promise<void> {
@@ -111,6 +116,8 @@ class MapImageLayer extends AttribLayer {
             this.noLayerErr();
             return loadPromises;
         }
+
+        this.layerTree.name = this.name;
 
         // a trick. this promise wont resolve until all the loading things have finished.
         // then we revert the layer visibility back to what the config wanted.
