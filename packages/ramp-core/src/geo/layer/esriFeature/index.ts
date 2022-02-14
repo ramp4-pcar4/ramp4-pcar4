@@ -71,10 +71,6 @@ class FeatureLayer extends AttribLayer {
     onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
-        if (!this.layerTree) {
-            throw new Error('superclass did not create layer tree');
-        }
-
         // setting custom renderer here (if one is provided)
         const hasCustRed =
             this.esriLayer && this.origRampConfig.customRenderer?.type;
@@ -89,19 +85,13 @@ class FeatureLayer extends AttribLayer {
         // const layerUrl: string = (<esri.FeatureLayer>this._innerLayer).url;
         const layerUrl: string = (<any>this.esriLayer).parsedUrl.path;
         const urlData = this.$iApi.geo.utils.shared.parseUrlIndex(layerUrl);
-        const featIdx: number = urlData.index || 0; // we're going to have an index. feature layer wont load without one.
+        const featIdx: number = urlData.index || 0;
 
         // feature has only one layer
-        // const featFC = new FeatureFC(this, featIdx);
-        // this.fcs[featIdx] = featFC;
         this.serviceUrl = layerUrl;
-        this.layerTree.children.push(
-            new TreeNode(featIdx, this.uid, this.name)
-        ); // TODO verify name is populated at this point
-        // featFC.name = this.name; // feature layer is flat, so the sublayer and layer share their name
 
-        // TODO see if we need to re-synch the parent name
-        // this.layerTree.name = this.name;
+        this.layerTree.name = this.name;
+        this.layerTree.layerIdx = featIdx;
 
         // update asynch data
         const pLD: Promise<void> = this.loadLayerMetadata(
