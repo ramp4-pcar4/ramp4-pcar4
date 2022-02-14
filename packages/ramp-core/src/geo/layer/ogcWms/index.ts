@@ -118,12 +118,8 @@ export default class WmsLayer extends CommonLayer {
             throw new Error('superclass did not create layer tree');
         }
 
-        // const wmsFC = new WmsFC(this, 0);
-        // this.fcs[0] = wmsFC;
-
-        this.layerTree.children.push(new TreeNode(0, this.uid, this.name));
-        // TODO see if we need to re-synch the parent name
-        // this.layerTree.name = this.name;
+        this.layerTree.name = this.name;
+        this.layerTree.layerIdx = 0; // default index
 
         // Set visibility of sublayers based on presence in the config
         const crawlSublayers = (

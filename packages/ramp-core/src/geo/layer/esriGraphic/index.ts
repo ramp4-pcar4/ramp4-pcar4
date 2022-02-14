@@ -53,15 +53,8 @@ class GraphicLayer extends CommonGraphicLayer {
         // TODO if we ever have a way to "configure" initial graphics in the layer config,
         //      would probably want to create them here.
 
-        // feature has only one layer
-        // const normieFC = new CommonFC(this, 0);
-        // this.fcs[0] = normieFC;
-
-        this.layerTree.children.push(new TreeNode(0, this.uid, this.name)); // TODO verify name is populated at this point
-        // normieFC.name = this.name; // feature layer is flat, so the sublayer and layer share their name
-
-        // TODO see if we need to re-synch the parent name
-        // this.layerTree.name = this.name;
+        this.layerTree.name = this.name;
+        this.layerTree.layerIdx = 0; // default index
 
         return loadPromises;
     }

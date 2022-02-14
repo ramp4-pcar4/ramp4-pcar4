@@ -348,12 +348,13 @@ export class CommonLayer extends LayerInstance {
     }
 
     protected onLoadActions(): Array<Promise<void>> {
-        if (!this.name) {
+        if (!this._name) {
             // no name from config. attempt layer name
-            this.name = this.esriLayer?.title || '';
+            // if not layer name, use id instead
+            this._name = this.esriLayer?.title || this.id;
         }
 
-        this.identify = !(this.config.state.identify == undefined)
+        this.identify = !(this.config.state?.identify == undefined)
             ? this.config.state.identify
             : this.supportsIdentify;
 
@@ -361,7 +362,7 @@ export class CommonLayer extends LayerInstance {
         // TODO consider initializing the layer tree object in the constructor, then editing it here.
         //      would mean we can get rid of the undefined type on the property
         if (!this.layerTree) {
-            this.layerTree = new TreeNode(-1, this.uid, this.name, false);
+            this.layerTree = new TreeNode(-1, this.uid, this.name, true);
         }
 
         // TODO implement extent defaulting. Need to add property, get appropriate format from incoming ramp config, maybe need an interface
@@ -438,13 +439,7 @@ export class CommonLayer extends LayerInstance {
      * @returns {String} name of the layer
      */
     get name(): string {
-        if (!this.sawLoad) {
-            // layer has not been loaded yet
-            // if the config has a name defined, this.name will be set
-            // empty string will indicate the layer has not loaded and has no name defined
-            return this._name || '';
-        }
-        return this._name || this.id;
+        return this._name;
     }
 
     /**

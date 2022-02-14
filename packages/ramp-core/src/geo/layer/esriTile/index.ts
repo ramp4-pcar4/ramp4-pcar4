@@ -45,13 +45,12 @@ class TileLayer extends CommonLayer {
     onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
-        // const tileFC = new CommonFC(this, 0);
-        // this.fcs[0] = tileFC;
+        if (!this.layerTree) {
+            throw new Error('superclass did not create layer tree');
+        }
 
-        this.layerTree?.children.push(new TreeNode(0, this.uid, this.name));
-
-        // TODO see if we need to re-synch the parent name
-        // this.layerTree.name = this.name;
+        this.layerTree.name = this.name;
+        this.layerTree.layerIdx = 0; // default index
 
         const legendPromise = this.$iApi.geo.utils.symbology
             .mapServerToLocalLegend(this.origRampConfig.url)
