@@ -48,7 +48,11 @@ class ImageryLayer extends CommonLayer {
         // const imgFC = new CommonFC(this, 0);
         // this.fcs[0] = imgFC;
 
-        this.layerTree?.children.push(new TreeNode(0, this.uid, this.name));
+        // check if tree node already exists
+        if (this.layerTree) {
+            // load the name
+            this.layerTree.name = this.name;
+        }
 
         // TODO see if we need to re-synch the parent name
         // this.layerTree.name = this.name;

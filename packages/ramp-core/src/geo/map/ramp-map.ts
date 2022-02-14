@@ -827,15 +827,13 @@ export class MapAPI extends CommonMapAPI {
             return matchedResult !== undefined;
         });
         if (esriGraphic && hitLayer) {
-            if (hitLayer.getLayerTree().children.length > 1) {
-                console.warn(
-                    'Found layer with more than one child during hitTest'
-                );
+            if (hitLayer.sublayers.length > 1) {
+                console.warn('Found layer with sublayers during hitTest');
             }
             return {
                 oid: esriGraphic.getObjectId(),
                 layerId: esriGraphic.layer.id,
-                layerIdx: hitLayer.getLayerTree().children[0].layerIdx
+                layerIdx: hitLayer.getLayerTree().layerIdx
             };
         }
     }

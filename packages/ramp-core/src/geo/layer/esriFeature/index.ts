@@ -89,19 +89,12 @@ class FeatureLayer extends AttribLayer {
         // const layerUrl: string = (<esri.FeatureLayer>this._innerLayer).url;
         const layerUrl: string = (<any>this.esriLayer).parsedUrl.path;
         const urlData = this.$iApi.geo.utils.shared.parseUrlIndex(layerUrl);
-        const featIdx: number = urlData.index || 0; // we're going to have an index. feature layer wont load without one.
 
         // feature has only one layer
-        // const featFC = new FeatureFC(this, featIdx);
-        // this.fcs[featIdx] = featFC;
         this.serviceUrl = layerUrl;
-        this.layerTree.children.push(
-            new TreeNode(featIdx, this.uid, this.name)
-        ); // TODO verify name is populated at this point
-        // featFC.name = this.name; // feature layer is flat, so the sublayer and layer share their name
 
-        // TODO see if we need to re-synch the parent name
-        // this.layerTree.name = this.name;
+        // load the name name
+        this.layerTree.name = this.name;
 
         // update asynch data
         const pLD: Promise<void> = this.loadLayerMetadata(
