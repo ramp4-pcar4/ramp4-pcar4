@@ -112,6 +112,12 @@ class MapImageLayer extends AttribLayer {
             return loadPromises;
         }
 
+        // mark the root node of this layer as not layer
+        // TODO: revisit this once we decide on what `isLayer` should be
+        this.layerTree.name = this.name;
+        this.layerTree.isLayer = false;
+        this.layerTree.layerIdx = -1;
+
         // a trick. this promise wont resolve until all the loading things have finished.
         // then we revert the layer visibility back to what the config wanted.
         // avoids multiple re-draws as child visibilities get set up.
