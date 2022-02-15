@@ -89,12 +89,13 @@ class FeatureLayer extends AttribLayer {
         // const layerUrl: string = (<esri.FeatureLayer>this._innerLayer).url;
         const layerUrl: string = (<any>this.esriLayer).parsedUrl.path;
         const urlData = this.$iApi.geo.utils.shared.parseUrlIndex(layerUrl);
+        const featIdx: number = urlData.index || 0;
 
         // feature has only one layer
         this.serviceUrl = layerUrl;
 
-        // load the name name
         this.layerTree.name = this.name;
+        this.layerTree.layerIdx = featIdx;
 
         // update asynch data
         const pLD: Promise<void> = this.loadLayerMetadata(

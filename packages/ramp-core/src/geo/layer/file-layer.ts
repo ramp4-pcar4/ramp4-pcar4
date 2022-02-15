@@ -193,8 +193,8 @@ export class FileLayer extends AttribLayer {
             );
         }
 
-        // load the name
         this.layerTree.name = this.name;
+        this.layerTree.layerIdx = 0; // default index
 
         // TODO implement symbology load
         // const pLS = aFC.loadSymbology();

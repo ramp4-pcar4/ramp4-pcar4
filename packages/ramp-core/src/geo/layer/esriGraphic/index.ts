@@ -53,8 +53,8 @@ class GraphicLayer extends CommonGraphicLayer {
         // TODO if we ever have a way to "configure" initial graphics in the layer config,
         //      would probably want to create them here.
 
-        // load the name
         this.layerTree.name = this.name;
+        this.layerTree.layerIdx = 0; // default index
 
         return loadPromises;
     }

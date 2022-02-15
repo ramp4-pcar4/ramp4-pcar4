@@ -45,17 +45,12 @@ class ImageryLayer extends CommonLayer {
     onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
-        // const imgFC = new CommonFC(this, 0);
-        // this.fcs[0] = imgFC;
-
-        // check if tree node already exists
-        if (this.layerTree) {
-            // load the name
-            this.layerTree.name = this.name;
+        if (!this.layerTree) {
+            throw new Error('superclass did not create layer tree');
         }
 
-        // TODO see if we need to re-synch the parent name
-        // this.layerTree.name = this.name;
+        this.layerTree.name = this.name;
+        this.layerTree.layerIdx = 0; // default index
 
         const legendPromise = this.$iApi.geo.utils.symbology
             .mapServerToLocalLegend(this.origRampConfig.url)

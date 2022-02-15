@@ -118,8 +118,8 @@ export default class WmsLayer extends CommonLayer {
             throw new Error('superclass did not create layer tree');
         }
 
-        // load the name
         this.layerTree.name = this.name;
+        this.layerTree.layerIdx = 0; // default index
 
         // Set visibility of sublayers based on presence in the config
         const crawlSublayers = (

@@ -362,7 +362,7 @@ export class CommonLayer extends LayerInstance {
         // TODO consider initializing the layer tree object in the constructor, then editing it here.
         //      would mean we can get rid of the undefined type on the property
         if (!this.layerTree) {
-            this.layerTree = new TreeNode(-1, this.uid, this.name, false);
+            this.layerTree = new TreeNode(-1, this.uid, this.name, true);
         }
 
         // TODO implement extent defaulting. Need to add property, get appropriate format from incoming ramp config, maybe need an interface
