@@ -71,10 +71,6 @@ class FeatureLayer extends AttribLayer {
     onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
-        if (!this.layerTree) {
-            throw new Error('superclass did not create layer tree');
-        }
-
         // setting custom renderer here (if one is provided)
         const hasCustRed =
             this.esriLayer && this.origRampConfig.customRenderer?.type;

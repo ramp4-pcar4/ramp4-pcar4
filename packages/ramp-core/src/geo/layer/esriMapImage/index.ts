@@ -107,10 +107,6 @@ class MapImageLayer extends AttribLayer {
     onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
-        if (!this.layerTree) {
-            throw new Error('superclass did not create layer tree');
-        }
-
         if (!this.esriLayer) {
             this.noLayerErr();
             return loadPromises;
@@ -118,7 +114,9 @@ class MapImageLayer extends AttribLayer {
 
         // mark the root node of this layer as not layer
         // TODO: revisit this once we decide on what `isLayer` should be
+        this.layerTree.name = this.name;
         this.layerTree.isLayer = false;
+        this.layerTree.layerIdx = -1;
 
         // a trick. this promise wont resolve until all the loading things have finished.
         // then we revert the layer visibility back to what the config wanted.

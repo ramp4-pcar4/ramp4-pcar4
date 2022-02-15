@@ -50,8 +50,7 @@ export class CommonLayer extends LayerInstance {
     protected loadPromise: DefPromise; // a promise that resolves when layer is fully ready and safe to use. for convenience of caller
     protected viewPromise: DefPromise; // a promise that resolves when a layer view has been created on the map. helps bridge the view handler with the layer load handler
 
-    protected layerTree: TreeNode | undefined;
-    protected reloadTree: TreeNode | undefined;
+    protected layerTree: TreeNode;
 
     esriWatches: Array<__esri.WatchHandle>;
 
@@ -93,6 +92,7 @@ export class CommonLayer extends LayerInstance {
         this.loadPromise = new DefPromise();
         this.viewPromise = new DefPromise();
         this.esriWatches = [];
+        this.layerTree = new TreeNode(0, this.uid, this.name, true); // is a layer with layer index 0 by default. subclasses will change this when they load
     }
 
     /**
@@ -335,7 +335,6 @@ export class CommonLayer extends LayerInstance {
         Promise.all(loadPromises).then(() => {
             this.updateState(LayerState.LOADED);
             this.sawLoad = true;
-            this.reloadTree = this.layerTree;
             this.loadPromise.resolveMe();
 
             this.sublayers.forEach(
@@ -357,13 +356,6 @@ export class CommonLayer extends LayerInstance {
         this.identify = !(this.config.state?.identify == undefined)
             ? this.config.state.identify
             : this.supportsIdentify;
-
-        // make the root of the tree
-        // TODO consider initializing the layer tree object in the constructor, then editing it here.
-        //      would mean we can get rid of the undefined type on the property
-        if (!this.layerTree) {
-            this.layerTree = new TreeNode(-1, this.uid, this.name, true);
-        }
 
         // TODO implement extent defaulting. Need to add property, get appropriate format from incoming ramp config, maybe need an interface
         /*

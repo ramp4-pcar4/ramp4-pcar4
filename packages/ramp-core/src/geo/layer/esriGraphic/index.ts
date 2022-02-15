@@ -46,15 +46,10 @@ class GraphicLayer extends CommonGraphicLayer {
     onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
-        if (!this.layerTree) {
-            throw new Error('superclass did not create layer tree');
-        }
-
         // TODO if we ever have a way to "configure" initial graphics in the layer config,
         //      would probably want to create them here.
 
         this.layerTree.name = this.name;
-        this.layerTree.layerIdx = 0; // default index
 
         return loadPromises;
     }

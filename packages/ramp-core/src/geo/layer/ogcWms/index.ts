@@ -114,12 +114,7 @@ export default class WmsLayer extends CommonLayer {
     onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
-        if (!this.layerTree) {
-            throw new Error('superclass did not create layer tree');
-        }
-
         this.layerTree.name = this.name;
-        this.layerTree.layerIdx = 0; // default index
 
         // Set visibility of sublayers based on presence in the config
         const crawlSublayers = (

@@ -182,10 +182,6 @@ export class FileLayer extends AttribLayer {
     onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
-        if (!this.layerTree) {
-            throw new Error('superclass did not create layer tree');
-        }
-
         // setting custom renderer here (if one is provided)
         if (this.esriLayer && this.origRampConfig.customRenderer?.type) {
             this.esriLayer.renderer = EsriRendererFromJson(
@@ -194,7 +190,6 @@ export class FileLayer extends AttribLayer {
         }
 
         this.layerTree.name = this.name;
-        this.layerTree.layerIdx = 0; // default index
 
         // TODO implement symbology load
         // const pLS = aFC.loadSymbology();
