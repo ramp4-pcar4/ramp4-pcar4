@@ -42,7 +42,6 @@ import MapnavButtonV from '@/fixtures/mapnav/button.vue';
 
 import DividerV from '@/fixtures/appbar/divider.vue';
 import AppbarButtonV from '@/fixtures/appbar/button.vue';
-import Toggle from '@vueform/toggle';
 import { MaptipAPI } from '@/geo/map/maptip';
 
 interface RampOptions {
@@ -376,7 +375,6 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
 
     vueElement.component('divider', DividerV);
     vueElement.component('appbar-button', AppbarButtonV);
-    vueElement.component('toggle-button', Toggle);
 
     // Add the $store and $iApi instances to the Vue components.
     vueElement.config.globalProperties.$store = store;

@@ -21,13 +21,14 @@
                 <settings-component
                     class="rv-subsection"
                     type="toggle"
-                    :name="$t('settings.label.visibility')"
                     icon="visibility"
+                    @toggled="updateVisibility"
+                    :name="$t('settings.label.visibility')"
                     :config="{
-                        onChange: updateVisibility,
-                        value: visibilityModel
+                        value: visibilityModel,
+                        disabled: !legendItem._controlAvailable('visibility')
                     }"
-                ></settings-component>
+                />
 
                 <div class="rv-settings-divider"></div>
 
@@ -46,8 +47,8 @@
                     type="toggle"
                     :name="$t('settings.label.boundingBox')"
                     icon="box"
+                    @toggled="() => {}"
                     :config="{
-                        onChange: () => {},
                         value: false,
                         disabled: true
                     }"
@@ -68,8 +69,8 @@
                     type="toggle"
                     :name="$t('settings.label.identify')"
                     icon="location"
+                    @toggled="updateIdentify"
                     :config="{
-                        onChange: updateIdentify,
                         value: identifyModel
                     }"
                 ></settings-component>
@@ -166,9 +167,9 @@ export default defineComponent({
     },
     methods: {
         // Update the layer visibility.
-        updateVisibility(val: any) {
-            this.legendItem.toggleVisibility(val.value);
-            this.visibilityModel = val.value;
+        updateVisibility(val: boolean) {
+            this.legendItem.toggleVisibility(val);
+            this.visibilityModel = val;
         },
 
         // Update the layer opacity.
@@ -178,7 +179,7 @@ export default defineComponent({
         },
 
         // Update the layer's toggle identify.
-        updateIdentify(val: any) {
+        updateIdentify(val: boolean) {
             this.legendItem.toggleIdentify(val);
             this.identifyModel = val;
         },
