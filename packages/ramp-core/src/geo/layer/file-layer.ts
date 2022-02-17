@@ -182,10 +182,6 @@ export class FileLayer extends AttribLayer {
     onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
-        if (!this.layerTree) {
-            throw new Error('superclass did not create layer tree');
-        }
-
         // setting custom renderer here (if one is provided)
         if (this.esriLayer && this.origRampConfig.customRenderer?.type) {
             this.esriLayer.renderer = EsriRendererFromJson(
@@ -193,14 +189,7 @@ export class FileLayer extends AttribLayer {
             );
         }
 
-        // feature has only one layer
-        const featIdx: number = 0; // GeoJSON is always 0
-        // const fFC = new FileFC(this, featIdx);
-        // fFC.name = this.name; // geojson layer is flat, so the sublayer and layer share their name. we do this here and not in extractMetaData because .name is private
-        // this.fcs[featIdx] = fFC;
-        this.layerTree.children.push(
-            new TreeNode(featIdx, this.uid, this.name)
-        );
+        this.layerTree.name = this.name;
 
         // TODO implement symbology load
         // const pLS = aFC.loadSymbology();

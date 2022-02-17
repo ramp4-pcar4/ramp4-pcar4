@@ -36,27 +36,21 @@ The **UID** is a string identifier assigned to every `Layer` that is unique acro
 
 Every `Layer` object has a method `.getLayerTree()`. This returns a heirarchical object that describes the logical layout of the layer.
 
-Most layers have one single logical component and a basic tree. The structure is a bit redundant, but keeps things aligned and predictable.
+Most layers have one single logical component and a basic tree.
 
 ```json
 {
-    "layerIdx": -1,
+    "layerIdx": 0,
     "name": "Fancy Layer",
-    "children": [
-        {
-            "layerIdx": 4,
-            "name": "Fancy Layer",
-            "children": [],
-            "isLayer": true,
-            "uid": "432rubbishasdfsdfad"
-        }
-    ],
-    "isLayer": false,
+    "children": [],
+    "isLayer": true,
     "uid": "ABCDskipafewYbecauseihavetogo4aP&Z4U"
 }
 ```
 
-A Map Image Layer composed of multiple sources could have a more structured result. The tree is the easiest way to inspect the structure. Note that subfolder structures do not have a uid; they exist to organize the heirarchy but have no related `Layer` object.
+A Map Image Layer composed of multiple sources could have a more structured result with Map Image Sublayers. The tree is the easiest way to inspect the structure.
+
+Note that subfolder structures do not have a uid; they exist to organize the heirarchy but have no related `Layer` object.
 
 ```json
 {
