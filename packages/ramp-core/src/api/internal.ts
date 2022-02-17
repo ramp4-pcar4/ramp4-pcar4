@@ -30,3 +30,4 @@ export * from './fixture';
 export * from './panel';
 export * from './panel-instance';
 export * from './notifications';
+export * from './config-upgrade';

@@ -314,7 +314,7 @@ export class ProjectionAPI {
         await this.checkProjBomber([destProj, geometry.sr]);
 
         // convert to geojson
-        const preGJ = RAMP.GEO.geom.geomRampToGeoJson(geometry);
+        const preGJ = geometry.toGeoJSON();
 
         // project geojson
         const postGJ = await this.projectGeoJson(

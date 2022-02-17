@@ -353,7 +353,6 @@ let config = {
         ],
         fixtures: {
             legend: {
-                reorderable: true,
                 root: {
                     children: [
                         {
@@ -777,7 +776,6 @@ let config = {
         ],
         fixtures: {
             legend: {
-                reorderable: true,
                 root: {
                     children: [
                         {
