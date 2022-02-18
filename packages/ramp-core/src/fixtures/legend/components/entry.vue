@@ -2,20 +2,28 @@
     <div class="legend-item" :key="legendItem.visibility">
         <div class="relative">
             <div
-                class="
+                :class="`
                     default-focus-style
                     p-5
                     flex
                     items-center
                     hover:bg-gray-200
-                    cursor-pointer
+                    ${
+                        legendItem._controlAvailable('datatable')
+                            ? 'cursor-pointer'
+                            : 'cursor-default'
+                    }
                     h-44
-                "
+                `"
                 @click="toggleGrid"
                 v-focus-item="'show-truncate'"
                 @mouseover.stop="$event.currentTarget._tippy.show()"
                 @mouseout.self="$event.currentTarget._tippy.hide()"
-                :content="$t('legend.entry.data')"
+                :content="
+                    legendItem._controlAvailable('datatable')
+                        ? $t('legend.entry.data')
+                        : ''
+                "
                 v-tippy="{
                     placement: 'top-start',
                     trigger: 'manual focus',
