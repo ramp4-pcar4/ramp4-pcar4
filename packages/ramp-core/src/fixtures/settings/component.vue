@@ -13,7 +13,6 @@ import { defineComponent, markRaw } from 'vue';
 // Import control templates.
 import SliderControl from './templates/slider-control.vue';
 import ToggleSwitchControl from './templates/toggle-switch-control.vue';
-import ToggleButtonControl from './templates/toggle-button-control.vue';
 import InputControl from './templates/input-control.vue';
 import { svgIcons } from './templates/icons';
 
@@ -45,7 +44,6 @@ export default defineComponent({
             templates: {
                 slider: markRaw(SliderControl),
                 toggle: markRaw(ToggleSwitchControl),
-                'toggle-button': markRaw(ToggleButtonControl),
                 input: markRaw(InputControl)
             }
         };

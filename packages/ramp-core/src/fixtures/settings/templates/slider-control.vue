@@ -20,16 +20,18 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-
-import VueSlider from 'vue-slider-component';
-import 'vue-slider-component/theme/default.css';
+import VueSlider from '@ecgc/vue-slider-component';
+import '@ecgc/vue-slider-component/theme/default.css';
 
 export default defineComponent({
     components: { VueSlider },
     props: {
         name: String,
         icon: String,
-        config: Object
+        config: {
+            type: Object,
+            required: true
+        }
     },
     watch: {
         // watch the config for changes to the opacity value
@@ -42,7 +44,7 @@ export default defineComponent({
     },
     data() {
         return {
-            value: this.config?.value
+            value: this.config.value
         };
     }
 });

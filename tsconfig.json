@@ -1,6 +1,0 @@
-{
-    // https://github.com/vuejs/vetur/issues/815#issuecomment-450545705
-    // needed to get vetur to run and make vscode useful
-    // may be able to be removed after vetur adds multi-root support
-    "extends": "./packages/ramp-core/tsconfig.json"
-}
