@@ -526,7 +526,7 @@ export default class WmsLayer extends CommonLayer {
                 this.getWMSLayerTitle(configLayerEntries[idx].id) ||
                 configLayerEntries[idx].id;
             const symbologyItem: LegendSymbology = {
-                uid: RAMP.GEO.sharedUtils.generateUUID(),
+                uid: this.$iApi.geo.utils.shared.generateUUID(),
                 label: name,
                 svgcode: '',
                 esriStandard: false, // is an image

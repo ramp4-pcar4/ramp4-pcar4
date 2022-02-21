@@ -8,7 +8,6 @@ export class LegendState {
 
 export interface LegendConfig {
     isOpen: boolean;
-    reorderable: boolean;
     root: { name: string; children: Array<any> };
     headerControls: Array<string>;
 }

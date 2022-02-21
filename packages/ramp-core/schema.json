@@ -228,11 +228,6 @@
                     "default": false,
                     "description": "Specifies whether legend panel is open by default."
                 },
-                "reorderable": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Specifies whether layers in legend panel are reorderable."
-                },
                 "root": {
                     "$ref": "#/$defs/entryGroup"
                 }
@@ -484,9 +479,9 @@
             "required": ["exclusiveVisibility"],
             "unevaluatedProperties": false
         },
-        "navbar": {
+        "mapnav": {
             "type": "object",
-            "description": "Provides configuration to the navbar. If not supplied the default navbar buttons are shown.",
+            "description": "Provides configuration to the map navigation bar fixture. If not supplied the default mapnav buttons are shown.",
             "properties": {
                 "zoomOption": {
                     "type": "string",
@@ -497,7 +492,7 @@
                 "items": {
                     "type": "array",
                     "default": ["fullscreen", "help", "home", "basemap"],
-                    "description": "Map navigation buttons displayed on navbar.",
+                    "description": "Map navigation buttons displayed on mapnav.",
                     "items": {
                         "type": "string",
                         "enum": [
@@ -1737,7 +1732,6 @@
                     "$ref": "#/$defs/legend",
                     "default": {
                         "isOpen": false,
-                        "reorderable": true,
                         "root": {}
                     },
                     "description": "Provides configuration to legend. If not supplied, a blank legend is displayed."
@@ -1750,7 +1744,7 @@
                     "description": "Provides configuration to the appbar. If not supplied, default appbar controls are displayed."
                 },
                 "mapnav": {
-                    "$ref": "#/$defs/navbar",
+                    "$ref": "#/$defs/mapnav",
                     "default": {
                         "zoom": "buttons",
                         "items": ["fullscreen", "home", "help", "basemap"]
