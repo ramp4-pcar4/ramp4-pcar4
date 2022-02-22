@@ -261,13 +261,7 @@ export class OverviewMapAPI extends CommonMapAPI {
      * @param {Extent} newExtent new main map extent
      */
     updateOverview(newExtent: Extent) {
-        const hRatio =
-            this.$iApi.geo.map.getPixelHeight() / this.getPixelHeight();
-        const wRatio =
-            this.$iApi.geo.map.getPixelWidth() / this.getPixelWidth();
-        const overviewScale =
-            this.$iApi.geo.map.getScale() * 1.5 * Math.max(hRatio, wRatio);
-        this.zoomMapTo(newExtent.center(), overviewScale, false);
+        this.zoomMapTo(newExtent.expand(1.5), undefined, false);
 
         // this draws the outline of the main map extent
         this.esriView!.graphics.getItemAt(0).geometry =
