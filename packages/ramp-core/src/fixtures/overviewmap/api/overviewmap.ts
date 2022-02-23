@@ -1,6 +1,5 @@
 import { FixtureInstance } from '@/api';
 import { OverviewmapConfig, OverviewmapStore } from '../store';
-import { config } from '../default-config';
 
 export class OverviewmapAPI extends FixtureInstance {
     /**
@@ -10,12 +9,18 @@ export class OverviewmapAPI extends FixtureInstance {
      * @memberof OverviewmapAPI
      */
     _parseConfig(overviewmapConfig?: OverviewmapConfig) {
-        // use the default config if overview map config is not provided
-        let mapConfig: OverviewmapConfig = overviewmapConfig || config;
-        this.$vApp.$store.set(OverviewmapStore.mapConfig, mapConfig.map);
+        this.$vApp.$store.set(
+            OverviewmapStore.basemaps,
+            overviewmapConfig?.basemaps || {}
+        );
+        this.$vApp.$store.set(OverviewmapStore.mapConfig, {
+            basemaps: overviewmapConfig
+                ? Object.values(overviewmapConfig.basemaps)
+                : []
+        });
         this.$vApp.$store.set(
             OverviewmapStore.startMinimized,
-            mapConfig.startMinimized
+            overviewmapConfig?.startMinimized || true
         );
     }
 

@@ -114,7 +114,9 @@ export default defineComponent({
     },
     methods: {
         selectBasemap(basemap: any) {
-            this.$iApi.geo.map.setBasemap(basemap.id);
+            if (basemap.id !== this.selectedBasemap.id) {
+                this.$iApi.geo.map.setBasemap(basemap.id);
+            }
         }
     }
 });

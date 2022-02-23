@@ -50,41 +50,17 @@ let config = {
         },
         fixtures: {
             overviewmap: {
-                map: {
-                    extentSets: [
-                        {
-                            id: 'EXT_NRCAN_Lambert_3978',
-                            default: {
-                                xmax: 3549492,
-                                xmin: -2681457,
-                                ymax: 3482193,
-                                ymin: -883440,
-                                spatialReference: {
-                                    wkid: 3978
-                                }
+                basemaps: {
+                    DEFAULT_NRCAN_Lambert_3978: {
+                        id: 'CBCT',
+                        tileSchemaId: 'DEFAULT_NRCAN_Lambert_3978',
+                        layers: [
+                            {
+                                layerType: 'esriTile',
+                                url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBCT3978/MapServer'
                             }
-                        }
-                    ],
-                    lodSets: [
-                        {
-                            id: 'LOD_NRCAN_Lambert_3978',
-                            lods: RAMP.GEO.defaultLODs(
-                                RAMP.GEO.defaultTileSchemas()[0]
-                            )
-                        }
-                    ],
-                    basemaps: [
-                        {
-                            id: 'CBCT',
-                            tileSchemaId: 'DEFAULT_NRCAN_Lambert_3978',
-                            layers: [
-                                {
-                                    layerType: 'esriTile',
-                                    url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBCT3978/MapServer'
-                                }
-                            ]
-                        }
-                    ]
+                        ]
+                    }
                 },
                 startMinimized: true
             }

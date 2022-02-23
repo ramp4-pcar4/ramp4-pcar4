@@ -1,20 +1,12 @@
-import {
-    RampExtentSetConfig,
-    RampMapConfig,
-    RampBasemapConfig,
-    RampLodSetConfig
-} from '@/geo/api';
+import { RampBasemapConfig } from '@/geo/api';
 
 export class OverviewmapState {
-    mapConfig: RampMapConfig | undefined = undefined;
+    mapConfig: any = undefined;
+    basemaps: { [key: string]: RampBasemapConfig } = {};
     startMinimized: boolean = true;
 }
 
 export interface OverviewmapConfig {
-    map: {
-        lodSets: Array<RampLodSetConfig>;
-        extentSets: Array<RampExtentSetConfig>;
-        basemaps: Array<RampBasemapConfig>;
-    };
+    basemaps: { [key: string]: RampBasemapConfig };
     startMinimized: boolean;
 }

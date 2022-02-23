@@ -5,7 +5,6 @@ import {
     ExtentSet,
     RampBasemapConfig,
     RampExtentSetConfig,
-    RampLodSetConfig,
     RampMapConfig,
     RampTileSchemaConfig
 } from '@/geo/api';
@@ -24,63 +23,27 @@ export class OverviewMapAPI extends CommonMapAPI {
 
     /**
      * Will generate a ESRI map view and add it to the page
-     * Can optionally provide the basemap or basemap id to be used when creating the map view
+     * Must provide the basemap or basemap id to be used when creating the map view
      *
-     * @param {string | Basemap | undefined} basemap the id of the basemap that should be used when creating the map view
+     * @param {string | Basemap} basemap the id of the basemap that should be used when creating the map view
      * @private
      */
-    protected createMapView(basemap?: string | Basemap): void {
-        // get the config from the store
-        const config: RampMapConfig | undefined = this.$iApi.$vApp.$store.get(
-            OverviewmapStore.mapConfig
-        );
-        if (!config) {
+    protected createMapView(basemap: string | Basemap): void {
+        if (!basemap) {
             throw new Error(
-                'Attempted to create overview map view without a map config'
+                'Attempted to create overview map view without a basemap'
             );
         }
 
         const bm: Basemap =
-            (typeof basemap === 'string'
-                ? this.findBasemap(basemap)
-                : basemap) || this.findBasemap(config.initialBasemapId);
+            typeof basemap === 'string' ? this.findBasemap(basemap) : basemap;
+
         this.applyBasemap(bm);
 
-        // get the current tile schema we are in
-        let mainMapConfig: RampMapConfig | undefined =
-            this.$iApi.$vApp.$store.get(ConfigStore.getMapConfig);
-        const tileSchemaConfig: RampTileSchemaConfig | undefined =
-            mainMapConfig?.tileSchemas.find(ts => ts.id === bm.tileSchemaId);
-
-        if (!tileSchemaConfig) {
-            throw new Error(
-                `Could not find tile schema for the given basemap id: ${bm.id}`
-            );
-        }
-
-        const extentSetConfig: RampExtentSetConfig | undefined =
-            config.extentSets.find(
-                es => es.id === tileSchemaConfig.extentSetId
-            );
-
-        if (!extentSetConfig) {
-            throw new Error(
-                `Could not find extent set with the given id: ${tileSchemaConfig.extentSetId}`
-            );
-        }
-
-        this._rampExtentSet = ExtentSet.fromConfig(extentSetConfig);
+        // TODO: This assumes that the overview map will be synced with the main map's tile schema, so it just uses the extent/sr from the main map
+        //       Revisit this when enhancing the overview map to be able to use a different tile schema than the main map
+        this._rampExtentSet = this.$iApi.geo.map.getExtentSet().clone();
         this._rampSR = this._rampExtentSet.sr.clone();
-
-        const lodSetConfig: RampLodSetConfig | undefined = config.lodSets.find(
-            ls => ls.id === tileSchemaConfig.lodSetId
-        );
-
-        if (!lodSetConfig) {
-            throw new Error(
-                `Could not find lod set with the given id: ${tileSchemaConfig.lodSetId}`
-            );
-        }
 
         // create esri view with config
         this.esriView = markRaw(
@@ -88,11 +51,10 @@ export class OverviewMapAPI extends CommonMapAPI {
                 map: this.esriMap,
                 container: this._targetDiv,
                 constraints: {
-                    lods: <Array<EsriLOD>>lodSetConfig.lods,
                     rotationEnabled: false
                 },
                 spatialReference: this._rampSR.toESRI(),
-                extent: this._rampExtentSet.defaultExtent.toESRI(),
+                extent: this.$iApi.geo.map.getExtent().expand(1.5).toESRI(), // use the expanded main map extent
                 navigation: {
                     browserTouchPanEnabled: false
                 }
@@ -192,22 +154,20 @@ export class OverviewMapAPI extends CommonMapAPI {
      * @returns {boolean} indicates if the schema has changed
      */
     setBasemap(basemapId: string): boolean {
-        // refresh the map with the new basemap
         const bm: Basemap = this.findBasemap(basemapId);
-        this.refreshMap(bm);
 
-        // check for tile schema disrespect
-        const mainMapBasemap: RampBasemapConfig = this.$iApi.$vApp.$store.get(
-            ConfigStore.getActiveBasemapConfig
-        )! as RampBasemapConfig;
+        // get the current basemap
+        const currBm: Basemap | undefined = this.getCurrentBasemapId()
+            ? this.findBasemap(this.getCurrentBasemapId()!)
+            : undefined;
+
         const differentSchema: boolean =
-            mainMapBasemap.tileSchemaId !== bm.tileSchemaId;
+            currBm?.tileSchemaId !== bm.tileSchemaId;
 
         if (differentSchema) {
-            // nod of disapproval
-            console.warn(
-                "The Overview Map's basemap has a tile schema that is different from the main map's basemap. This can cause unexpected behavior."
-            );
+            this.refreshMap(bm);
+        } else {
+            this.applyBasemap(bm);
         }
 
         return differentSchema;

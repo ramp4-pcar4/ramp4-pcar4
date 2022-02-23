@@ -15,9 +15,9 @@ export class ExtentSet {
     ) {
         this.id = id;
         this.sr = defaultExtent.sr.clone();
-        this._defaultExtent = defaultExtent;
-        this._fullExtent = fullExtent;
-        this._maximumExtent = maximumExtent;
+        this._defaultExtent = defaultExtent.clone();
+        this._fullExtent = fullExtent?.clone();
+        this._maximumExtent = maximumExtent?.clone();
 
         // quick extent spatial reference sanity check
         if (fullExtent && !fullExtent.sr.isEqual(this.sr)) {
@@ -92,6 +92,15 @@ export class ExtentSet {
                       extentSetConfig.maximum
                   )
                 : undefined
+        );
+    }
+
+    clone(): ExtentSet {
+        return new ExtentSet(
+            this.id,
+            this._defaultExtent,
+            this._fullExtent,
+            this._maximumExtent
         );
     }
 }
