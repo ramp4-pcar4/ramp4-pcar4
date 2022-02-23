@@ -124,14 +124,14 @@ export class LegendAPI extends FixtureInstance {
     }
 
     /**
-     * Update an existing legend entry to load the given layer
+     * Update an existing legend entry with data from the given layer
      * Does nothing if the legend entry is not found
      *
-     * @param {LayerInstance} layer the layer to load into the legend entry
+     * @param {LayerInstance} layer the layer to update the legend entry with
      * @memberOf LegendFixture
      */
     updateLegend(layer: LayerInstance) {
-        // helper function to load a layer onto a legend entry
+        // helper function to link a layer into a legend entry
         const updateEntry = (layer: LayerInstance) => {
             const entry: LegendEntry | undefined = this.$vApp.$store.get(
                 LegendStore.getChildById,

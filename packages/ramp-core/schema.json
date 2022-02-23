@@ -1703,27 +1703,6 @@
             "enum": ["4.0"],
             "description": "The schema version used to validate the configuration file. The schema should enumerate the list of versions accepted by this version of the viewer."
         },
-        "ui": {
-            "type": "object",
-            "description": "Configuration for required UI map components.",
-            "properties": {
-                "title": {
-                    "type": "string",
-                    "description": "An optional title to be used in the place of the default viewer title."
-                },
-                "fullscreen": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Indicates if viewer takes up entire viewport."
-                },
-                "restrictNavigation": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Specifies whether or not to restrict user from panning beyond the maximum map extent."
-                }
-            },
-            "unevaluatedProperties": false
-        },
         "fixtures": {
             "type": "object",
             "description": "Optional configuration for required map fixtures. TODO: fixtures may not exist so cannot enforce fixtures in config file",
@@ -1894,6 +1873,11 @@
                 "proxyUrl": {
                     "type": "string",
                     "description": "An optional proxy to be used for dealing with same-origin issues.  URL must either be a relative path on the same server or an absolute path on a server which sets CORS headers."
+                },
+                "animate": {
+                    "type": "boolean",
+                    "description": "Will enable visual animation when using the site, such as control transitions.",
+                    "default": true
                 }
             },
             "required": [],

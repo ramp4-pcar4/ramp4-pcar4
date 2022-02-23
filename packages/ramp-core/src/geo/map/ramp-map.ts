@@ -436,6 +436,10 @@ export class MapAPI extends CommonMapAPI {
         }
         // sync layer store order with map order
         this.$vApp.$store.set(LayerStore.reorderLayer, { layer, index });
+        this.$iApi.event.emit(GlobalEvents.MAP_REORDER, {
+            layer,
+            newIndex: index
+        });
     }
 
     /**

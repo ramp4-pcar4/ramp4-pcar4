@@ -759,7 +759,7 @@ let config = {
             },
             mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] }
         },
-        animate: true
+        system: { animate: true }
     }
 };
 
