@@ -81,6 +81,14 @@ export class Extent extends BaseGeometry {
         );
     }
 
+    expand(factor: number): Extent {
+        // need to clone this extent before expanding
+        return Extent.fromESRI(
+            this.toESRI().expand(factor),
+            `${this.id}-expanded`
+        );
+    }
+
     clone(): Extent {
         return new Extent(this.id, this.rawMin, this.rawMax, this.sr);
     }
