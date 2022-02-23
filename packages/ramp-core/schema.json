@@ -46,31 +46,12 @@
             "type": "object",
             "description": "Provides the configuration to the overviewmap fixture",
             "properties": {
-                "map": {
+                "basemaps": {
                     "type": "object",
-                    "description": "Specifies the map of the overviewmap fixture",
-                    "properties": {
-                        "extentSets": {
-                            "type": "array",
-                            "description": "The default, full and maximum extents of the overviewmap.",
-                            "items": {
-                                "$ref": "#/$defs/extentSetNode"
-                            }
-                        },
-                        "lodSets": {
-                            "type": "array",
-                            "description": "The levels of detail (zoom scales) available for the overviewmap.",
-                            "items": {
-                                "$ref": "#/$defs/lodSetNode"
-                            }
-                        },
-                        "basemaps": {
-                            "type": "array",
-                            "description": "A list of basemaps to be made available for the overview map. Can provide one basemap for each tile schema provided in the main map config.",
-                            "items": {
-                                "$ref": "#/$defs/basemapNode"
-                            }
-                        }
+                    "description": "Key-value dictionary where the key is the tile schema id and the value is a basemap. Can provide an overriding basemap for each tile schema in the main map config.",
+                    "additionalProperties": {
+                        "type": "object",
+                        "$ref": "#/$defs/basemapNode"
                     }
                 },
                 "startMinimized": {

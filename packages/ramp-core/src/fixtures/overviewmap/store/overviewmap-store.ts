@@ -26,6 +26,10 @@ export enum OverviewmapStore {
      */
     mapConfig = 'overviewmap/mapConfig',
     /**
+     * (State) basemaps: { [key: string]: RampBasemapConfig }
+     */
+    basemaps = 'overviewmap/basemaps',
+    /**
      * (State) startMinimized: boolean
      */
     startMinimized = 'overviewmap/startMinimized',
