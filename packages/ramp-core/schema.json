@@ -1467,18 +1467,20 @@
                         "properties": {
                             "id": {
                                 "type": "string",
-                                "default": ""
+                                "description": "Base layer's id"
                             },
                             "layerType": {
                                 "type": "string",
-                                "default": ""
+                                "description": "Base layer's type",
+                                "enum": ["esriMapImage", "esriTile"]
                             },
                             "url": {
                                 "type": "string",
-                                "default": ""
+                                "description": "Base layer's url"
                             },
                             "opacity": {
                                 "type": "number",
+                                "description": "Base layer's opacity",
                                 "default": 1
                             }
                         },
