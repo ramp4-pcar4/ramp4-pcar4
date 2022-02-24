@@ -15,11 +15,13 @@ export class Basemap {
             baseLayers: rampConfig.layers.map(layerConfig => {
                 if (layerConfig.layerType === LayerType.TILE) {
                     return new EsriTileLayer({
-                        url: layerConfig.url
+                        url: layerConfig.url,
+                        opacity: layerConfig.opacity
                     });
                 } else if (layerConfig.layerType === LayerType.MAPIMAGE) {
                     return new EsriMapImageLayer({
-                        url: layerConfig.url
+                        url: layerConfig.url,
+                        opacity: layerConfig.opacity
                     });
                 } else {
                     throw new Error(

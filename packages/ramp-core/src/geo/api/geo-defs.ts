@@ -509,9 +509,10 @@ export interface RampExtentSetConfig {
 }
 
 export interface RampBasemapLayerConfig {
+    id?: string;
     layerType: string;
     url: string;
-    // TODO figure out if we need extra flag to mark as baselayer or referencelayer
+    opacity?: number;
 }
 
 export interface RampBasemapConfig {
@@ -520,6 +521,7 @@ export interface RampBasemapConfig {
     name?: string;
     description?: string;
     altText?: string;
+    thumbnailUrl?: string;
     attribution?: Attribution;
     layers: Array<RampBasemapLayerConfig>;
 }
