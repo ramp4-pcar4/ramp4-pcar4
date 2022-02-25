@@ -405,7 +405,7 @@ let config = {
                 text: 'All Your Base are Belong to Us'
             }
         },
-        animate: true
+        system: { animate: true }
     }
 };
 

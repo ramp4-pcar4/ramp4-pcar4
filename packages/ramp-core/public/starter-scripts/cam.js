@@ -383,7 +383,7 @@ let config = {
                 }
             }
         },
-        animate: true
+        system: { animate: true }
     },
     fr: {
         map: {
@@ -962,7 +962,7 @@ let config = {
                 }
             }
         },
-        animate: true
+        system: { animate: true }
     }
 };
 

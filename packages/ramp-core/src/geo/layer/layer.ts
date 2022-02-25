@@ -227,6 +227,14 @@ export class LayerAPI extends APIScope {
         return layer;
     }
 
+    /**
+     * Return all registered layers.
+     * @returns {Array<LayerInstance>} all registered layers
+     */
+    allLayers(): Array<LayerInstance> {
+        return this.$vApp.$store.get<LayerInstance[]>(LayerStore.layers) || [];
+    }
+
     // TODO consider if we need a defaulting scenario. This might tie in with
     //      people wanting to override core layer types; they would omit then provide
     //      the custom layer definition class.

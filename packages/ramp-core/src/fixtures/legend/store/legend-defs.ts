@@ -197,7 +197,7 @@ export class LegendEntry extends LegendItem {
     }
 
     /**
-     * Load the given layer into this entry
+     * Have the entry adapt and update to the given layer as it loads.
      * Is either called in the constructor, or through the legend api
      */
     loadLayer(layer: LayerInstance): void {

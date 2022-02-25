@@ -76,9 +76,9 @@ export interface RampConfig {
     map: RampMapConfig;
     layers: RampLayerConfig[];
     fixtures: { [key: string]: any };
-    animate: boolean;
     system?: {
         proxyUrl?: string;
+        animate?: boolean;
     };
 }
 

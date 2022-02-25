@@ -51,8 +51,7 @@ function individualConfigUpgrader(r2c: any): any {
         fixtures: [],
         layers: [],
         map: {},
-        system: {},
-        animate: true
+        system: { animate: true }
     };
 
     // ramp 2 top-level object has

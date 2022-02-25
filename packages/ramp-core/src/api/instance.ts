@@ -55,7 +55,7 @@ export class InstanceAPI {
     readonly panel: PanelAPI;
     readonly event: EventAPI;
     readonly geo: GeoAPI;
-    readonly notifications: NotificationAPI;
+    readonly notify: NotificationAPI;
     readonly startRequired: boolean;
     readonly ui: { maptip: MaptipAPI };
     started: boolean = false;
@@ -94,8 +94,7 @@ export class InstanceAPI {
         this.geo = new GeoAPI(this);
         //TODO before 1.0: does the ui namespace still make sense, should we just leave maptip under geo.map only?
         this.ui = { maptip: this.geo.map.maptip };
-        //TODO before 1.0: is 'notifications' too long of a name? maybe 'log' or 'notify'
-        this.notifications = new NotificationAPI(this);
+        this.notify = new NotificationAPI(this);
 
         // TODO: decide whether to move to src/main.ts:createApp
         // TODO: store a reference to the even bus in the global store [?]
@@ -128,7 +127,7 @@ export class InstanceAPI {
             );
 
             // disable animations if needed
-            if (!langConfig.animate && this.$element._container) {
+            if (!langConfig.system?.animate && this.$element._container) {
                 this.$element._container.classList.remove('animation-enabled');
             }
 
