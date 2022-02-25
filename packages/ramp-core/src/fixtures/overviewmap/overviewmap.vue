@@ -83,12 +83,14 @@ export default defineComponent({
     data() {
         return {
             mapConfig: get(OverviewmapStore.mapConfig),
+            basemaps: get(OverviewmapStore.basemaps),
             startMinimized: get(OverviewmapStore.startMinimized),
 
             // TODO: find a way to fix this declaration (should be something like overviewMap: OverviewMapAPI but that gave a compile error)
             overviewMap: new OverviewMapAPI(this.$iApi),
             minimized: true,
-            hoverOnExtent: false
+            hoverOnExtent: false,
+            handlers: [] as Array<string>
         };
     },
 
@@ -106,17 +108,57 @@ export default defineComponent({
 
             this.minimized = this.startMinimized;
 
-            this.$iApi.event.on(
-                GlobalEvents.MAP_EXTENTCHANGE,
-                (newExtent: Extent) => {
-                    this.overviewMap.updateOverview(newExtent);
-                }
+            // update the overview map whenever the extent changes
+            this.handlers.push(
+                this.$iApi.event.on(
+                    GlobalEvents.MAP_EXTENTCHANGE,
+                    (newExtent: Extent) => {
+                        this.overviewMap.updateOverview(newExtent);
+                    }
+                )
             );
 
-            this.$iApi.event.on(GlobalEvents.MAP_REFRESH_END, () => {
-                this._adaptBasemap();
-            });
+            // adapt the overview map's basemap whenever the main map refreshes
+            this.handlers.push(
+                this.$iApi.event.on(GlobalEvents.MAP_REFRESH_END, () => {
+                    this._adaptBasemap();
+                })
+            );
+
+            // adapt the overview map's basemap when the main map's basemap changes
+            // note that this handler is for the same schema basemap change case where the overview map is using the main map's basemap
+            this.handlers.push(
+                this.$iApi.event.on(
+                    GlobalEvents.MAP_BASEMAPCHANGE,
+                    (payload: {
+                        basemapId: string;
+                        schemaChanged: boolean;
+                    }) => {
+                        if (
+                            !payload.schemaChanged &&
+                            this.overviewMap.created
+                        ) {
+                            const currBm: RampBasemapConfig | undefined =
+                                this.$iApi.$vApp.$store.get(
+                                    ConfigStore.getActiveBasemapConfig
+                                );
+
+                            if (
+                                currBm &&
+                                this.basemaps[currBm.tileSchemaId] === undefined
+                            ) {
+                                this.overviewMap.setBasemap(payload.basemapId);
+                            }
+                        }
+                    }
+                )
+            );
         });
+    },
+
+    beforeUnmount() {
+        // Remove all event handlers for this component
+        this.handlers.forEach(handler => this.$iApi.event.off(handler));
     },
 
     methods: {
@@ -171,9 +213,7 @@ export default defineComponent({
                 }
 
                 // find a basemap in this tile schema
-                const basemap = this.mapConfig.basemaps.find(
-                    (bm: any) => bm.tileSchemaId === tileSchemaId
-                );
+                const basemap = this.basemaps[tileSchemaId];
 
                 if (!basemap) {
                     throw new Error(
