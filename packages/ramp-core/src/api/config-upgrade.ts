@@ -1,5 +1,13 @@
 // mess of code to convert a RAMP2 config to a RAMP4 config
 
+import {
+    LayerType,
+    RampBasemapConfig,
+    RampBasemapLayerConfig,
+    RampExtentSetConfig,
+    RampTileSchemaConfig
+} from '@/geo/api';
+
 // This will be exposed on the global RAMP interface. Make caller pre-upgrade the config, don't make internals figure it out.
 // Reasons: RAMP2 has separate configs per language, caller would need to pre-bundle them to allow them into the instance.
 //          Caller may want to do further adjustments to result to make up for gaps in what we are able to upgrade.
@@ -48,7 +56,7 @@ function individualConfigUpgrader(r2c: any): any {
         //      on the other hand, any updates to the target version will need to edit this file.
         version: '4.0',
         ui: {},
-        fixtures: [],
+        fixtures: {},
         layers: [],
         map: {},
         system: { animate: true }
@@ -93,20 +101,144 @@ function mapUpgrader(r2Map: any, r4c: any): void {
     }
 
     if (r2Map.extentSets) {
-        // TODO process extent sets. Need to hoist the spatial reference that is sitting at set level
+        // process extent sets. Need to hoist the spatial reference that is sitting at set level
         //      into each extent for r4
+        r4c.map.extentSets = [];
+        r2Map.extentSets.forEach((r2es: any) => {
+            let r4es: RampExtentSetConfig = {
+                id: r2es.id,
+                default: {
+                    xmin: r2es.default.xmin,
+                    xmax: r2es.default.xmax,
+                    ymin: r2es.default.ymin,
+                    ymax: r2es.default.ymax,
+                    spatialReference: r2es.spatialReference
+                }
+            };
+
+            // check if full and maximum extents are provided
+            if (r2es.hasOwnProperty('full')) {
+                r4es.full = {
+                    xmin: r2es.full.xmin,
+                    xmax: r2es.full.xmax,
+                    ymin: r2es.full.ymin,
+                    ymax: r2es.full.ymax,
+                    spatialReference: r2es.spatialReference
+                };
+            }
+            if (r2es.hasOwnProperty('maximum')) {
+                r4es.maximum = {
+                    xmin: r2es.maximum.xmin,
+                    xmax: r2es.maximum.xmax,
+                    ymin: r2es.maximum.ymin,
+                    ymax: r2es.maximum.ymax,
+                    spatialReference: r2es.spatialReference
+                };
+            }
+
+            r4c.map.extentSets.push(r4es);
+        });
     }
 
     if (r2Map.lodSets) {
-        // TODO process lod sets. I beleive they are 1-to-1
+        // process lod sets, should be 1-to-1
+        r4c.map.lodSets = r2Map.lodSets;
     }
 
     if (r2Map.tileSchemas) {
-        // TODO process schemas. I beleive they are 1-to-1
+        // process schemas
+        r4c.map.tileSchemas = [];
+        r2Map.tileSchemas.forEach((r2ts: any) => {
+            let r4ts: RampTileSchemaConfig = {
+                id: r2ts.id,
+                name: r2ts.name,
+                extentSetId: r2ts.extentSetId,
+                lodSetId: r2ts.lodSetId,
+                thumbnailTileUrls: [], // TODO: use some defaulting here?
+                hasNorthPole: r2ts.hasNorthPole
+            };
+
+            // process the overview map config
+            if (r2ts.overviewUrl) {
+                // check if we don't already have an overview map config
+                if (!r4c.fixtures.hasOwnProperty('overviewmap')) {
+                    // init the config
+                    r4c.fixtures.overviewmap = {
+                        basemaps: {},
+                        startMinimized: true // default to true
+                    };
+                }
+
+                // add new entry
+                r4c.fixtures.overviewmap.basemaps[r2ts.id] = {
+                    id: r2ts.overviewUrl.id,
+                    tileSchemaId: r2ts.id,
+                    layers: [
+                        {
+                            id: r2ts.overviewUrl.id,
+                            layerType:
+                                r2ts.overviewUrl.layerType === 'esriDynamic'
+                                    ? LayerType.MAPIMAGE
+                                    : LayerType.TILE,
+                            url: r2ts.overviewUrl.url,
+                            opacity: r2ts.overviewUrl.opacity || 1
+                        }
+                    ]
+                };
+            }
+
+            r4c.map.tileSchemas.push(r4ts);
+        });
     }
 
-    if (r2Map.basemaps) {
-        // TODO process basemap array
+    if (r2Map.baseMaps) {
+        // process basemaps
+        r4c.map.basemaps = [];
+        r2Map.baseMaps.forEach((r2bm: any) => {
+            let r4bm: RampBasemapConfig = {
+                id: r2bm.id,
+                tileSchemaId: r2bm.tileSchemaId,
+                name: r2bm.name,
+                description: r2bm.description,
+                altText: r2bm.altText,
+                thumbnailUrl: r2bm.thumbnailUrl,
+                layers: [] // populated later
+            };
+
+            // process basemap attribution
+            if (r2bm.attribution) {
+                r4bm.attribution = {
+                    text: {},
+                    logo: {}
+                };
+                if (r2bm.text) {
+                    r4bm.attribution.text.disabled = !r2bm.text.enabled;
+                    r4bm.attribution.text.value = r2bm.text.value;
+                }
+                if (r2bm.logo) {
+                    r4bm.attribution.logo.disabled = !r2bm.logo.enabled;
+                    r4bm.attribution.logo.altText = r2bm.logo.altText;
+                    r4bm.attribution.logo.value = r2bm.logo.value;
+                    r4bm.attribution.logo.link = r2bm.logo.link;
+                }
+            }
+
+            // process the layers
+            r2bm.layers.forEach((r2bml: any) => {
+                let r4bml: RampBasemapLayerConfig = {
+                    id: r2bml.id,
+                    layerType:
+                        r2bml.layerType === 'esriDynamic'
+                            ? LayerType.MAPIMAGE
+                            : LayerType.TILE,
+                    url: r2bml.url,
+                    opacity: r2bml.opacity || 1
+                };
+                r4bm.layers.push(r4bml);
+            });
+
+            r4c.map.basemaps.push(r4bm);
+        });
     }
 
     if (r2Map.legend) {
