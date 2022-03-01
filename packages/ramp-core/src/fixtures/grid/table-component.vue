@@ -168,6 +168,7 @@
             @grid-ready="onGridReady"
             @keydown="stopArrowKeyProp"
             @firstDataRendered="gridRendered"
+            @cell-key-press="onCellKeyPress"
             :doesExternalFilterPass="doesExternalFilterPass"
             :isExternalFilterPresent="isExternalFilterPresent"
         >
@@ -1111,6 +1112,35 @@ export default defineComponent({
             ];
             if (arrowKeys.includes(event.key)) {
                 event.stopPropagation();
+            }
+        },
+
+        /**
+         * Triggered by ag-grid whenever a key is pressed on a focused/active cell.
+         * For our use case we open a new browser tab (or window, it's based on the users browser settings)
+         * for each href attribute found in the cell content when the 'Enter' key is pressed.
+         *
+         * Note that for security/performance purposes some browsers limit the number
+         * of tabs that can be opened to one. The user can disable this limitation by
+         * allowing popups from the website hosting a ramp map (shows up as an icon in the url bar of chrome,
+         * other browser may vary).
+         */
+        onCellKeyPress({ event }: { event: KeyboardEvent }) {
+            function childNodeTraversal(childNodes: ChildNode[]) {
+                childNodes.forEach((cN: any) => {
+                    if (cN.href) {
+                        window.open(cN.href);
+                    }
+
+                    if (cN.childNodes.length > 0) {
+                        childNodeTraversal(cN.childNodes);
+                    }
+                });
+            }
+
+            if (event.key == 'Enter') {
+                // @ts-ignore
+                childNodeTraversal(event.target.childNodes);
             }
         }
     }
