@@ -168,6 +168,7 @@
             @grid-ready="onGridReady"
             @keydown="stopArrowKeyProp"
             @firstDataRendered="gridRendered"
+            @cell-key-press="onCellKeyPress"
             :doesExternalFilterPass="doesExternalFilterPass"
             :isExternalFilterPresent="isExternalFilterPresent"
         >
@@ -245,6 +246,8 @@ export default defineComponent({
             gridAccessibilityManager: undefined as
                 | GridAccessibilityManager
                 | undefined,
+
+            onCellKeyPress: GridAccessibilityManager.onCellKeyPress,
 
             // Filter variables.
             quicksearch: '',
