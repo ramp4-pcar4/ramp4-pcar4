@@ -62,7 +62,8 @@ let config = {
                         ]
                     }
                 },
-                startMinimized: false
+                startMinimized: false,
+                expandFactor: 3
             }
         }
     }

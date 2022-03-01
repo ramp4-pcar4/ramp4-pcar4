@@ -58,6 +58,11 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Initial state of the overviewmap"
+                },
+                "expandFactor": {
+                    "type": "number",
+                    "default": 1.5,
+                    "description": "The ratio of the overview map's extent size compared to the main map's extent size"
                 }
             }
         },

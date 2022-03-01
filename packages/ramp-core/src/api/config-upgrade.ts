@@ -97,7 +97,28 @@ function mapUpgrader(r2Map: any, r4c: any): void {
     }
 
     if (r2Map.components) {
-        // TODO process components. A lot of these translate to fixture inclusion/exclusion
+        // TODO process components
+        // TODO: handle fixture inclusion/exclusion using the `enabled` flag in the component config
+
+        if (
+            r2Map.components.overviewMap &&
+            r2Map.components.overviewMap.enabled // TODO: revisit this when handling fixture inclusion/exclusion
+        ) {
+            // process overview map
+            // basemap entries will be added when processing the tile schemas
+
+            // check if we don't already have an overview map config
+            if (!r4c.fixtures.overviewmap) {
+                // init the config
+                r4c.fixtures.overviewmap = {
+                    basemaps: {}
+                };
+            }
+            r4c.fixtures.overviewmap.startMinimized =
+                !r2Map.components.overviewMap.initiallyExpanded;
+            r4c.fixtures.overviewmap.expandFactor =
+                r2Map.components.overviewMap.expandFactor ?? 1.5;
+        }
     }
 
     if (r2Map.extentSets) {
@@ -117,7 +138,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
             };
 
             // check if full and maximum extents are provided
-            if (r2es.hasOwnProperty('full')) {
+            if (r2es.full) {
                 r4es.full = {
                     xmin: r2es.full.xmin,
                     xmax: r2es.full.xmax,
@@ -126,7 +147,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
                     spatialReference: r2es.spatialReference
                 };
             }
-            if (r2es.hasOwnProperty('maximum')) {
+            if (r2es.maximum) {
                 r4es.maximum = {
                     xmin: r2es.maximum.xmin,
                     xmax: r2es.maximum.xmax,
@@ -155,33 +176,34 @@ function mapUpgrader(r2Map: any, r4c: any): void {
                 extentSetId: r2ts.extentSetId,
                 lodSetId: r2ts.lodSetId,
                 thumbnailTileUrls: [], // TODO: use some defaulting here?
-                hasNorthPole: r2ts.hasNorthPole
+                hasNorthPole: r2ts.hasNorthPole || false
             };
 
             // process the overview map config
             if (r2ts.overviewUrl) {
                 // check if we don't already have an overview map config
-                if (!r4c.fixtures.hasOwnProperty('overviewmap')) {
+                if (!r4c.fixtures.overviewmap) {
                     // init the config
                     r4c.fixtures.overviewmap = {
-                        basemaps: {},
-                        startMinimized: true // default to true
+                        basemaps: {}
                     };
                 }
 
                 // add new entry
                 r4c.fixtures.overviewmap.basemaps[r2ts.id] = {
-                    id: r2ts.overviewUrl.id,
+                    id: r2ts.overviewUrl.id || `overviewmap-basemap-${r2ts.id}`,
                     tileSchemaId: r2ts.id,
                     layers: [
                         {
-                            id: r2ts.overviewUrl.id,
+                            id:
+                                r2ts.overviewUrl.id ||
+                                `overviewmap-basemap-${r2ts.id}-0`,
                             layerType:
                                 r2ts.overviewUrl.layerType === 'esriDynamic'
                                     ? LayerType.MAPIMAGE
                                     : LayerType.TILE,
                             url: r2ts.overviewUrl.url,
-                            opacity: r2ts.overviewUrl.opacity || 1
+                            opacity: r2ts.overviewUrl.opacity ?? 1
                         }
                     ]
                 };
@@ -211,11 +233,11 @@ function mapUpgrader(r2Map: any, r4c: any): void {
                     text: {},
                     logo: {}
                 };
-                if (r2bm.text) {
+                if (r2bm.attribution.text) {
                     r4bm.attribution.text.disabled = !r2bm.text.enabled;
                     r4bm.attribution.text.value = r2bm.text.value;
                 }
-                if (r2bm.logo) {
+                if (r2bm.attribution.logo) {
                     r4bm.attribution.logo.disabled = !r2bm.logo.enabled;
                     r4bm.attribution.logo.altText = r2bm.logo.altText;
                     r4bm.attribution.logo.value = r2bm.logo.value;
@@ -224,15 +246,15 @@ function mapUpgrader(r2Map: any, r4c: any): void {
             }
 
             // process the layers
-            r2bm.layers.forEach((r2bml: any) => {
+            r2bm.layers.forEach((r2bml: any, idx: number) => {
                 let r4bml: RampBasemapLayerConfig = {
-                    id: r2bml.id,
+                    id: r2bml.id || `${r2bm.id}-${idx}`,
                     layerType:
                         r2bml.layerType === 'esriDynamic'
                             ? LayerType.MAPIMAGE
                             : LayerType.TILE,
                     url: r2bml.url,
-                    opacity: r2bml.opacity || 1
+                    opacity: r2bml.opacity ?? 1
                 };
                 r4bm.layers.push(r4bml);
             });

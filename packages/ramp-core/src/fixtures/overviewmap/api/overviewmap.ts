@@ -22,6 +22,10 @@ export class OverviewmapAPI extends FixtureInstance {
             OverviewmapStore.startMinimized,
             overviewmapConfig?.startMinimized || true
         );
+        this.$vApp.$store.set(
+            OverviewmapStore.expandFactor,
+            overviewmapConfig?.expandFactor ?? 1.5
+        );
     }
 
     get config(): OverviewmapConfig {
