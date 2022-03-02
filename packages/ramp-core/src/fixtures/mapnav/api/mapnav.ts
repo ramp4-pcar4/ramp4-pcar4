@@ -1,10 +1,6 @@
 import { FixtureInstance } from '@/api';
 
-import {
-    MapnavFixtureConfig,
-    MapnavItemInstance,
-    MapnavItemSet
-} from '../store';
+import { MapnavFixtureConfig, MapnavItem, MapnavItemSet } from '../store';
 
 export class MapnavAPI extends FixtureInstance {
     /**
@@ -19,9 +15,9 @@ export class MapnavAPI extends FixtureInstance {
     }
 
     /**
-     * Parses the appbar config JSON snippet from the config file and save resulting objects to the fixture store.
+     * Parses the mapnav config JSON snippet from the config file and save resulting objects to the fixture store.
      *
-     * @param {MapnavFixtureConfig} [appbarConfig]
+     * @param {MapnavFixtureConfig} [mapnavConfig]
      * @returns
      * @memberof MapnavAPI
      */
@@ -30,8 +26,10 @@ export class MapnavAPI extends FixtureInstance {
             return;
         }
 
-        const mapnavItems = mapnavConfig.items.map(
-            (item: any) => new MapnavItemInstance(item)
+        const mapnavItems: MapnavItem[] = mapnavConfig.items.map(
+            (item: string) => ({
+                id: item
+            })
         );
 
         // save mapnav items as a collection to the store

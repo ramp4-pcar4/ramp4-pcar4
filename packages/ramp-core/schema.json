@@ -477,7 +477,7 @@
                     "items": {
                         "type": "string",
                         "enum": [
-                            "geoLocator",
+                            "geolocator",
                             "zoom",
                             "home",
                             "basemap",
