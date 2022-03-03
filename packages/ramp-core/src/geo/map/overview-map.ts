@@ -1,14 +1,7 @@
 import { markRaw } from 'vue';
 import { Basemap, CommonMapAPI, InstanceAPI } from '@/api/internal';
-import {
-    Extent,
-    ExtentSet,
-    RampBasemapConfig,
-    RampExtentSetConfig,
-    RampMapConfig,
-    RampTileSchemaConfig
-} from '@/geo/api';
-import { EsriLOD, EsriMapView, EsriGraphic } from '@/geo/esri';
+import { Extent, RampMapConfig } from '@/geo/api';
+import { EsriMapView, EsriGraphic } from '@/geo/esri';
 import { ConfigStore } from '@/store/modules/config';
 import { OverviewmapStore } from '@/fixtures/overviewmap/store';
 
@@ -45,6 +38,10 @@ export class OverviewMapAPI extends CommonMapAPI {
         this._rampExtentSet = this.$iApi.geo.map.getExtentSet().clone();
         this._rampSR = this._rampExtentSet.sr.clone();
 
+        const expandFactor: number = this.$iApi.$vApp.$store.get(
+            OverviewmapStore.expandFactor
+        ) as number;
+
         // create esri view with config
         this.esriView = markRaw(
             new EsriMapView({
@@ -54,7 +51,10 @@ export class OverviewMapAPI extends CommonMapAPI {
                     rotationEnabled: false
                 },
                 spatialReference: this._rampSR.toESRI(),
-                extent: this.$iApi.geo.map.getExtent().expand(1.5).toESRI(), // use the expanded main map extent
+                extent: this.$iApi.geo.map
+                    .getExtent()
+                    .toESRI()
+                    .expand(expandFactor), // use the expanded main map extent
                 navigation: {
                     browserTouchPanEnabled: false
                 }
@@ -221,7 +221,11 @@ export class OverviewMapAPI extends CommonMapAPI {
      * @param {Extent} newExtent new main map extent
      */
     updateOverview(newExtent: Extent) {
-        this.zoomMapTo(newExtent.expand(1.5), undefined, false);
+        const expandFactor: number = this.$iApi.$vApp.$store.get(
+            OverviewmapStore.expandFactor
+        ) as number;
+
+        this.zoomMapTo(newExtent.expand(expandFactor), undefined, false);
 
         // this draws the outline of the main map extent
         this.esriView!.graphics.getItemAt(0).geometry =

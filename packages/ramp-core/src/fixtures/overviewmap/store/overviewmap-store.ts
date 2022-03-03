@@ -34,6 +34,10 @@ export enum OverviewmapStore {
      */
     startMinimized = 'overviewmap/startMinimized',
     /**
+     * (State) expandFactor: number
+     */
+    expandFactor = 'overviewmap/expandFactor',
+    /**
      * (Action) updateIntialBasemap: (basemapId: string)
      */
     updateIntialBasemap = 'overviewmap/updateIntialBasemap!'
