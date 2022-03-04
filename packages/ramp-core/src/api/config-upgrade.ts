@@ -119,6 +119,26 @@ function mapUpgrader(r2Map: any, r4c: any): void {
             r4c.fixtures.overviewmap.expandFactor =
                 r2Map.components.overviewMap.expandFactor ?? 1.5;
         }
+
+        if (
+            r2Map.components.northArrow &&
+            r2Map.components.northArrow.enabled
+        ) {
+            // process north arrow
+
+            let r4na: any = {};
+            if (r2Map.components.northArrow.arrowIcon) {
+                r4na.arrowIcon = r2Map.components.northArrow.arrowIcon;
+            }
+            if (r2Map.components.northArrow.poleIcon) {
+                r4na.poleIcon = r2Map.components.northArrow.arrowIcon;
+            }
+
+            // if we have at least on of the values defined, add this fixture config
+            if (r4na) {
+                r4c.fixtures.northarrow = r4na;
+            }
+        }
     }
 
     if (r2Map.extentSets) {
@@ -234,14 +254,17 @@ function mapUpgrader(r2Map: any, r4c: any): void {
                     logo: {}
                 };
                 if (r2bm.attribution.text) {
-                    r4bm.attribution.text.disabled = !r2bm.text.enabled;
-                    r4bm.attribution.text.value = r2bm.text.value;
+                    r4bm.attribution.text.disabled =
+                        !r2bm.attribution.text.enabled;
+                    r4bm.attribution.text.value = r2bm.attribution.text.value;
                 }
                 if (r2bm.attribution.logo) {
-                    r4bm.attribution.logo.disabled = !r2bm.logo.enabled;
-                    r4bm.attribution.logo.altText = r2bm.logo.altText;
-                    r4bm.attribution.logo.value = r2bm.logo.value;
-                    r4bm.attribution.logo.link = r2bm.logo.link;
+                    r4bm.attribution.logo.disabled =
+                        !r2bm.attribution.logo.enabled;
+                    r4bm.attribution.logo.altText =
+                        r2bm.attribution.logo.altText;
+                    r4bm.attribution.logo.value = r2bm.attribution.logo.value;
+                    r4bm.attribution.logo.link = r2bm.attribution.logo.link;
                 }
             }
 
