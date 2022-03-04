@@ -344,4 +344,30 @@ function servicesUpgrader(r2Services: any, r4c: any): void {
  */
 function uiUpgrader(r2ui: any, r4c: any): void {
     // TODO git r done
+
+    if (r2ui.navBar) {
+        // process nav bar
+        r4c.fixtures.mapnav = {
+            zoomOption: r2ui.navBar.zoom || 'buttons',
+            items: []
+        };
+        const allowedItems: string[] = [
+            'geolocator',
+            'zoom',
+            'home',
+            'basemap',
+            'help',
+            'fullscreen',
+            'geosearch',
+            'legend'
+        ];
+        r2ui.navBar.extra.forEach((item: string) => {
+            const itemLower = item.toLowerCase();
+            if (!allowedItems.includes(itemLower)) {
+                console.warn(`ignored invalid mapnav item: ${item}`);
+            } else {
+                r4c.fixtures.mapnav.items.push(itemLower);
+            }
+        });
+    }
 }
