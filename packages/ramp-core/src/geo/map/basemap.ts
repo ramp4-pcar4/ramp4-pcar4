@@ -1,7 +1,12 @@
 // these are for actual basemap objects in the map
 
 import { Attribution, LayerType, RampBasemapConfig } from '@/geo/api';
-import { EsriBasemap, EsriMapImageLayer, EsriTileLayer } from '@/geo/esri';
+import {
+    EsriBasemap,
+    EsriMapImageLayer,
+    EsriOpenStreetMapLayer,
+    EsriTileLayer
+} from '@/geo/esri';
 
 export class Basemap {
     esriBasemap: EsriBasemap;
@@ -12,7 +17,12 @@ export class Basemap {
 
         this.esriBasemap = new EsriBasemap({
             // TODO split by type if we have to populate referenceLayers
+            // TODO we can technically support most layer types. Might want to expand a bit.
+            //      Feature would be easy.
+            //      File based trickier but useful. Would throw asynch wrench into this.
+            //      ESRI Image Server would make sense.
             baseLayers: rampConfig.layers.map(layerConfig => {
+                // TODO convert to switch statement if we add more types?
                 if (layerConfig.layerType === LayerType.TILE) {
                     return new EsriTileLayer({
                         url: layerConfig.url,
@@ -21,6 +31,10 @@ export class Basemap {
                 } else if (layerConfig.layerType === LayerType.MAPIMAGE) {
                     return new EsriMapImageLayer({
                         url: layerConfig.url,
+                        opacity: layerConfig.opacity
+                    });
+                } else if (layerConfig.layerType === LayerType.OSM) {
+                    return new EsriOpenStreetMapLayer({
                         opacity: layerConfig.opacity
                     });
                 } else {

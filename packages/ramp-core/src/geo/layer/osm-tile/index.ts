@@ -2,22 +2,25 @@
 
 import { CommonLayer, InstanceAPI } from '@/api/internal';
 import { DataFormat, LayerType, RampLayerConfig } from '@/geo/api';
-import { EsriImageryLayer } from '@/geo/esri';
+import { EsriOpenStreetMapLayer } from '@/geo/esri';
 import { markRaw } from 'vue';
 
-class ImageryLayer extends CommonLayer {
-    declare esriLayer: EsriImageryLayer | undefined;
+class OsmTileLayer extends CommonLayer {
+    declare esriLayer: EsriOpenStreetMapLayer | undefined;
 
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.supportsIdentify = false;
-        this.layerType = LayerType.IMAGERY;
-        this.dataFormat = DataFormat.ESRI_RASTER;
+        this.layerType = LayerType.OSM;
+        this.dataFormat = DataFormat.OSM_TILE;
+        this.supportsFeatures = false;
     }
 
     async initiate(): Promise<void> {
         this.esriLayer = markRaw(
-            new EsriImageryLayer(this.makeEsriLayerConfig(this.origRampConfig))
+            new EsriOpenStreetMapLayer(
+                this.makeEsriLayerConfig(this.origRampConfig)
+            )
         );
         await super.initiate();
     }
@@ -30,10 +33,12 @@ class ImageryLayer extends CommonLayer {
      */
     protected makeEsriLayerConfig(
         rampLayerConfig: RampLayerConfig
-    ): __esri.ImageryLayerProperties {
+    ): __esri.OpenStreetMapLayerProperties {
         // TODO flush out
-        const esriConfig: __esri.ImageryLayerProperties =
+        const esriConfig: __esri.OpenStreetMapLayerProperties =
             super.makeEsriLayerConfig(rampLayerConfig);
+
+        // TODO remove .url from object? should be empty string coming in.
 
         return esriConfig;
     }
@@ -48,13 +53,12 @@ class ImageryLayer extends CommonLayer {
 
         this.layerTree.name = this.name;
 
-        const legendPromise = this.$iApi.geo.utils.symbology
-            .mapServerToLocalLegend(this.origRampConfig.url)
-            .then(legArray => {
-                this.legend = legArray;
-            });
-
-        loadPromises.push(legendPromise);
+        // TODO what is appropriate legend? The default empty array?
+        //      OSM is not arcgis so no legend rest endpoint to scrape.
+        //      and if they host their own it's likely massive with all the possible symbols.
+        //      Right now you see nothing in the spot to the left of the layer name.
+        //      Maybe we hardcode the OSM icon? It is a map with a magnifying glass,
+        //      which might be confusing as it will look like a search icon.
 
         // TODO once decided, might want to set a value on layer count that indicates nothing to count
 
@@ -64,4 +68,4 @@ class ImageryLayer extends CommonLayer {
     }
 }
 
-export default ImageryLayer;
+export default OsmTileLayer;

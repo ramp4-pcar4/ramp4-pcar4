@@ -74,7 +74,8 @@ let config = {
                     visibility: true
                 },
                 customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
-            }
+            },
+            { id: 'userOSM', layerType: 'osm-tile' }
         ],
         fixtures: {
             legend: {
@@ -94,7 +95,8 @@ let config = {
                                     entryIndex: 18
                                 }
                             ]
-                        }
+                        },
+                        { layerId: 'userOSM', name: 'Open Street Map' }
                     ]
                 }
             },

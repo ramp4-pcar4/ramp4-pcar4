@@ -21,6 +21,7 @@ import EsriFeatureLayer from '@arcgis/core/layers/FeatureLayer';
 import EsriGraphicsLayer from '@arcgis/core/layers/GraphicsLayer';
 import EsriImageryLayer from '@arcgis/core/layers/ImageryLayer';
 import EsriMapImageLayer from '@arcgis/core/layers/MapImageLayer';
+import EsriOpenStreetMapLayer from '@arcgis/core/layers/OpenStreetMapLayer';
 import EsriTileLayer from '@arcgis/core/layers/TileLayer';
 import EsriWMSLayer from '@arcgis/core/layers/WMSLayer';
 import EsriField from '@arcgis/core/layers/support/Field';
@@ -83,6 +84,7 @@ export {
     EsriMapImageLayer,
     EsriMapView,
     EsriMultipoint,
+    EsriOpenStreetMapLayer,
     EsriPictureMarkerSymbol,
     // EsriPrintParameters,
     // EsriPrint,

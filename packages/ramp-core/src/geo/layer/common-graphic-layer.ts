@@ -4,16 +4,13 @@
 
 import { CommonLayer, InstanceAPI } from '@/api/internal';
 import { EsriGraphicsLayer } from '@/geo/esri';
-import { Graphic, RampLayerConfig } from '@/geo/api';
+import { DataFormat, Graphic, RampLayerConfig } from '@/geo/api';
 
 export class CommonGraphicLayer extends CommonLayer {
     protected constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
-        // TODO if nothing to add, delete this constructor
         super(rampConfig, $iApi);
+        this.dataFormat = DataFormat.ESRI_FEATURE;
     }
-
-    // TODO see if we even need FCs? will depend what CommonLayer is assuming / requring
-    //      i suppose we would, for basic stuff like visibility (unless we override everything in this file)
 
     protected _graphics: Array<Graphic> = [];
     declare esriLayer: EsriGraphicsLayer | undefined;

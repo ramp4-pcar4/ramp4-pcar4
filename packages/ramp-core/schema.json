@@ -519,6 +519,9 @@
                     },
                     {
                         "$ref": "#/$defs/wmsLayerNode"
+                    },
+                    {
+                        "$ref": "#/$defs/osmLayerNode"
                     }
                 ]
             },
@@ -599,6 +602,66 @@
                 }
             },
             "required": ["id", "layerType", "url"],
+            "unevaluatedProperties": false
+        },
+        "osmLayerNode": {
+            "type": "object",
+            "description": "Properties describing an OpenStreetMap layer.",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "Identification of the layer for referencing within the viewer (does not relate directly to any external service)."
+                },
+                "name": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Display name of the layer."
+                },
+                "expectedResponseTime": {
+                    "type": "number",
+                    "default": 4000,
+                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
+                },
+                "metadataUrl": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Metadata url of the layer service."
+                },
+                "layerType": {
+                    "type": "string",
+                    "enum": ["osm-tile"],
+                    "description": "Service type shorthand for OpenStreetMap layers."
+                },
+                "extent": {
+                    "$ref": "#/$defs/extentWithReferenceNode"
+                },
+                "controls": {
+                    "$ref": "#/$defs/legendEntryControls",
+                    "default": [
+                        "opacity",
+                        "visibility",
+                        "boundingBox",
+                        "metadata",
+                        "boundaryZoom",
+                        "reload",
+                        "remove",
+                        "settings"
+                    ]
+                },
+                "disabledControls": {
+                    "$ref": "#/$defs/legendEntryControls",
+                    "default": []
+                },
+                "state": {
+                    "$ref": "#/$defs/initialLayerSettings"
+                },
+                "cosmetic": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Indicates if this layer is a cosmetic supporting layer which will not be considered for general user interaction."
+                }
+            },
+            "required": ["id", "layerType"],
             "unevaluatedProperties": false
         },
         "mapImageLayerNode": {
@@ -1477,7 +1540,11 @@
                             "layerType": {
                                 "type": "string",
                                 "description": "Base layer's type",
-                                "enum": ["esri-map-image", "esri-tile"]
+                                "enum": [
+                                    "esri-map-image",
+                                    "esri-tile",
+                                    "osm-tile"
+                                ]
                             },
                             "url": {
                                 "type": "string",
