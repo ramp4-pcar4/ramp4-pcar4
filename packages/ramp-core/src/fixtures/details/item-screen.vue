@@ -12,16 +12,16 @@
                         props: { resultIndex: resultIndex }
                     })
                 "
-                v-if="!isFeature && layerType !== 'ogcWms'"
+                v-if="!isFeature && layerType !== 'ogc-wms'"
             ></back>
             <back
                 @click="panel.show({ screen: 'details-screen-layers' })"
-                v-if="layerType === 'ogcWms'"
+                v-if="layerType === 'ogc-wms'"
             ></back>
             <close @click="panel.close()" />
         </template>
         <template #content>
-            <div class="flex py-8" v-if="layerType !== 'ogcWms'">
+            <div class="flex py-8" v-if="layerType !== 'ogc-wms'">
                 <span
                     class="flex-none m-auto symbologyIcon"
                     v-html="icon"
@@ -121,7 +121,7 @@ export default defineComponent({
 
         fieldsList(): Array<FieldDefinition> {
             // wms layers do not support fields
-            if (this.layerType === 'ogcWms') {
+            if (this.layerType === 'ogc-wms') {
                 return [];
             }
 
@@ -148,7 +148,7 @@ export default defineComponent({
                 return this.templateBindings[layer.id].template;
             }
             // If nothing is found, use a default template.
-            if (this.layerType === 'ogcWms') {
+            if (this.layerType === 'ogc-wms') {
                 return 'html-default';
             } else {
                 return 'esri-default';
@@ -171,7 +171,7 @@ export default defineComponent({
                 return;
             }
 
-            if (this.layerType !== 'ogcWms') {
+            if (this.layerType !== 'ogc-wms') {
                 const oidField = layer.oidField;
                 layer.getIcon(this.identifyItem.data[oidField]).then(value => {
                     this.icon = value;
@@ -202,7 +202,7 @@ export default defineComponent({
         }
     },
     mounted() {
-        if (this.layerType !== 'ogcWms') {
+        if (this.layerType !== 'ogc-wms') {
             this.fetchIcon();
         }
     }

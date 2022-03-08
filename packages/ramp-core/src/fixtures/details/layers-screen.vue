@@ -48,7 +48,7 @@ import { get } from '@/store/pathify-helper';
 import { DetailsStore } from './store';
 
 import { LayerInstance, PanelInstance } from '@/api';
-import { IdentifyResult } from '@/geo/api';
+import { IdentifyResult, LayerType } from '@/geo/api';
 
 export default defineComponent({
     name: 'DetailsLayersScreenV',
@@ -101,14 +101,14 @@ export default defineComponent({
         openResult(index: number) {
             if (
                 this.getLayerByUid(this.payload[index].uid)!.layerType ===
-                'ogcWms'
+                LayerType.WMS
             ) {
                 // skip results screen for wms layers
                 this.panel!.show({
                     screen: 'details-screen-item',
                     props: {
                         resultIndex: index,
-                        layerType: 'ogcWms',
+                        layerType: LayerType.WMS,
                         itemIndex: 0
                     }
                 });

@@ -1,7 +1,7 @@
 // TODO add proper comments
 
 import { CommonLayer, InstanceAPI } from '@/api/internal';
-import { LayerType, RampLayerConfig, TreeNode } from '@/geo/api';
+import { LayerType, RampLayerConfig } from '@/geo/api';
 import { EsriImageryLayer } from '@/geo/esri';
 import { markRaw } from 'vue';
 

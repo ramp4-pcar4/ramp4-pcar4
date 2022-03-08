@@ -78,7 +78,7 @@ let config = {
                     layers: [
                         {
                             id: 'CBMT',
-                            layerType: 'esriTile',
+                            layerType: 'esri-tile',
                             url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer'
                         }
                     ],
@@ -93,7 +93,7 @@ let config = {
                     layers: [
                         {
                             id: 'SMR',
-                            layerType: 'esriTile',
+                            layerType: 'esri-tile',
                             url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer'
                         }
                     ],
@@ -109,7 +109,7 @@ let config = {
                     layers: [
                         {
                             id: 'CBME_CBCE_HS_RO_3978',
-                            layerType: 'esriTile',
+                            layerType: 'esri-tile',
                             url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
                         }
                     ],
@@ -125,7 +125,7 @@ let config = {
                     layers: [
                         {
                             id: 'CBMT_CBCT_GEOM_3978',
-                            layerType: 'esriTile',
+                            layerType: 'esri-tile',
                             url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
                         }
                     ],
@@ -141,7 +141,7 @@ let config = {
                     layers: [
                         {
                             id: 'World_Imagery',
-                            layerType: 'esriTile',
+                            layerType: 'esri-tile',
                             url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                         }
                     ],
@@ -165,7 +165,7 @@ let config = {
                     layers: [
                         {
                             id: 'World_Physical_Map',
-                            layerType: 'esriTile',
+                            layerType: 'esri-tile',
                             url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer'
                         }
                     ],
@@ -181,7 +181,7 @@ let config = {
                     layers: [
                         {
                             id: 'World_Shaded_Relief',
-                            layerType: 'esriTile',
+                            layerType: 'esri-tile',
                             url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer'
                         }
                     ],
@@ -197,7 +197,7 @@ let config = {
                     layers: [
                         {
                             id: 'World_Street_Map',
-                            layerType: 'esriTile',
+                            layerType: 'esri-tile',
                             url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer'
                         }
                     ],
@@ -213,7 +213,7 @@ let config = {
                     layers: [
                         {
                             id: 'World_Terrain_Base',
-                            layerType: 'esriTile',
+                            layerType: 'esri-tile',
                             url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer'
                         }
                     ],
@@ -229,7 +229,7 @@ let config = {
                     layers: [
                         {
                             id: 'World_Topo_Map',
-                            layerType: 'esriTile',
+                            layerType: 'esri-tile',
                             url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
                         }
                     ],
@@ -242,7 +242,7 @@ let config = {
         layers: [
             {
                 id: 'FeatureSimple',
-                layerType: 'esriFeature',
+                layerType: 'esri-feature',
                 url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
                 customRenderer: {
                     type: 'simple',
@@ -267,7 +267,7 @@ let config = {
             },
             {
                 id: 'FeatureUniqueValue',
-                layerType: 'esriFeature',
+                layerType: 'esri-feature',
                 url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
                 customRenderer: {
                     type: 'uniqueValue',
@@ -300,7 +300,7 @@ let config = {
             },
             {
                 id: 'FeatureClassBreaks',
-                layerType: 'esriFeature',
+                layerType: 'esri-feature',
                 url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
                 customRenderer: {
                     type: 'classBreaks',
@@ -359,7 +359,7 @@ let config = {
             },
             {
                 id: 'WFSSimple',
-                layerType: 'ogcWfs',
+                layerType: 'ogc-wfs',
                 url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
                 customRenderer: {
                     type: 'simple',
@@ -384,7 +384,7 @@ let config = {
             },
             {
                 id: 'WFSUniqueValue',
-                layerType: 'ogcWfs',
+                layerType: 'ogc-wfs',
                 url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
                 customRenderer: {
                     type: 'uniqueValue',
@@ -448,7 +448,7 @@ let config = {
             },
             {
                 id: 'WFSClassBreaks',
-                layerType: 'ogcWfs',
+                layerType: 'ogc-wfs',
                 url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
                 customRenderer: {
                     type: 'classBreaks',
@@ -513,7 +513,7 @@ let config = {
             },
             {
                 id: 'MILSimple',
-                layerType: 'esriMapImage',
+                layerType: 'esri-map-image',
                 url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                 layerEntries: [
                     {
@@ -560,7 +560,7 @@ let config = {
             },
             {
                 id: 'MILUniqueValue',
-                layerType: 'esriMapImage',
+                layerType: 'esri-map-image',
                 url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                 layerEntries: [
                     {
@@ -622,7 +622,7 @@ let config = {
             },
             {
                 id: 'MILClassBreaks',
-                layerType: 'esriMapImage',
+                layerType: 'esri-map-image',
                 url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                 layerEntries: [
                     {

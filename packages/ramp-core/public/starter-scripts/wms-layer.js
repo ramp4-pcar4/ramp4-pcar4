@@ -64,7 +64,7 @@ let config = {
                     tileSchemaId: 'DEFAULT_ESRI_World_AuxMerc_3857',
                     layers: [
                         {
-                            layerType: 'esriTile',
+                            layerType: 'esri-tile',
                             url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                         }
                     ]
@@ -78,7 +78,7 @@ let config = {
                     layers: [
                         {
                             id: 'CBMT',
-                            layerType: 'esriTile',
+                            layerType: 'esri-tile',
                             url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer'
                         }
                     ],
@@ -90,7 +90,7 @@ let config = {
         layers: [
             {
                 id: 'ahocevar',
-                layerType: 'ogcWms',
+                layerType: 'ogc-wms',
                 url: 'https://ahocevar.com/geoserver/wms',
                 state: {
                     visibility: true
@@ -104,7 +104,7 @@ let config = {
             },
             {
                 id: 'RailwayNetwork',
-                layerType: 'ogcWms',
+                layerType: 'ogc-wms',
                 url: 'http://maps.geogratis.gc.ca/wms/railway_en',
                 state: {
                     visibility: true
@@ -124,7 +124,7 @@ let config = {
             },
             {
                 id: 'GeoMet',
-                layerType: 'ogcWms',
+                layerType: 'ogc-wms',
                 url: 'http://geo.weather.gc.ca/geomet/?lang=E&service=WMS&request=GetCapabilities',
                 state: {
                     visibility: true,

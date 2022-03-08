@@ -40,7 +40,7 @@ let config = {
                     tileSchemaId: 'DEFAULT_NRCAN_Lambert_3978',
                     layers: [
                         {
-                            layerType: 'esriTile',
+                            layerType: 'esri-tile',
                             url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBCT3978/MapServer'
                         }
                     ]

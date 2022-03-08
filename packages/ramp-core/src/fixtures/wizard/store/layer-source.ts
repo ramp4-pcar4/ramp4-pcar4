@@ -39,11 +39,11 @@ export class LayerSource extends APIScope {
         }
 
         switch (fileType) {
-            case 'geojson':
+            case LayerType.GEOJSON:
                 return this.getGeojsonInfo(url, fileData!);
-            case 'shapefile':
+            case LayerType.SHAPEFILE:
                 return this.getShapfileInfo(url, fileData!);
-            case 'csv':
+            case LayerType.CSV:
                 return this.getCsvInfo(url, fileData!);
         }
     }
@@ -60,7 +60,7 @@ export class LayerSource extends APIScope {
 
         const config = {
             id: `geojson#${++this.layerCount}`,
-            layerType: 'fileGeoJson',
+            layerType: LayerType.GEOJSON,
             url,
             name: url.substr(url.lastIndexOf('/') + 1),
             state: { opacity: 1, visibility: true },
@@ -83,7 +83,7 @@ export class LayerSource extends APIScope {
 
         const config = {
             id: `csv#${++this.layerCount}`,
-            layerType: 'fileCsv',
+            layerType: LayerType.CSV,
             url,
             name: url.substr(url.lastIndexOf('/') + 1),
             state: { opacity: 1, visibility: true },
@@ -312,12 +312,12 @@ export class LayerSource extends APIScope {
         // check if file url
         switch (url.match(/\.(zip|csv|geojson|json)$/)?.[1]) {
             case 'zip':
-                return 'shapefile';
+                return LayerType.SHAPEFILE;
             case 'csv':
-                return 'csv';
+                return LayerType.CSV;
             case 'geojson':
             case 'json':
-                return 'geojson';
+                return LayerType.GEOJSON;
         }
 
         // probably an image layer if ends with ImageServer

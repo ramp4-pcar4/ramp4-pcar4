@@ -564,7 +564,7 @@
                 },
                 "layerType": {
                     "type": "string",
-                    "enum": ["esriImagery", "esriTile"],
+                    "enum": ["esri-imagery", "esri-tile"],
                     "description": "Service type shorthand for basic layers."
                 },
                 "extent": {
@@ -641,8 +641,8 @@
                 },
                 "layerType": {
                     "type": "string",
-                    "enum": ["esriMapImage"],
-                    "default": "esriMapImage",
+                    "enum": ["esri-map-image"],
+                    "default": "esri-map-image",
                     "description": "Service type shorthand for map image layers."
                 },
                 "toggleSymbology": {
@@ -809,7 +809,7 @@
                 },
                 "layerType": {
                     "type": "string",
-                    "enum": ["esriFeature"],
+                    "enum": ["esri-feature"],
                     "description": "Service type shorthand for feature layers."
                 },
                 "toggleSymbology": {
@@ -901,8 +901,8 @@
                 },
                 "layerType": {
                     "type": "string",
-                    "enum": ["esriFeature"],
-                    "default": "esriFeature",
+                    "enum": ["esri-feature"],
+                    "default": "esri-feature",
                     "description": "Service type shorthand for file layers."
                 },
                 "fileType": {
@@ -1001,8 +1001,8 @@
                 },
                 "layerType": {
                     "type": "string",
-                    "enum": ["ogcWfs"],
-                    "default": "ofcWfs",
+                    "enum": ["ogc-wfs"],
+                    "default": "ogc-wfs",
                     "description": "Service type shorthand for WFS layers."
                 },
                 "tolerance": {
@@ -1112,8 +1112,8 @@
                 },
                 "layerType": {
                     "type": "string",
-                    "enum": ["ogcWms"],
-                    "default": "ocgWms",
+                    "enum": ["ogc-wms"],
+                    "default": "ogc-wms",
                     "description": "Service type shorthand for WMS layers."
                 },
                 "featureInfoMimeType": {
@@ -1477,7 +1477,7 @@
                             "layerType": {
                                 "type": "string",
                                 "description": "Base layer's type",
-                                "enum": ["esriMapImage", "esriTile"]
+                                "enum": ["esri-map-image", "esri-tile"]
                             },
                             "url": {
                                 "type": "string",

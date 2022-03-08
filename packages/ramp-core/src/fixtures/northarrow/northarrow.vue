@@ -12,7 +12,13 @@ import { defineComponent } from 'vue';
 import { get } from '@/store/pathify-helper';
 import { NortharrowStore } from './store';
 import { GlobalEvents, CommonGraphicLayer } from '@/api/internal';
-import { Graphic, Extent, Point, PointStyleOptions } from '@/geo/api';
+import {
+    Graphic,
+    Extent,
+    LayerType,
+    Point,
+    PointStyleOptions
+} from '@/geo/api';
 import flag from './flag.json';
 import { debounce } from 'throttle-debounce';
 
@@ -141,7 +147,7 @@ export default defineComponent({
                         const poleLayer =
                             await this.$iApi.geo.layer.createLayer({
                                 layerId: 'PoleMarker',
-                                layerType: 'esriGraphic',
+                                layerType: LayerType.GRAPHIC,
                                 cosmetic: true // mark this layer as a cosmetic layer
                             });
                         await poleLayer.initiate();

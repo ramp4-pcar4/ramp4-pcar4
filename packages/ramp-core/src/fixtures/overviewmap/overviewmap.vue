@@ -239,7 +239,10 @@ export default defineComponent({
                 // if we errored above, just use the main map's basemap
 
                 // TODO: do we want this warning? will throw on every map refresh if no basemaps have been provided in the config (which is valid)
-                console.warn(`${err}. Will default to the main map's basemap.`);
+                //       JR: no, as it made me investigate what the problem was. If we want to put a warning for an error that is not the
+                //           hardcoded one thrown above, we should compare the error text and only console if different. Can also shorten the
+                //           above to a unique key of sorts, since it wont be visibile to eyes.
+                // console.warn(`${err}. Will default to the main map's basemap.`);
 
                 // override the intial basemap id in the overview map config
                 if (!this.overviewMap.created) {

@@ -316,15 +316,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Component } from 'vue';
+import { defineComponent } from 'vue';
 import { get, sync, call } from '@/store/pathify-helper';
 
 import { PanelInstance } from '@/api';
-import { LayerStore } from '@/store/modules/layer';
 import { LayerType } from '@/geo/api';
 import { GlobalEvents } from '@/api/internal';
 import { WizardStore, WizardStep } from './store';
-import { LayerSource, LayerInfo } from './store/layer-source';
 
 import WizardFormFooterV from './form-footer.vue';
 import WizardInputV from './form-input.vue';
@@ -395,12 +393,15 @@ export default defineComponent({
 
             // file layer formats
             fileTypeOptions: [
-                { value: 'geojson', label: this.$t('wizard.fileType.geojson') },
                 {
-                    value: 'shapefile',
+                    value: LayerType.GEOJSON,
+                    label: this.$t('wizard.fileType.geojson')
+                },
+                {
+                    value: LayerType.SHAPEFILE,
                     label: this.$t('wizard.fileType.shapefile')
                 },
-                { value: 'csv', label: this.$t('wizard.fileType.csv') }
+                { value: LayerType.CSV, label: this.$t('wizard.fileType.csv') }
             ]
         };
     },

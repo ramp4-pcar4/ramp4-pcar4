@@ -57,7 +57,7 @@ const rInstance = new RAMP.Instance(document.getElementById("map"), {
     layers: [
         {
             id: 'My_New_Layer',
-            layerType: 'esriFeature',
+            layerType: 'esri-feature',
             url: 'http://my-website.example/path/to/esri/layer'
         }
     ],
