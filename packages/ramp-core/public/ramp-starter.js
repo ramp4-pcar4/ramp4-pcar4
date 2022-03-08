@@ -247,6 +247,22 @@ let config = {
                     ],
                     tileSchemaId:
                         'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                },
+                {
+                    id: 'baseOpenStreetMap',
+                    name: 'OpenStreetMap',
+                    description: 'Open sourced topographical map.',
+                    altText: 'OpenStreetMap',
+                    layers: [
+                        {
+                            id: 'Open_Street_Map',
+                            layerType: 'osm-tile'
+                        }
+                    ],
+                    thumbnailUrl:
+                        'https://www.openstreetmap.org/assets/about/osm-a74d2c94082260032c133b9d206ee2fdd911e5c82bf03daae10393a02d7b4809.png',
+                    tileSchemaId:
+                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                 }
             ],
             initialBasemapId: 'baseEsriWorld'

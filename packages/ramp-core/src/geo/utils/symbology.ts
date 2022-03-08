@@ -263,17 +263,14 @@ export class SymbologyAPI extends APIScope {
     }
 
     /**
-     * Generates a placeholder symbology graphic. Returns a promise for consistency
+     * Generates a placeholder symbology graphic.
      * @function generatePlaceholderSymbology
      * @private
      * @param  {String} name label symbology label
      * @param  {String} colour colour to use in the graphic
      * @return {Object} symbology svg code and its label
      */
-    generatePlaceholderSymbology(
-        name: string,
-        colour: string = '#000'
-    ): Object {
+    generatePlaceholderSymbology(name: string, colour: string = '#000'): any {
         const draw = svgjs(window.document.createElement('div'))
             .size(this.CONTAINER_SIZE, this.CONTAINER_SIZE)
             .viewbox(0, 0, this.CONTAINER_SIZE, this.CONTAINER_SIZE);

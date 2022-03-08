@@ -105,8 +105,8 @@ export default defineComponent({
             }
 
             // Update the layer definition to filter child symbols
-            // WMS layers do not have child symbology
-            if (this.legendItem.layer?.layerType !== LayerType.WMS) {
+            // At the moment, only layers that support features will support sql filters
+            if (this.legendItem.layer?.supportsFeatures) {
                 this.legendItem.layer?.setSqlFilter(
                     CoreFilter.SYMBOL,
                     this.legendItem
