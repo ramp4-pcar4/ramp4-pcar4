@@ -101,7 +101,7 @@
                 <div class="m-5" v-for="item in symbologyStack" :key="item.uid">
                     <!-- for WMS layers -->
                     <div
-                        v-if="layerType === 'ogcWms'"
+                        v-if="layerType === 'ogc-wms'"
                         class="items-center grid-cols-1"
                     >
                         <div

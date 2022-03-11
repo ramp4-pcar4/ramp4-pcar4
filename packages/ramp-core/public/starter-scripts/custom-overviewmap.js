@@ -40,7 +40,7 @@ let config = {
                     tileSchemaId: 'DEFAULT_ESRI_World_AuxMerc_3857',
                     layers: [
                         {
-                            layerType: 'esriTile',
+                            layerType: 'esri-tile',
                             url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                         }
                     ]
@@ -56,7 +56,7 @@ let config = {
                         tileSchemaId: 'DEFAULT_ESRI_World_AuxMerc_3857',
                         layers: [
                             {
-                                layerType: 'esriTile',
+                                layerType: 'esri-tile',
                                 url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer'
                             }
                         ]

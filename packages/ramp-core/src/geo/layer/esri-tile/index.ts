@@ -1,7 +1,7 @@
 // TODO add proper comments
 
 import { CommonLayer, InstanceAPI } from '@/api/internal';
-import { LayerType, RampLayerConfig, TreeNode } from '@/geo/api';
+import { DataFormat, LayerType, RampLayerConfig } from '@/geo/api';
 import { EsriTileLayer } from '@/geo/esri';
 import { markRaw } from 'vue';
 
@@ -12,6 +12,7 @@ class TileLayer extends CommonLayer {
         super(rampConfig, $iApi);
         this.supportsIdentify = false;
         this.layerType = LayerType.TILE;
+        this.dataFormat = DataFormat.ESRI_TILE;
     }
 
     async initiate(): Promise<void> {

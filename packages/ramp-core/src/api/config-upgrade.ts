@@ -301,7 +301,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
 function layerUpgrader(r2layer: any): any {
     const r4layer: any = {
         id: r2layer.id,
-        layerType: r2layer.layerType,
+        layerType: r2layer.layerType, // TODO this will need to get mapped to the new kabab values in LayerType enum
         url: r2layer.url
     };
 

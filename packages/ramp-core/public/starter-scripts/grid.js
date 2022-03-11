@@ -39,7 +39,7 @@ let config = {
                     tileSchemaId: 'DEFAULT_ESRI_World_AuxMerc_3857',
                     layers: [
                         {
-                            layerType: 'esriTile',
+                            layerType: 'esri-tile',
                             url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                         }
                     ]
@@ -50,7 +50,7 @@ let config = {
         layers: [
             {
                 id: 'CarbonMonoxide',
-                layerType: 'esriFeature',
+                layerType: 'esri-feature',
                 url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer/9',
                 state: {
                     opacity: 1,
@@ -60,7 +60,7 @@ let config = {
             },
             {
                 id: 'CleanAir',
-                layerType: 'esriFeature',
+                layerType: 'esri-feature',
                 url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
                 state: {
                     opacity: 0.8,
@@ -70,7 +70,7 @@ let config = {
             },
             {
                 id: 'Shellfish',
-                layerType: 'esriFeature',
+                layerType: 'esri-feature',
                 url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/Shellfish_Classification_Mollusques/MapServer/6',
                 state: {
                     opacity: 1,

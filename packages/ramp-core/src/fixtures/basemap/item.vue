@@ -22,7 +22,10 @@
                         />
                         <!-- Else if, Use tileSchema tile urls -->
                         <img
-                            v-else-if="tileSchema.thumbnailTileUrls"
+                            v-else-if="
+                                tileSchema.thumbnailTileUrls &&
+                                layer.layerType === 'esri-tile'
+                            "
                             v-for="(url, idx) in tileSchema.thumbnailTileUrls"
                             class="w-full"
                             :alt="basemap.altText"

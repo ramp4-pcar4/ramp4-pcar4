@@ -40,7 +40,7 @@ let config = {
                     tileSchemaId: 'DEFAULT_ESRI_World_AuxMerc_3857',
                     layers: [
                         {
-                            layerType: 'esriTile',
+                            layerType: 'esri-tile',
                             url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                         }
                     ]
@@ -51,7 +51,7 @@ let config = {
         layers: [
             {
                 id: 'AirEmissions',
-                layerType: 'esriMapImage',
+                layerType: 'esri-map-image',
                 url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                 layerEntries: [
                     {
@@ -74,7 +74,8 @@ let config = {
                     visibility: true
                 },
                 customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
-            }
+            },
+            { id: 'userOSM', layerType: 'osm-tile' }
         ],
         fixtures: {
             legend: {
@@ -94,7 +95,8 @@ let config = {
                                     entryIndex: 18
                                 }
                             ]
-                        }
+                        },
+                        { layerId: 'userOSM', name: 'Open Street Map' }
                     ]
                 }
             },

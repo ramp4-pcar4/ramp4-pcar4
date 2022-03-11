@@ -117,17 +117,28 @@ export interface Attributes {
 //      or is it the type of ESRI layer that lives in the map.
 //      if the first, we might need to be careful as we can have custom values now.
 //      will enum cause a problem?
+//      ^ Mar 2022 whatever it means, it drives what layer class is used to construct the layer.
+//      So it's the value of the config item, and figures out what do generate from that.
+//      See https://github.com/ramp4-pcar4/ramp4-pcar4/discussions/338
 export enum LayerType {
     // ESRI
-    FEATURE = 'esriFeature',
-    MAPIMAGE = 'esriMapImage',
-    TILE = 'esriTile',
-    IMAGERY = 'esriImagery',
-    GRAPHIC = 'esriGraphic',
+    FEATURE = 'esri-feature',
+    MAPIMAGE = 'esri-map-image',
+    TILE = 'esri-tile',
+    IMAGERY = 'esri-imagery',
+    GRAPHIC = 'esri-graphic',
 
     // OGS
-    WMS = 'ogcWms',
-    WFS = 'ogcWfs', // TODO proposing this should not be a part of this enum. WFS = Feature
+    WMS = 'ogc-wms',
+    WFS = 'ogc-wfs',
+
+    // File Based
+    GEOJSON = 'file-geojson',
+    CSV = 'file-csv',
+    SHAPEFILE = 'file-shape',
+
+    // Other
+    OSM = 'osm-tile', // open street map
 
     UNKNOWN = 'unknown',
 
@@ -135,11 +146,14 @@ export enum LayerType {
 }
 
 // Format indicates what form the spatial data is encoded in.
+// This refers to what the client is dealing with. So there is no "csv" format,
+// as that data gets converted into esri feature format.
 // TODO add more as we support more formats
 export enum DataFormat {
     ESRI_FEATURE = 'esriFeature',
     ESRI_RASTER = 'esriRaster',
     ESRI_TILE = 'esriTile',
+    OSM_TILE = 'osmTile',
     OGC_RASTER = 'ogcRaster',
     UNKNOWN = 'unknown'
 }

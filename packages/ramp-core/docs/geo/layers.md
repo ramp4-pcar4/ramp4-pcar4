@@ -96,23 +96,24 @@ Note that subfolder structures do not have a uid; they exist to organize the hei
 
 The following formats have support built in the codebase. The ESRI formats assume being hosted on an ArcGIS Server `MapServer`. `FeatureServer` may work but with some functionality missing. The configuration `layerType` is provided in brackets.
 
--   ESRI Feature Layer (`esriFeature`)
--   ESRI Map Image Layer (formerly known as Dynamic Layer) (`esriMapImage`)
--   ESRI Tile Layer (`esriTile`)
--   ESRI Image Service (`esriImagery`)
--   ESRI Graphic Layer (`esriGraphic`)
--   OGC WFS 3.0 (`ogcWfs`)
--   OGC WMS (`ogcWms`)
--   GeoJSON (`fileGeoJson`)
--   CSV File (`fileCsv`)
--   Shapefile (`fileShape`)
+-   ESRI Feature Layer (`esri-feature`)
+-   ESRI Map Image Layer (formerly known as Dynamic Layer) (`esri-map-image`)
+-   ESRI Tile Layer (`esri-tile`)
+-   ESRI Image Service (`esri-imagery`)
+-   ESRI Graphic Layer (`esri-graphic`)
+-   OGC WFS 3.0 (`ogc-wfs`)
+-   OGC WMS (`ogc-wms`)
+-   GeoJSON (`file-geojson`)
+-   CSV File (`file-csv`)
+-   Shapefile (`file-shape`)
+-   OpenStreetMap Tile Layer (`osm-tile`)
 
 ## Layer Creation
 
 Layers are created by providing a configuration object to the creation function in the `geo` API.
 
 ```js
-var simpleConfig = { id: "funlayer", layerType: "esriFeature", url: "http://maptown.com/maps/rest/fancyService/4" };
+var simpleConfig = { id: "funlayer", layerType: "esri-feature", url: "http://maptown.com/maps/rest/fancyService/4" };
 var featureLayer = await instanceApi.geo.layer.createLayer(simpleConfig));
 ```
 
