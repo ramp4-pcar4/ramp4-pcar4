@@ -167,7 +167,7 @@ let config = {
                     }
                 },
                 appbar: {
-                    items: ['legend']
+                    items: ['legend', 'layer-reorder']
                 },
                 mapnav: { items: ['fullscreen', 'legend', 'home', 'basemap'] },
                 details: {
@@ -182,6 +182,9 @@ let config = {
                     text: 'WMS'
                 }
             }
+        },
+        system: {
+            animate: false
         }
     }
 };
@@ -255,7 +258,8 @@ rInstance.fixture
         'details',
         'wizard',
         'export-v1',
-        'basemap'
+        'basemap',
+        'layer-reorder'
     ])
     .then(() => {
         rInstance.panel.open('legend-panel');

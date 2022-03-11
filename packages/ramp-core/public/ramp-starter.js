@@ -1,7 +1,5 @@
 window.rInstance = null;
 
-console.log('RAMP has loaded.');
-
 // TODO: Location for version string needs to be finalized
 // document.getElementById('ramp-version').innerText =
 //     'v.' +

@@ -193,8 +193,8 @@ export default defineComponent({
         /**
          * Get animation enabled status
          */
-        isAnimationEnabled(): Boolean {
-            return this.$iApi.animate === 'on';
+        isAnimationEnabled(): boolean {
+            return this.$iApi.animate;
         }
     },
     watch: {

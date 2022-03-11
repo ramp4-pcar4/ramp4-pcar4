@@ -1,8 +1,6 @@
 window.rInstance = null;
 document.title = 'Custom Renderer';
 
-console.log('RAMP has loaded.');
-
 let config = {
     configs: {
         en: {

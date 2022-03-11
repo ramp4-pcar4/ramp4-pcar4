@@ -1,9 +1,10 @@
 <template>
     <dropdown-menu
         position="top-start"
+        :aria-label="$t('notifications.title')"
         :tooltip="$t('notifications.title')"
         tooltipPlacement="top"
-        class="pointer-events-auto sm:flex mx-16"
+        class="pointer-events-auto sm:flex ml-4 mr-8"
     >
         <template #header>
             <div class="flex items-center hover:text-white">

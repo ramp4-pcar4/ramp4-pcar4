@@ -1,7 +1,5 @@
 window.rInstance = null;
 
-console.log('RAMP has loaded.');
-
 let config = {
     configs: {
         en: {

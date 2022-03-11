@@ -5,14 +5,14 @@
             top-0
             left-0
             bottom-28
-            z-50
             flex flex-col
             items-stretch
             w-40
             pointer-events-auto
             appbar
             bg-black-75
-            sm:w-64
+            z-50
+            sm:w-64 sm:z-0 sm:bottom-38
         "
         v-focus-list
         ref="el"
@@ -40,24 +40,32 @@
         <notifications-appbar-button
             class="appbar-item bottom-48 h-48 sm:display-none"
         ></notifications-appbar-button>
-        <nav-button id="nav"></nav-button>
+
+        <!-- TODO: disabled this button for now, revist this when we need it in the future -->
+        <!-- <nav-button id="nav"></nav-button> -->
+        <about-ramp-dropdown
+            class="absolute bottom-0 h-40 sm:display-none w-full text-center"
+            position="right-start"
+        ></about-ramp-dropdown>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 import { get } from '@/store/pathify-helper';
 
 import MoreAppbarButtonV from './more-button.vue';
-import NavAppbarButtonV from './nav-button.vue';
+//import NavAppbarButtonV from './nav-button.vue';
 import NotificationsAppbarButtonV from '@/components/notification-center/appbar-button.vue';
+import AboutRampDropdownV from '@/components/about-ramp/about-ramp-dropdown.vue';
 
 export default defineComponent({
     name: 'AppbarV',
     components: {
         'more-button': MoreAppbarButtonV,
-        'nav-button': NavAppbarButtonV,
-        'notifications-appbar-button': NotificationsAppbarButtonV
+        // 'nav-button': NavAppbarButtonV,
+        'notifications-appbar-button': NotificationsAppbarButtonV,
+        'about-ramp-dropdown': AboutRampDropdownV
     },
 
     data() {
