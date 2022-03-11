@@ -98,8 +98,12 @@ export class InstanceAPI {
 
         // TODO: decide whether to move to src/main.ts:createApp
         // TODO: store a reference to the even bus in the global store [?]
-        if (configs !== undefined) {
-            const defaultConfig = configs[Object.keys(configs)[0]];
+        if (configs?.configs !== undefined) {
+            let langConfigs: {
+                [key: string]: RampConfig;
+            } = configs.configs;
+
+            const defaultConfig = langConfigs[Object.keys(langConfigs)[0]];
             this.$vApp.$store.set(
                 ConfigStore.newConfig,
                 defaultConfig !== undefined ? defaultConfig : undefined
@@ -111,12 +115,12 @@ export class InstanceAPI {
             });
             for (let lang in configs) {
                 this.$vApp.$store.set(ConfigStore.registerConfig, {
-                    config: configs[lang],
+                    config: langConfigs[lang],
                     langs: [lang]
                 });
             }
 
-            const langConfig = configs[this.$vApp.$i18n.locale];
+            const langConfig = langConfigs[this.$vApp.$i18n.locale];
 
             // set the initial basemap
             this.$vApp.$store.set(
@@ -161,8 +165,13 @@ export class InstanceAPI {
 
         // use strict check against false, as missing properties have default value of true.
         // run the default setup functions unless flags have been set to false.
-        if (!(options.loadDefaultFixtures === false)) {
-            this.fixture.addDefaultFixtures();
+        // override the loadDefaultFixtures flag if startingFixtures is provided
+        if (
+            !(options.loadDefaultFixtures === false) ||
+            (configs?.startingFixtures !== undefined &&
+                configs?.startingFixtures !== [])
+        ) {
+            this.fixture.addDefaultFixtures(configs?.startingFixtures);
         }
         if (!(options.loadDefaultEvents === false)) {
             this.event.addDefaultEvents();
