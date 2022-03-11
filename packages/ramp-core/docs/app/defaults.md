@@ -197,7 +197,7 @@ Note that if the default fixture exposes any methods on its API, a replacement f
 
 ### Subsets of the Default Setup
 
-Adding a subset of default fixtures. This map does very little! Note we could also suppress and then selectively add the neccessary default event handlers. This would be slightly more efficient (we would not have handlers reacting and then realizing there is nothing to do), but also requires one to figure out what event handlers are still needed.
+Adding a subset of default fixtures. This map does very little! Note we could also suppress and then selectively add the necessary default event handlers. This would be slightly more efficient (we would not have handlers reacting and then realizing there is nothing to do), but also requires one to figure out what event handlers are still needed.
 
 ```js
 var options = {
@@ -206,4 +206,23 @@ var options = {
 var rInstance = new RAMP.Instance(domElement, configs, options);
 rInstance.fixtures.add('help', CustomHelpFixtureClass);
 rInstance.fixtures.addDefaultFixtures(['help', 'appbar', 'mapnav']);
+```
+
+### Specify Starting Fixtures
+
+Provide a set of fixtures in the config to be loaded by the RAMP instance. The value of `loadDefaultFixtures` is ignored and the specified fixtures will be loaded.
+
+```js
+var configs = {
+    startingFixtures: ['help', 'appbar', 'mapnav'],
+    configs: {
+        en: {...},
+        fr: {...},
+        ...
+    }
+};
+var options = {
+    loadDefaultFixtures: true // ignored
+};
+var rInstance = new RAMP.Instance(domElement, configs, options);
 ```
