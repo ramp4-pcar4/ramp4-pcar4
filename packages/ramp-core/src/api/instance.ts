@@ -76,6 +76,14 @@ export class InstanceAPI {
         configs?: RampConfigs,
         options?: RampOptions
     ) {
+        console.log(
+            `RAMP v${RAMP.version.major}.${RAMP.version.minor}.${
+                RAMP.version.patch
+            } [${RAMP.version.hash.slice(0, 9)}] (Built on ${new Date(
+                RAMP.version.timestamp
+            ).toLocaleString()})`
+        );
+
         if (options?.startRequired) {
             this.startRequired = true;
         } else {
@@ -131,8 +139,14 @@ export class InstanceAPI {
             );
 
             // disable animations if needed
-            if (!langConfig.system?.animate && this.$element._container) {
-                this.$element._container.classList.remove('animation-enabled');
+            if (
+                !langConfig.system?.animate &&
+                this.$element._container &&
+                this.$element._container.children[0]
+            ) {
+                this.$element._container.children[0].classList.remove(
+                    'animation-enabled'
+                );
             }
 
             // process system configurations
@@ -274,17 +288,17 @@ export class InstanceAPI {
      * The current animation status.
      *
      * @readonly
-     * @type string
+     * @type boolean
      * @memberof InstanceAPI
      */
-    get animate(): string {
-        if (
+    get animate(): boolean {
+        return !!(
             this.$element._container &&
-            this.$element._container.classList.contains('animation-enabled')
-        ) {
-            return 'on';
-        }
-        return 'off';
+            this.$element._container.children[0] &&
+            this.$element._container.children[0].classList.contains(
+                'animation-enabled'
+            )
+        );
     }
 
     /**
