@@ -157,11 +157,6 @@
             "type": "object",
             "description": "Provides configuration to the geosearch fixture.",
             "properties": {
-                "enabled": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Specifies if geosearch functionality is enabled."
-                },
                 "serviceUrls": {
                     "type": "object",
                     "properties": {
@@ -1788,7 +1783,6 @@
                 "geosearch": {
                     "$ref": "#/$defs/geosearch",
                     "default": {
-                        "enabled": true,
                         "serviceUrls": {
                             "geoNames": "https://geogratis.gc.ca/services/geoname/@{language}/geonames.json",
                             "geoLocation": "https://geogratis.gc.ca/services/geolocation/@{language}/locate",

@@ -84,9 +84,13 @@ export interface RampConfig {
 
 /**
  * Multiple configuration objects pertaining to different languages for RAMP apps
+ * Can optionally provide a list of starting fixtures to load when RAMP loads
  *
  * @interface RampConfigs
  */
 export interface RampConfigs {
-    [key: string]: RampConfig;
+    startingFixtures?: string[];
+    configs: {
+        [key: string]: RampConfig;
+    };
 }
