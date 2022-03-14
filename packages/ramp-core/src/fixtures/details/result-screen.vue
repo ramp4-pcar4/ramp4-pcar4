@@ -1,24 +1,30 @@
 <template>
     <panel-screen :panel="panel">
-        <template #header>{{ $t('details.title') }}</template>
+        <template #header>{{ $t('details.items.title') }}</template>
         <template #controls>
             <minimize @click="panel.minimize()"></minimize>
-            <back @click="panel.show('details-screen-layers')"></back>
+            <back
+                v-if="previousItemIndex !== -1"
+                @click="this.openResult(this.previousItemIndex)"
+            ></back>
             <close @click="panel.close()"></close>
         </template>
         <template #content>
-            <div v-if="identifyResult.items.length > 0">
+            <div v-if="result.items.length > 0">
+                <span class="flex font-bold p-8 w-full" v-truncate>{{
+                    layerName
+                }}</span>
                 <button
                     class="
                         w-full
                         flex
-                        px-10
+                        px-16
                         py-10
                         text-md
                         hover:bg-gray-200
                         cursor-pointer
                     "
-                    v-for="(item, idx) in identifyResult.items"
+                    v-for="(item, idx) in result.items"
                     :key="idx"
                     @click="openResult(idx)"
                     v-focus-item
@@ -32,18 +38,18 @@
                     <span class="flex-initial py-5 px-10" v-truncate>
                         {{
                             item.data[nameField] ||
-                            'Identify Result ' + (idx + 1)
+                            $t('details.result.default.name', [idx + 1])
                         }}
                     </span>
                 </button>
             </div>
-            <div v-else>{{ $t('details.results.empty') }}</div>
+            <div v-else>{{ $t('details.layers.results.empty') }}</div>
         </template>
     </panel-screen>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
 import { get } from '@/store/pathify-helper';
 import { DetailsStore } from './store';
 
@@ -53,8 +59,19 @@ import { IdentifyResult } from '@/geo/api';
 export default defineComponent({
     name: 'DetailsResultScreenV',
     props: {
-        panel: PanelInstance,
-        resultIndex: Number
+        panel: {
+            type: Object as PropType<PanelInstance>,
+            required: true
+        },
+        result: {
+            type: Object as PropType<IdentifyResult>,
+            required: true
+        },
+        // the index of the item that was selected before coming to this screen (optional)
+        previousItemIndex: {
+            type: Number,
+            default: -1
+        }
     },
     data() {
         return {
@@ -65,30 +82,40 @@ export default defineComponent({
     },
     computed: {
         /**
-         * Returns the identify information for the layer specified by resultIndex.
-         */
-        identifyResult(): IdentifyResult {
-            return this.payload[this.resultIndex!];
-        },
-
-        /**
          * Returns the name field for the layer specified by resultIndex.
          */
         nameField(): string | undefined {
-            const layerInfo = this.payload[this.resultIndex!];
-            const uid = layerInfo?.uid;
-            const layer: LayerInstance | undefined = this.getLayerByUid(uid);
+            const layer: LayerInstance | undefined = this.getLayerByUid(
+                this.result.uid
+            );
             return layer?.nameField;
+        },
+
+        /**
+         * Returns the layer name of the result
+         */
+        layerName(): string {
+            const layer: LayerInstance | undefined = this.getLayerByUid(
+                this.result.uid
+            );
+            return layer?.name ?? '';
         }
+    },
+    mounted() {
+        this.$iApi.updateAlert(
+            this.$iApi.$vApp.$t('details.item.alert.show.list', {
+                layerName: this.layerName
+            })
+        );
     },
     methods: {
         /**
          * Switches the panel screen to display the data for a given result. Provides the currently selected layer index and the currently selected feature index as props.
          */
         openResult(itemIndex: number) {
-            this.panel!.show({
-                screen: 'details-screen-item',
-                props: { resultIndex: this.resultIndex, itemIndex: itemIndex }
+            this.panel.show({
+                screen: 'item-screen',
+                props: { result: this.result, itemIndex: itemIndex }
             });
         },
 
@@ -99,11 +126,12 @@ export default defineComponent({
          * @param {number} idx index of item in identifyResult.items
          */
         itemIcon(data: any, idx: number) {
-            const uid = this.identifyResult.uid;
-            const layer: LayerInstance | undefined = this.getLayerByUid(uid);
+            const layer: LayerInstance | undefined = this.getLayerByUid(
+                this.result.uid
+            );
             if (layer === undefined) {
                 console.warn(
-                    `could not find layer for uid ${uid} during icon lookup`
+                    `could not find layer for uid ${this.result.uid} during icon lookup`
                 );
                 return;
             }

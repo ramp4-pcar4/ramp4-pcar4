@@ -1,6 +1,7 @@
 import { DetailsAPI } from './api/details';
 import { details, DetailsConfig } from './store';
-import DetailsAppbarButtonV from './appbar-button.vue';
+import DetailsLayersAppbarButtonV from './layers-appbar-button.vue';
+import DetailsItemsAppbarButtonV from './items-appbar-button.vue';
 import DetailsLayerScreenV from './layers-screen.vue';
 import DetailsResultScreenV from './result-screen.vue';
 import DetailsItemScreenV from './item-screen.vue';
@@ -11,16 +12,24 @@ class DetailsFixture extends DetailsAPI {
     async added() {
         this.$iApi.panel.register(
             {
-                'details-panel': {
+                'details-layers-panel': {
                     screens: {
-                        'details-screen-layers': markRaw(DetailsLayerScreenV),
-                        'details-screen-result': markRaw(DetailsResultScreenV),
-                        'details-screen-item': markRaw(DetailsItemScreenV)
+                        'layers-screen': markRaw(DetailsLayerScreenV)
                     },
                     style: {
                         width: '350px'
                     },
-                    alertName: 'details.title'
+                    alertName: 'details.layers.title'
+                },
+                'details-items-panel': {
+                    screens: {
+                        'results-screen': markRaw(DetailsResultScreenV),
+                        'item-screen': markRaw(DetailsItemScreenV)
+                    },
+                    style: {
+                        width: '350px'
+                    },
+                    alertName: 'details.items.title'
                 }
             },
             { i18n: { messages } }
@@ -28,7 +37,15 @@ class DetailsFixture extends DetailsAPI {
 
         this.$vApp.$store.registerModule('details', details());
 
-        this.$iApi.component('details-appbar-button', DetailsAppbarButtonV);
+        // register a button for each panel
+        this.$iApi.component(
+            'details-layers-appbar-button',
+            DetailsLayersAppbarButtonV
+        );
+        this.$iApi.component(
+            'details-items-appbar-button',
+            DetailsItemsAppbarButtonV
+        );
 
         // Parse the details portion of the configuration file and save any custom
         // template bindings in the details store.

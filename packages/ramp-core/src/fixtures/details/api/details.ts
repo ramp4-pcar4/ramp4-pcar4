@@ -1,5 +1,5 @@
 import { FixtureInstance } from '@/api';
-import { IdentifyItem, IdentifyResult } from '@/geo/api';
+import { IdentifyResult } from '@/geo/api';
 import {
     DetailsConfig,
     DetailsItemSet,
@@ -22,46 +22,60 @@ export class DetailsAPI extends FixtureInstance {
         // Save the provided identify result in the store.
         this.$vApp.$store.set('details/setPayload!', payload);
 
-        let panel = this.$iApi.panel.get('details-panel');
-
         // Open the details panel.
-        if (!panel.isOpen) {
+        let layersPanel = this.$iApi.panel.get('details-layers-panel');
+        if (!layersPanel.isOpen) {
             this.$iApi.panel.open({
-                id: 'details-panel',
-                screen: 'details-screen-layers'
+                id: 'details-layers-panel'
             });
-        } else {
-            panel.show('details-screen-layers');
+        }
+
+        // Close the items panel.
+        let itemsPanel = this.$iApi.panel.get('details-items-panel');
+        if (itemsPanel.isOpen) {
+            itemsPanel.close();
         }
     }
 
     /**
      * Provided with the data for a single feature, open the details panel directly to the feature screen.
      *
-     * @param {IdentifyItem} payload
-     * @param {string} uid
+     * @param {{data: any, uid: string}} featureData
      * @memberof DetailsAPI
      */
-    openFeature(identifyItem: IdentifyItem, uid: string) {
-        // make IdentifyResult[] for consitency
-        const identifyResult: IdentifyResult = {
-            items: [identifyItem],
-            uid: uid,
-            loadPromise: Promise.resolve()
-        };
+    openFeature(featureData: { data: any; uid: string }) {
+        // Clear the payload in the store
+        this.$vApp.$store.set(DetailsStore.payload, []);
 
-        // Save the provided identify result in the store.
-        this.$vApp.$store.set(DetailsStore.payload, [identifyResult]);
-        // Open the details panel.
-        const panel = this.$iApi.panel.get('details-panel');
+        // Close the identified layers panel.
+        const panel = this.$iApi.panel.get('details-layers-panel');
         if (panel.isOpen) {
             this.$iApi.panel.close(panel);
         }
-        this.$iApi.panel.open({
-            id: 'details-panel',
-            screen: 'details-screen-item',
-            props: { isFeature: true, resultIndex: 0, itemIndex: 0 }
-        });
+
+        // Open or update the items panel
+        let itemsPanel = this.$iApi.panel.get('details-items-panel');
+        let props: any = {
+            result: {
+                items: [{ data: featureData.data }],
+                uid: featureData.uid,
+                loadPromise: Promise.resolve()
+            }
+        };
+        if (!itemsPanel.isOpen) {
+            // open the items panel
+            this.$iApi.panel!.open({
+                id: 'details-items-panel',
+                screen: 'item-screen',
+                props: props
+            });
+        } else {
+            // update the items screen
+            itemsPanel!.show({
+                screen: 'item-screen',
+                props: props
+            });
+        }
     }
 
     /**

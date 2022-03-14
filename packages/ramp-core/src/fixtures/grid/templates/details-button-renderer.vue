@@ -59,11 +59,11 @@ export default defineComponent({
 
     methods: {
         openDetails() {
-            const fakeIdentifyItem = deepmerge({}, { data: this.params.data });
-            delete fakeIdentifyItem['data']['rvInteractive'];
-            delete fakeIdentifyItem['data']['rvSymbol'];
+            let data = Object.assign({}, this.params.data);
+            delete data['rvInteractive'];
+            delete data['rvSymbol'];
             this.$iApi.event.emit(GlobalEvents.DETAILS_OPEN, {
-                identifyItem: fakeIdentifyItem,
+                data: data,
                 uid: this.params.uid
             });
         }

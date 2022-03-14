@@ -167,7 +167,8 @@ let config = {
                     }
                 },
                 appbar: {
-                    items: ['legend', 'layer-reorder']
+                    items: ['legend', 'layer-reorder'],
+                    temporaryButtons: ['details-layers', 'details-items']
                 },
                 mapnav: { items: ['fullscreen', 'legend', 'home', 'basemap'] },
                 details: {
@@ -254,8 +255,8 @@ rInstance.fixture
         'mapnav',
         'legend',
         'appbar',
-        'grid',
         'details',
+        'grid',
         'wizard',
         'export-v1',
         'basemap',

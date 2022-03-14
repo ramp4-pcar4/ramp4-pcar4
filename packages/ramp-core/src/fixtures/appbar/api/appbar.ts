@@ -91,15 +91,25 @@ export class AppbarAPI extends FixtureInstance {
         );
         Object.keys(tempButtonDict).forEach(key => {
             const id = tempButtonDict[key].id;
-            [`${id}-appbar-button`, id].some(v => {
-                if (this.$iApi.fixture.get(v)) {
-                    // if an item is registered globally, save the name of the registered component
-                    this.$vApp.$store.set(
-                        `appbar/tempButtonDict@${key}.componentId`,
-                        v
-                    );
-                }
-            });
+            if (
+                ![`${id}-appbar-button`, id].some(v => {
+                    let found: boolean = !!this.$iApi.fixture.get(v);
+                    if (found) {
+                        // if an item is registered globally, save the name of the registered component
+                        this.$vApp.$store.set(
+                            `appbar/tempButtonDict@${key}.componentId`,
+                            v
+                        );
+                    }
+                    return found;
+                })
+            ) {
+                // if we could not find the fixture component id, we register this id
+                this.$vApp.$store.set(
+                    `appbar/tempButtonDict@${key}.componentId`,
+                    id
+                );
+            }
         });
     }
 }

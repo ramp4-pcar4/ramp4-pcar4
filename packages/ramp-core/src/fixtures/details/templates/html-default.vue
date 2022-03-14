@@ -4,7 +4,7 @@
         v-if="identifyData"
         v-html="identifyData.data"
     ></div>
-    <div v-else>{{ $t('details.results.empty') }}</div>
+    <div v-else>{{ $t('details.layers.results.empty') }}</div>
 </template>
 
 <script lang="ts">

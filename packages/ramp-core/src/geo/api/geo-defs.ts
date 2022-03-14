@@ -355,7 +355,7 @@ export interface IdentifyItem {
 export interface IdentifyResult {
     items: Array<IdentifyItem>;
     uid: string; // this would match to the sublayer. TODO might want to name the property something more specific to that, like sublayerUid? indexUid? childUid? might be ok with uid as the parentUid is different name
-    loadPromise: Promise<void>; // TODO confirm we still need this. the .done of IdentifyResultSet should provide the same information. maybe it's a binding thing (bind to bool > bind to promise?)
+    loadPromise: Promise<void>;
 }
 
 export interface IdentifyResultSet {
