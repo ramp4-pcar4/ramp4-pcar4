@@ -627,7 +627,11 @@ let config = {
                 },
                 appbar: {
                     items: ['legend', 'geosearch', 'basemap', 'export-v1'],
-                    temporaryButtons: ['details', 'grid']
+                    temporaryButtons: [
+                        'details-layers',
+                        'details-items',
+                        'grid'
+                    ]
                 },
                 mapnav: { items: ['fullscreen', 'geoLocator', 'home', 'help'] },
                 'export-v1-title': {

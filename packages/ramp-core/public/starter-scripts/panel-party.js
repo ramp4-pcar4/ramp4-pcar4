@@ -390,7 +390,8 @@ let config = {
                         'export-v1'
                     ],
                     temporaryButtons: [
-                        { panelId: 'details-panel', appbarItem: 'details' },
+                        'details-layers',
+                        'details-items',
                         'metadata',
                         'settings',
                         'grid'

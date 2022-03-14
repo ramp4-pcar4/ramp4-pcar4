@@ -615,14 +615,11 @@ export class EventAPI extends APIScope {
                 break;
             case DefEH.OPEN_DETAILS:
                 // opens the standard details panel when a show details event happens
-                zeHandler = (payload: any) => {
+                zeHandler = (payload: { data: any; uid: string }) => {
                     const detailsFixture: DetailsAPI =
                         this.$iApi.fixture.get('details');
                     if (detailsFixture) {
-                        detailsFixture.openFeature(
-                            payload.identifyItem,
-                            payload.uid
-                        );
+                        detailsFixture.openFeature(payload);
                     }
                 };
                 this.$iApi.event.on(

@@ -1,3 +1,5 @@
+TODO: revisit this once the appbar has been enhanced (#817)
+
 # Appbar
 
 The Appbar is used as a starting point for functionality in the app. Its main use is buttons that open and close/minimize panels for fixtures but it can do whatever you want a component to do (assuming it fits in the appbar properly).
@@ -36,12 +38,12 @@ There is also the ability to configure temporary appbar buttons, these buttons a
 {
     "temporaryButtons": [
         "legend",
-        { "panelId": "details-panel", "appbarItem": "details" }
+        { "panelId": "settings-panel", "appbarItem": "settings" }
     ]
 }
 ```
 
-The first item in the array above (`legend`) will link `legend-panel` to `legend-appbar-button`. The second item links `details-panel` (panel-id) to the appbar-item described like it would in `items` in this case `details` or `details-appbar-button`.
+The first item in the array above (`legend`) will link `legend-panel` to `legend-appbar-button`. The second item links `settings-panel` (panel-id) to the appbar-item described like it would in `items` in this case `settings` or `settings-appbar-button`.
 
 Using what we've learned, the whole config for an appbar could be:
 

@@ -441,7 +441,13 @@ let config = {
                         'export-v1',
                         'layer-reorder'
                     ],
-                    temporaryButtons: ['details', 'grid', 'settings']
+
+                    temporaryButtons: [
+                        'details-layers',
+                        'details-items',
+                        'grid',
+                        'settings'
+                    ]
                 },
                 details: {
                     items: [
