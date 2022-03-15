@@ -2,176 +2,185 @@ window.rInstance = null;
 document.title = 'WMS Layers';
 
 let config = {
-    en: {
-        map: {
-            extentSets: [
-                {
-                    id: 'EXT_ESRI_World_AuxMerc_3857',
-                    default: {
-                        xmax: -5007771.626060756,
-                        xmin: -16632697.354854,
-                        ymax: 10015875.184845109,
-                        ymin: 5022907.964742964,
-                        spatialReference: {
-                            wkid: 102100,
-                            latestWkid: 3857
+    configs: {
+        en: {
+            map: {
+                extentSets: [
+                    {
+                        id: 'EXT_ESRI_World_AuxMerc_3857',
+                        default: {
+                            xmax: -5007771.626060756,
+                            xmin: -16632697.354854,
+                            ymax: 10015875.184845109,
+                            ymin: 5022907.964742964,
+                            spatialReference: {
+                                wkid: 102100,
+                                latestWkid: 3857
+                            }
+                        }
+                    },
+                    {
+                        id: 'EXT_NRCAN_Lambert_3978',
+                        default: {
+                            xmax: 3549492,
+                            xmin: -2681457,
+                            ymax: 3482193,
+                            ymin: -883440,
+                            spatialReference: {
+                                wkid: 3978
+                            }
                         }
                     }
-                },
-                {
-                    id: 'EXT_NRCAN_Lambert_3978',
-                    default: {
-                        xmax: 3549492,
-                        xmin: -2681457,
-                        ymax: 3482193,
-                        ymin: -883440,
-                        spatialReference: {
-                            wkid: 3978
-                        }
+                ],
+                lodSets: [
+                    {
+                        id: 'LOD_NRCAN_Lambert_3978',
+                        lods: RAMP.GEO.defaultLODs(
+                            RAMP.GEO.defaultTileSchemas()[0]
+                        )
+                    },
+                    {
+                        id: 'LOD_ESRI_World_AuxMerc_3857',
+                        lods: RAMP.GEO.defaultLODs(
+                            RAMP.GEO.defaultTileSchemas()[1]
+                        )
                     }
-                }
-            ],
-            lodSets: [
+                ],
+                tileSchemas: [
+                    {
+                        id: 'DEFAULT_NRCAN_Lambert_3978',
+                        name: 'Lambert Maps',
+                        extentSetId: 'EXT_NRCAN_Lambert_3978',
+                        lodSetId: 'LOD_NRCAN_Lambert_3978',
+                        thumbnailTileUrls: [
+                            '/tile/8/285/268',
+                            '/tile/8/285/269'
+                        ],
+                        hasNorthPole: true
+                    },
+                    {
+                        id: 'DEFAULT_ESRI_World_AuxMerc_3857',
+                        name: 'Web Mercator Maps',
+                        extentSetId: 'EXT_ESRI_World_AuxMerc_3857',
+                        lodSetId: 'LOD_ESRI_World_AuxMerc_3857',
+                        thumbnailTileUrls: ['/tile/8/91/74', '/tile/8/91/75']
+                    }
+                ],
+                basemaps: [
+                    {
+                        id: 'esriImagery',
+                        tileSchemaId: 'DEFAULT_ESRI_World_AuxMerc_3857',
+                        layers: [
+                            {
+                                layerType: 'esri-tile',
+                                url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                            }
+                        ]
+                    },
+                    {
+                        id: 'baseNrCan',
+                        name: 'Canada Base Map - Transportation (CBMT)',
+                        description:
+                            'The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.',
+                        altText: 'The Canada Base Map - Transportation (CBMT)',
+                        layers: [
+                            {
+                                id: 'CBMT',
+                                layerType: 'esri-tile',
+                                url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer'
+                            }
+                        ],
+                        tileSchemaId: 'DEFAULT_NRCAN_Lambert_3978'
+                    }
+                ],
+                initialBasemapId: 'esriImagery'
+            },
+            layers: [
                 {
-                    id: 'LOD_NRCAN_Lambert_3978',
-                    lods: RAMP.GEO.defaultLODs(RAMP.GEO.defaultTileSchemas()[0])
-                },
-                {
-                    id: 'LOD_ESRI_World_AuxMerc_3857',
-                    lods: RAMP.GEO.defaultLODs(RAMP.GEO.defaultTileSchemas()[1])
-                }
-            ],
-            tileSchemas: [
-                {
-                    id: 'DEFAULT_NRCAN_Lambert_3978',
-                    name: 'Lambert Maps',
-                    extentSetId: 'EXT_NRCAN_Lambert_3978',
-                    lodSetId: 'LOD_NRCAN_Lambert_3978',
-                    thumbnailTileUrls: ['/tile/8/285/268', '/tile/8/285/269'],
-                    hasNorthPole: true
-                },
-                {
-                    id: 'DEFAULT_ESRI_World_AuxMerc_3857',
-                    name: 'Web Mercator Maps',
-                    extentSetId: 'EXT_ESRI_World_AuxMerc_3857',
-                    lodSetId: 'LOD_ESRI_World_AuxMerc_3857',
-                    thumbnailTileUrls: ['/tile/8/91/74', '/tile/8/91/75']
-                }
-            ],
-            basemaps: [
-                {
-                    id: 'esriImagery',
-                    tileSchemaId: 'DEFAULT_ESRI_World_AuxMerc_3857',
-                    layers: [
+                    id: 'ahocevar',
+                    layerType: 'ogc-wms',
+                    url: 'https://ahocevar.com/geoserver/wms',
+                    state: {
+                        visibility: true
+                    },
+                    layerEntries: [
                         {
-                            layerType: 'esri-tile',
-                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
-                        }
-                    ]
-                },
-                {
-                    id: 'baseNrCan',
-                    name: 'Canada Base Map - Transportation (CBMT)',
-                    description:
-                        'The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.',
-                    altText: 'The Canada Base Map - Transportation (CBMT)',
-                    layers: [
-                        {
-                            id: 'CBMT',
-                            layerType: 'esri-tile',
-                            url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer'
+                            id: 'ne:ne'
                         }
                     ],
-                    tileSchemaId: 'DEFAULT_NRCAN_Lambert_3978'
+                    featureInfoMimeType: 'text/plain'
+                },
+                {
+                    id: 'RailwayNetwork',
+                    layerType: 'ogc-wms',
+                    url: 'http://maps.geogratis.gc.ca/wms/railway_en',
+                    state: {
+                        visibility: true
+                    },
+                    layerEntries: [
+                        { id: 'railway', name: 'Railway' },
+                        { id: 'railway.structure.line' },
+                        { id: 'railway.structure.point' },
+                        { id: 'railway.track' },
+                        { id: 'railway.ferry' },
+                        { id: 'railway.subdivision' },
+                        { id: 'railway.station' },
+                        { id: 'railway.marker_post' },
+                        { id: 'railway.crossing' }
+                    ],
+                    featureInfoMimeType: 'text/html'
+                },
+                {
+                    id: 'GeoMet',
+                    layerType: 'ogc-wms',
+                    url: 'http://geo.weather.gc.ca/geomet/?lang=E&service=WMS&request=GetCapabilities',
+                    state: {
+                        visibility: true,
+                        opacity: 0.5
+                    },
+                    layerEntries: [
+                        {
+                            id: 'RDPA.24F_PR',
+                            currentStyle: 'PRECIPMM'
+                        }
+                    ],
+                    featureInfoMimeType: 'text/plain'
                 }
             ],
-            initialBasemapId: 'esriImagery'
-        },
-        layers: [
-            {
-                id: 'ahocevar',
-                layerType: 'ogc-wms',
-                url: 'https://ahocevar.com/geoserver/wms',
-                state: {
-                    visibility: true
-                },
-                layerEntries: [
-                    {
-                        id: 'ne:ne'
+            fixtures: {
+                legend: {
+                    root: {
+                        children: [
+                            {
+                                layerId: 'RailwayNetwork',
+                                name: 'Railways'
+                            },
+                            {
+                                layerId: 'ahocevar',
+                                name: 'ahocevar'
+                            },
+                            {
+                                layerId: 'GeoMet',
+                                name: 'Cloud Coverage'
+                            }
+                        ]
                     }
-                ],
-                featureInfoMimeType: 'text/plain'
-            },
-            {
-                id: 'RailwayNetwork',
-                layerType: 'ogc-wms',
-                url: 'http://maps.geogratis.gc.ca/wms/railway_en',
-                state: {
-                    visibility: true
                 },
-                layerEntries: [
-                    { id: 'railway', name: 'Railway' },
-                    { id: 'railway.structure.line' },
-                    { id: 'railway.structure.point' },
-                    { id: 'railway.track' },
-                    { id: 'railway.ferry' },
-                    { id: 'railway.subdivision' },
-                    { id: 'railway.station' },
-                    { id: 'railway.marker_post' },
-                    { id: 'railway.crossing' }
-                ],
-                featureInfoMimeType: 'text/html'
-            },
-            {
-                id: 'GeoMet',
-                layerType: 'ogc-wms',
-                url: 'http://geo.weather.gc.ca/geomet/?lang=E&service=WMS&request=GetCapabilities',
-                state: {
-                    visibility: true,
-                    opacity: 0.5
+                appbar: {
+                    items: ['legend']
                 },
-                layerEntries: [
-                    {
-                        id: 'RDPA.24F_PR',
-                        currentStyle: 'PRECIPMM'
-                    }
-                ],
-                featureInfoMimeType: 'text/plain'
-            }
-        ],
-        fixtures: {
-            legend: {
-                root: {
-                    children: [
+                mapnav: { items: ['fullscreen', 'legend', 'home', 'basemap'] },
+                details: {
+                    items: [
                         {
-                            layerId: 'RailwayNetwork',
-                            name: 'Railways'
-                        },
-                        {
-                            layerId: 'ahocevar',
-                            name: 'ahocevar'
-                        },
-                        {
-                            layerId: 'GeoMet',
-                            name: 'Cloud Coverage'
+                            id: 'GeoMet',
+                            template: 'GeoMet-Template'
                         }
                     ]
+                },
+                'export-v1-title': {
+                    text: 'WMS'
                 }
-            },
-            appbar: {
-                items: ['legend']
-            },
-            mapnav: { items: ['fullscreen', 'legend', 'home', 'basemap'] },
-            details: {
-                items: [
-                    {
-                        id: 'GeoMet',
-                        template: 'GeoMet-Template'
-                    }
-                ]
-            },
-            'export-v1-title': {
-                text: 'WMS'
             }
         }
     }

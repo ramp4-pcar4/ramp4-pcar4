@@ -7,6 +7,7 @@ import {
     RampExtentSetConfig,
     RampTileSchemaConfig
 } from '@/geo/api';
+import { RampConfigs } from '@/types';
 
 // This will be exposed on the global RAMP interface. Make caller pre-upgrade the config, don't make internals figure it out.
 // Reasons: RAMP2 has separate configs per language, caller would need to pre-bundle them to allow them into the instance.
@@ -17,19 +18,12 @@ import {
 //      it wants the mandatory properties existing at definition. So we harness the power of 'any'
 //      to make the building up of objects easier.
 
-// Something we might not be able to support:
-// R2 has flags to "turn off" certain things, like basemap selector, geosearch.
-// in R4, this type of thing would be controlled from the instance constructor
-// (e.g. turn off loadDefaultFixtures, then page adds the desired fixtures).
-// we might be able to get an analog by targeting the appbar? E.g. fixture loads but
-// no launcher button on the UI anywhere.
-
 /**
  *
  * @param r2c a RAMP2 config or an array of RAMP2 configs (one per language)
  * @returns A RAMP4 config object set (language indexed), adapted as best as possible
  */
-export function configUpgrade2to4(r2c: any): any {
+export function configUpgrade2to4(r2c: any): RampConfigs {
     const r4c: any = {};
 
     const r2cs: Array<any> = Array.isArray(r2c) ? r2c : [r2c];
@@ -47,7 +41,44 @@ export function configUpgrade2to4(r2c: any): any {
         r4c[c.language] = nugget;
     });
 
-    return r4c;
+    // get all fixture enabled lists
+    let allFixturesEnabled: string[][] = Object.entries(r4c).map(
+        (langConfigPair: [string, any]) => {
+            let fixturesEnabled: string[] = langConfigPair[1].fixturesEnabled;
+            delete langConfigPair[1].fixturesEnabled; // remove this list from the config nugget
+            return fixturesEnabled;
+        }
+    );
+
+    // intersect all lists into single list (use a boolean to keep track of any mismatching lists)
+    let mismatch: boolean = false;
+    let startingFixtures: string[] = allFixturesEnabled.reduce((a, b) =>
+        a.filter(c => {
+            const includes: boolean = b.includes(c);
+            mismatch = mismatch || !includes;
+            return includes;
+        })
+    );
+    if (mismatch) {
+        // some lang config tried to load a different set of fixtures
+        console.warn(
+            'Configs attempted to load different sets of fixtures. Only common fixtures will be loaded (all configs must load the same fixtures).'
+        );
+    }
+
+    // add core always-on fixtures
+    startingFixtures.push(
+        'crosshairs',
+        'scrollguard',
+        'panguard',
+        'wizard',
+        'layer-reorder'
+    );
+
+    return {
+        startingFixtures: startingFixtures,
+        configs: r4c
+    };
 }
 
 function individualConfigUpgrader(r2c: any): any {
@@ -59,7 +90,8 @@ function individualConfigUpgrader(r2c: any): any {
         fixtures: {},
         layers: [],
         map: {},
-        system: { animate: true }
+        system: { animate: true },
+        fixturesEnabled: [] // this will be removed in the final step of configUpgrade2to4
     };
 
     // ramp 2 top-level object has
@@ -98,11 +130,11 @@ function mapUpgrader(r2Map: any, r4c: any): void {
 
     if (r2Map.components) {
         // TODO process components
-        // TODO: handle fixture inclusion/exclusion using the `enabled` flag in the component config
+        // TODO: handle fixture inclusion/exclusion flag in the component config. Append to fixturesEnabled if included
 
         if (
             r2Map.components.overviewMap &&
-            r2Map.components.overviewMap.enabled // TODO: revisit this when handling fixture inclusion/exclusion
+            r2Map.components.overviewMap.enabled
         ) {
             // process overview map
             // basemap entries will be added when processing the tile schemas
@@ -113,7 +145,10 @@ function mapUpgrader(r2Map: any, r4c: any): void {
                 r4c.fixtures.overviewmap = {
                     basemaps: {}
                 };
+                // add it here so it only adds once
+                r4c.fixturesEnabled.push('overviewmap');
             }
+
             r4c.fixtures.overviewmap.startMinimized =
                 !r2Map.components.overviewMap.initiallyExpanded;
             r4c.fixtures.overviewmap.expandFactor =
@@ -137,6 +172,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
             // if we have at least on of the values defined, add this fixture config
             if (r4na) {
                 r4c.fixtures.northarrow = r4na;
+                r4c.fixturesEnabled.push('northarrow');
             }
         }
     }
@@ -207,6 +243,8 @@ function mapUpgrader(r2Map: any, r4c: any): void {
                     r4c.fixtures.overviewmap = {
                         basemaps: {}
                     };
+                    // add it here so it only adds once
+                    r4c.fixturesEnabled.push('overviewmap');
                 }
 
                 // add new entry
@@ -367,6 +405,7 @@ function servicesUpgrader(r2Services: any, r4c: any): void {
  */
 function uiUpgrader(r2ui: any, r4c: any): void {
     // TODO git r done
+    // TODO: handle fixture inclusion/exclusion flag in the component config. Append to fixturesEnabled if included
 
     if (r2ui.navBar) {
         // process nav bar
@@ -387,10 +426,11 @@ function uiUpgrader(r2ui: any, r4c: any): void {
         r2ui.navBar.extra.forEach((item: string) => {
             const itemLower = item.toLowerCase();
             if (!allowedItems.includes(itemLower)) {
-                console.warn(`ignored invalid mapnav item: ${item}`);
+                console.warn(`Ignored invalid mapnav item: ${item}`);
             } else {
                 r4c.fixtures.mapnav.items.push(itemLower);
             }
         });
+        r4c.fixturesEnabled.push('mapnav');
     }
 }
