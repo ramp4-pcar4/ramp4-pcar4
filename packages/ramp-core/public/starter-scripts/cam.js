@@ -983,37 +983,7 @@ rInstance.fixture.addDefaultFixtures().then(() => {
     rInstance.panel.open('legend-panel');
 });
 
-rInstance.$element.component('WFSLayer-Custom', {
-    props: ['identifyData'],
-    template: `
-        <div>
-            <span>This is an example template that contains an image.</span>
-            <img src="https://i.imgur.com/WtY0tdC.gif" />
-        </div>
-    `
-});
-
-// add export-v1 fixtures
 rInstance.fixture.add('export-v1');
 
 // load map if startRequired is true
 rInstance.start();
-
-function switchLang() {
-    if (rInstance.language === 'en') {
-        rInstance.setLanguage('fr');
-    } else {
-        rInstance.setLanguage('en');
-    }
-    document.getElementById('instance-language').innerText = rInstance.language;
-}
-
-function animateToggle() {
-    if (rInstance.$vApp.$el.classList.contains('animation-enabled')) {
-        rInstance.$vApp.$el.classList.remove('animation-enabled');
-    } else {
-        rInstance.$vApp.$el.classList.add('animation-enabled');
-    }
-    document.getElementById('animate-status').innerText =
-        'Animate: ' + rInstance.animate;
-}
