@@ -39,7 +39,7 @@
                     xs:pl-40
                     sm:p-12 sm:pl-80
                     z-10
-                    sm:pb-36
+                    sm:pb-48
                     xs:pb-28
                 "
             ></panel-stack>
