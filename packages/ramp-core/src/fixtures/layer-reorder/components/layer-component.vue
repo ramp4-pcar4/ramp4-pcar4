@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="layersModel.length === 0" class="flex-1 ms-10" v-truncate>
-            <span>{{ $t('layerreorder.nolayers') }}</span>
+            <span class="p-5">{{ $t('layerreorder.nolayers') }}</span>
         </div>
         <draggable
             v-else
