@@ -21,13 +21,13 @@ export class LayerSource extends APIScope {
      * Get layer info from a file url or data
      *
      * @param {string} url a service url to load, name of file if file data is provided
-     * @param {string} fileType type of file
+     * @param {string} fileType format of the file (layer type)
      * @param {ArrayBuffer} [fileData] raw file data buffer
      * @returns {Promise<LayerInfo | undefined>} LayerInfo object
      */
     async fetchFileInfo(
         url: string,
-        fileType: string,
+        fileType: LayerType,
         fileData?: ArrayBuffer
     ): Promise<LayerInfo | undefined> {
         if (!fileData) {
@@ -45,6 +45,10 @@ export class LayerSource extends APIScope {
                 return this.getShapfileInfo(url, fileData!);
             case LayerType.CSV:
                 return this.getCsvInfo(url, fileData!);
+            default:
+                console.error(
+                    `Unsupported file type passed to fetchFileInfo - '${fileType}'`
+                );
         }
     }
 

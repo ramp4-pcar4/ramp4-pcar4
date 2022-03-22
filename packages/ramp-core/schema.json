@@ -926,7 +926,7 @@
         },
         "fileLayerNode": {
             "type": "object",
-            "description": "Properties describing a file layer (also an ESRI feature layer).",
+            "description": "Properties describing a file layer (implemented in an ESRI feature layer).",
             "properties": {
                 "id": {
                     "type": "string",
@@ -959,14 +959,8 @@
                 },
                 "layerType": {
                     "type": "string",
-                    "enum": ["esri-feature"],
-                    "default": "esri-feature",
+                    "enum": ["file-geojson", "file-csv", "file-shape"],
                     "description": "Service type shorthand for file layers."
-                },
-                "fileType": {
-                    "type": "string",
-                    "enum": ["csv", "geojson", "shapefile"],
-                    "description": "Specifies a supported RAMP file type - CSV, GeoJSON, or Zipped ShapeFile."
                 },
                 "latField": {
                     "type": "string",
@@ -1022,7 +1016,7 @@
                     }
                 }
             },
-            "required": ["id", "layerType", "fileType", "url"],
+            "required": ["id", "layerType", "url"],
             "additionalProperties": false
         },
         "wfsLayerNode": {
