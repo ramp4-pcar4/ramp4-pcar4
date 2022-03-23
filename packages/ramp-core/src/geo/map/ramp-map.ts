@@ -799,15 +799,18 @@ export class MapAPI extends CommonMapAPI {
             return;
         }
 
-        // Sync with layer store to get the top-most layer with respect to order of layers in the store
-        const layers: LayerInstance[] | undefined = this.$vApp.$store.get<
-            LayerInstance[]
-        >(LayerStore.layers);
+        // Get a copy of all layers from the layer store (this will be in reverse order)
+        let layers: LayerInstance[] | undefined = this.$vApp.$store
+            .get<LayerInstance[]>(LayerStore.layers)
+            ?.slice(0);
 
         // Don't perform a hittest request if the layers array hasn't been established yet.
         if (layers === undefined) {
             return;
         }
+
+        // reverse to respect layer order
+        layers.reverse();
 
         const response: __esri.HitTestResult = await this.esriView.hitTest({
             x: screenPoint.screenX,
