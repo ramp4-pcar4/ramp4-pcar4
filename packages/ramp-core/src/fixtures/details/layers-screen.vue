@@ -25,10 +25,12 @@
                     flex
                     hover:bg-gray-200
                     cursor-pointer
+                    disabled:cursor-default
                 "
                 v-for="(item, idx) in layerResults"
                 :key="`${item ? item.uid : 'loading'}-${idx}`"
                 @click="item && openResult(idx)"
+                :disabled="!(item && item.items.length > 0)"
             >
                 <div v-truncate>
                     {{ layerName(idx) || $t('details.layers.loading') }}

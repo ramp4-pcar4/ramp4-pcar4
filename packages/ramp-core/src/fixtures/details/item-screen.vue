@@ -282,7 +282,9 @@ export default defineComponent({
          * Get the icon of the identify result
          */
         fetchIcon() {
-            if (!this.identifyItem || this.layerType === 'ogc-wms') {
+            this.icon = '';
+
+            if (!this.identifyItem) {
                 return;
             }
 
@@ -296,9 +298,7 @@ export default defineComponent({
                 return;
             }
 
-            this.icon = '';
-
-            if (this.layerType !== 'ogc-wms') {
+            if (layer.supportsFeatures) {
                 const oidField = layer.oidField;
                 let lastIdx = this.currentIdx;
                 layer
