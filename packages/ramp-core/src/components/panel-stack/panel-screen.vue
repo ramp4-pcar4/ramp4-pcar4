@@ -25,8 +25,8 @@
             tabindex="-1"
         >
             <back
-                v-if="$iApi.screenSize === 'xs'"
-                @click="panel.close()"
+                v-if="panel && $iApi.screenSize === 'xs'"
+                @click="panel?.close()"
             ></back>
             <h2 class="flex-grow text-lg py-16 pl-8 min-w-0" v-truncate>
                 <slot name="header"></slot>
