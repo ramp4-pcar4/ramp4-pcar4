@@ -807,10 +807,21 @@
                     "$ref": "#/$defs/tableNode"
                 },
                 "fieldMetadata": {
-                    "type": "array",
+                    "type": "object",
                     "description": "Specifies options for the fields of a layer.",
-                    "items": {
-                        "$ref": "#/$defs/fieldMetadataEntry"
+                    "properties": {
+                        "fieldInfo": {
+                            "type": "array",
+                            "description": "Specifies field info for layer.",
+                            "items": {
+                                "$ref": "#/$defs/fieldMetadataEntry"
+                            }
+                        },
+                        "exclusiveFields": {
+                            "type": "boolean",
+                            "default": false,
+                            "description": "If true, only fields in fieldInfo are downloaded. Otherwise, download all fields."
+                        }
                     }
                 }
             },
@@ -1265,34 +1276,19 @@
         },
         "fieldMetadataEntry": {
             "type": "object",
-            "description": "Specifies options for metadata in a layer.",
+            "description": "Specifies field info for layer.",
             "properties": {
-                "fieldInfo": {
-                    "type": "array",
-                    "description": "Specifies field info for layer.",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "data": {
-                                "type": "string",
-                                "description": "Specifies the field name (data) to use to link to the identifier. Must exist in the layer. TODO: NAME CHANGE"
-                            },
-                            "alias": {
-                                "type": "string",
-                                "default": "",
-                                "description": "Specifies the field title. If missing, attempts to use the service alias, then defaults to the field name."
-                            }
-                        }
-                    },
-                    "required": ["data"]
+                "name": {
+                    "type": "string",
+                    "description": "Specifies the field name to use to link to the identifier. Must exist in the layer."
                 },
-                "exclusiveFields": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "If true, only fields in fieldInfo are downloaded. Otherwise, download all fields."
+                "alias": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Specifies the field title. If missing, attempts to use the service alias, then defaults to the field name."
                 }
             },
-            "unevaluatedProperties": false
+            "required": ["name"]
         },
         "initialLayerSettings": {
             "type": "object",
