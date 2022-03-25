@@ -331,7 +331,8 @@ let config = {
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
                     state: {
                         opacity: 0.8,
-                        visibility: true
+                        visibility: true,
+                        hovertips: false
                     },
                     tolerance: 10,
                     customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in

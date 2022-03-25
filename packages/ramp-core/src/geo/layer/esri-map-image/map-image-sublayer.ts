@@ -28,6 +28,7 @@ export class MapImageSublayer extends AttribLayer {
 
         this.dataFormat = DataFormat.ESRI_FEATURE;
         this.tooltipField = '';
+        this.hovertips = false;
 
         if (!parent.esriLayer) {
             throw new Error(

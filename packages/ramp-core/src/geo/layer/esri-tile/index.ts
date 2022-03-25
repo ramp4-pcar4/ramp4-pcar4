@@ -11,6 +11,7 @@ class TileLayer extends CommonLayer {
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.supportsIdentify = false;
+        this.hovertips = false;
         this.layerType = LayerType.TILE;
         this.dataFormat = DataFormat.ESRI_TILE;
     }
