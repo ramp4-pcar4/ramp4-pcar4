@@ -445,7 +445,7 @@ export interface RampLayerStateConfig {
 }
 
 export interface RampLayerFieldInfoConfig {
-    data: string; // TODO data is such a confusing word. name or fieldName makes way more sense
+    name: string;
     alias?: string;
 }
 

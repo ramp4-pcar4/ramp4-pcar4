@@ -228,8 +228,8 @@ export class AttribLayer extends CommonLayer {
         // if exlusive fields, only respect fields in the field info array
         if (configMetadata.exclusiveFields) {
             // ensure object id field is included
-            if (!configMetadata.fieldInfo.find(f => f.data === this.oidField)) {
-                configMetadata.fieldInfo.push({ data: this.oidField });
+            if (!configMetadata.fieldInfo.find(f => f.name === this.oidField)) {
+                configMetadata.fieldInfo.push({ name: this.oidField });
             }
 
             // TODO do we also need to ensure fields required by other things are auto-included?
@@ -242,11 +242,11 @@ export class AttribLayer extends CommonLayer {
             //      on things like details panes or grids
 
             this.fieldList = configMetadata.fieldInfo
-                .map(f => f.data)
+                .map(f => f.name)
                 .join(',');
             const tempFI = configMetadata.fieldInfo; // required because typescript is throwing a fit about undefineds inside the .filter
             this.esriFields = this.esriFields.filter(origField => {
-                return tempFI.find(fInfo => fInfo.data === origField.name);
+                return tempFI.find(fInfo => fInfo.name === origField.name);
             });
         } else {
             this.fieldList = '*';
@@ -255,7 +255,7 @@ export class AttribLayer extends CommonLayer {
         // if any aliases overrides, apply them
         configMetadata.fieldInfo.forEach(cf => {
             if (cf.alias) {
-                const ff = this.esriFields.find(fff => fff.name === cf.data);
+                const ff = this.esriFields.find(fff => fff.name === cf.name);
                 if (ff) {
                     ff.alias = cf.alias;
                 }
