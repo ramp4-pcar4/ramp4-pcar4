@@ -394,6 +394,7 @@ export class LayerInstance extends APIScope {
     isCosmetic: boolean;
     userAdded: boolean;
     identify: boolean;
+    hovertips: boolean;
 
     esriLayer: __esri.Layer | undefined;
     esriSubLayer: __esri.Sublayer | undefined; // used only by sublayers
@@ -431,6 +432,7 @@ export class LayerInstance extends APIScope {
         this.isCosmetic = config.cosmetic || false;
         this.userAdded = false;
         this.identify = false; // will be updated later based on config/supportsIdentify value
+        this.hovertips = config.state?.hovertips ?? true;
         this._sublayers = [];
     }
 

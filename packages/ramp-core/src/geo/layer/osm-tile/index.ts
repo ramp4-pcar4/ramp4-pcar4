@@ -19,6 +19,7 @@ class OsmTileLayer extends CommonLayer {
         this.layerType = LayerType.OSM;
         this.dataFormat = DataFormat.OSM_TILE;
         this.supportsFeatures = false;
+        this.hovertips = false;
     }
 
     async initiate(): Promise<void> {
