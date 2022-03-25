@@ -761,7 +761,12 @@ let config = {
                 },
                 appbar: {
                     items: ['legend'],
-                    temporaryButtons: ['details', 'grid', 'settings']
+                    temporaryButtons: [
+                        'details-layers',
+                        'details-items',
+                        'grid',
+                        'settings'
+                    ]
                 },
                 mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] }
             },

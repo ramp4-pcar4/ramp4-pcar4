@@ -1,37 +1,94 @@
 <template>
     <panel-screen>
         <template #header>
-            {{ $t('details.title') }}
+            {{ $t('details.items.title') }}
         </template>
         <template #controls>
             <minimize @click="panel.minimize()" />
-            <back
-                @click="
-                    panel.show({
-                        screen: 'details-screen-result',
-                        props: { resultIndex: resultIndex }
-                    })
-                "
-                v-if="!isFeature && layerType !== 'ogc-wms'"
-            ></back>
-            <back
-                @click="panel.show({ screen: 'details-screen-layers' })"
-                v-if="layerType === 'ogc-wms'"
-            ></back>
             <close @click="panel.close()" />
         </template>
         <template #content>
+            <div
+                class="flex justify-between py-8 px-8 mb-8 bg-gray-100"
+                v-if="result.items.length > 1 && layerType !== 'ogc-wms'"
+            >
+                <button
+                    class="px-8 font-bold hover:bg-gray-200 focus:bg-gray-200"
+                    :aria-label="$t('details.item.see.list')"
+                    @click="seeList"
+                >
+                    {{ $t('details.item.see.list') }}
+                </button>
+                <div class="flex bg-gray-200 py-8 items-center">
+                    <button
+                        :content="$t('details.item.previous.item')"
+                        v-tippy="{ placement: 'top' }"
+                        @click="advanceItemIndex(-1)"
+                        class="
+                            mx-2
+                            opacity-60
+                            hover:opacity-90
+                            disabled:opacity-30 disabled:cursor-default
+                        "
+                        :aria-label="$t('details.item.previous.item')"
+                        :disabled="currentIdx === 0"
+                    >
+                        <svg height="24" width="24" viewBox="0 0 23 23">
+                            <g>
+                                <path
+                                    d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"
+                                />
+                            </g>
+                        </svg>
+                    </button>
+                    <span class="px-8">
+                        {{
+                            $t('details.item.count', [
+                                currentIdx + 1,
+                                result.items.length
+                            ])
+                        }}
+                    </span>
+                    <button
+                        :content="$t('details.item.next.item')"
+                        v-tippy="{ placement: 'top' }"
+                        @click="advanceItemIndex(1)"
+                        class="
+                            mx-2
+                            rotate-180
+                            opacity-60
+                            hover:opacity-90
+                            disabled:opacity-30 disabled:cursor-default
+                        "
+                        :aria-label="$t('details.item.next.item')"
+                        :disabled="currentIdx === result.items.length - 1"
+                    >
+                        <svg height="24" width="24" viewBox="0 0 23 23">
+                            <g>
+                                <path
+                                    d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"
+                                />
+                            </g>
+                        </svg>
+                    </button>
+                </div>
+            </div>
             <div class="flex py-8" v-if="layerType !== 'ogc-wms'">
                 <span
+                    v-if="icon"
                     class="flex-none m-auto symbologyIcon"
                     v-html="icon"
                 ></span>
+                <div v-else class="m-auto">
+                    <div class="animate-spin spinner h-20 w-20"></div>
+                </div>
                 <span class="flex-grow my-auto text-lg px-8">
                     {{ itemName }}
                 </span>
                 <button
                     :content="$t('details.item.zoom')"
                     v-tippy="{ placement: 'bottom' }"
+                    :aria-label="$t('details.item.zoom')"
                     @click="zoomToFeature()"
                     class="text-gray-600 m-8"
                 >
@@ -59,12 +116,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
 import { get } from '@/store/pathify-helper';
 import { DetailsStore } from './store';
 
 import { LayerInstance, PanelInstance } from '@/api/internal';
-import { FieldDefinition, IdentifyResultFormat } from '@/geo/api';
+import {
+    FieldDefinition,
+    IdentifyResultFormat,
+    IdentifyResult
+} from '@/geo/api';
 
 import ESRIDefaultV from './templates/esri-default.vue';
 import HTMLDefaultV from './templates/html-default.vue';
@@ -72,13 +133,19 @@ import HTMLDefaultV from './templates/html-default.vue';
 export default defineComponent({
     name: 'DetailsItemScreenV',
     props: {
-        panel: PanelInstance,
-        // the index of the details item we want to display
-        resultIndex: Number,
-        itemIndex: Number,
-        layerType: String,
-        // true if the current payload is a single IdentifyItem
-        isFeature: Boolean
+        panel: {
+            type: Object as PropType<PanelInstance>,
+            required: true
+        },
+        result: {
+            type: Object as PropType<IdentifyResult>,
+            required: true
+        },
+        // the index of the details item we want to display (optional)
+        itemIndex: {
+            type: Number,
+            default: 0
+        }
     },
     components: {
         'esri-default': ESRIDefaultV,
@@ -90,33 +157,41 @@ export default defineComponent({
             payload: get(DetailsStore.payload),
             getLayerByUid: get('layer/getLayerByUid'),
             identifyTypes: IdentifyResultFormat.UNKNOWN,
-            icon: '' as String
+            icon: '' as String,
+            currentIdx: 0
         };
     },
-    watch: {
-        payload(newPayload: any) {
-            let idx: number = newPayload.length === 1 ? 0 : this.resultIndex!;
-            newPayload[idx].loadPromise.then(() => {
-                this.fetchIcon();
-            });
-        }
+    mounted() {
+        // this is called when screen is first mounted
+        this.initDetails();
+    },
+    beforeUpdate() {
+        // this is called before the screen is updated (e.g. user clicked another layer from layer results screen)
+        this.initDetails();
     },
     computed: {
         /**
-         * Returns the information for a single identify result, given the layer and item offsets.
+         * Returns the information for a single identify result item, item index.
          */
         identifyItem(): any {
-            return this.payload[this.resultIndex!].items[this.itemIndex!];
+            return this.result.items[this.currentIdx];
         },
 
         itemName(): string {
-            const layerInfo = this.payload[this.resultIndex!];
-            const uid = layerInfo.uid;
-            const layer: LayerInstance | undefined = this.getLayerByUid(uid);
+            const layer: LayerInstance | undefined = this.getLayerByUid(
+                this.result.uid
+            );
             const nameField = layer?.nameField;
             return nameField
                 ? this.identifyItem.data[nameField]
-                : this.$t('details.title');
+                : this.$t('details.items.title');
+        },
+
+        layerType(): string {
+            const layer: LayerInstance | undefined = this.getLayerByUid(
+                this.result.uid
+            );
+            return layer?.layerType || '';
         },
 
         fieldsList(): Array<FieldDefinition> {
@@ -125,17 +200,16 @@ export default defineComponent({
                 return [];
             }
 
-            const layerInfo = this.payload[this.resultIndex!];
-            const uid = layerInfo.uid;
-            const layer: LayerInstance | undefined = this.getLayerByUid(uid);
+            const layer: LayerInstance | undefined = this.getLayerByUid(
+                this.result.uid
+            );
             const fields = layer?.fields;
             return fields || [];
         },
 
         detailsTemplate(): string {
-            const layerInfo = this.payload[this.resultIndex!];
             const layer: LayerInstance | undefined = this.getLayerByUid(
-                layerInfo.uid
+                this.result.uid
             );
 
             // If there is a custom template binding for this layer in the store, then
@@ -156,40 +230,103 @@ export default defineComponent({
         }
     },
     methods: {
+        /**
+         * Initialize the details screen
+         */
+        initDetails() {
+            this.currentIdx = this.itemIndex ?? 0;
+            this.itemChanged();
+        },
+
+        /**
+         * Called whenever the displayed item changes
+         */
+        itemChanged() {
+            this.fetchIcon();
+            this.$iApi.updateAlert(
+                `${this.$iApi.$vApp.$t('details.item.alert.show.item', {
+                    itemName: this.itemName
+                })} ${
+                    this.result.items.length > 1
+                        ? this.$iApi.$vApp.$t('details.item.count', [
+                              this.currentIdx + 1,
+                              this.result.items.length
+                          ])
+                        : ''
+                }`
+            );
+        },
+
+        /**
+         * See all results from the identified layer
+         */
+        seeList() {
+            this.panel.show({
+                screen: 'results-screen',
+                props: {
+                    result: this.result,
+                    previousItemIndex: this.currentIdx
+                }
+            });
+        },
+
+        /**
+         * Advance the item index by direction
+         */
+        advanceItemIndex(direction: number) {
+            this.currentIdx += direction;
+            this.itemChanged();
+        },
+
+        /**
+         * Get the icon of the identify result
+         */
         fetchIcon() {
+            this.icon = '';
+
             if (!this.identifyItem) {
                 return;
             }
 
-            const layerInfo = this.payload[this.resultIndex!];
-            const uid = layerInfo.uid;
-            const layer: LayerInstance | undefined = this.getLayerByUid(uid);
+            const layer: LayerInstance | undefined = this.getLayerByUid(
+                this.result.uid
+            );
             if (layer === undefined) {
                 console.warn(
-                    `could not find layer for uid ${uid} during icon lookup`
+                    `could not find layer for uid ${this.result.uid} during icon lookup`
                 );
                 return;
             }
 
-            if (this.layerType !== 'ogc-wms') {
+            if (layer.supportsFeatures) {
                 const oidField = layer.oidField;
-                layer.getIcon(this.identifyItem.data[oidField]).then(value => {
-                    this.icon = value;
-                });
+                let lastIdx = this.currentIdx;
+                layer
+                    .getIcon(this.identifyItem.data[oidField])
+                    .then((value: string) => {
+                        // only update the icon if user is still on the same item
+                        if (this.currentIdx === lastIdx) {
+                            this.icon = value;
+                        }
+                    });
             }
         },
 
+        /**
+         * Zoom to feature on the map
+         */
         zoomToFeature() {
-            const layerInfo = this.payload[this.resultIndex!];
-            const uid = layerInfo.uid;
-            const layer: LayerInstance | undefined = this.getLayerByUid(uid);
+            const layer: LayerInstance | undefined = this.getLayerByUid(
+                this.result.uid
+            );
 
             if (layer === undefined) {
                 console.warn(
-                    `Could not find layer for uid ${uid} during zoom geometry lookup`
+                    `Could not find layer for uid ${this.result.uid} during zoom geometry lookup`
                 );
                 return;
             }
+
             const oid = this.identifyItem.data[layer.oidField];
             const opts = { getGeom: true };
             layer.getGraphic(oid, opts).then(g => {
@@ -199,14 +336,17 @@ export default defineComponent({
                     this.$iApi.geo.map.zoomMapTo(g.geometry, 50000);
                 }
             });
-        }
-    },
-    mounted() {
-        if (this.layerType !== 'ogc-wms') {
-            this.fetchIcon();
+
+            this.$iApi.updateAlert(
+                this.$iApi.$vApp.$t('details.item.alert.zoom')
+            );
         }
     }
 });
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.rotate-180 {
+    transform: rotate(-180deg);
+}
+</style>
