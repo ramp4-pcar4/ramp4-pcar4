@@ -262,24 +262,26 @@ let config = {
                                 opacity: 1
                             },
                             nameField: 'Name',
-                            table: {
-                                columns: [
-                                    { data: 'CompanyName' },
-                                    { data: 'Name' },
-                                    { data: 'E_Province' },
-                                    { data: 'City' },
-                                    { data: 'Latitude' },
-                                    { data: 'Longitude' },
-                                    { data: 'E_NAIC_Name' },
-                                    { data: 'CO2_eq' },
-                                    { data: 'E_Units' },
-                                    { data: 'Report_Year' },
-                                    { data: 'E_DetailPageURL' },
-                                    {
-                                        data: 'OBJECTID',
-                                        visible: false
-                                    }
-                                ]
+                            fixtures: {
+                                grid: {
+                                    columns: [
+                                        { data: 'CompanyName' },
+                                        { data: 'Name' },
+                                        { data: 'E_Province' },
+                                        { data: 'City' },
+                                        { data: 'Latitude' },
+                                        { data: 'Longitude' },
+                                        { data: 'E_NAIC_Name' },
+                                        { data: 'CO2_eq' },
+                                        { data: 'E_Units' },
+                                        { data: 'Report_Year' },
+                                        { data: 'E_DetailPageURL' },
+                                        {
+                                            data: 'OBJECTID',
+                                            visible: false
+                                        }
+                                    ]
+                                }
                             }
                         }
                     ]
@@ -297,24 +299,26 @@ let config = {
                     state: {
                         visibility: false
                     },
-                    table: {
-                        columns: [
-                            { data: 'NPRI_ID' },
-                            { data: 'GridColumn1' },
-                            { data: 'Company_Name' },
-                            { data: 'GridColumn3' },
-                            { data: 'GridColumn2' },
-                            { data: 'Address' },
-                            { data: 'PostalCode' },
-                            { data: 'Latitude' },
-                            { data: 'Longitude' },
-                            { data: 'E_NPRI_URL' },
-                            { data: 'GridColumn5' },
-                            { data: 'Units' },
-                            { data: 'Report_Year' },
-                            { data: 'E_DetailPageURL' },
-                            { data: 'OBJECTID', visible: false }
-                        ]
+                    fixtures: {
+                        grid: {
+                            columns: [
+                                { data: 'NPRI_ID' },
+                                { data: 'GridColumn1' },
+                                { data: 'Company_Name' },
+                                { data: 'GridColumn3' },
+                                { data: 'GridColumn2' },
+                                { data: 'Address' },
+                                { data: 'PostalCode' },
+                                { data: 'Latitude' },
+                                { data: 'Longitude' },
+                                { data: 'E_NPRI_URL' },
+                                { data: 'GridColumn5' },
+                                { data: 'Units' },
+                                { data: 'Report_Year' },
+                                { data: 'E_DetailPageURL' },
+                                { data: 'OBJECTID', visible: false }
+                            ]
+                        }
                     }
                 },
                 {
@@ -330,20 +334,22 @@ let config = {
                     state: {
                         visibility: false
                     },
-                    table: {
-                        columns: [
-                            { data: 'StationName' },
-                            { data: 'Address' },
-                            { data: 'City' },
-                            { data: 'E_Province' },
-                            { data: 'Latitude' },
-                            { data: 'Longitude' },
-                            { data: 'PM2_5' },
-                            { data: 'E_Units' },
-                            { data: 'Report_Year' },
-                            { data: 'E_DetailPageURL' },
-                            { data: 'OBJECTID', visible: false }
-                        ]
+                    fixtures: {
+                        grid: {
+                            columns: [
+                                { data: 'StationName' },
+                                { data: 'Address' },
+                                { data: 'City' },
+                                { data: 'E_Province' },
+                                { data: 'Latitude' },
+                                { data: 'Longitude' },
+                                { data: 'PM2_5' },
+                                { data: 'E_Units' },
+                                { data: 'Report_Year' },
+                                { data: 'E_DetailPageURL' },
+                                { data: 'OBJECTID', visible: false }
+                            ]
+                        }
                     }
                 },
                 {
@@ -359,20 +365,22 @@ let config = {
                     state: {
                         visibility: false
                     },
-                    table: {
-                        columns: [
-                            { data: 'StationName' },
-                            { data: 'Address' },
-                            { data: 'City' },
-                            { data: 'E_Province' },
-                            { data: 'Latitude' },
-                            { data: 'Longitude' },
-                            { data: 'SO2' },
-                            { data: 'E_Units' },
-                            { data: 'Report_Year' },
-                            { data: 'E_DetailPageURL' },
-                            { data: 'OBJECTID', visible: false }
-                        ]
+                    fixtures: {
+                        grid: {
+                            columns: [
+                                { data: 'StationName' },
+                                { data: 'Address' },
+                                { data: 'City' },
+                                { data: 'E_Province' },
+                                { data: 'Latitude' },
+                                { data: 'Longitude' },
+                                { data: 'SO2' },
+                                { data: 'E_Units' },
+                                { data: 'Report_Year' },
+                                { data: 'E_DetailPageURL' },
+                                { data: 'OBJECTID', visible: false }
+                            ]
+                        }
                     }
                 },
                 {
@@ -384,23 +392,25 @@ let config = {
                     state: {
                         visibility: false
                     },
-                    table: {
-                        columns: [
-                            { data: 'NPRI_ID' },
-                            { data: 'GridColumn1' },
-                            { data: 'Company_Name' },
-                            { data: 'GridColumn3' },
-                            { data: 'GridColumn2' },
-                            { data: 'Address' },
-                            { data: 'Latitude' },
-                            { data: 'Longitude' },
-                            { data: 'E_NPRI_URL' },
-                            { data: 'GridColumn5' },
-                            { data: 'E_Units' },
-                            { data: 'Report_Year' },
-                            { data: 'E_DetailPageURL' },
-                            { data: 'OBJECTID', visible: false }
-                        ]
+                    fixtures: {
+                        grid: {
+                            columns: [
+                                { data: 'NPRI_ID' },
+                                { data: 'GridColumn1' },
+                                { data: 'Company_Name' },
+                                { data: 'GridColumn3' },
+                                { data: 'GridColumn2' },
+                                { data: 'Address' },
+                                { data: 'Latitude' },
+                                { data: 'Longitude' },
+                                { data: 'E_NPRI_URL' },
+                                { data: 'GridColumn5' },
+                                { data: 'E_Units' },
+                                { data: 'Report_Year' },
+                                { data: 'E_DetailPageURL' },
+                                { data: 'OBJECTID', visible: false }
+                            ]
+                        }
                     },
                     disabledControls: ['metadata']
                 },
@@ -417,24 +427,26 @@ let config = {
                     state: {
                         visibility: false
                     },
-                    table: {
-                        columns: [
-                            { data: 'NPRI_ID' },
-                            { data: 'FacilityName' },
-                            { data: 'Company_Name' },
-                            { data: 'Address' },
-                            { data: 'City' },
-                            { data: 'E_Province' },
-                            { data: 'PostalCode' },
-                            { data: 'Latitude' },
-                            { data: 'Longitude' },
-                            { data: 'E_NPRI_URL' },
-                            { data: 'Pb' },
-                            { data: 'E_Units' },
-                            { data: 'Report_Year' },
-                            { data: 'E_DetailPageURL' },
-                            { data: 'OBJECTID', visible: false }
-                        ]
+                    fixtures: {
+                        grid: {
+                            columns: [
+                                { data: 'NPRI_ID' },
+                                { data: 'FacilityName' },
+                                { data: 'Company_Name' },
+                                { data: 'Address' },
+                                { data: 'City' },
+                                { data: 'E_Province' },
+                                { data: 'PostalCode' },
+                                { data: 'Latitude' },
+                                { data: 'Longitude' },
+                                { data: 'E_NPRI_URL' },
+                                { data: 'Pb' },
+                                { data: 'E_Units' },
+                                { data: 'Report_Year' },
+                                { data: 'E_DetailPageURL' },
+                                { data: 'OBJECTID', visible: false }
+                            ]
+                        }
                     }
                 },
                 {
@@ -458,24 +470,26 @@ let config = {
                                 opacity: 1
                             },
                             nameField: 'E_PA_Name',
-                            table: {
-                                columns: [
-                                    { data: 'E_PA_Name' },
-                                    { data: 'E_PA_Bio_Name' },
-                                    { data: 'E_Province' },
-                                    { data: 'E_PA_Type' },
-                                    { data: 'PA_Area_ha' },
-                                    { data: 'Protected_Date' },
-                                    { data: 'E_Management' },
-                                    { data: 'E_PA_Zone_Desc' },
-                                    { data: 'E_URL' },
-                                    { data: 'Report_Year' },
-                                    { data: 'E_DetailPageURL' },
-                                    {
-                                        data: 'OBJECTID',
-                                        visible: false
-                                    }
-                                ]
+                            fixtures: {
+                                grid: {
+                                    columns: [
+                                        { data: 'E_PA_Name' },
+                                        { data: 'E_PA_Bio_Name' },
+                                        { data: 'E_Province' },
+                                        { data: 'E_PA_Type' },
+                                        { data: 'PA_Area_ha' },
+                                        { data: 'Protected_Date' },
+                                        { data: 'E_Management' },
+                                        { data: 'E_PA_Zone_Desc' },
+                                        { data: 'E_URL' },
+                                        { data: 'Report_Year' },
+                                        { data: 'E_DetailPageURL' },
+                                        {
+                                            data: 'OBJECTID',
+                                            visible: false
+                                        }
+                                    ]
+                                }
                             }
                         }
                     ],
@@ -508,24 +522,26 @@ let config = {
                     state: {
                         visibility: false
                     },
-                    table: {
-                        columns: [
-                            { data: 'StationID' },
-                            { data: 'StationName' },
-                            { data: 'E_Overall_Condition' },
-                            { data: 'E_SampleType' },
-                            { data: 'E_Regulated' },
-                            { data: 'DrainageArea_sqkm' },
-                            { data: 'E_Province' },
-                            { data: 'Latitude' },
-                            { data: 'Longitude' },
-                            { data: 'E_URL_RealTime' },
-                            { data: 'E_URL_Historical' },
-                            { data: 'E_Measure' },
-                            { data: 'Report_Year' },
-                            { data: 'E_DetailPageURL' },
-                            { data: 'OBJECTID', visible: false }
-                        ]
+                    fixtures: {
+                        grid: {
+                            columns: [
+                                { data: 'StationID' },
+                                { data: 'StationName' },
+                                { data: 'E_Overall_Condition' },
+                                { data: 'E_SampleType' },
+                                { data: 'E_Regulated' },
+                                { data: 'DrainageArea_sqkm' },
+                                { data: 'E_Province' },
+                                { data: 'Latitude' },
+                                { data: 'Longitude' },
+                                { data: 'E_URL_RealTime' },
+                                { data: 'E_URL_Historical' },
+                                { data: 'E_Measure' },
+                                { data: 'Report_Year' },
+                                { data: 'E_DetailPageURL' },
+                                { data: 'OBJECTID', visible: false }
+                            ]
+                        }
                     }
                 },
                 {
@@ -545,8 +561,12 @@ let config = {
                                 visibility: true,
                                 opacity: 1
                             },
-                            table: {
-                                columns: [{ data: 'OBJECTID', visible: false }]
+                            fixtures: {
+                                grid: {
+                                    columns: [
+                                        { data: 'OBJECTID', visible: false }
+                                    ]
+                                }
                             }
                         },
                         {
@@ -555,10 +575,12 @@ let config = {
                                 visibility: false,
                                 opacity: 1
                             },
-                            table: {
-                                columns: [
-                                    { data: 'OBJECTID_2', visible: false }
-                                ]
+                            fixtures: {
+                                grid: {
+                                    columns: [
+                                        { data: 'OBJECTID_2', visible: false }
+                                    ]
+                                }
                             }
                         }
                     ],

@@ -13,6 +13,8 @@ import {
     FixtureMutation,
     FixtureBaseSet
 } from '@/store/modules/fixture';
+import { RampConfig } from '@/types';
+import { ConfigStore } from '@/store/modules/config';
 
 // TODO: implement the same `internal.ts` pattern in store, so can import from a single place;
 
@@ -168,6 +170,38 @@ export class FixtureAPI extends APIScope {
         });
 
         return fixtures.length === 1 ? fixtures[0] : fixtures;
+    }
+
+    /**
+     * Combines all layer fixture config from the main RAMP config into a dictionary
+     *
+     * @returns {{ [layerId: string]: any }} Dictionary where key is the layer Id and the value is the layer's fixture config
+     */
+    getLayerFixtureConfigs(): { [layerId: string]: any } {
+        let mainConfig: RampConfig = this.$iApi.getConfig();
+        let fixtureConfigs: { [layerId: string]: any } = {};
+
+        const layerCrawler = (layer: any, parent: any = undefined) => {
+            if (layer.fixtures) {
+                let layerId: string = layer.id;
+                if (parent !== undefined) {
+                    // generate suffixed layer id for sublayer entry
+                    layerId = `${parent.id}-${layer.index}`;
+                }
+                fixtureConfigs[layerId] = layer.fixtures;
+            }
+
+            // process child layer entries
+            if (layer.layerEntries) {
+                layer.layerEntries.forEach((sublayer: any) =>
+                    layerCrawler(sublayer, layer)
+                );
+            }
+        };
+
+        mainConfig.layers.forEach(layer => layerCrawler(layer));
+
+        return fixtureConfigs;
     }
 
     /**

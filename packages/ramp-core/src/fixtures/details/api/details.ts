@@ -79,15 +79,29 @@ export class DetailsAPI extends FixtureInstance {
     }
 
     /**
-     * Read the details section of the configuration file and save any custom template bindings in the store.
+     * Read the details section of the layers' fixture config
      *
-     * @param {DetailsConfig} [config]
      * @memberof DetailsAPI
      */
-    _parseConfig(config?: DetailsConfig) {
-        if (!config) return;
+    _parseConfig() {
+        // get all layer fixture configs
+        let layerFixtureConfigs: { [layerId: string]: any } =
+            this.$iApi.fixture.getLayerFixtureConfigs();
+        let detailsConfig: DetailsConfig = {
+            items: []
+        };
 
-        const detailsItems = config.items.map(
+        // construct the details config from the layer fixture configs
+        Object.keys(layerFixtureConfigs).forEach((layerId: string) => {
+            if (layerFixtureConfigs[layerId].details) {
+                detailsConfig.items.push({
+                    id: layerId,
+                    template: layerFixtureConfigs[layerId].details.template
+                });
+            }
+        });
+
+        const detailsItems = detailsConfig.items.map(
             (item: any) => new DetailsItemInstance(item)
         );
 

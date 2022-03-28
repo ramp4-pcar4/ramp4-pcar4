@@ -837,57 +837,59 @@ let config = {
                                 opacity: 1,
                                 visibility: true
                             },
-                            table: {
-                                lazyFilter: true,
-                                search: { enabled: false },
-                                columns: [
-                                    {
-                                        data: 'Category'
-                                    },
-                                    {
-                                        data: 'Recipient_type'
-                                    },
-                                    {
-                                        data: 'Department___Agency___Crown_Corporation'
-                                    },
-                                    {
-                                        data: 'Province_Territory'
-                                    },
-                                    {
-                                        data: 'Municipality___Community'
-                                    },
-                                    {
-                                        data: 'Program_name'
-                                    },
-                                    {
-                                        data: 'Project_name'
-                                    },
-                                    {
-                                        data: 'Project_description'
-                                    },
-                                    {
-                                        data: 'Ultimate_recipient_name'
-                                    },
-                                    {
-                                        data: 'Funding_date___estimated_start_date'
-                                    },
-                                    {
-                                        data: 'Program_contribution'
-                                    },
-                                    {
-                                        data: 'Estimated_total_project_cost'
-                                    },
-                                    {
-                                        data: 'Additional_information'
-                                    },
-                                    {
-                                        data: 'Icon',
-                                        visible: false
-                                    },
-                                    {
-                                        data: 'OBJECTID'
-                                    }
-                                ]
+                            fixtures: {
+                                grid: {
+                                    lazyFilter: true,
+                                    search: { enabled: false },
+                                    columns: [
+                                        {
+                                            data: 'Category'
+                                        },
+                                        {
+                                            data: 'Recipient_type'
+                                        },
+                                        {
+                                            data: 'Department___Agency___Crown_Corporation'
+                                        },
+                                        {
+                                            data: 'Province_Territory'
+                                        },
+                                        {
+                                            data: 'Municipality___Community'
+                                        },
+                                        {
+                                            data: 'Program_name'
+                                        },
+                                        {
+                                            data: 'Project_name'
+                                        },
+                                        {
+                                            data: 'Project_description'
+                                        },
+                                        {
+                                            data: 'Ultimate_recipient_name'
+                                        },
+                                        {
+                                            data: 'Funding_date___estimated_start_date'
+                                        },
+                                        {
+                                            data: 'Program_contribution'
+                                        },
+                                        {
+                                            data: 'Estimated_total_project_cost'
+                                        },
+                                        {
+                                            data: 'Additional_information'
+                                        },
+                                        {
+                                            data: 'Icon',
+                                            visible: false
+                                        },
+                                        {
+                                            data: 'OBJECTID'
+                                        }
+                                    ]
+                                }
                             }
                         }
                     ],

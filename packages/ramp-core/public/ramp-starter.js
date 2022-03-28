@@ -285,6 +285,11 @@ let config = {
                             state: {
                                 opacity: 1,
                                 visibility: true
+                            },
+                            fixtures: {
+                                details: {
+                                    template: 'Water-Quantity-Template'
+                                }
                             }
                         },
                         {
@@ -347,6 +352,11 @@ let config = {
                     customRenderer: {},
                     metadata: {
                         url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/master/README.md'
+                    },
+                    fixtures: {
+                        details: {
+                            template: 'WFSLayer-Custom'
+                        }
                     }
                 }
                 /*
@@ -450,17 +460,6 @@ let config = {
                         'settings'
                     ]
                 },
-                details: {
-                    items: [
-                        {
-                            id: 'WaterQuantity'
-                        },
-                        {
-                            id: 'WFSLayer',
-                            template: 'WFSLayer-Custom'
-                        }
-                    ]
-                },
                 mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
                 'export-v1-title': {
                     text: 'All Your Base are Belong to Us'
@@ -490,6 +489,69 @@ rInstance.$element.component('WFSLayer-Custom', {
             <img src="https://i.imgur.com/WtY0tdC.gif" />
         </div>
     `
+});
+
+rInstance.$element.component('Water-Quantity-Template', {
+    props: ['identifyData'],
+    template: `
+        <div style="align-items: center; justify-content: center; font-size: .875rem; font-family: Arial, sans-serif;">
+            <div v-html="renderHeader()" />
+            <div v-html="createSection('Station ID', 'StationID')" />
+            <div v-html="createSection('Province', 'E_Province')" />
+            <div v-html="createSection('Report Year', 'Report_Year')" />
+            <div style="display: flex; flex-direction: row; color: #a0aec0; font-weight: bold; padding-top: 5px;">
+                <div style="flex: 1 1 0%; width: 100%;">
+                    Latitude
+                </div>
+                <div style="flex: 1 1 0%; width: 100%;">
+                    Longitude
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: row;">
+                <div style="flex: 1 1 0%; width: 100%;">
+                    {{this.identifyData.data['Latitude']}}
+                </div>
+                <div style="flex: 1 1 0%; width: 100%;">
+                    {{this.identifyData.data['Longitude']}}
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: column; padding-top: 5px; color: #4299e1;">
+                <span style="font-weight: bold; color: #a0aec0;">Links</span>
+                <span v-html="this.identifyData.data['E_DetailPageURL']"></span>
+                <span v-html="this.identifyData.data['E_URL_Historical']"></span>
+                <span v-html="this.identifyData.data['E_URL_RealTime']"></span>
+            </div>
+        </div>
+    `,
+    methods: {
+        renderHeader() {
+            if (this.identifyData.data['Symbol'] === '3') {
+                return `
+                    <span style="display: flex; font-size: 1.25rem; background-color: #e53e3e; color: white; padding: 4px; text-align: center;">
+                        ${this.identifyData.data['StationName']}
+                    </span>
+                `;
+            } else {
+                return `
+                    <span style="display: flex; font-size: 1.25rem; background-color: #3182ce; color: white; padding: 4px; text-align: center;">
+                        ${this.identifyData.data['StationName']}
+                    </span>
+                `;
+            }
+        },
+        createSection(title, id) {
+            return `
+            <div style="display: flex; flex-direction: column; font-size: .875rem; padding-top: 5px;">
+                <span style="color: #a0aec0; font-weight: bold;">
+                    ${title}
+                </span>
+                <span>
+                    ${this.identifyData.data[id]}
+                </span>
+            </div>
+            `;
+        }
+    }
 });
 
 // add export-v1 fixtures
