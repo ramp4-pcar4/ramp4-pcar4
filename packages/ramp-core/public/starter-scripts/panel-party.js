@@ -271,6 +271,11 @@ let config = {
                             state: {
                                 opacity: 1,
                                 visibility: true
+                            },
+                            fixtures: {
+                                details: {
+                                    template: 'Water-Quantity-Template'
+                                }
                             }
                         }
                     ],
@@ -316,7 +321,12 @@ let config = {
                     state: {
                         visibility: true
                     },
-                    customRenderer: {}
+                    customRenderer: {},
+                    fixtures: {
+                        details: {
+                            template: 'WFSLayer-Custom'
+                        }
+                    }
                 }
                 /*
             {
@@ -398,18 +408,6 @@ let config = {
                     ]
                 },
                 mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
-                details: {
-                    items: [
-                        {
-                            id: 'WaterQuantity',
-                            template: 'Water-Quantity-Template'
-                        },
-                        {
-                            id: 'WFSLayer',
-                            template: 'WFSLayer-Custom'
-                        }
-                    ]
-                },
                 'export-v1-title': {
                     text: 'All Your Base are Belong to Us'
                 }

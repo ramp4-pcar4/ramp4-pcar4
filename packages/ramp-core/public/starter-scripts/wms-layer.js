@@ -144,7 +144,12 @@ let config = {
                             currentStyle: 'PRECIPMM'
                         }
                     ],
-                    featureInfoMimeType: 'text/plain'
+                    featureInfoMimeType: 'text/plain',
+                    fixtures: {
+                        details: {
+                            template: 'GeoMet-Template'
+                        }
+                    }
                 }
             ],
             fixtures: {
@@ -171,14 +176,6 @@ let config = {
                     temporaryButtons: ['details-layers', 'details-items']
                 },
                 mapnav: { items: ['fullscreen', 'legend', 'home', 'basemap'] },
-                details: {
-                    items: [
-                        {
-                            id: 'GeoMet',
-                            template: 'GeoMet-Template'
-                        }
-                    ]
-                },
                 'export-v1-title': {
                     text: 'WMS'
                 }
