@@ -103,8 +103,7 @@ let config = {
                 },
                 appbar: {
                     items: ['legend']
-                },
-                details: { items: [] }
+                }
             }
         }
     }

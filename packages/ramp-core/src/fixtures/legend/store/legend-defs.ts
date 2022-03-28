@@ -119,6 +119,7 @@ export class LegendEntry extends LegendItem {
     _layerParentId: string | undefined;
     _layerIdx: number | undefined;
     _symbologyExpanded: boolean;
+    _toggleSymbology: boolean;
 
     /**
      * Creates a new single legend entry.
@@ -132,6 +133,11 @@ export class LegendEntry extends LegendItem {
         this._layerParentId = legendEntry.layerParentId; // will only be defined for sublayers
         this._layerIdx = legendEntry.entryIndex; // will only be defined for sublayers
         this._symbologyExpanded = legendEntry.symbologyExpanded || false;
+
+        // read the toggleSymbology from the layer fixture config
+        this._toggleSymbology =
+            legendEntry.layerLegendConfigs[legendEntry.layerId]
+                ?.toggleSymbology ?? true;
 
         if (legendEntry.layer !== undefined) {
             // the legend entry config provides a layer, load layer properties from it
@@ -177,6 +183,11 @@ export class LegendEntry extends LegendItem {
     /** Returns true if symbology stack is expanded. */
     get symbologyExpanded(): boolean {
         return this._symbologyExpanded;
+    }
+
+    /** Indicates if this legend entry allows symbology to be toggled. */
+    get toggleSymbology(): boolean {
+        return this._toggleSymbology;
     }
 
     /**
@@ -434,6 +445,9 @@ export class LegendGroup extends LegendItem {
         children
             .filter((entry: any) => !entry.hidden)
             .forEach((entry: any) => {
+                // pass the layer fixture config to child items
+                entry.layerLegendConfigs = legendGroup.layerLegendConfigs;
+
                 // create new LegendGroup/LegendEntry and push to child array
                 if (
                     entry.exclusiveVisibility !== undefined ||

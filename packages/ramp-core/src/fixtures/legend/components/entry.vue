@@ -126,7 +126,10 @@
                             {{ item.label }}
                         </div>
                         <checkbox
-                            v-if="symbologyStack.length > 1"
+                            v-if="
+                                symbologyStack.length > 1 &&
+                                legendItem.toggleSymbology
+                            "
                             :value="item"
                             :legendItem="legendItem"
                             :checked="item.visibility"
