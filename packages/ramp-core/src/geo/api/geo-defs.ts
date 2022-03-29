@@ -442,6 +442,7 @@ export interface RampLayerStateConfig {
     visibility?: boolean;
     opacity?: number;
     identify?: boolean;
+    hovertips?: boolean;
 }
 
 export interface RampLayerFieldInfoConfig {

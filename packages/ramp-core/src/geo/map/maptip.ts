@@ -79,6 +79,11 @@ export class MaptipAPI extends APIScope {
             return;
         }
 
+        if (!layerInstance.hovertips) {
+            // the hit layer doesn't support hovertips
+            return;
+        }
+
         // Get the icon svg string for the graphic
         const icon: string = await layerInstance.getIcon(graphicHit.oid);
 

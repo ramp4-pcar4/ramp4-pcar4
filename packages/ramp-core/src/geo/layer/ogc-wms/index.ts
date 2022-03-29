@@ -25,6 +25,7 @@ export default class WmsLayer extends CommonLayer {
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.supportsIdentify = true;
+        this.hovertips = false;
         this.layerType = LayerType.WMS;
         this.mimeType = rampConfig.featureInfoMimeType || ''; // TODO is there a default? will that be in the config defaulting?
         this.sublayerNames = [];
