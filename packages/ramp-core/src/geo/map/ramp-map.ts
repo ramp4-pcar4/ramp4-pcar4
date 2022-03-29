@@ -833,7 +833,7 @@ export class MapAPI extends CommonMapAPI {
             }
             return matchedResult !== undefined;
         });
-        if (esriGraphic && hitLayer && hitLayer.hovertips) {
+        if (esriGraphic && hitLayer) {
             if (hitLayer.sublayers.length > 1) {
                 console.warn('Found layer with sublayers during hitTest');
             }
