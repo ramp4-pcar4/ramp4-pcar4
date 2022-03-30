@@ -8,25 +8,28 @@ The Appbar is used as a starting point for functionality in the app. Its main us
 
 Any arbitrary vue component can be added to the appbar, the config for appbar is as follows:
 
-```json
+```js
 {
-    "items": ["my-appbar-button"]
+    items: ["my-appbar-button"]
 }
 ```
 
 An item can be supplied as simply a component name or as an object indicating the component's name and any options to be passed to that component as props:
 
-```json
+```js
 {
-    "items": [{ "id": "my-other-appbar-button-with-options", "options": { "colour": "red" } }]
+    items: [{
+        id: "my-other-appbar-button-with-options", 
+        options: { colour: "red" }
+    }]
 }
 ```
 
 The `-appbar-button` suffix is optional and can be omitted. If a `gazebo` id is provided, the Appbar will automatically check if a `gazebo-appbar-button` component exist and use that one instead. This is a convenience feature to make config less verbose:
 
-```json
+```js
 {
-    "items": [
+    items: [
         "gazebo"
     ]
 }
@@ -34,11 +37,11 @@ The `-appbar-button` suffix is optional and can be omitted. If a `gazebo` id is 
 
 There is also the ability to configure temporary appbar buttons, these buttons are shown when a panel is opened and disappear when the related panel is closed. Again, the `-appbar-button` suffix is optional and can be omitted when specifying the appbar component id. The config is used as follows:
 
-```json
+```js
 {
-    "temporaryButtons": [
+    temporaryButtons: [
         "legend",
-        { "panelId": "settings-panel", "appbarItem": "settings" }
+        { panelId: "settings-panel", appbarItem: "settings" }
     ]
 }
 ```
@@ -47,11 +50,11 @@ The first item in the array above (`legend`) will link `legend-panel` to `legend
 
 Using what we've learned, the whole config for an appbar could be:
 
-```json
+```js
 {
-    "items": [
+    items: [
         "my-appbar-button",
-        { "id": "my-other-appbar-button-with-options", "options": { "colour": "red" } },
+        { id: "my-other-appbar-button-with-options", options: { colour: "red" } },
         "gazebo"
     ]
 }
@@ -61,11 +64,11 @@ Lastly, there is a Divider component that can be used by specifying an item with
 
 Lets say we want to separate the `gazebo` button from the other two:
 
-```json
+```js
 {
-    "items": [
+    items: [
         "my-appbar-button",
-        { "id": "my-other-appbar-button-with-options", "options": { "colour": "red" } },
+        { id: "my-other-appbar-button-with-options", options: { colour: "red" } },
         "divider",
         "gazebo"
     ]
@@ -74,11 +77,11 @@ Lets say we want to separate the `gazebo` button from the other two:
 
 And, you guessed it, you can register your own `my-fancy-divider` component and use it instead:
 
-```json
+```js
 {
-    "items": [
+    items: [
         "my-appbar-button",
-        { "id": "my-other-appbar-button-with-options", "options": { "colour": "red" } },
+        { id: "my-other-appbar-button-with-options", options: { colour: "red" } },
         "my-fancy-divider",
         "gazebo"
     ]

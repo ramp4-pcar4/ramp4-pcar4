@@ -322,6 +322,11 @@ export interface GetGraphicResult {
     geometry?: BaseGeometry;
 }
 
+export interface DiscreteGraphicResult {
+    oid: number; // oid of the result
+    graphic: Promise<GetGraphicResult>;
+}
+
 export interface QueryFeaturesParams {
     filterGeometry?: BaseGeometry; // filter by geometry
     filterSql?: string; // filter by sql query
@@ -341,27 +346,23 @@ export interface IdentifyParameters {
     sublayerIds?: Array<string | number>; // Optional array of sublayer uids or server indices. When defined, the given sublayers are queried for instead of the default (visible, queryable, on-scale sublayers)
 }
 
-// TODO for the identify structure, currently using uid to tie back to layers/sublayers. should we also include layerid / layerindex for completeness?
-
 export interface IdentifyItem {
-    data: any; // TODO figure out how we want to do this. we want the pipeline to be flexible and handle anything
+    data: any;
     format: IdentifyResultFormat;
-    // See https://github.com/ramp4-pcar4/r4design/issues/11
+    loaded: boolean;
+    loading: Promise<void>;
+    // See https://github.com/ramp4-pcar4/ramp4-pcar4/discussions/334
     // name: string;
     // id: string;
     // symbol: string; // SVG code. does this need to be more flexible to handle WMS image symbols? would a symbol stack-ish thing be more appropriate?
 }
 
+// the result of identifying against a logical layer ( a feature class or WMS )
 export interface IdentifyResult {
     items: Array<IdentifyItem>;
-    uid: string; // this would match to the sublayer. TODO might want to name the property something more specific to that, like sublayerUid? indexUid? childUid? might be ok with uid as the parentUid is different name
-    loadPromise: Promise<void>;
-}
-
-export interface IdentifyResultSet {
-    results: Array<IdentifyResult>;
-    done: Promise<void>;
-    parentUid: string; // this would be the parent layer's uid.
+    uid: string; // this would match to the logical layer.
+    loaded: boolean;
+    loading: Promise<void>; // represents the list of results has been found, but the content of items in the array may still be resolving
 }
 
 export interface MapIdentifyResult {

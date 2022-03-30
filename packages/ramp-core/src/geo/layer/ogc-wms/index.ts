@@ -1,21 +1,21 @@
 import { CommonLayer, InstanceAPI } from '@/api/internal';
 import {
     DataFormat,
+    DefPromise,
     GeometryType,
+    IdentifyItem,
     IdentifyParameters,
     IdentifyResult,
     IdentifyResultFormat,
-    IdentifyResultSet,
     LayerType,
     LegendSymbology,
     Point,
     RampLayerConfig,
-    RampLayerWmsLayerEntryConfig,
-    TreeNode
+    RampLayerWmsLayerEntryConfig
 } from '@/geo/api';
 import { EsriRequest, EsriWMSLayer, EsriWMSSublayer } from '@/geo/esri';
 import { UrlWrapper } from '@/geo/api';
-import { markRaw } from 'vue';
+import { markRaw, reactive } from 'vue';
 
 export default class WmsLayer extends CommonLayer {
     declare esriLayer: EsriWMSLayer | undefined;
@@ -165,7 +165,7 @@ export default class WmsLayer extends CommonLayer {
      * @param {Object} options     additional arguemets, see above.
      * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
      */
-    runIdentify(options: IdentifyParameters): IdentifyResultSet {
+    runIdentify(options: IdentifyParameters): Array<IdentifyResult> {
         // TODO add full documentation for options parameter
 
         if (options.geometry.type !== GeometryType.POINT) {
@@ -197,60 +197,58 @@ export default class WmsLayer extends CommonLayer {
             this.scaleSet.isOffScale(map.getScale()).offScale
         ) {
             // return empty result.
-            return super.runIdentify(options);
+            return [];
         }
 
         // TODO prolly need to flush out the config interfaces for this badboy
 
-        let loadResolve: any;
-        const innerResult: IdentifyResult = {
-            uid: this.uid,
-            loadPromise: new Promise(resolve => {
-                loadResolve = resolve;
-            }),
-            items: []
-        };
+        const dProm = new DefPromise();
 
-        const result: IdentifyResultSet = {
-            results: [innerResult],
-            done: Promise.resolve(), // set below
-            parentUid: this.uid
-        };
+        const result: IdentifyResult = reactive({
+            items: [],
+            loading: dProm.getPromise(),
+            loaded: false,
+            uid: this.uid
+        });
 
-        result.done = this.getFeatureInfo(
+        this.getFeatureInfo(
             this.sublayerNames,
             <Point>options.geometry,
             this.mimeType
         ).then(response => {
             // check if a result is returned by the service. If not, do not add to the array of data
-            // TODO verify we want empty .items array
             // TODO is is possible to have more than one item as a result? check how this works
             if (response) {
+                // we have all the data already so can init the item as loaded
+                const item: IdentifyItem = reactive({
+                    data: response,
+                    format: IdentifyResultFormat.UNKNOWN,
+                    loaded: true,
+                    loading: Promise.resolve()
+                });
+
                 if (typeof response !== 'string') {
                     // likely json or an image
                     // TODO improve the dection (maybe use the this.mimeType?)
-                    innerResult.items.push({
-                        format: IdentifyResultFormat.JSON,
-                        data: response
-                    });
+                    item.format = IdentifyResultFormat.JSON;
+                    result.items.push(item);
                 } else if (
                     response.indexOf('Search returned no results') === -1 &&
                     response !== ''
                 ) {
                     // TODO if service is french, will the "no results" message be different?
                     // TODO consider utilizing the infoMap variable above to detect HTML format.
-                    innerResult.items.push({
-                        format: IdentifyResultFormat.TEXT,
-                        data: response
-                    });
+                    item.format = IdentifyResultFormat.TEXT;
+                    result.items.push(item);
                 }
             }
 
-            // Resolve the load promise
-            loadResolve();
+            // Resolve the loading promise, set the flag
+            result.loaded = true;
+            dProm.resolveMe();
         });
 
-        return result;
+        return [result];
     }
 
     /**

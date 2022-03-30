@@ -24,8 +24,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import deepmerge from 'deepmerge';
 import { GlobalEvents } from '@/api/internal';
+import { IdentifyResultFormat } from '@/geo/api';
 import { directive as tippyDirective } from 'vue-tippy';
 
 export default defineComponent({
@@ -58,9 +58,12 @@ export default defineComponent({
             let data = Object.assign({}, this.params.data);
             delete data['rvInteractive'];
             delete data['rvSymbol'];
+
+            // grid only supports esri features at the moment, so we hardcode that format
             this.$iApi.event.emit(GlobalEvents.DETAILS_OPEN, {
                 data: data,
-                uid: this.params.uid
+                uid: this.params.uid,
+                format: IdentifyResultFormat.ESRI
             });
         }
     }

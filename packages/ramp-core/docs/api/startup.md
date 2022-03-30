@@ -17,7 +17,7 @@ The `pageElement` is the HTML element or element id that the instance should be 
 The `config` is an object containing a `configs` object which is keyed by language codes with configurations as values. See TODO LINK TO CONFIG SCHEMA DOC.
 This object can optionally include a `startingFixtures` list which is a set of fixtures that the RAMP instance will load (see `loadDefaultFixtures` below). Example:
 
-```json
+```js
 {
     startingFixtures: [],
     configs: {

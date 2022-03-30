@@ -8,7 +8,7 @@ import {
     GetGraphicParams,
     GetGraphicResult,
     IdentifyParameters,
-    IdentifyResultSet,
+    IdentifyResult,
     LayerState,
     LegendSymbology,
     ScaleSet,
@@ -710,14 +710,10 @@ export class LayerInstance extends APIScope {
      * Will return an empty result. Layers that support identify should override this method.
      *
      * @param options not used, present for nice signature of overrided function
-     * @returns {IdentifyResultSet} an empty result set
+     * @returns {Array} an empty result set
      */
-    runIdentify(options: IdentifyParameters): IdentifyResultSet {
-        return {
-            results: [],
-            done: Promise.resolve(),
-            parentUid: this.uid
-        };
+    runIdentify(options: IdentifyParameters): Array<IdentifyResult> {
+        return [];
     }
 
     /**

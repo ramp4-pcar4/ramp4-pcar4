@@ -465,33 +465,41 @@ rInstance.$element.component('Water-Quantity-Template', {
             <div v-html="createSection('Station ID', 'StationID')" />
             <div v-html="createSection('Province', 'E_Province')" />
             <div v-html="createSection('Report Year', 'Report_Year')" />
-            <div style="display: flex; flex-direction: row; color: #a0aec0; font-weight: bold; padding-top: 5px;">
-                <div style="flex: 1 1 0%; width: 100%;">
-                    Latitude
+            <div v-if="this.identifyData.loaded">
+                <div style="display: flex; flex-direction: row; color: #a0aec0; font-weight: bold; padding-top: 5px;">
+                    <div style="flex: 1 1 0%; width: 100%;">
+                        Latitude
+                    </div>
+                    <div style="flex: 1 1 0%; width: 100%;">
+                        Longitude
+                    </div>
                 </div>
-                <div style="flex: 1 1 0%; width: 100%;">
-                    Longitude
+                <div style="display: flex; flex-direction: row;">
+                    <div style="flex: 1 1 0%; width: 100%;">
+                        {{this.identifyData.data['Latitude']}}
+                    </div>
+                    <div style="flex: 1 1 0%; width: 100%;">
+                        {{this.identifyData.data['Longitude']}}
+                    </div>
                 </div>
-            </div>
-            <div style="display: flex; flex-direction: row;">
-                <div style="flex: 1 1 0%; width: 100%;">
-                    {{this.identifyData.data['Latitude']}}
+                <div style="display: flex; flex-direction: column; padding-top: 5px; color: #4299e1;">
+                    <span style="font-weight: bold; color: #a0aec0;">Links</span>
+                    <span v-html="this.identifyData.data['E_DetailPageURL']"></span>
+                    <span v-html="this.identifyData.data['E_URL_Historical']"></span>
+                    <span v-html="this.identifyData.data['E_URL_RealTime']"></span>
                 </div>
-                <div style="flex: 1 1 0%; width: 100%;">
-                    {{this.identifyData.data['Longitude']}}
-                </div>
-            </div>
-            <div style="display: flex; flex-direction: column; padding-top: 5px; color: #4299e1;">
-                <span style="font-weight: bold; color: #a0aec0;">Links</span>
-                <span v-html="this.identifyData.data['E_DetailPageURL']"></span>
-                <span v-html="this.identifyData.data['E_URL_Historical']"></span>
-                <span v-html="this.identifyData.data['E_URL_RealTime']"></span>
             </div>
         </div>
     `,
     methods: {
         renderHeader() {
-            if (this.identifyData.data['Symbol'] === '3') {
+            if (!this.identifyData.loaded) {
+                return `
+                <span style="display: flex; font-size: 1.25rem; background-color: #e21e5e; color: white; padding: 4px; text-align: center;">
+                    Loading...
+                </span>
+                `;
+            } else if (this.identifyData.data['Symbol'] === '3') {
                 return `
                     <span style="display: flex; font-size: 1.25rem; background-color: #e53e3e; color: white; padding: 4px; text-align: center;">
                         ${this.identifyData.data['StationName']}
@@ -506,13 +514,17 @@ rInstance.$element.component('Water-Quantity-Template', {
             }
         },
         createSection(title, id) {
+            var val = this.identifyData.loaded
+                ? this.identifyData.data[id]
+                : 'Loading...';
+
             return `
             <div style="display: flex; flex-direction: column; font-size: .875rem; padding-top: 5px;">
                 <span style="color: #a0aec0; font-weight: bold;">
                     ${title}
                 </span>
                 <span>
-                    ${this.identifyData.data[id]}
+                    ${val}
                 </span>
             </div>
             `;

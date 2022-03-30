@@ -17,6 +17,7 @@ import {
     Attributes,
     BaseGeometry,
     DataFormat,
+    DiscreteGraphicResult,
     Extent,
     FieldDefinition,
     Filter,
@@ -812,6 +813,7 @@ export class AttribLayer extends CommonLayer {
 
     // TODO we are using the getgraphic type as it's an unbound loosely typed feature
     //      may want to change name of the type to something more general
+
     /**
      * Requests a set of features for this layer that match the criteria of the options
      * - filterGeometry : a RAMP API geometry to restrict results to
@@ -819,14 +821,13 @@ export class AttribLayer extends CommonLayer {
      * - includeGeometry : a boolean to indicate if result features should include the geometry
      * - outFields : a string of comma separated field names. will restrict fields included in the output
      * - sourceSR : a spatial reference indicating what the source layer is encoded in. providing can assist in result geometry being of a proper resolution
-     * - map : a Ramp map. required if geometry was requested and the layer is not on a map
      *
      * @param options {Object} options to provide filters and helpful information.
-     * @returns {Promise} resolves with an array of features that satisfy the criteria
+     * @returns {Promise} resolves in an array of object ids and promises resolving in each feature
      */
-    async queryFeatures(
+    async queryFeaturesDiscrete(
         options: QueryFeaturesParams
-    ): Promise<Array<GetGraphicResult>> {
+    ): Promise<Array<DiscreteGraphicResult>> {
         // NOTE this assumes a server based layer
         //      local based layers should override this function
 
@@ -848,9 +849,29 @@ export class AttribLayer extends CommonLayer {
             getAttribs: true
             // unboundMap: options.map
         };
-        const cacheQueue: Array<Promise<GetGraphicResult>> = oids.map(oid =>
-            this.getGraphic(oid, p)
-        );
-        return Promise.all(cacheQueue);
+        return oids.map(oid => ({
+            oid: oid,
+            graphic: this.getGraphic(oid, p)
+        }));
+    }
+
+    /**
+     * Requests a set of features for this layer that match the criteria of the options
+     * - filterGeometry : a RAMP API geometry to restrict results to
+     * - filterSql : a where clause to apply against feature attributes
+     * - includeGeometry : a boolean to indicate if result features should include the geometry
+     * - outFields : a string of comma separated field names. will restrict fields included in the output
+     * - sourceSR : a spatial reference indicating what the source layer is encoded in. providing can assist in result geometry being of a proper resolution
+     *
+     * @param options {Object} options to provide filters and helpful information.
+     * @returns {Promise} resolves with an array of features that satisfy the criteria
+     */
+    async queryFeatures(
+        options: QueryFeaturesParams
+    ): Promise<Array<GetGraphicResult>> {
+        // runs discrete version, waits for everything to download,
+        // returns entire set in a cleaner array
+        const discreteResult = await this.queryFeaturesDiscrete(options);
+        return Promise.all(discreteResult.map(dr => dr.graphic));
     }
 }
