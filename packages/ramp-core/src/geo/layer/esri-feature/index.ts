@@ -1,16 +1,16 @@
 import { AttribLayer, InstanceAPI } from '@/api/internal';
 import {
     DataFormat,
+    DefPromise,
     GeometryType,
+    IdentifyItem,
     IdentifyParameters,
     IdentifyResult,
     IdentifyResultFormat,
-    IdentifyResultSet,
     LayerType,
     Point,
     QueryFeaturesParams,
-    RampLayerConfig,
-    TreeNode
+    RampLayerConfig
 } from '@/geo/api';
 import { EsriFeatureLayer, EsriRendererFromJson } from '@/geo/esri';
 import { markRaw } from 'vue';
@@ -170,7 +170,7 @@ class FeatureLayer extends AttribLayer {
 
     // ----------- LAYER ACTIONS -----------
 
-    runIdentify(options: IdentifyParameters): IdentifyResultSet {
+    runIdentify(options: IdentifyParameters): Array<IdentifyResult> {
         // early kickout check. not loaded/error; not visible; not queryable; off scale
         if (
             !this.isValidState ||
@@ -179,22 +179,16 @@ class FeatureLayer extends AttribLayer {
             this.scaleSet.isOffScale(this.$iApi.geo.map.getScale()).offScale
         ) {
             // return empty result.
-            return super.runIdentify(options);
+            return [];
         }
 
-        let loadResolve: any;
-        const innerResult: IdentifyResult = {
-            uid: this.uid,
-            loadPromise: new Promise(resolve => {
-                loadResolve = resolve;
-            }),
-            items: []
-        };
+        const dProm = new DefPromise();
 
-        const result: IdentifyResultSet = {
-            results: [innerResult],
-            done: Promise.resolve(), // set below, this chills typescript
-            parentUid: this.uid
+        const result: IdentifyResult = {
+            items: [],
+            loading: dProm.getPromise(),
+            loaded: false,
+            uid: this.uid
         };
 
         // run a spatial query
@@ -219,28 +213,33 @@ class FeatureLayer extends AttribLayer {
 
         qOpts.filterSql = this.getCombinedSqlFilter();
 
-        result.done = this.queryFeatures(qOpts).then(results => {
-            // TODO might be a problem overwriting the array if something is watching/binding to the original
-            innerResult.items = results.map(gr => {
-                return {
-                    // TODO decide if we want to handle alias mapping here or not.
-                    //      if we do, our "ESRI" format will need to include field metadata.
-                    //      if we dont, we need to ensure an outside fixture can access field metadata via uid easily.
-                    data: gr.attributes, // this.attributesToDetails(vAtt.attributes, layerData.fields),
-                    format: IdentifyResultFormat.ESRI
-
-                    // See comments on IdentifyItem interface definition; we may decide to not keep these properties
-                    // id:  gr.attributes[myFC.oidField].toString(),
-                    // symbol: this.gapi.utils.symbology.getGraphicIcon(gr.attributes, myFC.renderer) // TODO update to myFC.getIcon
-                    // name: this.getFeatureName(vAtt.oid.toString(), vAtt.attributes),
+        this.queryFeaturesDiscrete(qOpts).then(results => {
+            results.forEach(dgr => {
+                const itemDProm = new DefPromise();
+                const item: IdentifyItem = {
+                    data: undefined,
+                    format: IdentifyResultFormat.ESRI,
+                    loaded: false,
+                    loading: itemDProm.getPromise()
                 };
+
+                result.items.push(item); // push, incase something was bound to the array
+
+                // allow the item to be returned, but update the item after its guts download
+                dgr.graphic.then(g => {
+                    item.data = g.attributes;
+                    itemDProm.resolveMe();
+                    item.loaded = true;
+                });
             });
 
-            // Resolve the load promise
-            loadResolve();
+            // Resolve the loading promise, set the flag
+            // This promise only indicates we have an array of results (each may still be loading their internals)
+            dProm.resolveMe();
+            result.loaded = true;
         });
 
-        return result;
+        return [result];
     }
 
     /**

@@ -18,7 +18,6 @@ import {
     // IdentifyMode,
     IdentifyParameters,
     IdentifyResult,
-    IdentifyResultSet,
     MapClick,
     MapIdentifyResult,
     Point,
@@ -761,18 +760,13 @@ export class MapAPI extends CommonMapAPI {
         };
 
         // Perform an identify request on each layer. Does not perform the request on layers that do not have an identify function (layers that do not support identify).
-        const identifyInstances: IdentifyResultSet[] = layers
-            // This will filter out all MapImageLayers that are not visible, regardless of the visibility of the MapImageFCs (sublayers)
+        const identifyResults = layers
             .filter(layer => layer.supportsIdentify)
             .map(layer => {
                 p.tolerance = layer.clickTolerance;
                 return layer.runIdentify(p);
-            });
-
-        // Merge all results received by the identify into one array.
-        const identifyResults: IdentifyResult[] = (
-            [] as IdentifyResult[]
-        ).concat(...identifyInstances.map(({ results }) => results));
+            })
+            .flat();
 
         const fullResult: MapIdentifyResult = {
             results: identifyResults,

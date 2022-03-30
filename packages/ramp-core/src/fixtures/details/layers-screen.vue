@@ -28,16 +28,19 @@
                     disabled:cursor-default
                 "
                 v-for="(item, idx) in layerResults"
-                :key="`${item ? item.uid : 'loading'}-${idx}`"
-                @click="item && openResult(idx)"
-                :disabled="!(item && item.items.length > 0)"
+                :key="`${item.uid}-${item.loaded}-${idx}`"
+                @click="item.loaded && openResult(idx)"
+                :disabled="!(item.loaded && item.items.length > 0)"
             >
                 <div v-truncate>
+                    {{ item.loaded }}
                     {{ layerName(idx) || $t('details.layers.loading') }}
                 </div>
                 <div class="flex-auto"></div>
                 <!-- Display the count if item exists, else display the loading spinner -->
-                <div v-if="item" class="px-5">{{ item.items.length }}</div>
+                <div v-if="item.loaded" class="px-5">
+                    {{ item.items.length }}
+                </div>
                 <div v-else class="animate-spin spinner h-20 w-20 px-5"></div>
             </button>
         </template>
@@ -45,6 +48,8 @@
 </template>
 
 <script lang="ts">
+// This screen is the view of all layers that were interrogated in the identify
+
 import { defineComponent } from 'vue';
 import { get } from '@/store/pathify-helper';
 import { DetailsStore } from './store';
@@ -59,18 +64,16 @@ export default defineComponent({
     },
     data() {
         return {
-            layerResults: [] as Array<IdentifyResult | undefined>,
+            layerResults: [] as Array<IdentifyResult>,
             payload: get(DetailsStore.payload),
             getLayerByUid: get('layer/getLayerByUid'),
             layers: get('layer/layers')
         };
     },
     computed: {
-        totalResultCount(): any {
+        totalResultCount(): number {
             return this.layerResults
-                .map((r: IdentifyResult | undefined) =>
-                    r ? r.items.length : 0
-                )
+                .map(r => r.items.length)
                 .reduce((a: number, b: number) => a + b, 0);
         }
     },
@@ -89,14 +92,12 @@ export default defineComponent({
          * Load identify result items after all item's load promise has resolved
          */
         loadPayloadItems(newPayload: Array<IdentifyResult>): void {
-            this.layerResults = new Array(newPayload.length).fill(undefined);
-            newPayload.forEach((item: IdentifyResult, idx: number) =>
-                item.loadPromise.then(() => {
-                    this.layerResults[idx] = item;
-                })
-            );
+            // set the results, which are currently loading
+            this.layerResults = newPayload; // if we notice funny behavior, try making a clone/copy
+
+            // also wait for everything to finish so we can display a grand total
             Promise.all(
-                newPayload.map((item: IdentifyResult) => item.loadPromise)
+                newPayload.map((item: IdentifyResult) => item.loading)
             ).then(() => {
                 // alert the user about the number of results found
                 this.$iApi.updateAlert(
@@ -106,6 +107,19 @@ export default defineComponent({
                     })
                 );
             });
+
+            console.log('array reactive check', this.layerResults);
+
+            const enhance = () => {
+                console.log(
+                    'loaded status ' +
+                        this.layerResults.map(lr => lr.loaded).join()
+                );
+            };
+            setInterval(() => {
+                enhance();
+            }, 10000);
+            enhance();
         },
 
         /**
@@ -141,7 +155,6 @@ export default defineComponent({
          */
         layerName(idx: number) {
             const layerInfo = this.payload[idx];
-            // Check to see if there is a custom template defined for the selected layer.
             let item: LayerInstance | undefined = this.getLayerByUid(
                 layerInfo.uid
             );

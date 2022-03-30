@@ -8,114 +8,124 @@
             <close @click="panel.close()" />
         </template>
         <template #content>
-            <div
-                class="flex justify-between py-8 px-8 mb-8 bg-gray-100"
-                v-if="result.items.length > 1 && layerType !== 'ogc-wms'"
-            >
-                <button
-                    class="px-8 font-bold hover:bg-gray-200 focus:bg-gray-200"
-                    :aria-label="$t('details.item.see.list')"
-                    @click="seeList"
+            <div v-if="result.loaded">
+                <div
+                    class="flex justify-between py-8 px-8 mb-8 bg-gray-100"
+                    v-if="result.items.length > 1 && supportsFeatures"
                 >
-                    {{ $t('details.item.see.list') }}
-                </button>
-                <div class="flex bg-gray-200 py-8 items-center">
                     <button
-                        :content="$t('details.item.previous.item')"
-                        v-tippy="{ placement: 'top' }"
-                        @click="advanceItemIndex(-1)"
                         class="
-                            mx-2
-                            opacity-60
-                            hover:opacity-90
-                            disabled:opacity-30 disabled:cursor-default
+                            px-8
+                            font-bold
+                            hover:bg-gray-200
+                            focus:bg-gray-200
                         "
-                        :aria-label="$t('details.item.previous.item')"
-                        :disabled="currentIdx === 0"
+                        :aria-label="$t('details.item.see.list')"
+                        @click="seeList"
                     >
-                        <svg height="24" width="24" viewBox="0 0 23 23">
-                            <g>
-                                <path
-                                    d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"
-                                />
-                            </g>
-                        </svg>
+                        {{ $t('details.item.see.list') }}
                     </button>
-                    <span class="px-8">
-                        {{
-                            $t('details.item.count', [
-                                currentIdx + 1,
-                                result.items.length
-                            ])
-                        }}
+                    <div class="flex bg-gray-200 py-8 items-center">
+                        <button
+                            :content="$t('details.item.previous.item')"
+                            v-tippy="{ placement: 'top' }"
+                            @click="advanceItemIndex(-1)"
+                            class="
+                                mx-2
+                                opacity-60
+                                hover:opacity-90
+                                disabled:opacity-30 disabled:cursor-default
+                            "
+                            :aria-label="$t('details.item.previous.item')"
+                            :disabled="currentIdx === 0"
+                        >
+                            <svg height="24" width="24" viewBox="0 0 23 23">
+                                <g>
+                                    <path
+                                        d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"
+                                    />
+                                </g>
+                            </svg>
+                        </button>
+                        <span class="px-8">
+                            {{
+                                $t('details.item.count', [
+                                    currentIdx + 1,
+                                    result.items.length
+                                ])
+                            }}
+                        </span>
+                        <button
+                            :content="$t('details.item.next.item')"
+                            v-tippy="{ placement: 'top' }"
+                            @click="advanceItemIndex(1)"
+                            class="
+                                mx-2
+                                rotate-180
+                                opacity-60
+                                hover:opacity-90
+                                disabled:opacity-30 disabled:cursor-default
+                            "
+                            :aria-label="$t('details.item.next.item')"
+                            :disabled="currentIdx === result.items.length - 1"
+                        >
+                            <svg height="24" width="24" viewBox="0 0 23 23">
+                                <g>
+                                    <path
+                                        d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"
+                                    />
+                                </g>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex py-8" v-if="layerType !== 'ogc-wms'">
+                    <span
+                        v-if="icon"
+                        class="flex-none m-auto symbologyIcon"
+                        v-html="icon"
+                    ></span>
+                    <div v-else class="m-auto">
+                        <div class="animate-spin spinner h-20 w-20"></div>
+                    </div>
+                    <span class="flex-grow my-auto text-lg px-8">
+                        {{ itemName }}
                     </span>
                     <button
-                        :content="$t('details.item.next.item')"
-                        v-tippy="{ placement: 'top' }"
-                        @click="advanceItemIndex(1)"
-                        class="
-                            mx-2
-                            rotate-180
-                            opacity-60
-                            hover:opacity-90
-                            disabled:opacity-30 disabled:cursor-default
-                        "
-                        :aria-label="$t('details.item.next.item')"
-                        :disabled="currentIdx === result.items.length - 1"
+                        :content="$t('details.item.zoom')"
+                        v-tippy="{ placement: 'bottom' }"
+                        :aria-label="$t('details.item.zoom')"
+                        @click="zoomToFeature()"
+                        class="text-gray-600 m-8"
                     >
-                        <svg height="24" width="24" viewBox="0 0 23 23">
-                            <g>
-                                <path
-                                    d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"
-                                />
-                            </g>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            width="20"
+                        >
+                            <path
+                                d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                            />
+                            <path d="M0 0h24v24H0V0z" fill="none" />
+                            <path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z" />
                         </svg>
                     </button>
                 </div>
+                <component
+                    :is="detailsTemplate"
+                    :identifyData="identifyItem"
+                    :fields="fieldsList"
+                ></component>
             </div>
-            <div class="flex py-8" v-if="layerType !== 'ogc-wms'">
-                <span
-                    v-if="icon"
-                    class="flex-none m-auto symbologyIcon"
-                    v-html="icon"
-                ></span>
-                <div v-else class="m-auto">
-                    <div class="animate-spin spinner h-20 w-20"></div>
-                </div>
-                <span class="flex-grow my-auto text-lg px-8">
-                    {{ itemName }}
-                </span>
-                <button
-                    :content="$t('details.item.zoom')"
-                    v-tippy="{ placement: 'bottom' }"
-                    :aria-label="$t('details.item.zoom')"
-                    @click="zoomToFeature()"
-                    class="text-gray-600 m-8"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        width="20"
-                    >
-                        <path
-                            d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
-                        />
-                        <path d="M0 0h24v24H0V0z" fill="none" />
-                        <path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z" />
-                    </svg>
-                </button>
-            </div>
-            <component
-                :is="detailsTemplate"
-                :identifyData="identifyItem"
-                :fields="fieldsList"
-            ></component>
+            <div v-else class="animate-spin spinner h-20 w-20 px-5"></div>
         </template>
     </panel-screen>
 </template>
 
 <script lang="ts">
+// this screen is the display of an individual result, and nav controls at the top to other views
+
 import { defineComponent, PropType } from 'vue';
 import { get } from '@/store/pathify-helper';
 import { DetailsStore } from './store';
@@ -194,9 +204,16 @@ export default defineComponent({
             return layer?.layerType || '';
         },
 
+        supportsFeatures(): boolean {
+            const layer: LayerInstance | undefined = this.getLayerByUid(
+                this.result.uid
+            );
+            return layer?.supportsFeatures ?? false;
+        },
+
         fieldsList(): Array<FieldDefinition> {
             // wms layers do not support fields
-            if (this.layerType === 'ogc-wms') {
+            if (!this.supportsFeatures) {
                 return [];
             }
 
@@ -222,7 +239,7 @@ export default defineComponent({
                 return this.templateBindings[layer.id].template;
             }
             // If nothing is found, use a default template.
-            if (this.layerType === 'ogc-wms') {
+            if (!this.supportsFeatures) {
                 return 'html-default';
             } else {
                 return 'esri-default';
@@ -284,7 +301,7 @@ export default defineComponent({
         fetchIcon() {
             this.icon = '';
 
-            if (!this.identifyItem) {
+            if (!(this.identifyItem && this.identifyItem.loaded)) {
                 return;
             }
 

@@ -13,19 +13,19 @@ import {
 } from '@/api/internal';
 import {
     DataFormat,
+    DefPromise,
     Extent,
     GeometryType,
     GetGraphicParams,
     GetGraphicResult,
+    IdentifyItem,
     IdentifyParameters,
     IdentifyResult,
     IdentifyResultFormat,
-    IdentifyResultSet,
     LayerType,
     Point,
     QueryFeaturesParams,
-    RampLayerConfig,
-    TreeNode
+    RampLayerConfig
 } from '@/geo/api';
 import {
     EsriFeatureFilter,
@@ -235,7 +235,7 @@ export class FileLayer extends AttribLayer {
 
     // ----------- LAYER ACTIONS -----------
 
-    runIdentify(options: IdentifyParameters): IdentifyResultSet {
+    runIdentify(options: IdentifyParameters): Array<IdentifyResult> {
         // TODO this function is pretty much identical to FeatureLayer, now that we are using query for everything.
         //      the queryFeatures on the sublayer will automatically go to the correct server/file instance due to the
         //      overridden functions.
@@ -252,22 +252,16 @@ export class FileLayer extends AttribLayer {
             this.scaleSet.isOffScale(map.getScale()).offScale
         ) {
             // return empty result.
-            return super.runIdentify(options);
+            return [];
         }
 
-        let loadResolve: any;
-        const innerResult: IdentifyResult = {
-            uid: this.uid,
-            loadPromise: new Promise(resolve => {
-                loadResolve = resolve;
-            }),
-            items: []
-        };
+        const dProm = new DefPromise();
 
-        const result: IdentifyResultSet = {
-            results: [innerResult],
-            done: Promise.resolve(), // set properly below
-            parentUid: this.uid
+        const result: IdentifyResult = {
+            items: [],
+            loading: dProm.getPromise(),
+            loaded: false,
+            uid: this.uid
         };
 
         // run a spatial query
@@ -291,28 +285,28 @@ export class FileLayer extends AttribLayer {
 
         qOpts.filterSql = this.getCombinedSqlFilter();
 
-        result.done = this.queryFeatures(qOpts).then(results => {
-            // TODO might be a problem overwriting the array if something is watching/binding to the original
-            innerResult.items = results.map(gr => {
-                return {
-                    // TODO decide if we want to handle alias mapping here or not.
-                    //      if we do, our "ESRI" format will need to include field metadata.
-                    //      if we dont, we need to ensure an outside fixture can access field metadata via uid easily.
-                    data: gr.attributes, // this.attributesToDetails(vAtt.attributes, layerData.fields),
-                    format: IdentifyResultFormat.ESRI
+        this.queryFeatures(qOpts).then(results => {
+            results.forEach(gr => {
+                // file layer resolves all items at once,
+                // so our item-level stuff can be created in
+                // a loaded state
 
-                    // See comments on IdentifyItem interface definition; we may decide to not keep these properties
-                    // id:  gr.attributes[myFC.oidField].toString(),
-                    // symbol: this.$iApi.geo.utils.symbology.getGraphicIcon(gr.attributes, myFC.renderer) // TODO use myFC.getIcon instead
-                    // name: this.getFeatureName(vAtt.oid.toString(), vAtt.attributes),
+                const item: IdentifyItem = {
+                    data: gr.attributes,
+                    format: IdentifyResultFormat.ESRI,
+                    loaded: true,
+                    loading: Promise.resolve()
                 };
+
+                result.items.push(item); // push, incase something was bound to the array
             });
 
-            // Resolve the load promise
-            loadResolve();
+            // Resolve the loading promise, set the flag
+            dProm.resolveMe();
+            result.loaded = true;
         });
 
-        return result;
+        return [result];
     }
 
     extractLayerMetadata(): void {

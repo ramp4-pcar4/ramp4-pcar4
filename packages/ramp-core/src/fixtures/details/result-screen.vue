@@ -26,21 +26,27 @@
                     "
                     v-for="(item, idx) in result.items"
                     :key="idx"
-                    @click="openResult(idx)"
+                    @click="item.loaded && openResult(idx)"
+                    :disabled="!item.loaded"
                     v-focus-item
                     v-truncate
                 >
-                    <!-- TODO: test if itemIcon() call works as intended -->
-                    <span
-                        v-html="itemIcon(item.data, idx)"
-                        class="flex-none symbologyIcon"
-                    ></span>
-                    <span class="flex-initial py-5 px-10" v-truncate>
-                        {{
-                            item.data[nameField] ||
-                            $t('details.result.default.name', [idx + 1])
-                        }}
-                    </span>
+                    <div v-if="item.loaded">
+                        <span
+                            v-html="itemIcon(item.data, idx)"
+                            class="flex-none symbologyIcon"
+                        ></span>
+                        <span class="flex-initial py-5 px-10" v-truncate>
+                            {{
+                                item.data[nameField] ||
+                                $t('details.result.default.name', [idx + 1])
+                            }}
+                        </span>
+                    </div>
+                    <div
+                        v-else
+                        class="animate-spin spinner h-20 w-20 px-5"
+                    ></div>
                 </button>
             </div>
             <div v-else>{{ $t('details.layers.results.empty') }}</div>
@@ -49,6 +55,8 @@
 </template>
 
 <script lang="ts">
+// this screen is the list of results for one logical layer (one IdentifyResult object)
+
 import { defineComponent, PropType } from 'vue';
 import { get } from '@/store/pathify-helper';
 import { DetailsStore } from './store';

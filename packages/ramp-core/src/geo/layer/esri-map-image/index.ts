@@ -6,14 +6,15 @@ import {
 } from '@/api/internal';
 import {
     AttributeSet,
+    DefPromise,
     Extent,
     GeometryType,
     GetGraphicResult,
     GetGraphicParams,
+    IdentifyItem,
     IdentifyParameters,
     IdentifyResult,
     IdentifyResultFormat,
-    IdentifyResultSet,
     LayerType,
     Point,
     QueryFeaturesParams,
@@ -467,7 +468,7 @@ class MapImageLayer extends AttribLayer {
 
     // ----------- LAYER ACTIONS -----------
 
-    runIdentify(options: IdentifyParameters): IdentifyResultSet {
+    runIdentify(options: IdentifyParameters): Array<IdentifyResult> {
         // NOTE: we are looping over queryFeatures on each sublayer instead of running an identify on the entire layer.
         //       reasons:
         //         the queries allow us to only return OIDs. identify always pulls all the features.
@@ -479,7 +480,7 @@ class MapImageLayer extends AttribLayer {
         // early kickout check. not loaded/error
         if (!this.isValidState || !this.visibility) {
             // return empty result.
-            return super.runIdentify(options);
+            return [];
         }
 
         const map = this.$iApi.geo.map;
@@ -516,16 +517,10 @@ class MapImageLayer extends AttribLayer {
               );
 
         // early kickout check. all sublayers are one of: not visible; not identifiable; off scale; a raster layer
-        if (activeSublayers.length === 0 || !this.visibility) {
+        if (activeSublayers.length === 0) {
             // return empty result.
-            return super.runIdentify(options);
+            return [];
         }
-
-        const result: IdentifyResultSet = {
-            results: [],
-            done: Promise.resolve(), // set properly below
-            parentUid: this.uid
-        };
 
         // prepare a query
         // it may make more sense to have this made for each sublayer
@@ -542,56 +537,57 @@ class MapImageLayer extends AttribLayer {
             );
         }
 
-        // loop over active FCs. call query on each. prepare a geometry
-        result.done = Promise.all(
-            activeSublayers.map(sublayer => {
-                let loadResolve: any;
-                const innerResult: IdentifyResult = {
-                    uid: sublayer.uid,
-                    loadPromise: new Promise(resolve => {
-                        loadResolve = resolve;
-                    }),
-                    items: []
-                };
-                result.results.push(innerResult);
+        // loop over active sublayers. call query on each and generate an IdentifyItem to track it
+        return activeSublayers.map(sublayer => {
+            const dProm = new DefPromise();
 
-                if (sublayer.geomType !== GeometryType.POLYGON && pointBuffer) {
-                    // we want to use a point buffer if
-                    // - a point was used as identify input (aka a pointBuffer exists in the var)
-                    // - the sublayer is not a polygon layer
-                    qOpts.filterGeometry = pointBuffer;
-                } else {
-                    qOpts.filterGeometry = options.geometry;
-                }
+            const result: IdentifyResult = {
+                items: [],
+                loading: dProm.getPromise(),
+                loaded: false,
+                uid: sublayer.uid
+            };
 
-                qOpts.outFields = sublayer.fieldList;
-                qOpts.filterSql = sublayer.getCombinedSqlFilter();
+            if (sublayer.geomType !== GeometryType.POLYGON && pointBuffer) {
+                // we want to use a point buffer if
+                // - a point was used as identify input (aka a pointBuffer exists in the var)
+                // - the sublayer is not a polygon layer
+                qOpts.filterGeometry = pointBuffer;
+            } else {
+                qOpts.filterGeometry = options.geometry;
+            }
 
-                return sublayer.queryFeatures(qOpts).then(results => {
-                    // TODO might be a problem overwriting the array if something is watching/binding to the original
-                    innerResult.items = results.map(gr => {
-                        return {
-                            // TODO this block is the same as in featurelayer. might want to abstract to a shared function. really depends if we keep the extra params
-                            // TODO decide if we want to handle alias mapping here or not.
-                            //      if we do, our "ESRI" format will need to include field metadata.
-                            //      if we dont, we need to ensure an outside fixture can access field metadata via uid easily.
-                            data: gr.attributes, // this.attributesToDetails(vAtt.attributes, layerData.fields),
-                            format: IdentifyResultFormat.ESRI
+            qOpts.outFields = sublayer.fieldList;
+            qOpts.filterSql = sublayer.getCombinedSqlFilter();
 
-                            // See comments on IdentifyItem interface definition; we may decide to not keep these properties
-                            // id:  gr.attributes[sublayer.oidField].toString(),
-                            // symbol: this.gapi.utils.symbology.getGraphicIcon(gr.attributes, sublayer.renderer) // TODO use sublayer.getIcon instead
-                            // name: this.getFeatureName(vAtt.oid.toString(), vAtt.attributes),
-                        };
+            sublayer.queryFeaturesDiscrete(qOpts).then(results => {
+                results.forEach(dgr => {
+                    const itemDProm = new DefPromise();
+                    const item: IdentifyItem = {
+                        data: undefined,
+                        format: IdentifyResultFormat.ESRI,
+                        loaded: false,
+                        loading: itemDProm.getPromise()
+                    };
+
+                    result.items.push(item); // push, incase something was bound to the array
+
+                    // allow the item to be returned, but update the item after its guts download
+                    dgr.graphic.then(g => {
+                        item.data = g.attributes;
+                        itemDProm.resolveMe();
+                        item.loaded = true;
                     });
-
-                    // Resolve the load promise
-                    loadResolve();
                 });
-            })
-        ).then(() => Promise.resolve()); // just to stop typescript from crying about array result of .all()
 
-        return result;
+                // Resolve the loading promise, set the flag
+                // This promise only indicates we have an array of results (each may still be loading their internals)
+                dProm.resolveMe();
+                result.loaded = true;
+            });
+
+            return result;
+        });
     }
 
     private noFeaturesErr(): void {
