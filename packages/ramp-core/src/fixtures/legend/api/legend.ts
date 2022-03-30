@@ -23,6 +23,10 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     _parseConfig(legendConfig?: LegendConfig) {
+        // get all layer fixture configs to read layer-specific legend properties
+        let layerLegendConfigs: { [layerId: string]: any } =
+            this.getLayerFixtureConfigs();
+
         // parse the header controls, or default the controls
         let controls: Array<string> = [];
         if (!legendConfig?.headerControls) {
@@ -56,6 +60,9 @@ export class LegendAPI extends FixtureInstance {
         while (stack.length > 0) {
             // pop legend entry in stack and check if it has a corresponding layer
             const lastEntry = stack.pop();
+
+            // pass the layer fixture config to legend item for easy access
+            lastEntry.layerLegendConfigs = layerLegendConfigs;
 
             // (assuming visibility sets and groups will specify in config `exclusiveVisibility` or `children` properties, respectively)
             if (

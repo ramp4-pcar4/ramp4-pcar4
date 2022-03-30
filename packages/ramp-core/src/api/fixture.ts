@@ -13,6 +13,8 @@ import {
     FixtureMutation,
     FixtureBaseSet
 } from '@/store/modules/fixture';
+import { RampConfig } from '@/types';
+import { ConfigStore } from '@/store/modules/config';
 
 // TODO: implement the same `internal.ts` pattern in store, so can import from a single place;
 
@@ -373,5 +375,50 @@ export class FixtureInstance extends APIScope implements FixtureBase {
      */
     get config(): any {
         return this.$vApp.$store.get('config/getFixtureConfig', this.id);
+    }
+
+    /**
+     * Get this fixture's config from the layer config with the given layer id
+     * Will return `undefined` if layer config did not specify a config for this fixture
+     *
+     * @param {string} layerId The layer's id
+     * @returns {any} This fixture's config for the given layer
+     */
+    getLayerFixtureConfig(layerId: string): any {
+        let fixtureConfigs: { [layerId: string]: any } =
+            this.getLayerFixtureConfigs();
+        return fixtureConfigs[layerId];
+    }
+
+    /**
+     * Combines this fixtures configs from layer configs into an indexed-dictionary
+     *
+     * @returns {{ [layerId: string]: any }} Dictionary where key is the layer id and the value is this fixture's config for that layer
+     */
+    getLayerFixtureConfigs(): { [layerId: string]: any } {
+        let mainConfig: RampConfig = this.$iApi.getConfig();
+        let fixtureConfigs: { [layerId: string]: any } = {};
+
+        const layerCrawler = (layer: any, parent: any = undefined) => {
+            if (layer.fixtures && layer.fixtures[this.id] !== undefined) {
+                let layerId: string = layer.id;
+                if (parent !== undefined) {
+                    // generate suffixed layer id for sublayer entry
+                    layerId = `${parent.id}-${layer.index}`;
+                }
+                fixtureConfigs[layerId] = layer.fixtures[this.id];
+            }
+
+            // process child layer entries
+            if (layer.layerEntries) {
+                layer.layerEntries.forEach((sublayer: any) =>
+                    layerCrawler(sublayer, layer)
+                );
+            }
+        };
+
+        mainConfig.layers.forEach(layer => layerCrawler(layer));
+
+        return fixtureConfigs;
     }
 }

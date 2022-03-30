@@ -470,6 +470,7 @@ export interface RampLayerMapImageLayerEntryConfig {
     table?: any;
     fieldMetadata?: RampLayerFieldMetadataConfig;
     customRenderer?: any;
+    fixtures?: any; // layer-based fixture config
 }
 
 // i.e. a wms layer child
@@ -481,6 +482,7 @@ export interface RampLayerWmsLayerEntryConfig {
     controls?: any;
     currentStyle?: string; // style to be used
     styleLegends?: Array<{ name: string; url: string }>; // map of styles to legend graphic url. overrides service urls.
+    fixtures?: any; // layer-based fixture config
     // more...
 }
 
@@ -506,6 +508,7 @@ export interface RampLayerConfig {
     longField?: string; // csv coord field
     tolerance?: number; // click tolerance
     metadata?: { url: string; name?: string };
+    fixtures?: any; // layer-based fixture config
 }
 
 export interface RampExtentConfig {

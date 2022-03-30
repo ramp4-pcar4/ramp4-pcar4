@@ -135,23 +135,13 @@
             "type": "object",
             "description": "Provides configuration to the details fixture.",
             "properties": {
-                "templates": {
-                    "type": "array",
-                    "default": [],
-                    "description": "List of links to custom details templates for a defined layer.",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "layerId": {
-                                "type": "string",
-                                "description": "Custom Vue component to render as details template. Layer ID must exist."
-                            }
-                        },
-                        "required": ["layerId"]
-                    }
+                "template": {
+                    "type": "string",
+                    "description": "Custom Vue component to render as details template"
                 }
             },
-            "unevaluatedProperties": false
+            "required": ["template"],
+            "additionalProperties": false
         },
         "geosearch": {
             "type": "object",
@@ -703,11 +693,6 @@
                     "default": "esri-map-image",
                     "description": "Service type shorthand for map image layers."
                 },
-                "toggleSymbology": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Allows individual symbols to have visibility toggled on/off."
-                },
                 "singleEntryCollapse": {
                     "type": "boolean",
                     "default": false,
@@ -766,6 +751,9 @@
                     ],
                     "default": "png32",
                     "description": "The format of the layer image output."
+                },
+                "fixtures": {
+                    "$ref": "#/$defs/layerFixtureConfig"
                 }
             },
             "required": ["id", "layerType", "layerEntries", "url"],
@@ -803,9 +791,6 @@
                     "default": false,
                     "description": "A flag indicating this entry is only for state tracking (i.e. it should not be displayed on the UI and all of the controls will be ignored, but the layer itself will be displayed on the map with the given state settings)."
                 },
-                "table": {
-                    "$ref": "#/$defs/tableNode"
-                },
                 "fieldMetadata": {
                     "type": "object",
                     "description": "Specifies options for the fields of a layer.",
@@ -823,6 +808,9 @@
                             "description": "If true, only fields in fieldInfo are downloaded. Otherwise, download all fields."
                         }
                     }
+                },
+                "fixtures": {
+                    "$ref": "#/$defs/layerFixtureConfig"
                 }
             },
             "required": ["index"],
@@ -881,11 +869,6 @@
                     "enum": ["esri-feature"],
                     "description": "Service type shorthand for feature layers."
                 },
-                "toggleSymbology": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Allows individual symbols to have visibility toggled on/off."
-                },
                 "tolerance": {
                     "type": "number",
                     "default": 5,
@@ -916,9 +899,6 @@
                 "state": {
                     "$ref": "#/$defs/initialLayerSettings"
                 },
-                "table": {
-                    "$ref": "#/$defs/tableNode"
-                },
                 "customRenderer": {
                     "type": "object",
                     "description": "Optional renderer object to apply to the layer. Follows ESRI ArcGIS Server json convention.",
@@ -930,6 +910,9 @@
                     "items": {
                         "$ref": "#/$defs/fieldMetadataEntry"
                     }
+                },
+                "fixtures": {
+                    "$ref": "#/$defs/layerFixtureConfig"
                 }
             },
             "required": ["id", "layerType", "url"],
@@ -1011,9 +994,6 @@
                 "state": {
                     "$ref": "#/$defs/initialLayerSettings"
                 },
-                "table": {
-                    "$ref": "#/$defs/tableNode"
-                },
                 "customRenderer": {
                     "type": "object",
                     "description": "Optional renderer object to apply to the layer. Follows ESRI ArcGIS Server json convention.",
@@ -1025,6 +1005,9 @@
                     "items": {
                         "$ref": "#/$defs/fieldMetadataEntry"
                     }
+                },
+                "fixtures": {
+                    "$ref": "#/$defs/layerFixtureConfig"
                 }
             },
             "required": ["id", "layerType", "url"],
@@ -1098,9 +1081,6 @@
                 "state": {
                     "$ref": "#/$defs/initialLayerSettings"
                 },
-                "table": {
-                    "$ref": "#/$defs/tableNode"
-                },
                 "xyInAttribs": {
                     "type": "boolean",
                     "default": false,
@@ -1117,6 +1097,9 @@
                     "items": {
                         "$ref": "#/$defs/fieldMetadataEntry"
                     }
+                },
+                "fixtures": {
+                    "$ref": "#/$defs/layerFixtureConfig"
                 }
             },
             "required": ["id", "layerType", "url"],
@@ -1274,6 +1257,29 @@
             "required": ["id"],
             "unevaluatedProperties": false
         },
+        "layerFixtureConfig": {
+            "type": "object",
+            "description": "Fixture configuration that is specific to a layer.",
+            "properties": {
+                "details": {
+                    "$ref": "#/$defs/details"
+                },
+                "grid": {
+                    "$ref": "#/$defs/tableNode"
+                },
+                "legend": {
+                    "type": "object",
+                    "description": "Layer-specific legend configuration",
+                    "properties": {
+                        "toggleSymbology": {
+                            "type": "boolean",
+                            "default": true,
+                            "description": "Allows individual symbols to have visibility toggled on/off."
+                        }
+                    }
+                }
+            }
+        },
         "fieldMetadataEntry": {
             "type": "object",
             "description": "Specifies field info for layer.",
@@ -1381,11 +1387,12 @@
         "columnNode": {
             "type": "object",
             "description": "Specifies column properties. The ordering of columns in the table header is the same as the order they appear in this array.",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/fieldMetadataEntry"
+                }
+            ],
             "properties": {
-                "data": {
-                    "type": "string",
-                    "description": "The field name (data) to use to link to the layer column. Must exist in the layer."
-                },
                 "title": {
                     "type": "string",
                     "default": "",
@@ -1416,7 +1423,6 @@
                     "$ref": "#/$defs/filterNode"
                 }
             },
-            "required": ["data"],
             "unevaluatedProperties": false
         },
         "filterNode": {
