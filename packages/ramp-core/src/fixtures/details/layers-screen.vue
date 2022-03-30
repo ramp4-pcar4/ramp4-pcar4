@@ -8,6 +8,7 @@
             <close @click="panel.close()"></close>
         </template>
         <template #content>
+            <!-- Grond total -->
             <div class="p-5">
                 {{
                     $t('details.layers.found', {
@@ -16,6 +17,7 @@
                     })
                 }}
             </div>
+            <!-- Clicker for each layer -->
             <button
                 class="
                     w-full
@@ -28,16 +30,18 @@
                     disabled:cursor-default
                 "
                 v-for="(item, idx) in layerResults"
-                :key="`${item ? item.uid : 'loading'}-${idx}`"
-                @click="item && openResult(idx)"
-                :disabled="!(item && item.items.length > 0)"
+                :key="item.uid"
+                @click="item.loaded && openResult(idx)"
+                :disabled="!(item.loaded && item.items.length > 0)"
             >
                 <div v-truncate>
                     {{ layerName(idx) || $t('details.layers.loading') }}
                 </div>
                 <div class="flex-auto"></div>
                 <!-- Display the count if item exists, else display the loading spinner -->
-                <div v-if="item" class="px-5">{{ item.items.length }}</div>
+                <div v-if="item.loaded" class="px-5">
+                    {{ item.items.length }}
+                </div>
                 <div v-else class="animate-spin spinner h-20 w-20 px-5"></div>
             </button>
         </template>
@@ -45,6 +49,8 @@
 </template>
 
 <script lang="ts">
+// This screen is the view of all layers that were interrogated in the identify
+
 import { defineComponent } from 'vue';
 import { get } from '@/store/pathify-helper';
 import { DetailsStore } from './store';
@@ -59,24 +65,22 @@ export default defineComponent({
     },
     data() {
         return {
-            layerResults: [] as Array<IdentifyResult | undefined>,
+            layerResults: [] as Array<IdentifyResult>,
             payload: get(DetailsStore.payload),
             getLayerByUid: get('layer/getLayerByUid'),
             layers: get('layer/layers')
         };
     },
     computed: {
-        totalResultCount(): any {
+        totalResultCount(): number {
             return this.layerResults
-                .map((r: IdentifyResult | undefined) =>
-                    r ? r.items.length : 0
-                )
+                .map(r => r.items.length)
                 .reduce((a: number, b: number) => a + b, 0);
         }
     },
     watch: {
         payload: {
-            deep: true,
+            deep: false, // was true when our array had undefineds. now that objects arrive intact, we dont want this triggering when innards update
             immediate: true,
             handler(newPayload) {
                 // Reload items
@@ -89,14 +93,31 @@ export default defineComponent({
          * Load identify result items after all item's load promise has resolved
          */
         loadPayloadItems(newPayload: Array<IdentifyResult>): void {
-            this.layerResults = new Array(newPayload.length).fill(undefined);
-            newPayload.forEach((item: IdentifyResult, idx: number) =>
-                item.loadPromise.then(() => {
-                    this.layerResults[idx] = item;
-                })
-            );
+            // Note the incoming payload array needs to be made reactive at the source,
+            // i.e. in the layer that ran the identify and created this stuff.
+            // Not ideal. Have tried a number of workarounds but vue remains
+            // disrespectful in ignoring changes to array elements and updating
+            // controls in the template v-for's.
+            // I think the reason is because a promise that lives outside of
+            // the component is updating values, and the vue reactivity magic
+            // is not registering it in the dependency graph thing. Still don't know
+            // enough to say for sure.
+            // The alternative is to use $forceUpdate, which works but seems less
+            // efficient and sort of defeats the purpose of using a framework with
+            // "smart" two way binding.
+            // Tried making a reactive copy of elements here that would watch
+            // the original elements and update itself, would work for the
+            // IdentifyResults but the nested IdentifyItems would still break.
+            // It was also a big hack.
+            // Would like to revist, as this current solution is unintuitive,
+            // nobody writing a new layer type is going to have a clue they need
+            // to wrap their identify outputs in reactive() due to disrespectful code.
+
+            this.layerResults = newPayload;
+
+            // also wait for everything to finish so we can display a grand total
             Promise.all(
-                newPayload.map((item: IdentifyResult) => item.loadPromise)
+                newPayload.map((item: IdentifyResult) => item.loading)
             ).then(() => {
                 // alert the user about the number of results found
                 this.$iApi.updateAlert(
@@ -141,7 +162,6 @@ export default defineComponent({
          */
         layerName(idx: number) {
             const layerInfo = this.payload[idx];
-            // Check to see if there is a custom template defined for the selected layer.
             let item: LayerInstance | undefined = this.getLayerByUid(
                 layerInfo.uid
             );

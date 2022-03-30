@@ -19,7 +19,6 @@ import {
     GetGraphicParams,
     GetGraphicResult,
     IdentifyParameters,
-    IdentifyResultSet,
     LayerState,
     LegendSymbology,
     ScaleSet,
@@ -63,7 +62,7 @@ export interface LayerBase {
     ): boolean;
 
     getLegend(layerIdx: number | string | undefined): Array<LegendSymbology>;
-    identify(options: IdentifyParameters): IdentifyResultSet;
+    identify(options: IdentifyParameters): Array<IdentifyResult>;
 
     // attribute layer props. layers that do not support attributes can just return dummy values
     getFeatureCount?(layerIdx: number | string | undefined): number;

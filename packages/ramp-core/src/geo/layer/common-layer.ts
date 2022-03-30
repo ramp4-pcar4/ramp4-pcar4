@@ -1,9 +1,5 @@
 // put things here that would be common to all layers
 // used for layer types defined by Core RAMP.
-// TODO add proper comments
-
-// import { InfoBundle, LayerState, RampLayerConfig, LegendSymbology, IdentifyParameters, IdentifyResultSet,
-//    FilterEventParam, AttributeSet, FieldDefinition, TabularAttributeSet, GetGraphicResult, GetGraphicParams } from '../gapiTypes';
 
 import { GlobalEvents, InstanceAPI, LayerInstance } from '@/api/internal';
 import {
@@ -15,7 +11,7 @@ import {
     GetGraphicResult,
     GetGraphicParams,
     IdentifyParameters,
-    IdentifyResultSet,
+    IdentifyResult,
     LayerState,
     LayerType,
     LegendSymbology,
@@ -787,27 +783,6 @@ export class CommonLayer extends LayerInstance {
         } else {
             this.noLayerErr();
         }
-    }
-
-    // ----------- LAYER ACTIONS -----------
-
-    /**
-     * Baseline identify function for layers that do not support identify.
-     * Will return an empty result. Layers that support identify should override this method.
-     *
-     * @param options not used, present for nice signature of overrided function
-     * @returns {IdentifyResultSet} an empty result set
-     */
-    runIdentify(options: IdentifyParameters): IdentifyResultSet {
-        // returns an empty set.
-        // serves as a fallback incase someone tries to identify on a non-identifiyable layer
-        // (callers can use this.supportsIdentify to check for that)
-        // and also as a "no results" option for subclasses to use.
-        return {
-            results: [],
-            done: Promise.resolve(),
-            parentUid: this.uid
-        };
     }
 
     // ----------- STUB METHODS -----------
