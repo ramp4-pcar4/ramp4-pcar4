@@ -49,10 +49,10 @@ class DetailsFixture extends DetailsAPI {
 
         // Parse the details portion of the configuration file and save any custom
         // template bindings in the details store.
-        this._parseConfig();
+        this._parseConfig(this.config);
         this.$vApp.$watch(
             () => this.config,
-            (value: DetailsConfig | undefined) => this._parseConfig()
+            (value: DetailsConfig | undefined) => this._parseConfig(value)
         );
     }
 

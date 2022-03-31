@@ -153,6 +153,7 @@ export default defineComponent({
     },
     data() {
         return {
+            defaultTemplates: get(DetailsStore.defaultTemplates),
             templateBindings: get(DetailsStore.templates),
             payload: get(DetailsStore.payload),
             getLayerByUid: get('layer/getLayerByUid'),
@@ -221,7 +222,16 @@ export default defineComponent({
             ) {
                 return this.templateBindings[layer.id].template;
             }
-            // If nothing is found, use a default template.
+
+            // If nothing is found, use a default template from config
+            if (
+                this.defaultTemplates &&
+                this.defaultTemplates[this.identifyItem.format]
+            ) {
+                return this.defaultTemplates[this.identifyItem.format];
+            }
+
+            // If default template is not specified, use our default template
             if (this.layerType === 'ogc-wms') {
                 return 'html-default';
             } else {

@@ -2,6 +2,7 @@ import { FixtureInstance } from '@/api';
 import { IdentifyResult } from '@/geo/api';
 import {
     DetailsConfig,
+    DetailsConfigItem,
     DetailsItemSet,
     DetailsItemInstance,
     DetailsStore
@@ -81,24 +82,31 @@ export class DetailsAPI extends FixtureInstance {
     /**
      * Read the details section of the layers' fixture config
      *
+     * @param {DetailsConfig} [config]
      * @memberof DetailsAPI
      */
-    _parseConfig() {
+    _parseConfig(config?: DetailsConfig) {
+        // set the default templates if provided
+        if (config && config.templates) {
+            this.$vApp.$store.set(
+                DetailsStore.defaultTemplates,
+                config.templates
+            );
+        }
+
         // get all layer fixture configs
         let layerDetailsConfigs: any = this.getLayerFixtureConfigs();
-        let detailsConfig: DetailsConfig = {
-            items: []
-        };
+        let detailsConfigItems: DetailsConfigItem[] = [];
 
         // construct the details config from the layer fixture configs
         Object.keys(layerDetailsConfigs).forEach((layerId: string) => {
-            detailsConfig.items.push({
+            detailsConfigItems.push({
                 id: layerId,
                 template: layerDetailsConfigs[layerId].template
             });
         });
 
-        const detailsItems = detailsConfig.items.map(
+        const detailsItems = detailsConfigItems.map(
             (item: any) => new DetailsItemInstance(item)
         );
 

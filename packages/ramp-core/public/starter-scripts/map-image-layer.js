@@ -117,7 +117,11 @@ let config = {
                     items: ['legend']
                 },
                 mapnav: { items: ['fullscreen', 'legend', 'home', 'basemap'] },
-                details: { items: [] }
+                details: {
+                    templates: {
+                        esri: 'Details-Default-Template-Esri'
+                    }
+                }
             }
         }
     }
@@ -134,3 +138,43 @@ rInstance.fixture
     .then(() => {
         rInstance.panel.open('legend-panel');
     });
+
+rInstance.$element.component('Details-Default-Template-Esri', {
+    props: ['identifyData', 'fields'],
+    template: `
+        <div>
+            <div
+                class="p-5 pl-3 flex justify-end flex-wrap even:bg-green-100 border-2 border-black"
+                v-for="(val, name, itemIdx) in itemData()"
+                :key="itemIdx"
+            >
+                <span class="inline font-bold">{{ val.alias }}</span>
+                <span class="flex-auto"></span>
+                <span class="inline" v-html="val.value"></span>
+            </div>
+        </div>
+    `,
+    methods: {
+        itemData() {
+            const helper = {};
+            Object.assign(helper, this.identifyData.data);
+            if (helper.Symbol !== undefined) delete helper.Symbol;
+
+            let aliases = {};
+            this.fields.forEach(field => {
+                aliases[field.name] = field.alias || field.name;
+            });
+            Object.keys(helper).map(key => {
+                helper[key] = {
+                    value:
+                        typeof helper[key] === 'number'
+                            ? this.$iApi.$vApp.$n(helper[key], 'number')
+                            : helper[key],
+                    alias: aliases[key] || key
+                };
+            });
+
+            return helper;
+        }
+    }
+});

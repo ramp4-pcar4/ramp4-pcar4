@@ -372,6 +372,12 @@ function layerUpgrader(r2layer: any): any {
             );
     }
 
+    if (r2layer.details) {
+        console.warn(
+            `Details config provided in layer ${r2layer.id} cannot be mapped and will be skipped.`
+        );
+    }
+
     return r4layer;
 }
 

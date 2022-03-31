@@ -29,7 +29,8 @@ const mutations = {
 
 export enum DetailsStore {
     payload = 'details/payload',
-    templates = 'details/templates'
+    templates = 'details/templates',
+    defaultTemplates = 'details/defaultTemplates'
 }
 
 export function details() {
