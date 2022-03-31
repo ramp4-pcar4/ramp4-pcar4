@@ -164,7 +164,7 @@
             :gridOptions="gridOptions"
             :columnDefs="columnDefs"
             :rowData="rowData"
-            :frameworkComponents="frameworkComponents"
+            :components="frameworkComponents"
             @grid-ready="onGridReady"
             @keydown="stopArrowKeyProp"
             @firstDataRendered="gridRendered"
@@ -704,7 +704,7 @@ export default defineComponent({
             // see: https://github.com/ramp4-pcar4/ramp4-pcar4/pull/57#pullrequestreview-377999397
 
             // default to regex filtering for text columns
-            colDef.filterParams.textCustomComparator = function (
+            colDef.filterParams.textMatcher = function (
                 filter: any,
                 gridValue: any,
                 filterText: any
@@ -787,7 +787,7 @@ export default defineComponent({
                             padding: '0px'
                         };
                     },
-                    cellRendererFramework: DetailsButtonRendererV,
+                    cellRenderer: DetailsButtonRendererV,
                     cellRendererParams: {
                         uid: this.layerUid,
                         $iApi: this.$iApi,
@@ -807,7 +807,7 @@ export default defineComponent({
                             padding: '0px'
                         };
                     },
-                    cellRendererFramework: ZoomButtonRendererV,
+                    cellRenderer: ZoomButtonRendererV,
                     cellRendererParams: {
                         uid: this.layerUid,
                         $iApi: this.$iApi,

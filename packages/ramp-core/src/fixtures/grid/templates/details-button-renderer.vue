@@ -33,11 +33,7 @@ export default defineComponent({
     directives: {
         tippy: tippyDirective
     },
-    data(props) {
-        return {
-            params: props.params as any
-        };
-    },
+    props: ['params'],
     mounted() {
         // need to hoist events to top level cell wrapper to be keyboard accessible
         this.params.eGridCell.addEventListener(
