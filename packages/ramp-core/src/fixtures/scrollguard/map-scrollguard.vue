@@ -6,6 +6,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { get } from '@/store/pathify-helper';
+import { ScrollguardStore } from './store';
 
 export default defineComponent({
     name: 'MapScrollguardV',
@@ -18,9 +20,16 @@ export default defineComponent({
             capture: true
         });
     },
-
+    data() {
+        return {
+            enabled: get(ScrollguardStore.enabled)
+        };
+    },
     methods: {
         wheelHandler(event: WheelEvent) {
+            // If the scrollguard is disabled, do not block scrolling.
+            if (!this.enabled) return;
+
             const scrollGuardClassList = this.$el.classList;
 
             // prevent scroll unless ctrlKey is depressed
