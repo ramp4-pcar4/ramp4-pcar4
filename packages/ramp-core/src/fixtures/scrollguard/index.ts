@@ -1,13 +1,22 @@
 import messages from './lang/lang.csv';
 import ScrollguardV from './map-scrollguard.vue';
-import { FixtureInstance } from '@/api';
+import { ScrollguardAPI } from './api/scrollguard';
+import { scrollguard, ScrollguardConfig } from './store';
 
-class ScrollguardFixture extends FixtureInstance {
+class ScrollguardFixture extends ScrollguardAPI {
     added(): void {
         console.log(`[fixture] ${this.id} added`);
         // Manually add lang entries to i18n
         Object.entries(messages).forEach(value =>
             (<any>this.$vApp.$i18n).mergeLocaleMessage(...value)
+        );
+
+        this.$vApp.$store.registerModule('scrollguard', scrollguard());
+
+        this._parseConfig(this.config);
+        this.$vApp.$watch(
+            () => this.config,
+            (value: ScrollguardConfig | undefined) => this._parseConfig(value)
         );
 
         const { vNode, destroy, el } = this.mount(ScrollguardV, {
