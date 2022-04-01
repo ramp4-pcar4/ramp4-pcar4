@@ -115,9 +115,9 @@ export default defineComponent({
     directives: {
         tippy: tippyDirective
     },
-    data(props) {
+    props: ['params'],
+    data() {
         return {
-            params: props.params as any,
             sort: 0 as number,
             sortable: false as boolean,
             canMoveLeft: false as boolean,

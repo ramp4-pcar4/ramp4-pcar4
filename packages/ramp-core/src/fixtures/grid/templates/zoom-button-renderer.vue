@@ -33,9 +33,9 @@ export default defineComponent({
     directives: {
         tippy: tippyDirective
     },
-    data(props) {
+    props: ['params'],
+    data() {
         return {
-            params: props.params as any,
             getLayerByUid: get('layer/getLayerByUid')
         };
     },
