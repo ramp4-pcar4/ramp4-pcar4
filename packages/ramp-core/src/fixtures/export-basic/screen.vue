@@ -1,6 +1,6 @@
 <template>
     <panel-screen :panel="panel" :footer="true">
-        <template #header> Export </template>
+        <template #header> {{ $t('export-basic.title') }} </template>
 
         <template #controls>
             <close @click="panel.close()"></close>
@@ -26,11 +26,11 @@
                         mr-16
                     "
                 >
-                    {{ $t('export-v1.download') }}
+                    {{ $t('export-basic.download') }}
                 </button>
 
                 <button @click="make()" class="py-8 px-16">
-                    {{ $t('export-v1.refresh') }}
+                    {{ $t('export-basic.refresh') }}
                 </button>
             </div>
         </template>
@@ -41,12 +41,12 @@
 import { defineComponent, PropType } from 'vue';
 
 import { PanelInstance } from '@/api';
-import { ExportV1API } from './api';
+import { ExportBasicAPI } from './api';
 
 import { debounce } from 'throttle-debounce';
 
 export default defineComponent({
-    name: 'ExportV1ScreenV',
+    name: 'ExportBasicScreenV',
     props: {
         panel: {
             type: Object as PropType<PanelInstance>,
@@ -55,7 +55,7 @@ export default defineComponent({
     },
 
     data(): {
-        fixture: ExportV1API | null;
+        fixture: ExportBasicAPI | null;
         make: Function;
     } {
         return {
@@ -76,7 +76,7 @@ export default defineComponent({
     },
 
     mounted() {
-        this.fixture = this.$iApi.fixture.get('export-v1') as ExportV1API;
+        this.fixture = this.$iApi.fixture.get('export-basic') as ExportBasicAPI;
 
         const resizeObserver = new ResizeObserver(() => {
             this.make();

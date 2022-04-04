@@ -1,7 +1,7 @@
 <template>
     <appbar-button
         :onClickFunction="onClick"
-        :tooltip="$t('export-v1.appbarButton')"
+        :tooltip="$t('export-basic.title')"
     >
         <!-- https://fonts.google.com/icons?selected=Material+Icons:layers&icon.query=export -->
         <svg
@@ -18,10 +18,10 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-    name: 'ExportV1AppbarButtonV',
+    name: 'ExportBasicAppbarButtonV',
     methods: {
         onClick() {
-            this.$iApi.panel.toggle('export-v1-panel');
+            this.$iApi.panel.toggle('export-basic-panel');
         }
     }
 });

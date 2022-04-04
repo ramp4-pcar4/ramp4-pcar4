@@ -22,7 +22,7 @@ class LayerReorderFixture extends LayerReorderAPI {
                     style: {
                         width: '350px'
                     },
-                    alertName: 'layerreorder.title'
+                    alertName: 'layer-reorder.title'
                 }
             },
             {

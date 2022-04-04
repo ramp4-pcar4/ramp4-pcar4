@@ -482,6 +482,32 @@
             },
             "unevaluatedProperties": false
         },
+        "export-basic": {
+            "type": "object",
+            "description": "Provides configuration to the basic export fixture. If not supplied the default config used.",
+            "properties": {
+                "title": {
+                    "type": "object",
+                    "description": "Configuration for the title text of the exported image.",
+                    "properties": {
+                        "disabled": {
+                            "type": "boolean",
+                            "default": false,
+                            "description": "Indicates if the export title is disabled."
+                        },
+                        "value": {
+                            "type": "string",
+                            "default": "",
+                            "description": "The value of the title text."
+                        }
+                    }
+                },
+                "fileName": {
+                    "type": "string",
+                    "description": "The filename of the exported image."
+                }
+            }
+        },
         "layerList": {
             "type": "array",
             "description": "List of defined layers to be displayed, added to the map in the same order it appears in this list.",
