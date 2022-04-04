@@ -229,7 +229,7 @@ export enum GeosearchStore {
      */
     resultsVisible = 'geosearch/resultsVisible',
     /**
-     * (State) resultsVisible: boolean
+     * (State) loadingResults: boolean
      */
     loadingResults = 'geosearch/loadingResults',
     /**

@@ -7,7 +7,7 @@
         </div>
         <div class="flex-1"></div>
         <toggle
-            @change="value => $emit('toggled', value)"
+            @change="(value: any) => $emit('toggled', value)"
             @keyup.enter.capture.stop="handleKeyup"
             @keyup.space.capture.stop="handleKeyup"
             :disabled="isDisabled"

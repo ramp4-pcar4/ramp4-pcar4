@@ -15,6 +15,7 @@ import type { LayerReorderAPI } from '@/fixtures/layer-reorder/api/layer-reorder
 import type { MetadataAPI } from '@/fixtures/metadata/api/metadata';
 import type { MetadataPayload } from '@/fixtures/metadata/store';
 import { AppbarAction } from '@/fixtures/appbar/store';
+import type { HilightAPI } from '@/fixtures/hilight/api/hilight';
 import { LegendStore } from '@/fixtures/legend/store';
 import { GridStore, GridAction } from '@/fixtures/grid/store';
 import { LayerState } from '@/geo/api';
@@ -282,6 +283,12 @@ export enum GlobalEvents {
      * Payload: `(panel: PanelInstance)`
      */
     PANEL_CLOSED = 'panel/closed',
+
+    /**
+     * Fires when a panel is minimized.
+     * Payload: `(panel: PanelInstance)`
+     */
+    PANEL_MINIMIZED = 'panel/minimized',
 
     /**
      * Fires when a panel opens.

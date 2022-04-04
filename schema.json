@@ -2051,6 +2051,22 @@
                 "scrollguard": {
                     "$ref": "#/$defs/scrollguard",
                     "description": "Provides the configuration to the scrollguard fixture"
+                },
+                "hilight": {
+                    "description": "Provides configuration to the map's highlighter",
+                    "type": "object",
+                    "properties": {
+                        "mode": {
+                            "description": "The hilight mode to use. The default mode is glow.",
+                            "type": "string",
+                            "default": "glow",
+                            "enum": ["glow", "lift", "none"]
+                        },
+                        "options": {
+                            "description": "Options for the selected hilight mode.",
+                            "type": "object"
+                        }
+                    }
                 }
             },
             "unevaluatedProperties": false
