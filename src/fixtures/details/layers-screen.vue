@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-// This screen is the view of all layers that were interrogated in the identify
+// This screen is the view of all layers that were interrogated in the identify (the identify panel)
 
 import { defineComponent } from 'vue';
 import { DetailsStore } from './store';

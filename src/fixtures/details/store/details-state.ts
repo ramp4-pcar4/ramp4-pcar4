@@ -99,4 +99,12 @@ export class DetailsState {
      * @memberof DetailsState
      */
     activeGreedy: number = 0;
+
+    /**
+     * Whether or not the details hilight toggle is on.
+     *
+     * @type boolean
+     * @memberof DetailsState
+     */
+    hilightToggle: boolean = true;
 }

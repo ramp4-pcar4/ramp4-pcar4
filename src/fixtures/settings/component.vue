@@ -12,7 +12,7 @@ import { defineComponent, markRaw } from 'vue';
 
 // Import control templates.
 import SliderControl from './templates/slider-control.vue';
-import ToggleSwitchControl from './templates/toggle-switch-control.vue';
+import ToggleSwitchControl from '../../components/controls/toggle-switch-control.vue';
 import InputControl from './templates/input-control.vue';
 import { svgIcons } from './templates/icons';
 

@@ -395,9 +395,10 @@ export class CommonLayer extends LayerInstance {
             this._name = this.esriLayer?.title || this.id;
         }
 
-        this.identify = !(this.config.state?.identify == undefined)
-            ? this.config.state.identify
-            : this.supportsIdentify;
+        if (!this.isCosmetic) {
+            this.identify =
+                this.config.state?.identify ?? this.supportsIdentify;
+        }
 
         // TODO implement extent defaulting. Need to add property, get appropriate format from incoming ramp config, maybe need an interface
         /*

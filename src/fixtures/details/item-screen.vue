@@ -5,19 +5,33 @@
         </template>
         <template #content>
             <div v-if="result.loaded && activeGreedy === 0">
+                <!-- layer name -->
                 <div
-                    class="flex flex-col justify-between py-8 px-8 mb-8 bg-gray-100"
+                    class="p-8 font-bold break-words mb-8 bg-gray-100"
                     v-if="layerExists"
                 >
-                    <!-- layer name -->
-                    <div class="p-8 font-bold break-words">
-                        {{ layerName }}
-                    </div>
-                    <!-- paginator and list button for multiple features -->
-                    <div
-                        class="flex justify-between"
-                        v-if="result.items.length > 1"
-                    >
+                    {{ layerName }}
+                </div>
+                <!-- highlight toggle -->
+                <div
+                    class="p-8 mb-8 bg-gray-100 flex justify-between"
+                    v-if="details.hasHilighter()"
+                >
+                    <div>{{ $t('details.togglehilight.title') }}</div>
+                    <Toggle
+                        :config="{
+                            value: hilightToggle,
+                            disabled: false
+                        }"
+                        @toggled="onHilightToggle"
+                    ></Toggle>
+                </div>
+                <!-- paginator and list button for multiple features -->
+                <div
+                    class="flex flex-col justify-between p-8 mb-8 bg-gray-100"
+                    v-if="layerExists && result.items.length > 1"
+                >
+                    <div class="flex justify-between">
                         <button
                             class="px-8 font-bold hover:bg-gray-200 focus:bg-gray-200"
                             :aria-label="$t('details.item.see.list')"
@@ -146,8 +160,12 @@
 </template>
 
 <script lang="ts">
+// This screen is the view of a single identified geometry (details panel)
+
 import { defineComponent, type PropType } from 'vue';
 import { DetailsStore } from './store';
+import type { DetailsAPI } from './api/details';
+
 import { GlobalEvents } from '@/api';
 import { IdentifyResultFormat } from '@/geo/api';
 import type { FieldDefinition, IdentifyResult, IdentifyItem } from '@/geo/api';
@@ -155,6 +173,7 @@ import type { LayerInstance, PanelInstance } from '@/api/internal';
 
 import ESRIDefaultV from './templates/esri-default.vue';
 import HTMLDefaultV from './templates/html-default.vue';
+import Toggle from '../../components/controls/toggle-switch-control.vue';
 
 export default defineComponent({
     name: 'DetailsItemScreenV',
@@ -175,7 +194,8 @@ export default defineComponent({
     },
     components: {
         'esri-default': ESRIDefaultV,
-        'html-default': HTMLDefaultV
+        'html-default': HTMLDefaultV,
+        Toggle
     },
     data() {
         return {
@@ -187,7 +207,9 @@ export default defineComponent({
             icon: '' as string,
             currentIdx: 0,
             layerExists: false, // tracks whether the layer still exists
-            handlers: [] as Array<string>
+            handlers: [] as Array<string>,
+            details: this.$iApi.fixture.get('details') as DetailsAPI,
+            hilightToggle: true
         };
     },
     mounted() {
@@ -205,6 +227,41 @@ export default defineComponent({
                 }
             )
         );
+
+        this.handlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.PANEL_CLOSED,
+                (panel: PanelInstance) => {
+                    if (panel.id == 'details-items') {
+                        this.detailsClosed();
+                    }
+                }
+            )
+        );
+
+        this.handlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.PANEL_MINIMIZED,
+                (panel: PanelInstance) => {
+                    if (panel.id == 'details-items') {
+                        this.detailsMinimized();
+                    }
+                }
+            )
+        );
+
+        this.handlers.push(
+            this.$iApi.event.on(GlobalEvents.MAP_BASEMAPCHANGE, () => {
+                if (this.hilightToggle) {
+                    this.details.hilightDetailsItems(
+                        this.result.items[this.currentIdx],
+                        this.result.uid
+                    );
+                }
+            })
+        );
+
+        this.handlers.push();
     },
     beforeUnmount() {
         this.handlers.forEach(handler => this.$iApi.event.off(handler));
@@ -299,11 +356,30 @@ export default defineComponent({
     },
     methods: {
         /**
+         * Clean up for when the details screen is closed.
+         */
+        detailsClosed() {
+            this.details.removeDetailsHilight();
+            this.$store.set(DetailsStore.hilightToggle, true);
+        },
+
+        /**
+         * Clean up for when the details screen is minimized.
+         */
+        detailsMinimized() {
+            this.details.removeDetailsHilight();
+            // TODO: do we want to keep track of the index on minimize?
+        },
+
+        /**
          * Initialize the details screen
          */
         initDetails() {
             this.currentIdx = this.itemIndex ?? 0;
             this.layerExists = true;
+            this.hilightToggle =
+                this.$store.get(DetailsStore.hilightToggle) ??
+                this.hilightToggle;
             this.itemChanged();
         },
 
@@ -333,6 +409,12 @@ export default defineComponent({
                             : ''
                     }`
                 );
+                if (this.hilightToggle) {
+                    this.details.hilightDetailsItems(
+                        this.result.items[this.currentIdx],
+                        this.result.uid
+                    );
+                }
             } else {
                 // wait for load.
                 const localCurrentIndex = this.currentIdx;
@@ -440,6 +522,15 @@ export default defineComponent({
 
             this.$iApi.updateAlert(
                 this.$iApi.$vApp.$t('details.item.alert.zoom')
+            );
+        },
+
+        onHilightToggle(value: boolean) {
+            this.hilightToggle = value;
+            this.details.onHilightToggle(
+                value,
+                this.result.items[this.currentIdx],
+                this.result.uid
             );
         }
     }

@@ -116,6 +116,7 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | MAP_SCALECHANGE<br>'map/scalechanged'              | scale denominator: number                                      | The map scale changed                            |
 | MAP_START<br>'map/start'                           | none                                                           | The map startup was requested                    |
 | PANEL_CLOSED<br>'panel/closed'                     | PanelInstance object                                           | A panel was closed                               |
+| PANEL_MINIMIZED<br>'panel/closed'                 | PanelInstance object                                           | A panel was minimized                             |
 | PANEL_OPENED<br>'panel/opened'                     | PanelInstance object                                           | A panel was opened                               |
 | USER_LAYER_ADDED<br>'user/layeradded'              | LayerInstance object                                           | A layer was added during the session             |
 
