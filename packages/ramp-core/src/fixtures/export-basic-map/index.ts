@@ -1,9 +1,12 @@
 import { fabric } from 'fabric';
 
 import { FixtureInstance } from '@/api/internal';
-import { ExportV1SubFixture } from '@/fixtures/export-v1';
+import { ExportBasicSubFixture } from '@/fixtures/export-basic';
 
-class ExportV1MapFixture extends FixtureInstance implements ExportV1SubFixture {
+class ExportBasicMapFixture
+    extends FixtureInstance
+    implements ExportBasicSubFixture
+{
     async make(options: any): Promise<fabric.Image> {
         const screenshot = await this.$iApi.geo.map.takeScreenshot({
             quality: 1,
@@ -23,4 +26,4 @@ class ExportV1MapFixture extends FixtureInstance implements ExportV1SubFixture {
     }
 }
 
-export default ExportV1MapFixture;
+export default ExportBasicMapFixture;

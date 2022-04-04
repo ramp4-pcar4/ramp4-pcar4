@@ -1,7 +1,7 @@
 <template>
     <appbar-button
         :onClickFunction="onClick"
-        :tooltip="$t('layerreorder.title')"
+        :tooltip="$t('layer-reorder.title')"
     >
         <!--https://fonts.google.com/icons?selected=Material+Icons:low_priority -->
         <svg

@@ -1,6 +1,6 @@
 import { FixtureInstance, LayerInstance } from '@/api/internal';
 import { LayerStore } from '@/store/modules/layer';
-import { ExportV1SubFixture } from '@/fixtures/export-v1';
+import { ExportBasicSubFixture } from '@/fixtures/export-basic';
 import { fabric } from 'fabric';
 import { LegendSymbology } from '@/geo/api';
 
@@ -46,9 +46,9 @@ const COLUMN_SPACING = 20;
 const DEFAULT_FONT =
     'Montserrat, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif';
 
-class ExportV1LegendFixture
+class ExportBasicLegendFixture
     extends FixtureInstance
-    implements ExportV1SubFixture
+    implements ExportBasicSubFixture
 {
     async make(options: any): Promise<fabric.Group> {
         // filter out loading/errored and invisible layers
@@ -135,7 +135,7 @@ class ExportV1LegendFixture
      * @param {number} columnWidth
      * @param {number} columns
      * @returns {fabric.Group}
-     * @memberof ExportV1LegendFixture
+     * @memberof ExportBasicLegendFixture
      */
     private _makeColumns(
         items: fabric.Group[],
@@ -193,7 +193,7 @@ class ExportV1LegendFixture
      * @param {LayerInstance[]} layers
      * @param {RampLayerConfig[]} layerConfigs
      * @returns {Promise<Segment>[]}
-     * @memberof ExportV1LegendFixture
+     * @memberof ExportBasicLegendFixture
      */
     private _makeSegments(
         layers: LayerInstance[],
@@ -231,7 +231,7 @@ class ExportV1LegendFixture
      * @param {(number[] | string[])} ids
      * @param {LayerInstance} layer
      * @returns {Promise<SegmentChunk>[]}
-     * @memberof ExportV1LegendFixture
+     * @memberof ExportBasicLegendFixture
      */
     private _makeSegmentChunks(
         ids: number[],
@@ -281,7 +281,7 @@ class ExportV1LegendFixture
      * @private
      * @param {LegendSymbology[]} symbologyStack
      * @returns {Promise<fabric.Group>[]}
-     * @memberof ExportV1LegendFixture
+     * @memberof ExportBasicLegendFixture
      */
     private _makeChunkItems(
         symbologyStack: LegendSymbology[],
@@ -345,7 +345,7 @@ class ExportV1LegendFixture
      * @private
      * @param {TreeNode} node
      * @returns {number[]}
-     * @memberof ExportV1LegendFixture
+     * @memberof ExportBasicLegendFixture
      */
     private _getLayerTreeIds(rootLayer: LayerInstance): number[] {
         let ids: Array<number> = [];
@@ -385,4 +385,4 @@ const promisify = <T, A>(
         });
 };
 
-export default ExportV1LegendFixture;
+export default ExportBasicLegendFixture;

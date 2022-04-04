@@ -1,7 +1,7 @@
 <template>
     <panel-screen>
         <template #header>
-            {{ $t('layerreorder.title') }}
+            {{ $t('layer-reorder.title') }}
         </template>
 
         <template #controls>

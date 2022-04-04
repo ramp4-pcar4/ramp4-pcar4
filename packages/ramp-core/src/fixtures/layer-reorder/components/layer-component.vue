@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="layersModel.length === 0" class="flex-1 ms-10" v-truncate>
-            <span class="p-5">{{ $t('layerreorder.nolayers') }}</span>
+            <span class="p-5">{{ $t('layer-reorder.nolayers') }}</span>
         </div>
         <draggable
             v-else
@@ -49,7 +49,7 @@
                             class="text-gray-500 hover:text-black p-5"
                             :content="
                                 $t(
-                                    `layerreorder.${
+                                    `layer-reorder.${
                                         !element.isExpanded
                                             ? 'expand'
                                             : 'collapse'
@@ -63,7 +63,7 @@
                             }"
                             :aria-label="
                                 $t(
-                                    `layerreorder.${
+                                    `layer-reorder.${
                                         !element.isExpanded
                                             ? 'expand'
                                             : 'collapse'
@@ -146,18 +146,18 @@
                 <div
                     v-else
                     class="flex items-center p-5 mx-8 h-44 default-focus-style"
-                    :content="$t('layerreorder.loading')"
+                    :content="$t('layer-reorder.loading')"
                     v-tippy="{
                         placement: 'top-start',
                         aria: 'describedby'
                     }"
-                    :aria-label="$t('layerreorder.loading')"
+                    :aria-label="$t('layer-reorder.loading')"
                     v-focus-container
                     truncate-trigger
                 >
                     <div class="animate-spin spinner h-20 w-20 px-5"></div>
                     <div class="flex-1 mx-10">
-                        <span>{{ $t('layerreorder.loading') }} </span>
+                        <span>{{ $t('layer-reorder.loading') }} </span>
                     </div>
                 </div>
             </template>
@@ -329,8 +329,8 @@ export default defineComponent({
             this.$iApi.updateAlert(
                 this.$t(
                     layerModel.isExpanded
-                        ? 'layerreorder.expanded'
-                        : 'layerreorder.collapsed',
+                        ? 'layer-reorder.expanded'
+                        : 'layer-reorder.collapsed',
                     {
                         name: layerModel.name
                     }
@@ -376,7 +376,7 @@ export default defineComponent({
             this.$iApi.geo.map.reorder(layer, newIdx, true);
 
             this.$iApi.updateAlert(
-                this.$t('layerreorder.layermoved', {
+                this.$t('layer-reorder.layermoved', {
                     name: layerModel.name,
                     index: newIdx
                 })
@@ -410,7 +410,7 @@ export default defineComponent({
             this.$iApi.geo.map.reorder(layer, newIdx, true);
 
             this.$iApi.updateAlert(
-                this.$t('layerreorder.layermoved', {
+                this.$t('layer-reorder.layermoved', {
                     name: layerModel.name,
                     index: newIdx
                 })

@@ -648,7 +648,7 @@ let config = {
                     }
                 },
                 appbar: {
-                    items: ['legend', 'geosearch', 'basemap', 'export-v1'],
+                    items: ['legend', 'geosearch', 'basemap', 'export-basic'],
                     temporaryButtons: [
                         'details-layers',
                         'details-items',
@@ -656,8 +656,10 @@ let config = {
                     ]
                 },
                 mapnav: { items: ['fullscreen', 'geoLocator', 'home', 'help'] },
-                'export-v1-title': {
-                    text: 'Canadian Environmental Sustainability Indicators (CESI)'
+                'export-basic': {
+                    title: {
+                        value: 'Canadian Environmental Sustainability Indicators (CESI)'
+                    }
                 }
             },
             system: {
@@ -676,8 +678,8 @@ let options = {
 rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
 rInstance.fixture.addDefaultFixtures();
 
-// add export-v1 fixtures
-rInstance.fixture.add('export-v1');
+// add export fixtures
+rInstance.fixture.add('export-basic');
 
 // load map if startRequired is true
 rInstance.start();
