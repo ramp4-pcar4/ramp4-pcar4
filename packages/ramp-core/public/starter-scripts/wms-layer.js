@@ -178,6 +178,11 @@ let config = {
                 mapnav: { items: ['fullscreen', 'legend', 'home', 'basemap'] },
                 'export-v1-title': {
                     text: 'WMS'
+                },
+                details: {
+                    templates: {
+                        json: 'Details-Default-Template-WMS'
+                    }
                 }
             }
         },
@@ -192,6 +197,11 @@ let options = {
     loadDefaultEvents: true
 };
 rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
+
+rInstance.$element.component('Details-Default-Template-WMS', {
+    props: ['identifyData'],
+    template: `<div v-html="identifyData.data.data" />`
+});
 
 rInstance.$element.component('GeoMet-Template', {
     props: ['identifyData'],

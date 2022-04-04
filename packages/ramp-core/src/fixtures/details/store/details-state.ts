@@ -3,7 +3,10 @@ import { IdentifyResult } from '@/geo/api';
 export type DetailsItemSet = { [name: string]: DetailsItemInstance };
 
 export interface DetailsConfig {
-    items: DetailsConfigItem[];
+    /**
+     * The dictionary of default templates indexed by identify result format with value as the template component id.
+     */
+    templates: { [type: string]: string };
 }
 
 export interface DetailsConfigItem {
@@ -54,4 +57,11 @@ export class DetailsState {
      * @memberof DetailsState
      */
     templates: { [id: string]: DetailsItemInstance } = {};
+
+    /**
+     * Details default templates indexed by the identify result format
+     *
+     * @memberof DetailsState
+     */
+    defaultTemplates: { [type: string]: string } = {};
 }

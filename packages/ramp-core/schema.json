@@ -1788,12 +1788,27 @@
                     },
                     "description": "Provides configuration to geosearch. If not supplied, default geosearch services are used."
                 },
-                "identify": {
-                    "$ref": "#/$defs/details",
-                    "default": {
-                        "templates": []
+                "details": {
+                    "description": "Provides default template configuration to the details fixture. If not supplied, RAMP default templates wil be used.",
+                    "type": "object",
+                    "properties": {
+                        "templates": {
+                            "type": "object",
+                            "description": "Specifies a custom Vue component to render as the default details template for each identify result format.",
+                            "propertyNames": {
+                                "enum": [
+                                    "esri",
+                                    "text",
+                                    "image",
+                                    "html",
+                                    "xml",
+                                    "json"
+                                ]
+                            },
+                            "additionalProperties": { "type": "string" }
+                        }
                     },
-                    "description": "Provides configuration to identify results and details panel. Default to no user custom templates."
+                    "required": ["templates"]
                 },
                 "help": {
                     "$ref": "#/$defs/help",
