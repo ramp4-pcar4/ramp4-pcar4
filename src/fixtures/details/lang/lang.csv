@@ -15,3 +15,4 @@ details.item.no.data,No data to show because the layer has been removed,1,Aucune
 details.item.alert.zoom,Zoomed into feature,1,Zoomé sur l'élément,0
 details.item.alert.show.item,Showing result {itemName},1,Affichage des résultats {itemName},0
 details.item.alert.show.list,Showing all results for {layerName},1,Afficher tous les résultats pour {layerName},0
+details.togglehilight.title,Toggle Highlight,1,Toggle Souligner,0

@@ -17,6 +17,21 @@
                             </div>
                         </div>
 
+                        <!-- highlight toggle -->
+                        <div
+                            class="p-8 mb-8 bg-gray-100 flex justify-between"
+                            v-if="details.hasHilighter()"
+                        >
+                            <div>{{ $t('details.togglehilight.title') }}</div>
+                            <Toggle
+                                :config="{
+                                    value: hilightToggle,
+                                    disabled: false
+                                }"
+                                @toggled="onHilightToggle"
+                            ></Toggle>
+                        </div>
+
                         <!-- result list -->
                         <button
                             class="w-full flex px-16 py-10 text-md hover:bg-gray-200 cursor-pointer"
@@ -74,10 +89,14 @@
 </template>
 
 <script lang="ts">
+// This screen is the view of all geometries on a specific layer interrogated in the identify (details screen)
+
 import { defineComponent, type PropType } from 'vue';
+import type { DetailsAPI } from './api/details';
 import { DetailsStore } from './store';
 import { GlobalEvents, type LayerInstance, type PanelInstance } from '@/api';
 import type { IdentifyResult } from '@/geo/api';
+import Toggle from '../../components/controls/toggle-switch-control.vue';
 
 export default defineComponent({
     name: 'DetailsResultScreenV',
@@ -96,6 +115,7 @@ export default defineComponent({
             default: -1
         }
     },
+    components: { Toggle },
     data() {
         return {
             icon: [] as string[],
@@ -103,7 +123,9 @@ export default defineComponent({
             detailProperties: this.get(DetailsStore.properties),
             activeGreedy: this.get(DetailsStore.activeGreedy),
             slowLoadingFlag: this.get(DetailsStore.slowLoadingFlag),
-            handlers: [] as Array<string>
+            handlers: [] as Array<string>,
+            details: this.$iApi.fixture.get('details') as DetailsAPI,
+            hilightToggle: true
         };
     },
     computed: {
@@ -136,6 +158,15 @@ export default defineComponent({
         this.layerExists =
             this.$iApi.geo.layer.getLayer(this.result.uid) !== undefined;
 
+        this.hilightToggle =
+            this.$store.get(DetailsStore.hilightToggle) ?? this.hilightToggle;
+        if (this.hilightToggle) {
+            this.details.hilightDetailsItems(
+                this.result.items,
+                this.result.uid
+            );
+        }
+
         this.$iApi.updateAlert(
             this.$iApi.$vApp.$t('details.item.alert.show.list', {
                 layerName: this.layerName
@@ -153,11 +184,59 @@ export default defineComponent({
                 }
             )
         );
+
+        this.handlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.PANEL_CLOSED,
+                (panel: PanelInstance) => {
+                    if (panel.id == 'details-items') {
+                        this.detailsClosed();
+                    }
+                }
+            )
+        );
+
+        this.handlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.PANEL_MINIMIZED,
+                (panel: PanelInstance) => {
+                    if (panel.id == 'details-items') {
+                        this.detailsMinimized();
+                    }
+                }
+            )
+        );
+
+        this.handlers.push(
+            this.$iApi.event.on(GlobalEvents.MAP_BASEMAPCHANGE, () => {
+                if (this.hilightToggle) {
+                    this.details.hilightDetailsItems(
+                        this.result.items,
+                        this.result.uid
+                    );
+                }
+            })
+        );
     },
     beforeUnmount() {
         this.handlers.forEach(handler => this.$iApi.event.off(handler));
     },
     methods: {
+        /**
+         * Clean up for when the details screen is closed.
+         */
+        detailsClosed() {
+            this.details.removeDetailsHilight();
+            this.$store.set(DetailsStore.hilightToggle, true);
+        },
+
+        /**
+         * Clean up for when the details screen is minimized.
+         */
+        detailsMinimized() {
+            this.details.removeDetailsHilight();
+        },
+
         /**
          * Switches the panel screen to display the data for a given result. Provides the currently selected layer index and the currently selected feature index as props.
          */
@@ -192,6 +271,15 @@ export default defineComponent({
             });
 
             return this.icon[idx];
+        },
+
+        onHilightToggle(value: boolean) {
+            this.hilightToggle = value;
+            this.details.onHilightToggle(
+                value,
+                this.result.items,
+                this.result.uid
+            );
         }
     }
 });

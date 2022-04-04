@@ -69,6 +69,10 @@ export enum DetailsStore {
      */
     activeGreedy = 'details/activeGreedy',
     /**
+     * (State) hilightToggle: boolean
+     */
+    hilightToggle = 'details/hilightToggle',
+    /**
      * (Action) setPayload: (payload: ItemResult[])
      */
     setPayload = 'details/setPayload!',
