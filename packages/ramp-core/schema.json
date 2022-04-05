@@ -504,7 +504,6 @@
                 },
                 "fileName": {
                     "type": "string",
-                    "default": "export-image",
                     "description": "The filename of the exported image."
                 }
             }

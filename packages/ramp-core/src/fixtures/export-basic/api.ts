@@ -125,7 +125,7 @@ export class ExportBasicAPI extends FixtureInstance {
         const now = new Date();
         const fileName: string =
             this.config?.fileName ||
-            `export - ${now.getFullYear()}-${now.getMonth()}-${now.getDay()}, ${now.getHours()}_${now.getMinutes()}`;
+            `map-carte - ${now.getFullYear()}-${now.getMonth()}-${now.getDay()}, ${now.getHours()}_${now.getMinutes()}`;
 
         FileSaver.saveAs(
             this.fcFabricDownload!.toDataURL({
