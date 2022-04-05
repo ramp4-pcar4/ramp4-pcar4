@@ -397,7 +397,7 @@ let config = {
                         'geosearch',
                         'basemap',
                         'divider',
-                        'export-v1'
+                        'export-basic'
                     ],
                     temporaryButtons: [
                         'details-layers',
@@ -408,8 +408,10 @@ let config = {
                     ]
                 },
                 mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
-                'export-v1-title': {
-                    text: 'All Your Base are Belong to Us'
+                'export-basic': {
+                    title: {
+                        value: 'All Your Base are Belong to Us'
+                    }
                 }
             },
             system: { animate: true }
@@ -532,8 +534,8 @@ rInstance.fixture.add('mouruge', window.hostFixtures.mouruge).then(() => {
     rInstance.panel.open('mouruge-p1');
 });
 
-// add export-v1 fixtures
-rInstance.fixture.add('export-v1');
+// add export fixtures
+rInstance.fixture.add('export-basic');
 
 // sample event declared by the page
 
