@@ -276,6 +276,19 @@ export class PanelInstance extends APIScope {
     }
 
     /**
+     * Remove this panel.
+     * This is a proxy to `InstanceAPI.panel.remove(...)`.
+     *
+     * @returns {this}
+     * @memberof PanelInstance
+     */
+    remove(): this {
+        this.$iApi.panel.remove(this);
+
+        return this;
+    }
+
+    /**
      * Toggle panel.
      * This is a proxy to `InstanceAPI.panel.toggle(...)`.
      *

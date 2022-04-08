@@ -19,7 +19,7 @@ export class OverviewMapAPI extends CommonMapAPI {
      * Must provide the basemap or basemap id to be used when creating the map view
      *
      * @param {string | Basemap} basemap the id of the basemap that should be used when creating the map view
-     * @private
+     * @protected
      */
     protected createMapView(basemap: string | Basemap): void {
         if (!basemap) {
@@ -117,6 +117,21 @@ export class OverviewMapAPI extends CommonMapAPI {
     }
 
     /**
+     * Destroys the ESRI map view
+     *
+     * @protected
+     */
+    protected destroyMapView(): void {
+        // override the method to remove this listener
+        this.esriView?.container.removeEventListener('touchmove', e => {
+            e.preventDefault();
+        });
+        // remove the extent graphic
+        this.esriView?.graphics.removeAll();
+        super.destroyMapView();
+    }
+
+    /**
      * Searches the local basemap list and main map basemaps for a basemap with the given id
      * Throws error if basemap could not be found
      *
@@ -146,7 +161,8 @@ export class OverviewMapAPI extends CommonMapAPI {
     }
 
     /**
-     * Sets the overview map's basemap to the basemap with the given id and then refreshes it.
+     * Sets the overview map's basemap to the basemap with the given id.
+     * Will refresh the map view if set basemap uses different tile schema.
      *
      * Should only be called by the overview map component
      *
@@ -154,6 +170,11 @@ export class OverviewMapAPI extends CommonMapAPI {
      * @returns {boolean} indicates if the schema has changed
      */
     setBasemap(basemapId: string): boolean {
+        if (!this.esriView || !this.esriMap) {
+            this.noMapErr();
+            return false;
+        }
+
         const bm: Basemap = this.findBasemap(basemapId);
 
         // get the current basemap
@@ -165,7 +186,8 @@ export class OverviewMapAPI extends CommonMapAPI {
             currBm?.tileSchemaId !== bm.tileSchemaId;
 
         if (differentSchema) {
-            this.refreshMap(bm);
+            this.destroyMapView();
+            this.createMapView(bm);
         } else {
             this.applyBasemap(bm);
         }

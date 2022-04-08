@@ -16,6 +16,12 @@ export default defineComponent({
         }
     },
 
+    data() {
+        return {
+            watchers: [] as Array<Function>
+        };
+    },
+
     setup(props) {
         const stepper = reactive({
             activeIndex: props.activeStep,
@@ -27,10 +33,16 @@ export default defineComponent({
         return { stepper };
     },
 
-    watch: {
-        activeStep() {
-            this.stepper.activeIndex = this.activeStep;
-        }
+    created() {
+        this.watchers.push(
+            this.$watch('activeStep', () => {
+                this.stepper.activeIndex = this.activeStep;
+            })
+        );
+    },
+
+    beforeUnmount() {
+        this.watchers.forEach(unwatch => unwatch());
     }
 });
 </script>

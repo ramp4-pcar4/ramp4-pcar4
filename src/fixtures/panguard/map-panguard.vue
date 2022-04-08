@@ -6,62 +6,108 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { GlobalEvents } from '@/api';
 
 export default defineComponent({
     name: 'MapPanguardV',
-    data(): {
-        timeoutID: number | undefined;
-    } {
+    data() {
         return {
-            timeoutID: undefined
+            timeoutID: -1,
+            esriHandlers: [] as Array<any>,
+            rampHanders: [] as Array<string>
         };
     },
 
     mounted() {
-        // keep track of how many concurrent pointers are on the screen and their initial positions. This is a javascript map, not a map-map
-        const pointers = new Map();
+        this.setup();
+        // setup again when the map reloads
+        this.rampHanders.push(
+            this.$iApi.event.on(GlobalEvents.MAP_CREATED, () => {
+                this.setup();
+            })
+        );
+        this.rampHanders.push(
+            this.$iApi.event.on(GlobalEvents.MAP_DESTROYED, () => {
+                this.esriHandlers.forEach(h => h.remove());
+            })
+        );
+        this.rampHanders.push(
+            this.$iApi.event.on(GlobalEvents.MAP_REFRESH_START, () => {
+                this.esriHandlers.forEach(h => h.remove());
+            })
+        );
+        this.rampHanders.push(
+            this.$iApi.event.on(GlobalEvents.MAP_REFRESH_END, () => {
+                this.setup();
+            })
+        );
+    },
 
-        // prevent possible issues with esri event registration if this fixture runs before the map has built itself
-        this.$iApi.geo.map.viewPromise.then(() => {
-            // TODO: when projection change is implemented check that the below events track any changes to
-            // the esriView or update MapAPI to be raising pointer events on the EventAPI, and this will listen to for those events
-            this.$iApi.geo.map.esriView!.on('pointer-down', e => {
-                if (e.pointerType !== 'touch') return;
-                pointers.set(e.pointerId, { x: e.x, y: e.y });
-            });
+    beforeUnmount() {
+        this.rampHanders.forEach(h => this.$iApi.event.off(h));
+        this.esriHandlers.forEach(h => h.remove());
+    },
 
-            this.$iApi.geo.map.esriView!.on(
-                ['pointer-up', 'pointer-leave'],
-                e => {
-                    if (e.pointerType !== 'touch') return;
-                    pointers.delete(e.pointerId);
-                }
-            );
+    methods: {
+        setup() {
+            // keep track of how many concurrent pointers are on the screen and their initial positions. This is a javascript map, not a map-map
+            const pointers = new Map();
 
-            this.$iApi.geo.map.esriView!.on('pointer-move', e => {
-                const { pointerId, pointerType, x, y } = e;
-                const pointer = pointers.get(pointerId);
-
-                if (!pointer || pointerType !== 'touch' || pointers.size !== 1)
-                    return;
-
-                // ignore very small movements to avoid scrolling when someone is tapping the screen
-                const distance = Math.sqrt(
-                    Math.pow(x - pointer.x, 2) + Math.pow(y - pointer.y, 2)
+            // prevent possible issues with esri event registration if this fixture runs before the map has built itself
+            this.$iApi.geo.map.viewPromise.then(() => {
+                this.esriHandlers.push(
+                    this.$iApi.geo.map.esriView!.on('pointer-down', e => {
+                        if (e.pointerType !== 'touch') return;
+                        pointers.set(e.pointerId, { x: e.x, y: e.y });
+                    })
                 );
-                if (distance < 20) return;
 
-                // show the text on screen and remove after 2 seconds of no movement
-                this.$el.classList.add('active');
-                clearTimeout(this.timeoutID);
-                this.timeoutID = window.setTimeout(() => {
-                    this.$el.classList.remove('active');
-                }, 2000);
+                this.esriHandlers.push(
+                    this.$iApi.geo.map.esriView!.on(
+                        ['pointer-up', 'pointer-leave'],
+                        e => {
+                            if (e.pointerType !== 'touch') return;
+                            pointers.delete(e.pointerId);
+                        }
+                    )
+                );
 
-                // manually scroll the page since scrolling doesn't work when moving over the map
-                window.scrollBy(pointer.x - x, pointer.y - y);
+                this.esriHandlers.push(
+                    this.$iApi.geo.map.esriView!.on('pointer-move', e => {
+                        const { pointerId, pointerType, x, y } = e;
+                        const pointer = pointers.get(pointerId);
+
+                        if (
+                            !pointer ||
+                            pointerType !== 'touch' ||
+                            pointers.size !== 1
+                        )
+                            return;
+
+                        // ignore very small movements to avoid scrolling when someone is tapping the screen
+                        const distance = Math.sqrt(
+                            Math.pow(x - pointer.x, 2) +
+                                Math.pow(y - pointer.y, 2)
+                        );
+                        if (distance < 20) return;
+
+                        // show the text on screen and remove after 2 seconds of no movement
+                        this.$el.classList.add('active');
+
+                        if (this.timeoutID !== -1) {
+                            clearTimeout(this.timeoutID);
+                        }
+
+                        this.timeoutID = window.setTimeout(() => {
+                            this.$el.classList.remove('active');
+                        }, 2000);
+
+                        // manually scroll the page since scrolling doesn't work when moving over the map
+                        window.scrollBy(pointer.x - x, pointer.y - y);
+                    })
+                );
             });
-        });
+        }
     }
 });
 </script>

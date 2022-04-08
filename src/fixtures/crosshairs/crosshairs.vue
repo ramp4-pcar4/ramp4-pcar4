@@ -54,25 +54,35 @@ export default defineComponent({
     name: 'CrosshairsV',
     data() {
         return {
-            visible: false
+            visible: false,
+            handlers: [] as Array<string>
         };
     },
 
     mounted() {
-        this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, () => {
-            // display crosshairs if pan/zoom keys are active
-            if (this.$iApi.geo.map.keysActive) {
-                this.visible = true;
-            }
-        });
+        this.handlers.push(
+            this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, () => {
+                // display crosshairs if pan/zoom keys are active
+                if (this.$iApi.geo.map.keysActive) {
+                    this.visible = true;
+                }
+            })
+        );
 
-        this.$iApi.event.on(GlobalEvents.MAP_MOUSEDOWN, () => {
-            this.visible = false;
-        });
+        this.handlers.push(
+            this.$iApi.event.on(GlobalEvents.MAP_MOUSEDOWN, () => {
+                this.visible = false;
+            })
+        );
 
-        this.$iApi.event.on(GlobalEvents.MAP_BLUR, () => {
-            this.visible = false;
-        });
+        this.handlers.push(
+            this.$iApi.event.on(GlobalEvents.MAP_BLUR, () => {
+                this.visible = false;
+            })
+        );
+    },
+    beforeUnmount() {
+        this.handlers.forEach(h => this.$iApi.event.off(h));
     }
 });
 </script>

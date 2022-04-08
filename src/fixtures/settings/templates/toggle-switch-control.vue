@@ -58,21 +58,32 @@ export default defineComponent({
         return {
             isOn: this.config.value,
             isDisabled: !!this.config.disabled,
-            toggleKey: 0 // this key forces Vue to rerender Toggle
+            toggleKey: 0, // this key forces Vue to rerender Toggle
+            watchers: [] as Array<Function>
         };
     },
-    watch: {
-        config: {
-            handler(nConf, oConf) {
-                this.isOn = nConf.value;
-                this.isDisabled = !!nConf.disabled;
-                // The Toggle component has a bug where if doesn't update its css classes when the disabled property changes.
-                // The :key binding on the Toggle template is incremented if disabled changes, forcing a rerender
-                this.toggleKey += this.isDisabled !== oConf.disabled ? 1 : 0;
-            },
-            deep: true
-        }
+
+    created() {
+        this.watchers.push(
+            this.$watch(
+                'config',
+                (nConf: any, oConf: any) => {
+                    this.isOn = nConf.value;
+                    this.isDisabled = !!nConf.disabled;
+                    // The Toggle component has a bug where if doesn't update its css classes when the disabled property changes.
+                    // The :key binding on the Toggle template is incremented if disabled changes, forcing a rerender
+                    this.toggleKey +=
+                        this.isDisabled !== oConf.disabled ? 1 : 0;
+                },
+                { deep: true }
+            )
+        );
     },
+
+    beforeUnmount() {
+        this.watchers.forEach(unwatch => unwatch());
+    },
+
     methods: {
         handleKeyup() {
             if (!this.isDisabled) {

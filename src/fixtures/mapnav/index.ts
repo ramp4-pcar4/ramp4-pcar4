@@ -26,21 +26,26 @@ class MapnavFixture extends MapnavAPI {
         innerShell.appendChild(el.childNodes[0]);
 
         this._parseConfig(this.config);
-        this.$vApp.$watch(
+        let unwatch = this.$vApp.$watch(
             () => this.config,
             (value: MapnavFixtureConfig | undefined) => this._parseConfig(value)
         );
 
         // since components used in appbar can be registered after this point, listen to the global component registration event and re-validate items
         // TODO revist. this seems to be self-contained to the mapnav fixture, so ideally can stay as is and not worry about events api.
-        this.$iApi.event.on(
+        let handler = this.$iApi.event.on(
             GlobalEvents.COMPONENT,
             this._validateItems.bind(this)
         );
-    }
 
-    removed() {
-        this.$vApp.$store.unregisterModule('mapnav');
+        // override the removed method here to get access to scope
+        this.removed = () => {
+            console.log(`[fixture] ${this.id} removed`);
+            unwatch();
+            this.$vApp.$store.unregisterModule('mapnav');
+            this.$iApi.event.off(handler);
+            destroy();
+        };
     }
 }
 

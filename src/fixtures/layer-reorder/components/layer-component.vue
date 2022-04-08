@@ -171,7 +171,9 @@ export default defineComponent({
             layersModel: [] as Array<LayerModel>,
             oldOrder: [] as Array<number>, // keeps track of layer order when dragging starts
             minIdx: -Infinity, // lowest allowed index
-            maxIdx: Infinity // highest allowed index
+            maxIdx: Infinity, // highest allowed index,
+            handlers: [] as Array<string>,
+            watchers: [] as Array<Function>
         };
     },
     computed: {
@@ -182,27 +184,30 @@ export default defineComponent({
             return this.$iApi.animate;
         }
     },
-    watch: {
-        layers() {
-            // want to reload layers in case layers were added/removed, or existing layers have changed
-            this.loadLayers();
-        }
+
+    created() {
+        this.watchers.push(
+            this.$watch('layers', () => {
+                // want to reload layers in case layers were added/removed, or existing layers have changed
+                this.loadLayers();
+            })
+        );
     },
+
     mounted() {
         this.loadLayers();
 
         // watch for layer remove events (this is mainly used to react to sublayer removals)
-        this.$iApi.event.on(
-            GlobalEvents.LAYER_REMOVE,
-            () => {
+        this.handlers.push(
+            this.$iApi.event.on(GlobalEvents.LAYER_REMOVE, () => {
                 this.loadLayers();
-            },
-            'layer-reorder-remove'
+            })
         );
     },
     beforeUnmount() {
-        // unmount handler
-        this.$iApi.event.off('layer-reorder-remove');
+        // unmount handlers and watchers
+        this.handlers.forEach(handler => this.$iApi.event.off(handler));
+        this.watchers.forEach(unwatch => unwatch());
     },
     methods: {
         /**

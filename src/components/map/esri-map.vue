@@ -37,56 +37,71 @@ export default defineComponent({
             maptipPoint: get(MaptipStore.maptipPoint),
             maptipInstance: get(MaptipStore.maptipInstance),
             maptipContent: get(MaptipStore.content),
-            map: ref() // TODO assuming we need this as a local property for vue binding. if we don't, remove it and just use $iApi.geo.map
+            map: ref(), // TODO assuming we need this as a local property for vue binding. if we don't, remove it and just use $iApi.geo.map,
+            watchers: [] as Array<Function>
         };
     },
 
     created() {
         // temporarily print out loaded layers to console for grid testing purposes.
         console.log(this.layers, this.mapConfig);
-    },
-    mounted() {
-        // Set config watcher up here to be able to call it immediately on mount
+
+        // Set config watcher up here to be able to call it immediately on created
         // regularly `immediate` makes it get called during `created`
-        this.$watch('mapConfig', this.onMapConfigChange, { immediate: true });
-        this.$watch('layerConfigs', this.onLayerConfigArrayChange, {
-            immediate: true
-        });
+        // Keep track of the unwatch method returned by each watch so we can call it when the component is unmounted
+        this.watchers.push(
+            this.$watch('mapConfig', this.onMapConfigChange, {
+                immediate: true
+            })
+        );
+        this.watchers.push(
+            this.$watch('layerConfigs', this.onLayerConfigArrayChange, {
+                immediate: true
+            })
+        );
+        this.watchers.push(
+            this.$watch('maptipPoint', (maptipPoint: any) => {
+                if (this.maptipPoint) {
+                    // Calculate offset from mappoint
+                    let offsetX, offsetY: number;
+                    const originX: number =
+                        this.$iApi.geo.map.getPixelWidth() / 2;
+                    const originY = 0;
+                    const screenPointFromMapPoint =
+                        this.$iApi.geo.map.mapPointToScreenPoint(
+                            this.maptipPoint
+                        );
+                    offsetX = screenPointFromMapPoint.screenX - originX;
+                    offsetY = originY - screenPointFromMapPoint.screenY;
+                    this.maptipInstance.setProps({
+                        offset: [offsetX, offsetY]
+                    });
+                    if (this.maptipContent && this.maptipContent !== '') {
+                        this.maptipInstance.show();
+                    }
+                } else {
+                    this.maptipInstance.hide();
+                }
+            })
+        );
+        this.watchers.push(
+            this.$watch('maptipContent', (maptipContent: any) => {
+                if (
+                    this.maptipContent &&
+                    this.maptipContent !== '' &&
+                    this.maptipPoint
+                ) {
+                    this.maptipInstance.setContent(this.maptipContent);
+                    this.maptipInstance.show();
+                } else {
+                    this.maptipInstance.hide();
+                }
+            })
+        );
     },
 
-    watch: {
-        maptipPoint() {
-            if (this.maptipPoint) {
-                // Calculate offset from mappoint
-                let offsetX, offsetY: number;
-                const originX: number = this.$iApi.geo.map.getPixelWidth() / 2;
-                const originY = 0;
-                const screenPointFromMapPoint =
-                    this.$iApi.geo.map.mapPointToScreenPoint(this.maptipPoint);
-                offsetX = screenPointFromMapPoint.screenX - originX;
-                offsetY = originY - screenPointFromMapPoint.screenY;
-                this.maptipInstance.setProps({
-                    offset: [offsetX, offsetY]
-                });
-                if (this.maptipContent && this.maptipContent !== '') {
-                    this.maptipInstance.show();
-                }
-            } else {
-                this.maptipInstance.hide();
-            }
-        },
-        maptipContent() {
-            if (
-                this.maptipContent &&
-                this.maptipContent !== '' &&
-                this.maptipPoint
-            ) {
-                this.maptipInstance.setContent(this.maptipContent);
-                this.maptipInstance.show();
-            } else {
-                this.maptipInstance.hide();
-            }
-        }
+    beforeUnmount() {
+        this.watchers.forEach(unwatch => unwatch());
     },
 
     methods: {
@@ -198,7 +213,6 @@ export default defineComponent({
                 mapViewElement as HTMLDivElement
             );
             this.map = this.$iApi.geo.map;
-            this.$iApi.event.emit(GlobalEvents.MAP_CREATED);
 
             // Hide hovertip on map creation
             //@ts-ignore

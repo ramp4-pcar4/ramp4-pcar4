@@ -59,7 +59,8 @@ export default defineComponent({
             layerResults: [] as Array<IdentifyResult>,
             payload: get(DetailsStore.payload),
             getLayerByUid: get('layer/getLayerByUid'),
-            layers: get('layer/layers')
+            layers: get('layer/layers'),
+            watchers: [] as Array<Function>
         };
     },
     computed: {
@@ -69,16 +70,28 @@ export default defineComponent({
                 .reduce((a: number, b: number) => a + b, 0);
         }
     },
-    watch: {
-        payload: {
-            deep: false, // was true when our array had undefineds. now that objects arrive intact, we dont want this triggering when innards update
-            immediate: true,
-            handler(newPayload) {
-                // Reload items
-                this.loadPayloadItems(newPayload);
-            }
-        }
+
+    created() {
+        // keep track of this watcher because it needs to be removed when this component is unmounted
+        this.watchers.push(
+            this.$watch(
+                'payload',
+                (newPayload: Array<IdentifyResult>) => {
+                    // Reload items
+                    this.loadPayloadItems(newPayload);
+                },
+                {
+                    deep: false, // was true when our array had undefineds. now that objects arrive intact, we dont want this triggering when innards update
+                    immediate: true
+                }
+            )
+        );
     },
+
+    beforeUnmount() {
+        this.watchers.forEach(unwatch => unwatch());
+    },
+
     methods: {
         /**
          * Load identify result items after all item's load promise has resolved

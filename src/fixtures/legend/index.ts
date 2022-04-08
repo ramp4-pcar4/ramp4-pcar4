@@ -26,21 +26,25 @@ class LegendFixture extends LegendAPI {
             }
         );
 
-        // TODO: register legend panel
         this.$iApi.component('legend-appbar-button', LegendAppbarButtonV);
         this.$vApp.$store.registerModule('legend', legend());
 
         // parse legend section of config and store information in legend store
-        this._parseConfig(this.config);
-
-        this.$vApp.$watch(
+        // here we create a copy of the config because the config parser will mutate the layer ids in the config
+        this._parseConfig(JSON.parse(JSON.stringify(this.config)));
+        let unwatch = this.$vApp.$watch(
             () => this.config,
-            (value: any) => this._parseConfig(value)
+            (value: any) => this._parseConfig(JSON.parse(JSON.stringify(value)))
         );
-    }
 
-    removed() {
-        this.$vApp.$store.unregisterModule('legend');
+        // override the removed method here to get access to scope
+        this.removed = () => {
+            console.log(`[fixture] ${this.id} removed`);
+            // TODO: remove appbar button (blocked by #882)
+            unwatch();
+            this.$iApi.panel.remove('legend-panel');
+            this.$vApp.$store.unregisterModule('legend');
+        };
     }
 }
 
