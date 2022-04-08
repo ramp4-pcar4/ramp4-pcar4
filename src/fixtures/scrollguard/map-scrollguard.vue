@@ -20,6 +20,15 @@ export default defineComponent({
             capture: true
         });
     },
+    beforeUnmount() {
+        (
+            this.$iApi.$vApp.$el.querySelector(
+                '.inner-shell + .esri-view'
+            )! as HTMLElement
+        ).removeEventListener('wheel', this.wheelHandler, {
+            capture: true
+        });
+    },
     data() {
         return {
             enabled: get(ScrollguardStore.enabled)

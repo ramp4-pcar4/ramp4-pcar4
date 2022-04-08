@@ -1,5 +1,7 @@
 import { createInstance, geo } from '@/main';
 
+window.debugInstance = null;
+
 // TODO: Location for version string needs to be finalized
 // document.getElementById('ramp-version').innerText =
 //     'v.' +
@@ -593,3 +595,5 @@ function animateToggle() {
     document.getElementById('animate-status').innerText =
         'Animate: ' + rInstance.animate;
 }
+
+window.debugInstance = rInstance;

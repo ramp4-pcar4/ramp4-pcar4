@@ -127,27 +127,63 @@ export class CommonMapAPI extends APIScope {
     }
 
     /**
+     * Destroys the ESRI map
+     *
+     * @protected
+     */
+    protected destroyMap(): void {
+        if (!this.esriMap || !this.esriView) {
+            this.noMapErr();
+            return;
+        }
+
+        // destroy the map view first
+        this.destroyMapView();
+
+        // destroy the map
+        this.esriMap.destroy();
+        delete this.esriMap;
+
+        // clear local basemap store
+        this._basemapStore.forEach(bm => bm.esriBasemap.destroy());
+        this._basemapStore = [];
+    }
+
+    /**
+     * Reloads the map with the given map config and target div
+     *
+     * @param {RampMapConfig} config the config for the map
+     * @param {string | HTMLDivElement | undefined} targetDiv the div to be used for the map view
+     */
+    reloadMap(config: RampMapConfig, targetDiv: string | HTMLDivElement): void {
+        if (!this.esriMap || !this.esriView) {
+            this.noMapErr();
+            return;
+        }
+        this.destroyMap();
+        this.createMap(config, targetDiv);
+    }
+
+    /**
      * Will generate a ESRI map view and add it to the page
      * Can optionally provide the basemap or basemap id to be used when creating the map view
      *
      * This method should be overidden by child map classes
      *
      * @param {string | Basemap | undefined} basemap the id of the basemap that should be used when creating the map view
-     * @private
-     * @abstract
+     * @protected
      */
     protected createMapView(basemap?: string | Basemap): void {
         this.abstractError();
     }
 
     /**
-     * Refreshes the map view by destroying it first and then recreating it
-     * Can optionally provide the basemap or basemap id to be used when creating the map
+     * Destroys the ESRI map view
      *
-     * @param {string | Basemap | undefined} basemap the basemap or basemap id that should be used when recreating the map view
+     * @protected
      */
-    refreshMap(basemap?: string | Basemap): void {
-        if (!this.esriView || !this.esriMap) {
+    protected destroyMapView(): void {
+        if (!this.esriView) {
             this.noMapErr();
             return;
         }
@@ -172,8 +208,6 @@ export class CommonMapAPI extends APIScope {
         this.esriView.navigation = null;
         this.esriView.destroy();
         delete this.esriView;
-
-        this.createMapView(basemap);
     }
 
     /**

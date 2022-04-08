@@ -112,7 +112,8 @@ export default defineComponent({
             attribution: get(MapCaptionStore.attribution),
             cursorCoords: get(MapCaptionStore.cursorCoords),
             mapConfig: get(ConfigStore.getMapConfig),
-            lang: [] as string[]
+            lang: [] as Array<string>,
+            watchers: [] as Array<Function>
         };
     },
 
@@ -121,13 +122,24 @@ export default defineComponent({
         'about-ramp-dropdown': AboutRampDropdown
     },
 
-    watch: {
-        mapConfig(newConfig: RampMapConfig, oldConfig: RampMapConfig) {
-            if (newConfig === oldConfig) {
-                return;
-            }
-            this.$iApi.geo.map.caption.createCaption(this.mapConfig.caption);
-        }
+    created() {
+        this.watchers.push(
+            this.$watch(
+                'mapConfig',
+                (newConfig: RampMapConfig, oldConfig: RampMapConfig) => {
+                    if (newConfig === oldConfig) {
+                        return;
+                    }
+                    this.$iApi.geo.map.caption.createCaption(
+                        this.mapConfig.caption
+                    );
+                }
+            )
+        );
+    },
+
+    beforeUnmount() {
+        this.watchers.forEach(unwatch => unwatch());
     },
 
     updated() {

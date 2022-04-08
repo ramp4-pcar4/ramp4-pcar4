@@ -66,6 +66,17 @@
                 }
             }
         },
+        "scrollguard": {
+            "type": "object",
+            "description": "Provides the configuration to the scrollguard fixture",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Indicates if the scrollguard should be active"
+                }
+            }
+        },
         "appbar": {
             "type": "object",
             "description": "Provides configuration to the appbar fixture. If not supplied, the default appbar controls are displayed.",
@@ -1886,6 +1897,10 @@
                 "overviewmap": {
                     "$ref": "#/$defs/overviewmap",
                     "description": "Provides the configuration to the overviewmap fixture"
+                },
+                "scrollguard": {
+                    "$ref": "#/$defs/scrollguard",
+                    "description": "Provides the configuration to the scrollguard fixture"
                 }
             },
             "unevaluatedProperties": false

@@ -46,9 +46,19 @@ export default defineComponent({
     data() {
         return {
             open: false,
-            popper: null as any
+            popper: null as any,
+            watchers: [] as Array<Function>
         };
     },
+
+    created() {
+        this.watchers.push(
+            this.$watch('open', () => {
+                this.popper.update();
+            })
+        );
+    },
+
     mounted() {
         window.addEventListener(
             'click',
@@ -80,7 +90,7 @@ export default defineComponent({
         });
     },
     beforeUnmount() {
-        this.open = false;
+        this.watchers.forEach(unwatch => unwatch());
         window.removeEventListener(
             'click',
             event => {
@@ -90,12 +100,9 @@ export default defineComponent({
             },
             { capture: true }
         );
+        this.open = false;
     },
-    watch: {
-        open() {
-            this.popper.update();
-        }
-    },
+
     methods: {
         closeDropdown() {
             this.open = false;

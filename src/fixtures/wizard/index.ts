@@ -26,15 +26,19 @@ class WizardFixture extends WizardAPI {
             }
         );
 
-        this.$vApp.$store.registerModule('wizard', wizard());
-        this.$vApp.$store.set(
-            'wizard/layerSource',
-            new LayerSource(this.$iApi)
-        );
-    }
+        let layerSource: LayerSource | undefined = new LayerSource(this.$iApi);
 
-    removed() {
-        this.$vApp.$store.unregisterModule('wizard');
+        this.$vApp.$store.registerModule('wizard', wizard());
+        this.$vApp.$store.set('wizard/layerSource', layerSource);
+
+        // override the removed method here to get access to scope
+        this.removed = () => {
+            console.log(`[fixture] ${this.id} removed`);
+            // TODO: handle appbar button (blocked by #882)
+            this.$iApi.panel.remove('wizard-panel');
+            this.$vApp.$store.unregisterModule('wizard');
+            layerSource = undefined; // will be cleaned up by JS garbage collector
+        };
     }
 }
 

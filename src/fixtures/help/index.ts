@@ -33,14 +33,19 @@ class HelpFixture extends HelpAPI {
         );
         // parse help section of config and store information in help store
         this._parseConfig(this.config);
-        this.$vApp.$watch(
+        let unwatch = this.$vApp.$watch(
             () => this.config,
             (value: any) => this._parseConfig(value)
         );
-    }
 
-    removed() {
-        this.$vApp.$store.unregisterModule('help');
+        // override the removed method here to get access to scope
+        this.removed = () => {
+            console.log(`[fixture] ${this.id} removed`);
+            // TODO: remove mapnav button (probably need to discuss how to do this properly)
+            unwatch();
+            this.$vApp.$store.unregisterModule('help');
+            this.$iApi.panel.remove('help-panel');
+        };
     }
 }
 

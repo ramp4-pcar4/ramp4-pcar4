@@ -15,7 +15,7 @@ class OverviewmapFixture extends OverviewmapAPI {
         );
 
         this._parseConfig(this.config);
-        this.$vApp.$watch(
+        let unwatch = this.$vApp.$watch(
             () => this.config,
             (value: OverviewmapConfig | undefined) => this._parseConfig(value)
         );
@@ -26,11 +26,14 @@ class OverviewmapFixture extends OverviewmapAPI {
         const innerShell =
             this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         innerShell.appendChild(el.childNodes[0]);
-    }
 
-    removed() {
-        console.log(`[fixture] ${this.id} removed`);
-        this.$vApp.$store.unregisterModule('overviewmap');
+        // override the removed method here to get access to scope
+        this.removed = () => {
+            console.log(`[fixture] ${this.id} removed`);
+            unwatch();
+            this.$vApp.$store.unregisterModule('overviewmap');
+            destroy();
+        };
     }
 }
 

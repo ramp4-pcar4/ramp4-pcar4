@@ -9,7 +9,8 @@
                     items-center
                     hover:bg-gray-200
                     ${
-                        legendItem._controlAvailable('datatable')
+                        legendItem._controlAvailable('datatable') &&
+                        getDatagridExists()
                             ? 'cursor-pointer'
                             : 'cursor-default'
                     }
@@ -20,7 +21,8 @@
                 @mouseover.stop="$event.currentTarget._tippy.show()"
                 @mouseout.self="$event.currentTarget._tippy.hide()"
                 :content="
-                    legendItem._controlAvailable('datatable')
+                    legendItem._controlAvailable('datatable') &&
+                    getDatagridExists()
                         ? $t('legend.entry.data')
                         : ''
                 "
@@ -145,7 +147,6 @@
                         v-if="isAnimationEnabled"
                     ></div>
                     <div class="flex-1 text-gray-500" v-truncate>
-                        <!-- TODO: add official translation -->
                         <span>{{ $t('legend.symbology.loading') }}</span>
                     </div>
                 </div>
@@ -158,7 +159,7 @@
 import { defineComponent, toRaw } from 'vue';
 import type { PropType } from 'vue';
 import { GlobalEvents } from '@/api';
-import { Controls, LegendEntry, LegendGroup } from '../store/legend-defs';
+import { Controls, LegendEntry } from '../store/legend-defs';
 import LegendCheckboxV from './checkbox.vue';
 import LegendSymbologyStackV from './symbology-stack.vue';
 import LegendOptionsV from './legend-options.vue';
@@ -239,7 +240,10 @@ export default defineComponent({
          * Toggles data table panel to open/close for the LegendItem.
          */
         toggleGrid(): void {
-            if (this.legendItem!._controlAvailable(Controls.Datatable)) {
+            if (
+                this.legendItem!._controlAvailable(Controls.Datatable) &&
+                this.getDatagridExists()
+            ) {
                 this.$iApi.event.emit(
                     GlobalEvents.GRID_TOGGLE,
                     this.legendItem!.layerUID
@@ -260,6 +264,17 @@ export default defineComponent({
             svg?.setAttribute('height', item.imgHeight);
             svg?.setAttribute('width', item.imgWidth);
             return span.outerHTML;
+        },
+
+        /**
+         * Indicates if the data grid fixture has been added
+         */
+        getDatagridExists(): boolean {
+            try {
+                return !!this.$iApi.fixture.get('grid');
+            } catch (e) {
+                return false;
+            }
         }
     }
 });

@@ -10,7 +10,8 @@ type PanelContext = ActionContext<PanelState, RootState>;
 
 export enum PanelAction {
     openPanel = 'openPanel',
-    closePanel = 'removePanel',
+    closePanel = 'closePanel',
+    removePanel = 'removePanel',
     setWidth = 'setWidth',
     setStackWidth = 'setStackWidth',
     updateVisible = 'updateVisible'
@@ -21,7 +22,8 @@ export enum PanelMutation {
     OPEN_PANEL = 'OPEN_PANEL',
 
     ADD_TO_PANEL_ORDER = 'ADD_TO_PANEL_ORDER',
-    CLOSE_PANEL = 'REMOVE_PANEL',
+    CLOSE_PANEL = 'CLOSE_PANEL',
+    REMOVE_PANEL = 'REMOVE_PANEL',
 
     SET_ORDERED_ITEMS = 'SET_ORDERED_ITEMS',
     SET_PRIORITY = 'SET_PRIORITY',
@@ -66,6 +68,18 @@ const actions = {
         }
 
         context.commit(PanelMutation.CLOSE_PANEL, value);
+        context.dispatch(PanelAction.updateVisible);
+    },
+
+    [PanelAction.removePanel](
+        context: PanelContext,
+        value: { panel: PanelConfig }
+    ): void {
+        if (context.state.priority === value.panel) {
+            context.commit(PanelMutation.SET_PRIORITY, null);
+        }
+
+        context.commit(PanelMutation.REMOVE_PANEL, value);
         context.dispatch(PanelAction.updateVisible);
     },
 
@@ -177,6 +191,30 @@ const mutations = {
                 ...state.orderedItems.slice(0, index),
                 ...state.orderedItems.slice(index + 1)
             ];
+        }
+    },
+
+    [PanelMutation.REMOVE_PANEL](
+        state: PanelState,
+        { panel }: { panel: PanelInstance }
+    ): void {
+        // remove from items
+        if (state.items[panel.id] !== undefined) {
+            delete state.items[panel.id];
+        }
+
+        // remove from visible
+        const index = state.visible.indexOf(panel);
+        if (index !== -1) {
+            state.visible = [
+                ...state.visible.slice(0, index),
+                ...state.visible.slice(index + 1)
+            ];
+        }
+
+        // remove from pinner
+        if (state.pinned !== null && state.pinned.id == panel.id) {
+            state.pinned = null;
         }
     }
 };

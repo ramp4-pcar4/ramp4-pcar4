@@ -42,7 +42,7 @@ export default defineComponent({
         };
     },
 
-    created() {
+    mounted() {
         // TODO decide if this event handler should go into the default ramp events, or remain as hard-bound to geosearch.
         //      hard-bound means no one outside can un-hook and replace with a different reaction.
         //      going default means the handler function needs to be public / on the geosearch api.
@@ -56,8 +56,6 @@ export default defineComponent({
     },
 
     /**
-     * beforeUnmount lifecycle hook (previously beforeDestroy in Vue2)
-     *
      * This is called while the component is still functional right before everything is removed.
      */
     beforeUnmount() {

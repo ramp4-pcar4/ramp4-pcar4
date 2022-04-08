@@ -15,7 +15,7 @@ class ScrollguardFixture extends ScrollguardAPI {
         this.$vApp.$store.registerModule('scrollguard', scrollguard());
 
         this._parseConfig(this.config);
-        this.$vApp.$watch(
+        let unwatch = this.$vApp.$watch(
             () => this.config,
             (value: ScrollguardConfig | undefined) => this._parseConfig(value)
         );
@@ -23,13 +23,18 @@ class ScrollguardFixture extends ScrollguardAPI {
         const { vNode, destroy, el } = this.mount(ScrollguardV, {
             app: this.$element
         });
+
         const innerShell =
             this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         innerShell.appendChild(el.childNodes[0]);
-    }
 
-    removed(): void {
-        console.log(`[fixture] ${this.id} removed`);
+        // override the removed method here to get access to scope
+        this.removed = () => {
+            console.log(`[fixture] ${this.id} removed`);
+            unwatch();
+            this.$vApp.$store.unregisterModule('scrollguard');
+            destroy();
+        };
     }
 }
 
