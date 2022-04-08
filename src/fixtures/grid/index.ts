@@ -30,6 +30,8 @@ class GridFixture extends GridAPI {
     }
 
     removed() {
+        // TODO: remove appbar button (blocked by #882)
+        this.$iApi.panel.remove('grid-panel');
         this.$vApp.$store.unregisterModule('grid');
     }
 }

@@ -2,7 +2,6 @@ import { FixtureInstance, LayerInstance } from '@/api';
 import { LegendStore } from '../store';
 import type { LegendConfig } from '../store';
 import { LegendItem, LegendEntry, LegendGroup } from '../store/legend-defs';
-import { LayerStore } from '@/store/modules/layer';
 
 export class LegendAPI extends FixtureInstance {
     /**
@@ -91,6 +90,11 @@ export class LegendAPI extends FixtureInstance {
         this.$vApp.$store.set(LegendStore.children, legendEntries);
 
         // TODO: validate legend items?
+
+        // update legend in case layers were added before the legend was created
+        this.$iApi.geo.layer.allLayers().forEach(l => {
+            this.updateLegend(l);
+        });
     }
 
     /**

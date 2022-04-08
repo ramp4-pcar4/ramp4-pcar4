@@ -152,7 +152,6 @@ export default defineComponent({
         return {
             defaultTemplates: get(DetailsStore.defaultTemplates),
             templateBindings: get(DetailsStore.templates),
-            payload: get(DetailsStore.payload),
             getLayerByUid: get('layer/getLayerByUid'),
             identifyTypes: IdentifyResultFormat.UNKNOWN,
             icon: '' as string,

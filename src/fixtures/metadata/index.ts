@@ -22,19 +22,23 @@ class MetadataFixture extends MetadataAPI {
             { i18n: { messages } }
         );
 
-        const handler = (payload: any) => {
-            const metadataFixture: MetadataAPI =
-                this.$iApi.fixture.get('metadata');
-            metadataFixture.openMetadata(payload);
-        };
-
         this.$iApi.component('metadata-appbar-button', MetadataAppbarButtonV);
 
-        this.$iApi.event.on(
+        let handler = this.$iApi.event.on(
             GlobalEvents.METADATA_OPEN,
-            handler,
-            'metadata_opened_handler'
+            (payload: any) => {
+                const metadataFixture: MetadataAPI =
+                    this.$iApi.fixture.get('metadata');
+                metadataFixture.openMetadata(payload);
+            }
         );
+
+        this.removed = () => {
+            console.log(`[fixture] ${this.id} removed`);
+            // TODO: remove appbar button (blocked by #882)
+            this.$iApi.event.off(handler);
+            this.$iApi.panel.remove('metadata-panel');
+        };
     }
 }
 

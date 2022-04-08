@@ -41,7 +41,8 @@ export default defineComponent({
                     <path id="path6038" d="M297.256 144.666l-7.726 19.568 7.726-7.726" fill="#6d6d6d" stroke-width=".296" stroke-linecap="square"/>
                 </g>
             </svg>`,
-            poleMarkerAdded: false
+            poleMarkerAdded: false,
+            handlers: [] as Array<string>
         };
     },
 
@@ -54,10 +55,17 @@ export default defineComponent({
         if (this.$iApi.geo.map.esriView?.ready) {
             this.updateNortharrow(this.$iApi.geo.map.getExtent());
         }
-        this.$iApi.event.on(
-            GlobalEvents.MAP_EXTENTCHANGE,
-            debounce(300, this.updateNortharrow)
+
+        this.handlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.MAP_EXTENTCHANGE,
+                debounce(300, this.updateNortharrow)
+            )
         );
+    },
+
+    beforeUnmount() {
+        this.handlers.forEach(h => this.$iApi.event.off(h));
     },
 
     methods: {
@@ -146,7 +154,7 @@ export default defineComponent({
 
                         const poleLayer =
                             await this.$iApi.geo.layer.createLayer({
-                                layerId: 'PoleMarker',
+                                id: 'PoleMarker',
                                 layerType: LayerType.GRAPHIC,
                                 cosmetic: true // mark this layer as a cosmetic layer
                             });

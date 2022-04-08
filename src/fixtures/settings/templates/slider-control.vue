@@ -33,18 +33,28 @@ export default defineComponent({
             required: true
         }
     },
-    watch: {
-        // watch the config for changes to the opacity value
-        config: {
-            handler(newConfig) {
-                this.value = newConfig.value;
-            },
-            deep: true
-        }
+
+    created() {
+        this.watchers.push(
+            // watch the config for changes to the opacity value
+            this.$watch(
+                'config',
+                (newConfig: any) => {
+                    this.value = newConfig.value;
+                },
+                { deep: true }
+            )
+        );
     },
+
+    beforeUnmount() {
+        this.watchers.forEach(unwatch => unwatch());
+    },
+
     data() {
         return {
-            value: this.config.value
+            value: this.config.value,
+            watchers: [] as Array<Function>
         };
     }
 });

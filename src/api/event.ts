@@ -60,6 +60,12 @@ export enum GlobalEvents {
     FIXTURE_ADDED = 'fixture/added',
 
     /**
+     * Fires when a fixture is removed from the instance.
+     * Payload: `(fixture: FixtureInstance)`
+     */
+    FIXTURE_REMOVED = 'fixture/removed',
+
+    /**
      * Fires when a request is issued to toggle (show if hidden, hide if showing) the grid of attributes.
      * Payload: `(uid: string, force?: boolean)`
      */
@@ -136,6 +142,12 @@ export enum GlobalEvents {
      * Payload: none
      */
     MAP_CREATED = 'map/created',
+
+    /**
+     * Fires after the map is destroyed.
+     * Payload: none
+     */
+    MAP_DESTROYED = 'map/destroyed',
 
     /**
      * Fires when the map is double-clicked.
@@ -953,23 +965,23 @@ export class EventAPI extends APIScope {
             case DefEH.GRID_REMOVES_LAYER_GRID:
                 // when a layer is removed, close the standard grid if open for that layer
                 zeHandler = (layer: LayerInstance) => {
-                    // remove cached grid state for layer from grid store
-                    this.$vApp.$store.dispatch(
-                        `grid/${GridAction.removeGrid}`,
-                        layer.uid
-                    );
-                    // close grid panel if open or minimized with removed layer
-                    const currentUid = this.$vApp.$store.get(
-                        GridStore.currentUid
-                    );
-                    if (
-                        !this.$vApp.$store.get(
-                            LayerStore.getLayerByUid,
-                            currentUid
-                        )
-                    ) {
-                        const panel = this.$iApi.panel.get('grid-panel');
-                        this.$iApi.panel.close(panel);
+                    if (this.$iApi.$vApp.$store.hasModule('grid')) {
+                        // remove cached grid state for layer from grid store
+                        this.$vApp.$store.dispatch(
+                            `grid/${GridAction.removeGrid}`,
+                            layer.uid
+                        );
+                        // close grid panel if open or minimized with removed layer
+                        const currentUid = this.$vApp.$store.get(
+                            GridStore.currentUid
+                        );
+                        if (layer.uid === currentUid) {
+                            const panel = this.$iApi.panel.get('grid-panel');
+                            if (panel.isOpen) {
+                                this.$iApi.panel.close(panel);
+                            }
+                            this.$vApp.$store.set(GridStore.currentUid, null);
+                        }
                     }
                 };
                 this.$iApi.event.on(

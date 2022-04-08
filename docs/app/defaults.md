@@ -84,6 +84,7 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | CONFIG_CHANGE<br>'config/change'                   | RampConfig object                                              | The config was changed                           |
 | FILTER_CHANGE<br>'filter/change'                   | FilterEventParam object                                        | A filter has changed                             |
 | FIXTURE_ADDED<br>'fixture/added'                   | FixtureInstance object                                         | A fixture has been added                         |
+| FIXTURE_REMOVED<br>'fixture/removed'               | FixtureInstance object                                         | A fixture has been removed                       |
 | LAYER_OPACITYCHANGE<br>'layer/opacitychange'       | _opacity_: new value, _uid_: affected uid                      | The layer opacity changed                        |
 | LAYER_REGISTERED<br>'layer/registered'             | LayerInstance object                                           | The layer was added to the map                   |
 | LAYER_RELOAD_END<br>'layer/reloadend'              | LayerInstance object                                           | The layer finished reloading                     |
@@ -95,6 +96,7 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | MAP_BLUR<br>'map/blur'                             | FocusEvent object                                              | The map lost focus                               |
 | MAP_CLICK<br>'map/click'                           | MapClick object                                                | The map was clicked                              |
 | MAP_CREATED<br>'map/created'                       | none                                                           | The map was created                              |
+| MAP_DESTROYED<br>'map/destroyed'                   | none                                                           | The map was destroyed                            |
 | MAP_DOUBLECLICK<br>'map/doubleclick'               | MapClick object                                                | The map was double clicked                       |
 | MAP_EXTENTCHANGE<br>'map/extentchanged'            | RAMP Extent object                                             | The map extent changed                           |
 | MAP_GRAPHICHIT<br>'map/graphichit'                 | { layer, graphicHit, attributes, icon, screenPoint}            | A graphic was found where the mouse/crosshair is |

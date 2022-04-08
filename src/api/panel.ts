@@ -84,6 +84,25 @@ export class PanelAPI extends APIScope {
     }
 
     /**
+     * Removes a panel instance
+     *
+     * @param {(string | PanelInstance)} value
+     * @memberof PanelAPI
+     */
+    remove(value: string | PanelInstance): void {
+        let panel: PanelInstance = this.get(value);
+
+        // close the panel if it is open
+        if (panel.isOpen) {
+            this.close(panel);
+        }
+
+        this.$vApp.$store.set(`panel/${PanelMutation.REMOVE_PANEL}!`, {
+            panel
+        });
+    }
+
+    /**
      * Finds and returns a panel with the id specified.
      *
      * @param {(string | PanelInstance)} value

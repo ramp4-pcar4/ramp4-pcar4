@@ -48,10 +48,12 @@ export default defineComponent({
 
     data(): {
         fixture: ExportBasicAPI | null;
+        resizeObserver: ResizeObserver | null;
         make: Function;
     } {
         return {
             fixture: null,
+            resizeObserver: null,
             make: debounce(300, function (this: any) {
                 if (!this.fixture) {
                     return;
@@ -69,12 +71,15 @@ export default defineComponent({
 
     mounted() {
         this.fixture = this.$iApi.fixture.get('export-basic') as ExportBasicAPI;
-
-        const resizeObserver = new ResizeObserver(() => {
+        this.resizeObserver = new ResizeObserver(() => {
             this.make();
         });
+        this.resizeObserver.observe(this.$el);
+    },
 
-        resizeObserver.observe(this.$el);
+    beforeUnmount() {
+        // remove the resize observer
+        this.resizeObserver!.disconnect();
     }
 });
 </script>

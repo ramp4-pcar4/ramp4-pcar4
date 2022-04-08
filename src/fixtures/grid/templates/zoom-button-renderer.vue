@@ -57,6 +57,23 @@ export default defineComponent({
         });
     },
 
+    beforeUnmount() {
+        this.params.eGridCell.removeEventListener(
+            'keydown',
+            (e: KeyboardEvent) => {
+                if (e.key === 'Enter') {
+                    this.zoomToFeature();
+                }
+            }
+        );
+        this.params.eGridCell.removeEventListener('focus', () => {
+            (this.$el as any)._tippy.show();
+        });
+        this.params.eGridCell.removeEventListener('blur', () => {
+            (this.$el as any)._tippy.hide();
+        });
+    },
+
     methods: {
         zoomToFeature() {
             const layer: LayerInstance | undefined = this.getLayerByUid(

@@ -23,7 +23,9 @@
                 href="#"
                 class="flex leading-snug items-start w-auto"
                 :class="{
-                    disabled: !legendItem._controlAvailable(`metadata`)
+                    disabled:
+                        !legendItem._controlAvailable(`metadata`) ||
+                        !getFixtureExists('metadata')
                 }"
                 @click="toggleMetadata"
             >
@@ -39,7 +41,9 @@
                 href="#"
                 class="flex leading-snug items-center w-auto"
                 :class="{
-                    disabled: !legendItem._controlAvailable(`settings`)
+                    disabled:
+                        !legendItem._controlAvailable(`settings`) ||
+                        !getFixtureExists('settings')
                 }"
                 @click="toggleSettings"
             >
@@ -57,7 +61,9 @@
                 href="#"
                 class="flex leading-snug items-center w-auto"
                 :class="{
-                    disabled: !legendItem._controlAvailable(`datatable`)
+                    disabled:
+                        !legendItem._controlAvailable(`datatable`) ||
+                        !getFixtureExists('grid')
                 }"
                 @click="toggleGrid"
             >
@@ -163,7 +169,10 @@ export default defineComponent({
          * Toggles data table panel to open/close for the LegendItem.
          */
         toggleGrid() {
-            if (this.legendItem!._controlAvailable(Controls.Datatable)) {
+            if (
+                this.legendItem!._controlAvailable(Controls.Datatable) &&
+                this.getFixtureExists('grid')
+            ) {
                 this.$iApi.event.emit(
                     GlobalEvents.GRID_TOGGLE,
                     this.legendItem!.layerUID
@@ -175,7 +184,10 @@ export default defineComponent({
          * Toggles settings panel to open/close type for the LegendItem.
          */
         toggleSettings() {
-            if (this.legendItem!._controlAvailable(Controls.Settings)) {
+            if (
+                this.legendItem!._controlAvailable(Controls.Settings) &&
+                this.getFixtureExists('settings')
+            ) {
                 this.$iApi.event.emit(
                     GlobalEvents.SETTINGS_TOGGLE,
                     this.legendItem!.layerUID
@@ -187,6 +199,10 @@ export default defineComponent({
          * Toggles metadata panel to open/close for the LegendItem.
          */
         toggleMetadata() {
+            if (!this.getFixtureExists('metadata')) {
+                return;
+            }
+
             const metaConfig =
                 this.legendItem?.layer?.config.metadata ||
                 this.legendItem?.layer?.parentLayer?.config?.metadata ||
@@ -230,6 +246,17 @@ export default defineComponent({
         reloadLayer() {
             if (this.legendItem!._controlAvailable(Controls.Reload)) {
                 toRaw(this.legendItem!.layer!).reload();
+            }
+        },
+
+        /**
+         * Indicates if the fixture with the given name has been added
+         */
+        getFixtureExists(fixtureName: string): boolean {
+            try {
+                return !!this.$iApi.fixture.get(fixtureName);
+            } catch (e) {
+                return false;
             }
         }
     }

@@ -30,7 +30,10 @@ class GeosearchFixture extends GeosearchAPI {
     }
 
     removed() {
+        console.log(`[fixture] ${this.id} removed`);
+        // TODO: remove appbar button (blocked by #882)
         this.$vApp.$store.unregisterModule('geosearch');
+        this.$iApi.panel.remove('geosearch-panel');
     }
 }
 

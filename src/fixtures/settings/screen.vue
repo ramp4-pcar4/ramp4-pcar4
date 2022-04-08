@@ -125,16 +125,21 @@ export default defineComponent({
             opacityModel: this.layer.opacity * 100,
             identifyModel: this.layer.identify,
             snapshotToggle: false,
-            handlers: [] as Array<string>
+            handlers: [] as Array<string>,
+            watchers: [] as Array<Function>
         };
     },
-    watch: {
-        uid(newUid: string, oldUid: string) {
-            if (newUid !== oldUid) {
-                this.loadLayerProperties();
-            }
-        }
+
+    created() {
+        this.watchers.push(
+            this.$watch('uid', (newUid: string, oldUid: string) => {
+                if (newUid !== oldUid) {
+                    this.loadLayerProperties();
+                }
+            })
+        );
     },
+
     mounted() {
         this.loadLayerProperties();
 
@@ -163,8 +168,9 @@ export default defineComponent({
         );
     },
     beforeUnmount() {
-        // Remove all event handlers for this component
+        // Remove all event handlers and watchers for this component
         this.handlers.forEach(handler => this.$iApi.event.off(handler));
+        this.watchers.forEach(unwatch => unwatch());
     },
     methods: {
         // Update the layer visibility.

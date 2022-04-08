@@ -65,9 +65,7 @@ export default defineComponent({
             mapConfig: get(OverviewmapStore.mapConfig),
             basemaps: get(OverviewmapStore.basemaps),
             startMinimized: get(OverviewmapStore.startMinimized),
-
-            // TODO: find a way to fix this declaration (should be something like overviewMap: OverviewMapAPI but that gave a compile error)
-            overviewMap: new OverviewMapAPI(this.$iApi),
+            overviewMap: null as any,
             minimized: true,
             hoverOnExtent: false,
             handlers: [] as Array<string>
@@ -96,6 +94,13 @@ export default defineComponent({
                         this.overviewMap.updateOverview(newExtent);
                     }
                 )
+            );
+
+            // adapt the overview map's basemap whenever the main map is created
+            this.handlers.push(
+                this.$iApi.event.on(GlobalEvents.MAP_CREATED, () => {
+                    this._adaptBasemap();
+                })
             );
 
             // adapt the overview map's basemap whenever the main map refreshes
@@ -139,6 +144,9 @@ export default defineComponent({
     beforeUnmount() {
         // Remove all event handlers for this component
         this.handlers.forEach(handler => this.$iApi.event.off(handler));
+
+        this.overviewMap.destroyMap();
+        delete this.overviewMap;
     },
 
     methods: {
