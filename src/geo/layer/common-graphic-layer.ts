@@ -11,6 +11,10 @@ export class CommonGraphicLayer extends CommonLayer {
     protected constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.dataFormat = DataFormat.ESRI_FEATURE;
+
+        // Until we implement hovertip support on RAMP Graphics, turn off hovertips to stop
+        // hittest errors in the console.
+        this.hovertips = false;
     }
 
     protected _graphics: Array<Graphic> = [];

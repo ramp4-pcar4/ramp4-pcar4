@@ -6,16 +6,17 @@ import {
     DataFormat,
     DefPromise,
     Extent,
-    ScaleSet,
-    TreeNode,
+    Graphic,
+    LayerState,
     LayerType,
-    LayerState
+    NoGeometry,
+    ScaleSet,
+    TreeNode
 } from '@/geo/api';
 
 import type {
     AttributeSet,
     FieldDefinition,
-    GetGraphicResult,
     GetGraphicParams,
     LegendSymbology,
     RampLayerConfig,
@@ -857,14 +858,11 @@ export class CommonLayer extends LayerInstance {
      *
      * @param {Integer} objectId the object id of the graphic to find
      * @param {Object} options options object for the request, see above
-     * @returns {Promise} resolves with a fake graphic containing the requested information
+     * @returns {Promise} resolves with a Graphic containing the requested information
      */
-    getGraphic(
-        objectId: number,
-        options: GetGraphicParams
-    ): Promise<GetGraphicResult> {
+    getGraphic(objectId: number, options: GetGraphicParams): Promise<Graphic> {
         this.stubError();
-        return Promise.resolve({});
+        return Promise.resolve(new Graphic(new NoGeometry()));
     }
 
     /**

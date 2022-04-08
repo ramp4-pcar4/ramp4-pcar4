@@ -19,7 +19,9 @@ import {
     DataFormat,
     Extent,
     Filter,
-    GeometryType
+    GeometryType,
+    Graphic,
+    NoGeometry
 } from '@/geo/api';
 
 import type {
@@ -27,7 +29,6 @@ import type {
     Attributes,
     FieldDefinition,
     GetGraphicParams,
-    GetGraphicResult,
     DiscreteGraphicResult,
     GetGraphicServiceDetails,
     QueryFeaturesArcServerParams,
@@ -462,12 +463,12 @@ export class AttribLayer extends CommonLayer {
      *
      * @param {Integer} objectId the object id of the graphic to find
      * @param {Object} options options object for the request, see above
-     * @returns {Promise} resolves with a fake graphic containing the requested information
+     * @returns {Promise} resolves with a Graphic containing the requested information
      */
     async getGraphic(
         objectId: number,
         opts: GetGraphicParams
-    ): Promise<GetGraphicResult> {
+    ): Promise<Graphic> {
         // NOTE RAMP2 version of this included the sublayer object. we want to keep those hidden, so
         //      for now will just return the graphic structure and if we need more stuff we
         //      will figure out a proper way to do that.
@@ -477,10 +478,8 @@ export class AttribLayer extends CommonLayer {
 
         // NOTE this is for server-based layers. local layers with features should override this for gains.
 
-        // TODO toy with the idea of changing GetGraphicResult to RAMP.API Graphic type.
-        //      potential reasons not to: that type has additional properties like style.
-
-        const resultFeat: any = {};
+        let resultAttribs: any = {};
+        let resultGeom: BaseGeometry = new NoGeometry();
         const map = this.$iApi.geo.map; // used to do `opts.unboundMap || ` first, but think we're getting rid of that.
 
         // redundant checks to shut up typescript
@@ -501,15 +500,14 @@ export class AttribLayer extends CommonLayer {
             let aCache = this.quickCache.getAttribs(objectId);
             if (aCache) {
                 // value is already cached. use it
-                resultFeat.attributes = aCache;
+                resultAttribs = aCache;
             } else if (this.attLoader.isLoaded || this.isFile!) {
                 // NOTE: the above line has a habit of showing as an error in VSCode. The compiler will not be as dumb.
 
                 // all attributes have been loaded (or is a file and are local). use that store.
                 // since attributes come from a promise, reset the wait promise to the attribute promise
                 const atSet = await this.attLoader.getAttribs();
-                resultFeat.attributes =
-                    atSet.features[atSet.oidIndex[objectId]];
+                resultAttribs = atSet.features[atSet.oidIndex[objectId]];
             } else {
                 // we will need to download data from the service
                 needWebAttr = true;
@@ -524,7 +522,7 @@ export class AttribLayer extends CommonLayer {
 
             // attempt to get geometry from fastest source.
             if (gCache) {
-                resultFeat.geometry = gCache;
+                resultGeom = gCache;
 
                 /*
             // TODO / NOTE: at first glance it looks like ESRI 4 is hiding the guts of server-based feature layers.
@@ -581,7 +579,7 @@ export class AttribLayer extends CommonLayer {
                     <BaseGeometry>webFeat.geometry,
                     scale
                 );
-                resultFeat.geometry = webFeat.geometry;
+                resultGeom = webFeat.geometry;
             }
 
             if (
@@ -598,12 +596,12 @@ export class AttribLayer extends CommonLayer {
 
                 if (needWebAttr) {
                     // only put attribs on the result if requester asked for them
-                    resultFeat.attributes = webFeat.attributes;
+                    resultAttribs = webFeat.attributes;
                 }
             }
         }
 
-        return resultFeat;
+        return new Graphic(resultGeom, '', resultAttribs);
     }
 
     /**
@@ -871,9 +869,7 @@ export class AttribLayer extends CommonLayer {
      * @param options {Object} options to provide filters and helpful information.
      * @returns {Promise} resolves with an array of features that satisfy the criteria
      */
-    async queryFeatures(
-        options: QueryFeaturesParams
-    ): Promise<Array<GetGraphicResult>> {
+    async queryFeatures(options: QueryFeaturesParams): Promise<Array<Graphic>> {
         // runs discrete version, waits for everything to download,
         // returns entire set in a cleaner array
         const discreteResult = await this.queryFeaturesDiscrete(options);

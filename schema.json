@@ -13,7 +13,7 @@
                 "folderName": {
                     "type": "string",
                     "default": "default",
-                    "description": "Help folder name which contains the help description and images."
+                    "description": "Help folder name within the help directory which contains the help content and images. Markdown files must be named for the language they support, e.g. en.md, fr.md"
                 },
                 "panelWidth": {
                     "type": "number",

@@ -6,8 +6,10 @@ import {
 } from '@/api/internal';
 import {
     DefPromise,
+    Graphic,
     Extent,
     GeometryType,
+    NoGeometry,
     TreeNode,
     LayerType,
     IdentifyResultFormat
@@ -15,7 +17,6 @@ import {
 
 import type {
     AttributeSet,
-    GetGraphicResult,
     GetGraphicParams,
     IdentifyItem,
     IdentifyParameters,
@@ -659,14 +660,11 @@ class MapImageLayer extends AttribLayer {
      *
      * @param {Integer} objectId the object id of the graphic to find
      * @param {Object} options options object for the request, see above
-     * @returns {Promise} resolves with a fake graphic containing the requested information
+     * @returns {Promise} resolves with a Graphic containing the requested information
      */
-    getGraphic(
-        objectId: number,
-        options: GetGraphicParams
-    ): Promise<GetGraphicResult> {
+    getGraphic(objectId: number, options: GetGraphicParams): Promise<Graphic> {
         this.noFeaturesErr();
-        return Promise.resolve({});
+        return Promise.resolve(new Graphic(new NoGeometry()));
     }
 
     /**

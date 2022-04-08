@@ -7,9 +7,9 @@ import type {
     Attributes,
     AttributeSet,
     BaseGeometry,
-    GetGraphicResult,
     GetGraphicServiceDetails
 } from '@/geo/api';
+import { Graphic, NoGeometry } from '@/geo/api';
 import { EsriGeometryFromJson, EsriRequest } from '@/geo/esri';
 import to from 'await-to-js';
 import { toRaw } from 'vue';
@@ -182,7 +182,7 @@ export class AttributeAPI extends APIScope {
 
     async loadSingleFeature(
         details: GetGraphicServiceDetails
-    ): Promise<GetGraphicResult> {
+    ): Promise<Graphic> {
         const params: __esri.RequestOptions = {
             query: {
                 f: 'json',
@@ -236,20 +236,20 @@ export class AttributeAPI extends APIScope {
         const feats: Array<any> = serviceResult.data.features;
         if (feats.length > 0) {
             const feat = feats[0];
-            const result: GetGraphicResult = {
-                attributes: feat.attributes // attributes are always there, so we always return them. letter caller decide to discard them or not.
-            };
+            let geom: BaseGeometry;
 
             if (details.includeGeometry) {
                 // server result omits spatial reference
                 feat.geometry.spatialReference =
                     serviceResult.data.spatialReference;
                 const localEsriGeom = EsriGeometryFromJson(feat.geometry);
-                result.geometry =
-                    this.$iApi.geo.utils.geom.geomEsriToRamp(localEsriGeom);
+                geom = this.$iApi.geo.utils.geom.geomEsriToRamp(localEsriGeom);
+            } else {
+                geom = new NoGeometry();
             }
 
-            return result;
+            // attributes are always there, so we always return them. letter caller decide to discard them or not.
+            return new Graphic(geom, '', feat.attributes);
         }
 
         // We got no features, so throw error

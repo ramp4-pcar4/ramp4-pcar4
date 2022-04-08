@@ -1,4 +1,10 @@
-import type { BaseGeometry, Extent, Point, SpatialReference } from '@/geo/api';
+import type {
+    BaseGeometry,
+    Extent,
+    Graphic,
+    Point,
+    SpatialReference
+} from '@/geo/api';
 
 export interface ColourParams {
     r: number;
@@ -7,20 +13,20 @@ export interface ColourParams {
     a?: number;
 }
 
-// TODO add support for PATH type?
-//      would allow person to define a sybmol using svg. would need to enhance our style params to allow for svg path.
-//      alternately we can hotwire the .icon field. so if PATH, use .icon. might also make sense to add ICON to the enum,
-//      and have it be a special case just for the constructor and minimize confusion of callers.
-export enum PointStyle {
+export enum PointStyleType {
     CIRCLE = 'circle',
     CROSS = 'cross',
     DIAMOND = 'diamond',
+    ICON = 'icon', // this one is special, not an esri type. denotes a picture marker instead of simple marker
+    PATH = 'path',
     SQUARE = 'square',
     TRIANGLE = 'triangle',
     X = 'x'
 }
 
-export enum LineStyle {
+// These need to match the ESRI style constants
+// https://developers.arcgis.com/javascript/latest/api-reference/esri-symbols-SimpleLineSymbol.html#style
+export enum LineStyleType {
     DASH = 'dash',
     DASHDOT = 'dash-dot',
     DASHDOTDOT = 'short-dash-dot-dot', // for backwards compatibility
@@ -37,7 +43,19 @@ export enum LineStyle {
     SOLID = 'solid'
 }
 
-export enum FillStyle {
+export enum LineJoinType {
+    BEVEL = 'bevel',
+    MITER = 'miter',
+    ROUND = 'round'
+}
+
+export enum LineCapType {
+    ROUND = 'round',
+    BUTT = 'butt', // round butt lol
+    SQUARE = 'square'
+}
+
+export enum FillStyleType {
     BDIAG = 'backward-diagonal',
     CROSS = 'cross',
     DIAG_CROSS = 'diagonal-cross',
@@ -69,40 +87,41 @@ export enum RendererType {
     Unknown = 'unknown'
 }
 
-export interface StyleParams {
-    style?: string;
+export interface LineStyleOptions {
+    style?: LineStyleType;
     colour?: Array<number> | string | ColourParams;
-    width?: number;
+    width?: number | string;
+    miter?: number;
+    cap?: LineCapType;
+    join?: LineJoinType;
 }
 
-export interface PointStyleParams extends StyleParams {
-    style?: PointStyle;
+export interface PointStyleOptions {
+    style: PointStyleType;
+    xOffset?: number | string;
+    yOffset?: number | string;
+    angle?: number;
+}
+
+export interface PointMarkerStyleOptions extends PointStyleOptions {
+    size?: number | string;
+    colour?: Array<number> | string | ColourParams;
+    outline?: LineStyleOptions;
+    path?: string;
+}
+
+export interface PointIconStyleOptions extends PointStyleOptions {
     icon?: string;
-    height?: number;
-    xOffset?: number;
-    yOffset?: number;
+    height?: number | string;
+    width?: number | string;
 }
 
-// essentially just pretties up the name. no new params
-export interface LineStyleParams extends StyleParams {
-    style?: LineStyle;
-}
-
-// TODO document the funnybusiness of this.
-// because we extend interfaces, this param object has an extra set of things
-export interface PolygonStyleParams extends StyleParams {
-    outlineColour?: Array<number> | string | ColourParams;
-    outlineWidth?: number;
-    outlineStyle?: LineStyle;
-
-    // the above 3 are for flexibility and backwards compatibility. the property below allows a shortcut by just supplying a line style
-    outlineParams?: LineStyleParams;
-
-    // again, mostly for backwards compatibility. opacity can now be provided on the colour itself. and we can use inherited style and colour for the fills as default
-    // (these params will have priority)
-    fillColour?: Array<number> | string | ColourParams;
-    fillOpacity?: number;
-    fillStyle?: FillStyle;
+export interface PolygonStyleOptions {
+    outline?: LineStyleOptions;
+    fill?: {
+        colour?: Array<number> | string | ColourParams;
+        style?: FillStyleType;
+    };
 }
 
 export type SrDef = SpatialReference | string | number;
@@ -303,8 +322,6 @@ export interface ArcGisServerUrl {
 export interface GetGraphicParams {
     getGeom?: boolean;
     getAttribs?: boolean;
-    // I don't think we need this anymore. The map is now effectively a singleton on the instance API. no more layers holding pointers to the map they live in.
-    // unboundMap?: MapAPI;
 }
 
 export interface GetGraphicServiceDetails {
@@ -316,15 +333,9 @@ export interface GetGraphicServiceDetails {
     oid: number; // oid of the feature to find
 }
 
-export interface GetGraphicResult {
-    // TODO replace all this with a RAMPAPI.Graphic?
-    attributes?: Attributes;
-    geometry?: BaseGeometry;
-}
-
 export interface DiscreteGraphicResult {
     oid: number; // oid of the result
-    graphic: Promise<GetGraphicResult>;
+    graphic: Promise<Graphic>;
 }
 
 export interface QueryFeaturesParams {

@@ -11,6 +11,8 @@
 //     ']  -  built on ' +
 //     new Date(RAMP.version.timestamp).toLocaleDateString();
 
+window.debugInstance = null;
+
 let config = {
     configs: {
         en: {
@@ -492,6 +494,9 @@ const rInstance = RAMP.createInstance(
     config,
     options
 );
+
+window.debugInstance = rInstance;
+
 rInstance.fixture.addDefaultFixtures().then(() => {
     rInstance.panel.open('legend-panel');
 });
