@@ -249,17 +249,21 @@ export class FileUtils extends APIScope {
 
         // change latitude and longitude fields from esriFieldTypeString -> esriFieldTypeDouble if they exist
         if (options) {
-            if (options.latfield) {
+            if (options.latField) {
                 const latField = configPackage.fields.find(
-                    field => field.name === options.latfield
+                    field =>
+                        field.name === options.latField ||
+                        field.alias === options.latField
                 );
                 if (latField) {
                     latField.type = 'double';
                 }
             }
-            if (options.lonfield) {
+            if (options.lonField) {
                 const longField = configPackage.fields.find(
-                    field => field.name === options.lonfield
+                    field =>
+                        field.name === options.lonField ||
+                        field.alias === options.lonField
                 );
                 if (longField) {
                     longField.type = 'double';

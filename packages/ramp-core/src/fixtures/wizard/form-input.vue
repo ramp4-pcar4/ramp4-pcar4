@@ -187,6 +187,10 @@ interface SelectionOption {
 export default defineComponent({
     name: 'WizardInputV',
     props: {
+        defaultOption: {
+            type: Boolean,
+            default: false
+        },
         formatError: {
             type: Boolean,
             default: false
@@ -233,6 +237,17 @@ export default defineComponent({
         },
         validationMessages: {
             type: Object as PropType<ValidationMsgs>
+        }
+    },
+
+    created() {
+        // set default selected value to be first option if not already defined
+        if (
+            this.defaultOption &&
+            this.modelValue === '' &&
+            this.options.length
+        ) {
+            this.$emit('update:modelValue', this.options[0].value);
         }
     },
 

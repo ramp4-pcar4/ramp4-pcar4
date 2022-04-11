@@ -101,7 +101,13 @@ export class FileLayer extends AttribLayer {
         // TODO figure out how a sourceProjection option would work. who is supplying this? an API caller? RAMP UI / Config really doesnt support it.
         const opts = {
             layerId: this.origRampConfig.id || '',
-            targetSR: this.$iApi.geo.map.getSR()
+            targetSR: this.$iApi.geo.map.getSR(),
+            ...(this.origRampConfig.latField && {
+                latField: this.origRampConfig.latField
+            }),
+            ...(this.origRampConfig.longField && {
+                lonField: this.origRampConfig.longField
+            })
         };
 
         this.esriJson = await this.$iApi.geo.layer.files.geoJsonToEsriJson(

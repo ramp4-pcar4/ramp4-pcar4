@@ -136,8 +136,10 @@ export class LegendEntry extends LegendItem {
 
         // read the toggleSymbology from the layer fixture config
         this._toggleSymbology =
-            legendEntry.layerLegendConfigs[legendEntry.layerId]
-                ?.toggleSymbology ?? true;
+            legendEntry.layerLegendConfigs !== undefined
+                ? legendEntry.layerLegendConfigs[legendEntry.layerId]
+                      ?.toggleSymbology ?? true
+                : true;
 
         if (legendEntry.layer !== undefined) {
             // the legend entry config provides a layer, load layer properties from it
