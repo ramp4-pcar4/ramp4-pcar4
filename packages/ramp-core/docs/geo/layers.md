@@ -38,13 +38,13 @@ Every `Layer` object has a method `.getLayerTree()`. This returns a heirarchical
 
 Most layers have one single logical component and a basic tree.
 
-```json
+```js
 {
-    "layerIdx": 0,
-    "name": "Fancy Layer",
-    "children": [],
-    "isLayer": true,
-    "uid": "ABCDskipafewYbecauseihavetogo4aP&Z4U"
+    layerIdx: 0,
+    name: "Fancy Layer",
+    children: [],
+    isLayer: true,
+    uid: "ABCDskipafewYbecauseihavetogo4aP&Z4U"
 }
 ```
 
@@ -52,43 +52,43 @@ A Map Image Layer composed of multiple sources could have a more structured resu
 
 Note that subfolder structures do not have a uid; they exist to organize the heirarchy but have no related `Layer` object.
 
-```json
+```js
 {
-    "layerIdx": -1,
-    "name": "Restaurants",
-    "children": [
+    layerIdx: -1,
+    name: "Restaurants",
+    children: [
         {
-            "layerIdx": 4,
-            "name": "Fine Dining",
-            "children": [],
-            "isLayer": true,
-            "uid": "432rubbishasdfsdfad"
+            layerIdx: 4,
+            name: "Fine Dining",
+            children: [],
+            isLayer: true,
+            uid: "432rubbishasdfsdfad"
         },
         {
-            "layerIdx": 6,
-            "name": "Fast Food",
-            "children": [
+            layerIdx: 6,
+            name: "Fast Food",
+            children: [
                 {
-                    "layerIdx": 7,
-                    "name": "Burger Joints",
-                    "children": [],
-                    "isLayer": true,
-                    "uid": "765rubbishasdfsdfad"
+                    layerIdx: 7,
+                    name: "Burger Joints",
+                    children: [],
+                    isLayer: true,
+                    uid: "765rubbishasdfsdfad"
                 },
                 {
-                    "layerIdx": 9,
-                    "name": "Pizza Parlours",
-                    "children": [],
-                    "isLayer": true,
-                    "uid": "988rubbishasdfsdfad"
+                    layerIdx: 9,
+                    name: "Pizza Parlours",
+                    children: [],
+                    isLayer: true,
+                    uid: "988rubbishasdfsdfad"
                 }
             ],
-            "isLayer": false,
-            "uid": ""
+            isLayer: false,
+            uid: ""
         }
     ],
-    "isLayer": false,
-    "uid": "ABCDskipafewYbecauseihavetogo4aP&Z4U"
+    isLayer: false,
+    uid: "ABCDskipafewYbecauseihavetogo4aP&Z4U"
 }
 ```
 
@@ -253,36 +253,36 @@ The `.runIdentify()` method will execute an identify request on the layer. Ident
 
 Options parameter object:
 
-```json
+```js
 {
     geometry,       // The geometry to identify against. A RAMP API Geometry. Intersecting features will be returned.
     returnGeometry, // An optional boolean to indicate the geometry of the result features should also be downloaded. Defaults to `false`
     sublayerIds,    // An optional array of sublayer uids (string) or server indicies (number) that indicate which sublayers to include in the request.
-    tolerance;      // An optional integer number to buffer the geometry. Is generally only useful if the geometry is a point. The number represents pixels to buffer by (so 5 would be a 10x10 pixel square around the point at the current map scale level).
-}
+    tolerance       // An optional integer number to buffer the geometry. Is generally only useful if the geometry is a point.
+}                   // The number represents pixels to buffer by (so 5 would be a 10x10 pixel square around the point at the current map scale level).
 ```
 
-The result object is on the fancy side, as there are a few levels identify acts up. The topmost level is tied to the `Layer` object, providing the layer `uid`, a promise that resolves on completion, and the array of results. The result array has an entry for each logical layer involved, including the logical `uid`, a loading flag, and another array of results (called items) for the logical layer. The items array contains a format specification and a property containing data that aligns to the given format.
+The result object is on the fancy side, as there are a few levels identify acts up. The topmost array of results has an entry for each logical layer involved, including the logical `uid`, a loading flag and promise, and another array of individual hits (called items) for the logical layer. The loading properties here indicate when the items array as been populated, but be aware that individual items still may be downloading their own data. 
+The items array contains a loading flag and promise to track the download of its data, a format specification and a property to contain data that aligns to the given format.
 
 TODO flush out formats once things are nailed down.
 
 ```js
-{
-    parentUid,               // uid of the layer object
-    done,                    // a promise, resolves when request is done
-    results: [
-        {
-            uid,             // uid of the sublayer / logical layer this set of results belongs to
-            isLoading,       // boolean flag indicating if items are still loading
-            items: [
-                {
-                    format,  // string indicating what format the data is in
-                    data     // the data describing an item that satisfied the identify request
-                },
-            ]
-        },
-    ]
-}
+[
+    {
+        uid,             // uid of the sublayer / logical layer this set of results belongs to
+        loaded,          // boolean flag indicating if items array has been populated
+        loading,         // promise that resolves when items array is populated
+        items: [
+            {
+                loaded,  // boolean flag indicating if the item data has been populated
+                loading, // promise that resolves when item data is populated
+                format,  // string indicating what format the data is in
+                data     // the data describing an item that satisfied the identify request
+            },
+        ]
+    },
+]
 ```
 
 Example call
@@ -291,7 +291,13 @@ Example call
 var opts = { geometry: myPoint, tolerance: 3 };
 var result = myLayer.runIdentify(opts);
 await result.done;
-result.results.forEach(r => processResults(r));
+result.forEach(r => {
+    r.loading.then(() => {
+        r.items.forEach(i => {
+            i.loading.then(() => processResult(i));
+        });
+    });
+});
 ```
 
 ## Attribute Related Operations

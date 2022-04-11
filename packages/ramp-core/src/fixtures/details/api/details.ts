@@ -41,10 +41,10 @@ export class DetailsAPI extends FixtureInstance {
     /**
      * Provided with the data for a single feature, open the details panel directly to the feature screen.
      *
-     * @param {{data: any, uid: string}} featureData
+     * @param {{data: any, uid: string, format: string}} featureData
      * @memberof DetailsAPI
      */
-    openFeature(featureData: { data: any; uid: string }) {
+    openFeature(featureData: { data: any; uid: string; format: string }) {
         // Clear the payload in the store
         this.$vApp.$store.set(DetailsStore.payload, []);
 
@@ -56,11 +56,20 @@ export class DetailsAPI extends FixtureInstance {
 
         // Open or update the items panel
         let itemsPanel = this.$iApi.panel.get('details-items-panel');
+        // result: is IdentifyResult class
         let props: any = {
             result: {
-                items: [{ data: featureData.data }],
+                items: [
+                    {
+                        data: featureData.data,
+                        format: featureData.format,
+                        loaded: true,
+                        loading: Promise.resolve()
+                    }
+                ],
                 uid: featureData.uid,
-                loadPromise: Promise.resolve()
+                loading: Promise.resolve(),
+                loaded: true
             }
         };
         if (!itemsPanel.isOpen) {
