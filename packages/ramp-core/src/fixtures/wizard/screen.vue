@@ -10,8 +10,10 @@
 
         <template #content>
             <stepper :activeStep="step">
+                <!-- Upload data wizard step -->
                 <stepper-item :title="$t('wizard.upload.title')" :summary="url">
                     <form name="upload" @submit="onUploadContinue">
+                        <!-- Upload a file -->
                         <wizard-input
                             type="file"
                             name="file"
@@ -21,6 +23,8 @@
                         >
                         </wizard-input>
                         <span class="block text-center mb-10">or</span>
+
+                        <!-- Provide layer URL -->
                         <wizard-input
                             type="url"
                             name="url"
@@ -47,46 +51,15 @@
                             :disabled="!goNext"
                         ></wizard-form-footer>
                     </form>
-                    <!-- <FormulateForm
-                        name="upload"
-                        @submit="onUploadContinue"
-                        @input="$formulate.resetValidation('upload')"
-                        #default="{ hasErrors }"
-                    >
-                        <FormulateInput
-                            type="file"
-                            name="file"
-                            :label="$t('wizard.upload.file.label')"
-                            :help="$t('wizard.upload.file.help')"
-                            v-model="formulateFile"
-                            :uploader="uploadFile"
-                            accept=".geojson,.json,.csv,.zip"
-                        />
-                        <span class="block text-center mb-10">or</span>
-                        <FormulateInput
-                            type="url"
-                            name="url"
-                            :label="$t('wizard.upload.url.label')"
-                            v-model.trim="url"
-                            validation="bail|required|url"
-                            :validation-messages="{
-                                required: $t('wizard.upload.url.error.required'),
-                                url: $t('wizard.upload.url.error.url')
-                            }"
-                        />
-                        <wizard-form-footer
-                            @submit="$formulate.submit('upload')"
-                            @cancel="goToStep(0)"
-                            :disabled="hasErrors"
-                        ></wizard-form-footer>
-                    </FormulateForm> -->
                 </stepper-item>
 
+                <!-- Select format wizard step -->
                 <stepper-item
                     :title="$t('wizard.format.title')"
                     :summary="typeSelection"
                 >
                     <form name="format" @submit="onSelectContinue">
+                        <!-- List of file/service types based on layer -->
                         <wizard-input
                             type="select"
                             name="type"
@@ -130,37 +103,9 @@
                             :disabled="false"
                         ></wizard-form-footer>
                     </form>
-                    <!-- <FormulateForm
-                        name="format"
-                        #default="{ hasErrors }"
-                        @submit="onSelectContinue"
-                        @input="$formulate.resetValidation('format')"
-                    >
-                        <FormulateInput
-                            type="select"
-                            name="type"
-                            :size="isFileLayer ? fileTypeOptions.length : serviceTypeOptions.length"
-                            :label="
-                                isFileLayer
-                                    ? $t('wizard.format.type.file')
-                                    : $t('wizard.format.type.service')
-                            "
-                            v-model="typeSelection"
-                            :options="isFileLayer ? fileTypeOptions : serviceTypeOptions"
-                            validation="required"
-                            :validation-messages="{
-                                required: $t('wizard.format.type.error.required')
-                            }"
-                            @keydown.stop
-                        />
-                        <wizard-form-footer
-                            @submit="$formulate.submit('format')"
-                            @cancel="goToStep(0)"
-                            :disabled="hasErrors"
-                        ></wizard-form-footer>
-                    </FormulateForm> -->
                 </stepper-item>
 
+                <!-- Configure layer wizard step -->
                 <stepper-item :title="$t('wizard.configure.title')">
                     <form name="configure" @submit="onConfigureContinue">
                         <wizard-input
@@ -184,6 +129,7 @@
                             name="nameField"
                             v-model="layerInfo.config.nameField"
                             :label="$t('wizard.configure.nameField.label')"
+                            :defaultOption="true"
                             :options="fieldOptions()"
                         >
                         </wizard-input>
@@ -202,7 +148,8 @@
                             v-if="layerInfo.configOptions.includes(`latField`)"
                             type="select"
                             name="latField"
-                            v-model="layerInfo.config.lonField"
+                            v-model="layerInfo.config.latField"
+                            :defaultOption="true"
                             :label="$t('wizard.configure.latField.label')"
                             :options="fieldOptions()"
                         >
@@ -212,10 +159,12 @@
                             type="select"
                             name="longField"
                             v-model="layerInfo.config.longField"
+                            :defaultOption="true"
                             :label="$t('wizard.configure.longField.label')"
                             :options="fieldOptions()"
                         >
                         </wizard-input>
+                        <!-- For map image layers -->
                         <wizard-input
                             v-if="
                                 layerInfo.configOptions.includes(`layerEntries`)
@@ -243,72 +192,6 @@
                             :disabled="!finishStep"
                         ></wizard-form-footer>
                     </form>
-                    <!-- <FormulateForm
-                        name="configure"
-                        #default="{ hasErrors }"
-                        @submit="onConfigureContinue"
-                        @input="$formulate.resetValidation('configure')"
-                    >
-                        <FormulateInput
-                            v-if="layerInfo.configOptions.includes(`name`)"
-                            type="text"
-                            name="name"
-                            :label="$t('wizard.configure.name.label')"
-                            :value="layerInfo.config.name"
-                            validation="required"
-                            :validation-messages="{
-                                required: $t('wizard.configure.name.error.required')
-                            }"
-                        />
-                        <FormulateInput
-                            v-if="layerInfo.configOptions.includes(`nameField`)"
-                            type="select"
-                            name="nameField"
-                            :label="$t('wizard.configure.nameField.label')"
-                            :value="layerInfo.config.nameField"
-                            :options="fieldOptions"
-                        />
-                        <FormulateInput
-                            v-if="layerInfo.configOptions.includes(`tooltipField`)"
-                            type="select"
-                            name="tooltipField"
-                            :label="$t('wizard.configure.tooltipField.label')"
-                            :value="layerInfo.config.tooltipField"
-                            :options="fieldOptions"
-                        />
-                        <FormulateInput
-                            v-if="layerInfo.configOptions.includes(`latField`)"
-                            type="select"
-                            name="latField"
-                            :label="$t('wizard.configure.latField.label')"
-                            :value="layerInfo.config.lonField"
-                            :options="fieldOptions"
-                        />
-                        <FormulateInput
-                            v-if="layerInfo.configOptions.includes(`longField`)"
-                            type="select"
-                            name="longField"
-                            :label="$t('wizard.configure.longField.label')"
-                            :value="layerInfo.config.longField"
-                            :options="fieldOptions"
-                        />
-                        <FormulateInput
-                            v-if="layerInfo.configOptions.includes(`layerEntries`)"
-                            type="select"
-                            name="layerEntries"
-                            :label="$t('wizard.configure.layerEntries.label')"
-                            :help="$t('wizard.configure.layerEntries.help')"
-                            :options="sublayerOptions"
-                            multiple="true"
-                            validation="required"
-                            @keydown.stop
-                        />
-                        <wizard-form-footer
-                            @submit="$formulate.submit('configure')"
-                            @cancel="goToStep(1)"
-                            :disabled="hasErrors"
-                        ></wizard-form-footer>
-                    </FormulateForm> -->
                 </stepper-item>
             </stepper>
         </template>
@@ -328,10 +211,6 @@ import WizardFormFooterV from './form-footer.vue';
 import WizardInputV from './form-input.vue';
 import StepperItemV from './stepper-item.vue';
 import StepperV from './stepper.vue';
-
-interface FormulateFile {
-    files: Array<File>;
-}
 
 export default defineComponent({
     name: 'WizardScreenV',
@@ -413,7 +292,6 @@ export default defineComponent({
             this.step === WizardStep.CONFIGURE
         ) {
             this.formatError = true;
-            // this.setError('format', 'type', this.$t('wizard.format.type.error.invalid') as string);
             this.goToStep(WizardStep.FORMAT);
         }
 
@@ -428,12 +306,6 @@ export default defineComponent({
 
             reader.onerror = () => {
                 this.formulateFile = {};
-                // this.formulateFile?.files[0].removeFile();
-                // this.setError(
-                //     'upload',
-                //     'file',
-                //     this.$t('wizard.upload.file.error.failed') as string
-                // );
             };
 
             reader.onload = e => {
@@ -441,11 +313,6 @@ export default defineComponent({
                 this.url = file.name;
                 this.onUploadContinue(e);
             };
-
-            // this was used by vue-formulate previously
-            // reader.onprogress = event => {
-            //     progress(Math.min(Math.round((event.loaded / event.total) * 100), 100));
-            // };
 
             reader.readAsArrayBuffer(file);
         },
@@ -458,7 +325,6 @@ export default defineComponent({
                 setTimeout(() => {
                     // reset upload file
                     this.formulateFile = {};
-                    // this.formulateFile?.files[0].removeFile();
                 }, 500);
             }
 
@@ -484,12 +350,6 @@ export default defineComponent({
 
             if (!this.layerInfo || featureError) {
                 this.formatError = true;
-                // this.setError(
-                //     'format',
-                //     'type',
-                //     this.$t('wizard.format.type.error.invalid') as string
-                // );
-                // placeholder value for layerInfo to prevent prod build errors
                 this.layerInfo = { config: null, configOptions: [] };
                 return;
             }
@@ -524,7 +384,7 @@ export default defineComponent({
             this.goToStep(WizardStep.UPLOAD);
         },
 
-        // options for fields selectors
+        // default options for fields selectors
         fieldOptions() {
             return this.layerInfo!.fields.map((field: any) => {
                 return {
@@ -532,6 +392,11 @@ export default defineComponent({
                     label: field.alias || field.name
                 };
             });
+        },
+
+        // options for lat/long field selectors
+        latLonOptions(fieldName: string) {
+            // TODO: if lat/long fields parsing is added when extracting CSV fields return that here
         },
 
         // options for sublayers selector
@@ -603,8 +468,6 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 ::v-deep {
-    @import '@braid/vue-formulate/themes/snow/snow.scss';
-
     .formulate-input {
         font-family: unset;
 
