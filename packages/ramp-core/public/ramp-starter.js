@@ -466,6 +466,12 @@ let config = {
                         value: 'All Your Base are Belong to Us'
                     },
                     fileName: 'ramp-pcar-4-map-carte'
+                },
+                geosearch: {
+                    geoNames:
+                        'https://geogratis.gc.ca/services/geoname/@{language}/geonames.json',
+                    geoLocation:
+                        'https://geogratis.gc.ca/services/geolocation/@{language}/locate'
                 }
             },
             system: { animate: true }

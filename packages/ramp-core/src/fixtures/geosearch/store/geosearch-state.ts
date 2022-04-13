@@ -1,3 +1,4 @@
+import { GeosearchConfig } from './definitions';
 import { GeoSearchUI } from './geosearch.feature';
 
 export class GeosearchState {
@@ -10,10 +11,12 @@ export class GeosearchState {
     resultsVisible: boolean;
     loadingResults: boolean;
 
-    constructor() {
+    constructor(geosearchConfig: GeosearchConfig) {
         // initialize geosearch feature service that contains all key geosearch functionality - running queries, fetch initial filters, update filters, etc.
         let language = 'en';
-        this.GSservice = new GeoSearchUI({ language });
+
+        // add language property to the geosearch config
+        this.GSservice = new GeoSearchUI(language, geosearchConfig);
         // query params contains filter types
         let queryParams: QueryParams = {
             type: '',

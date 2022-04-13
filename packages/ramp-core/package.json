@@ -10,7 +10,8 @@
         "lint": "vue-cli-service lint",
         "docs:build": "typedoc && vuepress build docs",
         "docs:dev": "typedoc && vuepress dev docs",
-        "host": "http-server . -p 3001 -c-1"
+        "host": "http-server . -p 3001 -c-1",
+        "fetchdata": "node src/fixtures/geosearch/scripts/provinceCompiler.js && node src/fixtures/geosearch/scripts/typesCompiler.js"
     },
     "dependencies": {
         "@arcgis/core": "4.22.2",
@@ -31,6 +32,7 @@
         "linkify-html": "~3.0.4",
         "linkifyjs": "~3.0.4",
         "marked": "^4.0.10",
+        "node-fetch": "2.6.1",
         "proj4": "2.6.0",
         "ramp-locale-loader": "workspace:*",
         "ramp-sample-fixtures": "workspace:*",

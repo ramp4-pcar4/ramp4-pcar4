@@ -40,31 +40,40 @@ const CODE_TO_ABBR = {
  * {
  *      excludeTypes: string | Array<string>,
  *      language: string,
- *      geoLocateUrl: string,
- *      geoNameUrl: string
+ *      geoNames: string;
+ *      geoLocation: string;
  * }
  */
 export class GeoSearchUI {
-    config: defs.MainConfig;
+    config: defs.GeosearchConfig;
 
-    constructor(uConfig: any) {
-        // set default URLS if none provided and search/replace language in string (if exists)
-        const language = uConfig.language ? uConfig.language : 'en';
-        let geoLocateUrl = uConfig.geoLocateUrl
-            ? uConfig.geoLocateUrl
-            : GEO_LOCATE_URL;
-        let geoNameUrl = uConfig.geoNameUrl
-            ? uConfig.geoNameUrl
-            : GEO_NAMES_URL;
+    constructor(language: string, uConfig: any) {
+        // If there's a geosearch config in the configuration file, set the URLs if they are provided.
+        let geoLocateUrl;
+        let geoNameUrl;
+
+        if (uConfig) {
+            geoLocateUrl = uConfig.geoLocation
+                ? uConfig.geoLocation
+                : GEO_LOCATE_URL;
+            geoNameUrl = uConfig.geoNames ? uConfig.geoNames : GEO_NAMES_URL;
+        } else {
+            // If the URLs are not provided, set them to be defaults.
+            geoLocateUrl = GEO_LOCATE_URL;
+            geoNameUrl = GEO_NAMES_URL;
+        }
+
         geoLocateUrl = geoLocateUrl.replace('@{language}', language);
         geoNameUrl = geoNameUrl.replace('@{language}', language);
 
-        // set default config values
-        const categories = uConfig.settings ? uConfig.settings.categories : [];
-        const sortOrder = uConfig.settings ? uConfig.settings.sortOrder : [];
-        const maxResults = uConfig.settings ? uConfig.settings.maxResults : 100;
-        const officialOnly = uConfig.settings
-            ? uConfig.settings.officialOnly
+        // set default config values, if settings object is provided
+        const categories = uConfig?.settings ? uConfig.settings.categories : [];
+        const sortOrder = uConfig?.settings ? uConfig.settings.sortOrder : [];
+        const maxResults = uConfig?.settings
+            ? uConfig.settings.maxResults
+            : 100;
+        const officialOnly = uConfig?.settings
+            ? uConfig?.settings.officialOnly
             : false;
 
         // match a new config object with the one defined in definitions.ts
@@ -80,10 +89,10 @@ export class GeoSearchUI {
             officialOnly
         };
         // remove any types to be excluded from config
-        this.config.types.filterValidTypes(uConfig.excludeTypes);
+        this.config.types.filterValidTypes(uConfig?.excludeTypes);
         (<any>this)._provinceList = [];
         (<any>this)._typeList = [];
-        (<any>this)._excludedTypes = uConfig.excludeTypes || [];
+        (<any>this)._excludedTypes = uConfig?.excludeTypes || [];
     }
     get provinceList() {
         return (<any>this)._provinceList;
