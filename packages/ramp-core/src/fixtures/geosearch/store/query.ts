@@ -1,6 +1,6 @@
 import * as defs from './definitions';
 
-export function make(config: defs.MainConfig, query: string): Query {
+export function make(config: defs.GeosearchConfig, query: string): Query {
     const latLngRegDD =
         /^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)(\s*[,|;\s]\s*)[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)[*]$/;
     const ntsReg = /^\d{2,3}[A-P]/;
@@ -28,14 +28,14 @@ export function make(config: defs.MainConfig, query: string): Query {
 }
 
 export class Query {
-    config: defs.MainConfig;
+    config: defs.GeosearchConfig;
     query: string | undefined;
     results: defs.NameResultList = [];
     onComplete: any;
     latLongResult: any;
     featureResults: defs.queryFeatureResults = undefined;
 
-    constructor(config: defs.MainConfig, query?: string) {
+    constructor(config: defs.GeosearchConfig, query?: string) {
         this.query = query;
         this.config = config;
     }
@@ -118,7 +118,7 @@ export class Query {
 }
 
 export class LatLongQuery extends Query {
-    constructor(config: defs.MainConfig, query: string) {
+    constructor(config: defs.GeosearchConfig, query: string) {
         super(config, query);
         let coords: number[];
 
@@ -164,7 +164,7 @@ export class LatLongQuery extends Query {
 }
 
 export class FSAQuery extends Query {
-    constructor(config: defs.MainConfig, query: string) {
+    constructor(config: defs.GeosearchConfig, query: string) {
         // extract the first three characters to conduct FSA search
         query = query.substring(0, 3).toUpperCase();
         super(config, query);
@@ -235,7 +235,7 @@ export class NTSQuery extends Query {
     unit!: defs.NTSResult;
     mapSheets: defs.NTSResultList = [];
 
-    constructor(config: defs.MainConfig, query: string) {
+    constructor(config: defs.GeosearchConfig, query: string) {
         super(config, query);
         // front pad 0 if NTS starts with two digits
         query = isNaN(parseInt(query[2])) ? '0' + query : query;
