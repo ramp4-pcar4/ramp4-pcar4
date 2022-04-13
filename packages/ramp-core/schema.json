@@ -1805,12 +1805,10 @@
                 "geosearch": {
                     "$ref": "#/$defs/geosearch",
                     "default": {
-                        "serviceUrls": {
-                            "geoNames": "https://geogratis.gc.ca/services/geoname/@{language}/geonames.json",
-                            "geoLocation": "https://geogratis.gc.ca/services/geolocation/@{language}/locate",
-                            "provinces": "",
-                            "types": ""
-                        }
+                        "geoNames": "https://geogratis.gc.ca/services/geoname/@{language}/geonames.json",
+                        "geoLocation": "https://geogratis.gc.ca/services/geolocation/@{language}/locate",
+                        "provinces": "",
+                        "types": ""
                     },
                     "description": "Provides configuration to geosearch. If not supplied, default geosearch services are used."
                 },

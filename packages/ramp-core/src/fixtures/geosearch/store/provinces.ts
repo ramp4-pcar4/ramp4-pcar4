@@ -1,7 +1,5 @@
-import * as jsonprovs from './data/provinces.json';
 import * as defs from './definitions';
-
-const provinceObj: { [key: string]: Provinces } = {};
+const fetch = require('node-fetch');
 const fsaToProv = <any>{
     A: 10,
     B: 12,
@@ -22,15 +20,29 @@ const fsaToProv = <any>{
     X: [62, 61],
     Y: 60
 };
-const provs: defs.GenericObjectType = (<any>jsonprovs).default;
+
+const provs: any = {
+    en: {},
+    fr: {}
+};
 
 class Provinces {
     list: defs.GenericObjectType = {};
 
-    constructor(language: string) {
-        Object.keys(provs[language]).forEach(provKey => {
-            this.list[provKey] = (<any>provs[language])[provKey];
-        });
+    constructor(language: string, url: string) {
+        const fetchProvinces = fetch(url)
+            .then((res: any) => res.json())
+            .then((json: any) => {
+                // Update the provinces array.
+                json.definitions.forEach(
+                    (type: any) =>
+                        (provs[language][type.code] = type.description)
+                );
+
+                Object.keys(provs[language]).forEach(provKey => {
+                    this.list[provKey] = (<any>provs[language])[provKey];
+                });
+            });
     }
 
     // return list of province codes based on FSA search input query
@@ -50,8 +62,6 @@ class Provinces {
     }
 }
 
-export default function (language: string): defs.Provinces {
-    return (provinceObj[language] = provinceObj[language]
-        ? provinceObj[language]
-        : new Provinces(language));
+export default function (language: string, url: string): defs.Provinces {
+    return new Provinces(language, url);
 }
