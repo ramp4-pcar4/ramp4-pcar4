@@ -160,22 +160,22 @@
                             "default": "",
                             "description": "Endpoint url for geoLocation service."
                         },
-                        "provinces": {
+                        "geoProvince": {
                             "type": "string",
-                            "default": "",
+                            "default": "https://geogratis.gc.ca/services/geoname/@{language}/codes/province.json",
                             "description": "Endpoint url for provinces service."
                         },
-                        "types": {
+                        "geoTypes": {
                             "type": "string",
-                            "default": "",
+                            "default": "https://geogratis.gc.ca/services/geoname/@{language}/codes/concise.json",
                             "description": "Endpoint url for types service."
                         }
                     },
                     "required": [
                         "geoNames",
                         "geoLocation",
-                        "provinces",
-                        "types"
+                        "geoProvince",
+                        "geoTypes"
                     ]
                 }
             },
@@ -1805,12 +1805,10 @@
                 "geosearch": {
                     "$ref": "#/$defs/geosearch",
                     "default": {
-                        "serviceUrls": {
-                            "geoNames": "https://geogratis.gc.ca/services/geoname/@{language}/geonames.json",
-                            "geoLocation": "https://geogratis.gc.ca/services/geolocation/@{language}/locate",
-                            "provinces": "",
-                            "types": ""
-                        }
+                        "geoNames": "https://geogratis.gc.ca/services/geoname/@{language}/geonames.json",
+                        "geoLocation": "https://geogratis.gc.ca/services/geolocation/@{language}/locate",
+                        "geoProvince": "https://geogratis.gc.ca/services/geoname/@{language}/codes/province.json",
+                        "geoTypes": "https://geogratis.gc.ca/services/geoname/@{language}/codes/concise.json"
                     },
                     "description": "Provides configuration to geosearch. If not supplied, default geosearch services are used."
                 },
