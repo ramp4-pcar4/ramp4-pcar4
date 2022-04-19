@@ -4,10 +4,10 @@
 
 RAMP - The Reusable Accessible Mapping Platform, is a Javascript based web mapping platform that provides a reusable, responsive and WCAG 2.1 AA compliant common viewer for the Government of Canada. The fourth incarnation embraces the following large-scale changes
 
-- Updating the UI framework from Angular 1 to Vue 3
-- Updating the ESRI Mapping API from v3 to v4
-- An application architecture and API that is more open and adjustable
-- UI re-design with mobile use in mind
+-   Updating the UI framework from Angular 1 to Vue 3
+-   Updating the ESRI Mapping API from v3 to v4
+-   An application architecture and API that is more open and adjustable
+-   UI re-design with mobile use in mind
 
 This project is currently in development. Incomplete features, bugs, and breaking changes to the API and configuration schema should be expected until the `v1.0.0` release. The previous version can be found [here](https://github.com/fgpv-vpgf/fgpv-vpgf).
 
@@ -15,81 +15,66 @@ This project is currently in development. Incomplete features, bugs, and breakin
 
 ## Local development
 
-### Editor
+### public vs demos folders
 
-[Visual Studio Code](https://code.visualstudio.com) is the recommended editor.
+The `public` folder is a **static only** folder. It contains the help md files and a `samples` subfolder containing end-user demo assets and ramp library source code in various formats (es, umd, iife). Files in this folder are not processed by vite and therefore cannot reference outside files. This is useful for testing if things are broken between the develop and production build. Later on these files will be published to npm, unpkg and others.
 
-Install the [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) extension and set it as your default formatter with "Format on save" enabled.
+To test the files in the `public/samples` folder locally:
 
-You can also format your code manually by running the command `rush lint`.
-
-### Install build tools
-
-Download and install [Node.js v14.15.4](https://nodejs.org/dist/v14.15.4/node-v14.15.4-x64.msi).
-
-Install [Rushjs](https://rushjs.io) globally with the command `npm install -g @microsoft/rush`.
-
-### Installing dependencies
-
-Use Rush to install dependencies:
-
-```
-$ rush install
+```js
+npm run build
+npm run preview
 ```
 
-For a list of optional arguments see the [help page](https://rushjs.io/pages/commands/rush_install/).
+Then open `http://localhost:5050/samples/index.html` in your browser.
 
-Avoid using `rush update` unless you need to update the shrinkwrap file (like when a dependency is added/modified in a `package.json` file).
+The `demos` folder **is** processed by vite and can therefore reference any source file in the repo. This is the starting point for local development. For example, the `demos/starter-scripts/main.js` file imports `{ createInstance, geo } from '@/main';` whereas `public/samples/starter-scripts/main.js` doesn't since RAMP is globally defined by the `index.html` file when it loads `<script src="./lib/ramp.iife.js"></script>`.
 
-Do not use `rush update --full` unless you are tasked with bumping up all dependencies to the latest SemVer-compatible version.
+Run `npm run dev` then open `http://localhost:3000/demos/index.html` in your browser.
 
-### Running a development build
+During build, both `demos` and `public` folders are placed into `dist`.
 
-```
-$ rush serve
-```
+### Recommended IDE Setup
 
-Fun test page will be found at `http://localhost:8080/`
+[VSCode](https://code.visualstudio.com/) with the recommended extensions (VSCode should bug you to install them).
 
-### Idiosyncrasies of the serve build
+#### Important:
 
-Rush is running the `serve` command in all the packages in parallel and ignoring dependency trees. The packages in turn run `webpack --watch` in one form or another to watch and recompile them as files change since Rush itself [cannot run watch tasks in the background right now](https://github.com/microsoft/rushstack/issues/1151). Due to the way Rush is implemented, the `serve` command is executed in packages in the alphabetic order and only the output from the first package's watch.
+1. Install [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar).
+2. Disable/remove [Vetur](https://marketplace.visualstudio.com/items?itemName=octref.vetur).
+3. Type `@builtin typescript` in the search box on the VSCode extensions tab and **disable** "TypeScript and JavaScript Language Features". Volar has its own TS language server so we don't want to run two concurrently.
 
-The alphabetic order makes sense because the `serve` command explicitly ignores dependencies and runs in parallel. Otherwise, it wouldn't have been possible to run `watch` tasks simultaneously--`rush serve` would just be stuck waiting for the first `watch` to return something before proceeding to the next. The only way to control the execution order is by package names (at least this seems to be the case right now).
+### Project Setup
 
-Due to this technicality, `ramp-core` package should remain the first package on the list as its output is the main indication of the `serve` task progress (`geoapi` and `sample-fixtures` compile very quickly compared to `core`). When adding a new package to the monorepo, its name should not alphabetically precede `ramp-core`.
+Download the latest [Node LTS version](https://nodejs.org/en/download/), currently v16.14.x. Node current also works (v17.9.x).
 
-## Testing
-
-`rush test:e2e` will run a UI-less (headless) version of cypress that will provide output saying which tests passed/failed.
-
-If you want to have a UI or have the tests react to changes in either the code or testing files, you should run `rush test:e2e-ui`.
-
-### Building a prod library
-
-```
-$ rush build
+```sh
+npm install
 ```
 
-To serve a production build, run `rush host`, and open `http://localhost:3001/host/`
+### Compile and Hot-Reload for Development
 
-### Idiosyncrasies of the prod build
-
-Since we are using dynamic imports in the code, webpack generates a chunk file for every source file. This is happening because webpack doesn't know which files/components will be loaded exactly. This creates extra files in the `dist` folder but it doesn't mean all these extra files will be loaded. See this issue for more details: https://github.com/webpack/webpack/issues/4807
-
-In the `dist` folder you might see three `snowman` files because there are three snowman source files:
-
-```
-RAMP.umd.snowman.js
-RAMP.umd.snowman-appbar-button.js
-RAMP.umd.snowman-snowman.js
+```sh
+npm run dev
 ```
 
-If you host a production build, only `RAMP.umd.snowman.js` is loaded, as it should be because the `snowman` fixture doesn't use any dynamic imports. Contents of `RAMP.umd.snowman-appbar-button.js` and `RAMP.umd.snowman-snowman.js` are included in `RAMP.umd.snowman.js` that's why it's enough to just load this one. The other two files are generated because it's impossible for the build tool to tell that they are not dynamically imported as well.
+Open `http://localhost:3000` in your browser.
 
-This issue is annoying, but not harmful (apart from consuming extra storage space with unused files). Maybe it's possible to use tree-shaking to manually specify for which files chunks should not be created to reduce the number of files. See here: https://webpack.js.org/guides/tree-shaking/
+### Build for production
 
-## Contributing
+```sh
+npm run build
+```
+
+The production files will be placed in the `dist` folder.
+
+### Preview production build (after running build)
+
+```sh
+npm run preview
+```
+
+Open `http://localhost:5050` in your browser.
 
 ### Demo Builds
 
