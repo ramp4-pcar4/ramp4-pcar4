@@ -63,3 +63,4 @@ common/temp/**
 package-deps.json
 
 dist/
+.DS_Store
