@@ -2,7 +2,7 @@ on:
     pull_request:
         branches: [master]
 env:
-    NODE_VERSION: '14.15.4'
+    NODE_VERSION: '17.9.0'
 jobs:
     pr-checks:
         name: PR Status Checks
@@ -19,14 +19,14 @@ jobs:
               run: echo "##[set-output name=name;]$(echo ${GITHUB_REF#refs/*/})"
               id: extract_ref
 
-            - name: Check pnpm-lock.yaml is up to date
+            - name: Check if Typescript is happy
               shell: bash
-              run: node common/scripts/install-run-rush.js install
+              run: echo "No"
 
-            - name: Check everything builds without errors
+            - name: Check if ESLint is happy
               shell: bash
-              run: node common/scripts/install-run-rush.js build
+              run: echo "No"
 
-            - name: Check ramp-core has been linted
+            - name: Check if prettier is happy
               shell: bash
-              run: node common/scripts/install-run-rush.js lint:check
+              run: echo "Yes"

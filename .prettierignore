@@ -1,2 +1,3 @@
 docs
-public/help
+*.md
+dist

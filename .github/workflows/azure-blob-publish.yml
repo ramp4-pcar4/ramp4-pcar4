@@ -20,10 +20,9 @@ jobs:
             - name: npm install, build
               shell: bash
               run: |
-                  npm i
-                  npm run build
-                  ./scripts/deploy-to-azure.sh
+                  ./scripts/build.sh
               env:
+                  NODE_OPTIONS: '--max-old-space-size=8192'
                   AZ_LOGIN_NAME: ${{ secrets.AZ_LOGIN_NAME }}
                   AZ_PASSWORD: ${{ secrets.AZ_PASSWORD }}
                   AZ_TENANT: ${{ secrets.AZ_TENANT }}

@@ -57,21 +57,19 @@ export default defineComponent({
             (newLocale: any, oldLocale: any) => {
                 if (newLocale === oldLocale) return;
                 // path to where HELP is hosted is different if RAMP is built as prod library
-                const base =
-                    process.env.VUE_APP_BUILD_TARGET === 'lib'
-                        ? '../dist/'
-                        : '/';
+                const base = '../help';
+
                 const folder = this.folderName || 'default';
                 const renderer = new marked.Renderer();
                 // make it easier to use images in markdown by prepending path to href if href is not an external source
                 // this avoids the need for ![](help/images/myimg.png) to just ![](myimg.png). This overrides the default image renderer completely.
                 renderer.image = (href: string, title: string) => {
                     if (href.indexOf('http') === -1) {
-                        href = `${base}help/${folder}/images/` + href;
+                        href = `${base}/${folder}/images/` + href;
                     }
                     return `<img src="${href}" alt="${title}">`;
                 };
-                axios.get(`${base}help/${folder}/${newLocale}.md`).then(r => {
+                axios.get(`${base}/${folder}/${newLocale}.md`).then(r => {
                     // matches help sections from markdown file where each section begins with one hashbang and a space
                     // followed by the section header, exactly 2 newlines, then up to but not including a double newline
                     // note that the {2,} below is used as the double line deparator since each double new line is actually 6

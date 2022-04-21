@@ -28,7 +28,7 @@ export interface APIInterface {
     configUpgrade(ramp2Config: any | Array<any>): any;
 }
 
-const geocommon: GeoCommonAPI = new GeoCommonAPI();
+export const geocommon: GeoCommonAPI = new GeoCommonAPI();
 
 const api: APIInterface = {
     Instance: InstanceAPI,

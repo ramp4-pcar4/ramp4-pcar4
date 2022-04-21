@@ -32,6 +32,12 @@ export default defineComponent({
                 [LegendTypes.Placeholder]: LegendPlaceholderV
             };
         }
+    },
+    mounted() {
+        this.legendItem.loadPromise.then(() => {
+            // need to manually update once the item loads to avoid some reactivity nuisances
+            this.$forceUpdate();
+        });
     }
 });
 </script>
