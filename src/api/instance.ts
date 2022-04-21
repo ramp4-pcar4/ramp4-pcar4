@@ -43,7 +43,7 @@ import DividerV from '@/fixtures/appbar/divider.vue';
 import AppbarButtonV from '@/fixtures/appbar/button.vue';
 import type { MaptipAPI } from '@/geo/map/maptip';
 
-interface RampOptions {
+export interface RampOptions {
     loadDefaultFixtures?: boolean;
     loadDefaultEvents?: boolean;
     startRequired?: boolean;
