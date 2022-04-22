@@ -296,7 +296,7 @@
             },
             "uniqueItems": true
         },
-        "legendEntryControls": {
+        "layerControls": {
             "type": "array",
             "description": "All possible controls to be enabled/disabled on a single legend entry.",
             "items": {
@@ -585,7 +585,7 @@
                     "$ref": "#/$defs/extentWithReferenceNode"
                 },
                 "controls": {
-                    "$ref": "#/$defs/legendEntryControls",
+                    "$ref": "#/$defs/layerControls",
                     "default": [
                         "opacity",
                         "visibility",
@@ -600,7 +600,7 @@
                     ]
                 },
                 "disabledControls": {
-                    "$ref": "#/$defs/legendEntryControls",
+                    "$ref": "#/$defs/layerControls",
                     "default": []
                 },
                 "state": {
@@ -647,7 +647,7 @@
                     "$ref": "#/$defs/extentWithReferenceNode"
                 },
                 "controls": {
-                    "$ref": "#/$defs/legendEntryControls",
+                    "$ref": "#/$defs/layerControls",
                     "default": [
                         "opacity",
                         "visibility",
@@ -660,7 +660,7 @@
                     ]
                 },
                 "disabledControls": {
-                    "$ref": "#/$defs/legendEntryControls",
+                    "$ref": "#/$defs/layerControls",
                     "default": []
                 },
                 "state": {
@@ -741,7 +741,7 @@
                     "$ref": "#/$defs/extentWithReferenceNode"
                 },
                 "controls": {
-                    "$ref": "#/$defs/legendEntryControls",
+                    "$ref": "#/$defs/layerControls",
                     "default": [
                         "opacity",
                         "visibility",
@@ -756,7 +756,7 @@
                     ]
                 },
                 "disabledControls": {
-                    "$ref": "#/$defs/legendEntryControls",
+                    "$ref": "#/$defs/layerControls",
                     "default": []
                 },
                 "state": {
@@ -807,7 +807,7 @@
                     "$ref": "#/$defs/extentWithReferenceNode"
                 },
                 "controls": {
-                    "$ref": "#/$defs/legendEntryControls"
+                    "$ref": "#/$defs/layerControls"
                 },
                 "state": {
                     "$ref": "#/$defs/initialLayerSettings"
@@ -904,7 +904,7 @@
                     "$ref": "#/$defs/extentWithReferenceNode"
                 },
                 "controls": {
-                    "$ref": "#/$defs/legendEntryControls",
+                    "$ref": "#/$defs/layerControls",
                     "default": [
                         "opacity",
                         "visibility",
@@ -919,7 +919,7 @@
                     ]
                 },
                 "disabledControls": {
-                    "$ref": "#/$defs/legendEntryControls",
+                    "$ref": "#/$defs/layerControls",
                     "default": []
                 },
                 "state": {
@@ -999,7 +999,7 @@
                     "$ref": "#/$defs/extentWithReferenceNode"
                 },
                 "controls": {
-                    "$ref": "#/$defs/legendEntryControls",
+                    "$ref": "#/$defs/layerControls",
                     "default": [
                         "opacity",
                         "visibility",
@@ -1014,7 +1014,7 @@
                     ]
                 },
                 "disabledControls": {
-                    "$ref": "#/$defs/legendEntryControls",
+                    "$ref": "#/$defs/layerControls",
                     "default": []
                 },
                 "state": {
@@ -1086,7 +1086,7 @@
                     "$ref": "#/$defs/extentWithReferenceNode"
                 },
                 "controls": {
-                    "$ref": "#/$defs/legendEntryControls",
+                    "$ref": "#/$defs/layerControls",
                     "default": [
                         "opacity",
                         "visibility",
@@ -1101,7 +1101,7 @@
                     ]
                 },
                 "disabledControls": {
-                    "$ref": "#/$defs/legendEntryControls",
+                    "$ref": "#/$defs/layerControls",
                     "default": []
                 },
                 "state": {
@@ -1213,7 +1213,7 @@
                     "$ref": "#/$defs/extentWithReferenceNode"
                 },
                 "controls": {
-                    "$ref": "#/$defs/legendEntryControls",
+                    "$ref": "#/$defs/layerControls",
                     "default": [
                         "opacity",
                         "visibility",
@@ -1228,7 +1228,7 @@
                     ]
                 },
                 "disabledControls": {
-                    "$ref": "#/$defs/legendEntryControls",
+                    "$ref": "#/$defs/layerControls",
                     "default": []
                 },
                 "state": {
@@ -1274,7 +1274,7 @@
                     "description": "Current style for the layer entry in the WMS."
                 },
                 "controls": {
-                    "$ref": "#/$defs/legendEntryControls"
+                    "$ref": "#/$defs/layerControls"
                 },
                 "state": {
                     "$ref": "#/$defs/initialLayerSettings"
