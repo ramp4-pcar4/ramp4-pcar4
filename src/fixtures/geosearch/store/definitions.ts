@@ -3,7 +3,7 @@ export interface GenericObjectType {
 }
 
 // config object is used by all query classes
-export interface MainConfig {
+export interface GeosearchConfig {
     geoNameUrl: string;
     geoLocateUrl: string;
     categories: string[];

@@ -1,5 +1,5 @@
-import * as jsonprovs from './data/provinces.json';
 import * as defs from './definitions';
+import axios from 'axios';
 
 const provinceObj: { [key: string]: Provinces } = {};
 const fsaToProv = <any>{
@@ -22,14 +22,25 @@ const fsaToProv = <any>{
     X: [62, 61],
     Y: 60
 };
-const provs: defs.GenericObjectType = (<any>jsonprovs).default;
+
+const provs: any = {
+    en: {},
+    fr: {}
+};
 
 class Provinces {
     list: defs.GenericObjectType = {};
 
-    constructor(language: string) {
-        Object.keys(provs[language]).forEach(provKey => {
-            this.list[provKey] = (<any>provs[language])[provKey];
+    constructor(language: string, url: string) {
+        const fetchProvinces = axios.get(url).then((res: any) => {
+            // Update the provinces array.
+            res.data.definitions.forEach(
+                (type: any) => (provs[language][type.code] = type.description)
+            );
+
+            Object.keys(provs[language]).forEach(provKey => {
+                this.list[provKey] = (<any>provs[language])[provKey];
+            });
         });
     }
 
@@ -50,8 +61,6 @@ class Provinces {
     }
 }
 
-export default function (language: string): defs.Provinces {
-    return (provinceObj[language] = provinceObj[language]
-        ? provinceObj[language]
-        : new Provinces(language));
+export default function (language: string, url: string): defs.Provinces {
+    return new Provinces(language, url);
 }
