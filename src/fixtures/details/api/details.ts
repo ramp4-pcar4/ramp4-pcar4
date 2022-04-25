@@ -30,12 +30,6 @@ export class DetailsAPI extends FixtureInstance {
                 id: 'details-layers-panel'
             });
         }
-
-        // Close the items panel.
-        const itemsPanel = this.$iApi.panel.get('details-items-panel');
-        if (itemsPanel.isOpen) {
-            itemsPanel.close();
-        }
     }
 
     /**
