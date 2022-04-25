@@ -43,7 +43,9 @@ export default defineConfig(({ command, mode }) => {
                     input: {
                         main: '/index.html'
                     }
-                }
+                },
+                minify: 'esbuild',
+                target: 'esnext'
             };
         }
     } else {
