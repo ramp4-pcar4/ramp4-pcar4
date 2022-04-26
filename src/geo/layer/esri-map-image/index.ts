@@ -550,7 +550,8 @@ class MapImageLayer extends AttribLayer {
                 items: [],
                 loading: dProm.getPromise(),
                 loaded: false,
-                uid: sublayer.uid
+                uid: sublayer.uid,
+                requestTime: Date.now()
             });
 
             if (sublayer.geomType !== GeometryType.POLYGON && pointBuffer) {

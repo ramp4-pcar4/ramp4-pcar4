@@ -374,6 +374,7 @@ export interface IdentifyResult {
     uid: string; // this would match to the logical layer.
     loaded: boolean;
     loading: Promise<void>; // represents the list of results has been found, but the content of items in the array may still be resolving
+    requestTime: number; // tracks timestamp of identify request
 }
 
 export interface MapIdentifyResult {

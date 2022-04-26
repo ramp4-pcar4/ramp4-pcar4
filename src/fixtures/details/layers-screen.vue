@@ -46,7 +46,7 @@ import { defineComponent } from 'vue';
 import { get } from '@/store/pathify-helper';
 import { DetailsStore } from './store';
 
-import { LayerInstance, PanelInstance } from '@/api';
+import { GlobalEvents, LayerInstance, PanelInstance } from '@/api';
 import type { IdentifyResult } from '@/geo/api';
 
 export default defineComponent({
@@ -57,7 +57,8 @@ export default defineComponent({
     data() {
         return {
             layerResults: [] as Array<IdentifyResult>,
-            lastLayerId: '' as string,
+            lastLayerUid: '' as string,
+            activeGreedy: 0 as number, // 0 = turn greedy mode off, some timestamp = greedy mode running with last request timestamp
             payload: get(DetailsStore.payload),
             getLayerByUid: get('layer/getLayerByUid'),
             layers: get('layer/layers'),
@@ -71,7 +72,6 @@ export default defineComponent({
                 .reduce((a: number, b: number) => a + b, 0);
         }
     },
-
     created() {
         // keep track of this watcher because it needs to be removed when this component is unmounted
         this.watchers.push(
@@ -88,11 +88,18 @@ export default defineComponent({
             )
         );
     },
-
+    mounted() {
+        // if details item screen is closed while greedy open is running, turn abort flag on
+        this.$iApi.event.on(
+            GlobalEvents.DETAILS_CLOSED,
+            () => (this.activeGreedy = 0),
+            'details_item_closed'
+        );
+    },
     beforeUnmount() {
         this.watchers.forEach(unwatch => unwatch());
+        this.$iApi.event.off('details_item_closed');
     },
-
     methods: {
         /**
          * Load identify result items after all item's load promise has resolved
@@ -118,12 +125,124 @@ export default defineComponent({
             // nobody writing a new layer type is going to have a clue they need
             // to wrap their identify outputs in reactive() due to disrespectful code.
 
+            // track last identify request timestamp and add to payload items
+            if (newPayload.length === 0) {
+                this.activeGreedy = 0;
+                return;
+            }
+            this.activeGreedy = newPayload[0].requestTime;
+
             this.layerResults = newPayload;
+
+            // wait for everything to finish so we can display a grand total
+            this.calculateGrandTotal(newPayload);
 
             // procedure to auto open the individual item panel whenever possible
             this.autoOpen(newPayload);
+        },
 
-            // also wait for everything to finish so we can display a grand total
+        /**
+         * Multiple greedy approach to auto-open identify item panel explained as follows:
+         * A new array of promises (loadingResults) is created that resolves for each item when it is done loading and contains non-empty results count, and is rejected otherwise.
+         * Case 1 - if no identify panels are open or only the identify summary panel is open:
+         *              wait for any of the promises to resolve and open the item screen for the first that does, track this layer ID (also tracked if item screen opened manually)
+         *              if no promises resolve, user clicked on empty map point with no data so reset last layer ID to none and close items screen
+         * Case 2 - if item panel is already open for a layer:
+         *              this layer takes priority so wait for it to resolve first, if there are new results refresh the panel to update
+         *              otherwise if there are no results for this previously open layer, follow the same steps as for case 1
+         */
+        autoOpen(newPayload: Array<IdentifyResult>): void {
+            // TODO: Decide if its worth to enhance code to close items panel on every new identify request.
+            // This is for the case where a slow loading layer takes a long time to resolve and currently the old items screen remains open
+            // which looks off since it is out of sync. If we do this, we would need to remove the below check if items panel is open and explore
+            // options for how to better track this.lastLayerUid (otherwise a layer would almost always be prioritized over others). For example, doing
+            // something like tracking this.lastLayerUid only if items panel is open before closing on a new request. Or if it is decided that this is not
+            // worth changing, ignore everything that was said here and delete.
+            const itemsPanel = this.$iApi.panel.get('details-items-panel');
+            // if the item panel is already open for a layer, wait on that layer to resolve first
+            if (this.lastLayerUid && itemsPanel.isOpen) {
+                const lastIdx = this.layerResults.findIndex(
+                    (item: IdentifyResult) => item.uid === this.lastLayerUid
+                );
+
+                if (lastIdx !== -1) {
+                    const lastIdentify = this.layerResults[lastIdx];
+                    // wait on last opened layer to see if it resolves with new results
+                    lastIdentify.loading.then(() => {
+                        // new identify request came in while loading old results, exit greedy algo
+                        if (lastIdentify.requestTime !== this.activeGreedy) {
+                            return;
+                        }
+
+                        // update items screen with new results for that layer and turn off greedy loading and abort flags
+                        if (lastIdentify.items.length > 0) {
+                            this.activeGreedy = 0;
+                            this.openResult(lastIdx);
+                        } else {
+                            // otherwise proceed as normal in case 1
+                            this.autoOpenAny(newPayload);
+                        }
+                    });
+                } else {
+                    // if last opened layer no longer exists close items panel and proceed with case 1
+                    this.closeResult();
+                    this.autoOpenAny(newPayload);
+                }
+            } else {
+                // if no identify item panel was open or no last layer is tracked, proceed with case 1
+                this.autoOpenAny(newPayload);
+            }
+        },
+
+        /**
+         * Helper function for greedy auto-open function, implementation for case 1.
+         */
+        autoOpenAny(newPayload: Array<IdentifyResult>): void {
+            const loadingResults = newPayload.map((item: IdentifyResult) =>
+                item.loading.then(() =>
+                    item.items.length > 0
+                        ? Promise.resolve(item)
+                        : Promise.reject()
+                )
+            );
+            const lastTime = newPayload[0].requestTime;
+
+            // wait on any layer promise to resolve first with new identify results
+            // @ts-ignore
+            Promise.any(loadingResults)
+                .then((res: IdentifyResult) => {
+                    // new identify request came in while loading old results, exit greedy algo
+                    if (res.requestTime !== this.activeGreedy) {
+                        return;
+                    }
+
+                    // open results item screen and turn off greedy loading and abort flags
+                    const idx = this.layerResults.findIndex(
+                        (item: IdentifyResult) => item.uid === res.uid
+                    );
+                    this.activeGreedy = 0;
+                    if (idx !== -1) {
+                        this.openResult(idx);
+                    }
+                })
+                .catch(() => {
+                    // new identify request came in while loading old results, exit greedy algo
+                    if (lastTime !== this.activeGreedy) {
+                        return;
+                    }
+
+                    // no promise resolved, clicked on empty map point with no identify results
+                    // then clear the last tracked layer and close the items panel
+                    this.lastLayerUid = '';
+                    this.activeGreedy = 0;
+                    this.closeResult();
+                });
+        },
+
+        /**
+         * Wait for all layers to finish loading to alert total number of results to be displayed in identify summary.
+         */
+        calculateGrandTotal(newPayload: Array<IdentifyResult>): void {
             Promise.all(
                 newPayload.map((item: IdentifyResult) => item.loading)
             ).then(() => {
@@ -138,77 +257,13 @@ export default defineComponent({
         },
 
         /**
-         * Multiple greedy approach to auto-open identify item panel explained as follows:
-         * A new array of promises (loadingResults) is created that resolves for each item when it is done loading and contains non-empty results count, and is rejected otherwise.
-         * Case 1 - if no identify panels are open or only the identify summary panel is open:
-         *              wait for any of the promises to resolve and open the item screen for the first that does, track this layer ID (also tracked if item screen opened manually)
-         *              if no promises resolve, user clicked on empty map point with no data so reset last layer ID to none and close items screen
-         * Case 2 - if item panel is already open for a layer:
-         *              this layer takes priority so wait for it to resolve first, if there are new results refresh the panel to update
-         *              otherwise if there are no results for this previously open layer, follow the same steps as for case 1
+         * Closes details item panel.
          */
-        autoOpen(newPayload: Array<IdentifyResult>): void {
-            // if the item panel is already open for a layer, wait on that layer to resolve first
+        closeResult(): void {
             const itemsPanel = this.$iApi.panel.get('details-items-panel');
-            if (this.lastLayerId && itemsPanel.isOpen) {
-                const lastIdx = this.layerResults.findIndex(
-                    (item: IdentifyResult) => (item.uid = this.lastLayerId)
-                );
-
-                if (lastIdx !== -1) {
-                    const lastIdentify = this.layerResults[lastIdx];
-                    // wait on last opened layer to see if it resolves with new results
-                    lastIdentify.loading.then(() => {
-                        // otherwise proceed as normal in case 1 by opening item panel for any layer that resolves
-                        lastIdentify.items.length > 0
-                            ? this.openResult(lastIdx)
-                            : this.autoOpenAny(newPayload);
-                    });
-                } else {
-                    // if last opened layer no longer exists throw an error
-                    console.error(
-                        'Last opened layer ID for details cannot be found.'
-                    );
-                }
-            } else {
-                // if no identify item panel was open or no last layer is tracked, proceed with case 1
-                this.autoOpenAny(newPayload);
+            if (itemsPanel.isOpen) {
+                itemsPanel.close();
             }
-        },
-
-        /**
-         * Helper function for greedy auto-open function, implementation for case 1.
-         */
-        autoOpenAny(newPayload: Array<IdentifyResult>): void {
-            const loadingResults = newPayload.map((item: IdentifyResult) => {
-                return item.loading.then(() =>
-                    item.items.length > 0
-                        ? Promise.resolve(item.uid)
-                        : Promise.reject()
-                );
-            });
-
-            // wait on any layer promise to resolve first with new identify results
-            Promise.any(loadingResults)
-                .then((res: any) => {
-                    const idx = this.layerResults.findIndex(
-                        (item: IdentifyResult) => item.uid === res
-                    );
-                    if (idx !== -1) {
-                        this.openResult(idx);
-                    }
-                })
-                .catch(() => {
-                    // no promise resolved, clicked on empty map point with no identify results
-                    // then clear the last tracked layer and close the items panel
-                    this.lastLayerId = '';
-                    const itemsPanel = this.$iApi.panel.get(
-                        'details-items-panel'
-                    );
-                    if (itemsPanel.isOpen) {
-                        itemsPanel.close();
-                    }
-                });
         },
 
         /**
@@ -216,13 +271,16 @@ export default defineComponent({
          */
         openResult(index: number) {
             if (this.payload[index].items.length > 0) {
+                // set greedy mode off for any existing running requests (for case where user manually clicks an item)
+                this.activeGreedy = 0;
+
                 // skip results screen for wms layers
                 let itemsPanel = this.$iApi.panel.get('details-items-panel');
                 let props: any = {
                     result: this.payload[index]
                 };
                 // track last open layer ID every time item panel is opened
-                this.lastLayerId = this.payload[index].uid;
+                this.lastLayerUid = this.payload[index].uid;
 
                 if (!itemsPanel.isOpen) {
                     // open the items panel

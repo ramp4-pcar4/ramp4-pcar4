@@ -275,7 +275,8 @@ export class FileLayer extends AttribLayer {
             items: [],
             loading: dProm.getPromise(),
             loaded: false,
-            uid: this.uid
+            uid: this.uid,
+            requestTime: Date.now()
         });
 
         // run a spatial query

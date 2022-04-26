@@ -34,6 +34,12 @@ export default defineConfig(({ command, mode }) => {
                     }
                 }
             };
+            baseConfig.resolve = {
+                alias: {
+                    '@': resolve(__dirname, 'src'),
+                    'vue': 'vue/dist/vue.esm-bundler.js'
+                }
+            }
         } else {
             baseConfig.publicDir = false;
             baseConfig.root = 'demos';
