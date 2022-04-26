@@ -330,7 +330,7 @@ let config = {
                     }
                 },
                 appbar: {
-                    items: ['legend', 'geosearch', 'export-basic'],
+                    items: ['legend', 'geosearch', 'export'],
                     temporaryButtons: [
                         'details-layers',
                         'details-items',
@@ -338,7 +338,7 @@ let config = {
                     ]
                 },
                 mapnav: { items: ['fullscreen', 'geoLocator', 'home', 'help'] },
-                'export-basic': {
+                export: {
                     title: {
                         value: 'Climate action map'
                     }
@@ -917,7 +917,7 @@ let config = {
                     }
                 },
                 appbar: {
-                    items: ['legend', 'geosearch', 'export-basic'],
+                    items: ['legend', 'geosearch', 'export'],
                     temporaryButtons: [
                         'details-layers',
                         'details-items',
@@ -925,7 +925,7 @@ let config = {
                     ]
                 },
                 mapnav: { items: ['fullscreen', 'geoLocator', 'home', 'help'] },
-                'export-basic': {
+                export: {
                     title: {
                         value: 'Climate action map'
                     }
@@ -995,7 +995,7 @@ rInstance.fixture.addDefaultFixtures().then(() => {
     rInstance.panel.open('legend-panel');
 });
 
-rInstance.fixture.add('export-basic');
+rInstance.fixture.add('export');
 
 // load map if startRequired is true
 rInstance.start();
