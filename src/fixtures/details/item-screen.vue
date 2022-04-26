@@ -5,7 +5,7 @@
         </template>
         <template #controls>
             <minimize @click="panel.minimize()" />
-            <close @click="panel.close()" />
+            <close @click="close()" />
         </template>
         <template #content>
             <div v-if="result.loaded">
@@ -120,6 +120,7 @@ import { get } from '@/store/pathify-helper';
 import { DetailsStore } from './store';
 
 import type { LayerInstance, PanelInstance } from '@/api/internal';
+import { GlobalEvents } from '@/api';
 import { IdentifyResultFormat } from '@/geo/api';
 
 import type { FieldDefinition, IdentifyResult, IdentifyItem } from '@/geo/api';
@@ -243,6 +244,14 @@ export default defineComponent({
         }
     },
     methods: {
+        /**
+         * Close details screen
+         */
+        close() {
+            this.panel.close();
+            this.$iApi.event.emit(GlobalEvents.DETAILS_CLOSED);
+        },
+
         /**
          * Initialize the details screen
          */
