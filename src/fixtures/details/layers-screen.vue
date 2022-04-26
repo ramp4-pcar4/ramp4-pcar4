@@ -57,7 +57,7 @@ export default defineComponent({
     data() {
         return {
             layerResults: [] as Array<IdentifyResult>,
-            lastLayerId: '' as string,
+            lastLayerUid: '' as string,
             payload: get(DetailsStore.payload),
             getLayerByUid: get('layer/getLayerByUid'),
             layers: get('layer/layers')
@@ -107,21 +107,11 @@ export default defineComponent({
 
             this.layerResults = newPayload;
 
+            // wait for everything to finish so we can display a grand total
+            this.calculateGrandTotal(newPayload);
+
             // procedure to auto open the individual item panel whenever possible
             this.autoOpen(newPayload);
-
-            // also wait for everything to finish so we can display a grand total
-            Promise.all(
-                newPayload.map((item: IdentifyResult) => item.loading)
-            ).then(() => {
-                // alert the user about the number of results found
-                this.$iApi.updateAlert(
-                    this.$iApi.$vApp.$t('details.layers.found', {
-                        numResults: this.totalResultCount,
-                        numLayers: newPayload.length
-                    })
-                );
-            });
         },
 
         /**
@@ -137,9 +127,9 @@ export default defineComponent({
         autoOpen(newPayload: Array<IdentifyResult>): void {
             // if the item panel is already open for a layer, wait on that layer to resolve first
             const itemsPanel = this.$iApi.panel.get('details-items-panel');
-            if (this.lastLayerId && itemsPanel.isOpen) {
+            if (this.lastLayerUid && itemsPanel.isOpen) {
                 const lastIdx = this.layerResults.findIndex(
-                    (item: IdentifyResult) => (item.uid = this.lastLayerId)
+                    (item: IdentifyResult) => item.uid === this.lastLayerUid
                 );
 
                 if (lastIdx !== -1) {
@@ -152,10 +142,9 @@ export default defineComponent({
                             : this.autoOpenAny(newPayload);
                     });
                 } else {
-                    // if last opened layer no longer exists throw an error
-                    console.error(
-                        'Last opened layer ID for details cannot be found.'
-                    );
+                    // if last opened layer no longer exists close items panel and proceed with case 1
+                    this.closeResult();
+                    this.autoOpenAny(newPayload);
                 }
             } else {
                 // if no identify item panel was open or no last layer is tracked, proceed with case 1
@@ -167,19 +156,20 @@ export default defineComponent({
          * Helper function for greedy auto-open function, implementation for case 1.
          */
         autoOpenAny(newPayload: Array<IdentifyResult>): void {
-            const loadingResults = newPayload.map((item: IdentifyResult) => {
-                return item.loading.then(() =>
+            const loadingResults = newPayload.map((item: IdentifyResult) =>
+                item.loading.then(() =>
                     item.items.length > 0
-                        ? Promise.resolve(item.uid)
+                        ? Promise.resolve(item)
                         : Promise.reject()
-                );
-            });
+                )
+            );
 
             // wait on any layer promise to resolve first with new identify results
+            // @ts-ignore
             Promise.any(loadingResults)
-                .then((res: any) => {
+                .then((res: IdentifyResult) => {
                     const idx = this.layerResults.findIndex(
-                        (item: IdentifyResult) => item.uid === res
+                        (item: IdentifyResult) => item.uid === res.uid
                     );
                     if (idx !== -1) {
                         this.openResult(idx);
@@ -188,14 +178,36 @@ export default defineComponent({
                 .catch(() => {
                     // no promise resolved, clicked on empty map point with no identify results
                     // then clear the last tracked layer and close the items panel
-                    this.lastLayerId = '';
-                    const itemsPanel = this.$iApi.panel.get(
-                        'details-items-panel'
-                    );
-                    if (itemsPanel.isOpen) {
-                        itemsPanel.close();
-                    }
+                    this.lastLayerUid = '';
+                    this.closeResult();
                 });
+        },
+
+        /**
+         * Wait for all layers to finish loading to alert total number of results to be displayed in identify summary.
+         */
+        calculateGrandTotal(newPayload: Array<IdentifyResult>): void {
+            Promise.all(
+                newPayload.map((item: IdentifyResult) => item.loading)
+            ).then(() => {
+                // alert the user about the number of results found
+                this.$iApi.updateAlert(
+                    this.$iApi.$vApp.$t('details.layers.found', {
+                        numResults: this.totalResultCount,
+                        numLayers: newPayload.length
+                    })
+                );
+            });
+        },
+
+        /**
+         * Closes details item panel.
+         */
+        closeResult(): void {
+            const itemsPanel = this.$iApi.panel.get('details-items-panel');
+            if (itemsPanel.isOpen) {
+                itemsPanel.close();
+            }
         },
 
         /**
@@ -209,7 +221,7 @@ export default defineComponent({
                     result: this.payload[index]
                 };
                 // track last open layer ID every time item panel is opened
-                this.lastLayerId = this.payload[index].uid;
+                this.lastLayerUid = this.payload[index].uid;
 
                 if (!itemsPanel.isOpen) {
                     // open the items panel
