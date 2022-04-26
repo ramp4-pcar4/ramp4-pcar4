@@ -212,7 +212,8 @@ export default class WmsLayer extends CommonLayer {
             items: [],
             loading: dProm.getPromise(),
             loaded: false,
-            uid: this.uid
+            uid: this.uid,
+            requestTime: Date.now()
         });
 
         this.getFeatureInfo(
