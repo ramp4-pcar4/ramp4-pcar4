@@ -20,6 +20,7 @@ import {
 import type {
     GraphicHitResult,
     IdentifyParameters,
+    IdentifyResult,
     MapClick,
     MapIdentifyResult,
     RampBasemapConfig,
@@ -799,6 +800,12 @@ export class MapAPI extends CommonMapAPI {
                 return layer.runIdentify(p);
             })
             .flat();
+
+        // update each item with current timestamp
+        const timestamp = Date.now();
+        identifyResults.forEach((item: IdentifyResult) => {
+            item.requestTime = timestamp;
+        });
 
         const fullResult: MapIdentifyResult = {
             results: identifyResults,
