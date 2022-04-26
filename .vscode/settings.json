@@ -7,7 +7,7 @@
         "src/fixtures/appbar/lang",
         "src/fixtures/basemap/lang",
         "src/fixtures/details/lang",
-        "src/fixtures/export-basic/lang",
+        "src/fixtures/export/lang",
         "src/fixtures/gazebo/lang",
         "src/fixtures/geosearch/lang",
         "src/fixtures/grid/lang",
