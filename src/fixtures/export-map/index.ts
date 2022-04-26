@@ -1,12 +1,16 @@
 import { fabric } from 'fabric';
 
 import { FixtureInstance } from '@/api/internal';
-import type { ExportBasicSubFixture } from '@/fixtures/export-basic/api';
+import type { ExportAPI, ExportSubFixture } from '@/fixtures/export/api/export';
+import type { ExportConfig } from '../export/store';
 
-class ExportBasicMapFixture
-    extends FixtureInstance
-    implements ExportBasicSubFixture
-{
+class ExportMapFixture extends FixtureInstance implements ExportSubFixture {
+    get config(): any {
+        let fixtureConfig: ExportConfig | undefined =
+            this.$iApi.fixture.get<ExportAPI>('export').config;
+        return fixtureConfig?.map;
+    }
+
     async make(options: any): Promise<fabric.Image> {
         const screenshot = await this.$iApi.geo.map.takeScreenshot({
             quality: 1,
@@ -26,4 +30,4 @@ class ExportBasicMapFixture
     }
 }
 
-export default ExportBasicMapFixture;
+export default ExportMapFixture;

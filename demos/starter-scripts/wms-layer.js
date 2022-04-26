@@ -172,11 +172,11 @@ let config = {
                     }
                 },
                 appbar: {
-                    items: ['legend', 'layer-reorder', 'export-basic'],
+                    items: ['legend', 'layer-reorder', 'export'],
                     temporaryButtons: ['details-layers', 'details-items']
                 },
                 mapnav: { items: ['fullscreen', 'legend', 'home', 'basemap'] },
-                'export-basic': {
+                export: {
                     title: {
                         value: 'WMS'
                     }
@@ -267,7 +267,7 @@ rInstance.fixture
         'details',
         'grid',
         'wizard',
-        'export-basic',
+        'export',
         'basemap',
         'layer-reorder'
     ])

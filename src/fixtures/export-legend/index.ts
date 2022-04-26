@@ -1,8 +1,9 @@
 import { FixtureInstance, LayerInstance } from '@/api/internal';
 import { LayerStore } from '@/store/modules/layer';
-import type { ExportBasicSubFixture } from '@/fixtures/export-basic/api';
+import type { ExportAPI, ExportSubFixture } from '@/fixtures/export/api/export';
 import { fabric } from 'fabric';
 import type { LegendSymbology } from '@/geo/api';
+import type { ExportConfig } from '../export/store';
 
 /**
  * Represents a map layer.
@@ -46,20 +47,33 @@ const COLUMN_SPACING = 20;
 const DEFAULT_FONT =
     'Montserrat, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif';
 
-class ExportBasicLegendFixture
-    extends FixtureInstance
-    implements ExportBasicSubFixture
-{
+class ExportLegendFixture extends FixtureInstance implements ExportSubFixture {
+    get config(): any {
+        let fixtureConfig: ExportConfig | undefined =
+            this.$iApi.fixture.get<ExportAPI>('export').config;
+        return fixtureConfig?.legend;
+    }
+
     async make(options: any): Promise<fabric.Group> {
         // filter out loading/errored and invisible layers
         const layers = this.$vApp.$store
             .get<LayerInstance[]>(LayerStore.layers)!
-            .filter(layer => layer.isValidState && layer.visibility);
+            .filter(
+                layer =>
+                    layer.isValidState && layer.visibility && !layer.isCosmetic
+            );
+
+        if (layers.length === 0) {
+            // return an empty group
+            return new fabric.Group([], {
+                originX: 'left'
+            });
+        }
 
         // number of columns based on export width and min col width
         const columns = Math.min(
             layers.length,
-            Math.floor(options.width / (MIN_COLUMN_WIDTH + COLUMN_SPACING))
+            Math.floor(options.width / (MIN_COLUMN_WIDTH + COLUMN_SPACING)) || 1 // round to 1 if floor is 0
         );
 
         // calculate column width such that columns are even spaced across entire export width
@@ -135,7 +149,7 @@ class ExportBasicLegendFixture
      * @param {number} columnWidth
      * @param {number} columns
      * @returns {fabric.Group}
-     * @memberof ExportBasicLegendFixture
+     * @memberof ExportLegendFixture
      */
     private _makeColumns(
         items: fabric.Group[],
@@ -182,7 +196,7 @@ class ExportBasicLegendFixture
         });
 
         return new fabric.Group(items, {
-            originX: 'center'
+            originX: 'left'
         });
     }
 
@@ -193,7 +207,7 @@ class ExportBasicLegendFixture
      * @param {LayerInstance[]} layers
      * @param {RampLayerConfig[]} layerConfigs
      * @returns {Promise<Segment>[]}
-     * @memberof ExportBasicLegendFixture
+     * @memberof ExportLegendFixture
      */
     private _makeSegments(
         layers: LayerInstance[],
@@ -231,7 +245,7 @@ class ExportBasicLegendFixture
      * @param {(number[] | string[])} ids
      * @param {LayerInstance} layer
      * @returns {Promise<SegmentChunk>[]}
-     * @memberof ExportBasicLegendFixture
+     * @memberof ExportLegendFixture
      */
     private _makeSegmentChunks(
         ids: number[],
@@ -281,7 +295,7 @@ class ExportBasicLegendFixture
      * @private
      * @param {LegendSymbology[]} symbologyStack
      * @returns {Promise<fabric.Group>[]}
-     * @memberof ExportBasicLegendFixture
+     * @memberof ExportLegendFixture
      */
     private _makeChunkItems(
         symbologyStack: LegendSymbology[],
@@ -345,7 +359,7 @@ class ExportBasicLegendFixture
      * @private
      * @param {TreeNode} node
      * @returns {number[]}
-     * @memberof ExportBasicLegendFixture
+     * @memberof ExportLegendFixture
      */
     private _getLayerTreeIds(rootLayer: LayerInstance): number[] {
         const ids: Array<number> = [];
@@ -385,4 +399,4 @@ const promisify = <T, A>(
         });
 };
 
-export default ExportBasicLegendFixture;
+export default ExportLegendFixture;
