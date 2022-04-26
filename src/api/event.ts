@@ -42,6 +42,12 @@ export enum GlobalEvents {
     CONFIG_CHANGE = 'config/configchanged',
 
     /**
+     * Fires when details panel is closed.
+     * Payload: none
+     */
+    DETAILS_CLOSED = 'details/closed',
+
+    /**
      * Fires when a request is issued to show the details of an identify result.
      * Payload: `({ identifyItem: IdentifyItem, uid: string })`
      */
