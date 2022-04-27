@@ -109,9 +109,17 @@ export class FixtureAPI extends APIScope {
     ): T {
         const fixture = this.get<T>(fixtureOrId);
 
+        if (!fixture) {
+            throw new Error(
+                `Could not find fixture ${fixtureOrId} for removal`
+            );
+        }
+
         this.$vApp.$store.set(`fixture/${FixtureMutation.REMOVE_FIXTURE}!`, {
             value: fixture
         });
+
+        this.$iApi.event.emit(GlobalEvents.FIXTURE_REMOVED, fixture);
 
         return fixture;
     }

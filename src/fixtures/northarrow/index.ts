@@ -3,6 +3,8 @@ import { northarrow } from './store/index';
 import type { NortharrowConfig } from './store/index';
 import NortharrowV from './northarrow.vue';
 
+export const POLE_MARKER_LAYER_ID: string = 'RampPoleMarker';
+
 class NortharrowFixture extends NortharrowAPI {
     async added() {
         console.log(`[fixture] ${this.id} added`);
@@ -10,7 +12,7 @@ class NortharrowFixture extends NortharrowAPI {
         this.$vApp.$store.registerModule('northarrow', northarrow());
 
         this._parseConfig(this.config);
-        this.$vApp.$watch(
+        let unwatch = this.$vApp.$watch(
             () => this.config,
             (value: NortharrowConfig | undefined) => this._parseConfig(value)
         );
@@ -21,11 +23,22 @@ class NortharrowFixture extends NortharrowAPI {
         const innerShell =
             this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         innerShell.appendChild(el.childNodes[0]);
-    }
 
-    removed(): void {
-        console.log(`[fixture] ${this.id} removed`);
-        this.$vApp.$store.unregisterModule('northarrow');
+        // override the removed method here to get access to scope
+        this.removed = () => {
+            console.log(`[fixture] ${this.id} removed`);
+
+            unwatch();
+
+            this.$vApp.$store.unregisterModule('northarrow');
+
+            // remove the pole marker layer if it exists
+            if (this.$iApi.geo.layer.getLayer(POLE_MARKER_LAYER_ID)) {
+                this.$iApi.geo.map.removeLayer(POLE_MARKER_LAYER_ID);
+            }
+
+            destroy();
+        };
     }
 }
 

@@ -1,6 +1,6 @@
 export class MapnavState {
     /**
-     * A set of all open (visible and hidden) panels.
+     * A set of all open (visible and hidden) mapnav items.
      *
      * @type {MapnavItem[]}
      * @memberof MapnavState

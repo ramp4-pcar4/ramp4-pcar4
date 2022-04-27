@@ -55,11 +55,43 @@ export class MapAPI extends CommonMapAPI {
     }
 
     /**
+     * Will generate the actual Map control objects and construct it on the page
+     * @param {RampMapConfig} config the config for the map
+     * @param {string | HTMLDivElement} targetDiv the div to be used for the map view
+     */
+    createMap(config: RampMapConfig, targetDiv: string | HTMLDivElement): void {
+        super.createMap(config, targetDiv);
+        this.$iApi.event.emit(GlobalEvents.MAP_CREATED);
+    }
+
+    /**
+     * Destroys the ESRI map
+     *
+     * @protected
+     */
+    protected destroyMap(): void {
+        if (!this.esriMap || !this.esriView) {
+            this.noMapErr();
+            return;
+        }
+
+        // remove all layers (need to use uid so we don't mutate layers collection when looping)
+        this.$iApi.geo.layer
+            .allLayers()
+            .map(l => l.uid)
+            .forEach(l => this.removeLayer(l));
+
+        // now destroy the map
+        super.destroyMap();
+        this.$iApi.event.emit(GlobalEvents.MAP_DESTROYED);
+    }
+
+    /**
      * Will generate a ESRI map view and add it to the page
      * Can optionally provide the basemap or basemap id to be used when creating the map view
      *
+     * @protected
      * @param {string | Basemap | undefined} basemap the id of the basemap that should be used when creating the map view
-     * @private
      */
     protected createMapView(basemap?: string | Basemap): void {
         // get the config from the store
@@ -248,44 +280,16 @@ export class MapAPI extends CommonMapAPI {
     }
 
     /**
-     * Refreshes the map view by destroying it first and then recreating it
-     * Can optionally provide the basemap or basemap id to be used when creating the map
+     * Destroys the ESRI map view
      *
-     * @param {string | Basemap | undefined} basemap the basemap or basemap id that should be used when recreating the map view
+     * @protected
      */
-    refreshMap(basemap?: string | Basemap): void {
-        if (!this.esriView || !this.esriMap) {
-            this.noMapErr();
-            return;
-        }
-
-        this._viewPromise = new DefPromise();
-        this.created = false;
-
-        this.$iApi.event.emit(GlobalEvents.MAP_REFRESH_START);
-
-        // Clean up map view
-        this.handlers.forEach(h => h.remove());
-        this.handlers = [];
-
-        // Destroy the current map view
-        // @ts-ignore
-        this.esriView.map = null;
-        // @ts-ignore
-        this.esriView.container = null;
-        // @ts-ignore
-        this.esriView.spatialReference = null;
-        // @ts-ignore
-        this.esriView.extent = null;
-        // @ts-ignore
-        this.esriView.navigation = null;
-        this.esriView.destroy();
-        delete this.esriView;
-
-        // recreate the map view
-        this.createMapView(basemap);
-
-        this.$iApi.event.emit(GlobalEvents.MAP_REFRESH_END);
+    protected destroyMapView(): void {
+        // override the method to remove this listener
+        this.esriView?.container.removeEventListener('touchmove', e => {
+            e.preventDefault();
+        });
+        super.destroyMapView();
     }
 
     /**
@@ -319,6 +323,11 @@ export class MapAPI extends CommonMapAPI {
      * @returns {boolean} indicates if the schema has changed
      */
     setBasemap(basemapId: string): boolean {
+        if (!this.esriView || !this.esriMap) {
+            this.noMapErr();
+            return false;
+        }
+
         const bm: Basemap = this.findBasemap(basemapId);
         const currentBasemp: RampBasemapConfig = this.$iApi.$vApp.$store.get(
             ConfigStore.getActiveBasemapConfig
@@ -328,8 +337,16 @@ export class MapAPI extends CommonMapAPI {
             currentBasemp.tileSchemaId !== bm.tileSchemaId;
 
         if (schemaChanged) {
-            // reproject the map
-            this.refreshMap(bm);
+            // destroy the map view
+            // reset the view promise and created flag before firing the event
+            this._viewPromise = new DefPromise();
+            this.created = false;
+            this.$iApi.event.emit(GlobalEvents.MAP_REFRESH_START);
+            this.destroyMapView();
+
+            // recreate the map view
+            this.createMapView(bm);
+            this.$iApi.event.emit(GlobalEvents.MAP_REFRESH_END);
         } else {
             // change the basemap
             this.applyBasemap(bm);
@@ -449,7 +466,7 @@ export class MapAPI extends CommonMapAPI {
      */
     removeSublayer(sublayer: LayerInstance | string): void {
         let uid: string;
-        let layer: LayerInstance;
+        let layer: LayerInstance | undefined;
         if (typeof sublayer === 'string') {
             uid = sublayer;
             layer = this.$iApi.geo.layer.getLayer(uid);
@@ -462,6 +479,12 @@ export class MapAPI extends CommonMapAPI {
             uid = sublayer.uid;
             layer = sublayer;
         }
+
+        // Error checking
+        if (!layer) {
+            throw new Error('Sublayer could not be found for removal.');
+        }
+
         this.$iApi.event.emit(GlobalEvents.LAYER_REMOVE, sublayer);
         layer.visibility = false; // make the sublayer invisible
         layer.isRemoved = true; // mark sublayer as removed
@@ -498,20 +521,29 @@ export class MapAPI extends CommonMapAPI {
             layerInstance = this.$iApi.geo.layer.getLayer(layer);
         }
 
+        // Error checking
+        if (!layerInstance) {
+            throw new Error('Layer could not be found for removal.');
+        }
+
         // If layer is a sublayer, pass the call to removeSublayer
         if (layerInstance.isSublayer) {
             this.removeSublayer(layerInstance);
             return;
         }
 
-        // Error checking
-        if (!layerInstance) {
-            throw new Error('Layer could not be found for removal.');
-        }
         if (!layerInstance.esriLayer) {
             throw new Error(
                 'Attempted to remove layer from the map without an esri layer. Likely layer.initiate() was not called or had not finished.'
             );
+        }
+
+        // if layer is parent layer, then remove all its sublayers first if there is at least one active sublayer
+        if (
+            layerInstance.supportsSublayers &&
+            layerInstance.sublayers.some(sl => !sl.isRemoved)
+        ) {
+            layerInstance.sublayers.forEach(sl => this.removeSublayer(sl));
         }
 
         // Now we start the layer removal process

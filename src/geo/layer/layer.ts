@@ -197,7 +197,7 @@ export class LayerAPI extends APIScope {
      *
      * @param layerId layer id or uid of the layer
      */
-    getLayer(layerId: string): LayerInstance {
+    getLayer(layerId: string): LayerInstance | undefined {
         // since this would be a fairly common thing to want to do via the instance API,
         // this function acts as a nice / obvious endpoint and saves caller
         // from figuring out how to use the store.
@@ -211,15 +211,6 @@ export class LayerAPI extends APIScope {
             layer = this.$iApi.$vApp.$store.get(
                 LayerStore.getLayerByUid,
                 layerId
-            );
-        }
-
-        if (!layer) {
-            // TODO better to return undefined and console.error?
-            //      Returning undefined means function has two return types,
-            //      and makes caller always validate/cast to shut up typescript.
-            throw new Error(
-                `Could not find layer associated with '${layerId}'`
             );
         }
 

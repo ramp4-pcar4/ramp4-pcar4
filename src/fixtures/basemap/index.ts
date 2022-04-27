@@ -24,7 +24,13 @@ class BasemapFixture extends FixtureInstance {
         );
     }
 
-    removed() {}
+    removed() {
+        console.log(`[fixture] ${this.id} removed`);
+        // TODO:
+        // - remove mapnav button
+        // - remove appbar button (blocked by #882)
+        this.$iApi.panel.remove('basemap-panel');
+    }
 }
 
 export default BasemapFixture;

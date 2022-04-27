@@ -8,8 +8,6 @@ import messages from './lang/lang.csv?raw';
 // "It's a trap!" -- Admiral Appbar
 
 class AppbarFixture extends AppbarAPI {
-    eventHandlers: string[] = [];
-
     initialized() {
         console.log(`[fixture] ${this.id} initialized`);
     }
@@ -41,8 +39,10 @@ class AppbarFixture extends AppbarAPI {
             (value: AppbarFixtureConfig | undefined) => this._parseConfig(value)
         );
 
+        let eventHandlers: string[] = [];
+
         // Add and remove temp appbar buttons when panels are opened and close
-        this.eventHandlers.push(
+        eventHandlers.push(
             this.$iApi.event.on(
                 GlobalEvents.PANEL_OPENED,
                 (panel: PanelInstance) => {
@@ -54,7 +54,7 @@ class AppbarFixture extends AppbarAPI {
             )
         );
 
-        this.eventHandlers.push(
+        eventHandlers.push(
             this.$iApi.event.on(
                 GlobalEvents.PANEL_CLOSED,
                 (panel: PanelInstance) => {
@@ -68,20 +68,18 @@ class AppbarFixture extends AppbarAPI {
 
         // since components used in appbar can be registered after this point, listen to the global component registration event and re-validate items
         // TODO revisit. this seems to be self-contained to the appbar fixture, so ideally can stay as is and not worry about events api.
-        this.eventHandlers.push(
+        eventHandlers.push(
             this.$iApi.event.on(
                 GlobalEvents.COMPONENT,
                 this._validateItems.bind(this)
             )
         );
-    }
 
-    removed() {
-        this.$vApp.$store.unregisterModule('appbar');
-
-        this.eventHandlers.forEach(eventHandler =>
-            this.$iApi.event.off(eventHandler)
-        );
+        this.removed = () => {
+            this.$vApp.$store.unregisterModule('appbar');
+            eventHandlers.forEach(h => this.$iApi.event.off(h));
+            destroy();
+        };
     }
 }
 

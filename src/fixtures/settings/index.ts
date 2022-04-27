@@ -25,6 +25,12 @@ class SettingsFixture extends SettingsAPI {
 
         this.$iApi.component('settings-appbar-button', SettingsAppbarButtonV);
     }
+
+    removed() {
+        console.log(`[fixture] ${this.id} removed`);
+        // TODO: handle appbar button (blocked by #882)
+        this.$iApi.panel.remove('settings-panel');
+    }
 }
 
 export default SettingsFixture;

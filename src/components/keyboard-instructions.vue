@@ -41,17 +41,24 @@ export default defineComponent({
     data() {
         return {
             open: false,
-            instructionSections: ['app', 'lists', 'map']
+            instructionSections: ['app', 'lists', 'map'],
+            handlers: [] as Array<string>
         };
     },
 
     mounted() {
-        this.$iApi.event.on('openKeyboardInstructions', () => {
-            this.open = true;
-            this.$nextTick(() => {
-                (this.$refs.firstEl as HTMLElement)?.focus();
-            });
-        });
+        this.handlers.push(
+            this.$iApi.event.on('openKeyboardInstructions', () => {
+                this.open = true;
+                this.$nextTick(() => {
+                    (this.$refs.firstEl as HTMLElement)?.focus();
+                });
+            })
+        );
+    },
+
+    beforeUnmount() {
+        this.handlers.forEach(handler => this.$iApi.event.off(handler));
     },
 
     methods: {

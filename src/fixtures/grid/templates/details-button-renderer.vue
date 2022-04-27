@@ -57,6 +57,24 @@ export default defineComponent({
         });
     },
 
+    beforeUnmount() {
+        this.params.eGridCell.removeEventListener(
+            'keydown',
+            (e: KeyboardEvent) => {
+                if (e.key === 'Enter') {
+                    this.openDetails();
+                }
+            }
+        );
+
+        this.params.eGridCell.removeEventListener('focus', () => {
+            (this.$el as any)._tippy.show();
+        });
+        this.params.eGridCell.removeEventListener('blur', () => {
+            (this.$el as any)._tippy.hide();
+        });
+    },
+
     methods: {
         openDetails() {
             let data = Object.assign({}, this.params.data);
