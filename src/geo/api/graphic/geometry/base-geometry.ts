@@ -47,6 +47,13 @@ export class BaseGeometry {
         );
     }
 
+    invalid(): boolean {
+        return (
+            this.type === GeometryType.NONE ||
+            this.type === GeometryType.UNKNOWN
+        );
+    }
+
     protected geoJsonFactory(
         type: string,
         coords: Array<any>
@@ -59,5 +66,15 @@ export class BaseGeometry {
             gj.crs = this.sr.toGeoJSON();
         }
         return gj;
+    }
+}
+
+// used for placeholder / to avoid undefined params when no geometry is relevant
+export class NoGeometry extends BaseGeometry {
+    constructor() {
+        super('no_geometry');
+    }
+    get type(): GeometryType {
+        return GeometryType.NONE;
     }
 }

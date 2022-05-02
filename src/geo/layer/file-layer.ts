@@ -27,7 +27,7 @@ import {
 
 import type {
     GetGraphicParams,
-    GetGraphicResult,
+    Graphic,
     IdentifyItem,
     IdentifyParameters,
     IdentifyResult,
@@ -385,12 +385,12 @@ export class FileLayer extends AttribLayer {
      *                 - map           map wrapper object of current map. only required if requesting geometry
      *                 - getGeom          boolean. indicates if return value should have geometry included. default to false
      *                 - getAttribs       boolean. indicates if return value should have attributes included. default to false
-     * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .layerFC for convenience
+     * @returns {Promise} resolves with a Graphic
      */
     async getGraphic(
         objectId: number,
         opts: GetGraphicParams
-    ): Promise<GetGraphicResult> {
+    ): Promise<Graphic> {
         const gjOpt: QueryFeaturesParams = {
             filterSql: `${this.oidField}=${objectId}`,
             includeGeometry: !!opts.getGeom
@@ -427,9 +427,7 @@ export class FileLayer extends AttribLayer {
      * @param options {Object} options to provide filters and helpful information.
      * @returns {Promise} resolves with an array of features that satisfy the criteria
      */
-    async queryFeatures(
-        options: QueryFeaturesParams
-    ): Promise<Array<GetGraphicResult>> {
+    async queryFeatures(options: QueryFeaturesParams): Promise<Array<Graphic>> {
         const gjOpt: QueryFeaturesFileParams = {
             layer: this,
             ...options

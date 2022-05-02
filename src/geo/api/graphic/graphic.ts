@@ -9,13 +9,13 @@
 
 // makes a bit more sense, also helps make the geometry more memory-friendly (i.e. not having space allocated for null pointers to styles and hovers in big point chains)
 
-import type { Attributes, BaseGeometry, Hover, StyleOptions } from '@/geo/api';
+import type { Attributes, BaseGeometry, BaseStyle, Hover } from '@/geo/api';
 import RAMP from '@/api';
 
 export class Graphic {
     attributes: Attributes;
     geometry: BaseGeometry;
-    style: StyleOptions | undefined;
+    style: BaseStyle | undefined;
     id: string;
 
     constructor(geom: BaseGeometry, id?: string, attribs?: Attributes) {

@@ -6,12 +6,13 @@ import {
     BaseGeometry,
     Extent,
     GeometryType,
+    Graphic,
+    NoGeometry,
     Point,
     SpatialReference
 } from '@/geo/api';
 
 import type {
-    GetGraphicResult,
     QueryFeaturesArcServerParams,
     QueryFeaturesParams
 } from '@/geo/api';
@@ -68,7 +69,7 @@ export class QueryAPI extends APIScope {
      */
     async geoJsonQuery(
         options: QueryFeaturesFileParams
-    ): Promise<Array<GetGraphicResult>> {
+    ): Promise<Array<Graphic>> {
         const query = new EsriQuery();
         query.returnGeometry = !!options.includeGeometry;
         query.outFields = ['*']; // TODO look into using the options value. test it well, as the .where gets wonky with outfields
@@ -102,16 +103,17 @@ export class QueryAPI extends APIScope {
 
         // convert to our type. seems a bit wasteful, but we already want to convert to ramp geoms so do it
         return featSet.features.map((f, i) => {
-            const ggr: GetGraphicResult = {
-                attributes: f.attributes
-            };
+            let geom: BaseGeometry;
             if (query.returnGeometry) {
-                ggr.geometry = this.$iApi.geo.utils.geom.geomEsriToRamp(
+                geom = this.$iApi.geo.utils.geom.geomEsriToRamp(
                     f.geometry,
                     `queryResult${i}`
                 );
+            } else {
+                geom = new NoGeometry();
             }
-            return ggr;
+
+            return new Graphic(geom, '', f.attributes);
         });
     }
 
@@ -149,17 +151,15 @@ export class QueryAPI extends APIScope {
                 geometry.sr.wkid === 3978 &&
                 sourceSR.wkid === 4326
             ) {
-                finalGeom = this.$iApi.geo.utils.geom.geomRampToEsri(geometry);
+                finalGeom = geometry.toESRI();
             } else {
                 // convert extent to polygon to avoid issues when a service in a different projection
                 // attempts to warp the extent
-                finalGeom = this.$iApi.geo.utils.geom.geomRampToEsri(
-                    (<Extent>geometry).toPolygon()
-                );
+                finalGeom = (<Extent>geometry).toPolygon().toESRI();
             }
         } else {
             // take as is
-            finalGeom = this.$iApi.geo.utils.geom.geomRampToEsri(geometry);
+            finalGeom = geometry.toESRI();
         }
 
         return finalGeom;

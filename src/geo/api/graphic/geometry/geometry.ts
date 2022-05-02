@@ -2,19 +2,19 @@
 
 import type GeoJson from 'geojson';
 import {
-    Graphic,
     BaseGeometry,
+    BaseStyle,
     Extent,
     GeoJsonGeomType,
     GeometryType,
+    Graphic,
     LineString,
     MultiLineString,
     MultiPoint,
     MultiPolygon,
     Point,
-    PointStyleOptions,
-    Polygon,
-    StyleOptions
+    PointStyle,
+    Polygon
 } from '@/geo/api';
 import type { MapClick, MapMove } from '@/geo/api';
 import {
@@ -22,11 +22,17 @@ import {
     EsriGeometry,
     EsriGraphic,
     EsriMultipoint,
+    EsriPictureMarkerSymbol,
     EsriPoint,
     EsriPolygon,
     EsriPolyline,
+    EsriSimpleFillSymbol,
+    EsriSimpleLineSymbol,
+    EsriSimpleMarkerSymbol,
     EsriSymbol
 } from '@/geo/esri';
+import { LineStyle } from '../style/line-style';
+import { PolygonStyle } from '../style/polygon-style';
 
 export class GeometryAPI {
     /**
@@ -251,8 +257,29 @@ export class GeometryAPI {
         return new EsriGraphic(gConf);
     }
 
-    styleRampToEsri(rampStyle: StyleOptions): EsriSymbol {
+    styleRampToEsri(rampStyle: BaseStyle): EsriSymbol {
         return rampStyle.toESRI();
+    }
+
+    styleEsriToRamp(esriSymbol: EsriSymbol): BaseStyle {
+        switch (esriSymbol.type) {
+            case 'picture-marker':
+            case 'simple-marker':
+                return PointStyle.fromESRI(
+                    <EsriSimpleMarkerSymbol | EsriPictureMarkerSymbol>esriSymbol
+                );
+            case 'simple-line':
+                return LineStyle.fromESRI(<EsriSimpleLineSymbol>esriSymbol);
+            case 'simple-fill':
+                return PolygonStyle.fromESRI(<EsriSimpleFillSymbol>esriSymbol);
+            default:
+                console.error(
+                    `Unsupported ESRI symbol type encountered: ${esriSymbol.type}`
+                );
+
+                // Should we hard error? Returning a point to a non-point requestor might be more chaotic.
+                return new PointStyle();
+        }
     }
 
     // converts an arcgis server geometry type to ramp geometry type
@@ -315,6 +342,6 @@ export class GeometryAPI {
      * @returns {Boolean}                        true if valid image extension
      */
     isImageUrl(text: string): boolean {
-        return PointStyleOptions.isImageUrl(text);
+        return PointStyle.isImageUrl(text);
     }
 }

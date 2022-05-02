@@ -369,7 +369,7 @@ export default defineComponent({
             const oid = this.identifyItem.data[layer.oidField];
             const opts = { getGeom: true };
             layer.getGraphic(oid, opts).then(g => {
-                if (g.geometry === undefined) {
+                if (g.geometry.invalid()) {
                     console.error(`Could not find graphic for objectid ${oid}`);
                 } else {
                     this.$iApi.geo.map.zoomMapTo(g.geometry, 50000);

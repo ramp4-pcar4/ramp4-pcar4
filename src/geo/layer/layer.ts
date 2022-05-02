@@ -1,12 +1,18 @@
 // layers api and other public, general layer things.
 
 import { APIScope, FileUtils, InstanceAPI, OgcUtils } from '@/api/internal';
-import { Extent, LayerState, ScaleSet, TreeNode } from '@/geo/api';
+import {
+    Extent,
+    Graphic,
+    LayerState,
+    NoGeometry,
+    ScaleSet,
+    TreeNode
+} from '@/geo/api';
 import type {
     AttributeSet,
     FieldDefinition,
     GetGraphicParams,
-    GetGraphicResult,
     IdentifyParameters,
     IdentifyResult,
     LegendSymbology,
@@ -760,13 +766,10 @@ export class LayerInstance extends APIScope {
      *
      * @param {Integer} objectId the object id of the graphic to find
      * @param {Object} options options object for the request, see above
-     * @returns {Promise} resolves with a fake graphic containing the requested information
+     * @returns {Promise} resolves with a Graphic containing the requested information
      */
-    getGraphic(
-        objectId: number,
-        options: GetGraphicParams
-    ): Promise<GetGraphicResult> {
-        return Promise.resolve({});
+    getGraphic(objectId: number, options: GetGraphicParams): Promise<Graphic> {
+        return Promise.resolve(new Graphic(new NoGeometry()));
     }
 
     /**

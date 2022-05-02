@@ -6,14 +6,14 @@ import {
     Graphic,
     LinearRing,
     LineString,
-    LineStyleOptions,
+    LineStyle,
     MultiLineString,
     MultiPoint,
     MultiPolygon,
     Point,
-    PointStyleOptions,
+    PointStyle,
     Polygon,
-    PolygonStyleOptions,
+    PolygonStyle,
     ProjectionAPI,
     SharedUtilsAPI,
     SpatialReference
@@ -28,15 +28,15 @@ export class GeoCommonAPI {
     Graphic = Graphic;
     // Hover = Hover;
     LineString = LineString;
-    LineStyleOptions = LineStyleOptions;
+    LineStyle = LineStyle;
     LinearRing = LinearRing;
     MultiLineString = MultiLineString;
     MultiPoint = MultiPoint;
     MultiPolygon = MultiPolygon;
     Point = Point;
-    PointStyleOptions = PointStyleOptions;
+    PointStyle = PointStyle;
     Polygon = Polygon;
-    PolygonStyleOptions = PolygonStyleOptions;
+    PolygonStyle = PolygonStyle;
     SpatialReference = SpatialReference; // SpatialReference: typeof SpatialReference = SpatialReference // this is great code
 
     // useful functions

@@ -17,7 +17,7 @@ import {
     Extent,
     FieldDefinition,
     GetGraphicParams,
-    GetGraphicResult,
+    Graphic,
     IdentifyParameters,
     LayerState,
     LegendSymbology,
@@ -70,7 +70,7 @@ export interface LayerBase {
         objectId: number,
         options: GetGraphicParams,
         layerIdx: number | string | undefined
-    ): Promise<GetGraphicResult>;
+    ): Promise<Graphic>;
     getIcon?(
         objectId: number,
         layerIdx: number | string | undefined

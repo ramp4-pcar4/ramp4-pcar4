@@ -17,7 +17,9 @@ import {
     Extent,
     LayerType,
     Point,
-    PointStyleOptions
+    type PointIconStyleOptions,
+    PointStyle,
+    PointStyleType
 } from '@/geo/api';
 import flag from './flag.json';
 import { debounce } from 'throttle-debounce';
@@ -136,21 +138,19 @@ export default defineComponent({
                         let poleStyleParams;
                         if (this.poleIcon) {
                             // fixture config has provided a custom image.
-                            // TODO do we need to parmatarize the additonal options?
+                            // TODO do we need to parmatarize the additonal options? offsets? height?
+                            //      we would need to expand what our config schema accepts. Right now
+                            //      you can only specify an icon image. Maybe we should allow the option
+                            //      to pass any Option param object that a PointStyle class can accept.
                             poleStyleParams = {
+                                style: PointStyleType.ICON,
                                 icon: this.poleIcon,
                                 height: 16.5,
                                 width: 16.5
                             };
                         } else {
                             // grab data from our default in flag.json
-                            poleStyleParams = {
-                                icon: flag.url,
-                                height: flag.height,
-                                width: flag.width,
-                                xOffset: flag.xoffset,
-                                yOffset: flag.yoffset
-                            };
+                            poleStyleParams = flag;
                         }
 
                         const poleLayer =
@@ -161,11 +161,9 @@ export default defineComponent({
                             });
                         await poleLayer.initiate();
 
-                        // TODO deal with offsets?
-
                         const poleGraphic = new Graphic(projPole, 'northpole');
-                        const poleStyle = new PointStyleOptions(
-                            poleStyleParams
+                        const poleStyle = new PointStyle(
+                            <PointIconStyleOptions>poleStyleParams
                         );
                         poleGraphic.style = poleStyle;
 

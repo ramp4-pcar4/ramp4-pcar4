@@ -314,6 +314,9 @@ export class CommonMapAPI extends APIScope {
         animate = true
     ): Promise<void> {
         if (this.esriView) {
+            if (geom.invalid()) {
+                throw new Error('attempt to zoom to invalid geometry');
+            }
             const g = await this.geomToMapSR(geom);
             // TODO investigate the `snapTo` parameter if we have an extent / poly coming in
             //      see how it compares to the old "fit to view" parameter of ESRI3
