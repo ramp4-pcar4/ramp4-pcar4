@@ -121,8 +121,8 @@ export default defineComponent({
     data() {
         return {
             layerName: '',
-            visibilityModel: this.layer.visibility,
-            opacityModel: this.layer.opacity * 100,
+            visibilityModel: this.layer.visibility ? this.layer.visibility : true,
+            opacityModel: this.layer.opacity ? this.layer.opacity * 100 : 100,
             identifyModel: this.layer.identify,
             snapshotToggle: false,
             handlers: [] as Array<string>,
@@ -203,8 +203,10 @@ export default defineComponent({
             this.layer.isLayerLoaded().then(() => {
                 if (oldUid === this.layer.uid) {
                     // ensure that it's still the same layer
-                    this.visibilityModel = this.layer.visibility;
-                    this.opacityModel = Math.round(this.layer.opacity * 100);
+                    this.visibilityModel = this.layer.visibility ? this.layer.visibility : true;
+
+                    // If opacity is not defined, then default it to 100.
+                    this.opacityModel = this.layer.opacity ? Math.round(this.layer.opacity * 100) : 100;
                     this.identifyModel = this.layer.identify;
                     this.layerName = this.layer.name;
                 }

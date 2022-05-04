@@ -515,34 +515,34 @@ export class LayerInstance extends APIScope {
     /**
      * Returns the visibility of the layer.
      *
-     * @returns {Boolean} visibility of the layer
+     * @returns {Boolean | undefined} visibility of the layer
      */
-    get visibility(): boolean {
+    get visibility(): boolean | undefined {
         return false;
     }
 
     /**
      * Applies visibility to layer.
      *
-     * @param {Boolean} value the new visibility setting
+     * @param {Boolean | undefined} value the new visibility setting
      */
-    set visibility(value: boolean) {}
+    set visibility(value: boolean | undefined) {}
 
     /**
      * Returns the opacity of the layer.
      *
-     * @returns {Boolean} opacity of the layer
+     * @returns {Boolean | undefined} opacity of the layer
      */
-    get opacity(): number {
+    get opacity(): number | undefined {
         return 0;
     }
 
     /**
      * Applies opacity to layer.
      *
-     * @param {Boolean} value the new opacity setting
+     * @param {Boolean | undefined} value the new opacity setting
      */
-    set opacity(value: number) {}
+    set opacity(value: number | undefined) {}
 
     /**
      * Returns the scale set (min and max visible scale) of the layer.

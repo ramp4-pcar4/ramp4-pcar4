@@ -451,8 +451,8 @@ export interface RampSpatialReference {
 }
 
 export interface RampLayerStateConfig {
-    visibility?: boolean;
-    opacity?: number;
+    visibility?: boolean | undefined;
+    opacity?: number | undefined;
     identify?: boolean;
     hovertips?: boolean;
 }

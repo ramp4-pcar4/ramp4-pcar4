@@ -395,8 +395,8 @@ class MapImageLayer extends AttribLayer {
                     // apply any updates that were in the configuration snippets
                     const subC = subConfigs[mlFC.layerIdx];
                     if (subC) {
-                        mlFC.visibility = subC.state?.visibility || false;
-                        mlFC.opacity = subC.state?.opacity || 0;
+                        mlFC.visibility = subC.state?.visibility || true;
+                        mlFC.opacity = subC.state?.opacity || 1;
                         // mlFC.setQueryable(subC.state.identify); // TODO uncomment when done
                         mlFC.nameField = subC.nameField || mlFC.nameField || '';
                         mlFC.processFieldMetadata(subC.fieldMetadata);
