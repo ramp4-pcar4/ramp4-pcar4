@@ -28,7 +28,7 @@
                 <export-settings
                     :componentSelectedState="selectedComponents"
                     :onComponentToggle="make()"
-                    class="ml-auto py-8 px-8"
+                    class="ml-auto flex px-8"
                 ></export-settings>
             </div>
         </template>
