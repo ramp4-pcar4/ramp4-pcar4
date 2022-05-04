@@ -347,6 +347,15 @@ class MapImageLayer extends AttribLayer {
                         );
                         (_sublayer.parentLayer as CommonLayer) // the parent of a MapImageSublayer must be a CommonLayer
                             ?.checkVisibility();
+                    }),
+                    subLayer.watch('opacity', (newval: number) => {
+                        this.$iApi.event.emit(
+                            GlobalEvents.LAYER_OPACITYCHANGE,
+                            {
+                                opacity: newval,
+                                uid: _sublayer.uid
+                            }
+                        );
                     })
                 );
             }
