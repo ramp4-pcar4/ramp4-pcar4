@@ -1,0 +1,13 @@
+key,enValue,enValid,frValue,frValid
+export.title,Export,1,Export,0
+export.alertName,Export,1,Export,0
+export.download,Download image,1,Download image,0
+export.refresh,Refresh,1,Refresh,0
+export.scaleBar.approx,{0} approx.,1,{0} approx.,0
+export.menu,Settings Menu,1,Settings Menu,0
+export.menu.component.title,Title,1,Titre,1
+export.menu.component.map,Map,1,Carte,1
+export.menu.component.mapElements,North arrow and scalebar,1,Flèche du nord et échelle graphique,1
+export.menu.component.legend,Legend,1,Légende,1
+export.menu.component.footnote,Footnote,1,Référence,1
+export.menu.component.timestamp,Timestamp,1,Timestamp,0

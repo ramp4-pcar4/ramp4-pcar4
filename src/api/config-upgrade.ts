@@ -398,7 +398,31 @@ function servicesUpgrader(r2Services: any, r4c: any): void {
     }
 
     if (r2Services.export) {
-        // TODO port data to our poorly named export fixure config
+        // check if the export nugget already exists because the legend info section parser could have created it first
+        if (!r4c.fixtures.export) {
+            r4c.fixtures.export = {};
+            r4c.fixturesEnabled.push('export');
+        }
+
+        // if-party to ensure properties are added only if they exists (no undefined props)
+        if (r2Services.export.title) {
+            r4c.fixtures.export.title = r2Services.export.title;
+        }
+        if (r2Services.export.map) {
+            r4c.fixtures.export.map = r2Services.export.map;
+        }
+        if (r2Services.export.mapElements) {
+            r4c.fixtures.export.mapElements = r2Services.export.mapElements;
+        }
+        if (r2Services.export.legend) {
+            r4c.fixtures.export.legend = r2Services.export.legend;
+        }
+        if (r2Services.export.footnote) {
+            r4c.fixtures.export.footnote = r2Services.export.footnote;
+        }
+        if (r2Services.export.timestamp) {
+            r4c.fixtures.export.timestamp = r2Services.export.timestamp;
+        }
     }
 
     if (r2Services.proxyUrl) {

@@ -524,25 +524,90 @@
             },
             "unevaluatedProperties": false
         },
-        "export-basic": {
+        "exportComponent": {
             "type": "object",
-            "description": "Provides configuration to the basic export fixture. If not supplied the default config used.",
+            "description": "Provides configuration for an export fixture component. If not supplied the default config used.",
+            "properties": {
+                "selected": {
+                    "type": "boolean",
+                    "description": "Indicates if this component is selected.",
+                    "default": true
+                },
+                "selectable": {
+                    "type": "boolean",
+                    "description": "Indicates if this component is selectable.",
+                    "default": true
+                }
+            }
+        },
+        "export": {
+            "type": "object",
+            "description": "Provides configuration to the export fixture. If not supplied the default config used.",
             "properties": {
                 "title": {
                     "type": "object",
-                    "description": "Configuration for the title text of the exported image.",
+                    "description": "Configuration for the title.",
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/exportComponent"
+                        }
+                    ],
                     "properties": {
-                        "disabled": {
-                            "type": "boolean",
-                            "default": false,
-                            "description": "Indicates if the export title is disabled."
-                        },
+                        "value": {
+                            "type": "string",
+                            "default": "RAMP-Map / PCAR-Carte",
+                            "description": "The value of the title text."
+                        }
+                    },
+                    "requried": ["value"]
+                },
+                "map": {
+                    "type": "object",
+                    "description": "Configuration for map.",
+                    "$ref": "#/$defs/exportComponent"
+                },
+                "mapElements": {
+                    "type": "object",
+                    "description": "Configuration for the north arrow and scale bar.",
+                    "$ref": "#/$defs/exportComponent"
+                },
+                "legend": {
+                    "type": "object",
+                    "description": "Configuration for the legend.",
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/exportComponent"
+                        }
+                    ],
+                    "properties": {
+                        "columnWidth": {
+                            "type": "number",
+                            "default": "",
+                            "description": "Value in pixels to be used as the column width for the exported legend."
+                        }
+                    }
+                },
+                "footnote": {
+                    "type": "object",
+                    "description": "Configuration for the footnote.",
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/exportComponent"
+                        }
+                    ],
+                    "properties": {
                         "value": {
                             "type": "string",
                             "default": "",
-                            "description": "The value of the title text."
+                            "description": "The value of the footnote text."
                         }
-                    }
+                    },
+                    "requried": ["value"]
+                },
+                "timestamp": {
+                    "type": "object",
+                    "description": "Configuration for the timestamp.",
+                    "$ref": "#/$defs/exportComponent"
                 },
                 "fileName": {
                     "type": "string",

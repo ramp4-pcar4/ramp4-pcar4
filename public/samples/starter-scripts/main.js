@@ -449,7 +449,7 @@ let config = {
                         'legend',
                         'geosearch',
                         'basemap',
-                        'export-basic',
+                        'export',
                         'layer-reorder'
                     ],
 
@@ -461,9 +461,13 @@ let config = {
                     ]
                 },
                 mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
-                'export-basic': {
+                export: {
                     title: {
-                        value: 'All Your Base are Belong to Us'
+                        value: 'All Your Base are Belong to Us',
+                        selectable: false
+                    },
+                    legend: {
+                        selected: false
                     },
                     fileName: 'ramp-pcar-4-map-carte'
                 },
@@ -587,7 +591,7 @@ rInstance.$element.component('Water-Quantity-Template', {
 });
 
 // add export fixtures
-rInstance.fixture.add('export-basic');
+rInstance.fixture.add('export');
 
 // load map if startRequired is true
 rInstance.start();
