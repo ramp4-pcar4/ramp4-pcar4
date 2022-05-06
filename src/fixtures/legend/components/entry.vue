@@ -9,7 +9,7 @@
                     items-center
                     hover:bg-gray-200
                     ${
-                        legendItem._controlAvailable('datatable') &&
+                        legendItem.controlAvailable('datatable') &&
                         getDatagridExists()
                             ? 'cursor-pointer'
                             : 'cursor-default'
@@ -21,7 +21,7 @@
                 @mouseover.stop="$event.currentTarget._tippy.show()"
                 @mouseout.self="$event.currentTarget._tippy.hide()"
                 :content="
-                    legendItem._controlAvailable('datatable') &&
+                    legendItem.controlAvailable('datatable') &&
                     getDatagridExists()
                         ? $t('legend.entry.data')
                         : ''
@@ -41,9 +41,9 @@
                         tabindex="-1"
                         :class="{
                             'cursor-default':
-                                !legendItem._controlAvailable('symbology')
+                                !legendItem.controlAvailable('symbology')
                         }"
-                        :disabled="!legendItem._controlAvailable('symbology')"
+                        :disabled="!legendItem.controlAvailable('symbology')"
                         :content="
                             legendItem.symbologyExpanded
                                 ? $t('legend.symbology.hide')
@@ -57,7 +57,7 @@
                         <symbology-stack
                             :class="{
                                 'pointer-events-none':
-                                    !legendItem._controlAvailable('symbology')
+                                    !legendItem.controlAvailable('symbology')
                             }"
                             class="w-32 h-32"
                             :visible="legendItem.symbologyExpanded"
@@ -87,7 +87,7 @@
                         legendItem.parent.type === 'VisibilitySet'
                     "
                     :legendItem="legendItem"
-                    :disabled="!legendItem._controlAvailable('visibility')"
+                    :disabled="!legendItem.controlAvailable('visibility')"
                 />
             </div>
         </div>
@@ -135,7 +135,9 @@
                             :value="item"
                             :legendItem="legendItem"
                             :checked="item.visibility"
-                            :disabled="!legendItem._controlAvailable('visibility')"
+                            :disabled="
+                                !legendItem.controlAvailable('visibility')
+                            "
                         />
                     </div>
                 </div>
@@ -160,11 +162,11 @@
 import { defineComponent, toRaw } from 'vue';
 import type { PropType } from 'vue';
 import { GlobalEvents } from '@/api';
-import { Controls, LegendEntry } from '../store/legend-defs';
+import type { LegendEntry } from '../store/legend-defs';
 import LegendCheckboxV from './checkbox.vue';
 import LegendSymbologyStackV from './symbology-stack.vue';
 import LegendOptionsV from './legend-options.vue';
-import type { LegendSymbology } from '@/geo/api';
+import { LayerControls, type LegendSymbology } from '@/geo/api';
 
 export default defineComponent({
     name: 'LegendEntryV',
@@ -225,7 +227,7 @@ export default defineComponent({
          * Display symbology stack for the layer.
          */
         toggleSymbology(): void {
-            if (this.legendItem!._controlAvailable(Controls.Symbology)) {
+            if (this.legendItem!.controlAvailable(LayerControls.Symbology)) {
                 const expanded = this.legendItem!.toggleSymbologyExpand();
                 this.$iApi.updateAlert(
                     this.$t(
@@ -242,7 +244,7 @@ export default defineComponent({
          */
         toggleGrid(): void {
             if (
-                this.legendItem!._controlAvailable(Controls.Datatable) &&
+                this.legendItem!.controlAvailable(LayerControls.Datatable) &&
                 this.getDatagridExists()
             ) {
                 this.$iApi.event.emit(

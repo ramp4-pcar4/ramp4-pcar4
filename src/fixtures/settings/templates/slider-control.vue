@@ -9,6 +9,7 @@
                 class="mr-16"
                 @change="config.onChange"
                 v-model="value"
+                :disabled="this.config.disabled"
                 :width="250"
                 :min="0"
                 :max="100"
@@ -41,6 +42,7 @@ export default defineComponent({
                 'config',
                 (newConfig: any) => {
                     this.value = newConfig.value;
+                    this.isDisabled = !!newConfig.disabled;
                 },
                 { deep: true }
             )
@@ -54,6 +56,7 @@ export default defineComponent({
     data() {
         return {
             value: this.config.value,
+            isDisabled: !!this.config.disabled,
             watchers: [] as Array<Function>
         };
     }

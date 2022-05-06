@@ -26,7 +26,7 @@
                     :name="$t('settings.label.visibility')"
                     :config="{
                         value: visibilityModel,
-                        disabled: !legendItem._controlAvailable('visibility')
+                        disabled: !controlAvailable('visibility')
                     }"
                 />
 
@@ -37,7 +37,11 @@
                     type="slider"
                     :name="$t('settings.label.opacity')"
                     icon="opacity"
-                    :config="{ onChange: updateOpacity, value: opacityModel }"
+                    :config="{
+                        onChange: updateOpacity,
+                        value: opacityModel,
+                        disabled: !controlAvailable('opacity')
+                    }"
                 ></settings-component>
 
                 <div class="rv-settings-divider"></div>
@@ -50,7 +54,7 @@
                     @toggled="() => {}"
                     :config="{
                         value: false,
-                        disabled: true
+                        disabled: !controlAvailable('boundingBox')
                     }"
                 ></settings-component>
 
@@ -71,7 +75,8 @@
                     icon="location"
                     @toggled="updateIdentify"
                     :config="{
-                        value: identifyModel
+                        value: identifyModel,
+                        disabled: !controlAvailable('identify')
                     }"
                 ></settings-component>
 
@@ -90,7 +95,11 @@
                     type="input"
                     :name="$t('settings.label.refreshHint')"
                     icon="location"
-                    :config="{ onChange: () => {}, value: 0 }"
+                    :config="{
+                        onChange: () => {},
+                        value: 0,
+                        disabled: !controlAvailable('refresh')
+                    }"
                 ></settings-component>
 
                 <div class="rv-settings-divider"></div>
@@ -106,6 +115,8 @@ import type { PanelInstance } from '@/api';
 import SettingsComponentV from './component.vue';
 import { GlobalEvents, LayerInstance } from '@/api/internal';
 import type { LegendEntry } from '../legend/store/legend-defs';
+import type { SettingsAPI } from './api/settings';
+import type { LayerControls } from '@/geo/api';
 
 export default defineComponent({
     name: 'SettingsScreenV',
@@ -120,6 +131,7 @@ export default defineComponent({
     },
     data() {
         return {
+            fixture: {},
             layerName: '',
             visibilityModel: this.layer.visibility,
             opacityModel: this.layer.opacity * 100,
@@ -131,6 +143,8 @@ export default defineComponent({
     },
 
     created() {
+        this.fixture = this.$iApi.fixture.get('settings');
+
         this.watchers.push(
             this.$watch('uid', (newUid: string, oldUid: string) => {
                 if (newUid !== oldUid) {
@@ -173,9 +187,36 @@ export default defineComponent({
         this.watchers.forEach(unwatch => unwatch());
     },
     methods: {
+        /**
+         * Check if control is enabled on this layer's settings config
+         * Default to layer controls if settings config is not defined
+         */
+        controlAvailable(control: LayerControls): any {
+            if (!this.fixture) {
+                console.warn(
+                    'Settings panel cannot check for layer control because it could not find settings fixture api'
+                );
+                return false;
+            }
+            const settingsConfig: any = (
+                this.fixture as SettingsAPI
+            )?.getLayerFixtureConfig(this.layer.id);
+
+            // check disabled controls first
+            if (settingsConfig?.disabledControls?.includes(control)) {
+                return false;
+            }
+            // check controls list and default to layer controls if not defined
+            return (
+                settingsConfig?.controls?.includes(control) ??
+                this.layer.controlAvailable(control)
+            );
+        },
+
         // Update the layer visibility.
         updateVisibility(val: boolean) {
-            this.legendItem.toggleVisibility(val);
+            // force update the visibility
+            this.legendItem.toggleVisibility(val, true, true);
             this.visibilityModel = val;
         },
 
