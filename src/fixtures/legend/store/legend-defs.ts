@@ -1,4 +1,4 @@
-import { DefPromise, LayerType, TreeNode } from '@/geo/api';
+import { DefPromise, LayerControls, LayerType, TreeNode } from '@/geo/api';
 import type { LegendSymbology } from '@/geo/api';
 import type { LayerInstance } from '@/api/internal';
 import RAMP from '@/api';
@@ -11,7 +11,8 @@ export class LegendItem {
     _id: string;
     _name: string;
     _type: LegendTypes;
-    _controls: Array<string>;
+    _controls: Array<LayerControls> | undefined; // will use layer controls if undefined
+    _disabledControls: Array<LayerControls> | undefined; // will use layer's disabled controls if undefined
     _children: Array<LegendEntry | LegendGroup> = [];
     _parent: LegendGroup | undefined = undefined; // can only be a legend group or visibility set
     _loadPromise: DefPromise; // promise that resolves when legend item is loaded
@@ -25,24 +26,13 @@ export class LegendItem {
     constructor(legendItem: any) {
         this._loadPromise = new DefPromise();
         this._id = legendItem.layerId;
-        this._name = legendItem.name !== undefined ? legendItem.name : '';
-        this._type =
-            legendItem.type !== undefined ? legendItem.type : LegendTypes.Entry;
-        this._controls =
-            legendItem.controls !== undefined
-                ? legendItem.controls
-                : [
-                      Controls.Visibility,
-                      Controls.BoundaryZoom,
-                      Controls.Refresh,
-                      Controls.Reload,
-                      Controls.Remove,
-                      Controls.Datatable,
-                      Controls.Settings,
-                      Controls.Symbology
-                  ];
-        this._hidden =
-            legendItem.hidden !== undefined ? legendItem.hidden : false;
+        this._name = legendItem.name ?? '';
+        this._type = legendItem.type ?? LegendTypes.Entry;
+
+        this._controls = legendItem.controls?.slice();
+        this._disabledControls = legendItem.disabledControls?.slice();
+
+        this._hidden = legendItem.hidden ?? false;
         this._itemConfig = legendItem;
 
         this._uid = RAMP.GEO.sharedUtils.generateUUID();
@@ -105,11 +95,19 @@ export class LegendItem {
 
     /**
      * Check if a control is available for the legend item.
-     * @param control name of the control
-     * @return {boolean} - true if the control is included in legend item's available controls
+     * Returns:
+     *  - True if the control is included in legend item's available controls
+     *  - False if control is not included, or if control is disabled
+     *  - Undefined if controls are not defined
+     * @param {LayerControls} control name of the control
+     * @return {boolean | undefined}
      */
-    _controlAvailable(control: Controls): boolean {
-        return this._controls.includes(control);
+    controlAvailable(control: LayerControls): boolean | undefined {
+        // check disabled controls first
+        if (this._disabledControls?.includes(control)) {
+            return false;
+        }
+        return this._controls?.includes(control);
     }
 }
 
@@ -238,17 +236,17 @@ export class LegendEntry extends LegendItem {
                     : undefined;
 
                 // remove controls if layer doesn't support them
-                let controlsToRemove: Array<string> = [];
+                let controlsToRemove: Array<LayerControls> = [];
                 if (!layer.supportsFeatures) {
-                    controlsToRemove.push(Controls.Datatable);
+                    controlsToRemove.push(LayerControls.Datatable);
                 }
                 if (layer.extent === undefined) {
-                    controlsToRemove.push(Controls.BoundaryZoom);
+                    controlsToRemove.push(LayerControls.BoundaryZoom);
                 }
                 controlsToRemove.forEach(control => {
-                    let idx: number = this._controls.indexOf(control);
+                    let idx: number = this._controls?.indexOf(control) ?? -1;
                     if (idx !== -1) {
-                        this._controls.splice(idx, 1);
+                        this._controls?.splice(idx, 1);
                     }
                 });
 
@@ -268,8 +266,7 @@ export class LegendEntry extends LegendItem {
      * @param {boolean} expanded optional parameter to toggle expanded to a certain value
      */
     toggleSymbologyExpand(expanded: boolean | undefined = undefined): boolean {
-        this._symbologyExpanded =
-            expanded !== undefined ? expanded : !this._symbologyExpanded;
+        this._symbologyExpanded = expanded ?? !this._symbologyExpanded;
         return this._symbologyExpanded;
     }
 
@@ -322,33 +319,30 @@ export class LegendEntry extends LegendItem {
         visibility: boolean | undefined = undefined,
         updateParent: boolean = true
     ): void {
-        if (this._controls.includes(Controls.Visibility)) {
-            // do nothing if visibility of entry is already equal to the argument value
-            if (this.visibility === visibility || !this._layer) {
-                return;
+        // do nothing if visibility of entry is already equal to the argument value
+        if (this.visibility === visibility || !this._layer) {
+            return;
+        }
+
+        this._layer.visibility = visibility ?? !this.visibility;
+
+        // Check if some of the child symbols have their definition visibility on
+        const noDefinitionsVisible: boolean = !this._layer.legend.some(
+            (item: LegendSymbology) => item.lastVisbility
+        );
+
+        this._layer.legend.forEach((item: LegendSymbology) => {
+            if (noDefinitionsVisible) {
+                // If there are no definitions visible and we toggled the parent layer on
+                // then we set all the children to visible
+                item.lastVisbility = true;
             }
+            item.visibility = this.visibility ? item.lastVisbility : false;
+        });
 
-            this._layer.visibility =
-                visibility !== undefined ? visibility : !this.visibility;
-
-            // Check if some of the child symbols have their definition visibility on
-            const noDefinitionsVisible: boolean = !this._layer.legend.some(
-                (item: LegendSymbology) => item.lastVisbility
-            );
-
-            this._layer.legend.forEach((item: LegendSymbology) => {
-                if (noDefinitionsVisible) {
-                    // If there are no definitions visible and we toggled the parent layer on
-                    // then we set all the children to visible
-                    item.lastVisbility = true;
-                }
-                item.visibility = this.visibility ? item.lastVisbility : false;
-            });
-
-            // update parent visibility if current legend entry is part of a group or set
-            if (this._parent instanceof LegendGroup && updateParent) {
-                this._parent.checkVisibility(this);
-            }
+        // update parent visibility if current legend entry is part of a group or set
+        if (this._parent instanceof LegendGroup && updateParent) {
+            this._parent.checkVisibility(this);
         }
     }
 
@@ -372,6 +366,21 @@ export class LegendEntry extends LegendItem {
             this._layer.identify = identify;
         }
     }
+
+    /**
+     * Check if a control is available for the legend entry.
+     * Will default to checking the layer's controls if controls are undefined on the legend item
+     *
+     * @param {LayerControls} control name of the control
+     * @return {boolean} Indicates if control is enabled on this legend item or layer
+     */
+    controlAvailable(control: LayerControls): boolean {
+        return (
+            super.controlAvailable(control) ??
+            this.layer?.controlAvailable(control) ??
+            false
+        ); // default to false if layer is undefined
+    }
 }
 
 /**
@@ -391,6 +400,12 @@ export class LegendGroup extends LegendItem {
         super(legendGroup);
         this._parent = parent;
         this._type = LegendTypes.Placeholder; // group will be in a placeholder state by default
+
+        // default legend group controls if it is not defined
+        this._controls = legendGroup.controls?.slice() ?? [
+            LayerControls.Visibility
+        ];
+        this._disabledControls = legendGroup.disabledControls?.slice() ?? [];
 
         this._expanded = legendGroup.expanded || true;
         this._visibility = legendGroup.visibility || true;
@@ -573,7 +588,7 @@ export class LegendGroup extends LegendItem {
         updateParent: boolean = true
     ): void {
         const oldVal = this._visibility;
-        this._visibility = visible !== undefined ? visible : !this._visibility;
+        this._visibility = visible ?? !this._visibility;
         // check if visibility value changes
         if (oldVal === this._visibility) {
             return;
@@ -624,19 +639,4 @@ export enum LegendTypes {
     Entry = 'LegendEntry',
     Info = 'InfoSection',
     Placeholder = 'Placeholder'
-}
-
-export enum Controls {
-    Opacity = 'opacity',
-    Visibility = 'visibility',
-    Boundingbox = 'boundingBox',
-    BoundaryZoom = 'boundaryZoom',
-    Identify = 'identify',
-    Metadata = 'metadata',
-    Refresh = 'refresh',
-    Reload = 'reload',
-    Remove = 'remove',
-    Settings = 'settings',
-    Datatable = 'datatable',
-    Symbology = 'symbology'
 }
