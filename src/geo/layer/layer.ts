@@ -4,6 +4,7 @@ import { APIScope, FileUtils, InstanceAPI, OgcUtils } from '@/api/internal';
 import {
     Extent,
     Graphic,
+    LayerControls,
     LayerState,
     NoGeometry,
     ScaleSet,
@@ -201,7 +202,8 @@ export class LayerAPI extends APIScope {
     /**
      * Access an instantiated layer object.
      *
-     * @param layerId layer id or uid of the layer
+     * @param {string} layerId layer id or uid of the layer
+     * @returns {LayerInstance | undefined} The layer instance with the given id. Returns undefined is layer is not found.
      */
     getLayer(layerId: string): LayerInstance | undefined {
         // since this would be a fairly common thing to want to do via the instance API,
@@ -229,6 +231,71 @@ export class LayerAPI extends APIScope {
      */
     allLayers(): Array<LayerInstance> {
         return this.$vApp.$store.get<LayerInstance[]>(LayerStore.layers) || [];
+    }
+
+    /**
+     * Get controls and disabled controls configuration of the layer with the given id.
+     *
+     * @param {string} layerId layer id or uid of the layer
+     * @returns {Object | undefined} The layer's controls and disabled controls configuration. Returns undefined if layer is not found.
+     */
+    getLayerControls(layerId: string):
+        | {
+              controls: Array<LayerControls>;
+              disabledControls: Array<LayerControls>;
+          }
+        | undefined {
+        // fetch the layer first since given layerId can be layer id or uid
+        const layer: LayerInstance | undefined = this.getLayer(layerId);
+        if (!layer) {
+            return;
+        }
+
+        // get controls config from layer.config since we do not expect this to change mid-session
+        const controls: Array<LayerControls> =
+            layer.config.controls?.slice() ?? [
+                LayerControls.BoundaryZoom,
+                LayerControls.Boundingbox,
+                LayerControls.Datatable,
+                LayerControls.Identify,
+                LayerControls.Metadata,
+                LayerControls.Opacity,
+                LayerControls.Refresh,
+                LayerControls.Reload,
+                LayerControls.Remove,
+                LayerControls.Settings,
+                LayerControls.Symbology,
+                LayerControls.Visibility
+            ];
+
+        // remove controls if layer doesn't support them
+        let controlsToRemove: Array<LayerControls> = [];
+        if (!layer.supportsFeatures) {
+            controlsToRemove.push(LayerControls.Datatable);
+        }
+        if (layer.extent === undefined) {
+            controlsToRemove.push(LayerControls.BoundaryZoom);
+        }
+        const metaConfig =
+            layer.config?.metadata ||
+            (layer.isSublayer ? layer.parentLayer?.config?.metadata : {}) ||
+            {};
+        if (!metaConfig.url) {
+            controlsToRemove.push(LayerControls.Metadata);
+        }
+
+        controlsToRemove.forEach(control => {
+            let idx: number = controls?.indexOf(control) ?? -1;
+            if (idx !== -1) {
+                controls?.splice(idx, 1);
+            }
+        });
+
+        // return default controls if controls is undefined
+        return {
+            controls: controls,
+            disabledControls: layer.config.disabledControls ?? []
+        };
     }
 
     // TODO consider if we need a defaulting scenario. This might tie in with
@@ -985,5 +1052,26 @@ export class LayerInstance extends APIScope {
         }
 
         return this._sublayers[workingIdx];
+    }
+
+    /**
+     * Check if layer controls is available on this layer.
+     *
+     * @param {LayerControls} control the layer control to check
+     * @returns {boolean} Indicates if the given control is enabled on this layer
+     */
+    controlAvailable(control: LayerControls): boolean {
+        const controls:
+            | {
+                  controls: Array<string>;
+                  disabledControls: Array<string>;
+              }
+            | undefined = this.$iApi.geo.layer.getLayerControls(this.id);
+
+        // check disabled controls first
+        if (controls?.disabledControls?.includes(control)) {
+            return false;
+        }
+        return controls?.controls.includes(control) ?? false;
     }
 }

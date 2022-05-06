@@ -28,20 +28,12 @@ export class LegendAPI extends FixtureInstance {
             this.getLayerFixtureConfigs();
 
         // parse the header controls, or default the controls
-        let controls: Array<string> = [];
-        if (!legendConfig?.headerControls) {
-            // use the default controls
-            controls = [
-                'wizard',
-                'layerReorder',
-                'groupToggle',
-                'visibilityToggle'
-            ];
-        } else {
-            legendConfig.headerControls.forEach(control => {
-                controls.push(control);
-            });
-        }
+        let controls: Array<string> = legendConfig?.headerControls?.slice() ?? [
+            'wizard',
+            'layerReorder',
+            'groupToggle',
+            'visibilityToggle'
+        ];
         this.$vApp.$store.set(LegendStore.headerControls, controls);
 
         if (!legendConfig || !legendConfig.root.children) {
