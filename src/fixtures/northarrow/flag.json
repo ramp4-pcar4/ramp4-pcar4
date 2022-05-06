@@ -1,8 +1,8 @@
 {
-    "style": "icon",
-    "width": 16.5,
-    "height": 16.5,
-    "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxnIGlkPSJmbGFnIj4KICAgIDxwYXRoIGQ9Ik0xNC40IDZMMTQgNEg1djE3aDJ2LTdoNS42bC40IDJoN1Y2eiIgZmlsbD0iI2YwMCIgc3Ryb2tlPSIjMDAwIj48L3BhdGg+CiAgPC9nPgo8L3N2Zz4K",
-    "xOffset": 7,
-    "yOffset": 7
+    "style": "path",
+    "size": 12,
+    "path": "M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z",
+    "colour": "#ff0000ff",
+    "xOffset": 5,
+    "yOffset": 6
 }

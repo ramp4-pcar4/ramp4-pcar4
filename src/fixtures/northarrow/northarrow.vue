@@ -18,6 +18,7 @@ import {
     LayerType,
     Point,
     type PointIconStyleOptions,
+    type PointMarkerStyleOptions,
     PointStyle,
     PointStyleType
 } from '@/geo/api';
@@ -160,7 +161,9 @@ export default defineComponent({
 
                         const poleGraphic = new Graphic(projPole, 'northpole');
                         const poleStyle = new PointStyle(
-                            <PointIconStyleOptions>poleStyleParams
+                            <PointIconStyleOptions | PointMarkerStyleOptions>(
+                                poleStyleParams
+                            )
                         );
                         poleGraphic.style = poleStyle;
 
