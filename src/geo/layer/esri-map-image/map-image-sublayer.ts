@@ -10,7 +10,7 @@ export class MapImageSublayer extends AttribLayer {
     tooltipField: string;
 
     constructor(
-        config: { layerType: string; state?: RampLayerStateConfig },
+        config: any,
         $iApi: InstanceAPI,
         parent: MapImageLayer,
         layerIdx = 0

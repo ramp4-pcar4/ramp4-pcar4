@@ -584,7 +584,7 @@ let config = {
                             }
                         }
                     ],
-                    disabledControls: ['query', 'data']
+                    disabledControls: ['identify', 'data']
                 }
             ],
             fixtures: {

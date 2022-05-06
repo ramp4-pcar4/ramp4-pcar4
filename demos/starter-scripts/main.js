@@ -287,6 +287,9 @@ let config = {
                             fixtures: {
                                 details: {
                                     template: 'Water-Quantity-Template'
+                                },
+                                settings: {
+                                    controls: ['visibility', 'opacity']
                                 }
                             }
                         },
@@ -296,7 +299,8 @@ let config = {
                             state: {
                                 opacity: 0.5,
                                 visibility: true
-                            }
+                            },
+                            disabledControls: ['opacity']
                         }
                     ],
                     state: {
@@ -316,8 +320,7 @@ let config = {
                     layerEntries: [
                         {
                             index: 5,
-                            state: {
-                            }
+                            state: {}
                         }
                     ],
                     state: {
@@ -337,24 +340,26 @@ let config = {
                     },
                     tolerance: 10,
                     customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
-                },
-                {
-                    id: 'WFSLayer',
-                    layerType: 'ogc-wfs',
-                    url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
-                    state: {
-                        visibility: true
-                    },
-                    customRenderer: {},
-                    metadata: {
-                        url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/master/README.md'
-                    },
-                    fixtures: {
-                        details: {
-                            template: 'WFSLayer-Custom'
-                        }
-                    }
                 }
+                // TODO: Revisit this in #1002
+                // Removing WFS layer for now since it is breaking other layers
+                // {
+                //     id: 'WFSLayer',
+                //     layerType: 'ogc-wfs',
+                //     url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
+                //     state: {
+                //         visibility: true
+                //     },
+                //     customRenderer: {},
+                //     metadata: {
+                //         url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/master/README.md'
+                //     },
+                //     fixtures: {
+                //         details: {
+                //             template: 'WFSLayer-Custom'
+                //         }
+                //     }
+                // }
                 /*
             {
                 id: 'TestTile',
@@ -389,7 +394,8 @@ let config = {
                                 exclusiveVisibility: [
                                     {
                                         layerId: 'CleanAir',
-                                        name: 'Clean Air in Set'
+                                        name: 'Clean Air in Set',
+                                        disabledControls: ['boundaryZoom']
                                     },
                                     {
                                         name: 'Group in Set',
@@ -399,12 +405,10 @@ let config = {
                                                 name: 'Water Quantity in Nested Group',
                                                 entryIndex: 1,
                                                 controls: [
+                                                    'datatable',
                                                     'metadata',
-                                                    'boundaryZoom',
-                                                    'refresh',
                                                     'reload',
                                                     'remove',
-                                                    'datatable',
                                                     'settings',
                                                     'symbology'
                                                 ]
@@ -422,21 +426,22 @@ let config = {
                                         ]
                                     }
                                 ]
-                            },
-                            {
-                                layerId: 'WFSLayer',
-                                name: 'WFSLayer',
-                                controls: [
-                                    'metadata',
-                                    'boundaryZoom',
-                                    'refresh',
-                                    'reload',
-                                    'remove',
-                                    'datatable',
-                                    'settings',
-                                    'symbology'
-                                ]
                             }
+                            // TODO: Revisit this in #1002
+                            // {
+                            //     layerId: 'WFSLayer',
+                            //     name: 'WFSLayer',
+                            //     controls: [
+                            //         'metadata',
+                            //         'boundaryZoom',
+                            //         'refresh',
+                            //         'reload',
+                            //         'remove',
+                            //         'datatable',
+                            //         'settings',
+                            //         'symbology'
+                            //     ]
+                            // }
                         ]
                     }
                 },
