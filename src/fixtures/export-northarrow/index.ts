@@ -22,14 +22,10 @@ class ExportNorthArrowFixture
 
         // below angle calculation code duplicated from north arrow fixture
         const innerShell = document.querySelector('.inner-shell')!;
-        const mercator = [900913, 3587, 54004, 41001, 102113, 102100, 3785];
         const sr: SpatialReference = this.$iApi.geo.map.getSR();
         let angle = 0;
 
-        if (
-            (sr.wkid && mercator.includes(sr.wkid)) ||
-            (sr.latestWkid && mercator.includes(sr.latestWkid))
-        ) {
+        if (sr.isWebMercator()) {
             // the north arrow will always point up in mercator projection
             angle = 0;
         } else {

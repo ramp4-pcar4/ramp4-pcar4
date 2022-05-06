@@ -80,11 +80,8 @@ export default defineComponent({
             const appbarWidth =
                 document.querySelector('.appbar')?.clientWidth || 0;
             const sr = newExtent.sr;
-            const mercator = [900913, 3587, 54004, 41001, 102113, 102100, 3785];
-            if (
-                (sr.wkid && mercator.includes(sr.wkid)) ||
-                (sr.latestWkid && mercator.includes(sr.latestWkid))
-            ) {
+
+            if (sr.isWebMercator()) {
                 // mercator projection, always in center of viewer with no rotation
                 this.displayArrow = true;
                 this.angle = 0;
