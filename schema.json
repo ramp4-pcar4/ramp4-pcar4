@@ -269,15 +269,7 @@
                 },
                 "controls": {
                     "$ref": "#/$defs/legendGroupControls",
-                    "default": [
-                        "opacity",
-                        "visibility",
-                        "symbology",
-                        "identify",
-                        "reload",
-                        "remove",
-                        "settings"
-                    ]
+                    "default": ["visibility"]
                 },
                 "disabledControls": {
                     "$ref": "#/$defs/legendGroupControls",
@@ -313,10 +305,10 @@
             "items": {
                 "type": "string",
                 "enum": [
-                    "wizard",
-                    "layerReorder",
                     "groupToggle",
-                    "visibilityToggle"
+                    "layerReorder",
+                    "visibilityToggle",
+                    "wizard"
                 ]
             },
             "uniqueItems": true
@@ -327,13 +319,13 @@
             "items": {
                 "type": "string",
                 "enum": [
-                    "opacity",
-                    "visibility",
-                    "symbology",
                     "identify",
+                    "opacity",
                     "reload",
                     "remove",
-                    "settings"
+                    "settings",
+                    "symbology",
+                    "visibility"
                 ]
             },
             "uniqueItems": true
@@ -344,18 +336,18 @@
             "items": {
                 "type": "string",
                 "enum": [
-                    "opacity",
-                    "visibility",
+                    "boundaryZoom",
                     "boundingBox",
+                    "datatable",
                     "identify",
                     "metadata",
-                    "boundaryZoom",
+                    "opacity",
                     "refresh",
                     "reload",
                     "remove",
                     "settings",
-                    "data",
-                    "styles"
+                    "symbology",
+                    "visibility"
                 ]
             },
             "uniqueItems": true
@@ -400,6 +392,13 @@
                     "type": "string",
                     "default": "",
                     "description": "Optional description displayed above the symbology stack on mouse hover."
+                },
+                "controls": {
+                    "$ref": "#/$defs/layerControls"
+                },
+                "disabledControls": {
+                    "$ref": "#/$defs/layerControls",
+                    "default": []
                 },
                 "symbologyStack": {
                     "$ref": "#/$defs/symbologyStack"
@@ -694,6 +693,7 @@
                 "controls": {
                     "$ref": "#/$defs/layerControls",
                     "default": [
+                        "datatable",
                         "opacity",
                         "visibility",
                         "boundingBox",
@@ -703,7 +703,8 @@
                         "refresh",
                         "reload",
                         "remove",
-                        "settings"
+                        "settings",
+                        "symbology"
                     ]
                 },
                 "disabledControls": {
@@ -859,7 +860,8 @@
                         "refresh",
                         "reload",
                         "remove",
-                        "settings"
+                        "settings",
+                        "symbology"
                     ]
                 },
                 "disabledControls": {
@@ -914,7 +916,25 @@
                     "$ref": "#/$defs/extentWithReferenceNode"
                 },
                 "controls": {
-                    "$ref": "#/$defs/layerControls"
+                    "$ref": "#/$defs/layerControls",
+                    "default": [
+                        "datatable",
+                        "opacity",
+                        "visibility",
+                        "boundingBox",
+                        "identify",
+                        "metadata",
+                        "boundaryZoom",
+                        "refresh",
+                        "reload",
+                        "remove",
+                        "settings",
+                        "symbology"
+                    ]
+                },
+                "disabledControls": {
+                    "$ref": "#/$defs/layerControls",
+                    "default": []
                 },
                 "state": {
                     "$ref": "#/$defs/initialLayerSettings"
@@ -1013,6 +1033,7 @@
                 "controls": {
                     "$ref": "#/$defs/layerControls",
                     "default": [
+                        "datatable",
                         "opacity",
                         "visibility",
                         "boundingBox",
@@ -1022,7 +1043,8 @@
                         "refresh",
                         "reload",
                         "remove",
-                        "settings"
+                        "settings",
+                        "symbology"
                     ]
                 },
                 "disabledControls": {
@@ -1108,6 +1130,7 @@
                 "controls": {
                     "$ref": "#/$defs/layerControls",
                     "default": [
+                        "datatable",
                         "opacity",
                         "visibility",
                         "boundingBox",
@@ -1117,7 +1140,8 @@
                         "refresh",
                         "reload",
                         "remove",
-                        "settings"
+                        "settings",
+                        "symbology"
                     ]
                 },
                 "disabledControls": {
@@ -1195,6 +1219,7 @@
                 "controls": {
                     "$ref": "#/$defs/layerControls",
                     "default": [
+                        "datatable",
                         "opacity",
                         "visibility",
                         "boundingBox",
@@ -1204,7 +1229,8 @@
                         "refresh",
                         "reload",
                         "remove",
-                        "settings"
+                        "settings",
+                        "symbology"
                     ]
                 },
                 "disabledControls": {
@@ -1331,7 +1357,8 @@
                         "refresh",
                         "reload",
                         "remove",
-                        "settings"
+                        "settings",
+                        "symbology"
                     ]
                 },
                 "disabledControls": {
@@ -1381,7 +1408,24 @@
                     "description": "Current style for the layer entry in the WMS."
                 },
                 "controls": {
-                    "$ref": "#/$defs/layerControls"
+                    "$ref": "#/$defs/layerControls",
+                    "default": [
+                        "opacity",
+                        "visibility",
+                        "boundingBox",
+                        "identify",
+                        "metadata",
+                        "boundaryZoom",
+                        "refresh",
+                        "reload",
+                        "remove",
+                        "settings",
+                        "symbology"
+                    ]
+                },
+                "disabledControls": {
+                    "$ref": "#/$defs/layerControls",
+                    "default": []
                 },
                 "state": {
                     "$ref": "#/$defs/initialLayerSettings"
@@ -1408,6 +1452,19 @@
                             "type": "boolean",
                             "default": true,
                             "description": "Allows individual symbols to have visibility toggled on/off."
+                        }
+                    }
+                },
+                "settings": {
+                    "type": "object",
+                    "description": "Layer-specific settings configuration",
+                    "properties": {
+                        "controls": {
+                            "$ref": "#/$defs/layerControls"
+                        },
+                        "disabledControls": {
+                            "$ref": "#/$defs/layerControls",
+                            "default": []
                         }
                     }
                 }

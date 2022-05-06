@@ -47,6 +47,7 @@
                         legendItem.parent.type === LegendTypes.Set
                     "
                     :legendItem="legendItem"
+                    :disabled="!legendItem.controlAvailable('visibility')"
                 />
             </div>
         </div>
