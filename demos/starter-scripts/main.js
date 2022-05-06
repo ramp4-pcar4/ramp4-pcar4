@@ -317,8 +317,6 @@ let config = {
                         {
                             index: 5,
                             state: {
-                                opacity: 1,
-                                visibility: true
                             }
                         }
                     ],

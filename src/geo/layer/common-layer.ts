@@ -312,8 +312,8 @@ export class CommonLayer extends LayerInstance {
         const esriConfig: any = {
             id: rampLayerConfig.id,
             url: rampLayerConfig.url,
-            opacity: rampLayerConfig?.state?.opacity,
-            visible: rampLayerConfig?.state?.visibility
+            opacity: rampLayerConfig?.state?.opacity ?? 1,
+            visible: rampLayerConfig?.state?.visibility ?? true
         };
 
         // TODO careful now. seems setting this willy nilly, even if undefined value, causes layer to keep pinging the server
