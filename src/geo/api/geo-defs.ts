@@ -422,6 +422,13 @@ export interface Attribution {
     };
 }
 
+export interface ScaleHelper {
+    units: string;
+    isImperialScale: boolean;
+    pixels: number;
+    distance: number;
+}
+
 // Contains properties needed to display scale on the map-caption bar
 export interface ScaleBar {
     disabled?: boolean;

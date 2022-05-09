@@ -42,7 +42,11 @@ export class SpatialReference {
     isEqual(otherSR: SpatialReference): boolean {
         // TODO consider improving this logic. might make more sense to do
         //      some type of cross-matching against wkid and latestWkid.
-        //      e.g. 102100 and 3857 should effectively be considered equal
+
+        if (this.isWebMercator() && otherSR.isWebMercator()) {
+            return true;
+        }
+
         return (
             this.wkid === otherSR.wkid &&
             this.wkt === otherSR.wkt &&
@@ -72,6 +76,14 @@ export class SpatialReference {
             }
         }
         return l;
+    }
+
+    isWebMercator(): boolean {
+        const mercator = [900913, 3587, 54004, 41001, 102113, 102100, 3785];
+        return !!(
+            (this.wkid && mercator.includes(this.wkid)) ||
+            (this.latestWkid && mercator.includes(this.latestWkid))
+        );
     }
 
     /**

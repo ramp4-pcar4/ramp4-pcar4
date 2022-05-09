@@ -37,9 +37,9 @@ export class BaseStyle {
             }
             const suffix = input.substring(len - 2);
             if (suffix === 'px') {
-                numnum = parseFloat(input.substring(0, len - 3)) * 1.333333;
+                numnum = parseFloat(input.substring(0, len - 2)) * 1.333333;
             } else if (suffix === 'pt') {
-                numnum = parseFloat(input.substring(0, len - 3));
+                numnum = parseFloat(input.substring(0, len - 2));
             } else {
                 numnum = parseFloat(input);
             }

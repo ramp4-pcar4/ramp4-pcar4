@@ -1,6 +1,12 @@
 import { APIScope, InstanceAPI } from '@/api/internal';
 import { MapCaptionStore } from '@/store/modules/map-caption';
-import type { Attribution, MapCaptionConfig, Point, ScaleBar } from '@/geo/api';
+import type {
+    Attribution,
+    MapCaptionConfig,
+    Point,
+    ScaleBar,
+    ScaleHelper
+} from '@/geo/api';
 
 export class MapCaptionAPI extends APIScope {
     // Default point formatters
@@ -202,51 +208,21 @@ export class MapCaptionAPI extends APIScope {
         const isImperialScale: boolean =
             currentScaleBar?.isImperialScale || false;
 
-        // the starting length of the scale line in pixels
-        // reduce the length of the bar on extra small layouts
-        const factor = window.innerWidth > 600 ? 70 : 35;
-        const mapResolution = this.$iApi.geo.map.getResolution();
-
-        // distance in meters
-        const meters = mapResolution * factor;
-        const metersInAMile = 1609.34;
-        const metersInAFoot = 3.28084;
-
-        let distance, pixels, unit;
-
-        // If meters < 1Km, then use different scaling
-        if (meters > 1000) {
-            // get the distance in units, either miles or kilometers
-            const units =
-                (mapResolution * factor) /
-                (isImperialScale ? metersInAMile : 1000);
-            unit = isImperialScale ? 'mi' : 'km';
-
-            // length of the distance number
-            const len = Math.round(units).toString().length;
-            const div = Math.pow(10, len - 1);
-
-            // we want to round the distance to the ceiling of the highest position and display a nice number
-            // 45.637km => 50.00km; 4.368km => 5.00km
-            // 28.357mi => 30.00mi; 2.714mi => 3.00mi
-            distance = Math.ceil(units / div) * div;
-
-            // calcualte length of the scale line in pixels based on the round distance
-            pixels =
-                (distance * (isImperialScale ? metersInAMile : 1000)) /
-                mapResolution;
-        } else {
-            // Round the meters up
-            distance = Math.ceil(
-                isImperialScale ? meters * metersInAFoot : meters
-            );
-            pixels = meters / mapResolution;
-            unit = isImperialScale ? 'ft' : 'm';
-        }
+        // the object after the ?? is just to chill out typescript. Array.find threatens undefined even though we will get a match.
+        const scaleInfo = this.scaleHelper().find(
+            h => h.isImperialScale === isImperialScale
+        ) ?? {
+            isImperialScale: false,
+            units: 'error',
+            pixels: 1,
+            distance: 1
+        };
 
         this.$iApi.$vApp.$store.set(MapCaptionStore.setScale, {
-            width: `${pixels}px`,
-            label: `${this.$iApi.$vApp.$n(distance, 'number')}${unit}`,
+            width: `${scaleInfo.pixels}px`,
+            label: `${this.$iApi.$vApp.$n(scaleInfo.distance, 'number')}${
+                scaleInfo.units
+            }`,
             isImperialScale: isImperialScale
         });
     }
@@ -288,6 +264,69 @@ export class MapCaptionAPI extends APIScope {
             // value is a function
             this.pointFormatter = value;
         }
+    }
+
+    /**
+     * Generates helpful information to be used when constructing scale bars.
+     * @returns { Array<ScaleHelper> } two objects with information for metric and imperial
+     */
+    scaleHelper(): Array<ScaleHelper> {
+        // the starting length of the scale line in pixels
+        // reduce the length of the bar on extra small layouts
+        const factor = window.innerWidth > 600 ? 70 : 35;
+        const mapResolution = this.$iApi.geo.map.getResolution();
+        const result: Array<ScaleHelper> = [];
+
+        // distance in meters
+        const meters = mapResolution * factor;
+        const metersInAMile = 1609.34;
+        const metersInAFoot = 3.28084;
+
+        // use arrays to store both imperial and metric calulcations
+        let measureUnits: Array<string> =
+            meters > 1000 ? ['km', 'mi'] : ['m', 'ft'];
+
+        for (let i = 0; i < 2; i++) {
+            let isImperialScale = i === 1;
+
+            result.push({
+                isImperialScale: isImperialScale,
+                units: measureUnits[i],
+                pixels: 0,
+                distance: 0
+            });
+
+            // If meters < 1Km, then use different scaling
+            if (meters > 1000) {
+                // get the distance in units, either miles or kilometers
+                const units =
+                    (mapResolution * factor) /
+                    (isImperialScale ? metersInAMile : 1000);
+
+                // length of the distance number
+                const len = Math.round(units).toString().length;
+                const div = Math.pow(10, len - 1);
+
+                // we want to round the distance to the ceiling of the highest position and display a nice number
+                // 45.637km => 50.00km; 4.368km => 5.00km
+                // 28.357mi => 30.00mi; 2.714mi => 3.00mi
+                result[i].distance = Math.ceil(units / div) * div;
+
+                // calcualte length of the scale line in pixels based on the round distance
+                result[i].pixels =
+                    (result[i].distance *
+                        (isImperialScale ? metersInAMile : 1000)) /
+                    mapResolution;
+            } else {
+                // Round the meters up
+                result[i].distance = Math.ceil(
+                    isImperialScale ? meters * metersInAFoot : meters
+                );
+                result[i].pixels = meters / mapResolution;
+            }
+        }
+
+        return result;
     }
 
     /**

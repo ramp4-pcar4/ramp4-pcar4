@@ -4,6 +4,6 @@
         "bradlc.vscode-tailwindcss",
         "austenc.tailwind-docs",
         "gruntfuggly.todo-tree",
-        "johnsoncodehk.volar"
+        "vue.volar"
     ]
 }
