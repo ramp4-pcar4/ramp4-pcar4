@@ -31,6 +31,9 @@
                     :content="element.name"
                     v-focus-container
                 >
+                    <!-- TODO: fix this hack that prevents duplicate UI bug on prod (to reproduce: remove this, run prod build and open -> close -> re-open reorder panel) -->
+                    <div class="hidden"></div>
+
                     <div
                         class="flex items-center p-5 ms-5 h-44 cursor-pointer hover:bg-gray-200"
                     >

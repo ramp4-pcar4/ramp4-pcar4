@@ -157,10 +157,14 @@ const mutations = {
             index = state.layers.length
         }: { layer: LayerInstance; index: number }
     ) => {
-        state.layers.splice(state.layers.indexOf(layer), 1);
-        state.layers.splice(index, 0, layer);
-        // copy to new array to trigger reactivity
-        state.layers = [...state.layers];
+        // find and swap layer with target index
+        const layerIdx = state.layers.findIndex(l => l.uid === layer.uid);
+        if (layerIdx !== -1 && layerIdx !== index) {
+            state.layers.splice(layerIdx, 1);
+            state.layers.splice(index, 0, layer);
+            // copy to new array to trigger reactivity
+            state.layers = [...state.layers];
+        }
     },
     REMOVE_LAYER: (state: LayerState, value: LayerInstance) => {
         // copy to new array so watchers will have a reference to the old value

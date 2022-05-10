@@ -19,7 +19,7 @@
 import { defineComponent, ref } from 'vue';
 import { get } from '@/store/pathify-helper';
 import type { RampLayerConfig, RampMapConfig } from '@/geo/api';
-import { GlobalEvents, LayerInstance, MapAPI } from '@/api/internal';
+import type { LayerInstance } from '@/api/internal';
 
 import { ConfigStore } from '@/store/modules/config';
 import { LayerStore } from '@/store/modules/layer';
@@ -193,10 +193,15 @@ export default defineComponent({
             layers
                 .filter(Boolean)
                 .forEach((layer: LayerInstance | null, index: number) => {
-                    this.$iApi.geo.map.reorder(
-                        layer!,
-                        oldValue ? oldValue.length + index : index
-                    );
+                    // wait on layer load to check for valid state
+                    layer?.isLayerLoaded().then(() => {
+                        if (layer?.isValidState) {
+                            this.$iApi.geo.map.reorder(
+                                layer!,
+                                oldValue ? oldValue.length + index : index
+                            );
+                        }
+                    });
                 });
         },
         onMapConfigChange(newValue: RampMapConfig, oldValue: RampMapConfig) {

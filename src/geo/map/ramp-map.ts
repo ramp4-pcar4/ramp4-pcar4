@@ -446,17 +446,18 @@ export class MapAPI extends CommonMapAPI {
             );
             // set map order
             this.esriMap.reorder(layer.esriLayer, esriLayerIndex);
+
+            // sync layer store order with map order
+            this.$vApp.$store.set(LayerStore.reorderLayer, { layer, index });
+            this.$iApi.event.emit(GlobalEvents.MAP_REORDER, {
+                layer,
+                newIndex: index
+            });
         } else {
             console.error(
                 'Attempted reorder without an esri layer. Likely layer.initiate() was not called or had not finished.'
             );
         }
-        // sync layer store order with map order
-        this.$vApp.$store.set(LayerStore.reorderLayer, { layer, index });
-        this.$iApi.event.emit(GlobalEvents.MAP_REORDER, {
-            layer,
-            newIndex: index
-        });
     }
 
     /**
