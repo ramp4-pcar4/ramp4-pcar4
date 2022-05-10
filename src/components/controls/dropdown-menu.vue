@@ -59,7 +59,7 @@ export default defineComponent({
     },
 
     mounted() {
-        document.addEventListener(
+        window.addEventListener(
             'click',
             event => {
                 if (!this.$el.contains(event.target)) {
