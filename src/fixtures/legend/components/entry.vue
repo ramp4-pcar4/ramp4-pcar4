@@ -135,6 +135,7 @@
                             :value="item"
                             :legendItem="legendItem"
                             :checked="item.visibility"
+                            :disabled="!legendItem._controlAvailable('visibility')"
                         />
                     </div>
                 </div>
