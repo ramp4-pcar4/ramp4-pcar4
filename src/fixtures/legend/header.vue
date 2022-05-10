@@ -3,7 +3,7 @@
         <!-- open import wizard -->
         <button
             @click="openWizard"
-            class="relative mr-auto text-gray-500 hover:text-black p-8 mb-3"
+            class="relative mr-auto text-gray-500 hover:text-black mb-3"
             v-show="getWizardExists() && isControlAvailable('wizard')"
             :content="$t('legend.header.addlayer')"
             v-tippy="{ placement: 'right' }"
@@ -78,10 +78,7 @@
         >
             <template #header>
                 <div class="flex p-8">
-                    <svg
-                        class="fill-current w-18 h-18 mx-5"
-                        viewBox="0 0 23 21"
-                    >
+                    <svg class="fill-current w-18 h-18" viewBox="0 0 23 21">
                         <path
                             d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
                         />
