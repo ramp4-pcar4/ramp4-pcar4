@@ -1,9 +1,11 @@
+// TODO we probably need a better way to get the instance than off the window?
+
 const search = query => {
     // types into search bar
     cy.get('.rv-geosearch-bar input').clear().type(query);
     // waits for search to update
     cy.window()
-        .its('rInstance.$vApp.$store')
+        .its('debugInstance.$vApp.$store')
         .invoke('get', 'geosearch/lastSearchVal')
         .should('eq', query);
 };
@@ -14,9 +16,9 @@ const viewIsAt = (long, lat, delta = 0.1) => {
     cy.wait(1000);
     cy.window().then(window => {
         cy.wrap(
-            window.rInstance.geo.utils.proj.projectGeometry(
+            window.debugInstance.geo.proj.projectGeometry(
                 4326,
-                window.rInstance.geo.map.getExtent().center()
+                window.debugInstance.geo.map.getExtent().center()
             )
         ).should(point => {
             expect(point.x).closeTo(long, delta);
@@ -155,7 +157,7 @@ describe('Geosearch', () => {
         it('filters to visible extent', () => {
             // zoom to a smaller extent
             cy.window()
-                .its('rInstance.geo.map.esriView')
+                .its('debugInstance.geo.map.esriView')
                 .invoke(
                     'goTo',
                     { center: [-90, 49], zoom: 4 },
@@ -168,13 +170,13 @@ describe('Geosearch', () => {
             cy.window().then(window => {
                 // project extent to lat/long
                 cy.wrap(
-                    window.rInstance.geo.utils.proj.projectExtent(
+                    window.debugInstance.geo.proj.projectExtent(
                         4326,
-                        window.rInstance.geo.map.getExtent()
+                        window.debugInstance.geo.map.getExtent()
                     )
                 ).then(extent => {
                     // check that each result is inside extent
-                    window.rInstance.$vApp.$store
+                    window.debugInstance.$vApp.$store
                         .get('geosearch/searchResults')
                         .forEach(result => {
                             expect(result.position[0]).to.be.lessThan(

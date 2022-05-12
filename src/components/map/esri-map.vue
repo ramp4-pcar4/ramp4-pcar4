@@ -19,7 +19,7 @@
 import { defineComponent, ref } from 'vue';
 import { get } from '@/store/pathify-helper';
 import type { RampLayerConfig, RampMapConfig } from '@/geo/api';
-import { GlobalEvents, LayerInstance, MapAPI } from '@/api/internal';
+import type { LayerInstance } from '@/api/internal';
 
 import { ConfigStore } from '@/store/modules/config';
 import { LayerStore } from '@/store/modules/layer';

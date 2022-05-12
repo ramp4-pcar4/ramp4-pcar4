@@ -86,7 +86,7 @@ class FeatureLayer extends AttribLayer {
         //      can also consider changing logic to use origRampConfig.url;
         // const layerUrl: string = (<esri.FeatureLayer>this._innerLayer).url;
         const layerUrl: string = (<any>this.esriLayer).parsedUrl.path;
-        const urlData = this.$iApi.geo.utils.shared.parseUrlIndex(layerUrl);
+        const urlData = this.$iApi.geo.shared.parseUrlIndex(layerUrl);
         const featIdx: number = urlData.index || 0;
 
         // feature has only one layer
@@ -206,7 +206,7 @@ class FeatureLayer extends AttribLayer {
             options.geometry.type === GeometryType.POINT
         ) {
             // if our layer is not polygon, and our identify input is a point, make a point buffer
-            qOpts.filterGeometry = this.$iApi.geo.utils.query.makeClickBuffer(
+            qOpts.filterGeometry = this.$iApi.geo.query.makeClickBuffer(
                 <Point>options.geometry,
                 options.tolerance
             );

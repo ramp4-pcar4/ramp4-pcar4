@@ -228,7 +228,7 @@ export class OverviewMapAPI extends CommonMapAPI {
             if (esriDrag.action === 'end') {
                 // zoom main map once drag is done
                 this.$iApi.geo.map.zoomMapTo(
-                    this.$iApi.geo.utils.geom.geomEsriToRamp(newExtent),
+                    this.$iApi.geo.geom.geomEsriToRamp(newExtent),
                     undefined,
                     false
                 );

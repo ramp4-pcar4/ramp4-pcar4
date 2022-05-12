@@ -23,7 +23,7 @@ A more detailed description of the process will be covered with the examples bel
 ### Example 1: Passing a single config in RAMP Instance constructor
 
 ```typescript=
-new RAMP.Instance(document.getElementById('app'), { en: enConfig })
+RAMP.createInstance(document.getElementById('app'), { en: enConfig })
 ```
 
 If the user chooses to pass a single config like above, RAMP will take that config and populate it for all available app languages in `i18n.messages`.
@@ -41,7 +41,7 @@ registeredConfigs = {
 ### Example 2: Passing multiple configs in RAMP Instance constructor
 
 ```typescript=
-new RAMP.Instance(document.getElementById('app'), {
+RAMP.createInstance(document.getElementById('app'), {
     en: enConfig,
     fr: frConfig
 })

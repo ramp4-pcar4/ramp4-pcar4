@@ -48,8 +48,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import { PanelInstance } from '@/api';
+import { defineComponent, type PropType } from 'vue';
+import type { PanelInstance } from '@/api';
 
 export default defineComponent({
     name: 'GazeboP2Screen2V',

@@ -7,7 +7,7 @@ TODO do we need a note about needing the Vue library script to be added before R
 A page script can create an instance of RAMP with the following call:
 
 ```js
-var rInstance = new RAMP.Instance(pageElement, config, options);
+var rInstance = RAMP.createInstance(pageElement, config, options);
 ```
 
 Multiple instances can be hosted on a page (each requiring their own pageElement).

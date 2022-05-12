@@ -35,14 +35,14 @@ let config = {
                 lodSets: [
                     {
                         id: 'LOD_NRCAN_Lambert_3978',
-                        lods: RAMP.GEO.defaultLODs(
-                            RAMP.GEO.defaultTileSchemas()[0]
+                        lods: RAMP.geo.defaultLODs(
+                            RAMP.geo.defaultTileSchemas()[0]
                         )
                     },
                     {
                         id: 'LOD_ESRI_World_AuxMerc_3857',
-                        lods: RAMP.GEO.defaultLODs(
-                            RAMP.GEO.defaultTileSchemas()[1]
+                        lods: RAMP.geo.defaultLODs(
+                            RAMP.geo.defaultTileSchemas()[1]
                         )
                     }
                 ],
@@ -198,7 +198,11 @@ let options = {
     loadDefaultFixtures: false,
     loadDefaultEvents: true
 };
-rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
+rInstance = RAMP.createInstance(
+    document.getElementById('app'),
+    config,
+    options
+);
 
 rInstance.$element.component('Details-Default-Template-WMS', {
     props: ['identifyData'],

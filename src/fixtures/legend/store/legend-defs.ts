@@ -1,7 +1,7 @@
 import { DefPromise, LayerControls, LayerType, TreeNode } from '@/geo/api';
 import type { LegendSymbology } from '@/geo/api';
 import type { LayerInstance } from '@/api/internal';
-import RAMP from '@/api';
+import { geo } from '@/main';
 
 /**
  * Function definitions for legend item wrapper objects.
@@ -35,7 +35,7 @@ export class LegendItem {
         this._hidden = legendItem.hidden ?? false;
         this._itemConfig = legendItem;
 
-        this._uid = RAMP.GEO.sharedUtils.generateUUID();
+        this._uid = geo.sharedUtils.generateUUID();
     }
 
     /** Returns the item's id. */

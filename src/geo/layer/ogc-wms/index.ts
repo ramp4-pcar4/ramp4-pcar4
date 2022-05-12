@@ -526,11 +526,11 @@ export default class WmsLayer extends CommonLayer {
                 this.getWMSLayerTitle(configLayerEntries[idx].id) ||
                 configLayerEntries[idx].id;
             const symbologyItem: LegendSymbology = {
-                uid: this.$iApi.geo.utils.shared.generateUUID(),
+                uid: this.$iApi.geo.shared.generateUUID(),
                 label: name,
                 svgcode: '',
                 esriStandard: false, // is an image
-                drawPromise: this.$iApi.geo.utils.symbology
+                drawPromise: this.$iApi.geo.symbology
                     .generateWMSSymbology(imageUri)
                     .then((data: any) => {
                         symbologyItem.svgcode = data.svgcode;

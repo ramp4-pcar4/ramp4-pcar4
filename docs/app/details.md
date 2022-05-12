@@ -52,7 +52,7 @@ __Note:__ it is important that you include the `identifyData` prop in the compon
 __2.__ Once the custom component has been created, you will want to add your layer to RAMP and set the new component as a custom template in the details fixture. You can do both of these in the configuration file:
 
 ```javascript=
-const rInstance = new RAMP.Instance(document.getElementById("map"), {
+const rInstance = RAMP.createInstance(document.getElementById("map"), {
     map: { ... },
     layers: [
         {

@@ -167,7 +167,7 @@ TODO keep updating the list, make new subsections as appropriate. Maybe move to 
 Creating a default instance of RAMP. No special action is required.
 
 ```js
-var rInstance = new RAMP.Instance(domElement, configs);
+var rInstance = RAMP.createInstance(domElement, configs);
 ```
 
 Create a default instance the long-winded way.
@@ -177,7 +177,7 @@ var options = {
     loadDefaultFixtures: false,
     loadDefaultEvents: false
 };
-var rInstance = new RAMP.Instance(domElement, configs, options);
+var rInstance = RAMP.createInstance(domElement, configs, options);
 rInstance.fixtures.addDefaultFixtures();
 rInstance.event.addDefaultEvents();
 ```
@@ -190,7 +190,7 @@ Replacing a default fixture with a custom fixture of the same name and interface
 var options = {
     loadDefaultFixtures: false
 };
-var rInstance = new RAMP.Instance(domElement, configs, options);
+var rInstance = RAMP.createInstance(domElement, configs, options);
 rInstance.fixtures.add('help', CustomHelpFixtureClass);
 rInstance.fixtures.addDefaultFixtures();
 ```
@@ -205,7 +205,7 @@ Adding a subset of default fixtures. This map does very little! Note we could al
 var options = {
     loadDefaultFixtures: false
 };
-var rInstance = new RAMP.Instance(domElement, configs, options);
+var rInstance = RAMP.createInstance(domElement, configs, options);
 rInstance.fixtures.add('help', CustomHelpFixtureClass);
 rInstance.fixtures.addDefaultFixtures(['help', 'appbar', 'mapnav']);
 ```
@@ -226,5 +226,5 @@ var configs = {
 var options = {
     loadDefaultFixtures: true // ignored
 };
-var rInstance = new RAMP.Instance(domElement, configs, options);
+var rInstance = RAMP.createInstance(domElement, configs, options);
 ```

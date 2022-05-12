@@ -50,7 +50,7 @@ class TileLayer extends CommonLayer {
 
         this.layerTree.name = this.name;
 
-        const legendPromise = this.$iApi.geo.utils.symbology
+        const legendPromise = this.$iApi.geo.symbology
             .mapServerToLocalLegend(this.origRampConfig.url)
             .then(legArray => {
                 this.legend = legArray;

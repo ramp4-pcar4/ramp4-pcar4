@@ -1,8 +1,4 @@
-import Vue from 'vue';
-import { FormulateGlobalInstance } from '@braid/vue-formulate';
-
 import { RampLayerConfig, RampMapConfig } from './geo/api';
-import { APIInterface, InstanceAPI } from './api';
 
 /**
  * The configuration object for RAMP apps

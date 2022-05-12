@@ -110,7 +110,7 @@ export class CommonGraphicLayer extends CommonLayer {
 
         const mapSR = this.$iApi.geo.map.getSR();
         const projGeomsProms = validGraphics.map(g =>
-            this.$iApi.geo.utils.proj.projectGeometry(mapSR, g.geometry)
+            this.$iApi.geo.proj.projectGeometry(mapSR, g.geometry)
         );
 
         const projGeoms = await Promise.all(projGeomsProms);
@@ -122,7 +122,7 @@ export class CommonGraphicLayer extends CommonLayer {
 
             // TODO add in hover after we figure out what we want
 
-            return this.$iApi.geo.utils.geom.graphicRampToEsri(projGraphic);
+            return this.$iApi.geo.geom.graphicRampToEsri(projGraphic);
         });
 
         // TODO raise event?

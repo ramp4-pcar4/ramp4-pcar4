@@ -2,64 +2,26 @@
 
 import {
     APIScope,
+    AttributeAPI,
     InstanceAPI,
     LayerAPI,
     MapAPI,
-    UtilsAPI
+    QueryAPI,
+    SymbologyAPI
 } from '@/api/internal';
-
-import {
-    Extent,
-    Graphic,
-    LinearRing,
-    LineString,
-    LineStyle,
-    MultiLineString,
-    MultiPoint,
-    MultiPolygon,
-    Point,
-    PointStyle,
-    Polygon,
-    PolygonStyle,
-    SpatialReference
-} from '@/geo/api';
-
+import { geo } from '@/main';
+import type { GeometryAPI, ProjectionAPI, SharedUtilsAPI } from '@/geo/api';
 import { EsriConfig } from '@/geo/esri';
 
 export class GeoAPI extends APIScope {
-    map: MapAPI;
+    attributes: AttributeAPI;
+    geom: GeometryAPI;
     layer: LayerAPI;
-    utils: UtilsAPI;
-
-    // how to best expose the geometery/graphic stuff?
-    // This is not a huge deal as it's also available via RAMP.GEO.
-    // this provides more of a convenience if someone is already working against iApi.
-    // Decided on putting it at the root for now, can re-arrange before v1
-
-    // Other options:
-    //      .graphic would be proper, but thats a long word.
-    //      split things out? geo.geom for geometry, geo.graphic for others?
-    //      everything under .geom?
-    //      note we have .geo.utils.geom already.
-    //      .shapes?
-    //      Remove .utils from geo, hoist up what is inside there to here,
-    //      so we have geo.proj, geo.geom, geo.attributes, etc
-    //      and then we can put the stuff into geo.geom?
-
-    Extent = Extent;
-    Graphic = Graphic;
-    // Hover = Hover;
-    LineString = LineString;
-    LineStyle = LineStyle;
-    LinearRing = LinearRing;
-    MultiLineString = MultiLineString;
-    MultiPoint = MultiPoint;
-    MultiPolygon = MultiPolygon;
-    Point = Point;
-    PointStyle = PointStyle;
-    Polygon = Polygon;
-    PolygonStyle = PolygonStyle;
-    SpatialReference = SpatialReference;
+    map: MapAPI;
+    proj: ProjectionAPI;
+    query: QueryAPI;
+    shared: SharedUtilsAPI;
+    symbology: SymbologyAPI;
 
     /**
      * @constructor
@@ -68,9 +30,16 @@ export class GeoAPI extends APIScope {
     constructor(iApi: InstanceAPI) {
         super(iApi);
 
+        // Refer to global instance
+        this.geom = geo.geom;
+        this.proj = geo.proj;
+        this.shared = geo.sharedUtils;
+
         this.map = new MapAPI(iApi);
-        this.utils = new UtilsAPI(iApi);
         this.layer = new LayerAPI(iApi);
+        this.attributes = new AttributeAPI(iApi);
+        this.query = new QueryAPI(iApi);
+        this.symbology = new SymbologyAPI(iApi);
     }
 
     /**

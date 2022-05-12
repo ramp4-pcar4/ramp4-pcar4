@@ -6,12 +6,10 @@ export default (): Plugin => {
     return {
         name: 'vite-plugin-version',
         config(config) {
-            const hash = JSON.stringify(
-                execSync('git rev-parse HEAD').toString().trim()
-            );
-            const timestamp = JSON.stringify(
-                execSync('git log -1 --format=%cd').toString().trim()
-            );
+            const hash = execSync('git rev-parse HEAD').toString().trim();
+            const timestamp = execSync('git log -1 --format=%cd')
+                .toString()
+                .trim();
 
             const [major, minor, patch] = pkg.version.split('.');
 

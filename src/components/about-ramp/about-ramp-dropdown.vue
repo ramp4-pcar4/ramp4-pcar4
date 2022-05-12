@@ -68,7 +68,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
-import RAMP from '@/api';
+import { version } from '@/main';
 
 export default defineComponent({
     name: 'AboutRampDropdownV',
@@ -89,24 +89,39 @@ export default defineComponent({
          * Get RAMP's version string
          */
         versionString(): string {
-            return `${RAMP.version.major}.${RAMP.version.minor}.${RAMP.version.patch}`;
+            return `${version.major}.${version.minor}.${version.patch}`;
         },
 
         /**
          * Get RAMP build version hash
          */
         versionHash(): string {
-            return RAMP.version.hash.slice(0, 9);
+            return version.hash.slice(0, 9);
         },
 
         /**
          * Get RAMP build date
          */
         buildDate(): string {
-            let timestamp = new Date(RAMP.version.timestamp);
-            return `${timestamp.getFullYear()}-${
-                timestamp.getMonth() + 1
-            }-${timestamp.getDate()} ${timestamp.getHours()}:${timestamp.getMinutes()}:${timestamp.getSeconds()}`;
+            let timestamp = new Date(version.timestamp);
+            if (isNaN(<any>timestamp)) {
+                // this appears to be broken in dev serve mode (but not always).
+                // likely the vite `git log -1 --format=%cd` command isnt working in that context
+                return 'dev mode, no date';
+            } else {
+                const padZero = (num: number): string => {
+                    if (num < 10) {
+                        return '0' + num.toString();
+                    } else {
+                        return num.toString();
+                    }
+                };
+                return `${timestamp.getFullYear()}-${
+                    timestamp.getMonth() + 1
+                }-${timestamp.getDate()} ${timestamp.getHours()}:${padZero(
+                    timestamp.getMinutes()
+                )}:${padZero(timestamp.getSeconds())}`;
+            }
         }
     }
 });

@@ -8,7 +8,7 @@ import {
 } from '@/geo/api';
 import type { EpsgLookup, SrDef } from '@/geo/api';
 import { EsriRequest } from '@/geo/esri';
-import RAMP from '@/api';
+import { geo } from '@/main';
 
 // since ProjectionService is now a class instead a stateless service, it appears that the proj4 library is maintaining it's state
 // (i.e. if we add defs in one function, they remain available in other functions).
@@ -323,7 +323,7 @@ export class ProjectionAPI {
         );
 
         // convert back to RAMP geometry
-        const projectedRampGeom = RAMP.GEO.geom.geomGeoJsonToRamp(
+        const projectedRampGeom = geo.geom.geomGeoJsonToRamp(
             postGJ,
             geometry.id
         );

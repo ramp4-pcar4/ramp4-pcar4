@@ -22,8 +22,8 @@ let config = {
                 lodSets: [
                     {
                         id: 'LOD_NRCAN_Lambert_3978',
-                        lods: RAMP.GEO.defaultLODs(
-                            RAMP.GEO.defaultTileSchemas()[0]
+                        lods: RAMP.geo.defaultLODs(
+                            RAMP.geo.defaultTileSchemas()[0]
                         )
                     }
                 ],
@@ -71,5 +71,9 @@ let options = {
     loadDefaultEvents: false
 };
 
-rInstance = new RAMP.Instance(document.getElementById('app'), config, options);
+rInstance = RAMP.createInstance(
+    document.getElementById('app'),
+    config,
+    options
+);
 rInstance.fixture.addDefaultFixtures(['northarrow']);

@@ -290,7 +290,7 @@ export class FileLayer extends AttribLayer {
             options.geometry.type === GeometryType.POINT
         ) {
             // if our layer is not polygon, and our identify input is a point, make a point buffer
-            qOpts.filterGeometry = this.$iApi.geo.utils.query.makeClickBuffer(
+            qOpts.filterGeometry = this.$iApi.geo.query.makeClickBuffer(
                 <Point>options.geometry,
                 options.tolerance
             );
@@ -335,7 +335,7 @@ export class FileLayer extends AttribLayer {
         // properties for all endpoints
         this.supportsFeatures = true;
 
-        this.geomType = this.$iApi.geo.utils.geom.clientGeomTypeToRampGeomType(
+        this.geomType = this.$iApi.geo.geom.clientGeomTypeToRampGeomType(
             l.geometryType
         );
         this.quickCache = new QuickCache(this.geomType);
@@ -354,7 +354,7 @@ export class FileLayer extends AttribLayer {
 
         // if there was a custom renderer in the config, it would have been applied when the
         // layer was constructed. no need to check here.
-        this.renderer = this.$iApi.geo.utils.symbology.makeRenderer(
+        this.renderer = this.$iApi.geo.symbology.makeRenderer(
             l.renderer,
             this.esriFields
         );
@@ -363,9 +363,7 @@ export class FileLayer extends AttribLayer {
         // for now, will not include that set (promise.all'd) on the layer load blocker;
         // don't want to stop a layer from loading just because an icon won't draw.
         // ideally we'll have placeholder symbol (white square, loading symbol, caution symbol, etc)
-        this.legend = this.$iApi.geo.utils.symbology.rendererToLegend(
-            this.renderer
-        );
+        this.legend = this.$iApi.geo.symbology.rendererToLegend(this.renderer);
 
         const loadData: AttributeLoaderDetails = {
             sourceGraphics: l.source,
@@ -434,7 +432,7 @@ export class FileLayer extends AttribLayer {
             ...options
         };
 
-        return this.$iApi.geo.utils.query.geoJsonQuery(gjOpt);
+        return this.$iApi.geo.query.geoJsonQuery(gjOpt);
     }
 
     // TODO this is more of a utility function. leaving it public as it might be useful, revist when
@@ -447,7 +445,7 @@ export class FileLayer extends AttribLayer {
 
         // run the query. since geojson is local, the util always returns everything.
         // iterate through the results and strip out the OIDs
-        const gjFeats = await this.$iApi.geo.utils.query.geoJsonQuery(gjOpt);
+        const gjFeats = await this.$iApi.geo.query.geoJsonQuery(gjOpt);
         return gjFeats.map(feat =>
             feat.attributes ? feat.attributes[this.oidField] : -1
         );

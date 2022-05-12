@@ -243,7 +243,7 @@ export class AttributeAPI extends APIScope {
                 feat.geometry.spatialReference =
                     serviceResult.data.spatialReference;
                 const localEsriGeom = EsriGeometryFromJson(feat.geometry);
-                geom = this.$iApi.geo.utils.geom.geomEsriToRamp(localEsriGeom);
+                geom = this.$iApi.geo.geom.geomEsriToRamp(localEsriGeom);
             } else {
                 geom = new NoGeometry();
             }
@@ -349,7 +349,7 @@ export class ArcServerAttributeLoader extends AttributeLoaderBase {
 
     protected loadPromiseGenerator(): Promise<AttributeSet> {
         // TODO call arcgis loader
-        return this.$iApi.geo.utils.attributes.loadArcGisServerAttributes(
+        return this.$iApi.geo.attributes.loadArcGisServerAttributes(
             this.details,
             this.aac
         );
@@ -362,7 +362,7 @@ export class FileLayerAttributeLoader extends AttributeLoaderBase {
     }
 
     protected loadPromiseGenerator(): Promise<AttributeSet> {
-        return this.$iApi.geo.utils.attributes.loadGraphicsAttributes(
+        return this.$iApi.geo.attributes.loadGraphicsAttributes(
             this.details,
             this.aac
         );

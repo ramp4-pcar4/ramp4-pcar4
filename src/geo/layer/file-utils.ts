@@ -213,7 +213,7 @@ export class FileUtils extends APIScope {
             if (options.layerId) {
                 layerId = options.layerId;
             } else {
-                layerId = this.$iApi.geo.utils.shared.generateUUID();
+                layerId = this.$iApi.geo.shared.generateUUID();
             }
 
             // due to grousyness of esri typescript, we mangle the colour pre-fromJSON
@@ -242,7 +242,7 @@ export class FileUtils extends APIScope {
         // the field names
         cleanUpFields(geoJson, configPackage);
 
-        const destProj = this.$iApi.geo.utils.proj.normalizeProj(targetSR);
+        const destProj = this.$iApi.geo.proj.normalizeProj(targetSR);
 
         // change latitude and longitude fields from esriFieldTypeString -> esriFieldTypeDouble if they exist
         if (options) {
@@ -277,18 +277,14 @@ export class FileUtils extends APIScope {
 
         // TODO if we want/need, we can put an error handler on the promise to deal with incompatible projections.
         //      e.g. maybe we want to catch it and then build a dummy layer set to error state?
-        await this.$iApi.geo.utils.proj.checkProjBomber([srcProj, targetSR]);
+        await this.$iApi.geo.proj.checkProjBomber([srcProj, targetSR]);
 
         // generate a nicely formatted object that that esri feature layer constructor can accept to make a local layer
 
         // project data and convert to esri json format
         const fancySR = new EsriSpatialReference(targetSR);
 
-        await this.$iApi.geo.utils.proj.projectGeoJson(
-            geoJson,
-            srcProj,
-            destProj
-        );
+        await this.$iApi.geo.proj.projectGeoJson(geoJson, srcProj, destProj);
 
         // terraformer has no support for non-wkid layers. can also do funny things if source is 102100.
         // use 8888 as placehold then adjust below

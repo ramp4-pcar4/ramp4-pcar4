@@ -111,7 +111,7 @@ window.hostFixtures['myfixture'] = MyFixture;
 <script src="../dist/RAMP.umd.js"></script>
 
 <script>
-    const rInstance = new RAMP.Instance(...);
+    const rInstance = RAMP.createInstance(...);
     rInstance.fixture.add('myfixture', window.hostFixtures.myfixture);
 </script>
 ```
@@ -146,7 +146,7 @@ const handle = setInterval(() => {
 
 <script>
     var rInstance;
-    rInstance = new RAMP.Instance(document.getElementById('app'), ...);
+    rInstance = RAMP.createInstance(document.getElementById('app'), ...);
 </script>
 ```
 

@@ -7,8 +7,6 @@ import type { RootState } from '@/store';
 import type { RampLayerConfig } from '@/geo/api';
 import type { LayerInstance } from '@/api/internal';
 
-import api from '@/api'; // this is the external ramp api, not the instance api
-
 // TODO we have "Layer" referenced as a layer baseclass in a lot of comments. Update it to whatever is appropriate and accurate.
 
 // NOTE
