@@ -700,15 +700,13 @@ export default defineComponent({
 
             // default to regex filtering for text columns
             colDef.filterParams.textMatcher = function (
-                filter: any,
-                gridValue: any,
-                filterText: any
+                params: any
             ) {
                 // treat * as a regular special character
-                const newFilterText = filterText.replace(/\*/, '\\*');
+                const newFilterText = params.filterText.replace(/\*/, '\\*');
                 // surround filter text with .* to match anything before and after
                 const re = new RegExp(`^.*${newFilterText}.*`);
-                return re.test(gridValue);
+                return re.test(params.value);
             };
 
             // modified from: https://www.ag-grid.com/javascript-grid-filter-text/#text-formatter
@@ -1167,10 +1165,18 @@ interface ColumnDefinition {
 :deep(.ag-pinned-left-header .ag-header-cell) {
     padding: 0px !important;
 }
+:deep(.ag-floating-filter-full-body input) {
+    border-width: 2px;
+    padding: 5px;
+    background: white;
+}
 :deep(.ag-header-cell) {
     background: #f9f9f9;
 }
 :deep(.ag-root .rv-input::placeholder) {
+    font-size: 12px;
+}
+:deep(.ag-root .rv-input) {
     font-size: 12px;
 }
 
