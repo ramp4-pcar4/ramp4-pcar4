@@ -105,7 +105,7 @@ export default defineComponent({
     methods: {
         closeDropdown(e: Event) {
             if (!e.currentTarget.contains(e.relatedTarget)) {
-                this.open = false
+                this.open = false;
             }
         }
     }
@@ -115,7 +115,7 @@ export default defineComponent({
 <style lang="scss">
 .rv-dropdown > * {
     display: block;
-    padding: 0.5rem 1rem 0.5rem 1rem;
+    padding: 0.5rem 0rem;
     color: #2d3748;
 }
 .rv-dropdown > *:hover:not(.disabled) {
