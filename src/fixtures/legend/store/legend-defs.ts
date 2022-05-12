@@ -298,8 +298,9 @@ export class LegendEntry extends LegendItem {
             return;
         }
 
-        // if parent is turned off turn layer entry visiblity off
-        if (this._parent !== undefined && !this._parent.visibility) {
+        // if parent is turned off and this layer has the visibility control,
+        // turn layer entry visiblity off
+        if (this._parent !== undefined && !this._parent.visibility && this._controls.includes(Controls.Visibility)) {
             this._layer.visibility = false;
         } else if (this._parent?.type === LegendTypes.Set) {
             // toggle off visibility if entry is part of a visibility set with a set entry already toggled on
