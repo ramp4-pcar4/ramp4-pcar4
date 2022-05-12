@@ -11,7 +11,7 @@ The notifications API provides the ability to alert users to errors, warnings or
 As stated above there are three types of notifications; `error`, `warning` and `info`.
 
 ```js
-var rInstance = new RAMP.Instance(domElement, configs);
+var rInstance = RAMP.createInstance(domElement, configs);
 rInstance.notify.show("info", "The map has been created!");
 rInstance.notify.show("error", "Could not connect to the server for fixture A, try reloading the page");
 rInstance.notify.show("warning", "Slow response times from the server");

@@ -92,11 +92,10 @@ export default defineComponent({
             } else {
                 // north value (set longitude to be half of Canada extent (141° W, 52° W))
                 const pole: Point = new Point('pole', { x: -96, y: 90 });
-                const projPole =
-                    (await this.$iApi.geo.utils.proj.projectGeometry(
-                        sr,
-                        pole
-                    )) as Point;
+                const projPole = (await this.$iApi.geo.proj.projectGeometry(
+                    sr,
+                    pole
+                )) as Point;
                 const poleScreenPos =
                     this.$iApi.geo.map.mapPointToScreenPoint(projPole);
                 if (poleScreenPos.screenY < 0) {

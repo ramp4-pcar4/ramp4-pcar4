@@ -202,7 +202,7 @@ export class SymbologyAPI extends APIScope {
                 .viewbox(0, 0, 0, 0);
         }
 
-        const dataUri = await this.$iApi.geo.utils.shared.convertImagetoDataURL(
+        const dataUri = await this.$iApi.geo.shared.convertImagetoDataURL(
             imageUri
         );
         if (dataUri === imageUri) {
@@ -250,8 +250,9 @@ export class SymbologyAPI extends APIScope {
         }
 
         // need to draw the image to get its size (technically not needed if we have a url, but this is simpler)
-        const convertedUrl =
-            await this.$iApi.geo.utils.shared.convertImagetoDataURL(imageUri);
+        const convertedUrl = await this.$iApi.geo.shared.convertImagetoDataURL(
+            imageUri
+        );
 
         const { image } = await this.svgDrawImage(draw, convertedUrl);
 
@@ -639,7 +640,7 @@ export class SymbologyAPI extends APIScope {
                     dasharray: ESRI_DASH_MAPS[symbol.outline.style]
                 });
 
-                const picturePromise = _this.$iApi.geo.utils.shared
+                const picturePromise = _this.$iApi.geo.shared
                     .convertImagetoDataURL(imageUri)
                     .then((imageUri: string) => {
                         // make a fill from a tiled image
@@ -673,7 +674,7 @@ export class SymbologyAPI extends APIScope {
                         : symbol.url;
 
                 // need to draw the image to get its size (technically not needed if we have a url, but this is simpler)
-                const picturePromise = _this.$iApi.geo.utils.shared
+                const picturePromise = _this.$iApi.geo.shared
                     .convertImagetoDataURL(imageUri)
                     .then((imageUri: string) =>
                         _this.svgDrawImage(draw, imageUri)
@@ -839,7 +840,7 @@ export class SymbologyAPI extends APIScope {
         return finalSymbols.map(suSet => {
             const firstSu: BaseSymbolUnit = suSet[0];
             const legendSym: LegendSymbology = {
-                uid: this.$iApi.geo.utils.shared.generateUUID(),
+                uid: this.$iApi.geo.shared.generateUUID(),
                 label: firstSu.label || '',
                 definitionClause:
                     suSet.length === 1

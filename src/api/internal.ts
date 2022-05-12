@@ -24,7 +24,6 @@ export * from '@/geo/utils/attribute';
 export * from '@/geo/utils/renderer';
 export * from '@/geo/utils/symbology';
 export * from '@/geo/utils/query';
-export * from '@/geo/utils/utils';
 export * from '@/geo/geo';
 export * from './fixture';
 export * from './panel';

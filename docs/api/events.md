@@ -14,7 +14,7 @@ To have a function run whenever an event fires, use the `on()` method. Supply th
 
 
 ```js
-var rInstance = new RAMP.Instance(domElement, configs);
+var rInstance = RAMP.createInstance(domElement, configs);
 var myHandler = function (param) {
     doStuff(param);
 };
@@ -24,7 +24,7 @@ rInstance.event.on('map/click', myHandler, 'my_custom_map_click_handler');
 Similarly, the `once()` method can be used to set up a one-time event handler. After the handler is triggered by the event, it is unregistered automatically.
 
 ```js
-var rInstance = new RAMP.Instance(domElement, configs);
+var rInstance = RAMP.createInstance(domElement, configs);
 var myOneTimeHandler = function (param) {
     doStuff(param);
 };

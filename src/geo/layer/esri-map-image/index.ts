@@ -547,7 +547,7 @@ class MapImageLayer extends AttribLayer {
 
         let pointBuffer: Extent;
         if (options.geometry.type === GeometryType.POINT) {
-            pointBuffer = this.$iApi.geo.utils.query.makeClickBuffer(
+            pointBuffer = this.$iApi.geo.query.makeClickBuffer(
                 <Point>options.geometry,
                 options.tolerance
             );

@@ -76,7 +76,7 @@ export class CommonLayer extends LayerInstance {
 
         this.origRampConfig = rampConfig;
         this.id = rampConfig.id || '';
-        this.uid = this.$iApi.geo.utils.shared.generateUUID();
+        this.uid = this.$iApi.geo.shared.generateUUID();
         this.isRemoved = false;
         this.isSublayer = false;
         this.supportsIdentify = false; // default state.
@@ -367,7 +367,7 @@ export class CommonLayer extends LayerInstance {
 
         // layer base class doesnt have spatial ref, but we will assume all our layers do.
         // consider adding fancy checks if its missing, and if so just promise.resolve
-        const lookupPromise = this.$iApi.geo.utils.proj
+        const lookupPromise = this.$iApi.geo.proj
             .checkProj((<any>this.esriLayer).spatialReference)
             .then((goodSR: boolean) => {
                 if (goodSR) {

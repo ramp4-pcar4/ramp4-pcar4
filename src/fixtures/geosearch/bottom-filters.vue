@@ -69,7 +69,7 @@ export default defineComponent({
                 return ext;
             } else {
                 // var needed to get around casting complaints with async syntax
-                const pExt = await this.$iApi.geo.utils.proj.projectGeometry(
+                const pExt = await this.$iApi.geo.proj.projectGeometry(
                     4326,
                     ext
                 );
