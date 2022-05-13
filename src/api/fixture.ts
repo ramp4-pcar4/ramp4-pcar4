@@ -120,7 +120,6 @@ export class FixtureAPI extends APIScope {
         });
 
         this.$iApi.event.emit(GlobalEvents.FIXTURE_REMOVED, fixture);
-
         return fixture;
     }
 

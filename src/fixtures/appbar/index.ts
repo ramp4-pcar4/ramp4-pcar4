@@ -34,7 +34,7 @@ class AppbarFixture extends AppbarAPI {
         );
 
         this._parseConfig(this.config);
-        this.$vApp.$watch(
+        let unwatch = this.$vApp.$watch(
             () => this.config,
             (value: AppbarFixtureConfig | undefined) => this._parseConfig(value)
         );
@@ -78,6 +78,7 @@ class AppbarFixture extends AppbarAPI {
         this.removed = () => {
             this.$vApp.$store.unregisterModule('appbar');
             eventHandlers.forEach(h => this.$iApi.event.off(h));
+            unwatch();
             destroy();
         };
     }
