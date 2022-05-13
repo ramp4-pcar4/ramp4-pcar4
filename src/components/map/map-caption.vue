@@ -129,17 +129,14 @@ export default defineComponent({
 
     created() {
         this.watchers.push(
-            this.$watch(
-                'mapConfig',
-                (newConfig: RampMapConfig, oldConfig: RampMapConfig) => {
-                    if (newConfig === oldConfig) {
-                        return;
-                    }
-                    this.$iApi.geo.map.caption.createCaption(
-                        this.mapConfig.caption
-                    );
+            this.$watch('mapConfig', (newConfig: RampMapConfig) => {
+                if (!newConfig) {
+                    return;
                 }
-            )
+                this.$iApi.geo.map.caption.createCaption(
+                    this.mapConfig.caption
+                );
+            })
         );
     },
 

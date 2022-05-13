@@ -27,7 +27,7 @@ class ExportFixture extends ExportAPI {
 
         this.$iApi.component('export-appbar-button', ExportAppbarButtonV);
 
-        // store module intializer function is called "xport" instead of "export" because export is a reserved keyword
+        // store module initializer function is called "xport" instead of "export" because export is a reserved keyword
         this.$vApp.$store.registerModule('export', xport());
 
         this.$iApi.panel.register(
