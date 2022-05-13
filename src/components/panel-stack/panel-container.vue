@@ -4,6 +4,7 @@
         :class="panel.expanded ? 'flex-grow max-w-full' : ''"
         :style="panel.style"
         :data-cy="panel.id"
+        ref="root"
     >
         <!-- this renders a panel screen which is currently in view -->
 
@@ -20,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import type { PropType } from 'vue';
 
 import anime from 'animejs';
@@ -35,7 +36,68 @@ export default defineComponent({
             required: true
         }
     },
+    setup(props) {
+        const skipTransition = ref(false); // indicates if the transition should be skipped
+        const root = ref();
 
+        // Animate transition between panel screen components by fading them in/out.
+        const animateTransition = (
+            el: HTMLElement,
+            done: () => void,
+            value: number[]
+        ): void => {
+            if (skipTransition.value) {
+                return done();
+            }
+            anime({
+                targets: el,
+                opacity: {
+                    value,
+                    duration: 400,
+                    easing: 'cubicBezier(.5, .05, .1, .3)'
+                },
+                complete: done
+            });
+        };
+
+        const enter = (el: HTMLElement, done: () => void): void => {
+            animateTransition(el, done, [0, 1]);
+        };
+
+        const beforeLeave = (el: HTMLElement): void => {
+            // this will also trigger when the loading component is transitioning out; in such cases skip executing this function
+            if (el.classList.contains('screen-spinner')) {
+                return;
+            }
+
+            // if the screen component is already loaded; if so, skip the transition
+            skipTransition.value = props.panel.isScreenLoaded(
+                props.panel.route.screen
+            );
+
+            // with transition, even if it's instanteneous, there is that annoying flicker when the focus ring is set
+            // just before the component is removed from DOM; supress the focus ring on the screen component just before `leave` event
+            root.value
+                .querySelectorAll('[focus-item')
+                .forEach((element: HTMLElement) =>
+                    element.classList.remove('default-focus-style')
+                );
+        };
+
+        const leave = (el: HTMLElement, done: () => void): void => {
+            animateTransition(el, done, [1, 0]);
+        };
+
+        return {
+            skipTransition,
+            root,
+            enter,
+            beforeLeave,
+            leave,
+            animateTransition
+        };
+    }
+    /*
     data() {
         return {
             // indicates if the transition should be skipped
@@ -61,6 +123,7 @@ export default defineComponent({
 
             // with transition, even if it's instanteneous, there is that annoying flicker when the focus ring is set
             // just before the component is removed from DOM; supress the focus ring on the screen component just before `leave` event
+            console.log('What is the el thing? It is: ', this.$el)
             this.$el
                 .querySelectorAll('[focus-item')
                 .forEach((element: HTMLElement) =>
@@ -70,11 +133,12 @@ export default defineComponent({
 
         leave(el: HTMLElement, done: () => void): void {
             this.animateTransition(el, done, [1, 0]);
-        },
+        },*/
 
-        /**
-         * Animate transition between panel screen components by fading them in/out.
-         */
+    /**
+     * Animate transition between panel screen components by fading them in/out.
+     */
+    /*
         animateTransition(
             el: HTMLElement,
             done: () => void,
@@ -94,7 +158,7 @@ export default defineComponent({
                 complete: done
             });
         }
-    }
+    }*/
 });
 </script>
 
