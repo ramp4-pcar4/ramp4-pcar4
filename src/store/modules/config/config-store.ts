@@ -13,6 +13,12 @@ import { i18n } from '@/lang';
 type ConfigContext = ActionContext<ConfigState, RootState>;
 
 const getters = {
+    getRegisteredConfigs: (
+        state: ConfigState
+    ): { [key: string]: RampConfig } => {
+        return state.registeredConfigs;
+    },
+
     getActiveConfig:
         (state: ConfigState) =>
         (lang: string): RampConfig => {
@@ -45,10 +51,12 @@ const actions = {
         context: ConfigContext,
         config: RampConfig
     ): void {
-        const newConfig = merge(context.state.config, config);
-        context.commit('SET_CONFIG', newConfig);
-        console.log('new config adding layers', newConfig.layers);
-        this.set(LayerStore.addLayerConfigs, newConfig.layers);
+        // Don't merge the configs because it causes issues when reloading, instead set the config directly
+        // const newConfig = merge(context.state.config, config);
+
+        context.commit('SET_CONFIG', config);
+        console.log('new config adding layers', config.layers);
+        this.set(LayerStore.addLayerConfigs, config.layers);
     },
     registerConfig: function (
         this: any,
@@ -69,17 +77,6 @@ const actions = {
                 context.state.registeredConfigs[lang] = config;
             }
         }
-    },
-    overrideConfig: function (
-        this: any,
-        context: ConfigContext,
-        newConfig: RampConfig
-    ): void {
-        this.set(LayerStore.addLayers, newConfig.layers);
-        // save and override registered and main config
-        context.dispatch('registerConfig', newConfig);
-        context.commit('SET_CONFIG', newConfig);
-        // TODO: trigger map reload?
     },
     updateConfig: function (
         this: any,
@@ -136,16 +133,6 @@ export enum ConfigStore {
      */
     registerConfig = 'config/registerConfig!',
     /**
-     * `function overrideConfig(newConfig: RampConfig) => void`
-     *
-     * Overrides current active config
-     *
-     * `@remarks` Action - use `@Call`
-     *
-     * `@param` config - new RAMP config to override existing one entirely
-     */
-    overrideConfig = 'config/overrideConfig!',
-    /**
      * `function updateConfig(fixtureConfig: any) => void`
      *
      * Update config based on a modified fixture snippet
@@ -165,6 +152,14 @@ export enum ConfigStore {
      * `@param` newBasemap - the new basemap config
      */
     setActiveBasemap = 'config/setActiveBasemap!',
+    /**
+     * Get all registered configs for each language
+     *
+     * `@remarks` Getter - use `@Get`
+     *
+     * `@returns` <{ [key: string]: RampConfig }> RAMP config for each registered language
+     */
+    getRegisteredConfigs = 'config/getRegisteredConfigs',
     /**
      * Get active config based on the current map language
      *

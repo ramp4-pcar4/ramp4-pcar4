@@ -7,7 +7,14 @@ export function get(path) {
     const property =
         path in store.getters
             ? computed(() => store.getters[path])
-            : computed(() => store.get(path));
+            : computed(() => {
+                  try {
+                      return store.get(path);
+                  } catch (err) {
+                      console.error(`vuex pathify error: ${err}`);
+                      return undefined;
+                  }
+              });
     // console.log('store: ', store, path, property);
     return property;
 }

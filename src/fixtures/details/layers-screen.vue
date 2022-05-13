@@ -126,7 +126,7 @@ export default defineComponent({
             // to wrap their identify outputs in reactive() due to disrespectful code.
 
             // track last identify request timestamp and add to payload items
-            if (newPayload.length === 0) {
+            if (!newPayload) {
                 this.activeGreedy = 0;
                 return;
             }

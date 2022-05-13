@@ -476,6 +476,15 @@ export class EventAPI extends APIScope {
     }
 
     /**
+     * Removes all event handlers, filtered to an event name if desired.
+     * @param {string} [event] name of the event. Omission will remove all handlers for all events
+     */
+    offAll(event = ''): void {
+        let active: Array<string> = this.activeHandlers(event);
+        active.forEach(h => this.off(h));
+    }
+
+    /**
      * Triggers an event.
      *
      * @param {string} event the name of the event
