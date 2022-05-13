@@ -246,6 +246,21 @@ export enum IdentifyResultFormat {
     UNKNOWN = 'unknown'
 }
 
+export enum LayerControls {
+    BoundaryZoom = 'boundaryZoom',
+    Boundingbox = 'boundingBox',
+    Datatable = 'datatable',
+    Identify = 'identify',
+    Metadata = 'metadata',
+    Opacity = 'opacity',
+    Refresh = 'refresh',
+    Reload = 'reload',
+    Remove = 'remove',
+    Settings = 'settings',
+    Symbology = 'symbology',
+    Visibility = 'visibility'
+}
+
 // TODO since MapClick and MapMove are payloads on public events, is there a proper
 //      way they should be exposed from the main app as well (like, exported? in one of those .d.ts files?)?
 //      same question probably applies to a number of other interfaces here.
@@ -485,7 +500,8 @@ export interface RampLayerMapImageLayerEntryConfig {
     state?: RampLayerStateConfig;
     // following items need to be flushed out
     extent?: any;
-    controls?: any;
+    controls?: Array<LayerControls>;
+    disabledControls?: Array<LayerControls>;
     stateOnly?: any;
     table?: any;
     fieldMetadata?: RampLayerFieldMetadataConfig;
@@ -499,7 +515,8 @@ export interface RampLayerWmsLayerEntryConfig {
     name?: string; // this is display name in ramp. would override "title" on the service
     state?: RampLayerStateConfig;
     // following items need to be flushed out
-    controls?: any;
+    controls?: Array<LayerControls>;
+    disabledControls?: Array<LayerControls>;
     currentStyle?: string; // style to be used
     styleLegends?: Array<{ name: string; url: string }>; // map of styles to legend graphic url. overrides service urls.
     fixtures?: any; // layer-based fixture config
@@ -520,6 +537,8 @@ export interface RampLayerConfig {
     nameField?: string;
     tooltipField?: string;
     featureInfoMimeType?: string;
+    controls?: Array<LayerControls>;
+    disabledControls?: Array<LayerControls>;
     layerEntries?:
         | Array<RampLayerMapImageLayerEntryConfig>
         | Array<RampLayerWmsLayerEntryConfig>;

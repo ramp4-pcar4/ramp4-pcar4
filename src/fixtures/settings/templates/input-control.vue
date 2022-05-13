@@ -8,6 +8,7 @@
                 class="rv-input text-md w-full"
                 type="number"
                 :value="config.value"
+                :disabled="isDisabled"
                 min="0"
                 max="100"
             />
@@ -36,6 +37,29 @@ export default defineComponent({
             type: String,
             required: true
         }
+    },
+    created() {
+        this.watchers.push(
+            // watch the config for changes to the disabled value
+            this.$watch(
+                'config',
+                (newConfig: any) => {
+                    this.isDisabled = !!newConfig.disabled;
+                },
+                { deep: true }
+            )
+        );
+    },
+
+    beforeUnmount() {
+        this.watchers.forEach(unwatch => unwatch());
+    },
+
+    data() {
+        return {
+            isDisabled: !!this.config.disabled,
+            watchers: [] as Array<Function>
+        };
     }
 });
 </script>
@@ -53,5 +77,8 @@ export default defineComponent({
     outline: none;
     border-bottom: 2px solid #ddd;
     margin-bottom: 0px;
+}
+.rv-input:disabled {
+    color: #ddd;
 }
 </style>

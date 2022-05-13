@@ -24,7 +24,7 @@
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled:
-                        !legendItem._controlAvailable(`metadata`) ||
+                        !legendItem.controlAvailable(`metadata`) ||
                         !getFixtureExists('metadata')
                 }"
                 @click="toggleMetadata"
@@ -42,7 +42,7 @@
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled:
-                        !legendItem._controlAvailable(`settings`) ||
+                        !legendItem.controlAvailable(`settings`) ||
                         !getFixtureExists('settings')
                 }"
                 @click="toggleSettings"
@@ -62,7 +62,7 @@
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled:
-                        !legendItem._controlAvailable(`datatable`) ||
+                        !legendItem.controlAvailable(`datatable`) ||
                         !getFixtureExists('grid')
                 }"
                 @click="toggleGrid"
@@ -79,7 +79,7 @@
                 href="#"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
-                    disabled: !legendItem._controlAvailable(`symbology`)
+                    disabled: !legendItem.controlAvailable(`symbology`)
                 }"
                 @click="toggleSymbology"
             >
@@ -95,7 +95,7 @@
                 href="#"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
-                    disabled: !legendItem._controlAvailable(`boundaryZoom`)
+                    disabled: !legendItem.controlAvailable(`boundaryZoom`)
                 }"
                 @click="zoomToLayerBoundary"
             >
@@ -113,7 +113,7 @@
                 href="#"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
-                    disabled: !legendItem._controlAvailable(`remove`)
+                    disabled: !legendItem.controlAvailable(`remove`)
                 }"
                 @click="removeLayer"
             >
@@ -129,7 +129,7 @@
                 href="#"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
-                    disabled: !legendItem._controlAvailable(`reload`)
+                    disabled: !legendItem.controlAvailable(`reload`)
                 }"
                 @click="reloadLayer"
             >
@@ -146,21 +146,22 @@
 
 <script lang="ts">
 import { GlobalEvents } from '@/api';
+import { LayerControls } from '@/geo/api';
 import { defineComponent, toRaw } from 'vue';
-import type { PropType } from 'vue';
-import { Controls, LegendEntry } from '../store/legend-defs';
+import { LegendEntry } from '../store/legend-defs';
 
 export default defineComponent({
     name: 'LegendOptionsV',
     props: {
         legendItem: LegendEntry
     },
+
     methods: {
         /**
          * Display symbology stack for the layer.
          */
         toggleSymbology(): void {
-            if (this.legendItem!._controlAvailable(Controls.Symbology)) {
+            if (this.legendItem!.controlAvailable(LayerControls.Symbology)) {
                 this.legendItem!.toggleSymbologyExpand();
             }
         },
@@ -170,7 +171,7 @@ export default defineComponent({
          */
         toggleGrid() {
             if (
-                this.legendItem!._controlAvailable(Controls.Datatable) &&
+                this.legendItem!.controlAvailable(LayerControls.Datatable) &&
                 this.getFixtureExists('grid')
             ) {
                 this.$iApi.event.emit(
@@ -185,7 +186,7 @@ export default defineComponent({
          */
         toggleSettings() {
             if (
-                this.legendItem!._controlAvailable(Controls.Settings) &&
+                this.legendItem!.controlAvailable(LayerControls.Settings) &&
                 this.getFixtureExists('settings')
             ) {
                 this.$iApi.event.emit(
@@ -199,26 +200,27 @@ export default defineComponent({
          * Toggles metadata panel to open/close for the LegendItem.
          */
         toggleMetadata() {
-            if (!this.getFixtureExists('metadata')) {
-                return;
-            }
-
-            const metaConfig =
-                this.legendItem?.layer?.config.metadata ||
-                this.legendItem?.layer?.parentLayer?.config?.metadata ||
-                {};
-
-            const name = metaConfig?.name || this.legendItem?.layer?.name || '';
             if (
-                this.legendItem!._controlAvailable(Controls.Metadata) &&
-                metaConfig.url
+                this.legendItem!.controlAvailable(LayerControls.Metadata) &&
+                this.getFixtureExists('metadata')
             ) {
-                // TODO: toggle metadata panel through API/store call
-                this.$iApi.event.emit(GlobalEvents.METADATA_OPEN, {
-                    type: 'html',
-                    layerName: name,
-                    url: metaConfig.url
-                });
+                const metaConfig =
+                    this.legendItem?.layer?.config.metadata ||
+                    this.legendItem?.layer?.parentLayer?.config?.metadata ||
+                    {};
+                const name =
+                    metaConfig?.name || this.legendItem?.layer?.name || '';
+
+                if (metaConfig.url) {
+                    // TODO: toggle metadata panel through API/store call
+                    this.$iApi.event.emit(GlobalEvents.METADATA_OPEN, {
+                        type: 'html',
+                        layerName: name,
+                        url: metaConfig.url
+                    });
+                } else {
+                    console.warn('Layer does not have a metadata url defined');
+                }
             }
         },
 
@@ -226,7 +228,7 @@ export default defineComponent({
          * Zoom to the boundary of layer
          */
         zoomToLayerBoundary() {
-            if (this.legendItem!._controlAvailable(Controls.BoundaryZoom)) {
+            if (this.legendItem!.controlAvailable(LayerControls.BoundaryZoom)) {
                 this.legendItem?.layer?.zoomToLayerBoundary();
             }
         },
@@ -235,7 +237,7 @@ export default defineComponent({
          * Removes layer from map.
          */
         removeLayer() {
-            if (this.legendItem!._controlAvailable(Controls.Remove)) {
+            if (this.legendItem!.controlAvailable(LayerControls.Remove)) {
                 this.$iApi.geo.map.removeLayer(this.legendItem!.layerUID!);
             }
         },
@@ -244,7 +246,7 @@ export default defineComponent({
          * Reloads a layer on the map.
          */
         reloadLayer() {
-            if (this.legendItem!._controlAvailable(Controls.Reload)) {
+            if (this.legendItem!.controlAvailable(LayerControls.Reload)) {
                 toRaw(this.legendItem!.layer!).reload();
             }
         },
