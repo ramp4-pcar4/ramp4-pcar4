@@ -120,6 +120,7 @@ export default defineComponent({
             //      change before map exists. kicking out for now to make demos work.
             //      possibly this is evil in vue state land. if so, then someone figure out
             //      the root cause and fix that.
+
             if (!this.map || !newValue) {
                 return;
             }
@@ -170,10 +171,10 @@ export default defineComponent({
                     });
                 });
         },
-        onMapConfigChange(newValue: RampMapConfig, oldValue: RampMapConfig) {
+        onMapConfigChange(newValue: RampMapConfig) {
             console.log('new map config change: ', newValue, this.mapConfig);
 
-            if (newValue === oldValue) {
+            if (!newValue) {
                 return;
             }
 
