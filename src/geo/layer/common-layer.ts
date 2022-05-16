@@ -134,7 +134,7 @@ export class CommonLayer extends LayerInstance {
 
         if (this.isSublayer) {
             // early back out, we don't want the below code to run for sublayers
-            console.warn('Attempted to intiate a sublayer as a CommonLayer');
+            console.warn('Attempted to initiate a sublayer as a CommonLayer');
             return Promise.resolve();
         }
 
