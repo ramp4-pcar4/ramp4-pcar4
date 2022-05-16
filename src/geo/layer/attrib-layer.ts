@@ -131,7 +131,7 @@ export class AttribLayer extends CommonLayer {
         // properties for all endpoints
 
         // TODO need to decide what propert default is. Raster Layer has null gt.
-        this.geomType = this.$iApi.geo.utils.geom.serverGeomTypeToRampGeomType(
+        this.geomType = this.$iApi.geo.geom.serverGeomTypeToRampGeomType(
             sData.geometryType
         );
         this.quickCache = new QuickCache(this.geomType);
@@ -179,7 +179,7 @@ export class AttribLayer extends CommonLayer {
                 options && options.customRenderer && options.customRenderer.type
                     ? options.customRenderer
                     : EsriRendererFromJson(sData.drawingInfo.renderer);
-            this.renderer = this.$iApi.geo.utils.symbology.makeRenderer(
+            this.renderer = this.$iApi.geo.symbology.makeRenderer(
                 renderer,
                 this.esriFields
             );
@@ -188,7 +188,7 @@ export class AttribLayer extends CommonLayer {
             // for now, will not include that set (promise.all'd) on the layer load blocker;
             // don't want to stop a layer from loading just because an icon won't draw.
             // ideally we'll have placeholder symbol (white square, loading symbol, caution symbol, etc)
-            this.legend = this.$iApi.geo.utils.symbology.rendererToLegend(
+            this.legend = this.$iApi.geo.symbology.rendererToLegend(
                 this.renderer
             );
 
@@ -568,10 +568,9 @@ export class AttribLayer extends CommonLayer {
                 }
             }
 
-            const webFeat =
-                await this.$iApi.geo.utils.attributes.loadSingleFeature(
-                    serviceParams
-                );
+            const webFeat = await this.$iApi.geo.attributes.loadSingleFeature(
+                serviceParams
+            );
             if (needWebGeom) {
                 // save our result in the cache
                 this.quickCache.setGeom(
@@ -615,7 +614,7 @@ export class AttribLayer extends CommonLayer {
             throw new Error('getIcon called before renderer is defined');
         }
         const g = await this.getGraphic(objectId, { getAttribs: true });
-        return this.$iApi.geo.utils.symbology.getGraphicIcon(
+        return this.$iApi.geo.symbology.getGraphicIcon(
             g.attributes || {},
             this.renderer
         );
@@ -811,7 +810,7 @@ export class AttribLayer extends CommonLayer {
             ...options
         };
 
-        return this.$iApi.geo.utils.query.arcGisServerQueryIds(agsOpt);
+        return this.$iApi.geo.query.arcGisServerQueryIds(agsOpt);
     }
 
     // TODO we are using the getgraphic type as it's an unbound loosely typed feature

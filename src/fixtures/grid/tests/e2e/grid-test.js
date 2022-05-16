@@ -16,7 +16,7 @@ describe('Grid', () => {
         it('has correct data', () => {
             toggleGrid('Clean Air');
             cy.window()
-                .its('rInstance.$vApp.$store')
+                .its('debugInstance.$vApp.$store')
                 .invoke('get', 'layer/getLayerById', 'CleanAir')
                 .invoke('getAttributes')
                 .then(attributes => {
@@ -96,7 +96,7 @@ describe('Grid', () => {
         it('has correct icons', () => {
             toggleGrid('Carbon monoxide');
             cy.window()
-                .its('rInstance.$vApp.$store')
+                .its('debugInstance.$vApp.$store')
                 .invoke('get', 'layer/getLayerById', 'CarbonMonoxide')
                 .then(layer => {
                     cy.wrap(layer)
@@ -171,7 +171,7 @@ describe('Grid', () => {
                             cy.wait(1000);
                             // get location from layer and compare with centre of visible extent
                             cy.wrap(
-                                window.rInstance.$vApp.$store.get(
+                                window.debugInstance.$vApp.$store.get(
                                     'layer/getLayerById',
                                     'CleanAir'
                                 )
@@ -180,7 +180,7 @@ describe('Grid', () => {
                                     getGeom: true
                                 })
                                 .then(g => {
-                                    const center = window.rInstance.geo.map
+                                    const center = window.debugInstance.geo.map
                                         .getExtent()
                                         .center();
                                     expect(center.x).to.equal(g.geometry.x);
@@ -205,7 +205,7 @@ describe('Grid', () => {
             cy.get('.ag-body-viewport').scrollTo(0, 5000);
 
             cy.window()
-                .its('rInstance.$vApp.$store')
+                .its('debugInstance.$vApp.$store')
                 .invoke('get', 'layer/getLayerById', 'CarbonMonoxide')
                 .invoke('getAttributes')
                 .then(attributes => {

@@ -172,7 +172,7 @@ export class MapAPI extends CommonMapAPI {
                 //       between them. They can subscribe to the filter event and get all the info they need.
 
                 const newExtent = <Extent>(
-                    this.$iApi.geo.utils.geom.geomEsriToRamp(
+                    this.$iApi.geo.geom.geomEsriToRamp(
                         newval,
                         'map_extent_event'
                     )
@@ -204,7 +204,7 @@ export class MapAPI extends CommonMapAPI {
             this.esriView.on('click', esriClick => {
                 this.$iApi.event.emit(
                     GlobalEvents.MAP_CLICK,
-                    this.$iApi.geo.utils.geom.esriMapClickToRamp(
+                    this.$iApi.geo.geom.esriMapClickToRamp(
                         esriClick,
                         'map_click_point'
                     )
@@ -216,7 +216,7 @@ export class MapAPI extends CommonMapAPI {
             this.esriView.on('double-click', esriClick => {
                 this.$iApi.event.emit(
                     GlobalEvents.MAP_DOUBLECLICK,
-                    this.$iApi.geo.utils.geom.esriMapClickToRamp(
+                    this.$iApi.geo.geom.esriMapClickToRamp(
                         esriClick,
                         'map_doubleclick_point'
                     )
@@ -229,7 +229,7 @@ export class MapAPI extends CommonMapAPI {
                 // TODO debounce here? the map event fires pretty much every change in pixel value.
                 this.$iApi.event.emit(
                     GlobalEvents.MAP_MOUSEMOVE,
-                    this.$iApi.geo.utils.geom.esriMapMouseToRamp(esriMouseMove)
+                    this.$iApi.geo.geom.esriMapMouseToRamp(esriMouseMove)
                 );
             })
         );

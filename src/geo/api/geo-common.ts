@@ -1,44 +1,10 @@
 // TODO I don't love this class / file name. Rename if better suggestion
 
-import {
-    Extent,
-    GeometryAPI,
-    Graphic,
-    LinearRing,
-    LineString,
-    LineStyle,
-    MultiLineString,
-    MultiPoint,
-    MultiPolygon,
-    Point,
-    PointStyle,
-    Polygon,
-    PolygonStyle,
-    ProjectionAPI,
-    SharedUtilsAPI,
-    SpatialReference
-} from '@/geo/api';
+import { GeometryAPI, ProjectionAPI, SharedUtilsAPI } from '@/geo/api';
 
 import type { RampLodConfig } from '@/geo/api';
 
 export class GeoCommonAPI {
-    // exposing the open classes for quick reference on the RAMP API
-
-    Extent = Extent;
-    Graphic = Graphic;
-    // Hover = Hover;
-    LineString = LineString;
-    LineStyle = LineStyle;
-    LinearRing = LinearRing;
-    MultiLineString = MultiLineString;
-    MultiPoint = MultiPoint;
-    MultiPolygon = MultiPolygon;
-    Point = Point;
-    PointStyle = PointStyle;
-    Polygon = Polygon;
-    PolygonStyle = PolygonStyle;
-    SpatialReference = SpatialReference; // SpatialReference: typeof SpatialReference = SpatialReference // this is great code
-
     // useful functions
 
     protected DEFAULT_MERCATOR = 'DEFAULT_ESRI_World_AuxMerc_3857';

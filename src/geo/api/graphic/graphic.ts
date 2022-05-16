@@ -10,7 +10,7 @@
 // makes a bit more sense, also helps make the geometry more memory-friendly (i.e. not having space allocated for null pointers to styles and hovers in big point chains)
 
 import type { Attributes, BaseGeometry, BaseStyle, Hover } from '@/geo/api';
-import RAMP from '@/api';
+import { geo } from '@/main';
 
 export class Graphic {
     attributes: Attributes;
@@ -23,7 +23,7 @@ export class Graphic {
         if (id) {
             this.id = id;
         } else {
-            this.id = RAMP.GEO.sharedUtils.generateUUID();
+            this.id = geo.sharedUtils.generateUUID();
         }
         if (attribs) {
             this.attributes = attribs;

@@ -8,13 +8,15 @@ import {
     GeoJsonGeomType,
     GeometryType,
     Graphic,
+    LinearRing,
     LineString,
     MultiLineString,
     MultiPoint,
     MultiPolygon,
     Point,
     PointStyle,
-    Polygon
+    Polygon,
+    SpatialReference
 } from '@/geo/api';
 import type { MapClick, MapMove } from '@/geo/api';
 import {
@@ -35,6 +37,22 @@ import { LineStyle } from '../style/line-style';
 import { PolygonStyle } from '../style/polygon-style';
 
 export class GeometryAPI {
+    // expose our common classes, so they can be grabbed from iApi.geo.geom easily
+    Extent = Extent;
+    Graphic = Graphic;
+    // Hover = Hover;
+    LineString = LineString;
+    LineStyle = LineStyle;
+    LinearRing = LinearRing;
+    MultiLineString = MultiLineString;
+    MultiPoint = MultiPoint;
+    MultiPolygon = MultiPolygon;
+    Point = Point;
+    PointStyle = PointStyle;
+    Polygon = Polygon;
+    PolygonStyle = PolygonStyle;
+    SpatialReference = SpatialReference;
+
     /**
      * Convert an ESRI map click event object to a generic RAMPish map click event object
      *

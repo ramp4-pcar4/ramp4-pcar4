@@ -66,13 +66,12 @@ class OsmTileLayer extends CommonLayer {
         //      For now, just using a default "O".  The odds of OSM being an active
         //      layer in the legend is pretty low, and a config can override the symbol I believe.
 
-        const legGuts =
-            this.$iApi.geo.utils.symbology.generatePlaceholderSymbology(
-                'O',
-                '#03fc4e'
-            );
+        const legGuts = this.$iApi.geo.symbology.generatePlaceholderSymbology(
+            'O',
+            '#03fc4e'
+        );
         const symbologyItem: LegendSymbology = {
-            uid: this.$iApi.geo.utils.shared.generateUUID(),
+            uid: this.$iApi.geo.shared.generateUUID(),
             label: 'OpenStreetMap', // product name, same in Fr
             svgcode: legGuts.svgcode,
             esriStandard: true,

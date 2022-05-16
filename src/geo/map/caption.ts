@@ -355,8 +355,10 @@ export class MapCaptionAPI extends APIScope {
      */
     async formatLatLongDMS(p: Point): Promise<string> {
         // get the lat long projection
-        const latLongPoint: any =
-            await this.$iApi.geo.utils.proj.projectGeometry(4326, p);
+        const latLongPoint: any = await this.$iApi.geo.proj.projectGeometry(
+            4326,
+            p
+        );
 
         const lat = this.wrapValue(latLongPoint.y, -90, 90);
         const lon = this.wrapValue(latLongPoint.x, -180, 180);
@@ -401,8 +403,10 @@ export class MapCaptionAPI extends APIScope {
      */
     async formatLatLongDDM(p: Point): Promise<string> {
         // get the lat long projection
-        const latLongPoint: any =
-            await this.$iApi.geo.utils.proj.projectGeometry(4326, p);
+        const latLongPoint: any = await this.$iApi.geo.proj.projectGeometry(
+            4326,
+            p
+        );
 
         const lat = this.wrapValue(latLongPoint.y, -90, 90);
         const lon = this.wrapValue(latLongPoint.x, -180, 180);
@@ -445,8 +449,10 @@ export class MapCaptionAPI extends APIScope {
      */
     async formatLatLongDD(p: Point): Promise<string> {
         // get the lat long projection
-        const latLongPoint: any =
-            await this.$iApi.geo.utils.proj.projectGeometry(4326, p);
+        const latLongPoint: any = await this.$iApi.geo.proj.projectGeometry(
+            4326,
+            p
+        );
 
         const lat = this.wrapValue(latLongPoint.y, -90, 90);
         const lon = this.wrapValue(latLongPoint.x, -180, 180);
@@ -480,8 +486,10 @@ export class MapCaptionAPI extends APIScope {
      */
     async formatMercator(p: Point): Promise<string> {
         // project using Web-Mercator wkid
-        const projectedPoint: any =
-            await this.$iApi.geo.utils.proj.projectGeometry(102100, p);
+        const projectedPoint: any = await this.$iApi.geo.proj.projectGeometry(
+            102100,
+            p
+        );
 
         return `${this.$iApi.$vApp.$n(
             Math.floor(projectedPoint.x),
@@ -501,8 +509,10 @@ export class MapCaptionAPI extends APIScope {
      */
     async formatLambert(p: Point): Promise<string> {
         // project using Lambert wkid
-        const projectedPoint: any =
-            await this.$iApi.geo.utils.proj.projectGeometry(3978, p);
+        const projectedPoint: any = await this.$iApi.geo.proj.projectGeometry(
+            3978,
+            p
+        );
 
         return `${this.$iApi.$vApp.$n(
             Math.abs(Math.floor(projectedPoint.x)),
@@ -526,8 +536,10 @@ export class MapCaptionAPI extends APIScope {
      */
     async formatUTM(p: Point): Promise<string> {
         // get the lat long point
-        const latLongPoint: any =
-            await this.$iApi.geo.utils.proj.projectGeometry(4326, p);
+        const latLongPoint: any = await this.$iApi.geo.proj.projectGeometry(
+            4326,
+            p
+        );
         const lat = this.wrapValue(latLongPoint.y, -90, 90);
         const lon = this.wrapValue(latLongPoint.x, -180, 180);
 
@@ -535,11 +547,10 @@ export class MapCaptionAPI extends APIScope {
         const zone = Math.ceil((lon + 180) / 6);
 
         // project the point using the zone's utm projection
-        const projectedPoint: any =
-            await this.$iApi.geo.utils.proj.projectGeometry(
-                parseInt('326' + zone),
-                p
-            );
+        const projectedPoint: any = await this.$iApi.geo.proj.projectGeometry(
+            parseInt('326' + zone),
+            p
+        );
 
         return `${this.$iApi.$vApp.$n(zone, 'number', {
             minimumIntegerDigits: 2
@@ -565,11 +576,10 @@ export class MapCaptionAPI extends APIScope {
      */
     async formatBasemap(p: Point): Promise<string> {
         // project the point using the basemaps spatial reference
-        const projectedPoint: any =
-            await this.$iApi.geo.utils.proj.projectGeometry(
-                this.$iApi.geo.map.getSR(),
-                p
-            );
+        const projectedPoint: any = await this.$iApi.geo.proj.projectGeometry(
+            this.$iApi.geo.map.getSR(),
+            p
+        );
 
         return `${this.$iApi.$vApp.$n(
             projectedPoint.x,

@@ -105,7 +105,7 @@ export class QueryAPI extends APIScope {
         return featSet.features.map((f, i) => {
             let geom: BaseGeometry;
             if (query.returnGeometry) {
-                geom = this.$iApi.geo.utils.geom.geomEsriToRamp(
+                geom = this.$iApi.geo.geom.geomEsriToRamp(
                     f.geometry,
                     `queryResult${i}`
                 );

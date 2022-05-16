@@ -293,10 +293,7 @@ export class CommonMapAPI extends APIScope {
         if (this._rampSR.isEqual(geom.sr)) {
             return Promise.resolve(geom);
         } else {
-            return this.$iApi.geo.utils.proj.projectGeometry(
-                this._rampSR,
-                geom
-            );
+            return this.$iApi.geo.proj.projectGeometry(this._rampSR, geom);
         }
     }
 
@@ -321,7 +318,7 @@ export class CommonMapAPI extends APIScope {
             // TODO investigate the `snapTo` parameter if we have an extent / poly coming in
             //      see how it compares to the old "fit to view" parameter of ESRI3
             const zoomP: any = {
-                target: this.$iApi.geo.utils.geom.geomRampToEsri(g)
+                target: this.$iApi.geo.geom.geomRampToEsri(g)
             };
             if (g.type === GeometryType.POINT) {
                 zoomP.scale = scale || 50000;

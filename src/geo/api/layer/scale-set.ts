@@ -25,10 +25,13 @@ export class ScaleSet {
      */
     isOffScale(mapScale: number): OffScaleStatus {
         // GIS for dummies.
-        // scale increases as you zoom out, decreases as you zoom in
-        // minScale means if you zoom out beyond this number, hide the layer
-        // maxScale means if you zoom in past this number, hide the layer
-        // 0 value for min or max scale means there is no hiding in effect
+        // Scale is an integer that represents the denominator of the map scale.
+        // A scale of 500 really means 1:500, or 1/500.
+        // Scale increases as you zoom out, decreases as you zoom in,
+        // (or the opposite if thinking in 1/scale context).
+        // minScale means if you zoom out beyond this number, hide the layer.
+        // maxScale means if you zoom in past this number, hide the layer.
+        // 0 value for min or max scale means there is no hiding in effect.
 
         const result = {
             offScale: false,
