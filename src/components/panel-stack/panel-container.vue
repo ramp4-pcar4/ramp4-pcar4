@@ -36,14 +36,16 @@ export default defineComponent({
             required: true
         }
     },
-    
     setup(props) {
-        const skipTransition = ref(false) // indicates if the transition should be skipped
-        const root = ref()
+        const skipTransition = ref(false); // indicates if the transition should be skipped
+        const root = ref();
 
-        
-         // Animate transition between panel screen components by fading them in/out.
-        const animateTransition = (el: HTMLElement, done: () => void, value: number[]): void => {
+        // Animate transition between panel screen components by fading them in/out.
+        const animateTransition = (
+            el: HTMLElement,
+            done: () => void,
+            value: number[]
+        ): void => {
             if (skipTransition.value) {
                 return done();
             }
@@ -56,11 +58,11 @@ export default defineComponent({
                 },
                 complete: done
             });
-        }
+        };
 
         const enter = (el: HTMLElement, done: () => void): void => {
             animateTransition(el, done, [0, 1]);
-        }
+        };
 
         const beforeLeave = (el: HTMLElement): void => {
             // this will also trigger when the loading component is transitioning out; in such cases skip executing this function
@@ -79,14 +81,21 @@ export default defineComponent({
                 .querySelectorAll('[focus-item')
                 .forEach((element: HTMLElement) =>
                     element.classList.remove('default-focus-style')
-            );
-        }
+                );
+        };
 
         const leave = (el: HTMLElement, done: () => void): void => {
             animateTransition(el, done, [1, 0]);
-        }
-        
-        return { skipTransition, root, enter, beforeLeave, leave, animateTransition }
+        };
+
+        return {
+            skipTransition,
+            root,
+            enter,
+            beforeLeave,
+            leave,
+            animateTransition
+        };
     }
     /*
     data() {
@@ -126,10 +135,10 @@ export default defineComponent({
             this.animateTransition(el, done, [1, 0]);
         },*/
 
-        /**
-         * Animate transition between panel screen components by fading them in/out.
-         */
-        /*
+    /**
+     * Animate transition between panel screen components by fading them in/out.
+     */
+    /*
         animateTransition(
             el: HTMLElement,
             done: () => void,
