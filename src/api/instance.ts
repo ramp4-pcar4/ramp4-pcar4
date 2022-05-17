@@ -400,6 +400,9 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
     vueElement.config.globalProperties.$store = store;
     vueElement.config.globalProperties.$iApi = iApi;
 
+    // Add the iApi instance to Vue component with provide/inject
+    vueElement.provide('iApi', iApi);
+
     const app = vueElement.mount(element);
 
     return { element: vueElement, app };
