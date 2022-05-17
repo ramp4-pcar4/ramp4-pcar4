@@ -13,65 +13,51 @@
                     {{ $t('keyboardInstructions.open') }}
                 </button>
             </div>
-            <keyboard-instructions-modal></keyboard-instructions-modal>
-            <panel-stack
-                class="panel-stack sm:flex absolute inset-0 overflow-hidden sm:p-12 z-10 sm:pl-80 xs:pl-40 sm:pb-48 xs:pb-28 xs:pr-0 sm:pr-40"
-            ></panel-stack>
-            <notification-floating-button
-                v-if="!appbarFixture"
-            ></notification-floating-button>
-            <map-caption class="z-10"></map-caption>
+            <keyboard-instructions-modal-v />
+            <panel-stack-v
+                class="panel-stack sm:flex absolute inset-0 overflow-hidden xs:pl-40 sm:p-12 sm:pl-80 z-10 sm:pb-48 xs:pb-28"
+            />
+            <notifications-floating-button-v v-if="!appbarFixture" />
+            <map-caption-v class="z-10" />
         </div>
 
-        <esri-map v-if="start"></esri-map>
+        <esri-map-v v-if="start" />
         <div v-else class="w-full h-full">
             <div class="spinner relative inset-x-1/2 inset-y-9/20"></div>
         </div>
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { ref, inject } from 'vue';
 import EsriMapV from '@/components/map/esri-map.vue';
 import PanelStackV from '@/components/panel-stack/panel-stack.vue';
 import MapCaptionV from '@/components/map/map-caption.vue';
 import NotificationsFloatingButtonV from '@/components/notification-center/floating-button.vue';
 import KeyboardInstructionsModalV from './keyboard-instructions.vue';
 import { GlobalEvents } from '@/api';
+import type { InstanceAPI } from '@/api';
+import type { storeType } from '@/store';
 
-export default defineComponent({
-    name: 'Shell',
-    components: {
-        'esri-map': EsriMapV,
-        'panel-stack': PanelStackV,
-        'map-caption': MapCaptionV,
-        'notification-floating-button': NotificationsFloatingButtonV,
-        'keyboard-instructions-modal': KeyboardInstructionsModalV
-    },
-    data() {
-        return {
-            appbarFixture: this.get(`fixture/items@appbar`),
-            start: false
-        };
-    },
-    created() {
-        // the start property is used to prevent the esri-map component from instantiating
-        // until the property turns true. trickery!
-        if (this.$iApi.startRequired) {
-            this.$iApi.event.once(GlobalEvents.MAP_START, () => {
-                this.start = true;
-            });
-        } else {
-            this.$iApi.event.emit(GlobalEvents.MAP_START);
-            this.start = true;
-        }
-    },
-    methods: {
-        openKeyboardInstructions() {
-            this.$iApi.event.emit('openKeyboardInstructions');
-        }
-    }
-});
+const iApi = inject('iApi') as InstanceAPI;
+const store = inject('thisStore') as storeType;
+const appbarFixture = ref(store.get(`fixture/items@appbar`));
+const start = ref(false);
+
+// the start property is used to prevent the esri-map component from instantiating
+// until the property turns true. trickery!
+if (iApi.startRequired) {
+    iApi.event.once(GlobalEvents.MAP_START, () => {
+        start.value = true;
+    });
+} else {
+    iApi.event.emit(GlobalEvents.MAP_START);
+    start.value = true;
+}
+
+const openKeyboardInstructions = () => {
+    iApi.event.emit('openKeyboardInstructions');
+};
 </script>
 
 <style lang="scss" scoped>
