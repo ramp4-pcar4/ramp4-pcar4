@@ -33,54 +33,46 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import type { InstanceAPI } from '@/api';
+import { ref, inject, onMounted, onBeforeUnmount, nextTick } from 'vue';
 
-export default defineComponent({
-    name: 'KeyboardInstructionsModalV',
-    data() {
-        return {
-            open: false,
-            instructionSections: ['app', 'lists', 'map'],
-            handlers: [] as Array<string>
-        };
-    },
+const iApi = inject('iApi') as InstanceAPI;
+const open = ref<boolean>(false);
+const instructionSections = ref<string[]>(['app', 'lists', 'map']);
+const handlers = ref<Array<string>>([]);
+const firstEl = ref();
+const lastEl = ref();
 
-    mounted() {
-        this.handlers.push(
-            this.$iApi.event.on('openKeyboardInstructions', () => {
-                this.open = true;
-                this.$nextTick(() => {
-                    (this.$refs.firstEl as HTMLElement)?.focus();
-                });
-            })
-        );
-    },
-
-    beforeUnmount() {
-        this.handlers.forEach(handler => this.$iApi.event.off(handler));
-    },
-
-    methods: {
-        onKeydown(event: KeyboardEvent) {
-            if (event.key === 'Tab') {
-                if (event.shiftKey && event.target === this.$refs.firstEl) {
-                    event.preventDefault();
-                    (this.$refs.lastEl as HTMLElement).focus();
-                } else if (
-                    !event.shiftKey &&
-                    event.target == this.$refs.lastEl
-                ) {
-                    event.preventDefault();
-                    (this.$refs.firstEl as HTMLElement).focus();
-                }
-            } else if (event.key === 'Escape') {
-                event.preventDefault();
-                this.open = false;
-            }
-        }
-    }
+onMounted(() => {
+    handlers.value.push(
+        iApi.event.on('openKeyboardInstructions', () => {
+            open.value = true;
+            nextTick(() => {
+                (firstEl.value as HTMLElement)?.focus();
+            });
+        })
+    );
 });
+
+onBeforeUnmount(() => {
+    handlers.value.forEach(handler => iApi.event.off(handler));
+});
+
+const onKeydown = (event: KeyboardEvent) => {
+    if (event.key === 'Tab') {
+        if (event.shiftKey && event.target === firstEl.value) {
+            event.preventDefault();
+            (lastEl.value as HTMLElement).focus();
+        } else if (!event.shiftKey && event.target == lastEl.value) {
+            event.preventDefault();
+            (firstEl.value as HTMLElement).focus();
+        }
+    } else if (event.key === 'Escape') {
+        event.preventDefault();
+        open.value = false;
+    }
+};
 </script>
 
 <style lang="scss" scoped></style>
