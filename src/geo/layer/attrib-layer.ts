@@ -469,10 +469,6 @@ export class AttribLayer extends CommonLayer {
         objectId: number,
         opts: GetGraphicParams
     ): Promise<Graphic> {
-        // NOTE RAMP2 version of this included the sublayer object. we want to keep those hidden, so
-        //      for now will just return the graphic structure and if we need more stuff we
-        //      will figure out a proper way to do that.
-
         // see https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2190 for reasons why
         // things are done the way they are in this function.
 
@@ -480,7 +476,7 @@ export class AttribLayer extends CommonLayer {
 
         let resultAttribs: any = {};
         let resultGeom: BaseGeometry = new NoGeometry();
-        const map = this.$iApi.geo.map; // used to do `opts.unboundMap || ` first, but think we're getting rid of that.
+        const map = this.$iApi.geo.map;
 
         // redundant checks to shut up typescript
         if (!this.quickCache) {
@@ -490,12 +486,11 @@ export class AttribLayer extends CommonLayer {
             throw new Error('getGraphic call with missing attribute loader');
         }
 
-        // const nonPoint = this.geomType !== 'esriGeometryPoint';
         let needWebAttr = false;
         let needWebGeom = false;
         let scale = 0;
 
-        if (opts.getAttribs) {
+        if (opts.getAttribs || opts.getStyle) {
             // attempt to get attributes from fastest source.
             let aCache = this.quickCache.getAttribs(objectId);
             if (aCache) {
@@ -600,7 +595,22 @@ export class AttribLayer extends CommonLayer {
             }
         }
 
-        return new Graphic(resultGeom, '', resultAttribs);
+        // logic in attribute param - we need attributes if style was requested. So it's possible our
+        // resultAttribs has values due to a style request, but caller does not want attributes on the result.
+        const resGraphic = new Graphic(
+            resultGeom,
+            '',
+            opts.getAttribs ? resultAttribs : undefined
+        );
+
+        if (opts.getStyle) {
+            const esriSymb = toRaw(
+                this.renderer!.getGraphicSymbol(resultAttribs)
+            );
+            resGraphic.style = this.$iApi.geo.geom.styleEsriToRamp(esriSymb);
+        }
+
+        return resGraphic;
     }
 
     /**
@@ -849,7 +859,6 @@ export class AttribLayer extends CommonLayer {
         const p: GetGraphicParams = {
             getGeom: !!options.includeGeometry,
             getAttribs: true
-            // unboundMap: options.map
         };
         return oids.map(oid => ({
             oid: oid,
