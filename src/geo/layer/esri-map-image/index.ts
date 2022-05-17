@@ -300,9 +300,14 @@ class MapImageLayer extends AttribLayer {
                     this._sublayers[sid] = new MapImageSublayer(
                         {
                             layerType: LayerType.SUBLAYER,
-                            state: subConfigs[sid].state,
-                            controls: subConfigs[sid].controls,
-                            disabledControls: subConfigs[sid].disabledControls
+                            // If the state isn't defined, use the same state as the parent.
+                            state: subConfigs[sid]?.state ?? {
+                                opacity: this.opacity,
+                                visibility: this.visibility,
+                                hovertips: this.hovertips
+                            },
+                            controls: subConfigs[sid]?.controls,
+                            disabledControls: subConfigs[sid]?.disabledControls
                         },
                         this.$iApi,
                         this,
