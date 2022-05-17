@@ -408,7 +408,17 @@ export class FileLayer extends AttribLayer {
                 'did not get a single result on a query for a specific object id'
             );
         }
-        return resultArr[0];
+
+        const resGraphic = resultArr[0];
+
+        if (opts.getStyle) {
+            const esriSymb = toRaw(
+                this.renderer!.getGraphicSymbol(resGraphic.attributes)
+            );
+            resGraphic.style = this.$iApi.geo.geom.styleEsriToRamp(esriSymb);
+        }
+
+        return resGraphic;
     }
 
     // TODO we are using the getgraphic type as it's an unbound loosely typed feature
