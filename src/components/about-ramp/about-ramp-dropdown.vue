@@ -1,5 +1,5 @@
 <template>
-    <dropdown-menu
+    <dropdown-menu-v
         class="pointer-events-auto sm:flex"
         :aria-label="$t('ramp.about')"
         :position="position"
@@ -62,67 +62,57 @@
                 </div>
             </div>
         </template>
-    </dropdown-menu>
+    </dropdown-menu-v>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
+<script setup lang="ts">
+import { computed } from 'vue';
 import { version } from '@/main';
 
-export default defineComponent({
-    name: 'AboutRampDropdownV',
+import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 
-    props: {
-        position: {
-            type: String,
-            default: 'top-start'
-        }
-    },
+defineProps({
+    position: {
+        type: String,
+        default: 'top-start'
+    }
+});
+/**
+ * Get RAMP's version string
+ */
+const versionString = computed<string>(() => {
+    return `${version.major}.${version.minor}.${version.patch}`;
+});
 
-    components: {
-        'dropdown-menu': DropdownMenuV
-    },
+/**
+ * Get RAMP build version hash
+ */
+const versionHash = computed<string>(() => {
+    return version.hash.slice(0, 9);
+});
 
-    computed: {
-        /**
-         * Get RAMP's version string
-         */
-        versionString(): string {
-            return `${version.major}.${version.minor}.${version.patch}`;
-        },
-
-        /**
-         * Get RAMP build version hash
-         */
-        versionHash(): string {
-            return version.hash.slice(0, 9);
-        },
-
-        /**
-         * Get RAMP build date
-         */
-        buildDate(): string {
-            let timestamp = new Date(version.timestamp);
-            if (isNaN(<any>timestamp)) {
-                // this appears to be broken in dev serve mode (but not always).
-                // likely the vite `git log -1 --format=%cd` command isnt working in that context
-                return 'dev mode, no date';
+/**
+ * Get RAMP build date
+ */
+const buildDate = computed<string>(() => {
+    let timestamp = new Date(version.timestamp);
+    if (isNaN(<any>timestamp)) {
+        // this appears to be broken in dev serve mode (but not always).
+        // likely the vite `git log -1 --format=%cd` command isnt working in that context
+        return 'dev mode, no date';
+    } else {
+        const padZero = (num: number): string => {
+            if (num < 10) {
+                return '0' + num.toString();
             } else {
-                const padZero = (num: number): string => {
-                    if (num < 10) {
-                        return '0' + num.toString();
-                    } else {
-                        return num.toString();
-                    }
-                };
-                return `${timestamp.getFullYear()}-${
-                    timestamp.getMonth() + 1
-                }-${timestamp.getDate()} ${timestamp.getHours()}:${padZero(
-                    timestamp.getMinutes()
-                )}:${padZero(timestamp.getSeconds())}`;
+                return num.toString();
             }
-        }
+        };
+        return `${timestamp.getFullYear()}-${
+            timestamp.getMonth() + 1
+        }-${timestamp.getDate()} ${timestamp.getHours()}:${padZero(
+            timestamp.getMinutes()
+        )}:${padZero(timestamp.getSeconds())}`;
     }
 });
 </script>
