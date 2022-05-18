@@ -299,10 +299,18 @@ class MapImageLayer extends AttribLayer {
                 if (!this._sublayers[sid]) {
                     this._sublayers[sid] = new MapImageSublayer(
                         {
+                            // TODO: Revisit once issue #961 is implemented. 
+                            // See https://github.com/ramp4-pcar4/ramp4-pcar4/pull/1045#pullrequestreview-977116071
                             layerType: LayerType.SUBLAYER,
-                            state: subConfigs[sid].state,
-                            controls: subConfigs[sid].controls,
-                            disabledControls: subConfigs[sid].disabledControls
+                            // If the state isn't defined, use the same state as the parent.
+                            state: subConfigs[sid]?.state ?? {
+                                opacity: this.opacity,
+                                visibility: this.visibility,
+                                hovertips: this.hovertips,
+                                identify: this.identify
+                            },
+                            controls: subConfigs[sid]?.controls,
+                            disabledControls: subConfigs[sid]?.disabledControls
                         },
                         this.$iApi,
                         this,
