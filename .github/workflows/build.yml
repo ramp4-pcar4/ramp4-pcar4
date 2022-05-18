@@ -1,0 +1,55 @@
+name: NPM install and build
+
+on:
+    workflow_call:
+        inputs:
+            build_mode:
+                type: string
+                required: true
+
+            cache_sha:
+                type: string
+                required: true
+
+env:
+    NODE_VERSION: '17.9.0'
+
+jobs:
+    install-build:
+        name: Install and build
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+              with:
+                  ## We want the head repo for PR's since pull_request_target uses the base repo by default.
+                  ## Fallback to default repo if pull_request_target didn't trigger the workflow.
+                  repository: ${{ github.event.pull_request_target.head.repo.full_name || github.repository }}
+                  ref: ${{ github.head_ref || github.ref_name }}
+
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+                  cache: 'npm'
+
+            - name: Try to restore node_modules folder from cache
+              id: cache-node-modules
+              uses: actions/cache@v3
+              with:
+                  path: ./node_modules
+                  key: npm-${{ hashFiles('./package-lock.json') }}
+
+            - name: Otherwise install npm dependencies
+              if: steps.cache-node-modules.outputs.cache-hit != 'true'
+              run: npm ci
+
+            - name: Persist build output for other workflows
+              uses: actions/cache@v3
+              with:
+                  path: ${{ inputs.build_mode }}
+                  key: ${{ inputs.build_mode }}-${{ inputs.cache_sha }}
+
+            - name: Build the files!
+              run: npm run build -- --mode=${{ inputs.build_mode }}
+              env:
+                  NODE_OPTIONS: '--max-old-space-size=8192'
+                  DIST_NAME: ${{ inputs.build_mode }}
