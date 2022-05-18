@@ -19,6 +19,11 @@ const baseConfig: UserConfigExport = {
 
 export default defineConfig(({ command, mode }) => {
     if (command == 'build') {
+        baseConfig.resolve = {
+            alias: {
+                vue: 'vue/dist/vue.esm-bundler.js'
+            }
+        };
         if (mode === 'production') {
             baseConfig.build = {
                 lib: {
@@ -34,12 +39,6 @@ export default defineConfig(({ command, mode }) => {
                     }
                 }
             };
-            baseConfig.resolve = {
-                alias: {
-                    '@': resolve(__dirname, 'src'),
-                    'vue': 'vue/dist/vue.esm-bundler.js'
-                }
-            }
         } else {
             baseConfig.publicDir = false;
             baseConfig.root = 'demos';
