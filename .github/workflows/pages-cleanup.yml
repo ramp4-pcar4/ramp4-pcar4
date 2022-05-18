@@ -1,0 +1,23 @@
+name: Cleanup GitHub pages
+
+on:
+    pull_request_target:
+        types: [closed]
+
+jobs:
+    cleanup-pages:
+        name: Cleanup GitHub pages
+        runs-on: ubuntu-latest
+        steps:
+            ## Delete the PR demo from gh-pages when the PR is closed
+            - uses: actions/checkout@v3
+              with:
+                  ref: 'gh-pages'
+
+            - uses: actions/github-script@v6
+              name: Delete the demo folder for the closed PR
+              with:
+                  script: |
+                      git rm -r ${{ github.head_ref }}/*
+                      git commit -a -m 'Delete PR demo ${{ github.head_ref }} for repo ${{ github.event.pull_request.head.repo.full_name }}'
+                      git push origin HEAD:gh-pages
