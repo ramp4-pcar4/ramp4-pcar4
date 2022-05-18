@@ -345,7 +345,8 @@ let config = {
                 {
                     id: 'WFSLayer',
                     layerType: 'ogc-wfs',
-                    url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
+                    url: 'https://api.weather.gc.ca//collections/ahccd-trends/items?measurement_type__type_mesure=total_precip&period__periode=Ann&startindex=0&limit=1000&province__province=on',
+                    xyInAttribs: true,
                     state: {
                         visibility: true
                     },
@@ -359,30 +360,6 @@ let config = {
                         }
                     }
                 }
-                /*
-            {
-                id: 'TestTile',
-                layerType: 'esri-tile',
-                url: 'https://services.arcgisonline.com/arcgis/rest/services/USA_Topo_Maps/MapServer',
-                state: {
-                    opacity: 1,
-                    visibility: true
-                },
-                customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
-            },
-            {
-                "id": "CanGRID_tmean_MAM_en",
-                "layerType": "ogc-wms",
-                "url": "https://geo.weather.gc.ca/geomet-climate?SERVICE=WMS&VERSION=1.3.0",
-                "name": "Total precipitation",
-                "state": {
-                    "opacity": 0.85,
-                    "visibility": true
-                },
-                "layerEntries": [{"id": "CANGRD.TREND.TM_SPRING" }],
-                "featureInfoMimeType": "application/json"
-            }
-            */
             ],
             fixtures: {
                 legend: {

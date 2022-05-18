@@ -340,50 +340,25 @@ let config = {
                     },
                     tolerance: 10,
                     customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                },
+                {
+                    id: 'WFSLayer',
+                    layerType: 'ogc-wfs',
+                    url: 'https://api.weather.gc.ca//collections/ahccd-trends/items?measurement_type__type_mesure=total_precip&period__periode=Ann&startindex=0&limit=1000&province__province=on',
+                    xyInAttribs: true,
+                    state: {
+                        visibility: true
+                    },
+                    customRenderer: {},
+                    metadata: {
+                        url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/main/README.md'
+                    },
+                    fixtures: {
+                        details: {
+                            template: 'WFSLayer-Custom'
+                        }
+                    }
                 }
-                // TODO: Revisit this in #1002
-                // Removing WFS layer for now since it is breaking other layers
-                // {
-                //     id: 'WFSLayer',
-                //     layerType: 'ogc-wfs',
-                //     url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
-                //     state: {
-                //         visibility: true
-                //     },
-                //     customRenderer: {},
-                //     metadata: {
-                //         url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/main/README.md'
-                //     },
-                //     fixtures: {
-                //         details: {
-                //             template: 'WFSLayer-Custom'
-                //         }
-                //     }
-                // }
-                /*
-            {
-                id: 'TestTile',
-                layerType: 'esri-tile',
-                url: 'https://services.arcgisonline.com/arcgis/rest/services/USA_Topo_Maps/MapServer',
-                state: {
-                    opacity: 1,
-                    visibility: true
-                },
-                customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
-            },
-            {
-                "id": "CanGRID_tmean_MAM_en",
-                "layerType": "ogc-wms",
-                "url": "https://geo.weather.gc.ca/geomet-climate?SERVICE=WMS&VERSION=1.3.0",
-                "name": "Total precipitation",
-                "state": {
-                    "opacity": 0.85,
-                    "visibility": true
-                },
-                "layerEntries": [{"id": "CANGRD.TREND.TM_SPRING" }],
-                "featureInfoMimeType": "application/json"
-            }
-            */
             ],
             fixtures: {
                 legend: {
@@ -426,22 +401,21 @@ let config = {
                                         ]
                                     }
                                 ]
+                            },
+                            {
+                                layerId: 'WFSLayer',
+                                name: 'WFSLayer',
+                                controls: [
+                                    'metadata',
+                                    'boundaryZoom',
+                                    'refresh',
+                                    'reload',
+                                    'remove',
+                                    'datatable',
+                                    'settings',
+                                    'symbology'
+                                ]
                             }
-                            // TODO: Revisit this in #1002
-                            // {
-                            //     layerId: 'WFSLayer',
-                            //     name: 'WFSLayer',
-                            //     controls: [
-                            //         'metadata',
-                            //         'boundaryZoom',
-                            //         'refresh',
-                            //         'reload',
-                            //         'remove',
-                            //         'datatable',
-                            //         'settings',
-                            //         'symbology'
-                            //     ]
-                            // }
                         ]
                     }
                 },
