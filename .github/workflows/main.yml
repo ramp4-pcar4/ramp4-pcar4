@@ -1,0 +1,61 @@
+on:
+    pull_request_target:
+        types: [opened, synchronize]
+
+    push:
+        branches:
+            - 'main'
+            - 'master'
+            - 'develop'
+        tags:
+            - v**
+
+jobs:
+    build-dev:
+        name: Develop build for demo files
+        uses: ./.github/workflows/build.yml
+        with:
+            build_mode: 'development'
+            cache_sha: ${{ github.event.pull_request.head.sha || github.sha }}
+
+    build-prod:
+        name: Production build for library files
+        uses: ./.github/workflows/build.yml
+        with:
+            build_mode: 'production'
+            cache_sha: ${{ github.event.pull_request.head.sha || github.sha }}
+
+    post-build:
+        name: Merge dev & prod into a bundle
+        needs: [build-dev, build-prod]
+        runs-on: ubuntu-latest
+        steps:
+            - name: Get library (prod) files
+              uses: actions/cache@v3
+              with:
+                  path: production
+                  key: production-${{ github.event.pull_request.head.sha || github.sha }}
+
+            - name: Get development files
+              uses: actions/cache@v3
+              with:
+                  path: development
+                  key: development-${{ github.event.pull_request.head.sha || github.sha }}
+
+            - name: Cache dist files
+              uses: actions/cache@v3
+              with:
+                  path: dist
+                  key: dist-${{ github.event.pull_request.head.sha || github.sha }}
+
+            - name: Join both dev/prod caches
+              run: |
+                  mkdir dist
+                  mv development/* production/* dist
+
+    deploy-pages:
+        needs: [post-build]
+        name: Deploy the files
+        uses: ./.github/workflows/pages.yml
+        with:
+            cache_sha: ${{ github.event.pull_request.head.sha || github.sha }}
