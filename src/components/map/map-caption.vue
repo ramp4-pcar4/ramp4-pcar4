@@ -30,7 +30,7 @@
         </span>
 
         <span
-            class="relative ml-10 truncate top-2 sm:block display-none"
+            class="relative ml-10 truncate top-2 sm:block display-none pointer-events-auto cursor-default select-none"
             v-if="!attribution.text.disabled"
         >
             {{ attribution.text.value }}
@@ -42,7 +42,7 @@
 
         <span
             v-if="!cursorCoords.disabled"
-            class="flex-shrink-0 relative top-2 pr-14 pl-14 text-sm sm:text-base"
+            class="flex-shrink-0 relative top-2 pr-14 pl-14 text-sm sm:text-base pointer-events-auto cursor-default select-none"
         >
             {{ cursorCoords.formattedString }}
         </span>
