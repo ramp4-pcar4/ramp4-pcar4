@@ -50,9 +50,7 @@ export class OgcUtils extends APIScope {
         if (totalCount === -1) {
             // get the total number of records
             newQueryMap = {
-                request: 'GetFeature',
-                resultType: 'hits',
-                limit: '0'
+                resulttype: 'hits'
             };
         }
 

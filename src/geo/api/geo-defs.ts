@@ -6,6 +6,25 @@ import type {
     SpatialReference
 } from '@/geo/api';
 
+// From the supported ESRI field types
+// https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-support-Field.html#type
+export enum FieldType {
+    BLOB = 'blob',
+    DATE = 'date',
+    DOUBLE = 'double',
+    GEOMETRY = 'geometry',
+    GLOBAL_ID = 'global-id',
+    GUID = 'guid',
+    INTEGER = 'integer',
+    LONG = 'long',
+    OID = 'oid',
+    RASTER = 'raster',
+    SINGLE = 'single',
+    SMALL_INTEGER = 'small-integer',
+    STRING = 'string',
+    XML = 'xml'
+}
+
 export interface ColourParams {
     r: number;
     g: number;
