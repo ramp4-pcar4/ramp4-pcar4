@@ -13,10 +13,6 @@ on:
 env:
     NODE_VERSION: '17.9.0'
 
-concurrency:
-    group: ${{ github.head_ref || github.ref_name }}
-    cancel-in-progress: true
-
 jobs:
     build-dev:
         name: Develop build for demo files
