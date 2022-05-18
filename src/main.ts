@@ -18,7 +18,7 @@
 //    library name, and contains the "export" of the library (which is what this file does).
 //    A code snippet from rollup's source code that is likely doing this.
 //
-// 	if (hasExports) {
+//  if (hasExports) {
 //    if (name && !(extend && namedExportsMode)) {
 //      wrapperIntro = (useVariableAssignment ? `${cnst} ${name}` : `this${keypath(name, getPropertyAccess)}`) + `${_}=${_}${wrapperIntro}`;
 //    }

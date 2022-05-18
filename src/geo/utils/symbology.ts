@@ -7,7 +7,7 @@ import {
     SimpleRenderer,
     UniqueValueRenderer
 } from '@/api/internal';
-import { LineStyle } from '@/geo/api';
+import { LineStyleType } from '@/geo/api';
 import type { Attributes, LegendSymbology } from '@/geo/api';
 import {
     EsriRenderer,
@@ -392,18 +392,19 @@ export class SymbologyAPI extends APIScope {
         // line dash styles
         // if we need to revist the svg numbers, can see esri 4 styles at https://developers.arcgis.com/javascript/latest/sample-code/playground/live/index.html#/config=symbols/2d/SimpleLineSymbol.json
         const ESRI_DASH_MAPS = {
-            [LineStyle.SOLID]: 'none', // esriSLSSolid
-            [LineStyle.NONE]: 'none', // esriSLSNull
-            [LineStyle.DASH]: '5.333,4', // esriSLSDash
-            [LineStyle.DOT]: '1.333,4', // esriSLSDot
-            [LineStyle.DASHDOT]: '5.333,4,1.333,4', // esriSLSDashDot
-            [LineStyle.LONGDASH]: '10.666,4', // esriSLSLongDash
-            [LineStyle.LONGDASHDOT]: '10.666,4,1.333,4', // esriSLSLongDashDot
-            [LineStyle.LONGDASHDOTDOT]: '10.666,4,1.333,4,1.333,4', // esriSLSLongDashDotDot
-            [LineStyle.SHORTDOT]: '1.333,1.333', // esriSLSShortDot
-            [LineStyle.SHORTDASH]: '5.333,1.333', // esriSLSShortDash
-            [LineStyle.SHORTDASHDOT]: '5.333,1.333,1.333,1.333', // esriSLSShortDashDot
-            [LineStyle.SHORTDASHDOTDOT]: '5.333,1.333,1.333,1.333,1.333,1.333' // esriSLSShortDashDotDot
+            [LineStyleType.SOLID]: 'none', // esriSLSSolid
+            [LineStyleType.NONE]: 'none', // esriSLSNull
+            [LineStyleType.DASH]: '5.333,4', // esriSLSDash
+            [LineStyleType.DOT]: '1.333,4', // esriSLSDot
+            [LineStyleType.DASHDOT]: '5.333,4,1.333,4', // esriSLSDashDot
+            [LineStyleType.LONGDASH]: '10.666,4', // esriSLSLongDash
+            [LineStyleType.LONGDASHDOT]: '10.666,4,1.333,4', // esriSLSLongDashDot
+            [LineStyleType.LONGDASHDOTDOT]: '10.666,4,1.333,4,1.333,4', // esriSLSLongDashDotDot
+            [LineStyleType.SHORTDOT]: '1.333,1.333', // esriSLSShortDot
+            [LineStyleType.SHORTDASH]: '5.333,1.333', // esriSLSShortDash
+            [LineStyleType.SHORTDASHDOT]: '5.333,1.333,1.333,1.333', // esriSLSShortDashDot
+            [LineStyleType.SHORTDASHDOTDOT]:
+                '5.333,1.333,1.333,1.333,1.333,1.333' // esriSLSShortDashDotDot
         };
 
         // default stroke style

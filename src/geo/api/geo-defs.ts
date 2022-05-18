@@ -337,6 +337,7 @@ export interface ArcGisServerUrl {
 export interface GetGraphicParams {
     getGeom?: boolean;
     getAttribs?: boolean;
+    getStyle?: boolean;
 }
 
 export interface GetGraphicServiceDetails {
