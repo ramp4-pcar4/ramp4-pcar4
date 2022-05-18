@@ -55,6 +55,12 @@
                         class="fill-current w-16 h-16"
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
+                        @click="e => e.stopPropagation()"
+                        :content="basemap.description"
+                        v-tippy="{
+                            placement: 'bottom',
+                            trigger: 'click'
+                        }"
                     >
                         <path d="M0 0h24v24H0z" fill="none"></path>
                         <path
