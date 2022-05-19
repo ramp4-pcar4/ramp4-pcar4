@@ -16,6 +16,7 @@
         </button>
         <div
             v-show="open"
+            @click="popper.update()"
             class="rv-dropdown shadow-md border border-gray:200 py-8 bg-white rounded z-10"
             :class="{ 'text-center': centered }"
             ref="dropdown"

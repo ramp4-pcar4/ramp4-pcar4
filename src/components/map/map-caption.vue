@@ -87,10 +87,15 @@
             <a
                 v-for="(item, index) in lang"
                 :key="`${item}-${index}`"
-                class="flex-auto items-center text-sm sm:text-base"
+                class="flex-auto items-center text-sm sm:text-base cursor-pointer"
+                :class="{ 'font-bold': item === $iApi.$vApp.$i18n.locale }"
+                href="javascript:;"
                 @click="changeLang(item)"
             >
                 {{ $t('map.language.' + item) }}
+                <span class="sr-only" v-if="item === $iApi.$vApp.$i18n.locale">
+                    {{ $t('map.language.curr') }}
+                </span>
             </a>
         </dropdown-menu>
     </div>
@@ -149,7 +154,6 @@ export default defineComponent({
             }
         });
     },
-
     methods: {
         changeLang(lang: string) {
             if (this.$iApi.$vApp.$i18n.locale != lang) {
