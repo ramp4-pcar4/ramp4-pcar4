@@ -87,7 +87,8 @@
             <a
                 v-for="(item, index) in lang"
                 :key="`${item}-${index}`"
-                class="flex-auto items-center text-sm sm:text-base"
+                class="flex-auto items-center text-sm sm:text-base cursor-pointer"
+                href="javascript:;"
                 @click="changeLang(item)"
             >
                 {{ $t('map.language.' + item) }}
