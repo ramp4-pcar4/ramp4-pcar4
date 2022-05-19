@@ -4,7 +4,7 @@ import { FileLayer } from '@/api/internal';
 
 // NOTE this is currently 100% untested
 
-class CsvLayer extends FileLayer {
+export class CsvLayer extends FileLayer {
     async initiate(): Promise<void> {
         // TODO check if .sourceGeoJson is already populated?
         //      if this initiate is a reload, do we want to re-use it, or re-download? decide.
@@ -51,5 +51,3 @@ class CsvLayer extends FileLayer {
         await super.initiate();
     }
 }
-
-export default CsvLayer;

@@ -528,7 +528,7 @@ export interface RampLayerWmsLayerEntryConfig {
 export interface RampLayerConfig {
     id: string;
     layerType: string;
-    url: string;
+    url?: string;
     name?: string;
     state?: RampLayerStateConfig;
     customRenderer?: any; // TODO expand, if worth it. fairly complex object
@@ -549,6 +549,7 @@ export interface RampLayerConfig {
     tolerance?: number; // click tolerance
     metadata?: { url: string; name?: string };
     fixtures?: any; // layer-based fixture config
+    cosmetic?: boolean;
 }
 
 export interface RampExtentConfig {

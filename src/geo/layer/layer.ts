@@ -1,12 +1,29 @@
 // layers api and other public, general layer things.
 
-import { APIScope, FileUtils, InstanceAPI, OgcUtils } from '@/api/internal';
+import {
+    APIScope,
+    CsvLayer,
+    FileUtils,
+    FeatureLayer,
+    GeoJsonLayer,
+    GraphicLayer,
+    InstanceAPI,
+    MapImageLayer,
+    OgcUtils,
+    OsmTileLayer,
+    ShapefileLayer,
+    TileLayer,
+    WfsLayer,
+    WmsLayer
+} from '@/api/internal';
 import {
     Extent,
     Graphic,
     LayerControls,
     LayerState,
+    LayerType,
     NoGeometry,
+    type RampLayerConfig,
     ScaleSet,
     TreeNode
 } from '@/geo/api';
@@ -20,72 +37,9 @@ import type {
     TabularAttributeSet
 } from '@/geo/api';
 import { LayerStore } from '@/store/modules/layer';
-import to from 'await-to-js';
-
-const layerModules = import.meta.glob<{ default: ILayerInstance }>(
-    `@/geo/layer/*/index.ts`
-);
-
-// CUSTOM-LAYER
-// A constructor returning an object implementing LayerBase interface.
-// type ILayerBase = new (config: any, iApi: InstanceAPI) => LayerBase;
-
-// TODO revist how useful this is. LayerInstance implements LayerBase so its very similar to ILayerBase.
-//      look at the Base vs Instance stuff in the fixtures section. does it still make sense?
-//      This TODO becomes irrelevant if we don't go forward with custom layers and drop LayerBase for good.
-/**
- * A constructor returning an instance of LayerInstance class.
- */
-type ILayerInstance = new (config: any, iApi: InstanceAPI) => LayerInstance;
-
-// this probably becomes the vuex store object if we convert?
-// metadata to store and track our layer definitions
-class LayerDef {
-    // layerConstructor: ILayerBase | undefined; // CUSTOM-LAYER
-    strongLayerConstructor: ILayerInstance | undefined; // would be a layer def from inside RAMP
-    rawBase = false; // true if constructor is from outside the core and requires updateBaseToInstance
-    loadPromise: Promise<any> | undefined; // resolves when layer definition has loaded
-    id: string;
-    private api: InstanceAPI;
-
-    constructor(id: string, api: InstanceAPI) {
-        this.id = id;
-        this.api = api;
-        this.loadPromise = Promise.resolve();
-    }
-
-    // TODO figure out the config. if we have the config present for instantiation of the layer object, or we
-    //      push it off to a "load layer" function which could be used for reloads as well.
-    async generateLayer(config: any): Promise<LayerInstance> {
-        await this.loadPromise;
-
-        // CUSTOM-LAYER
-        /*
-        if (this.rawBase && this.layerConstructor) {
-            return LayerInstance.updateBaseToInstance(
-                new this.layerConstructor(config, this.api),
-                this.id,
-                this.api
-            );
-        } else */
-
-        if (this.strongLayerConstructor) {
-            return new this.strongLayerConstructor(config, this.api);
-        } else {
-            throw new Error(
-                `Layer Definition bug. A definition promise resolved but no definition exists. Definition id ${this.id}`
-            );
-        }
-    }
-}
 
 // this class represents the functions that exist on rampApi.geo.layer
 export class LayerAPI extends APIScope {
-    // stores any layer definitions that have been added. this would migrate to a vuex store if we apply that here
-    // NOTE probably want to change this from LayerBase to ILayerBase.
-    //      we want to store constructors, not instances of layers.
-    _layerDefStore: { [key: string]: LayerDef } = {};
-
     files: FileUtils;
     ogc: OgcUtils;
 
@@ -95,108 +49,52 @@ export class LayerAPI extends APIScope {
         this.ogc = new OgcUtils(iApi);
     }
 
-    // NOTE also might want to store the Promises that get generated when creating these definitions.
-    //      when we request a new layer, would be good to be able to see if a definition request
-    //      is pending, instead of just failing on a "no definition found" case.
-
-    // CUSTOM-LAYER
-    // stuff removed from addLayerDef params & jsdoc
-    //
-    // * Loads a (built-in) layer definition or adds supplied layer definition into the R4MP instance.
-    // * @param {ILayereBase} [constructor]
-    // async addLayerDef(id: string, constructor?: ILayerBase): Promise<string> {
-
-    // made private until we decide we are supporting custom layer definitions. createLayer
-    // will now automatically manage the layer definition loading, simplifying the number
-    // of things that need to be called.
-
-    /**
-     * Loads a (built-in) layer definition into the R4MP instance.
-     *
-     * @param {string} id
-     * @returns {Promise<string>} the id, resolves after definition is loaded
-     * @memberof LayerAPI
-     */
-    private async addLayerDef(id: string): Promise<string> {
-        // TODO revisit if the return value should be LayerBase. This is registering a layer definition
-        //      (i.e. a blueprint), so the layer id might be more appropriate, or void. Person would
-        //      use the create layer on LayerAPI to make an actual layer.
-        //      Also might consider changing the type to ILayerBase, as returning the constructor makes a bit more sense.
-        //      This TODO would become irrelevant if custom layers are not implemented.
-
-        // if the layer def already exist, do nothing and just return it
-        // TODO in vuex world, would be a store check
-        // if (id in this.$vApp.$store.get<FixtureBaseSet>(`fixture/items`)!) {
-        if (this._layerDefStore[id]) {
-            console.warn(`Encountered duplicate layer registration for ${id}`);
-            return id;
-        }
-
-        const layerDef = new LayerDef(id, this.$iApi);
-
-        // CUSTOM-LAYER
-        // only need to provide fixture constructors for external fixtures since internal ones are loaded automatically
-        /*
-        if (constructor) {
-            if (typeof constructor !== 'function') {
-                throw new Error('malformed layer definition constructor');
-            }
-
-            layerDef.layerConstructor = constructor;
-            layerDef.rawBase = true;
-            layerDef.loadPromise = Promise.resolve();
-            this._layerDefStore[id] = layerDef;
-
-        } else { */
-
-        // trickery. when the promise resolves, we know layerDef.layerConstructor will have a value.
-        layerDef.loadPromise = this.magicLoader(layerDef);
-
-        // store the def in the registry before blocking
-        this._layerDefStore[id] = layerDef;
-        await layerDef.loadPromise;
-
-        return id;
-    }
-
-    private async magicLoader(layerDef: LayerDef): Promise<void> {
-        // TODO might need some magic in the webpack to copy stuff over.
-        //      we might also need to structure our layers folder to be by-id
-        // perform a dynamic webpack import of a internal fixture (allows for code splitting)
-        layerDef.strongLayerConstructor = (
-            await layerModules[`./${layerDef.id}/index.ts`]()
-        ).default;
-    }
-
-    // made private until we decide we are supporting custom layer definitions. createLayer
-    // will now automatically manage the layer definition loading, simplifying the number
-    // of things that need to be called.
-
-    private layerDefExists(id: string): boolean {
-        return !!this._layerDefStore[id];
-    }
-
     /**
      * Will generate a RAMP Layer based on the supplied config object.
      *
      * @param {Object} config a valid layer configuration object
-     * @returns {Promise<LayerInstance>} resolves with Layer in uninitialted state
+     * @returns {LayerInstance} Layer in uninitialted state
      */
-    async createLayer(config: any): Promise<LayerInstance> {
-        // TODO update the type of config? want to type it as RampLayerConfig but we could have 3rd party random thing passed in
-        if (!this.layerDefExists(config.layerType)) {
-            const [defLoadErr, layer] = await to(
-                this.addLayerDef(config.layerType)
-            );
+    createLayer(config: RampLayerConfig): LayerInstance {
+        let closs: new (config: any, iApi: InstanceAPI) => LayerInstance;
 
-            if (defLoadErr) {
-                throw new Error(
-                    `Could not find or load layer definition for layer type ${config.layerType}`
-                );
-            }
+        // for mad speed gains, order the switch in most common to most obscure
+        switch (config.layerType) {
+            case LayerType.FEATURE:
+                closs = FeatureLayer;
+                break;
+            case LayerType.MAPIMAGE:
+                closs = MapImageLayer;
+                break;
+            case LayerType.GRAPHIC:
+                closs = GraphicLayer;
+                break;
+            case LayerType.TILE:
+                closs = TileLayer;
+                break;
+            case LayerType.WFS:
+                closs = WfsLayer;
+                break;
+            case LayerType.WMS:
+                closs = WmsLayer;
+                break;
+            case LayerType.GEOJSON:
+                closs = GeoJsonLayer;
+                break;
+            case LayerType.CSV:
+                closs = CsvLayer;
+                break;
+            case LayerType.SHAPEFILE:
+                closs = ShapefileLayer;
+                break;
+            case LayerType.OSM:
+                closs = OsmTileLayer;
+                break;
+            default:
+                throw new Error('Unsupported Layer Type ' + config.layerType);
         }
 
-        return this._layerDefStore[config.layerType].generateLayer(config);
+        return new closs(config, this.$iApi);
     }
 
     /**
@@ -306,12 +204,6 @@ export class LayerAPI extends APIScope {
 
 // TODO put in a separate file?
 
-// CUSTOM-LAYER
-// stuff removed from class doc and signature
-//
-//  * @implements {LayerBase}
-// export class LayerInstance extends APIScope implements LayerBase {
-
 /**
  * A base class for Layer subclasses. It provides some utility functions to Layer and also gives access to `$iApi` and `$vApp` globals.
  * Mostly it exposes stub methods on LayerBase; this is because layer subclasses can be wildly different, so we don't
@@ -328,112 +220,6 @@ export class LayerInstance extends APIScope {
         return '';
     }
     config: any = {};
-
-    // CUSTOM-LAYER
-    /**
-     * Adds missing functions and properties to the object implementing FixtureBase interface.
-     * This is only needed for external fixtures as they can't inherit from FixtureInstance.
-     *
-     * TODO: If you know a better way to deep-mixin props/getters/functions from a class into another class instance, please tell me. I honestly don't know 🤷‍♂️.
-     *
-     * @static
-     * @param {LayerBase} value
-     * @param {string} id
-     * @param {InstanceAPI} $iApi
-     * @returns {LayerInstance}
-     * @memberof LayerInstance
-     */
-    /*
-    static updateBaseToInstance(
-        value: LayerBase,
-        config: any,
-        $iApi: InstanceAPI
-    ): LayerInstance {
-        const instance = new LayerInstance(config, $iApi);
-
-        Object.defineProperties(value, {
-            config: { value: config },
-            $iApi: { value: $iApi },
-            $vApp: {
-                get(): Vue {
-                    return instance.$vApp;
-                }
-            },
-            getFeatureCount: {
-                value: value.getFeatureCount
-                    ? value.getFeatureCount
-                    : instance.getFeatureCount
-            },
-            getGraphic: {
-                value: value.getGraphic ? value.getGraphic : instance.getGraphic
-            },
-            getIcon: {
-                value: value.getIcon ? value.getIcon : instance.getIcon
-            },
-            getOidField: {
-                value: value.getOidField
-                    ? value.getOidField
-                    : instance.getOidField
-            },
-            getNameField: {
-                value: value.getNameField
-                    ? value.getNameField
-                    : instance.getNameField
-            },
-            getGeomType: {
-                value: value.getGeomType
-                    ? value.getGeomType
-                    : instance.getGeomType
-            },
-            getFields: {
-                value: value.getFields ? value.getFields : instance.getFields
-            },
-            getAttributes: {
-                value: value.getAttributes
-                    ? value.getAttributes
-                    : instance.getAttributes
-            },
-            getTabularAttributes: {
-                value: value.getTabularAttributes
-                    ? value.getTabularAttributes
-                    : instance.getTabularAttributes
-            },
-            abortAttributeLoad: {
-                value: value.abortAttributeLoad
-                    ? value.abortAttributeLoad
-                    : instance.abortAttributeLoad
-            },
-            destroyAttributes: {
-                value: value.destroyAttributes
-                    ? value.destroyAttributes
-                    : instance.destroyAttributes
-            },
-            applySqlFilter: {
-                value: value.applySqlFilter
-                    ? value.applySqlFilter
-                    : instance.applySqlFilter
-            },
-            getFilterOIDs: {
-                value: value.getFilterOIDs
-                    ? value.getFilterOIDs
-                    : instance.getFilterOIDs
-            },
-            getSqlFilter: {
-                value: value.getSqlFilter
-                    ? value.getSqlFilter
-                    : instance.getSqlFilter
-            },
-            setSqlFilter: {
-                value: value.setSqlFilter
-                    ? value.setSqlFilter
-                    : instance.setSqlFilter
-            }
-            // remove: { value: instance.remove },
-            // extend: { value: instance.extend },
-        });
-        return value as LayerInstance;
-    }
-    */
 
     /**
      * ID of this layer. Also known as the layerId.

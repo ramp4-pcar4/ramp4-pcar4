@@ -150,12 +150,11 @@ export default defineComponent({
                             poleStyleParams = flag;
                         }
 
-                        const poleLayer =
-                            await this.$iApi.geo.layer.createLayer({
-                                id: POLE_MARKER_LAYER_ID,
-                                layerType: LayerType.GRAPHIC,
-                                cosmetic: true // mark this layer as a cosmetic layer
-                            });
+                        const poleLayer = this.$iApi.geo.layer.createLayer({
+                            id: POLE_MARKER_LAYER_ID,
+                            layerType: LayerType.GRAPHIC,
+                            cosmetic: true // mark this layer as a cosmetic layer
+                        });
                         await poleLayer.initiate();
 
                         const poleGraphic = new Graphic(projPole, 'northpole');

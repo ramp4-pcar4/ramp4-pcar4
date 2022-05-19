@@ -17,7 +17,7 @@ import type {
 import { EsriFeatureLayer, EsriRendererFromJson } from '@/geo/esri';
 import { markRaw, reactive } from 'vue';
 
-class FeatureLayer extends AttribLayer {
+export class FeatureLayer extends AttribLayer {
     declare esriLayer: EsriFeatureLayer | undefined;
 
     tooltipField: string;
@@ -260,5 +260,3 @@ class FeatureLayer extends AttribLayer {
         this.esriLayer.definitionExpression = sql;
     }
 }
-
-export default FeatureLayer;

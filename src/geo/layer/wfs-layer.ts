@@ -3,7 +3,7 @@
 import { FileLayer } from '@/api/internal';
 import { UrlWrapper } from '@/geo/api';
 
-class WFSLayer extends FileLayer {
+export class WfsLayer extends FileLayer {
     async initiate(): Promise<void> {
         const wrapper = new UrlWrapper(this.config.url);
 
@@ -24,5 +24,3 @@ class WFSLayer extends FileLayer {
         await super.initiate();
     }
 }
-
-export default WFSLayer;

@@ -377,6 +377,6 @@ export class FileUtils extends APIScope {
      * @returns {Promise} a promise resolving with geojson
      */
     async shapefileToGeoJson(shapeData: ArrayBuffer): Promise<any> {
-        return window.shp(shapeData);
+        return (<any>window).shp(shapeData);
     }
 }

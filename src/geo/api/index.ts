@@ -32,6 +32,3 @@ export * from './map/extent-set';
 export * from './utils/promise';
 export * from './utils/shared-utils';
 export * from './utils/projection';
-
-// CUSTOM-LAYER
-// export * from './layer/layer-base';

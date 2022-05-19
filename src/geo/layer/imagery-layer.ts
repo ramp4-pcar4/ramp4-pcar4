@@ -6,7 +6,7 @@ import type { RampLayerConfig } from '@/geo/api';
 import { EsriImageryLayer } from '@/geo/esri';
 import { markRaw } from 'vue';
 
-class ImageryLayer extends CommonLayer {
+export class ImageryLayer extends CommonLayer {
     declare esriLayer: EsriImageryLayer | undefined;
 
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
@@ -64,5 +64,3 @@ class ImageryLayer extends CommonLayer {
         return loadPromises;
     }
 }
-
-export default ImageryLayer;
