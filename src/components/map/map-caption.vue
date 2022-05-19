@@ -1,6 +1,6 @@
 <template>
     <div
-        class="map-caption absolute bottom-0 flex justify-center pointer-events-none text-gray-400 bg-black-75 left-0 right-0 py-2 sm:py-6"
+        class="map-caption absolute bottom-0 flex justify-center pointer-events-auto cursor-default select-none text-gray-400 bg-black-75 left-0 right-0 py-2 sm:py-6"
     >
         <about-ramp-dropdown
             class="sm:block display-none ml-8 mr-4"
@@ -30,7 +30,7 @@
         </span>
 
         <span
-            class="relative ml-10 truncate top-2 sm:block display-none pointer-events-auto cursor-default select-none"
+            class="relative ml-10 truncate top-2 sm:block display-none"
             v-if="!attribution.text.disabled"
         >
             {{ attribution.text.value }}
@@ -42,7 +42,7 @@
 
         <span
             v-if="!cursorCoords.disabled"
-            class="flex-shrink-0 relative top-2 pr-14 pl-14 text-sm sm:text-base pointer-events-auto cursor-default select-none"
+            class="flex-shrink-0 relative top-2 pr-14 pl-14 text-sm sm:text-base"
         >
             {{ cursorCoords.formattedString }}
         </span>
