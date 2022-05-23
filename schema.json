@@ -2115,6 +2115,11 @@
                         }
                     },
                     "required": ["mouseCoords", "scaleBar"]
+                },
+                "pointZoomScale": {
+                    "type": "number",
+                    "default": 50000,
+                    "description": "The zoom level when zooming to a point feature (e.g. when using the zoom button in the datagrid). Should be a positive integer."
                 }
             },
             "required": ["tileSchemas", "baseMaps"],
