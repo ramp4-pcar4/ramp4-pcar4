@@ -619,4 +619,5 @@ export interface RampMapConfig {
     tileSchemas: Array<RampTileSchemaConfig>;
     initialBasemapId: string;
     caption?: MapCaptionConfig;
+    pointZoomScale: number;
 }
