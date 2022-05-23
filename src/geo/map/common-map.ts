@@ -83,6 +83,12 @@ export class CommonMapAPI extends APIScope {
      */
     protected handlers: Array<any>;
 
+    /**
+     * The default zoom level when zooming to a point feature
+     * @private
+     */
+    protected pointZoomScale: number;
+
     protected constructor(iApi: InstanceAPI) {
         super(iApi);
 
@@ -90,6 +96,7 @@ export class CommonMapAPI extends APIScope {
         this._basemapStore = [];
         this._viewPromise = new DefPromise();
         this.handlers = [];
+        this.pointZoomScale = 50000;
     }
 
     protected noMapErr(): void {
@@ -121,7 +128,7 @@ export class CommonMapAPI extends APIScope {
             );
         }
         this.esriMap = markRaw(new EsriMap(esriConfig));
-
+        this.pointZoomScale = config.pointZoomScale && config.pointZoomScale > 0 ? config.pointZoomScale : 50000;
         this._targetDiv = targetDiv;
         this.createMapView(config.initialBasemapId);
     }
@@ -321,7 +328,7 @@ export class CommonMapAPI extends APIScope {
                 target: this.$iApi.geo.geom.geomRampToEsri(g)
             };
             if (g.type === GeometryType.POINT) {
-                zoomP.scale = scale || 50000;
+                zoomP.scale = scale || this.pointZoomScale;
             }
             const opts: any = { animate: animate };
             if (this.esriView) {
@@ -454,6 +461,26 @@ export class CommonMapAPI extends APIScope {
             this.noMapErr();
             return 1; // avoid returning zero, could cause divide-by-zero error in caller.
         }
+    }
+
+    /**
+     * Set's the map's pointZoomScale value to newScale.
+     * If newScale is not a positive number, a console error is thrown.
+     *
+     * The returned boolean indicates if the value has been successfully set.
+     *
+     * @param {number} newScale the new pointZoomScale value, which must be a positive number
+     * @returns {boolean} indicates if the value was set successfully
+     */
+    setPointZoomScale(newScale: number): boolean {
+        if (newScale > 0) {
+            this.pointZoomScale = newScale;
+            return true;
+        }
+        console.error(
+            `Cannot set pointZoomScale to non-positive number: ${newScale}.`
+        );
+        return false;
     }
 
     // TODO shared Map (not view-based) functions could go here.
