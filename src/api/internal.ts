@@ -16,6 +16,7 @@ export * from '@/geo/map/ramp-map';
 export * from '@/geo/layer/file-utils';
 export * from '@/geo/layer/ogc-utils';
 export * from '@/geo/layer/layer';
+export * from '@/geo/layer/layer-instance';
 export * from '@/geo/layer/common-layer';
 export * from '@/geo/layer/attrib-layer';
 export * from '@/geo/layer/common-graphic-layer';
