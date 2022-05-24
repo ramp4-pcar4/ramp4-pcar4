@@ -2,13 +2,14 @@ export class TreeNode {
     layerIdx: number;
     name: string;
     children: Array<TreeNode>;
-    isLayer: boolean; // TODO: decide on the purpose of this flag post-layer-refactor?
     uid: string;
 
-    constructor(idx: number, uid: string, name = '', isLayer = true) {
+    private isRoot: boolean;
+
+    constructor(idx: number, uid: string, name = '', root = true) {
         this.layerIdx = idx;
         this.name = name;
-        this.isLayer = isLayer;
+        this.isRoot = root;
         this.children = [];
         this.uid = uid;
     }
@@ -47,5 +48,25 @@ export class TreeNode {
             // return nothing, or the bubbled up tree node, not the child (t) that was being iterated on
             return hit;
         }
+    }
+
+    /**
+     * Returns whether this node is bound to a logical layer.
+     *
+     * @method isLogicalLayer
+     * @returns {boolean} true if the layer is bound to a logical layer.
+     */
+    get isLogicalLayer(): boolean {
+        return this.layerIdx > -1 && this.children.length === 0;
+    }
+
+    /**
+     * Returns whether this node is a root node.
+     *
+     * @method isLayerRoot
+     * @returns {boolean} true if this node is a root node for this layer. 
+     */
+    get isLayerRoot(): boolean {
+        return this.isRoot;
     }
 }

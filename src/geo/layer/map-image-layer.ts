@@ -49,10 +49,6 @@ export class MapImageLayer extends AttribLayer {
         this.layerType = LayerType.MAPIMAGE;
         this.isDynamic = false; // will get updated after layer load.
         this.hovertips = false;
-
-        // mark the root node of this layer as not layer
-        // TODO: revisit this once we decide on what `isLayer` should be
-        this.layerTree.isLayer = false;
         this.layerTree.layerIdx = -1;
     }
 
@@ -342,7 +338,7 @@ export class MapImageLayer extends AttribLayer {
                         sid,
                         _sublayer.uid,
                         (_sublayer as CommonLayer).name,
-                        true
+                        false
                     );
                     parentTreeNode.children.push(treeLeaf);
                 }
