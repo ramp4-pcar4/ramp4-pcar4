@@ -70,6 +70,8 @@ export default defineComponent({
             { capture: true }
         );
 
+        window.addEventListener('resize', () => this.popper.update());
+
         // $nextTick should prevent any race conditions by letting the child elements render before trying to place them using popper
         this.$nextTick(() => {
             this.popper = createPopper(
