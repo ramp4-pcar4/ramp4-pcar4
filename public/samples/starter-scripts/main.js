@@ -14,7 +14,481 @@
 window.debugInstance = null;
 window.debugInstance2 = null;
 
-let config = {
+let config1 = {
+    configs: {
+        en: {
+            map: {
+                extentSets: [
+                    {
+                        id: 'EXT_ESRI_World_AuxMerc_3857',
+                        default: {
+                            xmax: -5007771.626060756,
+                            xmin: -16632697.354854,
+                            ymax: 10015875.184845109,
+                            ymin: 5022907.964742964,
+                            spatialReference: {
+                                wkid: 102100,
+                                latestWkid: 3857
+                            }
+                        }
+                    },
+                    {
+                        id: 'EXT_NRCAN_Lambert_3978',
+                        default: {
+                            xmax: 3549492,
+                            xmin: -2681457,
+                            ymax: 3482193,
+                            ymin: -883440,
+                            spatialReference: {
+                                wkid: 3978
+                            }
+                        }
+                    }
+                ],
+                caption: {
+                    mouseCoords: {
+                        formatter: 'WEB_MERCATOR'
+                    },
+                    scaleBar: {
+                        imperialScale: true
+                    }
+                },
+                lodSets: [
+                    {
+                        id: 'LOD_NRCAN_Lambert_3978',
+                        lods: RAMP.geo.defaultLODs(
+                            RAMP.geo.defaultTileSchemas()[0]
+                        )
+                    },
+                    {
+                        id: 'LOD_ESRI_World_AuxMerc_3857',
+                        lods: RAMP.geo.defaultLODs(
+                            RAMP.geo.defaultTileSchemas()[1]
+                        )
+                    }
+                ],
+                tileSchemas: [
+                    {
+                        id: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                        name: 'Lambert Maps',
+                        extentSetId: 'EXT_NRCAN_Lambert_3978',
+                        lodSetId: 'LOD_NRCAN_Lambert_3978',
+                        thumbnailTileUrls: [
+                            '/tile/8/285/268',
+                            '/tile/8/285/269'
+                        ],
+                        hasNorthPole: true
+                    },
+                    {
+                        id: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                        name: 'Web Mercator Maps',
+                        extentSetId: 'EXT_ESRI_World_AuxMerc_3857',
+                        lodSetId: 'LOD_ESRI_World_AuxMerc_3857',
+                        thumbnailTileUrls: ['/tile/8/91/74', '/tile/8/91/75']
+                    }
+                ],
+                basemaps: [
+                    {
+                        id: 'baseNrCan',
+                        name: 'Canada Base Map - Transportation (CBMT)',
+                        description:
+                            'The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.',
+                        altText: 'The Canada Base Map - Transportation (CBMT)',
+                        layers: [
+                            {
+                                id: 'CBMT',
+                                layerType: 'esri-tile',
+                                url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer'
+                            }
+                        ],
+                        tileSchemaId:
+                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                    },
+                    {
+                        id: 'baseSimple',
+                        name: 'Canada Base Map - Simple',
+                        description: 'Canada Base Map - Simple',
+                        altText: 'Canada base map - Simple',
+                        layers: [
+                            {
+                                id: 'SMR',
+                                layerType: 'esri-tile',
+                                url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer'
+                            }
+                        ],
+                        tileSchemaId:
+                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                    },
+                    {
+                        id: 'baseCBME_CBCE_HS_RO_3978',
+                        name: 'Canada Base Map - Elevation (CBME)',
+                        description:
+                            'The Canada Base Map - Elevation (CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.',
+                        altText: 'Canada Base Map - Elevation (CBME)',
+                        layers: [
+                            {
+                                id: 'CBME_CBCE_HS_RO_3978',
+                                layerType: 'esri-tile',
+                                url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
+                            }
+                        ],
+                        tileSchemaId:
+                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                    },
+                    {
+                        id: 'baseCBMT_CBCT_GEOM_3978',
+                        name: 'Canada Base Map - Transportation (CBMT)',
+                        description:
+                            ' The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.',
+                        altText: 'Canada Base Map - Transportation (CBMT)',
+                        layers: [
+                            {
+                                id: 'CBMT_CBCT_GEOM_3978',
+                                layerType: 'esri-tile',
+                                url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
+                            }
+                        ],
+                        tileSchemaId:
+                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                    },
+                    {
+                        id: 'baseEsriWorld',
+                        name: 'World Imagery',
+                        description:
+                            'World Imagery provides one meter or better satellite and aerial imagery in many parts of the world and lower resolution satellite imagery worldwide.',
+                        altText: 'World Imagery',
+                        layers: [
+                            {
+                                id: 'World_Imagery',
+                                layerType: 'esri-tile',
+                                url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                            }
+                        ],
+                        tileSchemaId:
+                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                        attribution: {
+                            text: {
+                                disabled: true
+                            },
+                            logo: {
+                                disabled: true
+                            }
+                        }
+                    },
+                    {
+                        id: 'baseEsriPhysical',
+                        name: 'World Physical Map',
+                        description:
+                            'This map presents the Natural Earth physical map at 1.24km per pixel for the world and 500m for the coterminous United States.',
+                        altText: 'World Physical Map',
+                        layers: [
+                            {
+                                id: 'World_Physical_Map',
+                                layerType: 'esri-tile',
+                                url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer'
+                            }
+                        ],
+                        tileSchemaId:
+                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                    },
+                    {
+                        id: 'baseEsriRelief',
+                        name: 'World Shaded Relief',
+                        description:
+                            'This map portrays surface elevation as shaded relief. This map is used as a basemap layer to add shaded relief to other GIS maps, such as the ArcGIS Online World Street Map.',
+                        altText: 'World Shaded Relief',
+                        layers: [
+                            {
+                                id: 'World_Shaded_Relief',
+                                layerType: 'esri-tile',
+                                url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer'
+                            }
+                        ],
+                        tileSchemaId:
+                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                    },
+                    {
+                        id: 'baseEsriStreet',
+                        name: 'World Street Map',
+                        description:
+                            'This worldwide street map presents highway-level data for the world.',
+                        altText: 'ESWorld Street Map',
+                        layers: [
+                            {
+                                id: 'World_Street_Map',
+                                layerType: 'esri-tile',
+                                url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer'
+                            }
+                        ],
+                        tileSchemaId:
+                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                    },
+                    {
+                        id: 'baseEsriTerrain',
+                        name: 'World Terrain Base',
+                        description:
+                            'This map is designed to be used as a base map by GIS professionals to overlay other thematic layers such as demographics or land cover.',
+                        altText: 'World Terrain Base',
+                        layers: [
+                            {
+                                id: 'World_Terrain_Base',
+                                layerType: 'esri-tile',
+                                url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer'
+                            }
+                        ],
+                        tileSchemaId:
+                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                    },
+                    {
+                        id: 'baseEsriTopo',
+                        name: 'World Topographic Map',
+                        description:
+                            'This map is designed to be used as a basemap by GIS professionals and as a reference map by anyone.',
+                        altText: 'World Topographic Map',
+                        layers: [
+                            {
+                                id: 'World_Topo_Map',
+                                layerType: 'esri-tile',
+                                url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
+                            }
+                        ],
+                        tileSchemaId:
+                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                    },
+                    {
+                        id: 'baseOpenStreetMap',
+                        name: 'OpenStreetMap',
+                        description: 'Open sourced topographical map.',
+                        altText: 'OpenStreetMap',
+                        layers: [
+                            {
+                                id: 'Open_Street_Map',
+                                layerType: 'osm-tile'
+                            }
+                        ],
+                        thumbnailUrl:
+                            'https://www.openstreetmap.org/assets/about/osm-a74d2c94082260032c133b9d206ee2fdd911e5c82bf03daae10393a02d7b4809.png',
+                        tileSchemaId:
+                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                    }
+                ],
+                initialBasemapId: 'baseEsriWorld'
+            },
+            layers: [
+                {
+                    id: 'WaterQuantity',
+                    layerType: 'esri-map-image',
+                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                    layerEntries: [
+                        {
+                            index: 1,
+                            name: 'Water quantity child',
+                            state: {
+                                opacity: 1,
+                                visibility: true
+                            },
+                            fixtures: {
+                                details: {
+                                    template: 'Water-Quantity-Template'
+                                }
+                            }
+                        },
+                        {
+                            index: 9,
+                            name: 'Carbon monoxide emissions by facility',
+                            state: {
+                                opacity: 0.5,
+                                visibility: true
+                            }
+                        }
+                    ],
+                    state: {
+                        opacity: 1,
+                        visibility: true
+                    },
+                    metadata: {
+                        url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/master/README.md',
+                        name: 'Read Me!'
+                    },
+                    customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                },
+                {
+                    id: 'WaterQuality',
+                    layerType: 'esri-map-image',
+                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                    layerEntries: [
+                        {
+                            index: 5,
+                            state: {
+                                opacity: 1,
+                                visibility: true
+                            }
+                        }
+                    ],
+                    state: {
+                        opacity: 1,
+                        visibility: true
+                    },
+                    customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                },
+                {
+                    id: 'CleanAir',
+                    layerType: 'esri-feature',
+                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
+                    state: {
+                        opacity: 0.8,
+                        visibility: true,
+                        hovertips: false
+                    },
+                    tolerance: 10,
+                    customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                },
+                {
+                    id: 'WFSLayer',
+                    layerType: 'ogc-wfs',
+                    url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
+                    state: {
+                        visibility: true
+                    },
+                    customRenderer: {},
+                    metadata: {
+                        url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/master/README.md'
+                    },
+                    fixtures: {
+                        details: {
+                            template: 'WFSLayer-Custom'
+                        }
+                    }
+                }
+                /*
+            {
+                id: 'TestTile',
+                layerType: 'esri-tile',
+                url: 'https://services.arcgisonline.com/arcgis/rest/services/USA_Topo_Maps/MapServer',
+                state: {
+                    opacity: 1,
+                    visibility: true
+                },
+                customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+            },
+            {
+                "id": "CanGRID_tmean_MAM_en",
+                "layerType": "ogc-wms",
+                "url": "https://geo.weather.gc.ca/geomet-climate?SERVICE=WMS&VERSION=1.3.0",
+                "name": "Total precipitation",
+                "state": {
+                    "opacity": 0.85,
+                    "visibility": true
+                },
+                "layerEntries": [{"id": "CANGRD.TREND.TM_SPRING" }],
+                "featureInfoMimeType": "application/json"
+            }
+            */
+            ],
+            fixtures: {
+                legend: {
+                    root: {
+                        children: [
+                            {
+                                name: 'Visibility Set',
+                                exclusiveVisibility: [
+                                    {
+                                        layerId: 'CleanAir',
+                                        name: 'Clean Air in Set'
+                                    },
+                                    {
+                                        name: 'Group in Set',
+                                        children: [
+                                            {
+                                                layerId: 'WaterQuantity',
+                                                name: 'Water Quantity in Nested Group',
+                                                entryIndex: 1,
+                                                controls: [
+                                                    'metadata',
+                                                    'boundaryZoom',
+                                                    'refresh',
+                                                    'reload',
+                                                    'remove',
+                                                    'datatable',
+                                                    'settings',
+                                                    'symbology'
+                                                ]
+                                            },
+                                            {
+                                                layerId: 'WaterQuantity',
+                                                name: 'CO2 in Nested Group',
+                                                entryIndex: 9
+                                            },
+                                            {
+                                                layerId: 'WaterQuality',
+                                                name: 'Water Quality in Nested Group',
+                                                entryIndex: 5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                layerId: 'WFSLayer',
+                                name: 'WFSLayer',
+                                controls: [
+                                    'metadata',
+                                    'boundaryZoom',
+                                    'refresh',
+                                    'reload',
+                                    'remove',
+                                    'datatable',
+                                    'settings',
+                                    'symbology'
+                                ]
+                            }
+                        ]
+                    }
+                },
+                appbar: {
+                    items: [
+                        'legend',
+                        'geosearch',
+                        'basemap',
+                        'export',
+                        'layer-reorder'
+                    ],
+
+                    temporaryButtons: [
+                        'details-layers',
+                        'details-items',
+                        'grid',
+                        'settings'
+                    ]
+                },
+                mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
+                export: {
+                    title: {
+                        value: 'All Your Base are Belong to Us',
+                        selectable: false
+                    },
+                    legend: {
+                        selected: false
+                    },
+                    fileName: 'ramp-pcar-4-map-carte'
+                },
+                geosearch: {
+                    geoNames:
+                        'https://geogratis.gc.ca/services/geoname/@{language}/geonames.json',
+                    geoLocation:
+                        'https://geogratis.gc.ca/services/geolocation/@{language}/locate',
+                    geoTypes:
+                        'https://geogratis.gc.ca/services/geoname/@{language}/codes/concise.json',
+                    geoProvince:
+                        'https://geogratis.gc.ca/services/geoname/@{language}/codes/province.json'
+                }
+            },
+            system: { animate: true }
+        }
+    }
+};
+
+let config2 = {
     configs: {
         en: {
             map: {
@@ -496,7 +970,7 @@ let options = {
 
 const rInstance = RAMP.createInstance(
     document.getElementById('app1'),
-    config,
+    config1,
     options
 );
 
@@ -618,7 +1092,7 @@ function animateToggle() {
 
 const rInstance2 = RAMP.createInstance(
     document.getElementById('app2'),
-    config,
+    config2,
     {
         loadDefaultFixtures: true,
         loadDefaultEvents: true,
