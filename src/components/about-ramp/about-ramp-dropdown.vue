@@ -129,6 +129,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .about-ramp-dropdown {
+    @apply p-0 #{!important};
     &:hover {
         @apply bg-white #{!important};
     }
