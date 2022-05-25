@@ -115,6 +115,7 @@ export default defineComponent({
 <style lang="scss">
 .rv-dropdown > * {
     display: block;
+    padding: 0.5rem 1rem;
     color: #2d3748;
 }
 .rv-dropdown > *:hover:not(.disabled) {

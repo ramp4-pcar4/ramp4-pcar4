@@ -116,11 +116,13 @@ export class MaptipAPI extends APIScope {
         screenPoint: Point;
     }) {
         this.setContent(
-            `<div class="flex items-center">${info.icon} ${
+            `<div class="flex items-center space-x-5"><span>${
+                info.icon
+            }</span><span class="truncate">${
                 info.attributes[
                     info.layer.config.tooltipField || info.layer.nameField
                 ]
-            }</div>`
+            }</span></div>`
         );
     }
 
