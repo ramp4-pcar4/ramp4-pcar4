@@ -1,6 +1,7 @@
 import { createInstance, geo } from '@/main';
 
 window.debugInstance = null;
+window.debugInstance2 = null;
 
 // TODO: Location for version string needs to be finalized
 // document.getElementById('ramp-version').innerText =
@@ -485,7 +486,7 @@ let options = {
 };
 
 const rInstance = createInstance(
-    document.getElementById('app'),
+    document.getElementById('app1'),
     config,
     options
 );
@@ -602,5 +603,12 @@ function animateToggle() {
     document.getElementById('animate-status').innerText =
         'Animate: ' + rInstance.animate;
 }
-
 window.debugInstance = rInstance;
+
+const rInstance2 = createInstance(document.getElementById('app2'), config, {
+    loadDefaultFixtures: true,
+    loadDefaultEvents: true,
+    startRequired: false
+});
+rInstance2.start();
+window.debugInstance2 = rInstance2;

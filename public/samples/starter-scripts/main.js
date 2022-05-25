@@ -12,6 +12,7 @@
 //     new Date(RAMP.version.timestamp).toLocaleDateString();
 
 window.debugInstance = null;
+window.debugInstance2 = null;
 
 let config = {
     configs: {
@@ -494,7 +495,7 @@ let options = {
 };
 
 const rInstance = RAMP.createInstance(
-    document.getElementById('app'),
+    document.getElementById('app1'),
     config,
     options
 );
@@ -614,3 +615,15 @@ function animateToggle() {
     document.getElementById('animate-status').innerText =
         'Animate: ' + rInstance.animate;
 }
+
+const rInstance2 = RAMP.createInstance(
+    document.getElementById('app2'),
+    config,
+    {
+        loadDefaultFixtures: true,
+        loadDefaultEvents: true,
+        startRequired: false
+    }
+);
+rInstance2.start();
+window.debugInstance2 = rInstance2;

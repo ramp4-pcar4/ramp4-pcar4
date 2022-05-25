@@ -25,8 +25,38 @@
         </noscript>
 
         <div id="IE"></div>
-        <div id="app"></div>
+        <div id="main-container">
+            <div id="container1">
+                <h1 class="ramp-heading">RAMP Instance 1</h1>
+                <div id="app1"></div>
+            </div>
 
+            <div id="container2">
+                <h1 class="ramp-heading">RAMP Instance 2</h1>
+                <div id="app2"></div>
+            </div>
+        </div>
         <script type="module" src="./starter-scripts/main.js"></script>
+        <style>
+            #main-container {
+                display: flex;
+            }
+            .ramp-heading {
+                font-size: 28pt;
+                text-align: center;
+                font-weight: bolder;
+            }
+            #container1 {
+                width: 50vw;
+                height: 500px;
+                background-color: crimson;
+            }
+            #container2 {
+                width: 50vw;
+                margin-left: 5px;
+                height: 500px;
+                background-color: blue;
+            }
+        </style>
     </body>
 </html>
