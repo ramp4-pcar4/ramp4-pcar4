@@ -1,5 +1,5 @@
 <template>
-    <div @focusout="closeDropdown">
+    <div ref="el" @focusout="closeDropdown">
         <button
             class="text-gray-500 hover:text-black dropdown-button"
             @click="open = !open"
@@ -10,7 +10,7 @@
                 animation: tooltipAnimation,
                 appendTo: 'parent'
             }"
-            ref="dropdown-trigger"
+            ref="dropdownTrigger"
         >
             <slot name="header"></slot>
         </button>
@@ -25,90 +25,85 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { onMounted, ref, nextTick, onBeforeUnmount, watch } from 'vue';
 import { createPopper } from '@popperjs/core';
 import type { Placement } from '@popperjs/core';
-export default defineComponent({
-    name: 'DropdownMenuV',
-    props: {
-        position: {
-            type: String,
-            default: 'bottom'
-        },
-        tooltip: { type: String },
-        tooltipPlacement: { type: String, default: 'bottom' },
-        tooltipTheme: { type: String, default: 'ramp4' },
-        tooltipAnimation: { type: String, default: 'scale' },
-        centered: { type: Boolean, default: true }
-    },
-    data() {
-        return {
-            open: false,
-            popper: null as any,
-            watchers: [] as Array<Function>
-        };
-    },
 
-    created() {
-        this.watchers.push(
-            this.$watch('open', () => {
-                this.popper.update();
-            })
-        );
-    },
+const open = ref(false);
+const popper = ref<any>(null) as any;
+const watchers = ref<Array<Function>>([]);
+const el = ref();
+const dropdown = ref();
+const dropdownTrigger = ref();
 
-    mounted() {
-        window.addEventListener(
-            'click',
-            event => {
-                if (!this.$el.contains(event.target)) {
-                    this.open = false;
-                }
-            },
-            { capture: true }
-        );
-
-        // $nextTick should prevent any race conditions by letting the child elements render before trying to place them using popper
-        this.$nextTick(() => {
-            this.popper = createPopper(
-                this.$refs['dropdown-trigger'] as Element,
-                this.$refs['dropdown'] as HTMLElement,
-                {
-                    placement: (this.position || 'bottom') as Placement,
-                    modifiers: [
-                        {
-                            name: 'offset',
-                            options: {
-                                offset: [0, 5]
-                            }
-                        }
-                    ]
-                }
-            );
-        });
+const props = defineProps({
+    position: {
+        type: String,
+        default: 'bottom'
     },
-    beforeUnmount() {
-        this.watchers.forEach(unwatch => unwatch());
-        window.removeEventListener(
-            'click',
-            event => {
-                if (!this.$el.contains(event.target)) {
-                    this.open = false;
-                }
-            },
-            { capture: true }
-        );
-        this.open = false;
-    },
+    tooltip: { type: String },
+    tooltipPlacement: { type: String, default: 'bottom' },
+    tooltipTheme: { type: String, default: 'ramp4' },
+    tooltipAnimation: { type: String, default: 'scale' },
+    centered: { type: Boolean, default: true }
+});
 
-    methods: {
-        closeDropdown(e: Event) {
-            if (!e.currentTarget.contains(e.relatedTarget)) {
-                this.open = false;
-            }
-        }
+watchers.value.push(
+    watch(open, () => {
+        popper.value.update();
+    })
+);
+
+const closeDropdown = (e: Event) => {
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+        open.value = false;
     }
+};
+
+onMounted(() => {
+    window.addEventListener(
+        'click',
+        event => {
+            if (!el.value.contains(event.target)) {
+                open.value = false;
+            }
+        },
+        { capture: true }
+    );
+
+    // nextTick should prevent any race conditions by letting the child elements render before trying to place them using popper
+    nextTick(() => {
+        popper.value = createPopper(
+            dropdownTrigger.value as Element,
+            dropdown.value as HTMLElement,
+            {
+                placement: (props.position || 'bottom') as Placement,
+                modifiers: [
+                    {
+                        name: 'offset',
+                        options: {
+                            offset: [0, 5]
+                        }
+                    }
+                ]
+            }
+        );
+    });
+});
+
+onBeforeUnmount(() => {
+    watchers.value.forEach(unwatch => unwatch());
+    window.removeEventListener(
+        'click',
+        event => {
+            if (!el.value.contains(event.target)) {
+                open.value = false;
+            }
+        },
+        { capture: true }
+    );
+    open.value = false;
 });
 </script>
 
