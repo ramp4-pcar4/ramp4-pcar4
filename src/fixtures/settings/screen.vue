@@ -161,7 +161,7 @@ export default defineComponent({
             this.$iApi.event.on(
                 GlobalEvents.LAYER_VISIBILITYCHANGE,
                 (newVisibility: any) => {
-                    if (this.uid === newVisibility.uid) {
+                    if (this.uid === newVisibility.layer.uid) {
                         this.visibilityModel = newVisibility.visibility;
                     }
                 }
@@ -172,7 +172,7 @@ export default defineComponent({
             this.$iApi.event.on(
                 GlobalEvents.LAYER_OPACITYCHANGE,
                 (newOpacity: any) => {
-                    if (this.uid === newOpacity.uid) {
+                    if (this.uid === newOpacity.layer.uid) {
                         this.opacityModel = Math.round(
                             newOpacity.opacity * 100
                         );
