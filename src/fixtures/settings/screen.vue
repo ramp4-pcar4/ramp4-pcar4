@@ -170,6 +170,19 @@ export default defineComponent({
 
         this.handlers.push(
             this.$iApi.event.on(
+                GlobalEvents.LAYER_OPACITYCHANGE,
+                (newOpacity: any) => {
+                    if (this.uid === newOpacity.uid) {
+                        this.opacityModel = Math.round(
+                            newOpacity.opacity * 100
+                        );
+                    }
+                }
+            )
+        );
+
+        this.handlers.push(
+            this.$iApi.event.on(
                 GlobalEvents.LAYER_RELOAD_END,
                 (reloadedLayer: LayerInstance) => {
                     reloadedLayer.isLayerLoaded().then(() => {
