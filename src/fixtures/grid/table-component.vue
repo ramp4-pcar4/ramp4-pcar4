@@ -490,15 +490,16 @@ export default defineComponent({
                     GlobalEvents.LAYER_VISIBILITYCHANGE,
                     ({
                         visibility,
-                        uid
+                        layer
                     }: {
                         visibility: boolean;
-                        uid: string;
+                        layer: LayerInstance;
                     }) => {
                         if (
-                            uid &&
-                            (uid === this.layerUid ||
-                                uid === this.getLayerByUid(this.layerUid)!.uid)
+                            layer.uid &&
+                            (layer.uid === this.layerUid ||
+                                layer.uid ===
+                                    this.getLayerByUid(this.layerUid)!.uid)
                         ) {
                             this.applyLayerFilters();
                         }
@@ -699,9 +700,7 @@ export default defineComponent({
             // see: https://github.com/ramp4-pcar4/ramp4-pcar4/pull/57#pullrequestreview-377999397
 
             // default to regex filtering for text columns
-            colDef.filterParams.textMatcher = function (
-                params: any
-            ) {
+            colDef.filterParams.textMatcher = function (params: any) {
                 // treat * as a regular special character
                 const newFilterText = params.filterText.replace(/\*/, '\\*');
                 // surround filter text with .* to match anything before and after

@@ -161,7 +161,7 @@ export default defineComponent({
             this.$iApi.event.on(
                 GlobalEvents.LAYER_VISIBILITYCHANGE,
                 (newVisibility: any) => {
-                    if (this.uid === newVisibility.uid) {
+                    if (this.uid === newVisibility.layer.uid) {
                         this.visibilityModel = newVisibility.visibility;
                     }
                 }

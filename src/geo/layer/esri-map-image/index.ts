@@ -299,7 +299,7 @@ class MapImageLayer extends AttribLayer {
                 if (!this._sublayers[sid]) {
                     this._sublayers[sid] = new MapImageSublayer(
                         {
-                            // TODO: Revisit once issue #961 is implemented. 
+                            // TODO: Revisit once issue #961 is implemented.
                             // See https://github.com/ramp4-pcar4/ramp4-pcar4/pull/1045#pullrequestreview-977116071
                             layerType: LayerType.SUBLAYER,
                             // If the state isn't defined, use the same state as the parent.
@@ -352,7 +352,7 @@ class MapImageLayer extends AttribLayer {
                             GlobalEvents.LAYER_VISIBILITYCHANGE,
                             {
                                 visibility: _sublayer.visibility,
-                                uid: _sublayer.uid
+                                layer: _sublayer
                             }
                         );
                         (_sublayer.parentLayer as CommonLayer) // the parent of a MapImageSublayer must be a CommonLayer
@@ -363,7 +363,7 @@ class MapImageLayer extends AttribLayer {
                             GlobalEvents.LAYER_OPACITYCHANGE,
                             {
                                 opacity: newval,
-                                uid: _sublayer.uid
+                                layer: _sublayer
                             }
                         );
                     })
