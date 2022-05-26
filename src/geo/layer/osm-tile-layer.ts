@@ -8,7 +8,7 @@ import type { LegendSymbology, RampLayerConfig } from '@/geo/api';
 import { EsriOpenStreetMapLayer } from '@/geo/esri';
 import { markRaw } from 'vue';
 
-class OsmTileLayer extends CommonLayer {
+export class OsmTileLayer extends CommonLayer {
     declare esriLayer: EsriOpenStreetMapLayer | undefined;
 
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
@@ -86,5 +86,3 @@ class OsmTileLayer extends CommonLayer {
         return loadPromises;
     }
 }
-
-export default OsmTileLayer;

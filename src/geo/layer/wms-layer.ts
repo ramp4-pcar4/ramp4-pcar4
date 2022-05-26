@@ -4,7 +4,8 @@ import {
     DefPromise,
     GeometryType,
     IdentifyResultFormat,
-    LayerType
+    LayerType,
+    UrlWrapper
 } from '@/geo/api';
 
 import type {
@@ -18,10 +19,9 @@ import type {
 } from '@/geo/api';
 
 import { EsriRequest, EsriWMSLayer, EsriWMSSublayer } from '@/geo/esri';
-import { UrlWrapper } from '@/geo/api';
 import { markRaw, reactive } from 'vue';
 
-export default class WmsLayer extends CommonLayer {
+export class WmsLayer extends CommonLayer {
     declare esriLayer: EsriWMSLayer | undefined;
     sublayerNames: Array<string>;
     readonly mimeType: string;

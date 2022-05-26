@@ -8,7 +8,7 @@ import { markRaw } from 'vue';
 //      lets us make fancier versions later, and this remains as the vanilla without colliding with
 //      the fancy versions
 
-class GraphicLayer extends CommonGraphicLayer {
+export class GraphicLayer extends CommonGraphicLayer {
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.layerType = LayerType.GRAPHIC;
@@ -57,5 +57,3 @@ class GraphicLayer extends CommonGraphicLayer {
 
     // ----------- LAYER ACTIONS -----------
 }
-
-export default GraphicLayer;

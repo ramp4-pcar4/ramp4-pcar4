@@ -3,23 +3,22 @@
 import { CommonLayer, InstanceAPI } from '@/api/internal';
 import { DataFormat, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
-import { EsriTileLayer } from '@/geo/esri';
+import { EsriImageryLayer } from '@/geo/esri';
 import { markRaw } from 'vue';
 
-class TileLayer extends CommonLayer {
-    declare esriLayer: EsriTileLayer | undefined;
+export class ImageryLayer extends CommonLayer {
+    declare esriLayer: EsriImageryLayer | undefined;
 
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.supportsIdentify = false;
-        this.hovertips = false;
-        this.layerType = LayerType.TILE;
-        this.dataFormat = DataFormat.ESRI_TILE;
+        this.layerType = LayerType.IMAGERY;
+        this.dataFormat = DataFormat.ESRI_RASTER;
     }
 
     async initiate(): Promise<void> {
         this.esriLayer = markRaw(
-            new EsriTileLayer(this.makeEsriLayerConfig(this.origRampConfig))
+            new EsriImageryLayer(this.makeEsriLayerConfig(this.origRampConfig))
         );
         await super.initiate();
     }
@@ -32,9 +31,9 @@ class TileLayer extends CommonLayer {
      */
     protected makeEsriLayerConfig(
         rampLayerConfig: RampLayerConfig
-    ): __esri.TileLayerProperties {
+    ): __esri.ImageryLayerProperties {
         // TODO flush out
-        const esriConfig: __esri.TileLayerProperties =
+        const esriConfig: __esri.ImageryLayerProperties =
             super.makeEsriLayerConfig(rampLayerConfig);
 
         return esriConfig;
@@ -65,5 +64,3 @@ class TileLayer extends CommonLayer {
         return loadPromises;
     }
 }
-
-export default TileLayer;

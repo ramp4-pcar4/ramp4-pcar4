@@ -1,9 +1,6 @@
-import { AttribLayer, InstanceAPI } from '@/api/internal';
+import { AttribLayer, InstanceAPI, type MapImageLayer } from '@/api/internal';
 import { DataFormat, LayerType } from '@/geo/api';
-
-import type { RampLayerConfig, RampLayerStateConfig } from '@/geo/api';
-
-import type MapImageLayer from './index';
+import type { RampLayerConfig } from '@/geo/api';
 import { markRaw } from 'vue';
 
 export class MapImageSublayer extends AttribLayer {

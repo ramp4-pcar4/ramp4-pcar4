@@ -2,7 +2,8 @@ import {
     AttribLayer,
     CommonLayer,
     GlobalEvents,
-    InstanceAPI
+    InstanceAPI,
+    MapImageSublayer
 } from '@/api/internal';
 import {
     DefPromise,
@@ -33,11 +34,10 @@ import {
     EsriRequest,
     EsriRendererFromJson
 } from '@/geo/esri';
-import { MapImageSublayer } from './map-image-sublayer';
 import { markRaw, reactive } from 'vue';
 
 // Formerly known as DynamicLayer
-class MapImageLayer extends AttribLayer {
+export class MapImageLayer extends AttribLayer {
     // indicates if sublayers can have opacity adjusted
     isDynamic: boolean;
     declare esriLayer: EsriMapImageLayer | undefined;
@@ -299,7 +299,7 @@ class MapImageLayer extends AttribLayer {
                 if (!this._sublayers[sid]) {
                     this._sublayers[sid] = new MapImageSublayer(
                         {
-                            // TODO: Revisit once issue #961 is implemented. 
+                            // TODO: Revisit once issue #961 is implemented.
                             // See https://github.com/ramp4-pcar4/ramp4-pcar4/pull/1045#pullrequestreview-977116071
                             layerType: LayerType.SUBLAYER,
                             // If the state isn't defined, use the same state as the parent.
@@ -734,5 +734,3 @@ class MapImageLayer extends AttribLayer {
         return Promise.resolve(undefined);
     }
 }
-
-export default MapImageLayer;

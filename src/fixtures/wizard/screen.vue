@@ -363,14 +363,7 @@ export default defineComponent({
         async onConfigureContinue(data: object) {
             const config = Object.assign(this.layerInfo!.config, data);
 
-            // CUSTOM-LAYER
-            /*
-            if (!this.$iApi.geo.layer.layerDefExists(config.layerType)) {
-                await this.$iApi.geo.layer.addLayerDef(config.layerType);
-            }
-            */
-
-            const layer = await this.$iApi.geo.layer.createLayer(config);
+            const layer = this.$iApi.geo.layer.createLayer(config);
             await layer.initiate();
             layer.userAdded = true;
 

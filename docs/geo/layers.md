@@ -114,7 +114,7 @@ Layers are created by providing a configuration object to the creation function 
 
 ```js
 var simpleConfig = { id: "funlayer", layerType: "esri-feature", url: "http://maptown.com/maps/rest/fancyService/4" };
-var featureLayer = await instanceApi.geo.layer.createLayer(simpleConfig));
+var featureLayer = instanceApi.geo.layer.createLayer(simpleConfig));
 ```
 
 ### Inner Layer Management
@@ -347,14 +347,13 @@ TODO flush out the return value
 myLayer.getTabularAttributes(); // Promise resolving with tabular attribute object.
 ```
 
-Request an individual graphic. This can include the geometry, the attributes, or both. The function uses a caching strategy so multiple requests for the same data will be server friendly.
-TODO flush out details.
+Request an individual graphic. This can include the geometry, the attributes, and the style. The function uses a caching strategy so multiple requests for the same data will be server friendly.
 
 ```js
-var opts = { getGeom: true, getAttribs: true };
+var opts = { getGeom: true, getAttribs: true, getStyle: true };
 var objectId = 61;
 var result = await myLayer.getGraphic(objectId, opts);
-console.log(g.attributes, g.geometry);
+console.log(g.attributes, g.geometry, g.style);
 ```
 
 Request the icon symbol for a specific feature. The icon corresponds to the legend representation of how the layer renderer would display this feature. The icon is encoded as an SVG string.
