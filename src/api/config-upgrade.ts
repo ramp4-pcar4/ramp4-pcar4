@@ -465,4 +465,12 @@ function uiUpgrader(r2ui: any, r4c: any): void {
         });
         r4c.fixturesEnabled.push('mapnav');
     }
+
+    if (r2ui.help) {
+        r4c.fixtures.help = {
+            folderName: r2ui.help.folderName || 'default',
+            panelWidth: 350 // this property is not supported in the RAMP2 config - I'm guessing its ok to initialize to the default
+        };
+        r4c.fixturesEnabled.push('help');
+    }
 }
