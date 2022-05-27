@@ -7,13 +7,16 @@ import {
 } from '@/api/internal';
 import {
     DefPromise,
-    Graphic,
+    DrawState,
     Extent,
     GeometryType,
-    NoGeometry,
-    TreeNode,
+    Graphic,
+    IdentifyResultFormat,
+    LayerFormat,
     LayerType,
-    IdentifyResultFormat
+    LayerState,
+    NoGeometry,
+    TreeNode
 } from '@/geo/api';
 
 import type {
@@ -47,6 +50,7 @@ export class MapImageLayer extends AttribLayer {
         this.supportsIdentify = true;
         this.supportsSublayers = true;
         this.layerType = LayerType.MAPIMAGE;
+        this.layerFormat = LayerFormat.MAPIMAGE;
         this.isDynamic = false; // will get updated after layer load.
         this.hovertips = false;
         this.layerTree.layerIdx = -1;
@@ -141,9 +145,6 @@ export class MapImageLayer extends AttribLayer {
             this.id + '_extent'
         );
 
-        // TODO the whole "configIsComplete" logic in RAMP2 was never invoked by the client.
-        //      Don't see the point in re-adding it here.
-
         const findSublayer = (targetIndex: number): __esri.Sublayer => {
             const finder = this.esriLayer?.allSublayers.find(s => {
                 return s.id === targetIndex;
@@ -153,65 +154,6 @@ export class MapImageLayer extends AttribLayer {
             }
             return finder;
         };
-
-        // don't worry about structured legend. the legend part is separate from
-        // the layers part. we just load what we are told to. the legend module
-        // will handle the structured part.
-
-        // a lack of the property means we use the layer definition
-        /*
-        const dummyState = {
-            opacity: 1,
-            visibility: false,
-            identify: false
-        };
-        */
-
-        // TODO take another look at the identify flag coming in from the config. figure out how we track all identifiable layers
-        //      and make sure they get turned off/on according to settings
-
-        // subfunction to clone a layerEntries config object.
-        // since we are using typed objects with getters and setters,
-        // our usual easy ways of cloning an object don't work (e.g. using
-        // JSON.parse(JSON.stringify(x))). This is not a great solution (understatement),
-        //  but is being done as a quick n dirty workaround. At a later time,
-        // the guts of this function can be re-examined for a better,
-        // less hardcoded solution.
-        /*
-        const cloneConfig = origConfig => {
-            const clone = {};
-
-            // direct copies, no defaulting
-            clone.name = origConfig.name;
-            clone.index = origConfig.index;
-            clone.stateOnly = origConfig.stateOnly;
-            clone.nameField = origConfig.nameField;
-            clone.highlightFeature = origConfig.highlightFeature || true; // simple default
-
-            // an empty string is a valid property, so be wary of falsy logic
-            clone.outfields = origConfig.hasOwnProperty('outfields') ? origConfig.outfields : '*';
-
-            // with state, we are either complete, or pure defaults.
-            // in the non-complete case, we treat our state as unreliable and
-            // expect the client to assign properties as it does parent-child inheritance
-            // defaulting (which occurs after this onLoad function has completed)
-            if (this._configIsComplete) {
-                clone.state = {
-                    visiblity: origConfig.visiblity,
-                    opacity: origConfig.opacity,
-                    identify: origConfig.identify
-                };
-            } else {
-                clone.state = Object.assign({}, dummyState);
-            }
-
-            // if extent is present, we assume it is fully defined.
-            // extents are not using fancy typed objects, so can directly reference
-            clone.extent = origConfig.extent;
-
-            return clone;
-        };
-        */
 
         // collate any relevant overrides from the config.
         const subConfigs: {
@@ -224,45 +166,6 @@ export class MapImageLayer extends AttribLayer {
             // TODO the || 0 is there to handle missing index. probably will never happen. add an error check?
             subConfigs[le.index || 0] = le;
         });
-
-        // subfunction to return a subconfig object.
-        // if it does not exist or is not defaulted, will do that first
-        // id param is an integer in string format
-
-        /*
-        const fetchSubConfig = (id, serverName = '') => {
-
-            if (subConfigs[id]) {
-                const subC = subConfigs[id];
-                if (!subC.defaulted) {
-                    // config is incomplete, fill in blanks
-                    // we will never hit this code block a complete config was passed in
-
-                    // apply a server name if no name exists
-                    if (!subC.config.name) {
-                        subC.config.name = serverName;
-                    }
-
-                    // mark as defaulted so we don't do this again
-                    subC.defaulted = true;
-                }
-                return subC.config;
-            } else {
-                // no config at all. we apply defaults, and a name from the server if available
-                const configSeed = {
-                    name: serverName,
-                    index: parseInt(id),
-                    stateOnly: true
-                };
-                const newConfig = cloneConfig(configSeed);
-                subConfigs[id] = {
-                    config: newConfig,
-                    defaulted: true
-                };
-                return newConfig;
-            }
-        };
-        */
 
         // shortcut var to track all leafs that need attention
         // in the loading process
@@ -381,55 +284,55 @@ export class MapImageLayer extends AttribLayer {
         });
 
         // process each leaf sublayer we walked to in the sublayer tree crawl above
-        leafsToInit.forEach((mlFC: MapImageSublayer) => {
+        leafsToInit.forEach((miSL: MapImageSublayer) => {
             // NOTE: can consider alternates, like esriLayer.url + / + layerIdx
-            const sublayer = findSublayer(mlFC.layerIdx);
-            const config = subConfigs[mlFC.layerIdx];
-            mlFC.serviceUrl = sublayer.url;
+            const sublayer = findSublayer(miSL.layerIdx);
+            const config = subConfigs[miSL.layerIdx];
+            miSL.serviceUrl = sublayer.url;
 
             // the sublayer needs to be re-fetched because the initial sublayer was marked as "raw"
-            mlFC.fetchEsriSublayer(this);
+            miSL.fetchEsriSublayer(this);
 
             // setting custom renderer here (if one is provided)
             const hasCustRed =
-                mlFC.esriSubLayer && config?.customRenderer?.type;
+                miSL.esriSubLayer && config?.customRenderer?.type;
             if (hasCustRed) {
-                mlFC.esriSubLayer!.renderer = EsriRendererFromJson(
+                miSL.esriSubLayer!.renderer = EsriRendererFromJson(
                     config.customRenderer
                 );
             }
 
             // TODO check if we have custom renderer, add to options parameter here
-            const pLMD: Promise<void> = mlFC
+            const pLMD: Promise<void> = miSL
                 .loadLayerMetadata(
                     hasCustRed
-                        ? { customRenderer: mlFC.esriSubLayer?.renderer }
+                        ? { customRenderer: miSL.esriSubLayer?.renderer }
                         : {}
                 )
                 .then(() => {
                     // apply any updates that were in the configuration snippets
-                    const subC = subConfigs[mlFC.layerIdx];
+                    const subC = subConfigs[miSL.layerIdx];
                     if (subC) {
-                        mlFC.visibility = subC.state?.visibility || true;
-                        mlFC.opacity = subC.state?.opacity || 1;
-                        // mlFC.setQueryable(subC.state.identify); // TODO uncomment when done
-                        mlFC.nameField = subC.nameField || mlFC.nameField || '';
-                        mlFC.processFieldMetadata(subC.fieldMetadata);
+                        miSL.visibility = subC.state?.visibility || true;
+                        miSL.opacity = subC.state?.opacity || 1;
+                        // miSL.setQueryable(subC.state.identify); // TODO uncomment when done
+                        miSL.nameField = subC.nameField || miSL.nameField || '';
+                        miSL.processFieldMetadata(subC.fieldMetadata);
                     } else {
                         // pulling from parent would be cool, but complex. all the promises would need to be resolved in tree-order
                         // maybe put defaulting here for visible/opac/identify
-                        mlFC.processFieldMetadata();
+                        miSL.processFieldMetadata();
                     }
 
                     // do any things that are specific to feature or raster subtypes
-                    if (mlFC.supportsFeatures) {
-                        if (!mlFC.attLoader) {
+                    if (miSL.supportsFeatures) {
+                        if (!miSL.attLoader) {
                             throw new Error(
                                 'Map Image Sublayer - expected attLoader to exist'
                             );
                         }
-                        mlFC.attLoader.updateFieldList(mlFC.fieldList);
-                        return mlFC.loadFeatureCount();
+                        miSL.attLoader.updateFieldList(miSL.fieldList);
+                        return miSL.loadFeatureCount();
                     } else {
                         return Promise.resolve();
                     }
@@ -437,7 +340,7 @@ export class MapImageLayer extends AttribLayer {
 
             // TODO.  might need to wait for renderer to finish loading first on this.
             // load real symbols into our source
-            // loadPromises.push(mlFC.loadSymbology());
+            // loadPromises.push(miSL.loadSymbology());
 
             loadPromises.push(pLMD);
         });
@@ -484,6 +387,18 @@ export class MapImageLayer extends AttribLayer {
         }
 
         return loadPromises;
+    }
+
+    updateState(newState: LayerState): void {
+        // force any sublayers to also update their state and raise events
+        super.updateState(newState);
+        this.sublayers.forEach(sublayer => sublayer.updateState(newState));
+    }
+
+    updateDrawState(newState: DrawState): void {
+        // force any sublayers to also update their draw state and raise events
+        super.updateDrawState(newState);
+        this.sublayers.forEach(sublayer => sublayer.updateDrawState(newState));
     }
 
     // ----------- LAYER ACTIONS -----------

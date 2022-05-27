@@ -4,13 +4,14 @@
 
 import { CommonLayer, InstanceAPI } from '@/api/internal';
 import type { EsriGraphicsLayer } from '@/geo/esri';
-import { DataFormat, Graphic } from '@/geo/api';
+import { DataFormat, Graphic, LayerFormat } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 
 export class CommonGraphicLayer extends CommonLayer {
     protected constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.dataFormat = DataFormat.ESRI_FEATURE;
+        this.layerFormat = LayerFormat.GRAPHIC;
 
         // Until we implement hovertip support on RAMP Graphics, turn off hovertips to stop
         // hittest errors in the console.

@@ -877,6 +877,12 @@ export class SymbologyAPI extends APIScope {
      *
      */
     private async getMapServerLegend(layerUrl: string): Promise<any> {
+        if (!layerUrl) {
+            throw new Error(
+                'Legend server request is missing the required url.'
+            );
+        }
+
         // standard json request with error checking
         const reqParams: __esri.RequestOptions = {
             query: { f: 'json' }

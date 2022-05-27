@@ -85,6 +85,7 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | FILTER_CHANGE<br>'filter/change'                   | FilterEventParam object                                        | A filter has changed                             |
 | FIXTURE_ADDED<br>'fixture/added'                   | FixtureInstance object                                         | A fixture has been added                         |
 | FIXTURE_REMOVED<br>'fixture/removed'               | FixtureInstance object                                         | A fixture has been removed                       |
+| LAYER_DRAWSTATECHANGE<br>'layer/drawstatechange'   | _state_: new value, layer: LayerInstance object                | The layer draw state changed                     |
 | LAYER_OPACITYCHANGE<br>'layer/opacitychange'       | _opacity_: new value, layer: LayerInstance object              | The layer opacity changed                        |
 | LAYER_REGISTERED<br>'layer/registered'             | LayerInstance object                                           | The layer was added to the map                   |
 | LAYER_RELOAD_END<br>'layer/reloadend'              | LayerInstance object                                           | The layer finished reloading                     |
@@ -107,7 +108,7 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | MAP_MOUSEMOVE<br>'map/mousemove'                   | MapMove object                                                 | The mouse moved over the map                     |
 | MAP_REFRESH_END<br>'map/refreshend'                | none                                                           | The map view started refreshing                  |
 | MAP_REFRESH_START<br>'map/refreshstart'            | none                                                           | The map view finished refreshing                 |
-| MAP_RESIZED<br>'map/resized'                       | { height: number, width: number }                              | The map view changed size                        |
+| MAP_RESIZED<br>'map/resized'                       | _height_: new height, _width_: new width                       | The map view changed size                        |
 | MAP_SCALECHANGE<br>'map/scalechanged'              | scale denominator: number                                      | The map scale changed                            |
 | MAP_START<br>'map/start'                           | none                                                           | The map startup was requested                    |
 | PANEL_CLOSED<br>'panel/closed'                     | PanelInstance object                                           | A panel was closed                               |

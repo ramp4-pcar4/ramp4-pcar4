@@ -84,6 +84,12 @@ export enum GlobalEvents {
     HELP_TOGGLE = 'help/toggle',
 
     /**
+     * Fires when the drawing state of a layer changes.
+     * Payload: `({ layer: LayerInstance, state: string })`
+     */
+    LAYER_DRAWSTATECHANGE = 'layer/drawstatechange',
+
+    /**
      * Fires when the opacity of a layer changes.
      * Payload: `({ layer: LayerInstance, opacity: number })`
      */

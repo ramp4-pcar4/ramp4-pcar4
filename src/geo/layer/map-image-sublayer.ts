@@ -1,5 +1,10 @@
-import { AttribLayer, InstanceAPI, type MapImageLayer } from '@/api/internal';
-import { DataFormat, LayerType } from '@/geo/api';
+import {
+    AttribLayer,
+    GlobalEvents,
+    InstanceAPI,
+    type MapImageLayer
+} from '@/api/internal';
+import { DataFormat, LayerFormat, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 import { markRaw } from 'vue';
 
@@ -15,12 +20,13 @@ export class MapImageSublayer extends AttribLayer {
         super(config as RampLayerConfig, $iApi);
 
         this.layerType = LayerType.SUBLAYER;
+        this.layerFormat = LayerFormat.MAPIMAGE;
         this.isSublayer = true;
         this.layerIdx = layerIdx;
         this.parentLayer = parent;
         this.id = `${parent.id}-${layerIdx}`;
 
-        this.dataFormat = DataFormat.ESRI_FEATURE;
+        this.dataFormat = DataFormat.ESRI_FEATURE; // this will get flipped to raster during the server metadata checks if needed
         this.tooltipField = '';
         this.hovertips = false;
 
@@ -58,6 +64,10 @@ export class MapImageSublayer extends AttribLayer {
      * Load actions for a MapImage sublayer
      */
     onLoadActions(): Array<Promise<void>> {
+        // Note we do not call super.onLoadActions, which you would see happen in
+        //      every other layer. We don't want to wire up the standard "top level"
+        //      layer stuff for sublayers.
+
         this.layerTree.name = this.name;
         this.layerTree.layerIdx = this.layerIdx;
 
