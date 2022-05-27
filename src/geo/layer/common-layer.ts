@@ -297,7 +297,7 @@ export class CommonLayer extends LayerInstance {
     }
 
     // TODO strongly type if it makes sense. unsure if we want client config definitions in here
-    //      that said if client shema is different that here, things are gonna break so maybe this is good idea
+    //      that said if client schema is different that here, things are gonna break so maybe this is good idea
     /**
      * Take a layer config from the RAMP application and derives a configuration for an ESRI layer
      *
@@ -317,9 +317,11 @@ export class CommonLayer extends LayerInstance {
         };
 
         // TODO careful now. seems setting this willy nilly, even if undefined value, causes layer to keep pinging the server
-        if (typeof rampLayerConfig.refreshInterval !== 'undefined') {
-            esriConfig.refreshInterval = rampLayerConfig.refreshInterval;
-        }
+        // TODO revisit issue #1019 after v1.0.0
+        // if (typeof rampLayerConfig.refreshInterval !== 'undefined') {
+        //     esriConfig.refreshInterval = rampLayerConfig.refreshInterval;
+        // }
+
         return esriConfig;
     }
 

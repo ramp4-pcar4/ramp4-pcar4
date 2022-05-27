@@ -532,7 +532,8 @@ export interface RampLayerConfig {
     name?: string;
     state?: RampLayerStateConfig;
     customRenderer?: any; // TODO expand, if worth it. fairly complex object
-    refreshInterval?: number;
+    // TODO revisit issue #1019 after v1.0.0
+    // refreshInterval?: number;
     initialFilteredQuery?: string;
     fieldMetadata?: RampLayerFieldMetadataConfig;
     nameField?: string;

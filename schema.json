@@ -665,12 +665,12 @@
                 "refreshInterval": {
                     "type": "number",
                     "default": 0,
-                    "description": "The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes."
+                    "description": "The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes. Currently not supported."
                 },
                 "expectedResponseTime": {
                     "type": "number",
                     "default": 4000,
-                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
+                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer. Currently not supported."
                 },
                 "metadataUrl": {
                     "type": "string",
@@ -739,7 +739,7 @@
                 "expectedResponseTime": {
                     "type": "number",
                     "default": 4000,
-                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
+                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer. Currently not supported."
                 },
                 "metadataUrl": {
                     "type": "string",
@@ -804,12 +804,12 @@
                 "refreshInterval": {
                     "type": "number",
                     "default": 0,
-                    "description": "The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes."
+                    "description": "The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes. Currently not supported."
                 },
                 "expectedResponseTime": {
                     "type": "number",
                     "default": 4000,
-                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
+                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer. Currently not supported."
                 },
                 "metadataUrl": {
                     "type": "string",
@@ -1000,12 +1000,12 @@
                 "refreshInterval": {
                     "type": "number",
                     "default": 0,
-                    "description": "Automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes."
+                    "description": "Automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes. Currently not supported."
                 },
                 "expectedResponseTime": {
                     "type": "number",
                     "default": 4000,
-                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
+                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer. Currently not supported."
                 },
                 "metadataUrl": {
                     "type": "string",
@@ -1285,12 +1285,12 @@
                 "refreshInterval": {
                     "type": "number",
                     "default": 0,
-                    "description": "Automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes."
+                    "description": "Automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes. Currently not supported."
                 },
                 "expectedResponseTime": {
                     "type": "number",
                     "default": 4000,
-                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
+                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer. Currently not supported."
                 },
                 "metadataUrl": {
                     "type": "string",
