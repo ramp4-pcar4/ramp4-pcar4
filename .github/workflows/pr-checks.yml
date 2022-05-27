@@ -1,6 +1,6 @@
 on:
     pull_request:
-        branches: [master]
+        branches: [main]
 env:
     NODE_VERSION: '17.9.0'
 jobs:

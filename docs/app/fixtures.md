@@ -48,7 +48,7 @@ This type of fixture is written in plain JS, and requires no compilation step si
 
 This is the most simple and fast way to create fixtures as no build step is required. It is also the most compact way to create fixtures as no external code (like Vue component decorators or other helper functions) is included in the fixture bundle.
 
-A sample of this type of fixture can be found [here](https://github.com/ramp4-pcar4/ramp4-pcar4/blob/master/packages/ramp-sample-fixtures/src/diligord/diligord-fixture.js).
+A sample of this type of fixture can be found [here](https://github.com/ramp4-pcar4/ramp4-pcar4/blob/main/packages/ramp-sample-fixtures/src/diligord/diligord-fixture.js).
 
 ### Typescript, Vue Decorators
 
@@ -58,7 +58,7 @@ This is the most comfortable way to create fixtures since it's possible to use n
 
 The resulting bundle includes more of external code as Vue decorators will be incorporated into the end file.
 
-A sample of this type of fixture can be found [here](https://github.com/ramp4-pcar4/ramp4-pcar4/tree/master/packages/ramp-sample-fixtures/src/iklob).
+A sample of this type of fixture can be found [here](https://github.com/ramp4-pcar4/ramp4-pcar4/tree/main/packages/ramp-sample-fixtures/src/iklob).
 
 TODO is there a link to some good Vue doc site for people not familiar with Vue Templates, Decorators, and Runtime? Could add it just to be a bit more helpful
 
@@ -87,7 +87,7 @@ The resulting bundle includes a small amount of external code needed to normaliz
 
 Compared to the Vue Decorator technique, this approach offers a smaller package size and avoids having to care about library loading order while still providing the convenience of Typescript and Vue templates. The lack of decorators will likely be the deciding factor.
 
-A sample of this type of fixture can be found [here](https://github.com/ramp4-pcar4/ramp4-pcar4/tree/master/packages/ramp-sample-fixtures/src/mouruge).
+A sample of this type of fixture can be found [here](https://github.com/ramp4-pcar4/ramp4-pcar4/tree/main/packages/ramp-sample-fixtures/src/mouruge).
 
 ## Loading External Fixtures
 
