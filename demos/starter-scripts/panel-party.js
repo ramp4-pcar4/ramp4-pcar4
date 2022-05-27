@@ -446,7 +446,7 @@ rInstance.fixture.addDefaultFixtures().then(() => {
     rInstance.event.emit('metadata/open', {
         type: 'html',
         layerName: 'Sample Layer Name',
-        url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/master/README.md'
+        url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/main/README.md'
     });
 });
 

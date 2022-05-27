@@ -16,7 +16,7 @@ git init
 git add .
 git commit -m 'deploy version 1.0.0'
 
-git push -f git@github.com:ramp4-pcar4/ramp4-pcar4.git master:gh-pages
+git push -f git@github.com:ramp4-pcar4/ramp4-pcar4.git main:gh-pages
 
 cd ..
 rm -rf dist || rmdir /s /q dist

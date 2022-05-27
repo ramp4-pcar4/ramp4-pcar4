@@ -308,7 +308,7 @@ let config = {
                         visibility: true
                     },
                     metadata: {
-                        url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/master/README.md',
+                        url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/main/README.md',
                         name: 'Read Me!'
                     },
                     customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
@@ -352,7 +352,7 @@ let config = {
                 //     },
                 //     customRenderer: {},
                 //     metadata: {
-                //         url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/master/README.md'
+                //         url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/main/README.md'
                 //     },
                 //     fixtures: {
                 //         details: {
