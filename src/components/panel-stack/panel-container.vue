@@ -1,6 +1,6 @@
 <template>
     <div
-        class="shadow-tm bg-white h-full xs:mr-0 sm:mr-12 last:mr-0 pointer-events-auto min-w-0"
+        class="shadow-tm bg-white h-full xs:mr-0 sm:mr-12 last:mr-0 pointer-events-auto min-w-0 shrink-0"
         :class="panel.expanded ? 'flex-grow max-w-full' : ''"
         :style="panel.style"
         :data-cy="panel.id"
