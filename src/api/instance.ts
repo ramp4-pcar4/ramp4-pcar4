@@ -103,6 +103,32 @@ export class InstanceAPI {
         this.ui = { maptip: this.geo.map.maptip };
         this.notify = new NotificationAPI(this);
 
+        this._isFullscreen =
+            screenfull.isEnabled &&
+            !!this.$vApp.$root &&
+            screenfull.isFullscreen &&
+            screenfull.element === this.$vApp.$root.$el;
+        if (screenfull.isEnabled) {
+            // update fullscreen flag as needed (getters don't work right with screenfull)
+            screenfull.onchange(() => {
+                // screnfull decrees a second enabled check
+                this._isFullscreen =
+                    screenfull.isEnabled &&
+                    !!this.$vApp.$root &&
+                    screenfull.isFullscreen &&
+                    screenfull.element === this.$vApp.$root.$el;
+            });
+        }
+
+        this.initialize(configs, options);
+    }
+
+    /**
+     * Initializes a Vue R4MP instance with the given config and options
+     * @param {RampConfigs | undefined} configs language-keyed R4MP config
+     * @param {RampOptions | undefined} options startup options for this R4MP instance
+     */
+    initialize(configs?: RampConfigs, options?: RampOptions): void {
         // TODO: decide whether to move to src/main.ts:createApp
         // TODO: store a reference to the even bus in the global store [?]
         if (configs?.configs !== undefined) {
@@ -110,24 +136,21 @@ export class InstanceAPI {
                 [key: string]: RampConfig;
             } = configs.configs;
 
-            const defaultConfig = langConfigs[Object.keys(langConfigs)[0]];
-            this.$vApp.$store.set(
-                ConfigStore.newConfig,
-                defaultConfig !== undefined ? defaultConfig : undefined
-            );
+            const langConfig =
+                langConfigs[this.$vApp.$i18n.locale] ??
+                langConfigs[Object.keys(langConfigs)[0]];
+            this.$vApp.$store.set(ConfigStore.newConfig, langConfig);
 
             // register first config for all available languages and then overwrite configs per language as needed
             this.$vApp.$store.set(ConfigStore.registerConfig, {
-                config: defaultConfig
+                config: langConfig
             });
-            for (let lang in configs) {
+            for (let lang in langConfigs) {
                 this.$vApp.$store.set(ConfigStore.registerConfig, {
                     config: langConfigs[lang],
                     langs: [lang]
                 });
             }
-
-            const langConfig = langConfigs[this.$vApp.$i18n.locale];
 
             // set the initial basemap
             this.$vApp.$store.set(
@@ -154,23 +177,6 @@ export class InstanceAPI {
             }
         }
 
-        this._isFullscreen =
-            screenfull.isEnabled &&
-            !!this.$vApp.$root &&
-            screenfull.isFullscreen &&
-            screenfull.element === this.$vApp.$root.$el;
-        if (screenfull.isEnabled) {
-            // update fullscreen flag as needed (getters don't work right with screenfull)
-            screenfull.onchange(() => {
-                // screnfull decrees a second enabled check
-                this._isFullscreen =
-                    screenfull.isEnabled &&
-                    !!this.$vApp.$root &&
-                    screenfull.isFullscreen &&
-                    screenfull.element === this.$vApp.$root.$el;
-            });
-        }
-
         // default missing options
         if (!options) {
             options = {};
@@ -188,6 +194,66 @@ export class InstanceAPI {
         if (!(options.loadDefaultEvents === false)) {
             this.event.addDefaultEvents();
         }
+    }
+
+    /**
+     * Reloads Vue R4MP instance with a new config
+     * @param {RampConfigs} configs language-keyed R4MP config
+     * @param {RampOptions} options startup options for this R4MP instance
+     */
+    reload(configs?: RampConfigs, options?: RampOptions): void {
+        // TODO: remove the below step after #882 and appbar/mapnav fixture removal is donethanks
+        // clear appbar and mapnav buttons
+        this.$vApp.$store.set('appbar/items', {});
+        this.$vApp.$store.set('appbar/order', []);
+        this.$vApp.$store.set('appbar/temporary', []);
+        this.$vApp.$store.set('appbar/tempButtonDict', {});
+        this.$vApp.$store.set('mapnav/items', {});
+        this.$vApp.$store.set('mapnav/order', []);
+
+        // remove all fixtures
+        // get list of all fixture ids currently added
+        let addedFixtures: Array<string> = Object.keys(
+            this.$vApp.$store.get('fixture/items') as any
+        );
+        // remove each fixture
+        addedFixtures.forEach((id: string) => {
+            // check if the fixture exists first otherwise it will error
+            if (this.fixture.get(id) !== undefined) {
+                this.fixture.remove(id);
+            }
+        });
+
+        // destroy map (calls private destroyMap)
+        // @ts-ignore
+        this.geo.map.destroyMap();
+
+        // remove all event handlers
+        this.event.offAll();
+
+        // if configs is not provided, use the current configs
+        if (configs === undefined) {
+            // Need to clone this config to trigger config watch handlers
+            configs = JSON.parse(
+                JSON.stringify({
+                    configs: this.$vApp.$store.get(
+                        ConfigStore.getRegisteredConfigs
+                    )!
+                })
+            );
+        }
+
+        // clear all notifications (using set to call action)
+        this.$vApp.$store.set('notification/clearAll!', {});
+
+        // clear maptip
+        this.geo.map.maptip.clear();
+
+        // reset start flag
+        this.started = false;
+
+        // re-initalize ramp
+        this.initialize(configs, options);
     }
 
     // TODO: we probably need to expose other Vue global functions here like `set`, `use`, etc.
@@ -243,17 +309,22 @@ export class InstanceAPI {
     }
 
     /**
-     * Gets the config linked to the current language of the app.
+     * Gets the [cloned] config linked to the current language of the app.
      *
      * @memberof InstanceAPI
      */
     getConfig() {
         const language = this.$vApp.$i18n.locale;
 
-        return this.$vApp.$store.get(
-            ConfigStore.getActiveConfig,
-            language
-        ) as RampConfig;
+        // clone it to avoid mutations to store config
+        return JSON.parse(
+            JSON.stringify(
+                this.$vApp.$store.get(
+                    ConfigStore.getActiveConfig,
+                    language
+                ) as RampConfig
+            )
+        );
     }
 
     /**
@@ -263,12 +334,17 @@ export class InstanceAPI {
      * @memberof InstanceAPI
      */
     setLanguage(language: string): void {
+        if (this.$vApp.$i18n.locale === language) {
+            return;
+        }
+
         this.$vApp.$i18n.locale = language;
         const activeConfig = this.getConfig();
-        console.log('active config: ', activeConfig);
-        // TODO: do something with active config - reload map?
 
         this.$vApp.$iApi.event.emit(GlobalEvents.CONFIG_CHANGE, activeConfig);
+
+        // reload the map to apply new config
+        this.reload();
     }
 
     /**

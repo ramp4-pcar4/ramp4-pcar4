@@ -125,12 +125,14 @@ export default defineComponent({
             // nobody writing a new layer type is going to have a clue they need
             // to wrap their identify outputs in reactive() due to disrespectful code.
 
-            // track last identify request timestamp and add to payload items
-            if (newPayload.length === 0) {
-                this.activeGreedy = 0;
+            // if no payload, just return
+            if (newPayload === undefined) {
                 return;
             }
-            this.activeGreedy = newPayload[0].requestTime;
+
+            // track last identify request timestamp and add to payload items
+            this.activeGreedy =
+                newPayload.length === 0 ? 0 : newPayload[0].requestTime;
 
             this.layerResults = newPayload;
 
