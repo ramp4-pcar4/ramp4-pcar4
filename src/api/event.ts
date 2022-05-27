@@ -85,7 +85,7 @@ export enum GlobalEvents {
 
     /**
      * Fires when the opacity of a layer changes.
-     * Payload: `({ uid: string, opacity: number })`
+     * Payload: `({ layer: LayerInstance, opacity: number })`
      */
     LAYER_OPACITYCHANGE = 'layer/opacitychange',
 
@@ -115,13 +115,13 @@ export enum GlobalEvents {
 
     /**
      * Fires when the state of a layer changes.
-     * Payload: `({ uid: string, state: string })`
+     * Payload: `({ layer: LayerInstance, state: string })`
      */
     LAYER_STATECHANGE = 'layer/statechange',
 
     /**
      * Fires when the visibility of a layer changes.
-     * Payload: `({ uid: string, visibility: boolean })`
+     * Payload: `({ layer: LayerInstance, visibility: boolean })`
      */
     LAYER_VISIBILITYCHANGE = 'layer/visibilitychange',
 

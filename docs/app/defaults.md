@@ -85,13 +85,13 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | FILTER_CHANGE<br>'filter/change'                   | FilterEventParam object                                        | A filter has changed                             |
 | FIXTURE_ADDED<br>'fixture/added'                   | FixtureInstance object                                         | A fixture has been added                         |
 | FIXTURE_REMOVED<br>'fixture/removed'               | FixtureInstance object                                         | A fixture has been removed                       |
-| LAYER_OPACITYCHANGE<br>'layer/opacitychange'       | _opacity_: new value, _uid_: affected uid                      | The layer opacity changed                        |
+| LAYER_OPACITYCHANGE<br>'layer/opacitychange'       | _opacity_: new value, layer: LayerInstance object              | The layer opacity changed                        |
 | LAYER_REGISTERED<br>'layer/registered'             | LayerInstance object                                           | The layer was added to the map                   |
 | LAYER_RELOAD_END<br>'layer/reloadend'              | LayerInstance object                                           | The layer finished reloading                     |
 | LAYER_RELOAD_START<br>'layer/reloadstart'          | LayerInstance object                                           | The layer started reloading                      |
 | LAYER_REMOVE<br>'layer/remove'                     | LayerInstance object                                           | The layer was removed from the map               |
-| LAYER_STATECHANGE<br>'layer/statechange'           | _state_: new value, _uid_: affected uid                        | The layer state changed                          |
-| LAYER_VISIBILITYCHANGE<br>'layer/visibilitychange' | _visibility_: new value, _uid_: affected uid                   | The layer visibility changed                     |
+| LAYER_STATECHANGE<br>'layer/statechange'           | _state_: new value, layer: LayerInstance object                | The layer state changed                          |
+| LAYER_VISIBILITYCHANGE<br>'layer/visibilitychange' | _visibility_: new value, layer: LayerInstance object           | The layer visibility changed                     |
 | MAP_BASEMAPCHANGE<br>'map/basemapchanged'          | basemapId: string, schemaChanged: boolean                      | The basemap was changed                          |
 | MAP_BLUR<br>'map/blur'                             | FocusEvent object                                              | The map lost focus                               |
 | MAP_CLICK<br>'map/click'                           | MapClick object                                                | The map was clicked                              |

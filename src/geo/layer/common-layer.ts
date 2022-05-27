@@ -112,7 +112,7 @@ export class CommonLayer extends LayerInstance {
         this.state = newState;
         this.$iApi.event.emit(GlobalEvents.LAYER_STATECHANGE, {
             state: newState,
-            uid: this.uid
+            layer: this
         });
     }
 
@@ -158,7 +158,7 @@ export class CommonLayer extends LayerInstance {
                 //      also might want some redundant params, like layer id.
                 this.$iApi.event.emit(GlobalEvents.LAYER_VISIBILITYCHANGE, {
                     visibility: newval,
-                    uid: this.uid
+                    layer: this
                 });
             })
         );
@@ -171,7 +171,7 @@ export class CommonLayer extends LayerInstance {
                 //      also might want some redundant params, like layer id.
                 this.$iApi.event.emit(GlobalEvents.LAYER_OPACITYCHANGE, {
                     opacity: newval,
-                    uid: this.uid
+                    layer: this
                 });
             })
         );

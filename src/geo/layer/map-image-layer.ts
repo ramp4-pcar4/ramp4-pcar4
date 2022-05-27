@@ -348,7 +348,7 @@ export class MapImageLayer extends AttribLayer {
                             GlobalEvents.LAYER_VISIBILITYCHANGE,
                             {
                                 visibility: _sublayer.visibility,
-                                uid: _sublayer.uid
+                                layer: _sublayer
                             }
                         );
                         (_sublayer.parentLayer as CommonLayer) // the parent of a MapImageSublayer must be a CommonLayer
@@ -359,7 +359,7 @@ export class MapImageLayer extends AttribLayer {
                             GlobalEvents.LAYER_OPACITYCHANGE,
                             {
                                 opacity: newval,
-                                uid: _sublayer.uid
+                                layer: _sublayer
                             }
                         );
                     })
