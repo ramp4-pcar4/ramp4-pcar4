@@ -81,7 +81,7 @@ export class CommonMapAPI extends APIScope {
      * List of ESRI watch handlers
      * @private
      */
-    protected handlers: Array<any>;
+    protected handlers: Array<{ type: string; handler: any }>;
 
     /**
      * The default zoom level when zooming to a point feature
@@ -128,7 +128,10 @@ export class CommonMapAPI extends APIScope {
             );
         }
         this.esriMap = markRaw(new EsriMap(esriConfig));
-        this.pointZoomScale = config.pointZoomScale && config.pointZoomScale > 0 ? config.pointZoomScale : 50000;
+        this.pointZoomScale =
+            config.pointZoomScale && config.pointZoomScale > 0
+                ? config.pointZoomScale
+                : 50000;
         this._targetDiv = targetDiv;
         this.createMapView(config.initialBasemapId);
     }
@@ -199,7 +202,7 @@ export class CommonMapAPI extends APIScope {
         this.created = false;
 
         // Clean up map view
-        this.handlers.forEach(h => h.remove());
+        this.handlers.forEach(h => h.handler.remove());
         this.handlers = [];
 
         // Destroy the current map view

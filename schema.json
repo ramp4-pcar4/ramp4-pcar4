@@ -2119,7 +2119,14 @@
                 "pointZoomScale": {
                     "type": "number",
                     "default": 50000,
+                    "minimum": 1,
                     "description": "The zoom level when zooming to a point feature (e.g. when using the zoom button in the datagrid). Should be a positive integer."
+                },
+                "mapMouseThrottle": {
+                    "type": "number",
+                    "default": 0,
+                    "minimum": 0,
+                    "description": "The amount of throttling (in milliseconds) to be used for the map mouse move event. A value of 0 means no throttle."
                 }
             },
             "required": ["tileSchemas", "baseMaps"],
