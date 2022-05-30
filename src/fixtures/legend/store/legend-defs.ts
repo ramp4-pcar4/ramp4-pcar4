@@ -54,7 +54,7 @@ export class LegendItem {
     }
 
     /** Returns the item's type. */
-    get type(): string {
+    get type(): LegendTypes {
         return this._type;
     }
 
@@ -144,6 +144,8 @@ export class LegendEntry extends LegendItem {
         if (legendEntry.layer !== undefined) {
             // the legend entry config provides a layer, load layer properties from it
             this.loadLayer(legendEntry.layer);
+        } else {
+            this.errorCheck();
         }
     }
 
@@ -199,6 +201,28 @@ export class LegendEntry extends LegendItem {
         // reset the entry to a placeholder state
         this._type = LegendTypes.Placeholder;
         this._loadPromise = new DefPromise();
+
+        // set to error state if no layer exists
+        if (this._layer === undefined) {
+            this.errorCheck();
+        }
+    }
+
+    /**
+     * Sets entry to an error state if no layer is defined
+     */
+    errorCheck(): void {
+        // delay for potential loadLayer call before setting legend item state to error indicating failed layer
+        setTimeout(() => {
+            // TODO: no layer can also indicate info section
+            if (
+                this._layer === undefined &&
+                this._type === LegendTypes.Placeholder
+            ) {
+                this.setErrorType();
+            }
+        }, 20000);
+        // TODO: improve this timeout for error once #1020 (layer expectedResponseTime) is implemented
     }
 
     /**
@@ -207,6 +231,14 @@ export class LegendEntry extends LegendItem {
     remove(): void {
         // set it's visibility to false and update parent visibility
         this.toggleVisibility(false, true);
+    }
+
+    /**
+     * Sets entry to an error state
+     */
+    setErrorType(): void {
+        this._type = LegendTypes.Error;
+        this._loadPromise.rejectMe();
     }
 
     /**
@@ -220,7 +252,7 @@ export class LegendEntry extends LegendItem {
                 this._layer?.layerType === LayerType.MAPIMAGE &&
                 !this._layerIdx
             ) {
-                this._type = LegendTypes.Placeholder;
+                this._type = LegendTypes.Error;
                 console.error(
                     `MapImageLayer has no entryIndex defined - ${this._itemConfig.layerId} (${this._itemConfig.name})`
                 );
@@ -384,11 +416,12 @@ export class LegendEntry extends LegendItem {
      * @return {boolean} Indicates if control is enabled on this legend item or layer
      */
     controlAvailable(control: LayerControls): boolean {
+        // default to false if layer is undefined
         return (
             super.controlAvailable(control) ??
             this.layer?.controlAvailable(control) ??
             false
-        ); // default to false if layer is undefined
+        );
     }
 }
 
@@ -647,5 +680,6 @@ export enum LegendTypes {
     Set = 'VisibilitySet',
     Entry = 'LegendEntry',
     Info = 'InfoSection',
-    Placeholder = 'Placeholder'
+    Placeholder = 'Placeholder',
+    Error = 'Error'
 }
