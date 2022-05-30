@@ -144,6 +144,8 @@ export class LegendEntry extends LegendItem {
         if (legendEntry.layer !== undefined) {
             // the legend entry config provides a layer, load layer properties from it
             this.loadLayer(legendEntry.layer);
+        } else {
+            this.error();
         }
     }
 
@@ -199,6 +201,28 @@ export class LegendEntry extends LegendItem {
         // reset the entry to a placeholder state
         this._type = LegendTypes.Placeholder;
         this._loadPromise = new DefPromise();
+
+        // set to error state if no layer exists
+        if (this._layer === undefined) {
+            this.error();
+        }
+    }
+
+    /**
+     * Sets entry to an error state if no layer is defined
+     */
+    error(): void {
+        // delay for potential loadLayer call before setting legend item state to error indicating failed layer
+        setTimeout(() => {
+            // TODO: no layer can also indicate info section
+            if (
+                this._layer === undefined &&
+                this._type === LegendTypes.Placeholder
+            ) {
+                this._type = LegendTypes.Error;
+                this._loadPromise.rejectMe();
+            }
+        }, 3000);
     }
 
     /**
@@ -220,7 +244,7 @@ export class LegendEntry extends LegendItem {
                 this._layer?.layerType === LayerType.MAPIMAGE &&
                 !this._layerIdx
             ) {
-                this._type = LegendTypes.Placeholder;
+                this._type = LegendTypes.Error;
                 console.error(
                     `MapImageLayer has no entryIndex defined - ${this._itemConfig.layerId} (${this._itemConfig.name})`
                 );
@@ -384,11 +408,12 @@ export class LegendEntry extends LegendItem {
      * @return {boolean} Indicates if control is enabled on this legend item or layer
      */
     controlAvailable(control: LayerControls): boolean {
+        // default to false if layer is undefined
         return (
             super.controlAvailable(control) ??
             this.layer?.controlAvailable(control) ??
             false
-        ); // default to false if layer is undefined
+        );
     }
 }
 
@@ -647,5 +672,6 @@ export enum LegendTypes {
     Set = 'VisibilitySet',
     Entry = 'LegendEntry',
     Info = 'InfoSection',
-    Placeholder = 'Placeholder'
+    Placeholder = 'Placeholder',
+    Error = 'Error'
 }

@@ -13,6 +13,7 @@
 import LayerEntryV from './entry.vue';
 import LegendGroupV from './group.vue';
 import LegendPlaceholderV from './placeholder.vue';
+import LegendErrorV from './error.vue';
 import { defineComponent } from 'vue';
 import type { PropType } from 'vue';
 import { LegendItem, LegendTypes } from '../store/legend-defs';
@@ -29,15 +30,20 @@ export default defineComponent({
                 [LegendTypes.Set]: LegendGroupV,
                 [LegendTypes.Group]: LegendGroupV,
                 [LegendTypes.Entry]: LayerEntryV,
-                [LegendTypes.Placeholder]: LegendPlaceholderV
+                [LegendTypes.Placeholder]: LegendPlaceholderV,
+                [LegendTypes.Error]: LegendErrorV
             };
         }
     },
     mounted() {
-        this.legendItem.loadPromise.then(() => {
-            // need to manually update once the item loads to avoid some reactivity nuisances
-            this.$forceUpdate();
-        });
+        // need to manually update once the item loads/fails to avoid some reactivity nuisances
+        this.legendItem.loadPromise
+            .then(() => {
+                this.$forceUpdate();
+            })
+            .catch(() => {
+                this.$forceUpdate();
+            });
     }
 });
 </script>
