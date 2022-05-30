@@ -36,6 +36,7 @@ import { LayerStore } from '@/store/modules/layer';
 import { MapCaptionAPI } from './caption';
 import { markRaw, toRaw } from 'vue';
 import { ConfigStore } from '@/store/modules/config';
+import { throttle } from 'throttle-debounce';
 
 export class MapAPI extends CommonMapAPI {
     // API for managing the maptip
@@ -43,6 +44,12 @@ export class MapAPI extends CommonMapAPI {
 
     // API for managing map caption
     caption: MapCaptionAPI;
+
+    /**
+     * The throttle level for map mouse move events
+     * @private
+     */
+    private mapMouseThrottle: number;
 
     /**
      * @constructor
@@ -53,6 +60,8 @@ export class MapAPI extends CommonMapAPI {
 
         this.maptip = new MaptipAPI(iApi);
         this.caption = new MapCaptionAPI(iApi);
+
+        this.mapMouseThrottle = 0; // default to 0 (no throttle)
     }
 
     /**
@@ -61,6 +70,7 @@ export class MapAPI extends CommonMapAPI {
      * @param {string | HTMLDivElement} targetDiv the div to be used for the map view
      */
     createMap(config: RampMapConfig, targetDiv: string | HTMLDivElement): void {
+        this.setMapMouseThrottle(config.mapMouseThrottle ?? 0);
         super.createMap(config, targetDiv);
         this.$iApi.event.emit(GlobalEvents.MAP_CREATED);
     }
@@ -165,8 +175,9 @@ export class MapAPI extends CommonMapAPI {
         // Remove all ui components
         this.esriView.ui.components = [];
 
-        this.handlers.push(
-            this.esriView.watch('extent', (newval: __esri.Extent) => {
+        this.handlers.push({
+            type: 'extent',
+            handler: this.esriView.watch('extent', (newval: __esri.Extent) => {
                 // NOTE: yes, double events. rationale is a block of code dealing with filters will not
                 //       want to have two event handlers (one on filter, one on extent change) and synch
                 //       between them. They can subscribe to the filter event and get all the info they need.
@@ -183,25 +194,28 @@ export class MapAPI extends CommonMapAPI {
                     filterKey: CoreFilter.EXTENT
                 });
             })
-        );
+        });
 
-        this.handlers.push(
-            this.esriView.watch('scale', (newval: number) => {
+        this.handlers.push({
+            type: 'scale',
+            handler: this.esriView.watch('scale', (newval: number) => {
                 this.$iApi.event.emit(GlobalEvents.MAP_SCALECHANGE, newval);
             })
-        );
+        });
 
-        this.handlers.push(
-            this.esriView.on('resize', esriResize => {
+        this.handlers.push({
+            type: 'resize',
+            handler: this.esriView.on('resize', esriResize => {
                 this.$iApi.event.emit(GlobalEvents.MAP_RESIZED, {
                     height: esriResize.height,
                     width: esriResize.width
                 });
             })
-        );
+        });
 
-        this.handlers.push(
-            this.esriView.on('click', esriClick => {
+        this.handlers.push({
+            type: 'click',
+            handler: this.esriView.on('click', esriClick => {
                 this.$iApi.event.emit(
                     GlobalEvents.MAP_CLICK,
                     this.$iApi.geo.geom.esriMapClickToRamp(
@@ -210,10 +224,11 @@ export class MapAPI extends CommonMapAPI {
                     )
                 );
             })
-        );
+        });
 
-        this.handlers.push(
-            this.esriView.on('double-click', esriClick => {
+        this.handlers.push({
+            type: 'double-click',
+            handler: this.esriView.on('double-click', esriClick => {
                 this.$iApi.event.emit(
                     GlobalEvents.MAP_DOUBLECLICK,
                     this.$iApi.geo.geom.esriMapClickToRamp(
@@ -222,30 +237,35 @@ export class MapAPI extends CommonMapAPI {
                     )
                 );
             })
-        );
+        });
 
-        this.handlers.push(
-            this.esriView.on('pointer-move', esriMouseMove => {
-                // TODO debounce here? the map event fires pretty much every change in pixel value.
-                this.$iApi.event.emit(
-                    GlobalEvents.MAP_MOUSEMOVE,
-                    this.$iApi.geo.geom.esriMapMouseToRamp(esriMouseMove)
-                );
-            })
-        );
+        this.handlers.push({
+            type: 'pointer-move',
+            handler: this.esriView.on(
+                'pointer-move',
+                throttle(this.mapMouseThrottle, esriMouseMove => {
+                    this.$iApi.event.emit(
+                        GlobalEvents.MAP_MOUSEMOVE,
+                        this.$iApi.geo.geom.esriMapMouseToRamp(esriMouseMove)
+                    );
+                })
+            )
+        });
 
-        this.handlers.push(
-            this.esriView.on('pointer-down', esriMouseDown => {
+        this.handlers.push({
+            type: 'pointer-down',
+            handler: this.esriView.on('pointer-down', esriMouseDown => {
                 // .native is a DOM pointer event
                 this.$iApi.event.emit(
                     GlobalEvents.MAP_MOUSEDOWN,
                     esriMouseDown.native
                 );
             })
-        );
+        });
 
-        this.handlers.push(
-            this.esriView.on('key-down', esriKeyDown => {
+        this.handlers.push({
+            type: 'key-down',
+            handler: this.esriView.on('key-down', esriKeyDown => {
                 // .native is a DOM keyboard event
                 this.$iApi.event.emit(
                     GlobalEvents.MAP_KEYDOWN,
@@ -253,22 +273,24 @@ export class MapAPI extends CommonMapAPI {
                 );
                 esriKeyDown.stopPropagation();
             })
-        );
+        });
 
-        this.handlers.push(
-            this.esriView.on('key-up', esriKeyUp => {
+        this.handlers.push({
+            type: 'key-up',
+            handler: this.esriView.on('key-up', esriKeyUp => {
                 // .native is a DOM keyboard event
                 this.$iApi.event.emit(GlobalEvents.MAP_KEYUP, esriKeyUp.native);
                 esriKeyUp.stopPropagation();
             })
-        );
+        });
 
-        this.handlers.push(
-            this.esriView.on('blur', esriBlur => {
+        this.handlers.push({
+            type: 'blur',
+            handler: this.esriView.on('blur', esriBlur => {
                 // .native is a DOM keyboard event
                 this.$iApi.event.emit(GlobalEvents.MAP_BLUR, esriBlur.native);
             })
-        );
+        });
 
         this.esriView.container.addEventListener('touchmove', e => {
             // need this for panning and zooming to work on mobile devices / touchscreens
@@ -580,6 +602,53 @@ export class MapAPI extends CommonMapAPI {
     */
 
     // TODO passthrough functions, either by aly magic or make them hardcoded
+
+    /**
+     * Set's the map's mapMouseThrottle value to newThrottle.
+     * If newThrottle is not a positive number, a console error is thrown.
+     *
+     * The returned boolean indicates if the value has been successfully set.
+     *
+     * @param {number} newThrottle the new mapMouseThrottle value, which must be a positive number
+     * @returns {boolean} indicates if the value was set successfully
+     */
+    setMapMouseThrottle(newThrottle: number): boolean {
+        if (newThrottle < 0) {
+            console.error(
+                'Cannot set map mouse throttle to value that is less than 0.'
+            );
+            return false;
+        }
+        this.mapMouseThrottle = newThrottle;
+
+        // remove the current ESRI map mouse move handler
+        const currIdx = this.handlers.findIndex(h => h.type === 'pointer-move');
+        if (currIdx !== -1) {
+            let currHandler = this.handlers[currIdx];
+            this.handlers.splice(currIdx, 1);
+            currHandler.handler.remove();
+        }
+
+        // create a new handler (only if it was added before)
+        if (this.esriView && currIdx !== -1) {
+            this.handlers.push({
+                type: 'pointer-move',
+                handler: this.esriView.on(
+                    'pointer-move',
+                    throttle(this.mapMouseThrottle, esriMouseMove => {
+                        this.$iApi.event.emit(
+                            GlobalEvents.MAP_MOUSEMOVE,
+                            this.$iApi.geo.geom.esriMapMouseToRamp(
+                                esriMouseMove
+                            )
+                        );
+                    })
+                )
+            });
+        }
+
+        return true;
+    }
 
     /**
      * Zooms the map to a given zoom level. The center point will not change.

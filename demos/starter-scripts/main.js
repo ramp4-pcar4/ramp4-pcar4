@@ -54,6 +54,7 @@ let config = {
                         imperialScale: true
                     }
                 },
+                mapMouseThrottle: 200,
                 lodSets: [
                     {
                         id: 'LOD_NRCAN_Lambert_3978',
