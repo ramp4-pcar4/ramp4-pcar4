@@ -55,14 +55,14 @@
             </template>
             <a
                 href="#"
-                class="flex leading-snug items-center w-116 py-8"
+                class="flex leading-snug items-center overflow-hidden whitespace-nowrap"
                 @click="expand"
             >
                 {{ $t('legend.header.groups.expand') }}
             </a>
             <a
                 href="#"
-                class="flex leading-snug items-center w-116 py-8"
+                class="flex leading-snug items-center overflow-hidden whitespace-nowrap"
                 @click="collapse"
             >
                 {{ $t('legend.header.groups.collapse') }}
@@ -87,14 +87,14 @@
             </template>
             <a
                 href="#"
-                class="flex leading-snug items-center w-100 py-8"
+                class="flex leading-snug items-center w-100 overflow-hidden whitespace-nowrap"
                 @click="show"
             >
                 {{ $t('legend.header.visible.show') }}
             </a>
             <a
                 href="#"
-                class="flex leading-snug items-center w-100 py-8"
+                class="flex leading-snug items-center w-100 overflow-hidden whitespace-nowrap"
                 @click="hide"
             >
                 {{ $t('legend.header.visible.hide') }}

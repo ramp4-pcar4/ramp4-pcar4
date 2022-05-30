@@ -96,6 +96,7 @@ export default defineComponent({
 }
 .notification-dropdown {
     min-height: 250px;
+    @apply p-0 #{!important};
     &:hover {
         @apply bg-white #{!important};
     }
