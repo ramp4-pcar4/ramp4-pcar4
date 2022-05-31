@@ -53,6 +53,14 @@ export class PanelState {
      * @memberof PanelState
      */
     stackWidth = 0;
+
+    /**
+     * True if the app contains the `xs` class, indicating that panels have no extra margin.
+     *
+     * @type {boolean}
+     * @memberof PanelState
+     */
+     mobileView = false;
 }
 
 // this should have been `AsyncComponentPromise` type, but something is off there

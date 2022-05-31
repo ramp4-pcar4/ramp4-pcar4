@@ -38,13 +38,18 @@ export default defineComponent({
     data() {
         return {
             visible: get('panel/getVisible'),
-            stackWidth: sync('panel/stackWidth')
+            stackWidth: sync('panel/stackWidth'),
+            mobileView: sync('panel/mobileView')
         };
     },
 
     mounted(): void {
         // sync the `panel-stack` width into the store so that visible can get calculated
         const resizeObserver = new ResizeObserver((entries: any) => {
+            // Determine if the app is in mobile mode (the app container ONLY has the `xs` class on it. If it contains `sm`
+            // then the screen is too large).
+            this.mobileView = !this.$root?.$el.classList.contains('sm');
+
             this.stackWidth = entries[0].contentRect.width;
         });
 

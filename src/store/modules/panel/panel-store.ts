@@ -14,6 +14,7 @@ export enum PanelAction {
     removePanel = 'removePanel',
     setWidth = 'setWidth',
     setStackWidth = 'setStackWidth',
+    setMobileView = 'setMobileView',
     updateVisible = 'updateVisible'
 }
 
@@ -99,20 +100,28 @@ const actions = {
         context.dispatch(PanelAction.updateVisible);
     },
 
+    [PanelAction.setMobileView](context: PanelContext, value: boolean): void {
+        context.commit('SET_MOBILE_VIEW', value);
+    },
+
     [PanelAction.updateVisible](context: PanelContext): void {
         //TODO: update when panel width system is in place
         let remainingWidth = context.state.stackWidth;
         let nowVisible: PanelInstance[] = [];
 
         // add panels until theres no space in the stack
-        for (
-            let i = context.state.orderedItems.length - 1;
-            i >= 0 &&
-            remainingWidth >= (context.state.orderedItems[i].width || 350);
-            i--
-        ) {
-            remainingWidth -= context.state.orderedItems[i].width || 350;
-            nowVisible.unshift(context.state.orderedItems[i]);
+        for (let i = context.state.orderedItems.length - 1; i >= 0; i--) {
+            let panelWidth = context.state.orderedItems[i].width || 350;
+
+            // If not in mobile view, all panels have a 12px margin to the right.
+            if (!context.state.mobileView) {
+                panelWidth += 12;
+            }
+
+            if (remainingWidth >= panelWidth) {
+                remainingWidth -= panelWidth;
+                nowVisible.unshift(context.state.orderedItems[i]);
+            }
         }
 
         // if pinned isn't visible we need to change the order of the panels (to make it visible)
