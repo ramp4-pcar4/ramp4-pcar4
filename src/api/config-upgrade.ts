@@ -341,9 +341,88 @@ function mapUpgrader(r2Map: any, r4c: any): void {
 function layerUpgrader(r2layer: any): any {
     const r4layer: any = {
         id: r2layer.id,
-        layerType: r2layer.layerType, // TODO this will need to get mapped to the new kabab values in LayerType enum
         url: r2layer.url
     };
+
+    // fill in the properties that are common across all layer types
+    if (r2layer.name) {
+        r4layer.name = r2layer.name;
+    }
+    if (r2layer.refreshInterval) {
+        r4layer.refreshInterval = r2layer.refreshInterval;
+        console.warn(
+            'Property refreshInterval in layer is currently not supported.'
+        );
+    }
+    if (r2layer.expectedResponseTime) {
+        r4layer.expectedResponseTime = r2layer.expectedResponseTime;
+        console.warn(
+            'Property expectedResponseTime in layer is currently not supported.'
+        );
+    }
+    if (r2layer.metadataUrl) {
+        r4layer.metadataUrl = r2layer.metadataUrl;
+    }
+    if (r2layer.catalogueUrl) {
+        r4layer.catalogueUrl = r2layer.catalogueUrl;
+    }
+    if (r2layer.extent) {
+        r4layer.extent = r2layer.extent;
+    }
+    const allowedControls: string[] = [
+        'boundaryZoom',
+        'boundingBox',
+        'datatable',
+        'identify',
+        'metadata',
+        'opacity',
+        'refresh',
+        'reload',
+        'remove',
+        'settings',
+        'symbology',
+        'visibility'
+    ];
+    if (r2layer.controls) {
+        r4layer.controls = [];
+        r2layer.controls.forEach((control: string) => {
+            if (control === 'query') {
+                r4layer.controls.push('identify');
+            } else if (allowedControls.includes(control)) {
+                r4layer.controls.push(control);
+            } else {
+                console.warn(`Ignored invalid layer control: ${control}`);
+            }
+        });
+    }
+    // Should disabledControls be removed as well, seeing as it was handled in #884?
+    if (r2layer.disabledControls) {
+        r4layer.disabledControls = [];
+        r2layer.disabledControls.forEach((control: string) => {
+            if (control === 'query') {
+                r4layer.disabledControls.push('identify');
+            } else if (allowedControls.includes(control)) {
+                r4layer.disabledControls.push(control);
+            } else {
+                console.warn(`Ignored invalid layer control: ${control}`);
+            }
+        });
+    }
+
+    if (r2layer.state) {
+        r4layer.state = {
+            opacity: r2layer.state.opacity ?? 1,
+            visibility: r2layer.state.visibility ?? true,
+            boundingBox: r2layer.state.boundingBox ?? false,
+            identify: r2layer.state.query ?? true,
+            hovertips: r2layer.state.hovertips ?? true
+        };
+        if (typeof r2layer.state.snapshot !== 'undefined') {
+            console.warn(
+                `snapshot property provided in initialLayer settings in layer ${r2layer.id} cannot be mapped and will be skipped.`
+            );
+        }
+    }
 
     // TODO fill in the specifcs for each layer type
     //      will probably want sub-functions for common big structures like grid/table,
@@ -351,21 +430,37 @@ function layerUpgrader(r2layer: any): any {
 
     switch (r2layer.layerType) {
         case 'esriDynamic':
+            r4layer.layerType = 'esri-map-image';
             break;
 
         case 'esriFeature':
+            r4layer.layerType = 'esri-feature';
             break;
 
         case 'ogcWfs':
+            r4layer.layerType = 'ogc-wfs';
             break;
 
         case 'ogcWms':
+            r4layer.layerType = 'ogc-wms';
             break;
 
         case 'esriImage':
+            r4layer.layerType = 'esri-imagery';
+            if (typeof r2layer.enableStructuredDelete !== 'undefined') {
+                console.warn(
+                    `enableStructuredDelete property provided in layer ${r2layer.id} cannot be mapped and will be skipped.`
+                );
+            }
             break;
 
         case 'esriTile':
+            r4layer.layerType = 'esri-tile';
+            if (typeof r2layer.enableStructuredDelete !== 'undefined') {
+                console.warn(
+                    `enableStructuredDelete property provided in layer ${r2layer.id} cannot be mapped and will be skipped.`
+                );
+            }
             break;
 
         default:
