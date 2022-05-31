@@ -51,7 +51,7 @@
                     "description": "Key-value dictionary where the key is the tile schema id and the value is a basemap. Can provide an overriding basemap for each tile schema in the main map config.",
                     "additionalProperties": {
                         "type": "object",
-                        "$ref": "#/$defs/basemapNode"
+                        "$ref": "#/$defs/basemap"
                     }
                 },
                 "startMinimized": {
@@ -620,31 +620,31 @@
             "items": {
                 "oneOf": [
                     {
-                        "$ref": "#/$defs/basicLayerNode"
+                        "$ref": "#/$defs/basicLayer"
                     },
                     {
-                        "$ref": "#/$defs/mapImageLayerNode"
+                        "$ref": "#/$defs/mapImageLayer"
                     },
                     {
-                        "$ref": "#/$defs/featureLayerNode"
+                        "$ref": "#/$defs/featureLayer"
                     },
                     {
-                        "$ref": "#/$defs/fileLayerNode"
+                        "$ref": "#/$defs/fileLayer"
                     },
                     {
-                        "$ref": "#/$defs/wfsLayerNode"
+                        "$ref": "#/$defs/wfsLayer"
                     },
                     {
-                        "$ref": "#/$defs/wmsLayerNode"
+                        "$ref": "#/$defs/wmsLayer"
                     },
                     {
-                        "$ref": "#/$defs/osmLayerNode"
+                        "$ref": "#/$defs/osmLayer"
                     }
                 ]
             },
             "minItems": 0
         },
-        "basicLayerNode": {
+        "basicLayer": {
             "type": "object",
             "description": "Properties describing a generic layer type that can represent an ESRI tile/image layer.",
             "properties": {
@@ -688,7 +688,7 @@
                     "description": "Service type shorthand for basic layers."
                 },
                 "extent": {
-                    "$ref": "#/$defs/extentWithReferenceNode"
+                    "$ref": "#/$defs/extentWithReference"
                 },
                 "controls": {
                     "$ref": "#/$defs/layerControls",
@@ -723,7 +723,7 @@
             "required": ["id", "layerType", "url"],
             "unevaluatedProperties": false
         },
-        "osmLayerNode": {
+        "osmLayer": {
             "type": "object",
             "description": "Properties describing an OpenStreetMap layer.",
             "properties": {
@@ -752,7 +752,7 @@
                     "description": "Service type shorthand for OpenStreetMap layers."
                 },
                 "extent": {
-                    "$ref": "#/$defs/extentWithReferenceNode"
+                    "$ref": "#/$defs/extentWithReference"
                 },
                 "controls": {
                     "$ref": "#/$defs/layerControls",
@@ -783,7 +783,7 @@
             "required": ["id", "layerType"],
             "unevaluatedProperties": false
         },
-        "mapImageLayerNode": {
+        "mapImageLayer": {
             "type": "object",
             "description": "Properties describing a map image Layer which is rendered as a group by default.",
             "properties": {
@@ -836,7 +836,7 @@
                     "type": "array",
                     "description": "Layer entries rendered as part of the map image layer group.",
                     "items": {
-                        "$ref": "#/$defs/mapImageLayerEntryNode"
+                        "$ref": "#/$defs/mapImageLayerEntry"
                     },
                     "minItems": 1
                 },
@@ -846,7 +846,7 @@
                     "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer"
                 },
                 "extent": {
-                    "$ref": "#/$defs/extentWithReferenceNode"
+                    "$ref": "#/$defs/extentWithReference"
                 },
                 "controls": {
                     "$ref": "#/$defs/layerControls",
@@ -894,7 +894,7 @@
             "required": ["id", "layerType", "layerEntries", "url"],
             "unevaluatedProperties": false
         },
-        "mapImageLayerEntryNode": {
+        "mapImageLayerEntry": {
             "type": "object",
             "description": "A child entry of a map image layer.",
             "properties": {
@@ -913,7 +913,7 @@
                     "description": "The display field of the layer. If it is not present the viewer will make an attempt to scrape this information."
                 },
                 "extent": {
-                    "$ref": "#/$defs/extentWithReferenceNode"
+                    "$ref": "#/$defs/extentWithReference"
                 },
                 "controls": {
                     "$ref": "#/$defs/layerControls",
@@ -969,7 +969,7 @@
             "required": ["index"],
             "unevaluatedProperties": false
         },
-        "featureLayerNode": {
+        "featureLayer": {
             "type": "object",
             "description": "Properties describing an ESRI Feature Layer.",
             "properties": {
@@ -1028,7 +1028,7 @@
                     "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer"
                 },
                 "extent": {
-                    "$ref": "#/$defs/extentWithReferenceNode"
+                    "$ref": "#/$defs/extentWithReference"
                 },
                 "controls": {
                     "$ref": "#/$defs/layerControls",
@@ -1073,7 +1073,7 @@
             "required": ["id", "layerType", "url"],
             "additionalProperties": false
         },
-        "fileLayerNode": {
+        "fileLayer": {
             "type": "object",
             "description": "Properties describing a file layer (implemented in an ESRI feature layer).",
             "properties": {
@@ -1125,7 +1125,7 @@
                     "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer"
                 },
                 "extent": {
-                    "$ref": "#/$defs/extentWithReferenceNode"
+                    "$ref": "#/$defs/extentWithReference"
                 },
                 "controls": {
                     "$ref": "#/$defs/layerControls",
@@ -1170,7 +1170,7 @@
             "required": ["id", "layerType", "url"],
             "additionalProperties": false
         },
-        "wfsLayerNode": {
+        "wfsLayer": {
             "type": "object",
             "description": "Properties describing a WFS layer (also an ESRI feature layer).",
             "properties": {
@@ -1214,7 +1214,7 @@
                     "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer"
                 },
                 "extent": {
-                    "$ref": "#/$defs/extentWithReferenceNode"
+                    "$ref": "#/$defs/extentWithReference"
                 },
                 "controls": {
                     "$ref": "#/$defs/layerControls",
@@ -1264,7 +1264,7 @@
             "required": ["id", "layerType", "url"],
             "additionalProperties": false
         },
-        "wmsLayerNode": {
+        "wmsLayer": {
             "type": "object",
             "description": "Properties describing a WMS layer.",
             "properties": {
@@ -1311,7 +1311,7 @@
                     "type": "array",
                     "description": "Layer entries rendered as part of the WMS legend block.",
                     "items": {
-                        "$ref": "#/$defs/wmsLayerEntryNode"
+                        "$ref": "#/$defs/wmsLayerEntry"
                     },
                     "minItems": 1
                 },
@@ -1343,7 +1343,7 @@
                     "description": "Specifies if GetLegendGraphic should be enabled for this WMS and indicates the format that should be requested."
                 },
                 "extent": {
-                    "$ref": "#/$defs/extentWithReferenceNode"
+                    "$ref": "#/$defs/extentWithReference"
                 },
                 "controls": {
                     "$ref": "#/$defs/layerControls",
@@ -1372,7 +1372,7 @@
             "required": ["id", "layerType", "layerEntries", "url"],
             "unevaluatedProperties": false
         },
-        "wmsLayerEntryNode": {
+        "wmsLayerEntry": {
             "type": "object",
             "description": "A child entry of a WMS layer.",
             "properties": {
@@ -1442,7 +1442,7 @@
                     "$ref": "#/$defs/details"
                 },
                 "grid": {
-                    "$ref": "#/$defs/tableNode"
+                    "$ref": "#/$defs/table"
                 },
                 "legend": {
                     "type": "object",
@@ -1518,7 +1518,7 @@
             },
             "additionalProperties": false
         },
-        "tableNode": {
+        "table": {
             "type": "object",
             "description": "Configuration for the datatable.",
             "properties": {
@@ -1536,7 +1536,7 @@
                     "type": "array",
                     "description": "An array to specify how the columns (properties) of the table are defined. If a column is not present in the array, it is treated as disabled.",
                     "items": {
-                        "$ref": "#/$defs/columnNode"
+                        "$ref": "#/$defs/column"
                     }
                 },
                 "search": {
@@ -1574,7 +1574,7 @@
             },
             "unevaluatedProperties": false
         },
-        "columnNode": {
+        "column": {
             "type": "object",
             "description": "Specifies column properties. The ordering of columns in the table header is the same as the order they appear in this array.",
             "allOf": [
@@ -1610,12 +1610,12 @@
                     "description": "Specifies if column can be filtered."
                 },
                 "filter": {
-                    "$ref": "#/$defs/filterNode"
+                    "$ref": "#/$defs/filter"
                 }
             },
             "unevaluatedProperties": false
         },
-        "filterNode": {
+        "filter": {
             "type": "object",
             "description": "Specifies the filter properties for a column.",
             "properties": {
@@ -1639,7 +1639,7 @@
             "required": ["type"],
             "additionalProperties": false
         },
-        "tileSchemaNode": {
+        "tileSchema": {
             "type": "object",
             "description": "A unique combination of an LOD and an extent set (each basemap must fit into a tile schema).",
             "properties": {
@@ -1676,7 +1676,7 @@
             "required": ["id", "name", "default"],
             "additionalProperties": false
         },
-        "basemapNode": {
+        "basemap": {
             "type": "object",
             "description": "Properties of a basemap to be displayed in the basemap selector panel.",
             "properties": {
@@ -1742,7 +1742,7 @@
                     "minItems": 1
                 },
                 "attribution": {
-                    "$ref": "#/$defs/attributionNode"
+                    "$ref": "#/$defs/attribution"
                 }
             },
             "required": [
@@ -1755,7 +1755,7 @@
             ],
             "unevaluatedProperties": false
         },
-        "attributionNode": {
+        "attribution": {
             "type": "object",
             "description": "Custom attribution and logo for associated basemap when selected.",
             "properties": {
@@ -1803,7 +1803,7 @@
             "required": ["text", "logo"],
             "unevaluatedProperties": false
         },
-        "extentSetNode": {
+        "extentSet": {
             "type": "object",
             "description": "Configuration for all required extent properties.",
             "properties": {
@@ -1812,22 +1812,22 @@
                     "description": "Identification for extent set that is mainly referenced by a tile schema."
                 },
                 "default": {
-                    "$ref": "#/$defs/extentNode",
+                    "$ref": "#/$defs/extent",
                     "description": "The default (starting) extent."
                 },
                 "full": {
-                    "$ref": "#/$defs/extentNode",
+                    "$ref": "#/$defs/extent",
                     "description": "The full extent; default will be used if not supplied."
                 },
                 "maximum": {
-                    "$ref": "#/$defs/extentNode",
+                    "$ref": "#/$defs/extent",
                     "description": "The maximum extent; full or default extents will be used if not supplied."
                 }
             },
             "required": ["id", "default"],
             "unevaluatedProperties": false
         },
-        "extentNode": {
+        "extent": {
             "type": "object",
             "description": "Map extent defined by min/max xy-coordinates.",
             "properties": {
@@ -1847,7 +1847,7 @@
             "required": ["xmin", "ymin", "xmax", "ymax"],
             "additionalProperties": false
         },
-        "extentWithReferenceNode": {
+        "extentWithReference": {
             "type": "object",
             "description": "Map extent defined by min/max xy-coordinates and spatial reference.",
             "properties": {
@@ -1864,13 +1864,13 @@
                     "type": "number"
                 },
                 "spatialReference": {
-                    "$ref": "#/$defs/spatialReferenceNode"
+                    "$ref": "#/$defs/spatialReference"
                 }
             },
             "required": ["xmin", "ymin", "xmax", "ymax"],
             "unevaluatedProperties": false
         },
-        "spatialReferenceNode": {
+        "spatialReference": {
             "type": "object",
             "description": "Spatial reference properties to help define map projection.",
             "properties": {
@@ -1900,7 +1900,7 @@
             ],
             "unevaluatedProperties": false
         },
-        "lodSetNode": {
+        "lodSet": {
             "type": "object",
             "description": "Details for a specific tile schema.",
             "properties": {
@@ -2040,7 +2040,7 @@
                     "type": "array",
                     "description": "Combinations of LOD and extent sets for the map.",
                     "items": {
-                        "$ref": "#/$defs/tileSchemaNode"
+                        "$ref": "#/$defs/tileSchema"
                     },
                     "minItems": 1
                 },
@@ -2048,14 +2048,14 @@
                     "type": "array",
                     "description": "The default, full and maximum extents of the map.",
                     "items": {
-                        "$ref": "#/$defs/extentSetNode"
+                        "$ref": "#/$defs/extentSet"
                     }
                 },
                 "lodSets": {
                     "type": "array",
                     "description": "The levels of detail (zoom scales) available for the map.",
                     "items": {
-                        "$ref": "#/$defs/lodSetNode"
+                        "$ref": "#/$defs/lodSet"
                     }
                 },
                 "initialBasemapId": {
@@ -2066,7 +2066,7 @@
                     "type": "array",
                     "description": "A list of basemaps to be made available via the basemap selector.",
                     "items": {
-                        "$ref": "#/$defs/basemapNode"
+                        "$ref": "#/$defs/basemap"
                     },
                     "minItems": 1
                 },
