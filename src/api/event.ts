@@ -208,6 +208,18 @@ export enum GlobalEvents {
     MAP_MOUSEMOVE = 'map/mousemove',
 
     /**
+     * Fires when the mouse moves stops moving over the map.
+     * Payload: `(params: MapMove)`
+     */
+    MAP_MOUSEMOVE_END = 'map/mousemoveend',
+
+    /**
+     * Fires when the mouse starts moving over the map.
+     * Payload: `(params: MapMove)`
+     */
+    MAP_MOUSEMOVE_START = 'map/mousemovestart',
+
+    /**
      * Fires when the map view finishes refreshing.
      * Payload: none
      */

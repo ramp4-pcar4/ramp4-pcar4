@@ -106,6 +106,8 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | MAP_KEYUP<br>'map/keyup'                           | KeyboardEvent object                                           | A key was released                               |
 | MAP_MOUSEDOWN<br>'map/mousedown'                   | PointerEvent object                                            | A mouse button was depressed                     |
 | MAP_MOUSEMOVE<br>'map/mousemove'                   | MapMove object                                                 | The mouse moved over the map                     |
+| MAP_MOUSEMOVE_END<br>'map/mousemoveend'            | MapMove object                                                 | The mouse started moving over the map            |
+| MAP_MOUSEMOVE_START<br>'map/mousemovestart'        | MapMove object                                                 | The mouse stopped moving over the map            |
 | MAP_REFRESH_END<br>'map/refreshend'                | none                                                           | The map view started refreshing                  |
 | MAP_REFRESH_START<br>'map/refreshstart'            | none                                                           | The map view finished refreshing                 |
 | MAP_RESIZED<br>'map/resized'                       | _height_: new height, _width_: new width                       | The map view changed size                        |
