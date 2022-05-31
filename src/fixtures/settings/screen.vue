@@ -83,7 +83,8 @@
                 <div class="rv-settings-divider"></div>
             </div>
 
-            <div class="flex flex-col justify-center">
+            <!-- TODO: revisit issue #1019 after v1.0.0 -->
+            <!-- <div class="flex flex-col justify-center">
                 <span class="rv-subheader">{{
                     $t('settings.label.interval')
                 }}</span>
@@ -103,7 +104,7 @@
                 ></settings-component>
 
                 <div class="rv-settings-divider"></div>
-            </div>
+            </div> -->
         </template>
     </panel-screen>
 </template>
