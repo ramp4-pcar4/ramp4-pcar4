@@ -8,6 +8,7 @@ import {
     EsriSimpleRenderer,
     EsriSpatialReference
 } from '@/geo/esri';
+import { FieldType } from '@/geo/api';
 
 /**
  * Maps GeoJSON geometry types to a set of default renders defined in GlobalStorage.DefaultRenders
@@ -130,8 +131,7 @@ function cleanUpFields(
 
 export class FileUtils extends APIScope {
     /**
-     * Extracts fields from the first feature in the feature collection, does no
-     * guesswork on property types and calls everything a string.
+     * Extracts fields from the first feature in the feature collection
      */
     extractGeoJsonFields(geoJson: any) {
         // TODO attempt to strong type input parameter.  GeoJSON.FeatureCollection wants us to pass in other types so avoiding it for now.
@@ -141,27 +141,77 @@ export class FileUtils extends APIScope {
             );
         }
 
-        // TODO investigate if a value can be of numeric type in GeoJSON schema. if so, try to detect, change type to number
-        if (geoJson.features[0].properties) {
-            return Object.keys(geoJson.features[0].properties).map(function (
-                prop
-            ) {
-                return { name: prop, type: 'string' };
-            });
-        } else {
-            return [];
+        // extract all fields and type them as string for now
+        let fields: { name: string; type: string }[] = Object.keys(
+            geoJson.features[0].properties
+        ).map(field => {
+            return { name: field, type: 'string' };
+        });
+
+        let featureIdx = 0; // keep track of the current feature used for typing infering
+
+        // keep track of fields that still need to be typed
+        let fieldsToBeMapped: Array<string> = Object.keys(
+            geoJson.features[0].properties
+        );
+
+        // loop through all features until we type all fields or exhaust list
+        while (featureIdx < geoJson.features.length) {
+            let feature = geoJson.features[featureIdx];
+
+            if (feature.properties) {
+                // check all the values of this feature and attempt to type the fields that haven't been mapped yet
+                Object.keys(feature.properties)
+                    .filter((field: string) => fieldsToBeMapped.includes(field))
+                    .forEach((field: string) => {
+                        let value: any = feature.properties[field];
+
+                        // if value is null or undefined, we cannot infer type so we skip this feature and use the next one
+                        if (value != null) {
+                            // infer the type of this field
+                            let fieldIdx = fields.findIndex(
+                                fieldInfo => fieldInfo.name === field
+                            );
+                            fields[fieldIdx] = {
+                                name: field,
+                                type: this.inferType(value)
+                            };
+
+                            // remove this field from the list of fields with pending types
+                            fieldsToBeMapped.splice(
+                                fieldsToBeMapped.indexOf(field),
+                                1
+                            );
+                        }
+                    });
+            }
+
+            // check if all fields have been typed and mapped, if so exit the loop
+            if (fieldsToBeMapped.length === 0) {
+                break;
+            }
+
+            // not all fields have been mapped, so use the next feature
+            featureIdx++;
         }
+
+        return fields;
     }
 
     /**
      * Extracts fields from csv file does no guesswork on property types and calls everything a string.
      */
     extractCsvFields(csvData: string, delimiter = ',') {
+        // TODO: When csv file is read, all data is treated as strings (since the csv types do not carry over)
+        //       Since extractGeoJsonFields does type inferencing, maybe this can also be enhanced to infer types?
+        //       To do this, the csv data would need to be converted to its proper type before inferences
+        //       Proper typing is always preferred for data analysis and things like sorting
+
         const fields: Array<string> = dsv
             .dsvFormat(delimiter)
             .parseRows(csvData)[0];
         return fields.map(field => {
-            return { name: field, type: 'string' };
+            return { name: field, type: FieldType.STRING };
         });
     }
 
@@ -178,7 +228,7 @@ export class FileUtils extends APIScope {
             fields: [
                 {
                     name: 'OBJECTID',
-                    type: 'oid'
+                    type: FieldType.OID
                 }
             ]
         };
@@ -253,7 +303,7 @@ export class FileUtils extends APIScope {
                         field.alias === options.latField
                 );
                 if (latField) {
-                    latField.type = 'double';
+                    latField.type = FieldType.DOUBLE;
                 }
             }
             if (options.lonField) {
@@ -263,7 +313,7 @@ export class FileUtils extends APIScope {
                         field.alias === options.lonField
                 );
                 if (longField) {
-                    longField.type = 'double';
+                    longField.type = FieldType.DOUBLE;
                 }
             }
         }
@@ -303,8 +353,9 @@ export class FileUtils extends APIScope {
             // TODO figure out how to actually handle arrays or objects as attribute values
             Object.keys(gr.attributes).forEach(attName => {
                 if (
-                    Array.isArray(gr.attributes[attName]) ||
-                    typeof gr.attributes[attName] === 'object'
+                    (Array.isArray(gr.attributes[attName]) ||
+                        typeof gr.attributes[attName] === 'object') &&
+                    gr.attributes[attName] != null
                 ) {
                     gr.attributes[attName] = '[Complex Value Removed]';
                 }
@@ -378,5 +429,23 @@ export class FileUtils extends APIScope {
      */
     async shapefileToGeoJson(shapeData: ArrayBuffer): Promise<any> {
         return (<any>window).shp(shapeData);
+    }
+
+    /**
+     * Attempt to infers the type of a given value
+     * Will check if the value's type is one of int, double
+     * Defaults to string type if not
+     */
+    inferType(value: any): FieldType {
+        // TODO: add support for other types as needed
+        if (typeof value === 'number') {
+            // TODO: Ideally we would want to properly infer ints, but sometimes the value will look like an int (e.g. a whole number)
+            //       But the field actually supports floats and we got unlucky with the value that was chosen to infer the type.
+            //       Hence now the field is typed as an int field, but field is now seeing floats so ESRI throws warnings
+
+            // treat all numbers as doubles since it will also cover ints
+            return FieldType.DOUBLE;
+        }
+        return FieldType.STRING;
     }
 }

@@ -199,15 +199,18 @@ import GridCustomHeaderV from './templates/custom-header.vue';
 // grid button templates
 import DetailsButtonRendererV from './templates/details-button-renderer.vue';
 import ZoomButtonRendererV from './templates/zoom-button-renderer.vue';
-import { CoreFilter } from '@/geo/api';
+import { CoreFilter, FieldType } from '@/geo/api';
 
 import { debounce } from 'throttle-debounce';
 import linkifyHtml from 'linkify-html';
 
 // these should match up with the `type` value returned by the attribute promise.
-const NUM_TYPES: string[] = ['oid', 'double', 'single', 'integer'];
-const DATE_TYPE = 'date';
-const TEXT_TYPE = 'string';
+const NUM_TYPES: string[] = [
+    FieldType.OID,
+    FieldType.DOUBLE,
+    FieldType.SINGLE,
+    FieldType.INTEGER
+];
 
 export default defineComponent({
     name: 'GridTableComponentV',
@@ -376,22 +379,23 @@ export default defineComponent({
                             this.setUpNumberFilter(col, this.config.state);
                             col.filter = 'agNumberColumnFilter';
                             col.cellRenderer = (cell: any) => {
-                                return this.$iApi.$vApp.$n(
-                                    cell.value,
-                                    'number'
-                                );
+                                return cell.value == null
+                                    ? ''
+                                    : this.$iApi.$vApp.$n(cell.value, 'number');
                             };
-                        } else if (fieldInfo.type === DATE_TYPE) {
+                        } else if (fieldInfo.type === FieldType.DATE) {
                             this.setUpDateFilter(col, this.config.state);
                             col.filter = 'agDateColumnFilter';
                             col.minWidth = 400;
                             col.cellRenderer = (cell: any) => {
                                 // get YYYY-MM-DD from date
-                                return new Date(cell.value)
-                                    .toISOString()
-                                    .slice(0, 10);
+                                return cell.value == null
+                                    ? ''
+                                    : new Date(cell.value)
+                                          .toISOString()
+                                          .slice(0, 10);
                             };
-                        } else if (fieldInfo.type === TEXT_TYPE) {
+                        } else if (fieldInfo.type === FieldType.STRING) {
                             if (col.isSelector) {
                                 // set up a selector filter instead of a text filter if the `isSelector` flag is true.
                                 this.setUpSelectorFilter(
