@@ -95,6 +95,13 @@ module.exports = {
     },
     plugins: [
         plugin(function ({ addVariant, e }) {
+            addVariant('xs', ({ modifySelectors, separator }) => {
+                modifySelectors(({ className }) => {
+                    return `.xs .${e(`xs${separator}${className}`)}`;
+                });
+            });
+        }),
+        plugin(function ({ addVariant, e }) {
             addVariant('sm', ({ modifySelectors, separator }) => {
                 modifySelectors(({ className }) => {
                     return `.sm .${e(`sm${separator}${className}`)}`;
