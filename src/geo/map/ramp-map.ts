@@ -36,7 +36,7 @@ import { LayerStore } from '@/store/modules/layer';
 import { MapCaptionAPI } from './caption';
 import { markRaw, toRaw } from 'vue';
 import { ConfigStore } from '@/store/modules/config';
-import { throttle } from 'throttle-debounce';
+import { throttle, debounce } from 'throttle-debounce';
 
 export class MapAPI extends CommonMapAPI {
     // API for managing the maptip
@@ -246,6 +246,32 @@ export class MapAPI extends CommonMapAPI {
                 throttle(this.mapMouseThrottle, esriMouseMove => {
                     this.$iApi.event.emit(
                         GlobalEvents.MAP_MOUSEMOVE,
+                        this.$iApi.geo.geom.esriMapMouseToRamp(esriMouseMove)
+                    );
+                })
+            )
+        });
+
+        this.handlers.push({
+            type: 'pointer-move-start', // emulate mouse move start event using debounce
+            handler: this.esriView.on(
+                'pointer-move',
+                debounce(100, true, esriMouseMove => {
+                    this.$iApi.event.emit(
+                        GlobalEvents.MAP_MOUSEMOVE_START,
+                        this.$iApi.geo.geom.esriMapMouseToRamp(esriMouseMove)
+                    );
+                })
+            )
+        });
+
+        this.handlers.push({
+            type: 'pointer-move-end', // emulate mouse move end event using debounce
+            handler: this.esriView.on(
+                'pointer-move',
+                debounce(100, esriMouseMove => {
+                    this.$iApi.event.emit(
+                        GlobalEvents.MAP_MOUSEMOVE_END,
                         this.$iApi.geo.geom.esriMapMouseToRamp(esriMouseMove)
                     );
                 })
@@ -630,7 +656,7 @@ export class MapAPI extends CommonMapAPI {
         }
 
         // create a new handler (only if it was added before)
-        if (this.esriView && currIdx !== -1) {
+        if (currIdx !== -1 && this.esriView) {
             this.handlers.push({
                 type: 'pointer-move',
                 handler: this.esriView.on(
