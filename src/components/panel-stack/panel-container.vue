@@ -22,6 +22,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import type { PropType } from 'vue';
+import { get } from '@/store/pathify-helper';
 
 import anime from 'animejs';
 
@@ -39,8 +40,17 @@ export default defineComponent({
     data() {
         return {
             // indicates if the transition should be skipped
-            skipTransition: false
+            skipTransition: false,
+            mobileView: get('panel/mobileView')
         };
+    },
+
+    mounted() {
+        // If the app is in mobile view, we want the panel to take up the whole screen.
+        // This will override a existing width property if it is specified.
+        if (this.mobileView) {
+            this.panel.style.width = '100%';
+        }
     },
 
     methods: {
