@@ -9,7 +9,7 @@ if ('ResizeObserver' in self) {
     var ro = new ResizeObserver(function (entries) {
         // Default breakpoints that should apply to all observed
         // elements that don't define their own custom breakpoints.
-        var defaultBreakpoints = { xs: 384, sm: 576, md: 768, lg: 960 };
+        var defaultBreakpoints = { xs: 200, sm: 576, md: 768, lg: 960 };
 
         entries.forEach(function (entry) {
             // If breakpoints are defined on the observed element,

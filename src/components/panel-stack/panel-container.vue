@@ -22,6 +22,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import type { PropType } from 'vue';
+import { get } from '@/store/pathify-helper';
 
 import anime from 'animejs';
 
@@ -39,7 +40,8 @@ export default defineComponent({
     data() {
         return {
             // indicates if the transition should be skipped
-            skipTransition: false
+            skipTransition: false,
+            mobileView: get('panel/mobileView')
         };
     },
 
