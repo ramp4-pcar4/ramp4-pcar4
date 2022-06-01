@@ -349,7 +349,7 @@ function layerUpgrader(r2layer: any): any {
     if (r2layer.refreshInterval) {
         r4layer.refreshInterval = r2layer.refreshInterval ?? 0; // Should we remove this since we're not supporting refreshInterval for now?
         console.warn(
-            'Property expectedResponseTime in layer is currently not supported.'
+            'Property refreshInterval in layer is currently not supported.'
         );
     }
     if (r2layer.expectedResponseTime) {
