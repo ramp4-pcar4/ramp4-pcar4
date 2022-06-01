@@ -206,6 +206,10 @@ export class PanelInstance extends APIScope {
         if (!this.style['flex-basis']) {
             this.style['flex-basis'] = this.style.width || '350px';
         }
+
+        // set the panel width to 100% for mobile resolutions. The flex-basis property above
+        // will handle the regular width.
+        this.style['width'] = '100%';
     }
 
     /**

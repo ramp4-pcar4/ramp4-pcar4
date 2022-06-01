@@ -116,6 +116,9 @@ const actions = {
             // If not in mobile view, all panels have a 12px margin to the right.
             if (!context.state.mobileView) {
                 panelWidth += 12;
+            } else {
+                // If in mobile view, a single panel will take up the whole view.
+                panelWidth = 0;
             }
 
             if (remainingWidth >= panelWidth) {
