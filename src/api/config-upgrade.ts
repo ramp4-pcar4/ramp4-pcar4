@@ -347,20 +347,26 @@ function layerUpgrader(r2layer: any): any {
     // fill in the properties that are common across all layer types
     r4layer.name = r2layer.name ?? '';
     if (r2layer.refreshInterval) {
-        r4layer.refreshInterval = r2layer.refreshInterval ?? 0; // Should we remove this since we're not supporting refreshInterval for now?
+        r4layer.refreshInterval = r2layer.refreshInterval;
         console.warn(
             'Property refreshInterval in layer is currently not supported.'
         );
     }
     if (r2layer.expectedResponseTime) {
-        r4layer.expectedResponseTime = r2layer.expectedResponseTime; //  Should we remove this since we're not supporting expectedResponseTime for now?
+        r4layer.expectedResponseTime = r2layer.expectedResponseTime;
         console.warn(
             'Property expectedResponseTime in layer is currently not supported.'
         );
     }
-    r4layer.metadataUrl = r2layer.metadataUrl ?? null;
-    r4layer.catalogueUrl = r2layer.catalogueUrl ?? null;
-    r4layer.extent = r2layer.extent ?? null; // seems to be 1 to 1 correspondence between RAMP2 and RAMP4 extent nodes.
+    if (r2layer.metadataUrl) {
+        r4layer.metadataUrl = r2layer.metadataUrl;
+    }
+    if (r2layer.catalogueUrl) {
+        r4layer.catalogueUrl = r2layer.catalogueUrl;
+    }
+    if (r2layer.extent) {
+        r4layer.extent = r2layer.extent;
+    }
     const allowedControls: string[] = [
         'boundaryZoom',
         'boundingBox',
@@ -402,13 +408,22 @@ function layerUpgrader(r2layer: any): any {
     }
 
     if (r2layer.state) {
-        r4layer.state = {
-            opacity: r2layer.state.opacity ?? 1,
-            visibility: r2layer.state.visibility ?? true,
-            boundingBox: r2layer.state.boundingBox ?? false,
-            identify: r2layer.state.query ?? true,
-            hovertips: r2layer.state.hovertips ?? true
-        };
+        r4layer.state = {};
+        if (typeof r2layer.state.opacity !== 'undefined') {
+            r4layer.state.opacity = r2layer.state.opacity;
+        }
+        if (typeof r2layer.state.visibility !== 'undefined') {
+            r4layer.state.visibility = r2layer.state.visibility;
+        }
+        if (typeof r2layer.state.boundingBox !== 'undefined') {
+            r4layer.state.boundingBox = r2layer.state.boundingBox;
+        }
+        if (typeof r2layer.state.query !== 'undefined') {
+            r4layer.state.identify = r2layer.state.query;
+        }
+        if (typeof r2layer.state.hovertips !== 'undefined') {
+            r4layer.state.hovertips = r2layer.state.hovertips;
+        }
         if (typeof r2layer.state.snapshot !== 'undefined') {
             console.warn(
                 `snapshot property provided in initialLayer settings in layer ${r2layer.id} cannot be mapped and will be skipped.`
