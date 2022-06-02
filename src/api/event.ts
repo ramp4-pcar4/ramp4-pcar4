@@ -619,8 +619,10 @@ export class EventAPI extends APIScope {
             case DefEH.APPBAR_ADDS_PANEL_BUTTON:
                 zeHandler = (panel: PanelInstance) => {
                     if (
+                        this.$iApi.fixture.get('appbar') &&
                         !this.$iApi.$vApp.$store
                             .get('appbar/order')
+                            .flat()
                             .find(item => item === panel.id)
                     ) {
                         this.$iApi.$vApp.$store.dispatch(
@@ -634,8 +636,10 @@ export class EventAPI extends APIScope {
             case DefEH.APPBAR_REMOVES_PANEL_BUTTON:
                 zeHandler = (panel: PanelInstance) => {
                     if (
+                        this.$iApi.fixture.get('appbar') &&
                         !this.$iApi.$vApp.$store
                             .get('appbar/order')
+                            .flat()
                             .find(item => item === panel.id)
                     ) {
                         this.$iApi.$vApp.$store.dispatch(

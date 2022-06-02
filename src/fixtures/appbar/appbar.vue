@@ -4,24 +4,25 @@
         v-focus-list
         ref="el"
     >
-        <template v-for="(item, index) in items">
-            <default-button
-                v-if="typeof item === 'string'"
-                :key="`${item}-${index}`"
-                :panelId="item"
-                class="appbar-item h-48"
-            ></default-button>
-            <component
-                v-else
-                :is="addComponentIdSuffix(item.componentId)"
-                :key="`${item}-${index}`"
-                :options="item.options"
-                :id="item.id"
-                class="appbar-item h-48"
-            ></component>
+        <template v-for="(subArray, index) in items">
+            <template v-for="(item, index2) in subArray">
+                <default-button
+                    v-if="typeof item === 'string'"
+                    :key="`${item}-${index2}`"
+                    :panelId="item"
+                    class="appbar-item h-48"
+                ></default-button>
+                <component
+                    v-else
+                    :is="addComponentIdSuffix(item.componentId)"
+                    :key="`${item}-${index2}`"
+                    :options="item.options"
+                    :id="item.id"
+                    class="appbar-item h-48"
+                ></component>
+            </template>
+            <divider class="appbar-item"></divider>
         </template>
-
-        <divider class="appbar-item"></divider>
 
         <default-button
             v-for="item in temporaryItems"

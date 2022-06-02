@@ -23,16 +23,20 @@ const getters = {
      * Return a list of appbar items with registered components (ones that can be rendered right now).
      *
      * @param {AppbarState} state
-     * @returns {AppbarItemInstance[]}
+     * @returns {AppbarItemInstance[][]}
      */
-    visible(state: AppbarState): AppbarItemInstance[] {
+    visible(state: AppbarState): AppbarItemInstance[][] {
         return state.order
-            .map<AppbarItemInstance>(id => state.items[id])
-            .filter(item => {
-                if (typeof item === 'string' || item.componentId) {
-                    return true;
-                }
-            });
+            .map<AppbarItemInstance[]>(subArray =>
+                subArray
+                    .map(id => state.items[id])
+                    .filter(item => {
+                        if (typeof item === 'string' || item.componentId) {
+                            return true;
+                        }
+                    })
+            )
+            .filter(subArray => subArray.length > 0);
     }
 };
 

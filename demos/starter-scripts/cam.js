@@ -330,12 +330,7 @@ let config = {
                     }
                 },
                 appbar: {
-                    items: ['legend', 'geosearch', 'export'],
-                    temporaryButtons: [
-                        'details-layers',
-                        'details-items',
-                        'grid'
-                    ]
+                    items: ['legend', 'geosearch', 'export']
                 },
                 mapnav: { items: ['fullscreen', 'geoLocator', 'home', 'help'] },
                 export: {
@@ -917,12 +912,7 @@ let config = {
                     }
                 },
                 appbar: {
-                    items: ['legend', 'geosearch', 'export'],
-                    temporaryButtons: [
-                        'details-layers',
-                        'details-items',
-                        'grid'
-                    ]
+                    items: ['legend', 'geosearch', 'export']
                 },
                 mapnav: { items: ['fullscreen', 'geoLocator', 'home', 'help'] },
                 export: {

@@ -172,8 +172,7 @@ let config = {
                     }
                 },
                 appbar: {
-                    items: ['legend', 'layer-reorder', 'export'],
-                    temporaryButtons: ['details-layers', 'details-items']
+                    items: ['legend', 'layer-reorder', 'export']
                 },
                 mapnav: { items: ['fullscreen', 'legend', 'home', 'basemap'] },
                 export: {

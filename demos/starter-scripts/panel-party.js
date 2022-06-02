@@ -390,21 +390,9 @@ let config = {
                 },
                 appbar: {
                     items: [
-                        { id: 'gazebo', options: { colour: '#54a0ff' } },
-                        'divider',
-                        'snowman',
-                        'legend',
-                        'geosearch',
-                        'basemap',
-                        'divider',
-                        'export'
-                    ],
-                    temporaryButtons: [
-                        'details-layers',
-                        'details-items',
-                        'metadata',
-                        'settings',
-                        'grid'
+                        [{ id: 'gazebo', options: { colour: '#54a0ff' } }],
+                        ['snowman', 'legend', 'geosearch', 'basemap'],
+                        ['export']
                     ]
                 },
                 mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },

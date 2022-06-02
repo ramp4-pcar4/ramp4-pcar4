@@ -428,13 +428,6 @@ let config = {
                         'basemap',
                         'export',
                         'layer-reorder'
-                    ],
-
-                    temporaryButtons: [
-                        'details-layers',
-                        'details-items',
-                        'grid',
-                        'settings'
                     ]
                 },
                 mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
