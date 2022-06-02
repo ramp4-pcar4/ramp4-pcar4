@@ -1,12 +1,7 @@
 <template>
-    <panel-screen>
+    <panel-screen :panel="panel">
         <template #header>
             {{ $t('layer-reorder.title') }}
-        </template>
-
-        <template #controls>
-            <pin @click="panel.pin()" :active="isPinned()"></pin>
-            <close @click="panel.close()"></close>
         </template>
 
         <template #content>

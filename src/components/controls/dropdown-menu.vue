@@ -37,6 +37,10 @@ export default defineComponent({
             type: String,
             default: 'bottom'
         },
+        popperOptions: {
+            type: Object,
+            default: {}
+        },
         tooltip: { type: String },
         tooltipPlacement: { type: String, default: 'bottom' },
         tooltipTheme: { type: String, default: 'ramp4' },
@@ -84,7 +88,8 @@ export default defineComponent({
                                 offset: [0, 5]
                             }
                         }
-                    ]
+                    ],
+                    ...this.popperOptions
                 }
             );
         });

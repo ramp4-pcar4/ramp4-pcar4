@@ -4,18 +4,6 @@
             {{ $t('basemap.title') }}
         </template>
 
-        <template #controls>
-            <pin
-                @click="panel.pin()"
-                :active="panel.isPinned"
-                v-if="!$iApi.screenSize !== 'xs'"
-            ></pin>
-            <close
-                @click="panel.close()"
-                v-if="$iApi.screenSize !== 'xs'"
-            ></close>
-        </template>
-
         <template #content>
             <div class="h-600 overflow-y-auto">
                 <div

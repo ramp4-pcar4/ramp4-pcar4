@@ -1,11 +1,7 @@
 <template>
-    <panel-screen>
+    <panel-screen :panel="panel">
         <template #header>
             {{ $t('details.layers.title') }}
-        </template>
-        <template #controls>
-            <minimize @click="panel?.minimize()"></minimize>
-            <close @click="panel?.close()"></close>
         </template>
         <template #content>
             <!-- Grond total -->
@@ -160,7 +156,7 @@ export default defineComponent({
             // options for how to better track this.lastLayerUid (otherwise a layer would almost always be prioritized over others). For example, doing
             // something like tracking this.lastLayerUid only if items panel is open before closing on a new request. Or if it is decided that this is not
             // worth changing, ignore everything that was said here and delete.
-            const itemsPanel = this.$iApi.panel.get('details-items-panel');
+            const itemsPanel = this.$iApi.panel.get('details-items');
             // if the item panel is already open for a layer, wait on that layer to resolve first
             if (this.lastLayerUid && itemsPanel.isOpen) {
                 const lastIdx = this.layerResults.findIndex(
@@ -262,7 +258,7 @@ export default defineComponent({
          * Closes details item panel.
          */
         closeResult(): void {
-            const itemsPanel = this.$iApi.panel.get('details-items-panel');
+            const itemsPanel = this.$iApi.panel.get('details-items');
             if (itemsPanel.isOpen) {
                 itemsPanel.close();
             }
@@ -277,7 +273,7 @@ export default defineComponent({
                 this.activeGreedy = 0;
 
                 // skip results screen for wms layers
-                let itemsPanel = this.$iApi.panel.get('details-items-panel');
+                let itemsPanel = this.$iApi.panel.get('details-items');
                 let props: any = {
                     result: this.payload[index]
                 };
@@ -287,7 +283,7 @@ export default defineComponent({
                 if (!itemsPanel.isOpen) {
                     // open the items panel
                     this.$iApi.panel!.open({
-                        id: 'details-items-panel',
+                        id: 'details-items',
                         screen: 'item-screen',
                         props: props
                     });

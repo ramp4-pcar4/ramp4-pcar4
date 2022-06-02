@@ -41,7 +41,7 @@ class AppbarFixture extends AppbarAPI {
 
         let eventHandlers: string[] = [];
 
-        // Add and remove temp appbar buttons when panels are opened and close
+        /* // Add and remove temp appbar buttons when panels are opened and close
         eventHandlers.push(
             this.$iApi.event.on(
                 GlobalEvents.PANEL_OPENED,
@@ -64,7 +64,7 @@ class AppbarFixture extends AppbarAPI {
                     );
                 }
             )
-        );
+        ); */
 
         // since components used in appbar can be registered after this point, listen to the global component registration event and re-validate items
         // TODO revisit. this seems to be self-contained to the appbar fixture, so ideally can stay as is and not worry about events api.

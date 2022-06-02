@@ -1,12 +1,7 @@
 <template>
-    <panel-screen>
+    <panel-screen :panel="panel">
         <template #header>
             {{ $t('metadata.title') }}: {{ payload.layerName }}
-        </template>
-
-        <template #controls>
-            <minimize @click="panel.minimize()" />
-            <close @click="panel.close()" />
         </template>
 
         <template #content>

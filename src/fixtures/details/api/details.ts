@@ -24,10 +24,10 @@ export class DetailsAPI extends FixtureInstance {
         this.$vApp.$store.set('details/setPayload!', payload);
 
         // Open the details panel.
-        const layersPanel = this.$iApi.panel.get('details-layers-panel');
+        const layersPanel = this.$iApi.panel.get('details-layers');
         if (!layersPanel.isOpen) {
             this.$iApi.panel.open({
-                id: 'details-layers-panel'
+                id: 'details-layers'
             });
         }
     }
@@ -43,13 +43,13 @@ export class DetailsAPI extends FixtureInstance {
         this.$vApp.$store.set(DetailsStore.payload, []);
 
         // Close the identified layers panel.
-        const panel = this.$iApi.panel.get('details-layers-panel');
+        const panel = this.$iApi.panel.get('details-layers');
         if (panel.isOpen) {
             this.$iApi.panel.close(panel);
         }
 
         // Open or update the items panel
-        let itemsPanel = this.$iApi.panel.get('details-items-panel');
+        let itemsPanel = this.$iApi.panel.get('details-items');
         // result: is IdentifyResult class
         let props: any = {
             result: {
@@ -69,7 +69,7 @@ export class DetailsAPI extends FixtureInstance {
         if (!itemsPanel.isOpen) {
             // open the items panel
             this.$iApi.panel!.open({
-                id: 'details-items-panel',
+                id: 'details-items',
                 screen: 'item-screen',
                 props: props
             });

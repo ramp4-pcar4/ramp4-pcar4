@@ -1,13 +1,8 @@
 <template>
-    <panel-screen>
+    <panel-screen :panel="panel">
         <template #header>
             {{ $t('settings.title') }}:
             {{ layerName || $t('settings.layer.loading') }}
-        </template>
-
-        <template #controls>
-            <minimize @click="panel.minimize()" />
-            <close @click="panel.close()" />
         </template>
 
         <template #content>

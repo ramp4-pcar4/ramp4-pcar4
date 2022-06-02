@@ -21,23 +21,20 @@ describe('Settings', () => {
         });
 
         // wait for settings panel to open
-        cy.contains(
-            '[data-cy="settings-panel"] .rv-subsection',
-            'Show layer'
-        ).find('.vue-js-switch');
+        cy.contains('[data-cy="settings"] .rv-subsection', 'Show layer').find(
+            '.vue-js-switch'
+        );
 
         // layer visibility toggle should be off
-        cy.contains('[data-cy="settings-panel"] .rv-subsection', 'Show layer')
+        cy.contains('[data-cy="settings"] .rv-subsection', 'Show layer')
             .find('.vue-js-switch')
             .should('not.have.class', 'toggled');
 
         // close settings
-        cy.get(
-            '[data-cy="settings-panel"] header button[content="Close"]'
-        ).click();
+        cy.get('[data-cy="settings"] header button[content="Close"]').click();
 
         // wait for panel to close
-        cy.get('[data-cy="settings-panel"]').should('not.exist');
+        cy.get('[data-cy="settings"]').should('not.exist');
 
         cy.get('@layer').then(layer => {
             // make layer visible and set opacity
@@ -51,7 +48,7 @@ describe('Settings', () => {
         });
 
         // layer visibility toggle should be on
-        cy.contains('[data-cy="settings-panel"] .rv-subsection', 'Show layer')
+        cy.contains('[data-cy="settings"] .rv-subsection', 'Show layer')
             .find('.vue-js-switch')
             .should('have.class', 'toggled');
 
@@ -61,10 +58,8 @@ describe('Settings', () => {
             .and('equal', '43');
 
         // close settings
-        cy.get(
-            '[data-cy="settings-panel"] header button[content="Close"]'
-        ).click();
-        cy.get('[data-cy="settings-panel"]').should('not.exist');
+        cy.get('[data-cy="settings"] header button[content="Close"]').click();
+        cy.get('[data-cy="settings"]').should('not.exist');
     });
 
     it('changes layer state', () => {
@@ -86,7 +81,7 @@ describe('Settings', () => {
         });
 
         // toggle layer visibility on
-        cy.contains('[data-cy="settings-panel"] .rv-subsection', 'Show layer')
+        cy.contains('[data-cy="settings"] .rv-subsection', 'Show layer')
             .find('.vue-js-switch')
             .click({ force: true });
         // layer should be visible
@@ -99,10 +94,8 @@ describe('Settings', () => {
         cy.get('@layer').invoke('getOpacity').should('equal', 0.68);
 
         // close settings
-        cy.get(
-            '[data-cy="settings-panel"] header button[content="Close"]'
-        ).click();
-        cy.get('[data-cy="settings-panel"]').should('not.exist');
+        cy.get('[data-cy="settings"] header button[content="Close"]').click();
+        cy.get('[data-cy="settings"]').should('not.exist');
     });
 
     it('reacts to layer state', () => {
@@ -124,17 +117,16 @@ describe('Settings', () => {
         });
 
         // wait for settings panel to open
-        cy.contains(
-            '[data-cy="settings-panel"] .rv-subsection',
-            'Show layer'
-        ).find('.vue-js-switch');
+        cy.contains('[data-cy="settings"] .rv-subsection', 'Show layer').find(
+            '.vue-js-switch'
+        );
 
         // toggle visibility and set opacity
         cy.get('@layer').invoke('setVisibility', true);
         cy.get('@layer').invoke('setOpacity', 0.43);
 
         // layer visibility toggle should be on
-        cy.contains('[data-cy="settings-panel"] .rv-subsection', 'Show layer')
+        cy.contains('[data-cy="settings"] .rv-subsection', 'Show layer')
             .find('.vue-js-switch')
             .should('have.class', 'toggled');
 
@@ -145,9 +137,7 @@ describe('Settings', () => {
         //     .and('equal', '43');
 
         // close settings
-        cy.get(
-            '[data-cy="settings-panel"] header button[content="Close"]'
-        ).click();
-        cy.get('[data-cy="settings-panel"]').should('not.exist');
+        cy.get('[data-cy="settings"] header button[content="Close"]').click();
+        cy.get('[data-cy="settings"]').should('not.exist');
     });
 });

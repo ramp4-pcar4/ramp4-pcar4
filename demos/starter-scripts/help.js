@@ -73,6 +73,6 @@ rInstance = RAMP.createInstance(
     options
 );
 rInstance.fixture.addDefaultFixtures(['mapnav', 'help']).then(() => {
-    rInstance.panel.open('help-panel');
+    rInstance.panel.open('help');
 });
 rInstance.event.addDefaultEvents(['toggles_help_panel']);

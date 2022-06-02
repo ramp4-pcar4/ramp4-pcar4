@@ -140,7 +140,7 @@ rInstance = RAMP.createInstance(
 rInstance.fixture
     .addDefaultFixtures(['mapnav', 'legend', 'appbar', 'grid', 'details'])
     .then(() => {
-        rInstance.panel.open('legend-panel');
+        rInstance.panel.open('legend');
     });
 
 rInstance.$element.component('Details-Default-Template-Esri', {

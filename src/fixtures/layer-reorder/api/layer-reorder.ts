@@ -7,9 +7,9 @@ export class LayerReorderAPI extends FixtureInstance {
      * @memberof LayerReorderAPI
      */
     openLayerReorder(): void {
-        const panel = this.$iApi.panel.get('layer-reorder-panel');
+        const panel = this.$iApi.panel.get('layer-reorder');
         if (!panel.isOpen) {
-            this.$iApi.panel.open('layer-reorder-panel');
+            this.$iApi.panel.open('layer-reorder');
         }
     }
 }

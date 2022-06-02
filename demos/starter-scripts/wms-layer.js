@@ -276,5 +276,5 @@ rInstance.fixture
         'layer-reorder'
     ])
     .then(() => {
-        rInstance.panel.open('legend-panel');
+        rInstance.panel.open('legend');
     });

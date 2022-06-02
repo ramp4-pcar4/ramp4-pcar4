@@ -94,6 +94,7 @@ export type PanelConfigScreens = {
 };
 export type PanelConfigRoute = { screen: string; props?: object };
 export type PanelConfigStyle = { [key: string]: string };
+export type PanelConfigControls = { expand?: boolean };
 
 export interface PanelConfig {
     /**
@@ -111,6 +112,8 @@ export interface PanelConfig {
      * @memberof PanelConfig
      */
     alertName: string;
+
+    controls?: PanelConfigControls;
 
     /**
      * The style object to apply to the panel.

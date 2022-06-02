@@ -19,7 +19,7 @@ export class NotificationAPI extends APIScope {
         super(iApi);
 
         this.$iApi.panel.register({
-            id: 'notifications-panel',
+            id: 'notifications',
             config: {
                 screens: {
                     'notifications-screen': markRaw(NotificationsScreenV)

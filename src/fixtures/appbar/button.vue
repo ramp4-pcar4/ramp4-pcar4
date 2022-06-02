@@ -1,7 +1,7 @@
 <template>
     <div class="relative" tabindex="-1">
         <button
-            class="py-6 w-full h-full focus:outline-none"
+            class="py-6 w-full h-full"
             @click="
                 () => {
                     onClickFunction();
@@ -47,7 +47,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 button {
-    outline: none;
+    outline: none !important;
 
     &.focused {
         @apply bg-blue-900 text-white;

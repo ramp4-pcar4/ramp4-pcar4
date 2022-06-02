@@ -1,8 +1,6 @@
 import { DetailsAPI } from './api/details';
 import { details } from './store';
 import type { DetailsConfig } from './store';
-import DetailsLayersAppbarButtonV from './layers-appbar-button.vue';
-import DetailsItemsAppbarButtonV from './items-appbar-button.vue';
 import DetailsLayerScreenV from './layers-screen.vue';
 import DetailsResultScreenV from './result-screen.vue';
 import DetailsItemScreenV from './item-screen.vue';
@@ -13,22 +11,32 @@ class DetailsFixture extends DetailsAPI {
     async added() {
         this.$iApi.panel.register(
             {
-                'details-layers-panel': {
+                'details-layers': {
                     screens: {
                         'layers-screen': markRaw(DetailsLayerScreenV)
                     },
                     style: {
                         width: '350px'
                     },
+                    button: {
+                        tooltip: 'details.layers.title',
+                        // https://fonts.google.com/icons?selected=Material+Icons:place
+                        icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>'
+                    },
                     alertName: 'details.layers.title'
                 },
-                'details-items-panel': {
+                'details-items': {
                     screens: {
                         'results-screen': markRaw(DetailsResultScreenV),
                         'item-screen': markRaw(DetailsItemScreenV)
                     },
                     style: {
                         width: '350px'
+                    },
+                    button: {
+                        tooltip: 'details.items.title',
+                        // https://fonts.google.com/icons?selected=Material%20Icons%3Aarticle%3A
+                        icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" /></svg>'
                     },
                     alertName: 'details.items.title'
                 }
@@ -37,16 +45,6 @@ class DetailsFixture extends DetailsAPI {
         );
 
         this.$vApp.$store.registerModule('details', details());
-
-        // register a button for each panel
-        this.$iApi.component(
-            'details-layers-appbar-button',
-            DetailsLayersAppbarButtonV
-        );
-        this.$iApi.component(
-            'details-items-appbar-button',
-            DetailsItemsAppbarButtonV
-        );
 
         // Parse the details portion of the configuration file and save any custom
         // template bindings in the details store.
@@ -61,8 +59,8 @@ class DetailsFixture extends DetailsAPI {
             console.log(`[fixture] ${this.id} removed`);
             // TODO: remove appbar buttons (blocked by #882)
             unwatch();
-            this.$iApi.panel.remove('details-items-panel');
-            this.$iApi.panel.remove('details-layers-panel');
+            this.$iApi.panel.remove('details-items');
+            this.$iApi.panel.remove('details-layers');
 
             // /*
             //     TODO: Fix this hack!

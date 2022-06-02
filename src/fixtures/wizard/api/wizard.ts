@@ -7,11 +7,11 @@ export class WizardAPI extends FixtureInstance {
      * @memberof WizardAPI
      */
     openWizard(): void {
-        const panel = this.$iApi.panel.get('wizard-panel');
+        const panel = this.$iApi.panel.get('wizard');
 
         if (!panel.isOpen) {
             this.$iApi.panel.open({
-                id: 'wizard-panel',
+                id: 'wizard',
                 screen: 'wizard-screen'
             });
         }

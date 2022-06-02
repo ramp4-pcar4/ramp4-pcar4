@@ -4,11 +4,6 @@
             {{ $t('notifications.title') }}
         </template>
 
-        <template #controls>
-            <pin @click="panel.pin()" :active="isPinned()"></pin>
-            <close @click="panel.close()"></close>
-        </template>
-
         <template #content>
             <div class="h-full flex flex-col">
                 <div class="w-full flex mb-6">

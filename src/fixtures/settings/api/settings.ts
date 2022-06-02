@@ -11,14 +11,14 @@ export class SettingsAPI extends FixtureInstance {
             'layer/getLayerByUid',
             uid
         );
-        const panel = this.$iApi.panel.get('settings-panel');
+        const panel = this.$iApi.panel.get('settings');
         const legendItem = this.$iApi.$vApp.$store.get(
             LegendStore.getChildById,
             layer?.id
         );
         if (!panel.isOpen) {
             this.$iApi.panel.open({
-                id: 'settings-panel',
+                id: 'settings',
                 props: { layer: layer, uid: uid, legendItem: legendItem }
             });
         } else {

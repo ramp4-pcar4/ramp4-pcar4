@@ -2,7 +2,6 @@ import { markRaw } from 'vue';
 import GeosearchScreenV from './screen.vue';
 import { GeosearchAPI } from './api/geosearch';
 import { geosearch } from './store/index';
-import GeosearchAppbarButtonV from './appbar-button.vue';
 
 import messages from './lang/lang.csv?raw';
 
@@ -10,17 +9,18 @@ class GeosearchFixture extends GeosearchAPI {
     async added() {
         console.log(`[fixture] ${this.id} added`);
 
-        // TODO: this appbar registration also seems like a common action; maybe automate
-        this.$iApi.component('geosearch-appbar-button', GeosearchAppbarButtonV);
-
         this.$vApp.$store.registerModule('geosearch', geosearch(this.config));
 
         this.$iApi.panel.register(
             {
-                id: 'geosearch-panel',
+                id: 'geosearch',
                 config: {
                     screens: {
                         'geosearch-component': markRaw(GeosearchScreenV)
+                    },
+                    button: {
+                        tooltip: 'geosearch.title',
+                        icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /><path d="M0 0h24v24H0z" fill="none" /></svg>'
                     },
                     alertName: 'geosearch.title'
                 }
@@ -33,7 +33,7 @@ class GeosearchFixture extends GeosearchAPI {
         console.log(`[fixture] ${this.id} removed`);
         // TODO: remove appbar button (blocked by #882)
         this.$vApp.$store.unregisterModule('geosearch');
-        this.$iApi.panel.remove('geosearch-panel');
+        this.$iApi.panel.remove('geosearch');
     }
 }
 

@@ -122,5 +122,5 @@ rInstance = RAMP.createInstance(
 rInstance.fixture
     .addDefaultFixtures(['legend', 'appbar', 'grid', 'details'])
     .then(() => {
-        rInstance.panel.open('legend-panel');
+        rInstance.panel.open('legend');
     });

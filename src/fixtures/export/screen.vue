@@ -2,10 +2,6 @@
     <panel-screen :panel="panel" :footer="true">
         <template #header> {{ $t('export.title') }} </template>
 
-        <template #controls>
-            <close @click="panel.close()"></close>
-        </template>
-
         <template #content>
             <div class="overflow-hidden border border-gray-200">
                 <canvas class="export-canvas"></canvas>

@@ -1,13 +1,7 @@
 <template>
-    <panel-screen>
+    <panel-screen :panel="panel">
         <template #header
             >{{ $t('grid.title') }}: {{ head || $t('grid.layer.loading') }}
-        </template>
-        <template #controls>
-            <minimize @click="panel.minimize()" />
-            <pin @click="panel.pin()" :active="panel.isPinned" />
-            <expand @click="panel.expand()" :active="panel.expanded" />
-            <close @click="panel.close()" />
         </template>
         <template #content>
             <table-component

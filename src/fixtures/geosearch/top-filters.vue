@@ -1,6 +1,6 @@
 <template>
-    <div class="rv-geosearch-top-filters flex w-full mt-16">
-        <div class="inline-block w-2/5 h-40 ml-16">
+    <div class="rv-geosearch-top-filters flex w-full mx-8">
+        <div class="inline-block w-2/5 h-40">
             <select
                 class="form-select border-b border-b-gray-600 w-full h-auto py-0 cursor-pointer"
                 :value="queryParams.province"

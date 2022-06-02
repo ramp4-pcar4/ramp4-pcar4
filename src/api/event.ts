@@ -7,6 +7,7 @@ import type { GridAPI } from '@/fixtures/grid/api/grid';
 import type { WizardAPI } from '@/fixtures/wizard/api/wizard';
 import type { LegendAPI } from '@/fixtures/legend/api/legend';
 import type { LayerReorderAPI } from '@/fixtures/layer-reorder/api/layer-reorder';
+import { AppbarAction } from '@/fixtures/appbar/store';
 import { LegendStore } from '@/fixtures/legend/store';
 import { GridStore, GridAction } from '@/fixtures/grid/store';
 import type {
@@ -252,6 +253,12 @@ export enum GlobalEvents {
     PANEL_CLOSED = 'panel/closed',
 
     /**
+     * Fires when a panel is pushed offscreen.
+     * Payload: `(panel: PanelInstance)`
+     */
+    PANEL_OFFSCREEN = 'panel/offscreen',
+
+    /**
      * Fires when a panel opens.
      * Payload: `(panel: PanelInstance)`
      */
@@ -290,6 +297,8 @@ export enum GlobalEvents {
 //            after v1.0.0 release, best to never edit them unless no other alternative,
 //            as it will be a breaking change to API usage.
 enum DefEH {
+    APPBAR_ADDS_PANEL_BUTTON = 'appbar_adds_panel_button',
+    APPBAR_REMOVES_PANEL_BUTTON = 'appbar_removes_panel_button',
     IDENTIFY_DETAILS = 'ramp_identify_opens_details',
     MAP_IDENTIFY = 'ramp_map_click_runs_identify',
     MAP_KEYDOWN = 'ramp_map_keydown',
@@ -562,6 +571,8 @@ export class EventAPI extends APIScope {
             //      fails a bit here. we could make it work if we force every default
             //      handler name to being with a specific prefix. Alternately use object, not enum.
             eventHandlerNames = [
+                DefEH.APPBAR_ADDS_PANEL_BUTTON,
+                DefEH.APPBAR_REMOVES_PANEL_BUTTON,
                 DefEH.MAP_IDENTIFY,
                 DefEH.MAP_KEYDOWN,
                 DefEH.MAP_KEYUP,
@@ -605,6 +616,36 @@ export class EventAPI extends APIScope {
     private defaultHandlerFactory(handlerName: string): string {
         let zeHandler: Function;
         switch (handlerName) {
+            case DefEH.APPBAR_ADDS_PANEL_BUTTON:
+                zeHandler = (panel: PanelInstance) => {
+                    if (
+                        !this.$iApi.$vApp.$store
+                            .get('appbar/order')
+                            .find(item => item === panel.id)
+                    ) {
+                        this.$iApi.$vApp.$store.dispatch(
+                            `appbar/${AppbarAction.ADD_TEMP_BUTTON}`,
+                            panel.id
+                        );
+                    }
+                };
+                this.on(GlobalEvents.PANEL_OPENED, zeHandler, handlerName);
+                break;
+            case DefEH.APPBAR_REMOVES_PANEL_BUTTON:
+                zeHandler = (panel: PanelInstance) => {
+                    if (
+                        !this.$iApi.$vApp.$store
+                            .get('appbar/order')
+                            .find(item => item === panel.id)
+                    ) {
+                        this.$iApi.$vApp.$store.dispatch(
+                            `appbar/${AppbarAction.REMOVE_TEMP_BUTTON}`,
+                            panel.id
+                        );
+                    }
+                };
+                this.on(GlobalEvents.PANEL_CLOSED, zeHandler, handlerName);
+                break;
             case DefEH.MAP_IDENTIFY:
                 // when map clicks, run the identify action
                 zeHandler = (clickParam: MapClick) => {
@@ -991,7 +1032,7 @@ export class EventAPI extends APIScope {
                             GridStore.currentUid
                         );
                         if (layer.uid === currentUid) {
-                            const panel = this.$iApi.panel.get('grid-panel');
+                            const panel = this.$iApi.panel.get('grid');
                             if (panel.isOpen) {
                                 this.$iApi.panel.close(panel);
                             }

@@ -11,7 +11,7 @@ class WizardFixture extends WizardAPI {
 
         this.$iApi.panel.register(
             {
-                'wizard-panel': {
+                wizard: {
                     screens: {
                         'wizard-screen': markRaw(WizardScreenV)
                     },
@@ -35,7 +35,7 @@ class WizardFixture extends WizardAPI {
         this.removed = () => {
             console.log(`[fixture] ${this.id} removed`);
             // TODO: handle appbar button (blocked by #882)
-            this.$iApi.panel.remove('wizard-panel');
+            this.$iApi.panel.remove('wizard');
             this.$vApp.$store.unregisterModule('wizard');
             layerSource = undefined; // will be cleaned up by JS garbage collector
         };

@@ -479,7 +479,7 @@ const rInstance = RAMP.createInstance(
 window.debugInstance = rInstance;
 
 rInstance.fixture.addDefaultFixtures().then(() => {
-    rInstance.panel.open('legend-panel');
+    rInstance.panel.open('legend');
 });
 
 rInstance.$element.component('WFSLayer-Custom', {

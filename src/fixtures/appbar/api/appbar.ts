@@ -28,16 +28,19 @@ export class AppbarAPI extends FixtureInstance {
             return;
         }
 
-        const appbarItems = appbarConfig.items.map(
-            item => new AppbarItemInstance(item)
-        );
+        const appbarItems = appbarConfig.items.map(item => {
+            if (typeof item === 'string') {
+                return item;
+            }
+            return new AppbarItemInstance(item);
+        });
 
         // save appbar items as a collection to the store
         // they are saves as a set for easy by-id access
         this.$vApp.$store.set(
             'appbar/items',
             appbarItems.reduce<AppbarItemSet>((map, item) => {
-                map[item.id] = item;
+                map[item.id || item] = item;
                 return map;
             }, {})
         );
@@ -45,23 +48,9 @@ export class AppbarAPI extends FixtureInstance {
         // save an ordered list of item ids to use when rendering components
         this.$vApp.$store.set(
             'appbar/order',
-            appbarItems.map(item => item.id)
+            appbarItems.map(item => item.id || item)
         );
 
-        if (appbarConfig.temporaryButtons) {
-            const appbarTempItems = Object.fromEntries(
-                appbarConfig.temporaryButtons.map(item => {
-                    if (typeof item === 'string') {
-                        return [`${item}-panel`, new AppbarItemInstance(item)];
-                    }
-                    return [
-                        item.panelId,
-                        new AppbarItemInstance(item.appbarItem)
-                    ];
-                })
-            );
-            this.$vApp.$store.set('appbar/tempButtonDict', appbarTempItems);
-        }
         this._validateItems();
     }
 
@@ -74,40 +63,18 @@ export class AppbarAPI extends FixtureInstance {
     _validateItems() {
         // get the ordered list of items and see if any of them are registered
         this.$vApp.$store.get<string[]>('appbar/order')!.forEach(id => {
+            if (
+                typeof this.$vApp.$store.get(`appbar/items@${id}`) === 'string'
+            ) {
+                return;
+            }
             // appbar check components with the literal id and with a `-appbar-button` suffix;
-            [`${id}-appbar-button`, id].some(v => {
+            [id].some(v => {
                 if (this.$iApi.fixture.get(v)) {
                     // if an item is registered globally, save the name of the registered component
                     this.$vApp.$store.set(`appbar/items@${id}.componentId`, v);
                 }
             });
-        });
-
-        // check the list of temp appbar buttons as well
-        const tempButtonDict = this.$vApp.$store.get<any>(
-            'appbar/tempButtonDict'
-        );
-        Object.keys(tempButtonDict).forEach(key => {
-            const id = tempButtonDict[key].id;
-            if (
-                ![`${id}-appbar-button`, id].some(v => {
-                    const found = !!this.$iApi.fixture.get(v);
-                    if (found) {
-                        // if an item is registered globally, save the name of the registered component
-                        this.$vApp.$store.set(
-                            `appbar/tempButtonDict@${key}.componentId`,
-                            v
-                        );
-                    }
-                    return found;
-                })
-            ) {
-                // if we could not find the fixture component id, we register this id
-                this.$vApp.$store.set(
-                    `appbar/tempButtonDict@${key}.componentId`,
-                    id
-                );
-            }
         });
     }
 }

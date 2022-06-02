@@ -1,11 +1,7 @@
 <template>
-    <panel-screen>
+    <panel-screen :panel="panel">
         <template #header>
             {{ $t('wizard.title') }}
-        </template>
-
-        <template #controls>
-            <close @click="panel.close()"></close>
         </template>
 
         <template #content>

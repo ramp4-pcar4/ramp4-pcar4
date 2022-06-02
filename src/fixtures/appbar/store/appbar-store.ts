@@ -28,45 +28,32 @@ const getters = {
     visible(state: AppbarState): AppbarItemInstance[] {
         return state.order
             .map<AppbarItemInstance>(id => state.items[id])
-            .filter(item => item.componentId);
+            .filter(item => {
+                if (typeof item === 'string' || item.componentId) {
+                    return true;
+                }
+            });
     }
 };
 
 const actions = {
     [AppbarAction.ADD_TEMP_BUTTON](context: AppbarContext, value: string) {
-        const item = context.state.tempButtonDict[value];
-        if (
-            item &&
-            !context.state.temporary.find(button => button.id === item.id)
-        ) {
-            context.commit(AppbarMutation.ADD_TEMP_BUTTON, item);
+        if (!context.state.temporary.find(id => id === value)) {
+            context.commit(AppbarMutation.ADD_TEMP_BUTTON, value);
         }
     },
     [AppbarAction.REMOVE_TEMP_BUTTON](context: AppbarContext, value: string) {
-        const item = context.state.tempButtonDict[value];
-        if (!item) {
-            return;
-        }
-        const button = context.state.temporary.find(
-            button => button.id === item.id
-        );
-        if (button) {
-            context.commit(AppbarMutation.REMOVE_TEMP_BUTTON, button);
+        if (context.state.temporary.find(id => id === value)) {
+            context.commit(AppbarMutation.REMOVE_TEMP_BUTTON, value);
         }
     }
 };
 
 const mutations = {
-    [AppbarMutation.ADD_TEMP_BUTTON](
-        state: AppbarState,
-        value: AppbarItemInstance
-    ) {
+    [AppbarMutation.ADD_TEMP_BUTTON](state: AppbarState, value: string) {
         state.temporary.push(value);
     },
-    [AppbarMutation.REMOVE_TEMP_BUTTON](
-        state: AppbarState,
-        value: AppbarItemInstance
-    ) {
+    [AppbarMutation.REMOVE_TEMP_BUTTON](state: AppbarState, value: string) {
         state.temporary.splice(state.temporary.indexOf(value), 1);
     }
 };
