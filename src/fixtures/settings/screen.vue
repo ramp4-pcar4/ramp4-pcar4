@@ -189,6 +189,17 @@ export default defineComponent({
                 }
             )
         );
+
+        this.handlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.LAYER_REMOVE,
+                (removedLayer: LayerInstance) => {
+                    if (this.uid === removedLayer.uid) {
+                        this.panel.close();
+                    }
+                }
+            )
+        );
     },
     beforeUnmount() {
         // Remove all event handlers and watchers for this component

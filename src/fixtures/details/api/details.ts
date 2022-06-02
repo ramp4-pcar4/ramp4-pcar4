@@ -21,7 +21,7 @@ export class DetailsAPI extends FixtureInstance {
      */
     openDetails(payload: IdentifyResult[]): void {
         // Save the provided identify result in the store.
-        this.$vApp.$store.set('details/setPayload!', payload);
+        this.$vApp.$store.set(DetailsStore.setPayload, payload);
 
         // Open the details panel.
         const layersPanel = this.$iApi.panel.get('details-layers');
@@ -38,9 +38,9 @@ export class DetailsAPI extends FixtureInstance {
      * @param {{data: any, uid: string, format: string}} featureData
      * @memberof DetailsAPI
      */
-    openFeature(featureData: { data: any; uid: string; format: string }) {
+    openFeature(featureData: { data: any; uid: string; format: string }): void {
         // Clear the payload in the store
-        this.$vApp.$store.set(DetailsStore.payload, []);
+        this.$vApp.$store.set(DetailsStore.setPayload, []);
 
         // Close the identified layers panel.
         const panel = this.$iApi.panel.get('details-layers');

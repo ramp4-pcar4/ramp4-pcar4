@@ -152,12 +152,28 @@ export default defineComponent({
             getLayerByUid: get('layer/getLayerByUid'),
             identifyTypes: IdentifyResultFormat.UNKNOWN,
             icon: '' as string,
-            currentIdx: 0
+            currentIdx: 0,
+            handlers: [] as Array<string>
         };
     },
     mounted() {
         // this is called when screen is first mounted
         this.initDetails();
+
+        // close this panel if layer is removed
+        this.handlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.LAYER_REMOVE,
+                (removedLayer: LayerInstance) => {
+                    if (this.result.uid === removedLayer.uid) {
+                        this.panel.close();
+                    }
+                }
+            )
+        );
+    },
+    beforeUnmount() {
+        this.handlers.forEach(handler => this.$iApi.event.off(handler));
     },
     beforeUpdate() {
         // this is called before the screen is updated (e.g. user clicked another layer from layer results screen)

@@ -122,13 +122,13 @@ export default defineComponent({
             // to wrap their identify outputs in reactive() due to disrespectful code.
 
             // if no payload, just return
-            if (newPayload === undefined) {
+            if (newPayload === undefined || newPayload.length === 0) {
+                this.activeGreedy = 0;
                 return;
             }
 
             // track last identify request timestamp and add to payload items
-            this.activeGreedy =
-                newPayload.length === 0 ? 0 : newPayload[0].requestTime;
+            this.activeGreedy = newPayload[0].requestTime;
 
             this.layerResults = newPayload;
 
