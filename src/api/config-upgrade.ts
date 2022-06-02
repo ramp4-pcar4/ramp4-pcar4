@@ -489,7 +489,22 @@ function servicesUpgrader(r2Services: any, r4c: any): void {
     }
 
     if (r2Services.search) {
-        // TODO port data to geoserach fixture config
+        r4c.fixtures.geosearch = {};
+
+        // required in ramp2
+        r4c.fixtures.geosearch.serviceUrls = {
+            geoNames: r2Services.search.serviceUrls.geoNames,
+            geoLocation: r2Services.search.serviceUrls.geoLocation,
+            geoProvince: r2Services.search.serviceUrls.provinces,
+            geoTypes: r2Services.search.serviceUrls.types
+        };
+
+        if (r2Services.search.settings) {
+            r4c.fixtures.geosearch.serviceUrls.settings =
+                r2Services.search.settings;
+        }
+
+        r4c.fixturesEnabled.push('geosearch');
     }
 
     if (r2Services.export) {
