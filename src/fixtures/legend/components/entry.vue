@@ -161,12 +161,13 @@
 <script lang="ts">
 import { defineComponent, toRaw } from 'vue';
 import type { PropType } from 'vue';
-import { GlobalEvents } from '@/api';
-import type { LegendEntry } from '../store/legend-defs';
+import { GlobalEvents, LayerInstance } from '@/api';
+import { LayerControls, LayerState, type LegendSymbology } from '@/geo/api';
+
+import { LegendTypes, type LegendEntry } from '../store/legend-defs';
 import LegendCheckboxV from './checkbox.vue';
 import LegendSymbologyStackV from './symbology-stack.vue';
 import LegendOptionsV from './legend-options.vue';
-import { LayerControls, type LegendSymbology } from '@/geo/api';
 
 export default defineComponent({
     name: 'LegendEntryV',
@@ -181,7 +182,8 @@ export default defineComponent({
 
     data() {
         return {
-            symbologyStack: [] as Array<LegendSymbology>
+            symbologyStack: [] as Array<LegendSymbology>,
+            handlers: [] as Array<string>
         };
     },
 
@@ -213,6 +215,22 @@ export default defineComponent({
             return;
         }
 
+        // watch for when layer state turns to ERROR
+        this.handlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.LAYER_STATECHANGE,
+                (payload: { layer: LayerInstance; state: string }) => {
+                    // sync legend item state with layer state if errors
+                    if (
+                        payload.state === LayerState.ERROR &&
+                        payload.layer.uid === this.legendItem!.layer!.uid
+                    ) {
+                        this.legendItem.setErrorType();
+                    }
+                }
+            )
+        );
+
         Promise.all(
             toRaw(this.legendItem!.legend!).map(
                 (item: LegendSymbology) => item.drawPromise
@@ -220,6 +238,10 @@ export default defineComponent({
         ).then(() => {
             this.symbologyStack = toRaw(this.legendItem!.legend!);
         });
+    },
+
+    beforeUnmount() {
+        this.handlers.forEach(handler => this.$iApi.event.off(handler));
     },
 
     methods: {
