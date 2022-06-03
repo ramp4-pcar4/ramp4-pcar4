@@ -37,7 +37,7 @@ export default defineComponent({
 
     methods: {
         onClick() {
-            this.$iApi.panel.toggle('notifications-panel');
+            this.$iApi.panel.toggle('notifications');
         }
     }
 });

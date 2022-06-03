@@ -35,7 +35,7 @@ export class GridAPI extends FixtureInstance {
         const prevUid = this.$vApp.$store.get(GridStore.currentUid);
         this.$vApp.$store.set(GridStore.currentUid, uid ? uid : null);
 
-        const panel = this.$iApi.panel.get('grid-panel');
+        const panel = this.$iApi.panel.get('grid');
 
         if (open === false) {
             // force close
@@ -44,7 +44,7 @@ export class GridAPI extends FixtureInstance {
         }
 
         if (!panel.isOpen) {
-            this.$iApi.panel.open('grid-panel');
+            this.$iApi.panel.open('grid');
         } else if (prevUid !== uid || open === true) {
             // don't toggle off if different layer or force open, use key prop to force rerender
             panel.show({ screen: 'grid-screen', props: { key: uid } });

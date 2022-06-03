@@ -10,7 +10,7 @@ export class HelpAPI extends FixtureInstance {
      * @memberof HelpAPI
      */
     toggleHelp(open?: boolean) {
-        const panel = this.$iApi.panel.get('help-panel');
+        const panel = this.$iApi.panel.get('help');
         if (open === undefined) {
             this.$iApi.panel.toggle(panel);
         } else if (open && !panel.isOpen) {
@@ -41,7 +41,7 @@ export class HelpAPI extends FixtureInstance {
         if (!helpConfig) return;
         this.$vApp.$store.set(HelpStore.folderName, helpConfig.folderName);
         if (helpConfig.panelWidth) {
-            const panel = this.$iApi.panel.get('help-panel');
+            const panel = this.$iApi.panel.get('help');
             this.$iApi.panel.setStyle(
                 panel,
                 { width: `${helpConfig.panelWidth}px` },

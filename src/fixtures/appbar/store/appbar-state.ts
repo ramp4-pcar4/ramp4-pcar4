@@ -16,31 +16,18 @@ export class AppbarState {
     order: string[] = [];
 
     /**
-     * An ordered list of appbar items to show in the bottom temporary panel section
+     * An ordered list of panel IDs. Used to display the buttons registered to the panels.
      *
-     * @type {AppbarItemInstance[]}
+     * @type {string[]}
      * @memberof AppbarState
      */
-    temporary: AppbarItemInstance[] = [];
-
-    /**
-     * A dictionary linking panel IDs to appbar items
-     *
-     * @type {[panelId: string] : AppbarItemInstance}
-     * @memberof AppbarState
-     */
-    tempButtonDict: { [panelId: string]: AppbarItemInstance } = {};
+    temporary: string[] = [];
 }
 
-export type AppbarItemSet = { [name: string]: AppbarItemInstance };
+export type AppbarItemSet = { [name: string]: string | AppbarItemInstance };
 
 export interface AppbarFixtureConfig {
     items: (string | AppbarItemConfig)[];
-
-    temporaryButtons?: (
-        | string
-        | { panelId: string; appbarItem: string | AppbarItemConfig }
-    )[];
 }
 
 export interface AppbarItemConfig {
@@ -80,10 +67,10 @@ export class AppbarItemInstance implements AppbarItemConfig {
      */
     componentId?: string;
 
-    constructor(value: string | AppbarItemConfig) {
+    constructor(value: AppbarItemConfig) {
         const params = {
             options: {},
-            ...(typeof value === 'string' ? { id: value } : value)
+            ...value
         };
         ({ id: this.id, options: this.options } = params);
 

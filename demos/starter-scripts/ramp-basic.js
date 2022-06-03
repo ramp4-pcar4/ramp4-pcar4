@@ -276,8 +276,7 @@ let config = {
             layers: [],
             fixtures: {
                 appbar: {
-                    items: ['legend', 'geosearch', 'basemap', 'layer-reorder'],
-                    temporaryButtons: ['details', 'grid', 'settings']
+                    items: ['legend', 'geosearch', 'basemap', 'layer-reorder']
                 },
                 mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] }
             },
@@ -298,7 +297,7 @@ rInstance = RAMP.createInstance(
     options
 );
 rInstance.fixture.addDefaultFixtures().then(() => {
-    rInstance.panel.open('legend-panel');
+    rInstance.panel.open('legend');
 });
 
 rInstance.start();

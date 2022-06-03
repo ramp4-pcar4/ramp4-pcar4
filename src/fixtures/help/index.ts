@@ -16,7 +16,7 @@ class HelpFixture extends HelpAPI {
 
         this.$iApi.panel.register(
             {
-                'help-panel': {
+                help: {
                     screens: {
                         'help-screen': markRaw(HelpScreenV)
                     },
@@ -44,7 +44,7 @@ class HelpFixture extends HelpAPI {
             // TODO: remove mapnav button (probably need to discuss how to do this properly)
             unwatch();
             this.$vApp.$store.unregisterModule('help');
-            this.$iApi.panel.remove('help-panel');
+            this.$iApi.panel.remove('help');
         };
     }
 }

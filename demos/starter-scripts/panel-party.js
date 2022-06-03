@@ -390,21 +390,9 @@ let config = {
                 },
                 appbar: {
                     items: [
-                        { id: 'gazebo', options: { colour: '#54a0ff' } },
-                        'divider',
-                        'snowman',
-                        'legend',
-                        'geosearch',
-                        'basemap',
-                        'divider',
-                        'export'
-                    ],
-                    temporaryButtons: [
-                        'details-layers',
-                        'details-items',
-                        'metadata',
-                        'settings',
-                        'grid'
+                        [{ id: 'gazebo', options: { colour: '#54a0ff' } }],
+                        ['snowman', 'legend', 'geosearch', 'basemap'],
+                        ['export']
                     ]
                 },
                 mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
@@ -438,10 +426,10 @@ var iklobLoad = rInstance.event.on('fixture/added', fixture => {
 });
 
 rInstance.fixture.addDefaultFixtures().then(() => {
-    rInstance.panel.open('geosearch-panel');
-    rInstance.panel.open('basemap-panel');
-    rInstance.panel.open('legend-panel');
-    rInstance.panel.open('help-panel');
+    rInstance.panel.open('geosearch');
+    rInstance.panel.open('basemap');
+    rInstance.panel.open('legend');
+    rInstance.panel.open('help');
     // Emits an event to open the metadata panel. Usually, this is be done by any fixture that wants the metadata panel to open.
     rInstance.event.emit('metadata/open', {
         type: 'html',

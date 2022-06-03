@@ -17,15 +17,29 @@
             class="flex flex-shrink-0 items-center border-b border-solid border-gray-600 px-8 h-48 overflow-hidden"
             tabindex="-1"
         >
-            <back
-                v-if="panel && $iApi.screenSize === 'xs'"
-                @click="panel?.close()"
-            ></back>
+            <back class="block sm:hidden" @click="panel.close()"></back>
+
             <h2 class="flex-grow text-lg py-16 pl-8 min-w-0" v-truncate>
                 <slot name="header"></slot>
             </h2>
 
-            <slot name="controls"></slot>
+            <panel-options-menu v-if="!!$slots.controls">
+                <slot name="controls"></slot>
+            </panel-options-menu>
+
+            <div class="hidden sm:flex">
+                <pin @click="panel.pin()" :active="panel.isPinned" />
+                <expand
+                    v-if="panel.controls && panel.controls.expand"
+                    @click="panel.expand()"
+                    :active="panel.expanded"
+                />
+                <minimize
+                    v-if="panel.button && temporary.includes(panel.id)"
+                    @click="panel.minimize()"
+                />
+                <close @click="panel.close()" />
+            </div>
         </header>
 
         <div v-if="content" class="p-8 flex-grow overflow-y-auto">
@@ -45,6 +59,7 @@
 <script lang="ts">
 import type { PanelInstance } from '@/api';
 import { defineComponent } from 'vue';
+import { get } from '@/store/pathify-helper';
 import type { PropType } from 'vue';
 
 export default defineComponent({
@@ -65,7 +80,15 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-        panel: Object as PropType<PanelInstance>
+        panel: {
+            type: Object as PropType<PanelInstance>,
+            required: true
+        }
+    },
+    data() {
+        return {
+            temporary: get('appbar/temporary')
+        };
     }
 });
 </script>

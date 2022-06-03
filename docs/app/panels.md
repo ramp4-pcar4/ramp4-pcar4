@@ -4,6 +4,23 @@
 
 Write other stuff.
 
+## Buttons
+
+Panels can be registered with button options. These consist of an icon and a tooltip which the [appbar](appbar.md) will use to create default appbar buttons as needed.
+
+```js
+this.$iApi.panel.register({
+    id: `panel-one`,
+    config: {
+        screens: <...>,
+        button: {
+            icon: <...>, // svg string or other icon
+            tooltip: 'Panel one' //or i18n key, i.e. panelone.button.tooltip
+        }
+    }
+})
+```
+
 ## Localization
 
 TODO why is localization documentation in `panels.md`? I feel half of this file should exist in `config-language.md` and the rest should be massaged as as guide for how to use panels.

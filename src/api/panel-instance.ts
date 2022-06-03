@@ -49,6 +49,8 @@ export class PanelInstance extends APIScope {
 
     readonly alertName: string;
 
+    controls: any;
+
     /**
      * Checks if a given screen component id is already loaded and ready to render.
      *
@@ -178,11 +180,17 @@ export class PanelInstance extends APIScope {
             screens: this.screens,
             style: this.style,
             expanded: this.expanded,
-            alertName: this.alertName
+            alertName: this.alertName,
+            button: this.button,
+            controls: this.controls
         } = {
             id,
             style: {},
             expanded: false,
+            controls: {
+                expand: false,
+                ...config.controls
+            },
             ...config
         });
 

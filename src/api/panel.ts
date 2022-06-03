@@ -114,10 +114,6 @@ export class PanelAPI extends APIScope {
         const id = typeof value === 'string' ? value : value.id;
         const panel = this.$vApp.$store.get<PanelInstance>(`panel/items@${id}`);
 
-        if (!panel) {
-            throw new Error("panel doesn't exist");
-        }
-
         return panel;
     }
 

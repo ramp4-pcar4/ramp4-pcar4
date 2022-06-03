@@ -1,14 +1,6 @@
 <template>
     <panel-screen :panel="panel">
         <template #header>{{ $t('details.items.title') }}</template>
-        <template #controls>
-            <minimize @click="panel.minimize()"></minimize>
-            <back
-                v-if="previousItemIndex !== -1"
-                @click="this.openResult(this.previousItemIndex)"
-            ></back>
-            <close @click="panel.close()"></close>
-        </template>
         <template #content>
             <div v-if="result.items.length > 0">
                 <span class="flex font-bold p-8 w-full" v-truncate>{{

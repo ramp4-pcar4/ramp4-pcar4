@@ -23,7 +23,7 @@ export default defineComponent({
     name: 'BasemapNavButtonV',
     methods: {
         togglePanel() {
-            const panel = this.$iApi.panel.toggle('basemap-panel');
+            const panel = this.$iApi.panel.toggle('basemap');
         }
     }
 });

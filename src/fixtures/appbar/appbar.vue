@@ -4,25 +4,34 @@
         v-focus-list
         ref="el"
     >
-        <component
-            v-for="(item, index) in items"
-            :is="addComponentIdSuffix(item.componentId)"
-            :key="`${item}-${index}`"
-            class="appbar-item"
-            :class="{ 'h-48': item.id !== 'divider' }"
-            :options="item.options"
-            :id="item.id"
-        ></component>
-        <divider class="appbar-item"></divider>
-        <component
+        <template v-for="(subArray, index) in items">
+            <template v-for="(item, index2) in subArray">
+                <default-button
+                    v-if="typeof item === 'string'"
+                    :key="`${item}-${index2}`"
+                    :panelId="item"
+                    class="appbar-item h-48"
+                ></default-button>
+                <component
+                    v-else
+                    :is="addComponentIdSuffix(item.componentId)"
+                    :key="`${item}-${index2}`"
+                    :options="item.options"
+                    :id="item.id"
+                    class="appbar-item h-48"
+                ></component>
+            </template>
+            <divider class="appbar-item"></divider>
+        </template>
+
+        <default-button
             v-for="item in temporaryItems"
-            :is="addComponentIdSuffix(item.componentId)"
-            :key="`${item.id}-temp`"
+            :panelId="item"
+            :minimize="true"
+            :key="`${item}-temp`"
             class="appbar-item h-48"
-            :options="item.options"
-            :id="item.id"
-        >
-        </component>
+        ></default-button>
+
         <more-button id="more" v-show="overflow"></more-button>
         <notifications-appbar-button
             class="appbar-item bottom-48 h-48 sm:display-none"
@@ -41,6 +50,8 @@
 import { defineComponent } from 'vue';
 import { get } from '@/store/pathify-helper';
 
+import DefaultAppbarButtonV from './default-button.vue';
+import AppbarDividerV from './divider.vue';
 import MoreAppbarButtonV from './more-button.vue';
 //import NavAppbarButtonV from './nav-button.vue';
 import NotificationsAppbarButtonV from '@/components/notification-center/appbar-button.vue';
@@ -49,6 +60,8 @@ import AboutRampDropdownV from '@/components/about-ramp/about-ramp-dropdown.vue'
 export default defineComponent({
     name: 'AppbarV',
     components: {
+        'default-button': DefaultAppbarButtonV,
+        divider: AppbarDividerV,
         'more-button': MoreAppbarButtonV,
         // 'nav-button': NavAppbarButtonV,
         'notifications-appbar-button': NotificationsAppbarButtonV,

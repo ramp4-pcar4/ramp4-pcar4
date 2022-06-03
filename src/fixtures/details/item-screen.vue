@@ -1,11 +1,7 @@
 <template>
-    <panel-screen>
+    <panel-screen :panel="panel">
         <template #header>
             {{ $t('details.items.title') }}
-        </template>
-        <template #controls>
-            <minimize @click="panel.minimize()" />
-            <close @click="close()" />
         </template>
         <template #content>
             <div v-if="result.loaded">

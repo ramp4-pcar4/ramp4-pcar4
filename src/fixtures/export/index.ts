@@ -1,7 +1,6 @@
 import { markRaw } from 'vue';
 import { ExportAPI } from './api/export';
 import { xport } from './store/index';
-import ExportAppbarButtonV from './appbar-button.vue';
 import ExportScreenV from './screen.vue';
 import messages from './lang/lang.csv?raw';
 
@@ -25,14 +24,12 @@ class ExportFixture extends ExportAPI {
     added(): void {
         console.log(`[fixture] ${this.id} added`);
 
-        this.$iApi.component('export-appbar-button', ExportAppbarButtonV);
-
         // store module initializer function is called "xport" instead of "export" because export is a reserved keyword
         this.$vApp.$store.registerModule('export', xport());
 
         this.$iApi.panel.register(
             {
-                id: 'export-panel',
+                id: 'export',
                 config: {
                     screens: {
                         'export-screen': markRaw(ExportScreenV)
@@ -40,6 +37,11 @@ class ExportFixture extends ExportAPI {
                     style: {
                         'flex-grow': '1',
                         'max-width': '800px'
+                    },
+                    button: {
+                        tooltip: 'export.title',
+                        // https://fonts.google.com/icons?selected=Material+Icons:layers&icon.query=export
+                        icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg>'
                     },
                     alertName: 'export.alertName'
                 }
@@ -73,7 +75,7 @@ class ExportFixture extends ExportAPI {
                 .get<ExportScalebarFixture>('export-scalebar')
                 ?.remove();
 
-            this.$iApi.panel.remove('export-panel');
+            this.$iApi.panel.remove('export');
             this.$vApp.$store.unregisterModule('export');
         };
     }

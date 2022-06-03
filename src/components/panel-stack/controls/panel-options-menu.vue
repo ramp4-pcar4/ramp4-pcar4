@@ -1,10 +1,12 @@
 <template>
     <dropdown-menu
-        class="relative"
+        class="flex"
         :tooltip="$t('panels.controls.optionsMenu')"
+        :popperOptions="{ strategy: 'fixed' }"
+        position="bottom-end"
     >
         <template #header>
-            <div class="p-8">
+            <div class="p-6">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -38,4 +40,8 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.rv-dropdown > *) {
+    @apply w-full text-left;
+}
+</style>

@@ -71,5 +71,5 @@ rInstance = RAMP.createInstance(
     options
 );
 rInstance.fixture.addDefaultFixtures(['appbar', 'geosearch']).then(() => {
-    rInstance.panel.open('geosearch-panel');
+    rInstance.panel.open('geosearch');
 });

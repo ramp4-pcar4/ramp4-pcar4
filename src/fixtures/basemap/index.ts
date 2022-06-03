@@ -1,7 +1,6 @@
 import { markRaw } from 'vue';
 import BasemapScreenV from './screen.vue';
 import { FixtureInstance } from '@/api';
-import BasemapAppbarButtonV from './appbar-button.vue';
 import BasemapNavButtonV from './nav-button.vue';
 import messages from './lang/lang.csv?raw';
 
@@ -9,14 +8,17 @@ class BasemapFixture extends FixtureInstance {
     added() {
         console.log(`[fixture] ${this.id} added`);
 
-        this.$iApi.component('basemap-appbar-button', BasemapAppbarButtonV);
         this.$iApi.component('basemap-nav-button', BasemapNavButtonV);
 
         this.$iApi.panel.register(
             {
-                id: 'basemap-panel',
+                id: 'basemap',
                 config: {
                     screens: { 'basemap-component': markRaw(BasemapScreenV) },
+                    button: {
+                        tooltip: 'basemap.title',
+                        icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/><path d="M0 0h24v24H0z" fill="none" /></svg>'
+                    },
                     alertName: 'basemap.title'
                 }
             },
@@ -29,7 +31,7 @@ class BasemapFixture extends FixtureInstance {
         // TODO:
         // - remove mapnav button
         // - remove appbar button (blocked by #882)
-        this.$iApi.panel.remove('basemap-panel');
+        this.$iApi.panel.remove('basemap');
     }
 }
 

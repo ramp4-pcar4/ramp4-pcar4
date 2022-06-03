@@ -6,15 +6,16 @@ The Appbar is used as a starting point for functionality in the app. Its main us
 
 ## Configuration
 
-Any arbitrary vue component can be added to the appbar, the config for appbar is as follows:
+The items array can contain Panel IDs as strings or Appbar Item Configs. The below config will add a button for the `legend` panel as well as the component `my-other-appbar-button`. The `my-other-appbar-button` must be registered globally, and the `legend` panel must be registered with a button specified ([details here](panels.md)).
 
 ```js
 {
-    items: ["my-appbar-button"]
+    items: [ "legend",
+        {id: "my-other-appbar-button"}]
 }
 ```
 
-An item can be supplied as simply a component name or as an object indicating the component's name and any options to be passed to that component as props:
+Appbar Item Configs can also take options:
 
 ```js
 {
@@ -25,65 +26,28 @@ An item can be supplied as simply a component name or as an object indicating th
 }
 ```
 
-The `-appbar-button` suffix is optional and can be omitted. If a `gazebo` id is provided, the Appbar will automatically check if a `gazebo-appbar-button` component exist and use that one instead. This is a convenience feature to make config less verbose:
-
-```js
-{
-    items: [
-        "gazebo"
-    ]
-}
-```
-
-There is also the ability to configure temporary appbar buttons, these buttons are shown when a panel is opened and disappear when the related panel is closed. Again, the `-appbar-button` suffix is optional and can be omitted when specifying the appbar component id. The config is used as follows:
-
-```js
-{
-    temporaryButtons: [
-        "legend",
-        { panelId: "settings-panel", appbarItem: "settings" }
-    ]
-}
-```
-
-The first item in the array above (`legend`) will link `legend-panel` to `legend-appbar-button`. The second item links `settings-panel` (panel-id) to the appbar-item described like it would in `items` in this case `settings` or `settings-appbar-button`.
-
 Using what we've learned, the whole config for an appbar could be:
 
 ```js
 {
     items: [
-        "my-appbar-button",
-        { id: "my-other-appbar-button-with-options", options: { colour: "red" } },
+        "legend",
+        { id: "my-other-appbar-button", options: { colour: "red" } },
         "gazebo"
     ]
 }
-````
+```
 
-Lastly, there is a Divider component that can be used by specifying an item with the `divider` id. As its name suggests, this component just adds a divider in between groups of appbar buttons.
+Lastly, the appbar can divide buttons into groups. This is done by specifying `items` as a 2d array. Each sub-array will have a divider placed between them.
 
 Lets say we want to separate the `gazebo` button from the other two:
 
 ```js
 {
     items: [
-        "my-appbar-button",
-        { id: "my-other-appbar-button-with-options", options: { colour: "red" } },
-        "divider",
-        "gazebo"
-    ]
-}
-```
-
-And, you guessed it, you can register your own `my-fancy-divider` component and use it instead:
-
-```js
-{
-    items: [
-        "my-appbar-button",
-        { id: "my-other-appbar-button-with-options", options: { colour: "red" } },
-        "my-fancy-divider",
-        "gazebo"
+        ["legend",
+        { id: "my-other-appbar-button", options: { colour: "red" } }],
+        ["gazebo"]
     ]
 }
 ```

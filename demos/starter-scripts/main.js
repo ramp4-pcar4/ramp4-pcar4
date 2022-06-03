@@ -427,13 +427,6 @@ let config = {
                         'basemap',
                         'export',
                         'layer-reorder'
-                    ],
-
-                    temporaryButtons: [
-                        'details-layers',
-                        'details-items',
-                        'grid',
-                        'settings'
                     ]
                 },
                 mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
@@ -465,7 +458,7 @@ const rInstance = createInstance(
     options
 );
 rInstance.fixture.addDefaultFixtures().then(() => {
-    rInstance.panel.open('legend-panel');
+    rInstance.panel.open('legend');
 });
 
 rInstance.$element.component('WFSLayer-Custom', {

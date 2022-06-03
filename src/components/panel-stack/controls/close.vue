@@ -7,8 +7,7 @@
             v-tippy="{
                 placement: 'bottom',
                 theme: 'ramp4',
-                animation: 'scale',
-                appendTo: 'parent'
+                animation: 'scale'
             }"
         >
             <svg

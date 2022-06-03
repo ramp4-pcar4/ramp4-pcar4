@@ -765,13 +765,7 @@ let config = {
                     }
                 },
                 appbar: {
-                    items: ['legend'],
-                    temporaryButtons: [
-                        'details-layers',
-                        'details-items',
-                        'grid',
-                        'settings'
-                    ]
+                    items: ['legend']
                 },
                 mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] }
             },
@@ -792,7 +786,7 @@ rInstance = RAMP.createInstance(
     options
 );
 rInstance.fixture.addDefaultFixtures().then(() => {
-    rInstance.panel.open('legend-panel');
+    rInstance.panel.open('legend');
 });
 
 // load map if startRequired is true

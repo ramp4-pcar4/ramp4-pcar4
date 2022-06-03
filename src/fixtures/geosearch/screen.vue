@@ -1,23 +1,10 @@
 <template>
     <panel-screen :panel="panel">
-        <template #header>
-            <geosearch-bar></geosearch-bar>
-        </template>
-
-        <template #controls>
-            <pin
-                @click="panel.pin()"
-                :active="panel.isPinned"
-                v-if="$iApi.screenSize !== 'xs'"
-            ></pin>
-            <close
-                @click="panel.close()"
-                v-if="$iApi.screenSize !== 'xs'"
-            ></close>
-        </template>
+        <template #header>{{ $t('geosearch.title') }}</template>
 
         <template #content>
             <div class="flex flex-col h-full">
+                <geosearch-bar></geosearch-bar>
                 <geosearch-top-filters></geosearch-top-filters>
                 <loading-bar
                     class="flex-none"

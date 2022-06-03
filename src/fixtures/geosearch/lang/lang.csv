@@ -1,7 +1,7 @@
 key,enValue,enValid,frValue,frValid
 geosearch.title,Geolocation Search,1,Recherche géolocalisée,1
 geosearch.noResults,No results to show for ,1,Aucun résultat à afficher pour ,1
-geosearch.searchText,Geolocation Search,1,Recherche géolocalisée,1
+geosearch.searchText,Search for a location...,1,Recherche d’un emplacement...,0
 geosearch.visible,Visible on map,1,Visible sur la carte,1
 geosearch.filters.province,Province,1,Province,1
 geosearch.filters.type,Type,1,Type,1

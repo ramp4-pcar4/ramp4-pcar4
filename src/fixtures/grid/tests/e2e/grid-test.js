@@ -138,20 +138,17 @@ describe('Grid', () => {
                 // click details button
                 cy.wrap($row).find(`[col-id="1"]`).click();
                 // should open up the details panel
-                cy.get('[data-cy="details-panel"]');
+                cy.get('[data-cy="details"]');
                 // check that details panel contains row data
                 cy.wrap($row)
                     .find('.ag-cell-value')
                     .each($cell => {
                         if ($cell.attr('aria-colindex') > 3) {
-                            cy.contains(
-                                '[data-cy="details-panel"]',
-                                $cell.text()
-                            );
+                            cy.contains('[data-cy="details"]', $cell.text());
                         }
                     });
             });
-            cy.get('[data-cy="details-panel"] header button').click();
+            cy.get('[data-cy="details"] header button').click();
             toggleGrid('Clean Air');
         });
 
@@ -391,7 +388,7 @@ describe('Grid', () => {
 
     describe('Filters', () => {
         const clearFilters = () => {
-            cy.contains('[data-cy="grid-panel"] header button', 'More').click();
+            cy.contains('[data-cy="grid"] header button', 'More').click();
             cy.contains('Clear filters').click().blur();
         };
 
@@ -819,9 +816,7 @@ describe('Grid', () => {
 
         it('filters globally', () => {
             toggleGrid('Carbon monoxide');
-            cy.get('[data-cy="grid-panel"] header .rv-global-search').type(
-                'geo'
-            );
+            cy.get('[data-cy="grid"] header .rv-global-search').type('geo');
             cy.get('.ag-center-cols-container .ag-row').each($row => {
                 cy.wrap($row).contains('geo', { matchCase: false });
             });
@@ -834,9 +829,7 @@ describe('Grid', () => {
 
         it('filters multiple columns with global field', () => {
             toggleGrid('Carbon monoxide');
-            cy.get('[data-cy="grid-panel"] header .rv-global-search').type(
-                'geo'
-            );
+            cy.get('[data-cy="grid"] header .rv-global-search').type('geo');
             // filter "Facility", "Company", and "Symbol" fields
             // need to force because not all fields will be visible
             cy.get('[aria-rowindex="2"] [aria-colindex="6"] .rv-input').type(

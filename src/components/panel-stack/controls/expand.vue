@@ -3,7 +3,12 @@
         <button
             class="text-gray-500 hover:text-black focus:text-black w-full h-full flex justify-center items-center"
             :content="$t(`panels.controls.${active ? 'collapse' : 'expand'}`)"
-            v-tippy="{ placement: 'bottom', hideOnClick: false }"
+            v-tippy="{
+                placement: 'bottom',
+                theme: 'ramp4',
+                animation: 'scale',
+                hideOnClick: false
+            }"
         >
             <!-- EXPAND https://fonts.google.com/icons?selected=Material%20Icons%3Aexpand%3A -->
             <svg
