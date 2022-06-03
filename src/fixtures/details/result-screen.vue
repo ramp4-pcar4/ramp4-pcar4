@@ -47,7 +47,7 @@ import { defineComponent } from 'vue';
 import type { PropType } from 'vue';
 import { get } from '@/store/pathify-helper';
 
-import type { LayerInstance, PanelInstance } from '@/api';
+import { GlobalEvents, type LayerInstance, type PanelInstance } from '@/api';
 import type { IdentifyResult } from '@/geo/api';
 
 export default defineComponent({
@@ -70,7 +70,8 @@ export default defineComponent({
     data() {
         return {
             getLayerByUid: get('layer/getLayerByUid'),
-            icon: [] as string[]
+            icon: [] as string[],
+            handlers: [] as Array<string>
         };
     },
     computed: {
@@ -100,6 +101,21 @@ export default defineComponent({
                 layerName: this.layerName
             })
         );
+
+        // close this panel if layer is removed
+        this.handlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.LAYER_REMOVE,
+                (removedLayer: LayerInstance) => {
+                    if (this.result.uid === removedLayer.uid) {
+                        this.panel.close();
+                    }
+                }
+            )
+        );
+    },
+    beforeUnmount() {
+        this.handlers.forEach(handler => this.$iApi.event.off(handler));
     },
     methods: {
         /**

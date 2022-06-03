@@ -8,7 +8,7 @@
                 <!-- paginator and list button for multiple features -->
                 <div
                     class="flex justify-between py-8 px-8 mb-8 bg-gray-100"
-                    v-if="result.items.length > 1"
+                    v-if="result.items.length > 1 && layerExists"
                 >
                     <button
                         class="px-8 font-bold hover:bg-gray-200 focus:bg-gray-200"
@@ -61,48 +61,61 @@
                     </div>
                 </div>
                 <!-- actual details section -->
-                <div v-if="identifyItem.loaded">
-                    <!-- fancy header for esri features -->
-                    <div class="flex py-8" v-if="supportsFeatures">
-                        <span
-                            v-if="icon"
-                            class="flex-none m-auto symbologyIcon"
-                            v-html="icon"
-                        ></span>
-                        <div v-else class="m-auto">
-                            <div class="animate-spin spinner h-20 w-20"></div>
-                        </div>
-                        <span class="flex-grow my-auto text-lg px-8">
-                            {{ itemName }}
-                        </span>
-                        <button
-                            :content="$t('details.item.zoom')"
-                            v-tippy="{ placement: 'bottom' }"
-                            :aria-label="$t('details.item.zoom')"
-                            @click="zoomToFeature()"
-                            class="text-gray-600 m-8"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                width="20"
+                <div v-if="layerExists">
+                    <div v-if="identifyItem.loaded">
+                        <!-- fancy header for esri features -->
+                        <div class="flex py-8" v-if="supportsFeatures">
+                            <span
+                                v-if="icon"
+                                class="flex-none m-auto symbologyIcon"
+                                v-html="icon"
+                            ></span>
+                            <div v-else class="m-auto">
+                                <div
+                                    class="animate-spin spinner h-20 w-20"
+                                ></div>
+                            </div>
+                            <span class="flex-grow my-auto text-lg px-8">
+                                {{ itemName }}
+                            </span>
+                            <button
+                                :content="$t('details.item.zoom')"
+                                v-tippy="{ placement: 'bottom' }"
+                                :aria-label="$t('details.item.zoom')"
+                                @click="zoomToFeature()"
+                                class="text-gray-600 m-8"
                             >
-                                <path
-                                    d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
-                                />
-                                <path d="M0 0h24v24H0V0z" fill="none" />
-                                <path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z" />
-                            </svg>
-                        </button>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    width="20"
+                                >
+                                    <path
+                                        d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                                    />
+                                    <path d="M0 0h24v24H0V0z" fill="none" />
+                                    <path
+                                        d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+                        <component
+                            :is="detailsTemplate"
+                            :identifyData="identifyItem"
+                            :fields="fieldsList"
+                        ></component>
                     </div>
-                    <component
-                        :is="detailsTemplate"
-                        :identifyData="identifyItem"
-                        :fields="fieldsList"
-                    ></component>
+                    <div
+                        v-else
+                        class="animate-spin spinner h-20 w-20 px-5"
+                    ></div>
                 </div>
-                <div v-else class="animate-spin spinner h-20 w-20 px-5"></div>
+                <!-- layer does not exist anymore, show no data text -->
+                <div v-else class="p-5">
+                    {{ $t('details.item.no.data') }}
+                </div>
             </div>
             <div v-else class="animate-spin spinner h-20 w-20 px-5"></div>
         </template>
@@ -149,10 +162,10 @@ export default defineComponent({
         return {
             defaultTemplates: get(DetailsStore.defaultTemplates),
             templateBindings: get(DetailsStore.templates),
-            getLayerByUid: get('layer/getLayerByUid'),
             identifyTypes: IdentifyResultFormat.UNKNOWN,
             icon: '' as string,
             currentIdx: 0,
+            layerExists: false, // tracks whether the layer still exists
             handlers: [] as Array<string>
         };
     },
@@ -188,9 +201,8 @@ export default defineComponent({
         },
 
         itemName(): string {
-            const layer: LayerInstance | undefined = this.getLayerByUid(
-                this.result.uid
-            );
+            const layer: LayerInstance | undefined =
+                this.$iApi.geo.layer.getLayer(this.result.uid);
             const nameField = layer?.nameField;
             return nameField && this.identifyItem.loaded
                 ? this.identifyItem.data[nameField]
@@ -198,16 +210,14 @@ export default defineComponent({
         },
 
         layerType(): string {
-            const layer: LayerInstance | undefined = this.getLayerByUid(
-                this.result.uid
-            );
+            const layer: LayerInstance | undefined =
+                this.$iApi.geo.layer.getLayer(this.result.uid);
             return layer?.layerType || '';
         },
 
         supportsFeatures(): boolean {
-            const layer: LayerInstance | undefined = this.getLayerByUid(
-                this.result.uid
-            );
+            const layer: LayerInstance | undefined =
+                this.$iApi.geo.layer.getLayer(this.result.uid);
             return layer?.supportsFeatures ?? false;
         },
 
@@ -217,17 +227,15 @@ export default defineComponent({
                 return [];
             }
 
-            const layer: LayerInstance | undefined = this.getLayerByUid(
-                this.result.uid
-            );
+            const layer: LayerInstance | undefined =
+                this.$iApi.geo.layer.getLayer(this.result.uid);
             const fields = layer?.fields;
             return fields || [];
         },
 
         detailsTemplate(): string {
-            const layer: LayerInstance | undefined = this.getLayerByUid(
-                this.result.uid
-            );
+            const layer: LayerInstance | undefined =
+                this.$iApi.geo.layer.getLayer(this.result.uid);
 
             // If there is a custom template binding for this layer in the store, then
             // return its name.
@@ -269,6 +277,7 @@ export default defineComponent({
          */
         initDetails() {
             this.currentIdx = this.itemIndex ?? 0;
+            this.layerExists = true;
             this.itemChanged();
         },
 
@@ -277,6 +286,14 @@ export default defineComponent({
          */
         itemChanged() {
             if (this.identifyItem.loaded) {
+                const layer: LayerInstance | undefined =
+                    this.$iApi.geo.layer.getLayer(this.result.uid);
+                if (!layer) {
+                    // could not find this layer, so mark this result as invalid
+                    // this handles the case where user minimized item screen -> deletes layer -> opens item screen again
+                    this.layerExists = false;
+                }
+
                 this.fetchIcon();
                 this.$iApi.updateAlert(
                     `${this.$iApi.$vApp.$t('details.item.alert.show.item', {
@@ -341,9 +358,8 @@ export default defineComponent({
                 return;
             }
 
-            const layer: LayerInstance | undefined = this.getLayerByUid(
-                this.result.uid
-            );
+            const layer: LayerInstance | undefined =
+                this.$iApi.geo.layer.getLayer(this.result.uid);
             if (layer === undefined) {
                 console.warn(
                     `could not find layer for uid ${this.result.uid} during icon lookup`
@@ -369,9 +385,8 @@ export default defineComponent({
          * Zoom to feature on the map
          */
         zoomToFeature() {
-            const layer: LayerInstance | undefined = this.getLayerByUid(
-                this.result.uid
-            );
+            const layer: LayerInstance | undefined =
+                this.$iApi.geo.layer.getLayer(this.result.uid);
 
             if (layer === undefined) {
                 console.warn(
