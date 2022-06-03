@@ -1,9 +1,13 @@
 import { APIScope, InstanceAPI } from '@/api/internal';
 import {
+    DataFormat,
+    DrawState,
     Extent,
     Graphic,
     LayerControls,
+    LayerFormat,
     LayerState,
+    LayerType,
     NoGeometry,
     ScaleSet,
     TreeNode
@@ -30,9 +34,6 @@ import type {
  * @extends {APIScope}
  */
 export class LayerInstance extends APIScope {
-    get layerType(): string {
-        return '';
-    }
     config: any = {};
 
     /**
@@ -46,8 +47,12 @@ export class LayerInstance extends APIScope {
 
     initialized: boolean;
     state: LayerState;
+    drawState: DrawState;
 
     layerIdx: number;
+    layerType: LayerType;
+    layerFormat: LayerFormat;
+    dataFormat: DataFormat;
     supportsIdentify: boolean;
     supportsFeatures: boolean;
     supportsSublayers: boolean;
@@ -84,8 +89,12 @@ export class LayerInstance extends APIScope {
 
         this.initialized = false;
         this.state = LayerState.NEW;
+        this.drawState = DrawState.NOT_LOADED;
 
         this.layerIdx = -1; // default value
+        this.layerFormat = LayerFormat.UNKNOWN;
+        this.layerType = LayerType.UNKNOWN;
+        this.dataFormat = DataFormat.UNKNOWN;
         this.supportsIdentify = false; // this is updated by subclasses as they will know the real deal.
         this.supportsFeatures = false;
         this.supportsSublayers = false;
@@ -491,66 +500,6 @@ export class LayerInstance extends APIScope {
     }
 
     /**
-     * Removes the specified fixture from R4MP instance.
-     * This is a proxy to `RAMP.fixture.remove(...)`.
-     *
-     * @returns {this}
-     * @memberof FixtureInstance
-     */
-    // TODO re-add this if we support removal
-    /*
-    remove(): this {
-        this.$iApi.fixture.remove(this);
-        return this;
-    }
-    */
-
-    /**
-     * A helper function to create a "subclass" of the base Vue constructor
-     *
-     * @param {VueConstructor<Vue>} vueConstructor
-     * @param {ComponentOptions<Vue>} [options={}]
-     * @param {boolean} [mount=true]
-     * @returns {Vue}
-     * @memberof FixtureInstance
-     */
-    // TODO i have no idea what this does, but since layers are not vue componets like fixtures are,
-    //      will assume we don't need this
-    /*
-    extend(vueConstructor: VueConstructor<Vue>, options: ComponentOptions<Vue> = {}, mount: boolean = true): Vue {
-        const component = new (Vue.extend(vueConstructor))({
-            iApi: this.$iApi,
-            ...options,
-            propsData: {
-                ...options.propsData,
-                fixture: this
-            }
-        });
-        component.$mount();
-        return component;
-    }
-    */
-
-    // added?(): void;
-    // removed?(): void;
-    // initialized?(): void;
-    // terminated?(): void;
-
-    /**
-     * Returns the fixture config section (JSON) taken from the global config.
-     *
-     * @readonly
-     * @type {*}
-     * @memberof FixtureInstance
-     */
-    // this might return if we vuex thing. for now, config is normal local property
-    /*
-    get config(): any {
-        return this.$vApp.$store.get('config/getFixtureConfig', this.id);
-    }
-    */
-
-    /**
      * Get the parent layer for this layer
      * Only supported for sublayers
      *
@@ -590,6 +539,24 @@ export class LayerInstance extends APIScope {
     get sublayers(): Array<LayerInstance> {
         return this._sublayers;
     }
+
+    /**
+     * Initiates actions after layer load.
+     * Should generally only be called internally by the RAMP core.
+     */
+    onLoad(): void {}
+
+    /**
+     * Updates layer state and raises events.
+     * Should generally only be called internally by the RAMP core.
+     */
+    updateState(newState: LayerState): void {}
+
+    /**
+     * Updates layer draw state and raises events.
+     * Should generally only be called internally by the RAMP core.
+     */
+    updateDrawState(newState: DrawState): void {}
 
     /**
      * Finds an sublayer index corresponding to the given uid.

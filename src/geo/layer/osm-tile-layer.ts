@@ -1,7 +1,7 @@
 // TODO add proper comments
 
 import { CommonLayer, InstanceAPI } from '@/api/internal';
-import { DataFormat, LayerType } from '@/geo/api';
+import { DataFormat, LayerFormat, LayerType } from '@/geo/api';
 
 import type { LegendSymbology, RampLayerConfig } from '@/geo/api';
 
@@ -15,6 +15,7 @@ export class OsmTileLayer extends CommonLayer {
         super(rampConfig, $iApi);
         this.supportsIdentify = false;
         this.layerType = LayerType.OSM;
+        this.layerFormat = LayerFormat.OSM;
         this.dataFormat = DataFormat.OSM_TILE;
         this.supportsFeatures = false;
         this.hovertips = false;

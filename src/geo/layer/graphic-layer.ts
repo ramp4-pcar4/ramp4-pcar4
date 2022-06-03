@@ -1,5 +1,5 @@
 import { CommonGraphicLayer, InstanceAPI } from '@/api/internal';
-import { LayerType } from '@/geo/api';
+import { DrawState, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 import { EsriGraphicsLayer } from '@/geo/esri';
 import { markRaw } from 'vue';
@@ -51,7 +51,7 @@ export class GraphicLayer extends CommonGraphicLayer {
         //      would probably want to create them here.
 
         this.layerTree.name = this.name;
-
+        this.updateDrawState(DrawState.UP_TO_DATE);
         return loadPromises;
     }
 

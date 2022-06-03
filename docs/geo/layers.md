@@ -195,10 +195,34 @@ Determine if the layer is in a valid state. Invalid states would be pre-loaded o
 myLayer.isValidState; // true
 ```
 
-Get the state of the layer. This can provide a finer level of detail compared to `.isValidState`, such as if layer data is currently being refreshed from the server.
+Get the state of the layer. This state tracks the loading life cycle (i.e. loading, loaded, error)
 
 ```js
-myLayer.state; // 'rv-loaded'
+myLayer.state; // 'loaded'
+```
+
+Get the drawing state of the layer. This state tracks the drawing life cycle (i.e. getting or processing spatial data for the current map view)
+
+```js
+myLayer.drawState; // 'refresh'
+```
+
+Get the layer type. This matches the value that was provided in the config snippet. One can derive where the layer data came from and what functionality it can support.
+
+```js
+myLayer.layerType; // 'esri-tile'
+```
+
+Get the format of the layer. This indicates the type of Esri layer that has been instantiated on the map stack for this layer.
+
+```js
+myLayer.layerFormat; // 'feature'
+```
+
+Get the format of the spatial data in the layer.
+
+```js
+myLayer.dataFormat; // 'esriRaster'
 ```
 
 Get the visible scale ranges for layer or sublayer. A value of `0` on a range indicates there is no limit. Scales are fractions (i.e. a value of `2000` actually means 1/2000 scale), so `min` and `max` can be counterintuitive (large scale means the view is closer to real life size, so the viewport is closer to the ground level).

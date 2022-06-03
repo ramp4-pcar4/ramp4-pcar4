@@ -151,13 +151,8 @@ export interface Attributes {
     [key: string]: any;
 }
 
-// TODO revisit what this actually means now. Is the .layerType value on a layer config?
-//      or is it the type of ESRI layer that lives in the map.
-//      if the first, we might need to be careful as we can have custom values now.
-//      will enum cause a problem?
-//      ^ Mar 2022 whatever it means, it drives what layer class is used to construct the layer.
-//      So it's the value of the config item, and figures out what do generate from that.
-//      See https://github.com/ramp4-pcar4/ramp4-pcar4/discussions/338
+// aligns with config values
+// describes the source of the layer
 export enum LayerType {
     // ESRI
     FEATURE = 'esri-feature',
@@ -181,6 +176,18 @@ export enum LayerType {
     UNKNOWN = 'unknown',
 
     SUBLAYER = 'sublayer'
+}
+
+// describes how the layer is implemented in the map stack (i.e. hints at the ESRI Layer class)
+export enum LayerFormat {
+    FEATURE = 'feature',
+    GRAPHIC = 'graphic',
+    IMAGERY = 'imagery',
+    MAPIMAGE = 'map-image',
+    OSM = 'osm-tile',
+    TILE = 'tile',
+    UNKNOWN = 'unknown',
+    WMS = 'wms'
 }
 
 // Format indicates what form the spatial data is encoded in.
@@ -243,16 +250,17 @@ export interface EpsgLookup {
     (code: string | number): Promise<string>;
 }
 
-export interface DojoWindow extends Window {
-    require?: any; // require is both a function, and has event handlers. probably a way to define in typescript interface, not going to right now.
+export enum LayerState {
+    NEW = 'new', // this means ramp layer class exists but needs to be initialized()
+    LOADING = 'loading',
+    LOADED = 'loaded',
+    ERROR = 'error'
 }
 
-export enum LayerState { // these are used as css classes; hence the `rv` prefix
-    NEW = 'rv-new', // this means layer class exists but needs to be initialized()
-    REFRESH = 'rv-refresh',
-    LOADING = 'rv-loading',
-    LOADED = 'rv-loaded',
-    ERROR = 'rv-error'
+export enum DrawState {
+    NOT_LOADED = 'not-loaded',
+    REFRESH = 'refresh',
+    UP_TO_DATE = 'up-to-date'
 }
 
 export enum IdentifyResultFormat {
@@ -546,7 +554,7 @@ export interface RampLayerWmsLayerEntryConfig {
 // TODO investigate if we want to make a fancy interface heirarchy instead of pile-of-?-properties
 export interface RampLayerConfig {
     id: string;
-    layerType: string;
+    layerType: LayerType;
     url?: string;
     name?: string;
     state?: RampLayerStateConfig;
@@ -589,7 +597,7 @@ export interface RampExtentSetConfig {
 
 export interface RampBasemapLayerConfig {
     id?: string;
-    layerType: string;
+    layerType: LayerType;
     url: string;
     opacity?: number;
 }

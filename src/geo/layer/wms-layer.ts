@@ -4,6 +4,7 @@ import {
     DefPromise,
     GeometryType,
     IdentifyResultFormat,
+    LayerFormat,
     LayerType,
     UrlWrapper
 } from '@/geo/api';
@@ -31,6 +32,7 @@ export class WmsLayer extends CommonLayer {
         this.supportsIdentify = true;
         this.hovertips = false;
         this.layerType = LayerType.WMS;
+        this.layerFormat = LayerFormat.WMS;
         this.mimeType = rampConfig.featureInfoMimeType || ''; // TODO is there a default? will that be in the config defaulting?
         this.sublayerNames = [];
         this.dataFormat = DataFormat.OGC_RASTER;
@@ -81,7 +83,7 @@ export class WmsLayer extends CommonLayer {
         };
 
         // do a GetCapabilities call for only the specified layer if it is a geomet layer
-        if (rampLayerConfig.url.indexOf('/geomet') !== -1) {
+        if (rampLayerConfig.url!.indexOf('/geomet') !== -1) {
             // multiple values for layer/layers parameter currently not supported by geomet
             esriConfig.customParameters.layers = lEntries[0].id;
         }

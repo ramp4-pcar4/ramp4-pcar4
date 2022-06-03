@@ -18,10 +18,11 @@ import type {
 import {
     DataFormat,
     DefPromise,
+    DrawState,
     Extent,
     GeometryType,
     IdentifyResultFormat,
-    LayerType,
+    LayerFormat,
     Point
 } from '@/geo/api';
 
@@ -82,8 +83,8 @@ export class FileLayer extends AttribLayer {
         super(rampConfig, $iApi);
         this.supportsIdentify = true;
         this.isFile = true;
-        this.layerType = LayerType.FEATURE;
         this.dataFormat = DataFormat.ESRI_FEATURE;
+        this.layerFormat = LayerFormat.FEATURE;
         this.tooltipField = '';
     }
 
@@ -243,6 +244,15 @@ export class FileLayer extends AttribLayer {
         //      Alllso, we might consider putting this promise in the onLoadActions of BaseLayer, if we find other layers
         //      become hooked on the power of the view and require it to be ready.
         loadPromises.push(this.viewPromise.getPromise());
+
+        // since no "update" cycle, mark layer as up to date after all load promises resolve.
+        // Note looks like the view promise handler in CommonLayer is already setting this.
+        // leaving commented code to avoid confusion
+        /*
+        Promise.all(loadPromises).then(() => {
+            this.updateDrawState(DrawState.UP_TO_DATE);
+        });
+        */
 
         return loadPromises;
     }

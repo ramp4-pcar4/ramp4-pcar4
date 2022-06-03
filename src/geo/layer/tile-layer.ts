@@ -1,7 +1,7 @@
 // TODO add proper comments
 
 import { CommonLayer, InstanceAPI } from '@/api/internal';
-import { DataFormat, LayerType } from '@/geo/api';
+import { DataFormat, LayerFormat, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 import { EsriTileLayer } from '@/geo/esri';
 import { markRaw } from 'vue';
@@ -14,6 +14,7 @@ export class TileLayer extends CommonLayer {
         this.supportsIdentify = false;
         this.hovertips = false;
         this.layerType = LayerType.TILE;
+        this.layerFormat = LayerFormat.TILE;
         this.dataFormat = DataFormat.ESRI_TILE;
     }
 
@@ -51,7 +52,7 @@ export class TileLayer extends CommonLayer {
         this.layerTree.name = this.name;
 
         const legendPromise = this.$iApi.geo.symbology
-            .mapServerToLocalLegend(this.origRampConfig.url)
+            .mapServerToLocalLegend(this.origRampConfig.url!)
             .then(legArray => {
                 this.legend = legArray;
             });

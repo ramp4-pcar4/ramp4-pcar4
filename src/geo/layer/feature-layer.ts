@@ -4,6 +4,7 @@ import {
     DefPromise,
     GeometryType,
     IdentifyResultFormat,
+    LayerFormat,
     LayerType
 } from '@/geo/api';
 import type {
@@ -28,6 +29,7 @@ export class FeatureLayer extends AttribLayer {
         this.tooltipField = '';
         this.supportsIdentify = true;
         this.layerType = LayerType.FEATURE;
+        this.layerFormat = LayerFormat.FEATURE;
     }
 
     async initiate(): Promise<void> {

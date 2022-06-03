@@ -1,10 +1,14 @@
-// handles static geojson (e.g. from a user file or hardcoded in a config) or a geojson file hosted on a web server
-
-import { FileLayer } from '@/api/internal';
+import { FileLayer, InstanceAPI } from '@/api/internal';
+import { LayerType, type RampLayerConfig } from '@/geo/api';
 
 // NOTE this is currently 100% untested
 
 export class CsvLayer extends FileLayer {
+    constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
+        super(rampConfig, $iApi);
+        this.layerType = LayerType.CSV;
+    }
+
     async initiate(): Promise<void> {
         // TODO check if .sourceGeoJson is already populated?
         //      if this initiate is a reload, do we want to re-use it, or re-download? decide.

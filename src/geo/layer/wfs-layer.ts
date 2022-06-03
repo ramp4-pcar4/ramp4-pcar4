@@ -1,9 +1,14 @@
 // handles static geojson (e.g. from a user file or hardcoded in a config) or a geojson file hosted on a web server
 
-import { FileLayer } from '@/api/internal';
-import { UrlWrapper } from '@/geo/api';
+import { FileLayer, InstanceAPI } from '@/api/internal';
+import { LayerType, type RampLayerConfig, UrlWrapper } from '@/geo/api';
 
 export class WfsLayer extends FileLayer {
+    constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
+        super(rampConfig, $iApi);
+        this.layerType = LayerType.WFS;
+    }
+
     async initiate(): Promise<void> {
         const wrapper = new UrlWrapper(this.config.url);
 

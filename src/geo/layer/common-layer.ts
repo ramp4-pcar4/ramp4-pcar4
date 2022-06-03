@@ -5,8 +5,10 @@ import { GlobalEvents, InstanceAPI, LayerInstance } from '@/api/internal';
 import {
     DataFormat,
     DefPromise,
+    DrawState,
     Extent,
     Graphic,
+    LayerFormat,
     LayerState,
     LayerType,
     NoGeometry,
@@ -34,14 +36,10 @@ export class CommonLayer extends LayerInstance {
     _geomType: string;
     _nameField: string;
     _oidField: string;
-    _dataFormat: DataFormat;
-    protected _layerType: LayerType; // TODO change to readonly?
     // used to manage debouncing when applying filter updates against a layer. Private! but needs to be seen by FCs.
     _lastFilterUpdate = '';
 
     protected origRampConfig: RampLayerConfig;
-    protected sawLoad: boolean;
-    protected sawRefresh: boolean;
 
     // TODO consider also having a loaded boolean property, allowing a synch check if layer has loaded or not. state can flip around to update, etc.
     //      alternately implement something like function layerLoaded() from old geoApi
@@ -71,8 +69,9 @@ export class CommonLayer extends LayerInstance {
         this._geomType = 'error';
         this._nameField = 'error';
         this._oidField = 'error';
-        this._dataFormat = DataFormat.UNKNOWN;
-        this._layerType = LayerType.UNKNOWN;
+        this.dataFormat = DataFormat.UNKNOWN;
+        this.layerType = LayerType.UNKNOWN;
+        this.layerFormat = LayerFormat.UNKNOWN;
 
         this.origRampConfig = rampConfig;
         this.id = rampConfig.id || '';
@@ -84,21 +83,12 @@ export class CommonLayer extends LayerInstance {
         this.supportsSublayers = false; // by default layers do not support sublayers
         this.isFile = false; // default state.
         this.initialized = false;
-        this.sawLoad = false;
-        this.sawRefresh = false;
-        this.state = LayerState.LOADING;
+        this.state = LayerState.NEW;
+        this.drawState = DrawState.NOT_LOADED;
         this.loadPromise = new DefPromise();
         this.viewPromise = new DefPromise();
         this.esriWatches = [];
         this.layerTree = new TreeNode(0, this.uid, this.name, true); // is a layer with layer index 0 by default. subclasses will change this when they load
-    }
-
-    /**
-     * Indicates layer had loaded and achieved one sucessful update. I.e. layer has been drawn on the map once.
-     * @property initLoadDone
-     */
-    get initLoadDone(): boolean {
-        return this.sawLoad && this.sawRefresh;
     }
 
     protected noLayerErr(): void {
@@ -108,9 +98,17 @@ export class CommonLayer extends LayerInstance {
         console.trace();
     }
 
-    protected updateState(newState: LayerState): void {
+    updateState(newState: LayerState): void {
         this.state = newState;
         this.$iApi.event.emit(GlobalEvents.LAYER_STATECHANGE, {
+            state: newState,
+            layer: this
+        });
+    }
+
+    updateDrawState(newState: DrawState): void {
+        this.drawState = newState;
+        this.$iApi.event.emit(GlobalEvents.LAYER_DRAWSTATECHANGE, {
             state: newState,
             layer: this
         });
@@ -202,12 +200,9 @@ export class CommonLayer extends LayerInstance {
                 this.esriView = e.layerView;
                 this.esriWatches.push(
                     e.layerView.watch('updating', (newval: boolean) => {
-                        this.updateState(
-                            newval ? LayerState.REFRESH : LayerState.LOADED
+                        this.updateDrawState(
+                            newval ? DrawState.REFRESH : DrawState.UP_TO_DATE
                         );
-                        if (newval) {
-                            this.sawRefresh = true;
-                        }
                     })
                 );
                 this.viewPromise.resolveMe();
@@ -235,6 +230,7 @@ export class CommonLayer extends LayerInstance {
         this.esriWatches = [];
 
         this.updateState(LayerState.NEW);
+        this.updateDrawState(DrawState.NOT_LOADED);
 
         this.initialized = false;
     }
@@ -328,21 +324,16 @@ export class CommonLayer extends LayerInstance {
     // ----------- LAYER LOAD -----------
 
     // when esri layer loads, this will make sure the layer and FCs are in synch then let outsiders know its loaded
-    protected onLoad(): void {
+    onLoad(): void {
         // magic happens here. other layers will override onLoadActions,
         // meaning this will run the function appropriate for the layer who inherited LayerBase
         const loadPromises: Array<Promise<void>> = this.onLoadActions();
         Promise.all(loadPromises).then(() => {
             this.updateState(LayerState.LOADED);
-            this.sawLoad = true;
             this.loadPromise.resolveMe();
 
-            this.sublayers.forEach(
-                sublayer =>
-                    // This will just trigger the above statements
-                    // Also checks if onLoad is defined on this sublayer
-                    (sublayer as any)?.onLoad && (sublayer as any)?.onLoad()
-            );
+            // This will just trigger the above statements for each sublayer
+            this.sublayers.forEach(sublayer => sublayer.onLoad());
         });
     }
 
@@ -402,10 +393,7 @@ export class CommonLayer extends LayerInstance {
      * @returns {Boolean} true if layer is in an interactive state
      */
     get isValidState(): boolean {
-        return (
-            this.state === LayerState.LOADED ||
-            this.state === LayerState.REFRESH
-        );
+        return this.state === LayerState.LOADED;
     }
 
     // ----------- LAYER MANAGEMENT -----------
@@ -658,46 +646,6 @@ export class CommonLayer extends LayerInstance {
     }
 
     /**
-     * Returns the data format of a layer
-     *
-     * @returns {DataFormat} format type of the layer
-     */
-    get dataFormat(): DataFormat {
-        // TODO return value might need to be common string to allow for outside layers to have custom formats.
-        //      see if the interface on LayerInstance can be string and we can still compile an enum here or not.
-        // this.stubError();
-        return this._dataFormat;
-    }
-
-    /**
-     * Set the data format of the physical layer
-     *
-     * @param {DataFormat} dataFormat the new data format for the layer
-     */
-    set dataFormat(dataFormat: DataFormat) {
-        this._dataFormat = dataFormat;
-    }
-
-    /**
-     * Get the type of the physical layer
-     *
-     * @returns {LayerType} layer type of the layer
-     */
-    get layerType(): LayerType {
-        // this.stubError();
-        return this._layerType;
-    }
-
-    /**
-     * Set the type of the physical layer
-     *
-     * @param {LayerType} layerType the new layer type for the layer
-     */
-    set layerType(layerType: LayerType) {
-        this._layerType = layerType;
-    }
-
-    /**
      * Provides a tree structure describing the layer and any sublayers,
      * including uid values. Should only be called after isLayerLoaded resolves.
      *
@@ -796,7 +744,7 @@ export class CommonLayer extends LayerInstance {
 
     protected stubError(): void {
         throw new Error(
-            `Attempted to use a method not valid for ${this._layerType}`
+            `Attempted to use a method not valid for ${this.layerType}`
         );
     }
 
