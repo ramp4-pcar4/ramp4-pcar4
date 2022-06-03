@@ -153,6 +153,8 @@ TODO keep updating the list, make new subsections as appropriate. Maybe move to 
 -   `opens_feature_details` causes the details fixture to open for a single feature
 -   `toggles_help_panel` causes the help fixture to toggle the help panel
 -   `toggles_grid_panel` causes the grid fixture to toggle the grid panel
+-   `appbar_adds_temporary_button` causes the appbar to add a temporary button when a panel without a fixed button is opened
+-   `appbar_removes_temporary_button` causes the appbar to remove a temporary button when the respective panel is closed
 
 ### Component Handlers
 

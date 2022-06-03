@@ -253,12 +253,6 @@ export enum GlobalEvents {
     PANEL_CLOSED = 'panel/closed',
 
     /**
-     * Fires when a panel is pushed offscreen.
-     * Payload: `(panel: PanelInstance)`
-     */
-    PANEL_OFFSCREEN = 'panel/offscreen',
-
-    /**
      * Fires when a panel opens.
      * Payload: `(panel: PanelInstance)`
      */
