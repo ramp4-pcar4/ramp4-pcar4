@@ -344,7 +344,7 @@ function layerUpgrader(r2layer: any): any {
         url: r2layer.url
     };
 
-    // fill in the properties that are common across all layer types
+    // fill in the properties that are common across many layer types to avoid duplicate code
     if (r2layer.name) {
         r4layer.name = r2layer.name;
     }
@@ -369,6 +369,13 @@ function layerUpgrader(r2layer: any): any {
     if (r2layer.extent) {
         r4layer.extent = r2layer.extent;
     }
+
+    if (typeof r2layer.enableStructuredDelete !== 'undefined') {
+        console.warn(
+            `enableStructuredDelete property provided in layer ${r2layer.id} cannot be mapped and will be skipped.`
+        );
+    }
+
     const allowedControls: string[] = [
         'boundaryZoom',
         'boundingBox',
@@ -395,7 +402,7 @@ function layerUpgrader(r2layer: any): any {
             }
         });
     }
-    // Should disabledControls be removed as well, seeing as it was handled in #884?
+
     if (r2layer.disabledControls) {
         r4layer.disabledControls = [];
         r2layer.disabledControls.forEach((control: string) => {
@@ -424,6 +431,117 @@ function layerUpgrader(r2layer: any): any {
         }
     }
 
+    if (r2layer.nameField) {
+        r4layer.nameField = r2layer.nameField;
+    }
+
+    if (r2layer.tooltipField) {
+        r4layer.tooltipField = r2layer.tooltipField;
+    }
+    if (r2layer.tolerance) {
+        r4layer.tolerance = r2layer.tolerance;
+    }
+    if (r2layer.customRenderer) {
+        r4layer.customRenderer = r2layer.customRenderer;
+    }
+
+    if (r2layer.fieldMetadata) {
+        r4layer.fieldMatadata = [];
+        r2layer.fieldMatadata.forEach((r2fieldMetadataEntry: any) => {
+            const r4fieldMetadataEntry: any = {
+                name: r2fieldMetadataEntry.data
+            };
+            if (r2fieldMetadataEntry.alias) {
+                r4fieldMetadataEntry.alias = r2fieldMetadataEntry.alias;
+            }
+            r4layer.fieldMatadata.push(r4fieldMetadataEntry);
+        });
+    }
+    if (typeof r2layer.toggleSymbology !== 'undefined' || r2layer.table) {
+        r4layer.fixtures = {};
+        if (typeof r2layer.toggleSymbology !== 'undefined') {
+            r4layer.fixtures.legend = {
+                toggleSymbology: r2layer.toggleSymbology
+            };
+        }
+        if (r2layer.table) {
+            r4layer.fixtures.grid = {};
+            if (r2layer.table.title) {
+                r4layer.fixtures.grid.title = r2layer.table.title;
+            }
+            if (r2layer.table.description) {
+                console.warn(
+                    `description property provided in table property in layer ${r2layer.id} cannot be mapped and will be skipped.`
+                );
+            }
+            if (typeof r2layer.table.maximize !== 'undefined') {
+                console.warn(
+                    `maximize property provided in table property in layer ${r2layer.id} cannot be mapped and will be skipped.`
+                );
+            }
+            if (r2layer.table.search) {
+                r4layer.fixtures.grid.search = r2layer.table.search;
+            }
+            if (typeof r2layer.table.lazyFilter !== 'undefined') {
+                console.warn(
+                    `lazyFilter property provided in table property in layer ${r2layer.id} cannot be mapped and will be skipped.`
+                );
+            }
+            if (typeof r2layer.table.applyMap !== 'undefined') {
+                r4layer.fixtures.grid.applyMap = r2layer.table.applyMap;
+            }
+            if (typeof r2layer.table.showFilter !== 'undefined') {
+                r4layer.fixtures.grid.showFilter = r2layer.table.showFilter;
+            }
+            if (typeof r2layer.table.filterByExtent !== 'undefined') {
+                r4layer.fixtures.grid.filterByExtent =
+                    r2layer.table.filterByExtent;
+            }
+            if (typeof r2layer.table.searchStrictMatch !== 'undefined') {
+                console.warn(
+                    `searchStrictMatch property provided in table property in layer ${r2layer.id} cannot be mapped and will be skipped.`
+                );
+            }
+            if (typeof r2layer.table.printEnabled !== 'undefined') {
+                console.warn(
+                    `printEnabled property provided in table property in layer ${r2layer.id} cannot be mapped and will be skipped.`
+                );
+            }
+            if (r2layer.table.columns) {
+                r4layer.fixtures.grid.columns = [];
+                r2layer.table.columns.forEach((r2tableColumn: any) => {
+                    const r4tableColumn: any = {
+                        name: r2tableColumn.data
+                    };
+                    if (r2tableColumn.title) {
+                        r4tableColumn.title = r2tableColumn.title;
+                    }
+                    if (r2tableColumn.description) {
+                        console.warn(
+                            `description property provided in column property in table property in layer ${r2layer.id} cannot be mapped and will be skipped.`
+                        );
+                    }
+                    if (typeof r2tableColumn.visible !== 'undefined') {
+                        r4tableColumn.visible = r2tableColumn.visible;
+                    }
+                    if (r2tableColumn.width) {
+                        r4tableColumn.width = r2tableColumn.width;
+                    }
+                    if (r2tableColumn.sort) {
+                        r4tableColumn.sort = r2tableColumn.sort;
+                    }
+                    if (typeof r2tableColumn.searchable !== 'undefined') {
+                        r4tableColumn.searchable = r2tableColumn.searchable;
+                    }
+                    if (r2tableColumn.filter) {
+                        r4tableColumn.filter = r2tableColumn.filter;
+                    }
+                    r4layer.fixtures.grid.columns.push(r4tableColumn);
+                });
+            }
+        }
+    }
+
     // TODO fill in the specifcs for each layer type
     //      will probably want sub-functions for common big structures like grid/table,
     //      fields, dynamic & wms sublayers
@@ -435,32 +553,105 @@ function layerUpgrader(r2layer: any): any {
 
         case 'esriFeature':
             r4layer.layerType = 'esri-feature';
-            break;
+            if (r2layer.outfields) {
+                console.warn(
+                    `outfields property provided in layer ${r2layer.id} cannot be mapped and will be skipped.`
+                );
+            }
+
+            // Check if this feature layer is actually a file layer, and map file layer properties
+            if (r2layer.fileType) {
+                r4layer.layerType =
+                    r2layer.fileType === 'shapefile'
+                        ? 'file-shape'
+                        : `file-${r2layer.fileType}`;
+                if (r2layer.colour) {
+                    r4layer.colour = r2layer.colour;
+                }
+                if (r2layer.latField) {
+                    r4layer.latField = r2layer.latField;
+                }
+                if (r2layer.longField) {
+                    r4layer.longField = r2layer.longField;
+                }
+            }
 
         case 'ogcWfs':
             r4layer.layerType = 'ogc-wfs';
+            if (r2layer.colour) {
+                r4layer.colour = r2layer.colour;
+            }
+            if (typeof r2layer.xyInAttribs !== 'undefined') {
+                r4layer.xyInAttribs = r2layer.xyInAttribs;
+            }
             break;
 
         case 'ogcWms':
             r4layer.layerType = 'ogc-wms';
+
+            // TODO: uncomment this out (and make appropriate changes if necessary) when schema analysis for WMS layer is done
+            /*
+            if (typeof r2layer.suppressGetCapabilities !== 'undefined') {
+                r4layer.suppressGetCapabilities =
+                    r2layer.suppressGetCapabilities;
+            }
+            if (r2layer.featureInfoMimeType) {
+                r4layer.featureInfoMimeType = r2layer.featureInfoMimeType;
+            }
+            if (r2layer.legendMimeType) {
+                r4layer.legendMimeType = r2layer.legendMimeType;
+            }
+            if (r2layer.layerEntries) {
+                r4layer.layerEntries = [];
+                r2layer.layerEntries.forEach((r2layerEntry: any) => {
+                    const r4layerEntry: any = { id: r2layerEntry.id };
+                    if (r2layerEntry.name) {
+                        r4layerEntry.name = r2layerEntry.name;
+                    }
+                    if (r2layerEntry.currentStyle) {
+                        r4layerEntry.currentStyle = r2layerEntry.currentStyle;
+                    }
+                    if (r2layerEntry.controls) {
+                        r4layerEntry.controls = [];
+                        r2layerEntry.controls.forEach((control: string) => {
+                            if (control === 'query') {
+                                r4layerEntry.controls.push('identify');
+                            } else if (allowedControls.includes(control)) {
+                                r4layerEntry.controls.push(control);
+                            } else {
+                                console.warn(
+                                    `Ignored invalid layer control: ${control}`
+                                );
+                            }
+                        });
+                    }
+                    if (r2layerEntry.state) {
+                        r4layerEntry.state = {
+                            opacity: r2layerEntry.state.opacity ?? 1,
+                            visibility: r2layerEntry.state.visibility ?? true,
+                            boundingBox:
+                                r2layerEntry.state.boundingBox ?? false,
+                            identify: r2layerEntry.state.query ?? true,
+                            hovertips: r2layerEntry.state.hovertips ?? true
+                        };
+                        if (
+                            typeof r2layerEntry.state.snapshot !== 'undefined'
+                        ) {
+                            console.warn(
+                                `snapshot property provided in initialLayer settings in layer entry of layer ${r2layer.id} cannot be mapped and will be skipped.`
+                            );
+                        }
+                    }
+                });
+            }*/
             break;
 
         case 'esriImage':
             r4layer.layerType = 'esri-imagery';
-            if (typeof r2layer.enableStructuredDelete !== 'undefined') {
-                console.warn(
-                    `enableStructuredDelete property provided in layer ${r2layer.id} cannot be mapped and will be skipped.`
-                );
-            }
             break;
 
         case 'esriTile':
             r4layer.layerType = 'esri-tile';
-            if (typeof r2layer.enableStructuredDelete !== 'undefined') {
-                console.warn(
-                    `enableStructuredDelete property provided in layer ${r2layer.id} cannot be mapped and will be skipped.`
-                );
-            }
             break;
 
         default:
@@ -579,7 +770,7 @@ function uiUpgrader(r2ui: any, r4c: any): void {
     if (r2ui.help) {
         r4c.fixtures.help = {
             folderName: r2ui.help.folderName || 'default',
-            panelWidth: 350 // this property is not supported in the RAMP2 config - I'm guessing its ok to initialize to the default
+            panelWidth: 350
         };
         r4c.fixturesEnabled.push('help');
     }
