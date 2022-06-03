@@ -39,9 +39,6 @@ export class DetailsAPI extends FixtureInstance {
      * @memberof DetailsAPI
      */
     openFeature(featureData: { data: any; uid: string; format: string }): void {
-        // Clear the payload in the store
-        this.$vApp.$store.set(DetailsStore.setPayload, []);
-
         // Close the identified layers panel.
         const panel = this.$iApi.panel.get('details-layers');
         if (panel.isOpen) {

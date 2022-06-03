@@ -122,13 +122,13 @@ export default defineComponent({
             // to wrap their identify outputs in reactive() due to disrespectful code.
 
             // if no payload, just return
-            if (newPayload === undefined || newPayload.length === 0) {
-                this.activeGreedy = 0;
+            if (newPayload === undefined) {
                 return;
             }
 
             // track last identify request timestamp and add to payload items
-            this.activeGreedy = newPayload[0].requestTime;
+            this.activeGreedy =
+                newPayload.length === 0 ? 0 : newPayload[0].requestTime;
 
             this.layerResults = newPayload;
 
@@ -203,7 +203,8 @@ export default defineComponent({
                         : Promise.reject()
                 )
             );
-            const lastTime = newPayload[0].requestTime;
+            const lastTime =
+                newPayload.length === 0 ? 0 : newPayload[0].requestTime;
 
             // wait on any layer promise to resolve first with new identify results
             // @ts-ignore
