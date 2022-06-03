@@ -75,36 +75,41 @@ export class OverviewMapAPI extends CommonMapAPI {
         };
         this.esriView.graphics.add(new EsriGraphic(graphic));
 
-        this.handlers.push(
-            this.esriView.on('mouse-wheel', esriMouseWheel => {
+        this.handlers.push({
+            type: 'mouse-wheel',
+            handler: this.esriView.on('mouse-wheel', esriMouseWheel => {
                 esriMouseWheel.stopPropagation();
             })
-        );
+        });
 
-        this.handlers.push(
-            this.esriView.on('double-click', esriDoubleClick => {
+        this.handlers.push({
+            type: 'double-click',
+            handler: this.esriView.on('double-click', esriDoubleClick => {
                 esriDoubleClick.stopPropagation();
             })
-        );
+        });
 
-        this.handlers.push(
-            this.esriView.on('key-down', esriKeyDown => {
+        this.handlers.push({
+            type: 'key-down',
+            handler: this.esriView.on('key-down', esriKeyDown => {
                 esriKeyDown.stopPropagation();
             })
-        );
+        });
 
-        this.handlers.push(
-            this.esriView.on('key-up', esriKeyUp => {
+        this.handlers.push({
+            type: 'key-up',
+            handler: this.esriView.on('key-up', esriKeyUp => {
                 esriKeyUp.stopPropagation();
             })
-        );
+        });
 
-        this.handlers.push(
-            this.esriView.on('drag', esriDrag => {
+        this.handlers.push({
+            type: 'drag',
+            handler: this.esriView.on('drag', esriDrag => {
                 esriDrag.stopPropagation();
                 this.mapDrag(esriDrag);
             })
-        );
+        });
 
         this.esriView.container.addEventListener('touchmove', e => {
             // need this for panning and zooming to work on mobile devices / touchscreens

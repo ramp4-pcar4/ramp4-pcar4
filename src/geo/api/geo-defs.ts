@@ -649,4 +649,5 @@ export interface RampMapConfig {
     initialBasemapId: string;
     caption?: MapCaptionConfig;
     pointZoomScale?: number;
+    mapMouseThrottle?: number;
 }

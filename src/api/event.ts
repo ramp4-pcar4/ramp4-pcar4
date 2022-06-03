@@ -14,13 +14,11 @@ import type {
     MapMove,
     MouseCoords,
     RampBasemapConfig,
-    RampMapConfig,
     ScreenPoint
 } from '@/geo/api';
 import type { RampConfig } from '@/types';
 import { debounce, throttle } from 'throttle-debounce';
 import { MapCaptionStore } from '@/store/modules/map-caption';
-import { LayerStore } from '@/store/modules/layer';
 import { ConfigStore } from '@/store/modules/config';
 
 // TODO ensure some of the internal types used in the payload comments are published
@@ -208,6 +206,18 @@ export enum GlobalEvents {
      * Payload: `(params: MapMove)`
      */
     MAP_MOUSEMOVE = 'map/mousemove',
+
+    /**
+     * Fires when the mouse moves stops moving over the map.
+     * Payload: `(params: MapMove)`
+     */
+    MAP_MOUSEMOVE_END = 'map/mousemoveend',
+
+    /**
+     * Fires when the mouse starts moving over the map.
+     * Payload: `(params: MapMove)`
+     */
+    MAP_MOUSEMOVE_START = 'map/mousemovestart',
 
     /**
      * Fires when the map view finishes refreshing.
