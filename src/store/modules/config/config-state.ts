@@ -6,10 +6,11 @@ export class ConfigState {
     activeBasemapConfig: RampBasemapConfig | undefined;
     // change if decide need to support registering multiple configs per lang
     registeredConfigs: { [key: string]: RampConfig };
+    registeredLangs: { [key: string]: string };
 
     constructor(config: any) {
         this.config = config;
-        const lang = config.language;
-        this.registeredConfigs = { [lang]: config };
+        this.registeredConfigs = {};
+        this.registeredLangs = {};
     }
 }

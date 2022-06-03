@@ -124,12 +124,13 @@ export class InstanceAPI {
 
     /**
      * Initializes a Vue R4MP instance with the given config and options
+     *
      * @param {RampConfigs | undefined} configs language-keyed R4MP config
      * @param {RampOptions | undefined} options startup options for this R4MP instance
      */
     initialize(configs?: RampConfigs, options?: RampOptions): void {
         // TODO: decide whether to move to src/main.ts:createApp
-        // TODO: store a reference to the even bus in the global store [?]
+        // TODO: store a reference to the event bus in the global store [?]
         if (configs?.configs !== undefined) {
             let langConfigs: {
                 [key: string]: RampConfig;
@@ -197,6 +198,7 @@ export class InstanceAPI {
 
     /**
      * Reloads Vue R4MP instance with a new config
+     *
      * @param {RampConfigs} configs language-keyed R4MP config
      * @param {RampOptions} options startup options for this R4MP instance
      */
@@ -337,9 +339,19 @@ export class InstanceAPI {
             return;
         }
 
-        this.$vApp.$i18n.locale = language;
-        const activeConfig = this.getConfig();
+        const langs = this.$vApp.$store.get(ConfigStore.getRegisteredLangs) as {
+            [key: string]: string;
+        };
 
+        // prevent full map reload if the new language uses the same config
+        if (langs[language] === langs[this.$vApp.$i18n.locale]) {
+            this.$vApp.$i18n.locale = language;
+            return;
+        }
+
+        this.$vApp.$i18n.locale = language;
+
+        const activeConfig = this.getConfig();
         this.$vApp.$iApi.event.emit(GlobalEvents.CONFIG_CHANGE, activeConfig);
 
         // reload the map to apply new config
