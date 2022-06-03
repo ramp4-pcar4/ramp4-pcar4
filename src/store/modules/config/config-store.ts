@@ -1,6 +1,5 @@
-import type { ActionContext, Action } from 'vuex';
+import type { ActionContext } from 'vuex';
 import { make } from 'vuex-pathify';
-import merge from 'deepmerge';
 import type { RampBasemapConfig, RampMapConfig } from '@/geo/api';
 
 import { ConfigState } from './config-state';
@@ -17,6 +16,10 @@ const getters = {
         state: ConfigState
     ): { [key: string]: RampConfig } => {
         return state.registeredConfigs;
+    },
+
+    getRegisteredLangs: (state: ConfigState): { [key: string]: string } => {
+        return state.registeredLangs;
     },
 
     getActiveConfig:
@@ -67,14 +70,19 @@ const actions = {
         const config = configInfo.config;
         if (langs !== undefined && langs.length > 0) {
             // register config for specified languages
-            langs.forEach(
-                (lang: string) =>
-                    (context.state.registeredConfigs[lang] = config)
-            );
+            langs.forEach((lang: string) => {
+                context.state.registeredConfigs[lang] = config;
+                // add correspondence between language and config
+                context.state.registeredLangs[lang] = lang;
+            });
         } else {
             // register config for all available languages
             for (const lang in i18n.global.messages) {
                 context.state.registeredConfigs[lang] = config;
+                // initially each language corresponds to first config by default
+                context.state.registeredLangs[lang] = Object.keys(
+                    context.state.registeredConfigs
+                )[0];
             }
         }
     },
@@ -160,6 +168,14 @@ export enum ConfigStore {
      * `@returns` <{ [key: string]: RampConfig }> RAMP config for each registered language
      */
     getRegisteredConfigs = 'config/getRegisteredConfigs',
+    /**
+     * Get correspondence from each language to config
+     *
+     * `@remarks` Getter - use `@Get`
+     *
+     * `@returns` <{ [key: string]: string }> RAMP config langauge for each registered language
+     */
+    getRegisteredLangs = 'config/getRegisteredLangs',
     /**
      * Get active config based on the current map language
      *
