@@ -6,7 +6,9 @@
         tooltip-placement="top"
     >
         <template #header>
-            <div class="text-gray-400 w-full h-full hover:text-black p-8">
+            <div
+                class="flex items-center text-gray-400 w-full h-full hover:text-black p-8"
+            >
                 <svg
                     class="fill-current w-24 h-24 m-auto"
                     xmlns="http://www.w3.org/2000/svg"
