@@ -7,9 +7,6 @@ import type { RootState } from '@/store/state';
 
 type MapnavContext = ActionContext<MapnavState, RootState>;
 
-type StoreActions = { [key: string]: Action<MapnavState, RootState> };
-type StoreMutations = { [key: string]: Mutation<MapnavState> };
-
 export enum MapnavAction {
     REMOVE_ITEM = 'removeItem'
 }
@@ -34,16 +31,15 @@ const getters = {
 
 const actions = {
     [MapnavAction.REMOVE_ITEM](context: MapnavContext, value: string) {
-        const item = context.state.items[value];
-        if (item) {
-            context.commit(MapnavMutation.REMOVE_ITEM, item);
-        }
+        context.commit(MapnavMutation.REMOVE_ITEM, value);
     }
 };
 
 const mutations = {
     [MapnavMutation.REMOVE_ITEM](state: MapnavState, value: string) {
-        delete state.items[value];
+        if (value in state.items) {
+            delete state.items[value];
+        }
         let index = state.order.indexOf(value);
         if (index !== -1) {
             state.order.splice(index, 1);

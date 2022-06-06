@@ -429,7 +429,16 @@ let config = {
                         'layer-reorder'
                     ]
                 },
-                mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
+                mapnav: {
+                    items: [
+                        'fullscreen',
+                        'help',
+                        'home',
+                        'basemap',
+                        'legend',
+                        'geosearch'
+                    ]
+                },
                 export: {
                     title: {
                         value: 'All Your Base are Belong to Us',

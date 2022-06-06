@@ -58,16 +58,26 @@ export class MapnavAPI extends FixtureInstance {
      * @memberof MapnavAPI
      */
     _validateItems() {
+        // system mapnav controls that are not tied to a fixture
+        const systemControls: string[] = [
+            'geolocator',
+            'zoom',
+            'home',
+            'fullscreen'
+        ];
+
         // get the ordered list of items and see if any of them are registered
         this.$vApp.$store.get<string[]>('mapnav/order')!.forEach(id => {
-            // check components with the literal id and with a `-nav-button` suffix;
-            [`${id}-nav-button`, id].some(v => {
-                // TODO: fix this if needed
-                // if (v in this.$vApp.$options.components!) {
-                // if an item is registered globally, save the name of the registered component
-                this.$vApp.$store.set(`mapnav/items@${id}.componentId`, v);
-                // }
-            });
+            // can't check if the nav button component is registered
+            // so we make the assumption that it will always have the `-nav-button` prefix
+
+            // check if fixture exists, or if control is a system control
+            if (this.$iApi.fixture.get(id) || systemControls.includes(id)) {
+                this.$vApp.$store.set(
+                    `mapnav/items@${id}.componentId`,
+                    `${id}-nav-button`
+                );
+            }
         });
     }
 }

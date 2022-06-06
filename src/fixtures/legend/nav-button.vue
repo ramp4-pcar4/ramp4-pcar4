@@ -1,8 +1,5 @@
 <template>
-    <mapnav-button
-        :onClickFunction="togglePanel"
-        :tooltip="$t('basemap.title')"
-    >
+    <mapnav-button :onClickFunction="togglePanel" :tooltip="$t('legend.title')">
         <svg
             class="fill-current w-32 h-20"
             xmlns="http://www.w3.org/2000/svg"
@@ -10,7 +7,7 @@
         >
             <path d="M0 0h24v24H0z" fill="none" />
             <path
-                d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"
+                d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"
             />
         </svg>
     </mapnav-button>
@@ -20,10 +17,10 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-    name: 'BasemapNavButtonV',
+    name: 'LegendNavButtonV',
     methods: {
         togglePanel() {
-            this.$iApi.panel.toggle('basemap');
+            this.$iApi.panel.toggle('legend');
         }
     }
 });

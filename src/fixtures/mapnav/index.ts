@@ -33,17 +33,23 @@ class MapnavFixture extends MapnavAPI {
 
         // since components used in appbar can be registered after this point, listen to the global component registration event and re-validate items
         // TODO revist. this seems to be self-contained to the mapnav fixture, so ideally can stay as is and not worry about events api.
-        let handler = this.$iApi.event.on(
-            GlobalEvents.COMPONENT,
-            this._validateItems.bind(this)
-        );
+        let handler = this.$iApi.event.on(GlobalEvents.COMPONENT, () => {
+            this._parseConfig(this.config);
+        });
 
         // override the removed method here to get access to scope
         this.removed = () => {
             console.log(`[fixture] ${this.id} removed`);
             unwatch();
-            this.$vApp.$store.unregisterModule('mapnav');
             this.$iApi.event.off(handler);
+
+            // gracefully remove all buttons first (in case anything is watching for button removal)
+            let items: any = { ...this.$vApp.$store.get('mapnav/items') };
+            Object.keys(items).forEach(item =>
+                this.$iApi.$vApp.$store.dispatch('mapnav/removeItem', item)
+            );
+
+            this.$vApp.$store.unregisterModule('mapnav');
             destroy();
         };
     }
