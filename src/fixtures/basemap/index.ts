@@ -28,9 +28,14 @@ class BasemapFixture extends FixtureInstance {
 
     removed() {
         console.log(`[fixture] ${this.id} removed`);
-        // TODO:
-        // - remove mapnav button
-        // - remove appbar button (blocked by #882)
+
+        if (!!this.$iApi.fixture.get('appbar')) {
+            this.$iApi.$vApp.$store.dispatch('appbar/removeButton', 'basemap');
+        }
+        if (!!this.$iApi.fixture.get('mapnav')) {
+            this.$iApi.$vApp.$store.dispatch('mapnav/removeItem', 'basemap');
+        }
+
         this.$iApi.panel.remove('basemap');
     }
 }

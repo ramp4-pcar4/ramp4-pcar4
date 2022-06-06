@@ -8,14 +8,12 @@ type AppbarContext = ActionContext<AppbarState, RootState>;
 
 export enum AppbarAction {
     ADD_TEMP_BUTTON = 'addTempButton',
-    REMOVE_TEMP_BUTTON = 'removeTempButton'
+    REMOVE_BUTTON = 'removeButton'
 }
 
 export enum AppbarMutation {
-    ADD_ITEM = 'ADD_ITEM',
-    REMOVE_ITEM = 'REMOVE_ITEM',
     ADD_TEMP_BUTTON = 'ADD_TEMP_BUTTON',
-    REMOVE_TEMP_BUTTON = 'REMOVE_TEMP_BUTTON'
+    REMOVE_BUTTON = 'REMOVE_BUTTON'
 }
 
 const getters = {
@@ -25,11 +23,16 @@ const getters = {
      * @param {AppbarState} state
      * @returns {AppbarItemInstance[][]}
      */
-    visible(state: AppbarState): AppbarItemInstance[][] {
+    visible(state: AppbarState): (AppbarItemInstance | string)[][] {
         return state.order
-            .map<AppbarItemInstance[]>(subArray =>
+            .map<(AppbarItemInstance | string)[]>(subArray =>
                 subArray
-                    .map(id => state.items[id])
+                    .map(
+                        item =>
+                            state.items[
+                                typeof item === 'string' ? item : item.id
+                            ]
+                    )
                     .filter(item => {
                         if (typeof item === 'string' || item.componentId) {
                             return true;
@@ -46,10 +49,8 @@ const actions = {
             context.commit(AppbarMutation.ADD_TEMP_BUTTON, value);
         }
     },
-    [AppbarAction.REMOVE_TEMP_BUTTON](context: AppbarContext, value: string) {
-        if (context.state.temporary.find(id => id === value)) {
-            context.commit(AppbarMutation.REMOVE_TEMP_BUTTON, value);
-        }
+    [AppbarAction.REMOVE_BUTTON](context: AppbarContext, value: string) {
+        context.commit(AppbarMutation.REMOVE_BUTTON, value);
     }
 };
 
@@ -57,8 +58,23 @@ const mutations = {
     [AppbarMutation.ADD_TEMP_BUTTON](state: AppbarState, value: string) {
         state.temporary.push(value);
     },
-    [AppbarMutation.REMOVE_TEMP_BUTTON](state: AppbarState, value: string) {
-        state.temporary.splice(state.temporary.indexOf(value), 1);
+    [AppbarMutation.REMOVE_BUTTON](state: AppbarState, value: string) {
+        let idx = state.temporary.indexOf(value);
+        if (idx !== -1) {
+            // remove from temporary list
+            state.temporary.splice(idx, 1);
+        }
+        if (value in state.items) {
+            // remove from items
+            delete state.items[value];
+        }
+        state.order.forEach((subItems: (string | AppbarItemInstance)[]) => {
+            let idx = subItems.indexOf(value);
+            if (idx !== -1) {
+                // remove from order sub group list
+                subItems.splice(idx, 1);
+            }
+        });
     }
 };
 

@@ -1,5 +1,10 @@
 import { TinyEmitter } from 'tiny-emitter';
-import { APIScope, InstanceAPI, LayerInstance } from './internal';
+import {
+    APIScope,
+    InstanceAPI,
+    LayerInstance,
+    PanelInstance
+} from './internal';
 import type { DetailsAPI } from '@/fixtures/details/api/details';
 import type { SettingsAPI } from '@/fixtures/settings/api/settings';
 import type { HelpAPI } from '@/fixtures/help/api/help';
@@ -633,10 +638,9 @@ export class EventAPI extends APIScope {
                 zeHandler = (panel: PanelInstance) => {
                     if (
                         this.$iApi.fixture.get('appbar') &&
-                        !this.$iApi.$vApp.$store
-                            .get('appbar/order')
+                        !(this.$iApi.$vApp.$store.get('appbar/order') as any)
                             .flat()
-                            .find(item => item === panel.id)
+                            .find((item: string) => item === panel.id)
                     ) {
                         this.$iApi.$vApp.$store.dispatch(
                             `appbar/${AppbarAction.ADD_TEMP_BUTTON}`,
@@ -650,13 +654,12 @@ export class EventAPI extends APIScope {
                 zeHandler = (panel: PanelInstance) => {
                     if (
                         this.$iApi.fixture.get('appbar') &&
-                        !this.$iApi.$vApp.$store
-                            .get('appbar/order')
+                        !(this.$iApi.$vApp.$store.get('appbar/order') as any)
                             .flat()
-                            .find(item => item === panel.id)
+                            .find((item: string) => item === panel.id)
                     ) {
                         this.$iApi.$vApp.$store.dispatch(
-                            `appbar/${AppbarAction.REMOVE_TEMP_BUTTON}`,
+                            `appbar/${AppbarAction.REMOVE_BUTTON}`,
                             panel.id
                         );
                     }

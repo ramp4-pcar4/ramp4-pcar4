@@ -207,15 +207,6 @@ export class InstanceAPI {
      * @param {RampOptions} options startup options for this R4MP instance
      */
     reload(configs?: RampConfigs, options?: RampOptions): void {
-        // TODO: remove the below step after #882 and appbar/mapnav fixture removal is donethanks
-        // clear appbar and mapnav buttons
-        this.$vApp.$store.set('appbar/items', {});
-        this.$vApp.$store.set('appbar/order', []);
-        this.$vApp.$store.set('appbar/temporary', []);
-        this.$vApp.$store.set('appbar/tempButtonDict', {});
-        this.$vApp.$store.set('mapnav/items', {});
-        this.$vApp.$store.set('mapnav/order', []);
-
         // remove all fixtures
         // get list of all fixture ids currently added
         let addedFixtures: Array<string> = Object.keys(

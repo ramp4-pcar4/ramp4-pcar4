@@ -41,8 +41,12 @@ class HelpFixture extends HelpAPI {
         // override the removed method here to get access to scope
         this.removed = () => {
             console.log(`[fixture] ${this.id} removed`);
-            // TODO: remove mapnav button (probably need to discuss how to do this properly)
             unwatch();
+
+            if (!!this.$iApi.fixture.get('mapnav')) {
+                this.$iApi.$vApp.$store.dispatch('mapnav/removeItem', 'help');
+            }
+
             this.$vApp.$store.unregisterModule('help');
             this.$iApi.panel.remove('help');
         };

@@ -34,7 +34,6 @@ class WizardFixture extends WizardAPI {
         // override the removed method here to get access to scope
         this.removed = () => {
             console.log(`[fixture] ${this.id} removed`);
-            // TODO: handle appbar button (blocked by #882)
             this.$iApi.panel.remove('wizard');
             this.$vApp.$store.unregisterModule('wizard');
             layerSource = undefined; // will be cleaned up by JS garbage collector

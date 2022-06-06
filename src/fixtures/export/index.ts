@@ -58,7 +58,6 @@ class ExportFixture extends ExportAPI {
 
         this.removed = () => {
             console.log(`[fixture] ${this.id} removed`);
-            // TODO: remove appbar button (blocked by #882)
             unwatch();
             // remove sub fixtures
             this.$iApi.fixture
@@ -74,6 +73,13 @@ class ExportFixture extends ExportAPI {
             this.$iApi.fixture
                 .get<ExportScalebarFixture>('export-scalebar')
                 ?.remove();
+
+            if (!!this.$iApi.fixture.get('appbar')) {
+                this.$iApi.$vApp.$store.dispatch(
+                    'appbar/removeButton',
+                    'export'
+                );
+            }
 
             this.$iApi.panel.remove('export');
             this.$vApp.$store.unregisterModule('export');
