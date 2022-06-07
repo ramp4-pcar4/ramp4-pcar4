@@ -35,7 +35,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { get } from '@/store/pathify-helper';
 
 import NotificationItemV from './notification-item.vue';
 
@@ -47,7 +46,7 @@ export default defineComponent({
 
     data() {
         return {
-            notificationStack: get('notification/notificationStack')
+            notificationStack: this.get('notification/notificationStack')
         };
     }
 });

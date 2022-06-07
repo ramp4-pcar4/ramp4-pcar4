@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { get, call } from '@/store/pathify-helper';
+
 import { GeosearchStore } from './store';
 import { debounce } from 'throttle-debounce';
 
@@ -20,8 +20,8 @@ export default defineComponent({
     data() {
         return {
             // fetch search value and actions from store
-            searchVal: get(GeosearchStore.searchVal),
-            setSearchTerm: call(GeosearchStore.setSearchTerm),
+            searchVal: this.get(GeosearchStore.searchVal),
+            setSearchTerm: this.call(GeosearchStore.setSearchTerm),
 
             // debounce function for search term change
             onSearchTermChange: debounce(500, (searchTerm: string) => {

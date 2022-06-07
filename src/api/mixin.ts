@@ -12,6 +12,7 @@ export default {
             beforeCreate() {
                 const options = this.$options;
 
+                // TODO: does this do anything? Neither of these ever seem to be true, maybe something that was needed for vue 2 only?
                 if (options.iApi) {
                     // if `iApi` option was set directly, assign it directly to the Vue instance as `$iApi`, so it will be accessible to components
                     this.$iApi = options.iApi;

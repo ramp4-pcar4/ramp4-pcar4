@@ -125,7 +125,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import type { PropType } from 'vue';
-import { get } from '@/store/pathify-helper';
+
 import { DetailsStore } from './store';
 
 import type { LayerInstance, PanelInstance } from '@/api/internal';
@@ -160,8 +160,8 @@ export default defineComponent({
     },
     data() {
         return {
-            defaultTemplates: get(DetailsStore.defaultTemplates),
-            templateBindings: get(DetailsStore.templates),
+            defaultTemplates: this.get(DetailsStore.defaultTemplates),
+            templateBindings: this.get(DetailsStore.templates),
             identifyTypes: IdentifyResultFormat.UNKNOWN,
             icon: '' as string,
             currentIdx: 0,

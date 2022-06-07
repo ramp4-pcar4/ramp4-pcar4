@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { get } from '@/store/pathify-helper';
+
 import type { LayerInstance } from '@/api/internal';
 import { directive as tippyDirective } from 'vue-tippy';
 
@@ -36,7 +36,7 @@ export default defineComponent({
     props: ['params'],
     data() {
         return {
-            getLayerByUid: get('layer/getLayerByUid')
+            getLayerByUid: this.get('layer/getLayerByUid')
         };
     },
     mounted() {

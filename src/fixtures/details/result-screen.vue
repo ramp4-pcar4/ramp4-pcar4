@@ -51,7 +51,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import type { PropType } from 'vue';
-import { get } from '@/store/pathify-helper';
 
 import { GlobalEvents, type LayerInstance, type PanelInstance } from '@/api';
 import type { IdentifyResult } from '@/geo/api';

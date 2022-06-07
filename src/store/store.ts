@@ -12,18 +12,20 @@ import type { RootState } from '@/store/state';
 
 // pathify.options.deep = 2;
 
-export const store = vuexCreateStore(<RootState>{
-    plugins: [pathify.plugin],
-    modules: {
-        config: config(),
-        fixture: fixture(),
-        layer: layer(),
-        mapcaption: mapcaption(),
-        maptip: maptip(),
-        notification: notification(),
-        panel: panel()
-    }
-});
+export function store() {
+    return vuexCreateStore(<RootState>{
+        plugins: [pathify.plugin],
+        modules: {
+            config: config(),
+            fixture: fixture(),
+            layer: layer(),
+            mapcaption: mapcaption(),
+            maptip: maptip(),
+            notification: notification(),
+            panel: panel()
+        }
+    });
+}
 
 export type storeType = vuexStore<Record<string, unknown>>;
 

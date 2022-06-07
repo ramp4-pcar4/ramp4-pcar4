@@ -68,7 +68,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { get, call } from '@/store/pathify-helper';
 
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 import NotificationListV from './notification-list.vue';
@@ -82,8 +81,8 @@ export default defineComponent({
 
     data() {
         return {
-            number: get('notification/notificationNumber'),
-            clearAll: call('notification/clearAll')
+            number: this.get('notification/notificationNumber'),
+            clearAll: this.call('notification/clearAll')
         };
     }
 });

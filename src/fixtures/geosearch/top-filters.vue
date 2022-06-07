@@ -51,7 +51,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { get, call } from '@/store/pathify-helper';
+
 import { GeosearchStore } from './store';
 
 export default defineComponent({
@@ -60,11 +60,11 @@ export default defineComponent({
     // fetch defined province/type filters + filter params from store
     data() {
         return {
-            provinces: get(GeosearchStore.getProvinces),
-            types: get(GeosearchStore.getTypes),
-            queryParams: get(GeosearchStore.queryParams),
-            setProvince: call(GeosearchStore.setProvince),
-            setType: call(GeosearchStore.setType)
+            provinces: this.get(GeosearchStore.getProvinces),
+            types: this.get(GeosearchStore.getTypes),
+            queryParams: this.get(GeosearchStore.queryParams),
+            setProvince: this.call(GeosearchStore.setProvince),
+            setType: this.call(GeosearchStore.setType)
         };
     },
     methods: {

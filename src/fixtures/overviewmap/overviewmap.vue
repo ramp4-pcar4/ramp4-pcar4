@@ -52,7 +52,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { get } from '@/store/pathify-helper';
+
 import type { Extent, RampBasemapConfig } from '@/geo/api';
 import { GlobalEvents, OverviewMapAPI } from '@/api/internal';
 import { OverviewmapStore } from './store';
@@ -62,9 +62,9 @@ export default defineComponent({
     name: 'OverviewmapV',
     data() {
         return {
-            mapConfig: get(OverviewmapStore.mapConfig),
-            basemaps: get(OverviewmapStore.basemaps),
-            startMinimized: get(OverviewmapStore.startMinimized),
+            mapConfig: this.get(OverviewmapStore.mapConfig),
+            basemaps: this.get(OverviewmapStore.basemaps),
+            startMinimized: this.get(OverviewmapStore.startMinimized),
             overviewMap: new OverviewMapAPI(this.$iApi),
             minimized: true,
             hoverOnExtent: false,

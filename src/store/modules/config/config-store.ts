@@ -75,15 +75,6 @@ const actions = {
                 // add correspondence between language and config
                 context.state.registeredLangs[lang] = lang;
             });
-        } else {
-            // register config for all available languages
-            for (const lang in i18n.global.messages) {
-                context.state.registeredConfigs[lang] = config;
-                // initially each language corresponds to first config by default
-                context.state.registeredLangs[lang] = Object.keys(
-                    context.state.registeredConfigs
-                )[0];
-            }
         }
     },
     updateConfig: function (

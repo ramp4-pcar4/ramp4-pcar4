@@ -8,6 +8,7 @@ import type { RampConfig, RampConfigs } from '@/types';
 import { i18n } from '@/lang';
 import screenfull from 'screenfull';
 import mixin from './mixin';
+import pathifyHelper from '@/store/pathify-helper';
 
 import App from '@/app.vue';
 import { store } from '@/store';
@@ -143,7 +144,8 @@ export class InstanceAPI {
 
             // register first config for all available languages and then overwrite configs per language as needed
             this.$vApp.$store.set(ConfigStore.registerConfig, {
-                config: langConfig
+                config: langConfig,
+                langs: Object.keys(this.$vApp.$i18n.messages)
             });
             for (let lang in langConfigs) {
                 this.$vApp.$store.set(ConfigStore.registerConfig, {
@@ -451,14 +453,17 @@ export class InstanceAPI {
 function createApp(element: HTMLElement, iApi: InstanceAPI) {
     // passing the `iApi` reference to the root Vue component will propagate it to all the child component in this instance of R4MP Vue application
     // if several R4MP apps are created, each will contain a reference of its own API instance
+    const thisStore = store();
+    const thisi18n = i18n();
     const vueElement = createRampApp(App)
-        .use(store)
-        .use(i18n)
+        .use(thisStore)
+        .use(thisi18n)
         .use(VueTippy, {
             directive: 'tippy', // => v-tippy
             component: 'tippy' // => <tippy/>
         })
-        .use(mixin);
+        .use(mixin)
+        .use(pathifyHelper);
 
     vueElement.directive('focus-container', FocusContainer);
     vueElement.directive('focus-list', FocusList);
@@ -483,7 +488,7 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
     vueElement.component('appbar-button', AppbarButtonV);
 
     // Add the $store and $iApi instances to the Vue components.
-    vueElement.config.globalProperties.$store = store;
+    vueElement.config.globalProperties.$store = thisStore;
     vueElement.config.globalProperties.$iApi = iApi;
 
     const app = vueElement.mount(element);

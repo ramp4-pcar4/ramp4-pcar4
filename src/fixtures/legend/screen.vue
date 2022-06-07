@@ -18,7 +18,6 @@
 </template>
 
 <script lang="ts">
-import { get } from '@/store/pathify-helper';
 import type { PanelInstance } from '@/api';
 import { defineComponent, defineAsyncComponent } from 'vue';
 import type { PropType } from 'vue';
@@ -43,7 +42,7 @@ export default defineComponent({
     },
 
     data() {
-        return { children: get(LegendStore.children) };
+        return { children: this.get(LegendStore.children) };
     }
 });
 </script>

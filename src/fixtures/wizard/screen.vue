@@ -196,7 +196,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { get, sync, call } from '@/store/pathify-helper';
 
 import { PanelInstance } from '@/api';
 import { LayerType } from '@/geo/api';
@@ -223,15 +222,10 @@ export default defineComponent({
 
     data() {
         return {
-            layerSource: get(WizardStore.layerSource),
-            step: get(WizardStore.step),
+            layerSource: this.get(WizardStore.layerSource),
+            step: this.get(WizardStore.step),
 
-            url: sync(WizardStore.url),
-            fileData: sync(WizardStore.fileData),
-            typeSelection: sync(WizardStore.typeSelection),
-            layerInfo: sync(WizardStore.layerInfo),
-
-            goToStep: call(WizardStore.goToStep),
+            goToStep: this.call(WizardStore.goToStep),
 
             formulateFile: {},
             formatError: false,
@@ -279,6 +273,41 @@ export default defineComponent({
                 { value: LayerType.CSV, label: this.$t('wizard.fileType.csv') }
             ]
         };
+    },
+
+    computed: {
+        url: {
+            get() {
+                return this.$store.get(WizardStore.url);
+            },
+            set(newValue) {
+                this.$store.set(WizardStore.url, newValue);
+            }
+        },
+        fileData: {
+            get() {
+                return this.$store.get(WizardStore.fileData);
+            },
+            set(newValue) {
+                this.$store.set(WizardStore.fileData, newValue);
+            }
+        },
+        typeSelection: {
+            get() {
+                return this.$store.get(WizardStore.typeSelection);
+            },
+            set(newValue) {
+                this.$store.set(WizardStore.typeSelection, newValue);
+            }
+        },
+        layerInfo: {
+            get() {
+                return this.$store.get(WizardStore.layerInfo);
+            },
+            set(newValue) {
+                this.$store.set(WizardStore.layerInfo, newValue);
+            }
+        }
     },
 
     // lifecycle hook captures errors from child components
