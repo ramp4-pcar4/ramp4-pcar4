@@ -220,14 +220,12 @@ export default defineComponent({
     },
     props: {
         layerUid: {
-            type: String,
-            required: true
+            type: String
         }
     },
 
     data() {
         return {
-            getLayerByUid: get('layer/getLayerByUid'),
             grids: get(GridStore.grids),
             config: ref(),
             gridApi: ref(),
@@ -299,14 +297,19 @@ export default defineComponent({
             )
         };
 
-        const fancyLayer: LayerInstance | undefined = this.getLayerByUid(
-            this.layerUid
-        );
+        if (this.layerUid == null) {
+            // if uid is null or undefined, the layer has been deleted while this component was unmounted
+            return;
+        }
+
+        const fancyLayer: LayerInstance | undefined =
+            this.$iApi.geo.layer.getLayer(this.layerUid);
 
         if (fancyLayer === undefined) {
-            // this really shouldn't happen unless the wrong API call is made, but maybe we should
-            // do something else here anyway.
-            console.error(`Could not find layer with uid ${this.layerUid}.`);
+            // this can happen if the grid was minimized before the layer was removed
+            console.warn(
+                `Data grid could not find layer with uid ${this.layerUid}.`
+            );
             return;
         }
 
@@ -482,7 +485,8 @@ export default defineComponent({
                             filterKey !== CoreFilter.GRID &&
                             uid &&
                             (uid === this.layerUid ||
-                                this.getLayerByUid(uid)!.uid == this.layerUid)
+                                this.$iApi.geo.layer.getLayer(uid)?.uid ==
+                                    this.layerUid)
                         ) {
                             this.applyLayerFilters();
                         }
@@ -503,7 +507,8 @@ export default defineComponent({
                             layer.uid &&
                             (layer.uid === this.layerUid ||
                                 layer.uid ===
-                                    this.getLayerByUid(this.layerUid)!.uid)
+                                    this.$iApi.geo.layer.getLayer(this.layerUid)
+                                        ?.uid)
                         ) {
                             this.applyLayerFilters();
                         }
@@ -823,7 +828,7 @@ export default defineComponent({
                     maxWidth: 82,
                     cellRenderer: (cell: any) => {
                         const layer: LayerInstance | undefined =
-                            this.getLayerByUid(this.layerUid);
+                            this.$iApi.geo.layer.getLayer(this.layerUid);
                         if (layer === undefined) return;
                         const iconContainer = document.createElement('span');
                         const oid = cell.data[this.oidField];
@@ -861,8 +866,8 @@ export default defineComponent({
 
         // updates external grid filter based on layer filter and rerenders grid
         async applyLayerFilters() {
-            const layer = this.getLayerByUid(this.layerUid)!;
-            if (!layer.visibility) {
+            const layer = this.$iApi.geo.layer.getLayer(this.layerUid)!;
+            if (!layer || !layer.visibility) {
                 this.filteredOids = [];
             } else {
                 this.filteredOids = await layer.getFilterOIDs(
@@ -876,8 +881,8 @@ export default defineComponent({
 
         applyFiltersToMap() {
             const mapFilterQuery = this.getFiltersQuery();
-            const layer = this.getLayerByUid(this.layerUid);
-            layer!.setSqlFilter(CoreFilter.GRID, mapFilterQuery, this.layerUid);
+            const layer = this.$iApi.geo.layer.getLayer(this.layerUid);
+            layer?.setSqlFilter(CoreFilter.GRID, mapFilterQuery, this.layerUid);
             this.filterSync = true;
         },
 
@@ -1089,8 +1094,8 @@ export default defineComponent({
         // checks if current grid filters are applied to map
         gridFiltersApplied() {
             const gridQuery = this.getFiltersQuery();
-            const layer = this.getLayerByUid(this.layerUid);
-            const layerQuery = layer!.getSqlFilter(
+            const layer = this.$iApi.geo.layer.getLayer(this.layerUid);
+            const layerQuery = layer?.getSqlFilter(
                 CoreFilter.GRID,
                 this.layerUid
             );
