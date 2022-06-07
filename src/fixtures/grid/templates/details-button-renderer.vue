@@ -30,13 +30,9 @@ import { directive as tippyDirective } from 'vue-tippy';
 
 export default defineComponent({
     name: 'DetailsButtonRendererV',
+    props: ['params'],
     directives: {
         tippy: tippyDirective
-    },
-    data(props) {
-        return {
-            params: props.params as any
-        };
     },
     mounted() {
         // need to hoist events to top level cell wrapper to be keyboard accessible
