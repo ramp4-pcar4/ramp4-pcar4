@@ -1,5 +1,5 @@
 <template>
-    <panel-screen>
+    <panel-screen :panel="panel">
         <template #header>
             {{ $t('notifications.title') }}
         </template>
@@ -62,12 +62,6 @@ export default defineComponent({
         return {
             clearAll: call('notification/clearAll')
         };
-    },
-
-    methods: {
-        isPinned(): boolean {
-            return this.panel.isPinned;
-        }
     }
 });
 </script>

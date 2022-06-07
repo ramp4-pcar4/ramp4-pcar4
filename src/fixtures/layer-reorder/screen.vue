@@ -26,11 +26,6 @@ export default defineComponent({
             type: Object as PropType<PanelInstance>,
             required: true
         }
-    },
-    methods: {
-        isPinned(): boolean {
-            return this.panel.isPinned;
-        }
     }
 });
 </script>

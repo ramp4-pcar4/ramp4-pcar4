@@ -102,12 +102,6 @@ export default defineComponent({
 
     beforeUnmount() {
         this.watchers.forEach(unwatch => unwatch());
-    },
-
-    methods: {
-        isPinned(): boolean {
-            return this.panel.isPinned;
-        }
     }
 });
 </script>
