@@ -155,7 +155,7 @@
 
 <script lang="ts">
 import { defineComponent, toRaw } from 'vue';
-import { get } from '@/store/pathify-helper';
+
 import { LayerStore } from '@/store/modules/layer';
 import { GlobalEvents, LayerInstance } from '@/api';
 import type { LayerModel } from '../definitions';
@@ -170,7 +170,7 @@ export default defineComponent({
     },
     data() {
         return {
-            layers: get(LayerStore.layers),
+            layers: this.get(LayerStore.layers),
             layersModel: [] as Array<LayerModel>,
             oldOrder: [] as Array<number>, // keeps track of layer order when dragging starts
             minIdx: -Infinity, // lowest allowed index

@@ -48,7 +48,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { get } from '@/store/pathify-helper';
 
 import DefaultAppbarButtonV from './default-button.vue';
 import AppbarDividerV from './divider.vue';
@@ -70,8 +69,8 @@ export default defineComponent({
 
     data() {
         return {
-            items: get('appbar/visible'),
-            temporaryItems: get('appbar/temporary'),
+            items: this.get('appbar/visible'),
+            temporaryItems: this.get('appbar/temporary'),
             overflow: false
         };
     },

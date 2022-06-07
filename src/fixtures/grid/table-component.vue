@@ -172,7 +172,7 @@
 
 <script lang="ts">
 import { markRaw, defineComponent, ref } from 'vue';
-import { get } from '@/store/pathify-helper';
+
 import { LayerInstance, GlobalEvents } from '@/api/internal';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -227,8 +227,8 @@ export default defineComponent({
 
     data() {
         return {
-            getLayerByUid: get('layer/getLayerByUid'),
-            grids: get(GridStore.grids),
+            getLayerByUid: this.get('layer/getLayerByUid'),
+            grids: this.get(GridStore.grids),
             config: ref(),
             gridApi: ref(),
             gridOptions: ref(),

@@ -23,7 +23,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { get } from '@/store/pathify-helper';
 
 import ZoomNavV from './buttons/zoom-nav.vue';
 import DividerNavV from './buttons/divider-nav.vue';
@@ -37,7 +36,7 @@ export default defineComponent({
 
     data() {
         return {
-            visible: get('mapnav/visible')
+            visible: this.get('mapnav/visible')
         };
     }
 });

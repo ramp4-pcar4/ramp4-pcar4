@@ -39,7 +39,6 @@
 <script lang="ts">
 import { defineComponent, defineAsyncComponent } from 'vue';
 import type { PropType } from 'vue';
-import { call } from '@/store/pathify-helper';
 
 import type { PanelInstance } from '@/api';
 
@@ -60,7 +59,7 @@ export default defineComponent({
 
     data() {
         return {
-            clearAll: call('notification/clearAll')
+            clearAll: this.call('notification/clearAll')
         };
     },
 

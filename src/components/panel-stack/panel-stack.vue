@@ -16,7 +16,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { get, sync } from '@/store/pathify-helper';
 
 import anime from 'animejs';
 
@@ -37,9 +36,7 @@ export default defineComponent({
 
     data() {
         return {
-            visible: get('panel/getVisible'),
-            stackWidth: sync('panel/stackWidth'),
-            mobileView: sync('panel/mobileView')
+            visible: this.get('panel/getVisible')
         };
     },
 
@@ -48,9 +45,12 @@ export default defineComponent({
         const resizeObserver = new ResizeObserver((entries: any) => {
             // Determine if the app is in mobile mode (the app container ONLY has the `xs` class on it. If it contains `sm`
             // then the screen is too large).
-            this.mobileView = !this.$root?.$el.classList.contains('sm');
+            this.$store.set(
+                'panel/mobileView',
+                !this.$root?.$el.classList.contains('sm')
+            );
 
-            this.stackWidth = entries[0].contentRect.width;
+            this.$store.set('panel/stackWidth', entries[0].contentRect.width);
         });
 
         resizeObserver.observe(this.$el);

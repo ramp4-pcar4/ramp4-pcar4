@@ -45,7 +45,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import type { PropType } from 'vue';
-import { get } from '@/store/pathify-helper';
 
 import type { LayerInstance, PanelInstance } from '@/api';
 import type { IdentifyResult } from '@/geo/api';
@@ -69,7 +68,7 @@ export default defineComponent({
     },
     data() {
         return {
-            getLayerByUid: get('layer/getLayerByUid'),
+            getLayerByUid: this.get('layer/getLayerByUid'),
             icon: [] as string[]
         };
     },

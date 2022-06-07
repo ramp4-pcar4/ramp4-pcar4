@@ -59,7 +59,7 @@
 <script lang="ts">
 import type { PanelInstance } from '@/api';
 import { defineComponent } from 'vue';
-import { get } from '@/store/pathify-helper';
+
 import type { PropType } from 'vue';
 
 export default defineComponent({
@@ -87,7 +87,7 @@ export default defineComponent({
     },
     data() {
         return {
-            temporary: get('appbar/temporary')
+            temporary: this.get('appbar/temporary')
         };
     }
 });

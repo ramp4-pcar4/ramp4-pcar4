@@ -32,7 +32,6 @@
 </template>
 
 <script lang="ts">
-import { get } from '@/store/pathify-helper';
 import { defineComponent } from 'vue';
 import type { PropType } from 'vue';
 import type { PanelInstance } from '@/api';
@@ -87,7 +86,7 @@ export default defineComponent({
         return {
             fixture: null,
             resizeObserver: null,
-            componentSelectedState: get(
+            componentSelectedState: this.get(
                 ExportStore.componentSelectedState
             ) as any,
             make: debounce(300, function (this: any) {

@@ -65,7 +65,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import type { PropType } from 'vue';
-import { get } from '@/store/pathify-helper';
+
 import to from 'await-to-js';
 
 import { LayerStore } from '@/store/modules/layer';
@@ -80,7 +80,7 @@ export default defineComponent({
     },
     data() {
         return {
-            layerConfigs: get(LayerStore.layerConfigs)
+            layerConfigs: this.get(LayerStore.layerConfigs)
         };
     },
     methods: {

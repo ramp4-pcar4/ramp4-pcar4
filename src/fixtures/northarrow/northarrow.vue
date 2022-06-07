@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { get } from '@/store/pathify-helper';
+
 import { NortharrowStore } from './store';
 import { GlobalEvents, CommonGraphicLayer } from '@/api/internal';
 import {
@@ -30,8 +30,8 @@ export default defineComponent({
     name: 'NortharrowV',
     data() {
         return {
-            arrowIcon: get(NortharrowStore.arrowIcon),
-            poleIcon: get(NortharrowStore.poleIcon),
+            arrowIcon: this.get(NortharrowStore.arrowIcon),
+            poleIcon: this.get(NortharrowStore.poleIcon),
             angle: 0,
             arrowLeft: 0,
             displayArrow: false,

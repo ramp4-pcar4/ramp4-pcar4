@@ -36,15 +36,15 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { sync } from '@/store/pathify-helper';
+
 import type { PanelInstance } from '../../api';
 
 export default defineComponent({
     name: 'GazeboP1Screen1V',
     data() {
         return {
-            route: sync('panel/items@p1.route'),
-            pinned: sync('panel/pinned'),
+            route: this.sync('panel/items@p1.route'),
+            pinned: this.sync('panel/pinned'),
             url: 'https://i2.wp.com/freepngimages.com/wp-content/uploads/2017/08/wooden-garden-gazebo.png?w=860'
         };
     },

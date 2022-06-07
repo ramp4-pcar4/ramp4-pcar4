@@ -63,7 +63,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { call } from '@/store/pathify-helper';
 
 import { NotificationType } from '@/api/notifications';
 
@@ -78,7 +77,7 @@ export default defineComponent({
 
     data() {
         return {
-            removeNotification: call('notification/removeNotification'),
+            removeNotification: this.call('notification/removeNotification'),
             open: false,
             icons: {
                 [NotificationType.WARNING]: '⚠',
