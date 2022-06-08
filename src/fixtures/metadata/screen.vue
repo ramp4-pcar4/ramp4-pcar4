@@ -11,6 +11,7 @@
                     v-if="state.status == 'loading'"
                     class="flex flex-col justify-center text-center"
                 >
+                    <!-- TODO: Localize this -->
                     Loading...
                 </div>
 
@@ -35,8 +36,9 @@
                 <div v-else class="flex flex-col justify-center text-center">
                     <img src="https://i.imgur.com/fA5EqV6.png" />
 
-                    <span class="text-xl mt-20"
-                        >There was an error retrieving this resource. Please try
+                    <span class="text-xl mt-20">
+                        <!-- TODO: Localize this -->
+                        There was an error retrieving this resource. Please try
                         again.</span
                     >
                 </div>
@@ -74,7 +76,7 @@ export default defineComponent({
 
     data() {
         return {
-            state: { status: 'loading', response: null } as MetadataState,
+            state: { status: 'loading', response: null } as MetadataState, // TODO: maybe we can add a metadata store?
             cache: {} as MetadataCache
         };
     },

@@ -1,85 +1,89 @@
 <template>
     <panel-screen :panel="panel">
         <template #header>
-            {{ $t('settings.title') }}:
-            {{ layerName || $t('settings.layer.loading') }}
+            {{
+                layerExists
+                    ? `${$t('settings.title')}: ${layerName}`
+                    : $t('settings.title')
+            }}
         </template>
 
         <template #content>
-            <div class="flex flex-col justify-center">
-                <span class="rv-subheader">{{
-                    $t('settings.label.display')
-                }}</span>
+            <div v-if="layerExists">
+                <div class="flex flex-col justify-center">
+                    <span class="rv-subheader">{{
+                        $t('settings.label.display')
+                    }}</span>
 
-                <div class="rv-settings-divider"></div>
+                    <div class="rv-settings-divider"></div>
 
-                <settings-component
-                    class="rv-subsection"
-                    type="toggle"
-                    icon="visibility"
-                    @toggled="updateVisibility"
-                    :name="$t('settings.label.visibility')"
-                    :config="{
-                        value: visibilityModel,
-                        disabled: !controlAvailable('visibility')
-                    }"
-                />
+                    <settings-component
+                        class="rv-subsection"
+                        type="toggle"
+                        icon="visibility"
+                        @toggled="updateVisibility"
+                        :name="$t('settings.label.visibility')"
+                        :config="{
+                            value: visibilityModel,
+                            disabled: !controlAvailable('visibility')
+                        }"
+                    />
 
-                <div class="rv-settings-divider"></div>
+                    <div class="rv-settings-divider"></div>
 
-                <settings-component
-                    class="rv-subsection"
-                    type="slider"
-                    :name="$t('settings.label.opacity')"
-                    icon="opacity"
-                    :config="{
-                        onChange: updateOpacity,
-                        value: opacityModel,
-                        disabled: !controlAvailable('opacity')
-                    }"
-                ></settings-component>
+                    <settings-component
+                        class="rv-subsection"
+                        type="slider"
+                        :name="$t('settings.label.opacity')"
+                        icon="opacity"
+                        :config="{
+                            onChange: updateOpacity,
+                            value: opacityModel,
+                            disabled: !controlAvailable('opacity')
+                        }"
+                    ></settings-component>
 
-                <div class="rv-settings-divider"></div>
+                    <div class="rv-settings-divider"></div>
 
-                <settings-component
-                    class="rv-subsection"
-                    type="toggle"
-                    :name="$t('settings.label.boundingBox')"
-                    icon="box"
-                    @toggled="() => {}"
-                    :config="{
-                        value: false,
-                        disabled: !controlAvailable('boundingBox')
-                    }"
-                ></settings-component>
+                    <settings-component
+                        class="rv-subsection"
+                        type="toggle"
+                        :name="$t('settings.label.boundingBox')"
+                        icon="box"
+                        @toggled="() => {}"
+                        :config="{
+                            value: false,
+                            disabled: !controlAvailable('boundingBox')
+                        }"
+                    ></settings-component>
 
-                <div class="rv-settings-divider"></div>
-            </div>
+                    <div class="rv-settings-divider"></div>
+                </div>
 
-            <div class="flex flex-col justify-center">
-                <span class="rv-subheader">{{
-                    $t('settings.label.data')
-                }}</span>
+                <div class="flex flex-col justify-center">
+                    <span class="rv-subheader">{{
+                        $t('settings.label.data')
+                    }}</span>
 
-                <div class="rv-settings-divider"></div>
+                    <div class="rv-settings-divider"></div>
 
-                <settings-component
-                    class="rv-subsection"
-                    type="toggle"
-                    :name="$t('settings.label.identify')"
-                    icon="location"
-                    @toggled="updateIdentify"
-                    :config="{
-                        value: identifyModel,
-                        disabled: !controlAvailable('identify')
-                    }"
-                ></settings-component>
+                    <settings-component
+                        class="rv-subsection"
+                        type="toggle"
+                        :name="$t('settings.label.identify')"
+                        icon="location"
+                        @toggled="updateIdentify"
+                        :config="{
+                            value: identifyModel,
+                            disabled: !controlAvailable('identify')
+                        }"
+                    ></settings-component>
 
-                <div class="rv-settings-divider"></div>
-            </div>
+                    <div class="rv-settings-divider"></div>
+                </div>
 
-            <!-- TODO: revisit issue #1019 after v1.0.0 -->
-            <!-- <div class="flex flex-col justify-center">
+                <!-- TODO: revisit issue #1019 after v1.0.0 -->
+                <!-- <div class="flex flex-col justify-center">
                 <span class="rv-subheader">{{
                     $t('settings.label.interval')
                 }}</span>
@@ -100,6 +104,10 @@
 
                 <div class="rv-settings-divider"></div>
             </div> -->
+            </div>
+            <div v-else class="p-5">
+                <span>{{ $t('settings.label.no.layer') }}</span>
+            </div>
         </template>
     </panel-screen>
 </template>
@@ -133,6 +141,7 @@ export default defineComponent({
             opacityModel: this.layer.opacity * 100,
             identifyModel: this.layer.identify,
             snapshotToggle: false,
+            layerExists: false, // tracks whether the layer still exists
             handlers: [] as Array<string>,
             watchers: [] as Array<Function>
         };
@@ -140,6 +149,9 @@ export default defineComponent({
 
     created() {
         this.fixture = this.$iApi.fixture.get('settings');
+
+        this.layerExists =
+            this.$iApi.geo.layer.getLayer(this.uid) !== undefined;
 
         this.watchers.push(
             this.$watch('uid', (newUid: string, oldUid: string) => {
@@ -186,6 +198,17 @@ export default defineComponent({
                             this.loadLayerProperties();
                         }
                     });
+                }
+            )
+        );
+
+        this.handlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.LAYER_REMOVE,
+                (removedLayer: LayerInstance) => {
+                    if (this.uid === removedLayer.uid) {
+                        this.panel.close();
+                    }
                 }
             )
         );
@@ -249,6 +272,9 @@ export default defineComponent({
 
         // load property data from layer
         loadLayerProperties() {
+            this.layerExists =
+                this.$iApi.geo.layer.getLayer(this.uid) !== undefined;
+
             const oldUid = this.layer.uid;
             this.layer.isLayerLoaded().then(() => {
                 if (oldUid === this.layer.uid) {

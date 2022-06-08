@@ -26,6 +26,7 @@ class MetadataFixture extends MetadataAPI {
             { i18n: { messages } }
         );
 
+        // TODO: this should be a default handler
         let handler = this.$iApi.event.on(
             GlobalEvents.METADATA_OPEN,
             (payload: any) => {

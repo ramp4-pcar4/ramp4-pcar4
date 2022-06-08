@@ -1,7 +1,9 @@
 <template>
     <panel-screen :panel="panel">
         <template #header
-            >{{ $t('grid.title') }}: {{ head || $t('grid.layer.loading') }}
+            >{{
+                head !== '' ? `${$t('grid.title')}: ${head}` : $t('grid.title')
+            }}
         </template>
         <template #content>
             <table-component
@@ -59,7 +61,9 @@ export default defineComponent({
     methods: {
         layerName(): string {
             if (this.rvGrid) {
-                this.layer = this.rvGrid.getLayerByUid(this.rvGrid.layerUid);
+                this.layer = this.$iApi.geo.layer.getLayer(
+                    this.rvGrid.layerUid
+                );
 
                 if (this.layer !== undefined) {
                     return this.layer.name;

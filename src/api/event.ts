@@ -21,6 +21,7 @@ import type { RampConfig } from '@/types';
 import { debounce, throttle } from 'throttle-debounce';
 import { MapCaptionStore } from '@/store/modules/map-caption';
 import { ConfigStore } from '@/store/modules/config';
+import { DetailsStore } from '@/fixtures/details/store';
 
 // TODO ensure some of the internal types used in the payload comments are published
 //      as part of our API doc generator. Would be ideal if doc output hyperlinked to
@@ -333,7 +334,8 @@ enum DefEH {
     MAP_UPDATE_CAPTION_COORDS = 'updates_map_caption_coords',
     LEGEND_REMOVES_LAYER_ENTRY = 'legend_removes_layer_entry',
     LEGEND_RELOADS_LAYER_ENTRY = 'legend_reloads_layer_entry',
-    GRID_REMOVES_LAYER_GRID = 'grid_removes_layer_grid'
+    GRID_REMOVES_LAYER_GRID = 'grid_removes_layer_grid',
+    DETAILS_REMOVES_LAYER = 'details_removes_layer'
 }
 
 // private for EventBus internals, so don't export
@@ -607,7 +609,8 @@ export class EventAPI extends APIScope {
                 DefEH.MAP_UPDATE_CAPTION_COORDS,
                 DefEH.LEGEND_REMOVES_LAYER_ENTRY,
                 DefEH.LEGEND_RELOADS_LAYER_ENTRY,
-                DefEH.GRID_REMOVES_LAYER_GRID
+                DefEH.GRID_REMOVES_LAYER_GRID,
+                DefEH.DETAILS_REMOVES_LAYER
             ];
         }
 
@@ -1052,6 +1055,23 @@ export class EventAPI extends APIScope {
                             }
                             this.$vApp.$store.set(GridStore.currentUid, null);
                         }
+                    }
+                };
+                this.$iApi.event.on(
+                    GlobalEvents.LAYER_REMOVE,
+                    zeHandler,
+                    handlerName
+                );
+                break;
+            case DefEH.DETAILS_REMOVES_LAYER:
+                // when a layer is removed, remove it from the details payload
+                zeHandler = (layer: LayerInstance) => {
+                    if (!!this.$iApi.fixture.get('details')) {
+                        // remove the layer from the payload results
+                        this.$iApi.$vApp.$store.set(
+                            DetailsStore.removeLayer,
+                            layer
+                        )!;
                     }
                 };
                 this.$iApi.event.on(

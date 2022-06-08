@@ -203,7 +203,8 @@ export default defineComponent({
                         : Promise.reject()
                 )
             );
-            const lastTime = newPayload[0].requestTime;
+            const lastTime =
+                newPayload.length === 0 ? 0 : newPayload[0].requestTime;
 
             // wait on any layer promise to resolve first with new identify results
             // @ts-ignore

@@ -10,6 +10,7 @@ details.item.zoom,Zoom to feature,1,Zoom à l'élément,1
 details.item.previous.item,Previous item,1,Point précédent,0
 details.item.next.item,Next item,1,Prochain article,0
 details.item.count,{0} of {1},1,{0} de {1},0
+details.item.no.data,No data to show because the layer has been removed,1,No data to show because the layer has been removed,0
 details.item.alert.zoom,Zoomed into feature,1,Zoomed into feature,0
 details.item.alert.show.item,Showing result {itemName},1,Showing result {itemName},0
 details.item.alert.show.list,Showing all results for {layerName},1,Showing all results for {layerName},0
