@@ -17,7 +17,6 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { get } from '@/store/pathify-helper';
 
 import { PanelInstance } from '@/api';
 import GridTableComponentV from '@/fixtures/grid/table-component.vue';
@@ -39,8 +38,8 @@ export default defineComponent({
 
     data() {
         return {
-            layers: get(LayerStore.layers),
-            currentUid: get(GridStore.currentUid),
+            layers: this.get(LayerStore.layers),
+            currentUid: this.get(GridStore.currentUid),
             quicksearch: '',
             head: '',
             layer: ref()

@@ -25,13 +25,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { get } from '@/store/pathify-helper';
 
 export default defineComponent({
     name: 'NotificationsFloatingButtonV',
     data() {
         return {
-            number: get('notification/notificationNumber')
+            number: this.get('notification/notificationNumber')
         };
     }
 });

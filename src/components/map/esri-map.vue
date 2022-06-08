@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { get } from '@/store/pathify-helper';
+
 import type { RampLayerConfig, RampMapConfig } from '@/geo/api';
 import type { LayerInstance } from '@/api/internal';
 
@@ -31,12 +31,12 @@ export default defineComponent({
     name: 'EsriMapV',
     data() {
         return {
-            mapConfig: get(ConfigStore.getMapConfig),
-            layers: get(LayerStore.layers),
-            layerConfigs: get(LayerStore.layerConfigs),
-            maptipPoint: get(MaptipStore.maptipPoint),
-            maptipInstance: get(MaptipStore.maptipInstance),
-            maptipContent: get(MaptipStore.content),
+            mapConfig: this.get(ConfigStore.getMapConfig),
+            layers: this.get(LayerStore.layers),
+            layerConfigs: this.get(LayerStore.layerConfigs),
+            maptipPoint: this.get(MaptipStore.maptipPoint),
+            maptipInstance: this.get(MaptipStore.maptipInstance),
+            maptipContent: this.get(MaptipStore.content),
             map: ref(), // TODO assuming we need this as a local property for vue binding. if we don't, remove it and just use $iApi.geo.map,
             watchers: [] as Array<Function>
         };

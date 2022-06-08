@@ -29,7 +29,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { get } from '@/store/pathify-helper';
 
 export default defineComponent({
     name: 'GazeboP1Scree2V',
@@ -47,7 +46,7 @@ export default defineComponent({
         pinPanel(): void {
             // ❌ this is bad because it's tappnig directly into the store circumventing the API
             // this will work, but if the store changes structure, it might break 👇
-            const panel = get(`panel/items@p1`) as any;
+            const panel = this.get(`panel/items@p1`) as any;
             this.$iApi.$vApp.$store.set(
                 'panel/pinned',
                 this.pinned() !== 'p1' ? panel : null
@@ -57,7 +56,7 @@ export default defineComponent({
             this.$iApi.$vApp.$store.set('panel/items@p1.route', { screen });
         },
         pinned(): string | null {
-            const panel = get('panel/pinned') as any;
+            const panel = this.get('panel/pinned') as any;
             return panel ? panel.id : null;
         }
     }

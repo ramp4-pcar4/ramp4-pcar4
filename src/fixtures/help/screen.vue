@@ -17,7 +17,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import type { PropType } from 'vue';
-import { get } from '@/store/pathify-helper';
 
 import type { PanelInstance } from '@/api';
 import { HelpStore } from './store';
@@ -40,7 +39,7 @@ export default defineComponent({
 
     data() {
         return {
-            folderName: get(HelpStore.folderName),
+            folderName: this.get(HelpStore.folderName),
             helpSections: [] as Array<any>,
             watchers: [] as Array<Function>
         };

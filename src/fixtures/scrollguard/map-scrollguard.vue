@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { get } from '@/store/pathify-helper';
+
 import { ScrollguardStore } from './store';
 
 export default defineComponent({
@@ -31,7 +31,7 @@ export default defineComponent({
     },
     data() {
         return {
-            enabled: get(ScrollguardStore.enabled)
+            enabled: this.get(ScrollguardStore.enabled)
         };
     },
     methods: {

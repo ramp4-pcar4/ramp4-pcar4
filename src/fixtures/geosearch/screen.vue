@@ -88,7 +88,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import type { PropType } from 'vue';
-import { get } from '@/store/pathify-helper';
+
 import type { PanelInstance } from '@/api';
 import { Point } from '@/geo/api';
 
@@ -119,9 +119,9 @@ export default defineComponent({
     // fetch store properties/data
     data() {
         return {
-            searchVal: get(GeosearchStore.searchVal),
-            searchResults: get(GeosearchStore.searchResults),
-            loadingResults: get(GeosearchStore.loadingResults)
+            searchVal: this.get(GeosearchStore.searchVal),
+            searchResults: this.get(GeosearchStore.searchResults),
+            loadingResults: this.get(GeosearchStore.loadingResults)
         };
     },
     methods: {

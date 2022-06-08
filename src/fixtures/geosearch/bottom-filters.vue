@@ -14,7 +14,6 @@
 </template>
 
 <script lang="ts">
-import { get, call } from '@/store/pathify-helper';
 import { GlobalEvents } from '@/api/internal';
 import type { Extent } from '@/geo/api';
 import { GeosearchStore } from './store';
@@ -26,9 +25,9 @@ export default defineComponent({
     name: 'GeosearchBottomFiltersV',
     data() {
         return {
-            resultsVisible: get(GeosearchStore.resultsVisible),
+            resultsVisible: this.get(GeosearchStore.resultsVisible),
 
-            setMapExtent: call(GeosearchStore.setMapExtent),
+            setMapExtent: this.call(GeosearchStore.setMapExtent),
 
             // Called when the map extent is changed. Updates geosearch data to display accurate results.
             onMapExtentChange: debounce(300, (newExtent: Extent) => {

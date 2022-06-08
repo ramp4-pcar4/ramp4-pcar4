@@ -105,7 +105,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { call } from '@/store/pathify-helper';
 
 import { LegendStore } from './store';
 import { GlobalEvents } from '../../api/internal';
@@ -114,10 +113,10 @@ export default defineComponent({
     name: 'LegendHeaderV',
     data() {
         return {
-            show: call(LegendStore.showAll),
-            hide: call(LegendStore.hideAll),
-            expand: call(LegendStore.expandGroups),
-            collapse: call(LegendStore.collapseGroups)
+            show: this.call(LegendStore.showAll),
+            hide: this.call(LegendStore.hideAll),
+            expand: this.call(LegendStore.expandGroups),
+            collapse: this.call(LegendStore.collapseGroups)
         };
     },
     methods: {

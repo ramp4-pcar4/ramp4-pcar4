@@ -39,7 +39,7 @@
 // This screen is the view of all layers that were interrogated in the identify
 
 import { defineComponent } from 'vue';
-import { get } from '@/store/pathify-helper';
+
 import { DetailsStore } from './store';
 
 import { GlobalEvents, LayerInstance, PanelInstance } from '@/api';
@@ -55,9 +55,9 @@ export default defineComponent({
             layerResults: [] as Array<IdentifyResult>,
             lastLayerUid: '' as string,
             activeGreedy: 0 as number, // 0 = turn greedy mode off, some timestamp = greedy mode running with last request timestamp
-            payload: get(DetailsStore.payload),
-            getLayerByUid: get('layer/getLayerByUid'),
-            layers: get('layer/layers'),
+            payload: this.get(DetailsStore.payload),
+            getLayerByUid: this.get('layer/getLayerByUid'),
+            layers: this.get('layer/layers'),
             watchers: [] as Array<Function>
         };
     },

@@ -103,7 +103,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { get } from '@/store/pathify-helper';
+
 import type { RampMapConfig } from '@/geo/api';
 import { MapCaptionStore } from '@/store/modules/map-caption';
 import { ConfigStore } from '@/store/modules/config';
@@ -113,10 +113,10 @@ import AboutRampDropdown from '@/components/about-ramp/about-ramp-dropdown.vue';
 export default defineComponent({
     data() {
         return {
-            scale: get(MapCaptionStore.scale),
-            attribution: get(MapCaptionStore.attribution),
-            cursorCoords: get(MapCaptionStore.cursorCoords),
-            mapConfig: get(ConfigStore.getMapConfig),
+            scale: this.get(MapCaptionStore.scale),
+            attribution: this.get(MapCaptionStore.attribution),
+            cursorCoords: this.get(MapCaptionStore.cursorCoords),
+            mapConfig: this.get(ConfigStore.getMapConfig),
             lang: [] as Array<string>,
             watchers: [] as Array<Function>
         };

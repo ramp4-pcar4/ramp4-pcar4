@@ -96,7 +96,7 @@
 import { defineComponent } from 'vue';
 import type { PropType } from 'vue';
 import type { RampBasemapConfig, RampTileSchemaConfig } from '@/geo/api';
-import { get } from '@/store/pathify-helper';
+
 import { ConfigStore } from '@/store/modules/config';
 
 export default defineComponent({
@@ -113,7 +113,7 @@ export default defineComponent({
     },
     data() {
         return {
-            selectedBasemap: get(ConfigStore.getActiveBasemapConfig)
+            selectedBasemap: this.get(ConfigStore.getActiveBasemapConfig)
         };
     },
     methods: {

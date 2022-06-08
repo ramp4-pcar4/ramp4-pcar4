@@ -46,7 +46,8 @@ export default defineConfig(({ command, mode }) => {
                 outDir: `${distName}/demos`,
                 rollupOptions: {
                     input: {
-                        main: '/index.html'
+                        main: '/index.html',
+                        multi: '/index-multi.html'
                     }
                 },
                 minify: 'esbuild',

@@ -43,7 +43,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import type { PropType } from 'vue';
-import { get } from '@/store/pathify-helper';
+
 import BasemapItemV from './item.vue';
 import type {
     RampBasemapConfig,
@@ -67,7 +67,7 @@ export default defineComponent({
         return {
             tileSchemas: [] as Array<RampTileSchemaConfig>,
             basemaps: [] as Array<RampBasemapConfig>,
-            selectedBasemap: get(ConfigStore.getActiveBasemapConfig)
+            selectedBasemap: this.get(ConfigStore.getActiveBasemapConfig)
         };
     },
     mounted() {
