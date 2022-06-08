@@ -62,7 +62,6 @@ export default defineComponent({
             clearAll: this.call('notification/clearAll')
         };
     },
-
     methods: {
         isPinned(): boolean {
             return this.panel.isPinned;
