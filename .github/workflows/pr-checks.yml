@@ -21,11 +21,11 @@ jobs:
 
             - name: Check if Typescript is happy
               shell: bash
-              run: echo "No"
+              run: echo "Yes"
 
             - name: Check if ESLint is happy
               shell: bash
-              run: echo "No"
+              run: echo "Yes"
 
             - name: Check if prettier is happy
               shell: bash
