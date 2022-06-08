@@ -529,7 +529,7 @@ function layerUpgrader(r2layer: any): any {
 /**
  * Maps the common properties in layer and layer entry to avoid duplicate code.
  * @param r2layer layer or layer entry from ramp 2 config
- * @returns layer from ramp 4 config with common properties mapped
+ * @returns layer or layer entry from ramp 4 config with common properties mapped
  */
 
 function layerCommonPropertiesUpgrader(r2layer: any) {
@@ -698,6 +698,7 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
             }
         }
     }
+    return r4layer;
 }
 
 /**
