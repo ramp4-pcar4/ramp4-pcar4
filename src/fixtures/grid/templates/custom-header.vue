@@ -160,7 +160,7 @@ export default defineComponent({
                         [index].querySelector('.move-left') as HTMLElement
                 ).focus();
 
-                this.params.gridApi.ensureColumnVisible(allColumns[index]);
+                this.params.api.ensureColumnVisible(allColumns[index]);
             }
         },
 
@@ -175,7 +175,7 @@ export default defineComponent({
 
             if (this.canMoveRight) {
                 this.columnApi.moveColumn(this.params.column, index);
-                this.params.gridApi.ensureColumnVisible(allColumns[index]);
+                this.params.api.ensureColumnVisible(allColumns[index]);
             }
         },
 
