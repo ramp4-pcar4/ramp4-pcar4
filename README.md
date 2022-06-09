@@ -17,18 +17,18 @@ This project is currently in development. Incomplete features, bugs, and breakin
 
 ### public vs demos folders
 
-The `public` folder is a **static only** folder. It contains the help md files and a `samples` subfolder containing end-user demo assets and ramp library source code in various formats (es, umd, iife). Files in this folder are not processed by vite and therefore cannot reference outside files. This is useful for testing if things are broken between the develop and production build. Later on these files will be published to npm, unpkg and others.
+The `public` folder is a **static only** folder. It contains the help md files and end-user demo assets and ramp library source code in various formats (es, global). Files in this folder are not processed by vite and therefore cannot reference outside files. This is useful for testing if things are broken between the develop and production build. Later on these files will be published to npm, unpkg and others.
 
-To test the files in the `public/samples` folder locally:
+To test the files in the `public` folder locally:
 
 ```js
 npm run build
 npm run preview
 ```
 
-Then open `http://localhost:5050/samples/index.html` in your browser.
+Then open `http://localhost:5050/index.html` in your browser.
 
-The `demos` folder **is** processed by vite and can therefore reference any source file in the repo. This is the starting point for local development. For example, the `demos/starter-scripts/main.js` file imports `{ createInstance, geo } from '@/main';` whereas `public/samples/starter-scripts/main.js` doesn't since RAMP is globally defined by the `index.html` file when it loads `<script src="./lib/ramp.iife.js"></script>`.
+The `demos` folder **is** processed by vite and can therefore reference any source file in the repo. This is the starting point for local development. For example, the `demos/starter-scripts/main.js` file imports `{ createInstance, geo } from '@/main';` whereas `public/starter-scripts/index.js` doesn't since RAMP is globally defined by the `index.html` file when it loads `<script src="./lib/ramp.global.js"></script>`.
 
 Run `npm run dev` then open `http://localhost:3000/demos/index.html` in your browser.
 
@@ -46,10 +46,10 @@ During build, both `demos` and `public` folders are placed into `dist`.
 
 ### Project Setup
 
-Download the latest [Node LTS version](https://nodejs.org/en/download/), currently v16.14.x. Node current also works (v17.9.x).
+Download the latest [Node version](https://nodejs.org/en/download/), currently v18.3.0 or later.
 
 ```sh
-npm install
+npm ci
 ```
 
 ### Compile and Hot-Reload for Development
@@ -78,6 +78,6 @@ Open `http://localhost:5050` in your browser.
 
 ### Demo Builds
 
-Demo builds are available at: http://ramp4-app.azureedge.net/demo
+The most recent build is available at https://ramp4-pcar4.github.io/ramp4-pcar4/main/.
 
-Contact a project maintainer for credentials to have your pushed code automatically built and available at the above URL. You'll need to set the provided credentials as secrets in your forked repo (`AZ_LOGIN_NAME`, `AZ_PASSWORD`, `AZ_STORAGE_ACCOUNT`, and `AZ_TENANT`).
+Demo builds are automatically generated for pull requests if you are a member of the [ramp4-pcar4 organization](https://github.com/orgs/ramp4-pcar4/people) and have your visibility set to public. 

@@ -57,7 +57,7 @@ export default defineConfig(({ command, mode }) => {
     } else {
         // preview mode
         if (mode === 'production') {
-            baseConfig.server!.open = '/samples/index.html';
+            baseConfig.server!.open = '/index.html';
         }
     }
     return baseConfig;
