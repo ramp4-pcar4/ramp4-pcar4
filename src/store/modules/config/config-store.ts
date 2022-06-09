@@ -73,7 +73,6 @@ const actions = {
         if (allLangs !== undefined && allLangs.length > 0) {
             // register config for all available languages
             allLangs.forEach((lang: string) => {
-                console.log(lang);
                 context.state.registeredConfigs[lang] = config;
                 // initially each language corresponds to first config by default
                 context.state.registeredLangs[lang] = Object.keys(
