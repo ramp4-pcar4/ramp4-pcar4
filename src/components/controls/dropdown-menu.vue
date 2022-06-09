@@ -1,5 +1,5 @@
 <template>
-    <div @focusout="closeDropdown">
+    <div>
         <button
             class="text-gray-500 hover:text-black dropdown-button"
             @click="open = !open"
@@ -21,7 +21,7 @@
             :class="{ 'text-center': centered }"
             ref="dropdown"
         >
-            <slot v-bind:close="closeDropdown"></slot>
+            <slot v-bind:close="() => (open = !open)"></slot>
         </div>
     </div>
 </template>
@@ -74,6 +74,16 @@ export default defineComponent({
             { capture: true }
         );
 
+        window.addEventListener('blur', () => {
+            this.open = false;
+        });
+
+        window.addEventListener('focusin', event => {
+            if (!this.$el.contains(event.target)) {
+                this.open = false;
+            }
+        });
+
         // $nextTick should prevent any race conditions by letting the child elements render before trying to place them using popper
         this.$nextTick(() => {
             this.popper = createPopper(
@@ -105,15 +115,15 @@ export default defineComponent({
             },
             { capture: true }
         );
-        this.open = false;
-    },
-
-    methods: {
-        closeDropdown(e: Event) {
-            if (!e.currentTarget.contains(e.relatedTarget)) {
+        window.removeEventListener('blur', () => {
+            this.open = false;
+        });
+        window.removeEventListener('focusin', event => {
+            if (!this.$el.contains(event.target)) {
                 this.open = false;
             }
-        }
+        });
+        this.open = false;
     }
 });
 </script>
