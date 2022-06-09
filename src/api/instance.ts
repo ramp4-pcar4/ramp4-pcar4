@@ -142,17 +142,12 @@ export class InstanceAPI {
                 langConfigs[Object.keys(langConfigs)[0]];
             this.$vApp.$store.set(ConfigStore.newConfig, langConfig);
 
-            // register first config for all available languages and then overwrite configs per language as needed
+            // register configs and languages in the store
             this.$vApp.$store.set(ConfigStore.registerConfig, {
                 config: langConfig,
-                langs: Object.keys(this.$vApp.$i18n.messages)
+                configLangs: Object.keys(langConfigs),
+                allLangs: Object.keys(this.$vApp.$i18n.messages)
             });
-            for (let lang in langConfigs) {
-                this.$vApp.$store.set(ConfigStore.registerConfig, {
-                    config: langConfigs[lang],
-                    langs: [lang]
-                });
-            }
 
             // set the initial basemap
             this.$vApp.$store.set(
