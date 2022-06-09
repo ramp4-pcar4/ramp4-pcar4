@@ -6,7 +6,6 @@ import { ConfigState } from './config-state';
 import type { RootState } from '@/store';
 import { LayerStore } from '../layer';
 import type { RampConfig } from '@/types';
-import { i18n } from '@/lang';
 
 // use for actions
 type ConfigContext = ActionContext<ConfigState, RootState>;
@@ -66,11 +65,25 @@ const actions = {
         context: ConfigContext,
         configInfo: any
     ): void {
-        const langs = configInfo.langs;
+        // configLangs are languages with a given config, whereas allLangs include languages without their own config
+        const configLangs = configInfo.configLangs;
         const config = configInfo.config;
-        if (langs !== undefined && langs.length > 0) {
+        const allLangs = configInfo.allLangs;
+
+        if (allLangs !== undefined && allLangs.length > 0) {
+            // register config for all available languages
+            allLangs.forEach((lang: string) => {
+                context.state.registeredConfigs[lang] = config;
+                // initially each language corresponds to first config by default
+                context.state.registeredLangs[lang] = Object.keys(
+                    context.state.registeredConfigs
+                )[0];
+            });
+        }
+
+        if (configLangs !== undefined && configLangs.length > 0) {
             // register config for specified languages
-            langs.forEach((lang: string) => {
+            configLangs.forEach((lang: string) => {
                 context.state.registeredConfigs[lang] = config;
                 // add correspondence between language and config
                 context.state.registeredLangs[lang] = lang;
