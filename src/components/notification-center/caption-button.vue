@@ -57,10 +57,14 @@
                                 />
                             </svg>
                         </button>
-                        <close @click="scope.close"></close>
+                        <close @click="scope.close" ref="close-button"></close>
                     </div>
                 </div>
-                <notification-list class="overflow-y-auto"></notification-list>
+                <notification-list
+                    class="overflow-y-auto"
+                    @remove="refocus"
+                    ref="notification-list"
+                ></notification-list>
             </div>
         </template>
     </dropdown-menu>
@@ -84,6 +88,16 @@ export default defineComponent({
             number: this.get('notification/notificationNumber'),
             clearAll: this.call('notification/clearAll')
         };
+    },
+
+    methods: {
+        refocus() {
+            if (this.number > 1) {
+                this.$refs['notification-list'].$refs['list'].focus();
+            } else {
+                this.$refs['close-button'].$el.querySelector('button').focus();
+            }
+        }
     }
 });
 </script>

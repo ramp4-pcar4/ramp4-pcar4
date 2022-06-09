@@ -1,7 +1,7 @@
 <template>
     <!-- Yes Notifications -->
     <div>
-        <ul v-if="notificationStack.length > 0" v-focus-list>
+        <ul v-if="notificationStack.length > 0" v-focus-list ref="list">
             <template
                 v-for="(notification, index) in notificationStack"
                 :key="notification.message + index"
@@ -11,6 +11,7 @@
                     :class="[notification.type]"
                     :notification="notification"
                     v-focus-item
+                    @removeNotification="$emit('remove')"
                 ></notification-item>
             </template>
         </ul>
