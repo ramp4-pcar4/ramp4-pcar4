@@ -34,7 +34,8 @@
                 </svg>
             </div>
             <button
-                @click.stop="removeNotification(notification)"
+                @click.stop="handleRemove"
+                @focusout.stop
                 class="mx-4 p-4"
                 :content="$t('notifications.controls.dismiss')"
                 v-tippy="{ theme: 'ramp4', animation: 'scale' }"
@@ -92,6 +93,10 @@ export default defineComponent({
             if (!this.notification.messageList) {
                 return false;
             }
+        },
+        handleRemove() {
+            this.removeNotification(this.notification);
+            this.$emit('removeNotification');
         }
     }
 });
