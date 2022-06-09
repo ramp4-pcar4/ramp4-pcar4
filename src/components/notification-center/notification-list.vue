@@ -1,6 +1,6 @@
 <template>
     <!-- Yes Notifications -->
-    <div>
+    <div tabindex="0" ref="root">
         <ul v-if="notificationStack.length > 0" v-focus-list>
             <template
                 v-for="(notification, index) in notificationStack"
@@ -11,6 +11,7 @@
                     :class="[notification.type]"
                     :notification="notification"
                     v-focus-item
+                    @removeNotification="$refs.root.focus()"
                 ></notification-item>
             </template>
         </ul>
