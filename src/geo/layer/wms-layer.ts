@@ -318,7 +318,9 @@ export class WmsLayer extends CommonLayer {
         // result return type is text unless we have a fancy case
         // TODO add something else? images?
         const customReturnType = {
-            'application/json': 'json'
+            'application/json': 'json',
+            'text/html': 'text',
+            'text/plain': 'text'
         };
 
         // TODO worth examining: the esri layer has properties .featureInfoUrl and .featureInfoFormat

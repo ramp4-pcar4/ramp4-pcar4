@@ -405,10 +405,6 @@ export interface IdentifyItem {
     format: IdentifyResultFormat;
     loaded: boolean;
     loading: Promise<void>;
-    // See https://github.com/ramp4-pcar4/ramp4-pcar4/discussions/334
-    // name: string;
-    // id: string;
-    // symbol: string; // SVG code. does this need to be more flexible to handle WMS image symbols? would a symbol stack-ish thing be more appropriate?
 }
 
 // the result of identifying against a logical layer ( a feature class or WMS )
