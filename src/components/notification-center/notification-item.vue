@@ -35,7 +35,6 @@
             </div>
             <button
                 @click.stop="handleRemove"
-                @focusout.stop
                 class="mx-4 p-4"
                 :content="$t('notifications.controls.dismiss')"
                 v-tippy="{ theme: 'ramp4', animation: 'scale' }"

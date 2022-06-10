@@ -19,7 +19,6 @@
             @click="popper.update()"
             class="rv-dropdown shadow-md border border-gray:200 py-8 bg-white rounded z-10"
             :class="{ 'text-center': centered }"
-            tabindex="0"
             ref="dropdown"
         >
             <slot v-bind:close="closeDropdown"></slot>

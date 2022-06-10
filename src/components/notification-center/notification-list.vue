@@ -1,7 +1,7 @@
 <template>
     <!-- Yes Notifications -->
-    <div tabindex="0" ref="root">
-        <ul v-if="notificationStack.length > 0" v-focus-list>
+    <div>
+        <ul v-if="notificationStack.length > 0" v-focus-list ref="root">
             <template
                 v-for="(notification, index) in notificationStack"
                 :key="notification.message + index"
@@ -16,7 +16,10 @@
             </template>
         </ul>
         <!-- No Notifications -->
-        <div v-else class="flex flex-col items-center h-full">
+        <div
+            v-else="notificationStack.length === 0"
+            class="flex flex-col items-center h-full"
+        >
             <span class="flex-grow" />
             <svg
                 xmlns="http://www.w3.org/2000/svg"
