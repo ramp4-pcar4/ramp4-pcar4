@@ -10,10 +10,10 @@ export class AppbarState {
     /**
      * An ordered list of fixed appbar item ids.
      *
-     * @type {string[]}
+     * @type {(string | AppbarItemInstance)[][]}
      * @memberof AppbarState
      */
-    order: string[] = [];
+    order: (string | AppbarItemInstance)[][] = [];
 
     /**
      * An ordered list of panel IDs. Used to display the buttons registered to the panels.

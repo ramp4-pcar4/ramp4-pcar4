@@ -35,7 +35,7 @@
                     :active="panel.expanded"
                 />
                 <minimize
-                    v-if="panel.button && temporary.includes(panel.id)"
+                    v-if="panel.button && temporary?.includes(panel.id)"
                     @click="panel.minimize()"
                 />
                 <close @click="panel.close()" />

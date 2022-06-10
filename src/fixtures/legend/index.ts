@@ -1,6 +1,7 @@
 import { markRaw } from 'vue';
 import { LegendAPI } from './api/legend';
 import { legend } from './store/index';
+import LegendNavButtonV from './nav-button.vue';
 import LegendScreenV from './screen.vue';
 
 import messages from './lang/lang.csv?raw';
@@ -8,6 +9,9 @@ import messages from './lang/lang.csv?raw';
 class LegendFixture extends LegendAPI {
     added() {
         console.log(`[fixture] ${this.id} added`);
+
+        this.$iApi.component('legend-nav-button', LegendNavButtonV);
+
         this.$iApi.panel.register(
             {
                 legend: {
@@ -43,8 +47,19 @@ class LegendFixture extends LegendAPI {
         // override the removed method here to get access to scope
         this.removed = () => {
             console.log(`[fixture] ${this.id} removed`);
-            // TODO: remove appbar button (blocked by #882)
             unwatch();
+
+            if (!!this.$iApi.fixture.get('appbar')) {
+                this.$iApi.$vApp.$store.dispatch(
+                    'appbar/removeButton',
+                    'legend'
+                );
+            }
+
+            if (!!this.$iApi.fixture.get('mapnav')) {
+                this.$iApi.$vApp.$store.dispatch('mapnav/removeItem', 'legend');
+            }
+
             this.$iApi.panel.remove('legend');
             this.$vApp.$store.unregisterModule('legend');
         };

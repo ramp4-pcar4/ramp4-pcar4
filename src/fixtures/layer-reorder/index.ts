@@ -32,7 +32,12 @@ class LayerReorderFixture extends LayerReorderAPI {
 
     removed() {
         console.log(`[fixture] ${this.id} removed`);
-        // TODO: remove appbar button (blocked by #882)
+        if (!!this.$iApi.fixture.get('appbar')) {
+            this.$iApi.$vApp.$store.dispatch(
+                'appbar/removeButton',
+                'layer-reorder'
+            );
+        }
         this.$iApi.panel.remove('layer-reorder');
     }
 }

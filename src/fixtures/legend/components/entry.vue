@@ -18,8 +18,8 @@
                 `"
                 @click="toggleGrid"
                 v-focus-item="'show-truncate'"
-                @mouseover.stop="$event.currentTarget._tippy.show()"
-                @mouseout.self="$event.currentTarget._tippy.hide()"
+                @mouseover.stop="$event.currentTarget._tippy?.show()"
+                @mouseout.self="$event.currentTarget._tippy?.hide()"
                 :content="
                     legendItem.controlAvailable('datatable') &&
                     getDatagridExists()

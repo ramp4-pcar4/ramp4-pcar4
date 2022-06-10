@@ -57,10 +57,20 @@ class DetailsFixture extends DetailsAPI {
         // override the removed method here to get access to scope
         this.removed = () => {
             console.log(`[fixture] ${this.id} removed`);
-            // TODO: remove appbar buttons (blocked by #882)
             unwatch();
             this.$iApi.panel.remove('details-items');
             this.$iApi.panel.remove('details-layers');
+
+            if (!!this.$iApi.fixture.get('appbar')) {
+                this.$iApi.$vApp.$store.dispatch(
+                    'appbar/removeButton',
+                    'details-layers'
+                );
+                this.$iApi.$vApp.$store.dispatch(
+                    'appbar/removeButton',
+                    'details-items'
+                );
+            }
 
             // /*
             //     TODO: Fix this hack!

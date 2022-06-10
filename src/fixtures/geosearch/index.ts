@@ -1,6 +1,7 @@
 import { markRaw } from 'vue';
 import GeosearchScreenV from './screen.vue';
 import { GeosearchAPI } from './api/geosearch';
+import GeosearchNavButtonV from './nav-button.vue';
 import { geosearch } from './store/index';
 
 import messages from './lang/lang.csv?raw';
@@ -10,6 +11,8 @@ class GeosearchFixture extends GeosearchAPI {
         console.log(`[fixture] ${this.id} added`);
 
         this.$vApp.$store.registerModule('geosearch', geosearch(this.config));
+
+        this.$iApi.component('geosearch-nav-button', GeosearchNavButtonV);
 
         this.$iApi.panel.register(
             {
@@ -31,7 +34,18 @@ class GeosearchFixture extends GeosearchAPI {
 
     removed() {
         console.log(`[fixture] ${this.id} removed`);
-        // TODO: remove appbar button (blocked by #882)
+
+        if (!!this.$iApi.fixture.get('appbar')) {
+            this.$iApi.$vApp.$store.dispatch(
+                'appbar/removeButton',
+                'geosearch'
+            );
+        }
+
+        if (!!this.$iApi.fixture.get('mapnav')) {
+            this.$iApi.$vApp.$store.dispatch('mapnav/removeItem', 'geosearch');
+        }
+
         this.$vApp.$store.unregisterModule('geosearch');
         this.$iApi.panel.remove('geosearch');
     }
