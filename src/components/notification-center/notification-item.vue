@@ -94,8 +94,8 @@ export default defineComponent({
             }
         },
         handleRemove() {
-            this.removeNotification(this.notification);
             this.$emit('removeNotification');
+            this.removeNotification(this.notification);
         }
     }
 });

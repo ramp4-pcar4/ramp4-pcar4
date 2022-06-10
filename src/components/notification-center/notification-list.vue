@@ -1,7 +1,7 @@
 <template>
     <!-- Yes Notifications -->
     <div>
-        <ul v-if="notificationStack.length > 0" v-focus-list ref="root">
+        <ul v-if="notificationStack.length > 0" v-focus-list ref="list">
             <template
                 v-for="(notification, index) in notificationStack"
                 :key="notification.message + index"
@@ -11,15 +11,12 @@
                     :class="[notification.type]"
                     :notification="notification"
                     v-focus-item
-                    @removeNotification="$refs.root.focus()"
+                    @removeNotification="$emit('remove')"
                 ></notification-item>
             </template>
         </ul>
         <!-- No Notifications -->
-        <div
-            v-else="notificationStack.length === 0"
-            class="flex flex-col items-center h-full"
-        >
+        <div v-else class="flex flex-col items-center h-full">
             <span class="flex-grow" />
             <svg
                 xmlns="http://www.w3.org/2000/svg"
