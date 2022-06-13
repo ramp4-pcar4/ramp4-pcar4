@@ -383,6 +383,10 @@ export class MapAPI extends CommonMapAPI {
         if (schemaChanged) {
             // destroy the map view
             // reset the view promise and created flag before firing the event
+
+            // store extent prior to reprojection
+            const extent = this.getExtent();
+
             this._viewPromise = new DefPromise();
             this.created = false;
             this.$iApi.event.emit(GlobalEvents.MAP_REFRESH_START);
@@ -391,6 +395,11 @@ export class MapAPI extends CommonMapAPI {
             // recreate the map view
             this.createMapView(bm);
             this.$iApi.event.emit(GlobalEvents.MAP_REFRESH_END);
+
+            // go to equivalent extent in new projection
+            this.$iApi.geo.proj
+                .projectExtent(this._rampSR!, extent)
+                .then(projExtent => this.zoomMapTo(projExtent));
         } else {
             // change the basemap
             this.applyBasemap(bm);
