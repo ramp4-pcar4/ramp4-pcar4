@@ -124,6 +124,12 @@
                     >
                         {{ validationMessages.invalid }}
                     </div>
+                    <div
+                        v-if="validation && failureError"
+                        class="text-red-900 text-xs"
+                    >
+                        {{ validationMessages.failure }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -151,6 +157,7 @@ import type { PropType } from 'vue';
 interface ValidationMsgs {
     required: string;
     invalid: string;
+    failure: string;
 }
 
 interface SelectionOption {
@@ -166,6 +173,10 @@ export default defineComponent({
             default: false
         },
         formatError: {
+            type: Boolean,
+            default: false
+        },
+        failureError: {
             type: Boolean,
             default: false
         },

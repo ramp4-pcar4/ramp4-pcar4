@@ -56,6 +56,27 @@
                 >
                     <form name="format" @submit="onSelectContinue">
                         <!-- List of file/service types based on layer -->
+
+                        <!-- Display CORS required warning if needed for this configuration -->
+                        <div
+                            v-if="IsCorsRequired"
+                            class="inline-flex items-center mb-10"
+                        >
+                            <svg
+                                class="inline-block fill-current w-16 h-16"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                            >
+                                <path d="M0 0h24v24H0z" fill="none"></path>
+                                <path
+                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
+                                />
+                            </svg>
+                            <span class="px-5 text-xs">
+                                {{ $t('wizard.format.info.cors') }}</span
+                            >
+                        </div>
+
                         <wizard-input
                             type="select"
                             name="type"
@@ -77,12 +98,22 @@
                                     : serviceTypeOptions
                             "
                             :formatError="formatError"
+                            :failureError="failureError"
                             :validation="true"
                             :validation-messages="{
                                 required: $t(
                                     'wizard.format.type.error.required'
                                 ),
-                                invalid: $t('wizard.format.type.error.invalid')
+                                invalid: $t('wizard.format.type.error.invalid'),
+                                failure: `${$t(
+                                    'wizard.format.type.error.failure'
+                                )}.${
+                                    IsCorsRequired
+                                        ? ' ' +
+                                          $t('wizard.format.warn.cors') +
+                                          '.'
+                                        : ''
+                                }`
                             }"
                             @keydown.stop
                         >
@@ -92,6 +123,7 @@
                             @cancel="
                                 () => {
                                     formatError = false;
+                                    failureError = false;
                                     url ? (goNext = true) : (goNext = false);
                                     goToStep(0);
                                 }
@@ -229,6 +261,7 @@ export default defineComponent({
 
             formulateFile: {},
             formatError: false,
+            failureError: false,
             goNext: false,
             finishStep: false,
 
@@ -307,6 +340,45 @@ export default defineComponent({
             set(newValue) {
                 this.$store.set(WizardStore.layerInfo, newValue);
             }
+        },
+        IsCorsRequired() {
+            // check if proxy is defined
+            let hasProxy = this.$iApi.geo.proxy !== '';
+
+            // handle cases for each type
+            switch (this.typeSelection) {
+                // ESRI ArcGIS Server
+                // required only if no proxy is set
+                case LayerType.FEATURE:
+                case LayerType.MAPIMAGE:
+                case LayerType.TILE:
+                case LayerType.IMAGERY:
+                    return !hasProxy;
+
+                // WFS Server
+                // always required
+                case LayerType.WFS:
+                    return true;
+
+                // WMS Server
+                // required only if proxy is set
+                case LayerType.WMS:
+                    return !hasProxy;
+
+                // Files
+                // always required for files from hosted services
+                case LayerType.GEOJSON:
+                case LayerType.SHAPEFILE:
+                case LayerType.CSV:
+                    // check if file is from web hosted
+                    if (this.isFileLayer() && !this.fileData) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                default:
+                    return false;
+            }
         }
     },
 
@@ -358,16 +430,24 @@ export default defineComponent({
         },
 
         async onSelectContinue() {
-            this.layerInfo = this.isFileLayer()
-                ? await this.layerSource.fetchFileInfo(
-                      this.url,
-                      this.typeSelection,
-                      this.fileData
-                  )
-                : await this.layerSource.fetchServiceInfo(
-                      this.url,
-                      this.typeSelection
-                  );
+            this.failureError = false;
+
+            try {
+                this.layerInfo = this.isFileLayer()
+                    ? await this.layerSource.fetchFileInfo(
+                          this.url,
+                          this.typeSelection,
+                          this.fileData
+                      )
+                    : await this.layerSource.fetchServiceInfo(
+                          this.url,
+                          this.typeSelection
+                      );
+            } catch (_) {
+                this.failureError = true;
+                return;
+            }
+
             // check for incorrect feature service type
             const featureError =
                 this.typeSelection === LayerType.FEATURE &&
@@ -455,6 +535,9 @@ export default defineComponent({
         updateFile(newFile: File) {
             this.formulateFile = newFile;
             this.uploadFile(newFile);
+
+            // reset url since a file was uploaded instead
+            this.url = '';
         },
 
         updateUrl(url: string, valid: boolean) {
