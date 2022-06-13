@@ -1,6 +1,6 @@
 <template>
     <div
-        class="map-caption absolute bottom-0 flex justify-center pointer-events-auto cursor-default select-none text-gray-400 bg-black-75 left-0 right-0 py-2 sm:py-6"
+        class="map-caption absolute bottom-0 flex justify-end pointer-events-auto cursor-default select-none text-gray-400 bg-black-75 left-0 right-0 py-2 sm:py-6"
     >
         <about-ramp-dropdown
             class="sm:block display-none ml-8 mr-4"
@@ -12,7 +12,7 @@
         ></notifications-caption-button>
 
         <span
-            class="relative truncate top-1 sm:block display-none"
+            class="relative truncate top-1 sm:block display-none shrink-0"
             v-if="!attribution.logo.disabled"
         >
             <a
@@ -30,8 +30,17 @@
         </span>
 
         <span
-            class="relative ml-10 truncate top-2 sm:block display-none"
+            class="relative ml-10 top-2 sm:block display-none"
             v-if="!attribution.text.disabled"
+            v-truncate="{
+                options: {
+                    placement: 'top',
+                    hideOnClick: false,
+                    theme: 'ramp4',
+                    animation: 'scale',
+                    appendTo: 'parent'
+                }
+            }"
         >
             {{ attribution.text.value }}
         </span>
@@ -40,64 +49,75 @@
 
         <!-- TODO: find out if any ARIA attributes are needed for the map scale -->
 
-        <span
-            v-if="!cursorCoords.disabled"
-            class="flex-shrink-0 relative top-2 pr-14 pl-14 text-sm sm:text-base"
-        >
-            {{ cursorCoords.formattedString }}
-        </span>
-
-        <button
-            v-if="!scale.disabled"
-            class="flex-shrink-0 mx-10 px-4 pointer-events-auto cursor-pointer border-none"
-            @click="onScaleClick"
-            :aria-pressed="scale.isImperialScale"
-            :aria-label="$t('map.toggleScaleUnits')"
-            v-tippy="{
-                placement: 'top',
-                hideOnClick: false,
-                theme: 'ramp4',
-                animation: 'scale',
-                appendTo: 'parent'
-            }"
-            :content="$t('map.toggleScaleUnits')"
-        >
-            <span
-                class="border-solid border-2 border-white border-t-0 h-5 mr-4 inline-block"
-                :style="{ width: scale.width }"
-            ></span>
-            <span class="relative text-sm sm:text-base">
-                {{ scale.label }}
-            </span>
-        </button>
-
-        <dropdown-menu
-            class="flex-shrink-0 pointer-events-auto focus:outline-none px-4 mr-4"
-            position="top-end"
-            :tooltip="$t('map.changeLanguage')"
-            tooltip-placement="top-end"
-        >
-            <template #header>
-                <span
-                    class="text-gray-400 hover:text-white text-sm sm:text-base pb-5"
-                >
-                    {{ $t('map.language.short') }}
-                </span>
-            </template>
-            <a
-                v-for="(item, index) in lang"
-                :key="`${item}-${index}`"
-                class="flex-auto items-center text-sm sm:text-base cursor-pointer"
-                :class="{ 'font-bold': item === $iApi.$vApp.$i18n.locale }"
-                href="javascript:;"
-                @click="changeLang(item)"
+        <div class="flex min-w-0 sm:min-w-fit relative justify-end">
+            <div
+                v-if="!cursorCoords.disabled"
+                class="relative top-2 pl-8 sm:px-14 text-sm sm:text-base"
+                v-truncate="{
+                    options: {
+                        hideOnClick: false,
+                        theme: 'ramp4',
+                        animation: 'scale'
+                    }
+                }"
             >
-                {{ $t('map.language.' + item) }}
-                <span class="sr-only" v-if="item === $iApi.$vApp.$i18n.locale">
-                    {{ $t('map.language.curr') }}
+                {{ cursorCoords.formattedString }}
+            </div>
+
+            <button
+                v-if="!scale.disabled"
+                class="flex-shrink-0 mx-10 px-4 pointer-events-auto cursor-pointer border-none"
+                @click="onScaleClick"
+                :aria-pressed="scale.isImperialScale"
+                :aria-label="$t('map.toggleScaleUnits')"
+                v-tippy="{
+                    placement: 'top',
+                    hideOnClick: false,
+                    theme: 'ramp4',
+                    animation: 'scale'
+                }"
+                :content="$t('map.toggleScaleUnits')"
+            >
+                <span
+                    class="border-solid border-2 border-white border-t-0 h-5 mr-4 inline-block"
+                    :style="{ width: scale.width }"
+                ></span>
+                <span class="relative text-sm sm:text-base">
+                    {{ scale.label }}
                 </span>
-            </a>
-        </dropdown-menu>
+            </button>
+
+            <dropdown-menu
+                class="flex-shrink-0 pointer-events-auto focus:outline-none px-4 mr-4"
+                position="top-end"
+                :tooltip="$t('map.changeLanguage')"
+                tooltip-placement="top-end"
+            >
+                <template #header>
+                    <span
+                        class="text-gray-400 hover:text-white text-sm sm:text-base pb-5"
+                    >
+                        {{ $t('map.language.short') }}
+                    </span>
+                </template>
+                <a
+                    v-for="(item, index) in lang"
+                    :key="`${item}-${index}`"
+                    class="flex-auto items-center text-sm sm:text-base cursor-pointer"
+                    :class="{ 'font-bold': item === $iApi.$vApp.$i18n.locale }"
+                    href="javascript:;"
+                    @click="changeLang(item)"
+                >
+                    {{ $t('map.language.' + item) }}
+                    <span
+                        class="sr-only"
+                        v-if="item === $iApi.$vApp.$i18n.locale"
+                    >
+                        {{ $t('map.language.curr') }}
+                    </span>
+                </a>
+            </dropdown-menu>
+        </div>
     </div>
 </template>
 

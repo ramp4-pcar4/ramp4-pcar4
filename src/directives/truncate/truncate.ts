@@ -41,19 +41,16 @@ export const Truncate: Directive = {
             placement: 'bottom-start',
             //flip: false, // can't find a replacement for Vue3
             //boundary: 'window',
-            triggerTarget: triggerElement
+            triggerTarget: triggerElement,
+            ...(binding.value?.options || {})
         });
-
-        // if (binding.value && binding.value.options) {
-        //     (el as any)._tippy.set(binding.value.options);
-        // }
     },
     updated(el: HTMLElement, binding: DirectiveBinding) {
         // update content and options
         if ((el as any)._tippy) {
             (el as any)._tippy.setContent(el.textContent);
             if (binding.value && binding.value.options) {
-                (el as any)._tippy.set(binding.value.options);
+                (el as any)._tippy.setProps(binding.value.options);
             }
         }
     },
