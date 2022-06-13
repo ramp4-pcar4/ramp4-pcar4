@@ -445,62 +445,43 @@ function layerUpgrader(r2layer: any): any {
 
         case 'ogcWms':
             r4layer.layerType = 'ogc-wms';
-
-            // TODO: uncomment this out (and make appropriate changes if necessary) when schema analysis for WMS layer is done
-            /*
-            if (typeof r2layer.suppressGetCapabilities !== 'undefined') {
-                r4layer.suppressGetCapabilities =
-                    r2layer.suppressGetCapabilities;
+            if (r2layer.suppressGetCapabilities) {
+                console.warn(
+                    `suppressGetCapabilities property provided in layer ${r2layer.id} cannot be mapped and will be skipped.`
+                );
             }
             if (r2layer.featureInfoMimeType) {
-                r4layer.featureInfoMimeType = r2layer.featureInfoMimeType;
+                if (r2layer.featureInfoMimeType === 'text/html;fgpv=summary') {
+                    r4layer.featureInfoMimeType = 'text/html';
+                } else {
+                    r4layer.featureInfoMimeType = r2layer.featureInfoMimeType;
+                }
             }
             if (r2layer.legendMimeType) {
-                r4layer.legendMimeType = r2layer.legendMimeType;
+                console.warn(
+                    `legendMimeType property provided in layer ${r2layer.id} cannot be mapped and will be skipped.`
+                );
             }
             if (r2layer.layerEntries) {
                 r4layer.layerEntries = [];
                 r2layer.layerEntries.forEach((r2layerEntry: any) => {
-                    const r4layerEntry: any = { id: r2layerEntry.id };
-                    if (r2layerEntry.name) {
-                        r4layerEntry.name = r2layerEntry.name;
-                    }
+                    const r4layerEntry: any =
+                        layerCommonPropertiesUpgrader(r2layerEntry);
+                    r4layerEntry.id = r2layerEntry.id;
                     if (r2layerEntry.currentStyle) {
                         r4layerEntry.currentStyle = r2layerEntry.currentStyle;
+                        console.warn(
+                            `currentStyle property provided in layer entry ${r2layerEntry.id} of layer ${r2layer.id} is currently not supported.`
+                        );
                     }
-                    if (r2layerEntry.controls) {
-                        r4layerEntry.controls = [];
-                        r2layerEntry.controls.forEach((control: string) => {
-                            if (control === 'query') {
-                                r4layerEntry.controls.push('identify');
-                            } else if (allowedControls.includes(control)) {
-                                r4layerEntry.controls.push(control);
-                            } else {
-                                console.warn(
-                                    `Ignored invalid layer control: ${control}`
-                                );
-                            }
-                        });
+                    if (r2layerEntry.allStyles) {
+                        console.warn(
+                            `allStyles property provided in layer entry ${r2layerEntry.id} of layer ${r2layer.id} cannot be mapped and will be skipped.`
+                        );
                     }
-                    if (r2layerEntry.state) {
-                        r4layerEntry.state = {
-                            opacity: r2layerEntry.state.opacity ?? 1,
-                            visibility: r2layerEntry.state.visibility ?? true,
-                            boundingBox:
-                                r2layerEntry.state.boundingBox ?? false,
-                            identify: r2layerEntry.state.query ?? true,
-                            hovertips: r2layerEntry.state.hovertips ?? true
-                        };
-                        if (
-                            typeof r2layerEntry.state.snapshot !== 'undefined'
-                        ) {
-                            console.warn(
-                                `snapshot property provided in initialLayer settings in layer entry of layer ${r2layer.id} cannot be mapped and will be skipped.`
-                            );
-                        }
-                    }
+                    r4layer.layerEntries.push(r4layerEntry);
                 });
-            }*/
+            }
             break;
 
         case 'esriImage':
