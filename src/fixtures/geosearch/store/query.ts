@@ -1,4 +1,4 @@
-import * as defs from './definitions';
+import type * as defs from '../definitions';
 
 export function make(config: defs.GeosearchConfig, query: string): Query {
     const latLngRegDD =

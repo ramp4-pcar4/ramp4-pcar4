@@ -8,7 +8,7 @@ import type {
 import messages from './lang.csv?raw';
 
 export type I18nComponentOptions = {
-    messages?: LocaleMessages<VueMessageType>;
+    messages?: LocaleMessages<VueMessageType> | VueMessageType;
     dateTimeFormats?: IntlDateTimeFormats;
     numberFormats?: IntlNumberFormats;
     sharedMessages?: LocaleMessages<VueMessageType>;

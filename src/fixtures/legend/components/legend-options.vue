@@ -237,7 +237,8 @@ export default defineComponent({
                     this.$iApi.event.emit(GlobalEvents.METADATA_OPEN, {
                         type: 'html',
                         layerName: name,
-                        url: metaConfig.url
+                        url: metaConfig.url,
+                        uid: this.legendItem!.layerUID
                     });
                 } else {
                     console.warn('Layer does not have a metadata url defined');

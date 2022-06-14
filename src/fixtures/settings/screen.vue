@@ -113,14 +113,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import type { PropType } from 'vue';
+import { defineComponent, type PropType } from 'vue';
 import type { PanelInstance } from '@/api';
-import SettingsComponentV from './component.vue';
 import { GlobalEvents, LayerInstance } from '@/api/internal';
+import type { LayerControls } from '@/geo/api';
 import type { LegendEntry } from '../legend/store/legend-defs';
 import type { SettingsAPI } from './api/settings';
-import type { LayerControls } from '@/geo/api';
+import SettingsComponentV from './component.vue';
 
 export default defineComponent({
     name: 'SettingsScreenV',
