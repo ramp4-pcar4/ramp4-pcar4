@@ -1,7 +1,8 @@
 import { markRaw } from 'vue';
 import { MetadataAPI } from './api/metadata';
+import { metadata } from './store/index';
 import MetadataScreenV from './screen.vue';
-import { GlobalEvents } from '@/api';
+
 import messages from './lang/lang.csv?raw';
 
 class MetadataFixture extends MetadataAPI {
@@ -26,15 +27,7 @@ class MetadataFixture extends MetadataAPI {
             { i18n: { messages } }
         );
 
-        // TODO: this should be a default handler
-        let handler = this.$iApi.event.on(
-            GlobalEvents.METADATA_OPEN,
-            (payload: any) => {
-                const metadataFixture: MetadataAPI =
-                    this.$iApi.fixture.get('metadata');
-                metadataFixture.openMetadata(payload);
-            }
-        );
+        this.$vApp.$store.registerModule('metadata', metadata());
 
         this.removed = () => {
             console.log(`[fixture] ${this.id} removed`);
@@ -44,8 +37,9 @@ class MetadataFixture extends MetadataAPI {
                     'metadata'
                 );
             }
-            this.$iApi.event.off(handler);
+
             this.$iApi.panel.remove('metadata');
+            this.$vApp.$store.unregisterModule('metadata');
         };
     }
 }

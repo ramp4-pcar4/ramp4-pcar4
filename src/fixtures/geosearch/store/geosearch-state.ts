@@ -1,4 +1,4 @@
-import type { GeosearchConfig } from './definitions';
+import type { GeosearchConfig } from '../definitions';
 import { GeoSearchUI } from './geosearch.feature';
 
 export class GeosearchState {
