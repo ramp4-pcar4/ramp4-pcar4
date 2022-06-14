@@ -55,12 +55,20 @@ export class PanelState {
     stackWidth = 0;
 
     /**
+     * The remaining screen width that non-opened panels are allowed to take up.
+     *
+     * @type {number}
+     * @memberof PanelState
+     */
+    remainingWidth = 0;
+
+    /**
      * True if the app contains the `xs` class, indicating that panels have no extra margin.
      *
      * @type {boolean}
      * @memberof PanelState
      */
-     mobileView = false;
+    mobileView = false;
 }
 
 // this should have been `AsyncComponentPromise` type, but something is off there
