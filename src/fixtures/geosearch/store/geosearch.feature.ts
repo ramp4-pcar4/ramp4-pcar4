@@ -5,7 +5,7 @@
 import Provinces from './provinces';
 import Types from './types';
 import * as Q from './query';
-import * as defs from './definitions';
+import type * as defs from '../definitions';
 
 // geosearch query services
 const GEO_LOCATE_URL =

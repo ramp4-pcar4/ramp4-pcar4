@@ -3,7 +3,7 @@ import { make } from 'vuex-pathify';
 
 import { GeosearchState } from './geosearch-state';
 import type { RootState } from '@/store/state';
-import type { GeosearchConfig } from './definitions';
+import type { GeosearchConfig } from '../definitions';
 
 type GeosearchContext = ActionContext<GeosearchState, RootState>;
 

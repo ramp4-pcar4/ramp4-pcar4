@@ -176,7 +176,6 @@ export default defineComponent({
     props: {
         legendItem: LegendEntry
     },
-
     methods: {
         /**
          * Display symbology stack for the layer.
@@ -237,7 +236,8 @@ export default defineComponent({
                     this.$iApi.event.emit(GlobalEvents.METADATA_OPEN, {
                         type: 'html',
                         layerName: name,
-                        url: metaConfig.url
+                        url: metaConfig.url,
+                        layer: this.legendItem!.layer
                     });
                 } else {
                     console.warn('Layer does not have a metadata url defined');

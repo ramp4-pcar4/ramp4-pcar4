@@ -1,4 +1,4 @@
-import * as defs from './definitions';
+import type * as defs from '../definitions';
 import axios from 'axios';
 
 const types: any = {
