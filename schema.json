@@ -20,9 +20,7 @@
                     "description": "Help panel width in pixels"
                 }
             },
-            "required": [
-                "folderName"
-            ],
+            "required": ["folderName"],
             "additionalProperties": false
         },
         "northarrow": {
@@ -40,10 +38,7 @@
                     "description": "The graphical icon url/data url of the north pole that replaces north arrow when it's on north pole"
                 }
             },
-            "required": [
-                "arrowIcon",
-                "poleIcon"
-            ],
+            "required": ["arrowIcon", "poleIcon"],
             "additionalProperties": false
         },
         "overviewmap": {
@@ -87,11 +82,7 @@
             "properties": {
                 "items": {
                     "type": "array",
-                    "default": [
-                        "legend",
-                        "geosearch",
-                        "basemap"
-                    ],
+                    "default": ["legend", "geosearch", "basemap"],
                     "description": "Items that are displayed on the appbar, such as buttons linked to map components, formatters, images, etc.",
                     "items": {
                         "oneOf": [
@@ -148,9 +139,7 @@
                     "minItems": 1
                 }
             },
-            "required": [
-                "items"
-            ],
+            "required": ["items"],
             "additionalProperties": false
         },
         "details": {
@@ -162,9 +151,7 @@
                     "description": "Custom Vue component to render as details template"
                 }
             },
-            "required": [
-                "template"
-            ],
+            "required": ["template"],
             "additionalProperties": false
         },
         "geosearch": {
@@ -254,13 +241,16 @@
                     "default": false,
                     "description": "Specifies whether legend panel is open by default."
                 },
+                "isPinned": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Specifies whether legend panel is pinned by default."
+                },
                 "root": {
                     "$ref": "#/$defs/entryGroup"
                 }
             },
-            "required": [
-                "root"
-            ],
+            "required": ["root"],
             "unevaluatedProperties": false
         },
         "entryGroup": {
@@ -284,9 +274,7 @@
                 },
                 "controls": {
                     "$ref": "#/$defs/legendGroupControls",
-                    "default": [
-                        "visibility"
-                    ]
+                    "default": ["visibility"]
                 },
                 "disabledControls": {
                     "$ref": "#/$defs/legendGroupControls",
@@ -313,10 +301,7 @@
                     "minItems": 1
                 }
             },
-            "required": [
-                "name",
-                "children"
-            ],
+            "required": ["name", "children"],
             "unevaluatedProperties": false
         },
         "legendHeaderControls": {
@@ -425,10 +410,7 @@
                 },
                 "symbologyRenderStyle": {
                     "type": "string",
-                    "enum": [
-                        "icons",
-                        "images"
-                    ],
+                    "enum": ["icons", "images"],
                     "default": "icons",
                     "description": "An optional style, describes how the symbology stack should be rendered."
                 },
@@ -438,9 +420,7 @@
                     "description": "Indicates if symbology stack is expand by default"
                 }
             },
-            "required": [
-                "layerId"
-            ],
+            "required": ["layerId"],
             "unevaluatedProperties": false
         },
         "symbologyStack": {
@@ -465,10 +445,7 @@
                         "description": "An SQL where clause by which the map and datatable attributes can be filtered. All the query results for the symbologyStack should cover all attributes for that layer."
                     }
                 },
-                "required": [
-                    "image",
-                    "text"
-                ],
+                "required": ["image", "text"],
                 "additionalProperties": false
             },
             "minItems": 1
@@ -479,11 +456,7 @@
             "properties": {
                 "infoType": {
                     "type": "string",
-                    "enum": [
-                        "title",
-                        "image",
-                        "text"
-                    ],
+                    "enum": ["title", "image", "text"],
                     "default": "title",
                     "description": "Type of info content."
                 },
@@ -492,10 +465,7 @@
                     "description": "Actual content of the section - description of title/text or URL to image file."
                 }
             },
-            "required": [
-                "infoType",
-                "content"
-            ],
+            "required": ["infoType", "content"],
             "additionalProperties": false
         },
         "visibilitySet": {
@@ -523,9 +493,7 @@
                     "minItems": 1
                 }
             },
-            "required": [
-                "exclusiveVisibility"
-            ],
+            "required": ["exclusiveVisibility"],
             "unevaluatedProperties": false
         },
         "mapnav": {
@@ -534,22 +502,13 @@
             "properties": {
                 "zoomOption": {
                     "type": "string",
-                    "enum": [
-                        "all",
-                        "buttons",
-                        "slider"
-                    ],
+                    "enum": ["all", "buttons", "slider"],
                     "default": "buttons",
                     "description": "Specifies between zoom buttons or zoom sliders."
                 },
                 "items": {
                     "type": "array",
-                    "default": [
-                        "fullscreen",
-                        "help",
-                        "home",
-                        "basemap"
-                    ],
+                    "default": ["fullscreen", "help", "home", "basemap"],
                     "description": "Map navigation buttons displayed on mapnav.",
                     "items": {
                         "type": "string",
@@ -604,9 +563,7 @@
                             "description": "The value of the title text."
                         }
                     },
-                    "requried": [
-                        "value"
-                    ]
+                    "requried": ["value"]
                 },
                 "map": {
                     "type": "object",
@@ -649,9 +606,7 @@
                             "description": "The value of the footnote text."
                         }
                     },
-                    "requried": [
-                        "value"
-                    ]
+                    "requried": ["value"]
                 },
                 "timestamp": {
                     "type": "object",
@@ -734,10 +689,7 @@
                 },
                 "layerType": {
                     "type": "string",
-                    "enum": [
-                        "esri-imagery",
-                        "esri-tile"
-                    ],
+                    "enum": ["esri-imagery", "esri-tile"],
                     "description": "Service type shorthand for basic layers."
                 },
                 "extent": {
@@ -773,11 +725,7 @@
                     "description": "Indicates if this layer is a cosmetic supporting layer which will not be considered for general user interaction."
                 }
             },
-            "required": [
-                "id",
-                "layerType",
-                "url"
-            ],
+            "required": ["id", "layerType", "url"],
             "unevaluatedProperties": false
         },
         "osmLayer": {
@@ -805,9 +753,7 @@
                 },
                 "layerType": {
                     "type": "string",
-                    "enum": [
-                        "osm-tile"
-                    ],
+                    "enum": ["osm-tile"],
                     "description": "Service type shorthand for OpenStreetMap layers."
                 },
                 "extent": {
@@ -839,10 +785,7 @@
                     "description": "Indicates if this layer is a cosmetic supporting layer which will not be considered for general user interaction."
                 }
             },
-            "required": [
-                "id",
-                "layerType"
-            ],
+            "required": ["id", "layerType"],
             "unevaluatedProperties": false
         },
         "mapImageLayer": {
@@ -885,9 +828,7 @@
                 },
                 "layerType": {
                     "type": "string",
-                    "enum": [
-                        "esri-map-image"
-                    ],
+                    "enum": ["esri-map-image"],
                     "default": "esri-map-image",
                     "description": "Service type shorthand for map image layers."
                 },
@@ -955,12 +896,7 @@
                     "$ref": "#/$defs/layerFixtureConfig"
                 }
             },
-            "required": [
-                "id",
-                "layerType",
-                "layerEntries",
-                "url"
-            ],
+            "required": ["id", "layerType", "layerEntries", "url"],
             "unevaluatedProperties": false
         },
         "mapImageLayerEntry": {
@@ -1035,9 +971,7 @@
                     "$ref": "#/$defs/layerFixtureConfig"
                 }
             },
-            "required": [
-                "index"
-            ],
+            "required": ["index"],
             "unevaluatedProperties": false
         },
         "featureLayer": {
@@ -1090,9 +1024,7 @@
                 },
                 "layerType": {
                     "type": "string",
-                    "enum": [
-                        "esri-feature"
-                    ],
+                    "enum": ["esri-feature"],
                     "description": "Service type shorthand for feature layers."
                 },
                 "tolerance": {
@@ -1143,11 +1075,7 @@
                     "$ref": "#/$defs/layerFixtureConfig"
                 }
             },
-            "required": [
-                "id",
-                "layerType",
-                "url"
-            ],
+            "required": ["id", "layerType", "url"],
             "additionalProperties": false
         },
         "fileLayer": {
@@ -1185,11 +1113,7 @@
                 },
                 "layerType": {
                     "type": "string",
-                    "enum": [
-                        "file-geojson",
-                        "file-csv",
-                        "file-shape"
-                    ],
+                    "enum": ["file-geojson", "file-csv", "file-shape"],
                     "description": "Service type shorthand for file layers."
                 },
                 "latField": {
@@ -1248,11 +1172,7 @@
                     "$ref": "#/$defs/layerFixtureConfig"
                 }
             },
-            "required": [
-                "id",
-                "layerType",
-                "url"
-            ],
+            "required": ["id", "layerType", "url"],
             "additionalProperties": false
         },
         "wfsLayer": {
@@ -1289,9 +1209,7 @@
                 },
                 "layerType": {
                     "type": "string",
-                    "enum": [
-                        "ogc-wfs"
-                    ],
+                    "enum": ["ogc-wfs"],
                     "default": "ogc-wfs",
                     "description": "Service type shorthand for WFS layers."
                 },
@@ -1348,11 +1266,7 @@
                     "$ref": "#/$defs/layerFixtureConfig"
                 }
             },
-            "required": [
-                "id",
-                "layerType",
-                "url"
-            ],
+            "required": ["id", "layerType", "url"],
             "additionalProperties": false
         },
         "wmsLayer": {
@@ -1403,19 +1317,13 @@
                 },
                 "layerType": {
                     "type": "string",
-                    "enum": [
-                        "ogc-wms"
-                    ],
+                    "enum": ["ogc-wms"],
                     "default": "ogc-wms",
                     "description": "Service type shorthand for WMS layers."
                 },
                 "featureInfoMimeType": {
                     "type": "string",
-                    "enum": [
-                        "text/html",
-                        "text/plain",
-                        "application/json"
-                    ],
+                    "enum": ["text/html", "text/plain", "application/json"],
                     "description": "Specifies if GetFeatureInfo should be enabled for this WMS and indicates the format that should be requested."
                 },
                 "extent": {
@@ -1445,12 +1353,7 @@
                     "$ref": "#/$defs/initialLayerSettings"
                 }
             },
-            "required": [
-                "id",
-                "layerType",
-                "layerEntries",
-                "url"
-            ],
+            "required": ["id", "layerType", "layerEntries", "url"],
             "unevaluatedProperties": false
         },
         "wmsLayerEntry": {
@@ -1512,9 +1415,7 @@
                     "$ref": "#/$defs/initialLayerSettings"
                 }
             },
-            "required": [
-                "id"
-            ],
+            "required": ["id"],
             "unevaluatedProperties": false
         },
         "layerFixtureConfig": {
@@ -1567,9 +1468,7 @@
                     "description": "Specifies the field title. If missing, attempts to use the service alias, then defaults to the field name."
                 }
             },
-            "required": [
-                "name"
-            ]
+            "required": ["name"]
         },
         "initialLayerSettings": {
             "type": "object",
@@ -1685,10 +1584,7 @@
                 },
                 "sort": {
                     "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ],
+                    "enum": ["asc", "desc"],
                     "default": "asc",
                     "description": "Specifies if column requires to be sorted, either in ascending or descending order."
                 },
@@ -1709,12 +1605,7 @@
             "properties": {
                 "type": {
                     "type": "string",
-                    "enum": [
-                        "string",
-                        "number",
-                        "date",
-                        "selector"
-                    ],
+                    "enum": ["string", "number", "date", "selector"],
                     "default": "string",
                     "description": "Specifies the filter type to use for a column. Defaults to being filtered as a string."
                 },
@@ -1729,9 +1620,7 @@
                     "description": "Specifies if filter is modifiable."
                 }
             },
-            "required": [
-                "type"
-            ],
+            "required": ["type"],
             "additionalProperties": false
         },
         "tileSchema": {
@@ -1768,11 +1657,7 @@
                     "minItems": 2
                 }
             },
-            "required": [
-                "id",
-                "name",
-                "default"
-            ],
+            "required": ["id", "name", "default"],
             "additionalProperties": false
         },
         "basemap": {
@@ -1836,11 +1721,7 @@
                                 "default": 1
                             }
                         },
-                        "required": [
-                            "id",
-                            "layerType",
-                            "url"
-                        ]
+                        "required": ["id", "layerType", "url"]
                     },
                     "minItems": 1
                 },
@@ -1903,10 +1784,7 @@
                     }
                 }
             },
-            "required": [
-                "text",
-                "logo"
-            ],
+            "required": ["text", "logo"],
             "unevaluatedProperties": false
         },
         "extentSet": {
@@ -1930,10 +1808,7 @@
                     "description": "The maximum extent; full or default extents will be used if not supplied."
                 }
             },
-            "required": [
-                "id",
-                "default"
-            ],
+            "required": ["id", "default"],
             "unevaluatedProperties": false
         },
         "extent": {
@@ -1953,12 +1828,7 @@
                     "type": "number"
                 }
             },
-            "required": [
-                "xmin",
-                "ymin",
-                "xmax",
-                "ymax"
-            ],
+            "required": ["xmin", "ymin", "xmax", "ymax"],
             "additionalProperties": false
         },
         "extentWithReference": {
@@ -1981,12 +1851,7 @@
                     "$ref": "#/$defs/spatialReference"
                 }
             },
-            "required": [
-                "xmin",
-                "ymin",
-                "xmax",
-                "ymax"
-            ],
+            "required": ["xmin", "ymin", "xmax", "ymax"],
             "unevaluatedProperties": false
         },
         "spatialReference": {
@@ -2008,19 +1873,13 @@
             },
             "anyOf": [
                 {
-                    "required": [
-                        "wkid"
-                    ]
+                    "required": ["wkid"]
                 },
                 {
-                    "required": [
-                        "latestWkid"
-                    ]
+                    "required": ["latestWkid"]
                 },
                 {
-                    "required": [
-                        "wkt"
-                    ]
+                    "required": ["wkt"]
                 }
             ],
             "unevaluatedProperties": false
@@ -2049,27 +1908,18 @@
                                 "type": "number"
                             }
                         },
-                        "required": [
-                            "level",
-                            "resolution",
-                            "scale"
-                        ]
+                        "required": ["level", "resolution", "scale"]
                     }
                 }
             },
-            "required": [
-                "id",
-                "lods"
-            ],
+            "required": ["id", "lods"],
             "unevaluatedProperties": false
         }
     },
     "properties": {
         "version": {
             "type": "string",
-            "enum": [
-                "4.0"
-            ],
+            "enum": ["4.0"],
             "description": "The schema version used to validate the configuration file. The schema should enumerate the list of versions accepted by this version of the viewer."
         },
         "fixtures": {
@@ -2087,11 +1937,7 @@
                 "appbar": {
                     "$ref": "#/$defs/appbar",
                     "default": {
-                        "items": [
-                            "legend",
-                            "geosearch",
-                            "basemap"
-                        ]
+                        "items": ["legend", "geosearch", "basemap"]
                     },
                     "description": "Provides configuration to the appbar. If not supplied, default appbar controls are displayed."
                 },
@@ -2099,12 +1945,7 @@
                     "$ref": "#/$defs/mapnav",
                     "default": {
                         "zoom": "buttons",
-                        "items": [
-                            "fullscreen",
-                            "home",
-                            "help",
-                            "basemap"
-                        ]
+                        "items": ["fullscreen", "home", "help", "basemap"]
                     },
                     "description": "Provides configuration to the appbar. If not supplied, default appbar controls are displayed."
                 },
@@ -2142,9 +1983,7 @@
                             }
                         }
                     },
-                    "required": [
-                        "templates"
-                    ]
+                    "required": ["templates"]
                 },
                 "help": {
                     "$ref": "#/$defs/help",
@@ -2260,10 +2099,7 @@
                             }
                         }
                     },
-                    "required": [
-                        "mouseCoords",
-                        "scaleBar"
-                    ]
+                    "required": ["mouseCoords", "scaleBar"]
                 },
                 "pointZoomScale": {
                     "type": "number",
@@ -2278,10 +2114,7 @@
                     "description": "The amount of throttling (in milliseconds) to be used for the map mouse move event. A value of 0 means no throttle."
                 }
             },
-            "required": [
-                "tileSchemas",
-                "baseMaps"
-            ],
+            "required": ["tileSchemas", "baseMaps"],
             "unevaluatedProperties": false
         },
         "system": {
@@ -2302,7 +2135,5 @@
             "unevaluatedProperties": false
         }
     },
-    "required": [
-        "version"
-    ]
+    "required": ["version"]
 }
