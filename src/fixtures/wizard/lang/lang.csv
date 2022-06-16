@@ -13,6 +13,9 @@ wizard.format.type.service,Service type,1,Type de service,1
 wizard.format.type.file,File format,1,Format du fichier,1
 wizard.format.type.error.required,Service or file type is required,1,Le service ou le type de fichier est requis,1
 wizard.format.type.error.invalid,Invalid file or service type,1,Type de fichier ou de service non valide,1
+wizard.format.type.error.failure,Failed to load data from file/service,1,Failed to load data from file/service,0
+wizard.format.info.cors,Service needs to be CORS enabled,1,Service needs to be CORS enabled,0
+wizard.format.warn.cors,Service may not support CORS,1,Service may not support CORS,0
 wizard.fileType.csv,CSV,1,CSV,1
 wizard.fileType.shapefile,zipped Shapefile,1,Shapefile zippé,1
 wizard.fileType.geojson,GeoJSON,1,GeoJSON,1
