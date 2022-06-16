@@ -15,6 +15,9 @@ const baseConfig: UserConfigExport = {
             vue: 'vue/dist/vue.esm-bundler.js'
         }
     },
+    build: {
+        target: 'esnext'
+    },
     server: {
         open: '/demos/index.html'
     }
@@ -23,12 +26,12 @@ const baseConfig: UserConfigExport = {
 export default defineConfig(({ command, mode }) => {
     if (command == 'build') {
         if (mode === 'production') {
-            baseConfig.build = {
+            Object.assign(baseConfig.build!, {
                 outDir: `${distName}`,
                 lib: {
                     entry: resolve(__dirname, 'src/main.ts'),
                     name: 'RAMP',
-                    fileName: format =>
+                    fileName: (format: string) =>
                         `ramp.${format == 'iife' ? 'global' : format}.js`,
                     formats: ['es', 'iife']
                 },
@@ -38,21 +41,19 @@ export default defineConfig(({ command, mode }) => {
                         dir: `${distName}/lib`
                     }
                 }
-            };
+            });
         } else {
             baseConfig.publicDir = false;
             baseConfig.root = 'demos';
-            baseConfig.build = {
+            Object.assign(baseConfig.build!, {
                 outDir: `${distName}/demos`,
                 rollupOptions: {
                     input: {
                         main: '/index.html',
                         multi: '/index-multi.html'
                     }
-                },
-                minify: 'esbuild',
-                target: 'esnext'
-            };
+                }
+            });
         }
     } else {
         // preview mode
