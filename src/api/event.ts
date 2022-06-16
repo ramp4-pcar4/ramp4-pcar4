@@ -12,6 +12,8 @@ import type { GridAPI } from '@/fixtures/grid/api/grid';
 import type { WizardAPI } from '@/fixtures/wizard/api/wizard';
 import type { LegendAPI } from '@/fixtures/legend/api/legend';
 import type { LayerReorderAPI } from '@/fixtures/layer-reorder/api/layer-reorder';
+import type { MetadataAPI } from '@/fixtures/metadata/api/metadata';
+import type { MetadataPayload } from '@/fixtures/metadata/store';
 import { AppbarAction } from '@/fixtures/appbar/store';
 import { LegendStore } from '@/fixtures/legend/store';
 import { GridStore, GridAction } from '@/fixtures/grid/store';
@@ -326,6 +328,7 @@ enum DefEH {
     TOGGLE_GRID = 'toggles_grid_panel',
     OPEN_WIZARD = 'opens_wizard_panel',
     OPEN_LAYER_REORDER = 'opens_layer_reorder_panel',
+    OPEN_METADATA = 'opens_metadata_panel',
     UPDATE_LEGEND_LAYER_REGISTER = 'updates_legend_layer_register',
     UPDATE_LEGEND_WIZARD_ADDED = 'updates_legend_wizard_added',
     UPDATE_LEGEND_LAYER_RELOAD = 'updates_legend_layer_reload',
@@ -601,6 +604,7 @@ export class EventAPI extends APIScope {
                 DefEH.TOGGLE_GRID,
                 DefEH.OPEN_WIZARD,
                 DefEH.OPEN_LAYER_REORDER,
+                DefEH.OPEN_METADATA,
                 DefEH.UPDATE_LEGEND_LAYER_REGISTER,
                 DefEH.UPDATE_LEGEND_WIZARD_ADDED,
                 DefEH.UPDATE_LEGEND_LAYER_RELOAD,
@@ -778,8 +782,23 @@ export class EventAPI extends APIScope {
                     handlerName
                 );
                 break;
+            case DefEH.OPEN_METADATA:
+                // opens the standard metadata panel when an open metadata event happens
+                zeHandler = (payload: MetadataPayload) => {
+                    const metadataFixture: MetadataAPI =
+                        this.$iApi.fixture.get('metadata');
+                    if (metadataFixture) {
+                        metadataFixture.toggleMetadata(payload);
+                    }
+                };
+                this.$iApi.event.on(
+                    GlobalEvents.METADATA_OPEN,
+                    zeHandler,
+                    handlerName
+                );
+                break;
             case DefEH.UPDATE_LEGEND_LAYER_REGISTER:
-                // when a layer is regestered, have the standard legend update in accordance to the layer
+                // when a layer is registered, have the standard legend update in accordance to the layer
                 zeHandler = (layer: LayerInstance) => {
                     const legendFixture: LegendAPI =
                         this.$iApi.fixture.get('legend');

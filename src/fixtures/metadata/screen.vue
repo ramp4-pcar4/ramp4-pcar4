@@ -8,27 +8,22 @@
             <div class="flex justify-center">
                 <!-- Loading Screen -->
                 <div
-                    v-if="state.status == 'loading'"
+                    v-if="status == 'loading'"
                     class="flex flex-col justify-center text-center"
                 >
-                    <!-- TODO: Localize this -->
-                    Loading...
+                    {{ $t('metadata.loading') }}
                 </div>
 
                 <!-- Found Screen, XML -->
                 <div
-                    v-else-if="
-                        payload.type === 'xml' && state.status == 'success'
-                    "
+                    v-else-if="payload.type === 'xml' && status == 'success'"
                     class="flex flex-col justify-center"
                 ></div>
 
                 <!-- Found Screen, HTML -->
                 <div
-                    v-else-if="
-                        payload.type === 'html' && state.status == 'success'
-                    "
-                    v-html="state.response"
+                    v-else-if="payload.type === 'html' && status == 'success'"
+                    v-html="response"
                     class="flex flex-col justify-center max-w-full"
                 ></div>
 
@@ -37,10 +32,8 @@
                     <img src="https://i.imgur.com/fA5EqV6.png" />
 
                     <span class="text-xl mt-20">
-                        <!-- TODO: Localize this -->
-                        There was an error retrieving this resource. Please try
-                        again.</span
-                    >
+                        {{ $t('metadata.error') }}
+                    </span>
                 </div>
             </div>
         </template>
@@ -48,43 +41,46 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import type { PropType } from 'vue';
-import type { PanelInstance } from '@/api';
-import type {
-    MetadataPayload,
-    MetadataResult,
-    MetadataState,
-    MetadataCache
-} from './definitions';
+import { defineComponent, type PropType } from 'vue';
+import { GlobalEvents, LayerInstance, type PanelInstance } from '@/api';
+import {
+    MetadataStore,
+    type MetadataPayload,
+    type MetadataResult,
+    type MetadataCache
+} from './store';
 
 import XSLT_en from './files/xstyle_default_en.xsl?raw';
 import XSLT_fr from './files/xstyle_default_fr.xsl?raw';
 
 export default defineComponent({
     name: 'MetadataScreenV',
-
     props: {
         panel: {
-            type: Object as PropType<PanelInstance>
+            type: Object as PropType<PanelInstance>,
+            required: true
         },
         payload: {
             type: Object as PropType<MetadataPayload>,
             required: true
         }
     },
-
     data() {
         return {
-            state: { status: 'loading', response: null } as MetadataState, // TODO: maybe we can add a metadata store?
-            cache: {} as MetadataCache
+            status: this.get(MetadataStore.status),
+            response: this.get(MetadataStore.response),
+            // layerExists: false, // tracks whether the layer still exists
+            cache: {} as MetadataCache,
+            handlers: [] as Array<string>
         };
     },
-
     mounted() {
+        // TODO: re-test this once layer isRemoved property is implemented (and fix the remove layer when panel minimized case)
+        // this.layerExists = this.payload.layer !== undefined;
+
         if (this.payload.type === 'xml') {
             this.loadFromURL(this.payload.url, []).then(r => {
-                this.state.status = 'success';
+                this.$iApi.$vApp.$store.set(MetadataStore.status, 'success');
 
                 // Append the content to the panel.
                 if (r !== null) {
@@ -93,12 +89,27 @@ export default defineComponent({
             });
         } else if (this.payload.type === 'html') {
             this.requestContent(this.payload.url).then(r => {
-                this.state.status = 'success';
-                this.state.response = r.response;
+                this.$iApi.$vApp.$store.set(MetadataStore.status, r.status);
+                this.$iApi.$vApp.$store.set(MetadataStore.response, r.response);
             });
         }
-    },
 
+        // if layer is removed with its metadata open close this panel
+        this.handlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.LAYER_REMOVE,
+                (removedLayer: LayerInstance) => {
+                    if (this.payload.layer?.uid === removedLayer.uid) {
+                        this.panel.close();
+                    }
+                }
+            )
+        );
+    },
+    beforeUnmount() {
+        // remove all event handlers
+        this.handlers.forEach(handler => this.$iApi.event.off(handler));
+    },
     methods: {
         /**
          * Applies an XSLT to XML, XML is provided but the XSLT is stored in a string constant.
@@ -155,23 +166,8 @@ export default defineComponent({
                     );
                 }
                 output = xsltProc.transformToFragment(xmlDoc, document);
-            } else if (window.hasOwnProperty('ActiveXObject')) {
-                // IE11 (╯°□°）╯︵ ┻━┻
-                const xslt = new window.ActiveXObject('Msxml2.XSLTemplate');
-                const xmlDoc = new window.ActiveXObject('Msxml2.DOMDocument');
-                const xslDoc = new window.ActiveXObject(
-                    'Msxml2.FreeThreadedDOMDocument'
-                );
-                xmlDoc.loadXML(xmlString);
-                xslDoc.loadXML(xslString);
-                xslt.stylesheet = xslDoc;
-                const xsltProc = xslt.createProcessor();
-                xsltProc.input = xmlDoc;
-                xsltProc.transform();
-                output = document
-                    .createRange()
-                    .createContextualFragment(xsltProc.output);
             }
+            // ('-')7 IE retirement (╯°□°）╯︵ ┻━┻
 
             return output;
         },
@@ -180,7 +176,7 @@ export default defineComponent({
          * Sends a GET request to the provided URL. Returns a promise containing information received from the webpage.
          * */
         requestContent(url: string): Promise<MetadataResult> {
-            return new Promise((resolve, reject) => {
+            return new Promise(resolve => {
                 const xobj = new XMLHttpRequest();
                 xobj.open('GET', url, true);
                 xobj.responseType = 'text';

@@ -103,6 +103,7 @@ export type PanelConfigScreens = {
 export type PanelConfigRoute = { screen: string; props?: object };
 export type PanelConfigStyle = { [key: string]: string };
 export type PanelConfigControls = { expand?: boolean };
+export type PanelAppbarButton = { icon: string; tooltip: string };
 
 export interface PanelConfig {
     /**
@@ -122,6 +123,14 @@ export interface PanelConfig {
     alertName: string;
 
     controls?: PanelConfigControls;
+
+    /**
+     * Button layout to be used in appbar.
+     *
+     * @type {PanelAppbarButton}
+     * @memberof PanelConfig
+     */
+    button?: PanelAppbarButton;
 
     /**
      * The style object to apply to the panel.
