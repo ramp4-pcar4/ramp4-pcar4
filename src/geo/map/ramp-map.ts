@@ -614,6 +614,7 @@ export class MapAPI extends CommonMapAPI {
 
         // Remove the layer from the map
         this.esriMap.remove(layerInstance.esriLayer);
+        layerInstance.isRemoved = true;
 
         // Fire the layer removal event
         this.$iApi.event.emit(GlobalEvents.LAYER_REMOVE, layerInstance);
