@@ -50,6 +50,7 @@ jobs:
 
             - name: Join both dev/prod caches
               run: |
+                  rm -rf dist
                   mkdir dist
                   mv development/* production/* dist
 
