@@ -257,7 +257,7 @@ Determine if a layer was added by the user during the session.
 myLayer.userAdded; // true
 ```
 
-Determine if a layer has been removed from the map / session. In most cases this is redundant, as the layer will be toast. It becomes useful when dealing with sublayers, as a sublayer could be removed but the parent layer remains and retains the original layer tree.
+Determine if a layer has been removed from the map / session. This also applies to sublayers which can be removed but the parent layer remains and retains the original layer tree.
 
 ```js
 myLayer.isRemoved; // false

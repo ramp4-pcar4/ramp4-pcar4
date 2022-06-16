@@ -57,7 +57,7 @@ export class LayerInstance extends APIScope {
     supportsFeatures: boolean;
     supportsSublayers: boolean;
     isSublayer: boolean;
-    isRemoved: boolean; // used to mark sublayers for removal
+    isRemoved: boolean; // used to track if layer is removed from map. Is false during the period "before" the layer gets added to map.
     isFile: boolean;
     isCosmetic: boolean;
     userAdded: boolean;
