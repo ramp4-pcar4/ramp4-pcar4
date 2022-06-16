@@ -29,7 +29,8 @@ export enum PanelMutation {
     SET_ORDERED_ITEMS = 'SET_ORDERED_ITEMS',
     SET_PRIORITY = 'SET_PRIORITY',
     SET_VISIBLE = 'SET_VISIBLE',
-    SET_WIDTH = 'SET_WIDTH'
+    SET_WIDTH = 'SET_WIDTH',
+    SET_REMAINING_WIDTH = 'SET_REMAINING_WIDTH'
 }
 
 const getters = {
@@ -47,7 +48,16 @@ const getters = {
             }
 
             return state.visible;
-        }
+        },
+
+    /**
+     * Returns `remainingWidth` from the state. Displays how much space is left for panels to be displayed on the map.
+     *
+     * @returns {number}
+     */
+    getRemainingWidth: (state: PanelState): number => {
+        return state.remainingWidth;
+    }
 };
 
 const actions = {
@@ -174,6 +184,7 @@ const actions = {
             context.commit(PanelMutation.SET_PRIORITY, null);
         }
 
+        context.commit(PanelMutation.SET_REMAINING_WIDTH, remainingWidth);
         context.commit(PanelMutation.SET_VISIBLE, nowVisible);
     }
 };

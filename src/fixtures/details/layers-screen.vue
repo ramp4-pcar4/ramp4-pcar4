@@ -58,6 +58,8 @@ export default defineComponent({
             payload: this.get(DetailsStore.payload),
             getLayerByUid: this.get('layer/getLayerByUid'),
             layers: this.get('layer/layers'),
+            mobileMode: this.get('panel/mobileView'),
+            remainingWidth: this.get('panel/getRemainingWidth'),
             watchers: [] as Array<Function>
         };
     },
@@ -126,9 +128,17 @@ export default defineComponent({
                 return;
             }
 
-            // track last identify request timestamp and add to payload items
+            // track last identify request timestamp and add to payload items. If no new results, app is in mobile mode, or if
+            // there is not enough space available to open the detail items panel, then disable the greedy identify.
+            const detailsPanel = this.$iApi.panel.get('details-items');
+            const detailsWidth = detailsPanel.width || 350;
+
             this.activeGreedy =
-                newPayload.length === 0 ? 0 : newPayload[0].requestTime;
+                this.mobileMode ||
+                (this.remainingWidth < detailsWidth && !detailsPanel.isOpen) ||
+                newPayload.length === 0
+                    ? 0
+                    : newPayload[0].requestTime;
 
             this.layerResults = newPayload;
 
