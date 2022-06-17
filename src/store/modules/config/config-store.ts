@@ -40,6 +40,10 @@ const getters = {
         return state.activeBasemapConfig!;
     },
 
+    getStartingFixtures: (state: ConfigState): string[] => {
+        return [...state.startingFixtures!];
+    },
+
     getFixtureConfig:
         (state: ConfigState) =>
         (key: string): any => {
@@ -113,6 +117,13 @@ const actions = {
     ): void {
         // update the active basemap config
         context.state.activeBasemapConfig = newBasemap;
+    },
+    setStartingFixtures: function (
+        this: any,
+        context: ConfigContext,
+        startingFixtures: string[]
+    ): void {
+        context.state.startingFixtures = [...startingFixtures];
     }
 };
 
@@ -165,6 +176,17 @@ export enum ConfigStore {
      */
     setActiveBasemap = 'config/setActiveBasemap!',
     /**
+     * `function setStartingFixtures(startingFixtures: string[]) => void`
+     *
+     * Sets the list of starting fixture to be loaded when RAMP loads
+     * Used when RAMP reloads to change languages
+     *
+     * `@remarks` Action - use `@Call`
+     *
+     * `@param` startingFixtures - the starting fixture config
+     */
+    setStartingFixtures = 'config/setStartingFixtures!',
+    /**
      * Get all registered configs for each language
      *
      * `@remarks` Getter - use `@Get`
@@ -206,6 +228,14 @@ export enum ConfigStore {
      * `@returns` <RampBasemapConfig> The config of the currently used basemap
      */
     getActiveBasemapConfig = 'config/getActiveBasemapConfig',
+    /**
+     * getStartingFixtures
+     *
+     * `@remarks` Getter - use `@Get`
+     *
+     * `@returns` <string[]> The starting fixtures that RAMP loads with
+     */
+    getStartingFixtures = 'config/getStartingFixtures',
     /**
      * getFixtureConfig
      *

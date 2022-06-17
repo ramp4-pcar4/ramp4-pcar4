@@ -50,7 +50,9 @@ export default defineConfig(({ command, mode }) => {
                 rollupOptions: {
                     input: {
                         main: '/index.html',
-                        multi: '/index-multi.html'
+                        multi: '/index-multi.html',
+                        e2e: '/index-e2e.html',
+                        wet: '/index-wet.html'
                     }
                 }
             });

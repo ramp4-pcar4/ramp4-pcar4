@@ -1,16 +1,3 @@
-// TODO: Location for version string needs to be finalized
-// document.getElementById('ramp-version').innerText =
-//     'v.' +
-//     RAMP.version.major +
-//     '.' +
-//     RAMP.version.minor +
-//     '.' +
-//     RAMP.version.patch +
-//     ' [#' +
-//     RAMP.version.hash.slice(0, 6) +
-//     ']  -  built on ' +
-//     new Date(RAMP.version.timestamp).toLocaleDateString();
-
 window.debugInstance = null;
 
 let config = {
