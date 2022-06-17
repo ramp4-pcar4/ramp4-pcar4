@@ -75,13 +75,11 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 :deep(.section-body) {
-    table,
     p {
         @apply mb-15;
     }
-    th,
-    td {
-        @apply px-5;
+    li {
+        @apply pb-10;
     }
     img {
         @apply inline;
