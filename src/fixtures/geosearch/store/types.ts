@@ -1,6 +1,7 @@
-import type * as defs from '../definitions';
+import type { IGenericObjectType, ITypes } from '../definitions';
 import axios from 'axios';
 
+// TODO should these strings be in an i18n csv instead?
 const types: any = {
     en: {
         FSA: 'Forward Sortation Area',
@@ -17,8 +18,8 @@ const types: any = {
 };
 
 class Types {
-    allTypes: defs.GenericObjectType = {};
-    validTypes: defs.GenericObjectType = {};
+    allTypes: IGenericObjectType = {};
+    validTypes: IGenericObjectType = {};
     filterComplete = false;
 
     constructor(language: string, url: string) {
@@ -38,7 +39,7 @@ class Types {
     }
 
     // remove any excluded types indicated by config
-    filterValidTypes(exclude?: string | string[]): defs.GenericObjectType {
+    filterValidTypes(exclude?: string | string[]): IGenericObjectType {
         if (this.filterComplete) {
             return this.validTypes;
         }
@@ -53,6 +54,6 @@ class Types {
     }
 }
 
-export default function (language: string, url: string): defs.Types {
+export default function (language: string, url: string): ITypes {
     return new Types(language, url);
 }

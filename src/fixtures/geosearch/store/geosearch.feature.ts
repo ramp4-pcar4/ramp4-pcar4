@@ -5,9 +5,10 @@
 import Provinces from './provinces';
 import Types from './types';
 import * as Q from './query';
-import type * as defs from '../definitions';
+import type { IGeosearchConfig } from '../definitions';
 
 // geosearch query services
+// note "geolocation" is a service for looking up locations in canada. It is not a geolocator for the browser's location.
 const GEO_LOCATE_URL =
     'https://geogratis.gc.ca/services/geolocation/@{language}/locate';
 const GEO_NAMES_URL =
@@ -49,21 +50,25 @@ const CODE_TO_ABBR = {
  * }
  */
 export class GeoSearchUI {
-    config: defs.GeosearchConfig;
+    config: IGeosearchConfig;
 
     constructor(language: string, uConfig: any) {
         // If there's a geosearch config in the configuration file, set the URLs if they are provided.
-        let geoLocateUrl, geoNameUrl, geoProvinceUrl, geoTypesUrl;
+        let geoLocateUrl: string;
+        let geoNameUrl: string;
+        let geoProvinceUrl: string;
+        let geoTypesUrl: string;
 
-        if (uConfig) {
-            geoLocateUrl = uConfig.geoLocation
-                ? uConfig.geoLocation
+        const services: any = uConfig?.serviceUrls;
+        if (services) {
+            geoLocateUrl = services.geoLocation
+                ? services.geoLocation
                 : GEO_LOCATE_URL;
-            geoNameUrl = uConfig.geoNames ? uConfig.geoNames : GEO_NAMES_URL;
-            geoProvinceUrl = uConfig.geoProvince
-                ? uConfig.geoProvince
+            geoNameUrl = services.geoNames ? services.geoNames : GEO_NAMES_URL;
+            geoProvinceUrl = services.geoProvince
+                ? services.geoProvince
                 : GEO_PROVINCES_URL;
-            geoTypesUrl = uConfig.geoTypes ? uConfig.geoTypes : GEO_TYPES_URL;
+            geoTypesUrl = services.geoTypes ? services.geoTypes : GEO_TYPES_URL;
         } else {
             // If the URLs are not provided, set them to be defaults.
             geoLocateUrl = GEO_LOCATE_URL;
@@ -78,14 +83,22 @@ export class GeoSearchUI {
         geoTypesUrl = geoTypesUrl.replace('@{language}', language);
 
         // set default config values, if settings object is provided
-        const categories = uConfig?.settings ? uConfig.settings.categories : [];
-        const sortOrder = uConfig?.settings ? uConfig.settings.sortOrder : [];
-        const maxResults = uConfig?.settings
-            ? uConfig.settings.maxResults
-            : 100;
-        const officialOnly = uConfig?.settings
-            ? uConfig?.settings.officialOnly
-            : false;
+        const settings: any = uConfig?.settings;
+        let categories: Array<string>;
+        let sortOrder: Array<string>;
+        let maxResults: number;
+        let officialOnly: boolean;
+        if (settings) {
+            categories = settings.categories ? settings.categories : [];
+            sortOrder = settings.sortOrder ? settings.sortOrder : [];
+            maxResults = settings.maxResults > 0 ? settings.maxResults : 100; // > will fail on undefined, defaulting
+            officialOnly = !!settings.officialOnly;
+        } else {
+            categories = [];
+            sortOrder = [];
+            maxResults = 100;
+            officialOnly = false;
+        }
 
         // match a new config object with the one defined in definitions.ts
         this.config = {

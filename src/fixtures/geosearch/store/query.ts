@@ -1,6 +1,16 @@
-import type * as defs from '../definitions';
+import type {
+    IFSAResult,
+    IGeosearchConfig,
+    INameResponse,
+    INTSResult,
+    IRawNameResult,
+    LocateResponseList,
+    NameResultList,
+    NTSResultList,
+    queryFeatureResults
+} from '../definitions';
 
-export function make(config: defs.GeosearchConfig, query: string): Query {
+export function make(config: IGeosearchConfig, query: string): Query {
     const latLngRegDD =
         /^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)(\s*[,|;\s]\s*)[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)[*]$/;
     const ntsReg = /^\d{2,3}[A-P]/;
@@ -28,22 +38,22 @@ export function make(config: defs.GeosearchConfig, query: string): Query {
 }
 
 export class Query {
-    config: defs.GeosearchConfig;
+    config: IGeosearchConfig;
     query: string | undefined;
-    results: defs.NameResultList = [];
+    results: NameResultList = [];
     onComplete: any;
     latLongResult: any;
-    featureResults: defs.queryFeatureResults = undefined;
+    featureResults: queryFeatureResults = undefined;
 
-    constructor(config: defs.GeosearchConfig, query?: string) {
+    constructor(config: IGeosearchConfig, query?: string) {
         this.query = query;
         this.config = config;
     }
 
-    search(): Promise<defs.NameResultList> {
-        return (<Promise<defs.RawNameResult>>(
-            this.jsonRequest(this.getUrl())
-        )).then(r => this.normalizeNameItems(r.items));
+    search(): Promise<NameResultList> {
+        return (<Promise<IRawNameResult>>this.jsonRequest(this.getUrl())).then(
+            r => this.normalizeNameItems(r.items)
+        );
     }
 
     private getUrl(
@@ -66,7 +76,7 @@ export class Query {
         return url;
     }
 
-    normalizeNameItems(items: defs.NameResponse[]): defs.NameResultList {
+    normalizeNameItems(items: INameResponse[]): NameResultList {
         return items
             .filter(i => this.config.types.validTypes[i.concise.code])
             .map(i => {
@@ -102,14 +112,14 @@ export class Query {
         });
     }
 
-    locateByQuery(): Promise<defs.LocateResponseList> {
-        return <Promise<defs.LocateResponseList>>(
+    locateByQuery(): Promise<LocateResponseList> {
+        return <Promise<LocateResponseList>>(
             this.jsonRequest(this.getUrl(true, undefined))
         );
     }
 
     nameByLatLon(lat: number, lon: number, restrict?: number[]): any {
-        return (<Promise<defs.RawNameResult>>(
+        return (<Promise<IRawNameResult>>(
             this.jsonRequest(this.getUrl(false, restrict, lat, lon))
         )).then(r => {
             return this.normalizeNameItems(r.items);
@@ -118,7 +128,7 @@ export class Query {
 }
 
 export class LatLongQuery extends Query {
-    constructor(config: defs.GeosearchConfig, query: string) {
+    constructor(config: IGeosearchConfig, query: string) {
         super(config, query);
         let coords: number[];
 
@@ -164,7 +174,7 @@ export class LatLongQuery extends Query {
 }
 
 export class FSAQuery extends Query {
-    constructor(config: defs.GeosearchConfig, query: string) {
+    constructor(config: IGeosearchConfig, query: string) {
         // extract the first three characters to conduct FSA search
         query = query.substring(0, 3).toUpperCase();
         super(config, query);
@@ -188,14 +198,14 @@ export class FSAQuery extends Query {
         });
     }
 
-    formatLocationResult(): Promise<defs.FSAResult | undefined> {
+    formatLocationResult(): Promise<IFSAResult | undefined> {
         return this.locateByQuery().then(locateResponseList => {
             // query check added since it can be null but will never be in this case (make TS happy)
             if (locateResponseList.length === 1 && this.query) {
                 const provList = this.config.provinces.fsaToProvinces(
                     this.query
                 );
-                return <defs.FSAResult>{
+                return <IFSAResult>{
                     fsa: this.query,
                     code: 'FSA',
                     desc: this.config.types.allTypes.FSA,
@@ -232,10 +242,10 @@ export class FSAQuery extends Query {
  */
 export class NTSQuery extends Query {
     unitName: string;
-    unit!: defs.NTSResult;
-    mapSheets: defs.NTSResultList = [];
+    unit!: INTSResult;
+    mapSheets: NTSResultList = [];
 
-    constructor(config: defs.GeosearchConfig, query: string) {
+    constructor(config: IGeosearchConfig, query: string) {
         super(config, query);
         // front pad 0 if NTS starts with two digits
         query = isNaN(parseInt(query[2])) ? '0' + query : query;
@@ -264,10 +274,10 @@ export class NTSQuery extends Query {
         });
     }
 
-    locateToResult(lrl: defs.LocateResponseList): defs.NTSResultList {
+    locateToResult(lrl: LocateResponseList): NTSResultList {
         const results = lrl.map(ls => {
             const title = ls.title.split(' ');
-            return <defs.NTSResult>{
+            return <INTSResult>{
                 nts: title.shift() || '', // 064D or 064D06
                 location: title.join(' '), // "NUMABIN BAY"
                 code: 'NTS', // "NTS"
