@@ -360,6 +360,10 @@
                     "type": "string",
                     "description": "Link to a layer defined in the layers section of config."
                 },
+                "name": {
+                    "type": "string",
+                    "description": "Title of the legend entry."
+                },
                 "hidden": {
                     "type": "boolean",
                     "default": false,

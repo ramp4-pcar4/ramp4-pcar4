@@ -103,9 +103,9 @@ function individualConfigUpgrader(r2c: any): any {
     // .ui
     // .language
 
-    mapUpgrader(r2c.map, r4c);
     servicesUpgrader(r2c.services, r4c);
     uiUpgrader(r2c.ui, r4c);
+    mapUpgrader(r2c.map, r4c);
 
     // note that r2 .plugins has no analogue at the moment.
     // areas of interest, back to cart, co-ord info, custom export, are not implemented
@@ -134,6 +134,26 @@ function mapUpgrader(r2Map: any, r4c: any): void {
         // TODO process components
         // TODO: handle fixture inclusion/exclusion flag in the component config. Append to fixturesEnabled if included
 
+        if (r2Map.components.geoSearch) {
+            if (r2Map.components.geoSearch.enabled) {
+                r4c.fixturesEnabled.push('geosearch');
+            }
+            if (typeof r2Map.components.geoSearch.showGraphic !== 'undefined') {
+                console.warn(
+                    `showGraphic property provided in geoSearch map component cannot be mapped and will be skipped.`
+                );
+            }
+            if (typeof r2Map.components.geoSearch.showInfo !== 'undefined') {
+                console.warn(
+                    `showInfo property provided in geoSearch map component cannot be mapped and will be skipped.`
+                );
+            }
+        }
+        if (r2Map.components.mouseInfo) {
+            console.warn(
+                `mouseInfo property provided in map components cannot be mapped and will be skipped.`
+            );
+        }
         if (
             r2Map.components.overviewMap &&
             r2Map.components.overviewMap.enabled
@@ -168,7 +188,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
                 r4na.arrowIcon = r2Map.components.northArrow.arrowIcon;
             }
             if (r2Map.components.northArrow.poleIcon) {
-                r4na.poleIcon = r2Map.components.northArrow.arrowIcon;
+                r4na.poleIcon = r2Map.components.northArrow.poleIcon;
             }
 
             // if we have at least on of the values defined, add this fixture config
@@ -176,6 +196,32 @@ function mapUpgrader(r2Map: any, r4c: any): void {
                 r4c.fixtures.northarrow = r4na;
                 r4c.fixturesEnabled.push('northarrow');
             }
+        }
+        if (r2Map.components.scaleBar && r2Map.components.scaleBar.enabled) {
+            r4c.map.caption = {
+                mouseCoords: {
+                    disabled: false,
+                    formatter: 'LAT_LONG_DMS'
+                },
+                scaleBar: {
+                    disabled: false,
+                    imperialScale: false
+                }
+            };
+            if (r2Map.components.scaleBar.attachTo) {
+                console.warn(
+                    `attachTo property provided in scaleBar map component cannot be mapped and will be skipped.`
+                );
+            }
+            // TODO: add support for scaleBar.scalebarUnit at a later time
+            if (r2Map.components.scaleBar.scalebarUnit) {
+                console.warn(
+                    `scalebarUnit property provided in scaleBar map component is currently not supported.`
+                );
+            }
+        }
+        if (r2Map.components.basemap && r2Map.components.basemap.enabled) {
+            r4c.fixturesEnabled.push('basemap');
         }
     }
 
@@ -327,17 +373,264 @@ function mapUpgrader(r2Map: any, r4c: any): void {
     }
 
     if (r2Map.legend) {
-        // TODO ensure the legend fixture will be loaded and config for fixture exists.
-        //      We could else to exclude the legend fixture, but since thats not a valid
-        //      scenario in R2, i don't think we need to bother.
+        r4c.fixturesEnabled.push('legend');
         if (r2Map.legend.type === 'autopopulate') {
-            // TODO will need to add a basic "layer" legend block to the legend for every layer in the config, in order.
+            // default legend - just add an entry for each layer. For map image and WMS layers, create an entry group and
+            // add an entry for each layer entry.
+            r4c.fixtures.legend = {
+                root: {
+                    name: "I'm root",
+                    children: []
+                }
+            };
+            // layers already mapped through layerUpgrader
+            if (r4c.layers) {
+                r4c.layers.forEach((r4layer: any) => {
+                    if (
+                        r4layer.type === 'esri-map-image' ||
+                        r4layer.type === 'ogc-wms'
+                    ) {
+                        const entryGroup: any = {
+                            name: r4layer.name ?? `${r4layer.id} Group`,
+                            children: []
+                        };
+                        r4layer.layerEntries.forEach((r4layerEntry: any) => {
+                            const entry: any = {
+                                layerId: r4layer.id
+                            };
+                            if (r4layerEntry.name) {
+                                entry.name = r4layerEntry.name;
+                            }
+                            if (r4layerEntry.controls) {
+                                entry.controls = r4layerEntry.controls;
+                            }
+                            if (r4layerEntry.disabledControls) {
+                                entry.disabledControls =
+                                    r4layerEntry.disabledControls;
+                            }
+                            if (r4layer.type === 'esri-map-image') {
+                                entry.entryIndex = r4layerEntry.index;
+                            } else {
+                                entry.entryId = r4layerEntry.id;
+                                console.warn(
+                                    `entryId property defined in legend entry ${entry.layerId} is currently not supported.`
+                                );
+                            }
+                            entryGroup.children.push(entry);
+                        });
+                        r4c.fixtures.legend.root.children.push(entryGroup);
+                    } else {
+                        const entry: any = {
+                            layerId: r4layer.id
+                        };
+                        if (r4layer.controls) {
+                            entry.controls = r4layer.controls;
+                        }
+                        if (r4layer.disabledControls) {
+                            entry.disabledControls = r4layer.disabledControls;
+                        }
+                        r4c.fixtures.legend.root.children.push(entry);
+                    }
+                });
+            }
         } else {
-            // TODO need to map R2 legend structures to R4 legend structures
+            r4c.fixtures.legend = {
+                root: legendGroupUpgrader(r2Map.legend.root)
+            };
         }
     }
 }
 
+/**
+ * Map a legend entry group from RAMP2 to RAMP4 config.
+ * @param r2legendGroup legend entry group from RAMP2 config
+ * @return legend entry group from RAMP4 config
+ */
+function legendGroupUpgrader(r2legendGroup: any) {
+    const r4legendGroup: any = { name: r2legendGroup.name, children: [] };
+    if (typeof r2legendGroup.hidden !== 'undefined') {
+        r4legendGroup.hidden = r2legendGroup.hidden;
+        console.warn(
+            `hidden property defined in legend entry group ${r2legendGroup.name} is currently not supported.`
+        );
+    }
+    if (typeof r2legendGroup.expanded !== 'undefined') {
+        r4legendGroup.expanded = r2legendGroup.expanded;
+    }
+    const allowedControls = [
+        'identify',
+        'opacity',
+        'reload',
+        'remove',
+        'settings',
+        'symbology',
+        'visibility'
+    ];
+    if (r2legendGroup.controls && r2legendGroup.controls.length > 0) {
+        r4legendGroup.controls = controlsUpgrader(
+            r2legendGroup.controls,
+            allowedControls
+        );
+        if (r2legendGroup.controls !== ['visibility']) {
+            console.warn(
+                `Legend entry groups currently support only the visibility control. All other controls are currently not supported.`
+            );
+        }
+    }
+    if (
+        r2legendGroup.disabledControls &&
+        r2legendGroup.disabledControls.length > 0
+    ) {
+        r4legendGroup.disabledControls = controlsUpgrader(
+            r2legendGroup.disabledControls,
+            allowedControls
+        );
+        if (r2legendGroup.disabledControls !== ['visibility']) {
+            console.warn(
+                `Legend entry groups currently support only the visibility control. All other controls are currently not supported.`
+            );
+        }
+    }
+    r2legendGroup.children.forEach((child: any) => {
+        // child is a legend entry
+        if (child.layerId) {
+            r4legendGroup.children.push(legendEntryUpgrader(child));
+        }
+        // child is an info section
+        else if (child.infoType) {
+            console.warn(
+                `infoSection item type in children list of legend entry group ${r4legendGroup.name} is currently not supported.`
+            );
+            if (child.infoType === 'unboundLayer') {
+                console.warn(
+                    `unboundLayer infoType in infoSection in children list of legend entry group ${r4legendGroup.name} cannot be mapped and will be skipped.`
+                );
+            } else {
+                r4legendGroup.children.push({
+                    infoType: child.infoType,
+                    content: child.content
+                });
+                if (typeof child.export !== 'undefined') {
+                    console.warn(
+                        `export property in infoSection in children list of legend entry group ${r4legendGroup.name} cannot be mapped and will be skipped.`
+                    );
+                }
+            }
+        }
+        // child is a visibility set
+        else if (child.exclusiveVisibility) {
+            const visibilitySet: any = { exclusiveVisibility: [] };
+            if (typeof child.collapse !== 'undefined') {
+                console.warn(
+                    `collapse property in visibilitySet in children list of legend entry group ${r4legendGroup.name} is currently not supported.`
+                );
+                visibilitySet.collapse = child.collapse;
+            }
+            child.exclusiveVisibility.forEach((item: any) => {
+                // item is a layer entry
+                if (item.layerId) {
+                    visibilitySet.exclusiveVisibility.push(
+                        legendEntryUpgrader(item)
+                    );
+                }
+                // item is a layer entry group
+                else {
+                    visibilitySet.exclusiveVisibility.push(
+                        legendGroupUpgrader(item)
+                    );
+                }
+            });
+            r4legendGroup.children.push(visibilitySet);
+        }
+        // child is a legend entry group
+        else {
+            r4legendGroup.children.push(legendGroupUpgrader(child));
+        }
+    });
+    return r4legendGroup;
+}
+
+/**
+ * Map legend entry from RAMP2 to RAMP4 config.
+ * @param r2legendEntry legend entry from RAMP2 config
+ * @return legend entry from RAMP4 config
+ */
+function legendEntryUpgrader(r2legendEntry: any) {
+    const r4legendEntry: any = r2legendEntry; // mostly a 1:1 mapping
+    const allowedControls = [
+        'boundaryZoom',
+        'boundingBox',
+        'datatable',
+        'identify',
+        'metadata',
+        'opacity',
+        'refresh',
+        'reload',
+        'remove',
+        'settings',
+        'symbology',
+        'visibility'
+    ];
+    if (r2legendEntry.controls && r2legendEntry.controls.length > 0) {
+        r4legendEntry.controls = controlsUpgrader(
+            r2legendEntry.controls,
+            allowedControls
+        );
+    }
+    if (
+        r2legendEntry.disabledControls &&
+        r2legendEntry.disabledControls.length > 0
+    ) {
+        r4legendEntry.disabledControls = controlsUpgrader(
+            r2legendEntry.disabledControls,
+            allowedControls
+        );
+    }
+    // Warning party
+    // TODO: remove these warnings whenever we add support for one of these properties.
+    if (typeof r2legendEntry.hidden !== 'undefined') {
+        console.warn(
+            `hidden property defined in legend entry ${r2legendEntry.layerId} is currently not supported.`
+        );
+    }
+    if (r2legendEntry.controlledIds) {
+        console.warn(
+            `controlledIds property defined in legend entry ${r2legendEntry.layerId} is currently not supported.`
+        );
+    }
+    if (r2legendEntry.entryId) {
+        console.warn(
+            `entryId property defined in legend entry ${r2legendEntry.layerId} is currently not supported.`
+        );
+    }
+    if (r2legendEntry.coverIcon) {
+        console.warn(
+            `coverIcon property defined in legend entry ${r2legendEntry.layerId} is currently not supported.`
+        );
+    }
+    if (r2legendEntry.description) {
+        console.warn(
+            `description property defined in legend entry ${r2legendEntry.layerId} is currently not supported.`
+        );
+    }
+    if (r2legendEntry.symbologyStack) {
+        console.warn(
+            `symbologyStack property defined in legend entry ${r2legendEntry.layerId} is currently not supported.`
+        );
+    }
+    if (r2legendEntry.symbologyRenderStyle) {
+        console.warn(
+            `symbologyRenderStyle property defined in legend entry ${r2legendEntry.layerId} is currently not supported.`
+        );
+    }
+    return r4legendEntry;
+}
+
+/**
+ * Map layer from RAMP2 to RAMP4 config.
+ * @param r2layer layer from RAMP2 config
+ * @return layer from RAMP4 config
+ */
 function layerUpgrader(r2layer: any): any {
     const r4layer: any = layerCommonPropertiesUpgrader(r2layer);
     r4layer.id = r2layer.id;
@@ -378,10 +671,6 @@ function layerUpgrader(r2layer: any): any {
     if (r2layer.customRenderer) {
         r4layer.customRenderer = r2layer.customRenderer;
     }
-
-    // TODO fill in the specifcs for each layer type
-    //      will probably want sub-functions for common big structures like grid/table,
-    //      fields, dynamic & wms sublayers
 
     switch (r2layer.layerType) {
         case 'esriDynamic':
@@ -538,30 +827,15 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
         'symbology',
         'visibility'
     ];
-    if (r2layer.controls) {
-        r4layer.controls = [];
-        r2layer.controls.forEach((control: string) => {
-            if (control === 'query') {
-                r4layer.controls.push('identify');
-            } else if (allowedControls.includes(control)) {
-                r4layer.controls.push(control);
-            } else {
-                console.warn(`Ignored invalid layer control: ${control}`);
-            }
-        });
+    if (r2layer.controls && r2layer.controls.length > 0) {
+        r4layer.controls = controlsUpgrader(r2layer.controlsm, allowedControls);
     }
 
-    if (r2layer.disabledControls) {
-        r4layer.disabledControls = [];
-        r2layer.disabledControls.forEach((control: string) => {
-            if (control === 'query') {
-                r4layer.disabledControls.push('identify');
-            } else if (allowedControls.includes(control)) {
-                r4layer.disabledControls.push(control);
-            } else {
-                console.warn(`Ignored invalid layer control: ${control}`);
-            }
-        });
+    if (r2layer.disabledControls && r2layer.disabledControls.length > 0) {
+        r4layer.disabledControls = controlsUpgrader(
+            r2layer.disabledControls,
+            allowedControls
+        );
     }
 
     if (r2layer.state) {
@@ -683,6 +957,25 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
 }
 
 /**
+ * Convert a RAMP2 controls array into a RAMP4 controls array - controls can be of any type (legendGroup, layer, etc.)
+ * @param r2controls controls array from RAMP2 config
+ * @param allowedControls controls supported by RAMP4 config
+ */
+function controlsUpgrader(r2controls: String[], allowedControls: String[]) {
+    const r4controls: String[] = [];
+    r2controls.forEach((control: any) => {
+        if (allowedControls.includes('identify') && control === 'query') {
+            r4controls.push('identify');
+        } else if (allowedControls.includes(control)) {
+            r4controls.push(control);
+        } else {
+            console.warn(`Ignored invalid control: ${control}`);
+        }
+    });
+    return r4controls;
+}
+
+/**
  *
  * @param r2Services services nugget from ramp 2 config
  * @param r4c entire ramp4 config. param is modded in place, since ramp2 elements end up all over the new config
@@ -706,8 +999,6 @@ function servicesUpgrader(r2Services: any, r4c: any): void {
         if (r2Services.search.settings) {
             r4c.fixtures.geosearch.settings = r2Services.search.settings;
         }
-
-        r4c.fixturesEnabled.push('geosearch');
     }
 
     if (r2Services.export) {
