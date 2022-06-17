@@ -2,6 +2,7 @@ import { APIScope } from '@/api/internal';
 import defaultRenderers from './defaultRenderers.json';
 import ArcGIS from 'terraformer-arcgis-parser';
 import { csv2geojson, dsv } from 'csv2geojson';
+import shp from 'shpjs/dist/shp.min.js';
 
 import {
     EsriColour,
@@ -428,7 +429,7 @@ export class FileUtils extends APIScope {
      * @returns {Promise} a promise resolving with geojson
      */
     async shapefileToGeoJson(shapeData: ArrayBuffer): Promise<any> {
-        return (<any>window).shp(shapeData);
+        return shp(shapeData);
     }
 
     /**

@@ -36,6 +36,7 @@
         "pinia": "^2.0.13",
         "proj4": "2.6.0",
         "screenfull": "~5.0.2",
+        "shpjs": "^4.0.2",
         "svg.js": "2.7.1",
         "terraformer": "1.0.9",
         "terraformer-arcgis-parser": "1.1.0",

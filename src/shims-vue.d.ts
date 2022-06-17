@@ -39,3 +39,6 @@ declare class ResizeObserver {
     unobserve(target: Element): void;
     disconnect(): void;
 }
+
+declare module 'shpjs/dist/shp.min.js';
+declare module 'csv2geojson';
