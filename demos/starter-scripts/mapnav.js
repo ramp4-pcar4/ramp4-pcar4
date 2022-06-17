@@ -1,5 +1,6 @@
-window.rInstance = null;
-document.title = 'Mapnav';
+import { createInstance, geo } from '@/main';
+
+window.debugInstance = null;
 
 let config = {
     configs: {
@@ -23,9 +24,7 @@ let config = {
                 lodSets: [
                     {
                         id: 'LOD_ESRI_World_AuxMerc_3857',
-                        lods: RAMP.geo.defaultLODs(
-                            RAMP.geo.defaultTileSchemas()[1]
-                        )
+                        lods: geo.defaultLODs(geo.defaultTileSchemas()[1])
                     }
                 ],
                 tileSchemas: [
@@ -63,9 +62,11 @@ let options = {
     loadDefaultEvents: false
 };
 
-rInstance = RAMP.createInstance(
+const rInstance = createInstance(
     document.getElementById('app'),
     config,
     options
 );
 rInstance.fixture.addDefaultFixtures(['mapnav']);
+
+window.debugInstance = rInstance;

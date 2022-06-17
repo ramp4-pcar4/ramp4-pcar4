@@ -134,6 +134,9 @@ export default defineComponent({
                     }
                 )
             );
+
+            // update the overview map with the current map extent
+            this.overviewMap.updateOverview(this.$iApi.geo.map.getExtent());
         });
     },
 
