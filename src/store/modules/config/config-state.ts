@@ -3,6 +3,7 @@ import type { RampConfig } from '@/types';
 
 export class ConfigState {
     config: RampConfig;
+    startingFixtures: string[];
     activeBasemapConfig: RampBasemapConfig | undefined;
     // change if decide need to support registering multiple configs per lang
     registeredConfigs: { [key: string]: RampConfig };
@@ -10,6 +11,7 @@ export class ConfigState {
 
     constructor(config: any) {
         this.config = config;
+        this.startingFixtures = [];
         this.registeredConfigs = {};
         this.registeredLangs = {};
     }

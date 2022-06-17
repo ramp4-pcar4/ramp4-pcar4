@@ -1,5 +1,6 @@
-window.rInstance = null;
-document.title = 'Custom North Arrow';
+import { createInstance, geo } from '@/main';
+
+window.debugInstance = null;
 
 let config = {
     configs: {
@@ -22,9 +23,7 @@ let config = {
                 lodSets: [
                     {
                         id: 'LOD_NRCAN_Lambert_3978',
-                        lods: RAMP.geo.defaultLODs(
-                            RAMP.geo.defaultTileSchemas()[0]
-                        )
+                        lods: geo.defaultLODs(geo.defaultTileSchemas()[0])
                     }
                 ],
                 tileSchemas: [
@@ -71,9 +70,12 @@ let options = {
     loadDefaultEvents: false
 };
 
-rInstance = RAMP.createInstance(
+const rInstance = createInstance(
     document.getElementById('app'),
     config,
     options
 );
+
 rInstance.fixture.addDefaultFixtures(['northarrow']);
+
+window.debugInstance = rInstance;
