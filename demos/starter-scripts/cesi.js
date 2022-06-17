@@ -1,8 +1,28 @@
-window.rInstance = null;
+import { createInstance, geo } from '@/main';
 
-console.log('RAMP has loaded.');
+window.debugInstance = null;
 
 let config = {
+    startingFixtures: [
+        'appbar',
+        'basemap',
+        'crosshairs',
+        'details',
+        'geosearch',
+        'grid',
+        'help',
+        'layer-reorder',
+        'legend',
+        'mapnav',
+        'metadata',
+        'northarrow',
+        'overviewmap',
+        'scrollguard',
+        'panguard',
+        'settings',
+        'wizard',
+        'export'
+    ],
     configs: {
         en: {
             map: {
@@ -44,15 +64,11 @@ let config = {
                 lodSets: [
                     {
                         id: 'LOD_NRCAN_Lambert_3978',
-                        lods: RAMP.geo.defaultLODs(
-                            RAMP.geo.defaultTileSchemas()[0]
-                        )
+                        lods: geo.defaultLODs(geo.defaultTileSchemas()[0])
                     },
                     {
                         id: 'LOD_ESRI_World_AuxMerc_3857',
-                        lods: RAMP.geo.defaultLODs(
-                            RAMP.geo.defaultTileSchemas()[1]
-                        )
+                        lods: geo.defaultLODs(geo.defaultTileSchemas()[1])
                     }
                 ],
                 tileSchemas: [
@@ -666,19 +682,13 @@ let config = {
 
 let options = {
     loadDefaultFixtures: false,
-    loadDefaultEvents: true,
-    startRequired: false
+    loadDefaultEvents: true
 };
 
-rInstance = RAMP.createInstance(
+const rInstance = createInstance(
     document.getElementById('app'),
     config,
     options
 );
-rInstance.fixture.addDefaultFixtures();
 
-// add export fixtures
-rInstance.fixture.add('export');
-
-// load map if startRequired is true
-rInstance.start();
+window.debugInstance = rInstance;
