@@ -379,8 +379,6 @@ let config = {
                             'https://geogratis.gc.ca/services/geoname/en/geonames.json',
                         geoLocation:
                             'https://geogratis.gc.ca/services/geolocation/en/locate?q=',
-                        geoSuggest:
-                            'https://geogratis.gc.ca/services/geolocation/en/suggest?q=',
                         provinces:
                             'https://geogratis.gc.ca/services/geoname/en/codes/province.json',
                         types: 'https://geogratis.gc.ca/services/geoname/en/codes/concise.json'
@@ -961,8 +959,6 @@ let config = {
                             'https://geogratis.gc.ca/services/geoname/en/geonames.json',
                         geoLocation:
                             'https://geogratis.gc.ca/services/geolocation/en/locate?q=',
-                        geoSuggest:
-                            'https://geogratis.gc.ca/services/geolocation/en/suggest?q=',
                         provinces:
                             'https://geogratis.gc.ca/services/geoname/en/codes/province.json',
                         types: 'https://geogratis.gc.ca/services/geoname/en/codes/concise.json'

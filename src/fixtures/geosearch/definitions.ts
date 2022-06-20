@@ -1,9 +1,10 @@
-export interface GenericObjectType {
+export interface IGenericObjectType {
     [key: string]: string;
 }
 
 // config object is used by all query classes
-export interface GeosearchConfig {
+// this is a flattened version from the actual RAMP config. Easier to bind to.
+export interface IGeosearchConfig {
     geoNameUrl: string;
     geoLocateUrl: string;
     categories: string[];
@@ -11,11 +12,11 @@ export interface GeosearchConfig {
     maxResults: number;
     officialOnly: boolean;
     language: string;
-    types: Types;
-    provinces: Provinces;
+    types: ITypes;
+    provinces: IProvinces;
 }
 
-export interface NameResponse {
+export interface INameResponse {
     name: string;
     location: string;
     province: { code: string };
@@ -25,72 +26,72 @@ export interface NameResponse {
     bbox: number[];
 }
 
-export interface Types {
-    allTypes: GenericObjectType;
-    validTypes: GenericObjectType;
-    filterValidTypes(exclude?: string | string[]): GenericObjectType;
+export interface ITypes {
+    allTypes: IGenericObjectType;
+    validTypes: IGenericObjectType;
+    filterValidTypes(exclude?: string | string[]): IGenericObjectType;
 }
 
-export interface Provinces {
-    list: GenericObjectType;
-    fsaToProvinces(fsa: string): GenericObjectType;
+export interface IProvinces {
+    list: IGenericObjectType;
+    fsaToProvinces(fsa: string): IGenericObjectType;
 }
 
-export interface LatLon {
+export interface ILatLon {
     lat: number;
     lon: number;
 }
 
-export interface RawNameResult {
-    items: NameResponse[];
+export interface IRawNameResult {
+    items: INameResponse[];
 }
 
-export interface FSAResult {
+export interface IFSAResult {
     fsa: string; // "H0H"
     code: string; // "FSA"
     desc: string; // "Forward Sortation Area"
     province: string; // Ontario
-    _provinces: GenericObjectType; // {ON: "Ontario"} or {ON: "Ontario", MB: "Manitoba"}
-    LatLon: LatLon;
+    _provinces: IGenericObjectType; // {ON: "Ontario"} or {ON: "Ontario", MB: "Manitoba"}
+    LatLon: ILatLon;
 }
 
-export interface NTSResult {
+export interface INTSResult {
     nts: string; // 064D or 064D06
     location: string; // "NUMABIN BAY"
     code: string; // "NTS"
     desc: string; // "National Topographic System"
-    LatLon: LatLon;
+    LatLon: ILatLon;
     bbox: number[];
 }
 
-export interface LatLongResult {
+export interface ILatLongResult {
     latlong: string; // "54.54,-91.45"
     desc: string; // "Latitude/Longitude",
-    LatLon: LatLon;
+    LatLon: ILatLon;
     bbox: number[];
 }
 
 // defines results from a geoNames search
-export interface NameResult {
+export interface INameResult {
     name: string;
     location: string;
     province: string; // "Ontario"
     type: string; // "Lake"
-    LatLon: LatLon;
+    LatLon: ILatLon;
     bbox: number[];
 }
 
-export interface LocateResponse {
+export interface ILocateResponse {
     title: string;
     bbox?: number[];
     geometry: { coordinates: number[] };
 }
 
-export type LocateResponseList = LocateResponse[];
-export type NameResultList = NameResult[];
-export type NTSResultList = NTSResult[];
+export type LocateResponseList = ILocateResponse[];
+export type NameResultList = INameResult[];
+export type NTSResultList = INTSResult[];
 export type queryFeatureResults =
-    | FSAResult
-    | NTSResult
-    | LatLongResult
+    | IFSAResult
+    | INTSResult
+    | ILatLongResult
     | undefined;

@@ -1,7 +1,6 @@
-import type * as defs from '../definitions';
+import type { IGenericObjectType, IProvinces } from '../definitions';
 import axios from 'axios';
 
-const provinceObj: { [key: string]: Provinces } = {};
 const fsaToProv = <any>{
     A: 10,
     B: 12,
@@ -29,10 +28,10 @@ const provs: any = {
 };
 
 class Provinces {
-    list: defs.GenericObjectType = {};
+    list: IGenericObjectType = {};
 
     constructor(language: string, url: string) {
-        const fetchProvinces = axios.get(url).then((res: any) => {
+        axios.get(url).then((res: any) => {
             // Update the provinces array.
             res.data.definitions.forEach(
                 (type: any) => (provs[language][type.code] = type.description)
@@ -45,8 +44,8 @@ class Provinces {
     }
 
     // return list of province codes based on FSA search input query
-    fsaToProvinces(fsa: string): defs.GenericObjectType {
-        const genericObj: defs.GenericObjectType = {};
+    fsaToProvinces(fsa: string): IGenericObjectType {
+        const genericObj: IGenericObjectType = {};
         // either a provincial code, or an array of them
         let provCodes = <number[] | number>(
             fsaToProv[fsa.substring(0, 1).toUpperCase()]
@@ -61,6 +60,6 @@ class Provinces {
     }
 }
 
-export default function (language: string, url: string): defs.Provinces {
+export default function (language: string, url: string): IProvinces {
     return new Provinces(language, url);
 }

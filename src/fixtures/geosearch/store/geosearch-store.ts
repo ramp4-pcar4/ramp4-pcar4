@@ -3,7 +3,6 @@ import { make } from 'vuex-pathify';
 
 import { GeosearchState } from './geosearch-state';
 import type { RootState } from '@/store/state';
-import type { GeosearchConfig } from '../definitions';
 
 type GeosearchContext = ActionContext<GeosearchState, RootState>;
 
@@ -255,7 +254,7 @@ export enum GeosearchStore {
     setMapExtent = 'geosearch/setMapExtent'
 }
 
-export function geosearch(config: GeosearchConfig) {
+export function geosearch(config: any) {
     const state = new GeosearchState(config);
 
     return {

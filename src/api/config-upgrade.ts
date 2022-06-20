@@ -704,8 +704,7 @@ function servicesUpgrader(r2Services: any, r4c: any): void {
         };
 
         if (r2Services.search.settings) {
-            r4c.fixtures.geosearch.serviceUrls.settings =
-                r2Services.search.settings;
+            r4c.fixtures.geosearch.settings = r2Services.search.settings;
         }
 
         r4c.fixturesEnabled.push('geosearch');
