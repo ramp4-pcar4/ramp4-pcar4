@@ -49,7 +49,7 @@
 
         <!-- TODO: find out if any ARIA attributes are needed for the map scale -->
 
-        <div class="flex min-w-0 sm:min-w-fit relative justify-end">
+        <div class="flex min-w-0 sm:min-w-fit justify-end">
             <div
                 v-if="!cursorCoords.disabled"
                 class="relative top-2 pl-8 sm:px-14 text-sm sm:text-base"
