@@ -107,24 +107,30 @@
                             :fields="fieldsList"
                         ></component>
                     </div>
-                    <div
-                        v-else
-                        class="animate-spin spinner h-20 w-20 px-5"
-                    ></div>
+                    <!-- identified item is loading -->
+                    <div v-else class="flex justify-center py-10 items-center">
+                        <span
+                            class="animate-spin spinner h-20 w-20 px-5 mr-8"
+                        ></span>
+                        {{ $t('details.item.loading') }}
+                    </div>
                 </div>
                 <!-- layer does not exist anymore, show no data text -->
                 <div v-else class="p-5">
                     {{ $t('details.item.no.data') }}
                 </div>
             </div>
-            <div v-else class="animate-spin spinner h-20 w-20 px-5"></div>
+            <!-- result is loading -->
+            <div v-else class="flex justify-center py-10 items-center">
+                <span class="animate-spin spinner h-20 w-20 px-5 mr-8"></span>
+                {{ $t('details.item.loading') }}
+            </div>
         </template>
     </panel-screen>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import type { PropType } from 'vue';
+import { defineComponent, type PropType } from 'vue';
 
 import { DetailsStore } from './store';
 

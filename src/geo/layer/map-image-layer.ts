@@ -504,9 +504,12 @@ export class MapImageLayer extends AttribLayer {
                         loaded: false,
                         loading: new Promise(resolve => {
                             dgr.graphic.then(g => {
-                                item.data = g.attributes;
-                                item.loaded = true;
-                                resolve();
+                                // temporary loading buffer for demo
+                                setTimeout(() => {
+                                    item.data = g.attributes;
+                                    item.loaded = true;
+                                    resolve();
+                                }, 5000);
                             });
                         })
                     });
