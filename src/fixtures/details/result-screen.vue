@@ -4,9 +4,9 @@
         <template #content>
             <div v-if="layerExists">
                 <div v-if="result.items.length > 0">
-                    <span class="flex font-bold p-8 w-full" v-truncate>{{
-                        layerName
-                    }}</span>
+                    <span class="flex font-bold p-8 w-full" v-truncate>
+                        {{ layerName }}
+                    </span>
                     <button
                         class="w-full flex px-16 py-10 text-md hover:bg-gray-200 cursor-pointer"
                         v-for="(item, idx) in result.items"
@@ -28,8 +28,11 @@
                             v-if="item.loaded"
                         >
                             {{
-                                item.data[nameField] ||
-                                $t('details.result.default.name', [idx + 1])
+                                nameField
+                                    ? item.data[nameField]
+                                    : $t('details.result.default.name', [
+                                          idx + 1
+                                      ])
                             }}
                         </span>
                         <span
@@ -49,9 +52,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import type { PropType } from 'vue';
-
+import { defineComponent, type PropType } from 'vue';
 import { GlobalEvents, type LayerInstance, type PanelInstance } from '@/api';
 import type { IdentifyResult } from '@/geo/api';
 
