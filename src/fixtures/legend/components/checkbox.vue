@@ -3,6 +3,13 @@
         <!-- TODO: see if getting this to use v-model works; children wouldnt update properly on initial try -->
         <input
             :type="isRadio ? 'radio' : 'checkbox'"
+            :aria-label="
+                $t(
+                    checked
+                        ? 'legend.visibility.hide'
+                        : 'legend.visibility.show'
+                )
+            "
             :checked="checked && initialChecked"
             @click.stop="toggleVisibility(value)"
             @keyup.enter.stop="toggleVisibility(value)"
