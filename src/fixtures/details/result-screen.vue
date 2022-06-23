@@ -4,9 +4,17 @@
         <template #content>
             <div v-if="layerExists">
                 <div v-if="result.items.length > 0">
-                    <span class="flex font-bold p-8 w-full" v-truncate>
-                        {{ layerName }}
-                    </span>
+                    <!-- layer name -->
+                    <div
+                        class="flex justify-between py-8 px-8 mb-8 bg-gray-100"
+                        v-if="layerExists"
+                    >
+                        <div class="p-8 font-bold break-words">
+                            {{ layerName }}
+                        </div>
+                    </div>
+
+                    <!-- result list -->
                     <button
                         class="w-full flex px-16 py-10 text-md hover:bg-gray-200 cursor-pointer"
                         v-for="(item, idx) in result.items"

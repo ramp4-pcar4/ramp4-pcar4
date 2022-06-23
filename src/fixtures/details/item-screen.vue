@@ -5,59 +5,70 @@
         </template>
         <template #content>
             <div v-if="result.loaded">
-                <!-- paginator and list button for multiple features -->
                 <div
-                    class="flex justify-between py-8 px-8 mb-8 bg-gray-100"
-                    v-if="result.items.length > 1 && layerExists"
+                    class="flex flex-col justify-between py-8 px-8 mb-8 bg-gray-100"
+                    v-if="layerExists"
                 >
-                    <button
-                        class="px-8 font-bold hover:bg-gray-200 focus:bg-gray-200"
-                        :aria-label="$t('details.item.see.list')"
-                        @click="seeList"
+                    <!-- layer name -->
+                    <div class="p-8 font-bold break-words">
+                        {{ layerName }}
+                    </div>
+                    <!-- paginator and list button for multiple features -->
+                    <div
+                        class="flex justify-between"
+                        v-if="result.items.length > 1"
                     >
-                        {{ $t('details.item.see.list') }}
-                    </button>
-                    <div class="flex bg-gray-200 py-8 items-center">
                         <button
-                            :content="$t('details.item.previous.item')"
-                            v-tippy="{ placement: 'top' }"
-                            @click="advanceItemIndex(-1)"
-                            class="mx-2 opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
-                            :aria-label="$t('details.item.previous.item')"
-                            :disabled="currentIdx === 0"
+                            class="px-8 font-bold hover:bg-gray-200 focus:bg-gray-200"
+                            :aria-label="$t('details.item.see.list')"
+                            @click="seeList"
                         >
-                            <svg height="24" width="24" viewBox="0 0 23 23">
-                                <g>
-                                    <path
-                                        d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"
-                                    />
-                                </g>
-                            </svg>
+                            {{ $t('details.item.see.list') }}
                         </button>
-                        <span class="px-8">
-                            {{
-                                $t('details.item.count', [
-                                    currentIdx + 1,
-                                    result.items.length
-                                ])
-                            }}
-                        </span>
-                        <button
-                            :content="$t('details.item.next.item')"
-                            v-tippy="{ placement: 'top' }"
-                            @click="advanceItemIndex(1)"
-                            class="mx-2 rotate-180 opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
-                            :aria-label="$t('details.item.next.item')"
-                            :disabled="currentIdx === result.items.length - 1"
-                        >
-                            <svg height="24" width="24" viewBox="0 0 23 23">
-                                <g>
-                                    <path
-                                        d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"
-                                    />
-                                </g>
-                            </svg>
-                        </button>
+                        <div class="flex bg-gray-200 py-8 items-center">
+                            <button
+                                :content="$t('details.item.previous.item')"
+                                v-tippy="{ placement: 'top' }"
+                                @click="advanceItemIndex(-1)"
+                                class="mx-2 opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
+                                :aria-label="$t('details.item.previous.item')"
+                                :disabled="currentIdx === 0"
+                            >
+                                <svg height="24" width="24" viewBox="0 0 23 23">
+                                    <g>
+                                        <path
+                                            d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"
+                                        />
+                                    </g>
+                                </svg>
+                            </button>
+                            <span class="px-8">
+                                {{
+                                    $t('details.item.count', [
+                                        currentIdx + 1,
+                                        result.items.length
+                                    ])
+                                }}
+                            </span>
+                            <button
+                                :content="$t('details.item.next.item')"
+                                v-tippy="{ placement: 'top' }"
+                                @click="advanceItemIndex(1)"
+                                class="mx-2 rotate-180 opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
+                                :aria-label="$t('details.item.next.item')"
+                                :disabled="
+                                    currentIdx === result.items.length - 1
+                                "
+                            >
+                                <svg height="24" width="24" viewBox="0 0 23 23">
+                                    <g>
+                                        <path
+                                            d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"
+                                        />
+                                    </g>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <!-- actual details section -->
@@ -213,6 +224,12 @@ export default defineComponent({
             return nameField && this.identifyItem.loaded
                 ? this.identifyItem.data[nameField]
                 : this.$t('details.items.title');
+        },
+
+        layerName(): string {
+            const layer: LayerInstance | undefined =
+                this.$iApi.geo.layer.getLayer(this.result.uid);
+            return layer?.name ?? '';
         },
 
         layerType(): string {
