@@ -4,9 +4,9 @@
         <template #content>
             <div v-if="layerExists">
                 <div v-if="result.items.length > 0">
-                    <span class="flex font-bold p-8 w-full" v-truncate>
+                    <div v-if="layerExists" class="p-8" v-truncate>
                         {{ layerName }}
-                    </span>
+                    </div>
                     <button
                         class="w-full flex px-16 py-10 text-md hover:bg-gray-200 cursor-pointer"
                         v-for="(item, idx) in result.items"

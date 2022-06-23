@@ -5,6 +5,11 @@
         </template>
         <template #content>
             <div v-if="result.loaded">
+                <!-- layer name -->
+                <div v-if="layerExists" class="p-8" v-truncate>
+                    {{ layerName }}
+                </div>
+
                 <!-- paginator and list button for multiple features -->
                 <div
                     class="flex justify-between py-8 px-8 mb-8 bg-gray-100"
@@ -213,6 +218,12 @@ export default defineComponent({
             return nameField && this.identifyItem.loaded
                 ? this.identifyItem.data[nameField]
                 : this.$t('details.items.title');
+        },
+
+        layerName(): string {
+            const layer: LayerInstance | undefined =
+                this.$iApi.geo.layer.getLayer(this.result.uid);
+            return layer?.name ?? '';
         },
 
         layerType(): string {
