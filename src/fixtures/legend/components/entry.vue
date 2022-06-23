@@ -271,7 +271,7 @@ export default defineComponent({
             ) {
                 this.$iApi.event.emit(
                     GlobalEvents.GRID_TOGGLE,
-                    this.legendItem!.layerUID
+                    this.legendItem!.layer
                 );
             }
         },

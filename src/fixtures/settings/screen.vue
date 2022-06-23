@@ -25,7 +25,9 @@
                         :name="$t('settings.label.visibility')"
                         :config="{
                             value: visibilityModel,
-                            disabled: !controlAvailable('visibility')
+                            disabled: !controlAvailable(
+                                LayerControls.Visibility
+                            )
                         }"
                     />
 
@@ -39,7 +41,7 @@
                         :config="{
                             onChange: updateOpacity,
                             value: opacityModel,
-                            disabled: !controlAvailable('opacity')
+                            disabled: !controlAvailable(LayerControls.Opacity)
                         }"
                     ></settings-component>
 
@@ -53,7 +55,9 @@
                         @toggled="() => {}"
                         :config="{
                             value: false,
-                            disabled: !controlAvailable('boundingBox')
+                            disabled: !controlAvailable(
+                                LayerControls.Boundingbox
+                            )
                         }"
                     ></settings-component>
 
@@ -75,7 +79,7 @@
                         @toggled="updateIdentify"
                         :config="{
                             value: identifyModel,
-                            disabled: !controlAvailable('identify')
+                            disabled: !controlAvailable(LayerControls.Identify)
                         }"
                     ></settings-component>
 
@@ -116,7 +120,7 @@
 import { defineComponent, type PropType } from 'vue';
 import type { PanelInstance } from '@/api';
 import { GlobalEvents, LayerInstance } from '@/api/internal';
-import type { LayerControls } from '@/geo/api';
+import { LayerControls } from '@/geo/api';
 import type { LegendEntry } from '../legend/store/legend-defs';
 import type { SettingsAPI } from './api/settings';
 import SettingsComponentV from './component.vue';
@@ -126,7 +130,6 @@ export default defineComponent({
     props: {
         panel: { type: Object as PropType<PanelInstance>, required: true },
         layer: { type: Object as PropType<LayerInstance>, required: true },
-        uid: { type: String, required: true },
         legendItem: { type: Object as PropType<LegendEntry>, required: true }
     },
     components: {
@@ -134,8 +137,10 @@ export default defineComponent({
     },
     data() {
         return {
+            LayerControls,
             fixture: {},
             layerName: '',
+            uid: this.layer.uid,
             visibilityModel: this.layer.visibility,
             opacityModel: this.layer.opacity * 100,
             identifyModel: this.layer.identify,
@@ -149,11 +154,10 @@ export default defineComponent({
     created() {
         this.fixture = this.$iApi.fixture.get('settings');
 
-        this.layerExists =
-            this.$iApi.geo.layer.getLayer(this.uid) !== undefined;
+        this.layerExists = this.layer !== undefined && !this.layer!.isRemoved;
 
         this.watchers.push(
-            this.$watch('uid', (newUid: string, oldUid: string) => {
+            this.$watch('layer.uid', (newUid: string, oldUid: string) => {
                 if (newUid !== oldUid) {
                     this.loadLayerProperties();
                 }
@@ -219,8 +223,8 @@ export default defineComponent({
     },
     methods: {
         /**
-         * Check if control is enabled on this layer's settings config
-         * Default to layer controls if settings config is not defined
+         * Check if control is enabled on this layer's settings config.
+         * Default to layer controls if settings config is not defined.
          */
         controlAvailable(control: LayerControls): any {
             if (!this.fixture) {
@@ -244,35 +248,45 @@ export default defineComponent({
             );
         },
 
-        // Update the layer visibility.
+        /**
+         * Update the layer visibility.
+         */
         updateVisibility(val: boolean) {
             // force update the visibility
             this.legendItem.toggleVisibility(val, true, true);
             this.visibilityModel = val;
         },
 
-        // Update the layer opacity.
+        /**
+         * Update the layer opacity.
+         */
         updateOpacity(val: number) {
             this.legendItem.setOpacity(val / 100);
             this.opacityModel = val;
         },
 
-        // Update the layer's toggle identify.
+        /**
+         * Update the layer's toggle identify.
+         */
         updateIdentify(val: boolean) {
             this.legendItem.toggleIdentify(val);
             this.identifyModel = val;
         },
 
-        // Toggle snapshot mode for the layer.
+        /**
+         * Toggle snapshot mode for the layer.
+         */
         toggleSnapshot() {
             this.snapshotToggle = !this.snapshotToggle;
             // TODO: make necessary changes to layer
         },
 
-        // load property data from layer
+        /**
+         * Load property data from layer.
+         */
         loadLayerProperties() {
             this.layerExists =
-                this.$iApi.geo.layer.getLayer(this.uid) !== undefined;
+                this.layer !== undefined && !this.layer!.isRemoved;
 
             const oldUid = this.layer.uid;
             this.layer.isLayerLoaded().then(() => {
