@@ -24,7 +24,7 @@
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled:
-                        !legendItem.controlAvailable(`metadata`) ||
+                        !legendItem!.controlAvailable(LayerControls.Metadata) ||
                         !getFixtureExists('metadata')
                 }"
                 @click="toggleMetadata"
@@ -45,7 +45,7 @@
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled:
-                        !legendItem.controlAvailable(`settings`) ||
+                        !legendItem!.controlAvailable(LayerControls.Settings) ||
                         !getFixtureExists('settings')
                 }"
                 @click="toggleSettings"
@@ -68,7 +68,7 @@
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled:
-                        !legendItem.controlAvailable(`datatable`) ||
+                        !legendItem!.controlAvailable(LayerControls.Datatable) ||
                         !getFixtureExists('grid')
                 }"
                 @click="toggleGrid"
@@ -88,7 +88,7 @@
                 href="#"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
-                    disabled: !legendItem.controlAvailable(`symbology`)
+                    disabled: !legendItem!.controlAvailable(LayerControls.Symbology)
                 }"
                 @click="toggleSymbology"
             >
@@ -107,7 +107,7 @@
                 href="#"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
-                    disabled: !legendItem.controlAvailable(`boundaryZoom`)
+                    disabled: !legendItem!.controlAvailable(LayerControls.BoundaryZoom)
                 }"
                 @click="zoomToLayerBoundary"
             >
@@ -128,7 +128,7 @@
                 href="#"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
-                    disabled: !legendItem.controlAvailable(`remove`)
+                    disabled: !legendItem!.controlAvailable(LayerControls.Remove)
                 }"
                 @click="removeLayer"
             >
@@ -147,7 +147,7 @@
                 href="#"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
-                    disabled: !legendItem.controlAvailable(`reload`)
+                    disabled: !legendItem!.controlAvailable(LayerControls.Reload)
                 }"
                 @click="reloadLayer"
             >
@@ -176,6 +176,11 @@ export default defineComponent({
     props: {
         legendItem: LegendEntry
     },
+    data() {
+        return {
+            LayerControls
+        };
+    },
     methods: {
         /**
          * Display symbology stack for the layer.
@@ -196,7 +201,7 @@ export default defineComponent({
             ) {
                 this.$iApi.event.emit(
                     GlobalEvents.GRID_TOGGLE,
-                    this.legendItem!.layerUID
+                    this.legendItem!.layer
                 );
             }
         },
@@ -211,7 +216,7 @@ export default defineComponent({
             ) {
                 this.$iApi.event.emit(
                     GlobalEvents.SETTINGS_TOGGLE,
-                    this.legendItem!.layerUID
+                    this.legendItem!.layer
                 );
             }
         },

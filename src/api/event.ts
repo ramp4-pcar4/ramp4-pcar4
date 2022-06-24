@@ -692,11 +692,11 @@ export class EventAPI extends APIScope {
                 break;
             case DefEH.TOGGLE_SETTINGS:
                 // opens or closes the settings panel and hooks it up to the requested layer.
-                zeHandler = (payload: any) => {
+                zeHandler = (layer: LayerInstance) => {
                     const settingsFixture: SettingsAPI =
                         this.$iApi.fixture.get('settings');
                     if (settingsFixture) {
-                        settingsFixture.toggleSettings(payload);
+                        settingsFixture.toggleSettings(layer);
                     }
                 };
                 this.$iApi.event.on(
@@ -740,10 +740,10 @@ export class EventAPI extends APIScope {
                 break;
             case DefEH.TOGGLE_GRID:
                 // opens or closes the standard grid panel when a toggle grid event happens
-                zeHandler = (uid: string, open?: boolean) => {
+                zeHandler = (layer: LayerInstance, open?: boolean) => {
                     const gridFixture: GridAPI = this.$iApi.fixture.get('grid');
                     if (gridFixture) {
-                        gridFixture.toggleGrid(uid, open);
+                        gridFixture.toggleGrid(layer.uid, open);
                     }
                 };
                 this.$iApi.event.on(

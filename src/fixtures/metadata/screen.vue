@@ -5,36 +5,48 @@
         </template>
 
         <template #content>
-            <div class="flex justify-center">
-                <!-- Loading Screen -->
-                <div
-                    v-if="status == 'loading'"
-                    class="flex flex-col justify-center text-center"
-                >
-                    {{ $t('metadata.loading') }}
+            <div v-if="layerExists">
+                <div class="flex justify-center">
+                    <!-- Loading Screen -->
+                    <div
+                        v-if="status == 'loading'"
+                        class="flex flex-col justify-center text-center"
+                    >
+                        {{ $t('metadata.loading') }}
+                    </div>
+
+                    <!-- Found Screen, XML -->
+                    <div
+                        v-else-if="
+                            payload.type === 'xml' && status == 'success'
+                        "
+                        class="flex flex-col justify-center"
+                    ></div>
+
+                    <!-- Found Screen, HTML -->
+                    <div
+                        v-else-if="
+                            payload.type === 'html' && status == 'success'
+                        "
+                        v-html="response"
+                        class="flex flex-col justify-center max-w-full"
+                    ></div>
+
+                    <!-- Error Screen -->
+                    <div
+                        v-else
+                        class="flex flex-col justify-center text-center"
+                    >
+                        <img src="https://i.imgur.com/fA5EqV6.png" />
+
+                        <span class="text-xl mt-20">
+                            {{ $t('metadata.error') }}
+                        </span>
+                    </div>
                 </div>
-
-                <!-- Found Screen, XML -->
-                <div
-                    v-else-if="payload.type === 'xml' && status == 'success'"
-                    class="flex flex-col justify-center"
-                ></div>
-
-                <!-- Found Screen, HTML -->
-                <div
-                    v-else-if="payload.type === 'html' && status == 'success'"
-                    v-html="response"
-                    class="flex flex-col justify-center max-w-full"
-                ></div>
-
-                <!-- Error Screen -->
-                <div v-else class="flex flex-col justify-center text-center">
-                    <img src="https://i.imgur.com/fA5EqV6.png" />
-
-                    <span class="text-xl mt-20">
-                        {{ $t('metadata.error') }}
-                    </span>
-                </div>
+            </div>
+            <div v-else class="p-5">
+                <span>{{ $t('metadata.label.no.layer') }}</span>
             </div>
         </template>
     </panel-screen>
@@ -69,30 +81,14 @@ export default defineComponent({
         return {
             status: this.get(MetadataStore.status),
             response: this.get(MetadataStore.response),
-            // layerExists: false, // tracks whether the layer still exists
+            layerExists: false, // tracks whether the layer still exists
             cache: {} as MetadataCache,
-            handlers: [] as Array<string>
+            handlers: [] as Array<string>,
+            watchers: [] as Array<Function>
         };
     },
     mounted() {
-        // TODO: re-test this once layer isRemoved property is implemented (and fix the remove layer when panel minimized case)
-        // this.layerExists = this.payload.layer !== undefined;
-
-        if (this.payload.type === 'xml') {
-            this.loadFromURL(this.payload.url, []).then(r => {
-                this.$iApi.$vApp.$store.set(MetadataStore.status, 'success');
-
-                // Append the content to the panel.
-                if (r !== null) {
-                    this.$el.childNodes[1].appendChild(r);
-                }
-            });
-        } else if (this.payload.type === 'html') {
-            this.requestContent(this.payload.url).then(r => {
-                this.$iApi.$vApp.$store.set(MetadataStore.status, r.status);
-                this.$iApi.$vApp.$store.set(MetadataStore.response, r.response);
-            });
-        }
+        this.loadMetadata();
 
         // if layer is removed with its metadata open close this panel
         this.handlers.push(
@@ -105,12 +101,58 @@ export default defineComponent({
                 }
             )
         );
+
+        // watch for when metadata is opened for a new layer
+        this.watchers.push(
+            this.$watch(
+                'payload.layer.uid',
+                (newUid: string, oldUid: string) => {
+                    // update with new content
+                    if (newUid !== oldUid) {
+                        this.loadMetadata();
+                    }
+                }
+            )
+        );
     },
     beforeUnmount() {
-        // remove all event handlers
+        // remove all event handlers and watchers
         this.handlers.forEach(handler => this.$iApi.event.off(handler));
+        this.watchers.forEach(unwatch => unwatch());
     },
     methods: {
+        /**
+         * Load metadata content for new payload.
+         */
+        loadMetadata() {
+            // check if layer has not been removed
+            this.layerExists =
+                this.payload.layer !== undefined &&
+                !this.payload.layer!.isRemoved;
+
+            if (this.payload.type === 'xml') {
+                this.loadFromURL(this.payload.url, []).then(r => {
+                    this.$iApi.$vApp.$store.set(
+                        MetadataStore.status,
+                        'success'
+                    );
+
+                    // Append the content to the panel.
+                    if (r !== null) {
+                        this.$el.childNodes[1].appendChild(r);
+                    }
+                });
+            } else if (this.payload.type === 'html') {
+                this.requestContent(this.payload.url).then(r => {
+                    this.$iApi.$vApp.$store.set(MetadataStore.status, r.status);
+                    this.$iApi.$vApp.$store.set(
+                        MetadataStore.response,
+                        r.response
+                    );
+                });
+            }
+        },
+
         /**
          * Applies an XSLT to XML, XML is provided but the XSLT is stored in a string constant.
          *

@@ -16,7 +16,7 @@ export class MetadataAPI extends FixtureInstance {
             });
         } else {
             // otherwise refresh with new layer info or close if it is the same layer
-            const currentUid = (panel.route.props! as any).payload.uid;
+            const currentUid = (panel.route.props! as any).payload.layer.uid;
             if (currentUid !== payload?.layer?.uid) {
                 panel.show({
                     screen: 'metadata-screen-content',
