@@ -193,6 +193,10 @@ export class InstanceAPI {
             !(options.loadDefaultFixtures === false) ||
             configs?.startingFixtures !== undefined
         ) {
+            this.$vApp.$store.set(
+                ConfigStore.setStartingFixtures,
+                configs?.startingFixtures
+            );
             this.fixture.addDefaultFixtures(configs?.startingFixtures);
         }
         if (!(options.loadDefaultEvents === false)) {
@@ -232,6 +236,9 @@ export class InstanceAPI {
             // Need to clone this config to trigger config watch handlers
             configs = JSON.parse(
                 JSON.stringify({
+                    startingFixtures: this.$vApp.$store.get(
+                        ConfigStore.getStartingFixtures
+                    )!,
                     configs: this.$vApp.$store.get(
                         ConfigStore.getRegisteredConfigs
                     )!

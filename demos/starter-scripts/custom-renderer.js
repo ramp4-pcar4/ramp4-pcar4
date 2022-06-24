@@ -1,5 +1,6 @@
-window.rInstance = null;
-document.title = 'Custom Renderer';
+import { createInstance, geo } from '@/main';
+
+window.debugInstance = null;
 
 let config = {
     configs: {
@@ -43,15 +44,11 @@ let config = {
                 lodSets: [
                     {
                         id: 'LOD_NRCAN_Lambert_3978',
-                        lods: RAMP.geo.defaultLODs(
-                            RAMP.geo.defaultTileSchemas()[0]
-                        )
+                        lods: geo.defaultLODs(geo.defaultTileSchemas()[0])
                     },
                     {
                         id: 'LOD_ESRI_World_AuxMerc_3857',
-                        lods: RAMP.geo.defaultLODs(
-                            RAMP.geo.defaultTileSchemas()[1]
-                        )
+                        lods: geo.defaultLODs(geo.defaultTileSchemas()[1])
                     }
                 ],
                 tileSchemas: [
@@ -366,7 +363,8 @@ let config = {
                 {
                     id: 'WFSSimple',
                     layerType: 'ogc-wfs',
-                    url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
+                    url: 'https://api.weather.gc.ca//collections/ahccd-trends/items?measurement_type__type_mesure=total_precip&period__periode=Ann&startindex=0&limit=1000&province__province=on',
+                    xyInAttribs: true,
                     customRenderer: {
                         type: 'simple',
                         symbol: {
@@ -391,7 +389,8 @@ let config = {
                 {
                     id: 'WFSUniqueValue',
                     layerType: 'ogc-wfs',
-                    url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
+                    url: 'https://api.weather.gc.ca//collections/ahccd-trends/items?measurement_type__type_mesure=total_precip&period__periode=Ann&startindex=0&limit=1000&province__province=on',
+                    xyInAttribs: true,
                     customRenderer: {
                         type: 'uniqueValue',
                         field1: 'STATUS_EN',
@@ -455,7 +454,8 @@ let config = {
                 {
                     id: 'WFSClassBreaks',
                     layerType: 'ogc-wfs',
-                    url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
+                    url: 'https://api.weather.gc.ca//collections/ahccd-trends/items?measurement_type__type_mesure=total_precip&period__periode=Ann&startindex=0&limit=1000&province__province=on',
+                    xyInAttribs: true,
                     customRenderer: {
                         type: 'classBreaks',
                         field: 'OBJECTID',
@@ -776,28 +776,17 @@ let config = {
 
 let options = {
     loadDefaultFixtures: false,
-    loadDefaultEvents: true,
-    startRequired: false
+    loadDefaultEvents: true
 };
 
-rInstance = RAMP.createInstance(
+const rInstance = createInstance(
     document.getElementById('app'),
     config,
     options
 );
+
 rInstance.fixture.addDefaultFixtures().then(() => {
     rInstance.panel.open('legend');
 });
 
-// load map if startRequired is true
-rInstance.start();
-
-function animateToggle() {
-    if (rInstance.$vApp.$el.classList.contains('animation-enabled')) {
-        rInstance.$vApp.$el.classList.remove('animation-enabled');
-    } else {
-        rInstance.$vApp.$el.classList.add('animation-enabled');
-    }
-    document.getElementById('animate-status').innerText =
-        'Animate: ' + rInstance.animate;
-}
+window.debugInstance = rInstance;

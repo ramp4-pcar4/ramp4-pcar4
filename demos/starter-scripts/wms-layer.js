@@ -1,5 +1,6 @@
-window.rInstance = null;
-document.title = 'WMS Layers';
+import { createInstance, geo } from '@/main';
+
+window.debugInstance = null;
 
 let config = {
     configs: {
@@ -35,15 +36,11 @@ let config = {
                 lodSets: [
                     {
                         id: 'LOD_NRCAN_Lambert_3978',
-                        lods: RAMP.geo.defaultLODs(
-                            RAMP.geo.defaultTileSchemas()[0]
-                        )
+                        lods: geo.defaultLODs(geo.defaultTileSchemas()[0])
                     },
                     {
                         id: 'LOD_ESRI_World_AuxMerc_3857',
-                        lods: RAMP.geo.defaultLODs(
-                            RAMP.geo.defaultTileSchemas()[1]
-                        )
+                        lods: geo.defaultLODs(geo.defaultTileSchemas()[1])
                     }
                 ],
                 tileSchemas: [
@@ -197,7 +194,8 @@ let options = {
     loadDefaultFixtures: false,
     loadDefaultEvents: true
 };
-rInstance = RAMP.createInstance(
+
+const rInstance = createInstance(
     document.getElementById('app'),
     config,
     options
@@ -213,9 +211,14 @@ rInstance.$element.component('GeoMet-Template', {
     template: `<div v-html="createTemplate()" />`,
     methods: {
         parseText(text) {
+            // TODO: this code does not parse the text properly anymore
+            //       since this is just a sample page, it can be fixed when needed
             let obj = {};
             let rx = /(\w+) = '(?:"([^"]*)"|([^']*))/g;
-            while ((m = rx.exec(text)) !== null) {
+            while (rx.exec(text) !== null) {
+                let m = rx.exec(text);
+                if (m === null) break;
+
                 if (m[2]) {
                     obj[m[1]] = m[2];
                 } else {
@@ -277,3 +280,5 @@ rInstance.fixture
     .then(() => {
         rInstance.panel.open('legend');
     });
+
+window.debugInstance = rInstance;

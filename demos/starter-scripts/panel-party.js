@@ -1,18 +1,6 @@
-window.rInstance = null;
-document.title = 'Panel Party';
+import { createInstance, geo } from '@/main';
 
-// TODO: Location for version string needs to be finalized
-// document.getElementById('ramp-version').innerText =
-//     'v.' +
-//     RAMP.version.major +
-//     '.' +
-//     RAMP.version.minor +
-//     '.' +
-//     RAMP.version.patch +
-//     ' [#' +
-//     RAMP.version.hash.slice(0, 6) +
-//     ']  -  built on ' +
-//     new Date(RAMP.version.timestamp).toLocaleDateString();
+window.debugInstance = null;
 
 let config = {
     configs: {
@@ -56,15 +44,11 @@ let config = {
                 lodSets: [
                     {
                         id: 'LOD_NRCAN_Lambert_3978',
-                        lods: RAMP.geo.defaultLODs(
-                            RAMP.geo.defaultTileSchemas()[0]
-                        )
+                        lods: geo.defaultLODs(geo.defaultTileSchemas()[0])
                     },
                     {
                         id: 'LOD_ESRI_World_AuxMerc_3857',
-                        lods: RAMP.geo.defaultLODs(
-                            RAMP.geo.defaultTileSchemas()[1]
-                        )
+                        lods: geo.defaultLODs(geo.defaultTileSchemas()[1])
                     }
                 ],
                 tileSchemas: [
@@ -328,30 +312,6 @@ let config = {
                         }
                     }
                 }
-                /*
-            {
-                id: 'TestTile',
-                layerType: 'esri-tile',
-                url: 'https://services.arcgisonline.com/arcgis/rest/services/USA_Topo_Maps/MapServer',
-                state: {
-                    opacity: 1,
-                    visibility: true
-                },
-                customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
-            },
-            {
-                "id": "CanGRID_tmean_MAM_en",
-                "layerType": "ogc-wms",
-                "url": "https://geo.weather.gc.ca/geomet-climate?SERVICE=WMS&VERSION=1.3.0",
-                "name": "Total precipitation",
-                "state": {
-                    "opacity": 0.85,
-                    "visibility": true
-                },
-                "layerEntries": [{"id": "CANGRD.TREND.TM_SPRING" }],
-                "featureInfoMimeType": "application/json"
-            }
-            */
             ],
             fixtures: {
                 legend: {
@@ -412,7 +372,7 @@ let options = {
     loadDefaultEvents: true
 };
 
-rInstance = RAMP.createInstance(
+const rInstance = createInstance(
     document.getElementById('app'),
     config,
     options
