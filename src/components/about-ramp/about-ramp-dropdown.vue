@@ -1,7 +1,7 @@
 <template>
     <dropdown-menu
         class="pointer-events-auto sm:flex"
-        :aria-label="$t('ramp.about')"
+        :aria-label="$t('ramp.about.open')"
         :position="position"
         :tooltip="$t('ramp.about')"
         :tooltipPlacement="position"

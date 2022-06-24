@@ -4,6 +4,7 @@ lang-dir,ltr,1,ltr,1
 lang-en,English,1,French,1
 lang-fr,anglais,1,français,1
 lang-native,English,1,Français,1
+ramp.about.open,Open About RAMP,1,Ouvrir À propos de RAMP,0
 ramp.about,About RAMP,1,Au sujet de la PCAR,0
 keyboardInstructions.title,Keyboard Instructions,1,Instructions clavier,1
 keyboardInstructions.open,Open keyboard instructions,1,Instructions clavier ouvert,1
@@ -22,6 +23,7 @@ map.language.en,English,1,English,1
 map.language.fr,Français,1,Français,1
 map.language.curr,current,1,actuel,1
 map.export,export map,1,exporter la carte,1
+notifications.open,Open Notifications Panel,1,Ouvrir le panneau des notifications,0
 notifications.title,Notifications,1,Notifications,1
 notifications.empty,No new notifications.,1,Aucune nouvelle notification.,1
 notifications.controls.dismiss,Dismiss,1,Rejeter,1

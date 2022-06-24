@@ -1,7 +1,7 @@
 <template>
     <dropdown-menu
         position="top-start"
-        :aria-label="$t('notifications.title')"
+        :aria-label="$t('notifications.open')"
         :tooltip="$t('notifications.title')"
         tooltipPlacement="top"
         class="pointer-events-auto sm:flex ml-4 mr-8"
