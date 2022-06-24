@@ -11,13 +11,18 @@
         <template #footer>
             <div class="flex">
                 <button
-                    @click="fixture.export()"
+                    @click="fixture?.export()"
                     class="bg-green-500 hover:bg-green-700 text-white font-bold py-8 px-16 mr-16"
+                    :aria-label="$t('export.download')"
                 >
                     {{ $t('export.download') }}
                 </button>
 
-                <button @click="make()" class="py-8 px-16">
+                <button
+                    @click="make()"
+                    class="py-8 px-16"
+                    :aria-label="$t('export.refresh')"
+                >
                     {{ $t('export.refresh') }}
                 </button>
 

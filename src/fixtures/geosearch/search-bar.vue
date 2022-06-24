@@ -6,6 +6,7 @@
             :placeholder="$t('geosearch.searchText')"
             :value="searchVal"
             @input="onSearchTermChange($event.target.value)"
+            :aria-label="$t('geosearch.searchText')"
         />
     </div>
 </template>
