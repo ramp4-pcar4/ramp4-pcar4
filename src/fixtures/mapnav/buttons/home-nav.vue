@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { ExtentSet } from '@/geo/api';
+import type { ExtentSet } from '@/geo/api';
 
 export default defineComponent({
     name: 'HomeNavV',
