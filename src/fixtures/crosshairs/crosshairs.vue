@@ -70,6 +70,15 @@ export default defineComponent({
         );
 
         this.handlers.push(
+            this.$iApi.event.on(GlobalEvents.MAP_FOCUS, () => {
+                // display crosshairs only when focused with keyboard controls
+                if (!this.$iApi.geo.map.mouseFocus) {
+                    this.visible = true;
+                }
+            })
+        );
+
+        this.handlers.push(
             this.$iApi.event.on(GlobalEvents.MAP_MOUSEDOWN, () => {
                 this.visible = false;
             })

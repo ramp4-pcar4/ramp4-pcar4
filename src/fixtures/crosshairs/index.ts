@@ -5,7 +5,7 @@ import { FixtureInstance } from '@/api';
 class CrosshairsFixture extends FixtureInstance {
     added(): void {
         console.log(`[fixture] ${this.id} added`);
-        const { vNode, destroy, el } = this.mount(CrosshairsV, {
+        const { destroy, el } = this.mount(CrosshairsV, {
             app: this.$element
         });
 
