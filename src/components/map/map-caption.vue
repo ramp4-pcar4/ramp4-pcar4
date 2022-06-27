@@ -12,7 +12,7 @@
         ></notifications-caption-button>
 
         <span
-            class="relative truncate top-1 sm:block display-none shrink-0"
+            class="relative top-1 sm:block display-none shrink-0"
             v-if="!attribution.logo.disabled"
         >
             <a

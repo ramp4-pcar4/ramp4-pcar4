@@ -70,6 +70,15 @@ export default defineComponent({
         );
 
         this.handlers.push(
+            this.$iApi.event.on(GlobalEvents.MAP_KEYUP, () => {
+                // display crosshairs when focused from tabbing
+                // This is a bit hacky since it only fires when the tab key is let go. This works fine for tabbing,
+                // but when going backwards by shift-tabbing its possible to keep the shift key held, which prevents a keyup event.
+                this.visible = true;
+            })
+        );
+
+        this.handlers.push(
             this.$iApi.event.on(GlobalEvents.MAP_MOUSEDOWN, () => {
                 this.visible = false;
             })
