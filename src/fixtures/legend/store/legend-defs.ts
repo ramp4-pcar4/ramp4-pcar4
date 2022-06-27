@@ -131,7 +131,7 @@ export class LegendEntry extends LegendItem {
         this._type = LegendTypes.Placeholder; // entry will be in a placeholder state by default
 
         this._layerParentId = legendEntry.layerParentId; // will only be defined for sublayers
-        this._layerIdx = legendEntry.entryIndex; // will only be defined for sublayers
+        this._layerIdx = legendEntry.sublayerIndex; // will only be defined for sublayers
         this._symbologyExpanded = legendEntry.symbologyExpanded || false;
 
         // read the toggleSymbology from the layer fixture config
@@ -160,7 +160,7 @@ export class LegendEntry extends LegendItem {
     }
 
     /** Returns the entry index of the layer */
-    get entryIndex(): number | undefined {
+    get sublayerIndex(): number | undefined {
         return this._layerIdx;
     }
 
@@ -254,7 +254,7 @@ export class LegendEntry extends LegendItem {
             ) {
                 this._type = LegendTypes.Error;
                 console.error(
-                    `MapImageLayer has no entryIndex defined - ${this._itemConfig.layerId} (${this._itemConfig.name})`
+                    `MapImageLayer has no sublayerIndex defined - ${this._itemConfig.layerId} (${this._itemConfig.name})`
                 );
                 this._loadPromise.rejectMe();
             } else {
@@ -463,7 +463,7 @@ export class LegendGroup extends LegendItem {
                                   layer: layer,
                                   layerId: layer.id,
                                   name: layer.name,
-                                  entryIndex:
+                                  sublayerIndex:
                                       layer.layerIdx === -1
                                           ? undefined
                                           : layer.layerIdx
@@ -518,9 +518,9 @@ export class LegendGroup extends LegendItem {
                     this._children.push(new LegendGroup(entry, this));
                 } else {
                     // if the entry is a sublayer, set the entry id to the sublayers id
-                    if (entry.entryIndex !== undefined) {
+                    if (entry.sublayerIndex !== undefined) {
                         entry.layerParentId = entry.layerId;
-                        entry.layerId = `${entry.layerId}-${entry.entryIndex}`;
+                        entry.layerId = `${entry.layerId}-${entry.sublayerIndex}`;
                     }
                     this._children.push(new LegendEntry(entry, this));
                 }

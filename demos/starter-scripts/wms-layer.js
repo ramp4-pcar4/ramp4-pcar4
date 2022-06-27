@@ -100,7 +100,7 @@ let config = {
                     state: {
                         visibility: true
                     },
-                    layerEntries: [
+                    sublayers: [
                         {
                             id: 'ne:ne'
                         }
@@ -114,7 +114,7 @@ let config = {
                     state: {
                         visibility: true
                     },
-                    layerEntries: [
+                    sublayers: [
                         { id: 'railway', name: 'Railway' },
                         { id: 'railway.structure.line' },
                         { id: 'railway.structure.point' },
@@ -135,7 +135,7 @@ let config = {
                         visibility: true,
                         opacity: 0.5
                     },
-                    layerEntries: [
+                    sublayers: [
                         {
                             id: 'RDPA.24F_PR',
                             currentStyle: 'PRECIPMM'

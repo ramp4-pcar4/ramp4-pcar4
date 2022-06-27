@@ -515,7 +515,7 @@ export interface RampLayerFieldMetadataConfig {
 }
 
 // i.e. a dynamic layer child
-export interface RampLayerMapImageLayerEntryConfig {
+export interface RampLayerMapImageSublayerConfig {
     // A+ name
     index?: number;
     name?: string;
@@ -534,7 +534,7 @@ export interface RampLayerMapImageLayerEntryConfig {
 }
 
 // i.e. a wms layer child
-export interface RampLayerWmsLayerEntryConfig {
+export interface RampLayerWmsSublayerConfig {
     id?: string; // this is the "name" on the service
     name?: string; // this is display name in ramp. would override "title" on the service
     state?: RampLayerStateConfig;
@@ -564,9 +564,9 @@ export interface RampLayerConfig {
     featureInfoMimeType?: string;
     controls?: Array<LayerControls>;
     disabledControls?: Array<LayerControls>;
-    layerEntries?:
-        | Array<RampLayerMapImageLayerEntryConfig>
-        | Array<RampLayerWmsLayerEntryConfig>;
+    sublayers?:
+        | Array<RampLayerMapImageSublayerConfig>
+        | Array<RampLayerWmsSublayerConfig>;
     rawData?: any; // used for static data, like geojson string, shapefile guts
     latField?: string; // csv coord field
     longField?: string; // csv coord field

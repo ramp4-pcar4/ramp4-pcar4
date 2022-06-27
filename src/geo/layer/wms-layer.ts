@@ -13,7 +13,7 @@ import type {
     IdentifyItem,
     LegendSymbology,
     RampLayerConfig,
-    RampLayerWmsLayerEntryConfig,
+    RampLayerWmsSublayerConfig,
     IdentifyParameters,
     IdentifyResult,
     Point
@@ -61,10 +61,12 @@ export class WmsLayer extends CommonLayer {
             rampLayerConfig
         );
 
-        const lEntries = <Array<RampLayerWmsLayerEntryConfig>>(
-            rampLayerConfig.layerEntries
+        const lEntries = <Array<RampLayerWmsSublayerConfig>>(
+            rampLayerConfig.sublayers
         );
-        this.sublayerNames = lEntries.map(le => le.id || 'error_no_wms_id');
+        this.sublayerNames = lEntries.map(
+            sublayer => sublayer.id || 'error_no_wms_id'
+        );
 
         // reminder: unlike MapImageLayer, we do not allow tweaking visibility
         //           of sublayers at runtime.
@@ -105,8 +107,8 @@ export class WmsLayer extends CommonLayer {
         if (this.config.suppressGetCapabilities) {
             cfg.resourceInfo = {
                 extent: new this._apiRef.Map.Extent(-141, 41, -52, 83.5, {wkid: 4326}), // TODO make this a parameter post-demo
-                layerInfos: this.config.layerEntries
-                    .map(le => new this._apiRef.layer.WMSLayerInfo({name: le.id, title: le.name || ''}))
+                layerInfos: this.config.sublayers
+                    .map(sublayer new this._apiRef.layer.WMSLayerInfo({name: sublayer.id, title: sublayer.name || ''}))
             };
         }
         */
@@ -438,20 +440,24 @@ export class WmsLayer extends CommonLayer {
                 // this is a temp fix until we figure out what is going wrong there. See #603.
                 if (sl.legendUrl) {
                     // check if the style matches that in the config.
-                    // need to use forEach here and not find/filter because the layerEntries properties are not always the same
-                    this.origRampConfig.layerEntries?.forEach(
-                        (le: RampLayerWmsLayerEntryConfig) => {
-                            if (le.id && le.currentStyle && le.id === sl.name) {
+                    // need to use forEach here and not find/filter because the sublayers properties are not always the same
+                    this.origRampConfig.sublayers?.forEach(
+                        (sublayer: RampLayerWmsSublayerConfig) => {
+                            if (
+                                sublayer.id &&
+                                sublayer.currentStyle &&
+                                sublayer.id === sl.name
+                            ) {
                                 const wrapper = new UrlWrapper(sl.legendUrl);
                                 // assuming here that STYLE is always appended in all caps to avoid using .toUpperCase() above.
                                 // if the assumption is wrong, might need to rework some logic so that no case-sensitive parts of the URL get changed. e.g., 'geomet' in geomet layers
                                 if ('STYLE' in wrapper.queryMap) {
                                     if (
                                         wrapper.queryMap.STYLE !==
-                                        le.currentStyle
+                                        sublayer.currentStyle
                                     ) {
                                         sl.legendUrl = wrapper.updateQuery({
-                                            STYLE: le.currentStyle
+                                            STYLE: sublayer.currentStyle
                                         });
                                     }
                                 }
@@ -514,21 +520,21 @@ export class WmsLayer extends CommonLayer {
      * @returns {Promise}         resolves when symbology has been downloaded
      */
     loadSymbology() {
-        const configLayerEntries = this.config.layerEntries;
+        const configSublayers = this.config.sublayers;
         const legendArray = this.getLegendUrls(
-            configLayerEntries.map((le: any) => {
+            configSublayers.map((sublayer: any) => {
                 return {
-                    id: le.id,
-                    styleLegends: le.styleLegends,
-                    currentStyle: le.currentStyle
+                    id: sublayer.id,
+                    styleLegends: sublayer.styleLegends,
+                    currentStyle: sublayer.currentStyle
                 };
             })
         ).map((imageUri, idx) => {
             // config specified name || server specified name || config id
             const name =
-                configLayerEntries[idx].name ||
-                this.getWMSLayerTitle(configLayerEntries[idx].id) ||
-                configLayerEntries[idx].id;
+                configSublayers[idx].name ||
+                this.getWMSLayerTitle(configSublayers[idx].id) ||
+                configSublayers[idx].id;
             const symbologyItem: LegendSymbology = {
                 uid: this.$iApi.geo.shared.generateUUID(),
                 label: name,
