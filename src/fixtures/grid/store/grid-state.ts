@@ -1,5 +1,6 @@
 import type TableStateManager from './table-state-manager';
 import type { PanelConfig } from '@/store/modules/panel';
+import type { PanelWidthObject } from '@/api';
 
 export class GridState {
     /**
@@ -43,4 +44,12 @@ export interface GridConfig {
      * @memberof GridItemConfig
      */
     state: TableStateManager;
+
+    /**
+     * The width of the grid panel in pixels.
+     *
+     * @type {number}
+     * @interface GridConfig
+     */
+    panelWidth: PanelWidthObject | number;
 }

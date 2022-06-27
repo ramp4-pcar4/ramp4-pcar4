@@ -1,4 +1,5 @@
 import type { IdentifyResult } from '@/geo/api';
+import type { PanelWidthObject } from '@/api';
 
 export type DetailsItemSet = { [name: string]: DetailsItemInstance };
 
@@ -7,6 +8,14 @@ export interface DetailsConfig {
      * The dictionary of default templates indexed by identify result format with value as the template component id.
      */
     templates: { [type: string]: string };
+
+    /**
+     * The width of the details panel in pixels.
+     *
+     * @type {number}
+     * @interface GridConfig
+     */
+    panelWidth: PanelWidthObject | number;
 }
 
 export interface DetailsConfigItem {

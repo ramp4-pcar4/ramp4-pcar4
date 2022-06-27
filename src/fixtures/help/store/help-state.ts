@@ -1,3 +1,5 @@
+import type { PanelWidthObject } from '@/api';
+
 export class HelpState {
     /**
      * name of help source folder
@@ -10,5 +12,5 @@ export class HelpState {
 
 export interface HelpConfig {
     folderName: string;
-    panelWidth: number;
+    panelWidth: PanelWidthObject | number;
 }

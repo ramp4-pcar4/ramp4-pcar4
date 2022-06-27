@@ -420,4 +420,46 @@ export class FixtureInstance extends APIScope implements FixtureBase {
 
         return fixtureConfigs;
     }
+
+    /**
+     * If the `panelWidth` property is provided, handle default and specified panel widths for the given fixture.
+     *
+     * @param {Array<string>} panels list of panel names for the calling fixture
+     */
+    handlePanelWidths(panels: Array<string>): void {
+        if (this.config?.panelWidth) {
+            const panelWidths: any = {};
+
+            // If only a number was provided, use it as the `default` value.
+            if (typeof this.config?.panelWidth == 'number') {
+                this.config.panelWidth = {
+                    default: this.config?.panelWidth
+                };
+            }
+
+            // If the `default` attribute is provided, set all panels owned by this fixture to the provided width.
+            if (this.config.panelWidth.default) {
+                panels.forEach((item: string) => {
+                    panelWidths[item] = (this.config.panelWidth as any).default;
+                });
+            }
+
+            // Handle other panels, if they have a specific width set.
+            for (const item in this.config.panelWidth) {
+                if (item == 'default') continue;
+                panelWidths[item] = this.config.panelWidth[item];
+            }
+
+            // Update the width for each specified panel.
+            for (const item in panelWidths) {
+                // Set new panel widths.
+                const panel = this.$iApi.panel.get(item);
+                this.$iApi.panel.setStyle(
+                    panel,
+                    { width: `${panelWidths[item]}px` },
+                    true
+                );
+            }
+        }
+    }
 }
