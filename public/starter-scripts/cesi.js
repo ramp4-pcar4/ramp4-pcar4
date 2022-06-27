@@ -272,7 +272,7 @@ let config = {
                         visibility: true,
                         opacity: 1
                     },
-                    layerEntries: [
+                    sublayers: [
                         {
                             index: 10,
                             state: {
@@ -480,7 +480,7 @@ let config = {
                         visibility: false,
                         opacity: 1
                     },
-                    layerEntries: [
+                    sublayers: [
                         {
                             index: 32,
                             state: {
@@ -572,7 +572,7 @@ let config = {
                         visibility: true,
                         opacity: 1
                     },
-                    layerEntries: [
+                    sublayers: [
                         {
                             index: 33,
                             state: {

@@ -265,7 +265,7 @@ let config = {
                     id: 'WaterQuantity',
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
-                    layerEntries: [
+                    sublayers: [
                         {
                             index: 1,
                             name: 'Water quantity child',
@@ -302,7 +302,7 @@ let config = {
                     id: 'WaterQuality',
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
-                    layerEntries: [
+                    sublayers: [
                         {
                             index: 5,
                             state: {

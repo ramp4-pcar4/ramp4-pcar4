@@ -55,7 +55,7 @@ let config = {
                     id: 'AirEmissions',
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
-                    layerEntries: [
+                    sublayers: [
                         {
                             index: 9,
                             state: {

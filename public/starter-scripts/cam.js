@@ -266,7 +266,7 @@ let config = {
                     name: 'Climate action map',
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CAM/MapServer',
-                    layerEntries: [
+                    sublayers: [
                         {
                             index: 0,
                             name: 'Keyword search',
@@ -659,7 +659,7 @@ let config = {
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CAM/MapServer',
                     tolerance: 20,
                     symbologyExpanded: true,
-                    layerEntries: [
+                    sublayers: [
                         {
                             index: 1,
                             name: 'Recherche de mot cl?',

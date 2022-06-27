@@ -526,7 +526,7 @@ let config = {
                     id: 'MILSimple',
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
-                    layerEntries: [
+                    sublayers: [
                         {
                             index: 18,
                             state: {
@@ -573,7 +573,7 @@ let config = {
                     id: 'MILUniqueValue',
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
-                    layerEntries: [
+                    sublayers: [
                         {
                             index: 18,
                             state: {
@@ -635,7 +635,7 @@ let config = {
                     id: 'MILClassBreaks',
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
-                    layerEntries: [
+                    sublayers: [
                         {
                             index: 18,
                             state: {
