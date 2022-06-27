@@ -145,6 +145,12 @@ export enum GlobalEvents {
     MAP_BASEMAPCHANGE = 'map/basemapchanged',
 
     /**
+     * Fires when the map gains focus.
+     * Payload: `(params: KeyboardEvent)` (DOM Event)
+     */
+    MAP_FOCUS = 'map/focus',
+
+    /**
      * Fires when the map loses focus.
      * Payload: `(params: KeyboardEvent)` (DOM Event)
      */
@@ -866,7 +872,7 @@ export class EventAPI extends APIScope {
                 break;
             case DefEH.MAP_BLUR:
                 // processes loss of focus from the map view
-                zeHandler = (payload: FocusEvent) => {
+                zeHandler = (payload: KeyboardEvent) => {
                     this.$iApi.geo.map.stopKeyPan();
                 };
                 this.$iApi.event.on(

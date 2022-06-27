@@ -94,7 +94,8 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | LAYER_STATECHANGE<br>'layer/statechange'           | _state_: new value, layer: LayerInstance object                | The layer state changed                          |
 | LAYER_VISIBILITYCHANGE<br>'layer/visibilitychange' | _visibility_: new value, layer: LayerInstance object           | The layer visibility changed                     |
 | MAP_BASEMAPCHANGE<br>'map/basemapchanged'          | basemapId: string, schemaChanged: boolean                      | The basemap was changed                          |
-| MAP_BLUR<br>'map/blur'                             | FocusEvent object                                              | The map lost focus                               |
+| MAP_FOCUS<br>'map/focus'                           | KeyboardEvent object                                           | The map gained focus                                |
+| MAP_BLUR<br>'map/blur'                             | KeyboardEvent object                                           | The map lost focus                               |
 | MAP_CLICK<br>'map/click'                           | MapClick object                                                | The map was clicked                              |
 | MAP_CREATED<br>'map/created'                       | none                                                           | The map was created                              |
 | MAP_DESTROYED<br>'map/destroyed'                   | none                                                           | The map was destroyed                            |
