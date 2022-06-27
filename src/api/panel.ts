@@ -467,3 +467,21 @@ export type PanelRegistrationOptions = {
      */
     i18n?: I18nComponentOptions;
 };
+
+export interface PanelWidthObject {
+    /**
+     * The default panel width for this fixtures panels.
+     *
+     * @type number
+     * @memberof PanelWidthObject
+     */
+    default?: number;
+
+    /**
+     * Used for setting a specific panel width.
+     *
+     * @type number
+     * @memberof PanelWidthObject
+     */
+    [panel: string]: number | any;
+}

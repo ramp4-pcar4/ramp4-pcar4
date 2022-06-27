@@ -241,12 +241,19 @@
                     "default": true,
                     "description": "Specifies whether legend panel is pinned by default."
                 },
+                "panelWidth": {
+                    "$ref": "#/$defs/panelWidth"
+                },
                 "root": {
                     "$ref": "#/$defs/entryGroup"
                 }
             },
             "required": ["root"],
             "unevaluatedProperties": false
+        },
+        "panelWidth": {
+            "type": ["number", "object"],
+            "description": "Determines the width of provided panels. If a number, then defaults all panels for the fixture to the number."
         },
         "entryGroup": {
             "type": "object",
@@ -611,6 +618,9 @@
                 "fileName": {
                     "type": "string",
                     "description": "The filename of the exported image."
+                },
+                "panelWidth": {
+                    "$ref": "#/$defs/panelWidth"
                 }
             }
         },
@@ -1549,6 +1559,9 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Specifies if the table should filter rows by extent by default."
+                },
+                "panelWidth": {
+                    "$ref": "#/$defs/panelWidth"
                 }
             },
             "unevaluatedProperties": false
@@ -1976,6 +1989,9 @@
                             "additionalProperties": {
                                 "type": "string"
                             }
+                        },
+                        "panelWidth": {
+                            "$ref": "#/$defs/panelWidth"
                         }
                     },
                     "required": ["templates"]
@@ -1984,7 +2000,9 @@
                     "$ref": "#/$defs/help",
                     "default": {
                         "folderName": "default",
-                        "panelWidth": 350
+                        "panelWidth": {
+                            "$ref": "#/$defs/panelWidth"
+                        }
                     },
                     "description": "Specifies details for the Help section"
                 },

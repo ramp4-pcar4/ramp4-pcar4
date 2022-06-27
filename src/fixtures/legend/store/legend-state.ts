@@ -1,3 +1,4 @@
+import type { PanelWidthObject } from '@/api';
 import type { LegendEntry, LegendGroup } from './legend-defs';
 
 export class LegendState {
@@ -11,4 +12,5 @@ export interface LegendConfig {
     isPinned: boolean;
     root: { name: string; children: Array<any> };
     headerControls: Array<string>;
+    panelWidth: PanelWidthObject | number;
 }

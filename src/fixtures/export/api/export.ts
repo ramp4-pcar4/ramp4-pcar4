@@ -59,6 +59,8 @@ export class ExportAPI extends FixtureInstance {
             ExportStore.fileName,
             exportConfig.fileName || ''
         );
+
+        this.handlePanelWidths(['export']);
     }
 
     /**

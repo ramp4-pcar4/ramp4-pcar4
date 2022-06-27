@@ -1,3 +1,5 @@
+import type { PanelWidthObject } from '@/api';
+
 export class ExportState {
     componentSelectedState: any = {
         title: true,
@@ -29,4 +31,5 @@ export interface ExportConfig {
     footnote?: ExportComponentConfig;
     timestamp?: ExportComponentConfig;
     fileName?: string;
+    panelWidth: PanelWidthObject | number;
 }

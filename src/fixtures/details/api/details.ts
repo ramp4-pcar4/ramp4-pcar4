@@ -94,6 +94,8 @@ export class DetailsAPI extends FixtureInstance {
             );
         }
 
+        this.handlePanelWidths(['details-items', 'details-layers']);
+
         // get all layer fixture configs
         let layerDetailsConfigs: any = this.getLayerFixtureConfigs();
         let detailsConfigItems: DetailsConfigItem[] = [];
