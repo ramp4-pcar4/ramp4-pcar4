@@ -5,6 +5,7 @@
             position="bottom-start"
             :tooltip="$t('legend.entry.options')"
             tooltip-placement="left"
+            ref="dropdown-menu"
         >
             <template #header>
                 <div class="flex p-8">
@@ -274,6 +275,7 @@ export default defineComponent({
         reloadLayer() {
             if (this.legendItem!.controlAvailable(LayerControls.Reload)) {
                 toRaw(this.legendItem!.layer!).reload();
+                this.$refs['dropdown-menu'].open = false;
             }
         },
 
