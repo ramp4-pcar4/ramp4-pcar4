@@ -14,7 +14,7 @@
                 ></default-button>
                 <component
                     v-else
-                    :is="addComponentIdSuffix(item.componentId)"
+                    :is="item.componentId"
                     :key="`${item}-${index2}`"
                     :options="item.options"
                     :id="item.id"
@@ -141,18 +141,6 @@ export default defineComponent({
                 if (dropdown.childElementCount == 0) this.overflow = false;
             }
         });
-    },
-    methods: {
-        /**
-         * Checks if the component id has the "-appbar-button" suffix
-         * Returns the component id with the suffix added
-         */
-        addComponentIdSuffix(componentId: string): string {
-            if (componentId.includes('-appbar-button')) {
-                return componentId;
-            }
-            return `${componentId}-appbar-button`;
-        }
     }
 });
 </script>

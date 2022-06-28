@@ -70,7 +70,6 @@ export class AppbarAPI extends FixtureInstance {
 
     /**
      * Checks if components specified as appbar items are registered or not.
-     * Will check the literal id values, and id values with `-appbar-button` suffixes appended.
      *
      * @memberof AppbarAPI
      */
@@ -86,7 +85,7 @@ export class AppbarAPI extends FixtureInstance {
                 ) {
                     return;
                 }
-                // appbar check components with the literal id and with a `-appbar-button` suffix;
+                // check for components with the id
                 [id].some(v => {
                     if (this.$iApi.fixture.get(v)) {
                         // if an item is registered globally, save the name of the registered component
