@@ -52,4 +52,16 @@ export class GridAPI extends FixtureInstance {
             panel.close();
         }
     }
+
+    /**
+     * Parses the grid config JSON snippet from the config file.
+     *
+     * @param {GridConfig} [gridConfig]
+     * @memberof GridAPI
+     */
+    _parseConfig(gridConfig?: GridConfig) {
+        if (!gridConfig) return;
+
+        this.handlePanelWidths(['grid']);
+    }
 }

@@ -40,13 +40,7 @@ export class HelpAPI extends FixtureInstance {
     _parseConfig(helpConfig?: HelpConfig) {
         if (!helpConfig) return;
         this.$vApp.$store.set(HelpStore.folderName, helpConfig.folderName);
-        if (helpConfig.panelWidth) {
-            const panel = this.$iApi.panel.get('help');
-            this.$iApi.panel.setStyle(
-                panel,
-                { width: `${helpConfig.panelWidth}px` },
-                true
-            );
-        }
+
+        this.handlePanelWidths(['help']);
     }
 }

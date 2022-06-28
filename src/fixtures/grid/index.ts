@@ -32,6 +32,7 @@ class GridFixture extends GridAPI {
             { i18n: { messages } }
         );
 
+        this._parseConfig(this.config);
         this.$vApp.$store.registerModule('grid', grid());
     }
 
