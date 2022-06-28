@@ -306,6 +306,14 @@ export class MapAPI extends CommonMapAPI {
         });
 
         this.handlers.push({
+            type: 'focus',
+            handler: this.esriView.on('focus', esriFocus => {
+                // .native is a DOM keyboard event
+                this.$iApi.event.emit(GlobalEvents.MAP_FOCUS, esriFocus.native);
+            })
+        });
+
+        this.handlers.push({
             type: 'blur',
             handler: this.esriView.on('blur', esriBlur => {
                 // .native is a DOM keyboard event
@@ -997,6 +1005,9 @@ export class MapAPI extends CommonMapAPI {
     // ID of pan interval
     private _panInterval: any;
 
+    // true if map is focused using mouse click
+    private _mouseFocus: boolean = false;
+
     /**
      * Processes keydown event on map and initiates panning/zooming
      *
@@ -1057,6 +1068,15 @@ export class MapAPI extends CommonMapAPI {
     }
 
     /**
+     * Sets the map focus source from the mouse
+     *
+     * @memberof MapAPI
+     */
+    setMouseFocus() {
+        this._mouseFocus = true;
+    }
+
+    /**
      * Stops panning and deactivates all keys
      *
      * @memberof MapAPI
@@ -1064,6 +1084,7 @@ export class MapAPI extends CommonMapAPI {
     stopKeyPan() {
         this._activeKeys = [];
         clearInterval(this._panInterval);
+        this._mouseFocus = false;
     }
 
     /**
@@ -1077,6 +1098,16 @@ export class MapAPI extends CommonMapAPI {
             this._activeKeys.filter(k => !['Control', 'Shift'].includes(k))
                 .length !== 0
         );
+    }
+
+    /**
+     * Returns if map focus is caused by mouse click
+     *
+     * @memberof MapAPI
+     * @returns {boolean}
+     */
+    get mouseFocus(): boolean {
+        return this._mouseFocus;
     }
 
     /**

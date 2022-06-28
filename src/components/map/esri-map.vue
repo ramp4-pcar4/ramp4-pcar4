@@ -12,6 +12,7 @@
             delay: 200,
             duration: [200, 200]
         }"
+        @mousedown="mouseFocus"
     ></div>
 </template>
 
@@ -198,6 +199,10 @@ export default defineComponent({
             // TODO see if we still need this. map config should trigger the array watcher due to the store.
             //      possibly layer config is processed before map config is done creating map?
             this.onLayerConfigArrayChange(this.layerConfigs.value, []);
+        },
+        mouseFocus() {
+            // focused the map using the mouse, as opposed to keyboard controls
+            this.$iApi.geo.map.setMouseFocus();
         }
     }
 });
