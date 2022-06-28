@@ -28,7 +28,7 @@ import type {
     Point,
     QueryFeaturesParams,
     RampLayerConfig,
-    RampLayerMapImageLayerEntryConfig,
+    RampLayerMapImageSublayerConfig,
     TabularAttributeSet
 } from '@/geo/api';
 
@@ -91,16 +91,16 @@ export class MapImageLayer extends AttribLayer {
         //                 prior to running this function. essentially do tree traversal before this instead
         //                 of on onLoadActions like we currently do.
         /*
-        if (rampLayerConfig.layerEntries) {
+        if (rampLayerConfig.sublayers) {
             // NOTE: important not to set esriConfig property to empty array, as that will request no sublayers
             // TODO documentation isn't clear if we should be using .sublayers or .allSublayers ; if .sublayers can it be flat array?
             //      play with their online sandbox using a nested service if cant figure it out.
             // let us all stop to appreciate this line of code.
-            esriConfig.sublayers = (<Array<RampLayerMapImageLayerEntryConfig>>rampLayerConfig.layerEntries).map((le: RampLayerMapImageLayerEntryConfig) => {
+            esriConfig.sublayers = (<Array<RampLayerMapImageSublayerConfig>>rampLayerConfig.sublayers).map((sublayer: RampLayerMapImageSublayerConfig) => {
                 // the super call will set up the basics/common stuff like vis, opacity, def identify
                 // works because the sublayer property scheme is nearly identical to a normal layer
-                const subby: esri.SublayerProperties = super.makeEsriLayerConfig(le);
-                subby.id = le.index;
+                const subby: esri.SublayerProperties = super.makeEsriLayerConfig(sublayer);
+                subby.id = sublayer.index;
 
                 // TODO process the other options
                 return subby;
@@ -157,14 +157,14 @@ export class MapImageLayer extends AttribLayer {
 
         // collate any relevant overrides from the config.
         const subConfigs: {
-            [key: number]: RampLayerMapImageLayerEntryConfig;
+            [key: number]: RampLayerMapImageSublayerConfig;
         } = {};
 
-        (<Array<RampLayerMapImageLayerEntryConfig>>(
-            this.origRampConfig.layerEntries
-        )).forEach((le: RampLayerMapImageLayerEntryConfig) => {
+        (<Array<RampLayerMapImageSublayerConfig>>(
+            this.origRampConfig.sublayers
+        )).forEach((sublayer: RampLayerMapImageSublayerConfig) => {
             // TODO the || 0 is there to handle missing index. probably will never happen. add an error check?
-            subConfigs[le.index || 0] = le;
+            subConfigs[sublayer.index || 0] = sublayer;
         });
 
         // shortcut var to track all leafs that need attention
@@ -271,12 +271,12 @@ export class MapImageLayer extends AttribLayer {
         };
 
         // process the child layers our config is insested in, and all their children.
-        (<Array<RampLayerMapImageLayerEntryConfig>>(
-            this.origRampConfig.layerEntries
-        )).forEach(le => {
-            if (!le.stateOnly) {
+        (<Array<RampLayerMapImageSublayerConfig>>(
+            this.origRampConfig.sublayers
+        )).forEach(sublayer => {
+            if (!sublayer.stateOnly) {
                 // TODO add a check instead of 0 default on the index?
-                const rootSub = findSublayer(le.index || 0);
+                const rootSub = findSublayer(sublayer.index || 0);
                 // TODO would need to validate layer tree every loop to shut up typescript. shutting it up with comment instead.
                 // @ts-ignore
                 processSublayer(rootSub, this.layerTree);

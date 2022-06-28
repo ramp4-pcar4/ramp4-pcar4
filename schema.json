@@ -377,12 +377,12 @@
                         "type": "string"
                     }
                 },
-                "entryIndex": {
+                "sublayerIndex": {
                     "type": "integer",
                     "default": 0,
                     "description": "Index of the 'sublayer' in the case of a map image layer."
                 },
-                "entryId": {
+                "sublayerId": {
                     "type": "string",
                     "default": 0,
                     "description": "Id of the 'sublayer' in the case of an OGC WMS layer."
@@ -836,11 +836,11 @@
                     "default": false,
                     "description": "Indicates that the map image layer with a single layer entry should be rendered without the root group."
                 },
-                "layerEntries": {
+                "sublayers": {
                     "type": "array",
                     "description": "Layer entries rendered as part of the map image layer group.",
                     "items": {
-                        "$ref": "#/$defs/mapImageLayerEntry"
+                        "$ref": "#/$defs/mapImageSublayer"
                     },
                     "minItems": 1
                 },
@@ -895,10 +895,10 @@
                     "$ref": "#/$defs/layerFixtureConfig"
                 }
             },
-            "required": ["id", "layerType", "layerEntries", "url"],
+            "required": ["id", "layerType", "sublayers", "url"],
             "unevaluatedProperties": false
         },
-        "mapImageLayerEntry": {
+        "mapImageSublayer": {
             "type": "object",
             "description": "A child entry of a map image layer.",
             "properties": {
@@ -1306,11 +1306,11 @@
                     "default": null,
                     "description": "Catalogue url of the layer service."
                 },
-                "layerEntries": {
+                "sublayers": {
                     "type": "array",
                     "description": "Layer entries rendered as part of the WMS legend block.",
                     "items": {
-                        "$ref": "#/$defs/wmsLayerEntry"
+                        "$ref": "#/$defs/wmsSublayer"
                     },
                     "minItems": 1
                 },
@@ -1352,10 +1352,10 @@
                     "$ref": "#/$defs/initialLayerSettings"
                 }
             },
-            "required": ["id", "layerType", "layerEntries", "url"],
+            "required": ["id", "layerType", "sublayers", "url"],
             "unevaluatedProperties": false
         },
-        "wmsLayerEntry": {
+        "wmsSublayer": {
             "type": "object",
             "description": "A child entry of a WMS layer.",
             "properties": {

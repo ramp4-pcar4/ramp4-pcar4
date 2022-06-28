@@ -265,7 +265,7 @@ let config = {
                     id: 'WaterQuantity',
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
-                    layerEntries: [
+                    sublayers: [
                         {
                             index: 1,
                             name: 'Water quantity child',
@@ -302,7 +302,7 @@ let config = {
                     id: 'WaterQuality',
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
-                    layerEntries: [
+                    sublayers: [
                         {
                             index: 5,
                             state: {
@@ -365,7 +365,7 @@ let config = {
                                             {
                                                 layerId: 'WaterQuantity',
                                                 name: 'Water Quantity in Nested Group',
-                                                entryIndex: 1,
+                                                sublayerIndex: 1,
                                                 controls: [
                                                     'metadata',
                                                     'boundaryZoom',
@@ -380,12 +380,12 @@ let config = {
                                             {
                                                 layerId: 'WaterQuantity',
                                                 name: 'CO2 in Nested Group',
-                                                entryIndex: 9
+                                                sublayerIndex: 9
                                             },
                                             {
                                                 layerId: 'WaterQuality',
                                                 name: 'Water Quality in Nested Group',
-                                                entryIndex: 5
+                                                sublayerIndex: 5
                                             }
                                         ]
                                     }

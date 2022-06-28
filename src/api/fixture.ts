@@ -409,8 +409,8 @@ export class FixtureInstance extends APIScope implements FixtureBase {
             }
 
             // process child layer entries
-            if (layer.layerEntries) {
-                layer.layerEntries.forEach((sublayer: any) =>
+            if (layer.sublayers) {
+                layer.sublayers.forEach((sublayer: any) =>
                     layerCrawler(sublayer, layer)
                 );
             }

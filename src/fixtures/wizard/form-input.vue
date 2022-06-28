@@ -88,7 +88,7 @@
                     </select>
                     <div class="text-gray-400 text-xs mb-1">{{ help }}</div>
                     <div
-                        v-if="validation && layerEntriesError"
+                        v-if="validation && sublayersError"
                         class="text-red-900 text-xs"
                     >
                         {{ validationMessages.required }}
@@ -255,7 +255,7 @@ export default defineComponent({
         return {
             valid: false,
             urlError: false,
-            layerEntriesError: false,
+            sublayersError: false,
             selected: []
         };
     },
@@ -277,8 +277,8 @@ export default defineComponent({
 
         checkMultiSelectError(selected: Array<any>) {
             selected && selected.length > 0
-                ? (this.layerEntriesError = false)
-                : (this.layerEntriesError = true);
+                ? (this.sublayersError = false)
+                : (this.sublayersError = true);
         }
     }
 });

@@ -194,21 +194,19 @@
                         </wizard-input>
                         <!-- For map image layers -->
                         <wizard-input
-                            v-if="
-                                layerInfo.configOptions.includes(`layerEntries`)
-                            "
+                            v-if="layerInfo.configOptions.includes(`sublayers`)"
                             type="select"
-                            name="layerEntries"
-                            v-model="layerInfo.config.layerEntries"
-                            @select="updateLayerEntries"
-                            :label="$t('wizard.configure.layerEntries.label')"
-                            :help="$t('wizard.configure.layerEntries.help')"
+                            name="sublayers"
+                            v-model="layerInfo.config.sublayers"
+                            @select="updateSublayers"
+                            :label="$t('wizard.configure.sublayers.label')"
+                            :help="$t('wizard.configure.sublayers.help')"
                             :options="sublayerOptions()"
                             :multiple="true"
                             :validation="true"
                             :validation-messages="{
                                 required: $t(
-                                    'wizard.configure.layerEntries.error.required'
+                                    'wizard.configure.sublayers.error.required'
                                 )
                             }"
                             @keydown.stop
@@ -460,7 +458,7 @@ export default defineComponent({
             }
 
             this.goToStep(WizardStep.CONFIGURE);
-            this.layerInfo.configOptions.includes(`layerEntries`)
+            this.layerInfo.configOptions.includes(`sublayers`)
                 ? (this.finishStep = false)
                 : (this.finishStep = true);
         },
@@ -552,14 +550,14 @@ export default defineComponent({
 
         updateLayerName(name: string) {
             this.layerInfo.config.name = name;
-            const le = this.layerInfo.config.layerEntries;
-            const canFinish = le ? name && le.length > 0 : name;
+            const sublayers = this.layerInfo.config.sublayers;
+            const canFinish = sublayers ? name && sublayers.length > 0 : name;
             canFinish ? (this.finishStep = true) : (this.finishStep = false);
         },
 
-        updateLayerEntries(le: Array<any>) {
-            this.layerInfo.config.layerEntries = le;
-            le.length > 0 && this.layerInfo.config.name
+        updateSublayers(sublayer: Array<any>) {
+            this.layerInfo.config.sublayers = sublayer;
+            sublayer.length > 0 && this.layerInfo.config.name
                 ? (this.finishStep = true)
                 : (this.finishStep = false);
         }

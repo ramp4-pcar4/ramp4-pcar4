@@ -176,14 +176,14 @@ export class LayerSource extends APIScope {
             url: url,
             layerType: LayerType.MAPIMAGE,
             name: response.data.mapName,
-            layerEntries: [],
+            sublayers: [],
             state: { opacity: 1, visibility: true }
         };
 
         return {
             config,
             layers: flattenMapImageLayerList(response.data.layers),
-            configOptions: ['name', 'layerEntries']
+            configOptions: ['name', 'sublayers']
         };
 
         function flattenMapImageLayerList(layers: any) {
@@ -277,7 +277,7 @@ export class LayerSource extends APIScope {
         return {
             config,
             layers: flattenWmsLayerList(capabilities.layers),
-            configOptions: ['name', 'layerEntries']
+            configOptions: ['name', 'sublayers']
         };
 
         function flattenWmsLayerList(layers: any, level = 0) {

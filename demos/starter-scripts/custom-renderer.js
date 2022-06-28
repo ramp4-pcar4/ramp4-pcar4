@@ -526,7 +526,7 @@ let config = {
                     id: 'MILSimple',
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
-                    layerEntries: [
+                    sublayers: [
                         {
                             index: 18,
                             state: {
@@ -573,7 +573,7 @@ let config = {
                     id: 'MILUniqueValue',
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
-                    layerEntries: [
+                    sublayers: [
                         {
                             index: 18,
                             state: {
@@ -635,7 +635,7 @@ let config = {
                     id: 'MILClassBreaks',
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
-                    layerEntries: [
+                    sublayers: [
                         {
                             index: 18,
                             state: {
@@ -740,24 +740,24 @@ let config = {
                                             {
                                                 layerId: 'MILSimple',
                                                 name: 'Sulfur Oxide Emissions',
-                                                entryIndex: 18
+                                                sublayerIndex: 18
                                             },
                                             {
                                                 layerId: 'MILSimple',
                                                 name: 'Water Quantity',
-                                                entryIndex: 1
+                                                sublayerIndex: 1
                                             }
                                         ]
                                     },
                                     {
                                         layerId: 'MILUniqueValue',
                                         name: 'Unique Value',
-                                        entryIndex: 18
+                                        sublayerIndex: 18
                                     },
                                     {
                                         layerId: 'MILClassBreaks',
                                         name: 'Class Breaks',
-                                        entryIndex: 18
+                                        sublayerIndex: 18
                                     }
                                 ]
                             }

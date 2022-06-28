@@ -394,26 +394,26 @@ function mapUpgrader(r2Map: any, r4c: any): void {
                             name: r4layer.name ?? `${r4layer.id} Group`,
                             children: []
                         };
-                        r4layer.layerEntries.forEach((r4layerEntry: any) => {
+                        r4layer.sublayers.forEach((r4Sublayer: any) => {
                             const entry: any = {
                                 layerId: r4layer.id
                             };
-                            if (r4layerEntry.name) {
-                                entry.name = r4layerEntry.name;
+                            if (r4Sublayer.name) {
+                                entry.name = r4Sublayer.name;
                             }
-                            if (r4layerEntry.controls) {
-                                entry.controls = r4layerEntry.controls;
+                            if (r4Sublayer.controls) {
+                                entry.controls = r4Sublayer.controls;
                             }
-                            if (r4layerEntry.disabledControls) {
+                            if (r4Sublayer.disabledControls) {
                                 entry.disabledControls =
-                                    r4layerEntry.disabledControls;
+                                    r4Sublayer.disabledControls;
                             }
                             if (r4layer.type === 'esri-map-image') {
-                                entry.entryIndex = r4layerEntry.index;
+                                entry.sublayerIndex = r4Sublayer.index;
                             } else {
-                                entry.entryId = r4layerEntry.id;
+                                entry.sublayerId = r4Sublayer.id;
                                 console.warn(
-                                    `entryId property defined in legend entry ${entry.layerId} is currently not supported.`
+                                    `sublayerId property defined in legend entry ${entry.layerId} is currently not supported.`
                                 );
                             }
                             entryGroup.children.push(entry);
@@ -598,9 +598,9 @@ function legendEntryUpgrader(r2legendEntry: any) {
             `controlledIds property defined in legend entry ${r2legendEntry.layerId} is currently not supported.`
         );
     }
-    if (r2legendEntry.entryId) {
+    if (r2legendEntry.sublayerId) {
         console.warn(
-            `entryId property defined in legend entry ${r2legendEntry.layerId} is currently not supported.`
+            `sublayerId property defined in legend entry ${r2legendEntry.layerId} is currently not supported.`
         );
     }
     if (r2legendEntry.coverIcon) {
@@ -681,18 +681,18 @@ function layerUpgrader(r2layer: any): any {
             if (r2layer.imageFormat) {
                 r4layer.imageFormat = r2layer.imageFormat;
             }
-            if (r2layer.layerEntries) {
-                r4layer.layerEntries = [];
-                r2layer.layerEntries.forEach((r2layerEntry: any) => {
-                    const r4layerEntry: any =
-                        layerCommonPropertiesUpgrader(r2layerEntry);
-                    r4layerEntry.index = r2layerEntry.index;
-                    if (r2layerEntry.outfields) {
+            if (r2layer.sublayers) {
+                r4layer.sublayers = [];
+                r2layer.sublayers.forEach((r2Sublayer: any) => {
+                    const r4Sublayer: any =
+                        layerCommonPropertiesUpgrader(r2Sublayer);
+                    r4Sublayer.index = r2Sublayer.index;
+                    if (r2Sublayer.outfields) {
                         console.warn(
-                            `outfields property provided in layer entry ${r2layerEntry.index} of layer ${r2layer.id} cannot be mapped and will be skipped.`
+                            `outfields property provided in layer entry ${r2Sublayer.index} of layer ${r2layer.id} cannot be mapped and will be skipped.`
                         );
                     }
-                    r2layer.layerEntries.push(r4layerEntry);
+                    r2layer.sublayers.push(r4Sublayer);
                 });
             }
             break;
@@ -751,24 +751,24 @@ function layerUpgrader(r2layer: any): any {
                     `legendMimeType property provided in layer ${r2layer.id} cannot be mapped and will be skipped.`
                 );
             }
-            if (r2layer.layerEntries) {
-                r4layer.layerEntries = [];
-                r2layer.layerEntries.forEach((r2layerEntry: any) => {
-                    const r4layerEntry: any =
-                        layerCommonPropertiesUpgrader(r2layerEntry);
-                    r4layerEntry.id = r2layerEntry.id;
-                    if (r2layerEntry.currentStyle) {
-                        r4layerEntry.currentStyle = r2layerEntry.currentStyle;
+            if (r2layer.sublayers) {
+                r4layer.sublayers = [];
+                r2layer.sublayers.forEach((r2Sublayer: any) => {
+                    const r4Sublayer: any =
+                        layerCommonPropertiesUpgrader(r2Sublayer);
+                    r4Sublayer.id = r2Sublayer.id;
+                    if (r2Sublayer.currentStyle) {
+                        r4Sublayer.currentStyle = r2Sublayer.currentStyle;
                         console.warn(
-                            `currentStyle property provided in layer entry ${r2layerEntry.id} of layer ${r2layer.id} is currently not supported.`
+                            `currentStyle property provided in layer entry ${r2Sublayer.id} of layer ${r2layer.id} is currently not supported.`
                         );
                     }
-                    if (r2layerEntry.allStyles) {
+                    if (r2Sublayer.allStyles) {
                         console.warn(
-                            `allStyles property provided in layer entry ${r2layerEntry.id} of layer ${r2layer.id} cannot be mapped and will be skipped.`
+                            `allStyles property provided in layer entry ${r2Sublayer.id} of layer ${r2layer.id} cannot be mapped and will be skipped.`
                         );
                     }
-                    r4layer.layerEntries.push(r4layerEntry);
+                    r4layer.sublayers.push(r4Sublayer);
                 });
             }
             break;

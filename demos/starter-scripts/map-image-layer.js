@@ -55,7 +55,7 @@ let config = {
                     id: 'AirEmissions',
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
-                    layerEntries: [
+                    sublayers: [
                         {
                             index: 9,
                             state: {
@@ -99,12 +99,12 @@ let config = {
                                     {
                                         layerId: 'AirEmissions',
                                         name: 'Carbon monoxide emissions by facility',
-                                        entryIndex: 9
+                                        sublayerIndex: 9
                                     },
                                     {
                                         layerId: 'AirEmissions',
                                         name: 'Sulphur oxide emissions by facility',
-                                        entryIndex: 18
+                                        sublayerIndex: 18
                                     }
                                 ]
                             },

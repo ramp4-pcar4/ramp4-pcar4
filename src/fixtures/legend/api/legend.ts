@@ -67,9 +67,9 @@ export class LegendAPI extends FixtureInstance {
             } else if (lastEntry.layerId !== undefined) {
                 // create a wrapper legend object for single legend entry
                 // if the entry is a sublayer, override the entry id to the sublayers id
-                if (lastEntry.entryIndex !== undefined) {
+                if (lastEntry.sublayerIndex !== undefined) {
                     lastEntry.layerParentId = lastEntry.layerId;
-                    lastEntry.layerId = `${lastEntry.layerId}-${lastEntry.entryIndex}`;
+                    lastEntry.layerId = `${lastEntry.layerId}-${lastEntry.sublayerIndex}`;
                 }
                 const legendEntry = new LegendEntry(
                     lastEntry,
