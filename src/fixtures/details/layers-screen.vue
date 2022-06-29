@@ -56,6 +56,7 @@ export default defineComponent({
             lastLayerUid: '' as string,
             activeGreedy: 0 as number, // 0 = turn greedy mode off, some timestamp = greedy mode running with last request timestamp
             payload: this.get(DetailsStore.payload),
+            detailProperties: this.get(DetailsStore.properties),
             getLayerByUid: this.get('layer/getLayerByUid'),
             layers: this.get('layer/layers'),
             mobileMode: this.get('panel/mobileView'),
@@ -313,12 +314,17 @@ export default defineComponent({
          */
         layerName(idx: number) {
             const layerInfo = this.payload[idx];
-            let item: LayerInstance | undefined = this.getLayerByUid(
+            let layer: LayerInstance | undefined = this.getLayerByUid(
                 layerInfo.uid
             );
-            if (!item) return '';
-
-            return item.name;
+            if (
+                layer &&
+                this.detailProperties[layer.id] &&
+                this.detailProperties[layer.id].name
+            ) {
+                return this.detailProperties[layer.id].name;
+            }
+            return layer?.name ?? '';
         }
     }
 });
