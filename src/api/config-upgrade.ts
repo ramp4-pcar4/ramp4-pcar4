@@ -104,8 +104,8 @@ function individualConfigUpgrader(r2c: any): any {
     // .language
 
     servicesUpgrader(r2c.services, r4c);
-    uiUpgrader(r2c.ui, r4c);
     mapUpgrader(r2c.map, r4c);
+    uiUpgrader(r2c.ui, r4c);
 
     // note that r2 .plugins has no analogue at the moment.
     // areas of interest, back to cart, co-ord info, custom export, are not implemented
@@ -471,7 +471,10 @@ function legendGroupUpgrader(r2legendGroup: any) {
             r2legendGroup.controls,
             allowedControls
         );
-        if (r2legendGroup.controls !== ['visibility']) {
+        if (
+            r2legendGroup.controls.length !== 1 ||
+            r2legendGroup.controls[0] !== 'visibility'
+        ) {
             console.warn(
                 `Legend entry groups currently support only the visibility control. All other controls are currently not supported.`
             );
@@ -485,7 +488,10 @@ function legendGroupUpgrader(r2legendGroup: any) {
             r2legendGroup.disabledControls,
             allowedControls
         );
-        if (r2legendGroup.disabledControls !== ['visibility']) {
+        if (
+            r2legendGroup.disabledControls.length !== 1 ||
+            r2legendGroup.disabledControls[0] !== 'visibility'
+        ) {
             console.warn(
                 `Legend entry groups currently support only the visibility control. All other controls are currently not supported.`
             );
@@ -996,8 +1002,20 @@ function servicesUpgrader(r2Services: any, r4c: any): void {
             geoTypes: r2Services.search.serviceUrls.types
         };
 
+        if (r2Services.search.serviceUrls.geoSuggest) {
+            console.warn(
+                `geoSuggest property provided in serviceUrls of search service cannot be mapped and will be skipped.`
+            );
+        }
+
         if (r2Services.search.settings) {
             r4c.fixtures.geosearch.settings = r2Services.search.settings;
+        }
+
+        if (r2Services.search.disabledSearches) {
+            console.warn(
+                `disabledSearches property provided in search service cannot be mapped and will be skipped.`
+            );
         }
     }
 
@@ -1010,28 +1028,117 @@ function servicesUpgrader(r2Services: any, r4c: any): void {
 
         // if-party to ensure properties are added only if they exists (no undefined props)
         if (r2Services.export.title) {
-            r4c.fixtures.export.title = r2Services.export.title;
+            r4c.fixtures.export.title = {
+                selected: r2Services.export.title.isSelected ?? true,
+                selectable: r2Services.export.title.isSelectable ?? true,
+                value: r2Services.export.title.value ?? 'RAMP-Map / PCAR-Carte'
+            };
         }
         if (r2Services.export.map) {
-            r4c.fixtures.export.map = r2Services.export.map;
+            r4c.fixtures.export.map = {
+                selected: r2Services.export.map.isSelected ?? true,
+                selectable: r2Services.export.map.isSelectable ?? true
+            };
+            if (r2Services.export.map.value) {
+                console.warn(
+                    `value property provided in map export component cannot be mapped and will be skipped.`
+                );
+            }
         }
         if (r2Services.export.mapElements) {
-            r4c.fixtures.export.mapElements = r2Services.export.mapElements;
+            r4c.fixtures.export.mapElements = {
+                selected: r2Services.export.mapElements.isSelected ?? true,
+                selectable: r2Services.export.mapElements.isSelectable ?? true
+            };
+            if (r2Services.export.mapElements.value) {
+                console.warn(
+                    `value property provided in mapElements export component cannot be mapped and will be skipped.`
+                );
+            }
         }
         if (r2Services.export.legend) {
-            r4c.fixtures.export.legend = r2Services.export.legend;
+            r4c.fixtures.export.legend = {
+                selected: r2Services.export.legend.isSelected ?? true,
+                selectable: r2Services.export.legend.isSelectable ?? true
+            };
+            if (r2Services.export.legend.columnWidth) {
+                r4c.fixtures.export.legend.columnWidth =
+                    r2Services.export.legend.columnWidth;
+            }
+            if (r2Services.export.legend.value) {
+                console.warn(
+                    `value property provided in legend export component cannot be mapped and will be skipped.`
+                );
+            }
+            if (
+                typeof r2Services.export.legend.showInfoSymbology !==
+                'undefined'
+            ) {
+                console.warn(
+                    `showInfoSymbology property provided in legend export component cannot be mapped and will be skipped.`
+                );
+            }
+            if (
+                typeof r2Services.export.legend.showControlledSymbology !==
+                'undefined'
+            ) {
+                console.warn(
+                    `showControlledSymbology property provided in legend export component cannot be mapped and will be skipped.`
+                );
+            }
         }
         if (r2Services.export.footnote) {
-            r4c.fixtures.export.footnote = r2Services.export.footnote;
+            r4c.fixtures.export.footnote = {
+                selected: r2Services.export.footnote.isSelected ?? true,
+                selectable: r2Services.export.footnote.isSelectable ?? true,
+                value: r2Services.export.footnote.value ?? ''
+            };
         }
         if (r2Services.export.timestamp) {
-            r4c.fixtures.export.timestamp = r2Services.export.timestamp;
+            r4c.fixtures.export.timestamp = {
+                selected: r2Services.export.timestamp.isSelected ?? true,
+                selectable: r2Services.export.timestamp.isSelectable ?? true
+            };
+            if (r2Services.export.timestamp.value) {
+                console.warn(
+                    `value property provided in timestamp export component cannot be mapped and will be skipped.`
+                );
+            }
+        }
+        if (r2Services.export.timeout) {
+            console.warn(
+                `timeout property provided in export property of services config cannot be mapped and will be skipped.`
+            );
+        }
+        if (typeof r2Services.cleanCanvas !== 'undefined') {
+            console.warn(
+                `cleanCanvas property provided in export property of services config cannot be mapped and will be skipped.`
+            );
         }
     }
 
     if (r2Services.proxyUrl) {
         r4c.system.proxyUrl = r2Services.proxyUrl;
     }
+
+    // TODO: If any of these properties get implemented/used in the future, remove them from the warning list and map them appropriately.
+    const unused: String[] = [
+        'corsEverywhere',
+        'exportMapUrl',
+        'geometryUrl',
+        'googleAPIKey',
+        'esriLibUrl',
+        'geolocation',
+        'coordInfo',
+        'print'
+    ];
+    unused.forEach((property: any) => {
+        if (typeof r2Services[property] !== 'undefined') {
+            console.warn(
+                `${property} property provided in services config cannot be mapped and will be skipped.`
+            );
+        }
+    });
 }
 
 /**
@@ -1077,4 +1184,172 @@ function uiUpgrader(r2ui: any, r4c: any): void {
         };
         r4c.fixturesEnabled.push('help');
     }
+
+    if (r2ui.legend) {
+        const headerControls: String[] = ['groupToggle', 'visibilityToggle'];
+        if (r2ui.legend.reorderable) {
+            headerControls.push('layerReorder');
+        }
+
+        if (r2ui.legend.allowImport) {
+            headerControls.push('wizard');
+        }
+        // legend already mapped through mapUpgrader
+        if (r4c.fixtures.legend) {
+            r4c.fixtures.legend.headerControls = headerControls;
+            r4c.fixtures.legend.isOpen =
+                r2ui.legend.isOpen && r2ui.legend.isOpen.large;
+        } else {
+            r4c.fixturesEnabled.push('legend');
+            r4c.fixtures.legend = {
+                headerControls: headerControls,
+                isOpen: r2ui.legend.isOpen && r2ui.legend.isOpen.large,
+                root: {}
+            };
+        }
+    }
+
+    // Map appbar - take all the buttons in the R2 side menu and appBar and put them in R4 appbar if they're valid in R4
+    r4c.fixtures.appbar = { items: [] };
+    r4c.fixturesEnabled.push('appbar');
+    const validItems = ['layers', 'basemap', 'export', 'help', 'geoSearch']; // Are there any more?
+    if (r2ui.appBar) {
+        if (r2ui.appBar.layers !== false) {
+            r4c.fixtures.appbar.items.push('legend');
+            if (!r4c.fixturesEnabled.includes('legend')) {
+                r4c.fixturesEnabled.push('legend');
+            }
+        }
+        if (r2ui.appBar.geoSearch !== false) {
+            r4c.fixtures.appbar.items.push('geosearch');
+        }
+        if (r2ui.appBar.basemap !== false) {
+            r4c.fixtures.appbar.items.push('basemap');
+        }
+    } else {
+        r4c.fixtures.appbar.items.push('legend');
+        if (!r4c.fixturesEnabled.includes('legend')) {
+            r4c.fixturesEnabled.push('legend');
+        }
+        r4c.fixtures.appbar.items.push('geosearch');
+        r4c.fixtures.appbar.items.push('basemap');
+    }
+    if (
+        r2ui.sideMenu &&
+        r2ui.sideMenu.items &&
+        r2ui.sideMenu.items.length > 0
+    ) {
+        r2ui.sideMenu.items.forEach((r2SideMenuButtons: any[]) => {
+            r2SideMenuButtons.forEach((button: any) => {
+                if (
+                    button === 'layers' &&
+                    !r4c.fixtures.appbar.items.includes('legend')
+                ) {
+                    r4c.fixtures.appbar.items.push('legend');
+                    if (!r4c.fixturesEnabled.includes('legend')) {
+                        r4c.fixturesEnabled.push('legend');
+                    }
+                } else if (
+                    button !== 'layers' &&
+                    validItems.includes(button) &&
+                    !r4c.fixtures.appbar.items.includes(button.toLowerCase()) // toLowerCase needed to handle geoSearch vs geosearch
+                ) {
+                    r4c.fixtures.appbar.items.push(button.toLowerCase());
+                    if (
+                        button.toLowerCase() === 'help' ||
+                        (button.toLowerCase() === 'export' &&
+                            !r4c.fixturesEnabled.includes(button.toLowerCase()))
+                    ) {
+                        r4c.fixturesEnabled.push(button.toLowerCase());
+                    }
+                }
+            });
+        });
+    }
+
+    // map tableIsOpen - hunt down the appropriate layer/sublayer and set the table to be open
+    const allowedTypes = [
+        'esri-map-image',
+        'esri-feature',
+        'ogc-wfs',
+        'file-geojson',
+        'file-csv',
+        'file-shape'
+    ];
+    if (
+        r2ui.tableIsOpen &&
+        r2ui.tableIsOpen.id &&
+        r2ui.tableIsOpen.large &&
+        r4c.layers &&
+        r4c.layers.length > 0
+    ) {
+        for (let i = 0; i < r4c.layers.length; i++) {
+            if (
+                r4c.layers[i].id === r2ui.tableIsOpen.id &&
+                allowedTypes.includes(r4c.layers[i].layerType)
+            ) {
+                if (
+                    r2ui.tableIsOpen.dynamicIndex &&
+                    r4c.layers[i].layerType === 'esri-map-image'
+                ) {
+                    for (let j = 0; j < r4c.layers[i].sublayers.length; j++) {
+                        if (
+                            r2ui.tableIsOpen.dynamicIndex ===
+                            r4c.layers[i].sublayers[j].index
+                        ) {
+                            if (!r4c.layers[i].sublayers[j].fixtures) {
+                                r4c.layers[i].sublayers[j].fixtures = {
+                                    grid: {
+                                        isOpen: true
+                                    }
+                                };
+                            } else if (
+                                !r4c.layers[i].sublayers[j].fixtures.grid
+                            ) {
+                                r4c.layers[i].sublayers[j].fixtures.grid = {
+                                    isOpen: true
+                                };
+                            } else {
+                                r4c.layers[i].sublayers[
+                                    j
+                                ].fixtures.grid.isOpen = true;
+                            }
+                        }
+                    }
+                } else {
+                    if (!r4c.layers[i].fixtures) {
+                        r4c.layers[i].fixtures = {
+                            grid: {
+                                isOpen: true
+                            }
+                        };
+                    } else if (!r4c.layers[i].fixtures.grid) {
+                        r4c.layers[i].fixtures.grid = {
+                            isOpen: true
+                        };
+                    } else {
+                        r4c.layers[i].fixtures.grid.isOpen = true;
+                    }
+                }
+            }
+        }
+    }
+
+    // TODO: If any of these properties get implemented/used in the future, remove them from the warning list and map them appropriately.
+    const unused: String[] = [
+        'fullscreen',
+        'theme',
+        'logoUrl',
+        'failureFeedback',
+        'title',
+        'restrictNavigation',
+        'about'
+    ];
+    unused.forEach((property: any) => {
+        if (typeof r2ui[property] !== 'undefined') {
+            console.warn(
+                `${property} property provided in services config cannot be mapped and will be skipped.`
+            );
+        }
+    });
 }
