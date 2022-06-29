@@ -441,6 +441,9 @@ let config = {
                         selected: false
                     },
                     fileName: 'ramp-pcar-4-map-carte'
+                },
+                scrollguard: {
+                    enabled: true
                 }
             },
             system: { animate: true }
@@ -461,7 +464,6 @@ const rInstance = createInstance(
 );
 rInstance.fixture.addDefaultFixtures().then(() => {
     rInstance.panel.open('legend');
-    rInstance.panel.pin('legend');
 });
 
 rInstance.$element.component('WFSLayer-Custom', {

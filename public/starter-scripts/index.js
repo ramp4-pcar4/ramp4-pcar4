@@ -468,6 +468,7 @@ window.debugInstance = rInstance;
 
 rInstance.fixture.addDefaultFixtures().then(() => {
     rInstance.panel.open('legend');
+    rInstance.panel.pin('legend');
 });
 
 rInstance.$element.component('WFSLayer-Custom', {

@@ -35,9 +35,6 @@ class LegendFixture extends LegendAPI {
         );
 
         this.$vApp.$store.registerModule('legend', legend());
-        if (super.config?.isPinned !== false) {
-            this.$iApi.panel.pin('legend');
-        }
 
         // parse legend section of config and store information in legend store
         // here we create a copy of the config because the config parser will mutate the layer ids in the config
