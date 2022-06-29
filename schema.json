@@ -146,6 +146,10 @@
             "type": "object",
             "description": "Provides configuration to the details fixture.",
             "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Display name of the identified layer"
+                },
                 "template": {
                     "type": "string",
                     "description": "Custom Vue component to render as details template"

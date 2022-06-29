@@ -28,6 +28,14 @@ export interface DetailsConfigItem {
     id: string;
 
     /**
+     * The optional display name of the layer.
+     *
+     * @type {string}
+     * @memberof DetailsConfigItem
+     */
+    name: string;
+
+    /**
      * The component that we would like to use as a template.
      *
      * @type {string}
@@ -39,15 +47,19 @@ export interface DetailsConfigItem {
 export class DetailsItemInstance implements DetailsConfigItem {
     id: string;
 
+    name: string;
+
     template: string;
 
     componentId?: string;
 
     constructor(value: string | DetailsConfigItem) {
         const params = {
-            ...(typeof value === 'string' ? { id: value, template: '' } : value)
+            ...(typeof value === 'string'
+                ? { id: value, template: '', name: '' }
+                : value)
         };
-        ({ template: this.template, id: this.id } = params);
+        ({ template: this.template, id: this.id, name: this.name } = params);
     }
 }
 
@@ -61,11 +73,11 @@ export class DetailsState {
     payload: IdentifyResult[] = [];
 
     /**
-     * Details config templates
+     * Details config properties
      *
      * @memberof DetailsState
      */
-    templates: { [id: string]: DetailsItemInstance } = {};
+    properties: { [id: string]: DetailsItemInstance } = {};
 
     /**
      * Details default templates indexed by the identify result format

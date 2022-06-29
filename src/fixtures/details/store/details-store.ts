@@ -53,9 +53,9 @@ export enum DetailsStore {
      */
     payload = 'details/payload',
     /**
-     * (State) templates:  { [id: string]: DetailsItemInstance }
+     * (State) properties:  { [id: string]: DetailsItemInstance }
      */
-    templates = 'details/templates',
+    properties = 'details/properties',
     /**
      * (State) defaultTemplates:  { [type: string]: string }
      */

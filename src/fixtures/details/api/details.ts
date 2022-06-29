@@ -104,6 +104,7 @@ export class DetailsAPI extends FixtureInstance {
         Object.keys(layerDetailsConfigs).forEach((layerId: string) => {
             detailsConfigItems.push({
                 id: layerId,
+                name: layerDetailsConfigs[layerId].name,
                 template: layerDetailsConfigs[layerId].template
             });
         });
@@ -114,7 +115,7 @@ export class DetailsAPI extends FixtureInstance {
 
         // save the items in the store
         this.$vApp.$store.set(
-            DetailsStore.templates,
+            DetailsStore.properties,
             detailsItems.reduce<DetailsItemSet>((map, item) => {
                 map[item.id] = item;
                 return map;
@@ -132,12 +133,12 @@ export class DetailsAPI extends FixtureInstance {
     _validateItems() {
         Object.values(
             this.$vApp.$store.get<DetailsItemInstance[]>(
-                DetailsStore.templates
+                DetailsStore.properties
             )!
         ).forEach(item => {
             if (item.template in this.$vApp.$options.components!) {
                 this.$vApp.$store.set(
-                    `${DetailsStore.templates}@${item.id}.componentId`,
+                    `${DetailsStore.properties}@${item.id}.componentId`,
                     item.template
                 );
             }

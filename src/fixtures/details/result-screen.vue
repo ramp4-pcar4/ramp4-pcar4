@@ -64,6 +64,8 @@ import { defineComponent, type PropType } from 'vue';
 import { GlobalEvents, type LayerInstance, type PanelInstance } from '@/api';
 import type { IdentifyResult } from '@/geo/api';
 
+import { DetailsStore } from './store';
+
 export default defineComponent({
     name: 'DetailsResultScreenV',
     props: {
@@ -85,6 +87,7 @@ export default defineComponent({
         return {
             icon: [] as string[],
             layerExists: false, // tracks whether the layer still exists
+            detailProperties: this.get(DetailsStore.properties),
             handlers: [] as Array<string>
         };
     },
@@ -104,6 +107,13 @@ export default defineComponent({
         layerName(): string {
             const layer: LayerInstance | undefined =
                 this.$iApi.geo.layer.getLayer(this.result.uid);
+            if (
+                layer &&
+                this.detailProperties[layer.id] &&
+                this.detailProperties[layer.id].name
+            ) {
+                return this.detailProperties[layer.id].name;
+            }
             return layer?.name ?? '';
         }
     },

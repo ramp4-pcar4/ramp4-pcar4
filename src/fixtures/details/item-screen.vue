@@ -178,7 +178,7 @@ export default defineComponent({
     data() {
         return {
             defaultTemplates: this.get(DetailsStore.defaultTemplates),
-            templateBindings: this.get(DetailsStore.templates),
+            detailProperties: this.get(DetailsStore.properties),
             identifyTypes: IdentifyResultFormat.UNKNOWN,
             icon: '' as string,
             currentIdx: 0,
@@ -229,6 +229,13 @@ export default defineComponent({
         layerName(): string {
             const layer: LayerInstance | undefined =
                 this.$iApi.geo.layer.getLayer(this.result.uid);
+            if (
+                layer &&
+                this.detailProperties[layer.id] &&
+                this.detailProperties[layer.id].name
+            ) {
+                return this.detailProperties[layer.id].name;
+            }
             return layer?.name ?? '';
         },
 
@@ -264,10 +271,10 @@ export default defineComponent({
             // return its name.
             if (
                 layer &&
-                this.templateBindings[layer.id] &&
-                this.templateBindings[layer.id].template
+                this.detailProperties[layer.id] &&
+                this.detailProperties[layer.id].template
             ) {
-                return this.templateBindings[layer.id].template;
+                return this.detailProperties[layer.id].template;
             }
 
             // If nothing is found, use a default template from config
