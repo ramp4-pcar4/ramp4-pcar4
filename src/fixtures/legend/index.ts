@@ -36,7 +36,12 @@ class LegendFixture extends LegendAPI {
 
         this.$vApp.$store.registerModule('legend', legend());
         if (super.config?.isPinned !== false) {
-            this.$iApi.panel.pin('legend');
+            // TODO: revisit this once #1166 is donethanks
+            // only pin if legend is open
+            const legendPanel = this.$iApi.panel.get('legend');
+            if (legendPanel.isOpen) {
+                this.$iApi.panel.pin('legend');
+            }
         }
 
         // parse legend section of config and store information in legend store
