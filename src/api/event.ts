@@ -341,6 +341,7 @@ enum DefEH {
     MAP_BASEMAPCHANGE_ATTRIBUTION = 'updates_map_caption_attribution_basemap',
     CONFIG_CHANGE_ATTRIBUTION = 'updates_map_caption_attribution_config',
     MAP_CREATED_ATTRIBUTION = 'updates_map_caption_attribution_map_created',
+    MAP_RESIZED_SCALEBAR = 'resizes_map_caption_scale',
     MAP_SCALECHANGE_SCALEBAR = 'updates_map_caption_scale',
     MOUSE_MOVE_MAPTIP_CHECK = 'checks_maptip_mouse_move',
     EXTENT_CHANGE_MAPTIP_CHECK = 'checks_maptip_extent_change',
@@ -617,6 +618,7 @@ export class EventAPI extends APIScope {
                 DefEH.MAP_BASEMAPCHANGE_ATTRIBUTION,
                 DefEH.CONFIG_CHANGE_ATTRIBUTION,
                 DefEH.MAP_CREATED_ATTRIBUTION,
+                DefEH.MAP_RESIZED_SCALEBAR,
                 DefEH.MAP_SCALECHANGE_SCALEBAR,
                 DefEH.MOUSE_MOVE_MAPTIP_CHECK,
                 DefEH.EXTENT_CHANGE_MAPTIP_CHECK,
@@ -932,6 +934,16 @@ export class EventAPI extends APIScope {
                 this.$iApi.event.on(
                     GlobalEvents.MAP_CREATED,
                     zeHandler,
+                    handlerName
+                );
+                break;
+            case DefEH.MAP_RESIZED_SCALEBAR:
+                // update the map scale caption when the window is resized
+                this.$iApi.event.on(
+                    GlobalEvents.MAP_RESIZED,
+                    debounce(100, () =>
+                        this.$iApi.geo.map.caption.updateScale()
+                    ),
                     handlerName
                 );
                 break;
