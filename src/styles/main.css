@@ -1,12 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+.ramp-app {
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+    @tailwind variants;
 
-@layer utilities {
-    .display-none {
-        display: none;
+    @layer utilities {
+        .display-none {
+            display: none;
+        }
     }
 }
+
 .ramp-app {
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI,
         Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
