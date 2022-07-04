@@ -273,21 +273,6 @@ export enum IdentifyResultFormat {
     UNKNOWN = 'unknown'
 }
 
-export enum LayerControls {
-    BoundaryZoom = 'boundaryZoom',
-    Boundingbox = 'boundingBox',
-    Datatable = 'datatable',
-    Identify = 'identify',
-    Metadata = 'metadata',
-    Opacity = 'opacity',
-    Refresh = 'refresh',
-    Reload = 'reload',
-    Remove = 'remove',
-    Settings = 'settings',
-    Symbology = 'symbology',
-    Visibility = 'visibility'
-}
-
 // TODO since MapClick and MapMove are payloads on public events, is there a proper
 //      way they should be exposed from the main app as well (like, exported? in one of those .d.ts files?)?
 //      same question probably applies to a number of other interfaces here.
@@ -450,30 +435,11 @@ export enum CoreFilter {
     API = 'api' // this would be a default api key. e.g. if someone just does an API filter set with no key parameter, it would use this.
 }
 
-// Attribution interface that contains all the core attributes of the attribution node
-export interface Attribution {
-    text: { disabled?: boolean; value?: string };
-    logo: {
-        disabled?: boolean;
-        altText?: string;
-        value?: string;
-        link?: string;
-    };
-}
-
 export interface ScaleHelper {
     units: string;
     isImperialScale: boolean;
     pixels: number;
     distance: number;
-}
-
-// Contains properties needed to display scale on the map-caption bar
-export interface ScaleBar {
-    disabled?: boolean;
-    label?: string;
-    width?: string;
-    isImperialScale?: boolean;
 }
 
 // Contains properties needed to display mouse co-ords on the map-caption bar
@@ -490,6 +456,39 @@ export interface UrlQueryMap {
 
 // TODO migrate these to /geo/api/geo-common ? if we need config interfaces before creating an instance,
 //      having them defined here might cause circular reference.
+
+export enum LayerControls {
+    BoundaryZoom = 'boundaryZoom',
+    Datatable = 'datatable',
+    Identify = 'identify',
+    Metadata = 'metadata',
+    Opacity = 'opacity',
+    Refresh = 'refresh',
+    Reload = 'reload',
+    Remove = 'remove',
+    Settings = 'settings',
+    Symbology = 'symbology',
+    Visibility = 'visibility'
+}
+
+// Attribution interface that contains all the core attributes of the attribution node
+export interface Attribution {
+    text: { disabled?: boolean; value?: string };
+    logo: {
+        disabled?: boolean;
+        altText?: string;
+        value?: string;
+        link?: string;
+    };
+}
+
+// Contains properties needed to display scale on the map-caption bar
+export interface ScaleBar {
+    disabled?: boolean;
+    label?: string;
+    width?: string;
+    isImperialScale?: boolean;
+}
 
 export interface RampSpatialReference {
     wkid?: number;
@@ -517,17 +516,16 @@ export interface RampLayerFieldMetadataConfig {
 // i.e. a dynamic layer child
 export interface RampLayerMapImageSublayerConfig {
     // A+ name
-    index?: number;
+    index: number;
     name?: string;
     nameField?: string;
     // outfields?: string; // TODO tbd if we keep this
     state?: RampLayerStateConfig;
     // following items need to be flushed out
-    extent?: any;
+    extent?: RampExtentConfig;
     controls?: Array<LayerControls>;
     disabledControls?: Array<LayerControls>;
-    stateOnly?: any;
-    table?: any;
+    stateOnly?: boolean;
     fieldMetadata?: RampLayerFieldMetadataConfig;
     customRenderer?: any;
     fixtures?: any; // layer-based fixture config
@@ -535,7 +533,7 @@ export interface RampLayerMapImageSublayerConfig {
 
 // i.e. a wms layer child
 export interface RampLayerWmsSublayerConfig {
-    id?: string; // this is the "name" on the service
+    id: string; // this is the "name" on the service
     name?: string; // this is display name in ramp. would override "title" on the service
     state?: RampLayerStateConfig;
     // following items need to be flushed out
@@ -544,37 +542,38 @@ export interface RampLayerWmsSublayerConfig {
     currentStyle?: string; // style to be used
     styleLegends?: Array<{ name: string; url: string }>; // map of styles to legend graphic url. overrides service urls.
     fixtures?: any; // layer-based fixture config
-    // more...
 }
 
 // TODO investigate if we want to make a fancy interface heirarchy instead of pile-of-?-properties
 export interface RampLayerConfig {
     id: string;
     layerType: LayerType;
-    url?: string;
+    url: string;
     name?: string;
     state?: RampLayerStateConfig;
-    customRenderer?: any; // TODO expand, if worth it. fairly complex object
+    customRenderer?: any;
     // TODO revisit issue #1019 after v1.0.0
     // refreshInterval?: number;
-    initialFilteredQuery?: string;
     fieldMetadata?: RampLayerFieldMetadataConfig;
     nameField?: string;
     tooltipField?: string;
-    featureInfoMimeType?: string;
+    featureInfoMimeType?: string; // used by WMS layer
     controls?: Array<LayerControls>;
     disabledControls?: Array<LayerControls>;
     sublayers?:
         | Array<RampLayerMapImageSublayerConfig>
         | Array<RampLayerWmsSublayerConfig>;
-    rawData?: any; // used for static data, like geojson string, shapefile guts
+    extent?: RampExtentConfig;
     latField?: string; // csv coord field
     longField?: string; // csv coord field
     tolerance?: number; // click tolerance
     metadata?: { url: string; name?: string };
+    catalogueUrl?: string;
     fixtures?: any; // layer-based fixture config
     cosmetic?: boolean;
     colour?: string;
+    initialFilteredQuery?: string;
+    rawData?: any; // used for static data, like geojson string, shapefile guts
 }
 
 export interface RampExtentConfig {
@@ -593,7 +592,7 @@ export interface RampExtentSetConfig {
 }
 
 export interface RampBasemapLayerConfig {
-    id?: string;
+    id: string;
     layerType: LayerType;
     url: string;
     opacity?: number;
@@ -601,13 +600,13 @@ export interface RampBasemapLayerConfig {
 
 export interface RampBasemapConfig {
     id: string;
-    tileSchemaId: string;
-    name?: string;
-    description?: string;
-    altText?: string;
+    name: string;
+    description: string;
+    altText: string;
     thumbnailUrl?: string;
-    attribution?: Attribution;
+    tileSchemaId: string;
     layers: Array<RampBasemapLayerConfig>;
+    attribution?: Attribution;
 }
 
 export interface RampTileSchemaConfig {
