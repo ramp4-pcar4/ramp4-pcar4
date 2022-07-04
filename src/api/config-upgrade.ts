@@ -277,6 +277,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
             let r4ts: RampTileSchemaConfig = {
                 id: r2ts.id,
                 name: r2ts.name,
+                default: '', // TODO: use better defaulting here
                 extentSetId: r2ts.extentSetId,
                 lodSetId: r2ts.lodSetId,
                 thumbnailTileUrls: [], // TODO: use some defaulting here?

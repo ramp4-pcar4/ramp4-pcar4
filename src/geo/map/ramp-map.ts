@@ -133,12 +133,16 @@ export class MapAPI extends CommonMapAPI {
 
         const extentSetConfig: RampExtentSetConfig | undefined =
             config.extentSets.find(
-                es => es.id === tileSchemaConfig.extentSetId
+                es =>
+                    es.id ===
+                    (tileSchemaConfig.extentSetId || tileSchemaConfig.default)
             );
 
         if (!extentSetConfig) {
             throw new Error(
-                `Could not find extent set with the given id: ${tileSchemaConfig.extentSetId}`
+                `Could not find extent set with the given id: ${
+                    tileSchemaConfig.extentSetId || tileSchemaConfig.default
+                }`
             );
         }
 
@@ -146,12 +150,16 @@ export class MapAPI extends CommonMapAPI {
         this._rampSR = this._rampExtentSet.sr.clone();
 
         const lodSetConfig: RampLodSetConfig | undefined = config.lodSets.find(
-            ls => ls.id === tileSchemaConfig.lodSetId
+            ls =>
+                ls.id ===
+                (tileSchemaConfig.lodSetId || tileSchemaConfig.default)
         );
 
         if (!lodSetConfig) {
             throw new Error(
-                `Could not find lod set with the given id: ${tileSchemaConfig.lodSetId}`
+                `Could not find lod set with the given id: ${
+                    tileSchemaConfig.lodSetId || tileSchemaConfig.default
+                }`
             );
         }
 
