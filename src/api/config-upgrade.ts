@@ -565,7 +565,6 @@ function legendEntryUpgrader(r2legendEntry: any) {
     const r4legendEntry: any = r2legendEntry; // mostly a 1:1 mapping
     const allowedControls = [
         'boundaryZoom',
-        'boundingBox',
         'datatable',
         'identify',
         'metadata',
@@ -656,7 +655,9 @@ function layerUpgrader(r2layer: any): any {
         );
     }
     if (r2layer.metadataUrl) {
-        r4layer.metadataUrl = r2layer.metadataUrl;
+        r4layer.metadata = {
+            url: r2layer.metadataUrl
+        };
     }
     if (r2layer.catalogueUrl) {
         r4layer.catalogueUrl = r2layer.catalogueUrl;
@@ -821,7 +822,6 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
     }
     const allowedControls: string[] = [
         'boundaryZoom',
-        'boundingBox',
         'datatable',
         'identify',
         'metadata',
@@ -848,13 +848,17 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
         r4layer.state = {
             opacity: r2layer.state.opacity ?? 1,
             visibility: r2layer.state.visibility ?? true,
-            boundingBox: r2layer.state.boundingBox ?? false,
             identify: r2layer.state.query ?? true,
             hovertips: r2layer.state.hovertips ?? true
         };
         if (typeof r2layer.state.snapshot !== 'undefined') {
             console.warn(
                 `snapshot property provided in initialLayer settings in layer ${r2layer.id} cannot be mapped and will be skipped.`
+            );
+        }
+        if (typeof r2layer.state.boundingBox !== 'undefined') {
+            console.warn(
+                `boundingBox property provided in initialLayer settings in layer ${r2layer.id} cannot be mapped and will be skipped.`
             );
         }
     }
