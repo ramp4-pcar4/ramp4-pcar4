@@ -574,6 +574,7 @@ export interface RampLayerConfig {
     metadata?: { url: string; name?: string };
     fixtures?: any; // layer-based fixture config
     cosmetic?: boolean;
+    colour?: string;
 }
 
 export interface RampExtentConfig {
