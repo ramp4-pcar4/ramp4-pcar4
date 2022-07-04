@@ -5,7 +5,7 @@ import type {
     LocaleMessages,
     VueMessageType
 } from 'vue-i18n';
-import messages from './lang.csv?raw';
+import messages from './lang.csv';
 
 export type I18nComponentOptions = {
     messages?: LocaleMessages<VueMessageType> | VueMessageType;
