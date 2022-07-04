@@ -9,7 +9,7 @@ import {
     EsriSimpleRenderer,
     EsriSpatialReference
 } from '@/geo/esri';
-import { FieldType } from '@/geo/api';
+import { Colour, FieldType } from '@/geo/api';
 
 /**
  * Maps GeoJSON geometry types to a set of default renders defined in GlobalStorage.DefaultRenders
@@ -239,8 +239,12 @@ export class FileUtils extends APIScope {
 
         // @ts-ignore
         const value = featureTypeToRenderer[geoJson.features[0].geometry.type];
-        // @ts-ignore
-        const defRender: any = defaultRenderers[value];
+        // clone the default renderer so changes don't persist
+        // also note that this default renderer object is in ArcGIS Server object format
+        const defRender: any = JSON.parse(
+            // @ts-ignore
+            JSON.stringify(defaultRenderers[value])
+        );
 
         // attempt to get spatial reference from geoJson
         if (geoJson.crs && geoJson.crs.type === 'name') {
@@ -267,11 +271,10 @@ export class FileUtils extends APIScope {
                 layerId = this.$iApi.geo.shared.generateUUID();
             }
 
-            // due to grousyness of esri typescript, we mangle the colour pre-fromJSON
             if (options.colour) {
-                defRender.renderer.symbol.color = new EsriColour(
+                defRender.renderer.symbol.color = new Colour(
                     options.colour
-                ).toRgba();
+                ).toArcServer();
             }
 
             // TODO add support for renderer option, or drop the option

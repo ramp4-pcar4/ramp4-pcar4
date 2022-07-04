@@ -86,6 +86,11 @@ export class Colour {
         return new EsriColour(this.rgba);
     }
 
+    toArcServer(): Array<number> {
+        // map (0-1) alpha to (0-255) alpha
+        return [this.c[0], this.c[1], this.c[2], 255 * this.c[3]];
+    }
+
     static hexToInt(twoCharHex: string): number {
         return twoCharHex.length === 0 ? 255 : parseInt(twoCharHex, 16);
     }
