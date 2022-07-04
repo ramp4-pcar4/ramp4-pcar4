@@ -17,7 +17,7 @@
             class="flex flex-shrink-0 items-center border-b border-solid border-gray-600 px-8 h-48 overflow-hidden"
             tabindex="-1"
         >
-            <back class="block sm:hidden" @click="panel.close()"></back>
+            <back class="block sm:display-none" @click="panel.close()"></back>
 
             <h2 class="flex-grow text-lg py-16 pl-8 min-w-0" v-truncate>
                 <slot name="header"></slot>
@@ -27,7 +27,7 @@
                 <slot name="controls"></slot>
             </panel-options-menu>
 
-            <div class="hidden sm:flex">
+            <div class="display-none sm:flex">
                 <pin @click="panel.pin()" :active="panel.isPinned" />
                 <expand
                     v-if="panel.controls && panel.controls.expand"
