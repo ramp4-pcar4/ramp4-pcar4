@@ -47,7 +47,8 @@
 
                     <div class="rv-settings-divider"></div>
 
-                    <settings-component
+                    <!-- Revist this in #194 -->
+                    <!-- <settings-component
                         class="rv-subsection"
                         type="toggle"
                         :name="$t('settings.label.boundingBox')"
@@ -60,8 +61,7 @@
                             )
                         }"
                     ></settings-component>
-
-                    <div class="rv-settings-divider"></div>
+                    <div class="rv-settings-divider"></div> -->
                 </div>
 
                 <div class="flex flex-col justify-center">
