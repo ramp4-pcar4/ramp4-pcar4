@@ -13,6 +13,7 @@
             duration: [200, 200]
         }"
         @mousedown="mouseFocus"
+        @keydown.up.down.left.right.prevent
     ></div>
 </template>
 
