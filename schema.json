@@ -348,7 +348,6 @@
                 "type": "string",
                 "enum": [
                     "boundaryZoom",
-                    "boundingBox",
                     "datatable",
                     "identify",
                     "metadata",
@@ -690,10 +689,20 @@
                     "default": 4000,
                     "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer. Currently not supported."
                 },
-                "metadataUrl": {
-                    "type": "string",
-                    "default": null,
-                    "description": "Metadata url of the layer service."
+                "metadata": {
+                    "type": "object",
+                    "description": "Metadata link and name of the layer service.",
+                    "properties": {
+                        "url": {
+                            "type": "string",
+                            "description": "Metadata url of the layer service."
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "Name to be displayed as the header of the metadata panel."
+                        },
+                        "required": ["url"]
+                    }
                 },
                 "catalogueUrl": {
                     "type": "string",
@@ -714,7 +723,6 @@
                         "datatable",
                         "opacity",
                         "visibility",
-                        "boundingBox",
                         "identify",
                         "metadata",
                         "boundaryZoom",
@@ -759,10 +767,20 @@
                     "default": 4000,
                     "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer. Currently not supported."
                 },
-                "metadataUrl": {
-                    "type": "string",
-                    "default": null,
-                    "description": "Metadata url of the layer service."
+                "metadata": {
+                    "type": "object",
+                    "description": "Metadata link and name of the layer service.",
+                    "properties": {
+                        "url": {
+                            "type": "string",
+                            "description": "Metadata url of the layer service."
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "Name to be displayed as the header of the metadata panel."
+                        },
+                        "required": ["url"]
+                    }
                 },
                 "layerType": {
                     "type": "string",
@@ -777,7 +795,6 @@
                     "default": [
                         "opacity",
                         "visibility",
-                        "boundingBox",
                         "metadata",
                         "boundaryZoom",
                         "reload",
@@ -829,10 +846,20 @@
                     "default": 4000,
                     "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer. Currently not supported."
                 },
-                "metadataUrl": {
-                    "type": "string",
-                    "default": null,
-                    "description": "Metadata url of the layer service."
+                "metadata": {
+                    "type": "object",
+                    "description": "Metadata link and name of the layer service.",
+                    "properties": {
+                        "url": {
+                            "type": "string",
+                            "description": "Metadata url of the layer service."
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "Name to be displayed as the header of the metadata panel."
+                        },
+                        "required": ["url"]
+                    }
                 },
                 "catalogueUrl": {
                     "type": "string",
@@ -871,7 +898,6 @@
                     "default": [
                         "opacity",
                         "visibility",
-                        "boundingBox",
                         "identify",
                         "metadata",
                         "boundaryZoom",
@@ -939,7 +965,6 @@
                         "datatable",
                         "opacity",
                         "visibility",
-                        "boundingBox",
                         "identify",
                         "metadata",
                         "boundaryZoom",
@@ -961,6 +986,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "A flag indicating this entry is only for state tracking (i.e. it should not be displayed on the UI and all of the controls will be ignored, but the layer itself will be displayed on the map with the given state settings)."
+                },
+                "customRenderer": {
+                    "type": "object",
+                    "description": "Optional renderer object to apply to the layer. Follows ESRI ArcGIS Server json convention.",
+                    "additionalProperties": true
                 },
                 "fieldMetadata": {
                     "type": "object",
@@ -1025,10 +1055,20 @@
                     "default": 4000,
                     "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer. Currently not supported."
                 },
-                "metadataUrl": {
-                    "type": "string",
-                    "default": null,
-                    "description": "Metadata url of the layer service."
+                "metadata": {
+                    "type": "object",
+                    "description": "Metadata link and name of the layer service.",
+                    "properties": {
+                        "url": {
+                            "type": "string",
+                            "description": "Metadata url of the layer service."
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "Name to be displayed as the header of the metadata panel."
+                        },
+                        "required": ["url"]
+                    }
                 },
                 "catalogueUrl": {
                     "type": "string",
@@ -1054,7 +1094,6 @@
                         "datatable",
                         "opacity",
                         "visibility",
-                        "boundingBox",
                         "identify",
                         "metadata",
                         "boundaryZoom",
@@ -1083,6 +1122,10 @@
                     "items": {
                         "$ref": "#/$defs/fieldMetadataEntry"
                     }
+                },
+                "initialFilteredQuery": {
+                    "type": "string",
+                    "description": "Initial filter query to be applied to the layer."
                 },
                 "fixtures": {
                     "$ref": "#/$defs/layerFixtureConfig"
@@ -1151,7 +1194,6 @@
                         "datatable",
                         "opacity",
                         "visibility",
-                        "boundingBox",
                         "identify",
                         "metadata",
                         "boundaryZoom",
@@ -1240,7 +1282,6 @@
                         "datatable",
                         "opacity",
                         "visibility",
-                        "boundingBox",
                         "identify",
                         "metadata",
                         "boundaryZoom",
@@ -1310,10 +1351,20 @@
                     "default": 4000,
                     "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer. Currently not supported."
                 },
-                "metadataUrl": {
-                    "type": "string",
-                    "default": null,
-                    "description": "Metadata url of the layer service."
+                "metadata": {
+                    "type": "object",
+                    "description": "Metadata link and name of the layer service.",
+                    "properties": {
+                        "url": {
+                            "type": "string",
+                            "description": "Metadata url of the layer service."
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "Name to be displayed as the header of the metadata panel."
+                        },
+                        "required": ["url"]
+                    }
                 },
                 "catalogueUrl": {
                     "type": "string",
@@ -1347,7 +1398,6 @@
                     "default": [
                         "opacity",
                         "visibility",
-                        "boundingBox",
                         "identify",
                         "metadata",
                         "boundaryZoom",
@@ -1409,7 +1459,6 @@
                     "default": [
                         "opacity",
                         "visibility",
-                        "boundingBox",
                         "identify",
                         "metadata",
                         "boundaryZoom",
@@ -1439,7 +1488,7 @@
                     "$ref": "#/$defs/details"
                 },
                 "grid": {
-                    "$ref": "#/$defs/table"
+                    "$ref": "#/$defs/grid"
                 },
                 "legend": {
                     "type": "object",
@@ -1515,7 +1564,7 @@
             },
             "additionalProperties": false
         },
-        "table": {
+        "grid": {
             "type": "object",
             "description": "Configuration for the datatable.",
             "properties": {
@@ -1649,7 +1698,7 @@
                 },
                 "default": {
                     "type": "string",
-                    "description": "Default name that can be traced to a value containing extent set and lod set hardcoded data."
+                    "description": "Default name to be used for extentSetId and lodSetId that can be traced to a value containing extent set and lod set hardcoded data."
                 },
                 "name": {
                     "type": "string",
@@ -1671,6 +1720,10 @@
                         "type": "string"
                     },
                     "minItems": 2
+                },
+                "hasNorthPole": {
+                    "type": "boolean",
+                    "description": "Indicates if this tile schema shows the north pole."
                 }
             },
             "required": ["id", "name", "default"],

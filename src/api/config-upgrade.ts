@@ -277,6 +277,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
             let r4ts: RampTileSchemaConfig = {
                 id: r2ts.id,
                 name: r2ts.name,
+                default: '', // TODO: use better defaulting here
                 extentSetId: r2ts.extentSetId,
                 lodSetId: r2ts.lodSetId,
                 thumbnailTileUrls: [], // TODO: use some defaulting here?
@@ -565,7 +566,6 @@ function legendEntryUpgrader(r2legendEntry: any) {
     const r4legendEntry: any = r2legendEntry; // mostly a 1:1 mapping
     const allowedControls = [
         'boundaryZoom',
-        'boundingBox',
         'datatable',
         'identify',
         'metadata',
@@ -656,7 +656,9 @@ function layerUpgrader(r2layer: any): any {
         );
     }
     if (r2layer.metadataUrl) {
-        r4layer.metadataUrl = r2layer.metadataUrl;
+        r4layer.metadata = {
+            url: r2layer.metadataUrl
+        };
     }
     if (r2layer.catalogueUrl) {
         r4layer.catalogueUrl = r2layer.catalogueUrl;
@@ -821,7 +823,6 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
     }
     const allowedControls: string[] = [
         'boundaryZoom',
-        'boundingBox',
         'datatable',
         'identify',
         'metadata',
