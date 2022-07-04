@@ -106,7 +106,6 @@ export class FileLayer extends AttribLayer {
 
         // TODO figure out options parameter.
         // TODO look into supporting renderer from rampConfig. dont we already have something like this?
-        // TODO should be a colour option. figure out where that comes from. will our ramp config have that? or is it sys option for wizard trickery?
         // TODO figure out how a sourceProjection option would work. who is supplying this? an API caller? RAMP UI / Config really doesnt support it.
         const opts = {
             layerId: this.origRampConfig.id || '',
@@ -116,7 +115,8 @@ export class FileLayer extends AttribLayer {
             }),
             ...(this.origRampConfig.longField && {
                 lonField: this.origRampConfig.longField
-            })
+            }),
+            colour: this.origRampConfig.colour
         };
 
         this.esriJson = await this.$iApi.geo.layer.files.geoJsonToEsriJson(
