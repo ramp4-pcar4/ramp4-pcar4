@@ -484,7 +484,7 @@ rInstance.$element.component('WFSLayer-Custom', {
 rInstance.$element.component('Water-Quantity-Template', {
     props: ['identifyData'],
     template: `
-        <div style="align-items: center; justify-content: center; font-size: .875rem; font-family: Arial, sans-serif;">
+        <div style="align-items: center; justify-content: center; font-size: 14px; font-family: Arial, sans-serif;">
             <div v-html="renderHeader()" />
             <div v-html="createSection('Station ID', 'StationID')" />
             <div v-html="createSection('Province', 'E_Province')" />
@@ -519,19 +519,19 @@ rInstance.$element.component('Water-Quantity-Template', {
         renderHeader() {
             if (!this.identifyData.loaded) {
                 return `
-                <span style="display: flex; font-size: 1.25rem; background-color: #e21e5e; color: white; padding: 4px; text-align: center;">
+                <span style="display: flex; font-size: 20px; background-color: #e21e5e; color: white; padding: 4px; text-align: center;">
                     Loading...
                 </span>
                 `;
             } else if (this.identifyData.data['Symbol'] === '3') {
                 return `
-                    <span style="display: flex; font-size: 1.25rem; background-color: #e53e3e; color: white; padding: 4px; text-align: center;">
+                    <span style="display: flex; font-size: 20px; background-color: #e53e3e; color: white; padding: 4px; text-align: center;">
                         ${this.identifyData.data['StationName']}
                     </span>
                 `;
             } else {
                 return `
-                    <span style="display: flex; font-size: 1.25rem; background-color: #3182ce; color: white; padding: 4px; text-align: center;">
+                    <span style="display: flex; font-size: 20px; background-color: #3182ce; color: white; padding: 4px; text-align: center;">
                         ${this.identifyData.data['StationName']}
                     </span>
                 `;
@@ -543,7 +543,7 @@ rInstance.$element.component('Water-Quantity-Template', {
                 : 'Loading...';
 
             return `
-            <div style="display: flex; flex-direction: column; font-size: .875rem; padding-top: 5px;">
+            <div style="display: flex; flex-direction: column; padding-top: 5px;">
                 <span style="color: #a0aec0; font-weight: bold;">
                     ${title}
                 </span>
