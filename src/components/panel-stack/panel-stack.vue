@@ -47,7 +47,7 @@ export default defineComponent({
             // then the screen is too large).
             this.$store.set(
                 'panel/mobileView',
-                !this.$root?.$el.classList.contains('sm')
+                !this.$root.$refs['app-size'].classList.contains('sm')
             );
 
             this.$store.set('panel/stackWidth', entries[0].contentRect.width);
