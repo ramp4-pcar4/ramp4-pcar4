@@ -6,11 +6,12 @@ import {
     Graphic,
     LayerControls,
     LayerFormat,
-    LayerState,
+    LoadState,
     LayerType,
     NoGeometry,
     ScaleSet,
-    TreeNode
+    TreeNode,
+    LayerState
 } from '@/geo/api';
 import type {
     AttributeSet,
@@ -46,7 +47,8 @@ export class LayerInstance extends APIScope {
     uid: string;
 
     initialized: boolean;
-    state: LayerState;
+    loadState: LoadState;
+    layerState: LayerState;
     drawState: DrawState;
 
     layerIdx: number;
@@ -88,9 +90,9 @@ export class LayerInstance extends APIScope {
         this.uid = ''; // shutting up typescript. will get set somewhere else. // TODO verify setting, move here if that is smarter.
 
         this.initialized = false;
-        this.state = LayerState.NEW;
+        this.loadState = LoadState.NEW;
         this.drawState = DrawState.NOT_LOADED;
-
+        this.layerState = LayerState.NEW;
         this.layerIdx = -1; // default value
         this.layerFormat = LayerFormat.UNKNOWN;
         this.layerType = LayerType.UNKNOWN;
@@ -547,16 +549,28 @@ export class LayerInstance extends APIScope {
     onLoad(): void {}
 
     /**
-     * Updates layer state and raises events.
+     * Initiates actions after layer load error.
      * Should generally only be called internally by the RAMP core.
      */
-    updateState(newState: LayerState): void {}
+    onError(): void {}
+
+    /**
+     * Updates layer load state and raises events.
+     * Should generally only be called internally by the RAMP core.
+     */
+    updateLoadState(newState: LoadState): void {}
 
     /**
      * Updates layer draw state and raises events.
      * Should generally only be called internally by the RAMP core.
      */
     updateDrawState(newState: DrawState): void {}
+
+    /**
+     * Updates layer layer state and raises events.
+     * Should generally only be called internally by the RAMP core.
+     */
+    updateLayerState(newState: LayerState): void {}
 
     /**
      * Finds an sublayer index corresponding to the given uid.

@@ -162,7 +162,7 @@
 import { defineComponent, toRaw } from 'vue';
 import type { PropType } from 'vue';
 import { GlobalEvents, LayerInstance } from '@/api';
-import { LayerControls, LayerState, type LegendSymbology } from '@/geo/api';
+import { LayerControls, LoadState, type LegendSymbology } from '@/geo/api';
 
 import type { LegendEntry } from '../store/legend-defs';
 import LegendCheckboxV from './checkbox.vue';
@@ -218,11 +218,11 @@ export default defineComponent({
         // watch for when layer state turns to ERROR
         this.handlers.push(
             this.$iApi.event.on(
-                GlobalEvents.LAYER_STATECHANGE,
+                GlobalEvents.LAYER_LOADSTATECHANGE,
                 (payload: { layer: LayerInstance; state: string }) => {
                     // sync legend item state with layer state if errors
                     if (
-                        payload.state === LayerState.ERROR &&
+                        payload.state === LoadState.ERROR &&
                         payload.layer.uid === this.legendItem!.layer!.uid
                     ) {
                         this.legendItem.setErrorType();

@@ -35,7 +35,7 @@ export class LayerAPI extends APIScope {
      * Will generate a RAMP Layer based on the supplied config object.
      *
      * @param {Object} config a valid layer configuration object
-     * @returns {LayerInstance} Layer in uninitialized state
+     * @returns {LayerInstance} Layer in uninitialized load state
      */
     createLayer(config: RampLayerConfig): LayerInstance {
         let closs: new (config: any, iApi: InstanceAPI) => LayerInstance;
@@ -111,6 +111,16 @@ export class LayerAPI extends APIScope {
      */
     allLayers(): Array<LayerInstance> {
         return this.$vApp.$store.get<LayerInstance[]>(LayerStore.layers) || [];
+    }
+
+    /**
+     * Return all error layers.
+     * @returns {Array<LayerInstance>} all error layers
+     */
+    allErrorLayers(): Array<LayerInstance> {
+        return (
+            this.$vApp.$store.get<LayerInstance[]>(LayerStore.penaltyBox) || []
+        );
     }
 
     /**

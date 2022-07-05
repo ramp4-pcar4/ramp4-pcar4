@@ -338,6 +338,7 @@ let config = {
                     state: {
                         visibility: true
                     },
+                    expectedResponseTime: 10,
                     customRenderer: {},
                     metadata: {
                         url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/main/README.md'

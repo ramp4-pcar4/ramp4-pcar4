@@ -265,7 +265,7 @@ let config = {
                     id: 'climateActionMap',
                     name: 'Climate action map',
                     layerType: 'esri-map-image',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CAM/MapServer',
+                    url: 'hahaha',
                     sublayers: [
                         {
                             index: 0,
