@@ -131,8 +131,19 @@ const actions = {
         });
         */
     },
+    addErrorLayers: (context: LayerContext, layers: LayerInstance[]) => {
+        if (!Array.isArray(layers)) {
+            return;
+        }
+        layers.forEach(l => {
+            context.commit('ADD_ERROR_LAYER', l);
+        });
+    },
     removeLayer: (context: LayerContext, layer: LayerInstance) => {
         context.commit('REMOVE_LAYER', layer);
+    },
+    removeErrorLayer: (context: LayerContext, layer: LayerInstance) => {
+        context.commit('REMOVE_ERROR_LAYER', layer);
     },
     removeLayerConfig: (context: LayerContext, layerId: string) => {
         context.commit('REMOVE_LAYER_CONFIG', layerId);
@@ -147,6 +158,9 @@ const mutations = {
     ADD_LAYER: (state: LayerState, value: LayerInstance) => {
         // copy to new array so watchers will have a reference to the old value
         state.layers = [...state.layers, value];
+    },
+    ADD_ERROR_LAYER: (state: LayerState, value: LayerInstance) => {
+        state.penaltyBox = [...state.penaltyBox, value];
     },
     REORDER_LAYER: (
         state: LayerState,
@@ -171,6 +185,13 @@ const mutations = {
         });
         state.layers = filteredLayers;
     },
+    REMOVE_ERROR_LAYER: (state: LayerState, value: LayerInstance) => {
+        // copy to new array so watchers will have a reference to the old value
+        const filteredLayers = state.penaltyBox.filter(layer => {
+            return layer.id !== value.id || layer.uid !== value.uid;
+        });
+        state.penaltyBox = filteredLayers;
+    },
     REMOVE_LAYER_CONFIG: (state: LayerState, layerId: string) => {
         // copy to new array so watchers will have a reference to the old value
         const filteredLayerConfigs = state.layerConfigs.filter(layerConfig => {
@@ -193,6 +214,12 @@ export enum LayerStore {
      * (State) layers: LayerInstance[]
      */
     layers = 'layer/layers',
+
+    /**
+     * (State) penaltyBox: LayerInstance[]
+     */
+    penaltyBox = 'layer/penaltyBox',
+
     /**
      * (Action) reorderLayer: ({ layer: LayerInstance, index: number })
      */
@@ -202,9 +229,17 @@ export enum LayerStore {
      */
     addLayers = 'layer/addLayers!',
     /**
+     * (Action) addErrorLayers: (layers: LayerInstance[])
+     */
+    addErrorLayers = 'layer/addErrorLayers!',
+    /**
      * (Action) removeLayer: (layer: LayerInstance)
      */
     removeLayer = 'layer/removeLayer!',
+    /**
+     * (Action) removeLayer: (layer: LayerInstance)
+     */
+    removeErrorLayer = 'layer/removeErrorLayer!',
     /**
      * (State) layerConfigs: RampLayerConfig[]
      */
