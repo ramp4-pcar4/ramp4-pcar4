@@ -121,7 +121,7 @@ var featureLayer = instanceApi.geo.layer.createLayer(simpleConfig));
 
 The creation of the layer just generates the controlling `Layer` object. To generate an ESRI layer (which the mapping API uses to render stuff on the map), use the `initiate()` method on the layer. To remove/trash the ESRI layer, use `terminate()`. These functions can be used to orchestrate things like layer reloads, projection changes, etc.
 
-The `.initialized` property on the `Layer` will indicate the current state of the layer in this matter.
+The `.initiationState` property on the `Layer` will indicate the current state of the layer in this matter.
 
 ### Waiting For Layer Load
 
@@ -195,10 +195,16 @@ Determine if the layer is in a valid state. Invalid states would be pre-loaded o
 myLayer.isValidState; // true
 ```
 
-Get the state of the layer. This state tracks the loading life cycle (i.e. loading, loaded, error)
+Get the load state of the layer. This state tracks the loading life cycle (i.e. loading, loaded, error)
 
 ```js
-myLayer.state; // 'loaded'
+myLayer.layerState; // 'loaded'
+```
+
+Get the layer state of the layer. This state tracks the initiation life cycle (i.e. initiating, initiated, terminating, terminated)
+
+```js
+myLayer.initiationState; // 'initiated'
 ```
 
 Get the drawing state of the layer. This state tracks the drawing life cycle (i.e. getting or processing spatial data for the current map view)
@@ -286,7 +292,7 @@ Options parameter object:
 }                   // The number represents pixels to buffer by (so 5 would be a 10x10 pixel square around the point at the current map scale level).
 ```
 
-The result object is on the fancy side, as there are a few levels identify acts up. The topmost array of results has an entry for each logical layer involved, including the logical `uid`, a loading flag and promise, and another array of individual hits (called items) for the logical layer. The loading properties here indicate when the items array as been populated, but be aware that individual items still may be downloading their own data. 
+The result object is on the fancy side, as there are a few levels identify acts up. The topmost array of results has an entry for each logical layer involved, including the logical `uid`, a loading flag and promise, and another array of individual hits (called items) for the logical layer. The loading properties here indicate when the items array as been populated, but be aware that individual items still may be downloading their own data.
 The items array contains a loading flag and promise to track the download of its data, a format specification and a property to contain data that aligns to the given format.
 
 TODO flush out formats once things are nailed down.

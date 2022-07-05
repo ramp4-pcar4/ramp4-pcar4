@@ -1,13 +1,19 @@
 // put things here that would be common to all layers
 // used for layer types defined by Core RAMP.
 
-import { GlobalEvents, InstanceAPI, LayerInstance } from '@/api/internal';
+import {
+    GlobalEvents,
+    InstanceAPI,
+    LayerInstance,
+    NotificationType
+} from '@/api/internal';
 import {
     DataFormat,
     DefPromise,
     DrawState,
     Extent,
     Graphic,
+    InitiationState,
     LayerFormat,
     LayerState,
     LayerType,
@@ -24,6 +30,7 @@ import type {
     RampLayerConfig,
     TabularAttributeSet
 } from '@/geo/api';
+import to from 'await-to-js';
 
 export class CommonLayer extends LayerInstance {
     // common layer properties
@@ -82,8 +89,8 @@ export class CommonLayer extends LayerInstance {
         this.supportsFeatures = false; // default state. featurish layers should set to true when the load
         this.supportsSublayers = false; // by default layers do not support sublayers
         this.isFile = false; // default state.
-        this.initialized = false;
-        this.state = LayerState.NEW;
+        this.layerState = LayerState.NEW;
+        this.initiationState = InitiationState.NEW;
         this.drawState = DrawState.NOT_LOADED;
         this.loadPromise = new DefPromise();
         this.viewPromise = new DefPromise();
@@ -98,9 +105,17 @@ export class CommonLayer extends LayerInstance {
         console.trace();
     }
 
-    updateState(newState: LayerState): void {
-        this.state = newState;
-        this.$iApi.event.emit(GlobalEvents.LAYER_STATECHANGE, {
+    updateInitiationState(newState: InitiationState): void {
+        this.initiationState = newState;
+        this.$iApi.event.emit(GlobalEvents.LAYER_INITIATIONSTATECHANGE, {
+            state: newState,
+            layer: this
+        });
+    }
+
+    updateLayerState(newState: LayerState): void {
+        this.layerState = newState;
+        this.$iApi.event.emit(GlobalEvents.LAYER_LAYERSTATECHANGE, {
             state: newState,
             layer: this
         });
@@ -114,7 +129,37 @@ export class CommonLayer extends LayerInstance {
         });
     }
 
+    // need this so initiate encapsulates the entire initiation process regardless of which inherited layer type is being initiated
     async initiate(): Promise<void> {
+        this.updateInitiationState(InitiationState.INITIATING);
+        let timer = undefined;
+        if (
+            typeof this.origRampConfig.expectedResponseTime === 'undefined' ||
+            this.origRampConfig.expectedResponseTime > 0
+        ) {
+            timer = setTimeout(
+                () =>
+                    this.$iApi.notify.show(
+                        NotificationType.WARNING,
+                        this.$vApp.$t(`layer.longload`, {
+                            id: this.id
+                        })
+                    ),
+                this.origRampConfig.expectedResponseTime ?? 4000
+            );
+        }
+        const [initiateErr] = await to(this.onInitiate()); // Need this because some layers don't do error handling things
+        if (timer) {
+            clearTimeout(timer);
+        }
+        if (initiateErr) {
+            this.onError();
+            // throw new Error();
+        }
+        this.updateInitiationState(InitiationState.INITIATED);
+    }
+
+    protected async onInitiate(): Promise<void> {
         // NOTE CommonLayer a superclass and this method should be called via super.initiate()
         //      in subclass.initiate() at the appropriate time. A general rule is that at
         //      minimum the subclass should instantiate the Esri layer object and assign it
@@ -129,7 +174,6 @@ export class CommonLayer extends LayerInstance {
 
         // TODO consider putting lots of info on the events.  e.g. instead of just state changed, have .state, .layerid
         //      visibility might need an optional sublayer index (whatever we're calling that)
-
         if (this.isSublayer) {
             // early back out, we don't want the below code to run for sublayers
             console.warn('Attempted to initiate a sublayer as a CommonLayer');
@@ -142,9 +186,9 @@ export class CommonLayer extends LayerInstance {
             return;
         }
 
-        if (this.initialized) {
+        if (this.initiationState === InitiationState.INITIATED) {
             console.error(
-                `Encountered layer initialize while already initialized, layer id ${this.id}`
+                `Encountered layer initialize while already initiated, layer id ${this.id}`
             );
         }
 
@@ -188,8 +232,10 @@ export class CommonLayer extends LayerInstance {
                     // additional asynch work to fully set things up, so we delay firing the event until
                     // that is done.
                     this.onLoad();
+                } else if (newval === 'failed') {
+                    this.onError();
                 } else {
-                    this.updateState(statemap[newval]);
+                    this.updateLayerState(statemap[newval]);
                 }
             })
         );
@@ -209,8 +255,6 @@ export class CommonLayer extends LayerInstance {
             }
         );
 
-        this.initialized = true;
-
         // initiate sublayers last (top down intiation)
         this.sublayers.forEach(s => s.initiate());
     }
@@ -221,6 +265,7 @@ export class CommonLayer extends LayerInstance {
         //       erases any downloaded/cached attribute data.
 
         // terminate sublayers first (bottom up termination)
+        this.updateInitiationState(InitiationState.TERMINATING);
         this.sublayers.forEach(s => s.terminate());
 
         this.loadPromise = new DefPromise();
@@ -229,10 +274,9 @@ export class CommonLayer extends LayerInstance {
         this.esriWatches.forEach(w => w.remove());
         this.esriWatches = [];
 
-        this.updateState(LayerState.NEW);
+        this.updateLayerState(LayerState.NEW);
         this.updateDrawState(DrawState.NOT_LOADED);
-
-        this.initialized = false;
+        this.updateInitiationState(InitiationState.TERMINATED);
     }
 
     async reload(): Promise<void> {
@@ -247,7 +291,7 @@ export class CommonLayer extends LayerInstance {
 
         let mapStackPosition = 0; // TODO verify best default if we can't find actual old position. top of the stack seems correct? top of data layer stack (to avoid covering north arrow)?
 
-        if (this.initialized) {
+        if (this.initiationState === InitiationState.INITIATED) {
             if (this.esriLayer) {
                 // attempt to find esri layer in esri map
                 const tempPosition =
@@ -329,12 +373,19 @@ export class CommonLayer extends LayerInstance {
         // meaning this will run the function appropriate for the layer who inherited LayerBase
         const loadPromises: Array<Promise<void>> = this.onLoadActions();
         Promise.all(loadPromises).then(() => {
-            this.updateState(LayerState.LOADED);
+            this.updateLayerState(LayerState.LOADED);
             this.loadPromise.resolveMe();
 
             // This will just trigger the above statements for each sublayer
             this.sublayers.forEach(sublayer => sublayer.onLoad());
         });
+    }
+
+    // when esri layer load errors
+    onError(): void {
+        this.updateLayerState(LayerState.ERROR);
+        this.loadPromise.rejectMe();
+        this.sublayers.forEach(sublayer => sublayer.onError());
     }
 
     protected onLoadActions(): Array<Promise<void>> {
@@ -366,7 +417,7 @@ export class CommonLayer extends LayerInstance {
                 if (goodSR) {
                     return Promise.resolve();
                 } else {
-                    this.updateState(LayerState.ERROR);
+                    this.updateLayerState(LayerState.ERROR);
                     return Promise.reject();
                 }
             });
@@ -393,7 +444,7 @@ export class CommonLayer extends LayerInstance {
      * @returns {Boolean} true if layer is in an interactive state
      */
     get isValidState(): boolean {
-        return this.state === LayerState.LOADED;
+        return this.layerState === LayerState.LOADED;
     }
 
     // ----------- LAYER MANAGEMENT -----------

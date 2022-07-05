@@ -12,9 +12,10 @@ import {
     GeometryType,
     Graphic,
     IdentifyResultFormat,
+    InitiationState,
     LayerFormat,
-    LayerType,
     LayerState,
+    LayerType,
     NoGeometry,
     TreeNode
 } from '@/geo/api';
@@ -56,11 +57,11 @@ export class MapImageLayer extends AttribLayer {
         this.layerTree.layerIdx = -1;
     }
 
-    async initiate(): Promise<void> {
+    protected async onInitiate(): Promise<void> {
         this.esriLayer = markRaw(
             new EsriMapImageLayer(this.makeEsriLayerConfig(this.origRampConfig))
         );
-        await super.initiate();
+        await super.onInitiate();
     }
 
     /**
@@ -235,7 +236,7 @@ export class MapImageLayer extends AttribLayer {
                     !parentTreeNode.children
                         .map(node => node.layerIdx)
                         .includes(sid) ||
-                    !_sublayer.initialized
+                    _sublayer.initiationState !== InitiationState.INITIATED
                 ) {
                     const treeLeaf = new TreeNode(
                         sid,
@@ -389,10 +390,10 @@ export class MapImageLayer extends AttribLayer {
         return loadPromises;
     }
 
-    updateState(newState: LayerState): void {
+    updateLayerState(newState: LayerState): void {
         // force any sublayers to also update their state and raise events
-        super.updateState(newState);
-        this.sublayers.forEach(sublayer => sublayer.updateState(newState));
+        super.updateLayerState(newState);
+        this.sublayers.forEach(sublayer => sublayer.updateLayerState(newState));
     }
 
     updateDrawState(newState: DrawState): void {

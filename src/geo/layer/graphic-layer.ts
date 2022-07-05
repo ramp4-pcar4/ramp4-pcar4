@@ -14,11 +14,11 @@ export class GraphicLayer extends CommonGraphicLayer {
         this.layerType = LayerType.GRAPHIC;
     }
 
-    async initiate(): Promise<void> {
+    protected async onInitiate(): Promise<void> {
         this.esriLayer = markRaw(
             new EsriGraphicsLayer(this.makeEsriLayerConfig(this.origRampConfig))
         );
-        await super.initiate();
+        await super.onInitiate();
     }
 
     /**

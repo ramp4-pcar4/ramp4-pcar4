@@ -89,28 +89,50 @@ export default defineComponent({
          */
         reloadLayer() {
             if (this.legendItem!.controlAvailable(LayerControls.Reload)) {
-                // call reload on layer if it exists
-                if (this.legendItem.layer !== undefined) {
-                    this.legendItem!.layer!.reload();
-                } else {
-                    // otherwise attempt to re-create layer with layer config
-                    const layerConfig = this.layerConfigs.find(
-                        (lc: RampLayerConfig) => lc.id === this.legendItem.id
-                    );
-                    if (layerConfig !== undefined) {
-                        this.recreateLayer(layerConfig);
-                    }
-                }
-
                 // reload legend item state back to placeholder state
                 this.legendItem.reload();
-                // catch error if reload fails
-                this.legendItem.loadPromise.catch(() => {
-                    console.error(
-                        'Failed to reload layer - ',
-                        this.legendItem.name
-                    );
-                });
+                // want the animation to play for half a second because a reload can fail "instantly", making it look like nothing happened to the user
+                setTimeout(() => {
+                    // call reload on layer if it exists
+                    if (this.legendItem.layer !== undefined) {
+                        this.legendItem!.layer!.reload()
+                            .then(() =>
+                                this.$iApi.$vApp.$store.set(
+                                    LayerStore.removeErrorLayer,
+                                    this.legendItem.layer!
+                                )
+                            )
+                            .catch(() =>
+                                this.$iApi.$vApp.$store.set(
+                                    LayerStore.addErrorLayers,
+                                    [this.legendItem.layer!]
+                                )
+                            );
+                    } else {
+                        // otherwise attempt to re-create layer with layer config
+                        const layerConfig =
+                            this.legendItem!.sublayerIndex === undefined
+                                ? this.layerConfigs.find(
+                                      (lc: RampLayerConfig) =>
+                                          lc.id === this.legendItem.id
+                                  )
+                                : this.layerConfigs.find(
+                                      (lc: RampLayerConfig) =>
+                                          lc.id ===
+                                          this.legendItem.layerParentId
+                                  );
+                        if (layerConfig !== undefined) {
+                            this.recreateLayer(layerConfig);
+                        }
+                    }
+                    // catch error if reload fails
+                    this.legendItem.loadPromise.catch(() => {
+                        console.error(
+                            'Failed to reload layer - ',
+                            this.legendItem.name
+                        );
+                    });
+                }, 500);
             }
         },
         /**
@@ -122,14 +144,30 @@ export default defineComponent({
                 // same code to how layers are initialized when layer config array changes, expose this as layer API method?
                 await new Promise<LayerInstance>(async (resolve, reject) => {
                     const layer = this.$iApi.geo.layer.createLayer(layerConfig);
-                    const [initiateErr] = await to(layer!.initiate());
-
-                    if (initiateErr) {
-                        reject(initiateErr);
+                    this.$iApi.$vApp.$store.set(
+                        LayerStore.removeErrorLayer,
+                        layer!
+                    );
+                    // check if the layer error'd while already in the map
+                    const checkLayer = this.$iApi.geo.layer.getLayer(layer.id);
+                    if (checkLayer) {
+                        const [reloadErr] = await to(checkLayer.reload());
+                        if (reloadErr) {
+                            this.$iApi.$vApp.$store.set(
+                                LayerStore.addErrorLayers,
+                                [layer!]
+                            );
+                            reject(reloadErr);
+                        }
                     } else {
-                        this.$iApi.geo.map.addLayer(layer!);
-                    }
+                        const [initiateErr] = await to(
+                            this.$iApi.geo.map.addLayer(layer!)
+                        );
 
+                        if (initiateErr) {
+                            reject(initiateErr);
+                        }
+                    }
                     resolve(layer!);
                 });
             } catch {

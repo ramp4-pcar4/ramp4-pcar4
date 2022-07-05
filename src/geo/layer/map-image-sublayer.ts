@@ -4,7 +4,7 @@ import {
     InstanceAPI,
     type MapImageLayer
 } from '@/api/internal';
-import { DataFormat, LayerFormat, LayerType } from '@/geo/api';
+import { DataFormat, InitiationState, LayerFormat, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 import { markRaw } from 'vue';
 
@@ -83,9 +83,9 @@ export class MapImageSublayer extends AttribLayer {
      *
      * This is called after the parent layer is initiated
      */
-    async initiate(): Promise<void> {
-        // For now we just set initialized to true
-        this.initialized = true;
+    protected async onInitiate(): Promise<void> {
+        // For now we just set initiation state to initiated
+        this.initiationState = InitiationState.INITIATED; // hardcoding this one because we don't want event API to fire here
     }
 
     async reload(): Promise<void> {
