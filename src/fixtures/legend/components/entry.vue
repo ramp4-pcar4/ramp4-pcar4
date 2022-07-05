@@ -218,7 +218,7 @@ export default defineComponent({
         // watch for when layer state turns to ERROR
         this.handlers.push(
             this.$iApi.event.on(
-                GlobalEvents.LAYER_STATECHANGE,
+                GlobalEvents.LAYER_LAYERSTATECHANGE,
                 (payload: { layer: LayerInstance; state: string }) => {
                     // sync legend item state with layer state if errors
                     if (

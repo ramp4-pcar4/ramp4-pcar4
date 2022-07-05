@@ -42,3 +42,4 @@ panels.controls.collapse,Collapse,1,Réduire,1
 panels.alert.open,{name} panel opened,1,Panneau de {name} ouvert,0
 panels.alert.close,{name} panel closed,1,Panneau de {name} fermé,0
 panels.alert.minimize,{name} panel minimized,1,Panneau de {name} minimisé,0
+layer.longload,{id} is taking longer than expected to load,1,{id} prend plus longtemps que prévu,0

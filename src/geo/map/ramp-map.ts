@@ -14,6 +14,8 @@ import {
     DefPromise,
     Extent,
     ExtentSet,
+    InitiationState,
+    LayerState,
     Point,
     ScaleSet
 } from '@/geo/api';
@@ -60,7 +62,6 @@ export class MapAPI extends CommonMapAPI {
 
         this.maptip = new MaptipAPI(iApi);
         this.caption = new MapCaptionAPI(iApi);
-
         this.mapMouseThrottle = 0; // default to 0 (no throttle)
     }
 
@@ -430,33 +431,51 @@ export class MapAPI extends CommonMapAPI {
      * @param {number | undefined} index optional order index to add the layer to
      * @returns {Promise<void>} a promise that resolves when the layer has been added to the map
      */
-    addLayer(
+    async addLayer(
         layer: LayerInstance,
         index: number | undefined = undefined
-    ): void {
+    ): Promise<void> {
         if (!this.esriMap) {
             this.noMapErr();
             return;
         }
-        // await layer.isReadyForMap();
-        if (layer.esriLayer) {
-            this.esriMap.add(layer.esriLayer);
-            this.$iApi.$vApp.$store.set(LayerStore.addLayers, [layer]);
-
-            // if index is provided, reorder the layer to the given index
-            // use the reorder method so that the esri map-stack and the layer store can stay in sync
-            if (index !== undefined) {
-                this.reorder(layer, index);
-            }
-
-            // layer has been added to the map, fire layer registered event
-            this.$iApi.event.emit(GlobalEvents.LAYER_REGISTERED, layer);
-        } else {
-            // TODO maybe we should call layer.initiate() and block? Could be a nice shortcut. But also might have unintended effects.
-            console.error(
-                'Layer added to map without an esri layer. Likely layer.initiate() was not called or had not finished.'
-            );
+        if (
+            layer.initiationState !== InitiationState.INITIATING &&
+            layer.initiationState !== InitiationState.INITIATED &&
+            layer.layerState !== LayerState.ERROR
+        ) {
+            // could also await for this but its technically not necessary thanks to the watcher.
+            layer.initiate();
         }
+        let timeElapsed = 0;
+        // Alternative to this: use event API and watch for layer initiated and layer error events??
+        const layerWatcher = setInterval(() => {
+            timeElapsed += 1000;
+            if (
+                timeElapsed >= 600000 ||
+                layer.layerState === LayerState.ERROR
+            ) {
+                clearInterval(layerWatcher);
+                this.$iApi.$vApp.$store.set(LayerStore.addErrorLayers, [layer]);
+                layer.updateLayerState(LayerState.ERROR); // need this thanks to an edge case where the legend sometimes doesnt update
+                throw new Error(`Failed to add layer - ${layer.id}`);
+            } else if (
+                layer.initiationState === InitiationState.INITIATED &&
+                layer.esriLayer
+            ) {
+                clearInterval(layerWatcher);
+                this.esriMap?.add(layer.esriLayer);
+                this.$iApi.$vApp.$store.set(LayerStore.addLayers, [layer]);
+                // if index is provided, reorder the layer to the given index
+                // use the reorder method so that the esri map-stack and the layer store can stay in sync
+                if (index !== undefined) {
+                    this.reorder(layer, index);
+                }
+
+                // layer has been added to the map, fire layer registered event
+                this.$iApi.event.emit(GlobalEvents.LAYER_REGISTERED, layer);
+            }
+        }, 250);
     }
 
     /**

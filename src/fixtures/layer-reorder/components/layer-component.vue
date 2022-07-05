@@ -161,6 +161,7 @@ import { GlobalEvents, LayerInstance } from '@/api';
 import type { LayerModel } from '../definitions';
 import LayerReorderButtonV from './reorder-button.vue';
 import draggable from 'vuedraggable';
+import { LayerState } from '@/geo/api';
 
 export default defineComponent({
     name: 'LayerReorderComponentV',
@@ -228,7 +229,11 @@ export default defineComponent({
             this.layersModel = [];
 
             this.layersModel = [...toRaw(this.layers)]
-                .filter((layer: LayerInstance) => !layer.isCosmetic) // filter out cosmetic layers
+                .filter(
+                    (layer: LayerInstance) =>
+                        !layer.isCosmetic &&
+                        layer.layerState !== LayerState.ERROR
+                ) // filter out cosmetic layers
                 .reverse() // needs to be reverse because map-stack is in reverse order of layer list
                 .map((layer: LayerInstance) => {
                     // get the true index of this layer in the layers list
@@ -249,9 +254,12 @@ export default defineComponent({
 
             // add load promise listeners to update models
             this.layers.forEach((layer: LayerInstance) => {
-                layer.isLayerLoaded().then(() => {
-                    this.loadLayerData(layer);
-                });
+                layer
+                    .isLayerLoaded()
+                    .then(() => {
+                        this.loadLayerData(layer);
+                    })
+                    .catch(() => 1); // make the console stop complaining
             });
 
             // calculate the min and max boundary indices
