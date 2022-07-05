@@ -12,7 +12,7 @@
         ></notifications-caption-button>
 
         <span
-            class="relative top-1 sm:block display-none shrink-0"
+            class="relative top-2 sm:top-1 ml-4 sm:ml-0 shrink-0"
             v-if="!attribution.logo.disabled"
         >
             <a
@@ -22,7 +22,7 @@
                 :aria-label="attribution.logo.altText"
             >
                 <img
-                    class="object-contain h-26"
+                    class="object-contain h-18 sm:h-26"
                     :src="attribution.logo.value"
                     :alt="attribution.logo.altText"
                 />
@@ -30,15 +30,14 @@
         </span>
 
         <span
-            class="relative ml-10 top-2 sm:block display-none"
+            class="relative ml-10 top-2 text-sm sm:text-base"
             v-if="!attribution.text.disabled"
             v-truncate="{
                 options: {
                     placement: 'top',
                     hideOnClick: false,
                     theme: 'ramp4',
-                    animation: 'scale',
-                    appendTo: 'parent'
+                    animation: 'scale'
                 }
             }"
         >
@@ -49,10 +48,10 @@
 
         <!-- TODO: find out if any ARIA attributes are needed for the map scale -->
 
-        <div class="flex min-w-0 sm:min-w-fit justify-end">
+        <div class="flex min-w-fit justify-end">
             <div
                 v-if="!cursorCoords.disabled"
-                class="relative top-2 pl-8 sm:px-14 text-sm sm:text-base"
+                class="relative top-2 pl-8 px-14 sm:block display-none"
                 v-truncate="{
                     options: {
                         hideOnClick: false,
@@ -66,7 +65,7 @@
 
             <button
                 v-if="!scale.disabled"
-                class="flex-shrink-0 mx-10 px-4 pointer-events-auto cursor-pointer border-none"
+                class="flex-shrink-0 mx-2 sm:mx-10 px-4 pointer-events-auto cursor-pointer border-none"
                 @click="onScaleClick"
                 :aria-pressed="scale.isImperialScale"
                 :aria-label="$t('map.toggleScaleUnits')"
