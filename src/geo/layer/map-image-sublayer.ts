@@ -83,7 +83,7 @@ export class MapImageSublayer extends AttribLayer {
      *
      * This is called after the parent layer is initiated
      */
-    async initiate(): Promise<void> {
+    protected async onInitiate(): Promise<void> {
         // For now we just set initialized to true
         this.initialized = true;
     }

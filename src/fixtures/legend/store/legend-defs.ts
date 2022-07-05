@@ -140,12 +140,9 @@ export class LegendEntry extends LegendItem {
                 ? legendEntry.layerLegendConfigs[legendEntry.layerId]
                       ?.toggleSymbology ?? true
                 : true;
-
         if (legendEntry.layer !== undefined) {
             // the legend entry config provides a layer, load layer properties from it
             this.loadLayer(legendEntry.layer);
-        } else {
-            this.errorCheck();
         }
     }
 
@@ -201,28 +198,6 @@ export class LegendEntry extends LegendItem {
         // reset the entry to a placeholder state
         this._type = LegendTypes.Placeholder;
         this._loadPromise = new DefPromise();
-
-        // set to error state if no layer exists
-        if (this._layer === undefined) {
-            this.errorCheck();
-        }
-    }
-
-    /**
-     * Sets entry to an error state if no layer is defined
-     */
-    errorCheck(): void {
-        // delay for potential loadLayer call before setting legend item state to error indicating failed layer
-        setTimeout(() => {
-            // TODO: no layer can also indicate info section
-            if (
-                this._layer === undefined &&
-                this._type === LegendTypes.Placeholder
-            ) {
-                this.setErrorType();
-            }
-        }, 20000);
-        // TODO: improve this timeout for error once #1020 (layer expectedResponseTime) is implemented
     }
 
     /**
@@ -247,49 +222,55 @@ export class LegendEntry extends LegendItem {
      */
     loadLayer(layer: LayerInstance): void {
         this._layer = layer;
-        this._layer.isLayerLoaded().then(() => {
-            if (
-                this._layer?.layerType === LayerType.MAPIMAGE &&
-                !this._layerIdx
-            ) {
-                this._type = LegendTypes.Error;
-                console.error(
-                    `MapImageLayer has no sublayerIndex defined - ${this._itemConfig.layerId} (${this._itemConfig.name})`
-                );
-                this._loadPromise.rejectMe();
-            } else {
-                this._type = LegendTypes.Entry;
-                // override config values with layer properties
-                this._id = layer.id;
-                this._layerIdx =
-                    layer.layerIdx === -1 ? undefined : layer.layerIdx;
-                this._layerParentId = layer.isSublayer
-                    ? layer.parentLayer!.id
-                    : undefined;
+        this._layer
+            .isLayerLoaded()
+            .then(() => {
+                if (
+                    this._layer?.layerType === LayerType.MAPIMAGE &&
+                    !this._layerIdx
+                ) {
+                    this._type = LegendTypes.Error;
+                    console.error(
+                        `MapImageLayer has no sublayerIndex defined - ${this._itemConfig.layerId} (${this._itemConfig.name})`
+                    );
+                    this._loadPromise.rejectMe();
+                } else {
+                    this._type = LegendTypes.Entry;
+                    // override config values with layer properties
+                    this._id = layer.id;
+                    this._layerIdx =
+                        layer.layerIdx === -1 ? undefined : layer.layerIdx;
+                    this._layerParentId = layer.isSublayer
+                        ? layer.parentLayer!.id
+                        : undefined;
 
-                // remove controls if layer doesn't support them
-                let controlsToRemove: Array<LayerControls> = [];
-                if (!layer.supportsFeatures) {
-                    controlsToRemove.push(LayerControls.Datatable);
-                }
-                if (layer.extent === undefined) {
-                    controlsToRemove.push(LayerControls.BoundaryZoom);
-                }
-                controlsToRemove.forEach(control => {
-                    let idx: number = this._controls?.indexOf(control) ?? -1;
-                    if (idx !== -1) {
-                        this._controls?.splice(idx, 1);
+                    // remove controls if layer doesn't support them
+                    let controlsToRemove: Array<LayerControls> = [];
+                    if (!layer.supportsFeatures) {
+                        controlsToRemove.push(LayerControls.Datatable);
                     }
-                });
+                    if (layer.extent === undefined) {
+                        controlsToRemove.push(LayerControls.BoundaryZoom);
+                    }
+                    controlsToRemove.forEach(control => {
+                        let idx: number =
+                            this._controls?.indexOf(control) ?? -1;
+                        if (idx !== -1) {
+                            this._controls?.splice(idx, 1);
+                        }
+                    });
 
-                this.checkVisibilityRules();
-                if (!layer.visibility) {
-                    // if the layer is invisible, set all child symbols to invisible
-                    this.setChildSymbologyVisibility(undefined, false);
+                    this.checkVisibilityRules();
+                    if (!layer.visibility) {
+                        // if the layer is invisible, set all child symbols to invisible
+                        this.setChildSymbologyVisibility(undefined, false);
+                    }
+                    this._loadPromise.resolveMe();
                 }
-                this._loadPromise.resolveMe();
-            }
-        });
+            })
+            .catch(() => {
+                this.setErrorType();
+            });
     }
 
     /**

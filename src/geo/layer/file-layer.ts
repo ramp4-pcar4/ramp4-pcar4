@@ -88,10 +88,10 @@ export class FileLayer extends AttribLayer {
         this.tooltipField = '';
     }
 
-    async initiate(): Promise<void> {
+    protected async onInitiate(): Promise<void> {
         // NOTE subclasses of FileLayer should do all their file data processing first,
         //      drop it in this.sourceGeoJson,
-        //      then call super.initiate() as final step.
+        //      then call super.onInitiate() as final step.
 
         // TODO figure out how the geojson is supplied.
         // another protected property? a permananent property to support reloads? part of rampConfig?
@@ -130,7 +130,7 @@ export class FileLayer extends AttribLayer {
 
         this.esriJson = undefined;
 
-        await super.initiate();
+        await super.onInitiate();
     }
 
     /**

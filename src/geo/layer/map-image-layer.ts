@@ -14,7 +14,7 @@ import {
     IdentifyResultFormat,
     LayerFormat,
     LayerType,
-    LayerState,
+    LoadState,
     NoGeometry,
     TreeNode
 } from '@/geo/api';
@@ -56,11 +56,11 @@ export class MapImageLayer extends AttribLayer {
         this.layerTree.layerIdx = -1;
     }
 
-    async initiate(): Promise<void> {
+    protected async onInitiate(): Promise<void> {
         this.esriLayer = markRaw(
             new EsriMapImageLayer(this.makeEsriLayerConfig(this.origRampConfig))
         );
-        await super.initiate();
+        await super.onInitiate();
     }
 
     /**
@@ -389,10 +389,10 @@ export class MapImageLayer extends AttribLayer {
         return loadPromises;
     }
 
-    updateState(newState: LayerState): void {
+    updateLoadState(newState: LoadState): void {
         // force any sublayers to also update their state and raise events
-        super.updateState(newState);
-        this.sublayers.forEach(sublayer => sublayer.updateState(newState));
+        super.updateLoadState(newState);
+        this.sublayers.forEach(sublayer => sublayer.updateLoadState(newState));
     }
 
     updateDrawState(newState: DrawState): void {
