@@ -7,7 +7,7 @@ export class ShapefileLayer extends FileLayer {
         this.layerType = LayerType.SHAPEFILE;
     }
 
-    async initiate(): Promise<void> {
+    protected async onInitiate(): Promise<void> {
         // TODO check if .sourceGeoJson is already populated?
         //      if this initiate is a reload, do we want to re-use it, or re-download? decide.
 
@@ -56,6 +56,6 @@ export class ShapefileLayer extends FileLayer {
         this.sourceGeoJson =
             await this.$iApi.geo.layer.files.shapefileToGeoJson(shapefileData);
 
-        await super.initiate();
+        await super.onInitiate();
     }
 }

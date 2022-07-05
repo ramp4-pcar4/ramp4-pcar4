@@ -693,7 +693,7 @@
                 "expectedResponseTime": {
                     "type": "number",
                     "default": 4000,
-                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer. Currently not supported."
+                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
                 },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"
@@ -759,7 +759,7 @@
                 "expectedResponseTime": {
                     "type": "number",
                     "default": 4000,
-                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer. Currently not supported."
+                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
                 },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"
@@ -826,7 +826,7 @@
                 "expectedResponseTime": {
                     "type": "number",
                     "default": 4000,
-                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer. Currently not supported."
+                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
                 },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"
@@ -1023,7 +1023,7 @@
                 "expectedResponseTime": {
                     "type": "number",
                     "default": 4000,
-                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer. Currently not supported."
+                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
                 },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"
@@ -1125,6 +1125,11 @@
                     "default": "",
                     "description": "Hex code representing the layer symbology colour."
                 },
+                "expectedResponseTime": {
+                    "type": "number",
+                    "default": 4000,
+                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
+                },
                 "layerType": {
                     "type": "string",
                     "enum": ["file-geojson", "file-csv", "file-shape"],
@@ -1215,6 +1220,11 @@
                     "type": "string",
                     "default": "",
                     "description": "The service endpoint of the layer. It should match the type provided in layerType."
+                },
+                "expectedResponseTime": {
+                    "type": "number",
+                    "default": 4000,
+                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
                 },
                 "colour": {
                     "type": "string",
@@ -1307,7 +1317,7 @@
                 "expectedResponseTime": {
                     "type": "number",
                     "default": 4000,
-                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer. Currently not supported."
+                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
                 },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"

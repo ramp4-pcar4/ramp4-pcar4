@@ -9,7 +9,7 @@ export class WfsLayer extends FileLayer {
         this.layerType = LayerType.WFS;
     }
 
-    async initiate(): Promise<void> {
+    protected async onInitiate(): Promise<void> {
         const wrapper = new UrlWrapper(this.config.url);
 
         // get start index and limit set on the url
@@ -25,7 +25,6 @@ export class WfsLayer extends FileLayer {
         );
 
         // TODO error handling? set layer state to error if above call fails?
-
-        await super.initiate();
+        await super.onInitiate();
     }
 }

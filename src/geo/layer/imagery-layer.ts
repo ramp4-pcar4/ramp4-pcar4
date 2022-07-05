@@ -17,11 +17,11 @@ export class ImageryLayer extends CommonLayer {
         this.dataFormat = DataFormat.ESRI_RASTER;
     }
 
-    async initiate(): Promise<void> {
+    protected async onInitiate(): Promise<void> {
         this.esriLayer = markRaw(
             new EsriImageryLayer(this.makeEsriLayerConfig(this.origRampConfig))
         );
-        await super.initiate();
+        await super.onInitiate();
     }
 
     /**

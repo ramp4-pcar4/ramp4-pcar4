@@ -89,6 +89,9 @@ export class LegendAPI extends FixtureInstance {
         this.$iApi.geo.layer.allLayers().forEach(l => {
             this.updateLegend(l);
         });
+        this.$iApi.geo.layer.allErrorLayers().forEach(l => {
+            this.updateLegend(l);
+        });
     }
 
     /**
@@ -146,14 +149,30 @@ export class LegendAPI extends FixtureInstance {
             );
             entry?.loadLayer(layer);
         };
-
-        layer.isLayerLoaded().then(() => {
-            updateEntry(layer); // update the root entry first
-            if (layer.supportsSublayers) {
-                layer.sublayers.forEach((sublayer: LayerInstance) => {
-                    updateEntry(sublayer); // the legend entries will use the sublayer
-                });
-            }
-        });
+        const errorEntry = (layer: LayerInstance | String) => {
+            const entry: LegendEntry | undefined = this.$vApp.$store.get(
+                LegendStore.getChildById,
+                layer instanceof LayerInstance ? layer.id : layer
+            );
+            entry?.setErrorType();
+        };
+        layer
+            .isLayerLoaded()
+            .then(() => {
+                updateEntry(layer); // update the root entry first
+                if (layer.supportsSublayers) {
+                    layer.sublayers.forEach((sublayer: LayerInstance) => {
+                        updateEntry(sublayer); // the legend entries will use the sublayer
+                    });
+                }
+            })
+            .catch(() => {
+                errorEntry(layer); // update the root entry first
+                if (layer.supportsSublayers) {
+                    layer.config.sublayers.forEach((sublayer: any) => {
+                        errorEntry(`${layer.id}-${sublayer.index}`); // hacky solution because sublayers arent created on error
+                    });
+                }
+            });
     }
 }

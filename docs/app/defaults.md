@@ -91,7 +91,8 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | LAYER_RELOAD_END<br>'layer/reloadend'              | LayerInstance object                                           | The layer finished reloading                     |
 | LAYER_RELOAD_START<br>'layer/reloadstart'          | LayerInstance object                                           | The layer started reloading                      |
 | LAYER_REMOVE<br>'layer/remove'                     | LayerInstance object                                           | The layer was removed from the map               |
-| LAYER_STATECHANGE<br>'layer/statechange'           | _state_: new value, layer: LayerInstance object                | The layer state changed                          |
+| LAYER_LAYERSTATECHANGE<br>'layer/layerstatechange'   | _state_: new value, layer: LayerInstance object                | The layer load state changed |
+| LAYER_INITIATIONSTATECHANGE<br>'layer/initiationStatechange' | _state_: new value, layer: LayerInstance object                | The layer layer state changed                 |
 | LAYER_VISIBILITYCHANGE<br>'layer/visibilitychange' | _visibility_: new value, layer: LayerInstance object           | The layer visibility changed                     |
 | MAP_BASEMAPCHANGE<br>'map/basemapchanged'          | basemapId: string, schemaChanged: boolean                      | The basemap was changed                          |
 | MAP_FOCUS<br>'map/focus'                           | KeyboardEvent object                                           | The map gained focus                                |

@@ -38,11 +38,11 @@ export class WmsLayer extends CommonLayer {
         this.dataFormat = DataFormat.OGC_RASTER;
     }
 
-    async initiate(): Promise<void> {
+    protected async onInitiate(): Promise<void> {
         this.esriLayer = markRaw(
             new EsriWMSLayer(this.makeEsriLayerConfig(this.origRampConfig))
         );
-        await super.initiate();
+        await super.onInitiate();
     }
 
     /**
