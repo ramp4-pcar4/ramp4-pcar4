@@ -26,7 +26,9 @@ The following navigation controls can be found in the bottom right corner of the
 |--|--|
 | Zoom in - Plus (+) | Zoom in one level on the map to see more detailed content |
 | Zoom out - Minus (-) | Zoom out one level on the map to see less detailed content |
-| Fullscreen | Full screen presents map content using the entire page. Full screen option is only available when the map is embedded into another page | Home / Initial extent | Zoom and pan map such that initial extent is visible |
+| Fullscreen | Full screen presents map content using the entire page. Full screen option is only available when the map is embedded into another page |
+| Geolocate | Zoom and pan map over the current location of the device |
+| Home / Initial extent | Zoom and pan map such that initial extent is visible |
 | Help | Toggle open or closed the help dialog |
 
 
