@@ -101,6 +101,11 @@ export default defineComponent({
         );
     },
 
+    mounted() {
+        // Prevents a vertical scrollbar from appearing over the map.
+        this.$el.style.setProperty('overflow', 'hidden');
+    },
+
     beforeUnmount() {
         this.watchers.forEach(unwatch => unwatch());
     },
