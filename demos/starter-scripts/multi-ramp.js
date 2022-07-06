@@ -428,7 +428,15 @@ let config = {
                         'layer-reorder'
                     ]
                 },
-                mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
+                mapnav: {
+                    items: [
+                        'fullscreen',
+                        'geolocator',
+                        'help',
+                        'home',
+                        'basemap'
+                    ]
+                },
                 export: {
                     title: {
                         value: 'All Your Base are Belong to Us',
@@ -857,7 +865,15 @@ let config2 = {
                         'layer-reorder'
                     ]
                 },
-                mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
+                mapnav: {
+                    items: [
+                        'fullscreen',
+                        'geolocator',
+                        'help',
+                        'home',
+                        'basemap'
+                    ]
+                },
                 export: {
                     title: {
                         value: 'All Your Base are Belong to Us',
@@ -1286,7 +1302,15 @@ let config3 = {
                         'layer-reorder'
                     ]
                 },
-                mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
+                mapnav: {
+                    items: [
+                        'fullscreen',
+                        'geolocator',
+                        'help',
+                        'home',
+                        'basemap'
+                    ]
+                },
                 export: {
                     title: {
                         value: 'All Your Base are Belong to Us',

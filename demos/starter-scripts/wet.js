@@ -419,6 +419,7 @@ let config = {
                 mapnav: {
                     items: [
                         'fullscreen',
+                        'geolocator',
                         'help',
                         'home',
                         'basemap',

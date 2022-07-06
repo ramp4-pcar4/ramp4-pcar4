@@ -37,6 +37,7 @@ import PanelOptionsMenuV from '@/components/panel-stack/controls/panel-options-m
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 
 import FullscreenNavV from '@/fixtures/mapnav/buttons/fullscreen-nav.vue';
+import GeolocatorNavV from '@/fixtures/mapnav/buttons/geolocator-nav.vue';
 import HomeNavV from '@/fixtures/mapnav/buttons/home-nav.vue';
 import MapnavButtonV from '@/fixtures/mapnav/button.vue';
 
@@ -483,6 +484,7 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
 
     // ported from mapnav.vue
     vueElement.component('fullscreen-nav-button', FullscreenNavV);
+    vueElement.component('geolocator-nav-button', GeolocatorNavV);
     vueElement.component('home-nav-button', HomeNavV);
     vueElement.component('mapnav-button', MapnavButtonV);
 

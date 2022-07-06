@@ -352,7 +352,7 @@ let config = {
                 appbar: {
                     items: ['legend', 'geosearch', 'export']
                 },
-                mapnav: { items: ['fullscreen', 'geoLocator', 'home', 'help'] },
+                mapnav: { items: ['fullscreen', 'geolocator', 'home', 'help'] },
                 export: {
                     title: {
                         value: 'Climate action map'
@@ -747,7 +747,7 @@ let config = {
                 appbar: {
                     items: ['legend', 'geosearch', 'export']
                 },
-                mapnav: { items: ['fullscreen', 'geoLocator', 'home', 'help'] },
+                mapnav: { items: ['fullscreen', 'geolocator', 'home', 'help'] },
                 export: {
                     title: {
                         value: 'Climate action map'

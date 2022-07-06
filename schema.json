@@ -517,7 +517,13 @@
                 },
                 "items": {
                     "type": "array",
-                    "default": ["fullscreen", "help", "home", "basemap"],
+                    "default": [
+                        "fullscreen",
+                        "help",
+                        "home",
+                        "geolocator",
+                        "basemap"
+                    ],
                     "description": "Map navigation buttons displayed on mapnav.",
                     "items": {
                         "type": "string",
@@ -1961,7 +1967,13 @@
                     "$ref": "#/$defs/mapnav",
                     "default": {
                         "zoom": "buttons",
-                        "items": ["fullscreen", "home", "help", "basemap"]
+                        "items": [
+                            "fullscreen",
+                            "home",
+                            "geolocator",
+                            "help",
+                            "basemap"
+                        ]
                     },
                     "description": "Provides configuration to the appbar. If not supplied, default appbar controls are displayed."
                 },
