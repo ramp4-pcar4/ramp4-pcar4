@@ -1,7 +1,7 @@
 <template>
     <div
         name="esriMap"
-        class="h-full"
+        class="h-full overflow-hidden"
         v-tippy="{
             allowHTML: true,
             zIndex: 5,
