@@ -1042,6 +1042,9 @@ export class MapAPI extends CommonMapAPI {
             this.keyZoom(payload);
         } else if (payload.key === 'Enter') {
             this.runIdentify(this.getExtent().center());
+        } else if (payload.key === 'Tab') {
+            // used to distinguish keyboard/mouse focus
+            this._activeKeys.push(payload.key);
         }
     }
 
@@ -1082,9 +1085,12 @@ export class MapAPI extends CommonMapAPI {
      * @memberof MapAPI
      */
     stopKeyPan() {
+        // prevents crosshairs appearing when reentering tab/window when mouse focused
+        if (this._activeKeys.includes('Tab')) {
+            this._mouseFocus = false;
+        }
         this._activeKeys = [];
         clearInterval(this._panInterval);
-        this._mouseFocus = false;
     }
 
     /**
