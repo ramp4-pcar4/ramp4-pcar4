@@ -6,7 +6,7 @@ Menu options on the left will typically open new information panels. These panel
 
 The bell symbol in the lower-left corner displays notifications related to services or information on the map. Messages will be displayed here when erroneous services are not able to load on the map.
 
-For general or technical inquiries regarding the Reusable Accessible Mapping Platform that this interactive map is based on, please contact [applicationsdecartographieweb-webmappingapplications@ec.gc.ca](mailto:applicationsdecartographieweb-webmappingapplications@ec.gc.ca)>. You may access the RAMP GitHub repository using the "About RAMP" button in the lower-left corner.
+For general or technical inquiries regarding the Reusable Accessible Mapping Platform that this interactive map is based on, please contact [applicationsdecartographieweb-webmappingapplications@ec.gc.ca](mailto:applicationsdecartographieweb-webmappingapplications@ec.gc.ca). You may access the RAMP GitHub repository using the "About RAMP" button in the lower-left corner.
 
 # Identifying Data
 
@@ -61,7 +61,7 @@ While hovering over a layer or tabbing to one, select the three dots icon to mak
 
 Note that some settings may not be available depending on various factors such as layer type or configuration.
 
-|Nom|Description|
+|Name|Description|
 |----|----|
 | Metadata | Display relevant metadata in a slideout panel |
 | Settings | Opens slideout panel where bounding box and queryable data can be toggled as well as the ability to adjust opacity amount |
@@ -76,7 +76,7 @@ Note that some settings may not be available depending on various factors such a
 
 In the Legend panel, 4 functions appear in a row at the top:
 
-|Nom|Description|
+|Name|Description|
 |----|----|
 | Add Layer | Menu options to add a file or service based layer |
 | Reorder Layers | Provides an alternative to the click-hold and drag reordering already available. When selected, layers are only reorderable by holding onto the handle icon next to each layer. Most useful for touch devices |

@@ -6,7 +6,7 @@
 
 [fr] The bell symbol in the lower-left corner displays notifications related to services or information on the map. Messages will be displayed here when erroneous services are not able to load on the map.
 
-[fr] For general or technical inquiries regarding the Reusable Accessible Mapping Platform that this interactive map is based on, please contact [applicationsdecartographieweb-webmappingapplications@ec.gc.ca](mailto:applicationsdecartographieweb-webmappingapplications@ec.gc.ca)>. You may access the RAMP GitHub repository using the "About RAMP" button in the lower-left corner.
+[fr] For general or technical inquiries regarding the Reusable Accessible Mapping Platform that this interactive map is based on, please contact [applicationsdecartographieweb-webmappingapplications@ec.gc.ca](mailto:applicationsdecartographieweb-webmappingapplications@ec.gc.ca). You may access the RAMP GitHub repository using the "About RAMP" button in the lower-left corner.
 
 # Identifying Data
 
@@ -61,7 +61,7 @@
 
 [fr] Note that some settings may not be available depending on various factors such as layer type or configuration.
 
-|Nom|Description|
+|[fr] Name|[fr] Description|
 |----|----|
 | [fr] Metadata | [fr] Display relevant metadata in a slideout panel |
 | [fr] Settings | [fr] Opens slideout panel where bounding box and queryable data can be toggled as well as the ability to adjust opacity amount |
@@ -76,7 +76,7 @@
 
 [fr] In the Legend panel, 4 functions appear in a row at the top:
 
-|Nom|Description|
+|[fr] Name|[fr] Description|
 |----|----|
 | [fr] Add Layer | [fr] Menu options to add a file or service based layer |
 | [fr] Reorder Layers | [fr] Provides an alternative to the click-hold and drag reordering already available. When selected, layers are only reorderable by holding onto the handle icon next to each layer. Most useful for touch devices |
