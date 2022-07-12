@@ -517,7 +517,10 @@ export class MapImageLayer extends AttribLayer {
                 // Resolve the loading promise, set the flag
                 // This promise only indicates we have an array of results (each may still be loading their internals)
                 result.loaded = true;
-                dProm.resolveMe();
+                // TODO: remove this after demo purposes
+                setTimeout(() => {
+                    dProm.resolveMe();
+                }, 2000);
             });
 
             return result;

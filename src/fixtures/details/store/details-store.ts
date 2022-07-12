@@ -61,6 +61,14 @@ export enum DetailsStore {
      */
     defaultTemplates = 'details/defaultTemplates',
     /**
+     * (State) greedyLoading: boolean
+     */
+    greedyLoading = 'details/greedyLoading',
+    /**
+     * (State) activeGreedy: number
+     */
+    activeGreedy = 'details/activeGreedy',
+    /**
      * (Action) setPayload: (payload: ItemResult[])
      */
     setPayload = 'details/setPayload!',
