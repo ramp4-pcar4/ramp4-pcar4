@@ -34,7 +34,7 @@ The following navigation controls can be found in the bottom right corner of the
 
 # Navigation Information
 
-The navigation information is located in the lower right corner of the map and includes map scale and mouse cursor positioning coordinates.
+The navigation information is located in the lower right corner of the map and includes map scale and mouse/crosshairs positioning coordinates.
 
 The positioning coordinates can be in degrees minutes seconds (DMS), decimal degrees or meters depending on the projection and configuration used.
 

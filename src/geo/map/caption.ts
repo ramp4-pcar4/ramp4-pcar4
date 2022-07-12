@@ -44,15 +44,15 @@ export class MapCaptionAPI extends APIScope {
             return;
         }
 
-        // check if mouse coords has been disabled
-        if (captionConfig.mouseCoords.disabled) {
-            this.$iApi.$vApp.$store.set(MapCaptionStore.setCursorCoords, {
+        // check if map coords has been disabled
+        if (captionConfig.mapCoords.disabled) {
+            this.$iApi.$vApp.$store.set(MapCaptionStore.setCoords, {
                 disabled: true
             });
         } else {
             // get formatter specified in the config
             const defaultFormatter: string | undefined =
-                captionConfig.mouseCoords.formatter;
+                captionConfig.mapCoords.formatter;
             if (defaultFormatter !== undefined) {
                 this.setPointFormatter(defaultFormatter);
             }

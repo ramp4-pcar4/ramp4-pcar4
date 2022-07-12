@@ -2092,9 +2092,9 @@
                     "type": "object",
                     "description": "Configuration for the components in the map caption bar",
                     "properties": {
-                        "mouseCoords": {
+                        "mapCoords": {
                             "type": "object",
-                            "description": "Configuration for mouse co-ords",
+                            "description": "Configuration for mouse/crosshairs co-ords",
                             "properties": {
                                 "disabled": {
                                     "type": "boolean",
@@ -2132,7 +2132,7 @@
                             }
                         }
                     },
-                    "required": ["mouseCoords", "scaleBar"]
+                    "required": ["mapCoords", "scaleBar"]
                 },
                 "pointZoomScale": {
                     "type": "number",

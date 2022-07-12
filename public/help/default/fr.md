@@ -34,7 +34,7 @@
 
 # [fr] Navigation Information
 
-[fr] The navigation information is located in the lower right corner of the map and includes map scale and mouse cursor positioning coordinates.
+[fr] The navigation information is located in the lower right corner of the map and includes map scale and mouse/crosshairs positioning coordinates.
 
 [fr] The positioning coordinates can be in degrees minutes seconds (DMS), decimal degrees or meters depending on the projection and configuration used.
 
