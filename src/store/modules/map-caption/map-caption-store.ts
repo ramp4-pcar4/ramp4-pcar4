@@ -3,7 +3,7 @@ import { make } from 'vuex-pathify';
 
 import { MapCaptionState } from './map-caption-state';
 import type { RootState } from '@/store';
-import type { Attribution, MouseCoords, ScaleBar } from '@/geo/api';
+import type { Attribution, MapCoords, ScaleBar } from '@/geo/api';
 
 type MapCaptionContext = ActionContext<MapCaptionState, RootState>;
 
@@ -13,11 +13,8 @@ const actions = {
     setAttribution: (context: MapCaptionContext, attribution: Attribution) => {
         context.commit('SET_ATTRIBUTION', attribution);
     },
-    setCursorCoords: (
-        context: MapCaptionContext,
-        cursorCoords: MouseCoords
-    ) => {
-        context.commit('SET_CURSOR_COORDS', cursorCoords);
+    setCoords: (context: MapCaptionContext, coords: MapCoords) => {
+        context.commit('SET_COORDS', coords);
     },
     setScale: (context: MapCaptionContext, scale: ScaleBar) => {
         context.commit('SET_SCALE', scale);
@@ -31,8 +28,8 @@ const mutations = {
     SET_ATTRIBUTION: (state: MapCaptionState, value: Attribution) => {
         state.attribution = value;
     },
-    SET_CURSOR_COORDS: (state: MapCaptionState, value: MouseCoords) => {
-        state.cursorCoords = value;
+    SET_COORDS: (state: MapCaptionState, value: MapCoords) => {
+        state.coords = value;
     },
     SET_SCALE: (state: MapCaptionState, value: ScaleBar) => {
         state.scale = value;
@@ -56,13 +53,13 @@ export enum MapCaptionStore {
      */
     setAttribution = 'mapcaption/setAttribution!',
     /**
-     * (State) cursorCoords: MouseCoords
+     * (State) coords: MapCoords
      */
-    cursorCoords = 'mapcaption/cursorCoords',
+    coords = 'mapcaption/coords',
     /**
-     * (Action) setCursorCoords: (cursorCoords: MouseCoords)
+     * (Action) setCoords: (coords: MapCoords)
      */
-    setCursorCoords = 'mapcaption/setCursorCoords!',
+    setCoords = 'mapcaption/setCoords!',
     /**
      * (State) scale: ScaleBar
      */

@@ -442,8 +442,8 @@ export interface ScaleHelper {
     distance: number;
 }
 
-// Contains properties needed to display mouse co-ords on the map-caption bar
-export interface MouseCoords {
+// Contains properties needed to display mouse/crosshairs co-ords on the map-caption bar
+export interface MapCoords {
     disabled?: boolean;
     formattedString?: string;
 }
@@ -631,7 +631,7 @@ export interface RampLodConfig {
 
 // Contains properties for compoents on the map caption bar
 export interface MapCaptionConfig {
-    mouseCoords: { disabled?: boolean; formatter?: string };
+    mapCoords: { disabled?: boolean; formatter?: string };
     scaleBar: { disabled?: boolean; imperialScale?: boolean };
 }
 

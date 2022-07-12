@@ -1,17 +1,13 @@
-import type { Attribution, ScaleBar, MouseCoords } from '@/geo/api';
+import type { Attribution, ScaleBar, MapCoords } from '@/geo/api';
 
 export class MapCaptionState {
     attribution: Attribution;
     scale: ScaleBar;
-    cursorCoords: MouseCoords;
+    coords: MapCoords;
 
-    constructor(
-        attrib: Attribution,
-        scale: ScaleBar,
-        cursorCoords: MouseCoords
-    ) {
+    constructor(attrib: Attribution, scale: ScaleBar, coords: MapCoords) {
         this.attribution = attrib;
         this.scale = scale;
-        this.cursorCoords = cursorCoords;
+        this.coords = coords;
     }
 }

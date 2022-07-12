@@ -47,7 +47,7 @@ let config = {
                     }
                 ],
                 caption: {
-                    mouseCoords: {
+                    mapCoords: {
                         formatter: 'WEB_MERCATOR'
                     },
                     scaleBar: {
@@ -484,7 +484,7 @@ let config2 = {
                     }
                 ],
                 caption: {
-                    mouseCoords: {
+                    mapCoords: {
                         formatter: 'WEB_MERCATOR'
                     },
                     scaleBar: {
@@ -921,7 +921,7 @@ let config3 = {
                     }
                 ],
                 caption: {
-                    mouseCoords: {
+                    mapCoords: {
                         formatter: 'WEB_MERCATOR'
                     },
                     scaleBar: {

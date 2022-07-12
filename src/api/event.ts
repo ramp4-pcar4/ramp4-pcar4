@@ -20,7 +20,7 @@ import { GridStore, GridAction } from '@/fixtures/grid/store';
 import type {
     MapClick,
     MapMove,
-    MouseCoords,
+    MapCoords,
     RampBasemapConfig,
     ScreenPoint
 } from '@/geo/api';
@@ -346,7 +346,8 @@ enum DefEH {
     MOUSE_MOVE_MAPTIP_CHECK = 'checks_maptip_mouse_move',
     EXTENT_CHANGE_MAPTIP_CHECK = 'checks_maptip_extent_change',
     SHOW_DEFAULT_MAPTIP = 'show_default_maptip',
-    MAP_UPDATE_CAPTION_COORDS = 'updates_map_caption_coords',
+    MAP_UPDATE_MOUSE_COORDS = 'updates_map_mouse_coords',
+    MAP_UPDATE_CROSSHAIRS_COORDS = 'updates_map_crosshairs_coords',
     LEGEND_REMOVES_LAYER_ENTRY = 'legend_removes_layer_entry',
     LEGEND_RELOADS_LAYER_ENTRY = 'legend_reloads_layer_entry',
     GRID_REMOVES_LAYER_GRID = 'grid_removes_layer_grid',
@@ -623,7 +624,8 @@ export class EventAPI extends APIScope {
                 DefEH.MOUSE_MOVE_MAPTIP_CHECK,
                 DefEH.EXTENT_CHANGE_MAPTIP_CHECK,
                 DefEH.SHOW_DEFAULT_MAPTIP,
-                DefEH.MAP_UPDATE_CAPTION_COORDS,
+                DefEH.MAP_UPDATE_MOUSE_COORDS,
+                DefEH.MAP_UPDATE_CROSSHAIRS_COORDS,
                 DefEH.LEGEND_REMOVES_LAYER_ENTRY,
                 DefEH.LEGEND_RELOADS_LAYER_ENTRY,
                 DefEH.GRID_REMOVES_LAYER_GRID,
@@ -1005,17 +1007,15 @@ export class EventAPI extends APIScope {
                     handlerName
                 );
                 break;
-            case DefEH.MAP_UPDATE_CAPTION_COORDS:
-                // update the mouse co-ordinate caption when the mouse moves over the map
+            case DefEH.MAP_UPDATE_MOUSE_COORDS:
+                // update the co-ordinate caption when the mouse moves over the map
                 this.$iApi.event.on(
                     GlobalEvents.MAP_MOUSEMOVE,
                     throttle(200, (mapMove: MapMove) => {
-                        // check if cursor coords are disabled
+                        // check if coords are disabled
                         // if it is, then do not update it
-                        const currentCursorCoords: MouseCoords | undefined =
-                            this.$iApi.$vApp.$store.get(
-                                MapCaptionStore.cursorCoords
-                            );
+                        const currentCursorCoords: MapCoords | undefined =
+                            this.$iApi.$vApp.$store.get(MapCaptionStore.coords);
                         if (currentCursorCoords?.disabled) {
                             return;
                         }
@@ -1028,7 +1028,38 @@ export class EventAPI extends APIScope {
                             )
                             .then(fs => {
                                 this.$iApi.$vApp.$store.set(
-                                    MapCaptionStore.setCursorCoords,
+                                    MapCaptionStore.setCoords,
+                                    {
+                                        formattedString: fs
+                                    }
+                                );
+                            });
+                    }),
+                    handlerName
+                );
+                break;
+            case DefEH.MAP_UPDATE_CROSSHAIRS_COORDS:
+                // update the caption coordinates when the crosshairs pan over the map
+                this.$iApi.event.on(
+                    GlobalEvents.MAP_KEYDOWN,
+                    throttle(200, () => {
+                        // check if coords are disabled
+                        // if they are, then do not update
+                        const currentCrosshairsCoords: MapCoords | undefined =
+                            this.$iApi.$vApp.$store.get(MapCaptionStore.coords);
+                        if (
+                            currentCrosshairsCoords?.disabled ||
+                            !this.$iApi.geo.map.keysActive
+                        ) {
+                            return;
+                        }
+                        this.$iApi.geo.map.caption
+                            .formatPoint(
+                                this.$iApi.geo.map.getExtent().center()
+                            )
+                            .then(fs => {
+                                this.$iApi.$vApp.$store.set(
+                                    MapCaptionStore.setCoords,
                                     {
                                         formattedString: fs
                                     }
