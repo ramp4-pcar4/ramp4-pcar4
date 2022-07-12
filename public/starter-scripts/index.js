@@ -417,7 +417,15 @@ let config = {
                         'layer-reorder'
                     ]
                 },
-                mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
+                mapnav: {
+                    items: [
+                        'fullscreen',
+                        'help',
+                        'home',
+                        'geolocator',
+                        'basemap'
+                    ]
+                },
                 details: {
                     panelWidth: {
                         default: 350,

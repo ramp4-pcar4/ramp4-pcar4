@@ -668,7 +668,7 @@ let config = {
                 appbar: {
                     items: ['legend', 'geosearch', 'basemap', 'export']
                 },
-                mapnav: { items: ['fullscreen', 'geoLocator', 'home', 'help'] },
+                mapnav: { items: ['fullscreen', 'geolocator', 'home', 'help'] },
                 export: {
                     title: {
                         value: 'Canadian Environmental Sustainability Indicators (CESI)'

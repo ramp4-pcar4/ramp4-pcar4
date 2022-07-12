@@ -1,4 +1,4 @@
-import type { ActionContext, Action, Mutation } from 'vuex';
+import type { ActionContext } from 'vuex';
 import { make } from 'vuex-pathify';
 
 import { MapnavState } from './mapnav-state';

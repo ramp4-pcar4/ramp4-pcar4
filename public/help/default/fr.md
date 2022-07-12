@@ -26,7 +26,9 @@
 |--|--|
 | [fr] Zoom in - Plus (+) | [fr] Zoom in one level on the map to see more detailed content |
 | [fr] Zoom out - Minus (-) | [fr] Zoom out one level on the map to see less detailed content |
-| [fr] Fullscreen | [fr] Full screen presents map content using the entire page. Full screen option is only available when the map is embedded into another page | [fr] Home / Initial extent | [fr] Zoom and pan map such that initial extent is visible |
+| [fr] Fullscreen | [fr] Full screen presents map content using the entire page. Full screen option is only available when the map is embedded into another page |
+| [fr] Geolocate | [fr] Zoom and pan map over the current location of the device |
+| [fr] Home / Initial extent | [fr] Zoom and pan map such that initial extent is visible |
 | [fr] Help | [fr] Toggle open or closed the help dialog |
 
 
