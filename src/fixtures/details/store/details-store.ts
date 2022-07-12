@@ -61,6 +61,14 @@ export enum DetailsStore {
      */
     defaultTemplates = 'details/defaultTemplates',
     /**
+     * (State) slowLoadingFlag: boolean
+     */
+    slowLoadingFlag = 'details/slowLoadingFlag',
+    /**
+     * (State) activeGreedy: number
+     */
+    activeGreedy = 'details/activeGreedy',
+    /**
      * (Action) setPayload: (payload: ItemResult[])
      */
     setPayload = 'details/setPayload!',

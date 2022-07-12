@@ -4,7 +4,7 @@
             {{ $t('details.items.title') }}
         </template>
         <template #content>
-            <div v-if="result.loaded">
+            <div v-if="result.loaded && activeGreedy === 0">
                 <div
                     class="flex flex-col justify-between py-8 px-8 mb-8 bg-gray-100"
                     v-if="layerExists"
@@ -132,24 +132,26 @@
                 </div>
             </div>
             <!-- result is loading -->
-            <div v-else class="flex justify-center py-10 items-center">
+            <div
+                v-else-if="slowLoadingFlag"
+                class="flex justify-center py-10 items-center"
+            >
                 <span class="animate-spin spinner h-20 w-20 px-5 mr-8"></span>
                 {{ $t('details.item.loading') }}
             </div>
+            <!-- clear panel when new identify request came in -->
+            <div v-else></div>
         </template>
     </panel-screen>
 </template>
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
-
 import { DetailsStore } from './store';
-
-import type { LayerInstance, PanelInstance } from '@/api/internal';
 import { GlobalEvents } from '@/api';
 import { IdentifyResultFormat } from '@/geo/api';
-
 import type { FieldDefinition, IdentifyResult, IdentifyItem } from '@/geo/api';
+import type { LayerInstance, PanelInstance } from '@/api/internal';
 
 import ESRIDefaultV from './templates/esri-default.vue';
 import HTMLDefaultV from './templates/html-default.vue';
@@ -179,6 +181,8 @@ export default defineComponent({
         return {
             defaultTemplates: this.get(DetailsStore.defaultTemplates),
             detailProperties: this.get(DetailsStore.properties),
+            activeGreedy: this.get(DetailsStore.activeGreedy),
+            slowLoadingFlag: this.get(DetailsStore.slowLoadingFlag),
             identifyTypes: IdentifyResultFormat.UNKNOWN,
             icon: '' as string,
             currentIdx: 0,
@@ -294,14 +298,6 @@ export default defineComponent({
         }
     },
     methods: {
-        /**
-         * Close details screen
-         */
-        close() {
-            this.panel.close();
-            this.$iApi.event.emit(GlobalEvents.DETAILS_CLOSED);
-        },
-
         /**
          * Initialize the details screen
          */

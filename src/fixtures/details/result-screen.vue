@@ -1,70 +1,83 @@
 <template>
     <panel-screen :panel="panel">
-        <template #header>{{ $t('details.items.title') }}</template>
+        <template #header>
+            {{ $t('details.items.title') }}
+        </template>
         <template #content>
-            <div v-if="layerExists">
-                <div v-if="result.items.length > 0">
-                    <!-- layer name -->
-                    <div
-                        class="flex justify-between py-8 px-8 mb-8 bg-gray-100"
-                        v-if="layerExists"
-                    >
-                        <div class="p-8 font-bold break-words">
-                            {{ layerName }}
-                        </div>
-                    </div>
-
-                    <!-- result list -->
-                    <button
-                        class="w-full flex px-16 py-10 text-md hover:bg-gray-200 cursor-pointer"
-                        v-for="(item, idx) in result.items"
-                        :key="idx"
-                        @click="item.loaded && openResult(idx)"
-                        :disabled="!item.loaded"
-                        v-focus-item
-                        v-truncate
-                    >
-                        <!-- ifs on each span as wrapper breaks aligment. smart person might improve things -->
-                        <span
-                            v-if="item.loaded"
-                            v-html="itemIcon(item.data, idx)"
-                            class="flex-none symbologyIcon"
-                        ></span>
-                        <span
-                            class="flex-initial py-5 px-10"
-                            v-truncate
-                            v-if="item.loaded"
+            <div v-if="result.loaded && activeGreedy === 0">
+                <div v-if="layerExists">
+                    <div v-if="result.items.length > 0">
+                        <!-- layer name -->
+                        <div
+                            class="flex justify-between py-8 px-8 mb-8 bg-gray-100"
+                            v-if="layerExists"
                         >
-                            {{
-                                nameField
-                                    ? item.data[nameField]
-                                    : $t('details.result.default.name', [
-                                          idx + 1
-                                      ])
-                            }}
-                        </span>
-                        <span
-                            v-if="!item.loaded"
-                            class="animate-spin spinner h-20 w-20 px-5"
-                        ></span>
-                    </button>
+                            <div class="p-8 font-bold break-words">
+                                {{ layerName }}
+                            </div>
+                        </div>
+
+                        <!-- result list -->
+                        <button
+                            class="w-full flex px-16 py-10 text-md hover:bg-gray-200 cursor-pointer"
+                            v-for="(item, idx) in result.items"
+                            :key="idx"
+                            @click="item.loaded && openResult(idx)"
+                            :disabled="!item.loaded"
+                            v-focus-item
+                            v-truncate
+                        >
+                            <!-- ifs on each span as wrapper breaks aligment. smart person might improve things -->
+                            <span
+                                v-if="item.loaded"
+                                v-html="itemIcon(item.data, idx)"
+                                class="flex-none symbologyIcon"
+                            ></span>
+                            <span
+                                class="flex-initial py-5 px-10"
+                                v-truncate
+                                v-if="item.loaded"
+                            >
+                                {{
+                                    nameField
+                                        ? item.data[nameField]
+                                        : $t('details.result.default.name', [
+                                              idx + 1
+                                          ])
+                                }}
+                            </span>
+                            <span
+                                v-if="!item.loaded"
+                                class="animate-spin spinner h-20 w-20 px-5"
+                            ></span>
+                        </button>
+                    </div>
+                    <div v-else>{{ $t('details.layers.results.empty') }}</div>
                 </div>
-                <div v-else>{{ $t('details.layers.results.empty') }}</div>
+                <!-- layer does not exist anymore, show no data text -->
+                <div v-else class="p-5">
+                    {{ $t('details.item.no.data') }}
+                </div>
             </div>
-            <!-- layer does not exist anymore, show no data text -->
-            <div v-else class="p-5">
-                {{ $t('details.item.no.data') }}
+            <!-- result is loading -->
+            <div
+                v-else-if="slowLoadingFlag"
+                class="flex justify-center py-10 items-center"
+            >
+                <span class="animate-spin spinner h-20 w-20 px-5 mr-8"></span>
+                {{ $t('details.item.loading') }}
             </div>
+            <!-- clear panel when new identify request came in -->
+            <div v-else></div>
         </template>
     </panel-screen>
 </template>
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
+import { DetailsStore } from './store';
 import { GlobalEvents, type LayerInstance, type PanelInstance } from '@/api';
 import type { IdentifyResult } from '@/geo/api';
-
-import { DetailsStore } from './store';
 
 export default defineComponent({
     name: 'DetailsResultScreenV',
@@ -88,6 +101,8 @@ export default defineComponent({
             icon: [] as string[],
             layerExists: false, // tracks whether the layer still exists
             detailProperties: this.get(DetailsStore.properties),
+            activeGreedy: this.get(DetailsStore.activeGreedy),
+            slowLoadingFlag: this.get(DetailsStore.slowLoadingFlag),
             handlers: [] as Array<string>
         };
     },
