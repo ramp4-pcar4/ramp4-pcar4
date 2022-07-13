@@ -57,6 +57,7 @@ import type { Extent, RampBasemapConfig } from '@/geo/api';
 import { GlobalEvents, OverviewMapAPI } from '@/api/internal';
 import { OverviewmapStore } from './store';
 import { ConfigStore } from '@/store/modules/config';
+import { debounce } from 'throttle-debounce';
 
 export default defineComponent({
     name: 'OverviewmapV',
@@ -82,13 +83,19 @@ export default defineComponent({
 
             this.minimized = this.startMinimized;
 
+            // update the overview map with the current map extent
+            let updatePromise = this.overviewMap.updateOverview(
+                this.$iApi.geo.map.getExtent()
+            );
             // update the overview map whenever the extent changes
             this.handlers.push(
                 this.$iApi.event.on(
                     GlobalEvents.MAP_EXTENTCHANGE,
-                    (newExtent: Extent) => {
-                        this.overviewMap.updateOverview(newExtent);
-                    }
+                    debounce(100, (newExtent: Extent) => {
+                        updatePromise.then(() =>
+                            this.overviewMap.updateOverview(newExtent)
+                        );
+                    })
                 )
             );
 
@@ -134,9 +141,6 @@ export default defineComponent({
                     }
                 )
             );
-
-            // update the overview map with the current map extent
-            this.overviewMap.updateOverview(this.$iApi.geo.map.getExtent());
         });
     },
 

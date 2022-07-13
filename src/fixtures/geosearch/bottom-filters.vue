@@ -47,6 +47,7 @@ export default defineComponent({
         //      going default means the handler function needs to be public / on the geosearch api.
         //      ^ not entirely true. a person can still unhook the event, however our public documentation will
         //        have no mention of the event handler name. A person would need to discover it.
+        // TODO also consider if this handler requires debounce because MAP_EXTENTCHANGE fires at a high rate
         this.$iApi.event.on(
             GlobalEvents.MAP_EXTENTCHANGE,
             this.onMapExtentChange,

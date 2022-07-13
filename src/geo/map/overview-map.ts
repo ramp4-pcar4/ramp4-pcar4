@@ -246,17 +246,24 @@ export class OverviewMapAPI extends CommonMapAPI {
      * Updates overviewmap extent and graphic based on main map extent
      *
      * @param {Extent} newExtent new main map extent
+     * @returns {Promise<void>} A promise that resolves when the overviewmap has finished updating
      */
-    updateOverview(newExtent: Extent) {
+    updateOverview(newExtent: Extent): Promise<void> {
         const expandFactor: number = this.$iApi.$vApp.$store.get(
             OverviewmapStore.expandFactor
         ) as number;
 
-        this.zoomMapTo(newExtent.expand(expandFactor), undefined, false);
+        let zoomPromise = this.zoomMapTo(
+            newExtent.expand(expandFactor),
+            undefined,
+            false
+        );
 
         // this draws the outline of the main map extent
         this.esriView!.graphics.getItemAt(0).geometry =
             this.$iApi.geo.map.esriView!.extent;
+
+        return zoomPromise;
     }
 
     /**
