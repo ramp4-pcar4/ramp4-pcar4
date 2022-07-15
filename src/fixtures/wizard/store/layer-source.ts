@@ -77,7 +77,7 @@ export class LayerSource extends APIScope {
             fields: [{ name: 'OBJECTID', type: 'oid' }].concat(
                 this.$iApi.geo.layer.files.extractGeoJsonFields(fileData)
             ),
-            configOptions: ['name', 'nameField', 'tooltipField']
+            configOptions: ['name', 'nameField', 'tooltipField', 'colour']
         };
     }
 
@@ -105,7 +105,8 @@ export class LayerSource extends APIScope {
                 'nameField',
                 'tooltipField',
                 'latField',
-                'longField'
+                'longField',
+                'colour'
             ]
         };
     }
@@ -164,7 +165,7 @@ export class LayerSource extends APIScope {
         return {
             config,
             fields: response.data.fields,
-            configOptions: ['name', 'nameField', 'tooltipField']
+            configOptions: ['name', 'nameField', 'tooltipField', 'colour']
         };
     }
 
