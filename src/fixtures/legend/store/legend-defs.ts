@@ -94,6 +94,13 @@ export class LegendItem {
     reload(): void {}
 
     /**
+     * Returns a legend config representation of this item.
+     */
+    getConfig(): any {
+        return {};
+    }
+
+    /**
      * Check if a control is available for the legend item.
      * Returns:
      *  - True if the control is included in legend item's available controls
@@ -189,6 +196,28 @@ export class LegendEntry extends LegendItem {
     /** Indicates if this legend entry allows symbology to be toggled. */
     get toggleSymbology(): boolean {
         return this._toggleSymbology;
+    }
+
+    /**
+     * Returns a legend config representation of this entry.
+     */
+    getConfig(): any {
+        let conf: any = {
+            itemType: this._type,
+            layerId:
+                this._layerParentId !== undefined
+                    ? this._layerParentId
+                    : this._id,
+            layerUid: this.layerUID,
+            uid: this._uid,
+            name: this._name
+        };
+
+        if (this._layerIdx !== undefined) {
+            conf.sublayerIndex = this._layerIdx;
+        }
+
+        return conf;
     }
 
     /**
@@ -422,7 +451,7 @@ export class LegendGroup extends LegendItem {
     constructor(legendGroup: any, parent: LegendGroup | undefined = undefined) {
         super(legendGroup);
         this._parent = parent;
-        this._type = LegendTypes.Placeholder; // group will be in a placeholder state by default
+        this._type = LegendTypes.Placeholder;
 
         // default legend group controls if it is not defined
         this._controls = legendGroup.controls?.slice() ?? [
@@ -430,84 +459,26 @@ export class LegendGroup extends LegendItem {
         ];
         this._disabledControls = legendGroup.disabledControls?.slice() ?? [];
 
-        this._expanded = legendGroup.expanded || true;
-        this._visibility = legendGroup.visibility || true;
+        this._expanded = legendGroup.expanded ?? true;
+        this._visibility = legendGroup.visibility ?? true;
 
-        if (legendGroup.layer !== undefined) {
-            // if provided a layer object, wait for the layer to load before initializing
+        // if layer is provided, wait for it to load before loading this group
+        // otherwise load immediately
+        const loadItem = () => {
+            this._type =
+                legendGroup.exclusiveVisibility !== undefined
+                    ? LegendTypes.Set
+                    : LegendTypes.Group;
+            this._loadPromise.resolveMe();
+            this.checkVisibilityRules();
+        };
+        if (legendGroup.layer === undefined) {
+            loadItem();
+        } else {
             legendGroup.layer.isLayerLoaded().then(() => {
-                const parseLayers = (layers: Array<LayerInstance>): any => {
-                    return layers.map((layer: LayerInstance) =>
-                        layer.isSublayer
-                            ? {
-                                  // create legend entry config
-                                  layer: layer,
-                                  layerId: layer.id,
-                                  name: layer.name,
-                                  sublayerIndex:
-                                      layer.layerIdx === -1
-                                          ? undefined
-                                          : layer.layerIdx
-                              }
-                            : {
-                                  // create legend group config
-                                  name: layer.name,
-                                  children: parseLayers(layer.sublayers)
-                              }
-                    );
-                };
-                // map the sublayers of the given layer into legend entries/groups
-                legendGroup.children = parseLayers(legendGroup.layer.sublayers);
-                this._initGroupProperties(legendGroup);
+                loadItem();
             });
-        } else {
-            // otherwise just initialize the group
-            this._initGroupProperties(legendGroup);
         }
-    }
-
-    /**
-     * Set group properties such as id, visibility and opacity. Called whenever group is created or reloaded.
-     * @param legendGroup config snippet for legend group
-     */
-    _initGroupProperties(legendGroup: any): void {
-        // update the type
-        if (legendGroup.exclusiveVisibility !== undefined) {
-            this._type = legendGroup.exclusiveVisibility
-                ? LegendTypes.Set
-                : LegendTypes.Group;
-        } else {
-            this._type = LegendTypes.Group;
-        }
-
-        // initialize objects for all non-hidden group/set children entries
-        const children =
-            this._type === LegendTypes.Set
-                ? legendGroup.exclusiveVisibility
-                : legendGroup.children;
-        children
-            .filter((entry: any) => !entry.hidden)
-            .forEach((entry: any) => {
-                // pass the layer fixture config to child items
-                entry.layerLegendConfigs = legendGroup.layerLegendConfigs;
-
-                // create new LegendGroup/LegendEntry and push to child array
-                if (
-                    entry.exclusiveVisibility !== undefined ||
-                    entry.children !== undefined
-                ) {
-                    this._children.push(new LegendGroup(entry, this));
-                } else {
-                    // if the entry is a sublayer, set the entry id to the sublayers id
-                    if (entry.sublayerIndex !== undefined) {
-                        entry.layerParentId = entry.layerId;
-                        entry.layerId = `${entry.layerId}-${entry.sublayerIndex}`;
-                    }
-                    this._children.push(new LegendEntry(entry, this));
-                }
-            });
-
-        this._loadPromise.resolveMe();
     }
 
     /**
@@ -585,7 +556,7 @@ export class LegendGroup extends LegendItem {
         } else if (toggledChild.visibility) {
             // turn off all child entries except for the last one toggled on, mark that as the last visible entry in the set
             this.children.forEach(entry => {
-                if (entry.visibility && entry.id !== toggledChild.id) {
+                if (entry.visibility && entry.uid !== toggledChild.uid) {
                     entry.toggleVisibility(false, false);
                 }
             });
@@ -653,6 +624,31 @@ export class LegendGroup extends LegendItem {
         if (this._parent instanceof LegendGroup && updateParent) {
             this._parent.checkVisibility(this);
         }
+    }
+
+    /**
+     * Returns a legend config representation of this entry.
+     */
+    getConfig(): any {
+        let conf: any = {
+            itemType: this._type,
+            uid: this._uid,
+            name: this._name
+        };
+
+        let childConfs: Array<any> = [];
+
+        this._children.forEach(item => {
+            childConfs.push(item.getConfig());
+        });
+
+        if (this._type === LegendTypes.Set) {
+            conf.exclusiveVisibility = childConfs;
+        } else {
+            conf.children = childConfs;
+        }
+
+        return conf;
     }
 }
 
