@@ -56,14 +56,14 @@
             <a
                 href="#"
                 class="flex leading-snug items-center overflow-hidden whitespace-nowrap"
-                @click="expand"
+                @click="legendApi.expandItems(true)"
             >
                 {{ $t('legend.header.groups.expand') }}
             </a>
             <a
                 href="#"
                 class="flex leading-snug items-center overflow-hidden whitespace-nowrap"
-                @click="collapse"
+                @click="legendApi.expandItems(false)"
             >
                 {{ $t('legend.header.groups.collapse') }}
             </a>
@@ -88,14 +88,14 @@
             <a
                 href="#"
                 class="flex leading-snug items-center w-100 overflow-hidden whitespace-nowrap"
-                @click="show"
+                @click="legendApi.showItems(true)"
             >
                 {{ $t('legend.header.visible.show') }}
             </a>
             <a
                 href="#"
                 class="flex leading-snug items-center w-100 overflow-hidden whitespace-nowrap"
-                @click="hide"
+                @click="legendApi.showItems(false)"
             >
                 {{ $t('legend.header.visible.hide') }}
             </a>
@@ -108,17 +108,16 @@ import { defineComponent } from 'vue';
 
 import { LegendStore } from './store';
 import { GlobalEvents } from '../../api/internal';
+import type { LegendAPI } from './api/legend';
 
 export default defineComponent({
     name: 'LegendHeaderV',
     data() {
         return {
-            show: this.call(LegendStore.showAll),
-            hide: this.call(LegendStore.hideAll),
-            expand: this.call(LegendStore.expandGroups),
-            collapse: this.call(LegendStore.collapseGroups)
+            legendApi: this.$iApi.fixture.get<LegendAPI>('legend')!
         };
     },
+
     methods: {
         openWizard() {
             this.$iApi.event.emit(GlobalEvents.WIZARD_OPEN);

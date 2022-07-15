@@ -1,12 +1,10 @@
 <template>
-    <KeepAlive>
-        <component
-            class="select-none"
-            :is="templates[legendItem.type]"
-            :legendItem="legendItem"
-            :props="props"
-        ></component>
-    </KeepAlive>
+    <component
+        class="select-none"
+        :is="templates[legendItem.type]"
+        :legendItem="legendItem"
+        :props="props"
+    ></component>
 </template>
 
 <script lang="ts">

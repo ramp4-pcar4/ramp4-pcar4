@@ -5,18 +5,17 @@ import {
     LayerInstance,
     PanelInstance
 } from './internal';
+import type { AppbarAPI } from '@/fixtures/appbar/api/appbar';
 import type { DetailsAPI } from '@/fixtures/details/api/details';
-import type { SettingsAPI } from '@/fixtures/settings/api/settings';
-import type { HelpAPI } from '@/fixtures/help/api/help';
 import type { GridAPI } from '@/fixtures/grid/api/grid';
-import type { WizardAPI } from '@/fixtures/wizard/api/wizard';
-import type { LegendAPI } from '@/fixtures/legend/api/legend';
+import type { HelpAPI } from '@/fixtures/help/api/help';
 import type { LayerReorderAPI } from '@/fixtures/layer-reorder/api/layer-reorder';
+import type { LegendAPI } from '@/fixtures/legend/api/legend';
 import type { MetadataAPI } from '@/fixtures/metadata/api/metadata';
 import type { MetadataPayload } from '@/fixtures/metadata/store';
+import type { SettingsAPI } from '@/fixtures/settings/api/settings';
+import type { WizardAPI } from '@/fixtures/wizard/api/wizard';
 import { AppbarAction } from '@/fixtures/appbar/store';
-import type { HilightAPI } from '@/fixtures/hilight/api/hilight';
-import { LegendStore } from '@/fixtures/legend/store';
 import { GridStore, GridAction } from '@/fixtures/grid/store';
 import { LayerState } from '@/geo/api';
 import type {
@@ -667,7 +666,7 @@ export class EventAPI extends APIScope {
             case DefEH.APPBAR_ADDS_PANEL_BUTTON:
                 zeHandler = (panel: PanelInstance) => {
                     if (
-                        this.$iApi.fixture.get('appbar') &&
+                        this.$iApi.fixture.get<AppbarAPI>('appbar') &&
                         !(this.$iApi.$vApp.$store.get('appbar/order') as any)
                             .flat()
                             .find((item: string) => item === panel.id)
@@ -683,7 +682,7 @@ export class EventAPI extends APIScope {
             case DefEH.APPBAR_REMOVES_PANEL_BUTTON:
                 zeHandler = (panel: PanelInstance) => {
                     if (
-                        this.$iApi.fixture.get('appbar') &&
+                        this.$iApi.fixture.get<AppbarAPI>('appbar') &&
                         !(this.$iApi.$vApp.$store.get('appbar/order') as any)
                             .flat()
                             .find((item: string) => item === panel.id)
@@ -708,8 +707,8 @@ export class EventAPI extends APIScope {
             case DefEH.IDENTIFY_DETAILS:
                 // when identify runs, open details fixture and show the results
                 zeHandler = (identifyParam: any) => {
-                    const detailFix: DetailsAPI =
-                        this.$iApi.fixture.get('details');
+                    const detailFix =
+                        this.$iApi.fixture.get<DetailsAPI>('details');
                     if (detailFix) {
                         detailFix.openDetails(identifyParam.results);
                     }
@@ -719,8 +718,8 @@ export class EventAPI extends APIScope {
             case DefEH.TOGGLE_SETTINGS:
                 // opens or closes the settings panel and hooks it up to the requested layer.
                 zeHandler = (layer: LayerInstance) => {
-                    const settingsFixture: SettingsAPI =
-                        this.$iApi.fixture.get('settings');
+                    const settingsFixture =
+                        this.$iApi.fixture.get<SettingsAPI>('settings');
                     if (settingsFixture) {
                         settingsFixture.toggleSettings(layer);
                     }
@@ -738,8 +737,8 @@ export class EventAPI extends APIScope {
                     uid: string;
                     format: string;
                 }) => {
-                    const detailsFixture: DetailsAPI =
-                        this.$iApi.fixture.get('details');
+                    const detailsFixture =
+                        this.$iApi.fixture.get<DetailsAPI>('details');
                     if (detailsFixture) {
                         detailsFixture.openFeature(payload);
                     }
@@ -753,7 +752,7 @@ export class EventAPI extends APIScope {
             case DefEH.TOGGLE_HELP:
                 // opens or closes the standard help panel when a toggle help event happens
                 zeHandler = (payload?: boolean) => {
-                    const helpFixture: HelpAPI = this.$iApi.fixture.get('help');
+                    const helpFixture = this.$iApi.fixture.get<HelpAPI>('help');
                     if (helpFixture) {
                         helpFixture.toggleHelp(payload);
                     }
@@ -767,7 +766,7 @@ export class EventAPI extends APIScope {
             case DefEH.TOGGLE_GRID:
                 // opens or closes the standard grid panel when a toggle grid event happens
                 zeHandler = (layer: LayerInstance, open?: boolean) => {
-                    const gridFixture: GridAPI = this.$iApi.fixture.get('grid');
+                    const gridFixture = this.$iApi.fixture.get<GridAPI>('grid');
                     if (gridFixture) {
                         gridFixture.toggleGrid(layer.uid, open);
                     }
@@ -781,8 +780,8 @@ export class EventAPI extends APIScope {
             case DefEH.OPEN_WIZARD:
                 // opens the standard add layer wizard panel when an open wizard event happens
                 zeHandler = () => {
-                    const wizardFixture: WizardAPI =
-                        this.$iApi.fixture.get('wizard');
+                    const wizardFixture =
+                        this.$iApi.fixture.get<WizardAPI>('wizard');
                     if (wizardFixture) {
                         wizardFixture.openWizard();
                     }
@@ -796,8 +795,10 @@ export class EventAPI extends APIScope {
             case DefEH.OPEN_LAYER_REORDER:
                 // opens the standard layer reorder panel when an open reorder event happens
                 zeHandler = () => {
-                    const reorderFixture: LayerReorderAPI =
-                        this.$iApi.fixture.get('layer-reorder');
+                    const reorderFixture =
+                        this.$iApi.fixture.get<LayerReorderAPI>(
+                            'layer-reorder'
+                        );
                     if (reorderFixture) {
                         reorderFixture.openLayerReorder();
                     }
@@ -811,8 +812,8 @@ export class EventAPI extends APIScope {
             case DefEH.OPEN_METADATA:
                 // opens the standard metadata panel when an open metadata event happens
                 zeHandler = (payload: MetadataPayload) => {
-                    const metadataFixture: MetadataAPI =
-                        this.$iApi.fixture.get('metadata');
+                    const metadataFixture =
+                        this.$iApi.fixture.get<MetadataAPI>('metadata');
                     if (metadataFixture) {
                         metadataFixture.toggleMetadata(payload);
                     }
@@ -826,8 +827,8 @@ export class EventAPI extends APIScope {
             case DefEH.UPDATE_LEGEND_LAYER_REGISTER:
                 // when a layer is registered, have the standard legend update in accordance to the layer
                 zeHandler = (layer: LayerInstance) => {
-                    const legendFixture: LegendAPI =
-                        this.$iApi.fixture.get('legend');
+                    const legendFixture =
+                        this.$iApi.fixture.get<LegendAPI>('legend');
                     if (legendFixture) {
                         legendFixture.updateLegend(layer);
                     }
@@ -861,10 +862,10 @@ export class EventAPI extends APIScope {
             case DefEH.UPDATE_LEGEND_WIZARD_ADDED:
                 // when a layer is user-added, have the standard legend create a new stock entry for the layer
                 zeHandler = (layer: LayerInstance) => {
-                    const legendFixture: LegendAPI =
-                        this.$iApi.fixture.get('legend');
+                    const legendFixture =
+                        this.$iApi.fixture.get<LegendAPI>('legend');
                     if (legendFixture) {
-                        legendFixture.generateLegend(layer);
+                        legendFixture.addLayerItem(layer);
                     }
                 };
                 this.$iApi.event.on(
@@ -876,8 +877,8 @@ export class EventAPI extends APIScope {
             case DefEH.UPDATE_LEGEND_LAYER_RELOAD:
                 // when a layer is reloaded, have the standard legend update in accordance to the layer
                 zeHandler = (layer: LayerInstance) => {
-                    const legendFixture: LegendAPI =
-                        this.$iApi.fixture.get('legend');
+                    const legendFixture =
+                        this.$iApi.fixture.get<LegendAPI>('legend');
                     if (legendFixture) {
                         legendFixture.updateLegend(layer);
                     }
@@ -1108,11 +1109,9 @@ export class EventAPI extends APIScope {
             case DefEH.LEGEND_REMOVES_LAYER_ENTRY:
                 // when a layer is removed from the map, remove any bound entries from the standard legend
                 zeHandler = (layer: LayerInstance) => {
-                    if (!!this.$iApi.fixture.get('legend')) {
-                        this.$iApi.$vApp.$store.dispatch(
-                            LegendStore.removeLayerEntry,
-                            layer.uid
-                        );
+                    let legendApi = this.$iApi.fixture.get<LegendAPI>('legend');
+                    if (legendApi) {
+                        legendApi.removeLayerItem(layer);
                         this.$iApi.updateAlert(
                             this.$vApp.$t('legend.alert.layerRemoved', {
                                 name: layer.name
@@ -1129,11 +1128,9 @@ export class EventAPI extends APIScope {
             case DefEH.LEGEND_RELOADS_LAYER_ENTRY:
                 // when a layer starts to reload, reset any entries in the standard legend to a loading state
                 zeHandler = (layer: LayerInstance) => {
-                    if (!!this.$iApi.fixture.get('legend')) {
-                        this.$iApi.$vApp.$store.dispatch(
-                            LegendStore.reloadLayerEntry,
-                            layer.uid
-                        );
+                    let legendApi = this.$iApi.fixture.get<LegendAPI>('legend');
+                    if (legendApi) {
+                        legendApi.reloadLayerItem(layer.uid);
                     }
                 };
                 this.$iApi.event.on(
@@ -1145,7 +1142,7 @@ export class EventAPI extends APIScope {
             case DefEH.GRID_REMOVES_LAYER_GRID:
                 // when a layer is removed, close the standard grid if open for that layer
                 zeHandler = (layer: LayerInstance) => {
-                    if (!!this.$iApi.fixture.get('grid')) {
+                    if (!!this.$iApi.fixture.get<GridAPI>('grid')) {
                         // remove cached grid state for layer from grid store
                         this.$vApp.$store.dispatch(
                             `grid/${GridAction.removeGrid}`,
@@ -1173,7 +1170,7 @@ export class EventAPI extends APIScope {
             case DefEH.DETAILS_REMOVES_LAYER:
                 // when a layer is removed, remove it from the details payload
                 zeHandler = (layer: LayerInstance) => {
-                    if (!!this.$iApi.fixture.get('details')) {
+                    if (!!this.$iApi.fixture.get<DetailsAPI>('details')) {
                         // remove the layer from the payload results
                         this.$iApi.$vApp.$store.set(
                             DetailsStore.removeLayer,

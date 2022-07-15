@@ -1,9 +1,9 @@
 import type { PanelWidthObject } from '@/api';
-import type { LegendEntry, LegendGroup } from './legend-defs';
+import type { LegendItem } from './legend-defs';
 
 export class LegendState {
     legendConfig: LegendConfig | undefined = undefined;
-    children: Array<LegendEntry | LegendGroup> = [];
+    children: Array<LegendItem> = [];
     headerControls: Array<string> = [];
 }
 
