@@ -145,7 +145,6 @@ export class LayerAPI extends APIScope {
         const controls: Array<LayerControls> =
             layer.config.controls?.slice() ?? [
                 LayerControls.BoundaryZoom,
-                LayerControls.Boundingbox,
                 LayerControls.Datatable,
                 LayerControls.Identify,
                 LayerControls.Metadata,

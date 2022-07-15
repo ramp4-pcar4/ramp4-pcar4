@@ -15,6 +15,10 @@ class WizardFixture extends WizardAPI {
                     screens: {
                         'wizard-screen': markRaw(WizardScreenV)
                     },
+                    button: {
+                        tooltip: 'wizard.title',
+                        icon: '<svg class="fill-current" viewBox="0 0 23 21"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg>'
+                    },
                     style: {
                         width: '350px'
                     },

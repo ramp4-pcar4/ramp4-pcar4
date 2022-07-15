@@ -21,8 +21,8 @@
 import type { PanelInstance } from '@/api';
 import { defineComponent, defineAsyncComponent } from 'vue';
 import type { PropType } from 'vue';
-
-import { LegendStore } from './store';
+import type { LegendAPI } from './api/legend';
+import type { LegendItem } from './store/legend-defs';
 
 export default defineComponent({
     name: 'LegendScreenV',
@@ -33,16 +33,22 @@ export default defineComponent({
         }
     },
 
+    computed: {
+        children(): Array<LegendItem> {
+            let legendApi = this.$iApi.fixture.get<LegendAPI>('legend');
+            if (legendApi) {
+                return [...legendApi.getLegend()];
+            }
+            return [];
+        }
+    },
+
     components: {
         // async components to avoid circular dependency breakage
         'legend-header': defineAsyncComponent(() => import('./header.vue')),
         'legend-component': defineAsyncComponent(
             () => import('./components/component.vue')
         )
-    },
-
-    data() {
-        return { children: this.get(LegendStore.children) };
     }
 });
 </script>
