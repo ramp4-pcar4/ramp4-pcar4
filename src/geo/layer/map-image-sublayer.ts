@@ -68,6 +68,10 @@ export class MapImageSublayer extends AttribLayer {
         //      every other layer. We don't want to wire up the standard "top level"
         //      layer stuff for sublayers.
 
+        // use the tree node created by the parent
+        this.layerTree = this.parentLayer!.getLayerTree().findChildByUid(
+            this.uid
+        )!;
         this.layerTree.name = this.name;
         this.layerTree.layerIdx = this.layerIdx;
 
