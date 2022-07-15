@@ -212,6 +212,55 @@
                             @keydown.stop
                         >
                         </wizard-input>
+                        <label
+                            class="sr-only"
+                            :for="`${colourPickerId}-color-hex`"
+                            >{{ $t('wizard.configure.colour.hex') }}</label
+                        >
+                        <label
+                            class="text-base font-bold"
+                            v-if="layerInfo.configOptions.includes('colour')"
+                            >{{ $t('wizard.configure.colour.label') }}</label
+                        >
+                        <ColorPicker
+                            v-if="layerInfo.configOptions.includes('colour')"
+                            alpha-channel="hide"
+                            :visible-formats="['hex']"
+                            default-format="hex"
+                            :id="colourPickerId"
+                            :color="colour"
+                            @color-change="updateColour"
+                        >
+                            <template #hue-range-input-label>
+                                <span class="sr-only">{{
+                                    $t('wizard.configure.colour.hue')
+                                }}</span>
+                            </template>
+
+                            <template #copy-button>
+                                <span class="sr-only">{{
+                                    $t('wizard.configure.colour.copy')
+                                }}</span>
+
+                                <svg
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="15"
+                                    height="15"
+                                    viewBox="0 0 15 15"
+                                >
+                                    <path
+                                        d="M5 0v2H1v13h12v-3h-1v2H2V5h10v3h1V2H9V0zm1 1h2v2h3v1H3V3h3z"
+                                        fill="currentColor"
+                                    />
+
+                                    <path
+                                        d="M10 7v2h5v2h-5v2l-3-3zM3 6h5v1H3zm0 2h3v1H3zm0 2h3v1H3zm0 2h5v1H3z"
+                                        fill="currentColor"
+                                    />
+                                </svg>
+                            </template>
+                        </ColorPicker>
                         <wizard-form-footer
                             @submit="onConfigureContinue"
                             @cancel="goToStep(1)"
@@ -225,7 +274,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
+import { ColorPicker } from 'vue-accessible-color-picker';
 
 import { PanelInstance } from '@/api';
 import { LayerType } from '@/geo/api';
@@ -247,13 +297,17 @@ export default defineComponent({
         'wizard-form-footer': WizardFormFooterV,
         'wizard-input': WizardInputV,
         'stepper-item': StepperItemV,
-        stepper: StepperV
+        stepper: StepperV,
+        ColorPicker
     },
 
     data() {
         return {
             layerSource: this.get(WizardStore.layerSource),
             step: this.get(WizardStore.step),
+
+            colour: ref(),
+            colourPickerId: ref(),
 
             goToStep: this.call(WizardStore.goToStep),
 
@@ -457,7 +511,24 @@ export default defineComponent({
                 return;
             }
 
+            // Generates a random 6 character hex string to use a random colour. The 16777215 is (I think) the number of possible colours.
+            this.colour =
+                '#' +
+                Math.floor(Math.random() * 16777215)
+                    .toString(16)
+                    .padStart(6, '0');
+            // generate unique ID for colour picker to prevent multi-ramp collisions
+            do {
+                this.colourPickerId = Math.random()
+                    .toString(36)
+                    .substring(2, 9);
+            } while (
+                document.getElementById(this.colourPickerId + '-hue-slider') !==
+                null
+            );
+
             this.goToStep(WizardStep.CONFIGURE);
+
             this.layerInfo.configOptions.includes(`sublayers`)
                 ? (this.finishStep = false)
                 : (this.finishStep = true);
@@ -556,6 +627,15 @@ export default defineComponent({
             sublayer.length > 0 && this.layerInfo.config.name
                 ? (this.finishStep = true)
                 : (this.finishStep = false);
+        },
+
+        updateColour(eventData: any) {
+            // trimming hex because it still has alpha attached even though its turned off
+            this.layerInfo.config.colour = eventData.colors.hex.substring(0, 7);
+
+            // manually setting copy button colour because of reset styles on the page and it uses a css variable that I think will mess with multi-ramp
+            this.$el.querySelector('.vacp-copy-button')!.style.backgroundColor =
+                this.layerInfo.config.colour;
         }
     }
 });
@@ -587,5 +667,8 @@ export default defineComponent({
             }
         }
     }
+}
+:deep(.vacp-color-input-label-text) {
+    display: none;
 }
 </style>
