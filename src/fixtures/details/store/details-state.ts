@@ -80,9 +80,23 @@ export class DetailsState {
     properties: { [id: string]: DetailsItemInstance } = {};
 
     /**
-     * Details default templates indexed by the identify result format
+     * Details default templates indexed by the identify result format.
      *
      * @memberof DetailsState
      */
     defaultTemplates: { [type: string]: string } = {};
+
+    /**
+     * Indicates whether greedy mode is still loading for current identify request after 500ms delay.
+     *
+     * @memberof DetailsState
+     */
+    slowLoadingFlag: boolean = false;
+
+    /**
+     * Indicates whether greedy mode is off (0), or currently running for the last request timestamp.
+     *
+     * @memberof DetailsState
+     */
+    activeGreedy: number = 0;
 }

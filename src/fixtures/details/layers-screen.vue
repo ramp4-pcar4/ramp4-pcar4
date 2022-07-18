@@ -4,33 +4,48 @@
             {{ $t('details.layers.title') }}
         </template>
         <template #content>
-            <!-- Grond total -->
-            <div class="p-5">
-                {{
-                    $t('details.layers.found', {
-                        numResults: totalResultCount,
-                        numLayers: payload.length
-                    })
-                }}
+            <div v-if="activeGreedy === 0">
+                <!-- grond total -->
+                <div class="p-5">
+                    {{
+                        $t('details.layers.found', {
+                            numResults: totalResultCount,
+                            numLayers: payload.length
+                        })
+                    }}
+                </div>
+                <!-- clicker for each layer -->
+                <button
+                    class="w-full px-20 py-10 text-md flex hover:bg-gray-200 cursor-pointer disabled:cursor-default"
+                    v-for="(item, idx) in layerResults"
+                    :key="item.uid"
+                    @click="item.loaded && openResult(idx)"
+                    :disabled="!(item.loaded && item.items.length > 0)"
+                >
+                    <div v-truncate>
+                        {{ layerName(idx) || $t('details.layers.loading') }}
+                    </div>
+                    <div class="flex-auto"></div>
+                    <!-- display the count if item exists, else display the loading spinner -->
+                    <div v-if="item.loaded" class="px-5">
+                        {{ item.items.length }}
+                    </div>
+                    <div
+                        v-else
+                        class="animate-spin spinner h-20 w-20 px-5"
+                    ></div>
+                </button>
             </div>
-            <!-- Clicker for each layer -->
-            <button
-                class="w-full px-20 py-10 text-md flex hover:bg-gray-200 cursor-pointer disabled:cursor-default"
-                v-for="(item, idx) in layerResults"
-                :key="item.uid"
-                @click="item.loaded && openResult(idx)"
-                :disabled="!(item.loaded && item.items.length > 0)"
+            <!-- show loading spinner when waiting for identify results -->
+            <div
+                v-else-if="slowLoadingFlag"
+                class="flex justify-center py-10 items-center"
             >
-                <div v-truncate>
-                    {{ layerName(idx) || $t('details.layers.loading') }}
-                </div>
-                <div class="flex-auto"></div>
-                <!-- Display the count if item exists, else display the loading spinner -->
-                <div v-if="item.loaded" class="px-5">
-                    {{ item.items.length }}
-                </div>
-                <div v-else class="animate-spin spinner h-20 w-20 px-5"></div>
-            </button>
+                <span class="animate-spin spinner h-20 w-20 px-5 mr-8"></span>
+                {{ $t('details.item.loading') }}
+            </div>
+            <!-- clear panel when new identify request came in -->
+            <div v-else></div>
         </template>
     </panel-screen>
 </template>
@@ -39,9 +54,7 @@
 // This screen is the view of all layers that were interrogated in the identify
 
 import { defineComponent } from 'vue';
-
 import { DetailsStore } from './store';
-
 import { GlobalEvents, LayerInstance, PanelInstance } from '@/api';
 import type { IdentifyResult } from '@/geo/api';
 
@@ -54,13 +67,15 @@ export default defineComponent({
         return {
             layerResults: [] as Array<IdentifyResult>,
             lastLayerUid: '' as string,
-            activeGreedy: 0 as number, // 0 = turn greedy mode off, some timestamp = greedy mode running with last request timestamp
+            activeGreedy: this.get(DetailsStore.activeGreedy), // 0 = turn greedy mode off, some timestamp = greedy mode running with last request timestamp
+            slowLoadingFlag: this.get(DetailsStore.slowLoadingFlag),
             payload: this.get(DetailsStore.payload),
             detailProperties: this.get(DetailsStore.properties),
             getLayerByUid: this.get('layer/getLayerByUid'),
             layers: this.get('layer/layers'),
             mobileMode: this.get('panel/mobileView'),
             remainingWidth: this.get('panel/getRemainingWidth'),
+            handlers: [] as Array<string>,
             watchers: [] as Array<Function>
         };
     },
@@ -89,15 +104,38 @@ export default defineComponent({
     },
     mounted() {
         // if details item screen is closed while greedy open is running, turn abort flag on
-        this.$iApi.event.on(
-            GlobalEvents.DETAILS_CLOSED,
-            () => (this.activeGreedy = 0),
-            'details_item_closed'
+        this.handlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.PANEL_CLOSED,
+                (panel: PanelInstance) => {
+                    if (
+                        panel.id === 'details-items' ||
+                        panel.id === 'details-layers'
+                    ) {
+                        this.$iApi.$vApp.$store.set(
+                            DetailsStore.activeGreedy,
+                            0
+                        );
+                    }
+                }
+            )
+        );
+
+        this.watchers.push(
+            this.$watch('activeGreedy', (newGreedy: Number) => {
+                // watch to turn off greedy loading flag if greedy mode is turned off
+                if (newGreedy === 0) {
+                    this.$iApi.$vApp.$store.set(
+                        DetailsStore.slowLoadingFlag,
+                        false
+                    );
+                }
+            })
         );
     },
     beforeUnmount() {
+        this.handlers.forEach(handler => this.$iApi.event.off(handler));
         this.watchers.forEach(unwatch => unwatch());
-        this.$iApi.event.off('details_item_closed');
     },
     methods: {
         /**
@@ -134,12 +172,14 @@ export default defineComponent({
             const detailsPanel = this.$iApi.panel.get('details-items');
             const detailsWidth = detailsPanel.width || 350;
 
-            this.activeGreedy =
+            const greedyMode =
                 this.mobileMode ||
                 (this.remainingWidth < detailsWidth && !detailsPanel.isOpen) ||
                 newPayload.length === 0
                     ? 0
                     : newPayload[0].requestTime;
+            this.$iApi.$vApp.$store.set(DetailsStore.activeGreedy, greedyMode);
+            this.$iApi.$vApp.$store.set(DetailsStore.slowLoadingFlag, false);
 
             this.layerResults = newPayload;
 
@@ -161,12 +201,6 @@ export default defineComponent({
          *              otherwise if there are no results for this previously open layer, follow the same steps as for case 1
          */
         autoOpen(newPayload: Array<IdentifyResult>): void {
-            // TODO: Decide if its worth to enhance code to close items panel on every new identify request.
-            // This is for the case where a slow loading layer takes a long time to resolve and currently the old items screen remains open
-            // which looks off since it is out of sync. If we do this, we would need to remove the below check if items panel is open and explore
-            // options for how to better track this.lastLayerUid (otherwise a layer would almost always be prioritized over others). For example, doing
-            // something like tracking this.lastLayerUid only if items panel is open before closing on a new request. Or if it is decided that this is not
-            // worth changing, ignore everything that was said here and delete.
             const itemsPanel = this.$iApi.panel.get('details-items');
             // if the item panel is already open for a layer, wait on that layer to resolve first
             if (this.lastLayerUid && itemsPanel.isOpen) {
@@ -185,7 +219,10 @@ export default defineComponent({
 
                         // update items screen with new results for that layer and turn off greedy loading and abort flags
                         if (lastIdentify.items.length > 0) {
-                            this.activeGreedy = 0;
+                            this.$iApi.$vApp.$store.set(
+                                DetailsStore.activeGreedy,
+                                0
+                            );
                             this.openResult(lastIdx);
                         } else {
                             // otherwise proceed as normal in case 1
@@ -201,6 +238,19 @@ export default defineComponent({
                 // if no identify item panel was open or no last layer is tracked, proceed with case 1
                 this.autoOpenAny(newPayload);
             }
+
+            // after a set time period, if greedy mode is still running for current identify request turn on loading flag
+            setTimeout(() => {
+                if (
+                    this.activeGreedy !== 0 &&
+                    newPayload[0].requestTime === this.activeGreedy
+                ) {
+                    this.$iApi.$vApp.$store.set(
+                        DetailsStore.slowLoadingFlag,
+                        true
+                    );
+                }
+            }, 500);
         },
 
         /**
@@ -230,7 +280,7 @@ export default defineComponent({
                     const idx = this.layerResults.findIndex(
                         (item: IdentifyResult) => item.uid === res.uid
                     );
-                    this.activeGreedy = 0;
+                    this.$iApi.$vApp.$store.set(DetailsStore.activeGreedy, 0);
                     if (idx !== -1) {
                         this.openResult(idx);
                     }
@@ -244,7 +294,7 @@ export default defineComponent({
                     // no promise resolved, clicked on empty map point with no identify results
                     // then clear the last tracked layer and close the items panel
                     this.lastLayerUid = '';
-                    this.activeGreedy = 0;
+                    this.$iApi.$vApp.$store.set(DetailsStore.activeGreedy, 0);
                     this.closeResult();
                 });
         },
@@ -282,11 +332,11 @@ export default defineComponent({
         openResult(index: number) {
             if (this.payload[index].items.length > 0) {
                 // set greedy mode off for any existing running requests (for case where user manually clicks an item)
-                this.activeGreedy = 0;
+                this.$iApi.$vApp.$store.set(DetailsStore.activeGreedy, 0);
 
                 // skip results screen for wms layers
                 let itemsPanel = this.$iApi.panel.get('details-items');
-                let props: any = {
+                let props = {
                     result: this.payload[index]
                 };
                 // track last open layer ID every time item panel is opened
