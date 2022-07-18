@@ -6,8 +6,8 @@
             :aria-label="
                 $t(
                     checked
-                        ? 'legend.visibility.hide'
-                        : 'legend.visibility.show'
+                        ? `legend.visibility.hide${label}`
+                        : `legend.visibility.show${label}`
                 )
             "
             :checked="checked && initialChecked"
@@ -23,8 +23,8 @@
             :content="
                 $t(
                     checked
-                        ? 'legend.visibility.hide'
-                        : 'legend.visibility.show'
+                        ? `legend.visibility.hide${label}`
+                        : `legend.visibility.show${label}`
                 )
             "
             v-tippy="{ placement: 'top-end', hideOnClick: false }"
@@ -48,6 +48,7 @@ export default defineComponent({
         },
         legendItem: { type: Object as PropType<LegendEntry>, required: true },
         checked: { type: Boolean },
+        label: { type: String },
         isRadio: { type: Boolean },
         disabled: { type: Boolean }
     },

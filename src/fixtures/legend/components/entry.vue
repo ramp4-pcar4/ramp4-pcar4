@@ -88,6 +88,7 @@
                     "
                     :legendItem="legendItem"
                     :disabled="!legendItem.controlAvailable('visibility')"
+                    label="Layer"
                 />
             </div>
         </div>
@@ -138,6 +139,7 @@
                             :disabled="
                                 !legendItem.controlAvailable('visibility')
                             "
+                            label="Symbol"
                         />
                     </div>
                 </div>
