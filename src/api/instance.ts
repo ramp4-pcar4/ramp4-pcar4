@@ -76,13 +76,13 @@ export class InstanceAPI {
         configs?: RampConfigs,
         options?: RampOptions
     ) {
-        console.log(
-            `RAMP v${__VERSION__.major}.${__VERSION__.minor}.${
-                __VERSION__.patch
-            } [${__VERSION__.hash.slice(0, 9)}] (Built on ${new Date(
-                __VERSION__.timestamp.toString()
-            ).toLocaleString()})`
-        );
+        // console.log(
+        //     `RAMP v${__VERSION__.major}.${__VERSION__.minor}.${
+        //         __VERSION__.patch
+        //     } [${__VERSION__.hash.slice(0, 9)}] (Built on ${new Date(
+        //         __VERSION__.timestamp.toString()
+        //     ).toLocaleString()})`
+        // );
 
         if (options?.startRequired) {
             this.startRequired = true;

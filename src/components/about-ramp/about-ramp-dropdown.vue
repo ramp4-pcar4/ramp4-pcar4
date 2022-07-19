@@ -68,7 +68,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
-import { version } from '@/main';
+//import { version } from '@/main';
 
 export default defineComponent({
     name: 'AboutRampDropdownV',
@@ -89,21 +89,24 @@ export default defineComponent({
          * Get RAMP's version string
          */
         versionString(): string {
-            return `${version.major}.${version.minor}.${version.patch}`;
+            // return `${version.major}.${version.minor}.${version.patch}`;
+            return `versionString`;
         },
 
         /**
          * Get RAMP build version hash
          */
         versionHash(): string {
-            return version.hash.slice(0, 9);
+            // return version.hash.slice(0, 9);
+            return 'versionHash';
         },
 
         /**
          * Get RAMP build date
          */
         buildDate(): string {
-            let timestamp = new Date(version.timestamp);
+            //let timestamp = new Date(version.timestamp);
+            let timestamp = new Date(Date.now());
             if (isNaN(<any>timestamp)) {
                 // this appears to be broken in dev serve mode (but not always).
                 // likely the vite `git log -1 --format=%cd` command isnt working in that context
