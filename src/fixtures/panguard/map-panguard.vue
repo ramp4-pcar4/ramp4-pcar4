@@ -1,6 +1,6 @@
 <template>
-    <div class="pan-guard" ref="panGuard">
-        <p class="label">{{ $t('panguard.instructions') }}</p>
+    <div class="pg" ref="panGuard">
+        <p class="pg-label">{{ $t('panguard.instructions') }}</p>
     </div>
 </template>
 
@@ -92,14 +92,14 @@ export default defineComponent({
                         if (distance < 20) return;
 
                         // show the text on screen and remove after 2 seconds of no movement
-                        this.$el.classList.add('active');
+                        this.$el.classList.add('pg-active');
 
                         if (this.timeoutID !== -1) {
                             clearTimeout(this.timeoutID);
                         }
 
                         this.timeoutID = window.setTimeout(() => {
-                            this.$el.classList.remove('active');
+                            this.$el.classList.remove('pg-active');
                         }, 2000);
 
                         // manually scroll the page since scrolling doesn't work when moving over the map
@@ -113,7 +113,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.pan-guard {
+.pg {
     transition: opacity ease-in-out;
     background-color: rgba(0, 0, 0, 0.45);
     text-align: center;
@@ -130,15 +130,15 @@ export default defineComponent({
     transition-duration: 0.8s;
 
     opacity: 0;
-    z-index: 100;
     pointer-events: none !important;
+    z-index: 100;
 
-    &.active {
+    &.pg-active {
         opacity: 1;
         transition-duration: 0.3s;
     }
 
-    .label {
+    .pg-label {
         font-size: 1em * 1.5;
         color: white;
         position: relative;
