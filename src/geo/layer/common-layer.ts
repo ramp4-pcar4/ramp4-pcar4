@@ -24,6 +24,7 @@ import {
 
 import type {
     AttributeSet,
+    DrawOrder,
     FieldDefinition,
     GetGraphicParams,
     LegendSymbology,
@@ -43,6 +44,7 @@ export class CommonLayer extends LayerInstance {
     _geomType: string;
     _nameField: string;
     _oidField: string;
+    _drawOrder: Array<DrawOrder>;
     // used to manage debouncing when applying filter updates against a layer. Private! but needs to be seen by FCs.
     _lastFilterUpdate = '';
 
@@ -79,6 +81,7 @@ export class CommonLayer extends LayerInstance {
         this.dataFormat = DataFormat.UNKNOWN;
         this.layerType = LayerType.UNKNOWN;
         this.layerFormat = LayerFormat.UNKNOWN;
+        this._drawOrder = [];
 
         this.origRampConfig = rampConfig;
         this.id = rampConfig.id || '';
@@ -618,6 +621,13 @@ export class CommonLayer extends LayerInstance {
         }
 
         this._clickTolerance = tolerance;
+    }
+
+    /**
+     * Returns an array describing the draw order of features. Raster layers will have empty arrays
+     */
+    get drawOrder(): Array<DrawOrder> {
+        return this._drawOrder;
     }
 
     /**

@@ -271,6 +271,11 @@ export enum DrawState {
     UP_TO_DATE = 'up-to-date'
 }
 
+export interface DrawOrder {
+    field: string;
+    ascending: boolean; // true means smaller values are drawn ON TOP of larger values. false is the opposite
+}
+
 export enum IdentifyResultFormat {
     ESRI = 'esri',
     TEXT = 'text',
@@ -582,6 +587,7 @@ export interface RampLayerConfig {
     cosmetic?: boolean;
     colour?: string;
     initialFilteredQuery?: string;
+    drawOrder?: Array<DrawOrder>; // feature drawing order
     rawData?: any; // used for static data, like geojson string, shapefile guts
 }
 

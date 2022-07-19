@@ -64,6 +64,19 @@ export class FeatureLayer extends AttribLayer {
             esriConfig.definitionExpression =
                 rampLayerConfig.initialFilteredQuery;
         }
+
+        if (
+            Array.isArray(rampLayerConfig.drawOrder) &&
+            rampLayerConfig.drawOrder.length > 0
+        ) {
+            // Note esri currently only supports one field, but coding to support multiple when they
+            //      enhance the api to handle that.
+            esriConfig.orderBy = rampLayerConfig.drawOrder.map(dr => ({
+                field: dr.field,
+                order: dr.ascending ? 'ascending' : 'descending'
+            }));
+            this._drawOrder = rampLayerConfig.drawOrder.slice();
+        }
         return esriConfig;
     }
 
@@ -115,46 +128,24 @@ export class FeatureLayer extends AttribLayer {
 
             this.processFieldMetadata(this.origRampConfig.fieldMetadata);
             this.attLoader.updateFieldList(this.fieldList);
-        });
 
-        /*
-        const pLD = aFC.getLayerData().then(ld => {
-
-
-            // TODO implement, maybe move into superclass
-
-            // trickery. file layer can have field names that are bad keys.
-            // our file loader will have corrected them, but config.nameField and config.tooltipField will have
-            // been supplied from the wizard (it pre-fetches fields to present a choice
-            // to the user). If the nameField / tooltipField was adjusted for bad characters, we need to
-            // re-synchronize it here.
-            if (this.dataSource() !== shared.dataSources.ESRI) {
-                if (ld.fields.findIndex(f => f.name === aFC.nameField) === -1) {
-                    const validField = ld.fields.find(f => f.alias === aFC.nameField);
-                    if (validField) {
-                        aFC.nameField = validField.name;
-                        if (!this.config.tooltipField) {    // tooltipField wasn't explicitly provided, so it was also using the bad nameField key
-                            aFC.tooltipField = validField.name
-                        }
-                    } else {
-                        // give warning. impact is tooltips will have no text, details pane no header
-                        console.warn(`Cannot find name field in layer field list: ${aFC.nameField}`);
-                    }
-                }
-
-                // only check the tooltipField if it was provided from the config, otherwise it would have been corrected above already (if required)
-                if (this.config.tooltipField && ld.fields.findIndex(f => f.name === aFC.tooltipField) === -1) {
-                    const validField = ld.fields.find(f => f.alias === aFC.tooltipField);
-                    if (validField) {
-                        aFC.tooltipField = validField.name;
-                    } else {
-                        // give warning. impact is tooltips will have no text, details pane no header
-                        console.warn(`Cannot find name field in layer field list: ${aFC.tooltipField}`);
-                    }
-                }
+            if (!this.esriLayer?.orderBy) {
+                // would be the case if no draw order was provided in the config.
+                // now that we know the OID field, set the layer to draw by OID
+                // so we can determine what is top-most.
+                // "descending" matches the natural drawing order the most. with no order,
+                // things get drawn in order they come back from server. Which is usually
+                // sorted by OID, smallest to largest, so smallest on the bottom, which is descending.
+                // NOTE all my digging can't find any "orderBy" that comes back from a REST API
+                //      endpoint for a mapserver layer. If that becomes a feature or we find a sample
+                //      that supports it, would need some extra code here to use the server draw order
+                //      and synch our _drawOrder with it.
+                this.esriLayer!.orderBy = [
+                    { field: this.oidField, order: 'descending' }
+                ];
+                this._drawOrder = [{ field: this.oidField, ascending: false }];
             }
         });
-        */
 
         const pFC = this.loadFeatureCount();
 
@@ -166,8 +157,7 @@ export class FeatureLayer extends AttribLayer {
         }
         */
 
-        // TODO add back in promises
-        loadPromises.push(pLD, pFC); // , pLS
+        loadPromises.push(pLD, pFC);
 
         return loadPromises;
     }

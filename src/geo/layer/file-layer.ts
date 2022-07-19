@@ -142,19 +142,10 @@ export class FileLayer extends AttribLayer {
     protected makeEsriLayerConfig(
         rampLayerConfig: RampLayerConfig
     ): __esri.FeatureLayerProperties {
-        // TODO might want to add an extra paremter here, as we will be passing in fields, source graphics, renderer, etc.
         const esriConfig: __esri.FeatureLayerProperties =
             super.makeEsriLayerConfig(rampLayerConfig);
 
-        // TEMP CHECKLIST OF PROPERTIES
-        // source - converter
-        // objectIdField - converter
-        // id - config || converter
-        // fields - converter, possibly alias overrides from config
-        // renderer - converter
-        // spatialReference - converter
-        // geometryType - converter
-        // definitionExpression - TODO need to test / figure out. likely need to port to our filter framework and not set on the layer. might also be handled by AttribLayer plumbing
+        const oidField = 'OBJECTID';
 
         // TODO add any extra properties for geoJson layers here
         //      in none, delete this function and let super get called automatically
@@ -177,14 +168,31 @@ export class FileLayer extends AttribLayer {
             fieldValidator(
                 <Array<EsriField>>esriConfig.fields,
                 this.origRampConfig.nameField || ''
-            ) || 'OBJECTID';
+            ) || oidField;
         esriConfig.outFields = ['*']; // TODO eventually will want this overridable by the config.
 
         // TODO inspect rampLayerConfig for any config field alias overrides or field restrictions. apply them to esriConfig.fields
 
-        this.esriJson = undefined; // done with parameter trickery, erase this.
-
         delete esriConfig.url;
+
+        if (
+            Array.isArray(rampLayerConfig.drawOrder) &&
+            rampLayerConfig.drawOrder.length > 0
+        ) {
+            // Note esri currently only supports one field, but coding to support multiple when they
+            //      enhance the api to handle that.
+            esriConfig.orderBy = rampLayerConfig.drawOrder.map(dr => ({
+                field: dr.field,
+                order: dr.ascending ? 'ascending' : 'descending'
+            }));
+            this._drawOrder = rampLayerConfig.drawOrder.slice();
+        } else {
+            esriConfig.orderBy = [{ field: oidField, order: 'descending' }];
+            this._drawOrder = [{ field: oidField, ascending: false }];
+        }
+
+        // TODO definitionExpression need to test / figure out. likely need to port to our filter framework and not set on the layer.
+        //      might also be handled by AttribLayer plumbing
 
         return esriConfig;
     }

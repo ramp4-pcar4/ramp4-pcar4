@@ -33,7 +33,7 @@ import type {
     ScreenPoint,
     Screenshot
 } from '@/geo/api';
-import { EsriGraphic, EsriLOD, EsriMapView } from '@/geo/esri';
+import { EsriLOD, EsriMapView } from '@/geo/esri';
 import { LayerStore } from '@/store/modules/layer';
 import { MapCaptionAPI } from './caption';
 import { markRaw, toRaw } from 'vue';
@@ -985,34 +985,134 @@ export class MapAPI extends CommonMapAPI {
         // reverse to respect layer order
         layers.reverse();
 
-        const response: __esri.HitTestResult = await this.esriView.hitTest({
+        const hitTest: __esri.HitTestResult = await this.esriView.hitTest({
             x: screenPoint.screenX,
             y: screenPoint.screenY
         });
 
-        if (response.results.length === 0) return;
+        if (hitTest.results.length === 0) return;
 
-        let esriGraphic: EsriGraphic | undefined;
         let hitLayer: LayerInstance | undefined;
 
+        // find the top-most layer that has a hit
+        // graphics are un-ordered
         layers.some(layer => {
-            // breaks in the first match hit, preserving the layer order
-            const matchedResult: any = response.results.find(result => {
+            const matchedResult: any = hitTest.results.find(result => {
                 return result.graphic.layer.id === layer.id;
             });
             if (matchedResult) {
                 hitLayer = layer;
-                esriGraphic = matchedResult.graphic;
+                // esriGraphic = matchedResult.graphic;
             }
+
+            // stops the .some() loop when we get a hit
             return matchedResult !== undefined;
         });
-        if (esriGraphic && hitLayer) {
+        if (hitLayer) {
             if (hitLayer.sublayers.length > 1) {
                 console.warn('Found layer with sublayers during hitTest');
             }
+
+            // TODO what to do if topmost is a graphic layer?
+            //      no schema so no orderBy. Also no "object id"
+            //
+            //      return first for now, acknowledge limitation until esri fixes their return value?
+            //      this would require changing function return value to have RampGraphic instead of oid.
+            //      alternate is use graphic "id", but that is a string.
+            //
+            //      additional boolean on parameter indicating if graphic/feature, then handle appropriately?
+            //      could also turn off / return nothing, but eventually we may want to support hover on
+            //      graphics layer; ramp2 did, though it was easier, no hitTest nonsense.
+            //
+            //      For something like the feature highlighter, we want the graphic to have the tooltip.
+            //      We don't support tips on Ramp Graphics yet. We could remove any graphic layers from this
+            //      algo, but then we don't know the highlighted thing is also the topmost in normal layer so
+            //      could be more confusing since tip name won't match.
+
+            if (hitLayer.drawOrder.length === 0) {
+                console.warn('Found layer with no draw order during hitTest');
+                // TODO return first item here?
+            }
+            // find all hit results that exists for this layer
+            let hits = hitTest.results.filter(
+                hit => hit.graphic.layer.id === hitLayer!.id
+            );
+
+            // comparitor that works of string and number
+            // both inputs should be same type
+            // returns 0 (equal), 1 (val1 bigger), -1 (val1 smaller)
+            const genericComparitor = (val1: any, val2: any): number => {
+                if (val1 === val2) {
+                    return 0;
+                } else {
+                    return val1 > val2 ? 1 : -1;
+                }
+            };
+
+            // leverage drawing order to determine top-most item.
+            // TODO esri has hinted they will be improving hitTest to order it's results by drawing order.
+            //      as of now (v4.24) it does not. If that gets implemented, would suggest removing this
+            //      routine and just use array order, as it should be accurate and more efficient.
+            // NOTE also as of now (v4.24), esri only supports ordering by one field. this routine
+            //      will support many so that it will work if esri api starts supporting many fields
+            let topBucket: Array<__esri.ViewHit> = []; // list of current top contenders
+            let topValue: any; // current "highest/lowest value found" of order field for a given loop
+
+            hitLayer.drawOrder.some((dr, i) => {
+                // algo here
+                // return true/false to exit or conitnue the .some
+
+                // initialize top trackers to the first item. current winner by default;
+                topBucket = [hits.pop()!];
+                topValue = topBucket[0].graphic.attributes[dr.field];
+
+                // inspect the rest of the hits, bubbling winners into top trackers
+                hits.forEach(h => {
+                    const hitVal = h.graphic.attributes[dr.field];
+                    const diff = genericComparitor(topValue, hitVal);
+                    if (diff === 0) {
+                        // on par with our current top. add to set of top values
+                        topBucket.push(h);
+                    } else if (
+                        (dr.ascending && diff > 0) ||
+                        (!dr.ascending && diff < 0)
+                    ) {
+                        // this hit is better than our current top. all hail the new top.
+                        // remeber, ascending means smaller values are on top (this is ESRI's convention/language)
+                        topBucket = [h];
+                        topValue = hitVal;
+                    }
+                });
+
+                if (
+                    topBucket.length === 1 ||
+                    i === hitLayer!.drawOrder.length - 1
+                ) {
+                    // we have found the best, or  can no longer differentiate. exit
+                    return true;
+                }
+
+                // prepare hits array for next draw order critera. Only consider the ones currently at the top
+                hits = topBucket;
+                return false; // continues the .some loop
+            });
+
+            if (topBucket.length === 0) {
+                console.error(
+                    'Hit test failed to find topmost item using draw order'
+                );
+                return; // act like nothing was hit. ideally this never happens
+            }
+
+            // at this point we should have a winner in the top bucket.
+            // If there are more than one, it means we could not differentiate, so pick the first.
+            const topGraphic = topBucket[0].graphic;
+
+            // TODO consider changing this object. oid + uid? oid + layerinstance? RampGraphic + layerInstance?
+            //      oid + uid is cleanest; only risk is layer has been removed from registry, but then it shouldnt be on the map anyway
             return {
-                oid: esriGraphic.getObjectId(),
-                layerId: esriGraphic.layer.id,
+                oid: topGraphic.getObjectId(),
+                layerId: hitLayer.id,
                 layerIdx: hitLayer.getLayerTree().layerIdx
             };
         }

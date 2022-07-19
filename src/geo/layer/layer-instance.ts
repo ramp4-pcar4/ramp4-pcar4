@@ -15,6 +15,7 @@ import {
 } from '@/geo/api';
 import type {
     AttributeSet,
+    DrawOrder,
     FieldDefinition,
     GetGraphicParams,
     IdentifyParameters,
@@ -374,6 +375,13 @@ export class LayerInstance extends APIScope {
      * @param {Integer} tolerance the new click tolerance
      */
     set clickTolerance(tolerance: number) {}
+
+    /**
+     * Return the draw order for the layer, if applicable
+     */
+    get drawOrder(): Array<DrawOrder> {
+        return [];
+    }
 
     /**
      * Baseline identify function for layers that do not support identify.
