@@ -250,6 +250,14 @@ export interface EpsgLookup {
     (code: string | number): Promise<string>;
 }
 
+export enum InitiationState {
+    NEW = 'new',
+    INITIATING = 'initiating',
+    INITIATED = 'initiated',
+    TERMINATING = 'terminating',
+    TERMINATED = 'terminated'
+}
+
 export enum LayerState {
     NEW = 'new', // this means ramp layer class exists but needs to be initialized()
     LOADING = 'loading',
@@ -554,6 +562,7 @@ export interface RampLayerConfig {
     customRenderer?: any;
     // TODO revisit issue #1019 after v1.0.0
     // refreshInterval?: number;
+    expectedResponseTime?: number;
     fieldMetadata?: RampLayerFieldMetadataConfig;
     nameField?: string;
     tooltipField?: string;

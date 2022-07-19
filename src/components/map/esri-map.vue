@@ -138,19 +138,12 @@ export default defineComponent({
                                     this.$iApi.geo.layer.createLayer(
                                         layerConfig
                                     );
-
-                                // TODO call the new layer load method.
-                                //      might need to wait on that (think file layers that are making asynch calls prior to creating esri layer)
-                                //      see if layers are going to expose an "esri layer exists" promise, leverage that if they do
                                 const [initiateErr] = await to(
-                                    layer!.initiate()
+                                    this.map.addLayer(layer!)
                                 );
                                 if (initiateErr) {
                                     console.error(initiateErr);
-                                } else {
-                                    this.map.addLayer(layer!);
                                 }
-
                                 resolve(layer!);
                             }
                         );
@@ -163,14 +156,19 @@ export default defineComponent({
                 .filter(Boolean)
                 .forEach((layer: LayerInstance | null, index: number) => {
                     // wait on layer load to check for valid state
-                    layer?.isLayerLoaded().then(() => {
-                        if (layer?.isValidState) {
-                            this.$iApi.geo.map.reorder(
-                                layer!,
-                                oldValue ? oldValue.length + index : index
-                            );
-                        }
-                    });
+                    layer
+                        ?.isLayerLoaded()
+                        .then(() => {
+                            if (layer?.isValidState) {
+                                this.$iApi.geo.map.reorder(
+                                    layer!,
+                                    oldValue ? oldValue.length + index : index
+                                );
+                            }
+                        })
+                        .catch(() =>
+                            console.log(`Unable to reorder ${layer.id}.`)
+                        );
                 });
         },
         onMapConfigChange(newValue: RampMapConfig) {

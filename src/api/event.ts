@@ -17,6 +17,7 @@ import type { MetadataPayload } from '@/fixtures/metadata/store';
 import { AppbarAction } from '@/fixtures/appbar/store';
 import { LegendStore } from '@/fixtures/legend/store';
 import { GridStore, GridAction } from '@/fixtures/grid/store';
+import { LayerState } from '@/geo/api';
 import type {
     MapClick,
     MapMove,
@@ -121,10 +122,16 @@ export enum GlobalEvents {
     LAYER_REMOVE = 'layer/remove',
 
     /**
-     * Fires when the state of a layer changes.
+     * Fires when the load state of a layer changes.
      * Payload: `({ layer: LayerInstance, state: string })`
      */
-    LAYER_STATECHANGE = 'layer/statechange',
+    LAYER_LAYERSTATECHANGE = 'layer/layerstatechange',
+
+    /**
+     * Fires when the layer state of a layer changes.
+     * Payload: `({ layer: LayerInstance, state: string})`
+     */
+    LAYER_INITIATIONSTATECHANGE = 'layer/initiationStatechange',
 
     /**
      * Fires when the visibility of a layer changes.
@@ -330,6 +337,7 @@ enum DefEH {
     OPEN_LAYER_REORDER = 'opens_layer_reorder_panel',
     OPEN_METADATA = 'opens_metadata_panel',
     UPDATE_LEGEND_LAYER_REGISTER = 'updates_legend_layer_register',
+    UPDATE_LEGEND_LAYER_ERROR = 'updates_legend_layer_error',
     UPDATE_LEGEND_WIZARD_ADDED = 'updates_legend_wizard_added',
     UPDATE_LEGEND_LAYER_RELOAD = 'updates_legend_layer_reload',
     MAP_BASEMAPCHANGE_ATTRIBUTION = 'updates_map_caption_attribution_basemap',
@@ -607,6 +615,7 @@ export class EventAPI extends APIScope {
                 DefEH.OPEN_LAYER_REORDER,
                 DefEH.OPEN_METADATA,
                 DefEH.UPDATE_LEGEND_LAYER_REGISTER,
+                DefEH.UPDATE_LEGEND_LAYER_ERROR,
                 DefEH.UPDATE_LEGEND_WIZARD_ADDED,
                 DefEH.UPDATE_LEGEND_LAYER_RELOAD,
                 DefEH.MAP_BASEMAPCHANGE_ATTRIBUTION,
@@ -810,6 +819,26 @@ export class EventAPI extends APIScope {
                 };
                 this.$iApi.event.on(
                     GlobalEvents.LAYER_REGISTERED,
+                    zeHandler,
+                    handlerName
+                );
+                break;
+            case DefEH.UPDATE_LEGEND_LAYER_ERROR:
+                // when a layer errors, have the standard legend update in accordance to the layer
+                zeHandler = (payload: {
+                    state: String;
+                    layer: LayerInstance;
+                }) => {
+                    if (payload.layer.layerState === LayerState.ERROR) {
+                        const legendFixture: LegendAPI =
+                            this.$iApi.fixture.get('legend');
+                        if (legendFixture) {
+                            legendFixture.updateLegend(payload.layer);
+                        }
+                    }
+                };
+                this.$iApi.event.on(
+                    GlobalEvents.LAYER_LAYERSTATECHANGE,
                     zeHandler,
                     handlerName
                 );

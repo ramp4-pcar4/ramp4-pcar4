@@ -9,7 +9,7 @@ export class GeoJsonLayer extends FileLayer {
         this.layerType = LayerType.GEOJSON;
     }
 
-    async initiate(): Promise<void> {
+    protected async onInitiate(): Promise<void> {
         // TODO check if .sourceGeoJson is already populated?
         //      if this initiate is a reload, do we want to re-use it, or re-download? decide.
 
@@ -63,6 +63,6 @@ export class GeoJsonLayer extends FileLayer {
             throw new Error('GeoJson layer config contains no raw data or url');
         }
 
-        await super.initiate();
+        await super.onInitiate();
     }
 }

@@ -21,13 +21,13 @@ export class OsmTileLayer extends CommonLayer {
         this.hovertips = false;
     }
 
-    async initiate(): Promise<void> {
+    protected async onInitiate(): Promise<void> {
         this.esriLayer = markRaw(
             new EsriOpenStreetMapLayer(
                 this.makeEsriLayerConfig(this.origRampConfig)
             )
         );
-        await super.initiate();
+        await super.onInitiate();
     }
 
     /**

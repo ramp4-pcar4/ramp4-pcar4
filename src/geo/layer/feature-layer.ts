@@ -32,13 +32,13 @@ export class FeatureLayer extends AttribLayer {
         this.layerFormat = LayerFormat.FEATURE;
     }
 
-    async initiate(): Promise<void> {
+    protected async onInitiate(): Promise<void> {
         markRaw(
             (this.esriLayer = new EsriFeatureLayer(
                 this.makeEsriLayerConfig(this.origRampConfig)
             ))
         );
-        await super.initiate();
+        await super.onInitiate();
     }
 
     /**

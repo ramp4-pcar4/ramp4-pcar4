@@ -18,11 +18,11 @@ export class TileLayer extends CommonLayer {
         this.dataFormat = DataFormat.ESRI_TILE;
     }
 
-    async initiate(): Promise<void> {
+    protected async onInitiate(): Promise<void> {
         this.esriLayer = markRaw(
             new EsriTileLayer(this.makeEsriLayerConfig(this.origRampConfig))
         );
-        await super.initiate();
+        await super.onInitiate();
     }
 
     /**

@@ -4,6 +4,7 @@ import {
     DrawState,
     Extent,
     Graphic,
+    InitiationState,
     LayerControls,
     LayerFormat,
     LayerState,
@@ -44,9 +45,8 @@ export class LayerInstance extends APIScope {
      */
     id: string;
     uid: string;
-
-    initialized: boolean;
-    state: LayerState;
+    layerState: LayerState;
+    initiationState: InitiationState;
     drawState: DrawState;
 
     layerIdx: number;
@@ -86,11 +86,9 @@ export class LayerInstance extends APIScope {
 
         this.id = ''; // take from config here?
         this.uid = ''; // shutting up typescript. will get set somewhere else. // TODO verify setting, move here if that is smarter.
-
-        this.initialized = false;
-        this.state = LayerState.NEW;
+        this.layerState = LayerState.NEW;
         this.drawState = DrawState.NOT_LOADED;
-
+        this.initiationState = InitiationState.NEW;
         this.layerIdx = -1; // default value
         this.layerFormat = LayerFormat.UNKNOWN;
         this.layerType = LayerType.UNKNOWN;
@@ -547,16 +545,28 @@ export class LayerInstance extends APIScope {
     onLoad(): void {}
 
     /**
-     * Updates layer state and raises events.
+     * Initiates actions after layer load error.
      * Should generally only be called internally by the RAMP core.
      */
-    updateState(newState: LayerState): void {}
+    onError(): void {}
+
+    /**
+     * Updates layer load state and raises events.
+     * Should generally only be called internally by the RAMP core.
+     */
+    updateLayerState(newState: LayerState): void {}
 
     /**
      * Updates layer draw state and raises events.
      * Should generally only be called internally by the RAMP core.
      */
     updateDrawState(newState: DrawState): void {}
+
+    /**
+     * Updates layer layer state and raises events.
+     * Should generally only be called internally by the RAMP core.
+     */
+    updateInitiationState(newState: InitiationState): void {}
 
     /**
      * Finds an sublayer index corresponding to the given uid.

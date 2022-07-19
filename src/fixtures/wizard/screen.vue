@@ -467,15 +467,11 @@ export default defineComponent({
             const config = Object.assign(this.layerInfo!.config, data);
 
             const layer = this.$iApi.geo.layer.createLayer(config);
-            await layer.initiate();
+            await this.$iApi.geo.map.addLayer(layer);
             layer.userAdded = true;
 
             // notify the legend to prepare a legend item
             this.$iApi.event.emit(GlobalEvents.USER_LAYER_ADDED, layer);
-
-            // add layer to map
-            this.$iApi.geo.map.addLayer(layer);
-
             this.goNext = false;
             this.goToStep(WizardStep.UPLOAD);
         },
