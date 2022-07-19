@@ -199,7 +199,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
         }
         if (r2Map.components.scaleBar && r2Map.components.scaleBar.enabled) {
             r4c.map.caption = {
-                mouseCoords: {
+                mapCoords: {
                     disabled: false,
                     formatter: 'LAT_LONG_DMS'
                 },

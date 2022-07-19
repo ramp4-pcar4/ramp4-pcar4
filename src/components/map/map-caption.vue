@@ -50,7 +50,7 @@
 
         <div class="flex min-w-fit justify-end">
             <div
-                v-if="!cursorCoords.disabled"
+                v-if="!coords.disabled"
                 class="relative top-2 pl-8 px-14 sm:block display-none"
                 v-truncate="{
                     options: {
@@ -60,7 +60,7 @@
                     }
                 }"
             >
-                {{ cursorCoords.formattedString }}
+                {{ coords.formattedString }}
             </div>
 
             <button
@@ -134,7 +134,7 @@ export default defineComponent({
         return {
             scale: this.get(MapCaptionStore.scale),
             attribution: this.get(MapCaptionStore.attribution),
-            cursorCoords: this.get(MapCaptionStore.cursorCoords),
+            coords: this.get(MapCaptionStore.coords),
             mapConfig: this.get(ConfigStore.getMapConfig),
             lang: [] as Array<string>,
             watchers: [] as Array<Function>

@@ -34,7 +34,7 @@ let config = {
                     }
                 ],
                 caption: {
-                    mouseCoords: {
+                    mapCoords: {
                         formatter: 'WEB_MERCATOR'
                     },
                     scaleBar: {

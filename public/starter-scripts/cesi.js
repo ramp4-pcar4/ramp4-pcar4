@@ -52,7 +52,7 @@ let config = {
                     }
                 ],
                 caption: {
-                    mouseCoords: {
+                    mapCoords: {
                         formatter: 'LAT_LONG_DMS'
                     },
                     scaleBar: {
