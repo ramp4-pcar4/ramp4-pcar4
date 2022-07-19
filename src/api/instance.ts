@@ -297,11 +297,12 @@ export class InstanceAPI {
      * @memberof InstanceAPI
      */
     get screenSize(): string | null {
-        if (!this.$root || !this.$root.$refs['app-size']) {
+        if (!this.$vApp?.$root || !this.$vApp.$root.$refs['app-size']) {
             return null;
         }
 
-        const classList = this.$root.$refs['app-size'].classList;
+        const classList = (this.$vApp.$root.$refs['app-size'] as HTMLElement)
+            .classList;
         if (classList.contains('lg')) {
             return 'lg';
         } else if (classList.contains('md')) {
