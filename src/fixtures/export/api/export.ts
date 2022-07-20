@@ -121,7 +121,9 @@ export class ExportAPI extends FixtureInstance {
                 /* text: '😸🤖🧙‍♂️🤦‍♀️🎶', */
                 top: this.options.runningHeight,
                 left: 0,
-                originX: 'left'
+                originX: 'left',
+                width: panelWidth,
+                textAlign: 'center'
             });
             this.options.runningHeight += fbTitle.height! + 40;
             selectedExportComponents.push(fbTitle);
@@ -140,6 +142,11 @@ export class ExportAPI extends FixtureInstance {
 
             this.options.runningHeight += fbMap.height! + 40;
             selectedExportComponents.push(fbMap);
+        }
+
+        // title should spread to length of canvas if map isn't rendered
+        if (!fbMap && fbTitle) {
+            fbTitle.width = DEFAULT_WIDTH;
         }
 
         this.options.scale =
