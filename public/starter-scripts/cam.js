@@ -264,71 +264,65 @@ let config = {
                 {
                     id: 'climateActionMap',
                     name: 'Climate action map',
-                    layerType: 'esri-map-image',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CAM/MapServer',
-                    sublayers: [
-                        {
-                            index: 0,
-                            name: 'Keyword search',
-                            state: {
-                                opacity: 1,
-                                visibility: true
-                            },
-                            table: {
-                                lazyFilter: true,
-                                search: { enabled: false },
-                                columns: [
-                                    {
-                                        name: 'Category'
-                                    },
-                                    {
-                                        name: 'Recipient_type'
-                                    },
-                                    {
-                                        name: 'Department___Agency___Crown_Corporation'
-                                    },
-                                    {
-                                        name: 'Province_Territory'
-                                    },
-                                    {
-                                        name: 'Municipality___Community'
-                                    },
-                                    {
-                                        name: 'Program_name'
-                                    },
-                                    {
-                                        name: 'Project_name'
-                                    },
-                                    {
-                                        name: 'Project_description'
-                                    },
-                                    {
-                                        name: 'Ultimate_recipient_name'
-                                    },
-                                    {
-                                        name: 'Funding_date___estimated_start_date'
-                                    },
-                                    {
-                                        name: 'Program_contribution'
-                                    },
-                                    {
-                                        name: 'Estimated_total_project_cost'
-                                    },
-                                    {
-                                        name: 'Additional_information'
-                                    },
-                                    {
-                                        name: 'Icon',
-                                        visible: false
-                                    },
-                                    {
-                                        name: 'OBJECTID'
-                                    }
-                                ]
-                            }
+                    layerType: 'esri-feature',
+                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CAM/MapServer/0',
+                    fixtures: {
+                        grid: {
+                            lazyFilter: true,
+                            search: { enabled: false },
+                            columns: [
+                                {
+                                    name: 'Category'
+                                },
+                                {
+                                    name: 'Recipient_type'
+                                },
+                                {
+                                    name: 'Department___Agency___Crown_Corporation'
+                                },
+                                {
+                                    name: 'Province_Territory'
+                                },
+                                {
+                                    name: 'Municipality___Community'
+                                },
+                                {
+                                    name: 'Program_name'
+                                },
+                                {
+                                    name: 'Project_name'
+                                },
+                                {
+                                    name: 'Project_description'
+                                },
+                                {
+                                    name: 'Ultimate_recipient_name'
+                                },
+                                {
+                                    name: 'Funding_date___estimated_start_date'
+                                },
+                                {
+                                    name: 'Program_contribution'
+                                },
+                                {
+                                    name: 'Estimated_total_project_cost'
+                                },
+                                {
+                                    name: 'Additional_information'
+                                },
+                                {
+                                    name: 'Icon',
+                                    visible: false
+                                },
+                                {
+                                    name: 'OBJECTID'
+                                }
+                            ]
                         }
-                    ],
-                    tolerance: 20,
+                    },
+                    tolerance: 5,
+                    identifyMode: 'hybrid',
+                    drawOrder: [{ field: 'Program_name', ascending: true }],
                     state: {
                         opacity: 1,
                         visibility: true
@@ -343,8 +337,7 @@ let config = {
                             {
                                 name: 'Keyword search',
                                 layerId: 'climateActionMap',
-                                symbologyExpanded: true,
-                                sublayerIndex: 0
+                                symbologyExpanded: true
                             }
                         ]
                     }
