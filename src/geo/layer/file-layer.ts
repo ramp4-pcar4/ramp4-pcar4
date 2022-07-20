@@ -18,11 +18,11 @@ import type {
 import {
     DataFormat,
     DefPromise,
-    DrawState,
     Extent,
     GeometryType,
     IdentifyResultFormat,
     LayerFormat,
+    LayerIdentifyMode,
     Point
 } from '@/geo/api';
 
@@ -86,6 +86,14 @@ export class FileLayer extends AttribLayer {
         this.dataFormat = DataFormat.ESRI_FEATURE;
         this.layerFormat = LayerFormat.FEATURE;
         this.tooltipField = '';
+        if (
+            rampConfig.identifyMode &&
+            rampConfig.identifyMode !== LayerIdentifyMode.NONE
+        ) {
+            this.identifyMode = rampConfig.identifyMode;
+        } else {
+            this.identifyMode = LayerIdentifyMode.GEOMETRIC;
+        }
     }
 
     protected async onInitiate(): Promise<void> {
@@ -277,12 +285,7 @@ export class FileLayer extends AttribLayer {
         const map = this.$iApi.geo.map;
 
         // early kickout check. not loaded/error; not visible; not queryable; off scale
-        if (
-            !this.isValidState ||
-            !this.visibility ||
-            !this.identify ||
-            this.scaleSet.isOffScale(map.getScale()).offScale
-        ) {
+        if (!this.canIdentify()) {
             // return empty result.
             return [];
         }
@@ -297,29 +300,78 @@ export class FileLayer extends AttribLayer {
             requestTime: Date.now()
         });
 
-        // run a spatial query
-        const qOpts: QueryFeaturesParams = {
-            outFields: this.fieldList,
-            includeGeometry: false
-        };
+        // allows us to pause and wait for various things before generating contents of result.items[]
+        let symbolBlocker = Promise.resolve();
+        let geomBlocker = Promise.resolve();
+        let hitBucket: Array<Graphic> = []; // collates results across promises
 
+        // if our identify mode needs geometry hit, run it
         if (
-            this.geomType !== GeometryType.POLYGON &&
-            options.geometry.type === GeometryType.POINT
+            this.identifyMode === LayerIdentifyMode.HYBRID ||
+            this.identifyMode === LayerIdentifyMode.GEOMETRIC
         ) {
-            // if our layer is not polygon, and our identify input is a point, make a point buffer
-            qOpts.filterGeometry = this.$iApi.geo.query.makeClickBuffer(
-                <Point>options.geometry,
-                options.tolerance
-            );
-        } else {
-            qOpts.filterGeometry = options.geometry;
+            // run a spatial query
+            const qOpts: QueryFeaturesParams = {
+                outFields: this.fieldList,
+                includeGeometry: false
+            };
+
+            if (
+                this.geomType !== GeometryType.POLYGON &&
+                options.geometry.type === GeometryType.POINT
+            ) {
+                // if our layer is not polygon, and our identify input is a point, make a point buffer
+                qOpts.filterGeometry = this.$iApi.geo.query.makeClickBuffer(
+                    <Point>options.geometry,
+                    options.tolerance
+                );
+            } else {
+                qOpts.filterGeometry = options.geometry;
+            }
+
+            qOpts.filterSql = this.getCombinedSqlFilter();
+
+            geomBlocker = this.queryFeatures(qOpts).then(results => {
+                hitBucket = results;
+            });
         }
 
-        qOpts.filterSql = this.getCombinedSqlFilter();
+        // if our identify mode needs symbol hit, run it
+        if (
+            options.hitTest &&
+            (this.identifyMode === LayerIdentifyMode.HYBRID ||
+                this.identifyMode === LayerIdentifyMode.SYMBOLIC)
+        ) {
+            // we wait for geometry (if it happened) to avoid race conditions.
+            symbolBlocker = geomBlocker.then(async () => {
+                // filter hits that match this layer, and don't already exist
+                // in any results from the geometry. Add things that pass the filter
+                // to our hit bucket
+                const hitArray = await options.hitTest!;
+                const hitGraphics = await Promise.all(
+                    hitArray
+                        .filter(
+                            hr =>
+                                hr.layerId === this.id &&
+                                hitBucket.findIndex(
+                                    g => hr.oid === g.attributes[this.oidField]
+                                ) === -1
+                        )
+                        .map(hr => {
+                            // will be fast since all local
+                            return this.getGraphic(hr.oid, {
+                                getAttribs: true
+                            });
+                        })
+                );
 
-        this.queryFeatures(qOpts).then(results => {
-            results.forEach(gr => {
+                hitBucket = hitBucket.concat(hitGraphics);
+            });
+        }
+
+        Promise.all([symbolBlocker, geomBlocker]).then(() => {
+            // both identifies have completed. convert our hits into identify result goodness
+            hitBucket.forEach(gr => {
                 // file layer resolves all items at once,
                 // so our item-level stuff can be created in
                 // a loaded state

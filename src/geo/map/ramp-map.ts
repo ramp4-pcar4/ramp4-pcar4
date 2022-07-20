@@ -15,6 +15,7 @@ import {
     Extent,
     ExtentSet,
     InitiationState,
+    LayerIdentifyMode,
     LayerState,
     Point,
     ScaleSet
@@ -928,8 +929,35 @@ export class MapAPI extends CommonMapAPI {
             return { click: mapClick, results: [] };
         }
 
+        // if any layers want symbolic identify, initiate the hit test now.
+        // the promise will resolve in an array of any hits, providing layerid and objectid of hits
+        let hitTestProm: Promise<Array<GraphicHitResult>> = Promise.resolve([]);
+        if (
+            layers.some(l => {
+                return (
+                    l.canIdentify() &&
+                    (l.identifyMode === LayerIdentifyMode.HYBRID ||
+                        l.identifyMode === LayerIdentifyMode.SYMBOLIC)
+                );
+            })
+        ) {
+            hitTestProm = this.esriView!.hitTest({
+                x: mapClick.screenX,
+                y: mapClick.screenY
+            }).then(hitResults => {
+                return hitResults.results.map(hr => {
+                    return {
+                        layerId: hr.layer.id,
+                        layerIdx: 0, // not required for this process, default rather than expensive lookup
+                        oid: hr.graphic.getObjectId()
+                    };
+                });
+            });
+        }
+
         let p: IdentifyParameters = {
-            geometry: mapClick.mapPoint
+            geometry: mapClick.mapPoint,
+            hitTest: hitTestProm
         };
 
         // Perform an identify request on each layer. Does not perform the request on layers that do not have an identify function (layers that do not support identify).
@@ -985,7 +1013,7 @@ export class MapAPI extends CommonMapAPI {
         // reverse to respect layer order
         layers.reverse();
 
-        const hitTest: __esri.HitTestResult = await this.esriView.hitTest({
+        const hitTest = await this.esriView.hitTest({
             x: screenPoint.screenX,
             y: screenPoint.screenY
         });

@@ -15,6 +15,7 @@ import {
     Graphic,
     InitiationState,
     LayerFormat,
+    LayerIdentifyMode,
     LayerState,
     LayerType,
     NoGeometry,
@@ -89,6 +90,7 @@ export class CommonLayer extends LayerInstance {
         this.isRemoved = false;
         this.isSublayer = false;
         this.supportsIdentify = false; // default state.
+        this.identifyMode = LayerIdentifyMode.NONE;
         this.supportsFeatures = false; // default state. featurish layers should set to true when the load
         this.supportsSublayers = false; // by default layers do not support sublayers
         this.isFile = false; // default state.
@@ -523,6 +525,19 @@ export class CommonLayer extends LayerInstance {
     }
 
     /**
+     * Indicates if layer should participate in an identify request.
+     */
+    canIdentify(): boolean {
+        return (
+            this.supportsIdentify &&
+            this.isValidState &&
+            this.visibility &&
+            this.identify &&
+            !this.scaleSet.isOffScale(this.$iApi.geo.map.getScale()).offScale
+        );
+    }
+
+    /**
      * Cause the map to zoom to a scale level where the layer is visible.
      *
      * @returns {Promise} resolves when map has finished zooming
@@ -860,12 +875,11 @@ export class CommonLayer extends LayerInstance {
         });
     }
 
-    // TODO think about this name. using getGraphic for consistency.
     /**
      * Gets information on a graphic in the most efficient way possible. Options object properties:
      * - getGeom ; a boolean to indicate if the result should include graphic geometry
      * - getAttribs ; a boolean to indicate if the result should include graphic attributes
-     * - unboundMap ; an optional RampMap reference. Only required if geometry was requested and the layer has not been added to a map.
+     * - getStyle ; a boolean to indicate if the result should include symbol styling information
      *
      * @param {Integer} objectId the object id of the graphic to find
      * @param {Object} options options object for the request, see above

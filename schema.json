@@ -1109,6 +1109,12 @@
                 "drawOrder": {
                     "$ref": "#/$defs/drawOrder",
                     "default": []
+                },
+                "identifyMode": {
+                    "type": "string",
+                    "description": "Determines how features should be identified. By geometry, by symbol, or both.",
+                    "default": "geometric",
+                    "enum": ["geometric", "symbolic", "hybrid"]
                 }
             },
             "required": ["id", "layerType", "url"],
@@ -1214,6 +1220,12 @@
                 "drawOrder": {
                     "$ref": "#/$defs/drawOrder",
                     "default": []
+                },
+                "identifyMode": {
+                    "type": "string",
+                    "description": "Determines how features should be identified. By geometry, by symbol, or both.",
+                    "default": "geometric",
+                    "enum": ["geometric", "symbolic", "hybrid"]
                 }
             },
             "required": ["id", "layerType", "url"],
@@ -1316,6 +1328,12 @@
                 "drawOrder": {
                     "$ref": "#/$defs/drawOrder",
                     "default": []
+                },
+                "identifyMode": {
+                    "type": "string",
+                    "description": "Determines how features should be identified. By geometry, by symbol, or both.",
+                    "default": "geometric",
+                    "enum": ["geometric", "symbolic", "hybrid"]
                 }
             },
             "required": ["id", "layerType", "url"],

@@ -5,9 +5,11 @@ import {
     GeometryType,
     IdentifyResultFormat,
     LayerFormat,
+    LayerIdentifyMode,
     LayerType
 } from '@/geo/api';
 import type {
+    DiscreteGraphicResult,
     IdentifyParameters,
     IdentifyResult,
     QueryFeaturesParams,
@@ -30,6 +32,14 @@ export class FeatureLayer extends AttribLayer {
         this.supportsIdentify = true;
         this.layerType = LayerType.FEATURE;
         this.layerFormat = LayerFormat.FEATURE;
+        if (
+            rampConfig.identifyMode &&
+            rampConfig.identifyMode !== LayerIdentifyMode.NONE
+        ) {
+            this.identifyMode = rampConfig.identifyMode;
+        } else {
+            this.identifyMode = LayerIdentifyMode.GEOMETRIC;
+        }
     }
 
     protected async onInitiate(): Promise<void> {
@@ -166,12 +176,7 @@ export class FeatureLayer extends AttribLayer {
 
     runIdentify(options: IdentifyParameters): Array<IdentifyResult> {
         // early kickout check. not loaded/error; not visible; not queryable; off scale
-        if (
-            !this.isValidState ||
-            !this.visibility ||
-            !this.identify ||
-            this.scaleSet.isOffScale(this.$iApi.geo.map.getScale()).offScale
-        ) {
+        if (!this.canIdentify()) {
             // return empty result.
             return [];
         }
@@ -186,30 +191,76 @@ export class FeatureLayer extends AttribLayer {
             requestTime: Date.now()
         });
 
-        // run a spatial query
-        // TODO investigate if we need the sourceSR param set here
-        const qOpts: QueryFeaturesParams = {
-            outFields: this.fieldList,
-            includeGeometry: false
-        };
+        // allows us to pause and wait for various things before generating contents of result.items[]
+        let clientBlocker = Promise.resolve();
+        let serverBlocker = Promise.resolve();
+        let hitBucket: Array<DiscreteGraphicResult> = []; // collates results across promises
 
+        // if our identify mode needs server hit, run it
         if (
-            this.geomType !== GeometryType.POLYGON &&
-            options.geometry.type === GeometryType.POINT
+            this.identifyMode === LayerIdentifyMode.HYBRID ||
+            this.identifyMode === LayerIdentifyMode.GEOMETRIC
         ) {
-            // if our layer is not polygon, and our identify input is a point, make a point buffer
-            qOpts.filterGeometry = this.$iApi.geo.query.makeClickBuffer(
-                <Point>options.geometry,
-                options.tolerance
-            );
-        } else {
-            qOpts.filterGeometry = options.geometry;
+            // run a spatial query
+            // TODO investigate if we need the sourceSR param set here
+            const qOpts: QueryFeaturesParams = {
+                outFields: this.fieldList,
+                includeGeometry: false
+            };
+
+            if (
+                this.geomType !== GeometryType.POLYGON &&
+                options.geometry.type === GeometryType.POINT
+            ) {
+                // if our layer is not polygon, and our identify input is a point, make a point buffer
+                qOpts.filterGeometry = this.$iApi.geo.query.makeClickBuffer(
+                    <Point>options.geometry,
+                    options.tolerance
+                );
+            } else {
+                qOpts.filterGeometry = options.geometry;
+            }
+
+            qOpts.filterSql = this.getCombinedSqlFilter();
+
+            serverBlocker = this.queryFeaturesDiscrete(qOpts).then(results => {
+                hitBucket = results;
+            });
         }
 
-        qOpts.filterSql = this.getCombinedSqlFilter();
+        // if our identify mode needs client hit, run it
+        if (
+            options.hitTest &&
+            (this.identifyMode === LayerIdentifyMode.HYBRID ||
+                this.identifyMode === LayerIdentifyMode.SYMBOLIC)
+        ) {
+            // we wait for server (if it happened) to avoid race conditions.
+            clientBlocker = serverBlocker.then(async () => {
+                // filter hits that match this layer, and don't already exist
+                // in any results from the server. Add things that pass the filter
+                // to our hit bucket
+                const hitArray = await options.hitTest!;
+                hitArray
+                    .filter(
+                        hr =>
+                            hr.layerId === this.id &&
+                            hitBucket.findIndex(dgr => hr.oid === dgr.oid) ===
+                                -1
+                    )
+                    .forEach(hr => {
+                        hitBucket.push({
+                            oid: hr.oid,
+                            graphic: this.getGraphic(hr.oid, {
+                                getAttribs: true
+                            })
+                        });
+                    });
+            });
+        }
 
-        this.queryFeaturesDiscrete(qOpts).then(results => {
-            results.forEach(dgr => {
+        Promise.all([clientBlocker, serverBlocker]).then(() => {
+            // both identifies have completed. convert our hits into identify result goodness
+            hitBucket.forEach(dgr => {
                 const item: IdentifyItem = reactive({
                     data: undefined,
                     format: IdentifyResultFormat.ESRI,

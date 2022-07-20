@@ -246,6 +246,13 @@ export enum GeoJsonGeomType {
 //    Haze = 'haze'
 //}
 
+export enum LayerIdentifyMode {
+    GEOMETRIC = 'geometric', // uses geometric intersection; feature symbology is not considered
+    SYMBOLIC = 'symbolic', // uses symbol intersection; not applicable for raster layers
+    HYBRID = 'hybrid', // combines geometric and symbolic results
+    NONE = 'none' // value for layers that don't support identify
+}
+
 export interface EpsgLookup {
     (code: string | number): Promise<string>;
 }
@@ -396,6 +403,7 @@ export interface IdentifyParameters {
     tolerance?: number;
     returnGeometry?: boolean; // TODO revisit this. might make more sense to offload geom to a followup request. if we keep, we may need to add property to IdentifyItem for the geom to live in
     sublayerIds?: Array<string | number>; // Optional array of sublayer uids or server indices. When defined, the given sublayers are queried for instead of the default (visible, queryable, on-scale sublayers)
+    hitTest?: Promise<Array<GraphicHitResult>>; // Optional results of local hits to incorporate in the identify
 }
 
 export interface IdentifyItem {
@@ -588,6 +596,7 @@ export interface RampLayerConfig {
     colour?: string;
     initialFilteredQuery?: string;
     drawOrder?: Array<DrawOrder>; // feature drawing order
+    identifyMode?: LayerIdentifyMode;
     rawData?: any; // used for static data, like geojson string, shapefile guts
 }
 
