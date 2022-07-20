@@ -32,7 +32,7 @@ class ExportTitleFixture extends FixtureInstance implements ExportSubFixture {
         }
 
         const config: any = merge(fabricTextConfig, options || {});
-        const fbTitle = new fabric.Text(config.text, config);
+        const fbTitle = new fabric.Textbox(config.text, config);
         return Promise.resolve(fbTitle);
     }
 }

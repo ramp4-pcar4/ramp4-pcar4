@@ -121,7 +121,9 @@ export class ExportAPI extends FixtureInstance {
                 /* text: '😸🤖🧙‍♂️🤦‍♀️🎶', */
                 top: this.options.runningHeight,
                 left: 0,
-                originX: 'left'
+                originX: 'left',
+                width: panelWidth,
+                textAlign: 'center'
             });
             this.options.runningHeight += fbTitle.height! + 40;
             selectedExportComponents.push(fbTitle);
