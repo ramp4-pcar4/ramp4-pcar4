@@ -84,6 +84,31 @@ export class PanelAPI extends APIScope {
     }
 
     /**
+     * Provides a promise that resolves when the panel(s) have finished registration.
+     *
+     * @param {(string | string[])} panelId the panel ID(s) for which the promise is requested
+     * @memberof PanelAPI
+     */
+    isRegistered(panelId: string | string[]): Promise<any> {
+        // We first need to create a registration promise for all panels that currently don't have one
+        const idsToCheck = Array.isArray(panelId) ? panelId : [panelId];
+        idsToCheck.forEach((id: string) => {
+            if (
+                this.$vApp.$store.get(`panel/regPromises@${id}`) === undefined
+            ) {
+                this.$vApp.$store.set(
+                    `panel/${PanelMutation.ADD_REG_PROMISE}!`,
+                    id
+                );
+            }
+        });
+        // Now, get all the promises and return
+        return Promise.all(
+            this.$vApp.$store.get('panel/getRegPromises', idsToCheck) // not sure how to get typescript to stop yelling
+        );
+    }
+
+    /**
      * Removes a panel instance
      *
      * @param {(string | PanelInstance)} value
@@ -161,17 +186,17 @@ export class PanelAPI extends APIScope {
                 screen = Object.keys(panel.screens).pop()!;
             }
         }
-
-        this.show(panel, { screen, props });
-
-        this.$vApp.$store.set(`panel/${PanelAction.openPanel}!`, { panel });
-        this.$iApi.updateAlert(
-            this.$vApp.$t(`panels.alert.open`, {
-                name: this.$vApp.$t(panel.alertName)
-            })
-        );
-        this.$iApi.event.emit(GlobalEvents.PANEL_OPENED, panel);
-
+        if (this.show(panel, { screen, props })) {
+            this.$vApp.$store.set(`panel/${PanelAction.openPanel}!`, { panel });
+            this.$iApi.updateAlert(
+                this.$vApp.$t(`panels.alert.open`, {
+                    name: this.$vApp.$t(panel.alertName)
+                })
+            );
+            this.$iApi.event.emit(GlobalEvents.PANEL_OPENED, panel);
+        } else {
+            console.error(`Failed to open ${panel.id} panel.`);
+        }
         return panel;
     }
 
@@ -360,8 +385,25 @@ export class PanelAPI extends APIScope {
     show(
         value: string | PanelInstance,
         route: PanelConfigRoute
-    ): PanelInstance {
+    ): PanelInstance | undefined {
         const panel = this.get(value);
+
+        // check if required props are there, or bad things can happen on startup
+        // need this here until we figure out how to pass in props, after layer use is normalized
+        if (panel.screens[route.screen]) {
+            const propsToCheck = Object.keys(
+                panel.screens[route.screen]?.props
+            ).filter((pr: String) => pr !== 'panel');
+            const propsPassed = route.props ? Object.keys(route.props) : [];
+            for (let i = 0; i < propsToCheck.length; i++) {
+                if (
+                    !propsPassed.includes(propsToCheck[i]) &&
+                    panel.screens[route.screen].props[propsToCheck[i]].required
+                ) {
+                    return undefined;
+                }
+            }
+        }
 
         // register all the panel screen components globally
         // only register if it hasn't been registered before

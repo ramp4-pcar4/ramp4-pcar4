@@ -1,6 +1,7 @@
 import type { Component, ComponentOptions, ComponentPublicInstance } from 'vue';
 
 import type { PanelInstance } from '@/api';
+import type { DefPromise } from '@/geo/api';
 
 export class PanelState {
     /**
@@ -10,6 +11,13 @@ export class PanelState {
      * @memberof PanelState
      */
     items: { [name: string]: PanelInstance } = {};
+
+    /**
+     * A list of registration promises for all panels.
+     * @type {{ [name: string]: DefPromise }}
+     * @memberof PanelState
+     */
+    regPromises: { [name: string]: DefPromise } = {};
 
     /**
      * A list of all panels in the arrangement they would be put on screen.

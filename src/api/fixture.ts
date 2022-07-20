@@ -172,6 +172,32 @@ export class FixtureAPI extends APIScope {
     }
 
     /**
+     * Provides a promise that resolves when the fixture(s) have finished loading.
+     *
+     * @param {(string | string[])} fixtureId the fixture ID(s) for which the promise is requested
+     * @memberof FixtureAPI
+     */
+    isLoaded(fixtureId: string | string[]): Promise<any> {
+        // We first create loadPromises for fixtures that don't have one
+        const idsToCheck = Array.isArray(fixtureId) ? fixtureId : [fixtureId];
+        idsToCheck.forEach((id: string) => {
+            if (
+                this.$vApp.$store.get(`fixture/loadPromises@${id}`) ===
+                undefined
+            ) {
+                this.$vApp.$store.set(
+                    `fixture/${FixtureMutation.ADD_LOAD_PROMISE}!`,
+                    id
+                );
+            }
+        });
+        // Now, get all the promises and return
+        return Promise.all(
+            this.$vApp.$store.get('fixture/getLoadPromises', idsToCheck) // not sure how to get typescript to stop yelling
+        );
+    }
+
+    /**
      * Loads the set of standard, built-in fixtures to the R4MP Vue instance.
      * This will quickly set up the vanilla version of RAMP.
      * Note this function is automatically run by the instance startup unless the loadDefaultFixtures option is

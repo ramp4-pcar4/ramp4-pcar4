@@ -235,16 +235,6 @@
                         "visibilityToggle"
                     ]
                 },
-                "isOpen": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Specifies whether legend panel is open by default."
-                },
-                "isPinned": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Specifies whether legend panel is pinned by default."
-                },
                 "panelWidth": {
                     "$ref": "#/$defs/panelWidth"
                 },
@@ -1590,11 +1580,6 @@
                     "default": "",
                     "description": "Title of the datatable."
                 },
-                "isOpen": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Specifies if this table component should be open/closed on initial load."
-                },
                 "columns": {
                     "type": "array",
                     "description": "An array to specify how the columns (properties) of the table are defined. If a column is not present in the array, it is treated as disabled.",
@@ -2011,7 +1996,6 @@
                 "legend": {
                     "$ref": "#/$defs/legend",
                     "default": {
-                        "isOpen": false,
                         "root": {}
                     },
                     "description": "Provides configuration to legend. If not supplied, a blank legend is displayed."
@@ -2120,6 +2104,33 @@
                 }
             },
             "unevaluatedProperties": false
+        },
+        "panels": {
+            "type": "object",
+            "description": "Configuration of panel properties.",
+            "properties": {
+                "open": {
+                    "type": "array",
+                    "description": "The panels to open on startup. Panels with props are currently not supported.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "description": "The ID of the panel to open."
+                            },
+                            "pin": {
+                                "type": "boolean",
+                                "default": "false",
+                                "description": "Whether to pin the panel as well (in addition to opening)."
+                            }
+                        },
+                        "required": ["id"],
+                        "additionalProperties": "false"
+                    }
+                }
+            },
+            "additionalProperties": "false"
         },
         "layers": {
             "$ref": "#/$defs/layerList",

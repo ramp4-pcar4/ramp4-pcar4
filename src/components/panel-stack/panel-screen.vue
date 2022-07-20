@@ -88,7 +88,9 @@ export default defineComponent({
     },
     data() {
         return {
-            temporary: this.get('appbar/temporary'),
+            temporary: this.$iApi.fixture.get('appbar')
+                ? this.$store.get('appbar/temporary')
+                : [],
             mobileView: this.get('panel/mobileView')
         };
     },
