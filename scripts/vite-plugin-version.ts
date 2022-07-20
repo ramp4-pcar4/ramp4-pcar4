@@ -14,7 +14,7 @@ export default (): Plugin => {
             const [major, minor, patch] = pkg.version.split('.');
 
             config.define
-                ? (config.define.__VERSION__ = {
+                ? (config.define.__RAMP_VERSION__ = {
                       major,
                       minor,
                       patch,

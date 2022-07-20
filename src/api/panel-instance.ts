@@ -19,7 +19,7 @@ import type {
 } from '@/store/modules/panel';
 
 import ScreenSpinnerV from '@/components/panel-stack/screen-spinner.vue';
-const screenModules = import.meta.glob<Component>(`@/fixtures/*/screen.vue`);
+const screenModules = import.meta.glob<Component>('../fixtures/*/screen.vue');
 
 export class PanelInstance extends APIScope {
     /**

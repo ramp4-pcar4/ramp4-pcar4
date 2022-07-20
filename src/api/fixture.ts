@@ -8,7 +8,7 @@ import type { FixtureBase, FixtureBaseSet } from '@/store/modules/fixture';
 import type { RampConfig } from '@/types';
 
 const fixtureModules = import.meta.glob<{ default: typeof FixtureInstance }>(
-    `@/fixtures/*/index.ts`
+    '@/fixtures/*/index.ts'
 );
 
 // TODO: implement the same `internal.ts` pattern in store, so can import from a single place;

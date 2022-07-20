@@ -77,10 +77,10 @@ export class InstanceAPI {
         options?: RampOptions
     ) {
         console.log(
-            `RAMP v${__VERSION__.major}.${__VERSION__.minor}.${
-                __VERSION__.patch
-            } [${__VERSION__.hash.slice(0, 9)}] (Built on ${new Date(
-                __VERSION__.timestamp.toString()
+            `RAMP v${__RAMP_VERSION__.major}.${__RAMP_VERSION__.minor}.${
+                __RAMP_VERSION__.patch
+            } [${__RAMP_VERSION__.hash.slice(0, 9)}] (Built on ${new Date(
+                __RAMP_VERSION__.timestamp.toString()
             ).toLocaleString()})`
         );
 
