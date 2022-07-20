@@ -85,10 +85,12 @@ export default defineComponent({
             required: true
         }
     },
-    data() {
-        return {
-            temporary: this.get('appbar/temporary')
-        };
+    computed: {
+        temporary() {
+            return this.$iApi.fixture.get('appbar')
+                ? this.$store.get('appbar/temporary')
+                : [];
+        }
     }
 });
 </script>
