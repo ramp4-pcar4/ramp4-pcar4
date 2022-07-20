@@ -12,7 +12,7 @@
             <div class="flex">
                 <button
                     @click="fixture?.export()"
-                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-8 px-16 mr-16"
+                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-8 px-8 sm:px-16 mr-8 sm:mr-16"
                     :aria-label="$t('export.download')"
                 >
                     {{ $t('export.download') }}
@@ -20,7 +20,7 @@
 
                 <button
                     @click="make()"
-                    class="py-8 px-16"
+                    class="py-8 px-4 sm:px-16"
                     :aria-label="$t('export.refresh')"
                 >
                     {{ $t('export.refresh') }}
@@ -29,7 +29,7 @@
                 <export-settings
                     :componentSelectedState="selectedComponents"
                     :onComponentToggle="make()"
-                    class="ml-auto flex px-8"
+                    class="ml-auto flex px-4 sm:px-8"
                 ></export-settings>
             </div>
         </template>
