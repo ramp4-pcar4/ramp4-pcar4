@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 
-declare const __VERSION__: {
+// temp fix until issue 1256 is given the Petrov treatment
+declare const __RAMPVERSION__: {
     major: string;
     minor: string;
     patch: string;

@@ -13,8 +13,9 @@ export default (): Plugin => {
 
             const [major, minor, patch] = pkg.version.split('.');
 
+            // temp fix until issue 1256 is given the Petrov treatment
             config.define
-                ? (config.define.__VERSION__ = {
+                ? (config.define.__RAMPVERSION__ = {
                       major,
                       minor,
                       patch,
