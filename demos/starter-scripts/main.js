@@ -445,13 +445,16 @@ let config = {
                     fileName: 'ramp-pcar-4-map-carte'
                 }
             },
+            panels: {
+                open: [{ id: 'legend', pin: true }]
+            },
             system: { animate: true }
         }
     }
 };
 
 let options = {
-    loadDefaultFixtures: false,
+    loadDefaultFixtures: true,
     loadDefaultEvents: true,
     startRequired: false
 };
@@ -461,10 +464,11 @@ const rInstance = createInstance(
     config,
     options
 );
-rInstance.fixture.addDefaultFixtures().then(() => {
-    rInstance.panel.open('legend');
-    rInstance.panel.pin('legend');
-});
+
+// rInstance.fixture.addDefaultFixtures().then(() => {
+//     rInstance.panel.open('legend');
+//     rInstance.panel.pin('legend');
+// });
 
 rInstance.$element.component('WFSLayer-Custom', {
     props: ['identifyData'],

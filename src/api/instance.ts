@@ -165,6 +165,28 @@ export class InstanceAPI {
                 )
             );
 
+            // open and pin appropiate panels on startup
+            // TODO: Note that certain panels like grid, settings, etc. need to get data for a specific layer.
+            // Because different fixtures get this data in different ways (some use LayerInstance, some uid, some custom config),
+            // there is no way to open the panel with layer data loaded without writing specific code for specific fixtures.
+            // Once layer usage throughout RAMP is normalized, add an extra nugget in the config called options or something so that the panel
+            // can load layer data as well.
+            if (
+                langConfig.panels &&
+                langConfig.panels.open &&
+                langConfig.panels.open.length > 0
+            ) {
+                const panelIds = langConfig.panels.open.map(p => p.id);
+                this.panel.isRegistered(panelIds).then(() => {
+                    langConfig.panels?.open?.forEach(panel => {
+                        this.panel.open(panel.id);
+                        if (panel.pin) {
+                            this.panel.pin(panel.id);
+                        }
+                    });
+                });
+            }
+
             // disable animations if needed
             if (
                 !langConfig.system?.animate &&

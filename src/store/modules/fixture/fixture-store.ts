@@ -3,6 +3,7 @@ import type { ActionContext, Action, Mutation } from 'vuex';
 import { FixtureState } from './fixture-state';
 import type { FixtureBase } from './fixture-state';
 import type { RootState } from '@/store/state';
+import { DefPromise } from '@/geo/api';
 
 type FixtureContext = ActionContext<FixtureState, RootState>;
 
@@ -15,10 +16,30 @@ export enum FixtureAction {}
 
 export enum FixtureMutation {
     ADD_FIXTURE = 'ADD_FIXTURE',
-    REMOVE_FIXTURE = 'REMOVE_FIXTURE'
+    REMOVE_FIXTURE = 'REMOVE_FIXTURE',
+    ADD_LOAD_PROMISE = 'ADD_LOAD_PROMISE'
 }
 
-const getters = {};
+const getters = {
+    /**
+     * Returns registration promises from the state, for the specified fixtureIds.
+     * Should ideally be called when all fixtureIds have a promise associated with them.
+     * @param fixtureIds the fixture Ids for which promises should be returned
+     */
+    getLoadPromises:
+        (state: FixtureState) =>
+        (fixtureIds: string[]): Promise<void>[] => {
+            const loadPromises: Promise<void>[] = [];
+            fixtureIds.forEach((fixtureId: string) => {
+                if (fixtureId in state.loadPromises) {
+                    loadPromises.push(
+                        state.loadPromises[fixtureId].getPromise()
+                    );
+                }
+            });
+            return loadPromises;
+        }
+};
 
 const actions: StoreActions = {};
 
@@ -35,7 +56,17 @@ const mutations: StoreMutations = {
         { value }: { value: FixtureBase }
     ): void {
         state.items = { ...state.items, [value.id]: value };
-
+        // since fixture has successfully loaded, resolve its associated load promise
+        if (!(value.id in state.loadPromises)) {
+            const loadPromise = new DefPromise();
+            loadPromise.resolveMe();
+            state.loadPromises = {
+                ...state.loadPromises,
+                [value.id]: loadPromise
+            };
+        } else {
+            state.loadPromises[value.id].resolveMe();
+        }
         // call the `added` life hook if available
         if (typeof value.added === 'function') {
             value.added();
@@ -54,11 +85,28 @@ const mutations: StoreMutations = {
     ): void {
         delete state.items[value.id];
         state.items = { ...state.items };
-
+        delete state.loadPromises[value.id];
+        state.loadPromises = { ...state.loadPromises };
         // call the `removed` life hook if available
         if (typeof value.removed === 'function') {
             value.removed();
         }
+    },
+
+    /**
+     * Mutation to add a new load promise for the specified fixture Id.
+     *
+     * @param {FixtureState} state
+     * @param {string} fixtureId
+     */
+    [FixtureMutation.ADD_LOAD_PROMISE](
+        state: FixtureState,
+        fixtureId: string
+    ): void {
+        state.loadPromises = {
+            ...state.loadPromises,
+            [fixtureId]: new DefPromise()
+        };
     }
 };
 

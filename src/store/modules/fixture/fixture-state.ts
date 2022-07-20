@@ -1,5 +1,8 @@
+import type { DefPromise } from '@/geo/api';
+
 export class FixtureState {
     items: { [name: string]: FixtureBase } = {};
+    loadPromises: { [name: string]: DefPromise } = {};
 }
 
 export type FixtureBaseSet = { [name: string]: FixtureBase };
