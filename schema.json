@@ -682,7 +682,9 @@
                         "type": "boolean",
                         "description": "Direction to order in. True means smaller values are on top of larger values. False is the opposite."
                     }
-                }
+                },
+                "additionalProperties": false,
+                "required": ["field", "ascending"]
             }
         },
         "basicLayer": {
