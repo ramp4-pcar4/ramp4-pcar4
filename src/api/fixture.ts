@@ -1,6 +1,5 @@
 import { createApp, defineComponent, h, render } from 'vue';
-
-import type { Component, ComponentOptions, ComponentPublicInstance } from 'vue';
+import type { Component, ComponentOptions } from 'vue';
 
 import { APIScope, GlobalEvents, InstanceAPI } from './internal';
 import { FixtureMutation } from '@/store/modules/fixture';
@@ -427,7 +426,11 @@ export class FixtureInstance extends APIScope implements FixtureBase {
      * @param {Array<string>} panels list of panel names for the calling fixture
      */
     handlePanelWidths(panels: Array<string>): void {
-        if (this.config?.panelWidth) {
+        // for mobile mode, disregard specified panel widths and use default 100% width
+        if (
+            this.config?.panelWidth &&
+            !this.$vApp.$store.get('panel/mobileView')
+        ) {
             const panelWidths: any = {};
 
             // If only a number was provided, use it as the `default` value.
