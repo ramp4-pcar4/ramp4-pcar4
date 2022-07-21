@@ -3,6 +3,7 @@ import {
     DataFormat,
     DrawState,
     Extent,
+    GeometryType,
     Graphic,
     InitiationState,
     LayerControls,
@@ -144,6 +145,11 @@ export class LayerInstance extends APIScope {
     hovertips: boolean;
 
     /**
+     * The geometry type of the layer.
+     */
+    geomType: GeometryType;
+
+    /**
      *  The internal ESRI API layer
      */
     esriLayer: __esri.Layer | undefined;
@@ -198,6 +204,7 @@ export class LayerInstance extends APIScope {
         this.userAdded = false;
         this.identify = false; // will be updated later based on config/supportsIdentify value
         this.hovertips = config.state?.hovertips ?? true;
+        this.geomType = GeometryType.UNKNOWN;
         this._sublayers = [];
     }
 
@@ -389,22 +396,6 @@ export class LayerInstance extends APIScope {
      * @param {Array<FieldDefinition>} fields the list of field definitions
      */
     set fields(fields: Array<FieldDefinition>) {}
-
-    /**
-     * Returns the geometry type of the given layer.
-     *
-     * @returns {Array} list of field definitions
-     */
-    get geomType(): string {
-        return 'error';
-    }
-
-    /**
-     * Sets the geometry type of the layer
-     *
-     * @param {string} type the new the geometry type
-     */
-    set geomType(type: string) {}
 
     /**
      * Returns the name field of the given layer.

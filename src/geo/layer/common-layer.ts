@@ -12,6 +12,7 @@ import {
     DefPromise,
     DrawState,
     Extent,
+    GeometryType,
     Graphic,
     InitiationState,
     LayerFormat,
@@ -42,7 +43,6 @@ export class CommonLayer extends LayerInstance {
     _clickTolerance: number;
     _featureCount: number;
     _fields: Array<FieldDefinition>;
-    _geomType: string;
     _nameField: string;
     _oidField: string;
     _drawOrder: Array<DrawOrder>;
@@ -76,7 +76,7 @@ export class CommonLayer extends LayerInstance {
         this._clickTolerance =
             rampConfig.tolerance != undefined ? rampConfig.tolerance : 5; // use default value of 5 if tolerance is undefined
         this._fields = [];
-        this._geomType = 'error';
+        this.geomType = GeometryType.NONE;
         this._nameField = 'error';
         this._oidField = 'error';
         this.dataFormat = DataFormat.UNKNOWN;
@@ -665,26 +665,7 @@ export class CommonLayer extends LayerInstance {
     }
 
     /**
-     * Returns the geometry type of the given sublayer.
-     *
-     * @returns {Array} list of field definitions
-     */
-    get geomType(): string {
-        // this.stubError();
-        return this._geomType;
-    }
-
-    /**
-     * Sets the geometry type of the layer
-     *
-     * @param {string} type the new the geometry type
-     */
-    set geomType(type: string) {
-        this._geomType = type;
-    }
-
-    /**
-     * Returns the name field of the given sublayer.
+     * Returns the name field of the layer.
      *
      * @returns {string} name field
      */
@@ -703,7 +684,7 @@ export class CommonLayer extends LayerInstance {
     }
 
     /**
-     * Returns the OID field of the given sublayer.
+     * Returns the OID field of the layer.
      *
      * @returns {string} OID field
      */
