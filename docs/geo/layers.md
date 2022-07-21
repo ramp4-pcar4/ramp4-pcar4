@@ -279,6 +279,20 @@ myLayer.isRemoved; // false
 myLayer.supportsIdentify; // true
 ```
 
+Layers also have method `.canIdentify()` which indicates if the layer would partipate in an identify at the current moment. This method takes into account things like layer visibility, the value of the `.identify` toggle, if the layer is in a loading or error state, etc.
+
+```js
+myLayer.canIdentify(); // true
+```
+
+Layers also have the property `.identifyMode`. This can be `'geometric'` (using intersection against feature geometry), `'symbolic'` (using intersection against layer symbols), or `'hybrid'` (combining both types of intersections). Raster based layers (Map Image, WMS) are always in `geometric` mode since there is no client side renderers to leverage. Vector based layers can choose any of the modes.
+
+```js
+myLayer.identifyMode; // 'hybrid'
+```
+
+The typical identify process is run from the map, using `MapAPI.runIdentify()`. This will execute the identify across all valid layers and collate the results. However, the following goes into the guts of how each layer contributes to that process. Custom modules are allowed to run identifies directly off layers if it is advantageous.
+
 The `.runIdentify()` method will execute an identify request on the layer. Identify is not directly called on logical sublayers. RAMP's sublayer filter can be overridden using the below options parameter object.
 
 Options parameter object:
@@ -348,6 +362,12 @@ Get the geometry type of the logical layer.
 
 ```js
 myLayer.geomType; // "polygon"
+```
+
+Get the draw order of the layer. Not supported by Map Image Layers. Can only be set via layer configuration. ESRI currently only supports ordering by one field.
+
+```js
+myLayer.drawOrder; // [{ field: 'name', ascending: true }]
 ```
 
 Request the set of attributes for the logical layer. The first request will incur the server hit. Subsequent requests will use the cached result.
