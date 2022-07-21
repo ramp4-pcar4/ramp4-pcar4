@@ -172,6 +172,17 @@ export class AttribLayer extends CommonLayer {
                     })();
             }
 
+            // drawOrder field check
+            this.drawOrder.forEach(d => {
+                if (
+                    this.esriFields.findIndex(ef => ef.name === d.field) === -1
+                ) {
+                    console.error(
+                        `Draw order for layer ${this.id} references invalid field ${d.field}`
+                    );
+                }
+            });
+
             // add renderer and legend
             const renderer =
                 options && options.customRenderer && options.customRenderer.type
