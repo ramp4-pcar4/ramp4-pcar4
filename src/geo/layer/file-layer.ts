@@ -92,7 +92,7 @@ export class FileLayer extends AttribLayer {
         ) {
             this.identifyMode = rampConfig.identifyMode;
         } else {
-            this.identifyMode = LayerIdentifyMode.GEOMETRIC;
+            this.identifyMode = LayerIdentifyMode.HYBRID;
         }
     }
 

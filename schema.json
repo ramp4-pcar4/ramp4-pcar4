@@ -1113,7 +1113,7 @@
                 "identifyMode": {
                     "type": "string",
                     "description": "Determines how features should be identified. By geometry, by symbol, or both.",
-                    "default": "geometric",
+                    "default": "hybrid",
                     "enum": ["geometric", "symbolic", "hybrid"]
                 }
             },
@@ -1224,7 +1224,7 @@
                 "identifyMode": {
                     "type": "string",
                     "description": "Determines how features should be identified. By geometry, by symbol, or both.",
-                    "default": "geometric",
+                    "default": "hybrid",
                     "enum": ["geometric", "symbolic", "hybrid"]
                 }
             },
@@ -1332,7 +1332,7 @@
                 "identifyMode": {
                     "type": "string",
                     "description": "Determines how features should be identified. By geometry, by symbol, or both.",
-                    "default": "geometric",
+                    "default": "hybrid",
                     "enum": ["geometric", "symbolic", "hybrid"]
                 }
             },
