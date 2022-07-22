@@ -443,6 +443,9 @@ let config = {
                         selected: false
                     },
                     fileName: 'ramp-pcar-4-map-carte'
+                },
+                help: {
+                    location: '../help'
                 }
             },
             panels: {

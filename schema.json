@@ -9,10 +9,10 @@
             "type": "object",
             "description": "Specifies details for the Help section.",
             "properties": {
-                "folderName": {
+                "location": {
                     "type": "string",
-                    "default": "default",
-                    "description": "Help folder name within the help directory which contains the help content and images. Markdown files must be named for the language they support, e.g. en.md, fr.md"
+                    "default": "./help/",
+                    "description": "Relative path or URL to the help directory, which contains the help content and images. Markdown files must be named for the language they support, e.g. en.md, fr.md. Images must be placed in a subfolder named images."
                 },
                 "panelWidth": {
                     "type": "number",

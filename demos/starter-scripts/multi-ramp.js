@@ -446,6 +446,9 @@ let config = {
                         selected: false
                     },
                     fileName: 'ramp-pcar-4-map-carte'
+                },
+                help: {
+                    location: '../help'
                 }
             },
             system: { animate: true }
@@ -883,6 +886,9 @@ let config2 = {
                         selected: false
                     },
                     fileName: 'ramp-pcar-4-map-carte'
+                },
+                help: {
+                    location: '../help'
                 }
             },
             system: { animate: true }
@@ -1320,6 +1326,9 @@ let config3 = {
                         selected: false
                     },
                     fileName: 'ramp-pcar-4-map-carte'
+                },
+                help: {
+                    location: '../help'
                 }
             },
             system: { animate: true }

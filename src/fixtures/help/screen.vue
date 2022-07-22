@@ -39,7 +39,7 @@ export default defineComponent({
 
     data() {
         return {
-            folderName: this.get(HelpStore.folderName),
+            location: this.get(HelpStore.location),
             helpSections: [] as Array<any>,
             watchers: [] as Array<Function>
         };
@@ -53,19 +53,20 @@ export default defineComponent({
                 (newLocale: any, oldLocale: any) => {
                     if (newLocale === oldLocale) return;
                     // path to where HELP is hosted is different if RAMP is built as prod library
-                    const base = '../help';
-
-                    const folder = this.folderName || 'default';
                     const renderer = new marked.Renderer();
+                    const loc =
+                        this.location.slice(-1) === '/'
+                            ? this.location
+                            : `${this.location}/`;
                     // make it easier to use images in markdown by prepending path to href if href is not an external source
                     // this avoids the need for ![](help/images/myimg.png) to just ![](myimg.png). This overrides the default image renderer completely.
                     renderer.image = (href: string, title: string) => {
                         if (href.indexOf('http') === -1) {
-                            href = `${base}/${folder}/images/` + href;
+                            href = `${loc}images/` + href;
                         }
                         return `<img src="${href}" alt="${title}">`;
                     };
-                    axios.get(`${base}/${folder}/${newLocale}.md`).then(r => {
+                    axios.get(`${loc}${newLocale}.md`).then(r => {
                         // matches help sections from markdown file where each section begins with one hashbang and a space
                         // followed by the section header, exactly 2 newlines, then up to but not including a double newline
                         // note that the {2,} below is used as the double line deparator since each double new line is actually 6
