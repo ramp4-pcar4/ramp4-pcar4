@@ -7,10 +7,10 @@ export class HelpState {
      * @type {string}
      * @memberof HelpState
      */
-    folderName = '';
+    location = './help/';
 }
 
 export interface HelpConfig {
-    folderName: string;
+    location: string;
     panelWidth: PanelWidthObject | number;
 }
