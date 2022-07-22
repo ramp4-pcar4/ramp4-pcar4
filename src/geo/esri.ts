@@ -52,7 +52,6 @@ import EsriSimpleLineSymbol from '@arcgis/core/symbols/SimpleLineSymbol';
 import EsriSimpleMarkerSymbol from '@arcgis/core/symbols/SimpleMarkerSymbol';
 import EsriSymbol from '@arcgis/core/symbols/Symbol';
 import { fromJSON as EsriSymbolFromJson } from '@arcgis/core/symbols/support/jsonUtils';
-import EsriGeometryService from '@arcgis/core/tasks/GeometryService';
 import EsriFeatureFilter from '@arcgis/core/layers/support/FeatureFilter';
 import EsriMapView from '@arcgis/core/views/MapView';
 import EsriBasemapGallery from '@arcgis/core/widgets/BasemapGallery';
@@ -72,7 +71,6 @@ export {
     EsriField,
     EsriGeometry,
     EsriGeometryFromJson,
-    EsriGeometryService,
     EsriGraphic,
     EsriGraphicsLayer,
     // EsriIdentifyParameters,
