@@ -53,10 +53,13 @@ export default defineComponent({
                 (newLocale: any, oldLocale: any) => {
                     if (newLocale === oldLocale) return;
                     // path to where HELP is hosted is different if RAMP is built as prod library
-                    const base = '../help';
-
+                    const base =
+                        import.meta.env.MODE === 'development'
+                            ? '../help'
+                            : './help';
                     const folder = this.folderName || 'default';
                     const renderer = new marked.Renderer();
+
                     // make it easier to use images in markdown by prepending path to href if href is not an external source
                     // this avoids the need for ![](help/images/myimg.png) to just ![](myimg.png). This overrides the default image renderer completely.
                     renderer.image = (href: string, title: string) => {
