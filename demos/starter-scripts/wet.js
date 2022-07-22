@@ -445,6 +445,9 @@ let config = {
                 },
                 scrollguard: {
                     enabled: true
+                },
+                help: {
+                    location: '../help/default'
                 }
             },
             system: { animate: true }

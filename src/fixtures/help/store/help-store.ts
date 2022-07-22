@@ -9,7 +9,7 @@ const mutations = {};
 const actions = {};
 
 export enum HelpStore {
-    folderName = 'help/folderName'
+    location = 'help/location'
 }
 
 export function help() {
