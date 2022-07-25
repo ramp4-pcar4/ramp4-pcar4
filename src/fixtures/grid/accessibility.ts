@@ -56,13 +56,6 @@ export class GridAccessibilityManager {
             this.element.querySelectorAll(HEADER_ROW_SELECTOR)
         ) as HTMLElement[];
 
-        this.element
-            .querySelector('.ag-center-cols-viewport')
-            ?.classList.add('overflow-hidden');
-        this.element
-            .querySelector('.ag-body-horizontal-scroll-viewport')
-            ?.setAttribute('tabindex', '-1');
-
         this.initAccessibilityListeners();
         this.initScrollListeners();
     }
