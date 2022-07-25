@@ -168,8 +168,7 @@
             @cell-key-press="onCellKeyPress"
             :doesExternalFilterPass="doesExternalFilterPass"
             :isExternalFilterPresent="isExternalFilterPresent"
-        >
-        </ag-grid-vue>
+        />
     </div>
 </template>
 
