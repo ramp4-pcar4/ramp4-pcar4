@@ -212,7 +212,9 @@ export class MapImageLayer extends AttribLayer {
                                 identify: this.identify
                             },
                             controls: subConfigs[sid]?.controls,
-                            disabledControls: subConfigs[sid]?.disabledControls
+                            disabledControls: subConfigs[sid]?.disabledControls,
+                            initialFilteredQuery:
+                                subConfigs[sid]?.initialFilteredQuery
                         },
                         this.$iApi,
                         this,

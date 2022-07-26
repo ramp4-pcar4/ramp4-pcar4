@@ -990,6 +990,10 @@
                         }
                     }
                 },
+                "initialFilteredQuery": {
+                    "type": "string",
+                    "description": "Initial filter query to be applied to the layer. SQL WHERE clause format."
+                },
                 "fixtures": {
                     "$ref": "#/$defs/layerFixtureConfig"
                 }
@@ -1093,7 +1097,7 @@
                 },
                 "initialFilteredQuery": {
                     "type": "string",
-                    "description": "Initial filter query to be applied to the layer."
+                    "description": "Initial filter query to be applied to the layer. SQL WHERE clause format."
                 },
                 "fixtures": {
                     "$ref": "#/$defs/layerFixtureConfig"
@@ -1206,6 +1210,10 @@
                         "$ref": "#/$defs/fieldMetadataEntry"
                     }
                 },
+                "initialFilteredQuery": {
+                    "type": "string",
+                    "description": "Initial filter query to be applied to the layer. SQL WHERE clause format."
+                },
                 "fixtures": {
                     "$ref": "#/$defs/layerFixtureConfig"
                 },
@@ -1313,6 +1321,10 @@
                     "items": {
                         "$ref": "#/$defs/fieldMetadataEntry"
                     }
+                },
+                "initialFilteredQuery": {
+                    "type": "string",
+                    "description": "Initial filter query to be applied to the layer. SQL WHERE clause format."
                 },
                 "fixtures": {
                     "$ref": "#/$defs/layerFixtureConfig"
