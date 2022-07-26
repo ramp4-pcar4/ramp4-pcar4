@@ -114,6 +114,7 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | MAP_RESIZED<br>'map/resized'                       | _height_: new height, _width_: new width                       | The map view changed size                        |
 | MAP_SCALECHANGE<br>'map/scalechanged'              | scale denominator: number                                      | The map scale changed                            |
 | MAP_START<br>'map/start'                           | none                                                           | The map startup was requested                    |
+| RAMP_MOBILEVIEW_CHANGE<br>'ramp/mobile'            | mobileMode: boolean                                            | The screen changes to/from mobile resolution     |
 | PANEL_CLOSED<br>'panel/closed'                     | PanelInstance object                                           | A panel was closed                               |
 | PANEL_OPENED<br>'panel/opened'                     | PanelInstance object                                           | A panel was opened                               |
 | USER_LAYER_ADDED<br>'user/layeradded'              | LayerInstance object                                           | A layer was added during the session             |

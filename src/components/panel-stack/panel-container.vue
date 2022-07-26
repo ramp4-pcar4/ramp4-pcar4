@@ -36,31 +36,8 @@ export default defineComponent({
     data() {
         return {
             // indicates if the transition should be skipped
-            skipTransition: false,
-            mobileMode: this.get('panel/mobileView'),
-            watchers: [] as Array<Function>
+            skipTransition: false
         };
-    },
-
-    mounted() {
-        // make panel container responsive when resizing to mobile resolution
-        this.watchers.push(
-            this.$watch(
-                'mobileMode',
-                (newMobileMode: boolean, oldMobileMode: boolean) => {
-                    if (newMobileMode !== oldMobileMode && newMobileMode) {
-                        // set width back to 100% for mobile
-                        this.$iApi.panel.setStyle(this.panel, {
-                            width: '100%'
-                        });
-                    }
-                }
-            )
-        );
-    },
-
-    beforeUnmount() {
-        this.watchers.forEach(unwatch => unwatch());
     },
 
     methods: {

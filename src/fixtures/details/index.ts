@@ -5,7 +5,9 @@ import DetailsLayerScreenV from './layers-screen.vue';
 import DetailsResultScreenV from './result-screen.vue';
 import DetailsItemScreenV from './item-screen.vue';
 import messages from './lang/lang.csv?raw';
+
 import { markRaw } from 'vue';
+import { GlobalEvents } from '@/api';
 
 class DetailsFixture extends DetailsAPI {
     async added() {
@@ -54,10 +56,33 @@ class DetailsFixture extends DetailsAPI {
             (value: DetailsConfig | undefined) => this._parseConfig(value)
         );
 
+        let eventHandlers: string[] = [];
+        // make panel container responsive when resizing to mobile resolution
+        eventHandlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.RAMP_MOBILEVIEW_CHANGE,
+                (mobileMode: boolean) => {
+                    const detailsPanels = ['details-items', 'details-layers'];
+                    if (mobileMode) {
+                        // set width to 100% on mobile
+                        for (const panel of detailsPanels) {
+                            this.$iApi.panel.setStyle(panel, {
+                                width: '100%'
+                            });
+                        }
+                    } else {
+                        this.handlePanelWidths(detailsPanels);
+                    }
+                }
+            )
+        );
+
         // override the removed method here to get access to scope
         this.removed = () => {
             console.log(`[fixture] ${this.id} removed`);
             unwatch();
+            eventHandlers.forEach(h => this.$iApi.event.off(h));
+
             this.$iApi.panel.remove('details-items');
             this.$iApi.panel.remove('details-layers');
 
