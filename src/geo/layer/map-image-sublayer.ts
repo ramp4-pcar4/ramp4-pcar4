@@ -4,7 +4,13 @@ import {
     InstanceAPI,
     type MapImageLayer
 } from '@/api/internal';
-import { DataFormat, InitiationState, LayerFormat, LayerType } from '@/geo/api';
+import {
+    CoreFilter,
+    DataFormat,
+    InitiationState,
+    LayerFormat,
+    LayerType
+} from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 import { markRaw } from 'vue';
 
@@ -37,6 +43,11 @@ export class MapImageSublayer extends AttribLayer {
         }
 
         this.fetchEsriSublayer(parent);
+
+        if (config.initialFilteredQuery) {
+            this.filter.setSql(CoreFilter.INITIAL, config.initialFilteredQuery);
+            this.applySqlFilter();
+        }
     }
 
     /**

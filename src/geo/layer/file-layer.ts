@@ -16,6 +16,7 @@ import type {
 } from '@/api/internal';
 
 import {
+    CoreFilter,
     DataFormat,
     DefPromise,
     DrawState,
@@ -86,6 +87,13 @@ export class FileLayer extends AttribLayer {
         this.dataFormat = DataFormat.ESRI_FEATURE;
         this.layerFormat = LayerFormat.FEATURE;
         this.tooltipField = '';
+
+        if (rampConfig.initialFilteredQuery) {
+            this.filter.setSql(
+                CoreFilter.INITIAL,
+                rampConfig.initialFilteredQuery
+            );
+        }
     }
 
     protected async onInitiate(): Promise<void> {
@@ -253,6 +261,13 @@ export class FileLayer extends AttribLayer {
             this.updateDrawState(DrawState.UP_TO_DATE);
         });
         */
+
+        // if we had an initial filter, apply it to the layer when it's done loading
+        if (this.filter.getSql(CoreFilter.INITIAL)) {
+            Promise.all(loadPromises).then(() => {
+                this.applySqlFilter();
+            });
+        }
 
         return loadPromises;
     }

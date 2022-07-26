@@ -536,6 +536,7 @@ export interface RampLayerMapImageSublayerConfig {
     disabledControls?: Array<LayerControls>;
     stateOnly?: boolean;
     fieldMetadata?: RampLayerFieldMetadataConfig;
+    initialFilteredQuery?: string;
     customRenderer?: any;
     fixtures?: any; // layer-based fixture config
 }
