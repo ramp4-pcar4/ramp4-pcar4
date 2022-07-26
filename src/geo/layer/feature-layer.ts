@@ -1,5 +1,6 @@
 import { AttribLayer, InstanceAPI } from '@/api/internal';
 import {
+    CoreFilter,
     DataFormat,
     DefPromise,
     GeometryType,
@@ -69,10 +70,16 @@ export class FeatureLayer extends AttribLayer {
         // TODO add any extra properties for attrib-based layers here
         // if we have a definition at load, apply it here to avoid cancellation errors on
         if (rampLayerConfig.initialFilteredQuery) {
-            // TODO do we need to add something to the .filter? or is this
-            //      a fixed query never goes away?
+            // even though the layer filter would eventually propagate the query to
+            // the definition expression, by setting it on the esri config our initial
+            // layer load will apply the filter. This potentially avoids a very big
+            // data request that would just get filtered out seconds later.
             esriConfig.definitionExpression =
                 rampLayerConfig.initialFilteredQuery;
+            this.filter.setSql(
+                CoreFilter.INITIAL,
+                rampLayerConfig.initialFilteredQuery
+            );
         }
 
         if (

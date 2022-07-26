@@ -416,7 +416,7 @@ console.log(svg);
 
 ### Filters
 
-Apply a SQL filter on a logical layer. This will alert any listeners on the `layer.filterChanged` event. Core SQL filters include `grid`, `symbol`, and `api`
+Apply a SQL filter on a logical layer. This will alert any listeners on the `layer.filterChanged` event. Core SQL filters include `grid`, `symbol`, `extent`, and `initial`. Avoid using core filter names for custom filters. If no filter name is provided, the generic `api` value will be used.
 
 ```js
 myLayer.setSqlFilter('dogfilter', `breed = 'terrier'`);
