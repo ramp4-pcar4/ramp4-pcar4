@@ -117,16 +117,24 @@ export default defineComponent({
             // Update the layer definition to filter child symbols
             // At the moment, only layers that support features will support sql filters
             if (this.legendItem.layer?.supportsFeatures) {
-                this.legendItem.layer?.setSqlFilter(
-                    CoreFilter.SYMBOL,
-                    this.legendItem
-                        .legend!.filter(
-                            (item: LegendSymbology) =>
-                                item.lastVisbility === true
-                        )
-                        .map((item: LegendSymbology) => item.definitionClause)
-                        .join(' OR ')
-                );
+                const filterGuts = this.legendItem
+                    .legend!.filter(
+                        (item: LegendSymbology) => item.lastVisbility === true
+                    )
+                    .map(
+                        (item: LegendSymbology) => item.definitionClause || ''
+                    );
+
+                let sql = ''; // default value, this computes to "show all"
+                if (filterGuts.length === 0) {
+                    // nothing visible.
+                    sql = '1=2';
+                } else if (filterGuts.length < this.legendItem.legend!.length) {
+                    // only a subset of checkboxes are checked. need filter
+                    sql = filterGuts.join(' OR ');
+                }
+
+                this.legendItem.layer?.setSqlFilter(CoreFilter.SYMBOL, sql);
             }
             this.initialChecked = true;
         }
