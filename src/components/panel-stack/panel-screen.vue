@@ -29,6 +29,16 @@
             </panel-options-menu>
 
             <div class="display-none sm:flex">
+                <left
+                    v-if="reorderable"
+                    @click="panel.move('left')"
+                    :active="!panel.isLeftMostPanel"
+                />
+                <right
+                    v-if="reorderable"
+                    @click="panel.move('right')"
+                    :active="!panel.isRightMostPanel"
+                />
                 <pin @click="panel.pin()" :active="panel.isPinned" />
                 <expand
                     v-if="panel.controls && panel.controls.expand"
@@ -91,7 +101,8 @@ export default defineComponent({
             temporary: this.$iApi.fixture.get('appbar')
                 ? this.$store.get('appbar/temporary')
                 : [],
-            mobileView: this.get('panel/mobileView')
+            mobileView: this.get('panel/mobileView'),
+            reorderable: this.get('panel/reorderable')
         };
     },
     methods: {
