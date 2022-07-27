@@ -11,6 +11,7 @@ type PanelContext = ActionContext<PanelState, RootState>;
 export enum PanelAction {
     openPanel = 'openPanel',
     closePanel = 'closePanel',
+    movePanel = 'movePanel',
     removePanel = 'removePanel',
     setWidth = 'setWidth',
     setStackWidth = 'setStackWidth',
@@ -25,6 +26,7 @@ export enum PanelMutation {
     ADD_TO_PANEL_ORDER = 'ADD_TO_PANEL_ORDER',
     CLOSE_PANEL = 'CLOSE_PANEL',
     REMOVE_PANEL = 'REMOVE_PANEL',
+    MOVE_PANEL = 'MOVE_PANEL',
 
     SET_ORDERED_ITEMS = 'SET_ORDERED_ITEMS',
     SET_PRIORITY = 'SET_PRIORITY',
@@ -79,6 +81,14 @@ const actions = {
         }
 
         context.commit(PanelMutation.CLOSE_PANEL, value);
+        context.dispatch(PanelAction.updateVisible);
+    },
+
+    [PanelAction.movePanel](
+        context: PanelContext,
+        value: { panel: PanelConfig; direction: string }
+    ): void {
+        context.commit(PanelMutation.MOVE_PANEL, value);
         context.dispatch(PanelAction.updateVisible);
     },
 
@@ -213,6 +223,20 @@ const mutations = {
             state.orderedItems = [
                 ...state.orderedItems.slice(0, index),
                 ...state.orderedItems.slice(index + 1)
+            ];
+        }
+    },
+
+    [PanelMutation.MOVE_PANEL](
+        state: PanelState,
+        { panel, direction }: { panel: PanelInstance; direction: string }
+    ): void {
+        const index = state.orderedItems.indexOf(panel);
+        const delta = direction === 'right' ? 1 : -1;
+        if (state.visible.includes(state.orderedItems[index + delta])) {
+            [state.orderedItems[index], state.orderedItems[index + delta]] = [
+                state.orderedItems[index + delta],
+                state.orderedItems[index]
             ];
         }
     },

@@ -288,6 +288,47 @@ export class PanelInstance extends APIScope {
     }
 
     /**
+     * Move this panel left or right in the stack.
+     * This is a proxy to `InstanceAPI.panel.move(...)`.
+     *
+     * @returns {this}
+     * @memberof PanelInstance
+     */
+    move(direction: string): this {
+        this.$iApi.panel.move(this, direction);
+
+        return this;
+    }
+
+    /**
+     * Checks if this panel is the leftmost visible panel.
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof PanelInstance
+     */
+    get isLeftMostPanel(): boolean {
+        if (this.$iApi.panel.visible.length > 0) {
+            return this.id === this.$iApi.panel.visible[0].id;
+        }
+        return false;
+    }
+
+    /**
+     * Checks if this panel is the rightmost visible panel.
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof PanelInstance
+     */
+    get isRightMostPanel(): boolean {
+        if (this.$iApi.panel.visible.length > 0) {
+            return this.id === this.$iApi.panel.visible.slice(-1)[0].id;
+        }
+        return false;
+    }
+
+    /**
      * Remove this panel.
      * This is a proxy to `InstanceAPI.panel.remove(...)`.
      *
