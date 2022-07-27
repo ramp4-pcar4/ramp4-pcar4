@@ -28,6 +28,14 @@
             </panel-options-menu>
 
             <div class="display-none sm:flex">
+                <left
+                    @click="panel.move('left')"
+                    :active="!panel.isLeftMostPanel"
+                />
+                <right
+                    @click="panel.move('right')"
+                    :active="!panel.isRightMostPanel"
+                />
                 <pin @click="panel.pin()" :active="panel.isPinned" />
                 <expand
                     v-if="panel.controls && panel.controls.expand"

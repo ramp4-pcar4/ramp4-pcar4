@@ -249,6 +249,24 @@ export class PanelAPI extends APIScope {
     }
 
     /**
+     * Moves the specifed visible panel to the left or right.
+     *
+     * @param {(string | PanelInstance)} value
+     * @returns {PanelInstance}
+     * @memberof PanelAPI
+     */
+    move(value: string | PanelInstance, direction: string): PanelInstance {
+        const panel = this.get(value);
+
+        this.$vApp.$store.set(`panel/${PanelAction.movePanel}!`, {
+            panel,
+            direction
+        });
+
+        return panel;
+    }
+
+    /**
      * Toggle panel.
      *
      * @param {string | PanelInstance | PanelInstancePath} [value]

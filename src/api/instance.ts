@@ -33,6 +33,8 @@ import CloseV from '@/components/panel-stack/controls/close.vue';
 import BackV from '@/components/panel-stack/controls/back.vue';
 import ExpandV from '@/components/panel-stack/controls/expand.vue';
 import MinimizeV from '@/components/panel-stack/controls/minimize.vue';
+import RightV from '@/components/panel-stack/controls/right.vue';
+import LeftV from '@/components/panel-stack/controls/left.vue';
 import PanelOptionsMenuV from '@/components/panel-stack/controls/panel-options-menu.vue';
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 
@@ -481,6 +483,8 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
     vueElement.component('panel-options-menu', PanelOptionsMenuV);
     vueElement.component('dropdown-menu', DropdownMenuV);
     vueElement.component('minimize', MinimizeV);
+    vueElement.component('right', RightV);
+    vueElement.component('left', LeftV);
 
     // ported from mapnav.vue
     vueElement.component('fullscreen-nav-button', FullscreenNavV);
