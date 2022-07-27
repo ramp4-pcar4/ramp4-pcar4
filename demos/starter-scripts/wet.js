@@ -447,6 +447,9 @@ let config = {
                     enabled: true
                 }
             },
+            panels: {
+                reorderable: false
+            },
             system: { animate: true }
         }
     }

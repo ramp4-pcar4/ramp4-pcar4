@@ -77,6 +77,14 @@ export class PanelState {
      * @memberof PanelState
      */
     mobileView = false;
+
+    /**
+     * True if panels have the move left/right controls enabled.
+     *
+     * @type {boolean}
+     * @memberof PanelState
+     */
+    reorderable = true;
 }
 
 // this should have been `AsyncComponentPromise` type, but something is off there

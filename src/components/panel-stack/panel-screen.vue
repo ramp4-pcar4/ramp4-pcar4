@@ -29,6 +29,16 @@
             </panel-options-menu>
 
             <div class="display-none sm:flex">
+                <left
+                    v-if="reorderable"
+                    @click="move('left')"
+                    :active="!panel.isLeftMostPanel"
+                />
+                <right
+                    v-if="reorderable"
+                    @click="move('right')"
+                    :active="!panel.isRightMostPanel"
+                />
                 <pin @click="panel.pin()" :active="panel.isPinned" />
                 <expand
                     v-if="panel.controls && panel.controls.expand"
@@ -91,13 +101,25 @@ export default defineComponent({
             temporary: this.$iApi.fixture.get('appbar')
                 ? this.$store.get('appbar/temporary')
                 : [],
-            mobileView: this.get('panel/mobileView')
+            mobileView: this.get('panel/mobileView'),
+            reorderable: this.get('panel/reorderable')
         };
     },
     methods: {
         checkMode() {
             // If the application is in mobile mode (app only has `xs` CSS class), do not display tooltip.
             return !this.mobileView;
+        },
+        move(direction: string) {
+            this.panel.move(direction);
+            if (direction === 'left') {
+                // needed to preserve focus on correct panel
+                this.$nextTick(() => {
+                    (
+                        this.$el.querySelector('.move-left') as HTMLElement
+                    ).focus();
+                });
+            }
         }
     }
 });

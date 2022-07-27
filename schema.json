@@ -2144,6 +2144,11 @@
                         "required": ["id"],
                         "additionalProperties": "false"
                     }
+                },
+                "reorderable": {
+                    "type": "boolean",
+                    "description": "Enables panel reorder controls.",
+                    "default": true
                 }
             },
             "additionalProperties": "false"
