@@ -274,6 +274,8 @@ let config = {
                                 opacity: 1,
                                 visibility: true
                             },
+                            initialFilteredQuery:
+                                "Department___Agency___Crown_Corporation = 'Transport Canada'",
                             table: {
                                 lazyFilter: true,
                                 search: { enabled: false },
