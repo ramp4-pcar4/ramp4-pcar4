@@ -323,6 +323,8 @@ let config = {
                     tolerance: 5,
                     identifyMode: 'hybrid',
                     drawOrder: [{ field: 'Program_name', ascending: true }],
+                    initialFilteredQuery:
+                        "Department___Agency___Crown_Corporation = 'Transport Canada'",
                     state: {
                         opacity: 1,
                         visibility: true
