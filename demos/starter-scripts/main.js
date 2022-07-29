@@ -436,7 +436,7 @@ let config = {
                 },
                 export: {
                     title: {
-                        value: 'All Your Base are Belong to Us',
+                        value: 'All Your Base are Belong to Us All Your Base are Belong to Us All Your Base are Belong to Us',
                         selectable: false
                     },
                     legend: {

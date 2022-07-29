@@ -12,7 +12,7 @@
         @click="open = !open"
         :class="notification.messageList ? 'cursor-pointer' : ''"
     >
-        <div class="flex items-center h-32">
+        <div class="flex items-center text-left">
             <span
                 >{{ icons[notification.type] }} {{ notification.message }}</span
             >

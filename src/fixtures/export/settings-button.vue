@@ -1,13 +1,13 @@
 <template>
     <dropdown-menu
         v-focus-item
-        position="left-end"
+        :position="dropdownPlacement"
         :tooltip="$t('export.menu')"
         tooltip-placement="top"
     >
         <template #header>
             <div
-                class="flex items-center text-gray-400 w-full h-full hover:text-black p-8"
+                class="flex items-center text-gray-400 w-full h-full hover:text-black p-4 sm:p-8"
             >
                 <svg
                     class="fill-current w-24 h-24 m-auto"
@@ -70,6 +70,15 @@ import { ExportStore } from './store';
 
 export default defineComponent({
     name: 'ExportSettingsButtonV',
+    data() {
+        return {
+            dropdownPlacement: !this.$root.$refs['app-size'].classList.contains(
+                'sm'
+            )
+                ? 'top-end'
+                : 'left-end'
+        };
+    },
     props: {
         componentSelectedState: {
             type: Object,
