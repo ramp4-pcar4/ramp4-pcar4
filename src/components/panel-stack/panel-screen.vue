@@ -5,6 +5,7 @@
         v-tippy="{
             trigger: 'focus',
             appendTo: 'parent',
+            onShow: checkMode,
             popperOptions: {
                 modifiers: [
                     { name: 'preventOverflow', options: { altAxis: true } }
@@ -87,8 +88,15 @@ export default defineComponent({
     },
     data() {
         return {
-            temporary: this.get('appbar/temporary')
+            temporary: this.get('appbar/temporary'),
+            mobileView: this.get('panel/mobileView')
         };
+    },
+    methods: {
+        checkMode() {
+            // If the application is in mobile mode (app only has `xs` CSS class), do not display tooltip.
+            return !this.mobileView;
+        }
     }
 });
 </script>
