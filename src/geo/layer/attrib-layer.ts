@@ -129,8 +129,6 @@ export class AttribLayer extends CommonLayer {
         const sData: any = serviceResult.data;
 
         // properties for all endpoints
-
-        // TODO need to decide what propert default is. Raster Layer has null gt.
         this.geomType = this.$iApi.geo.geom.serverGeomTypeToRampGeomType(
             sData.geometryType
         );
@@ -147,7 +145,7 @@ export class AttribLayer extends CommonLayer {
             this.dataFormat = DataFormat.ESRI_FEATURE;
             this.esriFields = markRaw(
                 sData.fields.map((f: any) => EsriField.fromJSON(f))
-            ); // TODO need to use Field.fromJSON() to make things correct
+            );
             this.nameField = sData.displayField;
 
             // find object id field
@@ -166,6 +164,7 @@ export class AttribLayer extends CommonLayer {
                 this.oidField =
                     sData.objectIdField ||
                     (() => {
+                        // TODO worth pinging the notification api, or pushing layer into error state?
                         console.error(
                             `Encountered service with no OID defined: ${this.serviceUrl}`
                         );
@@ -173,7 +172,17 @@ export class AttribLayer extends CommonLayer {
                     })();
             }
 
-            // TODO add in renderer and legend magic
+            // drawOrder field check
+            this.drawOrder.forEach(d => {
+                if (
+                    this.esriFields.findIndex(ef => ef.name === d.field) === -1
+                ) {
+                    console.error(
+                        `Draw order for layer ${this.id} references invalid field ${d.field}`
+                    );
+                }
+            });
+
             // add renderer and legend
             const renderer =
                 options && options.customRenderer && options.customRenderer.type
@@ -496,9 +505,7 @@ export class AttribLayer extends CommonLayer {
             if (aCache) {
                 // value is already cached. use it
                 resultAttribs = aCache;
-            } else if (this.attLoader.isLoaded || this.isFile!) {
-                // NOTE: the above line has a habit of showing as an error in VSCode. The compiler will not be as dumb.
-
+            } else if (this.attLoader.isLoaded() || this.isFile!) {
                 // all attributes have been loaded (or is a file and are local). use that store.
                 // since attributes come from a promise, reset the wait promise to the attribute promise
                 const atSet = await this.attLoader.getAttribs();

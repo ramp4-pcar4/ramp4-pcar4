@@ -28,7 +28,7 @@ import { configUpgrade2to4, InstanceAPI } from '@/api/internal';
 import type { RampOptions } from '@/api/instance';
 import type { RampConfigs } from './types';
 
-export const version = __VERSION__;
+export const version = __RAMP_VERSION__;
 export function configUpgrade(ramp2Config: any | Array<any>): any {
     return configUpgrade2to4(ramp2Config);
 }

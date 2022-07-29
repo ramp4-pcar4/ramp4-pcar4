@@ -304,6 +304,7 @@ export class GeometryAPI {
     serverGeomTypeToRampGeomType(serverType: string): GeometryType {
         if (!serverType) {
             // falsy case, pass it on thru
+            // this would handle a MIL raster sublayer
             return GeometryType.NONE;
         }
         switch (serverType) {

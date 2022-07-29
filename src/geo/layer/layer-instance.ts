@@ -3,10 +3,12 @@ import {
     DataFormat,
     DrawState,
     Extent,
+    GeometryType,
     Graphic,
     InitiationState,
     LayerControls,
     LayerFormat,
+    LayerIdentifyMode,
     LayerState,
     LayerType,
     NoGeometry,
@@ -15,6 +17,7 @@ import {
 } from '@/geo/api';
 import type {
     AttributeSet,
+    DrawOrder,
     FieldDefinition,
     GetGraphicParams,
     IdentifyParameters,
@@ -44,29 +47,126 @@ export class LayerInstance extends APIScope {
      * @memberof LayerInstance
      */
     id: string;
+
+    /**
+     * Unique identifier for this layer. Randomly generated at runtime.
+     */
     uid: string;
+
+    /**
+     * State of the actual layer on the map, such as loading, loaded, error'd.
+     */
     layerState: LayerState;
+
+    /**
+     * State of the initiation / termination process of the layer
+     */
     initiationState: InitiationState;
+
+    /**
+     * State of drawing / refreshing data for a layer
+     */
     drawState: DrawState;
 
+    /**
+     * Index of the layer. Aligns to index of arcgis server, or defaults to 0 on other layers
+     */
     layerIdx: number;
+
+    /**
+     * Type of layer this is (describes the overall layer)
+     */
     layerType: LayerType;
+
+    /**
+     * How the layer is instantiated in the map stack
+     */
     layerFormat: LayerFormat;
+
+    /**
+     * The type of spatial data used to generate layer content
+     */
     dataFormat: DataFormat;
+
+    /**
+     * If the layer type can support an identify request
+     */
     supportsIdentify: boolean;
+
+    /**
+     * If the layer type can support Feature type requests and operations
+     */
     supportsFeatures: boolean;
+
+    /**
+     * If the layer has Sublayers
+     */
     supportsSublayers: boolean;
+
+    /**
+     * If the layer is a Sublayer
+     */
     isSublayer: boolean;
-    isRemoved: boolean; // used to track if layer is removed from map. Is false during the period "before" the layer gets added to map.
+
+    /**
+     * Tracks if layer is removed from map. Is false during the period "before" the layer gets added to map.
+     */
+    isRemoved: boolean;
+
+    // TODO verify if WFS has isFile === true, update the comment
+    /**
+     * If the layer was sourced from a file / no server.
+     */
     isFile: boolean;
+
+    /**
+     * If the layer is non-interactive and only displays content on the map
+     */
     isCosmetic: boolean;
+
+    /**
+     * If the layer was added by user interaction during the session
+     */
     userAdded: boolean;
+
+    /**
+     * If the layer is set to participate in identify requests
+     */
     identify: boolean;
+
+    /**
+     * The type of logic used to identify items on the layer
+     */
+    identifyMode: LayerIdentifyMode;
+
+    /**
+     * If the layer should show hovertips on the map
+     */
     hovertips: boolean;
 
+    /**
+     * The geometry type of the layer.
+     */
+    geomType: GeometryType;
+
+    /**
+     *  The internal ESRI API layer
+     */
     esriLayer: __esri.Layer | undefined;
-    esriSubLayer: __esri.Sublayer | undefined; // used only by sublayers
+
+    /**
+     *  The internal ESRI API sublayer. Valid only by sublayers
+     */
+    esriSubLayer: __esri.Sublayer | undefined;
+
+    /**
+     * The internal ESRI API layer view
+     */
     esriView: __esri.LayerView | undefined;
+
+    /**
+     * The extent of the layer on the map
+     */
     extent: Extent | undefined; // layer extent
 
     protected _parentLayer: LayerInstance | undefined;
@@ -94,6 +194,7 @@ export class LayerInstance extends APIScope {
         this.layerType = LayerType.UNKNOWN;
         this.dataFormat = DataFormat.UNKNOWN;
         this.supportsIdentify = false; // this is updated by subclasses as they will know the real deal.
+        this.identifyMode = LayerIdentifyMode.NONE;
         this.supportsFeatures = false;
         this.supportsSublayers = false;
         this.isSublayer = false;
@@ -103,6 +204,7 @@ export class LayerInstance extends APIScope {
         this.userAdded = false;
         this.identify = false; // will be updated later based on config/supportsIdentify value
         this.hovertips = config.state?.hovertips ?? true;
+        this.geomType = GeometryType.UNKNOWN;
         this._sublayers = [];
     }
 
@@ -296,22 +398,6 @@ export class LayerInstance extends APIScope {
     set fields(fields: Array<FieldDefinition>) {}
 
     /**
-     * Returns the geometry type of the given layer.
-     *
-     * @returns {Array} list of field definitions
-     */
-    get geomType(): string {
-        return 'error';
-    }
-
-    /**
-     * Sets the geometry type of the layer
-     *
-     * @param {string} type the new the geometry type
-     */
-    set geomType(type: string) {}
-
-    /**
      * Returns the name field of the given layer.
      *
      * @returns {string} name field
@@ -374,6 +460,20 @@ export class LayerInstance extends APIScope {
      * @param {Integer} tolerance the new click tolerance
      */
     set clickTolerance(tolerance: number) {}
+
+    /**
+     * Return the draw order for the layer, if applicable
+     */
+    get drawOrder(): Array<DrawOrder> {
+        return [];
+    }
+
+    /**
+     * Indicates if layer should participate in an identify request.
+     */
+    canIdentify(): boolean {
+        return false;
+    }
 
     /**
      * Baseline identify function for layers that do not support identify.

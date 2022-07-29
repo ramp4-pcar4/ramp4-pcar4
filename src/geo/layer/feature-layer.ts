@@ -5,9 +5,11 @@ import {
     GeometryType,
     IdentifyResultFormat,
     LayerFormat,
+    LayerIdentifyMode,
     LayerType
 } from '@/geo/api';
 import type {
+    DiscreteGraphicResult,
     IdentifyParameters,
     IdentifyResult,
     QueryFeaturesParams,
@@ -30,6 +32,14 @@ export class FeatureLayer extends AttribLayer {
         this.supportsIdentify = true;
         this.layerType = LayerType.FEATURE;
         this.layerFormat = LayerFormat.FEATURE;
+        if (
+            rampConfig.identifyMode &&
+            rampConfig.identifyMode !== LayerIdentifyMode.NONE
+        ) {
+            this.identifyMode = rampConfig.identifyMode;
+        } else {
+            this.identifyMode = LayerIdentifyMode.HYBRID;
+        }
     }
 
     protected async onInitiate(): Promise<void> {
@@ -63,6 +73,19 @@ export class FeatureLayer extends AttribLayer {
             //      a fixed query never goes away?
             esriConfig.definitionExpression =
                 rampLayerConfig.initialFilteredQuery;
+        }
+
+        if (
+            Array.isArray(rampLayerConfig.drawOrder) &&
+            rampLayerConfig.drawOrder.length > 0
+        ) {
+            // Note esri currently only supports one field, but coding to support multiple when they
+            //      enhance the api to handle that.
+            esriConfig.orderBy = rampLayerConfig.drawOrder.map(dr => ({
+                field: dr.field,
+                order: dr.ascending ? 'ascending' : 'descending'
+            }));
+            this._drawOrder = rampLayerConfig.drawOrder.slice();
         }
         return esriConfig;
     }
@@ -115,46 +138,24 @@ export class FeatureLayer extends AttribLayer {
 
             this.processFieldMetadata(this.origRampConfig.fieldMetadata);
             this.attLoader.updateFieldList(this.fieldList);
-        });
 
-        /*
-        const pLD = aFC.getLayerData().then(ld => {
-
-
-            // TODO implement, maybe move into superclass
-
-            // trickery. file layer can have field names that are bad keys.
-            // our file loader will have corrected them, but config.nameField and config.tooltipField will have
-            // been supplied from the wizard (it pre-fetches fields to present a choice
-            // to the user). If the nameField / tooltipField was adjusted for bad characters, we need to
-            // re-synchronize it here.
-            if (this.dataSource() !== shared.dataSources.ESRI) {
-                if (ld.fields.findIndex(f => f.name === aFC.nameField) === -1) {
-                    const validField = ld.fields.find(f => f.alias === aFC.nameField);
-                    if (validField) {
-                        aFC.nameField = validField.name;
-                        if (!this.config.tooltipField) {    // tooltipField wasn't explicitly provided, so it was also using the bad nameField key
-                            aFC.tooltipField = validField.name
-                        }
-                    } else {
-                        // give warning. impact is tooltips will have no text, details pane no header
-                        console.warn(`Cannot find name field in layer field list: ${aFC.nameField}`);
-                    }
-                }
-
-                // only check the tooltipField if it was provided from the config, otherwise it would have been corrected above already (if required)
-                if (this.config.tooltipField && ld.fields.findIndex(f => f.name === aFC.tooltipField) === -1) {
-                    const validField = ld.fields.find(f => f.alias === aFC.tooltipField);
-                    if (validField) {
-                        aFC.tooltipField = validField.name;
-                    } else {
-                        // give warning. impact is tooltips will have no text, details pane no header
-                        console.warn(`Cannot find name field in layer field list: ${aFC.tooltipField}`);
-                    }
-                }
+            if (!this.esriLayer?.orderBy) {
+                // would be the case if no draw order was provided in the config.
+                // now that we know the OID field, set the layer to draw by OID
+                // so we can determine what is top-most.
+                // "descending" matches the natural drawing order the most. with no order,
+                // things get drawn in order they come back from server. Which is usually
+                // sorted by OID, smallest to largest, so smallest on the bottom, which is descending.
+                // NOTE all my digging can't find any "orderBy" that comes back from a REST API
+                //      endpoint for a mapserver layer. If that becomes a feature or we find a sample
+                //      that supports it, would need some extra code here to use the server draw order
+                //      and synch our _drawOrder with it.
+                this.esriLayer!.orderBy = [
+                    { field: this.oidField, order: 'descending' }
+                ];
+                this._drawOrder = [{ field: this.oidField, ascending: false }];
             }
         });
-        */
 
         const pFC = this.loadFeatureCount();
 
@@ -166,8 +167,7 @@ export class FeatureLayer extends AttribLayer {
         }
         */
 
-        // TODO add back in promises
-        loadPromises.push(pLD, pFC); // , pLS
+        loadPromises.push(pLD, pFC);
 
         return loadPromises;
     }
@@ -176,12 +176,7 @@ export class FeatureLayer extends AttribLayer {
 
     runIdentify(options: IdentifyParameters): Array<IdentifyResult> {
         // early kickout check. not loaded/error; not visible; not queryable; off scale
-        if (
-            !this.isValidState ||
-            !this.visibility ||
-            !this.identify ||
-            this.scaleSet.isOffScale(this.$iApi.geo.map.getScale()).offScale
-        ) {
+        if (!this.canIdentify()) {
             // return empty result.
             return [];
         }
@@ -196,30 +191,76 @@ export class FeatureLayer extends AttribLayer {
             requestTime: Date.now()
         });
 
-        // run a spatial query
-        // TODO investigate if we need the sourceSR param set here
-        const qOpts: QueryFeaturesParams = {
-            outFields: this.fieldList,
-            includeGeometry: false
-        };
+        // allows us to pause and wait for various things before generating contents of result.items[]
+        let clientBlocker = Promise.resolve();
+        let serverBlocker = Promise.resolve();
+        let hitBucket: Array<DiscreteGraphicResult> = []; // collates results across promises
 
+        // if our identify mode needs server hit, run it
         if (
-            this.geomType !== GeometryType.POLYGON &&
-            options.geometry.type === GeometryType.POINT
+            this.identifyMode === LayerIdentifyMode.HYBRID ||
+            this.identifyMode === LayerIdentifyMode.GEOMETRIC
         ) {
-            // if our layer is not polygon, and our identify input is a point, make a point buffer
-            qOpts.filterGeometry = this.$iApi.geo.query.makeClickBuffer(
-                <Point>options.geometry,
-                options.tolerance
-            );
-        } else {
-            qOpts.filterGeometry = options.geometry;
+            // run a spatial query
+            // TODO investigate if we need the sourceSR param set here
+            const qOpts: QueryFeaturesParams = {
+                outFields: this.fieldList,
+                includeGeometry: false
+            };
+
+            if (
+                this.geomType !== GeometryType.POLYGON &&
+                options.geometry.type === GeometryType.POINT
+            ) {
+                // if our layer is not polygon, and our identify input is a point, make a point buffer
+                qOpts.filterGeometry = this.$iApi.geo.query.makeClickBuffer(
+                    <Point>options.geometry,
+                    options.tolerance
+                );
+            } else {
+                qOpts.filterGeometry = options.geometry;
+            }
+
+            qOpts.filterSql = this.getCombinedSqlFilter();
+
+            serverBlocker = this.queryFeaturesDiscrete(qOpts).then(results => {
+                hitBucket = results;
+            });
         }
 
-        qOpts.filterSql = this.getCombinedSqlFilter();
+        // if our identify mode needs client hit, run it
+        if (
+            options.hitTest &&
+            (this.identifyMode === LayerIdentifyMode.HYBRID ||
+                this.identifyMode === LayerIdentifyMode.SYMBOLIC)
+        ) {
+            // we wait for server (if it happened) to avoid race conditions.
+            clientBlocker = serverBlocker.then(async () => {
+                // filter hits that match this layer, and don't already exist
+                // in any results from the server. Add things that pass the filter
+                // to our hit bucket
+                const hitArray = await options.hitTest!;
+                hitArray
+                    .filter(
+                        hr =>
+                            hr.layerId === this.id &&
+                            hitBucket.findIndex(dgr => hr.oid === dgr.oid) ===
+                                -1
+                    )
+                    .forEach(hr => {
+                        hitBucket.push({
+                            oid: hr.oid,
+                            graphic: this.getGraphic(hr.oid, {
+                                getAttribs: true
+                            })
+                        });
+                    });
+            });
+        }
 
-        this.queryFeaturesDiscrete(qOpts).then(results => {
-            results.forEach(dgr => {
+        Promise.all([clientBlocker, serverBlocker]).then(() => {
+            // both identifies have completed. convert our hits into identify result goodness
+            hitBucket.forEach(dgr => {
                 const item: IdentifyItem = reactive({
                     data: undefined,
                     format: IdentifyResultFormat.ESRI,

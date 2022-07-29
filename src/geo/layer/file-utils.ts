@@ -4,11 +4,7 @@ import ArcGIS from 'terraformer-arcgis-parser';
 import { csv2geojson, dsv } from 'csv2geojson';
 import shp from 'shpjs/dist/shp.min.js';
 
-import {
-    EsriColour,
-    EsriSimpleRenderer,
-    EsriSpatialReference
-} from '@/geo/esri';
+import { EsriSimpleRenderer, EsriSpatialReference } from '@/geo/esri';
 import { Colour, FieldType } from '@/geo/api';
 
 /**

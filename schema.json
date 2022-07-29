@@ -667,6 +667,26 @@
             },
             "minItems": 0
         },
+        "drawOrder": {
+            "type": "array",
+            "description": "Attribute fields used to control drawing order on the map for vector features. Note ESRI currently only supports one field.",
+            "items": {
+                "type": "object",
+                "description": "Draw order for one attribute field.",
+                "properties": {
+                    "field": {
+                        "type": "string",
+                        "description": "Layer field name contianing the value to order by."
+                    },
+                    "ascending": {
+                        "type": "boolean",
+                        "description": "Direction to order in. True means smaller values are on top of larger values. False is the opposite."
+                    }
+                },
+                "additionalProperties": false,
+                "required": ["field", "ascending"]
+            }
+        },
         "basicLayer": {
             "type": "object",
             "description": "Properties describing a generic layer type that can represent an ESRI tile/image layer.",
@@ -1087,6 +1107,16 @@
                 },
                 "fixtures": {
                     "$ref": "#/$defs/layerFixtureConfig"
+                },
+                "drawOrder": {
+                    "$ref": "#/$defs/drawOrder",
+                    "default": []
+                },
+                "identifyMode": {
+                    "type": "string",
+                    "description": "Determines how features should be identified. By geometry, by symbol, or both.",
+                    "default": "hybrid",
+                    "enum": ["geometric", "symbolic", "hybrid"]
                 }
             },
             "required": ["id", "layerType", "url"],
@@ -1188,6 +1218,16 @@
                 },
                 "fixtures": {
                     "$ref": "#/$defs/layerFixtureConfig"
+                },
+                "drawOrder": {
+                    "$ref": "#/$defs/drawOrder",
+                    "default": []
+                },
+                "identifyMode": {
+                    "type": "string",
+                    "description": "Determines how features should be identified. By geometry, by symbol, or both.",
+                    "default": "hybrid",
+                    "enum": ["geometric", "symbolic", "hybrid"]
                 }
             },
             "required": ["id", "layerType", "url"],
@@ -1286,6 +1326,16 @@
                 },
                 "fixtures": {
                     "$ref": "#/$defs/layerFixtureConfig"
+                },
+                "drawOrder": {
+                    "$ref": "#/$defs/drawOrder",
+                    "default": []
+                },
+                "identifyMode": {
+                    "type": "string",
+                    "description": "Determines how features should be identified. By geometry, by symbol, or both.",
+                    "default": "hybrid",
+                    "enum": ["geometric", "symbolic", "hybrid"]
                 }
             },
             "required": ["id", "layerType", "url"],

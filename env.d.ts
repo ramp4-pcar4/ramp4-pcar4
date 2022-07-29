@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 
-declare const __VERSION__: {
+declare const __RAMP_VERSION__: {
     major: string;
     minor: string;
     patch: string;

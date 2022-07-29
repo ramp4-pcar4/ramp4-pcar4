@@ -5,6 +5,7 @@ import {
     GeometryType,
     IdentifyResultFormat,
     LayerFormat,
+    LayerIdentifyMode,
     LayerType,
     UrlWrapper
 } from '@/geo/api';
@@ -36,6 +37,7 @@ export class WmsLayer extends CommonLayer {
         this.mimeType = rampConfig.featureInfoMimeType || ''; // TODO is there a default? will that be in the config defaulting?
         this.sublayerNames = [];
         this.dataFormat = DataFormat.OGC_RASTER;
+        this.identifyMode = LayerIdentifyMode.GEOMETRIC;
     }
 
     protected async onInitiate(): Promise<void> {
@@ -166,6 +168,24 @@ export class WmsLayer extends CommonLayer {
 
     // ----------- LAYER ACTIONS -----------
 
+    canIdentify(): boolean {
+        // TODO implement once mime type restrictions are figured out
+        // TODO revist how we want to use this.
+        //      old ramp would only allow requests that had matching mime types,
+        //      and the result of the mapping would dictate which identify panel was used.
+        //      we will probably have a different panel scheme.
+        /*
+        const infoMap = {
+            'text/html;fgpv=summary': 'HTML',
+            'text/html': 'HTML',
+            'text/plain': 'Text',
+            'application/json': 'EsriFeature'
+        };
+        */
+
+        return super.canIdentify(); // && infoMap[this.config.featureInfoMimeType]
+    }
+
     /**
      * Run a getFeatureInfo on a WMS layer, return the result as a promise.
      * Options: specs to be added once finalized
@@ -183,27 +203,10 @@ export class WmsLayer extends CommonLayer {
             throw new Error('a point must be used for WMS Identify');
         }
 
-        // TODO revist how we want to use this.
-        //      old ramp would only allow requests that had matching mime types,
-        //      and the result of the mapping would dictate which identify panel was used.
-        //      we will probably have a different panel scheme.
-        const infoMap = {
-            'text/html;fgpv=summary': 'HTML',
-            'text/html': 'HTML',
-            'text/plain': 'Text',
-            'application/json': 'EsriFeature'
-        };
-
         const map = this.$iApi.geo.map;
 
         // early kickout check. not loaded/error
-        if (
-            !this.isValidState ||
-            !this.visibility ||
-            !this.identify ||
-            // !infoMap[this.config.featureInfoMimeType] || // TODO implement once config is defined
-            this.scaleSet.isOffScale(map.getScale()).offScale
-        ) {
+        if (!this.canIdentify()) {
             // return empty result.
             return [];
         }
@@ -441,29 +444,29 @@ export class WmsLayer extends CommonLayer {
                 if (sl.legendUrl) {
                     // check if the style matches that in the config.
                     // need to use forEach here and not find/filter because the sublayers properties are not always the same
-                    this.origRampConfig.sublayers?.forEach(
-                        (sublayer: RampLayerWmsSublayerConfig) => {
-                            if (
-                                sublayer.id &&
-                                sublayer.currentStyle &&
-                                sublayer.id === sl.name
-                            ) {
-                                const wrapper = new UrlWrapper(sl.legendUrl);
-                                // assuming here that STYLE is always appended in all caps to avoid using .toUpperCase() above.
-                                // if the assumption is wrong, might need to rework some logic so that no case-sensitive parts of the URL get changed. e.g., 'geomet' in geomet layers
-                                if ('STYLE' in wrapper.queryMap) {
-                                    if (
-                                        wrapper.queryMap.STYLE !==
-                                        sublayer.currentStyle
-                                    ) {
-                                        sl.legendUrl = wrapper.updateQuery({
-                                            STYLE: sublayer.currentStyle
-                                        });
-                                    }
+                    (<Array<RampLayerWmsSublayerConfig>>(
+                        this.origRampConfig.sublayers
+                    ))?.forEach(sublayer => {
+                        if (
+                            sublayer.id &&
+                            sublayer.currentStyle &&
+                            sublayer.id === sl.name
+                        ) {
+                            const wrapper = new UrlWrapper(sl.legendUrl);
+                            // assuming here that STYLE is always appended in all caps to avoid using .toUpperCase() above.
+                            // if the assumption is wrong, might need to rework some logic so that no case-sensitive parts of the URL get changed. e.g., 'geomet' in geomet layers
+                            if ('STYLE' in wrapper.queryMap) {
+                                if (
+                                    wrapper.queryMap.STYLE !==
+                                    sublayer.currentStyle
+                                ) {
+                                    sl.legendUrl = wrapper.updateQuery({
+                                        STYLE: sublayer.currentStyle
+                                    });
                                 }
                             }
                         }
-                    );
+                    });
                 }
                 slMap.set(sl.name, sl.legendUrl);
             }

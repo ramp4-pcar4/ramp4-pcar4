@@ -12,9 +12,11 @@ import {
     DefPromise,
     DrawState,
     Extent,
+    GeometryType,
     Graphic,
     InitiationState,
     LayerFormat,
+    LayerIdentifyMode,
     LayerState,
     LayerType,
     NoGeometry,
@@ -24,6 +26,7 @@ import {
 
 import type {
     AttributeSet,
+    DrawOrder,
     FieldDefinition,
     GetGraphicParams,
     LegendSymbology,
@@ -40,9 +43,9 @@ export class CommonLayer extends LayerInstance {
     _clickTolerance: number;
     _featureCount: number;
     _fields: Array<FieldDefinition>;
-    _geomType: string;
     _nameField: string;
     _oidField: string;
+    _drawOrder: Array<DrawOrder>;
     // used to manage debouncing when applying filter updates against a layer. Private! but needs to be seen by FCs.
     _lastFilterUpdate = '';
 
@@ -73,12 +76,13 @@ export class CommonLayer extends LayerInstance {
         this._clickTolerance =
             rampConfig.tolerance != undefined ? rampConfig.tolerance : 5; // use default value of 5 if tolerance is undefined
         this._fields = [];
-        this._geomType = 'error';
+        this.geomType = GeometryType.NONE;
         this._nameField = 'error';
         this._oidField = 'error';
         this.dataFormat = DataFormat.UNKNOWN;
         this.layerType = LayerType.UNKNOWN;
         this.layerFormat = LayerFormat.UNKNOWN;
+        this._drawOrder = [];
 
         this.origRampConfig = rampConfig;
         this.id = rampConfig.id || '';
@@ -86,6 +90,7 @@ export class CommonLayer extends LayerInstance {
         this.isRemoved = false;
         this.isSublayer = false;
         this.supportsIdentify = false; // default state.
+        this.identifyMode = LayerIdentifyMode.NONE;
         this.supportsFeatures = false; // default state. featurish layers should set to true when the load
         this.supportsSublayers = false; // by default layers do not support sublayers
         this.isFile = false; // default state.
@@ -520,6 +525,19 @@ export class CommonLayer extends LayerInstance {
     }
 
     /**
+     * Indicates if layer should participate in an identify request.
+     */
+    canIdentify(): boolean {
+        return (
+            this.supportsIdentify &&
+            this.isValidState &&
+            this.visibility &&
+            this.identify &&
+            !this.scaleSet.isOffScale(this.$iApi.geo.map.getScale()).offScale
+        );
+    }
+
+    /**
      * Cause the map to zoom to a scale level where the layer is visible.
      *
      * @returns {Promise} resolves when map has finished zooming
@@ -621,6 +639,13 @@ export class CommonLayer extends LayerInstance {
     }
 
     /**
+     * Returns an array describing the draw order of features. Raster layers will have empty arrays
+     */
+    get drawOrder(): Array<DrawOrder> {
+        return this._drawOrder;
+    }
+
+    /**
      * Returns an array of field definitions about the given sublayer's fields. Raster layers will have empty arrays.
      *
      * @returns {Array} list of field definitions
@@ -640,26 +665,7 @@ export class CommonLayer extends LayerInstance {
     }
 
     /**
-     * Returns the geometry type of the given sublayer.
-     *
-     * @returns {Array} list of field definitions
-     */
-    get geomType(): string {
-        // this.stubError();
-        return this._geomType;
-    }
-
-    /**
-     * Sets the geometry type of the layer
-     *
-     * @param {string} type the new the geometry type
-     */
-    set geomType(type: string) {
-        this._geomType = type;
-    }
-
-    /**
-     * Returns the name field of the given sublayer.
+     * Returns the name field of the layer.
      *
      * @returns {string} name field
      */
@@ -678,7 +684,7 @@ export class CommonLayer extends LayerInstance {
     }
 
     /**
-     * Returns the OID field of the given sublayer.
+     * Returns the OID field of the layer.
      *
      * @returns {string} OID field
      */
@@ -850,12 +856,11 @@ export class CommonLayer extends LayerInstance {
         });
     }
 
-    // TODO think about this name. using getGraphic for consistency.
     /**
      * Gets information on a graphic in the most efficient way possible. Options object properties:
      * - getGeom ; a boolean to indicate if the result should include graphic geometry
      * - getAttribs ; a boolean to indicate if the result should include graphic attributes
-     * - unboundMap ; an optional RampMap reference. Only required if geometry was requested and the layer has not been added to a map.
+     * - getStyle ; a boolean to indicate if the result should include symbol styling information
      *
      * @param {Integer} objectId the object id of the graphic to find
      * @param {Object} options options object for the request, see above

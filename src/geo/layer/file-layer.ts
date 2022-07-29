@@ -18,11 +18,11 @@ import type {
 import {
     DataFormat,
     DefPromise,
-    DrawState,
     Extent,
     GeometryType,
     IdentifyResultFormat,
     LayerFormat,
+    LayerIdentifyMode,
     Point
 } from '@/geo/api';
 
@@ -86,6 +86,14 @@ export class FileLayer extends AttribLayer {
         this.dataFormat = DataFormat.ESRI_FEATURE;
         this.layerFormat = LayerFormat.FEATURE;
         this.tooltipField = '';
+        if (
+            rampConfig.identifyMode &&
+            rampConfig.identifyMode !== LayerIdentifyMode.NONE
+        ) {
+            this.identifyMode = rampConfig.identifyMode;
+        } else {
+            this.identifyMode = LayerIdentifyMode.HYBRID;
+        }
     }
 
     protected async onInitiate(): Promise<void> {
@@ -142,19 +150,10 @@ export class FileLayer extends AttribLayer {
     protected makeEsriLayerConfig(
         rampLayerConfig: RampLayerConfig
     ): __esri.FeatureLayerProperties {
-        // TODO might want to add an extra paremter here, as we will be passing in fields, source graphics, renderer, etc.
         const esriConfig: __esri.FeatureLayerProperties =
             super.makeEsriLayerConfig(rampLayerConfig);
 
-        // TEMP CHECKLIST OF PROPERTIES
-        // source - converter
-        // objectIdField - converter
-        // id - config || converter
-        // fields - converter, possibly alias overrides from config
-        // renderer - converter
-        // spatialReference - converter
-        // geometryType - converter
-        // definitionExpression - TODO need to test / figure out. likely need to port to our filter framework and not set on the layer. might also be handled by AttribLayer plumbing
+        const oidField = 'OBJECTID';
 
         // TODO add any extra properties for geoJson layers here
         //      in none, delete this function and let super get called automatically
@@ -177,14 +176,31 @@ export class FileLayer extends AttribLayer {
             fieldValidator(
                 <Array<EsriField>>esriConfig.fields,
                 this.origRampConfig.nameField || ''
-            ) || 'OBJECTID';
+            ) || oidField;
         esriConfig.outFields = ['*']; // TODO eventually will want this overridable by the config.
 
         // TODO inspect rampLayerConfig for any config field alias overrides or field restrictions. apply them to esriConfig.fields
 
-        this.esriJson = undefined; // done with parameter trickery, erase this.
-
         delete esriConfig.url;
+
+        if (
+            Array.isArray(rampLayerConfig.drawOrder) &&
+            rampLayerConfig.drawOrder.length > 0
+        ) {
+            // Note esri currently only supports one field, but coding to support multiple when they
+            //      enhance the api to handle that.
+            esriConfig.orderBy = rampLayerConfig.drawOrder.map(dr => ({
+                field: dr.field,
+                order: dr.ascending ? 'ascending' : 'descending'
+            }));
+            this._drawOrder = rampLayerConfig.drawOrder.slice();
+        } else {
+            esriConfig.orderBy = [{ field: oidField, order: 'descending' }];
+            this._drawOrder = [{ field: oidField, ascending: false }];
+        }
+
+        // TODO definitionExpression need to test / figure out. likely need to port to our filter framework and not set on the layer.
+        //      might also be handled by AttribLayer plumbing
 
         return esriConfig;
     }
@@ -269,12 +285,7 @@ export class FileLayer extends AttribLayer {
         const map = this.$iApi.geo.map;
 
         // early kickout check. not loaded/error; not visible; not queryable; off scale
-        if (
-            !this.isValidState ||
-            !this.visibility ||
-            !this.identify ||
-            this.scaleSet.isOffScale(map.getScale()).offScale
-        ) {
+        if (!this.canIdentify()) {
             // return empty result.
             return [];
         }
@@ -289,29 +300,78 @@ export class FileLayer extends AttribLayer {
             requestTime: Date.now()
         });
 
-        // run a spatial query
-        const qOpts: QueryFeaturesParams = {
-            outFields: this.fieldList,
-            includeGeometry: false
-        };
+        // allows us to pause and wait for various things before generating contents of result.items[]
+        let symbolBlocker = Promise.resolve();
+        let geomBlocker = Promise.resolve();
+        let hitBucket: Array<Graphic> = []; // collates results across promises
 
+        // if our identify mode needs geometry hit, run it
         if (
-            this.geomType !== GeometryType.POLYGON &&
-            options.geometry.type === GeometryType.POINT
+            this.identifyMode === LayerIdentifyMode.HYBRID ||
+            this.identifyMode === LayerIdentifyMode.GEOMETRIC
         ) {
-            // if our layer is not polygon, and our identify input is a point, make a point buffer
-            qOpts.filterGeometry = this.$iApi.geo.query.makeClickBuffer(
-                <Point>options.geometry,
-                options.tolerance
-            );
-        } else {
-            qOpts.filterGeometry = options.geometry;
+            // run a spatial query
+            const qOpts: QueryFeaturesParams = {
+                outFields: this.fieldList,
+                includeGeometry: false
+            };
+
+            if (
+                this.geomType !== GeometryType.POLYGON &&
+                options.geometry.type === GeometryType.POINT
+            ) {
+                // if our layer is not polygon, and our identify input is a point, make a point buffer
+                qOpts.filterGeometry = this.$iApi.geo.query.makeClickBuffer(
+                    <Point>options.geometry,
+                    options.tolerance
+                );
+            } else {
+                qOpts.filterGeometry = options.geometry;
+            }
+
+            qOpts.filterSql = this.getCombinedSqlFilter();
+
+            geomBlocker = this.queryFeatures(qOpts).then(results => {
+                hitBucket = results;
+            });
         }
 
-        qOpts.filterSql = this.getCombinedSqlFilter();
+        // if our identify mode needs symbol hit, run it
+        if (
+            options.hitTest &&
+            (this.identifyMode === LayerIdentifyMode.HYBRID ||
+                this.identifyMode === LayerIdentifyMode.SYMBOLIC)
+        ) {
+            // we wait for geometry (if it happened) to avoid race conditions.
+            symbolBlocker = geomBlocker.then(async () => {
+                // filter hits that match this layer, and don't already exist
+                // in any results from the geometry. Add things that pass the filter
+                // to our hit bucket
+                const hitArray = await options.hitTest!;
+                const hitGraphics = await Promise.all(
+                    hitArray
+                        .filter(
+                            hr =>
+                                hr.layerId === this.id &&
+                                hitBucket.findIndex(
+                                    g => hr.oid === g.attributes[this.oidField]
+                                ) === -1
+                        )
+                        .map(hr => {
+                            // will be fast since all local
+                            return this.getGraphic(hr.oid, {
+                                getAttribs: true
+                            });
+                        })
+                );
 
-        this.queryFeatures(qOpts).then(results => {
-            results.forEach(gr => {
+                hitBucket = hitBucket.concat(hitGraphics);
+            });
+        }
+
+        Promise.all([symbolBlocker, geomBlocker]).then(() => {
+            // both identifies have completed. convert our hits into identify result goodness
+            hitBucket.forEach(gr => {
                 // file layer resolves all items at once,
                 // so our item-level stuff can be created in
                 // a loaded state

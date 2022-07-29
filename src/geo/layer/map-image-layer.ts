@@ -14,6 +14,7 @@ import {
     IdentifyResultFormat,
     InitiationState,
     LayerFormat,
+    LayerIdentifyMode,
     LayerState,
     LayerType,
     NoGeometry,
@@ -55,6 +56,7 @@ export class MapImageLayer extends AttribLayer {
         this.isDynamic = false; // will get updated after layer load.
         this.hovertips = false;
         this.layerTree.layerIdx = -1;
+        this.identifyMode = LayerIdentifyMode.GEOMETRIC;
     }
 
     protected async onInitiate(): Promise<void> {
@@ -414,7 +416,7 @@ export class MapImageLayer extends AttribLayer {
         //         also, if the grid has been opened, the identify can utilize the local attribute set.
 
         // early kickout check. not loaded/error
-        if (!this.isValidState || !this.visibility) {
+        if (!this.canIdentify()) {
             // return empty result.
             return [];
         }
@@ -443,12 +445,7 @@ export class MapImageLayer extends AttribLayer {
             : (<Array<MapImageSublayer>>this._sublayers).filter(
                   (sublayer: MapImageSublayer) => {
                       // query for visible, identifiable, on-scale sublayers
-                      return (
-                          sublayer.visibility &&
-                          sublayer.supportsFeatures &&
-                          sublayer.identify &&
-                          !sublayer.scaleSet.isOffScale(map.getScale()).offScale
-                      );
+                      return sublayer.canIdentify();
                   }
               );
 
