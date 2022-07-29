@@ -245,6 +245,8 @@ export class PanelAPI extends APIScope {
             })
         );
 
+        this.$iApi.event.emit(GlobalEvents.PANEL_MINIMIZED, panel);
+
         return panel;
     }
 
