@@ -48,6 +48,7 @@
                     "
                     :legendItem="legendItem"
                     :disabled="!legendItem.controlAvailable('visibility')"
+                    label="Group"
                 />
             </div>
         </div>
