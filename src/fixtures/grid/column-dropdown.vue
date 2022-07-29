@@ -38,10 +38,15 @@
             href="#"
             class="flex leading-snug items-center w-256"
         >
-            {{ col.headerName }}
-            <div class="flex-auto"></div>
-            <div class="md-icon-small inline" v-if="!col.hide">
-                <svg height="18" width="18" viewBox="0 0 24 24" class="inline">
+            <div class="md-icon-small inline">
+                {{ col.headerName }}
+                <svg
+                    height="18"
+                    width="18"
+                    viewBox="0 0 24 24"
+                    class="inline float-right"
+                    v-if="!col.hide"
+                >
                     <g id="done">
                         <path
                             d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
