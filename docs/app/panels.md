@@ -4,6 +4,11 @@
 
 Write other stuff.
 
+## Startup
+
+Panels can be opened/pinned when RAMP starts up via the config. The following stock panel ID's are currently supported:
+`basemap`, `export`, `geosearch`, `help`, `layer-reorder`, `legend`, `notifications`, and `wizard`.
+
 ## Buttons
 
 Panels can be registered with button options. These consist of an icon and a tooltip which the [appbar](appbar.md) will use to create default appbar buttons as needed.

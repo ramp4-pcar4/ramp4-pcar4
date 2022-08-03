@@ -92,6 +92,7 @@ function individualConfigUpgrader(r2c: any): any {
         fixtures: {},
         layers: [],
         map: {},
+        panels: { open: [] },
         system: { animate: true },
         fixturesEnabled: [] // this will be removed in the final step of configUpgrade2to4
     };
@@ -1201,15 +1202,15 @@ function uiUpgrader(r2ui: any, r4c: any): void {
         // legend already mapped through mapUpgrader
         if (r4c.fixtures.legend) {
             r4c.fixtures.legend.headerControls = headerControls;
-            r4c.fixtures.legend.isOpen =
-                r2ui.legend.isOpen && r2ui.legend.isOpen.large;
         } else {
             r4c.fixturesEnabled.push('legend');
             r4c.fixtures.legend = {
                 headerControls: headerControls,
-                isOpen: r2ui.legend.isOpen && r2ui.legend.isOpen.large,
                 root: {}
             };
+        }
+        if (r2ui.legend.isOpen && r2ui.legend.isOpen.large) {
+            r4c.panels.open.push({ id: 'legend' });
         }
     }
 
@@ -1282,12 +1283,16 @@ function uiUpgrader(r2ui: any, r4c: any): void {
     ];
     if (
         r2ui.tableIsOpen &&
-        r2ui.tableIsOpen.id &&
-        r2ui.tableIsOpen.large &&
-        r4c.layers &&
-        r4c.layers.length > 0
+        // r2ui.tableIsOpen.id &&
+        r2ui.tableIsOpen.large
+        // r4c.layers &&
+        // r4c.layers.length > 0
     ) {
-        for (let i = 0; i < r4c.layers.length; i++) {
+        // TODO: revisit once layer usage is normalized and layer-bound panels can be opened on startup.
+        // See https://github.com/ramp4-pcar4/ramp4-pcar4/discussions/1279 for details.
+        /*
+        r4c.panels.open.push({ id: 'grid' });
+         for (let i = 0; i < r4c.layers.length; i++) {
             if (
                 r4c.layers[i].id === r2ui.tableIsOpen.id &&
                 allowedTypes.includes(r4c.layers[i].layerType)
@@ -1336,7 +1341,7 @@ function uiUpgrader(r2ui: any, r4c: any): void {
                     }
                 }
             }
-        }
+        } */
     }
 
     // TODO: If any of these properties get implemented/used in the future, remove them from the warning list and map them appropriately.

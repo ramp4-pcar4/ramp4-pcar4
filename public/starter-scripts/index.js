@@ -455,13 +455,16 @@ let config = {
                     }
                 }
             },
+            panels: {
+                open: [{ id: 'legend', pin: true }]
+            },
             system: { animate: true }
         }
     }
 };
 
 let options = {
-    loadDefaultFixtures: false,
+    loadDefaultFixtures: true,
     loadDefaultEvents: true,
     startRequired: false
 };
@@ -474,10 +477,10 @@ const rInstance = RAMP.createInstance(
 
 window.debugInstance = rInstance;
 
-rInstance.fixture.addDefaultFixtures().then(() => {
+/* rInstance.fixture.addDefaultFixtures().then(() => {
     rInstance.panel.open('legend');
     rInstance.panel.pin('legend');
-});
+}); */
 
 rInstance.$element.component('WFSLayer-Custom', {
     props: ['identifyData'],

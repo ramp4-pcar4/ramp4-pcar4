@@ -9,6 +9,12 @@ export interface RampConfig {
     map: RampMapConfig;
     layers: RampLayerConfig[];
     fixtures: { [key: string]: any };
+    panels?: {
+        open?: {
+            id: string;
+            pin?: boolean;
+        }[];
+    };
     system?: {
         proxyUrl?: string;
         animate?: boolean;

@@ -5,6 +5,7 @@ import { PanelState } from './panel-state';
 import type { PanelConfig } from './panel-state';
 import type { RootState } from '@/store/state';
 import type { PanelInstance } from '@/api';
+import { DefPromise } from '@/geo/api';
 
 type PanelContext = ActionContext<PanelState, RootState>;
 
@@ -23,6 +24,7 @@ export enum PanelMutation {
     OPEN_PANEL = 'OPEN_PANEL',
 
     ADD_TO_PANEL_ORDER = 'ADD_TO_PANEL_ORDER',
+    ADD_REG_PROMISE = 'ADD_REG_PROMISE',
     CLOSE_PANEL = 'CLOSE_PANEL',
     REMOVE_PANEL = 'REMOVE_PANEL',
 
@@ -57,7 +59,24 @@ const getters = {
      */
     getRemainingWidth: (state: PanelState): number => {
         return state.remainingWidth;
-    }
+    },
+
+    /**
+     * Returns registration promises from the state, for the specified panelIds.
+     * Should ideally be called when all panelIds have a promise associated with them.
+     * @param panelIds the panel Ids for which promises should be returned
+     */
+    getRegPromises:
+        (state: PanelState) =>
+        (panelIds: string[]): Promise<void>[] => {
+            const regPromises: Promise<void>[] = [];
+            panelIds.forEach((panelId: string) => {
+                if (panelId in state.regPromises) {
+                    regPromises.push(state.regPromises[panelId].getPromise());
+                }
+            });
+            return regPromises;
+        }
 };
 
 const actions = {
@@ -147,7 +166,6 @@ const actions = {
             !nowVisible.includes(context.state.pinned)
         ) {
             let lastElement: PanelInstance;
-
             // remove elements from visible until theres room for pinned
             for (
                 let i = 0;
@@ -180,14 +198,15 @@ const actions = {
             );
             // clone the current order, splice out the pinned item, insert it back in after the last element we removed from visible
             const newPanelOrder = context.state.orderedItems.slice();
-            newPanelOrder.splice(pinnedIndex, 1);
-            newPanelOrder.splice(lastRemovedIndex, 0, context.state.pinned);
+            if (lastRemovedIndex > -1) {
+                newPanelOrder.splice(pinnedIndex, 1);
+                newPanelOrder.splice(lastRemovedIndex, 0, context.state.pinned);
+            }
 
             context.commit(PanelMutation.SET_ORDERED_ITEMS, newPanelOrder);
         } else {
             context.commit(PanelMutation.SET_PRIORITY, null);
         }
-
         context.commit(PanelMutation.SET_REMAINING_WIDTH, remainingWidth);
         context.commit(PanelMutation.SET_VISIBLE, nowVisible);
     }
@@ -199,6 +218,17 @@ const mutations = {
         { panel }: { panel: PanelInstance }
     ): void {
         state.items = { ...state.items, [panel.id]: panel };
+        // since panel has successfully registered, resolve its associated registration promise
+        if (!(panel.id in state.regPromises)) {
+            const regPromise = new DefPromise();
+            regPromise.resolveMe();
+            state.regPromises = {
+                ...state.regPromises,
+                [panel.id]: regPromise
+            };
+        } else {
+            state.regPromises[panel.id].resolveMe();
+        }
     },
 
     [PanelMutation.OPEN_PANEL](
@@ -230,6 +260,10 @@ const mutations = {
             delete state.items[panel.id];
         }
 
+        // remove registration promise
+        if (state.regPromises[panel.id] !== undefined) {
+            delete state.regPromises[panel.id];
+        }
         // remove from visible
         const index = state.visible.indexOf(panel);
         if (index !== -1) {
@@ -243,6 +277,13 @@ const mutations = {
         if (state.pinned !== null && state.pinned.id == panel.id) {
             state.pinned = null;
         }
+    },
+
+    [PanelMutation.ADD_REG_PROMISE](state: PanelState, panelId: string): void {
+        state.regPromises = {
+            ...state.regPromises,
+            [panelId]: new DefPromise()
+        };
     }
 };
 
