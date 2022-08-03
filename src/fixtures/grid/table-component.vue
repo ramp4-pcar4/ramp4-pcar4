@@ -47,7 +47,7 @@
                     class="p-4 h-40 disabled:opacity-30 disabled:cursor-default text-gray-500 hover:text-black"
                     @click="applyFiltersToMap"
                     :content="$t('grid.label.filters.apply')"
-                    v-tippy="{ placement: 'bottom', hideOnClick: false }"
+                    v-tippy="{ placement: 'bottom' }"
                     :disabled="filterSync"
                 >
                     <svg
@@ -92,7 +92,9 @@
                             ? $t('grid.label.filters.hide')
                             : $t('grid.label.filters.show')
                     "
-                    v-tippy="{ placement: 'bottom', hideOnClick: false }"
+                    v-tippy="{
+                        placement: 'bottom'
+                    }"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
