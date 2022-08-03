@@ -682,7 +682,7 @@ export class AttribLayer extends CommonLayer {
      */
     applySqlFilter(exclusions: Array<string> = []): void {
         throw new Error(
-            'attempted to apply sql filter to a layer not equipped for it. likely a new subclass of AttribFC did not override applySqlFilter'
+            'attempted to apply sql filter to a layer not equipped for it. likely a new subclass of AttribLayer did not override applySqlFilter'
         );
     }
 

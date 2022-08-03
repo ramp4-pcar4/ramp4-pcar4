@@ -450,9 +450,10 @@ export interface FilterEventParam {
 // these represent filter keys that the core reserves. the above interface does not use it for typing as
 // 3rd parties can define their own keys.
 export enum CoreFilter {
-    SYMBOL = 'symbol',
-    GRID = 'grid',
-    EXTENT = 'extent',
+    SYMBOL = 'symbol', // used for symbol visibililty filters in the legend
+    GRID = 'grid', // used to apply grid filters to a layer
+    EXTENT = 'extent', // captures a filter based on an extent. leveraged by the grid to only show rows visible on screen
+    INITIAL = 'initial', // used to track an initial filter provided by the layer config
     API = 'api' // this would be a default api key. e.g. if someone just does an API filter set with no key parameter, it would use this.
 }
 
@@ -548,6 +549,7 @@ export interface RampLayerMapImageSublayerConfig {
     disabledControls?: Array<LayerControls>;
     stateOnly?: boolean;
     fieldMetadata?: RampLayerFieldMetadataConfig;
+    initialFilteredQuery?: string;
     customRenderer?: any;
     fixtures?: any; // layer-based fixture config
 }
