@@ -6,7 +6,13 @@
             :placeholder="$t('geosearch.searchText')"
             :value="searchVal"
             @input="onSearchTermChange($event.target.value)"
+            @keyup.enter="
+                if ($store.get('panel/mobileView')) {
+                    $event?.target?.blur();
+                }
+            "
             :aria-label="$t('geosearch.searchText')"
+            enterkeyhint="done"
         />
     </div>
 </template>

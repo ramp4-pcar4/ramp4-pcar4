@@ -5,7 +5,13 @@
             style="width: 45%"
             type="text"
             v-model="minVal"
-            @keyup="minValChanged()"
+            @input="minValChanged()"
+            @keyup.enter="
+                if ($store.get('panel/mobileView')) {
+                    $event?.target?.blur();
+                }
+            "
+            enterkeyhint="done"
             :placeholder="$t('grid.filters.number.min')"
         />
         <span class="w-12" />
@@ -14,7 +20,13 @@
             style="width: 45%"
             type="text"
             v-model="maxVal"
-            @keyup="maxValChanged()"
+            @input="maxValChanged()"
+            @keyup.enter="
+                if ($store.get('panel/mobileView')) {
+                    $event?.target?.blur();
+                }
+            "
+            enterkeyhint="done"
             :placeholder="$t('grid.filters.number.max')"
         />
     </div>
