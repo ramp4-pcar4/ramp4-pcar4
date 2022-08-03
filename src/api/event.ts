@@ -273,10 +273,16 @@ export enum GlobalEvents {
     MAP_START = 'map/start',
 
     /**
-     * Fires when a request is issued to open the Metadata panel
+     * Fires when a request is issued to open the Metadata panel.
      * Payload: `({ type: string, layerName: string, url: string })`
      */
     METADATA_OPEN = 'metadata/open',
+
+    /**
+     * Fires when screen size changes from/to mobile resolution.
+     * Payload `(mobileMode: boolean)`
+     */
+    RAMP_MOBILEVIEW_CHANGE = 'ramp/mobileviewchange',
 
     /**
      * Fires when a panel is closed.

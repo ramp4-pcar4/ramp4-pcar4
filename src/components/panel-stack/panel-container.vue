@@ -20,11 +20,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import type { PropType } from 'vue';
-
+import { defineComponent, type PropType } from 'vue';
 import anime from 'animejs';
-
 import type { PanelInstance } from '@/api';
 
 export default defineComponent({

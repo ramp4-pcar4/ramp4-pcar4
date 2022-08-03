@@ -16,9 +16,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { GlobalEvents } from '@/api';
 
 import anime from 'animejs';
-
 import PanelContainerV from './panel-container.vue';
 
 declare class ResizeObserver {
@@ -36,19 +36,29 @@ export default defineComponent({
 
     data() {
         return {
-            visible: this.get('panel/getVisible')
+            visible: this.get('panel/getVisible'),
+            mobileMode: this.get('panel/mobileView')
         };
     },
 
     mounted(): void {
         // sync the `panel-stack` width into the store so that visible can get calculated
         const resizeObserver = new ResizeObserver((entries: any) => {
-            // Determine if the app is in mobile mode (the app container ONLY has the `xs` class on it. If it contains `sm`
-            // then the screen is too large).
-            this.$store.set(
-                'panel/mobileView',
-                !this.$root.$refs['app-size'].classList.contains('sm')
-            );
+            // determine if app is in mobile mode (app container ONLY has the `xs` class on it,
+            // if it contains `sm` then the screen is too large)
+            const newMode = !(
+                this.$root?.$refs['app-size'] as HTMLElement
+            ).classList.contains('sm');
+            const oldMode = this.mobileMode;
+
+            // fire event when mobile mode changes
+            if (oldMode !== newMode) {
+                this.$store.set('panel/mobileView', newMode);
+                this.$iApi.event.emit(
+                    GlobalEvents.RAMP_MOBILEVIEW_CHANGE,
+                    newMode
+                );
+            }
 
             this.$store.set('panel/stackWidth', entries[0].contentRect.width);
         });
