@@ -165,7 +165,7 @@ export class LayerSource extends APIScope {
         return {
             config,
             fields: response.data.fields,
-            configOptions: ['name', 'nameField', 'tooltipField', 'colour']
+            configOptions: ['name', 'nameField', 'tooltipField']
         };
     }
 
