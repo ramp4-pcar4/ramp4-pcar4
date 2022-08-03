@@ -233,8 +233,8 @@ export class DetailsAPI extends FixtureInstance {
     /**
      * Return whether or not a HilightMode has been defined (other than NONE)
      */
-    hasHilighter() {
+    hasHilighter(): boolean {
         const hilightFix: HilightAPI = this.$iApi.fixture.get('hilight');
-        return hilightFix.hilightMode.mode !== HilightMode.NONE;
+        return hilightFix && hilightFix.hilightMode.mode !== HilightMode.NONE;
     }
 }
