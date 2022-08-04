@@ -596,6 +596,7 @@ export interface RampLayerConfig {
     fixtures?: any; // layer-based fixture config
     cosmetic?: boolean;
     colour?: string;
+    imageFormat?: string;
     initialFilteredQuery?: string;
     drawOrder?: Array<DrawOrder>; // feature drawing order
     identifyMode?: LayerIdentifyMode;

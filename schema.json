@@ -908,8 +908,7 @@
                         "gif",
                         "svg"
                     ],
-                    "default": "png32",
-                    "description": "The format of the layer image output."
+                    "description": "The format of the layer image output. Default service setting used if not supplied (usually png32)"
                 },
                 "fixtures": {
                     "$ref": "#/$defs/layerFixtureConfig"
