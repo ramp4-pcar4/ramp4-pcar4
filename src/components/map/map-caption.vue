@@ -73,7 +73,8 @@
                     placement: 'top',
                     hideOnClick: false,
                     theme: 'ramp4',
-                    animation: 'scale'
+                    animation: 'scale',
+                    touch: ['hold', 200]
                 }"
                 :content="$t('map.toggleScaleUnits')"
             >
@@ -89,8 +90,13 @@
             <dropdown-menu
                 class="flex-shrink-0 pointer-events-auto focus:outline-none px-4 mr-4"
                 position="top-end"
-                :tooltip="$t('map.changeLanguage')"
-                tooltip-placement="top-end"
+                v-tippy="{
+                    placement: 'top-end',
+                    theme: 'ramp4',
+                    animation: 'scale',
+                    touch: ['hold', 200]
+                }"
+                :content="$t('map.changeLanguage')"
             >
                 <template #header>
                     <span

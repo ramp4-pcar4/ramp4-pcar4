@@ -107,6 +107,7 @@ export class FocusListManager {
     highlightedItem: HTMLElement;
     isHorizontal: boolean;
     isClicked: boolean;
+    isTapped: boolean;
 
     /**
      * Creates an instance of FocusListManager
@@ -121,6 +122,7 @@ export class FocusListManager {
         this.isHorizontal = attributeValue === 'horizontal';
 
         this.isClicked = false;
+        this.isTapped = false;
 
         // remove the ability to tab to sub-items
         this.setTabIndex(-1);
@@ -140,6 +142,9 @@ export class FocusListManager {
         });
         element.addEventListener('mousedown', function (event: MouseEvent) {
             focusManager.onMousedown();
+        });
+        element.addEventListener('touchstart', function (event: MouseEvent) {
+            focusManager.onTouchstart();
         });
     }
 
@@ -194,12 +199,13 @@ export class FocusListManager {
         this.setAriaActiveDescendant(item);
         this.setTabIndex(0, item);
         item.scrollIntoView({ block: 'nearest' });
-        if ((item as any)._tippy) {
+        if ((item as any)._tippy && !this.isTapped) {
             (item as any)._tippy.show();
         }
         if (item.getAttribute(ITEM_ATTR) === SHOW_TRUNCATE) {
             (item.querySelector(`[${TRUNCATE_ATTR}]`)! as any)?._tippy?.show();
         }
+        this.isTapped = false;
     }
 
     /**
@@ -463,5 +469,12 @@ export class FocusListManager {
     onMousedown() {
         // set clicked flag so focus event knows its been triggered by a click and isn't currently being traversed by keyboard
         this.isClicked = true;
+    }
+
+    /**
+     * Callback for the TOUCHSTART event listener on the focus list element.
+     */
+    onTouchstart() {
+        this.isTapped = true;
     }
 }
