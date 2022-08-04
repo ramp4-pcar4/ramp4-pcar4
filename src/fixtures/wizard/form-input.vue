@@ -51,6 +51,11 @@
                             urlError = false;
                         }
                     "
+                    @keyup.enter="
+                        if ($store.get('panel/mobileView')) {
+                            $event?.target?.blur();
+                        }
+                    "
                 />
             </div>
             <div v-if="urlError" class="text-red-900 text-xs">

@@ -3,7 +3,13 @@
         <div class="flex items-center justify-between pl-8 pb-8">
             <div class="flex items-center pb-4 mr-8 min-w-0">
                 <input
-                    @keyup="updateQuickSearch()"
+                    @input="updateQuickSearch()"
+                    @keyup.enter="
+                        if ($store.get('panel/mobileView')) {
+                            $event?.target?.blur();
+                        }
+                    "
+                    enterkeyhint="done"
                     v-model="quicksearch"
                     class="rv-global-search rv-input pr-32 min-w-0"
                     aria-invalid="false"

@@ -6,6 +6,12 @@
             placeholder="date min"
             v-model="minVal"
             @change="minValChanged()"
+            @keyup.enter="
+                if ($store.get('panel/mobileView')) {
+                    $event?.target?.blur();
+                }
+            "
+            enterkeyhint="done"
         />
         <span class="w-12" />
         <input
@@ -14,6 +20,12 @@
             placeholder="date max"
             v-model="maxVal"
             @change="maxValChanged()"
+            @keyup.enter="
+                if ($store.get('panel/mobileView')) {
+                    $event?.target?.blur();
+                }
+            "
+            enterkeyhint="done"
         />
     </div>
 </template>

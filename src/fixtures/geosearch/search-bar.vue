@@ -8,11 +8,11 @@
             @input="onSearchTermChange($event.target.value)"
             @keyup.enter="
                 if ($store.get('panel/mobileView')) {
-                    $event.target.blur();
+                    $event?.target?.blur();
                 }
             "
             :aria-label="$t('geosearch.searchText')"
-            enterkeyhint="done"
+            enterkeyhint="Done"
         />
     </div>
 </template>
