@@ -87,6 +87,17 @@ export class MapImageLayer extends AttribLayer {
         // override. make things invisible, revert to config setting after sublayers have been assigned visibilities and load finishes.
         esriConfig.visible = false;
 
+        if (rampLayerConfig.imageFormat) {
+            // very grouchy about the string. Since it will be blank/default most of the time,
+            // dont want to code a giant verification check.
+            // Configurators who provide bad values will enjoy their funny images.
+            // Note png24 is esri default according to docs, but if you set it as default it wrecks the edges
+            // of most features. My belief is the actual default is the best setting the server supports,
+            // so will only set the esri config if we have an override
+            // @ts-ignore
+            esriConfig.imageFormat = rampLayerConfig.imageFormat;
+        }
+
         // IMPORTANT NOTE: do not set esriConfig.sublayers here.
         //                 it will defeat our auto-crawl behavior of sublayer trees.
         //                 if we do decide we need to leverage sublayer initialization on the layer constructor,
