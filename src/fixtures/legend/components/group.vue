@@ -85,6 +85,7 @@ export default defineComponent({
     },
     methods: {
         toggleExpand() {
+            console.log('TOGGLE EXPAND...');
             this.legendItem.toggleExpanded();
             this.$iApi.updateAlert(
                 this.$t(

@@ -9,7 +9,7 @@
                     items-center
                     hover:bg-gray-200
                     ${
-                        legendItem.controlAvailable('datatable') &&
+                        legendItem.controlAvailable(LayerControls.Datatable) &&
                         getDatagridExists()
                             ? 'cursor-pointer'
                             : 'cursor-default'
@@ -18,10 +18,14 @@
                 `"
                 @click="toggleGrid"
                 v-focus-item="'show-truncate'"
-                @mouseover.stop="$event.currentTarget._tippy?.show()"
-                @mouseout.self="$event.currentTarget._tippy?.hide()"
+                @mouseover.stop="
+                    mobileMode ? null : $event.currentTarget?._tippy?.show()
+                "
+                @mouseout.self="
+                    mobileMode ? null : $event.currentTarget?._tippy?.hide()
+                "
                 :content="
-                    legendItem.controlAvailable('datatable') &&
+                    legendItem.controlAvailable(LayerControls.Datatable) &&
                     getDatagridExists()
                         ? $t('legend.entry.data')
                         : ''
@@ -40,10 +44,15 @@
                         @click.stop="toggleSymbology"
                         tabindex="-1"
                         :class="{
-                            'cursor-default':
-                                !legendItem.controlAvailable('symbology')
+                            'cursor-default': !legendItem.controlAvailable(
+                                LayerControls.Symbology
+                            )
                         }"
-                        :disabled="!legendItem.controlAvailable('symbology')"
+                        :disabled="
+                            !legendItem.controlAvailable(
+                                LayerControls.Symbology
+                            )
+                        "
                         :content="
                             legendItem.symbologyExpanded
                                 ? $t('legend.symbology.hide')
@@ -57,7 +66,9 @@
                         <symbology-stack
                             :class="{
                                 'pointer-events-none':
-                                    !legendItem.controlAvailable('symbology')
+                                    !legendItem.controlAvailable(
+                                        LayerControls.Symbology
+                                    )
                             }"
                             class="w-32 h-32"
                             :visible="legendItem.symbologyExpanded"
@@ -76,7 +87,7 @@
                 </div>
 
                 <!-- options dropdown menu -->
-                <options :legendItem="legendItem"></options>
+                <options :legendItem="legendItem" ref="more-options"></options>
 
                 <!-- visibility -->
                 <checkbox
@@ -87,7 +98,9 @@
                         legendItem.parent.type === 'VisibilitySet'
                     "
                     :legendItem="legendItem"
-                    :disabled="!legendItem.controlAvailable('visibility')"
+                    :disabled="
+                        !legendItem.controlAvailable(LayerControls.Visibility)
+                    "
                     label="Layer"
                 />
             </div>
@@ -137,7 +150,9 @@
                             :legendItem="legendItem"
                             :checked="item.visibility"
                             :disabled="
-                                !legendItem.controlAvailable('visibility')
+                                !legendItem.controlAvailable(
+                                    LayerControls.Visibility
+                                )
                             "
                             label="Symbol"
                         />
@@ -185,6 +200,8 @@ export default defineComponent({
 
     data() {
         return {
+            LayerControls,
+            mobileMode: this.get('panel/mobileView'),
             symbologyStack: [] as Array<LegendSymbology>,
             handlers: [] as Array<string>
         };
@@ -278,6 +295,16 @@ export default defineComponent({
                 );
             }
         },
+
+        // addHoverEffects(): void {
+        //     const options: any = this.$refs['more-options'];
+        //     options.$el.classList.add('show');
+        // },
+
+        // removeHoverEffects(): void {
+        //     const options: any = this.$refs['more-options'];
+        //     options.$el.classList.remove('show');
+        // },
 
         /**
          * Returns a span containing the resized legend graphic.
