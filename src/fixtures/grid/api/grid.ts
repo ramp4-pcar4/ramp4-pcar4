@@ -43,7 +43,7 @@ export class GridAPI extends FixtureInstance {
             return;
         }
 
-        if (!panel.isOpen) {
+        if (!panel.isOpen || !panel.isVisible) {
             this.$iApi.panel.open('grid');
         } else if (prevUid !== uid || open === true) {
             // don't toggle off if different layer or force open, use key prop to force rerender
