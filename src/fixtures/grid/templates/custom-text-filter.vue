@@ -3,8 +3,14 @@
         <input
             class="rv-input w-full bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
             type="text"
-            @keyup="valueChanged()"
+            @input="valueChanged()"
             v-model="filterValue"
+            @keyup.enter="
+                if ($store.get('panel/mobileView')) {
+                    $event?.target?.blur();
+                }
+            "
+            enterkeyhint="done"
             :placeholder="
                 $t('grid.filters.column.label.text', [
                     params.column.colDef.headerName
