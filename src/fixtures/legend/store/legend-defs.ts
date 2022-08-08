@@ -15,7 +15,7 @@ export class LegendItem {
     _disabledControls: Array<LayerControls> | undefined; // will use layer's disabled controls if undefined
     _children: Array<LegendEntry | LegendGroup> = [];
     _parent: LegendGroup | undefined = undefined; // can only be a legend group or visibility set
-    _loadPromise: DefPromise; // promise that resolves when legend item is loaded
+    _loadPromise: DefPromise; // deferred promise that resolves when legend item is loaded
 
     _hidden: boolean;
     _itemConfig: any;
@@ -252,7 +252,7 @@ export class LegendEntry extends LegendItem {
     loadLayer(layer: LayerInstance): void {
         this._layer = layer;
         this._layer
-            .isLayerLoaded()
+            .loadPromise()
             .then(() => {
                 if (
                     this._layer?.layerType === LayerType.MAPIMAGE &&
@@ -475,7 +475,7 @@ export class LegendGroup extends LegendItem {
         if (legendGroup.layer === undefined) {
             loadItem();
         } else {
-            legendGroup.layer.isLayerLoaded().then(() => {
+            legendGroup.layer.loadPromise().then(() => {
                 loadItem();
             });
         }

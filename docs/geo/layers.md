@@ -127,12 +127,12 @@ The `.initiationState` property on the `Layer` will indicate the current state o
 
 In general, most layer properties and methods should only be accessed after the layer has loaded. Attempts to use prior to that may result in the data not existing (a console error will usually alert you to this mistake).
 
-The `Layer` object expose the `isLayerLoaded()` method, which returns a promise that will not resolve until the load has completed.
+The `Layer` object expose the `loadPromise()` method, which returns a promise that will not resolve until the load has completed.
 
 Of course, you can gate areas of logic so that code only runs after the layer is known to be loaded, and then you don't need to continually check the status.
 
 ```js
-await myLayer.isLayerLoaded();
+await myLayer.loadPromise();
 myLayer.dostuff();
 ```
 
@@ -189,10 +189,10 @@ Get the layer name (defined by configuration, and if not supplied, any server va
 myLayer.name; // "Fancy Layer"
 ```
 
-Determine if the layer is in a valid state. Invalid states would be pre-loaded or an error state. This can also be used as an alternative to `isLayerLoaded()` if the calling code does not require a `Promise` to wait on.
+Determine if the layer is loaded. This can also be used as an alternative to `loadPromise()` if the calling code does not require a `Promise` to wait on. It also serves as a shortcut to inspecting the `.layerState` property.
 
 ```js
-myLayer.isValidState; // true
+myLayer.isLoaded; // true
 ```
 
 Get the load state of the layer. This state tracks the loading life cycle (i.e. loading, loaded, error)
@@ -384,10 +384,10 @@ TODO figure out and document how the load count/status can be monitored.
 myLayer.abortAttributeLoad();
 ```
 
-Remove any attributes that had been loaded. The end result of this request is the appearance of the layer not having loaded attributes. Note this will not interrupt any loading process that is currently active. Use `abortAttributeLoad` to interrupt any enormous loads or hung calls.
+Remove any cached attributes or geometries that have been loaded. The end result of this request is the appearance of the layer not having loaded or cached attributes. Note this will not interrupt any loading process (`getAttributes()`) that is currently active. Use `abortAttributeLoad()` to interrupt any enormous loads or hung calls.
 
 ```js
-myLayer.destroyAttributes();
+myLayer.clearFeatureCache();
 ```
 
 Request the attributes in a tabular format with column metadata, suitable for grid or table consumption. This will use any pre-loaded attribute set, and if none exist, will execute the `getAttributes` request.

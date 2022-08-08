@@ -171,7 +171,7 @@ export class HilightAPI extends FixtureInstance {
         const hilightLayer = this.$iApi.geo.layer.getLayer(HILIGHT_LAYER_NAME);
         if (
             hilightLayer &&
-            hilightLayer.isValidState &&
+            hilightLayer.isLoaded &&
             hilightLayer instanceof CommonGraphicLayer
         ) {
             return hilightLayer;
