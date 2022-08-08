@@ -442,17 +442,8 @@ export class QuickCache {
         store[key] = geom;
     }
 
-    // TODO if we decide not to use cacheResult, this function might be so underpowered its not worth having
-    /*
-    private finder(store: {[key: number]: any}, key: number): any {
-        return store[key];
-
-
-        const x = store[key];
-        return {
-            found: !!x,
-            item: x
-        }
+    clearAll(): void {
+        this.attribs = {};
+        this.geoms = {};
     }
-    */
 }

@@ -40,12 +40,15 @@ export class CommonGraphicLayer extends CommonLayer {
     }
 
     /**
-     * Get the feature count for the given sublayer.
+     * Get the number of graphics in the layer.
      *
-     * @param {Integer | String} [layerIdx] targets a layer index or uid to get the feature count for. Uses first/only if omitted.
-     * @returns {Integer} number of features in the sublayer
+     * @returns {Integer} number of graphics in the layer
      */
-    getFeatureCount(): number {
+    getGraphicCount(): number {
+        // TODO alternate, leverage the common layer property .featureCount,
+        //      and adjust it every time we add/remove graphics from the layer.
+        //      Pro: re-use property, similar interface
+        //      Con: it's graphics, not features. Lies!
         return this._graphics.length;
     }
 

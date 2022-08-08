@@ -87,7 +87,7 @@ export class QueryAPI extends APIScope {
         }
 
         // TODO check strong typing of this line (after GeoJSON layers are implemented)
-        await options.layer.isLayerLoaded();
+        await options.layer.loadPromise();
 
         if (!options.layer.esriLayer) {
             throw new Error('file layer being queried contains no ESRI layer');

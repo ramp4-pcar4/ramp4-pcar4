@@ -165,7 +165,7 @@ export class LegendAPI extends FixtureInstance {
             // if layer supports sublayers, then we need to parse the
             // layer tree after loading and generate the children
 
-            await layer.isLayerLoaded();
+            await layer.loadPromise();
 
             // TODO: could modify LayerInstance's getSublayer to do what this helper is doing.
             //       current getSublayer only checks the sublayer list one level down, but in
@@ -405,7 +405,7 @@ export class LegendAPI extends FixtureInstance {
             (entry as LegendEntry)?.setErrorType();
         };
         layer
-            .isLayerLoaded()
+            .loadPromise()
             .then(() => {
                 updateEntry(layer); // update the root entry first
                 if (layer.supportsSublayers) {

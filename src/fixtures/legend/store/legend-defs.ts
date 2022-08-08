@@ -252,7 +252,7 @@ export class LegendEntry extends LegendItem {
     loadLayer(layer: LayerInstance): void {
         this._layer = layer;
         this._layer
-            .isLayerLoaded()
+            .loadPromise()
             .then(() => {
                 if (
                     this._layer?.layerType === LayerType.MAPIMAGE &&
@@ -475,7 +475,7 @@ export class LegendGroup extends LegendItem {
         if (legendGroup.layer === undefined) {
             loadItem();
         } else {
-            legendGroup.layer.isLayerLoaded().then(() => {
+            legendGroup.layer.loadPromise().then(() => {
                 loadItem();
             });
         }

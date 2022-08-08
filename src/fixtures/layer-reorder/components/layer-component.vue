@@ -255,7 +255,7 @@ export default defineComponent({
             // add load promise listeners to update models
             this.layers.forEach((layer: LayerInstance) => {
                 layer
-                    .isLayerLoaded()
+                    .loadPromise()
                     .then(() => {
                         this.loadLayerData(layer);
                     })

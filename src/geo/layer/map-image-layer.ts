@@ -145,7 +145,7 @@ export class MapImageLayer extends AttribLayer {
         // avoids multiple re-draws as child visibilities get set up.
         // so really the inner statement runs after everything else in this
         // function is done.
-        this.isLayerLoaded().then(() => {
+        this.loadPromise().then(() => {
             if (this.origRampConfig && this.origRampConfig.state) {
                 this.visibility = !!this.origRampConfig.state.visibility;
             }
@@ -543,7 +543,7 @@ export class MapImageLayer extends AttribLayer {
     }
 
     /**
-     * Invokes the process to get the full set of attribute values for the given sublayer.
+     * Invokes the process to get the full set of attribute values for the layer.
      * Repeat calls will re-use the downloaded values unless the values have been explicitly cleared.
      *
      * @returns {Promise} resolves with set of attribute values
@@ -565,16 +565,16 @@ export class MapImageLayer extends AttribLayer {
     }
 
     /**
-     * Requests that any downloaded attribute sets be removed from memory. The next getAttributes request will pull from the server again.
+     * Requests that any downloaded attribute sets or cached geometry be removed from memory. The next requests will pull from the server again.
      *
      */
-    destroyAttributes(): void {
+    clearFeatureCache(): void {
         this.noFeaturesErr();
     }
 
     // formerly known as getFormattedAttributes
     /**
-     * Invokes the process to get the full set of attribute values for the given sublayer,
+     * Invokes the process to get the full set of attribute values for the layer,
      * formatted in a tabular format. Additional data properties are also included.
      * Repeat calls will re-use the downloaded values unless the values have been explicitly cleared.
      *
@@ -621,7 +621,7 @@ export class MapImageLayer extends AttribLayer {
     }
 
     /**
-     * Returns the value of a named SQL filter for a given sublayer.
+     * Returns the value of a named SQL filter on the layer.
      *
      * @param {String} filterKey the filter key / named filter to view
      * @returns {String} the value of the where clause for the filter. Empty string if not defined.
@@ -642,7 +642,7 @@ export class MapImageLayer extends AttribLayer {
     }
 
     /**
-     * Gets array of object ids that currently pass any filters for the given sublayer
+     * Gets array of object ids that currently pass any filters on the layer
      *
      * @param {Array} [exclusions] list of any filters keys to exclude from the result. omission includes all filters
      * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent

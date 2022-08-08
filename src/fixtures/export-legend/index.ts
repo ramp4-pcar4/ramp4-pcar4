@@ -59,8 +59,7 @@ class ExportLegendFixture extends FixtureInstance implements ExportSubFixture {
         const layers = this.$vApp.$store
             .get<LayerInstance[]>(LayerStore.layers)!
             .filter(
-                layer =>
-                    layer.isValidState && layer.visibility && !layer.isCosmetic
+                layer => layer.isLoaded && layer.visibility && !layer.isCosmetic
             );
 
         if (layers.length === 0) {

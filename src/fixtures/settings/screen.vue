@@ -196,7 +196,7 @@ export default defineComponent({
             this.$iApi.event.on(
                 GlobalEvents.LAYER_RELOAD_END,
                 (reloadedLayer: LayerInstance) => {
-                    reloadedLayer.isLayerLoaded().then(() => {
+                    reloadedLayer.loadPromise().then(() => {
                         if (this.uid === reloadedLayer.uid) {
                             this.loadLayerProperties();
                         }
@@ -289,7 +289,7 @@ export default defineComponent({
                 this.layer !== undefined && !this.layer!.isRemoved;
 
             const oldUid = this.layer.uid;
-            this.layer.isLayerLoaded().then(() => {
+            this.layer.loadPromise().then(() => {
                 if (oldUid === this.layer.uid) {
                     // ensure that it's still the same layer
                     this.visibilityModel = this.layer.visibility;

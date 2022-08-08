@@ -27,7 +27,6 @@ import {
 import type {
     AttributeSet,
     Attributes,
-    FieldDefinition,
     GetGraphicParams,
     DiscreteGraphicResult,
     GetGraphicServiceDetails,
@@ -146,6 +145,14 @@ export class AttribLayer extends CommonLayer {
             this.esriFields = markRaw(
                 sData.fields.map((f: any) => EsriField.fromJSON(f))
             );
+            this.fields = this.esriFields.map(f => {
+                return {
+                    name: f.name,
+                    alias: f.alias,
+                    type: f.type,
+                    length: f.length
+                };
+            });
             this.nameField = sData.displayField;
 
             // find object id field
@@ -280,7 +287,7 @@ export class AttribLayer extends CommonLayer {
     }
 
     /**
-     * Invokes the process to get the full set of attribute values for the given sublayer.
+     * Invokes the process to get the full set of attribute values for the layer.
      * Repeat calls will re-use the downloaded values unless the values have been explicitly cleared.
      *
      * @returns {Promise} resolves with set of attribute values
@@ -292,33 +299,6 @@ export class AttribLayer extends CommonLayer {
             this.noLayerErr();
             return Promise.resolve({ oidIndex: {}, features: [] });
         }
-    }
-
-    /**
-     * Returns an array of field definitions about the given sublayer's fields. Raster layers will have empty arrays.
-     *
-     * @returns {Array} list of field definitions
-     */
-    get fields(): Array<FieldDefinition> {
-        // extra fancy so we dont have to expose the ESRI field class
-        return this.esriFields.map(f => {
-            f = toRaw(f);
-            return {
-                name: f.name,
-                alias: f.alias,
-                type: f.type,
-                length: f.length
-            };
-        });
-    }
-
-    /**
-     * Sets the array of field definitions about the layers's fields
-     *
-     * @param {Array<FieldDefinition>} fields the list of field definitions
-     */
-    set fields(fields: Array<FieldDefinition>) {
-        super.fields = fields;
     }
 
     /**
@@ -334,20 +314,23 @@ export class AttribLayer extends CommonLayer {
     }
 
     /**
-     * Requests that any downloaded attribute sets be removed from memory. The next getAttributes request will pull from the server again.
+     * Requests that any downloaded attribute sets or cached geometry be removed from memory. The next requests will pull from the server again.
      *
      */
-    destroyAttributes(): void {
+    clearFeatureCache(): void {
         if (this.attLoader) {
             this.attLoader.destroyAttribs();
         } else {
             this.noLayerErr();
         }
+        if (this.quickCache) {
+            this.quickCache.clearAll();
+        }
     }
 
     // formerly known as getFormattedAttributes
     /**
-     * Invokes the process to get the full set of attribute values for the given sublayer,
+     * Invokes the process to get the full set of attribute values for the layer,
      * formatted in a tabular format. Additional data properties are also included.
      * Repeat calls will re-use the downloaded values unless the values have been explicitly cleared.
      *
@@ -389,10 +372,6 @@ export class AttribLayer extends CommonLayer {
             throw new Error('Attempting to get attributes on a raster layer.');
         }
 
-        // TODO we could also wait on this.parentLayer.isLayerLoaded()
-        //      but given sublayer's get created on the load event, it seems unlikely right now
-        //      that anyone would be calling this pre-layer-load.
-
         // TODO figure out how to handle a failure in .getAttribs. See comment catch block at bottom of function.
         const attSet = await this.attLoader.getAttribs();
 
@@ -424,7 +403,7 @@ export class AttribLayer extends CommonLayer {
         // to get around this, we add a function with the same name that returns the value,
         // tricking that silly datagrid.
         columns.forEach(c => {
-            if (c.data.substr(-2) === '()') {
+            if (c.data.slice(-2) === '()') {
                 // have to use function() to get .this to reference the row.
                 // arrow notation will reference the attribFC class.
                 const secretFunc = function () {
@@ -432,7 +411,7 @@ export class AttribLayer extends CommonLayer {
                     return this[c.data];
                 };
 
-                const stub = c.data.substr(0, c.data.length - 2); // function without brackets
+                const stub = c.data.slice(0, -2); // function without brackets
                 rows.forEach(r => {
                     r[stub] = secretFunc;
                 });
@@ -687,7 +666,7 @@ export class AttribLayer extends CommonLayer {
     }
 
     /**
-     * Returns the value of a named SQL filter for a given sublayer.
+     * Returns the value of a named SQL filter on the layer.
      *
      * @param {String} filterKey the filter key / named filter to view
      * @returns {String} the value of the where clause for the filter. Empty string if not defined.

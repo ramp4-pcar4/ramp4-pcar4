@@ -1,9 +1,4 @@
-import {
-    AttribLayer,
-    GlobalEvents,
-    InstanceAPI,
-    type MapImageLayer
-} from '@/api/internal';
+import { AttribLayer, InstanceAPI, type MapImageLayer } from '@/api/internal';
 import {
     CoreFilter,
     DataFormat,
