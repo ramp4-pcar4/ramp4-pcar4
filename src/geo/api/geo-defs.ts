@@ -302,6 +302,7 @@ export interface MapClick {
     screenX: number;
     screenY: number;
     button: number;
+    input: string;
     clickTime: number;
 }
 
@@ -590,7 +591,8 @@ export interface RampLayerConfig {
     extent?: RampExtentConfig;
     latField?: string; // csv coord field
     longField?: string; // csv coord field
-    tolerance?: number; // click tolerance
+    mouseTolerance?: number; // mouse tolerance
+    touchTolerance?: number; // touch tolerance
     metadata?: { url: string; name?: string };
     catalogueUrl?: string;
     fixtures?: any; // layer-based fixture config

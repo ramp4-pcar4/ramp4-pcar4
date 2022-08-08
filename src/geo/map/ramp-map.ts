@@ -918,6 +918,7 @@ export class MapAPI extends CommonMapAPI {
                 screenX: screenPoint.screenX,
                 screenY: screenPoint.screenY,
                 button: 0,
+                input: 'mouse',
                 clickTime: Date.now()
             };
         } else {
@@ -964,7 +965,11 @@ export class MapAPI extends CommonMapAPI {
         const identifyResults = layers
             .filter(layer => layer.supportsIdentify)
             .map(layer => {
-                p.tolerance = layer.clickTolerance;
+                // set identify tolerance based on input source
+                p.tolerance =
+                    mapClick.input == 'touch'
+                        ? layer.touchTolerance
+                        : layer.mouseTolerance;
                 return layer.runIdentify(p);
             })
             .flat();
