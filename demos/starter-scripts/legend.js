@@ -137,7 +137,7 @@ let config = {
                         visibility: true,
                         hovertips: false
                     },
-                    tolerance: 10,
+                    mouseTolerance: 10,
                     customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
                 },
                 {

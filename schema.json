@@ -865,10 +865,15 @@
                     },
                     "minItems": 1
                 },
-                "tolerance": {
+                "mouseTolerance": {
                     "type": "number",
                     "default": 5,
                     "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer"
+                },
+                "touchTolerance": {
+                    "type": "number",
+                    "default": 15,
+                    "description": "Specifies the tolerance in pixels when determining if a feature was tapped. Should be non-negative integer"
                 },
                 "extent": {
                     "$ref": "#/$defs/extentWithReference"
@@ -1051,7 +1056,7 @@
                     "enum": ["esri-feature"],
                     "description": "Service type shorthand for feature layers."
                 },
-                "tolerance": {
+                "mouseTolerance": {
                     "type": "number",
                     "default": 5,
                     "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer"
@@ -1166,7 +1171,7 @@
                     "type": "string",
                     "description": "The longitude field of the layer (only for CSVs)."
                 },
-                "tolerance": {
+                "mouseTolerance": {
                     "type": "number",
                     "default": 5,
                     "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer"
@@ -1273,7 +1278,7 @@
                     "default": "ogc-wfs",
                     "description": "Service type shorthand for WFS layers."
                 },
-                "tolerance": {
+                "mouseTolerance": {
                     "type": "number",
                     "default": 5,
                     "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer"

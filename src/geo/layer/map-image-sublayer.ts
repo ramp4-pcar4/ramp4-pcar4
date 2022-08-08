@@ -175,31 +175,59 @@ export class MapImageSublayer extends AttribLayer {
     }
 
     /**
-     * Get the click tolerance in pixels for this sublayer's parent layer
+     * Get the mouse tolerance in pixels for this sublayer's parent layer
      *
-     * @returns {number} the click tolerance of the parent layer
+     * @returns {number} the mouse tolerance of the parent layer
      */
-    get clickTolerance(): number {
+    get mouseTolerance(): number {
         if (!this.parentLayer?.esriLayer || !this.esriSubLayer) {
             this.noLayerErr();
             return 0;
         }
 
-        return this.parentLayer.clickTolerance;
+        return this.parentLayer.mouseTolerance;
     }
 
     /**
-     * Set the click tolerance for this sublayer's parent layer in pixels
+     * Set the mouse tolerance for this sublayer's parent layer in pixels
      *
-     * @param {number} tolerance the new click tolerance
+     * @param {number} tolerance the new mouse tolerance
      */
-    set clickTolerance(tolerance: number) {
+    set mouseTolerance(tolerance: number) {
         if (!this.parentLayer?.esriLayer || !this.esriSubLayer) {
             this.noLayerErr();
             return;
         }
 
-        this.parentLayer.clickTolerance = tolerance;
+        this.parentLayer.mouseTolerance = tolerance;
+    }
+
+    /**
+     * Get the touch tolerance in pixels for this sublayer's parent layer
+     *
+     * @returns {number} the touch tolerance of the parent layer
+     */
+    get touchTolerance(): number {
+        if (!this.parentLayer?.esriLayer || !this.esriSubLayer) {
+            this.noLayerErr();
+            return 0;
+        }
+
+        return this.parentLayer.touchTolerance;
+    }
+
+    /**
+     * Set the touch tolerance in pixels for this sublayer's parent layer
+     *
+     * @param {number} tolerance the new touch tolerance of the parent layer
+     */
+    set touchTolerance(tolerance: number) {
+        if (!this.parentLayer?.esriLayer || !this.esriSubLayer) {
+            this.noLayerErr();
+            return;
+        }
+
+        this.parentLayer.touchTolerance = tolerance;
     }
 
     /**

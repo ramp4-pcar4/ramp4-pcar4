@@ -40,7 +40,8 @@ export class CommonLayer extends LayerInstance {
     _name: string;
     _scaleSet: ScaleSet;
     _legend: Array<LegendSymbology>;
-    _clickTolerance: number;
+    _mouseTolerance: number;
+    _touchTolerance: number;
     _featureCount: number;
     _fields: Array<FieldDefinition>;
     _nameField: string;
@@ -73,8 +74,14 @@ export class CommonLayer extends LayerInstance {
         this._scaleSet = new ScaleSet();
         this._legend = [];
         this._featureCount = -1;
-        this._clickTolerance =
-            rampConfig.tolerance != undefined ? rampConfig.tolerance : 5; // use default value of 5 if tolerance is undefined
+        this._mouseTolerance =
+            rampConfig.mouseTolerance != undefined
+                ? rampConfig.mouseTolerance
+                : 5; // use default value of 5 if mouse tolerance is undefined
+        this._touchTolerance =
+            rampConfig.touchTolerance != undefined
+                ? rampConfig.touchTolerance
+                : 15; // use default value of 15 if touch tolerance is undefined
         this._fields = [];
         this.geomType = GeometryType.NONE;
         this._nameField = 'error';
@@ -609,20 +616,20 @@ export class CommonLayer extends LayerInstance {
     }
 
     /**
-     * Get the click tolerance in pixels for this layer
+     * Get the mouse tolerance in pixels for this layer
      *
-     * @returns {number} the click tolerance of this layer
+     * @returns {number} the mouse tolerance of this layer
      */
-    get clickTolerance() {
-        return this._clickTolerance;
+    get mouseTolerance() {
+        return this._mouseTolerance;
     }
 
     /**
-     * Set the click tolerance for this layer in pixels
+     * Set the mouse tolerance for this layer in pixels
      *
-     * @param {number} tolerance the new click tolerance
+     * @param {number} tolerance the new mouse tolerance
      */
-    set clickTolerance(tolerance: number) {
+    set mouseTolerance(tolerance: number) {
         if (!this.supportsIdentify) {
             console.warn(
                 "Attempted to set click tolerance on a layer that doesn't support identify"
@@ -636,7 +643,37 @@ export class CommonLayer extends LayerInstance {
             return;
         }
 
-        this._clickTolerance = tolerance;
+        this._mouseTolerance = tolerance;
+    }
+
+    /**
+     * Get the touch tolerance in pixels for this layer
+     *
+     * @returns {number} the touch tolerance of this layer
+     */
+    get touchTolerance() {
+        return this._touchTolerance;
+    }
+
+    /**
+     * Set the touch tolerance in pixels for this layer
+     *
+     * @param {number} tolerance the new touch tolerance
+     */
+    set touchTolerance(tolerance: number) {
+        if (!this.supportsIdentify) {
+            console.warn(
+                "Attempted to set touch tolerance on a layer that doesn't support identify"
+            );
+            return;
+        }
+
+        if (tolerance < 0) {
+            console.error('Attempted to set a negative touch tolerance');
+            return;
+        }
+
+        this._touchTolerance = tolerance;
     }
 
     /**

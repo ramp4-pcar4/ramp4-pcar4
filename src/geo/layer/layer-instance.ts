@@ -446,20 +446,36 @@ export class LayerInstance extends APIScope {
     set featureCount(count: number) {}
 
     /**
-     * Get the click tolerance in pixels for this layer
+     * Get the mouse tolerance in pixels for this layer
      *
-     * @returns {number} the click tolerance of this layer
+     * @returns {number} the mouse tolerance of this layer
      */
-    get clickTolerance(): number {
+    get mouseTolerance(): number {
         return 0;
     }
 
     /**
-     * Set the click tolerance for this layer in pixels
+     * Set the mouse tolerance for this layer in pixels
      *
-     * @param {Integer} tolerance the new click tolerance
+     * @param {Integer} tolerance the new mouse tolerance
      */
-    set clickTolerance(tolerance: number) {}
+    set mouseTolerance(tolerance: number) {}
+
+    /**
+     * Get the touch tolerance in pixels for this layer
+     *
+     * @returns {number} the touch tolerance of this layer
+     */
+    get touchTolerance(): number {
+        return 0;
+    }
+
+    /**
+     * Set the touch tolerance in pixels for this layer
+     *
+     * @param {Integer} tolerance the new touch tolerance
+     */
+    set touchTolerance(tolerance: number) {}
 
     /**
      * Return the draw order for the layer, if applicable
