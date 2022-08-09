@@ -674,7 +674,10 @@ function layerUpgrader(r2layer: any): any {
         r4layer.tooltipField = r2layer.tooltipField;
     }
     if (r2layer.tolerance) {
-        r4layer.tolerance = r2layer.tolerance;
+        r4layer.mouseTolerance = r2layer.tolerance;
+        if (r2layer.layerType === 'esriDynamic') {
+            r4layer.touchTolerance = r2layer.tolerance + 10;
+        }
     }
     if (r2layer.customRenderer) {
         r4layer.customRenderer = r2layer.customRenderer;

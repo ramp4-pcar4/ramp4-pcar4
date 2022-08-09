@@ -320,7 +320,7 @@ let config = {
                             ]
                         }
                     },
-                    tolerance: 5,
+                    mouseTolerance: 5,
                     identifyMode: 'hybrid',
                     drawOrder: [{ field: 'Program_name', ascending: true }],
                     state: {

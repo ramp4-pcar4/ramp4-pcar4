@@ -69,6 +69,7 @@ export class GeometryAPI {
             screenX: esriMapClick.x,
             screenY: esriMapClick.y,
             button: esriMapClick.button,
+            input: esriMapClick.native.pointerType,
             clickTime: esriMapClick.timestamp
         };
     }
