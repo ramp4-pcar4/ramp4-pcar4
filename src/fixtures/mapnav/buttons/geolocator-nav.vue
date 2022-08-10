@@ -36,11 +36,24 @@ export default defineComponent({
                     maximumAge: Infinity,
                     timeout: 5000
                 }).catch((error: GeolocationPositionError) => {
-                    // send an error message if user accepts location access but something goes wrong with the navigator
-                    if (error.code > 1) {
+                    if (
+                        error.code ===
+                        GeolocationPositionError.PERMISSION_DENIED
+                    ) {
+                        // send an error message for a denied permission error
                         this.$iApi.notify.show(
                             NotificationType.ERROR,
-                            this.$iApi.$vApp.$t('mapnav.geolocator.error')
+                            this.$iApi.$vApp.$t(
+                                'mapnav.geolocator.error.permission'
+                            )
+                        );
+                    } else {
+                        // send an error message for an internal/timeout error
+                        this.$iApi.notify.show(
+                            NotificationType.ERROR,
+                            this.$iApi.$vApp.$t(
+                                'mapnav.geolocator.error.internal'
+                            )
                         );
                     }
                 });
