@@ -20,7 +20,7 @@
             <notification-floating-button
                 v-if="!appbarFixture"
             ></notification-floating-button>
-            <map-caption class="z-10"></map-caption>
+            <map-caption class="z-30"></map-caption>
         </div>
 
         <esri-map v-if="start"></esri-map>

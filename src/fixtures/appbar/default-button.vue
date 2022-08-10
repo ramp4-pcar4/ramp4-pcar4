@@ -5,7 +5,8 @@
         :tooltip="$t(panelButton.tooltip)"
         :id="panelId"
         ><div
-            class="fill-current w-24 h-24 ml-8 sm:ml-20"
+            class="default fill-current w-24 h-24 ml-8 sm:ml-20"
+            :class="{ 'ml-20': overflow }"
             v-html="panelButton.icon"
         ></div
     ></appbar-button>
@@ -24,6 +25,9 @@ export default defineComponent({
         minimize: {
             type: Boolean,
             default: false
+        },
+        overflow: {
+            type: Boolean
         }
     },
     computed: {
