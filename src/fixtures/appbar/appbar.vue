@@ -1,38 +1,94 @@
 <template>
     <div
-        class="absolute top-0 left-0 bottom-28 flex flex-col items-stretch w-40 pointer-events-auto appbar bg-black-75 z-50 sm:w-64 sm:z-0 sm:bottom-38"
+        class="absolute top-0 left-0 bottom-28 flex flex-col w-40 pointer-events-auto appbar z-50 sm:z-20 bg-black-75 sm:w-64 sm:bottom-38"
         v-focus-list
         ref="el"
     >
         <template v-for="(subArray, index) in items">
             <template v-for="(item, index2) in subArray">
                 <default-button
-                    v-if="typeof item === 'string'"
+                    v-if="
+                        typeof item === 'string' &&
+                        overflowFlags[`${item}-${index2}`] !== true
+                    "
                     :key="`${item}-${index2}`"
                     :panelId="item"
                     class="appbar-item h-48"
+                    :class="`identifier-${item}-${index2}`"
                 ></default-button>
                 <component
-                    v-else
+                    v-else-if="overflowFlags[`${item}-${index2}`] !== true"
                     :is="item.componentId"
                     :key="`${item}-${index2}`"
                     :options="item.options"
                     :id="item.id"
                     class="appbar-item h-48"
+                    :class="`identifier-${item}-${index2}`"
                 ></component>
             </template>
-            <divider class="appbar-item"></divider>
+            <divider
+                class="appbar-item"
+                :class="`identifier-divider-${index}`"
+                v-if="overflowFlags[`divider-${index}`] !== true"
+            ></divider>
         </template>
 
         <default-button
-            v-for="item in temporaryItems"
+            v-for="item in temporaryItems.filter(
+                t => overflowFlags[`${t}-temp`] !== true
+            )"
             :panelId="item"
             :minimize="true"
             :key="`${item}-temp`"
+            :class="`identifier-${item}-temp`"
             class="appbar-item h-48"
         ></default-button>
 
-        <more-button id="more" v-show="overflow"></more-button>
+        <more-button id="more" v-show="overflow">
+            <template v-slot:default>
+                <template v-for="(subArray, index) in items" :key="index">
+                    <template v-for="(item, index2) in subArray">
+                        <default-button
+                            v-if="
+                                typeof item === 'string' &&
+                                overflowFlags[`${item}-${index2}`]
+                            "
+                            :key="`${item}-${index2}`"
+                            :panelId="item"
+                            class="text-black hover:bg-gray my-4 h-36"
+                            :class="`identifier-${item}-${index2}`"
+                            overflow
+                        ></default-button>
+                        <component
+                            v-else-if="overflowFlags[`${item}-${index2}`]"
+                            :is="item.componentId"
+                            :key="`${item}-${index2}`"
+                            :options="item.options"
+                            :id="item.id"
+                            class="appbar-item h-48"
+                            :class="`identifier-${item}-${index2}`"
+                        ></component>
+                    </template>
+                    <divider
+                        class="border-black my-4"
+                        :class="`identifier-divider-${index}`"
+                        v-if="overflowFlags[`divider-${index}`]"
+                    ></divider>
+                </template>
+
+                <default-button
+                    v-for="item in temporaryItems.filter(
+                        t => overflowFlags[`${t}-temp`]
+                    )"
+                    :panelId="item"
+                    :minimize="true"
+                    :key="`${item}-temp`"
+                    :class="`identifier-${item}-temp`"
+                    class="text-black hover:bg-gray my-4 h-36"
+                    overflow
+                ></default-button>
+            </template>
+        </more-button>
         <notifications-appbar-button
             class="appbar-item bottom-48 h-48 sm:display-none"
         ></notifications-appbar-button>
@@ -71,75 +127,89 @@ export default defineComponent({
         return {
             items: this.get('appbar/visible'),
             temporaryItems: this.get('appbar/temporary'),
-            overflow: false
+            overflow: false,
+            overflowFlags: {} as {
+                [key: string]: boolean;
+            }
         };
+    },
+    beforeMount() {
+        window.addEventListener('resize', this.$forceUpdate);
+    },
+    beforeUnmount() {
+        window.removeEventListener('resize', this.$forceUpdate);
     },
     updated() {
         this.$nextTick(() => {
             const element: any = this.$refs.el;
-
-            let children: Element[] = [...element.childNodes];
-
+            let key: string | undefined = undefined;
+            let children: Element[] = [...element.children];
             let bound: number | undefined =
-                children[children.length - 2].clientTop;
-            let dropdown: Element | null = document.getElementById('dropdown');
-
+                children[children.length - 2].getBoundingClientRect().top;
+            if (!this.$store.get('panel/mobileView')) {
+                bound = element.getBoundingClientRect().bottom - 38;
+            }
+            let dropdown: Element | null = element.querySelector('#dropdown');
+            const buttonsToOverflow: string[] = [];
             // check positions of appbar buttons
-            for (let i = children.length - 3; i >= 0; i--) {
-                let bottom: number =
-                    children[i].clientTop + children[i].clientHeight;
+            for (let i = children.length - 4; i >= 0; i--) {
+                let bottom: number = children[i].getBoundingClientRect().bottom;
                 if (
                     bound &&
                     dropdown &&
-                    (bottom >= bound || (this.overflow && bottom + 48 >= bound))
+                    (bottom > bound || (this.overflow && bottom + 56 > bound))
                 ) {
-                    console.log(`[${i}]`, children[i].getBoundingClientRect());
-
-                    children[i].classList.remove(
-                        'hover:text-white',
-                        'text-gray-400'
-                    );
-                    children[i].classList.add(
-                        'text-black',
-                        'hover:bg-gray-100'
-                    );
-
-                    element.removeChild(children[i]);
-                    dropdown.appendChild(children[i]);
+                    children[i].classList.forEach(cl => {
+                        if (cl.includes('identifier')) {
+                            key = cl.slice(11);
+                        }
+                    });
+                    if (key) this.overflowFlags[key] = true;
                     if (!this.overflow) this.overflow = true;
-                } else {
+                } else if (bottom !== 0) {
                     break;
                 }
             }
-
             // check position of more button
-            let more: Element | null = document.getElementById('more');
-            let moreBottom = element.clientTop + element.clientHeight;
+            let more: Element | null = element.querySelector('#more');
+            let moreBottom = more!.getBoundingClientRect().bottom;
+            key = undefined;
             if (
                 this.overflow &&
                 bound &&
                 more &&
                 dropdown &&
                 moreBottom !== 0 &&
-                (moreBottom <= bound - 48 || dropdown.childElementCount == 1)
+                (moreBottom <= bound - 56 ||
+                    (dropdown.childElementCount == 1 && moreBottom <= bound))
             ) {
-                while (
-                    moreBottom <= bound - 48 ||
-                    dropdown.childElementCount == 1
-                ) {
-                    let item: Element | null = dropdown.firstElementChild;
+                // dropdown.classList.add(`max-h-${moreBottom - 8}`);
+                let buttonsRemaining: number = dropdown.childElementCount;
+                let index: number = 0;
+                while (moreBottom <= bound - 56 || buttonsRemaining == 1) {
+                    let item: Element | null = dropdown.children[index];
                     if (item) {
-                        item.classList.remove(
-                            'text-black',
-                            'hover:bg-gray-100'
-                        );
-                        item.classList.add('text-gray-400', 'hover:text-white');
-                        dropdown.removeChild(item);
-                        element.insertBefore(item, more);
+                        item.classList.forEach(cl => {
+                            if (cl.includes('identifier')) {
+                                key = cl.slice(11);
+                            }
+                        });
+                        if (key) this.overflowFlags[key] = false;
+                        moreBottom += 48;
+                        buttonsRemaining -= 1;
+                        index += 1;
+                    }
+                    if (buttonsRemaining == 0) {
+                        this.overflow = false;
+                        break;
                     }
                 }
-                if (dropdown.childElementCount == 0) this.overflow = false;
             }
+            // clean up flags for items that were removed.
+            Object.keys(this.overflowFlags).forEach((key: string) => {
+                if (!element.querySelector(`.identifier-${key}`))
+                    delete this.overflowFlags[key];
+            });
         });
     }
 });
