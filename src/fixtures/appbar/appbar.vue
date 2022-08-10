@@ -24,6 +24,8 @@
             <divider class="appbar-item"></divider>
         </template>
 
+        <span v-show="false" id="appbar-divider"></span>
+
         <default-button
             v-for="item in temporaryItems"
             :panelId="item"
@@ -77,44 +79,69 @@ export default defineComponent({
     updated() {
         this.$nextTick(() => {
             const element: any = this.$refs.el;
-
-            let children: Element[] = [...element.childNodes];
+            let isTemp = true;
+            let children: Element[] = [...element.children];
 
             let bound: number | undefined =
-                children[children.length - 2].clientTop;
-            let dropdown: Element | null = document.getElementById('dropdown');
-
+                children[children.length - 2].getBoundingClientRect().top;
+            let dropdown: Element | null = element.querySelector('#dropdown');
             // check positions of appbar buttons
-            for (let i = children.length - 3; i >= 0; i--) {
+            for (let i = children.length - 4; i >= 0; i--) {
+                if (children[i].id === 'appbar-divider') {
+                    isTemp = false;
+                    continue;
+                }
                 let bottom: number =
-                    children[i].clientTop + children[i].clientHeight;
+                    children[i].getBoundingClientRect().top +
+                    children[i].getBoundingClientRect().height;
                 if (
-                    bound &&
-                    dropdown &&
-                    (bottom >= bound || (this.overflow && bottom + 48 >= bound))
+                    (bound &&
+                        dropdown &&
+                        (bottom >= bound ||
+                            (this.overflow && bottom + 48 >= bound))) ||
+                    (isTemp && this.overflow)
                 ) {
                     console.log(`[${i}]`, children[i].getBoundingClientRect());
 
-                    children[i].classList.remove(
-                        'hover:text-white',
-                        'text-gray-400'
-                    );
+                    children[i].classList.remove('appbar-item', 'h-48');
                     children[i].classList.add(
                         'text-black',
-                        'hover:bg-gray-100'
+                        'hover:bg-gray-100',
+                        'my-4',
+                        'h-36'
                     );
-
+                    children[i]
+                        .querySelector('.default')
+                        ?.classList.replace('ml-8', 'ml-20');
+                    if (children[i].classList.contains('border-b')) {
+                        children[i].classList.add('border-black');
+                    }
                     element.removeChild(children[i]);
-                    dropdown.appendChild(children[i]);
+                    if (isTemp) {
+                        const moreDivider =
+                            dropdown?.querySelector('#more-divider');
+                        moreDivider?.parentNode?.insertBefore(
+                            children[i],
+                            moreDivider.nextSibling
+                        );
+                    } else {
+                        dropdown?.insertBefore(
+                            children[i],
+                            dropdown?.firstChild
+                        );
+                    }
                     if (!this.overflow) this.overflow = true;
-                } else {
+                } else if (bottom !== 0) {
                     break;
                 }
             }
 
             // check position of more button
             let more: Element | null = document.getElementById('more');
-            let moreBottom = element.clientTop + element.clientHeight;
+            let moreBottom = more
+                ? more.getBoundingClientRect().top +
+                  more.getBoundingClientRect().height
+                : Math.PI; // to get typescript to STOP ANNOYING ME
             if (
                 this.overflow &&
                 bound &&
@@ -123,22 +150,47 @@ export default defineComponent({
                 moreBottom !== 0 &&
                 (moreBottom <= bound - 48 || dropdown.childElementCount == 1)
             ) {
+                isTemp = false;
                 while (
                     moreBottom <= bound - 48 ||
-                    dropdown.childElementCount == 1
+                    dropdown.childElementCount == 2
                 ) {
-                    let item: Element | null = dropdown.firstElementChild;
+                    let item: Element | null = dropdown.children[0];
+                    if (item.id === 'more-divider') {
+                        item = dropdown.children[1];
+                        isTemp = true;
+                    }
                     if (item) {
                         item.classList.remove(
                             'text-black',
-                            'hover:bg-gray-100'
+                            'hover:bg-gray-100',
+                            'my-4',
+                            'h-36'
                         );
-                        item.classList.add('text-gray-400', 'hover:text-white');
+                        item.classList.add('appbar-item', 'h-48');
+                        item.querySelector('.default')?.classList.replace(
+                            'ml-20',
+                            'ml-8'
+                        );
+                        item.classList.remove('border-black');
                         dropdown.removeChild(item);
-                        element.insertBefore(item, more);
+                        if (isTemp) {
+                            element.insertBefore(item, more);
+                        } else {
+                            element.insertBefore(
+                                item,
+                                element.querySelector('#appbar-divider')
+                            );
+                        }
+                        moreBottom =
+                            more.getBoundingClientRect().top +
+                            more.getBoundingClientRect().height;
+                    }
+                    if (dropdown.childElementCount == 1) {
+                        this.overflow = false;
+                        break;
                     }
                 }
-                if (dropdown.childElementCount == 0) this.overflow = false;
             }
         });
     }
