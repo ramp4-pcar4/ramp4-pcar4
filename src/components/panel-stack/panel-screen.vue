@@ -1,6 +1,5 @@
 <template>
     <div
-        class="h-full flex flex-col items-stretch"
         :content="$t('panels.access')"
         v-tippy="{
             trigger: 'focus',

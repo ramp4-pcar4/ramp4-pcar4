@@ -23,8 +23,9 @@
             @blur="open = false"
             :position="position"
             id="dropdown"
-            class="dropdown shadow-md border border-gray:200 absolute py-8 w-64 bg-white rounded text-center z-10"
+            class="dropdown shadow-md border border-gray:200 absolute w-64 flex flex-col bg-white rounded z-10"
         >
+            <span v-show="false" id="more-divider"></span>
             <slot></slot>
         </div>
     </div>
@@ -74,14 +75,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.dropdown > * {
-    display: block;
-    padding: 0.5rem 1rem 0.5rem 1rem;
-    color: #2d3748;
-    &:hover:not(.disabled) {
-        background-color: #eee;
-    }
-}
 .dropdown {
     @apply left-full bottom-0;
 }
