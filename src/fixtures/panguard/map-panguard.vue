@@ -67,7 +67,10 @@ export default defineComponent({
                         ['pointer-up', 'pointer-leave'],
                         e => {
                             if (e.pointerType !== 'touch') return;
-                            pointers.delete(e.pointerId);
+                            // small delay as to not offend panguard when lifting more than one finger
+                            window.setTimeout(() => {
+                                pointers.delete(e.pointerId);
+                            }, 200);
                         }
                     )
                 );
@@ -81,8 +84,10 @@ export default defineComponent({
                             !pointer ||
                             pointerType !== 'touch' ||
                             pointers.size !== 1
-                        )
+                        ) {
+                            this.$el.classList.remove('pg-active');
                             return;
+                        }
 
                         // ignore very small movements to avoid scrolling when someone is tapping the screen
                         const distance = Math.sqrt(
