@@ -20,7 +20,7 @@
 
                 <!-- dropdown icon -->
                 <div
-                    class="icon"
+                    class="dropdown-icon"
                     :class="{ 'transform -rotate-180': expanded }"
                 >
                     <svg
@@ -85,7 +85,7 @@ export default defineComponent({
         @apply inline;
     }
 }
-.help-section-header .icon {
+.help-section-header .dropdown-icon {
     transition: transform 0.3s cubic-bezier(0.35, 0, 0.25, 1);
 }
 .help-item-leave-active,
