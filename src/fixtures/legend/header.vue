@@ -37,8 +37,8 @@
         <dropdown-menu
             class="relative"
             position="left-start"
-            :tooltip="$t('legend.header.groups')"
-            tooltip-placement="left"
+            :content="$t('legend.header.groups')"
+            v-tippy="{ placement: 'left' }"
             v-show="isControlAvailable('groupToggle')"
         >
             <template #header>
@@ -72,8 +72,8 @@
         <dropdown-menu
             class="relative"
             position="left-start"
-            :tooltip="$t('legend.header.visible')"
-            tooltip-placement="left"
+            :content="$t('legend.header.visible')"
+            v-tippy="{ placement: 'left' }"
             v-show="isControlAvailable('visibilityToggle')"
         >
             <template #header>
