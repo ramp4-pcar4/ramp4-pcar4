@@ -838,7 +838,7 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
         'visibility'
     ];
     if (r2layer.controls && r2layer.controls.length > 0) {
-        r4layer.controls = controlsUpgrader(r2layer.controlsm, allowedControls);
+        r4layer.controls = controlsUpgrader(r2layer.controls, allowedControls);
     }
 
     if (r2layer.disabledControls && r2layer.disabledControls.length > 0) {
