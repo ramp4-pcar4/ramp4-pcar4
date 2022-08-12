@@ -224,7 +224,6 @@ export class FixtureAPI extends APIScope {
                 'layer-reorder',
                 'legend',
                 'mapnav',
-                'metadata',
                 'northarrow',
                 'overviewmap',
                 'scrollguard',
