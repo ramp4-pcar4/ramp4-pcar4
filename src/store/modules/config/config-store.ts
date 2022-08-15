@@ -24,12 +24,15 @@ const getters = {
     getActiveConfig:
         (state: ConfigState) =>
         (lang: string): RampConfig => {
-            if (state.registeredConfigs[lang] === undefined) {
+            if (
+                state.registeredConfigs[state.registeredLangs[lang]] ===
+                undefined
+            ) {
                 throw new Error(
                     'Unsupported language or no registered config exists for requested language'
                 );
             }
-            return state.registeredConfigs[lang];
+            return state.registeredConfigs[state.registeredLangs[lang]];
         },
 
     getMapConfig: (state: ConfigState): RampMapConfig => {
@@ -61,7 +64,6 @@ const actions = {
         // const newConfig = merge(context.state.config, config);
 
         context.commit('SET_CONFIG', config);
-        console.log('new config adding layers', config.layers);
         this.set(LayerStore.addLayerConfigs, config.layers);
     },
     registerConfig: function (
@@ -73,24 +75,21 @@ const actions = {
         const configLangs = configInfo.configLangs;
         const config = configInfo.config;
         const allLangs = configInfo.allLangs;
-
-        if (allLangs !== undefined && allLangs.length > 0) {
-            // register config for all available languages
-            allLangs.forEach((lang: string) => {
-                context.state.registeredConfigs[lang] = config;
-                // initially each language corresponds to first config by default
-                context.state.registeredLangs[lang] = Object.keys(
-                    context.state.registeredConfigs
-                )[0];
-            });
-        }
-
         if (configLangs !== undefined && configLangs.length > 0) {
             // register config for specified languages
             configLangs.forEach((lang: string) => {
                 context.state.registeredConfigs[lang] = config;
                 // add correspondence between language and config
                 context.state.registeredLangs[lang] = lang;
+            });
+        }
+        if (allLangs !== undefined && allLangs.length > 0) {
+            // register config for all available languages
+            allLangs.forEach((lang: string) => {
+                // initially each language corresponds to first config by default
+                context.state.registeredLangs[lang] = Object.keys(
+                    context.state.registeredConfigs
+                )[0];
             });
         }
     },
