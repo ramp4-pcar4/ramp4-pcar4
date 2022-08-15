@@ -127,6 +127,7 @@ export class LegendEntry extends LegendItem {
     _layerIdx: number | undefined;
     _symbologyExpanded: boolean;
     _toggleSymbology: boolean;
+    _layerRedrawing: boolean;
 
     /**
      * Creates a new single legend entry.
@@ -140,6 +141,7 @@ export class LegendEntry extends LegendItem {
         this._layerParentId = legendEntry.layerParentId; // will only be defined for sublayers
         this._layerIdx = legendEntry.sublayerIndex; // will only be defined for sublayers
         this._symbologyExpanded = legendEntry.symbologyExpanded || false;
+        this._layerRedrawing = false;
 
         // read the toggleSymbology from the layer fixture config
         this._toggleSymbology =
@@ -196,6 +198,16 @@ export class LegendEntry extends LegendItem {
     /** Indicates if this legend entry allows symbology to be toggled. */
     get toggleSymbology(): boolean {
         return this._toggleSymbology;
+    }
+
+    /** Indicates if the layer is currently redrawing */
+    get layerRedrawing(): boolean {
+        return this._layerRedrawing;
+    }
+
+    /** Indicate if the entry is currently redrawing */
+    set layerRedrawing(val: boolean) {
+        this._layerRedrawing = val;
     }
 
     /**
