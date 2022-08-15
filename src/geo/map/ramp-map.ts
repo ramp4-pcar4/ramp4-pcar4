@@ -1034,6 +1034,19 @@ export class MapAPI extends CommonMapAPI {
                 return result.graphic.layer.id === layer.id;
             });
             if (matchedResult) {
+                if (layer.isCosmetic) {
+                    // means topmost thing was in a cosmetic layer.
+                    // we currently can't do a hovertip on these.
+                    // Acually it's graphic layers that are the problem, but
+                    // cosmetics shouldnt be interactive anyways. if someone decides
+                    // to use a graphic layer as non-cosmetic we will need more code
+                    // here. Reason is graphic layers have no feature schema, so there
+                    // is no order-by / draw order, so we can't figure out which is
+                    // top-most. More ideas in the big comment block below for work-arounds.
+                    // Returning true without setting hitLayer exits the loop and acts like
+                    // nothing was hit.
+                    return true;
+                }
                 hitLayer = layer;
                 // esriGraphic = matchedResult.graphic;
             }
