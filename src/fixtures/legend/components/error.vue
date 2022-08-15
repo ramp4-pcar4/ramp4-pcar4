@@ -160,13 +160,9 @@ export default defineComponent({
                             reject(reloadErr);
                         }
                     } else {
-                        const [initiateErr] = await to(
-                            this.$iApi.geo.map.addLayer(layer!)
-                        );
-
-                        if (initiateErr) {
-                            reject(initiateErr);
-                        }
+                        this.$iApi.geo.map
+                            .addLayer(layer!)
+                            .catch(() => reject());
                     }
                     resolve(layer!);
                 });

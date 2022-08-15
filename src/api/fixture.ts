@@ -3,6 +3,7 @@ import type { Component, ComponentOptions } from 'vue';
 
 import { APIScope, GlobalEvents, InstanceAPI } from './internal';
 import { FixtureMutation } from '@/store/modules/fixture';
+import { ConfigStore } from '@/store/modules/config';
 import type { FixtureBase, FixtureBaseSet } from '@/store/modules/fixture';
 import type { RampConfig } from '@/types';
 
@@ -233,7 +234,7 @@ export class FixtureAPI extends APIScope {
                 'wizard'
             ];
         }
-
+        this.$vApp.$store.set(ConfigStore.setStartingFixtures, fixtureNames);
         // add all the requested default promises.
         // return the promise-all of all the add fixture promises
         // TODO alterately, don't do a promise.all, and just return the array of promises. not sure which is more useful.

@@ -538,7 +538,7 @@ export default defineComponent({
             const config = Object.assign(this.layerInfo!.config, data);
 
             const layer = this.$iApi.geo.layer.createLayer(config);
-            await this.$iApi.geo.map.addLayer(layer);
+            this.$iApi.geo.map.addLayer(layer);
             layer.userAdded = true;
 
             // notify the legend to prepare a legend item

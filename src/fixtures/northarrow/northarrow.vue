@@ -155,7 +155,7 @@ export default defineComponent({
                             layerType: LayerType.GRAPHIC,
                             cosmetic: true // mark this layer as a cosmetic layer
                         });
-                        await this.$iApi.geo.map.addLayer(poleLayer);
+                        this.$iApi.geo.map.addLayer(poleLayer);
 
                         const poleGraphic = new Graphic(projPole, 'northpole');
                         const poleStyle = new PointStyle(
