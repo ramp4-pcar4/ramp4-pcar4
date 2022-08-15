@@ -230,8 +230,7 @@ export default defineComponent({
                         }
                     });
                 } else {
-                    // if last opened layer no longer exists close items panel and proceed with case 1
-                    this.closeResult();
+                    // if last opened layer no longer exists proceed with case 1
                     this.autoOpenAny(newPayload);
                 }
             } else {
