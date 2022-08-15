@@ -91,6 +91,13 @@
                     label="Layer"
                 />
             </div>
+            <!-- display draw refresh loading bar -->
+            <div class="flex-1 h-3">
+                <div
+                    v-show="legendItem.layerRedrawing && legendItem.visibility"
+                    class="progress-line"
+                ></div>
+            </div>
         </div>
 
         <!-- Symbology Stack Section -->
@@ -164,7 +171,7 @@
 import { defineComponent, toRaw } from 'vue';
 import type { PropType } from 'vue';
 import { GlobalEvents, LayerInstance } from '@/api';
-import { LayerControls, LayerState } from '@/geo/api';
+import { DrawState, LayerControls, LayerState } from '@/geo/api';
 import type { LegendSymbology } from '@/geo/api';
 
 import type { LegendEntry } from '../store/legend-defs';
@@ -229,6 +236,19 @@ export default defineComponent({
                         payload.layer.uid === this.legendItem!.layer!.uid
                     ) {
                         this.legendItem.setErrorType();
+                    }
+                }
+            )
+        );
+
+        // watch for the layer's drawstate
+        this.handlers.push(
+            this.$iApi.event.on(
+                GlobalEvents.LAYER_DRAWSTATECHANGE,
+                (payload: { layer: LayerInstance; state: string }) => {
+                    if (this.legendItem.layerUID === payload.layer.uid) {
+                        this.legendItem.layerRedrawing =
+                            payload.layer.drawState === DrawState.REFRESH;
                     }
                 }
             )
