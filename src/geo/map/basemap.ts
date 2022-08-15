@@ -76,7 +76,7 @@ export class Basemap {
      * Set this basemap's name
      */
     set name(value: string | undefined) {
-        this.config.name = value;
+        this.config.name = value || '';
     }
 
     /**
@@ -90,7 +90,7 @@ export class Basemap {
      * Set this basemap's description
      */
     set description(value: string | undefined) {
-        this.config.description = value;
+        this.config.description = value || '';
     }
 
     /**
@@ -104,7 +104,7 @@ export class Basemap {
      * Set this basemap's alt text
      */
     set altText(value: string | undefined) {
-        this.config.altText = value;
+        this.config.altText = value || '';
     }
 
     /**

@@ -157,9 +157,9 @@ export default defineComponent({
                 .forEach((layer: LayerInstance | null, index: number) => {
                     // wait on layer load to check for valid state
                     layer
-                        ?.isLayerLoaded()
+                        ?.loadPromise()
                         .then(() => {
-                            if (layer?.isValidState) {
+                            if (layer?.isLoaded) {
                                 this.$iApi.geo.map.reorder(
                                     layer!,
                                     oldValue ? oldValue.length + index : index

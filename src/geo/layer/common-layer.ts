@@ -27,9 +27,7 @@ import {
 import type {
     AttributeSet,
     DrawOrder,
-    FieldDefinition,
     GetGraphicParams,
-    LegendSymbology,
     RampLayerConfig,
     TabularAttributeSet
 } from '@/geo/api';
@@ -37,25 +35,18 @@ import to from 'await-to-js';
 
 export class CommonLayer extends LayerInstance {
     // common layer properties
-    _name: string;
+
     _scaleSet: ScaleSet;
-    _legend: Array<LegendSymbology>;
     _mouseTolerance: number;
     _touchTolerance: number;
-    _featureCount: number;
-    _fields: Array<FieldDefinition>;
-    _nameField: string;
-    _oidField: string;
     _drawOrder: Array<DrawOrder>;
     // used to manage debouncing when applying filter updates against a layer. Private! but needs to be seen by FCs.
     _lastFilterUpdate = '';
 
     protected origRampConfig: RampLayerConfig;
 
-    // TODO consider also having a loaded boolean property, allowing a synch check if layer has loaded or not. state can flip around to update, etc.
-    //      alternately implement something like function layerLoaded() from old geoApi
-    protected loadPromise: DefPromise; // a promise that resolves when layer is fully ready and safe to use. for convenience of caller
-    protected viewPromise: DefPromise; // a promise that resolves when a layer view has been created on the map. helps bridge the view handler with the layer load handler
+    protected loadDefProm: DefPromise; // a deferred promise that resolves when layer is fully ready and safe to use. for convenience of caller
+    protected viewDefProm: DefPromise; // a deferred promise that resolves when a layer view has been created on the map. helps bridge the view handler with the layer load handler
 
     protected layerTree: TreeNode;
 
@@ -70,10 +61,9 @@ export class CommonLayer extends LayerInstance {
         super(rampConfig, $iApi);
 
         // initialize common layer properties
-        this._name = rampConfig.name || '';
+        this.name = rampConfig.name || '';
         this._scaleSet = new ScaleSet();
-        this._legend = [];
-        this._featureCount = -1;
+
         this._mouseTolerance =
             rampConfig.mouseTolerance != undefined
                 ? rampConfig.mouseTolerance
@@ -82,10 +72,8 @@ export class CommonLayer extends LayerInstance {
             rampConfig.touchTolerance != undefined
                 ? rampConfig.touchTolerance
                 : 15; // use default value of 15 if touch tolerance is undefined
-        this._fields = [];
+
         this.geomType = GeometryType.NONE;
-        this._nameField = 'error';
-        this._oidField = 'error';
         this.dataFormat = DataFormat.UNKNOWN;
         this.layerType = LayerType.UNKNOWN;
         this.layerFormat = LayerFormat.UNKNOWN;
@@ -104,15 +92,15 @@ export class CommonLayer extends LayerInstance {
         this.layerState = LayerState.NEW;
         this.initiationState = InitiationState.NEW;
         this.drawState = DrawState.NOT_LOADED;
-        this.loadPromise = new DefPromise();
-        this.viewPromise = new DefPromise();
+        this.loadDefProm = new DefPromise();
+        this.viewDefProm = new DefPromise();
         this.esriWatches = [];
         this.layerTree = new TreeNode(0, this.uid, this.name, true); // is a layer with layer index 0 by default. subclasses will change this when they load
     }
 
     protected noLayerErr(): void {
         console.error(
-            'Attempted to manipulate the layer before .initiate() finished'
+            'Attempted to manipulate the layer but no layer found. Likely .initiate() was not finished or failed.'
         );
         console.trace();
     }
@@ -166,7 +154,6 @@ export class CommonLayer extends LayerInstance {
         }
         if (initiateErr) {
             this.onError();
-            // throw new Error();
         }
         this.updateInitiationState(InitiationState.INITIATED);
     }
@@ -184,8 +171,6 @@ export class CommonLayer extends LayerInstance {
         // NOTE current limitation: the event setup here only support one layer view. Any attempt to make
         //      RAMP have two map views rendering the same Layer will require some major refactoring.
 
-        // TODO consider putting lots of info on the events.  e.g. instead of just state changed, have .state, .layerid
-        //      visibility might need an optional sublayer index (whatever we're calling that)
         if (this.isSublayer) {
             // early back out, we don't want the below code to run for sublayers
             console.warn('Attempted to initiate a sublayer as a CommonLayer');
@@ -193,7 +178,6 @@ export class CommonLayer extends LayerInstance {
         }
 
         if (!this.esriLayer) {
-            // TODO maybe different more specific error here. We assume the .initiate() on the subclass would have created the layer by now.
             this.noLayerErr();
             return;
         }
@@ -209,7 +193,6 @@ export class CommonLayer extends LayerInstance {
                 // TODO re-evaluate the event parameter. This is common routine. Need to think about how sublayer would factor in to this.
                 //      might need a secondary sublayer event, triggered on the sublayer? Sublayer visibility can change without affecting
                 //      overall layer. TRICKY.
-                //      also might want some redundant params, like layer id.
                 this.$iApi.event.emit(GlobalEvents.LAYER_VISIBILITYCHANGE, {
                     visibility: newval,
                     layer: this
@@ -222,7 +205,6 @@ export class CommonLayer extends LayerInstance {
                 // TODO re-evaluate the event parameter. This is common routine. Need to think about how sublayer would factor in to this.
                 //      might need a secondary sublayer event, triggered on the sublayer? Sublayer opacity can change without affecting
                 //      overall layer opacity. TRICKY.
-                //      also might want some redundant params, like layer id.
                 this.$iApi.event.emit(GlobalEvents.LAYER_OPACITYCHANGE, {
                     opacity: newval,
                     layer: this
@@ -263,7 +245,7 @@ export class CommonLayer extends LayerInstance {
                         );
                     })
                 );
-                this.viewPromise.resolveMe();
+                this.viewDefProm.resolveMe();
             }
         );
 
@@ -273,15 +255,13 @@ export class CommonLayer extends LayerInstance {
 
     async terminate(): Promise<void> {
         // TODO null out esrilayer objects? or make orchestrator handle that stuff.
-        // Note: attributes are stored in the FCs, so clearing the array
-        //       erases any downloaded/cached attribute data.
 
         // terminate sublayers first (bottom up termination)
         this.updateInitiationState(InitiationState.TERMINATING);
         this.sublayers.forEach(s => s.terminate());
 
-        this.loadPromise = new DefPromise();
-        this.viewPromise = new DefPromise();
+        this.loadDefProm = new DefPromise();
+        this.viewDefProm = new DefPromise();
 
         this.esriWatches.forEach(w => w.remove());
         this.esriWatches = [];
@@ -297,11 +277,9 @@ export class CommonLayer extends LayerInstance {
             return;
         }
 
-        // TODO should we consider a "reload start" event? Could be useful for animations.
-        //      that said, .terminate() should cycle the layer state values so animations
-        //      are probably already keying on that.
-
-        let mapStackPosition = 0; // TODO verify best default if we can't find actual old position. top of the stack seems correct? top of data layer stack (to avoid covering north arrow)?
+        // TODO verify best default if we can't find actual old position.
+        // top of the stack seems correct? top of data layer stack (to avoid covering north arrow)?
+        let mapStackPosition = 0;
 
         if (this.initiationState === InitiationState.INITIATED) {
             if (this.esriLayer) {
@@ -312,12 +290,7 @@ export class CommonLayer extends LayerInstance {
                     );
                 if (tempPosition > -1) {
                     mapStackPosition = tempPosition;
-
                     this.$iApi.geo.map.esriMap.layers.remove(this.esriLayer);
-
-                    // TODO add an ELSE clause here. attempt to derive the position from the layer store (which is ordered).
-                    //      do this after discussion 474 is figured out; it will probably put graphics layers into the layer
-                    //      store, making the position calculation much easier than it currently is.
                 }
             }
 
@@ -348,8 +321,6 @@ export class CommonLayer extends LayerInstance {
         );
     }
 
-    // TODO strongly type if it makes sense. unsure if we want client config definitions in here
-    //      that said if client schema is different that here, things are gonna break so maybe this is good idea
     /**
      * Take a layer config from the RAMP application and derives a configuration for an ESRI layer
      *
@@ -357,10 +328,6 @@ export class CommonLayer extends LayerInstance {
      * @returns configuration object for the ESRI layer representing this layer
      */
     protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): any {
-        // TODO flush out
-        // NOTE: it would be nice to put esri.LayerProperties as the return type, but since we are cheating with refreshInterval it wont work
-        //       we can make our own interface if it needs to happen (or can extent the esri one)
-
         const esriConfig: any = {
             id: rampLayerConfig.id,
             url: rampLayerConfig.url,
@@ -369,7 +336,7 @@ export class CommonLayer extends LayerInstance {
         };
 
         // TODO careful now. seems setting this willy nilly, even if undefined value, causes layer to keep pinging the server
-        // TODO revisit issue #1019 after v1.0.0
+        // TODO revisit issue #1018 after v1.0.0
         // if (typeof rampLayerConfig.refreshInterval !== 'undefined') {
         //     esriConfig.refreshInterval = rampLayerConfig.refreshInterval;
         // }
@@ -379,32 +346,39 @@ export class CommonLayer extends LayerInstance {
 
     // ----------- LAYER LOAD -----------
 
-    // when esri layer loads, this will make sure the layer and FCs are in synch then let outsiders know its loaded
+    // When esri layer loads, this will perform any additional layer setup.
+    // The layer status will be set to loaded once everything has finished.
     onLoad(): void {
         // magic happens here. other layers will override onLoadActions,
         // meaning this will run the function appropriate for the layer who inherited LayerBase
         const loadPromises: Array<Promise<void>> = this.onLoadActions();
         Promise.all(loadPromises).then(() => {
             this.updateLayerState(LayerState.LOADED);
-            this.loadPromise.resolveMe();
+            this.loadDefProm.resolveMe();
 
             // This will just trigger the above statements for each sublayer
             this.sublayers.forEach(sublayer => sublayer.onLoad());
         });
     }
 
+    // TODO what happens if the error state is hit after the layer is loaded?
+    //      Probably ok (rejecting a resolved promise that nobody is listening for).
+    //      Putting the layer in error status is what is important.
     // when esri layer load errors
     onError(): void {
         this.updateLayerState(LayerState.ERROR);
-        this.loadPromise.rejectMe();
+        this.loadDefProm.rejectMe();
         this.sublayers.forEach(sublayer => sublayer.onError());
     }
 
+    // performs setup on the layer that needs to occur after the esri layer
+    // exists, but before we mark the layer as loaded. Any async tasks must
+    // include their promise in the return array.
     protected onLoadActions(): Array<Promise<void>> {
-        if (!this._name) {
+        if (!this.name) {
             // no name from config. attempt layer name
             // if not layer name, use id instead
-            this._name = this.esriLayer?.title || this.id;
+            this.name = this.esriLayer?.title || this.id;
         }
 
         if (!this.isCosmetic) {
@@ -426,7 +400,7 @@ export class CommonLayer extends LayerInstance {
         // consider adding fancy checks if its missing, and if so just promise.resolve
         const lookupPromise = this.$iApi.geo.proj
             .checkProj((<any>this.esriLayer).spatialReference)
-            .then((goodSR: boolean) => {
+            .then(goodSR => {
                 if (goodSR) {
                     return Promise.resolve();
                 } else {
@@ -442,21 +416,22 @@ export class CommonLayer extends LayerInstance {
      * Provides a promise that resolves when the layer has finished loading. If accessing layer properties that
      * depend on the layer being loaded, wait on this promise before accessing them.
      *
-     * @method isLayerLoaded
+     * @method loadPromise
      * @returns {Promise} resolves when the layer has finished loading
      */
-    isLayerLoaded(): Promise<void> {
-        return this.loadPromise.getPromise();
+    loadPromise(): Promise<void> {
+        return this.loadDefProm.getPromise();
     }
 
     /**
      * Indicates if the layer is in a state that is makes sense to interact with.
      * I.e. False if layer has not done it's initial load, or is in error state.
+     * Acts as a handy shortcut to inspecting the layerState.
      *
-     * @method isValidState
-     * @returns {Boolean} true if layer is in an interactive state
+     * @method isLoaded
+     * @returns {Boolean} true if layer is loaded
      */
-    get isValidState(): boolean {
+    get isLoaded(): boolean {
         return this.layerState === LayerState.LOADED;
     }
 
@@ -466,33 +441,18 @@ export class CommonLayer extends LayerInstance {
      * Wraps an error test for when someone calls a map dependend function too early
      * @private
      */
-    protected mapCheck() {
+    protected mapCheck(): boolean {
         // Map Check Hah ha-ha-Hah
         // I be the anti-map rhythm rock shocker
-        // TODO maybe make this a boolean that gets flipped to true once layer is added to the map.
-        /*
-        if (this.isUndefined(this.hostMap)) {
-            throw new Error('Attempting to use map-dependent logic before the layer has been added to the map');
+
+        if (this.$iApi.geo.map.created) {
+            return true;
+        } else {
+            console.error(
+                'Attempting to use map-dependent logic before the layer has been added to the map'
+            );
+            return false;
         }
-        */
-    }
-
-    /**
-     * Returns the name of the layer.
-     *
-     * @returns {String} name of the layer
-     */
-    get name(): string {
-        return this._name;
-    }
-
-    /**
-     * Set the name of the layer.
-     *
-     * @param {String} name the new name of the layer
-     */
-    set name(name: string) {
-        this._name = name;
     }
 
     /**
@@ -523,8 +483,12 @@ export class CommonLayer extends LayerInstance {
     isOffscale(testScale: number | undefined = undefined): boolean {
         let mahScale: number;
         if (typeof testScale === 'undefined') {
-            this.mapCheck();
-            mahScale = this.$iApi.geo.map.getScale();
+            if (this.mapCheck()) {
+                mahScale = this.$iApi.geo.map.getScale();
+            } else {
+                // default due to no map, ideally does nothing.
+                return false;
+            }
         } else {
             mahScale = testScale;
         }
@@ -538,7 +502,7 @@ export class CommonLayer extends LayerInstance {
     canIdentify(): boolean {
         return (
             this.supportsIdentify &&
-            this.isValidState &&
+            this.isLoaded &&
             this.visibility &&
             this.identify &&
             !this.scaleSet.isOffScale(this.$iApi.geo.map.getScale()).offScale
@@ -551,15 +515,17 @@ export class CommonLayer extends LayerInstance {
      * @returns {Promise} resolves when map has finished zooming
      */
     zoomToVisibleScale(): Promise<void> {
-        this.mapCheck();
-
-        // TODO consider enhancing to bring in the old "pan to data" step from RAMP2.
-        //      was never a great function; only worked well if data was in a condensed area.
-        //      if we do it, we would wait for zoom promise, then check if map center is
-        //      inside the layer extent. if not, pan the map to layer extent center.
-        //      would need to add an extra boolean flag parameter to indicate if we do the pan or not.
-        //      alternate idea is make a separate pan-to-extent function and let caller make two calls. hmmm. nice.
-        return this.$iApi.geo.map.zoomToVisibleScale(this.scaleSet);
+        if (this.mapCheck()) {
+            // TODO consider enhancing to bring in the old "pan to data" step from RAMP2.
+            //      was never a great function; only worked well if data was in a condensed area.
+            //      if we do it, we would wait for zoom promise, then check if map center is
+            //      inside the layer extent. if not, pan the map to layer extent center.
+            //      would need to add an extra boolean flag parameter to indicate if we do the pan or not.
+            //      alternate idea is make a separate pan-to-extent function and let caller make two calls. hmmm. nice.
+            return this.$iApi.geo.map.zoomToVisibleScale(this.scaleSet);
+        } else {
+            return Promise.resolve();
+        }
     }
 
     /**
@@ -569,50 +535,17 @@ export class CommonLayer extends LayerInstance {
      */
     zoomToLayerBoundary(): Promise<void> {
         if (!this.extent) {
-            throw new Error(
+            console.error(
                 `Attempted to zoom to boundary of a layer with no extent (Layer Id: ${this.id})`
             );
+            return Promise.resolve();
         }
-        this.mapCheck();
-        return this.$iApi.geo.map.zoomMapTo(this.extent);
-    }
 
-    /**
-     * Return the legend of the layer
-     *
-     * @returns {Array<LegendSymbology>} the legend of the layer
-     */
-    get legend(): Array<LegendSymbology> {
-        // this.stubError();
-        return this._legend;
-    }
-
-    /**
-     * Set the legend of the layer
-     *
-     * @param {Array<LegendSymbology>} legend the new legend of the layer
-     */
-    set legend(legend: Array<LegendSymbology>) {
-        this._legend = legend;
-    }
-
-    /**
-     * Get the feature count for the given sublayer.
-     *
-     * @returns {Integer} number of features in the sublayer
-     */
-    get featureCount(): number {
-        // this.stubError();
-        return this._featureCount;
-    }
-
-    /**
-     * Set the feature count for this layer
-     *
-     * @param {Integer} count the new number of features in the layer
-     */
-    set featureCount(count: number) {
-        this._featureCount = count;
+        if (this.mapCheck()) {
+            return this.$iApi.geo.map.zoomMapTo(this.extent);
+        } else {
+            return Promise.resolve();
+        }
     }
 
     /**
@@ -684,65 +617,8 @@ export class CommonLayer extends LayerInstance {
     }
 
     /**
-     * Returns an array of field definitions about the given sublayer's fields. Raster layers will have empty arrays.
-     *
-     * @returns {Array} list of field definitions
-     */
-    get fields(): Array<FieldDefinition> {
-        // this.stubError();
-        return this._fields;
-    }
-
-    /**
-     * Sets the array of field definitions about the layers's fields
-     *
-     * @param {Array<FieldDefinition>} fields the list of field definitions
-     */
-    set fields(fields: Array<FieldDefinition>) {
-        this._fields = fields;
-    }
-
-    /**
-     * Returns the name field of the layer.
-     *
-     * @returns {string} name field
-     */
-    get nameField(): string {
-        // this.stubError();
-        return this._nameField;
-    }
-
-    /**
-     * Set the name field of the layer
-     *
-     * @param {string} name the new name field
-     */
-    set nameField(name: string) {
-        this._nameField = name;
-    }
-
-    /**
-     * Returns the OID field of the layer.
-     *
-     * @returns {string} OID field
-     */
-    get oidField(): string {
-        // this.stubError();
-        return this._oidField;
-    }
-
-    /**
-     * Set the OID field of the layer
-     *
-     * @param {string} name the new OID field
-     */
-    set oidField(name: string) {
-        this._oidField = name;
-    }
-
-    /**
      * Provides a tree structure describing the layer and any sublayers,
-     * including uid values. Should only be called after isLayerLoaded resolves.
+     * including uid values. Should only be called after loadPromise resolves.
      *
      * @method getLayerTree
      * @returns {TreeNode} the root of the layer tree
@@ -844,7 +720,7 @@ export class CommonLayer extends LayerInstance {
     }
 
     /**
-     * Invokes the process to get the full set of attribute values for the given sublayer.
+     * Invokes the process to get the full set of attribute values for the layer.
      * Repeat calls will re-use the downloaded values unless the values have been explicitly cleared.
      *
      * @returns {Promise} resolves with set of attribute values
@@ -866,16 +742,16 @@ export class CommonLayer extends LayerInstance {
     }
 
     /**
-     * Requests that any downloaded attribute sets be removed from memory. The next getAttributes request will pull from the server again.
+     * Requests that any downloaded attribute sets or cached geometry be removed from memory. The next requests will pull from the server again.
      *
      */
-    destroyAttributes(): void {
+    clearFeatureCache(): void {
         this.stubError();
     }
 
     // formerly known as getFormattedAttributes
     /**
-     * Invokes the process to get the full set of attribute values for the given sublayer,
+     * Invokes the process to get the full set of attribute values for the layer,
      * formatted in a tabular format. Additional data properties are also included.
      * Repeat calls will re-use the downloaded values unless the values have been explicitly cleared.
      *
@@ -921,7 +797,7 @@ export class CommonLayer extends LayerInstance {
     }
 
     /**
-     * Returns the value of a named SQL filter for a given sublayer.
+     * Returns the value of a named SQL filter on a layer.
      *
      * @param {String} filterKey the filter key / named filter to view
      * @returns {String} the value of the where clause for the filter. Empty string if not defined.
@@ -942,11 +818,8 @@ export class CommonLayer extends LayerInstance {
         this.stubError();
     }
 
-    // TODO this makes for a fairly gnarly param. i.e. to target a sublayer with no extras, gotta call
-    //      mylayer.getFilterOIDs(undefined, undefined, myUid)
-    //      changing the two params to an options object somewhat helps, though that would also be optional param.
     /**
-     * Gets array of object ids that currently pass any filters for the given sublayer
+     * Gets array of object ids that currently pass any filters for the layer
      *
      * @param {Array} [exclusions] list of any filters keys to exclude from the result. omission includes all filters
      * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent

@@ -54,6 +54,11 @@ export class LayerInstance extends APIScope {
     uid: string;
 
     /**
+     * The name of the layer.
+     */
+    name: string;
+
+    /**
      * State of the actual layer on the map, such as loading, loaded, error'd.
      */
     layerState: LayerState;
@@ -97,6 +102,26 @@ export class LayerInstance extends APIScope {
      * If the layer type can support Feature type requests and operations
      */
     supportsFeatures: boolean;
+
+    /**
+     * Feature count (-1 represents undefined / unknown)
+     */
+    featureCount: number;
+
+    /**
+     * Array of field definitions about the given layer's fields. Non-feature layers will have empty arrays.
+     */
+    fields: Array<FieldDefinition>;
+
+    /**
+     * Field name that contains value considered the name of a feature. Not applicable for non-feature layers.
+     */
+    nameField: string;
+
+    /**
+     * Field name that contains the object ID of a feature. Not applicable for non-feature layers.
+     */
+    oidField: string;
 
     /**
      * If the layer has Sublayers
@@ -150,6 +175,11 @@ export class LayerInstance extends APIScope {
     geomType: GeometryType;
 
     /**
+     * Legend symbols of the layer
+     */
+    legend: Array<LegendSymbology>;
+
+    /**
      *  The internal ESRI API layer
      */
     esriLayer: __esri.Layer | undefined;
@@ -186,6 +216,7 @@ export class LayerInstance extends APIScope {
 
         this.id = ''; // take from config here?
         this.uid = ''; // shutting up typescript. will get set somewhere else. // TODO verify setting, move here if that is smarter.
+        this.name = 'error';
         this.layerState = LayerState.NEW;
         this.drawState = DrawState.NOT_LOADED;
         this.initiationState = InitiationState.NEW;
@@ -196,6 +227,10 @@ export class LayerInstance extends APIScope {
         this.supportsIdentify = false; // this is updated by subclasses as they will know the real deal.
         this.identifyMode = LayerIdentifyMode.NONE;
         this.supportsFeatures = false;
+        this.featureCount = -1;
+        this.fields = [];
+        this.nameField = '';
+        this.oidField = '';
         this.supportsSublayers = false;
         this.isSublayer = false;
         this.isRemoved = false;
@@ -205,6 +240,7 @@ export class LayerInstance extends APIScope {
         this.identify = false; // will be updated later based on config/supportsIdentify value
         this.hovertips = config.state?.hovertips ?? true;
         this.geomType = GeometryType.UNKNOWN;
+        this.legend = [];
         this._sublayers = [];
     }
 
@@ -240,10 +276,10 @@ export class LayerInstance extends APIScope {
      * Provides a promise that resolves when the layer has finished loading. If accessing layer properties that
      * depend on the layer being loaded, wait on this promise before accessing them.
      *
-     * @method isLayerLoaded
+     * @method loadPromise
      * @returns {Promise} resolves when the layer has finished loading
      */
-    isLayerLoaded(): Promise<void> {
+    loadPromise(): Promise<void> {
         return Promise.resolve();
     }
 
@@ -253,13 +289,13 @@ export class LayerInstance extends APIScope {
      *
      * @returns {Boolean} true if layer is in an interactive state
      */
-    get isValidState(): boolean {
+    get isLoaded(): boolean {
         return false;
     }
 
     /**
      * Provides a tree structure describing the layer and any sublayers,
-     * including uid values. Should only be called after isLayerLoaded resolves.
+     * including uid values. Should only be called after loadPromise resolves.
      *
      * @method getLayerTree
      * @returns {TreeNode} the root of the layer tree
@@ -271,22 +307,6 @@ export class LayerInstance extends APIScope {
             'getLayerTree() was not implemented in layer'
         );
     }
-
-    /**
-     * Returns the name of the layer.
-     *
-     * @returns {String} name of the layer
-     */
-    get name(): string {
-        return 'error';
-    }
-
-    /**
-     * Set the name of the layer.
-     *
-     * @param {String} name the new name of the layer
-     */
-    set name(name: string) {}
 
     /**
      * Returns the visibility of the layer.
@@ -366,87 +386,7 @@ export class LayerInstance extends APIScope {
     }
 
     /**
-     * Return the legend of the layer
-     *
-     * @returns {Array<LegendSymbology>} the legend of the layer
-     */
-    get legend(): Array<LegendSymbology> {
-        return [];
-    }
-
-    /**
-     * Set the legend of the layer
-     *
-     * @param {Array<LegendSymbology>} legend the new legend of the layer
-     */
-    set legend(legend: Array<LegendSymbology>) {}
-
-    /**
-     * Returns an array of field definitions about the given layer's fields. Raster layers will have empty arrays.
-     *
-     * @returns {Array} list of field definitions
-     */
-    get fields(): Array<FieldDefinition> {
-        return [];
-    }
-
-    /**
-     * Sets the array of field definitions about the layers's fields
-     *
-     * @param {Array<FieldDefinition>} fields the list of field definitions
-     */
-    set fields(fields: Array<FieldDefinition>) {}
-
-    /**
-     * Returns the name field of the given layer.
-     *
-     * @returns {string} name field
-     */
-    get nameField(): string {
-        return 'error';
-    }
-
-    /**
-     * Set the name field of the layer
-     *
-     * @param {string} name the new name field
-     */
-    set nameField(name: string) {}
-
-    /**
-     * Returns the OID field of the given layer.
-     *
-     * @returns {string} OID field
-     */
-    get oidField(): string {
-        return 'error';
-    }
-
-    /**
-     * Set the OID field of the layer
-     *
-     * @param {string} name the new OID field
-     */
-    set oidField(name: string) {}
-
-    /**
-     * Get the feature count for the given layer.
-     *
-     * @returns {Integer} number of features in the layer
-     */
-    get featureCount(): number {
-        return -1;
-    }
-
-    /**
-     * Set the feature count for the layer
-     *
-     * @param {Integer} count the new number of features in the layer
-     */
-    set featureCount(count: number) {}
-
-    /**
-     * Get the mouse tolerance in pixels for this layer
+     * Get the click tolerance in pixels for this layer
      *
      * @returns {number} the mouse tolerance of this layer
      */
@@ -526,10 +466,10 @@ export class LayerInstance extends APIScope {
     abortAttributeLoad(): void {}
 
     /**
-     * Requests that any downloaded attribute sets be removed from memory. The next getAttributes request will pull from the server again.
+     * Requests that any downloaded attribute sets or cached geometry be removed from memory. The next requests will pull from the server again.
      *
      */
-    destroyAttributes(): void {}
+    clearFeatureCache(): void {}
 
     // formerly known as getFormattedAttributes
     /**

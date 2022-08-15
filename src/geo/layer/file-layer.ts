@@ -249,7 +249,7 @@ export class FileLayer extends AttribLayer {
 
         this.processFieldMetadata(this.origRampConfig.fieldMetadata);
         if (!this.attLoader) {
-            throw new Error('file fc did not have attribute loader object');
+            throw new Error('file layer did not have attribute loader object');
         }
         this.attLoader.updateFieldList(this.fieldList);
 
@@ -265,10 +265,10 @@ export class FileLayer extends AttribLayer {
 
         // TODO testing this out for now. our SQL support needs the view in place, so this delays our load promise until the view is ready.
         //      if this becomes problematic (e.g. we want to create a layer and have it "load" without adding it to a map),
-        //      we can instead put the view promise dependency on the applySqlFilter of GeoJsonFC. this will require making the viewPromise public.
+        //      we can instead put the view promise dependency on the applySqlFilter of GeoJsonFC. this will require making the viewDefProm public.
         //      Alllso, we might consider putting this promise in the onLoadActions of BaseLayer, if we find other layers
         //      become hooked on the power of the view and require it to be ready.
-        loadPromises.push(this.viewPromise.getPromise());
+        loadPromises.push(this.viewDefProm.getPromise());
 
         // since no "update" cycle, mark layer as up to date after all load promises resolve.
         // Note looks like the view promise handler in CommonLayer is already setting this.
@@ -424,6 +424,8 @@ export class FileLayer extends AttribLayer {
         this.geomType = this.$iApi.geo.geom.clientGeomTypeToRampGeomType(
             l.geometryType
         );
+
+        // here to avoid any null-dereference errors, but never used.
         this.quickCache = new QuickCache(this.geomType);
 
         // TODO if we ever make config override for scale, would need to apply on the layer constructor, will end up here
@@ -434,7 +436,15 @@ export class FileLayer extends AttribLayer {
         // TODO check if layer auto-gens this in .fullExtent
         this.extent = Extent.fromESRI(l.fullExtent, this.id + '_extent');
 
-        this.esriFields = l.fields;
+        this.esriFields = markRaw(l.fields.slice());
+        this.fields = this.esriFields.map(f => {
+            return {
+                name: f.name,
+                alias: f.alias,
+                type: f.type,
+                length: f.length
+            };
+        });
         this.nameField = l.displayField;
         this.oidField = l.objectIdField;
 

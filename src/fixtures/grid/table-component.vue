@@ -268,7 +268,7 @@ export default defineComponent({
     },
 
     beforeMount() {
-        this.config = this.grids[this.layerUid];
+        this.config = this.grids[this.layerUid!];
 
         this.filterInfo = {
             firstRow: 0,
@@ -328,7 +328,7 @@ export default defineComponent({
             return;
         }
 
-        fancyLayer.isLayerLoaded().then(() => {
+        fancyLayer.loadPromise().then(() => {
             const tableAttributePromise =
                 markRaw(fancyLayer).getTabularAttributes();
 
@@ -517,8 +517,9 @@ export default defineComponent({
                             layer.uid &&
                             (layer.uid === this.layerUid ||
                                 layer.uid ===
-                                    this.$iApi.geo.layer.getLayer(this.layerUid)
-                                        ?.uid)
+                                    this.$iApi.geo.layer.getLayer(
+                                        this.layerUid!
+                                    )?.uid)
                         ) {
                             this.applyLayerFilters();
                         }
@@ -529,7 +530,7 @@ export default defineComponent({
                 this.$iApi.event.on(
                     GlobalEvents.LAYER_RELOAD_END,
                     (reloadedLayer: LayerInstance) => {
-                        reloadedLayer.isLayerLoaded().then(() => {
+                        reloadedLayer.loadPromise().then(() => {
                             if (this.layerUid === reloadedLayer.uid) {
                                 this.applyLayerFilters();
                             }
@@ -838,7 +839,7 @@ export default defineComponent({
                     maxWidth: 82,
                     cellRenderer: (cell: any) => {
                         const layer: LayerInstance | undefined =
-                            this.$iApi.geo.layer.getLayer(this.layerUid);
+                            this.$iApi.geo.layer.getLayer(this.layerUid!);
                         if (layer === undefined) return;
                         const iconContainer = document.createElement('span');
                         const oid = cell.data[this.oidField];
@@ -876,14 +877,13 @@ export default defineComponent({
 
         // updates external grid filter based on layer filter and rerenders grid
         async applyLayerFilters() {
-            const layer = this.$iApi.geo.layer.getLayer(this.layerUid)!;
+            const layer = this.$iApi.geo.layer.getLayer(this.layerUid!)!;
             if (!layer || !layer.visibility) {
                 this.filteredOids = [];
             } else {
                 this.filteredOids = await layer.getFilterOIDs(
                     [CoreFilter.GRID],
-                    undefined,
-                    this.layerUid
+                    undefined
                 );
             }
             this.gridApi.onFilterChanged();
@@ -891,8 +891,8 @@ export default defineComponent({
 
         applyFiltersToMap() {
             const mapFilterQuery = this.getFiltersQuery();
-            const layer = this.$iApi.geo.layer.getLayer(this.layerUid);
-            layer?.setSqlFilter(CoreFilter.GRID, mapFilterQuery, this.layerUid);
+            const layer = this.$iApi.geo.layer.getLayer(this.layerUid!);
+            layer?.setSqlFilter(CoreFilter.GRID, mapFilterQuery);
             this.filterSync = true;
         },
 
@@ -1104,11 +1104,8 @@ export default defineComponent({
         // checks if current grid filters are applied to map
         gridFiltersApplied() {
             const gridQuery = this.getFiltersQuery();
-            const layer = this.$iApi.geo.layer.getLayer(this.layerUid);
-            const layerQuery = layer?.getSqlFilter(
-                CoreFilter.GRID,
-                this.layerUid
-            );
+            const layer = this.$iApi.geo.layer.getLayer(this.layerUid!);
+            const layerQuery = layer?.getSqlFilter(CoreFilter.GRID);
             return gridQuery === layerQuery;
         },
 

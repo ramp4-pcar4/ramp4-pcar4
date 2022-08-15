@@ -37,7 +37,7 @@ export class GlowHilightMode extends LiftHilightMode {
         if (
             hilightLayer &&
             hilightLayer.esriLayer &&
-            hilightLayer.isValidState &&
+            hilightLayer.isLoaded &&
             hilightLayer instanceof GraphicLayer
         ) {
             const gs: Array<Graphic> =
