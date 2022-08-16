@@ -48,10 +48,6 @@ Continued [here](geosearch.md).
 
 The `help` provides a means to display user help for the application. TODO create and hyperlink to `help.md`, or provide any other relevant info here.
 
-### Metadata
-
-The `metadata` provides an interface to view extra information about a layer. TODO create and hyperlink to `metadata.md`, or provide any other relevant info here.
-
 ### Settings
 
 The `settings` allow you to make live modifications to a layer on the map. TODO create and hyperlink to `settings.md`

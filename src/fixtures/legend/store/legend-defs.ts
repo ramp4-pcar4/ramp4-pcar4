@@ -281,6 +281,15 @@ export class LegendEntry extends LegendItem {
                     if (layer.extent === undefined) {
                         controlsToRemove.push(LayerControls.BoundaryZoom);
                     }
+                    const metaConfig =
+                        layer.config?.metadata ||
+                        (layer.isSublayer
+                            ? layer.parentLayer?.config?.metadata
+                            : {}) ||
+                        {};
+                    if (!metaConfig.url) {
+                        controlsToRemove.push(LayerControls.Metadata);
+                    }
                     controlsToRemove.forEach(control => {
                         let idx: number =
                             this._controls?.indexOf(control) ?? -1;

@@ -21,12 +21,12 @@
             </template>
             <!-- metadata -->
             <a
+                v-if="getFixtureExists('metadata')"
                 href="#"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled:
-                        !legendItem!.controlAvailable(LayerControls.Metadata) ||
-                        !getFixtureExists('metadata')
+                        !legendItem!.controlAvailable(LayerControls.Metadata)
                 }"
                 @click="toggleMetadata"
             >
