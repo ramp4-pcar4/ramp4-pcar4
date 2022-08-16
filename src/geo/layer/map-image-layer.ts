@@ -36,8 +36,8 @@ import type {
 
 import {
     EsriMapImageLayer,
-    EsriRequest,
-    EsriRendererFromJson
+    EsriRendererFromJson,
+    EsriRequest
 } from '@/geo/esri';
 import { markRaw, reactive } from 'vue';
 

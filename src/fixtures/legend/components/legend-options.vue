@@ -3,14 +3,14 @@
         <dropdown-menu
             class="flex-shrink-0"
             position="bottom-start"
-            :tooltip="$t('legend.entry.options')"
+            :tooltip="$t('legend.layer.options')"
             tooltip-placement="left"
             ref="dropdown-menu"
         >
             <template #header>
-                <div class="flex p-8">
+                <div class="flex p-4">
                     <svg
-                        class="inline-block fill-current w-18 h-18 mx-8"
+                        class="inline-block fill-current w-18 h-18 mx-4"
                         viewBox="0 0 23 21"
                     >
                         <path
@@ -21,12 +21,12 @@
             </template>
             <!-- metadata -->
             <a
-                v-if="getFixtureExists('metadata')"
                 href="#"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled:
-                        !legendItem!.controlAvailable(LayerControls.Metadata)
+                        !legendItem!.layerControlAvailable(LayerControl.Metadata) ||
+                        !getFixtureExists('metadata')
                 }"
                 @click="toggleMetadata"
             >
@@ -38,7 +38,7 @@
                         d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"
                     />
                 </svg>
-                {{ $t('legend.entry.controls.metadata') }}
+                {{ $t('legend.layer.controls.metadata') }}
             </a>
             <!-- settings -->
             <a
@@ -46,7 +46,7 @@
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled:
-                        !legendItem!.controlAvailable(LayerControls.Settings) ||
+                        !legendItem!.layerControlAvailable(LayerControl.Settings) ||
                         !getFixtureExists('settings')
                 }"
                 @click="toggleSettings"
@@ -61,7 +61,7 @@
                         />
                     </g>
                 </svg>
-                {{ $t('legend.entry.controls.settings') }}
+                {{ $t('legend.layer.controls.settings') }}
             </a>
             <!-- datatable -->
             <a
@@ -69,7 +69,7 @@
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled:
-                        !legendItem!.controlAvailable(LayerControls.Datatable) ||
+                        !legendItem!.layerControlAvailable(LayerControl.Datatable) ||
                         !getFixtureExists('grid')
                 }"
                 @click="toggleGrid"
@@ -82,14 +82,14 @@
                         d="M 4.00002,3L 20,3C 21.1046,3 22,3.89543 22,5L 22,20C 22,21.1046 21.1046,22 20,22L 4.00001,22C 2.89544,22 2.00001,21.1046 2.00001,20L 2.00002,5C 2.00002,3.89543 2.89545,3 4.00002,3 Z M 4.00002,7L 4.00001,10L 8,10L 8,7.00001L 4.00002,7 Z M 10,7.00001L 9.99999,10L 14,10L 14,7.00001L 10,7.00001 Z M 20,10L 20,7L 16,7.00001L 16,10L 20,10 Z M 4.00002,12L 4.00002,15L 8,15L 8,12L 4.00002,12 Z M 4.00001,20L 8,20L 8,17L 4.00002,17L 4.00001,20 Z M 9.99999,12L 9.99999,15L 14,15L 14,12L 9.99999,12 Z M 9.99999,20L 14,20L 14,17L 9.99999,17L 9.99999,20 Z M 20,20L 20,17L 16,17L 16,20L 20,20 Z M 20,12L 16,12L 16,15L 20,15L 20,12 Z "
                     />
                 </svg>
-                {{ $t('legend.entry.controls.datatable') }}
+                {{ $t('legend.layer.controls.datatable') }}
             </a>
             <!-- symbology stack -->
             <a
                 href="#"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
-                    disabled: !legendItem!.controlAvailable(LayerControls.Symbology)
+                    disabled: !legendItem!.layerControlAvailable(LayerControl.Symbology)
                 }"
                 @click="toggleSymbology"
             >
@@ -101,14 +101,14 @@
                         d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"
                     />
                 </svg>
-                {{ $t('legend.entry.controls.symbology') }}
+                {{ $t('legend.layer.controls.symbology') }}
             </a>
             <!-- boundary zoom -->
             <a
                 href="#"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
-                    disabled: !legendItem!.controlAvailable(LayerControls.BoundaryZoom)
+                    disabled: !legendItem!.layerControlAvailable(LayerControl.BoundaryZoom)
                 }"
                 @click="zoomToLayerBoundary"
             >
@@ -122,14 +122,14 @@
                     <path d="M0 0h24v24H0V0z" fill="none" />
                     <path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z" />
                 </svg>
-                {{ $t('legend.entry.controls.boundaryzoom') }}
+                {{ $t('legend.layer.controls.boundaryzoom') }}
             </a>
             <!-- remove -->
             <a
                 href="#"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
-                    disabled: !legendItem!.controlAvailable(LayerControls.Remove)
+                    disabled: !legendItem!.layerControlAvailable(LayerControl.Remove)
                 }"
                 @click="removeLayer"
             >
@@ -141,14 +141,14 @@
                         d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
                     ></path>
                 </svg>
-                {{ $t('legend.entry.controls.remove') }}
+                {{ $t('legend.layer.controls.remove') }}
             </a>
             <!-- reload -->
             <a
                 href="#"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
-                    disabled: !legendItem!.controlAvailable(LayerControls.Reload)
+                    disabled: !legendItem!.layerControlAvailable(LayerControl.Reload)
                 }"
                 @click="reloadLayer"
             >
@@ -160,7 +160,7 @@
                         d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"
                     ></path>
                 </svg>
-                {{ $t('legend.entry.controls.reload') }}
+                {{ $t('legend.layer.controls.reload') }}
             </a>
         </dropdown-menu>
     </div>
@@ -168,18 +168,18 @@
 
 <script lang="ts">
 import { GlobalEvents } from '@/api';
-import { LayerControls } from '@/geo/api';
+import { LayerControl } from '@/geo/api';
 import { defineComponent, toRaw } from 'vue';
-import { LegendEntry } from '../store/legend-defs';
+import { LayerItem } from '../store/layer-item';
 
 export default defineComponent({
     name: 'LegendOptionsV',
     props: {
-        legendItem: LegendEntry
+        legendItem: LayerItem
     },
     data() {
         return {
-            LayerControls
+            LayerControl
         };
     },
     methods: {
@@ -187,8 +187,10 @@ export default defineComponent({
          * Display symbology stack for the layer.
          */
         toggleSymbology(): void {
-            if (this.legendItem!.controlAvailable(LayerControls.Symbology)) {
-                this.legendItem!.toggleSymbologyExpand();
+            if (
+                this.legendItem!.layerControlAvailable(LayerControl.Symbology)
+            ) {
+                this.legendItem!.toggleSymbology();
             }
         },
 
@@ -197,7 +199,9 @@ export default defineComponent({
          */
         toggleGrid() {
             if (
-                this.legendItem!.controlAvailable(LayerControls.Datatable) &&
+                this.legendItem!.layerControlAvailable(
+                    LayerControl.Datatable
+                ) &&
                 this.getFixtureExists('grid')
             ) {
                 this.$iApi.event.emit(
@@ -212,7 +216,7 @@ export default defineComponent({
          */
         toggleSettings() {
             if (
-                this.legendItem!.controlAvailable(LayerControls.Settings) &&
+                this.legendItem!.layerControlAvailable(LayerControl.Settings) &&
                 this.getFixtureExists('settings')
             ) {
                 this.$iApi.event.emit(
@@ -227,7 +231,7 @@ export default defineComponent({
          */
         toggleMetadata() {
             if (
-                this.legendItem!.controlAvailable(LayerControls.Metadata) &&
+                this.legendItem!.layerControlAvailable(LayerControl.Metadata) &&
                 this.getFixtureExists('metadata')
             ) {
                 const metaConfig =
@@ -255,7 +259,11 @@ export default defineComponent({
          * Zoom to the boundary of layer
          */
         zoomToLayerBoundary() {
-            if (this.legendItem!.controlAvailable(LayerControls.BoundaryZoom)) {
+            if (
+                this.legendItem!.layerControlAvailable(
+                    LayerControl.BoundaryZoom
+                )
+            ) {
                 this.legendItem?.layer?.zoomToLayerBoundary();
             }
         },
@@ -264,8 +272,8 @@ export default defineComponent({
          * Removes layer from map.
          */
         removeLayer() {
-            if (this.legendItem!.controlAvailable(LayerControls.Remove)) {
-                this.$iApi.geo.map.removeLayer(this.legendItem!.layerUID!);
+            if (this.legendItem!.layerControlAvailable(LayerControl.Remove)) {
+                this.$iApi.geo.map.removeLayer(this.legendItem!.layerUid!);
             }
         },
 
@@ -273,7 +281,7 @@ export default defineComponent({
          * Reloads a layer on the map.
          */
         reloadLayer() {
-            if (this.legendItem!.controlAvailable(LayerControls.Reload)) {
+            if (this.legendItem!.layerControlAvailable(LayerControl.Reload)) {
                 toRaw(this.legendItem!.layer!).reload();
                 this.$refs['dropdown-menu'].open = false;
             }

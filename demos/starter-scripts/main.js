@@ -286,7 +286,7 @@ let config = {
                             name: 'Carbon monoxide emissions by facility',
                             state: {
                                 opacity: 0.5,
-                                visibility: true
+                                visibility: false
                             },
                             disabledControls: ['opacity']
                         }
@@ -347,6 +347,41 @@ let config = {
                             template: 'WFSLayer-Custom'
                         }
                     }
+                },
+                {
+                    id: 'Caribous',
+                    name: 'Caribou Layer',
+                    layerType: 'esri-feature',
+                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/2015_Disturbance_Footprints_Boreal_Caribou_lempreinte_15m/MapServer/0',
+                    mouseTolerance: 5,
+                    identifyMode: 'hybrid',
+                    state: {
+                        opacity: 0.5,
+                        visibility: true
+                    },
+                    customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                },
+                {
+                    id: 'OilFacility',
+                    name: 'OilFacility',
+                    layerType: 'esri-feature',
+                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/StoryRAMP/410b88da_0ed1_4749_903f_5e76c24e2e5f/MapServer/1',
+                    state: {
+                        opacity: 1,
+                        visibility: true
+                    },
+                    customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                },
+                {
+                    id: 'ReleasesDisposals',
+                    name: 'ReleaseDisposals',
+                    layerType: 'esri-feature',
+                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/StoryRAMP/410b88da_0ed1_4749_903f_5e76c24e2e5f/MapServer/2',
+                    state: {
+                        opacity: 1,
+                        visibility: true
+                    },
+                    customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
                 }
             ],
             fixtures: {
@@ -354,33 +389,43 @@ let config = {
                     root: {
                         children: [
                             {
-                                name: 'Visibility Set',
-                                exclusiveVisibility: [
+                                name: 'Regular Group',
+                                children: [
+                                    {
+                                        layerId: 'OilFacility',
+                                        name: 'Oil Sands Facility Locations',
+                                        disabledLayerControls: ['visibility'],
+                                        coverIcon:
+                                            'https://cdn-icons-png.flaticon.com/512/3129/3129632.png'
+                                    },
+                                    {
+                                        layerId: 'ReleasesDisposals',
+                                        name: 'Releases and Disposals by Mining Facilities',
+                                        disabledLayerControls: ['boundaryZoom']
+                                    }
+                                ]
+                            },
+                            {
+                                name: 'Exclusive Visibility Set',
+                                disabledControls: ['visibilityButton'],
+                                exclusive: true,
+                                children: [
                                     {
                                         layerId: 'CleanAir',
                                         name: 'Clean Air in Set',
-                                        disabledControls: ['boundaryZoom']
+                                        disabledLayerControls: ['boundaryZoom']
                                     },
                                     {
-                                        name: 'Group in Set',
+                                        layerId: 'WaterQuantity',
+                                        name: 'Water Quantity in Nested Group',
+                                        sublayerIndex: 1,
+                                        expanded: false,
                                         children: [
                                             {
                                                 layerId: 'WaterQuantity',
-                                                name: 'Water Quantity in Nested Group',
-                                                sublayerIndex: 1,
-                                                controls: [
-                                                    'datatable',
-                                                    'metadata',
-                                                    'reload',
-                                                    'remove',
-                                                    'settings',
-                                                    'symbology'
-                                                ]
-                                            },
-                                            {
-                                                layerId: 'WaterQuantity',
                                                 name: 'CO2 in Nested Group',
-                                                sublayerIndex: 9
+                                                sublayerIndex: 9,
+                                                visibility: false
                                             },
                                             {
                                                 layerId: 'WaterQuality',
@@ -388,21 +433,50 @@ let config = {
                                                 sublayerIndex: 5
                                             }
                                         ]
+                                    },
+                                    {
+                                        layerId: 'WFSLayer',
+                                        name: 'WFSLayer'
                                     }
                                 ]
                             },
                             {
-                                layerId: 'WFSLayer',
-                                name: 'WFSLayer',
-                                controls: [
-                                    'metadata',
-                                    'boundaryZoom',
-                                    'refresh',
-                                    'reload',
-                                    'remove',
-                                    'datatable',
-                                    'settings',
-                                    'symbology'
+                                infoType: 'text',
+                                content: 'Image info section example:'
+                            },
+                            {
+                                infoType: 'image',
+                                content:
+                                    'https://media.gettyimages.com/photos/niagara-falls-picture-id1181897622?k=20&m=1181897622&s=612x612&w=0&h=doNDR18kAA7kl7UuTZcAZdoGQxTE1UJYTzrdW1f3KcI='
+                            },
+                            {
+                                name: 'Title info section with children.',
+                                infoType: 'title',
+                                content: 'Expand me for a surprise!',
+                                expanded: false,
+                                children: [
+                                    {
+                                        name: 'text info section with children',
+                                        infoType: 'text',
+                                        content: 'Keep expanding!',
+                                        expanded: false,
+                                        children: [
+                                            {
+                                                name: 'Custom Info Section',
+                                                infoType: 'template',
+                                                content: `<div>
+                                                            <span>Surpise one:.</span>
+                                                            <img src="https://i.imgur.com/WtY0tdC.gif" />
+                                                            </div>`
+                                            },
+                                            {
+                                                name: 'Surprise 2: Secret feature layer hidden in info section with custom cover icon',
+                                                layerId: 'Caribous',
+                                                coverIcon:
+                                                    'https://cdn-icons-png.flaticon.com/512/3628/3628583.png'
+                                            }
+                                        ]
+                                    }
                                 ]
                             }
                         ]

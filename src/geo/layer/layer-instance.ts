@@ -6,7 +6,7 @@ import {
     GeometryType,
     Graphic,
     InitiationState,
-    LayerControls,
+    LayerControl,
     LayerFormat,
     LayerIdentifyMode,
     LayerState,
@@ -338,7 +338,9 @@ export class LayerInstance extends APIScope {
      *
      * @param {Boolean} value the new opacity setting
      */
-    set opacity(value: number) {}
+    set opacity(value: number) {
+        this.opacity = value;
+    }
 
     /**
      * Returns the scale set (min and max visible scale) of the layer.
@@ -690,10 +692,10 @@ export class LayerInstance extends APIScope {
     /**
      * Check if layer controls is available on this layer.
      *
-     * @param {LayerControls} control the layer control to check
+     * @param {LayerControl} control the layer control to check
      * @returns {boolean} Indicates if the given control is enabled on this layer
      */
-    controlAvailable(control: LayerControls): boolean {
+    controlAvailable(control: LayerControl): boolean {
         const controls:
             | {
                   controls: Array<string>;
