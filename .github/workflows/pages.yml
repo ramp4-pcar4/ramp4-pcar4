@@ -20,6 +20,11 @@ jobs:
                   path: dist
                   key: dist-${{ inputs.cache_sha }}
 
+            - name: Move the .nojekyll file to dist folder
+              shell: bash
+              run: |
+                  cp .nojekyll ./dist
+
             - name: Deploy 🚀
               uses: JamesIves/github-pages-deploy-action@v4.3.3
               with:
