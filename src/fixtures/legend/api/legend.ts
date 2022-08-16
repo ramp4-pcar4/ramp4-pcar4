@@ -395,11 +395,11 @@ export class LegendAPI extends FixtureInstance {
     updateLegend(layer: LayerInstance): void {
         // helper function to link a layer into a legend entry
         const updateEntry = (layer: LayerInstance) => {
-            const entry: LegendItem | undefined = this.getLayerItem(layer.id);
+            const entry: LegendItem | undefined = this.getItem(layer.id);
             (entry as LegendEntry)?.loadLayer(layer);
         };
         const errorEntry = (layer: LayerInstance | string) => {
-            const entry: LegendItem | undefined = this.getLayerItem(
+            const entry: LegendItem | undefined = this.getItem(
                 layer instanceof LayerInstance ? layer.id : layer
             );
             (entry as LegendEntry)?.setErrorType();
