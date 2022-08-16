@@ -132,8 +132,10 @@ export default defineComponent({
 .rv-dropdown > * {
     padding: 0.5rem 1rem;
     display: block !important;
-    color: #2d3748 !important;
     text-decoration: none !important;
+}
+.rv-dropdown > *:not(.disabled) {
+    color: #2d3748 !important;
 }
 .rv-dropdown > *:hover:not(.disabled) {
     background-color: #eee;

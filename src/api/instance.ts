@@ -27,7 +27,7 @@ import {
     PanelAPI,
     NotificationAPI
 } from './internal';
-import { LayerInstance } from './internal';
+import type { LayerInstance } from './internal';
 
 import PanelScreenV from '@/components/panel-stack/panel-screen.vue';
 import PinV from '@/components/panel-stack/controls/pin.vue';
@@ -45,7 +45,6 @@ import MapnavButtonV from '@/fixtures/mapnav/button.vue';
 
 import AppbarButtonV from '@/fixtures/appbar/button.vue';
 import type { MaptipAPI } from '@/geo/map/maptip';
-import { layer } from '@/store/modules/layer';
 
 export interface RampOptions {
     loadDefaultFixtures?: boolean;
@@ -150,6 +149,7 @@ export class InstanceAPI {
             this.$vApp.$store.set(ConfigStore.registerConfig, {
                 config: langConfig,
                 configLangs: Object.keys(langConfigs),
+                // @ts-ignore
                 allLangs: Object.keys(this.$vApp.$i18n.messages)
             });
 
