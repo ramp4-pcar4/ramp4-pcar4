@@ -61,9 +61,6 @@ export class FeatureLayer extends AttribLayer {
     protected makeEsriLayerConfig(
         rampLayerConfig: RampLayerConfig
     ): __esri.FeatureLayerProperties {
-        // TODO flush out
-        // NOTE: it would be nice to put esri.LayerProperties as the return type, but since we are cheating with refreshInterval it wont work
-        //       we can make our own interface if it needs to happen (or can extent the esri one)
         const esriConfig: __esri.FeatureLayerProperties =
             super.makeEsriLayerConfig(rampLayerConfig);
 

@@ -34,7 +34,10 @@ export class WmsLayer extends CommonLayer {
         this.hovertips = false;
         this.layerType = LayerType.WMS;
         this.layerFormat = LayerFormat.WMS;
-        this.mimeType = rampConfig.featureInfoMimeType || ''; // TODO is there a default? will that be in the config defaulting?
+        // TODO is there a default? we have a bit of stuff in this file that assumes `text`,
+        //      but the INFO_FORMAT param on the GetFeatureInfo request gets set to this value.
+        //      Is it better to have that param turn off if not supplied and let server use default?
+        this.mimeType = rampConfig.featureInfoMimeType || '';
         this.sublayerNames = [];
         this.dataFormat = DataFormat.OGC_RASTER;
         this.identifyMode = LayerIdentifyMode.GEOMETRIC;
@@ -92,6 +95,17 @@ export class WmsLayer extends CommonLayer {
             esriConfig.customParameters.layers = lEntries[0].id;
         }
 
+        // NOTE the above `if` is what we currently have for the
+        //      suppressGetCapabilities thing that Ramp2 did. It
+        //      only works for geomet's services for now. Our best knowledge
+        //      is the geomet "layer" param is custom to their server setup.
+        //      Bit of risk here, if they ever change their URL or param names.
+        //      Would also need more code changes if we need to support different
+        //      services in this way. Hopefully vast majority of WMS endpoints
+        //      dont have 10+ MB capability files, and this is non-issue.
+        //      the todo below is original brainstorming on the problem,
+        //      not feeling hot that a good universal solution exists.
+        //
         // TODO need to test the .suppressGetCapabilities functionality.
         //      we no longer have .resourceInfo on the layer constructor.
         //      first attempt would be to try and pre-populate .sublayers
@@ -159,7 +173,7 @@ export class WmsLayer extends CommonLayer {
             this.noLayerErr();
         }
 
-        loadPromises.push(this.loadSymbology());
+        this.loadSymbology();
 
         // TODO check out whats going on with layer extent. is it set and donethanks?
 
@@ -284,8 +298,7 @@ export class WmsLayer extends CommonLayer {
 
     /**
      * Handles click events for WMS layers (makes a WMS GetFeatureInfo call behind the scenes).
-     * TODO update these params once things are solidified
-     * @param {WmsLayer} wmsLayer a RAMP WMSLayer object to be queried
+     *
      * @param {Array} layerList a list of strings identifying the WMS sublayers to be queried
      * @param {Point} point a RAMP Point indicating where the user clicked
      * @param {String} mimeType the format to be requested for the response
@@ -520,9 +533,8 @@ export class WmsLayer extends CommonLayer {
      * Download or refresh the internal symbology for the sublayer.
      *
      * @function loadSymbology
-     * @returns {Promise}         resolves when symbology has been downloaded
      */
-    loadSymbology() {
+    loadSymbology(): void {
         const configSublayers = this.config.sublayers;
         const legendArray = this.getLegendUrls(
             configSublayers.map((sublayer: any) => {
@@ -554,6 +566,5 @@ export class WmsLayer extends CommonLayer {
             return symbologyItem;
         });
         this.legend = legendArray;
-        return Promise.resolve();
     }
 }

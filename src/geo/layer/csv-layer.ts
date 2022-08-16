@@ -1,8 +1,6 @@
 import { FileLayer, InstanceAPI } from '@/api/internal';
 import { LayerType, type RampLayerConfig } from '@/geo/api';
 
-// NOTE this is currently 100% untested
-
 export class CsvLayer extends FileLayer {
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
@@ -38,7 +36,7 @@ export class CsvLayer extends FileLayer {
             //   3. store parsed result in local var csvData
 
             // temp line to warn people
-            csvData = 'error remote file csv loader not yet implemented';
+            throw new Error('remote file csv loader not yet supported');
         } else {
             throw new Error('Csv file config contains no raw data or url');
         }

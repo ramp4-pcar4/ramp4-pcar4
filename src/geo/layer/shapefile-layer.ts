@@ -44,8 +44,7 @@ export class ShapefileLayer extends FileLayer {
             // might make sense to put those steps in geo.layers.files module for re-use
 
             // temp line to warn people
-            shapefileData =
-                'error remote file shapefile loader not yet implemented';
+            throw new Error('remote file shapefile loader not yet supported');
         } else {
             throw new Error(
                 'shapefile file config contains no raw data or url'

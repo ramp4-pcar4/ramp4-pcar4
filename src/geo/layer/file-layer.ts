@@ -231,9 +231,6 @@ export class FileLayer extends AttribLayer {
 
         this.layerTree.name = this.name;
 
-        // TODO implement symbology load
-        // const pLS = aFC.loadSymbology();
-
         // NOTE: call extract, not load, as there is no service involved here
         // TODO figure out what do to with custom renderer here
         this.extractLayerMetadata();

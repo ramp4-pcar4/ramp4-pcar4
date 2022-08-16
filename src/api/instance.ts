@@ -27,7 +27,7 @@ import {
     PanelAPI,
     NotificationAPI
 } from './internal';
-import { LayerInstance } from './internal';
+import type { LayerInstance } from './internal';
 
 import PanelScreenV from '@/components/panel-stack/panel-screen.vue';
 import PinV from '@/components/panel-stack/controls/pin.vue';

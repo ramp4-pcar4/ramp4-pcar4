@@ -153,15 +153,16 @@ export default defineComponent({
                         const poleLayer = this.$iApi.geo.layer.createLayer({
                             id: POLE_MARKER_LAYER_ID,
                             layerType: LayerType.GRAPHIC,
+                            url: '',
                             cosmetic: true // mark this layer as a cosmetic layer
                         });
                         this.$iApi.geo.map.addLayer(poleLayer);
 
                         const poleGraphic = new Graphic(projPole, 'northpole');
                         const poleStyle = new PointStyle(
-                            <PointIconStyleOptions | PointMarkerStyleOptions>(
-                                poleStyleParams
-                            )
+                            poleStyleParams as
+                                | PointIconStyleOptions
+                                | PointMarkerStyleOptions
                         );
                         poleGraphic.style = poleStyle;
 

@@ -92,6 +92,12 @@ export enum GlobalEvents {
     LAYER_DRAWSTATECHANGE = 'layer/drawstatechange',
 
     /**
+     * Fires when the layer state of a layer changes.
+     * Payload: `({ layer: LayerInstance, state: string})`
+     */
+    LAYER_INITIATIONSTATECHANGE = 'layer/initiationStatechange',
+
+    /**
      * Fires when the opacity of a layer changes.
      * Payload: `({ layer: LayerInstance, opacity: number })`
      */
@@ -126,12 +132,6 @@ export enum GlobalEvents {
      * Payload: `({ layer: LayerInstance, state: string })`
      */
     LAYER_LAYERSTATECHANGE = 'layer/layerstatechange',
-
-    /**
-     * Fires when the layer state of a layer changes.
-     * Payload: `({ layer: LayerInstance, state: string})`
-     */
-    LAYER_INITIATIONSTATECHANGE = 'layer/initiationStatechange',
 
     /**
      * Fires when the visibility of a layer changes.

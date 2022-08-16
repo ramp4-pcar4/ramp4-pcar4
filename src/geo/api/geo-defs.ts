@@ -572,7 +572,7 @@ export interface RampLayerWmsSublayerConfig {
 export interface RampLayerConfig {
     id: string;
     layerType: LayerType;
-    url: string;
+    url: string; // TODO tricky choice. really this should be optional. Graphic layers & raw geojson don't use it. But then we need undefined checks in majority of code.
     name?: string;
     state?: RampLayerStateConfig;
     customRenderer?: any;
