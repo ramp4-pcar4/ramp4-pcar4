@@ -432,51 +432,55 @@ export class MapAPI extends CommonMapAPI {
      * @param {number | undefined} index optional order index to add the layer to
      * @returns {Promise<void>} a promise that resolves when the layer has been added to the map
      */
-    async addLayer(
+    addLayer(
         layer: LayerInstance,
         index: number | undefined = undefined
     ): Promise<void> {
-        if (!this.esriMap) {
-            this.noMapErr();
-            return;
-        }
-        if (
-            layer.initiationState !== InitiationState.INITIATING &&
-            layer.initiationState !== InitiationState.INITIATED &&
-            layer.layerState !== LayerState.ERROR
-        ) {
-            // could also await for this but its technically not necessary thanks to the watcher.
-            layer.initiate();
-        }
-        let timeElapsed = 0;
-        // Alternative to this: use event API and watch for layer initiated and layer error events??
-        const layerWatcher = setInterval(() => {
-            timeElapsed += 1000;
-            if (
-                timeElapsed >= 600000 ||
-                layer.layerState === LayerState.ERROR
-            ) {
-                clearInterval(layerWatcher);
-                this.$iApi.$vApp.$store.set(LayerStore.addErrorLayers, [layer]);
-                layer.updateLayerState(LayerState.ERROR); // need this thanks to an edge case where the legend sometimes doesnt update
-                throw new Error(`Failed to add layer - ${layer.id}`);
-            } else if (
-                layer.initiationState === InitiationState.INITIATED &&
-                layer.esriLayer
-            ) {
-                clearInterval(layerWatcher);
-                this.esriMap?.add(layer.esriLayer);
-                this.$iApi.$vApp.$store.set(LayerStore.addLayers, [layer]);
-                // if index is provided, reorder the layer to the given index
-                // use the reorder method so that the esri map-stack and the layer store can stay in sync
-                if (index !== undefined) {
-                    this.reorder(layer, index);
-                }
-
-                // layer has been added to the map, fire layer registered event
-                this.$iApi.event.emit(GlobalEvents.LAYER_REGISTERED, layer);
+        return new Promise((resolve, reject) => {
+            if (!this.esriMap) {
+                this.noMapErr();
+                reject();
             }
-        }, 250);
+            if (
+                layer.initiationState !== InitiationState.INITIATING &&
+                layer.initiationState !== InitiationState.INITIATED &&
+                layer.layerState !== LayerState.ERROR
+            ) {
+                // could also await for this but its technically not necessary thanks to the watcher.
+                layer.initiate();
+            }
+            let timeElapsed = 0;
+            // Alternative to this: use event API and watch for layer initiated and layer error events??
+            const layerWatcher = setInterval(() => {
+                timeElapsed += 1000;
+                if (
+                    timeElapsed >= 600000 ||
+                    layer.layerState === LayerState.ERROR
+                ) {
+                    clearInterval(layerWatcher);
+                    this.$iApi.$vApp.$store.set(LayerStore.addErrorLayers, [
+                        layer
+                    ]);
+                    layer.updateLayerState(LayerState.ERROR); // need this thanks to an edge case where the legend sometimes doesnt update
+                    reject();
+                } else if (
+                    layer.initiationState === InitiationState.INITIATED &&
+                    layer.esriLayer
+                ) {
+                    clearInterval(layerWatcher);
+                    this.esriMap?.add(layer.esriLayer);
+                    this.$iApi.$vApp.$store.set(LayerStore.addLayers, [layer]);
+                    // if index is provided, reorder the layer to the given index
+                    // use the reorder method so that the esri map-stack and the layer store can stay in sync
+                    if (index !== undefined) {
+                        this.reorder(layer, index);
+                    }
+                    // layer has been added to the map, fire layer registered event
+                    this.$iApi.event.emit(GlobalEvents.LAYER_REGISTERED, layer);
+                    resolve();
+                }
+            }, 250);
+        });
     }
 
     /**

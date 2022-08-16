@@ -13,6 +13,7 @@ import pathifyHelper from '@/store/pathify-helper';
 import App from '@/app.vue';
 import { store } from '@/store';
 import { ConfigStore } from '@/store/modules/config';
+import { MaptipStore } from '@/store/modules/maptip';
 
 import VueTippy from 'vue-tippy';
 import { FocusList, FocusItem, FocusContainer } from '@/directives/focus-list';
@@ -26,6 +27,7 @@ import {
     PanelAPI,
     NotificationAPI
 } from './internal';
+import { LayerInstance } from './internal';
 
 import PanelScreenV from '@/components/panel-stack/panel-screen.vue';
 import PinV from '@/components/panel-stack/controls/pin.vue';
@@ -43,6 +45,7 @@ import MapnavButtonV from '@/fixtures/mapnav/button.vue';
 
 import AppbarButtonV from '@/fixtures/appbar/button.vue';
 import type { MaptipAPI } from '@/geo/map/maptip';
+import { layer } from '@/store/modules/layer';
 
 export interface RampOptions {
     loadDefaultFixtures?: boolean;
@@ -165,6 +168,51 @@ export class InstanceAPI {
                 )
             );
 
+            // create the map
+            console.log('Creating map:', langConfig.map);
+            const mapViewElement: Element | null =
+                this.$vApp.$el.querySelector('#esriMap');
+
+            this.geo.map.createMap(
+                langConfig.map,
+                mapViewElement as HTMLDivElement
+            );
+
+            // Hide hovertip on map creation
+            //@ts-ignore
+            mapViewElement._tippy.hide(0);
+            this.$vApp.$store.set(
+                MaptipStore.setMaptipInstance,
+                //@ts-ignore
+                mapViewElement._tippy
+            );
+
+            // add layers
+            if (langConfig.layers && langConfig.layers.length > 0) {
+                console.log('Adding layers:', langConfig.layers);
+                langConfig.layers
+                    .map(layerConfig => {
+                        const layer = this.geo.layer.createLayer(layerConfig);
+                        this.geo.map.addLayer(layer!);
+                        return layer;
+                    })
+                    .filter(Boolean)
+                    .forEach((layer: LayerInstance, index: number) => {
+                        layer
+                            ?.loadPromise()
+                            .then(() => {
+                                if (layer?.isLoaded) {
+                                    this.geo.map.reorder(layer!, index);
+                                }
+                            })
+                            .catch(() =>
+                                console.error(
+                                    `Failed to add/reorder layer: ${layer.id}.`
+                                )
+                            );
+                    });
+            }
+
             // open and pin appropiate panels on startup
             // TODO: Note that certain panels like grid, settings, etc. need to get data for a specific layer.
             // Because different fixtures get this data in different ways (some use LayerInstance, some uid, some custom config),
@@ -216,10 +264,6 @@ export class InstanceAPI {
             !(options.loadDefaultFixtures === false) ||
             configs?.startingFixtures !== undefined
         ) {
-            this.$vApp.$store.set(
-                ConfigStore.setStartingFixtures,
-                configs?.startingFixtures
-            );
             this.fixture.addDefaultFixtures(configs?.startingFixtures);
         }
         if (!(options.loadDefaultEvents === false)) {
