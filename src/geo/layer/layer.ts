@@ -17,7 +17,7 @@ import {
     WfsLayer,
     WmsLayer
 } from '@/api/internal';
-import { LayerControls, LayerType, type RampLayerConfig } from '@/geo/api';
+import { LayerControl, LayerType, type RampLayerConfig } from '@/geo/api';
 import { LayerStore } from '@/store/modules/layer';
 
 // this class represents the functions that exist on rampApi.geo.layer
@@ -131,8 +131,8 @@ export class LayerAPI extends APIScope {
      */
     getLayerControls(layerId: string):
         | {
-              controls: Array<LayerControls>;
-              disabledControls: Array<LayerControls>;
+              controls: Array<LayerControl>;
+              disabledControls: Array<LayerControl>;
           }
         | undefined {
         // fetch the layer first since given layerId can be layer id or uid
@@ -142,35 +142,35 @@ export class LayerAPI extends APIScope {
         }
 
         // get controls config from layer.config since we do not expect this to change mid-session
-        const controls: Array<LayerControls> =
+        const controls: Array<LayerControl> =
             layer.config.controls?.slice() ?? [
-                LayerControls.BoundaryZoom,
-                LayerControls.Datatable,
-                LayerControls.Identify,
-                LayerControls.Metadata,
-                LayerControls.Opacity,
-                LayerControls.Refresh,
-                LayerControls.Reload,
-                LayerControls.Remove,
-                LayerControls.Settings,
-                LayerControls.Symbology,
-                LayerControls.Visibility
+                LayerControl.BoundaryZoom,
+                LayerControl.Datatable,
+                LayerControl.Identify,
+                LayerControl.Metadata,
+                LayerControl.Opacity,
+                LayerControl.Refresh,
+                LayerControl.Reload,
+                LayerControl.Remove,
+                LayerControl.Settings,
+                LayerControl.Symbology,
+                LayerControl.Visibility
             ];
 
         // remove controls if layer doesn't support them
-        let controlsToRemove: Array<LayerControls> = [];
+        let controlsToRemove: Array<LayerControl> = [];
         if (!layer.supportsFeatures) {
-            controlsToRemove.push(LayerControls.Datatable);
+            controlsToRemove.push(LayerControl.Datatable);
         }
         if (layer.extent === undefined) {
-            controlsToRemove.push(LayerControls.BoundaryZoom);
+            controlsToRemove.push(LayerControl.BoundaryZoom);
         }
         const metaConfig =
             layer.config?.metadata ||
             (layer.isSublayer ? layer.parentLayer?.config?.metadata : {}) ||
             {};
         if (!metaConfig.url) {
-            controlsToRemove.push(LayerControls.Metadata);
+            controlsToRemove.push(LayerControl.Metadata);
         }
 
         controlsToRemove.forEach(control => {

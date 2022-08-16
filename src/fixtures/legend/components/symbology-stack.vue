@@ -46,15 +46,15 @@
 <script lang="ts">
 import type { LayerInstance } from '@/api';
 import type { LegendSymbology } from '@/geo/api';
-import { defineComponent, toRaw } from 'vue';
 import type { PropType } from 'vue';
-import type { LegendEntry } from '../store/legend-defs';
+import { defineComponent, toRaw } from 'vue';
+import type { LayerItem } from '../store/layer-item';
 
 export default defineComponent({
     name: 'LegendSymbologyStackV',
     props: {
         visible: { type: Boolean, required: true },
-        legendItem: { type: Object as PropType<LegendEntry>, required: true },
+        legendItem: { type: Object as PropType<LayerItem>, required: true },
         layer: { type: Object as PropType<LayerInstance>, required: true }
     },
     data() {
@@ -63,9 +63,9 @@ export default defineComponent({
         };
     },
     mounted() {
-        // wait for the layer entry to load
+        // wait for the layer item to load
         this.legendItem.loadPromise.then(() => {
-            if (this.legendItem.layerUID !== undefined) {
+            if (this.legendItem.layerUid !== undefined) {
                 // retrieve the symbology stack
                 // waits on all symbols in the stack to finish loading before displaying.
                 Promise.all(
