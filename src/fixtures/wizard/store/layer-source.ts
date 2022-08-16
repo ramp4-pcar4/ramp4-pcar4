@@ -171,7 +171,6 @@ export class LayerSource extends APIScope {
 
     async getMapImageInfo(url: string): Promise<LayerInfo> {
         const response = await axios.get(url, { params: { f: 'json' } });
-
         const config = {
             id: `${LayerType.MAPIMAGE}#${++this.layerCount}`,
             url: url,

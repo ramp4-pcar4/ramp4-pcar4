@@ -277,7 +277,7 @@
                     "$ref": "#/$defs/panelWidth"
                 },
                 "root": {
-                    "$ref": "#/$defs/entryGroup"
+                    "$ref": "#/$defs/sectionItem"
                 }
             },
             "required": ["root"],
@@ -287,143 +287,53 @@
             "type": ["number", "object"],
             "description": "Determines the width of provided panels. If a number, then defaults all panels for the fixture to the number."
         },
-        "entryGroup": {
+        "sectionItem": {
             "type": "object",
-            "description": "A legend group element that can contain child elements to form a nested legend structure.",
+            "description": "A legend item not bound to a layer, used only for grouping legend items or displaying info sections.",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/legendItem"
+                }
+            ],
             "properties": {
-                "name": {
+                "infoType": {
+                    "type": "string",
+                    "enum": ["title", "image", "text", "markdown", "template"],
+                    "default": "title",
+                    "description": "Type of info content."
+                },
+                "content": {
                     "type": "string",
                     "default": "",
-                    "description": "Title of the legend group."
-                },
-                "hidden": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Indicates that the legend group will be hidden from the UI."
-                },
-                "expanded": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Specifies if legend group is expanded by default."
-                },
-                "controls": {
-                    "$ref": "#/$defs/legendGroupControls",
-                    "default": ["visibility"]
-                },
-                "disabledControls": {
-                    "$ref": "#/$defs/legendGroupControls",
-                    "default": []
-                },
-                "children": {
-                    "type": "array",
-                    "items": {
-                        "oneOf": [
-                            {
-                                "$ref": "#/$defs/entry"
-                            },
-                            {
-                                "$ref": "#/$defs/entryGroup"
-                            },
-                            {
-                                "$ref": "#/$defs/infoSection"
-                            },
-                            {
-                                "$ref": "#/$defs/visibilitySet"
-                            }
-                        ]
-                    },
-                    "minItems": 1
+                    "description": "Actual content of the section - description of title/text, URL to image file, or HTML for template."
                 }
             },
-            "required": ["name", "children"],
             "unevaluatedProperties": false
         },
-        "legendHeaderControls": {
-            "type": "array",
-            "description": "All possible controls to show in the legend header.",
-            "items": {
-                "type": "string",
-                "enum": [
-                    "groupToggle",
-                    "layerReorder",
-                    "visibilityToggle",
-                    "wizard"
-                ]
-            },
-            "uniqueItems": true
-        },
-        "legendGroupControls": {
-            "type": "array",
-            "description": "All possible controls to be enabled/disabled on a legend group.",
-            "items": {
-                "type": "string",
-                "enum": [
-                    "identify",
-                    "opacity",
-                    "reload",
-                    "remove",
-                    "settings",
-                    "symbology",
-                    "visibility"
-                ]
-            },
-            "uniqueItems": true
-        },
-        "layerControls": {
-            "type": "array",
-            "description": "All possible controls to be enabled/disabled on a single legend entry.",
-            "items": {
-                "type": "string",
-                "enum": [
-                    "boundaryZoom",
-                    "datatable",
-                    "identify",
-                    "metadata",
-                    "opacity",
-                    "refresh",
-                    "reload",
-                    "remove",
-                    "settings",
-                    "symbology",
-                    "visibility"
-                ]
-            },
-            "uniqueItems": true
-        },
-        "entry": {
+        "layerItem": {
             "type": "object",
-            "description": "A single entry legend element.",
+            "description": "A single legend item bound to a layer.",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/legendItem"
+                }
+            ],
             "properties": {
                 "layerId": {
                     "type": "string",
-                    "description": "Link to a layer defined in the layers section of config."
-                },
-                "name": {
-                    "type": "string",
-                    "description": "Title of the legend entry."
-                },
-                "hidden": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Indicates that the legend block will be hidden from the UI and all its controls will be inaccessible to the user."
-                },
-                "controlledIds": {
-                    "type": "array",
-                    "default": [],
-                    "description": "List of additional layer ids which controlled by this layer.",
-                    "items": {
-                        "type": "string"
-                    }
+                    "description": "Id a layer defined in the layers section of config."
                 },
                 "sublayerIndex": {
                     "type": "integer",
                     "default": 0,
                     "description": "Index of the 'sublayer' in the case of a map image layer."
                 },
-                "sublayerId": {
-                    "type": "string",
-                    "default": 0,
-                    "description": "Id of the 'sublayer' in the case of an OGC WMS layer."
+                "layerControls": {
+                    "$ref": "#/$defs/layerControls"
+                },
+                "layerDisabledControls": {
+                    "$ref": "#/$defs/layerControls",
+                    "default": []
                 },
                 "coverIcon": {
                     "type": "string",
@@ -434,13 +344,6 @@
                     "type": "string",
                     "default": "",
                     "description": "Optional description displayed above the symbology stack on mouse hover."
-                },
-                "controls": {
-                    "$ref": "#/$defs/layerControls"
-                },
-                "disabledControls": {
-                    "$ref": "#/$defs/layerControls",
-                    "default": []
                 },
                 "symbologyStack": {
                     "$ref": "#/$defs/symbologyStack"
@@ -459,6 +362,102 @@
             },
             "required": ["layerId"],
             "unevaluatedProperties": false
+        },
+        "legendItem": {
+            "type": "object",
+            "description": "Config for common properties present in all legend item types.",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Title of the legend item."
+                },
+                "hidden": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Indicates that the legend item will be hidden from the UI."
+                },
+                "expanded": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Specifies if the legend item is expanded by default."
+                },
+                "visibility": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Specifies that the legend item will be visible by default."
+                },
+                "exclusive": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Specifies that children of this item form an exclusive set."
+                },
+                "controls": {
+                    "$ref": "#/$defs/legendItemControls",
+                    "default": ["visibility", "expand"]
+                },
+                "disabledControls": {
+                    "$ref": "#/$defs/legendItemControls",
+                    "default": []
+                },
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/$defs/layerItem"
+                            },
+                            {
+                                "$ref": "#/$defs/sectionItem"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "legendHeaderControls": {
+            "type": "array",
+            "description": "All possible controls to show in the legend header.",
+            "items": {
+                "type": "string",
+                "enum": [
+                    "groupToggle",
+                    "layerReorder",
+                    "visibilityToggle",
+                    "wizard"
+                ]
+            },
+            "uniqueItems": true
+        },
+        "legendItemControls": {
+            "type": "array",
+            "description": "All possible controls to be enabled/disabled on a legend item.",
+            "items": {
+                "type": "string",
+                "enum": ["visibility", "expand"]
+            },
+            "uniqueItems": true
+        },
+        "layerControls": {
+            "type": "array",
+            "description": "All possible controls to be enabled/disabled on a single legend layer item.",
+            "items": {
+                "type": "string",
+                "enum": [
+                    "boundaryZoom",
+                    "datatable",
+                    "identify",
+                    "metadata",
+                    "opacity",
+                    "refresh",
+                    "reload",
+                    "remove",
+                    "settings",
+                    "symbology",
+                    "visibility"
+                ]
+            },
+            "uniqueItems": true
         },
         "symbologyStack": {
             "type": "array",
@@ -486,52 +485,6 @@
                 "additionalProperties": false
             },
             "minItems": 1
-        },
-        "infoSection": {
-            "type": "object",
-            "description": "Static content that can be added to a legend.",
-            "properties": {
-                "infoType": {
-                    "type": "string",
-                    "enum": ["title", "image", "text"],
-                    "default": "title",
-                    "description": "Type of info content."
-                },
-                "content": {
-                    "type": "string",
-                    "description": "Actual content of the section - description of title/text or URL to image file."
-                }
-            },
-            "required": ["infoType", "content"],
-            "additionalProperties": false
-        },
-        "visibilitySet": {
-            "type": "object",
-            "description": "A visibility set legend element with only one child element visible at all times.",
-            "properties": {
-                "collapse": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Renders a visiblity set as a single legend entry."
-                },
-                "exclusiveVisibility": {
-                    "type": "array",
-                    "description": "A list of legend elements forming the visibility set.",
-                    "items": {
-                        "oneOf": [
-                            {
-                                "$ref": "#/$defs/entryGroup"
-                            },
-                            {
-                                "$ref": "#/$defs/entry"
-                            }
-                        ]
-                    },
-                    "minItems": 1
-                }
-            },
-            "required": ["exclusiveVisibility"],
-            "unevaluatedProperties": false
         },
         "mapnav": {
             "type": "object",

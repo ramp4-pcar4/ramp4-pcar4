@@ -536,7 +536,7 @@ export default defineComponent({
 
         async onConfigureContinue(data: object) {
             const config = Object.assign(this.layerInfo!.config, data);
-
+            console.log('Config:', config);
             const layer = this.$iApi.geo.layer.createLayer(config);
             this.$iApi.geo.map.addLayer(layer);
             layer.userAdded = true;

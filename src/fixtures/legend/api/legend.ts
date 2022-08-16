@@ -1,8 +1,10 @@
 import { FixtureInstance, LayerInstance } from '@/api';
 import type { TreeNode } from '@/geo/api';
-import { LegendStore } from '../store';
 import type { LegendConfig } from '../store';
-import { LegendItem, LegendEntry, LegendGroup } from '../store/legend-defs';
+import { LegendStore } from '../store';
+import { LayerItem } from '../store/layer-item';
+import { LegendItem } from '../store/legend-item';
+import { SectionItem } from '../store/section-item';
 
 export class LegendAPI extends FixtureInstance {
     /**
@@ -56,25 +58,30 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     createItem(itemConf: any, parent?: LegendItem): LegendItem {
-        // validate the parent
-        let parentItem = this._validateParent(parent);
         let item: LegendItem | undefined = undefined;
 
-        if (
-            itemConf.children !== undefined ||
-            itemConf.exclusiveVisibility !== undefined
-        ) {
+        if (itemConf.layerId === undefined) {
             // (assuming visibility sets and groups will specify in config `exclusiveVisibility` or `children` properties, respectively)
             // create a wrapper legend object for group or visibility set
-            item = new LegendGroup(itemConf, parentItem);
+            item = new SectionItem(this.$iApi, itemConf, parent);
+        } else {
+            // create a wrapper legend object for single layer item
+            // if the item is a sublayer, override the item id to the sublayers id
+            if (itemConf.sublayerIndex !== undefined) {
+                itemConf.layerId = `${itemConf.layerId}-${itemConf.sublayerIndex}`;
+            }
+            item = new LayerItem(
+                this.$iApi,
+                itemConf,
+                parent
+            ) as unknown as LegendItem;
+        }
 
-            // initialize objects for all non-hidden group/set children entries
-            const children =
-                itemConf.exclusiveVisibility !== undefined
-                    ? itemConf.exclusiveVisibility
-                    : itemConf.children;
+        // initialize objects for all non-hidden group/set children entries
+        const children = itemConf.children;
 
-            // construct children
+        // construct children
+        if (children) {
             children
                 .filter((childConf: any) => !childConf.hidden)
                 .forEach((childConf: any) => {
@@ -84,19 +91,11 @@ export class LegendAPI extends FixtureInstance {
                             itemConf.layerLegendConfigs;
                     }
 
-                    // ts ignoring below because returned item is "LegendItem", but accepted type is "LegendEntry | LegendGroup"
+                    // ts ignoring below because returned item is "LegendItem", but accepted type is "LayerItem | SectionItem"
                     // which is the same thing! (╯°□°）╯︵ ┻━┻
                     //@ts-ignore
                     item!.children.push(this.createItem(childConf, item));
                 });
-        } else if (itemConf.layerId !== undefined) {
-            // create a wrapper legend object for single legend entry
-            // if the entry is a sublayer, override the entry id to the sublayers id
-            if (itemConf.sublayerIndex !== undefined) {
-                itemConf.layerParentId = itemConf.layerId;
-                itemConf.layerId = `${itemConf.layerId}-${itemConf.sublayerIndex}`;
-            }
-            item = new LegendEntry(itemConf, parentItem);
         }
 
         return item!;
@@ -111,9 +110,6 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     addItem(item: any | LegendItem, parent?: LegendItem): LegendItem {
-        // validate the parent
-        parent = this._validateParent(parent);
-
         let constructedItem: LegendItem =
             item instanceof LegendItem ? item : this.createItem(item, parent);
         this._insertItem(constructedItem, parent);
@@ -126,40 +122,30 @@ export class LegendAPI extends FixtureInstance {
      *
      * @param {LayerInstance} layer the layer to create an item for
      * @param {LegendItem | undefined} parent optional parent item to create this item under
-     * @returns {Promise<LegendItem>} a promise that resolves with the added legend item
+     * @returns {Promise<LegendItem>} a promise that resolves with the added layer item
      * @memberof LegendAPI
      */
     async addLayerItem(
         layer: LayerInstance,
         parent?: LegendItem
-    ): Promise<LegendItem> {
-        // validate the parent
-        let parentItem = this._validateParent(parent);
-
+    ): Promise<LayerItem> {
         // only create a top-level legend item for the layer that will be in a placeholder state
-        // if layer supports sublayers, create a legend group, else create a legend entry
-        const item: LegendItem = layer.supportsSublayers
-            ? new LegendGroup(
-                  {
-                      layer: layer,
-                      name: layer.name,
-                      visibility: layer.visibility
-                  },
-                  parentItem
-              )
-            : new LegendEntry(
-                  {
-                      layer: layer,
-                      name: layer.name,
-                      layerId: layer.id,
-                      visibility: layer.visibility
-                  },
-                  parentItem
-              );
+        const item: LayerItem = new LayerItem(
+            this.$iApi,
+            {
+                layerId: layer.id,
+                sublayerIndex:
+                    layer.layerIdx !== -1 ? layer.layerIdx : undefined,
+                name: layer.name,
+                visibility: layer.visibility
+            },
+            parent,
+            layer
+        );
 
-        // add the legend entry/group to store
+        // add the layer item to store
         // will be in a placeholder state until the layer is loaded
-        this._insertItem(item, parentItem);
+        this._insertItem(item as unknown as LegendItem, parent);
 
         if (layer.supportsSublayers) {
             // if layer supports sublayers, then we need to parse the
@@ -230,7 +216,9 @@ export class LegendAPI extends FixtureInstance {
             layer
                 .getLayerTree()
                 .children.map(childNode => treeWalker(childNode))
-                .map(childConf => this.addItem(childConf, item));
+                .map(childConf =>
+                    this.addItem(childConf, item as unknown as LegendItem)
+                );
         }
 
         return item;
@@ -280,53 +268,64 @@ export class LegendAPI extends FixtureInstance {
     }
 
     /**
-     * Get a legend item given its id or uid.
+     * Get a legend item given its uid.
      *
-     * @param {string} id the id or uid of the legend item
-     * @returns {LegendItem | undefined} return legend item with given id or uid. returns undefined if item is not found.
+     * @param {string} uid the uid of the legend item
+     * @returns {LegendItem | undefined} return legend item with given uid. returns undefined if item is not found.
      * @memberof LegendAPI
      */
-    getItem(id: string): LegendItem | undefined {
+    getItem(uid: string): LegendItem | undefined {
         let legend: Array<LegendItem> = this.getLegend();
 
         let result: LegendItem | undefined;
-
-        // first try fetching item with id
         legend.some((item: LegendItem) => {
             result = this._searchTree(
                 item,
-                (item: LegendItem) => item.id === id
+                (item: LegendItem) => item.uid === uid
             );
             return result !== undefined;
         });
-
-        if (result === undefined) {
-            // if item couldn't be found with the id, try using uid instead
-            legend.some((item: LegendItem) => {
-                result = this._searchTree(
-                    item,
-                    (item: LegendItem) => item.uid === id
-                );
-                return result !== undefined;
-            });
-        }
 
         return result;
     }
 
     /**
-     * Get a legend item connected to the layer with the given id/uid or the given layer instance.
+     * Get a layer item connected to the layer with the given id/uid or the given layer instance.
      *
      * @param {string | LayerInstance} layer the id/uid of the layer or layer instance
-     * @returns {LegendItem | undefined} return legend item tied to the found layer. returns undefined if no such item is found.
+     * @returns {LegendItem | undefined} return layer item tied to the found layer. returns undefined if no such item is found.
      * @memberof LegendAPI
      */
-    getLayerItem(layer: string | LayerInstance): LegendItem | undefined {
-        let l: LayerInstance | undefined =
-            typeof layer === 'string'
-                ? this.$iApi.geo.layer.getLayer(layer)
-                : layer;
-        return this.getItem(l?.id || '');
+    getLayerItem(layer: string | LayerInstance): LayerItem | undefined {
+        let id: string = typeof layer === 'string' ? layer : layer.id;
+        let legend: Array<LegendItem> = this.getLegend();
+
+        let result: LayerItem | undefined;
+
+        // first try fetching item with id
+        legend.some((item: LegendItem) => {
+            result = this._searchTree(
+                item,
+                (item: LegendItem) =>
+                    item instanceof LayerItem && item.layerId === id
+            ) as unknown as LayerItem;
+            return result !== undefined;
+        });
+
+        if (result === undefined) {
+            // if item couldn't be found with the id, try using uid instead
+            id = typeof layer === 'string' ? layer : layer.uid;
+            legend.some((item: LegendItem) => {
+                result = this._searchTree(
+                    item,
+                    (item: LegendItem) =>
+                        item instanceof LayerItem && item.layerUid === id
+                ) as unknown as LayerItem;
+                return result !== undefined;
+            });
+        }
+
+        return result;
     }
 
     /**
@@ -346,7 +345,7 @@ export class LegendAPI extends FixtureInstance {
             items.push(
                 ...this._searchTreeAll(item, (item: LegendItem) => {
                     return (
-                        item instanceof LegendGroup && item.expanded === check
+                        item.children.length > 0 && item.expanded === check // Do we want to include leaves here?
                     );
                 })
             );
@@ -371,11 +370,7 @@ export class LegendAPI extends FixtureInstance {
         legend.forEach(item => {
             items.push(
                 ...this._searchTreeAll(item, (item: LegendItem) => {
-                    return (
-                        (item instanceof LegendGroup ||
-                            item instanceof LegendEntry) &&
-                        item.visibility === check
-                    );
+                    return item.visibility === check;
                 })
             );
         });
@@ -386,39 +381,42 @@ export class LegendAPI extends FixtureInstance {
     // Update
 
     /**
-     * Update an existing legend entry with data from the given layer
-     * Does nothing if the legend entry is not found
+     * Update an existing layer item with data from the given layer
+     * Does nothing if the layer item is not found
      *
-     * @param {LayerInstance} layer the layer to update the legend entry with
+     * @param {LayerInstance} layer the layer to update the layer item with
      * @memberof LegendAPI
      */
     updateLegend(layer: LayerInstance): void {
-        // helper function to link a layer into a legend entry
-        const updateEntry = (layer: LayerInstance) => {
-            const entry: LegendItem | undefined = this.getItem(layer.id);
-            (entry as LegendEntry)?.loadLayer(layer);
-        };
-        const errorEntry = (layer: LayerInstance | string) => {
-            const entry: LegendItem | undefined = this.getItem(
-                layer instanceof LayerInstance ? layer.id : layer
-            );
-            (entry as LegendEntry)?.setErrorType();
+        // helper function to link a layer into a layer item
+        const updateLayerItem = (
+            layer: LayerInstance | string,
+            error: boolean
+        ) => {
+            const layerItem: LayerItem | undefined = this.getLayerItem(layer);
+            if (error) {
+                layerItem?.error();
+            } else {
+                layerItem?.load(
+                    layer instanceof LayerInstance ? layer : undefined
+                );
+            }
         };
         layer
             .loadPromise()
             .then(() => {
-                updateEntry(layer); // update the root entry first
+                updateLayerItem(layer, false); // update the root layer item first
                 if (layer.supportsSublayers) {
                     layer.sublayers.forEach((sublayer: LayerInstance) => {
-                        updateEntry(sublayer); // the legend entries will use the sublayer
+                        updateLayerItem(sublayer, false);
                     });
                 }
             })
             .catch(() => {
-                errorEntry(layer); // update the root entry first
+                updateLayerItem(layer, true); // update the root layer item first
                 if (layer.supportsSublayers) {
                     layer.config.sublayers.forEach((sublayer: any) => {
-                        errorEntry(`${layer.id}-${sublayer.index}`); // hacky solution because sublayers arent created on error
+                        updateLayerItem(`${layer.id}-${sublayer.index}`, true); // hacky solution because sublayers arent created on error
                     });
                 }
             });
@@ -468,16 +466,14 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     reloadLayerItem(layerId: string): boolean {
-        let item: LegendItem | undefined = this.getLayerItem(layerId);
+        let item: LayerItem | undefined = this.getLayerItem(layerId);
 
         if (!item) {
             return false;
         }
 
-        if (!(item instanceof LegendEntry)) {
-            console.warn(
-                'reloading is not supported for non-legend entry items'
-            );
+        if (!(item instanceof LayerItem)) {
+            console.warn('reloading is not supported for non layer items');
             return false;
         }
 
@@ -488,9 +484,9 @@ export class LegendAPI extends FixtureInstance {
     // Delete
 
     /**
-     * Removes the legend item with the given id, uid, or the item instance.
+     * Removes the legend item with the given uid, or the item instance.
      *
-     * @param {string | LegendItem} item the uid/id of item or legend item instance to be removed
+     * @param {string | LegendItem} item the uid of item or legend item instance to be removed
      * @returns {boolean} returns true if item was removed, false otherwise
      * @memberof LegendAPI
      */
@@ -506,17 +502,17 @@ export class LegendAPI extends FixtureInstance {
     }
 
     /**
-     * Remove the legend item connected to the layer with the given id/uid or the given layer instance.
+     * Remove the layer item connected to the layer with the given id/uid or the given layer instance.
      *
      * @param {string | LayerInstance} layer the id/uid of the layer or layer instance
      * @returns {boolean} returns true if item was removed, false otherwise
      * @memberof LegendAPI
      */
     removeLayerItem(layer: string | LayerInstance): boolean {
-        let itemToRemove: LegendItem | undefined = this.getLayerItem(layer);
+        let itemToRemove: LayerItem | undefined = this.getLayerItem(layer);
 
         if (itemToRemove !== undefined) {
-            return this._deleteItem(itemToRemove);
+            return this._deleteItem(itemToRemove as unknown as LegendItem);
         }
 
         return false;
@@ -585,21 +581,15 @@ export class LegendAPI extends FixtureInstance {
         const visibility = options.visibility;
         const expanded = options.expanded;
         // for current legend child toggle properties if possible, check for appropriate legend element type
-        if (
-            visibility !== undefined &&
-            (item instanceof LegendGroup || item instanceof LegendEntry)
-        ) {
+        if (visibility !== undefined) {
+            // Seems to be working fine magically without the edge case check.
+            // Adding the edge case check breaks toggling all visibility in some cases.
             // visibility set edge case
-            if (
-                !(
-                    item.parent instanceof LegendGroup &&
-                    item.parent.visibility === visibility
-                )
-            ) {
-                item.toggleVisibility(visibility);
-            }
+            // if (!(item.parent && item.parent.visibility === visibility)) {
+            item.toggleVisibility(visibility);
+            // }
         }
-        if (expanded !== undefined && item instanceof LegendGroup) {
+        if (expanded !== undefined && item.children.length > 0) {
             item.toggleExpanded(expanded);
         }
         // traverse the tree and make recursive calls
@@ -615,7 +605,7 @@ export class LegendAPI extends FixtureInstance {
      * Add the given legend item to the legend store
      *
      * @param {Legenditem} item the legend item to be added
-     * @param {LegendItem | undefined} parent the parent legend group for this entry
+     * @param {LegendItem | undefined} parent the parent legend item for this item
      */
     private _insertItem(item: LegendItem, parent?: LegendItem): void {
         // remove item to store
@@ -629,34 +619,16 @@ export class LegendAPI extends FixtureInstance {
      * @returns {boolean} returns true if item was removed, false otherwise
      */
     private _deleteItem(item: LegendItem): boolean {
-        // Need this check for now because LegendItem does not completely encapsulate the entry and group classes
-        if (!(item instanceof LegendEntry)) {
-            console.error(
-                'deleting is not supported for non-legend entry items'
-            );
-            return false;
+        // Need this check for now because LegendItem does not completely encapsulate the item and section classes
+        if (item.children.length > 0) {
+            item.children.forEach((child: LegendItem) => {
+                child.parent = item.parent;
+                this._insertItem(child, item.parent);
+            });
         }
-
         // remove item from store
         this.$iApi.$vApp.$store.dispatch(LegendStore.removeItem, item);
 
         return true;
-    }
-
-    /**
-     * Checks if the given legend item is a legend group.
-     * Will return the same item if it is a legend group, and will return undefined otherwise
-     *
-     * @param {LegendItem | undefined} parent the legend item to validate
-     * @returns {LegendGroup | undefined} returns the parent parameter if it is a legend group, and returns undefined otherwise
-     */
-    private _validateParent(parent?: LegendItem): LegendGroup | undefined {
-        if (parent !== undefined && !(parent instanceof LegendGroup)) {
-            console.warn(
-                'attempted to use a non-group legend item as a parent item - will default to using the legend root'
-            );
-            return undefined;
-        }
-        return parent;
     }
 }

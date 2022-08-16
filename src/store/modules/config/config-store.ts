@@ -1,11 +1,11 @@
+import type { RampBasemapConfig, RampMapConfig } from '@/geo/api';
 import type { ActionContext } from 'vuex';
 import { make } from 'vuex-pathify';
-import type { RampBasemapConfig, RampMapConfig } from '@/geo/api';
 
-import { ConfigState } from './config-state';
 import type { RootState } from '@/store';
-import { LayerStore } from '../layer';
 import type { RampConfig } from '@/types';
+import { LayerStore } from '../layer';
+import { ConfigState } from './config-state';
 
 // use for actions
 type ConfigContext = ActionContext<ConfigState, RootState>;

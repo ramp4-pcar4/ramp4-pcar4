@@ -134,7 +134,7 @@ export default defineComponent({
     display: block !important;
     text-decoration: none !important;
 }
-.rv-dropdown > *:not(.disabled) {
+.rv-dropdown > :not(.disabled) {
     color: #2d3748 !important;
 }
 .rv-dropdown > *:hover:not(.disabled) {

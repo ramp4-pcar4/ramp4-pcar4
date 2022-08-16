@@ -25,9 +25,8 @@
                         :name="$t('settings.label.visibility')"
                         :config="{
                             value: visibilityModel,
-                            disabled: !controlAvailable(
-                                LayerControls.Visibility
-                            )
+                            disabled:
+                                !legendItem.layerControlAvailable('visibility')
                         }"
                     />
 
@@ -41,7 +40,7 @@
                         :config="{
                             onChange: updateOpacity,
                             value: opacityModel,
-                            disabled: !controlAvailable(LayerControls.Opacity)
+                            disabled: !controlAvailable(LayerControl.Opacity)
                         }"
                     ></settings-component>
 
@@ -57,7 +56,7 @@
                         :config="{
                             value: false,
                             disabled: !controlAvailable(
-                                LayerControls.Boundingbox
+                                LayerControl.Boundingbox
                             )
                         }"
                     ></settings-component>
@@ -79,7 +78,7 @@
                         @toggled="updateIdentify"
                         :config="{
                             value: identifyModel,
-                            disabled: !controlAvailable(LayerControls.Identify)
+                            disabled: !controlAvailable(LayerControl.Identify)
                         }"
                     ></settings-component>
 
@@ -117,11 +116,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, type PropType } from 'vue';
 import type { PanelInstance } from '@/api';
 import { GlobalEvents, LayerInstance } from '@/api/internal';
-import { LayerControls } from '@/geo/api';
-import type { LegendEntry } from '../legend/store/legend-defs';
+import { LayerControl } from '@/geo/api';
+import { defineComponent, type PropType } from 'vue';
+import type { LayerItem } from '../legend/store/layer-item';
 import type { SettingsAPI } from './api/settings';
 import SettingsComponentV from './component.vue';
 
@@ -130,14 +129,14 @@ export default defineComponent({
     props: {
         panel: { type: Object as PropType<PanelInstance>, required: true },
         layer: { type: Object as PropType<LayerInstance>, required: true },
-        legendItem: { type: Object as PropType<LegendEntry>, required: true }
+        legendItem: { type: Object as PropType<LayerItem>, required: true }
     },
     components: {
         'settings-component': SettingsComponentV
     },
     data() {
         return {
-            LayerControls,
+            LayerControl,
             fixture: {},
             layerName: '',
             uid: this.layer.uid,
@@ -226,7 +225,7 @@ export default defineComponent({
          * Check if control is enabled on this layer's settings config.
          * Default to layer controls if settings config is not defined.
          */
-        controlAvailable(control: LayerControls): any {
+        controlAvailable(control: LayerControl): any {
             if (!this.fixture) {
                 console.warn(
                     'Settings panel cannot check for layer control because it could not find settings fixture api'
@@ -238,13 +237,13 @@ export default defineComponent({
             )?.getLayerFixtureConfig(this.layer.id);
 
             // check disabled controls first
-            if (settingsConfig?.disabledControls?.includes(control)) {
+            if (settingsConfig?.disabledLayerControls?.includes(control)) {
                 return false;
             }
             // check controls list and default to layer controls if not defined
             return (
-                settingsConfig?.controls?.includes(control) ??
-                this.layer.controlAvailable(control)
+                settingsConfig?.layerControls?.includes(control) ??
+                this.legendItem.layerControlAvailable(control)
             );
         },
 
@@ -253,7 +252,7 @@ export default defineComponent({
          */
         updateVisibility(val: boolean) {
             // force update the visibility
-            this.legendItem.toggleVisibility(val, true, true);
+            this.legendItem.toggleVisibility(val);
             this.visibilityModel = val;
         },
 
@@ -261,7 +260,7 @@ export default defineComponent({
          * Update the layer opacity.
          */
         updateOpacity(val: number) {
-            this.legendItem.setOpacity(val / 100);
+            this.legendItem.layer.opacity = val / 100;
             this.opacityModel = val;
         },
 
@@ -269,7 +268,7 @@ export default defineComponent({
          * Update the layer's toggle identify.
          */
         updateIdentify(val: boolean) {
-            this.legendItem.toggleIdentify(val);
+            this.legendItem.layer.identify = val;
             this.identifyModel = val;
         },
 
