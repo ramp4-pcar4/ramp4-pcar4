@@ -960,6 +960,15 @@ export class EventAPI extends APIScope {
                 );
                 break;
             case DefEH.MAP_CREATED_ATTRIBUTION:
+                // update basemap attribution if map was created before adding event handler
+                if (this.$iApi.geo.map.created)
+                    this.$iApi.geo.map.caption.updateAttribution(
+                        (
+                            this.$iApi.$vApp.$store.get(
+                                ConfigStore.getActiveBasemapConfig
+                            ) as RampBasemapConfig
+                        )?.attribution
+                    );
                 // update any basemap attribution in the map caption when the map is created
                 zeHandler = () => {
                     this.$iApi.geo.map.caption.updateAttribution(
