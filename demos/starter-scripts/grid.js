@@ -74,7 +74,7 @@ let config = {
                 {
                     id: 'Shellfish',
                     layerType: 'esri-feature',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/Shellfish_Classification_Mollusques/MapServer/6',
+                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/Shellfish_Classification_Mollusques/MapServer/1',
                     state: {
                         opacity: 1,
                         visibility: true
