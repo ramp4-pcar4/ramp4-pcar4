@@ -354,10 +354,6 @@ export class MapImageLayer extends AttribLayer {
                     }
                 });
 
-            // TODO.  might need to wait for renderer to finish loading first on this.
-            // load real symbols into our source
-            // loadPromises.push(miSL.loadSymbology());
-
             loadPromises.push(pLMD);
         });
 

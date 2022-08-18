@@ -42,8 +42,6 @@ import { markRaw, toRaw } from 'vue';
 import { EsriField, EsriRendererFromJson, EsriRequest } from '@/geo/esri';
 
 export class AttribLayer extends CommonLayer {
-    // property does get initialized in the super. typescript just being grousy
-    // @ts-ignore
     geomType: GeometryType;
     esriFields: Array<EsriField>;
     fieldList: string; // list of field names, useful for numerous esri api calls
@@ -442,7 +440,6 @@ export class AttribLayer extends CommonLayer {
         */
     }
 
-    // TODO think about this name. using getGraphic for consistency.
     /**
      * Gets information on a graphic in the most efficient way possible. Options object properties:
      * - getGeom ; a boolean to indicate if the result should include graphic geometry
@@ -808,9 +805,6 @@ export class AttribLayer extends CommonLayer {
 
         return this.$iApi.geo.query.arcGisServerQueryIds(agsOpt);
     }
-
-    // TODO we are using the getgraphic type as it's an unbound loosely typed feature
-    //      may want to change name of the type to something more general
 
     /**
      * Requests a set of features for this layer that match the criteria of the options
