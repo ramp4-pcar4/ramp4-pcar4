@@ -970,6 +970,8 @@ export class EventAPI extends APIScope {
                         )?.attribution
                     );
                 };
+                // update basemap attribution if map was created before adding event handler
+                if (this.$iApi.geo.map.created) zeHandler();
                 this.$iApi.event.on(
                     GlobalEvents.MAP_CREATED,
                     zeHandler,
