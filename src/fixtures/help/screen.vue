@@ -53,7 +53,7 @@ export default defineComponent({
                 (newLocale: any, oldLocale: any) => {
                     if (newLocale === oldLocale) return;
                     // path to where HELP is hosted is different if RAMP is built as prod library
-                    const base = '../help';
+                    const base = './help';
 
                     const folder = this.folderName || 'default';
                     const renderer = new marked.Renderer();

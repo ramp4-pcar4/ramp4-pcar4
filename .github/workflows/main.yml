@@ -53,6 +53,7 @@ jobs:
                   rm -rf dist
                   mkdir dist
                   mv development/* production/* dist
+                  cp -R public/help dist/demos/help
 
     deploy-pages:
         needs: [post-build]
