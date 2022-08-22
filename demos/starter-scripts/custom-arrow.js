@@ -46,7 +46,7 @@ let config = {
                         layers: [
                             {
                                 layerType: 'esri-tile',
-                                url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBCT3978/MapServer'
+                                url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBCT3978/MapServer'
                             }
                         ]
                     }
