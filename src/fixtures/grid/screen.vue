@@ -10,6 +10,7 @@
                 class="rv-grid"
                 ref="rvGrid"
                 :layerUid="currentUid"
+                :panel="panel"
             ></table-component>
         </template>
     </panel-screen>
@@ -27,8 +28,13 @@ import { LayerStore } from '@/store/modules/layer';
 
 export default defineComponent({
     props: {
-        panel: PanelInstance,
-        header: String
+        panel: {
+            type: PanelInstance,
+            required: true
+        },
+        header: {
+            type: String
+        }
     },
 
     components: {
