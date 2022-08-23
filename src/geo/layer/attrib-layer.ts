@@ -373,11 +373,21 @@ export class AttribLayer extends CommonLayer {
         // TODO figure out how to handle a failure in .getAttribs. See comment catch block at bottom of function.
         const attSet = await this.attLoader.getAttribs();
 
+        if (!attSet.features || attSet.features.length === 0) {
+            // return empty attributes (this will happen if the attribute load was aborted)
+            return {
+                columns: [],
+                rows: [],
+                fields: [],
+                oidField: ''
+            };
+        }
+
         // create columns array consumable by datables. We don't include the alias defined in the config here as
         // the grid handles it seperately.
         const columns = this.esriFields
             .filter(field =>
-                // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
+                // assuming there is at least one attribute - empty attribute bundle promises should be rejected, so it never even gets this far
                 // filter out fields where there is no corresponding attribute data
                 attSet.features[0].hasOwnProperty(toRaw(field).name)
             )

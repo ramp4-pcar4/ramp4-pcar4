@@ -91,6 +91,9 @@ export class AttributeAPI extends APIScope {
         if (len > 0) {
             // figure out if we hit the end of the data. different logic for newer vs older servers.
             controller.loadedCount += len;
+
+            await new Promise(resolve => setTimeout(resolve, 3000));
+
             let moreDataToLoad: boolean;
             if (details.supportsLimit) {
                 moreDataToLoad = serviceResult.data.exceededTransferLimit;
@@ -112,10 +115,14 @@ export class AttributeAPI extends APIScope {
                     controller
                 );
                 // take our current batch, append on everything the recursive call loaded, and return
-                return feats.concat(futureFeats);
+                // return empty list if aborted
+                return controller.loadAbortFlag
+                    ? []
+                    : feats.concat(futureFeats);
             } else {
                 // done thanks
-                return feats;
+                // return empty list if aborted
+                return controller.loadAbortFlag ? [] : feats;
             }
         } else {
             // no more data.  we are done
@@ -328,6 +335,10 @@ export class AttributeLoaderBase extends APIScope {
 
     isLoaded(): boolean {
         return this.aac.loadIsDone;
+    }
+
+    isLoadAborted(): boolean {
+        return this.aac.loadAbortFlag;
     }
 
     // this will be overrideable.
