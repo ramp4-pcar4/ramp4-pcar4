@@ -1,5 +1,5 @@
 <template>
-    <div @click.stop @mouseover.stop class="options display-none cursor-auto">
+    <div @click.stop @mouseover.stop class="options display-block cursor-auto">
         <dropdown-menu
             class="flex-shrink-0"
             position="bottom-start"

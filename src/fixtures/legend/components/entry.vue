@@ -9,7 +9,7 @@
                     items-center
                     hover:bg-gray-200
                     ${
-                        legendItem.controlAvailable('datatable') &&
+                        legendItem.controlAvailable(LayerControls.Datatable) &&
                         getDatagridExists()
                             ? 'cursor-pointer'
                             : 'cursor-default'
@@ -18,10 +18,14 @@
                 `"
                 @click="toggleGrid"
                 v-focus-item="'show-truncate'"
-                @mouseover.stop="$event.currentTarget._tippy?.show()"
-                @mouseout.self="$event.currentTarget._tippy?.hide()"
+                @mouseover.stop="
+                    mobileMode ? null : $event.currentTarget?._tippy?.show()
+                "
+                @mouseout.self="
+                    mobileMode ? null : $event.currentTarget?._tippy?.hide()
+                "
                 :content="
-                    legendItem.controlAvailable('datatable') &&
+                    legendItem.controlAvailable(LayerControls.Datatable) &&
                     getDatagridExists()
                         ? $t('legend.entry.data')
                         : ''
@@ -40,10 +44,15 @@
                         @click.stop="toggleSymbology"
                         tabindex="-1"
                         :class="{
-                            'cursor-default':
-                                !legendItem.controlAvailable('symbology')
+                            'cursor-default': !legendItem.controlAvailable(
+                                LayerControls.Symbology
+                            )
                         }"
-                        :disabled="!legendItem.controlAvailable('symbology')"
+                        :disabled="
+                            !legendItem.controlAvailable(
+                                LayerControls.Symbology
+                            )
+                        "
                         :content="
                             legendItem.symbologyExpanded
                                 ? $t('legend.symbology.hide')
@@ -57,7 +66,9 @@
                         <symbology-stack
                             :class="{
                                 'pointer-events-none':
-                                    !legendItem.controlAvailable('symbology')
+                                    !legendItem.controlAvailable(
+                                        LayerControls.Symbology
+                                    )
                             }"
                             class="w-32 h-32"
                             :visible="legendItem.symbologyExpanded"
@@ -87,7 +98,9 @@
                         legendItem.parent.type === 'VisibilitySet'
                     "
                     :legendItem="legendItem"
-                    :disabled="!legendItem.controlAvailable('visibility')"
+                    :disabled="
+                        !legendItem.controlAvailable(LayerControls.Visibility)
+                    "
                     label="Layer"
                 />
             </div>
@@ -144,7 +157,9 @@
                             :legendItem="legendItem"
                             :checked="item.visibility"
                             :disabled="
-                                !legendItem.controlAvailable('visibility')
+                                !legendItem.controlAvailable(
+                                    LayerControls.Visibility
+                                )
                             "
                             label="Symbol"
                         />
@@ -192,6 +207,8 @@ export default defineComponent({
 
     data() {
         return {
+            LayerControls,
+            mobileMode: this.get('panel/mobileView'),
             symbologyStack: [] as Array<LegendSymbology>,
             handlers: [] as Array<string>
         };
@@ -339,7 +356,18 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.legend-item:hover,
+@media (hover) {
+    .legend-item {
+        .options {
+            @apply hidden;
+        }
+    }
+    .legend-item:hover {
+        .options {
+            @apply block;
+        }
+    }
+}
 .legend-item:focus-within {
     .options {
         @apply block;
