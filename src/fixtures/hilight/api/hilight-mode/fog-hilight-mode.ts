@@ -9,7 +9,9 @@ export class FogHilightMode extends LiftHilightMode {
     // TODO: make these configurable later
     // See https://github.com/ramp4-pcar4/ramp4-pcar4/issues/1353
     onOpacity: number = 0.75;
-    offOpacity: number = 0.1;
+    offOpacity: number = 0.02;
+
+    private lastAdd: number = 0;
 
     constructor(config: any, iApi: InstanceAPI) {
         super(config, iApi);
@@ -79,6 +81,8 @@ export class FogHilightMode extends LiftHilightMode {
      * Adds the given graphics to the hilight layer.
      */
     async add(graphics: Array<Graphic>) {
+        this.lastAdd = Date.now();
+
         // turn the fog "on"
         const fogLayer = this.getFogLayer();
         if (!fogLayer) {
@@ -106,7 +110,21 @@ export class FogHilightMode extends LiftHilightMode {
         if (!fogLayer) {
             return;
         }
-        fogLayer.opacity = this.offOpacity;
+
+        // When we quickly go from highlighting one item to another, if it's the first time
+        // highlighting we can have a delay if RAMP needs to fetch feature attribute data
+        // from a map server. This can cause a "flicker" on the screen as the fog layer turns
+        // off then turns back on again.
+        // This timeout will give a small time buffer to give a new highlight a chance
+        // to be requested. If we see that one was, we will not turn off and
+        // simply wait for next add to finish.
+        const lastRemove = Date.now();
+        setTimeout(() => {
+            if (this.lastAdd < lastRemove) {
+                // nothing was added during the timeout, so we turn off the fog
+                fogLayer.opacity = this.offOpacity;
+            }
+        }, 300);
     }
 
     async reloadHilight(graphics: Array<Graphic>) {

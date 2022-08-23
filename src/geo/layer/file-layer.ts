@@ -429,8 +429,7 @@ export class FileLayer extends AttribLayer {
         this.scaleSet.minScale = l.minScale || 0;
         this.scaleSet.maxScale = l.maxScale || 0;
 
-        // TODO will need to calculate this as esri removed their library to calculate it
-        // TODO check if layer auto-gens this in .fullExtent
+        // ESRI API appears to calculate the extent correctly. Well done!
         this.extent = Extent.fromESRI(l.fullExtent, this.id + '_extent');
 
         this.esriFields = markRaw(l.fields.slice());
