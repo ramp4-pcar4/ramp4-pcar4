@@ -1,6 +1,32 @@
 <template>
     <div class="flex flex-col w-full h-full bg-white">
-        <div class="flex items-center justify-between pl-8 pb-8">
+        <div
+            v-show="isLoadingGrid"
+            class="flex flex-col justify-center items-center h-full"
+        >
+            <!-- show loading animation if loading -->
+            <div class="flex flex-row">
+                <span class="font-bold text-2xl">{{ loadedRecordCount }}</span>
+                <svg class="stroke-black stroke-1" height="50" width="25">
+                    <line x1="0" y1="50" x2="25" y2="0"></line>
+                </svg>
+                <span class="mt-20 text-xl">{{ totalRecordCount }}</span>
+            </div>
+            <div class="my-20">
+                <span class="text-sm">{{
+                    loadedRecordCount < totalRecordCount
+                        ? $t('grid.splash.loading')
+                        : $t('grid.splash.building')
+                }}</span>
+            </div>
+        </div>
+
+        <!-- render grid if loading is done -->
+        <div
+            v-show="!isLoadingGrid"
+            class="flex items-center justify-between pl-8 pb-8"
+        >
+            <!-- show grid components if done loading -->
             <div class="flex items-center pb-4 mr-8 min-w-0">
                 <input
                     @input="updateQuickSearch()"
@@ -145,9 +171,13 @@
                 </dropdown-menu>
             </div>
         </div>
-        <span class="w-full h-0 shadow-clip"></span>
+        <span v-show="!isLoadingGrid" class="w-full h-0 shadow-clip"></span>
 
-        <span class="w-full text-sm mb-0 pl-8 pt-8 pb-4 bg-gray-50" v-truncate>
+        <span
+            v-show="!isLoadingGrid"
+            class="w-full text-sm mb-0 pl-8 pt-8 pb-4 bg-gray-50"
+            v-truncate
+        >
             {{
                 $t('grid.filters.label.info', {
                     range: `${filterInfo.firstRow} - ${filterInfo.lastRow}`,
@@ -164,6 +194,7 @@
 
         <!-- main grid component -->
         <ag-grid-vue
+            v-show="!isLoadingGrid"
             class="ag-theme-material flex-grow"
             enableCellTextSelection="true"
             :gridOptions="gridOptions"
@@ -183,7 +214,7 @@
 <script lang="ts">
 import { markRaw, defineComponent, ref } from 'vue';
 
-import { LayerInstance, GlobalEvents } from '@/api/internal';
+import { AttribLayer, GlobalEvents, LayerInstance } from '@/api/internal';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
@@ -242,7 +273,11 @@ export default defineComponent({
             gridOptions: ref(),
             frameworkComponents: ref(),
 
+            isLoadingGrid: false,
+            loadedRecordCount: 0,
+            totalRecordCount: 0,
             handlers: [] as Array<string>,
+            watchers: [] as Array<Function>,
 
             columnApi: ref(),
             columnDefs: [] as Array<ColumnDefinition>,
@@ -269,6 +304,8 @@ export default defineComponent({
 
     beforeMount() {
         this.config = this.grids[this.layerUid!];
+
+        this.isLoadingGrid = true;
 
         this.filterInfo = {
             firstRow: 0,
@@ -327,6 +364,21 @@ export default defineComponent({
             // This layer does not support features, hence no support for data table
             return;
         }
+
+        // get the currently loaded and total record count from layer
+        this.totalRecordCount = fancyLayer.featureCount;
+        this.loadedRecordCount =
+            (fancyLayer as AttribLayer)?.attLoader?.loadCount() ?? 0;
+
+        // watch the load count of the attrib loader
+        this.watchers.push(
+            this.$watch(
+                () => (fancyLayer as AttribLayer)?.attLoader?.loadCount() ?? 0,
+                (count: number) => {
+                    this.loadedRecordCount = count;
+                }
+            )
+        );
 
         fancyLayer.loadPromise().then(() => {
             const tableAttributePromise =
@@ -456,6 +508,9 @@ export default defineComponent({
 
                 // save field that contains oid for this layer
                 this.oidField = tableAttributes.oidField;
+
+                // the grid is now ready to be displayed
+                this.isLoadingGrid = false;
             });
         });
     },
@@ -463,6 +518,7 @@ export default defineComponent({
     beforeUnmount() {
         // Remove all event handlers for this component
         this.handlers.forEach(handler => this.$iApi.event.off(handler));
+        this.watchers.forEach(unwatch => unwatch());
         this.gridAccessibilityManager?.removeAccessibilityListeners();
         this.gridAccessibilityManager?.removeScrollListeners();
     },
