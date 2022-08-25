@@ -1,0 +1,131 @@
+import { GlobalEvents, TileLayer, type InstanceAPI } from '@/api';
+import { LayerType, type Graphic, type RampBasemapConfig } from '@/geo/api';
+import { ConfigStore } from '@/store/modules/config';
+import { FOG_HILIGHT_LAYER_NAME } from '../hilight-defs';
+import { LiftHilightMode } from './lift-hilight-mode';
+
+export class FogHilightMode extends LiftHilightMode {
+    handlers: Array<string> = [];
+    // TODO: make these configurable later
+    // See https://github.com/ramp4-pcar4/ramp4-pcar4/issues/1353
+    onOpacity: number = 0.75;
+    offOpacity: number = 0.1;
+
+    constructor(config: any, iApi: InstanceAPI) {
+        super(config, iApi);
+
+        this.hilightSetup();
+
+        this.handlers.push(
+            this.$iApi.event.on(GlobalEvents.MAP_BASEMAPCHANGE, () => {
+                const hilightLayer = this.getHilightLayer();
+                if (hilightLayer && hilightLayer.graphics.length === 0) {
+                    // if the highlighter is currently "off", update the basemap
+                    // if the highlighter is "on", then details (or whatever is using the hilighter) will handle this event
+                    this.updateFogLayer();
+                }
+            })
+        );
+    }
+
+    private async hilightSetup() {
+        const mapConfig: RampBasemapConfig = this.$iApi.$vApp.$store.get(
+            ConfigStore.getActiveBasemapConfig
+        )! as RampBasemapConfig;
+        try {
+            const fogLayer = await this.$iApi.geo.layer.createLayer({
+                id: FOG_HILIGHT_LAYER_NAME,
+                layerType: LayerType.TILE,
+                cosmetic: true,
+                // TODO: what if there's more than 1 URL provided?
+                // See https://github.com/ramp4-pcar4/ramp4-pcar4/discussions/1352
+                url: mapConfig.layers[0].url
+            });
+
+            await this.$iApi.geo.map.addLayer(fogLayer);
+            // off
+            fogLayer.opacity = this.offOpacity;
+
+            this.reorderFogLayer();
+        } catch {
+            console.error(
+                'Something went wrong while setting up the hilighter.'
+            );
+        }
+    }
+
+    private async updateFogLayer() {
+        this.$iApi.geo.map.removeLayer(FOG_HILIGHT_LAYER_NAME);
+        await this.hilightSetup();
+    }
+
+    private reorderFogLayer() {
+        const fogLayer = this.getFogLayer();
+        const hilightLayer = this.getHilightLayer();
+        if (!hilightLayer || !fogLayer) {
+            return;
+        }
+
+        const layers = this.$iApi.geo.layer.allLayers();
+        const fogIdx: number = layers.indexOf(fogLayer);
+        const hilightIdx: number = layers.indexOf(hilightLayer);
+
+        if (hilightIdx < fogIdx) {
+            this.$iApi.geo.map.reorder(hilightLayer, fogIdx + 1, false);
+        }
+    }
+
+    /**
+     * Adds the given graphics to the hilight layer.
+     */
+    async add(graphics: Array<Graphic>) {
+        // turn the fog "on"
+        const fogLayer = this.getFogLayer();
+        if (!fogLayer) {
+            return;
+        }
+        fogLayer.opacity = this.onOpacity;
+
+        // add the given graphics to the layer
+        await super.add(graphics);
+    }
+
+    /**
+     * Removes the given graphics from the hilight layer.
+     */
+    async remove(graphics?: Array<Graphic>) {
+        // remove the given graphics from the layer
+        await super.remove(graphics);
+
+        // NOTE: because details calls remove and add each time it does a hilight, there can be a flicker
+        // when switching between items on the details panel (because the fog gets turned off then on again each time)
+        // See https://github.com/ramp4-pcar4/ramp4-pcar4/issues/1350
+
+        // turn the fog "off"
+        const fogLayer = this.getFogLayer();
+        if (!fogLayer) {
+            return;
+        }
+        fogLayer.opacity = this.offOpacity;
+    }
+
+    async reloadHilight(graphics: Array<Graphic>) {
+        await this.updateFogLayer();
+        await super.reloadHilight(graphics);
+    }
+
+    /**
+     * Returns the Hilight layer.
+     */
+    private getFogLayer(): TileLayer | undefined {
+        const hilightLayer = this.$iApi.geo.layer.getLayer(
+            FOG_HILIGHT_LAYER_NAME
+        );
+        if (hilightLayer && hilightLayer instanceof TileLayer) {
+            return hilightLayer;
+        } else {
+            console.warn('Hilight fog layer could not be fetched.');
+            return undefined;
+        }
+    }
+}

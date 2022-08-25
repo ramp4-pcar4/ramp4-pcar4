@@ -253,7 +253,7 @@ export default defineComponent({
         this.handlers.push(
             this.$iApi.event.on(GlobalEvents.MAP_BASEMAPCHANGE, () => {
                 if (this.hilightToggle) {
-                    this.details.hilightDetailsItems(
+                    this.details.reloadDetailsHilight(
                         this.result.items[this.currentIdx],
                         this.result.uid
                     );
