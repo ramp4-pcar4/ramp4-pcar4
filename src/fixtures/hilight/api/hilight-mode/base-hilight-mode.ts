@@ -28,6 +28,11 @@ export class BaseHilightMode extends APIScope {
     }
 
     /**
+     * Reload the hilighter's map elements.
+     */
+    async reloadHilight(graphics: Array<Graphic>) {}
+
+    /**
      * Returns the Hilight layer.
      */
     getHilightLayer(): CommonGraphicLayer | undefined {
@@ -35,7 +40,7 @@ export class BaseHilightMode extends APIScope {
         if (hilightLayer && hilightLayer instanceof CommonGraphicLayer) {
             return hilightLayer;
         } else {
-            console.warn('hilight layer could not be fetched.');
+            console.warn('Hilight layer could not be fetched.');
             return undefined;
         }
     }

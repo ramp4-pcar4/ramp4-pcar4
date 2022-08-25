@@ -12,6 +12,7 @@ import {
     type HilightConfig
 } from './hilight-defs';
 import { BaseHilightMode } from './hilight-mode/base-hilight-mode';
+import { FogHilightMode } from './hilight-mode/fog-hilight-mode';
 import { GlowHilightMode } from './hilight-mode/glow-hilight-mode';
 import { LiftHilightMode } from './hilight-mode/lift-hilight-mode';
 
@@ -48,6 +49,12 @@ export class HilightAPI extends FixtureInstance {
                     break;
                 case HilightMode.LIFT:
                     this.hilightMode = new LiftHilightMode(
+                        hilightConfig,
+                        this.$iApi
+                    );
+                    break;
+                case HilightMode.FOG:
+                    this.hilightMode = new FogHilightMode(
                         hilightConfig,
                         this.$iApi
                     );
@@ -101,6 +108,11 @@ export class HilightAPI extends FixtureInstance {
                 : [graphics]
             : undefined;
         await this.hilightMode.remove(gs);
+    }
+
+    async reloadHilight(graphics: Array<Graphic> | Graphic) {
+        const gs = graphics instanceof Array ? graphics : [graphics];
+        await this.hilightMode.reloadHilight(gs);
     }
 
     /**

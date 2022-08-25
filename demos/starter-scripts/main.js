@@ -446,6 +446,10 @@ let config = {
                 },
                 help: {
                     location: '../help'
+                },
+                // BLOCKER: REMOVE BEFORE PULLING
+                hilight: {
+                    mode: 'fog'
                 }
             },
             panels: {
