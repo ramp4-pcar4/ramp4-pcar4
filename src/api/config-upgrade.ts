@@ -637,7 +637,7 @@ function legendEntryUpgrader(r2legendEntry: any) {
  * @param r2layer layer from RAMP2 config
  * @return layer from RAMP4 config
  */
-function layerUpgrader(r2layer: any): any {
+export function layerUpgrader(r2layer: any): any {
     const r4layer: any = layerCommonPropertiesUpgrader(r2layer);
     r4layer.id = r2layer.id;
     r4layer.url = r2layer.url;
@@ -651,9 +651,6 @@ function layerUpgrader(r2layer: any): any {
     }
     if (r2layer.expectedResponseTime) {
         r4layer.expectedResponseTime = r2layer.expectedResponseTime;
-        console.warn(
-            'Property expectedResponseTime in layer is currently not supported.'
-        );
     }
     if (r2layer.metadataUrl) {
         r4layer.metadata = {
@@ -692,18 +689,18 @@ function layerUpgrader(r2layer: any): any {
             if (r2layer.imageFormat) {
                 r4layer.imageFormat = r2layer.imageFormat;
             }
-            if (r2layer.sublayers) {
+            if (r2layer.layerEntries) {
                 r4layer.sublayers = [];
-                r2layer.sublayers.forEach((r2Sublayer: any) => {
+                r2layer.layerEntries.forEach((r2LayerEntry: any) => {
                     const r4Sublayer: any =
-                        layerCommonPropertiesUpgrader(r2Sublayer);
-                    r4Sublayer.index = r2Sublayer.index;
-                    if (r2Sublayer.outfields) {
+                        layerCommonPropertiesUpgrader(r2LayerEntry);
+                    r4Sublayer.index = r2LayerEntry.index;
+                    if (r2LayerEntry.outfields) {
                         console.warn(
-                            `outfields property provided in layer entry ${r2Sublayer.index} of layer ${r2layer.id} cannot be mapped and will be skipped.`
+                            `outfields property provided in layer entry ${r2LayerEntry.index} of layer ${r2layer.id} cannot be mapped and will be skipped.`
                         );
                     }
-                    r2layer.sublayers.push(r4Sublayer);
+                    r4layer.sublayers.push(r4Sublayer);
                 });
             }
             break;
@@ -762,21 +759,21 @@ function layerUpgrader(r2layer: any): any {
                     `legendMimeType property provided in layer ${r2layer.id} cannot be mapped and will be skipped.`
                 );
             }
-            if (r2layer.sublayers) {
+            if (r2layer.layerEntries) {
                 r4layer.sublayers = [];
-                r2layer.sublayers.forEach((r2Sublayer: any) => {
+                r2layer.layerEntries.forEach((r2LayerEntry: any) => {
                     const r4Sublayer: any =
-                        layerCommonPropertiesUpgrader(r2Sublayer);
-                    r4Sublayer.id = r2Sublayer.id;
-                    if (r2Sublayer.currentStyle) {
-                        r4Sublayer.currentStyle = r2Sublayer.currentStyle;
+                        layerCommonPropertiesUpgrader(r2LayerEntry);
+                    r4Sublayer.id = r2LayerEntry.id;
+                    if (r2LayerEntry.currentStyle) {
+                        r4Sublayer.currentStyle = r2LayerEntry.currentStyle;
                         console.warn(
-                            `currentStyle property provided in layer entry ${r2Sublayer.id} of layer ${r2layer.id} is currently not supported.`
+                            `currentStyle property provided in layer entry ${r2LayerEntry.id} of layer ${r2layer.id} is currently not supported.`
                         );
                     }
-                    if (r2Sublayer.allStyles) {
+                    if (r2LayerEntry.allStyles) {
                         console.warn(
-                            `allStyles property provided in layer entry ${r2Sublayer.id} of layer ${r2layer.id} cannot be mapped and will be skipped.`
+                            `allStyles property provided in layer entry ${r2LayerEntry.id} of layer ${r2layer.id} cannot be mapped and will be skipped.`
                         );
                     }
                     r4layer.sublayers.push(r4Sublayer);
