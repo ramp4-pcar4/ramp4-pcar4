@@ -112,10 +112,14 @@ export class AttributeAPI extends APIScope {
                     controller
                 );
                 // take our current batch, append on everything the recursive call loaded, and return
-                return feats.concat(futureFeats);
+                // return empty list if aborted
+                return controller.loadAbortFlag
+                    ? []
+                    : feats.concat(futureFeats);
             } else {
                 // done thanks
-                return feats;
+                // return empty list if aborted
+                return controller.loadAbortFlag ? [] : feats;
             }
         } else {
             // no more data.  we are done
@@ -328,6 +332,10 @@ export class AttributeLoaderBase extends APIScope {
 
     isLoaded(): boolean {
         return this.aac.loadIsDone;
+    }
+
+    isLoadAborted(): boolean {
+        return this.aac.loadAbortFlag;
     }
 
     // this will be overrideable.

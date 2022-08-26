@@ -19,6 +19,15 @@
                         : $t('grid.splash.building')
                 }}</span>
             </div>
+            <div>
+                <button
+                    @click="closeGrid"
+                    class="py-8 px-8 sm:px-16 bg-gray-300"
+                    :aria-label="$t('grid.splash.cancel')"
+                >
+                    {{ $t('grid.splash.cancel') }}
+                </button>
+            </div>
         </div>
 
         <!-- render grid if loading is done -->
@@ -32,6 +41,7 @@
                     @input="updateQuickSearch()"
                     @keyup.enter="
                         if ($store.get('panel/mobileView')) {
+                            //@ts-ignore
                             $event?.target?.blur();
                         }
                     "
@@ -214,7 +224,12 @@
 <script lang="ts">
 import { markRaw, defineComponent, ref } from 'vue';
 
-import { AttribLayer, GlobalEvents, LayerInstance } from '@/api/internal';
+import {
+    AttribLayer,
+    GlobalEvents,
+    LayerInstance,
+    PanelInstance
+} from '@/api/internal';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
@@ -260,8 +275,13 @@ export default defineComponent({
         AgGridVue
     },
     props: {
+        panel: {
+            type: PanelInstance,
+            required: true
+        },
         layerUid: {
-            type: String
+            type: String,
+            required: true
         }
     },
 
@@ -303,9 +323,13 @@ export default defineComponent({
     },
 
     beforeMount() {
-        this.config = this.grids[this.layerUid!];
+        this.config = this.grids[this.layerUid];
 
         this.isLoadingGrid = true;
+
+        // re-opening the grid for a cancelled layer doesn't re-render the grid properly
+        // hence we use this force update call to force re-render
+        this.$forceUpdate();
 
         this.filterInfo = {
             firstRow: 0,
@@ -385,6 +409,13 @@ export default defineComponent({
                 markRaw(fancyLayer).getTabularAttributes();
 
             tableAttributePromise.then((tableAttributes: any) => {
+                // check if load was cancelled by checking the loadAborted state
+                if ((fancyLayer as AttribLayer)?.attLoader?.isLoadAborted()) {
+                    // if load was cancelled, don't load grid any further and return
+                    this.isLoadingGrid = false;
+                    return;
+                }
+
                 // Iterate through table columns and set up column definitions and column filter stuff.
                 // Also adds the `rvSymbol` and `rvInteractive` columns to the table.
                 [
@@ -516,6 +547,9 @@ export default defineComponent({
     },
 
     beforeUnmount() {
+        // cancel any attribute loads that are in progress
+        this.cancelAttributeLoad();
+
         // Remove all event handlers for this component
         this.handlers.forEach(handler => this.$iApi.event.off(handler));
         this.watchers.forEach(unwatch => unwatch());
@@ -573,9 +607,8 @@ export default defineComponent({
                             layer.uid &&
                             (layer.uid === this.layerUid ||
                                 layer.uid ===
-                                    this.$iApi.geo.layer.getLayer(
-                                        this.layerUid!
-                                    )?.uid)
+                                    this.$iApi.geo.layer.getLayer(this.layerUid)
+                                        ?.uid)
                         ) {
                             this.applyLayerFilters();
                         }
@@ -646,7 +679,7 @@ export default defineComponent({
 
         // Updates the current status of the filter.
         updateFilterInfo() {
-            if (this.gridApi) {
+            if (this.gridApi && !this.isLoadingGrid) {
                 this.filterInfo.firstRow =
                     this.gridApi.getFirstDisplayedRow() + 1;
                 this.filterInfo.lastRow =
@@ -895,7 +928,7 @@ export default defineComponent({
                     maxWidth: 82,
                     cellRenderer: (cell: any) => {
                         const layer: LayerInstance | undefined =
-                            this.$iApi.geo.layer.getLayer(this.layerUid!);
+                            this.$iApi.geo.layer.getLayer(this.layerUid);
                         if (layer === undefined) return;
                         const iconContainer = document.createElement('span');
                         const oid = cell.data[this.oidField];
@@ -933,7 +966,7 @@ export default defineComponent({
 
         // updates external grid filter based on layer filter and rerenders grid
         async applyLayerFilters() {
-            const layer = this.$iApi.geo.layer.getLayer(this.layerUid!)!;
+            const layer = this.$iApi.geo.layer.getLayer(this.layerUid)!;
             if (!layer || !layer.visibility) {
                 this.filteredOids = [];
             } else {
@@ -947,7 +980,7 @@ export default defineComponent({
 
         applyFiltersToMap() {
             const mapFilterQuery = this.getFiltersQuery();
-            const layer = this.$iApi.geo.layer.getLayer(this.layerUid!);
+            const layer = this.$iApi.geo.layer.getLayer(this.layerUid);
             layer?.setSqlFilter(CoreFilter.GRID, mapFilterQuery);
             this.filterSync = true;
         },
@@ -1160,7 +1193,7 @@ export default defineComponent({
         // checks if current grid filters are applied to map
         gridFiltersApplied() {
             const gridQuery = this.getFiltersQuery();
-            const layer = this.$iApi.geo.layer.getLayer(this.layerUid!);
+            const layer = this.$iApi.geo.layer.getLayer(this.layerUid);
             const layerQuery = layer?.getSqlFilter(CoreFilter.GRID);
             return gridQuery === layerQuery;
         },
@@ -1178,6 +1211,27 @@ export default defineComponent({
             ];
             if (arrowKeys.includes(event.key)) {
                 event.stopPropagation();
+            }
+        },
+
+        closeGrid() {
+            // cancel any attribute loads that are in progress
+            this.cancelAttributeLoad();
+
+            // close the grid panel
+            if (this.panel.isOpen) {
+                this.panel.close();
+            }
+        },
+
+        cancelAttributeLoad() {
+            if (this.isLoadingGrid) {
+                // stop the in progress attribute load
+                const layer = this.$iApi.geo.layer.getLayer(this.layerUid);
+                layer?.abortAttributeLoad();
+
+                // we want to clear the attribute cache to reset it for future requests
+                layer?.clearFeatureCache();
             }
         }
     }
