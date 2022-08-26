@@ -35,6 +35,8 @@ import CloseV from '@/components/panel-stack/controls/close.vue';
 import BackV from '@/components/panel-stack/controls/back.vue';
 import ExpandV from '@/components/panel-stack/controls/expand.vue';
 import MinimizeV from '@/components/panel-stack/controls/minimize.vue';
+import RightV from '@/components/panel-stack/controls/right.vue';
+import LeftV from '@/components/panel-stack/controls/left.vue';
 import PanelOptionsMenuV from '@/components/panel-stack/controls/panel-options-menu.vue';
 import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
 
@@ -213,26 +215,31 @@ export class InstanceAPI {
                     });
             }
 
-            // open and pin appropiate panels on startup
-            // TODO: Note that certain panels like grid, settings, etc. need to get data for a specific layer.
-            // Because different fixtures get this data in different ways (some use LayerInstance, some uid, some custom config),
-            // there is no way to open the panel with layer data loaded without writing specific code for specific fixtures.
-            // Once layer usage throughout RAMP is normalized, add an extra nugget in the config called options or something so that the panel
-            // can load layer data as well.
-            if (
-                langConfig.panels &&
-                langConfig.panels.open &&
-                langConfig.panels.open.length > 0
-            ) {
-                const panelIds = langConfig.panels.open.map(p => p.id);
-                this.panel.isRegistered(panelIds).then(() => {
-                    langConfig.panels?.open?.forEach(panel => {
-                        this.panel.open(panel.id);
-                        if (panel.pin) {
-                            this.panel.pin(panel.id);
-                        }
+            if (langConfig.panels) {
+                // open and pin appropiate panels on startup
+                // TODO: Note that certain panels like grid, settings, etc. need to get data for a specific layer.
+                // Because different fixtures get this data in different ways (some use LayerInstance, some uid, some custom config),
+                // there is no way to open the panel with layer data loaded without writing specific code for specific fixtures.
+                // Once layer usage throughout RAMP is normalized, add an extra nugget in the config called options or something so that the panel
+                // can load layer data as well.
+                if (
+                    langConfig.panels.open &&
+                    langConfig.panels.open.length > 0
+                ) {
+                    const panelIds = langConfig.panels.open.map(p => p.id);
+                    this.panel.isRegistered(panelIds).then(() => {
+                        langConfig.panels?.open?.forEach(panel => {
+                            this.panel.open(panel.id);
+                            if (panel.pin) {
+                                this.panel.pin(panel.id);
+                            }
+                        });
                     });
-                });
+                }
+
+                // enable/disable reorder controls
+                const enable = langConfig.panels.reorderable ?? true;
+                this.$vApp.$store.set('panel/reorderable', enable);
             }
 
             // disable animations if needed
@@ -548,6 +555,8 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
     vueElement.component('panel-options-menu', PanelOptionsMenuV);
     vueElement.component('dropdown-menu', DropdownMenuV);
     vueElement.component('minimize', MinimizeV);
+    vueElement.component('right', RightV);
+    vueElement.component('left', LeftV);
 
     // ported from mapnav.vue
     vueElement.component('fullscreen-nav-button', FullscreenNavV);

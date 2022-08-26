@@ -450,6 +450,9 @@ let config = {
                     location: '../help'
                 }
             },
+            panels: {
+                reorderable: false
+            },
             system: { animate: true }
         }
     }
