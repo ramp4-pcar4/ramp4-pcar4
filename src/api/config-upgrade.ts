@@ -637,7 +637,7 @@ function legendEntryUpgrader(r2legendEntry: any) {
  * @param r2layer layer from RAMP2 config
  * @return layer from RAMP4 config
  */
-function layerUpgrader(r2layer: any): any {
+export function layerUpgrader(r2layer: any): any {
     const r4layer: any = layerCommonPropertiesUpgrader(r2layer);
     r4layer.id = r2layer.id;
     r4layer.url = r2layer.url;
@@ -651,9 +651,6 @@ function layerUpgrader(r2layer: any): any {
     }
     if (r2layer.expectedResponseTime) {
         r4layer.expectedResponseTime = r2layer.expectedResponseTime;
-        console.warn(
-            'Property expectedResponseTime in layer is currently not supported.'
-        );
     }
     if (r2layer.metadataUrl) {
         r4layer.metadata = {
