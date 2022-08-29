@@ -414,7 +414,8 @@ let config = {
                         'geosearch',
                         'basemap',
                         'export',
-                        'layer-reorder'
+                        'layer-reorder',
+                        'areas-of-interest'
                     ]
                 },
                 mapnav: {
@@ -453,6 +454,69 @@ let config = {
                         geoProvince:
                             'https://geogratis.gc.ca/services/geoname/@{language}/codes/province.json'
                     }
+                },
+                'areas-of-interest': {
+                    areas: [
+                        {
+                            title: 'Reservoir Manicougan, Quebec, Canada',
+                            thumbnail:
+                                'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/268',
+                            altText: 'Reservoir Manicougan, Quebec, Canada',
+                            description:
+                                'Manicouagan Reservoir (also Lake Manicouagan) is an annular lake in central Quebec, Canada, covering an area of 1,942 km2 (750 sq mi). The structure was created 214 (±1) million years ago, in the Late Triassic, by the impact of a meteorite 5 km (3 mi) in diameter.',
+                            extent: {
+                                xmax: 1840000,
+                                xmin: 1750000,
+                                ymax: 682193,
+                                ymin: 583440,
+                                spatialReference: {
+                                    wkid: 3978
+                                }
+                            }
+                        },
+                        {
+                            title: 'Gulf of St Lawrence',
+                            thumbnail:
+                                'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/286/270',
+                            extent: {
+                                xmin: 2050000,
+                                xmax: 2240000,
+                                ymin: 583440,
+                                ymax: 682193,
+                                spatialReference: {
+                                    wkid: 3978
+                                }
+                            }
+                        },
+                        {
+                            title: 'Lake Grandmesnil and surrounding lakes',
+                            thumbnail:
+                                'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/269',
+                            extent: {
+                                xmin: 1800000,
+                                xmax: 1840000,
+                                ymin: 583440,
+                                ymax: 682193,
+                                spatialReference: {
+                                    wkid: 3978
+                                }
+                            }
+                        },
+                        {
+                            title: 'Lake Piraube and surrounding lakes',
+                            thumbnail:
+                                'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/286/267',
+                            extent: {
+                                xmin: 1550000,
+                                xmax: 1740000,
+                                ymin: 333440,
+                                ymax: 632193,
+                                spatialReference: {
+                                    wkid: 3978
+                                }
+                            }
+                        }
+                    ]
                 }
             },
             panels: {
@@ -567,8 +631,11 @@ rInstance.$element.component('Water-Quantity-Template', {
     }
 });
 
-// add export fixtures
+// add export fixture
 rInstance.fixture.add('export');
+
+// add areas of interest fixture
+rInstance.fixture.add('areas-of-interest');
 
 // load map if startRequired is true
 rInstance.start();

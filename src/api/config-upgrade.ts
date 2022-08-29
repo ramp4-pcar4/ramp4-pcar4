@@ -112,6 +112,9 @@ function individualConfigUpgrader(r2c: any): any {
     // areas of interest, back to cart, co-ord info, custom export, are not implemented
     // and would likely be out-of-core fixtures.
 
+    // #1346 adds areas of interest fixture as optional core fixture, so we can support the plugin config upgrader
+    pluginsUpgrader(r2c.plugins, r4c);
+
     return r4c;
 }
 
@@ -1364,4 +1367,37 @@ function uiUpgrader(r2ui: any, r4c: any): void {
             );
         }
     });
+}
+
+/**
+ * @param r2plugins plugins nugget from ramp 2 config
+ * @param r4c entire ramp4 config. param is modded in place, since ramp2 elements end up all over the new config
+ */
+function pluginsUpgrader(r2plugins: any, r4c: any): void {
+    if (r2plugins.areasOfInterest) {
+        // add the areas of interest fixture
+        if (!r4c.fixturesEnabled.includes('areas-of-interest')) {
+            r4c.fixturesEnabled.push('areas-of-interest');
+        }
+
+        r4c.fixtures['areas-of-interest'] = {
+            areas: r2plugins.areasOfInterest.areas.map((area: any) => {
+                return {
+                    title: `${area['title-en-CA']} / ${area['title-fr-CA']}`,
+                    thumbnail: area.thumbnailUrl,
+                    altText: area.altText ?? '',
+                    description: area.description ?? '',
+                    extent: {
+                        xmin: area.xmin,
+                        xmax: area.xmax,
+                        ymin: area.ymin,
+                        ymax: area.ymax,
+                        spatialReference: {
+                            wkid: area.wkid
+                        }
+                    }
+                };
+            })
+        };
+    }
 }
