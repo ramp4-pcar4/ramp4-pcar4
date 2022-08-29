@@ -76,6 +76,44 @@
                 }
             }
         },
+        "areas-of-interest": {
+            "type": "object",
+            "description": "Provides the configuration to the areas of interest fixture",
+            "properties": {
+                "areas": {
+                    "type": "array",
+                    "description": "The areas to be displayed in the areas of interest fixture",
+                    "items": {
+                        "type": "object",
+                        "description": "The configuration for an area of interest",
+                        "properties": {
+                            "title": {
+                                "type": "string",
+                                "description": "The title for this area of interest"
+                            },
+                            "thumbnail": {
+                                "type": "string",
+                                "description": "The URL or base64 for the image to be used as the thumbnail graphic for this area of interest"
+                            },
+                            "altText": {
+                                "type": "string",
+                                "description": "Optional alt-text for the thumbnail"
+                            },
+                            "description": {
+                                "type": "string",
+                                "description": "Optional description blurb for this area of interest"
+                            },
+                            "extent": {
+                                "$ref": "#/$defs/extentWithReference",
+                                "description": "The map extent for this area of interest"
+                            }
+                        },
+                        "required": ["title", "extent"],
+                        "additionalProperties": false
+                    }
+                }
+            }
+        },
         "appbar": {
             "type": "object",
             "description": "Provides configuration to the appbar fixture. If not supplied, the default appbar controls are displayed.",
@@ -2117,6 +2155,10 @@
                             "type": "object"
                         }
                     }
+                },
+                "areas-of-interest": {
+                    "$ref": "#/$defs/areas-of-interest",
+                    "description": "Provides configuration to the areas of interest fixture"
                 }
             },
             "unevaluatedProperties": false
