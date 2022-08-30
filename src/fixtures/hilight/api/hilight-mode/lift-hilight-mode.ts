@@ -24,4 +24,12 @@ export class LiftHilightMode extends BaseHilightMode {
         }
         await hilightLayer.removeGraphic(graphics);
     }
+
+    /**
+     * Reload the hilighter's map elements.
+     */
+    async reloadHilight(graphics: Array<Graphic>) {
+        await this.remove(graphics);
+        await this.add(graphics);
+    }
 }

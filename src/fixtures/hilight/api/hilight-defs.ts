@@ -1,4 +1,5 @@
 export const HILIGHT_LAYER_NAME = 'Ramp-Hilight';
+export const FOG_HILIGHT_LAYER_NAME = 'Ramp-Hilight-Fog-Basemap';
 
 export const DEFAULT_CONFIG = {
     mode: 'glow',
@@ -11,7 +12,8 @@ export const DEFAULT_CONFIG = {
 export enum HilightMode {
     NONE = 'none', // no hilight
     GLOW = 'glow', // an ESRI highlight
-    LIFT = 'lift' // adds identified graphics to the hilightlayer
+    LIFT = 'lift', // adds identified graphics to the hilightlayer
+    FOG = 'fog' // dims non-hilighted geometries
 }
 
 export interface HilightConfig {

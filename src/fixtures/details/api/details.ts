@@ -152,46 +152,25 @@ export class DetailsAPI extends FixtureInstance {
 
     /**
      * Highlight identified items
-     * @param items identified items
+     * @param items items to add
+     * @param layerUid uid of layer the items belong to
      */
     async hilightDetailsItems(
         items: IdentifyItem | Array<IdentifyItem>,
         layerUid: string
     ) {
         // hilight all provided identify items for this layer
-        const layer: LayerInstance | undefined =
-            this.$iApi.geo.layer.getLayer(layerUid);
-        if (layer) {
-            const hItems = items instanceof Array ? items : [items];
-            const hilightFix: HilightAPI = this.$iApi.fixture.get('hilight');
-            if (hilightFix) {
-                await hilightFix.removeHilight(
-                    hilightFix.getGraphicsByKey((origin = ORIGIN_DETAILS))
-                );
-
-                // get all the identified Graphics
-                const gs: Array<Graphic> = [];
-                await Promise.all(
-                    hItems.map(async item => {
-                        const oid = item.data[layer.oidField];
-                        const g: Graphic = await (
-                            layer as AttribLayer
-                        ).getGraphic(oid, {
-                            getGeom: true,
-                            getAttribs: true,
-                            getStyle: true
-                        });
-                        g.id = hilightFix.constructGraphicKey(
-                            ORIGIN_DETAILS,
-                            layerUid,
-                            oid
-                        );
-                        gs.push(g);
-                    })
-                );
-
-                hilightFix.addHilight(gs);
-            }
+        const hItems = items instanceof Array ? items : [items];
+        const hilightFix: HilightAPI = this.$iApi.fixture.get('hilight');
+        if (hilightFix) {
+            await hilightFix.removeHilight(
+                hilightFix.getGraphicsByKey((origin = ORIGIN_DETAILS))
+            );
+            const graphics: Array<Graphic> = await this.getHilightGraphics(
+                hItems,
+                layerUid
+            );
+            hilightFix.addHilight(graphics);
         }
     }
 
@@ -205,6 +184,64 @@ export class DetailsAPI extends FixtureInstance {
                 hilightFix.getGraphicsByKey((origin = ORIGIN_DETAILS))
             );
         }
+    }
+
+    /**
+     * Reload map elements of the hilighter.
+     * @param items items to reload
+     * @param layerUid uid of layer the items belong to
+     */
+    async reloadDetailsHilight(
+        items: IdentifyItem | Array<IdentifyItem>,
+        layerUid: string
+    ) {
+        // hilight all provided identify items for this layer
+        const hItems = items instanceof Array ? items : [items];
+        const hilightFix: HilightAPI = this.$iApi.fixture.get('hilight');
+        if (hilightFix) {
+            const graphics: Array<Graphic> = await this.getHilightGraphics(
+                hItems,
+                layerUid
+            );
+            hilightFix.reloadHilight(graphics);
+        }
+    }
+
+    /**
+     * Return the graphics of the given IdentifyItems.
+     * @param items items to hilight
+     * @param layerUid uid of layer the items belong to
+     */
+    async getHilightGraphics(
+        items: Array<IdentifyItem>,
+        layerUid: string
+    ): Promise<Array<Graphic>> {
+        const layer: LayerInstance = this.$iApi.geo.layer.getLayer(layerUid)!;
+        const hilightFix: HilightAPI = this.$iApi.fixture.get('hilight');
+        const gs: Array<Graphic> = [];
+        if (layer) {
+            // get all the identified Graphics
+            await Promise.all(
+                items.map(async item => {
+                    const oid = item.data[layer.oidField];
+                    const g: Graphic = await (layer as AttribLayer).getGraphic(
+                        oid,
+                        {
+                            getGeom: true,
+                            getAttribs: true,
+                            getStyle: true
+                        }
+                    );
+                    g.id = hilightFix.constructGraphicKey(
+                        ORIGIN_DETAILS,
+                        layerUid,
+                        oid
+                    );
+                    gs.push(g);
+                })
+            );
+        }
+        return gs;
     }
 
     /**
