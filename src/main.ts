@@ -24,13 +24,18 @@
 //    }
 
 import { GeoCommonAPI } from '@/geo/api/geo-common';
-import { configUpgrade2to4, InstanceAPI } from '@/api/internal';
+import { configUpgrade2to4, layerUpgrader, InstanceAPI } from '@/api/internal';
 import type { RampOptions } from '@/api/instance';
 import type { RampConfigs } from './types';
+import type { RampLayerConfig } from './geo/api';
 
 export const version = __RAMP_VERSION__;
 export function configUpgrade(ramp2Config: any | Array<any>): any {
     return configUpgrade2to4(ramp2Config);
+}
+
+export function layerConfigUpgrade(ramp2LayerConfig: any): RampLayerConfig {
+    return layerUpgrader(ramp2LayerConfig);
 }
 
 export const createInstance = (
