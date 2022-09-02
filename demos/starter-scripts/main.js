@@ -483,8 +483,6 @@ let config = {
                         },
                         {
                             title: 'Lake Grandmesnil and surrounding lakes',
-                            thumbnail:
-                                'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/269',
                             extent: {
                                 xmin: 1800000,
                                 xmax: 1840000,
