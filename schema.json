@@ -2152,7 +2152,11 @@
                         },
                         "options": {
                             "description": "Options for the selected hilight mode.",
-                            "type": "object"
+                            "type": "object",
+                            "properties": {
+                                "onOpacity": "Opacity of the highlighted feature. Applies to fog hilight mode.",
+                                "offOpacity": "Opacity of all other non-highlighted features. Applies to fog hilight mode."
+                            }
                         }
                     }
                 },
