@@ -33,9 +33,17 @@ import type {
 } from '@/geo/api';
 import to from 'await-to-js';
 
+enum TimerType {
+    DRAW = 'draw',
+    LOAD = 'load'
+}
+
 export class CommonLayer extends LayerInstance {
     // common layer properties
-
+    timers: {
+        draw: number | undefined;
+        load: number | undefined;
+    };
     _scaleSet: ScaleSet;
     _mouseTolerance: number;
     _touchTolerance: number;
@@ -78,7 +86,10 @@ export class CommonLayer extends LayerInstance {
         this.layerType = LayerType.UNKNOWN;
         this.layerFormat = LayerFormat.UNKNOWN;
         this._drawOrder = [];
-
+        this.timers = {
+            draw: undefined,
+            load: undefined
+        };
         this.origRampConfig = rampConfig;
         this.id = rampConfig.id || '';
         this.uid = this.$iApi.geo.shared.generateUUID();
@@ -123,6 +134,18 @@ export class CommonLayer extends LayerInstance {
 
     updateDrawState(newState: DrawState): void {
         this.drawState = newState;
+        if (
+            newState !== DrawState.UP_TO_DATE &&
+            (typeof this.origRampConfig.expectedDrawTime === 'undefined' ||
+                this.origRampConfig.expectedDrawTime > 0)
+        ) {
+            this.startTimer(
+                TimerType.DRAW,
+                this.origRampConfig.expectedDrawTime ?? 4000
+            );
+        } else if (newState === DrawState.UP_TO_DATE) {
+            this.stopTimer(TimerType.DRAW);
+        }
         this.$iApi.event.emit(GlobalEvents.LAYER_DRAWSTATECHANGE, {
             state: newState,
             layer: this
@@ -132,26 +155,17 @@ export class CommonLayer extends LayerInstance {
     // need this so initiate encapsulates the entire initiation process regardless of which inherited layer type is being initiated
     async initiate(): Promise<void> {
         this.updateInitiationState(InitiationState.INITIATING);
-        let timer = undefined;
         if (
             typeof this.origRampConfig.expectedResponseTime === 'undefined' ||
             this.origRampConfig.expectedResponseTime > 0
         ) {
-            timer = setTimeout(
-                () =>
-                    this.$iApi.notify.show(
-                        NotificationType.WARNING,
-                        this.$vApp.$t(`layer.longload`, {
-                            id: this.id
-                        })
-                    ),
+            this.startTimer(
+                TimerType.LOAD,
                 this.origRampConfig.expectedResponseTime ?? 4000
             );
         }
         const [initiateErr] = await to(this.onInitiate()); // Need this because some layers don't do error handling things
-        if (timer) {
-            clearTimeout(timer);
-        }
+        this.stopTimer(TimerType.LOAD);
         if (initiateErr) {
             this.onError();
         }
@@ -355,7 +369,16 @@ export class CommonLayer extends LayerInstance {
         Promise.all(loadPromises).then(() => {
             this.updateLayerState(LayerState.LOADED);
             this.loadDefProm.resolveMe();
-
+            if (
+                this.drawState !== DrawState.UP_TO_DATE &&
+                (typeof this.origRampConfig.expectedDrawTime === 'undefined' ||
+                    this.origRampConfig.expectedDrawTime > 0)
+            ) {
+                this.startTimer(
+                    TimerType.DRAW,
+                    this.origRampConfig.expectedDrawTime ?? 4000
+                );
+            }
             // This will just trigger the above statements for each sublayer
             this.sublayers.forEach(sublayer => sublayer.onLoad());
         });
@@ -853,5 +876,33 @@ export class CommonLayer extends LayerInstance {
      */
     setCustomParameter(key: string, value: string, forceRefresh = true): void {
         this.stubError();
+    }
+
+    /**
+     * Start the draw/load timer for the layer, after which is a slow to load/draw notification is shown.
+     * @param type the type of timer to start (load or draw)
+     * @param length the number of seconds after which the notification will be shown
+     */
+    protected startTimer(type: TimerType, length: number): void {
+        this.timers[type] = setTimeout(
+            () =>
+                this.$iApi.notify.show(
+                    NotificationType.WARNING,
+                    this.$vApp.$t(`layer.long${type}`, {
+                        id: this.id
+                    })
+                ),
+            length
+        );
+    }
+
+    /**
+     * Stop the draw/load timer for the layer, if it was started.
+     * @param type the type of timer to stop (load or draw)
+     */
+    protected stopTimer(type: TimerType): void {
+        if (this.timers[type]) {
+            clearTimeout(this.timers[type]);
+        }
     }
 }

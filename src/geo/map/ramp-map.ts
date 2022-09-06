@@ -1,13 +1,13 @@
 // wraps and represents a 2D esri map
 // TODO add proper comments
-
 import {
     Basemap,
     CommonMapAPI,
     GlobalEvents,
     InstanceAPI,
     LayerInstance,
-    MaptipAPI
+    MaptipAPI,
+    NotificationType
 } from '@/api/internal';
 import {
     CoreFilter,
@@ -462,6 +462,12 @@ export class MapAPI extends CommonMapAPI {
                         layer
                     ]);
                     layer.updateLayerState(LayerState.ERROR); // need this thanks to an edge case where the legend sometimes doesnt update
+                    this.$iApi.notify.show(
+                        NotificationType.ERROR,
+                        this.$vApp.$t('layer.error', {
+                            id: layer.id
+                        })
+                    );
                     reject();
                 } else if (
                     layer.initiationState === InitiationState.INITIATED &&

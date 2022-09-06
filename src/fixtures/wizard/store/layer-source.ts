@@ -33,10 +33,10 @@ export class LayerSource extends APIScope {
     ): Promise<LayerInfo | undefined> {
         if (!fileData) {
             // if given a url, load data so we can get fields
-            const response = await axios.get(url, {
-                responseType: 'arraybuffer'
-            });
-            fileData = response.data;
+            fileData = await this.$iApi.geo.layer.files.fetchFileData(
+                url,
+                fileType
+            );
         }
 
         switch (fileType) {
@@ -81,24 +81,28 @@ export class LayerSource extends APIScope {
         };
     }
 
-    async getCsvInfo(url: string, fileData: ArrayBuffer): Promise<LayerInfo> {
-        const formattedData = new TextDecoder('utf-8').decode(
-            new Uint8Array(fileData)
-        );
-
+    async getCsvInfo(
+        url: string,
+        fileData: ArrayBuffer | string
+    ): Promise<LayerInfo> {
+        if (fileData instanceof ArrayBuffer) {
+            fileData = new TextDecoder('utf-8').decode(
+                new Uint8Array(fileData)
+            );
+        }
         const config = {
             id: `csv#${++this.layerCount}`,
             layerType: LayerType.CSV,
             url,
             name: url.substr(url.lastIndexOf('/') + 1),
             state: { opacity: 1, visibility: true },
-            rawData: formattedData
+            rawData: fileData
         };
 
         return {
             config,
             fields: [{ name: 'OBJECTID', type: 'oid' }].concat(
-                this.$iApi.geo.layer.files.extractCsvFields(formattedData)
+                this.$iApi.geo.layer.files.extractCsvFields(fileData)
             ),
             configOptions: [
                 'name',
