@@ -578,6 +578,7 @@ export interface RampLayerConfig {
     customRenderer?: any;
     // TODO revisit issue #1019 after v1.0.0
     // refreshInterval?: number;
+    expectedDrawTime?: number;
     expectedResponseTime?: number;
     fieldMetadata?: RampLayerFieldMetadataConfig;
     nameField?: string;
