@@ -19,7 +19,7 @@ const baseConfig: UserConfigExport = {
         target: 'esnext'
     },
     server: {
-        open: '/demos/index.html'
+        open: '/demos/index-samples.html'
     }
 };
 
@@ -52,7 +52,8 @@ export default defineConfig(({ command, mode }) => {
                         main: '/index.html',
                         multi: '/index-multi.html',
                         e2e: '/index-e2e.html',
-                        wet: '/index-wet.html'
+                        wet: '/index-wet.html',
+                        samples: '/index-samples.html'
                     }
                 }
             });

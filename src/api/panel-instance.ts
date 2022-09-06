@@ -87,8 +87,7 @@ export class PanelInstance extends APIScope {
             let asyncComponent: Promise<AsyncComponentEh>;
 
             if (typeof screen === 'string') {
-                asyncComponent =
-                    screenModules[`../fixtures/${screen}/screen.vue`]();
+                asyncComponent = screenModules[`../fixtures/${screen}`]();
             } else {
                 asyncComponent = screen(); // execute the async component function to get the promise
             }
