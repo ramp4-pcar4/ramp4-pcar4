@@ -16,12 +16,6 @@ export class ShapefileLayer extends FileLayer {
         // set geojson to special property.
         // then initiate the FileLayer
 
-        if (!this.origRampConfig.latField || !this.origRampConfig.longField) {
-            throw new Error(
-                'shapefile file config missing lat or long field names'
-            );
-        }
-
         let shapefileData: any; // i believe this needs to be an ArrayBuffer
 
         if (this.origRampConfig.rawData) {
@@ -33,18 +27,10 @@ export class ShapefileLayer extends FileLayer {
             // TODO add check that errors if typeof is string?
             shapefileData = this.origRampConfig.rawData;
         } else if (this.origRampConfig.url) {
-            // make web call to download shapefile file
-
-            // not implemented yet
-            // steps will be
-            //   1. await web response of this.origRampConfig.url
-            //   2. any parsing required to get web result into array buffer format
-            //   3. store parsed result in local var shapefileData
-
-            // might make sense to put those steps in geo.layers.files module for re-use
-
-            // temp line to warn people
-            throw new Error('remote file shapefile loader not yet supported');
+            shapefileData = await this.$iApi.geo.layer.files.fetchFileData(
+                this.origRampConfig.url,
+                this.layerType
+            );
         } else {
             throw new Error(
                 'shapefile file config contains no raw data or url'

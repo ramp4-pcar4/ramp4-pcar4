@@ -124,6 +124,14 @@ export class LayerInstance extends APIScope {
     oidField: string;
 
     /**
+     * Object that contains values for the expected draw/response time.
+     */
+    expectedTime: {
+        draw: number;
+        load: number;
+    };
+
+    /**
      * If the layer has Sublayers
      */
     supportsSublayers: boolean;
@@ -242,6 +250,7 @@ export class LayerInstance extends APIScope {
         this.geomType = GeometryType.UNKNOWN;
         this.legend = [];
         this._sublayers = [];
+        this.expectedTime = { draw: 0, load: 0 };
     }
 
     /**
