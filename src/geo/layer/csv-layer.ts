@@ -27,16 +27,10 @@ export class CsvLayer extends FileLayer {
             // TODO validation? check that type is string?
             csvData = this.origRampConfig.rawData;
         } else if (this.origRampConfig.url) {
-            // make web call to download csv file
-
-            // not implemented yet
-            // steps will be
-            //   1. await web response of this.origRampConfig.url
-            //   2. any parsing required to get web result into string format
-            //   3. store parsed result in local var csvData
-
-            // temp line to warn people
-            throw new Error('remote file csv loader not yet supported');
+            csvData = await this.$iApi.geo.layer.files.fetchFileData(
+                this.origRampConfig.url,
+                this.layerType
+            );
         } else {
             throw new Error('Csv file config contains no raw data or url');
         }
