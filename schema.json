@@ -691,6 +691,11 @@
                     "default": 0,
                     "description": "The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes. Currently not supported."
                 },
+                "expectedDrawTime": {
+                    "type": "number",
+                    "default": 4000,
+                    "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
+                },
                 "expectedResponseTime": {
                     "type": "number",
                     "default": 4000,
@@ -756,6 +761,11 @@
                     "type": "string",
                     "default": "",
                     "description": "Display name of the layer."
+                },
+                "expectedDrawTime": {
+                    "type": "number",
+                    "default": 4000,
+                    "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
                 },
                 "expectedResponseTime": {
                     "type": "number",
@@ -823,6 +833,11 @@
                     "type": "number",
                     "default": 0,
                     "description": "The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes. Currently not supported."
+                },
+                "expectedDrawTime": {
+                    "type": "number",
+                    "default": 4000,
+                    "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
                 },
                 "expectedResponseTime": {
                     "type": "number",
@@ -1029,6 +1044,11 @@
                     "default": 0,
                     "description": "Automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes. Currently not supported."
                 },
+                "expectedDrawTime": {
+                    "type": "number",
+                    "default": 4000,
+                    "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
+                },
                 "expectedResponseTime": {
                     "type": "number",
                     "default": 4000,
@@ -1144,6 +1164,11 @@
                     "default": "",
                     "description": "Hex code representing the layer symbology colour."
                 },
+                "expectedDrawTime": {
+                    "type": "number",
+                    "default": 4000,
+                    "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
+                },
                 "expectedResponseTime": {
                     "type": "number",
                     "default": 4000,
@@ -1254,6 +1279,11 @@
                     "default": "",
                     "description": "The service endpoint of the layer. It should match the type provided in layerType."
                 },
+                "expectedDrawTime": {
+                    "type": "number",
+                    "default": 4000,
+                    "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
+                },
                 "expectedResponseTime": {
                     "type": "number",
                     "default": 4000,
@@ -1360,6 +1390,11 @@
                     "type": "number",
                     "default": 0,
                     "description": "Automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes. Currently not supported."
+                },
+                "expectedDrawTime": {
+                    "type": "number",
+                    "default": 4000,
+                    "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
                 },
                 "expectedResponseTime": {
                     "type": "number",

@@ -265,6 +265,7 @@ let config = {
                     id: 'WaterQuantity',
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                    expectedDrawTime: 1,
                     sublayers: [
                         {
                             index: 1,
@@ -332,7 +333,7 @@ let config = {
                 {
                     id: 'WFSLayer',
                     layerType: 'ogc-wfs',
-                    url: 'https://api.weather.gc.ca//collections/ahccd-trends/items?measurement_type__type_mesure=total_precip&period__periode=Ann&startindex=0&limit=1000&province__province=on',
+                    url: 'MY RANDOM URL HAHAHAHA',
                     xyInAttribs: true,
                     state: {
                         visibility: true
@@ -381,6 +382,26 @@ let config = {
                         visibility: true
                     },
                     customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                },
+                {
+                    id: 'GeoJsonLayer',
+                    name: 'GeoJsonLayer',
+                    layerType: 'file-geojson',
+                    url: 'https://mohsin-r.github.io/ramp-storage/happy.json'
+                },
+                {
+                    id: 'CSVLayer',
+                    name: 'CSVLayer',
+                    layerType: 'file-csv',
+                    url: 'https://mohsin-r.github.io/ramp-storage/csv_layer.csv',
+                    latField: 'Y',
+                    longField: 'X'
+                },
+                {
+                    id: 'ShapeLayer',
+                    name: 'ShapeLayer',
+                    layerType: 'file-shape',
+                    url: 'https://mohsin-r.github.io/ramp-storage/shape_layer.zip'
                 }
             ],
             fixtures: {
@@ -477,6 +498,18 @@ let config = {
                                         ]
                                     }
                                 ]
+                            },
+                            {
+                                layerId: 'GeoJsonLayer',
+                                name: 'GeoJson Layer'
+                            },
+                            {
+                                layerId: 'CSVLayer',
+                                name: 'CSV Layer'
+                            },
+                            {
+                                layerId: 'ShapeLayer',
+                                name: 'Shape Layer'
                             }
                         ]
                     }

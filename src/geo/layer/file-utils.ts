@@ -3,9 +3,10 @@ import defaultRenderers from './defaultRenderers.json';
 import ArcGIS from 'terraformer-arcgis-parser';
 import { csv2geojson, dsv } from 'csv2geojson';
 import shp from 'shpjs/dist/shp.min.js';
+import axios from 'axios';
 
 import { EsriSimpleRenderer, EsriSpatialReference } from '@/geo/esri';
-import { Colour, FieldType } from '@/geo/api';
+import { Colour, FieldType, LayerType } from '@/geo/api';
 
 /**
  * Maps GeoJSON geometry types to a set of default renders defined in GlobalStorage.DefaultRenders
@@ -127,6 +128,37 @@ function cleanUpFields(
 }
 
 export class FileUtils extends APIScope {
+    /**
+     * Fetch file data from remote URL.
+     * @param url the URL to get the data from
+     * @param fileType the type of the file layer (csv, shape, or geoJson)
+     */
+    async fetchFileData(url: string, fileType: LayerType) {
+        // TODO: What if this errors? In the two use cases within RAMP (wizard and config), errors are properly handled elsewhere.
+        // Do we want to have any error handling here?
+        const response = await axios.get(url, {
+            responseType: 'arraybuffer'
+        });
+        switch (fileType) {
+            case LayerType.GEOJSON:
+                return JSON.parse(
+                    new TextDecoder('utf-8').decode(
+                        new Uint8Array(response.data)
+                    )
+                );
+            case LayerType.SHAPEFILE:
+                return response.data;
+            case LayerType.CSV:
+                return new TextDecoder('utf-8').decode(
+                    new Uint8Array(response.data)
+                );
+            default:
+                console.error(
+                    `Unsupported file type passed to fetchFileData- '${fileType}'`
+                );
+        }
+    }
+
     /**
      * Extracts fields from the first feature in the feature collection
      */
