@@ -1,9 +1,12 @@
 import type { ActionContext } from 'vuex';
 import { make } from 'vuex-pathify';
 
-import { LegendState } from './legend-state';
-import { LegendItem, LegendEntry, LegendGroup } from './legend-defs';
 import type { RootState } from '@/store';
+import { LegendState } from './legend-state';
+
+import { LayerItem } from './layer-item';
+import type { LegendItem } from './legend-item';
+import { SectionItem } from './section-item';
 
 // use for actions
 type LegendContext = ActionContext<LegendState, RootState>;
@@ -20,18 +23,10 @@ const mutations = {
             state.children = [...state.children, value.item];
         } else {
             // validate items to keep ts happy
-
-            // below checks should never trigger if legend API is used correctly
-            if (!(value.parent instanceof LegendGroup)) {
-                console.error(
-                    'attempted to create legend item under a non-group legend item'
-                );
-                return;
-            }
-
+            // this check should never trigger if legend API is used correctly
             if (
-                !(value.item instanceof LegendGroup) &&
-                !(value.item instanceof LegendEntry)
+                !(value.item instanceof SectionItem) &&
+                !(value.item instanceof LayerItem)
             ) {
                 console.error(
                     'attempted to add an unsupported legend item type'
@@ -40,32 +35,31 @@ const mutations = {
             }
 
             value.parent.children = [...value.parent.children, value.item];
-            if (value.item.visibility) {
-                value.parent.checkVisibility(value.item);
-            }
         }
     },
     REMOVE_ITEM: (state: LegendState, item: LegendItem) => {
         const removeItem = (children: Array<LegendItem>) => {
-            // remove entry
-            children = children.filter(entry => {
-                if (entry instanceof LegendEntry && entry === item) {
-                    entry.remove();
+            // remove item
+            children = children.filter(child => {
+                if (child === item && !child.children.length) {
+                    child.onRemoved();
                 }
-                return entry !== item;
+                return child !== item;
             });
 
-            // recursively check child legend groups
-            children
-                .filter((entry: LegendItem) => entry instanceof LegendGroup)
-                .forEach((group: any) => {
-                    group.children = removeItem(group.children);
-                });
+            // recursively check child legend items
+            children.forEach((child: any) => {
+                child.children = removeItem(child.children);
+            });
 
-            // remove groups with no children
+            // remove SectionItems with no remaining children
             children = children.filter(
                 item =>
-                    item instanceof LegendEntry || item.children.length !== 0
+                    !(
+                        item instanceof SectionItem &&
+                        !item.children.length &&
+                        item.content === ''
+                    )
             );
 
             return children;
@@ -95,7 +89,7 @@ export enum LegendStore {
      */
     children = 'legend/children',
     /**
-     * (State) headerContros: Array<string>
+     * (State) headerControls: Array<string>
      */
     headerControls = 'legend/headerControls',
     /**

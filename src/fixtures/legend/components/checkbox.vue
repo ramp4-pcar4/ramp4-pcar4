@@ -10,9 +10,10 @@
                         : `legend.visibility.show${label}`
                 )
             "
+            @click.stop
             :checked="checked && initialChecked"
-            @click.stop="toggleVisibility(value)"
-            @keyup.enter.stop="toggleVisibility(value)"
+            @change.stop="toggleVisibility()"
+            @keyup.enter.stop="toggleVisibility()"
             :class="[
                 isRadio ? 'form-radio' : 'form-checkbox rounded-none',
                 disabled ? 'text-gray-400 ' : 'text-black cursor-pointer'
@@ -33,20 +34,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import type { PropType } from 'vue';
-import { CoreFilter } from '@/geo/api';
-import type { LegendSymbology } from '@/geo/api';
-import { LegendEntry, LegendItem } from '../store/legend-defs';
+import { CoreFilter, type LegendSymbology } from '@/geo/api';
+import { defineComponent, type PropType } from 'vue';
+
+import { LayerItem } from '../store/layer-item';
+import { LegendItem } from '../store/legend-item';
 
 export default defineComponent({
     name: 'CheckboxV',
     props: {
         value: {
-            type: Object as PropType<LegendEntry | LegendSymbology>,
+            type: Object as PropType<LegendItem | LegendSymbology>,
             required: true
         },
-        legendItem: { type: Object as PropType<LegendEntry>, required: true },
+        legendItem: { type: Object as PropType<LegendItem>, required: true },
         checked: { type: Boolean },
         label: { type: String },
         isRadio: { type: Boolean },
@@ -66,11 +67,11 @@ export default defineComponent({
 
     methods: {
         /**
-         * Returns true if non of the child symbols are visible
-         * @returns {boolean} Boolean value that is true when no child symbols are visible
+         * Returns true if none of the child symbols are visible
+         * @returns {boolean} true when no child symbols are visible
          */
-        _noSymbolsVisible(): boolean {
-            return !this.legendItem.legend?.some(
+        _noSymbolsVisible(item: LayerItem): boolean {
+            return !item.layer.legend.some(
                 (item: LegendSymbology) => item.visibility
             );
         },
@@ -82,61 +83,59 @@ export default defineComponent({
             if (this.value instanceof LegendItem) {
                 // Toggle parent symbology checkbox
                 this.legendItem.toggleVisibility();
-            } else {
+            } else if (this.legendItem instanceof LayerItem) {
                 // Toggle child symbology checkbox
-                if (this._noSymbolsVisible()) {
+                if (this._noSymbolsVisible(this.legendItem)) {
                     // If no symbols are visible, then set the parent layer to visible
                     // since we toggled on one of the child symbols and set all other
                     // symbols to invisible (except for the one that is toggled on)
-
-                    this.legendItem.setChildSymbologyVisibility(
-                        undefined,
-                        false
-                    );
-                    this.legendItem.setChildSymbologyVisibility(
+                    this.legendItem.setSymbologyVisibility(undefined, false);
+                    this.legendItem.setSymbologyVisibility(
                         this.value.uid,
                         true
                     );
-                    if (!this.legendItem.visibility) {
-                        this.legendItem.toggleVisibility(true);
-                    }
+                    this.legendItem.toggleVisibility(true);
                 } else {
                     // Toggle the child symbology
-                    this.legendItem.setChildSymbologyVisibility(
+                    this.legendItem.setSymbologyVisibility(
                         this.value.uid,
                         !this.value.lastVisbility
                     );
                 }
 
                 // If all child symbols are toggled off, then toggle off the parent layer too
-                if (this._noSymbolsVisible()) {
+                if (this._noSymbolsVisible(this.legendItem)) {
                     this.legendItem.toggleVisibility(false);
                 }
-            }
 
-            // Update the layer definition to filter child symbols
-            // At the moment, only layers that support features will support sql filters
-            if (this.legendItem.layer?.supportsFeatures) {
-                const filterGuts = this.legendItem
-                    .legend!.filter(
-                        (item: LegendSymbology) => item.lastVisbility === true
-                    )
-                    .map(
-                        (item: LegendSymbology) => item.definitionClause || ''
-                    );
+                // Update the layer definition to filter child symbols
+                // At the moment, only layers that support features will support sql filters
+                if (this.legendItem.layer?.supportsFeatures) {
+                    const filterGuts = this.legendItem.layer
+                        .legend!.filter(
+                            (item: LegendSymbology) =>
+                                item.lastVisbility === true
+                        )
+                        .map(
+                            (item: LegendSymbology) =>
+                                item.definitionClause || ''
+                        );
 
-                let sql = ''; // default value, this computes to "show all"
-                if (filterGuts.length === 0) {
-                    // nothing visible.
-                    sql = '1=2';
-                } else if (filterGuts.length < this.legendItem.legend!.length) {
-                    // only a subset of checkboxes are checked. need filter
-                    sql = filterGuts.join(' OR ');
+                    let sql = ''; // default value, this computes to "show all"
+                    if (filterGuts.length === 0) {
+                        // nothing visible.
+                        sql = '1=2';
+                    } else if (
+                        filterGuts.length < this.legendItem.layer.legend!.length
+                    ) {
+                        // only a subset of checkboxes are checked. need filter
+                        sql = filterGuts.join(' OR ');
+                    }
+
+                    this.legendItem.layer?.setSqlFilter(CoreFilter.SYMBOL, sql);
                 }
-
-                this.legendItem.layer?.setSqlFilter(CoreFilter.SYMBOL, sql);
+                this.initialChecked = true;
             }
-            this.initialChecked = true;
         }
     }
 });

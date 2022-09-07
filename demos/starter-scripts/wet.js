@@ -354,11 +354,12 @@ let config = {
                         children: [
                             {
                                 name: 'Visibility Set',
-                                exclusiveVisibility: [
+                                exclusive: true,
+                                children: [
                                     {
                                         layerId: 'CleanAir',
                                         name: 'Clean Air in Set',
-                                        disabledControls: ['boundaryZoom']
+                                        disabledLayerControls: ['boundaryZoom']
                                     },
                                     {
                                         name: 'Group in Set',
@@ -367,7 +368,7 @@ let config = {
                                                 layerId: 'WaterQuantity',
                                                 name: 'Water Quantity in Nested Group',
                                                 sublayerIndex: 1,
-                                                controls: [
+                                                layerControls: [
                                                     'datatable',
                                                     'metadata',
                                                     'reload',
@@ -393,7 +394,7 @@ let config = {
                             {
                                 layerId: 'WFSLayer',
                                 name: 'WFSLayer',
-                                controls: [
+                                layerControls: [
                                     'metadata',
                                     'boundaryZoom',
                                     'refresh',

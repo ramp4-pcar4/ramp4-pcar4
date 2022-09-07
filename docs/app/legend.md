@@ -3,58 +3,95 @@
 
 ## Overview
 
-The legend fixture contains a panel which displays information about the map contents. The legend panel allows for easy access to each layer's data table, settings, and metadata. The panel also allows you to refresh and delete layers. Most features in the legend panel are customizable. Certain app configurations can mean features are removed or do not apply to specific scenarios. 
+The legend fixture contains a panel which displays information about the map contents. The legend panel allows for easy access to each layer's data table, settings, and metadata. The panel also allows you to refresh, add, and delete layers. Most features in the legend panel are customizable. Certain app configurations can mean features are removed or do not apply to specific scenarios. 
 
 The legend fixture is a default fixture, meaning it will be automatically loaded using a standard configuration.
 
 
 ## Buttons
 
-**Toggle Visibility**
-Clicking on this button opens a dropdown menu that allows you to toggle the visibility of all map layers on or off. If a layer has it's visibility control disabled, its visibility will not be modified.
-
-**Toggle Groups**
-Clicking on this button opens a dropdown menu that allows you to expand or collapse all layer groups in the legend. 
+**Add Layer**
+Clicking this button opens the layer wizard, which allows you to add new layers to the map.
 
 **Reorder Layers**
 Clicking this button opens the layer re-order panel (if the fixture has been added to RAMP). This fixture allows you to modify the priority in which layers appear on the map. 
 
-**Add Layer**
-Clicking this button opens the layer wizard, which allows you to add new layers to the map.
+**Toggle Visibility**
+Clicking on this button opens a dropdown menu that allows you to toggle the visibility of all legend items on or off. If an item has it's visibility control disabled, its visibility will not be modified.
+
+**Toggle Groups**
+Clicking on this button opens a dropdown menu that allows you to expand or collapse all groups in the legend. 
+
 
 ## Components
 
-#### Legend Entry
-A legend entry represents a single layer (or sub-layer, in the case of Map Image Layers) on the map. A layer's legend entry allows you to interact with the layer. If supported, clicking on the legend entry will open the data table associated with the layer. Legend entries also contain a `More options` button, which contains more interactive options:
+#### Legend Item
+A legend item is a generic class that represents entries in the legend. A legend item is a recursive component that can contain and be contained within other legend items. The given options for a legend item are:
+- Visibility (`visibilityButton`): *determines whether a visibility button is attached to the legend item, so that the item visibility can be controlled from the legend.*
+- Expand (`expandButton`): *determines whether the legend item can be expanded and collapsed in the legend.*
+
+Toggling the visibility of a legend item will toggle the visibility of all its child items. These controls can be disabled for a specific legend item through its object in the legend portion of the configuration file. There are two ways of doing this:
+1. Add the `disabledControls` property to the object as an array with the names for each control (in parentheses above). The following example demonstrates disabling the expand toggle for a legend item called `Visible Set`:
+
+    ```
+    {
+        name: 'Visible Set',
+        disabledControls: ['expandButton'],
+        children: [ ... ]
+    }
+    ```
+2. Add the `controls` property to the object as an array, and omit the names for each disabled control. The next code block provides the same configuration as the previous example:
+
+    ```
+    {
+        name: 'Visible Set',
+        controls: ['visibilityButton'],
+        children: [ ... ]
+    }
+    ```
+    
+If no control configuration for the legend item is provided, both controls are enabled by default.
+
+#### Layer Item
+A layer item is a legend item bound to a single layer (or sub-layer, in the case of Map Image Layers) on the map. Layer items allow you to interact with layers from the legend. If supported, clicking on a layer item will open the data table associated with the layer. Legend entries also contain a `More options` button, which contains more interactive options:
 - Metadata (`metadata`): *if a metadata URL is provided, opens a panel displaying the data.*
 - Settings (`settings`): *opens a settings panel that allows you to control layer opacity, visibility, and more.*
-- Datatable (`datatable`): *opens the data table for the associated layer. Same action as simply clicking on the legend entry.*
-- Legend: *expands or collapses the layer symbology stack.*
+- Datatable (`datatable`): *opens the data table for the associated layer. Same action as simply clicking on the layer item.*
+- Legend (`symbology`): *expands or collapses the layer symbology stack.*
 - Zoom to Layer Boundary (`boundaryZoom`): *sets the map zoom level to contain all layer features.*
 - Remove (`remove`): *removes the layer from the legend and map.*
 - Reload (`reload`): *reloads the layer.*
-- Visibility (`visibility`): *whether the visibility of this layer can be toggled on or off.*
 
-These controls can be disabled for a specific layer through its object in the legend portion of the configuration file. To do this, add the `disabledControls` property to the object as an array. The app names for each of these controls are in parenthesis above. The following example demonstrates disabling the boundary zoom for a layer called `CleanAir`:
+In addition to these controls, opening the settings panel provides extra options that specify how the layer is displayed on the map
 
-```
-{
-    layerId: 'CleanAir',
-    name: 'Clean Air in Set',
-    disabledControls: ['boundaryZoom']
-}
-```
+- Show layer (`visibility`): *toggles the visibility of the layer on or off.*
+- Opacity (`opacity`): *sets the opacity of the layer as a percentage.*
+- Toggle identify (`identify`): *when toggled off, data from this layer will not appear in identify results (e.g. when clicking on the map).*
 
-When accessing the `More options` menu for this layer in the app, the `Zoom to Boundary` button will not be able to be clicked.
+Like legend item controls, these controls can be disabled for a specific layer through its object in the legend portion of the configuration file. Again, there are two ways to do this: 
+1. Add the `disabledLayerControls` property to the object as an array with the names for each control (in parenthesis above). The following example demonstrates disabling the boundary zoom and opacity controls for a legend item called `CleanAir`:
 
-#### Legend Group
-A legend group is a recursive component that can contain legend entries, or other legend groups. A legend group can be collapsed to hide the legend entires contained within it. Toggling the visibility on the group, if enabled, will toggle the visibility of all of the legend entries contained within.
+    ```
+    {
+        layerId: 'CleanAir',
+        name: 'Clean Air',
+        disabledLayerControls: ['boundaryZoom', 'opacity']
+    }
+    ```
+2. Add the `layerControls` property to the object as an array, and omit the names for each disabled control. The next example configures `CleanAir` with only the remove control enabled:
 
-#### Visibility Group
-A visibility group works similar to the legend group, however the legend only allows for at most one child of the group to the visible at a time. If one child is visible and you toggle the visibility on for another child, the visibility for the first child will be turned off.
+    ```
+    {
+        layerId: 'CleanAir',
+        name: 'Clean Air in Set',
+        layerControls: ['remove']
+    }
+    ```
 
-#### Info Section
-TODO once added
+Additionally, controls will be disabled if the layer item does not support them.
+
+#### Section Item
+A section item is a legend item that is not bound to a layer. Section items can be used to group collections of legend items, as well as display information that can take the format of title, text, image, Markdown, or custom HTML template.
 
 ## Configuration
 > Note that in the following examples, the `layerId` represents the ID of the layer previously added to the map. [See the documentation for Layers](#) to understand how to add a layer to the map through the configuration file (TODO).
@@ -85,7 +122,7 @@ const config = {
         legend: {
             root: {
                 children: {
-                    ... put your layer objects here ...
+                    ... put your legend items here ...
                 }
             }
         },
@@ -95,126 +132,71 @@ const config = {
 ```
 
 ### Legend Component Objects
-There are four types of legend component objects for the legend fixture, each one representing one of the [Components](#Components) mentioned earlier in this documentation.
+There are two types of legend component objects for the legend fixture, each one representing a [Component](#Components) mentioned earlier in this documentation.
 
-#### Entry
-An entry acts as a leaf of the legend tree structure. It has the following properties:
+#### Legend Item
+Every node in the legend tree structure is an instance of a legend item. All legend items share these properties:
+- `name`: display name for legend item
+- `children`: list of child legend items
+- `hidden`: indicates if item (and its children) should be hidden from the legend
+- `expanded`: default expanded state of item
+- `visibility`: default visibility state of item
+- `exclusive`: indicates if toggling visibility should follow "exclusive" behavior
+- `controls:`: keeps track of list of enabled legend item controls
+- `disabledControls:`: keeps track of list of disabled legend item controls
 
-`layerId`: the ID of the layer this legend entry represents. The layer should already be added to the RAMP configuration under the `layers` section.
+#### Layer Item
+A layer item is an instance of a legend item. A single layer item directly corresponds to a single layer/sublayer on the map. It inherits the properties of a legend item, as well as:
+- `layerId`: the ID of the layer this legend entry represents. The layer should already be added to the RAMP configuration under the `layers` section
+- `sublayerIndex`: for Map Image Layers, an integer specifying the index of the sublayer
+- `symbologyExpanded`: determines whether the symbology stack is expanded by default
+- `coverIcon`: a custom icon to be displayed on the symbology stack
+- `description`: description text to be displayed above symbology stack when it is expanded
+- `layerControls:`: keeps track of list of enabled layer item controls
+- `disabledLayerControls:`: keeps track of list of disabled layer item controls
 
-`name`: the name that will be displayed for this layer in the legend.
-
-`sublayerIndex`: For Map Image Layers, an integer specifying the index of the sublayer.
-
-`controls`: an array of controls that are enabled for this legend entry.
-
-`disabledControls`: an array of controls that are disabled for this legend entry.
-
-`symbologyExpanded`: a boolean that determines whether the symbology stack is expanded by default.
-
-The following is an example of an entry in the configuration file:
+The following is an example of a layer item in the configuration file:
 ```text
  {
     layerId: 'WaterQuantity',
-    name: 'Water Quantity in Nested Group',
+    name: 'Water Quantity Layer',
     sublayerIndex: 1,
-    controls: [
+    layerControls: [
         'datatable',
         'metadata',
+        'opacity',
         'reload',
         'remove',
         'settings',
-        'symbology'
+        'symbology',
+        'visibility'
     ]
 }
 ```
 
-#### Entry Group
-An entry group acts as a non-leaf node of the legend tree structure. It has the following properties:
+#### Section Item
+A section item is an instance of a legend item. A section item does not correspond with any layer, but is used to group and label other legend items. It inherits the properties of a legend item, as well as:
+- `infoType`: the type of info displayed on the item, which can be title, text, an image, markdown, or HTML.
+- `content`: the content to be displayed on the item
 
-`name`: the name that will be displayed for this layer in the legend.
-
-`expanded`: a boolean, true if the group is expanded by default.
-
-`controls`: an array of controls that are enabled for this legend group.
-
-`disabledControls`: an array of controls that are disabled for this legend group.
-
-`children`: an array. Items in this array can be configuration for any legend component (an entry, an entry group, a visibility set, or an info section).
-
-The following is an example of an entry group in the configuration file:
-
+The following is an example of a section item containing two layer items in the configuration file:
 ```text
 {
-    name: 'Group in Set',
+    name: 'Layer Group',
+    infoType: 'text',
+    content: 'This group contains two layer items.'
     children: [
         {
             layerId: 'WaterQuantity',
-            name: 'Water Quantity in Nested Group',
-            sublayerIndex: 1,
-            controls: [
-                'datatable',
-                'metadata',
-                'reload',
-                'remove',
-                'settings',
-                'symbology'
-            ]
-        },
-        {
-            layerId: 'WaterQuantity',
-            name: 'CO2 in Nested Group',
-            sublayerIndex: 9
+            name: 'Water Quantity in Layer Group',
         },
         {
             layerId: 'WaterQuality',
-            name: 'Water Quality in Nested Group',
-            sublayerIndex: 5
+            name: 'Water Quality in Layer Group',
         }
     ]
 }
 ```
-
-#### Visibility Set
-A visibility set is displayed similar to the group, however only one entry can be visibile at a time. It has the following properties:
-
-`collapse` (not yet implemented): a boolean, if true renders the visibility set as a single legend entry.
-
-`exclusiveVisibility`: an array, similar to the `children` property in the group config. Items in this array can be either an entry, or an entry group. It **cannot** be another visibility set.
-
-The following is an example of a visibility set in the configuration file:
-
-```text
-{
-    name: 'Visibility Set',
-    exclusiveVisibility: [
-        {
-            layerId: 'CleanAir',
-            name: 'Clean Air in Set',
-            disabledControls: ['boundaryZoom']
-        },
-        {
-            name: 'Group in Set',
-            children: [
-                {
-                    layerId: 'WaterQuantity',
-                    name: 'CO2 in Nested Group',
-                    sublayerIndex: 9
-                },
-                {
-                    layerId: 'WaterQuality',
-                    name: 'Water Quality in Nested Group',
-                    sublayerIndex: 5
-                }
-            ]
-        }
-    ]
-}
-```
-
-#### Info Section
-TO BE IMPLEMENTED
-
 
 ## CRUD API
 The CRUD (Create, Read, Update, Delete) API for the legend provides an interface that is able to create, read, update, and delete legend items.

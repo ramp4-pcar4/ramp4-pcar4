@@ -454,9 +454,6 @@ function legendGroupUpgrader(r2legendGroup: any) {
     const r4legendGroup: any = { name: r2legendGroup.name, children: [] };
     if (typeof r2legendGroup.hidden !== 'undefined') {
         r4legendGroup.hidden = r2legendGroup.hidden;
-        console.warn(
-            `hidden property defined in legend entry group ${r2legendGroup.name} is currently not supported.`
-        );
     }
     if (typeof r2legendGroup.expanded !== 'undefined') {
         r4legendGroup.expanded = r2legendGroup.expanded;
@@ -483,6 +480,7 @@ function legendGroupUpgrader(r2legendGroup: any) {
                 `Legend entry groups currently support only the visibility control. All other controls are currently not supported.`
             );
         }
+        r4legendGroup.controls.push('expand');
     }
     if (
         r2legendGroup.disabledControls &&
@@ -508,9 +506,6 @@ function legendGroupUpgrader(r2legendGroup: any) {
         }
         // child is an info section
         else if (child.infoType) {
-            console.warn(
-                `infoSection item type in children list of legend entry group ${r4legendGroup.name} is currently not supported.`
-            );
             if (child.infoType === 'unboundLayer') {
                 console.warn(
                     `unboundLayer infoType in infoSection in children list of legend entry group ${r4legendGroup.name} cannot be mapped and will be skipped.`
@@ -529,25 +524,24 @@ function legendGroupUpgrader(r2legendGroup: any) {
         }
         // child is a visibility set
         else if (child.exclusiveVisibility) {
-            const visibilitySet: any = { exclusiveVisibility: [] };
+            const visibilitySet: any = {
+                name: 'Visibility Set',
+                children: [],
+                exclusive: true
+            };
             if (typeof child.collapse !== 'undefined') {
                 console.warn(
-                    `collapse property in visibilitySet in children list of legend entry group ${r4legendGroup.name} is currently not supported.`
+                    `collapse property in visibilitySet in children list of legend entry group ${r4legendGroup.name} cannot be mapped and will be skipped.`
                 );
-                visibilitySet.collapse = child.collapse;
             }
             child.exclusiveVisibility.forEach((item: any) => {
                 // item is a layer entry
                 if (item.layerId) {
-                    visibilitySet.exclusiveVisibility.push(
-                        legendEntryUpgrader(item)
-                    );
+                    visibilitySet.children.push(legendEntryUpgrader(item));
                 }
                 // item is a layer entry group
                 else {
-                    visibilitySet.exclusiveVisibility.push(
-                        legendGroupUpgrader(item)
-                    );
+                    visibilitySet.children.push(legendGroupUpgrader(item));
                 }
             });
             r4legendGroup.children.push(visibilitySet);
@@ -581,7 +575,7 @@ function legendEntryUpgrader(r2legendEntry: any) {
         'visibility'
     ];
     if (r2legendEntry.controls && r2legendEntry.controls.length > 0) {
-        r4legendEntry.controls = controlsUpgrader(
+        r4legendEntry.layerControls = controlsUpgrader(
             r2legendEntry.controls,
             allowedControls
         );
@@ -590,31 +584,26 @@ function legendEntryUpgrader(r2legendEntry: any) {
         r2legendEntry.disabledControls &&
         r2legendEntry.disabledControls.length > 0
     ) {
-        r4legendEntry.disabledControls = controlsUpgrader(
+        r4legendEntry.disabledLayerControls = controlsUpgrader(
             r2legendEntry.disabledControls,
             allowedControls
         );
     }
     // Warning party
     // TODO: remove these warnings whenever we add support for one of these properties.
-    if (typeof r2legendEntry.hidden !== 'undefined') {
-        console.warn(
-            `hidden property defined in legend entry ${r2legendEntry.layerId} is currently not supported.`
-        );
-    }
     if (r2legendEntry.controlledIds) {
         console.warn(
-            `controlledIds property defined in legend entry ${r2legendEntry.layerId} is currently not supported.`
+            `controlledIds property defined in legend entry ${r2legendEntry.layerId} cannot be mapped and will be skipped.`
         );
+        delete r4legendEntry.controlledIds;
     }
-    if (r2legendEntry.sublayerId) {
-        console.warn(
-            `sublayerId property defined in legend entry ${r2legendEntry.layerId} is currently not supported.`
-        );
+    if (r2legendEntry.entryIndex) {
+        r4legendEntry.sublayerIndex = r2legendEntry.entryIndex;
+        delete r2legendEntry.entryIndex;
     }
-    if (r2legendEntry.coverIcon) {
+    if (r2legendEntry.entryId) {
         console.warn(
-            `coverIcon property defined in legend entry ${r2legendEntry.layerId} is currently not supported.`
+            `entryId property defined in legend entry ${r2legendEntry.layerId} cannot be mapped and will be skipped.`
         );
     }
     if (r2legendEntry.description) {

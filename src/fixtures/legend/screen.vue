@@ -7,11 +7,12 @@
         <template #content>
             <legend-header></legend-header>
             <div v-focus-list>
-                <legend-component
+                <legend-item
                     v-for="item in children"
                     :legendItem="item"
                     :key="item.uid"
-                ></legend-component>
+                >
+                </legend-item>
             </div>
         </template>
     </panel-screen>
@@ -22,7 +23,7 @@ import type { PanelInstance } from '@/api';
 import { defineComponent, defineAsyncComponent } from 'vue';
 import type { PropType } from 'vue';
 import type { LegendAPI } from './api/legend';
-import type { LegendItem } from './store/legend-defs';
+import type { LegendItem } from './store/legend-item';
 
 export default defineComponent({
     name: 'LegendScreenV',
@@ -46,8 +47,8 @@ export default defineComponent({
     components: {
         // async components to avoid circular dependency breakage
         'legend-header': defineAsyncComponent(() => import('./header.vue')),
-        'legend-component': defineAsyncComponent(
-            () => import('./components/component.vue')
+        'legend-item': defineAsyncComponent(
+            () => import('./components/item.vue')
         )
     }
 });

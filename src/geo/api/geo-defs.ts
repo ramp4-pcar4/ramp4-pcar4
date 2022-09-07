@@ -480,7 +480,7 @@ export interface UrlQueryMap {
 // TODO migrate these to /geo/api/geo-common ? if we need config interfaces before creating an instance,
 //      having them defined here might cause circular reference.
 
-export enum LayerControls {
+export enum LayerControl {
     BoundaryZoom = 'boundaryZoom',
     Datatable = 'datatable',
     Identify = 'identify',
@@ -546,8 +546,8 @@ export interface RampLayerMapImageSublayerConfig {
     state?: RampLayerStateConfig;
     // following items need to be flushed out
     extent?: RampExtentConfig;
-    controls?: Array<LayerControls>;
-    disabledControls?: Array<LayerControls>;
+    controls?: Array<LayerControl>;
+    disabledControls?: Array<LayerControl>;
     stateOnly?: boolean;
     fieldMetadata?: RampLayerFieldMetadataConfig;
     initialFilteredQuery?: string;
@@ -561,8 +561,8 @@ export interface RampLayerWmsSublayerConfig {
     name?: string; // this is display name in ramp. would override "title" on the service
     state?: RampLayerStateConfig;
     // following items need to be flushed out
-    controls?: Array<LayerControls>;
-    disabledControls?: Array<LayerControls>;
+    controls?: Array<LayerControl>;
+    disabledControls?: Array<LayerControl>;
     currentStyle?: string; // style to be used
     styleLegends?: Array<{ name: string; url: string }>; // map of styles to legend graphic url. overrides service urls.
     fixtures?: any; // layer-based fixture config
@@ -583,8 +583,8 @@ export interface RampLayerConfig {
     nameField?: string;
     tooltipField?: string;
     featureInfoMimeType?: string; // used by WMS layer
-    controls?: Array<LayerControls>;
-    disabledControls?: Array<LayerControls>;
+    controls?: Array<LayerControl>;
+    disabledControls?: Array<LayerControl>;
     sublayers?:
         | Array<RampLayerMapImageSublayerConfig>
         | Array<RampLayerWmsSublayerConfig>;
