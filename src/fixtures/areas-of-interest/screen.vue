@@ -11,6 +11,7 @@
                         <li v-for="(area, idx) in areas" :key="idx">
                             <area-item
                                 :area="area"
+                                :show-thumbnail="showThumbnail"
                                 class="block relative overflow-hidden"
                             ></area-item>
                         </li>
@@ -29,6 +30,7 @@ import AreaOfInterestV from './item.vue';
 
 import type { PanelInstance } from '@/api';
 import { AreasOfInterestStore } from './store';
+import type { AreaOfInterest } from './store';
 
 export default defineComponent({
     name: 'AreasOfInterestScreenV',
@@ -42,8 +44,14 @@ export default defineComponent({
     },
     data() {
         return {
-            areas: this.get(AreasOfInterestStore.areas)
+            areas: this.get(AreasOfInterestStore.areas),
+            showThumbnail: false
         };
+    },
+    mounted() {
+        this.showThumbnail = this.areas.some(
+            (area: AreaOfInterest) => area.thumbnail
+        );
     }
 });
 </script>

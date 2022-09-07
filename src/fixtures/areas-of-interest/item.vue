@@ -1,7 +1,8 @@
 <template>
-    <div class="mb-10">
+    <div class="mt-10">
         <button
-            class="area-of-interest-item-button bg-gray-300 w-full border border-gray-300"
+            class="area-of-interest-item-button bg-gray-300 w-full"
+            :class="{ 'border border-gray-300': showThumbnail }"
             :aria-label="$t('areas-of-interest.select')"
             @click="selectAreaOfInterest(area)"
             v-focus-item
@@ -9,7 +10,8 @@
             <!-- thumbnail -->
             <div>
                 <div
-                    class="flex h-180 hover:opacity-50 area-of-interest-item-image"
+                    class="flex hover:opacity-50 area-of-interest-item-image"
+                    :class="showThumbnail ? 'h-180' : 'h-30'"
                 >
                     <!-- Use area of interest thumbnail url -->
                     <img
@@ -18,9 +20,8 @@
                         :alt="area.altText || area.title"
                         :src="area.thumbnail"
                     />
-                    <!-- Else, use placeholder image -->
                     <img
-                        v-else
+                        v-else-if="showThumbnail"
                         class="w-full bg-white object-contain py-30"
                         :alt="area.altText || area.title"
                         src="https://openclipart.org/image/800px/160615"
@@ -76,6 +77,9 @@ export default defineComponent({
         area: {
             type: Object as PropType<AreaOfInterest>,
             required: true
+        },
+        showThumbnail: {
+            type: Boolean
         }
     },
     methods: {
