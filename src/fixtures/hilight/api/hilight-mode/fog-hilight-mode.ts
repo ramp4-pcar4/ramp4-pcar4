@@ -8,14 +8,18 @@ export class FogHilightMode extends LiftHilightMode {
     handlers: Array<string> = [];
     // TODO: make these configurable later
     // See https://github.com/ramp4-pcar4/ramp4-pcar4/issues/1353
-    onOpacity: number = 0.75;
-    offOpacity: number = 0.02;
+    onOpacity: number;
+    offOpacity: number;
 
     private lastAdd: number = 0;
 
     constructor(config: any, iApi: InstanceAPI) {
         super(config, iApi);
-
+        this.onOpacity = config.options?.onOpacity ?? 0.75;
+        this.offOpacity =
+            config.options?.offOpacity > 0.02
+                ? config.options.offOpacity
+                : 0.02;
         this.hilightSetup();
 
         this.handlers.push(

@@ -2105,7 +2105,19 @@
                         },
                         "options": {
                             "description": "Options for the selected hilight mode.",
-                            "type": "object"
+                            "type": "object",
+                            "properties": {
+                                "onOpacity": {
+                                    "description": "Opacity of the fog that obscures non-highlighted features when a feature is highlighted. Applies to fog hilight mode.",
+                                    "type": "number",
+                                    "default": 0.75
+                                },
+                                "offOpacity": {
+                                    "description": "Opacity of the fog that obscures non-highlighted features when no feature is highlighted. Applies to fog hilight mode.",
+                                    "type": "number",
+                                    "default": 0.02
+                                }
+                            }
                         }
                     }
                 },
