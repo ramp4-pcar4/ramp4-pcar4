@@ -40,7 +40,7 @@
                 <div
                     v-show="expanded"
                     v-html="helpSection.info"
-                    class="section-body px-20 pt-5 overflow-hidden"
+                    class="ramp-markdown section-body px-20 pt-5 overflow-hidden"
                 ></div>
             </transition>
         </div>
