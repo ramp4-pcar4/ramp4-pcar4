@@ -314,15 +314,17 @@ export class LayerInstance extends APIScope {
      * @returns {Boolean} visibility of the layer
      */
     get visibility(): boolean {
-        return false;
+        return this.visibility;
     }
 
     /**
-     * Applies visibility to layer.
+     * Set visibility of layer.
      *
      * @param {Boolean} value the new visibility setting
      */
-    set visibility(value: boolean) {}
+    set visibility(value: boolean) {
+        this.visibility = value;
+    }
 
     /**
      * Returns the opacity of the layer.
@@ -330,7 +332,7 @@ export class LayerInstance extends APIScope {
      * @returns {Boolean} opacity of the layer
      */
     get opacity(): number {
-        return 0;
+        return this.opacity;
     }
 
     /**
