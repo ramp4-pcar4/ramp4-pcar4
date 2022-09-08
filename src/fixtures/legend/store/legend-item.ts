@@ -239,12 +239,15 @@ export class LegendItem extends APIScope {
      */
     checkVisibilityRules(): void {
         if (this.parent && !this.parent.visibility) {
-            // if parent is not visible and legend item has visibiility control, turn visiblity off
+            // if parent is not visible and legend item has visibility control, turn visiblity off
             this.toggleVisibility(false, false);
         } else if (this.parent?.exclusive) {
             // toggle not visible if item is part of a exclusive set with another item's visibility already toggled on
             const siblingVisible = this.parent.children.some(
-                item => item.visibility && item !== this
+                item =>
+                    item.visibility &&
+                    item.type === LegendType.Item &&
+                    item !== this
             );
 
             if (siblingVisible) {
