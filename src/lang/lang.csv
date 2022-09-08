@@ -44,4 +44,6 @@ panels.controls.moveLeft,Move Left,1,Aller à gauche,1
 panels.alert.open,{name} panel opened,1,Panneau de {name} ouvert,0
 panels.alert.close,{name} panel closed,1,Panneau de {name} fermé,0
 panels.alert.minimize,{name} panel minimized,1,Panneau de {name} minimisé,0
-layer.longload,{id} is taking longer than expected to load,1,{id} prend plus longtemps que prévu,0
+layer.error,{id} failed to load,1,{id} n'a pas pu être chargée,0
+layer.longload,{id} is taking longer than expected to load,1,{id} prend plus longtemps que prévu à charger,0
+layer.longdraw,{id} is taking longer than expected to draw,1,{id} prend plus longtemps que prévu pour dessiner,0
