@@ -1,20 +1,21 @@
 
 # General User Interface Guidance
 
-
 Menu options on the left will typically open new information panels. These panels have the option to pin them in place or close them using the thumb-pin and "x" buttons, respectively.
 
 The bell symbol in the lower-left corner displays notifications related to services or information on the map. Messages will be displayed here when erroneous services are not able to load on the map.
 
 For general or technical inquiries regarding the Reusable Accessible Mapping Platform that this interactive map is based on, please contact [applicationsdecartographieweb-webmappingapplications@ec.gc.ca](mailto:applicationsdecartographieweb-webmappingapplications@ec.gc.ca). You may access the RAMP GitHub repository using the "About RAMP" button in the lower-left corner.
 
+
 # Identifying Data
 
 There are three ways to access the data on the map:
 
-1. Select a point - Click or touch a data feature on the map, which will open or update the details panel with information specific to that item. 
+1. Select a point - Click or touch a data feature on the map, which will open or update the details panel with information specific to that item.
 2. Accessed via Data Table and search - see "Data Table" section below.
 3. Keyboard control crosshairs - see "Accessibility - Keyboard Navigation" section below.
+
 
 # Navigation Controls
 
@@ -45,6 +46,7 @@ The overview map displays a generalised view of the main map at a smaller scale.
 
 Select-hold on the overview map and drag it to change the extent of the main map. Selecting the toggle arrow icon in the top right corner of the overview map will expand or collapse it.
 
+
 # Legend
 
 The Legend panel, accessed from the first option in the left menu, serves as a map legend and lists the layers available to display in the map.
@@ -56,6 +58,7 @@ Each layer has some symbology associated with it. For simple layers with only on
 You can toggle the visibility of the layer at any time by selecting the checkbox next to each layer.
 
 Note, if a layer fails to load correctly it will be identified by an error notice. Instead of the standard layer actions you can select to either reload the layer (this is particularly helpful if there is a temporary network connectivity issue) or remove the layer.
+
 
 # Layer Settings
 
@@ -72,7 +75,7 @@ Note that some settings may not be available depending on various factors such a
 | Zoom to layer boundary | Pans and zooms the map so that the layer boundary is in view |
 | Reload | Reloads the layer |
 | Remove | Remove the layer from the map and legend |
-  
+
 
 # Layer Submenu
 
@@ -85,6 +88,7 @@ In the Legend panel, 4 functions appear in a row at the top:
 | Toggle Groups | Opens or closes all groups |
 | Toggle Visibility | Enables or disables the visibility for all layers |
 
+
 # Geolocation Search
 
 ### General Use
@@ -96,33 +100,25 @@ The geosearch component functions to allow users to search for places in Canada.
 __Keyword search__: Type any keyword into geosearch to display a list of results that contains the keyword.
 
 - each search result consists of: location name (with keyword highlighted), location province, and location type (lake, city, town, etc.)
-
 - click on any individual result to mark its coordinates and zoom the map to center around this location
 
 __FSA search__: A __forward sortation area (FSA)__ is a way to designate a geographical area based on the first three characters in a Canadian postal code. All postal codes that start with the same three characters are considered an __FSA__.
 
 - a search using FSA will display a list of results in the vicinity of that area
-
 - the very first result is a location of the FSA itself, click to zoom and center the map on the FSA
-
 - example: type in __M3H__
 
 __Latitude/Longitude search__: Search using lat/long coordinates to display a list of results in the vicinity of that map point.
 
 - similarly to FSA search, the first result will be a location of those coordinates entered, click this to zoom and center the map on the map point
-
 - lat/long search recognizes spaces, commas, semicolons, or vertical bars (|) to separate the co-ordinates
-
 - example: type in __54.3733,-91.7417__
 
 __NTS search__: __ National Topographic System (NTS)__ is a system used for providing general topographic maps of the country, producing details on landforms, lakes/rivers, forests, roads and railways, etc.
 
 - the NTS is split into three major zones: "Southern zone" - latitudes between 40°N and 68°N, "Arctic zone" - latitudes between 68°N and 80°N, and the "High Arctic zone" - latitudes between 80°N and 88°N
-
 - an NTS map number consists of a string containing a number identifying a map sheet, a letter identifying a map area, and a number identifying the scale map sheet
-
 - likewise, the first result will be a location of the NTS map number, click to center map on this area
-
 - example: type in __030M13__
 
 #### Unsupported Search Types
@@ -161,7 +157,7 @@ Click on the download button in the bottom-left of the panel to retrieve the fin
 
 <sup>†</sup>Please note timestamp is optional and may not be available depending on the map
 
-  
+
 # Data Table Panel
 
 The __Data Table__ panel is shown above in its initial state.
@@ -169,20 +165,13 @@ The __Data Table__ panel is shown above in its initial state.
 In addition to scrolling data, it is possible to:
 
 - Sort the data by selecting the header of the column. Multiple columns can be sorted by holding down shift before clicking a column header
-
 - Open the detail panel corresponding to a given row by selecting the *Details* paper icon
-
 - Position the map view to the location of the feature corresponding to a given row by selecting the *Zoom To Feature* magnifying glass icon
-
 - Move the columns by selecting left and right arrows beside the column title to shift it left or right
-
 - Filter the columns by numerical range, text, selection or date (if the configuration allows it). Changes in the table can also be made to reflect on the map by applying or clearing filters from map options, available in the top right corner of the data table
-
 - Show and/or hide columns by clicking on the *Hide Columns* icon, in the top right corner of the data table.
-
 - Navigate the table using a keyboard
 
-  
 The number of features in the layer is displayed in the top left corner below the layer title.
 
 ### Table Controls
@@ -202,26 +191,20 @@ This control group is located at the top of the data table and has the following
 - Global Search
 - Filter the table by making sure that the search term is a substring of the rows' data at one or more columns
 
-  
-
 #### Second row:
 
 - Apply Table Filters To Map
     - update the map to display only the data that is visible in the table
     - if the data in the table already matches the data displayed on the map, this button will be disabled
-
 - Toggle Column Visibilities
     - allows you to choose which columns you want to be visible on the table
-
 - Show filters
     - toggling this option off will hide all column filters
     - unable to change column filters while toggled off
     - column filters remain applied even when toggled off
-
 - Table Menu (More Options)
     - Clear Search and Filters
         - clear any existing filters and searches that may be applied to the table
-
 
 ### Sorting and Reordering
 
@@ -230,23 +213,16 @@ For each column in the data table, there may be a set of arrows associated with 
   __Column Sort__: Click on the column title to sort the columns in ascending/descending order (for numerical data) and alphabetical order (for text data).
 
 - an upward arrow (![](datatable/sortAsc.png)) next to the column title indicates that the column data is being sorted in ascending order or alphabetical order
-
 - a downward arrow (![](datatable/sortDesc.png)) next to the column title indicates that the column data is being sorted in descending order or reverse alphabetical order
-
 - No arrow next to the column title means that there is no sort applied to current column
-
 - sort multiple columns at once using shift + select column names
-
 - how it works: the next selected column using tab will be sorted according to the last selected column's groups of identical data
 
 __Column Reorder__: The two right/left arrows next to the column name are for reordering the columns.
 
 - click the right arrow to swap a column with the one on the right
-
 - the right arrow is disabled for the rightmost column of a data table
-
 - click the left arrow to swap a column with the one on the left
-
 - the left arrow is disabled for the leftmost column of a data table
 
 ### Filter data
@@ -254,21 +230,14 @@ __Column Reorder__: The two right/left arrows next to the column name are for re
 Data can be filtered by column. A column is searchable if there is an input field under the title of the header. As mentioned previously, there are 4 types of filters:
 
 -  __Text__: Character input field. Use the wildcard character (\*) to replace a sequence of zero or more characters (e.g. _* levo_ will find Charlevoix)
-
 -  _Note, without a generic character, the search will find only the elements where the word searched begins the sentence._
-
 -  __Number__: Input fields that accept only numbers
-
     - If a minimum and a maximum are defined the filter will search for a range
-
     - If, for example, only a minimum is defined, it will perform the operation _greater than_
-
 -  __Selection__: Drop-down menu which allows the selection of one or more predefined values
-
 -  __Date__: Similar to the numeric field but uses dates
 
 Some filters are not editable; Their value can not be changed. They are represented by a dashed line below their value.
-  
 
 ### Global Search
 
@@ -276,20 +245,18 @@ This control, which is found in the upper right corner of the data table, allows
 
 - If you enter the _Brook_ value, the data table will select the data that contains _Brook_ at any location (e.g. _Corner Brook_ will be selected)
 
-  
 ### Keyboard Navigation
 
 Use `Tab` to go through each of the table controls, and to navigate between the three major table groups:
 
 - Column Headers
-
 - Column Filters
-
 - Table Body
 
 Once any major group is focused on, you can use the arrow keys to navigate through the table cells for that component. Doing this will highlight the currently focused table cell.
 
 To access the buttons and/or input fields within a cell, make sure the cell is highlighted (by using arrow keys as above) and use `Tab` to navigate between its children.
+
 
 # Accessibility
 

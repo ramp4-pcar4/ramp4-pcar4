@@ -4,6 +4,12 @@
     @tailwind utilities;
     @tailwind variants;
 
+    @layer base {
+        .ramp-markdown * {
+            all: revert;
+        }
+    }
+
     @layer utilities {
         .display-none {
             display: none;

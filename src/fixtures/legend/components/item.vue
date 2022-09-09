@@ -206,7 +206,7 @@
                     />
                     <div
                         v-else-if="legendItem.infoType === InfoType.Markdown"
-                        class="markdown"
+                        class="ramp-markdown"
                         v-html="markdownToHtml(legendItem.content)"
                     ></div>
                     <component
