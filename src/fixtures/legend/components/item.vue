@@ -686,6 +686,9 @@ export default defineComponent({
                 });
             });
         }
+    },
+    beforeUnmount() {
+        this.handlers.forEach(handler => this.$iApi.event.off(handler));
     }
 });
 </script>

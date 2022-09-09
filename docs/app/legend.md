@@ -1,5 +1,4 @@
-# RAMP4 Legend Documentation
-
+# Legend
 
 ## Overview
 
