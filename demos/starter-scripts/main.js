@@ -288,7 +288,11 @@ let config = {
                                 opacity: 0.5,
                                 visibility: false
                             },
-                            disabledControls: ['opacity']
+                            fixtures: {
+                                settings: {
+                                    disabledControls: ['opacity']
+                                }
+                            }
                         }
                     ],
                     state: {
@@ -325,6 +329,15 @@ let config = {
                         opacity: 0.8,
                         visibility: true,
                         hovertips: false
+                    },
+                    fixtures: {
+                        settings: {
+                            disabledControls: [
+                                'visibility',
+                                'opacity',
+                                'identify'
+                            ]
+                        }
                     },
                     tolerance: 10,
                     customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in

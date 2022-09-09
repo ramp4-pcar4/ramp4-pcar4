@@ -25,8 +25,7 @@
                         :name="$t('settings.label.visibility')"
                         :config="{
                             value: visibilityModel,
-                            disabled:
-                                !legendItem.layerControlAvailable('visibility')
+                            disabled: !controlAvailable(LayerControl.Visibility)
                         }"
                     />
 
@@ -120,7 +119,6 @@ import type { PanelInstance } from '@/api';
 import { GlobalEvents, LayerInstance } from '@/api/internal';
 import { LayerControl } from '@/geo/api';
 import { defineComponent, type PropType } from 'vue';
-import type { LayerItem } from '../legend/store/layer-item';
 import type { SettingsAPI } from './api/settings';
 import SettingsComponentV from './component.vue';
 
@@ -128,8 +126,7 @@ export default defineComponent({
     name: 'SettingsScreenV',
     props: {
         panel: { type: Object as PropType<PanelInstance>, required: true },
-        layer: { type: Object as PropType<LayerInstance>, required: true },
-        legendItem: { type: Object as PropType<LayerItem>, required: true }
+        layer: { type: Object as PropType<LayerInstance>, required: true }
     },
     components: {
         'settings-component': SettingsComponentV
@@ -223,9 +220,9 @@ export default defineComponent({
     methods: {
         /**
          * Check if control is enabled on this layer's settings config.
-         * Default to layer controls if settings config is not defined.
+         * Default to enabled controls if fixture/settings config is not defined.
          */
-        controlAvailable(control: LayerControl): any {
+        controlAvailable(control: LayerControl): boolean {
             if (!this.fixture) {
                 console.warn(
                     'Settings panel cannot check for layer control because it could not find settings fixture api'
@@ -236,23 +233,20 @@ export default defineComponent({
                 this.fixture as SettingsAPI
             )?.getLayerFixtureConfig(this.layer.id);
 
-            // check disabled controls first
-            if (settingsConfig?.disabledLayerControls?.includes(control)) {
-                return false;
-            }
-            // check controls list and default to layer controls if not defined
-            return (
-                settingsConfig?.layerControls?.includes(control) ??
-                this.legendItem.layerControlAvailable(control)
-            );
+            // check disabled controls, then controls
+            return settingsConfig?.disabledControls?.includes(control)
+                ? false
+                : settingsConfig?.controls
+                ? settingsConfig?.controls?.includes(control)
+                : true;
         },
 
         /**
          * Update the layer visibility.
          */
         updateVisibility(val: boolean) {
-            // force update the visibility
-            this.legendItem.toggleVisibility(val);
+            // update the visibility
+            this.layer.visibility = val;
             this.visibilityModel = val;
         },
 
@@ -260,7 +254,7 @@ export default defineComponent({
          * Update the layer opacity.
          */
         updateOpacity(val: number) {
-            this.legendItem.layer.opacity = val / 100;
+            this.layer.opacity = val / 100;
             this.opacityModel = val;
         },
 
@@ -268,7 +262,7 @@ export default defineComponent({
          * Update the layer's toggle identify.
          */
         updateIdentify(val: boolean) {
-            this.legendItem.layer.identify = val;
+            this.layer.identify = val;
             this.identifyModel = val;
         },
 

@@ -50,7 +50,9 @@ The `help` provides a means to display user help for the application. TODO creat
 
 ### Settings
 
-The `settings` allow you to make live modifications to a layer on the map. TODO create and hyperlink to `settings.md`
+The `settings` allow you to make live modifications to a layer on the map.
+
+Continued [here](settings.md).
 
 ### Northarrow
 
