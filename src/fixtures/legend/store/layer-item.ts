@@ -119,10 +119,17 @@ export class LayerItem extends LegendItem {
     /**
      * Toggle visibility state of a layer item. Needs to verify parent visibility is updated.
      * @param {boolean} visibility set legend item to visible/not visible if given, otherwise toggle
-     * @param {boolean} updateParent whether or not toggleVisibiliity should 'bubble-up' the legend tree
+     * @param {boolean} updateParent whether or not toggleVisibility should 'bubble-up' the legend tree
      */
-    toggleVisibility(visible?: boolean, updateParent: boolean = true): void {
-        if (!this.layerControlAvailable(LayerControl.Visibility)) {
+    toggleVisibility(
+        visible?: boolean,
+        updateParent: boolean = true,
+        forceUpdate: boolean = false
+    ): void {
+        if (
+            !this.layerControlAvailable(LayerControl.Visibility) &&
+            !forceUpdate
+        ) {
             return;
         }
         super.toggleVisibility(visible, updateParent);

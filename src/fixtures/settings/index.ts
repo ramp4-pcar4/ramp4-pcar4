@@ -1,12 +1,12 @@
 import { markRaw } from 'vue';
 import { SettingsAPI } from './api/settings';
-
 import SettingsScreenV from './screen.vue';
-
 import messages from './lang/lang.csv?raw';
 
 class SettingsFixture extends SettingsAPI {
     async added() {
+        console.log(`[fixture] ${this.id} added`);
+
         this.$iApi.panel.register(
             {
                 settings: {

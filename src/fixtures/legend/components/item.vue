@@ -677,6 +677,23 @@ export default defineComponent({
                     )
                 );
 
+                this.handlers.push(
+                    this.$iApi.event.on(
+                        GlobalEvents.LAYER_VISIBILITYCHANGE,
+                        (updatedLayer: any) => {
+                            if (
+                                updatedLayer.layer.uid ===
+                                this.legendItem.layer.uid
+                            )
+                                this.legendItem.toggleVisibility(
+                                    updatedLayer.visibility,
+                                    true,
+                                    true
+                                );
+                        }
+                    )
+                );
+
                 Promise.all(
                     toRaw(this.legendItem!.layer!.legend).map(
                         (item: LegendSymbology) => item.drawPromise
@@ -686,6 +703,11 @@ export default defineComponent({
                 });
             });
         }
+    },
+
+    beforeUnmount() {
+        // Remove all event handlers for this component
+        this.handlers.forEach(handler => this.$iApi.event.off(handler));
     }
 });
 </script>
