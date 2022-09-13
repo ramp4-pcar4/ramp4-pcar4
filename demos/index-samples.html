@@ -69,7 +69,7 @@
             }
         </style>
 
-        <script>
+        <script type="module">
             var SAMPLE_KEY = 'sample';
             var currentUrl = new URL(window.location.href);
 
@@ -78,7 +78,7 @@
                 .addEventListener('change', onConfigSelect);
             initialLoad();
 
-            function appendScript(scriptName) {
+            async function appendScript(scriptName) {
                 // replace app div
                 document.getElementById('app').remove();
                 var newDiv = document.createElement('div');
@@ -86,14 +86,17 @@
                 document.body.append(newDiv);
 
                 //append script with time string to defeat caching
-                let script = document.createElement('script');
+                /* let script = document.createElement('script');
                 script.src =
                     './starter-scripts/' +
                     scriptName +
                     '.js?nocache=' +
                     new Date().getTime();
                 script.type = 'module';
-                document.head.appendChild(script);
+                document.head.appendChild(script); */
+                const dummy = await import(
+                    `./starter-scripts/${scriptName}.js`
+                ); // need the dummy because vite is a dummy and will only recognize dynamic imports this way
 
                 // update url
                 currentUrl.searchParams.set(
@@ -118,6 +121,7 @@
                     selectElem.item(sampleIndex)
                 ) {
                     selectElem.options[sampleIndex].selected = 'selected';
+                    appendScript(selectElem.options[sampleIndex].value);
                 } else {
                     appendScript(selectElem.options[0].value);
                 }
