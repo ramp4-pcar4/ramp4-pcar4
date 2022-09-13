@@ -78,37 +78,20 @@
                 .addEventListener('change', onConfigSelect);
             initialLoad();
 
-            async function appendScript(scriptName) {
-                // replace app div
-                document.getElementById('app').remove();
-                var newDiv = document.createElement('div');
-                newDiv.id = 'app';
-                document.body.append(newDiv);
-
-                //append script with time string to defeat caching
-                /* let script = document.createElement('script');
-                script.src =
-                    './starter-scripts/' +
-                    scriptName +
-                    '.js?nocache=' +
-                    new Date().getTime();
-                script.type = 'module';
-                document.head.appendChild(script); */
+            async function loadScript(scriptName) {
+                // vite dynamic import. requires assigning to a variable to be recognized.
                 const dummy = await import(
                     `./starter-scripts/${scriptName}.js`
-                ); // need the dummy because vite is a dummy and will only recognize dynamic imports this way
+                );
+            }
 
-                // update url
+            function onConfigSelect(event) {
+                // refresh page with new selection in URL
                 currentUrl.searchParams.set(
                     SAMPLE_KEY,
                     document.getElementById('selectConfig').selectedIndex + 1
                 );
-                history.pushState({}, '', currentUrl);
-            }
-
-            function onConfigSelect(event) {
-                let scriptName = event.target.value;
-                appendScript(scriptName);
+                window.location.href = currentUrl;
             }
 
             function initialLoad() {
@@ -121,9 +104,9 @@
                     selectElem.item(sampleIndex)
                 ) {
                     selectElem.options[sampleIndex].selected = 'selected';
-                    appendScript(selectElem.options[sampleIndex].value);
+                    loadScript(selectElem.options[sampleIndex].value);
                 } else {
-                    appendScript(selectElem.options[0].value);
+                    loadScript(selectElem.options[0].value);
                 }
             }
         </script>
