@@ -5,8 +5,7 @@ on:
     push:
         branches:
             - 'main'
-            - 'master'
-            - 'develop'
+            - 'qa'
         tags:
             - v**
 
