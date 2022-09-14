@@ -352,6 +352,9 @@ export class ClassBreaksSymbolUnit extends BaseSymbolUnit {
 
     match(searchParams: any): boolean {
         // param will be a numeric value
+        if (this.minValue === this.maxValue) {
+            return this.maxValue === searchParams;
+        }
         return this.minValue < searchParams && this.maxValue >= searchParams;
     }
 }
