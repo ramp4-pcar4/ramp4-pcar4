@@ -1,4 +1,4 @@
-import { LayerInstance, type InstanceAPI } from '@/api';
+import { GlobalEvents, LayerInstance, type InstanceAPI } from '@/api';
 import {
     DrawState,
     LayerControl,
@@ -20,6 +20,8 @@ export class LayerItem extends LegendItem {
     _symbologyExpanded: boolean;
     _layerControls: Array<LayerControl> = [];
     _layerDisabledControls: Array<LayerControl> = [];
+
+    handlers: Array<string> = [];
 
     /**
      * Creates a new single layer item.
@@ -119,10 +121,18 @@ export class LayerItem extends LegendItem {
     /**
      * Toggle visibility state of a layer item. Needs to verify parent visibility is updated.
      * @param {boolean} visibility set legend item to visible/not visible if given, otherwise toggle
-     * @param {boolean} updateParent whether or not toggleVisibiliity should 'bubble-up' the legend tree
+     * @param {boolean} updateParent whether or not toggleVisibility should 'bubble-up' the legend tree
+     * @param {boolean} forceUpdate ignore control check, used when visibility is changed outside of legend fixture
      */
-    toggleVisibility(visible?: boolean, updateParent: boolean = true): void {
-        if (!this.layerControlAvailable(LayerControl.Visibility)) {
+    toggleVisibility(
+        visible?: boolean,
+        updateParent: boolean = true,
+        forceUpdate: boolean = false
+    ): void {
+        if (
+            !this.layerControlAvailable(LayerControl.Visibility) &&
+            !forceUpdate
+        ) {
             return;
         }
         super.toggleVisibility(visible, updateParent);
@@ -209,6 +219,21 @@ export class LayerItem extends LegendItem {
                             this.setSymbologyVisibility(undefined, false);
                         }
                     }
+
+                    // event listener must be added after the layer is loaded
+                    this.handlers.push(
+                        this.$iApi.event.on(
+                            GlobalEvents.LAYER_VISIBILITYCHANGE,
+                            (updatedLayer: any) => {
+                                if (updatedLayer.layer.uid === this.layer.uid)
+                                    this.toggleVisibility(
+                                        updatedLayer.visibility,
+                                        true,
+                                        true
+                                    );
+                            }
+                        )
+                    );
                 })
                 .catch(() => {
                     this.error();

@@ -626,6 +626,11 @@ export class LegendAPI extends FixtureInstance {
                 this._insertItem(child, item.parent);
             });
         }
+        // unhook layer item listeners
+        if (item instanceof LayerItem) {
+            item.handlers.forEach(handler => this.$iApi.event.off(handler));
+        }
+
         // remove item from store
         this.$iApi.$vApp.$store.dispatch(LegendStore.removeItem, item);
 
