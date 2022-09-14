@@ -229,7 +229,10 @@ export class InstanceAPI {
                     const panelIds = langConfig.panels.open.map(p => p.id);
                     this.panel.isRegistered(panelIds).then(() => {
                         langConfig.panels?.open?.forEach(panel => {
-                            this.panel.open(panel.id);
+                            this.panel.open({
+                                id: panel.id,
+                                screen: panel.screen
+                            });
                             if (panel.pin) {
                                 this.panel.pin(panel.id);
                             }

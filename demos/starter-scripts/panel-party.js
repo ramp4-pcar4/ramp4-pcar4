@@ -1,4 +1,7 @@
 import { createInstance, geo } from '@/main';
+import { IklobFixture } from './sample-fixtures/iklob/main';
+import { DiligordFixture } from './sample-fixtures/diligord/diligord-fixture';
+import { MourugeFixture } from './sample-fixtures/mouruge/main';
 
 window.debugInstance = null;
 
@@ -301,11 +304,16 @@ let config = {
                 {
                     id: 'WFSLayer',
                     layerType: 'ogc-wfs',
-                    url: 'https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=7740',
+                    url: 'https://api.weather.gc.ca//collections/ahccd-trends/items?measurement_type__type_mesure=total_precip&period__periode=Ann&startindex=0&limit=1000&province__province=on',
+                    xyInAttribs: true,
+                    colour: '#FF5555',
                     state: {
                         visibility: true
                     },
                     customRenderer: {},
+                    metadata: {
+                        url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/main/README.md'
+                    },
                     fixtures: {
                         details: {
                             template: 'WFSLayer-Custom'
@@ -350,9 +358,15 @@ let config = {
                 },
                 appbar: {
                     items: [
-                        [{ id: 'gazebo', options: { colour: '#54a0ff' } }],
-                        ['snowman', 'legend', 'geosearch', 'basemap'],
-                        ['export']
+                        [
+                            'diligord-p1',
+                            {
+                                id: 'gazebo'
+                            },
+                            'iklob-p1',
+                            'mouruge-p1'
+                        ],
+                        ['snowman', 'legend', 'geosearch', 'basemap']
                     ]
                 },
                 mapnav: { items: ['fullscreen', 'help', 'home', 'basemap'] },
@@ -362,14 +376,22 @@ let config = {
                     }
                 }
             },
+            panels: {
+                open: [
+                    { id: 'diligord-p1' },
+                    { id: 'iklob-p1' },
+                    { id: 'mouruge-p1' }
+                ]
+            },
             system: { animate: true }
         }
     }
 };
 
 let options = {
-    loadDefaultFixtures: false,
-    loadDefaultEvents: true
+    loadDefaultFixtures: true,
+    loadDefaultEvents: true,
+    startRequired: false
 };
 
 const rInstance = createInstance(
@@ -378,25 +400,15 @@ const rInstance = createInstance(
     options
 );
 
-var iklobLoad = rInstance.event.on('fixture/added', fixture => {
-    if (fixture.id === 'iklob') {
-        rInstance.event.off(iklobLoad);
-        rInstance.panel.open('iklob-p1');
-    }
-});
+window.debugInstance = rInstance;
 
-rInstance.fixture.addDefaultFixtures().then(() => {
-    rInstance.panel.open('geosearch');
-    rInstance.panel.open('basemap');
-    rInstance.panel.open('legend');
-    rInstance.panel.open('help');
-    // Emits an event to open the metadata panel. Usually, this is be done by any fixture that wants the metadata panel to open.
-    rInstance.event.emit('metadata/open', {
-        type: 'html',
-        layerName: 'Sample Layer Name',
-        url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/main/README.md'
-    });
-});
+// add fixtures
+rInstance.fixture.add('iklob', IklobFixture);
+rInstance.fixture.add('diligord', DiligordFixture);
+rInstance.fixture.add('mouruge', MourugeFixture);
+rInstance.fixture.add('gazebo');
+rInstance.fixture.add('snowman');
+rInstance.fixture.add('export');
 
 // Load custom templates.
 rInstance.$element.component('WFSLayer-Custom', {
@@ -483,51 +495,3 @@ rInstance.$element.component('Water-Quantity-Template', {
         }
     }
 });
-
-// start loading non-default fixtures; this is just an example
-
-// TODO: fix console errors
-rInstance.fixture.add('snowman');
-rInstance.fixture.add('gazebo').then(() => {
-    rInstance.panel.get('p2').open({ screen: 'p-2-screen-2' }).pin();
-});
-/* rInstance.fixture.add('diligord', window.hostFixtures.diligord).then(() => {
-    rInstance.panel.open('diligord-p1');
-});
-rInstance.fixture.add('mouruge', window.hostFixtures.mouruge).then(() => {
-    rInstance.panel.open('mouruge-p1');
-}); */
-
-// add export fixtures
-rInstance.fixture.add('export');
-
-// sample event declared by the page
-
-// interesting race condition here. we could use rInstance.availableEvents to find the name,
-// but given the async nature of fixture.add, the name will not be registered yet.
-var gazeboEventName = 'gazebo/beholdMyText';
-
-// a one time handler. clicking "see a cat" many times should only result in one console log
-var onceHandler = function (text) {
-    console.log('EVENTS API SAMPLE: a one time event : ' + text);
-};
-rInstance.event.once(gazeboEventName, onceHandler, 'SAMPLE_HANDLER_ONCE');
-
-function switchLang() {
-    if (rInstance.language === 'en') {
-        rInstance.setLanguage('fr');
-    } else {
-        rInstance.setLanguage('en');
-    }
-    document.getElementById('instance-language').innerText = rInstance.language;
-}
-
-function animateToggle() {
-    if (rInstance.$vApp.$el.classList.contains('animation-enabled')) {
-        rInstance.$vApp.$el.classList.remove('animation-enabled');
-    } else {
-        rInstance.$vApp.$el.classList.add('animation-enabled');
-    }
-    document.getElementById('animate-status').innerText =
-        'Animate: ' + rInstance.animate;
-}

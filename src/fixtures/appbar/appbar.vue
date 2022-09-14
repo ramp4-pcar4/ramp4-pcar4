@@ -21,8 +21,8 @@
                     :is="item.componentId"
                     :key="`${item}-${index2}`"
                     :options="item.options"
-                    :id="item.id"
                     class="appbar-item h-48"
+                    :id="item.id"
                     :class="`identifier-${item}-${index2}`"
                 ></component>
             </template>
