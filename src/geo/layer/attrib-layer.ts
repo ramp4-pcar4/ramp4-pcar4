@@ -821,7 +821,6 @@ export class AttribLayer extends CommonLayer {
      * - filterGeometry : a RAMP API geometry to restrict results to
      * - filterSql : a where clause to apply against feature attributes
      * - includeGeometry : a boolean to indicate if result features should include the geometry
-     * - outFields : a string of comma separated field names. will restrict fields included in the output
      * - sourceSR : a spatial reference indicating what the source layer is encoded in. providing can assist in result geometry being of a proper resolution
      *
      * @param options {Object} options to provide filters and helpful information.
@@ -838,10 +837,6 @@ export class AttribLayer extends CommonLayer {
         //      layers record count, and this.attLoader.isLoaded is false,
         //      we could trigger a getattributes call to bulk download them upfront.
         //      would be more efficient (way less web calls).
-
-        if (!options.outFields) {
-            options.outFields = this.fieldList;
-        }
 
         const oids = await this.queryOIDs(options);
 

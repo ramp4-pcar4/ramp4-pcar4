@@ -332,6 +332,8 @@ export interface AttributeSet {
     oidIndex: { [key: number]: number };
 }
 
+// the type field values are aligned with the ESRI API values.
+// https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-support-Field.html#type
 export interface FieldDefinition {
     name: string;
     alias: string;
@@ -391,7 +393,6 @@ export interface QueryFeaturesParams {
     filterGeometry?: BaseGeometry; // filter by geometry
     filterSql?: string; // filter by sql query
     includeGeometry?: boolean; // if geometry should be included in the result
-    outFields?: string; // comma separated list of attributes to restrict what is downloaded
     sourceSR?: SpatialReference; // the spatial reference of the web service. providing helps avoid some reprojection issues
 }
 

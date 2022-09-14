@@ -983,22 +983,7 @@
                     "additionalProperties": true
                 },
                 "fieldMetadata": {
-                    "type": "object",
-                    "description": "Specifies options for the fields of a layer.",
-                    "properties": {
-                        "fieldInfo": {
-                            "type": "array",
-                            "description": "Specifies field info for layer.",
-                            "items": {
-                                "$ref": "#/$defs/fieldMetadataEntry"
-                            }
-                        },
-                        "exclusiveFields": {
-                            "type": "boolean",
-                            "default": false,
-                            "description": "If true, only fields in fieldInfo are downloaded. Otherwise, download all fields."
-                        }
-                    }
+                    "$ref": "#/$defs/fieldMetadata"
                 },
                 "initialFilteredQuery": {
                     "type": "string",
@@ -1104,11 +1089,7 @@
                     "additionalProperties": true
                 },
                 "fieldMetadata": {
-                    "type": "array",
-                    "description": "Specifies options for the fields of a layer.",
-                    "items": {
-                        "$ref": "#/$defs/fieldMetadataEntry"
-                    }
+                    "$ref": "#/$defs/fieldMetadata"
                 },
                 "initialFilteredQuery": {
                     "type": "string",
@@ -1224,11 +1205,7 @@
                     "additionalProperties": true
                 },
                 "fieldMetadata": {
-                    "type": "array",
-                    "description": "Specifies options for the fields of a layer.",
-                    "items": {
-                        "$ref": "#/$defs/fieldMetadataEntry"
-                    }
+                    "$ref": "#/$defs/fieldMetadata"
                 },
                 "initialFilteredQuery": {
                     "type": "string",
@@ -1341,11 +1318,7 @@
                     "additionalProperties": true
                 },
                 "fieldMetadata": {
-                    "type": "array",
-                    "description": "Specifies options for the fields of a layer.",
-                    "items": {
-                        "$ref": "#/$defs/fieldMetadataEntry"
-                    }
+                    "$ref": "#/$defs/fieldMetadata"
                 },
                 "initialFilteredQuery": {
                     "type": "string",
@@ -1585,6 +1558,24 @@
                 }
             },
             "required": ["name"]
+        },
+        "fieldMetadata": {
+            "type": "object",
+            "description": "Specifies options for the fields of a layer.",
+            "properties": {
+                "fieldInfo": {
+                    "type": "array",
+                    "description": "Specifies field info for layer.",
+                    "items": {
+                        "$ref": "#/$defs/fieldMetadataEntry"
+                    }
+                },
+                "exclusiveFields": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If true, only fields in fieldInfo are recognized and downloaded. Otherwise, all fields are used."
+                }
+            }
         },
         "initialLayerSettings": {
             "type": "object",

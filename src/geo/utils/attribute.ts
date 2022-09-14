@@ -169,6 +169,7 @@ export class AttributeAPI extends APIScope {
                 //      but we may need to do it for stuff like populating a grid with reduced columns.
                 //      if we do this, we may need to clone the attribute objects then remove properties;
                 //      we don't want to mess with the original source in the layer.
+                // If we do a stripping, use details.attribs as the source for what to keep.
                 return toRaw(g).attributes;
             }
         );

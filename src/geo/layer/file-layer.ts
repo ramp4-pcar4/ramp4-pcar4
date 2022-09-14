@@ -181,11 +181,15 @@ export class FileLayer extends AttribLayer {
             esriConfig[p] = this.esriJson[p];
         });
 
-        esriConfig.displayField =
-            fieldValidator(
-                <Array<EsriField>>esriConfig.fields,
-                this.origRampConfig.nameField || ''
-            ) || oidField;
+        if (this.origRampConfig.nameField) {
+            esriConfig.displayField =
+                fieldValidator(
+                    <Array<EsriField>>esriConfig.fields,
+                    this.origRampConfig.nameField!
+                ) || oidField;
+        } else {
+            esriConfig.displayField = oidField;
+        }
         esriConfig.outFields = ['*']; // TODO eventually will want this overridable by the config.
 
         // TODO inspect rampLayerConfig for any config field alias overrides or field restrictions. apply them to esriConfig.fields
@@ -325,7 +329,6 @@ export class FileLayer extends AttribLayer {
         ) {
             // run a spatial query
             const qOpts: QueryFeaturesParams = {
-                outFields: this.fieldList,
                 includeGeometry: false
             };
 
