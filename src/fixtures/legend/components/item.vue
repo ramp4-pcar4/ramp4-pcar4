@@ -19,11 +19,10 @@
                         ? 'cursor-pointer'
                         : 'cursor-default'
                 ]"
-                @mouseover.stop="
-                    mobileMode ? null : $event.currentTarget?._tippy?.show()
-                "
+                @mouseover.stop="hover($event.currentTarget)"
                 @mouseout.self="
-                    mobileMode ? null : $event.currentTarget?._tippy?.hide()
+                    mobileMode ? null : $event.currentTarget?._tippy?.hide(),
+                        (hovered = false)
                 "
                 @click="
                     () => {
@@ -389,7 +388,8 @@ export default defineComponent({
             symbologyStack: [] as Array<LegendSymbology>,
             handlers: [] as Array<string>,
             LayerItem: LayerItem,
-            InfoType: InfoType
+            InfoType: InfoType,
+            hovered: false
         };
     },
     computed: {
@@ -609,6 +609,15 @@ export default defineComponent({
             } catch {
                 return;
             }
+        },
+        /**
+         * Helper function needed to delay tooltips using the _tippy?.show() workaround
+         */
+        hover(t: EventTarget) {
+            this.hovered = true;
+            setTimeout(() => {
+                if (this.hovered) this.mobileMode ? null : t._tippy?.show();
+            }, 300);
         }
     },
     mounted() {
