@@ -687,11 +687,7 @@ export function layerUpgrader(r2layer: any): any {
                     const r4Sublayer: any =
                         layerCommonPropertiesUpgrader(r2LayerEntry);
                     r4Sublayer.index = r2LayerEntry.index;
-                    if (r2LayerEntry.outfields) {
-                        console.warn(
-                            `outfields property provided in layer entry ${r2LayerEntry.index} of layer ${r2layer.id} cannot be mapped and will be skipped.`
-                        );
-                    }
+
                     r4layer.sublayers.push(r4Sublayer);
                 });
             }
@@ -699,11 +695,6 @@ export function layerUpgrader(r2layer: any): any {
 
         case 'esriFeature':
             r4layer.layerType = 'esri-feature';
-            if (r2layer.outfields) {
-                console.warn(
-                    `outfields property provided in layer ${r2layer.id} cannot be mapped and will be skipped.`
-                );
-            }
 
             // Check if this feature layer is actually a file layer, and map file layer properties
             if (r2layer.fileType) {
@@ -860,18 +851,9 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
         r4layer.stateOnly = r2layer.stateOnly;
     }
 
-    if (r2layer.fieldMetadata) {
-        r4layer.fieldMatadata = [];
-        r2layer.fieldMatadata.forEach((r2fieldMetadataEntry: any) => {
-            const r4fieldMetadataEntry: any = {
-                name: r2fieldMetadataEntry.data
-            };
-            if (r2fieldMetadataEntry.alias) {
-                r4fieldMetadataEntry.alias = r2fieldMetadataEntry.alias;
-            }
-            r4layer.fieldMatadata.push(r4fieldMetadataEntry);
-        });
-    }
+    // deal with fields mayhem
+    fieldsSausageGrinder(r2layer, r4layer);
+
     if (typeof r2layer.toggleSymbology !== 'undefined' || r2layer.table) {
         r4layer.fixtures = {};
         if (typeof r2layer.toggleSymbology !== 'undefined') {
@@ -1386,4 +1368,67 @@ function pluginsUpgrader(r2plugins: any, r4c: any): void {
             })
         };
     }
+}
+
+/**
+ * Deals with the cross product scenarios of fieldMetadata and outfields.
+ * @param r2Layer ramp2 layer fun
+ * @param r4layer gets field metadata updated
+ */
+function fieldsSausageGrinder(r2layer: any, r4layer: any): void {
+    const hasOutfields: boolean =
+        r2layer.outfields && r2layer.outfields !== '*';
+    if (!hasOutfields && !r2layer.fieldMetadata) {
+        // no config items. do nothing. donethanks
+        return;
+    }
+
+    const struct = {
+        fieldInfo: [] as any[],
+        exclusiveFields: false
+    };
+
+    if (r2layer.fieldMetadata) {
+        // we have a field list, probably for providing aliases
+
+        struct.fieldInfo = r2layer.fieldMetadata.map((fmd: any) => {
+            const newNugget: any = {
+                name: fmd.data
+            };
+            if (fmd.alias) {
+                newNugget.alias = fmd.alias;
+            }
+            return newNugget;
+        });
+
+        if (hasOutfields) {
+            // We also have field restriction. ensure any fields not already in the alias list get included.
+            // This logic is not perfect. If we have an aliasd field that is not in outfields, unsure how that should be handled
+            // (i.e. which overrides). We take the lazy route and let alias override.
+            const checkFields = r2layer.outfields
+                .split(',')
+                .map((s: string) => s.trim());
+
+            checkFields.forEach((cf: string) => {
+                if (
+                    struct.fieldInfo.findIndex((fi: any) => fi.name === cf) ===
+                    -1
+                ) {
+                    // field did not exist. add it
+                    struct.fieldInfo.push({ name: cf });
+                }
+            });
+
+            struct.exclusiveFields = true;
+        }
+    } else if (hasOutfields) {
+        // we only have outfields, no alias mapping.
+
+        struct.fieldInfo = r2layer.outfields
+            .split(',')
+            .map((s: string) => ({ name: s.trim() }));
+        struct.exclusiveFields = true;
+    }
+
+    r4layer.fieldMetadata = struct;
 }
