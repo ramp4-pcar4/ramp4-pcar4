@@ -719,15 +719,6 @@ rInstance.fixture.add('areas-of-interest');
 // load map if startRequired is true
 rInstance.start();
 
-function switchLang() {
-    if (rInstance.language === 'en') {
-        rInstance.setLanguage('fr');
-    } else {
-        rInstance.setLanguage('en');
-    }
-    document.getElementById('instance-language').innerText = rInstance.language;
-}
-
 function animateToggle() {
     if (rInstance.$vApp.$el.classList.contains('animation-enabled')) {
         rInstance.$vApp.$el.classList.remove('animation-enabled');

@@ -86,7 +86,7 @@ class GazeboFixture extends FixtureInstance {
                          * // TODO: This should work:
                          * letting the core to lazy-load a screen component; need to provide a path relative to the fixtures home folder
                          */
-                        'p-2-screen-2': 'gazebo/p2-screen-2.vue',
+                        'p-2-screen-2': markRaw(GazeboP2Screen2V),
 
                         /**
                          * // TODO: This should work:

@@ -491,12 +491,12 @@ rInstance.fixture.add('snowman');
 rInstance.fixture.add('gazebo').then(() => {
     rInstance.panel.get('p2').open({ screen: 'p-2-screen-2' }).pin();
 });
-rInstance.fixture.add('diligord', window.hostFixtures.diligord).then(() => {
+/* rInstance.fixture.add('diligord', window.hostFixtures.diligord).then(() => {
     rInstance.panel.open('diligord-p1');
 });
 rInstance.fixture.add('mouruge', window.hostFixtures.mouruge).then(() => {
     rInstance.panel.open('mouruge-p1');
-});
+}); */
 
 // add export fixtures
 rInstance.fixture.add('export');
@@ -506,18 +506,6 @@ rInstance.fixture.add('export');
 // interesting race condition here. we could use rInstance.availableEvents to find the name,
 // but given the async nature of fixture.add, the name will not be registered yet.
 var gazeboEventName = 'gazebo/beholdMyText';
-
-// a handler to react to a gazebo event
-// click "see a cat" button to trigger console output
-var handler = function (text) {
-    // important to use get here, as the fixture might have been removed later on
-    var diligord = rInstance.fixture.get('diligord');
-    if (!diligord) {
-        return;
-    }
-    diligord.doAThing(text);
-};
-rInstance.event.on(gazeboEventName, handler, 'SAMPLE_HANDLER');
 
 // a one time handler. clicking "see a cat" many times should only result in one console log
 var onceHandler = function (text) {
