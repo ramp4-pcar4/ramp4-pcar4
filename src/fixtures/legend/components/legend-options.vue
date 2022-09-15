@@ -2,7 +2,7 @@
     <div @click.stop @mouseover.stop class="options display-block cursor-auto">
         <dropdown-menu
             class="flex-shrink-0"
-            position="bottom-start"
+            position="bottom-end"
             :tooltip="$t('legend.layer.options')"
             tooltip-placement="left"
             ref="dropdown-menu"

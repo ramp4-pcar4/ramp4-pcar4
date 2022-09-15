@@ -60,7 +60,7 @@
                         <close @click="scope.close"></close>
                     </div>
                 </div>
-                <notification-list class="overflow-y-auto"></notification-list>
+                <notification-list class="overflow-y-auto h-230" />
             </div>
         </template>
     </dropdown-menu>
