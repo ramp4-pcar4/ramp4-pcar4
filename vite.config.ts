@@ -53,7 +53,8 @@ export default defineConfig(({ command, mode }) => {
                         multi: '/index-multi.html',
                         e2e: '/index-e2e.html',
                         wet: '/index-wet.html',
-                        samples: '/index-samples.html'
+                        samples: '/index-samples.html',
+                        all: '/index-all.html'
                     }
                 }
             });

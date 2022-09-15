@@ -9,6 +9,12 @@
     <body style="margin: 0">
         <section id="header" style="width: 100%">
             <div class="row">
+                <!-- 
+                    PAY ATTENTION! :'0  The order of these options is hard-linked to the
+                    direct load url parameter. So page.html?sample=4 will take the fourth
+                    option, not option "04. ". Unless the list order is maintained impeccably.
+                    So no gaps or switcheroos in lable numbering or else things will look funny.
+                 -->
                 <select id="selectConfig" class="tool">
                     <option value="main">01. Default</option>
                     <option value="panel-party">02. Lots of panels</option>
@@ -28,7 +34,13 @@
                     <option value="geosearch">12. Geosearch</option>
                     <option value="help">13. Help</option>
                     <option value="mapnav">14. Mapnav</option>
-                </select>
+                    <option value="simple-feature">
+                        15. Basic Map with Feature Layers
+                    </option>
+                    <option value="simple-mil">
+                        16. Basic Map with Map Image Layers
+                    </option></select
+                ><a class="linky" href="index-all.html">Catalogue</a>
             </div>
         </section>
 
@@ -64,8 +76,13 @@
                 margin: 10px;
                 flex-grow: 1;
             }
+            .linky {
+                margin: 10px;
+                flex-grow: 0;
+                white-space: nowrap;
+            }
             #selectConfig {
-                width: 100%;
+                width: 90%;
             }
             #app {
                 height: 96vh;
