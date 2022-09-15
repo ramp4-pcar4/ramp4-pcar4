@@ -208,7 +208,6 @@ export class FeatureLayer extends AttribLayer {
             // run a spatial query
             // TODO investigate if we need the sourceSR param set here
             const qOpts: QueryFeaturesParams = {
-                outFields: this.fieldList,
                 includeGeometry: false
             };
 
