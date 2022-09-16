@@ -1,23 +1,24 @@
 <template>
     <div class="ag-custom-header flex flex-1 items-center h-full w-full">
-        <div v-if="sortable" class="flex flex-1 items-center min-w-0">
+        <div
+            v-if="sortable"
+            class="flex flex-1 items-center min-w-0"
+            truncate-trigger
+        >
             <button
                 @click="onSortRequested('asc', $event)"
                 :content="$t(`grid.header.sort.${sort}`)"
                 v-tippy="{ placement: 'top', hideOnClick: false }"
                 class="customHeaderLabel hover:bg-gray-300 font-bold p-8 max-w-full"
                 role="columnheader"
-                truncate-trigger
                 tabindex="-1"
             >
-                <!-- <div v-truncate="{ externalTrigger: true }"> -->
-                <div>
+                <div v-truncate="{ externalTrigger: true }">
                     {{ params.displayName }}
                 </div>
             </button>
         </div>
-        <!-- <span v-else class="customHeaderLabel" role="columnheader" v-truncate>{{ -->
-        <span v-else class="customHeaderLabel" role="columnheader">{{
+        <span v-else class="customHeaderLabel" role="columnheader" v-truncate>{{
             params.displayName
         }}</span>
 
