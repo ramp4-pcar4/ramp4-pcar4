@@ -7,17 +7,14 @@
                 v-tippy="{ placement: 'top', hideOnClick: false }"
                 class="customHeaderLabel hover:bg-gray-300 font-bold p-8 max-w-full"
                 role="columnheader"
-                truncate-trigger
                 tabindex="-1"
             >
-                <!-- <div v-truncate="{ externalTrigger: true }"> -->
-                <div>
+                <div v-truncate>
                     {{ params.displayName }}
                 </div>
             </button>
         </div>
-        <!-- <span v-else class="customHeaderLabel" role="columnheader" v-truncate>{{ -->
-        <span v-else class="customHeaderLabel" role="columnheader">{{
+        <span v-else class="customHeaderLabel" role="columnheader" v-truncate>{{
             params.displayName
         }}</span>
 
