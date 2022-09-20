@@ -437,8 +437,7 @@ let config = {
                                             {
                                                 layerId: 'WaterQuantity',
                                                 name: 'CO2 in Nested Group',
-                                                sublayerIndex: 9,
-                                                visibility: false
+                                                sublayerIndex: 9
                                             },
                                             {
                                                 layerId: 'WaterQuality',

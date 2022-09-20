@@ -139,7 +139,6 @@ Every node in the legend tree structure is an instance of a legend item. All leg
 - `children`: list of child legend items
 - `hidden`: indicates if item (and its children) should be hidden from the legend
 - `expanded`: default expanded state of item
-- `visibility`: default visibility state of item
 - `exclusive`: indicates if toggling visibility should follow "exclusive" behavior
 - `controls:`: keeps track of list of enabled legend item controls
 - `disabledControls:`: keeps track of list of disabled legend item controls

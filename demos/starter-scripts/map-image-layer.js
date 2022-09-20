@@ -87,6 +87,27 @@ let config = {
                     },
                     customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
                 },
+                {
+                    id: 'MarineWaterQuality',
+                    layerType: 'esri-map-image',
+                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/Shellfish_Sites_Samples_Mollusques_Echantillons/MapServer/',
+                    sublayers: [
+                        {
+                            index: 3
+                        },
+                        {
+                            index: 4
+                        },
+                        {
+                            index: 5
+                        }
+                    ],
+                    state: {
+                        opacity: 1,
+                        visibility: false
+                    },
+                    customRenderer: {}
+                },
                 { id: 'userOSM', layerType: 'osm-tile' }
             ],
             fixtures: {
@@ -105,6 +126,26 @@ let config = {
                                         layerId: 'AirEmissions',
                                         name: 'Sulphur oxide emissions by facility',
                                         sublayerIndex: 18
+                                    }
+                                ]
+                            },
+                            {
+                                name: 'Marine water quality (invisible)',
+                                children: [
+                                    {
+                                        layerId: 'MarineWaterQuality',
+                                        name: 'Samples in British Columbia',
+                                        sublayerIndex: 3
+                                    },
+                                    {
+                                        layerId: 'MarineWaterQuality',
+                                        name: 'Samples in New Brunswick',
+                                        sublayerIndex: 4
+                                    },
+                                    {
+                                        layerId: 'MarineWaterQuality',
+                                        name: 'Samples in Newfoundland and Labrador',
+                                        sublayerIndex: 5
                                     }
                                 ]
                             },
