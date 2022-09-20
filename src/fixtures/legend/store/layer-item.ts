@@ -1,10 +1,5 @@
 import { GlobalEvents, LayerInstance, type InstanceAPI } from '@/api';
-import {
-    DrawState,
-    LayerControl,
-    LayerType,
-    type LegendSymbology
-} from '@/geo/api';
+import { LayerControl, LayerType, type LegendSymbology } from '@/geo/api';
 import { LegendItem, LegendType } from './legend-item';
 
 export class LayerItem extends LegendItem {
@@ -219,6 +214,9 @@ export class LayerItem extends LegendItem {
                             this.setSymbologyVisibility(undefined, false);
                         }
                     }
+
+                    // override layer item visibility in favour of layer visibility
+                    this.toggleVisibility(layer.visibility);
 
                     // event listener must be added after the layer is loaded
                     this.handlers.push(
