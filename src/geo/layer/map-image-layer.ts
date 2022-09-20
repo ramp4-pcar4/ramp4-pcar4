@@ -45,6 +45,8 @@ import { markRaw, reactive } from 'vue';
 export class MapImageLayer extends AttribLayer {
     // indicates if sublayers can have opacity adjusted
     isDynamic: boolean;
+    // used to remember state after load
+    private origState: any;
     declare esriLayer: EsriMapImageLayer | undefined;
 
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
@@ -85,6 +87,10 @@ export class MapImageLayer extends AttribLayer {
         // if we have a definition at load, apply it here to avoid cancellation errors on
 
         // override. make things invisible, revert to config setting after sublayers have been assigned visibilities and load finishes.
+        this.origState = {
+            visibility: esriConfig.visible,
+            opacity: esriConfig.opacity
+        };
         esriConfig.visible = false;
 
         if (rampLayerConfig.imageFormat) {
@@ -146,8 +152,9 @@ export class MapImageLayer extends AttribLayer {
         // so really the inner statement runs after everything else in this
         // function is done.
         this.loadPromise().then(() => {
-            if (this.origRampConfig && this.origRampConfig.state) {
-                this.visibility = !!this.origRampConfig.state.visibility;
+            if (this.origRampConfig) {
+                // defaults to true
+                this.visibility = this.origState.visibility ?? true;
             }
         });
 
@@ -329,8 +336,12 @@ export class MapImageLayer extends AttribLayer {
                     // apply any updates that were in the configuration snippets
                     const subC = subConfigs[miSL.layerIdx];
                     if (subC) {
-                        miSL.visibility = subC.state?.visibility ?? true;
-                        miSL.opacity = subC.state?.opacity ?? 1;
+                        miSL.visibility =
+                            subC.state?.visibility ??
+                            this.origState.visibility ??
+                            true;
+                        miSL.opacity =
+                            subC.state?.opacity ?? this.origState.opacity ?? 1;
                         // miSL.setQueryable(subC.state.identify); // TODO uncomment when done
                         miSL.nameField = subC.nameField || miSL.nameField || '';
                         miSL.processFieldMetadata(subC.fieldMetadata);

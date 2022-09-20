@@ -56,7 +56,7 @@ export class LegendItem extends APIScope {
 
         this._hidden = config.hidden ?? false;
         this._expanded = config.expanded ?? true;
-        this._visibility = config.visibility ?? true;
+        this._visibility = true; // default value, gets updated later
         this._exclusive = config.exclusive ?? false;
 
         this._controls = config.controls?.slice() ?? [
