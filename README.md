@@ -13,6 +13,8 @@ This project is currently in development. Incomplete features, bugs, and breakin
 
 > This is an unsupported product. If you require a supported version please contact applicationsdecartographieweb-webmappingapplications@ec.gc.ca for a cost estimate. The software and code samples available on this website are provided "as is" without warranty of any kind, either express or implied. Use at your own risk. Access to this GitHub repository could become unavailable at any point in time.
 
+![](https://byob.yarr.is/ramp4-pcar4/ramp4-pcar4/tsbadge)
+
 ## Local development
 
 ### Project Setup
