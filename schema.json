@@ -369,7 +369,7 @@
             "properties": {
                 "name": {
                     "type": "string",
-                    "default": "",
+                    "default": "Layer name for layer items. Undefined for section items.",
                     "description": "Title of the legend item."
                 },
                 "hidden": {
