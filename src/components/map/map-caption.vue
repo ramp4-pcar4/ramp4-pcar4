@@ -70,6 +70,7 @@
                 :aria-pressed="scale.isImperialScale"
                 :aria-label="$t('map.toggleScaleUnits')"
                 v-tippy="{
+                    delay: [300, 0],
                     placement: 'top',
                     hideOnClick: false,
                     theme: 'ramp4',
@@ -91,6 +92,7 @@
                 class="flex-shrink-0 pointer-events-auto focus:outline-none px-4 mr-4"
                 position="top-end"
                 v-tippy="{
+                    delay: [300, 0],
                     placement: 'top-end',
                     theme: 'ramp4',
                     animation: 'scale',

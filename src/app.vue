@@ -32,6 +32,7 @@ export default defineComponent({
             inertia: true,
             trigger: 'mouseenter manual focus',
             touch: ['hold', 200],
+            delay: [300, 0],
             // needed to have tooltips in fullscreen, by default it appends to document.body
             appendTo: this.$el
         });
