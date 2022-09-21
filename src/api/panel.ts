@@ -190,7 +190,9 @@ export class PanelAPI extends APIScope {
             this.$vApp.$store.set(`panel/${PanelAction.openPanel}!`, { panel });
             this.$iApi.updateAlert(
                 this.$vApp.$t(`panels.alert.open`, {
-                    name: this.$vApp.$t(panel.alertName)
+                    name: panel.alertName
+                        ? this.$vApp.$t(panel.alertName)
+                        : panel.id
                 })
             );
             this.$iApi.event.emit(GlobalEvents.PANEL_OPENED, panel);
@@ -241,7 +243,9 @@ export class PanelAPI extends APIScope {
         this.$vApp.$store.set(`panel/${PanelAction.closePanel}!`, { panel });
         this.$iApi.updateAlert(
             this.$vApp.$t(`panels.alert.close`, {
-                name: this.$vApp.$t(panel.alertName)
+                name: panel.alertName
+                    ? this.$vApp.$t(panel.alertName)
+                    : panel.id
             })
         );
         this.$iApi.event.emit(GlobalEvents.PANEL_CLOSED, panel);
@@ -266,7 +270,9 @@ export class PanelAPI extends APIScope {
         this.$vApp.$store.set(`panel/${PanelAction.closePanel}!`, { panel });
         this.$iApi.updateAlert(
             this.$vApp.$t(`panels.alert.minimize`, {
-                name: this.$vApp.$t(panel.alertName)
+                name: panel.alertName
+                    ? this.$vApp.$t(panel.alertName)
+                    : panel.id
             })
         );
 
@@ -406,9 +412,14 @@ export class PanelAPI extends APIScope {
     ): PanelInstance | undefined {
         const panel = this.get(value);
 
+        // check if the requested screen exists, or bad things can happen on startup
+        if (!panel.screens[route.screen]) {
+            return undefined;
+        }
+
         // check if required props are there, or bad things can happen on startup
         // need this here until we figure out how to pass in props, after layer use is normalized
-        if (panel.screens[route.screen]) {
+        if (panel.screens[route.screen]?.props) {
             const propsToCheck = Object.keys(
                 panel.screens[route.screen]?.props
             ).filter((pr: String) => pr !== 'panel');

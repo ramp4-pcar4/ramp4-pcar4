@@ -87,11 +87,14 @@ export class AppbarAPI extends FixtureInstance {
                 }
                 // check for components with the id
                 [id].some(v => {
-                    if (this.$iApi.fixture.get(v)) {
+                    if (
+                        this.$iApi.fixture.get(v) &&
+                        !this.$vApp.$store.get(`appbar/items@${id}.componentId`)
+                    ) {
                         // if an item is registered globally, save the name of the registered component
                         this.$vApp.$store.set(
                             `appbar/items@${id}.componentId`,
-                            v
+                            `${v}-appbar-button`
                         );
                     }
                 });

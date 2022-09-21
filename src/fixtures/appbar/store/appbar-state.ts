@@ -40,6 +40,14 @@ export interface AppbarItemConfig {
     id: string;
 
     /**
+     * ID of the component of this appbar item.
+     *
+     * @type {string}
+     * @memberof AppbarItemConfig
+     */
+    componentId?: string;
+
+    /**
      * The options for the displayed appbar button.
      *
      * @type {object}
@@ -72,7 +80,11 @@ export class AppbarItemInstance implements AppbarItemConfig {
             options: {},
             ...value
         };
-        ({ id: this.id, options: this.options } = params);
+        ({
+            id: this.id,
+            options: this.options,
+            componentId: this.componentId
+        } = params);
 
         // this should work too, but it doesn't;
         // ({ id: this.id, options: this.options } = { options: {}, ...(typeof value === 'string' ? { id: value} : value) });

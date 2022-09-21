@@ -2,21 +2,6 @@
     <panel-screen :panel="panel">
         <template #header> Gazebo/Panel 2/Screen B </template>
 
-        <template #controls>
-            <!-- <pin> is a global button component that any fixture/panel/screen can reuse -->
-
-            <!-- ✔ this is the correct way to pin a panel and bind the button active state whether this panel is pinned or not 👇 -->
-            <pin
-                @click="panel.pin()"
-                :active="isPinned"
-                v-if="checkScreenSize"
-            ></pin>
-
-            <!-- ✔ this will also work 👇 -->
-            <!-- <pin @click="panel.pin()" :active="panel.isPinned"></pin> -->
-            <close @click="panel.close()"></close>
-        </template>
-
         <template #content>
             {{ $t('gz.hello2') }}
 
@@ -48,7 +33,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, type PropType } from 'vue';
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
 import type { PanelInstance } from '@/api';
 
 export default defineComponent({
@@ -56,16 +42,6 @@ export default defineComponent({
     props: {
         panel: { type: Object as PropType<PanelInstance>, required: true },
         greeting: { type: String }
-    },
-    computed: {
-        isPinned(): boolean {
-            return this.panel.isPinned;
-            // ✔ this also works 👇
-            // return this.$iApi.panel.pinned !== null && this.$iApi.panel.pinned.id === this.panel.id;
-        },
-        checkScreenSize(): boolean {
-            return this.$iApi.screenSize !== 'xs';
-        }
     },
     methods: {
         enhancedCatActivities() {

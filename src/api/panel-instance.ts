@@ -51,6 +51,8 @@ export class PanelInstance extends APIScope {
 
     controls: any;
 
+    button: any;
+
     /**
      * Checks if a given screen component id is already loaded and ready to render.
      *

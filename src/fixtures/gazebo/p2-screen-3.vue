@@ -2,21 +2,6 @@
     <panel-screen :panel="panel">
         <template #header> Gazebo/Panel 2/Screen C </template>
 
-        <template #controls>
-            <!-- <pin> is a global button component that any fixture/panel/screen can reuse -->
-
-            <!-- ✔ this is the correct way to pin a panel and bind the button active state whether this panel is pinned or not 👇 -->
-            <pin
-                @click="panel.pin()"
-                :active="panel.isPinned"
-                v-if="checkScreenSize"
-            ></pin>
-
-            <!-- ✔ this will also work 👇 -->
-            <!-- <pin @click="panel.pin()" :active="panel.isPinned"></pin> -->
-            <close @click="panel.close()" v-if="checkScreenSize"></close>
-        </template>
-
         <template #content>
             <div class="flex flex-col items-center mt-16">
                 <!-- ✔ this is the correct way to switch between screens in the same panel 👇 -->
@@ -54,7 +39,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, type PropType } from 'vue';
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
 import type { PanelInstance } from '@/api';
 
 export default defineComponent({
@@ -72,11 +58,6 @@ export default defineComponent({
                 lang_native: 'Fr',
                 who: '[moi chat]'
             }
-        }
-    },
-    computed: {
-        checkScreenSize(): boolean {
-            return this.$iApi.screenSize !== 'xs';
         }
     }
 });

@@ -12,6 +12,7 @@ export interface RampConfig {
     panels?: {
         open?: {
             id: string;
+            screen?: string;
             pin?: boolean;
         }[];
         reorderable?: boolean;
