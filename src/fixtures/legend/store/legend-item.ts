@@ -47,7 +47,7 @@ export class LegendItem extends APIScope {
         super(iApi);
 
         this._uid = geo.sharedUtils.generateUUID();
-        this._name = config.name ?? '';
+        this._name = config.name;
         this._type = config.type ?? LegendType.Placeholder;
         this._parent = parent;
         this._children = [];

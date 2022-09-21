@@ -215,6 +215,7 @@ export class MapImageLayer extends AttribLayer {
                             // TODO: Revisit once issue #961 is implemented.
                             // See https://github.com/ramp4-pcar4/ramp4-pcar4/pull/1045#pullrequestreview-977116071
                             layerType: LayerType.SUBLAYER,
+                            name: subConfigs[sid].name,
                             // If the state isn't defined, use the same state as the parent.
                             state: subConfigs[sid]?.state ?? {
                                 opacity: this.opacity,
@@ -371,33 +372,6 @@ export class MapImageLayer extends AttribLayer {
             }
         });
 
-        // get mapName of the legend entry from the service to use as the name if not provided in config
-        // TODO error handling on request?
-        //      consider using   import to from 'await-to-js';
-        if (!this.name) {
-            const serviceRequest = EsriRequest(this.esriLayer.url, {
-                query: {
-                    f: 'json'
-                }
-            });
-            const setTitle = serviceRequest.then(serviceResult => {
-                if (serviceResult.data) {
-                    this.name = serviceResult.data.mapName || '';
-                    // @ts-ignore
-                    this.layerTree.name = this.name;
-                } else {
-                    this.name = '[server error]';
-                    // @ts-ignore
-                    this.layerTree.name = '[server error]';
-                    console.error(
-                        // @ts-ignore
-                        `Get map name service failed: ${this.esriLayer.url}`
-                    );
-                }
-            });
-            loadPromises.push(setTitle);
-        }
-
         return loadPromises;
     }
 
@@ -500,7 +474,6 @@ export class MapImageLayer extends AttribLayer {
                 qOpts.filterGeometry = options.geometry;
             }
 
-            qOpts.outFields = sublayer.fieldList;
             qOpts.filterSql = sublayer.getCombinedSqlFilter();
 
             sublayer.queryFeaturesDiscrete(qOpts).then(results => {

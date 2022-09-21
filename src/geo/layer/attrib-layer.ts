@@ -217,6 +217,14 @@ export class AttribLayer extends CommonLayer {
                 attribs: '*' // NOTE we set to * here for generic case. loader may override later once config settings are applied
             };
             this.attLoader = new ArcServerAttributeLoader(this.$iApi, loadData);
+
+            /* See https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-FeatureLayer.html#title
+               In particular, if the service has several layers, then the title of each layer will be the concatenation
+               of the service name and the layer name.
+               For consistency with map image sublayers, we set the layer's name to only the service name below. */
+            if (!this.origRampConfig.name) {
+                this.name = sData.name ?? this.id;
+            }
         } else {
             this.dataFormat = DataFormat.ESRI_RASTER;
             this.esriFields = [];

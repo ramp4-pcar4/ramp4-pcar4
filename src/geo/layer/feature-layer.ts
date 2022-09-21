@@ -121,9 +121,6 @@ export class FeatureLayer extends AttribLayer {
         // feature has only one layer
         this.serviceUrl = layerUrl;
 
-        this.layerTree.name = this.name;
-        this.layerTree.layerIdx = featIdx;
-
         // update asynch data
         const pLD: Promise<void> = this.loadLayerMetadata(
             hasCustRed ? { customRenderer: this.esriLayer?.renderer } : {}
@@ -162,6 +159,9 @@ export class FeatureLayer extends AttribLayer {
         });
 
         const pFC = this.loadFeatureCount();
+
+        this.layerTree.name = this.name;
+        this.layerTree.layerIdx = featIdx;
 
         // if file based (or server extent was fried), calculate extent based on geometry
         // TODO implement this. may need a manual loop to calculate graphicsExtent since ESRI torpedo'd the function
