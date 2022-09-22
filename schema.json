@@ -382,11 +382,6 @@
                     "default": true,
                     "description": "Specifies if the legend item is expanded by default."
                 },
-                "visibility": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Specifies that the legend item will be visible by default."
-                },
                 "exclusive": {
                     "type": "boolean",
                     "default": false,
