@@ -2,18 +2,16 @@ import { FixtureInstance } from '@/api';
 
 export class WizardAPI extends FixtureInstance {
     /**
-     * Opens the wizard fixture panel
+     * Opens or closes the wizard fixture panel
      *
      * @memberof WizardAPI
      */
-    openWizard(): void {
+    toggleWizard(): void {
         const panel = this.$iApi.panel.get('wizard');
-
-        if (!panel.isOpen) {
-            this.$iApi.panel.open({
-                id: 'wizard',
-                screen: 'wizard-screen'
-            });
-        }
+        !panel.isOpen
+            ? this.$iApi.panel.open('wizard')
+            : panel.isVisible
+            ? this.$iApi.panel.close('wizard')
+            : this.$iApi.panel.toggleMinimize('wizard');
     }
 }
