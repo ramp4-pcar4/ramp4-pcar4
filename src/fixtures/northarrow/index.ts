@@ -12,7 +12,7 @@ class NortharrowFixture extends NortharrowAPI {
         this.$vApp.$store.registerModule('northarrow', northarrow());
 
         this._parseConfig(this.config);
-        let unwatch = this.$vApp.$watch(
+        const unwatch = this.$vApp.$watch(
             () => this.config,
             (value: NortharrowConfig | undefined) => this._parseConfig(value)
         );

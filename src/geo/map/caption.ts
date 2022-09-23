@@ -92,7 +92,7 @@ export class MapCaptionAPI extends APIScope {
      */
     updateAttribution(newAttribution: Attribution | undefined): void {
         // Default attribution
-        let attribution: Attribution = {
+        const attribution: Attribution = {
             text: { value: 'Powered by ESRI' },
             logo: {
                 altText: 'ESRI logo',
@@ -154,7 +154,7 @@ export class MapCaptionAPI extends APIScope {
                                 const maxIntervals: number =
                                     loadTimeout / intervalTimeout;
 
-                                let wait = setInterval(function () {
+                                const wait = setInterval(function () {
                                     if (bl.loaded && !bl.loadError) {
                                         clearInterval(wait);
                                         resolve(bl);
@@ -283,11 +283,11 @@ export class MapCaptionAPI extends APIScope {
         const metersInAFoot = 3.28084;
 
         // use arrays to store both imperial and metric calulcations
-        let measureUnits: Array<string> =
+        const measureUnits: Array<string> =
             meters > 1000 ? ['km', 'mi'] : ['m', 'ft'];
 
         for (let i = 0; i < 2; i++) {
-            let isImperialScale = i === 1;
+            const isImperialScale = i === 1;
 
             result.push({
                 isImperialScale: isImperialScale,

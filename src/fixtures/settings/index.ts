@@ -30,7 +30,7 @@ class SettingsFixture extends SettingsAPI {
 
     removed() {
         console.log(`[fixture] ${this.id} removed`);
-        if (!!this.$iApi.fixture.get('appbar')) {
+        if (this.$iApi.fixture.get('appbar')) {
             this.$iApi.$vApp.$store.dispatch('appbar/removeButton', 'settings');
         }
         this.$iApi.panel.remove('settings');

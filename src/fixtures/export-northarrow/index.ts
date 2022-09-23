@@ -11,7 +11,7 @@ class ExportNorthArrowFixture
     implements ExportSubFixture
 {
     get config(): any {
-        let fixtureConfig: ExportConfig | undefined =
+        const fixtureConfig: ExportConfig | undefined =
             this.$iApi.fixture.get<ExportAPI>('export').config;
         return fixtureConfig?.mapElements;
     }
@@ -61,7 +61,7 @@ class ExportNorthArrowFixture
         };
 
         // load the svg string into a fabric group
-        let group: Array<fabric.Object> = [];
+        const group: Array<fabric.Object> = [];
         let loadedObjects: fabric.Group = new fabric.Group();
         fabric.loadSVGFromString(
             arrowSVG,

@@ -6,7 +6,7 @@ import type { ExportConfig } from '../export/store';
 
 class ExportMapFixture extends FixtureInstance implements ExportSubFixture {
     get config(): any {
-        let fixtureConfig: ExportConfig | undefined =
+        const fixtureConfig: ExportConfig | undefined =
             this.$iApi.fixture.get<ExportAPI>('export').config;
         return fixtureConfig?.map;
     }

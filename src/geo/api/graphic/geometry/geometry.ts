@@ -199,7 +199,7 @@ export class GeometryAPI {
      */
     graphicRampToGeoJson(rampGraphic: Graphic): any {
         // the geojson Feature interface is being crabby.
-        let typescriptIsDumb: any = {}; // freaks out assigning random keys to .properties without an explicit `any`
+        const typescriptIsDumb: any = {}; // freaks out assigning random keys to .properties without an explicit `any`
         const f = {
             type: 'Feature',
             geometry: this.geomRampToGeoJson(rampGraphic.geometry),
@@ -253,7 +253,7 @@ export class GeometryAPI {
     graphicRampToEsri(rampGraphic: Graphic): EsriGraphic {
         // would be nice to use __esri.GraphicProperties as the type, but since we
         // need to tack on an id, that would anger the interface.
-        let gConf: any = {
+        const gConf: any = {
             attributes: {},
             id: rampGraphic.id
         };

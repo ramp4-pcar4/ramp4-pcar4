@@ -44,9 +44,9 @@ export function configUpgrade2to4(r2c: any): RampConfigs {
     });
 
     // get all fixture enabled lists
-    let allFixturesEnabled: string[][] = Object.entries(r4c).map(
+    const allFixturesEnabled: string[][] = Object.entries(r4c).map(
         (langConfigPair: [string, any]) => {
-            let fixturesEnabled: string[] = langConfigPair[1].fixturesEnabled;
+            const fixturesEnabled: string[] = langConfigPair[1].fixturesEnabled;
             delete langConfigPair[1].fixturesEnabled; // remove this list from the config nugget
             return fixturesEnabled;
         }
@@ -54,7 +54,7 @@ export function configUpgrade2to4(r2c: any): RampConfigs {
 
     // intersect all lists into single list (use a boolean to keep track of any mismatching lists)
     let mismatch: boolean = false;
-    let startingFixtures: string[] = allFixturesEnabled.reduce((a, b) =>
+    const startingFixtures: string[] = allFixturesEnabled.reduce((a, b) =>
         a.filter(c => {
             const includes: boolean = b.includes(c);
             mismatch = mismatch || !includes;
@@ -187,7 +187,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
         ) {
             // process north arrow
 
-            let r4na: any = {};
+            const r4na: any = {};
             if (r2Map.components.northArrow.arrowIcon) {
                 r4na.arrowIcon = r2Map.components.northArrow.arrowIcon;
             }
@@ -234,7 +234,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
         //      into each extent for r4
         r4c.map.extentSets = [];
         r2Map.extentSets.forEach((r2es: any) => {
-            let r4es: RampExtentSetConfig = {
+            const r4es: RampExtentSetConfig = {
                 id: r2es.id,
                 default: {
                     xmin: r2es.default.xmin,
@@ -278,7 +278,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
         // process schemas
         r4c.map.tileSchemas = [];
         r2Map.tileSchemas.forEach((r2ts: any) => {
-            let r4ts: RampTileSchemaConfig = {
+            const r4ts: RampTileSchemaConfig = {
                 id: r2ts.id,
                 name: r2ts.name,
                 extentSetId: r2ts.extentSetId,
@@ -327,7 +327,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
         // process basemaps
         r4c.map.basemaps = [];
         r2Map.baseMaps.forEach((r2bm: any) => {
-            let r4bm: RampBasemapConfig = {
+            const r4bm: RampBasemapConfig = {
                 id: r2bm.id,
                 tileSchemaId: r2bm.tileSchemaId,
                 name: r2bm.name,
@@ -360,7 +360,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
 
             // process the layers
             r2bm.layers.forEach((r2bml: any, idx: number) => {
-                let r4bml: RampBasemapLayerConfig = {
+                const r4bml: RampBasemapLayerConfig = {
                     id: r2bml.id || `${r2bm.id}-${idx}`,
                     layerType:
                         r2bml.layerType === 'esriDynamic'

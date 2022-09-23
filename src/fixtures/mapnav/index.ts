@@ -26,14 +26,14 @@ class MapnavFixture extends MapnavAPI {
         innerShell.appendChild(el.childNodes[0]);
 
         this._parseConfig(this.config);
-        let unwatch = this.$vApp.$watch(
+        const unwatch = this.$vApp.$watch(
             () => this.config,
             (value: MapnavFixtureConfig | undefined) => this._parseConfig(value)
         );
 
         // since components used in appbar can be registered after this point, listen to the global component registration event and re-validate items
         // TODO revist. this seems to be self-contained to the mapnav fixture, so ideally can stay as is and not worry about events api.
-        let handler = this.$iApi.event.on(GlobalEvents.COMPONENT, () => {
+        const handler = this.$iApi.event.on(GlobalEvents.COMPONENT, () => {
             this._parseConfig(this.config);
         });
 
@@ -44,7 +44,7 @@ class MapnavFixture extends MapnavAPI {
             this.$iApi.event.off(handler);
 
             // gracefully remove all buttons first (in case anything is watching for button removal)
-            let items: any = { ...this.$vApp.$store.get('mapnav/items') };
+            const items: any = { ...this.$vApp.$store.get('mapnav/items') };
             Object.keys(items).forEach(item =>
                 this.$iApi.$vApp.$store.dispatch('mapnav/removeItem', item)
             );
