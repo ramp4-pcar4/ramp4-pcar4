@@ -76,6 +76,7 @@ export class LayerItem extends LegendItem {
         this._layerId = layer.id;
         this._layerIdx = layer.layerIdx;
         this._layerUid = layer.uid;
+        this._name = this._name ?? layer.name;
         const cont = this.$iApi.geo.layer.getLayerControls(layer.id);
         if (this._layerControls.length === 0)
             this._layerControls = cont?.controls ?? [];
