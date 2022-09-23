@@ -16,9 +16,11 @@
             @keyup.enter.stop="toggleVisibility()"
             :class="[
                 isRadio ? 'form-radio' : 'form-checkbox rounded-none',
-                disabled ? 'text-gray-400 ' : 'text-black cursor-pointer'
+                disabled
+                    ? 'text-gray-400 border-gray-300'
+                    : 'text-black cursor-pointer border-gray-500 hover:border-black'
             ]"
-            class="mx-5 h-15 w-15 border-gray-500 hover:border-black"
+            class="mx-5 h-15 w-15"
             tabindex="-1"
             :disabled="disabled"
             :content="

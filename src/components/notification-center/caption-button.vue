@@ -36,7 +36,12 @@
                     <div class="absolute flex right-3 top-3">
                         <button
                             @click="clearAll"
-                            class="text-gray-500 hover:text-black p-4 mr-6"
+                            class="p-4 mr-6"
+                            :class="[
+                                !number
+                                    ? 'text-gray-300 cursor-default pointer-events-none'
+                                    : 'text-gray-500 hover:text-black'
+                            ]"
                             :content="$t('notifications.controls.clearAll')"
                             v-tippy="{
                                 placement: 'bottom',
@@ -78,7 +83,6 @@ export default defineComponent({
         'dropdown-menu': DropdownMenuV,
         'notification-list': NotificationListV
     },
-
     data() {
         return {
             number: this.get('notification/notificationNumber'),
