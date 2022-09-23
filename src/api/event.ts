@@ -302,10 +302,10 @@ export enum GlobalEvents {
     PANEL_OPENED = 'panel/opened',
 
     /**
-     * Fires when a request is issued to open the Layer Reorder panel.
+     * Fires when a request is issued to toggle (open/close) the Layer Reorder panel.
      * Payload: none
      */
-    REORDER_OPEN = 'reorder/open',
+    REORDER_TOGGLE = 'reorder/toggle',
 
     /**
      * Fires when a request is issued to toggle (show if hidden, hide if showing) layer settings.
@@ -320,10 +320,10 @@ export enum GlobalEvents {
     USER_LAYER_ADDED = 'user/layeradded',
 
     /**
-     * Fires when a request is issued to open the Add Layer Wizard.
+     * Fires when a request is issued to toggle (open/close) the Add Layer Wizard panel.
      * Payload: none
      */
-    WIZARD_OPEN = 'wizard/open'
+    WIZARD_TOGGLE = 'wizard/toggle'
 }
 
 // TODO export this enum?
@@ -345,8 +345,8 @@ enum DefEH {
     OPEN_DETAILS = 'opens_feature_details',
     TOGGLE_HELP = 'toggles_help_panel',
     TOGGLE_GRID = 'toggles_grid_panel',
-    OPEN_WIZARD = 'opens_wizard_panel',
-    OPEN_LAYER_REORDER = 'opens_layer_reorder_panel',
+    TOGGLE_WIZARD = 'toggles_wizard_panel',
+    TOGGLE_LAYER_REORDER = 'toggles_layer_reorder_panel',
     OPEN_METADATA = 'opens_metadata_panel',
     UPDATE_LEGEND_LAYER_REGISTER = 'updates_legend_layer_register',
     UPDATE_LEGEND_LAYER_ERROR = 'updates_legend_layer_error',
@@ -624,8 +624,8 @@ export class EventAPI extends APIScope {
                 DefEH.OPEN_DETAILS,
                 DefEH.TOGGLE_HELP,
                 DefEH.TOGGLE_GRID,
-                DefEH.OPEN_WIZARD,
-                DefEH.OPEN_LAYER_REORDER,
+                DefEH.TOGGLE_WIZARD,
+                DefEH.TOGGLE_LAYER_REORDER,
                 DefEH.OPEN_METADATA,
                 DefEH.UPDATE_LEGEND_LAYER_REGISTER,
                 DefEH.UPDATE_LEGEND_LAYER_ERROR,
@@ -777,34 +777,34 @@ export class EventAPI extends APIScope {
                     handlerName
                 );
                 break;
-            case DefEH.OPEN_WIZARD:
-                // opens the standard add layer wizard panel when an open wizard event happens
+            case DefEH.TOGGLE_WIZARD:
+                // opens or closes the standard add layer wizard panel when an toggle wizard event happens
                 zeHandler = () => {
                     const wizardFixture =
                         this.$iApi.fixture.get<WizardAPI>('wizard');
                     if (wizardFixture) {
-                        wizardFixture.openWizard();
+                        wizardFixture.toggleWizard();
                     }
                 };
                 this.$iApi.event.on(
-                    GlobalEvents.WIZARD_OPEN,
+                    GlobalEvents.WIZARD_TOGGLE,
                     zeHandler,
                     handlerName
                 );
                 break;
-            case DefEH.OPEN_LAYER_REORDER:
-                // opens the standard layer reorder panel when an open reorder event happens
+            case DefEH.TOGGLE_LAYER_REORDER:
+                // opens or closes the standard layer reorder panel when a toggle reorder event happens
                 zeHandler = () => {
                     const reorderFixture =
                         this.$iApi.fixture.get<LayerReorderAPI>(
                             'layer-reorder'
                         );
                     if (reorderFixture) {
-                        reorderFixture.openLayerReorder();
+                        reorderFixture.toggleLayerReorder();
                     }
                 };
                 this.$iApi.event.on(
-                    GlobalEvents.REORDER_OPEN,
+                    GlobalEvents.REORDER_TOGGLE,
                     zeHandler,
                     handlerName
                 );

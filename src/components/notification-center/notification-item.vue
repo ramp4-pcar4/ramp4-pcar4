@@ -1,6 +1,6 @@
 <template>
     <li
-        class="flex-col default-focus-style px-4"
+        class="flex-col default-focus-style p-4"
         :content="
             $t(
                 open
@@ -18,16 +18,16 @@
             >
             <span class="flex-grow"></span>
             <div
-                class="mx-4 p-4 pointer-events-none"
-                :class="{ 'rotate-180': true }"
+                class="dropdown-icon p-4 pointer-events-none"
+                :class="{ 'transform -rotate-180': open }"
                 v-if="notification.messageList"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
+                    height="24"
                     viewBox="0 0 24 24"
-                    class="fill-current w-16 h-16"
+                    width="24"
                 >
-                    <path d="M0 0h24v24H0V0z" fill="none" />
                     <path
                         d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"
                     />
@@ -97,4 +97,8 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.dropdown-icon {
+    transition: transform 0.3s cubic-bezier(0.35, 0, 0.25, 1);
+}
+</style>
