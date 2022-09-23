@@ -217,7 +217,7 @@ export class LayerItem extends LegendItem {
                     }
 
                     // override layer item visibility in favour of layer visibility
-                    this.toggleVisibility(layer.visibility);
+                    this.toggleVisibility(layer.visibility, true, true);
 
                     // event listener must be added after the layer is loaded
                     this.handlers.push(
