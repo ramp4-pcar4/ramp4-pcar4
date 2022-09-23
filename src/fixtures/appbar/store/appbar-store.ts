@@ -59,7 +59,7 @@ const mutations = {
         state.temporary.push(value);
     },
     [AppbarMutation.REMOVE_BUTTON](state: AppbarState, value: string) {
-        let idx = state.temporary.indexOf(value);
+        const idx = state.temporary.indexOf(value);
         if (idx !== -1) {
             // remove from temporary list
             state.temporary.splice(idx, 1);
@@ -69,7 +69,7 @@ const mutations = {
             delete state.items[value];
         }
         state.order.forEach((subItems: (string | AppbarItemInstance)[]) => {
-            let idx = subItems.indexOf(value);
+            const idx = subItems.indexOf(value);
             if (idx !== -1) {
                 // remove from order sub group list
                 subItems.splice(idx, 1);

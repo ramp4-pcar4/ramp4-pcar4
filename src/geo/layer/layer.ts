@@ -158,7 +158,7 @@ export class LayerAPI extends APIScope {
             ];
 
         // remove controls if layer doesn't support them
-        let controlsToRemove: Array<LayerControl> = [];
+        const controlsToRemove: Array<LayerControl> = [];
         if (!layer.supportsFeatures) {
             controlsToRemove.push(LayerControl.Datatable);
         }
@@ -174,7 +174,7 @@ export class LayerAPI extends APIScope {
         }
 
         controlsToRemove.forEach(control => {
-            let idx: number = controls?.indexOf(control) ?? -1;
+            const idx: number = controls?.indexOf(control) ?? -1;
             if (idx !== -1) {
                 controls?.splice(idx, 1);
             }

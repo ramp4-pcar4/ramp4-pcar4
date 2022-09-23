@@ -152,7 +152,9 @@ export class OverviewMapAPI extends CommonMapAPI {
             const mainMapConfig: RampMapConfig | undefined =
                 this.$iApi.$vApp.$store.get(ConfigStore.getMapConfig);
             if (mainMapConfig) {
-                let bmConfig = mainMapConfig.basemaps.find(bm => bm.id === id);
+                const bmConfig = mainMapConfig.basemaps.find(
+                    bm => bm.id === id
+                );
                 if (bmConfig) {
                     return new Basemap(bmConfig);
                 }
@@ -255,7 +257,7 @@ export class OverviewMapAPI extends CommonMapAPI {
             OverviewmapStore.expandFactor
         ) as number;
 
-        let zoomPromise = this.zoomMapTo(
+        const zoomPromise = this.zoomMapTo(
             newExtent.expand(expandFactor),
             undefined,
             false

@@ -43,7 +43,7 @@ class LegendFixture extends LegendAPI {
                 ? JSON.parse(JSON.stringify(this.config))
                 : undefined
         );
-        let unwatch = this.$vApp.$watch(
+        const unwatch = this.$vApp.$watch(
             () => this.config,
             (value: any) =>
                 this._parseConfig(
@@ -58,14 +58,14 @@ class LegendFixture extends LegendAPI {
             console.log(`[fixture] ${this.id} removed`);
             unwatch();
 
-            if (!!this.$iApi.fixture.get('appbar')) {
+            if (this.$iApi.fixture.get('appbar')) {
                 this.$iApi.$vApp.$store.dispatch(
                     'appbar/removeButton',
                     'legend'
                 );
             }
 
-            if (!!this.$iApi.fixture.get('mapnav')) {
+            if (this.$iApi.fixture.get('mapnav')) {
                 this.$iApi.$vApp.$store.dispatch('mapnav/removeItem', 'legend');
             }
 

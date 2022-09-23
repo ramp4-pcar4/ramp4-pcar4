@@ -241,7 +241,7 @@ export class MapImageLayer extends AttribLayer {
                     );
                 }
 
-                let _sublayer: MapImageSublayer = this._sublayers[
+                const _sublayer: MapImageSublayer = this._sublayers[
                     sid
                 ] as MapImageSublayer;
 

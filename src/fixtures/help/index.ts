@@ -33,7 +33,7 @@ class HelpFixture extends HelpAPI {
         );
         // parse help section of config and store information in help store
         this._parseConfig(this.config);
-        let unwatch = this.$vApp.$watch(
+        const unwatch = this.$vApp.$watch(
             () => this.config,
             (value: any) => this._parseConfig(value)
         );
@@ -43,7 +43,7 @@ class HelpFixture extends HelpAPI {
             console.log(`[fixture] ${this.id} removed`);
             unwatch();
 
-            if (!!this.$iApi.fixture.get('mapnav')) {
+            if (this.$iApi.fixture.get('mapnav')) {
                 this.$iApi.$vApp.$store.dispatch('mapnav/removeItem', 'help');
             }
 

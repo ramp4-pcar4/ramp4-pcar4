@@ -64,7 +64,7 @@ export class TreeNode {
      * Returns whether this node is a root node.
      *
      * @method isLayerRoot
-     * @returns {boolean} true if this node is a root node for this layer. 
+     * @returns {boolean} true if this node is a root node for this layer.
      */
     get isLayerRoot(): boolean {
         return this.isRoot;

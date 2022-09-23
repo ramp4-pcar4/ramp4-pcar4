@@ -171,7 +171,7 @@ export class FileUtils extends APIScope {
         }
 
         // extract all fields and type them as string for now
-        let fields: { name: string; type: string }[] = Object.keys(
+        const fields: { name: string; type: string }[] = Object.keys(
             geoJson.features[0].properties
         ).map(field => {
             return { name: field, type: 'string' };
@@ -180,25 +180,25 @@ export class FileUtils extends APIScope {
         let featureIdx = 0; // keep track of the current feature used for typing infering
 
         // keep track of fields that still need to be typed
-        let fieldsToBeMapped: Array<string> = Object.keys(
+        const fieldsToBeMapped: Array<string> = Object.keys(
             geoJson.features[0].properties
         );
 
         // loop through all features until we type all fields or exhaust list
         while (featureIdx < geoJson.features.length) {
-            let feature = geoJson.features[featureIdx];
+            const feature = geoJson.features[featureIdx];
 
             if (feature.properties) {
                 // check all the values of this feature and attempt to type the fields that haven't been mapped yet
                 Object.keys(feature.properties)
                     .filter((field: string) => fieldsToBeMapped.includes(field))
                     .forEach((field: string) => {
-                        let value: any = feature.properties[field];
+                        const value: any = feature.properties[field];
 
                         // if value is null or undefined, we cannot infer type so we skip this feature and use the next one
                         if (value != null) {
                             // infer the type of this field
-                            let fieldIdx = fields.findIndex(
+                            const fieldIdx = fields.findIndex(
                                 fieldInfo => fieldInfo.name === field
                             );
                             fields[fieldIdx] = {

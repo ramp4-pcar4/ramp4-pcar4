@@ -115,7 +115,7 @@ export class PanelAPI extends APIScope {
      * @memberof PanelAPI
      */
     remove(value: string | PanelInstance): void {
-        let panel: PanelInstance = this.get(value);
+        const panel: PanelInstance = this.get(value);
 
         // close the panel if it is open
         if (panel.isOpen) {

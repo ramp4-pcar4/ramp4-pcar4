@@ -146,7 +146,7 @@ const actions = {
     [PanelAction.updateVisible](context: PanelContext): void {
         // TODO: update when panel width system is in place
         let remainingWidth = context.state.stackWidth;
-        let nowVisible: PanelInstance[] = [];
+        const nowVisible: PanelInstance[] = [];
 
         // add panels until theres no space in the stack
         for (let i = context.state.orderedItems.length - 1; i >= 0; i--) {
