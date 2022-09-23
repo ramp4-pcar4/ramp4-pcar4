@@ -33,7 +33,7 @@ const bfs = (
     layers: Array<LayerInstance>,
     predicate: (layer: LayerInstance | undefined) => boolean
 ) => {
-    let queue = [...layers];
+    const queue = [...layers];
     while (queue.length > 0) {
         const layer = queue.shift();
         if (predicate(layer)) {

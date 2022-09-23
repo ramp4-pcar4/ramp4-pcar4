@@ -36,7 +36,7 @@ export class AppbarAPI extends FixtureInstance {
             config = appbarConfig.items;
         }
 
-        let appbarItems: (string | AppbarItemInstance)[][] = [];
+        const appbarItems: (string | AppbarItemInstance)[][] = [];
 
         config.forEach((appbarItemList: any[]) => {
             appbarItems.push(

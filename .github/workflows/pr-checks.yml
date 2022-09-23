@@ -48,3 +48,14 @@ jobs:
                   STATUS: ${{ steps.pr-checks.outputs.ts-errors }}
                   COLOR: blue
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Lint badge
+              if: always()
+              uses: RubbaBoy/BYOB@v1.3.0
+              with:
+                  NAME: lintbadge
+                  ICON: codecov
+                  LABEL: 'Lint'
+                  STATUS: 'Errors: ${{ steps.pr-checks.outputs.lint-errors }}, Warnings: ${{ steps.pr-checks.outputs.lint-warnings }}'
+                  COLOR: purple
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -40,14 +40,14 @@ export default defineComponent({
     props: ['params'],
     async mounted() {
         // need to hoist events to top level cell wrapper to be keyboard accessible
-        await nextTick;
+        await nextTick();
         const headerCell = this.$el.closest('.ag-header-cell');
         const grid = headerCell.closest('.ag-pinned-left-header');
         headerCell.addEventListener('keydown', async (e: KeyboardEvent) => {
             if (e.key === 'Enter') {
                 e.stopPropagation();
                 this.clearFilters();
-                await nextTick;
+                await nextTick();
                 grid.querySelector(
                     '.ag-header-cell.ag-floating-filter'
                 ).focus();
@@ -68,7 +68,7 @@ export default defineComponent({
             if (e.key === 'Enter') {
                 e.stopPropagation();
                 this.clearFilters();
-                await nextTick;
+                await nextTick();
                 grid.querySelector(
                     '.ag-header-cell.ag-floating-filter'
                 ).focus();

@@ -34,7 +34,7 @@ class AreasOfInterestFixture extends AreasOfInterestAPI {
         );
 
         this._parseConfig(this.config);
-        let unwatch = this.$vApp.$watch(
+        const unwatch = this.$vApp.$watch(
             () => this.config,
             (value: any) => this._parseConfig(value)
         );
@@ -43,7 +43,7 @@ class AreasOfInterestFixture extends AreasOfInterestAPI {
             console.log(`[fixture] ${this.id} removed`);
             unwatch();
 
-            if (!!this.$iApi.fixture.get('appbar')) {
+            if (this.$iApi.fixture.get('appbar')) {
                 this.$iApi.$vApp.$store.dispatch(
                     'appbar/removeButton',
                     'areas-of-interest'

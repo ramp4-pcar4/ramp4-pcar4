@@ -138,7 +138,7 @@ export class InstanceAPI {
         // TODO: decide whether to move to src/main.ts:createApp
         // TODO: store a reference to the event bus in the global store [?]
         if (configs?.configs !== undefined) {
-            let langConfigs: {
+            const langConfigs: {
                 [key: string]: RampConfig;
             } = configs.configs;
 
@@ -155,7 +155,7 @@ export class InstanceAPI {
                 allLangs: Object.keys(this.$vApp.$i18n.messages)
             });
 
-            for (let lang in langConfigs) {
+            for (const lang in langConfigs) {
                 this.$vApp.$store.set(ConfigStore.registerConfig, {
                     config: langConfigs[lang],
                     configLangs: [lang]
@@ -290,7 +290,7 @@ export class InstanceAPI {
     reload(configs?: RampConfigs, options?: RampOptions): void {
         // remove all fixtures
         // get list of all fixture ids currently added
-        let addedFixtures: Array<string> = Object.keys(
+        const addedFixtures: Array<string> = Object.keys(
             this.$vApp.$store.get('fixture/items') as any
         );
         // remove each fixture

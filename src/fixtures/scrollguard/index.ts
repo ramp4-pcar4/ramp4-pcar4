@@ -15,7 +15,7 @@ class ScrollguardFixture extends ScrollguardAPI {
         this.$vApp.$store.registerModule('scrollguard', scrollguard());
 
         this._parseConfig(this.config);
-        let unwatch = this.$vApp.$watch(
+        const unwatch = this.$vApp.$watch(
             () => this.config,
             (value: ScrollguardConfig | undefined) => this._parseConfig(value)
         );

@@ -35,14 +35,14 @@ class GeosearchFixture extends GeosearchAPI {
     removed() {
         console.log(`[fixture] ${this.id} removed`);
 
-        if (!!this.$iApi.fixture.get('appbar')) {
+        if (this.$iApi.fixture.get('appbar')) {
             this.$iApi.$vApp.$store.dispatch(
                 'appbar/removeButton',
                 'geosearch'
             );
         }
 
-        if (!!this.$iApi.fixture.get('mapnav')) {
+        if (this.$iApi.fixture.get('mapnav')) {
             this.$iApi.$vApp.$store.dispatch('mapnav/removeItem', 'geosearch');
         }
 

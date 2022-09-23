@@ -316,13 +316,13 @@ export class LegendItem extends APIScope {
      * Returns a legend config representation of this item.
      */
     getConfig(): any {
-        let config: any = {
+        const config: any = {
             uid: this.uid,
             name: this.name,
             itemType: this.type
         };
 
-        let childConfigs: Array<any> = [];
+        const childConfigs: Array<any> = [];
 
         this.children.forEach(item => {
             childConfigs.push(item.getConfig());

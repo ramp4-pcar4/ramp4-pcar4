@@ -531,7 +531,7 @@ export class EventAPI extends APIScope {
      * @param {string} [event] name of the event. Omission will remove all handlers for all events
      */
     offAll(event = ''): void {
-        let active: Array<string> = this.activeHandlers(event);
+        const active: Array<string> = this.activeHandlers(event);
         active.forEach(h => this.off(h));
     }
 
@@ -942,7 +942,7 @@ export class EventAPI extends APIScope {
             case DefEH.CONFIG_CHANGE_ATTRIBUTION:
                 // update any basemap attribution in the map caption when the config changes (likely langauge switch)
                 zeHandler = (payload: RampConfig) => {
-                    let currentBasemapConfig: RampBasemapConfig | undefined =
+                    const currentBasemapConfig: RampBasemapConfig | undefined =
                         payload.map.basemaps.find(
                             bms =>
                                 bms.id ===
@@ -1017,7 +1017,7 @@ export class EventAPI extends APIScope {
                 zeHandler = () => {
                     if (this.$iApi.geo.map.keysActive) {
                         // The user is using the crosshairs, perform hit-test using center of screens
-                        let screenCenter: ScreenPoint =
+                        const screenCenter: ScreenPoint =
                             this.$iApi.geo.map.mapPointToScreenPoint(
                                 this.$iApi.geo.map.getExtent().center()
                             );
@@ -1111,7 +1111,8 @@ export class EventAPI extends APIScope {
             case DefEH.LEGEND_REMOVES_LAYER_ENTRY:
                 // when a layer is removed from the map, remove any bound entries from the standard legend
                 zeHandler = (layer: LayerInstance) => {
-                    let legendApi = this.$iApi.fixture.get<LegendAPI>('legend');
+                    const legendApi =
+                        this.$iApi.fixture.get<LegendAPI>('legend');
                     if (legendApi) {
                         legendApi.removeLayerItem(layer);
                         this.$iApi.updateAlert(
@@ -1130,7 +1131,8 @@ export class EventAPI extends APIScope {
             case DefEH.LEGEND_RELOADS_LAYER_ENTRY:
                 // when a layer starts to reload, reset any entries in the standard legend to a loading state
                 zeHandler = (layer: LayerInstance) => {
-                    let legendApi = this.$iApi.fixture.get<LegendAPI>('legend');
+                    const legendApi =
+                        this.$iApi.fixture.get<LegendAPI>('legend');
                     if (legendApi) {
                         legendApi.reloadLayerItem(layer.uid);
                     }
@@ -1144,7 +1146,7 @@ export class EventAPI extends APIScope {
             case DefEH.GRID_REMOVES_LAYER_GRID:
                 // when a layer is removed, close the standard grid if open for that layer
                 zeHandler = (layer: LayerInstance) => {
-                    if (!!this.$iApi.fixture.get<GridAPI>('grid')) {
+                    if (this.$iApi.fixture.get<GridAPI>('grid')) {
                         // remove cached grid state for layer from grid store
                         this.$vApp.$store.dispatch(
                             `grid/${GridAction.removeGrid}`,
@@ -1172,7 +1174,7 @@ export class EventAPI extends APIScope {
             case DefEH.DETAILS_REMOVES_LAYER:
                 // when a layer is removed, remove it from the details payload
                 zeHandler = (layer: LayerInstance) => {
-                    if (!!this.$iApi.fixture.get<DetailsAPI>('details')) {
+                    if (this.$iApi.fixture.get<DetailsAPI>('details')) {
                         // remove the layer from the payload results
                         this.$iApi.$vApp.$store.set(
                             DetailsStore.removeLayer,

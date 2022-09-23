@@ -40,7 +40,7 @@ const mutations = {
         if (value in state.items) {
             delete state.items[value];
         }
-        let index = state.order.indexOf(value);
+        const index = state.order.indexOf(value);
         if (index !== -1) {
             state.order.splice(index, 1);
         }

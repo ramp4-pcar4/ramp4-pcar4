@@ -27,7 +27,7 @@ export class Colour {
             }
         } else if (typeof colour === 'string') {
             // trim # if its there
-            let s: string =
+            const s: string =
                 colour.substring(0, 1) === '#' ? colour.substring(1) : colour;
             this.c = [0, 2, 4, 6].map(i => {
                 const hex = s.substring(i, i + 2);

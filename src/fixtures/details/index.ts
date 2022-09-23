@@ -51,12 +51,12 @@ class DetailsFixture extends DetailsAPI {
         // Parse the details portion of the configuration file and save any custom
         // template bindings in the details store.
         this._parseConfig(this.config);
-        let unwatch = this.$vApp.$watch(
+        const unwatch = this.$vApp.$watch(
             () => this.config,
             (value: DetailsConfig | undefined) => this._parseConfig(value)
         );
 
-        let eventHandlers: string[] = [];
+        const eventHandlers: string[] = [];
         // make panel container responsive when resizing to mobile resolution
         eventHandlers.push(
             this.$iApi.event.on(
@@ -86,7 +86,7 @@ class DetailsFixture extends DetailsAPI {
             this.$iApi.panel.remove('details-items');
             this.$iApi.panel.remove('details-layers');
 
-            if (!!this.$iApi.fixture.get('appbar')) {
+            if (this.$iApi.fixture.get('appbar')) {
                 this.$iApi.$vApp.$store.dispatch(
                     'appbar/removeButton',
                     'details-layers'

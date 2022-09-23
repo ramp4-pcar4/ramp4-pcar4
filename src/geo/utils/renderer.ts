@@ -62,7 +62,7 @@ export class BaseRenderer {
 
         // could not find match, return default symbol with blank image
         console.error(`renderer search could not find match for ${sParams}`);
-        let defaultSymbol: BaseSymbolUnit = new BaseSymbolUnit(this);
+        const defaultSymbol: BaseSymbolUnit = new BaseSymbolUnit(this);
         defaultSymbol.svgCode = '';
         return defaultSymbol;
     }

@@ -14,12 +14,13 @@ export class LegendAPI extends FixtureInstance {
      */
     _parseConfig(legendConfig?: LegendConfig): void {
         // parse the header controls, or default the controls
-        let controls: Array<string> = legendConfig?.headerControls?.slice() ?? [
-            'wizard',
-            'layerReorder',
-            'groupToggle',
-            'visibilityToggle'
-        ];
+        const controls: Array<string> =
+            legendConfig?.headerControls?.slice() ?? [
+                'wizard',
+                'layerReorder',
+                'groupToggle',
+                'visibilityToggle'
+            ];
         this.$vApp.$store.set(LegendStore.headerControls, controls);
 
         if (!legendConfig || !legendConfig.root.children) {
@@ -29,7 +30,7 @@ export class LegendAPI extends FixtureInstance {
         this.handlePanelWidths(['legend']);
 
         // get all layer fixture configs to read layer-specific legend properties
-        let layerLegendConfigs: { [layerId: string]: any } =
+        const layerLegendConfigs: { [layerId: string]: any } =
             this.getLayerFixtureConfigs();
 
         legendConfig.root.children.forEach(legendItem => {
@@ -110,7 +111,7 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     addItem(item: any | LegendItem, parent?: LegendItem): LegendItem {
-        let constructedItem: LegendItem =
+        const constructedItem: LegendItem =
             item instanceof LegendItem ? item : this.createItem(item, parent);
         this._insertItem(constructedItem, parent);
 
@@ -161,7 +162,7 @@ export class LegendAPI extends FixtureInstance {
             // we need this local function because it is possible that this layer has not been added to
             // the map yet, hence using geo.layer.getLayer will not work
             const getLayer = (uid: string): LayerInstance | undefined => {
-                let queue = [layer];
+                const queue = [layer];
                 while (queue.length > 0) {
                     const l = queue.shift();
                     if (l && l.uid === uid) {
@@ -177,10 +178,10 @@ export class LegendAPI extends FixtureInstance {
             const treeWalker = (node: TreeNode): any => {
                 // the tree node does not have a reference to the layer, so we need to fetch sublayers manually
                 // will be undefined for non-root + non-logical layers (a.k.a MIL sub groups)
-                let currLayer = getLayer(node.uid)!;
+                const currLayer = getLayer(node.uid)!;
 
                 // current item legend config snippet
-                let currItem: any = {};
+                const currItem: any = {};
 
                 if (node.isLayerRoot && !node.isLogicalLayer) {
                     // is root, but not logical layer (MIL)
@@ -275,7 +276,7 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     getItem(uid: string): LegendItem | undefined {
-        let legend: Array<LegendItem> = this.getLegend();
+        const legend: Array<LegendItem> = this.getLegend();
 
         let result: LegendItem | undefined;
         legend.some((item: LegendItem) => {
@@ -298,7 +299,7 @@ export class LegendAPI extends FixtureInstance {
      */
     getLayerItem(layer: string | LayerInstance): LayerItem | undefined {
         let id: string = typeof layer === 'string' ? layer : layer.id;
-        let legend: Array<LegendItem> = this.getLegend();
+        const legend: Array<LegendItem> = this.getLegend();
 
         let result: LayerItem | undefined;
 
@@ -337,9 +338,9 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     getAllExpanded(expanded?: boolean): Array<LegendItem> {
-        let legend: Array<LegendItem> = this.getLegend();
-        let items: Array<LegendItem> = [];
-        let check = expanded ?? true;
+        const legend: Array<LegendItem> = this.getLegend();
+        const items: Array<LegendItem> = [];
+        const check = expanded ?? true;
 
         legend.forEach(item => {
             items.push(
@@ -363,9 +364,9 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     getAllVisible(visibility?: boolean): Array<LegendItem> {
-        let legend: Array<LegendItem> = this.getLegend();
-        let items: Array<LegendItem> = [];
-        let check = visibility ?? true;
+        const legend: Array<LegendItem> = this.getLegend();
+        const items: Array<LegendItem> = [];
+        const check = visibility ?? true;
 
         legend.forEach(item => {
             items.push(
@@ -430,8 +431,8 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     expandItems(expanded: boolean, root?: LegendItem): void {
-        let legend: Array<LegendItem> = this.getLegend();
-        let items = root === undefined ? legend : root.children;
+        const legend: Array<LegendItem> = this.getLegend();
+        const items = root === undefined ? legend : root.children;
         if (root !== undefined) {
             this._toggleState(root, { expanded: expanded });
         }
@@ -448,8 +449,8 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     showItems(visibility: boolean, root?: LegendItem): void {
-        let legend: Array<LegendItem> = this.getLegend();
-        let items = root === undefined ? legend : root.children;
+        const legend: Array<LegendItem> = this.getLegend();
+        const items = root === undefined ? legend : root.children;
         if (root !== undefined) {
             this._toggleState(root, { visibility: visibility });
         }
@@ -466,7 +467,7 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     reloadLayerItem(layerId: string): boolean {
-        let item: LayerItem | undefined = this.getLayerItem(layerId);
+        const item: LayerItem | undefined = this.getLayerItem(layerId);
 
         if (!item) {
             return false;
@@ -491,7 +492,7 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     removeItem(item: string | LegendItem): boolean {
-        let itemToRemove: LegendItem | undefined =
+        const itemToRemove: LegendItem | undefined =
             typeof item === 'string' ? this.getItem(item) : item;
 
         if (itemToRemove !== undefined) {
@@ -509,7 +510,7 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     removeLayerItem(layer: string | LayerInstance): boolean {
-        let itemToRemove: LayerItem | undefined = this.getLayerItem(layer);
+        const itemToRemove: LayerItem | undefined = this.getLayerItem(layer);
 
         if (itemToRemove !== undefined) {
             return this._deleteItem(itemToRemove as unknown as LegendItem);
@@ -554,10 +555,10 @@ export class LegendAPI extends FixtureInstance {
         root: LegendItem,
         predicate: (item: LegendItem) => boolean
     ): Array<LegendItem> {
-        let items: Array<LegendItem> = [];
+        const items: Array<LegendItem> = [];
 
         // good-ol' bfs
-        let queue: Array<LegendItem> = [root];
+        const queue: Array<LegendItem> = [root];
         while (queue.length > 0) {
             const item = queue.shift();
             if (item && predicate(item)) {

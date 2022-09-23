@@ -94,7 +94,7 @@ export class ExportAPI extends FixtureInstance {
 
         this.options.runningHeight = 0;
 
-        let selectedState: any = this.$iApi.$vApp.$store.get(
+        const selectedState: any = this.$iApi.$vApp.$store.get(
             ExportStore.componentSelectedState
         );
 
@@ -114,7 +114,7 @@ export class ExportAPI extends FixtureInstance {
         let fbScaleBar: fabric.Object | undefined;
         let fbNorthArrow: fabric.Object | undefined;
         let fbLegend: fabric.Object | undefined;
-        let selectedExportComponents: Array<fabric.Object> = [];
+        const selectedExportComponents: Array<fabric.Object> = [];
 
         if (selectedState.title) {
             fbTitle = await exportTitleFixture.make({

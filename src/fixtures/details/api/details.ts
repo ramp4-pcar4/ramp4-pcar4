@@ -51,9 +51,9 @@ export class DetailsAPI extends FixtureInstance {
         }
 
         // Open or update the items panel
-        let itemsPanel = this.$iApi.panel.get('details-items');
+        const itemsPanel = this.$iApi.panel.get('details-items');
         // result: is IdentifyResult class
-        let props: any = {
+        const props: any = {
             result: {
                 items: [
                     {
@@ -102,8 +102,8 @@ export class DetailsAPI extends FixtureInstance {
         this.handlePanelWidths(['details-items', 'details-layers']);
 
         // get all layer fixture configs
-        let layerDetailsConfigs: any = this.getLayerFixtureConfigs();
-        let detailsConfigItems: DetailsConfigItem[] = [];
+        const layerDetailsConfigs: any = this.getLayerFixtureConfigs();
+        const detailsConfigItems: DetailsConfigItem[] = [];
 
         // construct the details config from the layer fixture configs
         Object.keys(layerDetailsConfigs).forEach((layerId: string) => {

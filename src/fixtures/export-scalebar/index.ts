@@ -10,7 +10,7 @@ class ExportScalebarFixture
     implements ExportSubFixture
 {
     get config(): any {
-        let fixtureConfig: ExportConfig | undefined =
+        const fixtureConfig: ExportConfig | undefined =
             this.$iApi.fixture.get<ExportAPI>('export').config;
         return fixtureConfig?.mapElements;
     }
@@ -28,7 +28,7 @@ class ExportScalebarFixture
             //  ============================== (scale bar imperial)
             //  <imperial scale> mi/ft
 
-            let fbScaleText = new fabric.Text(
+            const fbScaleText = new fabric.Text(
                 this.$iApi.$vApp.$t('export.scaleBar.approx', [
                     `${this.$iApi.$vApp.$n(sInfo[i].distance, 'number')}${
                         sInfo[i].units
@@ -45,7 +45,7 @@ class ExportScalebarFixture
                     originY: 'top'
                 }
             );
-            let fbScaleLine = new fabric.Line(
+            const fbScaleLine = new fabric.Line(
                 [0, i === 0 ? 30 : 40, sInfo[i].pixels, i === 0 ? 30 : 40],
                 {
                     stroke: 'black',

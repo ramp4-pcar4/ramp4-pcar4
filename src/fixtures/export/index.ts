@@ -51,7 +51,7 @@ class ExportFixture extends ExportAPI {
 
         // parse export section of config and store in the config store
         this._parseConfig(this.config);
-        let unwatch = this.$vApp.$watch(
+        const unwatch = this.$vApp.$watch(
             () => this.config,
             (value: any) => this._parseConfig(value)
         );
@@ -74,7 +74,7 @@ class ExportFixture extends ExportAPI {
                 .get<ExportScalebarFixture>('export-scalebar')
                 ?.remove();
 
-            if (!!this.$iApi.fixture.get('appbar')) {
+            if (this.$iApi.fixture.get('appbar')) {
                 this.$iApi.$vApp.$store.dispatch(
                     'appbar/removeButton',
                     'export'

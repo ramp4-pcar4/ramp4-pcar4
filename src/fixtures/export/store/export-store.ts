@@ -22,7 +22,7 @@ const mutations = {
         value: { name: string; selected?: boolean }
     ) => {
         if (state.componentSelectedState[value.name] !== undefined) {
-            let currValue: boolean = state.componentSelectedState[value.name];
+            const currValue: boolean = state.componentSelectedState[value.name];
             state.componentSelectedState[value.name] =
                 value.selected !== undefined ? value.selected : !currValue;
         }

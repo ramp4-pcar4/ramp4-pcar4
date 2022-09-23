@@ -495,7 +495,7 @@ export class AttribLayer extends CommonLayer {
 
         if (opts.getAttribs || opts.getStyle) {
             // attempt to get attributes from fastest source.
-            let aCache = this.quickCache.getAttribs(objectId);
+            const aCache = this.quickCache.getAttribs(objectId);
             if (aCache) {
                 // value is already cached. use it
                 resultAttribs = aCache;

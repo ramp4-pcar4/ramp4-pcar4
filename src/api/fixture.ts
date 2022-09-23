@@ -410,7 +410,7 @@ export class FixtureInstance extends APIScope implements FixtureBase {
      * @returns {any} This fixture's config for the given layer
      */
     getLayerFixtureConfig(layerId: string): any {
-        let fixtureConfigs: { [layerId: string]: any } =
+        const fixtureConfigs: { [layerId: string]: any } =
             this.getLayerFixtureConfigs();
         return fixtureConfigs[layerId];
     }
@@ -421,8 +421,8 @@ export class FixtureInstance extends APIScope implements FixtureBase {
      * @returns {{ [layerId: string]: any }} Dictionary where key is the layer id and the value is this fixture's config for that layer
      */
     getLayerFixtureConfigs(): { [layerId: string]: any } {
-        let mainConfig: RampConfig = this.$iApi.getConfig();
-        let fixtureConfigs: { [layerId: string]: any } = {};
+        const mainConfig: RampConfig = this.$iApi.getConfig();
+        const fixtureConfigs: { [layerId: string]: any } = {};
 
         const layerCrawler = (layer: any, parent: any = undefined) => {
             if (layer.fixtures && layer.fixtures[this.id] !== undefined) {

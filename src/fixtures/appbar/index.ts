@@ -34,12 +34,12 @@ class AppbarFixture extends AppbarAPI {
         );
 
         this._parseConfig(this.config);
-        let unwatch = this.$vApp.$watch(
+        const unwatch = this.$vApp.$watch(
             () => this.config,
             (value: AppbarFixtureConfig | undefined) => this._parseConfig(value)
         );
 
-        let eventHandlers: string[] = [];
+        const eventHandlers: string[] = [];
 
         // since components used in appbar can be registered after this point, listen to the global component registration event and re-validate items
         // TODO revisit. this seems to be self-contained to the appbar fixture, so ideally can stay as is and not worry about events api.
@@ -55,8 +55,8 @@ class AppbarFixture extends AppbarAPI {
             eventHandlers.forEach(h => this.$iApi.event.off(h));
 
             // gracefully remove all buttons first (in case anything is watching for button removal)
-            let items: any = { ...this.$vApp.$store.get('appbar/items') };
-            let tempItems: string[] = [
+            const items: any = { ...this.$vApp.$store.get('appbar/items') };
+            const tempItems: string[] = [
                 ...(this.$vApp.$store.get('appbar/temporary') as string[])
             ];
             Object.keys(items).forEach(item =>

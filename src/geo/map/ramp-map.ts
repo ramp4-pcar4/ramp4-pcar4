@@ -687,7 +687,7 @@ export class MapAPI extends CommonMapAPI {
         // remove the current ESRI map mouse move handler
         const currIdx = this.handlers.findIndex(h => h.type === 'pointer-move');
         if (currIdx !== -1) {
-            let currHandler = this.handlers[currIdx];
+            const currHandler = this.handlers[currIdx];
             this.handlers.splice(currIdx, 1);
             currHandler.handler.remove();
         }
@@ -909,7 +909,7 @@ export class MapAPI extends CommonMapAPI {
      */
 
     runIdentify(targetPoint: MapClick | Point): MapIdentifyResult {
-        let layers: LayerInstance[] | undefined = this.$vApp.$store.get(
+        const layers: LayerInstance[] | undefined = this.$vApp.$store.get(
             LayerStore.layers
         );
 
@@ -960,7 +960,7 @@ export class MapAPI extends CommonMapAPI {
             });
         }
 
-        let p: IdentifyParameters = {
+        const p: IdentifyParameters = {
             geometry: mapClick.mapPoint,
             hitTest: hitTestProm
         };
@@ -1010,7 +1010,7 @@ export class MapAPI extends CommonMapAPI {
         }
 
         // Get a copy of all layers from the layer store (this will be in reverse order)
-        let layers: LayerInstance[] | undefined = this.$vApp.$store
+        const layers: LayerInstance[] | undefined = this.$vApp.$store
             .get<LayerInstance[]>(LayerStore.layers)
             ?.slice(0);
 
