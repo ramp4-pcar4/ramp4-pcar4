@@ -2,7 +2,7 @@
     <div class="relative legend-header flex">
         <!-- open import wizard -->
         <button
-            @click="openWizard"
+            @click="toggleWizard"
             class="relative mr-auto text-gray-500 hover:text-black mb-3"
             v-show="getWizardExists() && isControlAvailable('wizard')"
             :content="$t('legend.header.addlayer')"
@@ -14,7 +14,7 @@
         </button>
         <!-- open layer reorder -->
         <button
-            @click="openLayerReorder"
+            @click="toggleLayerReorder"
             class="relative mr-auto text-gray-500 hover:text-black p-8 mb-3"
             v-show="
                 getLayerReorderExists() && isControlAvailable('layerReorder')
@@ -119,8 +119,8 @@ export default defineComponent({
     },
 
     methods: {
-        openWizard() {
-            this.$iApi.event.emit(GlobalEvents.WIZARD_OPEN);
+        toggleWizard() {
+            this.$iApi.event.emit(GlobalEvents.WIZARD_TOGGLE);
         },
         getWizardExists(): boolean {
             try {
@@ -129,8 +129,8 @@ export default defineComponent({
                 return false;
             }
         },
-        openLayerReorder() {
-            this.$iApi.event.emit(GlobalEvents.REORDER_OPEN);
+        toggleLayerReorder() {
+            this.$iApi.event.emit(GlobalEvents.REORDER_TOGGLE);
         },
         getLayerReorderExists(): boolean {
             try {

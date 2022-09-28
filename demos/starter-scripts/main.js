@@ -381,7 +381,7 @@ let config = {
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/StoryRAMP/410b88da_0ed1_4749_903f_5e76c24e2e5f/MapServer/1',
                     state: {
                         opacity: 1,
-                        visibility: true
+                        visibility: false
                     },
                     customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
                 },
@@ -392,7 +392,7 @@ let config = {
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/StoryRAMP/410b88da_0ed1_4749_903f_5e76c24e2e5f/MapServer/2',
                     state: {
                         opacity: 1,
-                        visibility: true
+                        visibility: false
                     },
                     customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
                 }

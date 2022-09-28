@@ -9,7 +9,12 @@
                 <div class="w-full flex mb-6">
                     <button
                         @click="clearAll"
-                        class="text-gray-500 hover:text-black p-4 ml-auto"
+                        class="p-4 ml-auto"
+                        :class="[
+                            !number
+                                ? 'text-gray-300 cursor-default pointer-events-none'
+                                : 'text-gray-500 hover:text-black'
+                        ]"
                         :content="$t('notifications.controls.clearAll')"
                         v-tippy="{
                             placement: 'bottom',
@@ -59,6 +64,7 @@ export default defineComponent({
 
     data() {
         return {
+            number: this.get('notification/notificationNumber'),
             clearAll: this.call('notification/clearAll')
         };
     }
