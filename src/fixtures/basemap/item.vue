@@ -1,7 +1,7 @@
 <template>
     <div class="mb-10">
         <button
-            class="basemap-item-button bg-gray-300"
+            class="basemap-item-button bg-gray-300 h-210"
             :aria-label="$t('basemap.select')"
             @click="selectBasemap(basemap)"
             v-focus-item
@@ -24,6 +24,7 @@
                         <img
                             v-else-if="
                                 tileSchema.thumbnailTileUrls &&
+                                tileSchema.thumbnailTileUrls.length > 0 &&
                                 layer.layerType === 'esri-tile'
                             "
                             v-for="(url, idx) in tileSchema.thumbnailTileUrls"
@@ -118,6 +119,7 @@ export default defineComponent({
     },
     methods: {
         selectBasemap(basemap: any) {
+            console.log('Selecting basemap');
             if (basemap.id !== this.selectedBasemap.id) {
                 this.$iApi.geo.map.setBasemap(basemap.id);
             }

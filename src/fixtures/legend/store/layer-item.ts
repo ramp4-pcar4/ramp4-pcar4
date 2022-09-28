@@ -76,7 +76,7 @@ export class LayerItem extends LegendItem {
         this._layerId = layer.id;
         this._layerIdx = layer.layerIdx;
         this._layerUid = layer.uid;
-        this._name = this._name ?? layer.name;
+        if (!this._origName) this._name = layer.name;
         const cont = this.$iApi.geo.layer.getLayerControls(layer.id);
         if (this._layerControls.length === 0)
             this._layerControls = cont?.controls ?? [];
@@ -250,5 +250,10 @@ export class LayerItem extends LegendItem {
         return this._layerDisabledControls?.includes(control)
             ? false
             : this._layerControls?.includes(control);
+    }
+
+    error(): void {
+        this._name = this._name ?? this.layerId;
+        super.error();
     }
 }

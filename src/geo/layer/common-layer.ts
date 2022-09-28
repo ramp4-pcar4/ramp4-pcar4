@@ -378,6 +378,10 @@ export class CommonLayer extends LayerInstance {
                 id: this.id
             })
         );
+        // If server fetching fails and there is no name in config, set name to id
+        if (!this.origRampConfig) {
+            this.name = this.id;
+        }
     }
 
     // performs setup on the layer that needs to occur after the esri layer
