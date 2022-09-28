@@ -20,6 +20,7 @@ export enum LegendType {
 export class LegendItem extends APIScope {
     _uid: string;
     _name: string;
+    _origName: string;
     _type: LegendType;
 
     _children: Array<LegendItem> = []; // list of child legend items
@@ -48,6 +49,7 @@ export class LegendItem extends APIScope {
 
         this._uid = geo.sharedUtils.generateUUID();
         this._name = config.name;
+        this._origName = config.name;
         this._type = config.type ?? LegendType.Placeholder;
         this._parent = parent;
         this._children = [];

@@ -76,7 +76,7 @@ export class LayerItem extends LegendItem {
         this._layerId = layer.id;
         this._layerIdx = layer.layerIdx;
         this._layerUid = layer.uid;
-        this._name = this._name ?? layer.name;
+        if (!this._origName) this._name = layer.name;
         const cont = this.$iApi.geo.layer.getLayerControls(layer.id);
         if (this._layerControls.length === 0)
             this._layerControls = cont?.controls ?? [];
@@ -209,15 +209,14 @@ export class LayerItem extends LegendItem {
                         );
                     } else {
                         this.layer = layer;
+                        // override layer item visibility in favour of layer visibility
+                        this._visibility = layer.visibility;
                         super.load();
                         if (!layer.visibility) {
                             // if the layer is invisible, set all child symbols to invisible
                             this.setSymbologyVisibility(undefined, false);
                         }
                     }
-
-                    // override layer item visibility in favour of layer visibility
-                    this.toggleVisibility(layer.visibility, true, true);
 
                     // event listener must be added after the layer is loaded
                     this.handlers.push(
@@ -250,5 +249,10 @@ export class LayerItem extends LegendItem {
         return this._layerDisabledControls?.includes(control)
             ? false
             : this._layerControls?.includes(control);
+    }
+
+    error(): void {
+        this._name = this._name ?? this.layerId;
+        super.error();
     }
 }
