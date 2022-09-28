@@ -9,6 +9,7 @@ export class LayerItem extends LegendItem {
 
     _layer: LayerInstance | undefined;
     _layerRedrawing: boolean = false;
+    _layerInitVis: boolean | undefined;
 
     _coverIcon?: string;
     _description?: string;
@@ -76,6 +77,7 @@ export class LayerItem extends LegendItem {
         this._layerId = layer.id;
         this._layerIdx = layer.layerIdx;
         this._layerUid = layer.uid;
+        this._layerInitVis = layer.visibility;
         this._name = this._name ?? layer.name;
         const cont = this.$iApi.geo.layer.getLayerControls(layer.id);
         if (this._layerControls.length === 0)
@@ -210,14 +212,16 @@ export class LayerItem extends LegendItem {
                     } else {
                         this.layer = layer;
                         super.load();
+
+                        // override layer item visibility in favour of layer visibility
+                        // need to store layer's initial visibility, otherwise it will get lost in the toggling from
+                        // visibility rule checking
+                        this.toggleVisibility(this._layerInitVis, true, true);
                         if (!layer.visibility) {
                             // if the layer is invisible, set all child symbols to invisible
                             this.setSymbologyVisibility(undefined, false);
                         }
                     }
-
-                    // override layer item visibility in favour of layer visibility
-                    this.toggleVisibility(layer.visibility, true, true);
 
                     // event listener must be added after the layer is loaded
                     this.handlers.push(

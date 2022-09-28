@@ -74,7 +74,8 @@ export function configUpgrade2to4(r2c: any): RampConfigs {
         'scrollguard',
         'panguard',
         'wizard',
-        'layer-reorder'
+        'layer-reorder',
+        'details'
     );
 
     return {
@@ -88,7 +89,6 @@ function individualConfigUpgrader(r2c: any): any {
         // TODO is there a current version variable anywhere? I can see us forgetting to update this.
         //      on the other hand, any updates to the target version will need to edit this file.
         version: '4.0',
-        ui: {},
         fixtures: {},
         layers: [],
         map: {},
@@ -113,7 +113,7 @@ function individualConfigUpgrader(r2c: any): any {
     // and would likely be out-of-core fixtures.
 
     // #1346 adds areas of interest fixture as optional core fixture, so we can support the plugin config upgrader
-    pluginsUpgrader(r2c.plugins, r4c);
+    if (r2c.plugins) pluginsUpgrader(r2c.plugins, r4c);
 
     return r4c;
 }
@@ -152,11 +152,6 @@ function mapUpgrader(r2Map: any, r4c: any): void {
                     `showInfo property provided in geoSearch map component cannot be mapped and will be skipped.`
                 );
             }
-        }
-        if (r2Map.components.mouseInfo) {
-            console.warn(
-                `mouseInfo property provided in map components cannot be mapped and will be skipped.`
-            );
         }
         if (
             r2Map.components.overviewMap &&
@@ -204,23 +199,35 @@ function mapUpgrader(r2Map: any, r4c: any): void {
         if (r2Map.components.scaleBar && r2Map.components.scaleBar.enabled) {
             r4c.map.caption = {
                 mapCoords: {
-                    disabled: false,
-                    formatter: 'LAT_LONG_DMS'
+                    disabled: false
                 },
                 scaleBar: {
                     disabled: false,
-                    imperialScale: false
+                    imperialScale:
+                        r2Map?.components?.scaleBar?.scalebarUnit ===
+                            'english' ||
+                        (r2Map?.components?.scaleBar?.scalebarUnit === 'dual' &&
+                            Math.floor(Math.random() * 2) === 0)
                 }
             };
+            switch (r2Map.components?.mouseInfo?.spatialReference?.wkid) {
+                case 4326:
+                    r4c.map.caption.mapCoords.formatter = 'LAT_LONG_DMS';
+                    break;
+                case 3978:
+                    r4c.map.caption.mapCoords.formatter =
+                        'CANADA_ATLAS_LAMBERT';
+                    break;
+                case 102100:
+                    r4c.map.caption.mapCoords.formatter = 'WEB_MERCATOR';
+                    break;
+                default:
+                    r4c.map.caption.mapCoords.formatter = 'LAT_LONG_DMS';
+                    break;
+            }
             if (r2Map.components.scaleBar.attachTo) {
                 console.warn(
                     `attachTo property provided in scaleBar map component cannot be mapped and will be skipped.`
-                );
-            }
-            // TODO: add support for scaleBar.scalebarUnit at a later time
-            if (r2Map.components.scaleBar.scalebarUnit) {
-                console.warn(
-                    `scalebarUnit property provided in scaleBar map component is currently not supported.`
                 );
             }
         }
@@ -472,6 +479,9 @@ function legendGroupUpgrader(r2legendGroup: any) {
             r2legendGroup.controls,
             allowedControls
         );
+        if (r2legendGroup.controls.includes('visibility')) {
+            r4legendGroup.controls.push('visibilityButton');
+        }
         if (
             r2legendGroup.controls.length !== 1 ||
             r2legendGroup.controls[0] !== 'visibility'
@@ -480,7 +490,7 @@ function legendGroupUpgrader(r2legendGroup: any) {
                 `Legend entry groups currently support only the visibility control. All other controls are currently not supported.`
             );
         }
-        r4legendGroup.controls.push('expand');
+        r4legendGroup.controls.push('expandButton');
     }
     if (
         r2legendGroup.disabledControls &&
@@ -490,6 +500,9 @@ function legendGroupUpgrader(r2legendGroup: any) {
             r2legendGroup.disabledControls,
             allowedControls
         );
+        if (r2legendGroup.disabledControls.includes('visibility')) {
+            r4legendGroup.disabledControls.push('visibilityButton');
+        }
         if (
             r2legendGroup.disabledControls.length !== 1 ||
             r2legendGroup.disabledControls[0] !== 'visibility'
@@ -1158,7 +1171,10 @@ function uiUpgrader(r2ui: any, r4c: any): void {
 
     if (r2ui.help) {
         r4c.fixtures.help = {
-            folderName: r2ui.help.folderName || 'default',
+            location:
+                r2ui.help.folderName && r2ui.help.folderName !== 'default'
+                    ? `./${r2ui.help.folderName}`
+                    : './help',
             panelWidth: 350
         };
         r4c.fixturesEnabled.push('help');
@@ -1199,7 +1215,10 @@ function uiUpgrader(r2ui: any, r4c: any): void {
                 r4c.fixturesEnabled.push('legend');
             }
         }
-        if (r2ui.appBar.geoSearch !== false) {
+        if (
+            r2ui.appBar.geoSearch !== false &&
+            r4c.fixturesEnabled.includes('geosearch')
+        ) {
             r4c.fixtures.appbar.items.push('geosearch');
         }
         if (r2ui.appBar.basemap !== false) {

@@ -51,7 +51,7 @@ export default defineComponent({
     },
 
     mounted() {
-        if (this.arrowIcon.value) {
+        if (this.arrowIcon?.value) {
             this.arrow = `<img width='25' src='${this.arrowIcon.value}'>`;
         }
         // don't think this condition should be needed but sometimes errors at startup without it
