@@ -36,5 +36,9 @@ jobs:
                         issue_number: context.issue.number,
                         owner: context.repo.owner,
                         repo: context.repo.repo,
-                        body: `Your demo site is ready! 🚀 Visit it here: https://${{github.repository_owner}}.github.io/ramp4-pcar4/${{github.head_ref}}/`
+                        body: `Your demo site is ready! 🚀
+
+                        Main: https://${{github.repository_owner}}.github.io/ramp4-pcar4/${{github.head_ref}}/
+                        Catalogue: https://${{github.repository_owner}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/index-all.html
+                        Samples: https://${{github.repository_owner}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/index-samples.html`
                       })
