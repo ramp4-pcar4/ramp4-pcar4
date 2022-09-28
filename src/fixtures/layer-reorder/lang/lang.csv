@@ -1,11 +1,11 @@
 key,enValue,enValid,frValue,frValid
-layer-reorder.title,Reorder Layers,1,Reorder Layers,0
-layer-reorder.nolayers,No Layers,1,No Layers,0
-layer-reorder.loading,Loading,1,Loading,0
-layer-reorder.expand,Expand Sublayers,1,Expand Sublayers,0
-layer-reorder.expanded,{name} sublayers expanded,1,{name} sublayers expanded,0
-layer-reorder.collapse,Collapse Sublayers,1,Collapse Sublayers,0
-layer-reorder.collapsed,{name} sublayers collapsed,1,{name} sublayers collapsed,0
-layer-reorder.move.up,Move up,1,Move up,0
-layer-reorder.move.down,Move down,1,Move down,0
-layer-reorder.layermoved,{name} moved to index {index},1,{name} moved to index {index},0
+layer-reorder.title,Reorder Layers,1,Réorganiser les couches,1
+layer-reorder.nolayers,No Layers,1,Aucune couche,1
+layer-reorder.loading,Loading,1,Chargement,1
+layer-reorder.expand,Expand Sublayers,1,Développer les sous-couches,1
+layer-reorder.expanded,{name} sublayers expanded,1,Sous-couches {name} développées,1
+layer-reorder.collapse,Collapse Sublayers,1,Réduire les sous-couches,1
+layer-reorder.collapsed,{name} sublayers collapsed,1,Sous-couches {name} réduites,1
+layer-reorder.move.up,Move up,1,Déplacer vers le haut,1
+layer-reorder.move.down,Move down,1,Déplacer vers le bas,1
+layer-reorder.layermoved,{name} moved to index {index},1,{name} déplacé vers l’index {index},1
