@@ -86,22 +86,24 @@ export default defineComponent({
 
         // $nextTick should prevent any race conditions by letting the child elements render before trying to place them using popper
         this.$nextTick(() => {
-            this.popper = createPopper(
-                this.$refs['dropdown-trigger'] as Element,
-                this.$refs['dropdown'] as HTMLElement,
-                {
-                    placement: (this.position || 'bottom') as Placement,
-                    modifiers: [
-                        {
-                            name: 'offset',
-                            options: {
-                                offset: [0, 5]
+            if (this.$refs['dropdown-trigger'] && this.$refs['dropdown']) {
+                this.popper = createPopper(
+                    this.$refs['dropdown-trigger'] as Element,
+                    this.$refs['dropdown'] as HTMLElement,
+                    {
+                        placement: (this.position || 'bottom') as Placement,
+                        modifiers: [
+                            {
+                                name: 'offset',
+                                options: {
+                                    offset: [0, 5]
+                                }
                             }
-                        }
-                    ],
-                    ...this.popperOptions
-                }
-            );
+                        ],
+                        ...this.popperOptions
+                    }
+                );
+            }
         });
     },
     beforeUnmount() {

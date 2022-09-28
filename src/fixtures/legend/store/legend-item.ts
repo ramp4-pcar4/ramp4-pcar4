@@ -299,10 +299,23 @@ export class LegendItem extends APIScope {
                 this.layer.visibility = true;
             }
         } else {
-            this._lastVisible = toggledChild;
-            this._visibility = false;
-            if (this instanceof LayerItem) {
-                this.layer.visibility = false;
+            if (!this.children.some(child => child.visibility)) {
+                const onChild = this.children.find(
+                    child =>
+                        child instanceof LayerItem &&
+                        child.layerControlAvailable(LayerControl.Visibility) &&
+                        child._layerInitVis
+                );
+                if (onChild) {
+                    onChild.toggleVisibility(true, false);
+                    this._lastVisible = onChild;
+                } else {
+                    this._visibility = false;
+                    if (this instanceof LayerItem) {
+                        this.layer.visibility = false;
+                    }
+                    this._lastVisible = toggledChild;
+                }
             }
         }
 
