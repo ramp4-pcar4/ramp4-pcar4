@@ -1,269 +1,269 @@
 
-# [fr] General User Interface Guidance
+# Document d'orientation sur l'interface utilisateur
 
-[fr] Menu options on the left will typically open new information panels. These panels have the option to pin them in place or close them using the thumb-pin and "x" buttons, respectively.
+En général, les options du menu de gauche permettent d'ouvrir de nouvelles fenêtres de renseignements. Vous pouvez épingler ces fenêtres ou les fermer à l'aide des boutons « punaise » et « x », respectivement.
 
-[fr] The bell symbol in the lower-left corner displays notifications related to services or information on the map. Messages will be displayed here when erroneous services are not able to load on the map.
+Le symbole de la cloche dans le coin inférieur gauche affiche les notifications liées aux services ou aux renseignements sur la carte. Des messages sont affichés à cet endroit lorsque des services erronés ne peuvent pas être chargés sur la carte.
 
-[fr] For general or technical inquiries regarding the Reusable Accessible Mapping Platform that this interactive map is based on, please contact [applicationsdecartographieweb-webmappingapplications@ec.gc.ca](mailto:applicationsdecartographieweb-webmappingapplications@ec.gc.ca). You may access the RAMP GitHub repository using the "About RAMP" button in the lower-left corner.
+Pour toute question générale ou technique concernant la Plateforme de cartographie accessible et réutilisable (PCAR) sur laquelle repose cette carte interactive, veuillez communiquer avec [applicationsdecartographieweb‑webmappingapplications@ec.gc.ca](mailto:applicationsdecartographieweb-webmappingapplications@ec.gc.ca). Vous pouvez consulter le référentiel GitHub de la PCAR en cliquant sur le bouton « Au sujet de la PCAR » dans le coin inférieur gauche.
 
 
-# Identifying Data
+# Repérer les données
 
-[fr] There are three ways to access the data on the map:
+Il existe trois façons d'accéder aux données sur la carte :
 
-1. [fr] Select a point - Click or touch a data feature on the map, which will open or update the details panel with information specific to that item.
-2. [fr] Accessed via Data Table and search - see "Data Table" section below.
-3. [fr] Keyboard control crosshairs - see "Accessibility - Keyboard Navigation" section below.
+1. Sélectionnez un point : cliquez sur un élément ou touchez un élément de données sur la carte pour ouvrir ou mettre à jour la fenêtre de détails contenant les renseignements propres à cet élément.
+2. Utilisez le tableau de données et la fonction de recherche : consultez la partie « Tableau de données » ci‑après.
+3. Utilisez le réticule à l'aide des commandes du clavier : consultez la partie « Accessibilité – Navigation par clavier » ci‑après.
 
 
-# [fr] Navigation Controls
+# Commandes de navigation
 
-[fr] Navigation controls are used for changing the viewing extent of the map.
+Vous pouvez utiliser les commandes de navigation pour modifier l'étendue de la carte.
 
-[fr] The following navigation controls can be found in the bottom right corner of the map:
+Les commandes de navigation suivantes se trouvent dans le coin inférieur droit de la carte :
 
-| [fr] Function | [fr] Description |
-|--|--|
-| [fr] Zoom in - Plus (+) | [fr] Zoom in one level on the map to see more detailed content |
-| [fr] Zoom out - Minus (-) | [fr] Zoom out one level on the map to see less detailed content |
-| [fr] Fullscreen | [fr] Full screen presents map content using the entire page. Full screen option is only available when the map is embedded into another page |
-| [fr] Geolocate | [fr] Zoom and pan map over the current location of the device |
-| [fr] Home / Initial extent | [fr] Zoom and pan map such that initial extent is visible |
-| [fr] Help | [fr] Toggle open or closed the help dialog |
+| Fonction | Description |
+| --- | --- |
+| Zoom avant – Plus (+) | Permet de faire un zoom avant d'un niveau sur la carte pour voir un contenu plus détaillé. |
+| Zoom arrière – Moins (‑) | Permet de faire un zoom arrière d'un niveau sur la carte pour voir un contenu moins détaillé. |
+| Plein écran | Présente le contenu de la carte sur l'ensemble de la page. Cette fonction n'est disponible que lorsque la carte est intégrée à une autre page. |
+| Votre position | Permet de faire un zoom et un panoramique sur l'emplacement actuel de l'appareil. |
+| Accueil/étendue initiale | Permet de faire un zoom et un panoramique de façon à afficher l'étendue initiale. |
+| Aide | Ouvre ou ferme la boîte d'aide. |
 
 
-# [fr] Navigation Information
+# Renseignements de navigation
 
-[fr] The navigation information is located in the lower right corner of the map and includes map scale and mouse/crosshairs positioning coordinates.
+Les renseignements de navigation sont situés dans le coin inférieur droit de la carte et comprennent l'échelle de la carte et les coordonnées de positionnement de la souris ou du réticule.
 
-[fr] The positioning coordinates can be in degrees minutes seconds (DMS), decimal degrees or meters depending on the projection and configuration used.
+Les coordonnées de positionnement peuvent être exprimées en degrés‑minutes‑secondes (DMS), en degrés décimaux ou en mètres, selon la projection et la configuration utilisées.
 
 
-# [fr] Overview Map
+# Aperçu de la carte
 
-[fr] The overview map displays a generalised view of the main map at a smaller scale. It can be found in the top right corner of the map.
+L'aperçu de la carte présente une vue générale de la carte principale à une échelle réduite. Il se trouve dans le coin supérieur droit de la carte.
 
-[fr] Select-hold on the overview map and drag it to change the extent of the main map. Selecting the toggle arrow icon in the top right corner of the overview map will expand or collapse it.
+Cliquez sur l'aperçu de la carte, maintenez le bouton de la souris enfoncé et faites‑le glisser pour modifier l'étendue de la carte principale. Vous pouvez cliquer sur l'icône de la flèche basculante, dans le coin supérieur droit de l'aperçu de la carte, pour développer ou réduire l'aperçu.
 
 
-# [fr] Legend
+# Légende
 
-[fr] The Legend panel, accessed from the first option in the left menu, serves as a map legend and lists the layers available to display in the map.
+La fenêtre Légende, accessible à partir de la première option du menu de gauche, sert de légende à la carte et répertorie les couches disponibles pouvant être affichées sur la carte.
 
-[fr] Access the layer list by clicking on the layer button in the top, left of center portion of the viewer.
+Cliquez sur le bouton des couches, situé en haut, à gauche de la partie centrale de l'outil de visualisation pour consulter la liste des couches.
 
-[fr] Each layer has some symbology associated with it. For simple layers with only one representative icon, the icon will be present next to the layer name. For complex layers (i.e. those with multiple symbols used per layer) the icon will show as a stack that can be toggled open and closed which is expanded beneath the layer name. WMS layers may optionally have a graphical legend defined, if one is present it will be displayed in the same drop down manner.
+Chaque couche est associée à un ensemble de symboles. Pour les couches simples ne comptant qu'une seule icône représentative, l'icône figurera à côté du nom de la couche. Pour les couches complexes (c.‑à‑d. celles qui utilisent plusieurs symboles par couche), l'icône figurera sous la forme d'une pile de feuilles que vous pouvez ouvrir ou fermer et que vous pouvez développer sous le nom de la couche. Les couches du Service de cartes Web peuvent compter une légende graphique définie; si c'est le cas, elle sera affichée de la même manière, dans un menu déroulant.
 
-[fr] You can toggle the visibility of the layer at any time by selecting the checkbox next to each layer.
+Vous pouvez à tout moment afficher ou masquer la couche en cochant la case située à côté d'elle.
 
-[fr] Note, if a layer fails to load correctly it will be identified by an error notice. Instead of the standard layer actions you can select to either reload the layer (this is particularly helpful if there is a temporary network connectivity issue) or remove the layer.
+Veuillez noter qu'un message d'erreur s'affichera si une couche ne se charge pas correctement. Au lieu des mesures normales liées à la couche, vous pouvez choisir de charger la couche à nouveau (ce qui est particulièrement utile en cas de problème de connectivité temporaire) ou de supprimer la couche.
 
 
-# [fr] Layer Settings
+# Paramètres des couches
 
-[fr] While hovering over a layer or tabbing to one, select the three dots icon to make the settings menu appear.
+Lorsque vous survolez une couche avec la souris ou passez à une couche à l'aide de la touche de tabulation, sélectionnez l'icône des trois points pour afficher le menu des paramètres.
 
-[fr] Note that some settings may not be available depending on various factors such as layer type or configuration.
+Veuillez noter que certains paramètres ne sont nécessairement pas disponibles, selon différents facteurs, comme le type de couche ou la configuration.
 
-|[fr] Name|[fr] Description|
-|----|----|
-| [fr] Metadata | [fr] Display relevant metadata in a slideout panel |
-| [fr] Settings | [fr] Opens slideout panel where bounding box and queryable data can be toggled as well as the ability to adjust opacity amount |
-| [fr] Datatable | [fr] Select to view data in table format |
-| [fr] Show legend | [fr] Expands/Collapses the legend image stack |
-| [fr] Zoom to layer boundary | [fr] Pans and zooms the map so that the layer boundary is in view |
-| [fr] Reload | [fr] Reloads the layer |
-| [fr] Remove | [fr] Remove the layer from the map and legend |
+| Nom | Description |
+| --- | --- |
+| Métadonnées | Affiche les métadonnées pertinentes dans une fenêtre coulissante. |
+| Paramètres | Ouvre une fenêtre coulissante à l'intérieur de laquelle la zone de délimitation et les données interrogeables peuvent être affichées ou masquées et le degré d'opacité peut être réglé. |
+| Tableau de données | Affiche les données dans un tableau. |
+| Légende | Développe ou réduit la pile d'images de la légende. |
+| Zoomer à la limite | Permet d'avoir une vue panoramique et de faire un zoom sur la carte afin d'afficher la limite de la couche. |
+| Recharger | Recharge la couche. |
+| Retirer | Supprime la couche de la carte et de la légende. |
 
 
-# [fr] Layer Submenu
+# Sous‑menu de la couche
 
-[fr] In the Legend panel, 4 functions appear in a row at the top:
+Dans la fenêtre Légende, quatre fonctions s'affichent sur une ligne en haut :
 
-|[fr] Name|[fr] Description|
-|----|----|
-| [fr] Add Layer | [fr] Menu options to add a file or service based layer |
-| [fr] Reorder Layers | [fr] Provides an alternative to the click-hold and drag reordering already available. When selected, layers are only reorderable by holding onto the handle icon next to each layer. Most useful for touch devices |
-| [fr] Toggle Groups | [fr] Opens or closes all groups |
-| [fr] Toggle Visibility | [fr] Enables or disables the visibility for all layers |
+| Nom | Description |
+| --- | --- |
+| Ajouter une couche | Options du menu permettant d'ajouter une couche à partir d'un fichier ou d'un service. |
+| Réorganiser les couches | Fournit une solution de rechange à la réorganisation à l'aide de la technique glisser‑déposer, déjà proposée. Lorsque les couches sont sélectionnées, vous ne pouvez les réorganiser qu'en maintenant l'icône de la poignée, située à côté de chaque couche. Cette fonction est très utile pour les appareils à écran tactile. |
+| Basculer les groupes | Élargit ou réduit tous les groupes. |
+| Basculer la visibilité | Affiche ou masque toutes les couches. |
 
 
-# [fr] Geolocation Search
+# Recherche géolocalisée
 
-### [fr] General Use
+### Utilisation générale
 
-[fr] The geosearch component functions to allow users to search for places in Canada. When the geosearch icon in the left-hand menu is clicked, a panel is displayed with an input field for search keywords.
+La fonction de recherche géolocalisée permet aux utilisateurs de rechercher des lieux au Canada. Lorsque vous cliquez sur l'icône « Recherche géolocalisée », dans le menu de gauche, une fenêtre comprenant un champ de saisie pour la recherche par mot‑clé s'affiche.
 
-#### [fr] Supported Search Types
+#### Types de recherche pris en charge
 
-__[fr] Keyword search__: Type any keyword into geosearch to display a list of results that contains the keyword.
+**Recherche par mot‑clé**  : saisissez n'importe quel mot‑clé dans l'outil de recherche géolocalisée pour afficher une liste de résultats contenant ce mot‑clé.
 
-- [fr] each search result consists of: location name (with keyword highlighted), location province, and location type (lake, city, town, etc.)
-- [fr] click on any individual result to mark its coordinates and zoom the map to center around this location
+- Chaque résultat de recherche comprend les éléments suivants : le nom du lieu (mot‑clé en surbrillance), la province du lieu et le type de lieu (lac, ville, village, etc.).
+- Cliquez sur un résultat distinct pour saisir les coordonnées et faire un zoom sur la carte de façon à ce qu'elle soit centrée sur le lieu souhaité.
 
-__[fr] FSA search__: A __forward sortation area (FSA)__ is a way to designate a geographical area based on the first three characters in a Canadian postal code. All postal codes that start with the same three characters are considered an __FSA__.
+**Recherche par région de tri d'acheminement (RTA)** : une **région de tri d'acheminement (RTA)** est une façon de désigner une zone géographique en fonction des trois premiers caractères d'un code postal canadien. Tous les codes postaux qui commencent par les trois mêmes caractères font partie d'une même **RTA**.
 
-- [fr] a search using FSA will display a list of results in the vicinity of that area
-- [fr] the very first result is a location of the FSA itself, click to zoom and center the map on the FSA
-- [fr] example: type in __M3H__
+- Une recherche par RTA permet d'afficher une liste de résultats à proximité de cette région.
+- Le tout premier résultat désigne le lieu de la RTA elle‑même; cliquez pour faire un zoom et centrer la carte sur la RTA.
+- Par exemple : saisissez **M3H**.
 
-__[fr] Latitude/Longitude search__: Search using lat/long coordinates to display a list of results in the vicinity of that map point.
+**Recherche par latitude et longitude**  : effectuez une recherche à partir des coordonnées de latitude et de longitude pour afficher une liste de résultats à proximité de ce point de la carte.
 
-- [fr] similarly to FSA search, the first result will be a location of those coordinates entered, click this to zoom and center the map on the map point
-- [fr] lat/long search recognizes spaces, commas, semicolons, or vertical bars (|) to separate the co-ordinates
-- [fr] example: type in __54.3733,-91.7417__
+- Comme dans le cas de la recherche par RTA, le premier résultat désignera le lieu des coordonnées saisies, cliquez sur ce résultat pour faire un zoom et centrer la carte sur ce point.
+- La recherche par latitude et longitude accepte les espaces, les virgules, les points‑virgules ou les barres verticales (|) pour séparer les coordonnées.
+- Par exemple : saisissez **54.3733,‑91.7417**.
 
-__[fr] NTS search__: __ National Topographic System (NTS)__ is a system used for providing general topographic maps of the country, producing details on landforms, lakes/rivers, forests, roads and railways, etc.
+**Recherche par le SNRC**  : le Système national de référence cartographique (SNRC) est un système utilisé pour fournir des cartes topographiques générales du pays, qui produit des renseignements sur les formes de relief, les lacs et les rivières, les forêts, les routes et les chemins de fer, etc.
 
-- [fr] the NTS is split into three major zones: "Southern zone" - latitudes between 40°N and 68°N, "Arctic zone" - latitudes between 68°N and 80°N, and the "High Arctic zone" - latitudes between 80°N and 88°N
-- [fr] an NTS map number consists of a string containing a number identifying a map sheet, a letter identifying a map area, and a number identifying the scale map sheet
-- [fr] likewise, the first result will be a location of the NTS map number, click to center map on this area
-- [fr] example: type in __030M13__
+- Le SNRC est divisé en trois grandes zones : la zone sud (latitudes comprises entre 40°N et 68°N), la zone arctique (latitudes comprises entre 68°N et 80°N) et la zone de l'Extrême‑Arctique (latitudes comprises entre 80°N et 88°N).
+- Le numéro d'une carte du SNRC consiste en une chaîne contenant un nombre désignant une feuille de carte, une lettre désignant une zone de carte et un nombre désignant la feuille de carte à l'échelle.
+- De même, le premier résultat désignera un emplacement du numéro de carte SNRC, cliquez pour centrer la carte sur cette zone.
+- Par exemple : saisissez **030M13**.
 
-#### [fr] Unsupported Search Types
+#### Types de recherche non pris en charge
 
-__[fr] Street address__: Search using direct street addresses is not supported by geosearch.
+**Adresse municipale**  : l'outil de recherche géolocalisée ne prend pas en charge la recherche par adresse municipale.
 
-- [fr] entering any valid street address should not return any results
+- La saisie d'une adresse valide ne devrait donner aucun résultat.
 
-### [fr] Geosearch Filtering
+### Filtres de la recherche géolocalisée
 
-[fr] When searching for a location, a results panel will appear below the search box. This results panel contains two dropdown boxes that allow you to filter the search results by their __province__ and by their __type__ (lake, town, river, etc.). To the right of these two boxes is a __Clear Filters__ ![](datatable/clear.png) button, which when clicked clears the selected filter options.
+Lorsque vous recherchez un lieu, une fenêtre s'affiche sous le champ de recherche. Cette fenêtre de résultats contient deux listes déroulantes qui vous permettent de filtrer les résultats de la recherche par **province** et par **type** (lac, ville, rivière, etc.). À droite de ces deux listes se trouve le bouton **Effacer les filtres** qui vous permet d'effacer les éléments de filtre sélectionnés.
 
-[fr] At the bottom of the results panel, there is a checkbox labeled __visible on map__. Checking this box will further filter the results to only show locations that are currently visible on the map. Moving the map around or zooming in/out with this box selected will automatically update the results to display locations that are on the map.
+Au bas de la fenêtre des résultats, il y a une case à cocher intitulée **Visible sur la carte**. Cochez cette case pour filtrer davantage les résultats et n'afficher que les lieux qui sont actuellement visibles sur la carte. Si vous déplacez la carte ou si vous faites un zoom avant ou arrière alors que cette case est cochée, les résultats seront automatiquement mis à jour de façon à afficher les lieux qui se trouvent sur la carte.
 
 
-# [fr] Basemap Selector
+# Outil de sélection de la carte de base
 
-[fr] The basemap selector modifies the underlying basemap to provide a variety of geographical contexts.
+L'outil de sélection de la carte de base modifie la carte de base sous‑jacente pour fournir un éventail de contextes géographiques.
 
-__[fr] To open the basemap selector:__
+**Pour ouvrir l'outil de sélection de la carte de base :**
 
-[fr] Select the "basemaps" icon in the left-hand menu. You will be presented with one or more basemaps to choose from, separated by their projection types (e.g. Lambert vs. Web Mercator). The map will reload if you change projections, but not if you switch basemaps within the same projection.
+Sélectionnez l'icône « Carte de base » dans le menu de gauche. Une liste de cartes de base s'affichera, les cartes étant séparées par type de projection (p. ex. Lambert ou Web Mercator). La carte sera chargée à nouveau si vous modifiez la projection, mais pas si vous la changez pour une carte de base au sein de la même projection.
 
 
-# [fr] Export Image
+# Exporter une image
 
-[fr] You can export an image of the map and its visible layers along with; a legend, title, north arrow with scalebar, custom footnote<sup>*</sup>, and a timestamp<sup>†</sup>.
+Vous pouvez exporter une image de la carte et de ses couches visibles, ainsi qu'une légende, un titre, une flèche d'orientation pointant vers le nord, une échelle, une note de bas de page personnalisée\* et une référence temporelle†.
 
-[fr] Select the "Export" down-arrow icon in the left-hand menu to get started. A panel will appear with an image of the map, and an option to enter a map title if desired.
+Sélectionnez l'icône de la flèche descendante « Exporter » dans le menu de gauche pour commencer. Une fenêtre présentant une image de la carte s'affichera, vous pourrez également saisir un titre, si vous le souhaitez.
 
-[fr] If you'd like to add or remove sections of the exported image such as a legend, click on the options cogwheel in the lower-right corner of the panel. There you'll be able to select/deselect the sections to appear in the exported image.
+Si vous souhaitez ajouter ou supprimer des parties de l'image exportée, comme une légende, cliquez sur la roue dentée, dans le coin inférieur droit de la fenêtre. Vous pourrez y sélectionner et désélectionner les parties qui figureront sur l'image exportée.
 
-[fr] Click on the download button in the bottom-left of the panel to retrieve the final generated map image.
+Cliquez sur le bouton de téléchargement, dans le coin inférieur gauche de la fenêtre, pour générer l'image finale de la carte.
 
-<sup>*</sup>[fr] Please note that the footnote may not be available depending on the map.
+\*Veuillez noter que la note de bas de page n'est peut‑être pas disponible, selon la carte.
 
-<sup>†</sup>[fr] Please note timestamp is optional and may not be available depending on the map
+†Veuillez noter que la référence temporelle est facultative et n'est peut‑être pas disponible, selon la carte.
 
 
-# [fr] Data Table Panel
+# Fenêtre du tableau de données
 
-[fr] The __Data Table__ panel is shown above in its initial state.
+La fenêtre **Tableau de données** est présentée ci‑dessus dans son état initial.
 
-[fr] In addition to scrolling data, it is possible to:
+En plus de pouvoir faire défiler les données, vous pouvez :
 
-- [fr] Sort the data by selecting the header of the column. Multiple columns can be sorted by holding down shift before clicking a column header
-- [fr] Open the detail panel corresponding to a given row by selecting the *Details* paper icon
-- [fr] Position the map view to the location of the feature corresponding to a given row by selecting the *Zoom To Feature* magnifying glass icon
-- [fr] Move the columns by selecting left and right arrows beside the column title to shift it left or right
-- [fr] Filter the columns by numerical range, text, selection or date (if the configuration allows it). Changes in the table can also be made to reflect on the map by applying or clearing filters from map options, available in the top right corner of the data table
-- [fr] Show and/or hide columns by clicking on the *Hide Columns* icon, in the top right corner of the data table.
-- [fr] Navigate the table using a keyboard
+- trier les données en cliquant sur l'en‑tête de la colonne. Vous pouvez trier plusieurs colonnes en maintenant la touche Maj enfoncée avant de cliquer sur un en‑tête de colonne;
+- uvrir la fenêtre de détails correspondant à une ligne donnée en cliquant sur l'icône représentant une feuille de papier _Détails_;
+- placer la vue cartographique à l'emplacement de l'élément correspondant à une ligne donnée en cliquant sur l'icône de la loupe _Zoom à l'élément_;
+- déplacer les colonnes en cliquant sur les flèches gauche et droite, à côté du titre de la colonne, pour déplacer la colonne vers la gauche ou la droite;
+- appliquer un filtre sur les colonnes selon une plage numérique, du texte, une sélection ou une date (si la configuration le permet). Vous pouvez appliquer ou supprimer les filtres à partir des options de la carte, situées dans le coin supérieur droit du tableau de données, pour que les modifications apportées au tableau s'affichent sur la carte;
+- afficher et/ou masquer les colonnes en cliquant sur l'icône _Masquer les colonnes_, située dans le coin supérieur droit du tableau de données;
+- vous déplacer dans le tableau au moyen du clavier.
 
-[fr] The number of features in the layer is displayed in the top left corner below the layer title.
+Le nombre d'éléments figurant dans la couche est affiché dans le coin supérieur gauche, sous le titre de la couche.
 
-### [fr] Table Controls
+### Commandes du tableau
 
-[fr] This control group is located at the top of the data table and has the following options:
+Ce groupe de commandes est situé en haut du tableau de données et comporte les options suivantes:
 
-#### [fr] First row:
+#### Première rangée:
 
-- [fr] Collapse
-    - [fr] Condenses the table into a smaller panel so the map is viewable at the same time
-- [fr] Expand
-    - [fr] Expands the table into a wider panel that fits the available area over the map
-- [fr] Minimize
-    - [fr] Hides the data grid from the map view, accessible to expand from the left-hand menu bar
-- [fr] Close Table
-    - [fr] Closes the table
-- Global Search
-- [fr] Filter the table by making sure that the search term is a substring of the rows' data at one or more columns
+- Réduire
+  - Condense le tableau dans une petite fenêtre pour vous permettre de voir la carte en même temps.
+- Développer
+  - Développe le tableau en une fenêtre plus large qui s'adapte à la zone disponible sur la carte.
+- Réduire
+  - Masque la grille de données de la carte. Vous pouvez développer la grille réduite en cliquant sur l'icône de la grille située dans la barre de menu de gauche.
+- Fermer
+  - Ferme le tableau.
+- Faire une recherche générale
+- Appliquer un filtre au tableau en veillant à ce que le terme recherché soit une sous‑chaîne des données des lignes d'au moins une colonne.
 
-#### Second row:
+#### Deuxième rangée :
 
-- [fr] Apply Table Filters To Map
-    - [fr] update the map to display only the data that is visible in the table
-    - [fr] if the data in the table already matches the data displayed on the map, this button will be disabled
-- [fr] Toggle Column Visibilities
-    - [fr] allows you to choose which columns you want to be visible on the table
-- [fr] Show filters
-    - [fr] toggling this option off will hide all column filters
-    - [fr] unable to change column filters while toggled off
-    - [fr] column filters remain applied even when toggled off
-- [fr] Table Menu (More Options)
-    - [fr] Clear Search and Filters
-        - [fr] clear any existing filters and searches that may be applied to the table
+- Appliquer des filtres à la carte
+  - Met à jour la carte pour n'afficher que les données visibles dans le tableau.
+  - Si les données du tableau correspondent déjà aux données affichées sur la carte, ce bouton sera désactivé.
+- Masquer les colonnes
+  - Permet de choisir les colonnes que vous souhaitez afficher dans le tableau.
+- Afficher les filtres
+  - Lorsque cette option est désactivée, tous les filtres de colonnes seront masqués.
+  - Lorsque cette option est désactivée, il n'est pas possible de modifier les filtres de colonnes.
+  - Les filtres de colonnes demeurent en vigueur même lorsque l'option est désactivée.
+- Menu du tableau (options supplémentaires)
+  - Efface la recherche et les filtres
+    - Efface toutes les recherches et tous les filtres qui peuvent s'appliquer au tableau.
 
-### [fr] Sorting and Reordering
+### Triage et réorganisation
 
-[fr] For each column in the data table, there may be a set of arrows associated with that column which represents how it can be sorted and reordered.
+Chaque colonne du tableau de données peut comprendre un ensemble de flèches désignant la manière dont la colonne peut être triée et réorganisée.
 
-  __[fr] Column Sort__: Click on the column title to sort the columns in ascending/descending order (for numerical data) and alphabetical order (for text data).
+**Tri des colonnes**  : cliquez sur le titre de la colonne pour effectuer un tri croissant ou décroissant(pour les données numériques) ou en ordre alphabétique (pour les données textuelles).
 
-- [fr] an upward arrow (![](datatable/sortAsc.png)) next to the column title indicates that the column data is being sorted in ascending order or alphabetical order
-- [fr] a downward arrow (![](datatable/sortDesc.png)) next to the column title indicates that the column data is being sorted in descending order or reverse alphabetical order
-- [fr] No arrow next to the column title means that there is no sort applied to current column
-- [fr] sort multiple columns at once using shift + select column names
-- [fr] how it works: the next selected column using tab will be sorted according to the last selected column's groups of identical data
+- Une flèche vers le haut () à côté du titre de la colonne indique que les données de la colonne sont triées de manière croissante ou par ordre alphabétique.
+- Une flèche vers le bas () à côté du titre de la colonne indique que les données de la colonne sont triées en manière décroissante ou par ordre alphabétique inverse.
+- L'absence de flèche à côté du titre de la colonne indique qu'aucun tri n'est appliqué à la colonne visée.
+- Enfoncez la touche Maj et sélectionnez les noms des colonnes pour trier plusieurs colonnes à la fois.
+- Fonctionnement : la prochaine colonne sélectionnée à l'aide de la touche Maj sera triée en fonction des groupes de données identiques de la dernière colonne sélectionnée.
 
-__[fr] Column Reorder__: [fr] The two right/left arrows next to the column name are for reordering the columns.
+**Réorganisation des colonnes**  : les deux flèches droite et gauche, situées à côté du nom de la colonne, permettent de réorganiser les colonnes.
 
-- [fr] click the right arrow to swap a column with the one on the right
-- [fr] the right arrow is disabled for the rightmost column of a data table
-- [fr] click the left arrow to swap a column with the one on the left
-- [fr] the left arrow is disabled for the leftmost column of a data table
+- Cliquez sur la flèche droite pour déplacer une colonne vers la droite.
+- La flèche droite est désactivée pour la colonne la plus à droite d'un tableau de données.
+- Cliquez sur la flèche gauche pour déplacer une colonne vers la gauche.
+- La flèche gauche est désactivée pour la colonne la plus à gauche d'un tableau de données.
 
-### [fr] Filter data
+### Application d'un filtre aux données
 
-[fr] Data can be filtered by column. A column is searchable if there is an input field under the title of the header. As mentioned previously, there are 4 types of filters:
+Vous pouvez filtrer les données par colonne. Vous pouvez effectuer une recherche dans une colonne si un champ de saisie est situé sous le titre de l'en‑tête. Comme il a été mentionné précédemment, il existe quatre types de filtres :
 
--  __[fr] Text__: Character input field. Use the wildcard character (\*) to replace a sequence of zero or more characters (e.g. _* levo_ will find Charlevoix)
--  _[fr] Note, without a generic character, the search will find only the elements where the word searched begins the sentence._
--  __[fr] Number__: Input fields that accept only numbers
-    - [fr] If a minimum and a maximum are defined the filter will search for a range
-    - [fr] If, for example, only a minimum is defined, it will perform the operation _greater than_
--  __[fr] Selection__: Drop-down menu which allows the selection of one or more predefined values
--  __[fr] Date__: Similar to the numeric field but uses dates
+- **Texte**  : champ de saisie de caractères. Utilisez le caractère de remplacement (\*) pour remplacer une séquence de zéro ou de plusieurs caractères (p. ex. si vous saisissez _\*levo_, les résultats de la recherche afficheront le mot Charlevoix).
+- _Veuillez noter que sans caractère générique, les résultats ne montrent que les éléments où le mot recherché se trouve au début de la phrase._
+- **Chiffre**  : champs de saisie qui n'acceptent que des chiffres.
+  - Si vous définissez un minimum et un maximum, le filtre recherchera une plage.
+  - Par exemple, si vous ne définissez qu'un minimum, l'opération _supérieur à_ sera effectuée.
+- **Sélection**  : menu déroulant vous permettant de sélectionner une ou plusieurs valeurs prédéfinies.
+- **Date**  : semblable au champ numérique, mais réservé aux dates.
 
-[fr] Some filters are not editable; Their value can not be changed. They are represented by a dashed line below their value.
+Certains filtres ne sont pas modifiables, c'est‑à‑dire que vous ne pouvez pas modifier la valeur affichée. Une ligne pointillée se trouve sous la valeur.
 
-### [fr] Global Search
+### Recherche générale
 
-[fr] This control, which is found in the upper right corner of the data table, allows to filter the data table globally.
+Cette commande, qui se trouve dans le coin supérieur droit du tableau de données, permet d'appliquer un filtre global au tableau de données.
 
-- [fr] If you enter the _Brook_ value, the data table will select the data that contains _Brook_ at any location (e.g. _Corner Brook_ will be selected)
+- Si vous saisissez la valeur _Brook_, le tableau de données sélectionnera les données qui contiennent le mot _Brook_ à n'importe quel endroit (p. ex. _Corner_ _Brook_ sera sélectionné).
 
-### [fr] Keyboard Navigation
+### Navigation par clavier
 
-[fr] Use `Tab` to go through each of the table controls, and to navigate between the three major table groups:
+Utilisez la touche Tab pour parcourir les commandes du tableau, et pour vous déplacer dans les trois principaux groupes du tableau :
 
-- [fr] Column Headers
-- [fr] Column Filters
-- [fr] Table Body
+- en‑têtes de colonnes;
+- filtres de colonnes;
+- corps du tableau.
 
-[fr] Once any major group is focused on, you can use the arrow keys to navigate through the table cells for that component. Doing this will highlight the currently focused table cell.
+Lorsqu'un groupe principal est visé, vous pouvez utiliser les flèches pour vous déplacer dans les cellules du tableau et trouver l'élément souhaité. La cellule du tableau sur laquelle vous vous trouvez est délimitée.
 
-[fr] To access the buttons and/or input fields within a cell, make sure the cell is highlighted (by using arrow keys as above) and use `Tab` to navigate between its children.
+Pour accéder aux boutons et/ou aux champs de saisie d'une cellule, assurez‑vous que la cellule visée est délimitée (au moyen des flèches, comme ci‑dessus) et utilisez la touche Tab pour vous déplacer dans les cellules connexes.
 
 
-# [fr] Accessibility
+# Accessibilité
 
-[fr] The Reusable Accessible Mapping Platform is designed to be used in a context that is WCAG 2.1 "AA" compliant. Due diligence for full compliance is the responsibility of the page owner.
+La Plateforme de cartographie accessible et réutilisable est conçue pour être utilisée dans un contexte conforme aux normes WCAG 2.1 AA. Il incombe au propriétaire de la page de faire preuve de diligence raisonnable pour garantir la pleine conformité.
 
-#### [fr] Keyboard Navigation
+#### Navigation par clavier
 
-[fr] Keyboard functionality is provided as an alternative for users who are unable to use a mouse. Use the Tab key to navigate forward to links and controls on the page. Press Shift+Tab to go back one step. Use the Enter or Spacebar keys to activate links and controls.
+Les fonctions accessibles à partir du clavier constituent une solution de rechange pour les utilisateurs qui ne sont pas en mesure d'utiliser une souris. Utilisez la touche Tab pour vous déplacer vers les liens et les commandes de la page. Enfoncez les touches Maj + Tab pour revenir en arrière. Utilisez la touche Entrée ou la barre d'espacement pour activer les liens et les commandes.
 
-[fr] When the map gains focus, a crosshairs marker is displayed in the center of the map. Use the __arrow__ keys to move the map and __+__ / __-__ keys to zoom in and out. Press __Enter__ to select a feature under the crosshairs and display associated data in the Details panel.
+Lorsque la carte est mise au point, un marqueur en forme de réticule s'affiche au centre. Utilisez les **flèches** pour déplacer la carte, et les touches **+** / **-** pour effectuer un zoom avant ou un zoom arrière. Enfoncez la touche Entrée pour sélectionner un élément sous le réticule et afficher les données connexes dans la fenêtre Détails.

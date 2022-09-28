@@ -1,7 +1,7 @@
 key,enValue,enValid,frValue,frValid
 legend.title,Legend,1,Légende,1
 legend.header.addlayer,Add Layer,1,Ajouter une couche,1
-legend.header.reorderlayers,Reorder Layers,1,Reorder Layers,0
+legend.header.reorderlayers,Reorder Layers,1,Réorganiser les couches,1
 legend.header.groups,Toggle Groups,1,Basculer les Groupes,1
 legend.header.groups.expand,Expand All,1,Élargir les groupes,1
 legend.header.groups.collapse,Collapse All,1,Réduire les groupes,1
@@ -12,10 +12,10 @@ legend.group.expand,Expand Group,1,Développer un groupe,1
 legend.group.collapse,Collapse Group,1,Réduire un groupe,1
 legend.visibility.showLayer,Show layer,1,Afficher la couche,1
 legend.visibility.hideLayer,Hide layer,1,Masquer la couche,1
-legend.visibility.showSymbol,Show symbol,1,Afficher le symbole,0
-legend.visibility.hideSymbol,Hide symbol,1,Masquer le symbole,0
-legend.visibility.showGroup,Show group,1,Afficher le groupe,0
-legend.visibility.hideGroup,Hide group,1,Masquer le groupe,0
+legend.visibility.showSymbol,Show symbol,1,Afficher le symbole,1
+legend.visibility.hideSymbol,Hide symbol,1,Masquer le symbole,1
+legend.visibility.showGroup,Show group,1,Afficher le groupe,1
+legend.visibility.hideGroup,Hide group,1,Masquer le groupe,1
 legend.symbology.expand,Expand legend,1,Développer la légende,1
 legend.symbology.hide,Hide legend,1,Masquer la légende,1
 legend.symbology.loading,Loading...,1,Chargement en cours...,1
@@ -28,9 +28,9 @@ legend.layer.controls.symbology,Legend,1,Légende,1
 legend.layer.controls.boundaryzoom,Zoom to Layer Boundary,1,Zoomer à la limite,1
 legend.layer.controls.remove,Remove,1,Retirer,1
 legend.layer.controls.reload,Reload,1,Recharger,1
-legend.alert.symbologyExpanded,Layer legend expanded,1,Légende de la couche élargi,0
-legend.alert.symbologyCollapsed,Layer legend collapsed,1,Légende de la couche de fondre,0
-legend.alert.groupExpanded,Legend group expanded,1,Légende groupe élargi,0
-legend.alert.groupCollapsed,Legend group collapsed,1,Légende de fondre en groupe,0
+legend.alert.symbologyExpanded,Layer legend expanded,1,Légende de la couche développée,1
+legend.alert.symbologyCollapsed,Layer legend collapsed,1,Légende de la couche réduite,1
+legend.alert.groupExpanded,Legend group expanded,1,Groupe de légende développé,1
+legend.alert.groupCollapsed,Legend group collapsed,1,Groupe de légende réduit,1
 legend.alert.layerAdded,{name} layer added to legend,1,{name} couche ajoutée à la légende,1
 legend.alert.layerRemoved,{name} layer removed from legend,1,Couche {name} retiré de la légende,1
