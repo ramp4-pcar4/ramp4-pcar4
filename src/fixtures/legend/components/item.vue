@@ -477,7 +477,7 @@ export default defineComponent({
                 this.$iApi.updateAlert(
                     this.$t(
                         `legend.alert.symbology${
-                            expanded ? 'expandButtoned' : 'Collapsed'
+                            expanded ? 'Expanded' : 'Collapsed'
                         }`
                     )
                 );

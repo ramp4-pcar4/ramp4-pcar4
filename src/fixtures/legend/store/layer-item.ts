@@ -209,15 +209,14 @@ export class LayerItem extends LegendItem {
                         );
                     } else {
                         this.layer = layer;
+                        // override layer item visibility in favour of layer visibility
+                        this._visibility = layer.visibility;
                         super.load();
                         if (!layer.visibility) {
                             // if the layer is invisible, set all child symbols to invisible
                             this.setSymbologyVisibility(undefined, false);
                         }
                     }
-
-                    // override layer item visibility in favour of layer visibility
-                    this.toggleVisibility(layer.visibility, true, true);
 
                     // event listener must be added after the layer is loaded
                     this.handlers.push(
