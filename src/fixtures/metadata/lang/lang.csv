@@ -2,7 +2,7 @@ key,enValue,enValid,frValue,frValid
 metadata.title,Metadata,1,Métadonnées,1
 metadata.loading,Loading...,1,Chargement en cours...,1
 metadata.error,There was an error retrieving this resource. Please try again.,1,Une erreur s'est produite lors du chargement de cette ressource. Veuillez essayer de nouveau.,1
-metadata.label.no.layer,No metadata to show because the layer has been removed,1,No metadata to show because the layer has been removed,0
+metadata.label.no.layer,No metadata to show because the layer has been removed,1,Aucune métadonnée à afficher, car la couche a été supprimée.,1
 metadata.xslt.Abstract,Abstract,1,Résumé,1
 metadata.xslt.Scope,Scope,1,Portée,1
 metadata.xslt.hereBeScope,here be scope,1,la portée jusqu'ici,1
