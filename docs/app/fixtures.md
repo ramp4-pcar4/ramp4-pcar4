@@ -2,16 +2,12 @@
 
 This covers various ways to create fixtures.
 
-TODO this entire doc should be re-verified by the Vue3 squad to ensure things are still accurate.
-TODO also a Vue person should read over the parts talking about Vue to make sure they make sense, and there is enough information provided that a person familiar with Vue would find it useful.
-TODO the outcome of https://github.com/ramp4-pcar4/ramp4-pcar4/issues/692 might impact this doc some.
-
 ## Interface
 
 The fixture interface has four methods, all optional. They take no parameters and return no value. If a custom fixture implements them, the RAMP instance will run them at the appropriate time.
 
 - `added()` is run when the fixture has been added to the RAMP instance
-- `initialized()` is run when the fixture is `added` and the instance Map has finished initializing
+- `initialized()` is run when the fixture is `added` and the instance map has finished initializing
 - `terminated()` is run immediately before the fixture is removed from the RAMP instance
 - `removed()` is run after fixture is removed from the RAMP instance
 
@@ -21,7 +17,7 @@ The fixture interface has four methods, all optional. They take no parameters an
 
 This approach involves forking the R4MP code-base, adding new fixtures, and re-building the project. While this can be rather intensive, the result means the new fixtures are now a part of the R4MP library you are hosting and can be used like other provided fixtures.
 
-Fixture code should be placed in a directory within `packages/ramp-core/src/fixtures`. The directory name should be the fixture name. The existing source code can be used as a guide or template to begin a fixture, if desired.
+Fixture code should be placed in a directory within `src/fixtures`. The directory name should be the fixture name. The existing source code can be used as a guide or template to begin a fixture, if desired.
 
 The remaining creation examples deal with fixtures that are defined outside of the R4MP source, and are more appropriate for a site that is just using the compiled R4MP library (and not wanting to fork & rebuild).
 
@@ -48,7 +44,7 @@ This type of fixture is written in plain JS, and requires no compilation step si
 
 This is the most simple and fast way to create fixtures as no build step is required. It is also the most compact way to create fixtures as no external code (like Vue component decorators or other helper functions) is included in the fixture bundle.
 
-A sample of this type of fixture can be found [here](https://github.com/ramp4-pcar4/ramp4-pcar4/blob/main/packages/ramp-sample-fixtures/src/diligord/diligord-fixture.js).
+A sample of this type of fixture can be found [here](https://github.com/ramp4-pcar4/ramp4-pcar4/blob/main/demos/starter-scripts/sample-fixtures/diligord/diligord-fixture.js).
 
 ### Typescript, Vue Decorators
 
@@ -58,30 +54,31 @@ This is the most comfortable way to create fixtures since it's possible to use n
 
 The resulting bundle includes more of external code as Vue decorators will be incorporated into the end file.
 
-A sample of this type of fixture can be found [here](https://github.com/ramp4-pcar4/ramp4-pcar4/tree/main/packages/ramp-sample-fixtures/src/iklob).
+A sample of this type of fixture can be found [here](https://github.com/ramp4-pcar4/ramp4-pcar4/tree/main/demos/starter-scripts/sample-fixtures/iklob).
 
-TODO is there a link to some good Vue doc site for people not familiar with Vue Templates, Decorators, and Runtime? Could add it just to be a bit more helpful
+For more information about how to use `Vue`, click [here](https://vuejs.org/guide/introduction.html)
 
 > **Note:**
 >
-> Since these fixture uses `Vue` class directly and `Vue` runtime is not bundled in, the fixture expects `Vue` to be available on the global scope. So, it must be loaded after `Vue` runtime is loaded, but before `RAMP` is loaded, to ensure `RAMP` has not been instantiated yet.
+> Since these fixtures use `Vue` and `Vue` runtime is not bundled in, the fixture expects `Vue` to be available on the global scope.
 >
 > ```html
 > <!-- load Vue since RAMP doesn't bundle it -->
-> <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
->
-> <!-- load fixtures that require Vue -->
-> <script src="../dist/sample-fixtures/iklob-fixture.js"></script>
+> <script src="https://unpkg.com/vue"></script>
 >
 > <!-- load RAMP after loading Vue -->
-> <script src="../dist/RAMP.umd.js"></script>
+> <script src="./lib/RAMP.global.js"></script>
+>
+> <!-- load script that creates RAMP instance-->
+> <script type="module" src="./starter-scripts/index.js"></script>
+>
+> <!-- load fixtures that require Vue -->
+> <script src="../dist/sample-fixtures/diligord-fixture.js"></script>
 > ```
-
-TODO verify part of the above. In particular, why must the script load before the RAMP script. This "note" may have been written before `RAMP.Instance()` was a thing. Is it because the sample fixture dumps itself on `window.hostFixtures`? If so it seems we just need to time the code in the starter script to ensure the fixture exists before adding it to the instantiation.
 
 ### Typescript, No Vue Decorators
 
-This type of fixture is written in Typescript and contains a `.vue` single-file component. The code of the component, however, is written in plain Typescript, without use of Vue decorators. This fixture also requires a build step.  
+This type of fixture is written in Typescript and contains a `.vue` single-file component. The code of the component, however, is written in plain Typescript, without use of Vue decorators. This fixture also requires a build step.
 
 The resulting bundle includes a small amount of external code needed to normalize Vue components, plus a UMD wrapper around it.
 
@@ -93,7 +90,7 @@ A sample of this type of fixture can be found [here](https://github.com/ramp4-pc
 
 ### The Preferred Way
 
-The preferred way of loading fixtures involves adding the fixture class to the global scope (`window.hostedFixtures` or any other suitable place) and then letting the host page add it to a specific RAMP instance.
+The preferred way of loading fixtures involves either importing the fixture class or adding it to the global scope (`window.hostedFixtures` or any other suitable place) and then letting the host page add it to a specific RAMP instance.
 
 ```js
 // my-fixture.js
@@ -107,16 +104,14 @@ window.hostFixtures['myfixture'] = MyFixture;
 <script src="../path/my-fixture.js"></script>
 
 <!-- load Vue and RAMP -->
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script src="../dist/RAMP.umd.js"></script>
+<script src="https://unpkg.com/vue"></script>
+<script src="./lib/RAMP.global.js"></script>
 
 <script>
     const rInstance = RAMP.createInstance(...);
     rInstance.fixture.add('myfixture', window.hostFixtures.myfixture);
 </script>
 ```
-
-TODO verify the Vue path in the above sample is Vue 3 (might be Vue 2)
 
 ### The Other (Rare) Way
 
@@ -180,6 +175,6 @@ screens: {
 }
 ```
 
-Here, `import` will be picked up by webpack and used for code splitting, so it will only work for internal fixtures. For external fixtures, there are no rules for how your load external files; just return a promise with your component code and it should work.
+Here, `import` will be picked up by webpack and used for code splitting, so it will only work for internal fixtures. For external fixtures, there are no rules for how you load external files; just return a promise with your component code and it should work.
 
-Read [Async Components](https://vuejs.org/v2/guide/components-dynamic-async.html#Async-Components) in Vue docs if you want more details.
+Read [Async Components](https://vuejs.org/guide/components/async.html) in Vue docs if you want more details.
