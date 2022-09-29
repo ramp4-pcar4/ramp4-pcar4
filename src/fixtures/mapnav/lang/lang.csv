@@ -4,5 +4,5 @@ mapnav.zoomOut,Zoom Out,1,Zoom arrière,1
 mapnav.home,Home,1,Accueil,1
 mapnav.fullscreen,Full Screen,1,Plein Écran,1
 mapnav.geolocator,Your Location,1,Votre position,1
-mapnav.geolocator.error.permission,The location request was denied. Please check your browser permission settings.,1,La demande de localisation a été refusée. Veuillez vérifier les paramètres d'autorisation de votre navigateur.,0
+mapnav.geolocator.error.permission,The location request was denied. Please check your browser permission settings.,1,Demande de localisation refusée. Veuillez vérifier les paramètres d'autorisation de votre navigateur.,1
 mapnav.geolocator.error.internal,Your location could not be found.,1,Votre emplacement n'a pu être trouvé.,1
