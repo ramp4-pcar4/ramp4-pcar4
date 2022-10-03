@@ -131,6 +131,12 @@ export class FeatureLayer extends AttribLayer {
                 );
             }
 
+            // apply server visibility in case of missing visibility in config
+            this.visibility =
+                this.origRampConfig?.state?.visibility ??
+                this._serverVisibility ??
+                true;
+
             // apply any config based overrides to the data we just downloaded
             this.nameField =
                 this.origRampConfig.nameField || this.nameField || '';

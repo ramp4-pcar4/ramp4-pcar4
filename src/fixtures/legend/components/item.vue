@@ -186,7 +186,11 @@
                     class="flex-1 pointer-events-none"
                     v-truncate="{ externalTrigger: true }"
                 >
-                    <span>{{ legendItem.name }}</span>
+                    <span>{{
+                        legendItem.name ??
+                        legendItem?.layer?.name ??
+                        legendItem.layerId
+                    }}</span>
                 </div>
                 <div v-else class="flex-1">
                     <h3
