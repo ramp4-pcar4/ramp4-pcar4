@@ -5,7 +5,7 @@
     @tailwind variants;
 
     @layer base {
-        .ramp-markdown * {
+        .ramp-markdown :not(table, td, img) {
             all: revert;
         }
     }
@@ -58,6 +58,19 @@
     stroke: #1e90ff;
     stroke-dasharray: 1, 1;
     stroke-width: 2px;
+}
+
+.ramp-markdown td {
+    border-width: 1px;
+    padding: 5px;
+}
+
+.ramp-markdown img {
+    display: inline;
+}
+
+.ramp-markdown p {
+    margin-bottom: 10px;
 }
 
 .tippy-tooltip.ramp-theme {
