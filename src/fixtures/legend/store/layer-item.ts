@@ -78,7 +78,6 @@ export class LayerItem extends LegendItem {
         this._layerIdx = layer.layerIdx;
         this._layerUid = layer.uid;
         this._layerInitVis = layer.visibility;
-        this._name = this._name ?? layer.name;
         const cont = this.$iApi.geo.layer.getLayerControls(layer.id);
         if (this._layerControls.length === 0)
             this._layerControls = cont?.controls ?? [];
@@ -198,6 +197,7 @@ export class LayerItem extends LegendItem {
                     : this.$iApi.geo.layer.getLayer(
                           this._layerId ?? this._layerUid
                       );
+            this.layer = layer;
             this._layer
                 ?.loadPromise()
                 .then(() => {
@@ -210,7 +210,6 @@ export class LayerItem extends LegendItem {
                             `MapImageLayer has no sublayerIndex defined for layer: ${this._layerId}.`
                         );
                     } else {
-                        this.layer = layer;
                         super.load();
 
                         // override layer item visibility in favour of layer visibility

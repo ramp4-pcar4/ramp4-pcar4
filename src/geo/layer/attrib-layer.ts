@@ -136,6 +136,7 @@ export class AttribLayer extends CommonLayer {
         this.extent = sData.extent
             ? Extent.fromArcServer(sData.extent, this.id + '_extent')
             : undefined;
+        this._serverVisibility = sData.defaultVisibility;
 
         if (sData.type === 'Feature Layer') {
             this.supportsFeatures = true;
