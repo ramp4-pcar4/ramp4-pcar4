@@ -399,6 +399,7 @@ let config = {
             ],
             fixtures: {
                 legend: {
+                    type: 'auto',
                     root: {
                         children: [
                             {

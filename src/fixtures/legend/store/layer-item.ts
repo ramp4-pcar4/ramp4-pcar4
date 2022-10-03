@@ -199,21 +199,11 @@ export class LayerItem extends LegendItem {
             this._layer
                 ?.loadPromise()
                 .then(() => {
-                    if (
-                        this._layer?.layerType === LayerType.MAPIMAGE &&
-                        !this._layerIdx
-                    ) {
-                        this.error();
-                        console.error(
-                            `MapImageLayer has no sublayerIndex defined for layer: ${this._layerId}.`
-                        );
-                    } else {
-                        this.layer = layer;
-                        super.load();
-                        if (!layer.visibility) {
-                            // if the layer is invisible, set all child symbols to invisible
-                            this.setSymbologyVisibility(undefined, false);
-                        }
+                    this.layer = layer;
+                    super.load();
+                    if (!layer.visibility) {
+                        // if the layer is invisible, set all child symbols to invisible
+                        this.setSymbologyVisibility(undefined, false);
                     }
 
                     // override layer item visibility in favour of layer visibility

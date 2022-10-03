@@ -1,5 +1,11 @@
 import { FixtureInstance, LayerInstance } from '@/api';
-import type { TreeNode } from '@/geo/api';
+import {
+    LayerType,
+    type RampLayerConfig,
+    type RampLayerMapImageSublayerConfig,
+    type TreeNode
+} from '@/geo/api';
+import { LayerStore } from '@/store/modules/layer';
 import type { LegendConfig } from '../store';
 import { LegendStore } from '../store';
 import { LayerItem } from '../store/layer-item';
@@ -29,15 +35,43 @@ export class LegendAPI extends FixtureInstance {
 
         this.handlePanelWidths(['legend']);
 
-        // get all layer fixture configs to read layer-specific legend properties
-        const layerLegendConfigs: { [layerId: string]: any } =
-            this.getLayerFixtureConfigs();
+        if (legendConfig.type === 'auto') {
+            const layerConfigs: RampLayerConfig[] =
+                this.$vApp.$store.get(LayerStore.layerConfigs) ?? [];
+            layerConfigs.forEach((layerConfig: RampLayerConfig) => {
+                const itemConfig: any = {
+                    layerId: layerConfig.id,
+                    name: layerConfig.name,
+                    layerControls: layerConfig.controls,
+                    disabledLayerControls: layerConfig.disabledControls
+                };
+                if (layerConfig.layerType === LayerType.MAPIMAGE) {
+                    itemConfig.children = layerConfig.sublayers?.map(
+                        (sublayerConfig: any) => {
+                            return {
+                                layerId: layerConfig.id,
+                                sublayerIndex: sublayerConfig.index,
+                                name: sublayerConfig.name,
+                                layerControls: sublayerConfig.controls,
+                                disabledLayerControls:
+                                    sublayerConfig.disabledControls
+                            };
+                        }
+                    );
+                }
+                this.addItem(itemConfig);
+            });
+        } else {
+            // get all layer fixture configs to read layer-specific legend properties
+            const layerLegendConfigs: { [layerId: string]: any } =
+                this.getLayerFixtureConfigs();
 
-        legendConfig.root.children.forEach(legendItem => {
-            // pass the layer legend fixture config
-            legendItem.layerLegendConfigs = layerLegendConfigs;
-            this.addItem(legendItem);
-        });
+            legendConfig.root.children.forEach(legendItem => {
+                // pass the layer legend fixture config
+                legendItem.layerLegendConfigs = layerLegendConfigs;
+                this.addItem(legendItem);
+            });
+        }
 
         // update legend in case layers were added before the legend was created
         this.$iApi.geo.layer.allLayers().forEach(l => {
@@ -136,9 +170,7 @@ export class LegendAPI extends FixtureInstance {
             {
                 layerId: layer.id,
                 sublayerIndex:
-                    layer.layerIdx !== -1 ? layer.layerIdx : undefined,
-                name: layer.name,
-                visibility: layer.visibility
+                    layer.layerIdx !== -1 ? layer.layerIdx : undefined
             },
             parent,
             layer

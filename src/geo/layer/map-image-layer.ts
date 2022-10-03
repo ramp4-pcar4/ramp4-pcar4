@@ -222,7 +222,7 @@ export class MapImageLayer extends AttribLayer {
                             // TODO: Revisit once issue #961 is implemented.
                             // See https://github.com/ramp4-pcar4/ramp4-pcar4/pull/1045#pullrequestreview-977116071
                             layerType: LayerType.SUBLAYER,
-                            name: subConfigs[sid].name,
+                            name: subConfigs[sid]?.name,
                             // If the state isn't defined, use the same state as the parent.
                             state: subConfigs[sid]?.state ?? {
                                 opacity: this.opacity,

@@ -8,8 +8,7 @@ export class LegendState {
 }
 
 export interface LegendConfig {
-    isOpen: boolean;
-    isPinned: boolean;
+    type: string;
     root: { name: string; children: Array<any> };
     headerControls: Array<string>;
     panelWidth: PanelWidthObject | number;
