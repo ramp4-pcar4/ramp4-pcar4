@@ -40,6 +40,7 @@ enum TimerType {
 
 export class CommonLayer extends LayerInstance {
     // common layer properties
+    serverVisibility: boolean | undefined;
     timers: {
         draw: number | undefined;
         load: number | undefined;
@@ -101,6 +102,7 @@ export class CommonLayer extends LayerInstance {
         this.identifyMode = LayerIdentifyMode.NONE;
         this.supportsFeatures = false; // default state. featurish layers should set to true when the load
         this.supportsSublayers = false; // by default layers do not support sublayers
+        this.serverVisibility = undefined;
         this.isFile = false; // default state.
         this.layerState = LayerState.NEW;
         this.initiationState = InitiationState.NEW;
@@ -353,15 +355,19 @@ export class CommonLayer extends LayerInstance {
         // magic happens here. other layers will override onLoadActions,
         // meaning this will run the function appropriate for the layer who inherited LayerBase
         const loadPromises: Array<Promise<void>> = this.onLoadActions();
-        Promise.all(loadPromises).then(() => {
-            this.updateLayerState(LayerState.LOADED);
-            this.loadDefProm.resolveMe();
-            if (this.drawState !== DrawState.UP_TO_DATE) {
-                this.startTimer(TimerType.DRAW);
-            }
-            // This will just trigger the above statements for each sublayer
-            this.sublayers.forEach(sublayer => sublayer.onLoad());
-        });
+        Promise.all(loadPromises)
+            .then(() => {
+                this.updateLayerState(LayerState.LOADED);
+                this.loadDefProm.resolveMe();
+                if (this.drawState !== DrawState.UP_TO_DATE) {
+                    this.startTimer(TimerType.DRAW);
+                }
+                // This will just trigger the above statements for each sublayer
+                this.sublayers.forEach(sublayer => sublayer.onLoad());
+            })
+            .catch(() => {
+                this.onError();
+            });
     }
 
     // TODO what happens if the error state is hit after the layer is loaded?
@@ -413,7 +419,6 @@ export class CommonLayer extends LayerInstance {
                 if (goodSR) {
                     return Promise.resolve();
                 } else {
-                    this.updateLayerState(LayerState.ERROR);
                     return Promise.reject();
                 }
             });

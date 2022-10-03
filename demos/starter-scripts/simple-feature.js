@@ -269,6 +269,11 @@ let config = {
                     id: 'Water',
                     layerType: 'esri-feature',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/8'
+                },
+                {
+                    id: 'FailedProj',
+                    layerType: 'esri-feature',
+                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/ON_CriticalHabitat_ON_HabitatEssentiel/MapServer/3'
                 }
             ],
             fixtures: {
@@ -280,6 +285,9 @@ let config = {
                             },
                             {
                                 layerId: 'Water'
+                            },
+                            {
+                                layerId: 'FailedProj'
                             }
                         ]
                     }

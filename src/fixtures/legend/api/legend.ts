@@ -396,6 +396,7 @@ export class LegendAPI extends FixtureInstance {
         ) => {
             const layerItem: LayerItem | undefined = this.getLayerItem(layer);
             if (error) {
+                if (layer instanceof LayerInstance) layerItem!.layer = layer;
                 layerItem?.error();
             } else {
                 layerItem?.load(
