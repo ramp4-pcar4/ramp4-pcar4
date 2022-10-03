@@ -23,14 +23,14 @@ Vous pouvez utiliser les commandes de navigation pour modifier l'étendue de la 
 
 Les commandes de navigation suivantes se trouvent dans le coin inférieur droit de la carte :
 
-| Fonction | Description |
-| --- | --- |
-| Zoom avant – Plus (+) | Permet de faire un zoom avant d'un niveau sur la carte pour voir un contenu plus détaillé. |
-| Zoom arrière – Moins (‑) | Permet de faire un zoom arrière d'un niveau sur la carte pour voir un contenu moins détaillé. |
-| Plein écran | Présente le contenu de la carte sur l'ensemble de la page. Cette fonction n'est disponible que lorsque la carte est intégrée à une autre page. |
-| Votre position | Permet de faire un zoom et un panoramique sur l'emplacement actuel de l'appareil. |
-| Accueil/étendue initiale | Permet de faire un zoom et un panoramique de façon à afficher l'étendue initiale. |
-| Aide | Ouvre ou ferme la boîte d'aide. |
+| Icône | Fonction | Description |
+| --- | --- | --- |
+| ![](navigation/zoomin.png) | Zoom avant – Plus (+) | Permet de faire un zoom avant d'un niveau sur la carte pour voir un contenu plus détaillé. |
+| ![](navigation/zoomout.png) | Zoom arrière – Moins (‑) | Permet de faire un zoom arrière d'un niveau sur la carte pour voir un contenu moins détaillé. |
+| ![](navigation/fullscreen.png) | Plein écran | Présente le contenu de la carte sur l'ensemble de la page. Cette fonction n'est disponible que lorsque la carte est intégrée à une autre page. |
+| ![](navigation/geolocate.png) | Votre position | Permet de faire un zoom et un panoramique sur l'emplacement actuel de l'appareil. |
+| ![](navigation/home.png) | Accueil/étendue initiale | Permet de faire un zoom et un panoramique de façon à afficher l'étendue initiale. |
+| ![](navigation/help.png) | Aide | Ouvre ou ferme la boîte d'aide. |
 
 
 # Renseignements de navigation
@@ -180,29 +180,29 @@ Ce groupe de commandes est situé en haut du tableau de données et comporte les
 
 #### Première rangée:
 
-- Réduire
+- ![](datatable/collapse.png) Réduire
   - Condense le tableau dans une petite fenêtre pour vous permettre de voir la carte en même temps.
-- Développer
+- ![](datatable/expand.png) Développer
   - Développe le tableau en une fenêtre plus large qui s'adapte à la zone disponible sur la carte.
-- Réduire
+- ![](datatable/minimize.png) Réduire
   - Masque la grille de données de la carte. Vous pouvez développer la grille réduite en cliquant sur l'icône de la grille située dans la barre de menu de gauche.
-- Fermer
+- ![](datatable/close.png) Fermer
   - Ferme le tableau.
 - Faire une recherche générale
-- Appliquer un filtre au tableau en veillant à ce que le terme recherché soit une sous‑chaîne des données des lignes d'au moins une colonne.
+  - Appliquer un filtre au tableau en veillant à ce que le terme recherché soit une sous‑chaîne des données des lignes d'au moins une colonne.
 
 #### Deuxième rangée :
 
-- Appliquer des filtres à la carte
+- ![](datatable/applyFilters.png) Appliquer des filtres à la carte
   - Met à jour la carte pour n'afficher que les données visibles dans le tableau.
   - Si les données du tableau correspondent déjà aux données affichées sur la carte, ce bouton sera désactivé.
-- Masquer les colonnes
+- ![](datatable/toggleCols.png) Masquer les colonnes
   - Permet de choisir les colonnes que vous souhaitez afficher dans le tableau.
-- Afficher les filtres
+- ![](datatable/showFilters.png) Afficher les filtres
   - Lorsque cette option est désactivée, tous les filtres de colonnes seront masqués.
   - Lorsque cette option est désactivée, il n'est pas possible de modifier les filtres de colonnes.
   - Les filtres de colonnes demeurent en vigueur même lorsque l'option est désactivée.
-- Menu du tableau (options supplémentaires)
+- ![](datatable/more.png) Menu du tableau (options supplémentaires)
   - Efface la recherche et les filtres
     - Efface toutes les recherches et tous les filtres qui peuvent s'appliquer au tableau.
 
@@ -212,8 +212,8 @@ Chaque colonne du tableau de données peut comprendre un ensemble de flèches d�
 
 **Tri des colonnes**  : cliquez sur le titre de la colonne pour effectuer un tri croissant ou décroissant(pour les données numériques) ou en ordre alphabétique (pour les données textuelles).
 
-- Une flèche vers le haut () à côté du titre de la colonne indique que les données de la colonne sont triées de manière croissante ou par ordre alphabétique.
-- Une flèche vers le bas () à côté du titre de la colonne indique que les données de la colonne sont triées en manière décroissante ou par ordre alphabétique inverse.
+- Une flèche vers le haut à côté du titre de la colonne indique que les données de la colonne sont triées de manière croissante ou par ordre alphabétique.
+- Une flèche vers le bas à côté du titre de la colonne indique que les données de la colonne sont triées en manière décroissante ou par ordre alphabétique inverse.
 - L'absence de flèche à côté du titre de la colonne indique qu'aucun tri n'est appliqué à la colonne visée.
 - Enfoncez la touche Maj et sélectionnez les noms des colonnes pour trier plusieurs colonnes à la fois.
 - Fonctionnement : la prochaine colonne sélectionnée à l'aide de la touche Maj sera triée en fonction des groupes de données identiques de la dernière colonne sélectionnée.

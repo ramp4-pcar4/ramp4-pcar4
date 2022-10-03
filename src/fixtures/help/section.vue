@@ -40,7 +40,7 @@
                 <div
                     v-show="expanded"
                     v-html="helpSection.info"
-                    class="ramp-markdown section-body px-20 pt-5 overflow-hidden"
+                    class="section-body px-20 pt-5 overflow-hidden"
                 ></div>
             </transition>
         </div>
@@ -74,15 +74,30 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.section-body {
+    @apply ml-10;
+}
 :deep(.section-body) {
-    p {
-        @apply mb-15;
+    h1,
+    h2,
+    h3,
+    h4 {
+        @apply mb-15 text-lg;
     }
+    p {
+        @apply mb-10;
+    }
+    a,
+    ul,
+    ol,
     li {
-        @apply pb-10;
+        all: revert;
     }
     img {
         @apply inline;
+    }
+    td {
+        @apply border p-5;
     }
 }
 .help-section-header .dropdown-icon {

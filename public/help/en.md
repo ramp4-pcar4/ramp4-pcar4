@@ -23,14 +23,14 @@ Navigation controls are used for changing the viewing extent of the map.
 
 The following navigation controls can be found in the bottom right corner of the map:
 
-| Function | Description |
-|--|--|
-| Zoom in - Plus (+) | Zoom in one level on the map to see more detailed content |
-| Zoom out - Minus (-) | Zoom out one level on the map to see less detailed content |
-| Fullscreen | Full screen presents map content using the entire page. Full screen option is only available when the map is embedded into another page |
-| Geolocate | Zoom and pan map over the current location of the device |
-| Home / Initial extent | Zoom and pan map such that initial extent is visible |
-| Help | Toggle open or closed the help dialog |
+| Icon | Function | Description |
+|--|--|--|
+| ![](navigation/zoomin.png) | Zoom in - Plus (+) | Zoom in one level on the map to see more detailed content |
+| ![](navigation/zoomout.png) | Zoom out - Minus (-) | Zoom out one level on the map to see less detailed content |
+| ![](navigation/fullscreen.png) | Fullscreen | Full screen presents map content using the entire page. Full screen option is only available when the map is embedded into another page |
+| ![](navigation/geolocate.png) | Geolocate | Zoom and pan map over the current location of the device |
+| ![](navigation/home.png) | Home / Initial extent | Zoom and pan map such that initial extent is visible |
+| ![](navigation/help.png) | Help | Toggle open or closed the help dialog |
 
 
 # Navigation Information
@@ -114,7 +114,7 @@ __Latitude/Longitude search__: Search using lat/long coordinates to display a li
 - lat/long search recognizes spaces, commas, semicolons, or vertical bars (|) to separate the co-ordinates
 - example: type in __54.3733,-91.7417__
 
-__NTS search__: __ National Topographic System (NTS)__ is a system used for providing general topographic maps of the country, producing details on landforms, lakes/rivers, forests, roads and railways, etc.
+__NTS search__: __National Topographic System (NTS)__ is a system used for providing general topographic maps of the country, producing details on landforms, lakes/rivers, forests, roads and railways, etc.
 
 - the NTS is split into three major zones: "Southern zone" - latitudes between 40°N and 68°N, "Arctic zone" - latitudes between 68°N and 80°N, and the "High Arctic zone" - latitudes between 80°N and 88°N
 - an NTS map number consists of a string containing a number identifying a map sheet, a letter identifying a map area, and a number identifying the scale map sheet
@@ -180,29 +180,29 @@ This control group is located at the top of the data table and has the following
 
 #### First row:
 
-- Collapse
+- ![](datatable/collapse.png) Collapse
     - Condenses the table into a smaller panel so the map is viewable at the same time
-- Expand
+- ![](datatable/expand.png) Expand
     - Expands the table into a wider panel that fits the available area over the map
-- Minimize
+- ![](datatable/minimize.png) Minimize
     - Hides the data grid from the map view, accessible to expand from the left-hand menu bar
-- Close Table
+- ![](datatable/close.png) Close Table
     - Closes the table
 - Global Search
-- Filter the table by making sure that the search term is a substring of the rows' data at one or more columns
+    - Filter the table by making sure that the search term is a substring of the rows' data at one or more columns
 
 #### Second row:
 
-- Apply Table Filters To Map
+- ![](datatable/applyFilters.png) Apply Table Filters To Map
     - update the map to display only the data that is visible in the table
     - if the data in the table already matches the data displayed on the map, this button will be disabled
-- Toggle Column Visibilities
+- ![](datatable/toggleCols.png) Toggle Column Visibilities
     - allows you to choose which columns you want to be visible on the table
-- Show filters
-    - toggling this option off will hide all column filters
+- ![](datatable/showFilters.png) Show filters
+    - toggling this option off will hide all column filters 
     - unable to change column filters while toggled off
     - column filters remain applied even when toggled off
-- Table Menu (More Options)
+- ![](datatable/more.png) Table Menu (More Options)
     - Clear Search and Filters
         - clear any existing filters and searches that may be applied to the table
 
@@ -212,8 +212,8 @@ For each column in the data table, there may be a set of arrows associated with 
 
   __Column Sort__: Click on the column title to sort the columns in ascending/descending order (for numerical data) and alphabetical order (for text data).
 
-- an upward arrow (![](datatable/sortAsc.png)) next to the column title indicates that the column data is being sorted in ascending order or alphabetical order
-- a downward arrow (![](datatable/sortDesc.png)) next to the column title indicates that the column data is being sorted in descending order or reverse alphabetical order
+- an upward arrow next to the column title indicates that the column data is being sorted in ascending order or alphabetical order
+- a downward arrow next to the column title indicates that the column data is being sorted in descending order or reverse alphabetical order
 - No arrow next to the column title means that there is no sort applied to current column
 - sort multiple columns at once using shift + select column names
 - how it works: the next selected column using tab will be sorted according to the last selected column's groups of identical data
