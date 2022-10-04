@@ -688,7 +688,7 @@
                 },
                 "expectedDrawTime": {
                     "type": "number",
-                    "default": 4000,
+                    "default": 10000,
                     "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
                 },
                 "expectedResponseTime": {
@@ -759,7 +759,7 @@
                 },
                 "expectedDrawTime": {
                     "type": "number",
-                    "default": 4000,
+                    "default": 10000,
                     "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
                 },
                 "expectedResponseTime": {
@@ -831,7 +831,7 @@
                 },
                 "expectedDrawTime": {
                     "type": "number",
-                    "default": 4000,
+                    "default": 10000,
                     "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
                 },
                 "expectedResponseTime": {
@@ -1026,7 +1026,7 @@
                 },
                 "expectedDrawTime": {
                     "type": "number",
-                    "default": 4000,
+                    "default": 10000,
                     "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
                 },
                 "expectedResponseTime": {
@@ -1142,7 +1142,7 @@
                 },
                 "expectedDrawTime": {
                     "type": "number",
-                    "default": 4000,
+                    "default": 10000,
                     "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
                 },
                 "expectedResponseTime": {
@@ -1253,7 +1253,7 @@
                 },
                 "expectedDrawTime": {
                     "type": "number",
-                    "default": 4000,
+                    "default": 10000,
                     "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
                 },
                 "expectedResponseTime": {
@@ -1361,7 +1361,7 @@
                 },
                 "expectedDrawTime": {
                     "type": "number",
-                    "default": 4000,
+                    "default": 10000,
                     "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
                 },
                 "expectedResponseTime": {
