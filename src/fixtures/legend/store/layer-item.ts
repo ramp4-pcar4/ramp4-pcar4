@@ -78,12 +78,7 @@ export class LayerItem extends LegendItem {
         this._layerIdx = layer.layerIdx;
         this._layerUid = layer.uid;
         this._layerInitVis = layer.visibility;
-        const cont = this.$iApi.geo.layer.getLayerControls(layer.id);
-        if (this._layerControls.length === 0)
-            this._layerControls = cont?.controls ?? [];
-        if (this._layerDisabledControls.length === 0)
-            this._layerDisabledControls = cont?.disabledControls ?? [];
-        //TODO may change this for when you enable a control that shouldnt be enabled (i.e metadata)
+        this.updateLayerControls();
     }
 
     get layerRedrawing(): boolean {
@@ -243,6 +238,11 @@ export class LayerItem extends LegendItem {
         }
     }
 
+    error(): void {
+        this.updateLayerControls();
+        super.error();
+    }
+
     /**
      * Check if a control is available for the layer item.
      *
@@ -253,5 +253,16 @@ export class LayerItem extends LegendItem {
         return this._layerDisabledControls?.includes(control)
             ? false
             : this._layerControls?.includes(control);
+    }
+
+    // Update layer controls and disabled controls for this layer item.
+    updateLayerControls() {
+        const cont =
+            this.$iApi.geo.layer.getLayerControls(this.layerId) ??
+            this.$iApi.geo.layer.getLayerControls(this.parentLayerId ?? '');
+        if (this._layerControls.length === 0)
+            this._layerControls = cont?.controls ?? [];
+        if (this._layerDisabledControls.length === 0)
+            this._layerDisabledControls = cont?.disabledControls ?? [];
     }
 }
