@@ -137,8 +137,7 @@ export class LegendAPI extends FixtureInstance {
                 layerId: layer.id,
                 sublayerIndex:
                     layer.layerIdx !== -1 ? layer.layerIdx : undefined,
-                name: layer.name,
-                visibility: layer.visibility
+                name: layer.name
             },
             parent,
             layer
@@ -396,8 +395,8 @@ export class LegendAPI extends FixtureInstance {
         ) => {
             const layerItem: LayerItem | undefined = this.getLayerItem(layer);
             if (error) {
-                if (layer instanceof LayerInstance) {
-                    layerItem!.layer = layer;
+                if (layerItem && layer instanceof LayerInstance) {
+                    layerItem.layer = layer;
                 }
                 layerItem?.error();
             } else {
