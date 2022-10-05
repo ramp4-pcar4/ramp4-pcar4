@@ -127,6 +127,37 @@ function cleanUpFields(
     });
 }
 
+/**
+ * Converts a geometry collection into a single geometry structure.
+ *
+ * @function cleanUpGeomCollection
+ * @param {any} geoJson layer data in GeoJSON format
+ * @param {number} idx index of feature in geoJson file
+ */
+function cleanUpGeomCollection(geoJson: any, idx: number) {
+    const geoms = geoJson.features[idx].geometry.geometries;
+
+    // convert to geometry primitive when collection contains a single geometry
+    if (geoms.length === 1) {
+        geoJson.features[idx].geometry = {
+            type: geoms[0].type,
+            coordinates: geoms[0].coordinates
+        };
+    } else {
+        // form a multipart geometry structure by merging coordinates of each geometry
+        const merged = geoms.map((g: any) => g.coordinates);
+
+        // map geometry type to corresponding multipart type
+        // - Point -> MultiPoint
+        // - LineString -> MultiLineString
+        // - Polygon -> MultiPolygon
+        geoJson.features[idx].geometry = {
+            type: `Multi${geoms[0].type}`,
+            coordinates: merged
+        };
+    }
+}
+
 export class FileUtils extends APIScope {
     /**
      * Fetch file data from remote URL.
@@ -167,6 +198,61 @@ export class FileUtils extends APIScope {
         if (geoJson.features.length < 1) {
             throw new Error(
                 'GeoJSON field extraction requires at least one feature'
+            );
+        }
+
+        // handle geometry collection structure
+        let geomType = geoJson.features[0].geometry.type;
+        geoJson.features.forEach((feature: any, idx: number) => {
+            const featType = feature.geometry.type;
+            if (featType === 'GeometryCollection') {
+                const geoms = feature.geometry.geometries;
+                // geometry collection cannot be empty, nor contain empty geometries
+                if (geoms === undefined || geoms.length === 0) {
+                    return Promise.reject(
+                        new Error(
+                            'GeoJSON file has geometry collection with missing/incomplete geometries'
+                        )
+                    );
+                }
+
+                // geometry type must be consistent within geometry collection
+                geomType = geoms[0].type;
+                geoms.forEach((geom: any) => {
+                    if (geom.type !== geomType) {
+                        return Promise.reject(
+                            new Error(
+                                'GeoJSON file has geometry collection containing multiple geometry types'
+                            )
+                        );
+                    }
+                });
+
+                // convert geometry collection to single structure
+                cleanUpGeomCollection(geoJson, idx);
+            }
+        });
+
+        // This ensures that after any cleanup, geometries in the file are of the same type.
+        // LineStrings/MultiLineStrings and Polygons/MultiPolygons can be considered the same type because Esri
+        // doesn't differentiate between the single & multi variants. This is NOT the case for Point/MultiPoint.
+        if (
+            [
+                ...new Set(
+                    geoJson.features.map((f: any) => {
+                        if (f.geometry.type === 'MultiLineString') {
+                            return 'LineString';
+                        } else if (f.geometry.type === 'MultiPolygon') {
+                            return 'Polygon';
+                        } else {
+                            return f.geometry.type;
+                        }
+                    })
+                )
+            ].length !== 1
+        ) {
+            return Promise.reject(
+                new Error('GeoJSON file contains multiple geometry types')
             );
         }
 
