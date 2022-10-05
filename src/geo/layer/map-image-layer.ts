@@ -339,8 +339,11 @@ export class MapImageLayer extends AttribLayer {
                     if (subC) {
                         miSL.visibility =
                             subC.state?.visibility ??
-                            miSL._serverVisibility ??
-                            this.origState.visibility ??
+                            (this.origState.visibility
+                                ? miSL._serverVisibility ??
+                                  this.origState.visibility
+                                : this.origState.visibility ??
+                                  miSL._serverVisibility) ??
                             true;
                         miSL.opacity =
                             subC.state?.opacity ?? this.origState.opacity ?? 1;
