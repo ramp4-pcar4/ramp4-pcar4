@@ -137,8 +137,7 @@ export class LegendAPI extends FixtureInstance {
                 layerId: layer.id,
                 sublayerIndex:
                     layer.layerIdx !== -1 ? layer.layerIdx : undefined,
-                name: layer.name,
-                visibility: layer.visibility
+                name: layer.name
             },
             parent,
             layer

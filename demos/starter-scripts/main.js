@@ -263,7 +263,7 @@ let config = {
                 {
                     id: 'WaterQuantity',
                     layerType: 'esri-map-image',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                    url: 'haha',
                     sublayers: [
                         {
                             index: 1,

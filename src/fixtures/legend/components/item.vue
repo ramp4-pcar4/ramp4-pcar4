@@ -48,6 +48,7 @@
                                   : 'legend.group.expand'
                           )
                         : legendItem instanceof LayerItem &&
+                          legendItem.type === LegendType.Item &&
                           controlAvailable('datatable') &&
                           getDatagridExists()
                         ? $t('legend.layer.data')
@@ -62,7 +63,7 @@
             >
                 <!-- smiley face. very important that we migrate this -->
                 <div
-                    class="flex mr-10"
+                    class="flex ml-3 mr-10"
                     v-if="legendItem.type !== LegendType.Item"
                 >
                     <svg
@@ -224,6 +225,11 @@
                         :class="{
                             disabled: !controlAvailable(`reload`)
                         }"
+                        :content="$t('legend.layer.controls.reload')"
+                        v-tippy="{
+                            placement: 'top-start'
+                        }"
+                        @mouseover.stop
                         @click.stop="reloadLayer"
                     >
                         <div class="flex p-8">
@@ -528,52 +534,49 @@ export default defineComponent({
          * Reloads a layer on the map.
          */
         reloadLayer() {
-            if (this.controlAvailable(LayerControl.Reload)) {
-                // reload legend item state back to placeholder state
-                this.legendItem.reload();
-                // want the animation to play for half a second because a reload can fail "instantly", making it look like nothing happened to the user
-                setTimeout(() => {
-                    // call reload on layer if it exists
-                    if (this.legendItem.layer !== undefined) {
-                        this.legendItem!.layer!.reload()
-                            .then(() =>
-                                this.$iApi.$vApp.$store.set(
-                                    LayerStore.removeErrorLayer,
-                                    this.legendItem.layer!
-                                )
+            // reload legend item state back to placeholder state
+            this.legendItem.reload();
+            // want the animation to play for half a second because a reload can fail "instantly", making it look like nothing happened to the user
+            setTimeout(() => {
+                // call reload on layer if it exists
+                if (this.legendItem.layer !== undefined) {
+                    this.legendItem!.layer!.reload()
+                        .then(() =>
+                            this.$iApi.$vApp.$store.set(
+                                LayerStore.removeErrorLayer,
+                                this.legendItem.layer!
                             )
-                            .catch(() =>
-                                this.$iApi.$vApp.$store.set(
-                                    LayerStore.addErrorLayers,
-                                    [this.legendItem.layer!]
-                                )
-                            );
-                    } else {
-                        // otherwise attempt to re-create layer with layer config
-                        const layerConfig =
-                            this.legendItem!.layerIdx === undefined
-                                ? this.layerConfigs.find(
-                                      (lc: RampLayerConfig) =>
-                                          lc.id === this.legendItem.layerId
-                                  )
-                                : this.layerConfigs.find(
-                                      (lc: RampLayerConfig) =>
-                                          lc.id ===
-                                          this.legendItem.parentLayerId
-                                  );
-                        if (layerConfig !== undefined) {
-                            this.recreateLayer(layerConfig);
-                        }
-                    }
-                    // catch error if reload fails
-                    this.legendItem.loadPromise.catch(() => {
-                        console.error(
-                            'Failed to reload layer - ',
-                            this.legendItem.name
+                        )
+                        .catch(() =>
+                            this.$iApi.$vApp.$store.set(
+                                LayerStore.addErrorLayers,
+                                [this.legendItem.layer!]
+                            )
                         );
-                    });
-                }, 500);
-            }
+                } else {
+                    // otherwise attempt to re-create layer with layer config
+                    const layerConfig =
+                        this.legendItem!.layerIdx === undefined
+                            ? this.layerConfigs.find(
+                                  (lc: RampLayerConfig) =>
+                                      lc.id === this.legendItem.layerId
+                              )
+                            : this.layerConfigs.find(
+                                  (lc: RampLayerConfig) =>
+                                      lc.id === this.legendItem.parentLayerId
+                              );
+                    if (layerConfig !== undefined) {
+                        this.recreateLayer(layerConfig);
+                    }
+                }
+                // catch error if reload fails
+                this.legendItem.loadPromise.catch(() => {
+                    console.error(
+                        'Failed to reload layer -',
+                        this.legendItem.name
+                    );
+                });
+            }, 500);
         },
         /**
          * Attempt to recreate and instantiate layer from config.

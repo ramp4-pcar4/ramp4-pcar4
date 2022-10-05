@@ -378,6 +378,8 @@ export class CommonLayer extends LayerInstance {
                 id: this.id
             })
         );
+        this.stopTimer(TimerType.DRAW);
+        this.stopTimer(TimerType.LOAD);
     }
 
     // performs setup on the layer that needs to occur after the esri layer
