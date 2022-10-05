@@ -48,6 +48,7 @@
                                   : 'legend.group.expand'
                           )
                         : legendItem instanceof LayerItem &&
+                          legendItem.type === LegendType.Item &&
                           controlAvailable('datatable') &&
                           getDatagridExists()
                         ? $t('legend.layer.data')
@@ -62,7 +63,7 @@
             >
                 <!-- smiley face. very important that we migrate this -->
                 <div
-                    class="flex mr-10"
+                    class="flex ml-3 mr-10"
                     v-if="legendItem.type !== LegendType.Item"
                 >
                     <svg
@@ -188,8 +189,9 @@
                 >
                     <span>{{
                         legendItem.name ??
-                        legendItem?.layer?.name ??
-                        legendItem.layerId
+                        (!legendItem.layer || legendItem?.layer?.name === ''
+                            ? legendItem.layerId
+                            : legendItem.layer?.name)
                     }}</span>
                 </div>
                 <div v-else class="flex-1">
@@ -228,6 +230,15 @@
                         :class="{
                             disabled: !controlAvailable(`reload`)
                         }"
+                        :content="
+                            controlAvailable('reload')
+                                ? $t('legend.layer.controls.reload')
+                                : ''
+                        "
+                        v-tippy="{
+                            placement: 'top-start'
+                        }"
+                        @mouseover.stop
                         @click.stop="reloadLayer"
                     >
                         <div class="flex p-8">
@@ -572,7 +583,7 @@ export default defineComponent({
                     // catch error if reload fails
                     this.legendItem.loadPromise.catch(() => {
                         console.error(
-                            'Failed to reload layer - ',
+                            'Failed to reload layer -',
                             this.legendItem.name
                         );
                     });
