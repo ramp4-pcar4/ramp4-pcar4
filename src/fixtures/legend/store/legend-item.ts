@@ -244,12 +244,8 @@ export class LegendItem extends APIScope {
         } else if (this.parent?.exclusive) {
             // toggle not visible if item is part of a exclusive set with another item's visibility already toggled on
             const siblingVisible = this.parent.children.some(
-                item =>
-                    item.visibility &&
-                    item.type === LegendType.Item &&
-                    item !== this
+                item => item.visibility && item !== this
             );
-
             if (siblingVisible) {
                 this.toggleVisibility(false, false);
             }
@@ -276,13 +272,13 @@ export class LegendItem extends APIScope {
                 this._visibleChildren = this.children.filter(
                     item => item.visibility
                 );
-                if (this instanceof LayerItem) {
+                if (this instanceof LayerItem && this.layer) {
                     this.layer.visibility = true;
                 }
             } else {
                 this._visibility = false;
                 this._visibleChildren = [];
-                if (this instanceof LayerItem) {
+                if (this instanceof LayerItem && this.layer) {
                     this.layer.visibility = false;
                 }
             }
@@ -295,13 +291,13 @@ export class LegendItem extends APIScope {
             });
             this._lastVisible = toggledChild;
             this._visibility = true;
-            if (this instanceof LayerItem) {
+            if (this instanceof LayerItem && this.layer) {
                 this.layer.visibility = true;
             }
         } else {
             this._lastVisible = toggledChild;
             this._visibility = false;
-            if (this instanceof LayerItem) {
+            if (this instanceof LayerItem && this.layer) {
                 this.layer.visibility = false;
             }
         }
@@ -373,5 +369,6 @@ export class LegendItem extends APIScope {
     error() {
         this._type = LegendType.Error;
         this._loadPromise.rejectMe();
+        this.checkVisibilityRules();
     }
 }
