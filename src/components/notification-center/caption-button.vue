@@ -35,6 +35,7 @@
                     </h4>
                     <div class="absolute flex right-3 top-3">
                         <button
+                            type="button"
                             @click="clearAll"
                             class="p-4 mr-6"
                             :class="[

@@ -4,6 +4,7 @@
         tabindex="-1"
     >
         <button
+            type="button"
             class="w-full h-full default-focus-style focus:outline-none"
             @click="onClickFunction()"
             v-focus-item
