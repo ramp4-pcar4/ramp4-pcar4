@@ -40,7 +40,7 @@
                 <div
                     v-show="expanded"
                     v-html="helpSection.info"
-                    class="ramp-markdown section-body px-20 pt-5 overflow-hidden"
+                    class="ramp-markdown section-body px-20 pt-5 ml-10 overflow-hidden"
                 ></div>
             </transition>
         </div>
@@ -74,17 +74,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-:deep(.section-body) {
-    p {
-        @apply mb-15;
-    }
-    li {
-        @apply pb-10;
-    }
-    img {
-        @apply inline;
-    }
-}
 .help-section-header .dropdown-icon {
     transition: transform 0.3s cubic-bezier(0.35, 0, 0.25, 1);
 }
