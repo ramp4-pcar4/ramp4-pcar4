@@ -265,8 +265,13 @@ export class FileUtils extends APIScope {
         // ensure our features have ids
         assignIds(geoJson);
 
+        // TODO this is assuming uniformity. If we support a mixed bag
+        //      (e.g. points + multipoints, all converted to multipoints),
+        //      then this likely needs a full file scan & analysis
+        const geoJsonGeomType = geoJson.features[0].geometry.type;
+
         // @ts-ignore
-        const value = featureTypeToRenderer[geoJson.features[0].geometry.type];
+        const value = featureTypeToRenderer[geoJsonGeomType];
         // clone the default renderer so changes don't persist
         // also note that this default renderer object is in ArcGIS Server object format
         const defRender: any = JSON.parse(
@@ -374,12 +379,13 @@ export class FileUtils extends APIScope {
         // NOTE typescript lies here. it insists esriJson will have .features property, but it infact is the feature array itself
         //      it also claims the .sr param is not valid, though it's in the documentation and the code.  lies!
         const esriJson = <any>ArcGIS.convert(geoJson, <any>{ sr: 8888 });
-        configPackage.geometryType = defRender.geometryType;
+        configPackage.geometryType =
+            this.$iApi.geo.geom.geoJsonGeomTypeToEsriGeomType(geoJsonGeomType);
 
         // set proper SR on the geometeries
         esriJson.forEach((gr: any) => {
             gr.geometry.spatialReference = fancySR;
-            gr.geometry.type = defRender.geometryType;
+            gr.geometry.type = configPackage.geometryType;
 
             // TEMPORARY hunt any complex datatypes and replace with a string
             // TODO figure out how to actually handle arrays or objects as attribute values
