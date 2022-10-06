@@ -25,7 +25,6 @@ export class MapImageSublayer extends AttribLayer {
         this.isSublayer = true;
         this.layerIdx = layerIdx;
         this.parentLayer = parent;
-        this.id = `${parent.id}-${layerIdx}`;
 
         this.dataFormat = DataFormat.ESRI_FEATURE; // this will get flipped to raster during the server metadata checks if needed
         this.tooltipField = '';

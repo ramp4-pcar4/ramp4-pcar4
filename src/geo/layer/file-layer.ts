@@ -433,7 +433,8 @@ export class FileLayer extends AttribLayer {
         this.scaleSet.maxScale = l.maxScale || 0;
 
         // ESRI API appears to calculate the extent correctly. Well done!
-        this.extent = Extent.fromESRI(l.fullExtent, this.id + '_extent');
+        this.extent =
+            this.extent ?? Extent.fromESRI(l.fullExtent, this.id + '_extent');
 
         this.esriFields = markRaw(l.fields.slice());
         this.fields = this.esriFields.map(f => {

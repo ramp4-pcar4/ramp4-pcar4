@@ -104,6 +104,9 @@ export class CommonLayer extends LayerInstance {
         this.supportsSublayers = false; // by default layers do not support sublayers
         this._serverVisibility = undefined;
         this.isFile = false; // default state.
+        this.extent = rampConfig.extent
+            ? Extent.fromConfig(`${this.id}_extent`, rampConfig.extent)
+            : undefined;
         this.layerState = LayerState.NEW;
         this.initiationState = InitiationState.NEW;
         this.drawState = DrawState.NOT_LOADED;
@@ -402,16 +405,6 @@ export class CommonLayer extends LayerInstance {
             this.identify =
                 this.config.state?.identify ?? this.supportsIdentify;
         }
-
-        // TODO implement extent defaulting. Need to add property, get appropriate format from incoming ramp config, maybe need an interface
-        /*
-        if (!this.extent) {
-            // no extent from config. attempt layer extent
-            this.extent = this.esriLayer.fullExtent;
-        }
-
-        this.extent = shared.makeSafeExtent(this.extent);
-        */
 
         // layer base class doesnt have spatial ref, but we will assume all our layers do.
         // consider adding fancy checks if its missing, and if so just promise.resolve
