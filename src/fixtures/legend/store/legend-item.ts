@@ -299,10 +299,27 @@ export class LegendItem extends APIScope {
                 this.layer.visibility = true;
             }
         } else {
-            this._lastVisible = toggledChild;
-            this._visibility = false;
-            if (this instanceof LayerItem) {
-                this.layer.visibility = false;
+            // item in exclusive set is being turned off
+            // if this causes all items in the exclusive set to be off, we first attempt to find an item that should have been on
+            // and we turn that item on
+            // if our search is unsuccessful and all items in the set are off, turn the parent off
+            if (!this.children.some(child => child.visibility)) {
+                const onChild = this.children.find(
+                    child =>
+                        child instanceof LayerItem &&
+                        child.layerControlAvailable(LayerControl.Visibility) &&
+                        child._layerInitVis
+                );
+                if (onChild) {
+                    onChild.toggleVisibility(true, false);
+                    this._lastVisible = onChild;
+                } else {
+                    this._visibility = false;
+                    if (this instanceof LayerItem) {
+                        this.layer.visibility = false;
+                    }
+                    this._lastVisible = toggledChild;
+                }
             }
         }
 
