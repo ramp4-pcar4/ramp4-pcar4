@@ -59,6 +59,16 @@ export class ProjectionAPI {
         }
     }
 
+    /**
+     * Add a projection definition.
+     * @param {number | string} code the projection code to add.
+     * @param {string} proj4formula the formula for the projection.
+     */
+    addProjection(code: number | string, proj4formula: string) {
+        code = typeof code === 'number' ? `EPSG:${code}` : code;
+        proj4.defs(code, proj4formula);
+    }
+
     // default for lazyness. uses official epsg website, hardcoded for extra style points.
     private defaultEpsgLookup(code: string | number): Promise<string> {
         const urnRegex = /urn:ogc:def:crs:EPSG::(\d+)/;
