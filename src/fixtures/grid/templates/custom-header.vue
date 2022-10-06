@@ -6,6 +6,7 @@
             truncate-trigger
         >
             <button
+                type="button"
                 @click="onSortRequested('asc', $event)"
                 :content="$t(`grid.header.sort.${sort}`)"
                 v-tippy="{ placement: 'top', hideOnClick: false }"
@@ -52,6 +53,7 @@
                 </div>
             </span>
             <button
+                type="button"
                 :content="$t(`grid.header.reorder.left`)"
                 v-tippy="{ placement: 'top' }"
                 @click="moveLeft()"
@@ -70,6 +72,7 @@
                 </div>
             </button>
             <button
+                type="button"
                 :content="$t(`grid.header.reorder.right`)"
                 v-tippy="{ placement: 'top' }"
                 @click="moveRight()"

@@ -21,6 +21,7 @@
             </div>
             <div>
                 <button
+                    type="button"
                     @click="closeGrid"
                     class="py-8 px-8 sm:px-16 bg-gray-300"
                     :aria-label="$t('grid.splash.cancel')"
@@ -86,6 +87,7 @@
 
             <div class="pb-2 flex ml-auto">
                 <button
+                    type="button"
                     class="p-4 h-40 disabled:opacity-30 disabled:cursor-default text-gray-500 hover:text-black"
                     @click="applyFiltersToMap"
                     :content="$t('grid.label.filters.apply')"
@@ -127,6 +129,7 @@
 
                 <!-- toggle column filters -->
                 <button
+                    type="button"
                     class="p-4 h-40 text-gray-500 hover:text-black"
                     @click="toggleShowFilters()"
                     :content="
@@ -172,6 +175,7 @@
                         </svg>
                     </template>
                     <button
+                        type="button"
                         href="#"
                         class="px-8"
                         @click="clearSearchAndFilters()"

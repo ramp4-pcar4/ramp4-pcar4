@@ -2,6 +2,7 @@
     <div class="mb-10">
         <button
             class="basemap-item-button bg-gray-300 h-210"
+            type="button"
             :aria-label="$t('basemap.select')"
             @click="selectBasemap(basemap)"
             v-focus-item

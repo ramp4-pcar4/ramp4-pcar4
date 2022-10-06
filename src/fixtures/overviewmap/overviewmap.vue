@@ -15,6 +15,7 @@
             <!-- toggle -->
             <div class="absolute h-30 w-30 top-0 right-0">
                 <button
+                    type="button"
                     tabindex="0"
                     class="cursor-pointer absolute h-full w-full"
                     @click="minimized = !minimized"

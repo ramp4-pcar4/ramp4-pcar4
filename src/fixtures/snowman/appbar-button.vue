@@ -1,5 +1,5 @@
 <template>
-    <appbar-button :onClickFunction="togglePanel" tooltip="⛄">
+    <appbar-button :onClickFunction="togglePanel" type="button" tooltip="⛄">
         <span class="block h-24">⛄</span>
     </appbar-button>
 </template>

@@ -16,6 +16,7 @@
                 </div>
                 <!-- clicker for each layer -->
                 <button
+                    type="button"
                     class="w-full px-20 py-10 text-md flex hover:bg-gray-200 cursor-pointer disabled:cursor-default"
                     v-for="(item, idx) in layerResults"
                     :key="item.uid"

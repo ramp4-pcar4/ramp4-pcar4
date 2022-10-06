@@ -1,6 +1,7 @@
 <template>
     <div class="mt-10">
         <button
+            type="button"
             class="area-of-interest-item-button bg-gray-300 w-full"
             :class="{ 'border border-gray-300': showThumbnail }"
             :aria-label="$t('areas-of-interest.select')"

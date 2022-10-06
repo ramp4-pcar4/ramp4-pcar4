@@ -1,6 +1,10 @@
 <template>
     <div>
-        <mapnav-button :onClickFunction="zoomIn" :tooltip="$t('mapnav.zoomIn')">
+        <mapnav-button
+            :onClickFunction="zoomIn"
+            type="button"
+            :tooltip="$t('mapnav.zoomIn')"
+        >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -13,6 +17,7 @@
         <divider-nav></divider-nav>
         <mapnav-button
             :onClickFunction="zoomOut"
+            type="button"
             :tooltip="$t('mapnav.zoomOut')"
         >
             <svg

@@ -1,5 +1,6 @@
 <template>
     <button
+        type="button"
         v-if="!disabled"
         :class="`pb-10 text-gray-500 hover:text-black p-8 ${
             direction === 'up' ? 'rotate-180' : ''
@@ -17,6 +18,7 @@
         </svg>
     </button>
     <button
+        type="button"
         v-else
         :class="`pb-10 text-gray-300 p-8 ${
             direction === 'up' ? 'rotate-180' : ''

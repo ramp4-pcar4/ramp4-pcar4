@@ -1,6 +1,7 @@
 <template>
     <mapnav-button
         :onClickFunction="geolocate"
+        type="button"
         :tooltip="$t('mapnav.geolocator')"
     >
         <svg

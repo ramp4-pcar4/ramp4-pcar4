@@ -12,6 +12,7 @@
             <div class="flex flex-col items-center">
                 <!-- setting panel route directly in the store will not work ❌  -->
                 <button
+                    type="button"
                     @click="panel.show({ screen: 'p-1-screen-2' })"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-8 px-16"
                 >

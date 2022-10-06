@@ -35,6 +35,7 @@
                         v-bind:key="idx"
                     >
                         <button
+                            type="button"
                             class="absolute inset-0 h-full w-full hover:bg-gray-300 default-focus-style"
                             @click="zoomIn(result)"
                             v-focus-item="'show-truncate'"

@@ -91,6 +91,7 @@
         </more-button>
         <notifications-appbar-button
             class="appbar-item bottom-48 h-48 sm:display-none"
+            type="button"
         ></notifications-appbar-button>
 
         <!-- TODO: disabled this button for now, revist this when we need it in the future -->
@@ -98,6 +99,7 @@
         <about-ramp-dropdown
             class="absolute bottom-0 h-40 sm:display-none w-full text-center"
             position="right-start"
+            type="button"
         ></about-ramp-dropdown>
     </div>
 </template>

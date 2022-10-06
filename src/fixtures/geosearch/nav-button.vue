@@ -1,6 +1,7 @@
 <template>
     <mapnav-button
         :onClickFunction="togglePanel"
+        type="button"
         :tooltip="$t('geosearch.title')"
     >
         <svg

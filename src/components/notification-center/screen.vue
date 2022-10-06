@@ -8,6 +8,7 @@
             <div class="h-full flex flex-col">
                 <div class="w-full flex mb-6">
                     <button
+                        type="button"
                         @click="clearAll"
                         class="p-4 ml-auto"
                         :class="[

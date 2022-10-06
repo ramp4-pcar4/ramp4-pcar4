@@ -6,6 +6,7 @@
             <div class="flex flex-col items-center mt-16">
                 <!-- ✔ this is the correct way to switch between screens in the same panel 👇 -->
                 <button
+                    type="button"
                     @click="
                         panel.show({
                             screen: 'p-2-screen-1',

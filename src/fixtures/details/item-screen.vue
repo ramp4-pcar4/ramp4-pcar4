@@ -33,6 +33,7 @@
                 >
                     <div class="flex justify-between">
                         <button
+                            type="button"
                             class="px-8 font-bold hover:bg-gray-200 focus:bg-gray-200"
                             :aria-label="$t('details.item.see.list')"
                             @click="seeList"
@@ -41,6 +42,7 @@
                         </button>
                         <div class="flex bg-gray-200 py-8 items-center">
                             <button
+                                type="button"
                                 :content="$t('details.item.previous.item')"
                                 v-tippy="{ placement: 'top' }"
                                 @click="advanceItemIndex(-1)"
@@ -65,6 +67,7 @@
                                 }}
                             </span>
                             <button
+                                type="button"
                                 :content="$t('details.item.next.item')"
                                 v-tippy="{ placement: 'top' }"
                                 @click="advanceItemIndex(1)"
@@ -104,6 +107,7 @@
                                 {{ itemName }}
                             </span>
                             <button
+                                type="button"
                                 :content="$t('details.item.zoom')"
                                 v-tippy="{ placement: 'bottom' }"
                                 :aria-label="$t('details.item.zoom')"

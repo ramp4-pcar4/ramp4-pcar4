@@ -5,10 +5,12 @@
         <about-ramp-dropdown
             class="sm:block display-none ml-8 mr-4"
             position="top-end"
+            type="button"
         ></about-ramp-dropdown>
 
         <notifications-caption-button
             class="sm:block display-none"
+            type="button"
         ></notifications-caption-button>
 
         <span
@@ -64,6 +66,7 @@
             </div>
 
             <button
+                type="button"
                 v-if="!scale.disabled"
                 class="flex-shrink-0 mx-2 sm:mx-10 px-4 pointer-events-auto cursor-pointer border-none"
                 @click="onScaleClick"

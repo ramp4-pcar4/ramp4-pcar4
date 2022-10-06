@@ -1,6 +1,7 @@
 <template>
     <div class="w-32 h-32">
         <button
+            type="button"
             class="text-gray-500 hover:text-black focus:text-black w-full h-full flex justify-center items-center"
             :content="$t(`panels.controls.${active ? 'collapse' : 'expand'}`)"
             v-tippy="{

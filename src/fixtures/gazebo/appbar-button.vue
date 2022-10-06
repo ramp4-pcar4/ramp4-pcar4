@@ -1,5 +1,5 @@
 <template>
-    <appbar-button :onClickFunction="onClick" tooltip="Gazebo">
+    <appbar-button :onClickFunction="onClick" type="button" tooltip="Gazebo">
         <span :style="{ color: options?.colour ?? '#BDBDBD' }">G </span>
     </appbar-button>
 </template>

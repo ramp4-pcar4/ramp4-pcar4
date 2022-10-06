@@ -1,6 +1,7 @@
 <template>
     <div class="appbar-item relative inset-x-0 w-full text-center">
         <button
+            type="button"
             class="text-gray-400 w-full h-48 focus:outline-none hover:text-white"
             @click="open = !open"
             v-focus-item

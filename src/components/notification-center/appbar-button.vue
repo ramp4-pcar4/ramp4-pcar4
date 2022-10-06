@@ -1,6 +1,7 @@
 <template>
     <appbar-button
         :onClickFunction="onClick"
+        type="button"
         :tooltip="$t('notifications.title')"
         class="notification-button"
         id=""

@@ -1,6 +1,7 @@
 <template>
     <div class="relative" tabindex="-1">
         <button
+            type="button"
             class="py-6 w-full h-full"
             @click="
                 () => {

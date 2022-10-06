@@ -1,6 +1,7 @@
 <template>
     <div>
         <button
+            type="button"
             class="text-gray-500 hover:text-black dropdown-button"
             @click="open = !open"
             :content="tooltip"
