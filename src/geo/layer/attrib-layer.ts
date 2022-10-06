@@ -133,9 +133,11 @@ export class AttribLayer extends CommonLayer {
         this.scaleSet.minScale = sData.effectiveMinScale || sData.minScale;
         this.scaleSet.maxScale = sData.effectiveMaxScale || sData.maxScale;
         this.supportsFeatures = false; // saves us from having to keep comparing type to 'Feature Layer' on the client
-        this.extent = sData.extent
-            ? Extent.fromArcServer(sData.extent, this.id + '_extent')
-            : undefined;
+        this.extent =
+            this.extent ??
+            (sData.extent
+                ? Extent.fromArcServer(sData.extent, this.id + '_extent')
+                : undefined);
         this._serverVisibility = sData.defaultVisibility;
 
         if (sData.type === 'Feature Layer') {
