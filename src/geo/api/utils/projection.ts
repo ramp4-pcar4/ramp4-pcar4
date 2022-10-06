@@ -81,7 +81,6 @@ export class ProjectionAPI {
                 epsgUrl,
                 params
             ); // TODO since this is outside of esri api, consider using the vue web request lib here
-
             restReq.then(
                 (serviceResult: __esri.RequestResponse) => {
                     if (serviceResult.data) {
@@ -196,12 +195,16 @@ export class ProjectionAPI {
 
         // function to execute a lookup & store result if success
         const doLookup = async (epsgStr: string): Promise<boolean> => {
-            const def = await this.epsgLookup(epsgStr);
-            if (def === null || def === '') {
+            try {
+                const def = await this.epsgLookup(epsgStr);
+                if (def === null || def === '') {
+                    return false;
+                }
+                proj4.defs(epsgStr, def);
+                return true;
+            } catch (e) {
                 return false;
             }
-            proj4.defs(epsgStr, def);
-            return true;
         };
 
         // check the latestWkid first, if it exists (as that wkid is usally the EPSG friendly one)
