@@ -23,6 +23,7 @@
                 {{ $t(`keyboardInstructions.${section}`) }}
             </p>
             <button
+                type="button"
                 class="mt-auto self-end mr-10 mb-10 px-20 py-10"
                 @click="open = false"
                 ref="lastEl"

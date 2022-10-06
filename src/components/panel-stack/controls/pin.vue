@@ -1,6 +1,7 @@
 <template>
     <div class="relative" tabindex="-1">
         <button
+            type="button"
             class="text-gray-500 hover:text-black focus:text-black p-8"
             :class="{ 'text-gray-700': active }"
             :content="

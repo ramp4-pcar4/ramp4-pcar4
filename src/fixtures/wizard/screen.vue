@@ -237,7 +237,7 @@
                                 }}</span>
                             </template>
 
-                            <template #copy-button>
+                            <template #copy-button type="button">
                                 <span class="sr-only">{{
                                     $t('wizard.configure.colour.copy')
                                 }}</span>

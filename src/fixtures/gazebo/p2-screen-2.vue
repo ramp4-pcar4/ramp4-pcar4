@@ -8,6 +8,7 @@
             <div class="flex flex-row justify-center items-center mt-16">
                 <!-- ✔ this is the correct way to switch between screens in the same panel 👇 -->
                 <button
+                    type="button"
                     @click="
                         panel.show({
                             screen: 'p-2-screen-1',
@@ -20,6 +21,7 @@
                 </button>
 
                 <button
+                    type="button"
                     @click="enhancedCatActivities()"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-8 px-16 m-2"
                 >

@@ -1,6 +1,7 @@
 <template>
     <mapnav-button
         :onClickFunction="onClick"
+        type="button"
         :tooltip="$t('mapnav.fullscreen')"
     >
         <svg

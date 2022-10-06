@@ -1,5 +1,6 @@
 <template>
     <mapnav-button
+        type="button"
         :onClickFunction="togglePanel"
         :tooltip="$t('basemap.title')"
     >

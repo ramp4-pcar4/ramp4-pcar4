@@ -26,12 +26,13 @@
                 <option value="" disabled hidden>
                     {{ $t('geosearch.filters.type') }}
                 </option>
-                <option v-for="type in types" v-bind:key="type.code">
+                <option v-for="type in types" :key="type.code">
                     {{ type.name }}
                 </option>
             </select>
         </div>
         <button
+            type="button"
             class="inline-block flex text-gray-400 w-1/8 hover:text-black float-right disabled:cursor-default disabled:text-gray-400"
             :disabled="!queryParams.type && !queryParams.province"
             v-on:click="clearFilters"

@@ -1,5 +1,9 @@
 <template>
-    <mapnav-button :onClickFunction="onClick" :tooltip="$t('help.title')">
+    <mapnav-button
+        :onClickFunction="onClick"
+        type="button"
+        :tooltip="$t('help.title')"
+    >
         <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"

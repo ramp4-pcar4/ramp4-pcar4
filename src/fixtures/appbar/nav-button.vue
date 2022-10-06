@@ -1,5 +1,6 @@
 <template>
     <dropdown-menu
+        type="button"
         class="absolute inset-x-0 bottom-0 h-48 w-full text-center focus:outline-none"
         v-focus-item
         position="right-end"

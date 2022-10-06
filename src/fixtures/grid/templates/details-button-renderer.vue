@@ -1,5 +1,6 @@
 <template>
     <button
+        type="button"
         class="flex items-center justify-center w-46 h-44"
         :content="$t('grid.cells.details')"
         v-tippy="{ placement: 'top' }"

@@ -1,6 +1,7 @@
 <template>
     <appbar-button
         v-if="panelButton"
+        type="button"
         :onClickFunction="onClickFunction"
         :tooltip="$t(panelButton.tooltip)"
         :id="panelId"

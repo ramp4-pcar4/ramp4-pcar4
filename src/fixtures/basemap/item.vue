@@ -1,6 +1,7 @@
 <template>
     <div class="mb-10">
         <button
+            type="button"
             class="basemap-item-button bg-gray-300"
             :aria-label="$t('basemap.select')"
             @click="selectBasemap(basemap)"
