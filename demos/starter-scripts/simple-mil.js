@@ -264,7 +264,22 @@ let config = {
                     id: 'EcoGeo',
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/',
-                    sublayers: [{ index: 6 }, { index: 8 }]
+                    sublayers: [
+                        {
+                            index: 6,
+                            extent: {
+                                xmin: 11000000,
+                                xmax: 19000000,
+                                ymin: -6000000,
+                                ymax: -850000,
+                                spatialReference: {
+                                    wkid: 102100,
+                                    latestWkid: 3857
+                                }
+                            }
+                        },
+                        { index: 8 }
+                    ]
                 }
             ],
             fixtures: {

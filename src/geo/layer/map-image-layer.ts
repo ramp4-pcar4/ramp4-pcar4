@@ -161,10 +161,9 @@ export class MapImageLayer extends AttribLayer {
         this.isDynamic =
             this.esriLayer.capabilities.exportMap.supportsDynamicLayers;
 
-        this.extent = Extent.fromESRI(
-            this.esriLayer.fullExtent,
-            this.id + '_extent'
-        );
+        this.extent =
+            this.extent ??
+            Extent.fromESRI(this.esriLayer.fullExtent, this.id + '_extent');
 
         const findSublayer = (targetIndex: number): __esri.Sublayer => {
             const finder = this.esriLayer?.allSublayers.find(s => {
@@ -219,6 +218,7 @@ export class MapImageLayer extends AttribLayer {
                 if (!this._sublayers[sid]) {
                     this._sublayers[sid] = new MapImageSublayer(
                         {
+                            id: `${this.id}-${sid}`,
                             // TODO: Revisit once issue #961 is implemented.
                             // See https://github.com/ramp4-pcar4/ramp4-pcar4/pull/1045#pullrequestreview-977116071
                             layerType: LayerType.SUBLAYER,
@@ -230,6 +230,7 @@ export class MapImageLayer extends AttribLayer {
                                 hovertips: this.hovertips,
                                 identify: this.identify
                             },
+                            extent: subConfigs[sid]?.extent,
                             controls: subConfigs[sid]?.controls,
                             disabledControls: subConfigs[sid]?.disabledControls,
                             initialFilteredQuery:
