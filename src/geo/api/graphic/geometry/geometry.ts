@@ -351,8 +351,28 @@ export class GeometryAPI {
         }
     }
 
-    // everything below is worker functions for the main hawggies above.
-    // they can be used by outside callers, but in most cases, use the standard things ^
+    // converts a geojson geometry type to an esri geometry type that can support it
+    geoJsonGeomTypeToEsriGeomType(
+        geoJsonGeomType: GeoJsonGeomType
+    ): 'point' | 'multipoint' | 'polyline' | 'polygon' {
+        switch (geoJsonGeomType) {
+            case GeoJsonGeomType.POINT:
+                return 'point';
+            case GeoJsonGeomType.LINESTRING:
+            case GeoJsonGeomType.MULTILINESTRING:
+                return 'polyline';
+            case GeoJsonGeomType.POLYGON:
+            case GeoJsonGeomType.MULTIPOLYGON:
+                return 'polygon';
+            case GeoJsonGeomType.MULTIPOINT:
+                return 'multipoint';
+
+            default:
+                throw new Error(
+                    `Encountered unhandled geometry type ${geoJsonGeomType}`
+                );
+        }
+    }
 
     /**
      * Check to see if text provided is a valid image / data URL based on extension type or format.
