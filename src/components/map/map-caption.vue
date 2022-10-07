@@ -64,6 +64,7 @@
             </div>
 
             <button
+                type="button"
                 v-if="!scale.disabled"
                 class="flex-shrink-0 mx-2 sm:mx-10 px-4 pointer-events-auto cursor-pointer border-none"
                 @click="onScaleClick"

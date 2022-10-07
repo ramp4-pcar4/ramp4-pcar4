@@ -39,6 +39,7 @@
                     >
                         <!-- dropdown toggle  -->
                         <button
+                            type="button"
                             v-if="element.supportsSublayers"
                             @click="toggleExpand(element)"
                             class="text-gray-500 hover:text-black p-5"

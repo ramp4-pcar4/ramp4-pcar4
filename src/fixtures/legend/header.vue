@@ -2,6 +2,7 @@
     <div class="relative legend-header flex">
         <!-- open import wizard -->
         <button
+            type="button"
             @click="toggleWizard"
             class="relative mr-auto text-gray-500 hover:text-black mb-3"
             v-show="getWizardExists() && isControlAvailable('wizard')"
@@ -14,6 +15,7 @@
         </button>
         <!-- open layer reorder -->
         <button
+            type="button"
             @click="toggleLayerReorder"
             class="relative mr-auto text-gray-500 hover:text-black p-8 mb-3"
             v-show="

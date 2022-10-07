@@ -34,6 +34,7 @@
 
                         <!-- result list -->
                         <button
+                            type="button"
                             class="w-full flex px-16 py-10 text-md hover:bg-gray-200 cursor-pointer"
                             v-for="(item, idx) in result.items"
                             :key="idx"

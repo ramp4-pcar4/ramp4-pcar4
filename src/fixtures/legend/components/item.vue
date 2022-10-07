@@ -116,6 +116,7 @@
                     @mouseover.stop
                 >
                     <button
+                        type="button"
                         @click.stop="toggleSymbology"
                         :class="[
                             controlAvailable('symbology')
@@ -226,6 +227,7 @@
                     v-if="legendItem.type === LegendType.Error"
                 >
                     <button
+                        type="button"
                         class="text-gray-500 hover:text-black dropdown-button"
                         :class="{
                             disabled: !controlAvailable(`reload`)

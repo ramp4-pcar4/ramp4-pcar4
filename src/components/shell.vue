@@ -7,6 +7,7 @@
             <div class="sr-only screen-reader-alert"></div>
             <div class="absolute top-8 w-full flex justify-center">
                 <button
+                    type="button"
                     class="bg-white opacity-0 focus:opacity-100 z-50 shadow-md px-10"
                     @click="openKeyboardInstructions"
                 >

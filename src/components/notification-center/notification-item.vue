@@ -34,6 +34,7 @@
                 </svg>
             </div>
             <button
+                type="button"
                 @click.stop="removeNotification(notification)"
                 class="mx-4 p-4"
                 :content="$t('notifications.controls.dismiss')"
