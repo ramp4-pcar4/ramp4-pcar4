@@ -136,7 +136,11 @@ export class LayerAPI extends APIScope {
           }
         | undefined {
         // fetch the layer first since given layerId can be layer id or uid
-        const layer: LayerInstance | undefined = this.getLayer(layerId);
+        const layer: LayerInstance | undefined =
+            this.getLayer(layerId) ??
+            this.allErrorLayers().find(
+                layer => layer.id === layerId || layer.uid === layerId
+            );
         if (!layer) {
             return;
         }

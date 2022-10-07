@@ -337,10 +337,18 @@ export class MapImageLayer extends AttribLayer {
                     // apply any updates that were in the configuration snippets
                     const subC = subConfigs[miSL.layerIdx];
                     if (subC) {
+                        // Sublayer visibility is normally checked (and set) in the following order:
+                        // sublayer config -> server -> parent config -> true.
+                        // First value in the order that is defined is taken as the sublayer's visibility.
+                        // However, if parent vis is set to false on config, we prioritize parent config over server vis.
+                        // The order in that case is sublayer config -> parent config -> server -> true.
                         miSL.visibility =
                             subC.state?.visibility ??
-                            miSL._serverVisibility ??
-                            this.origState.visibility ??
+                            (this.origState.visibility
+                                ? miSL._serverVisibility ??
+                                  this.origState.visibility
+                                : this.origState.visibility ??
+                                  miSL._serverVisibility) ??
                             true;
                         miSL.opacity =
                             subC.state?.opacity ?? this.origState.opacity ?? 1;
