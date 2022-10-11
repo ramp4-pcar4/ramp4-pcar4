@@ -1,5 +1,5 @@
 import { GlobalEvents, LayerInstance, type InstanceAPI } from '@/api';
-import { LayerControl, LayerState, LayerType } from '@/geo/api';
+import { DrawState, LayerControl, LayerType } from '@/geo/api';
 import type { LegendSymbology } from '@/geo/api';
 import { LegendItem, LegendType } from './legend-item';
 
@@ -12,12 +12,15 @@ export class LayerItem extends LegendItem {
     _layerRedrawing: boolean = false;
     _layerInitVis: boolean | undefined;
     _loadCancelled: boolean = false;
+    _treeGrown: boolean = false;
 
     _coverIcon?: string;
     _description?: string;
     _symbologyExpanded: boolean;
-    _layerControls: Array<LayerControl> | undefined;
-    _layerDisabledControls: Array<LayerControl> | undefined;
+    _origLayerControls: Array<LayerControl> | undefined;
+    _origLayerDisabledControls: Array<LayerControl> | undefined;
+    _layerControls: Array<LayerControl>;
+    _layerDisabledControls: Array<LayerControl>;
 
     handlers: Array<string> = [];
 
@@ -34,8 +37,10 @@ export class LayerItem extends LegendItem {
         this._type = LegendType.Placeholder;
         this._layerId = config.layerId;
         this._layerIdx = config.sublayerIndex;
-        this._layerControls = config.layerControls;
-        this._layerDisabledControls = config.disabledLayerControls;
+        this._origLayerControls = config.layerControls;
+        this._origLayerDisabledControls = config.disabledLayerControls;
+        this._layerControls = config.layerControls ?? [];
+        this._layerDisabledControls = config.disabledLayerControls ?? [];
         this._layerRedrawing = false;
         this._symbologyExpanded = config.symbologyExpanded || false;
         if (config.coverIcon) this._coverIcon = config.coverIcon;
@@ -105,6 +110,30 @@ export class LayerItem extends LegendItem {
     /** Returns true if symbology stack is expanded. */
     get symbologyExpanded(): boolean {
         return this._symbologyExpanded;
+    }
+
+    get treeGrown(): boolean {
+        return this._treeGrown;
+    }
+
+    set treeGrown(value: boolean) {
+        this._treeGrown = value;
+    }
+
+    get loadCancelled() {
+        return this._loadCancelled;
+    }
+
+    set loadCancelled(value: boolean) {
+        this._loadCancelled = value;
+    }
+
+    get origLayerControls() {
+        return this._origLayerControls;
+    }
+
+    get origDisabledLayerControls() {
+        return this._origLayerDisabledControls;
     }
 
     /**
@@ -253,30 +282,38 @@ export class LayerItem extends LegendItem {
                             }
                         )
                     );
+
+                    this.handlers.push(
+                        this.$iApi.event.on(
+                            GlobalEvents.LAYER_DRAWSTATECHANGE,
+                            (payload: {
+                                layer: LayerInstance;
+                                state: string;
+                            }) => {
+                                if (this.layer.uid === payload.layer.uid) {
+                                    if (
+                                        payload.layer.drawState ===
+                                        DrawState.REFRESH
+                                    ) {
+                                        // if layer is redrawing, turn on the indicator right away
+                                        this.layerRedrawing = true;
+                                    } else {
+                                        // wait for a short duration and check draw state again
+                                        setTimeout(() => {
+                                            // check draw state again
+                                            this.layerRedrawing =
+                                                payload.layer.drawState ===
+                                                DrawState.REFRESH;
+                                        }, 500);
+                                    }
+                                }
+                            }
+                        )
+                    );
                 })
                 .catch(() => {
                     this.error();
                 });
-            // watch for when layer state turns to ERROR
-            /* this.handlers.push(
-                this.$iApi.event.on(
-                    GlobalEvents.LAYER_LAYERSTATECHANGE,
-                    (payload: { layer: LayerInstance; state: string }) => {
-                        // sync legend item state with layer state if errors
-                        if (
-                            payload.state === LayerState.ERROR &&
-                            payload.layer.uid === this.layer.uid
-                        ) {
-                            this.error();
-                        } else if (
-                            payload.state === LayerState.LOADED &&
-                            payload.layer.uid === this.layer.uid
-                        ) {
-                            this.load(payload.layer);
-                        }
-                    }
-                )
-            ); */
         }
     }
 
@@ -303,8 +340,9 @@ export class LayerItem extends LegendItem {
         const cont =
             this.$iApi.geo.layer.getLayerControls(this.layerId) ??
             this.$iApi.geo.layer.getLayerControls(this.parentLayerId ?? '');
-        if (!this._layerControls) this._layerControls = cont?.controls ?? [];
-        if (!this._layerDisabledControls)
+        if (!this._origLayerControls)
+            this._layerControls = cont?.controls ?? [];
+        if (!this._origLayerDisabledControls)
             this._layerDisabledControls = cont?.disabledControls ?? [];
     }
 }

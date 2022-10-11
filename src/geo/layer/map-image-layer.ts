@@ -142,18 +142,6 @@ export class MapImageLayer extends AttribLayer {
 
         this.layerTree.name = this.name;
 
-        // a trick. this promise wont resolve until all the loading things have finished.
-        // then we revert the layer visibility back to what the config wanted.
-        // avoids multiple re-draws as child visibilities get set up.
-        // so really the inner statement runs after everything else in this
-        // function is done.
-        this.loadPromise().then(() => {
-            if (this.origRampConfig) {
-                // defaults to true
-                this.visibility = this.origState.visibility ?? true;
-            }
-        });
-
         this.isDynamic =
             this.esriLayer.capabilities.exportMap.supportsDynamicLayers;
 
@@ -202,7 +190,9 @@ export class MapImageLayer extends AttribLayer {
                 // group sublayer. set up our tree for the client, then crawl children.
                 const gName = (subC ? subC.name : '') || subLayer.title || ''; // config if exists, else server, else none
                 const treeGroup = new TreeNode(sid, '', gName, false); // TODO leaving uid blank. there is no object to tie back to. ensure not a problem for vue bindings
-                parentTreeNode.children.push(treeGroup);
+                if (!parentTreeNode.findChildByIdx(sid)) {
+                    parentTreeNode.children.push(treeGroup); // prevent duplication of child on reload
+                }
 
                 // process the kids in the group.
                 subLayer.sublayers.forEach((subSubLayer: __esri.Sublayer) => {
@@ -389,6 +379,11 @@ export class MapImageLayer extends AttribLayer {
                 s.opacity = 0; // might be overkill
             }
         });
+
+        if (this.origRampConfig) {
+            // defaults to true
+            this.visibility = this.origState.visibility ?? true;
+        }
 
         return loadPromises;
     }
