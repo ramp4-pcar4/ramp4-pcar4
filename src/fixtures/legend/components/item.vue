@@ -421,7 +421,7 @@ import type {
     RampLayerConfig,
     RampLayerMapImageSublayerConfig
 } from '@/geo/api';
-import { DrawState, LayerControl } from '@/geo/api';
+import { LayerControl } from '@/geo/api';
 import { LayerStore } from '@/store/modules/layer';
 import to from 'await-to-js';
 import { marked } from 'marked';
@@ -455,7 +455,6 @@ export default defineComponent({
             layerConfigs: this.get(LayerStore.layerConfigs),
             LegendType: LegendType,
             symbologyStack: [] as Array<LegendSymbology>,
-            handlers: [] as Array<string>,
             LayerItem: LayerItem,
             InfoType: InfoType,
             hovered: false
@@ -601,24 +600,6 @@ export default defineComponent({
         reloadIfReady() {
             // reload legend item state back to placeholder state
             this.legendItem.reload();
-            // if a sublayer was reloaded, put all sublayer items in reloading state.
-            const layerConfig: RampLayerConfig = this.layerConfigs.find(
-                (lc: RampLayerConfig) => lc.id === this.legendItem.parentLayerId
-            );
-            if (layerConfig) {
-                layerConfig.sublayers?.forEach(sc => {
-                    const layerItemToCancel = this.$iApi.fixture
-                        .get<LegendAPI>('legend')
-                        ?.getLayerItem(
-                            `${layerConfig.id}-${
-                                (sc as RampLayerMapImageSublayerConfig).index
-                            }`
-                        );
-                    if (layerItemToCancel) {
-                        layerItemToCancel.reload();
-                    }
-                });
-            }
             if ((this.legendItem as unknown as LayerItem)._loadCancelled) {
                 const readyWatcher = setInterval(() => {
                     if ((this.legendItem as unknown as LayerItem).layer) {
@@ -761,26 +742,44 @@ export default defineComponent({
                 // layer in loading state, cancel layer
                 this.legendItem.error();
                 (this.legendItem as unknown as LayerItem)._loadCancelled = true;
-                // if a sublayer was cancelled, cancel all other sublayers.
-                const layerConfig: RampLayerConfig = this.layerConfigs.find(
-                    (lc: RampLayerConfig) => lc.id === layerItem.parentLayerId
-                );
-                if (layerConfig) {
-                    layerConfig.sublayers?.forEach(sc => {
+                // if a sublayer or parent layer was cancelled, cancel the parent layer and all other sublayers.
+                // need to keep polling for the parent layer since some sublayers may not be in the config (stuff that came from a group)
+                const cancelWatcher = setInterval(() => {
+                    const parentLayer =
+                        this.$iApi.geo.layer
+                            .allLayers()
+                            .find(
+                                l =>
+                                    l.id === layerItem.parentLayerId ||
+                                    l.id === layerItem.layerId
+                            ) ??
+                        this.$iApi.geo.layer
+                            .allErrorLayers()
+                            .find(
+                                l =>
+                                    l.id === layerItem.parentLayerId ||
+                                    l.id === layerItem.layerId
+                            );
+                    if (parentLayer) {
+                        clearInterval(cancelWatcher);
                         const layerItemToCancel = this.$iApi.fixture
                             .get<LegendAPI>('legend')
-                            ?.getLayerItem(
-                                `${layerConfig.id}-${
-                                    (sc as RampLayerMapImageSublayerConfig)
-                                        .index
-                                }`
-                            );
+                            ?.getLayerItem(parentLayer);
                         if (layerItemToCancel) {
                             layerItemToCancel.error();
                             layerItemToCancel._loadCancelled = true;
                         }
-                    });
-                }
+                        parentLayer.sublayers?.forEach(sl => {
+                            const sublayerItemToCancel = this.$iApi.fixture
+                                .get<LegendAPI>('legend')
+                                ?.getLayerItem(sl);
+                            if (sublayerItemToCancel) {
+                                sublayerItemToCancel.error();
+                                sublayerItemToCancel._loadCancelled = true;
+                            }
+                        });
+                    }
+                }, 250);
             }
         },
         /**
@@ -807,34 +806,6 @@ export default defineComponent({
                     return;
                 }
 
-                // watch for the layer's drawstate
-                this.handlers.push(
-                    this.$iApi.event.on(
-                        GlobalEvents.LAYER_DRAWSTATECHANGE,
-                        (payload: { layer: LayerInstance; state: string }) => {
-                            if (
-                                this.legendItem.layer.uid === payload.layer.uid
-                            ) {
-                                if (
-                                    payload.layer.drawState ===
-                                    DrawState.REFRESH
-                                ) {
-                                    // if layer is redrawing, turn on the indicator right away
-                                    this.legendItem.layerRedrawing = true;
-                                } else {
-                                    // wait for a short duration and check draw state again
-                                    setTimeout(() => {
-                                        // check draw state again
-                                        this.legendItem.layerRedrawing =
-                                            payload.layer.drawState ===
-                                            DrawState.REFRESH;
-                                    }, 500);
-                                }
-                            }
-                        }
-                    )
-                );
-
                 Promise.all(
                     toRaw(this.legendItem!.layer!.legend).map(
                         (item: LegendSymbology) => item.drawPromise
@@ -844,9 +815,6 @@ export default defineComponent({
                 });
             });
         }
-    },
-    beforeUnmount() {
-        this.handlers.forEach(handler => this.$iApi.event.off(handler));
     }
 });
 </script>

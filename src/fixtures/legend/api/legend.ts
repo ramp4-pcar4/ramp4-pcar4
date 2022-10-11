@@ -1,5 +1,5 @@
 import { FixtureInstance, LayerInstance } from '@/api';
-import type { TreeNode } from '@/geo/api';
+import { LayerType, type TreeNode } from '@/geo/api';
 import type { LegendConfig } from '../store';
 import { LegendStore } from '../store';
 import { LayerItem } from '../store/layer-item';
@@ -140,90 +140,22 @@ export class LegendAPI extends FixtureInstance {
             layer
         );
 
-        // add the layer item to store
-        // will be in a placeholder state until the layer is loaded
-        this._insertItem(item as unknown as LegendItem, parent);
-        // Vue reactivity stuff being annoying, maybe the store stores a copy of the object rather than a reference? Not sure.
-        // Re fetching the item from the store and then modifying seems to fix things.
-        const updatedItem = this.getLayerItem(layer);
-        updatedItem?.load(layer);
-
         if (layer.supportsSublayers) {
             // if layer supports sublayers, then we need to parse the
             // layer tree after loading and generate the children
 
             await layer.loadPromise();
 
-            // TODO: could modify LayerInstance's getSublayer to do what this helper is doing.
-            //       current getSublayer only checks the sublayer list one level down, but in
-            //       a more complex layer tree the requested sublayer can be much more nested
-
-            // local function to search a sublayer instance in the layer's tree with the given layer uid
-            // we need this local function because it is possible that this layer has not been added to
-            // the map yet, hence using geo.layer.getLayer will not work
-            const getLayer = (uid: string): LayerInstance | undefined => {
-                const queue = [layer];
-                while (queue.length > 0) {
-                    const l = queue.shift();
-                    if (l && l.uid === uid) {
-                        return l;
-                    }
-                    if (l) {
-                        queue.push(...l.sublayers);
-                    }
-                }
-            };
-
-            // map out the layer's layer tree children into a legend configs and call addItem on each config
-            const treeWalker = (node: TreeNode): any => {
-                // the tree node does not have a reference to the layer, so we need to fetch sublayers manually
-                // will be undefined for non-root + non-logical layers (a.k.a MIL sub groups)
-                const currLayer = getLayer(node.uid)!;
-
-                // current item legend config snippet
-                const currItem: any = {};
-
-                if (node.isLayerRoot && !node.isLogicalLayer) {
-                    // is root, but not logical layer (MIL)
-                    currItem.layer = currLayer;
-                    currItem.name = currLayer.name;
-                    // TODO: since .children is used here, only legend groups will be created here when MIL is added
-                    //       can enhance later to use .exclusiveVisibility if user wants to add MIL as visibility set from wizard
-                    currItem.children = node.children.map(childNode =>
-                        treeWalker(childNode)
-                    );
-                } else if (!node.isLayerRoot && !node.isLogicalLayer) {
-                    // is not root, and is not logical layer (MIL sub groups)
-                    // coud merge above if-branch with this one, but will keep them separate for clarity
-                    currItem.name = node.name;
-                    // TODO: since .children is used here, only legend groups will be created here when MIL is added
-                    //       can enhance later to use .exclusiveVisibility if user wants to add MIL as visibility set from wizard
-                    currItem.children = node.children.map(childNode =>
-                        treeWalker(childNode)
-                    );
-                } else if (node.isLogicalLayer) {
-                    // is logical layer (regular layers and sublayers)
-                    currItem.layer = currLayer;
-                    currItem.name = currLayer.name;
-                    currItem.layerId = currLayer.id;
-                    currItem.sublayerIndex =
-                        layer.layerIdx === -1 ? undefined : layer.layerIdx;
-                }
-
-                return currItem;
-            };
-
             // for each child node -> parse & create item config -> create child legend item and append to this item
             layer
                 .getLayerTree()
-                .children.map(childNode => treeWalker(childNode))
-                .map(childConf =>
-                    this.addItem(
-                        childConf,
-                        updatedItem as unknown as LegendItem
-                    )
-                );
+                .children.map(childNode => this._treeWalker(layer, childNode))
+                .map(childConf => this.addItem(childConf, parent));
         }
+
+        // add the layer item to store
+        // will be in a placeholder state until the layer is loaded
+        this._insertItem(item as unknown as LegendItem, parent);
         return item;
     }
 
@@ -411,11 +343,75 @@ export class LegendAPI extends FixtureInstance {
         layer
             .loadPromise()
             .then(() => {
-                updateLayerItem(layer, false); // update the root layer item first
-                if (layer.supportsSublayers) {
-                    layer.sublayers.forEach((sublayer: LayerInstance) => {
-                        updateLayerItem(sublayer, false);
-                    });
+                let layerItem: LayerItem | undefined = this.getLayerItem(layer);
+                // if load was cancelled, just update the parent and do not grow out tree
+                if (layerItem?.loadCancelled) {
+                    updateLayerItem(layer, false);
+                    return;
+                }
+                if (layer.layerType === LayerType.MAPIMAGE) {
+                    // For MIL, need to do tree growing magic
+                    const treeParser = (node: TreeNode) => {
+                        if (node.isLayerRoot && !node.isLogicalLayer) {
+                            // is root, but not logical layer (MIL)
+                            // grow out the full tree if it has not already been grown
+                            layerItem = this.getLayerItem(layer);
+                            updateLayerItem(layer, false);
+                            if (layerItem && !layerItem.treeGrown) {
+                                node.children
+                                    .map(childNode =>
+                                        this._treeWalker(layer, childNode)
+                                    )
+                                    .map(childConf =>
+                                        this.addItem(
+                                            childConf,
+                                            layerItem as unknown as LegendItem
+                                        )
+                                    );
+                                layerItem.treeGrown = true;
+                            }
+                            // parse child nodes
+                            node.children.forEach(childNode =>
+                                treeParser(childNode)
+                            );
+                        } else if (!node.isLayerRoot && !node.isLogicalLayer) {
+                            // is not root, and is not logical layer (MIL sub groups)
+                            // we remove the current layer item for the group, and instead turn it into a group
+                            layerItem = this.getLayerItem(
+                                `${layer.id}-${node.layerIdx}`
+                            );
+                            if (layerItem) {
+                                const layerItemConf = layerItem.getConfig();
+                                delete layerItemConf.layerId;
+                                delete layerItemConf.sublayerIndex;
+                                delete layerItemConf.children;
+                                const replacementConf = {
+                                    ...this._treeWalker(layer, node),
+                                    ...layerItemConf
+                                };
+                                const replacementItem: LegendItem =
+                                    this.createItem(replacementConf);
+                                this._replaceItem(
+                                    layerItem as unknown as LegendItem,
+                                    replacementItem
+                                );
+                            }
+                            // parse child nodes
+                            node.children.forEach(childNode =>
+                                treeParser(childNode)
+                            );
+                        } else if (node.isLogicalLayer) {
+                            // is logical layer (regular layers and sublayers)
+                            updateLayerItem(
+                                this._treeWalker(layer, node).layer,
+                                false
+                            );
+                        }
+                    };
+                    treeParser(layer.getLayerTree());
+                } else {
+                    // For all other layer types, just update the layer item
+                    updateLayerItem(layer, false);
                 }
             })
             .catch(() => {
@@ -642,5 +638,76 @@ export class LegendAPI extends FixtureInstance {
         this.$iApi.$vApp.$store.dispatch(LegendStore.removeItem, item);
 
         return true;
+    }
+
+    private _replaceItem(oldItem: LegendItem, newItem: LegendItem) {
+        this.$iApi.$vApp.$store.dispatch(LegendStore.replaceItem, {
+            oldItem,
+            newItem
+        });
+    }
+
+    // map out layer's layer tree children into a legend configs
+    private _treeWalker(
+        layer: LayerInstance,
+        node: TreeNode,
+        extraConfig?: object
+    ): any {
+        // the tree node does not have a reference to the layer, so we need to fetch sublayers manually
+        // will be undefined for non-root + non-logical layers (a.k.a MIL sub groups)
+
+        // TODO: could modify LayerInstance's getSublayer to do what this helper is doing.
+        //       current getSublayer only checks the sublayer list one level down, but in
+        //       a more complex layer tree the requested sublayer can be much more nested
+
+        // local function to search a sublayer instance in the layer's tree with the given layer uid
+        // we need this local function because it is possible that this layer has not been added to
+        // the map yet, hence using geo.layer.getLayer will not work
+        const getLayer = (uid: string): LayerInstance | undefined => {
+            const queue = [layer];
+            while (queue.length > 0) {
+                const l = queue.shift();
+                if (l && l.uid === uid) {
+                    return l;
+                }
+                if (l) {
+                    queue.push(...l.sublayers);
+                }
+            }
+        };
+
+        const currLayer = getLayer(node.uid)!;
+
+        // current item legend config snippet
+        const currItem: any = {};
+
+        if (node.isLayerRoot && !node.isLogicalLayer) {
+            // is root, but not logical layer (MIL)
+            currItem.layer = currLayer;
+            currItem.name = currLayer.name;
+            // TODO: since .children is used here, only legend groups will be created here when MIL is added
+            //       can enhance later to use .exclusiveVisibility if user wants to add MIL as visibility set from wizard
+            currItem.children = node.children.map(childNode =>
+                this._treeWalker(layer, childNode, extraConfig)
+            );
+        } else if (!node.isLayerRoot && !node.isLogicalLayer) {
+            // is not root, and is not logical layer (MIL sub groups)
+            // coud merge above if-branch with this one, but will keep them separate for clarity
+            currItem.name = node.name;
+            // TODO: since .children is used here, only legend groups will be created here when MIL is added
+            //       can enhance later to use .exclusiveVisibility if user wants to add MIL as visibility set from wizard
+            currItem.children = node.children.map(childNode =>
+                this._treeWalker(layer, childNode, extraConfig)
+            );
+        } else if (node.isLogicalLayer) {
+            // is logical layer (regular layers and sublayers)
+            currItem.layer = currLayer;
+            currItem.name = currLayer.name;
+            currItem.layerId = currLayer.id;
+            currItem.sublayerIndex =
+                layer.layerIdx === -1 ? undefined : layer.layerIdx;
+        }
+
+        return { ...currItem, ...extraConfig };
     }
 }
