@@ -129,7 +129,7 @@ export class LayerItem extends LegendItem {
         super.toggleVisibility(visible, updateParent);
 
         // LayerItem additionally deals with symbology and layers
-        if (this.layer) {
+        if (this.layer && this.layer.isLoaded) {
             this.layer.visibility = this.visibility;
 
             // check child symobls for visibility
@@ -241,6 +241,7 @@ export class LayerItem extends LegendItem {
     error(): void {
         this.updateLayerControls();
         super.error();
+        this.toggleVisibility(false, true, true);
     }
 
     /**

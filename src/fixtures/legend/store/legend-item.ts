@@ -272,13 +272,21 @@ export class LegendItem extends APIScope {
                 this._visibleChildren = this.children.filter(
                     item => item.visibility
                 );
-                if (this instanceof LayerItem && this.layer) {
+                if (
+                    this instanceof LayerItem &&
+                    this.layer &&
+                    this.layer.isLoaded
+                ) {
                     this.layer.visibility = true;
                 }
             } else {
                 this._visibility = false;
                 this._visibleChildren = [];
-                if (this instanceof LayerItem && this.layer) {
+                if (
+                    this instanceof LayerItem &&
+                    this.layer &&
+                    this.layer.isLoaded
+                ) {
                     this.layer.visibility = false;
                 }
             }
@@ -291,7 +299,11 @@ export class LegendItem extends APIScope {
             });
             this._lastVisible = toggledChild;
             this._visibility = true;
-            if (this instanceof LayerItem && this.layer) {
+            if (
+                this instanceof LayerItem &&
+                this.layer &&
+                this.layer.isLoaded
+            ) {
                 this.layer.visibility = true;
             }
         } else {
@@ -314,7 +326,11 @@ export class LegendItem extends APIScope {
                     this._lastVisible = onChild;
                 } else {
                     this._visibility = false;
-                    if (this instanceof LayerItem && this.layer) {
+                    if (
+                        this instanceof LayerItem &&
+                        this.layer &&
+                        this.layer.isLoaded
+                    ) {
                         this.layer.visibility = false;
                     }
                     this._lastVisible = toggledChild;
