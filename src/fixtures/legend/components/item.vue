@@ -10,8 +10,9 @@
                         ? 'non-loaded-item bg-red-200'
                         : 'non-loaded-item',
                     legendItem instanceof LayerItem ? 'p-5' : 'px-5 py-10',
-                    (isGroup && controlAvailable('expandButton')) ||
-                    (!isGroup &&
+                    (legendItem.children.length > 0 &&
+                        controlAvailable('expandButton')) ||
+                    (legendItem.children.length === 0 &&
                         legendItem instanceof LayerItem &&
                         controlAvailable('datatable') &&
                         getDatagridExists() &&
@@ -27,21 +28,22 @@
                 @click="
                     () => {
                         if (
-                            !isGroup &&
+                            legendItem.children.length === 0 &&
                             legendItem instanceof LayerItem &&
                             controlAvailable('datatable') &&
                             getDatagridExists() &&
                             legendItem.type === LegendType.Item
                         ) {
                             toggleGrid();
-                        } else if (isGroup) {
+                        } else if (legendItem.children.length > 0) {
                             toggleExpand();
                         }
                     }
                 "
                 v-focus-item="'show-truncate'"
                 :content="
-                    isGroup && controlAvailable('expandButton')
+                    legendItem.children.length > 0 &&
+                    controlAvailable('expandButton')
                         ? $t(
                               legendItem.expanded
                                   ? 'legend.group.collapse'
@@ -279,7 +281,7 @@
                         legendItem instanceof LayerItem &&
                         !legendItem.layerControlAvailable('visibility')
                     "
-                    :label="isGroup ? 'Group' : 'Layer'"
+                    :label="legendItem.children.length > 0 ? 'Group' : 'Layer'"
                 />
             </div>
             <div
@@ -302,6 +304,15 @@
         >
             <div v-if="symbologyStack.length > 0">
                 <!-- display each symbol -->
+                <p
+                    v-if="
+                        legendItem instanceof LayerItem &&
+                        legendItem.description
+                    "
+                    class="m-5"
+                >
+                    {{ legendItem.description }}
+                </p>
                 <div class="m-5" v-for="item in symbologyStack" :key="item.uid">
                     <!-- for WMS layers -->
                     <div
@@ -424,13 +435,6 @@ export default defineComponent({
          */
         isAnimationEnabled(): boolean {
             return this.$iApi.animate;
-        },
-
-        /**
-         * Get if this item is a group (has at least one child)
-         */
-        isGroup(): boolean {
-            return this.legendItem.children.length > 0;
         },
 
         /**

@@ -619,11 +619,6 @@ function legendEntryUpgrader(r2legendEntry: any) {
             `entryId property defined in legend entry ${r2legendEntry.layerId} cannot be mapped and will be skipped.`
         );
     }
-    if (r2legendEntry.description) {
-        console.warn(
-            `description property defined in legend entry ${r2legendEntry.layerId} is currently not supported.`
-        );
-    }
     if (r2legendEntry.symbologyStack) {
         console.warn(
             `symbologyStack property defined in legend entry ${r2legendEntry.layerId} is currently not supported.`

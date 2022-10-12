@@ -110,6 +110,22 @@ export class LayerItem extends LegendItem {
     }
 
     /**
+     * Returns a legend config representation of this item.
+     */
+    getConfig() {
+        const config: any = {
+            layerId: this._layerId,
+            sublayerIndex: this._layerIdx,
+            layerControls: this._layerControls,
+            disabledLayerControls: this._layerDisabledControls,
+            symbologyExpanded: this._symbologyExpanded,
+            coverIcon: this._coverIcon,
+            description: this._description
+        };
+        return { ...super.getConfig(), ...config };
+    }
+
+    /**
      * Toggle visibility state of a layer item. Needs to verify parent visibility is updated.
      * @param {boolean} visibility set legend item to visible/not visible if given, otherwise toggle
      * @param {boolean} updateParent whether or not toggleVisibility should 'bubble-up' the legend tree
