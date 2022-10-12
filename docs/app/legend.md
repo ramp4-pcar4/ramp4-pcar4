@@ -90,7 +90,7 @@ Like legend item controls, these controls can be disabled for a specific layer t
 Additionally, controls will be disabled if the layer item does not support them.
 
 #### Section Item
-A section item is a legend item that is not bound to a layer. Section items can be used to group collections of legend items, as well as display information that can take the format of title, text, image, Markdown, or custom HTML template.
+A section item is a legend item that is not bound to a layer. Section items can be used to group collections of legend items, as well as display information that can take the format of title, text, image, Markdown, or custom HTML template. If a section item does NOT contain any layer-bound children, its visibility and expand control buttons must be explicitly enabled, unlike other layer-bound legend items that have those buttons enabled by default. 
 
 ## Configuration
 > Note that in the following examples, the `layerId` represents the ID of the layer previously added to the map. [See the documentation for Layers](#) to understand how to add a layer to the map through the configuration file (TODO).
