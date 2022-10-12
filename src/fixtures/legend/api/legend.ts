@@ -83,20 +83,17 @@ export class LegendAPI extends FixtureInstance {
 
         // construct children
         if (children) {
-            children
-                .filter((childConf: any) => !childConf.hidden)
-                .forEach((childConf: any) => {
-                    // pass the layer fixture config to child items
-                    if (itemConf.layerLegendConfigs !== undefined) {
-                        childConf.layerLegendConfigs =
-                            itemConf.layerLegendConfigs;
-                    }
+            children.forEach((childConf: any) => {
+                // pass the layer fixture config to child items
+                if (itemConf.layerLegendConfigs !== undefined) {
+                    childConf.layerLegendConfigs = itemConf.layerLegendConfigs;
+                }
 
-                    // ts ignoring below because returned item is "LegendItem", but accepted type is "LayerItem | SectionItem"
-                    // which is the same thing! (╯°□°）╯︵ ┻━┻
-                    //@ts-ignore
-                    item!.children.push(this.createItem(childConf, item));
-                });
+                // ts ignoring below because returned item is "LegendItem", but accepted type is "LayerItem | SectionItem"
+                // which is the same thing! (╯°□°）╯︵ ┻━┻
+                //@ts-ignore
+                item!.children.push(this.createItem(childConf, item));
+            });
         }
 
         return item!;

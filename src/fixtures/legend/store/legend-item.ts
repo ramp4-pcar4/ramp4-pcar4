@@ -333,9 +333,12 @@ export class LegendItem extends APIScope {
      */
     getConfig(): any {
         const config: any = {
-            uid: this.uid,
-            name: this.name,
-            itemType: this.type
+            name: this._name,
+            hidden: this._hidden,
+            expanded: this._expanded,
+            exclusive: this._exclusive,
+            controls: this._controls,
+            disabledControls: this._disabledControls
         };
 
         const childConfigs: Array<any> = [];

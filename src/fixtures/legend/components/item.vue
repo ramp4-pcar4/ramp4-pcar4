@@ -163,10 +163,7 @@
 
                 <!-- dropdown icon -->
                 <div
-                    v-if="
-                        legendItem.children.length > 0 &&
-                        controlAvailable('expandButton')
-                    "
+                    v-if="isGroup && controlAvailable('expandButton')"
                     class="expand-toggle mr-5 pointer-events-none"
                     :class="{ 'rotate-180': legendItem.expanded }"
                 >
@@ -302,6 +299,15 @@
         >
             <div v-if="symbologyStack.length > 0">
                 <!-- display each symbol -->
+                <p
+                    v-if="
+                        legendItem instanceof LayerItem &&
+                        legendItem.description
+                    "
+                    class="m-5"
+                >
+                    {{ legendItem.description }}
+                </p>
                 <div class="m-5" v-for="item in symbologyStack" :key="item.uid">
                     <!-- for WMS layers -->
                     <div
