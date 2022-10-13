@@ -448,6 +448,20 @@ export default defineComponent({
         return false;
     },
 
+    mounted() {
+        // runs when the wizard panel was closed on the 'configure' step and reopened
+        if (this.step === WizardStep.CONFIGURE) {
+            // generates a new colour for the colour picker
+            if (this.layerInfo.configOptions.includes('colour')) {
+                this.generateColour();
+            }
+            // re-enables the confirmation button if the layer name is not empty and sublayer selection is not required
+            this.finishStep =
+                !this.layerInfo.configOptions.includes(`sublayers`) &&
+                this.layerInfo.config.name;
+        }
+    },
+
     methods: {
         // reads uploaded file
         async uploadFile(file: File, progress?: Function) {
@@ -511,21 +525,7 @@ export default defineComponent({
                 return;
             }
 
-            // Generates a random 6 character hex string to use a random colour. The 16777215 is (I think) the number of possible colours.
-            this.colour =
-                '#' +
-                Math.floor(Math.random() * 16777215)
-                    .toString(16)
-                    .padStart(6, '0');
-            // generate unique ID for colour picker to prevent multi-ramp collisions
-            do {
-                this.colourPickerId = Math.random()
-                    .toString(36)
-                    .substring(2, 9);
-            } while (
-                document.getElementById(this.colourPickerId + '-hue-slider') !==
-                null
-            );
+            this.generateColour();
 
             this.goToStep(WizardStep.CONFIGURE);
 
@@ -627,6 +627,24 @@ export default defineComponent({
             sublayer.length > 0 && this.layerInfo.config.name
                 ? (this.finishStep = true)
                 : (this.finishStep = false);
+        },
+
+        generateColour() {
+            // Generates a random 6 character hex string to use a random colour. The 16777215 is (I think) the number of possible colours.
+            this.colour =
+                '#' +
+                Math.floor(Math.random() * 16777215)
+                    .toString(16)
+                    .padStart(6, '0');
+            // generate unique ID for colour picker to prevent multi-ramp collisions
+            do {
+                this.colourPickerId = Math.random()
+                    .toString(36)
+                    .substring(2, 9);
+            } while (
+                document.getElementById(this.colourPickerId + '-hue-slider') !==
+                null
+            );
         },
 
         updateColour(eventData: any) {
