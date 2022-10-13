@@ -176,6 +176,7 @@ The following is an example of a layer item in the configuration file:
 A section item is an instance of a legend item. A section item does not correspond with any layer, but is used to group and label other legend items. It inherits the properties of a legend item, as well as:
 - `infoType`: the type of info displayed on the item, which can be title, text, an image, markdown, or HTML.
 - `content`: the content to be displayed on the item
+Note that when a section item has a defined `content` property, its visibility and expand control buttons must be explicitly enabled, unlike other legend items that have those buttons enabled by default. 
 
 The following is an example of a section item containing two layer items in the configuration file:
 ```text
