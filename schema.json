@@ -343,7 +343,7 @@
                 "description": {
                     "type": "string",
                     "default": "",
-                    "description": "Optional description displayed above the symbology stack on mouse hover."
+                    "description": "Optional description displayed above the symbology stack when it is expanded."
                 },
                 "symbologyStack": {
                     "$ref": "#/$defs/symbologyStack"

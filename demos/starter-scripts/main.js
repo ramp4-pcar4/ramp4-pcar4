@@ -414,7 +414,9 @@ let config = {
                                     {
                                         layerId: 'ReleasesDisposals',
                                         name: 'Releases and Disposals by Mining Facilities',
-                                        disabledLayerControls: ['boundaryZoom']
+                                        disabledLayerControls: ['boundaryZoom'],
+                                        description:
+                                            'Symbology description for releases and disposals by mining facilities'
                                     }
                                 ]
                             },

@@ -54,4 +54,15 @@ export class SectionItem extends LegendItem {
     set content(content: string) {
         this._content = content;
     }
+
+    /**
+     * Returns a legend config representation of this item.
+     */
+    getConfig() {
+        const config: any = {
+            infoType: this._infoType,
+            content: this._content
+        };
+        return { ...super.getConfig(), ...config };
+    }
 }
