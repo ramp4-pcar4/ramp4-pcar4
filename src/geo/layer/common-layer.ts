@@ -141,9 +141,9 @@ export class CommonLayer extends LayerInstance {
 
     updateDrawState(newState: DrawState): void {
         this.drawState = newState;
-        if (newState !== DrawState.UP_TO_DATE) {
+        if (newState === DrawState.REFRESH) {
             this.startTimer(TimerType.DRAW);
-        } else {
+        } else if (newState === DrawState.UP_TO_DATE) {
             this.stopTimer(TimerType.DRAW);
         }
         this.$iApi.event.emit(GlobalEvents.LAYER_DRAWSTATECHANGE, {
@@ -156,6 +156,7 @@ export class CommonLayer extends LayerInstance {
     async initiate(): Promise<void> {
         this.updateInitiationState(InitiationState.INITIATING);
         this.startTimer(TimerType.LOAD);
+        this.startTimer(TimerType.DRAW);
         const [initiateErr] = await to(this.onInitiate()); // Need this because some layers don't do error handling things
         this.stopTimer(TimerType.LOAD);
         if (initiateErr) {

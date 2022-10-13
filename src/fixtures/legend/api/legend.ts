@@ -146,6 +146,10 @@ export class LegendAPI extends FixtureInstance {
         // add the layer item to store
         // will be in a placeholder state until the layer is loaded
         this._insertItem(item as unknown as LegendItem, parent);
+        // Vue reactivity stuff being annoying, maybe the store stores a copy of the object rather than a reference? Not sure.
+        // Re fetching the item from the store and then modifying seems to fix things.
+        const updatedItem = this.getLayerItem(layer);
+        updatedItem?.load(layer);
 
         if (layer.supportsSublayers) {
             // if layer supports sublayers, then we need to parse the
@@ -217,10 +221,12 @@ export class LegendAPI extends FixtureInstance {
                 .getLayerTree()
                 .children.map(childNode => treeWalker(childNode))
                 .map(childConf =>
-                    this.addItem(childConf, item as unknown as LegendItem)
+                    this.addItem(
+                        childConf,
+                        updatedItem as unknown as LegendItem
+                    )
                 );
         }
-
         return item;
     }
 

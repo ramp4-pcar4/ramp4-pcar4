@@ -35,10 +35,6 @@ export class LayerItem extends LegendItem {
         this._layerControls = config.layerControls ?? [];
         this._layerDisabledControls = config.disabledLayerControls ?? [];
         this._layerRedrawing = false;
-        if (layer) {
-            this.layer = layer;
-            this.load(layer);
-        }
         this._symbologyExpanded = config.symbologyExpanded || false;
         if (config.coverIcon) this._coverIcon = config.coverIcon;
         if (config.description) this._description = config.description;
@@ -222,12 +218,13 @@ export class LayerItem extends LegendItem {
                         this.$iApi.event.on(
                             GlobalEvents.LAYER_VISIBILITYCHANGE,
                             (updatedLayer: any) => {
-                                if (updatedLayer.layer.uid === this.layer.uid)
+                                if (updatedLayer.layer.uid === this.layer.uid) {
                                     this.toggleVisibility(
                                         updatedLayer.visibility,
                                         true,
                                         true
                                     );
+                                }
                             }
                         )
                     );
