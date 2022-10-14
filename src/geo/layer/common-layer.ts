@@ -141,9 +141,9 @@ export class CommonLayer extends LayerInstance {
 
     updateDrawState(newState: DrawState): void {
         this.drawState = newState;
-        if (newState !== DrawState.UP_TO_DATE) {
+        if (newState === DrawState.REFRESH) {
             this.startTimer(TimerType.DRAW);
-        } else {
+        } else if (newState === DrawState.UP_TO_DATE) {
             this.stopTimer(TimerType.DRAW);
         }
         this.$iApi.event.emit(GlobalEvents.LAYER_DRAWSTATECHANGE, {
@@ -157,7 +157,9 @@ export class CommonLayer extends LayerInstance {
         this.updateInitiationState(InitiationState.INITIATING);
         this.startTimer(TimerType.LOAD);
         const [initiateErr] = await to(this.onInitiate()); // Need this because some layers don't do error handling things
-        this.stopTimer(TimerType.LOAD);
+        if (this.drawState !== DrawState.UP_TO_DATE) {
+            this.startTimer(TimerType.DRAW);
+        }
         if (initiateErr) {
             this.onError();
         }
@@ -362,9 +364,7 @@ export class CommonLayer extends LayerInstance {
             .then(() => {
                 this.updateLayerState(LayerState.LOADED);
                 this.loadDefProm.resolveMe();
-                if (this.drawState !== DrawState.UP_TO_DATE) {
-                    this.startTimer(TimerType.DRAW);
-                }
+                this.stopTimer(TimerType.LOAD);
                 // This will just trigger the above statements for each sublayer
                 this.sublayers.forEach(sublayer => sublayer.onLoad());
             })

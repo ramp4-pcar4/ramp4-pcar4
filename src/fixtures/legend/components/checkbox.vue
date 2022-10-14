@@ -2,7 +2,7 @@
     <div class="relative" @mouseover.stop>
         <!-- TODO: see if getting this to use v-model works; children wouldnt update properly on initial try -->
         <input
-            :type="isRadio ? 'radio' : 'checkbox'"
+            type="checkbox"
             :aria-label="
                 $t(
                     checked

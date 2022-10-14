@@ -244,7 +244,10 @@ export class LegendItem extends APIScope {
         } else if (this.parent?.exclusive) {
             // toggle not visible if item is part of a exclusive set with another item's visibility already toggled on
             const siblingVisible = this.parent.children.some(
-                item => item.visibility && item !== this
+                item =>
+                    item.visibility &&
+                    item !== this &&
+                    item.type === LegendType.Item
             );
             if (siblingVisible) {
                 this.toggleVisibility(false, false);
@@ -308,34 +311,15 @@ export class LegendItem extends APIScope {
             }
         } else {
             // item in exclusive set is being turned off
-            // if this causes all items in the exclusive set to be off, we first attempt to find an item that should have been on
-            // and we turn that item on
-            // if our search is unsuccessful and all items in the set are off, turn the parent off
+            this._visibility = false;
             if (
-                this.visibility &&
-                !this.children.some(child => child.visibility)
+                this instanceof LayerItem &&
+                this.layer &&
+                this.layer.isLoaded
             ) {
-                const onChild = this.children.find(
-                    child =>
-                        child instanceof LayerItem &&
-                        child.layerControlAvailable(LayerControl.Visibility) &&
-                        child._layerInitVis
-                );
-                if (onChild) {
-                    onChild.toggleVisibility(true, false);
-                    this._lastVisible = onChild;
-                } else {
-                    this._visibility = false;
-                    if (
-                        this instanceof LayerItem &&
-                        this.layer &&
-                        this.layer.isLoaded
-                    ) {
-                        this.layer.visibility = false;
-                    }
-                    this._lastVisible = toggledChild;
-                }
+                this.layer.visibility = false;
             }
+            this._lastVisible = toggledChild;
         }
 
         // to update nested items
