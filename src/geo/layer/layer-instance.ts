@@ -303,6 +303,13 @@ export class LayerInstance extends APIScope {
     }
 
     /**
+     * Indicates if the esriLayer exists.
+     */
+    get layerExists(): boolean {
+        return false;
+    }
+
+    /**
      * Provides a tree structure describing the layer and any sublayers,
      * including uid values. Should only be called after loadPromise resolves.
      *

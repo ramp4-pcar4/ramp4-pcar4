@@ -107,6 +107,13 @@ export class MapImageSublayer extends AttribLayer {
     }
 
     /**
+     * Indicates if the esriSublayer and the parentLayer exist.
+     */
+    get layerExists(): boolean {
+        return this.parentLayer?.esriLayer && this.esriSubLayer ? true : false;
+    }
+
+    /**
      * Returns the visibility of the sublayer.
      *
      * @function getVisibility

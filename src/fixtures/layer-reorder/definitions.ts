@@ -4,6 +4,7 @@ export interface LayerModel {
     uid: string;
     name: string;
     orderIdx: number;
+    componentIdx: number;
     isExpanded: boolean;
     isLoaded: boolean;
     supportsSublayers: boolean;
