@@ -57,6 +57,7 @@ export class CommonLayer extends LayerInstance {
     protected loadDefProm: DefPromise; // a deferred promise that resolves when layer is fully ready and safe to use. for convenience of caller
     protected viewDefProm: DefPromise; // a deferred promise that resolves when a layer view has been created on the map. helps bridge the view handler with the layer load handler
 
+    protected loadPromFulfilled: boolean; // a boolean to track whether the promise has fulfilled or not
     protected layerTree: TreeNode;
 
     esriWatches: Array<__esri.WatchHandle>;
@@ -112,6 +113,7 @@ export class CommonLayer extends LayerInstance {
         this.drawState = DrawState.NOT_LOADED;
         this.loadDefProm = new DefPromise();
         this.viewDefProm = new DefPromise();
+        this.loadPromFulfilled = false;
         this.esriWatches = [];
         this.layerTree = new TreeNode(0, this.uid, this.name, true); // is a layer with layer index 0 by default. subclasses will change this when they load
     }
@@ -269,6 +271,7 @@ export class CommonLayer extends LayerInstance {
         this.sublayers.forEach(s => s.terminate());
 
         this.loadDefProm = new DefPromise();
+        this.loadPromFulfilled = false;
         this.viewDefProm = new DefPromise();
 
         this.esriWatches.forEach(w => w.remove());
@@ -362,11 +365,17 @@ export class CommonLayer extends LayerInstance {
         const loadPromises: Array<Promise<void>> = this.onLoadActions();
         Promise.all(loadPromises)
             .then(() => {
-                this.updateLayerState(LayerState.LOADED);
+                // if promise was previously not in pending status, make a new one
+                // otherwise we're trying to resolve a resolved/rejected promise
+                if (this.loadPromFulfilled) {
+                    this.loadDefProm = new DefPromise();
+                }
                 this.loadDefProm.resolveMe();
+                this.loadPromFulfilled = true;
                 this.stopTimer(TimerType.LOAD);
                 // This will just trigger the above statements for each sublayer
                 this.sublayers.forEach(sublayer => sublayer.onLoad());
+                this.updateLayerState(LayerState.LOADED);
             })
             .catch(() => {
                 this.onError();
@@ -378,8 +387,13 @@ export class CommonLayer extends LayerInstance {
     //      Putting the layer in error status is what is important.
     // when esri layer load errors
     onError(): void {
-        this.updateLayerState(LayerState.ERROR);
+        // if promise was previously not in pending status, make a new one
+        // otherwise we're trying to resolve a resolved/rejected promise
+        if (this.loadPromFulfilled) {
+            this.loadDefProm = new DefPromise();
+        }
         this.loadDefProm.rejectMe();
+        this.loadPromFulfilled = true;
         this.sublayers.forEach(sublayer => sublayer.onError());
         this.$iApi.notify.show(
             NotificationType.ERROR,
@@ -389,6 +403,7 @@ export class CommonLayer extends LayerInstance {
         );
         this.stopTimer(TimerType.DRAW);
         this.stopTimer(TimerType.LOAD);
+        this.updateLayerState(LayerState.ERROR);
     }
 
     // performs setup on the layer that needs to occur after the esri layer
@@ -442,6 +457,13 @@ export class CommonLayer extends LayerInstance {
      */
     get isLoaded(): boolean {
         return this.layerState === LayerState.LOADED;
+    }
+
+    /**
+     * Indicates if the Esri map layer exists
+     */
+    get layerExists(): boolean {
+        return this.esriLayer ? true : false;
     }
 
     // ----------- LAYER MANAGEMENT -----------

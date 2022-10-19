@@ -278,7 +278,7 @@ export class LegendItem extends APIScope {
                 if (
                     this instanceof LayerItem &&
                     this.layer &&
-                    this.layer.isLoaded
+                    this.layer.layerExists
                 ) {
                     this.layer.visibility = true;
                 }
@@ -288,7 +288,7 @@ export class LegendItem extends APIScope {
                 if (
                     this instanceof LayerItem &&
                     this.layer &&
-                    this.layer.isLoaded
+                    this.layer.layerExists
                 ) {
                     this.layer.visibility = false;
                 }
@@ -305,7 +305,7 @@ export class LegendItem extends APIScope {
             if (
                 this instanceof LayerItem &&
                 this.layer &&
-                this.layer.isLoaded
+                this.layer.layerExists
             ) {
                 this.layer.visibility = true;
             }
@@ -315,7 +315,7 @@ export class LegendItem extends APIScope {
             if (
                 this instanceof LayerItem &&
                 this.layer &&
-                this.layer.isLoaded
+                this.layer.layerExists
             ) {
                 this.layer.visibility = false;
             }

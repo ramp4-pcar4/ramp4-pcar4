@@ -1,5 +1,6 @@
 import { GlobalEvents, LayerInstance, type InstanceAPI } from '@/api';
-import { LayerControl, LayerType, type LegendSymbology } from '@/geo/api';
+import { LayerControl, LayerState, LayerType } from '@/geo/api';
+import type { LegendSymbology } from '@/geo/api';
 import { LegendItem, LegendType } from './legend-item';
 
 export class LayerItem extends LegendItem {
@@ -141,7 +142,7 @@ export class LayerItem extends LegendItem {
         super.toggleVisibility(visible, updateParent);
 
         // LayerItem additionally deals with symbology and layers
-        if (this.layer && this.layer.isLoaded) {
+        if (this.layer && this.layer.layerExists) {
             this.layer.visibility = this.visibility;
 
             // check child symobls for visibility
@@ -248,6 +249,26 @@ export class LayerItem extends LegendItem {
                 .catch(() => {
                     this.error();
                 });
+            // watch for when layer state turns to ERROR
+            /* this.handlers.push(
+                this.$iApi.event.on(
+                    GlobalEvents.LAYER_LAYERSTATECHANGE,
+                    (payload: { layer: LayerInstance; state: string }) => {
+                        // sync legend item state with layer state if errors
+                        if (
+                            payload.state === LayerState.ERROR &&
+                            payload.layer.uid === this.layer.uid
+                        ) {
+                            this.error();
+                        } else if (
+                            payload.state === LayerState.LOADED &&
+                            payload.layer.uid === this.layer.uid
+                        ) {
+                            this.load(payload.layer);
+                        }
+                    }
+                )
+            ); */
         }
     }
 

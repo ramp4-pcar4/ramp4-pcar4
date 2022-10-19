@@ -376,7 +376,7 @@
 <script lang="ts">
 import { GlobalEvents, LayerInstance } from '@/api';
 import type { LegendSymbology, RampLayerConfig } from '@/geo/api';
-import { DrawState, LayerControl, LayerState } from '@/geo/api';
+import { DrawState, LayerControl } from '@/geo/api';
 import { LayerStore } from '@/store/modules/layer';
 import to from 'await-to-js';
 import { marked } from 'marked';
@@ -558,7 +558,8 @@ export default defineComponent({
                 setTimeout(() => {
                     // call reload on layer if it exists
                     if (this.legendItem.layer !== undefined) {
-                        this.legendItem!.layer!.reload()
+                        toRaw(this.legendItem!.layer!)
+                            .reload()
                             .then(() =>
                                 this.$iApi.$vApp.$store.set(
                                     LayerStore.removeErrorLayer,
@@ -648,7 +649,6 @@ export default defineComponent({
             // load the symbology only when the layer is loaded
             this.legendItem.loadPromise.then(() => {
                 this.symbologyStack = [];
-
                 // Wait for symbology to load
                 if (!this.legendItem!.layer) {
                     // This should never happen because the layer is loaded before the legend item component is mounted
@@ -657,29 +657,6 @@ export default defineComponent({
                     );
                     return;
                 }
-
-                // watch for when layer state turns to ERROR
-                this.handlers.push(
-                    this.$iApi.event.on(
-                        GlobalEvents.LAYER_LAYERSTATECHANGE,
-                        (payload: { layer: LayerInstance; state: string }) => {
-                            // sync legend item state with layer state if errors
-                            if (
-                                payload.state === LayerState.ERROR &&
-                                payload.layer.uid ===
-                                    this.legendItem!.layer!.uid
-                            ) {
-                                this.legendItem.error();
-                            } else if (
-                                payload.state === LayerState.LOADED &&
-                                payload.layer.uid ===
-                                    this.legendItem!.layer!.uid
-                            ) {
-                                this.legendItem.checkVisibilityRules();
-                            }
-                        }
-                    )
-                );
 
                 // watch for the layer's drawstate
                 this.handlers.push(
