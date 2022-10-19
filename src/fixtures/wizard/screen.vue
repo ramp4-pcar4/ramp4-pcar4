@@ -630,12 +630,13 @@ export default defineComponent({
         },
 
         generateColour() {
-            // Generates a random 6 character hex string to use a random colour. The 16777215 is (I think) the number of possible colours.
+            // Generates a random 6 character hex string to use a random colour if one is not already selected. The 16777215 is (I think) the number of possible colours.
             this.colour =
+                this.layerInfo.config.colour ??
                 '#' +
-                Math.floor(Math.random() * 16777215)
-                    .toString(16)
-                    .padStart(6, '0');
+                    Math.floor(Math.random() * 16777215)
+                        .toString(16)
+                        .padStart(6, '0');
             // generate unique ID for colour picker to prevent multi-ramp collisions
             do {
                 this.colourPickerId = Math.random()
