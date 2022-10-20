@@ -16,8 +16,8 @@ export class GeoJsonLayer extends FileLayer {
         // then initiate the FileLayer
 
         if (this.origRampConfig.rawData) {
-            // geojson has been passed in as static string
-            // TODO validation? check that type is string?
+            // geojson has been passed in as static string or GeoJSON object
+            // TODO validation? check that type is string or object?
             this.sourceGeoJson = this.origRampConfig.rawData;
         } else if (this.origRampConfig.url) {
             this.sourceGeoJson = await this.$iApi.geo.layer.files.fetchFileData(

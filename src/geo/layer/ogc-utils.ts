@@ -1,5 +1,5 @@
 import { APIScope } from '@/api/internal';
-import { UrlWrapper } from '@/geo/api';
+import { GeoJsonGeomType, UrlWrapper } from '@/geo/api';
 import type { UrlQueryMap } from '@/geo/api';
 import yxList from './reversedAxis.json';
 import { EsriRequest } from '@/geo/esri';
@@ -103,7 +103,7 @@ export class OgcUtils extends APIScope {
             if (
                 xyInAttribs &&
                 wfsData.features.length > 0 &&
-                wfsData.features[0].geometry.type === 'Point'
+                wfsData.features[0].geometry.type === GeoJsonGeomType.POINT
             ) {
                 // attempt copy of points to attributes.
                 // if we extend this logic to all feature based layers (not just wfs),

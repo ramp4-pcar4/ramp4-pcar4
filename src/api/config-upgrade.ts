@@ -650,7 +650,7 @@ export function layerUpgrader(r2layer: any): any {
         );
     }
     if (r2layer.expectedResponseTime) {
-        r4layer.expectedResponseTime = r2layer.expectedResponseTime;
+        r4layer.expectedLoadTime = r2layer.expectedResponseTime;
     }
     if (r2layer.metadataUrl) {
         r4layer.metadata = {
@@ -856,7 +856,7 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
     }
 
     if (typeof r2layer.stateOnly !== 'undefined') {
-        r4layer.stateOnly = r2layer.stateOnly;
+        r4layer.cosmetic = r2layer.stateOnly;
     }
 
     // deal with fields mayhem
