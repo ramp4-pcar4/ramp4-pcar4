@@ -35,8 +35,8 @@ The settings configuration object supports the following two properties:
 - `controls`: keeps track of the list of enabled layer controls
     - Visibility (`visibility`): *determines whether layer visibility can be toggled*
     - Opacity (`opacity`): *determines whether layer opacity can be adjusted*
-    - Identify (`metadata`): *determines whether layer identification can be toggled*
-- `disabledControls`: keeps track of the list of enabled layer controls
+    - Identify (`identify`): *determines whether layer identification can be toggled*
+- `disabledControls`: keeps track of the list of disabled layer controls
     - See above
 
 By default, if no `settings` configuration object is provided within a layer configuration, all layer controls are enabled. There are two ways to disable layer controls: 

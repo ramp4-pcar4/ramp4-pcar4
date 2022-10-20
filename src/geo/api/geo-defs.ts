@@ -549,7 +549,7 @@ export interface RampLayerMapImageSublayerConfig {
     extent?: RampExtentConfig;
     controls?: Array<LayerControl>;
     disabledControls?: Array<LayerControl>;
-    stateOnly?: boolean;
+    cosmetic?: boolean;
     fieldMetadata?: RampLayerFieldMetadataConfig;
     initialFilteredQuery?: string;
     customRenderer?: any;
@@ -580,7 +580,7 @@ export interface RampLayerConfig {
     // TODO revisit issue #1019 after v1.0.0
     // refreshInterval?: number;
     expectedDrawTime?: number;
-    expectedResponseTime?: number;
+    expectedLoadTime?: number;
     fieldMetadata?: RampLayerFieldMetadataConfig;
     nameField?: string;
     tooltipField?: string;

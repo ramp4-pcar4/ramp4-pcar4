@@ -251,9 +251,7 @@ export class FileUtils extends APIScope {
                 )
             ].length !== 1
         ) {
-            return Promise.reject(
-                new Error('GeoJSON file contains multiple geometry types')
-            );
+            throw new Error('GeoJSON file contains multiple geometry types');
         }
 
         // extract all fields and type them as string for now

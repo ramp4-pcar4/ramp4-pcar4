@@ -141,7 +141,7 @@ export class CommonMapAPI extends APIScope {
      *
      * @protected
      */
-    protected destroyMap(): void {
+    destroyMap(): void {
         if (!this.esriMap || !this.esriView) {
             this.noMapErr();
             return;
