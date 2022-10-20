@@ -299,7 +299,7 @@ export class MapImageLayer extends AttribLayer {
         (<Array<RampLayerMapImageSublayerConfig>>(
             this.origRampConfig.sublayers
         )).forEach(sublayer => {
-            if (!sublayer.stateOnly) {
+            if (!sublayer.cosmetic) {
                 // TODO add a check instead of 0 default on the index?
                 const rootSub = findSublayer(sublayer.index || 0);
                 // TODO would need to validate layer tree every loop to shut up typescript. shutting it up with comment instead.

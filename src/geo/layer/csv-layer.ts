@@ -11,16 +11,11 @@ export class CsvLayer extends FileLayer {
         // TODO check if .sourceGeoJson is already populated?
         //      if this initiate is a reload, do we want to re-use it, or re-download? decide.
 
-        // get csv from appropriate source
-        // parse and convert to geojson
-        // set geojson to special property.
-        // then initiate the FileLayer
-
         if (!this.origRampConfig.latField || !this.origRampConfig.longField) {
             throw new Error('csv file config missing lat or long field names');
         }
 
-        let csvData: string;
+        let csvData: string; // contents of the file, encoded in UTF8
 
         if (this.origRampConfig.rawData) {
             // csv data has been passed in as static string
