@@ -93,13 +93,13 @@
 
                         <!-- controls -->
                         <reorder-button
-                            :disabled="_isBoundary(element.orderIdx + 1)"
+                            :disabled="_isBoundary(element.componentIdx - 1)"
                             direction="up"
                             class="px-7"
                             @click="onMoveLayerButton(element, 1)"
                         />
                         <reorder-button
-                            :disabled="_isBoundary(element.orderIdx - 1)"
+                            :disabled="_isBoundary(element.componentIdx + 1)"
                             direction="down"
                             class="px-7"
                             @click="onMoveLayerButton(element, -1)"
@@ -175,8 +175,6 @@ export default defineComponent({
             layers: this.get(LayerStore.layers),
             layersModel: [] as Array<LayerModel>,
             oldOrder: [] as Array<number>, // keeps track of layer order when dragging starts
-            minIdx: -Infinity, // lowest allowed index
-            maxIdx: Infinity, // highest allowed index,
             handlers: [] as Array<string>,
             watchers: [] as Array<Function>
         };
@@ -208,6 +206,13 @@ export default defineComponent({
                 this.loadLayers();
             })
         );
+
+        // watch for layer state changes
+        this.handlers.push(
+            this.$iApi.event.on(GlobalEvents.LAYER_LAYERSTATECHANGE, () => {
+                this.loadLayers();
+            })
+        );
     },
     beforeUnmount() {
         // unmount handlers and watchers
@@ -236,7 +241,7 @@ export default defineComponent({
                         layer.layerState !== LayerState.ERROR
                 ) // filter out cosmetic layers
                 .reverse() // needs to be reverse because map-stack is in reverse order of layer list
-                .map((layer: LayerInstance) => {
+                .map((layer: LayerInstance, index: number) => {
                     // get the true index of this layer in the layers list
                     const trueIdx: number = this.layers.indexOf(layer);
                     // map layer instance to simpler layer model object
@@ -245,6 +250,7 @@ export default defineComponent({
                         uid: layer.uid,
                         name: '',
                         orderIdx: trueIdx,
+                        componentIdx: index,
                         isExpanded: layerExpandedState[layer.id] || false,
                         isLoaded: false,
                         supportsSublayers: layer.supportsSublayers,
@@ -261,32 +267,6 @@ export default defineComponent({
                         this.loadLayerData(layer);
                     })
                     .catch(() => 1); // make the console stop complaining
-            });
-
-            // calculate the min and max boundary indices
-            // algorithm explanation:
-            //      loop through the list of layers from both directions and store the index of the first cosmetic layer hit
-            //      if we only see cosmetic layers after that index, then the index will not change and hence we found the boundary
-            //      if we see a non-cosmetic layer, then we reset the index because that was not the boundary
-            this.layers.forEach((layer: LayerInstance, idx: number) => {
-                // check if we hit a cosmetic layer and if we did, keep track of the index
-                if (this.maxIdx === Infinity && layer.isCosmetic) {
-                    this.maxIdx = idx;
-                }
-                if (
-                    this.minIdx === -Infinity &&
-                    this.layers[this._reverseIndex(idx)].isCosmetic
-                ) {
-                    this.minIdx = this._reverseIndex(idx);
-                }
-
-                // check if it's a non-cosmetic layer, and if it is, reset the boundaries
-                if (!layer.isCosmetic) {
-                    this.maxIdx = Infinity;
-                }
-                if (!this.layers[this._reverseIndex(idx)].isCosmetic) {
-                    this.minIdx = -Infinity;
-                }
             });
         },
 
@@ -436,14 +416,8 @@ export default defineComponent({
          * @param {number} idx the index to be checked
          * @returns {boolean} returns true if the index is at the boundary
          */
-        _isBoundary(idx: number): boolean {
-            if (idx < 0 || idx > this.layers.length - 1) {
-                return true;
-            }
-            if (idx >= this.maxIdx || idx <= this.minIdx) {
-                return true;
-            }
-            return false;
+        _isBoundary(index: number): boolean {
+            return index < 0 || index > this.layersModel.length - 1;
         }
     }
 });
