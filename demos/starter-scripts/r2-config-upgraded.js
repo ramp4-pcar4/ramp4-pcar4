@@ -1,4 +1,4 @@
-import { createInstance, geo, configUpgrade } from '@/main';
+import { createInstance, configUpgrade } from '@/main';
 
 window.debugInstance = null;
 
