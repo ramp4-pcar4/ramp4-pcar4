@@ -34,11 +34,7 @@ import type {
     TabularAttributeSet
 } from '@/geo/api';
 
-import {
-    EsriMapImageLayer,
-    EsriRendererFromJson,
-    EsriRequest
-} from '@/geo/esri';
+import { EsriMapImageLayer, EsriRendererFromJson } from '@/geo/esri';
 import { markRaw, reactive } from 'vue';
 
 // Formerly known as DynamicLayer
@@ -47,6 +43,8 @@ export class MapImageLayer extends AttribLayer {
     isDynamic: boolean;
     // used to remember state after load
     private origState: any;
+    // used to track which sublayers have had their loading cancelled
+    private cancelledIndexes: number[];
     declare esriLayer: EsriMapImageLayer | undefined;
 
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
@@ -59,6 +57,44 @@ export class MapImageLayer extends AttribLayer {
         this.hovertips = false;
         this.layerTree.layerIdx = -1;
         this.identifyMode = LayerIdentifyMode.GEOMETRIC;
+        this.cancelledIndexes = [];
+        this.$iApi.event.on(
+            GlobalEvents.LAYER_CANCEL,
+            (payload: {
+                layerId: string;
+                parentLayerId: string;
+                sublayerIndex: number;
+            }) => {
+                if (payload.parentLayerId === this.id) {
+                    const sublayerToCancel = this._sublayers.find(
+                        sublayer =>
+                            sublayer?.layerIdx === payload.sublayerIndex &&
+                            sublayer?.initiationState ===
+                                InitiationState.INITIATED
+                    );
+                    // case one: sublayer initiation is done, remove sublayer
+                    if (sublayerToCancel) {
+                        (sublayerToCancel as MapImageSublayer).isCancelled =
+                            true;
+                        sublayerToCancel.visibility = false;
+                    } else {
+                        this.cancelledIndexes.push(payload.sublayerIndex);
+                    }
+                } else if (payload.layerId === this.id) {
+                    // parent layer cancelled, cancel all sublayers
+                    this._sublayers.forEach(sublayer => {
+                        (sublayer as MapImageSublayer).isCancelled = true;
+                        sublayer.visibility = false;
+                    });
+                    this.origRampConfig.sublayers?.forEach(sublayerConfig => {
+                        this.cancelledIndexes.push(
+                            (sublayerConfig as RampLayerMapImageSublayerConfig)
+                                .index
+                        );
+                    });
+                }
+            }
+        );
     }
 
     protected async onInitiate(): Promise<void> {
@@ -66,6 +102,14 @@ export class MapImageLayer extends AttribLayer {
             new EsriMapImageLayer(this.makeEsriLayerConfig(this.origRampConfig))
         );
         await super.onInitiate();
+    }
+
+    async reload(): Promise<void> {
+        this.cancelledIndexes = [];
+        this._sublayers.forEach(sublayer => {
+            (sublayer as MapImageSublayer).isCancelled = false;
+        });
+        super.reload();
     }
 
     /**
@@ -246,7 +290,7 @@ export class MapImageLayer extends AttribLayer {
                     sid
                 ] as MapImageSublayer;
 
-                if (_sublayer.isRemoved) {
+                if (_sublayer.isRemoved || _sublayer.isCancelled) {
                     return; // no need to initialize a removed sublayer
                 }
 
@@ -259,8 +303,7 @@ export class MapImageLayer extends AttribLayer {
                 if (
                     !parentTreeNode.children
                         .map(node => node.layerIdx)
-                        .includes(sid) ||
-                    _sublayer.initiationState !== InitiationState.INITIATED
+                        .includes(sid)
                 ) {
                     const treeLeaf = new TreeNode(
                         sid,
@@ -317,6 +360,13 @@ export class MapImageLayer extends AttribLayer {
 
             // the sublayer needs to be re-fetched because the initial sublayer was marked as "raw"
             miSL.fetchEsriSublayer(this);
+            miSL.initiate();
+
+            // remove the leaf it was cancelled somewhere along the process
+            // anything cancelled beyond this point will call removeSublayer directly since the sublayer is now initiated
+            if (this.cancelledIndexes.includes(miSL.layerIdx)) {
+                miSL.isCancelled = true;
+            }
 
             // setting custom renderer here (if one is provided)
             const hasCustRed =
@@ -338,19 +388,22 @@ export class MapImageLayer extends AttribLayer {
                     // apply any updates that were in the configuration snippets
                     const subC = subConfigs[miSL.layerIdx];
                     if (subC) {
-                        // Sublayer visibility is normally checked (and set) in the following order:
+                        // If the sublayer is cancelled or removed, set to invisible.
+                        // Otherwise, sublayer visibility is normally checked (and set) in the following order:
                         // sublayer config -> server -> parent config -> true.
                         // First value in the order that is defined is taken as the sublayer's visibility.
                         // However, if parent vis is set to false on config, we prioritize parent config over server vis.
                         // The order in that case is sublayer config -> parent config -> server -> true.
                         miSL.visibility =
-                            subC.state?.visibility ??
-                            (this.origState.visibility
-                                ? miSL._serverVisibility ??
-                                  this.origState.visibility
-                                : this.origState.visibility ??
-                                  miSL._serverVisibility) ??
-                            true;
+                            miSL.isCancelled || miSL.isRemoved
+                                ? false
+                                : subC.state?.visibility ??
+                                  (this.origState.visibility
+                                      ? miSL._serverVisibility ??
+                                        this.origState.visibility
+                                      : this.origState.visibility ??
+                                        miSL._serverVisibility) ??
+                                  true;
                         miSL.opacity =
                             subC.state?.opacity ?? this.origState.opacity ?? 1;
                         // miSL.setQueryable(subC.state.identify); // TODO uncomment when done
@@ -375,7 +428,6 @@ export class MapImageLayer extends AttribLayer {
                         return Promise.resolve();
                     }
                 });
-
             loadPromises.push(pLMD);
         });
 

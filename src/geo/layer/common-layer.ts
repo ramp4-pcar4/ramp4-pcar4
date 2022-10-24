@@ -362,9 +362,11 @@ export class CommonLayer extends LayerInstance {
     onLoad(): void {
         // magic happens here. other layers will override onLoadActions,
         // meaning this will run the function appropriate for the layer who inherited LayerBase
+        const loadTimeout = setTimeout(this.onError, 20000); // 20 second time limit for actions to execute
         const loadPromises: Array<Promise<void>> = this.onLoadActions();
         Promise.all(loadPromises)
             .then(() => {
+                clearTimeout(loadTimeout);
                 // if promise was previously not in pending status, make a new one
                 // otherwise we're trying to resolve a resolved/rejected promise
                 if (this.loadPromFulfilled) {
@@ -378,6 +380,7 @@ export class CommonLayer extends LayerInstance {
                 this.updateLayerState(LayerState.LOADED);
             })
             .catch(() => {
+                clearTimeout(loadTimeout);
                 this.onError();
             });
     }
