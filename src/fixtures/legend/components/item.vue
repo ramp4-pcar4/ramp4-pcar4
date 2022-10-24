@@ -225,7 +225,7 @@
                 >
                     <button
                         type="button"
-                        class="text-gray-500 hover:text-black dropdown-button"
+                        class="text-gray-500 hover:text-black"
                         :class="{
                             disabled: !controlAvailable(`reload`)
                         }"
@@ -248,6 +248,38 @@
                                 <path
                                     d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"
                                 ></path>
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- cancel for loading and error'd items -->
+                <div
+                    v-if="
+                        legendItem.type !== LegendType.Item &&
+                        legendItem instanceof LayerItem
+                    "
+                    class="relative"
+                >
+                    <button
+                        type="button"
+                        class="text-gray-500 hover:text-black"
+                        :content="$t('legend.layer.controls.remove')"
+                        v-tippy="{
+                            placement: 'top-start'
+                        }"
+                        @mouseover.stop
+                        @click.stop="removeLayer"
+                    >
+                        <div class="flex p-8">
+                            <svg
+                                class="fill-current w-18 h-18"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 352 512"
+                            >
+                                <path
+                                    d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
+                                />
                             </svg>
                         </div>
                     </button>
@@ -376,7 +408,7 @@
 <script lang="ts">
 import { GlobalEvents, LayerInstance } from '@/api';
 import type { LegendSymbology, RampLayerConfig } from '@/geo/api';
-import { DrawState, LayerControl } from '@/geo/api';
+import { DrawState, InitiationState, LayerControl } from '@/geo/api';
 import { LayerStore } from '@/store/modules/layer';
 import to from 'await-to-js';
 import { marked } from 'marked';
@@ -389,6 +421,7 @@ import { InfoType, SectionItem } from '../store/section-item';
 import LegendCheckboxV from './checkbox.vue';
 import LegendOptionsV from './legend-options.vue';
 import LegendSymbologyStackV from './symbology-stack.vue';
+import type { LegendAPI } from '../api/legend';
 
 export default defineComponent({
     name: 'LegendItemV',
@@ -632,6 +665,42 @@ export default defineComponent({
                 });
             } catch {
                 return;
+            }
+        },
+        /**
+         * Remove a loading/error'd layer
+         */
+        removeLayer() {
+            const layerItem: LayerItem = toRaw(
+                this.legendItem as unknown as LayerItem
+            ); // so that typescript doesn't yell in the whole method
+            if (
+                layerItem.layer &&
+                layerItem.layer.layerExists &&
+                layerItem.layer.initiationState === InitiationState.INITIATED
+            ) {
+                // Case 1: Layer is initiated and on map stack. Call map's removeLayer. Donethanks.
+                this.$iApi.geo.map.removeLayer(layerItem.layer);
+            } else {
+                // Case 2 + 3: Layer is either not done initiation or has error'd in a way that it's not on map stack.
+                if (layerItem.type === LegendType.Error) {
+                    this.$iApi.$vApp.$store.set(
+                        LayerStore.removeErrorLayer,
+                        layerItem.layerId
+                    );
+                    this.$iApi.$vApp.$store.set(
+                        LayerStore.removeLayerConfig,
+                        layerItem.layerId
+                    );
+                }
+                this.$iApi.event.emit(GlobalEvents.LAYER_CANCEL, {
+                    layerId: layerItem.layerId,
+                    parentLayerId: layerItem.parentLayerId,
+                    sublayerIndex: layerItem.layerIdx
+                });
+                this.$iApi.fixture
+                    .get<LegendAPI>('legend')
+                    ?.removeLayerItem(layerItem.layerId);
             }
         },
         /**

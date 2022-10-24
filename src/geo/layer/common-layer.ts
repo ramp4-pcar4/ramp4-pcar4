@@ -116,6 +116,25 @@ export class CommonLayer extends LayerInstance {
         this.loadPromFulfilled = false;
         this.esriWatches = [];
         this.layerTree = new TreeNode(0, this.uid, this.name, true); // is a layer with layer index 0 by default. subclasses will change this when they load
+        // set the removed property to true if layer initiation was cancelled
+        this.$iApi.event.on(
+            GlobalEvents.LAYER_CANCEL,
+            (payload: {
+                layerId: string;
+                parentLayerId: string;
+                sublayerIndex: number;
+            }) => {
+                if (this.id === payload.layerId) {
+                    this.isRemoved = true;
+                    if (
+                        this.initiationState === InitiationState.INITIATED &&
+                        this.layerExists
+                    ) {
+                        this.$iApi.geo.map.removeLayer(this);
+                    }
+                }
+            }
+        );
     }
 
     protected noLayerErr(): void {
@@ -324,7 +343,12 @@ export class CommonLayer extends LayerInstance {
             return;
         }
 
-        this.$iApi.geo.map.esriMap.layers.add(this.esriLayer, mapStackPosition);
+        if (!this.isRemoved) {
+            this.$iApi.geo.map.esriMap.layers.add(
+                this.esriLayer,
+                mapStackPosition
+            );
+        }
 
         this.$iApi.event.emit(GlobalEvents.LAYER_RELOAD_END, this);
         this.sublayers.forEach(sublayer =>

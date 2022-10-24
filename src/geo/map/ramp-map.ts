@@ -463,6 +463,10 @@ export class MapAPI extends CommonMapAPI {
                     ]);
                     layer.updateLayerState(LayerState.ERROR); // need this thanks to an edge case where the legend sometimes doesnt update
                     reject();
+                } else if (layer.isRemoved) {
+                    clearInterval(layerWatcher); // layer intitiation cancelled, do not add layer, call remove for important updates and exit
+                    this.removeLayer(layer);
+                    reject();
                 } else if (
                     layer.initiationState === InitiationState.INITIATED &&
                     layer.esriLayer
@@ -570,7 +574,6 @@ export class MapAPI extends CommonMapAPI {
         if (!layer) {
             throw new Error('Sublayer could not be found for removal.');
         }
-
         this.$iApi.event.emit(GlobalEvents.LAYER_REMOVE, sublayer);
         layer.visibility = false; // make the sublayer invisible
         layer.isRemoved = true; // mark sublayer as removed

@@ -34,11 +34,7 @@ import type {
     TabularAttributeSet
 } from '@/geo/api';
 
-import {
-    EsriMapImageLayer,
-    EsriRendererFromJson,
-    EsriRequest
-} from '@/geo/esri';
+import { EsriMapImageLayer, EsriRendererFromJson } from '@/geo/esri';
 import { markRaw, reactive } from 'vue';
 
 // Formerly known as DynamicLayer
@@ -47,6 +43,8 @@ export class MapImageLayer extends AttribLayer {
     isDynamic: boolean;
     // used to remember state after load
     private origState: any;
+    // used to track which sublayers have had their loading cancelled
+    private cancelledIndexes: number[];
     declare esriLayer: EsriMapImageLayer | undefined;
 
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
@@ -59,6 +57,32 @@ export class MapImageLayer extends AttribLayer {
         this.hovertips = false;
         this.layerTree.layerIdx = -1;
         this.identifyMode = LayerIdentifyMode.GEOMETRIC;
+        this.cancelledIndexes = [];
+        this.$iApi.event.on(
+            GlobalEvents.LAYER_CANCEL,
+            (payload: {
+                layerId: string;
+                parentLayerId: string;
+                sublayerIndex: number;
+            }) => {
+                if (payload.parentLayerId === this.id) {
+                    const sublayerToRemove = this._sublayers.find(
+                        sublayer =>
+                            sublayer?.layerIdx === payload.sublayerIndex &&
+                            sublayer?.initiationState ===
+                                InitiationState.INITIATED
+                    );
+                    // case one: sublayer initiation is done, remove sublayer
+                    if (sublayerToRemove) {
+                        console.log('Case 1');
+                        this.$iApi.geo.map.removeSublayer(sublayerToRemove);
+                        // case two: sublayer initiation is not done, save index and remove later
+                    } else {
+                        this.cancelledIndexes.push(payload.sublayerIndex);
+                    }
+                }
+            }
+        );
     }
 
     protected async onInitiate(): Promise<void> {
@@ -259,8 +283,7 @@ export class MapImageLayer extends AttribLayer {
                 if (
                     !parentTreeNode.children
                         .map(node => node.layerIdx)
-                        .includes(sid) ||
-                    _sublayer.initiationState !== InitiationState.INITIATED
+                        .includes(sid)
                 ) {
                     const treeLeaf = new TreeNode(
                         sid,
@@ -317,6 +340,14 @@ export class MapImageLayer extends AttribLayer {
 
             // the sublayer needs to be re-fetched because the initial sublayer was marked as "raw"
             miSL.fetchEsriSublayer(this);
+            miSL.initiate();
+
+            // remove the leaf it was cancelled somewhere along the process
+            // anything cancelled beyond this point will call removeSublayer directly since the sublayer is now initiated
+            if (this.cancelledIndexes.includes(miSL.layerIdx)) {
+                this.$iApi.geo.map.removeSublayer(miSL);
+                return;
+            }
 
             // setting custom renderer here (if one is provided)
             const hasCustRed =
@@ -375,7 +406,6 @@ export class MapImageLayer extends AttribLayer {
                         return Promise.resolve();
                     }
                 });
-
             loadPromises.push(pLMD);
         });
 
