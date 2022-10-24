@@ -483,6 +483,7 @@ export class LegendAPI extends FixtureInstance {
             return false;
         }
 
+        item._loadCancelled = false;
         item.reload();
         return true;
     }

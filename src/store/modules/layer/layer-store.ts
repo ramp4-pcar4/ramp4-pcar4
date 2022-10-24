@@ -5,7 +5,7 @@ import { LayerState } from './layer-state';
 import type { RootState } from '@/store';
 
 import type { RampLayerConfig } from '@/geo/api';
-import type { LayerInstance } from '@/api/internal';
+import { LayerInstance } from '@/api/internal';
 
 // TODO we have "Layer" referenced as a layer baseclass in a lot of comments. Update it to whatever is appropriate and accurate.
 
@@ -185,10 +185,12 @@ const mutations = {
         });
         state.layers = filteredLayers;
     },
-    REMOVE_ERROR_LAYER: (state: LayerState, value: LayerInstance) => {
+    REMOVE_ERROR_LAYER: (state: LayerState, value: LayerInstance | string) => {
+        const layerId = value instanceof LayerInstance ? value.id : value;
+        const layerUid = value instanceof LayerInstance ? value.uid : value;
         // copy to new array so watchers will have a reference to the old value
         const filteredLayers = state.penaltyBox.filter(layer => {
-            return layer.id !== value.id || layer.uid !== value.uid;
+            return layer.id !== layerId && layer.uid !== layerUid;
         });
         state.penaltyBox = filteredLayers;
     },
