@@ -452,9 +452,9 @@ export class MapAPI extends CommonMapAPI {
             let timeElapsed = 0;
             // Alternative to this: use event API and watch for layer initiated and layer error events??
             const layerWatcher = setInterval(() => {
-                timeElapsed += 1000;
+                timeElapsed += 250;
                 if (
-                    timeElapsed >= 600000 ||
+                    timeElapsed >= 20000 ||
                     layer.layerState === LayerState.ERROR
                 ) {
                     clearInterval(layerWatcher);
@@ -570,7 +570,6 @@ export class MapAPI extends CommonMapAPI {
         if (!layer) {
             throw new Error('Sublayer could not be found for removal.');
         }
-
         this.$iApi.event.emit(GlobalEvents.LAYER_REMOVE, sublayer);
         layer.visibility = false; // make the sublayer invisible
         layer.isRemoved = true; // mark sublayer as removed
