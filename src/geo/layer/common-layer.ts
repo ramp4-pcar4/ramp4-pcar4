@@ -116,6 +116,19 @@ export class CommonLayer extends LayerInstance {
         this.loadPromFulfilled = false;
         this.esriWatches = [];
         this.layerTree = new TreeNode(0, this.uid, this.name, true); // is a layer with layer index 0 by default. subclasses will change this when they load
+        // set the removed property to true if layer initiation was cancelled
+        this.$iApi.event.on(
+            GlobalEvents.LAYER_CANCEL,
+            (payload: {
+                layerId: string;
+                parentLayerId: string;
+                sublayerIndex: number;
+            }) => {
+                if (this.id === payload.layerId) {
+                    // this.updateLayerState(LayerState.ERROR);
+                }
+            }
+        );
     }
 
     protected noLayerErr(): void {

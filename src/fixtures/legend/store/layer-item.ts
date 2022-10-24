@@ -11,6 +11,7 @@ export class LayerItem extends LegendItem {
     _layer: LayerInstance | undefined;
     _layerRedrawing: boolean = false;
     _layerInitVis: boolean | undefined;
+    _loadCancelled: boolean = false;
 
     _coverIcon?: string;
     _description?: string;
@@ -205,6 +206,10 @@ export class LayerItem extends LegendItem {
                           this._layerId ?? this._layerUid
                       );
             this.layer = layer;
+            if (this._loadCancelled) {
+                this.error();
+                return;
+            }
             this._layer
                 ?.loadPromise()
                 .then(() => {
@@ -276,6 +281,11 @@ export class LayerItem extends LegendItem {
         this.updateLayerControls();
         super.error();
         this.toggleVisibility(false, true, true);
+    }
+
+    reload(): void {
+        this._loadCancelled = false;
+        super.reload();
     }
 
     /**

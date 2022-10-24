@@ -11,6 +11,7 @@ import { markRaw } from 'vue';
 
 export class MapImageSublayer extends AttribLayer {
     tooltipField: string;
+    isCancelled: boolean;
 
     constructor(
         config: any,
@@ -23,6 +24,7 @@ export class MapImageSublayer extends AttribLayer {
         this.layerType = LayerType.SUBLAYER;
         this.layerFormat = LayerFormat.MAPIMAGE;
         this.isSublayer = true;
+        this.isCancelled = false;
         this.layerIdx = layerIdx;
         this.parentLayer = parent;
 
