@@ -479,7 +479,7 @@ export class MapAPI extends CommonMapAPI {
                     this.$iApi.event.emit(GlobalEvents.LAYER_REGISTERED, layer);
                     resolve();
                 }
-            }, 250);
+            }, 12000);
         });
     }
 
@@ -570,7 +570,6 @@ export class MapAPI extends CommonMapAPI {
         if (!layer) {
             throw new Error('Sublayer could not be found for removal.');
         }
-
         this.$iApi.event.emit(GlobalEvents.LAYER_REMOVE, sublayer);
         layer.visibility = false; // make the sublayer invisible
         layer.isRemoved = true; // mark sublayer as removed

@@ -86,6 +86,12 @@ export enum GlobalEvents {
     HELP_TOGGLE = 'help/toggle',
 
     /**
+     * Fires when layer initiation is cancelled.
+     * Payload: `({ layerId: string, parentLayerId: string, sublayerIndex: number})
+     */
+    LAYER_CANCEL = 'layer/cancel',
+
+    /**
      * Fires when the drawing state of a layer changes.
      * Payload: `({ layer: LayerInstance, state: string })`
      */
