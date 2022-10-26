@@ -584,7 +584,7 @@
                 },
                 "footnote": {
                     "type": "object",
-                    "description": "Configuration for the footnote.",
+                    "description": "Configuration for the footnote. Currently not supported.",
                     "allOf": [
                         {
                             "$ref": "#/$defs/exportComponent"
@@ -601,7 +601,7 @@
                 },
                 "timestamp": {
                     "type": "object",
-                    "description": "Configuration for the timestamp.",
+                    "description": "Configuration for the timestamp. Currently not supported.",
                     "$ref": "#/$defs/exportComponent"
                 },
                 "fileName": {

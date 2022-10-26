@@ -233,7 +233,7 @@ rInstance.$element.component('CCCS-Template', {
         </div>
         <div class="long-form" style="border-top: 1px dotted rgb(156 163 175); margin-left: -8px; margin-right: -8px; padding: 10px;">
             <p style="margin-bottom: 11.5px;">{{this.result.tt.baseline}}</p>
-            <a class="underline text-blue-600 hover:text-blue-800 visited:text-purple-600" href="{{ this.result.tt.learnMore.link }}" target="_blank"
+            <a class="underline text-blue-600 hover:text-blue-800 visited:text-purple-600" :href="this.result.tt.learnMore.link" target="_blank" rel="noopener noreferrer"
                 >{{ this.result.tt.learnMore.default }}</a
             >
         </div>
