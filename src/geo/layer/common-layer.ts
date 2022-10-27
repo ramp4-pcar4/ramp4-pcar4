@@ -163,6 +163,7 @@ export class CommonLayer extends LayerInstance {
             this.startTimer(TimerType.DRAW);
         }
         if (initiateErr) {
+            console.error(initiateErr.message);
             this.onError();
         }
         this.updateInitiationState(InitiationState.INITIATED);

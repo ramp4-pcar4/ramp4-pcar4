@@ -859,6 +859,10 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
         r4layer.stateOnly = r2layer.stateOnly;
     }
 
+    if (r2layer.initialFilteredQuery) {
+        r4layer.initialFilteredQuery = r2layer.initialFilteredQuery;
+    }
+
     // deal with fields mayhem
     fieldsSausageGrinder(r2layer, r4layer);
 

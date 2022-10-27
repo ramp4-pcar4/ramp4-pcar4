@@ -408,7 +408,14 @@ export class FileUtils extends APIScope {
             defRender.renderer
         );
         configPackage.fields = (configPackage.fields || []).concat(
-            this.extractGeoJsonFields(geoJson)
+            options.fieldMetadata?.exclusiveFields
+                ? (this.extractGeoJsonFields(geoJson) as Array<Object>).filter(
+                      (field: any) =>
+                          options.fieldMetadata?.fieldInfo?.find(
+                              (f: any) => f.name === field.name
+                          )
+                  )
+                : (this.extractGeoJsonFields(geoJson) as Array<Object>)
         );
 
         // clean the fields. in particular, CSV files can be loaded with spaces in
