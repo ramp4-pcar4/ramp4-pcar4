@@ -133,7 +133,8 @@ export class FileLayer extends AttribLayer {
             ...(this.origRampConfig.longField && {
                 lonField: this.origRampConfig.longField
             }),
-            colour: this.origRampConfig.colour
+            colour: this.origRampConfig.colour,
+            fieldMetadata: this.origRampConfig.fieldMetadata
         };
 
         this.esriJson = await this.$iApi.geo.layer.files.geoJsonToEsriJson(
