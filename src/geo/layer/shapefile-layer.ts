@@ -11,12 +11,7 @@ export class ShapefileLayer extends FileLayer {
         // TODO check if .sourceGeoJson is already populated?
         //      if this initiate is a reload, do we want to re-use it, or re-download? decide.
 
-        // get shapefile from appropriate source
-        // parse and convert to geojson
-        // set geojson to special property.
-        // then initiate the FileLayer
-
-        let shapefileData: any; // i believe this needs to be an ArrayBuffer
+        let shapefileData: any; // data type is actually an ArrayBuffer
 
         if (this.origRampConfig.rawData) {
             // shapefile data has been passed in as static data.

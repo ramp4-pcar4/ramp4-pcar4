@@ -141,7 +141,7 @@ export class OverviewMapAPI extends CommonMapAPI {
      * @returns {Basemap} the found basemap
      * @protected
      */
-    protected findBasemap(id: string): Basemap {
+    findBasemap(id: string): Basemap {
         const bm: Basemap | undefined = this._basemapStore.find(
             bms => bms.id === id
         );

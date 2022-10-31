@@ -89,7 +89,7 @@ export class CommonLayer extends LayerInstance {
         this.layerFormat = LayerFormat.UNKNOWN;
         this._drawOrder = [];
         this.expectedTime.draw = rampConfig.expectedDrawTime ?? 10000;
-        this.expectedTime.load = rampConfig.expectedResponseTime ?? 4000;
+        this.expectedTime.load = rampConfig.expectedLoadTime ?? 4000;
         this.timers = {
             draw: undefined,
             load: undefined

@@ -689,12 +689,12 @@
                 "expectedDrawTime": {
                     "type": "number",
                     "default": 10000,
-                    "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
+                    "description": "The time span (in milliseconds) after which a 'slow-to-draw' notification is shown for any drawing layer. Zero will disable notifications."
                 },
-                "expectedResponseTime": {
+                "expectedLoadTime": {
                     "type": "number",
                     "default": 4000,
-                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
+                    "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
                 },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"
@@ -702,7 +702,7 @@
                 "catalogueUrl": {
                     "type": "string",
                     "default": null,
-                    "description": "Catalogue url of the layer service."
+                    "description": "Catalogue url of the layer service. Currently not supported."
                 },
                 "layerType": {
                     "type": "string",
@@ -760,12 +760,12 @@
                 "expectedDrawTime": {
                     "type": "number",
                     "default": 10000,
-                    "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
+                    "description": "The time span (in milliseconds) after which a 'slow-to-draw' notification is shown for any drawing layer. Zero will disable notifications."
                 },
-                "expectedResponseTime": {
+                "expectedLoadTime": {
                     "type": "number",
                     "default": 4000,
-                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
+                    "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
                 },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"
@@ -832,12 +832,12 @@
                 "expectedDrawTime": {
                     "type": "number",
                     "default": 10000,
-                    "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
+                    "description": "The time span (in milliseconds) after which a 'slow-to-draw' notification is shown for any drawing layer. Zero will disable notifications."
                 },
-                "expectedResponseTime": {
+                "expectedLoadTime": {
                     "type": "number",
                     "default": 4000,
-                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
+                    "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
                 },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"
@@ -845,7 +845,7 @@
                 "catalogueUrl": {
                     "type": "string",
                     "default": null,
-                    "description": "Catalogue url of the layer service."
+                    "description": "Catalogue url of the layer service. Currently not supported."
                 },
                 "layerType": {
                     "type": "string",
@@ -967,10 +967,10 @@
                 "state": {
                     "$ref": "#/$defs/initialLayerSettings"
                 },
-                "stateOnly": {
+                "cosmetic": {
                     "type": "boolean",
                     "default": false,
-                    "description": "A flag indicating this entry is only for state tracking (i.e. it should not be displayed on the UI and all of the controls will be ignored, but the layer itself will be displayed on the map with the given state settings)."
+                    "description": "Indicates if this sublayer should only be drawn on the layer, but not be displayed or treated as an interactive layer on the UI."
                 },
                 "customRenderer": {
                     "type": "object",
@@ -1027,12 +1027,12 @@
                 "expectedDrawTime": {
                     "type": "number",
                     "default": 10000,
-                    "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
+                    "description": "The time span (in milliseconds) after which a 'slow-to-draw' notification is shown for any drawing layer. Zero will disable notifications."
                 },
-                "expectedResponseTime": {
+                "expectedLoadTime": {
                     "type": "number",
                     "default": 4000,
-                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
+                    "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
                 },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"
@@ -1040,7 +1040,7 @@
                 "catalogueUrl": {
                     "type": "string",
                     "default": null,
-                    "description": "Catalogue url of the layer service."
+                    "description": "Catalogue url of the layer service. Currently not supported."
                 },
                 "layerType": {
                     "type": "string",
@@ -1143,12 +1143,12 @@
                 "expectedDrawTime": {
                     "type": "number",
                     "default": 10000,
-                    "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
+                    "description": "The time span (in milliseconds) after which a 'slow-to-draw' notification is shown for any drawing layer. Zero will disable notifications."
                 },
-                "expectedResponseTime": {
+                "expectedLoadTime": {
                     "type": "number",
                     "default": 4000,
-                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
+                    "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
                 },
                 "layerType": {
                     "type": "string",
@@ -1213,6 +1213,11 @@
                     "$ref": "#/$defs/drawOrder",
                     "default": []
                 },
+                "rawData": {
+                    "type": "object",
+                    "description": "Optional content to use as the layer source (instead of loading via the url property). GeoJSON accepts json object or stringified object. CSV accepts string. Shapefile accepts binary ArrayBuffer (runtime only).",
+                    "additionalProperties": true
+                },
                 "identifyMode": {
                     "type": "string",
                     "description": "Determines how features should be identified. By geometry, by symbol, or both.",
@@ -1254,12 +1259,12 @@
                 "expectedDrawTime": {
                     "type": "number",
                     "default": 10000,
-                    "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
+                    "description": "The time span (in milliseconds) after which a 'slow-to-draw' notification is shown for any drawing layer. Zero will disable notifications."
                 },
-                "expectedResponseTime": {
+                "expectedLoadTime": {
                     "type": "number",
                     "default": 4000,
-                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
+                    "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
                 },
                 "colour": {
                     "type": "string",
@@ -1362,12 +1367,12 @@
                 "expectedDrawTime": {
                     "type": "number",
                     "default": 10000,
-                    "description": "The time span after which a 'slow-to-draw' notification is shown for any drawing layer."
+                    "description": "The time span (in milliseconds) after which a 'slow-to-draw' notification is shown for any drawing layer. Zero will disable notifications."
                 },
-                "expectedResponseTime": {
+                "expectedLoadTime": {
                     "type": "number",
                     "default": 4000,
-                    "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer."
+                    "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
                 },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"
@@ -1375,7 +1380,7 @@
                 "catalogueUrl": {
                     "type": "string",
                     "default": null,
-                    "description": "Catalogue url of the layer service."
+                    "description": "Catalogue url of the layer service. Currently not supported."
                 },
                 "sublayers": {
                     "type": "array",
@@ -1431,7 +1436,7 @@
             "properties": {
                 "id": {
                     "type": "string",
-                    "description": "Identification of the layer entry in the WMS."
+                    "description": "Identification of the layer name in the WMS."
                 },
                 "name": {
                     "type": "string",
@@ -1489,6 +1494,7 @@
         "layerFixtureConfig": {
             "type": "object",
             "description": "Fixture configuration that is specific to a layer.",
+            "additionalProperties": true,
             "properties": {
                 "details": {
                     "$ref": "#/$defs/details"
@@ -1579,7 +1585,7 @@
                 "opacity": {
                     "type": "number",
                     "default": 1,
-                    "description": "Initial opacity value of layer."
+                    "description": "Initial opacity value of layer. Accepts decimal values between 0 and 1."
                 },
                 "visibility": {
                     "type": "boolean",
