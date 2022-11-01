@@ -62,6 +62,18 @@ export default defineComponent({
                 return html;
             }
 
+            // Check to see if url is a valid image / data url based on extension type or format
+            if (
+                !!html.trim().match(/\.(jpeg|jpg|gif|png)$/) ||
+                !!html
+                    .trim()
+                    .match(
+                        /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i
+                    )
+            ) {
+                return `<img src="${html}" />`;
+            }
+
             const classes = 'underline text-blue-600 break-all';
             const div = document.createElement('div');
             div.innerHTML = html.trim();
