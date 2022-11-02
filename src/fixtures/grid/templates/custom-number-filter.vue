@@ -3,7 +3,7 @@
         <input
             class="rv-min rv-input bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
             style="width: 45%"
-            type="text"
+            type="number"
             v-model="minVal"
             @input="minValChanged()"
             @keyup.enter="
@@ -18,7 +18,7 @@
         <input
             class="rv-max rv-input bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
             style="width: 45%"
-            type="text"
+            type="number"
             v-model="maxVal"
             @input="maxValChanged()"
             @keyup.enter="
