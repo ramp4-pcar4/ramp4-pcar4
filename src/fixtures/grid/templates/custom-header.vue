@@ -25,6 +25,11 @@
 
         <div v-if="sortable" class="flex">
             <span
+                v-if="params.enableSorting && sort === 0"
+                class="w-24 inline-block"
+            >
+            </span>
+            <span
                 v-if="params.enableSorting && sort === 1"
                 class="customSortDownLabel"
             >
