@@ -38,7 +38,12 @@ export default defineConfig(({ command, mode }) => {
                 rollupOptions: {
                     output: {
                         inlineDynamicImports: true,
-                        dir: `${distName}/lib`
+                        dir: `${distName}/lib`,
+                        assetFileNames: (assetInfo: any) => {
+                            return assetInfo.name === 'style.css'
+                                ? 'ramp.css'
+                                : assetInfo.name;
+                        }
                     }
                 }
             });
