@@ -1651,7 +1651,7 @@
                 "filterByExtent": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Specifies if the table should filter rows by extent by default."
+                    "description": "Specifies if the table should filter rows by extent by default. Currently not supported."
                 },
                 "panelWidth": {
                     "$ref": "#/$defs/panelWidth"
