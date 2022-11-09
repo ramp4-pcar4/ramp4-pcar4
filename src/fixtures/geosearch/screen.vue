@@ -129,7 +129,7 @@ export default defineComponent({
         // zoom in to a clicked result
         zoomIn(result: any): void {
             let zoomPoint = new Point('zoomies', result.position);
-            this.$iApi.geo.map.zoomMapTo(zoomPoint, 50000);
+            this.$iApi.geo.map.zoomMapTo(zoomPoint);
         },
 
         // highlight the search term in each listed geosearch result
