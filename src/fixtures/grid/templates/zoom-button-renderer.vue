@@ -87,7 +87,7 @@ export default defineComponent({
                 if (g.geometry.invalid()) {
                     console.error(`Could not find graphic for objectid ${oid}`);
                 } else {
-                    this.$iApi.geo.map.zoomMapTo(g.geometry, 50000);
+                    this.$iApi.geo.map.zoomMapTo(g.geometry);
                 }
             });
         }
