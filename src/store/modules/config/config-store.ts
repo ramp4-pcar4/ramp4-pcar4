@@ -50,7 +50,9 @@ const getters = {
     getFixtureConfig:
         (state: ConfigState) =>
         (key: string): any => {
-            return state.config.fixtures[key];
+            return state.config.fixtures
+                ? state.config.fixtures[key]
+                : undefined;
         }
 };
 
