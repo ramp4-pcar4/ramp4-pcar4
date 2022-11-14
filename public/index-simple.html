@@ -1,55 +1,3 @@
-# RAMP Instantiation
-
-## Creating An Instance
-
-A page script can create an instance of RAMP with the following call:
-
-```js
-var rInstance = RAMP.createInstance(pageElement, config, options);
-```
-
-Multiple instances can be hosted on a page (each requiring their own page element).
-
-The `pageElement` is the HTML element or element id that the instance should be created in on the page.
-
-The `config` is an object containing a `configs` object which is keyed by language codes with configurations as values. The configurations must follow [this schema](https://github.com/ramp4-pcar4/ramp4-pcar4/blob/main/schema.json).
-This object can optionally include a `startingFixtures` list which is a set of fixtures that the RAMP instance will load. An example of the `config` object is shown below:
-
-```js
-{
-    startingFixtures: ['appbar', 'legend'],
-    configs: {
-        en: {
-            map: {},
-            layers: {},
-            fixtures: {}
-        },
-        fr: {
-            map: {},
-            layers: {},
-            fixtures: {}
-        }
-    }
-}
-```
-
-### Instance Options
-
-The following options are supported when creating an instance.
-
-`loadDefaultFixtures` will instruct RAMP to use the default set of fixtures, providing an "out-of-the-box" experience and requiring minimal setup. The default value is `true`, setting it to `false` means the instantiator must manage their own fixture setup. See the [defaults page](../app/defaults.md) and the [fixtures page](../app/fixtures.md) for additional details. If `startingFixtures` is specified in the the `config` object above and is non-empty, this option will be ignored and the specified fixtures will be loaded instead.
-
-`loadDefaultEvents` is related to `loadDefaultFixtures`, and will apply the default event handlers to link all the default fixtures to each-other and the RAMP core. The default value is `true`, setting it to `false` means the instantiator must wire up their own preferred event handlers.  See the [defaults page](../app/defaults.md) and the [events page](events.md) for additional details.
-
-`startRequired` will instruct RAMP to not initialize the map until the `.start()` method on the instance is called. The default value is `false`, and in this case the `.start()` call is not required. Setting to `true` allows the instance to exist and any pre-map processing or setup to occur before the map initializes.
-
-The `options` parameter can be omitted when creating a RAMP instance; the default values will provide the "out-of-the-box" functionality and will launch immediately.
-
-### Basic Sample
-
-The HTML template below shows a very basic example of how to setup and use RAMP on a webpage.
-
-```html
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -63,7 +11,10 @@ The HTML template below shows a very basic example of how to setup and use RAMP 
     </head>
     <body style="margin: 0">
         <!-- The page element that the RAMP instance will be created in -->
-        <div id="ramp-instance" style="height: 100vh; max-height: -webkit-fill-available"></div>
+        <div
+            id="ramp-instance"
+            style="height: 100vh; max-height: -webkit-fill-available"
+        ></div>
 
         <!-- Load the compiled RAMP script-->
         <script src="./lib/ramp.global.js"></script>
@@ -103,7 +54,10 @@ The HTML template below shows a very basic example of how to setup and use RAMP 
                                     name: 'Web Mercator Maps',
                                     extentSetId: 'EXT_ESRI_World_AuxMerc_3857',
                                     lodSetId: 'LOD_ESRI_World_AuxMerc_3857',
-                                    thumbnailTileUrls: ['/tile/8/91/74', '/tile/8/91/75']
+                                    thumbnailTileUrls: [
+                                        '/tile/8/91/74',
+                                        '/tile/8/91/75'
+                                    ]
                                 }
                             ],
                             basemaps: [
@@ -116,7 +70,8 @@ The HTML template below shows a very basic example of how to setup and use RAMP 
                                             url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                                         }
                                     ],
-                                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                                    tileSchemaId:
+                                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                                 }
                             ],
                             initialBasemapId: 'baseEsriWorld'
@@ -124,13 +79,11 @@ The HTML template below shows a very basic example of how to setup and use RAMP 
                     }
                 }
             };
-
             const options = {
                 loadDefaultFixtures: true,
                 loadDefaultEvents: true,
                 startRequired: false
-            }
-
+            };
             const rInstance = RAMP.createInstance(
                 document.getElementById('ramp-instance'),
                 config,
@@ -139,6 +92,3 @@ The HTML template below shows a very basic example of how to setup and use RAMP 
         </script>
     </body>
 </html>
-```
-
-Click [here](https://ramp4-pcar4.github.io/ramp4-pcar4/main/index-simple.html) to see this page in action.
