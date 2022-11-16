@@ -259,10 +259,10 @@ import GridCustomHeaderV from './templates/custom-header.vue';
 // grid button templates
 import DetailsButtonRendererV from './templates/details-button-renderer.vue';
 import ZoomButtonRendererV from './templates/zoom-button-renderer.vue';
+import CellRendererV from './templates/cell-renderer.vue';
 import { CoreFilter, FieldType } from '@/geo/api';
 
 import { debounce } from 'throttle-debounce';
-import linkifyHtml from 'linkify-html';
 
 // these should match up with the `type` value returned by the attribute promise.
 const NUM_TYPES: string[] = [
@@ -360,7 +360,20 @@ export default defineComponent({
                 this.filterSync = this.gridFiltersApplied();
                 this.updateFilterInfo();
             },
-            onBodyScroll: this.updateFilterInfo,
+            onBodyScroll: () => {
+                this.updateFilterInfo();
+                // prevent tootltips from leaving grid panel on scroll
+                [...document.querySelectorAll('[id^=tippy]')].forEach(
+                    (el: any) => {
+                        if (
+                            el._tippy &&
+                            this.$el.contains(el._tippy.reference)
+                        ) {
+                            el._tippy.hide();
+                        }
+                    }
+                );
+            },
             rowBuffer: 0,
             suppressColumnVirtualisation: true,
             // shift tab -> header, tab -> out of grid
@@ -478,22 +491,17 @@ export default defineComponent({
                         if (NUM_TYPES.indexOf(fieldInfo.type) > -1) {
                             this.setUpNumberFilter(col, this.config.state);
                             col.filter = 'agNumberColumnFilter';
-                            col.cellRenderer = (cell: any) => {
-                                return cell.value == null
-                                    ? ''
-                                    : this.$iApi.$vApp.$n(cell.value, 'number');
+                            col.cellRenderer = CellRendererV;
+                            col.cellRendererParams = {
+                                type: 'number'
                             };
                         } else if (fieldInfo.type === FieldType.DATE) {
                             this.setUpDateFilter(col, this.config.state);
                             col.filter = 'agDateColumnFilter';
                             col.minWidth = 400;
-                            col.cellRenderer = (cell: any) => {
-                                // get YYYY-MM-DD from date
-                                return cell.value == null
-                                    ? ''
-                                    : new Date(cell.value)
-                                          .toISOString()
-                                          .slice(0, 10);
+                            col.cellRenderer = CellRendererV;
+                            col.cellRendererParams = {
+                                type: 'date'
                             };
                         } else if (fieldInfo.type === FieldType.STRING) {
                             if (col.isSelector) {
@@ -506,29 +514,11 @@ export default defineComponent({
                             } else {
                                 this.setUpTextFilter(col, this.config.state);
                             }
-
-                            col.cellRenderer = (cell: any) => {
-                                // if value is falsey, return it
-                                if (!cell.value) {
-                                    return cell.value;
-                                }
-
-                                // test if the value already contains an anchor tag
-                                // if it does, just return the value
-                                if (/<a[^>]*>[^<]+<\/a>/g.test(cell.value)) {
-                                    return cell.value;
-                                }
-
-                                return linkifyHtml(cell.value, {
-                                    target: '_blank',
-                                    validate: {
-                                        url: (value: string) =>
-                                            /^https?:\/\//.test(value) // only links that begin with a protocol will be hyperlinked
-                                    }
-                                });
-                            };
-
                             col.filter = 'agTextColumnFilter';
+                            col.cellRenderer = CellRendererV;
+                            col.cellRendererParams = {
+                                type: 'string'
+                            };
                         }
 
                         this.columnDefs.push(col);
@@ -1273,6 +1263,7 @@ interface ColumnDefinition {
         comparator?: Function;
     };
     cellRenderer: Function;
+    cellRendererParams?: any;
     sortable: boolean;
     hide: boolean;
     isSelector: boolean;
