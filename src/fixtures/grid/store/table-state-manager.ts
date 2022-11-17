@@ -10,10 +10,8 @@ export default class TableStateManager {
     constructor(baseLayer: any) {
         this.baseLayer = baseLayer;
         this._showFilter =
-            baseLayer.table.showFilter !== undefined
-                ? baseLayer.table.showFilter
-                : true;
-        this._filterByExtent = baseLayer.table.filterByExtent || false;
+            baseLayer.showFilter !== undefined ? baseLayer.showFilter : true;
+        this._filterByExtent = baseLayer.filterByExtent || false;
         this._columnFilters = {};
         this._open = true;
         this._columnState = null;
@@ -61,6 +59,7 @@ export default class TableStateManager {
      */
     clearFilters() {
         this._columnFilters = {};
+        this._filterByExtent = false;
         this._filtered = false;
     }
 

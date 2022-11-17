@@ -760,18 +760,18 @@ export class EventAPI extends APIScope {
                         // remove cached grid state for layer from grid store
                         this.$vApp.$store.dispatch(
                             `grid/${GridAction.removeGrid}`,
-                            layer.uid
+                            layer.id
                         );
                         // close grid panel if open or minimized with removed layer
-                        const currentUid = this.$vApp.$store.get(
-                            GridStore.currentUid
+                        const currentId = this.$vApp.$store.get(
+                            GridStore.currentId
                         );
-                        if (layer.uid === currentUid) {
+                        if (layer.id === currentId) {
                             const panel = this.$iApi.panel.get('grid');
                             if (panel.isOpen) {
                                 this.$iApi.panel.close(panel);
                             }
-                            this.$vApp.$store.set(GridStore.currentUid, null);
+                            this.$vApp.$store.set(GridStore.currentId, null);
                         }
                     }
                 };
@@ -1053,7 +1053,7 @@ export class EventAPI extends APIScope {
                 zeHandler = (layer: LayerInstance, open?: boolean) => {
                     const gridFixture = this.$iApi.fixture.get<GridAPI>('grid');
                     if (gridFixture) {
-                        gridFixture.toggleGrid(layer.uid, open);
+                        gridFixture.toggleGrid(layer.id, open);
                     }
                 };
                 this.$iApi.event.on(

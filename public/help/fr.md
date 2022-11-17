@@ -202,8 +202,9 @@ Ce groupe de commandes est situé en haut du tableau de données et comporte les
   - Lorsque cette option est désactivée, tous les filtres de colonnes seront masqués.
   - Lorsque cette option est désactivée, il n'est pas possible de modifier les filtres de colonnes.
   - Les filtres de colonnes demeurent en vigueur même lorsque l'option est désactivée.
-- ![](datatable/more.png) Menu du tableau (options supplémentaires)
-  - Efface la recherche et les filtres
+- ![](datatable/extentFilter.png) Filtrer par étendue
+  - Permet de basculer le filtre par portée
+- ![](datatable/clearFilters.png) Efface la recherche et les filtres
     - Efface toutes les recherches et tous les filtres qui peuvent s'appliquer au tableau.
 
 ### Triage et réorganisation
