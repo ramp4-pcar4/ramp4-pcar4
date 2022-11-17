@@ -332,8 +332,7 @@
                     "$ref": "#/$defs/layerControls"
                 },
                 "layerDisabledControls": {
-                    "$ref": "#/$defs/layerControls",
-                    "default": []
+                    "$ref": "#/$defs/layerControls"
                 },
                 "coverIcon": {
                     "type": "string",
@@ -435,7 +434,7 @@
         },
         "layerControls": {
             "type": "array",
-            "description": "All possible controls to be enabled/disabled on a single legend layer item.",
+            "description": "All possible controls to be enabled/disabled on a single legend layer item. Defaults to controls/disabledControls defined in layer config if missing.",
             "items": {
                 "type": "string",
                 "enum": [
