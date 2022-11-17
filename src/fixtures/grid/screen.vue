@@ -9,7 +9,8 @@
             <table-component
                 class="rv-grid"
                 ref="rvGrid"
-                :layerUid="currentUid"
+                :layerId="currentId"
+                :layerUid="layerUid"
                 :panel="panel"
             ></table-component>
         </template>
@@ -45,7 +46,7 @@ export default defineComponent({
     data() {
         return {
             layers: this.get(LayerStore.layers),
-            currentUid: this.get(GridStore.currentUid),
+            currentId: this.get(GridStore.currentId),
             quicksearch: '',
             head: '',
             layer: ref()
@@ -61,6 +62,12 @@ export default defineComponent({
     mounted() {
         // Set the panel name to the name of the layer.
         this.head = this.layerName();
+    },
+
+    computed: {
+        layerUid(): string {
+            return this.$iApi.geo.layer.getLayer(this.currentId)!.uid;
+        }
     },
 
     methods: {
