@@ -358,6 +358,10 @@ let config = {
                     fixtures: {
                         details: {
                             template: 'WFSLayer-Custom'
+                        },
+                        grid: {
+                            filterByExtent: true,
+                            showFilter: false
                         }
                     }
                 },

@@ -6,10 +6,10 @@ export class GridState {
     /**
      * A list of all existing grid configuration files.
      *
-     * @type {{ [uid: string]: GridConfig }}
+     * @type {{ [id: string]: GridConfig }}
      * @memberof GridState
      */
-    grids: { [uid: string]: GridConfig } = {};
+    grids: { [id: string]: GridConfig } = {};
 
     /**
      * The grid panel.
@@ -20,22 +20,22 @@ export class GridState {
     panel: PanelConfig | null = null;
 
     /**
-     * The uid of the layer that is currently open in the grid.
+     * The id of the layer that is currently open in the grid.
      *
      * @type {(string | null)}
      * @memberof GridState
      */
-    currentUid: string | null = null;
+    currentId: string | null = null;
 }
 
 export interface GridConfig {
     /**
-     * The uid for the layer that this grid represents.
+     * The id for the layer that this grid represents.
      *
      * @type {String}
      * @memberof GridItemConfig
      */
-    uid: string;
+    id: string;
 
     /**
      * The state manager for this grid.

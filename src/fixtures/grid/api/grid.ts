@@ -5,35 +5,33 @@ import TableStateManager from '../store/table-state-manager';
 
 export class GridAPI extends FixtureInstance {
     /**
-     * Open the grid for the layer with the given uid.
+     * Open the grid for the layer with the given id.
      *
-     * @param {string} uid
+     * @param {string} id
      * @param {boolean} [open] force panel open or closed
      * @memberof GridAPI
      */
-    toggleGrid(uid: string, open?: boolean): void {
-        // get GridConfig for specified uid
+    toggleGrid(id: string, open?: boolean): void {
+        // get GridConfig for specified id
         let gridSettings: GridConfig | undefined = this.$vApp.$store.get(
-            `${GridStore.grids}@${uid}`
+            `${GridStore.grids}@${id}`
         );
 
-        // if no GridConfig exists for the given uid, create it.
+        // if no GridConfig exists for the given id, create it.
         if (gridSettings === undefined) {
             gridSettings = {
-                uid: uid,
+                id: id,
                 state: new TableStateManager({
-                    table: {
-                        showFilter: true,
-                        filterByExtent: false
-                    }
+                    showFilter: true,
+                    filterByExtent: false
                 })
             };
 
             this.$vApp.$store.set('grid/addGrid!', gridSettings);
         }
 
-        const prevUid = this.$vApp.$store.get(GridStore.currentUid);
-        this.$vApp.$store.set(GridStore.currentUid, uid ? uid : null);
+        const prevId = this.$vApp.$store.get(GridStore.currentId);
+        this.$vApp.$store.set(GridStore.currentId, id ? id : null);
 
         const panel = this.$iApi.panel.get('grid');
 
@@ -45,9 +43,9 @@ export class GridAPI extends FixtureInstance {
 
         if (!panel.isOpen || !panel.isVisible) {
             this.$iApi.panel.open('grid');
-        } else if (prevUid !== uid || open === true) {
+        } else if (prevId !== id || open === true) {
             // don't toggle off if different layer or force open, use key prop to force rerender
-            panel.show({ screen: 'grid-screen', props: { key: uid } });
+            panel.show({ screen: 'grid-screen', props: { key: id } });
         } else {
             panel.close();
         }
@@ -56,12 +54,22 @@ export class GridAPI extends FixtureInstance {
     /**
      * Parses the grid config JSON snippet from the config file.
      *
-     * @param {GridConfig} [gridConfig]
      * @memberof GridAPI
      */
-    _parseConfig(gridConfig?: GridConfig) {
-        if (!gridConfig) return;
-
+    _parseConfig() {
         this.handlePanelWidths(['grid']);
+
+        const layerGridConfigs: any = this.getLayerFixtureConfigs();
+
+        // construct the details config from the layer fixture configs
+        Object.keys(layerGridConfigs).forEach((layerId: string) => {
+            const gridConfig = {
+                id: layerId,
+                state: new TableStateManager(layerGridConfigs[layerId])
+            };
+
+            // save the item in the store
+            this.$vApp.$store.set('grid/addGrid!', gridConfig);
+        });
     }
 }
