@@ -193,6 +193,7 @@ export class FixtureAPI extends APIScope {
         });
         // Now, get all the promises and return
         return Promise.all(
+            // @ts-ignore
             this.$vApp.$store.get('fixture/getLoadPromises', idsToCheck) // not sure how to get typescript to stop yelling
         );
     }
@@ -442,7 +443,7 @@ export class FixtureInstance extends APIScope implements FixtureBase {
             }
         };
 
-        mainConfig.layers.forEach(layer => layerCrawler(layer));
+        mainConfig.layers?.forEach(layer => layerCrawler(layer));
 
         return fixtureConfigs;
     }

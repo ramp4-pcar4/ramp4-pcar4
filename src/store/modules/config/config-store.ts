@@ -60,10 +60,8 @@ const actions = {
         context: ConfigContext,
         config: RampConfig
     ): void {
-        // Don't merge the configs because it causes issues when reloading, instead set the config directly
-        // const newConfig = merge(context.state.config, config);
-
-        context.commit('SET_CONFIG', config);
+        const newConfig = { ...context.state.config, ...config };
+        context.commit('SET_CONFIG', newConfig);
         this.set(LayerStore.addLayerConfigs, config.layers);
     },
     registerConfig: function (
@@ -247,21 +245,20 @@ export enum ConfigStore {
 
 export function config() {
     const state = new ConfigState({
-        config: {
-            map: {
-                lods: [],
-                extent: {
-                    xmin: 0,
-                    xmax: 0,
-                    ymin: 0,
-                    ymax: 0,
-                    spatialReference: {}
-                },
-                basemaps: [],
-                initialBasemapId: ''
+        map: {
+            lods: [],
+            extent: {
+                xmin: 0,
+                xmax: 0,
+                ymin: 0,
+                ymax: 0,
+                spatialReference: {}
             },
-            layers: []
-        }
+            basemaps: [],
+            initialBasemapId: ''
+        },
+        fixtures: {},
+        layers: []
     });
 
     return {
