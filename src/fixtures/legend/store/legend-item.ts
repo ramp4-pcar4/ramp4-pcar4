@@ -217,10 +217,27 @@ export class LegendItem extends APIScope {
         } else {
             // for exclusive sets ensure that there is only one child item visible
             if (this.visibility) {
-                // toggle the last visible child on or by default the first child item in the set
-                this._lastVisible !== undefined
-                    ? this._lastVisible.toggleVisibility(true)
-                    : this.children[0].toggleVisibility(true);
+                // toggle the last visible child on if it is toggleable, otherwise find a toggleable child and toggle it
+                if (
+                    this._lastVisible &&
+                    (!(this._lastVisible instanceof LayerItem) ||
+                        this._lastVisible.layerControlAvailable(
+                            LayerControl.Visibility
+                        ))
+                ) {
+                    this._lastVisible.toggleVisibility(true);
+                } else {
+                    const itemToTurnOn = this.children.find(
+                        child =>
+                            !(child instanceof LayerItem) ||
+                            (
+                                child as unknown as LayerItem
+                            ).layerControlAvailable(LayerControl.Visibility)
+                    );
+                    if (itemToTurnOn) {
+                        itemToTurnOn.toggleVisibility(true);
+                    }
+                }
             } else {
                 // turn off visibility for all child items and save/update the last legend item
                 this._lastVisible = this.children.find(item => item.visibility);
