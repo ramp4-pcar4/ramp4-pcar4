@@ -1612,18 +1612,18 @@
                 "title": {
                     "type": "string",
                     "default": "",
-                    "description": "Title of the datatable."
+                    "description": "Title of the datatable. Currently not supported."
                 },
                 "columns": {
                     "type": "array",
-                    "description": "An array to specify how the columns (properties) of the table are defined. If a column is not present in the array, it is treated as disabled.",
+                    "description": "An array to specify how the columns (properties) of the table are defined. If a column is not present in the array, it is treated as disabled. Currently not supported.",
                     "items": {
                         "$ref": "#/$defs/column"
                     }
                 },
                 "search": {
                     "type": "object",
-                    "description": "Configures the datatable global search functionality.",
+                    "description": "Configures the datatable global search functionality. Currently not supported.",
                     "properties": {
                         "enabled": {
                             "type": "boolean",
@@ -1646,12 +1646,12 @@
                 "applyMap": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Specifies if column filters are applied to the map by default."
+                    "description": "Specifies if column filters are applied to the map by default. Currently not supported."
                 },
                 "filterByExtent": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Specifies if the table should filter rows by extent by default. Currently not supported."
+                    "description": "Specifies if the table should filter rows by extent by default."
                 },
                 "panelWidth": {
                     "$ref": "#/$defs/panelWidth"

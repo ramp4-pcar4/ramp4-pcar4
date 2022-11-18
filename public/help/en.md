@@ -202,9 +202,10 @@ This control group is located at the top of the data table and has the following
     - toggling this option off will hide all column filters 
     - unable to change column filters while toggled off
     - column filters remain applied even when toggled off
-- ![](datatable/more.png) Table Menu (More Options)
-    - Clear Search and Filters
-        - clear any existing filters and searches that may be applied to the table
+- ![](datatable/extentFilter.png) Extent filter
+    - toggles filter by extent
+- ![](datatable/clearFilters.png) Clear Search and Filters
+    - clear any existing filters and searches that may be applied to the table
 
 ### Sorting and Reordering
 
