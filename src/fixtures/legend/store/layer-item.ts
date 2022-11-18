@@ -16,8 +16,8 @@ export class LayerItem extends LegendItem {
     _coverIcon?: string;
     _description?: string;
     _symbologyExpanded: boolean;
-    _layerControls: Array<LayerControl> = [];
-    _layerDisabledControls: Array<LayerControl> = [];
+    _layerControls: Array<LayerControl> | undefined;
+    _layerDisabledControls: Array<LayerControl> | undefined;
 
     handlers: Array<string> = [];
 
@@ -34,8 +34,8 @@ export class LayerItem extends LegendItem {
         this._type = LegendType.Placeholder;
         this._layerId = config.layerId;
         this._layerIdx = config.sublayerIndex;
-        this._layerControls = config.layerControls ?? [];
-        this._layerDisabledControls = config.disabledLayerControls ?? [];
+        this._layerControls = config.layerControls;
+        this._layerDisabledControls = config.disabledLayerControls;
         this._layerRedrawing = false;
         this._symbologyExpanded = config.symbologyExpanded || false;
         if (config.coverIcon) this._coverIcon = config.coverIcon;
@@ -295,7 +295,7 @@ export class LayerItem extends LegendItem {
     layerControlAvailable(control: LayerControl): boolean {
         return this._layerDisabledControls?.includes(control)
             ? false
-            : this._layerControls?.includes(control);
+            : !!this._layerControls?.includes(control);
     }
 
     // Update layer controls and disabled controls for this layer item.
@@ -303,9 +303,8 @@ export class LayerItem extends LegendItem {
         const cont =
             this.$iApi.geo.layer.getLayerControls(this.layerId) ??
             this.$iApi.geo.layer.getLayerControls(this.parentLayerId ?? '');
-        if (this._layerControls.length === 0)
-            this._layerControls = cont?.controls ?? [];
-        if (this._layerDisabledControls.length === 0)
+        if (!this._layerControls) this._layerControls = cont?.controls ?? [];
+        if (!this._layerDisabledControls)
             this._layerDisabledControls = cont?.disabledControls ?? [];
     }
 }
