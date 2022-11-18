@@ -726,3 +726,5 @@ rInstance.fixture.add('areas-of-interest');
 
 // load map if startRequired is true
 rInstance.start();
+
+window.debugInstance = rInstance;

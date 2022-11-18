@@ -225,20 +225,13 @@
                 >
                     <button
                         type="button"
-                        class="text-gray-500 hover:text-black dropdown-button"
-                        :class="{
-                            disabled: !controlAvailable(`reload`)
-                        }"
-                        :content="
-                            controlAvailable('reload')
-                                ? $t('legend.layer.controls.reload')
-                                : ''
-                        "
+                        class="text-gray-500 hover:text-black"
+                        :content="$t('legend.layer.controls.reload')"
                         v-tippy="{
                             placement: 'top-start'
                         }"
                         @mouseover.stop
-                        @click.stop="reloadLayer"
+                        @click.stop="reloadIfReady"
                     >
                         <div class="flex p-8">
                             <svg
@@ -247,6 +240,54 @@
                             >
                                 <path
                                     d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"
+                                ></path>
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- cancel for loading and error'd items -->
+                <div
+                    v-if="
+                        legendItem.type !== LegendType.Item &&
+                        legendItem instanceof LayerItem
+                    "
+                    class="relative"
+                >
+                    <button
+                        type="button"
+                        class="text-gray-500 hover:text-black"
+                        :content="
+                            legendItem.type === LegendType.Error
+                                ? $t('legend.layer.controls.remove')
+                                : $t('legend.layer.controls.cancel')
+                        "
+                        v-tippy="{
+                            placement: 'top-start'
+                        }"
+                        @mouseover.stop
+                        @click.stop="cancelLayer"
+                    >
+                        <div class="flex p-8">
+                            <svg
+                                v-if="
+                                    legendItem.type === LegendType.Placeholder
+                                "
+                                class="fill-current w-18 h-18"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 352 512"
+                            >
+                                <path
+                                    d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
+                                />
+                            </svg>
+                            <svg
+                                v-else
+                                class="inline-block fill-current w-18 h-18 mr-1"
+                                viewBox="0 0 23 21"
+                            >
+                                <path
+                                    d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
                                 ></path>
                             </svg>
                         </div>
@@ -375,7 +416,11 @@
 
 <script lang="ts">
 import { GlobalEvents, LayerInstance } from '@/api';
-import type { LegendSymbology, RampLayerConfig } from '@/geo/api';
+import type {
+    LegendSymbology,
+    RampLayerConfig,
+    RampLayerMapImageSublayerConfig
+} from '@/geo/api';
 import { DrawState, LayerControl } from '@/geo/api';
 import { LayerStore } from '@/store/modules/layer';
 import to from 'await-to-js';
@@ -389,6 +434,7 @@ import { InfoType, SectionItem } from '../store/section-item';
 import LegendCheckboxV from './checkbox.vue';
 import LegendOptionsV from './legend-options.vue';
 import LegendSymbologyStackV from './symbology-stack.vue';
+import type { LegendAPI } from '../api/legend';
 
 export default defineComponent({
     name: 'LegendItemV',
@@ -548,56 +594,96 @@ export default defineComponent({
             }
         },
         /**
+         * Reloads layer if its "ready" to be reloaded.
+         * If a layer has not been cancelled, it is ready to be reloaded.
+         * If it has been cancelled by the user, then we wait for any currently in progress load to finish.
+         */
+        reloadIfReady() {
+            // reload legend item state back to placeholder state
+            this.legendItem.reload();
+            // if a sublayer was reloaded, put all sublayer items in reloading state.
+            const layerConfig: RampLayerConfig = this.layerConfigs.find(
+                (lc: RampLayerConfig) => lc.id === this.legendItem.parentLayerId
+            );
+            if (layerConfig) {
+                layerConfig.sublayers?.forEach(sc => {
+                    const layerItemToCancel = this.$iApi.fixture
+                        .get<LegendAPI>('legend')
+                        ?.getLayerItem(
+                            `${layerConfig.id}-${
+                                (sc as RampLayerMapImageSublayerConfig).index
+                            }`
+                        );
+                    if (layerItemToCancel) {
+                        layerItemToCancel.reload();
+                    }
+                });
+            }
+            if ((this.legendItem as unknown as LayerItem)._loadCancelled) {
+                const readyWatcher = setInterval(() => {
+                    if ((this.legendItem as unknown as LayerItem).layer) {
+                        Promise.allSettled([
+                            (this.legendItem as unknown as LayerItem).layer
+                                .loadPromise
+                        ]).then(() => {
+                            clearInterval(readyWatcher);
+                            this.reloadLayer();
+                        });
+                    }
+                }, 250);
+            } else {
+                this.reloadLayer();
+            }
+        },
+        /**
          * Reloads a layer on the map.
          */
         reloadLayer() {
-            if (this.controlAvailable(LayerControl.Reload)) {
-                // reload legend item state back to placeholder state
-                this.legendItem.reload();
-                // want the animation to play for half a second because a reload can fail "instantly", making it look like nothing happened to the user
-                setTimeout(() => {
-                    // call reload on layer if it exists
-                    if (this.legendItem.layer !== undefined) {
-                        toRaw(this.legendItem!.layer!)
-                            .reload()
-                            .then(() =>
-                                this.$iApi.$vApp.$store.set(
-                                    LayerStore.removeErrorLayer,
-                                    this.legendItem.layer!
-                                )
+            // want the animation to play for half a second because a reload can fail "instantly", making it look like nothing happened to the user
+            setTimeout(() => {
+                (this.legendItem as unknown as LayerItem)._loadCancelled =
+                    false;
+                // call reload on layer if it exists
+                if (this.legendItem.layer !== undefined) {
+                    toRaw(this.legendItem!.layer!)
+                        .reload()
+                        .then(() =>
+                            this.$iApi.$vApp.$store.set(
+                                LayerStore.removeErrorLayer,
+                                this.legendItem.layer!
                             )
-                            .catch(() =>
-                                this.$iApi.$vApp.$store.set(
-                                    LayerStore.addErrorLayers,
-                                    [this.legendItem.layer!]
-                                )
-                            );
-                    } else {
-                        // otherwise attempt to re-create layer with layer config
-                        const layerConfig =
-                            this.legendItem!.layerIdx === undefined
-                                ? this.layerConfigs.find(
-                                      (lc: RampLayerConfig) =>
-                                          lc.id === this.legendItem.layerId
-                                  )
-                                : this.layerConfigs.find(
-                                      (lc: RampLayerConfig) =>
-                                          lc.id ===
-                                          this.legendItem.parentLayerId
-                                  );
-                        if (layerConfig !== undefined) {
-                            this.recreateLayer(layerConfig);
-                        }
-                    }
-                    // catch error if reload fails
-                    this.legendItem.loadPromise.catch(() => {
-                        console.error(
-                            'Failed to reload layer -',
-                            this.legendItem.name
+                        )
+                        .catch(() =>
+                            this.$iApi.$vApp.$store.set(
+                                LayerStore.addErrorLayers,
+                                [this.legendItem.layer!]
+                            )
                         );
-                    });
-                }, 500);
-            }
+                } else {
+                    // otherwise attempt to re-create layer with layer config
+                    const layerConfig =
+                        this.legendItem!.layerIdx === undefined ||
+                        this.legendItem!.layerIdx === -1
+                            ? this.layerConfigs.find(
+                                  (lc: RampLayerConfig) =>
+                                      lc.id === this.legendItem.layerId
+                              )
+                            : this.layerConfigs.find(
+                                  (lc: RampLayerConfig) =>
+                                      lc.id === this.legendItem.parentLayerId
+                              );
+                    if (layerConfig !== undefined) {
+                        this.recreateLayer(layerConfig);
+                    }
+                }
+                // catch error if reload fails
+                this.legendItem.loadPromise.catch(() => {
+                    console.error(
+                        'Failed to reload layer -',
+                        this.legendItem.name
+                    );
+                });
+            }, 500);
         },
         /**
          * Attempt to recreate and instantiate layer from config.
@@ -615,7 +701,9 @@ export default defineComponent({
                     // check if the layer error'd while already in the map
                     const checkLayer = this.$iApi.geo.layer.getLayer(layer.id);
                     if (checkLayer) {
-                        const [reloadErr] = await to(checkLayer.reload());
+                        const [reloadErr] = await to(
+                            toRaw(checkLayer).reload()
+                        );
                         if (reloadErr) {
                             this.$iApi.$vApp.$store.set(
                                 LayerStore.addErrorLayers,
@@ -632,6 +720,67 @@ export default defineComponent({
                 });
             } catch {
                 return;
+            }
+        },
+        /**
+         * Moves loading layer into error state. Removes error'd layer from legend and map.
+         */
+        cancelLayer() {
+            const layerItem: LayerItem = toRaw(
+                this.legendItem as unknown as LayerItem
+            ); // so that typescript doesn't yell in the whole method
+            if (layerItem.type === LegendType.Error) {
+                this.legendItem._hidden = true; // temporarily hide item until we can remove it
+                // layer in error state, remove layer
+                // layer could appear in store later, so we need to keep checking if its there
+                let everythingRemoved: boolean = false;
+                const removalWatcher = setInterval(() => {
+                    // layer is gone from everywhere, so we are done
+                    if (everythingRemoved) {
+                        clearInterval(removalWatcher);
+                    } else if (layerItem.layer && layerItem.layer.layerExists) {
+                        // layer is now there, time to remove!
+                        this.$iApi.geo.map.removeLayer(layerItem.layer);
+                        // remove layer and layer config from store
+                        this.$iApi.$vApp.$store.set(
+                            LayerStore.removeErrorLayer,
+                            layerItem.layerId
+                        );
+                        this.$iApi.$vApp.$store.set(
+                            LayerStore.removeLayerConfig,
+                            layerItem.layerId
+                        );
+                        // remove layer item from legend
+                        this.$iApi.fixture
+                            .get<LegendAPI>('legend')
+                            ?.removeLayerItem(layerItem.layerId);
+                        everythingRemoved = true;
+                    }
+                }, 250);
+            } else {
+                // layer in loading state, cancel layer
+                this.legendItem.error();
+                (this.legendItem as unknown as LayerItem)._loadCancelled = true;
+                // if a sublayer was cancelled, cancel all other sublayers.
+                const layerConfig: RampLayerConfig = this.layerConfigs.find(
+                    (lc: RampLayerConfig) => lc.id === layerItem.parentLayerId
+                );
+                if (layerConfig) {
+                    layerConfig.sublayers?.forEach(sc => {
+                        const layerItemToCancel = this.$iApi.fixture
+                            .get<LegendAPI>('legend')
+                            ?.getLayerItem(
+                                `${layerConfig.id}-${
+                                    (sc as RampLayerMapImageSublayerConfig)
+                                        .index
+                                }`
+                            );
+                        if (layerItemToCancel) {
+                            layerItemToCancel.error();
+                            layerItemToCancel._loadCancelled = true;
+                        }
+                    });
+                }
             }
         },
         /**

@@ -90,7 +90,7 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | LAYER_REGISTERED<br>'layer/registered'             | LayerInstance object                                           | The layer was added to the map                   |
 | LAYER_RELOAD_END<br>'layer/reloadend'              | LayerInstance object                                           | The layer finished reloading                     |
 | LAYER_RELOAD_START<br>'layer/reloadstart'          | LayerInstance object                                           | The layer started reloading                      |
-| LAYER_REMOVE<br>'layer/remove'                     | LayerInstance object                                           | The layer was removed from the map               |       
+| LAYER_REMOVE<br>'layer/remove'                     | LayerInstance object                                           | The layer was removed from the map               |
 | LAYER_VISIBILITYCHANGE<br>'layer/visibilitychange' | _visibility_: new value, layer: LayerInstance object           | The layer visibility changed                     |
 | MAP_BASEMAPCHANGE<br>'map/basemapchanged'          | basemapId: string, schemaChanged: boolean                      | The basemap was changed                          |
 | MAP_BLUR<br>'map/blur'                             | KeyboardEvent object                                           | The map lost focus                               |

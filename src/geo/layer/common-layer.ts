@@ -363,22 +363,33 @@ export class CommonLayer extends LayerInstance {
     onLoad(): void {
         // magic happens here. other layers will override onLoadActions,
         // meaning this will run the function appropriate for the layer who inherited LayerBase
+        let timedOut = false;
+        const loadTimeout = setTimeout(() => {
+            timedOut = true;
+            this.onError();
+        }, 20000); // 20 second time limit for actions to execute
         const loadPromises: Array<Promise<void>> = this.onLoadActions();
         Promise.all(loadPromises)
             .then(() => {
-                // if promise was previously not in pending status, make a new one
-                // otherwise we're trying to resolve a resolved/rejected promise
-                if (this.loadPromFulfilled) {
-                    this.loadDefProm = new DefPromise();
+                clearTimeout(loadTimeout);
+                if (!timedOut) {
+                    // if promise was previously not in pending status, make a new one
+                    // otherwise we're trying to resolve a resolved/rejected promise
+                    if (this.loadPromFulfilled) {
+                        this.loadDefProm = new DefPromise();
+                    }
+                    this.loadDefProm.resolveMe();
+                    this.loadPromFulfilled = true;
+                    this.stopTimer(TimerType.LOAD);
+                    // This will just trigger the above statements for each sublayer
+                    this.sublayers.forEach(sublayer => sublayer.onLoad());
+                    this.updateLayerState(LayerState.LOADED);
+                } else {
+                    this.visibility = false;
                 }
-                this.loadDefProm.resolveMe();
-                this.loadPromFulfilled = true;
-                this.stopTimer(TimerType.LOAD);
-                // This will just trigger the above statements for each sublayer
-                this.sublayers.forEach(sublayer => sublayer.onLoad());
-                this.updateLayerState(LayerState.LOADED);
             })
             .catch(() => {
+                clearTimeout(loadTimeout);
                 this.onError();
             });
     }

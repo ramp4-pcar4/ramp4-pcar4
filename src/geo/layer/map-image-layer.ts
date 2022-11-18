@@ -34,11 +34,7 @@ import type {
     TabularAttributeSet
 } from '@/geo/api';
 
-import {
-    EsriMapImageLayer,
-    EsriRendererFromJson,
-    EsriRequest
-} from '@/geo/esri';
+import { EsriMapImageLayer, EsriRendererFromJson } from '@/geo/esri';
 import { markRaw, reactive } from 'vue';
 
 // Formerly known as DynamicLayer
@@ -259,8 +255,7 @@ export class MapImageLayer extends AttribLayer {
                 if (
                     !parentTreeNode.children
                         .map(node => node.layerIdx)
-                        .includes(sid) ||
-                    _sublayer.initiationState !== InitiationState.INITIATED
+                        .includes(sid)
                 ) {
                     const treeLeaf = new TreeNode(
                         sid,
@@ -317,6 +312,7 @@ export class MapImageLayer extends AttribLayer {
 
             // the sublayer needs to be re-fetched because the initial sublayer was marked as "raw"
             miSL.fetchEsriSublayer(this);
+            miSL.initiate();
 
             // setting custom renderer here (if one is provided)
             const hasCustRed =
@@ -338,19 +334,21 @@ export class MapImageLayer extends AttribLayer {
                     // apply any updates that were in the configuration snippets
                     const subC = subConfigs[miSL.layerIdx];
                     if (subC) {
-                        // Sublayer visibility is normally checked (and set) in the following order:
+                        // If the sublayer is cancelled or removed, set to invisible.
+                        // Otherwise, sublayer visibility is normally checked (and set) in the following order:
                         // sublayer config -> server -> parent config -> true.
                         // First value in the order that is defined is taken as the sublayer's visibility.
                         // However, if parent vis is set to false on config, we prioritize parent config over server vis.
                         // The order in that case is sublayer config -> parent config -> server -> true.
-                        miSL.visibility =
-                            subC.state?.visibility ??
-                            (this.origState.visibility
-                                ? miSL._serverVisibility ??
-                                  this.origState.visibility
-                                : this.origState.visibility ??
-                                  miSL._serverVisibility) ??
-                            true;
+                        miSL.visibility = miSL.isRemoved
+                            ? false
+                            : subC.state?.visibility ??
+                              (this.origState.visibility
+                                  ? miSL._serverVisibility ??
+                                    this.origState.visibility
+                                  : this.origState.visibility ??
+                                    miSL._serverVisibility) ??
+                              true;
                         miSL.opacity =
                             subC.state?.opacity ?? this.origState.opacity ?? 1;
                         // miSL.setQueryable(subC.state.identify); // TODO uncomment when done
@@ -375,7 +373,6 @@ export class MapImageLayer extends AttribLayer {
                         return Promise.resolve();
                     }
                 });
-
             loadPromises.push(pLMD);
         });
 
