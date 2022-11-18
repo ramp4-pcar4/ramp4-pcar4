@@ -142,3 +142,37 @@ The HTML template below shows a very basic example of how to setup and use RAMP 
 ```
 
 Click [here](https://ramp4-pcar4.github.io/ramp4-pcar4/main/index-simple.html) to see this page in action.
+
+## RAMP Build Files
+
+When you download and open up the folder containing the compiled version of RAMP, you will see three files:
+
+1. `ramp.css`
+
+This is the RAMP stylesheet and should be included in your webpage/app.
+
+2. `ramp.global.js`
+
+This is a script that you will need to run before you attempt to create any instances. It creates a global `RAMP` variable that has the following properties:
+
+* `createInstance(el, config, options)`. A function that creates a new instance of RAMP. Detailed usage instructions are [here](#creating-an-instance).
+* `configUpgrade(ramp2Config)`. A function that takes in a RAMP2 config or an array of RAMP2 configs and returns converted RAMP4 config(s).
+* `layerConfigUpgrade(ramp2LayerConfig)`. A function that takes in a RAMP2 layer config and returns a converted RAMP4 layer config.
+* `geo`. A module that contains default values for lod sets and tile schemas, as well as the projection API, geometry API, and shared utils API. TODO: Add link to full doc for this module if/when we write it.
+
+3. `ramp.es.js`
+
+This script works like a module, so you will not need to run it before creating an instance. Instead, you need to import the desired function from the file. It contains the same properties as `ramp.global.js`. Here is a code snippet showing usage:
+
+```
+import { createInstance, geo } from '../lib/ramp.es.js';
+
+const config = {...config definition goes here...}
+const options = {...options definition goes here...}
+
+const rInstance = createInstance(
+    document.getElementById('ramp-instance'),
+    config,
+    options
+);
+```
