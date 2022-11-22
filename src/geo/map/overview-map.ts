@@ -1,17 +1,31 @@
 import { markRaw } from 'vue';
-import { Basemap, CommonMapAPI, InstanceAPI } from '@/api/internal';
+import {
+    Basemap,
+    CommonMapAPI,
+    GraphicLayer,
+    InstanceAPI
+} from '@/api/internal';
+import { Graphic, LayerType, PolygonStyle } from '@/geo/api';
 import type { Extent, RampMapConfig } from '@/geo/api';
-import { EsriMapView, EsriGraphic } from '@/geo/esri';
+import { EsriMapView } from '@/geo/esri';
 import { ConfigStore } from '@/store/modules/config';
 import { OverviewmapStore } from '@/fixtures/overviewmap/store';
 
 export class OverviewMapAPI extends CommonMapAPI {
+    protected overviewGraphicLayer: GraphicLayer;
+
     /**
      * @constructor
      * @param {InstanceAPI} iApi the RAMP instance
      */
     constructor(iApi: InstanceAPI) {
         super(iApi);
+        this.overviewGraphicLayer = this.$iApi.geo.layer.createLayer({
+            id: 'RampOverviewGraphic',
+            layerType: LayerType.GRAPHIC,
+            url: '',
+            cosmetic: true
+        }) as GraphicLayer;
     }
 
     /**
@@ -61,17 +75,6 @@ export class OverviewMapAPI extends CommonMapAPI {
         // Remove all ui components
         this.esriView.ui.components = [];
 
-        // initialize extent rectangle graphic
-        const graphic = {
-            symbol: {
-                type: 'simple-fill',
-                color: [0, 0, 0, 0.25],
-                outline: null
-            },
-            visible: true
-        };
-        this.esriView.graphics.add(new EsriGraphic(graphic));
-
         this.handlers.push({
             type: 'mouse-wheel',
             handler: this.esriView.on('mouse-wheel', esriMouseWheel => {
@@ -118,6 +121,43 @@ export class OverviewMapAPI extends CommonMapAPI {
         this.created = true;
     }
 
+    async addMapGraphicLayer() {
+        if (!this.esriMap) {
+            this.noMapErr();
+            return;
+        }
+
+        const overviewGraphic = new Graphic(
+            this.$iApi.geo.map.getExtent(),
+            'overview-graphic'
+        );
+        overviewGraphic.style = new PolygonStyle({
+            fill: { colour: [0, 0, 0, 0.25] },
+            outline: { colour: '#FF0000' }
+        });
+
+        await this.overviewGraphicLayer.initiate();
+        await this.overviewGraphicLayer.addGraphic(overviewGraphic);
+        this.esriMap?.add(this.overviewGraphicLayer.esriLayer!);
+    }
+
+    removeMapGraphicLayer() {
+        if (!this.esriMap) {
+            this.noMapErr();
+            return;
+        }
+
+        if (!this.overviewGraphicLayer.esriLayer) {
+            throw new Error(
+                'Attempted to remove layer from the map without an esri layer. Likely layer.initiate() was not called or had not finished.'
+            );
+        }
+
+        this.overviewGraphicLayer.removeGraphic();
+        this.overviewGraphicLayer.terminate();
+        this.esriMap.remove(this.overviewGraphicLayer.esriLayer);
+    }
+
     /**
      * Destroys the ESRI map view
      *
@@ -129,7 +169,7 @@ export class OverviewMapAPI extends CommonMapAPI {
             e.preventDefault();
         });
         // remove the extent graphic
-        this.esriView?.graphics.removeAll();
+        this.removeMapGraphicLayer();
         super.destroyMapView();
     }
 
@@ -192,6 +232,7 @@ export class OverviewMapAPI extends CommonMapAPI {
         if (differentSchema) {
             this.destroyMapView();
             this.createMapView(bm);
+            this.addMapGraphicLayer();
         } else {
             this.applyBasemap(bm);
         }
@@ -218,7 +259,9 @@ export class OverviewMapAPI extends CommonMapAPI {
                 // check if drag hits graphic, if so set start extent
                 if (await this.cursorHitTest(esriDrag)) {
                     this.startExtent = markRaw(
-                        this.esriView!.graphics.getItemAt(0).geometry
+                        this.overviewGraphicLayer.getEsriGraphic(
+                            'overview-graphic'
+                        )!.geometry
                     ) as __esri.Extent;
                 }
             } else if (this.startExtent) {
@@ -231,7 +274,9 @@ export class OverviewMapAPI extends CommonMapAPI {
                 const newExtent = this.startExtent
                     .clone()
                     .offset(pos.x - origin.x, pos.y - origin.y, 0);
-                this.esriView!.graphics.getItemAt(0).geometry = newExtent;
+                this.overviewGraphicLayer.getEsriGraphic(
+                    'overview-graphic'
+                )!.geometry = newExtent;
 
                 if (esriDrag.action === 'end') {
                     // zoom main map once drag is done
@@ -263,9 +308,16 @@ export class OverviewMapAPI extends CommonMapAPI {
             false
         );
 
-        // this draws the outline of the main map extent
-        this.esriView!.graphics.getItemAt(0).geometry =
-            this.$iApi.geo.map.esriView!.extent;
+        const graphic =
+            this.overviewGraphicLayer.getLocalGraphic('overview-graphic');
+
+        // Instead of directly changing graphic geometry, we need to remove graphic, change geometry, and re add graphic.
+        // This is because of a glitch where changing the geometry directly sometimes causes multiple indicator rectangles
+        // to appear in the overview map (https://github.com/ramp4-pcar4/ramp4-pcar4/issues/1493).
+        // We suspect that this is an ESRI bug, and are implementing this hack as a workaround for now.
+        this.overviewGraphicLayer.removeGraphic(graphic);
+        graphic!.geometry = newExtent;
+        this.overviewGraphicLayer.addGraphic(graphic!);
 
         return zoomPromise;
     }

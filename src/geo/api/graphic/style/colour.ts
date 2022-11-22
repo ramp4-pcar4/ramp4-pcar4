@@ -21,7 +21,9 @@ export class Colour {
                 this.c = [0, 0, 0, 1];
                 return;
             }
-            this.c = (<Array<any>>colour).map(n => parseInt(n));
+            this.c = (<Array<any>>colour).map((n, i) =>
+                i === 3 ? n : parseInt(n)
+            );
             if (l === 3) {
                 this.c.push(1); // no opacity given. make opaque
             }
