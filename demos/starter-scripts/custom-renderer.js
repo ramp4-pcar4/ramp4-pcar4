@@ -246,7 +246,7 @@ let config = {
                 {
                     id: 'FeatureSimple',
                     layerType: 'esri-feature',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
+                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/9',
                     customRenderer: {
                         type: 'simple',
                         symbol: {
@@ -271,7 +271,7 @@ let config = {
                 {
                     id: 'FeatureUniqueValue',
                     layerType: 'esri-feature',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
+                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/9',
                     customRenderer: {
                         type: 'uniqueValue',
                         field1: 'Category',
@@ -304,7 +304,7 @@ let config = {
                 {
                     id: 'FeatureClassBreaks',
                     layerType: 'esri-feature',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
+                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/9',
                     customRenderer: {
                         type: 'classBreaks',
                         field: 'OBJECTID',

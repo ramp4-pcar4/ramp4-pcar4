@@ -332,7 +332,7 @@ let config = {
                 {
                     id: 'CleanAir',
                     layerType: 'esri-feature',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
+                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/9',
                     state: {
                         opacity: 0.8,
                         visibility: true,
@@ -773,7 +773,7 @@ let config2 = {
                 {
                     id: 'CleanAir',
                     layerType: 'esri-feature',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
+                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/9',
                     state: {
                         opacity: 0.8,
                         visibility: true,
@@ -1214,7 +1214,7 @@ let config3 = {
                 {
                     id: 'CleanAir',
                     layerType: 'esri-feature',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/9',
+                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/9',
                     state: {
                         opacity: 0.8,
                         visibility: true,
