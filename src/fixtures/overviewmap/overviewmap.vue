@@ -75,12 +75,14 @@ export default defineComponent({
     },
 
     mounted() {
-        this.$iApi.geo.map.viewPromise.then(() => {
+        this.$iApi.geo.map.viewPromise.then(async () => {
             this._adaptBasemap();
             this.overviewMap.createMap(
                 this.mapConfig,
                 this.$el.querySelector('.overviewmap') as HTMLDivElement
             );
+
+            await this.overviewMap.addMapGraphicLayer();
 
             this.minimized = this.startMinimized;
 
