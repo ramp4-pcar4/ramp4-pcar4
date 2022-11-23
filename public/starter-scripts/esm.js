@@ -1,4 +1,4 @@
-import { createInstance, geo } from '../lib/ramp.es.js';
+import { createInstance, geo } from '../lib/ramp.esm.js';
 
 window.debugInstance = null;
 

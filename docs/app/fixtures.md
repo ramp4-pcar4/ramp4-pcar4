@@ -67,7 +67,7 @@ For more information about how to use `Vue`, click [here](https://vuejs.org/guid
 > <script src="https://unpkg.com/vue"></script>
 >
 > <!-- load RAMP after loading Vue -->
-> <script src="./lib/RAMP.global.js"></script>
+> <script src="./lib/ramp.js"></script>
 >
 > <!-- load script that creates RAMP instance-->
 > <script type="module" src="./starter-scripts/index.js"></script>
@@ -105,7 +105,7 @@ window.hostFixtures['myfixture'] = MyFixture;
 
 <!-- load Vue and RAMP -->
 <script src="https://unpkg.com/vue"></script>
-<script src="./lib/RAMP.global.js"></script>
+<script src="./lib/ramp.js"></script>
 
 <script>
     const rInstance = RAMP.createInstance(...);
