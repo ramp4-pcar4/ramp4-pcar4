@@ -47,6 +47,7 @@ export default defineComponent({
         return {
             layers: this.get(LayerStore.layers),
             currentId: this.get(GridStore.currentId),
+            grids: this.get(GridStore.grids),
             currentUid: '',
             quicksearch: '',
             head: '',
@@ -71,6 +72,10 @@ export default defineComponent({
 
     methods: {
         layerName(): string {
+            const title = this.grids[this.currentId].state.title;
+            if (title !== '') {
+                return title;
+            }
             if (this.rvGrid) {
                 this.layer = this.$iApi.geo.layer.getLayer(
                     this.rvGrid.layerUid
