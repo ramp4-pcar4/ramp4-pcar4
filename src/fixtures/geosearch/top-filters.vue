@@ -33,14 +33,14 @@
         </div>
         <button
             type="button"
-            class="inline-block flex text-gray-400 w-1/8 hover:text-black float-right disabled:cursor-default disabled:text-gray-400"
+            class="flex items-center justify-center text-gray-400 w-1/8 h-30 mr-16 px-8 float-right hover:text-black disabled:cursor-default disabled:text-gray-400"
             :disabled="!queryParams.type && !queryParams.province"
             v-on:click="clearFilters"
             :content="$t('geosearch.filters.clear')"
             v-tippy="{ placement: 'bottom' }"
         >
             <div class="rv-geosearch-icon">
-                <svg class="fill-current w-18 h-18 mr-16" viewBox="0 0 23 21">
+                <svg class="fill-current w-18 h-18" viewBox="0 0 23 21">
                     <path
                         d="M 14.7574,20.8284L 17.6036,17.9822L 14.7574,15.1716L 16.1716,13.7574L 19.0178,16.568L 21.8284,13.7574L 23.2426,15.1716L 20.432,17.9822L 23.2426,20.8284L 21.8284,22.2426L 19.0178,19.3964L 16.1716,22.2426L 14.7574,20.8284 Z M 2,2L 19.9888,2.00001L 20,2.00001L 20,2.01122L 20,3.99999L 19.9207,3.99999L 13,10.9207L 13,22.909L 8.99999,18.909L 8.99999,10.906L 2.09405,3.99999L 2,3.99999L 2,2 Z "
                     />
