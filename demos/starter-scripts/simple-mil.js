@@ -263,7 +263,7 @@ let config = {
                 {
                     id: 'EcoGeo',
                     layerType: 'esri-map-image',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/',
+                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/',
                     sublayers: [{ index: 6 }, { index: 8 }]
                 }
             ],

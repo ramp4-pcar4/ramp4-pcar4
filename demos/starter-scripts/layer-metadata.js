@@ -78,9 +78,9 @@ let config = {
                     id: 'ecogeo-nature',
                     name: 'Nature',
                     layerType: 'esri-feature',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/6',
+                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/6',
                     metadata: {
-                        url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/6?f=pjson',
+                        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/6?f=pjson',
                         name: 'JSON'
                     }
                 }
