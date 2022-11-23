@@ -72,7 +72,7 @@ npm run preview
 
 Then open `http://localhost:5050/index.html` in your browser.
 
-The `demos` folder **is** processed by vite and can therefore reference any source file in the repo. This is the starting point for local development. For example, the `demos/starter-scripts/main.js` file imports `{ createInstance, geo } from '@/main';` whereas `public/starter-scripts/index.js` doesn't since RAMP is globally defined by the `index.html` file when it loads `<script src="./lib/ramp.global.js"></script>`.
+The `demos` folder **is** processed by vite and can therefore reference any source file in the repo. This is the starting point for local development. For example, the `demos/starter-scripts/main.js` file imports `{ createInstance, geo } from '@/main';` whereas `public/starter-scripts/index.js` doesn't since RAMP is globally defined by the `index.html` file when it loads `<script src="./lib/ramp.js"></script>`.
 
 Run `npm run dev` then open `http://localhost:3000/demos/index.html` in your browser.
 
@@ -82,4 +82,4 @@ During build, the `public` folder contents are placed into the `dist` folder.
 
 The most recent build is available at https://ramp4-pcar4.github.io/ramp4-pcar4/main/.
 
-Demo builds are automatically generated for pull requests if you are a member of the [ramp4-pcar4 organization](https://github.com/orgs/ramp4-pcar4/people) and have your visibility set to public. 
+Demo builds are automatically generated for pull requests if you are a member of the [ramp4-pcar4 organization](https://github.com/orgs/ramp4-pcar4/people) and have your visibility set to public.

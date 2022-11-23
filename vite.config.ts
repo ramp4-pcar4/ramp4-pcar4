@@ -32,7 +32,7 @@ export default defineConfig(({ command, mode }) => {
                     entry: resolve(__dirname, 'src/main.ts'),
                     name: 'RAMP',
                     fileName: (format: string) =>
-                        `ramp.${format == 'iife' ? 'global' : format}.js`,
+                        `ramp${format == 'iife' ? '' : '.esm'}.js`,
                     formats: ['es', 'iife']
                 },
                 rollupOptions: {

@@ -66,7 +66,7 @@ The HTML template below shows a very basic example of how to setup and use RAMP 
         <div id="ramp-instance" style="height: 100vh; max-height: -webkit-fill-available"></div>
 
         <!-- Load the compiled RAMP script-->
-        <script src="./lib/ramp.global.js"></script>
+        <script src="./lib/ramp.js"></script>
 
         <!-- Create simple RAMP instance-->
         <script>
@@ -151,7 +151,7 @@ When you download and open up the folder containing the compiled version of RAMP
 
 This is the RAMP stylesheet and should be included in your webpage/app.
 
-2. `ramp.global.js`
+2. `ramp.js`
 
 This is a script that you will need to run before you attempt to create any instances. It creates a global `RAMP` variable that has the following properties:
 
@@ -160,12 +160,12 @@ This is a script that you will need to run before you attempt to create any inst
 * `layerConfigUpgrade(ramp2LayerConfig)`. A function that takes in a RAMP2 layer config and returns a converted RAMP4 layer config.
 * `geo`. A module that contains default values for lod sets and tile schemas, as well as the projection API, geometry API, and shared utils API. TODO: Add link to full doc for this module if/when we write it.
 
-3. `ramp.es.js`
+3. `ramp.esm.js`
 
 This script works like a module, so you will not need to run it before creating an instance. Instead, you need to import the desired function from the file. It contains the same properties as `ramp.global.js`. Here is a code snippet showing usage:
 
 ```
-import { createInstance, geo } from '../lib/ramp.es.js';
+import { createInstance, geo } from '../lib/ramp.esm.js';
 
 const config = {...config definition goes here...}
 const options = {...options definition goes here...}
