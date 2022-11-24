@@ -1,5 +1,7 @@
 # Datatable
 
+Please note that while this document currently uses the term `datatable` profusely, the fixture id is `grid` and that should be used for configuration / API calls.
+
 ## Components
 The datatable panel contains multiple different components. Listed below are the most important ones, along with a brief description of what they do:
 
