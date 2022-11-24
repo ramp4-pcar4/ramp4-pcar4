@@ -16,7 +16,7 @@ In order to register a config on app startup, the user can pass in one or more c
 
 In the RAMP instance constructor, the first config (required) will be registered for all supported app languages (contained in `i18n.messages`). Any subsequent config file will be registered directly to its specified language.
 
-**TODO**: link a doc on `i18n` setup [here]() when complete
+**TODO**: link a doc on `i18n` setup *here* when complete
 
 A more detailed description of the process will be covered with the examples below.
 
