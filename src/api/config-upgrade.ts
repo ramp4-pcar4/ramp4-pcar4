@@ -889,8 +889,15 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
                 );
             }
             if (r2layer.table.search) {
-                r4layer.fixtures.grid.search = r2layer.table.search;
+                if (r2layer.table.search.enabled) {
+                    r4layer.fixtures.grid.search = r2layer.table.search.enabled;
+                }
+                if (r2layer.table.search.value) {
+                    r4layer.fixtures.grid.searchFilter =
+                        r2layer.table.search.value;
+                }
             }
+
             if (typeof r2layer.table.lazyFilter !== 'undefined') {
                 console.warn(
                     `lazyFilter property provided in table property in layer ${r2layer.id} cannot be mapped and will be skipped.`

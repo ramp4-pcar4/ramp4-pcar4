@@ -22,15 +22,18 @@ Various controls have been added to the datatable for user convenience.
 ### Show/Hide Columns
 A dropdown menu located in the upper right corner of the datatable, labeled `Columns`. This allows the user to hide unwanted columns from the table. Columns that are visible have a checkmark displayed beside them.
 
+### Clear Search and Filters
+A button located in the upper right corner of the datatable. This clears the global search and removes all filters currently applied to the columns.
+
+### Apply Filters to Map
+A control located in the upper right corner of the datatable, within the `More` dropdown menu. When this control is enabled, features on the map are in sync with filtered features on the datatable.
+
 ### Show/Hide Column Filters
-A button located in the upper right corner of the datatable, labeled `Filters`. Pressing this button toggles the [column filters](#Column-Filters) on and off.
+A control located in the upper right corner of the datatable, within the `More` dropdown menu. Pressing this button toggles the [column filters](#Column-Filters) on and off.
 **Note**: turning the column filter display off will not remove any column filters currently applied to the table.
 
 ### Toggle Extent Filter
-A button located in the upper right corner of the datatable. When enabled, the table only displays features within the current extent.
-
-### Clear Search and Filters
-A button located in the upper right corner of the datatable. This clears the global search and removes all filters currently applied to the columns.
+A control located in the upper right corner of the datatable, within the `More` dropdown menu. When enabled, the table only displays features within the current extent.
 
 ### Re-Order Columns
 Each column in the table has a pair of buttons beside it, labeled `<` and `>`. Pressing either of these buttons will shift the column to the left or right, respectively. You cannot move the rightmost column to the right, or the leftmost column to the left.
@@ -63,3 +66,33 @@ Represented by two date input fields. The date filter works in the same fashion 
     - If only the minimum is entered, the table displays all dates *later than or on* the minimum date.
     - If only the maximum is entered, the table displays all dates *earlier than or on* the maximum date.
     - If both the minimum and maximum are entered, the table displays all dates _in between or on_ the dates.
+
+## Configuration
+
+Like other fixtures, the datatable has multiple options that can be adjusted through the configuration file. Since the datatable settings are layer specific, the configuration resides in the fixtures property of layer config objects.
+- `title: string`, renders a custom title above the grid.
+- `columns: Object[]`, an array that specifies how the columns of the grid are defined. Currently not supported.
+- `search: boolean`, shows/hides the [global search bar](#Global-Search).
+- `searchFilter: string`, provides an initial filter in the global search bar
+- `showFilter: boolean`, shows/hides the [column filters](#Show/Hide-Column-Filters) on grid load
+- `applyToMap: boolean`, enables/disables the [Apply to Map filter](#Apply-Filters-to-Map) by default
+- `filterByExtent: boolean`, enables/disables the [Extent filter](#Toggle-Extent-Filter) by default
+
+An example of a layer with a configured datatable is below
+
+```text
+const config = {
+    layers: {
+        {
+            ... layer configurations
+            fixtures: {
+                grid: {
+                    title: 'Datatable for this layer',
+                    showFilter: false,
+                    searchFilter: 'Alberta',
+                }
+            }
+        }
+    }
+}
+```

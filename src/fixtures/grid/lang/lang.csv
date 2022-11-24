@@ -1,5 +1,5 @@
 key,enValue,enValid,frValue,frValid
-grid.title,Features,1,Éléments,1
+grid.title,Datatable,1,Tableau de données,1
 grid.alertName,Grid,1,Grille,1
 grid.splash.loading,Loading data...,1,Chargement des données...,1
 grid.splash.building,Building table...,1,Création du tableau...,1

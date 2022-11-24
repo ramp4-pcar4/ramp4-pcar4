@@ -37,7 +37,10 @@
             class="flex items-center justify-between pl-8 pb-8"
         >
             <!-- show grid components if done loading -->
-            <div class="flex items-center pb-4 mr-8 min-w-0">
+            <div
+                class="flex items-center pb-4 mr-8 min-w-0"
+                v-show="config.state.search"
+            >
                 <input
                     @input="updateQuickSearch()"
                     @keyup.enter="
@@ -47,7 +50,7 @@
                         }
                     "
                     enterkeyhint="done"
-                    v-model="quicksearch"
+                    v-model="config.state.searchFilter"
                     class="rv-global-search rv-input pr-32 min-w-0"
                     aria-invalid="false"
                     :aria-label="$t('grid.filters.label.global')"
@@ -61,7 +64,7 @@
                         viewBox="0 0 24 24"
                         focusable="false"
                         class="fill-current w-24 h-24 flex-shrink-0"
-                        v-if="quicksearch.length < 3"
+                        v-if="config.state.searchFilter.length < 3"
                     >
                         <g id="search_cache224">
                             <path
@@ -86,95 +89,11 @@
             </div>
 
             <div class="pb-2 flex ml-auto">
-                <button
-                    type="button"
-                    class="p-4 h-40 disabled:opacity-30 disabled:cursor-default text-gray-500 hover:text-black"
-                    @click="applyFiltersToMap"
-                    :content="$t('grid.label.filters.apply')"
-                    v-tippy="{ placement: 'bottom' }"
-                    :disabled="filterSync"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fit=""
-                        height="24px"
-                        width="24px"
-                        preserveAspectRatio="xMidYMid meet"
-                        viewBox="0 0 24 24"
-                        focusable="false"
-                    >
-                        <g id="map-refresh">
-                            <path
-                                d="m 15.585999,21.223066 2.414,-2.414 v 1.811 A 3.616,3.616 0 0 0 21.2,15.309066 l 0.881,-0.881 a 4.82,4.82 0 0 1 -4.080001,7.4 v 1.811 z m -13.5859988,-9.224 a 10,10 0 1 1 19.9999998,0 c 0,0.172 0,0.346 -0.013,0.517 a 5.971,5.971 0 0 0 -2.014001,-1.184001 7.935,7.935 0 0 0 -4.973,-6.742999 v 0.41 a 2,2 0 0 1 -2,2 h -2 v 2 A 1,1 0 0 1 10,9.9990662 H 8.0000002 v 1.9999998 h 5.9999988 a 1,1 0 0 1 0.495,0.131 6,6 0 0 0 -0.184,9.6 10.009,10.009 0 0 1 -12.3109988,-9.731 z m 2,0 a 8,8 0 0 0 6.9999988,7.93 v -1.93 a 2,2 0 0 1 -1.9999988,-2 v -1 l -4.79,-4.79 a 8.07,8.07 0 0 0 -0.21,1.79 z m 9.1729988,5 a 4.827,4.827 0 0 1 4.827,-4.828 v -1.81 l 2.414,2.414 -2.414,2.413 v -1.809 a 3.623,3.623 0 0 0 -3.62,3.62 3.537,3.537 0 0 0 0.42,1.69 l -0.881,0.881 a 4.787,4.787 0 0 1 -0.746,-2.571 z"
-                            ></path>
-                        </g>
-                    </svg>
-                </button>
-
                 <!-- show/hide columns -->
                 <column-dropdown
                     :columnApi="columnApi"
                     :columnDefs="columnDefs"
                 ></column-dropdown>
-
-                <!-- toggle column filters -->
-                <button
-                    type="button"
-                    class="p-4 h-40 text-gray-500 hover:text-black"
-                    :class="{ 'text-black': config.state.colFilter }"
-                    @click="toggleShowFilters()"
-                    :content="
-                        gridOptions.floatingFilter
-                            ? $t('grid.label.filters.hide')
-                            : $t('grid.label.filters.show')
-                    "
-                    v-tippy="{
-                        placement: 'bottom'
-                    }"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fit=""
-                        height="24px"
-                        width="24px"
-                        preserveAspectRatio="xMidYMid meet"
-                        viewBox="0 0 24 24"
-                        focusable="false"
-                        class="inline fill-current"
-                    >
-                        <g id="filter_cache958">
-                            <path
-                                d="M 3,2L 20.9888,2L 21,2L 21,2.01122L 21,3.99999L 20.9207,3.99999L 14,10.9207L 14,22.909L 9.99999,18.909L 10,10.906L 3.09405,3.99999L 3,3.99999L 3,2 Z "
-                            ></path>
-                        </g>
-                    </svg>
-                </button>
-
-                <!-- toggle extent filter -->
-                <button
-                    type="button"
-                    class="p-4 h-40 text-gray-500 hover:text-black"
-                    :class="{ 'text-black': config.state.filterByExtent }"
-                    @click="toggleFilterByExtent()"
-                    :content="$t('grid.filters.extent')"
-                    v-tippy="{
-                        placement: 'bottom'
-                    }"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        width="24px"
-                        viewBox="0 0 24 24"
-                        class="inline fill-current"
-                    >
-                        <g id="filter_cache958">
-                            <path
-                                d="M 4 10 Z M 2 2 L 19.9888 2 L 20 2 L 20 2.0112 L 20 4 L 19.9207 4 L 13 10.9207 L 13 22.909 L 9 18.909 L 9 10.906 L 2.0941 4 L 2 4 L 2 2 Z M 24 13 L 21 14 L 18 13 L 15 14 V 22 L 18 21 l 3 1 l 3 -1 z M 21 21 l -3 -1 V 14 l 3 1.055 z"
-                            ></path>
-                        </g>
-                    </svg>
-                </button>
 
                 <!-- clear all filters -->
                 <button
@@ -200,28 +119,149 @@
                         </g>
                     </svg>
                 </button>
+
+                <dropdown-menu
+                    class="h-40 w-40"
+                    :position="'bottom-end'"
+                    :tooltip="$t('panels.controls.optionsMenu')"
+                    :centered="false"
+                >
+                    <template #header
+                        ><svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            class="fill-current m-8 w-24 h-24"
+                        >
+                            <path
+                                d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+                            />
+                        </svg>
+                    </template>
+                    <!-- toggle apply to map -->
+                    <a
+                        href="#"
+                        class="flex leading-snug items-center w-256 hover:text-black"
+                        @click="toggleFiltersToMap()"
+                    >
+                        <div class="md-icon-small inline items-start">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                class="fill-current inline w-20 h-20 mr-2 text-gray-500"
+                            >
+                                <path
+                                    d="m 15.585999,21.223066 2.414,-2.414 v 1.811 A 3.616,3.616 0 0 0 21.2,15.309066 l 0.881,-0.881 a 4.82,4.82 0 0 1 -4.080001,7.4 v 1.811 z m -13.5859988,-9.224 a 10,10 0 1 1 19.9999998,0 c 0,0.172 0,0.346 -0.013,0.517 a 5.971,5.971 0 0 0 -2.014001,-1.184001 7.935,7.935 0 0 0 -4.973,-6.742999 v 0.41 a 2,2 0 0 1 -2,2 h -2 v 2 A 1,1 0 0 1 10,9.9990662 H 8.0000002 v 1.9999998 h 5.9999988 a 1,1 0 0 1 0.495,0.131 6,6 0 0 0 -0.184,9.6 10.009,10.009 0 0 1 -12.3109988,-9.731 z m 2,0 a 8,8 0 0 0 6.9999988,7.93 v -1.93 a 2,2 0 0 1 -1.9999988,-2 v -1 l -4.79,-4.79 a 8.07,8.07 0 0 0 -0.21,1.79 z m 9.1729988,5 a 4.827,4.827 0 0 1 4.827,-4.828 v -1.81 l 2.414,2.414 -2.414,2.413 v -1.809 a 3.623,3.623 0 0 0 -3.62,3.62 3.537,3.537 0 0 0 0.42,1.69 l -0.881,0.881 a 4.787,4.787 0 0 1 -0.746,-2.571 z"
+                                />
+                            </svg>
+                            {{ $t('grid.label.filters.apply') }}
+                            <svg
+                                height="18"
+                                width="18"
+                                viewBox="0 0 24 24"
+                                class="inline float-right"
+                                v-if="config.state.applyToMap"
+                            >
+                                <g id="done">
+                                    <path
+                                        d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+                                    />
+                                </g>
+                            </svg>
+                        </div>
+                    </a>
+                    <!-- toggle column filters -->
+                    <a
+                        href="#"
+                        class="flex leading-snug items-center w-256 hover:text-black"
+                        @click="toggleShowFilters()"
+                    >
+                        <div class="md-icon-small inline items-start">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                class="fill-current inline w-20 h-20 mr-2 text-gray-500"
+                            >
+                                <path
+                                    d="M 3,2L 20.9888,2L 21,2L 21,2.01122L 21,3.99999L 20.9207,3.99999L 14,10.9207L 14,22.909L 9.99999,18.909L 10,10.906L 3.09405,3.99999L 3,3.99999L 3,2 Z "
+                                />
+                            </svg>
+                            {{ $t('grid.label.filters.show') }}
+                            <svg
+                                height="18"
+                                width="18"
+                                viewBox="0 0 24 24"
+                                class="inline float-right"
+                                v-if="config.state.colFilter"
+                            >
+                                <g id="done">
+                                    <path
+                                        d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+                                    />
+                                </g>
+                            </svg>
+                        </div>
+                    </a>
+                    <!-- toggle extent filter -->
+                    <a
+                        href="#"
+                        class="flex leading-snug items-center w-256 hover:text-black"
+                        @click="toggleFilterByExtent()"
+                    >
+                        <div class="md-icon-small inline items-start">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                class="fill-current inline w-20 h-20 mr-2 text-gray-500"
+                            >
+                                <path
+                                    d="M 4 10 Z M 2 2 L 19.9888 2 L 20 2 L 20 2.0112 L 20 4 L 19.9207 4 L 13 10.9207 L 13 22.909 L 9 18.909 L 9 10.906 L 2.0941 4 L 2 4 L 2 2 Z M 24 13 L 21 14 L 18 13 L 15 14 V 22 L 18 21 l 3 1 l 3 -1 z M 21 21 l -3 -1 V 14 l 3 1.055 z"
+                                />
+                            </svg>
+                            {{ $t('grid.filters.extent') }}
+                            <svg
+                                height="18"
+                                width="18"
+                                viewBox="0 0 24 24"
+                                class="inline float-right"
+                                v-if="config.state.filterByExtent"
+                            >
+                                <g id="done">
+                                    <path
+                                        d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+                                    />
+                                </g>
+                            </svg>
+                        </div>
+                    </a>
+                </dropdown-menu>
             </div>
         </div>
         <span v-show="!isLoadingGrid" class="w-full h-0 shadow-clip"></span>
 
-        <span
-            v-show="!isLoadingGrid"
-            class="w-full text-sm mb-0 pl-8 pt-8 pb-4 bg-gray-50"
-            v-truncate
-        >
-            {{
-                $t('grid.filters.label.info', {
-                    range: `${filterInfo.firstRow} - ${filterInfo.lastRow}`,
-                    total: filterInfo.visibleRows
-                })
-            }}
+        <div class="pt-8 pl-8 pb-4 mb-0 bg-gray-50">
+            <div
+                v-show="!isLoadingGrid && gridTitle !== ''"
+                class="w-full font-bold"
+                v-truncate
+            >
+                {{ gridTitle }}
+            </div>
 
-            <span v-if="filterInfo.visibleRows !== rowData.length">{{
-                $t('grid.filters.label.filtered', {
-                    max: rowData.length
-                })
-            }}</span>
-        </span>
+            <div v-show="!isLoadingGrid" class="w-full text-sm" v-truncate>
+                {{
+                    $t('grid.filters.label.info', {
+                        range: `${filterInfo.firstRow} - ${filterInfo.lastRow}`,
+                        total: filterInfo.visibleRows
+                    })
+                }}
+
+                <span v-if="filterInfo.visibleRows !== rowData.length">{{
+                    $t('grid.filters.label.filtered', {
+                        max: rowData.length
+                    })
+                }}</span>
+            </div>
+        </div>
 
         <!-- main grid component -->
         <ag-grid-vue
@@ -324,6 +364,7 @@ export default defineComponent({
             handlers: [] as Array<string>,
             watchers: [] as Array<Function>,
 
+            gridTitle: '',
             columnApi: ref(),
             columnDefs: [] as Array<ColumnDefinition>,
             rowData: [],
@@ -336,7 +377,6 @@ export default defineComponent({
             onCellKeyPress: GridAccessibilityManager.onCellKeyPress,
 
             // Filter variables.
-            quicksearch: '',
             filterInfo: ref({
                 firstRow: 0,
                 lastRow: 0,
@@ -379,6 +419,7 @@ export default defineComponent({
             suppressRowTransform: true,
             onFilterChanged: () => {
                 this.filterSync = this.gridFiltersApplied();
+                this.applyFiltersToMap();
                 this.updateFilterInfo();
             },
             onBodyScroll: () => {
@@ -577,6 +618,14 @@ export default defineComponent({
             this.gridApi = params.api;
             this.columnApi = params.columnApi;
 
+            // get grid title
+            if (this.config.state.title !== '') {
+                this.gridTitle = this.config.state.title;
+            } else {
+                this.gridTitle =
+                    this.$iApi.geo.layer.getLayer(this.layerUid)?.name ?? '';
+            }
+
             // initialize filter info + status
             this.updateFilterInfo();
 
@@ -676,11 +725,11 @@ export default defineComponent({
 
         // Updates the global search value.
         updateQuickSearch() {
-            this.gridApi.setQuickFilter(this.quicksearch);
+            this.gridApi.setQuickFilter(this.config.state.searchFilter);
         },
 
         resetQuickSearch(): void {
-            this.quicksearch = '';
+            this.config.state.searchFilter = '';
             this.updateQuickSearch();
         },
 
@@ -712,6 +761,11 @@ export default defineComponent({
         // Updates the current status of the filter.
         updateFilterInfo() {
             if (this.gridApi && !this.isLoadingGrid) {
+                if (this.config.state.searchFilter !== '')
+                    this.updateQuickSearch();
+                if (this.config.state.applyToMap) {
+                    this.applyFiltersToMap();
+                }
                 this.filterInfo.firstRow =
                     this.gridApi.getFirstDisplayedRow() + 1;
                 this.filterInfo.lastRow =
@@ -1012,11 +1066,20 @@ export default defineComponent({
             this.gridApi.onFilterChanged();
         },
 
+        toggleFiltersToMap() {
+            this.config.state.applyToMap = !this.config.state.applyToMap;
+            this.applyFiltersToMap();
+        },
+
         applyFiltersToMap() {
-            const mapFilterQuery = this.getFiltersQuery();
             const layer = this.$iApi.geo.layer.getLayer(this.layerUid);
-            layer?.setSqlFilter(CoreFilter.GRID, mapFilterQuery);
-            this.filterSync = true;
+            if (!this.config.state.applyToMap) {
+                layer?.setSqlFilter(CoreFilter.GRID, '');
+            } else {
+                const mapFilterQuery = this.getFiltersQuery();
+                layer?.setSqlFilter(CoreFilter.GRID, mapFilterQuery);
+                this.filterSync = true;
+            }
         },
 
         // get filter SQL query string
@@ -1026,7 +1089,10 @@ export default defineComponent({
             Object.keys(filterModel).forEach(col => {
                 colStrs.push(this.filterToSql(col, filterModel[col]));
             });
-            if (this.quicksearch && this.quicksearch.length > 0) {
+            if (
+                this.config.state.searchFilter &&
+                this.config.state.searchFilter.length > 0
+            ) {
                 const globalSearchVal = this.globalSearchToSql() || '1=2';
                 if (globalSearchVal.length > 0) {
                     // do not push an empty global search
@@ -1129,7 +1195,7 @@ export default defineComponent({
         // convert global search to SQL string filter of columns excluding unfiltered columns
         globalSearchToSql(): string {
             // TODO: support for global search on dates
-            let val = this.quicksearch.replace(/'/g, "''");
+            let val = this.config.state.searchFilter.replace(/'/g, "''");
             // to implement quick filters, first need to split the search text on white space
             const searchVals = val.split(' ');
 
