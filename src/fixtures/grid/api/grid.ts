@@ -21,10 +21,7 @@ export class GridAPI extends FixtureInstance {
         if (gridSettings === undefined) {
             gridSettings = {
                 id: id,
-                state: new TableStateManager({
-                    showFilter: true,
-                    filterByExtent: false
-                })
+                state: new TableStateManager({})
             };
 
             this.$vApp.$store.set('grid/addGrid!', gridSettings);

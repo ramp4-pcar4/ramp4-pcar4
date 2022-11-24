@@ -1,10 +1,6 @@
 <template>
     <panel-screen :panel="panel">
-        <template #header
-            >{{
-                head !== '' ? `${$t('grid.title')}: ${head}` : $t('grid.title')
-            }}
-        </template>
+        <template #header>{{ $t('grid.title') }} </template>
         <template #content>
             <table-component
                 class="rv-grid"
@@ -62,26 +58,6 @@ export default defineComponent({
 
     beforeMount() {
         this.currentUid = this.$iApi.geo.layer.getLayer(this.currentId)!.uid;
-    },
-
-    mounted() {
-        // Set the panel name to the name of the layer.
-        this.head = this.layerName();
-    },
-
-    methods: {
-        layerName(): string {
-            if (this.rvGrid) {
-                this.layer = this.$iApi.geo.layer.getLayer(
-                    this.rvGrid.layerUid
-                );
-
-                if (this.layer !== undefined) {
-                    return this.layer.name;
-                }
-            }
-            return '';
-        }
     }
 });
 </script>

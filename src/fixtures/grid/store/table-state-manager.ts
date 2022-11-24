@@ -9,13 +9,16 @@
 export default class TableStateManager {
     constructor(baseLayer: any) {
         this.baseLayer = baseLayer;
-        this._showFilter =
-            baseLayer.showFilter !== undefined ? baseLayer.showFilter : true;
-        this._filterByExtent = baseLayer.filterByExtent || false;
+        this._title = baseLayer.title ?? '';
+        this._showFilter = baseLayer.showFilter ?? true;
+        this._filterByExtent = baseLayer.filterByExtent ?? false;
         this._columnFilters = {};
         this._open = true;
         this._columnState = null;
         this._filtered = true;
+        this._search = baseLayer.search ?? true;
+        this._searchFilter = baseLayer.searchFilter ?? '';
+        this._applyToMap = baseLayer.applyToMap ?? false;
     }
 
     /**
@@ -61,6 +64,7 @@ export default class TableStateManager {
         this._columnFilters = {};
         this._filterByExtent = false;
         this._filtered = false;
+        this._searchFilter = '';
     }
 
     _checkFilters() {
@@ -71,6 +75,24 @@ export default class TableStateManager {
 
     get filtered() {
         return this._filtered;
+    }
+
+    /**
+     * Returns the title of the datatable.
+     *
+     * @memberof TableStateManager
+     */
+    get title() {
+        return this._title;
+    }
+
+    /**
+     * Sets the title of the datatable.
+     *
+     * @memberof TableStateManager
+     */
+    set title(val) {
+        this._title = val;
     }
 
     /**
@@ -126,14 +148,72 @@ export default class TableStateManager {
     set open(val) {
         this._open = val;
     }
+
+    /**
+     * Returns whether the global search is currently enabled.
+     *
+     * @memberof TableStateManager
+     */
+    get search() {
+        return this._search;
+    }
+
+    /**
+     * Sets the global search to enabled or disabled.
+     *
+     * @memberof TableStateManager
+     */
+    set search(val) {
+        this._search = val;
+    }
+
+    /**
+     * Returns the value of the global search.
+     *
+     * @memberof TableStateManager
+     */
+    get searchFilter() {
+        return this._searchFilter;
+    }
+
+    /**
+     * Sets the value of the global search.
+     *
+     * @memberof TableStateManager
+     */
+    set searchFilter(val) {
+        this._searchFilter = val;
+    }
+
+    /**
+     * Returns whether grid filters should apply to the map.
+     *
+     * @memberof TableStateManager
+     */
+    get applyToMap() {
+        return this._applyToMap;
+    }
+
+    /**
+     * Sets the grid to enable or disable filtering results on the map.
+     *
+     * @memberof TableStateManager
+     */
+    set applyToMap(val) {
+        this._applyToMap = val;
+    }
 }
 
 export default interface TableStateManager {
     baseLayer: any;
+    _title: string;
     _showFilter: boolean;
     _filterByExtent: boolean;
     _columnFilters: any;
     _open: boolean;
     _columnState: any;
     _filtered: boolean;
+    _search: boolean;
+    _searchFilter: string;
+    _applyToMap: boolean;
 }

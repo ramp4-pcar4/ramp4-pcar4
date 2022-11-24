@@ -291,6 +291,10 @@ let config = {
                             fixtures: {
                                 settings: {
                                     disabledControls: ['opacity']
+                                },
+                                grid: {
+                                    title: 'A Custom Title',
+                                    search: false
                                 }
                             }
                         }
@@ -360,8 +364,11 @@ let config = {
                             template: 'WFSLayer-Custom'
                         },
                         grid: {
+                            title: 'Datatable for WFS features',
                             filterByExtent: true,
-                            showFilter: false
+                            showFilter: false,
+                            searchFilter: 'y',
+                            applyToMap: true
                         }
                     }
                 },
