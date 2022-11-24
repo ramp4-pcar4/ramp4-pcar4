@@ -1,39 +1,39 @@
-# Datatable
+# Grid
 
 ## Components
-The datatable panel contains multiple different components. Listed below are the most important ones, along with a brief description of what they do:
+The grid panel contains multiple different components. Listed below are the most important ones, along with a brief description of what they do:
 
-### The Grid
-The grid is the main component of the datatable. It contains a row for each feature on the layer. The grid columns correspond to the attributes that belong to the features.
+### The Grid Table
+The grid table is the main component of the grid fixture. It contains a row for each feature on the layer. The grid columns correspond to the attributes that belong to the features.
 **Note**: features will only appear on the grid if they are currently visible
 
 ### Global Search and Column Filters
 The global search and column filters allow the user to display smaller subsets of data within the table. See the [global search](#Global-Search) and [column filters](#Column-Filters).
 
 ### Scroll and Filter Status
-The scroll and filter status is located in the upper left corner of the datatable. It displays the range of rows that are currently visible on the table, and the total number of records that are in the table. If any filters are applied to the grid, the number of filtered rows will be displayed instead of the total number. The range of displayed rows updates as the user scrolls up or down in the table.
+The scroll and filter status is located in the upper left corner of the grid panel. It displays the range of rows that are currently visible on the table, and the total number of records that are in the table. If any filters are applied to the grid, the number of filtered rows will be displayed instead of the total number. The range of displayed rows updates as the user scrolls up or down in the table.
 
 ### Zoom and Details Buttons
-Each row in the datatable contains a zoom and details button. The zoom button centers the map on the feature in the row, and the details button opens the details panel of the feature.
+Each row in the grid table contains a zoom and details button. The zoom button centers the map on the feature in the row, and the details button opens the details panel of the feature.
 
 ## Controls
-Various controls have been added to the datatable for user convenience.
+Various controls have been added to the grid for user convenience.
 
 ### Show/Hide Columns
-A dropdown menu located in the upper right corner of the datatable, labeled `Columns`. This allows the user to hide unwanted columns from the table. Columns that are visible have a checkmark displayed beside them.
+A dropdown menu located in the upper right corner of the grid panel, labeled `Columns`. This allows the user to hide unwanted columns from the table. Columns that are visible have a checkmark displayed beside them.
 
 ### Clear Search and Filters
-A button located in the upper right corner of the datatable. This clears the global search and removes all filters currently applied to the columns.
+A button located in the upper right corner of the grid panel. This clears the global search and removes all filters currently applied to the columns.
 
 ### Apply Filters to Map
-A control located in the upper right corner of the datatable, within the `More` dropdown menu. When this control is enabled, features on the map are in sync with filtered features on the datatable.
+A control located in the upper right corner of the grid panel, within the `More` dropdown menu. When this control is enabled, features on the map are in sync with filtered features on the grid table.
 
 ### Show/Hide Column Filters
-A control located in the upper right corner of the datatable, within the `More` dropdown menu. Pressing this button toggles the [column filters](#Column-Filters) on and off.
+A control located in the upper right corner of the grid panel, within the `More` dropdown menu. Pressing this button toggles the [column filters](#Column-Filters) on and off.
 **Note**: turning the column filter display off will not remove any column filters currently applied to the table.
 
 ### Toggle Extent Filter
-A control located in the upper right corner of the datatable, within the `More` dropdown menu. When enabled, the table only displays features within the current extent.
+A control located in the upper right corner of the grid panel, within the `More` dropdown menu. When enabled, the table only displays features within the current extent.
 
 ### Re-Order Columns
 Each column in the table has a pair of buttons beside it, labeled `<` and `>`. Pressing either of these buttons will shift the column to the left or right, respectively. You cannot move the rightmost column to the right, or the leftmost column to the left.
@@ -50,7 +50,7 @@ Clicking on the column header will switch it between sorting methods. There are 
 The global search is located in the panel header. It is a text filter that applies to *all columns* in the table. It will display any row with an entry that matches the entered text.
 
 ## Column Filters
-The datatable currently supports four different types of column filters. If the datatable is closed, any column filters that are applied to the table will be re-applied when it is re-opened.
+The grid table currently supports four different types of column filters. If the grid panel is closed, any column filters that are applied to the table will be re-applied when it is re-opened.
 
 - **Text Filter**
 Represented by a text input box. Displays entries that contain matching text.
@@ -69,7 +69,7 @@ Represented by two date input fields. The date filter works in the same fashion 
 
 ## Configuration
 
-Like other fixtures, the datatable has multiple options that can be adjusted through the configuration file. Since the datatable settings are layer specific, the configuration resides in the fixtures property of layer config objects.
+Like other fixtures, the grid has multiple options that can be adjusted through the configuration file. Since the grid settings are layer specific, the configuration resides in the fixtures property of layer config objects.
 - `title: string`, renders a custom title above the grid.
 - `columns: Object[]`, an array that specifies how the columns of the grid are defined. Currently not supported.
 - `search: boolean`, shows/hides the [global search bar](#Global-Search).
@@ -78,7 +78,7 @@ Like other fixtures, the datatable has multiple options that can be adjusted thr
 - `applyToMap: boolean`, enables/disables the [Apply to Map filter](#Apply-Filters-to-Map) by default
 - `filterByExtent: boolean`, enables/disables the [Extent filter](#Toggle-Extent-Filter) by default
 
-An example of a layer with a configured datatable is below
+An example of a layer with a configured grid is below
 
 ```text
 const config = {

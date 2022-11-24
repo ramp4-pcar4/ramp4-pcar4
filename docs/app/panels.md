@@ -1,9 +1,5 @@
 # Panels
 
-## TODO
-
-Write other stuff.
-
 ## Startup
 
 Panels can be opened/pinned when RAMP starts up via the config. The following stock panel ID's are currently supported:
