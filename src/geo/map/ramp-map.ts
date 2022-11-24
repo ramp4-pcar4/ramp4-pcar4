@@ -78,11 +78,9 @@ export class MapAPI extends CommonMapAPI {
     }
 
     /**
-     * Destroys the ESRI map
-     *
-     * @protected
+     * Destroys the ESRI map. Typically called by internal system, use at your own risk.
      */
-    protected destroyMap(): void {
+    public destroyMap(): void {
         if (!this.esriMap || !this.esriView) {
             this.noMapErr();
             return;
