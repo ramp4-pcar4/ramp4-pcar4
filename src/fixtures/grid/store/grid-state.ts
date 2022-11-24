@@ -33,7 +33,7 @@ export interface GridConfig {
      * The id for the layer that this grid represents.
      *
      * @type {String}
-     * @memberof GridItemConfig
+     * @memberof GridConfig
      */
     id: string;
 
@@ -41,7 +41,7 @@ export interface GridConfig {
      * The state manager for this grid.
      *
      * @type {PanelStateManager}
-     * @memberof GridItemConfig
+     * @memberof GridConfig
      */
     state: TableStateManager;
 
