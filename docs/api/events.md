@@ -4,7 +4,9 @@
 
 The events API provides an interface to manage events and event handlers on the RAMP instance event bus. Classic event busses (busi?) normally deal with named events and handler functions reacting to those events. This approach means to target an event handler (for example, to remove it), one needs a pointer to the handler function.
 
-Since RAMP provides a default setup, and that setup contains event handlers, this makes it difficult for a 3rd party to access those handlers. To get around this, the RAMP events API introduces event handler names. Interactions with the API use the handler name instead of the handler function, and default event handler names can be found in the documentation (TODO link to doc page) for anyone wishing to manipulate them.
+Since RAMP provides a default setup, and that setup contains event handlers, this makes it difficult for a 3rd party to access those handlers. To get around this, the RAMP events API introduces event handler names. Interactions with the API use the handler name instead of the handler function, and default event handler names can be found in the [defaults page](../app/defaults.md#default-events-handlers) for anyone wishing to manipulate them.
+
+For a list of events that are raised by the RAMP core, please see the [core events list](../app/defaults.md#core-events).
 
 ## Primary Event Methods
 

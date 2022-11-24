@@ -368,7 +368,7 @@ export default defineComponent({
             columnApi: ref(),
             columnDefs: [] as Array<ColumnDefinition>,
             rowData: [],
-            oidField: 'OBJECTID',
+            oidField: 'OBJECTID', // this is just placeholder, will get overwritten below
 
             gridAccessibilityManager: undefined as
                 | GridAccessibilityManager
