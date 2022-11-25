@@ -13,8 +13,10 @@ export class GeosearchState {
     // param is the fixture config from config file
     constructor(geosearchConfig: any) {
         // initialize geosearch feature service that contains all key geosearch functionality - running queries, fetch initial filters, update filters, etc.
-        const language = 'en';
-        this.GSservice = new GeoSearchUI(language, geosearchConfig);
+        this.GSservice = new GeoSearchUI(
+            geosearchConfig.language,
+            geosearchConfig
+        );
         // query params contains filter types
         const queryParams: QueryParams = {
             type: '',

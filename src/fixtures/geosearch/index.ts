@@ -10,7 +10,10 @@ class GeosearchFixture extends GeosearchAPI {
     async added() {
         console.log(`[fixture] ${this.id} added`);
 
-        this.$vApp.$store.registerModule('geosearch', geosearch(this.config));
+        this.$vApp.$store.registerModule(
+            'geosearch',
+            geosearch({ ...this.config, language: this.$iApi.language })
+        );
 
         this.$iApi.component('geosearch-nav-button', GeosearchNavButtonV);
 
