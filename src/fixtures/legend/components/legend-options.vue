@@ -243,7 +243,7 @@ export default defineComponent({
 
                 if (metaConfig.url) {
                     // TODO: toggle metadata panel through API/store call
-                    this.$iApi.event.emit(GlobalEvents.METADATA_OPEN, {
+                    this.$iApi.event.emit(GlobalEvents.METADATA_TOGGLE, {
                         type: 'html',
                         layerName: name,
                         url: metaConfig.url,

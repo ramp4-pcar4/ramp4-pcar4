@@ -131,7 +131,7 @@ TODO add stuff as we make events that core fixtures raise
 | DETAILS_OPEN<br>'details/open'       | { data: any, uid: string, format: string }              | A feature's details was requested                              |
 | GRID_TOGGLE<br>'grid/toggle'         | layer: LayerInstance, _open_: boolean (optional)        | Grid panel toggle was requested with optional force open/close |
 | HELP_TOGGLE<br>'help/toggle'         | boolean (optional)                                      | Help panel toggle was requested with optional force open/close |
-| METADATA_OPEN<br>'metadata/open'     | { type: string, layerName: string, url: string, layer: LayerInstance }         | A metadata view was requested                                  |
+| METADATA_TOGGLE<br>'metadata/toggle' | { type: string, layerName: string, url: string, layer: LayerInstance }, open: boolean (optional)        | Metadata panel toggle was requested with optional force open/close                                 |
 | REORDER_TOGGLE<br>'reorder/toggle'   | boolean (optional)                                      | Layer reorder panel toggle was requested with optional force open/close |
 | SETTINGS_TOGGLE<br>'settings/toggle' | layer: LayerInstance, _open_: boolean (optional)        | Settings panel toggle was requested for a layer with optional force open/close |
 | WIZARD_TOGGLE<br>'wizard/open'       | boolean (optional)                                      | Wizard panel toggle was requested with optional force open/close |
