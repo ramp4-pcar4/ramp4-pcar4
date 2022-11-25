@@ -138,7 +138,7 @@ export class GeoSearchUI {
      * @return {Object}         associated province object
      */
     findProvinceObj(province: string) {
-        return this.fetchProvinces().find((p: any) => {
+        return this.provinceList.find((p: any) => {
             return p.name === province;
         });
     }
@@ -227,59 +227,72 @@ export class GeoSearchUI {
     }
 
     /**
-     * Return a list of formatted province objects
+     * Return a promise that resolves to a list of formatted province objects
      *
-     * @return {Array} list of formatted province objects
+     * @return {Promise<Array>} a promise that resolves to a list of formatted province objects
      */
-    fetchProvinces() {
-        const provinceList = [];
-        // add a '...' option as a way to clear province filter
-        const reset = {
-            code: -1,
-            abbr: '...',
-            name: '...'
-        };
-        provinceList.push(reset);
+    fetchProvinces(): Promise<Array<any>> {
+        return new Promise(resolve => {
+            const provsWatcher = setInterval(() => {
+                if (this.config.provinces.listFetched) {
+                    clearInterval(provsWatcher);
+                    const provinceList = [];
+                    // add a '...' option as a way to clear province filter
+                    const reset = {
+                        code: -1,
+                        abbr: '...',
+                        name: '...'
+                    };
+                    provinceList.push(reset);
 
-        // obtain province filters stored in config
-        const rawProvinces = this.config.provinces.list;
-        for (const code in rawProvinces) {
-            provinceList.push({
-                code: code,
-                abbr: (<any>CODE_TO_ABBR)[code],
-                name: rawProvinces[code]
+                    // obtain province filters stored in config
+                    const rawProvinces = this.config.provinces.list;
+                    for (const code in rawProvinces) {
+                        provinceList.push({
+                            code: code,
+                            abbr: (<any>CODE_TO_ABBR)[code],
+                            name: rawProvinces[code]
+                        });
+                    }
+                    this.provinceList = provinceList;
+                    resolve(this.provinceList);
+                }
             });
-        }
-        this.provinceList = provinceList;
-        return this.provinceList;
+        });
     }
 
     /**
-     * Return a list of formatted type objects
+     * Return a promise that resolves to a list of formatted type objects
      *
-     * @return {Array} a list of a formatted type objects
+     * @return {Promise<Array>} a promise that resolves to a list of formatted type objects
      */
-    fetchTypes() {
-        const typeList = [];
-        // add a '...' option as a way to clear province filter
-        const reset = {
-            code: -1,
-            name: '...'
-        };
-        typeList.push(reset);
-
-        // obtain the type filters stored in config
-        const rawTypes = this.config.types.allTypes;
-        for (const type in rawTypes) {
-            if (!(<any>this)._excludedTypes.includes(type)) {
-                typeList.push({
-                    code: type,
-                    name: rawTypes[type]
-                });
-            }
-        }
-        this.typeList = typeList;
-        return this.typeList;
+    fetchTypes(): Promise<Array<any>> {
+        return new Promise(resolve => {
+            const typesWatcher = setInterval(() => {
+                if (this.config.types.typesFetched) {
+                    clearInterval(typesWatcher);
+                    const typeList = [];
+                    // add a '...' option as a way to clear province filter
+                    const reset = {
+                        code: -1,
+                        name: '...'
+                    };
+                    typeList.push(reset);
+                    // obtain the type filters stored in config
+                    const rawTypes = this.config.types.allTypes;
+                    for (const type in rawTypes) {
+                        if (!(<any>this)._excludedTypes.includes(type)) {
+                            typeList.push({
+                                code: type,
+                                name: rawTypes[type]
+                            });
+                        }
+                    }
+                    this.typeList = typeList;
+                    resolve(this.typeList);
+                }
+            }, 250);
+        });
     }
 }
 

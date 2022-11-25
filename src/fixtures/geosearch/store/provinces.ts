@@ -29,6 +29,7 @@ const provs: any = {
 
 class Provinces {
     list: IGenericObjectType = {};
+    listFetched: boolean = false;
 
     constructor(language: string, url: string) {
         axios.get(url).then((res: any) => {
@@ -40,6 +41,8 @@ class Provinces {
             Object.keys(provs[language]).forEach(provKey => {
                 this.list[provKey] = (<any>provs[language])[provKey];
             });
+
+            this.listFetched = true;
         });
     }
 

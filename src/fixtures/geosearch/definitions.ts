@@ -29,11 +29,13 @@ export interface INameResponse {
 export interface ITypes {
     allTypes: IGenericObjectType;
     validTypes: IGenericObjectType;
+    typesFetched: boolean;
     filterValidTypes(exclude?: string | string[]): IGenericObjectType;
 }
 
 export interface IProvinces {
     list: IGenericObjectType;
+    listFetched: boolean;
     fsaToProvinces(fsa: string): IGenericObjectType;
 }
 
