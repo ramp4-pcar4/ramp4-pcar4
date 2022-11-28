@@ -128,7 +128,7 @@ TODO add stuff as we make events that core fixtures raise
 
 | Event Name                           | Payload                                                 | Event Announces                                                |
 | ------------------------------------ | ------------------------------------------------------- | -------------------------------------------------------------- |
-| DETAILS_OPEN<br>'details/open'       | { data: any, uid: string, format: string }              | A feature's details was requested                              |
+| DETAILS_TOGGLE<br>'details/toggle'   | { data: any, uid: string, format: string }, boolean (optional)         | A feature's details panel toggle was requested with optional force open/close       |
 | GRID_TOGGLE<br>'grid/toggle'         | layer: LayerInstance, _open_: boolean (optional)        | Grid panel toggle was requested with optional force open/close |
 | HELP_TOGGLE<br>'help/toggle'         | boolean (optional)                                      | Help panel toggle was requested with optional force open/close |
 | METADATA_OPEN<br>'metadata/open'     | { type: string, layerName: string, url: string, layer: LayerInstance }         | A metadata view was requested                                  |
