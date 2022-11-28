@@ -61,6 +61,10 @@ export enum DetailsStore {
      */
     defaultTemplates = 'details/defaultTemplates',
     /**
+     * (State) currentFeatureId: string | null
+     */
+    currentFeatureId = 'details/currentFeatureId',
+    /**
      * (State) slowLoadingFlag: boolean
      */
     slowLoadingFlag = 'details/slowLoadingFlag',
