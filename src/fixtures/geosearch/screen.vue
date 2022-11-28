@@ -8,16 +8,17 @@
                 <geosearch-top-filters></geosearch-top-filters>
                 <loading-bar
                     class="flex-none"
-                    :class="{ invisible: !loadingResults }"
+                    v-if="loadingResults"
                 ></loading-bar>
-                <div class="px-5 mb-10 truncate">
-                    <span
-                        class="relative h-48"
-                        v-if="
-                            searchVal &&
-                            searchResults.length === 0 &&
-                            !loadingResults
-                        "
+                <div
+                    class="px-8 mb-10 truncate"
+                    v-if="
+                        searchVal &&
+                        searchResults.length === 0 &&
+                        !loadingResults
+                    "
+                >
+                    <span class="relative h-48"
                         >{{ $t('geosearch.noResults')
                         }}<span class="font-bold text-blue-600"
                             >"{{ searchVal }}"</span

@@ -1,5 +1,7 @@
 <template>
-    <div class="w-full h-6 relative overflow-hidden rounded-full indeterminate">
+    <div
+        class="w-full h-6 relative overflow-hidden rounded-full indeterminate mb-14"
+    >
         <div
             class="h-full progressbar bg-blue-800 rounded-full top-0"
             aria-valuemin="0"

@@ -14,15 +14,17 @@ const getters = {
      * name: full province name
      *
      * @function getProvinces
-     * @return   {Array}    a list of all provinces in the form
+     * @return {Promise<Array>} a promise that resolves to a list of all provinces in the form
      */
-    getProvinces: (state: GeosearchState): [] => {
-        const provs = state.GSservice.fetchProvinces();
-        // sort the province filters in alphabetical order
-        provs.sort((provA: any, provB: any) =>
-            provA.name > provB.name ? 1 : -1
-        );
-        return provs;
+    getProvinces: (state: GeosearchState): Promise<Array<any>> => {
+        return new Promise(resolve => {
+            state.GSservice.fetchProvinces().then((provs: Array<any>) => {
+                provs.sort((provA: any, provB: any) =>
+                    provA.name > provB.name ? 1 : -1
+                );
+                resolve(provs);
+            });
+        });
     },
 
     /**
@@ -31,15 +33,17 @@ const getters = {
      * name: full type name (i.e. Territory)
      *
      * @function getTypes
-     * @return   {Array}    a list of all types in the form
+     * @return {Promise<Array>} a promise that resolves to a list of all types in the form
      */
-    getTypes: (state: GeosearchState): [] => {
-        const types = state.GSservice.fetchTypes();
-        // sort the type filters in alphabetical order
-        types.sort((typeA: any, typeB: any) =>
-            typeA.name > typeB.name ? 1 : -1
-        );
-        return types;
+    getTypes: (state: GeosearchState): Promise<Array<any>> => {
+        return new Promise(resolve => {
+            state.GSservice.fetchTypes().then((types: Array<any>) => {
+                types.sort((typeA: any, typeB: any) =>
+                    typeA.name > typeB.name ? 1 : -1
+                );
+                resolve(types);
+            });
+        });
     }
 };
 
@@ -52,6 +56,9 @@ const mutations = {
     },
     SET_EXTENT: (state: GeosearchState, extent: any) => {
         state.queryParams.extent = extent;
+    },
+    SET_GSSERVICE: (state: GeosearchState, newGSservice: any) => {
+        state.GSservice = newGSservice;
     }
 };
 
@@ -60,8 +67,9 @@ const actions = {
      * Runs geosearch query to update search and saved results.
      *
      * @function runQuery
+     * @param {boolean} forceReRun whether to force the query to run again
      */
-    runQuery: function (context: GeosearchContext): void {
+    runQuery: function (context: GeosearchContext, forceReRun?: boolean): void {
         // set loading flag to true and turn off when reach return
         context.commit('SET_LOADING_RESULTS', true);
         // when no search value is specified
@@ -72,28 +80,41 @@ const actions = {
         } else {
             // run new query if different search term is entered
             if (
-                context.state.searchVal &&
-                context.state.searchVal !== context.state.lastSearchVal
+                (context.state.searchVal &&
+                    context.state.searchVal !== context.state.lastSearchVal) ||
+                forceReRun
             ) {
-                context.state.GSservice.query(
-                    `${context.state.searchVal}*`
-                ).then((data: any) => {
-                    // store data for current search term
-                    context.commit(
-                        'SET_LAST_SEARCH_VAL',
-                        context.state.searchVal
-                    );
-                    context.commit('SET_SAVED_RESULTS', data);
+                // watch for provinces and types to finish loading
+                const watcher = setInterval(() => {
+                    if (
+                        context.state.GSservice.config.provinces.listFetched &&
+                        context.state.GSservice.config.types.typesFetched
+                    ) {
+                        clearInterval(watcher);
+                        context.state.GSservice.query(
+                            `${context.state.searchVal}*`
+                        ).then((data: any) => {
+                            // store data for current search term
+                            context.commit(
+                                'SET_LAST_SEARCH_VAL',
+                                context.state.searchVal
+                            );
+                            context.commit('SET_SAVED_RESULTS', data);
 
-                    // replace old saved results
-                    const filteredData = filter(
-                        context.state.resultsVisible,
-                        context.state.queryParams,
-                        context.state.savedResults
-                    );
-                    context.commit('SET_SEARCH_RESULTS', filteredData || []);
-                    context.commit('SET_LOADING_RESULTS', false);
-                });
+                            // replace old saved results
+                            const filteredData = filter(
+                                context.state.resultsVisible,
+                                context.state.queryParams,
+                                context.state.savedResults
+                            );
+                            context.commit(
+                                'SET_SEARCH_RESULTS',
+                                filteredData || []
+                            );
+                            context.commit('SET_LOADING_RESULTS', false);
+                        });
+                    }
+                }, 250);
             } else {
                 // otherwise no new search term so we only need to filter on query param values
                 const filteredData = filter(
@@ -110,26 +131,37 @@ const actions = {
      * Update province filter value.
      *
      * @function setProvince
-     * @param   {string}    province   the province code all results must be in
+     * @param   {object}   payload an object with two properties - province (the province to set) and
+     * forceReRun (whether to force the query to run again)
      */
-    setProvince: function (context: GeosearchContext, province: string): void {
+    setProvince: function (
+        context: GeosearchContext,
+        payload: { province: string; forceReRun?: boolean }
+    ): void {
         context.commit(
             'SET_PROVINCE',
-            typeof province === 'undefined' ? '' : province
+            typeof payload.province === 'undefined' ? '' : payload.province
         );
         // run query after province filter changes
-        context.dispatch('runQuery');
+        context.dispatch('runQuery', payload.forceReRun);
     },
     /**
      * Update type filter value.
      *
      * @function setType
-     * @param   {string}    type   the type code all results must have
+     * @param   {object}    payload   an object with two properties - type (the type to set) and
+     * forceReRun (whether to force the query to run again)
      */
-    setType: function (context: GeosearchContext, type: string): void {
-        context.commit('SET_TYPE', typeof type === 'undefined' ? '' : type);
+    setType: function (
+        context: GeosearchContext,
+        payload: { type: string; forceReRun?: boolean }
+    ): void {
+        context.commit(
+            'SET_TYPE',
+            typeof payload.type === 'undefined' ? '' : payload.type
+        );
         // run query after type filter changes
-        context.dispatch('runQuery');
+        context.dispatch('runQuery', payload.forceReRun);
     },
     /**
      * Update current search val and last search val.
@@ -251,7 +283,11 @@ export enum GeosearchStore {
     /**
      * (Action) setMapExtent: (mapExtent: any)
      */
-    setMapExtent = 'geosearch/setMapExtent'
+    setMapExtent = 'geosearch/setMapExtent',
+    /**
+     * (Action) setGSserivce: (config: any)
+     */
+    setGSservice = 'geosearch/setGSservice'
 }
 
 export function geosearch(config: any) {

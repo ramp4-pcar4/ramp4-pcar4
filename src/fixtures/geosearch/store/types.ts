@@ -21,6 +21,7 @@ class Types {
     allTypes: IGenericObjectType = {};
     validTypes: IGenericObjectType = {};
     filterComplete = false;
+    typesFetched: boolean = false;
 
     constructor(language: string, url: string) {
         const fetchTypes = axios.get(url).then((res: any) => {
@@ -35,6 +36,8 @@ class Types {
                 this.allTypes[typeKey] = (<any>types[language])[typeKey];
                 this.validTypes[typeKey] = (<any>types[language])[typeKey];
             });
+
+            this.typesFetched = true;
         });
     }
 

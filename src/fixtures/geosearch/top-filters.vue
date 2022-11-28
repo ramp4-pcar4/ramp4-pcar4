@@ -1,10 +1,10 @@
 <template>
-    <div class="rv-geosearch-top-filters flex items-center w-full mx-8">
+    <div class="rv-geosearch-top-filters flex items-center w-full mx-8 mb-14">
         <div class="inline-block w-2/5 h-26">
             <select
                 class="form-select border-b border-b-gray-600 w-full h-full py-0 cursor-pointer"
                 :value="queryParams.province"
-                v-on:change="setProvince($event.target.value)"
+                v-on:change="setProvince({ province: $event.target.value })"
             >
                 <option value="" disabled hidden>
                     {{ $t('geosearch.filters.province') }}
@@ -21,7 +21,7 @@
             <select
                 class="form-select border-b border-b-gray-600 w-full h-full py-0 cursor-pointer"
                 :value="queryParams.type"
-                v-on:change="setType($event.target.value)"
+                v-on:change="setType({ type: $event.target.value })"
             >
                 <option value="" disabled hidden>
                     {{ $t('geosearch.filters.type') }}
@@ -52,8 +52,10 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import type { GeosearchAPI } from './api/geosearch';
 
 import { GeosearchStore } from './store';
+import { GeoSearchUI } from './store/geosearch.feature';
 
 export default defineComponent({
     name: 'GeosearchTopFiltersV',
@@ -61,18 +63,70 @@ export default defineComponent({
     // fetch defined province/type filters + filter params from store
     data() {
         return {
-            provinces: this.get(GeosearchStore.getProvinces),
-            types: this.get(GeosearchStore.getTypes),
+            provinces: [] as Array<any>,
+            types: [] as Array<any>,
             queryParams: this.get(GeosearchStore.queryParams),
             setProvince: this.call(GeosearchStore.setProvince),
-            setType: this.call(GeosearchStore.setType)
+            setType: this.call(GeosearchStore.setType),
+            watchers: [] as Array<Function>
         };
+    },
+    created() {
+        this.updateProvincesAndTypes();
+        this.watchers.push(
+            this.$watch('$iApi.language', this.updateProvincesAndTypes)
+        );
+    },
+    beforeUnmount() {
+        this.watchers.forEach(unwatch => unwatch());
     },
     methods: {
         // Called when the `clear filters` button is clicked. Clears province and type filters.
         clearFilters(): void {
-            this.setProvince(undefined);
-            this.setType(undefined);
+            this.setProvince({});
+            this.setType({});
+        },
+
+        // Fetches the most up to date provinces and types.
+        // Because of the way the GSservice is structured, on language switch, we need to make a new GSservice in the updated language
+        // and then re fetch all the provinces and types again.
+        // TODO: In the future, we should look to refactor the code for this fixture to improve clarity and reduce the number of API calls.
+        updateProvincesAndTypes() {
+            this.$store.dispatch(
+                GeosearchStore.setGSservice,
+                new GeoSearchUI(
+                    this.$iApi.language,
+                    this.$iApi.fixture.get<GeosearchAPI>('geosearch').config
+                )
+            );
+            const queryProvCode = this.provinces.find(
+                prov => this.queryParams.province === prov.name
+            )?.code;
+            const queryTypeCode = this.types.find(
+                type => this.queryParams.type === type.name
+            )?.code;
+            (
+                this.$store.get(GeosearchStore.getProvinces) as Promise<
+                    Array<any>
+                >
+            ).then(provs => {
+                this.provinces = provs;
+                this.setProvince({
+                    province: provs.find(prov => prov.code === queryProvCode)
+                        ?.name,
+                    forceReRun: true
+                });
+            });
+
+            (
+                this.$store.get(GeosearchStore.getTypes) as Promise<Array<any>>
+            ).then(types => {
+                this.types = types;
+                this.setType({
+                    type: types.find(type => type.code === queryTypeCode)?.name,
+                    forceReRun: true
+                });
+            });
         }
     }
 });
