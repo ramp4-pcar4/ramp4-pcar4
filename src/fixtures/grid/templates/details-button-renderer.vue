@@ -79,7 +79,7 @@ export default defineComponent({
             delete data['rvSymbol'];
 
             // grid only supports esri features at the moment, so we hardcode that format
-            this.$iApi.event.emit(GlobalEvents.DETAILS_OPEN, {
+            this.$iApi.event.emit(GlobalEvents.DETAILS_TOGGLE, {
                 data: data,
                 uid: this.params.uid,
                 format: IdentifyResultFormat.ESRI
