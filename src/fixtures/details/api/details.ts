@@ -38,20 +38,25 @@ export class DetailsAPI extends FixtureInstance {
     }
 
     /**
-     * Provided with the data for a single feature, open the details panel directly to the feature screen.
+     * Provided with the data for a single feature, toggles the details panel directly with the feature screen.
      *
      * @param {{data: any, uid: string, format: string}} featureData
+     * @param {boolean | undefined} open
      * @memberof DetailsAPI
      */
-    openFeature(featureData: { data: any; uid: string; format: string }): void {
+    toggleFeature(
+        featureData: { data: any; uid: string; format: string },
+        open: boolean | undefined
+    ): void {
         // Close the identified layers panel.
         const panel = this.$iApi.panel.get('details-layers');
         if (panel.isOpen) {
             this.$iApi.panel.close(panel);
         }
 
-        // Open or update the items panel
+        // Toggle or update the items panel
         const itemsPanel = this.$iApi.panel.get('details-items');
+
         // result: is IdentifyResult class
         const props: any = {
             result: {
@@ -68,19 +73,35 @@ export class DetailsAPI extends FixtureInstance {
                 loaded: true
             }
         };
-        if (!itemsPanel.isOpen) {
+
+        // feature ids are composed of the layer uid and feature object id
+        const prevFeatureId = this.$vApp.$store.get(
+            DetailsStore.currentFeatureId
+        );
+        const currFeatureId = `${featureData.uid}-${featureData.data.OBJECTID}`;
+        this.$vApp.$store.set(
+            DetailsStore.currentFeatureId,
+            featureData.data ? currFeatureId : null
+        );
+
+        // toggle rules based on last opened details panel
+        if (open === false) {
+            this.$iApi.panel!.close(itemsPanel);
+        } else if (!itemsPanel.isOpen) {
             // open the items panel
             this.$iApi.panel!.open({
                 id: 'details-items',
                 screen: 'item-screen',
                 props: props
             });
-        } else {
+        } else if (prevFeatureId !== currFeatureId || open === true) {
             // update the items screen
             itemsPanel!.show({
                 screen: 'item-screen',
                 props: props
             });
+        } else {
+            this.$iApi.panel!.close(itemsPanel);
         }
     }
 

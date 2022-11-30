@@ -50,10 +50,10 @@ export enum GlobalEvents {
     CONFIG_CHANGE = 'config/configchanged',
 
     /**
-     * Fires when a request is issued to show the details of an identify result.
-     * Payload: `({ identifyItem: IdentifyItem, uid: string })`
+     * Fires when a request is issued to toggle (show if hidden, hide if showing) the details of an identify result.
+     * Payload: `({ identifyItem: IdentifyItem, uid: string, format: string }, force?: boolean)`
      */
-    DETAILS_OPEN = 'details/open',
+    DETAILS_TOGGLE = 'details/toggle',
 
     /**
      * Fires when a filter is changed.
@@ -354,7 +354,7 @@ enum DefEH {
     MAP_UPDATE_CROSSHAIRS_COORDS = 'updates_map_crosshairs_coords',
     MAP_UPDATE_MOUSE_COORDS = 'updates_map_mouse_coords',
     MOUSE_MOVE_MAPTIP_CHECK = 'checks_maptip_mouse_move',
-    OPEN_DETAILS = 'opens_feature_details',
+    TOGGLE_DETAILS = 'toggles_feature_details',
     OPEN_METADATA = 'opens_metadata_panel',
     SHOW_DEFAULT_MAPTIP = 'show_default_maptip',
     TOGGLE_GRID = 'toggles_grid_panel',
@@ -633,7 +633,7 @@ export class EventAPI extends APIScope {
                 DefEH.MAP_UPDATE_CROSSHAIRS_COORDS,
                 DefEH.MAP_UPDATE_MOUSE_COORDS,
                 DefEH.MOUSE_MOVE_MAPTIP_CHECK,
-                DefEH.OPEN_DETAILS,
+                DefEH.TOGGLE_DETAILS,
                 DefEH.OPEN_METADATA,
                 DefEH.SHOW_DEFAULT_MAPTIP,
                 DefEH.TOGGLE_GRID,
@@ -1001,21 +1001,24 @@ export class EventAPI extends APIScope {
                     handlerName
                 );
                 break;
-            case DefEH.OPEN_DETAILS:
-                // opens the standard details panel when a show details event happens
-                zeHandler = (payload: {
-                    data: any;
-                    uid: string;
-                    format: string;
-                }) => {
+            case DefEH.TOGGLE_DETAILS:
+                // opens or closes the standard details panel when a toggle details event happens
+                zeHandler = (
+                    payload: {
+                        data: any;
+                        uid: string;
+                        format: string;
+                    },
+                    open?: boolean
+                ) => {
                     const detailsFixture =
                         this.$iApi.fixture.get<DetailsAPI>('details');
                     if (detailsFixture) {
-                        detailsFixture.openFeature(payload);
+                        detailsFixture.toggleFeature(payload, open);
                     }
                 };
                 this.$iApi.event.on(
-                    GlobalEvents.DETAILS_OPEN,
+                    GlobalEvents.DETAILS_TOGGLE,
                     zeHandler,
                     handlerName
                 );
