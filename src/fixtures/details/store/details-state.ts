@@ -87,6 +87,13 @@ export class DetailsState {
     defaultTemplates: { [type: string]: string } = {};
 
     /**
+     * The id of the feature that the current details panel is targeting.
+     *
+     * @memberof DetailsState
+     */
+    currentFeatureId: string | undefined = undefined;
+
+    /**
      * Indicates whether greedy mode is still loading for current identify request after 500ms delay.
      *
      * @memberof DetailsState
