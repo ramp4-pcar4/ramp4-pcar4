@@ -272,10 +272,10 @@ export enum GlobalEvents {
     MAP_START = 'map/start',
 
     /**
-     * Fires when a request is issued to open the Metadata panel.
-     * Payload: `({ type: string, layerName: string, url: string })`
+     * Fires when a request is issued to toggle the Metadata panel.
+     * Payload: `({ type: string, layerName: string, url: string }, open: boolean)`
      */
-    METADATA_OPEN = 'metadata/open',
+    METADATA_TOGGLE = 'metadata/toggle',
 
     /**
      * Fires when a panel is closed.
@@ -1022,15 +1022,15 @@ export class EventAPI extends APIScope {
                 break;
             case DefEH.OPEN_METADATA:
                 // opens the standard metadata panel when an open metadata event happens
-                zeHandler = (payload: MetadataPayload) => {
+                zeHandler = (payload: MetadataPayload, open?: boolean) => {
                     const metadataFixture =
                         this.$iApi.fixture.get<MetadataAPI>('metadata');
                     if (metadataFixture) {
-                        metadataFixture.toggleMetadata(payload);
+                        metadataFixture.toggleMetadata(payload, open);
                     }
                 };
                 this.$iApi.event.on(
-                    GlobalEvents.METADATA_OPEN,
+                    GlobalEvents.METADATA_TOGGLE,
                     zeHandler,
                     handlerName
                 );
