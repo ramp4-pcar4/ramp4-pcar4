@@ -2,6 +2,7 @@
     <div class="h-full flex items-center justify-center">
         <input
             class="rv-min rv-input bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
+            :class="{ 'pointer-events-none': static }"
             style="width: 45%"
             type="number"
             v-model="minVal"
@@ -17,6 +18,7 @@
         <span class="w-12" />
         <input
             class="rv-max rv-input bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
+            :class="{ 'pointer-events-none': static }"
             style="width: 45%"
             type="number"
             v-model="maxVal"
@@ -41,17 +43,22 @@ export default defineComponent({
     data() {
         return {
             minVal: '' as any,
-            maxVal: '' as any
+            maxVal: '' as any,
+            static: this.params.stateManager.columns[
+                this.params.column.colDef.field
+            ].filter.static
         };
     },
 
     beforeMount() {
         // Load previously stored values (if saved in table state manager)
-        this.minVal = this.params.stateManager.getColumnFilter(
-            this.params.column.colDef.field + ' min'
+        this.minVal = this.params.stateManager.getColumnFilterValue(
+            this.params.column.colDef.field,
+            'min'
         );
-        this.maxVal = this.params.stateManager.getColumnFilter(
-            this.params.column.colDef.field + ' max'
+        this.maxVal = this.params.stateManager.getColumnFilterValue(
+            this.params.column.colDef.field,
+            'max'
         );
 
         // Apply the default values to the column filter.
@@ -68,9 +75,10 @@ export default defineComponent({
 
                 // Save the new filter value in the state manager. Allows for quick recovery if the grid is
                 // closed and re-opened.
-                this.params.stateManager.setColumnFilter(
-                    this.params.column.colDef.field + ' min',
-                    this.minVal
+                this.params.stateManager.setColumnFilterValue(
+                    this.params.column.colDef.field,
+                    this.minVal,
+                    'min'
                 );
             });
         },
@@ -83,9 +91,10 @@ export default defineComponent({
 
                 // Save the new filter value in the state manager. Allows for quick recovery if the grid is
                 // closed and re-opened.
-                this.params.stateManager.setColumnFilter(
-                    this.params.column.colDef.field + ' max',
-                    this.maxVal
+                this.params.stateManager.setColumnFilterValue(
+                    this.params.column.colDef.field,
+                    this.maxVal,
+                    'max'
                 );
             });
         },

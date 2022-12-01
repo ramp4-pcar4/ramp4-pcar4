@@ -1,3 +1,5 @@
+import ColumnStateManager from '../store/column-state-manager';
+
 /**
  * Saves relevant enhancedTable states so that it can be reset on reload/reopen. A PanelStateManager is linked to a BaseLayer.
  * setters are called each time enhancedTable states are updated, getters are called each time enhancedTable is reloaded/reopened.
@@ -12,24 +14,49 @@ export default class TableStateManager {
         this._title = baseLayer.title ?? '';
         this._showFilter = baseLayer.showFilter ?? true;
         this._filterByExtent = baseLayer.filterByExtent ?? false;
-        this._columnFilters = {};
+        this._columns = {};
         this._open = true;
-        this._columnState = null;
         this._filtered = true;
         this._search = baseLayer.search ?? true;
         this._searchFilter = baseLayer.searchFilter ?? '';
         this._applyToMap = baseLayer.applyToMap ?? false;
+
+        this.parsecolumns();
+    }
+
+    /**
+     * Parses any given configurations of columns.
+     *
+     * @returns
+     * @memberof TableStateManager
+     */
+    parsecolumns() {
+        if (this.baseLayer.columns) {
+            this.baseLayer.columns.forEach((columnConfig: any) => {
+                this._columns[columnConfig.field] = new ColumnStateManager(
+                    columnConfig
+                );
+            });
+        }
     }
 
     /**
      * Returns the stored filter value for the given column field.
      *
      * @param {*} colDefField
+     * @param {string} range
      * @returns
      * @memberof TableStateManager
      */
-    getColumnFilter(colDefField: any) {
-        return this._columnFilters[colDefField];
+    getColumnFilterValue(colDefField: any, range?: string) {
+        const filter = this._columns[colDefField].filter;
+        if (range === 'min') {
+            return filter.min;
+        } else if (range === 'max') {
+            return filter.max;
+        } else {
+            return filter.value;
+        }
     }
 
     /**
@@ -37,18 +64,29 @@ export default class TableStateManager {
      *
      * @param {*} colDefField
      * @param {(string | number)} filterValue
+     * @param {string} range
      * @memberof TableStateManager
      */
-    setColumnFilter(colDefField: any, filterValue: string | number) {
+    setColumnFilterValue(
+        colDefField: any,
+        filterValue: string | number,
+        range?: string
+    ) {
         let newFilterValue = filterValue;
         if (filterValue && typeof filterValue === 'string') {
             const escRegex = /[(!"#$%&'+,.\\/:;<=>?@[\]^`{|}~)]/g;
             newFilterValue = filterValue.replace(escRegex, '\\$&');
         }
 
-        this._columnFilters[colDefField] = newFilterValue;
+        if (range === 'min') {
+            this._columns[colDefField].filter.min = newFilterValue;
+        } else if (range === 'max') {
+            this._columns[colDefField].filter.max = newFilterValue;
+        } else {
+            this._columns[colDefField].filter.value = newFilterValue;
+        }
 
-        if (this._columnFilters[colDefField] !== '') {
+        if (this._columns[colDefField].filter.value !== '') {
             this._filtered = true;
         } else {
             this._checkFilters();
@@ -56,20 +94,30 @@ export default class TableStateManager {
     }
 
     /**
-     * Clears all saved column filters.
+     * Clears all saved filters.
      *
      * @memberof TableStateManager
      */
     clearFilters() {
-        this._columnFilters = {};
+        Object.entries(this._columns).forEach(([field, config]) => {
+            if (!config.filter.static) {
+                config.filter.min = null;
+                config.filter.max = null;
+                config.filter.value = '';
+            }
+        });
         this._filterByExtent = false;
         this._filtered = false;
         this._searchFilter = '';
     }
 
     _checkFilters() {
-        this._filtered = Object.values(this._columnFilters).some(filter => {
-            return filter !== '';
+        this._filtered = Object.values(this._columns).some(config => {
+            return (
+                config.filter.value !== '' ||
+                config.filter.min ||
+                config.filter.max
+            );
         });
     }
 
@@ -202,6 +250,24 @@ export default class TableStateManager {
     set applyToMap(val) {
         this._applyToMap = val;
     }
+
+    /**
+     * Returns an array of column configs.
+     *
+     * @memberof TableStateManager
+     */
+    get columns() {
+        return this._columns;
+    }
+
+    /**
+     * Sets column configs
+     *
+     * @memberof TableStateManager
+     */
+    set columns(val) {
+        this._columns = val;
+    }
 }
 
 export default interface TableStateManager {
@@ -209,9 +275,8 @@ export default interface TableStateManager {
     _title: string;
     _showFilter: boolean;
     _filterByExtent: boolean;
-    _columnFilters: any;
     _open: boolean;
-    _columnState: any;
+    _columns: { [field: string]: ColumnStateManager };
     _filtered: boolean;
     _search: boolean;
     _searchFilter: string;

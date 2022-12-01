@@ -299,6 +299,7 @@ import GridColumnDropdownV from './column-dropdown.vue';
 import { GridStore } from './store';
 import type { GridConfig } from './store';
 import type TableStateManager from './store/table-state-manager';
+import ColumnStateManager from './store/column-state-manager';
 import {
     GridAccessibilityManager,
     tabToNextCellHandler,
@@ -503,16 +504,30 @@ export default defineComponent({
                     'rvInteractive',
                     ...tableAttributes.columns
                 ].forEach((column: any) => {
+                    if (this.config.state?.columns[column.data] === undefined) {
+                        this.config.state.columns[column.data] =
+                            new ColumnStateManager({
+                                field: column.data,
+                                title: column.title
+                            });
+                    }
+                    let colConfig = this.config.state?.columns[column.data];
                     let col: ColumnDefinition = {
-                        headerName: column.title || '',
-                        field: column.data || column,
-                        isSelector: false,
+                        headerName: colConfig.title ?? column.title,
+                        headerComponent: 'agColumnHeader',
+                        headerComponentParams: {
+                            sort: colConfig.sort
+                        },
+                        field: column.data ?? column,
+                        isSelector: colConfig.filter.type === 'selector',
                         sortable: true,
                         lockPosition: true,
                         filterParams: {},
-                        floatingFilter: this.config.state.colFilter,
-                        hide: false,
-                        maxWidth: 400,
+                        floatingFilter:
+                            this.config.state.colFilter && colConfig.searchable,
+                        hide: !colConfig?.visible,
+                        minWidth: colConfig.width,
+                        maxWidth: colConfig.width ?? 400,
                         cellRenderer: (cell: any) => {
                             return cell.value;
                         },
@@ -776,8 +791,6 @@ export default defineComponent({
         },
 
         // Clear all table filters.
-        // TODO: In the old version of RAMP we had "static filters". If we re-implement these at some point, this function
-        // needs to be modified to not wipe them.
         clearFilters() {
             // Replace the filter model with an empty model.
             this.gridApi.setFilterModel({});
@@ -790,16 +803,6 @@ export default defineComponent({
         },
 
         setUpDateFilter(colDef: any, state: TableStateManager) {
-            // Retrieve stored filter values from the state manager if it exists.
-            let minVal =
-                state.getColumnFilter(colDef.field + ' min') !== undefined
-                    ? state.getColumnFilter(colDef.field + ' min')
-                    : '';
-            let maxVal =
-                state.getColumnFilter(colDef.field + ' max') !== undefined
-                    ? state.getColumnFilter(colDef.field + ' max')
-                    : '';
-
             colDef.floatingFilterComponent = 'dateFloatingFilter';
             colDef.filterParams.comparator = function (
                 filterDate: any,
@@ -844,12 +847,6 @@ export default defineComponent({
             rowData: any,
             state: TableStateManager
         ) {
-            // Retrieve stored filter value from the state manager if it exists.
-            let value =
-                state.getColumnFilter(colDef.field) !== undefined
-                    ? state.getColumnFilter(colDef.field)
-                    : '';
-
             colDef.floatingFilterComponent = 'selectorFloatingFilter';
             colDef.filterParams.inRangeInclusive = true;
             colDef.floatingFilterComponentParams = {
@@ -860,16 +857,6 @@ export default defineComponent({
         },
 
         setUpNumberFilter(colDef: any, state: TableStateManager) {
-            // Retrieve stored filter values from the state manager if it exists.
-            let minVal =
-                state.getColumnFilter(colDef.field + ' min') !== undefined
-                    ? state.getColumnFilter(colDef.field + ' min')
-                    : '';
-            let maxVal =
-                state.getColumnFilter(colDef.field + ' max') !== undefined
-                    ? state.getColumnFilter(colDef.field + ' max')
-                    : '';
-
             colDef.floatingFilterComponent = 'numberFloatingFilter';
             colDef.filterParams.inRangeInclusive = true;
             colDef.floatingFilterComponentParams = {
@@ -879,12 +866,6 @@ export default defineComponent({
         },
 
         setUpTextFilter(colDef: any, state: TableStateManager) {
-            // Retrieve stored filter value from the state manager if it exists.
-            let value =
-                state.getColumnFilter(colDef.field) !== undefined
-                    ? state.getColumnFilter(colDef.field)
-                    : '';
-
             colDef.floatingFilterComponent = 'textFloatingFilter';
             colDef.floatingFilterComponentParams = {
                 suppressFilterButton: true,
@@ -1119,55 +1100,50 @@ export default defineComponent({
                     }
                     break;
                 case 'text':
-                    if (column.isSelector) {
-                        return `UPPER(${col}) IN (${colFilter.filter.toUpperCase()})`;
-                    } else {
-                        let val = colFilter.filter.replace(/'/g, /''/);
-                        if (val !== '') {
-                            // following code is to UNESCAPE all special chars for ESRI and geoApi SQL to parse properly (remove the backslash)
-                            const escRegex =
-                                /\\[(!"#$&'+,.\\/:;<=>?@[\]^`{|}~)]/g;
-                            // remVal stores the remaining string text after the last special char (or the entire string, if there are no special chars at all)
-                            let remVal = val;
-                            let newVal = '';
-                            let escMatch = escRegex.exec(val);
-                            // lastIdx stores the last found index of the start of an escaped special char
-                            let lastIdx = 0;
-                            while (escMatch) {
-                                // update all variables after finding an escaped special char, preserving all text except the backslash
-                                newVal =
-                                    newVal +
-                                    val.substr(
-                                        lastIdx,
-                                        escMatch.index - lastIdx
-                                    ) +
-                                    escMatch[0].slice(-1);
-                                lastIdx = escMatch.index + 2;
-                                remVal = val.substr(escMatch.index + 2);
-                                escMatch = escRegex.exec(val);
-                            }
-                            newVal = newVal + remVal;
-
-                            // add ௌ before % and/or _ to act as the escape character
-                            // can change to MOST other characters and should still work (ideally want an escape char no one will search for) - just replace all instances of ௌ
-                            newVal = newVal.replace(/%/g, 'ௌ%');
-                            newVal = newVal.replace(/_/g, 'ௌ_');
-                            const filterVal = `*${newVal}`;
-                            newVal = filterVal.split(' ').join('*');
-                            // if val contains a % or _, add ESCAPE 'ௌ' at the end of the query
-                            let sqlWhere = `UPPER(${col}) LIKE \'${newVal
-                                .replace(/\*/g, '%')
-                                .toUpperCase()}%\'`;
-                            return sqlWhere.includes('ௌ%') ||
-                                sqlWhere.includes('ௌ_')
-                                ? `${sqlWhere} ESCAPE \'ௌ\'`
-                                : sqlWhere;
+                    let val = colFilter.filter.replace(/'/g, /''/);
+                    if (val !== '') {
+                        // following code is to UNESCAPE all special chars for ESRI and geoApi SQL to parse properly (remove the backslash)
+                        const escRegex = /\\[(!"#$&'+,.\\/:;<=>?@[\]^`{|}~)]/g;
+                        // remVal stores the remaining string text after the last special char (or the entire string, if there are no special chars at all)
+                        let remVal = val;
+                        let newVal = '';
+                        let escMatch = escRegex.exec(val);
+                        // lastIdx stores the last found index of the start of an escaped special char
+                        let lastIdx = 0;
+                        while (escMatch) {
+                            // update all variables after finding an escaped special char, preserving all text except the backslash
+                            newVal =
+                                newVal +
+                                val.substr(lastIdx, escMatch.index - lastIdx) +
+                                escMatch[0].slice(-1);
+                            lastIdx = escMatch.index + 2;
+                            remVal = val.substr(escMatch.index + 2);
+                            escMatch = escRegex.exec(val);
                         }
+                        newVal = newVal + remVal;
+
+                        // add ௌ before % and/or _ to act as the escape character
+                        // can change to MOST other characters and should still work (ideally want an escape char no one will search for) - just replace all instances of ௌ
+                        newVal = newVal.replace(/%/g, 'ௌ%');
+                        newVal = newVal.replace(/_/g, 'ௌ_');
+                        const filterVal = `*${newVal}`;
+                        newVal = filterVal.split(' ').join('*');
+                        // if val contains a % or _, add ESCAPE 'ௌ' at the end of the query
+                        let sqlWhere = `UPPER(${col}) LIKE \'${newVal
+                            .replace(/\*/g, '%')
+                            .toUpperCase()}%\'`;
+                        return sqlWhere.includes('ௌ%') ||
+                            sqlWhere.includes('ௌ_')
+                            ? `${sqlWhere} ESCAPE \'ௌ\'`
+                            : sqlWhere;
                     }
                     break;
                 case 'date': {
-                    const dateFrom = new Date(colFilter.dateFrom);
-                    const dateTo = new Date(colFilter.dateTo);
+                    // defaults to min and max dates respectively
+                    const dateFrom = new Date(colFilter.dateFrom ?? 0);
+                    const dateTo = new Date(
+                        colFilter.dateTo ?? 8640000000000000
+                    );
                     const from = dateFrom
                         ? `${
                               dateFrom.getMonth() + 1
@@ -1179,9 +1155,10 @@ export default defineComponent({
                           }/${dateTo.getDate()}/${dateTo.getFullYear()}`
                         : undefined;
                     switch (colFilter.type) {
-                        case 'greaterThanOrEqual':
+                        // cases are functionally greaterThanOrEqual or lessThanOrEqual
+                        case 'greaterThan':
                             return `${col} >= DATE '${from}'`;
-                        case 'lessThanOrEqual':
+                        case 'lessThan':
                             return `${col} <= DATE '${from}'`; // ag-grid uses from for a single upper limit as well
                         case 'inRange':
                             return `${col} >= DATE '${from}' AND ${col} <= DATE '${to}'`;
@@ -1358,6 +1335,8 @@ export interface TableComponent {
 interface ColumnDefinition {
     field: string;
     headerName: string;
+    headerComponent: any;
+    headerComponentParams: any;
     headerTooltip?: string;
     alias?: string;
     width?: number;

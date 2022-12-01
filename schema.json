@@ -1654,15 +1654,13 @@
         "column": {
             "type": "object",
             "description": "Specifies column properties. The ordering of columns in the table header is the same as the order they appear in this array.",
-            "allOf": [
-                {
-                    "$ref": "#/$defs/fieldMetadataEntry"
-                }
-            ],
             "properties": {
+                "field": {
+                    "type": "string",
+                    "description": "Unique identifier for the column. Aligns with the layer field name."
+                },
                 "title": {
                     "type": "string",
-                    "default": "",
                     "description": "Column title, uses the layer column name or alias if missing."
                 },
                 "visible": {
@@ -1672,19 +1670,19 @@
                 },
                 "width": {
                     "type": "number",
-                    "default": 100,
-                    "description": "Specifies the column width. The minimum and default column width is set to 100px."
+                    "default": null,
+                    "description": "Specifies the column width. The default maximum column width is 400px."
                 },
                 "sort": {
                     "type": "string",
-                    "enum": ["asc", "desc"],
-                    "default": "asc",
-                    "description": "Specifies if column requires to be sorted, either in ascending or descending order."
+                    "enum": ["asc", "desc", "none"],
+                    "default": "none",
+                    "description": "Specifies if column requires to be sorted, either in ascending, descending, or no order."
                 },
                 "searchable": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Specifies if column can be filtered."
+                    "description": "Specifies if column filter is available."
                 },
                 "filter": {
                     "$ref": "#/$defs/filter"
@@ -1704,13 +1702,23 @@
                 },
                 "value": {
                     "type": "string",
+                    "default": "",
+                    "description": "Specifies the initial filter value for string or selector types."
+                },
+                "min": {
+                    "type": "string",
                     "default": null,
-                    "description": "Specifies the filter value."
+                    "description": "Specifies the initial lower bound filter value for number or date types."
+                },
+                "max": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Specifies the initial upper bound filter value for number or date types."
                 },
                 "static": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Specifies if filter is modifiable."
+                    "description": "Specifies if column filter is modifiable."
                 }
             },
             "required": ["type"],

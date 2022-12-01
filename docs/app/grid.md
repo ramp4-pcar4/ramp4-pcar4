@@ -71,7 +71,7 @@ Represented by two date input fields. The date filter works in the same fashion 
 
 Like other fixtures, the grid has multiple options that can be adjusted through the configuration file. Since the grid settings are layer specific, the configuration resides in the fixtures property of layer config objects.
 - `title: string`, renders a custom title above the grid.
-- `columns: Object[]`, an array that specifies how the columns of the grid are defined. Currently not supported.
+- `columns: Object[]`, an array that specifies how the columns of the grid are defined. Its configuration is defined under [column configuration](#Column-Configuration).
 - `search: boolean`, shows/hides the [global search bar](#Global-Search).
 - `searchFilter: string`, provides an initial filter in the global search bar
 - `showFilter: boolean`, shows/hides the [column filters](#Show/Hide-Column-Filters) on grid load
@@ -90,6 +90,50 @@ const config = {
                     title: 'Datatable for this layer',
                     showFilter: false,
                     searchFilter: 'Alberta',
+                }
+            }
+        }
+    }
+}
+```
+
+### Column Configuration
+
+Every column in the datagrid can be configured separately.
+- `field: string`, a unique column identifier that aligns with attribute field name
+- `title: string`, applies a custom title to the column
+- `visible: boolean`, shows/hides the column on the grid by default
+- `width: number`, sets the width of the column
+- `sort: string`, determines the default order of the column, which can be unsorted, ascending, or descending
+- `searchable: boolean`, shows/hides the column filter
+- `filter: Object`, specifies filter values for the column
+    - `type: string`, specifies the datatype of the column (string, selector, number, date)
+    - `value: string`, specifies the default filter value for string and selector types
+    - `min: string | number`, specifies the default lower bound filter value for number and date types
+    - `max: string | number`, specifies the default upper bound filter value for number and date types
+    - `static: boolean`, enables/disables filter input
+
+An example of a datatable with a single configured column is below
+
+```text
+const config = {
+    layers: {
+        {
+            ... layer configurations
+            fixtures: {
+                grid: {
+                    columns: [
+                        {
+                            field: 'station_id__id_station',
+                            title: 'Station ID',
+                            width: 500,
+                            filter: {
+                                type: 'string',
+                                value: 6020384,
+                                static: true
+                            }
+                        }
+                    ]
                 }
             }
         }
