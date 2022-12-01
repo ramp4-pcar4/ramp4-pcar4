@@ -355,7 +355,7 @@ export default defineComponent({
 
             // apply changes
             const newIdx: number = this.oldOrder[newRelativeIdx];
-            this.$iApi.geo.map.reorder(layer, newIdx, true);
+            this.$iApi.geo.map.reorder(layer, newIdx);
 
             this.$iApi.updateAlert(
                 this.$t('layer-reorder.layermoved', {
@@ -389,7 +389,7 @@ export default defineComponent({
             const newIdx: number = this.layersModel[newRelativeIdx].orderIdx;
 
             // apply changes
-            this.$iApi.geo.map.reorder(layer, newIdx, true);
+            this.$iApi.geo.map.reorder(layer, newIdx);
 
             this.$iApi.updateAlert(
                 this.$t('layer-reorder.layermoved', {
