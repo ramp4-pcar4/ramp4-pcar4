@@ -7,7 +7,7 @@
         >
             <button
                 type="button"
-                @click="onSortRequested('asc', $event)"
+                @click="onSortRequested($event)"
                 :content="$t(`grid.header.sort.${sort}`)"
                 v-tippy="{ placement: 'top', hideOnClick: false }"
                 class="customHeaderLabel hover:bg-gray-300 font-bold p-8 max-w-full"
@@ -123,6 +123,14 @@ export default defineComponent({
         this.sortable = this.params.column.colDef.sortable;
         this.columnApi = this.params.columnApi;
 
+        if (this.params.sort === 'asc') {
+            this.sort = 1;
+            this.params.setSort('asc');
+        } else if (this.params.sort === 'desc') {
+            this.sort = 2;
+            this.params.setSort('desc');
+        }
+
         this.onColumnReorder();
         // update move state when column has moved
         this.params.column.addEventListener('leftChanged', () => {
@@ -189,14 +197,14 @@ export default defineComponent({
         },
 
         // Switch between sorting the column by `ascending`, `descending` or `none`.
-        onSortRequested(order: any, event: any): void {
+        onSortRequested(event: any): void {
             this.sort = (this.sort + 1) % 3;
             if (this.sort == 1) {
                 this.params.setSort('asc', event.shiftKey);
             } else if (this.sort == 2) {
                 this.params.setSort('desc', event.shiftKey);
             } else {
-                this.params.setSort('', event.shiftKey);
+                this.params.setSort('none', event.shiftKey);
             }
         }
     }

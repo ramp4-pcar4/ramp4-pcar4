@@ -2,6 +2,7 @@
     <div class="h-full flex items-center justify-center">
         <input
             class="rv-input w-full bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
+            :class="{ 'pointer-events-none': static }"
             type="text"
             @input="valueChanged()"
             v-model="filterValue"
@@ -21,19 +22,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
     name: 'GridCustomTextFilterV',
     props: ['params'],
     data() {
         return {
-            filterValue: ''
+            filterValue: '',
+            static: this.params.stateManager.columns[
+                this.params.column.colDef.field
+            ].filter.static
         };
     },
     beforeMount() {
         // Load previously stored value (if saved in table state manager)
-        this.filterValue = this.params.stateManager.getColumnFilter(
+        this.filterValue = this.params.stateManager.getColumnFilterValue(
             this.params.column.colDef.field
         );
 
@@ -54,7 +58,7 @@ export default defineComponent({
 
                 // Save the new filter value in the state manager. Allows for quick recovery if the grid is
                 // closed and re-opened.
-                this.params.stateManager.setColumnFilter(
+                this.params.stateManager.setColumnFilterValue(
                     this.params.column.colDef.field,
                     this.filterValue
                 );

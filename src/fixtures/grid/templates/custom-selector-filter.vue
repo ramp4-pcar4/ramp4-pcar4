@@ -1,7 +1,8 @@
 <template>
     <div class="h-full flex items-center justify-center">
         <select
-            class="rv-input w-full bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
+            class="rv-input w-full bg-white text-black-75 h-24 py-0 px-8 border-2 rounded"
+            :class="{ 'pointer-events-none': static }"
             v-model="selectedOption"
             @change="selectionChanged()"
         >
@@ -21,13 +22,16 @@ export default defineComponent({
     data() {
         return {
             selectedOption: '' as string,
-            options: [] as Array<string>
+            options: [] as Array<string>,
+            static: this.params.stateManager.columns[
+                this.params.column.colDef.field
+            ].filter.static
         };
     },
 
     beforeMount() {
         // Load previously stored value (if saved in table state manager)
-        this.selectedOption = this.params.stateManager.getColumnFilter(
+        this.selectedOption = this.params.stateManager.getColumnFilterValue(
             this.params.column.colDef.field
         );
 
@@ -56,7 +60,6 @@ export default defineComponent({
                 if (this.selectedOption === '...') {
                     // Clear the selector filter.
                     instance.setModel(null);
-                    instance.onFilterChanged();
                     this.selectedOption = '';
                 } else {
                     // Filter by the selected option.
@@ -69,7 +72,7 @@ export default defineComponent({
 
                 // Save the new filter value in the state manager. Allows for quick recovery if the grid is
                 // closed and re-opened.
-                this.params.stateManager.setColumnFilter(
+                this.params.stateManager.setColumnFilterValue(
                     this.params.column.colDef.field,
                     this.selectedOption
                 );

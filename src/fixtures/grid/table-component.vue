@@ -299,6 +299,7 @@ import GridColumnDropdownV from './column-dropdown.vue';
 import { GridStore } from './store';
 import type { GridConfig } from './store';
 import type TableStateManager from './store/table-state-manager';
+import ColumnStateManager from './store/column-state-manager';
 import {
     GridAccessibilityManager,
     tabToNextCellHandler,
@@ -503,16 +504,30 @@ export default defineComponent({
                     'rvInteractive',
                     ...tableAttributes.columns
                 ].forEach((column: any) => {
+                    if (this.config.state?.columns[column.data] === undefined) {
+                        this.config.state.columns[column.data] =
+                            new ColumnStateManager({
+                                field: column.data,
+                                title: column.title
+                            });
+                    }
+                    let colConfig = this.config.state?.columns[column.data];
                     let col: ColumnDefinition = {
-                        headerName: column.title || '',
-                        field: column.data || column,
-                        isSelector: false,
+                        headerName: colConfig.title,
+                        headerComponent: 'agColumnHeader',
+                        headerComponentParams: {
+                            sort: colConfig.sort
+                        },
+                        field: column.data ?? column,
+                        isSelector: colConfig.filter.type === 'selector',
                         sortable: true,
                         lockPosition: true,
                         filterParams: {},
-                        floatingFilter: this.config.state.colFilter,
-                        hide: false,
-                        maxWidth: 400,
+                        floatingFilter:
+                            this.config.state.colFilter && colConfig.searchable,
+                        hide: !colConfig?.visible,
+                        minWidth: colConfig.width,
+                        maxWidth: colConfig.width ?? 400,
                         cellRenderer: (cell: any) => {
                             return cell.value;
                         },
@@ -790,16 +805,6 @@ export default defineComponent({
         },
 
         setUpDateFilter(colDef: any, state: TableStateManager) {
-            // Retrieve stored filter values from the state manager if it exists.
-            let minVal =
-                state.getColumnFilter(colDef.field + ' min') !== undefined
-                    ? state.getColumnFilter(colDef.field + ' min')
-                    : '';
-            let maxVal =
-                state.getColumnFilter(colDef.field + ' max') !== undefined
-                    ? state.getColumnFilter(colDef.field + ' max')
-                    : '';
-
             colDef.floatingFilterComponent = 'dateFloatingFilter';
             colDef.filterParams.comparator = function (
                 filterDate: any,
@@ -844,12 +849,6 @@ export default defineComponent({
             rowData: any,
             state: TableStateManager
         ) {
-            // Retrieve stored filter value from the state manager if it exists.
-            let value =
-                state.getColumnFilter(colDef.field) !== undefined
-                    ? state.getColumnFilter(colDef.field)
-                    : '';
-
             colDef.floatingFilterComponent = 'selectorFloatingFilter';
             colDef.filterParams.inRangeInclusive = true;
             colDef.floatingFilterComponentParams = {
@@ -861,15 +860,6 @@ export default defineComponent({
 
         setUpNumberFilter(colDef: any, state: TableStateManager) {
             // Retrieve stored filter values from the state manager if it exists.
-            let minVal =
-                state.getColumnFilter(colDef.field + ' min') !== undefined
-                    ? state.getColumnFilter(colDef.field + ' min')
-                    : '';
-            let maxVal =
-                state.getColumnFilter(colDef.field + ' max') !== undefined
-                    ? state.getColumnFilter(colDef.field + ' max')
-                    : '';
-
             colDef.floatingFilterComponent = 'numberFloatingFilter';
             colDef.filterParams.inRangeInclusive = true;
             colDef.floatingFilterComponentParams = {
@@ -879,12 +869,6 @@ export default defineComponent({
         },
 
         setUpTextFilter(colDef: any, state: TableStateManager) {
-            // Retrieve stored filter value from the state manager if it exists.
-            let value =
-                state.getColumnFilter(colDef.field) !== undefined
-                    ? state.getColumnFilter(colDef.field)
-                    : '';
-
             colDef.floatingFilterComponent = 'textFloatingFilter';
             colDef.floatingFilterComponentParams = {
                 suppressFilterButton: true,
@@ -1358,6 +1342,8 @@ export interface TableComponent {
 interface ColumnDefinition {
     field: string;
     headerName: string;
+    headerComponent: any;
+    headerComponentParams: any;
     headerTooltip?: string;
     alias?: string;
     width?: number;
