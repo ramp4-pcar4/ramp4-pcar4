@@ -29,10 +29,10 @@ export default defineComponent({
         this.$options.iApi;
         this.fixture;
 
-        console.log(this.message);
+        // console.log(this.message);
 
         setTimeout(() => {
-            console.log(`[fixture] ${this.fixture.id} self-terminates`);
+            // console.log(`[fixture] ${this.fixture.id} self-terminates`);
 
             // NOTE: only on-map components need this relatively complicated removal process; panels are closed much easier
 

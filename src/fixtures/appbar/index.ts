@@ -9,11 +9,11 @@ import messages from './lang/lang.csv?raw';
 
 class AppbarFixture extends AppbarAPI {
     initialized() {
-        console.log(`[fixture] ${this.id} initialized`);
+        // console.log(`[fixture] ${this.id} initialized`);
     }
 
     async added() {
-        console.log(`[fixture] ${this.id} added`);
+        // console.log(`[fixture] ${this.id} added`);
 
         // TODO: registering a fixture store module seems like a common action almost every fixture needs; check if this can be automated somehow
         this.$vApp.$store.registerModule('appbar', appbar());
@@ -50,7 +50,7 @@ class AppbarFixture extends AppbarAPI {
         );
 
         this.removed = () => {
-            console.log(`[fixture] ${this.id} removed`);
+            // console.log(`[fixture] ${this.id} removed`);
             unwatch();
             eventHandlers.forEach(h => this.$iApi.event.off(h));
 

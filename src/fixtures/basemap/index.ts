@@ -6,7 +6,7 @@ import messages from './lang/lang.csv?raw';
 
 class BasemapFixture extends FixtureInstance {
     added() {
-        console.log(`[fixture] ${this.id} added`);
+        // console.log(`[fixture] ${this.id} added`);
 
         this.$iApi.component('basemap-nav-button', BasemapNavButtonV);
 
@@ -27,7 +27,7 @@ class BasemapFixture extends FixtureInstance {
     }
 
     removed() {
-        console.log(`[fixture] ${this.id} removed`);
+        // console.log(`[fixture] ${this.id} removed`);
 
         if (this.$iApi.fixture.get('appbar')) {
             this.$iApi.$vApp.$store.dispatch('appbar/removeButton', 'basemap');

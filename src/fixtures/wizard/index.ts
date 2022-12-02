@@ -7,7 +7,7 @@ import messages from './lang/lang.csv?raw';
 
 class WizardFixture extends WizardAPI {
     added() {
-        console.log(`[fixture] ${this.id} added`);
+        // console.log(`[fixture] ${this.id} added`);
 
         this.$iApi.panel.register(
             {
@@ -37,7 +37,7 @@ class WizardFixture extends WizardAPI {
 
         // override the removed method here to get access to scope
         this.removed = () => {
-            console.log(`[fixture] ${this.id} removed`);
+            // console.log(`[fixture] ${this.id} removed`);
             this.$iApi.panel.remove('wizard');
             this.$vApp.$store.unregisterModule('wizard');
             layerSource = undefined; // will be cleaned up by JS garbage collector

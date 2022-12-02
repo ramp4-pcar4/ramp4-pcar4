@@ -79,7 +79,7 @@ class DetailsFixture extends DetailsAPI {
 
         // override the removed method here to get access to scope
         this.removed = () => {
-            console.log(`[fixture] ${this.id} removed`);
+            // console.log(`[fixture] ${this.id} removed`);
             unwatch();
             eventHandlers.forEach(h => this.$iApi.event.off(h));
 

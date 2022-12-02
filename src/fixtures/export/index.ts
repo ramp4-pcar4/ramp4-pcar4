@@ -22,7 +22,7 @@ class ExportFixture extends ExportAPI {
     }
 
     added(): void {
-        console.log(`[fixture] ${this.id} added`);
+        // console.log(`[fixture] ${this.id} added`);
 
         // store module initializer function is called "xport" instead of "export" because export is a reserved keyword
         this.$vApp.$store.registerModule('export', xport());
@@ -57,7 +57,7 @@ class ExportFixture extends ExportAPI {
         );
 
         this.removed = () => {
-            console.log(`[fixture] ${this.id} removed`);
+            // console.log(`[fixture] ${this.id} removed`);
             unwatch();
             // remove sub fixtures
             this.$iApi.fixture

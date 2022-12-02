@@ -6,7 +6,7 @@ import type { ScrollguardConfig } from './store';
 
 class ScrollguardFixture extends ScrollguardAPI {
     added(): void {
-        console.log(`[fixture] ${this.id} added`);
+        // console.log(`[fixture] ${this.id} added`);
         // Manually add lang entries to i18n
         Object.entries(messages).forEach(value =>
             (<any>this.$vApp.$i18n).mergeLocaleMessage(...value)
@@ -30,7 +30,7 @@ class ScrollguardFixture extends ScrollguardAPI {
 
         // override the removed method here to get access to scope
         this.removed = () => {
-            console.log(`[fixture] ${this.id} removed`);
+            // console.log(`[fixture] ${this.id} removed`);
             unwatch();
             this.$vApp.$store.unregisterModule('scrollguard');
             destroy();

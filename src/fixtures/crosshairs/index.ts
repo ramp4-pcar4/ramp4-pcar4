@@ -4,7 +4,7 @@ import { FixtureInstance } from '@/api';
 
 class CrosshairsFixture extends FixtureInstance {
     added(): void {
-        console.log(`[fixture] ${this.id} added`);
+        // console.log(`[fixture] ${this.id} added`);
         const { destroy, el } = this.mount(CrosshairsV, {
             app: this.$element
         });
@@ -15,7 +15,7 @@ class CrosshairsFixture extends FixtureInstance {
 
         // override the removed method here to get access to scope
         this.removed = () => {
-            console.log(`[fixture] ${this.id} removed`);
+            // console.log(`[fixture] ${this.id} removed`);
             destroy();
         };
     }

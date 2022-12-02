@@ -709,7 +709,7 @@ export class SymbologyAPI extends APIScope {
             window.document.body.removeChild(container);
             return draw.svg();
         } catch (error) {
-            console.log(error);
+            console.error(error);
             return this.generateBlankSymbology(); // TODO create a warning icon instead?
         }
 

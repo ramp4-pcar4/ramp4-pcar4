@@ -5,7 +5,7 @@ import { LayerReorderAPI } from './api/layer-reorder';
 
 class LayerReorderFixture extends LayerReorderAPI {
     added() {
-        console.log(`[fixture] ${this.id} added`);
+        // console.log(`[fixture] ${this.id} added`);
 
         this.$iApi.panel.register(
             {
@@ -31,7 +31,7 @@ class LayerReorderFixture extends LayerReorderAPI {
     }
 
     removed() {
-        console.log(`[fixture] ${this.id} removed`);
+        // console.log(`[fixture] ${this.id} removed`);
         if (this.$iApi.fixture.get('appbar')) {
             this.$iApi.$vApp.$store.dispatch(
                 'appbar/removeButton',

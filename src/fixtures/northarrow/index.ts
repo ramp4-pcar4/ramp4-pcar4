@@ -7,7 +7,7 @@ export const POLE_MARKER_LAYER_ID: string = 'RampPoleMarker';
 
 class NortharrowFixture extends NortharrowAPI {
     async added() {
-        console.log(`[fixture] ${this.id} added`);
+        // console.log(`[fixture] ${this.id} added`);
 
         this.$vApp.$store.registerModule('northarrow', northarrow());
 
@@ -26,7 +26,7 @@ class NortharrowFixture extends NortharrowAPI {
 
         // override the removed method here to get access to scope
         this.removed = () => {
-            console.log(`[fixture] ${this.id} removed`);
+            // console.log(`[fixture] ${this.id} removed`);
 
             unwatch();
 

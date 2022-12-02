@@ -5,7 +5,7 @@ import messages from './lang/lang.csv?raw';
 
 class SettingsFixture extends SettingsAPI {
     async added() {
-        console.log(`[fixture] ${this.id} added`);
+        // console.log(`[fixture] ${this.id} added`);
 
         this.$iApi.panel.register(
             {
@@ -29,7 +29,7 @@ class SettingsFixture extends SettingsAPI {
     }
 
     removed() {
-        console.log(`[fixture] ${this.id} removed`);
+        // console.log(`[fixture] ${this.id} removed`);
         if (this.$iApi.fixture.get('appbar')) {
             this.$iApi.$vApp.$store.dispatch('appbar/removeButton', 'settings');
         }

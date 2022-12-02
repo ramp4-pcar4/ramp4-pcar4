@@ -4,7 +4,7 @@ import { FixtureInstance } from '@/api';
 
 class PanguardFixture extends FixtureInstance {
     added(): void {
-        console.log(`[fixture] ${this.id} added`);
+        // console.log(`[fixture] ${this.id} added`);
         // Manually add lang entries to i18n
         Object.entries(messages).forEach(value =>
             (<any>this.$vApp.$i18n).mergeLocaleMessage(...value)
@@ -19,7 +19,7 @@ class PanguardFixture extends FixtureInstance {
 
         // override the removed method here to get access to scope
         this.removed = () => {
-            console.log(`[fixture] ${this.id} removed`);
+            // console.log(`[fixture] ${this.id} removed`);
             destroy();
         };
     }

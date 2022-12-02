@@ -7,7 +7,7 @@ import messages from './lang/lang.csv?raw';
 
 class MapnavFixture extends MapnavAPI {
     async added() {
-        console.log(`[fixture] ${this.id} added`);
+        // console.log(`[fixture] ${this.id} added`);
 
         // TODO: registering a fixture store module seems like a common action almost every fixture needs; check if this can be automated somehow
         this.$vApp.$store.registerModule('mapnav', mapnav());
@@ -39,7 +39,7 @@ class MapnavFixture extends MapnavAPI {
 
         // override the removed method here to get access to scope
         this.removed = () => {
-            console.log(`[fixture] ${this.id} removed`);
+            // console.log(`[fixture] ${this.id} removed`);
             unwatch();
             this.$iApi.event.off(handler);
 
