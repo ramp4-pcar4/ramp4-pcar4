@@ -1,4 +1,4 @@
-TODO: revisit this once the appbar has been enhanced (#817)
+TODO: this needs to be updated to reflect changes made by https://github.com/ramp4-pcar4/ramp4-pcar4/discussions/817
 
 # Appbar
 

@@ -26,7 +26,7 @@ The `legend` provides an interactive listing of the layers and other data on the
 
 The `grid` provides a tabular view of attributes for a feature class.
 
-Continued [here](datatable.md).
+Continued [here](grid.md).
 
 ### Details
 
@@ -138,35 +138,72 @@ TODO add stuff as we make events that core fixtures raise
 
 ## Default Events Handlers
 
-Along with the default fixtures, there are default event handlers that are applied to make them react to each other and to the RAMP core. See the examples section below and the LINKTO Events API page for details on how to work with event handlers.
-
-TODO keep updating the list, make new subsections as appropriate. Maybe move to a separate page if it becomes a huge list.
+Along with the default fixtures, there are default event handlers that are applied to make them react to each other and to the RAMP core. See the examples section below and the [Events API page](../api/events.md) for details on how to work with event handlers.
 
 ### Map Handlers
 
--   `ramp_map_click_runs_identify` causes the identify process to start when the map is clicked
--   `ramp_identify_opens_details` causes the details fixture to open, displaying the result of an identify request.
--   `ramp_map_keydown` causes a key press to be processed on the map
--   `ramp_map_keyup` causes a key release to be processed on the map
--   `ramp_map_blur` causes keyboard navigation to stop when the map loses focus
--   `checks_maptip_mouse_move` causes a check for a graphic at mouse location on mouse move
--   `checks_maptip_extent_change` causes a check for a graphic at mouse location on extent change (for keyboard)
--   `show_default_maptip` displays the default maptip when a graphic is hit under mouse or keyboard crosshairs
+- `ramp_map_click_runs_identify` causes the identify process to start when the map is clicked
+- `ramp_map_identify_opens_identify_results` causes the identify results panel to open, displaying the results.
+- `ramp_map_keydown_updates_key_handler` causes a key press to be processed on the map
+- `ramp_map_keyup_updates_key_handler` causes a key release to be processed on the map
+- `ramp_map_blur_updates_key_handler` causes keyboard navigation to stop when the map loses focus
 
-### Fixture Handlers
+### Map Component Handlers
 
--   `ramp_settings_toggles_panel` causes the settings fixture to toggle the settings panel
--   `opens_feature_details` causes the details fixture to open for a single feature
--   `toggles_help_panel` causes the help fixture to toggle the help panel
--   `toggles_grid_panel` causes the grid fixture to toggle the grid panel
--   `appbar_adds_temporary_button` causes the appbar to add a temporary button when a panel without a fixed button is opened
--   `appbar_removes_temporary_button` causes the appbar to remove a temporary button when the respective panel is closed
+Updates the map attribution in the map-caption by retrieving it from the current basemap config
 
-### Component Handlers
+- `ramp_config_change_updates_map_attribs` when a configuration file changes (e.g. new language)
+- `ramp_map_basemap_updates_map_attribs` when the basemap changes
+- `ramp_map_created_updates_map_attribs` when the map is created
 
--   `updates_map_caption_attribution_basemap` updates the attribution in the map-caption by retrieving it from the current basemap config when the basemap changes
--   `updates_map_caption_attribution_config` updates the attribution in the map-caption by retrieving it from the current basemap config when the config changes
--   `updates_map_caption_scale` updates the scale bar in the map-caption when the map scale changes
+Updates the scalebar in the map-caption
+
+- `ramp_map_resize_updates_scalebar` when the map resizes
+- `ramp_map_scale_updates_scalebar` when the map scale changes
+
+Updates the co-ordinates in the map-caption
+
+- `ramp_map_keydown_updates_coords` when panning using a keyboard
+- `ramp_map_mouse_updates_coords` when moving the mouse
+
+Creates or updates the feature maptip
+
+- `ramp_map_extent_updates_maptip` check for graphics when map extent changes
+- `ramp_map_graphichit_creates_maptip` create maptip content when a new feature is hit
+- `ramp_map_mouse_updates_maptip` check for graphics when mouse moves
+
+### Layer Handlers
+
+Changes to layers causing changes to the legend
+
+- `ramp_layer_error_updates_legend` legend will reflect error state
+- `ramp_layer_register_binds_legend` will connect a legend item to layer when it is registered (created)
+- `ramp_layer_reload_end_binds_legend` will connect a legend item to layer when layer finishes a reload
+- `ramp_layer_reload_start_updates_legend` legend will reflect loading state when layer reload starts
+- `ramp_layer_remove_updates_legend` clears bound items from legend when layer is removed
+- `ramp_layer_useradd_updates_legend` adds a legend entry when layers are added via user controls
+
+Changes to layers causing changes in other fixtures
+
+- `ramp_layer_remove_updates_details` clear details info for layer that has been removed
+- `ramp_layer_remove_closes_grid` close grid if the grid layer is removed
+
+### Panel Handlers
+
+Reacting to panels opening and closing
+
+- `ramp_panel_close_updates_appbar` causes the appbar to remove a temporary button when the respective panel is closed
+- `ramp_panel_open_updates_appbar` causes the appbar to add a temporary button when a panel without a fixed button is opened
+
+Handling panel toggle event requests (open/close type actions)
+
+- `ramp_toggle_details` feature details panel
+- `ramp_toggle_grid` grid panel
+- `ramp_toggle_help` help panel
+- `ramp_toggle_metadata` metadata panel
+- `ramp_toggle_reorder` layer reorder panel
+- `ramp_toggle_settings` layer settings panel
+- `ramp_toggle_wizard` import wizard panel
 
 ## Examples
 

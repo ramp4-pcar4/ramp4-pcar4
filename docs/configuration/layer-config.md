@@ -64,7 +64,7 @@ The url where the layer definition and data should be loaded from.
 
 *array of string*
 
-Defines what controls should be available for this layer in the app. This list acts as the "layer default", but controls on specific fixtures can be overridden by configuration in the `fixtures` object of the layer configuration.
+Defines what controls should be available for this layer in the app. This list acts as the "layer default", but controls on specific fixtures can be overridden by that fixture's configuration structure (typically in the `fixtures` object of the layer configuration, or the configuration object of the fixture itself).
 
 See the [list of control names](#control-names) for valid values. If missing, all the valid controls will be included as a default. If `disabledControls` is also present on the layer config, that list will take priority and **any specified controls list will be ignored**.
 
@@ -92,7 +92,7 @@ Indicates if a layer should be treated as cosmetic; i.e. something that appears 
 
 *array of string*
 
-Defines what controls should be omitted / disabled for this layer in the app. This list acts as the "layer default", but disabled controls on specifc fixtures can be overridden by configuration in the `fixtures` object of the layer configuration.
+Defines what controls should be omitted / disabled for this layer in the app. This list acts as the "layer default", but disabled controls on specifc fixtures can be overridden by that fixture's configuration structure (typically in the `fixtures` object of the layer configuration, or the configuration object of the fixture itself).
 
 See the [list of control names](#control-names) for valid values. If missing, enabled controls will be determined by the `controls` config value, or all valid controls will be enabled if `controls` is also missing.
 
