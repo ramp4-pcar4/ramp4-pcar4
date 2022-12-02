@@ -5,7 +5,7 @@ import { FixtureInstance } from '@/api';
 
 class SnowmanFixture extends FixtureInstance {
     added(): void {
-        console.log(`[fixture] ${this.id} added`);
+        // console.log(`[fixture] ${this.id} added`);
 
         // register snowman appbar button
         this.$iApi.component('snowman-appbar-button', SnowmanAppbarButtonV);
@@ -27,7 +27,7 @@ class SnowmanFixture extends FixtureInstance {
     }
 
     removed(): void {
-        console.log(`[fixture] ${this.id} removed`);
+        // console.log(`[fixture] ${this.id} removed`);
     }
 }
 

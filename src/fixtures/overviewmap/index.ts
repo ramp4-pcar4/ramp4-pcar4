@@ -6,7 +6,7 @@ import messages from './lang/lang.csv?raw';
 
 class OverviewmapFixture extends OverviewmapAPI {
     added() {
-        console.log(`[fixture] ${this.id} added`);
+        // console.log(`[fixture] ${this.id} added`);
 
         this.$vApp.$store.registerModule('overviewmap', overviewmap());
 
@@ -29,7 +29,7 @@ class OverviewmapFixture extends OverviewmapAPI {
 
         // override the removed method here to get access to scope
         this.removed = () => {
-            console.log(`[fixture] ${this.id} removed`);
+            // console.log(`[fixture] ${this.id} removed`);
             unwatch();
             this.$vApp.$store.unregisterModule('overviewmap');
             destroy();

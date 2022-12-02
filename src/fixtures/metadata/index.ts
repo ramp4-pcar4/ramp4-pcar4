@@ -30,7 +30,7 @@ class MetadataFixture extends MetadataAPI {
         this.$vApp.$store.registerModule('metadata', metadata());
 
         this.removed = () => {
-            console.log(`[fixture] ${this.id} removed`);
+            // console.log(`[fixture] ${this.id} removed`);
             if (this.$iApi.fixture.get('appbar')) {
                 this.$iApi.$vApp.$store.dispatch(
                     'appbar/removeButton',

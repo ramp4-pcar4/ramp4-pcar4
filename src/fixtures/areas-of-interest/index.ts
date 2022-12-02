@@ -6,7 +6,7 @@ import { AreasOfInterestAPI } from './api/areas-of-interest';
 
 class AreasOfInterestFixture extends AreasOfInterestAPI {
     added() {
-        console.log(`[fixture] ${this.id} added`);
+        // console.log(`[fixture] ${this.id} added`);
 
         this.$vApp.$store.registerModule('areasOfInterest', areasOfInterest());
 
@@ -40,7 +40,7 @@ class AreasOfInterestFixture extends AreasOfInterestAPI {
         );
 
         this.removed = () => {
-            console.log(`[fixture] ${this.id} removed`);
+            // console.log(`[fixture] ${this.id} removed`);
             unwatch();
 
             if (this.$iApi.fixture.get('appbar')) {

@@ -8,7 +8,7 @@ import messages from './lang/lang.csv?raw';
 
 class HelpFixture extends HelpAPI {
     added() {
-        console.log(`[fixture] ${this.id} added`);
+        // console.log(`[fixture] ${this.id} added`);
 
         this.$iApi.component('help-nav-button', HelpNavButtonV);
 
@@ -40,7 +40,7 @@ class HelpFixture extends HelpAPI {
 
         // override the removed method here to get access to scope
         this.removed = () => {
-            console.log(`[fixture] ${this.id} removed`);
+            // console.log(`[fixture] ${this.id} removed`);
             unwatch();
 
             if (this.$iApi.fixture.get('mapnav')) {

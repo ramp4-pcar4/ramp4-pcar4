@@ -2,7 +2,7 @@ import { HilightAPI } from './api/hilight';
 
 class HilightFixture extends HilightAPI {
     async added() {
-        console.log(`[fixture] ${this.id} added`);
+        // console.log(`[fixture] ${this.id} added`);
 
         this._parseConfig(this.config);
         const unwatch = this.$vApp.$watch(
@@ -12,7 +12,7 @@ class HilightFixture extends HilightAPI {
 
         // override the removed method here to get access to scope
         this.removed = () => {
-            console.log(`[fixture] ${this.id} removed`);
+            // console.log(`[fixture] ${this.id} removed`);
             unwatch();
         };
     }

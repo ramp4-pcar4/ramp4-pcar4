@@ -8,7 +8,7 @@ import messages from './lang/lang.csv?raw';
 
 class GeosearchFixture extends GeosearchAPI {
     async added() {
-        console.log(`[fixture] ${this.id} added`);
+        // console.log(`[fixture] ${this.id} added`);
 
         this.$vApp.$store.registerModule(
             'geosearch',
@@ -36,7 +36,7 @@ class GeosearchFixture extends GeosearchAPI {
     }
 
     removed() {
-        console.log(`[fixture] ${this.id} removed`);
+        // console.log(`[fixture] ${this.id} removed`);
 
         if (this.$iApi.fixture.get('appbar')) {
             this.$iApi.$vApp.$store.dispatch(

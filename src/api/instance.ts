@@ -171,7 +171,7 @@ export class InstanceAPI {
             );
 
             // create the map
-            console.log('Creating map:', langConfig.map);
+            // console.log('Creating map:', langConfig.map);
             const mapViewElement: Element | null =
                 this.$vApp.$el.querySelector('#esriMap');
 
@@ -191,7 +191,7 @@ export class InstanceAPI {
 
             // add layers
             if (langConfig.layers && langConfig.layers.length > 0) {
-                console.log('Adding layers:', langConfig.layers);
+                // console.log('Adding layers:', langConfig.layers);
                 langConfig.layers
                     .map(layerConfig => {
                         const layer = this.geo.layer.createLayer(layerConfig);
