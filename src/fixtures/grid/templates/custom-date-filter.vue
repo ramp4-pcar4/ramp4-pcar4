@@ -2,6 +2,7 @@
     <div class="h-full flex items-center justify-center w-full">
         <input
             class="m-0 py-1 w-1/2 rv-input bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
+            :class="{ 'pointer-events-none': static }"
             type="date"
             placeholder="date min"
             v-model="minVal"
@@ -16,6 +17,7 @@
         <span class="w-12" />
         <input
             class="m-0 py-1 w-1/2 rv-input bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
+            :class="{ 'pointer-events-none': static }"
             type="date"
             placeholder="date max"
             v-model="maxVal"
@@ -39,19 +41,24 @@ export default defineComponent({
     data() {
         return {
             minVal: '' as any,
-            maxVal: '' as any
+            maxVal: '' as any,
+            static: this.params.stateManager.columns[
+                this.params.column.colDef.field
+            ].filter.static
         };
     },
 
     beforeMount() {
         // Load previously stored values (if saved in table state manager)
         this.minVal =
-            this.params.stateManager.getColumnFilter(
-                this.params.column.colDef.field + ' min'
+            this.params.stateManager.getColumnFilterValue(
+                this.params.column.colDef.field,
+                'min'
             ) || '';
         this.maxVal =
-            this.params.stateManager.getColumnFilter(
-                this.params.column.colDef.field + ' max'
+            this.params.stateManager.getColumnFilterValue(
+                this.params.column.colDef.field,
+                'max'
             ) || '';
         // Apply the default values to the column filter.
         this.minValChanged();
@@ -64,9 +71,10 @@ export default defineComponent({
                 this.setFilterModel(instance);
                 // Save the new filter value in the state manager. Allows for quick recovery if the grid is
                 // closed and re-opened.
-                this.params.stateManager.setColumnFilter(
-                    this.params.column.colDef.field + ' min',
-                    this.minVal
+                this.params.stateManager.setColumnFilterValue(
+                    this.params.column.colDef.field,
+                    this.minVal,
+                    'min'
                 );
             });
         },
@@ -76,24 +84,15 @@ export default defineComponent({
                 this.setFilterModel(instance);
                 // Save the new filter value in the state manager. Allows for quick recovery if the grid is
                 // closed and re-opened.
-                this.params.stateManager.setColumnFilter(
-                    this.params.column.colDef.field + ' max',
-                    this.maxVal
+                this.params.stateManager.setColumnFilterValue(
+                    this.params.column.colDef.field,
+                    this.maxVal,
+                    'max'
                 );
             });
         },
 
         setFilterModel(instance: any) {
-            // This is the furthest date supported by JavaScript.
-            let maxPossibleDate: Date | string = new Date(8640000000000000);
-            maxPossibleDate = `${maxPossibleDate.getFullYear()}-${
-                maxPossibleDate.getMonth() + 1
-            }-${maxPossibleDate.getDate()}`;
-            // This is the earliest date supported by JavaScript.
-            let minPossibleDate: Date | string = new Date(0);
-            minPossibleDate = `${minPossibleDate.getFullYear()}-${
-                minPossibleDate.getMonth() + 1
-            }-${minPossibleDate.getDate()}`;
             if (this.maxVal === '' && this.minVal === '') {
                 // If neither value is set, clear the date filter.
                 instance.setModel(null);
@@ -109,17 +108,15 @@ export default defineComponent({
                 // If only the maximum value is set, display all dates that occur before it.
                 instance.setModel({
                     filterType: 'date',
-                    type: 'inRange',
-                    dateFrom: minPossibleDate,
-                    dateTo: this.maxVal
+                    type: 'lessThan',
+                    dateFrom: this.maxVal
                 });
             } else if (this.maxVal === '') {
                 // If only the minimum value is set, display all dates that occur after it.
                 instance.setModel({
                     filterType: 'date',
-                    type: 'inRange',
-                    dateFrom: this.minVal,
-                    dateTo: maxPossibleDate
+                    type: 'greaterThan',
+                    dateFrom: this.minVal
                 });
             }
             this.params.api.onFilterChanged();
