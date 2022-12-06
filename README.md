@@ -9,7 +9,7 @@ RAMP - The Reusable Accessible Mapping Platform, is a Javascript based web mappi
 -   An application architecture and API that is more open and adjustable
 -   UI re-design with mobile use in mind
 
-This project is currently in development. Incomplete features, bugs, and breaking changes to the API and configuration schema should be expected until the `v1.0.0` release. The previous version (RAMP 2 / RAMP 3) can be found [here](https://github.com/fgpv-vpgf/fgpv-vpgf).
+The previous version (RAMP 2 / RAMP 3) can be found [here](https://github.com/fgpv-vpgf/fgpv-vpgf). Differences between the versions are summarized in the [v4.0.0 Release Notes](https://github.com/ramp4-pcar4/ramp4-pcar4/releases/tag/v4.0.0).
 
 > This is an unsupported product. If you require a supported version please contact applicationsdecartographieweb-webmappingapplications@ec.gc.ca for a cost estimate. The software and code samples available on this website are provided "as is" without warranty of any kind, either express or implied. Use at your own risk. Access to this GitHub repository could become unavailable at any point in time.
 
@@ -61,7 +61,7 @@ Open `http://localhost:5050` in your browser.
 
 ### public vs demos folders
 
-The `public` folder is a **static only** folder. It contains the help md files and end-user demo assets and ramp library source code in various formats (es, global). Files in this folder are not processed by vite and therefore cannot reference outside files. This is useful for testing if things are broken between the develop and production build. Later on these files will be published to npm, unpkg and others.
+The `public` folder is a **static only** folder. It contains the help md files and end-user demo assets and the compiled ramp library source code. Files in this folder are not processed by vite and therefore cannot reference outside files. This is useful for testing if things are broken between the develop and production build.
 
 To test the files in the `public` folder locally:
 
@@ -80,6 +80,6 @@ During build, the `public` folder contents are placed into the `dist` folder.
 
 ### Demo Builds
 
-The most recent build is available at https://ramp4-pcar4.github.io/ramp4-pcar4/main/.
+The demos of the most recent build are available at https://ramp4-pcar4.github.io/ramp4-pcar4/main/demos/index-all.html.
 
 Demo builds are automatically generated for pull requests if you are a member of the [ramp4-pcar4 organization](https://github.com/orgs/ramp4-pcar4/people) and have your visibility set to public.
