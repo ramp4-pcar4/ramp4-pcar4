@@ -48,10 +48,10 @@
 
         <!-- TODO: find out if any ARIA attributes are needed for the map scale -->
 
-        <div class="flex min-w-fit justify-end">
+        <div class="flex min-w-fit justify-end relative top-2">
             <div
                 v-if="!coords.disabled"
-                class="relative top-2 pl-8 px-14 sm:block display-none"
+                class="pl-8 px-14 sm:block display-none"
                 v-truncate="{
                     options: {
                         hideOnClick: false,
