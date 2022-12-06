@@ -65,7 +65,11 @@ let config = {
                         }
                     },
                     startMinimized: false,
-                    expandFactor: 3
+                    expandFactor: 3,
+                    areaOpacity: 0.5,
+                    areaColour: '#5D591F',
+                    borderColour: '#00FF00',
+                    borderWidth: 2
                 }
             }
         }

@@ -62,6 +62,26 @@
                     "type": "number",
                     "default": 1.5,
                     "description": "The ratio of the overview map's extent size compared to the main map's extent size"
+                },
+                "borderColour": {
+                    "type": "string",
+                    "default": "#FF0000",
+                    "description": "The colour of the area rectangle border."
+                },
+                "borderWidth": {
+                    "type": "number",
+                    "default": 1,
+                    "description": "The width of the area rectangle border"
+                },
+                "areaColour": {
+                    "type": "string",
+                    "default": "#000000",
+                    "description": "The colour of the area rectangle."
+                },
+                "areaOpacity": {
+                    "type": "number",
+                    "default": 1,
+                    "description": "The opacity value of the area rectangle. Accepts decimal values between 0 and 1."
                 }
             }
         },
