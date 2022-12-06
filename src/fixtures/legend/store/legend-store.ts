@@ -34,7 +34,10 @@ const mutations = {
                 return;
             }
 
-            value.parent.children = [...value.parent.children, value.item];
+            value.parent.children = [
+                ...value.parent.children,
+                value.item as LegendItem
+            ];
         }
     },
     REMOVE_ITEM: (state: LegendState, item: LegendItem) => {
@@ -66,6 +69,26 @@ const mutations = {
         };
 
         state.children = removeItem(state.children);
+    },
+    REPLACE_ITEM: (
+        state: LegendState,
+        value: { oldItem: LegendItem; newItem: LegendItem }
+    ) => {
+        if (value.oldItem.parent === undefined) {
+            const children = state.children;
+            const index = children.indexOf(value.oldItem);
+            if (index > -1) {
+                children[index] = value.newItem;
+            }
+            state.children = children;
+        } else {
+            const children = value.oldItem.parent.children;
+            const index = children.indexOf(value.oldItem);
+            if (index > -1) {
+                children[index] = value.newItem;
+            }
+            value.oldItem.parent.children = children;
+        }
     }
 };
 
@@ -80,6 +103,13 @@ const actions = {
     /** Remove legend item from store */
     removeItem: (context: LegendContext, item: LegendItem) => {
         context.commit('REMOVE_ITEM', item);
+    },
+    /** Replace legend item in store */
+    replaceItem: (
+        context: LegendContext,
+        value: { oldItem: LegendItem; newItem: LegendItem }
+    ) => {
+        context.commit('REPLACE_ITEM', value);
     }
 };
 
@@ -99,7 +129,11 @@ export enum LegendStore {
     /**
      * (Action) removeItem: (item: LegendItem)
      */
-    removeItem = 'legend/removeItem'
+    removeItem = 'legend/removeItem',
+    /**
+     * (Action) replaceItem:  (value: { oldItem: LegendItem; newItem: LegendItem })
+     */
+    replaceItem = 'legend/replaceItem'
 }
 
 export function legend() {
