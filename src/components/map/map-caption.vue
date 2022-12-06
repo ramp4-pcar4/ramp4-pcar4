@@ -51,7 +51,7 @@
         <div class="flex min-w-fit justify-end">
             <div
                 v-if="!coords.disabled"
-                class="relative top-2 pl-8 px-14 sm:block display-none"
+                class="pl-8 px-14 sm:block display-none relative top-2"
                 v-truncate="{
                     options: {
                         hideOnClick: false,
@@ -84,7 +84,7 @@
                     class="border-solid border-2 border-white border-t-0 h-5 mr-4 inline-block"
                     :style="{ width: scale.width }"
                 ></span>
-                <span class="relative text-sm sm:text-base">
+                <span class="relative top-1 text-sm sm:text-base">
                     {{ scale.label }}
                 </span>
             </button>
@@ -103,7 +103,7 @@
             >
                 <template #header>
                     <span
-                        class="text-gray-400 hover:text-white text-sm sm:text-base pb-5"
+                        class="relative top-2 text-gray-400 hover:text-white text-sm sm:text-base pb-5"
                     >
                         {{ $t('map.language.short') }}
                     </span>
