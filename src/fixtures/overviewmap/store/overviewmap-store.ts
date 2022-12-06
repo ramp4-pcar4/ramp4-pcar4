@@ -38,6 +38,22 @@ export enum OverviewmapStore {
      */
     expandFactor = 'overviewmap/expandFactor',
     /**
+     * (State) borderColour: string
+     */
+    borderColour = 'overviewmap/borderColour',
+    /**
+     * (State) borderWidth: number
+     */
+    borderWidth = 'overviewmap/borderWidth',
+    /**
+     * (State) areaColour: string
+     */
+    areaColour = 'overviewmap/areaColour',
+    /**
+     * (State) areaOpacity: number
+     */
+    areaOpacity = 'overviewmap/areaOpacity',
+    /**
      * (Action) updateIntialBasemap: (basemapId: string)
      */
     updateIntialBasemap = 'overviewmap/updateIntialBasemap!'
