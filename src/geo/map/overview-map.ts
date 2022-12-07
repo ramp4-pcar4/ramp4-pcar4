@@ -131,9 +131,35 @@ export class OverviewMapAPI extends CommonMapAPI {
             this.$iApi.geo.map.getExtent(),
             'overview-graphic'
         );
+
+        const borderColour =
+            (this.$iApi.$vApp.$store.get(
+                OverviewmapStore.borderColour
+            ) as string) ?? '#FF0000';
+        const borderWidth =
+            (this.$iApi.$vApp.$store.get(
+                OverviewmapStore.borderWidth
+            ) as number) ?? 1;
+        const areaColour =
+            (this.$iApi.$vApp.$store.get(
+                OverviewmapStore.areaColour
+            ) as string) ?? '#000000';
+        const areaOpacity =
+            (this.$iApi.$vApp.$store.get(
+                OverviewmapStore.areaOpacity
+            ) as number) ?? 0.25;
+
+        // generate hex colour with alpha
+        const areaFill = `${areaColour}${Math.round(areaOpacity * 255).toString(
+            16
+        )}`;
+
         overviewGraphic.style = new PolygonStyle({
-            fill: { colour: [0, 0, 0, 0.25] },
-            outline: { colour: '#FF0000' }
+            fill: { colour: areaFill },
+            outline: {
+                colour: borderColour,
+                width: borderWidth
+            }
         });
 
         await this.overviewGraphicLayer.initiate();

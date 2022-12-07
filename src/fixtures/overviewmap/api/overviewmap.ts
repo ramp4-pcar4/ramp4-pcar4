@@ -27,6 +27,22 @@ export class OverviewmapAPI extends FixtureInstance {
             OverviewmapStore.expandFactor,
             overviewmapConfig?.expandFactor ?? 1.5
         );
+        this.$vApp.$store.set(
+            OverviewmapStore.borderColour,
+            overviewmapConfig?.borderColour
+        );
+        this.$vApp.$store.set(
+            OverviewmapStore.borderWidth,
+            overviewmapConfig?.borderWidth
+        );
+        this.$vApp.$store.set(
+            OverviewmapStore.areaColour,
+            overviewmapConfig?.areaColour
+        );
+        this.$vApp.$store.set(
+            OverviewmapStore.areaOpacity,
+            overviewmapConfig?.areaOpacity
+        );
     }
 
     get config(): OverviewmapConfig {
