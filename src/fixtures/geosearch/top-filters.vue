@@ -5,13 +5,15 @@
                 class="form-select border-b border-b-gray-600 w-full h-full py-0 cursor-pointer"
                 :value="queryParams.province"
                 v-on:change="setProvince({ province: $event.target.value })"
+                v-truncate
             >
-                <option value="" disabled hidden>
+                <option value="" disabled hidden v-truncate>
                     {{ $t('geosearch.filters.province') }}
                 </option>
                 <option
                     v-for="province in provinces"
                     v-bind:key="province.code"
+                    v-truncate
                 >
                     {{ province.name }}
                 </option>
@@ -22,6 +24,7 @@
                 class="form-select border-b border-b-gray-600 w-full h-full py-0 cursor-pointer"
                 :value="queryParams.type"
                 v-on:change="setType({ type: $event.target.value })"
+                v-truncate
             >
                 <option value="" disabled hidden>
                     {{ $t('geosearch.filters.type') }}
