@@ -127,6 +127,8 @@ export class FocusListManager {
         // remove the ability to tab to sub-items
         this.setTabIndex(-1);
 
+        this.element.setAttribute('role', 'group');
+
         const focusManager = this;
         element.addEventListener('keydown', function (event: KeyboardEvent) {
             focusManager.onKeydown(event);
