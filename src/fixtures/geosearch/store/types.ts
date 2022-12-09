@@ -4,12 +4,14 @@ import axios from 'axios';
 // TODO should these strings be in an i18n csv instead?
 const types: any = {
     en: {
+        ADDRESS: 'Street Address',
         FSA: 'Forward Sortation Area',
         NTS: 'National Topographic System',
         COORD: 'Latitude/Longitude',
         SCALE: 'Scale'
     },
     fr: {
+        ADDRESS: 'Adresse Municipale',
         FSA: "Région De Tri D'Acheminement",
         NTS: 'Système National De Référence Cartographique',
         COORD: 'Latitude/Longitude',

@@ -1,4 +1,6 @@
 import type {
+    IAddressResult,
+    AddressResultList,
     IFSAResult,
     IGeosearchConfig,
     INameResponse,
@@ -7,7 +9,8 @@ import type {
     LocateResponseList,
     NameResultList,
     NTSResultList,
-    queryFeatureResults
+    queryFeatureResults,
+    ResultList
 } from '../definitions';
 
 export function make(config: IGeosearchConfig, query: string): Query {
@@ -25,12 +28,16 @@ export function make(config: IGeosearchConfig, query: string): Query {
     } else if (ntsReg.test(query)) {
         // NTS search
         return new NTSQuery(config, query.substring(0, 6).toUpperCase());
-        // } else if (/^[A-Za-z]/.test(query)) {
     } else {
+        // address search
+        const aq = new AddressQuery(config, query);
         // name based search
         const q = new Query(config, query);
-        q.onComplete = q.search().then(results => {
-            q.results = results;
+        q.onComplete = Promise.all([aq.onComplete, q.search()]).then(res => {
+            // returns a search result from addresses and names
+            q.results = res[0].results
+                .concat(res[1])
+                .slice(0, config.maxResults);
             return q;
         });
         return q;
@@ -40,7 +47,7 @@ export function make(config: IGeosearchConfig, query: string): Query {
 export class Query {
     config: IGeosearchConfig;
     query: string | undefined;
-    results: NameResultList = [];
+    results: ResultList = [];
     onComplete: any;
     latLongResult: any;
     featureResults: queryFeatureResults = undefined;
@@ -294,5 +301,37 @@ export class NTSQuery extends Query {
 
     equals(otherQ: NTSQuery): boolean {
         return this.unitName === otherQ.unitName;
+    }
+}
+
+export class AddressQuery extends Query {
+    constructor(config: IGeosearchConfig, query: string) {
+        query = encodeURIComponent(query.trim());
+        super(config, query);
+        this.onComplete = new Promise(resolve => {
+            this.locateByQuery().then(lr => {
+                this.results = this.locateToResult(lr);
+                resolve(this);
+            });
+        });
+    }
+
+    locateToResult(lrl: LocateResponseList): AddressResultList {
+        const results = lrl
+            .filter(lr => lr.type?.includes('Street'))
+            .map(ls => {
+                const [name, city, province] = ls.title.split(', ');
+                return <IAddressResult>{
+                    name: name,
+                    city: city.split(' Of ').pop(), // prevents redundant label i.e. 'City Of Kingston'
+                    province: province,
+                    desc: this.config.types.allTypes.ADDRESS,
+                    LatLon: {
+                        lat: ls.geometry.coordinates[1],
+                        lon: ls.geometry.coordinates[0]
+                    }
+                };
+            });
+        return results;
     }
 }

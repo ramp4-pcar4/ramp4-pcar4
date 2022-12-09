@@ -92,7 +92,7 @@ import { defineComponent } from 'vue';
 import type { PropType } from 'vue';
 
 import type { PanelInstance } from '@/api';
-import { Point } from '@/geo/api';
+import { Extent } from '@/geo/api';
 
 import { GeosearchStore } from './store';
 
@@ -129,8 +129,12 @@ export default defineComponent({
     methods: {
         // zoom in to a clicked result
         zoomIn(result: any): void {
-            let zoomPoint = new Point('zoomies', result.position);
-            this.$iApi.geo.map.zoomMapTo(zoomPoint);
+            let zoom = new Extent(
+                'zoomies',
+                [result.bbox[0], result.bbox[1]],
+                [result.bbox[2], result.bbox[3]]
+            );
+            this.$iApi.geo.map.zoomMapTo(zoom);
         },
 
         // highlight the search term in each listed geosearch result

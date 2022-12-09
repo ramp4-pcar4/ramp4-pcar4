@@ -158,15 +158,14 @@ export class GeoSearchUI {
                 if (q.featureResults) {
                     if (q.featureResults.fsa) {
                         // add first geosearch result as location of FSA itself
-                        const bboxRange = 0.02;
                         featureResult = [
                             {
                                 name: q.featureResults.fsa,
                                 bbox: [
-                                    q.featureResults.LatLon.lon + bboxRange,
-                                    q.featureResults.LatLon.lat - bboxRange,
-                                    q.featureResults.LatLon.lon - bboxRange,
-                                    q.featureResults.LatLon.lat + bboxRange
+                                    q.featureResults.LatLon.lon + 0.02,
+                                    q.featureResults.LatLon.lat - 0.02,
+                                    q.featureResults.LatLon.lon - 0.02,
+                                    q.featureResults.LatLon.lat + 0.02
                                 ],
                                 type: q.featureResults.desc,
                                 position: [
@@ -206,15 +205,19 @@ export class GeoSearchUI {
                     featureResult = [q.latLongResult];
                 }
                 // console.log("first feature result: ", featureResult);
-
                 // format returned query results appropriately to support zoom/extent functionality
                 const queryResult = q.results.map((item: any) => ({
                     name: item.name,
-                    bbox: item.bbox,
-                    type: item.type,
+                    bbox: item.bbox ?? [
+                        item.LatLon.lon + 0.002,
+                        item.LatLon.lat - 0.002,
+                        item.LatLon.lon - 0.002,
+                        item.LatLon.lat + 0.002
+                    ],
+                    type: item.type ?? item.desc,
                     position: [item.LatLon.lon, item.LatLon.lat],
                     location: {
-                        city: item.location,
+                        city: item.location ?? item.city,
                         latitude: item.LatLon.lat,
                         longitude: item.LatLon.lon,
                         province: this.findProvinceObj(item.province)
