@@ -127,6 +127,9 @@ export class FocusListManager {
         // remove the ability to tab to sub-items
         this.setTabIndex(-1);
 
+        // needs to be marked with group role to allow the aria-activedescendant attribute
+        this.element.setAttribute('role', 'group');
+
         const focusManager = this;
         element.addEventListener('keydown', function (event: KeyboardEvent) {
             focusManager.onKeydown(event);
