@@ -153,12 +153,12 @@ export class GeoSearchUI {
         // run query based on search string input
         return Q.make(this.config, q.toUpperCase()).onComplete.then(
             (q: any) => {
+                const bboxRange = 0.02;
                 // any feature result requires a manual first entry
                 let featureResult: any[] = [];
                 if (q.featureResults) {
                     if (q.featureResults.fsa) {
                         // add first geosearch result as location of FSA itself
-                        const bboxRange = 0.02;
                         featureResult = [
                             {
                                 name: q.featureResults.fsa,
@@ -206,15 +206,19 @@ export class GeoSearchUI {
                     featureResult = [q.latLongResult];
                 }
                 // console.log("first feature result: ", featureResult);
-
                 // format returned query results appropriately to support zoom/extent functionality
                 const queryResult = q.results.map((item: any) => ({
                     name: item.name,
-                    bbox: item.bbox,
-                    type: item.type,
+                    bbox: item.bbox ?? [
+                        item.LatLon.lon + bboxRange,
+                        item.LatLon.lat - bboxRange,
+                        item.LatLon.lon - bboxRange,
+                        item.LatLon.lat + bboxRange
+                    ],
+                    type: item.type ?? item.desc,
                     position: [item.LatLon.lon, item.LatLon.lat],
                     location: {
-                        city: item.location,
+                        city: item.location ?? item.city,
                         latitude: item.LatLon.lat,
                         longitude: item.LatLon.lon,
                         province: this.findProvinceObj(item.province)
