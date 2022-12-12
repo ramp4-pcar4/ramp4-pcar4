@@ -73,7 +73,7 @@ export default defineComponent({
          * @returns {boolean} true when no child symbols are visible
          */
         _noSymbolsVisible(item: LayerItem): boolean {
-            return !item.layer.legend.some(
+            return !item.symbologyStack.some(
                 (item: LegendSymbology) => item.visibility
             );
         },
@@ -113,8 +113,8 @@ export default defineComponent({
                 // Update the layer definition to filter child symbols
                 // At the moment, only layers that support features will support sql filters
                 if (this.legendItem.layer?.supportsFeatures) {
-                    const filterGuts = this.legendItem.layer
-                        .legend!.filter(
+                    const filterGuts = this.legendItem.symbologyStack
+                        .filter(
                             (item: LegendSymbology) =>
                                 item.lastVisbility === true
                         )
@@ -128,7 +128,8 @@ export default defineComponent({
                         // nothing visible.
                         sql = '1=2';
                     } else if (
-                        filterGuts.length < this.legendItem.layer.legend!.length
+                        filterGuts.length <
+                        this.legendItem.symbologyStack.length
                     ) {
                         // only a subset of checkboxes are checked. need filter
                         sql = filterGuts.join(' OR ');
