@@ -17,15 +17,26 @@
                 :key="idx"
             >
                 <span
+                    v-if="stack[idx].svgcode"
                     class="symbologyIcon w-28 h-28"
                     v-html="stack[idx].svgcode"
                 ></span>
+                <img
+                    v-else-if="stack[idx].imgUrl"
+                    class="symbologyIcon w-28 h-28"
+                    :src="stack[idx].imgUrl"
+                />
             </div>
         </div>
 
         <!-- Only one icon to display. -->
         <div v-else-if="stack.length > 0" class="symbologyIcon w-32 h-32">
-            <span v-html="stack[0].svgcode"></span>
+            <span v-if="stack[0].svgcode" v-html="stack[0].svgcode"></span>
+            <img
+                v-else-if="stack[0].imgUrl"
+                class="symbologyIcon w-full h-full"
+                :src="stack[0].imgUrl"
+            />
         </div>
     </div>
 
@@ -44,7 +55,6 @@
 </template>
 
 <script lang="ts">
-import type { LayerInstance } from '@/api';
 import type { LegendSymbology } from '@/geo/api';
 import type { PropType } from 'vue';
 import { defineComponent, toRaw } from 'vue';
@@ -54,8 +64,7 @@ export default defineComponent({
     name: 'LegendSymbologyStackV',
     props: {
         visible: { type: Boolean, required: true },
-        legendItem: { type: Object as PropType<LayerItem>, required: true },
-        layer: { type: Object as PropType<LayerInstance>, required: true }
+        legendItem: { type: Object as PropType<LayerItem>, required: true }
     },
     data() {
         return {
@@ -69,9 +78,11 @@ export default defineComponent({
                 // retrieve the symbology stack
                 // waits on all symbols in the stack to finish loading before displaying.
                 Promise.all(
-                    toRaw(this.layer).legend.map((l: any) => l.drawPromise)
+                    toRaw(this.legendItem.symbologyStack).map(
+                        (l: any) => l.drawPromise
+                    )
                 ).then((r: any) => {
-                    this.stack = toRaw(this.layer).legend;
+                    this.stack = toRaw(this.legendItem).symbologyStack;
                 });
             }
         });
