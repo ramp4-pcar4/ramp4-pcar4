@@ -15,6 +15,10 @@ The previous version (RAMP 2 / RAMP 3) can be found [here](https://github.com/fg
 
 ![](https://byob.yarr.is/ramp4-pcar4/ramp4-pcar4/tsbadge) ![](https://byob.yarr.is/ramp4-pcar4/ramp4-pcar4/lintbadge)
 
+## Documentation
+
+A proper docsite is in the works. For the time being, the docs [table of contents](https://github.com/ramp4-pcar4/ramp4-pcar4/blob/main/docs/toc.md) is the quickest way to find existing documentation.
+
 ## Local development
 
 ### Project Setup
