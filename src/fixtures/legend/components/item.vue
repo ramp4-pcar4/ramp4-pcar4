@@ -145,7 +145,6 @@
                                 legendItem instanceof LayerItem &&
                                 legendItem.symbologyExpanded
                             "
-                            :layer="legendItem.layer"
                             :legendItem="legendItem"
                         />
                         <img
@@ -350,13 +349,23 @@
                     {{ legendItem.description }}
                 </p>
                 <div class="m-5" v-for="item in symbologyStack" :key="item.uid">
-                    <!-- for WMS layers -->
+                    <!-- for WMS layers and image render styles -->
                     <div
-                        v-if="layerType === 'ogc-wms'"
+                        v-if="
+                            (item.imgUrl &&
+                                legendItem.symbologyRenderStyle === 'images') ||
+                            (!item.imgUrl && layerType === 'ogc-wms')
+                        "
                         class="items-center grid-cols-1"
                     >
                         <div
-                            v-if="item.imgHeight"
+                            v-if="item.imgUrl"
+                            class="symbologyIcon w-full p-5"
+                        >
+                            <img class="max-w-full" :src="item.imgUrl" />
+                        </div>
+                        <div
+                            v-else-if="item.imgHeight"
                             class="symbologyIcon w-full p-5"
                             v-html="getLegendGraphic(item)"
                         ></div>
@@ -365,19 +374,38 @@
                             class="flex-1 p-5 bg-black-75 text-white"
                             v-truncate
                         >
-                            {{ item.label }}
+                            <span>{{ item.label }}</span>
+                            <checkbox
+                                v-if="
+                                    (!item.imgUrl &&
+                                        symbologyStack.length > 1) ||
+                                    (item.imgUrl && item.definitionClause)
+                                "
+                                class="float-right"
+                                :value="item"
+                                :legendItem="legendItem"
+                                :checked="item.visibility"
+                                :disabled="!controlAvailable('visibility')"
+                                label="Symbol"
+                            />
                         </div>
                     </div>
                     <!-- for non-WMS layers -->
                     <div v-else class="flex items-center">
-                        <div class="symbologyIcon">
+                        <div v-if="item.imgUrl" class="symbologyIcon">
+                            <img class="w-32 h-32" :src="item.imgUrl" />
+                        </div>
+                        <div v-else-if="item.svgcode" class="symbologyIcon">
                             <span v-html="item.svgcode"></span>
                         </div>
                         <div class="flex-1 ml-15" v-truncate>
                             {{ item.label }}
                         </div>
                         <checkbox
-                            v-if="symbologyStack.length > 1"
+                            v-if="
+                                (!item.imgUrl && symbologyStack.length > 1) ||
+                                (item.imgUrl && item.definitionClause)
+                            "
                             :value="item"
                             :legendItem="legendItem"
                             :checked="item.visibility"
@@ -416,11 +444,7 @@
 
 <script lang="ts">
 import { GlobalEvents, LayerInstance } from '@/api';
-import type {
-    LegendSymbology,
-    RampLayerConfig,
-    RampLayerMapImageSublayerConfig
-} from '@/geo/api';
+import type { LegendSymbology, RampLayerConfig } from '@/geo/api';
 import { LayerControl } from '@/geo/api';
 import { LayerStore } from '@/store/modules/layer';
 import to from 'await-to-js';
@@ -807,11 +831,15 @@ export default defineComponent({
                 }
 
                 Promise.all(
-                    toRaw(this.legendItem!.layer!.legend).map(
-                        (item: LegendSymbology) => item.drawPromise
+                    toRaw(
+                        this.legendItem!.symbologyStack.map(
+                            (item: LegendSymbology) => item.drawPromise
+                        )
                     )
                 ).then(() => {
-                    this.symbologyStack = toRaw(this.legendItem!.layer!.legend);
+                    this.symbologyStack = toRaw(
+                        this.legendItem!.symbologyStack
+                    );
                 });
             });
         }

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The legend fixture contains a panel which displays information about the map contents. The legend panel allows for easy access to each layer's data table, settings, and metadata. The panel also allows you to refresh, add, and delete layers. Most features in the legend panel are customizable. Certain app configurations can mean features are removed or do not apply to specific scenarios. 
+The legend fixture contains a panel which displays information about the map contents. The legend panel allows for easy access to each layer's data table, settings, and metadata. The panel also allows you to refresh, add, and delete layers. Most features in the legend panel are customizable. Certain app configurations can mean features are removed or do not apply to specific scenarios.
 
 The legend fixture is a default fixture, meaning it will be automatically loaded using a standard configuration.
 
@@ -13,13 +13,13 @@ The legend fixture is a default fixture, meaning it will be automatically loaded
 Clicking this button opens the layer wizard, which allows you to add new layers to the map.
 
 **Reorder Layers**
-Clicking this button opens the layer re-order panel (if the fixture has been added to RAMP). This fixture allows you to modify the priority in which layers appear on the map. 
+Clicking this button opens the layer re-order panel (if the fixture has been added to RAMP). This fixture allows you to modify the priority in which layers appear on the map.
 
 **Toggle Visibility**
 Clicking on this button opens a dropdown menu that allows you to toggle the visibility of all legend items on or off. If an item has it's visibility control disabled, its visibility will not be modified.
 
 **Toggle Groups**
-Clicking on this button opens a dropdown menu that allows you to expand or collapse all groups in the legend. 
+Clicking on this button opens a dropdown menu that allows you to expand or collapse all groups in the legend.
 
 
 ## Components
@@ -48,12 +48,12 @@ Toggling the visibility of a legend item will toggle the visibility of all its c
         children: [ ... ]
     }
     ```
-    
+
 If no control configuration for the legend item is provided, both controls are enabled by default.
 
 #### Layer Item
 A layer item is a legend item bound to a single layer (or sub-layer, in the case of Map Image Layers) on the map. Layer items allow you to interact with layers from the legend. If supported, clicking on a layer item will open the data table associated with the layer. Legend entries also contain a `More options` button, which contains more interactive options:
-- Metadata (`metadata`): *if a metadata URL is provided, opens a panel displaying the data.*
+- Metadata (`metadata`): *if a metadata URL is provided and the metadata fixture has been added, opens a panel displaying the data.*
 - Settings (`settings`): *opens a settings panel that allows you to control layer opacity, visibility, and more.*
 - Datatable (`datatable`): *opens the data table for the associated layer. Same action as simply clicking on the layer item.*
 - Legend (`symbology`): *expands or collapses the layer symbology stack.*
@@ -67,7 +67,7 @@ In addition to these controls, opening the settings panel provides extra options
 - Opacity (`opacity`): *sets the opacity of the layer as a percentage.*
 - Toggle identify (`identify`): *when toggled off, data from this layer will not appear in identify results (e.g. when clicking on the map).*
 
-Like legend item controls, these controls can be disabled for a specific layer through its object in the legend portion of the configuration file. Again, there are two ways to do this: 
+Like legend item controls, these controls can be disabled for a specific layer through its object in the legend portion of the configuration file. Again, there are two ways to do this:
 1. Add the `disabledLayerControls` property to the object as an array with the names for each control (in parenthesis above). The following example demonstrates disabling the boundary zoom and opacity controls for a legend item called `CleanAir`:
 
     ```
@@ -147,7 +147,12 @@ Every node in the legend tree structure is an instance of a legend item. All leg
 A layer item is an instance of a legend item. A single layer item directly corresponds to a single layer/sublayer on the map. It inherits the properties of a legend item, as well as:
 - `layerId`: the ID of the layer this legend entry represents. The layer should already be added to the RAMP configuration under the `layers` section
 - `sublayerIndex`: for Map Image Layers, an integer specifying the index of the sublayer
-- `symbologyExpanded`: determines whether the symbology stack is expanded by default
+- `symbologyExpanded`: determines whether the symbology stack is expanded by default,
+- `symbologyRenderStyle`: whether to render the images in the symbology stack as 'icons' or 'images'. Will only apply to custom symbology stacks.
+- `symbologyStack`: an array of objects that will serve as the custom symbology stack to use instead of the layer's default. Each object in the array should have the following properties:
+    * `image`: URL of the image to display
+    * `text`: the text to display
+    * (optional) `sqlQuery`: an SQL where clause to apply as a layer filter when the symbol's visibility checkbox is checked.
 - `coverIcon`: a custom icon to be displayed on the symbology stack
 - `description`: description text to be displayed above symbology stack when it is expanded
 - `layerControls:`: keeps track of list of enabled layer item controls
@@ -156,8 +161,8 @@ A layer item is an instance of a legend item. A single layer item directly corre
 The following is an example of a layer item in the configuration file:
 ```text
  {
-    layerId: 'WaterQuantity',
-    name: 'Water Quantity Layer',
+    layerId: 'WasteLocations',
+    name: 'Waste Locations Layer',
     sublayerIndex: 1,
     layerControls: [
         'datatable',
@@ -168,6 +173,38 @@ The following is an example of a layer item in the configuration file:
         'settings',
         'symbology',
         'visibility'
+    ],
+    symbologyRenderStyle: 'icons',
+    symbologyStack: [
+        {
+            image: 'https://cdn.pixabay.com/photo/2013/08/06/19/13/plane-170272_960_720.jpg',
+            text: 'Airports',
+            sqlQuery:
+                "Sector = 'Airports and Services to Airports'"
+        },
+        {
+            image: 'https://cdn.pixabay.com/photo/2013/11/24/11/10/lab-217043_960_720.jpg',
+            text: 'Chemicals',
+            sqlQuery: "Sector = 'Chemicals'"
+        },
+        {
+            image: 'https://cdn.pixabay.com/photo/2018/08/24/23/33/oil-rig-3629119__340.jpg',
+            text: 'Oil and Gas',
+            sqlQuery:
+                "Sector = 'Oil and Gas (Conventional and Non-Conventional)'"
+        },
+        {
+            image: 'https://cdn.pixabay.com/photo/2016/11/21/15/42/disposal-1846033__340.jpg',
+            text: 'Waste',
+            sqlQuery:
+                "Sector = 'Waste Treatment and Disposal'"
+        },
+        {
+            image: 'https://cdn.pixabay.com/photo/2018/03/23/22/11/knowledge-3255140__340.jpg',
+            text: 'Other',
+            sqlQuery:
+                "Sector = 'All Other Sectors'"
+        }
     ]
 }
 ```
@@ -176,7 +213,7 @@ The following is an example of a layer item in the configuration file:
 A section item is an instance of a legend item. A section item does not correspond with any layer, but is used to group and label other legend items. It inherits the properties of a legend item, as well as:
 - `infoType`: the type of info displayed on the item, which can be title, text, an image, markdown, or HTML.
 - `content`: the content to be displayed on the item
-Note that when a section item has a defined `content` property, its visibility and expand control buttons must be explicitly enabled, unlike other legend items that have those buttons enabled by default. 
+Note that when a section item has a defined `content` property, its visibility and expand control buttons must be explicitly enabled, unlike other legend items that have those buttons enabled by default.
 
 The following is an example of a section item containing two layer items in the configuration file:
 ```text
