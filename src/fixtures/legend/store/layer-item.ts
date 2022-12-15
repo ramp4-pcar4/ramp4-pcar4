@@ -9,8 +9,9 @@ export class LayerItem extends LegendItem {
     _layerUid: string = '';
 
     _layer: LayerInstance | undefined;
-    _layerRedrawing: boolean = false;
     _layerInitVis: boolean | undefined;
+    _layerRedrawing: boolean = false;
+    _layerOffscale: boolean = false;
     _loadCancelled: boolean = false;
     _treeGrown: boolean = false;
 
@@ -97,6 +98,14 @@ export class LayerItem extends LegendItem {
         this._layerUid = layer.uid;
         this._symbologyStack = this._symbologyStack ?? layer.legend; // set this item's symbology stack to layer's default if undefined in config
         this.updateLayerControls();
+    }
+
+    get layerOffscale(): boolean {
+        return this._layerOffscale;
+    }
+
+    set layerOffscale(offscale: boolean) {
+        this._layerOffscale = offscale;
     }
 
     get layerRedrawing(): boolean {
@@ -343,6 +352,16 @@ export class LayerItem extends LegendItem {
                                         }, 500);
                                     }
                                 }
+                            }
+                        )
+                    );
+
+                    this._layerOffscale = this.layer?.isOffscale();
+                    this.handlers.push(
+                        this.$iApi.event.on(
+                            GlobalEvents.MAP_SCALECHANGE,
+                            () => {
+                                this._layerOffscale = this.layer?.isOffscale();
                             }
                         )
                     );

@@ -178,6 +178,29 @@
                     </svg>
                 </div>
 
+                <!-- offscale icon -->
+                <div
+                    class="relative mr-10"
+                    :content="$t('legend.layer.offscale')"
+                    v-tippy="{
+                        placement: 'top-start'
+                    }"
+                    @mouseover.stop
+                    v-if="
+                        legendItem instanceof LayerItem &&
+                        legendItem.layerOffscale
+                    "
+                >
+                    <svg
+                        class="inline-block fill-current w-18 h-18"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            d="M19.81 14.99l1.19-.92-1.43-1.43-1.19.92 1.43 1.43zm-.45-4.72L21 9l-9-7-2.91 2.27 7.87 7.88 2.4-1.88zM3.27 1L2 2.27l4.22 4.22L3 9l1.63 1.27L12 16l2.1-1.63 1.43 1.43L12 18.54l-7.37-5.73L3 14.07l9 7 4.95-3.85L20.73 21 22 19.73 3.27 1z"
+                        ></path>
+                    </svg>
+                </div>
+
                 <!-- name or info section-->
                 <div
                     v-if="!isSection"
@@ -302,9 +325,43 @@
                     :legendItem="legendItem"
                 />
 
+                <!-- zoom button for offscale layers -->
+                <div
+                    class="relative"
+                    v-if="
+                        legendItem instanceof LayerItem &&
+                        legendItem.layerOffscale
+                    "
+                >
+                    <button
+                        type="button"
+                        class="p-4"
+                        :content="$t('legend.layer.zoomToVisible')"
+                        v-tippy="{
+                            placement: 'top-start'
+                        }"
+                        @mouseover.stop
+                        @click.stop="legendItem.layer.zoomToVisibleScale()"
+                    >
+                        <svg
+                            class="m-auto"
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            width="18"
+                        >
+                            <path
+                                d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                            ></path>
+                            <path d="M0 0h24v24H0V0z" fill="none"></path>
+                            <path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"></path>
+                        </svg>
+                    </button>
+                </div>
+
                 <!-- visibility -->
                 <checkbox
-                    v-if="
+                    v-else-if="
                         legendItem.type === LegendType.Item &&
                         controlAvailable('visibilityButton')
                     "
