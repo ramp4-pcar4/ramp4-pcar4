@@ -250,10 +250,19 @@ Provides the following methods:
 Provides the following methods:
 - `getLegend()`: returns a direct reference to the full legend tree. Modifications made to this object will persist.
 - `getLegendConfig()`: returns the current state of the legend tree in the form of a legend config snippet.
-- `getItem(id: string)`: retrieves the legend item with the id provided.
-- `getLayerItem(id: string)`: retrieves the legend item provided with the id of the layer.
+- `getItem(uid: string)`: retrieves the legend item with the uid provided.
+- `getLayerItem(layer: string | LayerInstance)`: retrieves the layer item for the given layer/layer ID.
 - `getAllExpanded(expanded: boolean)`: retrieves all legend items with the given expanded state.
 - `getAllVisible(visibility: boolean)`: retrieves all legend items with the given visibility state.
+
+Note that all of the methods above return direct reference(s) to legend item(s) in the store. Therefore, directly manipulating properties of the returned item(s) will result in changes to the UI. Here is an example of this:
+
+```JS
+const myItem = legendApi.getItem('abcdefg');
+myItem.name = 'I have renamed my item!'; // this line will cause the name to update in the UI.
+```
+
+For more information on the different properties that legend items have, read the [legend component objects section](#legend-component-objects).
 
 
 ### Update
@@ -264,5 +273,5 @@ Provides the following methods:
 
 ### Delete
 Provides the following methods:
-- `removeItem(item: string | LegendItem)`: removes the legend item with the provided ID, or item instance.
+- `removeItem(item: string | LegendItem)`: removes the legend item with the provided uid, or item instance.
 - `removeLayerItem(layer: string | LayerInstance)`: removes the legend item connected to the layer ID or instance provided.
