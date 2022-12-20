@@ -6,6 +6,7 @@ import {
     PanelInstance
 } from './internal';
 import type { AppbarAPI } from '@/fixtures/appbar/api/appbar';
+import type { AutolegendAPI } from '@/fixtures/autolegend/api/autolegend';
 import type { DetailsAPI } from '@/fixtures/details/api/details';
 import type { GridAPI } from '@/fixtures/grid/api/grid';
 import type { HelpAPI } from '@/fixtures/help/api/help';
@@ -705,10 +706,21 @@ export class EventAPI extends APIScope {
                 break;
 
             case DefEH.LAYER_REGISTER_BINDS_LEGEND:
-                // when a layer is registered, have the standard legend update in accordance to the layer
+                // when a layer is registered, have the autolegend add it to the legend if it doesn't exist and
+                // have the standard legend update in accordance to the layer
                 zeHandler = (layer: LayerInstance) => {
+                    const autolegendFixture =
+                        this.$iApi.fixture.get<AutolegendAPI>('autolegend');
                     const legendFixture =
                         this.$iApi.fixture.get<LegendAPI>('legend');
+                    if (
+                        autolegendFixture &&
+                        legendFixture &&
+                        !legendFixture.getLayerItem(layer) &&
+                        !layer.isCosmetic
+                    ) {
+                        legendFixture.addLayerItem(layer);
+                    }
                     if (legendFixture) {
                         legendFixture.updateLegend(layer);
                     }
@@ -825,7 +837,7 @@ export class EventAPI extends APIScope {
                 zeHandler = (layer: LayerInstance) => {
                     const legendFixture =
                         this.$iApi.fixture.get<LegendAPI>('legend');
-                    if (legendFixture) {
+                    if (legendFixture && !legendFixture.getLayerItem(layer)) {
                         legendFixture.addLayerItem(layer);
                     }
                 };
