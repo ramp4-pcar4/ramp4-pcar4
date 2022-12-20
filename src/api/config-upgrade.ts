@@ -386,64 +386,8 @@ function mapUpgrader(r2Map: any, r4c: any): void {
     if (r2Map.legend) {
         r4c.fixturesEnabled.push('legend');
         if (r2Map.legend.type === 'autopopulate') {
-            // default legend - just add an entry for each layer. For map image and WMS layers, create an entry group and
-            // add an entry for each layer entry.
-            r4c.fixtures.legend = {
-                root: {
-                    name: "I'm root",
-                    children: []
-                }
-            };
-            // layers already mapped through layerUpgrader
-            if (r4c.layers) {
-                r4c.layers.forEach((r4layer: any) => {
-                    if (
-                        r4layer.type === 'esri-map-image' ||
-                        r4layer.type === 'ogc-wms'
-                    ) {
-                        const entryGroup: any = {
-                            name: r4layer.name ?? `${r4layer.id} Group`,
-                            children: []
-                        };
-                        r4layer.sublayers.forEach((r4Sublayer: any) => {
-                            const entry: any = {
-                                layerId: r4layer.id
-                            };
-                            if (r4Sublayer.name) {
-                                entry.name = r4Sublayer.name;
-                            }
-                            if (r4Sublayer.controls) {
-                                entry.controls = r4Sublayer.controls;
-                            }
-                            if (r4Sublayer.disabledControls) {
-                                entry.disabledControls =
-                                    r4Sublayer.disabledControls;
-                            }
-                            if (r4layer.type === 'esri-map-image') {
-                                entry.sublayerIndex = r4Sublayer.index;
-                            } else {
-                                entry.sublayerId = r4Sublayer.id;
-                                console.warn(
-                                    `sublayerId property defined in legend entry ${entry.layerId} is currently not supported.`
-                                );
-                            }
-                            entryGroup.children.push(entry);
-                        });
-                        r4c.fixtures.legend.root.children.push(entryGroup);
-                    } else {
-                        const entry: any = {
-                            layerId: r4layer.id
-                        };
-                        if (r4layer.controls) {
-                            entry.controls = r4layer.controls;
-                        }
-                        if (r4layer.disabledControls) {
-                            entry.disabledControls = r4layer.disabledControls;
-                        }
-                        r4c.fixtures.legend.root.children.push(entry);
-                    }
-                });
-            }
+            // default legend - just add the autolegend fixture
+            r4c.fixturesEnabled.push('autolegend');
         } else {
             r4c.fixtures.legend = {
                 root: legendGroupUpgrader(r2Map.legend.root)
