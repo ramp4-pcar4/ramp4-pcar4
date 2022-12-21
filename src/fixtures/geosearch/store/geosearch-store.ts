@@ -59,6 +59,9 @@ const mutations = {
     },
     SET_GSSERVICE: (state: GeosearchState, newGSservice: any) => {
         state.GSservice = newGSservice;
+    },
+    SET_FAILED_SERVICES: (state: GeosearchState, service: string[]) => {
+        state.failedServices = service;
     }
 };
 
@@ -94,12 +97,16 @@ const actions = {
                         context.state.GSservice.query(
                             `${context.state.searchVal}*`
                         ).then((data: any) => {
+                            context.commit(
+                                'SET_FAILED_SERVICES',
+                                data.failedServs
+                            );
                             // store data for current search term
                             context.commit(
                                 'SET_LAST_SEARCH_VAL',
                                 context.state.searchVal
                             );
-                            context.commit('SET_SAVED_RESULTS', data);
+                            context.commit('SET_SAVED_RESULTS', data.results);
 
                             // replace old saved results
                             const filteredData = filter(
@@ -265,6 +272,10 @@ export enum GeosearchStore {
      */
     loadingResults = 'geosearch/loadingResults',
     /**
+     * (State) failedServices: string[]
+     */
+    failedServices = 'geosearch/failedServices',
+    /**
      * (Action) runQuery: () => Promise
      */
     runQuery = 'geosearch/runQuery',
@@ -287,7 +298,11 @@ export enum GeosearchStore {
     /**
      * (Action) setGSserivce: (config: any)
      */
-    setGSservice = 'geosearch/setGSservice'
+    setGSservice = 'geosearch/setGSservice',
+    /**
+     * (Action) setFailedService: (service: string)
+     */
+    setFailedService = 'geosearch/setFailedService'
 }
 
 export function geosearch(config: any) {

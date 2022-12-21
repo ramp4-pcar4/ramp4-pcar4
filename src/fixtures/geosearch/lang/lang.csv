@@ -6,3 +6,4 @@ geosearch.visible,Visible on map,1,Visible sur la carte,1
 geosearch.filters.province,Province,1,Province,1
 geosearch.filters.type,Type,1,Type,1
 geosearch.filters.clear,Clear filters,1,Effacer les filtres,1
+geosearch.serviceError,No response from {services},1,[fr]No response from {services},0
