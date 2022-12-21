@@ -60,9 +60,8 @@ export class InstanceAPI {
     readonly event: EventAPI;
     readonly geo: GeoAPI;
     readonly notify: NotificationAPI;
-    readonly startRequired: boolean;
     readonly ui: { maptip: MaptipAPI };
-    started: boolean = false;
+    startRequired: boolean = false;
 
     /**
      * The instance of Vue R4MP application controlled by this InstanceAPI.
@@ -87,12 +86,6 @@ export class InstanceAPI {
                 __RAMP_VERSION__.timestamp.toString()
             ).toLocaleString()})`
         );
-
-        if (options?.startRequired) {
-            this.startRequired = true;
-        } else {
-            this.startRequired = false;
-        }
 
         this.event = new EventAPI(this);
 
@@ -170,50 +163,55 @@ export class InstanceAPI {
                 )
             );
 
-            // create the map
-            // console.log('Creating map:', langConfig.map);
-            const mapViewElement: Element | null =
-                this.$vApp.$el.querySelector('#esriMap');
+            const mapDivWatcher = setInterval(() => {
+                const mapViewElement: Element | null =
+                    this.$vApp.$el.querySelector('#esriMap');
+                if (mapViewElement) {
+                    clearInterval(mapDivWatcher);
 
-            this.geo.map.createMap(
-                langConfig.map,
-                mapViewElement as HTMLDivElement
-            );
+                    // create the map
+                    this.geo.map.createMap(
+                        langConfig.map,
+                        mapViewElement as HTMLDivElement
+                    );
 
-            // Hide hovertip on map creation
-            //@ts-ignore
-            mapViewElement._tippy.hide(0);
-            this.$vApp.$store.set(
-                MaptipStore.setMaptipInstance,
-                //@ts-ignore
-                mapViewElement._tippy
-            );
+                    // Hide hovertip on map creation
+                    //@ts-ignore
+                    mapViewElement._tippy.hide(0);
+                    this.$vApp.$store.set(
+                        MaptipStore.setMaptipInstance,
+                        //@ts-ignore
+                        mapViewElement._tippy
+                    );
 
-            // add layers
-            if (langConfig.layers && langConfig.layers.length > 0) {
-                // console.log('Adding layers:', langConfig.layers);
-                langConfig.layers
-                    .map(layerConfig => {
-                        const layer = this.geo.layer.createLayer(layerConfig);
-                        this.geo.map.addLayer(layer!);
-                        return layer;
-                    })
-                    .filter(Boolean)
-                    .forEach((layer: LayerInstance, index: number) => {
-                        layer
-                            ?.loadPromise()
-                            .then(() => {
-                                if (layer?.isLoaded) {
-                                    this.geo.map.reorder(layer!, index);
-                                }
+                    // add layers
+                    if (langConfig.layers && langConfig.layers.length > 0) {
+                        // console.log('Adding layers:', langConfig.layers);
+                        langConfig.layers
+                            .map(layerConfig => {
+                                const layer =
+                                    this.geo.layer.createLayer(layerConfig);
+                                this.geo.map.addLayer(layer!);
+                                return layer;
                             })
-                            .catch(() =>
-                                console.error(
-                                    `Failed to add/reorder layer: ${layer.id}.`
-                                )
-                            );
-                    });
-            }
+                            .filter(Boolean)
+                            .forEach((layer: LayerInstance, index: number) => {
+                                layer
+                                    ?.loadPromise()
+                                    .then(() => {
+                                        if (layer?.isLoaded) {
+                                            this.geo.map.reorder(layer!, index);
+                                        }
+                                    })
+                                    .catch(() =>
+                                        console.error(
+                                            `Failed to add/reorder layer: ${layer.id}.`
+                                        )
+                                    );
+                            });
+                    }
+                }
+            }, 100);
 
             if (langConfig.panels) {
                 // open and pin appropiate panels on startup
@@ -267,6 +265,14 @@ export class InstanceAPI {
             options = {};
         }
 
+        if (options?.startRequired) {
+            this.startRequired = true;
+            this.$vApp.$store.set('app/started', false);
+        } else {
+            this.startRequired = false;
+            this.$vApp.$store.set('app/started', true);
+        }
+
         // use strict check against false, as missing properties have default value of true.
         // run the default setup functions unless flags have been set to false.
         // override the loadDefaultFixtures flag if startingFixtures is provided
@@ -301,6 +307,9 @@ export class InstanceAPI {
             }
         });
 
+        // reset start flag
+        this.$vApp.$store.set('app/started', false);
+
         // destroy map (calls private destroyMap)
         // @ts-ignore
         this.geo.map.destroyMap();
@@ -328,9 +337,6 @@ export class InstanceAPI {
 
         // clear maptip
         this.geo.map.maptip.clear();
-
-        // reset start flag
-        this.started = false;
 
         // re-initalize ramp
         this.initialize(configs, options);
@@ -513,10 +519,10 @@ export class InstanceAPI {
 
     start(): void {
         // delay map loading
-        if (!this.started && this.startRequired) {
+        if (!this.$vApp.$store.get('app/started') && this.startRequired) {
             this.event.emit(GlobalEvents.MAP_START);
-            this.started = true;
-        } else if (this.started) {
+            this.$vApp.$store.set('app/started', true);
+        } else if (this.$vApp.$store.get('app/started')) {
             console.warn('start has already been called');
         }
     }
