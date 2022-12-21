@@ -11,6 +11,16 @@
                     v-if="loadingResults"
                 ></loading-bar>
                 <div
+                    class="text-red-900 text-xs px-8 mb-10"
+                    v-if="failedServices.length > 0 && !loadingResults"
+                >
+                    {{
+                        $t('geosearch.serviceError', {
+                            services: failedServices.join(', ')
+                        })
+                    }}
+                </div>
+                <div
                     class="px-8 mb-10 truncate"
                     v-if="
                         searchVal &&
@@ -123,9 +133,11 @@ export default defineComponent({
         return {
             searchVal: this.get(GeosearchStore.searchVal),
             searchResults: this.get(GeosearchStore.searchResults),
-            loadingResults: this.get(GeosearchStore.loadingResults)
+            loadingResults: this.get(GeosearchStore.loadingResults),
+            failedServices: this.get(GeosearchStore.failedServices)
         };
     },
+
     methods: {
         // zoom in to a clicked result
         zoomIn(result: any): void {

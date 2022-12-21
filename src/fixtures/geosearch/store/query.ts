@@ -1,6 +1,6 @@
 import type {
-    IAddressResult,
     AddressResultList,
+    IAddressResult,
     IFSAResult,
     IGeosearchConfig,
     INameResponse,
@@ -18,6 +18,7 @@ export function make(config: IGeosearchConfig, query: string): Query {
         /^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)(\s*[,|;\s]\s*)[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)[*]$/;
     const ntsReg = /^\d{2,3}[A-P]/;
     const fsaReg = /^[ABCEGHJKLMNPRSTVXY]\d[A-Z]/;
+    const addReg = /[\s\S]*/;
     if (latLngRegDD.test(query)) {
         const queryStr = query.slice(0, -1);
         // Lat/Long search in decimal degrees format
@@ -28,18 +29,26 @@ export function make(config: IGeosearchConfig, query: string): Query {
     } else if (ntsReg.test(query)) {
         // NTS search
         return new NTSQuery(config, query.substring(0, 6).toUpperCase());
+    } else if (addReg.test(query)) {
+        // Address search
+        return new AddressQuery(config, query);
     } else {
         // address search
         const aq = new AddressQuery(config, query);
         // name based search
         const q = new Query(config, query);
-        q.onComplete = Promise.all([aq.onComplete, q.search()]).then(res => {
-            // returns a search result from addresses and names
-            q.results = res[0].results
-                .concat(res[1])
-                .slice(0, config.maxResults);
-            return q;
-        });
+        q.onComplete = Promise.all([aq.onComplete, q.search()])
+            .then(res => {
+                // returns a search result from addresses and names
+                q.results = res[0].results
+                    .concat(res[1])
+                    .slice(0, config.maxResults);
+                q.failedServs.concat(aq.failedServs);
+                return q;
+            })
+            .catch(() => {
+                return q;
+            });
         return q;
     }
 }
@@ -47,10 +56,12 @@ export function make(config: IGeosearchConfig, query: string): Query {
 export class Query {
     config: IGeosearchConfig;
     query: string | undefined;
+    failedServs: string[] = [];
     results: ResultList = [];
     onComplete: any;
     latLongResult: any;
-    featureResults: queryFeatureResults = undefined;
+    featureResults: queryFeatureResults[] = [];
+    resultType: string = 'geoname';
 
     constructor(config: IGeosearchConfig, query?: string) {
         this.query = query;
@@ -58,9 +69,13 @@ export class Query {
     }
 
     search(): Promise<NameResultList> {
-        return (<Promise<IRawNameResult>>this.jsonRequest(this.getUrl())).then(
-            r => this.normalizeNameItems(r.items)
-        );
+        return (<Promise<IRawNameResult>>this.jsonRequest(this.getUrl()))
+            .then(r => this.normalizeNameItems(r.items))
+            .catch(() => {
+                console.error('Geoname service failed');
+                this.failedServs.push('Geoname');
+                return this.normalizeNameItems([]);
+            });
     }
 
     private getUrl(
@@ -128,15 +143,23 @@ export class Query {
     nameByLatLon(lat: number, lon: number, restrict?: number[]): any {
         return (<Promise<IRawNameResult>>(
             this.jsonRequest(this.getUrl(false, restrict, lat, lon))
-        )).then(r => {
-            return this.normalizeNameItems(r.items);
-        });
+        ))
+            .then(r => {
+                return this.normalizeNameItems(r.items);
+            })
+            .catch(() => {
+                console.error('LatLon service failed');
+                this.failedServs.push('Geoname');
+                return this.normalizeNameItems([]);
+            });
     }
 }
 
 export class LatLongQuery extends Query {
     constructor(config: IGeosearchConfig, query: string) {
         super(config, query);
+        this.resultType = 'latlong';
+
         let coords: number[];
 
         // remove extra spaces and delimiters (the filter). convert string numbers to floaty numbers
@@ -185,11 +208,12 @@ export class FSAQuery extends Query {
         // extract the first three characters to conduct FSA search
         query = query.substring(0, 3).toUpperCase();
         super(config, query);
+        this.resultType = 'fsa';
 
-        this.onComplete = new Promise((resolve, reject) => {
+        this.onComplete = new Promise(resolve => {
             this.formatLocationResult().then(fLR => {
                 if (fLR) {
-                    this.featureResults = fLR;
+                    this.featureResults.push(fLR);
                     this.nameByLatLon(
                         fLR.LatLon.lat,
                         fLR.LatLon.lon,
@@ -199,34 +223,41 @@ export class FSAQuery extends Query {
                         resolve(this);
                     });
                 } else {
-                    reject('FSA code given cannot be found.');
+                    console.log('FSA code given cannot be found.');
+                    resolve(this);
                 }
             });
         });
     }
 
     formatLocationResult(): Promise<IFSAResult | undefined> {
-        return this.locateByQuery().then(locateResponseList => {
-            // query check added since it can be null but will never be in this case (make TS happy)
-            if (locateResponseList.length === 1 && this.query) {
-                const provList = this.config.provinces.fsaToProvinces(
-                    this.query
-                );
-                return <IFSAResult>{
-                    fsa: this.query,
-                    code: 'FSA',
-                    desc: this.config.types.allTypes.FSA,
-                    province: Object.keys(provList)
-                        .map(i => provList[i])
-                        .join(','),
-                    _provinces: provList,
-                    LatLon: {
-                        lat: locateResponseList[0].geometry.coordinates[1],
-                        lon: locateResponseList[0].geometry.coordinates[0]
-                    }
-                };
-            }
-        });
+        return this.locateByQuery()
+            .then(locateResponseList => {
+                // query check added since it can be null but will never be in this case (make TS happy)
+                if (locateResponseList.length === 1 && this.query) {
+                    const provList = this.config.provinces.fsaToProvinces(
+                        this.query
+                    );
+                    return <IFSAResult>{
+                        fsa: this.query,
+                        code: 'FSA',
+                        desc: this.config.types.allTypes.FSA,
+                        province: Object.keys(provList)
+                            .map(i => provList[i])
+                            .join(','),
+                        _provinces: provList,
+                        LatLon: {
+                            lat: locateResponseList[0].geometry.coordinates[1],
+                            lon: locateResponseList[0].geometry.coordinates[0]
+                        }
+                    };
+                }
+            })
+            .catch(() => {
+                console.error('FSA service failed');
+                this.failedServs.push('Geolocate');
+                return undefined;
+            });
     }
 }
 
@@ -254,30 +285,39 @@ export class NTSQuery extends Query {
 
     constructor(config: IGeosearchConfig, query: string) {
         super(config, query);
+        this.resultType = 'nts';
+
         // front pad 0 if NTS starts with two digits
         query = isNaN(parseInt(query[2])) ? '0' + query : query;
         this.unitName = query;
         this.onComplete = new Promise((resolve, reject) => {
-            this.locateByQuery().then(lr => {
-                // query check added since it can be null but will never be in this case (make TS happy)
-                if (lr.length > 0 && this.query) {
-                    const allSheets = this.locateToResult(lr);
-                    this.unit = allSheets[0];
-                    this.mapSheets = allSheets;
+            this.locateByQuery()
+                .then(lr => {
+                    // query check added since it can be null but will never be in this case (make TS happy)
+                    if (lr.length > 0 && this.query) {
+                        const allSheets = this.locateToResult(lr);
+                        this.unit = allSheets[0];
+                        this.mapSheets = allSheets;
 
-                    this.featureResults = this.unit;
+                        this.featureResults.push(this.unit);
 
-                    this.nameByLatLon(
-                        this.unit.LatLon.lat,
-                        this.unit.LatLon.lon
-                    ).then((r: any) => {
-                        this.results = r;
+                        this.nameByLatLon(
+                            this.unit.LatLon.lat,
+                            this.unit.LatLon.lon
+                        ).then((r: any) => {
+                            this.results = r;
+                            resolve(this);
+                        });
+                    } else {
+                        console.log('Given NTS code not found');
                         resolve(this);
-                    });
-                } else {
-                    reject('Given NTS code not found');
-                }
-            });
+                    }
+                })
+                .catch(() => {
+                    console.error('NTS service failed');
+                    this.failedServs.push('Geolocate');
+                    resolve(this);
+                });
         });
     }
 
@@ -308,11 +348,25 @@ export class AddressQuery extends Query {
     constructor(config: IGeosearchConfig, query: string) {
         query = encodeURIComponent(query.trim());
         super(config, query);
+        this.resultType = 'address';
+
         this.onComplete = new Promise(resolve => {
-            this.locateByQuery().then(lr => {
-                this.results = this.locateToResult(lr);
-                resolve(this);
-            });
+            this.locateByQuery()
+                .then(lr => {
+                    this.featureResults = this.locateToResult(lr);
+                    this.search().then(r => {
+                        this.results = r;
+                        resolve(this);
+                    });
+                })
+                .catch(() => {
+                    this.failedServs.push('Geolocate');
+                    console.error('Address service failed');
+                    this.search().then(r => {
+                        this.results = r;
+                        resolve(this);
+                    });
+                });
         });
     }
 
