@@ -1,4 +1,5 @@
 import { createStore as vuexCreateStore, Store as vuexStore } from 'vuex';
+import { make } from 'vuex-pathify';
 import pathify from 'vuex-pathify';
 
 import { config } from '@/store/modules/config';
@@ -16,6 +17,11 @@ export function store() {
     return vuexCreateStore(<RootState>{
         plugins: [pathify.plugin],
         modules: {
+            app: {
+                namespaced: true,
+                state: { started: false },
+                mutations: { ...make.mutations({ started: false }) }
+            },
             config: config(),
             fixture: fixture(),
             layer: layer(),
