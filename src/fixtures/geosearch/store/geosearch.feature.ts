@@ -11,9 +11,9 @@ import type { Query } from './query';
 // geosearch query services
 // note "geolocation" is a service for looking up locations in canada. It is not a geolocator for the browser's location.
 const GEO_LOCATE_URL =
-    'https://geogratis.gc.ca/services/geolocation/@{language}/locte';
+    'https://geogratis.gc.ca/services/geolocation/@{language}/locate';
 const GEO_NAMES_URL =
-    'https://geogratis.gc.ca/services/geoname/@{language}/geonmes.json';
+    'https://geogratis.gc.ca/services/geoname/@{language}/geonames.json';
 const GEO_PROVINCES_URL =
     'https://geogratis.gc.ca/services/geoname/@{language}/codes/province.json';
 const GEO_TYPES_URL =
@@ -232,11 +232,51 @@ export class GeoSearchUI {
                         province: this.findProvinceObj(item.province)
                     }
                 }));
+
+                //
+                const levenshteinDistance = (result: string) => {
+                    // sanitize strings
+                    result = result.toLowerCase().trim();
+                    const query = decodeURI(
+                        q.query!.toLowerCase().replace('*', '')
+                    );
+
+                    /* Use a modified levenshtein distance algorithm to compute the 'distance' between the query and the result. 
+                     The distance is computed by assessing each letter where:
+                     - insertion costs 0.2
+                     - deletion, substitution cost 1
+                    */
+                    const levDistance = [];
+                    for (let i = 0; i <= result.length; i++) {
+                        levDistance[i] = [i];
+                        for (let j = 1; j <= query.length; j++) {
+                            levDistance[i][j] =
+                                i === 0
+                                    ? j
+                                    : Math.min(
+                                          levDistance[i][j - 1] + 1, // delete
+                                          levDistance[i - 1][j] + 0.2, // insert
+                                          levDistance[i - 1][j - 1] +
+                                              (query[j - 1] === result[i - 1]
+                                                  ? 0
+                                                  : 1) // substitute
+                                      );
+                        }
+                    }
+                    return levDistance[result.length][query.length];
+                };
+
                 // console.log("remaining query results: ", queryResult);
                 return {
                     results: featureResult
                         .concat(queryResult)
-                        .slice(0, this.config.maxResults),
+                        .slice(0, this.config.maxResults)
+                        .sort((a: any, b: any) => {
+                            return levenshteinDistance(a.name) >
+                                levenshteinDistance(b.name)
+                                ? 1
+                                : -1;
+                        }),
                     failedServs: q.failedServs
                 };
             }

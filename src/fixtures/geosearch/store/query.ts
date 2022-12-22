@@ -18,7 +18,6 @@ export function make(config: IGeosearchConfig, query: string): Query {
         /^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)(\s*[,|;\s]\s*)[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)[*]$/;
     const ntsReg = /^\d{2,3}[A-P]/;
     const fsaReg = /^[ABCEGHJKLMNPRSTVXY]\d[A-Z]/;
-    const addReg = /[\s\S]*/;
     if (latLngRegDD.test(query)) {
         const queryStr = query.slice(0, -1);
         // Lat/Long search in decimal degrees format
@@ -29,27 +28,9 @@ export function make(config: IGeosearchConfig, query: string): Query {
     } else if (ntsReg.test(query)) {
         // NTS search
         return new NTSQuery(config, query.substring(0, 6).toUpperCase());
-    } else if (addReg.test(query)) {
-        // Address search
-        return new AddressQuery(config, query);
     } else {
-        // address search
-        const aq = new AddressQuery(config, query);
-        // name based search
-        const q = new Query(config, query);
-        q.onComplete = Promise.all([aq.onComplete, q.search()])
-            .then(res => {
-                // returns a search result from addresses and names
-                q.results = res[0].results
-                    .concat(res[1])
-                    .slice(0, config.maxResults);
-                q.failedServs.concat(aq.failedServs);
-                return q;
-            })
-            .catch(() => {
-                return q;
-            });
-        return q;
+        // Address search (default)
+        return new AddressQuery(config, query);
     }
 }
 
@@ -73,7 +54,7 @@ export class Query {
             .then(r => this.normalizeNameItems(r.items))
             .catch(() => {
                 console.error('Geoname service failed');
-                this.failedServs.push('Geoname');
+                this.failedServs.push('geoname');
                 return this.normalizeNameItems([]);
             });
     }
@@ -149,7 +130,7 @@ export class Query {
             })
             .catch(() => {
                 console.error('LatLon service failed');
-                this.failedServs.push('Geoname');
+                this.failedServs.push('geoname');
                 return this.normalizeNameItems([]);
             });
     }
@@ -255,7 +236,7 @@ export class FSAQuery extends Query {
             })
             .catch(() => {
                 console.error('FSA service failed');
-                this.failedServs.push('Geolocate');
+                this.failedServs.push('geolocation');
                 return undefined;
             });
     }
@@ -315,7 +296,7 @@ export class NTSQuery extends Query {
                 })
                 .catch(() => {
                     console.error('NTS service failed');
-                    this.failedServs.push('Geolocate');
+                    this.failedServs.push('geolocation');
                     resolve(this);
                 });
         });
@@ -360,7 +341,7 @@ export class AddressQuery extends Query {
                     });
                 })
                 .catch(() => {
-                    this.failedServs.push('Geolocate');
+                    this.failedServs.push('geolocation');
                     console.error('Address service failed');
                     this.search().then(r => {
                         this.results = r;
