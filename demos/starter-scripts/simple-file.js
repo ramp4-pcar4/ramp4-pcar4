@@ -273,7 +273,8 @@ let config = {
                     id: 'GeoJson',
                     name: 'GeoJson',
                     layerType: 'file-geojson',
-                    url: '../file-layers/geojson.json'
+                    url: '../file-layers/geojson.json',
+                    caching: true
                 },
                 {
                     id: 'Shape',
