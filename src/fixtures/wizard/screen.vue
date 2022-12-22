@@ -509,6 +509,9 @@ export default defineComponent({
                           this.url,
                           this.typeSelection
                       );
+                if (this.isFileLayer() && this.fileData) {
+                    delete this.layerInfo.config.url;
+                }
             } catch (_) {
                 this.failureError = true;
                 return;
