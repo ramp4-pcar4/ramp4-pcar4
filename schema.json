@@ -1237,6 +1237,11 @@
                     "description": "Optional content to use as the layer source (instead of loading via the url property). GeoJSON accepts json object or stringified object. CSV accepts string. Shapefile accepts binary ArrayBuffer (runtime only).",
                     "additionalProperties": true
                 },
+                "caching": {
+                    "type": "boolean",
+                    "description": "Indicates whether to preserve the layer's raw data after initiation.",
+                    "default": "false"
+                },
                 "identifyMode": {
                     "type": "string",
                     "description": "Determines how features should be identified. By geometry, by symbol, or both.",
@@ -1349,6 +1354,11 @@
                 "drawOrder": {
                     "$ref": "#/$defs/drawOrder",
                     "default": []
+                },
+                "caching": {
+                    "type": "boolean",
+                    "description": "Indicates whether to preserve the layer's raw data after initiation.",
+                    "default": "false"
                 },
                 "identifyMode": {
                     "type": "string",

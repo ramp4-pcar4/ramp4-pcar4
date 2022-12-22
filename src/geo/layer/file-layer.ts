@@ -105,6 +105,16 @@ export class FileLayer extends AttribLayer {
         }
     }
 
+    async reload(): Promise<void> {
+        if (this.origRampConfig.caching !== true) {
+            console.error(
+                'Attempted to reload file layer without caching enabled.'
+            );
+            return;
+        }
+        await super.reload();
+    }
+
     protected async onInitiate(): Promise<void> {
         // NOTE subclasses of FileLayer should do all their file data processing first,
         //      drop it in this.sourceGeoJson,
@@ -113,10 +123,14 @@ export class FileLayer extends AttribLayer {
         // TODO figure out how the geojson is supplied.
         // another protected property? a permananent property to support reloads? part of rampConfig?
 
+        if (!this.sourceGeoJson) {
+            throw new Error('File Layer is missing raw data.');
+        }
+
         const realJson: any =
             typeof this.sourceGeoJson === 'string'
                 ? JSON.parse(this.sourceGeoJson)
-                : this.sourceGeoJson;
+                : JSON.parse(JSON.stringify(this.sourceGeoJson));
 
         // esri 4: https://developers.arcgis.com/javascript/latest/sample-code/layers-featurelayer-collection/index.html
         // might need to change our terraformer call to just create a set of graphics? need to inspect terrafomer outputs
@@ -147,6 +161,10 @@ export class FileLayer extends AttribLayer {
         );
 
         this.esriJson = undefined;
+        if (this.origRampConfig.caching !== true) {
+            delete this.origRampConfig.rawData;
+            delete this.sourceGeoJson;
+        }
 
         await super.onInitiate();
     }
