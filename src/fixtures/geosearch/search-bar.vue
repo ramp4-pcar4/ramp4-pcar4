@@ -1,8 +1,8 @@
 <template>
-    <div class="rv-geosearch-bar h-26 mb-14">
+    <div class="rv-geosearch-bar h-26 mb-8 mx-8">
         <input
             type="search"
-            class="border-b text-base px-12 py-8 outline-none focus:shadow-outline border-gray-600 mx-8 h-full min-w-0"
+            class="border-b w-full text-base py-8 outline-none focus:shadow-outline border-gray-600 h-full min-w-0"
             :placeholder="$t('geosearch.searchText')"
             :value="searchVal"
             @input="onSearchTermChange($event.target.value)"
