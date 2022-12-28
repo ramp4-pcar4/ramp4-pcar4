@@ -56,8 +56,8 @@
             <div v-if="urlError" class="text-red-900 text-xs">
                 {{
                     modelValue
-                        ? validationMessages.invalid
-                        : validationMessages.required
+                        ? validationMessages?.invalid
+                        : validationMessages?.required
                 }}
             </div>
         </div>
@@ -80,7 +80,7 @@
                         <option
                             class="p-6"
                             v-for="option in options"
-                            v-bind:key="option"
+                            v-bind:key="option.label"
                             :value="option.value"
                         >
                             {{ option.label }}
@@ -91,7 +91,7 @@
                         v-if="validation && sublayersError"
                         class="text-red-900 text-xs"
                     >
-                        {{ validationMessages.required }}
+                        {{ validationMessages?.required }}
                     </div>
                 </div>
                 <div v-else>
@@ -122,13 +122,13 @@
                         v-if="validation && formatError"
                         class="text-red-900 text-xs"
                     >
-                        {{ validationMessages.invalid }}
+                        {{ validationMessages?.invalid }}
                     </div>
                     <div
                         v-if="validation && failureError"
                         class="text-red-900 text-xs"
                     >
-                        {{ validationMessages.failure }}
+                        {{ validationMessages?.failure }}
                     </div>
                 </div>
             </div>
@@ -144,7 +144,7 @@
                 />
             </div>
             <div v-if="validation && !modelValue" class="text-red-900 text-xs">
-                {{ validationMessages.required }}
+                {{ validationMessages?.required }}
             </div>
         </div>
     </div>
@@ -155,13 +155,13 @@ import { defineComponent } from 'vue';
 import type { PropType } from 'vue';
 
 interface ValidationMsgs {
-    required: string;
-    invalid: string;
-    failure: string;
+    required?: string;
+    invalid?: string;
+    failure?: string;
 }
 
 interface SelectionOption {
-    value: string;
+    value: any;
     label: string;
 }
 

@@ -1,14 +1,21 @@
 import { LayerType } from '@/geo/api';
-import type { RampLayerConfig } from '@/geo/api';
+import type { FieldDefinition, RampLayerConfig } from '@/geo/api';
 import { APIScope, InstanceAPI } from '@/api/internal';
 import { UrlWrapper } from '@/geo/api';
 import axios from 'axios';
 
 export interface LayerInfo {
-    config: RampLayerConfig | null;
-    configOptions: Array<string>;
-    fields?: any;
-    layers?: any;
+    config: RampLayerConfig; // the layer's config
+    configOptions: Array<string>; // the layer's config options that will be taken from user input in the UI
+    fields?: Array<FieldDefinition>; // the fields for the layer
+    latLonFields?: { lat: Array<string>; lon: Array<string> }; // lat and lon are a list of field names that can be possible lat/lon fields
+    layers?: Array<{
+        id: number;
+        name: string;
+        parentLayerId: number;
+        defaultVisibility: boolean;
+        sublayerIds?: Array<number>;
+    }>; // a flattened list of info for the parent layer, sublayer groups, and sublayers. Only defined for MIL
 }
 
 export class LayerSource extends APIScope {
@@ -104,6 +111,8 @@ export class LayerSource extends APIScope {
             fields: [{ name: 'OBJECTID', type: 'oid' }].concat(
                 this.$iApi.geo.layer.files.extractCsvFields(fileData)
             ),
+            latLonFields:
+                this.$iApi.geo.layer.files.filterCsvLatLonFields(fileData),
             configOptions: [
                 'name',
                 'nameField',

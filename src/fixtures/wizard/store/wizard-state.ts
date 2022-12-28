@@ -1,3 +1,4 @@
+import { LayerType } from '@/geo/api';
 import type { LayerSource, LayerInfo } from './layer-source';
 
 export class WizardState {
@@ -15,7 +16,7 @@ export class WizardState {
      * @type {string}
      * @memberof WizardState
      */
-    url = '';
+    url: string = '';
 
     /**
      * Raw file data
@@ -39,7 +40,10 @@ export class WizardState {
      * @type {LayerInfo}
      * @memberof WizardState
      */
-    layerInfo: LayerInfo = { config: null, configOptions: [] };
+    layerInfo: LayerInfo = {
+        config: { id: 'Placeholder', layerType: LayerType.UNKNOWN, url: '' },
+        configOptions: []
+    };
 
     /**
      * Current wizard form step
