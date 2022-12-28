@@ -179,7 +179,7 @@
                             v-model="layerInfo.config.latField"
                             :defaultOption="true"
                             :label="$t('wizard.configure.latField.label')"
-                            :options="fieldOptions()"
+                            :options="latLonOptions('lat')"
                         >
                         </wizard-input>
                         <wizard-input
@@ -189,7 +189,7 @@
                             v-model="layerInfo.config.longField"
                             :defaultOption="true"
                             :label="$t('wizard.configure.longField.label')"
-                            :options="fieldOptions()"
+                            :options="latLonOptions('lon')"
                         >
                         </wizard-input>
                         <!-- For map image layers -->
@@ -219,11 +219,11 @@
                         >
                         <label
                             class="text-base font-bold"
-                            v-if="layerInfo.configOptions.includes('colour')"
+                            v-if="layerInfo?.configOptions.includes('colour')"
                             >{{ $t('wizard.configure.colour.label') }}</label
                         >
                         <ColorPicker
-                            v-if="layerInfo.configOptions.includes('colour')"
+                            v-if="layerInfo?.configOptions.includes('colour')"
                             alpha-channel="hide"
                             :visible-formats="['hex']"
                             default-format="hex"
@@ -286,6 +286,7 @@ import WizardFormFooterV from './form-footer.vue';
 import WizardInputV from './form-input.vue';
 import StepperItemV from './stepper-item.vue';
 import StepperV from './stepper.vue';
+import type { LayerInfo } from './store/layer-source';
 
 export default defineComponent({
     name: 'WizardScreenV',
@@ -362,10 +363,10 @@ export default defineComponent({
 
     computed: {
         url: {
-            get() {
+            get(): string | undefined {
                 return this.$store.get(WizardStore.url);
             },
-            set(newValue) {
+            set(newValue: string) {
                 this.$store.set(WizardStore.url, newValue);
             }
         },
@@ -386,10 +387,10 @@ export default defineComponent({
             }
         },
         layerInfo: {
-            get() {
+            get(): LayerInfo | undefined {
                 return this.$store.get(WizardStore.layerInfo);
             },
-            set(newValue) {
+            set(newValue: LayerInfo) {
                 this.$store.set(WizardStore.layerInfo, newValue);
             }
         },
@@ -559,7 +560,14 @@ export default defineComponent({
 
         // options for lat/long field selectors
         latLonOptions(fieldName: string) {
-            // TODO: if lat/long fields parsing is added when extracting CSV fields return that here
+            return this.layerInfo?.latLonFields[fieldName]?.map(
+                (field: any) => {
+                    return {
+                        value: field,
+                        label: field
+                    };
+                }
+            );
         },
 
         // options for sublayers selector
