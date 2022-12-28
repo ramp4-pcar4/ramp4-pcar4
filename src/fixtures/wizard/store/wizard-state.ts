@@ -15,7 +15,7 @@ export class WizardState {
      * @type {string}
      * @memberof WizardState
      */
-    url = '';
+    url: string = '';
 
     /**
      * Raw file data

@@ -8,6 +8,7 @@ export interface LayerInfo {
     config: RampLayerConfig | null;
     configOptions: Array<string>;
     fields?: any;
+    latLonFields?: any;
     layers?: any;
 }
 
@@ -104,6 +105,8 @@ export class LayerSource extends APIScope {
             fields: [{ name: 'OBJECTID', type: 'oid' }].concat(
                 this.$iApi.geo.layer.files.extractCsvFields(fileData)
             ),
+            latLonFields:
+                this.$iApi.geo.layer.files.filterCsvLatLonFields(fileData),
             configOptions: [
                 'name',
                 'nameField',
