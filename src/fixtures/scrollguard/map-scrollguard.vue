@@ -5,6 +5,7 @@
 </template>
 
 <script lang="ts">
+import { GlobalEvents } from '@/api';
 import { defineComponent } from 'vue';
 
 import { ScrollguardStore } from './store';
@@ -16,8 +17,17 @@ export default defineComponent({
             this.$iApi.$vApp.$el.querySelector(
                 '.inner-shell + .esri-view'
             )! as HTMLElement
-        ).addEventListener('wheel', this.wheelHandler, {
+        )?.addEventListener('wheel', this.wheelHandler, {
             capture: true
+        });
+        this.$iApi.event.on(GlobalEvents.MAP_CREATED, () => {
+            (
+                this.$iApi.$vApp.$el.querySelector(
+                    '.inner-shell + .esri-view'
+                )! as HTMLElement
+            )?.addEventListener('wheel', this.wheelHandler, {
+                capture: true
+            });
         });
     },
     beforeUnmount() {
@@ -25,7 +35,7 @@ export default defineComponent({
             this.$iApi.$vApp.$el.querySelector(
                 '.inner-shell + .esri-view'
             )! as HTMLElement
-        ).removeEventListener('wheel', this.wheelHandler, {
+        )?.removeEventListener('wheel', this.wheelHandler, {
             capture: true
         });
     },
