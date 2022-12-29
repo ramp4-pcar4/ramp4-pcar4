@@ -16,6 +16,7 @@ export interface RampConfig {
             pin?: boolean;
         }[];
         reorderable?: boolean;
+        resizeable?: boolean;
     };
     system?: {
         proxyUrl?: string;

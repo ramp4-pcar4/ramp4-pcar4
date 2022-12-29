@@ -36,6 +36,8 @@ panels.controls.pin,Pin,1,Épingler,1
 panels.controls.unpin,Unpin,1,Désépingler,1
 panels.controls.back,Back,1,Retour,1
 panels.controls.optionsMenu,More,1,Plus,1
+panels.controls.increase,Increase Width,1,Augmenter la largeur,0
+panels.controls.decrease,Decrease Width,1,Diminuer la largeur,0
 panels.controls.minimize,Minimize,1,Réduire,1
 panels.controls.expand,Expand,1,Développer,1
 panels.controls.collapse,Collapse,1,Réduire,1

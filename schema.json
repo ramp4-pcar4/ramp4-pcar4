@@ -2207,6 +2207,11 @@
                     "type": "boolean",
                     "description": "Enables panel reorder controls.",
                     "default": true
+                },
+                "resizeable": {
+                    "type": "boolean",
+                    "descrription": "Enables panel resize controls.",
+                    "default": true
                 }
             },
             "additionalProperties": "false"

@@ -85,6 +85,13 @@ export class PanelState {
      * @memberof PanelState
      */
     reorderable = true;
+
+    /**
+     * True if panels have the increase/decrease width controls enabled.
+     * @type {boolean}
+     * @memberof PanelState
+     */
+    resizeable = true;
 }
 
 // this should have been `AsyncComponentPromise` type, but something is off there

@@ -29,6 +29,16 @@
             </panel-options-menu>
 
             <div class="display-none sm:flex">
+                <decrease
+                    v-if="resizeable && !panel.style['flex-grow']"
+                    @click="resize(-50)"
+                    :active="panel.width !== 100"
+                />
+                <increase
+                    v-if="resizeable && !panel.style['flex-grow']"
+                    @click="resize(50)"
+                    :active="remainingWidth !== 0"
+                />
                 <left
                     v-if="reorderable"
                     @click="move('left')"
@@ -102,7 +112,9 @@ export default defineComponent({
                 ? this.$store.get('appbar/temporary')
                 : [],
             mobileView: this.get('panel/mobileView'),
-            reorderable: this.get('panel/reorderable')
+            remainingWidth: this.get('panel/getRemainingWidth'),
+            reorderable: this.get('panel/reorderable'),
+            resizeable: this.get('panel/resizeable')
         };
     },
     methods: {
@@ -120,6 +132,28 @@ export default defineComponent({
                     ).focus();
                 });
             }
+        },
+        resize(amount: number) {
+            // increase or decrease the width by the amount specified
+            // if the amount specified will cause the panel to go off the screen or have a width of less than the minimum width of 100px,
+            // we resize the panel by the amount possible (so until it takes the full width of the stack or has width of 100px)
+            this.panel.setStyles(
+                {
+                    'flex-basis': `
+                        ${
+                            (this.panel.width ?? 350) +
+                            (amount > 0
+                                ? Math.min(amount, this.remainingWidth)
+                                : Math.max(
+                                      amount,
+                                      -1 * ((this.panel.width ?? 350) - 100)
+                                  ))
+                        }px`
+                },
+                false
+            );
+            // after modifying the width, we need to update which panels are now visible
+            this.$store.dispatch('panel/updateVisible');
         }
     }
 });
