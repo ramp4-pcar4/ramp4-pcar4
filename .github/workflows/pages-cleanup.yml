@@ -9,6 +9,27 @@ jobs:
         name: Cleanup GitHub pages
         runs-on: ubuntu-latest
         steps:
+            - name: Check if contributor is an org member
+              id: is_organization_member
+              if: github.event_name == 'pull_request_target'
+              uses: JamesSingleton/is-organization-member@1.0.1
+              with:
+                  organization: ramp4-pcar4
+                  username: ${{ github.event.pull_request.head.user.login }}
+                  token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Output comment and end build if not org member
+              if: github.event_name == 'pull_request_target'
+              run: |
+                  result=${{ steps.is_organization_member.outputs.result }}
+                  if [ $result == false ]; then
+                    user=${{ github.event.pull_request.head.user.login }}
+                    echo Either ${user} is not part of the ramp4-pcar4 organization
+                    echo or ${user} has its Organization Visibility set to Private at
+                    echo https://github.com/orgs/ramp4-pcar4/people?query=${user}
+                    exit 1
+                  fi
+
             ## Delete the PR demo from gh-pages when the PR is closed
             - uses: actions/checkout@v3
               with:

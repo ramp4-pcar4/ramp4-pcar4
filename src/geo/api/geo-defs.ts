@@ -355,6 +355,7 @@ export interface LegendSymbology {
     label: string;
     definitionClause?: string;
     svgcode: string;
+    imgUrl: string; // for custom symbology stack
     drawPromise: Promise<string | void>;
     esriStandard: boolean; // indicates if this symbol is ESRI standard symbology or an image
     imgHeight?: string; // height of the original legend graphic (for wms layers)

@@ -454,11 +454,7 @@ export class FixtureInstance extends APIScope implements FixtureBase {
      * @param {Array<string>} panels list of panel names for the calling fixture
      */
     handlePanelWidths(panels: Array<string>): void {
-        // for mobile mode, disregard specified panel widths and use default 100% width
-        if (
-            this.config?.panelWidth &&
-            !this.$vApp.$store.get('panel/mobileView')
-        ) {
+        if (this.config?.panelWidth) {
             const panelWidths: any = {};
 
             // If only a number was provided, use it as the `default` value.
@@ -485,11 +481,9 @@ export class FixtureInstance extends APIScope implements FixtureBase {
             for (const item in panelWidths) {
                 // Set new panel widths.
                 const panel = this.$iApi.panel.get(item);
-                this.$iApi.panel.setStyle(
-                    panel,
-                    { width: `${panelWidths[item]}px` },
-                    true
-                );
+                this.$iApi.panel.setStyle(panel, {
+                    'flex-basis': `${panelWidths[item]}px`
+                });
             }
         }
     }

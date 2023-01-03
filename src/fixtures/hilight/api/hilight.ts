@@ -25,10 +25,9 @@ export class HilightAPI extends FixtureInstance {
         if (this.$iApi.geo.map.created) {
             this.initHilightLayer();
         } else {
-            this.$iApi.event.once(
-                GlobalEvents.MAP_CREATED,
-                this.initHilightLayer
-            );
+            this.$iApi.event.once(GlobalEvents.MAP_CREATED, () => {
+                this.initHilightLayer();
+            });
         }
     }
 

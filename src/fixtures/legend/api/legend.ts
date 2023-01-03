@@ -150,8 +150,10 @@ export class LegendAPI extends FixtureInstance {
             layer
                 .getLayerTree()
                 .children.map(childNode => this._treeWalker(layer, childNode))
-                .map(childConf => this.addItem(childConf, parent));
+                .map(childConf => this.addItem(childConf, item as unknown as LegendItem));
         }
+
+        item.treeGrown = true
 
         // add the layer item to store
         // will be in a placeholder state until the layer is loaded

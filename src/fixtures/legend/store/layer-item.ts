@@ -9,8 +9,9 @@ export class LayerItem extends LegendItem {
     _layerUid: string = '';
 
     _layer: LayerInstance | undefined;
-    _layerRedrawing: boolean = false;
     _layerInitVis: boolean | undefined;
+    _layerRedrawing: boolean = false;
+    _layerOffscale: boolean = false;
     _loadCancelled: boolean = false;
     _treeGrown: boolean = false;
 
@@ -21,6 +22,9 @@ export class LayerItem extends LegendItem {
     _origLayerDisabledControls: Array<LayerControl> | undefined;
     _layerControls: Array<LayerControl>;
     _layerDisabledControls: Array<LayerControl>;
+
+    _symbologyRenderStyle: string;
+    _symbologyStack: Array<LegendSymbology>;
 
     handlers: Array<string> = [];
 
@@ -45,6 +49,18 @@ export class LayerItem extends LegendItem {
         this._symbologyExpanded = config.symbologyExpanded || false;
         if (config.coverIcon) this._coverIcon = config.coverIcon;
         if (config.description) this._description = config.description;
+        this._symbologyRenderStyle = config.symbologyRenderStyle ?? 'icons';
+        this._symbologyStack = config.symbologyStack?.map((symbol: any) => {
+            return {
+                uid: this.$iApi.geo.shared.generateUUID(),
+                label: symbol.text,
+                definitionClause: symbol.sqlQuery,
+                imgUrl: symbol.image ?? '',
+                drawPromise: Promise.resolve(),
+                visibility: true, // just a placeholder
+                lastVisibility: true
+            };
+        });
     }
 
     /** Returns the id of the parent layer (for MIL) */
@@ -80,7 +96,16 @@ export class LayerItem extends LegendItem {
         this._layerId = layer.id;
         this._layerIdx = layer.layerIdx;
         this._layerUid = layer.uid;
+        this._symbologyStack = this._symbologyStack ?? layer.legend; // set this item's symbology stack to layer's default if undefined in config
         this.updateLayerControls();
+    }
+
+    get layerOffscale(): boolean {
+        return this._layerOffscale;
+    }
+
+    set layerOffscale(offscale: boolean) {
+        this._layerOffscale = offscale;
     }
 
     get layerRedrawing(): boolean {
@@ -136,6 +161,22 @@ export class LayerItem extends LegendItem {
         return this._origLayerDisabledControls;
     }
 
+    set symbologyRenderStyle(symbologyRenderStyle: string) {
+        this._symbologyRenderStyle = symbologyRenderStyle;
+    }
+
+    get symbologyRenderStyle() {
+        return this._symbologyRenderStyle;
+    }
+
+    set symbologyStack(symbologyStack: Array<LegendSymbology>) {
+        this._symbologyStack = symbologyStack;
+    }
+
+    get symbologyStack() {
+        return this._symbologyStack;
+    }
+
     /**
      * Returns a legend config representation of this item.
      */
@@ -177,11 +218,11 @@ export class LayerItem extends LegendItem {
             this.layer.visibility = this.visibility;
 
             // check child symobls for visibility
-            const someVisible = this.layer.legend.some(
+            const someVisible = this._symbologyStack.some(
                 (item: LegendSymbology) => item.lastVisbility
             );
 
-            this.layer.legend.forEach((item: LegendSymbology) => {
+            this._symbologyStack.forEach((item: LegendSymbology) => {
                 if (!someVisible) {
                     // if no symbols are visible and we toggled the parent layer on
                     // then set all the child symbols to visible
@@ -210,7 +251,7 @@ export class LayerItem extends LegendItem {
      * @param visible The new visibility value
      */
     setSymbologyVisibility(uid: string | undefined, visible: boolean): void {
-        this._layer?.legend.some((item: LegendSymbology) => {
+        this._symbologyStack.some((item: LegendSymbology) => {
             if (uid === undefined || item.uid === uid) {
                 item.visibility = visible;
                 item.lastVisbility = visible;
@@ -252,9 +293,10 @@ export class LayerItem extends LegendItem {
                             `MapImageLayer has no sublayerIndex defined for layer: ${this._layerId}.`
                         );
                     } else {
-                        this._layerInitVis = this._layerInitVis
-                            ? this._visibility
-                            : layer.visibility;
+                        this._layerInitVis =
+                            typeof this._layerInitVis !== 'undefined'
+                                ? this._visibility
+                                : layer.visibility;
                         super.load();
 
                         // override layer item visibility in favour of layer visibility
@@ -272,7 +314,10 @@ export class LayerItem extends LegendItem {
                         this.$iApi.event.on(
                             GlobalEvents.LAYER_VISIBILITYCHANGE,
                             (updatedLayer: any) => {
-                                if (updatedLayer.layer.uid === this.layer.uid) {
+                                if (
+                                    updatedLayer.layer.uid === this.layer.uid &&
+                                    this._type === LegendType.Item
+                                ) {
                                     this.toggleVisibility(
                                         updatedLayer.visibility,
                                         true,
@@ -307,6 +352,16 @@ export class LayerItem extends LegendItem {
                                         }, 500);
                                     }
                                 }
+                            }
+                        )
+                    );
+
+                    this._layerOffscale = this.layer?.isOffscale();
+                    this.handlers.push(
+                        this.$iApi.event.on(
+                            GlobalEvents.MAP_SCALECHANGE,
+                            () => {
+                                this._layerOffscale = this.layer?.isOffscale();
                             }
                         )
                     );
