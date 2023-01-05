@@ -9,6 +9,7 @@ export class GeosearchState {
     savedResults: Array<any>;
     resultsVisible: boolean;
     loadingResults: boolean;
+    failedServices: string[];
 
     // param is the fixture config from config file
     constructor(geosearchConfig: any) {
@@ -30,6 +31,7 @@ export class GeosearchState {
         this.searchResults = [];
         this.savedResults = [];
         this.loadingResults = false;
+        this.failedServices = [];
     }
 }
 

@@ -66,6 +66,15 @@ export interface INTSResult {
     bbox: number[];
 }
 
+export interface IAddressResult {
+    name: string; // "123 Yonge Street"
+    city: string; // "Toronto"
+    province: string; // "ON"
+    desc: string; // "Street Address"
+    LatLon: ILatLon;
+    bbox: number[];
+}
+
 export interface ILatLongResult {
     latlong: string; // "54.54,-91.45"
     desc: string; // "Latitude/Longitude",
@@ -85,6 +94,7 @@ export interface INameResult {
 
 export interface ILocateResponse {
     title: string;
+    type?: string;
     bbox?: number[];
     geometry: { coordinates: number[] };
 }
@@ -92,8 +102,11 @@ export interface ILocateResponse {
 export type LocateResponseList = ILocateResponse[];
 export type NameResultList = INameResult[];
 export type NTSResultList = INTSResult[];
+export type AddressResultList = IAddressResult[];
+export type ResultList = (INameResult | IAddressResult)[];
 export type queryFeatureResults =
     | IFSAResult
     | INTSResult
+    | IAddressResult
     | ILatLongResult
     | undefined;

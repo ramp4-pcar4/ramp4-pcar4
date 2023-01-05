@@ -16,6 +16,7 @@ In the header of the Geosearch panel, there is a search bar which allows users t
 
 **Keyword search**: Type any keyword into Geosearch to display a list of results that contains the keyword.
 - each search result consists of: location name (with search keyword highlighted), location province, and location type (lake, city, town, etc.)
+- street addresses are prioritized in the list of results
 - click on any individual result to mark its coordinates and zoom the map to center around this location
 
 **FSA search**: A **forward sortation area (FSA)** is a way to designate a geographical area based on the first three characters in a Canadian postal code. All postal codes that start with the same three characters are considered an **FSA**.
@@ -33,11 +34,6 @@ In the header of the Geosearch panel, there is a search bar which allows users t
 - an NTS map number consists of a string containing a number identifying a map sheet, a letter identifying a map area, and a number identifying the scale map sheet
 - likewise, the first result will be a location of the NTS map number, click to center map on this area
 - example: type in **030M13**
-
-#### Unsupported Search Types
-
-**Street address**: Search using direct street addresses is not supported by Geosearch.
-- entering any valid street address should not return any results
 
 ### Geosearch Filters:
 

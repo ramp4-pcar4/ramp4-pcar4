@@ -11,6 +11,16 @@
                     v-if="loadingResults"
                 ></loading-bar>
                 <div
+                    class="text-red-900 text-xs px-8 mb-10"
+                    v-if="failedServices.length > 0 && !loadingResults"
+                >
+                    {{
+                        $t('geosearch.serviceError', {
+                            services: failedServices.join(', ')
+                        })
+                    }}
+                </div>
+                <div
                     class="px-8 mb-10 truncate"
                     v-if="
                         searchVal &&
@@ -92,7 +102,7 @@ import { defineComponent } from 'vue';
 import type { PropType } from 'vue';
 
 import type { PanelInstance } from '@/api';
-import { Point } from '@/geo/api';
+import { Extent } from '@/geo/api';
 
 import { GeosearchStore } from './store';
 
@@ -123,14 +133,20 @@ export default defineComponent({
         return {
             searchVal: this.get(GeosearchStore.searchVal),
             searchResults: this.get(GeosearchStore.searchResults),
-            loadingResults: this.get(GeosearchStore.loadingResults)
+            loadingResults: this.get(GeosearchStore.loadingResults),
+            failedServices: this.get(GeosearchStore.failedServices)
         };
     },
+
     methods: {
         // zoom in to a clicked result
         zoomIn(result: any): void {
-            let zoomPoint = new Point('zoomies', result.position);
-            this.$iApi.geo.map.zoomMapTo(zoomPoint);
+            let zoom = new Extent(
+                'zoomies',
+                [result.bbox[0], result.bbox[1]],
+                [result.bbox[2], result.bbox[3]]
+            );
+            this.$iApi.geo.map.zoomMapTo(zoom);
         },
 
         // highlight the search term in each listed geosearch result
