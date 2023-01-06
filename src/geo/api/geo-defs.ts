@@ -355,7 +355,7 @@ export interface LegendSymbology {
     label: string;
     definitionClause?: string;
     svgcode: string;
-    imgUrl: string; // for custom symbology stack
+    imgUrl?: string; // for custom symbology stack
     drawPromise: Promise<string | void>;
     esriStandard: boolean; // indicates if this symbol is ESRI standard symbology or an image
     imgHeight?: string; // height of the original legend graphic (for wms layers)
@@ -605,6 +605,7 @@ export interface RampLayerConfig {
     initialFilteredQuery?: string;
     drawOrder?: Array<DrawOrder>; // feature drawing order
     identifyMode?: LayerIdentifyMode;
+    caching?: boolean; // whether to preserve raw data in file and WFS layers
     rawData?: any; // used for static data, like geojson string, shapefile guts
 }
 
