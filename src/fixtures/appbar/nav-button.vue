@@ -24,7 +24,7 @@
         </template>
         <!-- TODO: Revisit this when designing the gear icon menu -->
         <a
-            href="#"
+            href="javascript:;"
             class="w-160 inline-flex"
             @click="doAThing"
             content="PLACEHOLDER"

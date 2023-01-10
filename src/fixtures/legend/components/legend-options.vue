@@ -21,7 +21,7 @@
             </template>
             <!-- metadata -->
             <a
-                href="#"
+                href="javascript:;"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled:
@@ -42,7 +42,7 @@
             </a>
             <!-- settings -->
             <a
-                href="#"
+                href="javascript:;"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled:
@@ -65,7 +65,7 @@
             </a>
             <!-- datatable -->
             <a
-                href="#"
+                href="javascript:;"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled:
@@ -86,7 +86,7 @@
             </a>
             <!-- symbology stack -->
             <a
-                href="#"
+                href="javascript:;"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled: !legendItem!.layerControlAvailable(LayerControl.Symbology)
@@ -105,7 +105,7 @@
             </a>
             <!-- boundary zoom -->
             <a
-                href="#"
+                href="javascript:;"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled: !legendItem!.layerControlAvailable(LayerControl.BoundaryZoom)
@@ -126,7 +126,7 @@
             </a>
             <!-- remove -->
             <a
-                href="#"
+                href="javascript:;"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled: !legendItem!.layerControlAvailable(LayerControl.Remove)
@@ -145,7 +145,7 @@
             </a>
             <!-- reload -->
             <a
-                href="#"
+                href="javascript:;"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled: !legendItem!.layerControlAvailable(LayerControl.Reload)

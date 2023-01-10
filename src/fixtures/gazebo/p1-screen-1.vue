@@ -3,9 +3,9 @@
         <template #header> Gazebo/Panel 1/Screen A </template>
 
         <template #controls>
-            <a href="#">Option 1</a>
-            <a href="#">Option 2</a>
-            <a href="#">Option 3</a>
+            <a href="javascript:;">Option 1</a>
+            <a href="javascript:;">Option 2</a>
+            <a href="javascript:;">Option 3</a>
         </template>
 
         <template #content>
