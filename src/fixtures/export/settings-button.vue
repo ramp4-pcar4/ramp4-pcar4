@@ -28,7 +28,7 @@
                 v-for="component in componentSelectedState"
                 :key="component.name"
                 @click="toggleComponent(component)"
-                href="#"
+                href="javascript:;"
                 :class="`text-left text-sm sm:text-base ${
                     component.selectable ? 'cursor-pointer' : 'cursor-default'
                 }`"

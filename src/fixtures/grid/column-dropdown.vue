@@ -35,7 +35,7 @@
                 columnApi.setColumnVisible(col.field, col.hide);
                 col.hide = !col.hide;
             "
-            href="#"
+            href="javascript:;"
             class="flex leading-snug items-center w-256"
         >
             <div class="md-icon-small inline">

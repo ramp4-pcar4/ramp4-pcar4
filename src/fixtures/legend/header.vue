@@ -56,14 +56,14 @@
                 </div>
             </template>
             <a
-                href="#"
+                href="javascript:;"
                 class="flex leading-snug items-center overflow-hidden whitespace-nowrap"
                 @click="legendApi.expandItems(true)"
             >
                 {{ $t('legend.header.groups.expand') }}
             </a>
             <a
-                href="#"
+                href="javascript:;"
                 class="flex leading-snug items-center overflow-hidden whitespace-nowrap"
                 @click="legendApi.expandItems(false)"
             >
@@ -88,14 +88,14 @@
                 </div>
             </template>
             <a
-                href="#"
+                href="javascript:;"
                 class="flex leading-snug items-center w-100 overflow-hidden whitespace-nowrap"
                 @click="legendApi.showItems(true)"
             >
                 {{ $t('legend.header.visible.show') }}
             </a>
             <a
-                href="#"
+                href="javascript:;"
                 class="flex leading-snug items-center w-100 overflow-hidden whitespace-nowrap"
                 @click="legendApi.showItems(false)"
             >

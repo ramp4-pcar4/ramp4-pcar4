@@ -139,7 +139,7 @@
                     </template>
                     <!-- toggle apply to map -->
                     <a
-                        href="#"
+                        href="javascript:;"
                         class="flex leading-snug items-center w-256 hover:text-black"
                         @click="toggleFiltersToMap()"
                     >
@@ -171,7 +171,7 @@
                     </a>
                     <!-- toggle column filters -->
                     <a
-                        href="#"
+                        href="javascript:;"
                         class="flex leading-snug items-center w-256 hover:text-black"
                         @click="toggleShowFilters()"
                     >
@@ -203,7 +203,7 @@
                     </a>
                     <!-- toggle extent filter -->
                     <a
-                        href="#"
+                        href="javascript:;"
                         class="flex leading-snug items-center w-256 hover:text-black"
                         @click="toggleFilterByExtent()"
                     >
