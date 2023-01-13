@@ -41,6 +41,7 @@
                 class="flex items-center pb-4 mr-8 min-w-0"
                 v-show="config.state.search"
             >
+                <!-- global search bar -->
                 <input
                     @input="updateQuickSearch()"
                     @keyup.enter="
@@ -56,6 +57,7 @@
                     :aria-label="$t('grid.filters.label.global')"
                     :placeholder="$t('grid.filters.label.global')"
                 />
+                <!-- clear search button -->
                 <div class="-ml-30">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -91,8 +93,8 @@
             <div class="pb-2 flex ml-auto">
                 <!-- show/hide columns -->
                 <column-dropdown
-                    :columnApi="columnApi"
-                    :columnDefs="columnDefs"
+                    :agColumnApi="agColumnApi"
+                    :agColumnDefs="agColumnDefs"
                 ></column-dropdown>
 
                 <!-- clear all filters -->
@@ -120,6 +122,7 @@
                     </svg>
                 </button>
 
+                <!-- grid options dropdown -->
                 <dropdown-menu
                     class="h-40 w-40"
                     :position="'bottom-end'"
@@ -238,6 +241,7 @@
         </div>
         <span v-show="!isLoadingGrid" class="w-full h-0 shadow-clip"></span>
 
+        <!-- grid title and number of visible entries -->
         <div class="pt-8 pl-8 pb-4 mb-0 bg-gray-50">
             <div
                 v-show="!isLoadingGrid && gridTitle !== ''"
@@ -268,8 +272,8 @@
             v-show="!isLoadingGrid"
             class="ag-theme-material flex-grow"
             enableCellTextSelection="true"
-            :gridOptions="gridOptions"
-            :columnDefs="columnDefs"
+            :agGridOptions="agGridOptions"
+            :agColumnDefs="agColumnDefs"
             :rowData="rowData"
             :components="frameworkComponents"
             @grid-ready="onGridReady"
@@ -292,9 +296,17 @@ import {
     PanelInstance
 } from '@/api/internal';
 
+import type {
+    Attributes,
+    FieldDefinition,
+    FilterParams,
+    TabularAttributeSet
+} from '@/geo/api';
+
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
 import { AgGridVue } from 'ag-grid-vue3';
+import type { RowNode } from 'ag-grid-community';
 import GridColumnDropdownV from './column-dropdown.vue';
 import { GridStore } from './store';
 import type { GridConfig } from './store';
@@ -355,8 +367,8 @@ export default defineComponent({
         return {
             grids: this.get(GridStore.grids),
             config: ref(),
-            gridApi: ref(),
-            gridOptions: ref(),
+            agGridApi: ref(),
+            agGridOptions: ref(),
             frameworkComponents: ref(),
 
             isLoadingGrid: false,
@@ -366,9 +378,9 @@ export default defineComponent({
             watchers: [] as Array<Function>,
 
             gridTitle: '',
-            columnApi: ref(),
-            columnDefs: [] as Array<ColumnDefinition>,
-            rowData: [],
+            agColumnApi: ref(),
+            agColumnDefs: [] as Array<ColumnDefinition>,
+            rowData: [] as Array<Attributes>,
             oidField: 'OBJECTID', // this is just placeholder, will get overwritten below
 
             gridAccessibilityManager: undefined as
@@ -384,7 +396,7 @@ export default defineComponent({
                 visibleRows: 0
             }),
             filterSync: true,
-            filteredOids: ref()
+            filteredOids: ref<Array<number>>()
         };
     },
 
@@ -414,7 +426,7 @@ export default defineComponent({
         };
 
         // set up grid options
-        this.gridOptions = {
+        this.agGridOptions = {
             // lets header navigation be predictable, otherwise focus lists will be out of sync as soon as a column is shifted
             ensureDomOrder: true,
             suppressRowTransform: true,
@@ -425,7 +437,7 @@ export default defineComponent({
             },
             onBodyScroll: () => {
                 this.updateFilterInfo();
-                // prevent tootltips from leaving grid panel on scroll
+                // prevent tooltips from leaving grid panel on scroll
                 [...document.querySelectorAll('[id^=tippy]')].forEach(
                     (el: any) => {
                         if (
@@ -444,7 +456,7 @@ export default defineComponent({
             // tab vertically instead of horizontally
             tabToNextHeader: tabToNextHeaderHandler,
             onModelUpdated: debounce(300, () =>
-                this.columnApi.autoSizeAllColumns()
+                this.agColumnApi.autoSizeAllColumns()
             )
         };
 
@@ -488,132 +500,147 @@ export default defineComponent({
             const tableAttributePromise =
                 markRaw(fancyLayer).getTabularAttributes();
 
-            tableAttributePromise.then((tableAttributes: any) => {
-                // check if load was cancelled by checking the loadAborted state
-                if ((fancyLayer as AttribLayer)?.attLoader?.isLoadAborted()) {
-                    // if load was cancelled, don't load grid any further and return
-                    this.isLoadingGrid = false;
-                    return;
-                }
-
-                // Iterate through table columns and set up column definitions and column filter stuff.
-                // Also adds the `rvSymbol` and `rvInteractive` columns to the table.
-                [
-                    'rvRowIndex',
-                    'rvSymbol',
-                    'rvInteractive',
-                    ...tableAttributes.columns
-                ].forEach((column: any) => {
-                    if (this.config.state?.columns[column.data] === undefined) {
-                        this.config.state.columns[column.data] =
-                            new ColumnStateManager({
-                                field: column.data,
-                                title: column.title
-                            });
-                    }
-                    let colConfig = this.config.state?.columns[column.data];
-                    let col: ColumnDefinition = {
-                        headerName: colConfig.title ?? column.title,
-                        headerComponent: 'agColumnHeader',
-                        headerComponentParams: {
-                            sort: colConfig.sort
-                        },
-                        field: column.data ?? column,
-                        isSelector: colConfig.filter.type === 'selector',
-                        sortable: true,
-                        lockPosition: true,
-                        filterParams: {},
-                        floatingFilter:
-                            this.config.state.colFilter && colConfig.searchable,
-                        hide: !colConfig?.visible,
-                        minWidth: colConfig.width,
-                        maxWidth: colConfig.width ?? 400,
-                        cellRenderer: (cell: any) => {
-                            return cell.value;
-                        },
-                        suppressHeaderKeyboardEvent: (params: any) => {
-                            const keyboardEvent = params.event as KeyboardEvent;
-                            //suppresses enter on header cells and tab when the cell is not focused (focus is on an inner button)
-                            if (
-                                params.headerRowIndex === 0 &&
-                                (keyboardEvent.key === 'Enter' ||
-                                    (!(
-                                        keyboardEvent.target as HTMLElement
-                                    ).classList.contains('ag-header-cell') &&
-                                        keyboardEvent.key === 'Tab'))
-                            ) {
-                                return true;
-                            }
-                            return false;
-                        }
-                    };
-
-                    // retrieve the field info for the column
-                    let fieldInfo = tableAttributes.fields.find(
-                        (field: any) => field.name === col.field
-                    );
-
+            tableAttributePromise.then(
+                (tableAttributes: TabularAttributeSet) => {
+                    // check if load was cancelled by checking the loadAborted state
                     if (
-                        column === 'rvRowIndex' ||
-                        column === 'rvSymbol' ||
-                        column === 'rvInteractive'
+                        (fancyLayer as AttribLayer)?.attLoader?.isLoadAborted()
                     ) {
-                        this.setUpSpecialColumns(
-                            col,
-                            this.columnDefs,
-                            this.config.state
-                        );
-                    } else {
-                        // set up column filters according to their respective types
-                        if (NUM_TYPES.indexOf(fieldInfo.type) > -1) {
-                            this.setUpNumberFilter(col, this.config.state);
-                            col.filter = 'agNumberColumnFilter';
-                            col.cellRenderer = CellRendererV;
-                            col.cellRendererParams = {
-                                type: 'number'
-                            };
-                        } else if (fieldInfo.type === FieldType.DATE) {
-                            this.setUpDateFilter(col, this.config.state);
-                            col.filter = 'agDateColumnFilter';
-                            col.minWidth = 400;
-                            col.cellRenderer = CellRendererV;
-                            col.cellRendererParams = {
-                                type: 'date'
-                            };
-                        } else if (fieldInfo.type === FieldType.STRING) {
-                            if (col.isSelector) {
-                                // set up a selector filter instead of a text filter if the `isSelector` flag is true.
-                                this.setUpSelectorFilter(
-                                    col,
-                                    tableAttributes.rows,
-                                    this.config.state
-                                );
-                            } else {
-                                this.setUpTextFilter(col, this.config.state);
-                            }
-                            col.filter = 'agTextColumnFilter';
-                            col.cellRenderer = CellRendererV;
-                            col.cellRendererParams = {
-                                type: 'string'
-                            };
-                        }
-
-                        this.columnDefs.push(col);
+                        // if load was cancelled, don't load grid any further and return
+                        this.isLoadingGrid = false;
+                        return;
                     }
-                });
 
-                // load layer data into the table.
-                this.rowData = markRaw(tableAttributes.rows);
-                this.columnDefs = markRaw(this.columnDefs);
+                    // Iterate through table columns and set up column definitions and column filter stuff.
+                    // Also adds the `rvSymbol` and `rvInteractive` columns to the table.
+                    [
+                        'rvRowIndex',
+                        'rvSymbol',
+                        'rvInteractive',
+                        ...tableAttributes.columns
+                    ].forEach((column: any) => {
+                        // set up column data
+                        if (
+                            this.config.state?.columns[column.data] ===
+                            undefined
+                        ) {
+                            this.config.state.columns[column.data] =
+                                new ColumnStateManager({
+                                    field: column.data,
+                                    title: column.title
+                                });
+                        }
+                        let colConfig = this.config.state?.columns[column.data];
+                        let col: ColumnDefinition = {
+                            headerName: colConfig.title ?? column.title,
+                            headerComponent: 'agColumnHeader',
+                            headerComponentParams: {
+                                sort: colConfig.sort
+                            },
+                            field: column.data ?? column,
+                            isSelector: colConfig.filter.type === 'selector',
+                            sortable: true,
+                            lockPosition: true,
+                            filterParams: {},
+                            floatingFilter:
+                                this.config.state.colFilter &&
+                                colConfig.searchable,
+                            hide: !colConfig?.visible,
+                            minWidth: colConfig.width,
+                            maxWidth: colConfig.width ?? 400,
+                            cellRenderer: (cell: any) => {
+                                return cell.value;
+                            },
+                            suppressHeaderKeyboardEvent: (params: any) => {
+                                const keyboardEvent =
+                                    params.event as KeyboardEvent;
+                                //suppresses enter on header cells and tab when the cell is not focused (focus is on an inner button)
+                                if (
+                                    params.headerRowIndex === 0 &&
+                                    (keyboardEvent.key === 'Enter' ||
+                                        (!(
+                                            keyboardEvent.target as HTMLElement
+                                        ).classList.contains(
+                                            'ag-header-cell'
+                                        ) &&
+                                            keyboardEvent.key === 'Tab'))
+                                ) {
+                                    return true;
+                                }
+                                return false;
+                            }
+                        };
 
-                this.updateFilterInfo();
+                        // retrieve the field info for the column
+                        let fieldInfo = tableAttributes.fields.find(
+                            (field: FieldDefinition) => field.name === col.field
+                        );
 
-                // save field that contains oid for this layer
-                this.oidField = tableAttributes.oidField;
+                        if (
+                            column === 'rvRowIndex' ||
+                            column === 'rvSymbol' ||
+                            column === 'rvInteractive'
+                        ) {
+                            this.setUpSpecialColumns(
+                                col,
+                                this.agColumnDefs,
+                                this.config.state
+                            );
+                        } else {
+                            // set up column filters according to their respective types
+                            if (NUM_TYPES.indexOf(fieldInfo!.type) > -1) {
+                                this.setUpNumberFilter(col, this.config.state);
+                                col.filter = 'agNumberColumnFilter';
+                                col.cellRenderer = CellRendererV;
+                                col.cellRendererParams = {
+                                    type: 'number'
+                                };
+                            } else if (fieldInfo!.type === FieldType.DATE) {
+                                this.setUpDateFilter(col, this.config.state);
+                                col.filter = 'agDateColumnFilter';
+                                col.minWidth = 400;
+                                col.cellRenderer = CellRendererV;
+                                col.cellRendererParams = {
+                                    type: 'date'
+                                };
+                            } else if (fieldInfo!.type === FieldType.STRING) {
+                                if (col.isSelector) {
+                                    // set up a selector filter instead of a text filter if the `isSelector` flag is true.
+                                    this.setUpSelectorFilter(
+                                        col,
+                                        tableAttributes.rows,
+                                        this.config.state
+                                    );
+                                } else {
+                                    this.setUpTextFilter(
+                                        col,
+                                        this.config.state
+                                    );
+                                }
+                                col.filter = 'agTextColumnFilter';
+                                col.cellRenderer = CellRendererV;
+                                col.cellRendererParams = {
+                                    type: 'string'
+                                };
+                            }
 
-                // the grid is now ready to be displayed
-                this.isLoadingGrid = false;
-            });
+                            this.agColumnDefs.push(col);
+                        }
+                    });
+
+                    // load layer data into the table.
+                    this.rowData = markRaw(tableAttributes.rows);
+                    this.agColumnDefs = markRaw(this.agColumnDefs);
+
+                    this.updateFilterInfo();
+
+                    // save field that contains oid for this layer
+                    this.oidField = tableAttributes.oidField;
+
+                    // the grid is now ready to be displayed
+                    this.isLoadingGrid = false;
+                }
+            );
         });
     },
 
@@ -630,8 +657,8 @@ export default defineComponent({
 
     methods: {
         onGridReady(params: any) {
-            this.gridApi = params.api;
-            this.columnApi = params.columnApi;
+            this.agGridApi = params.api;
+            this.agColumnApi = params.agColumnApi;
 
             // get grid title
             if (this.config.state.title !== '') {
@@ -646,7 +673,7 @@ export default defineComponent({
 
             // don't need to wait for data to render if rowData available
             if (this.rowData.length > 0) {
-                this.columnApi.autoSizeAllColumns();
+                this.agColumnApi.autoSizeAllColumns();
             }
 
             // listen for layer filter and visibility events and update grid appropriately
@@ -676,7 +703,6 @@ export default defineComponent({
                 this.$iApi.event.on(
                     GlobalEvents.LAYER_VISIBILITYCHANGE,
                     ({
-                        visibility,
                         layer
                     }: {
                         visibility: boolean;
@@ -709,7 +735,7 @@ export default defineComponent({
             this.handlers.push(
                 this.$iApi.event.on(GlobalEvents.CONFIG_CHANGE, () => {
                     // Refresh the grid when the config changes (the language might have changed)
-                    this.gridApi.redrawRows({
+                    this.agGridApi.redrawRows({
                         force: true
                     });
                 })
@@ -729,18 +755,18 @@ export default defineComponent({
 
         gridRendered() {
             // size grid columns
-            this.columnApi.autoSizeAllColumns();
+            this.agColumnApi.autoSizeAllColumns();
 
             this.gridAccessibilityManager = new GridAccessibilityManager(
                 this.$el as HTMLElement,
-                this.gridApi,
-                this.columnApi
+                this.agGridApi,
+                this.agColumnApi
             );
         },
 
         // Updates the global search value.
         updateQuickSearch() {
-            this.gridApi.setQuickFilter(this.config.state.searchFilter);
+            this.agGridApi.setQuickFilter(this.config.state.searchFilter);
         },
 
         resetQuickSearch(): void {
@@ -762,47 +788,47 @@ export default defineComponent({
 
         // Toggles the floating (column) filters on and off.
         toggleShowFilters() {
-            let colDefs = this.gridOptions.api.getColumnDefs();
+            let colDefs = this.agGridOptions.api.getColumnDefs();
             this.config.state.colFilter = !this.config.state.colFilter;
 
-            colDefs.forEach((col: any) => {
+            colDefs.forEach((col: ColumnDefinition) => {
                 col.floatingFilter = this.config.state.colFilter;
             });
 
             // Update the column definitions with the new filter value.
-            this.gridOptions.api.setColumnDefs(colDefs);
+            this.agGridOptions.api.setColumnDefs(colDefs);
         },
 
         // Updates the current status of the filter.
         updateFilterInfo() {
-            if (this.gridApi && !this.isLoadingGrid) {
+            if (this.agGridApi && !this.isLoadingGrid) {
                 if (this.config.state.searchFilter !== '')
                     this.updateQuickSearch();
                 if (this.config.state.applyToMap) {
                     this.applyFiltersToMap();
                 }
                 this.filterInfo.firstRow =
-                    this.gridApi.getFirstDisplayedRow() + 1;
+                    this.agGridApi.getFirstDisplayedRow() + 1;
                 this.filterInfo.lastRow =
-                    this.gridApi.getLastDisplayedRow() + 1;
+                    this.agGridApi.getLastDisplayedRow() + 1;
                 this.filterInfo.visibleRows =
-                    this.gridApi.getDisplayedRowCount();
+                    this.agGridApi.getDisplayedRowCount();
             }
         },
 
         // Clear all table filters.
         clearFilters() {
             // Replace the filter model with an empty model.
-            this.gridApi.setFilterModel({});
+            this.agGridApi.setFilterModel({});
 
             // Clear any saved filter state in the table state manager.
             this.config.state.clearFilters();
 
             // Refresh the column filters to reset inputs.
-            this.gridApi.refreshHeader();
+            this.agGridApi.refreshHeader();
         },
 
-        setUpDateFilter(colDef: any, state: TableStateManager) {
+        setUpDateFilter(colDef: ColumnDefinition, state: TableStateManager) {
             colDef.floatingFilterComponent = 'dateFloatingFilter';
             colDef.filterParams.comparator = function (
                 filterDate: any,
@@ -843,8 +869,8 @@ export default defineComponent({
         },
 
         setUpSelectorFilter(
-            colDef: any,
-            rowData: any,
+            colDef: ColumnDefinition,
+            rowData: Attributes[],
             state: TableStateManager
         ) {
             colDef.floatingFilterComponent = 'selectorFloatingFilter';
@@ -856,7 +882,7 @@ export default defineComponent({
             };
         },
 
-        setUpNumberFilter(colDef: any, state: TableStateManager) {
+        setUpNumberFilter(colDef: ColumnDefinition, state: TableStateManager) {
             colDef.floatingFilterComponent = 'numberFloatingFilter';
             colDef.filterParams.inRangeInclusive = true;
             colDef.floatingFilterComponentParams = {
@@ -865,7 +891,7 @@ export default defineComponent({
             };
         },
 
-        setUpTextFilter(colDef: any, state: TableStateManager) {
+        setUpTextFilter(colDef: ColumnDefinition, state: TableStateManager) {
             colDef.floatingFilterComponent = 'textFloatingFilter';
             colDef.floatingFilterComponentParams = {
                 suppressFilterButton: true,
@@ -885,32 +911,33 @@ export default defineComponent({
             };
 
             // modified from: https://www.ag-grid.com/javascript-grid-filter-text/#text-formatter
-            let disregardAccents = function (s: any) {
-                if (isNaN(s)) {
-                    // check if s is a number before trying to convert it to lowercase (otherwise throws error)
-                    let r = s.toLowerCase();
-                    r = r.replace(new RegExp('[àáâãäå]', 'g'), 'a');
-                    r = r.replace(new RegExp('æ', 'g'), 'ae');
-                    r = r.replace(new RegExp('ç', 'g'), 'c');
-                    r = r.replace(new RegExp('[èéêë]', 'g'), 'e');
-                    r = r.replace(new RegExp('[ìíîï]', 'g'), 'i');
-                    r = r.replace(new RegExp('ñ', 'g'), 'n');
-                    r = r.replace(new RegExp('[òóôõö]', 'g'), 'o');
-                    r = r.replace(new RegExp('œ', 'g'), 'oe');
-                    r = r.replace(new RegExp('[ùúûü]', 'g'), 'u');
-                    r = r.replace(new RegExp('[ýÿ]', 'g'), 'y');
-                    return r;
-                }
-                return s;
+            let disregardAccents = function (s: string) {
+                let r = s.toLowerCase();
+                r = r.replace(new RegExp('[àáâãäå]', 'g'), 'a');
+                r = r.replace(new RegExp('æ', 'g'), 'ae');
+                r = r.replace(new RegExp('ç', 'g'), 'c');
+                r = r.replace(new RegExp('[èéêë]', 'g'), 'e');
+                r = r.replace(new RegExp('[ìíîï]', 'g'), 'i');
+                r = r.replace(new RegExp('ñ', 'g'), 'n');
+                r = r.replace(new RegExp('[òóôõö]', 'g'), 'o');
+                r = r.replace(new RegExp('œ', 'g'), 'oe');
+                r = r.replace(new RegExp('[ùúûü]', 'g'), 'u');
+                r = r.replace(new RegExp('[ýÿ]', 'g'), 'y');
+                return r;
             };
 
             // for individual columns
-            colDef.filterParams.textFormatter = function (s: any) {
+            colDef.filterParams.textFormatter = function (s: string) {
                 return disregardAccents(s);
             };
         },
 
-        setUpSpecialColumns(col: any, colDef: any, state: TableStateManager) {
+        setUpSpecialColumns(
+            col: ColumnDefinition,
+            colDef: (ColumnDefinition | SpecialColumnDefinition)[],
+            state: TableStateManager
+        ) {
+            // set up row number column
             if (col.field === 'rvRowIndex') {
                 let indexDef = {
                     sortable: false,
@@ -942,7 +969,6 @@ export default defineComponent({
             }
 
             // Set up the interactive column that contains the zoom and details button.
-            // TODO: add details functionality.
             if (col.field === 'rvInteractive') {
                 let detailsDef = {
                     sortable: false,
@@ -1004,7 +1030,7 @@ export default defineComponent({
                         });
                         return iconContainer;
                     },
-                    cellStyle: (cell: any) => {
+                    cellStyle: () => {
                         return {
                             paddingTop: '7px',
                             textAlign: 'center'
@@ -1027,7 +1053,7 @@ export default defineComponent({
         },
 
         // filters row based on layer filter
-        doesExternalFilterPass(node: any) {
+        doesExternalFilterPass(node: RowNode) {
             return this.filteredOids!.includes(node.data[this.oidField]);
         },
 
@@ -1044,7 +1070,7 @@ export default defineComponent({
                         : undefined
                 );
             }
-            this.gridApi.onFilterChanged();
+            this.agGridApi.onFilterChanged();
         },
 
         toggleFiltersToMap() {
@@ -1065,8 +1091,8 @@ export default defineComponent({
 
         // get filter SQL query string
         getFiltersQuery() {
-            const filterModel = this.gridApi.getFilterModel();
-            let colStrs: any = [];
+            const filterModel = this.agGridApi.getFilterModel();
+            let colStrs: (string | undefined)[] = [];
             Object.keys(filterModel).forEach(col => {
                 colStrs.push(this.filterToSql(col, filterModel[col]));
             });
@@ -1084,8 +1110,7 @@ export default defineComponent({
         },
 
         // converts columns filter to SQL
-        filterToSql(col: string, colFilter: any): any {
-            const column = this.columnApi.getColumn(col).colDef;
+        filterToSql(col: string, colFilter: { [key: string]: any }) {
             switch (colFilter.filterType) {
                 case 'number':
                     switch (colFilter.type) {
@@ -1142,7 +1167,7 @@ export default defineComponent({
                     // defaults to min and max dates respectively
                     const dateFrom = new Date(colFilter.dateFrom ?? 0);
                     const dateTo = new Date(
-                        colFilter.dateTo ?? 8640000000000000
+                        colFilter.dateTo ?? 8640000000000000 // max date
                     );
                     const from = dateFrom
                         ? `${
@@ -1176,9 +1201,9 @@ export default defineComponent({
             // to implement quick filters, first need to split the search text on white space
             const searchVals = val.split(' ');
 
-            const sortedRows = this.gridApi.rowModel.rowsToDisplay;
-            this.columnApi;
-            const columns = this.columnApi
+            const sortedRows = this.agGridApi.rowModel.rowsToDisplay;
+            this.agColumnApi;
+            const columns = this.agColumnApi
                 .getAllDisplayedColumns()
                 .filter(
                     (column: any) =>
@@ -1186,9 +1211,9 @@ export default defineComponent({
                         column.colDef.filter === 'agNumberColumnFilter'
                 );
 
-            let filteredColumns: any = [];
+            let filteredColumns: string[] = [];
 
-            sortedRows.forEach((row: any) => {
+            sortedRows.forEach((row: RowNode) => {
                 let rowMatch = true;
                 let rowSql = '';
                 // each row must contain all of the split search values
@@ -1316,10 +1341,10 @@ export default defineComponent({
 
 export interface TableComponent {
     config: GridConfig;
-    gridOptions: any;
-    gridApi: any;
-    columnApi: any;
-    columnDefs: any;
+    agGridOptions: any;
+    agGridApi: any;
+    agColumnApi: any;
+    agColumnDefs: any;
     rowData: any;
     frameworkComponents: any;
     quicksearch: string;
@@ -1329,13 +1354,13 @@ export interface TableComponent {
         visibleRows: number;
     };
     filterStatus: string;
-    filterByExtent: any;
+    filterByExtent: boolean;
 }
 
-interface ColumnDefinition {
+export interface ColumnDefinition {
     field: string;
     headerName: string;
-    headerComponent: any;
+    headerComponent: string;
     headerComponentParams: any;
     headerTooltip?: string;
     alias?: string;
@@ -1344,9 +1369,14 @@ interface ColumnDefinition {
     minWidth?: number;
     filter?: string;
     floatingFilter?: boolean;
-    filterParams: {
-        comparator?: Function;
+    floatingFilterComponent?: string;
+    floatingFilterComponentParams?: {
+        suppressFilterButton: boolean;
+        stateManager: TableStateManager;
+        clearFilters?: Function;
+        rowData?: Attributes[];
     };
+    filterParams: FilterParams;
     cellRenderer: Function;
     cellRendererParams?: any;
     sortable: boolean;
@@ -1354,6 +1384,29 @@ interface ColumnDefinition {
     isSelector: boolean;
     lockPosition: boolean;
     suppressHeaderKeyboardEvent: Function;
+}
+
+// column definition for specialized columns (index, symbols, etc.)
+export interface SpecialColumnDefinition {
+    sortable: boolean;
+    filter: boolean;
+    lockPosition: boolean;
+    isStatic?: boolean;
+    valueGetter?: string;
+    suppressMovable?: boolean;
+    suppressMenu?: boolean;
+    floatingFilter?: any;
+    floatingFilterComponent?: string;
+    floatingFilterComponentParams?: {
+        suppressFilterButton: boolean;
+        stateManager: TableStateManager;
+        clearFilters?: Function;
+    };
+    pinned?: string;
+    maxWidth: number;
+    cellStyle: Function;
+    cellRenderer?: Function;
+    cellRendererParams?: any;
 }
 </script>
 

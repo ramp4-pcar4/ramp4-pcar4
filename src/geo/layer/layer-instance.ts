@@ -500,8 +500,7 @@ export class LayerInstance extends APIScope {
             columns: [],
             rows: [],
             fields: [],
-            oidField: 'error',
-            oidIndex: 0 // TODO determine if we need this anymore
+            oidField: 'error'
         });
     }
 
