@@ -351,10 +351,10 @@ export class FileUtils extends APIScope {
                 const latIdx = result.lat.indexOf(fields[i]);
                 const lonIdx = result.lon.indexOf(fields[i]);
 
-                if ((isNaN(n) || n < -90 || n > 90) && latIdx !== -1) {
+                if (latIdx !== -1 && (isNaN(n) || n < -90 || n > 90)) {
                     result.lat.splice(latIdx, 1);
                 }
-                if ((isNaN(n) || n < -180 || n > 180) && lonIdx !== -1) {
+                if (lonIdx !== -1 && (isNaN(n) || n < -180 || n > 180)) {
                     result.lon.splice(lonIdx, 1);
                 }
 

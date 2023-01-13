@@ -336,7 +336,7 @@ export interface AttributeSet {
 // https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-support-Field.html#type
 export interface FieldDefinition {
     name: string;
-    alias: string;
+    alias?: string;
     type: string;
     length?: number;
 }

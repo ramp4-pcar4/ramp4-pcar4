@@ -279,6 +279,7 @@ import { ColorPicker } from 'vue-accessible-color-picker';
 
 import { PanelInstance } from '@/api';
 import { LayerType } from '@/geo/api';
+import type { RampLayerConfig } from '@/geo/api';
 import { GlobalEvents } from '@/api/internal';
 import { WizardStore, WizardStep } from './store';
 
@@ -374,21 +375,21 @@ export default defineComponent({
             get() {
                 return this.$store.get(WizardStore.fileData);
             },
-            set(newValue) {
+            set(newValue: ArrayBuffer) {
                 this.$store.set(WizardStore.fileData, newValue);
             }
         },
         typeSelection: {
-            get() {
-                return this.$store.get(WizardStore.typeSelection);
+            get(): string {
+                return this.$store.get(WizardStore.typeSelection) as string;
             },
-            set(newValue) {
+            set(newValue: string) {
                 this.$store.set(WizardStore.typeSelection, newValue);
             }
         },
         layerInfo: {
-            get(): LayerInfo | undefined {
-                return this.$store.get(WizardStore.layerInfo);
+            get(): LayerInfo {
+                return this.$store.get(WizardStore.layerInfo) as LayerInfo;
             },
             set(newValue: LayerInfo) {
                 this.$store.set(WizardStore.layerInfo, newValue);
@@ -459,7 +460,7 @@ export default defineComponent({
             // re-enables the confirmation button if the layer name is not empty and sublayer selection is not required
             this.finishStep =
                 !this.layerInfo.configOptions.includes(`sublayers`) &&
-                this.layerInfo.config.name;
+                !!this.layerInfo.config.name;
         }
     },
 
@@ -522,7 +523,14 @@ export default defineComponent({
 
             if (!this.layerInfo || featureError) {
                 this.formatError = true;
-                this.layerInfo = { config: null, configOptions: [] };
+                this.layerInfo = {
+                    config: {
+                        id: 'Placeholder',
+                        layerType: LayerType.UNKNOWN,
+                        url: ''
+                    },
+                    configOptions: []
+                };
                 return;
             }
 
@@ -536,7 +544,10 @@ export default defineComponent({
         },
 
         async onConfigureContinue(data: object) {
-            const config = Object.assign(this.layerInfo!.config, data);
+            const config: RampLayerConfig = Object.assign(
+                this.layerInfo.config,
+                data
+            );
             // console.log('Config:', config);
             const layer = this.$iApi.geo.layer.createLayer(config);
             this.$iApi.geo.map.addLayer(layer);
@@ -550,7 +561,7 @@ export default defineComponent({
 
         // default options for fields selectors
         fieldOptions() {
-            return this.layerInfo!.fields.map((field: any) => {
+            return this.layerInfo.fields!.map((field: any) => {
                 return {
                     value: field.name,
                     label: field.alias || field.name
@@ -559,20 +570,18 @@ export default defineComponent({
         },
 
         // options for lat/long field selectors
-        latLonOptions(fieldName: string) {
-            return this.layerInfo?.latLonFields[fieldName]?.map(
-                (field: any) => {
-                    return {
-                        value: field,
-                        label: field
-                    };
-                }
-            );
+        latLonOptions(fieldName: 'lat' | 'lon') {
+            return this.layerInfo.latLonFields![fieldName].map((field: any) => {
+                return {
+                    value: field,
+                    label: field
+                };
+            });
         },
 
         // options for sublayers selector
         sublayerOptions() {
-            return this.layerInfo!.layers.map((layer: any, idx: number) => {
+            return this.layerInfo.layers!.map((layer: any, idx: number) => {
                 return {
                     label: `${layer.indent}${layer.name}`,
                     value:
@@ -591,7 +600,9 @@ export default defineComponent({
         },
 
         isFileLayer() {
-            return this.fileData || this.url.match(/\.(zip|csv|json|geojson)$/);
+            return (
+                this.fileData || this.url!.match(/\.(zip|csv|json|geojson)$/)
+            );
         },
 
         // sets an error message on an input field
