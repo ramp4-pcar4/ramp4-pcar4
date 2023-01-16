@@ -346,8 +346,13 @@ export interface TabularAttributeSet {
     rows: Array<Attributes>;
     fields: Array<FieldDefinition>;
     oidField: string;
-    // oidIndex: number; // TODO determine if we need this anymore
-    // renderer: BaseRenderer; // TODO determine if we need this anymore
+}
+
+export interface FilterParams {
+    comparator?: Function;
+    inRangeInclusive?: boolean;
+    textMatcher?: Function;
+    textFormatter?: Function;
 }
 
 export interface LegendSymbology {

@@ -9,6 +9,7 @@
             @input="minValChanged()"
             @keyup.enter="
                 if ($store.get('panel/mobileView')) {
+                    //@ts-ignore
                     $event?.target?.blur();
                 }
             "
@@ -25,6 +26,7 @@
             @input="maxValChanged()"
             @keyup.enter="
                 if ($store.get('panel/mobileView')) {
+                    //@ts-ignore
                     $event?.target?.blur();
                 }
             "
@@ -35,7 +37,9 @@
 </template>
 
 <script lang="ts">
+import type { FilterParams } from '@/geo/api';
 import { defineComponent } from 'vue';
+import type { ColumnDefinition } from '../table-component.vue';
 
 export default defineComponent({
     name: 'GridCustomNumberFilterV',
@@ -137,7 +141,7 @@ export default defineComponent({
         },
 
         onParentModelChanged(parentModel: any) {
-            if (parentModel === {}) {
+            if (!parentModel || Object.keys(parentModel).length === 0) {
                 this.minVal = '';
                 this.maxVal = '';
             }
@@ -157,8 +161,8 @@ export default defineComponent({
 export interface GridCustomNumberFilter {
     minVal: any;
     maxVal: any;
-    colDef: any;
-    params: any;
+    colDef: ColumnDefinition;
+    params: FilterParams;
 }
 </script>
 
