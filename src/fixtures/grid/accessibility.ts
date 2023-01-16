@@ -5,10 +5,10 @@ const HEADER_ROW_SELECTOR = '.ag-header-viewport .ag-header-row';
 
 export class GridAccessibilityManager {
     element: HTMLElement;
-    grid: HTMLElement;
+    agGrid: HTMLElement;
     headerRows: HTMLElement[];
-    gridApi: GridApi;
-    columnApi: ColumnApi;
+    agGridApi: GridApi;
+    agColumnApi: ColumnApi;
     mousedown = false;
 
     /**
@@ -44,14 +44,18 @@ export class GridAccessibilityManager {
      * Initializes focus lists and listeners for grid keyboard navigation.
      *
      * @param {HTMLElement} element The grid element
-     * @param {GridApi} gridApi The ag-grid grid api
-     * @param {ColumnApi} columnApi The ag-grid column api
+     * @param {GridApi} agGridApi The ag-grid grid api
+     * @param {ColumnApi} agColumnApi The ag-grid column api
      */
-    constructor(element: HTMLElement, gridApi: GridApi, columnApi: ColumnApi) {
+    constructor(
+        element: HTMLElement,
+        agGridApi: GridApi,
+        agColumnApi: ColumnApi
+    ) {
         this.element = element;
-        this.gridApi = gridApi;
-        this.columnApi = columnApi;
-        this.grid = this.element.querySelector(GRID_SELECTOR) as HTMLElement;
+        this.agGridApi = agGridApi;
+        this.agColumnApi = agColumnApi;
+        this.agGrid = this.element.querySelector(GRID_SELECTOR) as HTMLElement;
         this.headerRows = Array.prototype.slice.call(
             this.element.querySelectorAll(HEADER_ROW_SELECTOR)
         ) as HTMLElement[];
@@ -214,9 +218,9 @@ export class GridAccessibilityManager {
      * Initializes the handlers needed for click + drag scrolling
      */
     private initScrollListeners() {
-        this.grid.style.cursor = 'grab';
+        this.agGrid.style.cursor = 'grab';
 
-        this.grid.addEventListener('mousedown', (event: MouseEvent) => {
+        this.agGrid.addEventListener('mousedown', (event: MouseEvent) => {
             this.scrollMouseDownHandler(event);
         });
     }
@@ -225,8 +229,8 @@ export class GridAccessibilityManager {
      * Removes the handlers for click + drag scrolling
      */
     removeScrollListeners() {
-        this.grid.style.cursor = 'default';
-        this.grid.removeEventListener('mousedown', (event: MouseEvent) => {
+        this.agGrid.style.cursor = 'default';
+        this.agGrid.removeEventListener('mousedown', (event: MouseEvent) => {
             this.scrollMouseDownHandler(event);
         });
     }
@@ -244,7 +248,7 @@ export class GridAccessibilityManager {
         const scrollStart = scrollBar.scrollLeft;
         const mouseStart = event.clientX;
 
-        this.grid.style.cursor = 'grabbing';
+        this.agGrid.style.cursor = 'grabbing';
 
         // Handles mouse moving while click is held down
         const scrollMouseMoveHandler = (event: MouseEvent) => {
@@ -255,15 +259,18 @@ export class GridAccessibilityManager {
         // Removes the handlers that were set
         // Scroll ends when click is let go or when the cursor leaves the element
         const endDragScroll = () => {
-            this.grid.style.cursor = 'grab';
-            this.grid.removeEventListener('mousemove', scrollMouseMoveHandler);
-            this.grid.removeEventListener('mouseup', endDragScroll);
-            this.grid.removeEventListener('mouseleave', endDragScroll);
+            this.agGrid.style.cursor = 'grab';
+            this.agGrid.removeEventListener(
+                'mousemove',
+                scrollMouseMoveHandler
+            );
+            this.agGrid.removeEventListener('mouseup', endDragScroll);
+            this.agGrid.removeEventListener('mouseleave', endDragScroll);
         };
 
-        this.grid.addEventListener('mousemove', scrollMouseMoveHandler);
-        this.grid.addEventListener('mouseup', endDragScroll);
-        this.grid.addEventListener('mouseleave', endDragScroll);
+        this.agGrid.addEventListener('mousemove', scrollMouseMoveHandler);
+        this.agGrid.addEventListener('mouseup', endDragScroll);
+        this.agGrid.addEventListener('mouseleave', endDragScroll);
     }
 }
 
@@ -277,8 +284,8 @@ interface TabToNextHeaderParams {
     nextHeaderPosition: HeaderPosition | null;
     // The number of header rows present in the grid
     headerRowCount: number;
-    api: GridApi;
-    columnApi: ColumnApi;
+    agApi: GridApi;
+    agColumnApi: ColumnApi;
 }
 
 interface HeaderPosition {
@@ -324,8 +331,8 @@ interface TabToNextCellParams {
     previousCellPosition: CellPosition;
     // The cell the grid would normally pick as the next cell for navigation.
     nextCellPosition: CellPosition | null;
-    api: GridApi;
-    columnApi: ColumnApi;
+    agApi: GridApi;
+    agColumnApi: ColumnApi;
 }
 
 interface CellPosition {

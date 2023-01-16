@@ -346,8 +346,6 @@ export interface TabularAttributeSet {
     rows: Array<Attributes>;
     fields: Array<FieldDefinition>;
     oidField: string;
-    // oidIndex: number; // TODO determine if we need this anymore
-    // renderer: BaseRenderer; // TODO determine if we need this anymore
 }
 
 export interface LegendSymbology {

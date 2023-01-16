@@ -8,6 +8,7 @@
             v-model="filterValue"
             @keyup.enter="
                 if ($store.get('panel/mobileView')) {
+                    //@ts-ignore
                     $event?.target?.blur();
                 }
             "
@@ -22,7 +23,9 @@
 </template>
 
 <script lang="ts">
+import type { FilterParams } from '@/geo/api';
 import { defineComponent } from 'vue';
+import type { ColumnDefinition } from '../table-component.vue';
 
 export default defineComponent({
     name: 'GridCustomTextFilterV',
@@ -68,7 +71,7 @@ export default defineComponent({
         },
 
         onParentModelChanged(parentModel: any): void {
-            if (parentModel === {}) {
+            if (!parentModel || Object.keys(parentModel).length === 0) {
                 this.filterValue = '';
             }
         },
@@ -85,8 +88,8 @@ export default defineComponent({
 
 export interface GridCustomTextFilter {
     filterValue: string;
-    colDef: any;
-    params: any;
+    colDef: ColumnDefinition;
+    params: FilterParams;
 }
 </script>
 
