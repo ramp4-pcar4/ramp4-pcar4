@@ -328,6 +328,46 @@ export class FileUtils extends APIScope {
         });
     }
 
+    /**
+     * Returns all the fields from csv file that can be possible lat/long fields
+     * @param csvData the csv file data
+     * @param delimiter the delimiter in the data
+     */
+    filterCsvLatLonFields(csvData: any, delimiter = ',') {
+        const data: Array<Array<string>> = dsv
+            .dsvFormat(delimiter)
+            .parseRows(csvData);
+        const fields: Array<string> = data[0];
+        const result = {
+            lat: JSON.parse(JSON.stringify(fields)),
+            lon: JSON.parse(JSON.stringify(fields))
+        };
+
+        // loop through each field
+        // if there exists a value for a field that cannot be a lat/long value, we remove the field from the result
+        for (let i = 0; i < fields.length; i++) {
+            for (let j = 1; j < data.length; j++) {
+                const n = Number(data[j][i]);
+                const latIdx = result.lat.indexOf(fields[i]);
+                const lonIdx = result.lon.indexOf(fields[i]);
+
+                if ((isNaN(n) || n < -90 || n > 90) && latIdx !== -1) {
+                    result.lat.splice(latIdx, 1);
+                }
+                if ((isNaN(n) || n < -180 || n > 180) && lonIdx !== -1) {
+                    result.lon.splice(lonIdx, 1);
+                }
+
+                // if this field cannot be a lat or long field, don't check the rest of the entries
+                if (latIdx === -1 && lonIdx === -1) {
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
     // TODO general type cleanup. just trying to make it work for now
     async geoJsonToEsriJson(
         geoJson: any,
