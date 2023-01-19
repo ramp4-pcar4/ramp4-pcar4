@@ -34,17 +34,13 @@
     </panel-screen>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
 import type { PropType } from 'vue';
 import type { PanelInstance } from '@/api';
 
-export default defineComponent({
-    name: 'GazeboP2Screen1V',
-    props: {
-        panel: { type: Object as PropType<PanelInstance>, required: true },
-        greeting: { type: String }
-    }
+defineProps({
+    panel: { type: Object as PropType<PanelInstance>, required: true },
+    greeting: { type: String }
 });
 </script>
 

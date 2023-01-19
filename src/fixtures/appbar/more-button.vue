@@ -1,5 +1,5 @@
 <template>
-    <div class="appbar-item relative inset-x-0 w-full text-center">
+    <div class="appbar-item relative inset-x-0 w-full text-center" ref="el">
         <button
             type="button"
             class="text-gray-400 w-full h-48 focus:outline-none hover:text-white"
@@ -31,46 +31,55 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 
-export default defineComponent({
-    name: 'MoreAppbarButtonV',
-    props: {
-        position: {
-            type: String,
-            default: 'bottom-right'
-        },
-        tooltip: {
-            type: [String, Boolean],
-            default: false
-        },
-        tooltipPlacement: {
-            type: String,
-            default: 'bottom'
-        }
+const props = defineProps({
+    position: {
+        type: String,
+        default: 'bottom-right'
     },
-
-    data() {
-        return {
-            open: false
-        };
+    tooltip: {
+        type: [String, Boolean],
+        default: false
     },
-
-    mounted() {
-        window.addEventListener(
-            'click',
-            event => {
-                if (
-                    event.target instanceof HTMLElement &&
-                    !this.$el.contains(event.target)
-                ) {
-                    this.open = false;
-                }
-            },
-            { capture: true }
-        );
+    tooltipPlacement: {
+        type: String,
+        default: 'bottom'
     }
+});
+
+const open = ref(false);
+const el = ref(null as unknown as Element);
+
+onMounted(() => {
+    window.addEventListener(
+        'click',
+        event => {
+            if (
+                event.target instanceof HTMLElement &&
+                !el.value.contains(event.target)
+            ) {
+                open.value = false;
+            }
+        },
+        { capture: true }
+    );
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener(
+        'click',
+        event => {
+            if (
+                event.target instanceof HTMLElement &&
+                !el.value.contains(event.target)
+            ) {
+                open.value = false;
+            }
+        },
+        { capture: true }
+    );
 });
 </script>
 

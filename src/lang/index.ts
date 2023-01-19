@@ -37,6 +37,7 @@ const numberFormats = {
 
 export function i18n() {
     return createI18n({
+        legacy: false,
         // get the language of the page from the root `html` node
         locale: document.documentElement!.getAttribute('lang') || lang,
         fallbackLocale: lang,

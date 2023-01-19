@@ -29,8 +29,8 @@ class ExportScalebarFixture
             //  <imperial scale> mi/ft
 
             const fbScaleText = new fabric.Text(
-                this.$iApi.$vApp.$t('export.scaleBar.approx', [
-                    `${this.$iApi.$vApp.$n(sInfo[i].distance, 'number')}${
+                this.$iApi.$i18n.t('export.scaleBar.approx', [
+                    `${this.$iApi.$i18n.n(sInfo[i].distance, 'number')}${
                         sInfo[i].units
                     }`
                 ]),

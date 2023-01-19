@@ -4,122 +4,117 @@
         @leave="leave"
         name="panel-container"
         tag="div"
+        ref="el"
     >
         <!-- TODO: pass a corresponding fixture instance to the panel component as it can be useful -->
         <panel-container
-            v-for="panel in visible($iApi.screenSize)"
+            v-for="panel in visible(iApi.screenSize)"
             :key="`${panel.id}`"
             :panel="panel"
         ></panel-container>
     </transition-group>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
 import { GlobalEvents } from '@/api';
-
+import type { PanelInstance } from '@/api';
 import anime from 'animejs';
-import PanelContainerV from './panel-container.vue';
+import PanelContainer from './panel-container.vue';
+import type { InstanceAPI } from '@/api';
+import { computed, inject, onMounted, ref } from 'vue';
+import type { ComponentPublicInstance } from 'vue';
+import { useStore } from 'vuex';
 
+const store = useStore();
+const iApi = inject<InstanceAPI>('iApi');
+const el = ref(null as unknown as ComponentPublicInstance);
+
+const mobileMode = computed(() => store.get('panel/mobileView'));
+
+onMounted(() => {
+    // sync the `panel-stack` width into the store so that visible can get calculated
+    const resizeObserver = new ResizeObserver((entries: any) => {
+        // determine if app is in mobile mode (app container ONLY has the `xs` class on it,
+        // if it contains `sm` then the screen is too large)
+        const newMode = !(
+            iApi?.$vApp.$root?.$refs['app-size'] as HTMLElement
+        ).classList.contains('sm');
+        const oldMode = mobileMode.value;
+
+        // fire event when mobile mode changes
+        if (oldMode !== newMode) {
+            store.set('panel/mobileView', newMode);
+            iApi?.event.emit(GlobalEvents.RAMP_MOBILEVIEW_CHANGE, newMode);
+        }
+
+        store.set('panel/stackWidth', entries[0].contentRect.width);
+    });
+
+    resizeObserver.observe(el.value.$el);
+});
+
+const visible = (screenSize: string | null): PanelInstance[] | undefined =>
+    store.get('panel/getVisible', screenSize);
+
+const enter = (el: Element, done: () => void): void => {
+    animateTransition(el, done, [
+        [6, 0],
+        [0, 1]
+    ]);
+};
+
+const leave = (el: Element, done: () => {}): void => {
+    const [bbox, pbbox] = [
+        el.children[0].getBoundingClientRect(),
+        el.parentElement!.getBoundingClientRect()
+    ];
+
+    // the panel will be positioned `absolute` and it will screw up its dimensions
+    // to prevent this, set width/height/left manually before detaching the panel
+    (el as HTMLElement).style.width = `${bbox.width}px`;
+    (el as HTMLElement).style.height = `${bbox.height}px`;
+    (el as HTMLElement).style.left = `${bbox.left - pbbox.left}px`;
+
+    // without this, the FLIP transition won't work
+    (el as HTMLElement).style.position = 'absolute';
+
+    animateTransition(el, done, [
+        [0, -6],
+        [1, 0]
+    ]);
+};
+
+/**
+ * Animate transition between panel screen components by fading them in/out.
+ */
+const animateTransition = (
+    el: Element,
+    done: () => void,
+    values: number[][]
+): void => {
+    anime({
+        targets: el,
+        duration: 300,
+        translateY: {
+            value: values[0],
+            easing: 'cubicBezier(.5, .05, .1, .3)'
+        },
+        opacity: {
+            value: values[1],
+            duration: 250,
+            easing: 'cubicBezier(.5, .05, .1, .3)'
+        },
+        complete: done
+    });
+};
+
+// @ts-ignore
 declare class ResizeObserver {
     constructor(callback: Function);
     observe(target: Element): void;
     unobserve(target: Element): void;
     disconnect(): void;
 }
-
-export default defineComponent({
-    name: 'PanelStackV',
-    components: {
-        'panel-container': PanelContainerV
-    },
-
-    data() {
-        return {
-            visible: this.get('panel/getVisible'),
-            mobileMode: this.get('panel/mobileView')
-        };
-    },
-
-    mounted(): void {
-        // sync the `panel-stack` width into the store so that visible can get calculated
-        const resizeObserver = new ResizeObserver((entries: any) => {
-            // determine if app is in mobile mode (app container ONLY has the `xs` class on it,
-            // if it contains `sm` then the screen is too large)
-            const newMode = !(
-                this.$root?.$refs['app-size'] as HTMLElement
-            ).classList.contains('sm');
-            const oldMode = this.mobileMode;
-
-            // fire event when mobile mode changes
-            if (oldMode !== newMode) {
-                this.$store.set('panel/mobileView', newMode);
-                this.$iApi.event.emit(
-                    GlobalEvents.RAMP_MOBILEVIEW_CHANGE,
-                    newMode
-                );
-            }
-
-            this.$store.set('panel/stackWidth', entries[0].contentRect.width);
-        });
-
-        resizeObserver.observe(this.$el);
-    },
-
-    methods: {
-        enter(el: HTMLElement, done: () => void): void {
-            this.animateTransition(el, done, [
-                [6, 0],
-                [0, 1]
-            ]);
-        },
-
-        leave(el: HTMLElement, done: () => {}): void {
-            const [bbox, pbbox] = [
-                el.children[0].getBoundingClientRect(),
-                el.parentElement!.getBoundingClientRect()
-            ];
-
-            // the panel will be positioned `absolute` and it will screw up its dimensions
-            // to prevent this, set width/height/left manually before detaching the panel
-            el.style.width = `${bbox.width}px`;
-            el.style.height = `${bbox.height}px`;
-            el.style.left = `${bbox.left - pbbox.left}px`;
-
-            // without this, the FLIP transition won't work
-            el.style.position = 'absolute';
-
-            this.animateTransition(el, done, [
-                [0, -6],
-                [1, 0]
-            ]);
-        },
-
-        /**
-         * Animate transition between panel screen components by fading them in/out.
-         */
-        animateTransition(
-            el: HTMLElement,
-            done: () => void,
-            values: number[][]
-        ): void {
-            anime({
-                targets: el,
-                duration: 300,
-                translateY: {
-                    value: values[0],
-                    easing: 'cubicBezier(.5, .05, .1, .3)'
-                },
-                opacity: {
-                    value: values[1],
-                    duration: 250,
-                    easing: 'cubicBezier(.5, .05, .1, .3)'
-                },
-                complete: done
-            });
-        }
-    }
-});
 </script>
 
 <style lang="scss" scoped>

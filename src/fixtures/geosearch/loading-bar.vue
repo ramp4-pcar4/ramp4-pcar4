@@ -14,13 +14,7 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-    name: 'GeosearchLoadingBarV'
-});
-</script>
+<script setup lang="ts"></script>
 
 <style scoped>
 @keyframes progress-indeterminate {

@@ -5,10 +5,12 @@
             class="border-b w-full text-base py-8 outline-none focus:shadow-outline border-gray-600 h-full min-w-0"
             :placeholder="$t('geosearch.searchText')"
             :value="searchVal"
-            @input="onSearchTermChange($event.target.value)"
+            @input="
+                onSearchTermChange(($event.target as HTMLInputElement).value)
+            "
             @keyup.enter="
                 if ($store.get('panel/mobileView')) {
-                    $event?.target?.blur();
+                    ($event.target as HTMLInputElement).blur();
                 }
             "
             :aria-label="$t('geosearch.searchText')"
@@ -17,25 +19,20 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
 
 import { GeosearchStore } from './store';
 import { debounce } from 'throttle-debounce';
+import { useStore } from 'vuex';
 
-export default defineComponent({
-    data() {
-        return {
-            // fetch search value and actions from store
-            searchVal: this.get(GeosearchStore.searchVal),
-            setSearchTerm: this.call(GeosearchStore.setSearchTerm),
+const store = useStore();
 
-            // debounce function for search term change
-            onSearchTermChange: debounce(500, (searchTerm: string) => {
-                this.setSearchTerm(searchTerm);
-            })
-        };
-    }
+const searchVal = computed(() => store.get(GeosearchStore.searchVal));
+const setSearchTerm = (value: string) =>
+    store.dispatch(GeosearchStore.setSearchTerm, value);
+const onSearchTermChange = debounce(500, (searchTerm: string) => {
+    setSearchTerm(searchTerm);
 });
 </script>
 

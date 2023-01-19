@@ -4,7 +4,7 @@
             type="button"
             class="text-gray-500 hover:text-black focus:text-black p-8"
             :class="{ 'text-gray-700': active }"
-            :content="$t('panels.controls.back')"
+            :content="t('panels.controls.back')"
             v-tippy="{
                 placement: 'bottom',
                 theme: 'ramp4',
@@ -25,17 +25,13 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'BackV',
-    props: {
-        active: {
-            type: Boolean
-        }
-    }
+const props = defineProps({
+    active: Boolean
 });
+const { t } = useI18n();
 </script>
 
 <style lang="scss" scoped></style>

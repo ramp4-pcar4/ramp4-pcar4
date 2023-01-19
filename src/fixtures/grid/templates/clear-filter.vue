@@ -7,6 +7,7 @@
         v-tippy="{ placement: 'bottom' }"
         :disabled="!params.stateManager.filtered"
         tabindex="-1"
+        ref="el"
     >
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -29,71 +30,63 @@
     </button>
 </template>
 
-<script lang="ts">
-import { defineComponent, nextTick } from 'vue';
-import { directive as tippyDirective } from 'vue-tippy';
+<script setup lang="ts">
+import { nextTick, onMounted, onBeforeUnmount, ref } from 'vue';
 
-export default defineComponent({
-    name: 'GridClearFilterV',
-    directives: {
-        tippy: tippyDirective
-    },
-    props: ['params'],
-    async mounted() {
-        // need to hoist events to top level cell wrapper to be keyboard accessible
-        await nextTick();
-        const headerCell = this.$el.closest('.ag-header-cell');
-        const grid = headerCell.closest('.ag-pinned-left-header');
-        headerCell.addEventListener('keydown', async (e: KeyboardEvent) => {
-            if (e.key === 'Enter') {
-                e.stopPropagation();
-                this.clearFilters();
-                await nextTick();
+const props = defineProps(['params']);
+
+const el = ref(null as unknown as HTMLElement);
+
+const clearFilters = () => props.params.clearFilters();
+
+onMounted(async () => {
+    // need to hoist events to top level cell wrapper to be keyboard accessible
+    await nextTick();
+    const headerCell: HTMLElement = el.value.closest('.ag-header-cell')!;
+    const grid: HTMLElement = headerCell.closest('.ag-pinned-left-header')!;
+    headerCell.addEventListener('keydown', async (e: KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            e.stopPropagation();
+            clearFilters();
+            await nextTick();
+            (
                 grid.querySelector(
                     '.ag-header-cell.ag-floating-filter'
-                ).focus();
-            }
-        });
-
-        headerCell.addEventListener('focus', () => {
-            (this.$el as any)._tippy.show();
-        });
-        headerCell.addEventListener('blur', () => {
-            (this.$el as any)._tippy.hide();
-        });
-    },
-    beforeUnmount() {
-        const headerCell = this.$el.closest('.ag-header-cell');
-        const grid = headerCell.closest('.ag-pinned-left-header');
-        headerCell.removeEventListener('keydown', async (e: KeyboardEvent) => {
-            if (e.key === 'Enter') {
-                e.stopPropagation();
-                this.clearFilters();
-                await nextTick();
-                grid.querySelector(
-                    '.ag-header-cell.ag-floating-filter'
-                ).focus();
-            }
-        });
-
-        headerCell.removeEventListener('focus', () => {
-            (this.$el as any)._tippy.show();
-        });
-        headerCell.removeEventListener('blur', () => {
-            (this.$el as any)._tippy.hide();
-        });
-    },
-    methods: {
-        clearFilters(): void {
-            this.params.clearFilters();
-        },
-        setModel(): void {
-            return;
-        },
-        onParentModelChange(): void {
-            return;
+                ) as HTMLElement
+            ).focus();
         }
-    }
+    });
+
+    headerCell.addEventListener('focus', () => {
+        (el.value as any)._tippy.show();
+    });
+    headerCell.addEventListener('blur', () => {
+        (el.value as any)._tippy.hide();
+    });
+});
+
+onBeforeUnmount(() => {
+    const headerCell: HTMLElement = el.value.closest('.ag-header-cell')!;
+    const grid: HTMLElement = headerCell.closest('.ag-pinned-left-header')!;
+    headerCell.removeEventListener('keydown', async (e: KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            e.stopPropagation();
+            clearFilters();
+            await nextTick();
+            (
+                grid.querySelector(
+                    '.ag-header-cell.ag-floating-filter'
+                ) as HTMLElement
+            ).focus();
+        }
+    });
+
+    headerCell.removeEventListener('focus', () => {
+        (el.value as any)._tippy.show();
+    });
+    headerCell.removeEventListener('blur', () => {
+        (el.value as any)._tippy.hide();
+    });
 });
 </script>
 

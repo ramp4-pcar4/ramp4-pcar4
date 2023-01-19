@@ -5,11 +5,7 @@
             class="text-gray-500 hover:text-black focus:text-black p-8"
             :class="{ 'text-gray-700': active }"
             :content="
-                $t(
-                    this.active
-                        ? 'panels.controls.unpin'
-                        : 'panels.controls.pin'
-                )
+                $t(active ? 'panels.controls.unpin' : 'panels.controls.pin')
             "
             v-tippy="{ placement: 'bottom', hideOnClick: false }"
         >
@@ -27,16 +23,9 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-    name: 'PinV',
-    props: {
-        active: {
-            type: Boolean
-        }
-    }
+<script setup lang="ts">
+const props = defineProps({
+    active: Boolean
 });
 </script>
 

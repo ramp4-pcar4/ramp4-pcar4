@@ -23,16 +23,9 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-    name: 'MinimizeV',
-    props: {
-        active: {
-            type: Boolean
-        }
-    }
+<script setup lang="ts">
+const props = defineProps({
+    active: Boolean
 });
 </script>
 

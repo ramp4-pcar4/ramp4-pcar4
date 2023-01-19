@@ -76,7 +76,7 @@ Example usage of number formatting:
 
 ```ts
 let value = 1000.119;
-let str = rInstance.$vApp.$n(value, 'number');
+let str = rInstance.$i18n.n(value, 'number');
 console.log(str);
 // 1000.119 (for en)
 // 1000,119(for fr)
@@ -86,7 +86,7 @@ Localization options can also be passed in when the formatting function is calle
 
 ```ts
 let value = 1000.119;
-let str = rInstance.$vApp.$n(value, 'number', {
+let str = rInstance.$i18n.n(value, 'number', {
     maximumFractionDigits: 1,
     useGrouping: true
 } as any);

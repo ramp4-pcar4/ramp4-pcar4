@@ -8,33 +8,37 @@
 
 <script lang="ts">
 import '@/styles/main.css';
-import { defineComponent } from 'vue';
+import { defineComponent, getCurrentInstance, onMounted } from 'vue';
 import Shell from '@/components/shell.vue';
-
+// @ts-ignore
 import ro from '@/scripts/resize-observer.js';
 import 'tippy.js/animations/scale.css';
 import { setDefaultProps } from 'vue-tippy';
 
 export default defineComponent({
+    name: 'App',
     components: { Shell },
-    mounted() {
-        // let ResizeObserver observe the app div
-        // it applies 'xs' 'sm' 'md' and 'lg' classes to the div depending on the size
-        ro.observe(this.$refs['app-size']);
-        // Set tooltip defaults, theme does not get applied properly in prod builds if setting the defaults using vue-tippy
-        // This bypasses the wrapper and sets the defaults at the tippy.js level
-        setDefaultProps({
-            aria: {
-                content: 'labelledby'
-            },
-            theme: 'ramp4',
-            animation: 'scale',
-            inertia: true,
-            trigger: 'mouseenter manual focus',
-            touch: ['hold', 200],
-            delay: [300, 0],
-            // needed to have tooltips in fullscreen, by default it appends to document.body
-            appendTo: this.$el
+    setup() {
+        const instance = getCurrentInstance();
+        onMounted(() => {
+            // let ResizeObserver observe the app div
+            // it applies 'xs' 'sm' 'md' and 'lg' classes to the div depending on the size
+            ro.observe(instance?.proxy?.$refs['app-size']);
+            // Set tooltip defaults, theme does not get applied properly in prod builds if setting the defaults using vue-tippy
+            // This bypasses the wrapper and sets the defaults at the tippy.js level
+            setDefaultProps({
+                aria: {
+                    content: 'labelledby'
+                },
+                theme: 'ramp4',
+                animation: 'scale',
+                inertia: true,
+                trigger: 'mouseenter manual focus',
+                touch: ['hold', 200],
+                delay: [300, 0],
+                // needed to have tooltips in fullscreen, by default it appends to document.body
+                appendTo: instance?.proxy?.$el
+            });
         });
     }
 });

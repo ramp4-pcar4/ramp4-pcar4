@@ -220,7 +220,7 @@ export class MapCaptionAPI extends APIScope {
 
         this.$iApi.$vApp.$store.set(MapCaptionStore.setScale, {
             width: `${scaleInfo.pixels}px`,
-            label: `${this.$iApi.$vApp.$n(scaleInfo.distance, 'number')}${
+            label: `${this.$iApi.$i18n.n(scaleInfo.distance, 'number')}${
                 scaleInfo.units
             }`,
             isImperialScale: isImperialScale
@@ -373,23 +373,23 @@ export class MapCaptionAPI extends APIScope {
         const mx = Math.floor(Math.abs((lon - dx) * 60));
         const sx = Math.floor((Math.abs(lon) - Math.abs(dx) - mx / 60) * 3600);
 
-        return `${this.$iApi.$vApp.$n(
+        return `${this.$iApi.$i18n.n(
             Math.abs(dy),
             'number'
-        )}${degreeSymbol} ${this.$iApi.$vApp.$n(my, 'number', {
+        )}${degreeSymbol} ${this.$iApi.$i18n.n(my, 'number', {
             minimumIntegerDigits: 2
-        } as any)}' ${this.$iApi.$vApp.$n(sy, 'number', {
+        } as any)}' ${this.$iApi.$i18n.n(sy, 'number', {
             minimumIntegerDigits: 2
-        } as any)}" ${this.$iApi.$vApp.$t(
+        } as any)}" ${this.$iApi.$i18n.t(
             'map.coordinates.' + (lat > 0 ? 'north' : 'south')
-        )} | ${this.$iApi.$vApp.$n(
+        )} | ${this.$iApi.$i18n.n(
             Math.abs(dx),
             'number'
-        )}${degreeSymbol} ${this.$iApi.$vApp.$n(mx, 'number', {
+        )}${degreeSymbol} ${this.$iApi.$i18n.n(mx, 'number', {
             minimumIntegerDigits: 2
-        } as any)}' ${this.$iApi.$vApp.$n(sx, 'number', {
+        } as any)}' ${this.$iApi.$i18n.n(sx, 'number', {
             minimumIntegerDigits: 2
-        } as any)}" ${this.$iApi.$vApp.$t(
+        } as any)}" ${this.$iApi.$i18n.t(
             'map.coordinates.' + (0 > lon ? 'west' : 'east')
         )}`;
     }
@@ -419,23 +419,23 @@ export class MapCaptionAPI extends APIScope {
         const dx = Math.floor(Math.abs(lon)) * (lon < 0 ? -1 : 1);
         const mx = Math.abs((lon - dx) * 60);
 
-        return `${this.$iApi.$vApp.$n(
+        return `${this.$iApi.$i18n.n(
             Math.abs(dy),
             'number'
-        )}${degreeSymbol} ${this.$iApi.$vApp.$n(my, 'number', {
+        )}${degreeSymbol} ${this.$iApi.$i18n.n(my, 'number', {
             minimumIntegerDigits: 2,
             minimumFractionDigits: 5,
             maximumFractionDigits: 5
-        } as any)} ${this.$iApi.$vApp.$t(
+        } as any)} ${this.$iApi.$i18n.t(
             'map.coordinates.' + (lat > 0 ? 'north' : 'south')
-        )} | ${this.$iApi.$vApp.$n(
+        )} | ${this.$iApi.$i18n.n(
             Math.abs(dx),
             'number'
-        )}${degreeSymbol} ${this.$iApi.$vApp.$n(mx, 'number', {
+        )}${degreeSymbol} ${this.$iApi.$i18n.n(mx, 'number', {
             minimumIntegerDigits: 2,
             minimumFractionDigits: 5,
             maximumFractionDigits: 5
-        } as any)} ${this.$iApi.$vApp.$t(
+        } as any)} ${this.$iApi.$i18n.t(
             'map.coordinates.' + (0 > lon ? 'west' : 'east')
         )}`;
     }
@@ -462,17 +462,17 @@ export class MapCaptionAPI extends APIScope {
         const dy = Math.abs(lat);
         const dx = Math.abs(lon);
 
-        return `${this.$iApi.$vApp.$n(dy, 'number', {
+        return `${this.$iApi.$i18n.n(dy, 'number', {
             minimumIntegerDigits: 2,
             minimumFractionDigits: 5,
             maximumFractionDigits: 5
-        } as any)}${degreeSymbol} ${this.$iApi.$vApp.$t(
+        } as any)}${degreeSymbol} ${this.$iApi.$i18n.t(
             'map.coordinates.' + (lat > 0 ? 'north' : 'south')
-        )} | ${this.$iApi.$vApp.$n(dx, 'number', {
+        )} | ${this.$iApi.$i18n.n(dx, 'number', {
             minimumIntegerDigits: 2,
             minimumFractionDigits: 5,
             maximumFractionDigits: 5
-        } as any)}${degreeSymbol} ${this.$iApi.$vApp.$t(
+        } as any)}${degreeSymbol} ${this.$iApi.$i18n.t(
             'map.coordinates.' + (0 > lon ? 'west' : 'east')
         )}`;
     }
@@ -491,13 +491,10 @@ export class MapCaptionAPI extends APIScope {
             p
         );
 
-        return `${this.$iApi.$vApp.$n(
+        return `${this.$iApi.$i18n.n(
             Math.floor(projectedPoint.x),
             'number'
-        )} m | ${this.$iApi.$vApp.$n(
-            Math.floor(projectedPoint.y),
-            'number'
-        )} m`;
+        )} m | ${this.$iApi.$i18n.n(Math.floor(projectedPoint.y), 'number')} m`;
     }
 
     /**
@@ -514,15 +511,15 @@ export class MapCaptionAPI extends APIScope {
             p
         );
 
-        return `${this.$iApi.$vApp.$n(
+        return `${this.$iApi.$i18n.n(
             Math.abs(Math.floor(projectedPoint.x)),
             'number'
-        )} m ${this.$iApi.$vApp.$t(
+        )} m ${this.$iApi.$i18n.t(
             'map.coordinates.' + (0 > projectedPoint.x ? 'west' : 'east')
-        )} | ${this.$iApi.$vApp.$n(
+        )} | ${this.$iApi.$i18n.n(
             Math.abs(Math.floor(projectedPoint.y)),
             'number'
-        )} m ${this.$iApi.$vApp.$t(
+        )} m ${this.$iApi.$i18n.t(
             'map.coordinates.' + (projectedPoint.y > 0 ? 'north' : 'south')
         )}`;
     }
@@ -552,19 +549,19 @@ export class MapCaptionAPI extends APIScope {
             p
         );
 
-        return `${this.$iApi.$vApp.$n(zone, 'number', {
+        return `${this.$iApi.$i18n.n(zone, 'number', {
             minimumIntegerDigits: 2
-        } as any)} ${this.$iApi.$vApp.$t(
+        } as any)} ${this.$iApi.$i18n.t(
             'map.coordinates.' + (lat > 0 ? 'north' : 'south')
-        )} ${this.$iApi.$vApp.$n(
+        )} ${this.$iApi.$i18n.n(
             Math.floor(projectedPoint.x),
             'number'
-        )} m${this.$iApi.$vApp.$t(
+        )} m${this.$iApi.$i18n.t(
             'map.coordinates.east'
-        )} | ${this.$iApi.$vApp.$n(
+        )} | ${this.$iApi.$i18n.n(
             Math.abs(Math.floor(projectedPoint.y)),
             'number'
-        )} m${this.$iApi.$vApp.$t('map.coordinates.north')}`;
+        )} m${this.$iApi.$i18n.t('map.coordinates.north')}`;
     }
 
     /**
@@ -581,9 +578,9 @@ export class MapCaptionAPI extends APIScope {
             p
         );
 
-        return `${this.$iApi.$vApp.$n(
+        return `${this.$iApi.$i18n.n(
             projectedPoint.x,
             'number'
-        )} | ${this.$iApi.$vApp.$n(projectedPoint.y, 'number')}`;
+        )} | ${this.$iApi.$i18n.n(projectedPoint.y, 'number')}`;
     }
 }

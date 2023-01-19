@@ -35,18 +35,10 @@
     </dropdown-menu>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-    name: 'NavAppbarButtonV',
-    methods: {
-        // TODO: Revisit this when designing the gear icon menu
-        doAThing() {
-            console.log('PLACEHOLDER BUTTON CLICKED');
-        }
-    }
-});
+<script setup lang="ts">
+const doAThing = () => {
+    console.log('PLACEHOLDER BUTTON CLICKED');
+};
 </script>
 
 <style lang="scss" scoped></style>

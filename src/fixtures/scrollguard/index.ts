@@ -9,7 +9,7 @@ class ScrollguardFixture extends ScrollguardAPI {
         // console.log(`[fixture] ${this.id} added`);
         // Manually add lang entries to i18n
         Object.entries(messages).forEach(value =>
-            (<any>this.$vApp.$i18n).mergeLocaleMessage(...value)
+            (<any>this.$iApi.$i18n).mergeLocaleMessage(...value)
         );
 
         this.$vApp.$store.registerModule('scrollguard', scrollguard());

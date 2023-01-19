@@ -6,6 +6,7 @@
         v-tippy="{ placement: 'top' }"
         @click="openDetails"
         tabindex="-1"
+        ref="el"
     >
         <svg
             class="m-auto"
@@ -22,70 +23,62 @@
     </button>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
+<script setup lang="ts">
+import { inject, onBeforeUnmount, onMounted, ref } from 'vue';
 import { GlobalEvents } from '@/api/internal';
+import type { InstanceAPI } from '@/api/internal';
 import { IdentifyResultFormat } from '@/geo/api';
-import { directive as tippyDirective } from 'vue-tippy';
 
-export default defineComponent({
-    name: 'DetailsButtonRendererV',
-    props: ['params'],
-    directives: {
-        tippy: tippyDirective
-    },
-    mounted() {
-        // need to hoist events to top level cell wrapper to be keyboard accessible
-        this.params.eGridCell.addEventListener(
-            'keydown',
-            (e: KeyboardEvent) => {
-                if (e.key === 'Enter') {
-                    this.openDetails();
-                }
-            }
-        );
+const props = defineProps(['params']);
 
-        this.params.eGridCell.addEventListener('focus', () => {
-            (this.$el as any)._tippy.show();
-        });
-        this.params.eGridCell.addEventListener('blur', () => {
-            (this.$el as any)._tippy.hide();
-        });
-    },
+const iApi = inject<InstanceAPI>('iApi')!;
+const el = ref(null as unknown as HTMLElement);
 
-    beforeUnmount() {
-        this.params.eGridCell.removeEventListener(
-            'keydown',
-            (e: KeyboardEvent) => {
-                if (e.key === 'Enter') {
-                    this.openDetails();
-                }
-            }
-        );
+const openDetails = () => {
+    let data = Object.assign({}, props.params.data);
+    delete data['rvInteractive'];
+    delete data['rvSymbol'];
 
-        this.params.eGridCell.removeEventListener('focus', () => {
-            (this.$el as any)._tippy.show();
-        });
-        this.params.eGridCell.removeEventListener('blur', () => {
-            (this.$el as any)._tippy.hide();
-        });
-    },
+    // grid only supports esri features at the moment, so we hardcode that format
+    iApi.event.emit(GlobalEvents.DETAILS_TOGGLE, {
+        data: data,
+        uid: props.params.uid,
+        format: IdentifyResultFormat.ESRI
+    });
+};
 
-    methods: {
-        openDetails() {
-            let data = Object.assign({}, this.params.data);
-            delete data['rvInteractive'];
-            delete data['rvSymbol'];
-
-            // grid only supports esri features at the moment, so we hardcode that format
-            this.$iApi.event.emit(GlobalEvents.DETAILS_TOGGLE, {
-                data: data,
-                uid: this.params.uid,
-                format: IdentifyResultFormat.ESRI
-            });
+onMounted(() => {
+    // need to hoist events to top level cell wrapper to be keyboard accessible
+    props.params.eGridCell.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            openDetails();
         }
-    }
+    });
+
+    props.params.eGridCell.addEventListener('focus', () => {
+        (el.value as any)._tippy.show();
+    });
+    props.params.eGridCell.addEventListener('blur', () => {
+        (el.value as any)._tippy.hide();
+    });
+});
+
+onBeforeUnmount(() => {
+    props.params.eGridCell.removeEventListener(
+        'keydown',
+        (e: KeyboardEvent) => {
+            if (e.key === 'Enter') {
+                openDetails();
+            }
+        }
+    );
+
+    props.params.eGridCell.removeEventListener('focus', () => {
+        (el.value as any)._tippy.show();
+    });
+    props.params.eGridCell.removeEventListener('blur', () => {
+        (el.value as any)._tippy.hide();
+    });
 });
 </script>
 

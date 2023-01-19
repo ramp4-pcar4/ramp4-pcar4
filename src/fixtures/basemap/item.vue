@@ -94,38 +94,38 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed, inject } from 'vue';
 import type { PropType } from 'vue';
 import type { RampBasemapConfig, RampTileSchemaConfig } from '@/geo/api';
 
 import { ConfigStore } from '@/store/modules/config';
+import type { InstanceAPI } from '@/api';
+import { useStore } from 'vuex';
 
-export default defineComponent({
-    name: 'BasemapItemV',
-    props: {
-        basemap: {
-            type: Object as PropType<RampBasemapConfig>,
-            required: true
-        },
-        tileSchema: {
-            type: Object as PropType<RampTileSchemaConfig>,
-            required: true
-        }
+const iApi = inject<InstanceAPI>('iApi');
+const store = useStore();
+
+defineProps({
+    basemap: {
+        type: Object as PropType<RampBasemapConfig>,
+        required: true
     },
-    data() {
-        return {
-            selectedBasemap: this.get(ConfigStore.getActiveBasemapConfig)
-        };
-    },
-    methods: {
-        selectBasemap(basemap: any) {
-            if (basemap.id !== this.selectedBasemap.id) {
-                this.$iApi.geo.map.setBasemap(basemap.id);
-            }
-        }
+    tileSchema: {
+        type: Object as PropType<RampTileSchemaConfig>,
+        required: true
     }
 });
+
+const selectedBasemap = computed<RampBasemapConfig>(
+    () => store.get(ConfigStore.getActiveBasemapConfig)!
+);
+
+const selectBasemap = (basemap: any) => {
+    if (basemap.id !== selectedBasemap.value.id) {
+        iApi?.geo.map.setBasemap(basemap.id);
+    }
+};
 </script>
 
 <style lang="scss" scoped>

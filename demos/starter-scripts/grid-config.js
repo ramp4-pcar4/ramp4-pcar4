@@ -195,7 +195,7 @@ rInstance.$element.component('Details-Default-Template-Esri', {
                 helper[key] = {
                     value:
                         typeof helper[key] === 'number'
-                            ? this.$iApi.$vApp.$n(helper[key], 'number')
+                            ? this.$iApi.$i18n.n(helper[key], 'number')
                             : helper[key],
                     alias: aliases[key] || key
                 };
