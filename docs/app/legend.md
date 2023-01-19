@@ -93,7 +93,7 @@ Additionally, controls will be disabled if the layer item does not support them.
 A section item is a legend item that is not bound to a layer. Section items can be used to group collections of legend items, as well as display information that can take the format of title, text, image, Markdown, or custom HTML template.
 
 ## Configuration
-> Note that in the following examples, the `layerId` represents the ID of the layer previously added to the map. [See the documentation for Layers](#) to understand how to add a layer to the map through the configuration file (TODO).
+> Note that in the following examples, the `layerId` represents the ID of the layer previously added to the map. [See the documentation for Layers](../configuration/layer-config.md) to understand how to add a layer to the map through the configuration file.
 
 The legend, like most other fixtures, can be configured directly through the main configuration file under the `fixtures` object. A very simple configuration file below shows where the legend configuration object should be placed:
 
@@ -233,6 +233,9 @@ The following is an example of a section item containing two layer items in the 
     ]
 }
 ```
+
+## Autolegend
+The legend can also be created automatically, without specifying a configuration, via the autolegend fixture. When enabled, this fixture will create a layer item in the legend for each layer defined in the layers section of the config. If a legend configuration is specified and the autolegend fixture is also enabled, the automatically created layer items will appear at the end of the legend (after all the configured items).
 
 ## CRUD API
 The CRUD (Create, Read, Update, Delete) API for the legend provides an interface that is able to create, read, update, and delete legend items.

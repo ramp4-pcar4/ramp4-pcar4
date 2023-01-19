@@ -23,7 +23,11 @@ export class LegendAPI extends FixtureInstance {
             ];
         this.$vApp.$store.set(LegendStore.headerControls, controls);
 
-        if (!legendConfig || !legendConfig.root.children) {
+        if (
+            !legendConfig ||
+            !legendConfig.root ||
+            !legendConfig.root.children
+        ) {
             return;
         }
 
@@ -150,10 +154,12 @@ export class LegendAPI extends FixtureInstance {
             layer
                 .getLayerTree()
                 .children.map(childNode => this._treeWalker(layer, childNode))
-                .map(childConf => this.addItem(childConf, item as unknown as LegendItem));
+                .map(childConf =>
+                    this.addItem(childConf, item as unknown as LegendItem)
+                );
         }
 
-        item.treeGrown = true
+        item.treeGrown = true;
 
         // add the layer item to store
         // will be in a placeholder state until the layer is loaded
