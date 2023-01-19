@@ -14,7 +14,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
+import type { ColumnDefinition, FilterParams } from '../table-component.vue';
 
 export default defineComponent({
     name: 'GridCustomSelectorFilterV',
@@ -82,7 +83,7 @@ export default defineComponent({
         },
 
         onParentModelChanged(parentModel: any) {
-            if (parentModel === {}) {
+            if (!parentModel || Object.keys(parentModel).length === 0) {
                 this.selectedOption = '';
             }
         },
@@ -99,9 +100,9 @@ export default defineComponent({
 
 export interface GridCustomSelectorFilter {
     selectedOption: string;
-    colDef: any;
+    colDef: ColumnDefinition;
     options: any;
-    params: any;
+    params: FilterParams;
 }
 </script>
 

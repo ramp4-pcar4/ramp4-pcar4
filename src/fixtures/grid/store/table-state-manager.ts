@@ -27,7 +27,6 @@ export default class TableStateManager {
     /**
      * Parses any given configurations of columns.
      *
-     * @returns
      * @memberof TableStateManager
      */
     parsecolumns() {
@@ -45,10 +44,10 @@ export default class TableStateManager {
      *
      * @param {*} colDefField
      * @param {string} range
-     * @returns
+     * @returns {string | number}
      * @memberof TableStateManager
      */
-    getColumnFilterValue(colDefField: any, range?: string) {
+    getColumnFilterValue(colDefField: any, range?: string): string | number {
         const filter = this._columns[colDefField].filter;
         if (range === 'min') {
             return filter.min;
