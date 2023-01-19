@@ -4,6 +4,7 @@
         :class="panel.expanded ? 'flex-grow max-w-full' : ''"
         :style="panel.style"
         :data-cy="panel.id"
+        ref="componentEl"
     >
         <!-- this renders a panel screen which is currently in view -->
 
@@ -19,80 +20,67 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, type PropType } from 'vue';
+<script setup lang="ts">
+import { ref } from 'vue';
+import type { PropType } from 'vue';
 import anime from 'animejs';
 import type { PanelInstance } from '@/api';
 
-export default defineComponent({
-    name: 'PanelContainerV',
-    props: {
-        panel: {
-            type: Object as PropType<PanelInstance>,
-            required: true
-        }
-    },
-
-    data() {
-        return {
-            // indicates if the transition should be skipped
-            skipTransition: false
-        };
-    },
-
-    methods: {
-        enter(el: HTMLElement, done: () => void): void {
-            this.animateTransition(el, done, [0, 1]);
-        },
-
-        beforeLeave(el: HTMLElement): void {
-            // this will also trigger when the loading component is transitioning out; in such cases skip executing this function
-            if (el.classList.contains('screen-spinner')) {
-                return;
-            }
-
-            // if the screen component is already loaded; if so, skip the transition
-            this.skipTransition = this.panel.isScreenLoaded(
-                this.panel.route.screen
-            );
-
-            // with transition, even if it's instanteneous, there is that annoying flicker when the focus ring is set
-            // just before the component is removed from DOM; supress the focus ring on the screen component just before `leave` event
-            this.$el
-                .querySelectorAll('[focus-item')
-                .forEach((element: HTMLElement) =>
-                    element.classList.remove('default-focus-style')
-                );
-        },
-
-        leave(el: HTMLElement, done: () => void): void {
-            this.animateTransition(el, done, [1, 0]);
-        },
-
-        /**
-         * Animate transition between panel screen components by fading them in/out.
-         */
-        animateTransition(
-            el: HTMLElement,
-            done: () => void,
-            value: number[]
-        ): void {
-            if (this.skipTransition) {
-                return done();
-            }
-
-            anime({
-                targets: el,
-                opacity: {
-                    value,
-                    duration: 400,
-                    easing: 'cubicBezier(.5, .05, .1, .3)'
-                },
-                complete: done
-            });
-        }
+const componentEl = ref(null as unknown as Element);
+const props = defineProps({
+    panel: {
+        type: Object as PropType<PanelInstance>,
+        required: true
     }
 });
+
+const skipTransition = ref(false);
+
+const animateTransition = (
+    el: HTMLElement,
+    done: () => void,
+    value: number[]
+): void => {
+    if (skipTransition.value) {
+        return done();
+    }
+
+    anime({
+        targets: el,
+        opacity: {
+            value,
+            duration: 400,
+            easing: 'cubicBezier(.5, .05, .1, .3)'
+        },
+        complete: done
+    });
+};
+
+const enter = (el: HTMLElement, done: () => void): void => {
+    animateTransition(el, done, [0, 1]);
+};
+
+const beforeLeave = (el: HTMLElement): void => {
+    // this will also trigger when the loading component is transitioning out; in such cases skip executing this function
+    if (el.classList.contains('screen-spinner')) {
+        return;
+    }
+
+    // if the screen component is already loaded; if so, skip the transition
+    skipTransition.value = props.panel.isScreenLoaded(props.panel.route.screen);
+
+    // with transition, even if it's instanteneous, there is that annoying flicker when the focus ring is set
+    // just before the component is removed from DOM; supress the focus ring on the screen component just before `leave` event
+    componentEl.value
+        .querySelectorAll('[focus-item')
+        .forEach((element: Element) =>
+            element.classList.remove('default-focus-style')
+        );
+};
+
+const leave = (el: HTMLElement, done: () => void): void => {
+    animateTransition(el, done, [0, 1]);
+};
 </script>
 
 <style lang="scss" scoped></style>

@@ -11,7 +11,7 @@
                     class="bg-white opacity-0 focus:opacity-100 z-50 shadow-md px-10"
                     @click="openKeyboardInstructions"
                 >
-                    {{ $t('keyboardInstructions.open') }}
+                    {{ t('keyboardInstructions.open') }}
                 </button>
             </div>
             <keyboard-instructions-modal></keyboard-instructions-modal>
@@ -19,47 +19,36 @@
                 class="panel-stack sm:flex absolute inset-0 overflow-hidden sm:p-12 z-10 sm:pl-80 xs:pl-40 sm:pb-48 xs:pb-28 xs:pr-0 sm:pr-40"
             ></panel-stack>
             <notification-floating-button
-                v-if="!appbarFixture"
+                v-if="!store.get(`fixture/items@appbar`)"
             ></notification-floating-button>
             <map-caption class="z-30"></map-caption>
         </div>
 
-        <esri-map v-if="started"></esri-map>
+        <esri-map v-if="store.get('app/started')"></esri-map>
         <div v-else class="w-full h-full">
             <div class="spinner relative inset-x-1/2 inset-y-9/20"></div>
         </div>
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import EsriMapV from '@/components/map/esri-map.vue';
-import PanelStackV from '@/components/panel-stack/panel-stack.vue';
-import MapCaptionV from '@/components/map/map-caption.vue';
-import NotificationsFloatingButtonV from '@/components/notification-center/floating-button.vue';
-import KeyboardInstructionsModalV from './keyboard-instructions.vue';
+<script setup lang="ts">
+import EsriMap from '@/components/map/esri-map.vue';
+import PanelStack from '@/components/panel-stack/panel-stack.vue';
+import MapCaption from '@/components/map/map-caption.vue';
+import NotificationFloatingButton from '@/components/notification-center/floating-button.vue';
+import KeyboardInstructionsModal from './keyboard-instructions.vue';
+import { inject } from 'vue';
+import { useStore } from 'vuex';
+import type { InstanceAPI } from '@/api';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'Shell',
-    components: {
-        'esri-map': EsriMapV,
-        'panel-stack': PanelStackV,
-        'map-caption': MapCaptionV,
-        'notification-floating-button': NotificationsFloatingButtonV,
-        'keyboard-instructions-modal': KeyboardInstructionsModalV
-    },
-    data() {
-        return {
-            appbarFixture: this.get(`fixture/items@appbar`),
-            started: this.get('app/started')
-        };
-    },
-    methods: {
-        openKeyboardInstructions() {
-            this.$iApi.event.emit('openKeyboardInstructions');
-        }
-    }
-});
+const iApi = inject<InstanceAPI>('iApi');
+const store = useStore();
+const { t } = useI18n();
+
+const openKeyboardInstructions = () => {
+    iApi?.event.emit('openKeyboardInstructions');
+};
 </script>
 
 <style lang="scss" scoped>

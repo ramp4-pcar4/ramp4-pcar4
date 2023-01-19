@@ -32,7 +32,7 @@
             )"
             :key="col.headerName"
             v-on:click="
-                columnApi.setColumnVisible(col.field, col.hide);
+                columnApi?.setColumnVisible(col.field, col.hide);
                 col.hide = !col.hide;
             "
             href="javascript:;"
@@ -58,14 +58,9 @@
     </dropdown-menu>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-    name: 'GridColumnDropdownV',
-    props: {
-        columnDefs: Array,
-        columnApi: Object
-    }
+<script setup lang="ts">
+defineProps({
+    columnDefs: { type: Array<any>, required: true },
+    columnApi: { type: Object }
 });
 </script>

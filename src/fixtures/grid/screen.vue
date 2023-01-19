@@ -4,7 +4,6 @@
         <template #content>
             <table-component
                 class="rv-grid"
-                ref="rvGrid"
                 :layerId="currentId"
                 :layerUid="currentUid"
                 :panel="panel"
@@ -13,52 +12,31 @@
     </panel-screen>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
-
-import { PanelInstance } from '@/api';
-import GridTableComponentV from '@/fixtures/grid/table-component.vue';
-import MinimizeV from '@/components/panel-stack/controls/minimize.vue';
+<script setup lang="ts">
+import { computed, inject, onBeforeMount, ref } from 'vue';
+import { PanelInstance, type InstanceAPI } from '@/api';
+import TableComponent from '@/fixtures/grid/table-component.vue';
 import { GridStore } from './store';
+import { useStore } from 'vuex';
 
-import { LayerStore } from '@/store/modules/layer';
-
-export default defineComponent({
-    props: {
-        panel: {
-            type: PanelInstance,
-            required: true
-        },
-        header: {
-            type: String
-        }
+defineProps({
+    panel: {
+        type: PanelInstance,
+        required: true
     },
-
-    components: {
-        'table-component': GridTableComponentV,
-        minimize: MinimizeV
-    },
-
-    data() {
-        return {
-            layers: this.get(LayerStore.layers),
-            currentId: this.get(GridStore.currentId),
-            currentUid: '',
-            quicksearch: '',
-            head: '',
-            layer: ref()
-        };
-    },
-
-    setup() {
-        const rvGrid = ref();
-
-        return { rvGrid };
-    },
-
-    beforeMount() {
-        this.currentUid = this.$iApi.geo.layer.getLayer(this.currentId)!.uid;
+    header: {
+        type: String
     }
+});
+
+const iApi = inject<InstanceAPI>('iApi')!;
+const store = useStore();
+
+const currentId = computed<string>(() => store.get(GridStore.currentId)!);
+const currentUid = ref<string>('');
+
+onBeforeMount(() => {
+    currentUid.value = iApi.geo.layer.getLayer(currentId.value)!.uid;
 });
 </script>
 

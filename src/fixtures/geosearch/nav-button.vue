@@ -16,17 +16,15 @@
     </mapnav-button>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import type { InstanceAPI } from '@/api';
+import { inject } from 'vue';
 
-export default defineComponent({
-    name: 'GeosearchNavButtonV',
-    methods: {
-        togglePanel() {
-            this.$iApi.panel.toggle('geosearch');
-        }
-    }
-});
+const iApi = inject<InstanceAPI>('iApi');
+
+const togglePanel = () => {
+    iApi?.panel.toggle('geosearch');
+};
 </script>
 
 <style lang="scss" scoped></style>

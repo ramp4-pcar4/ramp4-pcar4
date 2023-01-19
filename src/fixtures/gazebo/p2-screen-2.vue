@@ -34,25 +34,23 @@
     </panel-screen>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { inject } from 'vue';
 import type { PropType } from 'vue';
-import type { PanelInstance } from '@/api';
+import type { InstanceAPI, PanelInstance } from '@/api';
 
-export default defineComponent({
-    name: 'GazeboP2Screen2V',
-    props: {
-        panel: { type: Object as PropType<PanelInstance>, required: true },
-        greeting: { type: String }
-    },
-    methods: {
-        enhancedCatActivities() {
-            // shows a cat, also does an event API flex
-            this.panel.show('p-2-screen-3');
-            this.$iApi.event.emit('gazebo/beholdMyText', 'I am a cat');
-        }
-    }
+const props = defineProps({
+    panel: { type: Object as PropType<PanelInstance>, required: true },
+    greeting: { type: String }
 });
+
+const iApi = inject<InstanceAPI>('iApi')!;
+
+const enhancedCatActivities = () => {
+    // shows a cat, also does an event API flex
+    props.panel.show('p-2-screen-3');
+    iApi.event.emit('gazebo/beholdMyText', 'I am a cat');
+};
 </script>
 
 <style lang="scss" scoped></style>

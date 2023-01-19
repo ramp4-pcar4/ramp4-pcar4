@@ -12,90 +12,87 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { inject } from 'vue';
 import type { PropType } from 'vue';
 import type { FieldDefinition, IdentifyItem } from '@/geo/api';
 import linkifyHtml from 'linkify-html';
+import type { InstanceAPI } from '@/api';
 
-export default defineComponent({
-    name: 'ESRIDefaultV',
-    props: {
-        fields: {
-            type: Object as PropType<Array<FieldDefinition>>,
-            required: true
-        },
-        identifyData: {
-            type: Object as PropType<IdentifyItem>,
-            required: true
-        }
+const iApi = inject<InstanceAPI>('iApi');
+
+const props = defineProps({
+    fields: {
+        type: Object as PropType<Array<FieldDefinition>>,
+        required: true
     },
-
-    methods: {
-        // clone identifyData and remove unwanted data
-        itemData() {
-            const helper: any = {};
-            Object.assign(helper, this.identifyData.data);
-            if (helper.Symbol !== undefined) delete helper.Symbol;
-
-            let aliases: any = {};
-            this.fields.forEach(field => {
-                aliases[field.name] = field.alias || field.name; // use the key name if alias is not defined
-            });
-
-            Object.keys(helper).map(key => {
-                helper[key] = {
-                    value:
-                        typeof helper[key] === 'number'
-                            ? this.$iApi.$vApp.$n(helper[key], 'number')
-                            : helper[key],
-                    alias: aliases[key] || key // use the key name if alias is undefined
-                };
-            });
-            return helper;
-        },
-        /**
-         * Make links look like links and work like links
-         */
-        makeHtmlLink(html: string): string {
-            if (!html) {
-                return html;
-            }
-
-            // Check to see if url is a valid image / data url based on extension type or format
-            if (
-                !!html.trim().match(/\.(jpeg|jpg|gif|png)$/) ||
-                !!html
-                    .trim()
-                    .match(
-                        /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i
-                    )
-            ) {
-                return `<img src="${html}" />`;
-            }
-
-            const classes = 'underline text-blue-600 break-all';
-            const div = document.createElement('div');
-            div.innerHTML = html.trim();
-
-            // check if the html string is just an <a> tag
-            if (div.firstElementChild?.tagName == 'A') {
-                div.firstElementChild.className = classes;
-                return div.innerHTML;
-            } else {
-                // otherwise, look for any valid links
-                const options = {
-                    className: classes,
-                    target: '_blank',
-                    validate: {
-                        url: (value: string) => /^https?:\/\//.test(value) // only links that begin with a protocol will be hyperlinked
-                    }
-                };
-                return linkifyHtml(html, options);
-            }
-        }
+    identifyData: {
+        type: Object as PropType<IdentifyItem>,
+        required: true
     }
 });
+
+// clone identifyData and remove unwanted data
+const itemData = () => {
+    const helper: any = {};
+    Object.assign(helper, props.identifyData.data);
+    if (helper.Symbol !== undefined) delete helper.Symbol;
+
+    let aliases: any = {};
+    props.fields.forEach(field => {
+        aliases[field.name] = field.alias || field.name; // use the key name if alias is not defined
+    });
+
+    Object.keys(helper).map(key => {
+        helper[key] = {
+            value:
+                typeof helper[key] === 'number'
+                    ? iApi?.$i18n.n(helper[key], 'number')
+                    : helper[key],
+            alias: aliases[key] || key // use the key name if alias is undefined
+        };
+    });
+    return helper;
+};
+
+// make links look like links and work like links
+const makeHtmlLink = (html: string): string => {
+    if (!html) {
+        return html;
+    }
+
+    // Check to see if url is a valid image / data url based on extension type or format
+    if (
+        !!html.trim().match(/\.(jpeg|jpg|gif|png)$/) ||
+        !!html
+            .trim()
+            .match(
+                /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i
+            )
+    ) {
+        return `<img src="${html}" />`;
+    }
+
+    const classes = 'underline text-blue-600 break-all';
+    const div = document.createElement('div');
+    div.innerHTML = html.trim();
+
+    // check if the html string is just an <a> tag
+    if (div.firstElementChild?.tagName == 'A') {
+        div.firstElementChild.className = classes;
+        return div.innerHTML;
+    } else {
+        // otherwise, look for any valid links
+        const options = {
+            className: classes,
+            target: '_blank',
+            validate: {
+                url: (value: string) => /^https?:\/\//.test(value) // only links that begin with a protocol will be hyperlinked
+            }
+        };
+        return linkifyHtml(html, options);
+    }
+};
 </script>
 
 <style lang="scss"></style>

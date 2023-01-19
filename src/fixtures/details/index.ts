@@ -67,7 +67,7 @@ class DetailsFixture extends DetailsAPI {
                         // set width to 100% on mobile
                         for (const panel of detailsPanels) {
                             this.$iApi.panel.setStyle(panel, {
-                                width: '100%'
+                                width: '80%'
                             });
                         }
                     } else {

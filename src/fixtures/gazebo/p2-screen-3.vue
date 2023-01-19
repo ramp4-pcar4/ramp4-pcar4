@@ -28,40 +28,40 @@
                 <p>Locale merging:</p>
                 <dl>
                     <dt>global locale:</dt>
-                    <dd class="ml-32 font-bold">{{ $t('lang_native') }}</dd>
+                    <dd class="ml-32 font-bold">{{ t('lang_native') }}</dd>
                     <dt>fixture locale:</dt>
                     <dd class="ml-32 font-bold">{{ $t('gz.hello') }}</dd>
                     <dt>common panels locale:</dt>
-                    <dd class="ml-32 font-bold">{{ $t('who') }}</dd>
+                    <dd class="ml-32 font-bold">{{ t('who') }}</dd>
                 </dl>
             </div>
         </template>
     </panel-screen>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed, inject } from 'vue';
 import type { PropType } from 'vue';
-import type { PanelInstance } from '@/api';
+import type { InstanceAPI, PanelInstance } from '@/api';
 
-export default defineComponent({
-    name: 'GazeboP2Screen3V',
-    props: {
-        panel: { type: Object as PropType<PanelInstance>, required: true }
-    },
-    i18n: {
-        messages: {
-            en: {
-                lang_native: 'En',
-                who: '[me cat]'
-            },
-            fr: {
-                lang_native: 'Fr',
-                who: '[moi chat]'
-            }
-        }
-    }
+defineProps({
+    panel: { type: Object as PropType<PanelInstance>, required: true }
 });
+
+const iApi = inject<InstanceAPI>('iApi')!;
+
+// fun hack until we figure out how to do component-specific i18n in Composition API
+const messages: { [key: string]: { [key: string]: string } } = {
+    en: {
+        lang_native: 'En',
+        who: '[me cat]'
+    },
+    fr: {
+        lang_native: 'Fr',
+        who: '[moi chat]'
+    }
+};
+const t = (key: string) => messages[iApi.language][key];
 </script>
 
 <style lang="scss" scoped></style>

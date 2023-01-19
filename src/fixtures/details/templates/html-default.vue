@@ -7,18 +7,14 @@
     <div v-else>{{ $t('details.layers.results.empty') }}</div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
 import type { PropType } from 'vue';
 import type { IdentifyItem } from '@/geo/api';
 
-export default defineComponent({
-    name: 'HTMLDefaultV',
-    props: {
-        identifyData: {
-            type: Object as PropType<IdentifyItem>,
-            required: true
-        }
+defineProps({
+    identifyData: {
+        type: Object as PropType<IdentifyItem>,
+        required: true
     }
 });
 </script>

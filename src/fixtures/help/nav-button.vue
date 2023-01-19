@@ -13,18 +13,13 @@
     </mapnav-button>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { inject } from 'vue';
 import { GlobalEvents } from '../../api/internal';
+import type { InstanceAPI } from '../../api/internal';
 
-export default defineComponent({
-    name: 'HelpNavButtonV',
-    methods: {
-        onClick() {
-            this.$iApi.event.emit(GlobalEvents.HELP_TOGGLE);
-        }
-    }
-});
+const iApi = inject<InstanceAPI>('iApi')!;
+const onClick = () => iApi.event.emit(GlobalEvents.HELP_TOGGLE);
 </script>
 
 <style lang="scss" scoped></style>

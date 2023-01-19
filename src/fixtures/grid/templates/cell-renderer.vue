@@ -12,77 +12,78 @@
         v-tippy="{ trigger: 'manual' }"
         tabindex="-1"
         v-html="formatValue"
+        ref="el"
     />
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { directive as tippyDirective } from 'vue-tippy';
+<script setup lang="ts">
+import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
+import type { PropType } from 'vue';
+import type { InstanceAPI } from '@/api';
+import { useStore } from 'vuex';
 import linkifyHtml from 'linkify-html';
 
-export default defineComponent({
-    name: 'CellRendererV',
-    directives: {
-        tippy: tippyDirective
-    },
-    props: ['params'],
-    computed: {
-        formatValue() {
-            if (this.params.type === 'number') {
-                return this.params.value == null
-                    ? ''
-                    : this.$iApi.$vApp.$n(this.params.value, 'number');
-            } else if (this.params.type === 'date') {
-                // get YYYY-MM-DD from date
-                return this.params.value == null
-                    ? ''
-                    : new Date(this.params.value).toISOString().slice(0, 10);
-            } else if (this.params.type === 'string') {
-                // if value is falsey, return it
-                if (!this.params.value) {
-                    return this.params.value;
-                }
+const iApi = inject<InstanceAPI>('iApi')!;
+const store = useStore();
+const el = ref(null as unknown as HTMLElement);
 
-                // test if the value already contains an anchor tag
-                // if it does, just return the value
-                if (/<a[^>]*>[^<]+<\/a>/g.test(this.params.value)) {
-                    return this.params.value;
-                }
+const props = defineProps(['params']);
 
-                return linkifyHtml(this.params.value, {
-                    target: '_blank',
-                    validate: {
-                        url: (value: string) => /^https?:\/\//.test(value) // only links that begin with a protocol will be hyperlinked
-                    }
-                });
-            }
+const formatValue = computed<string>(() => {
+    if (props.params.type === 'number') {
+        return props.params.value == null
+            ? ''
+            : iApi.$i18n.n(props.params.value, 'number');
+    } else if (props.params.type === 'date') {
+        // get YYYY-MM-DD from date
+        return props.params.value == null
+            ? ''
+            : new Date(props.params.value).toISOString().slice(0, 10);
+    } else if (props.params.type === 'string') {
+        // if value is falsey, return it
+        if (!props.params.value) {
+            return props.params.value;
         }
-    },
-    mounted() {
-        // hoist events to cell wrapper for accessibility
-        this.params.eGridCell.addEventListener('blur', () => {
-            (this.$el as any)._tippy.hide();
-        });
-        this.params.eGridCell.addEventListener('focus', () => {
-            (this.$el as any)._tippy.show();
-            if (
-                this.$el._tippy.reference.clientWidth >=
-                this.$el._tippy.reference.scrollWidth
-            ) {
-                // hacky solution to prevent non-truncated cells from having a tooltip when using keyboard controls
-                (this.$el as any)._tippy.hide();
-            }
-        });
-    },
 
-    beforeUnmount() {
-        this.params.eGridCell.removeEventListener('blur', () => {
-            (this.$el as any)._tippy.hide();
-        });
-        this.params.eGridCell.removeEventListener('focus', () => {
-            (this.$el as any)._tippy.show();
+        // test if the value already contains an anchor tag
+        // if it does, just return the value
+        if (/<a[^>]*>[^<]+<\/a>/g.test(props.params.value)) {
+            return props.params.value;
+        }
+
+        return linkifyHtml(props.params.value, {
+            target: '_blank',
+            validate: {
+                url: (value: string) => /^https?:\/\//.test(value) // only links that begin with a protocol will be hyperlinked
+            }
         });
     }
+});
+
+onMounted(() => {
+    // hoist events to cell wrapper for accessibility
+    props.params.eGridCell.addEventListener('blur', () => {
+        (el.value as any)._tippy.hide();
+    });
+    props.params.eGridCell.addEventListener('focus', () => {
+        (el.value as any)._tippy.show();
+        if (
+            (el.value as any)._tippy.reference.clientWidth >=
+            (el.value as any)._tippy.reference.scrollWidth
+        ) {
+            // hacky solution to prevent non-truncated cells from having a tooltip when using keyboard controls
+            (el.value as any)._tippy.hide();
+        }
+    });
+});
+
+onBeforeUnmount(() => {
+    props.params.eGridCell.removeEventListener('blur', () => {
+        (el.value as any)._tippy.hide();
+    });
+    props.params.eGridCell.removeEventListener('focus', () => {
+        (el.value as any)._tippy.show();
+    });
 });
 </script>
 

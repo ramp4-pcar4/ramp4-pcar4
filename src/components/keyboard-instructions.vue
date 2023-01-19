@@ -12,7 +12,7 @@
             ref="firstEl"
         >
             <div class="flex items-center mb-20">
-                <h2 class="text-xl">{{ $t('keyboardInstructions.title') }}</h2>
+                <h2 class="text-xl">{{ t('keyboardInstructions.title') }}</h2>
                 <close class="ml-auto" @click="open = false"></close>
             </div>
             <p
@@ -20,7 +20,7 @@
                 v-for="section in instructionSections"
                 :key="section"
             >
-                {{ $t(`keyboardInstructions.${section}`) }}
+                {{ t(`keyboardInstructions.${section}`) }}
             </p>
             <button
                 type="button"
@@ -28,60 +28,56 @@
                 @click="open = false"
                 ref="lastEl"
             >
-                {{ $t('keyboardInstructions.OK') }}
+                {{ t('keyboardInstructions.OK') }}
             </button>
         </div>
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { inject, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import type { InstanceAPI } from '@/api';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'KeyboardInstructionsModalV',
-    data() {
-        return {
-            open: false,
-            instructionSections: ['app', 'lists', 'map'],
-            handlers: [] as Array<string>
-        };
-    },
+const iApi = inject<InstanceAPI>('iApi');
+const { t } = useI18n();
 
-    mounted() {
-        this.handlers.push(
-            this.$iApi.event.on('openKeyboardInstructions', () => {
-                this.open = true;
-                this.$nextTick(() => {
-                    (this.$refs.firstEl as HTMLElement)?.focus();
-                });
-            })
-        );
-    },
+const open = ref(false);
+const instructionSections = ref(['app', 'lists', 'map']);
+const handlers = ref([] as Array<string>);
 
-    beforeUnmount() {
-        this.handlers.forEach(handler => this.$iApi.event.off(handler));
-    },
+const firstEl = ref(null as unknown as HTMLElement);
+const lastEl = ref(null as unknown as HTMLElement);
 
-    methods: {
-        onKeydown(event: KeyboardEvent) {
-            if (event.key === 'Tab') {
-                if (event.shiftKey && event.target === this.$refs.firstEl) {
-                    event.preventDefault();
-                    (this.$refs.lastEl as HTMLElement).focus();
-                } else if (
-                    !event.shiftKey &&
-                    event.target == this.$refs.lastEl
-                ) {
-                    event.preventDefault();
-                    (this.$refs.firstEl as HTMLElement).focus();
-                }
-            } else if (event.key === 'Escape') {
-                event.preventDefault();
-                this.open = false;
-            }
-        }
-    }
+onMounted(() => {
+    handlers.value.push(
+        iApi!.event.on('openKeyboardInstructions', () => {
+            open.value = true;
+            nextTick(() => {
+                firstEl.value.focus();
+            });
+        })
+    );
 });
+
+onBeforeUnmount(() => {
+    handlers.value.forEach(handler => iApi?.event.off(handler));
+});
+
+const onKeydown = (event: KeyboardEvent) => {
+    if (event.key === 'Tab') {
+        if (event.shiftKey && event.target === firstEl.value) {
+            event.preventDefault();
+            lastEl.value.focus();
+        } else if (!event.shiftKey && event.target === lastEl.value) {
+            event.preventDefault();
+            firstEl.value.focus();
+        }
+    } else if (event.key === 'Escape') {
+        event.preventDefault();
+        open.value = false;
+    }
+};
 </script>
 
 <style lang="scss" scoped></style>

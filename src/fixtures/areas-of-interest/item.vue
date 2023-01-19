@@ -66,39 +66,38 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { inject } from 'vue';
 import type { PropType } from 'vue';
 import type { AreaOfInterest } from './store';
 import { Extent } from '@/geo/api';
+import type { InstanceAPI } from '@/api';
 
-export default defineComponent({
-    name: 'AreaOfInterestV',
-    props: {
-        area: {
-            type: Object as PropType<AreaOfInterest>,
-            required: true
-        },
-        showThumbnail: {
-            type: Boolean
-        }
+const props = defineProps({
+    area: {
+        type: Object as PropType<AreaOfInterest>,
+        required: true
     },
-    methods: {
-        selectAreaOfInterest(area: any) {
-            if (!area.extent) {
-                console.error(
-                    "selected area of interest doesn't have an extent specified."
-                );
-                return;
-            }
-
-            // zoom the map to this area's extent
-            this.$iApi.geo.map.zoomMapTo(
-                Extent.fromConfig(`area-of-interest-extent`, area.extent)
-            );
-        }
+    showThumbnail: {
+        type: Boolean
     }
 });
+
+const iApi = inject<InstanceAPI>('iApi');
+
+const selectAreaOfInterest = (area: any) => {
+    if (!area.extent) {
+        console.error(
+            "selected area of interest doesn't have an extent specified."
+        );
+        return;
+    }
+
+    // zoom the map to this area's extent
+    iApi?.geo.map.zoomMapTo(
+        Extent.fromConfig(`area-of-interest-extent`, area.extent)
+    );
+};
 </script>
 
 <style lang="scss" scoped>

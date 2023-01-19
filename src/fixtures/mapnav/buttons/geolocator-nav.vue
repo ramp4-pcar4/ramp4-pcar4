@@ -43,7 +43,7 @@ export default defineComponent({
                         // send an error message for a denied permission error
                         this.$iApi.notify.show(
                             NotificationType.ERROR,
-                            this.$iApi.$vApp.$t(
+                            this.$iApi.$i18n.t(
                                 'mapnav.geolocator.error.permission'
                             )
                         );
@@ -51,7 +51,7 @@ export default defineComponent({
                         // send an error message for an internal/timeout error
                         this.$iApi.notify.show(
                             NotificationType.ERROR,
-                            this.$iApi.$vApp.$t(
+                            this.$iApi.$i18n.t(
                                 'mapnav.geolocator.error.internal'
                             )
                         );

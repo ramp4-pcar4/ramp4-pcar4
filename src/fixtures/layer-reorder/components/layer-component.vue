@@ -154,272 +154,269 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, toRaw } from 'vue';
+<script setup lang="ts">
+import {
+    computed,
+    getCurrentInstance,
+    inject,
+    onBeforeMount,
+    onBeforeUnmount,
+    onMounted,
+    ref,
+    toRaw,
+    watch
+} from 'vue';
 
 import { LayerStore } from '@/store/modules/layer';
 import { GlobalEvents, LayerInstance } from '@/api';
+import type { InstanceAPI } from '@/api';
 import type { LayerModel } from '../definitions';
-import LayerReorderButtonV from './reorder-button.vue';
+import ReorderButton from './reorder-button.vue';
 import draggable from 'vuedraggable';
 import { LayerState } from '@/geo/api';
+import { useStore } from 'vuex';
 
-export default defineComponent({
-    name: 'LayerReorderComponentV',
-    components: {
-        draggable,
-        'reorder-button': LayerReorderButtonV
-    },
-    data() {
-        return {
-            layers: this.get(LayerStore.layers),
-            layersModel: [] as Array<LayerModel>,
-            oldOrder: [] as Array<number>, // keeps track of layer order when dragging starts
-            handlers: [] as Array<string>,
-            watchers: [] as Array<Function>
-        };
-    },
-    computed: {
-        /**
-         * Get animation enabled status
-         */
-        isAnimationEnabled(): boolean {
-            return this.$iApi.animate;
-        }
-    },
+const iApi = inject<InstanceAPI>('iApi')!;
+const store = useStore();
+const t = (key: string, opts: any) =>
+    getCurrentInstance()?.proxy?.$t(key, opts);
 
-    created() {
-        this.watchers.push(
-            this.$watch('layers', () => {
-                // want to reload layers in case layers were added/removed, or existing layers have changed
-                this.loadLayers();
+const layers = computed<LayerInstance[]>(() => store.get(LayerStore.layers)!);
+const layersModel = ref<Array<LayerModel>>([]);
+const oldOrder = ref<Array<number>>([]); // keeps track of layer order when dragging starts
+const handlers = ref<Array<string>>([]);
+const watchers = ref<Array<Function>>([]);
+const isAnimationEnabled = computed<boolean>(() => iApi.animate);
+
+/**
+ * Convert the layers from the store into a simple LayerModel interface that draggable can use
+ * Additionally set up layer load promise listeners to automatically update model when the layer loads
+ */
+const loadLayers = (): void => {
+    // remember which layers were expanded
+    let layerExpandedState: { [id: string]: boolean } = {};
+    layersModel.value.forEach((layer: LayerModel) => {
+        layerExpandedState[layer.id] = layer.isExpanded;
+    });
+
+    // reset models
+    layersModel.value = [];
+
+    layersModel.value = [...toRaw(layers.value)]
+        .filter(
+            (layer: LayerInstance) =>
+                !layer.isCosmetic && layer.layerState !== LayerState.ERROR
+        ) // filter out cosmetic layers
+        .reverse() // needs to be reverse because map-stack is in reverse order of layer list
+        .map((layer: LayerInstance, index: number) => {
+            // get the true index of this layer in the layers list
+            const trueIdx: number = layers.value.indexOf(layer);
+            // map layer instance to simpler layer model object
+            let model: LayerModel = {
+                id: layer.id,
+                uid: layer.uid,
+                name: '',
+                orderIdx: trueIdx,
+                componentIdx: index,
+                isExpanded: layerExpandedState[layer.id] || false,
+                isLoaded: false,
+                supportsSublayers: layer.supportsSublayers,
+                sublayers: []
+            };
+            return model;
+        });
+
+    // add load promise listeners to update models
+    layers.value.forEach((layer: LayerInstance) => {
+        layer
+            .loadPromise()
+            .then(() => {
+                loadLayerData(layer);
             })
-        );
-    },
+            .catch(() => 1); // make the console stop complaining
+    });
+};
 
-    mounted() {
-        this.loadLayers();
+/**
+ * Update the layer model associated with this layer
+ * @param {LayerInstance} layer the layer that has loaded
+ */
+const loadLayerData = (layer: LayerInstance): void => {
+    let model: LayerModel | undefined = layersModel.value.find(
+        (layerModel: LayerModel) => layerModel.id === layer.id
+    );
 
-        // watch for layer remove events (this is mainly used to react to sublayer removals)
-        this.handlers.push(
-            this.$iApi.event.on(GlobalEvents.LAYER_REMOVE, () => {
-                this.loadLayers();
-            })
-        );
-
-        // watch for layer state changes
-        this.handlers.push(
-            this.$iApi.event.on(GlobalEvents.LAYER_LAYERSTATECHANGE, () => {
-                this.loadLayers();
-            })
-        );
-    },
-    beforeUnmount() {
-        // unmount handlers and watchers
-        this.handlers.forEach(handler => this.$iApi.event.off(handler));
-        this.watchers.forEach(unwatch => unwatch());
-    },
-    methods: {
-        /**
-         * Convert the layers from the store into a simple LayerModel interface that draggable can use
-         * Additionally set up layer load promise listeners to automatically update model when the layer loads
-         */
-        loadLayers(): void {
-            // remember which layers were expanded
-            let layerExpandedState: { [id: string]: boolean } = {};
-            this.layersModel.forEach((layer: LayerModel) => {
-                layerExpandedState[layer.id] = layer.isExpanded;
-            });
-
-            // reset models
-            this.layersModel = [];
-
-            this.layersModel = [...toRaw(this.layers)]
-                .filter(
-                    (layer: LayerInstance) =>
-                        !layer.isCosmetic &&
-                        layer.layerState !== LayerState.ERROR
-                ) // filter out cosmetic layers
-                .reverse() // needs to be reverse because map-stack is in reverse order of layer list
-                .map((layer: LayerInstance, index: number) => {
-                    // get the true index of this layer in the layers list
-                    const trueIdx: number = this.layers.indexOf(layer);
-                    // map layer instance to simpler layer model object
-                    let model: LayerModel = {
-                        id: layer.id,
-                        uid: layer.uid,
-                        name: '',
-                        orderIdx: trueIdx,
-                        componentIdx: index,
-                        isExpanded: layerExpandedState[layer.id] || false,
-                        isLoaded: false,
-                        supportsSublayers: layer.supportsSublayers,
-                        sublayers: []
-                    };
-                    return model;
-                });
-
-            // add load promise listeners to update models
-            this.layers.forEach((layer: LayerInstance) => {
-                layer
-                    .loadPromise()
-                    .then(() => {
-                        this.loadLayerData(layer);
-                    })
-                    .catch(() => 1); // make the console stop complaining
-            });
-        },
-
-        /**
-         * Update the layer model associated with this layer
-         * @param {LayerInstance} layer the layer that has loaded
-         */
-        loadLayerData(layer: LayerInstance): void {
-            let model: LayerModel | undefined = this.layersModel.find(
-                (layerModel: LayerModel) => layerModel.id === layer.id
-            );
-
-            if (!model) {
-                return;
-            }
-
-            // load data from layer
-            model.name = layer.name;
-            model.sublayers = layer.sublayers
-                .filter(
-                    (sublayer: LayerInstance) =>
-                        sublayer !== undefined && !sublayer.isRemoved
-                )
-                .map((sublayer: LayerInstance) => {
-                    return {
-                        id: sublayer.id,
-                        name: sublayer.name
-                    };
-                });
-            model.isLoaded = true;
-        },
-
-        /**
-         * Toggle expand on a layer model
-         * @param {LayerModel} layerModel the layer model to update
-         */
-        toggleExpand(layerModel: LayerModel): void {
-            if (!layerModel.supportsSublayers) {
-                return;
-            }
-            layerModel.isExpanded = !layerModel.isExpanded;
-            this.$iApi.updateAlert(
-                this.$t(
-                    layerModel.isExpanded
-                        ? 'layer-reorder.expanded'
-                        : 'layer-reorder.collapsed',
-                    {
-                        name: layerModel.name
-                    }
-                )
-            );
-        },
-
-        /**
-         * User started moving the layer, keep track of the old order
-         */
-        onMoveLayerDragStart(): void {
-            this.oldOrder = this.layersModel.map(
-                (layerModel: LayerModel) => layerModel.orderIdx
-            );
-        },
-
-        /**
-         * Move a layer's order index
-         * Called by draggable after the user stops dragging the layer
-         * @param {CustomEvent} evt draggable event that contains the data on the moved object
-         */
-        onMoveLayerDragEnd(evt: any): void {
-            if (!evt.moved) {
-                // not a move event, ignore the change
-                return;
-            }
-
-            const layerModel: LayerModel = evt.moved.element;
-            const oldRelativeIdx: number = evt.moved.oldIndex;
-            const newRelativeIdx: number = evt.moved.newIndex;
-
-            if (oldRelativeIdx === newRelativeIdx) {
-                // the layer was not moved
-                return;
-            }
-
-            const layer: LayerInstance = this.layers.find(
-                (l: LayerInstance) => l.uid === layerModel.uid
-            );
-
-            // apply changes
-            const newIdx: number = this.oldOrder[newRelativeIdx];
-            this.$iApi.geo.map.reorder(layer, newIdx);
-
-            this.$iApi.updateAlert(
-                this.$t('layer-reorder.layermoved', {
-                    name: layerModel.name,
-                    index: newIdx
-                })
-            );
-        },
-
-        /**
-         * Increment/Decrement a layer's order index
-         * Called by the reorder buttons
-         * @param {LayerModel} layerModel layer that is being moved
-         * @param {number} direction direction to move the layer (+1 is up and -1 is down)
-         */
-        onMoveLayerButton(layerModel: LayerModel, direction: number): void {
-            let layer: LayerInstance = this.layers.find(
-                (l: LayerInstance) => l.uid === layerModel.uid
-            );
-
-            const currRelativeIdx: number =
-                this.layersModel.indexOf(layerModel);
-
-            // just in case
-            if (layer === undefined || currRelativeIdx === -1) {
-                return;
-            }
-
-            // calculate new layer order index
-            const newRelativeIdx: number = currRelativeIdx - direction;
-            const newIdx: number = this.layersModel[newRelativeIdx].orderIdx;
-
-            // apply changes
-            this.$iApi.geo.map.reorder(layer, newIdx);
-
-            this.$iApi.updateAlert(
-                this.$t('layer-reorder.layermoved', {
-                    name: layerModel.name,
-                    index: newIdx
-                })
-            );
-        },
-
-        /** ==================================== Helpers ==================================== **/
-
-        /**
-         * Helper function - reverse a given index relative to the layer stack
-         * @returns {number} the reversed index
-         */
-        _reverseIndex(idx: number): number {
-            return this.layers.length - 1 - idx;
-        },
-
-        /**
-         * Checks if the given index is at the boundary of the layers list
-         * Also accounts for cosmetic layers in the boundary
-         *
-         * @param {number} idx the index to be checked
-         * @returns {boolean} returns true if the index is at the boundary
-         */
-        _isBoundary(index: number): boolean {
-            return index < 0 || index > this.layersModel.length - 1;
-        }
+    if (!model) {
+        return;
     }
+
+    // load data from layer
+    model.name = layer.name;
+    model.sublayers = layer.sublayers
+        .filter(
+            (sublayer: LayerInstance) =>
+                sublayer !== undefined && !sublayer.isRemoved
+        )
+        .map((sublayer: LayerInstance) => {
+            return {
+                id: sublayer.id,
+                name: sublayer.name
+            };
+        });
+    model.isLoaded = true;
+};
+
+/**
+ * Toggle expand on a layer model
+ * @param {LayerModel} layerModel the layer model to update
+ */
+const toggleExpand = (layerModel: LayerModel): void => {
+    if (!layerModel.supportsSublayers) {
+        return;
+    }
+    layerModel.isExpanded = !layerModel.isExpanded;
+    iApi.updateAlert(
+        t(
+            layerModel.isExpanded
+                ? 'layer-reorder.expanded'
+                : 'layer-reorder.collapsed',
+            {
+                name: layerModel.name
+            }
+        )!
+    );
+};
+
+/**
+ * User started moving the layer, keep track of the old order
+ */
+const onMoveLayerDragStart = (): void => {
+    oldOrder.value = layersModel.value.map(
+        (layerModel: LayerModel) => layerModel.orderIdx
+    );
+};
+
+/**
+ * Move a layer's order index
+ * Called by draggable after the user stops dragging the layer
+ * @param {CustomEvent} evt draggable event that contains the data on the moved object
+ */
+const onMoveLayerDragEnd = (evt: any): void => {
+    if (!evt.moved) {
+        // not a move event, ignore the change
+        return;
+    }
+
+    const layerModel: LayerModel = evt.moved.element;
+    const oldRelativeIdx: number = evt.moved.oldIndex;
+    const newRelativeIdx: number = evt.moved.newIndex;
+
+    if (oldRelativeIdx === newRelativeIdx) {
+        // the layer was not moved
+        return;
+    }
+
+    const layer: LayerInstance = layers.value.find(
+        (l: LayerInstance) => l.uid === layerModel.uid
+    )!;
+
+    // apply changes
+    const newIdx: number = oldOrder.value[newRelativeIdx];
+    iApi.geo.map.reorder(layer, newIdx);
+
+    iApi.updateAlert(
+        t('layer-reorder.layermoved', {
+            name: layerModel.name,
+            index: newIdx
+        })!
+    );
+};
+
+/**
+ * Increment/Decrement a layer's order index
+ * Called by the reorder buttons
+ * @param {LayerModel} layerModel layer that is being moved
+ * @param {number} direction direction to move the layer (+1 is up and -1 is down)
+ */
+const onMoveLayerButton = (layerModel: LayerModel, direction: number): void => {
+    let layer: LayerInstance = layers.value.find(
+        (l: LayerInstance) => l.uid === layerModel.uid
+    )!;
+
+    const currRelativeIdx: number = layersModel.value.indexOf(layerModel);
+
+    // just in case
+    if (layer === undefined || currRelativeIdx === -1) {
+        return;
+    }
+
+    // calculate new layer order index
+    const newRelativeIdx: number = currRelativeIdx - direction;
+    const newIdx: number = layersModel.value[newRelativeIdx].orderIdx;
+
+    // apply changes
+    iApi.geo.map.reorder(layer, newIdx);
+
+    iApi.updateAlert(
+        t('layer-reorder.layermoved', {
+            name: layerModel.name,
+            index: newIdx
+        })!
+    );
+};
+
+/** ==================================== Helpers ==================================== **/
+
+/**
+ * Helper function - reverse a given index relative to the layer stack
+ * @returns {number} the reversed index
+ */
+const _reverseIndex = (idx: number): number => {
+    return layers.value.length - 1 - idx;
+};
+
+/**
+ * Checks if the given index is at the boundary of the layers list
+ * Also accounts for cosmetic layers in the boundary
+ *
+ * @param {number} idx the index to be checked
+ * @returns {boolean} returns true if the index is at the boundary
+ */
+const _isBoundary = (index: number): boolean => {
+    return index < 0 || index > layersModel.value.length - 1;
+};
+
+onBeforeMount(() => {
+    watchers.value.push(
+        watch(layers, () => {
+            // want to reload layers in case layers were added/removed, or existing layers have changed
+            loadLayers();
+        })
+    );
+});
+
+onMounted(() => {
+    loadLayers();
+
+    // watch for layer remove events (this is mainly used to react to sublayer removals)
+    handlers.value.push(
+        iApi.event.on(GlobalEvents.LAYER_REMOVE, () => {
+            loadLayers();
+        })
+    );
+
+    // watch for layer state changes
+    handlers.value.push(
+        iApi.event.on(GlobalEvents.LAYER_LAYERSTATECHANGE, () => {
+            loadLayers();
+        })
+    );
+});
+
+onBeforeUnmount(() => {
+    // unmount handlers and watchers
+    handlers.value.forEach(handler => iApi.event.off(handler));
+    watchers.value.forEach(unwatch => unwatch());
 });
 </script>
 

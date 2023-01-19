@@ -807,7 +807,7 @@ export class EventAPI extends APIScope {
                     if (legendApi) {
                         legendApi.removeLayerItem(layer);
                         this.$iApi.updateAlert(
-                            this.$vApp.$t('legend.alert.layerRemoved', {
+                            this.$iApi.$i18n.t('legend.alert.layerRemoved', {
                                 name: layer.name
                             })
                         );

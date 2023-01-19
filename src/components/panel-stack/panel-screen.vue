@@ -12,6 +12,7 @@
                 ]
             }
         }"
+        ref="el"
     >
         <header
             v-if="header"
@@ -67,62 +68,54 @@
     </div>
 </template>
 
-<script lang="ts">
-import type { PanelInstance } from '@/api';
-import { defineComponent } from 'vue';
-
+<script setup lang="ts">
+import type { InstanceAPI, PanelInstance } from '@/api';
+import { computed, inject, nextTick, ref } from 'vue';
 import type { PropType } from 'vue';
+import { useStore } from 'vuex';
 
-export default defineComponent({
-    name: 'PanelScreenV',
-    props: {
-        // prop indicating if the `header` slot should be rendered
-        header: {
-            type: Boolean,
-            default: true
-        },
-        // prop indicating if the `content` slot should be rendered
-        content: {
-            type: Boolean,
-            default: true
-        },
-        // prop indicating if the `footer` slot should be rendered
-        footer: {
-            type: Boolean,
-            default: false
-        },
-        panel: {
-            type: Object as PropType<PanelInstance>,
-            required: true
-        }
+const store = useStore();
+const iApi = inject<InstanceAPI>('iApi');
+const el = ref(null as unknown as Element);
+
+const props = defineProps({
+    // prop indicating if the `header` slot should be rendered
+    header: {
+        type: Boolean,
+        default: true
     },
-    data() {
-        return {
-            temporary: this.$iApi.fixture.get('appbar')
-                ? this.$store.get('appbar/temporary')
-                : [],
-            mobileView: this.get('panel/mobileView'),
-            reorderable: this.get('panel/reorderable')
-        };
+    // prop indicating if the `content` slot should be rendered
+    content: {
+        type: Boolean,
+        default: true
     },
-    methods: {
-        checkMode() {
-            // If the application is in mobile mode (app only has `xs` CSS class), do not display tooltip.
-            return !this.mobileView;
-        },
-        move(direction: string) {
-            this.panel.move(direction);
-            if (direction === 'left') {
-                // needed to preserve focus on correct panel
-                this.$nextTick(() => {
-                    (
-                        this.$el.querySelector('.move-left') as HTMLElement
-                    ).focus();
-                });
-            }
-        }
+    // prop indicating if the `footer` slot should be rendered
+    footer: {
+        type: Boolean,
+        default: false
+    },
+    panel: {
+        type: Object as PropType<PanelInstance>,
+        required: true
     }
 });
+
+const temporary = computed((): Array<string> | undefined =>
+    iApi?.fixture.get('appbar') ? store.get('appbar/temporary') : []
+);
+const mobileView = computed(() => store.get('panel/mobileView'));
+const reorderable = computed(() => store.get('panel/reorderable'));
+
+const checkMode = () => !mobileView;
+const move = (direction: string) => {
+    props.panel.move(direction);
+    if (direction === 'left') {
+        // needed to preserve focus on correct panel
+        nextTick(() => {
+            (el.value.querySelector('.move-left') as HTMLElement).focus();
+        });
+    }
+};
 </script>
 
 <style lang="scss" scoped></style>

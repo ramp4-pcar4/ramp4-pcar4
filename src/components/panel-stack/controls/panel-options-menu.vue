@@ -22,22 +22,11 @@
     </dropdown-menu>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
+<script setup lang="ts">
+import DropdownMenu from '@/components/controls/dropdown-menu.vue';
+import { ref } from 'vue';
 
-export default defineComponent({
-    name: 'PanelOptionsMenuV',
-    components: {
-        'dropdown-menu': DropdownMenuV
-    },
-
-    data() {
-        return {
-            open: false
-        };
-    }
-});
+const open = ref(false);
 </script>
 
 <style lang="scss" scoped>

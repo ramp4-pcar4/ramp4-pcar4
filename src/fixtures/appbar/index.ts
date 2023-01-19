@@ -20,7 +20,7 @@ class AppbarFixture extends AppbarAPI {
 
         // merge in translations since this has no panel
         Object.entries(messages).forEach(value =>
-            (<any>this.$vApp.$i18n).mergeLocaleMessage(...value)
+            (<any>this.$iApi.$i18n).mergeLocaleMessage(...value)
         );
 
         const { vNode, destroy, el } = this.mount(AppbarV, {

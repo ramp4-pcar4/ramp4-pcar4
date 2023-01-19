@@ -112,14 +112,14 @@
                     v-for="(item, index) in lang"
                     :key="`${item}-${index}`"
                     class="flex-auto items-center text-sm sm:text-base cursor-pointer"
-                    :class="{ 'font-bold': item === $iApi.$vApp.$i18n.locale }"
+                    :class="{ 'font-bold': item === $iApi.$i18n.locale.value }"
                     href="javascript:;"
                     @click="changeLang(item)"
                 >
                     {{ $t('map.language.' + item) }}
                     <span
                         class="sr-only"
-                        v-if="item === $iApi.$vApp.$i18n.locale"
+                        v-if="item === $iApi.$i18n.locale.value"
                     >
                         {{ $t('map.language.curr') }}
                     </span>
@@ -174,14 +174,14 @@ export default defineComponent({
 
     updated() {
         this.$nextTick(function () {
-            if (this.$iApi.$vApp.$i18n && this.lang.length == 0) {
-                this.lang = this.$iApi.$vApp.$i18n.availableLocales;
+            if (this.$iApi.$i18n && this.lang.length == 0) {
+                this.lang = this.$iApi.$i18n.availableLocales;
             }
         });
     },
     methods: {
         changeLang(lang: string) {
-            if (this.$iApi.$vApp.$i18n.locale != lang) {
+            if (this.$iApi.$i18n.locale.value != lang) {
                 this.$iApi.setLanguage(lang);
             }
         },

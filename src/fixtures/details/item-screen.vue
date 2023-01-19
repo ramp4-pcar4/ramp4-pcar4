@@ -163,379 +163,379 @@
     </panel-screen>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 // This screen is the view of a single identified geometry (details panel)
 
-import { defineComponent, type PropType } from 'vue';
-import { DetailsStore } from './store';
+import {
+    computed,
+    inject,
+    onBeforeUnmount,
+    onBeforeUpdate,
+    onMounted,
+    ref
+} from 'vue';
+import type { PropType } from 'vue';
+import { DetailsItemInstance, DetailsStore } from './store';
 import type { DetailsAPI } from './api/details';
 
-import { GlobalEvents } from '@/api';
+import { GlobalEvents, InstanceAPI } from '@/api';
 import { IdentifyResultFormat } from '@/geo/api';
 import type { FieldDefinition, IdentifyResult, IdentifyItem } from '@/geo/api';
 import type { LayerInstance, PanelInstance } from '@/api/internal';
 
-import ESRIDefaultV from './templates/esri-default.vue';
-import HTMLDefaultV from './templates/html-default.vue';
+import ESRIDefault from './templates/esri-default.vue';
+import HTMLDefault from './templates/html-default.vue';
 import Toggle from '../../components/controls/toggle-switch-control.vue';
+import { useStore } from 'vuex';
 
-export default defineComponent({
-    name: 'DetailsItemScreenV',
-    props: {
-        panel: {
-            type: Object as PropType<PanelInstance>,
-            required: true
-        },
-        result: {
-            type: Object as PropType<IdentifyResult>,
-            required: true
-        },
-        // the index of the details item we want to display (optional)
-        itemIndex: {
-            type: Number,
-            default: 0
-        }
+const iApi = inject<InstanceAPI>('iApi')!;
+const store = useStore();
+
+const props = defineProps({
+    panel: {
+        type: Object as PropType<PanelInstance>,
+        required: true
     },
-    components: {
-        'esri-default': ESRIDefaultV,
-        'html-default': HTMLDefaultV,
-        Toggle
+    result: {
+        type: Object as PropType<IdentifyResult>,
+        required: true
     },
-    data() {
-        return {
-            defaultTemplates: this.get(DetailsStore.defaultTemplates),
-            detailProperties: this.get(DetailsStore.properties),
-            activeGreedy: this.get(DetailsStore.activeGreedy),
-            slowLoadingFlag: this.get(DetailsStore.slowLoadingFlag),
-            identifyTypes: IdentifyResultFormat.UNKNOWN,
-            icon: '' as string,
-            currentIdx: 0,
-            layerExists: false, // tracks whether the layer still exists
-            handlers: [] as Array<string>,
-            details: this.$iApi.fixture.get('details') as DetailsAPI,
-            hilightToggle: true
-        };
-    },
-    mounted() {
-        // this is called when screen is first mounted
-        this.initDetails();
-
-        // close this panel if layer is removed
-        this.handlers.push(
-            this.$iApi.event.on(
-                GlobalEvents.LAYER_REMOVE,
-                (removedLayer: LayerInstance) => {
-                    if (this.result.uid === removedLayer.uid) {
-                        this.panel.close();
-                    }
-                }
-            )
-        );
-
-        this.handlers.push(
-            this.$iApi.event.on(
-                GlobalEvents.PANEL_CLOSED,
-                (panel: PanelInstance) => {
-                    if (panel.id == 'details-items') {
-                        this.detailsClosed();
-                    }
-                }
-            )
-        );
-
-        this.handlers.push(
-            this.$iApi.event.on(
-                GlobalEvents.PANEL_MINIMIZED,
-                (panel: PanelInstance) => {
-                    if (panel.id == 'details-items') {
-                        this.detailsMinimized();
-                    }
-                }
-            )
-        );
-
-        this.handlers.push(
-            this.$iApi.event.on(GlobalEvents.MAP_BASEMAPCHANGE, () => {
-                if (this.hilightToggle) {
-                    this.details.reloadDetailsHilight(
-                        this.result.items[this.currentIdx],
-                        this.result.uid
-                    );
-                }
-            })
-        );
-    },
-    beforeUnmount() {
-        this.handlers.forEach(handler => this.$iApi.event.off(handler));
-    },
-    beforeUpdate() {
-        // this is called before the screen is updated (e.g. user clicked another layer from layer results screen)
-        this.initDetails();
-    },
-    computed: {
-        /**
-         * Returns the information for a single identify result item, item index.
-         */
-        identifyItem(): IdentifyItem {
-            return this.result.items[this.currentIdx];
-        },
-
-        itemName(): string {
-            const layer: LayerInstance | undefined =
-                this.$iApi.geo.layer.getLayer(this.result.uid);
-            const nameField = layer?.nameField;
-            return nameField && this.identifyItem.loaded
-                ? this.identifyItem.data[nameField]
-                : this.$t('details.items.title');
-        },
-
-        layerName(): string {
-            const layer: LayerInstance | undefined =
-                this.$iApi.geo.layer.getLayer(this.result.uid);
-            if (
-                layer &&
-                this.detailProperties[layer.id] &&
-                this.detailProperties[layer.id].name
-            ) {
-                return this.detailProperties[layer.id].name;
-            }
-            return layer?.name ?? '';
-        },
-
-        layerType(): string {
-            const layer: LayerInstance | undefined =
-                this.$iApi.geo.layer.getLayer(this.result.uid);
-            return layer?.layerType || '';
-        },
-
-        supportsFeatures(): boolean {
-            const layer: LayerInstance | undefined =
-                this.$iApi.geo.layer.getLayer(this.result.uid);
-            return layer?.supportsFeatures ?? false;
-        },
-
-        fieldsList(): Array<FieldDefinition> {
-            // wms layers do not support fields
-            if (!this.supportsFeatures) {
-                return [];
-            }
-
-            const layer: LayerInstance | undefined =
-                this.$iApi.geo.layer.getLayer(this.result.uid);
-            const fields = layer?.fields;
-            return fields || [];
-        },
-
-        detailsTemplate(): string {
-            const layer: LayerInstance | undefined =
-                this.$iApi.geo.layer.getLayer(this.result.uid);
-
-            // If there is a custom template binding for this layer in the store, then
-            // return its name.
-            if (
-                layer &&
-                this.detailProperties[layer.id] &&
-                this.detailProperties[layer.id].template
-            ) {
-                return this.detailProperties[layer.id].template;
-            }
-
-            // If nothing is found, use a default template from config
-            if (
-                this.defaultTemplates &&
-                this.defaultTemplates[this.identifyItem.format]
-            ) {
-                return this.defaultTemplates[this.identifyItem.format];
-            }
-
-            // If default template is not specified, use our default template
-            if (!this.supportsFeatures) {
-                return 'html-default';
-            } else {
-                return 'esri-default';
-            }
-        }
-    },
-    methods: {
-        /**
-         * Clean up for when the details screen is closed.
-         */
-        detailsClosed() {
-            this.details.removeDetailsHilight();
-            this.$store.set(DetailsStore.hilightToggle, true);
-        },
-
-        /**
-         * Clean up for when the details screen is minimized.
-         */
-        detailsMinimized() {
-            this.details.removeDetailsHilight();
-            // TODO: do we want to keep track of the index on minimize?
-        },
-
-        /**
-         * Initialize the details screen
-         */
-        initDetails() {
-            this.currentIdx = this.itemIndex ?? 0;
-            this.layerExists = true;
-            this.hilightToggle =
-                this.$store.get(DetailsStore.hilightToggle) ??
-                this.hilightToggle;
-            this.itemChanged();
-        },
-
-        /**
-         * Called whenever the displayed item changes
-         */
-        itemChanged() {
-            if (this.identifyItem.loaded) {
-                const layer: LayerInstance | undefined =
-                    this.$iApi.geo.layer.getLayer(this.result.uid);
-                if (!layer) {
-                    // could not find this layer, so mark this result as invalid
-                    // this handles the case where user minimized item screen -> deletes layer -> opens item screen again
-                    this.layerExists = false;
-                }
-
-                this.fetchIcon();
-                this.$iApi.updateAlert(
-                    `${this.$iApi.$vApp.$t('details.item.alert.show.item', {
-                        itemName: this.itemName
-                    })} ${
-                        this.result.items.length > 1
-                            ? this.$iApi.$vApp.$t('details.item.count', [
-                                  this.currentIdx + 1,
-                                  this.result.items.length
-                              ])
-                            : ''
-                    }`
-                );
-                if (this.hilightToggle) {
-                    this.details.hilightDetailsItems(
-                        this.result.items[this.currentIdx],
-                        this.result.uid
-                    );
-                }
-            } else {
-                // wait for load.
-                const localCurrentIndex = this.currentIdx;
-                this.identifyItem.loading.then(() => {
-                    // see if the screen is still on the item we were waiting for
-                    // TODO do we also need to check if the screen itself changed to the list
-                    //      view or closed? Would this vue component be unmounted and dead at
-                    //      that point? Don't want stale updateAlerts pinging off after the fact.
-                    //      Could implement another flag, set it on seeList() and panel close.
-                    if (localCurrentIndex === this.currentIdx) {
-                        // re-call, knowing the item is now loaded.
-                        this.itemChanged();
-                    }
-                });
-
-                // TODO do we need some type of updateAlert that says the screen is now
-                //      in a loading state?
-            }
-        },
-
-        /**
-         * See all results from the identified layer
-         */
-        seeList() {
-            this.panel.show({
-                screen: 'results-screen',
-                props: {
-                    result: this.result,
-                    previousItemIndex: this.currentIdx
-                }
-            });
-        },
-
-        /**
-         * Advance the item index by direction
-         */
-        advanceItemIndex(direction: number) {
-            this.currentIdx += direction;
-            this.itemChanged();
-        },
-
-        /**
-         * Get the icon of the identify result
-         */
-        fetchIcon() {
-            this.icon = '';
-
-            if (!(this.identifyItem && this.identifyItem.loaded)) {
-                return;
-            }
-
-            const layer: LayerInstance | undefined =
-                this.$iApi.geo.layer.getLayer(this.result.uid);
-            if (layer === undefined) {
-                console.warn(
-                    `could not find layer for uid ${this.result.uid} during icon lookup`
-                );
-                return;
-            }
-
-            if (layer.supportsFeatures) {
-                const oidField = layer.oidField;
-                let lastIdx = this.currentIdx;
-                layer
-                    .getIcon(this.identifyItem.data[oidField])
-                    .then((value: string) => {
-                        // only update the icon if user is still on the same item
-                        if (this.currentIdx === lastIdx) {
-                            this.icon = value;
-                        }
-                    });
-            }
-        },
-
-        /**
-         * Zoom to feature on the map
-         */
-        zoomToFeature() {
-            const layer: LayerInstance | undefined =
-                this.$iApi.geo.layer.getLayer(this.result.uid);
-
-            if (layer === undefined) {
-                console.warn(
-                    `Could not find layer for uid ${this.result.uid} during zoom geometry lookup`
-                );
-                return;
-            }
-
-            if (!this.identifyItem.loaded) {
-                console.warn(
-                    'Details zoomToFeature call on item that is still loading. Should be impossible, alert the devs.'
-                );
-                return;
-            }
-
-            const oid = this.identifyItem.data[layer.oidField];
-            const opts = { getGeom: true };
-            layer.getGraphic(oid, opts).then(g => {
-                if (g.geometry.invalid()) {
-                    console.error(`Could not find graphic for objectid ${oid}`);
-                } else {
-                    this.$iApi.geo.map.zoomMapTo(g.geometry);
-                }
-            });
-
-            this.$iApi.updateAlert(
-                this.$iApi.$vApp.$t('details.item.alert.zoom')
-            );
-        },
-
-        onHilightToggle(value: boolean) {
-            this.hilightToggle = value;
-            this.details.onHilightToggle(
-                value,
-                this.result.items[this.currentIdx],
-                this.result.uid
-            );
-        }
+    // the index of the details item we want to display (optional)
+    itemIndex: {
+        type: Number,
+        default: 0
     }
+});
+
+const defaultTemplates = computed<{ [type: string]: string }>(
+    () => store.get(DetailsStore.defaultTemplates)!
+);
+const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(
+    () => store.get(DetailsStore.properties)!
+);
+const activeGreedy = computed<number>(
+    () => store.get(DetailsStore.activeGreedy)!
+);
+const slowLoadingFlag = computed<Boolean>(
+    () => store.get(DetailsStore.slowLoadingFlag)!
+);
+const identifyItem = computed<IdentifyItem>(
+    () => props.result.items[currentIdx.value]
+);
+const itemName = computed<string>(() => {
+    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
+        props.result.uid
+    );
+    const nameField = layer?.nameField;
+    return nameField && identifyItem.value.loaded
+        ? identifyItem.value.data[nameField]
+        : iApi.$i18n.t('details.items.title');
+});
+const layerName = computed<string>(() => {
+    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
+        props.result.uid
+    );
+    if (
+        layer &&
+        detailProperties.value[layer.id] &&
+        detailProperties.value[layer.id].name
+    ) {
+        return detailProperties.value[layer.id].name;
+    }
+    return layer?.name ?? '';
+});
+const layerType = computed<string>(() => {
+    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
+        props.result.uid
+    );
+    return layer?.layerType || '';
+});
+const supportsFeatures = computed<Boolean>(() => {
+    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
+        props.result.uid
+    );
+    return layer?.supportsFeatures ?? false;
+});
+const fieldsList = computed<Array<FieldDefinition>>(() => {
+    // wms layers do not support fields
+    if (!supportsFeatures.value) {
+        return [];
+    }
+    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
+        props.result.uid
+    );
+    const fields = layer?.fields;
+    return fields || [];
+});
+const detailsTemplate = computed(() => {
+    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
+        props.result.uid
+    );
+
+    // If there is a custom template binding for this layer in the store, then
+    // return its name.
+    if (
+        layer &&
+        detailProperties.value[layer.id] &&
+        detailProperties.value[layer.id].template
+    ) {
+        return detailProperties.value[layer.id].template;
+    }
+
+    // If nothing is found, use a default template from config
+    if (
+        defaultTemplates.value &&
+        defaultTemplates.value[identifyItem.value.format]
+    ) {
+        return defaultTemplates.value[identifyItem.value.format];
+    }
+
+    // If default template is not specified, use our default template
+    if (!supportsFeatures.value) {
+        return HTMLDefault;
+    } else {
+        return ESRIDefault;
+    }
+});
+
+const identifyTypes = ref<IdentifyResultFormat>(IdentifyResultFormat.UNKNOWN);
+const icon = ref<string>('');
+const currentIdx = ref<number>(0);
+const layerExists = ref<Boolean>(false);
+const handlers = ref<Array<string>>([]);
+const details = ref<DetailsAPI>(iApi.fixture.get('details'));
+const hilightToggle = ref<boolean>(true);
+
+/**
+ * Clean up for when the details screen is closed.
+ */
+const detailsClosed = () => {
+    details.value.removeDetailsHilight();
+    store.set(DetailsStore.hilightToggle, true);
+};
+
+/**
+ * Clean up for when the details screen is minimized.
+ */
+const detailsMinimized = () => {
+    details.value.removeDetailsHilight();
+    // TODO: do we want to keep track of the index on minimize?
+};
+
+/**
+ * Initialize the details screen
+ */
+const initDetails = () => {
+    currentIdx.value = props.itemIndex ?? 0;
+    layerExists.value = true;
+    hilightToggle.value =
+        store.get(DetailsStore.hilightToggle) ?? hilightToggle.value;
+    itemChanged();
+};
+
+/**
+ * Called whenever the displayed item changes
+ */
+const itemChanged = () => {
+    if (identifyItem.value.loaded) {
+        const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
+            props.result.uid
+        );
+        if (!layer) {
+            // could not find this layer, so mark this result as invalid
+            // this handles the case where user minimized item screen -> deletes layer -> opens item screen again
+            layerExists.value = false;
+        }
+
+        fetchIcon();
+        iApi.updateAlert(
+            `${iApi.$i18n.t('details.item.alert.show.item', {
+                itemName: itemName.value
+            })} ${
+                props.result.items.length > 1
+                    ? iApi.$i18n.t('details.item.count', [
+                          currentIdx.value + 1,
+                          props.result.items.length
+                      ])
+                    : ''
+            }`
+        );
+        if (hilightToggle.value) {
+            details.value.hilightDetailsItems(
+                props.result.items[currentIdx.value],
+                props.result.uid
+            );
+        }
+    } else {
+        // wait for load.
+        const localCurrentIndex = currentIdx.value;
+        identifyItem.value.loading.then(() => {
+            // see if the screen is still on the item we were waiting for
+            // TODO do we also need to check if the screen itself changed to the list
+            //      view or closed? Would this vue component be unmounted and dead at
+            //      that point? Don't want stale updateAlerts pinging off after the fact.
+            //      Could implement another flag, set it on seeList() and panel close.
+            if (localCurrentIndex === currentIdx.value) {
+                // re-call, knowing the item is now loaded.
+                itemChanged();
+            }
+        });
+
+        // TODO do we need some type of updateAlert that says the screen is now
+        //      in a loading state?
+    }
+};
+
+/**
+ * See all results from the identified layer
+ */
+const seeList = () => {
+    props.panel.show({
+        screen: 'results-screen',
+        props: {
+            result: props.result,
+            previousItemIndex: currentIdx.value
+        }
+    });
+};
+
+/**
+ * Advance the item index by direction
+ */
+const advanceItemIndex = (direction: number) => {
+    currentIdx.value += direction;
+    itemChanged();
+};
+
+/**
+ * Get the icon of the identify result
+ */
+const fetchIcon = () => {
+    icon.value = '';
+
+    if (!(identifyItem.value && identifyItem.value.loaded)) {
+        return;
+    }
+
+    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
+        props.result.uid
+    );
+    if (layer === undefined) {
+        console.warn(
+            `could not find layer for uid ${props.result.uid} during icon lookup`
+        );
+        return;
+    }
+
+    if (layer.supportsFeatures) {
+        const oidField = layer.oidField;
+        let lastIdx = currentIdx.value;
+        layer
+            .getIcon(identifyItem.value.data[oidField])
+            .then((value: string) => {
+                // only update the icon if user is still on the same item
+                if (currentIdx.value === lastIdx) {
+                    icon.value = value;
+                }
+            });
+    }
+};
+
+/**
+ * Zoom to feature on the map
+ */
+const zoomToFeature = () => {
+    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
+        props.result.uid
+    );
+
+    if (layer === undefined) {
+        console.warn(
+            `Could not find layer for uid ${props.result.uid} during zoom geometry lookup`
+        );
+        return;
+    }
+
+    if (!identifyItem.value.loaded) {
+        console.warn(
+            'Details zoomToFeature call on item that is still loading. Should be impossible, alert the devs.'
+        );
+        return;
+    }
+
+    const oid = identifyItem.value.data[layer.oidField];
+    const opts = { getGeom: true };
+    layer.getGraphic(oid, opts).then(g => {
+        if (g.geometry.invalid()) {
+            console.error(`Could not find graphic for objectid ${oid}`);
+        } else {
+            iApi.geo.map.zoomMapTo(g.geometry);
+        }
+    });
+
+    iApi.updateAlert(iApi.$i18n.t('details.item.alert.zoom'));
+};
+
+const onHilightToggle = (value: boolean) => {
+    hilightToggle.value = value;
+    details.value.onHilightToggle(
+        value,
+        props.result.items[currentIdx.value],
+        props.result.uid
+    );
+};
+
+onMounted(() => {
+    // this is called when screen is first mounted
+    initDetails();
+
+    // close this panel if layer is removed
+    handlers.value.push(
+        iApi.event.on(
+            GlobalEvents.LAYER_REMOVE,
+            (removedLayer: LayerInstance) => {
+                if (props.result.uid === removedLayer.uid) {
+                    props.panel.close();
+                }
+            }
+        )
+    );
+
+    handlers.value.push(
+        iApi.event.on(GlobalEvents.PANEL_CLOSED, (panel: PanelInstance) => {
+            if (panel.id == 'details-items') {
+                detailsClosed();
+            }
+        })
+    );
+
+    handlers.value.push(
+        iApi.event.on(GlobalEvents.PANEL_MINIMIZED, (panel: PanelInstance) => {
+            if (panel.id == 'details-items') {
+                detailsMinimized();
+            }
+        })
+    );
+
+    handlers.value.push(
+        iApi.event.on(GlobalEvents.MAP_BASEMAPCHANGE, () => {
+            if (hilightToggle.value) {
+                details.value.reloadDetailsHilight(
+                    props.result.items[currentIdx.value],
+                    props.result.uid
+                );
+            }
+        })
+    );
+});
+
+onBeforeUnmount(() => {
+    handlers.value.forEach(handler => iApi.event.off(handler));
+});
+
+onBeforeUpdate(() => {
+    // this is called before the screen is updated (e.g. user clicked another layer from layer results screen)
+    initDetails();
 });
 </script>
 

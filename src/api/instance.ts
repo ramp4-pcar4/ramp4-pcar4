@@ -47,6 +47,7 @@ import MapnavButtonV from '@/fixtures/mapnav/button.vue';
 
 import AppbarButtonV from '@/fixtures/appbar/button.vue';
 import type { MaptipAPI } from '@/geo/map/maptip';
+import type { Composer, LocaleMessages, VueMessageType } from 'vue-i18n';
 
 export interface RampOptions {
     loadDefaultFixtures?: boolean;
@@ -71,6 +72,7 @@ export class InstanceAPI {
      */
     readonly $vApp: ComponentPublicInstance;
     readonly $element: VueApp<Element>;
+    readonly $i18n: Composer<LocaleMessages<VueMessageType>, unknown>;
 
     private _isFullscreen: boolean;
 
@@ -93,6 +95,7 @@ export class InstanceAPI {
 
         this.$vApp = appInstance.app;
         this.$element = appInstance.element;
+        this.$i18n = appInstance.i18n;
 
         this.fixture = new FixtureAPI(this); // pass the iApi reference to the FixtureAPI
         this.panel = new PanelAPI(this);
@@ -136,7 +139,7 @@ export class InstanceAPI {
             } = configs.configs;
 
             const langConfig =
-                langConfigs[this.$vApp.$i18n.locale] ??
+                langConfigs[this.$i18n.locale.value] ??
                 langConfigs[Object.keys(langConfigs)[0]];
             this.$vApp.$store.set(ConfigStore.newConfig, langConfig);
 
@@ -145,7 +148,7 @@ export class InstanceAPI {
                 config: langConfig,
                 configLangs: Object.keys(langConfigs),
                 // @ts-ignore
-                allLangs: Object.keys(this.$vApp.$i18n.messages)
+                allLangs: Object.keys(this.$i18n.messages.value)
             });
 
             for (const lang in langConfigs) {
@@ -407,7 +410,7 @@ export class InstanceAPI {
      * @memberof InstanceAPI
      */
     getConfig() {
-        const language = this.$vApp.$i18n.locale;
+        const language = this.$i18n.locale.value;
 
         // clone it to avoid mutations to store config
         return JSON.parse(
@@ -427,7 +430,7 @@ export class InstanceAPI {
      * @memberof InstanceAPI
      */
     setLanguage(language: string): void {
-        if (this.$vApp.$i18n.locale === language) {
+        if (this.$i18n.locale.value === language) {
             return;
         }
 
@@ -436,12 +439,12 @@ export class InstanceAPI {
         };
 
         // prevent full map reload if the new language uses the same config
-        if (langs[language] === langs[this.$vApp.$i18n.locale]) {
-            this.$vApp.$i18n.locale = language;
+        if (langs[language] === langs[this.$i18n.locale.value]) {
+            this.$i18n.locale.value = language;
             return;
         }
 
-        this.$vApp.$i18n.locale = language;
+        this.$i18n.locale.value = language;
 
         const activeConfig = this.getConfig();
         this.$vApp.$iApi.event.emit(GlobalEvents.CONFIG_CHANGE, activeConfig);
@@ -458,7 +461,7 @@ export class InstanceAPI {
      * @memberof InstanceAPI
      */
     get language(): string {
-        return this.$vApp.$i18n.locale;
+        return this.$i18n.locale.value;
     }
 
     /**
@@ -595,7 +598,9 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
     vueElement.config.globalProperties.$store = thisStore;
     vueElement.config.globalProperties.$iApi = iApi;
 
+    vueElement.provide('iApi', iApi);
+
     const app = vueElement.mount(element);
 
-    return { element: vueElement, app };
+    return { element: vueElement, app, i18n: thisi18n.global };
 }

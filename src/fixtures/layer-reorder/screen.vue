@@ -10,22 +10,15 @@
     </panel-screen>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
 import type { PropType } from 'vue';
 import type { PanelInstance } from '@/api';
-import LayerReorderComponentV from './components/layer-component.vue';
+import LayerReorderComponent from './components/layer-component.vue';
 
-export default defineComponent({
-    name: 'LayerReorderScreenV',
-    components: {
-        'layer-reorder-component': LayerReorderComponentV
-    },
-    props: {
-        panel: {
-            type: Object as PropType<PanelInstance>,
-            required: true
-        }
+defineProps({
+    panel: {
+        type: Object as PropType<PanelInstance>,
+        required: true
     }
 });
 </script>
