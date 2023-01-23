@@ -38,8 +38,8 @@ export class MapImageSublayer extends AttribLayer {
 
         this.fetchEsriSublayer(parent);
 
-        if (config.initialFilteredQuery) {
-            this.filter.setSql(CoreFilter.INITIAL, config.initialFilteredQuery);
+        // force-apply any active filters now to avoid stuff we don't want from drawing on the map
+        if (config.initialFilteredQuery || config.permanentFilteredQuery) {
             this.applySqlFilter();
         }
     }

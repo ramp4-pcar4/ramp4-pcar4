@@ -1,5 +1,50 @@
 # Layer Configuration
 
+## Document Outline
+
+Layer Configuration Properties
+
+- [colour](#colour)
+- [controls](#controls)
+- [cosmetic](#cosmetic)
+- [customRenderer](#customRenderer)
+- [disabledControls](#disabledControls)
+- [drawOrder](#drawOrder)
+- [expectedDrawTime](#expectedDrawTime)
+- [expectedLoadTime](#expectedLoadTime)
+- [extent](#extent)
+- [featureInfoMimeType](#featureInfoMimeType)
+- [fieldMetadata](#fieldMetadata)
+- [fixtures](#fixtures)
+- [id](#id)
+- [identifyMode](#identifyMode)
+- [imageFormat](#imageFormat)
+- [initialFilteredQuery](#initialFilteredQuery)
+- [latField](#latField)
+- [layerType](#layerType)
+- [longField](#longField)
+- [metadata](#metadata)
+- [mouseTolerance](#mouseTolerance)
+- [name](#name)
+- [nameField](#nameField)
+- [permanentFilteredQuery](#permanentFilteredQuery)
+- [rawData](#rawData)
+- [singleEntryCollapse](#singleEntryCollapse)
+- [state](#state)
+- [sublayers](#sublayers)
+- [tooltipField](#tooltipField)
+- [touchTolerance](#touchTolerance)
+- [url](#url)
+- [xyInAttribs](#xyInAttribs)
+
+Additional Sections
+
+- [Control Names](#control-names)
+- [Image Format Types](#image-format-types)
+- [Layer Abilities](#layer-abilities)
+- [Map Image Sublayers](#map-image-sublayers)
+- [WMS Sublayers](#wms-sublayers)
+
 ## Required Properties
 
 ### id
@@ -349,7 +394,7 @@ Specifies the image format an ESRI Map Image Layer should return. See the [list 
 
 *string*, only applies to layers that [support attributes](#layer-abilities)
 
-Specifies an attribute based filter to be applied to the layer. Only features satisfying the query will appear in the layer. If missing, all features are shown. At runtime, this filter can be accessed via the Layer API using the filter key `initial`.
+Specifies an attribute based filter to be applied to the layer at startup. Features that don't satisfy the filter will not be shown. At runtime, this filter can be accessed via the Layer API using the filter key `initial`.
 
 Query format is that of an SQL WHERE clause, the part that comes after the keyword `WHERE`. See [this page](https://desktop.arcgis.com/en/arcmap/10.3/map/working-with-layers/building-a-query-expression.htm) for examples.
 
@@ -421,6 +466,24 @@ Specifies an attribute field name to use as the "name" for a feature. This will 
 }
 ```
 
+### permanentFilteredQuery
+
+*string*, only applies to layers that [support attributes](#layer-abilities)
+
+Specifies an attribute based filter to be applied to the layer. Features that don't satisfy the filter will not be shown. At runtime, this filter can be read via the Layer API using the filter key `permanent`, but cannot be updated.
+
+Query format is that of an SQL WHERE clause, the part that comes after the keyword `WHERE`. See [this page](https://desktop.arcgis.com/en/arcmap/10.3/map/working-with-layers/building-a-query-expression.htm) for examples.
+
+This differs from the `initialFilteredQuery`, in that the filter is locked for the lifetime of the layer. For layers hosted on ArcGIS servers, this means other requests like fetching all attributes will only download valid matches. This can provide an efficiency and bandwidth saving if one is only focusing on a subset of a large layer.
+
+File based layers will still download everything up-front, but will respect the filter afterwards. Same with WFS, but a WFS can apply a similar filter in its URL if the server will respect the parameter.
+
+```js
+{
+    permanentFilteredQuery: "resto_type = 'Hamburger'"
+}
+```
+
 ### rawData
 
 *string | object | ArrayBuffer*, only applies to file based layers
@@ -453,6 +516,8 @@ Specifies the file contents on the config. If provided, the `url` property will 
 ```
 
 ### singleEntryCollapse
+
+**This is currently not supported.** An alternative is to specify the `sublayerIndex` of the target child layer in the [legend configuration](../app/legend.md#layer-item-1).
 
 *boolean*, only applies to `esri-map-image`
 

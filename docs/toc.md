@@ -17,7 +17,7 @@ The [Startup](api/startup.md) page provides examples of how to instantiate a RAM
 
 ## App Configuration
 
-- Configuring across [different languages](configuration/config-language.md). Be aware the since text residing in the RAMP core is compiled, those items are currently available only in English and French.
+- Configuring across [different languages](configuration/config-language.md). Be aware the text residing in the RAMP core is compiled, so those items are currently available only in English and French. New languages can be added but requires a re-build of the library.
 - The [Layers Configuration](configuration/layer-config.md) page is fairly complete.
 - Configuration for various fixtures
   - [Appbar](app/appbar.md#configuration)

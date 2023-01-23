@@ -1,6 +1,6 @@
 # Geosearch
 
-The Geosearch component is contained inside a panel in the application. Geosearch makes use of the [Geogratis services](http://geogratis.gc.ca/).
+The Geosearch component is contained inside a panel in the application. Geosearch makes use of the [Geogratis services](https://geogratis.gc.ca/), in particular the [Geolocation service](https://www.nrcan.gc.ca/science-and-data/science-and-research/earth-sciences/geography/topographic-information/web-services/geolocation-service/17304) and the [Geoname service](https://www.nrcan.gc.ca/maps-tools-and-publications/maps/geographical-names-canada/application-programming-interface-api/9249).
 
 ## Component Breakdown
 

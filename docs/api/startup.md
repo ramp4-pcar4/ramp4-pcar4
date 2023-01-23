@@ -162,7 +162,7 @@ This is a script that you will need to run before you attempt to create any inst
 
 3. `ramp.esm.js`
 
-This script works like a module, so you will not need to run it before creating an instance. Instead, you need to import the desired function from the file. It contains the same properties as `ramp.global.js`. Here is a code snippet showing usage:
+This script works like a module, so you will not need to run it before creating an instance. Instead, you need to import the desired function from the file. It contains the same properties as `ramp.js`. Here is a code snippet showing usage:
 
 ```
 import { createInstance, geo } from '../lib/ramp.esm.js';
