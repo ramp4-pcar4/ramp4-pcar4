@@ -176,7 +176,7 @@ export class MapImageLayer extends AttribLayer {
         const leafsToInit: Array<MapImageSublayer> = [];
 
         // this subfunction will recursively crawl a sublayer structure.
-        // it will generate FCs for all leafs under the sublayer
+        // it will generate MIL Sublayer objects for all leafs under the sublayer
         // we also generate a tree structure of our layer that is in a format
         // that makes the client happy
         const processSublayer = (
@@ -220,7 +220,9 @@ export class MapImageLayer extends AttribLayer {
                             controls: subConfigs[sid]?.controls,
                             disabledControls: subConfigs[sid]?.disabledControls,
                             initialFilteredQuery:
-                                subConfigs[sid]?.initialFilteredQuery
+                                subConfigs[sid]?.initialFilteredQuery,
+                            permanentFilteredQuery:
+                                subConfigs[sid]?.permanentFilteredQuery
                         },
                         this.$iApi,
                         this,
@@ -380,10 +382,8 @@ export class MapImageLayer extends AttribLayer {
             }
         });
 
-        if (this.origRampConfig) {
-            // defaults to true
-            this.visibility = this.origState.visibility ?? true;
-        }
+        // defaults to true
+        this.visibility = this.origState.visibility ?? true;
 
         return loadPromises;
     }
@@ -405,19 +405,17 @@ export class MapImageLayer extends AttribLayer {
     runIdentify(options: IdentifyParameters): Array<IdentifyResult> {
         // NOTE: we are looping over queryFeatures on each sublayer instead of running an identify on the entire layer.
         //       reasons:
-        //         the queries allow us to only return OIDs. identify always pulls all the features.
-        //         identify returns results defined by server aliases instead of server field names, requiring us to reverse-engineer them
-        //         the query allows us to utilze our quick cache with the OID. the first hit is more heavy than an identify,
+        //         The queries allow us to only return OIDs. identify always pulls all the features.
+        //         Identify returns results defined by server aliases instead of server field names, requiring us to reverse-engineer them.
+        //         The query allows us to utilze our quick cache with the OID. the first hit is more heavy than an identify,
         //         but this also means the result is now cached and odds are the user is going to click on/inspect the result anyway.
-        //         also, if the grid has been opened, the identify can utilize the local attribute set.
+        //         Also, if the grid has been opened, the identify can utilize the local attribute set.
 
         // early kickout check. not loaded/error
         if (!this.canIdentify()) {
             // return empty result.
             return [];
         }
-
-        const map = this.$iApi.geo.map;
 
         // change any sublayer ids that are server indices to sublayer uids.
         if (options.sublayerIds) {

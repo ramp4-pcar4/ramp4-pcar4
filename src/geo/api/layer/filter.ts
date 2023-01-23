@@ -4,17 +4,22 @@ import { CoreFilter, Extent } from '@/geo/api';
  * @class Filter
  */
 export class Filter {
-    // handles state and result caches for data filters on feature classes
+    // Handles state and result caches for data filters on feature classes.
+    // Instances of this class are private within layers, so any public facing calls or event
+    // raising is done at the layer level.
 
     private sql: { [key: string]: string }; // object mapping string to string
     private cache: { [key: string]: Promise<Array<number>> }; // object mapping string to promise of array of ints
     private extent: Extent | undefined;
 
-    constructor() {
-        // typescript too dumb to figure out this initizlizes vars. thanks typescript.
-        // this.clearAll();
-
-        this.sql = {};
+    constructor(
+        permanentWhereClause: string = '',
+        initialWhereClause: string = ''
+    ) {
+        this.sql = {
+            [CoreFilter.PERMANENT]: permanentWhereClause,
+            [CoreFilter.INITIAL]: initialWhereClause
+        };
         this.extent = undefined;
         this.cache = {};
     }
@@ -38,15 +43,15 @@ export class Filter {
     }
 
     /**
-     * Indicates if any filters are active
+     * Indicates if any filters are active. A Permanent filter does not influence the result.
      *
      * @method isActive
-     * @returns {Boolean} indicates if any filters are active
+     * @returns {Boolean} indicates if any non-permanent filters are active
      */
     isActive(): boolean {
         // TODO clear up and make not of why there are no extent filters being considered here.
         //      is this because extent is considered map level? anyways clarify the jsdoc once known.
-        return this.sqlActiveFilters().length > 0;
+        return this.sqlActiveFilters([CoreFilter.PERMANENT]).length > 0;
     }
 
     /**
@@ -80,10 +85,16 @@ export class Filter {
      * @param {String} whereClause clause defining the active filters on symbols. Use '' for no filter. Use '1=2' for everything filtered.
      */
     setSql(filterKey: string, whereClause: string): void {
-        this.sql[filterKey] = whereClause;
+        if (filterKey === CoreFilter.PERMANENT) {
+            console.error(
+                'Attempted to overwrite a permanent filter. Not allowed.'
+            );
+        } else {
+            this.sql[filterKey] = whereClause;
 
-        // invalidate affected caches
-        this.clearCacheSet(filterKey);
+            // invalidate affected caches
+            this.clearCacheSet(filterKey);
+        }
     }
 
     /**
@@ -211,57 +222,14 @@ export class Filter {
     }
 
     /**
-     * Resets all internal filter settings to have no filter applied. Does not trigger filter change events.
+     * Resets all internal filter settings to have no filter applied.
      *
      * @method clearAll
      */
     clearAll(): void {
-        this.sql = {};
+        // clear everything except permanent, which must remain
+        this.sql = { [CoreFilter.PERMANENT]: this.sql[CoreFilter.PERMANENT] };
         this.extent = undefined;
         this.clearAllCaches();
     }
-
-    // Current plan is to have this living at the sublayer level.
-    /**
-     * Tells what object ids are currently passing the layer's filters.
-     *
-     * @method getFilterOIDs
-     * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all filters
-     * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent
-     * @returns {Promise} resolves with array of valid OIDs that layer is filtering. resolves with undefined if there is no filters being used
-     *
-    getFilterOIDs (exclusions = [], extent) {
-        // TODO perhaps key-mapping here? figure out SQL here? meh
-        return this._parent.getFilterOIDs(exclusions, extent);
-    }
-    */
-
-    // Current plan is to have events triggered in the sublayer when sql gets set
-    /**
-     * Helper method for raising filter events
-     *
-     * @method eventRaiser
-     * @private
-     * @param {String} filterType type of filter event being raised. Should be member of shared.filterType
-     *
-    eventRaiser (filterType) {
-        const fcID = this._parent.fcID;
-        this._parent._parent.raiseFilterEvent(fcID.layerId, fcID.layerIdx, filterType);
-    }
-    */
-
-    // This was never used in RAMP2. keep in comments until we know it is not needed in R4MP
-    /**
-     * Helper method generating IN SQL clauses against the OID field
-     *
-     * @method arrayToIn
-     * @private
-     * @param {Array} array an array of integers
-     * @returns {String} a SQL IN clause that dictates the object id field must match a number in the input array
-     *
-    arrayToIn (array) {
-        // TODO do we need empty array checks? caller should be smart enough to recognize prior to calling this
-        return `${this._parent.oidField} IN (${array.join(',')})`;
-    }
-    */
 }

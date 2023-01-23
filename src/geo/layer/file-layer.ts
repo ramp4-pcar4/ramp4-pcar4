@@ -97,13 +97,6 @@ export class FileLayer extends AttribLayer {
         } else {
             this.identifyMode = LayerIdentifyMode.HYBRID;
         }
-
-        if (rampConfig.initialFilteredQuery) {
-            this.filter.setSql(
-                CoreFilter.INITIAL,
-                rampConfig.initialFilteredQuery
-            );
-        }
     }
 
     async reload(): Promise<void> {
@@ -300,8 +293,8 @@ export class FileLayer extends AttribLayer {
         });
         */
 
-        // if we had an initial filter, apply it to the layer when it's done loading
-        if (this.filter.getSql(CoreFilter.INITIAL)) {
+        // if we had any initial filters, apply it to the layer when it's done loading
+        if (this.filter.getCombinedSql()) {
             Promise.all(loadPromises).then(() => {
                 this.applySqlFilter();
             });
