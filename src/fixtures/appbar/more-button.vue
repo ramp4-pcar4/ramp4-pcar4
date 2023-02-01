@@ -5,7 +5,7 @@
             class="text-gray-400 w-full h-48 focus:outline-none hover:text-white"
             @click="open = !open"
             v-focus-item
-            :content="$t('appbar.more')"
+            :content="t('appbar.more')"
             v-tippy="{ placement: 'right' }"
         >
             <svg
@@ -33,6 +33,9 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps({
     position: {

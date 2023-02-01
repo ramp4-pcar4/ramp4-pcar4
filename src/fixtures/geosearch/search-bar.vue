@@ -3,7 +3,7 @@
         <input
             type="search"
             class="border-b w-full text-base py-8 outline-none focus:shadow-outline border-gray-600 h-full min-w-0"
-            :placeholder="$t('geosearch.searchText')"
+            :placeholder="t('geosearch.searchText')"
             :value="searchVal"
             @input="
                 onSearchTermChange(($event.target as HTMLInputElement).value)
@@ -13,7 +13,7 @@
                     ($event.target as HTMLInputElement).blur();
                 }
             "
-            :aria-label="$t('geosearch.searchText')"
+            :aria-label="t('geosearch.searchText')"
             enterkeyhint="done"
         />
     </div>
@@ -25,7 +25,9 @@ import { computed } from 'vue';
 import { GeosearchStore } from './store';
 import { debounce } from 'throttle-debounce';
 import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const store = useStore();
 
 const searchVal = computed(() => store.get(GeosearchStore.searchVal));

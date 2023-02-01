@@ -11,27 +11,20 @@
     </panel-screen>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { inject, onBeforeMount, ref } from 'vue';
 
-export default defineComponent({
-    name: 'IklobFixtureV',
-    data() {
-        return {
-            gazeboText: ''
-        };
-    },
-    props: {
-        panel: Object
-    },
-    methods: {
-        onCatSeen() {
-            this.gazeboText = 'The cat on the gazebo panel has been seen!';
-        }
-    },
-    created() {
-        this.$iApi.event.once('gazebo/beholdMyText', this.onCatSeen);
-    }
+defineProps(['panel']);
+
+const iApi = inject<any>('iApi')!;
+
+const gazeboText = ref<string>('');
+const onCatSeen = () => {
+    gazeboText.value = 'The cat on the gazebo panel has been seen!';
+};
+
+onBeforeMount(() => {
+    iApi.event.once('gazebo/beholdMyText', onCatSeen);
 });
 </script>
 

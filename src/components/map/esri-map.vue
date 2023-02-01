@@ -18,77 +18,66 @@
     ></div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed, inject, onBeforeUnmount, reactive, watch } from 'vue';
 import { MaptipStore } from '@/store/modules/maptip';
+import { useStore } from 'vuex';
+import type { InstanceAPI } from '@/api';
+import type { Point } from '@/geo/api';
 
-export default defineComponent({
-    name: 'EsriMapV',
-    data() {
-        return {
-            maptipPoint: this.get(MaptipStore.maptipPoint),
-            maptipInstance: this.get(MaptipStore.maptipInstance),
-            maptipContent: this.get(MaptipStore.content),
-            watchers: [] as Array<Function>
-        };
-    },
+const store = useStore();
+const iApi = inject('iApi') as InstanceAPI;
 
-    created() {
-        // Set config watcher up here to be able to call it immediately on created
-        // regularly `immediate` makes it get called during `created`
-        // Keep track of the unwatch method returned by each watch so we can call it when the component is unmounted
-        this.watchers.push(
-            this.$watch('maptipPoint', (maptipPoint: any) => {
-                if (this.maptipPoint) {
-                    // Calculate offset from mappoint
-                    let offsetX, offsetY: number;
-                    const originX: number =
-                        this.$iApi.geo.map.getPixelWidth() / 2;
-                    const originY = 0;
-                    const screenPointFromMapPoint =
-                        this.$iApi.geo.map.mapPointToScreenPoint(
-                            this.maptipPoint
-                        );
-                    offsetX = screenPointFromMapPoint.screenX - originX;
-                    offsetY = originY - screenPointFromMapPoint.screenY;
-                    this.maptipInstance.setProps({
-                        offset: [offsetX, offsetY]
-                    });
-                    if (this.maptipContent && this.maptipContent !== '') {
-                        this.maptipInstance.show();
-                    }
-                } else {
-                    this.maptipInstance.hide();
-                }
-            })
-        );
-        this.watchers.push(
-            this.$watch('maptipContent', (maptipContent: any) => {
-                if (
-                    this.maptipContent &&
-                    this.maptipContent !== '' &&
-                    this.maptipPoint
-                ) {
-                    this.maptipInstance.setContent(this.maptipContent);
-                    this.maptipInstance.show();
-                } else {
-                    this.maptipInstance.hide();
-                }
-            })
-        );
-    },
+const maptipPoint = computed(() => store.get<Point>(MaptipStore.maptipPoint));
+const maptipInstance = computed(() =>
+    store.get<any>(MaptipStore.maptipInstance)
+);
+const maptipContent = computed(() => store.get<string>(MaptipStore.content));
+const watchers = reactive<Array<Function>>([]);
 
-    beforeUnmount() {
-        this.watchers.forEach(unwatch => unwatch());
-    },
-
-    methods: {
-        mouseFocus() {
-            // focused the map using the mouse, as opposed to keyboard controls
-            this.$iApi.geo.map.setMouseFocus();
+watchers.push(
+    watch(maptipPoint, () => {
+        if (maptipPoint.value) {
+            // Calculate offset from mappoint
+            let offsetX, offsetY: number;
+            const originX: number = iApi.geo.map.getPixelWidth() / 2;
+            const originY = 0;
+            const screenPointFromMapPoint = iApi.geo.map.mapPointToScreenPoint(
+                maptipPoint.value!
+            );
+            offsetX = screenPointFromMapPoint.screenX - originX;
+            offsetY = originY - screenPointFromMapPoint.screenY;
+            maptipInstance.value.setProps({
+                offset: [offsetX, offsetY]
+            });
+            if (maptipContent.value && maptipContent.value !== '') {
+                maptipInstance.value.show();
+            }
+        } else {
+            maptipInstance.value.hide();
         }
-    }
+    })
+);
+
+watchers.push(
+    watch(maptipContent, (maptipContent: any) => {
+        if (maptipContent && maptipContent !== '' && maptipPoint) {
+            maptipInstance.value.setContent(maptipContent);
+            maptipInstance.value.show();
+        } else {
+            maptipInstance.value.hide();
+        }
+    })
+);
+
+onBeforeUnmount(() => {
+    watchers.forEach(unwatch => unwatch());
 });
+
+const mouseFocus = () => {
+    // focused the map using the mouse, as opposed to keyboard controls
+    iApi.geo.map.setMouseFocus();
+};
 </script>
 
 <style lang="scss" scoped></style>

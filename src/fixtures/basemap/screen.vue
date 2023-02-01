@@ -1,7 +1,7 @@
 <template>
     <panel-screen :panel="panel">
         <template #header>
-            {{ $t('basemap.title') }}
+            {{ t('basemap.title') }}
         </template>
 
         <template #content>
@@ -53,7 +53,9 @@ import type {
 import type { PanelInstance } from '@/api';
 import { ConfigStore } from '@/store/modules/config';
 import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const store = useStore();
 
 defineProps({

@@ -1,7 +1,7 @@
 <template>
     <panel-screen :panel="panel">
         <template #header>
-            {{ $t('help.title') }}
+            {{ t('help.title') }}
         </template>
 
         <template #content>
@@ -31,9 +31,11 @@ import HelpSection from './section.vue';
 import axios from 'axios';
 import { marked } from 'marked';
 import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
 const iApi = inject<InstanceAPI>('iApi')!;
 const store = useStore();
+const { t } = useI18n();
 
 defineProps({
     panel: {

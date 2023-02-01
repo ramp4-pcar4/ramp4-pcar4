@@ -1,5 +1,5 @@
 <template>
-    <mapnav-button :onClickFunction="togglePanel" :tooltip="$t('legend.title')">
+    <mapnav-button :onClickFunction="togglePanel" :tooltip="t('legend.title')">
         <svg
             class="fill-current w-32 h-20"
             xmlns="http://www.w3.org/2000/svg"
@@ -13,17 +13,17 @@
     </mapnav-button>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { inject } from 'vue';
+import { useI18n } from 'vue-i18n';
+import type { InstanceAPI } from '@/api';
 
-export default defineComponent({
-    name: 'LegendNavButtonV',
-    methods: {
-        togglePanel() {
-            this.$iApi.panel.toggle('legend');
-        }
-    }
-});
+const { t } = useI18n();
+const iApi = inject('iApi') as InstanceAPI;
+
+const togglePanel = () => {
+    iApi.panel.toggle('legend');
+};
 </script>
 
 <style lang="scss" scoped></style>

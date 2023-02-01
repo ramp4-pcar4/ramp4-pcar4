@@ -21,25 +21,15 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+import ZoomNavSection from './buttons/zoom-nav.vue';
+import DividerNav from './buttons/divider-nav.vue';
 
-import ZoomNavV from './buttons/zoom-nav.vue';
-import DividerNavV from './buttons/divider-nav.vue';
+const store = useStore();
 
-export default defineComponent({
-    name: 'MapnavV',
-    components: {
-        'divider-nav': DividerNavV,
-        'zoom-nav-section': ZoomNavV
-    },
-
-    data() {
-        return {
-            visible: this.get('mapnav/visible')
-        };
-    }
-});
+const visible = computed(() => store.get('mapnav/visible'));
 </script>
 
 <style lang="scss" scoped>

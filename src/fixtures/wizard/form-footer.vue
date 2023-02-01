@@ -5,7 +5,7 @@
             type="button"
             @click="$emit('cancel')"
         >
-            {{ $t('wizard.step.cancel') }}
+            {{ t('wizard.step.cancel') }}
         </button>
 
         <button
@@ -14,21 +14,20 @@
             :disabled="disabled"
             @click="$emit('submit')"
         >
-            {{ $t('wizard.step.continue') }}
+            {{ t('wizard.step.continue') }}
         </button>
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'WizardFormFooterV',
-    props: {
-        disabled: {
-            type: Boolean,
-            default: true
-        }
+const { t } = useI18n();
+
+defineProps({
+    disabled: {
+        type: Boolean,
+        default: true
     }
 });
 </script>

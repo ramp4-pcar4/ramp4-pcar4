@@ -18,7 +18,6 @@
 
 <script setup lang="ts">
 import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
-import type { PropType } from 'vue';
 import type { InstanceAPI } from '@/api';
 import { useStore } from 'vuex';
 import linkifyHtml from 'linkify-html';
