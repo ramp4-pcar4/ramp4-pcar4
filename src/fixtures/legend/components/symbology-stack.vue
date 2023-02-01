@@ -54,39 +54,33 @@
     </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import type { LegendSymbology } from '@/geo/api';
-import type { PropType } from 'vue';
-import { defineComponent, toRaw } from 'vue';
+import { toRaw, onMounted, type PropType, ref } from 'vue';
 import type { LayerItem } from '../store/layer-item';
 
-export default defineComponent({
-    name: 'LegendSymbologyStackV',
-    props: {
-        visible: { type: Boolean, required: true },
-        legendItem: { type: Object as PropType<LayerItem>, required: true }
-    },
-    data() {
-        return {
-            stack: [] as Array<LegendSymbology>
-        };
-    },
-    mounted() {
-        // wait for the layer item to load
-        this.legendItem.loadPromise.then(() => {
-            if (this.legendItem.layerUid !== undefined) {
-                // retrieve the symbology stack
-                // waits on all symbols in the stack to finish loading before displaying.
-                Promise.all(
-                    toRaw(this.legendItem.symbologyStack).map(
-                        (l: any) => l.drawPromise
-                    )
-                ).then((r: any) => {
-                    this.stack = toRaw(this.legendItem).symbologyStack;
-                });
-            }
-        });
-    }
+const props = defineProps({
+    visible: { type: Boolean, required: true },
+    legendItem: { type: Object as PropType<LayerItem>, required: true }
+});
+
+const stack = ref<Array<LegendSymbology>>([]); // ref instead of reactive to maintain reactivity after promise
+
+onMounted(() => {
+    // wait for the layer item to load
+    props.legendItem.loadPromise.then(() => {
+        if (props.legendItem.layerUid !== undefined) {
+            // retrieve the symbology stack
+            // waits on all symbols in the stack to finish loading before displaying.
+            Promise.all(
+                toRaw(props.legendItem.symbologyStack).map(
+                    (l: any) => l.drawPromise
+                )
+            ).then(() => {
+                stack.value = toRaw(props.legendItem).symbologyStack;
+            });
+        }
+    });
 });
 </script>
 

@@ -2,7 +2,7 @@
     <li
         class="flex-col default-focus-style p-4"
         :content="
-            $t(
+            t(
                 open
                     ? 'notifications.controls.collapse'
                     : 'notifications.controls.expand'
@@ -37,7 +37,7 @@
                 type="button"
                 @click.stop="removeNotification(notification)"
                 class="mx-4 p-4"
-                :content="$t('notifications.controls.dismiss')"
+                :content="t('notifications.controls.dismiss')"
                 v-tippy="{ theme: 'ramp4', animation: 'scale' }"
             >
                 <svg
@@ -62,40 +62,37 @@
     </li>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
+<script setup lang="ts">
+import { reactive, ref } from 'vue';
+import { useStore } from 'vuex';
 import { NotificationType } from '@/api/notifications';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'NotificationListV',
-    props: {
-        notification: {
-            type: Object,
-            required: true
-        }
-    },
+const store = useStore();
+const { t } = useI18n();
 
-    data() {
-        return {
-            removeNotification: this.call('notification/removeNotification'),
-            open: false,
-            icons: {
-                [NotificationType.WARNING]: '⚠',
-                [NotificationType.INFO]: '☑',
-                [NotificationType.ERROR]: '❌'
-            }
-        };
-    },
-
-    methods: {
-        tooltipShow() {
-            if (!this.notification.messageList) {
-                return false;
-            }
-        }
+const props = defineProps({
+    notification: {
+        type: Object,
+        required: true
     }
 });
+
+const open = ref(false);
+const icons = reactive({
+    [NotificationType.WARNING]: '⚠',
+    [NotificationType.INFO]: '☑',
+    [NotificationType.ERROR]: '❌'
+});
+
+const removeNotification = (notif: any) => {
+    store.set('notification/removeNotification!', notif);
+};
+const tooltipShow = () => {
+    if (!props.notification.messageList) {
+        return false;
+    }
+};
 </script>
 
 <style lang="scss">

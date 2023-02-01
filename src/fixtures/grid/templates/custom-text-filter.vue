@@ -13,7 +13,7 @@
             "
             enterkeyhint="done"
             :placeholder="
-                $t('grid.filters.column.label.text', [
+                t('grid.filters.column.label.text', [
                     params.column.colDef.headerName
                 ])
             "
@@ -23,6 +23,7 @@
 
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { ColumnDefinition, FilterParams } from '../table-component.vue';
 
 export interface GridCustomTextFilter {
@@ -31,6 +32,7 @@ export interface GridCustomTextFilter {
     params: FilterParams;
 }
 
+const { t } = useI18n();
 const props = defineProps(['params']);
 
 const filterValue = ref<string>('');

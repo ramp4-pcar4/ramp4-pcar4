@@ -11,14 +11,6 @@ export class DiligordFixture {
         this.$iApi;
         this.$vApp;
 
-        const messages = {
-            en: {
-                changeTitle: 'Change panel title'
-            },
-            fr: {
-                changeTitle: 'Changer le titre du panneau'
-            }
-        };
         // Diligord Fixture creates a simple panel with a single screen with two header controls (pin and close),
         // and increment button and an input field (bound to the panel title) in the content slot
 
@@ -31,9 +23,6 @@ export class DiligordFixture {
             // this is the `PanelInstance` instance inside which this screen component is displayed, and it exposes panel API functions
             // methods, computed functions and template will have access to the panel as `this.panel`
             props: ['panel'],
-            i18n: {
-                messages
-            },
             // reactive component data
             data() {
                 return {
@@ -69,7 +58,7 @@ export class DiligordFixture {
                                     h(
                                         'label',
                                         { class: 'mt-16' },
-                                        this.$t('changeTitle')
+                                        this.$iApi.$i18n.t('changeTitle')
                                     ),
                                     h('input', {
                                         class: 'border-2  p-8 mb-10',
@@ -148,10 +137,12 @@ export class DiligordFixture {
             i18n: {
                 messages: {
                     en: {
-                        Diligord: 'Diligord'
+                        Diligord: 'Diligord',
+                        changeTitle: 'Change panel title'
                     },
                     fr: {
-                        Diligord: '[fr] Diligord'
+                        Diligord: '[fr] Diligord',
+                        changeTitle: 'Changer le titre du panneau'
                     }
                 }
             }

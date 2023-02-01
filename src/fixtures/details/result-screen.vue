@@ -1,7 +1,7 @@
 <template>
     <panel-screen :panel="panel">
         <template #header>
-            {{ $t('details.items.title') }}
+            {{ t('details.items.title') }}
         </template>
         <template #content>
             <div v-if="result.loaded && activeGreedy === 0">
@@ -22,7 +22,7 @@
                             class="p-8 mb-8 bg-gray-100 flex justify-between"
                             v-if="details.hasHilighter()"
                         >
-                            <div>{{ $t('details.togglehilight.title') }}</div>
+                            <div>{{ t('details.togglehilight.title') }}</div>
                             <Toggle
                                 :config="{
                                     value: hilightToggle,
@@ -57,7 +57,7 @@
                                 {{
                                     nameField
                                         ? item.data[nameField]
-                                        : $t('details.result.default.name', [
+                                        : t('details.result.default.name', [
                                               idx + 1
                                           ])
                                 }}
@@ -68,11 +68,11 @@
                             ></span>
                         </button>
                     </div>
-                    <div v-else>{{ $t('details.layers.results.empty') }}</div>
+                    <div v-else>{{ t('details.layers.results.empty') }}</div>
                 </div>
                 <!-- layer does not exist anymore, show no data text -->
                 <div v-else class="p-5">
-                    {{ $t('details.item.no.data') }}
+                    {{ t('details.item.no.data') }}
                 </div>
             </div>
             <!-- result is loading -->
@@ -81,7 +81,7 @@
                 class="flex justify-center py-10 items-center"
             >
                 <span class="animate-spin spinner h-20 w-20 px-5 mr-8"></span>
-                {{ $t('details.item.loading') }}
+                {{ t('details.item.loading') }}
             </div>
             <!-- clear panel when new identify request came in -->
             <div v-else></div>
@@ -102,7 +102,9 @@ import { GlobalEvents } from '@/api';
 import type { InstanceAPI, LayerInstance, PanelInstance } from '@/api';
 import type { IdentifyResult } from '@/geo/api';
 import Toggle from '../../components/controls/toggle-switch-control.vue';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
 const store = useStore();
 

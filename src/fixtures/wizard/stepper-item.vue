@@ -50,47 +50,34 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, inject } from 'vue';
+<script setup lang="ts">
+import { inject, onMounted, ref } from 'vue';
 
-export default defineComponent({
-    name: 'WizardStepperItemV',
-    props: {
-        title: {
-            type: String,
-            required: true
-        },
-        summary: {
-            type: String
-        }
+const stepper = inject('stepper') as any;
+
+defineProps({
+    title: {
+        type: String,
+        required: true
     },
-
-    data() {
-        return {
-            index: -1
-        };
-    },
-
-    setup() {
-        const stepper = inject('stepper') as any;
-
-        return { stepper };
-    },
-
-    mounted() {
-        this.index = this.stepper.numSteps++;
-    },
-
-    methods: {
-        done() {
-            return this.stepper.activeIndex > this.index;
-        },
-
-        active() {
-            return this.stepper.activeIndex === this.index;
-        }
+    summary: {
+        type: String
     }
 });
+
+const index = ref(-1);
+
+onMounted(() => {
+    index.value = stepper.numSteps++;
+});
+
+const done = () => {
+    return stepper.activeIndex > index.value;
+};
+
+const active = () => {
+    return stepper.activeIndex === index.value;
+};
 </script>
 
 <style lang="scss" scoped>
