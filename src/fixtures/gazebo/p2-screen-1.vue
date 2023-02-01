@@ -3,7 +3,7 @@
         <template #header> Gazebo/Panel 2/Screen A </template>
 
         <template #content>
-            {{ $t('gz.hello') }}
+            {{ t('gz.hello') }}
 
             <div class="flex flex-row justify-center items-center mt-16">
                 <!-- ✔ this is the correct way to switch between screens in the same panel 👇 -->
@@ -37,6 +37,9 @@
 <script setup lang="ts">
 import type { PropType } from 'vue';
 import type { PanelInstance } from '@/api';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 defineProps({
     panel: { type: Object as PropType<PanelInstance>, required: true },

@@ -5,7 +5,7 @@
             class="text-gray-500 hover:text-black focus:text-black p-8"
             :class="{ 'text-gray-700': active }"
             :content="
-                $t(active ? 'panels.controls.unpin' : 'panels.controls.pin')
+                t(active ? 'panels.controls.unpin' : 'panels.controls.pin')
             "
             v-tippy="{ placement: 'bottom', hideOnClick: false }"
         >
@@ -24,6 +24,9 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 const props = defineProps({
     active: Boolean
 });

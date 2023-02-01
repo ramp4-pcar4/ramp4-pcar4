@@ -4,7 +4,7 @@
             type="button"
             class="area-of-interest-item-button bg-gray-300 w-full"
             :class="{ 'border border-gray-300': showThumbnail }"
-            :aria-label="$t('areas-of-interest.select')"
+            :aria-label="t('areas-of-interest.select')"
             @click="selectAreaOfInterest(area)"
             v-focus-item
         >
@@ -72,6 +72,9 @@ import type { PropType } from 'vue';
 import type { AreaOfInterest } from './store';
 import { Extent } from '@/geo/api';
 import type { InstanceAPI } from '@/api';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps({
     area: {

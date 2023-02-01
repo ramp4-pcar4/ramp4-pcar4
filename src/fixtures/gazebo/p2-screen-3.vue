@@ -30,7 +30,7 @@
                     <dt>global locale:</dt>
                     <dd class="ml-32 font-bold">{{ t('lang_native') }}</dd>
                     <dt>fixture locale:</dt>
-                    <dd class="ml-32 font-bold">{{ $t('gz.hello') }}</dd>
+                    <dd class="ml-32 font-bold">{{ t('gz.hello') }}</dd>
                     <dt>common panels locale:</dt>
                     <dd class="ml-32 font-bold">{{ t('who') }}</dd>
                 </dl>
@@ -40,28 +40,28 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject } from 'vue';
+import { inject } from 'vue';
 import type { PropType } from 'vue';
 import type { InstanceAPI, PanelInstance } from '@/api';
+import { useI18n } from 'vue-i18n';
 
 defineProps({
     panel: { type: Object as PropType<PanelInstance>, required: true }
 });
 
 const iApi = inject<InstanceAPI>('iApi')!;
-
-// fun hack until we figure out how to do component-specific i18n in Composition API
-const messages: { [key: string]: { [key: string]: string } } = {
-    en: {
-        lang_native: 'En',
-        who: '[me cat]'
-    },
-    fr: {
-        lang_native: 'Fr',
-        who: '[moi chat]'
+const { t } = useI18n({
+    messages: {
+        en: {
+            lang_native: 'En',
+            who: '[me cat]'
+        },
+        fr: {
+            lang_native: 'Fr',
+            who: '[moi chat]'
+        }
     }
-};
-const t = (key: string) => messages[iApi.language][key];
+});
 </script>
 
 <style lang="scss" scoped></style>

@@ -2,8 +2,8 @@
     <button
         type="button"
         @click="$iApi.panel.get('notifications').open()"
-        class="pointer-events-auto flex items-center absolute left-8 bottom-36 p-6 block sm:display-none bg-black-75 rounded-full text-gray-400 hover:text-white"
-        :content="$t('notifications.title')"
+        class="pointer-events-auto items-center absolute left-8 bottom-36 p-6 block sm:display-none bg-black-75 rounded-full text-gray-400 hover:text-white"
+        :content="t('notifications.title')"
         v-tippy
     >
         <!-- https://fonts.google.com/icons?selected=Material%20Icons%3Anotifications -->
@@ -24,17 +24,15 @@
     </button>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useStore } from 'vuex';
 
-export default defineComponent({
-    name: 'NotificationsFloatingButtonV',
-    data() {
-        return {
-            number: this.get('notification/notificationNumber')
-        };
-    }
-});
+const store = useStore();
+const { t } = useI18n();
+
+const number = computed(() => store.get('notification/notificationNumber'));
 </script>
 
 <style lang="scss" scoped>

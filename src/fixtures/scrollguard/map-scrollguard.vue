@@ -1,74 +1,72 @@
 <template>
     <div class="sg" ref="scrollGuard">
-        <p class="sg-label">{{ $t('scrollguard.instructions') }}</p>
+        <p class="sg-label">{{ t('scrollguard.instructions') }}</p>
     </div>
 </template>
 
-<script lang="ts">
-import { GlobalEvents } from '@/api';
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { GlobalEvents, InstanceAPI } from '@/api';
+import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useStore } from 'vuex';
 
 import { ScrollguardStore } from './store';
 
-export default defineComponent({
-    name: 'MapScrollguardV',
-    mounted() {
+const store = useStore();
+const { t } = useI18n();
+const iApi = inject('iApi') as InstanceAPI;
+const scrollGuard = ref<HTMLElement>();
+
+const enabled = computed(() => store.get(ScrollguardStore.enabled));
+
+onMounted(() => {
+    (
+        iApi.$vApp.$el.querySelector(
+            '.inner-shell + .esri-view'
+        )! as HTMLElement
+    )?.addEventListener('wheel', wheelHandler, {
+        capture: true
+    });
+    iApi.event.on(GlobalEvents.MAP_CREATED, () => {
         (
-            this.$iApi.$vApp.$el.querySelector(
+            iApi.$vApp.$el.querySelector(
                 '.inner-shell + .esri-view'
             )! as HTMLElement
-        )?.addEventListener('wheel', this.wheelHandler, {
+        )?.addEventListener('wheel', wheelHandler, {
             capture: true
         });
-        this.$iApi.event.on(GlobalEvents.MAP_CREATED, () => {
-            (
-                this.$iApi.$vApp.$el.querySelector(
-                    '.inner-shell + .esri-view'
-                )! as HTMLElement
-            )?.addEventListener('wheel', this.wheelHandler, {
-                capture: true
-            });
-        });
-    },
-    beforeUnmount() {
-        (
-            this.$iApi.$vApp.$el.querySelector(
-                '.inner-shell + .esri-view'
-            )! as HTMLElement
-        )?.removeEventListener('wheel', this.wheelHandler, {
-            capture: true
-        });
-    },
-    data() {
-        return {
-            enabled: this.get(ScrollguardStore.enabled)
-        };
-    },
-    methods: {
-        wheelHandler(event: WheelEvent) {
-            // If the scrollguard is disabled, do not block scrolling.
-            if (!this.enabled) return;
-
-            const scrollGuardClassList = this.$el.classList;
-
-            // prevent scroll unless ctrlKey is depressed
-            if (!event.ctrlKey) {
-                event.stopPropagation();
-                scrollGuardClassList.remove('sg-scrolling');
-                scrollGuardClassList.add('sg-active');
-
-                // remove scroll guard notification after two seconds
-                window.setTimeout(
-                    () => scrollGuardClassList.remove('sg-active'),
-                    2000
-                );
-            } else {
-                scrollGuardClassList.remove('sg-active');
-                scrollGuardClassList.add('sg-scrolling');
-            }
-        }
-    }
+    });
 });
+
+onBeforeUnmount(() => {
+    (
+        iApi.$vApp.$el.querySelector(
+            '.inner-shell + .esri-view'
+        )! as HTMLElement
+    )?.removeEventListener('wheel', wheelHandler, {
+        capture: true
+    });
+});
+
+const wheelHandler = (event: WheelEvent) => {
+    // If the scrollguard is disabled, do not block scrolling.
+    if (!enabled.value) return;
+
+    const scrollGuardClassList = scrollGuard.value!.classList;
+
+    // prevent scroll unless ctrlKey is depressed
+    if (!event.ctrlKey) {
+        event.stopPropagation();
+        scrollGuardClassList.remove('sg-scrolling');
+        scrollGuardClassList.add('sg-active');
+
+        // remove scroll guard notification after two seconds
+        window.setTimeout(() => scrollGuardClassList.remove('sg-active'), 2000);
+    } else {
+        scrollGuardClassList.remove('sg-active');
+        scrollGuardClassList.add('sg-scrolling');
+    }
+};
 </script>
 
 <style lang="scss" scoped>

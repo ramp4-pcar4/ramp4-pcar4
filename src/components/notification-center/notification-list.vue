@@ -27,29 +27,24 @@
                     d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"
                 />
             </svg>
-            <span>{{ $t('notifications.empty') }}</span>
+            <span>{{ t('notifications.empty') }}</span>
             <span style="flex-grow: 6" />
         </div>
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useStore } from 'vuex';
+import NotificationItem from './notification-item.vue';
 
-import NotificationItemV from './notification-item.vue';
+const store = useStore();
+const { t } = useI18n();
 
-export default defineComponent({
-    name: 'NotificationListV',
-    components: {
-        'notification-item': NotificationItemV
-    },
-
-    data() {
-        return {
-            notificationStack: this.get('notification/notificationStack')
-        };
-    }
-});
+const notificationStack = computed(() =>
+    store.get<any>('notification/notificationStack')
+);
 </script>
 
 <style lang="scss" scoped></style>

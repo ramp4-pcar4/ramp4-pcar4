@@ -15,8 +15,8 @@
             <div class="my-20">
                 <span class="text-sm">{{
                     loadedRecordCount < totalRecordCount
-                        ? $t('grid.splash.loading')
-                        : $t('grid.splash.building')
+                        ? t('grid.splash.loading')
+                        : t('grid.splash.building')
                 }}</span>
             </div>
             <div>
@@ -24,9 +24,9 @@
                     type="button"
                     @click="closeGrid"
                     class="py-8 px-8 sm:px-16 bg-gray-300"
-                    :aria-label="$t('grid.splash.cancel')"
+                    :aria-label="t('grid.splash.cancel')"
                 >
-                    {{ $t('grid.splash.cancel') }}
+                    {{ t('grid.splash.cancel') }}
                 </button>
             </div>
         </div>
@@ -54,8 +54,8 @@
                     v-model="config.state.searchFilter"
                     class="rv-global-search rv-input pr-32 min-w-0"
                     aria-invalid="false"
-                    :aria-label="$t('grid.filters.label.global')"
-                    :placeholder="$t('grid.filters.label.global')"
+                    :aria-label="t('grid.filters.label.global')"
+                    :placeholder="t('grid.filters.label.global')"
                 />
                 <!-- clear search button -->
                 <div class="-ml-30">
@@ -102,7 +102,7 @@
                     type="button"
                     class="p-4 h-40 text-gray-500 hover:text-black"
                     @click="clearSearchAndFilters()"
-                    :content="$t('grid.clearAll')"
+                    :content="t('grid.clearAll')"
                     v-tippy="{
                         placement: 'bottom'
                     }"
@@ -126,7 +126,7 @@
                 <dropdown-menu
                     class="h-40 w-40"
                     :position="'bottom-end'"
-                    :tooltip="$t('panels.controls.optionsMenu')"
+                    :tooltip="t('panels.controls.optionsMenu')"
                     :centered="false"
                 >
                     <template #header
@@ -156,7 +156,7 @@
                                     d="m 15.585999,21.223066 2.414,-2.414 v 1.811 A 3.616,3.616 0 0 0 21.2,15.309066 l 0.881,-0.881 a 4.82,4.82 0 0 1 -4.080001,7.4 v 1.811 z m -13.5859988,-9.224 a 10,10 0 1 1 19.9999998,0 c 0,0.172 0,0.346 -0.013,0.517 a 5.971,5.971 0 0 0 -2.014001,-1.184001 7.935,7.935 0 0 0 -4.973,-6.742999 v 0.41 a 2,2 0 0 1 -2,2 h -2 v 2 A 1,1 0 0 1 10,9.9990662 H 8.0000002 v 1.9999998 h 5.9999988 a 1,1 0 0 1 0.495,0.131 6,6 0 0 0 -0.184,9.6 10.009,10.009 0 0 1 -12.3109988,-9.731 z m 2,0 a 8,8 0 0 0 6.9999988,7.93 v -1.93 a 2,2 0 0 1 -1.9999988,-2 v -1 l -4.79,-4.79 a 8.07,8.07 0 0 0 -0.21,1.79 z m 9.1729988,5 a 4.827,4.827 0 0 1 4.827,-4.828 v -1.81 l 2.414,2.414 -2.414,2.413 v -1.809 a 3.623,3.623 0 0 0 -3.62,3.62 3.537,3.537 0 0 0 0.42,1.69 l -0.881,0.881 a 4.787,4.787 0 0 1 -0.746,-2.571 z"
                                 />
                             </svg>
-                            {{ $t('grid.label.filters.apply') }}
+                            {{ t('grid.label.filters.apply') }}
                             <svg
                                 height="18"
                                 width="18"
@@ -188,7 +188,7 @@
                                     d="M 3,2L 20.9888,2L 21,2L 21,2.01122L 21,3.99999L 20.9207,3.99999L 14,10.9207L 14,22.909L 9.99999,18.909L 10,10.906L 3.09405,3.99999L 3,3.99999L 3,2 Z "
                                 />
                             </svg>
-                            {{ $t('grid.label.filters.show') }}
+                            {{ t('grid.label.filters.show') }}
                             <svg
                                 height="18"
                                 width="18"
@@ -220,7 +220,7 @@
                                     d="M 4 10 Z M 2 2 L 19.9888 2 L 20 2 L 20 2.0112 L 20 4 L 19.9207 4 L 13 10.9207 L 13 22.909 L 9 18.909 L 9 10.906 L 2.0941 4 L 2 4 L 2 2 Z M 24 13 L 21 14 L 18 13 L 15 14 V 22 L 18 21 l 3 1 l 3 -1 z M 21 21 l -3 -1 V 14 l 3 1.055 z"
                                 />
                             </svg>
-                            {{ $t('grid.filters.extent') }}
+                            {{ t('grid.filters.extent') }}
                             <svg
                                 height="18"
                                 width="18"
@@ -253,14 +253,14 @@
 
             <div v-show="!isLoadingGrid" class="w-full text-sm" v-truncate>
                 {{
-                    $t('grid.filters.label.info', {
+                    t('grid.filters.label.info', {
                         range: `${filterInfo.firstRow} - ${filterInfo.lastRow}`,
                         total: filterInfo.visibleRows
                     })
                 }}
 
                 <span v-if="filterInfo.visibleRows !== rowData.length">{{
-                    $t('grid.filters.label.filtered', {
+                    t('grid.filters.label.filtered', {
                         max: rowData.length
                     })
                 }}</span>
@@ -288,14 +288,14 @@
 
 <script setup lang="ts">
 import {
-    markRaw,
-    ref,
-    inject,
     computed,
     getCurrentInstance,
+    inject,
+    markRaw,
     onBeforeMount,
-    watch,
-    onBeforeUnmount
+    onBeforeUnmount,
+    ref,
+    watch
 } from 'vue';
 
 import {
@@ -306,11 +306,7 @@ import {
     PanelInstance
 } from '@/api/internal';
 
-import type {
-    Attributes,
-    FieldDefinition,
-    TabularAttributeSet
-} from '@/geo/api';
+import type { Attributes, TabularAttributeSet } from '@/geo/api';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
@@ -344,6 +340,7 @@ import { debounce } from 'throttle-debounce';
 import { useStore } from 'vuex';
 import type { RowNode } from 'ag-grid-community';
 import { ColumnApi, GridApi } from 'ag-grid-community';
+import { useI18n } from 'vue-i18n';
 
 export interface FilterParams {
     comparator?: Function;
@@ -430,7 +427,7 @@ const NUM_TYPES: string[] = [
 const iApi = inject<InstanceAPI>('iApi')!;
 const store = useStore();
 const el = ref(null as unknown as HTMLElement);
-const t = getCurrentInstance()?.proxy?.$t;
+const { t } = useI18n();
 const forceUpdate = () => getCurrentInstance()?.proxy?.$forceUpdate();
 
 const props = defineProps({
@@ -796,7 +793,7 @@ const setUpSpecialColumns = (
             cellRendererParams: {
                 uid: props.layerUid,
                 $iApi: iApi,
-                $t: t
+                t: t
             }
         };
         colDef.push(detailsDef);

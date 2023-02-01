@@ -1,7 +1,7 @@
 <template>
     <appbar-button
         :onClickFunction="onClick"
-        :tooltip="$t('notifications.title')"
+        :tooltip="t('notifications.title')"
         class="notification-button"
         id=""
     >
@@ -23,23 +23,21 @@
     </appbar-button>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { inject, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useStore } from 'vuex';
+import type { InstanceAPI } from '@/api';
 
-export default defineComponent({
-    name: 'NotificationsAppbarButtonV',
-    data() {
-        return {
-            number: this.get('notification/notificationNumber')
-        };
-    },
+const store = useStore();
+const { t } = useI18n();
+const iApi = inject('iApi') as InstanceAPI;
 
-    methods: {
-        onClick() {
-            this.$iApi.panel.toggle('notifications');
-        }
-    }
-});
+const number = computed(() => store.get('notification/notificationNumber'));
+
+const onClick = () => {
+    iApi.panel.toggle('notifications');
+};
 </script>
 
 <style lang="scss" scoped>

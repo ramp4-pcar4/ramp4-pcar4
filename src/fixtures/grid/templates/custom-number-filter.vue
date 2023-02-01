@@ -13,7 +13,7 @@
                 }
             "
             enterkeyhint="done"
-            :placeholder="$t('grid.filters.number.min')"
+            :placeholder="t('grid.filters.number.min')"
         />
         <span class="w-12" />
         <input
@@ -29,13 +29,14 @@
                 }
             "
             enterkeyhint="done"
-            :placeholder="$t('grid.filters.number.max')"
+            :placeholder="t('grid.filters.number.max')"
         />
     </div>
 </template>
 
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { ColumnDefinition, FilterParams } from '../table-component.vue';
 
 export interface GridCustomNumberFilter {
@@ -45,6 +46,7 @@ export interface GridCustomNumberFilter {
     params: FilterParams;
 }
 
+const { t } = useI18n();
 const props = defineProps(['params']);
 
 const minVal = ref<any>('');

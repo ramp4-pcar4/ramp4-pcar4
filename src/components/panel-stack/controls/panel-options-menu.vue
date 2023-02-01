@@ -1,7 +1,7 @@
 <template>
     <dropdown-menu
         class="flex"
-        :tooltip="$t('panels.controls.optionsMenu')"
+        :tooltip="t('panels.controls.optionsMenu')"
         :popperOptions="{ strategy: 'fixed' }"
         position="bottom-end"
     >
@@ -25,7 +25,9 @@
 <script setup lang="ts">
 import DropdownMenu from '@/components/controls/dropdown-menu.vue';
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const open = ref(false);
 </script>
 

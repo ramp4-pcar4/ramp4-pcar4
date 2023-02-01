@@ -16,20 +16,15 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-    name: 'MapnavButtonV',
-    props: {
-        onClickFunction: {
-            type: Function,
-            required: true
-        },
-        tooltip: {
-            type: [String, Boolean],
-            default: false
-        }
+<script setup lang="ts">
+defineProps({
+    onClickFunction: {
+        type: Function,
+        required: true
+    },
+    tooltip: {
+        type: [String, Boolean],
+        default: false
     }
 });
 </script>

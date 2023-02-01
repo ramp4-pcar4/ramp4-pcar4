@@ -16,7 +16,7 @@
                 v-truncate
             >
                 <option value="" disabled hidden v-truncate>
-                    {{ $t('geosearch.filters.province') }}
+                    {{ t('geosearch.filters.province') }}
                 </option>
                 <option
                     v-for="province in provinces"
@@ -39,7 +39,7 @@
                 v-truncate
             >
                 <option value="" disabled hidden>
-                    {{ $t('geosearch.filters.type') }}
+                    {{ t('geosearch.filters.type') }}
                 </option>
                 <option v-for="type in types" :key="type.code">
                     {{ type.name }}
@@ -50,7 +50,7 @@
                 class="text-gray-400 w-1/8 h-24 pl-8 pr-16 sm:pr-8 hover:text-black disabled:cursor-default disabled:text-gray-400"
                 :disabled="!queryParams.type && !queryParams.province"
                 v-on:click="clearFilters"
-                :content="$t('geosearch.filters.clear')"
+                :content="t('geosearch.filters.clear')"
                 v-tippy="{ placement: 'bottom' }"
             >
                 <div class="rv-geosearch-icon">
@@ -81,7 +81,9 @@ import type { GeosearchAPI } from './api/geosearch';
 import { GeosearchStore } from './store';
 import type { QueryParams } from './store';
 import { GeoSearchUI } from './store/geosearch.feature';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
 const store = useStore();
 

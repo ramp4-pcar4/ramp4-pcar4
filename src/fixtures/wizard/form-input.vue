@@ -10,7 +10,7 @@
                     accept=".geojson,.json,.csv,.zip"
                     @input="
                         event => {
-                            $emit('upload', event.target.files[0]);
+                            emit('upload', event.target.files[0]);
                             event.target.value = null;
                         }
                     "
@@ -47,7 +47,7 @@
                     @input="
                         event => {
                             validUrl(event.target.value);
-                            $emit('link', event.target.value, valid);
+                            emit('link', event.target.value, valid);
                             urlError = false;
                         }
                     "
@@ -71,8 +71,8 @@
                         :value="modelValue"
                         v-model="selected"
                         @change="
-                            event => {
-                                $emit('select', selected);
+                            () => {
+                                emit('select', selected);
                                 checkMultiSelectError(selected);
                             }
                         "
@@ -102,11 +102,8 @@
                         :value="modelValue"
                         @input="
                             size
-                                ? $emit('select', $event.target.value)
-                                : $emit(
-                                      'update:modelValue',
-                                      $event.target.value
-                                  )
+                                ? emit('select', $event.target.value)
+                                : emit('update:modelValue', $event.target.value)
                         "
                     >
                         <option
@@ -140,7 +137,7 @@
                     class="border-solid border-gray-300 p-3 w-full"
                     type="text"
                     :value="modelValue"
-                    @change="$emit('text', $event.target.value)"
+                    @change="emit('text', $event.target.value)"
                 />
             </div>
             <div v-if="validation && !modelValue" class="text-red-900 text-xs">
@@ -150,8 +147,8 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { ref } from 'vue';
 import type { PropType } from 'vue';
 
 interface ValidationMsgs {
@@ -165,123 +162,114 @@ interface SelectionOption {
     label: string;
 }
 
-export default defineComponent({
-    name: 'WizardInputV',
-    props: {
-        defaultOption: {
-            type: Boolean,
-            default: false
-        },
-        formatError: {
-            type: Boolean,
-            default: false
-        },
-        failureError: {
-            type: Boolean,
-            default: false
-        },
-        help: {
-            type: [String, Boolean],
-            default: false
-        },
-        label: {
-            type: [String, Boolean],
-            default: false
-        },
-        modelValue: {
-            type: [String, Array],
-            default: ''
-        },
-        name: {
-            type: [String, Boolean],
-            default: false
-        },
-        options: {
-            type: Array as PropType<Array<SelectionOption>>,
-            default: []
-        },
-        size: {
-            type: [Number, Boolean],
-            default: false
-        },
-        multiple: {
-            type: Boolean,
-            default: false
-        },
-        type: {
-            type: String,
-            default: 'text'
-        },
-        url: {
-            type: [String, Boolean],
-            default: false
-        },
-        validation: {
-            type: Boolean,
-            default: false
-        },
-        validationMessages: {
-            type: Object as PropType<ValidationMsgs>
-        }
+const emit = defineEmits([
+    'update:modelValue',
+    'link',
+    'select',
+    'upload',
+    'text'
+]);
+
+const props = defineProps({
+    defaultOption: {
+        type: Boolean,
+        default: false
     },
-
-    created() {
-        // set default selected value to be first option if not already defined
-        if (
-            this.defaultOption &&
-            this.modelValue === '' &&
-            this.options.length
-        ) {
-            // regex to guess closest default value for lat/long fields
-            let defaultValue = this.options[0].value;
-            if (this.name === 'latField') {
-                const latNames = new RegExp(/^(y|lat.*)$/i);
-                const latCandidate = this.options.find(option =>
-                    latNames.test(option.label)
-                );
-                defaultValue = latCandidate?.value || defaultValue;
-            } else if (this.name === 'longField') {
-                const longNames = new RegExp(/^(x|long.*)$/i);
-                const longCandidate = this.options.find(option =>
-                    longNames.test(option.label)
-                );
-                defaultValue = longCandidate?.value || defaultValue;
-            }
-            this.$emit('update:modelValue', defaultValue);
-        }
+    formatError: {
+        type: Boolean,
+        default: false
     },
-
-    data() {
-        return {
-            valid: false,
-            urlError: false,
-            sublayersError: false,
-            selected: []
-        };
+    failureError: {
+        type: Boolean,
+        default: false
     },
-
-    methods: {
-        validUrl(url: string) {
-            let newUrl;
-            try {
-                newUrl = new URL(url);
-            } catch (_) {
-                this.valid = false;
-                return false;
-            }
-
-            const link =
-                newUrl.protocol === 'http:' || newUrl.protocol === 'https:';
-            link ? (this.valid = true) : (this.valid = false);
-        },
-
-        checkMultiSelectError(selected: Array<any>) {
-            selected && selected.length > 0
-                ? (this.sublayersError = false)
-                : (this.sublayersError = true);
-        }
+    help: {
+        type: [String, Boolean],
+        default: false
+    },
+    label: {
+        type: [String, Boolean],
+        default: false
+    },
+    modelValue: {
+        type: [String, Array],
+        default: ''
+    },
+    name: {
+        type: [String, Boolean],
+        default: false
+    },
+    options: {
+        type: Array as PropType<Array<SelectionOption>>,
+        default: []
+    },
+    size: {
+        type: [Number, Boolean],
+        default: false
+    },
+    multiple: {
+        type: Boolean,
+        default: false
+    },
+    type: {
+        type: String,
+        default: 'text'
+    },
+    url: {
+        type: [String, Boolean],
+        default: false
+    },
+    validation: {
+        type: Boolean,
+        default: false
+    },
+    validationMessages: {
+        type: Object as PropType<ValidationMsgs>
     }
 });
+
+const valid = ref(false);
+const urlError = ref(false);
+const sublayersError = ref(false);
+const selected = ref([]);
+
+if (props.defaultOption && props.modelValue === '' && props.options.length) {
+    // regex to guess closest default value for lat/long fields
+    let defaultValue = props.options[0].value;
+    if (props.name === 'latField') {
+        const latNames = new RegExp(/^(y|lat.*)$/i);
+        const latCandidate = props.options.find(option =>
+            latNames.test(option.label)
+        );
+        defaultValue = latCandidate?.value || defaultValue;
+    } else if (props.name === 'longField') {
+        const longNames = new RegExp(/^(x|long.*)$/i);
+        const longCandidate = props.options.find(option =>
+            longNames.test(option.label)
+        );
+        defaultValue = longCandidate?.value || defaultValue;
+    }
+    emit('update:modelValue', defaultValue);
+}
+
+const validUrl = (url: string) => {
+    let newUrl;
+    try {
+        newUrl = new URL(url);
+    } catch (_) {
+        valid.value = false;
+        return false;
+    }
+
+    const link = newUrl.protocol === 'http:' || newUrl.protocol === 'https:';
+    link ? (valid.value = true) : (valid.value = false);
+};
+
+const checkMultiSelectError = (selected: Array<any>) => {
+    selected && selected.length > 0
+        ? (sublayersError.value = false)
+        : (sublayersError.value = true);
+};
 </script>
 
 <style lang="scss" scoped>

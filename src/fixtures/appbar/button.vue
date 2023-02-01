@@ -19,6 +19,7 @@
 </template>
 
 <script setup lang="ts">
+import { GlobalEvents } from '@/api';
 import type { InstanceAPI } from '@/api';
 import { inject } from 'vue';
 
@@ -39,7 +40,8 @@ const props = defineProps({
     }
 });
 
-const onClick = () => iApi?.event.emit('appbar/click', props.id);
+const onClick = () =>
+    iApi?.event.emit(GlobalEvents.APPBAR_BUTTON_CLICK, props.id);
 </script>
 
 <style lang="scss" scoped>
