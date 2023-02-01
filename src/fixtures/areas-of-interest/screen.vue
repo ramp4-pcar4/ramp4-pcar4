@@ -1,7 +1,7 @@
 <template>
     <panel-screen :panel="panel">
         <template #header>
-            {{ $t('areas-of-interest.title') }}
+            {{ t('areas-of-interest.title') }}
         </template>
 
         <template #content>
@@ -32,6 +32,9 @@ import type { PanelInstance } from '@/api';
 import { AreasOfInterestStore } from './store';
 import type { AreaOfInterest } from './store';
 import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 defineProps({
     panel: {

@@ -3,20 +3,18 @@
         <span class="block h-24">⛄</span>
     </appbar-button>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue';
 
-export default defineComponent({
-    name: 'SnowmanAppbarButtonV',
-    methods: {
-        togglePanel(): void {
-            // summon the SNOWMAN!
-            this.$iApi.fixture.add('snowman');
+<script setup lang="ts">
+import type { InstanceAPI } from '@/api';
+import { inject } from 'vue';
+const iApi = inject('iApi') as InstanceAPI;
 
-            // the above will re-add the snowman fixture as it was self-terminated
-        }
-    }
-});
+const togglePanel = () => {
+    // summon the SNOWMAN!
+    iApi.fixture.add('snowman');
+
+    // the above will re-add the snowman fixture as it was self-terminated
+};
 </script>
 
 <style lang="scss" scoped></style>

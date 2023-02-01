@@ -2,7 +2,7 @@
     <button
         type="button"
         class="flex items-center justify-center w-46 h-44"
-        :content="$t('grid.cells.details')"
+        :content="t('grid.cells.details')"
         v-tippy="{ placement: 'top' }"
         @click="openDetails"
         tabindex="-1"
@@ -28,9 +28,10 @@ import { inject, onBeforeUnmount, onMounted, ref } from 'vue';
 import { GlobalEvents } from '@/api/internal';
 import type { InstanceAPI } from '@/api/internal';
 import { IdentifyResultFormat } from '@/geo/api';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps(['params']);
-
+const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
 const el = ref(null as unknown as HTMLElement);
 

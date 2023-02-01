@@ -4,7 +4,7 @@
             type="button"
             class="text-gray-500 hover:text-black focus:text-black p-6"
             :class="{ 'text-gray-700': active }"
-            :content="$t('panels.controls.minimize')"
+            :content="t('panels.controls.minimize')"
             v-tippy="{
                 placement: 'bottom',
                 theme: 'ramp4',
@@ -24,9 +24,12 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
 const props = defineProps({
     active: Boolean
 });
+const { t } = useI18n();
 </script>
 
 <style lang="scss" scoped></style>

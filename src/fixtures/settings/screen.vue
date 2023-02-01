@@ -3,8 +3,8 @@
         <template #header>
             {{
                 layerExists
-                    ? `${$t('settings.title')}: ${layerName}`
-                    : $t('settings.title')
+                    ? `${t('settings.title')}: ${layerName}`
+                    : t('settings.title')
             }}
         </template>
 
@@ -12,7 +12,7 @@
             <div v-if="layerExists">
                 <div class="flex flex-col justify-center">
                     <span class="rv-subheader">{{
-                        $t('settings.label.display')
+                        t('settings.label.display')
                     }}</span>
 
                     <div class="rv-settings-divider"></div>
@@ -22,7 +22,7 @@
                         type="toggle"
                         icon="visibility"
                         @toggled="updateVisibility"
-                        :name="$t('settings.label.visibility')"
+                        :name="t('settings.label.visibility')"
                         :config="{
                             value: visibilityModel,
                             disabled: !controlAvailable(LayerControl.Visibility)
@@ -34,7 +34,7 @@
                     <settings-component
                         class="rv-subsection"
                         type="slider"
-                        :name="$t('settings.label.opacity')"
+                        :name="t('settings.label.opacity')"
                         icon="opacity"
                         :config="{
                             onChange: updateOpacity,
@@ -49,7 +49,7 @@
                     <!-- <settings-component
                         class="rv-subsection"
                         type="toggle"
-                        :name="$t('settings.label.boundingBox')"
+                        :name="t('settings.label.boundingBox')"
                         icon="box"
                         @toggled="() => {}"
                         :config="{
@@ -64,7 +64,7 @@
 
                 <div class="flex flex-col justify-center">
                     <span class="rv-subheader">{{
-                        $t('settings.label.data')
+                        t('settings.label.data')
                     }}</span>
 
                     <div class="rv-settings-divider"></div>
@@ -72,7 +72,7 @@
                     <settings-component
                         class="rv-subsection"
                         type="toggle"
-                        :name="$t('settings.label.identify')"
+                        :name="t('settings.label.identify')"
                         icon="location"
                         @toggled="updateIdentify"
                         :config="{
@@ -87,7 +87,7 @@
                 <!-- TODO: revisit issue #1019 after v1.0.0 -->
                 <!-- <div class="flex flex-col justify-center">
                 <span class="rv-subheader">{{
-                    $t('settings.label.interval')
+                    t('settings.label.interval')
                 }}</span>
 
                 <div class="rv-settings-divider"></div>
@@ -95,7 +95,7 @@
                 <settings-component
                     class="rv-subsection"
                     type="input"
-                    :name="$t('settings.label.refreshHint')"
+                    :name="t('settings.label.refreshHint')"
                     icon="location"
                     :config="{
                         onChange: () => {},
@@ -108,192 +108,184 @@
             </div> -->
             </div>
             <div v-else class="p-5">
-                <span>{{ $t('settings.label.no.layer') }}</span>
+                <span>{{ t('settings.label.no.layer') }}</span>
             </div>
         </template>
     </panel-screen>
 </template>
 
-<script lang="ts">
-import type { PanelInstance } from '@/api';
+<script setup lang="ts">
+import type { InstanceAPI, PanelInstance } from '@/api';
 import { GlobalEvents, LayerInstance } from '@/api/internal';
 import { LayerControl } from '@/geo/api';
-import { defineComponent, type PropType } from 'vue';
+import {
+    inject,
+    onBeforeUnmount,
+    onMounted,
+    reactive,
+    ref,
+    watch,
+    type PropType
+} from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { SettingsAPI } from './api/settings';
-import SettingsComponentV from './component.vue';
+import SettingsComponent from './component.vue';
 
-export default defineComponent({
-    name: 'SettingsScreenV',
-    props: {
-        panel: { type: Object as PropType<PanelInstance>, required: true },
-        layer: { type: Object as PropType<LayerInstance>, required: true }
-    },
-    components: {
-        'settings-component': SettingsComponentV
-    },
-    data() {
-        return {
-            LayerControl,
-            fixture: {},
-            layerName: '',
-            uid: this.layer.uid,
-            visibilityModel: this.layer.visibility,
-            opacityModel: this.layer.opacity * 100,
-            identifyModel: this.layer.identify,
-            snapshotToggle: false,
-            layerExists: false, // tracks whether the layer still exists
-            handlers: [] as Array<string>,
-            watchers: [] as Array<Function>
-        };
-    },
+const { t } = useI18n();
+const iApi = inject('iApi') as InstanceAPI;
 
-    created() {
-        this.fixture = this.$iApi.fixture.get('settings');
-
-        this.layerExists = this.layer !== undefined && !this.layer!.isRemoved;
-
-        this.watchers.push(
-            this.$watch('layer.uid', (newUid: string, oldUid: string) => {
-                if (newUid !== oldUid) {
-                    this.loadLayerProperties();
-                }
-            })
-        );
-    },
-
-    mounted() {
-        this.loadLayerProperties();
-
-        this.handlers.push(
-            this.$iApi.event.on(
-                GlobalEvents.LAYER_VISIBILITYCHANGE,
-                (newVisibility: any) => {
-                    if (this.uid === newVisibility.layer.uid) {
-                        this.visibilityModel = newVisibility.visibility;
-                    }
-                }
-            )
-        );
-
-        this.handlers.push(
-            this.$iApi.event.on(
-                GlobalEvents.LAYER_OPACITYCHANGE,
-                (newOpacity: any) => {
-                    if (this.uid === newOpacity.layer.uid) {
-                        this.opacityModel = Math.round(
-                            newOpacity.opacity * 100
-                        );
-                    }
-                }
-            )
-        );
-
-        this.handlers.push(
-            this.$iApi.event.on(
-                GlobalEvents.LAYER_RELOAD_END,
-                (reloadedLayer: LayerInstance) => {
-                    reloadedLayer.loadPromise().then(() => {
-                        if (this.uid === reloadedLayer.uid) {
-                            this.loadLayerProperties();
-                        }
-                    });
-                }
-            )
-        );
-
-        this.handlers.push(
-            this.$iApi.event.on(
-                GlobalEvents.LAYER_REMOVE,
-                (removedLayer: LayerInstance) => {
-                    if (this.uid === removedLayer.uid) {
-                        this.panel.close();
-                    }
-                }
-            )
-        );
-    },
-    beforeUnmount() {
-        // Remove all event handlers and watchers for this component
-        this.handlers.forEach(handler => this.$iApi.event.off(handler));
-        this.watchers.forEach(unwatch => unwatch());
-    },
-    methods: {
-        /**
-         * Check if control is enabled on this layer's settings config.
-         * Default to enabled controls if fixture/settings config is not defined.
-         */
-        controlAvailable(control: LayerControl): boolean {
-            if (!this.fixture) {
-                console.warn(
-                    'Settings panel cannot check for layer control because it could not find settings fixture api'
-                );
-                return false;
-            }
-            const settingsConfig: any = (
-                this.fixture as SettingsAPI
-            )?.getLayerFixtureConfig(this.layer.id);
-
-            // check disabled controls, then controls
-            return settingsConfig?.disabledControls?.includes(control)
-                ? false
-                : settingsConfig?.controls
-                ? settingsConfig?.controls?.includes(control)
-                : true;
-        },
-
-        /**
-         * Update the layer visibility.
-         */
-        updateVisibility(val: boolean) {
-            // update the visibility
-            this.layer.visibility = val;
-            this.visibilityModel = val;
-        },
-
-        /**
-         * Update the layer opacity.
-         */
-        updateOpacity(val: number) {
-            this.layer.opacity = val / 100;
-            this.opacityModel = val;
-        },
-
-        /**
-         * Update the layer's toggle identify.
-         */
-        updateIdentify(val: boolean) {
-            this.layer.identify = val;
-            this.identifyModel = val;
-        },
-
-        /**
-         * Toggle snapshot mode for the layer.
-         */
-        toggleSnapshot() {
-            this.snapshotToggle = !this.snapshotToggle;
-            // TODO: make necessary changes to layer
-        },
-
-        /**
-         * Load property data from layer.
-         */
-        loadLayerProperties() {
-            this.layerExists =
-                this.layer !== undefined && !this.layer!.isRemoved;
-
-            const oldUid = this.layer.uid;
-            this.layer.loadPromise().then(() => {
-                if (oldUid === this.layer.uid) {
-                    // ensure that it's still the same layer
-                    this.visibilityModel = this.layer.visibility;
-                    this.opacityModel = Math.round(this.layer.opacity * 100);
-                    this.identifyModel = this.layer.identify;
-                    this.layerName = this.layer.name;
-                }
-            });
-        }
-    }
+const props = defineProps({
+    panel: { type: Object as PropType<PanelInstance>, required: true },
+    layer: { type: Object as PropType<LayerInstance>, required: true }
 });
+
+let fixture = reactive({});
+const layerName = ref('');
+const uid = ref(props.layer.uid);
+const visibilityModel = ref(props.layer.visibility);
+const opacityModel = ref(props.layer.opacity * 100);
+const identifyModel = ref(props.layer.identify);
+const snapshotToggle = ref(false);
+const layerExists = ref(false); // tracks whether the layer still exists
+const handlers = reactive<Array<string>>([]);
+const watchers = reactive<Array<Function>>([]);
+
+fixture = iApi.fixture.get('settings');
+
+layerExists.value = props.layer !== undefined && !props.layer!.isRemoved;
+
+watchers.push(
+    watch(
+        () => props.layer.uid,
+        (newUid: string, oldUid: string) => {
+            if (newUid !== oldUid) {
+                loadLayerProperties();
+            }
+        }
+    )
+);
+
+onMounted(() => {
+    loadLayerProperties();
+
+    handlers.push(
+        iApi.event.on(
+            GlobalEvents.LAYER_VISIBILITYCHANGE,
+            (newVisibility: any) => {
+                if (uid.value === newVisibility.layer.uid) {
+                    visibilityModel.value = newVisibility.visibility;
+                }
+            }
+        )
+    );
+
+    handlers.push(
+        iApi.event.on(GlobalEvents.LAYER_OPACITYCHANGE, (newOpacity: any) => {
+            if (uid.value === newOpacity.layer.uid) {
+                opacityModel.value = Math.round(newOpacity.opacity * 100);
+            }
+        })
+    );
+
+    handlers.push(
+        iApi.event.on(
+            GlobalEvents.LAYER_RELOAD_END,
+            (reloadedLayer: LayerInstance) => {
+                reloadedLayer.loadPromise().then(() => {
+                    if (uid.value === reloadedLayer.uid) {
+                        loadLayerProperties();
+                    }
+                });
+            }
+        )
+    );
+
+    handlers.push(
+        iApi.event.on(
+            GlobalEvents.LAYER_REMOVE,
+            (removedLayer: LayerInstance) => {
+                if (uid.value === removedLayer.uid) {
+                    props.panel.close();
+                }
+            }
+        )
+    );
+});
+onBeforeUnmount(() => {
+    // Remove all event handlers and watchers for this component
+    handlers.forEach(handler => iApi.event.off(handler));
+    watchers.forEach(unwatch => unwatch());
+});
+
+const controlAvailable = (control: LayerControl): boolean => {
+    if (!fixture) {
+        console.warn(
+            'Settings panel cannot check for layer control because it could not find settings fixture api'
+        );
+        return false;
+    }
+    const settingsConfig: any = (fixture as SettingsAPI)?.getLayerFixtureConfig(
+        props.layer.id
+    );
+
+    // check disabled controls, then controls
+    return settingsConfig?.disabledControls?.includes(control)
+        ? false
+        : settingsConfig?.controls
+        ? settingsConfig?.controls?.includes(control)
+        : true;
+};
+
+/**
+ * Update the layer visibility.
+ */
+const updateVisibility = (val: boolean) => {
+    // update the visibility
+    props.layer.visibility = val;
+    visibilityModel.value = val;
+};
+
+/**
+ * Update the layer opacity.
+ */
+const updateOpacity = (val: number) => {
+    props.layer.opacity = val / 100;
+    opacityModel.value = val;
+};
+
+/**
+ * Update the layer's toggle identify.
+ */
+const updateIdentify = (val: boolean) => {
+    props.layer.identify = val;
+    identifyModel.value = val;
+};
+
+/**
+ * Toggle snapshot mode for the layer.
+ */
+const toggleSnapshot = () => {
+    snapshotToggle.value = !snapshotToggle.value;
+    // TODO: make necessary changes to layer
+};
+
+/**
+ * Load property data from layer.
+ */
+const loadLayerProperties = () => {
+    layerExists.value = props.layer !== undefined && !props.layer!.isRemoved;
+
+    const oldUid = props.layer.uid;
+    props.layer.loadPromise().then(() => {
+        if (oldUid === props.layer.uid) {
+            // ensure that it's still the same layer
+            visibilityModel.value = props.layer.visibility;
+            opacityModel.value = Math.round(props.layer.opacity * 100);
+            identifyModel.value = props.layer.identify;
+            layerName.value = props.layer.name;
+        }
+    });
+};
 </script>
 
 <style lang="scss" scoped>

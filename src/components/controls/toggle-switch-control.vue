@@ -7,7 +7,7 @@
         </div>
         <div class="flex-1"></div>
         <toggle
-            @change="(value: any) => $emit('toggled', value)"
+            @change="(value: any) => emit('toggled', value)"
             @keyup.enter.capture.stop="handleKeyup"
             @keyup.space.capture.stop="handleKeyup"
             :disabled="isDisabled"
@@ -33,65 +33,54 @@
                 handleOffDisabled: 'bg-gray-100 left-0',
                 label: 'text-center w-8 border-box whitespace-nowrap select-none'
             }"
-        ></toggle>
+        />
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import type { PropType } from 'vue';
+<script setup lang="ts">
+import { ref, reactive, toRef, watch, onBeforeUnmount } from 'vue';
 import Toggle from '@vueform/toggle';
+import type { PropType } from 'vue';
 
-export default defineComponent({
-    name: 'ToggleSwitchControl',
-    components: { Toggle },
-    emits: ['toggled'],
-    props: {
-        config: {
-            type: Object as PropType<{ value: boolean; disabled?: boolean }>,
-            required: true
+const emit = defineEmits(['toggled']);
+
+const props = defineProps({
+    config: {
+        type: Object as PropType<{ value: boolean; disabled?: boolean }>,
+        required: true
+    },
+    name: String,
+    icon: String
+});
+
+const isOn = ref<boolean>(props.config.value);
+const isDisabled = ref<boolean>(!!props.config.disabled);
+const toggleKey = ref<number>(0); // this key forces Vue to rerender Toggle
+const watchers = reactive<Array<Function>>([]);
+
+watchers.push(
+    watch(
+        toRef(props, 'config'),
+        (nConf: any, oConf: any) => {
+            isOn.value = nConf.value;
+            isDisabled.value = !!nConf.disabled;
+            // The Toggle component has a bug where if doesn't update its css classes when the disabled property changes.
+            // The :key binding on the Toggle template is incremented if disabled changes, forcing a rerender
+            toggleKey.value += isDisabled.value !== oConf.disabled ? 1 : 0;
         },
-        name: String,
-        icon: String
-    },
-    data() {
-        return {
-            isOn: this.config.value,
-            isDisabled: !!this.config.disabled,
-            toggleKey: 0, // this key forces Vue to rerender Toggle
-            watchers: [] as Array<Function>
-        };
-    },
+        { deep: true }
+    )
+);
 
-    created() {
-        this.watchers.push(
-            this.$watch(
-                'config',
-                (nConf: any, oConf: any) => {
-                    this.isOn = nConf.value;
-                    this.isDisabled = !!nConf.disabled;
-                    // The Toggle component has a bug where if doesn't update its css classes when the disabled property changes.
-                    // The :key binding on the Toggle template is incremented if disabled changes, forcing a rerender
-                    this.toggleKey +=
-                        this.isDisabled !== oConf.disabled ? 1 : 0;
-                },
-                { deep: true }
-            )
-        );
-    },
-
-    beforeUnmount() {
-        this.watchers.forEach(unwatch => unwatch());
-    },
-
-    methods: {
-        handleKeyup() {
-            if (!this.isDisabled) {
-                this.isOn = !this.isOn;
-                this.$emit('toggled', this.isOn);
-            }
-        }
+const handleKeyup = () => {
+    if (!isDisabled.value) {
+        isOn.value = !isOn.value;
+        emit('toggled', isOn.value);
     }
+};
+
+onBeforeUnmount(() => {
+    watchers.forEach(unwatch => unwatch());
 });
 </script>
 
