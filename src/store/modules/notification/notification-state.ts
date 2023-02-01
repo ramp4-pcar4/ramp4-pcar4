@@ -2,7 +2,6 @@ import type { NotificationType } from '@/api';
 
 export class NotificationState {
     notificationStack: (Notification | NotificationGroup)[] = [];
-
     groups: { [id: string]: NotificationGroup } = {};
 }
 

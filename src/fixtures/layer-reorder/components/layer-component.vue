@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="layersModel.length === 0" class="flex-1 ms-10" v-truncate>
-            <span class="p-5">{{ $t('layer-reorder.nolayers') }}</span>
+            <span class="p-5">{{ t('layer-reorder.nolayers') }}</span>
         </div>
         <draggable
             v-else
@@ -44,7 +44,7 @@
                             @click="toggleExpand(element)"
                             class="text-gray-500 hover:text-black p-5"
                             :content="
-                                $t(
+                                t(
                                     `layer-reorder.${
                                         !element.isExpanded
                                             ? 'expand'
@@ -58,7 +58,7 @@
                                 aria: 'describedby'
                             }"
                             :aria-label="
-                                $t(
+                                t(
                                     `layer-reorder.${
                                         !element.isExpanded
                                             ? 'expand'
@@ -135,18 +135,18 @@
                 <div
                     v-else
                     class="flex items-center p-5 mx-8 h-44 default-focus-style"
-                    :content="$t('layer-reorder.loading')"
+                    :content="t('layer-reorder.loading')"
                     v-tippy="{
                         placement: 'top-start',
                         aria: 'describedby'
                     }"
-                    :aria-label="$t('layer-reorder.loading')"
+                    :aria-label="t('layer-reorder.loading')"
                     v-focus-container
                     truncate-trigger
                 >
                     <div class="animate-spin spinner h-20 w-20 px-5"></div>
                     <div class="flex-1 mx-10">
-                        <span>{{ $t('layer-reorder.loading') }} </span>
+                        <span>{{ t('layer-reorder.loading') }} </span>
                     </div>
                 </div>
             </template>
@@ -157,7 +157,6 @@
 <script setup lang="ts">
 import {
     computed,
-    getCurrentInstance,
     inject,
     onBeforeMount,
     onBeforeUnmount,
@@ -175,11 +174,11 @@ import ReorderButton from './reorder-button.vue';
 import draggable from 'vuedraggable';
 import { LayerState } from '@/geo/api';
 import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
 const iApi = inject<InstanceAPI>('iApi')!;
 const store = useStore();
-const t = (key: string, opts: any) =>
-    getCurrentInstance()?.proxy?.$t(key, opts);
+const { t } = useI18n();
 
 const layers = computed<LayerInstance[]>(() => store.get(LayerStore.layers)!);
 const layersModel = ref<Array<LayerModel>>([]);

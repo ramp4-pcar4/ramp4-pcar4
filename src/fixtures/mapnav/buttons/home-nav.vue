@@ -1,5 +1,5 @@
 <template>
-    <mapnav-button :onClickFunction="goToHome" :tooltip="$t('mapnav.home')">
+    <mapnav-button :onClickFunction="goToHome" :tooltip="t('mapnav.home')">
         <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -11,21 +11,21 @@
     </mapnav-button>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import type { InstanceAPI } from '@/api';
 import type { ExtentSet } from '@/geo/api';
+import { inject } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'HomeNavV',
-    methods: {
-        goToHome() {
-            // Get extent from map
-            const extentSet: ExtentSet = this.$iApi.geo.map.getExtentSet();
-            // TODO: figure out which extent to zoom to. Maybe we want to add a start/home/init extent?
-            this.$iApi.geo.map.zoomMapTo(extentSet.fullExtent);
-        }
-    }
-});
+const { t } = useI18n();
+const iApi = inject('iApi') as InstanceAPI;
+
+const goToHome = () => {
+    // Get extent from map
+    const extentSet: ExtentSet = iApi.geo.map.getExtentSet();
+    // TODO: figure out which extent to zoom to. Maybe we want to add a start/home/init extent?
+    iApi.geo.map.zoomMapTo(extentSet.fullExtent);
+};
 </script>
 
 <style lang="scss" scoped></style>

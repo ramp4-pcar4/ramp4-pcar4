@@ -2,7 +2,7 @@
     <dropdown-menu
         class="relative"
         position="bottom-end"
-        :tooltip="$t('grid.label.columns')"
+        :tooltip="t('grid.label.columns')"
         :tooltip-placement="'bottom'"
         :centered="false"
     >
@@ -59,6 +59,10 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
+
 defineProps({
     columnDefs: { type: Array<any>, required: true },
     columnApi: { type: Object }

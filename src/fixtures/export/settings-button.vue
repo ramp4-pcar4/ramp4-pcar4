@@ -2,7 +2,7 @@
     <dropdown-menu
         v-focus-item
         :position="dropdownPlacement"
-        :tooltip="$t('export.menu')"
+        :tooltip="t('export.menu')"
         tooltip-placement="top"
     >
         <template #header>
@@ -55,7 +55,7 @@
                         }
                     `"
                         >{{
-                            $t(`export.menu.component.${component.name}`)
+                            t(`export.menu.component.${component.name}`)
                         }}</span
                     >
                 </div>
@@ -66,9 +66,11 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { ExportStore } from './store';
 
+const { t } = useI18n();
 const store = useStore();
 const emit = defineEmits(['onComponentToggle']);
 

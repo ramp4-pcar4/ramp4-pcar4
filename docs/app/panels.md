@@ -212,6 +212,7 @@ A few notes regarding writing a panel screen template:
 * The template must have the `panel-screen` component as its root. This is a globally registered component within RAMP so you do not need to import it from anywhere.
 * You need to have a `panel` prop in your template to pass into the `panel-screen` component.
 * There are four "slots" in the `panel-screen` component where you can pass in content from your template: header, content, footer, and controls. These sections have been described in the [overview](#overview) above.
+* For the `.vue` file method, the syntax in the example above is not required. In fact, any method of writing a Vue single file component will work. For example, you may wish to write the component in Composition API with the `<script setup>` syntax.
 
 ### Step 2: Register your panel
 

@@ -1,6 +1,6 @@
 <template>
     <panel-screen :panel="panel" :footer="true">
-        <template #header> {{ $t('export.title') }} </template>
+        <template #header> {{ t('export.title') }} </template>
 
         <template #content>
             <div class="overflow-hidden border border-gray-200">
@@ -14,18 +14,18 @@
                     type="button"
                     @click="fixture?.export()"
                     class="bg-green-500 hover:bg-green-700 text-white font-bold py-8 px-8 sm:px-16 mr-8 sm:mr-16"
-                    :aria-label="$t('export.download')"
+                    :aria-label="t('export.download')"
                 >
-                    {{ $t('export.download') }}
+                    {{ t('export.download') }}
                 </button>
 
                 <button
                     type="button"
                     @click="make()"
                     class="py-8 px-4 sm:px-16"
-                    :aria-label="$t('export.refresh')"
+                    :aria-label="t('export.refresh')"
                 >
-                    {{ $t('export.refresh') }}
+                    {{ t('export.refresh') }}
                 </button>
 
                 <export-settings
@@ -56,6 +56,7 @@ import { debounce } from 'throttle-debounce';
 import ExportSettings from './settings-button.vue';
 import { ExportStore } from './store';
 import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
 defineProps({
     panel: {
@@ -64,10 +65,11 @@ defineProps({
     }
 });
 
+const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
 const store = useStore();
 
-const fixture = ref<ExportAPI | undefined>(undefined);
+const fixture = ref<ExportAPI>();
 const resizeObserver = ref<ResizeObserver | undefined>(undefined);
 
 const el = computed<Element>(() => getCurrentInstance()?.proxy?.$el);

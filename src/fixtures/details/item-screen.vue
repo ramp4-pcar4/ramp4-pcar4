@@ -1,7 +1,7 @@
 <template>
     <panel-screen :panel="panel">
         <template #header>
-            {{ $t('details.items.title') }}
+            {{ t('details.items.title') }}
         </template>
         <template #content>
             <div v-if="result.loaded && activeGreedy === 0">
@@ -17,7 +17,7 @@
                     class="p-8 mb-8 bg-gray-100 flex justify-between"
                     v-if="details.hasHilighter()"
                 >
-                    <div>{{ $t('details.togglehilight.title') }}</div>
+                    <div>{{ t('details.togglehilight.title') }}</div>
                     <Toggle
                         :config="{
                             value: hilightToggle,
@@ -35,19 +35,19 @@
                         <button
                             type="button"
                             class="px-8 font-bold hover:bg-gray-200 focus:bg-gray-200"
-                            :aria-label="$t('details.item.see.list')"
+                            :aria-label="t('details.item.see.list')"
                             @click="seeList"
                         >
-                            {{ $t('details.item.see.list') }}
+                            {{ t('details.item.see.list') }}
                         </button>
                         <div class="flex bg-gray-200 py-8 items-center">
                             <button
                                 type="button"
-                                :content="$t('details.item.previous.item')"
+                                :content="t('details.item.previous.item')"
                                 v-tippy="{ placement: 'top' }"
                                 @click="advanceItemIndex(-1)"
                                 class="mx-2 opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
-                                :aria-label="$t('details.item.previous.item')"
+                                :aria-label="t('details.item.previous.item')"
                                 :disabled="currentIdx === 0"
                             >
                                 <svg height="24" width="24" viewBox="0 0 23 23">
@@ -60,7 +60,7 @@
                             </button>
                             <span class="px-8">
                                 {{
-                                    $t('details.item.count', [
+                                    t('details.item.count', [
                                         currentIdx + 1,
                                         result.items.length
                                     ])
@@ -68,11 +68,11 @@
                             </span>
                             <button
                                 type="button"
-                                :content="$t('details.item.next.item')"
+                                :content="t('details.item.next.item')"
                                 v-tippy="{ placement: 'top' }"
                                 @click="advanceItemIndex(1)"
                                 class="mx-2 rotate-180 opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
-                                :aria-label="$t('details.item.next.item')"
+                                :aria-label="t('details.item.next.item')"
                                 :disabled="
                                     currentIdx === result.items.length - 1
                                 "
@@ -108,9 +108,9 @@
                             </span>
                             <button
                                 type="button"
-                                :content="$t('details.item.zoom')"
+                                :content="t('details.item.zoom')"
                                 v-tippy="{ placement: 'bottom' }"
-                                :aria-label="$t('details.item.zoom')"
+                                :aria-label="t('details.item.zoom')"
                                 @click="zoomToFeature()"
                                 class="text-gray-600 m-8"
                             >
@@ -141,12 +141,12 @@
                         <span
                             class="animate-spin spinner h-20 w-20 px-5 mr-8"
                         ></span>
-                        {{ $t('details.item.loading') }}
+                        {{ t('details.item.loading') }}
                     </div>
                 </div>
                 <!-- layer does not exist anymore, show no data text -->
                 <div v-else class="p-5">
-                    {{ $t('details.item.no.data') }}
+                    {{ t('details.item.no.data') }}
                 </div>
             </div>
             <!-- result is loading -->
@@ -155,7 +155,7 @@
                 class="flex justify-center py-10 items-center"
             >
                 <span class="animate-spin spinner h-20 w-20 px-5 mr-8"></span>
-                {{ $t('details.item.loading') }}
+                {{ t('details.item.loading') }}
             </div>
             <!-- clear panel when new identify request came in -->
             <div v-else></div>
@@ -187,7 +187,9 @@ import ESRIDefault from './templates/esri-default.vue';
 import HTMLDefault from './templates/html-default.vue';
 import Toggle from '../../components/controls/toggle-switch-control.vue';
 import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
 const store = useStore();
 

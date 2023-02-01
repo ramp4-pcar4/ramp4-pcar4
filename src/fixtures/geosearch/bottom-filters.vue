@@ -11,7 +11,7 @@
                             ($event.target as HTMLInputElement).checked
                         )
                     "
-                />{{ $t('geosearch.visible') }}</label
+                />{{ t('geosearch.visible') }}</label
             >
         </div>
     </div>
@@ -26,7 +26,9 @@ import { debounce } from 'throttle-debounce';
 
 import { computed, inject, onBeforeUnmount, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
 const store = useStore();
 
