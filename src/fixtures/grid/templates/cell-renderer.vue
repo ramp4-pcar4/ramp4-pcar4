@@ -18,14 +18,13 @@
 
 <script setup lang="ts">
 import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
-import type { PropType } from 'vue';
 import type { InstanceAPI } from '@/api';
 import { useStore } from 'vuex';
 import linkifyHtml from 'linkify-html';
 
 const iApi = inject<InstanceAPI>('iApi')!;
 const store = useStore();
-const el = ref(null as unknown as HTMLElement);
+const el = ref<HTMLElement>();
 
 const props = defineProps(['params']);
 

@@ -27,7 +27,7 @@ import { useStore } from 'vuex';
 
 const store = useStore();
 const iApi = inject<InstanceAPI>('iApi');
-const el = ref(null as unknown as ComponentPublicInstance);
+const el = ref<ComponentPublicInstance>();
 
 const mobileMode = computed(() => store.get('panel/mobileView'));
 
@@ -50,7 +50,7 @@ onMounted(() => {
         store.set('panel/stackWidth', entries[0].contentRect.width);
     });
 
-    resizeObserver.observe(el.value.$el);
+    resizeObserver.observe(el.value?.$el);
 });
 
 const visible = (screenSize: string | null): PanelInstance[] | undefined =>

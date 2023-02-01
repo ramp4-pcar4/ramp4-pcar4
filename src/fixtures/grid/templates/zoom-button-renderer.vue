@@ -2,7 +2,7 @@
     <button
         type="button"
         class="flex items-center justify-center w-46 h-44"
-        :content="$t('grid.cells.zoom')"
+        :content="t('grid.cells.zoom')"
         v-tippy="{ placement: 'top' }"
         @click="zoomToFeature"
         tabindex="-1"
@@ -29,11 +29,13 @@ import { inject, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import type { InstanceAPI, LayerInstance } from '@/api/internal';
 import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps(['params']);
 const iApi = inject<InstanceAPI>('iApi')!;
 const store = useStore();
-const el = ref(null as unknown as HTMLElement);
+const el = ref<HTMLElement>();
+const { t } = useI18n();
 
 const getLayerByUid = (uid: string): LayerInstance | undefined =>
     store.get('layer/getLayerByUid', uid);

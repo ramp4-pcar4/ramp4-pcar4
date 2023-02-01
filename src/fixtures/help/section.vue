@@ -6,7 +6,7 @@
                 class="help-section-header flex items-center py-15 px-25 hover:bg-gray-200 cursor-pointer select-none w-full"
                 @click="toggleExpanded()"
                 :content="
-                    $t(
+                    t(
                         expanded
                             ? 'help.section.collapse'
                             : 'help.section.expand'
@@ -50,6 +50,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 defineProps({
     helpSection: {

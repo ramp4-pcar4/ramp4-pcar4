@@ -1,7 +1,7 @@
 <template>
     <div
         class="h-full flex flex-col items-stretch"
-        :content="$t('panels.access')"
+        :content="t('panels.access')"
         v-tippy="{
             trigger: 'focus',
             appendTo: 'parent',
@@ -73,10 +73,12 @@ import type { InstanceAPI, PanelInstance } from '@/api';
 import { computed, inject, nextTick, ref } from 'vue';
 import type { PropType } from 'vue';
 import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const store = useStore();
 const iApi = inject<InstanceAPI>('iApi');
-const el = ref(null as unknown as Element);
+const el = ref<Element>();
 
 const props = defineProps({
     // prop indicating if the `header` slot should be rendered
@@ -112,7 +114,7 @@ const move = (direction: string) => {
     if (direction === 'left') {
         // needed to preserve focus on correct panel
         nextTick(() => {
-            (el.value.querySelector('.move-left') as HTMLElement).focus();
+            (el.value?.querySelector('.move-left') as HTMLElement).focus();
         });
     }
 };

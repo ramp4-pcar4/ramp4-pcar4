@@ -1,7 +1,7 @@
 <template>
     <dropdown-menu
         position="top-start"
-        :tooltip="$t('notifications.title')"
+        :tooltip="t('notifications.title')"
         tooltipPlacement="top"
         class="pointer-events-auto sm:flex ml-4 mr-8"
     >
@@ -12,7 +12,7 @@
                     class="fill-current w-24 h-24"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
-                    :aria-label="$t('notifications.open')"
+                    :aria-label="t('notifications.open')"
                 >
                     <path
                         d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"
@@ -31,7 +31,7 @@
             >
                 <div>
                     <h4 class="pb-8 border-b border-gray-600">
-                        {{ $t('notifications.title') }}
+                        {{ t('notifications.title') }}
                     </h4>
                     <div class="absolute flex right-3 top-3">
                         <button
@@ -43,7 +43,7 @@
                                     ? 'text-gray-300 cursor-default pointer-events-none'
                                     : 'text-gray-500 hover:text-black'
                             ]"
-                            :content="$t('notifications.controls.clearAll')"
+                            :content="t('notifications.controls.clearAll')"
                             v-tippy="{
                                 placement: 'bottom',
                                 theme: 'ramp4',
@@ -72,25 +72,19 @@
     </dropdown-menu>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
 
-import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
-import NotificationListV from './notification-list.vue';
+import DropdownMenu from '@/components/controls/dropdown-menu.vue';
+import NotificationList from './notification-list.vue';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'NotificationsCaptionButtonV',
-    components: {
-        'dropdown-menu': DropdownMenuV,
-        'notification-list': NotificationListV
-    },
-    data() {
-        return {
-            number: this.get('notification/notificationNumber'),
-            clearAll: this.call('notification/clearAll')
-        };
-    }
-});
+const store = useStore();
+const { t } = useI18n();
+
+const number = computed(() => store.get('notification/notificationNumber'));
+const clearAll = () => store.dispatch('notification/clearAll');
 </script>
 
 <style lang="scss" scoped>

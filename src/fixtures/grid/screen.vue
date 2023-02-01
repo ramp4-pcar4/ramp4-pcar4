@@ -1,6 +1,6 @@
 <template>
     <panel-screen :panel="panel">
-        <template #header>{{ $t('grid.title') }} </template>
+        <template #header>{{ t('grid.title') }} </template>
         <template #content>
             <table-component
                 class="rv-grid"
@@ -18,6 +18,7 @@ import { PanelInstance, type InstanceAPI } from '@/api';
 import TableComponent from '@/fixtures/grid/table-component.vue';
 import { GridStore } from './store';
 import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
 defineProps({
     panel: {
@@ -31,6 +32,7 @@ defineProps({
 
 const iApi = inject<InstanceAPI>('iApi')!;
 const store = useStore();
+const { t } = useI18n();
 
 const currentId = computed<string>(() => store.get(GridStore.currentId)!);
 const currentUid = ref<string>('');

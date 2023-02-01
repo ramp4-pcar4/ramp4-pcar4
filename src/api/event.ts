@@ -38,6 +38,11 @@ import { DetailsStore } from '@/fixtures/details/store';
 
 export enum GlobalEvents {
     /**
+     * Fires when an appbar button is clicked.
+     * Payload: `(id: string)`
+     */
+    APPBAR_BUTTON_CLICK = 'appbar/click',
+    /**
      * Fires when a Vue component is registered with `rInstance.component(...)`.
      * Payload: `(id: string)`
      */

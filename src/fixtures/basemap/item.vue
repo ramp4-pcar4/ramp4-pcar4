@@ -3,7 +3,7 @@
         <button
             class="basemap-item-button bg-gray-300 h-210"
             type="button"
-            :aria-label="$t('basemap.select')"
+            :aria-label="t('basemap.select')"
             @click="selectBasemap(basemap)"
             v-focus-item
         >
@@ -102,7 +102,9 @@ import type { RampBasemapConfig, RampTileSchemaConfig } from '@/geo/api';
 import { ConfigStore } from '@/store/modules/config';
 import type { InstanceAPI } from '@/api';
 import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi');
 const store = useStore();
 

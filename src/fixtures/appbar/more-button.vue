@@ -5,7 +5,7 @@
             class="text-gray-400 w-full h-48 focus:outline-none hover:text-white"
             @click="open = !open"
             v-focus-item
-            :content="$t('appbar.more')"
+            :content="t('appbar.more')"
             v-tippy="{ placement: 'right' }"
         >
             <svg
@@ -33,6 +33,9 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps({
     position: {
@@ -50,7 +53,7 @@ const props = defineProps({
 });
 
 const open = ref(false);
-const el = ref(null as unknown as Element);
+const el = ref<Element>();
 
 onMounted(() => {
     window.addEventListener(
@@ -58,7 +61,7 @@ onMounted(() => {
         event => {
             if (
                 event.target instanceof HTMLElement &&
-                !el.value.contains(event.target)
+                !el.value?.contains(event.target)
             ) {
                 open.value = false;
             }
@@ -73,7 +76,7 @@ onBeforeUnmount(() => {
         event => {
             if (
                 event.target instanceof HTMLElement &&
-                !el.value.contains(event.target)
+                !el.value?.contains(event.target)
             ) {
                 open.value = false;
             }

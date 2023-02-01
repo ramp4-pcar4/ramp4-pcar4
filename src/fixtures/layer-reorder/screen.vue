@@ -1,7 +1,7 @@
 <template>
     <panel-screen :panel="panel">
         <template #header>
-            {{ $t('layer-reorder.title') }}
+            {{ t('layer-reorder.title') }}
         </template>
 
         <template #content>
@@ -14,6 +14,9 @@
 import type { PropType } from 'vue';
 import type { PanelInstance } from '@/api';
 import LayerReorderComponent from './components/layer-component.vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 defineProps({
     panel: {

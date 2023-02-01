@@ -1,8 +1,5 @@
 <template>
-    <mapnav-button
-        :onClickFunction="onClick"
-        :tooltip="$t('mapnav.fullscreen')"
-    >
+    <mapnav-button :onClickFunction="onClick" :tooltip="t('mapnav.fullscreen')">
         <svg
             v-if="$iApi.isFullscreen"
             xmlns="http://www.w3.org/2000/svg"
@@ -28,17 +25,17 @@
     </mapnav-button>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { inject } from 'vue';
+import { useI18n } from 'vue-i18n';
+import type { InstanceAPI } from '@/api';
 
-export default defineComponent({
-    name: 'FullscreenNavV',
-    methods: {
-        onClick() {
-            this.$iApi.toggleFullscreen();
-        }
-    }
-});
+const { t } = useI18n();
+const iApi = inject('iApi') as InstanceAPI;
+
+const onClick = () => {
+    iApi.toggleFullscreen();
+};
 </script>
 
 <style lang="scss" scoped></style>
