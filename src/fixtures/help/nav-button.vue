@@ -1,5 +1,5 @@
 <template>
-    <mapnav-button :onClickFunction="onClick" :tooltip="$t('help.title')">
+    <mapnav-button :onClickFunction="onClick" :tooltip="t('help.title')">
         <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -15,10 +15,13 @@
 
 <script setup lang="ts">
 import { inject } from 'vue';
-import { GlobalEvents } from '../../api/internal';
-import type { InstanceAPI } from '../../api/internal';
+import { GlobalEvents } from '@/api/internal';
+import type { InstanceAPI } from '@/api/internal';
+import { useI18n } from 'vue-i18n';
 
 const iApi = inject<InstanceAPI>('iApi')!;
+const { t } = useI18n();
+
 const onClick = () => iApi.event.emit(GlobalEvents.HELP_TOGGLE);
 </script>
 

@@ -1,8 +1,5 @@
 <template>
-    <mapnav-button
-        :onClickFunction="togglePanel"
-        :tooltip="$t('basemap.title')"
-    >
+    <mapnav-button :onClickFunction="togglePanel" :tooltip="t('basemap.title')">
         <svg
             class="fill-current w-32 h-20"
             xmlns="http://www.w3.org/2000/svg"
@@ -19,7 +16,9 @@
 <script setup lang="ts">
 import type { InstanceAPI } from '@/api';
 import { inject } from 'vue';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi');
 
 const togglePanel = () => iApi?.panel.toggle('basemap');

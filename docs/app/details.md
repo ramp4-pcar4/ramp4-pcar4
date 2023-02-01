@@ -58,22 +58,17 @@ const rInstance = RAMP.createInstance(document.getElementById("map"), {
         {
             id: 'My_New_Layer',
             layerType: 'esri-feature',
-            url: 'http://my-website.example/path/to/esri/layer'
-        }
-    ],
-    fixtures: {
-        details: {
-            items: [
-                {
-                    id: 'My_New_Layer',
+            url: 'http://my-website.example/path/to/esri/layer',
+            fixtures: {
+                details: {
                     template: 'My_Custom_Template'
                 }
-            ]
+            }
         }
-    }
+    ]
 });
 ```
 
-As shown in the config snippet above, template bindings should be placed under `fixtures.details.items`. When the details panel first loads, it looks for any template bindings in here. The `id` should match the layer `id`, and the `template` should match the name of the custom component that you registered on the host page.
+As shown in the config snippet above, template bindings should be placed under the layer's details fixture configuration. When the details panel first loads, it looks for any template bindings in here. Note that the `template` should match the name of the custom component that you registered on the host page.
 
 After completing these two steps, the custom component should now be displayed when requesting data from `My_New_Layer`.

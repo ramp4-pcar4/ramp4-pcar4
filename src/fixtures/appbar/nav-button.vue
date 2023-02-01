@@ -3,7 +3,7 @@
         class="absolute inset-x-0 bottom-0 h-48 w-full text-center focus:outline-none"
         v-focus-item
         position="right-end"
-        :tooltip="$t('appbar.navigation')"
+        :tooltip="t('appbar.navigation')"
         tooltip-placement="right"
     >
         <template #header>
@@ -36,6 +36,9 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 const doAThing = () => {
     console.log('PLACEHOLDER BUTTON CLICKED');
 };

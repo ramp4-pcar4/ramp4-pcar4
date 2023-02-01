@@ -1,6 +1,6 @@
 <template>
     <panel-screen :panel="panel">
-        <template #header>{{ $t('geosearch.title') }}</template>
+        <template #header>{{ t('geosearch.title') }}</template>
 
         <template #content>
             <div class="flex flex-col h-full">
@@ -15,7 +15,7 @@
                     v-if="failedServices.length > 0 && !loadingResults"
                 >
                     {{
-                        $t('geosearch.serviceError', {
+                        t('geosearch.serviceError', {
                             services: failedServices.join(', ')
                         })
                     }}
@@ -29,7 +29,7 @@
                     "
                 >
                     <span class="relative h-48"
-                        >{{ $t('geosearch.noResults')
+                        >{{ t('geosearch.noResults')
                         }}<span class="font-bold text-blue-600"
                             >"{{ searchVal }}"</span
                         ></span
@@ -108,7 +108,9 @@ import GeosearchTopFilters from './top-filters.vue';
 import GeosearchBottomFilters from './bottom-filters.vue';
 import LoadingBar from './loading-bar.vue';
 import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
 const store = useStore();
 

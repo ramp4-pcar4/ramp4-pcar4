@@ -6,7 +6,7 @@
             @click="toggleWizard"
             class="relative mr-auto text-gray-500 hover:text-black mb-3"
             v-show="getWizardExists() && isControlAvailable('wizard')"
-            :content="$t('legend.header.addlayer')"
+            :content="t('legend.header.addlayer')"
             v-tippy="{ placement: 'right' }"
         >
             <svg class="fill-current w-18 h-18 mx-8" viewBox="0 0 23 21">
@@ -21,7 +21,7 @@
             v-show="
                 getLayerReorderExists() && isControlAvailable('layerReorder')
             "
-            :content="$t('legend.header.reorderlayers')"
+            :content="t('legend.header.reorderlayers')"
             v-tippy="{ placement: 'right' }"
         >
             <svg
@@ -39,7 +39,7 @@
         <dropdown-menu
             class="relative"
             position="left-start"
-            :content="$t('legend.header.groups')"
+            :content="t('legend.header.groups')"
             v-tippy="{ placement: 'left' }"
             v-show="isControlAvailable('groupToggle')"
         >
@@ -60,21 +60,21 @@
                 class="flex leading-snug items-center overflow-hidden whitespace-nowrap"
                 @click="legendApi.expandItems(true)"
             >
-                {{ $t('legend.header.groups.expand') }}
+                {{ t('legend.header.groups.expand') }}
             </a>
             <a
                 href="javascript:;"
                 class="flex leading-snug items-center overflow-hidden whitespace-nowrap"
                 @click="legendApi.expandItems(false)"
             >
-                {{ $t('legend.header.groups.collapse') }}
+                {{ t('legend.header.groups.collapse') }}
             </a>
         </dropdown-menu>
         <!-- visibility toggle -->
         <dropdown-menu
             class="relative"
             position="left-start"
-            :content="$t('legend.header.visible')"
+            :content="t('legend.header.visible')"
             v-tippy="{ placement: 'left' }"
             v-show="isControlAvailable('visibilityToggle')"
         >
@@ -92,63 +92,61 @@
                 class="flex leading-snug items-center w-100 overflow-hidden whitespace-nowrap"
                 @click="legendApi.showItems(true)"
             >
-                {{ $t('legend.header.visible.show') }}
+                {{ t('legend.header.visible.show') }}
             </a>
             <a
                 href="javascript:;"
                 class="flex leading-snug items-center w-100 overflow-hidden whitespace-nowrap"
                 @click="legendApi.showItems(false)"
             >
-                {{ $t('legend.header.visible.hide') }}
+                {{ t('legend.header.visible.hide') }}
             </a>
         </dropdown-menu>
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
+<script setup lang="ts">
+import { computed, inject } from 'vue';
 import { LegendStore } from './store';
-import { GlobalEvents } from '../../api/internal';
+import { GlobalEvents, InstanceAPI } from '../../api/internal';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 import type { LegendAPI } from './api/legend';
 
-export default defineComponent({
-    name: 'LegendHeaderV',
-    data() {
-        return {
-            legendApi: this.$iApi.fixture.get<LegendAPI>('legend')!
-        };
-    },
+const store = useStore();
+const { t } = useI18n();
+const iApi = inject('iApi') as InstanceAPI;
 
-    methods: {
-        toggleWizard() {
-            this.$iApi.event.emit(GlobalEvents.WIZARD_TOGGLE);
-        },
-        getWizardExists(): boolean {
-            try {
-                return !!this.$iApi.fixture.get('wizard');
-            } catch (e) {
-                return false;
-            }
-        },
-        toggleLayerReorder() {
-            this.$iApi.event.emit(GlobalEvents.REORDER_TOGGLE);
-        },
-        getLayerReorderExists(): boolean {
-            try {
-                return !!this.$iApi.fixture.get('layer-reorder');
-            } catch (e) {
-                return false;
-            }
-        },
-        isControlAvailable(control: string): boolean {
-            const hc: Array<string> | undefined = this.$store.get(
-                LegendStore.headerControls
-            );
-            return hc!.includes(control);
-        }
+const legendApi = computed(() => iApi.fixture.get<LegendAPI>('legend')!);
+
+const toggleWizard = () => {
+    iApi.event.emit(GlobalEvents.WIZARD_TOGGLE);
+};
+
+const getWizardExists = (): boolean => {
+    try {
+        return !!iApi.fixture.get('wizard');
+    } catch (e) {
+        return false;
     }
-});
+};
+
+const toggleLayerReorder = () => {
+    iApi.event.emit(GlobalEvents.REORDER_TOGGLE);
+};
+
+const getLayerReorderExists = (): boolean => {
+    try {
+        return !!iApi.fixture.get('layer-reorder');
+    } catch (e) {
+        return false;
+    }
+};
+
+const isControlAvailable = (control: string): boolean => {
+    const hc: Array<string> | undefined = store.get(LegendStore.headerControls);
+    return hc!.includes(control);
+};
 </script>
 
 <style lang="scss" scoped>

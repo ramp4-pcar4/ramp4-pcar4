@@ -1,14 +1,14 @@
 <template>
     <panel-screen :panel="panel">
         <template #header>
-            {{ $t('details.layers.title') }}
+            {{ t('details.layers.title') }}
         </template>
         <template #content>
             <div v-if="activeGreedy === 0">
                 <!-- grond total -->
                 <div class="p-5">
                     {{
-                        $t('details.layers.found', {
+                        t('details.layers.found', {
                             numResults: totalResultCount,
                             numLayers: payload.length
                         })
@@ -24,7 +24,7 @@
                     :disabled="!(item.loaded && item.items.length > 0)"
                 >
                     <div v-truncate>
-                        {{ layerName(idx) || $t('details.layers.loading') }}
+                        {{ layerName(idx) || t('details.layers.loading') }}
                     </div>
                     <div class="flex-auto"></div>
                     <!-- display the count if item exists, else display the loading spinner -->
@@ -43,7 +43,7 @@
                 class="flex justify-center py-10 items-center"
             >
                 <span class="animate-spin spinner h-20 w-20 px-5 mr-8"></span>
-                {{ $t('details.item.loading') }}
+                {{ t('details.item.loading') }}
             </div>
             <!-- clear panel when new identify request came in -->
             <div v-else></div>
@@ -69,7 +69,9 @@ import { GlobalEvents, LayerInstance, PanelInstance } from '@/api';
 import type { InstanceAPI } from '@/api';
 import type { IdentifyResult } from '@/geo/api';
 import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
 const store = useStore();
 
