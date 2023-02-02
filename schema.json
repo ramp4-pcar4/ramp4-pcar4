@@ -875,7 +875,7 @@
                 "singleEntryCollapse": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Indicates that the map image layer with a single layer entry should be rendered without the root group."
+                    "description": "Indicates that the map image layer with a single layer entry should be rendered without the root group. Currently not supported."
                 },
                 "sublayers": {
                     "type": "array",
@@ -1003,6 +1003,10 @@
                     "type": "string",
                     "description": "Initial filter query to be applied to the layer. SQL WHERE clause format."
                 },
+                "permanentFilteredQuery": {
+                    "type": "string",
+                    "description": "Permanent filter query to be applied to the layer. Only passing data will be downloaded. SQL WHERE clause format."
+                },
                 "fixtures": {
                     "$ref": "#/$defs/layerFixtureConfig"
                 }
@@ -1108,6 +1112,10 @@
                 "initialFilteredQuery": {
                     "type": "string",
                     "description": "Initial filter query to be applied to the layer. SQL WHERE clause format."
+                },
+                "permanentFilteredQuery": {
+                    "type": "string",
+                    "description": "Permanent filter query to be applied to the layer. Only passing data will be downloaded. SQL WHERE clause format."
                 },
                 "fixtures": {
                     "$ref": "#/$defs/layerFixtureConfig"
@@ -1224,6 +1232,10 @@
                 "initialFilteredQuery": {
                     "type": "string",
                     "description": "Initial filter query to be applied to the layer. SQL WHERE clause format."
+                },
+                "permanentFilteredQuery": {
+                    "type": "string",
+                    "description": "Permanent filter query to be applied to the layer. SQL WHERE clause format."
                 },
                 "fixtures": {
                     "$ref": "#/$defs/layerFixtureConfig"
@@ -1347,6 +1359,10 @@
                 "initialFilteredQuery": {
                     "type": "string",
                     "description": "Initial filter query to be applied to the layer. SQL WHERE clause format."
+                },
+                "permanentFilteredQuery": {
+                    "type": "string",
+                    "description": "Permanent filter query to be applied to the layer. SQL WHERE clause format."
                 },
                 "fixtures": {
                     "$ref": "#/$defs/layerFixtureConfig"

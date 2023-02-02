@@ -25,6 +25,7 @@ export interface AttributeLoaderDetails {
     maxId?: number; // current maximum OID we have downloaded. i.e. keeps track of where we are over multiple batches of downloads
     batchSize: number; // calculated maximum amount of attributes that can be downloaded in a single request
     oidField: string; // attribute name of the OID field
+    permanentFilter?: string; // SQL to restrict the attributes to download
 }
 
 export class AttributeAPI extends APIScope {
@@ -49,10 +50,15 @@ export class AttributeAPI extends APIScope {
             return [];
         }
 
+        // construct additional filter if we have a permanent filter
+        const permFilter = details.permanentFilter
+            ? ` AND ${details.permanentFilter}`
+            : '';
+
         // make a web call that downloads a chonk of attributes.
         const params: __esri.RequestOptions = {
             query: {
-                where: `${details.oidField}>${details.maxId}`,
+                where: `${details.oidField}>${details.maxId}${permFilter}`,
                 outFields: details.attribs,
                 returnGeometry: 'false',
                 f: 'json'
@@ -161,6 +167,21 @@ export class AttributeAPI extends APIScope {
                 'No .sourceGraphics provided to file layer attribute loader'
             );
         }
+
+        // Ideally we would have a way to strip out any graphics/attributes that do not pass a
+        // permanent filter. Either here, or where we set sourceGraphics in the extractLayerMetadata
+        // method of file-layer. Or even better, applied against the incoming GeoJSON prior to converting
+        // it to a Feature Layer; this would be the most memory efficient, we end up with a feature layer
+        // containing only things that pass the permanent filter.
+        // However at the moment there is no nice sql filter thing available for these raw formats.
+        // Could resurrect AQL and mod it for GeoJSON formats, good times.
+        // https://github.com/fgpv-vpgf/fgpv-vpgf/blob/master/packages/ramp-geoapi/src/query.js#L218
+        // But for now, everything gets loaded in the attribute bundle (it is already local so no
+        // web traffic impact). Things will still be filtered out of identify and the table. The
+        // only noticeable impacts of this lazy approach is memory waste (both in layer and in
+        // attribute bundle), and the data grid will say "X records filtered from Y records",
+        // which is true, but a permanent filter ideally should present things as if they were
+        // never part of the layer.
 
         const pluckedAttributes = details.sourceGraphics.map(
             (g: __esri.Graphic) => {

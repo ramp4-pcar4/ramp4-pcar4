@@ -455,7 +455,8 @@ export enum CoreFilter {
     GRID = 'grid', // used to apply grid filters to a layer
     EXTENT = 'extent', // captures a filter based on an extent. leveraged by the grid to only show rows visible on screen
     INITIAL = 'initial', // used to track an initial filter provided by the layer config
-    API = 'api' // this would be a default api key. e.g. if someone just does an API filter set with no key parameter, it would use this.
+    API = 'api', // this would be a default api key. e.g. if someone just does an API filter set with no key parameter, it would use this.
+    PERMANENT = 'permanent' // a filter that is always on and will influence server calls (i.e. prevent data from being downloaded). can only be set via layer config
 }
 
 export interface ScaleHelper {
@@ -551,6 +552,7 @@ export interface RampLayerMapImageSublayerConfig {
     cosmetic?: boolean;
     fieldMetadata?: RampLayerFieldMetadataConfig;
     initialFilteredQuery?: string;
+    permanentFilteredQuery?: string;
     customRenderer?: any;
     fixtures?: any; // layer-based fixture config
 }
@@ -601,6 +603,7 @@ export interface RampLayerConfig {
     colour?: string;
     imageFormat?: string;
     initialFilteredQuery?: string;
+    permanentFilteredQuery?: string;
     drawOrder?: Array<DrawOrder>; // feature drawing order
     identifyMode?: LayerIdentifyMode;
     caching?: boolean; // whether to preserve raw data in file and WFS layers

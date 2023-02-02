@@ -16,6 +16,7 @@ import type { AttributeLoaderDetails } from '@/api/internal';
 
 import {
     BaseGeometry,
+    CoreFilter,
     DataFormat,
     Extent,
     Filter,
@@ -58,7 +59,10 @@ export class AttribLayer extends CommonLayer {
         this.serviceUrl = '';
         this.fieldList = '';
         this.esriFields = [];
-        this.filter = new Filter();
+        this.filter = new Filter(
+            rampConfig.permanentFilteredQuery || '',
+            rampConfig.initialFilteredQuery || ''
+        );
     }
 
     protected notLoadedErr(): void {
@@ -217,7 +221,8 @@ export class AttribLayer extends CommonLayer {
                 serviceUrl: this.serviceUrl,
                 oidField: this.oidField,
                 batchSize: -1,
-                attribs: '*' // NOTE we set to * here for generic case. loader may override later once config settings are applied
+                attribs: '*', // NOTE we set to * here for generic case. loader may override later once config settings are applied
+                permanentFilter: this.getSqlFilter(CoreFilter.PERMANENT)
             };
             this.attLoader = new ArcServerAttributeLoader(this.$iApi, loadData);
 
