@@ -148,11 +148,15 @@ export class PanelInstance extends APIScope {
      * @memberof PanelInstance
      */
     get width(): number | undefined {
-        if (!this.style.width || this.style.width.slice(-2) !== 'px') {
+        if (
+            this.$vApp.$store.get('panel/mobileView') ||
+            !this.style['flex-basis'] ||
+            this.style['flex-basis'].slice(-2) !== 'px'
+        ) {
             return undefined;
         }
 
-        return parseInt(this.style.width);
+        return parseInt(this.style['flex-basis']);
     }
 
     /**

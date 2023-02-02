@@ -190,6 +190,7 @@ const actions = {
             if (remainingWidth >= (context.state.pinned.width || 350)) {
                 // if theres room insert pinned element
                 nowVisible.unshift(context.state.pinned);
+                remainingWidth -= context.state.pinned.width || 350;
             } else {
                 // otherwise there is only one element in `nowVisible` (loop invariant fun)
                 // if there is no priority, the one element should be pinned
@@ -197,6 +198,8 @@ const actions = {
                 if (!context.state.priority) {
                     lastElement = nowVisible.shift()!;
                     nowVisible.unshift(context.state.pinned);
+                    remainingWidth += lastElement.width || 350;
+                    remainingWidth -= context.state.pinned.width || 350;
                 }
             }
 

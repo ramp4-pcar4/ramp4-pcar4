@@ -35,6 +35,8 @@ import CloseV from '@/components/panel-stack/controls/close.vue';
 import BackV from '@/components/panel-stack/controls/back.vue';
 import ExpandV from '@/components/panel-stack/controls/expand.vue';
 import MinimizeV from '@/components/panel-stack/controls/minimize.vue';
+import IncreaseV from '@/components/panel-stack/controls/increase.vue';
+import DecreaseV from '@/components/panel-stack/controls/decrease.vue';
 import RightV from '@/components/panel-stack/controls/right.vue';
 import LeftV from '@/components/panel-stack/controls/left.vue';
 import PanelOptionsMenuV from '@/components/panel-stack/controls/panel-options-menu.vue';
@@ -242,9 +244,17 @@ export class InstanceAPI {
                     });
                 }
 
-                // enable/disable reorder controls
-                const enable = langConfig.panels.reorderable ?? true;
-                this.$vApp.$store.set('panel/reorderable', enable);
+                // enable/disable reorder controls\
+                this.$vApp.$store.set(
+                    'panel/reorderable',
+                    langConfig.panels.reorderable ?? true
+                );
+
+                // enable/disable resize controls
+                this.$vApp.$store.set(
+                    'panel/resizeable',
+                    langConfig.panels.resizeable ?? true
+                );
             }
 
             // disable animations if needed
@@ -582,6 +592,8 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
     vueElement.component('minimize', MinimizeV);
     vueElement.component('right', RightV);
     vueElement.component('left', LeftV);
+    vueElement.component('increase', IncreaseV);
+    vueElement.component('decrease', DecreaseV);
 
     // ported from mapnav.vue
     vueElement.component('fullscreen-nav-button', FullscreenNavV);
