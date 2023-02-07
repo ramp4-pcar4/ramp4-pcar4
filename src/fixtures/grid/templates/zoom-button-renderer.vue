@@ -34,7 +34,7 @@ import { useI18n } from 'vue-i18n';
 const props = defineProps(['params']);
 const iApi = inject<InstanceAPI>('iApi')!;
 const store = useStore();
-const el = ref(null as unknown as HTMLElement);
+const el = ref<HTMLElement>();
 const { t } = useI18n();
 
 const getLayerByUid = (uid: string): LayerInstance | undefined =>

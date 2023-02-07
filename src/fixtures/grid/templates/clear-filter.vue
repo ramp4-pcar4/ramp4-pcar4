@@ -36,14 +36,14 @@ import { useI18n } from 'vue-i18n';
 
 const props = defineProps(['params']);
 const { t } = useI18n();
-const el = ref(null as unknown as HTMLElement);
+const el = ref<HTMLElement>();
 
 const clearFilters = () => props.params.clearFilters();
 
 onMounted(async () => {
     // need to hoist events to top level cell wrapper to be keyboard accessible
     await nextTick();
-    const headerCell: HTMLElement = el.value.closest('.ag-header-cell')!;
+    const headerCell: HTMLElement = el.value?.closest('.ag-header-cell')!;
     const grid: HTMLElement = headerCell.closest('.ag-pinned-left-header')!;
     headerCell.addEventListener('keydown', async (e: KeyboardEvent) => {
         if (e.key === 'Enter') {
@@ -67,7 +67,7 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-    const headerCell: HTMLElement = el.value.closest('.ag-header-cell')!;
+    const headerCell: HTMLElement = el.value?.closest('.ag-header-cell')!;
     const grid: HTMLElement = headerCell.closest('.ag-pinned-left-header')!;
     headerCell.removeEventListener('keydown', async (e: KeyboardEvent) => {
         if (e.key === 'Enter') {

@@ -33,7 +33,7 @@ import { useI18n } from 'vue-i18n';
 const props = defineProps(['params']);
 const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
-const el = ref(null as unknown as HTMLElement);
+const el = ref<HTMLElement>();
 
 const openDetails = () => {
     let data = Object.assign({}, props.params.data);

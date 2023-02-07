@@ -53,7 +53,7 @@ const props = defineProps({
 });
 
 const open = ref(false);
-const el = ref(null as unknown as Element);
+const el = ref<Element>();
 
 onMounted(() => {
     window.addEventListener(
@@ -61,7 +61,7 @@ onMounted(() => {
         event => {
             if (
                 event.target instanceof HTMLElement &&
-                !el.value.contains(event.target)
+                !el.value?.contains(event.target)
             ) {
                 open.value = false;
             }
@@ -76,7 +76,7 @@ onBeforeUnmount(() => {
         event => {
             if (
                 event.target instanceof HTMLElement &&
-                !el.value.contains(event.target)
+                !el.value?.contains(event.target)
             ) {
                 open.value = false;
             }

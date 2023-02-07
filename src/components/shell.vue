@@ -19,7 +19,7 @@
                 class="panel-stack sm:flex absolute inset-0 overflow-hidden sm:p-12 z-10 sm:pl-80 xs:pl-40 sm:pb-48 xs:pb-28 xs:pr-0 sm:pr-40"
             ></panel-stack>
             <notification-floating-button
-                v-if="!store.get(`fixture/items@appbar`)"
+                v-if="!appbarFixture"
             ></notification-floating-button>
             <map-caption class="z-30"></map-caption>
         </div>
@@ -37,7 +37,7 @@ import PanelStack from '@/components/panel-stack/panel-stack.vue';
 import MapCaption from '@/components/map/map-caption.vue';
 import NotificationFloatingButton from '@/components/notification-center/floating-button.vue';
 import KeyboardInstructionsModal from './keyboard-instructions.vue';
-import { inject } from 'vue';
+import { computed, inject } from 'vue';
 import { useStore } from 'vuex';
 import type { InstanceAPI } from '@/api';
 import { useI18n } from 'vue-i18n';
@@ -46,6 +46,7 @@ const iApi = inject<InstanceAPI>('iApi');
 const store = useStore();
 const { t } = useI18n();
 
+const appbarFixture = computed(() => store.get(`fixture/items@appbar`));
 const openKeyboardInstructions = () => {
     iApi?.event.emit('openKeyboardInstructions');
 };

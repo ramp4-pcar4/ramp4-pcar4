@@ -47,7 +47,7 @@ const store = useStore();
 const areas = computed<AreaOfInterest[] | undefined>(() =>
     store.get(AreasOfInterestStore.areas)
 );
-const showThumbnail = ref(false);
+let showThumbnail = ref(false);
 
 onMounted(() => {
     showThumbnail.value = !!areas.value?.some(

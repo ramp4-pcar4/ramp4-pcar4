@@ -24,7 +24,7 @@ import linkifyHtml from 'linkify-html';
 
 const iApi = inject<InstanceAPI>('iApi')!;
 const store = useStore();
-const el = ref(null as unknown as HTMLElement);
+const el = ref<HTMLElement>();
 
 const props = defineProps(['params']);
 

@@ -135,7 +135,7 @@ const overflowFlags = ref<{
     [key: string]: boolean;
 }>({});
 
-const el = ref(null as unknown as Element);
+const el = ref<Element>();
 
 onBeforeMount(() => {
     const instance = getCurrentInstance();
@@ -149,7 +149,7 @@ onBeforeUnmount(() => {
 
 onUpdated(() => {
     nextTick(() => {
-        const element: Element = el.value;
+        const element: Element = el.value!;
         let key: string | undefined = undefined;
         let children: Element[] = [...element.children];
         let bound: number | undefined =

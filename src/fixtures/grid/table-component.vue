@@ -426,7 +426,7 @@ const NUM_TYPES: string[] = [
 
 const iApi = inject<InstanceAPI>('iApi')!;
 const store = useStore();
-const el = ref(null as unknown as HTMLElement);
+const el = ref<HTMLElement>();
 const { t } = useI18n();
 const forceUpdate = () => getCurrentInstance()?.proxy?.$forceUpdate();
 
@@ -564,7 +564,7 @@ const gridRendered = () => {
     columnApi.value.autoSizeAllColumns();
 
     gridAccessibilityManager.value = new GridAccessibilityManager(
-        el.value,
+        el.value!,
         agGridApi.value as GridApi,
         columnApi.value as ColumnApi
     );
@@ -1180,7 +1180,7 @@ onBeforeMount(() => {
                 (element: any) => {
                     if (
                         element._tippy &&
-                        el.value.contains(element._tippy.reference)
+                        el.value?.contains(element._tippy.reference)
                     ) {
                         element._tippy.hide();
                     }

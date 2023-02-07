@@ -115,7 +115,7 @@ export interface GridCustomHeader {
 
 const { t } = useI18n();
 const props = defineProps(['params']);
-const el = ref(null as unknown as HTMLElement);
+const el = ref<HTMLElement>();
 
 const sort = ref<number>(0);
 const sortable = ref<boolean>(false);
@@ -150,7 +150,7 @@ const moveLeft = (): void => {
         // e.g. grid is A | B | C and this is B, if B moves left so the grid B | A | C this element is now A
         (
             el.value
-                .closest('.ag-header-row')
+                ?.closest('.ag-header-row')
                 ?.querySelectorAll('.ag-header-cell')
                 [index].querySelector('.move-left') as HTMLElement
         ).focus();
