@@ -87,16 +87,21 @@ export class GeoSearchUI {
         const settings: any = uConfig?.settings;
         let categories: Array<string>;
         let sortOrder: Array<string>;
+        let disabledSearchTypes: Array<string>;
         let maxResults: number;
         let officialOnly: boolean;
         if (settings) {
             categories = settings.categories ? settings.categories : [];
             sortOrder = settings.sortOrder ? settings.sortOrder : [];
+            disabledSearchTypes = settings.disabledSearchTypes
+                ? settings.disabledSearchTypes
+                : [];
             maxResults = settings.maxResults > 0 ? settings.maxResults : 100; // > will fail on undefined, defaulting
             officialOnly = !!settings.officialOnly;
         } else {
             categories = [];
             sortOrder = [];
+            disabledSearchTypes = [];
             maxResults = 100;
             officialOnly = false;
         }
@@ -110,6 +115,7 @@ export class GeoSearchUI {
             provinces: Provinces(language, geoProvinceUrl), // list of province filters
             categories,
             sortOrder,
+            disabledSearchTypes,
             maxResults,
             officialOnly
         };
@@ -119,6 +125,7 @@ export class GeoSearchUI {
         (<any>this)._typeList = [];
         (<any>this)._excludedTypes = uConfig?.excludeTypes || [];
     }
+
     get provinceList() {
         return (<any>this)._provinceList;
     }
@@ -130,6 +137,34 @@ export class GeoSearchUI {
     }
     set typeList(val) {
         (<any>this)._typeList = val;
+    }
+
+    levenshteinDistance(q: Query, result: string) {
+        // sanitize strings
+        result = result.toLowerCase().trim();
+        const query = decodeURI(q.query!.toLowerCase().replace('*', ''));
+
+        /* Use a modified levenshtein distance algorithm to compute the 'distance' between the query and the result. 
+         The distance is computed by assessing each letter where:
+         - insertion costs 0.2
+         - deletion, substitution cost 1
+        */
+        const levDistance = [];
+        for (let i = 0; i <= result.length; i++) {
+            levDistance[i] = [i];
+            for (let j = 1; j <= query.length; j++) {
+                levDistance[i][j] =
+                    i === 0
+                        ? j
+                        : Math.min(
+                              levDistance[i][j - 1] + 1, // delete
+                              levDistance[i - 1][j] + 0.2, // insert
+                              levDistance[i - 1][j - 1] +
+                                  (query[j - 1] === result[i - 1] ? 0 : 1) // substitute
+                          );
+            }
+        }
+        return levDistance[result.length][query.length];
     }
 
     /**
@@ -173,7 +208,8 @@ export class GeoSearchUI {
                                 latitude: fsa.LatLon.lat,
                                 longitude: fsa.LatLon.lon,
                                 province: this.findProvinceObj(fsa.province)
-                            }
+                            },
+                            order: -1
                         }));
                     } else if (q.resultType === 'nts') {
                         // add first geosearch result as location of NTS map number
@@ -186,7 +222,8 @@ export class GeoSearchUI {
                                 city: nts.location,
                                 latitude: nts.LatLon.lat,
                                 longitude: nts.LatLon.lon
-                            }
+                            },
+                            order: -1
                         }));
                     } else if (q.resultType === 'address') {
                         featureResult = q.featureResults.map(
@@ -210,15 +247,31 @@ export class GeoSearchUI {
                                     province: this.findProvinceObj(
                                         address.province
                                     )
-                                }
+                                },
+                                order:
+                                    this.config.sortOrder.indexOf('ADDR') >= 0
+                                        ? this.config.sortOrder.indexOf('ADDR')
+                                        : this.config.sortOrder.length
                             })
                         );
+                        if (this.config.sortOrder.length > 0) {
+                            // if custom sorting in place, apply lev only to street addresses
+                            featureResult = featureResult.sort(
+                                (a: any, b: any) => {
+                                    return this.levenshteinDistance(q, a.name) >
+                                        this.levenshteinDistance(q, b.name)
+                                        ? 1
+                                        : -1;
+                                }
+                            );
+                        }
                     }
                 } else if (q.resultType === 'latlong') {
                     // add first geosearch result as location of lat/lon coordinates
                     featureResult = [q.latLongResult];
+                    featureResult[0].order = -1;
                 }
-                // console.log("first feature result: ", featureResult);
+                // console.log('first feature result: ', featureResult);
                 // format returned query results appropriately to support zoom/extent functionality
                 const queryResult = q.results.map((item: any) => ({
                     name: item.name,
@@ -230,52 +283,25 @@ export class GeoSearchUI {
                         latitude: item.LatLon.lat,
                         longitude: item.LatLon.lon,
                         province: this.findProvinceObj(item.province)
-                    }
+                    },
+                    order: item.order
                 }));
 
-                //
-                const levenshteinDistance = (result: string) => {
-                    // sanitize strings
-                    result = result.toLowerCase().trim();
-                    const query = decodeURI(
-                        q.query!.toLowerCase().replace('*', '')
-                    );
-
-                    /* Use a modified levenshtein distance algorithm to compute the 'distance' between the query and the result. 
-                     The distance is computed by assessing each letter where:
-                     - insertion costs 0.2
-                     - deletion, substitution cost 1
-                    */
-                    const levDistance = [];
-                    for (let i = 0; i <= result.length; i++) {
-                        levDistance[i] = [i];
-                        for (let j = 1; j <= query.length; j++) {
-                            levDistance[i][j] =
-                                i === 0
-                                    ? j
-                                    : Math.min(
-                                          levDistance[i][j - 1] + 1, // delete
-                                          levDistance[i - 1][j] + 0.2, // insert
-                                          levDistance[i - 1][j - 1] +
-                                              (query[j - 1] === result[i - 1]
-                                                  ? 0
-                                                  : 1) // substitute
-                                      );
-                        }
-                    }
-                    return levDistance[result.length][query.length];
-                };
-
-                // console.log("remaining query results: ", queryResult);
+                // console.log('remaining query results: ', queryResult);
                 return {
                     results: featureResult
                         .concat(queryResult)
                         .slice(0, this.config.maxResults)
                         .sort((a: any, b: any) => {
-                            return levenshteinDistance(a.name) >
-                                levenshteinDistance(b.name)
-                                ? 1
-                                : -1;
+                            // use custom sort order if provided, otherwise lev sort by default
+                            if (this.config.sortOrder.length > 0) {
+                                return a.order > b.order ? 1 : -1;
+                            } else {
+                                return this.levenshteinDistance(q, a.name) >
+                                    this.levenshteinDistance(q, b.name)
+                                    ? 1
+                                    : -1;
+                            }
                         }),
                     failedServs: q.failedServs
                 };
