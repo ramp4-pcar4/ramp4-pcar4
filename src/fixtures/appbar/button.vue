@@ -18,32 +18,30 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { GlobalEvents } from '@/api';
+import type { InstanceAPI } from '@/api';
+import { inject } from 'vue';
 
-export default defineComponent({
-    name: 'AppbarButtonV',
-    props: {
-        onClickFunction: {
-            type: Function,
-            required: true
-        },
-        id: {
-            type: String,
-            required: true
-        },
-        tooltip: {
-            type: [String, Boolean],
-            default: false
-        }
+const iApi = inject<InstanceAPI>('iApi');
+
+const props = defineProps({
+    onClickFunction: {
+        type: Function,
+        required: true
     },
-    methods: {
-        onClick() {
-            // TODO: change fixtures to use this instead of click handlers in <fixture>-appbar-button?
-            this.$iApi.event.emit('appbar/click', this.id);
-        }
+    id: {
+        type: String,
+        required: true
+    },
+    tooltip: {
+        type: [String, Boolean],
+        default: false
     }
 });
+
+const onClick = () =>
+    iApi?.event.emit(GlobalEvents.APPBAR_BUTTON_CLICK, props.id);
 </script>
 
 <style lang="scss" scoped>

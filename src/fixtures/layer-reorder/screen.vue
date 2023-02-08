@@ -1,7 +1,7 @@
 <template>
     <panel-screen :panel="panel">
         <template #header>
-            {{ $t('layer-reorder.title') }}
+            {{ t('layer-reorder.title') }}
         </template>
 
         <template #content>
@@ -10,22 +10,18 @@
     </panel-screen>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
 import type { PropType } from 'vue';
 import type { PanelInstance } from '@/api';
-import LayerReorderComponentV from './components/layer-component.vue';
+import LayerReorderComponent from './components/layer-component.vue';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'LayerReorderScreenV',
-    components: {
-        'layer-reorder-component': LayerReorderComponentV
-    },
-    props: {
-        panel: {
-            type: Object as PropType<PanelInstance>,
-            required: true
-        }
+const { t } = useI18n();
+
+defineProps({
+    panel: {
+        type: Object as PropType<PanelInstance>,
+        required: true
     }
 });
 </script>

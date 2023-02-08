@@ -1,5 +1,8 @@
 <template>
-    <div class="ag-custom-header flex flex-1 items-center h-full w-full">
+    <div
+        class="ag-custom-header flex flex-1 items-center h-full w-full"
+        ref="el"
+    >
         <div
             v-if="sortable"
             class="flex flex-1 items-center min-w-0"
@@ -8,7 +11,7 @@
             <button
                 type="button"
                 @click="onSortRequested($event)"
-                :content="$t(`grid.header.sort.${sort}`)"
+                :content="t(`grid.header.sort.${sort}`)"
                 v-tippy="{ placement: 'top', hideOnClick: false }"
                 class="customHeaderLabel hover:bg-gray-300 font-bold p-8 max-w-full"
                 role="columnheader"
@@ -59,7 +62,7 @@
             </span>
             <button
                 type="button"
-                :content="$t(`grid.header.reorder.left`)"
+                :content="t(`grid.header.reorder.left`)"
                 v-tippy="{ placement: 'top' }"
                 @click="moveLeft()"
                 class="move-left opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
@@ -78,7 +81,7 @@
             </button>
             <button
                 type="button"
-                :content="$t(`grid.header.reorder.right`)"
+                :content="t(`grid.header.reorder.right`)"
                 v-tippy="{ placement: 'top' }"
                 @click="moveRight()"
                 class="move-right opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
@@ -99,116 +102,9 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { directive as tippyDirective } from 'vue-tippy';
-
-export default defineComponent({
-    name: 'GridCustomHeaderV',
-    directives: {
-        tippy: tippyDirective
-    },
-    props: ['params'],
-    data() {
-        return {
-            sort: 0 as number,
-            sortable: false as boolean,
-            canMoveLeft: false as boolean,
-            canMoveRight: false as boolean,
-            columnApi: null as any
-        };
-    },
-
-    mounted(): void {
-        this.sortable = this.params.column.colDef.sortable;
-        this.columnApi = this.params.columnApi;
-
-        if (this.params.sort === 'asc') {
-            this.sort = 1;
-            this.params.setSort('asc');
-        } else if (this.params.sort === 'desc') {
-            this.sort = 2;
-            this.params.setSort('desc');
-        }
-
-        this.onColumnReorder();
-        // update move state when column has moved
-        this.params.column.addEventListener('leftChanged', () => {
-            this.onColumnReorder();
-        });
-    },
-
-    beforeUnmount() {
-        this.params.column.removeEventListener('leftChanged', () => {
-            this.onColumnReorder();
-        });
-    },
-
-    methods: {
-        onColumnReorder() {
-            const columns: any = this.columnApi.getAllDisplayedColumns();
-            const columnIdx: number = columns.indexOf(this.params.column);
-            this.canMoveLeft =
-                columnIdx > 3 && !columns[columnIdx - 1].colDef.isStatic;
-            this.canMoveRight =
-                columnIdx < columns.length - 1 &&
-                !columns[columnIdx + 1].colDef.isStatic;
-        },
-
-        // Swap the position of a column with it's left neighbor. If the neighboring column is static,
-        // or if there is no left neighbor, don't move it.
-        moveLeft(): void {
-            const columns: any = this.columnApi.getAllDisplayedColumns();
-            const allColumns: any = this.columnApi.getAllGridColumns();
-            const index: number = allColumns.indexOf(
-                columns[columns.indexOf(this.params.column) - 1]
-            );
-
-            if (this.canMoveLeft) {
-                this.columnApi.moveColumn(this.params.column, index);
-
-                // Focus the "move left" button on the new column
-                // The same column index keeps this element so we can't just use a ref for the buttons;
-                // e.g. grid is A | B | C and this is B, if B moves left so the grid B | A | C this element is now A
-                (
-                    (this.$el as HTMLElement)
-                        .closest('.ag-header-row')
-                        ?.querySelectorAll('.ag-header-cell')
-                        [index].querySelector('.move-left') as HTMLElement
-                ).focus();
-
-                this.params.api.ensureColumnVisible(allColumns[index]);
-            }
-        },
-
-        // Swap the position of a column with it's right neighbor. If the neighboring column is static,
-        // or if there is no right neighbor, don't move it.
-        moveRight(): void {
-            const columns: any = this.columnApi.getAllDisplayedColumns();
-            const allColumns: any = this.columnApi.getAllGridColumns();
-            const index: number = allColumns.indexOf(
-                columns[columns.indexOf(this.params.column) + 1]
-            );
-
-            if (this.canMoveRight) {
-                this.columnApi.moveColumn(this.params.column, index);
-                this.params.api.ensureColumnVisible(allColumns[index]);
-            }
-        },
-
-        // Switch between sorting the column by `ascending`, `descending` or `none`.
-        onSortRequested(event: any): void {
-            this.sort = (this.sort + 1) % 3;
-            if (this.sort == 1) {
-                this.params.setSort('asc', event.shiftKey);
-            } else if (this.sort == 2) {
-                this.params.setSort('desc', event.shiftKey);
-            } else {
-                this.params.setSort('none', event.shiftKey);
-            }
-        }
-    }
-});
+<script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 export interface GridCustomHeader {
     sort: number;
@@ -216,6 +112,104 @@ export interface GridCustomHeader {
     columnApi: any;
     params: any;
 }
+
+const { t } = useI18n();
+const props = defineProps(['params']);
+const el = ref<HTMLElement>();
+
+const sort = ref<number>(0);
+const sortable = ref<boolean>(false);
+const canMoveLeft = ref<boolean>(false);
+const canMoveRight = ref<boolean>(false);
+const columnApi = ref<any>(null);
+
+const onColumnReorder = () => {
+    const columns: any = columnApi.value.getAllDisplayedColumns();
+    const columnIdx: number = columns.indexOf(props.params.column);
+    canMoveLeft.value =
+        columnIdx > 3 && !columns[columnIdx - 1].colDef.isStatic;
+    canMoveRight.value =
+        columnIdx < columns.length - 1 &&
+        !columns[columnIdx + 1].colDef.isStatic;
+};
+
+// Swap the position of a column with it's left neighbor. If the neighboring column is static,
+// or if there is no left neighbor, don't move it.
+const moveLeft = (): void => {
+    const columns: any = columnApi.value.getAllDisplayedColumns();
+    const allColumns: any = columnApi.value.getAllGridColumns();
+    const index: number = allColumns.indexOf(
+        columns[columns.indexOf(props.params.column) - 1]
+    );
+
+    if (canMoveLeft.value) {
+        columnApi.value.moveColumn(props.params.column, index);
+
+        // Focus the "move left" button on the new column
+        // The same column index keeps this element so we can't just use a ref for the buttons;
+        // e.g. grid is A | B | C and this is B, if B moves left so the grid B | A | C this element is now A
+        (
+            el.value
+                ?.closest('.ag-header-row')
+                ?.querySelectorAll('.ag-header-cell')
+                [index].querySelector('.move-left') as HTMLElement
+        ).focus();
+
+        props.params.api.ensureColumnVisible(allColumns[index]);
+    }
+};
+
+// Swap the position of a column with it's right neighbor. If the neighboring column is static,
+// or if there is no right neighbor, don't move it.
+const moveRight = (): void => {
+    const columns: any = columnApi.value.getAllDisplayedColumns();
+    const allColumns: any = columnApi.value.getAllGridColumns();
+    const index: number = allColumns.indexOf(
+        columns[columns.indexOf(props.params.column) + 1]
+    );
+
+    if (canMoveRight.value) {
+        columnApi.value.moveColumn(props.params.column, index);
+        props.params.api.ensureColumnVisible(allColumns[index]);
+    }
+};
+
+// Switch between sorting the column by `ascending`, `descending` or `none`.
+const onSortRequested = (event: any): void => {
+    sort.value = (sort.value + 1) % 3;
+    if (sort.value === 1) {
+        props.params.setSort('asc', event.shiftKey);
+    } else if (sort.value === 2) {
+        props.params.setSort('desc', event.shiftKey);
+    } else {
+        props.params.setSort('none', event.shiftKey);
+    }
+};
+
+onMounted(() => {
+    sortable.value = props.params.column.colDef.sortable;
+    columnApi.value = props.params.columnApi;
+
+    if (props.params.sort === 'asc') {
+        sort.value = 1;
+        props.params.setSort('asc');
+    } else if (props.params.sort === 'desc') {
+        sort.value = 2;
+        props.params.setSort('desc');
+    }
+
+    onColumnReorder();
+    // update move state when column has moved
+    props.params.column.addEventListener('leftChanged', () => {
+        onColumnReorder();
+    });
+});
+
+onBeforeUnmount(() => {
+    props.params.column.removeEventListener('leftChanged', () => {
+        onColumnReorder();
+    });
+});
 </script>
 
 <style lang="scss" scoped></style>

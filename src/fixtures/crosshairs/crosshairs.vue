@@ -46,53 +46,50 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { inject, onBeforeUnmount, onMounted, ref } from 'vue';
 import { GlobalEvents } from '@/api';
+import type { InstanceAPI } from '@/api';
 
-export default defineComponent({
-    name: 'CrosshairsV',
-    data() {
-        return {
-            visible: false,
-            handlers: [] as Array<string>
-        };
-    },
+const iApi = inject<InstanceAPI>('iApi')!;
 
-    mounted() {
-        this.handlers.push(
-            this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, () => {
-                // display crosshairs if pan/zoom keys are active
-                if (this.$iApi.geo.map.keysActive) {
-                    this.visible = true;
-                }
-            })
-        );
+const visible = ref<Boolean>(false);
+const handlers = ref<Array<string>>([]);
 
-        this.handlers.push(
-            this.$iApi.event.on(GlobalEvents.MAP_FOCUS, () => {
-                // display crosshairs only when focused with keyboard controls
-                if (!this.$iApi.geo.map.mouseFocus) {
-                    this.visible = true;
-                }
-            })
-        );
+onMounted(() => {
+    handlers.value.push(
+        iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, () => {
+            // display crosshairs if pan/zoom keys are active
+            if (iApi.geo.map.keysActive) {
+                visible.value = true;
+            }
+        })
+    );
 
-        this.handlers.push(
-            this.$iApi.event.on(GlobalEvents.MAP_MOUSEDOWN, () => {
-                this.visible = false;
-            })
-        );
+    handlers.value.push(
+        iApi.event.on(GlobalEvents.MAP_FOCUS, () => {
+            // display crosshairs only when focused with keyboard controls
+            if (!iApi.geo.map.mouseFocus) {
+                visible.value = true;
+            }
+        })
+    );
 
-        this.handlers.push(
-            this.$iApi.event.on(GlobalEvents.MAP_BLUR, () => {
-                this.visible = false;
-            })
-        );
-    },
-    beforeUnmount() {
-        this.handlers.forEach(h => this.$iApi.event.off(h));
-    }
+    handlers.value.push(
+        iApi.event.on(GlobalEvents.MAP_MOUSEDOWN, () => {
+            visible.value = false;
+        })
+    );
+
+    handlers.value.push(
+        iApi.event.on(GlobalEvents.MAP_BLUR, () => {
+            visible.value = false;
+        })
+    );
+});
+
+onBeforeUnmount(() => {
+    handlers.value.forEach(h => iApi.event.off(h));
 });
 </script>
 

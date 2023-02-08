@@ -3,7 +3,7 @@
         <button
             type="button"
             class="text-gray-500 hover:text-black focus:text-black w-full h-full flex justify-center items-center"
-            :content="$t(`panels.controls.${active ? 'collapse' : 'expand'}`)"
+            :content="t(`panels.controls.${active ? 'collapse' : 'expand'}`)"
             v-tippy="{
                 placement: 'bottom',
                 theme: 'ramp4',
@@ -43,13 +43,11 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'ExpandV',
-    props: {
-        active: Boolean
-    }
+const props = defineProps({
+    active: Boolean
 });
+const { t } = useI18n();
 </script>

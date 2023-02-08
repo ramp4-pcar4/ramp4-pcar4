@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div ref="el">
         <button
             type="button"
             class="text-gray-500 hover:text-black dropdown-button"
@@ -11,7 +11,7 @@
                 animation: tooltipAnimation,
                 appendTo: 'parent'
             }"
-            ref="dropdown-trigger"
+            ref="dropdownTrigger"
         >
             <slot name="header"></slot>
         </button>
@@ -27,107 +27,115 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { createPopper } from '@popperjs/core';
-import type { Placement } from '@popperjs/core';
-export default defineComponent({
-    name: 'DropdownMenuV',
-    props: {
-        position: {
-            type: String,
-            default: 'bottom'
-        },
-        popperOptions: {
-            type: Object,
-            default: {}
-        },
-        tooltip: { type: String },
-        tooltipPlacement: { type: String, default: 'bottom' },
-        tooltipTheme: { type: String, default: 'ramp4' },
-        tooltipAnimation: { type: String, default: 'scale' },
-        centered: { type: Boolean, default: true }
+<script setup lang="ts">
+import {
+    ref,
+    reactive,
+    watch,
+    nextTick,
+    onMounted,
+    onBeforeUnmount
+} from 'vue';
+import { createPopper, type Placement } from '@popperjs/core';
+
+const open = ref<boolean>(false);
+const popper = ref<any>(null);
+const watchers = reactive<Array<Function>>([]);
+
+const el = ref();
+const dropdown = ref<HTMLElement>();
+const dropdownTrigger = ref<Element>();
+
+const props = defineProps({
+    position: {
+        type: String,
+        default: 'bottom'
     },
-    data() {
-        return {
-            open: false,
-            popper: null as any,
-            watchers: [] as Array<Function>
-        };
+    popperOptions: {
+        type: Object,
+        default: {}
     },
+    tooltip: { type: String },
+    tooltipPlacement: { type: String, default: 'bottom' },
+    tooltipTheme: { type: String, default: 'ramp4' },
+    tooltipAnimation: { type: String, default: 'scale' },
+    centered: { type: Boolean, default: true }
+});
 
-    created() {
-        this.watchers.push(
-            this.$watch('open', () => {
-                this.popper.update();
-            })
-        );
-    },
+watchers.push(
+    watch(open, () => {
+        popper.value.update();
+    })
+);
 
-    mounted() {
-        window.addEventListener(
-            'click',
-            event => {
-                if (!this.$el.contains(event.target)) {
-                    this.open = false;
-                }
-            },
-            { capture: true }
-        );
-
-        window.addEventListener('blur', () => {
-            this.open = false;
-        });
-
-        window.addEventListener('focusin', event => {
-            if (!this.$el.contains(event.target)) {
-                this.open = false;
+onMounted(() => {
+    window.addEventListener(
+        'click',
+        event => {
+            if (!el.value || !el.value.contains(event.target)) {
+                open.value = false;
             }
-        });
+        },
+        { capture: true }
+    );
 
-        // $nextTick should prevent any race conditions by letting the child elements render before trying to place them using popper
-        this.$nextTick(() => {
-            if (this.$refs['dropdown-trigger'] && this.$refs['dropdown']) {
-                this.popper = createPopper(
-                    this.$refs['dropdown-trigger'] as Element,
-                    this.$refs['dropdown'] as HTMLElement,
-                    {
-                        placement: (this.position || 'bottom') as Placement,
-                        modifiers: [
-                            {
-                                name: 'offset',
-                                options: {
-                                    offset: [0, 5]
-                                }
+    window.addEventListener('blur', () => {
+        open.value = false;
+    });
+
+    window.addEventListener('focusin', event => {
+        if (!el.value || !el.value.contains(event.target)) {
+            open.value = false;
+        }
+    });
+
+    // nextTick should prevent any race conditions by letting the child elements render before trying to place them using popper
+    nextTick(() => {
+        if (dropdownTrigger.value && dropdown.value) {
+            popper.value = createPopper(
+                dropdownTrigger.value as Element,
+                dropdown.value as HTMLElement,
+                {
+                    placement: (props.position || 'bottom') as Placement,
+                    modifiers: [
+                        {
+                            name: 'offset',
+                            options: {
+                                offset: [0, 5]
                             }
-                        ],
-                        ...this.popperOptions
-                    }
-                );
-            }
-        });
-    },
-    beforeUnmount() {
-        this.watchers.forEach(unwatch => unwatch());
-        window.removeEventListener(
-            'click',
-            event => {
-                if (!this.$el.contains(event.target)) {
-                    this.open = false;
+                        }
+                    ],
+                    ...props.popperOptions
                 }
-            },
-            { capture: true }
-        );
-        window.removeEventListener('blur', () => {
-            this.open = false;
-        });
-        window.removeEventListener('focusin', event => {
-            if (!this.$el.contains(event.target)) {
-                this.open = false;
+            );
+        }
+    });
+});
+
+onBeforeUnmount(() => {
+    watchers.forEach(unwatch => unwatch());
+
+    window.removeEventListener(
+        'click',
+        event => {
+            if (!el.value || !el.value.contains(event.target)) {
+                open.value = false;
             }
-        });
-        this.open = false;
-    }
+        },
+        { capture: true }
+    );
+
+    window.removeEventListener('blur', () => {
+        open.value = false;
+    });
+
+    window.removeEventListener('focusin', event => {
+        if (!el.value || !el.value.contains(event.target)) {
+            open.value = false;
+        }
+    });
+
+    open.value = false;
 });
 </script>
 

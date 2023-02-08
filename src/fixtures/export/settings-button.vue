@@ -2,7 +2,7 @@
     <dropdown-menu
         v-focus-item
         :position="dropdownPlacement"
-        :tooltip="$t('export.menu')"
+        :tooltip="t('export.menu')"
         tooltip-placement="top"
     >
         <template #header>
@@ -55,7 +55,7 @@
                         }
                     `"
                         >{{
-                            $t(`export.menu.component.${component.name}`)
+                            t(`export.menu.component.${component.name}`)
                         }}</span
                     >
                 </div>
@@ -64,41 +64,38 @@
     </dropdown-menu>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useStore } from 'vuex';
 import { ExportStore } from './store';
 
-export default defineComponent({
-    name: 'ExportSettingsButtonV',
-    data() {
-        return {
-            dropdownPlacement: !this.$root.$refs['app-size'].classList.contains(
-                'sm'
-            )
-                ? 'top-end'
-                : 'left-end'
-        };
-    },
-    props: {
-        componentSelectedState: {
-            type: Object,
-            required: true
-        }
-    },
-    methods: {
-        toggleComponent(component: any): void {
-            if (!component.selectable) {
-                return;
-            }
-            // update the store
-            this.$iApi.$vApp.$store.set(ExportStore.toggleSelected, {
-                name: component.name
-            });
-            // notify the parent that a component was toggled
-            this.$emit('onComponentToggle');
-        }
+const { t } = useI18n();
+const store = useStore();
+const emit = defineEmits(['onComponentToggle']);
+
+defineProps({
+    componentSelectedState: {
+        type: Object,
+        required: true
     }
 });
+
+const dropdownPlacement = computed<string>(() =>
+    store.get('panel/mobileView') ? 'top-end' : 'left-end'
+);
+
+const toggleComponent = (component: any): void => {
+    if (!component.selectable) {
+        return;
+    }
+    // update the store
+    store.set(ExportStore.toggleSelected, {
+        name: component.name
+    });
+    // notify the parent that a component was toggled
+    emit('onComponentToggle');
+};
 </script>
 
 <style lang="scss" scoped></style>

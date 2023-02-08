@@ -3,7 +3,7 @@
         class="absolute inset-x-0 bottom-0 h-48 w-full text-center focus:outline-none"
         v-focus-item
         position="right-end"
-        :tooltip="$t('appbar.navigation')"
+        :tooltip="t('appbar.navigation')"
         tooltip-placement="right"
     >
         <template #header>
@@ -35,18 +35,13 @@
     </dropdown-menu>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'NavAppbarButtonV',
-    methods: {
-        // TODO: Revisit this when designing the gear icon menu
-        doAThing() {
-            console.log('PLACEHOLDER BUTTON CLICKED');
-        }
-    }
-});
+const { t } = useI18n();
+const doAThing = () => {
+    console.log('PLACEHOLDER BUTTON CLICKED');
+};
 </script>
 
 <style lang="scss" scoped></style>

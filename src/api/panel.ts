@@ -41,7 +41,7 @@ export class PanelAPI extends APIScope {
 
         if (options) {
             const i18n = options.i18n || {};
-            const $i18n = this.$vApp.$i18n;
+            const $i18n = this.$iApi.$i18n;
 
             // merge `messages`, `dateTimeFormats` and  `numberFormats` into the global locale
             // ignore `sharedMessages` prop as it makes no sense to use it here
@@ -189,9 +189,9 @@ export class PanelAPI extends APIScope {
         if (this.show(panel, { screen, props })) {
             this.$vApp.$store.set(`panel/${PanelAction.openPanel}!`, { panel });
             this.$iApi.updateAlert(
-                this.$vApp.$t(`panels.alert.open`, {
+                this.$iApi.$i18n.t(`panels.alert.open`, {
                     name: panel.alertName
-                        ? this.$vApp.$t(panel.alertName)
+                        ? this.$iApi.$i18n.t(panel.alertName)
                         : panel.id
                 })
             );
@@ -242,9 +242,9 @@ export class PanelAPI extends APIScope {
 
         this.$vApp.$store.set(`panel/${PanelAction.closePanel}!`, { panel });
         this.$iApi.updateAlert(
-            this.$vApp.$t(`panels.alert.close`, {
+            this.$iApi.$i18n.t(`panels.alert.close`, {
                 name: panel.alertName
-                    ? this.$vApp.$t(panel.alertName)
+                    ? this.$iApi.$i18n.t(panel.alertName)
                     : panel.id
             })
         );
@@ -269,9 +269,9 @@ export class PanelAPI extends APIScope {
 
         this.$vApp.$store.set(`panel/${PanelAction.closePanel}!`, { panel });
         this.$iApi.updateAlert(
-            this.$vApp.$t(`panels.alert.minimize`, {
+            this.$iApi.$i18n.t(`panels.alert.minimize`, {
                 name: panel.alertName
-                    ? this.$vApp.$t(panel.alertName)
+                    ? this.$iApi.$i18n.t(panel.alertName)
                     : panel.id
             })
         );

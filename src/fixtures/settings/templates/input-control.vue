@@ -14,53 +14,49 @@
             />
         </div>
         <div class="text-xs pt-10 text-gray-600 mb-20">
-            {{ $t('settings.label.refreshOff') }}
+            {{ t('settings.label.refreshOff') }}
         </div>
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import config from '@arcgis/core/config';
+import { onBeforeUnmount, reactive, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'SliderControl',
-    props: {
-        config: {
-            type: Object,
-            required: true
-        },
-        name: {
-            type: String,
-            required: true
-        },
-        icon: {
-            type: String,
-            required: true
-        }
-    },
-    created() {
-        this.watchers.push(
-            // watch the config for changes to the disabled value
-            this.$watch(
-                'config',
-                (newConfig: any) => {
-                    this.isDisabled = !!newConfig.disabled;
-                },
-                { deep: true }
-            )
-        );
-    },
+const { t } = useI18n();
 
-    beforeUnmount() {
-        this.watchers.forEach(unwatch => unwatch());
+const props = defineProps({
+    config: {
+        type: Object,
+        required: true
     },
-
-    data() {
-        return {
-            isDisabled: !!this.config.disabled,
-            watchers: [] as Array<Function>
-        };
+    name: {
+        type: String,
+        required: true
+    },
+    icon: {
+        type: String,
+        required: true
     }
+});
+
+const isDisabled = ref(!!props.config.disabled);
+const watchers = reactive<Array<Function>>([]);
+
+watchers.push(
+    // watch the config for changes to the opacity value
+    watch(
+        () => props.config,
+        (newConfig: any) => {
+            isDisabled.value = !!newConfig.disabled;
+        },
+        { deep: true }
+    )
+);
+
+onBeforeUnmount(() => {
+    watchers.forEach(unwatch => unwatch());
 });
 </script>
 

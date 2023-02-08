@@ -2,7 +2,7 @@
     <dropdown-menu
         class="relative"
         position="bottom-end"
-        :tooltip="$t('grid.label.columns')"
+        :tooltip="t('grid.label.columns')"
         :tooltip-placement="'bottom'"
         :centered="false"
     >
@@ -32,7 +32,7 @@
             )"
             :key="col.headerName"
             v-on:click="
-                columnApi.setColumnVisible(col.field, col.hide);
+                columnApi?.setColumnVisible(col.field, col.hide);
                 col.hide = !col.hide;
             "
             href="javascript:;"
@@ -58,14 +58,13 @@
     </dropdown-menu>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'GridColumnDropdownV',
-    props: {
-        columnDefs: Array,
-        columnApi: Object
-    }
+const { t } = useI18n();
+
+defineProps({
+    columnDefs: { type: Array<any>, required: true },
+    columnApi: { type: Object }
 });
 </script>

@@ -1,7 +1,7 @@
 <template>
     <panel-screen :panel="panel">
         <template #header>
-            {{ $t('basemap.title') }}
+            {{ t('basemap.title') }}
         </template>
 
         <template #content>
@@ -40,11 +40,11 @@
     </panel-screen>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue';
 import type { PropType } from 'vue';
 
-import BasemapItemV from './item.vue';
+import BasemapItem from './item.vue';
 import type {
     RampBasemapConfig,
     RampMapConfig,
@@ -52,41 +52,37 @@ import type {
 } from '@/geo/api';
 import type { PanelInstance } from '@/api';
 import { ConfigStore } from '@/store/modules/config';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'BasemapScreenV',
-    props: {
-        panel: {
-            type: Object as PropType<PanelInstance>
-        }
-    },
-    components: {
-        'basemap-item': BasemapItemV
-    },
-    data() {
-        return {
-            tileSchemas: [] as Array<RampTileSchemaConfig>,
-            basemaps: [] as Array<RampBasemapConfig>,
-            selectedBasemap: this.get(ConfigStore.getActiveBasemapConfig)
-        };
-    },
-    mounted() {
-        const mapConfig: RampMapConfig = this.$iApi.$vApp.$store.get(
-            ConfigStore.getMapConfig
-        )! as RampMapConfig;
-        this.tileSchemas = mapConfig.tileSchemas;
-        this.basemaps = mapConfig.basemaps;
-    },
-    methods: {
-        filterBasemaps(schemaId: string) {
-            // filter out all the basemaps that match the current schema
-            return this.basemaps.filter(
-                (basemap: RampBasemapConfig) =>
-                    basemap.tileSchemaId === schemaId
-            );
-        }
+const { t } = useI18n();
+const store = useStore();
+
+defineProps({
+    panel: {
+        type: Object as PropType<PanelInstance>
     }
 });
+
+const tileSchemas = ref<Array<RampTileSchemaConfig>>([]);
+const basemaps = ref<Array<RampBasemapConfig>>([]);
+const selectedBasemap = computed<RampBasemapConfig>(
+    () => store.get(ConfigStore.getActiveBasemapConfig)!
+);
+
+onMounted(() => {
+    const mapConfig: RampMapConfig = store.get(
+        ConfigStore.getMapConfig
+    )! as RampMapConfig;
+    tileSchemas.value = mapConfig.tileSchemas;
+    basemaps.value = mapConfig.basemaps;
+});
+
+// filter out all the basemaps that match the current schema
+const filterBasemaps = (schemaId: string) =>
+    basemaps.value.filter(
+        (basemap: RampBasemapConfig) => basemap.tileSchemaId === schemaId
+    );
 </script>
 
 <style lang="scss" scoped></style>

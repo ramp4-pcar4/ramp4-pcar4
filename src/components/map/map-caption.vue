@@ -5,33 +5,31 @@
         <about-ramp-dropdown
             class="sm:block display-none ml-8 mr-4"
             position="top-end"
-        ></about-ramp-dropdown>
+        />
 
-        <notifications-caption-button
-            class="sm:block display-none"
-        ></notifications-caption-button>
+        <notifications-caption-button class="sm:block display-none" />
 
         <span
             class="relative top-2 sm:top-1 ml-4 sm:ml-0 shrink-0"
-            v-if="!attribution.logo.disabled"
+            v-if="!attribution?.logo.disabled"
         >
             <a
                 class="pointer-events-auto cursor-pointer"
-                :href="attribution.logo.link"
+                :href="attribution?.logo.link"
                 target="_blank"
-                :aria-label="attribution.logo.altText"
+                :aria-label="attribution?.logo.altText"
             >
                 <img
                     class="object-contain h-18 sm:h-26"
-                    :src="attribution.logo.value"
-                    :alt="attribution.logo.altText"
+                    :src="attribution?.logo.value"
+                    :alt="attribution?.logo.altText"
                 />
             </a>
         </span>
 
         <span
             class="relative ml-10 top-2 text-sm sm:text-base"
-            v-if="!attribution.text.disabled"
+            v-if="!attribution?.text.disabled"
             v-truncate="{
                 options: {
                     placement: 'top',
@@ -41,7 +39,7 @@
                 }
             }"
         >
-            {{ attribution.text.value }}
+            {{ attribution?.text.value }}
         </span>
 
         <span class="flex-grow w-15"></span>
@@ -50,7 +48,7 @@
 
         <div class="flex min-w-fit justify-end">
             <div
-                v-if="!coords.disabled"
+                v-if="!coords?.disabled"
                 class="pl-8 px-14 sm:block display-none relative top-2"
                 v-truncate="{
                     options: {
@@ -60,16 +58,16 @@
                     }
                 }"
             >
-                {{ coords.formattedString }}
+                {{ coords?.formattedString }}
             </div>
 
             <button
                 type="button"
-                v-if="!scale.disabled"
+                v-if="!scale?.disabled"
                 class="flex-shrink-0 mx-2 sm:mx-10 px-4 pointer-events-auto cursor-pointer border-none"
                 @click="onScaleClick"
-                :aria-pressed="scale.isImperialScale"
-                :aria-label="$t('map.toggleScaleUnits')"
+                :aria-pressed="scale?.isImperialScale"
+                :aria-label="t('map.toggleScaleUnits')"
                 v-tippy="{
                     delay: [300, 0],
                     placement: 'top',
@@ -78,14 +76,14 @@
                     animation: 'scale',
                     touch: ['hold', 200]
                 }"
-                :content="$t('map.toggleScaleUnits')"
+                :content="t('map.toggleScaleUnits')"
             >
                 <span
                     class="border-solid border-2 border-white border-t-0 h-5 mr-4 inline-block"
-                    :style="{ width: scale.width }"
+                    :style="{ width: scale?.width }"
                 ></span>
                 <span class="relative top-1 text-sm sm:text-base">
-                    {{ scale.label }}
+                    {{ scale?.label }}
                 </span>
             </button>
 
@@ -99,29 +97,29 @@
                     animation: 'scale',
                     touch: ['hold', 200]
                 }"
-                :content="$t('map.changeLanguage')"
+                :content="t('map.changeLanguage')"
             >
                 <template #header>
                     <span
                         class="text-gray-400 hover:text-white text-sm sm:text-base pb-5"
                     >
-                        {{ $t('map.language.short') }}
+                        {{ t('map.language.short') }}
                     </span>
                 </template>
                 <a
                     v-for="(item, index) in lang"
                     :key="`${item}-${index}`"
                     class="flex-auto items-center text-sm sm:text-base cursor-pointer"
-                    :class="{ 'font-bold': item === $iApi.$vApp.$i18n.locale }"
+                    :class="{ 'font-bold': item === $iApi.$i18n.locale.value }"
                     href="javascript:;"
                     @click="changeLang(item)"
                 >
-                    {{ $t('map.language.' + item) }}
+                    {{ t('map.language.' + item) }}
                     <span
                         class="sr-only"
-                        v-if="item === $iApi.$vApp.$i18n.locale"
+                        v-if="item === $iApi.$i18n.locale.value"
                     >
-                        {{ $t('map.language.curr') }}
+                        {{ t('map.language.curr') }}
                     </span>
                 </a>
             </dropdown-menu>
@@ -129,72 +127,83 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-import type { RampMapConfig } from '@/geo/api';
+<script setup lang="ts">
+import {
+    computed,
+    inject,
+    nextTick,
+    onBeforeUnmount,
+    onUpdated,
+    reactive,
+    ref,
+    watch
+} from 'vue';
 import { MapCaptionStore } from '@/store/modules/map-caption';
 import { ConfigStore } from '@/store/modules/config';
-import NotificationsCaptionButtonV from '@/components/notification-center/caption-button.vue';
+import NotificationsCaptionButton from '@/components/notification-center/caption-button.vue';
 import AboutRampDropdown from '@/components/about-ramp/about-ramp-dropdown.vue';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    data() {
-        return {
-            scale: this.get(MapCaptionStore.scale),
-            attribution: this.get(MapCaptionStore.attribution),
-            coords: this.get(MapCaptionStore.coords),
-            mapConfig: this.get(ConfigStore.getMapConfig),
-            lang: [] as Array<string>,
-            watchers: [] as Array<Function>
-        };
-    },
+import type {
+    Attribution,
+    MapCoords,
+    RampMapConfig,
+    ScaleBar
+} from '@/geo/api';
+import type { InstanceAPI } from '@/api';
 
-    components: {
-        'notifications-caption-button': NotificationsCaptionButtonV,
-        'about-ramp-dropdown': AboutRampDropdown
-    },
+const store = useStore();
+const { t } = useI18n();
+const iApi = inject('iApi') as InstanceAPI;
 
-    created() {
-        this.watchers.push(
-            this.$watch('mapConfig', (newConfig: RampMapConfig) => {
-                if (!newConfig) {
-                    return;
-                }
-                this.$iApi.geo.map.caption.createCaption(
-                    this.mapConfig.caption
-                );
-            })
-        );
-    },
+const scale = computed(() => store.get<ScaleBar>(MapCaptionStore.scale));
+const attribution = computed(() =>
+    store.get<Attribution>(MapCaptionStore.attribution)
+);
+const coords = computed(() => store.get<MapCoords>(MapCaptionStore.coords));
+const mapConfig = computed(() =>
+    store.get<RampMapConfig>(ConfigStore.getMapConfig)
+);
 
-    beforeUnmount() {
-        this.watchers.forEach(unwatch => unwatch());
-    },
+const lang = ref<Array<string>>([]);
+const watchers = reactive<Array<Function>>([]);
 
-    updated() {
-        this.$nextTick(function () {
-            if (this.$iApi.$vApp.$i18n && this.lang.length == 0) {
-                this.lang = this.$iApi.$vApp.$i18n.availableLocales;
-            }
-        });
-    },
-    methods: {
-        changeLang(lang: string) {
-            if (this.$iApi.$vApp.$i18n.locale != lang) {
-                this.$iApi.setLanguage(lang);
-            }
-        },
-        /**
-         * Toggle the scale units
-         */
-        onScaleClick() {
-            // undefined argument will toggle the scale unit
-            this.$iApi.$vApp.$store.set(MapCaptionStore.toggleScale, undefined);
-            this.$iApi.geo.map.caption.updateScale();
+watchers.push(
+    watch(mapConfig, (newConfig: any) => {
+        if (!newConfig) {
+            return;
         }
-    }
+        iApi.geo.map.caption.createCaption(mapConfig.value?.caption);
+    })
+);
+
+onBeforeUnmount(() => {
+    watchers.forEach(unwatch => unwatch());
 });
+
+onUpdated(() => {
+    nextTick(() => {
+        if (iApi.$i18n.locale.value && lang.value.length == 0) {
+            lang.value = iApi.$i18n.availableLocales;
+        }
+    });
+});
+
+const changeLang = (lang: string) => {
+    if (iApi.$i18n.locale.value != lang) {
+        iApi.setLanguage(lang);
+    }
+};
+
+/**
+ * Toggle the scale units
+ */
+const onScaleClick = () => {
+    // undefined argument will toggle the scale unit
+    iApi.$vApp.$store.set(MapCaptionStore.toggleScale, undefined);
+    iApi.geo.map.caption.updateScale();
+};
 </script>
 
 <style lang="scss" scoped>

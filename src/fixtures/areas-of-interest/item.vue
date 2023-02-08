@@ -4,7 +4,7 @@
             type="button"
             class="area-of-interest-item-button bg-gray-300 w-full"
             :class="{ 'border border-gray-300': showThumbnail }"
-            :aria-label="$t('areas-of-interest.select')"
+            :aria-label="t('areas-of-interest.select')"
             @click="selectAreaOfInterest(area)"
             v-focus-item
         >
@@ -66,39 +66,41 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { inject } from 'vue';
 import type { PropType } from 'vue';
 import type { AreaOfInterest } from './store';
 import { Extent } from '@/geo/api';
+import type { InstanceAPI } from '@/api';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'AreaOfInterestV',
-    props: {
-        area: {
-            type: Object as PropType<AreaOfInterest>,
-            required: true
-        },
-        showThumbnail: {
-            type: Boolean
-        }
+const { t } = useI18n();
+
+const props = defineProps({
+    area: {
+        type: Object as PropType<AreaOfInterest>,
+        required: true
     },
-    methods: {
-        selectAreaOfInterest(area: any) {
-            if (!area.extent) {
-                console.error(
-                    "selected area of interest doesn't have an extent specified."
-                );
-                return;
-            }
-
-            // zoom the map to this area's extent
-            this.$iApi.geo.map.zoomMapTo(
-                Extent.fromConfig(`area-of-interest-extent`, area.extent)
-            );
-        }
+    showThumbnail: {
+        type: Boolean
     }
 });
+
+const iApi = inject<InstanceAPI>('iApi');
+
+const selectAreaOfInterest = (area: any) => {
+    if (!area.extent) {
+        console.error(
+            "selected area of interest doesn't have an extent specified."
+        );
+        return;
+    }
+
+    // zoom the map to this area's extent
+    iApi?.geo.map.zoomMapTo(
+        Extent.fromConfig(`area-of-interest-extent`, area.extent)
+    );
+};
 </script>
 
 <style lang="scss" scoped>

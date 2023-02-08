@@ -1,6 +1,6 @@
 <template>
     <panel-screen :panel="panel">
-        <template #header>{{ $t('geosearch.title') }}</template>
+        <template #header>{{ t('geosearch.title') }}</template>
 
         <template #content>
             <div class="flex flex-col h-full">
@@ -15,7 +15,7 @@
                     v-if="failedServices.length > 0 && !loadingResults"
                 >
                     {{
-                        $t('geosearch.serviceError', {
+                        t('geosearch.serviceError', {
                             services: failedServices.join(', ')
                         })
                     }}
@@ -29,7 +29,7 @@
                     "
                 >
                     <span class="relative h-48"
-                        >{{ $t('geosearch.noResults')
+                        >{{ t('geosearch.noResults')
                         }}<span class="font-bold text-blue-600"
                             >"{{ searchVal }}"</span
                         ></span
@@ -97,71 +97,60 @@
     </panel-screen>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed, inject } from 'vue';
 import type { PropType } from 'vue';
-
-import type { PanelInstance } from '@/api';
+import type { InstanceAPI, PanelInstance } from '@/api';
 import { Extent } from '@/geo/api';
-
 import { GeosearchStore } from './store';
+import GeosearchBar from './search-bar.vue';
+import GeosearchTopFilters from './top-filters.vue';
+import GeosearchBottomFilters from './bottom-filters.vue';
+import LoadingBar from './loading-bar.vue';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
-import GeosearchSearchBarV from './search-bar.vue';
-import GeosearchTopFiltersV from './top-filters.vue';
-import GeosearchBottomFiltersV from './bottom-filters.vue';
-import GeosearchLoadingBarV from './loading-bar.vue';
+const { t } = useI18n();
+const iApi = inject<InstanceAPI>('iApi')!;
+const store = useStore();
 
-export default defineComponent({
-    name: 'GeosearchScreenV',
-
-    props: {
-        panel: {
-            type: Object as PropType<PanelInstance>
-        }
-    },
-
-    // Import required components.
-    components: {
-        'geosearch-bar': GeosearchSearchBarV,
-        'geosearch-top-filters': GeosearchTopFiltersV,
-        'geosearch-bottom-filters': GeosearchBottomFiltersV,
-        'loading-bar': GeosearchLoadingBarV
-    },
-
-    // fetch store properties/data
-    data() {
-        return {
-            searchVal: this.get(GeosearchStore.searchVal),
-            searchResults: this.get(GeosearchStore.searchResults),
-            loadingResults: this.get(GeosearchStore.loadingResults),
-            failedServices: this.get(GeosearchStore.failedServices)
-        };
-    },
-
-    methods: {
-        // zoom in to a clicked result
-        zoomIn(result: any): void {
-            let zoom = new Extent(
-                'zoomies',
-                [result.bbox[0], result.bbox[1]],
-                [result.bbox[2], result.bbox[3]]
-            );
-            this.$iApi.geo.map.zoomMapTo(zoom);
-        },
-
-        // highlight the search term in each listed geosearch result
-        highlightSearchTerm(name: string, province: any) {
-            // wrap matched search term in results inside span with styling
-            const highlightedResult = name.replace(
-                new RegExp(`${this.searchVal.value}`, 'gi'),
-                match =>
-                    '<span class="font-bold text-blue-600">' + match + '</span>'
-            );
-            // add comma to new highlighted result if a province/location is provided
-            return province ? highlightedResult + ',' : highlightedResult;
-        }
+defineProps({
+    panel: {
+        type: Object as PropType<PanelInstance>
     }
 });
+
+const searchVal = computed<string>(() => store.get(GeosearchStore.searchVal)!);
+const searchResults = computed<Array<any>>(
+    () => store.get(GeosearchStore.searchResults)!
+);
+const loadingResults = computed<boolean>(
+    () => store.get(GeosearchStore.loadingResults)!
+);
+const failedServices = computed<string[]>(
+    () => store.get(GeosearchStore.failedServices)!
+);
+
+// zoom in to a clicked result
+const zoomIn = (result: any) => {
+    let zoom = new Extent(
+        'zoomies',
+        [result.bbox[0], result.bbox[1]],
+        [result.bbox[2], result.bbox[3]]
+    );
+    iApi.geo.map.zoomMapTo(zoom);
+};
+
+// highlight the search term in each listed geosearch result
+const highlightSearchTerm = (name: string, province: any) => {
+    // wrap matched search term in results inside span with styling
+    const highlightedResult = name.replace(
+        new RegExp(`${searchVal.value}`, 'gi'),
+        match => '<span class="font-bold text-blue-600">' + match + '</span>'
+    );
+    // add comma to new highlighted result if a province/location is provided
+    return province ? highlightedResult + ',' : highlightedResult;
+};
 </script>
 
 <style lang="scss" scoped></style>

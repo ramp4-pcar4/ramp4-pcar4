@@ -1,7 +1,7 @@
 <template>
     <mapnav-button
         :onClickFunction="geolocate"
-        :tooltip="$t('mapnav.geolocator')"
+        :tooltip="t('mapnav.geolocator')"
     >
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,82 +15,68 @@
     </mapnav-button>
 </template>
 
-<script lang="ts">
-import { NotificationType } from '@/api';
+<script setup lang="ts">
+import { InstanceAPI, NotificationType } from '@/api';
 import { Point, SpatialReference } from '@/geo/api';
-import { defineComponent } from 'vue';
+import { inject, reactive } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'GeolocatorNavV',
-    data() {
-        return {
-            geolocation: [] as Array<number>
-        };
-    },
-    methods: {
-        async geolocate() {
-            // use cached location
-            if (!this.geolocation.length) {
-                // request current location from browser
-                const position = await this.browserLocate({
-                    maximumAge: Infinity,
-                    timeout: 5000
-                }).catch((error: GeolocationPositionError) => {
-                    if (
-                        error.code ===
-                        GeolocationPositionError.PERMISSION_DENIED
-                    ) {
-                        // send an error message for a denied permission error
-                        this.$iApi.notify.show(
-                            NotificationType.ERROR,
-                            this.$iApi.$vApp.$t(
-                                'mapnav.geolocator.error.permission'
-                            )
-                        );
-                    } else {
-                        // send an error message for an internal/timeout error
-                        this.$iApi.notify.show(
-                            NotificationType.ERROR,
-                            this.$iApi.$vApp.$t(
-                                'mapnav.geolocator.error.internal'
-                            )
-                        );
-                    }
-                });
-                if (position) {
-                    // store geolocation as array for speedy zoomIn
-                    this.geolocation = [
-                        position.coords.longitude,
-                        position.coords.latitude
-                    ];
-                    this.zoomIn(this.geolocation);
-                }
+const { t } = useI18n();
+const iApi = inject('iApi') as InstanceAPI;
+
+let geolocation = reactive<Array<number>>([]);
+
+const geolocate = async () => {
+    // use cached location
+    if (!geolocation.length) {
+        // request current location from browser
+        const position = await browserLocate({
+            maximumAge: Infinity,
+            timeout: 5000
+        }).catch((error: GeolocationPositionError) => {
+            if (error.code === GeolocationPositionError.PERMISSION_DENIED) {
+                // send an error message for a denied permission error
+                iApi.notify.show(
+                    NotificationType.ERROR,
+                    t('mapnav.geolocator.error.permission')
+                );
             } else {
-                this.zoomIn(this.geolocation);
+                // send an error message for an internal/timeout error
+                iApi.notify.show(
+                    NotificationType.ERROR,
+                    t('mapnav.geolocator.error.internal')
+                );
             }
-        },
-        // zoom to point
-        zoomIn(coords: Array<number>): void {
-            let zoomTarget = new Point(
-                'geolocation',
-                coords,
-                SpatialReference.latLongSR(),
-                true
-            );
-            this.$iApi.geo.map.zoomMapTo(zoomTarget);
-        },
-        // prompt user to geolocate via browser
-        browserLocate(options: PositionOptions): Promise<GeolocationPosition> {
-            return new Promise((resolve, reject) =>
-                navigator.geolocation.getCurrentPosition(
-                    resolve,
-                    reject,
-                    options
-                )
-            );
+        });
+        if (position) {
+            // store geolocation as array for speedy zoomIn
+            geolocation = [position.coords.longitude, position.coords.latitude];
+            zoomIn(geolocation);
         }
+    } else {
+        zoomIn(geolocation);
     }
-});
+};
+
+// zoom to point
+const zoomIn = (coords: Array<number>): void => {
+    let zoomTarget = new Point(
+        'geolocation',
+        coords,
+        SpatialReference.latLongSR(),
+        true
+    );
+    iApi.geo.map.zoomMapTo(zoomTarget);
+};
+
+// prompt user to geolocate via browser
+const browserLocate = (
+    options: PositionOptions
+): Promise<GeolocationPosition> => {
+    return new Promise((resolve, reject) =>
+        navigator.geolocation.getCurrentPosition(resolve, reject, options)
+    );
+};
 </script>
 
 <style lang="scss" scoped></style>

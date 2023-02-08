@@ -7,7 +7,7 @@ class PanguardFixture extends FixtureInstance {
         // console.log(`[fixture] ${this.id} added`);
         // Manually add lang entries to i18n
         Object.entries(messages).forEach(value =>
-            (<any>this.$vApp.$i18n).mergeLocaleMessage(...value)
+            (<any>this.$iApi.$i18n).mergeLocaleMessage(...value)
         );
 
         const { vNode, destroy, el } = this.mount(PanguardV, {

@@ -1,7 +1,7 @@
 <template>
     <dropdown-menu
         class="flex"
-        :tooltip="$t('panels.controls.optionsMenu')"
+        :tooltip="t('panels.controls.optionsMenu')"
         :popperOptions="{ strategy: 'fixed' }"
         position="bottom-end"
     >
@@ -22,22 +22,13 @@
     </dropdown-menu>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import DropdownMenuV from '@/components/controls/dropdown-menu.vue';
+<script setup lang="ts">
+import DropdownMenu from '@/components/controls/dropdown-menu.vue';
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'PanelOptionsMenuV',
-    components: {
-        'dropdown-menu': DropdownMenuV
-    },
-
-    data() {
-        return {
-            open: false
-        };
-    }
-});
+const { t } = useI18n();
+const open = ref(false);
 </script>
 
 <style lang="scss" scoped>

@@ -1,7 +1,7 @@
 <template>
     <mapnav-button
         :onClickFunction="togglePanel"
-        :tooltip="$t('geosearch.title')"
+        :tooltip="t('geosearch.title')"
     >
         <svg
             class="fill-current w-32 h-20"
@@ -16,17 +16,17 @@
     </mapnav-button>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import type { InstanceAPI } from '@/api';
+import { inject } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'GeosearchNavButtonV',
-    methods: {
-        togglePanel() {
-            this.$iApi.panel.toggle('geosearch');
-        }
-    }
-});
+const { t } = useI18n();
+const iApi = inject<InstanceAPI>('iApi');
+
+const togglePanel = () => {
+    iApi?.panel.toggle('geosearch');
+};
 </script>
 
 <style lang="scss" scoped></style>

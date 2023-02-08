@@ -56,32 +56,10 @@ class DetailsFixture extends DetailsAPI {
             (value: DetailsConfig | undefined) => this._parseConfig(value)
         );
 
-        const eventHandlers: string[] = [];
-        // make panel container responsive when resizing to mobile resolution
-        eventHandlers.push(
-            this.$iApi.event.on(
-                GlobalEvents.RAMP_MOBILEVIEW_CHANGE,
-                (mobileMode: boolean) => {
-                    const detailsPanels = ['details-items', 'details-layers'];
-                    if (mobileMode) {
-                        // set width to 100% on mobile
-                        for (const panel of detailsPanels) {
-                            this.$iApi.panel.setStyle(panel, {
-                                width: '100%'
-                            });
-                        }
-                    } else {
-                        this.handlePanelWidths(detailsPanels);
-                    }
-                }
-            )
-        );
-
         // override the removed method here to get access to scope
         this.removed = () => {
             // console.log(`[fixture] ${this.id} removed`);
             unwatch();
-            eventHandlers.forEach(h => this.$iApi.event.off(h));
 
             this.$iApi.panel.remove('details-items');
             this.$iApi.panel.remove('details-layers');

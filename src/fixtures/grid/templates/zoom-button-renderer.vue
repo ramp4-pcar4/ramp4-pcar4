@@ -2,10 +2,11 @@
     <button
         type="button"
         class="flex items-center justify-center w-46 h-44"
-        :content="$t('grid.cells.zoom')"
+        :content="t('grid.cells.zoom')"
         v-tippy="{ placement: 'top' }"
         @click="zoomToFeature"
         tabindex="-1"
+        ref="el"
     >
         <svg
             class="m-auto"
@@ -23,75 +24,66 @@
     </button>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { inject, onBeforeUnmount, onMounted, ref } from 'vue';
 
-import type { LayerInstance } from '@/api/internal';
-import { directive as tippyDirective } from 'vue-tippy';
+import type { InstanceAPI, LayerInstance } from '@/api/internal';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'ZoomButtonRendererV',
-    directives: {
-        tippy: tippyDirective
-    },
-    props: ['params'],
-    data() {
-        return {
-            getLayerByUid: this.get('layer/getLayerByUid')
-        };
-    },
-    mounted() {
-        // need to hoist events to top level cell wrapper to be keyboard accessible
-        this.params.eGridCell.addEventListener(
-            'keydown',
-            (e: KeyboardEvent) => {
-                if (e.key === 'Enter') {
-                    this.zoomToFeature();
-                }
-            }
-        );
-        this.params.eGridCell.addEventListener('focus', () => {
-            (this.$el as any)._tippy.show();
-        });
-        this.params.eGridCell.addEventListener('blur', () => {
-            (this.$el as any)._tippy.hide();
-        });
-    },
+const props = defineProps(['params']);
+const iApi = inject<InstanceAPI>('iApi')!;
+const store = useStore();
+const el = ref<HTMLElement>();
+const { t } = useI18n();
 
-    beforeUnmount() {
-        this.params.eGridCell.removeEventListener(
-            'keydown',
-            (e: KeyboardEvent) => {
-                if (e.key === 'Enter') {
-                    this.zoomToFeature();
-                }
-            }
-        );
-        this.params.eGridCell.removeEventListener('focus', () => {
-            (this.$el as any)._tippy.show();
-        });
-        this.params.eGridCell.removeEventListener('blur', () => {
-            (this.$el as any)._tippy.hide();
-        });
-    },
+const getLayerByUid = (uid: string): LayerInstance | undefined =>
+    store.get('layer/getLayerByUid', uid);
 
-    methods: {
-        zoomToFeature() {
-            const layer: LayerInstance | undefined = this.getLayerByUid(
-                this.params.uid
-            );
-            if (layer === undefined) return;
-            const oid = this.params.data[this.params.oidField];
-            const opts = { getGeom: true };
-            layer.getGraphic(oid, opts).then(g => {
-                if (g.geometry.invalid()) {
-                    console.error(`Could not find graphic for objectid ${oid}`);
-                } else {
-                    this.$iApi.geo.map.zoomMapTo(g.geometry);
-                }
-            });
+const zoomToFeature = () => {
+    const layer: LayerInstance | undefined = getLayerByUid(props.params.uid);
+    if (layer === undefined) return;
+    const oid = props.params.data[props.params.oidField];
+    const opts = { getGeom: true };
+    layer.getGraphic(oid, opts).then(g => {
+        if (g.geometry.invalid()) {
+            console.error(`Could not find graphic for objectid ${oid}`);
+        } else {
+            iApi.geo.map.zoomMapTo(g.geometry);
         }
-    }
+    });
+};
+
+onMounted(() => {
+    // need to hoist events to top level cell wrapper to be keyboard accessible
+    props.params.eGridCell.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            zoomToFeature();
+        }
+    });
+    props.params.eGridCell.addEventListener('focus', () => {
+        (el.value as any)._tippy.show();
+    });
+    props.params.eGridCell.addEventListener('blur', () => {
+        (el.value as any)._tippy.hide();
+    });
+});
+
+onBeforeUnmount(() => {
+    props.params.eGridCell.removeEventListener(
+        'keydown',
+        (e: KeyboardEvent) => {
+            if (e.key === 'Enter') {
+                zoomToFeature();
+            }
+        }
+    );
+    props.params.eGridCell.removeEventListener('focus', () => {
+        (el.value as any)._tippy.show();
+    });
+    props.params.eGridCell.removeEventListener('blur', () => {
+        (el.value as any)._tippy.hide();
+    });
 });
 </script>
 

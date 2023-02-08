@@ -6,7 +6,7 @@
                 class="help-section-header flex items-center py-15 px-25 hover:bg-gray-200 cursor-pointer select-none w-full"
                 @click="toggleExpanded()"
                 :content="
-                    $t(
+                    t(
                         expanded
                             ? 'help.section.collapse'
                             : 'help.section.expand'
@@ -48,30 +48,23 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'HelpSectionV',
-    props: {
-        helpSection: {
-            type: Object,
-            required: true
-        }
-    },
+const { t } = useI18n();
 
-    data() {
-        return {
-            expanded: false
-        };
-    },
-
-    methods: {
-        toggleExpanded() {
-            this.expanded = !this.expanded;
-        }
+defineProps({
+    helpSection: {
+        type: Object,
+        required: true
     }
 });
+
+const expanded = ref<boolean>(false);
+const toggleExpanded = () => {
+    expanded.value = !expanded.value;
+};
 </script>
 
 <style lang="scss" scoped>

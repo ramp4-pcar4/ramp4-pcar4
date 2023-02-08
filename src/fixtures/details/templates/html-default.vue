@@ -4,21 +4,20 @@
         v-if="identifyData"
         v-html="identifyData.data"
     ></div>
-    <div v-else>{{ $t('details.layers.results.empty') }}</div>
+    <div v-else>{{ t('details.layers.results.empty') }}</div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
 import type { PropType } from 'vue';
 import type { IdentifyItem } from '@/geo/api';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'HTMLDefaultV',
-    props: {
-        identifyData: {
-            type: Object as PropType<IdentifyItem>,
-            required: true
-        }
+const { t } = useI18n();
+
+defineProps({
+    identifyData: {
+        type: Object as PropType<IdentifyItem>,
+        required: true
     }
 });
 </script>

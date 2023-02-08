@@ -409,7 +409,7 @@ export class CommonLayer extends LayerInstance {
         this.sublayers.forEach(sublayer => sublayer.onError());
         this.$iApi.notify.show(
             NotificationType.ERROR,
-            this.$vApp.$t('layer.error', {
+            this.$iApi.$i18n.t('layer.error', {
                 id: this.id
             })
         );
@@ -909,7 +909,7 @@ export class CommonLayer extends LayerInstance {
                 () =>
                     this.$iApi.notify.show(
                         NotificationType.WARNING,
-                        this.$vApp.$t(`layer.long${type}`, {
+                        this.$iApi.$i18n.t(`layer.long${type}`, {
                             id: this.id
                         })
                     ),

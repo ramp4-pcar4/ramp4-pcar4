@@ -15,12 +15,10 @@
     </panel-screen>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 // use the simplest syntax to create a Vue component--no decorators or classes, just a plain object
 // this will result in the smallest possible bundle size for the fixture
-export default {
-    props: ['panel']
-};
+defineProps(['panel']);
 </script>
 
 <style scoped></style>

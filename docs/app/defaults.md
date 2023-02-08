@@ -78,6 +78,7 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 
 | Event Name                                         | Payload                                                        | Event Announces                                  |
 | -------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------ |
+| APPBAR_BUTTON_CLICK<br>'appbar/click'                      | _id_: button component/panel id                                             | A button in the appbar was clicked
 | COMPONENT<br>'ramp/component'                      | _id_: component id                                             | A vue component registered                       |
 | CONFIG_CHANGE<br>'config/change'                   | RampConfig object                                              | The config was changed                           |
 | FILTER_CHANGE<br>'filter/change'                   | FilterEventParam object                                        | A filter has changed                             |

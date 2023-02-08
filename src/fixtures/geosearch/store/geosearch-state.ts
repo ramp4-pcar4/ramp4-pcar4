@@ -35,7 +35,7 @@ export class GeosearchState {
     }
 }
 
-interface QueryParams {
+export interface QueryParams {
     type: string;
     province: string;
     extent: string;
