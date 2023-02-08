@@ -102,6 +102,11 @@ La fonction de recherche géolocalisée permet aux utilisateurs de rechercher de
 - Chaque résultat de recherche comprend les éléments suivants : le nom du lieu (mot‑clé en surbrillance), la province du lieu et le type de lieu (lac, ville, village, etc.).
 - Cliquez sur un résultat distinct pour saisir les coordonnées et faire un zoom sur la carte de façon à ce qu'elle soit centrée sur le lieu souhaité.
 
+**Adresse de rue**: Effectuer une recherche en utilisant les adresses de rue directes pour afficher une liste de résultats liés au terme recherché
+
+- les adresses peuvent être localisées par nom de rue, ou plus précisément par numéro de lieu et nom de rue
+- les résultats sont triés en fonction du degré de correspondance entre l'adresse et le terme recherché.
+
 **Recherche par région de tri d'acheminement (RTA)** : une **région de tri d'acheminement (RTA)** est une façon de désigner une zone géographique en fonction des trois premiers caractères d'un code postal canadien. Tous les codes postaux qui commencent par les trois mêmes caractères font partie d'une même **RTA**.
 
 - Une recherche par RTA permet d'afficher une liste de résultats à proximité de cette région.
@@ -120,12 +125,6 @@ La fonction de recherche géolocalisée permet aux utilisateurs de rechercher de
 - Le numéro d'une carte du SNRC consiste en une chaîne contenant un nombre désignant une feuille de carte, une lettre désignant une zone de carte et un nombre désignant la feuille de carte à l'échelle.
 - De même, le premier résultat désignera un emplacement du numéro de carte SNRC, cliquez pour centrer la carte sur cette zone.
 - Par exemple : saisissez **030M13**.
-
-#### Types de recherche non pris en charge
-
-**Adresse municipale**  : l'outil de recherche géolocalisée ne prend pas en charge la recherche par adresse municipale.
-
-- La saisie d'une adresse valide ne devrait donner aucun résultat.
 
 ### Filtres de la recherche géolocalisée
 

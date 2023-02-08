@@ -1001,9 +1001,10 @@ function servicesUpgrader(r2Services: any, r4c: any): void {
         }
 
         if (r2Services.search.disabledSearches) {
-            console.warn(
-                `disabledSearches property provided in search service cannot be mapped and will be skipped.`
-            );
+            r4c.fixtures.geosearch.settings.disabledSearchTypes =
+                r2Services.search.disabledSearches.filter(
+                    (s: string) => s !== 'SCALE'
+                );
         }
     }
 

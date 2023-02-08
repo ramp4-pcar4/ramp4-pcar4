@@ -18,14 +18,23 @@ export function make(config: IGeosearchConfig, query: string): Query {
         /^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)(\s*[,|;\s]\s*)[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)[*]$/;
     const ntsReg = /^\d{2,3}[A-P]/;
     const fsaReg = /^[ABCEGHJKLMNPRSTVXY]\d[A-Z]/;
-    if (latLngRegDD.test(query)) {
+    if (
+        latLngRegDD.test(query) &&
+        !config.disabledSearchTypes.includes('LAT/LNG')
+    ) {
         const queryStr = query.slice(0, -1);
         // Lat/Long search in decimal degrees format
         return new LatLongQuery(config, queryStr);
-    } else if (fsaReg.test(query)) {
+    } else if (
+        fsaReg.test(query) &&
+        !config.disabledSearchTypes.includes('FSA')
+    ) {
         // FSA search (postal area code)
         return new FSAQuery(config, query);
-    } else if (ntsReg.test(query)) {
+    } else if (
+        ntsReg.test(query) &&
+        !config.disabledSearchTypes.includes('NTS')
+    ) {
         // NTS search
         return new NTSQuery(config, query.substring(0, 6).toUpperCase());
     } else {
@@ -69,13 +78,24 @@ export class Query {
         if (useLocate) {
             // URL for FSA and NFA search
             url = this.config.geoLocateUrl + '?q=' + this.query;
-        } else if (lat && lon) {
-            // lat long URL
-            url = `${this.config.geoNameUrl}?lat=${lat}&lon=${lon}&num=${this.config.maxResults}`;
         } else {
-            // plain name based search
-            url = `${this.config.geoNameUrl}?q=${this.query}&num=${this.config.maxResults}`;
+            if (lat && lon) {
+                // lat long URL
+                url = `${this.config.geoNameUrl}?lat=${lat}&lon=${lon}&num=${this.config.maxResults}`;
+            } else {
+                // plain name based search
+                url = `${this.config.geoNameUrl}?q=${this.query}&num=${this.config.maxResults}`;
+            }
+
+            // filter params for geoname service
+            if (this.config.categories.length > 0) {
+                url += `&concise=${this.config.categories.join(',')}`;
+            }
+            if (this.config.officialOnly) {
+                url += '&category=O';
+            }
         }
+
         return url;
     }
 
@@ -89,7 +109,11 @@ export class Query {
                     province: this.config.provinces.list[i.province.code],
                     type: this.config.types.allTypes[i.concise.code],
                     LatLon: { lat: i.latitude, lon: i.longitude },
-                    bbox: i.bbox
+                    bbox: i.bbox,
+                    order:
+                        this.config.sortOrder.indexOf(i.concise.code) >= 0
+                            ? this.config.sortOrder.indexOf(i.concise.code)
+                            : this.config.sortOrder.length
                 };
             });
     }
@@ -105,7 +129,6 @@ export class Query {
                         typeof xobj.response === 'string'
                             ? JSON.parse(xobj.response)
                             : xobj.response;
-                    // TODO: sort query results?
                     resolve(rawResponse);
                 } else {
                     reject('Could not load results from remote service.');
@@ -352,6 +375,12 @@ export class AddressQuery extends Query {
     }
 
     locateToResult(lrl: LocateResponseList): AddressResultList {
+        if (
+            this.config.categories.length > 0 &&
+            !this.config.categories.includes('ADDR')
+        ) {
+            return [];
+        }
         const results = lrl
             .filter(lr => lr.type?.includes('Street'))
             .map(ls => {

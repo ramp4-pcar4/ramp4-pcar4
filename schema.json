@@ -255,7 +255,7 @@
                                 "type": "string"
                             },
                             "default": [],
-                            "description": "Filter the search results based on the type of the geographical names. Allowed values can be found here (if using the Canadian GeoNames Search Service API): http://geogratis.gc.ca/services/geoname/en/codes/concise."
+                            "description": "Filter the search results based on the type of the geographical names. Allowed values can be found here (if using the Canadian GeoNames Search Service API): http://geogratis.gc.ca/services/geoname/en/codes/concise. Street address type ('ADDR') is also valid."
                         },
                         "sortOrder": {
                             "type": "array",
@@ -264,6 +264,16 @@
                             },
                             "default": [],
                             "description": "The sort order of the defined 'categories'. Any missing categories are appended to the bottom of the sorted list. The results can still be sorted through this option even if there are no categories being filtered."
+                        },
+                        "disabledSearchTypes": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": ["NTS", "FSA", "LAT/LNG"]
+                            },
+                            "uniqueItems": true,
+                            "default": [],
+                            "description": "Disable specific types of searches (NTS, FSA, or LAT/LNG)."
                         },
                         "maxResults": {
                             "type": "number",
