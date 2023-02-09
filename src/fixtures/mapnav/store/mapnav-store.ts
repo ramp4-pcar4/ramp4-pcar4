@@ -15,20 +15,6 @@ export enum MapnavMutation {
     REMOVE_ITEM = 'REMOVE_ITEM'
 }
 
-const getters = {
-    /**
-     * Return a list of mapnav items with registered components (ones that can be rendered right now).
-     *
-     * @param {Mapnav} state
-     * @returns {MapnavItem[]}
-     */
-    visible(state: MapnavState): MapnavItem[] {
-        return state.order
-            .map<MapnavItem>(id => state.items[id])
-            .filter(item => item.componentId);
-    }
-};
-
 const actions = {
     [MapnavAction.REMOVE_ITEM](context: MapnavContext, value: string) {
         context.commit(MapnavMutation.REMOVE_ITEM, value);
@@ -53,7 +39,6 @@ export function mapnav() {
     return {
         namespaced: true,
         state,
-        getters: { ...getters },
         actions: { ...actions },
         mutations: { ...mutations, ...make.mutations(['items', 'order']) }
     };
