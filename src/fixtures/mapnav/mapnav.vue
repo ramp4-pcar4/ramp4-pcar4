@@ -24,12 +24,17 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useStore } from 'vuex';
+import type { MapnavItemSet } from './store';
 import ZoomNavSection from './buttons/zoom-nav.vue';
 import DividerNav from './buttons/divider-nav.vue';
 
 const store = useStore();
 
-const visible = computed(() => store.get('mapnav/visible'));
+const visible = computed(() =>
+    (store.get('mapnav/order') as string[])
+        .map(id => (store.get('mapnav/items') as MapnavItemSet)[id])
+        .filter(item => item.componentId)
+);
 </script>
 
 <style lang="scss" scoped>
