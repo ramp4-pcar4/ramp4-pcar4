@@ -9,6 +9,7 @@ export interface IGeosearchConfig {
     geoLocateUrl: string;
     categories: string[];
     sortOrder: string[];
+    disabledSearchTypes: string[];
     maxResults: number;
     officialOnly: boolean;
     language: string;
@@ -90,6 +91,7 @@ export interface INameResult {
     type: string; // "Lake"
     LatLon: ILatLon;
     bbox: number[];
+    order: number;
 }
 
 export interface ILocateResponse {

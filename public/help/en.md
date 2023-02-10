@@ -102,6 +102,11 @@ __Keyword search__: Type any keyword into geosearch to display a list of results
 - each search result consists of: location name (with keyword highlighted), location province, and location type (lake, city, town, etc.)
 - click on any individual result to mark its coordinates and zoom the map to center around this location
 
+__Street address__: Search using direct street addresses to display a list of results related to the search term
+
+- addresses can be located by street name, or more precisely by place number and street name
+- results are sorted in order of how closely the address matches the search term
+
 __FSA search__: A __forward sortation area (FSA)__ is a way to designate a geographical area based on the first three characters in a Canadian postal code. All postal codes that start with the same three characters are considered an __FSA__.
 
 - a search using FSA will display a list of results in the vicinity of that area
@@ -120,12 +125,6 @@ __NTS search__: __National Topographic System (NTS)__ is a system used for provi
 - an NTS map number consists of a string containing a number identifying a map sheet, a letter identifying a map area, and a number identifying the scale map sheet
 - likewise, the first result will be a location of the NTS map number, click to center map on this area
 - example: type in __030M13__
-
-#### Unsupported Search Types
-
-__Street address__: Search using direct street addresses is not supported by geosearch.
-
-- entering any valid street address should not return any results
 
 ### Geosearch Filtering
 

@@ -50,3 +50,33 @@ Near the bottom of the Geosearch panel, there is a checkbox labeled **visible on
 When searching for a location, a list of matched results with all appropriate filters applied (map extent, province, type) will be displayed. This takes up the main body of the Geosearch panel. There is an upper limit of 100 results possible to be displayed. If no matching results are found, then a message will appear in place of the results to inform the users.
 
 ![](./images/geosearch-results.png)
+
+## Configuration
+
+The Geosearch panel has multiple options that can be adjusted through the configuration file. Though the Geosearch fixture is designed with the GeoGratis API in mind, a `serviceUrls` object with the following properties can define alternate URLs for the lookup service:
+
+- `geoLocateUrl: string`, endpoint for the Geolocation service
+- `geoNameUrl: string`, endpoint for the Geoname service
+- `geoProvinceUrl: string`, endpoint for province codes provided by the Geoname service
+- `geoTypesUrl: string`, endpoint for type codes provided by the Geoname service
+
+Also, a `settings` object enables additional fixture customization: 
+
+- `categories: string[]`, filter by [concise type](https://geogratis.gc.ca/services/geoname/en/codes/concise.json) or street address ('ADDR') when using the Geoname service
+- `sortOrder: string[]`, order search results based on category types, where missing types are appended to the bottom of the sorted list
+- `disabledSearchTypes: string[]`, omit results for given [search types](#Supported-Search-Types) (`LAT/LNG`, `FSA`, and `NTS`)
+- `maxResults: number`, specifies the maximum number of results from a query
+- `officialOnly: boolean`, results only use official names for geographic names
+
+An example of a configured Geosearch panel is below
+
+```text
+geosearch: {
+    settings: {
+        categories: ['CITY', 'TOWN', 'VILG', 'ADDR'],
+        sortOrder: ['TOWN', 'CITY'],
+        disabledSearchTypes: ['FSA'],
+        maxResults: 20
+    }
+}
+```

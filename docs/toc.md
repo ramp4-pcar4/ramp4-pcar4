@@ -22,6 +22,7 @@ The [Startup](api/startup.md) page provides examples of how to instantiate a RAM
 - Configuration for various fixtures
   - [Appbar](app/appbar.md#configuration)
   - [Details Custom Templating](app/details.md#creating-a-custom-template)
+  - [Geosearch](app/geosearch.md#configuration) 
   - [Grid](app/grid.md#configuration)
   - [Layer Settings](app/settings.md#configuration)
   - [Legend](app/legend.md#components) (configuration snippets are embedded in functional descriptions)  
