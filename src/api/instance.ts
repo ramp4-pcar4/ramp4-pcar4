@@ -127,10 +127,11 @@ export class InstanceAPI {
     /**
      * Initializes a Vue R4MP instance with the given config and options
      *
+     * @private
      * @param {RampConfigs | undefined} configs language-keyed R4MP config
      * @param {RampOptions | undefined} options startup options for this R4MP instance
      */
-    initialize(configs?: RampConfigs, options?: RampOptions): void {
+    private initialize(configs?: RampConfigs, options?: RampOptions): void {
         // TODO: decide whether to move to src/main.ts:createApp
         // TODO: store a reference to the event bus in the global store [?]
         if (configs?.configs !== undefined) {
