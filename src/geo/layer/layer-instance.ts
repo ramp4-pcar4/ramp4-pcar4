@@ -146,9 +146,8 @@ export class LayerInstance extends APIScope {
      */
     isRemoved: boolean;
 
-    // TODO verify if WFS has isFile === true, update the comment
     /**
-     * If the layer was sourced from a file / no server.
+     * If the layer was sourced from a file or a WFS source (which disconnects after load).
      */
     isFile: boolean;
 
