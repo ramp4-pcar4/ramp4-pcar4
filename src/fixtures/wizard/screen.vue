@@ -1,5 +1,5 @@
 <template>
-    <panel-screen :panel="panel" ref="el">
+    <panel-screen :panel="panel">
         <template #header>
             {{ t('wizard.title') }}
         </template>
@@ -130,7 +130,11 @@
 
                 <!-- Configure layer wizard step -->
                 <stepper-item :title="t('wizard.configure.title')">
-                    <form name="configure" @submit="onConfigureContinue">
+                    <form
+                        name="configure"
+                        @submit="onConfigureContinue"
+                        ref="formElement"
+                    >
                         <wizard-input
                             v-if="layerInfo?.configOptions.includes(`name`)"
                             type="text"
@@ -273,6 +277,7 @@
 <script setup lang="ts">
 import {
     computed,
+    getCurrentInstance,
     inject,
     nextTick,
     onErrorCaptured,
@@ -302,7 +307,7 @@ import { useI18n } from 'vue-i18n';
 const store = useStore();
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
-const el = ref();
+const formElement = ref();
 
 defineProps({
     panel: {
@@ -496,7 +501,7 @@ const onSelectContinue = async () => {
                   url.value,
                   typeSelection.value,
                   fileData.value
-              )
+              )!
             : await layerSource.value!.fetchServiceInfo(
                   url.value,
                   typeSelection.value
@@ -662,8 +667,9 @@ const updateColour = (eventData: any) => {
     layerInfo.value!.config.colour = eventData.colors.hex.substring(0, 7);
     // manually setting copy button colour because of reset styles on the page and it uses a css variable that I think will mess with multi-ramp
     nextTick(() => {
-        el.value.querySelector('.vacp-copy-button')!.style.backgroundColor =
-            layerInfo.value?.config.colour;
+        formElement.value.querySelector(
+            '.vacp-copy-button'
+        )!.style.backgroundColor = layerInfo.value?.config.colour;
     });
 };
 </script>

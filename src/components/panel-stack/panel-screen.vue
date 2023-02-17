@@ -108,7 +108,7 @@ const temporary = computed((): Array<string> | undefined =>
 const mobileView = computed(() => store.get('panel/mobileView'));
 const reorderable = computed(() => store.get('panel/reorderable'));
 
-const checkMode = () => !mobileView;
+const checkMode = () => !mobileView.value;
 const move = (direction: string) => {
     props.panel.move(direction);
     if (direction === 'left') {

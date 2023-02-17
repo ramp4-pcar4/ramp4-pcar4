@@ -737,11 +737,11 @@ const reloadLayer = () => {
             const layerConfig =
                 props.legendItem!.layerIdx === undefined ||
                 props.legendItem!.layerIdx === -1
-                    ? layerConfigs.find(
+                    ? layerConfigs.value.find(
                           (lc: RampLayerConfig) =>
                               lc.id === props.legendItem.layerId
                       )
-                    : layerConfigs.find(
+                    : layerConfigs.value.find(
                           (lc: RampLayerConfig) =>
                               lc.id === props.legendItem.parentLayerId
                       );
