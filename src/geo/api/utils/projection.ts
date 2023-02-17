@@ -81,9 +81,7 @@ export class ProjectionAPI {
         }
 
         return new Promise((resolve, reject) => {
-            const epsgUrl: string =
-                (window.location.protocol === 'https:' ? 'https:' : 'http:') +
-                `//epsg.io/${matcher[1]}.proj4`;
+            const epsgUrl: string = `https://epsg.io/${matcher[1]}.proj4`;
             const params: __esri.RequestOptions = {
                 responseType: 'text'
             };

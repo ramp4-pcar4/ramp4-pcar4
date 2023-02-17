@@ -139,7 +139,6 @@ const props = defineProps({
     layer: { type: Object as PropType<LayerInstance>, required: true }
 });
 
-let fixture = reactive({});
 const layerName = ref('');
 const uid = ref(props.layer.uid);
 const visibilityModel = ref(props.layer.visibility);
@@ -149,8 +148,6 @@ const snapshotToggle = ref(false);
 const layerExists = ref(false); // tracks whether the layer still exists
 const handlers = reactive<Array<string>>([]);
 const watchers = reactive<Array<Function>>([]);
-
-fixture = iApi.fixture.get('settings');
 
 layerExists.value = props.layer !== undefined && !props.layer!.isRemoved;
 
@@ -218,7 +215,8 @@ onBeforeUnmount(() => {
 });
 
 const controlAvailable = (control: LayerControl): boolean => {
-    if (!fixture) {
+    const fixture = iApi.fixture.get('settings');
+    if (!fixture || Object.keys(fixture).length === 0) {
         console.warn(
             'Settings panel cannot check for layer control because it could not find settings fixture api'
         );
