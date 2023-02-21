@@ -32,6 +32,7 @@ The [Startup](api/startup.md) page provides examples of how to instantiate a RAM
 
 APIs exposed by the library:
 
+- [Instance API](api/instance.md)
 - [Events API](api/events.md)
 - [Geometry API](api/geometry.md)
 - [Layers API](geo/layers.md)

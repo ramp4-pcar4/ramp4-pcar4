@@ -1,8 +1,18 @@
-# Geo Layer Classes
+# Layer Classes
 
-In this doc, `Layer` refers to any class that implements the `LayerInstance` generic class.
+In this doc, "Layer" refers to any class that implements the `LayerInstance` generic class.
 
-## Conceptual Fun - Physical vs Logical
+## Document Outline
+
+- [Structural Concepts](#structural-concepts)
+- [Supported Layer Types](#supported-layer-types)
+- [Layer Lifecycle](#layer-lifecycle)
+- [Sublayers](#sublayers)
+- [Common Operations](#common-operations)
+- [Identify](#identify)
+- [Feature Related Operations](#feature-related-operations)
+
+## Structural Concepts
 
 Layers can be viewed in two different ways due to how they are constructed.
 
@@ -18,23 +28,25 @@ While most physical layers have one logical layer, some can have multiple logica
 
 ### RAMP Layer Objects
 
-RAMP `Layer` objects can represent different viewpoints of the layer. For layers with a single feature class (the majority of layers), the `Layer` controls both the physical and logical component of the layer.
+RAMP Layer objects can represent different viewpoints of the layer. For layers with a single feature class (the majority of layers), the Layer controls both the physical and logical component of the layer.
 
-For layers with many logical layers, we will have one `Layer` controlling the physical and a sublayer `Layer` to control each logical layer. See the [sublayers](#Sublayers) section below.
+For layers with many logical layers, we will have one Layer controlling the physical and a sublayer Layer to control each logical layer. See the [sublayers](#Sublayers) section below.
 
-As an example, in a Map Image Layer, toggling the visibility on the `Layer` tied to the physical will just make the image on the client show or hide. Toggling the visibility on the `Layer` tied to one of the logical children will trigger a request for a new image to be generated on the map server.
+As an example, in a Map Image Layer, toggling the visibility on the Layer tied to the physical will just make the image on the client show or hide. Toggling the visibility on the Layer tied to one of the logical children will trigger a request for a new image to be generated on the map server.
 
 ### Identifiers
 
-The **Layer ID** is tied to each physical layer. This is defined in the layer configuration object (as `"id"`), and is also applied to the underlying ESRI layer object (as `layerId`). Each `Layer` exposes this is via the `.id` property. Note that sublayers will have the same `.id` as their parent layer.
+The **Layer ID** is tied to each physical layer. This is defined in the layer configuration object (as `"id"`), and is also applied to the underlying ESRI layer object (as `layerId`). Each Layer exposes this is via the `id` property.
 
-The **Layer Index** refers to the index on the server for the logical aspect of the layer. For layers that are not tied to an ArcGIS Server, we use `0` as the index value. For a parent `Layer` (which is tied only to the physical aspect, and has sublayers to reference the logical) we use `-1` as a placeholder index value, indicating there is no index. This value is found on a `Layer` via the `.layerIdx` property.
+The **Layer Index** refers to the index on the server for the logical aspect of the Layer. For Layers that are not tied to an ArcGIS Server, we use `0` as the index value. For a parent Layer (which is tied only to the physical aspect, and has sublayers to reference the logical) we use `-1` as a placeholder index value, indicating there is no index. This value is found on a Layer via the `layerIdx` property.
 
-The **UID** is a string identifier assigned to every `Layer` that is unique across the RAMP instance. This allows a single key to be used to find or reference a layer, avoiding the need to generate composite keys from the id and index. They are accessed on a `Layer` via the `.uid` property. It is important to note the UID does not exist until the layer is created (or in the case of sublayers, the layer load must complete), and cannot be predicted or assigned in the configuration beforehand.
+Note that sublayers will be assigned a composite `id` of the format `<parent layer id>-<sublayer index>`.
+
+The **UID** is a string identifier assigned to every Layer that is unique across the RAMP instance. This allows a single key to be used to find or reference a Layer, avoiding the need to generate composite keys from the id and index. They are accessed on a Layer via the `uid` property. It is important to note the UID does not exist until the Layer is created (or in the case of sublayers, the layer load must complete), and cannot be predicted or assigned in the configuration beforehand.
 
 ### Layer Tree
 
-Every `Layer` object has a method `.getLayerTree()`. This returns a heirarchical object that describes the logical layout of the layer.
+Every Layer object has a method `getLayerTree()`. This returns a heirarchical object that describes the logical layout of the Layer.
 
 Most layers have one single logical component and a basic tree.
 
@@ -50,7 +62,7 @@ Most layers have one single logical component and a basic tree.
 
 A Map Image Layer composed of multiple sources could have a more structured result with Map Image Sublayers. The tree is the easiest way to inspect the structure.
 
-Note that subfolder structures do not have a uid; they exist to organize the heirarchy but have no related `Layer` object.
+Note that subfolder structures do not have a uid; they exist to organize the heirarchy but have no related Layer object.
 
 ```js
 {
@@ -108,7 +120,9 @@ The following formats have support built in the codebase. The ESRI formats assum
 -   Shapefile (`file-shape`)
 -   OpenStreetMap Tile Layer (`osm-tile`)
 
-## Layer Creation
+## Layer Lifecycle
+
+### Creation
 
 Layers are created by providing a configuration object to the creation function in the `geo` API.
 
@@ -117,61 +131,79 @@ var simpleConfig = { id: "funlayer", layerType: "esri-feature", url: "http://map
 var featureLayer = instanceApi.geo.layer.createLayer(simpleConfig));
 ```
 
-### Inner Layer Management
+For details on the layer configuration objects, visit the [layer configuration](../configuration/layer-config.md) page.
 
-The creation of the layer just generates the controlling `Layer` object. To generate an ESRI layer (which the mapping API uses to render stuff on the map), use the `initiate()` method on the layer. To remove/trash the ESRI layer, use `terminate()`. These functions can be used to orchestrate things like layer reloads, projection changes, etc.
+To have a Layer appear on the map, it must be added.
 
-The `.initiationState` property on the `Layer` will indicate the current state of the layer in this matter.
+```js
+instanceApi.geo.map.addLayer(layerObj);
+```
+
+Any layer configs defined in the instance configuration (within the `layers` array) will automatically be added to the map at startup.
+
+### Internal Layer Management
+
+The creation of the layer just generates the controlling Layer object. To generate an ESRI layer (which the mapping API uses to render stuff on the map), use the `initiate()` method on the Layer. To remove/trash the ESRI layer, use `terminate()`. These functions are used by the RAMP core to orchestrate things like layer reloads and projection changes, and can be utilzied externally for custom behaviors.
+
+The `initiationState` property on the Layer will indicate the current state of the Layer in this matter.
+
+If an uninitated Layer is passed to `map.addLayer()`, it will be initialized automatically.
 
 ### Waiting For Layer Load
 
-In general, most layer properties and methods should only be accessed after the layer has loaded. Attempts to use prior to that may result in the data not existing (a console error will usually alert you to this mistake).
+In general, most Layer properties and methods should only be accessed after the Layer has loaded. Attempts to use prior to that may result in critical data not existing (a console error will usually alert you to this mistake).
 
-The `Layer` object expose the `loadPromise()` method, which returns a promise that will not resolve until the load has completed.
+The Layer object exposes the `loadPromise()` method, which returns a promise that will not resolve until the load has completed.
 
-Of course, you can gate areas of logic so that code only runs after the layer is known to be loaded, and then you don't need to continually check the status.
+Of course, you can gate areas of logic so that code only runs after the Layer is known to be loaded, and then you don't need to continually check the status.
 
 ```js
 await myLayer.loadPromise();
 myLayer.dostuff();
 ```
 
-The property `.isValidSate` can also be used to do a synchronous check to see if the layer is in a loaded state.
+The properties `layerState` and `isLoaded` can also be used to do a synchronous check of the Layer's current load state.
+
+### Finding A Layer
+
+A Layer or sublayer can be retrieved via the instance API using the Layer ID or the UID.
+
+```js
+var myLayer = instanceApi.geo.layer.getLayer('fancyLayerId'));
+```
+
+The `getLayer()` method will only return active valid Layers. A list of all Layers that have failed can also be utilized.
+
+```
+var errLayerArray = instanceApi.geo.layer.allErrorLayers();
+```
 
 ## Sublayers
 
 **Supports:** Map Image Layers
 
-The property `.supportsSublayers` provides a quick check to see if a layer deals with sublayers at all.
+The property `supportsSublayers` provides a quick check to see if a Layer deals with sublayers at all.
 
-The property `.isSublayer` will indicate if a `Layer` is a sublayer.
+The property `isSublayer` will indicate if a Layer is a sublayer.
 
-The method `.getSublayer(target)` is used to get a sublayer object. This should be called on the parent `Layer`. The `target` param can be the sublayer's layer index (integer) or the sublayers UID.
+The method `getSublayer(target)` is used to get a sublayer object. This should be called on the parent Layer. The `target` param can be the sublayer's layer index (integer) or the sublayers UID.
 
 ```js
 var mySublayer = myMapImgLayer.getSublayer('sublayeruid');
 var myOtherSublayer = myMapImgLayer.getSublayer(4);
 ```
 
-The `.sublayers` property provides an array containing all the sublayers of a layer.
+The `sublayers` property provides an array containing all the sublayers of a Layer.
 
-The `.parentLayer` property of a sublayer will return the `Layer` that acts as the parent / root / physical view of the layer.
+The `parentLayer` property of a sublayer will return the Layer that acts as the parent / root / physical view of the layer.
 
 ## Common Operations
 
 **Supports:** All Layers
 
-### Finding A Layer
-
-A layer can be retrieved via the instance API using the Layer ID or the UID. Note that when using Layer ID, if the layer has multiple sublayers (i.e. Map Image Layer), the parent layer will be returned.
-
-```js
-var myLayer = instanceApi.geo.layer.getLayer('fancyLayerId'));
-```
-
 ### Visibility and Opacity
 
-For `Layer`s with singular logical sublayers (every layer type except Map Image Layer), the visibility and opacity effect the entire layer. For Map Image Layers, the sublayers can be independently adjusted (some services may not support sublayer opacity).
+For Layers with singular logical sublayers (every layer type except Map Image Layer), the visibility and opacity effect the entire Layer. For Map Image Layers, the sublayers can be independently adjusted (some services may not support sublayer opacity).
 
 ```js
 myLayer.visibility = false;
@@ -183,87 +215,91 @@ myLayer.opacity; // 0.6
 
 ### Layer Metadata
 
-Get the layer name (defined by configuration, and if not supplied, any server value that is present).
+Get the Layer name (defined by configuration, and if not supplied, any server value that is present).
 
 ```js
 myLayer.name; // "Fancy Layer"
 ```
 
-Determine if the layer is loaded. This can also be used as an alternative to `loadPromise()` if the calling code does not require a `Promise` to wait on. It also serves as a shortcut to inspecting the `.layerState` property.
+Determine if the Layer is loaded. This can also be used as an alternative to `loadPromise()` if the calling code does not require a `Promise` to wait on. It also serves as a shortcut to inspecting the `layerState` property.
 
 ```js
 myLayer.isLoaded; // true
 ```
 
-Get the load state of the layer. This state tracks the loading life cycle (i.e. loading, loaded, error)
+Get the load state of the Layer. This state tracks the loading life cycle. Possible values: `loading`, `loaded`, `error`, `new`
 
 ```js
 myLayer.layerState; // 'loaded'
 ```
 
-Get the layer state of the layer. This state tracks the initiation life cycle (i.e. initiating, initiated, terminating, terminated)
+Get the initiation state of the Layer. This state tracks the initiation life cycle. Possible values: `new`, `initiating`, `initiated`, `terminating`, `terminated`
 
 ```js
 myLayer.initiationState; // 'initiated'
 ```
 
-Get the drawing state of the layer. This state tracks the drawing life cycle (i.e. getting or processing spatial data for the current map view)
+Get the drawing state of the Layer. This state tracks the drawing life cycle (i.e. getting or processing spatial data for the current map view)
 
 ```js
 myLayer.drawState; // 'refresh'
 ```
 
-Get the layer type. This matches the value that was provided in the config snippet. One can derive where the layer data came from and what functionality it can support.
+Get the Layer type. This matches the value that was provided in the config snippet. One can derive where the layer data came from and what functionality it can support.
 
 ```js
 myLayer.layerType; // 'esri-tile'
 ```
 
-Get the format of the layer. This indicates the type of Esri layer that has been instantiated on the map stack for this layer.
+Get the format of the Layer. This indicates the type of Esri layer that has been instantiated on the map stack for this Layer.
 
 ```js
 myLayer.layerFormat; // 'feature'
 ```
 
-Get the format of the spatial data in the layer.
+Get the format of the spatial data in the Layer.
 
 ```js
 myLayer.dataFormat; // 'esriRaster'
 ```
 
-Get the visible scale ranges for layer or sublayer. A value of `0` on a range indicates there is no limit. Scales are fractions (i.e. a value of `2000` actually means 1/2000 scale), so `min` and `max` can be counterintuitive (large scale means the view is closer to real life size, so the viewport is closer to the ground level).
+Determine if the Layer is designated as `cosmetic`. This means the Layer appears on the map but otherwise does not participate in normal interactions.
+
+```js
+myLayer.isCosmetic; // true
+```
+
+Get the visible scale ranges for the Layer or sublayer. A value of `0` on a range indicates there is no limit. Scales are fractions (i.e. a value of `2000` actually means 1/2000 scale), so `min` and `max` can be counterintuitive (large scale means the view is closer to real life size, so the viewport is closer to the ground level).
 
 ```js
 myLayer.scaleSet; // { minScale: 0, maxScale: 8500 }
 ```
 
-Determine if the layer supports our standard features (a feature is a geometry with an attribute set, conforming to a schema and symbolized by a renderer).
+Determine if the Layer supports our standard features (a feature is a geometry with an attribute set, conforming to a schema and symbolized by a renderer).
 
 ```js
 myLayer.supportsFeatures; // true
 ```
 
-Get legend iconography and names.
-
-TODO hotlink to any symbology / legend pages we create.
+Get legend iconography, names, and other metadata.
 
 ```js
 myLayer.legend; // [{ legend object }, { legend object }]
 ```
 
-Determine if the layer is file-based (this includes WFS, as it gets pre-loaded and is disconnected from its service while on the map).
+Determine if the Layer is file-based (this includes WFS, as it gets pre-loaded and is disconnected from its service while on the map).
 
 ```js
 myLayer.isFile; // false
 ```
 
-Determine if a layer was added by the user during the session.
+Determine if the Layer was added by the user during the session.
 
 ```js
 myLayer.userAdded; // true
 ```
 
-Determine if a layer has been removed from the map / session. This also applies to sublayers which can be removed but the parent layer remains and retains the original layer tree.
+Determine if the Layer has been removed from the map / session. This also applies to sublayers which can be removed but the parent Layer remains and retains the original layer tree.
 
 ```js
 myLayer.isRemoved; // false
@@ -273,56 +309,68 @@ myLayer.isRemoved; // false
 
 **Supports:** Feature Layers, Map Image Layers, WMS Layers, WFS Layers, File-Based Layers
 
-`Layer`s have the property `.supportsIdentify`, which determines if the layer can participate in an identify call.
+Layers have the property `supportsIdentify`, which determines if the Layer has the ability to process an identify request.
 
 ```js
 myLayer.supportsIdentify; // true
 ```
 
-Layers also have method `.canIdentify()` which indicates if the layer would partipate in an identify at the current moment. This method takes into account things like layer visibility, the value of the `.identify` toggle, if the layer is in a loading or error state, etc.
+The `identify` property can set if a Layer should be considered as part of a maps identify process. This is useful for refining results on a busy map.
+
+```js
+myLayer.identify = false;
+```
+
+Layers also have method `canIdentify()` which indicates if the Layer would partipate in an identify at the current moment. This method takes into account things like layer visibility, the value of the `identify` toggle, if the Layer is in a loading or error state, etc.
 
 ```js
 myLayer.canIdentify(); // true
 ```
 
-Layers also have the property `.identifyMode`. This can be `'geometric'` (using intersection against feature geometry), `'symbolic'` (using intersection against layer symbols), or `'hybrid'` (combining both types of intersections). Raster based layers (Map Image, WMS) are always in `geometric` mode since there is no client side renderers to leverage. Vector based layers can choose any of the modes.
+Layers also have the property `identifyMode`. This can be `'geometric'` (using intersection against feature geometry), `'symbolic'` (using intersection against layer symbols), or `'hybrid'` (combining both types of intersections). Raster based Layers (Map Image, WMS) are always in `geometric` mode since there is no client side renderers to leverage. Vector based Layers can choose any of the modes.
 
 ```js
 myLayer.identifyMode; // 'hybrid'
 ```
 
-The typical identify process is run from the map, using `MapAPI.runIdentify()`. This will execute the identify across all valid layers and collate the results. However, the following goes into the guts of how each layer contributes to that process. Custom modules are allowed to run identifies directly off layers if it is advantageous.
+The typical identify process is run from the map, using `MapAPI.runIdentify()`. This will execute the identify across all valid Layers and collate the results. However, the following goes into the guts of how each Layer contributes to that process. Custom modules are allowed to run identifies directly off Layers if it is advantageous.
 
-The `.runIdentify()` method will execute an identify request on the layer. Identify is not directly called on logical sublayers. RAMP's sublayer filter can be overridden using the below options parameter object.
+The `runIdentify()` method will execute an identify request on the Layer. For Map Image Layers, the identify is initiated from the parent Layer. Specific Sublayers can be omitted by using the options parameter object.
 
-Options parameter object:
+Options parameter object, with descriptions following:
 
 ```js
 {
-    geometry,       // The geometry to identify against. A RAMP API Geometry. Intersecting features will be returned.
-    returnGeometry, // An optional boolean to indicate the geometry of the result features should also be downloaded. Defaults to `false`
-    sublayerIds,    // An optional array of sublayer uids (string) or server indicies (number) that indicate which sublayers to include in the request.
-    tolerance       // An optional integer number to buffer the geometry. Is generally only useful if the geometry is a point.
-}                   // The number represents pixels to buffer by (so 5 would be a 10x10 pixel square around the point at the current map scale level).
+    geometry,
+    returnGeometry,
+    sublayerIds,
+    tolerance,
+    hitTest
+}
 ```
 
-The result object is on the fancy side, as there are a few levels identify acts up. The topmost array of results has an entry for each logical layer involved, including the logical `uid`, a loading flag and promise, and another array of individual hits (called items) for the logical layer. The loading properties here indicate when the items array as been populated, but be aware that individual items still may be downloading their own data.
-The items array contains a loading flag and promise to track the download of its data, a format specification and a property to contain data that aligns to the given format.
+- The geometry to identify against. A RAMP API [Geometry](../api/geometry.md). Intersecting features will be returned.
+- An optional boolean to indicate the geometry of the result features should also be downloaded. Defaults to `false`.
+- An optional array of sublayer uids (string) or server indicies / layer indexes (number) that indicate which sublayers to include in the request.
+- An optional integer number to buffer the geometry. Is generally only useful if the geometry is a point (i.e. where a mouse click / crosshair click occurred). The number represents pixels to buffer by (so 5 would be a 10x10 pixel square around the point at the current map scale level).
+- Optional result of a local hit test (a promise resolving in an array of graphic hit results). Utilized when in hybrid identify mode; will ensure any local results are excluded from the server results, avoiding duplicates.
 
-TODO flush out formats once things are nailed down.
+The result object of `runIdentify()` is on the fancy side, as there are a few levels identify acts upon. The topmost array of results has an entry for each logical layer involved, including the logical `uid`, a loading flag (`loaded`) and promise (`loading`), and another array of individual hits (`items`) for the logical layer. The loading properties here indicate when the items array as been populated, but be aware that individual `items` still may be downloading their own data.
+
+The `items` array contains a loading flag and promise to track the download of its data, a format specification and a property to contain data that aligns to the given format. Current format values include `esri` (standard attribute format), `text`, `image`, `html`, `xml`, `json`, `unknown`.
 
 ```js
 [
     {
-        uid,             // uid of the sublayer / logical layer this set of results belongs to
-        loaded,          // boolean flag indicating if items array has been populated
-        loading,         // promise that resolves when items array is populated
+        uid,
+        loaded,
+        loading,
         items: [
             {
-                loaded,  // boolean flag indicating if the item data has been populated
-                loading, // promise that resolves when item data is populated
-                format,  // string indicating what format the data is in
-                data     // the data describing an item that satisfied the identify request
+                loaded,
+                loading,
+                format,
+                data
             },
         ]
     },
@@ -344,57 +392,117 @@ result.forEach(r => {
 });
 ```
 
-## Attribute Related Operations
+## Feature Related Operations
 
-**Supports:** Feature Layers, Map Image Layers, WFS Layers, File Based Layers
+**Supports:** Feature Layers, Map Image Sublayers, WFS Layers, File Based Layers
 
-Note that Map Image Layers can have sublayers that are Raster in nature. These sublayers will not return any meaningful results for Attribute related calls.
+This section deals with Layers that have ESRI (or ESRI conforming) Features in a Feature Class. It will have features of the same geometry type, and those features will have attributes with the same set of fields.
 
-Attribute operations always target a logical layer. Attempts to call operations against a Map Image Layer parent will not work.
+Note that Map Image Layers can have sublayers that are Raster in nature. These sublayers will not return any meaningful results for Feature related calls.
 
-Get the total number of features in a logical layer.
+Attribute operations always target a logical layer. Attempts to call operations against a Map Image Layer (the parent of the sublayers) will not work.
+
+### Properties
+
+Get the total number of features:
 
 ```js
 myLayer.featureCount; // 254
 ```
 
-Get the geometry type of the logical layer.
+Get the geometry type (`Point`, `MultiPoint`, `LineString`, `Polygon`) of the feature class:
 
 ```js
-myLayer.geomType; // "polygon"
+myLayer.geomType; // "Polygon"
 ```
 
-Get the draw order of the layer. Not supported by Map Image Layers. Can only be set via layer configuration. ESRI currently only supports ordering by one field.
+Get the metadata for the attribute fields. Field type values are the same as the [ESRI types](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-support-Field.html#type).
 
 ```js
-myLayer.drawOrder; // [{ field: 'name', ascending: true }]
+myLayer.fields; // [{field1}, {field2}]
+
+// sample of 'fieldX' return object
+{
+  name: 'fieldname',
+  alias: 'My Field Name',
+  type: 'string',
+  length: 255 // max length, only used for strings
+}
 ```
 
-Request the set of attributes for the logical layer. The first request will incur the server hit. Subsequent requests will use the cached result.
-TODO flush out the return value
+Get the field name that is designated as the unique identifier of the feature.
+
+```js
+myLayer.oidField; // "OBJECTID"
+```
+
+Get the field name that is designated as the identifying name of the feature (used as a default for uncustomized map hovertips, identify panels, etc.).
+
+```js
+myLayer.nameField; // "site_name"
+```
+
+Get the draw order of the Layer. Not supported by Map Image Sublayers. Can only be set via layer configuration. ESRI currently only supports ordering by one field.
+
+```js
+myLayer.drawOrder; // [{ field: 'population', ascending: true }]
+```
+
+Get or set if the Layer features should show hovertips on the map:
+
+```js
+myLayer.hovertips;         // true
+myLayer.hovertips = false; // will no longer show hovertips
+```
+
+### Methods
+
+Request the set of attributes. The result includes an array of attributes (key value objects), and an object that provides an indexed lookup by Object ID into the array. The first request will incur the server hit. Subsequent requests will use the cached result.
 
 ```js
 myLayer.getAttributes(); // Promise resolving with a set of attributes.
+
+// sample of attribute set structure
+{
+  features: [{oid: 23, a: 'w', b: 'x'}, {oid: 45, a: 'y', b: 'z'}],
+  oidIndex: {23: 0, 45: 1}
+}
 ```
 
-Request the loading process of attributes be halted. The end result of this request is the appearance of the layer not having loaded attributes.
-TODO figure out and document how the load count/status can be monitored.
+Request the loading process of attributes be halted. The end result of this request is the appearance of the Layer not having loaded attributes.
 
 ```js
 myLayer.abortAttributeLoad();
 ```
 
-Remove any cached attributes or geometries that have been loaded. The end result of this request is the appearance of the layer not having loaded or cached attributes. Note this will not interrupt any loading process (`getAttributes()`) that is currently active. Use `abortAttributeLoad()` to interrupt any enormous loads or hung calls.
+View the number of attributes currently downloaded during a `getAttributes()` call, which can be useful for monitoring progress or detecting problems.
+
+```js
+myLayer.loadedCount; // 45
+```
+
+Remove any cached attributes or geometries that have been loaded. The end result of this request is the appearance of the Layer not having loaded or cached attributes. Note this will not interfere with an active call to `getAttributes()` on the Layer. Use `abortAttributeLoad()` to interrupt any enormous loads or hung calls.
 
 ```js
 myLayer.clearFeatureCache();
 ```
 
-Request the attributes in a tabular format with column metadata, suitable for grid or table consumption. This will use any pre-loaded attribute set, and if none exist, will execute the `getAttributes` request.
-TODO flush out the return value
+Request the attributes in a tabular format with column metadata, suitable for grid or table consumption. This will use any pre-loaded attribute set, and if none exist, will execute the `getAttributes()` request.
 
 ```js
 myLayer.getTabularAttributes(); // Promise resolving with tabular attribute object.
+
+// sample of tabular attribute object
+{
+  columns: [
+    {data: 'oid', title: 'object id'},
+    {data: 'a', title: 'Col A'},
+    {data: 'b', title: 'Col B'}
+  ],
+  rows: [{oid: 23, a: 'w', b: 'x'}, {oid: 45, a: 'y', b: 'z'}],
+  fields: [copy of layer .fields property],
+  oidField: 'oid'
+}
 ```
 
 Request an individual graphic. This can include the geometry, the attributes, and the style. The function uses a caching strategy so multiple requests for the same data will be server friendly.
@@ -416,19 +524,23 @@ console.log(svg);
 
 ### Filters
 
-Apply a SQL filter on a logical layer. This will alert any listeners on the `layer.filterChanged` event. Core SQL filters include `grid`, `symbol`, `extent`, `initial`, and `permanent`. Avoid using core filter names for custom filters. If no filter name is provided, the generic `api` value will be used. Note that `permanent` cannot be changed after the layer is created.
+Filters allow certain Layer features to be hidden based on the values of their attributes. Multiple filters combine together (i.e joined with `AND` logical operators).
+
+Filters use ESRI's [query expression syntax](https://desktop.arcgis.com/en/arcmap/10.3/map/working-with-layers/building-a-query-expression.htm), which is nearly identical to an SQL "WHERE" clause. A filter can be turned off using an empty string. For an absolute filter (hide everything), we recommend the filter `1=2`. 
+
+Use `setSqlFilter()` to apply a filter on a logical layer. This will also raise the `filter/change` event. Core SQL filters include `grid`, `symbol`, `extent`, `initial`, and `permanent`. Avoid using core filter names for custom filters. If no filter name is provided, the generic `api` value will be used. Note that `permanent` cannot be changed after the Layer is created.
 
 ```js
 myLayer.setSqlFilter('dogfilter', `breed = 'terrier'`);
 ```
 
-Get the current value of a SQL filter on a logical layer.
+The current value of a SQL filter on a logical layer can also be inspected.
 
 ```js
 myLayer.getSqlFilter('dogfilter'); // "breed = 'terrier'"
 ```
 
-Get an array of object ids that currently satisfy all active filters. An exclusion list can be provided, this will cause the result to ignore the effects of all filters being excluded. A map Extent can also be provided to limit the results to a given section of the map.
+One can also get an array of object ids that currently satisfy all active filters. An exclusion list can be provided, this will cause the result to ignore the effects of all filters being excluded. A map Extent can also be provided to limit the results to a given section of the map.
 
 Requests for OIDs use a caching strategy, so multiple requests when nothing has changed will be server friendly.
 
@@ -441,7 +553,7 @@ oids.forEach(oid => console.log('matched this object id', oid));
 var fullFilterResult = myLayer.getFilterOIDs();
 ```
 
-Apply all active SQL filters to the layer on the map. This will actually change how the layer appears on the map; features that don't pass the filter will not appear. Again, we can provide an exclusion array of keys to omit certain filters from the action
+Use `applySqlFilter()` to apply all active SQL filters to the Layer on the map. This will actually change how the Layer appears on the map; features that don't pass the filter will not appear. Again, we can provide an exclusion array of keys to omit certain filters from the action
 
 ```js
 // use all filters
