@@ -108,6 +108,11 @@ export class DetailsState {
     activeGreedy: number = 0;
 
     /**
+     * Indicates the time of the last highlighting action (request highlights or clear highlights).
+     */
+    lastHilight: number = 0;
+
+    /**
      * Whether or not the details hilight toggle is on.
      *
      * @type boolean

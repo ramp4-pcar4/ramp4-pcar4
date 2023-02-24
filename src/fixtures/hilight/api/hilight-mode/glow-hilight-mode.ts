@@ -45,10 +45,11 @@ export class GlowHilightMode extends LiftHilightMode {
             this.$iApi.geo.map.esriView
                 ?.whenLayerView(hilightLayer.esriLayer)
                 ?.then(function (layerView) {
-                    gs.forEach((g: Graphic) => {
-                        const graphic = hilightLayer.getEsriGraphic(g.id);
-                        layerView.highlight(graphic);
-                    });
+                    layerView.highlight(
+                        gs.map(
+                            (g: Graphic) => hilightLayer.getEsriGraphic(g.id)!
+                        )
+                    );
                 });
         }
     }
