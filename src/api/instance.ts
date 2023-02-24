@@ -411,14 +411,12 @@ export class InstanceAPI {
      * @memberof InstanceAPI
      */
     getConfig() {
-        const language = this.$i18n.locale.value;
-
         // clone it to avoid mutations to store config
         return JSON.parse(
             JSON.stringify(
                 this.$vApp.$store.get(
                     ConfigStore.getActiveConfig,
-                    language
+                    this.language
                 ) as RampConfig
             )
         );
@@ -462,7 +460,7 @@ export class InstanceAPI {
      * @memberof InstanceAPI
      */
     get language(): string {
-        return this.$i18n.locale.value;
+        return this.$vApp.$i18n.locale;
     }
 
     /**
