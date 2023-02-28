@@ -13,17 +13,15 @@
         tabindex="-1"
         v-html="formatValue"
         ref="el"
-    />
+    ></div>
 </template>
 
 <script setup lang="ts">
 import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
 import type { InstanceAPI } from '@/api';
-import { useStore } from 'vuex';
 import linkifyHtml from 'linkify-html';
 
 const iApi = inject<InstanceAPI>('iApi')!;
-const store = useStore();
 const el = ref<HTMLElement>();
 
 const props = defineProps(['params']);
