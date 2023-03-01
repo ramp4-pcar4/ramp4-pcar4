@@ -77,6 +77,10 @@ export enum DetailsStore {
      */
     hilightToggle = 'details/hilightToggle',
     /**
+     * (State) lastHilight: number
+     */
+    lastHilight = 'details/lastHilight',
+    /**
      * (Action) setPayload: (payload: ItemResult[])
      */
     setPayload = 'details/setPayload!',

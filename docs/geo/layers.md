@@ -355,7 +355,7 @@ Options parameter object, with descriptions following:
 - An optional integer number to buffer the geometry. Is generally only useful if the geometry is a point (i.e. where a mouse click / crosshair click occurred). The number represents pixels to buffer by (so 5 would be a 10x10 pixel square around the point at the current map scale level).
 - Optional result of a local hit test (a promise resolving in an array of graphic hit results). Utilized when in hybrid identify mode; will ensure any local results are excluded from the server results, avoiding duplicates.
 
-The result object of `runIdentify()` is on the fancy side, as there are a few levels identify acts upon. The topmost array of results has an entry for each logical layer involved, including the logical `uid`, a loading flag (`loaded`) and promise (`loading`), and another array of individual hits (`items`) for the logical layer. The loading properties here indicate when the items array as been populated, but be aware that individual `items` still may be downloading their own data.
+The result object of `runIdentify()` is on the fancy side, as there are a few levels identify acts upon. The topmost array of results has an entry for each logical layer involved, including the logical `uid`, a request timestamp(`requestTime`), a loading flag (`loaded`) and promise (`loading`), and another array of individual hits (`items`) for the logical layer. The loading properties here indicate when the items array as been populated, but be aware that individual `items` still may be downloading their own data.
 
 The `items` array contains a loading flag and promise to track the download of its data, a format specification and a property to contain data that aligns to the given format. Current format values include `esri` (standard attribute format), `text`, `image`, `html`, `xml`, `json`, `unknown`.
 
@@ -365,6 +365,7 @@ The `items` array contains a loading flag and promise to track the download of i
         uid,
         loaded,
         loading,
+        requestTime,
         items: [
             {
                 loaded,

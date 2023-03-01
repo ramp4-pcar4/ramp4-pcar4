@@ -187,21 +187,45 @@ export class DetailsAPI extends FixtureInstance {
             await hilightFix.removeHilight(
                 hilightFix.getGraphicsByKey((origin = ORIGIN_DETAILS))
             );
+
+            // calculate after the above removeHilight call, since it also does a timestamp.
+            // NOTE if the two calls are too fast (same time) then we can add optional param to
+            //      not stamp when removing, or pass in this stamp.
+            // mark and save this highlight session
+            const thisHighlight = Date.now();
+            this.$vApp.$store.set(DetailsStore.lastHilight, thisHighlight);
+
             const graphics: Array<Graphic> = await this.getHilightGraphics(
                 hItems,
                 layerUid
             );
-            hilightFix.addHilight(graphics);
+
+            if (
+                <number>this.$vApp.$store.get(DetailsStore.lastHilight) ===
+                thisHighlight
+            ) {
+                // our request on this thread is still the most recent one. begin to add graphics to highlighter
+                await hilightFix.addHilight(graphics);
+
+                // NOTE if addHighlight is also slow, will need additional check here. this one is trickier, since
+                //      our stale graphics have been added but need to get-gone. However, calling remove will
+                //      remove everything; if a new fast request came in after it and alredy completed, then
+                //      remove will erase that as well. May need to add timestamp to the origin key for
+                //      targeted removal.
+            }
         }
     }
 
     /**
      * Remove all details panel map hilights.
      */
-    removeDetailsHilight() {
+    async removeDetailsHilight() {
         const hilightFix: HilightAPI = this.$iApi.fixture.get('hilight');
         if (hilightFix) {
-            hilightFix.removeHilight(
+            // mark that we are removing. any in-progress highlights will
+            // see this new timestamp and know they are stale once finished.
+            this.$vApp.$store.set(DetailsStore.lastHilight, Date.now());
+            await hilightFix.removeHilight(
                 hilightFix.getGraphicsByKey((origin = ORIGIN_DETAILS))
             );
         }
