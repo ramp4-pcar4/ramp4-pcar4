@@ -32,10 +32,11 @@ npm ci
 ### Compile and Hot-Reload for Development
 
 ```sh
-npm run dev
+npm run dev # runs the local server in https
+npm run dev-http # runs the local server in http
 ```
 
-Open `http://localhost:3000` in your browser.
+Open `https://localhost:5173/demos/index-samples.html` or `http://localhost:5173/demos/index-samples.html` (depending on the command you ran) in your browser.
 
 ### Build for production
 
@@ -51,7 +52,7 @@ The production files will be placed in the `dist` folder.
 npm run preview
 ```
 
-Open `http://localhost:5050` in your browser.
+Open `http://localhost:5050/index.html` in your browser.
 
 ### Recommended IDE Setup
 
