@@ -1,4 +1,5 @@
 import { defineConfig, type UserConfigExport } from 'vite';
+import mkcert from 'vite-plugin-mkcert';
 import vue from '@vitejs/plugin-vue';
 import VitePluginI18n from './scripts/vite-plugin-i18n';
 import VitePluginVersion from './scripts/vite-plugin-version';
@@ -7,7 +8,10 @@ import { resolve } from 'path';
 const distName = resolve(__dirname, process.env.DIST_NAME || 'dist');
 
 const baseConfig: UserConfigExport = {
-    plugins: [vue(), VitePluginI18n(), VitePluginVersion()],
+    plugins: [vue(), VitePluginI18n(), VitePluginVersion(), mkcert()],
+    define: {
+        'process.env': process.env
+    },
     base: './',
     resolve: {
         alias: {
@@ -19,7 +23,8 @@ const baseConfig: UserConfigExport = {
         target: 'esnext'
     },
     server: {
-        open: '/demos/index-samples.html'
+        open: '/demos/index-samples.html',
+        https: false
     }
 };
 
@@ -27,21 +32,21 @@ export default defineConfig(({ command, mode }) => {
     if (command == 'build') {
         if (mode === 'production') {
             Object.assign(baseConfig.build!, {
-                outDir: `${distName}`,
+                outDir: distName,
                 lib: {
                     entry: resolve(__dirname, 'src/main.ts'),
                     name: 'RAMP',
                     fileName: (format: string) =>
-                        `ramp${format == 'iife' ? '' : '.esm'}.js`,
+                        `lib/ramp${format == 'iife' ? '' : '.esm'}.js`,
                     formats: ['es', 'iife']
                 },
                 rollupOptions: {
                     output: {
                         inlineDynamicImports: true,
-                        dir: `${distName}/lib`,
+                        dir: distName,
                         assetFileNames: (assetInfo: any) => {
                             return assetInfo.name === 'style.css'
-                                ? 'ramp.css'
+                                ? 'lib/ramp.css'
                                 : assetInfo.name;
                         }
                     }
