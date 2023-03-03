@@ -101,7 +101,7 @@
 import { computed, inject } from 'vue';
 import type { PropType } from 'vue';
 import type { InstanceAPI, PanelInstance } from '@/api';
-import { Extent } from '@/geo/api';
+import { Polygon, SpatialReference } from '@/geo/api';
 import { GeosearchStore } from './store';
 import GeosearchBar from './search-bar.vue';
 import GeosearchTopFilters from './top-filters.vue';
@@ -133,10 +133,19 @@ const failedServices = computed<string[]>(
 
 // zoom in to a clicked result
 const zoomIn = (result: any) => {
-    let zoom = new Extent(
+    let zoom = new Polygon(
         'zoomies',
-        [result.bbox[0], result.bbox[1]],
-        [result.bbox[2], result.bbox[3]]
+        [
+            [
+                [result.bbox[0], result.bbox[1]],
+                [result.bbox[0], result.bbox[3]],
+                [result.bbox[2], result.bbox[3]],
+                [result.bbox[2], result.bbox[1]],
+                [result.bbox[0], result.bbox[1]]
+            ]
+        ],
+        SpatialReference.latLongSR(),
+        true
     );
     iApi.geo.map.zoomMapTo(zoom);
 };
