@@ -6,7 +6,13 @@ import shp from 'shpjs/dist/shp.min.js';
 import axios from 'axios';
 
 import { EsriSimpleRenderer, EsriSpatialReference } from '@/geo/esri';
-import { Colour, FieldType, LayerType } from '@/geo/api';
+import {
+    Colour,
+    type CsvOptions,
+    FieldType,
+    type GeoJsonOptions,
+    LayerType
+} from '@/geo/api';
 
 /**
  * Maps GeoJSON geometry types to a set of default renders defined in GlobalStorage.DefaultRenders
@@ -194,7 +200,6 @@ export class FileUtils extends APIScope {
      * Extracts fields from the first feature in the feature collection
      */
     extractGeoJsonFields(geoJson: any) {
-        // TODO attempt to strong type input parameter.  GeoJSON.FeatureCollection wants us to pass in other types so avoiding it for now.
         if (geoJson.features.length < 1) {
             throw new Error(
                 'GeoJSON field extraction requires at least one feature'
@@ -319,6 +324,7 @@ export class FileUtils extends APIScope {
         //       Since extractGeoJsonFields does type inferencing, maybe this can also be enhanced to infer types?
         //       To do this, the csv data would need to be converted to its proper type before inferences
         //       Proper typing is always preferred for data analysis and things like sorting
+        //       See https://github.com/ramp4-pcar4/ramp4-pcar4/issues/1095
 
         const fields: Array<string> = dsv
             .dsvFormat(delimiter)
@@ -368,10 +374,16 @@ export class FileUtils extends APIScope {
         return result;
     }
 
-    // TODO general type cleanup. just trying to make it work for now
+    /**
+     * Convert GeoJSON to Esri json, a format that can be read by a feature layer constructor
+     *
+     * @param geoJson {Object} a GeoJSON object
+     * @param options {GeoJsonOptions} any options for the transformation
+     * @returns {Object} feature layer constructor object
+     */
     async geoJsonToEsriJson(
         geoJson: any,
-        options: any
+        options: GeoJsonOptions
     ): Promise<__esri.FeatureLayerProperties> {
         let targetSR: any;
         let srcProj = 'EPSG:4326'; // 4326 is the default for GeoJSON with no projection defined
@@ -433,15 +445,13 @@ export class FileUtils extends APIScope {
                     options.colour
                 ).toArcServer();
             }
-
-            // TODO add support for renderer option, or drop the option
         } else {
             throw new Error('geoJsonToEsriJson - missing opts arguement');
         }
 
-        // TODO this code only allows for simple renderers as default. Need to examine how the custom renderer from the config gets applied.
-        //      maybe we should be applying that here. Alternately it will be in layer constructor that is overriding that property
-        //      (it might happen after layer load.).  Alternatley it could be in ESRI 4 we can set it upfront on regular feature layers.
+        // Note: while this appears to always give the layer a simple renderer,
+        // if a customRenderer is on the config, it will get applied to the esri
+        // layer during FileLayer.onLoadActions()
         configPackage.renderer = EsriSimpleRenderer.fromJSON(
             defRender.renderer
         );
@@ -538,14 +548,16 @@ export class FileUtils extends APIScope {
         return configPackage;
     }
 
-    // TODO make strong types for option parameter
     // converts csv file in string format to geojson object
     // options
     //     - latfield: a string identifying the field containing latitude values ('Lat' by default)
     //     - lonfield: a string identifying the field containing longitude values ('Long' by default)
     //     - delimiter: a string defining the delimiter character of the file (',' by default)
-    async csvToGeoJson(csvData: string, opts: any): Promise<any> {
-        const csvOpts = {
+    async csvToGeoJson(
+        csvData: string,
+        opts: CsvOptions | undefined
+    ): Promise<any> {
+        const csvOpts: CsvOptions = {
             // default values
             latfield: 'Lat',
             lonfield: 'Long',
@@ -579,9 +591,9 @@ export class FileUtils extends APIScope {
                     // csv2geojson will not include the lat and long in the feature
                     data.features.map((feature: any) => {
                         // add new property Long and Lat before layer is generated
-                        feature.properties[csvOpts.lonfield] =
+                        feature.properties[csvOpts.lonfield!] =
                             feature.geometry.coordinates[0];
-                        feature.properties[csvOpts.latfield] =
+                        feature.properties[csvOpts.latfield!] =
                             feature.geometry.coordinates[1];
                     });
 

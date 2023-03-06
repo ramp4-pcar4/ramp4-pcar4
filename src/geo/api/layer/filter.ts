@@ -49,7 +49,7 @@ export class Filter {
      * @returns {Boolean} indicates if any non-permanent filters are active
      */
     isActive(): boolean {
-        // TODO clear up and make not of why there are no extent filters being considered here.
+        // TODO clear up and make note of why there are no extent filters being considered here.
         //      is this because extent is considered map level? anyways clarify the jsdoc once known.
         return this.sqlActiveFilters([CoreFilter.PERMANENT]).length > 0;
     }

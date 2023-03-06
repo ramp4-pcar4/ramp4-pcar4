@@ -2,8 +2,6 @@ import { markRaw } from 'vue';
 import screen from './screen.vue';
 export class IklobFixture {
     added(): void {
-        const messages = {};
-        // TODO: import `FixtureInstance` types
         (this as any).$iApi.panel.register(
             {
                 id: 'iklob-p1',

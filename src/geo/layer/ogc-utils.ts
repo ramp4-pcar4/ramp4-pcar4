@@ -13,8 +13,6 @@ type WFSResponse = {
 type WFSData = { type: string; features: any[] };
 
 export class OgcUtils extends APIScope {
-    // TODO update logic in this function to get changes done in https://github.com/fgpv-vpgf/fgpv-vpgf/pull/3858
-    // TODO consider changing the long list of functon params into one options param object
     /**
      *
      * @param {string} url the current url to the wfs service

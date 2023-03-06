@@ -59,7 +59,6 @@ export class WmsLayer extends CommonLayer {
     protected makeEsriLayerConfig(
         rampLayerConfig: RampLayerConfig
     ): __esri.WMSLayerProperties {
-        // TODO flush out
         // NOTE: it would be nice to put esri.LayerProperties as the return type, but since we are cheating with refreshInterval it wont work
         //       we can make our own interface if it needs to happen (or can extent the esri one)
         const esriConfig: __esri.WMSLayerProperties = super.makeEsriLayerConfig(
@@ -105,29 +104,9 @@ export class WmsLayer extends CommonLayer {
         //      dont have 10+ MB capability files, and this is non-issue.
         //      the todo below is original brainstorming on the problem,
         //      not feeling hot that a good universal solution exists.
-        //
-        // TODO need to test the .suppressGetCapabilities functionality.
-        //      we no longer have .resourceInfo on the layer constructor.
-        //      first attempt would be to try and pre-populate .sublayers
-        //      and .fullExtent in the constructor config
-        //      further complicated as .sublayers is a tree whereas .resourceInfo
-        //      was a flat array.
-        //      also, the ESRI doc as of 4.14 seems to indicate it always makes
-        //      a getcapabilities call so this might be a lost cause
 
         // looks like the GetCapabilities call is always made: https://community.esri.com/t5/arcgis-api-for-javascript/create-wms-layer-without-getcapabilities-request/td-p/1002080
 
-        // old code:
-
-        /*
-        if (this.config.suppressGetCapabilities) {
-            cfg.resourceInfo = {
-                extent: new this._apiRef.Map.Extent(-141, 41, -52, 83.5, {wkid: 4326}), // TODO make this a parameter post-demo
-                layerInfos: this.config.sublayers
-                    .map(sublayer new this._apiRef.layer.WMSLayerInfo({name: sublayer.id, title: sublayer.name || ''}))
-            };
-        }
-        */
         return esriConfig;
     }
 

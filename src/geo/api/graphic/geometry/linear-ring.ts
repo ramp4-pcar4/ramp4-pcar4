@@ -1,5 +1,3 @@
-// TODO add proper documentation
-
 import {
     GeoJsonGeomType,
     GeometryType,
@@ -58,10 +56,6 @@ export class LinearRing extends PointSet {
 
     /** Will update the n-th contained point with the values of the point parameter. It is assumed the point is in the same spatial reference as the Multipoint */
     updateAt(point: Point | Array<number> | object, n: number) {
-        // TODO question if this is good logic.
-        //      it helps a person not paying attention retain their ring.
-        //      if someone is being clever and updates both front and end, no harm i guess, will double the updates
-
         // add extra logic to ensure ring remains a ring
         const l = this.length - 1;
         if (n === 0) {

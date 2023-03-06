@@ -1,5 +1,4 @@
 // wraps and represents a 2D esri map
-// TODO add proper comments
 
 import {
     Basemap,
@@ -648,20 +647,6 @@ export class MapAPI extends CommonMapAPI {
         // Fire the layer removal event
         this.$iApi.event.emit(GlobalEvents.LAYER_REMOVE, layerInstance);
     }
-
-    /**
-     * Adds a highlight layer to the map
-     *
-     * @param {HighlightLayer} highlightLayer the highlight
-     */
-    // TODO make a decision to re-add or remove after we figure out what highlight layers are dong
-    /*
-    addHighlightLayer (highlightLayer: HighlightLayer): void {
-        this.esriMap.add(highlightLayer.esriLayer);
-    }
-    */
-
-    // TODO passthrough functions, either by aly magic or make them hardcoded
 
     /**
      * Set's the map's mapMouseThrottle value to newThrottle.

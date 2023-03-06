@@ -1,6 +1,5 @@
 // put things here that would be common to all esri attribute layers.
 // used for layer types defined by Core RAMP.
-// TODO add proper comments
 
 import {
     ArcServerAttributeLoader,
@@ -31,6 +30,7 @@ import type {
     GetGraphicParams,
     DiscreteGraphicResult,
     GetGraphicServiceDetails,
+    LoadLayerMetadataOptions,
     QueryFeaturesArcServerParams,
     QueryFeaturesParams,
     RampLayerConfig,
@@ -77,7 +77,6 @@ export class AttribLayer extends CommonLayer {
      * @returns configuration object for the ESRI layer representing this layer
      */
     protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): any {
-        // TODO flush out
         // NOTE: it would be nice to put esri.LayerProperties as the return type, but since we are cheating with refreshInterval it wont work
         //       we can make our own interface if it needs to happen (or can extent the esri one)
         const esriConfig: any = super.makeEsriLayerConfig(rampLayerConfig);
@@ -91,10 +90,9 @@ export class AttribLayer extends CommonLayer {
     // serviceUrl: string,
     // NOTE this logic is for ArcGIS Server sourced things.
     //      other sourced attribute layers should override this function.
-    // TODO consider moving a bulk of this out to LayerModule; the wizard may have use for running this (e.g. getting field list for a service url).
-    //      might not be worth it; the "shared" part is effectively the one line web request.
-    // TODO strongly type the options param?
-    async loadLayerMetadata(options: any = {}): Promise<void> {
+    async loadLayerMetadata(
+        options: LoadLayerMetadataOptions = {}
+    ): Promise<void> {
         // given all the error handlers, leaving this as a non-async function
 
         if (!this.serviceUrl) {
@@ -381,7 +379,6 @@ export class AttribLayer extends CommonLayer {
             );
         }
 
-        // TODO consider changing this to a warning and just return some dummy value
         if (this.dataFormat === DataFormat.ESRI_RASTER) {
             throw new Error('Attempting to get attributes on a raster layer.');
         }
@@ -450,8 +447,6 @@ export class AttribLayer extends CommonLayer {
             rows,
             fields: this.fields, // keep fields for reference ...
             oidField: this.oidField // ... keep a reference to id field ...
-            // oidIndex: attSet.oidIndex, // TODO determine if we need this anymore. who uses it? // ... and keep id mapping array
-            // renderer: this.renderer // TODO this should probably not be here. we should have a better way to derive data that the renderer could provide
         };
 
         /* OLD PROMISE CATCH BLOCK
@@ -529,11 +524,11 @@ export class AttribLayer extends CommonLayer {
                 resultGeom = gCache;
 
                 /*
-            // TODO / NOTE: at first glance it looks like ESRI 4 is hiding the guts of server-based feature layers.
+            // / NOTE: at first glance it looks like ESRI 4 is hiding the guts of server-based feature layers.
             //              when there is time, can take a look to see if any hidden/system caches are there on
             //              the esri layer object to exploit.
             //              for now, will just skip this optimization.
-            // UPDATE: could probably do thsi by running queryFeatures on the layer view.
+            // UPDATE: could probably do this by running queryFeatures on the layer view.
 
             } else if (this.parentLayer._innerLayer.type === 'feature') {
                 // it is a feature layer. we can attempt to extract info from it.
@@ -709,16 +704,6 @@ export class AttribLayer extends CommonLayer {
         return this.filter.getCombinedSql(exclusions);
     }
 
-    // TODO decide if we want this
-    //      the function is simple enough, but we would need some fancy events pinging off
-    //      for every sql key that got cleared. maybe filter.clearAll needs to return an
-    //      array of cleared filter keys?
-    /*
-    clearSqlFilter(): void {
-        this.filter.clearAll();
-    }
-    */
-
     /**
      * Gets array of object ids that currently pass any filters
      *
@@ -764,11 +749,18 @@ export class AttribLayer extends CommonLayer {
         return cache;
     }
 
+    /**
+     * Will populate the layers featureCount property based on the server metrics.
+     * @returns {Promise} that resolves when the count is populated
+     */
     async loadFeatureCount(): Promise<void> {
         if (!this.serviceUrl) {
             // case where a non-server subclass ends up calling this via .super magic.
             // will avoid failed attempts at reading a non-existing service.
             // class should implement their own logic to load feature count (e.g. scrape from file layer)
+            console.warn(
+                'A layer without a url attempted to run the server based feature count routine.'
+            );
             return;
         }
 
@@ -804,14 +796,15 @@ export class AttribLayer extends CommonLayer {
             return;
         }
 
-        // TODO old geoApi had logic to execute web request twice; comment indicated first request could fail.
-        //      re-apply this if we notice the same thing. sounds like garbage server problem tbh.
         // TODO need to decide on placeholder for unknown count.
         this.featureCount = serviceResult.data.count;
     }
 
-    // TODO this is more of a utility function. leaving it public as it might be useful, revist when
-    //      the app is mature.
+    /**
+     * Will return an array of object ids for features in the layer that satisfy the conditions of the query options parameter.
+     * @param options {Object} options to provide filters and helpful information.
+     * @returns {Promise} resolves with an array of numbers (object ids)
+     */
     queryOIDs(options: QueryFeaturesParams): Promise<Array<number>> {
         // NOTE this assumes a server based layer
         //      local based layers should override this function
@@ -820,8 +813,6 @@ export class AttribLayer extends CommonLayer {
             console.error(`a file layer called a server based query function`);
             console.trace();
         }
-
-        // TODO do we want do default options.outfields to our app-defined outfields if they are not provided?
 
         // execute the query ids
         const agsOpt: QueryFeaturesArcServerParams = {

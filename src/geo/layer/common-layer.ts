@@ -64,9 +64,6 @@ export class CommonLayer extends LayerInstance {
 
     // ----------- LAYER CONSTRUCTION AND INITIALIZAION -----------
 
-    // NOTE since constructor needs to be called first, we might want to push a lot of initialization to an .init() function
-    //      that actual implementer classes call in their constructors. e.g. for a file layer, might need to process file parts prior to running LayerBase stuff
-    // TODO if layer is now self-containing the reload stuff, we can internalize the reload tree.
     protected constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
 
@@ -319,8 +316,6 @@ export class CommonLayer extends LayerInstance {
         await this.initiate();
 
         if (!this.esriLayer) {
-            // TODO this might not warrent a console. A busted map server could fail, and the layer status would
-            //      already give the error indication.
             console.error('ESRI layer failed to re-create during reload.');
             return;
         }
@@ -347,8 +342,8 @@ export class CommonLayer extends LayerInstance {
             visible: rampLayerConfig?.state?.visibility ?? true
         };
 
-        // TODO careful now. seems setting this willy nilly, even if undefined value, causes layer to keep pinging the server
-        // TODO revisit issue #1018 after v1.0.0
+        // NOTE careful now. seems setting this willy nilly, even if undefined value, causes layer to keep pinging the server
+        //      revisit issue #1018 after v4.0.0
         // if (typeof rampLayerConfig.refreshInterval !== 'undefined') {
         //     esriConfig.refreshInterval = rampLayerConfig.refreshInterval;
         // }
@@ -808,8 +803,7 @@ export class CommonLayer extends LayerInstance {
             columns: [],
             rows: [],
             fields: [],
-            oidField: 'error',
-            oidIndex: 0 // TODO determine if we need this anymore
+            oidField: 'error'
         });
     }
 

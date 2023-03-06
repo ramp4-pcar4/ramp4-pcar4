@@ -3,8 +3,6 @@
 // makes it unclear how much overlap of functionality makes sense. Could be
 // we need an entirely different framework to really support 3D.
 
-// TODO add proper comments
-
 import { toRaw, markRaw } from 'vue';
 import { APIScope, Basemap, InstanceAPI } from '@/api/internal';
 import { EsriMap } from '@/geo/esri';
@@ -485,7 +483,4 @@ export class CommonMapAPI extends APIScope {
         );
         return false;
     }
-
-    // TODO shared Map (not view-based) functions could go here.
-    //      Includes passthrough things. Could also include addLayer (assuming the LayerView gets handled automagically in 3D case?)
 }

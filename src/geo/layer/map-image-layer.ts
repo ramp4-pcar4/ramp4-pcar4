@@ -73,13 +73,11 @@ export class MapImageLayer extends AttribLayer {
     protected makeEsriLayerConfig(
         rampLayerConfig: RampLayerConfig
     ): __esri.MapImageLayerProperties {
-        // TODO flush out
         // NOTE: it would be nice to put esri.LayerProperties as the return type, but since we are cheating with refreshInterval it wont work
         //       we can make our own interface if it needs to happen (or can extent the esri one)
         const esriConfig: __esri.MapImageLayerProperties =
             super.makeEsriLayerConfig(rampLayerConfig);
 
-        // TODO add any extra properties for attrib-based layers here
         // if we have a definition at load, apply it here to avoid cancellation errors on
 
         // override. make things invisible, revert to config setting after sublayers have been assigned visibilities and load finishes.
@@ -108,17 +106,19 @@ export class MapImageLayer extends AttribLayer {
         //                 of on onLoadActions like we currently do.
         /*
         if (rampLayerConfig.sublayers) {
-            // NOTE: important not to set esriConfig property to empty array, as that will request no sublayers
-            // TODO documentation isn't clear if we should be using .sublayers or .allSublayers ; if .sublayers can it be flat array?
-            //      play with their online sandbox using a nested service if cant figure it out.
+            // NOTE: important not to set esriConfig property to empty array, as that will request no sublayers.
+            //       Documentation isn't clear if we should be using .sublayers or .allSublayers ; if .sublayers can it be flat array?
+            //       Play with their online sandbox using a nested service if cant figure it out.
+            
             // let us all stop to appreciate this line of code.
             esriConfig.sublayers = (<Array<RampLayerMapImageSublayerConfig>>rampLayerConfig.sublayers).map((sublayer: RampLayerMapImageSublayerConfig) => {
+            
                 // the super call will set up the basics/common stuff like vis, opacity, def identify
                 // works because the sublayer property scheme is nearly identical to a normal layer
                 const subby: esri.SublayerProperties = super.makeEsriLayerConfig(sublayer);
                 subby.id = sublayer.index;
 
-                // TODO process the other options
+                // process the other options
                 return subby;
             })
         }
@@ -189,7 +189,7 @@ export class MapImageLayer extends AttribLayer {
             if (subLayer.sublayers && subLayer.sublayers.length > 0) {
                 // group sublayer. set up our tree for the client, then crawl children.
                 const gName = (subC ? subC.name : '') || subLayer.title || ''; // config if exists, else server, else none
-                const treeGroup = new TreeNode(sid, '', gName, false); // TODO leaving uid blank. there is no object to tie back to. ensure not a problem for vue bindings
+                const treeGroup = new TreeNode(sid, '', gName, false); // leaving uid blank. there is no object to tie back to. ensure not a problem for vue bindings
                 if (!parentTreeNode.findChildByIdx(sid)) {
                     parentTreeNode.children.push(treeGroup); // prevent duplication of child on reload
                 }
@@ -207,6 +207,11 @@ export class MapImageLayer extends AttribLayer {
                             id: `${this.id}-${sid}`,
                             // TODO: Revisit once issue #961 is implemented.
                             // See https://github.com/ramp4-pcar4/ramp4-pcar4/pull/1045#pullrequestreview-977116071
+                            // ^ update: issue 961 seems to have nothing to do with this. The PR link implies this
+                            //   comment is related to the parent state default line below. Best guess is that
+                            //   issue #1394 was the impacted issue. It appears that the code in the leaf initializer
+                            //   below is handling things, but leaving this here for now incase someone wants to
+                            //   dig deeper (or a problem arises)
                             layerType: LayerType.SUBLAYER,
                             name: subConfigs[sid]?.name,
                             // If the state isn't defined, use the same state as the parent.
@@ -289,7 +294,7 @@ export class MapImageLayer extends AttribLayer {
             if (!sublayer.cosmetic) {
                 // TODO add a check instead of 0 default on the index?
                 const rootSub = findSublayer(sublayer.index || 0);
-                // TODO would need to validate layer tree every loop to shut up typescript. shutting it up with comment instead.
+                // would need to validate layer tree every loop to shut up typescript. shutting it up with comment instead.
                 // @ts-ignore
                 processSublayer(rootSub, this.layerTree);
             }
@@ -315,7 +320,6 @@ export class MapImageLayer extends AttribLayer {
                 );
             }
 
-            // TODO check if we have custom renderer, add to options parameter here
             const pLMD: Promise<void> = miSL
                 .loadLayerMetadata(
                     hasCustRed
@@ -343,9 +347,12 @@ export class MapImageLayer extends AttribLayer {
                               true;
                         miSL.opacity =
                             subC.state?.opacity ?? this.origState.opacity ?? 1;
-                        // miSL.setQueryable(subC.state.identify); // TODO uncomment when done
                         miSL.nameField = subC.nameField || miSL.nameField || '';
                         miSL.processFieldMetadata(subC.fieldMetadata);
+                        // NOTE the miSL.identify property is currently getting set in onLoadActions() of
+                        //      MapImageSublayer. This will get called by this layer's onLoad after this
+                        //      function runs. Not sure why that one part is there, but suggest leave
+                        //      it alone unless things stop working. This comment just helps you find it.
                     } else {
                         // pulling from parent would be cool, but complex. all the promises would need to be resolved in tree-order
                         // maybe put defaulting here for visible/opac/identify
@@ -450,11 +457,8 @@ export class MapImageLayer extends AttribLayer {
         }
 
         // prepare a query
-        // it may make more sense to have this made for each sublayer
+
         // TODO investigate if we need the sourceSR param set here
-        const qOpts: QueryFeaturesParams = {
-            includeGeometry: options.returnGeometry
-        };
 
         let pointBuffer: Extent;
         if (options.geometry.type === GeometryType.POINT) {
@@ -467,6 +471,7 @@ export class MapImageLayer extends AttribLayer {
         // loop over active sublayers. call query on each and generate an IdentifyItem to track it
         return activeSublayers.map(sublayer => {
             const dProm = new DefPromise();
+            const qOpts: QueryFeaturesParams = {};
 
             const result: IdentifyResult = reactive({
                 items: [],
@@ -568,12 +573,10 @@ export class MapImageLayer extends AttribLayer {
             columns: [],
             rows: [],
             fields: [],
-            oidField: 'error',
-            oidIndex: 0 // TODO determine if we need this anymore
+            oidField: 'error'
         });
     }
 
-    // TODO think about this name. using getGraphic for consistency.
     /**
      * Gets information on a graphic in the most efficient way possible. Options object properties:
      * - getGeom ; a boolean to indicate if the result should include graphic geometry

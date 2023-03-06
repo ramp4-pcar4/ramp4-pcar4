@@ -1,6 +1,5 @@
 // put things here that would be common to all esri attribute layers.
 // used for layer types defined by Core RAMP.
-// TODO add proper comments
 
 import { CommonLayer, InstanceAPI } from '@/api/internal';
 import type { EsriGraphicsLayer, EsriGraphic } from '@/geo/esri';
@@ -28,7 +27,6 @@ export class CommonGraphicLayer extends CommonLayer {
      * @returns configuration object for the ESRI layer representing this layer
      */
     protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): any {
-        // TODO flush out
         // NOTE: it would be nice to put esri.LayerProperties as the return type, but since we are cheating with refreshInterval it wont work
         //       we can make our own interface if it needs to happen (or can extent the esri one)
         const esriConfig: any = super.makeEsriLayerConfig(rampLayerConfig);
@@ -52,12 +50,6 @@ export class CommonGraphicLayer extends CommonLayer {
         return this._graphics.length;
     }
 
-    // TODO think about this name. would like to use getGraphic for consistency.
-    //      However currently there are things that would need to be re-aligned.
-    //      These graphic ids are strings, object ids are ints. Method in common layer / interface
-    //      would need to support both types and handle bad data in actual layers.
-    //      This function is synch. We could have it wrap its result in a promise to align with
-    //      the server version
     /**
      * Gets a graphic from the layer, if it exists.
      *

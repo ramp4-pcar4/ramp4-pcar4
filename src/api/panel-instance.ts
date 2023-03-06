@@ -414,7 +414,6 @@ export class PanelInstance extends APIScope {
         // use the provided value or negate the existing `isPinned` status of this panel
         value = typeof value !== 'undefined' ? value : !this.isPinned;
 
-        // TODO: change to toggle the pin status
         this.$iApi.panel.pin(this, value);
 
         return this;

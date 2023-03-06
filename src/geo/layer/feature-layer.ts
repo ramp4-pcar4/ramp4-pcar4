@@ -64,7 +64,7 @@ export class FeatureLayer extends AttribLayer {
         const esriConfig: __esri.FeatureLayerProperties =
             super.makeEsriLayerConfig(rampLayerConfig);
 
-        // TODO add any extra properties for attrib-based layers here
+        // add any extra properties for attrib-based layers here
         // if we have a definition at load, apply it here to avoid cancellation errors on
         if (
             rampLayerConfig.initialFilteredQuery ||
@@ -109,8 +109,8 @@ export class FeatureLayer extends AttribLayer {
             );
         }
 
-        // TODO .url seems to not have the /index ending.  there is parsedUrl.path, but thats not on official definition
-        //      can also consider changing logic to use origRampConfig.url;
+        // .url seems to not have the /index ending.  there is parsedUrl.path, but thats not on official definition
+        // can also consider changing logic to use origRampConfig.url;
         // const layerUrl: string = (<esri.FeatureLayer>this._innerLayer).url;
         const layerUrl: string = (<any>this.esriLayer).parsedUrl.path;
         const urlData = this.$iApi.geo.shared.parseUrlIndex(layerUrl);
@@ -167,13 +167,8 @@ export class FeatureLayer extends AttribLayer {
         this.layerTree.name = this.name;
         this.layerTree.layerIdx = featIdx;
 
-        // if file based (or server extent was fried), calculate extent based on geometry
-        // TODO implement this. may need a manual loop to calculate graphicsExtent since ESRI torpedo'd the function
-        /*
-        if (!this.extent || !this.extent.xmin) {
-            this.extent = this._apiRef.proj.graphicsUtils.graphicsExtent(this._layer.graphics);
-        }
-        */
+        // Note that ESRI 4 seems to self-calculate a layer extent based on the geometry,
+        // so we no longer need to worry about generating one (graphicsUtils.graphicsExtent() is depreciated)
 
         loadPromises.push(pLD, pFC);
 

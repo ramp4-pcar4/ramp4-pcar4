@@ -372,7 +372,7 @@ enum DefEH {
 
 // private for EventBus internals, so don't export
 // a simple data structure for managing the Event API on fixtures.
-// TODO if we end up supporting toggle/disabled events, add an active boolean flag to the structure
+// If we end up supporting toggle/disabled events, add an active boolean flag to the structure
 class EventHandler {
     eventName: string;
     handlerName: string;
@@ -398,8 +398,7 @@ export class EventAPI extends APIScope {
     // tracks active event handlers: event name, handler name, and the actual handler function
     private readonly _eventRegister: Array<EventHandler>;
 
-    // a helpful register of event names that have been announced by the app and fixtures.
-    // TODO this is not essential. we can decide to remove the feature. would also remove .registerEventName and .eventNames
+    // a helpful register of event names that have been declared by the app and fixtures.
     private readonly _nameRegister: Array<string>;
 
     // for autonamer
@@ -510,10 +509,6 @@ export class EventAPI extends APIScope {
      */
     off(handlerName: string): void {
         // TODO support other overloads? like event name + handler function?
-        // TODO handle the "off all" scenario?
-        // TODO support "turn off all handlers for an event?".
-        //      This is a bit tricky as it also uses a 1 string param sig.
-        //      Could use a diff method, like .allOff(event)
 
         // check if name exists. if not... do nothing? console warn? error?
         const eh = this.findHandler(handlerName);
@@ -583,7 +578,7 @@ export class EventAPI extends APIScope {
      * @memberof EventAPI
      */
     activeHandlers(event = ''): Array<string> {
-        // TODO add a filter if we implement disabled events
+        // add a filter if we implement disabled events
 
         if (event === '') {
             return this._eventRegister.map(eh => eh.handlerName);
@@ -611,11 +606,7 @@ export class EventAPI extends APIScope {
             eventHandlerNames.length === 0
         ) {
             // use all the default event handlers
-            // TODO the enum-values-to-array logic we use in the event names list
-            //      fails a bit here. we could make it work if we force every default
-            //      handler name to being with a specific prefix. Alternately use object, not enum.
-            //      ---
-            //      Update (years later). We now have prefix "ramp_", but honestly not sure what orig problem was.
+
             eventHandlerNames = [
                 DefEH.CONFIG_CHANGE_UPDATES_MAP_ATTRIBS,
                 DefEH.LAYER_ERROR_UPDATES_LEGEND,

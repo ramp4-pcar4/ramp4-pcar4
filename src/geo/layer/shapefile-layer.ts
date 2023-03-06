@@ -8,9 +8,6 @@ export class ShapefileLayer extends FileLayer {
     }
 
     protected async onInitiate(): Promise<void> {
-        // TODO check if .sourceGeoJson is already populated?
-        //      if this initiate is a reload, do we want to re-use it, or re-download? decide.
-
         let shapefileData: any; // data type is actually an ArrayBuffer
 
         if (this.origRampConfig.rawData) {
