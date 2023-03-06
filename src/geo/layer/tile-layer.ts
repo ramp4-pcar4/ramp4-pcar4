@@ -1,5 +1,3 @@
-// TODO add proper comments
-
 import { CommonLayer, InstanceAPI } from '@/api/internal';
 import { DataFormat, LayerFormat, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
@@ -34,7 +32,6 @@ export class TileLayer extends CommonLayer {
     protected makeEsriLayerConfig(
         rampLayerConfig: RampLayerConfig
     ): __esri.TileLayerProperties {
-        // TODO flush out
         const esriConfig: __esri.TileLayerProperties =
             super.makeEsriLayerConfig(rampLayerConfig);
 

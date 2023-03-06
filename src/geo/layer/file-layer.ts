@@ -16,7 +16,6 @@ import type {
 } from '@/api/internal';
 
 import {
-    CoreFilter,
     DataFormat,
     DefPromise,
     Extent,
@@ -24,11 +23,11 @@ import {
     IdentifyResultFormat,
     LayerFormat,
     LayerIdentifyMode,
-    LayerType,
     Point
 } from '@/geo/api';
 
 import type {
+    GeoJsonOptions,
     GetGraphicParams,
     Graphic,
     IdentifyItem,
@@ -77,9 +76,11 @@ export class FileLayer extends AttribLayer {
 
     protected esriJson: __esri.FeatureLayerProperties | undefined; // used as temp var to get around typescript parameter grousing. will be undefined after initLayer()
 
-    sourceGeoJson: string | object | undefined; // TODO property for now. need to make final decison of how source geojson gets provided for initiate() to consume.
+    // temporarily stores GeoJSON. acts as a nice way for subclasses to parse their random sources to GeoJSON, drop it here,
+    // and have the generic initiation code in this file just grab it.
+    protected sourceGeoJson: string | object | undefined;
 
-    tooltipField: string; // TODO if we end up having more things that are shared with FeatureLayer, consider making a FeatureBaseLayer class for both to inherit from
+    tooltipField: string; // if we end up having more things that are shared with FeatureLayer, consider making a FeatureBaseLayer class for both to inherit from
 
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
@@ -114,9 +115,6 @@ export class FileLayer extends AttribLayer {
         //      drop it in this.sourceGeoJson,
         //      then call super.onInitiate() as final step.
 
-        // TODO figure out how the geojson is supplied.
-        // another protected property? a permananent property to support reloads? part of rampConfig?
-
         if (!this.sourceGeoJson) {
             throw new Error('File Layer is missing raw data.');
         }
@@ -126,13 +124,10 @@ export class FileLayer extends AttribLayer {
                 ? JSON.parse(this.sourceGeoJson)
                 : JSON.parse(JSON.stringify(this.sourceGeoJson)); // need a deep copy so that all the manipulation of realJson below does not affect sourceGeoJson
 
-        // esri 4: https://developers.arcgis.com/javascript/latest/sample-code/layers-featurelayer-collection/index.html
-        // might need to change our terraformer call to just create a set of graphics? need to inspect terrafomer outputs
-
-        // TODO figure out options parameter.
-        // TODO look into supporting renderer from rampConfig. dont we already have something like this?
-        // TODO figure out how a sourceProjection option would work. who is supplying this? an API caller? RAMP UI / Config really doesnt support it.
-        const opts = {
+        // NOTE: we are not setting the source projection option. It will assume LatLong, or use projection
+        //       contained in the geojson file. The option flag is only there in case other blocks of code
+        //       want to utilize this method with fancy projection madness.
+        const opts: GeoJsonOptions = {
             layerId: this.origRampConfig.id || '',
             targetSR: this.$iApi.geo.map.getSR(),
             ...(this.origRampConfig.latField && {
@@ -177,8 +172,6 @@ export class FileLayer extends AttribLayer {
 
         const oidField = 'OBJECTID';
 
-        // TODO add any extra properties for geoJson layers here
-        //      in none, delete this function and let super get called automatically
         const copyProp: Array<string> = [
             'source',
             'objectIdField',
@@ -203,9 +196,7 @@ export class FileLayer extends AttribLayer {
         } else {
             esriConfig.displayField = oidField;
         }
-        esriConfig.outFields = ['*']; // TODO eventually will want this overridable by the config.
-
-        // TODO inspect rampLayerConfig for any config field alias overrides or field restrictions. apply them to esriConfig.fields
+        esriConfig.outFields = ['*']; // the code that makes the esri variant of geojson will trim the fields to match fieldMetadata in the config. So take all here.
 
         delete esriConfig.url;
 
@@ -224,9 +215,6 @@ export class FileLayer extends AttribLayer {
             esriConfig.orderBy = [{ field: oidField, order: 'descending' }];
             this._drawOrder = [{ field: oidField, ascending: false }];
         }
-
-        // TODO definitionExpression need to test / figure out. likely need to port to our filter framework and not set on the layer.
-        //      might also be handled by AttribLayer plumbing
 
         return esriConfig;
     }
@@ -249,7 +237,6 @@ export class FileLayer extends AttribLayer {
         this.layerTree.name = this.name;
 
         // NOTE: call extract, not load, as there is no service involved here
-        // TODO figure out what do to with custom renderer here
         this.extractLayerMetadata();
         // NOTE name field overrides from config have already been applied by this point
         if (this.origRampConfig.tooltipField) {
@@ -269,17 +256,9 @@ export class FileLayer extends AttribLayer {
 
         this.featureCount = this.esriLayer?.source.length || 0;
 
-        // if file based (or server extent was fried), calculate extent based on geometry
-        // TODO implement this. may need a manual loop to calculate graphicsExtent since ESRI torpedo'd the function
-        /*
-        if (!this.extent || !this.extent.xmin) {
-            this.extent = this._apiRef.proj.graphicsUtils.graphicsExtent(this._layer.graphics);
-        }
-        */
-
-        // TODO testing this out for now. our SQL support needs the view in place, so this delays our load promise until the view is ready.
-        //      if this becomes problematic (e.g. we want to create a layer and have it "load" without adding it to a map),
-        //      we can instead put the view promise dependency on the applySqlFilter of GeoJsonFC. this will require making the viewDefProm public.
+        // NOTE Our SQL support needs the view in place, so this delays our load promise until the view is ready.
+        //      If this becomes problematic (e.g. we want to create a layer and have it "load" without adding it to a map),
+        //      we can instead put the view promise dependency on applySqlFilter() below. This will require making the viewDefProm public.
         //      Alllso, we might consider putting this promise in the onLoadActions of BaseLayer, if we find other layers
         //      become hooked on the power of the view and require it to be ready.
         loadPromises.push(this.viewDefProm.getPromise());
@@ -306,14 +285,6 @@ export class FileLayer extends AttribLayer {
     // ----------- LAYER ACTIONS -----------
 
     runIdentify(options: IdentifyParameters): Array<IdentifyResult> {
-        // TODO this function is pretty much identical to FeatureLayer, now that we are using query for everything.
-        //      the queryFeatures on the sublayer will automatically go to the correct server/file instance due to the
-        //      overridden functions.
-        //      once we figure out the tolerance/geometry and things are cooking, consider making this function
-        //      the generic one on AttribLayer, and then MapImageLayer overrides it with the child variation.
-
-        const map = this.$iApi.geo.map;
-
         // early kickout check. not loaded/error; not visible; not queryable; off scale
         if (!this.canIdentify()) {
             // return empty result.
@@ -441,7 +412,7 @@ export class FileLayer extends AttribLayer {
         // here to avoid any null-dereference errors, but never used.
         this.quickCache = new QuickCache(this.geomType);
 
-        // TODO if we ever make config override for scale, would need to apply on the layer constructor, will end up here
+        // if we ever make config override for scale, would need to apply on the layer constructor, will end up here
         this.scaleSet.minScale = l.minScale || 0;
         this.scaleSet.maxScale = l.maxScale || 0;
 
@@ -530,9 +501,6 @@ export class FileLayer extends AttribLayer {
         return resGraphic;
     }
 
-    // TODO we are using the getgraphic type as it's an unbound loosely typed feature
-    //      may want to change name of the type to something more general
-
     /**
      * Requests a set of features for this layer that match the criteria of the options
      * - filterGeometry : a RAMP API geometry to restrict results to
@@ -540,7 +508,6 @@ export class FileLayer extends AttribLayer {
      * - includeGeometry : a boolean to indicate if result features should include the geometry
      * - outFields : a string of comma separated field names. will restrict fields included in the output
      * - sourceSR : a spatial reference indicating what the source layer is encoded in. providing can assist in result geometry being of a proper resolution
-     * - map : a Ramp map. required if geometry was requested and the layer is not on a map
      *
      * @param options {Object} options to provide filters and helpful information.
      * @returns {Promise} resolves with an array of features that satisfy the criteria
@@ -554,8 +521,11 @@ export class FileLayer extends AttribLayer {
         return this.$iApi.geo.query.geoJsonQuery(gjOpt);
     }
 
-    // TODO this is more of a utility function. leaving it public as it might be useful, revist when
-    //      the app is mature.
+    /**
+     * Will return an array of object ids for features in the layer that satisfy the conditions of the query options parameter.
+     * @param options
+     * @returns {Promise} resolving with an array of numbers (object ids)
+     */
     async queryOIDs(options: QueryFeaturesParams): Promise<Array<number>> {
         const gjOpt: QueryFeaturesFileParams = {
             layer: this,

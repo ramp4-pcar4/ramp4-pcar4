@@ -222,7 +222,7 @@ export class LayerInstance extends APIScope {
         this.config = config;
 
         this.id = ''; // take from config here?
-        this.uid = ''; // shutting up typescript. will get set somewhere else. // TODO verify setting, move here if that is smarter.
+        this.uid = ''; // shutting up typescript. will get set somewhere else.
         this.name = 'error';
         this.layerState = LayerState.NEW;
         this.drawState = DrawState.NOT_LOADED;

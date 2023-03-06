@@ -260,14 +260,6 @@ const updateIdentify = (val: boolean) => {
 };
 
 /**
- * Toggle snapshot mode for the layer.
- */
-const toggleSnapshot = () => {
-    snapshotToggle.value = !snapshotToggle.value;
-    // TODO: make necessary changes to layer
-};
-
-/**
  * Load property data from layer.
  */
 const loadLayerProperties = () => {

@@ -186,7 +186,7 @@ const actions = {
      * Toggle map extent filter.
      *
      * @function setMapExtent
-     * @param   {any}    mapExtent   current map extent info // TODO what is this? add strong types? has .visible and .extent
+     * @param   {any}    mapExtent   current map extent info. has property .visible (boolean) and .extent (Extent)
      */
     setMapExtent: function (context: GeosearchContext, mapExtent: any): void {
         // if results should be filtered by current map view

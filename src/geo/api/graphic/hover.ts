@@ -1,8 +1,8 @@
-// TODO add proper documentation
-// TODO this is sketchy for now. not sure what kind of hover magic we will support
+// This is sketchy for now. not sure what kind of hover magic we will support
 //      only on SimpleLayer type things?
 //      should Hover be a part of Graphic instead of Geometry?
-// for the time being, we are just using RAMP2 object for placeholder
+// for the time being, we are just using RAMP2 object for placeholder.
+// This class is likely not used in v4.0.0
 
 interface HovertipOptions {
     keepOpen: boolean;

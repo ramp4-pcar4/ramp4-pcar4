@@ -23,7 +23,7 @@ export class Basemap {
             //      File based trickier but useful. Would throw asynch wrench into this.
             //      ESRI Image Server would make sense.
             baseLayers: rampConfig.layers.map(layerConfig => {
-                // TODO convert to switch statement if we add more types?
+                // convert to switch statement if we add more types?
                 if (layerConfig.layerType === LayerType.TILE) {
                     return new EsriTileLayer({
                         url: layerConfig.url,

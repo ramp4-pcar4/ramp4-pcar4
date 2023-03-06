@@ -85,12 +85,9 @@ export class ProjectionAPI {
             const params: __esri.RequestOptions = {
                 responseType: 'text'
             };
-            const restReq: IPromise<__esri.RequestResponse> = EsriRequest(
-                epsgUrl,
-                params
-            ); // TODO since this is outside of esri api, consider using the vue web request lib here
+            const restReq = EsriRequest(epsgUrl, params); // TODO since this is outside of esri api, consider using the vue web request lib here
             restReq.then(
-                (serviceResult: __esri.RequestResponse) => {
+                serviceResult => {
                     if (serviceResult.data) {
                         resolve(serviceResult.data); // should be a string. TEST!
                     } else {

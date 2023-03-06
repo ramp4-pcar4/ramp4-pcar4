@@ -1,5 +1,3 @@
-// TODO add proper comments
-
 import { CommonLayer, InstanceAPI } from '@/api/internal';
 import { DataFormat, LayerFormat, LayerType } from '@/geo/api';
 
@@ -39,7 +37,6 @@ export class OsmTileLayer extends CommonLayer {
     protected makeEsriLayerConfig(
         rampLayerConfig: RampLayerConfig
     ): __esri.OpenStreetMapLayerProperties {
-        // TODO flush out
         const esriConfig: __esri.OpenStreetMapLayerProperties =
             super.makeEsriLayerConfig(rampLayerConfig);
 
@@ -58,14 +55,14 @@ export class OsmTileLayer extends CommonLayer {
 
         this.layerTree.name = this.name;
 
-        // TODO what is appropriate legend? The default empty array?
-        //      OSM is not arcgis so no legend rest endpoint to scrape.
-        //      and if they host their own it's likely massive with all the possible symbols.
-        //      Right now you see nothing in the spot to the left of the layer name.
-        //      Maybe we hardcode the OSM icon? It is a map with a magnifying glass,
-        //      which might be confusing as it will look like a search icon.
-        //      For now, just using a default "O".  The odds of OSM being an active
-        //      layer in the legend is pretty low, and a config can override the symbol I believe.
+        // what is appropriate legend? The default empty array?
+        // OSM is not arcgis so no legend rest endpoint to scrape.
+        // and if they host their own it's likely massive with all the possible symbols.
+        // Right now you see nothing in the spot to the left of the layer name.
+        // Maybe we hardcode the OSM icon? It is a map with a magnifying glass,
+        // which might be confusing as it will look like a search icon.
+        // For now, just using a default "O".  The odds of OSM being an active
+        // layer in the legend is pretty low, and a config can override the symbol I believe.
 
         const legGuts = this.$iApi.geo.symbology.generatePlaceholderSymbology(
             'O',

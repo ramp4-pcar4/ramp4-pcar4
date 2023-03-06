@@ -135,8 +135,8 @@ function mapUpgrader(r2Map: any, r4c: any): void {
     }
 
     if (r2Map.components) {
-        // TODO process components
-        // TODO: handle fixture inclusion/exclusion flag in the component config. Append to fixturesEnabled if included
+        // process components
+        // handle fixture inclusion/exclusion flag in the component config. Append to fixturesEnabled if included
 
         if (r2Map.components.geoSearch) {
             if (r2Map.components.geoSearch.enabled) {
@@ -603,7 +603,7 @@ function legendEntryUpgrader(r2legendEntry: any) {
         );
     }
     // Warning party
-    // TODO: remove these warnings whenever we add support for one of these properties.
+    // remove these warnings whenever we add support for one of these properties.
     if (r2legendEntry.controlledIds) {
         console.warn(
             `controlledIds property defined in legend entry ${r2legendEntry.layerId} cannot be mapped and will be skipped.`
@@ -1110,7 +1110,7 @@ function servicesUpgrader(r2Services: any, r4c: any): void {
         r4c.system.proxyUrl = r2Services.proxyUrl;
     }
 
-    // TODO: If any of these properties get implemented/used in the future, remove them from the warning list and map them appropriately.
+    // If any of these properties get implemented/used in the future, remove them from the warning list and map them appropriately.
     const unused: String[] = [
         'corsEverywhere',
         'exportMapUrl',
@@ -1136,8 +1136,7 @@ function servicesUpgrader(r2Services: any, r4c: any): void {
  * @param r4c entire ramp4 config. param is modded in place, since ramp2 elements end up all over the new config
  */
 function uiUpgrader(r2ui: any, r4c: any): void {
-    // TODO git r done
-    // TODO: handle fixture inclusion/exclusion flag in the component config. Append to fixturesEnabled if included
+    // handle fixture inclusion/exclusion flag in the component config. Append to fixturesEnabled if included
 
     if (r2ui.navBar) {
         // process nav bar
@@ -1334,7 +1333,7 @@ function uiUpgrader(r2ui: any, r4c: any): void {
         } */
     }
 
-    // TODO: If any of these properties get implemented/used in the future, remove them from the warning list and map them appropriately.
+    // If any of these properties get implemented/used in the future, remove them from the warning list and map them appropriately.
     const unused: String[] = [
         'fullscreen',
         'theme',

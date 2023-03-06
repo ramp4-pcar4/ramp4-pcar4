@@ -1,5 +1,3 @@
-// TODO add proper documentation
-
 import {
     BaseGeometry,
     GeoJsonGeomType,
@@ -156,7 +154,8 @@ export class MultiPolygon extends BaseGeometry {
         const ringMerger: Array<Array<Array<number>>> = [];
 
         // TODO is there a more efficient way to do this than with pushes? use concats?
-        // concat will keep re-copying all known rings with each new polygon encountered, so probably worse
+        // concat will keep re-copying all known rings with each new polygon encountered,
+        // so probably worse (internet tends to agree)
         this.toArray().forEach(poly => {
             poly.forEach(ring => ringMerger.push(ring));
         });

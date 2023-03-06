@@ -1,5 +1,3 @@
-// TODO add proper comments
-
 // TODO move to main gapi types file?
 interface OffScaleStatus {
     offScale: boolean;

@@ -1,6 +1,7 @@
 # Config Migration Guide
 
 // TODO: Update this file when we add support for anything or make changes to the schema.
+// TODO this file is significantly out of date. Consider removing now that we have converter function
 
 Listed below are breaking changes from the RAMP2 schema i.e. properties in the RAMP2 config that cannot be mapped to some part of the RAMP4 config.
 

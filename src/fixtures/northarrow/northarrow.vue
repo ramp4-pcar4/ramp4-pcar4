@@ -140,7 +140,7 @@ const updateNortharrow = async (newExtent: Extent) => {
                 let poleStyleParams;
                 if (poleIcon.value) {
                     // fixture config has provided a custom image.
-                    // TODO do we need to parmatarize the additonal options? offsets? height?
+                    // TODO do we need to parameterize the additonal options? offsets? height?
                     //      we would need to expand what our config schema accepts. Right now
                     //      you can only specify an icon image. Maybe we should allow the option
                     //      to pass any Option param object that a PointStyle class can accept.

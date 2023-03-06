@@ -190,9 +190,4 @@ export class LayerAPI extends APIScope {
             disabledControls: layer.config.disabledControls ?? []
         };
     }
-
-    // TODO consider if we need a defaulting scenario. This might tie in with
-    //      people wanting to override core layer types; they would omit then provide
-    //      the custom layer definition class.
-    //      see fixture api, addDefaultFixtures method
 }

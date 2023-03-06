@@ -12,16 +12,6 @@ export class SharedUtilsAPI {
     generateUUID(): string {
         let d = Date.now();
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-            /*
-            // TODO: Come up with cheaper solution that doesn't use the crypto API and satifies CodeQL
-            const r =
-            (d +
-                window.crypto.getRandomValues(new Uint32Array(1))[0] *
-                Math.pow(2, -32) *
-                16) %
-                16 |
-                0; */
-
             // do math!
             /*jslint bitwise: true */
             const r = (d + Math.random() * 16) % 16 | 0;
@@ -42,13 +32,10 @@ export class SharedUtilsAPI {
      */
     convertImageToCanvas(
         url: string,
-        canvas: any = null,
+        canvas: HTMLCanvasElement | undefined = undefined,
         crossOrigin = true
     ): Promise<any> {
-        // TODO canvas param was initially typed as HTMLCanvasElement
-        //      find out where that type was getting imported in old GeoAPI,
-        //      decide if we want to import and use here
-        canvas = canvas || window.document.createElement('canvas');
+        const c = canvas ?? window.document.createElement('canvas');
 
         const image = window.document.createElement('img'); // create image node
 
@@ -58,12 +45,12 @@ export class SharedUtilsAPI {
 
         const conversionPromise = new Promise((resolve, reject) => {
             image.addEventListener('load', () => {
-                canvas.width = image.width; // changing canvas size will clear all previous content
-                canvas.height = image.height;
-                canvas.getContext('2d').drawImage(image, 0, 0); // draw image onto a canvas
+                c.width = image.width; // changing canvas size will clear all previous content
+                c.height = image.height;
+                c.getContext('2d')?.drawImage(image, 0, 0); // draw image onto a canvas
 
                 // return canvas
-                resolve(canvas);
+                resolve(c);
             });
             image.addEventListener('error', error => reject(error));
         });
