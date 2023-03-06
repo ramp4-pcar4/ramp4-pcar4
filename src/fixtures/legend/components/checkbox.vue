@@ -13,6 +13,7 @@
             @click.stop
             :checked="checked && initialChecked"
             @change.stop="toggleVisibility()"
+            @keypress.enter.prevent
             @keyup.enter.stop="toggleVisibility()"
             :class="[
                 isRadio ? 'form-radio' : 'form-checkbox rounded-none',

@@ -14,6 +14,7 @@
                 }
             "
             :aria-label="t('geosearch.searchText')"
+            @keypress.enter.prevent
             enterkeyhint="done"
         />
     </div>
