@@ -132,8 +132,6 @@ export class InstanceAPI {
      * @param {RampOptions | undefined} options startup options for this R4MP instance
      */
     private initialize(configs?: RampConfigs, options?: RampOptions): void {
-        // TODO: decide whether to move to src/main.ts:createApp
-        // TODO: store a reference to the event bus in the global store [?]
         if (configs?.configs !== undefined) {
             const langConfigs: {
                 [key: string]: RampConfig;
@@ -351,7 +349,6 @@ export class InstanceAPI {
         this.initialize(configs, options);
     }
 
-    // TODO: we probably need to expose other Vue global functions here like `set`, `use`, etc.
     /**
      * Retrieves a global Vue component by its id.
      *

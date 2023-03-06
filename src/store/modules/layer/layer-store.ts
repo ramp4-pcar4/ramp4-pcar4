@@ -7,8 +7,6 @@ import type { RootState } from '@/store';
 import type { RampLayerConfig } from '@/geo/api';
 import { LayerInstance } from '@/api/internal';
 
-// TODO we have "Layer" referenced as a layer baseclass in a lot of comments. Update it to whatever is appropriate and accurate.
-
 // NOTE
 // on the wonkyness of new changes here.
 // in old version, layer store would take layer configs, generate layers from layer blueprints, and store the layers.
@@ -69,10 +67,6 @@ const actions = {
         context: LayerContext,
         layerConfigs: RampLayerConfig[]
     ) => {
-        // TODO we are getting frequent errors at startup; something passes in an
-        //      undefined layerConfigs. kicking out for now to make demos work.
-        //      possibly this is evil in vue state land. if so, then someone figure out
-        //      the root cause and fix that.
         if (!Array.isArray(layerConfigs)) {
             return;
         }
@@ -87,10 +81,6 @@ const actions = {
         context.commit('REORDER_LAYER', { layer, index });
     },
     addLayers: (context: LayerContext, layers: LayerInstance[]) => {
-        // TODO we are getting frequent errors at startup; something passes in an
-        //      undefined layerConfigs. kicking out for now to make demos work.
-        //      possibly this is evil in vue state land. if so, then someone figure out
-        //      the root cause and fix that.
         if (!Array.isArray(layers)) {
             return;
         }
@@ -98,38 +88,6 @@ const actions = {
         layers.forEach(l => {
             context.commit('ADD_LAYER', l);
         });
-
-        // TODO clean this up
-
-        // plan for the moment.
-        // looks like we can't access $iApi here in the store.
-        // the old code used LayerBlueprint, which is a standalone factory and didn't need the api
-        // suggesting the following:
-        // have esrimap watch the layerconfig array as well.
-        // when it sees the change, it does the layer registration and generation (might as well also add it to the map)
-        // then it puts the new layer in the layer store (and we erase the existing listener). need to figure out how to do this.
-        // something like this.$vApp.$store.set(ConfigStore.newConfig, defaultConfig !== undefined ? defaultConfig : undefined);
-
-        /*
-        const loadproms = [];
-        layerConfigs.forEach(layerConfig => {
-            if (api.)
-            loadproms.push(LayerBlueprint.makeBlueprint(layerConfig));
-        });
-        */
-
-        // old code
-        /*
-        const blueprints: any = [];
-        layerConfigs.forEach(layerConfig => {
-            blueprints.push(LayerBlueprint.makeBlueprint(layerConfig));
-        });
-        blueprints.forEach((blueprint: any) => {
-            blueprint.makeLayer().then((layer: LayerBase) => {
-                context.commit('ADD_LAYER', layer);
-            });
-        });
-        */
     },
     addErrorLayers: (context: LayerContext, layers: LayerInstance[]) => {
         if (!Array.isArray(layers)) {

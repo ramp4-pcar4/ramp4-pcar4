@@ -1,5 +1,3 @@
-// TODO fancy up the docs
-
 import type GeoJson from 'geojson';
 import {
     BaseGeometry,

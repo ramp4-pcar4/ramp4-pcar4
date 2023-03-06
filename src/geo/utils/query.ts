@@ -1,6 +1,3 @@
-// TODO add proper comments
-// TODO change all the 'any' in this file to more strict types if possible
-
 import { APIScope, FileLayer, InstanceAPI } from '@/api/internal';
 import {
     BaseGeometry,
@@ -86,7 +83,6 @@ export class QueryAPI extends APIScope {
             query.where = options.filterSql;
         }
 
-        // TODO check strong typing of this line (after GeoJSON layers are implemented)
         await options.layer.loadPromise();
 
         if (!options.layer.esriLayer) {
@@ -117,9 +113,6 @@ export class QueryAPI extends APIScope {
         });
     }
 
-    // TODO think about splitting up a lot of the below functions into server specific
-    //      and file specific functions.
-
     /**
      * Helper function to modify input geometries for queries. Will attempt to avoid various pitfalls,
      * usually around projections
@@ -137,7 +130,6 @@ export class QueryAPI extends APIScope {
         mapScale?: number,
         sourceSR?: SpatialReference
     ): __esri.Geometry {
-        // TODO consider casting sourceSR to our API SR class?
         let finalGeom: __esri.Geometry;
 
         if (!isFileLayer && geometry.type === GeometryType.EXTENT) {

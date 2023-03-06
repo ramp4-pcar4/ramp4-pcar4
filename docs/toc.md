@@ -11,9 +11,10 @@ The [Startup](api/startup.md) page provides examples of how to instantiate a RAM
 ## Migration from RAMP 2 / RAMP 3
 
 - The [v4.0.0 Release Notes](https://github.com/ramp4-pcar4/ramp4-pcar4/releases/tag/v4.0.0) will highlight breaking changes and features not yet implemented.
-- The [Config Migration](config/migration.md) page provides a list of RAMP2 config properties that are currently not supported.
-- The [API Migration](api/migration.md) page is horribly incomplete but provides some detail on API differences.
 - This [Config Upgrade Sample Page](https://github.com/ramp4-pcar4/ramp4-pcar4/blob/main/demos/starter-scripts/r2-config-upgraded.js) shows how one can utilize the provided upgrade functions in an attempt to migrate a RAMP2 configuration to the RAMP4 schema. Note the functions `configUpgrade()` and `layerConfigUpgrade()` are available on the `RAMP.` global if using the standard build, or can be imported if using the `esm` build.
+- The [Config Incompatibilty](configuration/incompatibility.md) page provides a list of RAMP2 config properties that are currently not supported.
+- The [API Migration](api/migration.md) page is horribly incomplete but provides some detail on API differences.
+- The [Config Schema](https://github.com/ramp4-pcar4/ramp4-pcar4/blob/main/schema.json) provides a technical specification of the new RAMP4 configuration structure.
 
 ## App Configuration
 

@@ -8,9 +8,6 @@ export class CsvLayer extends FileLayer {
     }
 
     protected async onInitiate(): Promise<void> {
-        // TODO check if .sourceGeoJson is already populated?
-        //      if this initiate is a reload, do we want to re-use it, or re-download? decide.
-
         if (!this.origRampConfig.latField || !this.origRampConfig.longField) {
             throw new Error('csv file config missing lat or long field names');
         }

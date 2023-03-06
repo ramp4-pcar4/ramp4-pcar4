@@ -1,5 +1,3 @@
-// TODO add proper documentation
-
 import {
     BaseGeometry,
     GeoJsonGeomType,
@@ -45,7 +43,7 @@ export class Extent extends BaseGeometry {
         this.rawMax = Point.parseXY(maxGeometry);
     }
 
-    // TODO getter / setter for individul values? classic [x|y][min|max] set
+    // TODO setters for individul values? classic [x|y][min|max] set
 
     /** Returns the string 'Extent'. */
     get type(): GeometryType {

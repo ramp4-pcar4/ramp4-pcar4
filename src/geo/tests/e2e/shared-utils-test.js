@@ -156,8 +156,6 @@ describe('GeoAPI SharedUtils', () => {
     //     });
     // });
 
-    // TODO: Add more tests for SharedUtils through adding layers through the wizard
-
     it('formatLatLongDMSString undefined point', () => {
         cy.window().then(window => {
             const sharedUtils = window.debugInstance.geo.shared;

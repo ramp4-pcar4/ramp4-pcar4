@@ -1,5 +1,3 @@
-// TODO I don't love this class / file name. Rename if better suggestion
-
 import { GeometryAPI, ProjectionAPI, SharedUtilsAPI } from '@/geo/api';
 
 import type { RampLodConfig } from '@/geo/api';
