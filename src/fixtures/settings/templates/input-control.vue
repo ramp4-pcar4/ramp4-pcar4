@@ -5,6 +5,7 @@
         </div>
         <div class="flex flex-row">
             <input
+                @keypress.enter.prevent
                 class="rv-input text-md w-full"
                 type="number"
                 :value="config.value"

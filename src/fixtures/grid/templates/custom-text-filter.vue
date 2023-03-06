@@ -6,6 +6,7 @@
             type="text"
             @input="valueChanged()"
             v-model="filterValue"
+            @keypress.enter.prevent
             @keyup.enter="
                 if ($store.get('panel/mobileView')) {
                     ($event.target as HTMLInputElement).blur();
