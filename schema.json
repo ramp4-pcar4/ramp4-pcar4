@@ -1840,6 +1840,11 @@
                     "default": "",
                     "description": "Alt text for the basemap thumbnail image."
                 },
+                "hideThumbnail": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "When enabled, hides the basemap thumbnail image, leaving just the text component."
+                },
                 "thumbnailUrl": {
                     "type": "string",
                     "default": null,
@@ -1851,7 +1856,7 @@
                 },
                 "layers": {
                     "type": "array",
-                    "description": "A set of URLs which should be composited to form a basemap entry.",
+                    "description": "A set of URLs which should be composited to form a basemap entry. Stacked in ascending order, i.e. the first layer sits at the bottom and the last layer at the top",
                     "items": {
                         "type": "object",
                         "properties": {
