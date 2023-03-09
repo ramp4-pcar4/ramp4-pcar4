@@ -7,6 +7,7 @@
             type="number"
             v-model="minVal"
             @input="minValChanged()"
+            @keypress.enter.prevent
             @keyup.enter="
                 if ($store.get('panel/mobileView')) {
                     ($event.target as HTMLInputElement).blur();
@@ -23,6 +24,7 @@
             type="number"
             v-model="maxVal"
             @input="maxValChanged()"
+            @keypress.enter.prevent
             @keyup.enter="
                 if ($store.get('panel/mobileView')) {
                     ($event.target as HTMLInputElement).blur();

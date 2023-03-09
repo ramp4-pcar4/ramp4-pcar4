@@ -44,6 +44,7 @@
                 <!-- global search bar -->
                 <input
                     @input="updateQuickSearch()"
+                    @keypress.enter.prevent
                     @keyup.enter="
                         if ($store.get('panel/mobileView')) {
                             //@ts-ignore

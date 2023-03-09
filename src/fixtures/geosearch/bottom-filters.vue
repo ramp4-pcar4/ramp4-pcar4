@@ -11,6 +11,7 @@
                             ($event.target as HTMLInputElement).checked
                         )
                     "
+                    @keypress.enter.prevent
                 />{{ t('geosearch.visible') }}</label
             >
         </div>
