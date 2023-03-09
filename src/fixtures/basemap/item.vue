@@ -1,52 +1,65 @@
 <template>
     <div class="mb-10">
         <button
-            class="basemap-item-button bg-gray-300 h-210"
+            class="basemap-item-button bg-gray-300"
             type="button"
             :aria-label="t('basemap.select')"
             @click="selectBasemap(basemap)"
             v-focus-item
         >
+            <!-- thumbnail -->
             <div>
-                <div>
+                <div
+                    class="flex hover:opacity-50 basemap-item-image basemap-item-container"
+                    :class="!basemap.hideThumbnail ? 'h-180' : 'h-30'"
+                >
+                    <!-- text-only mode -->
+                    <img v-if="basemap.hideThumbnail" class="w-full h-30" />
+                    <!-- Else if, use basemap thumbnail url -->
+                    <img
+                        v-else-if="basemap.thumbnailUrl"
+                        class="w-full h-180"
+                        :alt="basemap.altText"
+                        :src="basemap.thumbnailUrl"
+                    />
+                    <!-- Else if, Use tileSchema tile urls -->
                     <div
-                        class="flex h-180 hover:opacity-50 basemap-item-image"
                         v-for="layer in basemap.layers"
                         :key="layer.id"
+                        v-else-if="
+                            tileSchema.thumbnailTileUrls &&
+                            tileSchema.thumbnailTileUrls.length > 0 &&
+                            basemap.layers.every(
+                                layer => layer.layerType === 'esri-tile'
+                            )
+                        "
+                        class="flex basemap-item-inner h-180"
                     >
-                        <!-- Use basemap thumbnail url -->
                         <img
-                            v-if="basemap.thumbnailUrl"
                             class="w-full"
-                            :alt="basemap.altText"
-                            :src="basemap.thumbnailUrl"
-                        />
-                        <!-- Else if, Use tileSchema tile urls -->
-                        <img
-                            v-else-if="
-                                tileSchema.thumbnailTileUrls &&
-                                tileSchema.thumbnailTileUrls.length > 0 &&
-                                layer.layerType === 'esri-tile'
-                            "
                             v-for="(url, idx) in tileSchema.thumbnailTileUrls"
-                            class="w-full"
                             :alt="basemap.altText"
                             :src="layer.url + url"
                             :key="idx"
                         />
-                        <!-- Else, Use placeholder image -->
-                        <img
-                            v-else
-                            class="w-full bg-white"
-                            :alt="basemap.altText"
-                            src="https://openclipart.org/image/800px/275366"
-                        />
                     </div>
+                    <!-- Else, Use placeholder image -->
+                    <img
+                        v-else
+                        class="w-full bg-white h-180"
+                        :alt="basemap.altText"
+                        src="https://openclipart.org/image/800px/275366"
+                    />
                 </div>
             </div>
 
             <div
-                class="absolute flex w-full bg-black opacity-75 text-white h-30 bottom-6 items-center"
+                class="absolute flex w-full bg-black text-white h-30 bottom-6 items-center"
+                :class="
+                    basemap.hideThumbnail && basemap.id === selectedBasemap.id
+                        ? 'opacity-85'
+                        : 'opacity-75'
+                "
             >
                 <div class="pl-5" v-truncate>
                     <span>{{ basemap.name }}</span>
@@ -78,7 +91,9 @@
 
             <div
                 class="rv-basemap-check absolute top-0 right-0"
-                v-if="basemap.id === selectedBasemap.id"
+                v-if="
+                    basemap.id === selectedBasemap.id && !basemap.hideThumbnail
+                "
             >
                 <svg
                     class="fill-current w-25 h-25 relative"
@@ -131,6 +146,16 @@ const selectBasemap = (basemap: any) => {
 </script>
 
 <style lang="scss" scoped>
+.basemap-item-container {
+    display: grid;
+    place-items: center;
+    grid-template-areas: 'inner-div';
+}
+
+.basemap-item-inner {
+    grid-area: inner-div;
+}
+
 [focus-list]:focus [focus-item].focused.basemap-item-button {
     border: solid black 2px;
 }

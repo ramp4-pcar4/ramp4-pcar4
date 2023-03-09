@@ -1851,7 +1851,7 @@
                 },
                 "layers": {
                     "type": "array",
-                    "description": "A set of URLs which should be composited to form a basemap entry.",
+                    "description": "A set of URLs which should be composited to form a basemap entry. Stacked in ascending order, i.e. the first layer sits at the bottom and the last layer at the top",
                     "items": {
                         "type": "object",
                         "properties": {
