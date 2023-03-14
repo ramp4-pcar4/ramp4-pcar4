@@ -4,6 +4,7 @@
 
 Layer Configuration Properties
 
+- [caching](#caching)
 - [colour](#colour)
 - [controls](#controls)
 - [cosmetic](#cosmetic)
@@ -247,6 +248,12 @@ Defines the desired state of the layer at load time.
 ```
 
 ## Fancy Properties
+
+### caching
+
+*boolean*, only applies to file based layers that have the [rawData](#rawdata) property set
+
+Specifies if a layers raw data should be preserved after the layer is created. This type of layer does not have a server-based source to ask for the data again, so enabling caching will allow for reloads to occur. It will however double the memory footprint of the layer. If missing, defaults to `false`.
 
 ### colour
 

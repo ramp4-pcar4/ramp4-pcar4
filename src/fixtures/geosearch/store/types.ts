@@ -1,7 +1,6 @@
 import type { IGenericObjectType, ITypes } from '../definitions';
 import axios from 'axios';
 
-// TODO should these strings be in an i18n csv instead?
 const types: any = {
     en: {
         ADDRESS: 'Street Address',

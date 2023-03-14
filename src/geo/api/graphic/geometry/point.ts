@@ -1,5 +1,3 @@
-// TODO add proper documentation
-
 import { BaseGeometry, GeoJsonGeomType, GeometryType } from '@/geo/api';
 import type { SrDef, IdDef } from '@/geo/api';
 import { EsriPoint } from '@/geo/esri';

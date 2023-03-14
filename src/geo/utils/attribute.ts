@@ -1,13 +1,10 @@
-// TODO fancy up the docs
-
-// TODO add proper comments
-
 import { APIScope, InstanceAPI } from '@/api/internal';
 import type {
     Attributes,
     AttributeSet,
     BaseGeometry,
-    GetGraphicServiceDetails
+    GetGraphicServiceDetails,
+    TabularAttributeSet
 } from '@/geo/api';
 import { Graphic, NoGeometry } from '@/geo/api';
 import { EsriGeometryFromJson, EsriRequest } from '@/geo/esri';
@@ -301,12 +298,10 @@ export class AsynchAttribController {
 }
 
 export class AttributeLoaderBase extends APIScope {
-    // TODO need to specificy either load url or load source (a file, a layer with baked attributes)
-
     protected aac: AsynchAttribController;
     protected loadPromise: Promise<AttributeSet> | undefined;
     protected details: AttributeLoaderDetails;
-    tabularAttributesCache: Promise<any> | undefined; // TODO enhance type
+    tabularAttributesCache: Promise<TabularAttributeSet> | undefined;
 
     protected constructor(iApi: InstanceAPI, details: AttributeLoaderDetails) {
         super(iApi);
@@ -336,8 +331,12 @@ export class AttributeLoaderBase extends APIScope {
     abortAttribLoad(): void {
         this.aac.loadAbortFlag = true;
 
-        // TODO nuke the promise?
-        // this.destroyAttribs();
+        // We do not destroy the promise at this point.
+        // Abort simply stops the cycle. destroyAttribs()
+        // will erase and reset the promise, and we let the
+        // caller decide when to do that.
+        // Caller would use the public method abortAttributeLoad()
+        // on the layer.
     }
 
     destroyAttribs(): void {
@@ -378,7 +377,6 @@ export class ArcServerAttributeLoader extends AttributeLoaderBase {
     }
 
     protected loadPromiseGenerator(): Promise<AttributeSet> {
-        // TODO call arcgis loader
         return this.$iApi.geo.attributes.loadArcGisServerAttributes(
             this.details,
             this.aac
@@ -402,16 +400,11 @@ export class FileLayerAttributeLoader extends AttributeLoaderBase {
 // manages the quick-lookup of attributes.
 // i.e. when it makes sense to just download one instead of the entire set
 export class QuickCache {
-    // TODO if we come up with nice types for attribs or geoms, apply them
-
     private attribs: { [key: number]: Attributes };
 
     // the "any" type here is funny. for points, its BaseGeometry, for line/poly based, it's an object indexed by scale,
     // which then containts an object indexed by key (likely oid) and returns BaseGeometry.
     // will keep as any since it's private and the interfaces are casting to BaseGeometry. otherwise would need type shenannigans.
-
-    // TODO see if we are impacted by the stuff found in https://github.com/fgpv-vpgf/fgpv-vpgf/issues/3873
-    //      if memory serves there is no local stealing anymore but check anyways.
 
     private geoms: { [key: number]: any };
 

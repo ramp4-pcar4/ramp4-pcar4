@@ -1,5 +1,3 @@
-// TODO add proper documentation
-
 import {
     BaseGeometry,
     GeoJsonGeomType,

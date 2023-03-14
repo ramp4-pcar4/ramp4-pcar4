@@ -11,8 +11,6 @@ const fixtureModules = import.meta.glob<{ default: typeof FixtureInstance }>(
     '../fixtures/*/index.ts'
 );
 
-// TODO: implement the same `internal.ts` pattern in store, so can import from a single place;
-
 /**
  * A constructor returning an object implementing FixtureBase interface.
  */
@@ -237,7 +235,6 @@ export class FixtureAPI extends APIScope {
         this.$vApp.$store.set(ConfigStore.setStartingFixtures, fixtureNames);
         // add all the requested default promises.
         // return the promise-all of all the add fixture promises
-        // TODO alterately, don't do a promise.all, and just return the array of promises. not sure which is more useful.
         return Promise.all(fixtureNames.map(fn => this.add(fn)));
     }
 }

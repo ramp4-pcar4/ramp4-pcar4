@@ -1,12 +1,7 @@
-// TODO add proper documentation
-
 import { GeometryType, SpatialReference } from '@/geo/api';
 import type { SrDef, IdDef } from '@/geo/api';
 import type { EsriGeometry } from '@/geo/esri';
 import type GeoJson from 'geojson';
-
-// TODO since this class is often used as a parameter type (i.e. something that accepts any of our geometries),
-//      maybe pick a different name, like Geometry, AnyGeometry, RampGeometry, GeometryInstance
 
 /**
  * Baseclass of all geometries. All geometry types must derive from this class. Not intented to be instantiated on its own.

@@ -1,5 +1,3 @@
-// TODO proper doc
-
 // contains renderer classes that let us decorate and work with ESRI renderer classes.
 // we can add more classes to support more renderer types if we need to
 

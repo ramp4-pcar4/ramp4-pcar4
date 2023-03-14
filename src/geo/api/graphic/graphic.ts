@@ -1,5 +1,3 @@
-// TODO add proper documentation
-
 // this will collate:
 
 // geometry

@@ -1,5 +1,3 @@
-// TODO add proper documentation
-
 import type { SrDef } from '@/geo/api';
 import { EsriSpatialReference } from '@/geo/esri';
 import type GeoJson from 'geojson';

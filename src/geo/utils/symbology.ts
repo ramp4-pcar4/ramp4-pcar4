@@ -337,7 +337,7 @@ export class SymbologyAPI extends APIScope {
             .size(this.CONTAINER_SIZE, this.CONTAINER_SIZE)
             .viewbox(0, 0, this.CONTAINER_SIZE, this.CONTAINER_SIZE);
 
-        // TODO use enums here if we can (functions, tricky)
+        // use enums here if we can (functions, tricky)
         // functions to draw esri simple marker symbols
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
@@ -575,7 +575,7 @@ export class SymbologyAPI extends APIScope {
                 const max = _this.CONTAINER_SIZE - _this.CONTENT_PADDING;
                 draw.line(min, min, max, max).stroke(lineStroke);
             },
-            // TODO find new equivalent for this. CLS was cartographic line style. can run test using fromJSON to see what this spits out.
+            // cartographic line style. internet is hinting that it is not supported on JS API
             esriCLS() {
                 // ESRI Fancy Line Symbol
                 this['simple-line']();
@@ -698,13 +698,10 @@ export class SymbologyAPI extends APIScope {
 
         // jscs:enable requireSpacesInAnonymousFunctionExpression
 
-        // console.log(symbol.type, label, '--START--');
-        // console.log(symbol);
-
         try {
             // @ts-ignore
             await Promise.resolve(symbolTypes[symbol.type]());
-            // console.log(symbol.type, label, '--DONE--');
+
             // remove element from the page
             window.document.body.removeChild(container);
             return draw.svg();
@@ -756,15 +753,14 @@ export class SymbologyAPI extends APIScope {
      * @param {Boolean} crossOrigin [optional = true] specifies if the image should be loaded as crossOrigin
      * @return {Promise} promise resolving with the loaded image and its loader object (see svg.js http://documentup.com/wout/svg.js#image for details)
      */
-    svgDrawImage(
+    async svgDrawImage(
         draw: any,
         imageUri: string,
         width = 0,
         height = 0,
         crossOrigin = true
     ): Promise<any> {
-        // TODO enhance to some proper types? make this async?
-        const promise = new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             const image = draw
                 .image(imageUri, width, height, crossOrigin)
                 .loaded((loader: any) => resolve({ image, loader }))
@@ -773,8 +769,6 @@ export class SymbologyAPI extends APIScope {
                     console.error(err);
                 });
         });
-
-        return promise;
     }
 
     /**

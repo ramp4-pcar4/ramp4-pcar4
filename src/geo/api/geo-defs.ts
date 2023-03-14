@@ -193,7 +193,7 @@ export enum LayerFormat {
 // Format indicates what form the spatial data is encoded in.
 // This refers to what the client is dealing with. So there is no "csv" format,
 // as that data gets converted into esri feature format.
-// TODO add more as we support more formats
+// Add more as we support more formats
 export enum DataFormat {
     ESRI_FEATURE = 'esriFeature',
     ESRI_RASTER = 'esriRaster',
@@ -293,9 +293,9 @@ export enum IdentifyResultFormat {
     UNKNOWN = 'unknown'
 }
 
-// TODO since MapClick and MapMove are payloads on public events, is there a proper
-//      way they should be exposed from the main app as well (like, exported? in one of those .d.ts files?)?
-//      same question probably applies to a number of other interfaces here.
+// Since MapClick and MapMove are payloads on public events, is there a proper
+// way they should be exposed from the main app as well (like, exported? in one of those .d.ts files?)?
+// same question probably applies to a number of other interfaces here.
 
 export interface MapClick {
     mapPoint: Point;
@@ -324,9 +324,6 @@ export interface Screenshot {
 }
 
 // a collection of attributes
-// TODO consider changin .features to .attributes or .attribs.
-//      features would be back-compatible, but it's confusing as we now have a Graphic class, which would be more
-//      aligned with the word "feature"
 export interface AttributeSet {
     features: Array<Attributes>;
     oidIndex: { [key: number]: number };
@@ -402,7 +399,6 @@ export interface QueryFeaturesArcServerParams extends QueryFeaturesParams {
 export interface IdentifyParameters {
     geometry: BaseGeometry;
     tolerance?: number;
-    returnGeometry?: boolean; // TODO revisit this. might make more sense to offload geom to a followup request. if we keep, we may need to add property to IdentifyItem for the geom to live in
     sublayerIds?: Array<string | number>; // Optional array of sublayer uids or server indices. When defined, the given sublayers are queried for instead of the default (visible, queryable, on-scale sublayers)
     hitTest?: Promise<Array<GraphicHitResult>>; // Optional results of local hits to incorporate in the identify
 }
@@ -476,6 +472,26 @@ export interface UrlQueryMap {
     [name: string]: string;
 }
 
+export interface GeoJsonOptions {
+    layerId?: string;
+    colour?: string;
+    fieldMetadata?: RampLayerFieldMetadataConfig;
+    sourceProjection?: string;
+    targetSR?: string | number | SpatialReference | Record<any, unknown>;
+    latField?: string;
+    lonField?: string;
+}
+
+export interface LoadLayerMetadataOptions {
+    customRenderer?: any; // valid JSON renderer. no handy typescript schema
+}
+
+export interface CsvOptions {
+    latfield?: string;
+    lonfield?: string;
+    delimiter?: string;
+}
+
 // ----------------------- CLIENT CONFIG INTERFACES -----------------------------------
 
 // TODO migrate these to /geo/api/geo-common ? if we need config interfaces before creating an instance,
@@ -543,7 +559,6 @@ export interface RampLayerMapImageSublayerConfig {
     index: number;
     name?: string;
     nameField?: string;
-    // outfields?: string; // TODO tbd if we keep this
     state?: RampLayerStateConfig;
     // following items need to be flushed out
     extent?: RampExtentConfig;
@@ -574,11 +589,11 @@ export interface RampLayerWmsSublayerConfig {
 export interface RampLayerConfig {
     id: string;
     layerType: LayerType;
-    url: string; // TODO tricky choice. really this should be optional. Graphic layers & raw geojson don't use it. But then we need undefined checks in majority of code.
+    url: string; // really this should be optional. Graphic layers & raw geojson don't use it. But then we would need undefined checks in majority of code.
     name?: string;
     state?: RampLayerStateConfig;
     customRenderer?: any;
-    // TODO revisit issue #1019 after v1.0.0
+    // NOTE would uncomment if issue #1019 gets done
     // refreshInterval?: number;
     expectedDrawTime?: number;
     expectedLoadTime?: number;
@@ -670,8 +685,8 @@ export interface MapCaptionConfig {
     scaleBar: { disabled?: boolean; imperialScale?: boolean };
 }
 
-// TODO actual ramp config is kinda wonky, split over lots of classes
-//      for now this will just serve as a nice type for the config
+// actual ramp config is kinda wonky, split over lots of classes
+// for now this will just serve as a nice type for the config
 export interface RampMapConfig {
     lodSets: Array<RampLodSetConfig>;
     extentSets: Array<RampExtentSetConfig>;
