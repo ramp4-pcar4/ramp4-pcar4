@@ -637,6 +637,7 @@ export interface RampBasemapConfig {
     name: string;
     description: string;
     altText: string;
+    hideThumbnail?: boolean;
     thumbnailUrl?: string;
     tileSchemaId: string;
     layers: Array<RampBasemapLayerConfig>;
