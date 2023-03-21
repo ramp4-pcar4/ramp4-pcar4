@@ -2,6 +2,7 @@ import { markRaw } from 'vue';
 import LayerReorderScreenV from './screen.vue';
 import messages from './lang/lang.csv?raw';
 import { LayerReorderAPI } from './api/layer-reorder';
+import { useAppbarStore } from '../appbar/store';
 
 class LayerReorderFixture extends LayerReorderAPI {
     added() {
@@ -33,10 +34,8 @@ class LayerReorderFixture extends LayerReorderAPI {
     removed() {
         // console.log(`[fixture] ${this.id} removed`);
         if (this.$iApi.fixture.get('appbar')) {
-            this.$iApi.$vApp.$store.dispatch(
-                'appbar/removeButton',
-                'layer-reorder'
-            );
+            const appbarStore = useAppbarStore(this.$vApp.$pinia);
+            appbarStore.removeButton('layer-reorder');
         }
         this.$iApi.panel.remove('layer-reorder');
     }

@@ -1,9 +1,5 @@
 import type { RampExtentConfig } from '@/geo/api';
 
-export class AreasOfInterestState {
-    areas: Array<AreaOfInterest> = [];
-}
-
 export interface AreasOfInterestConfig {
     areas: Array<AreaOfInterest>;
 }

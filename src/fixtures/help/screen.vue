@@ -26,15 +26,14 @@ import {
 import type { PropType } from 'vue';
 
 import type { InstanceAPI, PanelInstance } from '@/api';
-import { HelpStore } from './store';
+import { useHelpStore } from './store';
 import HelpSection from './section.vue';
 import axios from 'axios';
 import { marked } from 'marked';
-import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 
 const iApi = inject<InstanceAPI>('iApi')!;
-const store = useStore();
+const helpStore = useHelpStore();
 const { t } = useI18n();
 
 defineProps({
@@ -44,7 +43,7 @@ defineProps({
     }
 });
 
-const location = computed<string>(() => store.get(HelpStore.location)!);
+const location = computed<string>(() => helpStore.location);
 const helpSections = ref<Array<any>>([]);
 const watchers = ref<Array<Function>>([]);
 

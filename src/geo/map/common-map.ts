@@ -18,7 +18,6 @@ import {
 import type { RampMapConfig } from '@/geo/api';
 
 // Would ideally call this BaseMap, but that would get confused with Basemap.
-// We also use "Base" for our vuex state classes so want to avoid naming overlaps.
 // Do not add any event emits or listeners that would be tied to a specific map
 export class CommonMapAPI extends APIScope {
     /**

@@ -1,5 +1,5 @@
 import { FixtureInstance } from '@/api';
-import { OverviewmapStore } from '../store';
+import { useOverviewmapStore } from '../store';
 import type { OverviewmapConfig } from '../store';
 
 export class OverviewmapAPI extends FixtureInstance {
@@ -10,39 +10,23 @@ export class OverviewmapAPI extends FixtureInstance {
      * @memberof OverviewmapAPI
      */
     _parseConfig(overviewmapConfig?: OverviewmapConfig) {
-        this.$vApp.$store.set(
-            OverviewmapStore.basemaps,
-            overviewmapConfig?.basemaps || {}
-        );
-        this.$vApp.$store.set(OverviewmapStore.mapConfig, {
+        const overviewmapStore = useOverviewmapStore(this.$vApp.$pinia);
+
+        overviewmapStore.basemaps = overviewmapConfig?.basemaps || {};
+        overviewmapStore.mapConfig = {
             basemaps: overviewmapConfig
                 ? Object.values(overviewmapConfig.basemaps)
                 : []
-        });
-        this.$vApp.$store.set(
-            OverviewmapStore.startMinimized,
-            overviewmapConfig?.startMinimized ?? true
-        );
-        this.$vApp.$store.set(
-            OverviewmapStore.expandFactor,
-            overviewmapConfig?.expandFactor ?? 1.5
-        );
-        this.$vApp.$store.set(
-            OverviewmapStore.borderColour,
-            overviewmapConfig?.borderColour
-        );
-        this.$vApp.$store.set(
-            OverviewmapStore.borderWidth,
-            overviewmapConfig?.borderWidth
-        );
-        this.$vApp.$store.set(
-            OverviewmapStore.areaColour,
-            overviewmapConfig?.areaColour
-        );
-        this.$vApp.$store.set(
-            OverviewmapStore.areaOpacity,
-            overviewmapConfig?.areaOpacity
-        );
+        };
+        overviewmapStore.startMinimized =
+            overviewmapConfig?.startMinimized ?? true;
+        overviewmapStore.expandFactor = overviewmapConfig?.expandFactor ?? 1.5;
+        overviewmapStore.borderColour =
+            overviewmapConfig?.borderColour ?? '#FF0000';
+        overviewmapStore.borderWidth = overviewmapConfig?.borderWidth ?? 1;
+        overviewmapStore.areaColour =
+            overviewmapConfig?.areaColour ?? '#000000';
+        overviewmapStore.areaOpacity = overviewmapConfig?.areaOpacity ?? 0.25;
     }
 
     get config(): OverviewmapConfig {

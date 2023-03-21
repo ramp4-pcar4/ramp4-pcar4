@@ -18,7 +18,7 @@ import {
     ref
 } from 'vue';
 
-import { NortharrowStore } from './store';
+import { useNortharrowStore } from './store';
 import { GlobalEvents, CommonGraphicLayer, InstanceAPI } from '@/api/internal';
 import {
     Graphic,
@@ -33,14 +33,13 @@ import {
 import flag from './flag.json';
 import { debounce } from 'throttle-debounce';
 import { POLE_MARKER_LAYER_ID } from '.'; // imports from index.ts
-import { useStore } from 'vuex';
 
-const store = useStore();
+const northarrowStore = useNortharrowStore();
 const iApi = inject('iApi') as InstanceAPI;
 const el = ref();
 
-const arrowIcon = computed(() => store.get(NortharrowStore.arrowIcon));
-const poleIcon = computed(() => store.get(NortharrowStore.poleIcon));
+const arrowIcon = computed(() => northarrowStore.arrowIcon);
+const poleIcon = computed(() => northarrowStore.poleIcon);
 const angle = ref(0);
 const arrowLeft = ref(0);
 const displayArrow = ref(false);

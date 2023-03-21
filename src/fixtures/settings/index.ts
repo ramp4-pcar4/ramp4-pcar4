@@ -2,6 +2,7 @@ import { markRaw } from 'vue';
 import { SettingsAPI } from './api/settings';
 import SettingsScreenV from './screen.vue';
 import messages from './lang/lang.csv?raw';
+import { useAppbarStore } from '../appbar/store';
 
 class SettingsFixture extends SettingsAPI {
     async added() {
@@ -31,7 +32,8 @@ class SettingsFixture extends SettingsAPI {
     removed() {
         // console.log(`[fixture] ${this.id} removed`);
         if (this.$iApi.fixture.get('appbar')) {
-            this.$iApi.$vApp.$store.dispatch('appbar/removeButton', 'settings');
+            const appbarStore = useAppbarStore(this.$vApp.$pinia);
+            appbarStore.removeButton('settings');
         }
         this.$iApi.panel.remove('settings');
     }

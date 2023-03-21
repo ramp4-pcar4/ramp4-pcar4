@@ -1,63 +1,93 @@
 # The Store
 
-We use `Vuex` in RAMP to handle state storage and manipulation. The `Vuex` website (explanations and docs) can be found [here](https://vuex.vuejs.org/).
+We use `🍍 Pinia 🍍` in RAMP to handle state storage and manipulation. `Pinia` is a state management library which handles reactive data and state across components in the app.
 
-At its base, the `Vuex` store holds all the app state, and the rest of the code reacts to it.
+Full documentation can be found on the [`Pinia` website](https://pinia.vuejs.org/).
 
+## Our store setup
 
+Core has multiple stores for its internal state to keep things organized. Things like `layers` , `config`, `panels` etc.
 
-## A store module
+Each fixture is also able to have its own store. Since fixtures are removable/replaceable having core being in charge of stores for them isn't doable.
 
-We have store modules for core as well as each fixture (more on that later).
+Core stores are added in `store/store.ts`.
 
-A store module usually consists of a state object, as well as a set of `Getters`, `Actions` and `Mutations`. 
+## Store files
 
-- `Getters` retrieve info from the state object.
-- `Mutations` directly commit info to the state object.
-- `Actions` are the "I want to affect the state" function calls. These usually wrap `Mutations` and allow us to either do calculations before committing info and/or perform multiple `Mutations` in one call.
+Each store folder has 3 files;
 
+- A state file (`fixturename-state.ts`) which is where the state interface is declared, along with any other relevant types.
+- A store file (`fixturename-store.ts`) which is where the `state` ,`getters` and `actions` are, as well as the store creation function. This function allows us to have multiple copies of a fixture running with separate state.
+- An index file, which is just for store exporting.
 
+A store file contains a `defineStore(...)` function with two arguments: a unique store id and a Setup function.
 
-Each module has 3 files;
+```
+export const useNotificationStore = defineStore('notification', () => {
+  // ... setup function
+})
+```
 
-- A state file (`fixturename-state.ts`) which is where the state object is declared.
-- A store file (`fixturename-store.ts`) which is where the `Getters` ,`Actions` and `Mutations` are, as well as the store creation function. This function allows us to have multiple copies of a fixture running with separate state.
-- An index file, which is just for module exporting
+A Setup function consists of `state` properties, as well as an optional set of `getters` and `actions`.
 
+- `state` properties represent data in the store, defined using `ref()`.
+- `getters` retrieve info from the state, defined using `computed()`
+- `actions` act as methods to modify the state, defined using `function()`
 
+Below is a simple example of a Setup function for the `notification` store:
 
-## Our module setup
+```
+() => {
+    // state
+    const notificationStack = ref([]);
+    const groups = ref({});
 
-Core has multiple modules for its internal state to keep things organized. Things like `layers` , `config`, `panels` etc.
+    // getter
+    const notificationNumber = computed(() => {
+        return notificationStack.value.length >= 99
+            ? 99
+            : notificationStack.value.length;
+    });
 
-Each fixture is also able to have its own store module. Since fixtures are removable/replaceable having core being in charge of store modules for them isn't doable.
+    // action
+    function clearAll() {
+        Object.values(groups.value).forEach(group => removeGroup(group));
+        notificationStack.value = [];
+    }
 
-Core modules are added in `store/store.ts`.
-Fixture modules can be added in the fixture's `added` function using `this.$vApp.$store.registerModule(name, storeCreationFunction());`
+    return { notificationStack, groups, notificationNumber, clearAll };
+}
+```
 
+Note that any `state` property, `getter`, or `action` that will be accessed from somewhere else in the app must be returned by the Setup function.
 
+## How the store is accessed internally
 
-## Accessing the store from components
+### Accessing the store inside a component
 
-For interfacing with the store we use `vuex-pathify` which has docs [here](https://davestewart.github.io/vuex-pathify/#/).
+To interface with a store within a component, `useFixtureNameStore()` is called within `setup()`:
 
-Instead of having to do `this.$vApp.$store....` every time we want to use anything we have some nice decorators from `vuex-pathify` to make it simple.
+```
+import { useNotificationStore } from '@/stores/notification'
 
-### @Get
+const notificationStore = useNotificationStore();
+```
 
-This assigns a getter to a name in the current scope.
+Then the store and its properties can be accessed anywhere in the component:
 
-`@Get('panel/getVisible!') visible` assigns the `getVisible` getter from the `panel` module to the name `visible`. So if you wanted the value of `getVisible` anywhere in that file you access it using `this.visible`.
+```
+const number = computed(() => notificationStore.notificationNumber);
+const clearAll = () => notificationStore.clearAll();
+```
 
-### @Call
+### Accessing the store outside components
 
-This is `@Get` but for actions/mutations.
+Using a store outside a component is nearly identical to using a store within a component, with the additional requirement of passing the `pinia` instance that was passed to the app to the `useFixtureNameStore()` function call.
 
-### @Sync
+```
+const notificationStore = useNotificationStore(this.$vApp.$pinia);
+```
 
-This one allows both setting and getting.
+## How you can access the store
 
-Lets say we have`@Sync('app/welcomeMessage') message`. Then `console.log(this.message)` would print out the current value of `welcomeMessage` in the store. `this.message = "Hello World"` would commit that value to `welcomeMessage`. 
-
-
-
+The `InstanceAPI` has a method called `useStore()` which you can call to retrieve a desired store. See the [instance API](../api/instance.md#methods) documentation for details.

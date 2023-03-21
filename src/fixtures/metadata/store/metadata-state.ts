@@ -1,8 +1,9 @@
 import type { LayerInstance } from '@/api';
+import type { LineString } from 'geojson';
 
-export class MetadataState {
-    status: string = '';
-    response: DocumentFragment | string = '';
+export interface MetadataState {
+    status: string;
+    response: DocumentFragment | LineString;
 }
 
 export interface MetadataPayload {

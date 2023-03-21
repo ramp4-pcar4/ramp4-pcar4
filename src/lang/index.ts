@@ -1,4 +1,4 @@
-import { createI18n } from 'vue-i18n';
+import { createI18n, type I18n } from 'vue-i18n';
 import type {
     IntlDateTimeFormats,
     IntlNumberFormats,
@@ -35,7 +35,7 @@ const numberFormats = {
     }
 };
 
-export function i18n() {
+export function i18n(): I18n<{}, {}, {}, string, false> {
     return createI18n({
         legacy: false,
         // get the language of the page from the root `html` node

@@ -52,7 +52,7 @@ Information on more involved modifications via the API:
 - How [Focus Lists](app/focus-list.md) behave
 - The [Panels](app/panels.md) system
 - A very brief blurb about [tooltips](app/tooltips.md)
-- How [Vuex Stores](app/store.md) are used internally
+- How [Pinia Stores](app/store.md) are used internally
 - Information about various fixtures
   - [Appbar](app/appbar.md) (outdated)
   - [Details](app/details.md) (outdated)

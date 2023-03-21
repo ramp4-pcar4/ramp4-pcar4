@@ -94,10 +94,9 @@
 // This screen is the view of all geometries on a specific layer interrogated in the identify (details screen)
 
 import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
-import { useStore } from 'vuex';
 import type { PropType } from 'vue';
 import type { DetailsAPI } from './api/details';
-import { DetailsStore } from './store';
+import { useDetailsStore } from './store';
 import type { DetailsItemInstance } from './store';
 import { GlobalEvents } from '@/api';
 import type { InstanceAPI, LayerInstance, PanelInstance } from '@/api';
@@ -107,7 +106,7 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
-const store = useStore();
+const detailsStore = useDetailsStore();
 
 const props = defineProps({
     panel: {
@@ -126,14 +125,10 @@ const props = defineProps({
 });
 
 const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(
-    () => store.get(DetailsStore.properties)!
+    () => detailsStore.properties
 );
-const activeGreedy = computed<number>(
-    () => store.get(DetailsStore.activeGreedy)!
-);
-const slowLoadingFlag = computed<Boolean>(
-    () => store.get(DetailsStore.slowLoadingFlag)!
-);
+const activeGreedy = computed<number>(() => detailsStore.activeGreedy);
+const slowLoadingFlag = computed<Boolean>(() => detailsStore.slowLoadingFlag);
 const nameField = computed<string | undefined>(() => {
     const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
         props.result.uid
@@ -163,8 +158,7 @@ const hilightToggle = ref<boolean>(true);
 onMounted(() => {
     layerExists.value = iApi.geo.layer.getLayer(props.result.uid) !== undefined;
 
-    hilightToggle.value =
-        store.get(DetailsStore.hilightToggle) ?? hilightToggle.value;
+    hilightToggle.value = detailsStore.hilightToggle ?? hilightToggle.value;
     if (hilightToggle.value) {
         details.value.hilightDetailsItems(props.result.items, props.result.uid);
     }
@@ -224,7 +218,7 @@ onBeforeUnmount(() => {
  */
 const detailsClosed = () => {
     details.value.removeDetailsHilight();
-    store.set(DetailsStore.hilightToggle, true);
+    detailsStore.hilightToggle = true;
 };
 
 /**

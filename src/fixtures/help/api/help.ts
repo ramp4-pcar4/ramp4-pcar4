@@ -1,5 +1,5 @@
 import { FixtureInstance } from '@/api';
-import { HelpStore } from '../store';
+import { useHelpStore } from '../store';
 import type { HelpConfig } from '../store';
 
 export class HelpAPI extends FixtureInstance {
@@ -32,9 +32,8 @@ export class HelpAPI extends FixtureInstance {
      * @memberof HelpAPI
      */
     _parseConfig(helpConfig?: HelpConfig) {
-        if (!helpConfig) return;
-        this.$vApp.$store.set(HelpStore.location, helpConfig.location);
-
+        const helpStore = useHelpStore(this.$vApp.$pinia);
+        helpStore.location = helpConfig?.location ?? './help/';
         this.handlePanelWidths(['help']);
     }
 }

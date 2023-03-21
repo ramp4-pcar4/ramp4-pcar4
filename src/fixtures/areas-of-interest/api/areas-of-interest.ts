@@ -1,5 +1,5 @@
 import { FixtureInstance } from '@/api/internal';
-import { AreasOfInterestStore } from '../store';
+import { useAreasOfInterestStore } from '../store';
 import type { AreasOfInterestConfig } from '../store';
 
 export class AreasOfInterestAPI extends FixtureInstance {
@@ -17,9 +17,7 @@ export class AreasOfInterestAPI extends FixtureInstance {
         if (!areasOfInterest) {
             return;
         }
-        this.$iApi.$vApp.$store.set(
-            AreasOfInterestStore.areas,
-            areasOfInterest.areas
-        );
+        const areasOfInterestStore = useAreasOfInterestStore(this.$vApp.$pinia);
+        areasOfInterestStore.areas = areasOfInterest.areas;
     }
 }
