@@ -1,8 +1,8 @@
 import AppbarV from './appbar.vue';
 import { AppbarAPI } from './api/appbar';
-import { appbar } from './store';
+import { useAppbarStore } from './store';
 import type { AppbarFixtureConfig } from './store';
-import { GlobalEvents, PanelInstance } from '@/api';
+import { GlobalEvents } from '@/api';
 import messages from './lang/lang.csv?raw';
 
 // "It's a trap!" -- Admiral Appbar
@@ -14,9 +14,6 @@ class AppbarFixture extends AppbarAPI {
 
     async added() {
         // console.log(`[fixture] ${this.id} added`);
-
-        // TODO: registering a fixture store module seems like a common action almost every fixture needs; check if this can be automated somehow
-        this.$vApp.$store.registerModule('appbar', appbar());
 
         // merge in translations since this has no panel
         Object.entries(messages).forEach(value =>
@@ -50,24 +47,20 @@ class AppbarFixture extends AppbarAPI {
         );
 
         this.removed = () => {
+            const appbarStore = useAppbarStore(this.$vApp.$pinia);
             // console.log(`[fixture] ${this.id} removed`);
             unwatch();
             eventHandlers.forEach(h => this.$iApi.event.off(h));
 
             // gracefully remove all buttons first (in case anything is watching for button removal)
-            const items: any = { ...this.$vApp.$store.get('appbar/items') };
-            const tempItems: string[] = [
-                ...(this.$vApp.$store.get('appbar/temporary') as string[])
-            ];
-            Object.keys(items).forEach(item =>
-                this.$iApi.$vApp.$store.dispatch('appbar/removeButton', item)
-            );
-            tempItems.forEach(item =>
-                this.$iApi.$vApp.$store.dispatch('appbar/removeButton', item)
-            );
-
-            this.$vApp.$store.unregisterModule('appbar');
+            const items: any = { ...appbarStore.items };
+            const tempItems: string[] = [...appbarStore.temporary];
+            Object.keys(items).forEach(item => appbarStore.removeButton(item));
+            tempItems.forEach(item => appbarStore.removeButton(item));
             destroy();
+
+            // reset the store
+            appbarStore.$reset();
         };
     }
 }

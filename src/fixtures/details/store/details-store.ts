@@ -1,103 +1,68 @@
-import type { ActionContext } from 'vuex';
-import { make } from 'vuex-pathify';
-
-import { DetailsState } from './details-state';
-import type { RootState } from '@/store/state';
+import { defineStore } from 'pinia';
+import type { DetailsItemInstance } from './details-state';
 import type { LayerInstance } from '@/api';
+import type { IdentifyResult } from '@/geo/api';
+import { ref } from 'vue';
 
-type DetailsContext = ActionContext<DetailsState, RootState>;
+export const useDetailsStore = defineStore('details', () => {
+    /**
+     * An object containing a features attributes.
+     */
+    const payload = ref<Array<IdentifyResult>>([]);
 
-export enum DetailsAction {
-    removeLayer = 'removeLayer',
-    setPayload = 'setPayload'
-}
+    /**
+     * Details config properties
+     */
+    const properties = ref<{ [id: string]: DetailsItemInstance }>({});
 
-export enum DetailsMutation {
-    REMOVE_LAYER = 'REMOVE_LAYER',
-    SET_PAYLOAD = 'SET_PAYLOAD'
-}
+    /**
+     * Details default templates indexed by the identify result format.
+     */
+    const defaultTemplates = ref<{ [type: string]: string }>({});
 
-const getters = {};
+    /**
+     * The id of the feature that the current details panel is targeting.
+     */
+    const currentFeatureId = ref<string>();
 
-const actions = {
-    [DetailsAction.setPayload](context: DetailsContext, value: any): void {
-        context.commit(DetailsMutation.SET_PAYLOAD, value);
-    },
-    [DetailsAction.removeLayer](
-        context: DetailsContext,
-        layer: LayerInstance
-    ): void {
-        context.commit(DetailsMutation.REMOVE_LAYER, layer);
-    }
-};
-const mutations = {
-    [DetailsMutation.SET_PAYLOAD](state: DetailsState, value: any): void {
-        state.payload = value;
-    },
-    [DetailsMutation.REMOVE_LAYER](
-        state: DetailsState,
-        layer: LayerInstance
-    ): void {
+    /**
+     * Indicates whether greedy mode is still loading for current identify request after 500ms delay.
+     */
+    const slowLoadingFlag = ref<boolean>(false);
+
+    /**
+     * Indicates whether greedy mode is off (0), or currently running for the last request timestamp.
+     */
+    const activeGreedy = ref<number>(0);
+
+    /**
+     * Indicates the time of the last highlighting action (request highlights or clear highlights).
+     */
+    const lastHilight = ref<number>(0);
+
+    /**
+     * Whether or not the details hilight toggle is on.
+     */
+    const hilightToggle = ref<boolean>(true);
+
+    function removeLayer(layer: LayerInstance) {
         // check if this layer's results are in the payload
-        const idx = state.payload.findIndex(res => res.uid === layer.uid);
+        const idx = payload.value.findIndex(res => res.uid === layer.uid);
         if (idx !== -1) {
             // remove the result
-            state.payload.splice(idx, 1);
+            payload.value.splice(idx, 1);
         }
     }
-};
-
-export enum DetailsStore {
-    /**
-     * (State) payload: IdentifyResult[]
-     */
-    payload = 'details/payload',
-    /**
-     * (State) properties:  { [id: string]: DetailsItemInstance }
-     */
-    properties = 'details/properties',
-    /**
-     * (State) defaultTemplates:  { [type: string]: string }
-     */
-    defaultTemplates = 'details/defaultTemplates',
-    /**
-     * (State) currentFeatureId: string | undefined
-     */
-    currentFeatureId = 'details/currentFeatureId',
-    /**
-     * (State) slowLoadingFlag: boolean
-     */
-    slowLoadingFlag = 'details/slowLoadingFlag',
-    /**
-     * (State) activeGreedy: number
-     */
-    activeGreedy = 'details/activeGreedy',
-    /**
-     * (State) hilightToggle: boolean
-     */
-    hilightToggle = 'details/hilightToggle',
-    /**
-     * (State) lastHilight: number
-     */
-    lastHilight = 'details/lastHilight',
-    /**
-     * (Action) setPayload: (payload: ItemResult[])
-     */
-    setPayload = 'details/setPayload!',
-    /**
-     * (Action) removeLayer: (layer: LayerInstance)
-     */
-    removeLayer = 'details/removeLayer!'
-}
-
-export function details() {
-    const state = new DetailsState();
 
     return {
-        namespaced: true,
-        state,
-        getters: { ...getters },
-        actions: { ...actions },
-        mutations: { ...mutations, ...make.mutations(state) }
+        payload,
+        properties,
+        defaultTemplates,
+        currentFeatureId,
+        slowLoadingFlag,
+        activeGreedy,
+        lastHilight,
+        hilightToggle,
+        removeLayer
     };
-}
+});

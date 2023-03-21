@@ -69,19 +69,14 @@ import {
     LayerInstance,
     type PanelInstance
 } from '@/api';
-import {
-    MetadataStore,
-    type MetadataPayload,
-    type MetadataResult,
-    type MetadataCache
-} from './store';
+import type { MetadataPayload, MetadataResult, MetadataCache } from './store';
+import { useMetadataStore } from './store';
 
 import XSLT_en from './files/xstyle_default_en.xsl?raw';
 import XSLT_fr from './files/xstyle_default_fr.xsl?raw';
-import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 
-const store = useStore();
+const metadataStore = useMetadataStore();
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
 const el = ref();
@@ -97,8 +92,8 @@ const props = defineProps({
     }
 });
 
-const status = computed(() => store.get(MetadataStore.status));
-const response = computed(() => store.get(MetadataStore.response));
+const status = computed(() => metadataStore.status);
+const response = computed(() => metadataStore.response);
 const layerExists = ref(false); // tracks whether the layer still exists
 const cache = reactive<MetadataCache>({});
 const handlers = reactive<Array<string>>([]);
@@ -146,7 +141,7 @@ const loadMetadata = () => {
 
     if (props.payload.type === 'xml') {
         loadFromURL(props.payload.url, []).then((r: any) => {
-            iApi.$vApp.$store.set(MetadataStore.status, 'success');
+            metadataStore.status = 'success';
 
             // Append the content to the panel.
             if (r !== null) {
@@ -155,8 +150,9 @@ const loadMetadata = () => {
         });
     } else if (props.payload.type === 'html') {
         requestContent(props.payload.url).then(r => {
-            iApi.$vApp.$store.set(MetadataStore.status, r.status);
-            iApi.$vApp.$store.set(MetadataStore.response, r.response);
+            metadataStore.status = r.status;
+            //@ts-ignore
+            metadataStore.response = r.response;
         });
     }
 };
@@ -173,9 +169,8 @@ const loadFromURL = (xmlUrl: string, params: any[]) => {
     let XSLT = iApi.language === 'en' ? XSLT_en : XSLT_fr;
 
     // Translate headers.
-    XSLT = XSLT.replace(
-        /\{\{([\w.]+)\}\}/g,
-        (_: string, tag: string) => i18n(tag) //TODO do after i18n decided
+    XSLT = XSLT.replace(/\{\{([\w.]+)\}\}/g, (_: string, tag: string) =>
+        t(tag)
     );
 
     if (!cache[xmlUrl]) {

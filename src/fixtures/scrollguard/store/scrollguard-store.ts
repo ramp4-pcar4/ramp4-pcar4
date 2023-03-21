@@ -1,50 +1,12 @@
-import type { ActionContext } from 'vuex';
-import { make } from 'vuex-pathify';
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-import { ScrollguardState } from './scrollguard-state';
-import type { RootState } from '@/store/state';
+export const useScrollguardStore = defineStore('scrollguard', () => {
+    const enabled = ref(false);
 
-type ScrollguardContext = ActionContext<ScrollguardState, RootState>;
-
-export enum ScrollguardAction {
-    setEnabled = 'setEnabled'
-}
-
-export enum ScrollguardMutation {
-    SET_ENABLED = 'SET_ENABLED'
-}
-
-const getters = {};
-
-const actions = {
-    [ScrollguardAction.setEnabled](
-        context: ScrollguardContext,
-        value: any
-    ): void {
-        context.commit(ScrollguardMutation.SET_ENABLED, value);
+    function setEnabled(value: boolean) {
+        enabled.value = value;
     }
-};
-const mutations = {
-    [ScrollguardMutation.SET_ENABLED](
-        state: ScrollguardState,
-        value: any
-    ): void {
-        state.enabled = value;
-    }
-};
 
-export enum ScrollguardStore {
-    enabled = 'scrollguard/enabled'
-}
-
-export function scrollguard() {
-    const state = new ScrollguardState();
-
-    return {
-        namespaced: true,
-        state,
-        getters: { ...getters },
-        actions: { ...actions },
-        mutations: { ...mutations, ...make.mutations(state) }
-    };
-}
+    return { enabled, setEnabled };
+});

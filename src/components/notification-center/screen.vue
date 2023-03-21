@@ -44,12 +44,12 @@
 
 <script setup lang="ts">
 import { computed, type PropType } from 'vue';
-import { useStore } from 'vuex';
 import notificationList from './notification-list.vue';
 import { useI18n } from 'vue-i18n';
 import type { PanelInstance } from '@/api';
+import { useNotificationStore } from '@/stores/notification';
 
-const store = useStore();
+const notificationStore = useNotificationStore();
 const { t } = useI18n();
 
 defineProps({
@@ -59,9 +59,9 @@ defineProps({
     }
 });
 
-const number = computed(() => store.get('notification/notificationNumber'));
+const number = computed(() => notificationStore.notificationNumber);
 
-const clearAll = () => store.dispatch('notification/clearAll');
+const clearAll = () => notificationStore.clearAll();
 </script>
 
 <style lang="scss"></style>

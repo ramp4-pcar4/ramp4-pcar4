@@ -1,10 +1,12 @@
 import { APIScope, GlobalEvents, PanelInstance } from './internal';
-import { PanelMutation, PanelAction } from '@/store/modules/panel';
-import type { PanelConfig, PanelConfigRoute } from '@/store/modules/panel';
+import { usePanelStore } from '@/stores/panel';
+import type { PanelConfig, PanelConfigRoute } from '@/stores/panel';
 
 import type { I18nComponentOptions } from '@/lang';
 
 export class PanelAPI extends APIScope {
+    panelStore = usePanelStore(this.$vApp.$pinia);
+
     /**
      * Registers a provided panel object and returns the resulting `PanelInstance` objects.
      * When the panel is registered, all its screens are added to the Vue as components right away.
@@ -66,11 +68,7 @@ export class PanelAPI extends APIScope {
         }, []);
 
         // register all the panels with the store
-        panels.forEach(panel =>
-            this.$vApp.$store.set(`panel/${PanelMutation.REGISTER_PANEL}!`, {
-                panel
-            })
-        );
+        panels.forEach(panel => this.panelStore.registerPanel(panel));
 
         // return either a single panel or a set of panels, depending on the function input
         if (panels.length === 1) {
@@ -93,18 +91,13 @@ export class PanelAPI extends APIScope {
         // We first need to create a registration promise for all panels that currently don't have one
         const idsToCheck = Array.isArray(panelId) ? panelId : [panelId];
         idsToCheck.forEach((id: string) => {
-            if (
-                this.$vApp.$store.get(`panel/regPromises@${id}`) === undefined
-            ) {
-                this.$vApp.$store.set(
-                    `panel/${PanelMutation.ADD_REG_PROMISE}!`,
-                    id
-                );
+            if (this.panelStore.regPromises[id] === undefined) {
+                this.panelStore.addRegPromise(id);
             }
         });
         // Now, get all the promises and return
         return Promise.all(
-            this.$vApp.$store.get('panel/getRegPromises', idsToCheck) // not sure how to get typescript to stop yelling
+            this.panelStore.getRegPromises(idsToCheck) // not sure how to get typescript to stop yelling
         );
     }
 
@@ -122,9 +115,7 @@ export class PanelAPI extends APIScope {
             this.close(panel);
         }
 
-        this.$vApp.$store.set(`panel/${PanelMutation.REMOVE_PANEL}!`, {
-            panel
-        });
+        this.panelStore.removePanel(panel);
     }
 
     /**
@@ -137,9 +128,7 @@ export class PanelAPI extends APIScope {
     // TODO: implement overload to get a list of panels, similar to `feature.get([...])`
     get(value: string | PanelInstance): PanelInstance {
         const id = typeof value === 'string' ? value : value.id;
-        const panel = this.$vApp.$store.get<PanelInstance>(`panel/items@${id}`);
-
-        return panel;
+        return this.panelStore.items[id];
     }
 
     /**
@@ -187,7 +176,7 @@ export class PanelAPI extends APIScope {
             }
         }
         if (this.show(panel, { screen, props })) {
-            this.$vApp.$store.set(`panel/${PanelAction.openPanel}!`, { panel });
+            this.panelStore.openPanel(panel);
             this.$iApi.updateAlert(
                 this.$iApi.$i18n.t(`panels.alert.open`, {
                     name: panel.alertName
@@ -210,7 +199,8 @@ export class PanelAPI extends APIScope {
      * @memberof PanelAPI
      */
     get opened(): PanelInstance[] {
-        return this.$vApp.$store.get<PanelInstance[]>('panel/orderedItems')!;
+        //@ts-ignore
+        return this.panelStore.orderedItems;
     }
 
     /**
@@ -222,7 +212,8 @@ export class PanelAPI extends APIScope {
      * @memberof PanelAPI
      */
     get visible(): PanelInstance[] {
-        return this.$vApp.$store.get<PanelInstance[]>('panel/visible')!;
+        //@ts-ignore
+        return this.panelStore.visible;
     }
 
     /**
@@ -240,7 +231,7 @@ export class PanelAPI extends APIScope {
             panel.pin(false);
         }
 
-        this.$vApp.$store.set(`panel/${PanelAction.closePanel}!`, { panel });
+        this.panelStore.closePanel(panel);
         this.$iApi.updateAlert(
             this.$iApi.$i18n.t(`panels.alert.close`, {
                 name: panel.alertName
@@ -267,7 +258,7 @@ export class PanelAPI extends APIScope {
             panel.pin(false);
         }
 
-        this.$vApp.$store.set(`panel/${PanelAction.closePanel}!`, { panel });
+        this.panelStore.closePanel(panel);
         this.$iApi.updateAlert(
             this.$iApi.$i18n.t(`panels.alert.minimize`, {
                 name: panel.alertName
@@ -290,12 +281,7 @@ export class PanelAPI extends APIScope {
      */
     move(value: string | PanelInstance, direction: string): PanelInstance {
         const panel = this.get(value);
-
-        this.$vApp.$store.set(`panel/${PanelAction.movePanel}!`, {
-            panel,
-            direction
-        });
-
+        this.panelStore.movePanel(panel, direction);
         return panel;
     }
 
@@ -381,7 +367,8 @@ export class PanelAPI extends APIScope {
         }
 
         // NOTE: we store `pinned` in the store as a reference to a panel instance object
-        this.$vApp.$store.set('panel/pinned', pin ? panel : null);
+        //@ts-ignore
+        this.panelStore.pinned = pin ? panel : null;
 
         return panel;
     }
@@ -394,7 +381,8 @@ export class PanelAPI extends APIScope {
      * @memberof PanelAPI
      */
     get pinned(): PanelInstance | null {
-        return this.$vApp.$store.get<PanelInstance>('panel/pinned') || null;
+        //@ts-ignore
+        return this.panelStore.pinned || null;
     }
 
     /**
@@ -440,7 +428,7 @@ export class PanelAPI extends APIScope {
             panel.registerScreen(route.screen);
         }
 
-        this.$vApp.$store.set(`panel/items@${panel.id}.route`, route);
+        this.panelStore.items[panel.id].route = route;
 
         return panel;
     }
@@ -461,10 +449,9 @@ export class PanelAPI extends APIScope {
     ): PanelInstance | null {
         const panel = this.get(value);
 
-        this.$vApp.$store.set(
-            `panel/items@${panel.id}.style`,
-            replace ? style : { ...panel.style, ...style }
-        );
+        this.panelStore.items[panel.id].style = replace
+            ? style
+            : { ...panel.style, ...style };
 
         return panel;
     }
@@ -483,10 +470,8 @@ export class PanelAPI extends APIScope {
     ): PanelInstance | null {
         const panel = this.get(value);
 
-        this.$vApp.$store.set(
-            `panel/items@${panel.id}.expanded`,
-            expand !== undefined ? expand! : !panel.expanded
-        );
+        this.panelStore.items[panel.id].expanded =
+            expand !== undefined ? expand! : !panel.expanded;
 
         return panel;
     }

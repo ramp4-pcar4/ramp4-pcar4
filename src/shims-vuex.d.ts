@@ -5,8 +5,6 @@ import { FormulateGlobalInstance } from '@braid/vue-formulate';
 
 declare module '@vue/runtime-core' {
     interface ComponentCustomProperties {
-        $store: storeType;
-
         $iApi: InstanceAPI;
 
         iApi: InstanceAPI;

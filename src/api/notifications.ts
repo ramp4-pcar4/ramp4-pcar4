@@ -1,7 +1,7 @@
 import { markRaw } from 'vue';
 import { APIScope, InstanceAPI } from './internal';
-
 import NotificationsScreenV from '@/components/notification-center/screen.vue';
+import { useNotificationStore } from '@/stores/notification';
 
 export enum NotificationType {
     ERROR = 'error',
@@ -10,6 +10,8 @@ export enum NotificationType {
 }
 
 export class NotificationAPI extends APIScope {
+    notificationStore: any;
+
     /**
      * Creates an instance of Notification API
      *
@@ -27,6 +29,8 @@ export class NotificationAPI extends APIScope {
                 alertName: 'notifications.title'
             }
         });
+
+        this.notificationStore = useNotificationStore(this.$vApp.$pinia);
     }
 
     /**
@@ -37,10 +41,7 @@ export class NotificationAPI extends APIScope {
      * @memberof NotificationAPI
      */
     show(type: NotificationType, message: string) {
-        this.$vApp.$store.dispatch('notification/showNotification', {
-            type,
-            message
-        });
+        this.notificationStore.showNotification({ type, message });
     }
 
     /**
@@ -59,7 +60,7 @@ export class NotificationAPI extends APIScope {
         }
         const group = new NotificationGroup(this.$iApi, id, type, message);
 
-        this.$vApp.$store.dispatch('notification/registerGroup', group);
+        this.notificationStore.registerGroup(group);
         return group;
     }
 
@@ -71,15 +72,15 @@ export class NotificationAPI extends APIScope {
      * @memberof NotificationAPI
      */
     getGroup(id: string) {
-        const group: NotificationGroup | undefined = this.$vApp.$store.get(
-            `notification/groups@${id}`
-        );
-
+        const group: NotificationGroup | undefined =
+            this.notificationStore.groups[id];
         return group;
     }
 }
 
 export class NotificationGroup extends APIScope {
+    notificationStore = useNotificationStore(this.$vApp.$pinia);
+
     readonly id: string;
     readonly message: string;
     readonly type: NotificationType;
@@ -114,9 +115,6 @@ export class NotificationGroup extends APIScope {
      * @memberof NotificationGroup
      */
     show(message: string) {
-        this.$vApp.$store.dispatch('notification/addToGroup', {
-            id: this.id,
-            message
-        });
+        this.notificationStore.addToGroup(this.id, message);
     }
 }

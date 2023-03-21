@@ -1,6 +1,6 @@
 import { GlobalEvents, TileLayer, type InstanceAPI } from '@/api';
 import { LayerType, type Graphic, type RampBasemapConfig } from '@/geo/api';
-import { ConfigStore } from '@/store/modules/config';
+import { useConfigStore } from '@/stores/config';
 import { FOG_HILIGHT_LAYER_NAME } from '../hilight-defs';
 import { LiftHilightMode } from './lift-hilight-mode';
 
@@ -35,9 +35,8 @@ export class FogHilightMode extends LiftHilightMode {
     }
 
     private async hilightSetup() {
-        const mapConfig: RampBasemapConfig = this.$iApi.$vApp.$store.get(
-            ConfigStore.getActiveBasemapConfig
-        )! as RampBasemapConfig;
+        const mapConfig: RampBasemapConfig = useConfigStore(this.$vApp.$pinia)
+            .activeBasemapConfig as RampBasemapConfig;
         try {
             const fogLayer = await this.$iApi.geo.layer.createLayer({
                 id: FOG_HILIGHT_LAYER_NAME,

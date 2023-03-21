@@ -16,7 +16,7 @@ import type {
     PanelConfigStyle,
     AsyncComponentFactoryEh,
     AsyncComponentEh
-} from '@/store/modules/panel';
+} from '@/stores/panel';
 
 import ScreenSpinnerV from '@/components/panel-stack/screen-spinner.vue';
 const screenModules = import.meta.glob<Component>('../fixtures/*/screen.vue');

@@ -8,11 +8,12 @@ import {
 import { Graphic, LayerType, PolygonStyle } from '@/geo/api';
 import type { Extent, RampMapConfig } from '@/geo/api';
 import { EsriMapView } from '@/geo/esri';
-import { ConfigStore } from '@/store/modules/config';
-import { OverviewmapStore } from '@/fixtures/overviewmap/store';
+import { useConfigStore } from '@/stores/config';
+import { useOverviewmapStore } from '@/fixtures/overviewmap/store';
 
 export class OverviewMapAPI extends CommonMapAPI {
     protected overviewGraphicLayer: GraphicLayer;
+    overviewmapStore: any;
 
     /**
      * @constructor
@@ -26,6 +27,7 @@ export class OverviewMapAPI extends CommonMapAPI {
             url: '',
             cosmetic: true
         }) as GraphicLayer;
+        this.overviewmapStore = useOverviewmapStore(this.$vApp.$pinia);
     }
 
     /**
@@ -52,9 +54,7 @@ export class OverviewMapAPI extends CommonMapAPI {
         this._rampExtentSet = this.$iApi.geo.map.getExtentSet().clone();
         this._rampSR = this._rampExtentSet.sr.clone();
 
-        const expandFactor: number = this.$iApi.$vApp.$store.get(
-            OverviewmapStore.expandFactor
-        ) as number;
+        const expandFactor: number = this.overviewmapStore.expandFactor;
 
         // create esri view with config
         this.esriView = markRaw(
@@ -132,22 +132,10 @@ export class OverviewMapAPI extends CommonMapAPI {
             'overview-graphic'
         );
 
-        const borderColour =
-            (this.$iApi.$vApp.$store.get(
-                OverviewmapStore.borderColour
-            ) as string) ?? '#FF0000';
-        const borderWidth =
-            (this.$iApi.$vApp.$store.get(
-                OverviewmapStore.borderWidth
-            ) as number) ?? 1;
-        const areaColour =
-            (this.$iApi.$vApp.$store.get(
-                OverviewmapStore.areaColour
-            ) as string) ?? '#000000';
-        const areaOpacity =
-            (this.$iApi.$vApp.$store.get(
-                OverviewmapStore.areaOpacity
-            ) as number) ?? 0.25;
+        const borderColour = this.overviewmapStore.borderColour ?? '#FF0000';
+        const borderWidth = this.overviewmapStore.borderWidth ?? 1;
+        const areaColour = this.overviewmapStore.areaColour ?? '#000000';
+        const areaOpacity = this.overviewmapStore.areaOpacity ?? 0.25;
 
         // generate hex colour with alpha
         const areaFill = `${areaColour}${Math.round(areaOpacity * 255).toString(
@@ -215,8 +203,8 @@ export class OverviewMapAPI extends CommonMapAPI {
             return bm;
         } else {
             // search the basemaps in the main map config
-            const mainMapConfig: RampMapConfig | undefined =
-                this.$iApi.$vApp.$store.get(ConfigStore.getMapConfig);
+            const configStore = useConfigStore(this.$vApp.$pinia);
+            const mainMapConfig: RampMapConfig = configStore.config.map;
             if (mainMapConfig) {
                 const bmConfig = mainMapConfig.basemaps.find(
                     bm => bm.id === id
@@ -324,9 +312,7 @@ export class OverviewMapAPI extends CommonMapAPI {
      * @returns {Promise<void>} A promise that resolves when the overviewmap has finished updating
      */
     updateOverview(newExtent: Extent): Promise<void> {
-        const expandFactor: number = this.$iApi.$vApp.$store.get(
-            OverviewmapStore.expandFactor
-        ) as number;
+        const expandFactor: number = this.overviewmapStore.expandFactor;
 
         const zoomPromise = this.zoomMapTo(
             newExtent.expand(expandFactor),

@@ -8,16 +8,14 @@
 import { GlobalEvents, InstanceAPI } from '@/api';
 import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useStore } from 'vuex';
+import { useScrollguardStore } from './store';
 
-import { ScrollguardStore } from './store';
-
-const store = useStore();
+const scrollguardStore = useScrollguardStore();
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
 const scrollGuard = ref<HTMLElement>();
 
-const enabled = computed(() => store.get(ScrollguardStore.enabled));
+const enabled = computed(() => scrollguardStore.enabled);
 
 onMounted(() => {
     (

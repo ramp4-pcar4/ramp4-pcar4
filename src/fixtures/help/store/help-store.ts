@@ -1,25 +1,7 @@
-import { make } from 'vuex-pathify';
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-import { HelpState } from './help-state';
-
-const getters = {};
-
-const mutations = {};
-
-const actions = {};
-
-export enum HelpStore {
-    location = 'help/location'
-}
-
-export function help() {
-    const state = new HelpState();
-
-    return {
-        namespaced: true,
-        state,
-        getters: { ...getters },
-        actions: { ...actions, ...make.actions(state) },
-        mutations: { ...mutations, ...make.mutations(state) }
-    };
-}
+export const useHelpStore = defineStore('help', () => {
+    const location = ref<string>('./help/');
+    return { location };
+});

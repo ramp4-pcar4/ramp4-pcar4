@@ -1,6 +1,6 @@
 import { AttribLayer, FixtureInstance, LayerInstance } from '@/api';
 import type { Graphic, IdentifyItem, IdentifyResult } from '@/geo/api';
-import { DetailsItemInstance, DetailsStore } from '../store';
+import { DetailsItemInstance, useDetailsStore } from '../store';
 
 import type {
     DetailsConfig,
@@ -14,6 +14,8 @@ import { HilightMode } from '../../hilight/api/hilight-defs';
 export const ORIGIN_DETAILS = 'details';
 
 export class DetailsAPI extends FixtureInstance {
+    private detailsStore = useDetailsStore(this.$vApp.$pinia);
+
     get config(): DetailsConfig | undefined {
         return super.config;
     }
@@ -26,7 +28,7 @@ export class DetailsAPI extends FixtureInstance {
      */
     openDetails(payload: IdentifyResult[]): void {
         // Save the provided identify result in the store.
-        this.$vApp.$store.set(DetailsStore.setPayload, payload);
+        this.detailsStore.payload = payload;
 
         // Open the details panel.
         const layersPanel = this.$iApi.panel.get('details-layers');
@@ -75,14 +77,11 @@ export class DetailsAPI extends FixtureInstance {
         };
 
         // feature ids are composed of the layer uid and feature object id
-        const prevFeatureId = this.$vApp.$store.get(
-            DetailsStore.currentFeatureId
-        );
+        const prevFeatureId = this.detailsStore.currentFeatureId;
         const currFeatureId = `${featureData.uid}-${featureData.data.OBJECTID}`;
-        this.$vApp.$store.set(
-            DetailsStore.currentFeatureId,
-            featureData.data ? currFeatureId : null
-        );
+        this.detailsStore.currentFeatureId = featureData.data
+            ? currFeatureId
+            : undefined;
 
         // toggle rules based on last opened details panel
         if (open === false) {
@@ -114,10 +113,7 @@ export class DetailsAPI extends FixtureInstance {
     _parseConfig(config?: DetailsConfig) {
         // set the default templates if provided
         if (config && config.templates) {
-            this.$vApp.$store.set(
-                DetailsStore.defaultTemplates,
-                config.templates
-            );
+            this.detailsStore.defaultTemplates = config.templates;
         }
 
         this.handlePanelWidths(['details-items', 'details-layers']);
@@ -140,12 +136,12 @@ export class DetailsAPI extends FixtureInstance {
         );
 
         // save the items in the store
-        this.$vApp.$store.set(
-            DetailsStore.properties,
-            detailsItems.reduce<DetailsItemSet>((map, item) => {
+        this.detailsStore.properties = detailsItems.reduce<DetailsItemSet>(
+            (map, item) => {
                 map[item.id] = item;
                 return map;
-            }, {})
+            },
+            {}
         );
 
         this._validateItems();
@@ -157,16 +153,10 @@ export class DetailsAPI extends FixtureInstance {
      * @memberof DetailsAPI
      */
     _validateItems() {
-        Object.values(
-            this.$vApp.$store.get<DetailsItemInstance[]>(
-                DetailsStore.properties
-            )!
-        ).forEach(item => {
+        Object.values(this.detailsStore.properties).forEach(item => {
             if (item.template in this.$vApp.$options.components!) {
-                this.$vApp.$store.set(
-                    `${DetailsStore.properties}@${item.id}.componentId`,
-                    item.template
-                );
+                this.detailsStore.properties[item.id].componentId =
+                    item.template;
             }
         });
     }
@@ -193,17 +183,14 @@ export class DetailsAPI extends FixtureInstance {
             //      not stamp when removing, or pass in this stamp.
             // mark and save this highlight session
             const thisHighlight = Date.now();
-            this.$vApp.$store.set(DetailsStore.lastHilight, thisHighlight);
+            this.detailsStore.lastHilight = thisHighlight;
 
             const graphics: Array<Graphic> = await this.getHilightGraphics(
                 hItems,
                 layerUid
             );
 
-            if (
-                <number>this.$vApp.$store.get(DetailsStore.lastHilight) ===
-                thisHighlight
-            ) {
+            if (this.detailsStore.lastHilight === thisHighlight) {
                 // our request on this thread is still the most recent one. begin to add graphics to highlighter
                 await hilightFix.addHilight(graphics);
 
@@ -224,7 +211,7 @@ export class DetailsAPI extends FixtureInstance {
         if (hilightFix) {
             // mark that we are removing. any in-progress highlights will
             // see this new timestamp and know they are stale once finished.
-            this.$vApp.$store.set(DetailsStore.lastHilight, Date.now());
+            this.detailsStore.lastHilight = Date.now();
             await hilightFix.removeHilight(
                 hilightFix.getGraphicsByKey((origin = ORIGIN_DETAILS))
             );
@@ -304,11 +291,11 @@ export class DetailsAPI extends FixtureInstance {
         if (hilightOn) {
             // hilight got turned on
             this.hilightDetailsItems(items, layerUid);
-            this.$vApp.$store.set(DetailsStore.hilightToggle, true);
+            this.detailsStore.hilightToggle = true;
         } else {
             // hilight got turned off
             this.removeDetailsHilight();
-            this.$vApp.$store.set(DetailsStore.hilightToggle, false);
+            this.detailsStore.hilightToggle = false;
         }
     }
 

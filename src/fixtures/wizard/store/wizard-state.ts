@@ -1,14 +1,13 @@
-import { LayerType } from '@/geo/api';
 import type { LayerSource, LayerInfo } from './layer-source';
 
-export class WizardState {
+export interface WizardState {
     /**
      * Service for retreiving layer config info given a file or URL
      *
      * @type {LayerSource}
      * @memberof WizardState
      */
-    layerSource: LayerSource | null = null;
+    layerSource: LayerSource | null;
 
     /**
      * User entered URL
@@ -16,7 +15,7 @@ export class WizardState {
      * @type {string}
      * @memberof WizardState
      */
-    url: string = '';
+    url: string;
 
     /**
      * Raw file data
@@ -24,7 +23,7 @@ export class WizardState {
      * @type {ArrayBuffer}
      * @memberof WizardState
      */
-    fileData: ArrayBuffer | null = null;
+    fileData: ArrayBuffer | null;
 
     /**
      * Layer/file type selection
@@ -32,7 +31,7 @@ export class WizardState {
      * @type {string}
      * @memberof WizardState
      */
-    typeSelection = '';
+    typeSelection: string;
 
     /**
      * Layer configuration information
@@ -40,10 +39,7 @@ export class WizardState {
      * @type {LayerInfo}
      * @memberof WizardState
      */
-    layerInfo: LayerInfo = {
-        config: { id: 'Placeholder', layerType: LayerType.UNKNOWN, url: '' },
-        configOptions: []
-    };
+    layerInfo: LayerInfo;
 
     /**
      * Current wizard form step
@@ -51,7 +47,7 @@ export class WizardState {
      * @type {WizardStep}
      * @memberof WizardState
      */
-    step: WizardStep = WizardStep.UPLOAD;
+    currStep: WizardStep;
 }
 
 export enum WizardStep {

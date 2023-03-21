@@ -420,13 +420,7 @@ let config = {
                     }
                 },
                 appbar: {
-                    items: [
-                        'legend',
-                        'geosearch',
-                        'basemap',
-                        'export',
-                        'layer-reorder'
-                    ]
+                    items: ['legend', 'geosearch']
                 },
                 mapnav: {
                     items: [
