@@ -9,7 +9,7 @@
             @input="minValChanged()"
             @keypress.enter.prevent
             @keyup.enter="
-                if ($store.get('panel/mobileView')) {
+                if (panelStore.mobileView) {
                     ($event.target as HTMLInputElement).blur();
                 }
             "
@@ -26,7 +26,7 @@
             @input="maxValChanged()"
             @keypress.enter.prevent
             @keyup.enter="
-                if ($store.get('panel/mobileView')) {
+                if (panelStore.mobileView) {
                     ($event.target as HTMLInputElement).blur();
                 }
             "
@@ -39,6 +39,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { usePanelStore } from '@/stores/panel';
 import type { ColumnDefinition, FilterParams } from '../table-component.vue';
 
 export interface GridCustomNumberFilter {
@@ -48,6 +49,7 @@ export interface GridCustomNumberFilter {
     params: FilterParams;
 }
 
+const panelStore = usePanelStore();
 const { t } = useI18n();
 const props = defineProps(['params']);
 

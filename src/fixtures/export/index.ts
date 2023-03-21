@@ -1,6 +1,5 @@
 import { markRaw } from 'vue';
 import { ExportAPI } from './api/export';
-import { xport } from './store/index';
 import ExportScreenV from './screen.vue';
 import messages from './lang/lang.csv?raw';
 
@@ -10,6 +9,8 @@ import type ExportMapFixture from '../export-map';
 import type ExportTitleFixture from '../export-title';
 import type ExportNorthArrowFixture from '../export-northarrow';
 import type ExportScalebarFixture from '../export-scalebar';
+import { useAppbarStore } from '../appbar/store';
+import { useExportStore } from './store';
 
 class ExportFixture extends ExportAPI {
     initialized(): void {
@@ -23,9 +24,6 @@ class ExportFixture extends ExportAPI {
 
     added(): void {
         // console.log(`[fixture] ${this.id} added`);
-
-        // store module initializer function is called "xport" instead of "export" because export is a reserved keyword
-        this.$vApp.$store.registerModule('export', xport());
 
         this.$iApi.panel.register(
             {
@@ -75,14 +73,14 @@ class ExportFixture extends ExportAPI {
                 ?.remove();
 
             if (this.$iApi.fixture.get('appbar')) {
-                this.$iApi.$vApp.$store.dispatch(
-                    'appbar/removeButton',
-                    'export'
-                );
+                const appbarStore = useAppbarStore(this.$vApp.$pinia);
+                appbarStore.removeButton('export');
             }
 
+            const exportStore = useExportStore(this.$vApp.$pinia);
+            exportStore.$reset();
+
             this.$iApi.panel.remove('export');
-            this.$vApp.$store.unregisterModule('export');
         };
     }
 }

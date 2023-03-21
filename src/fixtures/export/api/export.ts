@@ -1,5 +1,5 @@
 import { FixtureInstance } from '@/api/internal';
-import { ExportStore } from '../store';
+import { useExportStore } from '../store';
 import type { ExportConfig } from '../store';
 
 import { fabric } from 'fabric';
@@ -47,18 +47,18 @@ export class ExportAPI extends FixtureInstance {
     _parseConfig(exportConfig?: ExportConfig) {
         if (!exportConfig) return;
 
-        this.$vApp.$store.set(ExportStore.componentSelectedState, {
+        const exportStore = useExportStore(this.$vApp.$pinia);
+
+        exportStore.componentSelectedState = {
             title: exportConfig.title?.selected ?? true,
             map: exportConfig.map?.selected ?? true,
             mapElements: exportConfig.mapElements?.selected ?? true,
             legend: exportConfig.legend?.selected ?? true,
             footnote: exportConfig.footnote?.selected ?? true,
             timestamp: exportConfig.timestamp?.selected ?? true
-        });
-        this.$vApp.$store.set(
-            ExportStore.fileName,
-            exportConfig.fileName || ''
-        );
+        };
+
+        exportStore.fileName = exportConfig.fileName || '';
 
         this.handlePanelWidths(['export']);
     }
@@ -84,6 +84,7 @@ export class ExportAPI extends FixtureInstance {
      * @memberof ExportAPI
      */
     async make(canvas: HTMLCanvasElement, panelWidth: number): Promise<void> {
+        const exportStore = useExportStore(this.$vApp.$pinia);
         this.fcFabric = new fabric.StaticCanvas(canvas, {
             backgroundColor: '#fff'
         });
@@ -94,9 +95,7 @@ export class ExportAPI extends FixtureInstance {
 
         this.options.runningHeight = 0;
 
-        const selectedState: any = this.$iApi.$vApp.$store.get(
-            ExportStore.componentSelectedState
-        );
+        const selectedState = exportStore.componentSelectedState;
 
         const exportTitleFixture: ExportSubFixture =
             this.getSubFixture('export-title');

@@ -3,6 +3,8 @@ import BasemapScreenV from './screen.vue';
 import { FixtureInstance } from '@/api';
 import BasemapNavButtonV from './nav-button.vue';
 import messages from './lang/lang.csv?raw';
+import { useAppbarStore } from '../appbar/store';
+import { useMapnavStore } from '../mapnav/store';
 
 class BasemapFixture extends FixtureInstance {
     added() {
@@ -30,10 +32,12 @@ class BasemapFixture extends FixtureInstance {
         // console.log(`[fixture] ${this.id} removed`);
 
         if (this.$iApi.fixture.get('appbar')) {
-            this.$iApi.$vApp.$store.dispatch('appbar/removeButton', 'basemap');
+            const appbarStore = useAppbarStore(this.$vApp.$pinia);
+            appbarStore.removeButton('basemap');
         }
         if (this.$iApi.fixture.get('mapnav')) {
-            this.$iApi.$vApp.$store.dispatch('mapnav/removeItem', 'basemap');
+            const mapnavStore = useMapnavStore(this.$vApp.$pinia);
+            mapnavStore.removeItem('basemap');
         }
 
         this.$iApi.panel.remove('basemap');

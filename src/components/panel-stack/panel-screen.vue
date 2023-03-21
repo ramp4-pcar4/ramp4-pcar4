@@ -72,11 +72,13 @@
 import type { InstanceAPI, PanelInstance } from '@/api';
 import { computed, inject, nextTick, ref } from 'vue';
 import type { PropType } from 'vue';
-import { useStore } from 'vuex';
+import { usePanelStore } from '@/stores/panel';
 import { useI18n } from 'vue-i18n';
+import { useAppbarStore } from '@/fixtures/appbar/store';
 
 const { t } = useI18n();
-const store = useStore();
+const panelStore = usePanelStore();
+const appbarStore = useAppbarStore();
 const iApi = inject<InstanceAPI>('iApi');
 const el = ref<Element>();
 
@@ -103,10 +105,10 @@ const props = defineProps({
 });
 
 const temporary = computed((): Array<string> | undefined =>
-    iApi?.fixture.get('appbar') ? store.get('appbar/temporary') : []
+    iApi?.fixture.get('appbar') ? appbarStore.temporary : []
 );
-const mobileView = computed(() => store.get('panel/mobileView'));
-const reorderable = computed(() => store.get('panel/reorderable'));
+const mobileView = computed(() => panelStore.mobileView);
+const reorderable = computed(() => panelStore.reorderable);
 
 const checkMode = () => !mobileView.value;
 const move = (direction: string) => {

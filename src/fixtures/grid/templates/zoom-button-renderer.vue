@@ -28,17 +28,17 @@
 import { inject, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import type { InstanceAPI, LayerInstance } from '@/api/internal';
-import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
+import { useLayerStore } from '@/stores/layer';
 
 const props = defineProps(['params']);
 const iApi = inject<InstanceAPI>('iApi')!;
-const store = useStore();
+const layerStore = useLayerStore();
 const el = ref<HTMLElement>();
 const { t } = useI18n();
 
 const getLayerByUid = (uid: string): LayerInstance | undefined =>
-    store.get('layer/getLayerByUid', uid);
+    layerStore.getLayerByUid(uid);
 
 const zoomToFeature = () => {
     const layer: LayerInstance | undefined = getLayerByUid(props.params.uid);

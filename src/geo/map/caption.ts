@@ -1,5 +1,5 @@
 import { APIScope, InstanceAPI } from '@/api/internal';
-import { MapCaptionStore } from '@/store/modules/map-caption';
+import { useMapCaptionStore } from '@/stores/map-caption';
 import type {
     Attribution,
     MapCaptionConfig,
@@ -44,11 +44,11 @@ export class MapCaptionAPI extends APIScope {
             return;
         }
 
+        const mapCaptionStore = useMapCaptionStore(this.$vApp.$pinia);
+
         // check if map coords has been disabled
         if (captionConfig.mapCoords.disabled) {
-            this.$iApi.$vApp.$store.set(MapCaptionStore.setCoords, {
-                disabled: true
-            });
+            mapCaptionStore.coords = { disabled: true };
         } else {
             // get formatter specified in the config
             const defaultFormatter: string | undefined =
@@ -60,19 +60,14 @@ export class MapCaptionAPI extends APIScope {
 
         // check if the scalebar has been disabled
         if (captionConfig.scaleBar.disabled) {
-            this.$iApi.$vApp.$store.set(MapCaptionStore.setScale, {
-                disabled: true
-            });
+            mapCaptionStore.scale = { disabled: true };
         } else {
             // get the scalebar unit specified in the config
             const useImperialUnits: boolean | undefined =
                 captionConfig.scaleBar.imperialScale;
             if (useImperialUnits !== undefined) {
                 // update the value in the store
-                this.$iApi.$vApp.$store.set(
-                    MapCaptionStore.toggleScale,
-                    useImperialUnits
-                );
+                mapCaptionStore.toggleScale(useImperialUnits);
                 // wait for the map to load since updateScale needs map view resolution
                 this.$iApi.geo.map.viewPromise.then(() => {
                     this.updateScale();
@@ -121,10 +116,8 @@ export class MapCaptionAPI extends APIScope {
             }
 
             // Update attribution
-            this.$iApi.$vApp.$store.set(
-                MapCaptionStore.setAttribution,
-                attribution
-            );
+            const mapCaptionStore = useMapCaptionStore(this.$vApp.$pinia);
+            mapCaptionStore.attribution = attribution;
         }
 
         // If the new attribution is undefined, or its text is disabled, pull text from copyright
@@ -182,10 +175,8 @@ export class MapCaptionAPI extends APIScope {
                     copyrightText || attribution.text.value;
 
                 // Update attribution
-                this.$iApi.$vApp.$store.set(
-                    MapCaptionStore.setAttribution,
-                    attribution
-                );
+                const mapCaptionStore = useMapCaptionStore(this.$vApp.$pinia);
+                mapCaptionStore.attribution = attribution;
             });
         }
     }
@@ -197,8 +188,8 @@ export class MapCaptionAPI extends APIScope {
      * @function updateScale
      */
     updateScale(): void {
-        const currentScaleBar: ScaleBar | undefined =
-            this.$iApi.$vApp.$store.get(MapCaptionStore.scale);
+        const mapCaptionStore = useMapCaptionStore(this.$vApp.$pinia);
+        const currentScaleBar: ScaleBar | undefined = mapCaptionStore.scale;
 
         // if the current scale bar is disabled, then do not update it
         if (currentScaleBar?.disabled) {
@@ -218,13 +209,13 @@ export class MapCaptionAPI extends APIScope {
             distance: 1
         };
 
-        this.$iApi.$vApp.$store.set(MapCaptionStore.setScale, {
+        mapCaptionStore.scale = {
             width: `${scaleInfo.pixels}px`,
             label: `${this.$iApi.$i18n.n(scaleInfo.distance, 'number')}${
                 scaleInfo.units
             }`,
             isImperialScale: isImperialScale
-        });
+        };
     }
 
     /**

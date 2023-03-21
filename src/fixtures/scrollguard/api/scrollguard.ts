@@ -1,5 +1,5 @@
 import { FixtureInstance } from '@/api';
-import { ScrollguardStore } from '../store';
+import { useScrollguardStore } from '../store';
 import type { ScrollguardConfig } from '../store';
 
 export class ScrollguardAPI extends FixtureInstance {
@@ -10,7 +10,7 @@ export class ScrollguardAPI extends FixtureInstance {
      * @memberof ScrollguardAPI
      */
     setEnabled(value: boolean) {
-        this.$vApp.$store.set(ScrollguardStore.enabled, value);
+        useScrollguardStore(this.$vApp.$pinia).enabled = value;
     }
 
     /**
@@ -20,10 +20,8 @@ export class ScrollguardAPI extends FixtureInstance {
      * @memberof ScrollguardAPI
      */
     _parseConfig(scrollguardConfig?: ScrollguardConfig) {
-        this.$vApp.$store.set(
-            ScrollguardStore.enabled,
-            scrollguardConfig?.enabled || false
-        );
+        useScrollguardStore(this.$vApp.$pinia).enabled =
+            scrollguardConfig?.enabled || false;
     }
 
     get config(): ScrollguardConfig | undefined {

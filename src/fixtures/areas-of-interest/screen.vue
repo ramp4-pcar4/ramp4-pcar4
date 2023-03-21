@@ -29,9 +29,8 @@ import type { PropType } from 'vue';
 import AreaItem from './item.vue';
 
 import type { PanelInstance } from '@/api';
-import { AreasOfInterestStore } from './store';
+import { useAreasOfInterestStore } from './store';
 import type { AreaOfInterest } from './store';
-import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -42,10 +41,10 @@ defineProps({
     }
 });
 
-const store = useStore();
+const areasOfInterestStore = useAreasOfInterestStore();
 
-const areas = computed<AreaOfInterest[] | undefined>(() =>
-    store.get(AreasOfInterestStore.areas)
+const areas = computed<AreaOfInterest[] | undefined>(
+    () => areasOfInterestStore.areas
 );
 let showThumbnail = ref(false);
 

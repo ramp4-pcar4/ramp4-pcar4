@@ -1,74 +1,54 @@
-import type { ActionContext } from 'vuex';
-import { make } from 'vuex-pathify';
+import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
+import type { AppbarItemInstance, AppbarItemSet } from './appbar-state';
 
-import { AppbarState, AppbarItemInstance } from './appbar-state';
-import type { RootState } from '@/store/state';
-
-type AppbarContext = ActionContext<AppbarState, RootState>;
-
-export enum AppbarAction {
-    ADD_TEMP_BUTTON = 'addTempButton',
-    REMOVE_BUTTON = 'removeButton'
-}
-
-export enum AppbarMutation {
-    ADD_TEMP_BUTTON = 'ADD_TEMP_BUTTON',
-    REMOVE_BUTTON = 'REMOVE_BUTTON'
-}
-
-const getters = {
+export const useAppbarStore = defineStore('appbar', () => {
     /**
-     * Return a list of appbar items with registered components (ones that can be rendered right now).
-     *
-     * @param {AppbarState} state
-     * @returns {AppbarItemInstance[][]}
+     * A set of all fixed appbar buttons.
      */
-    visible(state: AppbarState): (AppbarItemInstance | string)[][] {
-        return state.order
-            .map<(AppbarItemInstance | string)[]>(subArray =>
+    const items = ref<AppbarItemSet>({});
+
+    /**
+     * An ordered list of fixed appbar item ids.
+     */
+    const order = ref<string[][]>([]);
+
+    /**
+     * An ordered list of panel IDs. Used to display the buttons registered to the panels.
+     */
+    const temporary = ref<string[]>([]);
+
+    const visible = computed<(AppbarItemInstance | string)[][]>(() =>
+        order.value
+            .map<(AppbarItemInstance | string)[]>((subArray: string[]) =>
                 subArray
-                    .map(
-                        item =>
-                            state.items[
-                                typeof item === 'string' ? item : item.id
-                            ]
-                    )
+                    .map(id => items.value[id])
                     .filter(item => {
                         if (typeof item === 'string' || item.componentId) {
                             return true;
                         }
                     })
             )
-            .filter(subArray => subArray.length > 0);
-    }
-};
+            .filter(subArray => subArray.length > 0)
+    );
 
-const actions = {
-    [AppbarAction.ADD_TEMP_BUTTON](context: AppbarContext, value: string) {
-        if (!context.state.temporary.find(id => id === value)) {
-            context.commit(AppbarMutation.ADD_TEMP_BUTTON, value);
+    function addTempButton(value: string) {
+        if (!temporary.value.includes(value)) {
+            temporary.value.push(value);
         }
-    },
-    [AppbarAction.REMOVE_BUTTON](context: AppbarContext, value: string) {
-        context.commit(AppbarMutation.REMOVE_BUTTON, value);
     }
-};
 
-const mutations = {
-    [AppbarMutation.ADD_TEMP_BUTTON](state: AppbarState, value: string) {
-        state.temporary.push(value);
-    },
-    [AppbarMutation.REMOVE_BUTTON](state: AppbarState, value: string) {
-        const idx = state.temporary.indexOf(value);
+    function removeButton(value: string) {
+        const idx = temporary.value.indexOf(value);
         if (idx !== -1) {
             // remove from temporary list
-            state.temporary.splice(idx, 1);
+            temporary.value.splice(idx, 1);
         }
-        if (value in state.items) {
+        if (value in items.value) {
             // remove from items
-            delete state.items[value];
+            delete items.value[value];
         }
-        state.order.forEach((subItems: (string | AppbarItemInstance)[]) => {
+        order.value.forEach((subItems: (string | AppbarItemInstance)[]) => {
             const idx = subItems.indexOf(value);
             if (idx !== -1) {
                 // remove from order sub group list
@@ -76,19 +56,6 @@ const mutations = {
             }
         });
     }
-};
 
-export function appbar() {
-    const state = new AppbarState();
-
-    return {
-        namespaced: true,
-        state,
-        getters: { ...getters },
-        actions: { ...actions },
-        mutations: {
-            ...mutations,
-            ...make.mutations(['items', 'order', 'temporary', 'tempButtonDict'])
-        }
-    };
-}
+    return { items, order, temporary, visible, addTempButton, removeButton };
+});

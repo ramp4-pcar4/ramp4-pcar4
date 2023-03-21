@@ -2,18 +2,18 @@ import { markRaw } from 'vue';
 import GeosearchScreenV from './screen.vue';
 import { GeosearchAPI } from './api/geosearch';
 import GeosearchNavButtonV from './nav-button.vue';
-import { geosearch } from './store/index';
 
 import messages from './lang/lang.csv?raw';
+import { useAppbarStore } from '../appbar/store';
+import { useGeosearchStore } from './store';
+import { useMapnavStore } from '../mapnav/store';
 
 class GeosearchFixture extends GeosearchAPI {
     async added() {
         // console.log(`[fixture] ${this.id} added`);
 
-        this.$vApp.$store.registerModule(
-            'geosearch',
-            geosearch({ ...this.config, language: this.$iApi.language })
-        );
+        const geosearchStore = useGeosearchStore(this.$vApp.$pinia);
+        geosearchStore.initService(this.$iApi.language, this.config);
 
         this.$iApi.component('geosearch-nav-button', GeosearchNavButtonV);
 
@@ -39,17 +39,18 @@ class GeosearchFixture extends GeosearchAPI {
         // console.log(`[fixture] ${this.id} removed`);
 
         if (this.$iApi.fixture.get('appbar')) {
-            this.$iApi.$vApp.$store.dispatch(
-                'appbar/removeButton',
-                'geosearch'
-            );
+            const appbarStore = useAppbarStore(this.$vApp.$pinia);
+            appbarStore.removeButton('geosearch');
         }
 
         if (this.$iApi.fixture.get('mapnav')) {
-            this.$iApi.$vApp.$store.dispatch('mapnav/removeItem', 'geosearch');
+            const mapnavStore = useMapnavStore(this.$vApp.$pinia);
+            mapnavStore.removeItem('geosearch');
         }
 
-        this.$vApp.$store.unregisterModule('geosearch');
+        const geosearchStore = useGeosearchStore(this.$vApp.$pinia);
+        geosearchStore.$reset();
+
         this.$iApi.panel.remove('geosearch');
     }
 }

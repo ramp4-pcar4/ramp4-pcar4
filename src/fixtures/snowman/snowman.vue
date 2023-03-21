@@ -36,7 +36,7 @@ onMounted(() => {
 
         // NOTE: 📢 it's possible to call the store directly from a fixture component, but DON'T DO THIS! 🛑
         // always use the API, that's what it's for, let it call the store directly
-        // 👉 this.$iApi.$vApp.$store.set('fixture/REMOVE_FIXTURE!', { value: this }); ❌
+        // 👉 useFixtureStore(this.$iApi.$vApp.$pinia).removeFixture(this) ❌
 
         // 👇 this is the correct way ✔
         props.fixture.remove(); // or // this.$options.iApi.fixture.remove(this.fixture);

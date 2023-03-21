@@ -14,10 +14,9 @@
 
 <script setup lang="ts">
 import { computed, inject, onBeforeMount, ref } from 'vue';
-import { PanelInstance, type InstanceAPI } from '@/api';
+import { type InstanceAPI, PanelInstance } from '@/api';
 import TableComponent from '@/fixtures/grid/table-component.vue';
-import { GridStore } from './store';
-import { useStore } from 'vuex';
+import { useGridStore } from './store';
 import { useI18n } from 'vue-i18n';
 
 defineProps({
@@ -31,10 +30,10 @@ defineProps({
 });
 
 const iApi = inject<InstanceAPI>('iApi')!;
-const store = useStore();
+const gridStore = useGridStore();
 const { t } = useI18n();
 
-const currentId = computed<string>(() => store.get(GridStore.currentId)!);
+const currentId = computed<string>(() => gridStore.currentId!);
 const currentUid = ref<string>('');
 
 onBeforeMount(() => {

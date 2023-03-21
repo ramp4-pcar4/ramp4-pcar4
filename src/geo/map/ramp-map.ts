@@ -34,11 +34,11 @@ import type {
     Screenshot
 } from '@/geo/api';
 import { EsriLOD, EsriMapView } from '@/geo/esri';
-import { LayerStore } from '@/store/modules/layer';
+import { useLayerStore } from '@/stores/layer';
 import { MapCaptionAPI } from './caption';
 import { markRaw, toRaw } from 'vue';
-import { ConfigStore } from '@/store/modules/config';
-import { throttle, debounce } from 'throttle-debounce';
+import { useConfigStore } from '@/stores/config';
+import { debounce, throttle } from 'throttle-debounce';
 
 export class MapAPI extends CommonMapAPI {
     // API for managing the maptip
@@ -105,9 +105,8 @@ export class MapAPI extends CommonMapAPI {
      */
     protected createMapView(basemap?: string | Basemap): void {
         // get the config from the store
-        const config: RampMapConfig | undefined = this.$iApi.$vApp.$store.get(
-            ConfigStore.getMapConfig
-        );
+        const configStore = useConfigStore(this.$vApp.$pinia);
+        const config: RampMapConfig = configStore.config.map;
         if (!config) {
             throw new Error(
                 'Attempted to create map view without a map config'
@@ -361,7 +360,8 @@ export class MapAPI extends CommonMapAPI {
         this.esriMap.basemap = toRaw(bm.esriBasemap);
 
         // update the store
-        this.$iApi.$vApp.$store.set(ConfigStore.setActiveBasemap, bm.config);
+        const configStore = useConfigStore(this.$vApp.$pinia);
+        configStore.activeBasemapConfig = bm.config;
     }
 
     /**
@@ -379,10 +379,10 @@ export class MapAPI extends CommonMapAPI {
             return false;
         }
 
+        const configStore = useConfigStore(this.$vApp.$pinia);
         const bm: Basemap = this.findBasemap(basemapId);
-        const currentBasemp: RampBasemapConfig = this.$iApi.$vApp.$store.get(
-            ConfigStore.getActiveBasemapConfig
-        )! as RampBasemapConfig;
+        const currentBasemp: RampBasemapConfig =
+            configStore.activeBasemapConfig as RampBasemapConfig;
 
         const schemaChanged: boolean =
             currentBasemp.tileSchemaId !== bm.tileSchemaId;
@@ -446,6 +446,7 @@ export class MapAPI extends CommonMapAPI {
                 // could also await for this but its technically not necessary thanks to the watcher.
                 layer.initiate();
             }
+            const layerStore = useLayerStore(this.$vApp.$pinia);
             let timeElapsed = 0;
             // Alternative to this: use event API and watch for layer initiated and layer error events??
             const layerWatcher = setInterval(() => {
@@ -455,10 +456,8 @@ export class MapAPI extends CommonMapAPI {
                     layer.layerState === LayerState.ERROR
                 ) {
                     clearInterval(layerWatcher);
-                    this.$iApi.$vApp.$store.set(LayerStore.addErrorLayers, [
-                        layer
-                    ]);
-                    layer.updateLayerState(LayerState.ERROR); // need this thanks to an edge case where the legend sometimes doesnt update
+                    layerStore.addErrorLayer(layer);
+                    layer.onError(); // need this thanks to an edge case where the legend sometimes doesnt update
                     reject();
                 } else if (
                     layer.initiationState === InitiationState.INITIATED &&
@@ -466,7 +465,7 @@ export class MapAPI extends CommonMapAPI {
                 ) {
                     clearInterval(layerWatcher);
                     this.esriMap?.add(layer.esriLayer);
-                    this.$iApi.$vApp.$store.set(LayerStore.addLayers, [layer]);
+                    layerStore.addLayer(layer);
                     // if index is provided, reorder the layer to the given index
                     // use the reorder method so that the esri map-stack and the layer store can stay in sync
                     if (index !== undefined) {
@@ -502,9 +501,8 @@ export class MapAPI extends CommonMapAPI {
                 return;
             }
 
-            const layers = this.$vApp.$store.get<LayerInstance[]>(
-                LayerStore.layers
-            )!;
+            const layerStore = useLayerStore(this.$vApp.$pinia);
+            const layers = layerStore.layers as unknown as LayerInstance[];
 
             // number of layers in store but not on map, probably errored (up to target index)
             const notLoaded: number = layers
@@ -529,7 +527,7 @@ export class MapAPI extends CommonMapAPI {
             this.esriMap.reorder(layer.esriLayer, esriLayerIndex);
 
             // sync layer store order with map order
-            this.$vApp.$store.set(LayerStore.reorderLayer, { layer, index });
+            layerStore.reorderLayer(layer, index);
             this.$iApi.event.emit(GlobalEvents.MAP_REORDER, {
                 layer,
                 newIndex: index
@@ -632,13 +630,11 @@ export class MapAPI extends CommonMapAPI {
         // Clean up layer
         layerInstance.terminate();
 
-        this.$iApi.$vApp.$store.set(LayerStore.removeLayer, layerInstance);
+        const layerStore = useLayerStore(this.$vApp.$pinia);
+        layerStore.removeLayer(layerInstance);
 
         // Clean up the layer config store
-        this.$iApi.$vApp.$store.set(
-            LayerStore.removeLayerConfig,
-            layerInstance.id
-        );
+        layerStore.removeLayerConfig(layerInstance.id);
 
         // Remove the layer from the map
         this.esriMap.remove(layerInstance.esriLayer);
@@ -891,9 +887,9 @@ export class MapAPI extends CommonMapAPI {
      */
 
     runIdentify(targetPoint: MapClick | Point): MapIdentifyResult {
-        const layers: LayerInstance[] | undefined = this.$vApp.$store.get(
-            LayerStore.layers
-        );
+        const layers: LayerInstance[] | undefined = useLayerStore(
+            this.$vApp.$pinia
+        ).layers as unknown as LayerInstance[];
 
         let mapClick: MapClick;
         if (targetPoint instanceof Point) {
@@ -992,9 +988,10 @@ export class MapAPI extends CommonMapAPI {
         }
 
         // Get a copy of all layers from the layer store (this will be in reverse order)
-        const layers: LayerInstance[] | undefined = this.$vApp.$store
-            .get<LayerInstance[]>(LayerStore.layers)
-            ?.slice(0);
+        const layers: LayerInstance[] | undefined = (
+            useLayerStore(this.$vApp.$pinia)
+                .layers as unknown as LayerInstance[]
+        )?.slice(0);
 
         // Don't perform a hittest request if the layers array hasn't been established yet.
         if (layers === undefined) {

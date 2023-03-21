@@ -1,9 +1,10 @@
 import { markRaw } from 'vue';
 import { MetadataAPI } from './api/metadata';
-import { metadata } from './store/index';
 import MetadataScreenV from './screen.vue';
 
 import messages from './lang/lang.csv?raw';
+import { useAppbarStore } from '../appbar/store';
+import { useMetadataStore } from './store';
 
 class MetadataFixture extends MetadataAPI {
     async added() {
@@ -27,19 +28,17 @@ class MetadataFixture extends MetadataAPI {
             { i18n: { messages } }
         );
 
-        this.$vApp.$store.registerModule('metadata', metadata());
-
         this.removed = () => {
             // console.log(`[fixture] ${this.id} removed`);
             if (this.$iApi.fixture.get('appbar')) {
-                this.$iApi.$vApp.$store.dispatch(
-                    'appbar/removeButton',
-                    'metadata'
-                );
+                const appbarStore = useAppbarStore(this.$vApp.$pinia);
+                appbarStore.removeButton('metadata');
             }
 
+            const metadataStore = useMetadataStore(this.$vApp.$pinia);
+            metadataStore.$reset();
+
             this.$iApi.panel.remove('metadata');
-            this.$vApp.$store.unregisterModule('metadata');
         };
     }
 }

@@ -1,6 +1,6 @@
 import MapnavV from './mapnav.vue';
 import { MapnavAPI } from './api/mapnav';
-import { mapnav } from './store';
+import { useMapnavStore } from './store';
 import type { MapnavFixtureConfig } from './store';
 import { GlobalEvents } from '@/api';
 import messages from './lang/lang.csv?raw';
@@ -8,9 +8,6 @@ import messages from './lang/lang.csv?raw';
 class MapnavFixture extends MapnavAPI {
     async added() {
         // console.log(`[fixture] ${this.id} added`);
-
-        // TODO: registering a fixture store module seems like a common action almost every fixture needs; check if this can be automated somehow
-        this.$vApp.$store.registerModule('mapnav', mapnav());
 
         // since this has no panel we need to merge in translations ourselves
         // TODO?: see if giving fixtures a nicer way to merge translations w/o panel makes sense
@@ -44,12 +41,10 @@ class MapnavFixture extends MapnavAPI {
             this.$iApi.event.off(handler);
 
             // gracefully remove all buttons first (in case anything is watching for button removal)
-            const items: any = { ...this.$vApp.$store.get('mapnav/items') };
-            Object.keys(items).forEach(item =>
-                this.$iApi.$vApp.$store.dispatch('mapnav/removeItem', item)
-            );
-
-            this.$vApp.$store.unregisterModule('mapnav');
+            const mapnavStore = useMapnavStore(this.$vApp.$pinia);
+            const items: any = { ...mapnavStore.items };
+            Object.keys(items).forEach(item => mapnavStore.removeItem(item));
+            mapnavStore.$reset();
             destroy();
         };
     }

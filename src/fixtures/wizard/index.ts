@@ -1,9 +1,9 @@
 import { markRaw } from 'vue';
 import { WizardAPI } from './api/wizard';
 import WizardScreenV from './screen.vue';
-import { wizard } from './store/index';
 import { LayerSource } from './store/layer-source';
 import messages from './lang/lang.csv?raw';
+import { useWizardStore } from './store';
 
 class WizardFixture extends WizardAPI {
     added() {
@@ -32,15 +32,16 @@ class WizardFixture extends WizardAPI {
 
         let layerSource: LayerSource | undefined = new LayerSource(this.$iApi);
 
-        this.$vApp.$store.registerModule('wizard', wizard());
-        this.$vApp.$store.set('wizard/layerSource', layerSource);
+        const wizardStore = useWizardStore(this.$vApp.$pinia);
+        //@ts-ignore
+        wizardStore.layerSource = layerSource;
 
         // override the removed method here to get access to scope
         this.removed = () => {
             // console.log(`[fixture] ${this.id} removed`);
             this.$iApi.panel.remove('wizard');
-            this.$vApp.$store.unregisterModule('wizard');
             layerSource = undefined; // will be cleaned up by JS garbage collector
+            wizardStore.$reset();
         };
     }
 }

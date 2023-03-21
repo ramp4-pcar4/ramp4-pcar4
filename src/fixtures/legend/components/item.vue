@@ -503,7 +503,7 @@
 import { GlobalEvents, InstanceAPI, LayerInstance } from '@/api';
 import type { LegendSymbology, RampLayerConfig } from '@/geo/api';
 import { LayerControl } from '@/geo/api';
-import { LayerStore } from '@/store/modules/layer';
+import { useLayerStore } from '@/stores/layer';
 import to from 'await-to-js';
 import { marked } from 'marked';
 import {
@@ -521,13 +521,14 @@ import { InfoType, SectionItem } from '../store/section-item';
 import Checkbox from './checkbox.vue';
 import LegendOptions from './legend-options.vue';
 import SymbologyStack from './symbology-stack.vue';
-import { useStore } from 'vuex';
+import { usePanelStore } from '@/stores/panel';
 import { useI18n } from 'vue-i18n';
 
 import type { LegendAPI } from '../api/legend';
 import type { LegendItem } from '../store/legend-item';
 
-const store = useStore();
+const layerStore = useLayerStore();
+const panelStore = usePanelStore();
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
 const el = ref();
@@ -539,8 +540,8 @@ const props = defineProps({
     }
 });
 
-const mobileMode = ref(store.get('panel/mobileView'));
-const layerConfigs = computed(() => store.get(LayerStore.layerConfigs));
+const mobileMode = ref(panelStore.mobileView);
+const layerConfigs = computed(() => layerStore.layerConfigs);
 const symbologyStack = ref<Array<LegendSymbology>>([]); // ref instead of reactive to maintain reactivity after promise
 const hovered = ref(false);
 
@@ -721,17 +722,8 @@ const reloadLayer = () => {
         if (props.legendItem.layer !== undefined) {
             toRaw(props.legendItem!.layer!)
                 .reload()
-                .then(() =>
-                    iApi.$vApp.$store.set(
-                        LayerStore.removeErrorLayer,
-                        props.legendItem.layer!
-                    )
-                )
-                .catch(() =>
-                    iApi.$vApp.$store.set(LayerStore.addErrorLayers, [
-                        props.legendItem.layer!
-                    ])
-                );
+                .then(() => layerStore.removeErrorLayer(props.legendItem.layer))
+                .catch(() => layerStore.addErrorLayer(props.legendItem.layer));
         } else {
             // otherwise attempt to re-create layer with layer config
             const layerConfig =
@@ -764,13 +756,13 @@ const recreateLayer = async (layerConfig: RampLayerConfig) => {
         // same code to how layers are initialized when layer config array changes, expose this as layer API method?
         await new Promise<LayerInstance>(async (resolve, reject) => {
             const layer = iApi.geo.layer.createLayer(layerConfig);
-            iApi.$vApp.$store.set(LayerStore.removeErrorLayer, layer!);
+            layerStore.removeErrorLayer(layer);
             // check if the layer error'd while already in the map
             const checkLayer = iApi.geo.layer.getLayer(layer.id);
             if (checkLayer) {
                 const [reloadErr] = await to(toRaw(checkLayer).reload());
                 if (reloadErr) {
-                    iApi.$vApp.$store.set(LayerStore.addErrorLayers, [layer!]);
+                    layerStore.addErrorLayer(layer);
                     reject(reloadErr);
                 }
             } else {
@@ -803,14 +795,8 @@ const cancelLayer = () => {
                 // layer is now there, time to remove!
                 iApi.geo.map.removeLayer(layerItem.layer);
                 // remove layer and layer config from store
-                iApi.$vApp.$store.set(
-                    LayerStore.removeErrorLayer,
-                    layerItem.layerId
-                );
-                iApi.$vApp.$store.set(
-                    LayerStore.removeLayerConfig,
-                    layerItem.layerId
-                );
+                layerStore.removeErrorLayer(layerItem.layerId);
+                layerStore.removeLayerConfig(layerItem.layerId);
                 // remove layer item from legend
                 iApi.fixture
                     .get<LegendAPI>('legend')

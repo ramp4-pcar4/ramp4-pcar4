@@ -1,6 +1,6 @@
 import { markRaw } from 'vue';
 import { FixtureInstance } from '@/api';
-import type { AsyncComponentEh } from '@/store/modules/panel';
+import type { AsyncComponentEh } from '@/stores/panel';
 
 import GazeboAppbarButtonV from './appbar-button.vue';
 

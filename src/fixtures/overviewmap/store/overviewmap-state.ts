@@ -1,13 +1,13 @@
-import type { RampBasemapConfig } from '@/geo/api';
+import type { RampBasemapConfig, RampMapConfig } from '@/geo/api';
 
-export class OverviewmapState {
+export interface OverviewmapState {
     /**
      * The map configuration
      *
      * @type {RampMapConfig}
      * @memberof OverviewmapState
      */
-    mapConfig: any = undefined;
+    mapConfig: RampMapConfig;
 
     /**
      * A list of basemaps
@@ -15,7 +15,7 @@ export class OverviewmapState {
      * @type {{ [key: string]: RampBasemapConfig }}
      * @memberof OverviewmapState
      */
-    basemaps: { [key: string]: RampBasemapConfig } = {};
+    basemaps: { [key: string]: RampBasemapConfig };
 
     /**
      * Initial state of the overview map
@@ -23,7 +23,7 @@ export class OverviewmapState {
      * @type {boolean}
      * @memberof OverviewmapState
      */
-    startMinimized = true;
+    startMinimized: boolean;
 
     /**
      * Ratio of the overview map's extent size compared to the main map's extent size
@@ -31,7 +31,7 @@ export class OverviewmapState {
      * @type {number}
      * @memberof OverviewmapState
      */
-    expandFactor = 1.5;
+    expandFactor: number;
 
     /**
      * Colour of the area border
@@ -39,7 +39,7 @@ export class OverviewmapState {
      * @type {string}
      * @memberof OverviewmapState
      */
-    borderColour = '#FF0000';
+    borderColour: string;
 
     /**
      * Width of the area border
@@ -47,7 +47,7 @@ export class OverviewmapState {
      * @type {number}
      * @memberof OverviewmapState
      */
-    borderWidth = 1;
+    borderWidth: number;
 
     /**
      * Colour of the area rectangle
@@ -55,7 +55,7 @@ export class OverviewmapState {
      * @type {string}
      * @memberof OverviewmapState
      */
-    areaColour = '#000000';
+    areaColour: string;
 
     /**
      * Opacity of the area rectangle
@@ -63,7 +63,7 @@ export class OverviewmapState {
      * @type {number}
      * @memberof OverviewmapState
      */
-    areaOpacity = 0.25;
+    areaOpacity: number;
 }
 
 export interface OverviewmapConfig {

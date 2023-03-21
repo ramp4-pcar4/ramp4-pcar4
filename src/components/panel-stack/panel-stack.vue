@@ -23,13 +23,13 @@ import PanelContainer from './panel-container.vue';
 import type { InstanceAPI } from '@/api';
 import { computed, inject, onMounted, ref } from 'vue';
 import type { ComponentPublicInstance } from 'vue';
-import { useStore } from 'vuex';
+import { usePanelStore } from '@/stores/panel';
 
-const store = useStore();
+const panelStore = usePanelStore();
 const iApi = inject<InstanceAPI>('iApi');
 const el = ref<ComponentPublicInstance>();
 
-const mobileMode = computed(() => store.get('panel/mobileView'));
+const mobileMode = computed(() => panelStore.mobileView);
 
 onMounted(() => {
     // sync the `panel-stack` width into the store so that visible can get calculated
@@ -43,18 +43,19 @@ onMounted(() => {
 
         // fire event when mobile mode changes
         if (oldMode !== newMode) {
-            store.set('panel/mobileView', newMode);
+            panelStore.mobileView = newMode;
             iApi?.event.emit(GlobalEvents.RAMP_MOBILEVIEW_CHANGE, newMode);
         }
 
-        store.set('panel/stackWidth', entries[0].contentRect.width);
+        panelStore.setStackWidth(entries[0].contentRect.width);
     });
 
     resizeObserver.observe(el.value?.$el);
 });
 
 const visible = (screenSize: string | null): PanelInstance[] | undefined =>
-    store.get('panel/getVisible', screenSize);
+    //@ts-ignore
+    panelStore.getVisible(screenSize);
 
 const enter = (el: Element, done: () => void): void => {
     animateTransition(el, done, [

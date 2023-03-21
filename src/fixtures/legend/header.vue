@@ -107,13 +107,12 @@
 
 <script setup lang="ts">
 import { computed, inject } from 'vue';
-import { LegendStore } from './store';
+import { useLegendStore } from './store';
 import { GlobalEvents, InstanceAPI } from '@/api/internal';
-import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import type { LegendAPI } from './api/legend';
 
-const store = useStore();
+const legendStore = useLegendStore();
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
 
@@ -144,7 +143,7 @@ const getLayerReorderExists = (): boolean => {
 };
 
 const isControlAvailable = (control: string): boolean => {
-    const hc: Array<string> | undefined = store.get(LegendStore.headerControls);
+    const hc: Array<string> | undefined = legendStore.headerControls;
     return hc!.includes(control);
 };
 </script>

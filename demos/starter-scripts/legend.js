@@ -247,10 +247,9 @@ rInstance.fixture
         rInstance.panel.pin('legend');
 
         // manually override CleanAir item's uid for testing
-        let items = rInstance.$vApp.$store.get('legend/children');
-        items[1].children[0]._uid = '😎';
-
         window.lApi = window.debugInstance.fixture.get('legend');
+        let item = window.lApi.getLayerItem('CleanAir');
+        item.uid = '😎';
 
         // run test suite
         await testSuite();

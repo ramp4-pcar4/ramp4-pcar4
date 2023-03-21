@@ -138,33 +138,23 @@ import {
     ref,
     watch
 } from 'vue';
-import { MapCaptionStore } from '@/store/modules/map-caption';
-import { ConfigStore } from '@/store/modules/config';
+import { useMapCaptionStore } from '@/stores/map-caption';
 import NotificationsCaptionButton from '@/components/notification-center/caption-button.vue';
 import AboutRampDropdown from '@/components/about-ramp/about-ramp-dropdown.vue';
-import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 
-import type {
-    Attribution,
-    MapCoords,
-    RampMapConfig,
-    ScaleBar
-} from '@/geo/api';
 import type { InstanceAPI } from '@/api';
+import { useConfigStore } from '@/stores/config';
 
-const store = useStore();
+const mapCaptionStore = useMapCaptionStore();
+const configStore = useConfigStore();
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
 
-const scale = computed(() => store.get<ScaleBar>(MapCaptionStore.scale));
-const attribution = computed(() =>
-    store.get<Attribution>(MapCaptionStore.attribution)
-);
-const coords = computed(() => store.get<MapCoords>(MapCaptionStore.coords));
-const mapConfig = computed(() =>
-    store.get<RampMapConfig>(ConfigStore.getMapConfig)
-);
+const scale = computed(() => mapCaptionStore.scale);
+const attribution = computed(() => mapCaptionStore.attribution);
+const coords = computed(() => mapCaptionStore.coords);
+const mapConfig = computed(() => configStore.config.map);
 
 const lang = ref<Array<string>>([]);
 const watchers = reactive<Array<Function>>([]);
@@ -201,7 +191,7 @@ const changeLang = (lang: string) => {
  */
 const onScaleClick = () => {
     // undefined argument will toggle the scale unit
-    iApi.$vApp.$store.set(MapCaptionStore.toggleScale, undefined);
+    mapCaptionStore.toggleScale();
     iApi.geo.map.caption.updateScale();
 };
 </script>
