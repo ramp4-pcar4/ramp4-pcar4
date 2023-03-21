@@ -1,18 +1,17 @@
 import { markRaw } from 'vue';
 import { HelpAPI } from './api/help';
-import { help } from './store/index';
 import HelpScreenV from './screen.vue';
 import HelpNavButtonV from './nav-button.vue';
 
 import messages from './lang/lang.csv?raw';
+import { useMapnavStore } from '../mapnav/store';
+import { useHelpStore } from './store';
 
 class HelpFixture extends HelpAPI {
     added() {
         // console.log(`[fixture] ${this.id} added`);
 
         this.$iApi.component('help-nav-button', HelpNavButtonV);
-
-        this.$vApp.$store.registerModule('help', help());
 
         this.$iApi.panel.register(
             {
@@ -44,10 +43,13 @@ class HelpFixture extends HelpAPI {
             unwatch();
 
             if (this.$iApi.fixture.get('mapnav')) {
-                this.$iApi.$vApp.$store.dispatch('mapnav/removeItem', 'help');
+                const mapnavStore = useMapnavStore(this.$vApp.$pinia);
+                mapnavStore.removeItem('help');
             }
 
-            this.$vApp.$store.unregisterModule('help');
+            const helpStore = useHelpStore(this.$vApp.$pinia);
+            helpStore.$reset();
+
             this.$iApi.panel.remove('help');
         };
     }

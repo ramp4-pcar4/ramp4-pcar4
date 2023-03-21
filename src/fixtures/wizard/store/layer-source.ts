@@ -5,7 +5,7 @@ import { UrlWrapper } from '@/geo/api';
 import axios from 'axios';
 
 export interface LayerInfo {
-    config: RampLayerConfig; // the layer's config
+    config: RampLayerConfig | undefined; // the layer's config
     configOptions: Array<string>; // the layer's config options that will be taken from user input in the UI
     fields?: Array<FieldDefinition>; // the fields for the layer
     latLonFields?: { lat: Array<string>; lon: Array<string> }; // lat and lon are a list of field names that can be possible lat/lon fields

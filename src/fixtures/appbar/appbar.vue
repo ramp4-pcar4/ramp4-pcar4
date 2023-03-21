@@ -120,14 +120,16 @@ import MoreButton from './more-button.vue';
 import NotificationsAppbarButton from '@/components/notification-center/appbar-button.vue';
 import AboutRampDropdown from '@/components/about-ramp/about-ramp-dropdown.vue';
 import type { InstanceAPI } from '@/api';
-import { useStore } from 'vuex';
+import { usePanelStore } from '@/stores/panel';
+import { useAppbarStore } from './store';
 
 const iApi = inject<InstanceAPI>('iApi');
-const store = useStore();
+const panelStore = usePanelStore();
+const appbarStore = useAppbarStore();
 
-const items = computed<any>(() => store.get('appbar/visible'));
-const temporaryItems = computed<string[] | undefined>(() =>
-    store.get('appbar/temporary')
+const items = computed<any>(() => appbarStore.visible);
+const temporaryItems = computed<string[] | undefined>(
+    () => appbarStore.temporary
 );
 
 const overflow = ref(false);
@@ -154,7 +156,7 @@ onUpdated(() => {
         let children: Element[] = [...element.children];
         let bound: number | undefined =
             children[children.length - 2].getBoundingClientRect().top;
-        if (!store.get('panel/mobileView')) {
+        if (!panelStore.mobileView) {
             bound = element.getBoundingClientRect().bottom - 38;
         }
         let dropdown: Element | null = element.querySelector('#dropdown');

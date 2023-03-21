@@ -1,8 +1,10 @@
 import { FixtureInstance } from '@/api';
 
 import type { MapnavFixtureConfig, MapnavItem, MapnavItemSet } from '../store';
+import { useMapnavStore } from '../store';
 
 export class MapnavAPI extends FixtureInstance {
+    private mapnavStore = useMapnavStore(this.$vApp.$pinia);
     /**
      * Returns `MapnavFixtureConfig` section of the global config file.
      *
@@ -34,19 +36,16 @@ export class MapnavAPI extends FixtureInstance {
 
         // save mapnav items as a collection to the store
         // they are saves as a set for easy by-id access
-        this.$vApp.$store.set(
-            'mapnav/items',
-            mapnavItems.reduce<MapnavItemSet>((map: any, item: any) => {
+        this.mapnavStore.items = mapnavItems.reduce<MapnavItemSet>(
+            (map: any, item: any) => {
                 map[item.id] = item;
                 return map;
-            }, {})
+            },
+            {}
         );
 
         // save an ordered list of item ids to use when rendering components
-        this.$vApp.$store.set(
-            'mapnav/order',
-            mapnavItems.map((item: any) => item.id)
-        );
+        this.mapnavStore.order = mapnavItems.map((item: any) => item.id);
 
         this._validateItems();
     }
@@ -67,16 +66,13 @@ export class MapnavAPI extends FixtureInstance {
         ];
 
         // get the ordered list of items and see if any of them are registered
-        this.$vApp.$store.get<string[]>('mapnav/order')!.forEach(id => {
+        this.mapnavStore.order.forEach(id => {
             // can't check if the nav button component is registered
             // so we make the assumption that it will always have the `-nav-button` prefix
 
             // check if fixture exists, or if control is a system control
             if (this.$iApi.fixture.get(id) || systemControls.includes(id)) {
-                this.$vApp.$store.set(
-                    `mapnav/items@${id}.componentId`,
-                    `${id}-nav-button`
-                );
+                this.mapnavStore.items[id].componentId = `${id}-nav-button`;
             }
         });
     }

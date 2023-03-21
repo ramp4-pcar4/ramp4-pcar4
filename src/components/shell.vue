@@ -24,7 +24,7 @@
             <map-caption class="z-30"></map-caption>
         </div>
 
-        <esri-map v-if="store.get('app/started')"></esri-map>
+        <esri-map v-if="instanceStore.started"></esri-map>
         <div v-else class="w-full h-full">
             <div class="spinner relative inset-x-1/2 inset-y-9/20"></div>
         </div>
@@ -38,15 +38,17 @@ import MapCaption from '@/components/map/map-caption.vue';
 import NotificationFloatingButton from '@/components/notification-center/floating-button.vue';
 import KeyboardInstructionsModal from './keyboard-instructions.vue';
 import { computed, inject } from 'vue';
-import { useStore } from 'vuex';
 import type { InstanceAPI } from '@/api';
 import { useI18n } from 'vue-i18n';
+import { useFixtureStore } from '@/stores/fixture';
+import { useInstanceStore } from '@/stores/instance';
 
 const iApi = inject<InstanceAPI>('iApi');
-const store = useStore();
+const instanceStore = useInstanceStore();
+const fixtureStore = useFixtureStore();
 const { t } = useI18n();
 
-const appbarFixture = computed(() => store.get(`fixture/items@appbar`));
+const appbarFixture = computed(() => fixtureStore.items['appbar']);
 const openKeyboardInstructions = () => {
     iApi?.event.emit('openKeyboardInstructions');
 };

@@ -1,10 +1,11 @@
 import { GridAPI } from './api/grid';
-import { grid } from './store/index';
 import { markRaw } from 'vue';
 
 import GridScreenV from './screen.vue';
 
 import messages from './lang/lang.csv?raw';
+import { useAppbarStore } from '../appbar/store';
+import { useGridStore } from './store';
 
 class GridFixture extends GridAPI {
     async added() {
@@ -32,19 +33,20 @@ class GridFixture extends GridAPI {
             { i18n: { messages } }
         );
 
-        this.$vApp.$store.registerModule('grid', grid());
-
         // parse grid config for each layer
         this._parseConfig();
     }
 
     removed() {
         if (this.$iApi.fixture.get('appbar')) {
-            this.$iApi.$vApp.$store.dispatch('appbar/removeButton', 'grid');
+            const appbarStore = useAppbarStore(this.$vApp.$pinia);
+            appbarStore.removeButton('grid');
         }
 
+        const gridStore = useGridStore(this.$vApp.$pinia);
+        gridStore.$reset();
+
         this.$iApi.panel.remove('grid');
-        this.$vApp.$store.unregisterModule('grid');
     }
 }
 

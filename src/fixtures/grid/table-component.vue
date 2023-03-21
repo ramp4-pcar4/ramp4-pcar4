@@ -46,7 +46,7 @@
                     @input="updateQuickSearch()"
                     @keypress.enter.prevent
                     @keyup.enter="
-                        if ($store.get('panel/mobileView')) {
+                        if (panelStore.mobileView) {
                             //@ts-ignore
                             $event?.target?.blur();
                         }
@@ -313,7 +313,8 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
 import { AgGridVue } from 'ag-grid-vue3';
 import ColumnDropdown from './column-dropdown.vue';
-import { GridStore } from './store';
+import { useGridStore } from './store';
+import { usePanelStore } from '@/stores/panel';
 import type { GridConfig } from './store';
 import type TableStateManager from './store/table-state-manager';
 import ColumnStateManager from './store/column-state-manager';
@@ -338,7 +339,6 @@ import CellRendererV from './templates/cell-renderer.vue';
 import { CoreFilter, FieldType } from '@/geo/api';
 
 import { debounce } from 'throttle-debounce';
-import { useStore } from 'vuex';
 import type { RowNode } from 'ag-grid-community';
 import { ColumnApi, GridApi } from 'ag-grid-community';
 import { useI18n } from 'vue-i18n';
@@ -426,7 +426,8 @@ const NUM_TYPES: string[] = [
 ];
 
 const iApi = inject<InstanceAPI>('iApi')!;
-const store = useStore();
+const gridStore = useGridStore();
+const panelStore = usePanelStore();
 const el = ref<HTMLElement>();
 const { t } = useI18n();
 const forceUpdate = () => getCurrentInstance()?.proxy?.$forceUpdate();
@@ -446,9 +447,7 @@ const props = defineProps({
     }
 });
 
-const grids = computed<{ [id: string]: GridConfig }>(
-    () => store.get(GridStore.grids)!
-);
+const grids = computed<{ [id: string]: GridConfig }>(() => gridStore.grids);
 const config = ref<GridConfig>(grids.value['dummy']);
 const agGridApi = ref<GridApi>(new GridApi());
 const agGridOptions = ref();

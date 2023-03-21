@@ -37,7 +37,7 @@
                             @cancel="
                                 () => {
                                     goNext = false;
-                                    goToStep(0);
+                                    wizardStore.goToStep(0);
                                 }
                             "
                             :disabled="!goNext"
@@ -120,7 +120,7 @@
                                     formatError = false;
                                     failureError = false;
                                     url ? (goNext = true) : (goNext = false);
-                                    goToStep(0);
+                                    wizardStore.goToStep(0);
                                 }
                             "
                             :disabled="false"
@@ -264,7 +264,7 @@
                         </ColorPicker>
                         <wizard-form-footer
                             @submit="onConfigureContinue"
-                            @cancel="goToStep(1)"
+                            @cancel="wizardStore.goToStep(1)"
                             :disabled="!finishStep"
                         />
                     </form>
@@ -277,7 +277,6 @@
 <script setup lang="ts">
 import {
     computed,
-    getCurrentInstance,
     inject,
     nextTick,
     onErrorCaptured,
@@ -293,18 +292,17 @@ import type { InstanceAPI, PanelInstance } from '@/api';
 import { LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 import { GlobalEvents } from '@/api/internal';
-import { WizardStore, WizardStep } from './store';
+import { useWizardStore, WizardStep } from './store';
 
 import WizardFormFooter from './form-footer.vue';
 import WizardInput from './form-input.vue';
 import StepperItem from './stepper-item.vue';
 import Stepper from './stepper.vue';
-import type { LayerInfo, LayerSource } from './store/layer-source';
+import type { LayerInfo } from './store/layer-source';
 
-import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 
-const store = useStore();
+const wizardStore = useWizardStore();
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
 const formElement = ref();
@@ -316,10 +314,8 @@ defineProps({
     }
 });
 
-const layerSource = computed(() =>
-    store.get<LayerSource>(WizardStore.layerSource)
-);
-const step = computed(() => store.get<WizardStep>(WizardStore.step));
+const layerSource = computed(() => wizardStore.layerSource);
+const step = computed(() => wizardStore.currStep);
 
 const colour = ref();
 const colourPickerId = ref();
@@ -372,34 +368,34 @@ const fileTypeOptions = reactive([
 
 const url = computed({
     get(): string {
-        return store.get(WizardStore.url) as string;
+        return wizardStore.url as string;
     },
     set(newValue: string) {
-        store.set(WizardStore.url, newValue);
+        wizardStore.url = newValue;
     }
 });
 const fileData = computed({
     get(): ArrayBuffer {
-        return store.get(WizardStore.fileData) as ArrayBuffer;
+        return wizardStore.fileData as ArrayBuffer;
     },
     set(newValue: ArrayBuffer) {
-        store.set(WizardStore.fileData, newValue);
+        wizardStore.fileData = newValue;
     }
 });
 const typeSelection = computed({
     get(): LayerType {
-        return store.get(WizardStore.typeSelection) as LayerType;
+        return wizardStore.typeSelection as LayerType;
     },
     set(newValue: LayerType) {
-        store.set(WizardStore.typeSelection, newValue);
+        wizardStore.typeSelection = newValue;
     }
 });
 const layerInfo = computed({
     get(): LayerInfo {
-        return store.get(WizardStore.layerInfo) as LayerInfo;
+        return wizardStore.layerInfo as LayerInfo;
     },
     set(newValue: LayerInfo) {
-        store.set(WizardStore.layerInfo, newValue);
+        wizardStore.layerInfo = newValue;
     }
 });
 const IsCorsRequired = computed(() => {
@@ -448,7 +444,7 @@ onErrorCaptured(() => {
         step.value === WizardStep.CONFIGURE
     ) {
         formatError.value = true;
-        goToStep(WizardStep.FORMAT);
+        wizardStore.goToStep(WizardStep.FORMAT);
     }
     // return value needs to be false to prevent bubbling up to parent component errorCaptured
     return false;
@@ -489,7 +485,7 @@ const onUploadContinue = (event: any) => {
         url.value
     ) as LayerType;
 
-    goToStep(WizardStep.FORMAT);
+    wizardStore.goToStep(WizardStep.FORMAT);
 };
 
 const onSelectContinue = async () => {
@@ -534,7 +530,7 @@ const onSelectContinue = async () => {
 
     generateColour();
 
-    goToStep(WizardStep.CONFIGURE);
+    wizardStore.goToStep(WizardStep.CONFIGURE);
 
     layerInfo.value.configOptions.includes(`sublayers`)
         ? (finishStep.value = false)
@@ -554,11 +550,8 @@ const onConfigureContinue = async (data: object) => {
     // notify the legend to prepare a legend item
     iApi.event.emit(GlobalEvents.USER_LAYER_ADDED, layer);
     goNext.value = false;
-    goToStep(WizardStep.UPLOAD);
+    wizardStore.goToStep(WizardStep.UPLOAD);
 };
-
-const goToStep = (step: WizardStep) =>
-    store.dispatch(WizardStore.goToStep, step);
 
 // default options for fields selectors
 const fieldOptions = () => {

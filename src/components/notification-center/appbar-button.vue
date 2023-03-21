@@ -26,14 +26,14 @@
 <script setup lang="ts">
 import { inject, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useStore } from 'vuex';
+import { useNotificationStore } from '@/stores/notification';
 import type { InstanceAPI } from '@/api';
 
-const store = useStore();
+const notificationStore = useNotificationStore();
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
 
-const number = computed(() => store.get('notification/notificationNumber'));
+const number = computed(() => notificationStore.notificationNumber);
 
 const onClick = () => {
     iApi.panel.toggle('notifications');

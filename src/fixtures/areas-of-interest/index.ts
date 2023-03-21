@@ -1,14 +1,13 @@
 import { markRaw } from 'vue';
 import AreasOfInterestScreenV from './screen.vue';
 import messages from './lang/lang.csv?raw';
-import { areasOfInterest } from './store';
 import { AreasOfInterestAPI } from './api/areas-of-interest';
+import { useAppbarStore } from '../appbar/store';
+import { useAreasOfInterestStore } from './store';
 
 class AreasOfInterestFixture extends AreasOfInterestAPI {
     added() {
         // console.log(`[fixture] ${this.id} added`);
-
-        this.$vApp.$store.registerModule('areasOfInterest', areasOfInterest());
 
         this.$iApi.panel.register(
             {
@@ -44,14 +43,16 @@ class AreasOfInterestFixture extends AreasOfInterestAPI {
             unwatch();
 
             if (this.$iApi.fixture.get('appbar')) {
-                this.$iApi.$vApp.$store.dispatch(
-                    'appbar/removeButton',
-                    'areas-of-interest'
-                );
+                const appbarStore = useAppbarStore(this.$vApp.$pinia);
+                appbarStore.removeButton('areas-of-interest');
             }
 
             this.$iApi.panel.remove('areas-of-interest');
-            this.$vApp.$store.unregisterModule('areasOfInterest');
+
+            const areasOfInterestStore = useAreasOfInterestStore(
+                this.$vApp.$pinia
+            );
+            areasOfInterestStore.$reset();
         };
     }
 }

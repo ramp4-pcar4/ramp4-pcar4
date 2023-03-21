@@ -1,10 +1,12 @@
 import { markRaw } from 'vue';
 import { LegendAPI } from './api/legend';
-import { legend } from './store/index';
 import LegendNavButtonV from './nav-button.vue';
 import LegendScreenV from './screen.vue';
 
 import messages from './lang/lang.csv?raw';
+import { useAppbarStore } from '../appbar/store';
+import { useMapnavStore } from '../mapnav/store';
+import { useLegendStore } from './store';
 
 class LegendFixture extends LegendAPI {
     added() {
@@ -34,8 +36,6 @@ class LegendFixture extends LegendAPI {
             }
         );
 
-        this.$vApp.$store.registerModule('legend', legend());
-
         // parse legend section of config and store information in legend store
         // here we create a copy of the config because the config parser will mutate the layer ids in the config
         this._parseConfig(
@@ -55,22 +55,24 @@ class LegendFixture extends LegendAPI {
 
         // override the removed method here to get access to scope
         this.removed = () => {
+            // remove all le
             // console.log(`[fixture] ${this.id} removed`);
             unwatch();
 
             if (this.$iApi.fixture.get('appbar')) {
-                this.$iApi.$vApp.$store.dispatch(
-                    'appbar/removeButton',
-                    'legend'
-                );
+                const appbarStore = useAppbarStore(this.$vApp.$pinia);
+                appbarStore.removeButton('legend');
             }
 
             if (this.$iApi.fixture.get('mapnav')) {
-                this.$iApi.$vApp.$store.dispatch('mapnav/removeItem', 'legend');
+                const mapnavStore = useMapnavStore(this.$vApp.$pinia);
+                mapnavStore.removeItem('legend');
             }
 
+            const legendStore = useLegendStore();
+            legendStore.$reset();
+
             this.$iApi.panel.remove('legend');
-            this.$vApp.$store.unregisterModule('legend');
         };
     }
 }

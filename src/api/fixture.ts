@@ -2,9 +2,9 @@ import { createApp, defineComponent, h, render } from 'vue';
 import type { Component, ComponentOptions } from 'vue';
 
 import { APIScope, GlobalEvents, InstanceAPI } from './internal';
-import { FixtureMutation } from '@/store/modules/fixture';
-import { ConfigStore } from '@/store/modules/config';
-import type { FixtureBase, FixtureBaseSet } from '@/store/modules/fixture';
+import { useConfigStore } from '@/stores/config';
+import type { FixtureBase } from '@/stores/fixture';
+import { useFixtureStore } from '@/stores/fixture';
 import type { RampConfig } from '@/types';
 
 const fixtureModules = import.meta.glob<{ default: typeof FixtureInstance }>(
@@ -30,11 +30,9 @@ export class FixtureAPI extends APIScope {
      */
     constructor(iApi: InstanceAPI) {
         super(iApi);
-
         // when the map is created call the initialized method (if defined) for each fixture
         const onMapCreated = () => {
-            const fixtures =
-                this.$vApp.$store.get<FixtureBaseSet>(`fixture/items`)!;
+            const fixtures = useFixtureStore(this.$vApp.$pinia).items;
             Object.keys(fixtures).forEach(fId => {
                 fixtures[fId].initialized?.();
             });
@@ -55,7 +53,7 @@ export class FixtureAPI extends APIScope {
         let fixture: FixtureBase;
 
         // if the fixture already exist, do nothing and just return it
-        if (id in this.$vApp.$store.get<FixtureBaseSet>(`fixture/items`)!) {
+        if (id in useFixtureStore(this.$vApp.$pinia).items) {
             return this.get(id);
         }
 
@@ -79,12 +77,7 @@ export class FixtureAPI extends APIScope {
             fixture = new instanceConstructor(id, this.$iApi);
         }
 
-        // TODO: calling `ADD_FIXTURE` mutation directly here; might want to switch to calling the action `addFixture`
-        // TODO: using this horrible concatenated mixture `fixture/${FixtureMutation.ADD_FIXTURE}!` all the time doesn't seem like a good idea;
-        // fixtures are always stored as objects implementing `FixtureBase` interfaces;
-        this.$vApp.$store.set(`fixture/${FixtureMutation.ADD_FIXTURE}!`, {
-            value: fixture
-        });
+        useFixtureStore(this.$vApp.$pinia).addFixture(fixture);
 
         this.$iApi.event.emit(GlobalEvents.FIXTURE_ADDED, fixture);
 
@@ -113,9 +106,7 @@ export class FixtureAPI extends APIScope {
             );
         }
 
-        this.$vApp.$store.set(`fixture/${FixtureMutation.REMOVE_FIXTURE}!`, {
-            value: fixture
-        });
+        useFixtureStore(this.$vApp.$pinia).removeFixture(fixture);
 
         this.$iApi.event.emit(GlobalEvents.FIXTURE_REMOVED, fixture);
         return fixture;
@@ -158,7 +149,7 @@ export class FixtureAPI extends APIScope {
         }
 
         const fixtures = ids.map(id => {
-            const fixture = this.$vApp.$store.get<T>(`fixture/items@${id}`);
+            const fixture = useFixtureStore(this.$vApp.$pinia).items[id] as T;
             if (!fixture) {
                 return undefined;
             }
@@ -176,24 +167,16 @@ export class FixtureAPI extends APIScope {
      * @memberof FixtureAPI
      */
     isLoaded(fixtureId: string | string[]): Promise<any> {
+        const fixtureStore = useFixtureStore(this.$vApp.$pinia);
         // We first create loadPromises for fixtures that don't have one
         const idsToCheck = Array.isArray(fixtureId) ? fixtureId : [fixtureId];
         idsToCheck.forEach((id: string) => {
-            if (
-                this.$vApp.$store.get(`fixture/loadPromises@${id}`) ===
-                undefined
-            ) {
-                this.$vApp.$store.set(
-                    `fixture/${FixtureMutation.ADD_LOAD_PROMISE}!`,
-                    id
-                );
+            if (fixtureStore.loadPromises[id] === undefined) {
+                fixtureStore.addLoadPromise(id);
             }
         });
         // Now, get all the promises and return
-        return Promise.all(
-            // @ts-ignore
-            this.$vApp.$store.get('fixture/getLoadPromises', idsToCheck) // not sure how to get typescript to stop yelling
-        );
+        return Promise.all(fixtureStore.getLoadPromises(idsToCheck));
     }
 
     /**
@@ -232,7 +215,8 @@ export class FixtureAPI extends APIScope {
                 'wizard'
             ];
         }
-        this.$vApp.$store.set(ConfigStore.setStartingFixtures, fixtureNames);
+        const configStore = useConfigStore(this.$vApp.$pinia);
+        configStore.startingFixtures = fixtureNames;
         // add all the requested default promises.
         // return the promise-all of all the add fixture promises
         return Promise.all(fixtureNames.map(fn => this.add(fn)));
@@ -397,7 +381,8 @@ export class FixtureInstance extends APIScope implements FixtureBase {
      * @memberof FixtureInstance
      */
     get config(): any {
-        return this.$vApp.$store.get('config/getFixtureConfig', this.id);
+        const configStore = useConfigStore(this.$vApp.$pinia);
+        return configStore.config.fixtures[this.id];
     }
 
     /**

@@ -1,7 +1,6 @@
 import { FixtureInstance, LayerInstance } from '@/api';
 import { LayerType, type TreeNode } from '@/geo/api';
-import type { LegendConfig } from '../store';
-import { LegendStore } from '../store';
+import { type LegendConfig, useLegendStore } from '../store';
 import { LayerItem } from '../store/layer-item';
 import { LegendItem } from '../store/legend-item';
 import { SectionItem } from '../store/section-item';
@@ -21,7 +20,7 @@ export class LegendAPI extends FixtureInstance {
                 'groupToggle',
                 'visibilityToggle'
             ];
-        this.$vApp.$store.set(LegendStore.headerControls, controls);
+        useLegendStore(this.$vApp.$pinia).headerControls = controls;
 
         if (!legendConfig || !legendConfig.root.children) {
             return;
@@ -185,7 +184,8 @@ export class LegendAPI extends FixtureInstance {
      */
     getLegend(): Array<LegendItem> {
         return (
-            this.$vApp.$store.get<Array<LegendItem>>(LegendStore.children) || []
+            (useLegendStore(this.$vApp.$pinia)
+                .children as unknown as Array<LegendItem>) || []
         );
     }
 
@@ -615,8 +615,7 @@ export class LegendAPI extends FixtureInstance {
      * @param {LegendItem | undefined} parent the parent legend item for this item
      */
     private _insertItem(item: LegendItem, parent?: LegendItem): void {
-        // remove item to store
-        this.$iApi.$vApp.$store.dispatch(LegendStore.addItem, { item, parent });
+        useLegendStore(this.$vApp.$pinia).addItem({ item, parent });
     }
 
     /**
@@ -639,16 +638,13 @@ export class LegendAPI extends FixtureInstance {
         }
 
         // remove item from store
-        this.$iApi.$vApp.$store.dispatch(LegendStore.removeItem, item);
+        useLegendStore(this.$vApp.$pinia).removeItem(item);
 
         return true;
     }
 
     private _replaceItem(oldItem: LegendItem, newItem: LegendItem) {
-        this.$iApi.$vApp.$store.dispatch(LegendStore.replaceItem, {
-            oldItem,
-            newItem
-        });
+        useLegendStore(this.$vApp.$pinia).replaceItem({ oldItem, newItem });
     }
 
     // map out layer's layer tree children into a legend configs

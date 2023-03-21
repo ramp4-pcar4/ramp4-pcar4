@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import type { PropType } from 'vue';
 
 import BasemapItem from './item.vue';
@@ -51,12 +51,11 @@ import type {
     RampTileSchemaConfig
 } from '@/geo/api';
 import type { PanelInstance } from '@/api';
-import { ConfigStore } from '@/store/modules/config';
-import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
+import { useConfigStore } from '@/stores/config';
 
 const { t } = useI18n();
-const store = useStore();
+const configStore = useConfigStore();
 
 defineProps({
     panel: {
@@ -66,14 +65,9 @@ defineProps({
 
 const tileSchemas = ref<Array<RampTileSchemaConfig>>([]);
 const basemaps = ref<Array<RampBasemapConfig>>([]);
-const selectedBasemap = computed<RampBasemapConfig>(
-    () => store.get(ConfigStore.getActiveBasemapConfig)!
-);
 
 onMounted(() => {
-    const mapConfig: RampMapConfig = store.get(
-        ConfigStore.getMapConfig
-    )! as RampMapConfig;
+    const mapConfig = configStore.config.map as RampMapConfig;
     tileSchemas.value = mapConfig.tileSchemas;
     basemaps.value = mapConfig.basemaps;
 });

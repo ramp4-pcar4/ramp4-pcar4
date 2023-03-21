@@ -1,5 +1,5 @@
 import { FixtureInstance } from '@/api';
-import { NortharrowStore } from '../store';
+import { useNortharrowStore } from '../store';
 import type { NortharrowConfig } from '../store';
 
 export class NortharrowAPI extends FixtureInstance {
@@ -10,15 +10,11 @@ export class NortharrowAPI extends FixtureInstance {
      * @memberof NortharrowAPI
      */
     _parseConfig(northarrowConfig?: NortharrowConfig) {
+        const northarrowStore = useNortharrowStore(this.$vApp.$pinia);
+
         if (!northarrowConfig) return;
-        this.$vApp.$store.set(
-            NortharrowStore.arrowIcon,
-            northarrowConfig.arrowIcon
-        );
-        this.$vApp.$store.set(
-            NortharrowStore.poleIcon,
-            northarrowConfig.poleIcon
-        );
+        northarrowStore.arrowIcon = northarrowConfig.arrowIcon;
+        northarrowStore.poleIcon, northarrowConfig.poleIcon;
     }
 
     get config(): NortharrowConfig {

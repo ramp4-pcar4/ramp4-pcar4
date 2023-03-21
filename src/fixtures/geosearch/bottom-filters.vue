@@ -22,20 +22,17 @@
 import { GlobalEvents } from '@/api/internal';
 import type { InstanceAPI } from '@/api/internal';
 import type { Extent } from '@/geo/api';
-import { GeosearchStore } from './store';
+import { useGeosearchStore } from './store';
 import { debounce } from 'throttle-debounce';
 
 import { computed, inject, onBeforeUnmount, onMounted } from 'vue';
-import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
-const store = useStore();
+const geosearchStore = useGeosearchStore();
 
-const resultsVisible = computed<boolean>(
-    () => store.get(GeosearchStore.resultsVisible)!
-);
+const resultsVisible = computed<boolean>(() => geosearchStore.resultsVisible);
 
 const onMapExtentChange = debounce(300, (newExtent: Extent) => {
     latLongExtent(newExtent).then((e: Extent) => {
@@ -47,7 +44,7 @@ const onMapExtentChange = debounce(300, (newExtent: Extent) => {
 });
 
 const setMapExtent = (mapExtent: any) => {
-    store.dispatch(GeosearchStore.setMapExtent, mapExtent);
+    geosearchStore.setMapExtent(mapExtent);
 };
 
 // Computes the extent information.
