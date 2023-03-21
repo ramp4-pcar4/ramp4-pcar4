@@ -67,11 +67,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useStore } from 'vuex';
-import { ExportStore } from './store';
+import { usePanelStore } from '@/stores/panel';
+import { useExportStore } from './store';
 
 const { t } = useI18n();
-const store = useStore();
+const panelStore = usePanelStore();
+const exportStore = useExportStore();
 const emit = defineEmits(['onComponentToggle']);
 
 defineProps({
@@ -82,7 +83,7 @@ defineProps({
 });
 
 const dropdownPlacement = computed<string>(() =>
-    store.get('panel/mobileView') ? 'top-end' : 'left-end'
+    panelStore.mobileView ? 'top-end' : 'left-end'
 );
 
 const toggleComponent = (component: any): void => {
@@ -90,9 +91,10 @@ const toggleComponent = (component: any): void => {
         return;
     }
     // update the store
-    store.set(ExportStore.toggleSelected, {
+    exportStore.toggleSelected({
         name: component.name
     });
+
     // notify the parent that a component was toggled
     emit('onComponentToggle');
 };

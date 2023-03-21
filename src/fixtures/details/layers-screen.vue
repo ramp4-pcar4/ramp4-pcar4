@@ -63,17 +63,20 @@ import {
     ref,
     watch
 } from 'vue';
-import { DetailsStore } from './store';
+import { useDetailsStore } from './store';
 import type { DetailsItemInstance } from './store';
 import { GlobalEvents, LayerInstance, PanelInstance } from '@/api';
 import type { InstanceAPI } from '@/api';
 import type { IdentifyResult } from '@/geo/api';
-import { useStore } from 'vuex';
+import { usePanelStore } from '@/stores/panel';
 import { useI18n } from 'vue-i18n';
+import { useLayerStore } from '@/stores/layer';
 
 const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
-const store = useStore();
+const layerStore = useLayerStore();
+const panelStore = usePanelStore();
+const detailsStore = useDetailsStore();
 
 const props = defineProps({
     panel: PanelInstance
@@ -84,23 +87,17 @@ const lastLayerUid = ref<string>('');
 const handlers = ref<Array<string>>([]);
 const watchers = ref<Array<Function>>([]);
 
-const activeGreedy = computed<number>(
-    () => store.get(DetailsStore.activeGreedy)!
-);
-const slowLoadingFlag = computed<Boolean>(
-    () => store.get(DetailsStore.slowLoadingFlag)!
-);
-const payload = computed<IdentifyResult[]>(
-    () => store.get(DetailsStore.payload)!
-);
+const activeGreedy = computed<number>(() => detailsStore.activeGreedy);
+const slowLoadingFlag = computed<Boolean>(() => detailsStore.slowLoadingFlag);
+const payload = computed<IdentifyResult[]>(() => detailsStore.payload);
 const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(
-    () => store.get(DetailsStore.properties)!
+    () => detailsStore.properties
 );
-const layers = computed<LayerInstance[]>(() => store.get('layer/layers')!);
-const mobileMode = computed<Boolean>(() => store.get('panel/mobileView')!);
-const remainingWidth = computed<number>(
-    () => store.get('panel/getRemainingWidth')!
+const layers = computed<LayerInstance[]>(
+    () => layerStore.layers as unknown as LayerInstance[]
 );
+const mobileMode = computed<Boolean>(() => panelStore.mobileView);
+const remainingWidth = computed<number>(() => panelStore.getRemainingWidth);
 const totalResultCount = computed<number>(() =>
     layerResults.value
         .map(r => r.items.length)
@@ -147,8 +144,8 @@ const loadPayloadItems = (newPayload: Array<IdentifyResult>): void => {
         newPayload.length === 0
             ? 0
             : newPayload[0].requestTime;
-    store.set(DetailsStore.activeGreedy, greedyMode);
-    store.set(DetailsStore.slowLoadingFlag, false);
+    detailsStore.activeGreedy = greedyMode;
+    detailsStore.slowLoadingFlag = false;
 
     layerResults.value = newPayload;
 
@@ -188,7 +185,7 @@ const autoOpen = (newPayload: Array<IdentifyResult>): void => {
 
                 // update items screen with new results for that layer and turn off greedy loading and abort flags
                 if (lastIdentify.items.length > 0) {
-                    store.set(DetailsStore.activeGreedy, 0);
+                    detailsStore.activeGreedy = 0;
                     openResult(lastIdx);
                 } else {
                     // otherwise proceed as normal in case 1
@@ -210,7 +207,7 @@ const autoOpen = (newPayload: Array<IdentifyResult>): void => {
             activeGreedy.value !== 0 &&
             newPayload[0].requestTime === activeGreedy.value
         ) {
-            store.set(DetailsStore.slowLoadingFlag, true);
+            detailsStore.slowLoadingFlag = true;
         }
     }, 500);
 };
@@ -239,7 +236,7 @@ const autoOpenAny = (newPayload: Array<IdentifyResult>): void => {
             const idx = layerResults.value.findIndex(
                 (item: IdentifyResult) => item.uid === res.uid
             );
-            store.set(DetailsStore.activeGreedy, 0);
+            detailsStore.activeGreedy = 0;
             if (idx !== -1) {
                 openResult(idx);
             }
@@ -253,7 +250,7 @@ const autoOpenAny = (newPayload: Array<IdentifyResult>): void => {
             // no promise resolved, clicked on empty map point with no identify results
             // then clear the last tracked layer and close the items panel
             lastLayerUid.value = '';
-            store.set(DetailsStore.activeGreedy, 0);
+            detailsStore.activeGreedy = 0;
             closeResult();
         });
 };
@@ -291,7 +288,7 @@ const closeResult = (): void => {
 const openResult = (index: number) => {
     if (payload.value[index].items.length > 0) {
         // set greedy mode off for any existing running requests (for case where user manually clicks an item)
-        store.set(DetailsStore.activeGreedy, 0);
+        detailsStore.activeGreedy = 0;
 
         // skip results screen for wms layers
         let itemsPanel = iApi.panel.get('details-items');
@@ -323,8 +320,7 @@ const openResult = (index: number) => {
  */
 const layerName = (idx: number) => {
     const layerInfo = payload.value[idx];
-    let layer: LayerInstance | undefined = store.get(
-        'layer/getLayerByUid',
+    let layer: LayerInstance | undefined = layerStore.getLayerByUid(
         layerInfo.uid
     );
     if (
@@ -359,7 +355,7 @@ onMounted(() => {
     handlers.value.push(
         iApi.event.on(GlobalEvents.PANEL_CLOSED, (panel: PanelInstance) => {
             if (panel.id === 'details-items' || panel.id === 'details-layers') {
-                store.set(DetailsStore.activeGreedy, 0);
+                detailsStore.activeGreedy = 0;
             }
         })
     );
@@ -368,7 +364,7 @@ onMounted(() => {
         watch(activeGreedy, (newGreedy: Number) => {
             // watch to turn off greedy loading flag if greedy mode is turned off
             if (newGreedy === 0) {
-                store.set(DetailsStore.slowLoadingFlag, false);
+                detailsStore.slowLoadingFlag = false;
             }
         })
     );

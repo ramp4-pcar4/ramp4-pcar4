@@ -1,5 +1,5 @@
 import { FixtureInstance } from '@/api';
-import { GridStore } from '../store';
+import { useGridStore } from '../store';
 import type { GridConfig } from '../store';
 import TableStateManager from '../store/table-state-manager';
 
@@ -12,10 +12,9 @@ export class GridAPI extends FixtureInstance {
      * @memberof GridAPI
      */
     toggleGrid(id: string, open?: boolean): void {
+        const gridStore = useGridStore(this.$vApp.$pinia);
         // get GridConfig for specified id
-        let gridSettings: GridConfig | undefined = this.$vApp.$store.get(
-            `${GridStore.grids}@${id}`
-        );
+        let gridSettings: GridConfig | undefined = gridStore.grids[id];
 
         // if no GridConfig exists for the given id, create it.
         if (gridSettings === undefined) {
@@ -24,11 +23,11 @@ export class GridAPI extends FixtureInstance {
                 state: new TableStateManager({})
             };
 
-            this.$vApp.$store.set('grid/addGrid!', gridSettings);
+            gridStore.addGrid(gridSettings);
         }
 
-        const prevId = this.$vApp.$store.get(GridStore.currentId);
-        this.$vApp.$store.set(GridStore.currentId, id ? id : null);
+        const prevId = gridStore.currentId;
+        gridStore.currentId = id ? id : undefined;
 
         const panel = this.$iApi.panel.get('grid');
 
@@ -54,6 +53,7 @@ export class GridAPI extends FixtureInstance {
      * @memberof GridAPI
      */
     _parseConfig() {
+        const gridStore = useGridStore(this.$vApp.$pinia);
         this.handlePanelWidths(['grid']);
 
         const layerGridConfigs: any = this.getLayerFixtureConfigs();
@@ -66,7 +66,7 @@ export class GridAPI extends FixtureInstance {
             };
 
             // save the item in the store
-            this.$vApp.$store.set('grid/addGrid!', gridConfig);
+            gridStore.addGrid(gridConfig);
         });
     }
 }

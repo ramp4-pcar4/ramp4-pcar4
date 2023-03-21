@@ -1,17 +1,5 @@
 import type { PanelWidthObject } from '@/api';
 
-export class ExportState {
-    componentSelectedState: any = {
-        title: true,
-        map: true,
-        mapElements: true,
-        legend: true,
-        footnote: true,
-        timestamp: true
-    };
-    fileName: string = '';
-}
-
 interface ExportComponentConfig {
     selected?: boolean;
     selectable?: boolean;

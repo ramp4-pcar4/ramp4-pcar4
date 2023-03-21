@@ -166,21 +166,22 @@ import {
     watch
 } from 'vue';
 
-import { LayerStore } from '@/store/modules/layer';
+import { useLayerStore } from '@/stores/layer';
 import { GlobalEvents, LayerInstance } from '@/api';
 import type { InstanceAPI } from '@/api';
 import type { LayerModel } from '../definitions';
 import ReorderButton from './reorder-button.vue';
 import draggable from 'vuedraggable';
 import { LayerState } from '@/geo/api';
-import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 
 const iApi = inject<InstanceAPI>('iApi')!;
-const store = useStore();
+const layerStore = useLayerStore();
 const { t } = useI18n();
 
-const layers = computed<LayerInstance[]>(() => store.get(LayerStore.layers)!);
+const layers = computed<LayerInstance[]>(
+    () => layerStore.layers as unknown as LayerInstance[]
+);
 const layersModel = ref<Array<LayerModel>>([]);
 const oldOrder = ref<Array<number>>([]); // keeps track of layer order when dragging starts
 const handlers = ref<Array<string>>([]);

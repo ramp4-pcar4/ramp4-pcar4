@@ -18,7 +18,7 @@ import {
     WmsLayer
 } from '@/api/internal';
 import { LayerControl, LayerType, type RampLayerConfig } from '@/geo/api';
-import { LayerStore } from '@/store/modules/layer';
+import { useLayerStore } from '@/stores/layer';
 
 // this class represents the functions that exist on rampApi.geo.layer
 export class LayerAPI extends APIScope {
@@ -93,13 +93,11 @@ export class LayerAPI extends APIScope {
         let layer: LayerInstance | undefined;
 
         // test if param is layer id
-        layer = this.$iApi.$vApp.$store.get(LayerStore.getLayerById, layerId);
+        const layerStore = useLayerStore(this.$vApp.$pinia);
+        layer = layerStore.getLayerById(layerId);
         if (!layer) {
             // test if layer is a string uid
-            layer = this.$iApi.$vApp.$store.get(
-                LayerStore.getLayerByUid,
-                layerId
-            );
+            layer = layerStore.getLayerByUid(layerId);
         }
 
         return layer;
@@ -110,7 +108,10 @@ export class LayerAPI extends APIScope {
      * @returns {Array<LayerInstance>} all registered layers
      */
     allLayers(): Array<LayerInstance> {
-        return this.$vApp.$store.get<LayerInstance[]>(LayerStore.layers) || [];
+        return (
+            (useLayerStore(this.$vApp.$pinia)
+                .layers as unknown as Array<LayerInstance>) || []
+        );
     }
 
     /**
@@ -119,7 +120,8 @@ export class LayerAPI extends APIScope {
      */
     allErrorLayers(): Array<LayerInstance> {
         return (
-            this.$vApp.$store.get<LayerInstance[]>(LayerStore.penaltyBox) || []
+            (useLayerStore(this.$vApp.$pinia)
+                .penaltyBox as unknown as Array<LayerInstance>) || []
         );
     }
 

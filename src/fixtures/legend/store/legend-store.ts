@@ -1,26 +1,28 @@
-import type { ActionContext } from 'vuex';
-import { make } from 'vuex-pathify';
-
-import type { RootState } from '@/store';
-import { LegendState } from './legend-state';
-
+import type { LegendConfig } from './legend-state';
 import { LayerItem } from './layer-item';
 import type { LegendItem } from './legend-item';
 import { SectionItem } from './section-item';
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-// use for actions
-type LegendContext = ActionContext<LegendState, RootState>;
+// NOTE: Pinia and/or Typescript are dumb because when you provide a type like LegendItem, it does not save it as LegendItem.
+// Instead, it is saved as type { _uid: string, ...} i.e. it just saves it as an object with the properties.
+// This leads to typescipt grousing in addItem, removeItem and replaceItem below because it does not know that
+// LegendItem is literally the same thing as { _uid: string, ...}
+// Somebody attempted to grouse about this on GitHub, and Pinia people basically told them "not our problem".
+// See https://github.com/vuejs/pinia/discussions/1178
+// I have silenced the grousing with typecasting for now, but not exactly ideal.
+export const useLegendStore = defineStore('legend', () => {
+    const legendConfig = ref<LegendConfig>();
+    const children = ref<LegendItem[]>([]);
+    const headerControls = ref<string[]>([]);
 
-const getters = {};
-
-const mutations = {
-    ADD_ITEM: (
-        state: LegendState,
-        value: { item: LegendItem; parent: LegendItem | undefined }
-    ) => {
+    function addItem(value: {
+        item: LegendItem;
+        parent: LegendItem | undefined;
+    }) {
         if (value.parent === undefined) {
-            // add to root level
-            state.children = [...state.children, value.item];
+            children.value.push(value.item as any);
         } else {
             // validate items to keep ts happy
             // this check should never trigger if legend API is used correctly
@@ -34,13 +36,11 @@ const mutations = {
                 return;
             }
 
-            value.parent.children = [
-                ...value.parent.children,
-                value.item as LegendItem
-            ];
+            value.parent.children.push(value.item as any);
         }
-    },
-    REMOVE_ITEM: (state: LegendState, item: LegendItem) => {
+    }
+
+    function removeItem(item: LegendItem) {
         const removeItem = (children: Array<LegendItem>) => {
             // remove item
             children = children.filter(child => {
@@ -68,19 +68,17 @@ const mutations = {
             return children;
         };
 
-        state.children = removeItem(state.children);
-    },
-    REPLACE_ITEM: (
-        state: LegendState,
-        value: { oldItem: LegendItem; newItem: LegendItem }
-    ) => {
+        children.value = removeItem(children.value as any) as any;
+    }
+
+    function replaceItem(value: { oldItem: LegendItem; newItem: LegendItem }) {
         if (value.oldItem.parent === undefined) {
-            const children = state.children;
-            const index = children.indexOf(value.oldItem);
+            const currChildren = children.value;
+            const index = currChildren.indexOf(value.oldItem as any);
             if (index > -1) {
-                children[index] = value.newItem;
+                children.value[index] = value.newItem as any;
             }
-            state.children = children;
+            children.value = currChildren;
         } else {
             const children = value.oldItem.parent.children;
             const index = children.indexOf(value.oldItem);
@@ -90,60 +88,13 @@ const mutations = {
             value.oldItem.parent.children = children;
         }
     }
-};
-
-const actions = {
-    /** Add legend item to store */
-    addItem: (
-        context: LegendContext,
-        value: { item: LegendItem; parent: LegendItem | undefined }
-    ) => {
-        context.commit('ADD_ITEM', value);
-    },
-    /** Remove legend item from store */
-    removeItem: (context: LegendContext, item: LegendItem) => {
-        context.commit('REMOVE_ITEM', item);
-    },
-    /** Replace legend item in store */
-    replaceItem: (
-        context: LegendContext,
-        value: { oldItem: LegendItem; newItem: LegendItem }
-    ) => {
-        context.commit('REPLACE_ITEM', value);
-    }
-};
-
-export enum LegendStore {
-    /**
-     * (State) children: Array<LegendItem>
-     */
-    children = 'legend/children',
-    /**
-     * (State) headerControls: Array<string>
-     */
-    headerControls = 'legend/headerControls',
-    /**
-     * (Action) addItem: (value: { item: LegendItem; parent: LegendItem | undefined })
-     */
-    addItem = 'legend/addItem',
-    /**
-     * (Action) removeItem: (item: LegendItem)
-     */
-    removeItem = 'legend/removeItem',
-    /**
-     * (Action) replaceItem:  (value: { oldItem: LegendItem; newItem: LegendItem })
-     */
-    replaceItem = 'legend/replaceItem'
-}
-
-export function legend() {
-    const state = new LegendState();
 
     return {
-        namespaced: true,
-        state,
-        getters: { ...getters },
-        actions: { ...actions, ...make.actions(state) },
-        mutations: { ...mutations, ...make.mutations(state) }
+        legendConfig,
+        children,
+        headerControls,
+        addItem,
+        removeItem,
+        replaceItem
     };
-}
+});

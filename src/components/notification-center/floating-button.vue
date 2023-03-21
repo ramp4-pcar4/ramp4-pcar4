@@ -25,14 +25,14 @@
 </template>
 
 <script setup lang="ts">
+import { useNotificationStore } from '@/stores/notification';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useStore } from 'vuex';
 
-const store = useStore();
+const notificationStore = useNotificationStore();
 const { t } = useI18n();
 
-const number = computed(() => store.get('notification/notificationNumber'));
+const number = computed(() => notificationStore.notificationNumber);
 </script>
 
 <style lang="scss" scoped>

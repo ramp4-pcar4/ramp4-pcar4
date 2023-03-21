@@ -9,7 +9,7 @@
                 onSearchTermChange(($event.target as HTMLInputElement).value)
             "
             @keyup.enter="
-                if ($store.get('panel/mobileView')) {
+                if (panelStore.mobileView) {
                     ($event.target as HTMLInputElement).blur();
                 }
             "
@@ -22,18 +22,17 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-
-import { GeosearchStore } from './store';
+import { useGeosearchStore } from './store';
 import { debounce } from 'throttle-debounce';
-import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
+import { usePanelStore } from '@/stores/panel';
 
 const { t } = useI18n();
-const store = useStore();
+const geosearchStore = useGeosearchStore();
+const panelStore = usePanelStore();
 
-const searchVal = computed(() => store.get(GeosearchStore.searchVal));
-const setSearchTerm = (value: string) =>
-    store.dispatch(GeosearchStore.setSearchTerm, value);
+const searchVal = computed(() => geosearchStore.searchVal);
+const setSearchTerm = (value: string) => geosearchStore.setSearchTerm(value);
 const onSearchTermChange = debounce(500, (searchTerm: string) => {
     setSearchTerm(searchTerm);
 });

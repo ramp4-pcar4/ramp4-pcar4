@@ -4,7 +4,7 @@ import {
     InstanceAPI,
     LayerInstance
 } from '@/api/internal';
-import { MaptipStore } from '@/store/modules/maptip';
+import { useMaptipStore } from '@/stores/maptip';
 import type {
     Attributes,
     GraphicHitResult,
@@ -14,12 +14,15 @@ import type {
 } from '@/geo/api';
 
 export class MaptipAPI extends APIScope {
+    maptipStore: any;
+
     /**
      * @constructor
      * @param {InstanceAPI} iApi the RAMP instance
      */
     constructor(iApi: InstanceAPI) {
         super(iApi);
+        this.maptipStore = useMaptipStore(this.$vApp.$pinia);
     }
 
     // # makes variables private outside of typescript and lets us hide things on the API
@@ -131,8 +134,8 @@ export class MaptipAPI extends APIScope {
      * Clears the maptip from the map
      */
     clear(): void {
-        this.$iApi.$vApp.$store.set(MaptipStore.setMaptipPoint, undefined);
-        this.$iApi.$vApp.$store.set(MaptipStore.setMaptipContent, '');
+        this.maptipStore.setMaptipPoint(undefined);
+        this.maptipStore.setMaptipContent('');
     }
 
     /**
@@ -142,7 +145,7 @@ export class MaptipAPI extends APIScope {
      * @returns {any} the `tippy` tooltip instance
      */
     getInstance(): any {
-        return this.$iApi.$vApp.$store.get(MaptipStore.maptipInstance);
+        return this.maptipStore.maptipInstance;
     }
 
     /**
@@ -151,7 +154,7 @@ export class MaptipAPI extends APIScope {
      * @returns {Point} the current maptip map point
      */
     getPoint(): MaptipProperties | undefined {
-        return this.$iApi.$vApp.$store.get(MaptipStore.maptipPoint);
+        return this.maptipStore.maptipPoint;
     }
 
     /**
@@ -160,7 +163,7 @@ export class MaptipAPI extends APIScope {
      * @param {Point | undefined} maptipPoint
      */
     setPoint(maptipPoint: Point): void {
-        this.$iApi.$vApp.$store.set(MaptipStore.setMaptipPoint, maptipPoint);
+        this.maptipStore.setMaptipPoint(maptipPoint);
     }
 
     /**
@@ -170,6 +173,6 @@ export class MaptipAPI extends APIScope {
      * @param {string} content the new maptip html content
      */
     setContent(content: string): void {
-        this.$iApi.$vApp.$store.set(MaptipStore.setMaptipContent, content);
+        this.maptipStore.setMaptipContent(content);
     }
 }

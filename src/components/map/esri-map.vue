@@ -20,19 +20,16 @@
 
 <script setup lang="ts">
 import { computed, inject, onBeforeUnmount, reactive, watch } from 'vue';
-import { MaptipStore } from '@/store/modules/maptip';
-import { useStore } from 'vuex';
+import { useMaptipStore } from '@/stores/maptip';
 import type { InstanceAPI } from '@/api';
 import type { Point } from '@/geo/api';
 
-const store = useStore();
+const maptipStore = useMaptipStore();
 const iApi = inject('iApi') as InstanceAPI;
 
-const maptipPoint = computed(() => store.get<Point>(MaptipStore.maptipPoint));
-const maptipInstance = computed(() =>
-    store.get<any>(MaptipStore.maptipInstance)
-);
-const maptipContent = computed(() => store.get<string>(MaptipStore.content));
+const maptipPoint = computed(() => maptipStore.maptipPoint);
+const maptipInstance = computed(() => maptipStore.maptipInstance);
+const maptipContent = computed(() => maptipStore.content);
 const watchers = reactive<Array<Function>>([]);
 
 watchers.push(
@@ -43,7 +40,7 @@ watchers.push(
             const originX: number = iApi.geo.map.getPixelWidth() / 2;
             const originY = 0;
             const screenPointFromMapPoint = iApi.geo.map.mapPointToScreenPoint(
-                maptipPoint.value!
+                maptipPoint.value! as Point
             );
             offsetX = screenPointFromMapPoint.screenX - originX;
             offsetY = originY - screenPointFromMapPoint.screenY;

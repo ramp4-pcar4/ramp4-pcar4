@@ -1,5 +1,5 @@
 import { FixtureInstance, LayerInstance } from '@/api/internal';
-import { LayerStore } from '@/store/modules/layer';
+import { useLayerStore } from '@/stores/layer';
 import type { ExportAPI, ExportSubFixture } from '@/fixtures/export/api/export';
 import { fabric } from 'fabric';
 import type { LegendSymbology } from '@/geo/api';
@@ -56,11 +56,7 @@ class ExportLegendFixture extends FixtureInstance implements ExportSubFixture {
 
     async make(options: any): Promise<fabric.Group> {
         // filter out loading/errored and invisible layers
-        const layers = this.$vApp.$store
-            .get<LayerInstance[]>(LayerStore.layers)!
-            .filter(
-                layer => layer.isLoaded && layer.visibility && !layer.isCosmetic
-            );
+        const layers = useLayerStore(this.$vApp.$pinia).layers;
 
         if (layers.length === 0) {
             // return an empty group
@@ -82,7 +78,10 @@ class ExportLegendFixture extends FixtureInstance implements ExportSubFixture {
         let runningHeight = 0;
 
         const segments = await Promise.all(
-            this._makeSegments(layers, columnWidth)
+            this._makeSegments(
+                layers as unknown as Array<LayerInstance>,
+                columnWidth
+            )
         );
 
         // string all the graphic legend elements together adding margins between them

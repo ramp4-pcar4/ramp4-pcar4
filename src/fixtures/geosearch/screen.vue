@@ -102,17 +102,16 @@ import { computed, inject } from 'vue';
 import type { PropType } from 'vue';
 import type { InstanceAPI, PanelInstance } from '@/api';
 import { Polygon, SpatialReference } from '@/geo/api';
-import { GeosearchStore } from './store';
+import { useGeosearchStore } from './store';
 import GeosearchBar from './search-bar.vue';
 import GeosearchTopFilters from './top-filters.vue';
 import GeosearchBottomFilters from './bottom-filters.vue';
 import LoadingBar from './loading-bar.vue';
-import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
-const store = useStore();
+const geosearchStore = useGeosearchStore();
 
 defineProps({
     panel: {
@@ -120,16 +119,10 @@ defineProps({
     }
 });
 
-const searchVal = computed<string>(() => store.get(GeosearchStore.searchVal)!);
-const searchResults = computed<Array<any>>(
-    () => store.get(GeosearchStore.searchResults)!
-);
-const loadingResults = computed<boolean>(
-    () => store.get(GeosearchStore.loadingResults)!
-);
-const failedServices = computed<string[]>(
-    () => store.get(GeosearchStore.failedServices)!
-);
+const searchVal = computed<string>(() => geosearchStore.searchVal);
+const searchResults = computed<Array<any>>(() => geosearchStore.searchResults);
+const loadingResults = computed<boolean>(() => geosearchStore.loadingResults);
+const failedServices = computed<string[]>(() => geosearchStore.failedServices);
 
 // zoom in to a clicked result
 const zoomIn = (result: any) => {

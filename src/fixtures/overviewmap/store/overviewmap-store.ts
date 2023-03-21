@@ -1,72 +1,29 @@
-import type { ActionContext } from 'vuex';
-import { make } from 'vuex-pathify';
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-import { OverviewmapState } from './overviewmap-state';
-import type { RootState } from '@/store';
+export const useOverviewmapStore = defineStore('overviewmap', () => {
+    const mapConfig = ref(undefined);
+    const basemaps = ref({});
+    const startMinimized = ref(true);
+    const expandFactor = ref(1.5);
+    const borderColour = ref('#FF0000');
+    const borderWidth = ref(1);
+    const areaColour = ref('#000000');
+    const areaOpacity = ref(0.25);
 
-type OverviewMapContext = ActionContext<OverviewmapState, RootState>;
-
-const getters = {};
-
-const actions = {
-    updateIntialBasemap: (context: OverviewMapContext, basemapId: string) => {
-        context.commit('SET_INITIAL_BASEMAP', basemapId);
+    function updateInitialBasemap(basemapId: string) {
+        mapConfig.value.initialBasemapId = basemapId;
     }
-};
-
-const mutations = {
-    SET_INITIAL_BASEMAP: (state: OverviewmapState, basemapId: string) => {
-        state.mapConfig!.initialBasemapId = basemapId;
-    }
-};
-
-export enum OverviewmapStore {
-    /**
-     * (State) mapConfig: RampMapConfig
-     */
-    mapConfig = 'overviewmap/mapConfig',
-    /**
-     * (State) basemaps: { [key: string]: RampBasemapConfig }
-     */
-    basemaps = 'overviewmap/basemaps',
-    /**
-     * (State) startMinimized: boolean
-     */
-    startMinimized = 'overviewmap/startMinimized',
-    /**
-     * (State) expandFactor: number
-     */
-    expandFactor = 'overviewmap/expandFactor',
-    /**
-     * (State) borderColour: string
-     */
-    borderColour = 'overviewmap/borderColour',
-    /**
-     * (State) borderWidth: number
-     */
-    borderWidth = 'overviewmap/borderWidth',
-    /**
-     * (State) areaColour: string
-     */
-    areaColour = 'overviewmap/areaColour',
-    /**
-     * (State) areaOpacity: number
-     */
-    areaOpacity = 'overviewmap/areaOpacity',
-    /**
-     * (Action) updateIntialBasemap: (basemapId: string)
-     */
-    updateIntialBasemap = 'overviewmap/updateIntialBasemap!'
-}
-
-export function overviewmap() {
-    const state = new OverviewmapState();
 
     return {
-        namespaced: true,
-        state,
-        getters: { ...getters },
-        actions: { ...actions, ...make.actions(state) },
-        mutations: { ...mutations, ...make.mutations(state) }
+        mapConfig,
+        basemaps,
+        startMinimized,
+        expandFactor,
+        borderColour,
+        borderWidth,
+        areaColour,
+        areaOpacity,
+        updateInitialBasemap
     };
-}
+});

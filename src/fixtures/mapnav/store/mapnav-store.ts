@@ -1,45 +1,27 @@
-import type { ActionContext } from 'vuex';
-import { make } from 'vuex-pathify';
+import type { MapnavItemSet } from './mapnav-state';
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-import { MapnavState } from './mapnav-state';
-import type { MapnavItem } from './mapnav-state';
-import type { RootState } from '@/store/state';
+export const useMapnavStore = defineStore('mapnav', () => {
+    /**
+     * A set of all open (visible and hidden) mapnav items.
+     */
+    const items = ref<MapnavItemSet>({});
 
-type MapnavContext = ActionContext<MapnavState, RootState>;
+    /**
+     * An ordered list of mapnav item ids.
+     */
+    const order = ref<string[]>([]);
 
-export enum MapnavAction {
-    REMOVE_ITEM = 'removeItem'
-}
-
-export enum MapnavMutation {
-    REMOVE_ITEM = 'REMOVE_ITEM'
-}
-
-const actions = {
-    [MapnavAction.REMOVE_ITEM](context: MapnavContext, value: string) {
-        context.commit(MapnavMutation.REMOVE_ITEM, value);
-    }
-};
-
-const mutations = {
-    [MapnavMutation.REMOVE_ITEM](state: MapnavState, value: string) {
-        if (value in state.items) {
-            delete state.items[value];
+    function removeItem(value: string) {
+        if (value in items.value) {
+            delete items.value[value];
         }
-        const index = state.order.indexOf(value);
+        const index = order.value.indexOf(value);
         if (index !== -1) {
-            state.order.splice(index, 1);
+            order.value.splice(index, 1);
         }
     }
-};
 
-export function mapnav() {
-    const state = new MapnavState();
-
-    return {
-        namespaced: true,
-        state,
-        actions: { ...actions },
-        mutations: { ...mutations, ...make.mutations(['items', 'order']) }
-    };
-}
+    return { items, order, removeItem };
+});

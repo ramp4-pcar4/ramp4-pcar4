@@ -64,11 +64,11 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
-import { useStore } from 'vuex';
 import { NotificationType } from '@/api/notifications';
 import { useI18n } from 'vue-i18n';
+import { useNotificationStore } from '@/stores/notification';
 
-const store = useStore();
+const notificationStore = useNotificationStore();
 const { t } = useI18n();
 
 const props = defineProps({
@@ -86,7 +86,7 @@ const icons = reactive({
 });
 
 const removeNotification = (notif: any) => {
-    store.set('notification/removeNotification!', notif);
+    notificationStore.removeNotification(notif);
 };
 const tooltipShow = () => {
     if (!props.notification.messageList) {

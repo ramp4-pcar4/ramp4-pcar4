@@ -75,31 +75,26 @@ import {
     ref,
     watch
 } from 'vue';
-import { useStore } from 'vuex';
 import type { GeosearchAPI } from './api/geosearch';
-
-import { GeosearchStore } from './store';
+import { useGeosearchStore } from './store';
 import type { QueryParams } from './store';
-import { GeoSearchUI } from './store/geosearch.feature';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
-const store = useStore();
+const geosearchStore = useGeosearchStore();
 
 const provinces = ref<Array<any>>([]);
 const types = ref<Array<any>>([]);
 const watchers = ref<Array<Function>>([]);
 
-const queryParams = computed<QueryParams>(
-    () => store.get(GeosearchStore.queryParams)!
-);
+const queryParams = computed<QueryParams>(() => geosearchStore.queryParams);
 const language = computed<string>(() => iApi.language);
 
 const setProvince = (payload: { province?: string; forceReRun?: boolean }) =>
-    store.dispatch(GeosearchStore.setProvince, payload);
+    geosearchStore.setProvince(payload);
 const setType = (payload: { type?: string; forceReRun?: boolean }) =>
-    store.dispatch(GeosearchStore.setType, payload);
+    geosearchStore.setType(payload);
 
 // Called when the `clear filters` button is clicked. Clears province and type filters.
 const clearFilters = () => {
@@ -112,12 +107,9 @@ const clearFilters = () => {
 // and then re fetch all the provinces and types again.
 // TODO: In the future, we should look to refactor the code for this fixture to improve clarity and reduce the number of API calls.
 const updateProvincesAndTypes = () => {
-    store.dispatch(
-        GeosearchStore.setGSservice,
-        new GeoSearchUI(
-            iApi.language,
-            iApi.fixture.get<GeosearchAPI>('geosearch').config
-        )
+    geosearchStore.initService(
+        iApi.language,
+        iApi.fixture.get<GeosearchAPI>('geosearch').config
     );
     const queryProvCode = provinces.value.find(
         prov => queryParams.value.province === prov.name
@@ -125,17 +117,15 @@ const updateProvincesAndTypes = () => {
     const queryTypeCode = types.value.find(
         type => queryParams.value.type === type.name
     )?.code;
-    (store.get(GeosearchStore.getProvinces) as Promise<Array<any>>).then(
-        provs => {
-            provinces.value = provs;
-            setProvince({
-                province: provs.find(prov => prov.code === queryProvCode)?.name,
-                forceReRun: true
-            });
-        }
-    );
+    geosearchStore.getProvinces.then(provs => {
+        provinces.value = provs;
+        setProvince({
+            province: provs.find(prov => prov.code === queryProvCode)?.name,
+            forceReRun: true
+        });
+    });
 
-    (store.get(GeosearchStore.getTypes) as Promise<Array<any>>).then(typs => {
+    geosearchStore.getTypes.then(typs => {
         types.value = typs;
         setType({
             type: typs.find(type => type.code === queryTypeCode)?.name,

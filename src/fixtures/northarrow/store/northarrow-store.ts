@@ -1,26 +1,9 @@
-import { make } from 'vuex-pathify';
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-import { NortharrowState } from './northarrow-state';
+export const useNortharrowStore = defineStore('northarrow', () => {
+    const arrowIcon = ref('');
+    const poleIcon = ref('');
 
-const getters = {};
-
-const mutations = {};
-
-const actions = {};
-
-export enum NortharrowStore {
-    arrowIcon = 'northarrow/arrowIcon',
-    poleIcon = 'northarrow/poleIcon'
-}
-
-export function northarrow() {
-    const state = new NortharrowState();
-
-    return {
-        namespaced: true,
-        state,
-        getters: { ...getters },
-        actions: { ...actions, ...make.actions(state) },
-        mutations: { ...mutations, ...make.mutations(state) }
-    };
-}
+    return { arrowIcon, poleIcon };
+});
