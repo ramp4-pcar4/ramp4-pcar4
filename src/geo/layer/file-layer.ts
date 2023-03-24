@@ -16,7 +16,6 @@ import type {
 } from '@/api/internal';
 
 import {
-    CoreFilter,
     DataFormat,
     DefPromise,
     Extent,
@@ -24,7 +23,6 @@ import {
     IdentifyResultFormat,
     LayerFormat,
     LayerIdentifyMode,
-    LayerType,
     Point
 } from '@/geo/api';
 
@@ -157,8 +155,8 @@ export class FileLayer extends AttribLayer {
         this.esriJson = undefined;
         if (this.origRampConfig.caching !== true) {
             delete this.origRampConfig.rawData;
-            delete this.sourceGeoJson;
         }
+        delete this.sourceGeoJson;
 
         await super.onInitiate();
     }

@@ -8,18 +8,17 @@ export class ShapefileLayer extends FileLayer {
     }
 
     protected async onInitiate(): Promise<void> {
-        // TODO check if .sourceGeoJson is already populated?
-        //      if this initiate is a reload, do we want to re-use it, or re-download? decide.
-
         let shapefileData: any; // data type is actually an ArrayBuffer
 
-        if (this.origRampConfig.rawData) {
+        if (
+            this.origRampConfig.rawData &&
+            typeof this.origRampConfig.rawData === 'string'
+        ) {
             // shapefile data has been passed in as static data.
             // since shapefile is binary, you cannot drop this in a layer config file.
             // I think what can happen is a wizard could read the file (via file picker)
             // or some random api code could do pre-processing, and then drop it on the rawData
             // parameter which allows this routine to consume it.
-            // TODO add check that errors if typeof is string?
             shapefileData = this.origRampConfig.rawData;
         } else if (this.origRampConfig.url) {
             shapefileData = await this.$iApi.geo.layer.files.fetchFileData(

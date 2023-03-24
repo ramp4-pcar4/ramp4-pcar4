@@ -8,18 +8,17 @@ export class CsvLayer extends FileLayer {
     }
 
     protected async onInitiate(): Promise<void> {
-        // TODO check if .sourceGeoJson is already populated?
-        //      if this initiate is a reload, do we want to re-use it, or re-download? decide.
-
         if (!this.origRampConfig.latField || !this.origRampConfig.longField) {
             throw new Error('csv file config missing lat or long field names');
         }
 
         let csvData: string; // contents of the file, encoded in UTF8
 
-        if (this.origRampConfig.rawData) {
+        if (
+            this.origRampConfig.rawData &&
+            typeof this.origRampConfig.rawData === 'string'
+        ) {
             // csv data has been passed in as static string
-            // TODO validation? check that type is string?
             csvData = this.origRampConfig.rawData;
         } else if (this.origRampConfig.url) {
             csvData = await this.$iApi.geo.layer.files.fetchFileData(
