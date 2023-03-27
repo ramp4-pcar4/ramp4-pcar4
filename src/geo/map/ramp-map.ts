@@ -325,8 +325,12 @@ export class MapAPI extends CommonMapAPI {
             e.preventDefault();
         });
 
-        this._viewPromise.resolveMe();
-        this.created = true;
+        // as of ESRI v4.26, we need to marinate until .when() is done.
+        // otherwise, something happens too fast and the initial calls to view.goTo() grouse quite a lot.
+        this.esriView.when(() => {
+            this._viewPromise.resolveMe();
+            this.created = true;
+        });
     }
 
     /**

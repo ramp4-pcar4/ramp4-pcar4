@@ -93,6 +93,8 @@ onMounted(() => {
             el.value.querySelector('.overviewmap') as HTMLDivElement
         );
 
+        await overviewMap.viewPromise;
+
         await overviewMap.addMapGraphicLayer();
 
         minimized.value = startMinimized.value!;
@@ -106,9 +108,9 @@ onMounted(() => {
             iApi.event.on(
                 GlobalEvents.MAP_EXTENTCHANGE,
                 debounce(100, (newExtent: Extent) => {
-                    updatePromise.then(() =>
-                        overviewMap.updateOverview(newExtent)
-                    );
+                    updatePromise.then(() => {
+                        overviewMap.updateOverview(newExtent);
+                    });
                 })
             )
         );

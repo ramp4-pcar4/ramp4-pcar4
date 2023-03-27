@@ -327,13 +327,15 @@ export class CommonMapAPI extends APIScope {
             const zoomP: any = {
                 target: this.$iApi.geo.geom.geomRampToEsri(g)
             };
+
             if (g.type === GeometryType.POINT) {
                 zoomP.scale = scale || this.pointZoomScale;
             }
             const opts: any = { animate: animate };
-            if (this.esriView) {
-                return this.esriView.goTo(zoomP, opts);
-            }
+
+            return this.viewPromise.then(() => {
+                return this.esriView!.goTo(zoomP, opts);
+            });
         } else {
             this.noMapErr();
         }
