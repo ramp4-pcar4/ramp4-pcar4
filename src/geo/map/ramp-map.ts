@@ -325,8 +325,11 @@ export class MapAPI extends CommonMapAPI {
             e.preventDefault();
         });
 
-        this._viewPromise.resolveMe();
-        this.created = true;
+        // add more comments
+        this.esriView.when(() => {
+            this._viewPromise.resolveMe();
+            this.created = true;
+        });
     }
 
     /**

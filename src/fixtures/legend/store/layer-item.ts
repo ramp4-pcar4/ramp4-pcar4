@@ -361,7 +361,13 @@ export class LayerItem extends LegendItem {
                         this.$iApi.event.on(
                             GlobalEvents.MAP_SCALECHANGE,
                             () => {
-                                this._layerOffscale = this.layer?.isOffscale();
+                                // reason for this check is the scale likes to fire during a reprojection,
+                                // and if race condition aligns the map view will not exists (as the reprojected
+                                // view is getting built) when the offscale check is requested, causing a ruckus.
+                                if (this.$iApi.geo.map.created) {
+                                    this._layerOffscale =
+                                        this.layer?.isOffscale();
+                                }
                             }
                         )
                     );
