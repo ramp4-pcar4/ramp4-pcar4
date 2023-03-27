@@ -135,6 +135,6 @@ rInstance.$element.component('WFSLayer-Custom', {
 });
 
 // load map if startRequired is true
-rInstance.start();
+// rInstance.start();
 
 window.debugInstance = rInstance;

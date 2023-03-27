@@ -709,7 +709,7 @@ rInstance.fixture.add('export');
 rInstance.fixture.add('areas-of-interest');
 
 // load map if startRequired is true
-rInstance.start();
+// rInstance.start();
 
 function switchLang() {
     if (rInstance.language === 'en') {
