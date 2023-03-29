@@ -152,8 +152,8 @@ export class FileLayer extends AttribLayer {
         this.esriJson = undefined;
         if (this.origRampConfig.caching !== true) {
             delete this.origRampConfig.rawData;
-            delete this.sourceGeoJson;
         }
+        delete this.sourceGeoJson;
 
         await super.onInitiate();
     }

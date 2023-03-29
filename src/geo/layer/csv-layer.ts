@@ -14,9 +14,11 @@ export class CsvLayer extends FileLayer {
 
         let csvData: string; // contents of the file, encoded in UTF8
 
-        if (this.origRampConfig.rawData) {
+        if (
+            this.origRampConfig.rawData &&
+            typeof this.origRampConfig.rawData === 'string'
+        ) {
             // csv data has been passed in as static string
-            // TODO validation? check that type is string?
             csvData = this.origRampConfig.rawData;
         } else if (this.origRampConfig.url) {
             csvData = await this.$iApi.geo.layer.files.fetchFileData(

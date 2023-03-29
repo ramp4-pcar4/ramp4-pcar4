@@ -11,10 +11,12 @@ export class GeoJsonLayer extends FileLayer {
     protected async onInitiate(): Promise<void> {
         // get geojson from appropriate source and set to special property.
         // then initiate the FileLayer
-
-        if (this.origRampConfig.rawData) {
+        if (
+            this.origRampConfig.rawData &&
+            (typeof this.origRampConfig.rawData === 'string' ||
+                this.origRampConfig.rawData instanceof Object)
+        ) {
             // geojson has been passed in as static string or GeoJSON object
-            // TODO validation? check that type is string or object?
             this.sourceGeoJson = this.origRampConfig.rawData;
         } else if (this.origRampConfig.url) {
             this.sourceGeoJson = await this.$iApi.geo.layer.files.fetchFileData(
