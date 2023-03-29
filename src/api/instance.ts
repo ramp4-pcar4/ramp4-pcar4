@@ -1,4 +1,5 @@
 import { createApp as createRampApp } from 'vue';
+import { createPinia } from 'pinia';
 import type {
     ComponentPublicInstance,
     App as VueApp,
@@ -8,12 +9,9 @@ import type { RampConfig, RampConfigs } from '@/types';
 import { i18n } from '@/lang';
 import screenfull from 'screenfull';
 import mixin from './mixin';
-import pathifyHelper from '@/store/pathify-helper';
+import merge from 'deepmerge';
 
 import App from '@/app.vue';
-import { store } from '@/store';
-import { ConfigStore } from '@/store/modules/config';
-import { MaptipStore } from '@/store/modules/maptip';
 
 import VueTippy from 'vue-tippy';
 import { FocusList, FocusItem, FocusContainer } from '@/directives/focus-list';
@@ -47,7 +45,30 @@ import MapnavButtonV from '@/fixtures/mapnav/button.vue';
 
 import AppbarButtonV from '@/fixtures/appbar/button.vue';
 import type { MaptipAPI } from '@/geo/map/maptip';
-import type { Composer, LocaleMessages, VueMessageType } from 'vue-i18n';
+import type { Composer } from 'vue-i18n';
+
+import { useAppbarStore } from '@/fixtures/appbar/store';
+import { useAreasOfInterestStore } from '@/fixtures/areas-of-interest/store';
+import { useConfigStore } from '@/stores/config';
+import { useDetailsStore } from '@/fixtures/details/store';
+import { useExportStore } from '@/fixtures/export/store';
+import { useFixtureStore } from '@/stores/fixture';
+import { useGeosearchStore } from '@/fixtures/geosearch/store';
+import { useGridStore } from '@/fixtures/grid/store';
+import { useHelpStore } from '@/fixtures/help/store';
+import { useInstanceStore } from '@/stores/instance';
+import { useLayerStore } from '@/stores/layer';
+import { useLegendStore } from '@/fixtures/legend/store';
+import { useMapCaptionStore } from '@/stores/map-caption';
+import { useMapnavStore } from '@/fixtures/mapnav/store';
+import { useMaptipStore } from '@/stores/maptip';
+import { useMetadataStore } from '@/fixtures/metadata/store';
+import { useNortharrowStore } from '@/fixtures/northarrow/store';
+import { useNotificationStore } from '@/stores/notification';
+import { useOverviewmapStore } from '@/fixtures/overviewmap/store';
+import { usePanelStore } from '@/stores/panel';
+import { useScrollguardStore } from '@/fixtures/scrollguard/store';
+import { useWizardStore } from '@/fixtures/wizard/store';
 
 export interface RampOptions {
     loadDefaultFixtures?: boolean;
@@ -72,7 +93,7 @@ export class InstanceAPI {
      */
     readonly $vApp: ComponentPublicInstance;
     readonly $element: VueApp<Element>;
-    readonly $i18n: Composer<LocaleMessages<VueMessageType>, unknown>;
+    readonly $i18n: Composer;
 
     private _isFullscreen: boolean;
 
@@ -132,6 +153,9 @@ export class InstanceAPI {
      * @param {RampOptions | undefined} options startup options for this R4MP instance
      */
     private initialize(configs?: RampConfigs, options?: RampOptions): void {
+        const configStore = useConfigStore(this.$vApp.$pinia);
+        const panelStore = usePanelStore(this.$vApp.$pinia);
+        const maptipStore = useMaptipStore(this.$vApp.$pinia);
         if (configs?.configs !== undefined) {
             const langConfigs: {
                 [key: string]: RampConfig;
@@ -140,10 +164,10 @@ export class InstanceAPI {
             const langConfig =
                 langConfigs[this.$i18n.locale.value] ??
                 langConfigs[Object.keys(langConfigs)[0]];
-            this.$vApp.$store.set(ConfigStore.newConfig, langConfig);
+            configStore.newConfig(langConfig);
 
             // register first config for all available languages and then overwrite configs per language as needed
-            this.$vApp.$store.set(ConfigStore.registerConfig, {
+            configStore.registerConfig({
                 config: langConfig,
                 configLangs: Object.keys(langConfigs),
                 // @ts-ignore
@@ -151,18 +175,15 @@ export class InstanceAPI {
             });
 
             for (const lang in langConfigs) {
-                this.$vApp.$store.set(ConfigStore.registerConfig, {
+                configStore.registerConfig({
                     config: langConfigs[lang],
                     configLangs: [lang]
                 });
             }
 
             // set the initial basemap
-            this.$vApp.$store.set(
-                ConfigStore.setActiveBasemap,
-                langConfig.map.basemaps.find(
-                    bm => bm.id === langConfig.map.initialBasemapId
-                )
+            configStore.activeBasemapConfig = langConfig.map.basemaps.find(
+                bm => bm.id === langConfig.map.initialBasemapId
             );
 
             // need to wait for the map container div to appear
@@ -184,11 +205,8 @@ export class InstanceAPI {
                     // Hide hovertip on map creation
                     //@ts-ignore
                     mapViewElement._tippy.hide(0);
-                    this.$vApp.$store.set(
-                        MaptipStore.setMaptipInstance,
-                        //@ts-ignore
-                        mapViewElement._tippy
-                    );
+                    //@ts-ignore
+                    maptipStore.setMaptipInstance(mapViewElement._tippy);
 
                     // add layers
                     if (langConfig.layers && langConfig.layers.length > 0) {
@@ -245,8 +263,7 @@ export class InstanceAPI {
                 }
 
                 // enable/disable reorder controls
-                const enable = langConfig.panels.reorderable ?? true;
-                this.$vApp.$store.set('panel/reorderable', enable);
+                panelStore.reorderable = langConfig.panels.reorderable ?? true;
             }
 
             // disable animations if needed
@@ -271,12 +288,13 @@ export class InstanceAPI {
             options = {};
         }
 
+        const instanceStore = useInstanceStore(this.$vApp.$pinia);
         if (options?.startRequired) {
             this.startRequired = true;
-            this.$vApp.$store.set('app/started', false);
+            instanceStore.started = false;
         } else {
             this.startRequired = false;
-            this.$vApp.$store.set('app/started', true);
+            instanceStore.started = true;
             this.event.emit(GlobalEvents.MAP_START);
         }
 
@@ -301,11 +319,14 @@ export class InstanceAPI {
      * @param {RampOptions} options startup options for this R4MP instance
      */
     reload(configs?: RampConfigs, options?: RampOptions): void {
+        const instanceStore = useInstanceStore(this.$vApp.$pinia);
+        const notificationStore = useNotificationStore(this.$vApp.$pinia);
+        const configStore = useConfigStore(this.$vApp.$pinia);
+        const fixtureStore = useFixtureStore(this.$vApp.$pinia);
+
         // remove all fixtures
         // get list of all fixture ids currently added
-        const addedFixtures: Array<string> = Object.keys(
-            this.$vApp.$store.get('fixture/items') as any
-        );
+        const addedFixtures: Array<string> = Object.keys(fixtureStore.items);
         // remove each fixture
         addedFixtures.forEach((id: string) => {
             // check if the fixture exists first otherwise it will error
@@ -315,7 +336,7 @@ export class InstanceAPI {
         });
 
         // reset start flag
-        this.$vApp.$store.set('app/started', false);
+        instanceStore.started = false;
 
         // destroy map (calls private destroyMap)
         // @ts-ignore
@@ -329,18 +350,14 @@ export class InstanceAPI {
             // Need to clone this config to trigger config watch handlers
             configs = JSON.parse(
                 JSON.stringify({
-                    startingFixtures: this.$vApp.$store.get(
-                        ConfigStore.getStartingFixtures
-                    )!,
-                    configs: this.$vApp.$store.get(
-                        ConfigStore.getRegisteredConfigs
-                    )!
+                    startingFixtures: configStore.startingFixtures,
+                    configs: configStore.registeredConfigs
                 })
             );
         }
 
         // clear all notifications (using set to call action)
-        this.$vApp.$store.set('notification/clearAll!', {});
+        notificationStore.clearAll();
 
         // clear maptip
         this.geo.map.maptip.clear();
@@ -409,14 +426,92 @@ export class InstanceAPI {
      */
     getConfig() {
         // clone it to avoid mutations to store config
+        const configStore = useConfigStore(this.$vApp.$pinia);
         return JSON.parse(
-            JSON.stringify(
-                this.$vApp.$store.get(
-                    ConfigStore.getActiveConfig,
-                    this.language
-                ) as RampConfig
-            )
+            JSON.stringify(configStore.getActiveConfig(this.language))
         );
+    }
+
+    /**
+     * Returns the pinia store of the specified id, if it exists, else returns undefined.
+     *
+     * @param id the id of the store to return
+     * @memberof InstanceAPI
+     */
+    useStore<T>(id: string): Readonly<T> | undefined {
+        const fixtureIds = [
+            'appbar',
+            'areas-of-interest',
+            'details',
+            'export',
+            'geosearch',
+            'grid',
+            'help',
+            'legend',
+            'mapnav',
+            'metadata',
+            'northarrow',
+            'overviewmap',
+            'scrollguard',
+            'wizard'
+        ];
+
+        if (fixtureIds.includes(id) && !this.fixture.get(id)) {
+            return undefined;
+        }
+
+        let store;
+        switch (id) {
+            case 'appbar':
+                store = useAppbarStore(this.$vApp.$pinia);
+            case 'areas-of-interest':
+                store = useAreasOfInterestStore(this.$vApp.$pinia);
+            case 'details':
+                store = useDetailsStore(this.$vApp.$pinia);
+            case 'export':
+                store = useExportStore(this.$vApp.$pinia);
+            case 'geosearch':
+                store = useGeosearchStore(this.$vApp.$pinia);
+            case 'grid':
+                store = useGridStore(this.$vApp.$pinia);
+            case 'help':
+                store = useHelpStore(this.$vApp.$pinia);
+            case 'legend':
+                store = useLegendStore(this.$vApp.$pinia);
+            case 'mapnav':
+                store = useMapnavStore(this.$vApp.$pinia);
+            case 'metadata':
+                store = useMetadataStore(this.$vApp.$pinia);
+            case 'northarrow':
+                store = useNortharrowStore(this.$vApp.$pinia);
+            case 'overviewmap':
+                store = useOverviewmapStore(this.$vApp.$pinia);
+            case 'scrollguard':
+                store = useScrollguardStore(this.$vApp.$pinia);
+            case 'wizard':
+                store = useWizardStore(this.$vApp.$pinia);
+            case 'config':
+                store = useConfigStore(this.$vApp.$pinia);
+            case 'fixture':
+                store = useFixtureStore(this.$vApp.$pinia);
+            case 'instance':
+                store = useInstanceStore(this.$vApp.$pinia);
+            case 'layer':
+                store = useLayerStore(this.$vApp.$pinia);
+            case 'map-caption':
+                store = useMapCaptionStore(this.$vApp.$pinia);
+            case 'maptip':
+                store = useMaptipStore(this.$vApp.$pinia);
+            case 'notification':
+                store = useNotificationStore(this.$vApp.$pinia);
+            case 'panel':
+                store = usePanelStore(this.$vApp.$pinia);
+            default:
+                console.error(`The store ${id} does not exist.`);
+                store = undefined;
+        }
+
+        return store;
     }
 
     /**
@@ -429,10 +524,8 @@ export class InstanceAPI {
         if (this.$i18n.locale.value === language) {
             return;
         }
-
-        const langs = this.$vApp.$store.get(ConfigStore.getRegisteredLangs) as {
-            [key: string]: string;
-        };
+        const configStore = useConfigStore(this.$vApp.$pinia);
+        const langs = configStore.registeredLangs;
 
         // prevent full map reload if the new language uses the same config
         if (langs[language] === langs[this.$i18n.locale.value]) {
@@ -508,7 +601,7 @@ export class InstanceAPI {
      * @memberof InstanceAPI
      */
     get started(): boolean {
-        return !!this.$vApp.$store.get('app/started');
+        return useInstanceStore(this.$vApp.$pinia).started;
     }
 
     /**
@@ -533,11 +626,12 @@ export class InstanceAPI {
     }
 
     start(): void {
+        const instanceStore = useInstanceStore(this.$vApp.$pinia);
         // delay map loading
-        if (!this.$vApp.$store.get('app/started') && this.startRequired) {
+        if (!instanceStore.started && this.startRequired) {
             this.event.emit(GlobalEvents.MAP_START);
-            this.$vApp.$store.set('app/started', true);
-        } else if (this.$vApp.$store.get('app/started')) {
+            instanceStore.started = true;
+        } else if (instanceStore.started) {
             console.warn('start has already been called');
         }
     }
@@ -553,17 +647,20 @@ export class InstanceAPI {
 function createApp(element: HTMLElement, iApi: InstanceAPI) {
     // passing the `iApi` reference to the root Vue component will propagate it to all the child component in this instance of R4MP Vue application
     // if several R4MP apps are created, each will contain a reference of its own API instance
-    const thisStore = store();
+    const pinia = createPinia();
+    pinia.use(({ store }) => {
+        const initialState = merge({}, store.$state);
+        store.$reset = () => store.$patch(merge({}, {}, initialState));
+    });
     const thisi18n = i18n();
     const vueElement = createRampApp(App)
-        .use(thisStore)
         .use(thisi18n)
         .use(VueTippy, {
             directive: 'tippy', // => v-tippy
             component: 'tippy' // => <tippy/>
         })
         .use(mixin)
-        .use(pathifyHelper);
+        .use(pinia);
 
     vueElement.directive('focus-container', FocusContainer);
     vueElement.directive('focus-list', FocusList);
@@ -590,9 +687,9 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
 
     vueElement.component('appbar-button', AppbarButtonV);
 
-    // Add the $store and $iApi instances to the Vue components.
-    vueElement.config.globalProperties.$store = thisStore;
+    // Add the $pinia and $iApi instances to the Vue components.
     vueElement.config.globalProperties.$iApi = iApi;
+    vueElement.config.globalProperties.$pinia = pinia;
 
     vueElement.provide('iApi', iApi);
 

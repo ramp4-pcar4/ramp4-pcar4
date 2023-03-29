@@ -3,21 +3,21 @@ import type { Component, ComponentOptions, ComponentPublicInstance } from 'vue';
 import type { PanelInstance } from '@/api';
 import type { DefPromise } from '@/geo/api';
 
-export class PanelState {
+export interface PanelState {
     /**
      * A list of all open (visible and hidden) panels.
      *
      * @type {{ [name: string]: PanelInstance }}
      * @memberof PanelState
      */
-    items: { [name: string]: PanelInstance } = {};
+    items: { [name: string]: PanelInstance };
 
     /**
      * A list of registration promises for all panels.
      * @type {{ [name: string]: DefPromise }}
      * @memberof PanelState
      */
-    regPromises: { [name: string]: DefPromise } = {};
+    regPromises: { [name: string]: DefPromise };
 
     /**
      * A list of all panels in the arrangement they would be put on screen.
@@ -27,7 +27,7 @@ export class PanelState {
      * @type {PanelInstance[]}
      * @memberof PanelState
      */
-    orderedItems: PanelInstance[] = [];
+    orderedItems: PanelInstance[];
 
     /**
      * Indicates a pinned panel.
@@ -35,7 +35,7 @@ export class PanelState {
      * @type {(PanelInstance | null)}
      * @memberof PanelState
      */
-    pinned: PanelInstance | null = null;
+    pinned: PanelInstance | null;
 
     /**
      * Indicates the most recently opened panel has priority
@@ -44,7 +44,7 @@ export class PanelState {
      * @type {(PanelInstance | null)}
      * @memberof PanelState
      */
-    priority: PanelInstance | null = null;
+    priority: PanelInstance | null;
 
     /**
      * The panels that are displayed on the screen
@@ -52,7 +52,7 @@ export class PanelState {
      * @type {PanelInstance[]}
      * @memberof PanelState
      */
-    visible: PanelInstance[] = [];
+    visible: PanelInstance[];
 
     /**
      * The screen width that the visible panels are allowed to use.
@@ -60,7 +60,7 @@ export class PanelState {
      * @type {number}
      * @memberof PanelState
      */
-    stackWidth = 0;
+    stackWidth: number;
 
     /**
      * The remaining screen width that non-opened panels are allowed to take up.
@@ -68,7 +68,7 @@ export class PanelState {
      * @type {number}
      * @memberof PanelState
      */
-    remainingWidth = 0;
+    remainingWidth: number;
 
     /**
      * True if the app contains the `xs` class, indicating that panels have no extra margin.
@@ -76,7 +76,7 @@ export class PanelState {
      * @type {boolean}
      * @memberof PanelState
      */
-    mobileView = false;
+    mobileView: boolean;
 
     /**
      * True if panels have the move left/right controls enabled.
@@ -84,7 +84,7 @@ export class PanelState {
      * @type {boolean}
      * @memberof PanelState
      */
-    reorderable = true;
+    reorderable: boolean;
 }
 
 // this should have been `AsyncComponentPromise` type, but something is off there

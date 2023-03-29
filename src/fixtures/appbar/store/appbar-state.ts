@@ -1,33 +1,7 @@
-export class AppbarState {
-    /**
-     * A set of all fixed appbar buttons.
-     *
-     * @type {AppbarItem[]}
-     * @memberof AppbarState
-     */
-    items: AppbarItemSet = {};
-
-    /**
-     * An ordered list of fixed appbar item ids.
-     *
-     * @type {(string | AppbarItemInstance)[][]}
-     * @memberof AppbarState
-     */
-    order: (string | AppbarItemInstance)[][] = [];
-
-    /**
-     * An ordered list of panel IDs. Used to display the buttons registered to the panels.
-     *
-     * @type {string[]}
-     * @memberof AppbarState
-     */
-    temporary: string[] = [];
-}
-
 export type AppbarItemSet = { [name: string]: string | AppbarItemInstance };
 
 export interface AppbarFixtureConfig {
-    items: (string | AppbarItemConfig)[];
+    items: (string | AppbarItemConfig)[][];
 }
 
 export interface AppbarItemConfig {

@@ -36,15 +36,13 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useStore } from 'vuex';
+import { useNotificationStore } from '@/stores/notification';
 import NotificationItem from './notification-item.vue';
 
-const store = useStore();
+const notificationStore = useNotificationStore();
 const { t } = useI18n();
 
-const notificationStack = computed(() =>
-    store.get<any>('notification/notificationStack')
-);
+const notificationStack = computed(() => notificationStore.notificationStack);
 </script>
 
 <style lang="scss" scoped></style>

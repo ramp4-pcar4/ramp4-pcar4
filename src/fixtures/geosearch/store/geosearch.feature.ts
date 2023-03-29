@@ -144,7 +144,7 @@ export class GeoSearchUI {
         result = result.toLowerCase().trim();
         const query = decodeURI(q.query!.toLowerCase().replace('*', ''));
 
-        /* Use a modified levenshtein distance algorithm to compute the 'distance' between the query and the result. 
+        /* Use a modified levenshtein distance algorithm to compute the 'distance' between the query and the result.
          The distance is computed by assessing each letter where:
          - insertion costs 0.2
          - deletion, substitution cost 1

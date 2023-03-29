@@ -175,7 +175,7 @@ import {
     ref
 } from 'vue';
 import type { PropType } from 'vue';
-import { DetailsItemInstance, DetailsStore } from './store';
+import { DetailsItemInstance, useDetailsStore } from './store';
 import type { DetailsAPI } from './api/details';
 
 import { GlobalEvents, InstanceAPI } from '@/api';
@@ -186,12 +186,11 @@ import type { LayerInstance, PanelInstance } from '@/api/internal';
 import ESRIDefault from './templates/esri-default.vue';
 import HTMLDefault from './templates/html-default.vue';
 import Toggle from '../../components/controls/toggle-switch-control.vue';
-import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
-const store = useStore();
+const detailsStore = useDetailsStore();
 
 const props = defineProps({
     panel: {
@@ -210,17 +209,13 @@ const props = defineProps({
 });
 
 const defaultTemplates = computed<{ [type: string]: string }>(
-    () => store.get(DetailsStore.defaultTemplates)!
+    () => detailsStore.defaultTemplates
 );
 const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(
-    () => store.get(DetailsStore.properties)!
+    () => detailsStore.properties
 );
-const activeGreedy = computed<number>(
-    () => store.get(DetailsStore.activeGreedy)!
-);
-const slowLoadingFlag = computed<Boolean>(
-    () => store.get(DetailsStore.slowLoadingFlag)!
-);
+const activeGreedy = computed<number>(() => detailsStore.activeGreedy);
+const slowLoadingFlag = computed<Boolean>(() => detailsStore.slowLoadingFlag);
 const identifyItem = computed<IdentifyItem>(
     () => props.result.items[currentIdx.value]
 );
@@ -313,7 +308,7 @@ const hilightToggle = ref<boolean>(true);
  */
 const detailsClosed = () => {
     details.value.removeDetailsHilight();
-    store.set(DetailsStore.hilightToggle, true);
+    detailsStore.hilightToggle = true;
 };
 
 /**
@@ -330,8 +325,7 @@ const detailsMinimized = () => {
 const initDetails = () => {
     currentIdx.value = props.itemIndex ?? 0;
     layerExists.value = true;
-    hilightToggle.value =
-        store.get(DetailsStore.hilightToggle) ?? hilightToggle.value;
+    hilightToggle.value = detailsStore.hilightToggle ?? hilightToggle.value;
     itemChanged();
 };
 

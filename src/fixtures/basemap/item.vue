@@ -114,14 +114,13 @@ import { computed, inject } from 'vue';
 import type { PropType } from 'vue';
 import type { RampBasemapConfig, RampTileSchemaConfig } from '@/geo/api';
 
-import { ConfigStore } from '@/store/modules/config';
 import type { InstanceAPI } from '@/api';
-import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
+import { useConfigStore } from '@/stores/config';
 
 const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi');
-const store = useStore();
+const configStore = useConfigStore();
 
 defineProps({
     basemap: {
@@ -135,7 +134,7 @@ defineProps({
 });
 
 const selectedBasemap = computed<RampBasemapConfig>(
-    () => store.get(ConfigStore.getActiveBasemapConfig)!
+    () => configStore.activeBasemapConfig as RampBasemapConfig
 );
 
 const selectBasemap = (basemap: any) => {

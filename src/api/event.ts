@@ -15,8 +15,8 @@ import type { MetadataAPI } from '@/fixtures/metadata/api/metadata';
 import type { MetadataPayload } from '@/fixtures/metadata/store';
 import type { SettingsAPI } from '@/fixtures/settings/api/settings';
 import type { WizardAPI } from '@/fixtures/wizard/api/wizard';
-import { AppbarAction } from '@/fixtures/appbar/store';
-import { GridStore, GridAction } from '@/fixtures/grid/store';
+import { useAppbarStore } from '@/fixtures/appbar/store';
+import { useGridStore } from '@/fixtures/grid/store';
 import { LayerState } from '@/geo/api';
 import type {
     MapClick,
@@ -27,9 +27,9 @@ import type {
 } from '@/geo/api';
 import type { RampConfig } from '@/types';
 import { debounce, throttle } from 'throttle-debounce';
-import { MapCaptionStore } from '@/store/modules/map-caption';
-import { ConfigStore } from '@/store/modules/config';
-import { DetailsStore } from '@/fixtures/details/store';
+import { useMapCaptionStore } from '@/stores/map-caption';
+import { useConfigStore } from '@/stores/config';
+import { useDetailsStore } from '@/fixtures/details/store';
 
 // TODO ensure some of the internal types used in the payload comments are published
 //      as part of our API doc generator. Would be ideal if doc output hyperlinked to
@@ -752,21 +752,15 @@ export class EventAPI extends APIScope {
                 // when a layer is removed, close the standard grid if open for that layer
                 zeHandler = (layer: LayerInstance) => {
                     if (this.$iApi.fixture.get<GridAPI>('grid')) {
+                        const gridStore = useGridStore(this.$vApp.$pinia);
                         // remove cached grid state for layer from grid store
-                        this.$vApp.$store.dispatch(
-                            `grid/${GridAction.removeGrid}`,
-                            layer.id
-                        );
+                        gridStore.removeGrid(layer.id);
                         // close grid panel if open or minimized with removed layer
-                        const currentId = this.$vApp.$store.get(
-                            GridStore.currentId
-                        );
+                        const currentId = gridStore.currentId;
                         if (layer.id === currentId) {
                             const panel = this.$iApi.panel.get('grid');
-                            if (panel.isOpen) {
-                                this.$iApi.panel.close(panel);
-                            }
-                            this.$vApp.$store.set(GridStore.currentId, null);
+                            this.$iApi.panel.close(panel);
+                            gridStore.currentId = undefined;
                         }
                     }
                 };
@@ -780,12 +774,10 @@ export class EventAPI extends APIScope {
             case DefEH.LAYER_REMOVE_UPDATES_DETAILS:
                 // when a layer is removed, remove it from the details payload
                 zeHandler = (layer: LayerInstance) => {
+                    const detailsStore = useDetailsStore(this.$vApp.$pinia);
                     if (this.$iApi.fixture.get<DetailsAPI>('details')) {
                         // remove the layer from the payload results
-                        this.$iApi.$vApp.$store.set(
-                            DetailsStore.removeLayer,
-                            layer
-                        )!;
+                        detailsStore.removeLayer(layer);
                     }
                 };
                 this.$iApi.event.on(
@@ -836,11 +828,8 @@ export class EventAPI extends APIScope {
                 // update any basemap attribution in the map caption when the basemap changes
                 zeHandler = () => {
                     this.$iApi.geo.map.caption.updateAttribution(
-                        (
-                            this.$iApi.$vApp.$store.get(
-                                ConfigStore.getActiveBasemapConfig
-                            ) as RampBasemapConfig
-                        )?.attribution
+                        useConfigStore(this.$vApp.$pinia).activeBasemapConfig
+                            ?.attribution
                     );
                 };
                 this.$iApi.event.on(
@@ -876,11 +865,8 @@ export class EventAPI extends APIScope {
                 // update any basemap attribution in the map caption when the map is created
                 zeHandler = () => {
                     this.$iApi.geo.map.caption.updateAttribution(
-                        (
-                            this.$iApi.$vApp.$store.get(
-                                ConfigStore.getActiveBasemapConfig
-                            ) as RampBasemapConfig
-                        )?.attribution
+                        useConfigStore(this.$vApp.$pinia).activeBasemapConfig
+                            ?.attribution
                     );
                 };
                 // update basemap attribution if map was created before adding event handler
@@ -947,8 +933,10 @@ export class EventAPI extends APIScope {
                     throttle(200, () => {
                         // check if coords are disabled
                         // if they are, then do not update
-                        const currentCrosshairsCoords: MapCoords | undefined =
-                            this.$iApi.$vApp.$store.get(MapCaptionStore.coords);
+                        const mapCaptionStore = useMapCaptionStore(
+                            this.$vApp.$pinia
+                        );
+                        const currentCrosshairsCoords = mapCaptionStore.coords;
                         if (
                             currentCrosshairsCoords?.disabled ||
                             !this.$iApi.geo.map.keysActive
@@ -960,12 +948,9 @@ export class EventAPI extends APIScope {
                                 this.$iApi.geo.map.getExtent().center()
                             )
                             .then(fs => {
-                                this.$iApi.$vApp.$store.set(
-                                    MapCaptionStore.setCoords,
-                                    {
-                                        formattedString: fs
-                                    }
-                                );
+                                mapCaptionStore.coords = {
+                                    formattedString: fs
+                                };
                             });
                     }),
                     handlerName
@@ -1003,8 +988,10 @@ export class EventAPI extends APIScope {
                     throttle(200, (mapMove: MapMove) => {
                         // check if coords are disabled
                         // if it is, then do not update it
-                        const currentCursorCoords: MapCoords | undefined =
-                            this.$iApi.$vApp.$store.get(MapCaptionStore.coords);
+                        const mapCaptionStore = useMapCaptionStore(
+                            this.$vApp.$pinia
+                        );
+                        const currentCursorCoords = mapCaptionStore.coords;
                         if (currentCursorCoords?.disabled) {
                             return;
                         }
@@ -1016,12 +1003,9 @@ export class EventAPI extends APIScope {
                                 )
                             )
                             .then(fs => {
-                                this.$iApi.$vApp.$store.set(
-                                    MapCaptionStore.setCoords,
-                                    {
-                                        formattedString: fs
-                                    }
-                                );
+                                mapCaptionStore.coords = {
+                                    formattedString: fs
+                                };
                             });
                     }),
                     handlerName
@@ -1068,16 +1052,14 @@ export class EventAPI extends APIScope {
             case DefEH.PANEL_CLOSE_UPDATES_APPBAR:
                 // when a panel closes, if it had a non-permanant appbar button, remove it
                 zeHandler = (panel: PanelInstance) => {
+                    const appbarStore = useAppbarStore(this.$vApp.$pinia);
                     if (
                         this.$iApi.fixture.get<AppbarAPI>('appbar') &&
-                        !(this.$iApi.$vApp.$store.get('appbar/order') as any)
+                        !appbarStore.order
                             .flat()
                             .find((item: string) => item === panel.id)
                     ) {
-                        this.$iApi.$vApp.$store.dispatch(
-                            `appbar/${AppbarAction.REMOVE_BUTTON}`,
-                            panel.id
-                        );
+                        appbarStore.removeButton(panel.id);
                     }
                 };
                 this.on(GlobalEvents.PANEL_CLOSED, zeHandler, handlerName);
@@ -1086,16 +1068,14 @@ export class EventAPI extends APIScope {
             case DefEH.PANEL_OPEN_UPDATES_APPBAR:
                 // when a panel opens, if it doesn't have an appbar button, create a temporary one
                 zeHandler = (panel: PanelInstance) => {
+                    const appbarStore = useAppbarStore(this.$vApp.$pinia);
                     if (
                         this.$iApi.fixture.get<AppbarAPI>('appbar') &&
-                        !(this.$iApi.$vApp.$store.get('appbar/order') as any)
+                        !appbarStore.order
                             .flat()
                             .find((item: string) => item === panel.id)
                     ) {
-                        this.$iApi.$vApp.$store.dispatch(
-                            `appbar/${AppbarAction.ADD_TEMP_BUTTON}`,
-                            panel.id
-                        );
+                        appbarStore.addTempButton(panel.id);
                     }
                 };
                 this.on(GlobalEvents.PANEL_OPENED, zeHandler, handlerName);

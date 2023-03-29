@@ -77,14 +77,14 @@ import { computed } from 'vue';
 
 import DropdownMenu from '@/components/controls/dropdown-menu.vue';
 import NotificationList from './notification-list.vue';
-import { useStore } from 'vuex';
+import { useNotificationStore } from '@/stores/notification';
 import { useI18n } from 'vue-i18n';
 
-const store = useStore();
+const notificationStore = useNotificationStore();
 const { t } = useI18n();
 
-const number = computed(() => store.get('notification/notificationNumber'));
-const clearAll = () => store.dispatch('notification/clearAll');
+const number = computed(() => notificationStore.notificationNumber);
+const clearAll = () => notificationStore.clearAll();
 </script>
 
 <style lang="scss" scoped>

@@ -54,8 +54,7 @@ import type { ExportAPI } from './api/export';
 import { debounce } from 'throttle-debounce';
 
 import ExportSettings from './settings-button.vue';
-import { ExportStore } from './store';
-import { useStore } from 'vuex';
+import { useExportStore } from './store';
 import { useI18n } from 'vue-i18n';
 
 defineProps({
@@ -67,14 +66,14 @@ defineProps({
 
 const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
-const store = useStore();
+const exportStore = useExportStore();
 
 const fixture = ref<ExportAPI>();
 const resizeObserver = ref<ResizeObserver | undefined>(undefined);
 
 const el = computed<Element>(() => getCurrentInstance()?.proxy?.$el);
-const componentSelectedState = computed<any>(() =>
-    store.get(ExportStore.componentSelectedState)
+const componentSelectedState = computed(
+    () => exportStore.componentSelectedState
 );
 const selectedComponents = computed<any>(() => {
     let state: any = {};
@@ -83,7 +82,16 @@ const selectedComponents = computed<any>(() => {
             (component: string) => {
                 state[component] = {
                     name: component,
-                    selected: componentSelectedState.value[component] ?? false,
+                    selected:
+                        componentSelectedState.value[
+                            component as
+                                | 'title'
+                                | 'map'
+                                | 'mapElements'
+                                | 'legend'
+                                | 'footnote'
+                                | 'timestamp'
+                        ] ?? false,
                     selectable:
                         (fixture.value?.config as any)[component]?.selectable ??
                         true

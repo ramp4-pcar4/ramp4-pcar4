@@ -35,6 +35,7 @@ Note that all the properties above are read only.
 * `toggleFullscreen()` - Toggles fullscreen for the app.
 * `updateAlert(alert: string)` - Updates the screen reader alert. Use this to inform screen reader users of visual changes in the app (pieces of ui appearing/leaving).
 * `start()` - Starts the app i.e. loads the map and layers. Used when `startRequired` is set to true in the [instance options](./startup.md#instance-options).
+* `useStore(id: string)` - Returns the store with the specified id, if it exists, else returns undefined. The following out-of-the-box store ID's are currently supported: appbar, areas-of-interest, config, details, export, fixture, geosearch, grid, help, instance, layer, legend, map-caption, mapnav, maptip, metadata, northarrow, notification, overviewmap, panel, scrollgurard, and wizard. Note that for ids that correspond to fixture ids, the fixture must be added before the store can be retrieved.
 
 
 
