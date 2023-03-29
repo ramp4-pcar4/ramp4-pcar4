@@ -196,8 +196,12 @@ const onScaleClick = () => {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .map-caption {
     backdrop-filter: blur(5px);
+
+    button:focus {
+        outline: 2px solid #1e3a8a !important;
+    }
 }
 </style>
