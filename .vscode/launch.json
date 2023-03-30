@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Chrome",
+            "url": "https://127.0.0.1:5173/demos/index-samples.html",
+            "webRoot": "${workspaceFolder}/src",
+            "sourceMapPathOverrides": {
+                "webpack:///src/*": "$(webRoot)/*"
+            },
+            "preLaunchTask": "Start Server" // Launches the Vite server before the browser
+        }
+    ]
+}
