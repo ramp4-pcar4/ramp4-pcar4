@@ -1,0 +1,29 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Start Server",
+            "type": "shell",
+            "command": "cmd",
+            "isBackground": true,
+            "args": [
+                "/c",
+                // Check to see if the server is running on port 5173 first. If the port is free then launch, otherwise exit.
+                "netstat -aon | findstr :5173 | findstr LISTENING > nul || (npm run launch && exit)"
+            ],
+            "problemMatcher": [
+                {
+                    "owner": "Start Server",
+                    "pattern": {
+                        "regexp": ".+"
+                    },
+                    "background": {
+                        "activeOnStart": true,
+                        "beginsPattern": ".+",
+                        "endsPattern": ".+"
+                    }
+                }
+            ]
+        }
+    ]
+}
