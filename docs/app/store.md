@@ -12,9 +12,11 @@ Each fixture is also able to have its own store. Since fixtures are removable/re
 
 Core stores are added in `store/store.ts`.
 
+You can also create your own custom store for a custom fixture or otherwise, and bind it to your RAMP instance's pinia instance. For an example of how this can be done, please see our [custom funtimes fixture](https://github.com/ramp4-pcar4/ramp4-pcar4/tree/main/demos/starter-scripts/sample-fixtures/funtimes). A demo of the funtimes fixture is available [here](https://ramp4-pcar4.github.io/ramp4-pcar4/main/demos/index-samples?sample=37).
+
 ## Store files
 
-Each store folder has 3 files;
+For our core stores, each store folder has 3 files;
 
 - A state file (`fixturename-state.ts`) which is where the state interface is declared, along with any other relevant types.
 - A store file (`fixturename-store.ts`) which is where the `state` ,`getters` and `actions` are, as well as the store creation function. This function allows us to have multiple copies of a fixture running with separate state.
