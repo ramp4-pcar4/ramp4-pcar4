@@ -19,16 +19,9 @@ import { LiftHilightMode } from './hilight-mode/lift-hilight-mode';
 export class HilightAPI extends FixtureInstance {
     hilightMode: BaseHilightMode = new BaseHilightMode({}, this.$iApi);
 
-    constructor(id: string, iApi: InstanceAPI) {
-        super(id, iApi);
-        // create the hilight layer
-        if (this.$iApi.geo.map.created) {
-            this.initHilightLayer();
-        } else {
-            this.$iApi.event.once(GlobalEvents.MAP_CREATED, () => {
-                this.initHilightLayer();
-            });
-        }
+    initialized(): void {
+        // create the highlight layer once the map is available
+        this.initHilightLayer();
     }
 
     _parseConfig(hilightConfig?: HilightConfig) {
@@ -76,13 +69,14 @@ export class HilightAPI extends FixtureInstance {
      * Create the Hilight layer.
      */
     async initHilightLayer() {
-        const hilightLayer = await this.$iApi.geo.layer.createLayer({
+        const hilightLayer = this.$iApi.geo.layer.createLayer({
             id: HILIGHT_LAYER_NAME,
             layerType: LayerType.GRAPHIC,
             cosmetic: true,
             url: ''
         });
-        this.$iApi.geo.map.addLayer(hilightLayer);
+
+        await this.$iApi.geo.map.addLayer(hilightLayer);
     }
 
     /**
@@ -121,12 +115,12 @@ export class HilightAPI extends FixtureInstance {
      * @param uid Associated layer UID of the Graphic
      * @param oid Associated OID of the Graphic
      */
-    getGraphicsByKey(
+    async getGraphicsByKey(
         origin?: string,
         uid?: string,
         oid?: number
-    ): Array<Graphic> {
-        const hilightLayer = this.getHilightLayer();
+    ): Promise<Array<Graphic>> {
+        const hilightLayer = await this.getHilightLayer();
         if (!hilightLayer) {
             return [];
         }
@@ -178,16 +172,13 @@ export class HilightAPI extends FixtureInstance {
     /**
      * Return the hilightLayer
      */
-    getHilightLayer(): CommonGraphicLayer | undefined {
-        const hilightLayer = this.$iApi.geo.layer.getLayer(HILIGHT_LAYER_NAME);
-        if (
-            hilightLayer &&
-            hilightLayer.isLoaded &&
-            hilightLayer instanceof CommonGraphicLayer
-        ) {
-            return hilightLayer;
+    async getHilightLayer(): Promise<CommonGraphicLayer | undefined> {
+        if (this.hilightMode) {
+            return await this.hilightMode.getHilightLayer();
         } else {
-            console.warn('hilight layer could not be fetched.');
+            console.warn(
+                'API get layer request before highlight mode object exists'
+            );
             return undefined;
         }
     }

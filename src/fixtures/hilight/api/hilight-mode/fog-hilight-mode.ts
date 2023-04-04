@@ -24,12 +24,13 @@ export class FogHilightMode extends LiftHilightMode {
 
         this.handlers.push(
             this.$iApi.event.on(GlobalEvents.MAP_BASEMAPCHANGE, () => {
-                const hilightLayer = this.getHilightLayer();
-                if (hilightLayer && hilightLayer.graphics.length === 0) {
-                    // if the highlighter is currently "off", update the basemap
-                    // if the highlighter is "on", then details (or whatever is using the hilighter) will handle this event
-                    this.updateFogLayer();
-                }
+                this.getHilightLayer().then(hilightLayer => {
+                    if (hilightLayer && hilightLayer.graphics.length === 0) {
+                        // if the highlighter is currently "off", update the basemap
+                        // if the highlighter is "on", then details (or whatever is using the hilighter) will handle this event
+                        this.updateFogLayer();
+                    }
+                });
             })
         );
     }
@@ -38,7 +39,7 @@ export class FogHilightMode extends LiftHilightMode {
         const mapConfig: RampBasemapConfig = useConfigStore(this.$vApp.$pinia)
             .activeBasemapConfig as RampBasemapConfig;
         try {
-            const fogLayer = await this.$iApi.geo.layer.createLayer({
+            const fogLayer = this.$iApi.geo.layer.createLayer({
                 id: FOG_HILIGHT_LAYER_NAME,
                 layerType: LayerType.TILE,
                 cosmetic: true,
@@ -51,7 +52,7 @@ export class FogHilightMode extends LiftHilightMode {
             // off
             fogLayer.opacity = this.offOpacity;
 
-            this.reorderFogLayer();
+            await this.reorderFogLayer();
         } catch {
             console.error(
                 'Something went wrong while setting up the hilighter.'
@@ -64,9 +65,9 @@ export class FogHilightMode extends LiftHilightMode {
         await this.hilightSetup();
     }
 
-    private reorderFogLayer() {
+    private async reorderFogLayer() {
         const fogLayer = this.getFogLayer();
-        const hilightLayer = this.getHilightLayer();
+        const hilightLayer = await this.getHilightLayer();
         if (!hilightLayer || !fogLayer) {
             return;
         }

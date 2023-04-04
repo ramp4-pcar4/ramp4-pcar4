@@ -266,7 +266,7 @@ export enum InitiationState {
 }
 
 export enum LayerState {
-    NEW = 'new', // this means ramp layer class exists but needs to be initialized()
+    NEW = 'new', // this means ramp layer class exists but needs to be initiate() 'd
     LOADING = 'loading',
     LOADED = 'loaded',
     ERROR = 'error'
