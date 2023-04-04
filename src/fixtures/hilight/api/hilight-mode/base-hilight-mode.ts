@@ -1,4 +1,9 @@
-import { APIScope, CommonGraphicLayer, InstanceAPI } from '@/api';
+import {
+    APIScope,
+    CommonGraphicLayer,
+    InstanceAPI,
+    LayerInstance
+} from '@/api';
 import { HilightMode, HILIGHT_LAYER_NAME } from '../hilight-defs';
 import type { Graphic } from '@/geo/api';
 
@@ -35,10 +40,18 @@ export class BaseHilightMode extends APIScope {
     /**
      * Returns the Hilight layer.
      */
-    getHilightLayer(): CommonGraphicLayer | undefined {
-        const hilightLayer = this.$iApi.geo.layer.getLayer(HILIGHT_LAYER_NAME);
-        if (hilightLayer && hilightLayer instanceof CommonGraphicLayer) {
-            return hilightLayer;
+    async getHilightLayer(): Promise<CommonGraphicLayer | undefined> {
+        const hilightLayer = await this.layerGetterFuntime();
+        if (hilightLayer) {
+            if (
+                hilightLayer.isLoaded &&
+                hilightLayer instanceof CommonGraphicLayer
+            ) {
+                return hilightLayer;
+            } else {
+                console.warn('Hilight layer exists but is in bad form.');
+                return undefined;
+            }
         } else {
             console.warn('Hilight layer could not be fetched.');
             return undefined;
@@ -49,5 +62,34 @@ export class BaseHilightMode extends APIScope {
         console.warn(
             'Hilight mode method {method} was not implemented by subclass.'
         );
+    }
+
+    private layerGetterFuntime(): Promise<LayerInstance | undefined> {
+        // TODO rename and adapt below comment to jsdoc if we keep this.
+
+        // Makes getting the layer async, and adds a bit of buffer incase things were slow.
+        // But not a lot (1.1 seconds), since it's graphics layer it has no server call to wait on;
+        // should be really snappy. If it's too slow we do the grouse
+
+        return new Promise(resolve => {
+            let timeElapsed = 0;
+
+            const layerWatcher = setInterval(() => {
+                const layer = this.$iApi.geo.layer.getLayer(HILIGHT_LAYER_NAME);
+                if (layer) {
+                    clearInterval(layerWatcher);
+                    resolve(layer);
+                } else {
+                    // layer was not found, take a nap
+                    timeElapsed += 125;
+                    if (timeElapsed >= 1125) {
+                        // to long, game over
+                        clearInterval(layerWatcher);
+                        resolve(undefined);
+                        return;
+                    }
+                }
+            }, 125);
+        });
     }
 }
