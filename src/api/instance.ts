@@ -460,58 +460,55 @@ export class InstanceAPI {
             return undefined;
         }
 
-        let store;
         switch (id) {
             case 'appbar':
-                store = useAppbarStore(this.$vApp.$pinia);
+                return <Readonly<T>>useAppbarStore(this.$vApp.$pinia);
             case 'areas-of-interest':
-                store = useAreasOfInterestStore(this.$vApp.$pinia);
+                return <Readonly<T>>useAreasOfInterestStore(this.$vApp.$pinia);
             case 'details':
-                store = useDetailsStore(this.$vApp.$pinia);
+                return <Readonly<T>>useDetailsStore(this.$vApp.$pinia);
             case 'export':
-                store = useExportStore(this.$vApp.$pinia);
+                return <Readonly<T>>useExportStore(this.$vApp.$pinia);
             case 'geosearch':
-                store = useGeosearchStore(this.$vApp.$pinia);
+                return <Readonly<T>>useGeosearchStore(this.$vApp.$pinia);
             case 'grid':
-                store = useGridStore(this.$vApp.$pinia);
+                return <Readonly<T>>useGridStore(this.$vApp.$pinia);
             case 'help':
-                store = useHelpStore(this.$vApp.$pinia);
+                return <Readonly<T>>useHelpStore(this.$vApp.$pinia);
             case 'legend':
-                store = useLegendStore(this.$vApp.$pinia);
+                return <Readonly<T>>useLegendStore(this.$vApp.$pinia);
             case 'mapnav':
-                store = useMapnavStore(this.$vApp.$pinia);
+                return <Readonly<T>>useMapnavStore(this.$vApp.$pinia);
             case 'metadata':
-                store = useMetadataStore(this.$vApp.$pinia);
+                return <Readonly<T>>useMetadataStore(this.$vApp.$pinia);
             case 'northarrow':
-                store = useNortharrowStore(this.$vApp.$pinia);
+                return <Readonly<T>>useNortharrowStore(this.$vApp.$pinia);
             case 'overviewmap':
-                store = useOverviewmapStore(this.$vApp.$pinia);
+                return <Readonly<T>>useOverviewmapStore(this.$vApp.$pinia);
             case 'scrollguard':
-                store = useScrollguardStore(this.$vApp.$pinia);
+                return <Readonly<T>>useScrollguardStore(this.$vApp.$pinia);
             case 'wizard':
-                store = useWizardStore(this.$vApp.$pinia);
+                return <Readonly<T>>useWizardStore(this.$vApp.$pinia);
             case 'config':
-                store = useConfigStore(this.$vApp.$pinia);
+                return <Readonly<T>>useConfigStore(this.$vApp.$pinia);
             case 'fixture':
-                store = useFixtureStore(this.$vApp.$pinia);
+                return <Readonly<T>>useFixtureStore(this.$vApp.$pinia);
             case 'instance':
-                store = useInstanceStore(this.$vApp.$pinia);
+                return <Readonly<T>>useInstanceStore(this.$vApp.$pinia);
             case 'layer':
-                store = useLayerStore(this.$vApp.$pinia);
+                return <Readonly<T>>useLayerStore(this.$vApp.$pinia);
             case 'map-caption':
-                store = useMapCaptionStore(this.$vApp.$pinia);
+                return <Readonly<T>>useMapCaptionStore(this.$vApp.$pinia);
             case 'maptip':
-                store = useMaptipStore(this.$vApp.$pinia);
+                return <Readonly<T>>useMaptipStore(this.$vApp.$pinia);
             case 'notification':
-                store = useNotificationStore(this.$vApp.$pinia);
+                return <Readonly<T>>useNotificationStore(this.$vApp.$pinia);
             case 'panel':
-                store = usePanelStore(this.$vApp.$pinia);
+                return <Readonly<T>>usePanelStore(this.$vApp.$pinia);
             default:
                 console.error(`The store ${id} does not exist.`);
-                store = undefined;
+                return undefined;
         }
-
-        return store;
     }
 
     /**
