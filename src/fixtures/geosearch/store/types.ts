@@ -25,7 +25,7 @@ class Types {
     typesFetched: boolean = false;
 
     constructor(language: string, url: string) {
-        const fetchTypes = axios.get(url).then((res: any) => {
+        axios.get(url).then((res: any) => {
             // Remove the code from the type name.
             res.data.definitions.forEach((type: any) => {
                 types[language][type.code] = type.term.split(

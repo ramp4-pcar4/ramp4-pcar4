@@ -128,7 +128,7 @@ __NTS search__: __National Topographic System (NTS)__ is a system used for provi
 
 ### Geosearch Filtering
 
-When searching for a location, a results panel will appear below the search box. This results panel contains two dropdown boxes that allow you to filter the search results by their __province__ and by their __type__ (lake, town, river, etc.). To the right of these two boxes is a __Clear Filters__ ![An icon representing the "Clear" function](datatable/clear.png) button, which when clicked clears the selected filter options.
+When searching for a location, a results panel will appear below the search box. This results panel contains two dropdown boxes that allow you to filter the search results by their __province__ and by their __type__ (lake, town, river, etc.). To the right of these two boxes is a __Clear Filters__ ![An icon representing the "Clear" function](datatable/clearFilters.png) button, which when clicked clears the selected filter options.
 
 At the bottom of the results panel, there is a checkbox labeled __visible on map__. Checking this box will further filter the results to only show locations that are currently visible on the map. Moving the map around or zooming in/out with this box selected will automatically update the results to display locations that are on the map.
 

@@ -128,7 +128,7 @@ La fonction de recherche géolocalisée permet aux utilisateurs de rechercher de
 
 ### Filtres de la recherche géolocalisée
 
-Lorsque vous recherchez un lieu, une fenêtre s'affiche sous le champ de recherche. Cette fenêtre de résultats contient deux listes déroulantes qui vous permettent de filtrer les résultats de la recherche par **province** et par **type** (lac, ville, rivière, etc.). À droite de ces deux listes se trouve le bouton **Effacer les filtres** qui vous permet d'effacer les éléments de filtre sélectionnés.
+Lorsque vous recherchez un lieu, une fenêtre s'affiche sous le champ de recherche. Cette fenêtre de résultats contient deux listes déroulantes qui vous permettent de filtrer les résultats de la recherche par **province** et par **type** (lac, ville, rivière, etc.). À droite de ces deux listes se trouve le bouton **Effacer les filtres** ![](datatable/clearFilters.png) qui vous permet d'effacer les éléments de filtre sélectionnés.
 
 Au bas de la fenêtre des résultats, il y a une case à cocher intitulée **Visible sur la carte**. Cochez cette case pour filtrer davantage les résultats et n'afficher que les lieux qui sont actuellement visibles sur la carte. Si vous déplacez la carte ou si vous faites un zoom avant ou arrière alors que cette case est cochée, les résultats seront automatiquement mis à jour de façon à afficher les lieux qui se trouvent sur la carte.
 

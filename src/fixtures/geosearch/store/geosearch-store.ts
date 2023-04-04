@@ -1,4 +1,4 @@
-import type { QueryParams } from './geosearch-state';
+import type { MapExtent, QueryParams } from './geosearch-state';
 import { defineStore } from 'pinia';
 import { GeoSearchUI } from './geosearch.feature';
 import { computed, ref } from 'vue';
@@ -11,21 +11,25 @@ import { computed, ref } from 'vue';
  * @param {Object}  queryParams Contains which filter to process
  * @param {Array}   data        An array of results from the query
  */
-function filter(visibleOnly: boolean, queryParams: any, data: Array<any>) {
+function filter(
+    visibleOnly: boolean,
+    queryParams: QueryParams,
+    data: Array<any>
+) {
     if (visibleOnly && queryParams.extent) {
         // ensure bbox boundaries are within the current map extent properties
         data = data.filter(
             r =>
-                r.bbox[0] <= queryParams.extent.xmax &&
-                r.bbox[1] <= queryParams.extent.ymax &&
-                r.bbox[2] >= queryParams.extent.xmin &&
-                r.bbox[3] >= queryParams.extent.ymin
+                r.bbox[0] <= queryParams.extent!.xmax &&
+                r.bbox[1] <= queryParams.extent!.ymax &&
+                r.bbox[2] >= queryParams.extent!.xmin &&
+                r.bbox[3] >= queryParams.extent!.ymin
         );
     }
     if (queryParams.province && queryParams.province !== '...') {
         data = data.filter(
             r =>
-                r.location.province.name &&
+                r.location.province?.name &&
                 r.location.province.name === queryParams.province
         );
     }
@@ -40,7 +44,7 @@ export const useGeosearchStore = defineStore('geosearch', () => {
     const queryParams = ref<QueryParams>({
         type: '',
         province: '',
-        extent: ''
+        extent: undefined
     });
     const resultsVisible = ref<boolean>(false);
     const searchVal = ref<string>('');
@@ -132,6 +136,7 @@ export const useGeosearchStore = defineStore('geosearch', () => {
                                 // replace old saved results
                                 const filteredData = filter(
                                     resultsVisible.value,
+                                    //@ts-ignore
                                     queryParams.value,
                                     savedResults.value
                                 );
@@ -144,6 +149,7 @@ export const useGeosearchStore = defineStore('geosearch', () => {
                 // otherwise no new search term so we only need to filter on query param values
                 const filteredData = filter(
                     resultsVisible.value,
+                    //@ts-ignore
                     queryParams.value,
                     savedResults.value
                 );
@@ -201,9 +207,9 @@ export const useGeosearchStore = defineStore('geosearch', () => {
      * Toggle map extent filter.
      *
      * @function setMapExtent
-     * @param   {any}    mapExtent   current map extent info // TODO what is this? add strong types? has .visible and .extent
+     * @param {MapExtent} mapExtent current map extent info
      */
-    function setMapExtent(mapExtent: any): void {
+    function setMapExtent(mapExtent: MapExtent): void {
         // if results should be filtered by current map view
         if (mapExtent.visible !== undefined) {
             resultsVisible.value = mapExtent.visible;

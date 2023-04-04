@@ -41,8 +41,8 @@
                 <option value="" disabled hidden>
                     {{ t('geosearch.filters.type') }}
                 </option>
-                <option v-for="type in types" :key="type.code">
-                    {{ type.name }}
+                <option v-for="t in types" :key="t.code">
+                    {{ t.name }}
                 </option>
             </select>
             <button
@@ -88,7 +88,9 @@ const provinces = ref<Array<any>>([]);
 const types = ref<Array<any>>([]);
 const watchers = ref<Array<Function>>([]);
 
-const queryParams = computed<QueryParams>(() => geosearchStore.queryParams);
+const queryParams = computed<QueryParams>(
+    () => geosearchStore.queryParams as QueryParams
+);
 const language = computed<string>(() => iApi.language);
 
 const setProvince = (payload: { province?: string; forceReRun?: boolean }) =>
@@ -111,12 +113,16 @@ const updateProvincesAndTypes = () => {
         iApi.language,
         iApi.fixture.get<GeosearchAPI>('geosearch').config
     );
+
+    // convert current province and type selection to new lang
     const queryProvCode = provinces.value.find(
         prov => queryParams.value.province === prov.name
     )?.code;
     const queryTypeCode = types.value.find(
         type => queryParams.value.type === type.name
     )?.code;
+
+    // populate province and type selection lists in new lang
     geosearchStore.getProvinces.then(provs => {
         provinces.value = provs;
         setProvince({
@@ -124,7 +130,6 @@ const updateProvincesAndTypes = () => {
             forceReRun: true
         });
     });
-
     geosearchStore.getTypes.then(typs => {
         types.value = typs;
         setType({
