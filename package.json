@@ -18,7 +18,7 @@
         "format": "prettier .  --write"
     },
     "dependencies": {
-        "@arcgis/core": "4.25.5",
+        "@arcgis/core": "4.26.5",
         "@braid/vue-formulate": "~2.5.2",
         "@ecgc/vue-slider-component": "4.0.0-beta.7",
         "@popperjs/core": "^2.11.6",

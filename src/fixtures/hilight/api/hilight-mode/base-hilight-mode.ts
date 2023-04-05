@@ -1,4 +1,9 @@
-import { APIScope, CommonGraphicLayer, InstanceAPI } from '@/api';
+import {
+    APIScope,
+    CommonGraphicLayer,
+    InstanceAPI,
+    LayerInstance
+} from '@/api';
 import { HilightMode, HILIGHT_LAYER_NAME } from '../hilight-defs';
 import type { Graphic } from '@/geo/api';
 
@@ -35,10 +40,18 @@ export class BaseHilightMode extends APIScope {
     /**
      * Returns the Hilight layer.
      */
-    getHilightLayer(): CommonGraphicLayer | undefined {
-        const hilightLayer = this.$iApi.geo.layer.getLayer(HILIGHT_LAYER_NAME);
-        if (hilightLayer && hilightLayer instanceof CommonGraphicLayer) {
-            return hilightLayer;
+    async getHilightLayer(): Promise<CommonGraphicLayer | undefined> {
+        const hilightLayer = await this.layerFetcher();
+        if (hilightLayer) {
+            if (
+                hilightLayer.isLoaded &&
+                hilightLayer instanceof CommonGraphicLayer
+            ) {
+                return hilightLayer;
+            } else {
+                console.warn('Hilight layer exists but is in bad form.');
+                return undefined;
+            }
         } else {
             console.warn('Hilight layer could not be fetched.');
             return undefined;
@@ -49,5 +62,34 @@ export class BaseHilightMode extends APIScope {
         console.warn(
             'Hilight mode method {method} was not implemented by subclass.'
         );
+    }
+
+    /**
+     * Provides a short grace period to avoid scenarios where the layer is still getting created.
+     * Not overly long, as the highlight layer is a local graphics layer so no server lag involved.
+     *
+     * @returns Promise resolving in the LayerInstace, or undefined if we could not locate the layer.
+     */
+    private layerFetcher(): Promise<LayerInstance | undefined> {
+        return new Promise(resolve => {
+            let timeElapsed = 0;
+
+            const layerWatcher = setInterval(() => {
+                const layer = this.$iApi.geo.layer.getLayer(HILIGHT_LAYER_NAME);
+                if (layer) {
+                    clearInterval(layerWatcher);
+                    resolve(layer);
+                } else {
+                    // layer was not found, take a nap
+                    timeElapsed += 125;
+                    if (timeElapsed >= 1125) {
+                        // to long, game over
+                        clearInterval(layerWatcher);
+                        resolve(undefined);
+                        return;
+                    }
+                }
+            }, 125);
+        });
     }
 }

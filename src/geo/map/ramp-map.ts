@@ -73,7 +73,14 @@ export class MapAPI extends CommonMapAPI {
     createMap(config: RampMapConfig, targetDiv: string | HTMLDivElement): void {
         this.setMapMouseThrottle(config.mapMouseThrottle ?? 0);
         super.createMap(config, targetDiv);
-        this.$iApi.event.emit(GlobalEvents.MAP_CREATED);
+
+        this.viewPromise.then(() => {
+            // Timing issues beginning at ESRI v4.26 make us need to wait until the initial view gets created.
+            // Note that we don't want to have this raised in the view creation method, since
+            // the view can get rebuild during a MAP_REFRESH event, so would be disrespectful
+            // to raise an incorrect MAP_CREATED
+            this.$iApi.event.emit(GlobalEvents.MAP_CREATED);
+        });
     }
 
     /**
@@ -325,8 +332,12 @@ export class MapAPI extends CommonMapAPI {
             e.preventDefault();
         });
 
-        this._viewPromise.resolveMe();
-        this.created = true;
+        // as of ESRI v4.26, we need to marinate until .when() is done.
+        // otherwise, something happens too fast and the initial calls to view.goTo() grouse quite a lot.
+        this.esriView.when(() => {
+            this._viewPromise.resolveMe();
+            this.created = true;
+        });
     }
 
     /**
@@ -401,12 +412,15 @@ export class MapAPI extends CommonMapAPI {
 
             // recreate the map view
             this.createMapView(bm);
-            this.$iApi.event.emit(GlobalEvents.MAP_REFRESH_END);
 
-            // go to equivalent extent in new projection
-            this.$iApi.geo.proj
-                .projectExtent(this._rampSR!, extent)
-                .then(projExtent => this.zoomMapTo(projExtent));
+            this.viewPromise.then(() => {
+                this.$iApi.event.emit(GlobalEvents.MAP_REFRESH_END);
+
+                // go to equivalent extent in new projection
+                this.$iApi.geo.proj
+                    .projectExtent(this._rampSR!, extent)
+                    .then(projExtent => this.zoomMapTo(projExtent));
+            });
         } else {
             // change the basemap
             this.applyBasemap(bm);

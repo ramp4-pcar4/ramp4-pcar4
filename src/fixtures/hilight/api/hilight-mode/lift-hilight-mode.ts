@@ -7,7 +7,7 @@ export class LiftHilightMode extends BaseHilightMode {
      * Adds the given graphics to the hilight layer.
      */
     async add(graphics: Array<Graphic>) {
-        const hilightLayer = this.getHilightLayer();
+        const hilightLayer = await this.getHilightLayer();
         if (!hilightLayer) {
             return;
         }
@@ -18,11 +18,11 @@ export class LiftHilightMode extends BaseHilightMode {
      * Removes the given graphics from the hilight layer.
      */
     async remove(graphics: Array<Graphic> | undefined) {
-        const hilightLayer = this.getHilightLayer();
+        const hilightLayer = await this.getHilightLayer();
         if (!hilightLayer) {
             return;
         }
-        await hilightLayer.removeGraphic(graphics);
+        hilightLayer.removeGraphic(graphics);
     }
 
     /**

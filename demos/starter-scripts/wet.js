@@ -563,7 +563,7 @@ rInstance.$element.component('Water-Quantity-Template', {
 rInstance.fixture.add('export');
 
 // load map if startRequired is true
-rInstance.start();
+// rInstance.start();
 
 function switchLang() {
     if (rInstance.language === 'en') {

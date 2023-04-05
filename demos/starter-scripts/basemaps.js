@@ -313,7 +313,7 @@ const rInstance = createInstance(
 );
 
 // load map if startRequired is true
-rInstance.start();
+// rInstance.start();
 
 function animateToggle() {
     if (rInstance.$vApp.$el.classList.contains('animation-enabled')) {
