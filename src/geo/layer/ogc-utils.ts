@@ -3,7 +3,7 @@ import { GeoJsonGeomType, UrlWrapper } from '@/geo/api';
 import type { UrlQueryMap } from '@/geo/api';
 import yxList from './reversedAxis.json';
 import { EsriRequest } from '@/geo/esri';
-import axios from 'axios';
+import axios from 'redaxios';
 import to from 'await-to-js';
 import { parse } from 'fast-xml-parser';
 

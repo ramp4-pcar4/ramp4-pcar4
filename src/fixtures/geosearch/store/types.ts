@@ -1,5 +1,5 @@
 import type { IGenericObjectType, ITypes } from '../definitions';
-import axios from 'axios';
+import axios from 'redaxios';
 
 const types: any = {
     en: {
