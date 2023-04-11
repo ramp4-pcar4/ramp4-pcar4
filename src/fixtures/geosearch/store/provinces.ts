@@ -1,5 +1,5 @@
 import type { IGenericObjectType, IProvinces } from '../definitions';
-import axios from 'axios';
+import axios from 'redaxios';
 
 const fsaToProv = <any>{
     A: 10,

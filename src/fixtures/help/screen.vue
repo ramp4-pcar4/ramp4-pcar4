@@ -28,7 +28,7 @@ import type { PropType } from 'vue';
 import type { InstanceAPI, PanelInstance } from '@/api';
 import { useHelpStore } from './store';
 import HelpSection from './section.vue';
-import axios from 'axios';
+import axios from 'redaxios';
 import { marked } from 'marked';
 import { useI18n } from 'vue-i18n';
 

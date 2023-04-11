@@ -597,17 +597,6 @@ const isFileLayer = () => {
     return fileData.value || url!.value.match(/\.(zip|csv|json|geojson)$/);
 };
 
-// // sets an error message on an input field
-// const setError = (form: string, field: string, msg: string) => {
-//     this.$formulate.handle(
-//         {
-//             inputErrors: { [field]: [msg] },
-//             formErrors: []
-//         },
-//         form
-//     );
-// };
-
 const updateFile = (newFile: File) => {
     uploadFile(newFile);
 
@@ -668,32 +657,6 @@ const updateColour = (eventData: any) => {
 </script>
 
 <style lang="scss" scoped>
-:deep(.formulate-input) {
-    font-family: unset;
-
-    &[data-classification] {
-        input,
-        .formulate-input-upload-area-mask,
-        select {
-            @apply rounded-none;
-        }
-    }
-
-    &[data-classification='select'] {
-        .formulate-input-element::before {
-            @apply hidden; // hide second selector arrow
-        }
-
-        select {
-            &[size] {
-                @apply bg-none overflow-y-auto p-0;
-                > option {
-                    @apply p-10;
-                }
-            }
-        }
-    }
-}
 :deep(.vacp-color-input-label-text) {
     display: none;
 }

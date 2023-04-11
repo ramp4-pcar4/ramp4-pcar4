@@ -3,7 +3,7 @@ import defaultRenderers from './defaultRenderers.json';
 import ArcGIS from 'terraformer-arcgis-parser';
 import { csv2geojson, dsv } from 'csv2geojson';
 import shp from 'shpjs/dist/shp.min.js';
-import axios from 'axios';
+import axios from 'redaxios';
 
 import { EsriSimpleRenderer, EsriSpatialReference } from '@/geo/esri';
 import {

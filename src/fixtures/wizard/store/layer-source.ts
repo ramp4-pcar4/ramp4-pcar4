@@ -2,7 +2,7 @@ import { LayerType } from '@/geo/api';
 import type { FieldDefinition, RampLayerConfig } from '@/geo/api';
 import { APIScope, InstanceAPI } from '@/api/internal';
 import { UrlWrapper } from '@/geo/api';
-import axios from 'axios';
+import axios from 'redaxios';
 
 export interface LayerInfo {
     config: RampLayerConfig | undefined; // the layer's config
