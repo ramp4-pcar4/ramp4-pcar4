@@ -5,6 +5,7 @@
             :class="{ 'pointer-events-none': fixed }"
             v-model="selectedOption"
             @change="selectionChanged()"
+            @mousedown.stop
         >
             <option v-for="option in options" :value="option" :key="option">
                 {{ option }}

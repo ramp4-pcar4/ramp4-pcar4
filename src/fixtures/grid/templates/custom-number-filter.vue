@@ -7,6 +7,7 @@
             type="number"
             v-model="minVal"
             @input="minValChanged()"
+            @mousedown.stop
             @keypress.enter.prevent
             @keyup.enter="
                 if (panelStore.mobileView) {
@@ -24,6 +25,7 @@
             type="number"
             v-model="maxVal"
             @input="maxValChanged()"
+            @mousedown.stop
             @keypress.enter.prevent
             @keyup.enter="
                 if (panelStore.mobileView) {
