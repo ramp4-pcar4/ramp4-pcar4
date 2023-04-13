@@ -63,6 +63,37 @@
         </div>
         <div v-else-if="type === 'select'">
             <label class="text-base font-bold">{{ label }}</label>
+            <div
+                v-if="searchable && options.length > 4"
+                class="flex items-center pb-4 min-w-0"
+            >
+                <!-- layer filter -->
+                <input
+                    @keypress.enter.prevent
+                    enterkeyhint="done"
+                    v-model="filter"
+                    class="rv-global-search rv-input w-full min-w-0"
+                    aria-invalid="false"
+                    :aria-label="t('wizard.configure.sublayers.search')"
+                    :placeholder="t('wizard.configure.sublayers.search')"
+                />
+                <div class="-ml-30">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fit=""
+                        preserveAspectRatio="xMidYMid meet"
+                        viewBox="0 0 24 24"
+                        focusable="false"
+                        class="fill-current w-24 h-24 flex-shrink-0"
+                    >
+                        <g id="search_cache224">
+                            <path
+                                d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                            ></path>
+                        </g>
+                    </svg>
+                </div>
+            </div>
             <div class="relative mb-0.5" data-type="select">
                 <div v-if="multiple">
                     <select
@@ -79,7 +110,11 @@
                     >
                         <option
                             class="p-6"
-                            v-for="option in options"
+                            v-for="option in options.filter(o =>
+                                o.label
+                                    .toLowerCase()
+                                    .includes(filter.toLowerCase().trim())
+                            )"
                             v-bind:key="option.label"
                             :value="option.value"
                         >
@@ -150,6 +185,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { PropType } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface ValidationMsgs {
     required?: string;
@@ -161,6 +197,8 @@ interface SelectionOption {
     value: any;
     label: string;
 }
+
+const { t } = useI18n();
 
 const emit = defineEmits([
     'update:modelValue',
@@ -211,6 +249,10 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
+    searchable: {
+        type: Boolean,
+        default: false
+    },
     type: {
         type: String,
         default: 'text'
@@ -232,6 +274,7 @@ const valid = ref(false);
 const urlError = ref(false);
 const sublayersError = ref(false);
 const selected = ref([]);
+const filter = ref('');
 
 if (props.defaultOption && props.modelValue === '' && props.options.length) {
     // regex to guess closest default value for lat/long fields

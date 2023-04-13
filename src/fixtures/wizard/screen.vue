@@ -205,6 +205,7 @@
                             :help="t('wizard.configure.sublayers.help')"
                             :options="sublayerOptions()"
                             :multiple="true"
+                            :searchable="true"
                             :validation="true"
                             :validation-messages="{
                                 required: t(

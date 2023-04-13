@@ -35,6 +35,7 @@ wizard.configure.longField.label,Longitude Field,1,Champ longitude,1
 wizard.configure.sublayers.error.required,Sublayers are required,1,Des sous-couches sont requises,1
 wizard.configure.sublayers.label,Layers,1,Couches,1
 wizard.configure.sublayers.help,Hold Ctrl to select multiple layers,1,Maintenez la touche CTRL enfoncée pour sélectionner plusieurs couches,1
+wizard.configure.sublayers.search,Search layers,1,Couches de recherche,0
 wizard.configure.colour.label,Colour,1,Couleur,1
 wizard.configure.colour.hue,Hue,1,Teinte,1
 wizard.configure.colour.copy,Copy colour,1,Copier la couleur,1
