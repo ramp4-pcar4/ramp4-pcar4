@@ -3,22 +3,6 @@ import { LayerInstance } from '@/api/internal';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-// NOTE
-// on the wonkyness of new changes here.
-// in old version, layer store would take layer configs, generate layers from layer blueprints, and store the layers.
-// the layer blueprints were sort of stand alone hardcoded classes lurking inside the layer state folder.
-// now that layer definitions are loaded like fixtures, we can't do this.
-// also it appears we cant (or shouldn't) reference the $iApi from inside the state.
-// the new approach (which might be wrong but is working for now) is the layer state
-// handles both the layer configs and the layers.
-// the esri-map module watches the layer configs, when it sees a new config, it then instantiates the layer
-// (using $iApi), and stores the layer back into the store as well.
-// possible changes by smarter people:
-// - have the layer config store relocated to the config store
-// - have a way for the layer store to access and run the layer definitions from the iApi
-// - restructure the layer definitions manager on the iApi so that the definitions are inside the store.
-//   might be tricky, as this part also needs to know to load new definitions on demand
-
 // searches layers and sublayers using BFS and returns the first layer to satisfy the given predicate
 const bfs = (
     layers: Array<LayerInstance>,

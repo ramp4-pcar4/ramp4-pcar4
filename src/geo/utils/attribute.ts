@@ -57,6 +57,7 @@ export class AttributeAPI extends APIScope {
             query: {
                 where: `${details.oidField}>${details.maxId}${permFilter}`,
                 outFields: details.attribs,
+                orderByFields: details.oidField,
                 returnGeometry: 'false',
                 f: 'json'
             }
