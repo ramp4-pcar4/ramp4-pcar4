@@ -7,6 +7,7 @@
             placeholder="date min"
             v-model="minVal"
             @input="minValChanged()"
+            @mousedown.stop
             @keypress.enter.prevent
             @keyup.enter="
                 if (panelStore.mobileView) {
@@ -23,6 +24,7 @@
             placeholder="date max"
             v-model="maxVal"
             @input="maxValChanged()"
+            @mousedown.stop
             @keypress.enter.prevent
             @keyup.enter="
                 if (panelStore.mobileView) {

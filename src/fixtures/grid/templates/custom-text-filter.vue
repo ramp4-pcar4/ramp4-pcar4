@@ -6,6 +6,7 @@
             type="text"
             @input="valueChanged()"
             v-model="filterValue"
+            @mousedown.stop
             @keypress.enter.prevent
             @keyup.enter="
                 if (panelStore.mobileView) {
