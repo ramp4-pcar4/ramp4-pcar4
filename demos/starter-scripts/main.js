@@ -490,7 +490,7 @@ let config = {
                                                 name: 'Custom Info Section',
                                                 infoType: 'template',
                                                 content: `<div>
-                                                            <span>Surpise one:.</span>
+                                                            <span>Surprise one:.</span>
                                                             <img src="https://i.imgur.com/WtY0tdC.gif" />
                                                             </div>`
                                             },

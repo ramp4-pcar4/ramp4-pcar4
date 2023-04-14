@@ -25,12 +25,14 @@ import type { InstanceAPI, PanelInstance } from '@/api';
 import type { PropType } from 'vue';
 import type { LegendAPI } from './api/legend';
 import type { LegendItem } from './store/legend-item';
+import { useLegendStore } from './store';
 
 const legendHeader = defineAsyncComponent(() => import('./header.vue'));
 const legendItem = defineAsyncComponent(() => import('./components/item.vue'));
 
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
+const legendStore = useLegendStore();
 
 defineProps({
     panel: {
@@ -42,6 +44,9 @@ defineProps({
 const children = computed<Array<LegendItem>>(() => {
     let legendApi = iApi.fixture.get<LegendAPI>('legend');
     if (legendApi) {
+        if (legendStore.searchFilter) {
+            legendStore.filterLegend([...legendApi.getLegend()]);
+        }
         return [...legendApi.getLegend()];
     }
     return [];

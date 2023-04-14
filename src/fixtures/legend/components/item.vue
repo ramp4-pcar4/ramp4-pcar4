@@ -1,5 +1,9 @@
 <template>
-    <div :key="legendItem.visibility" v-if="!legendItem.hidden" ref="el">
+    <div
+        :key="legendItem.visibility"
+        v-if="!legendItem.hidden && filterItem()"
+        ref="el"
+    >
         <div class="relative">
             <div
                 class="flex items-center hover:bg-gray-200"
@@ -522,11 +526,13 @@ import Checkbox from './checkbox.vue';
 import LegendOptions from './legend-options.vue';
 import SymbologyStack from './symbology-stack.vue';
 import { usePanelStore } from '@/stores/panel';
+import { useLegendStore } from '../store/legend-store';
 import { useI18n } from 'vue-i18n';
 
 import type { LegendAPI } from '../api/legend';
 import type { LegendItem } from '../store/legend-item';
 
+const legendStore = useLegendStore();
 const layerStore = useLayerStore();
 const panelStore = usePanelStore();
 const { t } = useI18n();
@@ -857,6 +863,12 @@ const hover = (t: EventTarget) => {
     setTimeout(() => {
         if (hovered.value) mobileMode.value ? null : t._tippy?.show();
     }, 300);
+};
+
+const filterItem = () => {
+    return legendStore.searchFilter !== ''
+        ? props.legendItem._matchFilter
+        : true;
 };
 </script>
 
