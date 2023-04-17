@@ -1071,6 +1071,7 @@ export class EventAPI extends APIScope {
                     const appbarStore = useAppbarStore(this.$vApp.$pinia);
                     if (
                         this.$iApi.fixture.get<AppbarAPI>('appbar') &&
+                        (!panel.teleport || panel.teleport?.showAppbarButton) &&
                         !appbarStore.order
                             .flat()
                             .find((item: string) => item === panel.id)

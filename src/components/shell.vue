@@ -28,30 +28,44 @@
         <div v-else class="w-full h-full">
             <div class="spinner relative inset-x-1/2 inset-y-9/20"></div>
         </div>
+
+        <teleport v-for="panel in teleported()" :to="panel.teleport?.target">
+            <panel-container
+                :key="`${panel.id}`"
+                :panel="panel"
+            ></panel-container>
+        </teleport>
     </div>
 </template>
 
 <script setup lang="ts">
 import EsriMap from '@/components/map/esri-map.vue';
 import PanelStack from '@/components/panel-stack/panel-stack.vue';
+import PanelContainer from '@/components/panel-stack/panel-container.vue';
 import MapCaption from '@/components/map/map-caption.vue';
 import NotificationFloatingButton from '@/components/notification-center/floating-button.vue';
 import KeyboardInstructionsModal from './keyboard-instructions.vue';
 import { computed, inject } from 'vue';
-import type { InstanceAPI } from '@/api';
+import type { InstanceAPI, PanelInstance } from '@/api';
 import { useI18n } from 'vue-i18n';
 import { useFixtureStore } from '@/stores/fixture';
 import { useInstanceStore } from '@/stores/instance';
+import { usePanelStore } from '@/stores/panel';
 
 const iApi = inject<InstanceAPI>('iApi');
 const instanceStore = useInstanceStore();
 const fixtureStore = useFixtureStore();
+const panelStore = usePanelStore();
 const { t } = useI18n();
 
 const appbarFixture = computed(() => fixtureStore.items['appbar']);
 const openKeyboardInstructions = () => {
     iApi?.event.emit('openKeyboardInstructions');
 };
+
+const teleported = (): PanelInstance[] =>
+    // @ts-ignore
+    panelStore.teleported;
 </script>
 
 <style lang="scss" scoped>

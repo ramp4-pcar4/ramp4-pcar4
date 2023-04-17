@@ -19,7 +19,12 @@
             class="flex flex-shrink-0 items-center border-b border-solid border-gray-600 px-8 h-48 overflow-hidden"
             tabindex="-1"
         >
-            <back class="block sm:display-none" @click="panel.close()"></back>
+            <back
+                :class="
+                    !!panel.teleport ? 'display-none' : 'block sm:display-none'
+                "
+                @click="panel.close()"
+            ></back>
 
             <h2 class="flex-grow text-lg py-16 pl-8 min-w-0" v-truncate>
                 <slot name="header"></slot>
@@ -29,23 +34,25 @@
                 <slot name="controls"></slot>
             </panel-options-menu>
 
-            <div class="display-none sm:flex">
-                <left
-                    v-if="reorderable"
-                    @click="move('left')"
-                    :active="!panel.isLeftMostPanel"
-                />
-                <right
-                    v-if="reorderable"
-                    @click="move('right')"
-                    :active="!panel.isRightMostPanel"
-                />
-                <pin @click="panel.pin()" :active="panel.isPinned" />
-                <expand
-                    v-if="panel.controls && panel.controls.expand"
-                    @click="panel.expand()"
-                    :active="panel.expanded"
-                />
+            <div :class="!!panel.teleport ? 'flex' : 'display-none sm:flex'">
+                <div class="flex" v-if="!panel.teleport">
+                    <left
+                        v-if="reorderable"
+                        @click="move('left')"
+                        :active="!panel.isLeftMostPanel"
+                    />
+                    <right
+                        v-if="reorderable"
+                        @click="move('right')"
+                        :active="!panel.isRightMostPanel"
+                    />
+                    <pin @click="panel.pin()" :active="panel.isPinned" />
+                    <expand
+                        v-if="panel.controls && panel.controls.expand"
+                        @click="panel.expand()"
+                        :active="panel.expanded"
+                    />
+                </div>
                 <minimize
                     v-if="panel.button && temporary?.includes(panel.id)"
                     @click="panel.minimize()"
@@ -110,7 +117,7 @@ const temporary = computed((): Array<string> | undefined =>
 const mobileView = computed(() => panelStore.mobileView);
 const reorderable = computed(() => panelStore.reorderable);
 
-const checkMode = () => !mobileView.value;
+const checkMode = () => !mobileView.value && !props.panel.teleport;
 const move = (direction: string) => {
     props.panel.move(direction);
     if (direction === 'left') {

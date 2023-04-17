@@ -30,6 +30,8 @@ class WizardFixture extends WizardAPI {
             }
         );
 
+        this.handlePanelTeleports(['wizard']);
+
         let layerSource: LayerSource | undefined = new LayerSource(this.$iApi);
 
         const wizardStore = useWizardStore(this.$vApp.$pinia);

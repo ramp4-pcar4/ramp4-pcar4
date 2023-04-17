@@ -35,5 +35,6 @@ export class HelpAPI extends FixtureInstance {
         const helpStore = useHelpStore(this.$vApp.$pinia);
         helpStore.location = helpConfig?.location ?? './help/';
         this.handlePanelWidths(['help']);
+        this.handlePanelTeleports(['help']);
     }
 }

@@ -28,6 +28,8 @@ class MetadataFixture extends MetadataAPI {
             { i18n: { messages } }
         );
 
+        this.handlePanelTeleports(['metadata']);
+
         this.removed = () => {
             // console.log(`[fixture] ${this.id} removed`);
             if (this.$iApi.fixture.get('appbar')) {

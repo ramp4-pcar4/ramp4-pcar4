@@ -100,6 +100,9 @@
             "type": "object",
             "description": "Provides the configuration to the areas of interest fixture",
             "properties": {
+                "panelTeleport": {
+                    "$ref": "#/$defs/panelTeleport"
+                },
                 "areas": {
                     "type": "array",
                     "description": "The areas to be displayed in the areas of interest fixture",
@@ -220,6 +223,9 @@
             "type": "object",
             "description": "Provides configuration to the geosearch fixture.",
             "properties": {
+                "panelTeleport": {
+                    "$ref": "#/$defs/panelTeleport"
+                },
                 "serviceUrls": {
                     "type": "object",
                     "properties": {
@@ -306,6 +312,9 @@
                 "panelWidth": {
                     "$ref": "#/$defs/panelWidth"
                 },
+                "panelTeleport": {
+                    "$ref": "#/$defs/panelTeleport"
+                },
                 "root": {
                     "$ref": "#/$defs/sectionItem"
                 }
@@ -316,6 +325,28 @@
         "panelWidth": {
             "type": ["number", "object"],
             "description": "Determines the width of provided panels. If a number, then defaults all panels for the fixture to the number."
+        },
+        "panelTeleport": {
+            "type": "object",
+            "description": "Determines where to render the panel instead of its usual spot in the panel stack.",
+            "properties": {
+                "target": {
+                    "type": ["string", "element"],
+                    "description": "The target container where the panel will be rendered. Can be the element itself or a string query selector."
+                },
+                "showHeader": {
+                    "type": "boolean",
+                    "description": "Whether to show the panel header or not.",
+                    "default": false
+                },
+                "showAppbarButton": {
+                    "type": "boolean",
+                    "description": "Whether to show the appbar button for the panel or not. Only applies to temporary appbar buttons.",
+                    "default": false
+                }
+            },
+            "required": ["target"],
+            "unevaluatedProperties": false
         },
         "sectionItem": {
             "type": "object",
@@ -2151,6 +2182,17 @@
                         },
                         "panelWidth": {
                             "$ref": "#/$defs/panelWidth"
+                        },
+                        "panelTeleport": {
+                            "type": "object",
+                            "properties": {
+                                "details-layers": {
+                                    "$ref": "#/$defs/panelTeleport"
+                                },
+                                "details-items": {
+                                    "$ref": "#/$defs/panelTeleport"
+                                }
+                            }
                         }
                     },
                     "required": ["templates"]
@@ -2161,6 +2203,9 @@
                         "folderName": "default",
                         "panelWidth": {
                             "$ref": "#/$defs/panelWidth"
+                        },
+                        "panelTeleport": {
+                            "$ref": "#/$defs/panelTeleport"
                         }
                     },
                     "description": "Specifies details for the Help section"
