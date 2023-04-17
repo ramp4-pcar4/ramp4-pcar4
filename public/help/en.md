@@ -181,29 +181,29 @@ This control group is located at the top of the data table and has the following
 
 - ![An icon representing the "Collapse" function](datatable/collapse.png) Collapse
     - Condenses the table into a smaller panel so the map is viewable at the same time
-- ![[An icon representing the "Expand" function](datatable/expand.png) Expand
+- ![An icon representing the "Expand" function](datatable/expand.png) Expand
     - Expands the table into a wider panel that fits the available area over the map
-- ![[An icon representing the "Minimize" function](datatable/minimize.png) Minimize
+- ![An icon representing the "Minimize" function](datatable/minimize.png) Minimize
     - Hides the data grid from the map view, accessible to expand from the left-hand menu bar
-- ![[An icon representing the "Close table" function](datatable/close.png) Close Table
+- ![An icon representing the "Close table" function](datatable/close.png) Close Table
     - Closes the table
 - Global Search
     - Filter the table by making sure that the search term is a substring of the rows' data at one or more columns
 
 #### Second row:
 
-- ![[An icon representing the "Apply filters" function](datatable/applyFilters.png) Apply Table Filters To Map
+- ![An icon representing the "Apply filters" function](datatable/applyFilters.png) Apply Table Filters To Map
     - update the map to display only the data that is visible in the table
     - if the data in the table already matches the data displayed on the map, this button will be disabled
-- ![[An icon representing the "Toggle column visibilities" function](datatable/toggleCols.png) Toggle Column Visibilities
+- ![An icon representing the "Toggle column visibilities" function](datatable/toggleCols.png) Toggle Column Visibilities
     - allows you to choose which columns you want to be visible on the table
-- ![[An icon representing the "Show filters" function](datatable/showFilters.png) Show filters
-    - toggling this option off will hide all column filters 
+- ![An icon representing the "Show filters" function](datatable/showFilters.png) Show filters
+    - toggling this option off will hide all column filters
     - unable to change column filters while toggled off
     - column filters remain applied even when toggled off
-- ![[An icon representing the "Extent filter" function](datatable/extentFilter.png) Extent filter
+- ![An icon representing the "Extent filter" function](datatable/extentFilter.png) Extent filter
     - toggles filter by extent
-- ![[An icon representing the "Clear search and filters" function](datatable/clearFilters.png) Clear Search and Filters
+- ![An icon representing the "Clear search and filters" function](datatable/clearFilters.png) Clear Search and Filters
     - clear any existing filters and searches that may be applied to the table
 
 ### Sorting and Reordering
