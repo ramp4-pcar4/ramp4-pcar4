@@ -6,6 +6,7 @@ import { useConfigStore } from '@/stores/config';
 import type { FixtureBase } from '@/stores/fixture';
 import { useFixtureStore } from '@/stores/fixture';
 import type { RampConfig } from '@/types';
+import { usePanelStore } from '@/stores/panel';
 
 const fixtureModules = import.meta.glob<{ default: typeof FixtureInstance }>(
     '../fixtures/*/index.ts'
@@ -467,6 +468,21 @@ export class FixtureInstance extends APIScope implements FixtureBase {
                     'flex-basis': `${panelWidths[item]}px`
                 });
             }
+        }
+    }
+
+    /**
+     * If the `panelParentEl` property is provided, handle specified panelParentEl for the given fixture.
+     *
+     * @param {Array<string>} panels list of panel names for the calling fixture
+     */
+    handlePanelParentEls(panels: Array<string>) {
+        if (this.config?.panelParentEl) {
+            const panelStore = usePanelStore(this.$vApp.$pinia);
+            panels.forEach(p => {
+                panelStore.items[p].parentEl = this.config.panelParentEl;
+                panelStore.items[p].style.width = '100%';
+            });
         }
     }
 }

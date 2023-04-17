@@ -26,7 +26,7 @@ import type { ComponentPublicInstance } from 'vue';
 import { usePanelStore } from '@/stores/panel';
 
 const panelStore = usePanelStore();
-const iApi = inject<InstanceAPI>('iApi');
+const iApi = inject<InstanceAPI>('iApi')!;
 const el = ref<ComponentPublicInstance>();
 
 const mobileMode = computed(() => panelStore.mobileView);
@@ -65,6 +65,7 @@ const enter = (el: Element, done: () => void): void => {
 };
 
 const leave = (el: Element, done: () => {}): void => {
+    console.log(el.children);
     const [bbox, pbbox] = [
         el.children[0].getBoundingClientRect(),
         el.parentElement!.getBoundingClientRect()

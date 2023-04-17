@@ -55,6 +55,7 @@ export class GridAPI extends FixtureInstance {
     _parseConfig() {
         const gridStore = useGridStore(this.$vApp.$pinia);
         this.handlePanelWidths(['grid']);
+        this.handlePanelParentEls(['grid']);
 
         const layerGridConfigs: any = this.getLayerFixtureConfigs();
 

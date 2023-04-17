@@ -37,6 +37,10 @@ export const usePanelStore = defineStore('panel', () => {
         return visible.value;
     }
 
+    function getTeleported() {
+        return orderedItems.value.filter(item => item.parentEl);
+    }
+
     /**
      * Returns registration promises from the state, for the specified panelIds.
      * Should ideally be called when all panelIds have a promise associated with them.
@@ -105,6 +109,10 @@ export const usePanelStore = defineStore('panel', () => {
 
         // add panels until theres no space in the stack
         for (let i = orderedItems.value.length - 1; i >= 0; i--) {
+            // if this panel will be rendered elsewhere, don't include in regular stack calculation
+            if (orderedItems.value[i].parentEl) {
+                continue;
+            }
             let panelWidth = orderedItems.value[i].width || 350;
 
             // if not in mobile view, all panels have a 12px margin to the right
@@ -269,6 +277,7 @@ export const usePanelStore = defineStore('panel', () => {
         reorderable,
         getRemainingWidth,
         getVisible,
+        getTeleported,
         getRegPromises,
         openPanel,
         closePanel,

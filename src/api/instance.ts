@@ -533,7 +533,7 @@ export class InstanceAPI {
         this.$i18n.locale.value = language;
 
         const activeConfig = this.getConfig();
-        this.$vApp.$iApi.event.emit(GlobalEvents.CONFIG_CHANGE, activeConfig);
+        this.event.emit(GlobalEvents.CONFIG_CHANGE, activeConfig);
 
         // reload the map to apply new config
         this.reload();

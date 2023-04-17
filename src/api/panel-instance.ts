@@ -49,6 +49,11 @@ export class PanelInstance extends APIScope {
 
     readonly alertName: string;
 
+    /**
+     * An optional element to render the panel screen in (instead of its usual spot in the panel stack).
+     */
+    parentEl: string | HTMLElement | undefined;
+
     controls: any;
 
     button: any;
