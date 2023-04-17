@@ -27,6 +27,8 @@ class SettingsFixture extends SettingsAPI {
             },
             { i18n: { messages } }
         );
+
+        this.handlePanelTeleports(['settings']);
     }
 
     removed() {

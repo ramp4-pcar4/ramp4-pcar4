@@ -21,10 +21,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import type { PropType } from 'vue';
 import anime from 'animejs';
 import type { PanelInstance } from '@/api';
+// @ts-ignore
+import ro from '@/scripts/resize-observer.js';
 
 const componentEl = ref(null as unknown as Element);
 const props = defineProps({
@@ -35,6 +37,13 @@ const props = defineProps({
 });
 
 const skipTransition = ref(false);
+
+onMounted(() => {
+    // If this panel will be teleported elsewhere, apply tailwind styles directly on the panel.
+    if (props.panel.teleport) {
+        ro.observe(componentEl.value);
+    }
+});
 
 const animateTransition = (
     el: HTMLElement,

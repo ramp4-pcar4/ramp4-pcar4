@@ -27,6 +27,7 @@ export class LegendAPI extends FixtureInstance {
         }
 
         this.handlePanelWidths(['legend']);
+        this.handlePanelTeleports(['legend']);
 
         // get all layer fixture configs to read layer-specific legend properties
         const layerLegendConfigs: { [layerId: string]: any } =

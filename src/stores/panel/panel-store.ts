@@ -13,6 +13,7 @@ export const usePanelStore = defineStore('panel', () => {
     const items = ref<{ [name: string]: PanelInstance }>({});
     const regPromises = ref<{ [name: string]: DefPromise }>({});
     const orderedItems = ref<PanelInstance[]>([]);
+    const teleported = ref<PanelInstance[]>([]);
     const visible = ref<PanelInstance[]>([]);
 
     /**
@@ -191,18 +192,34 @@ export const usePanelStore = defineStore('panel', () => {
     }
 
     function open(panel: PanelInstance): void {
-        //@ts-ignore
-        orderedItems.value = [...orderedItems.value, panel];
+        if (panel.teleport) {
+            // @ts-ignore
+            teleported.value = [...teleported.value, panel];
+        } else {
+            //@ts-ignore
+            orderedItems.value = [...orderedItems.value, panel];
+        }
     }
 
     function close(panel: PanelInstance): void {
-        //@ts-ignore
-        const index = orderedItems.value.indexOf(panel);
-        if (index !== -1) {
-            orderedItems.value = [
-                ...orderedItems.value.slice(0, index),
-                ...orderedItems.value.slice(index + 1)
-            ];
+        if (panel.teleport) {
+            //@ts-ignore
+            const index = teleported.value.indexOf(panel);
+            if (index !== -1) {
+                teleported.value = [
+                    ...teleported.value.slice(0, index),
+                    ...teleported.value.slice(index + 1)
+                ];
+            }
+        } else {
+            //@ts-ignore
+            const index = orderedItems.value.indexOf(panel);
+            if (index !== -1) {
+                orderedItems.value = [
+                    ...orderedItems.value.slice(0, index),
+                    ...orderedItems.value.slice(index + 1)
+                ];
+            }
         }
     }
 
@@ -262,6 +279,7 @@ export const usePanelStore = defineStore('panel', () => {
         remWidth,
         mobileView,
         reorderable,
+        teleported,
         getRemainingWidth,
         getVisible,
         getRegPromises,

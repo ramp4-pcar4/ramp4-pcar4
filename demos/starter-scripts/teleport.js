@@ -286,9 +286,17 @@ let config = {
                             name: 'Carbon monoxide emissions by facility',
                             state: {
                                 opacity: 0.5,
-                                visibility: true
+                                visibility: false
                             },
-                            disabledControls: ['opacity']
+                            fixtures: {
+                                settings: {
+                                    disabledControls: ['opacity']
+                                },
+                                grid: {
+                                    title: 'A Custom Title',
+                                    search: false
+                                }
+                            }
                         }
                     ],
                     state: {
@@ -326,7 +334,16 @@ let config = {
                         visibility: true,
                         hovertips: false
                     },
-                    mouseTolerance: 10,
+                    fixtures: {
+                        settings: {
+                            disabledControls: [
+                                'visibility',
+                                'opacity',
+                                'identify'
+                            ]
+                        }
+                    },
+                    tolerance: 10,
                     customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
                 },
                 {
@@ -334,6 +351,7 @@ let config = {
                     layerType: 'ogc-wfs',
                     url: 'https://api.weather.gc.ca//collections/ahccd-trends/items?measurement_type__type_mesure=total_precip&period__periode=Ann&startindex=0&limit=1000&province__province=on',
                     xyInAttribs: true,
+                    colour: '#FF5555',
                     state: {
                         visibility: true
                     },
@@ -344,17 +362,78 @@ let config = {
                     fixtures: {
                         details: {
                             template: 'WFSLayer-Custom'
+                        },
+                        grid: {
+                            title: 'Datatable for WFS features',
+                            filterByExtent: true,
+                            showFilter: false,
+                            searchFilter: 'y',
+                            applyToMap: true
                         }
                     }
+                },
+                {
+                    id: 'Caribous',
+                    name: 'Caribou Layer',
+                    layerType: 'esri-feature',
+                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/2015_Disturbance_Footprints_Boreal_Caribou_lempreinte_15m/MapServer/0',
+                    mouseTolerance: 5,
+                    identifyMode: 'hybrid',
+                    state: {
+                        opacity: 0.5,
+                        visibility: true
+                    },
+                    customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                },
+                {
+                    id: 'OilFacility',
+                    name: 'OilFacility',
+                    layerType: 'esri-feature',
+                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/StoryRAMP/410b88da_0ed1_4749_903f_5e76c24e2e5f/MapServer/1',
+                    state: {
+                        opacity: 1,
+                        visibility: false
+                    },
+                    customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
+                },
+                {
+                    id: 'ReleasesDisposals',
+                    name: 'ReleaseDisposals',
+                    layerType: 'esri-feature',
+                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/StoryRAMP/410b88da_0ed1_4749_903f_5e76c24e2e5f/MapServer/2',
+                    state: {
+                        opacity: 1,
+                        visibility: false
+                    },
+                    customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in
                 }
             ],
             fixtures: {
                 legend: {
-                    panelTeleport: { target: '#legend', showHeader: true },
                     root: {
                         children: [
                             {
-                                name: 'Visibility Set',
+                                name: 'Regular Group',
+                                children: [
+                                    {
+                                        layerId: 'OilFacility',
+                                        name: 'Oil Sands Facility Locations',
+                                        disabledLayerControls: ['visibility'],
+                                        coverIcon:
+                                            'https://cdn-icons-png.flaticon.com/512/3129/3129632.png'
+                                    },
+                                    {
+                                        layerId: 'ReleasesDisposals',
+                                        name: 'Releases and Disposals by Mining Facilities',
+                                        disabledLayerControls: ['boundaryZoom'],
+                                        description:
+                                            'Symbology description for releases and disposals by mining facilities'
+                                    }
+                                ]
+                            },
+                            {
+                                name: 'Exclusive Visibility Set',
+                                disabledControls: ['visibilityButton'],
                                 exclusive: true,
                                 children: [
                                     {
@@ -363,21 +442,11 @@ let config = {
                                         disabledLayerControls: ['boundaryZoom']
                                     },
                                     {
-                                        name: 'Group in Set',
+                                        layerId: 'WaterQuantity',
+                                        name: 'Water Quantity in Nested Group',
+                                        sublayerIndex: 1,
+                                        expanded: false,
                                         children: [
-                                            {
-                                                layerId: 'WaterQuantity',
-                                                name: 'Water Quantity in Nested Group',
-                                                sublayerIndex: 1,
-                                                layerControls: [
-                                                    'datatable',
-                                                    'metadata',
-                                                    'reload',
-                                                    'remove',
-                                                    'settings',
-                                                    'symbology'
-                                                ]
-                                            },
                                             {
                                                 layerId: 'WaterQuantity',
                                                 name: 'CO2 in Nested Group',
@@ -389,21 +458,50 @@ let config = {
                                                 sublayerIndex: 5
                                             }
                                         ]
+                                    },
+                                    {
+                                        layerId: 'WFSLayer',
+                                        name: 'WFSLayer'
                                     }
                                 ]
                             },
                             {
-                                layerId: 'WFSLayer',
-                                name: 'WFSLayer',
-                                layerControls: [
-                                    'metadata',
-                                    'boundaryZoom',
-                                    'refresh',
-                                    'reload',
-                                    'remove',
-                                    'datatable',
-                                    'settings',
-                                    'symbology'
+                                infoType: 'text',
+                                content: 'Image info section example:'
+                            },
+                            {
+                                infoType: 'image',
+                                content:
+                                    'https://media.gettyimages.com/photos/niagara-falls-picture-id1181897622?k=20&m=1181897622&s=612x612&w=0&h=doNDR18kAA7kl7UuTZcAZdoGQxTE1UJYTzrdW1f3KcI='
+                            },
+                            {
+                                name: 'Title info section with children.',
+                                infoType: 'title',
+                                content: 'Expand me for a surprise!',
+                                expanded: false,
+                                children: [
+                                    {
+                                        name: 'text info section with children',
+                                        infoType: 'text',
+                                        content: 'Keep expanding!',
+                                        expanded: false,
+                                        children: [
+                                            {
+                                                name: 'Custom Info Section',
+                                                infoType: 'template',
+                                                content: `<div>
+                                                            <span>Surpise one:.</span>
+                                                            <img src="https://i.imgur.com/WtY0tdC.gif" />
+                                                            </div>`
+                                            },
+                                            {
+                                                name: 'Surprise 2: Secret feature layer hidden in info section with custom cover icon',
+                                                layerId: 'Caribous',
+                                                coverIcon:
+                                                    'https://cdn-icons-png.flaticon.com/512/3628/3628583.png'
+                                            }
+                                        ]
+                                    }
                                 ]
                             }
                         ]
@@ -415,7 +513,8 @@ let config = {
                         'geosearch',
                         'basemap',
                         'export',
-                        'layer-reorder'
+                        'layer-reorder',
+                        'areas-of-interest'
                     ]
                 },
                 mapnav: {
@@ -429,6 +528,13 @@ let config = {
                         'geosearch'
                     ]
                 },
+                grid: {
+                    panelTeleport: {
+                        target: document.getElementById('grid'),
+                        showHeader: true,
+                        showAppbarButton: true
+                    }
+                },
                 details: {
                     panelWidth: {
                         default: 350,
@@ -437,7 +543,7 @@ let config = {
                 },
                 export: {
                     title: {
-                        value: 'All Your Base are Belong to Us',
+                        value: 'All Your Base are Belong to Us All Your Base are Belong to Us All Your Base are Belong to Us',
                         selectable: false
                     },
                     legend: {
@@ -445,20 +551,76 @@ let config = {
                     },
                     fileName: 'ramp-pcar-4-map-carte'
                 },
-                scrollguard: {
-                    enabled: true
-                },
                 help: {
                     location: '../help'
                 },
-                grid: {
-                    panelTeleport: {
-                        target: document.getElementById('grid')
-                    }
+                'areas-of-interest': {
+                    areas: [
+                        {
+                            title: 'Reservoir Manicougan, Quebec, Canada',
+                            thumbnail:
+                                'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/268',
+                            altText: 'Reservoir Manicougan, Quebec, Canada',
+                            description:
+                                'Manicouagan Reservoir (also Lake Manicouagan) is an annular lake in central Quebec, Canada, covering an area of 1,942 km2 (750 sq mi). The structure was created 214 (±1) million years ago, in the Late Triassic, by the impact of a meteorite 5 km (3 mi) in diameter.',
+                            extent: {
+                                xmax: 1840000,
+                                xmin: 1750000,
+                                ymax: 682193,
+                                ymin: 583440,
+                                spatialReference: {
+                                    wkid: 3978
+                                }
+                            }
+                        },
+                        {
+                            title: 'Gulf of St Lawrence',
+                            thumbnail:
+                                'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/286/270',
+                            extent: {
+                                xmin: 2050000,
+                                xmax: 2240000,
+                                ymin: 583440,
+                                ymax: 682193,
+                                spatialReference: {
+                                    wkid: 3978
+                                }
+                            }
+                        },
+                        {
+                            title: 'Lake Grandmesnil and surrounding lakes',
+                            extent: {
+                                xmin: 1800000,
+                                xmax: 1840000,
+                                ymin: 583440,
+                                ymax: 682193,
+                                spatialReference: {
+                                    wkid: 3978
+                                }
+                            }
+                        },
+                        {
+                            title: 'CN Tower',
+                            thumbnail:
+                                'https://upload.wikimedia.org/wikipedia/commons/9/9c/Toronto_-_ON_-_CN_Tower_Turmkorb.jpg',
+                            description:
+                                'The CN Tower is a 553.3 m-high concrete communications and observation tower in downtown Toronto, Ontario, Canada.',
+                            extent: {
+                                xmin: -8838051.849695725,
+                                xmax: -8836512.572464375,
+                                ymin: 5409988.501845284,
+                                ymax: 5410763.023921062,
+                                spatialReference: {
+                                    wkid: 102100,
+                                    latestWkid: 3857
+                                }
+                            }
+                        }
+                    ]
                 }
             },
             panels: {
-                reorderable: false
+                open: [{ id: 'legend', pin: true }]
             },
             system: { animate: true }
         }
@@ -466,19 +628,16 @@ let config = {
 };
 
 let options = {
-    loadDefaultFixtures: false,
+    loadDefaultFixtures: true,
     loadDefaultEvents: true,
     startRequired: false
 };
 
 const rInstance = createInstance(
-    document.getElementById('app'),
+    document.getElementById('ramp-instance'),
     config,
     options
 );
-rInstance.fixture.addDefaultFixtures().then(() => {
-    rInstance.panel.open('legend');
-});
 
 rInstance.$element.component('WFSLayer-Custom', {
     props: ['identifyData'],
@@ -568,26 +727,7 @@ rInstance.$element.component('Water-Quantity-Template', {
 // add export fixtures
 rInstance.fixture.add('export');
 
-// load map if startRequired is true
-// rInstance.start();
-
-// function switchLang() {
-//     if (rInstance.language === 'en') {
-//         rInstance.setLanguage('fr');
-//     } else {
-//         rInstance.setLanguage('en');
-//     }
-//     document.getElementById('instance-language').innerText = rInstance.language;
-// }
-
-// function animateToggle() {
-//     if (rInstance.$vApp.$el.classList.contains('animation-enabled')) {
-//         rInstance.$vApp.$el.classList.remove('animation-enabled');
-//     } else {
-//         rInstance.$vApp.$el.classList.add('animation-enabled');
-//     }
-//     document.getElementById('animate-status').innerText =
-//         'Animate: ' + rInstance.animate;
-// }
+// add areas of interest fixture
+rInstance.fixture.add('areas-of-interest');
 
 window.debugInstance = rInstance;

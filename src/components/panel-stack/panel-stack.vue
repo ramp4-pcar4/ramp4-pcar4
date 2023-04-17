@@ -26,7 +26,7 @@ import type { ComponentPublicInstance } from 'vue';
 import { usePanelStore } from '@/stores/panel';
 
 const panelStore = usePanelStore();
-const iApi = inject<InstanceAPI>('iApi');
+const iApi = inject<InstanceAPI>('iApi')!;
 const el = ref<ComponentPublicInstance>();
 
 const mobileMode = computed(() => panelStore.mobileView);

@@ -33,6 +33,8 @@ class GeosearchFixture extends GeosearchAPI {
             },
             { i18n: { messages } }
         );
+
+        this.handlePanelTeleports(['geosearch']);
     }
 
     removed() {
