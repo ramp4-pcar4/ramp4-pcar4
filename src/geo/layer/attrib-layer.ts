@@ -806,8 +806,9 @@ export class AttribLayer extends CommonLayer {
      * @returns {Promise} resolves with an array of numbers (object ids)
      */
     queryOIDs(options: QueryFeaturesParams): Promise<Array<number>> {
-        // NOTE this assumes a server based layer
-        //      local based layers should override this function
+        // NOTE this assumes a server based layer.
+        //      local based layers should override this function.
+        //      the override is the only reason why this is not private
 
         if (this.isFile) {
             console.error(`a file layer called a server based query function`);

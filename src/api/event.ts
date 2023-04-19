@@ -21,7 +21,6 @@ import { LayerState } from '@/geo/api';
 import type {
     MapClick,
     MapMove,
-    MapCoords,
     RampBasemapConfig,
     ScreenPoint
 } from '@/geo/api';
@@ -36,6 +35,7 @@ import { useDetailsStore } from '@/fixtures/details/store';
 //      those definitions. If not we might want to just write out object structures instead of names.
 //      Obviously something like LayerInstance is too massive to do that with.
 
+// NOTE this enum cannot be a const enum, as we are scraping values to populate _nameRegister
 export enum GlobalEvents {
     /**
      * Fires when an appbar button is clicked.
@@ -335,7 +335,7 @@ export enum GlobalEvents {
 // IMPORTANT: if changing the enum values, be sure to update the documentation to reflect it.
 //            after v4.0.0 release, best to never edit them unless no other alternative,
 //            as it will be a breaking change to API usage.
-enum DefEH {
+const enum DefEH {
     CONFIG_CHANGE_UPDATES_MAP_ATTRIBS = 'ramp_config_change_updates_map_attribs',
     LAYER_ERROR_UPDATES_LEGEND = 'ramp_layer_error_updates_legend',
     LAYER_REGISTER_BINDS_LEGEND = 'ramp_layer_register_binds_legend',

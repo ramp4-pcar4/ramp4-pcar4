@@ -812,6 +812,7 @@ export class SymbologyAPI extends APIScope {
             // collate the symbol units by the label. this collapses complex definitions into a nice looking legend.
             // e.g. a renderer has SU for 'type=X' and 'type=Y', both with label 'Fun Stuff'. This merges the logic into
             // one line on the legend for Fun Stuff!
+            // See https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1972 for background on why this merging needs to happen
 
             // using Map will preserve the order things were encountered
             const legendCollater = new Map<string, Array<BaseSymbolUnit>>();

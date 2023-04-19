@@ -3,7 +3,7 @@ import { APIScope, InstanceAPI } from './internal';
 import NotificationsScreenV from '@/components/notification-center/screen.vue';
 import { useNotificationStore } from '@/stores/notification';
 
-export enum NotificationType {
+export const enum NotificationType {
     ERROR = 'error',
     INFO = 'info',
     WARNING = 'warning'

@@ -1,6 +1,6 @@
 import type { Directive, DirectiveBinding } from 'vue';
 
-enum KEYS {
+const enum KEYS {
     Enter = 'Enter',
     Space = ' ',
     Tab = 'Tab'
