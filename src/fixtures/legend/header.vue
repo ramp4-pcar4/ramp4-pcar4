@@ -127,6 +127,100 @@
                 ></path>
             </g>
         </svg>
+        <dropdown-menu
+            class="h-40 w-40"
+            :position="'bottom-end'"
+            :tooltip="t('panels.controls.optionsMenu')"
+            :centered="false"
+        >
+            <template #header
+                ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    class="fill-current ml-2 w-24 h-24"
+                >
+                    <path
+                        d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+                    />
+                </svg>
+            </template>
+            <!-- include parent/child in search -->
+            <a
+                href="javascript:;"
+                class="flex leading-snug items-center w-256 hover:text-black"
+                @click="
+                    legendStore.searchOptions.showAncestors =
+                        !legendStore.searchOptions.showAncestors
+                "
+            >
+                <div class="md-icon-small inline items-start">
+                    {{ t('legend.header.search.showAncestors') }}
+                    <svg
+                        height="18"
+                        width="18"
+                        viewBox="0 0 24 24"
+                        class="inline float-right"
+                        v-if="legendStore.searchOptions.showAncestors"
+                    >
+                        <g id="done">
+                            <path
+                                d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+                            />
+                        </g>
+                    </svg>
+                </div>
+            </a>
+            <a
+                href="javascript:;"
+                class="flex leading-snug items-center w-256 hover:text-black"
+                @click="
+                    legendStore.searchOptions.showChildren =
+                        !legendStore.searchOptions.showChildren
+                "
+            >
+                <div class="md-icon-small inline items-start">
+                    {{ t('legend.header.search.showChildren') }}
+                    <svg
+                        height="18"
+                        width="18"
+                        viewBox="0 0 24 24"
+                        class="inline float-right"
+                        v-if="legendStore.searchOptions.showChildren"
+                    >
+                        <g id="done">
+                            <path
+                                d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+                            />
+                        </g>
+                    </svg>
+                </div>
+            </a>
+            <a
+                href="javascript:;"
+                class="flex leading-snug items-center w-256 hover:text-black"
+                @click="
+                    legendStore.searchOptions.layersOnly =
+                        !legendStore.searchOptions.layersOnly
+                "
+            >
+                <div class="md-icon-small inline items-start">
+                    {{ t('legend.header.search.showLayers') }}
+                    <svg
+                        height="18"
+                        width="18"
+                        viewBox="0 0 24 24"
+                        class="inline float-right"
+                        v-if="legendStore.searchOptions.layersOnly"
+                    >
+                        <g id="done">
+                            <path
+                                d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+                            />
+                        </g>
+                    </svg>
+                </div>
+            </a>
+        </dropdown-menu>
     </div>
 </template>
 

@@ -9,6 +9,9 @@ legend.header.visible,Toggle Visibility,1,Basculer la Visibilité,1
 legend.header.visible.show,Show All,1,Montrer tout,1
 legend.header.visible.hide,Hide All,1,Cacher tout,1
 legend.header.search,Search layers,1,Couches de recherche,0
+legend.header.search.showAncestors,Include ancestor items,1,Inclure les éléments des ancêtres,0
+legend.header.search.showChildren,Include child items,1,Inclure les éléments de l'enfant,0
+legend.header.search.showLayers,Search only layers,1,recherche uniquement dans les couches,0
 legend.group.expand,Expand Group,1,Développer un groupe,1
 legend.group.collapse,Collapse Group,1,Réduire un groupe,1
 legend.visibility.showLayer,Show layer,1,Afficher la couche,1

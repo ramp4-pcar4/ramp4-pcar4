@@ -1,10 +1,6 @@
 <template>
-    <div
-        :key="legendItem.visibility"
-        v-if="!legendItem.hidden && filterItem()"
-        ref="el"
-    >
-        <div class="relative">
+    <div :key="legendItem.visibility" v-if="!legendItem.hidden" ref="el">
+        <div class="relative" v-if="filterItem()">
             <div
                 class="flex items-center hover:bg-gray-200"
                 :class="[

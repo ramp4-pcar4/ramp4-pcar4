@@ -8,3 +8,9 @@ export interface LegendConfig {
     searchFilter: string;
     panelWidth: PanelWidthObject | number;
 }
+
+export interface LegendSearchOptions {
+    showAncestors: boolean;
+    showChildren: boolean;
+    layersOnly: boolean;
+}
