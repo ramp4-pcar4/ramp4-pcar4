@@ -3,12 +3,12 @@ import { DefPromise, LayerControl } from '@/geo/api';
 import { geo } from '@/main';
 import { LayerItem } from './layer-item';
 
-export enum LegendControl {
+export const enum LegendControl {
     Visibility = 'visibilityButton',
     Expand = 'expandButton'
 }
 
-export enum LegendType {
+export const enum LegendType {
     Item = 'item',
     Placeholder = 'placeholder',
     Error = 'error'

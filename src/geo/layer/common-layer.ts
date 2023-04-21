@@ -33,7 +33,7 @@ import type {
 } from '@/geo/api';
 import to from 'await-to-js';
 
-enum TimerType {
+const enum TimerType {
     DRAW = 'draw',
     LOAD = 'load'
 }
@@ -489,6 +489,7 @@ export class CommonLayer extends LayerInstance {
             console.error(
                 'Attempting to use map-dependent logic before the layer has been added to the map'
             );
+            console.trace();
             return false;
         }
     }

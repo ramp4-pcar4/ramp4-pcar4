@@ -1,7 +1,7 @@
 import type { InstanceAPI } from '@/api';
 import { LegendControl, LegendItem } from './legend-item';
 
-export enum InfoType {
+export const enum InfoType {
     Title = 'title',
     Text = 'text',
     Image = 'image',

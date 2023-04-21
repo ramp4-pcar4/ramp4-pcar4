@@ -9,7 +9,7 @@ export const DEFAULT_CONFIG = {
     }
 };
 
-export enum HilightMode {
+export const enum HilightMode {
     NONE = 'none', // no hilight
     GLOW = 'glow', // an ESRI highlight
     LIFT = 'lift', // adds identified graphics to the hilightlayer

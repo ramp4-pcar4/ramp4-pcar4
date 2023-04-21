@@ -50,7 +50,7 @@ export interface WizardState {
     currStep: WizardStep;
 }
 
-export enum WizardStep {
+export const enum WizardStep {
     UPLOAD = 0,
     FORMAT = 1,
     CONFIGURE = 2

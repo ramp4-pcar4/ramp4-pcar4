@@ -1,6 +1,6 @@
 import type { Directive, DirectiveBinding } from 'vue';
 
-enum KEYS {
+const enum KEYS {
     ArrowDown = 'ArrowDown',
     ArrowDownIE = 'Down',
     ArrowLeft = 'ArrowLeft',

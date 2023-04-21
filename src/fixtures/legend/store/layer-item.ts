@@ -356,7 +356,9 @@ export class LayerItem extends LegendItem {
                         )
                     );
 
-                    this._layerOffscale = this.layer?.isOffscale();
+                    this._layerOffscale = this.$iApi.geo.map.created
+                        ? this.layer?.isOffscale()
+                        : false;
                     this.handlers.push(
                         this.$iApi.event.on(
                             GlobalEvents.MAP_SCALECHANGE,

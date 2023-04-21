@@ -8,7 +8,7 @@ import type {
 
 // From the supported ESRI field types
 // https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-support-Field.html#type
-export enum FieldType {
+export const enum FieldType {
     BLOB = 'blob',
     DATE = 'date',
     DOUBLE = 'double',
@@ -45,7 +45,7 @@ export enum PointStyleType {
 
 // These need to match the ESRI style constants
 // https://developers.arcgis.com/javascript/latest/api-reference/esri-symbols-SimpleLineSymbol.html#style
-export enum LineStyleType {
+export const enum LineStyleType {
     DASH = 'dash',
     DASHDOT = 'dash-dot',
     DASHDOTDOT = 'short-dash-dot-dot', // for backwards compatibility
@@ -62,19 +62,19 @@ export enum LineStyleType {
     SOLID = 'solid'
 }
 
-export enum LineJoinType {
+export const enum LineJoinType {
     BEVEL = 'bevel',
     MITER = 'miter',
     ROUND = 'round'
 }
 
-export enum LineCapType {
+export const enum LineCapType {
     ROUND = 'round',
     BUTT = 'butt', // round butt lol
     SQUARE = 'square'
 }
 
-export enum FillStyleType {
+export const enum FillStyleType {
     BDIAG = 'backward-diagonal',
     CROSS = 'cross',
     DIAG_CROSS = 'diagonal-cross',
@@ -86,7 +86,7 @@ export enum FillStyleType {
     VERTICAL = 'vertical'
 }
 
-export enum GeometryType {
+export const enum GeometryType {
     POINT = 'Point',
     MULTIPOINT = 'MultiPoint',
     LINESTRING = 'LineString',
@@ -99,7 +99,7 @@ export enum GeometryType {
     UNKNOWN = 'Unknown'
 }
 
-export enum RendererType {
+export const enum RendererType {
     Simple = 'simple',
     Unique = 'uniqueValue',
     ClassBreaks = 'classBreaks',
@@ -153,7 +153,7 @@ export interface Attributes {
 
 // aligns with config values
 // describes the source of the layer
-export enum LayerType {
+export const enum LayerType {
     // ESRI
     FEATURE = 'esri-feature',
     MAPIMAGE = 'esri-map-image',
@@ -179,7 +179,7 @@ export enum LayerType {
 }
 
 // describes how the layer is implemented in the map stack (i.e. hints at the ESRI Layer class)
-export enum LayerFormat {
+export const enum LayerFormat {
     FEATURE = 'feature',
     GRAPHIC = 'graphic',
     IMAGERY = 'imagery',
@@ -194,7 +194,7 @@ export enum LayerFormat {
 // This refers to what the client is dealing with. So there is no "csv" format,
 // as that data gets converted into esri feature format.
 // Add more as we support more formats
-export enum DataFormat {
+export const enum DataFormat {
     ESRI_FEATURE = 'esriFeature',
     ESRI_RASTER = 'esriRaster',
     ESRI_TILE = 'esriTile',
@@ -204,7 +204,7 @@ export enum DataFormat {
 }
 
 // GeoJson geometry types
-export enum GeoJsonGeomType {
+export const enum GeoJsonGeomType {
     POINT = 'Point',
     MULTIPOINT = 'MultiPoint',
     LINESTRING = 'LineString',
@@ -216,7 +216,7 @@ export enum GeoJsonGeomType {
 // pending https://github.com/ramp4-pcar4/ramp4-pcar4/issues/130
 // commenting out to avoid any undecided constants being exposed
 
-//export enum IdentifyMode {
+//export const enum IdentifyMode {
 //    /**
 //     * Runs the identify query and pipes the available results through the `identify` API endpoint.
 //     */
@@ -246,7 +246,7 @@ export enum GeoJsonGeomType {
 //    Haze = 'haze'
 //}
 
-export enum LayerIdentifyMode {
+export const enum LayerIdentifyMode {
     GEOMETRIC = 'geometric', // uses geometric intersection; feature symbology is not considered
     SYMBOLIC = 'symbolic', // uses symbol intersection; not applicable for raster layers
     HYBRID = 'hybrid', // combines geometric and symbolic results
@@ -257,7 +257,7 @@ export interface EpsgLookup {
     (code: string | number): Promise<string>;
 }
 
-export enum InitiationState {
+export const enum InitiationState {
     NEW = 'new',
     INITIATING = 'initiating',
     INITIATED = 'initiated',
@@ -265,14 +265,14 @@ export enum InitiationState {
     TERMINATED = 'terminated'
 }
 
-export enum LayerState {
+export const enum LayerState {
     NEW = 'new', // this means ramp layer class exists but needs to be initiate() 'd
     LOADING = 'loading',
     LOADED = 'loaded',
     ERROR = 'error'
 }
 
-export enum DrawState {
+export const enum DrawState {
     NOT_LOADED = 'not-loaded',
     REFRESH = 'refresh',
     UP_TO_DATE = 'up-to-date'
@@ -283,7 +283,7 @@ export interface DrawOrder {
     ascending: boolean; // true means smaller values are drawn ON TOP of larger values. false is the opposite
 }
 
-export enum IdentifyResultFormat {
+export const enum IdentifyResultFormat {
     ESRI = 'esri',
     TEXT = 'text',
     IMAGE = 'image', // TODO does this need to be split out into image formats like jpg, png?
@@ -446,7 +446,7 @@ export interface FilterEventParam {
 
 // these represent filter keys that the core reserves. the above interface does not use it for typing as
 // 3rd parties can define their own keys.
-export enum CoreFilter {
+export const enum CoreFilter {
     SYMBOL = 'symbol', // used for symbol visibililty filters in the legend
     GRID = 'grid', // used to apply grid filters to a layer
     EXTENT = 'extent', // captures a filter based on an extent. leveraged by the grid to only show rows visible on screen
@@ -497,7 +497,7 @@ export interface CsvOptions {
 // TODO migrate these to /geo/api/geo-common ? if we need config interfaces before creating an instance,
 //      having them defined here might cause circular reference.
 
-export enum LayerControl {
+export const enum LayerControl {
     BoundaryZoom = 'boundaryZoom',
     Datatable = 'datatable',
     Identify = 'identify',
