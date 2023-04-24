@@ -102,14 +102,6 @@ export class InstanceAPI {
         configs?: RampConfigs,
         options?: RampOptions
     ) {
-        console.log(
-            `RAMP v${__RAMP_VERSION__.major}.${__RAMP_VERSION__.minor}.${
-                __RAMP_VERSION__.patch
-            } [${__RAMP_VERSION__.hash.slice(0, 9)}] (Built on ${new Date(
-                __RAMP_VERSION__.timestamp.toString()
-            ).toLocaleString()})`
-        );
-
         this.event = new EventAPI(this);
 
         const appInstance = createApp(element, this);
