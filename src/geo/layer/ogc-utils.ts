@@ -14,15 +14,18 @@ type WFSData = { type: string; features: any[] };
 
 export class OgcUtils extends APIScope {
     /**
+     * Will load a WFS 3 feature set and return as GeoJSON object.
+     * Data will be downloaded in batches (based on limit parameter) to
+     * avoid massive requests that may timeout.
      *
-     * @param {string} url the current url to the wfs service
-     * @param {number} [totalCount=-1] the total number of items available on that service
-     * @param {number} [startindex=0] the index to start the querying from. default 0
-     * @param {number} [limit=1000] the limit of how many results we want returned. default 10
+     * @param {string} url the current url to the wfs service. Should be a /collections/id/items/ endpoint with optional params after the question operator
+     * @param {number} [totalCount=-1] the total number of features available on that service. If not provided, the service will be interrogated for the count.
+     * @param {number} [startindex=0] the feature index to start the querying from. default 0
+     * @param {number} [limit=1000] the limit of how many results we want returned per server request. default 1000
      * @param {WFSData} [wfsData={
      *                 type: 'FeatureCollection',
      *                 features: []
-     *             }] the resulting GeoJSON being populated as we receive layer information
+     *             }] the resulting GeoJSON being populated as we receive layer information. Undefined for initial request.
      * @param {boolean} [xyInAttribs=false] true if point co-ords should be copied to attribute values
      * @returns {Promise<any>} a promise resolving with the layer GeoJSON
      * @memberof WFSServiceSource
@@ -43,6 +46,12 @@ export class OgcUtils extends APIScope {
             limit: limit.toString()
         };
 
+        // Good reference to find information on the WFS 3 API
+        // https://github.com/opengeospatial/ogcapi-features
+        // Tricky to locate since it appears they now call it OGC API.
+        // The actual documents tend to change and old links 404, but some of the links in that
+        // repo should remain current.
+
         // it seems that some WFS services do not return the number of matched records with every request
         // so, we need to get that explicitly first
         if (totalCount === -1) {
@@ -56,7 +65,10 @@ export class OgcUtils extends APIScope {
         const wrapper = new UrlWrapper(url);
         const requestUrl = wrapper.updateQuery(newQueryMap);
 
-        // use angular to make web request, instead of esriRequest. this is because we can't rely on services having jsonp
+        // use axios to make web request, instead of esriRequest. this is because we can't rely on services having jsonp
+        // ^ as of ESRI 4, jsonp is not likely required. The choice between esri request and axios
+        //   will ultimately boil down to if a proxy should be used or not.
+        //   see https://github.com/ramp4-pcar4/ramp4-pcar4/discussions/773
         const [error, response] = await to<WFSResponse>(axios.get(requestUrl));
 
         if (!response) {
@@ -80,24 +92,27 @@ export class OgcUtils extends APIScope {
             );
         }
 
-        wfsData.features = [...wfsData.features, ...data.features]; // update the received features array
+        // update the received features array.
+        // use concat instead of spread operator for performance
+        wfsData.features = wfsData.features.concat(data.features);
 
         // check if all the requested features are downloaded
         if (data.features.length < totalCount - startindex) {
-            // the limit is either 1k or the number of remaining features
-            const limit = Math.min(
-                1000,
+            // the next limit is either the provided limit or the number of remaining features
+            const newLimit = Math.min(
+                limit,
                 totalCount - startindex - data.features.length
             );
             return this.loadWfsData(
                 requestUrl,
                 totalCount,
                 data.features.length + startindex,
-                limit,
+                newLimit,
                 wfsData,
                 xyInAttribs
             );
         } else {
+            // finally have downloaded the entire dataset.
             if (
                 xyInAttribs &&
                 wfsData.features.length > 0 &&
