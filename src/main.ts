@@ -29,6 +29,14 @@ import type { RampOptions } from '@/api/instance';
 import type { RampConfigs } from './types';
 import type { RampLayerConfig } from './geo/api';
 
+console.log(
+    `RAMP v${__RAMP_VERSION__.major}.${__RAMP_VERSION__.minor}.${
+        __RAMP_VERSION__.patch
+    } [${__RAMP_VERSION__.hash.slice(0, 9)}] (Built on ${new Date(
+        __RAMP_VERSION__.timestamp.toString()
+    ).toLocaleString()})`
+);
+
 export const version = __RAMP_VERSION__;
 export function configUpgrade(ramp2Config: any | Array<any>): any {
     return configUpgrade2to4(ramp2Config);
