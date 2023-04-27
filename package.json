@@ -1,6 +1,6 @@
 {
     "name": "ramp",
-    "version": "4.0.1-beta",
+    "version": "4.1.0",
     "type": "module",
     "scripts": {
         "dev": "vite",
