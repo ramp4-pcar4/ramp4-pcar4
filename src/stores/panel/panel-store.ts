@@ -79,8 +79,7 @@ export const usePanelStore = defineStore('panel', () => {
         updateVisible();
     }
 
-    function setWidth(value: number): void {
-        //context.commit(PanelMutation.SET_WIDTH, value);
+    function setWidth(): void {
         updateVisible();
     }
 

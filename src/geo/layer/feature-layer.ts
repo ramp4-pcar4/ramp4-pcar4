@@ -1,6 +1,5 @@
 import { AttribLayer, InstanceAPI } from '@/api/internal';
 import {
-    CoreFilter,
     DataFormat,
     DefPromise,
     GeometryType,

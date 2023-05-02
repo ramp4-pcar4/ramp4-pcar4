@@ -104,7 +104,7 @@ const versionHash = computed<string>(() => {
  */
 const buildDate = computed<string>(() => {
     let timestamp = new Date(version.timestamp);
-    if (isNaN(<any>timestamp)) {
+    if (isNaN(timestamp as any)) {
         // this appears to be broken in dev serve mode (but not always).
         // likely the vite `git log -1 --format=%cd` command isnt working in that context
         return 'dev mode, no date';

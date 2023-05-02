@@ -66,19 +66,19 @@ const valueChanged = (): void => {
     });
 };
 
-const onParentModelChanged = (parentModel: any): void => {
-    if (!parentModel || Object.keys(parentModel).length === 0) {
-        filterValue.value = '';
-    }
-};
+// const onParentModelChanged = (parentModel: any): void => {
+//     if (!parentModel || Object.keys(parentModel).length === 0) {
+//         filterValue.value = '';
+//     }
+// };
 
-const setModel = () => {
-    return {
-        filterType: 'text',
-        type: 'contains',
-        filter: filterValue.value
-    };
-};
+// const setModel = () => {
+//     return {
+//         filterType: 'text',
+//         type: 'contains',
+//         filter: filterValue.value
+//     };
+// };
 
 onBeforeMount(() => {
     // Load previously stored value (if saved in table state manager)

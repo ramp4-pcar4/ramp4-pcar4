@@ -64,11 +64,9 @@ const makeHtmlLink = (html: string): string => {
     // Check to see if url is a valid image / data url based on extension type or format
     if (
         !!html.trim().match(/\.(jpeg|jpg|gif|png)$/) ||
-        !!html
-            .trim()
-            .match(
-                /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i
-            )
+        !!html.trim().match(
+            /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i //eslint-disable-line
+        )
     ) {
         return `<img src="${html}" />`;
     }

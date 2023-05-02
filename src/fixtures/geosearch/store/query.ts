@@ -164,14 +164,12 @@ export class LatLongQuery extends Query {
         super(config, query);
         this.resultType = 'latlong';
 
-        let coords: number[];
-
         // remove extra spaces and delimiters (the filter). convert string numbers to floaty numbers
         const filteredQuery = query
             .split(/[\s|,|;|]/)
             .filter(n => !isNaN(n as any) && n !== '')
             .map(n => parseFloat(n));
-        coords = filteredQuery;
+        const coords: number[] = filteredQuery;
         // TODO: check and convert DMS format if applicable
 
         // apply buffer to create bbox from point coordinates
@@ -294,7 +292,7 @@ export class NTSQuery extends Query {
         // front pad 0 if NTS starts with two digits
         query = isNaN(parseInt(query[2])) ? '0' + query : query;
         this.unitName = query;
-        this.onComplete = new Promise((resolve, reject) => {
+        this.onComplete = new Promise(resolve => {
             this.locateByQuery()
                 .then(lr => {
                     // query check added since it can be null but will never be in this case (make TS happy)

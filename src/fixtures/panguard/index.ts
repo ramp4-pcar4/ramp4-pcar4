@@ -10,7 +10,7 @@ class PanguardFixture extends FixtureInstance {
             (<any>this.$iApi.$i18n).mergeLocaleMessage(...value)
         );
 
-        const { vNode, destroy, el } = this.mount(PanguardV, {
+        const { destroy, el } = this.mount(PanguardV, {
             app: this.$element
         });
         const innerShell =

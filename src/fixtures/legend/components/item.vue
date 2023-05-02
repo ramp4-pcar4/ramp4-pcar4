@@ -520,9 +520,12 @@ import { LegendControl, LegendType } from '../store/legend-item';
 import { InfoType, SectionItem } from '../store/section-item';
 import Checkbox from './checkbox.vue';
 import LegendOptions from './legend-options.vue';
-import SymbologyStack from './symbology-stack.vue';
 import { usePanelStore } from '@/stores/panel';
 import { useI18n } from 'vue-i18n';
+
+// eslint doesn't recognize <symbology-stack> usage
+// eslint-disable-next-line
+import SymbologyStack from './symbology-stack.vue';
 
 import type { LegendAPI } from '../api/legend';
 import type { LegendItem } from '../store/legend-item';
@@ -754,13 +757,15 @@ const recreateLayer = async (layerConfig: RampLayerConfig) => {
     try {
         // try to re-create new layer based on layerConfig
         // same code to how layers are initialized when layer config array changes, expose this as layer API method?
-        await new Promise<LayerInstance>(async (resolve, reject) => {
+        await new Promise<LayerInstance>((resolve, reject) => {
             const layer = iApi.geo.layer.createLayer(layerConfig);
             layerStore.removeErrorLayer(layer);
             // check if the layer error'd while already in the map
             const checkLayer = iApi.geo.layer.getLayer(layer.id);
             if (checkLayer) {
-                const [reloadErr] = await to(toRaw(checkLayer).reload());
+                const reloadErr = Promise.resolve(
+                    to(toRaw(checkLayer).reload())
+                );
                 if (reloadErr) {
                     layerStore.addErrorLayer(layer);
                     reject(reloadErr);
@@ -783,7 +788,7 @@ const cancelLayer = () => {
         props.legendItem as unknown as LayerItem
     ); // so that typescript doesn't yell in the whole method
     if (layerItem.type === LegendType.Error) {
-        props.legendItem._hidden = true; // temporarily hide item until we can remove it
+        props.legendItem.toggleHidden(true); // temporarily hide item until we can remove it
         // layer in error state, remove layer
         // layer could appear in store later, so we need to keep checking if its there
         let everythingRemoved: boolean = false;

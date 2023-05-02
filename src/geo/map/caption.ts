@@ -139,28 +139,24 @@ export class MapCaptionAPI extends APIScope {
             const baseLayerLoadPromises: Array<Promise<__esri.Layer | null>> =
                 this.$iApi.geo.map.esriMap.basemap.baseLayers
                     .map((bl: __esri.Layer) => {
-                        return new Promise<__esri.Layer | null>(
-                            (resolve, _) => {
-                                // Keep count of layer.load checks done so far
-                                let elapsedIntervals: number = 0;
-                                // The maximum number of layer.load checks we will do
-                                const maxIntervals: number =
-                                    loadTimeout / intervalTimeout;
+                        return new Promise<__esri.Layer | null>(resolve => {
+                            // Keep count of layer.load checks done so far
+                            let elapsedIntervals: number = 0;
+                            // The maximum number of layer.load checks we will do
+                            const maxIntervals: number =
+                                loadTimeout / intervalTimeout;
 
-                                const wait = setInterval(function () {
-                                    if (bl.loaded && !bl.loadError) {
-                                        clearInterval(wait);
-                                        resolve(bl);
-                                    } else if (
-                                        elapsedIntervals > maxIntervals
-                                    ) {
-                                        clearInterval(wait);
-                                        resolve(null);
-                                    }
-                                    elapsedIntervals++;
-                                }, intervalTimeout);
-                            }
-                        );
+                            const wait = setInterval(function () {
+                                if (bl.loaded && !bl.loadError) {
+                                    clearInterval(wait);
+                                    resolve(bl);
+                                } else if (elapsedIntervals > maxIntervals) {
+                                    clearInterval(wait);
+                                    resolve(null);
+                                }
+                                elapsedIntervals++;
+                            }, intervalTimeout);
+                        });
                     })
                     .toArray();
 

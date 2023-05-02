@@ -24,11 +24,9 @@
 
 <script setup lang="ts">
 import DropdownMenu from '@/components/controls/dropdown-menu.vue';
-import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-const open = ref(false);
 </script>
 
 <style lang="scss" scoped>

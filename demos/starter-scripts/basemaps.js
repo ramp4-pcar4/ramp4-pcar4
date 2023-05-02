@@ -315,14 +315,14 @@ const rInstance = createInstance(
 // load map if startRequired is true
 // rInstance.start();
 
-function animateToggle() {
-    if (rInstance.$vApp.$el.classList.contains('animation-enabled')) {
-        rInstance.$vApp.$el.classList.remove('animation-enabled');
-    } else {
-        rInstance.$vApp.$el.classList.add('animation-enabled');
-    }
-    document.getElementById('animate-status').innerText =
-        'Animate: ' + rInstance.animate;
-}
+// function animateToggle() {
+//     if (rInstance.$vApp.$el.classList.contains('animation-enabled')) {
+//         rInstance.$vApp.$el.classList.remove('animation-enabled');
+//     } else {
+//         rInstance.$vApp.$el.classList.add('animation-enabled');
+//     }
+//     document.getElementById('animate-status').innerText =
+//         'Animate: ' + rInstance.animate;
+// }
 
 window.debugInstance = rInstance;

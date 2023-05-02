@@ -3,7 +3,6 @@ import { fabric } from 'fabric';
 import { FixtureInstance } from '@/api/internal';
 import type { ExportAPI, ExportSubFixture } from '@/fixtures/export/api/export';
 import type { ExportConfig } from '../export/store';
-import type { ScaleHelper } from '@/geo/api';
 
 class ExportScalebarFixture
     extends FixtureInstance

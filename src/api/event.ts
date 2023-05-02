@@ -841,7 +841,7 @@ export class EventAPI extends APIScope {
 
             case DefEH.MAP_BLUR_UPDATES_KEY_HANDLER:
                 // processes loss of focus from the map view
-                zeHandler = (payload: KeyboardEvent) => {
+                zeHandler = () => {
                     this.$iApi.geo.map.stopKeyPan();
                 };
                 this.$iApi.event.on(

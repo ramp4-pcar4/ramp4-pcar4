@@ -30,7 +30,7 @@ export class IklobFixture {
     }
 }
 
-declare const rInstance: any;
+// declare const rInstance: any;
 
 // if it's not possible to load the fixture file before `RAMP.umd.js` is
 // loaded, and therefore it's not guaranteed that RAMP won't be

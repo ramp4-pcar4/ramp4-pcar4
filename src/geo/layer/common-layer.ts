@@ -1,5 +1,6 @@
 // put things here that would be common to all layers
 // used for layer types defined by Core RAMP.
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import {
     GlobalEvents,

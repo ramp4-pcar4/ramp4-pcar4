@@ -131,21 +131,21 @@ const setFilterModel = (instance: any) => {
     props.params.api.onFilterChanged();
 };
 
-const onParentModelChanged = (parentModel: any) => {
-    if (!parentModel || Object.keys(parentModel).length === 0) {
-        minVal.value = '';
-        maxVal.value = '';
-    }
-};
+// const onParentModelChanged = (parentModel: any) => {
+//     if (!parentModel || Object.keys(parentModel).length === 0) {
+//         minVal.value = '';
+//         maxVal.value = '';
+//     }
+// };
 
-const setModel = () => {
-    return {
-        filterType: 'number',
-        type: 'inRange',
-        filter: minVal.value,
-        filterTo: maxVal.value
-    };
-};
+// const setModel = () => {
+//     return {
+//         filterType: 'number',
+//         type: 'inRange',
+//         filter: minVal.value,
+//         filterTo: maxVal.value
+//     };
+// };
 
 onBeforeMount(() => {
     // Load previously stored values (if saved in table state manager)
