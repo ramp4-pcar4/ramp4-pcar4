@@ -138,6 +138,9 @@ export class LegendAPI extends FixtureInstance {
             parent,
             layer
         );
+        // add the layer item to store
+        // will be in a placeholder state until the layer is loaded
+        this._insertItem(item as unknown as LegendItem, parent);
 
         if (layer.supportsSublayers) {
             // if layer supports sublayers, then we need to parse the
@@ -156,9 +159,6 @@ export class LegendAPI extends FixtureInstance {
 
         item.treeGrown = true;
 
-        // add the layer item to store
-        // will be in a placeholder state until the layer is loaded
-        this._insertItem(item as unknown as LegendItem, parent);
         return item;
     }
 
@@ -389,6 +389,9 @@ export class LegendAPI extends FixtureInstance {
                                 delete layerItemConf.layerId;
                                 delete layerItemConf.sublayerIndex;
                                 delete layerItemConf.children;
+                                if (!layerItemConf.name) {
+                                    delete layerItemConf.name;
+                                }
                                 const replacementConf = {
                                     ...this._treeWalker(layer, node),
                                     ...layerItemConf

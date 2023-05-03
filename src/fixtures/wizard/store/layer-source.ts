@@ -215,7 +215,12 @@ export class LayerSource extends APIScope {
                     return 0;
                 } else {
                     return (
-                        calculateLevel(layers[layer.parentLayerId], layers) + 1
+                        calculateLevel(
+                            layers.find(
+                                (l: any) => l.id === layer.parentLayerId
+                            ),
+                            layers
+                        ) + 1
                     );
                 }
             }
