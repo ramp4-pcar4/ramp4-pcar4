@@ -14,7 +14,7 @@
                     $iApi.$i18n.t('funtimes.info')
                 }}
             </p>
-            <div v-for="item in items">
+            <div v-for="item in items" :key="item">
                 <div v-truncate class="item">
                     {{ item }}
                 </div>

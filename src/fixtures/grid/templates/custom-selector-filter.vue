@@ -62,19 +62,19 @@ const selectionChanged = () => {
     });
 };
 
-const onParentModelChanged = (parentModel: any) => {
-    if (!parentModel || Object.keys(parentModel).length === 0) {
-        selectedOption.value = '';
-    }
-};
+// const onParentModelChanged = (parentModel: any) => {
+//     if (!parentModel || Object.keys(parentModel).length === 0) {
+//         selectedOption.value = '';
+//     }
+// };
 
-const setModel = () => {
-    return {
-        filterType: 'text',
-        type: 'contains',
-        filter: selectedOption.value
-    };
-};
+// const setModel = () => {
+//     return {
+//         filterType: 'text',
+//         type: 'contains',
+//         filter: selectedOption.value
+//     };
+// };
 
 onBeforeMount(() => {
     // Load previously stored value (if saved in table state manager)

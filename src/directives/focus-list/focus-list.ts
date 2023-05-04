@@ -137,16 +137,16 @@ export class FocusListManager {
         element.addEventListener('click', function (event: MouseEvent) {
             focusManager.onClick(event);
         });
-        element.addEventListener('focus', function (event: FocusEvent) {
+        element.addEventListener('focus', function () {
             focusManager.onFocus();
         });
-        element.addEventListener('blur', function (event: FocusEvent) {
+        element.addEventListener('blur', function () {
             focusManager.onBlur();
         });
-        element.addEventListener('mousedown', function (event: MouseEvent) {
+        element.addEventListener('mousedown', function () {
             focusManager.onMousedown();
         });
-        element.addEventListener('touchstart', function (event: MouseEvent) {
+        element.addEventListener('touchstart', function () {
             focusManager.onTouchstart();
         });
     }

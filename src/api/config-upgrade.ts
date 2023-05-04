@@ -674,7 +674,7 @@ export function layerUpgrader(r2layer: any): any {
         case 'esriDynamic':
             r4layer.layerType = 'esri-map-image';
             if (typeof r2layer.singleEntryCollapse !== 'undefined') {
-                r2layer.singleEntryCollapse = r2layer.singleEntryCollapse;
+                r4layer.singleEntryCollapse = r2layer.singleEntryCollapse;
             }
             if (r2layer.imageFormat) {
                 r4layer.imageFormat = r2layer.imageFormat;
@@ -1262,14 +1262,14 @@ function uiUpgrader(r2ui: any, r4c: any): void {
     }
 
     // map tableIsOpen - hunt down the appropriate layer/sublayer and set the table to be open
-    const allowedTypes = [
-        'esri-map-image',
-        'esri-feature',
-        'ogc-wfs',
-        'file-geojson',
-        'file-csv',
-        'file-shape'
-    ];
+    // const allowedTypes = [
+    //     'esri-map-image',
+    //     'esri-feature',
+    //     'ogc-wfs',
+    //     'file-geojson',
+    //     'file-csv',
+    //     'file-shape'
+    // ];
     if (
         r2ui.tableIsOpen &&
         // r2ui.tableIsOpen.id &&

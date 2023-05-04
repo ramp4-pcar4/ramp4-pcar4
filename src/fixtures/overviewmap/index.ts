@@ -17,7 +17,7 @@ class OverviewmapFixture extends OverviewmapAPI {
             (value: OverviewmapConfig | undefined) => this._parseConfig(value)
         );
 
-        const { vNode, destroy, el } = this.mount(OverviewmapV, {
+        const { destroy, el } = this.mount(OverviewmapV, {
             app: this.$element
         });
         const innerShell =

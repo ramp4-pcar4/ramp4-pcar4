@@ -55,6 +55,7 @@ const formatValue = computed<string>(() => {
             }
         });
     }
+    return '';
 });
 
 onMounted(() => {

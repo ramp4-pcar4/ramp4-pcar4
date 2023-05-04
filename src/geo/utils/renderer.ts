@@ -162,7 +162,7 @@ export class BaseSymbolUnit {
 
     match(searchParams: any): boolean {
         // lazy, avoids us making a class for simple renderer symbol unit
-        return true;
+        return !!searchParams;
     }
 }
 

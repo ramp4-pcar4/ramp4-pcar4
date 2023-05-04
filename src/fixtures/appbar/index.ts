@@ -20,7 +20,7 @@ class AppbarFixture extends AppbarAPI {
             (<any>this.$iApi.$i18n).mergeLocaleMessage(...value)
         );
 
-        const { vNode, destroy, el } = this.mount(AppbarV, {
+        const { destroy, el } = this.mount(AppbarV, {
             app: this.$element
         });
         const innerShell =

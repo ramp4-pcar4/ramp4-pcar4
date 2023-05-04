@@ -15,7 +15,7 @@ class MapnavFixture extends MapnavAPI {
             (<any>this.$iApi.$i18n).mergeLocaleMessage(...value)
         );
 
-        const { vNode, destroy, el } = this.mount(MapnavV, {
+        const { destroy, el } = this.mount(MapnavV, {
             app: this.$element
         });
         const innerShell =

@@ -7,7 +7,6 @@ import GazeboAppbarButtonV from './appbar-button.vue';
 import GazeboP1Screen1V from './p1-screen-1.vue';
 import GazeboP1Screen2V from './p1-screen-2.vue';
 
-import GazeboP2Screen1V from './p2-screen-1.vue';
 import GazeboP2Screen2V from './p2-screen-2.vue';
 import GazeboP2Screen3V from './p2-screen-3.vue';
 

@@ -1,11 +1,5 @@
 import { AttribLayer, InstanceAPI, type MapImageLayer } from '@/api/internal';
-import {
-    CoreFilter,
-    DataFormat,
-    InitiationState,
-    LayerFormat,
-    LayerType
-} from '@/geo/api';
+import { DataFormat, InitiationState, LayerFormat, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 import { markRaw } from 'vue';
 

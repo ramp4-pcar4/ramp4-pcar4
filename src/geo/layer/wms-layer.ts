@@ -196,8 +196,6 @@ export class WmsLayer extends CommonLayer {
             throw new Error('a point must be used for WMS Identify');
         }
 
-        const map = this.$iApi.geo.map;
-
         // early kickout check. not loaded/error
         if (!this.canIdentify()) {
             // return empty result.
@@ -379,7 +377,7 @@ export class WmsLayer extends CommonLayer {
         } else {
             req = { SRS: 'EPSG:' + wkid, X: intX, Y: intY };
         }
-        if (!req.hasOwnProperty('BBOX')) {
+        if (!Object.prototype.hasOwnProperty.call(req, 'BBOX')) {
             req.BBOX = `${ext.xmin},${ext.ymin},${ext.xmax},${ext.ymax}`;
         }
         const settings = {

@@ -2,6 +2,7 @@
 // May be pointless and should be removed...limitied experience with 3D maps
 // makes it unclear how much overlap of functionality makes sense. Could be
 // we need an entirely different framework to really support 3D.
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { toRaw, markRaw } from 'vue';
 import { APIScope, Basemap, InstanceAPI } from '@/api/internal';

@@ -402,7 +402,10 @@ export class AttribLayer extends CommonLayer {
             .filter(field =>
                 // assuming there is at least one attribute - empty attribute bundle promises should be rejected, so it never even gets this far
                 // filter out fields where there is no corresponding attribute data
-                attSet.features[0].hasOwnProperty(toRaw(field).name)
+                Object.prototype.hasOwnProperty.call(
+                    attSet.features[0],
+                    toRaw(field).name
+                )
             )
             .map(field => ({
                 data: toRaw(field).name, // TODO calling this data is really unintuitive. consider global rename to fieldName, name, attribName, etc.
@@ -679,7 +682,7 @@ export class AttribLayer extends CommonLayer {
      */
     applySqlFilter(exclusions: Array<string> = []): void {
         throw new Error(
-            'attempted to apply sql filter to a layer not equipped for it. likely a new subclass of AttribLayer did not override applySqlFilter'
+            `attempted to apply sql filter ${exclusions} to a layer not equipped for it. likely a new subclass of AttribLayer did not override applySqlFilter`
         );
     }
 

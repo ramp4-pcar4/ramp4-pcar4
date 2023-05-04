@@ -327,7 +327,7 @@ export class FixtureInstance extends APIScope implements FixtureBase {
 
         const componentApp = createApp(component);
 
-        const { vNode, destroy, el } = this.mount(component, {
+        const { el } = this.mount(component, {
             props: { ...options.propsData },
             app: componentApp
         });

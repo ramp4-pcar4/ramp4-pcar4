@@ -1,3 +1,5 @@
+/*global RAMP*/
+
 window.debugInstance = null;
 
 let config = {

@@ -5,7 +5,6 @@ import {
     LayerInstance
 } from '@/api';
 import { HilightMode, HILIGHT_LAYER_NAME } from '../hilight-defs';
-import type { Graphic } from '@/geo/api';
 
 // This hilight mode does nothing
 export class BaseHilightMode extends APIScope {
@@ -21,21 +20,23 @@ export class BaseHilightMode extends APIScope {
     /**
      * Adds the given graphics to the hilight layer.
      */
-    async add(graphics: Array<Graphic>) {
+    async add() {
         this.notImplementedError('addGraphics');
     }
 
     /**
      * Removes the given graphics from the hilight layer.
      */
-    async remove(graphics?: Array<Graphic>) {
+    async remove() {
         this.notImplementedError('removeGraphics');
     }
 
     /**
      * Reload the hilighter's map elements.
      */
-    async reloadHilight(graphics: Array<Graphic>) {}
+    async reloadHilight() {
+        this.notImplementedError('reloadHilight');
+    }
 
     /**
      * Returns the Hilight layer.
@@ -60,7 +61,7 @@ export class BaseHilightMode extends APIScope {
 
     private notImplementedError(method: string) {
         console.warn(
-            'Hilight mode method {method} was not implemented by subclass.'
+            `Hilight mode method ${method} was not implemented by subclass.`
         );
     }
 

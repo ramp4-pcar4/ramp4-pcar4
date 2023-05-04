@@ -17,7 +17,7 @@ class ScrollguardFixture extends ScrollguardAPI {
             (value: ScrollguardConfig | undefined) => this._parseConfig(value)
         );
 
-        const { vNode, destroy, el } = this.mount(ScrollguardV, {
+        const { destroy, el } = this.mount(ScrollguardV, {
             app: this.$element
         });
 

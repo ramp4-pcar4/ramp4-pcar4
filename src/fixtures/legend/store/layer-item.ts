@@ -31,12 +31,7 @@ export class LayerItem extends LegendItem {
     /**
      * Creates a new single layer item.
      */
-    constructor(
-        iApi: InstanceAPI,
-        config: any,
-        parent?: LegendItem,
-        layer?: LayerInstance
-    ) {
+    constructor(iApi: InstanceAPI, config: any, parent?: LegendItem) {
         super(iApi, config, parent);
         this._type = LegendType.Placeholder;
         this._layerId = config.layerId;

@@ -239,7 +239,9 @@ const props = defineProps({
     },
     options: {
         type: Array as PropType<Array<SelectionOption>>,
-        default: []
+        default() {
+            return [];
+        }
     },
     size: {
         type: [Number, Boolean],
@@ -278,6 +280,8 @@ const filter = ref('');
 
 if (props.defaultOption && props.modelValue === '' && props.options.length) {
     // regex to guess closest default value for lat/long fields
+    // eslint has beef with the following line for unknown reasons
+    // eslint-disable-next-line
     let defaultValue = props.options[0].value;
     if (props.name === 'latField') {
         const latNames = new RegExp(/^(y|lat.*)$/i);

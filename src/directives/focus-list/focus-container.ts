@@ -49,7 +49,7 @@ class FocusContainerManager {
      * @param element The HTMLElement the directive was placed on
      * @param options The options provided to the directive
      */
-    constructor(element: HTMLElement, options: any) {
+    constructor(element: HTMLElement) {
         this.element = element;
         this.element.toggleAttribute(CONTAINER_ATTR, true);
         this.element.tabIndex = 0;
@@ -68,7 +68,7 @@ class FocusContainerManager {
         this.element.addEventListener('focusout', function (event: FocusEvent) {
             focusManager.onFocusOut(event);
         });
-        this.element.addEventListener('focus', function (event: FocusEvent) {
+        this.element.addEventListener('focus', function () {
             focusManager.onFocus();
         });
     }
@@ -93,7 +93,7 @@ class FocusContainerManager {
                 focusManager.onFocusOut(event);
             }
         );
-        this.element.removeEventListener('focus', function (event: FocusEvent) {
+        this.element.removeEventListener('focus', function () {
             focusManager.onFocus();
         });
     }
@@ -147,7 +147,7 @@ class FocusContainerManager {
     disableTabbing() {
         const tab_list = Array.prototype.filter.call(
             this.element.querySelectorAll(TABBABLE_TAGS),
-            el => {
+            () => {
                 return true;
             }
         ) as HTMLElement[];
