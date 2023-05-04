@@ -23,7 +23,7 @@
                 </svg>
             </div>
         </template>
-        <template v-slot:default="scope">
+        <template v-slot:default>
             <a
                 v-for="component in componentSelectedState"
                 :key="component.name"

@@ -1,4 +1,3 @@
-import type { IdentifyResult } from '@/geo/api';
 import type { PanelWidthObject } from '@/api';
 
 export type DetailsItemSet = { [name: string]: DetailsItemInstance };

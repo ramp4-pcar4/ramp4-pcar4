@@ -26,6 +26,9 @@ const iApi = inject('iApi') as InstanceAPI;
 
 let geolocation = reactive<Array<number>>([]);
 
+// These exist in all browsers but aren't predefined, so this tells eslint everything is a-ok
+/* global GeolocationPosition, GeolocationPositionError, PositionOptions */
+
 const geolocate = async () => {
     // use cached location
     if (!geolocation.length) {

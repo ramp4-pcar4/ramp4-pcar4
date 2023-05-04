@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { APIScope, InstanceAPI } from '@/api/internal';
 import {
     DataFormat,

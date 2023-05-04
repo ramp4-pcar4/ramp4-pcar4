@@ -565,23 +565,23 @@ rInstance.fixture.add('export');
 // load map if startRequired is true
 // rInstance.start();
 
-function switchLang() {
-    if (rInstance.language === 'en') {
-        rInstance.setLanguage('fr');
-    } else {
-        rInstance.setLanguage('en');
-    }
-    document.getElementById('instance-language').innerText = rInstance.language;
-}
+// function switchLang() {
+//     if (rInstance.language === 'en') {
+//         rInstance.setLanguage('fr');
+//     } else {
+//         rInstance.setLanguage('en');
+//     }
+//     document.getElementById('instance-language').innerText = rInstance.language;
+// }
 
-function animateToggle() {
-    if (rInstance.$vApp.$el.classList.contains('animation-enabled')) {
-        rInstance.$vApp.$el.classList.remove('animation-enabled');
-    } else {
-        rInstance.$vApp.$el.classList.add('animation-enabled');
-    }
-    document.getElementById('animate-status').innerText =
-        'Animate: ' + rInstance.animate;
-}
+// function animateToggle() {
+//     if (rInstance.$vApp.$el.classList.contains('animation-enabled')) {
+//         rInstance.$vApp.$el.classList.remove('animation-enabled');
+//     } else {
+//         rInstance.$vApp.$el.classList.add('animation-enabled');
+//     }
+//     document.getElementById('animate-status').innerText =
+//         'Animate: ' + rInstance.animate;
+// }
 
 window.debugInstance = rInstance;

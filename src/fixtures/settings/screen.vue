@@ -131,6 +131,11 @@ import { useI18n } from 'vue-i18n';
 import type { SettingsAPI } from './api/settings';
 import SettingsComponent from './component.vue';
 
+// eslint recommends not mutating props directly, but in this case
+// we aren't worried about messing with reactivity and the current
+// implementation is simpler than an event-based solution
+/* eslint-disable vue/no-mutating-props */
+
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
 
@@ -144,7 +149,6 @@ const uid = ref(props.layer.uid);
 const visibilityModel = ref(props.layer.visibility);
 const opacityModel = ref(props.layer.opacity * 100);
 const identifyModel = ref(props.layer.identify);
-const snapshotToggle = ref(false);
 const layerExists = ref(false); // tracks whether the layer still exists
 const handlers = reactive<Array<string>>([]);
 const watchers = reactive<Array<Function>>([]);

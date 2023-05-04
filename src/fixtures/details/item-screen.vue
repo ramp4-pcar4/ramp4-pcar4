@@ -179,7 +179,6 @@ import { DetailsItemInstance, useDetailsStore } from './store';
 import type { DetailsAPI } from './api/details';
 
 import { GlobalEvents, InstanceAPI } from '@/api';
-import { IdentifyResultFormat } from '@/geo/api';
 import type { FieldDefinition, IdentifyResult, IdentifyItem } from '@/geo/api';
 import type { LayerInstance, PanelInstance } from '@/api/internal';
 
@@ -241,12 +240,6 @@ const layerName = computed<string>(() => {
     }
     return layer?.name ?? '';
 });
-const layerType = computed<string>(() => {
-    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
-        props.result.uid
-    );
-    return layer?.layerType || '';
-});
 const supportsFeatures = computed<Boolean>(() => {
     const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
         props.result.uid
@@ -295,7 +288,6 @@ const detailsTemplate = computed(() => {
     }
 });
 
-const identifyTypes = ref<IdentifyResultFormat>(IdentifyResultFormat.UNKNOWN);
 const icon = ref<string>('');
 const currentIdx = ref<number>(0);
 const layerExists = ref<Boolean>(false);

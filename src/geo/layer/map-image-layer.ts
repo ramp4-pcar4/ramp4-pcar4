@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import {
     AttribLayer,
     CommonLayer,
@@ -12,7 +14,6 @@ import {
     GeometryType,
     Graphic,
     IdentifyResultFormat,
-    InitiationState,
     LayerFormat,
     LayerIdentifyMode,
     LayerState,

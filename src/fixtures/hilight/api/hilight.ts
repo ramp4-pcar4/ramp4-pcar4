@@ -1,9 +1,4 @@
-import {
-    InstanceAPI,
-    CommonGraphicLayer,
-    FixtureInstance,
-    GlobalEvents
-} from '@/api/internal';
+import { CommonGraphicLayer, FixtureInstance } from '@/api/internal';
 import { Graphic, LayerType } from '@/geo/api';
 import {
     DEFAULT_CONFIG,
