@@ -18,7 +18,8 @@ export class LegendAPI extends FixtureInstance {
                 'wizard',
                 'layerReorder',
                 'groupToggle',
-                'visibilityToggle'
+                'visibilityToggle',
+                'searchFilter'
             ];
         useLegendStore(this.$vApp.$pinia).headerControls = controls;
 

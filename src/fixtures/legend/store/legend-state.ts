@@ -5,5 +5,12 @@ export interface LegendConfig {
     isPinned: boolean;
     root: { name: string; children: Array<any> };
     headerControls: Array<string>;
+    searchFilter: string;
     panelWidth: PanelWidthObject | number;
+}
+
+export interface LegendSearchOptions {
+    showAncestors: boolean;
+    showChildren: boolean;
+    layersOnly: boolean;
 }

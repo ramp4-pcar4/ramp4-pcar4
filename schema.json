@@ -300,7 +300,8 @@
                         "wizard",
                         "layerReorder",
                         "groupToggle",
-                        "visibilityToggle"
+                        "visibilityToggle",
+                        "searchFilter"
                     ]
                 },
                 "panelWidth": {
@@ -448,7 +449,8 @@
                     "groupToggle",
                     "layerReorder",
                     "visibilityToggle",
-                    "wizard"
+                    "wizard",
+                    "searchFilter"
                 ]
             },
             "uniqueItems": true

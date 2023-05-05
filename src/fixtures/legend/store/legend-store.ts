@@ -1,4 +1,4 @@
-import type { LegendConfig } from './legend-state';
+import type { LegendConfig, LegendSearchOptions } from './legend-state';
 import { LayerItem } from './layer-item';
 import type { LegendItem } from './legend-item';
 import { SectionItem } from './section-item';
@@ -16,6 +16,12 @@ export const useLegendStore = defineStore('legend', () => {
     const legendConfig = ref<LegendConfig>();
     const children = ref<LegendItem[]>([]);
     const headerControls = ref<string[]>([]);
+    const searchFilter = ref<string>('');
+    const searchOptions = ref<LegendSearchOptions>({
+        showAncestors: true,
+        showChildren: true,
+        layersOnly: false
+    });
 
     function addItem(value: {
         item: LegendItem;
@@ -89,12 +95,57 @@ export const useLegendStore = defineStore('legend', () => {
         }
     }
 
+    function filterLegend(legend: LegendItem[]): void {
+        legend.forEach(item => {
+            item._matchFilter = false;
+            // search by name, content, and layer name when applicable
+            let field = `${item.name ?? ''} ${item.content ?? ''} ${
+                item.layerId ?? ''
+            }`;
+
+            // if item content matches the filter, display the item, as well as
+            // all the children of the item and the ancestors of the item
+            if (
+                field &&
+                field
+                    .toLowerCase()
+                    .includes(searchFilter.value.toLowerCase().trim()) &&
+                (!searchOptions.value.layersOnly || item instanceof LayerItem)
+            ) {
+                item._matchFilter = true;
+                if (searchOptions.value.showChildren) {
+                    let children = item.children;
+                    for (var i = 0; i < children.length; i++) {
+                        children[i]._matchFilter = true;
+                        children = [...children, ...children[i].children];
+                    }
+                } else {
+                    filterLegend(item.children);
+                }
+                if (searchOptions.value.showAncestors) {
+                    let parent = item.parent;
+                    while (parent) {
+                        parent._matchFilter = true;
+                        parent.toggleExpanded(true);
+                        parent = parent.parent;
+                    }
+                }
+            } else {
+                // if legend item content does not match the filter, search through the children of the item
+                filterLegend(item.children);
+            }
+        });
+    }
+
     return {
         legendConfig,
         children,
         headerControls,
+        searchFilter,
+        searchOptions,
         addItem,
         removeItem,
-        replaceItem
+        replaceItem,
+        filterLegend
     };
 });

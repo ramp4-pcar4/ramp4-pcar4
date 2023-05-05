@@ -31,6 +31,7 @@ export class LegendItem extends APIScope {
     _expanded: boolean; // expanded state of item
     _visibility: boolean; // visibility state of item
     _exclusive: boolean; // indicates if children should follow 'exclusive set' behavior (à la radio buttons)
+    _matchFilter: boolean; // if item matches current search string
 
     _controls: Array<LegendControl> | undefined; // will use layer controls if undefined
     _disabledControls: Array<LegendControl> | undefined; // will use layer's disabled controls if undefined
@@ -66,6 +67,8 @@ export class LegendItem extends APIScope {
         this._disabledControls = config.disabledControls?.slice();
         this._lastVisible;
         this._visibleChildren = [];
+
+        this._matchFilter = false;
     }
 
     /** Returns the item's uid */

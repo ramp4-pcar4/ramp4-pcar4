@@ -1,6 +1,6 @@
 <template>
     <div :key="legendItem.visibility" v-if="!legendItem.hidden" ref="el">
-        <div class="relative">
+        <div class="relative" v-if="filterItem()">
             <div
                 class="flex items-center hover:bg-gray-200"
                 :class="[
@@ -529,6 +529,7 @@ import { InfoType, SectionItem } from '../store/section-item';
 import Checkbox from './checkbox.vue';
 import LegendOptions from './legend-options.vue';
 import { usePanelStore } from '@/stores/panel';
+import { useLegendStore } from '../store/legend-store';
 import { useI18n } from 'vue-i18n';
 
 // eslint doesn't recognize <symbology-stack> usage
@@ -538,6 +539,7 @@ import SymbologyStack from './symbology-stack.vue';
 import type { LegendAPI } from '../api/legend';
 import type { LegendItem } from '../store/legend-item';
 
+const legendStore = useLegendStore();
 const layerStore = useLayerStore();
 const panelStore = usePanelStore();
 const { t } = useI18n();
@@ -868,6 +870,12 @@ const hover = (t: EventTarget) => {
     setTimeout(() => {
         if (hovered.value) mobileMode.value ? null : t._tippy?.show();
     }, 300);
+};
+
+const filterItem = () => {
+    return legendStore.searchFilter !== ''
+        ? props.legendItem._matchFilter
+        : true;
 };
 </script>
 
