@@ -74,7 +74,7 @@ export class LayerSource extends APIScope {
             id: `geojson#${++this.layerCount}`,
             layerType: LayerType.GEOJSON,
             url,
-            name: url.substr(url.lastIndexOf('/') + 1),
+            name: url.substring(url.lastIndexOf('/') + 1),
             state: { opacity: 1, visibility: true },
             rawData: fileData
         };
@@ -101,7 +101,7 @@ export class LayerSource extends APIScope {
             id: `csv#${++this.layerCount}`,
             layerType: LayerType.CSV,
             url,
-            name: url.substr(url.lastIndexOf('/') + 1),
+            name: url.substring(url.lastIndexOf('/') + 1),
             state: { opacity: 1, visibility: true },
             rawData: fileData
         };
@@ -199,6 +199,10 @@ export class LayerSource extends APIScope {
             configOptions: ['name', 'sublayers']
         };
 
+        /**
+         * Processes the layer's flattened layer tree to determine the level of each layer in the list.
+         * @param layers the layer's flattened tree that was retrieved from the server.
+         */
         function flattenMapImageLayerList(layers: any) {
             return layers.map((layer: any) => {
                 const level = calculateLevel(layer, layers);
@@ -210,12 +214,22 @@ export class LayerSource extends APIScope {
                 return layer;
             });
 
+            /**
+             * Calculates the level of the layer in the layer tree i.e. how many parent layers you can go up before you reach the base MIL.
+             * @param layer the layer for which the calculation is occurring.
+             * @param layers a flattened array of the layer tree.
+             */
             function calculateLevel(layer: any, layers: any): number {
                 if (layer.parentLayerId === -1) {
                     return 0;
                 } else {
                     return (
-                        calculateLevel(layers[layer.parentLayerId], layers) + 1
+                        calculateLevel(
+                            layers.find(
+                                (l: any) => l.id === layer.parentLayerId
+                            ),
+                            layers
+                        ) + 1
                     );
                 }
             }

@@ -281,6 +281,12 @@ let config = {
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                     sublayers: [{ index: 21 }, { index: 35 }]
+                },
+                {
+                    id: 'Cycling',
+                    layerType: 'esri-map-image',
+                    url: 'https://maps.ottawa.ca/arcgis/rest/services/CyclingMap/MapServer',
+                    sublayers: [{ index: 0 }, { index: 27 }]
                 }
             ],
             fixtures: {
@@ -315,6 +321,10 @@ let config = {
                                 name: 'MIL group that is exclusive set',
                                 expanded: false,
                                 exclusive: true
+                            },
+                            {
+                                layerId: 'Cycling',
+                                expanded: false
                             }
                         ]
                     }
