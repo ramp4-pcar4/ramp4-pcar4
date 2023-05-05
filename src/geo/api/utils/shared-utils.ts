@@ -191,7 +191,7 @@ export class UrlWrapper {
             deepmerge.all([{}, this.queryMap, queryMapUpdate])
         );
         const requestUrl = `${this.base}${Object.entries(requestQueryMap)
-            .filter(([_, value]) => value !== undefined)
+            .filter(([, value]) => value !== undefined)
             .map(
                 ([key, value], index) =>
                     `${index === 0 ? '?' : ''}${key}=${value}`

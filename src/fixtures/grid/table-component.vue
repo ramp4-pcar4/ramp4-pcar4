@@ -343,6 +343,9 @@ import type { RowNode } from 'ag-grid-community';
 import { ColumnApi, GridApi } from 'ag-grid-community';
 import { useI18n } from 'vue-i18n';
 
+// to prevent lint complaining about regex expressions
+/* eslint no-useless-escape: 0 */
+
 export interface FilterParams {
     comparator?: Function;
     inRangeInclusive?: boolean;
@@ -508,13 +511,7 @@ const onGridReady = (params: any) => {
     handlers.value.push(
         iApi.event.on(
             GlobalEvents.LAYER_VISIBILITYCHANGE,
-            ({
-                visibility,
-                layer
-            }: {
-                visibility: boolean;
-                layer: LayerInstance;
-            }) => {
+            ({ layer }: { visibility: boolean; layer: LayerInstance }) => {
                 if (
                     layer.uid &&
                     (layer.uid === props.layerUid ||
@@ -838,7 +835,7 @@ const setUpSpecialColumns = (
                 });
                 return iconContainer;
             },
-            cellStyle: (cell: any) => {
+            cellStyle: () => {
                 return {
                     paddingTop: '7px',
                     textAlign: 'center'
@@ -919,9 +916,8 @@ const getFiltersQuery = () => {
 
 // converts columns filter to SQL
 const filterToSql = (col: string, colFilter: { [key: string]: any }): any => {
-    const column = columnApi.value.getColumn(col)?.getColDef();
     switch (colFilter.filterType) {
-        case 'number':
+        case 'number': {
             switch (colFilter.type) {
                 case 'greaterThanOrEqual':
                     return `${col} >= ${colFilter.filter}`;
@@ -933,7 +929,8 @@ const filterToSql = (col: string, colFilter: { [key: string]: any }): any => {
                     break;
             }
             break;
-        case 'text':
+        }
+        case 'text': {
             let val = colFilter.filter.replace(/'/g, /''/);
             if (val !== '') {
                 // following code is to UNESCAPE all special chars for ESRI and geoApi SQL to parse properly (remove the backslash)
@@ -971,6 +968,7 @@ const filterToSql = (col: string, colFilter: { [key: string]: any }): any => {
                     : sqlWhere;
             }
             break;
+        }
         case 'date': {
             // defaults to min and max dates respectively
             const dateFrom = new Date(colFilter.dateFrom ?? 0);

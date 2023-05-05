@@ -98,7 +98,7 @@ export default class TableStateManager {
      * @memberof TableStateManager
      */
     clearFilters() {
-        Object.entries(this._columns).forEach(([field, config]) => {
+        Object.entries(this._columns).forEach(([, config]) => {
             if (!config.filter.static) {
                 config.filter.min = null;
                 config.filter.max = null;

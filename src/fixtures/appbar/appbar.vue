@@ -30,7 +30,8 @@
                 class="appbar-item"
                 :class="`identifier-divider-${index}`"
                 v-if="overflowFlags[`divider-${index}`] !== true"
-            ></divider>
+                :key="`${subArray}-${index}-default`"
+            />
         </template>
 
         <default-button
@@ -106,7 +107,6 @@
 import {
     computed,
     getCurrentInstance,
-    inject,
     nextTick,
     onBeforeMount,
     onBeforeUnmount,
@@ -119,11 +119,9 @@ import MoreButton from './more-button.vue';
 //import NavAppbarButtonV from './nav-button.vue';
 import NotificationsAppbarButton from '@/components/notification-center/appbar-button.vue';
 import AboutRampDropdown from '@/components/about-ramp/about-ramp-dropdown.vue';
-import type { InstanceAPI } from '@/api';
 import { usePanelStore } from '@/stores/panel';
 import { useAppbarStore } from './store';
 
-const iApi = inject<InstanceAPI>('iApi');
 const panelStore = usePanelStore();
 const appbarStore = useAppbarStore();
 
@@ -160,7 +158,6 @@ onUpdated(() => {
             bound = element.getBoundingClientRect().bottom - 38;
         }
         let dropdown: Element | null = element.querySelector('#dropdown');
-        const buttonsToOverflow: string[] = [];
         // check positions of appbar buttons
         for (let i = children.length - 4; i >= 0; i--) {
             let bottom: number = children[i].getBoundingClientRect().bottom;

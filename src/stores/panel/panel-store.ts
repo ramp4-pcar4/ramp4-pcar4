@@ -79,11 +79,6 @@ export const usePanelStore = defineStore('panel', () => {
         updateVisible();
     }
 
-    function setWidth(value: number): void {
-        //context.commit(PanelMutation.SET_WIDTH, value);
-        updateVisible();
-    }
-
     /**
      * Sets the width of the panel stack and re-calculates which panels are visible given the new width.
      *
@@ -274,7 +269,6 @@ export const usePanelStore = defineStore('panel', () => {
         closePanel,
         movePanel,
         removePanel,
-        setWidth,
         setStackWidth,
         setMobileView,
         updateVisible,

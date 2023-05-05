@@ -40,16 +40,14 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from 'vue';
 import type { PropType } from 'vue';
-import type { InstanceAPI, PanelInstance } from '@/api';
+import type { PanelInstance } from '@/api';
 import { useI18n } from 'vue-i18n';
 
 defineProps({
     panel: { type: Object as PropType<PanelInstance>, required: true }
 });
 
-const iApi = inject<InstanceAPI>('iApi')!;
 const { t } = useI18n({
     messages: {
         en: {

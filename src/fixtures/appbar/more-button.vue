@@ -37,18 +37,10 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-const props = defineProps({
+defineProps({
     position: {
         type: String,
         default: 'bottom-right'
-    },
-    tooltip: {
-        type: [String, Boolean],
-        default: false
-    },
-    tooltipPlacement: {
-        type: String,
-        default: 'bottom'
     }
 });
 

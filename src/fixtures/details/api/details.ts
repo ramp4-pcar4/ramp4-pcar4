@@ -174,9 +174,7 @@ export class DetailsAPI extends FixtureInstance {
         const hItems = items instanceof Array ? items : [items];
         const hilightFix: HilightAPI = this.$iApi.fixture.get('hilight');
         if (hilightFix) {
-            const gsByKey = await hilightFix.getGraphicsByKey(
-                (origin = ORIGIN_DETAILS)
-            );
+            const gsByKey = await hilightFix.getGraphicsByKey(ORIGIN_DETAILS);
             await hilightFix.removeHilight(gsByKey);
 
             // calculate after the above removeHilight call, since it also does a timestamp.
@@ -213,9 +211,7 @@ export class DetailsAPI extends FixtureInstance {
             // mark that we are removing. any in-progress highlights will
             // see this new timestamp and know they are stale once finished.
             this.detailsStore.lastHilight = Date.now();
-            const gsByKey = await hilightFix.getGraphicsByKey(
-                (origin = ORIGIN_DETAILS)
-            );
+            const gsByKey = await hilightFix.getGraphicsByKey(ORIGIN_DETAILS);
             await hilightFix.removeHilight(gsByKey);
         }
     }

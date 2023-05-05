@@ -10,10 +10,10 @@
                         ? 'non-loaded-item bg-red-200'
                         : 'non-loaded-item',
                     legendItem instanceof LayerItem ? 'p-5' : 'px-5 py-10',
-                    (isGroup && controlAvailable('expandButton')) ||
+                    (isGroup && controlAvailable(LegendControl.Expand)) ||
                     (!isGroup &&
                         legendItem instanceof LayerItem &&
-                        controlAvailable('datatable') &&
+                        controlAvailable(LayerControl.Datatable) &&
                         getDatagridExists() &&
                         legendItem.type === LegendType.Item)
                         ? 'cursor-pointer'
@@ -29,7 +29,7 @@
                         if (
                             !isGroup &&
                             legendItem instanceof LayerItem &&
-                            controlAvailable('datatable') &&
+                            controlAvailable(LayerControl.Datatable) &&
                             getDatagridExists() &&
                             legendItem.type === LegendType.Item
                         ) {
@@ -41,7 +41,7 @@
                 "
                 v-focus-item="'show-truncate'"
                 :content="
-                    isGroup && controlAvailable('expandButton')
+                    isGroup && controlAvailable(LegendControl.Expand)
                         ? t(
                               legendItem.expanded
                                   ? 'legend.group.collapse'
@@ -49,7 +49,7 @@
                           )
                         : legendItem instanceof LayerItem &&
                           legendItem.type === LegendType.Item &&
-                          controlAvailable('datatable') &&
+                          controlAvailable(LayerControl.Datatable) &&
                           getDatagridExists()
                         ? t('legend.layer.data')
                         : ''
@@ -119,11 +119,11 @@
                         type="button"
                         @click.stop="toggleSymbology"
                         :class="[
-                            controlAvailable('symbology')
+                            controlAvailable(LayerControl.Symbology)
                                 ? 'cursor-pointer'
                                 : 'cursor-default'
                         ]"
-                        :disabled="!controlAvailable('symbology')"
+                        :disabled="!controlAvailable(LayerControl.Symbology)"
                         :content="
                             legendItem instanceof LayerItem &&
                             legendItem.symbologyExpanded
@@ -137,8 +137,9 @@
                         <symbology-stack
                             v-if="!legendItem.coverIcon"
                             :class="{
-                                'pointer-events-none':
-                                    !controlAvailable('symbology')
+                                'pointer-events-none': !controlAvailable(
+                                    LayerControl.Symbology
+                                )
                             }"
                             class="w-32 h-32"
                             :visible="
@@ -150,8 +151,9 @@
                         <img
                             v-else
                             :class="{
-                                'pointer-events-none':
-                                    !controlAvailable('symbology')
+                                'pointer-events-none': !controlAvailable(
+                                    LayerControl.Symbology
+                                )
                             }"
                             class="w-32 h-32 hover:scale-105"
                             :src="legendItem.coverIcon"
@@ -162,7 +164,7 @@
 
                 <!-- dropdown icon -->
                 <div
-                    v-if="isGroup && controlAvailable('expandButton')"
+                    v-if="isGroup && controlAvailable(LegendControl.Expand)"
                     class="expand-toggle mr-5 pointer-events-none"
                     :class="{ 'rotate-180': legendItem.expanded }"
                 >
@@ -363,7 +365,7 @@
                 <checkbox
                     v-else-if="
                         legendItem.type === LegendType.Item &&
-                        controlAvailable('visibilityButton')
+                        controlAvailable(LegendControl.Visibility)
                     "
                     :checked="legendItem.visibility"
                     :value="legendItem"
@@ -371,7 +373,9 @@
                     :legendItem="legendItem"
                     :disabled="
                         legendItem instanceof LayerItem &&
-                        !legendItem.layerControlAvailable('visibility')
+                        !legendItem.layerControlAvailable(
+                            LayerControl.Visibility
+                        )
                     "
                     :label="isGroup ? 'Group' : 'Layer'"
                 />
@@ -442,7 +446,9 @@
                                 :value="item"
                                 :legendItem="legendItem"
                                 :checked="item.visibility"
-                                :disabled="!controlAvailable('visibility')"
+                                :disabled="
+                                    !controlAvailable(LayerControl.Visibility)
+                                "
                                 label="Symbol"
                             />
                         </div>
@@ -466,7 +472,9 @@
                             :value="item"
                             :legendItem="legendItem"
                             :checked="item.visibility"
-                            :disabled="!controlAvailable('visibility')"
+                            :disabled="
+                                !controlAvailable(LayerControl.Visibility)
+                            "
                             label="Symbol"
                         />
                     </div>
@@ -500,7 +508,7 @@
 </template>
 
 <script setup lang="ts">
-import { GlobalEvents, InstanceAPI, LayerInstance } from '@/api';
+import { GlobalEvents, InstanceAPI } from '@/api';
 import type { LegendSymbology, RampLayerConfig } from '@/geo/api';
 import { LayerControl } from '@/geo/api';
 import { useLayerStore } from '@/stores/layer';
@@ -520,9 +528,12 @@ import { LegendControl, LegendType } from '../store/legend-item';
 import { InfoType, SectionItem } from '../store/section-item';
 import Checkbox from './checkbox.vue';
 import LegendOptions from './legend-options.vue';
-import SymbologyStack from './symbology-stack.vue';
 import { usePanelStore } from '@/stores/panel';
 import { useI18n } from 'vue-i18n';
+
+// eslint doesn't recognize <symbology-stack> usage
+// eslint-disable-next-line
+import SymbologyStack from './symbology-stack.vue';
 
 import type { LegendAPI } from '../api/legend';
 import type { LegendItem } from '../store/legend-item';
@@ -622,7 +633,7 @@ const markdownToHtml = (md: string) => {
 const toggleExpand = () => {
     if (
         props.legendItem.children.length === 0 ||
-        !controlAvailable('expandButton')
+        !controlAvailable(LegendControl.Expand)
     ) {
         return;
     }
@@ -754,22 +765,22 @@ const recreateLayer = async (layerConfig: RampLayerConfig) => {
     try {
         // try to re-create new layer based on layerConfig
         // same code to how layers are initialized when layer config array changes, expose this as layer API method?
-        await new Promise<LayerInstance>(async (resolve, reject) => {
-            const layer = iApi.geo.layer.createLayer(layerConfig);
-            layerStore.removeErrorLayer(layer);
-            // check if the layer error'd while already in the map
-            const checkLayer = iApi.geo.layer.getLayer(layer.id);
-            if (checkLayer) {
-                const [reloadErr] = await to(toRaw(checkLayer).reload());
-                if (reloadErr) {
-                    layerStore.addErrorLayer(layer);
-                    reject(reloadErr);
-                }
-            } else {
-                iApi.geo.map.addLayer(layer!).catch(() => reject());
+        const layer = iApi.geo.layer.createLayer(layerConfig);
+        layerStore.removeErrorLayer(layer);
+        // check if the layer error'd while already in the map
+        const checkLayer = iApi.geo.layer.getLayer(layer.id);
+        if (checkLayer) {
+            const [reloadErr] = await to(toRaw(checkLayer).reload());
+            if (reloadErr) {
+                layerStore.addErrorLayer(layer);
+                throw new Error();
             }
-            resolve(layer!);
-        });
+        } else {
+            iApi.geo.map.addLayer(layer!).catch(() => {
+                throw new Error();
+            });
+        }
+        return layer!;
     } catch {
         return;
     }
@@ -783,7 +794,7 @@ const cancelLayer = () => {
         props.legendItem as unknown as LayerItem
     ); // so that typescript doesn't yell in the whole method
     if (layerItem.type === LegendType.Error) {
-        props.legendItem._hidden = true; // temporarily hide item until we can remove it
+        props.legendItem.toggleHidden(true); // temporarily hide item until we can remove it
         // layer in error state, remove layer
         // layer could appear in store later, so we need to keep checking if its there
         let everythingRemoved: boolean = false;

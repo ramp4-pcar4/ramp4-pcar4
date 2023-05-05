@@ -14,7 +14,7 @@ class NortharrowFixture extends NortharrowAPI {
             (value: NortharrowConfig | undefined) => this._parseConfig(value)
         );
 
-        const { vNode, destroy, el } = this.mount(NortharrowV, {
+        const { destroy, el } = this.mount(NortharrowV, {
             app: this.$element
         });
         const innerShell =

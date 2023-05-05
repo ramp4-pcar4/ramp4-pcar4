@@ -368,14 +368,6 @@ const onMoveLayerButton = (layerModel: LayerModel, direction: number): void => {
 /** ==================================== Helpers ==================================== **/
 
 /**
- * Helper function - reverse a given index relative to the layer stack
- * @returns {number} the reversed index
- */
-const _reverseIndex = (idx: number): number => {
-    return layers.value.length - 1 - idx;
-};
-
-/**
  * Checks if the given index is at the boundary of the layers list
  * Also accounts for cosmetic layers in the boundary
  *

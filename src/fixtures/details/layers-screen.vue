@@ -78,7 +78,7 @@ const layerStore = useLayerStore();
 const panelStore = usePanelStore();
 const detailsStore = useDetailsStore();
 
-const props = defineProps({
+defineProps({
     panel: PanelInstance
 });
 
@@ -92,9 +92,6 @@ const slowLoadingFlag = computed<Boolean>(() => detailsStore.slowLoadingFlag);
 const payload = computed<IdentifyResult[]>(() => detailsStore.payload);
 const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(
     () => detailsStore.properties
-);
-const layers = computed<LayerInstance[]>(
-    () => layerStore.layers as unknown as LayerInstance[]
 );
 const mobileMode = computed<Boolean>(() => panelStore.mobileView);
 const remainingWidth = computed<number>(() => panelStore.getRemainingWidth);

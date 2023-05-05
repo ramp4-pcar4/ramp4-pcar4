@@ -53,7 +53,9 @@ const props = defineProps({
     },
     popperOptions: {
         type: Object,
-        default: {}
+        default() {
+            return {};
+        }
     },
     tooltip: { type: String },
     tooltipPlacement: { type: String, default: 'bottom' },

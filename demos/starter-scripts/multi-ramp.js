@@ -1348,16 +1348,9 @@ const rInstance = createInstance(
     config,
     options
 );
-const rInstance2 = createInstance(
-    document.getElementById('app2'),
-    config2,
-    options2
-);
-const rInstance3 = createInstance(
-    document.getElementById('app3'),
-    config3,
-    options2
-);
+createInstance(document.getElementById('app2'), config2, options2);
+createInstance(document.getElementById('app3'), config3, options2);
+
 rInstance.fixture.addDefaultFixtures().then(() => {
     rInstance.panel.open('legend');
 });
@@ -1453,23 +1446,23 @@ rInstance.fixture.add('export');
 // load map if startRequired is true
 // rInstance.start();
 
-function switchLang() {
-    if (rInstance.language === 'en') {
-        rInstance.setLanguage('fr');
-    } else {
-        rInstance.setLanguage('en');
-    }
-    document.getElementById('instance-language').innerText = rInstance.language;
-}
+// function switchLang() {
+//     if (rInstance.language === 'en') {
+//         rInstance.setLanguage('fr');
+//     } else {
+//         rInstance.setLanguage('en');
+//     }
+//     document.getElementById('instance-language').innerText = rInstance.language;
+// }
 
-function animateToggle() {
-    if (rInstance.$vApp.$el.classList.contains('animation-enabled')) {
-        rInstance.$vApp.$el.classList.remove('animation-enabled');
-    } else {
-        rInstance.$vApp.$el.classList.add('animation-enabled');
-    }
-    document.getElementById('animate-status').innerText =
-        'Animate: ' + rInstance.animate;
-}
+// function animateToggle() {
+//     if (rInstance.$vApp.$el.classList.contains('animation-enabled')) {
+//         rInstance.$vApp.$el.classList.remove('animation-enabled');
+//     } else {
+//         rInstance.$vApp.$el.classList.add('animation-enabled');
+//     }
+//     document.getElementById('animate-status').innerText =
+//         'Animate: ' + rInstance.animate;
+// }
 
 window.debugInstance = rInstance;
