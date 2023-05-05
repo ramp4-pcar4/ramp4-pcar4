@@ -10,8 +10,8 @@
                     accept=".geojson,.json,.csv,.zip"
                     @input="
                         event => {
-                            emit('upload', event.target.files[0]);
-                            event.target.value = null;
+                            emit('upload', (event.target as HTMLInputElement).files![0]);
+                            (event.target as HTMLInputElement).value = '';
                         }
                     "
                 />
@@ -46,8 +46,8 @@
                     @change="valid ? (urlError = false) : (urlError = true)"
                     @input="
                         event => {
-                            validUrl(event.target.value);
-                            emit('link', event.target.value, valid);
+                            validUrl((event.target as HTMLInputElement).value);
+                            emit('link', (event.target as HTMLInputElement).value, valid);
                             urlError = false;
                         }
                     "
@@ -99,7 +99,6 @@
                     <select
                         class="block border-solid border-gray-300 w-full p-3 overflow-y-auto"
                         multiple
-                        :value="modelValue"
                         v-model="selected"
                         @change="
                             () => {
@@ -133,18 +132,24 @@
                     <select
                         class="block border-solid border-gray-300 w-full p-3 overflow-y-auto"
                         v-bind:class="size && 'configure-select'"
-                        :size="size ? size : null"
+                        :size="size"
                         :value="modelValue"
                         @input="
                             size
-                                ? emit('select', $event.target.value)
-                                : emit('update:modelValue', $event.target.value)
+                                ? emit(
+                                      'select',
+                                      ($event.target as HTMLInputElement).value
+                                  )
+                                : emit(
+                                      'update:modelValue',
+                                      ($event.target as HTMLInputElement).value
+                                  )
                         "
                     >
                         <option
                             class="p-6"
                             v-for="option in options"
-                            v-bind:key="option"
+                            :key="option.label"
                             :value="option.value"
                         >
                             {{ option.label }}
@@ -172,7 +177,9 @@
                     class="border-solid border-gray-300 p-3 w-full"
                     type="text"
                     :value="modelValue"
-                    @change="emit('text', $event.target.value)"
+                    @change="
+                        emit('text', ($event.target as HTMLInputElement).value)
+                    "
                 />
             </div>
             <div v-if="validation && !modelValue" class="text-red-900 text-xs">
@@ -244,8 +251,8 @@ const props = defineProps({
         }
     },
     size: {
-        type: [Number, Boolean],
-        default: false
+        type: [Number, String],
+        default: 0
     },
     multiple: {
         type: Boolean,

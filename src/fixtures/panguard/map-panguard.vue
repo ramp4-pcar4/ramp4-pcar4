@@ -61,6 +61,7 @@ const setup = () => {
         );
 
         esriHandlers.push(
+            //@ts-ignore
             iApi.geo.map.esriView!.on(['pointer-up', 'pointer-leave'], e => {
                 if (e.pointerType !== 'touch') return;
                 // small delay as to not offend panguard when lifting more than one finger

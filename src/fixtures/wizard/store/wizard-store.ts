@@ -2,19 +2,21 @@ import { defineStore } from 'pinia';
 import { LayerType } from '@/geo/api';
 import { WizardStep } from './wizard-state';
 import { ref } from 'vue';
+import type { LayerSource } from './layer-source';
 
 export const useWizardStore = defineStore('wizard', () => {
-    const layerSource = ref(null);
+    const placeholderConfig = {
+        id: 'Placeholder',
+        layerType: LayerType.UNKNOWN,
+        url: ''
+    };
+    const layerSource = ref<LayerSource>();
     const url = ref('');
     const typeSelection = ref('');
-    const fileData = ref(null);
+    const fileData = ref<ArrayBuffer | null>(null);
     const layerInfo = ref({
-        config: {
-            id: 'Placeholder',
-            layerType: LayerType.UNKNOWN,
-            url: ''
-        },
-        configOptions: []
+        config: placeholderConfig,
+        configOptions: [] as Array<string>
     });
     const currStep = ref(WizardStep.UPLOAD);
 
@@ -50,14 +52,14 @@ export const useWizardStore = defineStore('wizard', () => {
                     typeSelection.value = '';
                     fileData.value = null;
                     layerInfo.value = {
-                        config: null,
+                        config: placeholderConfig,
                         configOptions: []
                     };
                     currStep.value = WizardStep.UPLOAD;
                 } else if (step === WizardStep.FORMAT) {
                     // go to previous step
                     layerInfo.value = {
-                        config: null,
+                        config: placeholderConfig,
                         configOptions: []
                     };
                     currStep.value = WizardStep.FORMAT;

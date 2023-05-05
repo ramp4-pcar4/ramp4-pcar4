@@ -946,7 +946,7 @@ export class MapAPI extends CommonMapAPI {
                     return {
                         layerId: hr.layer.id,
                         layerIdx: 0, // not required for this process, default rather than expensive lookup
-                        oid: hr.graphic.getObjectId()
+                        oid: (hr as __esri.GraphicHit).graphic.getObjectId()
                     };
                 });
             });
@@ -1019,6 +1019,7 @@ export class MapAPI extends CommonMapAPI {
             x: screenPoint.screenX,
             y: screenPoint.screenY
         });
+        const hitResults = hitTest.results as Array<__esri.GraphicHit>;
 
         if (hitTest.results.length === 0) return;
 
@@ -1027,7 +1028,7 @@ export class MapAPI extends CommonMapAPI {
         // find the top-most layer that has a hit
         // graphics are un-ordered
         layers.some(layer => {
-            const matchedResult: any = hitTest.results.find(result => {
+            const matchedResult: any = hitResults.find(result => {
                 return result.graphic.layer.id === layer.id;
             });
             if (matchedResult) {
@@ -1077,7 +1078,7 @@ export class MapAPI extends CommonMapAPI {
                 // TODO return first item here?
             }
             // find all hit results that exists for this layer
-            let hits = hitTest.results.filter(
+            let hits = hitResults.filter(
                 hit => hit.graphic.layer.id === hitLayer!.id
             );
 
@@ -1098,7 +1099,7 @@ export class MapAPI extends CommonMapAPI {
             //      routine and just use array order, as it should be accurate and more efficient.
             // NOTE also as of now (v4.24), esri only supports ordering by one field. this routine
             //      will support many so that it will work if esri api starts supporting many fields
-            let topBucket: Array<__esri.ViewHit> = []; // list of current top contenders
+            let topBucket: Array<__esri.GraphicHit> = []; // list of current top contenders
             let topValue: any; // current "highest/lowest value found" of order field for a given loop
 
             hitLayer.drawOrder.some((dr, i) => {

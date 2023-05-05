@@ -42,6 +42,7 @@ export function i18n(): I18n<{}, {}, {}, string, false> {
         locale: document.documentElement!.getAttribute('lang') || lang,
         fallbackLocale: lang,
         globalInjection: true,
+        //@ts-ignore
         messages,
         numberFormats
     });

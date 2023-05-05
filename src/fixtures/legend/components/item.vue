@@ -1,5 +1,5 @@
 <template>
-    <div :key="legendItem.visibility" v-if="!legendItem.hidden" ref="el">
+    <div :key="legendItem.uid" v-if="!legendItem.hidden" ref="el">
         <div class="relative">
             <div
                 class="flex items-center hover:bg-gray-200"
@@ -19,8 +19,9 @@
                         ? 'cursor-pointer'
                         : 'cursor-default'
                 ]"
-                @mouseover.stop="hover($event.currentTarget)"
+                @mouseover.stop="hover($event.currentTarget!)"
                 @mouseout.self="
+                    //@ts-ignore
                     mobileMode ? null : $event.currentTarget?._tippy?.hide(),
                         (hovered = false)
                 "
@@ -205,7 +206,7 @@
 
                 <!-- name or info section-->
                 <div
-                    v-if="!isSection"
+                    v-if="legendItem instanceof LayerItem"
                     class="flex-1 pointer-events-none"
                     v-truncate="{ externalTrigger: true }"
                 >
@@ -216,12 +217,21 @@
                             : legendItem.layer?.name)
                     }}</span>
                 </div>
-                <div v-else class="flex-1">
+                <div
+                    v-else-if="legendItem instanceof SectionItem"
+                    class="flex-1"
+                >
                     <h3
                         class="text-lg font-bold"
-                        v-if="legendItem.infoType === InfoType.Title"
+                        v-if="
+                            legendItem.infoType === InfoType.Title &&
+                            legendItem.content
+                        "
                     >
                         {{ legendItem.content }}
+                    </h3>
+                    <h3 v-else-if="legendItem.infoType === InfoType.Title">
+                        {{ legendItem.name }}
                     </h3>
                     <p v-else-if="legendItem.infoType === InfoType.Text">
                         {{ legendItem.content }}
@@ -343,7 +353,9 @@
                             placement: 'top-start'
                         }"
                         @mouseover.stop
-                        @click.stop="legendItem.layer.zoomToVisibleScale()"
+                        @click.stop="
+                            (legendItem as LayerItem).layer.zoomToVisibleScale()
+                        "
                     >
                         <svg
                             class="m-auto"
@@ -368,7 +380,7 @@
                         controlAvailable(LegendControl.Visibility)
                     "
                     :checked="legendItem.visibility"
-                    :value="legendItem"
+                    :value="legendItem as LegendItem"
                     :isRadio="legendItem.parent && legendItem.parent.exclusive"
                     :legendItem="legendItem"
                     :disabled="
@@ -383,7 +395,9 @@
             <div
                 v-if="
                     legendItem.type === LegendType.Placeholder ||
-                    (legendItem.layerRedrawing && legendItem.visibility)
+                    (legendItem instanceof LayerItem &&
+                        legendItem.layerRedrawing &&
+                        legendItem.visibility)
                 "
                 class="flex-1 h-3"
             >
@@ -546,7 +560,7 @@ const el = ref();
 
 const props = defineProps({
     legendItem: {
-        type: Object as PropType<LegendItem>,
+        type: Object as PropType<LegendItem | LayerItem | SectionItem>,
         required: true
     }
 });
@@ -562,7 +576,7 @@ onMounted(() => {
         props.legendItem.loadPromise.then(() => {
             symbologyStack.value = [];
             // Wait for symbology to load
-            if (!props.legendItem!.layer) {
+            if (!(props.legendItem as LayerItem).layer) {
                 // This should never happen because the layer is loaded before the legend item component is mounted
                 console.warn(
                     'Attempted to mount legend item component with undefined layer'
@@ -571,12 +585,14 @@ onMounted(() => {
             }
             Promise.all(
                 toRaw(
-                    props.legendItem!.symbologyStack.map(
+                    (props.legendItem as LayerItem).symbologyStack.map(
                         (item: LegendSymbology) => item.drawPromise
                     )
                 )
             ).then(() => {
-                symbologyStack.value = toRaw(props.legendItem!.symbologyStack);
+                symbologyStack.value = toRaw(
+                    (props.legendItem as LayerItem).symbologyStack
+                );
             });
         });
     }
@@ -606,24 +622,20 @@ const isGroup = computed((): boolean => {
 });
 
 /**
- * Get if this item is an info section
- */
-const isSection = computed((): boolean => {
-    return (
-        props.legendItem instanceof SectionItem &&
-        props.legendItem.content !== ''
-    );
-});
-
-/**
  * Designate between layer controls and legend controls
  */
 const controlAvailable = (
     control: LegendControl | LayerControl
 ): boolean | undefined => {
-    if (Object.values(LegendControl).includes(control as LegendControl))
+    if (
+        control === LegendControl.Expand ||
+        control === LegendControl.Visibility
+    )
         return props.legendItem.controlAvailable(control as LegendControl);
-    else return props.legendItem.layerControlAvailable(control as LayerControl);
+    else
+        return (props.legendItem as LayerItem).layerControlAvailable(
+            control as LayerControl
+        );
 };
 
 const markdownToHtml = (md: string) => {
@@ -654,7 +666,7 @@ const toggleExpand = () => {
  */
 const toggleSymbology = (): void => {
     if (controlAvailable(LayerControl.Symbology)) {
-        const expanded = props.legendItem!.toggleSymbology();
+        const expanded = (props.legendItem as LayerItem).toggleSymbology();
         nextTick(() =>
             el.value.querySelector('.symbology-stack')?.scrollIntoView(false)
         );
@@ -669,7 +681,10 @@ const toggleSymbology = (): void => {
  */
 const toggleGrid = (): void => {
     if (controlAvailable(LayerControl.Datatable) && getDatagridExists()) {
-        iApi.event.emit(GlobalEvents.GRID_TOGGLE, props.legendItem!.layer);
+        iApi.event.emit(
+            GlobalEvents.GRID_TOGGLE,
+            (props.legendItem as LayerItem).layer
+        );
     }
 };
 
@@ -707,11 +722,11 @@ const getDatagridExists = (): boolean => {
 const reloadIfReady = () => {
     // reload legend item state back to placeholder state
     props.legendItem.reload();
-    if ((props.legendItem as unknown as LayerItem)._loadCancelled) {
+    if ((props.legendItem as LayerItem)._loadCancelled) {
         const readyWatcher = setInterval(() => {
-            if ((props.legendItem as unknown as LayerItem).layer) {
+            if ((props.legendItem as LayerItem).layer) {
                 Promise.allSettled([
-                    (props.legendItem as unknown as LayerItem).layer.loadPromise
+                    (props.legendItem as LayerItem).layer.loadPromise
                 ]).then(() => {
                     clearInterval(readyWatcher);
                     reloadLayer();
@@ -728,25 +743,34 @@ const reloadIfReady = () => {
 const reloadLayer = () => {
     // want the animation to play for half a second because a reload can fail "instantly", making it look like nothing happened to the user
     setTimeout(() => {
-        (props.legendItem as unknown as LayerItem)._loadCancelled = false;
+        (props.legendItem as LayerItem)._loadCancelled = false;
         // call reload on layer if it exists
-        if (props.legendItem.layer !== undefined) {
-            toRaw(props.legendItem!.layer!)
+        if ((props.legendItem as LayerItem).layer !== undefined) {
+            toRaw((props.legendItem as LayerItem).layer!)
                 .reload()
-                .then(() => layerStore.removeErrorLayer(props.legendItem.layer))
-                .catch(() => layerStore.addErrorLayer(props.legendItem.layer));
+                .then(() =>
+                    layerStore.removeErrorLayer(
+                        (props.legendItem as LayerItem).layer
+                    )
+                )
+                .catch(() =>
+                    layerStore.addErrorLayer(
+                        (props.legendItem as LayerItem).layer
+                    )
+                );
         } else {
             // otherwise attempt to re-create layer with layer config
             const layerConfig =
-                props.legendItem!.layerIdx === undefined ||
-                props.legendItem!.layerIdx === -1
+                (props.legendItem as LayerItem).layerIdx === undefined ||
+                (props.legendItem as LayerItem).layerIdx === -1
                     ? layerConfigs.value.find(
                           (lc: RampLayerConfig) =>
-                              lc.id === props.legendItem.layerId
+                              lc.id === (props.legendItem as LayerItem).layerId
                       )
                     : layerConfigs.value.find(
                           (lc: RampLayerConfig) =>
-                              lc.id === props.legendItem.parentLayerId
+                              lc.id ===
+                              (props.legendItem as LayerItem).parentLayerId
                       );
             if (layerConfig !== undefined) {
                 recreateLayer(layerConfig);
@@ -790,9 +814,7 @@ const recreateLayer = async (layerConfig: RampLayerConfig) => {
  * Moves loading layer into error state. Removes error'd layer from legend and map.
  */
 const cancelLayer = () => {
-    const layerItem: LayerItem = toRaw(
-        props.legendItem as unknown as LayerItem
-    ); // so that typescript doesn't yell in the whole method
+    const layerItem: LayerItem = toRaw(props.legendItem as LayerItem); // so that typescript doesn't yell in the whole method
     if (layerItem.type === LegendType.Error) {
         props.legendItem.toggleHidden(true); // temporarily hide item until we can remove it
         // layer in error state, remove layer
@@ -818,7 +840,7 @@ const cancelLayer = () => {
     } else {
         // layer in loading state, cancel layer
         props.legendItem.error();
-        (props.legendItem as unknown as LayerItem)._loadCancelled = true;
+        (props.legendItem as LayerItem)._loadCancelled = true;
         // if a sublayer or parent layer was cancelled, cancel the parent layer and all other sublayers.
         // need to keep polling for the parent layer since some sublayers may not be in the config (stuff that came from a group)
         const cancelWatcher = setInterval(() => {
@@ -866,6 +888,7 @@ const cancelLayer = () => {
 const hover = (t: EventTarget) => {
     hovered.value = true;
     setTimeout(() => {
+        //@ts-ignore
         if (hovered.value) mobileMode.value ? null : t._tippy?.show();
     }, 300);
 };

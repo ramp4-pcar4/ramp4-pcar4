@@ -50,7 +50,10 @@ const props = defineProps({
         type: Object as PropType<LegendItem | LegendSymbology>,
         required: true
     },
-    legendItem: { type: Object as PropType<LegendItem>, required: true },
+    legendItem: {
+        type: Object as PropType<LegendItem | LayerItem>,
+        required: true
+    },
     checked: { type: Boolean },
     label: { type: String },
     isRadio: { type: Boolean },

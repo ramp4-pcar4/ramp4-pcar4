@@ -494,17 +494,17 @@ const onSelectContinue = async () => {
 
     try {
         layerInfo.value = isFileLayer()
-            ? await layerSource.value!.fetchFileInfo(
+            ? ((await layerSource.value!.fetchFileInfo(
                   url.value,
                   typeSelection.value,
                   fileData.value
-              )!
-            : await layerSource.value!.fetchServiceInfo(
+              )!) as LayerInfo)
+            : ((await layerSource.value!.fetchServiceInfo(
                   url.value,
                   typeSelection.value
-              );
+              )) as LayerInfo);
         if (isFileLayer() && fileData.value) {
-            delete layerInfo.value.config.url;
+            layerInfo.value.config.url = '';
         }
     } catch (_) {
         failureError.value = true;
