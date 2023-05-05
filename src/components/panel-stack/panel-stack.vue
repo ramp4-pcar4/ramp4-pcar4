@@ -8,7 +8,7 @@
     >
         <!-- TODO: pass a corresponding fixture instance to the panel component as it can be useful -->
         <panel-container
-            v-for="panel in visible(iApi.screenSize)"
+            v-for="panel in visible(iApi!.screenSize)"
             :key="`${panel.id}`"
             :panel="panel"
         ></panel-container>
@@ -64,7 +64,7 @@ const enter = (el: Element, done: () => void): void => {
     ]);
 };
 
-const leave = (el: Element, done: () => {}): void => {
+const leave = (el: Element, done: () => void): void => {
     const [bbox, pbbox] = [
         el.children[0].getBoundingClientRect(),
         el.parentElement!.getBoundingClientRect()

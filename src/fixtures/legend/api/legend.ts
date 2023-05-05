@@ -135,8 +135,7 @@ export class LegendAPI extends FixtureInstance {
                     layer.layerIdx !== -1 ? layer.layerIdx : undefined,
                 name: layer.name
             },
-            parent,
-            layer
+            parent
         );
 
         if (layer.supportsSublayers) {

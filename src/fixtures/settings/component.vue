@@ -1,7 +1,7 @@
 <template>
     <component
-        :is="templates[type]"
-        :icon="icons[icon]"
+        :is="templates[type as keyof typeof templates]"
+        :icon="icons[icon as keyof typeof icons]"
         :name="name"
         :config="config"
     />

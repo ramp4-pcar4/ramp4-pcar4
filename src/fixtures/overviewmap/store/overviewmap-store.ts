@@ -1,8 +1,15 @@
+import type { RampMapConfig } from '@/geo/api';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export const useOverviewmapStore = defineStore('overviewmap', () => {
-    const mapConfig = ref(undefined);
+    const mapConfig = ref<RampMapConfig>({
+        lodSets: [],
+        extentSets: [],
+        basemaps: [],
+        tileSchemas: [],
+        initialBasemapId: ''
+    });
     const basemaps = ref({});
     const startMinimized = ref(true);
     const expandFactor = ref(1.5);

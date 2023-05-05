@@ -946,7 +946,7 @@ export class MapAPI extends CommonMapAPI {
                     return {
                         layerId: hr.layer.id,
                         layerIdx: 0, // not required for this process, default rather than expensive lookup
-                        oid: hr.graphic.getObjectId()
+                        oid: (hr as __esri.GraphicHit).graphic.getObjectId()
                     };
                 });
             });
@@ -1028,7 +1028,9 @@ export class MapAPI extends CommonMapAPI {
         // graphics are un-ordered
         layers.some(layer => {
             const matchedResult: any = hitTest.results.find(result => {
-                return result.graphic.layer.id === layer.id;
+                return (
+                    (result as __esri.GraphicHit).graphic.layer.id === layer.id
+                );
             });
             if (matchedResult) {
                 if (layer.isCosmetic) {
@@ -1078,7 +1080,8 @@ export class MapAPI extends CommonMapAPI {
             }
             // find all hit results that exists for this layer
             let hits = hitTest.results.filter(
-                hit => hit.graphic.layer.id === hitLayer!.id
+                hit =>
+                    (hit as __esri.GraphicHit).graphic.layer.id === hitLayer!.id
             );
 
             // comparitor that works of string and number
@@ -1107,11 +1110,14 @@ export class MapAPI extends CommonMapAPI {
 
                 // initialize top trackers to the first item. current winner by default;
                 topBucket = [hits.pop()!];
-                topValue = topBucket[0].graphic.attributes[dr.field];
+                topValue = (topBucket[0] as __esri.GraphicHit).graphic
+                    .attributes[dr.field];
 
                 // inspect the rest of the hits, bubbling winners into top trackers
                 hits.forEach(h => {
-                    const hitVal = h.graphic.attributes[dr.field];
+                    const hitVal = (h as __esri.GraphicHit).graphic.attributes[
+                        dr.field
+                    ];
                     const diff = genericComparitor(topValue, hitVal);
                     if (diff === 0) {
                         // on par with our current top. add to set of top values
@@ -1149,7 +1155,7 @@ export class MapAPI extends CommonMapAPI {
 
             // at this point we should have a winner in the top bucket.
             // If there are more than one, it means we could not differentiate, so pick the first.
-            const topGraphic = topBucket[0].graphic;
+            const topGraphic = (topBucket[0] as __esri.GraphicHit).graphic;
 
             // TODO consider changing this object. oid + uid? oid + layerinstance? RampGraphic + layerInstance?
             //      oid + uid is cleanest; only risk is layer has been removed from registry, but then it shouldnt be on the map anyway

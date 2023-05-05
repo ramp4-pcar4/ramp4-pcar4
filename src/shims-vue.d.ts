@@ -1,3 +1,9 @@
+declare module '*.vue' {
+    import { ComponentOptions } from 'vue';
+    const componentOptions: ComponentOptions;
+    export default componentOptions;
+}
+
 declare module '*lang.csv' {
     import { LocaleMessages, VueMessageType } from 'vue-i18n';
     const content: LocaleMessages<VueMessageType>;

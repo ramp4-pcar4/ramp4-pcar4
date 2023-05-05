@@ -1,7 +1,12 @@
 <template>
     <div
         class="absolute transition-all duration-300 ease-out"
-        :style="getArrowStyle()"
+        :style="{
+            'transform-origin': `top center`,
+            transform: `rotate(${angle}deg)`,
+            left: `${arrowLeft}px`,
+            visibility: displayArrow ? `visible` : `hidden`
+        }"
         ref="el"
     >
         <span class="northarrow" v-html="arrow"></span>
@@ -174,15 +179,6 @@ const updateNortharrow = async (newExtent: Extent) => {
             }
         }
     }
-};
-
-const getArrowStyle = () => {
-    return {
-        'transform-origin': `top center`,
-        transform: `rotate(${angle.value}deg)`,
-        left: `${arrowLeft.value}px`,
-        visibility: displayArrow.value ? `visible` : `hidden`
-    };
 };
 </script>
 
