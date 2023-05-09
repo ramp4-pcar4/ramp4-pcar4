@@ -66,27 +66,27 @@ While hovering over a layer or tabbing to one, select the three dots icon to mak
 
 Note that some settings may not be available depending on various factors such as layer type or configuration.
 
-|Name|Description|
-|----|----|
-| Metadata | Display relevant metadata in a slideout panel |
-| Settings | Opens slideout panel where bounding box and queryable data can be toggled as well as the ability to adjust opacity amount |
-| Datatable | Select to view data in table format |
-| Show legend | Expands/Collapses the legend image stack |
-| Zoom to layer boundary | Pans and zooms the map so that the layer boundary is in view |
-| Reload | Reloads the layer |
-| Remove | Remove the layer from the map and legend |
+| Icon | Function | Description |
+|--|--|--|
+| ![The icon representing the Metadata function](layer/metadata.png) | Metadata | Display relevant metadata in a slideout panel |
+| ![The icon representing the Settings function](layer/settings.png) | Settings | Opens slideout panel where bounding box and queryable data can be toggled as well as the ability to adjust opacity amount |
+| ![The icon representing the Datatable function](layer/datatable.png) | Datatable | Select to view data in table format |
+| ![The icon representing the Show Legend function](layer/legend.png) | Show legend | Expands/Collapses the legend image stack |
+| ![The icon representing the Zoom to Layer Boundary function](layer/zoomBoundary.png) | Zoom to layer boundary | Pans and zooms the map so that the layer boundary is in view |
+| ![The icon representing the Reload function](layer/reload.png) | Reload | Reloads the layer |
+| ![The icon representing the Remove function](layer/remove.png) | Remove | Remove the layer from the map and legend |
 
 
 # Layer Submenu
 
 In the Legend panel, 4 functions appear in a row at the top:
 
-|Name|Description|
-|----|----|
-| Add Layer | Menu options to add a file or service based layer |
-| Reorder Layers | Provides an alternative to the click-hold and drag reordering already available. When selected, layers are only reorderable by holding onto the handle icon next to each layer. Most useful for touch devices |
-| Toggle Groups | Opens or closes all groups |
-| Toggle Visibility | Enables or disables the visibility for all layers |
+| Icon | Function | Description |
+|--|--|--|
+| ![The icon representing the Add Layer function](layer/addLayer.png) | Add Layer | Menu options to add a file or service based layer |
+| ![The icon representing the Reorder Layers function](layer/reorderLayers.png) | Reorder Layers | Provides an alternative to the click-hold and drag reordering already available. When selected, layers are only reorderable by holding onto the handle icon next to each layer. Most useful for touch devices |
+| ![The icon representing the Toggle Groups function](layer/toggleGroups.png) | Toggle Groups | Opens or closes all groups |
+| ![The icon representing the Toggle Visibility function](layer/toggleVisibility.png) | Toggle Visibility | Enables or disables the visibility for all layers |
 
 
 # Geolocation Search
