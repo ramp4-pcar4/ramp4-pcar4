@@ -8,7 +8,6 @@ import type {
 import type { RampConfig, RampConfigs } from '@/types';
 import { i18n } from '@/lang';
 import screenfull from 'screenfull';
-import mixin from './mixin';
 import merge from 'deepmerge';
 
 import App from '@/app.vue';
@@ -648,7 +647,6 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
             directive: 'tippy', // => v-tippy
             component: 'tippy' // => <tippy/>
         })
-        .use(mixin)
         .use(pinia);
 
     vueElement.directive('focus-container', FocusContainer);
