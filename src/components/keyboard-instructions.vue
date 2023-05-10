@@ -13,7 +13,7 @@
         >
             <div class="flex items-center mb-20">
                 <h2 class="text-xl">{{ t('keyboardInstructions.title') }}</h2>
-                <close-button class="ml-auto" @click="open = false" />
+                <close class="ml-auto" @click="open = false" />
             </div>
             <p
                 class="whitespace-pre-line pb-10"

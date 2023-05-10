@@ -13,11 +13,9 @@ export class OverviewmapAPI extends FixtureInstance {
         const overviewmapStore = useOverviewmapStore(this.$vApp.$pinia);
 
         overviewmapStore.basemaps = overviewmapConfig?.basemaps || {};
-        overviewmapStore.mapConfig = {
-            basemaps: overviewmapConfig
-                ? Object.values(overviewmapConfig.basemaps)
-                : []
-        };
+        overviewmapStore.mapConfig.basemaps = overviewmapConfig
+            ? Object.values(overviewmapConfig.basemaps)
+            : [];
         overviewmapStore.startMinimized =
             overviewmapConfig?.startMinimized ?? true;
         overviewmapStore.expandFactor = overviewmapConfig?.expandFactor ?? 1.5;

@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { markRaw, reactive } from 'vue';
+import { markRaw, reactive, type PropType } from 'vue';
 
 // Import control templates.
 import SliderControl from './templates/slider-control.vue';
@@ -18,7 +18,7 @@ import { svgIcons } from './templates/icons';
 
 defineProps({
     type: {
-        type: String,
+        type: String as PropType<'slider' | 'toggle' | 'input'>,
         required: true
     },
     config: {
@@ -30,7 +30,9 @@ defineProps({
         required: true
     },
     icon: {
-        type: String,
+        type: String as PropType<
+            'visibility' | 'opacity' | 'box' | 'location' | 'refresh'
+        >,
         required: true
     }
 });

@@ -1,7 +1,7 @@
 <template>
     <button
         type="button"
-        @click="$iApi.panel.get('notifications').open()"
+        @click="iApi.panel.get('notifications').open()"
         class="pointer-events-auto items-center absolute left-8 bottom-36 p-6 block sm:display-none bg-black-75 rounded-full text-gray-400 hover:text-white"
         :content="t('notifications.title')"
         v-tippy
@@ -25,11 +25,13 @@
 </template>
 
 <script setup lang="ts">
+import type { InstanceAPI } from '@/api';
 import { useNotificationStore } from '@/stores/notification';
-import { computed } from 'vue';
+import { computed, inject } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const notificationStore = useNotificationStore();
+const iApi = inject('iApi') as InstanceAPI;
 const { t } = useI18n();
 
 const number = computed(() => notificationStore.notificationNumber);

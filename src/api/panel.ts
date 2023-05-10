@@ -1,5 +1,5 @@
 import { APIScope, GlobalEvents, PanelInstance } from './internal';
-import { usePanelStore } from '@/stores/panel';
+import { usePanelStore, type PanelConfigStyle } from '@/stores/panel';
 import type { PanelConfig, PanelConfigRoute } from '@/stores/panel';
 
 import type { I18nComponentOptions } from '@/lang';
@@ -450,7 +450,7 @@ export class PanelAPI extends APIScope {
         const panel = this.get(value);
 
         this.panelStore.items[panel.id].style = replace
-            ? style
+            ? (style as PanelConfigStyle)
             : { ...panel.style, ...style };
 
         return panel;

@@ -1,4 +1,4 @@
-import type { Directive, DirectiveBinding } from 'vue';
+import type { Directive } from 'vue';
 
 const enum KEYS {
     Enter = 'Enter',
@@ -20,8 +20,8 @@ let managers: FocusContainerManager[] = [];
  * It will only allow tab access to inner elements when `enter` or `space` are pressed on the container.
  */
 export const FocusContainer: Directive = {
-    mounted(el: HTMLElement, binding: DirectiveBinding) {
-        managers.push(new FocusContainerManager(el, binding.value));
+    mounted(el: HTMLElement) {
+        managers.push(new FocusContainerManager(el));
     },
     beforeUnmount(el: HTMLElement) {
         // filter removes the FocusContainerManager at the same time

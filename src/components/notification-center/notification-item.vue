@@ -14,7 +14,8 @@
     >
         <div class="flex items-center text-left">
             <span
-                >{{ icons[notification.type] }} {{ notification.message }}</span
+                >{{ icons[notification.type as NotificationType] }}
+                {{ notification.message }}</span
             >
             <span class="flex-grow"></span>
             <div

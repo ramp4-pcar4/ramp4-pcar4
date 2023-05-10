@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import {
     APIScope,
     CommonGraphicLayer,
@@ -5,6 +7,7 @@ import {
     LayerInstance
 } from '@/api';
 import { HilightMode, HILIGHT_LAYER_NAME } from '../hilight-defs';
+import type { Graphic } from '@/geo/api';
 
 // This hilight mode does nothing
 export class BaseHilightMode extends APIScope {
@@ -20,21 +23,21 @@ export class BaseHilightMode extends APIScope {
     /**
      * Adds the given graphics to the hilight layer.
      */
-    async add() {
+    async add(graphics: Array<Graphic>) {
         this.notImplementedError('addGraphics');
     }
 
     /**
      * Removes the given graphics from the hilight layer.
      */
-    async remove() {
+    async remove(graphics: Array<Graphic> | undefined) {
         this.notImplementedError('removeGraphics');
     }
 
     /**
      * Reload the hilighter's map elements.
      */
-    async reloadHilight() {
+    async reloadHilight(graphics: Array<Graphic>) {
         this.notImplementedError('reloadHilight');
     }
 

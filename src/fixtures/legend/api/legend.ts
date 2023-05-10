@@ -135,8 +135,7 @@ export class LegendAPI extends FixtureInstance {
                     layer.layerIdx !== -1 ? layer.layerIdx : undefined,
                 name: layer.name
             },
-            parent,
-            layer
+            parent
         );
         // add the layer item to store
         // will be in a placeholder state until the layer is loaded

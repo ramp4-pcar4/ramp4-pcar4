@@ -174,7 +174,7 @@ export class FileUtils extends APIScope {
         // TODO: What if this errors? In the two use cases within RAMP (wizard and config), errors are properly handled elsewhere.
         // Do we want to have any error handling here?
         const response = await axios.get(url, {
-            responseType: 'arraybuffer'
+            responseType: 'arrayBuffer'
         });
         switch (fileType) {
             case LayerType.GEOJSON:

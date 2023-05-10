@@ -78,7 +78,9 @@ const activeBasemap = computed<RampBasemapConfig>(
     () => configStore.activeBasemapConfig as RampBasemapConfig
 );
 const mapConfig = computed(() => overviewmapStore.mapConfig);
-const basemaps = computed(() => overviewmapStore.basemaps);
+const basemaps = computed(
+    () => overviewmapStore.basemaps as { [key: string]: RampBasemapConfig }
+);
 const startMinimized = computed(() => overviewmapStore.startMinimized);
 let overviewMap = reactive(new OverviewMapAPI(iApi));
 const minimized = ref(true);
