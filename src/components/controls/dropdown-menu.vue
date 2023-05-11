@@ -36,7 +36,8 @@ import {
     onMounted,
     onBeforeUnmount
 } from 'vue';
-import { createPopper, type Placement } from '@popperjs/core';
+import type { Placement, Modifier, State } from '@popperjs/core';
+import { createPopper, detectOverflow } from '@popperjs/core';
 
 const open = ref<boolean>(false);
 const popper = ref<any>(null);
@@ -93,6 +94,26 @@ onMounted(() => {
 
     // nextTick should prevent any race conditions by letting the child elements render before trying to place them using popper
     nextTick(() => {
+        const overflowScrollModifier: Modifier<'overflowScroll', {}> = {
+            name: 'overflowScroll',
+            enabled: true,
+            phase: 'main',
+            fn({ state }: { state: State }) {
+                const { bottom } = detectOverflow(state);
+
+                if (bottom > 0) {
+                    state.styles.popper.overflowY =
+                        bottom > 100 ? 'auto' : undefined;
+                    state.styles.popper.overflowX = 'hidden';
+                    state.styles.popper.height = `${
+                        state.rects.popper.height - bottom
+                    }px`;
+                } else {
+                    state.styles.popper.height = 'auto';
+                }
+            }
+        };
+
         if (dropdownTrigger.value && dropdown.value) {
             popper.value = createPopper(
                 dropdownTrigger.value as Element,
@@ -100,6 +121,7 @@ onMounted(() => {
                 {
                     placement: (props.position || 'bottom') as Placement,
                     modifiers: [
+                        overflowScrollModifier,
                         {
                             name: 'offset',
                             options: {
