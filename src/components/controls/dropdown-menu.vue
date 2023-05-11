@@ -153,4 +153,10 @@ onBeforeUnmount(() => {
 .rv-dropdown > *:hover:not(.disabled) {
     background-color: #eee;
 }
+@media (max-height: 700px) {
+    .rv-dropdown {
+        max-height: 50vh;
+        overflow-y: scroll;
+    }
+}
 </style>
