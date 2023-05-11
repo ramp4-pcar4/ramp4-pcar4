@@ -18,7 +18,7 @@
         <div
             v-show="open"
             @click="popper.update()"
-            class="rv-dropdown shadow-md border border-gray:200 py-8 bg-white rounded z-10"
+            class="rv-dropdown rv-dropdown-scrollable shadow-md border border-gray:200 py-8 bg-white rounded z-10"
             :class="{ 'text-center': centered }"
             ref="dropdown"
         >
@@ -152,5 +152,11 @@ onBeforeUnmount(() => {
 }
 .rv-dropdown > *:hover:not(.disabled) {
     background-color: #eee;
+}
+@media (max-height: 700px) {
+    .rv-dropdown-scrollable {
+        max-height: 50vh;
+        overflow-y: scroll;
+    }
 }
 </style>
