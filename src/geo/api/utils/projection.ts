@@ -128,8 +128,7 @@ export class ProjectionAPI {
      * Convert a projection to an string that is compatible with proj4.  If it is an ESRI SpatialReference or an integer it will be converted.
      * @param {Object|Integer|String} proj an ESRI SpatialReference, integer or string.  Strings will be unchanged and unchecked,
      * ints and SpatialReference objects will be converted.
-     * @return {String} A string in the form EPSG:####
-     * @private
+     * @return {String} A string in the form EPSG:#### or a WKT
      */
     normalizeProj(proj: any): string {
         if (typeof proj === 'object') {
