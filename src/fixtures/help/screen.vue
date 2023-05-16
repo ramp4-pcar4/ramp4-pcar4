@@ -62,7 +62,11 @@ onBeforeMount(() => {
                         : `${location.value}/`;
                 // make it easier to use images in markdown by prepending path to href if href is not an external source
                 // this avoids the need for ![](help/images/myimg.png) to just ![](myimg.png). This overrides the default image renderer completely.
-                renderer.image = (href: string, title: string, text: string) => {
+                renderer.image = (
+                    href: string,
+                    title: string,
+                    text: string
+                ) => {
                     if (href.indexOf('http') === -1) {
                         href = `${loc}images/` + href;
                     }

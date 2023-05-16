@@ -114,6 +114,7 @@ export class CommonLayer extends LayerInstance {
         this.loadPromFulfilled = false;
         this.esriWatches = [];
         this.layerTree = new TreeNode(0, this.uid, this.name, true); // is a layer with layer index 0 by default. subclasses will change this when they load
+        this.maxLoadTime = rampConfig.maxLoadTime ?? 20000;
     }
 
     protected noLayerErr(): void {
@@ -361,9 +362,13 @@ export class CommonLayer extends LayerInstance {
         // meaning this will run the function appropriate for the layer who inherited LayerBase
         let timedOut = false;
         const loadTimeout = setTimeout(() => {
-            timedOut = true;
-            this.onError();
-        }, 20000); // 20 second time limit for actions to execute
+            // if timeout is not 0, layer will go into error state after loading past timeout
+            // otherwise timeout is turned off (0), and layer can load forever
+            if (this.maxLoadTime) {
+                timedOut = true;
+                this.onError();
+            }
+        }, this.maxLoadTime); // configurable time limit for actions to execute
         const loadPromises: Array<Promise<void>> = this.onLoadActions();
         Promise.all(loadPromises)
             .then(() => {
