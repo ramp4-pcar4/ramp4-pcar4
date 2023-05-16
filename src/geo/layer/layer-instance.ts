@@ -189,6 +189,11 @@ export class LayerInstance extends APIScope {
     legend: Array<LegendSymbology>;
 
     /**
+     * How long layer can load for before error
+     */
+    layerLoadTime: number;
+
+    /**
      *  The internal ESRI API layer
      */
     esriLayer: __esri.Layer | undefined;
@@ -252,6 +257,7 @@ export class LayerInstance extends APIScope {
         this.legend = [];
         this._sublayers = [];
         this.expectedTime = { draw: 0, load: 0 };
+        this.layerLoadTime = 0;
     }
 
     /**
