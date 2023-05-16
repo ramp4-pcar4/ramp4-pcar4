@@ -725,6 +725,11 @@
                     "default": 4000,
                     "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
                 },
+                "maxLoadTime": {
+                    "type": "number",
+                    "default": 20000,
+                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will allow the layer to load forever"
+                },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"
                 },
@@ -795,6 +800,11 @@
                     "type": "number",
                     "default": 4000,
                     "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
+                },
+                "maxLoadTime": {
+                    "type": "number",
+                    "default": 20000,
+                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will allow the layer to load forever"
                 },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"
@@ -867,6 +877,11 @@
                     "type": "number",
                     "default": 4000,
                     "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
+                },
+                "maxLoadTime": {
+                    "type": "number",
+                    "default": 20000,
+                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will allow the layer to load forever"
                 },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"
@@ -1067,6 +1082,11 @@
                     "default": 4000,
                     "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
                 },
+                "maxLoadTime": {
+                    "type": "number",
+                    "default": 20000,
+                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will allow the layer to load forever"
+                },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"
                 },
@@ -1186,6 +1206,11 @@
                     "type": "number",
                     "default": 4000,
                     "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
+                },
+                "maxLoadTime": {
+                    "type": "number",
+                    "default": 20000,
+                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will allow the layer to load forever"
                 },
                 "layerType": {
                     "type": "string",
@@ -1312,6 +1337,11 @@
                     "default": 4000,
                     "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
                 },
+                "maxLoadTime": {
+                    "type": "number",
+                    "default": 20000,
+                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will allow the layer to load forever"
+                },
                 "colour": {
                     "type": "string",
                     "description": "The hex code representing the layer symbology colour."
@@ -1428,6 +1458,11 @@
                     "type": "number",
                     "default": 4000,
                     "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
+                },
+                "maxLoadTime": {
+                    "type": "number",
+                    "default": 20000,
+                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will allow the layer to load forever"
                 },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"

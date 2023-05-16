@@ -623,6 +623,7 @@ export interface RampLayerConfig {
     identifyMode?: LayerIdentifyMode;
     caching?: boolean; // whether to preserve raw data in file and WFS layers
     rawData?: any; // used for static data, like geojson string, shapefile guts
+    maxLoadTime?: number; // how long layer can load before error
 }
 
 export interface RampExtentConfig {
