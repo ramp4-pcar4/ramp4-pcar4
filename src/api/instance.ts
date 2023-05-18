@@ -8,7 +8,8 @@ import type {
 import type { RampConfig, RampConfigs } from '@/types';
 import { i18n } from '@/lang';
 import screenfull from 'screenfull';
-import merge from 'deepmerge';
+
+import clonedeep from 'lodash.clonedeep';
 
 import App from '@/app.vue';
 
@@ -637,8 +638,8 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
     // if several R4MP apps are created, each will contain a reference of its own API instance
     const pinia = createPinia();
     pinia.use(({ store }) => {
-        const initialState = merge({}, store.$state);
-        store.$reset = () => store.$patch(merge({}, {}, initialState));
+        const initialState = clonedeep(store.$state);
+        store.$reset = () => store.$patch(clonedeep(initialState));
     });
     const thisi18n = i18n();
     const vueElement = createRampApp(App)
