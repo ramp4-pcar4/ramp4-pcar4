@@ -148,6 +148,16 @@ onBeforeMount(() => {
 });
 </script>
 
+<script lang="ts">
+    // AG grid can't recognize required method using Composition API
+    // Use Options API instead, fixes console warnings
+    export default {
+        methods: {
+            onParentModelChanged(){}
+        }
+    };
+</script>
+
 <style lang="scss" scoped>
 .ag-floating-filter-full-body input,
 .ag-floating-filter-full-body select,
