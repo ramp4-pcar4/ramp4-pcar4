@@ -5,6 +5,7 @@
     "scripts": {
         "dev": "vite",
         "dev-http": "vite --https=false",
+        "launch": "vite --no-open",
         "build": "vite build",
         "preview": "vite preview --port 5050",
         "test:e2e": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress open'",
