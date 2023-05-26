@@ -24,6 +24,7 @@ Layer Configuration Properties
 - [latField](#latField)
 - [layerType](#layerType)
 - [longField](#longField)
+- [maxLoadTime](#maxLoadTime)
 - [metadata](#metadata)
 - [mouseTolerance](#mouseTolerance)
 - [name](#name)
@@ -193,6 +194,18 @@ The object structure matches the ArcGIS Server [2D Envelope](https://developers.
             wkid: 4326
         }
     }
+}
+```
+
+### maxLoadTime
+
+*integer*
+
+Defines a time limit, in milliseconds, for the max amount of time it would take for the layer load (i.e. establishing contact with a server, the fetching of metadata, the downloading of data for file or WFS type layers). If the limit is exceeded, the layer will stop loading and produce an error. If missing, a default of 20 seconds will be used. Setting to `0` will allow the layer to load forever.
+
+```js
+{
+    maxLoadTime: 10000
 }
 ```
 
