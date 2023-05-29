@@ -15,7 +15,7 @@ export const useGridStore = defineStore('grid', () => {
     const panel = ref<PanelConfig>();
 
     /**
-     * The id of the layer that is currently open in the grid.
+     * The id of the grid that is currently open.
      */
     const currentId = ref<string>();
 
@@ -29,5 +29,11 @@ export const useGridStore = defineStore('grid', () => {
         }
     }
 
-    return { grids, panel, currentId, addGrid, removeGrid };
+    function removeLayer(gridId: string, layerId: string) {
+        grids.value[gridId].layerIds = grids.value[gridId].layerIds.filter(
+            id => id !== layerId
+        );
+    }
+
+    return { grids, panel, currentId, addGrid, removeGrid, removeLayer };
 });
