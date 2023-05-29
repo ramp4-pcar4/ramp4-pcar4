@@ -906,6 +906,7 @@ const hover = (t: EventTarget) => {
 }
 @media (hover) {
     .loaded-item {
+        @apply min-h-[39px];
         .options {
             @apply hidden;
         }
