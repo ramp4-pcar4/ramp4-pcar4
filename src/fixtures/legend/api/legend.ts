@@ -698,9 +698,12 @@ export class LegendAPI extends FixtureInstance {
             currItem.name = node.name;
             // TODO: since .children is used here, only legend groups will be created here when MIL is added
             //       can enhance later to use .exclusiveVisibility if user wants to add MIL as visibility set from wizard
-            currItem.children = node.children.map(childNode =>
-                this._treeWalker(layer, childNode, extraConfig)
-            );
+            // need .reverse as MIL group objects in ESRI layer store their sublayers in reverse order
+            currItem.children = node.children
+                .reverse()
+                .map(childNode =>
+                    this._treeWalker(layer, childNode, extraConfig)
+                );
         } else if (node.isLogicalLayer) {
             // is logical layer (regular layers and sublayers)
             currItem.layer = currLayer;
