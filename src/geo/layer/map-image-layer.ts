@@ -196,9 +196,11 @@ export class MapImageLayer extends AttribLayer {
                 }
 
                 // process the kids in the group.
-                subLayer.sublayers.forEach((subSubLayer: __esri.Sublayer) => {
-                    processSublayer(subSubLayer, treeGroup);
-                });
+                subLayer.sublayers
+                    .reverse() // need .reverse as MIL group objects in ESRI layer store their sublayers in reverse order
+                    .forEach((subSubLayer: __esri.Sublayer) => {
+                        processSublayer(subSubLayer, treeGroup);
+                    });
             } else {
                 // leaf sublayer. make placeholders, add leaf to the tree
                 // below will run only during first load
