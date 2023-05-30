@@ -121,11 +121,12 @@ export const usePanelStore = defineStore('panel', () => {
             }
         }
 
-        // if pinned isn't visible we need to change the order of the panels (to make it visible)
+        // if pinned isn't visible and we are not in mobile mode we need to change the order of the panels (to make it visible)
         if (
             pinned.value &&
             //@ts-ignore
-            !nowVisible.includes(pinned.value)
+            !nowVisible.includes(pinned.value) &&
+            !mobileView.value
         ) {
             let lastElement: PanelInstance;
             // remove elements from visible until theres room for pinned
