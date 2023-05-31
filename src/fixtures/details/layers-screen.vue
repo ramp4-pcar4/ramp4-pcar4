@@ -31,6 +31,9 @@
                     <div v-if="item.loaded" class="px-5">
                         {{ item.items.length }}
                     </div>
+                    <div v-else-if="item.errored" class="px-5">
+                        {{ t('details.layers.error') }}
+                    </div>
                     <div
                         v-else
                         class="animate-spin spinner h-20 w-20 px-5"
