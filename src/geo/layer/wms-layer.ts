@@ -210,6 +210,7 @@ export class WmsLayer extends CommonLayer {
             items: [],
             loading: dProm.getPromise(),
             loaded: false,
+            errored: false,
             uid: this.uid,
             requestTime: Date.now()
         });
@@ -218,38 +219,43 @@ export class WmsLayer extends CommonLayer {
             this.sublayerNames,
             <Point>options.geometry,
             this.mimeType
-        ).then(response => {
-            // check if a result is returned by the service. If not, do not add to the array of data
-            // TODO is is possible to have more than one item as a result? check how this works
-            if (response) {
-                // we have all the data already so can init the item as loaded
-                const item: IdentifyItem = reactive({
-                    data: response,
-                    format: IdentifyResultFormat.UNKNOWN,
-                    loaded: true,
-                    loading: Promise.resolve()
-                });
+        )
+            .then(response => {
+                // check if a result is returned by the service. If not, do not add to the array of data
+                // TODO is is possible to have more than one item as a result? check how this works
+                if (response) {
+                    // we have all the data already so can init the item as loaded
+                    const item: IdentifyItem = reactive({
+                        data: response,
+                        format: IdentifyResultFormat.UNKNOWN,
+                        loaded: true,
+                        loading: Promise.resolve()
+                    });
 
-                if (typeof response !== 'string') {
-                    // likely json or an image
-                    // TODO improve the dection (maybe use the this.mimeType?)
-                    item.format = IdentifyResultFormat.JSON;
-                    result.items.push(item);
-                } else if (
-                    response.indexOf('Search returned no results') === -1 &&
-                    response !== ''
-                ) {
-                    // TODO if service is french, will the "no results" message be different?
-                    // TODO consider utilizing the infoMap variable above to detect HTML format.
-                    item.format = IdentifyResultFormat.TEXT;
-                    result.items.push(item);
+                    if (typeof response !== 'string') {
+                        // likely json or an image
+                        // TODO improve the dection (maybe use the this.mimeType?)
+                        item.format = IdentifyResultFormat.JSON;
+                        result.items.push(item);
+                    } else if (
+                        response.indexOf('Search returned no results') === -1 &&
+                        response !== ''
+                    ) {
+                        // TODO if service is french, will the "no results" message be different?
+                        // TODO consider utilizing the infoMap variable above to detect HTML format.
+                        item.format = IdentifyResultFormat.TEXT;
+                        result.items.push(item);
+                    }
                 }
-            }
 
-            // Resolve the loading promise, set the flag
-            result.loaded = true;
-            dProm.resolveMe();
-        });
+                // Resolve the loading promise, set the flag
+                result.loaded = true;
+                dProm.resolveMe();
+            })
+            .catch(() => {
+                result.errored = true;
+                dProm.resolveMe(); // keeping it this way so that we don't need to make annoying changes
+            });
 
         return [result];
     }

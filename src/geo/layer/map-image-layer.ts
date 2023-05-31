@@ -110,10 +110,10 @@ export class MapImageLayer extends AttribLayer {
             // NOTE: important not to set esriConfig property to empty array, as that will request no sublayers.
             //       Documentation isn't clear if we should be using .sublayers or .allSublayers ; if .sublayers can it be flat array?
             //       Play with their online sandbox using a nested service if cant figure it out.
-            
+
             // let us all stop to appreciate this line of code.
             esriConfig.sublayers = (<Array<RampLayerMapImageSublayerConfig>>rampLayerConfig.sublayers).map((sublayer: RampLayerMapImageSublayerConfig) => {
-            
+
                 // the super call will set up the basics/common stuff like vis, opacity, def identify
                 // works because the sublayer property scheme is nearly identical to a normal layer
                 const subby: esri.SublayerProperties = super.makeEsriLayerConfig(sublayer);
@@ -478,6 +478,7 @@ export class MapImageLayer extends AttribLayer {
                 items: [],
                 loading: dProm.getPromise(),
                 loaded: false,
+                errored: false,
                 uid: sublayer.uid,
                 requestTime: Date.now()
             });
@@ -493,29 +494,35 @@ export class MapImageLayer extends AttribLayer {
 
             qOpts.filterSql = sublayer.getCombinedSqlFilter();
 
-            sublayer.queryFeaturesDiscrete(qOpts).then(results => {
-                results.forEach(dgr => {
-                    const item: IdentifyItem = reactive({
-                        data: undefined,
-                        format: IdentifyResultFormat.ESRI,
-                        loaded: false,
-                        loading: new Promise(resolve => {
-                            dgr.graphic.then(g => {
-                                item.data = g.attributes;
-                                item.loaded = true;
-                                resolve();
-                            });
-                        })
+            sublayer
+                .queryFeaturesDiscrete(qOpts)
+                .then(results => {
+                    results.forEach(dgr => {
+                        const item: IdentifyItem = reactive({
+                            data: undefined,
+                            format: IdentifyResultFormat.ESRI,
+                            loaded: false,
+                            loading: new Promise(resolve => {
+                                dgr.graphic.then(g => {
+                                    item.data = g.attributes;
+                                    item.loaded = true;
+                                    resolve();
+                                });
+                            })
+                        });
+
+                        result.items.push(item); // push, incase something was bound to the array
                     });
 
-                    result.items.push(item); // push, incase something was bound to the array
+                    // Resolve the loading promise, set the flag
+                    // This promise only indicates we have an array of results (each may still be loading their internals)
+                    result.loaded = true;
+                    dProm.resolveMe();
+                })
+                .catch(() => {
+                    result.errored = true;
+                    dProm.resolveMe(); // keeping it this way so that we don't need to make annoying changes
                 });
-
-                // Resolve the loading promise, set the flag
-                // This promise only indicates we have an array of results (each may still be loading their internals)
-                result.loaded = true;
-                dProm.resolveMe();
-            });
 
             return result;
         });
