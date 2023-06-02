@@ -150,8 +150,12 @@
                     <!-- toggle apply to map -->
                     <a
                         href="javascript:;"
-                        class="flex leading-snug items-center w-256 hover:text-black"
-                        @click="toggleFiltersToMap()"
+                        class="flex leading-snug items-center w-256"
+                        :class="{
+                            hover: filtersEnabled ? 'none' : 'text-black',
+                            disabled: !filtersEnabled
+                        }"
+                        @click="filtersEnabled && toggleFiltersToMap()"
                     >
                         <div class="md-icon-small inline items-start">
                             <svg
@@ -214,8 +218,12 @@
                     <!-- toggle extent filter -->
                     <a
                         href="javascript:;"
-                        class="flex leading-snug items-center w-256 hover:text-black"
-                        @click="toggleFilterByExtent()"
+                        class="flex leading-snug items-center w-256"
+                        :class="{
+                            hover: filtersEnabled ? 'none' : 'text-black',
+                            disabled: !filtersEnabled
+                        }"
+                        @click="filtersEnabled && toggleFilterByExtent()"
                     >
                         <div class="md-icon-small inline items-start">
                             <svg
@@ -313,6 +321,7 @@ import {
     GlobalEvents,
     InstanceAPI,
     LayerInstance,
+    NotificationType,
     PanelInstance
 } from '@/api/internal';
 
@@ -486,6 +495,18 @@ const layerCols = ref<{
 const origLayerIds = ref(gridStore.grids[props.gridId].layerIds);
 const gridLayers = computed(() => {
     if (gridStore.grids[props.gridId]) {
+        // Check to see if all layers are consistent with their modifiability. If not, through a warning notifiying the user that filtering has been disabled.
+        const modifiable = gridStore.grids[props.gridId].layerIds.map(id => {
+            iApi.geo.layer.getLayer(id)?.canModifyLayer;
+        });
+
+        if (!modifiable.every(value => value === modifiable[0])) {
+            iApi.notify.show(
+                NotificationType.WARNING,
+                iApi.$i18n.t(`layer.filterwarning`)
+            );
+        }
+
         return gridStore.grids[props.gridId].layerIds.map(
             id => iApi.geo.layer.getLayer(id) as LayerInstance
         );
@@ -1187,6 +1208,14 @@ const cancelAttributeLoad = () => {
     }
 };
 
+/**
+ * Determine if the layer is modifiable
+ */
+const filtersEnabled = computed((): boolean | undefined => {
+    const layer = iApi.geo.layer.getLayer(props.gridId);
+    return layer?.canModifyLayer;
+});
+
 const getAttrPair = (
     id: string,
     attr: string
@@ -1565,5 +1594,9 @@ onBeforeUnmount(() => {
 .shadow-clip {
     box-shadow: 0px 0px 15px 1px rgb(0 0 0 / 75%);
     clip-path: inset(0px 0px -50px 0px);
+}
+
+.disabled {
+    @apply text-gray-400 cursor-default;
 }
 </style>
