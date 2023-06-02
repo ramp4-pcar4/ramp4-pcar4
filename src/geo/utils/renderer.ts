@@ -276,10 +276,11 @@ export class UniqueValueSymbolUnit extends BaseSymbolUnit {
 
         // sometimes values can be defined in number form.
         // we convert everything to strings so all other code doesn't need to worry about types
+        // put an empty string if key value is null
         if (typeof value === 'number') {
-            this.matchValue = value.toString();
+            this.matchValue = value.toString().replace(/<Null>/g, '');
         } else {
-            this.matchValue = value;
+            this.matchValue = value.replace(/<Null>/g, '');
         }
     }
 
