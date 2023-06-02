@@ -480,8 +480,9 @@
                         </div>
                         <checkbox
                             v-if="
-                                (!item.imgUrl && symbologyStack.length > 1) ||
-                                (item.imgUrl && item.definitionClause)
+                                modifiableLayer &&
+                                ((!item.imgUrl && symbologyStack.length > 1) ||
+                                    (item.imgUrl && item.definitionClause))
                             "
                             :value="item"
                             :legendItem="legendItem"
@@ -605,6 +606,16 @@ const layerType = computed((): string | undefined => {
     return props.legendItem instanceof LayerItem
         ? toRaw(props.legendItem!.layer)?.layerType
         : '';
+});
+
+/**
+ * Determine if the layer is modifiable
+ */
+const modifiableLayer = computed((): boolean => {
+    return (
+        props.legendItem instanceof LayerItem &&
+        toRaw(props.legendItem!.layer)?.canModifyLayer
+    );
 });
 
 /**
