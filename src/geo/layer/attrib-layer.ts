@@ -49,6 +49,7 @@ export class AttribLayer extends CommonLayer {
     attLoader: AttributeLoaderBase | undefined;
     renderer: BaseRenderer | undefined;
     serviceUrl: string;
+    canModifyLayer: boolean;
     protected quickCache: QuickCache | undefined;
     protected filter: Filter;
 
@@ -59,6 +60,7 @@ export class AttribLayer extends CommonLayer {
         this.serviceUrl = '';
         this.fieldList = '';
         this.esriFields = [];
+        this.canModifyLayer = true;
         this.filter = new Filter(
             rampConfig.permanentFilteredQuery || '',
             rampConfig.initialFilteredQuery || ''
@@ -135,6 +137,7 @@ export class AttribLayer extends CommonLayer {
         this.scaleSet.minScale = sData.effectiveMinScale || sData.minScale;
         this.scaleSet.maxScale = sData.effectiveMaxScale || sData.maxScale;
         this.supportsFeatures = false; // saves us from having to keep comparing type to 'Feature Layer' on the client
+        this.canModifyLayer = sData.canModifyLayer;
         this.extent =
             this.extent ??
             (sData.extent

@@ -5,7 +5,8 @@ import {
     CommonLayer,
     GlobalEvents,
     InstanceAPI,
-    MapImageSublayer
+    MapImageSublayer,
+    NotificationType
 } from '@/api/internal';
 import {
     DefPromise,
@@ -352,6 +353,11 @@ export class MapImageLayer extends AttribLayer {
                             subC.state?.opacity ?? this.origState.opacity ?? 1;
                         miSL.nameField = subC.nameField || miSL.nameField || '';
                         miSL.processFieldMetadata(subC.fieldMetadata);
+                        !miSL.canModifyLayer &&
+                            this.$iApi.notify.show(
+                                NotificationType.WARNING,
+                                'Filters have been disabled for ' + miSL.name
+                            );
                         // NOTE the miSL.identify property is currently getting set in onLoadActions() of
                         //      MapImageSublayer. This will get called by this layer's onLoad after this
                         //      function runs. Not sure why that one part is there, but suggest leave

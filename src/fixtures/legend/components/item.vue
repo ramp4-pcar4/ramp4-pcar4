@@ -377,7 +377,8 @@
                 <checkbox
                     v-else-if="
                         legendItem.type === LegendType.Item &&
-                        controlAvailable(LegendControl.Visibility)
+                        controlAvailable(LegendControl.Visibility) &&
+                        (modifiableLayer || isGroup)
                     "
                     :checked="legendItem.visibility"
                     :value="legendItem as LegendItem"
@@ -605,6 +606,16 @@ const layerType = computed((): string | undefined => {
     return props.legendItem instanceof LayerItem
         ? toRaw(props.legendItem!.layer)?.layerType
         : '';
+});
+
+/**
+ * Determine if the layer is modifiable
+ */
+const modifiableLayer = computed((): boolean => {
+    return (
+        props.legendItem instanceof LayerItem &&
+        toRaw(props.legendItem!.layer)?.canModifyLayer
+    );
 });
 
 /**
