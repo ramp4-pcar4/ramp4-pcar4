@@ -225,15 +225,19 @@ export class UniqueValueRenderer extends BaseRenderer {
                 const defClauseKeyValues: Array<string> = su.matchValue.split(
                     this.delim
                 );
+                // use operator IS NULL to account for nulls
                 const defClause: string = this.keyFields
-                    .map(
-                        (kf: string, i: number) =>
-                            `${kf} = ${fieldDelims[i]}${quoter(
-                                defClauseKeyValues[i]
-                            )}${fieldDelims[i]}`
+                    .map((kf: string, i: number) =>
+                        defClauseKeyValues[i] === '<Null>'
+                            ? `${kf} IS NULL`
+                            : `${kf} = ${fieldDelims[i]}${quoter(
+                                  defClauseKeyValues[i]
+                              )}${fieldDelims[i]}`
                     )
                     .join(' AND ');
                 su.definitionClause = `(${defClause})`;
+                // replace nulls with empty string
+                su.matchValue = su.matchValue.replace(/<Null>/g, '');
             }
 
             this.symbolUnits.push(su);
@@ -276,11 +280,10 @@ export class UniqueValueSymbolUnit extends BaseSymbolUnit {
 
         // sometimes values can be defined in number form.
         // we convert everything to strings so all other code doesn't need to worry about types
-        // put an empty string if key value is null
         if (typeof value === 'number') {
-            this.matchValue = value.toString().replace(/<Null>/g, '');
+            this.matchValue = value.toString();
         } else {
-            this.matchValue = value.replace(/<Null>/g, '');
+            this.matchValue = value;
         }
     }
 
