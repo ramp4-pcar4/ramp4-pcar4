@@ -1,7 +1,8 @@
-import { CommonLayer, InstanceAPI } from '@/api/internal';
+import { CommonLayer, InstanceAPI, NotificationType } from '@/api/internal';
 import { DataFormat, LayerFormat, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 import { EsriTileLayer } from '@/geo/esri';
+import { SpatialReference } from '@/geo/api';
 import { markRaw } from 'vue';
 
 export class TileLayer extends CommonLayer {
@@ -56,10 +57,35 @@ export class TileLayer extends CommonLayer {
 
         loadPromises.push(legendPromise);
 
+        this.checkProj();
+
         // TODO once decided, might want to set a value on layer count that indicates nothing to count
 
         // TODO check out whats going on with layer extent. is it set and donethanks?
 
         return loadPromises;
+    }
+
+    /**
+     * Check if the layer's projection matches the current basemap's.
+     * If it does not match, grouse in the notifications.
+     */
+    checkProj(): void {
+        const layerSR = SpatialReference.fromESRI(
+            this.esriLayer?.spatialReference!
+        );
+        const mapSR = this.$iApi.geo.map.getSR();
+
+        // do some cheating so that undefined values don't ruin everything
+        // we blame ESRI for setting the latestWkid even when we don't define it
+        mapSR.latestWkid = mapSR.latestWkid ?? mapSR.wkid;
+        mapSR.wkid = mapSR.wkid ?? mapSR.latestWkid;
+
+        if (!mapSR.isEqual(layerSR)) {
+            this.$iApi.notify.show(
+                NotificationType.WARNING,
+                this.$iApi.$i18n.t('layer.mismatch', { id: this.id })
+            );
+        }
     }
 }
