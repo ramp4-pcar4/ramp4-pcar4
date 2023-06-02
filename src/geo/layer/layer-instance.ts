@@ -214,6 +214,11 @@ export class LayerInstance extends APIScope {
      */
     extent: Extent | undefined; // layer extent
 
+    /**
+     * Indicates if the layer can be modified with filters.
+     */
+    canModifyLayer: boolean;
+
     protected _parentLayer: LayerInstance | undefined;
     protected _sublayers: Array<LayerInstance>;
 
@@ -259,6 +264,7 @@ export class LayerInstance extends APIScope {
         this._sublayers = [];
         this.expectedTime = { draw: 0, load: 0 };
         this.maxLoadTime = 0;
+        this.canModifyLayer = true;
     }
 
     /**
