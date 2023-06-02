@@ -144,8 +144,12 @@
                     <!-- toggle apply to map -->
                     <a
                         href="javascript:;"
-                        class="flex leading-snug items-center w-256 hover:text-black"
-                        @click="toggleFiltersToMap()"
+                        class="flex leading-snug items-center w-256"
+                        :class="{
+                            hover: filtersEnabled ? 'none' : 'text-black',
+                            disabled: !filtersEnabled
+                        }"
+                        @click="filtersEnabled && toggleFiltersToMap()"
                     >
                         <div class="md-icon-small inline items-start">
                             <svg
@@ -208,8 +212,12 @@
                     <!-- toggle extent filter -->
                     <a
                         href="javascript:;"
-                        class="flex leading-snug items-center w-256 hover:text-black"
-                        @click="toggleFilterByExtent()"
+                        class="flex leading-snug items-center w-256"
+                        :class="{
+                            hover: filtersEnabled ? 'none' : 'text-black',
+                            disabled: !filtersEnabled
+                        }"
+                        @click="filtersEnabled && toggleFilterByExtent()"
                     >
                         <div class="md-icon-small inline items-start">
                             <svg
@@ -1136,6 +1144,14 @@ const cancelAttributeLoad = () => {
     }
 };
 
+/**
+ * Determine if the layer is modifiable
+ */
+const filtersEnabled = computed((): boolean | undefined => {
+    const layer = iApi.geo.layer.getLayer(props.layerUid);
+    return layer?.canModifyLayer;
+});
+
 onBeforeMount(() => {
     config.value = grids.value[props.layerId];
 
@@ -1415,5 +1431,9 @@ onBeforeUnmount(() => {
 .shadow-clip {
     box-shadow: 0px 0px 15px 1px rgb(0 0 0 / 75%);
     clip-path: inset(0px 0px -50px 0px);
+}
+
+.disabled {
+    @apply text-gray-400 cursor-default;
 }
 </style>
