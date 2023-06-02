@@ -1,6 +1,7 @@
 key,enValue,enValid,frValue,frValid
 grid.title,Datatable,1,Tableau de données,1
 grid.alertName,Grid,1,Grille,1
+grid.splash.error,Error: Failed to load the layer's data.,1,Erreur : Échec du chargement des données de la couche.,0
 grid.splash.loading,Loading data...,1,Chargement des données...,1
 grid.splash.building,Building table...,1,Création du tableau...,1
 grid.splash.cancel,Cancel,1,Annuler,1

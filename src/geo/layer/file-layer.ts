@@ -297,6 +297,7 @@ export class FileLayer extends AttribLayer {
             items: [],
             loading: dProm.getPromise(),
             loaded: false,
+            errored: false,
             uid: this.uid,
             requestTime: Date.now()
         });
@@ -369,27 +370,32 @@ export class FileLayer extends AttribLayer {
             });
         }
 
-        Promise.all([symbolBlocker, geomBlocker]).then(() => {
-            // both identifies have completed. convert our hits into identify result goodness
-            hitBucket.forEach(gr => {
-                // file layer resolves all items at once,
-                // so our item-level stuff can be created in
-                // a loaded state
+        Promise.all([symbolBlocker, geomBlocker])
+            .then(() => {
+                // both identifies have completed. convert our hits into identify result goodness
+                hitBucket.forEach(gr => {
+                    // file layer resolves all items at once,
+                    // so our item-level stuff can be created in
+                    // a loaded state
 
-                const item: IdentifyItem = reactive({
-                    data: gr.attributes,
-                    format: IdentifyResultFormat.ESRI,
-                    loaded: true,
-                    loading: Promise.resolve()
+                    const item: IdentifyItem = reactive({
+                        data: gr.attributes,
+                        format: IdentifyResultFormat.ESRI,
+                        loaded: true,
+                        loading: Promise.resolve()
+                    });
+
+                    result.items.push(item); // push, incase something was bound to the array
                 });
 
-                result.items.push(item); // push, incase something was bound to the array
+                // Resolve the loading promise, set the flag
+                result.loaded = true;
+                dProm.resolveMe();
+            })
+            .catch(() => {
+                result.errored = true;
+                dProm.resolveMe();
             });
-
-            // Resolve the loading promise, set the flag
-            result.loaded = true;
-            dProm.resolveMe();
-        });
 
         return [result];
     }

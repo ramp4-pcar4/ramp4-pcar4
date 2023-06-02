@@ -189,6 +189,7 @@ export class FeatureLayer extends AttribLayer {
             items: [],
             loading: dProm.getPromise(),
             loaded: false,
+            errored: false,
             uid: this.uid,
             requestTime: Date.now()
         });
@@ -259,30 +260,35 @@ export class FeatureLayer extends AttribLayer {
             });
         }
 
-        Promise.all([clientBlocker, serverBlocker]).then(() => {
-            // both identifies have completed. convert our hits into identify result goodness
-            hitBucket.forEach(dgr => {
-                const item: IdentifyItem = reactive({
-                    data: undefined,
-                    format: IdentifyResultFormat.ESRI,
-                    loaded: false,
-                    loading: new Promise(resolve => {
-                        dgr.graphic.then(g => {
-                            item.data = g.attributes;
-                            item.loaded = true;
-                            resolve();
-                        });
-                    })
+        Promise.all([clientBlocker, serverBlocker])
+            .then(() => {
+                // both identifies have completed. convert our hits into identify result goodness
+                hitBucket.forEach(dgr => {
+                    const item: IdentifyItem = reactive({
+                        data: undefined,
+                        format: IdentifyResultFormat.ESRI,
+                        loaded: false,
+                        loading: new Promise(resolve => {
+                            dgr.graphic.then(g => {
+                                item.data = g.attributes;
+                                item.loaded = true;
+                                resolve();
+                            });
+                        })
+                    });
+
+                    result.items.push(item); // push, incase something was bound to the array
                 });
 
-                result.items.push(item); // push, incase something was bound to the array
+                // Resolve the loading promise, set the flag
+                // This promise only indicates we have an array of results (each may still be loading their internals)
+                result.loaded = true;
+                dProm.resolveMe();
+            })
+            .catch(() => {
+                result.errored = true;
+                dProm.resolveMe();
             });
-
-            // Resolve the loading promise, set the flag
-            // This promise only indicates we have an array of results (each may still be loading their internals)
-            result.loaded = true;
-            dProm.resolveMe();
-        });
 
         return [result];
     }
