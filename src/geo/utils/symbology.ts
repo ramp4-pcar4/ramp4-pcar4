@@ -989,7 +989,7 @@ export class SymbologyAPI extends APIScope {
 
         const fullRenderer = {
             type: 'uniqueValue',
-            field: 'fakefield',
+            field1: 'fakefield',
             uniqueValueInfos: [].concat(...layerRenders)
         };
 
