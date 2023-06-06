@@ -5,7 +5,7 @@
         class="h-full overflow-hidden"
         v-tippy="{
             allowHTML: true,
-            zIndex: 5,
+            zIndex: 150,
             theme: 'ramp4',
             trigger: 'manual',
             appendTo: 'parent',
