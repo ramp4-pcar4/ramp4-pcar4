@@ -51,7 +51,6 @@ export class MaptipAPI extends APIScope {
         }
 
         if (!graphicHit) {
-            this.#lastHit = undefined;
             this.clear();
             return;
         }
@@ -68,8 +67,8 @@ export class MaptipAPI extends APIScope {
             return;
         }
 
-        this.#lastHit = graphicHit;
         this.clear();
+        this.#lastHit = graphicHit;
 
         // Get the layer
         const layerInstance: LayerInstance | undefined =
@@ -134,6 +133,7 @@ export class MaptipAPI extends APIScope {
      * Clears the maptip from the map
      */
     clear(): void {
+        this.#lastHit = undefined;
         this.maptipStore.setMaptipPoint(undefined);
         this.maptipStore.setMaptipContent('');
     }

@@ -279,6 +279,19 @@ export class MapAPI extends CommonMapAPI {
         });
 
         this.handlers.push({
+            type: 'pointer-leave',
+            handler: this.esriView.on('pointer-leave', esriMouseLeave => {
+                // guarantee that no mouse move start/end event fires after the mouse leave event
+                setTimeout(() => {
+                    this.$iApi.event.emit(
+                        GlobalEvents.MAP_MOUSELEAVE,
+                        esriMouseLeave.native
+                    );
+                }, Math.max(this.mapMouseThrottle, 100) + 1);
+            })
+        });
+
+        this.handlers.push({
             type: 'pointer-down',
             handler: this.esriView.on('pointer-down', esriMouseDown => {
                 // .native is a DOM pointer event
