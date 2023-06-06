@@ -68,12 +68,10 @@ export class TileLayer extends CommonLayer {
 
     /**
      * Check if the layer's projection matches the current basemap's.
-     * If it does not match, grouse in the notifications.
+     * If it does not match, warn the user by sending a notification.
      */
     checkProj(): void {
-        const layerSR = SpatialReference.fromESRI(
-            this.esriLayer?.spatialReference!
-        );
+        const layerSR = this.getSR();
         const mapSR = this.$iApi.geo.map.getSR();
 
         if (!mapSR.isEqual(layerSR)) {
