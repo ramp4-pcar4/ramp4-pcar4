@@ -46,16 +46,16 @@ export class SpatialReference {
         }
 
         if (
-            (this.wkid && otherSR.wkid && this.wkid !== otherSR.wkid) ||
-            (this.wkt && otherSR.wkt && this.wkt !== otherSR.wkt) ||
+            (this.wkid && otherSR.wkid && this.wkid === otherSR.wkid) ||
+            (this.wkt && otherSR.wkt && this.wkt === otherSR.wkt) ||
             (this.latestWkid &&
                 otherSR.latestWkid &&
-                this.latestWkid !== otherSR.latestWkid)
+                this.latestWkid === otherSR.latestWkid)
         ) {
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     clone(): SpatialReference {

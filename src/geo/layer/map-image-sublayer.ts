@@ -1,5 +1,11 @@
 import { AttribLayer, InstanceAPI, type MapImageLayer } from '@/api/internal';
-import { DataFormat, InitiationState, LayerFormat, LayerType } from '@/geo/api';
+import {
+    DataFormat,
+    InitiationState,
+    LayerFormat,
+    LayerType,
+    SpatialReference
+} from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 import { markRaw } from 'vue';
 
@@ -240,5 +246,21 @@ export class MapImageSublayer extends AttribLayer {
         // TODO possibly check against this sublayer being a Raster Layer sublayer
         const sql = this.filter.getCombinedSql(exclusions);
         this.esriSubLayer.definitionExpression = sql;
+    }
+
+    /**
+     * Provides the spatial reference of the parent MIL.
+     *
+     * @returns {SpatialReference} the layer spatial reference in RAMP API format
+     */
+    getSR(): SpatialReference {
+        if (this.parentLayer?.esriLayer) {
+            return SpatialReference.fromESRI(
+                (<any>this._parentLayer?.esriLayer)?.spatialReference!
+            );
+        } else {
+            this.noLayerErr();
+            return SpatialReference.latLongSR();
+        }
     }
 }

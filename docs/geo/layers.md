@@ -305,6 +305,12 @@ Determine if the Layer has been removed from the map / session. This also applie
 myLayer.isRemoved; // false
 ```
 
+Request the layer's spatial reference in [RAMP's format](../api/geometry.md#spatial-reference).
+
+```js
+const sr = myLayer.getSR() // { wkid: 102100, latestWkid: 3857 }
+```
+
 ## Identify
 
 **Supports:** Feature Layers, Map Image Layers, WMS Layers, WFS Layers, File-Based Layers
@@ -525,7 +531,7 @@ console.log(svg);
 
 Filters allow certain Layer features to be hidden based on the values of their attributes. Multiple filters combine together (i.e joined with `AND` logical operators).
 
-Filters use ESRI's [query expression syntax](https://desktop.arcgis.com/en/arcmap/10.3/map/working-with-layers/building-a-query-expression.htm), which is nearly identical to an SQL "WHERE" clause. A filter can be turned off using an empty string. For an absolute filter (hide everything), we recommend the filter `1=2`. 
+Filters use ESRI's [query expression syntax](https://desktop.arcgis.com/en/arcmap/10.3/map/working-with-layers/building-a-query-expression.htm), which is nearly identical to an SQL "WHERE" clause. A filter can be turned off using an empty string. For an absolute filter (hide everything), we recommend the filter `1=2`.
 
 Use `setSqlFilter()` to apply a filter on a logical layer. This will also raise the `filter/change` event. Core SQL filters include `grid`, `symbol`, `extent`, `initial`, and `permanent`. Avoid using core filter names for custom filters. If no filter name is provided, the generic `api` value will be used. Note that `permanent` cannot be changed after the Layer is created.
 
