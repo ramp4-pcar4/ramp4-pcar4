@@ -15,37 +15,49 @@ jobs:
         uses: ./.github/workflows/build.yml
         with:
             build_mode: 'development'
-            cache_sha: ${{ github.event.pull_request.head.sha || github.sha }}
+            cache_sha: ${{ format('{0}-{1}', github.ref_name, github.event.pull_request.head.sha || github.sha) }}
 
     build-prod:
         name: Production build for library files
         uses: ./.github/workflows/build.yml
         with:
             build_mode: 'production'
-            cache_sha: ${{ github.event.pull_request.head.sha || github.sha }}
+            cache_sha: ${{ format('{0}-{1}', github.ref_name, github.event.pull_request.head.sha || github.sha) }}
+
+    build-docs:
+        name: Build for docsite
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v')
+        uses: ./.github/workflows/build-docs.yml
+        with:
+            cache_sha: ${{ format('{0}-{1}', github.ref_name, github.event.pull_request.head.sha || github.sha) }}
 
     post-build:
         name: Merge dev & prod into a bundle
-        needs: [build-dev, build-prod]
+        needs: [build-dev, build-prod, build-docs]
+        if: |
+            always() &&
+            (needs.build-dev.result == 'success' || needs.build-dev.result == 'skipped') &&
+            (needs.build-prod.result == 'success' || needs.build-prod.result == 'skipped') &&
+            (needs.build-docs.result == 'success' || needs.build-docs.result == 'skipped')
         runs-on: ubuntu-latest
         steps:
             - name: Get library (prod) files
               uses: actions/cache@v3
               with:
                   path: production
-                  key: production-${{ github.event.pull_request.head.sha || github.sha }}
+                  key: production-${{ format('{0}-{1}', github.ref_name, github.event.pull_request.head.sha || github.sha) }}
 
             - name: Get development files
               uses: actions/cache@v3
               with:
                   path: development
-                  key: development-${{ github.event.pull_request.head.sha || github.sha }}
+                  key: development-${{ format('{0}-{1}', github.ref_name, github.event.pull_request.head.sha || github.sha) }}
 
             - name: Cache dist files
               uses: actions/cache@v3
               with:
                   path: dist
-                  key: dist-${{ github.event.pull_request.head.sha || github.sha }}
+                  key: dist-${{ format('{0}-{1}', github.ref_name, github.event.pull_request.head.sha || github.sha) }}
 
             - name: Join both dev/prod caches
               run: |
@@ -53,9 +65,20 @@ jobs:
                   mkdir dist
                   mv development/* production/* dist
 
+            - name: Get docsite files
+              uses: actions/cache@v3
+              if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v')
+              with:
+                  path: docs
+                  key: docs-${{ format('{0}-{1}', github.ref_name, github.event.pull_request.head.sha || github.sha) }}
+
+            - name: Add docs folder to dist
+              if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v')
+              run: mv docs dist
+
     deploy-pages:
         needs: [post-build]
         name: Deploy the files
         uses: ./.github/workflows/pages.yml
         with:
-            cache_sha: ${{ github.event.pull_request.head.sha || github.sha }}
+            cache_sha: ${{ format('{0}-{1}', github.ref_name, github.event.pull_request.head.sha || github.sha) }}
