@@ -24,9 +24,22 @@ jobs:
             build_mode: 'production'
             cache_sha: ${{ github.event.pull_request.head.sha || github.sha }}
 
+    build-docs:
+        name: Documentation site build (only on push to main)
+        uses: ./.github/workflows/build.yml
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        with:
+            build_mode: 'documentation'
+            cache_sha: ${{ github.event.pull_request.head.sha || github.sha }}
+
     post-build:
         name: Merge dev & prod into a bundle
-        needs: [build-dev, build-prod]
+        needs: [build-dev, build-prod, build-docs]
+        if: |
+            always() &&
+            (needs.build-dev.result == 'success' || needs.build-dev.result == 'skipped') &&
+            (needs.build-prod.result == 'success' || needs.build-prod.result == 'skipped') &&
+            (needs.build-docs.result == 'success' || needs.build-docs.result == 'skipped')
         runs-on: ubuntu-latest
         steps:
             - name: Get library (prod) files
@@ -52,6 +65,15 @@ jobs:
                   rm -rf dist
                   mkdir dist
                   mv development/* production/* dist
+
+            - name: Create docsite directory
+              if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+              run: |
+                  mkdir -p documentation
+                  rm -rf documentation
+                  mkdir -p documentation/api-tech-docs
+                  mv vite-docs/* documentation/
+                  mv ts-docs/* documentation/api-tech-docs
 
     deploy-pages:
         needs: [post-build]

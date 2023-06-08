@@ -22,7 +22,7 @@ A more detailed description of the process will be covered with the examples bel
 
 ### Example 1: Passing a single config in RAMP Instance constructor
 
-```typescript=
+```ts
 RAMP.createInstance(document.getElementById('app'), { en: enConfig })
 ```
 
@@ -40,7 +40,7 @@ registeredConfigs = {
 
 ### Example 2: Passing multiple configs in RAMP Instance constructor
 
-```typescript=
+```ts
 RAMP.createInstance(document.getElementById('app'), {
     en: enConfig,
     fr: frConfig

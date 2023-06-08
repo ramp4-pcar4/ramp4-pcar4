@@ -28,6 +28,28 @@ jobs:
                   target-folder: ${{ github.head_ref || github.ref_name }}
                   single-commit: true
 
+            - name: Get RAMP version
+              uses: martinbeentjes/npm-get-version-action@v1.3.1
+              if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+              id: package-version
+
+            - name: Regex match RAMP version
+              uses: actions-ecosystem/action-regex-match@v2
+              if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+              id: regex-match
+              with:
+                  text: ${{ steps.package-version.outputs.current-version }}
+                  regex: '(\d+\.\d+\.\d+)'
+
+            - name: Deploy Docs 📜
+              uses: JamesIves/github-pages-deploy-action@v4.3.3
+              if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+              with:
+                  branch: gh-pages
+                  folder: documentation
+                  target-folder: documentation/${{ steps.regex-match.outputs.group1 || steps.package-version.outputs.current-version }}
+                  single-commit: true
+
             - uses: actions/github-script@v6
               name: Post link to demo for PR's
               if: github.event_name == 'pull_request_target' && github.event.action == 'opened'

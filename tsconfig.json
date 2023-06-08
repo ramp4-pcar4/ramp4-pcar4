@@ -10,6 +10,45 @@
         "pretty": true
     },
 
+    "typedocOptions": {
+        "entryPoints": [
+            "./src/main.ts",
+            "./src/api",
+            "./src/fixtures/appbar/api",
+            "./src/fixtures/areas-of-interest/api",
+            "./src/fixtures/details/api",
+            "./src/fixtures/export/api",
+            "./src/fixtures/export-legend",
+            "./src/fixtures/export-map",
+            "./src/fixtures/export-northarrow",
+            "./src/fixtures/export-scalebar",
+            "./src/fixtures/export-title",
+            "./src/fixtures/geosearch/api",
+            "./src/fixtures/grid/api",
+            "./src/fixtures/help/api",
+            "./src/fixtures/hilight/api",
+            "./src/fixtures/layer-reorder/api",
+            "./src/fixtures/legend/api",
+            "./src/fixtures/mapnav/api",
+            "./src/fixtures/metadata/api",
+            "./src/fixtures/northarrow/api",
+            "./src/fixtures/overviewmap/api",
+            "./src/fixtures/scrollguard/api",
+            "./src/fixtures/settings/api",
+            "./src/fixtures/wizard/api",
+            "./src/directives",
+            "./src/geo",
+            "./src/lang"
+        ],
+        "out": "ts-docs",
+        "entryPointStrategy": "expand",
+        "readme": "./README.md",
+        "includeVersion": true,
+        "githubPages": true,
+        "cleanOutputDir": true,
+        "exclude": "**/*/store/*.ts"
+    },
+
     "references": [
         {
             "path": "./tsconfig.vite-config.json"

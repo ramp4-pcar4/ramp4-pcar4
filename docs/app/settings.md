@@ -2,7 +2,7 @@
 
 ## Overview
 
-The settings fixture displays a panel containing information about a given layer. The settings panel also enables a user to modify layer settings. Settings can be made adjustable or fixed in the `config`. 
+The settings fixture displays a panel containing information about a given layer. The settings panel also enables a user to modify layer settings. Settings can be made adjustable or fixed in the `config`.
 
 The settings fixture is a default fixture, meaning it will be automatically loaded using a standard configuration.
 
@@ -10,15 +10,15 @@ The settings fixture is a default fixture, meaning it will be automatically load
 ## Configuration
 Unlike most fixtures, the settings fixture is configured separately for each layer in the main configuration file. A very simple configuration file below shows that the legend configuration object should be placed within a layer object, directly under the `fixtures` property:
 
-```text
+```
 const config = {
-    layers: [ 
+    layers: [
         {
             id: 'RAMP Layer',
             layerType: 'esri-feature',
             url: '...',
             fixtures: {
-                settings: { 
+                settings: {
                 ... layer settings go here ...
                 }
             }
@@ -39,7 +39,7 @@ The settings configuration object supports the following two properties:
 - `disabledControls`: keeps track of the list of disabled layer controls
     - See above
 
-By default, if no `settings` configuration object is provided within a layer configuration, all layer controls are enabled. There are two ways to disable layer controls: 
+By default, if no `settings` configuration object is provided within a layer configuration, all layer controls are enabled. There are two ways to disable layer controls:
 1. Add the `disabledControls` property to the object as an array with the names for each control (in parenthesis above). The following example demonstrates disabling the visibility and identify controls for the layer item `RAMP Layer`:
 
 ```
@@ -48,7 +48,7 @@ By default, if no `settings` configuration object is provided within a layer con
         layerType: 'esri-feature',
         url: '...',
         fixtures: {
-            settings: { 
+            settings: {
                 disabledControls: [
                     'visibility',
                     'identify'
@@ -57,7 +57,7 @@ By default, if no `settings` configuration object is provided within a layer con
         }
     }
 ```
-        
+
 1. Add the `controls` property to the object as an array and omit the names of the disabled layers. The next example configures `RAMP Layer`  in the same way as before:
 
 ```
@@ -66,7 +66,7 @@ By default, if no `settings` configuration object is provided within a layer con
         layerType: 'esri-feature',
         url: '...',
         fixtures: {
-            settings: { 
+            settings: {
                 controls: [
                     'opacity'
                 ]
