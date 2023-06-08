@@ -89,9 +89,9 @@ Valid values:
 
 ### url
 
-*string*, **Required** 
+*string*, **Required**
 
-The url where the layer definition and data should be loaded from. 
+The url where the layer definition and data should be loaded from.
 
 - ESRI type layers will be an ArcGIS Server rest endpoint. Feature layers must target the layer endpoint.
 - WMS layers will be the WMS server url.
@@ -242,13 +242,13 @@ Defines the name of the layer. If missing, the name defined on the layer source 
 
 *object*
 
-Defines the desired state of the layer at load time. 
+Defines the desired state of the layer at load time.
 
 - `visibility`: Boolean. If missing, will attempt to find an initial setting from the server, otherwise defaults to `true`.
 - `opacity`: Decimal between 0 and 1. If missing, will default to full opacity.
 - `identify`: Boolean. Ignored by layers that do not support identify requests. If missing, will default to `true`.
 - `hovertips`: Boolean. Ignored by layers that do not support hover tips (usually raster-based layers). If missing, will default to `true`.
- 
+
 ```js
 {
     state: {
@@ -294,7 +294,7 @@ The object structure matches the ArcGIS Server [Renderer](https://developers.arc
 
 ```js
 {
-    customRenderer: { 
+    customRenderer: {
         type: "simple",
         label: "Fancy Sites",
         symbol: {
@@ -368,7 +368,7 @@ The object structure is a string key being the fixture id, and a value being an 
 
 ```js
 {
-    fixtures: { 
+    fixtures: {
         grid: {
             title: "My Fancy Grid for this Layer"
         },
@@ -611,9 +611,9 @@ The sublayer also supports the following properties (see above for details). Som
 - `disabledControls`
 - `extent`
 - `fieldMetadata` (feature only)
-- `fixtures` 
+- `fixtures`
 - `initialFilteredQuery` (feature only)
-- `name` 
+- `name`
 - `nameField` (feature only)
 - `state`
 
@@ -643,7 +643,7 @@ The sublayer also supports the following properties (see above for details).
 - `controls`
 - `disabledControls`
 - `extent`
-- `name` 
+- `name`
 - `state`
 
 ```js
@@ -692,7 +692,7 @@ These represent control names that can be enabled or disabled throughout the sta
 - `metadata`: Access to the Metadata fixture panel.
 - `opacity`: Layer opacity.
 - `refresh`: Time-sensitive layer refresh interval. **Currently not supported**.
-- `reload`: Reload the layer. 
+- `reload`: Reload the layer.
 - `remove`: Remove the layer from the map / application.
 - `settings`: Access to the Settings fixture panel.
 - `symbology`: Access to the symbology stack in the Legend fixture panel.
@@ -700,7 +700,7 @@ These represent control names that can be enabled or disabled throughout the sta
 
 ### Image Format Types
 
-These represent formats an ESRI Map Image Layer can return. 
+These represent formats an ESRI Map Image Layer can return.
 
 - `png`
 - `png8`
@@ -717,7 +717,7 @@ These represent formats an ESRI Map Image Layer can return.
 This indicates which layer types can support certain sets of abilities
 
 | Layer Type      | Identify  | Attributes   | Local Data | Client Data Format |
-| ----------- | ----------- | ------------ | ------------ | ------------ | 
+| ----------- | ----------- | ------------ | ------------ | ------------ |
 | ESRI Feature Layer  |  Yes     | Yes               | No  | Vector |
 | ESRI Map Image Layer | Yes | No | No | Raster |
 | ESRI M.I.L. Feature Sublayer | Yes | Yes | No | Raster |

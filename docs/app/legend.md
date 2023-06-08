@@ -97,7 +97,7 @@ A section item is a legend item that is not bound to a layer. Section items can 
 
 The legend, like most other fixtures, can be configured directly through the main configuration file under the `fixtures` object. A very simple configuration file below shows where the legend configuration object should be placed:
 
-```text
+```
 const config = {
     layers: { ... },
     fixtures: {
@@ -114,7 +114,7 @@ The following properties exist on the legend configuration object:
 - `panelWidth: number`, if a custom legend width is required you can do this here. Otherwise if left blank the legend will use the the default fixture width.
 - `root: Object`, a tree-structured object that represents the layout for the legend. Top-level items can be added to the legend as a child of this object as such:
 
-```text
+```
 const config = {
     layers: { ... },
     fixtures: {
@@ -159,7 +159,7 @@ A layer item is an instance of a legend item. A single layer item directly corre
 - `disabledLayerControls:`: keeps track of list of disabled layer item controls
 
 The following is an example of a layer item in the configuration file:
-```text
+```
  {
     layerId: 'WasteLocations',
     name: 'Waste Locations Layer',
@@ -216,7 +216,7 @@ A section item is an instance of a legend item. A section item does not correspo
 Note that when a section item has a defined `content` property, its visibility and expand control buttons must be explicitly enabled, unlike other legend items that have those buttons enabled by default.
 
 The following is an example of a section item containing two layer items in the configuration file:
-```text
+```
 {
     name: 'Layer Group',
     infoType: 'text',

@@ -10,6 +10,25 @@
         "pretty": true
     },
 
+    "typedocOptions": {
+        "entryPoints": [
+            "./src/main.ts",
+            "./src/api",
+            "./src/fixtures",
+            "./src/directives",
+            "./src/geo",
+            "./src/lang"
+        ],
+        "out": "ts-docs",
+        "entryPointStrategy": "expand",
+        "readme": "./README.md",
+        "name": "R4MP",
+        "includeVersion": true,
+        "githubPages": true,
+        "cleanOutputDir": true,
+        "exclude": ["**/*/store/*.ts", "**/fixtures/*/index.ts", "**/tests"]
+    },
+
     "references": [
         {
             "path": "./tsconfig.vite-config.json"

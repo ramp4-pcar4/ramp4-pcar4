@@ -80,7 +80,7 @@ Like other fixtures, the grid has multiple options that can be adjusted through 
 
 An example of a layer with a configured grid is below
 
-```text
+```
 const config = {
     layers: {
         {
@@ -115,7 +115,7 @@ Every column in the datagrid can be configured separately.
 
 An example of a datatable with a single configured column is below
 
-```text
+```
 const config = {
     layers: {
         {
