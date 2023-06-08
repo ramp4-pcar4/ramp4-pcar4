@@ -26,6 +26,7 @@ jobs:
                   branch: gh-pages
                   folder: dist
                   target-folder: ${{ github.head_ref || github.ref_name }}
+                  single-commit: true
 
             - uses: actions/github-script@v6
               name: Post link to demo for PR's
