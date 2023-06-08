@@ -2,12 +2,20 @@ import type TableStateManager from './table-state-manager';
 
 export interface GridConfig {
     /**
-     * The id for the layer that this grid represents.
+     * The id of the grid.
      *
      * @type {String}
      * @memberof GridConfig
      */
     id: string;
+
+    /**
+     * The ids for the layers that this grid contains.
+     *
+     * @type {Array<String>}
+     * @memberof GridConfig
+     */
+    layerIds: string[];
 
     /**
      * The state manager for this grid.
@@ -16,4 +24,43 @@ export interface GridConfig {
      * @memberof GridConfig
      */
     state: TableStateManager;
+}
+
+export interface MergeGridConfig {
+    /**
+     * The id of the merge grid.
+     */
+    gridId: string;
+
+    /**
+     * Ids for layers contained in the merge grid.
+     */
+    layers: { layerId: string; subLayers: number[] };
+
+    /**
+     * The state options for the merge grid.
+     */
+    options: TableStateOptions;
+
+    /**
+     * The mapping parameters for the merge grid.
+     */
+    fieldMap: { field: string; sources: string[] };
+}
+
+export interface TableStateOptions {
+    title: string;
+    showFilter: boolean;
+    filterByExtent: boolean;
+    columns: any;
+    open: boolean;
+    filtered: boolean;
+    search: boolean;
+    searchFilter: string;
+    applyToMap: boolean;
+}
+
+export interface AttributeMapPair {
+    origAttr: string;
+    mappedAttr: string | undefined;
 }

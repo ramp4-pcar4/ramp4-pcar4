@@ -37,11 +37,10 @@ const layerStore = useLayerStore();
 const el = ref<HTMLElement>();
 const { t } = useI18n();
 
-const getLayerByUid = (uid: string): LayerInstance | undefined =>
-    layerStore.getLayerByUid(uid);
-
 const zoomToFeature = () => {
-    const layer: LayerInstance | undefined = getLayerByUid(props.params.uid);
+    const layer: LayerInstance | undefined = layerStore.getLayerByUid(
+        props.params.data.rvUid
+    );
     if (layer === undefined) return;
     const oid = props.params.data[props.params.oidField];
     const opts = { getGeom: true };

@@ -1695,6 +1695,67 @@
             },
             "additionalProperties": false
         },
+        "mergeGrid": {
+            "type": "object",
+            "description": "Specification for a single merge grid.",
+            "properties": {
+                "gridId": {
+                    "type": "string",
+                    "description": "The unique ID of the grid."
+                },
+                "layers": {
+                    "type": "array",
+                    "description": "A collection of layers present in the grid.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "layerId": {
+                                "type": "string",
+                                "description": "The layer ID."
+                            },
+                            "sublayers": {
+                                "type": "array",
+                                "description": "The IDs of the sublayers when the provided layer is a map image layer.",
+                                "items": {
+                                    "type": "number"
+                                },
+                                "minItems": 1
+                            }
+                        },
+                        "required": ["layerId"]
+                    }
+                },
+                "fieldMap": {
+                    "type": "array",
+                    "description": "Objects that define mappings between layer fields for merging layers with varying column names.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "field": {
+                                "type": "string",
+                                "description": "The name of the field the column names are mapped to."
+                            },
+                            "sources": {
+                                "type": "array",
+                                "description": "The names of the columns that are mapped to the destination field",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "options": {
+                    "type": "array",
+                    "description": "Configuration for the merge grid.",
+                    "items": {
+                        "$ref": "#/$defs/grid"
+                    }
+                }
+            },
+            "required": ["mergeGrids"],
+            "unevaluatedProperties": false
+        },
         "grid": {
             "type": "object",
             "description": "Configuration for the datatable.",
@@ -2162,6 +2223,21 @@
                         }
                     },
                     "description": "Provides configuration to geosearch. If not supplied, default geosearch services are used."
+                },
+                "grid": {
+                    "type": "object",
+                    "description": "Provides configuration to the grid fixture.",
+                    "properties": {
+                        "mergeGrids": {
+                            "type": "array",
+                            "description": "Provides specifications for merge grids. Can also be used to configure single-layer grids, but the 'gridOption' property within the layer configuration object is preferred.",
+                            "items": {
+                                "$ref": "#/$defs/mergeGrid"
+                            }
+                        }
+                    },
+                    "required": ["mergeGrids"],
+                    "unevaluatedProperties": false
                 },
                 "details": {
                     "description": "Provides default template configuration to the details fixture. If not supplied, RAMP default templates wil be used.",
