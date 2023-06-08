@@ -10,6 +10,14 @@ on:
             - v**
 
 jobs:
+    branch-name-check:
+        name: Check for invalid branch names
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check for "documentation"
+              if: (github.head_ref || github.ref_name) == 'documentation'
+              run: exit 1
+
     build-dev:
         name: Develop build for demo files
         uses: ./.github/workflows/build.yml
@@ -24,9 +32,39 @@ jobs:
             build_mode: 'production'
             cache_sha: ${{ github.event.pull_request.head.sha || github.sha }}
 
+    build-ts-docs:
+        name: Documentation site ts docs build (only on push to main)
+        uses: ./.github/workflows/build.yml
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        with:
+            build_mode: 'ts-docs'
+            cache_sha: ${{ github.event.pull_request.head.sha || github.sha }}
+
+    build-vite-docs:
+        name: Documentation site vite docs build (only on push to main)
+        uses: ./.github/workflows/build.yml
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        with:
+            build_mode: 'vite-docs'
+            cache_sha: ${{ github.event.pull_request.head.sha || github.sha }}
+
     post-build:
         name: Merge dev & prod into a bundle
-        needs: [build-dev, build-prod]
+        needs:
+            [
+                build-dev,
+                build-prod,
+                build-ts-docs,
+                build-vite-docs,
+                branch-name-check
+            ]
+        if: |
+            always() &&
+            (needs.build-dev.result == 'success' || needs.build-dev.result == 'skipped') &&
+            (needs.build-prod.result == 'success' || needs.build-prod.result == 'skipped') &&
+            (needs.build-ts-docs.result == 'success' || needs.build-ts-docs.result == 'skipped') &&
+            (needs.build-vite-docs.result == 'success' || needs.build-vite-docs.result == 'skipped') &&
+            (needs.branch-name-check.result == 'success' || needs.branch-name-check.result == 'skipped')
         runs-on: ubuntu-latest
         steps:
             - name: Get library (prod) files
@@ -41,11 +79,31 @@ jobs:
                   path: development
                   key: development-${{ github.event.pull_request.head.sha || github.sha }}
 
+            - name: Get ts doc files (if push to main)
+              if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+              uses: actions/cache@v3
+              with:
+                  path: ts-docs
+                  key: ts-docs-${{ github.event.pull_request.head.sha || github.sha }}
+
+            - name: Get vite doc files (if push to main)
+              if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+              uses: actions/cache@v3
+              with:
+                  path: vite-docs
+                  key: vite-docs-${{ github.event.pull_request.head.sha || github.sha }}
+
             - name: Cache dist files
               uses: actions/cache@v3
               with:
                   path: dist
                   key: dist-${{ github.event.pull_request.head.sha || github.sha }}
+
+            - name: Cache docsite files
+              uses: actions/cache@v3
+              with:
+                  path: documentation
+                  key: documentation-${{ github.event.pull_request.head.sha || github.sha }}
 
             - name: Join both dev/prod caches
               run: |
@@ -53,8 +111,18 @@ jobs:
                   mkdir dist
                   mv development/* production/* dist
 
+            - name: Consolidate docsite files
+              if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+              run: |
+                  mkdir -p documentation
+                  rm -rf documentation
+                  mkdir -p documentation/api-tech-docs
+                  mv vite-docs/* documentation/
+                  mv ts-docs/* documentation/api-tech-docs
+
     deploy-pages:
         needs: [post-build]
+        if: always() && (needs.post-build.result == 'success' || needs.post-build.result == 'skipped')
         name: Deploy the files
         uses: ./.github/workflows/pages.yml
         with:

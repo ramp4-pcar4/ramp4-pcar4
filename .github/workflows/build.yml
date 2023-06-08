@@ -69,6 +69,15 @@ jobs:
 
             - name: Build the files!
               run: npm run build -- --mode=${{ inputs.build_mode }}
+              if: inputs.build_mode == 'production' || inputs.build_mode == 'development'
               env:
                   NODE_OPTIONS: '--max-old-space-size=8192'
                   DIST_NAME: ${{ inputs.build_mode }}
+
+            - name: Build the ts docs!
+              if: inputs.build_mode == 'ts-docs'
+              run: npm run build:ts-docs
+
+            - name: Build the vitepress docs!
+              if: inputs.build_mode == 'vite-docs'
+              run: npm run build:vite-docs
