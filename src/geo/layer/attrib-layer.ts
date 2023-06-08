@@ -41,6 +41,7 @@ import deepmerge from 'deepmerge';
 import to from 'await-to-js';
 import { markRaw, toRaw } from 'vue';
 import { EsriField, EsriRendererFromJson, EsriRequest } from '@/geo/esri';
+import { useLayerStore } from '@/stores/layer';
 
 export class AttribLayer extends CommonLayer {
     geomType: GeometryType;
@@ -420,6 +421,9 @@ export class AttribLayer extends CommonLayer {
             const att = deepmerge({}, feature);
             att.rvInteractive = '';
             att.rvSymbol = this.renderer?.getGraphicIcon(feature);
+            att.rvUid = useLayerStore(this.$vApp.$pinia).getLayerById(
+                this.id
+            )!.uid;
             return att;
         });
 

@@ -1,33 +1,31 @@
 import { FixtureInstance } from '@/api';
 import { useGridStore } from '../store';
-import type { GridConfig } from '../store';
 import TableStateManager from '../store/table-state-manager';
 
 export class GridAPI extends FixtureInstance {
+    private gridStore = useGridStore(this.$vApp.$pinia);
     /**
-     * Open the grid for the layer with the given id.
+     * Open the grid with the given id.
      *
      * @param {string} id
      * @param {boolean} [open] force panel open or closed
      * @memberof GridAPI
      */
     toggleGrid(id: string, open?: boolean): void {
-        const gridStore = useGridStore(this.$vApp.$pinia);
-        // get GridConfig for specified id
-        let gridSettings: GridConfig | undefined = gridStore.grids[id];
+        // fetch id of grid containing layer with given id
+        const gridId = this.gridStore.getGridId(id);
 
         // if no GridConfig exists for the given id, create it.
-        if (gridSettings === undefined) {
-            gridSettings = {
+        if (!gridId) {
+            this.gridStore.addGrid({
                 id: id,
-                state: new TableStateManager({})
-            };
-
-            gridStore.addGrid(gridSettings);
+                layerIds: [id],
+                state: new TableStateManager()
+            });
         }
 
-        const prevId = gridStore.currentId;
-        gridStore.currentId = id ? id : undefined;
+        const prevId = this.gridStore.currentId;
+        this.gridStore.currentId = gridId ?? id;
 
         const panel = this.$iApi.panel.get('grid');
 
@@ -50,23 +48,61 @@ export class GridAPI extends FixtureInstance {
     /**
      * Parses the grid config JSON snippet from the config file.
      *
+     * @param {any} config
      * @memberof GridAPI
      */
-    _parseConfig() {
-        const gridStore = useGridStore(this.$vApp.$pinia);
+    _parseConfig(config?: any) {
         this.handlePanelWidths(['grid']);
 
         const layerGridConfigs: any = this.getLayerFixtureConfigs();
+
+        // parse merge grid configs
+        if (config) {
+            config.mergeGrids.forEach((mergeGrid: any) => {
+                const layerIds: string[] = [];
+
+                // extract grid options
+                const { gridId, layers, fieldMap, options } = mergeGrid;
+
+                // collate merged layer ids and remove them from layer specific grid configs
+                // in case they are defined in two places
+                layers.forEach((layer: any) => {
+                    if (layer.sublayers) {
+                        layer.sublayers?.forEach((sl: number) => {
+                            layerIds.push(`${layer.layerId}-${sl}`);
+                            delete layerGridConfigs[`${layer.layerId}-${sl}`];
+                        });
+                    } else {
+                        layerIds.push(layer.layerId);
+                        delete layerGridConfigs[layer.layerId];
+                    }
+                });
+
+                fieldMap?.forEach((map: any) => {
+                    map.sources.forEach((source: string) => {
+                        this.gridStore.fieldMap[source] = map.field;
+                    });
+                });
+
+                const gridConfig = {
+                    id: gridId,
+                    layerIds: layerIds,
+                    state: new TableStateManager(options)
+                };
+                this.gridStore.addGrid(gridConfig);
+            });
+        }
 
         // construct the details config from the layer fixture configs
         Object.keys(layerGridConfigs).forEach((layerId: string) => {
             const gridConfig = {
                 id: layerId,
+                layerIds: [layerId],
                 state: new TableStateManager(layerGridConfigs[layerId])
             };
 
             // save the item in the store
-            gridStore.addGrid(gridConfig);
+            this.gridStore.addGrid(gridConfig);
         });
     }
 }

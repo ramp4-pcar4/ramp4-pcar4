@@ -4,8 +4,7 @@
         <template #content>
             <table-component
                 class="rv-grid"
-                :layerId="currentId"
-                :layerUid="currentUid"
+                :gridId="currentId"
                 :panel="panel"
             ></table-component>
         </template>
@@ -13,8 +12,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onBeforeMount, ref } from 'vue';
-import { type InstanceAPI, PanelInstance } from '@/api';
+import { computed } from 'vue';
+import { PanelInstance } from '@/api';
 import TableComponent from '@/fixtures/grid/table-component.vue';
 import { useGridStore } from './store';
 import { useI18n } from 'vue-i18n';
@@ -29,16 +28,10 @@ defineProps({
     }
 });
 
-const iApi = inject<InstanceAPI>('iApi')!;
 const gridStore = useGridStore();
 const { t } = useI18n();
 
 const currentId = computed<string>(() => gridStore.currentId!);
-const currentUid = ref<string>('');
-
-onBeforeMount(() => {
-    currentUid.value = iApi.geo.layer.getLayer(currentId.value)!.uid;
-});
 </script>
 
 <style lang="scss" scoped>

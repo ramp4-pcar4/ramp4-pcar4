@@ -1,4 +1,5 @@
 import ColumnStateManager from '../store/column-state-manager';
+import type { TableStateOptions } from './grid-state';
 
 /**
  * Saves relevant enhancedTable states so that it can be reset on reload/reopen. A PanelStateManager is linked to a BaseLayer.
@@ -9,17 +10,17 @@ import ColumnStateManager from '../store/column-state-manager';
  *      - whether table maximized is in maximized or split view
  */
 export default class TableStateManager {
-    constructor(baseLayer: any) {
-        this.baseLayer = baseLayer;
-        this._title = baseLayer.title ?? '';
-        this._showFilter = baseLayer.showFilter ?? true;
-        this._filterByExtent = baseLayer.filterByExtent ?? false;
+    constructor(options?: TableStateOptions) {
+        this.state = options ?? {};
+        this._title = options?.title ?? '';
+        this._showFilter = options?.showFilter ?? true;
+        this._filterByExtent = options?.filterByExtent ?? false;
         this._columns = {};
         this._open = true;
         this._filtered = true;
-        this._search = baseLayer.search ?? true;
-        this._searchFilter = baseLayer.searchFilter ?? '';
-        this._applyToMap = baseLayer.applyToMap ?? false;
+        this._search = options?.search ?? true;
+        this._searchFilter = options?.searchFilter ?? '';
+        this._applyToMap = options?.applyToMap ?? false;
 
         this.parsecolumns();
     }
@@ -30,8 +31,8 @@ export default class TableStateManager {
      * @memberof TableStateManager
      */
     parsecolumns() {
-        if (this.baseLayer.columns) {
-            this.baseLayer.columns.forEach((columnConfig: any) => {
+        if (this.state.columns) {
+            this.state.columns.forEach((columnConfig: any) => {
                 this._columns[columnConfig.field] = new ColumnStateManager(
                     columnConfig
                 );
@@ -270,7 +271,7 @@ export default class TableStateManager {
 }
 
 export default interface TableStateManager {
-    baseLayer: any;
+    state: any;
     _title: string;
     _showFilter: boolean;
     _filterByExtent: boolean;

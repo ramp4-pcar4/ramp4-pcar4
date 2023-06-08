@@ -15,9 +15,14 @@ export const useGridStore = defineStore('grid', () => {
     const panel = ref<PanelConfig>();
 
     /**
-     * The id of the layer that is currently open in the grid.
+     * The id of the grid that is currently open.
      */
     const currentId = ref<string>();
+
+    /**
+     * A mapping of grid fields for merging columns
+     */
+    const fieldMap = ref<{ [source: string]: string }>({});
 
     function addGrid(value: GridConfig) {
         grids.value = { ...grids.value, [value.id]: value };
@@ -29,5 +34,26 @@ export const useGridStore = defineStore('grid', () => {
         }
     }
 
-    return { grids, panel, currentId, addGrid, removeGrid };
+    function getGridId(id: string) {
+        return Object.keys(grids.value).find(gid =>
+            grids.value[gid].layerIds.includes(id)
+        );
+    }
+
+    function removeLayer(gridId: string, layerId: string) {
+        grids.value[gridId].layerIds = grids.value[gridId].layerIds.filter(
+            id => id !== layerId
+        );
+    }
+
+    return {
+        grids,
+        panel,
+        currentId,
+        fieldMap,
+        addGrid,
+        removeGrid,
+        getGridId,
+        removeLayer
+    };
 });

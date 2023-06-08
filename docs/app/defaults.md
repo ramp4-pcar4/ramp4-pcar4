@@ -187,7 +187,7 @@ Changes to layers causing changes to the legend
 Changes to layers causing changes in other fixtures
 
 - `ramp_layer_remove_updates_details` clear details info for layer that has been removed
-- `ramp_layer_remove_closes_grid` close grid if the grid layer is removed
+- `ramp_layer_remove_checks_grid` close and remove grid if all its layers have been removed
 
 ### Panel Handlers
 
