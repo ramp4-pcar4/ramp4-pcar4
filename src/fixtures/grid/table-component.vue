@@ -9,7 +9,9 @@
         >
             <!-- show loading animation if loading -->
             <div class="flex flex-row">
-                <span class="font-bold text-2xl">{{ loadedRecordCount }}</span>
+                <span class="font-bold text-2xl">{{
+                    loadedRecordCount.reduce((sum, count) => sum + count, 0)
+                }}</span>
                 <svg class="stroke-black stroke-1" height="50" width="25">
                     <line x1="0" y1="50" x2="25" y2="0"></line>
                 </svg>
@@ -17,7 +19,8 @@
             </div>
             <div class="my-20">
                 <span class="text-sm">{{
-                    loadedRecordCount < totalRecordCount
+                    loadedRecordCount.reduce((sum, count) => sum + count, 0) <
+                    totalRecordCount
                         ? t('grid.splash.loading')
                         : t('grid.splash.building')
                 }}</span>
@@ -298,6 +301,7 @@ import {
     getCurrentInstance,
     inject,
     markRaw,
+    nextTick,
     onBeforeMount,
     onBeforeUnmount,
     ref,
@@ -318,10 +322,10 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
 import { AgGridVue } from 'ag-grid-vue3';
 import ColumnDropdown from './column-dropdown.vue';
-import { useGridStore } from './store';
+import { useGridStore, type AttributeMapPair } from './store';
 import { usePanelStore } from '@/stores/panel';
 import type { GridConfig } from './store';
-import type TableStateManager from './store/table-state-manager';
+import TableStateManager from './store/table-state-manager';
 import ColumnStateManager from './store/column-state-manager';
 import {
     GridAccessibilityManager,
@@ -445,24 +449,23 @@ const props = defineProps({
         type: PanelInstance,
         required: true
     },
-    layerId: {
-        type: String,
-        required: true
-    },
-    layerUid: {
+    gridId: {
         type: String,
         required: true
     }
 });
 
-const grids = computed<{ [id: string]: GridConfig }>(() => gridStore.grids);
-const config = ref<GridConfig>(grids.value['dummy']);
+const config = ref<GridConfig>({
+    id: 'dummy',
+    layerIds: [],
+    state: new TableStateManager()
+});
 const agGridApi = ref<GridApi>(new GridApi());
 const agGridOptions = ref();
 const frameworkComponents = ref();
 const isLoadingGrid = ref<boolean>(false);
 const isErrorGrid = ref<boolean>(false);
-const loadedRecordCount = ref<number>(0);
+const loadedRecordCount = ref<Array<number>>([]);
 const totalRecordCount = ref<number>(0);
 const handlers = ref<Array<string>>([]);
 const watchers = ref<Array<Function>>([]);
@@ -476,19 +479,28 @@ const gridAccessibilityManager = ref<GridAccessibilityManager | undefined>(
 );
 const onCellKeyPress = GridAccessibilityManager.onCellKeyPress;
 const filterInfo = ref({ firstRow: 0, lastRow: 0, visibleRows: 0 });
-const filterSync = ref<boolean>(true);
-const filteredOids = ref<Array<number>>();
+const filteredOids = ref<{ [uid: string]: Array<number> | undefined }>({});
+const layerCols = ref<{
+    [id: string]: Array<AttributeMapPair>;
+}>({});
+const origLayerIds = ref(gridStore.grids[props.gridId].layerIds);
+const gridLayers = computed(() => {
+    if (gridStore.grids[props.gridId]) {
+        return gridStore.grids[props.gridId].layerIds.map(
+            id => iApi.geo.layer.getLayer(id) as LayerInstance
+        );
+    } else return [];
+});
 
 const onGridReady = (params: any) => {
     agGridApi.value = params.api;
     columnApi.value = params.columnApi;
 
     // get grid title
-    if (config.value.state.title !== '') {
-        gridTitle.value = config.value.state.title;
-    } else {
-        gridTitle.value = iApi.geo.layer.getLayer(props.layerUid)?.name ?? '';
-    }
+    gridTitle.value =
+        config.value.state.title !== ''
+            ? config.value.state.title
+            : props.gridId;
 
     // initialize filter info + status
     updateFilterInfo();
@@ -506,8 +518,7 @@ const onGridReady = (params: any) => {
                 if (
                     filterKey !== CoreFilter.GRID &&
                     uid &&
-                    (uid === props.layerUid ||
-                        iApi.geo.layer.getLayer(uid)?.uid == props.layerUid)
+                    gridLayers.value.map(layer => layer.uid).includes(uid)
                 ) {
                     applyLayerFilters();
                 }
@@ -520,9 +531,7 @@ const onGridReady = (params: any) => {
             ({ layer }: { visibility: boolean; layer: LayerInstance }) => {
                 if (
                     layer.uid &&
-                    (layer.uid === props.layerUid ||
-                        layer.uid ===
-                            iApi.geo.layer.getLayer(props.layerUid)?.uid)
+                    gridLayers.value.map(layer => layer.uid).includes(layer.uid)
                 ) {
                     applyLayerFilters();
                 }
@@ -534,7 +543,11 @@ const onGridReady = (params: any) => {
             GlobalEvents.LAYER_RELOAD_END,
             (reloadedLayer: LayerInstance) => {
                 reloadedLayer.loadPromise().then(() => {
-                    if (props.layerUid === reloadedLayer.uid) {
+                    if (
+                        gridLayers.value
+                            .map(layer => layer.uid)
+                            .includes(reloadedLayer.uid)
+                    ) {
                         applyLayerFilters();
                     }
                 });
@@ -557,6 +570,20 @@ const onGridReady = (params: any) => {
                     applyLayerFilters();
                 }
             })
+        )
+    );
+    handlers.value.push(
+        iApi.event.on(
+            GlobalEvents.LAYER_REMOVE,
+            (removedLayer: LayerInstance) => {
+                if (
+                    origLayerIds.value.includes(removedLayer.id) &&
+                    gridLayers.value.length !== 0
+                ) {
+                    // recreate grid on layer removal
+                    setUpColumns();
+                }
+            }
         )
     );
     applyLayerFilters();
@@ -614,10 +641,16 @@ const updateFilterInfo = () => {
         if (config.value.state.applyToMap) {
             applyFiltersToMap();
         }
-        filterInfo.value.firstRow = agGridApi.value.getFirstDisplayedRow() + 1;
-        filterInfo.value.lastRow = agGridApi.value.getLastDisplayedRow() + 1;
-        filterInfo.value.visibleRows = agGridApi.value.getDisplayedRowCount();
+        nextTick(() => {
+            updateRowInfo();
+        });
     }
+};
+
+const updateRowInfo = () => {
+    filterInfo.value.firstRow = agGridApi.value.getFirstDisplayedRow() + 1;
+    filterInfo.value.lastRow = agGridApi.value.getLastDisplayedRow() + 1;
+    filterInfo.value.visibleRows = agGridApi.value.getDisplayedRowCount();
 };
 
 // Clear all table filters.
@@ -794,7 +827,6 @@ const setUpSpecialColumns = (
             },
             cellRenderer: DetailsButtonRendererV,
             cellRendererParams: {
-                uid: props.layerUid,
                 $iApi: iApi,
                 t: t
             }
@@ -814,7 +846,6 @@ const setUpSpecialColumns = (
             },
             cellRenderer: ZoomButtonRendererV,
             cellRendererParams: {
-                uid: props.layerUid,
                 $iApi: iApi,
                 oidField: oidField.value
             }
@@ -832,7 +863,7 @@ const setUpSpecialColumns = (
             maxWidth: 82,
             cellRenderer: (cell: any) => {
                 const layer: LayerInstance | undefined =
-                    iApi.geo.layer.getLayer(props.layerUid);
+                    iApi.geo.layer.getLayer(cell.data.rvUid);
                 if (layer === undefined) return;
                 const iconContainer = document.createElement('span');
                 const oid = cell.data[oidField.value];
@@ -848,7 +879,6 @@ const setUpSpecialColumns = (
                 };
             },
             cellRendererParams: {
-                uid: props.layerUid,
                 $iApi: iApi,
                 oidField: oidField.value
             }
@@ -860,28 +890,35 @@ const setUpSpecialColumns = (
 
 // checks if any external (layer) filters are applied
 const isExternalFilterPresent = () => {
-    return filteredOids.value !== undefined;
+    return !Object.values(filteredOids.value).every(oids => oids === undefined);
 };
 
 // filters row based on layer filter
 const doesExternalFilterPass = (node: RowNode) => {
-    return filteredOids.value!.includes(node.data[oidField.value]);
+    const oids = filteredOids.value[node.data.rvUid];
+    return oids === undefined || oids.includes(node.data[oidField.value]);
 };
 
 // updates external grid filter based on layer filter and rerenders grid
 const applyLayerFilters = async () => {
-    const layer = iApi.geo.layer.getLayer(props.layerUid)!;
-    if (!layer || !layer.visibility) {
-        filteredOids.value = [];
-    } else {
-        filteredOids.value = await layer.getFilterOIDs(
-            [CoreFilter.GRID],
-            config.value.state.filterByExtent
-                ? iApi.geo.map.getExtent()
-                : undefined
-        );
-    }
-    agGridApi.value.onFilterChanged();
+    Promise.all(
+        gridLayers.value.map(async layer => {
+            if (layer && layer.visibility) {
+                await layer
+                    .getFilterOIDs(
+                        [CoreFilter.GRID],
+                        config.value.state.filterByExtent
+                            ? iApi.geo.map.getExtent()
+                            : undefined
+                    )
+                    .then(oids => {
+                        filteredOids.value[layer.uid] = oids;
+                    });
+            } else {
+                filteredOids.value[layer.uid] = [];
+            }
+        })
+    ).then(() => agGridApi.value.onFilterChanged());
 };
 
 const toggleFiltersToMap = () => {
@@ -890,28 +927,37 @@ const toggleFiltersToMap = () => {
 };
 
 const applyFiltersToMap = () => {
-    const layer = iApi.geo.layer.getLayer(props.layerUid);
-    if (!config.value.state.applyToMap) {
-        layer?.setSqlFilter(CoreFilter.GRID, '');
-    } else {
-        const mapFilterQuery = getFiltersQuery();
-        layer?.setSqlFilter(CoreFilter.GRID, mapFilterQuery);
-        filterSync.value = true;
-    }
+    gridLayers.value.forEach(layer => {
+        if (!config.value.state.applyToMap) {
+            layer.setSqlFilter(CoreFilter.GRID, '');
+        } else {
+            const mapFilterQuery = getFiltersQuery(layer.id);
+            layer.setSqlFilter(CoreFilter.GRID, mapFilterQuery);
+        }
+    });
 };
 
 // get filter SQL query string
-const getFiltersQuery = () => {
+const getFiltersQuery = (id: string) => {
     const filterModel = agGridApi.value.getFilterModel();
     let colStrs: (string | undefined)[] = [];
     Object.keys(filterModel).forEach(col => {
-        colStrs.push(filterToSql(col, filterModel[col]));
+        // check if filter is applied to an attribute of this layer
+        const attrs = getAttrPair(id, col);
+        if (attrs) {
+            // create SQL string with original attribute name, because otherwise the the layer wouldn't recognize the attribute name in the filter
+            // i.e a layer with 'LAT' mapped to 'LATITUDE' in the grid must query '___ IN LAT' instead of '___ IN LATITUDE'
+            colStrs.push(filterToSql(attrs.origAttr, filterModel[col]));
+        } else {
+            // filter out layer when searching a column it doesn't have
+            colStrs.push('1=2');
+        }
     });
     if (
         config.value.state.searchFilter &&
         config.value.state.searchFilter.length > 0
     ) {
-        const globalSearchVal = globalSearchToSql() || '1=2';
+        const globalSearchVal = globalSearchToSql(id) || '1=2';
         if (globalSearchVal.length > 0) {
             // do not push an empty global search
             colStrs.push(`(${globalSearchVal})`);
@@ -1005,20 +1051,20 @@ const filterToSql = (col: string, colFilter: { [key: string]: any }): any => {
 };
 
 // convert global search to SQL string filter of columns excluding unfiltered columns
-const globalSearchToSql = (): string => {
+const globalSearchToSql = (id: string): string => {
     // TODO: support for global search on dates
     let val = config.value.state.searchFilter.replace(/'/g, "''");
     // to implement quick filters, first need to split the search text on white space
     const searchVals = val.split(' ');
 
     const sortedRows = (agGridApi.value as any).rowModel.rowsToDisplay;
-    columnApi.value;
     const columns = columnApi.value
         .getAllDisplayedColumns()
         .filter(
             (column: any) =>
-                column.colDef.filter === 'agTextColumnFilter' ||
-                column.colDef.filter === 'agNumberColumnFilter'
+                (column.colDef.filter === 'agTextColumnFilter' ||
+                    column.colDef.filter === 'agNumberColumnFilter') &&
+                getAttrPair(id, column.getColId())
         );
 
     let filteredColumns: string[] = [];
@@ -1040,9 +1086,15 @@ const globalSearchToSql = (): string => {
             let foundVal = false;
             for (let column of columns) {
                 const colId = column.getColId();
+                const origColId = getAttrPair(id, column.getColId())?.origAttr;
                 const colDef = column.getColDef();
+
+                // row data can be undefined when merging heterogenous layers
+                if (row.data[colId] === undefined) {
+                    foundVal = false;
+                }
                 // process global search sql independently for text and number columnns
-                if (colDef.filter === 'agTextColumnFilter') {
+                else if (colDef.filter === 'agTextColumnFilter') {
                     const cellData =
                         row.data[colId] === null
                             ? null
@@ -1051,11 +1103,11 @@ const globalSearchToSql = (): string => {
                         rowSql
                             ? (rowSql = rowSql.concat(
                                   ' AND ',
-                                  `(UPPER(${colId}) LIKE \'${filterVal}%\')`
+                                  `(UPPER(${origColId}) LIKE \'${filterVal}%\')`
                               ))
                             : (rowSql = rowSql.concat(
                                   '(',
-                                  `(UPPER(${colId}) LIKE \'${filterVal}%\')`
+                                  `(UPPER(${origColId}) LIKE \'${filterVal}%\')`
                               ));
                         // if we have already stored the current sql break from loop
                         filteredColumns.includes(rowSql + ')')
@@ -1070,11 +1122,11 @@ const globalSearchToSql = (): string => {
                         rowSql
                             ? (rowSql = rowSql.concat(
                                   ' AND ',
-                                  `(${colId} = ${cellData})`
+                                  `(${origColId} = ${cellData})`
                               ))
                             : (rowSql = rowSql.concat(
                                   '(',
-                                  `(${colId} = ${cellData})`
+                                  `(${origColId} = ${cellData})`
                               ));
                         filteredColumns.includes(rowSql + ')')
                             ? (foundVal = false)
@@ -1095,14 +1147,6 @@ const globalSearchToSql = (): string => {
         }
     });
     return filteredColumns.join(' OR ');
-};
-
-// checks if current grid filters are applied to map
-const gridFiltersApplied = () => {
-    const gridQuery = getFiltersQuery();
-    const layer = iApi.geo.layer.getLayer(props.layerUid);
-    const layerQuery = layer?.getSqlFilter(CoreFilter.GRID);
-    return gridQuery === layerQuery;
 };
 
 const stopArrowKeyProp = (event: KeyboardEvent) => {
@@ -1134,123 +1178,154 @@ const closeGrid = () => {
 const cancelAttributeLoad = () => {
     if (isLoadingGrid.value || isErrorGrid.value) {
         // stop the in progress attribute load
-        const layer = iApi.geo.layer.getLayer(props.layerUid);
-        layer?.abortAttributeLoad();
+        gridLayers.value.forEach(layer => {
+            layer.abortAttributeLoad();
 
-        // we want to clear the attribute cache to reset it for future requests
-        layer?.clearFeatureCache();
+            // we want to clear the attribute cache to reset it for future requests
+            layer.clearFeatureCache();
+        });
     }
 };
 
-onBeforeMount(() => {
-    config.value = grids.value[props.layerId];
-
-    isLoadingGrid.value = true;
-
-    // re-opening the grid for a cancelled layer doesn't re-render the grid properly
-    // hence we use this force update call to force re-render
-    forceUpdate();
-
-    filterInfo.value = {
-        firstRow: 0,
-        lastRow: 0,
-        visibleRows: 0
-    };
-
-    // import separate components
-    frameworkComponents.value = {
-        agColumnHeader: GridCustomHeaderV,
-        numberFloatingFilter: GridCustomNumberFilterV,
-        textFloatingFilter: GridCustomTextFilterV,
-        selectorFloatingFilter: GridCustomSelectorFilterV,
-        dateFloatingFilter: GridCustomDateFilterV,
-        clearFloatingFilter: GridClearFilterV
-    };
-
-    // set up grid options
-    agGridOptions.value = {
-        // lets header navigation be predictable, otherwise focus lists will be out of sync as soon as a column is shifted
-        ensureDomOrder: true,
-        suppressRowTransform: true,
-        onFilterChanged: () => {
-            filterSync.value = gridFiltersApplied();
-            applyFiltersToMap();
-            updateFilterInfo();
-        },
-        onBodyScroll: () => {
-            updateFilterInfo();
-            // prevent tooltips from leaving grid panel on scroll
-            [...document.querySelectorAll('[id^=tippy]')].forEach(
-                (element: any) => {
-                    if (
-                        element._tippy &&
-                        el.value?.contains(element._tippy.reference)
-                    ) {
-                        element._tippy.hide();
-                    }
-                }
-            );
-        },
-        rowBuffer: 0,
-        suppressColumnVirtualisation: true,
-        // shift tab -> header, tab -> out of grid
-        tabToNextCell: tabToNextCellHandler,
-        // tab vertically instead of horizontally
-        tabToNextHeader: tabToNextHeaderHandler,
-        onModelUpdated: debounce(300, () =>
-            columnApi.value.autoSizeAllColumns()
-        )
-    };
-
-    if (!props.layerUid) {
-        // if uid is null or undefined, the layer has been deleted while this component was unmounted
-        return;
-    }
-
-    const fancyLayer: LayerInstance | undefined = iApi.geo.layer.getLayer(
-        props.layerUid
+const getAttrPair = (
+    id: string,
+    attr: string
+): AttributeMapPair | undefined => {
+    // given an attribute name, returns the attribute and, if it exists, the mapped attribute in a layer
+    return layerCols.value[id].find(
+        layer => (layer.mappedAttr ?? layer.origAttr) === attr
     );
+};
 
-    if (fancyLayer === undefined) {
-        // this can happen if the grid was minimized before the layer was removed
-        console.warn(
-            `Data grid could not find layer with uid ${props.layerUid}.`
-        );
-        return;
-    }
+const setUpColumns = () => {
+    const fancyLayers: LayerInstance[] = gridLayers.value
+        .map(layer => {
+            if (layer.supportsFeatures && layer.isLoaded) {
+                return layer;
+            }
+        })
+        .filter(fl => fl !== undefined) as LayerInstance[];
 
-    if (!fancyLayer.supportsFeatures) {
-        // This layer does not support features, hence no support for data table
-        return;
+    if (fancyLayers.length === 0) {
+        // in the event of error'd layers, otherwise a blank datagrid will appear
+        closeGrid();
     }
 
     // get the currently loaded and total record count from layer
-    totalRecordCount.value = fancyLayer.featureCount;
-    loadedRecordCount.value =
-        (fancyLayer as AttribLayer)?.attLoader?.loadCount() ?? 0;
-
-    // watch the load count of the attrib loader
-    watchers.value.push(
-        watch(
-            () => (fancyLayer as AttribLayer)?.attLoader?.loadCount() ?? 0,
-            (count: number) => {
-                loadedRecordCount.value = count;
-            }
-        )
+    totalRecordCount.value = fancyLayers.reduce(
+        (count, { featureCount }) => count + featureCount,
+        0
     );
 
-    fancyLayer.loadPromise().then(() => {
-        const tableAttributePromise =
-            markRaw(fancyLayer).getTabularAttributes();
+    loadedRecordCount.value = new Array(gridLayers.value.length).fill(0);
 
-        tableAttributePromise
-            .then((tableAttributes: TabularAttributeSet) => {
+    fancyLayers.forEach(
+        (fl, idx) =>
+            (loadedRecordCount.value[idx] +=
+                (fl as AttribLayer).attLoader?.loadCount() ?? 0)
+    );
+
+    // watch the load count of the attrib loader
+    fancyLayers.forEach((fl, idx) => {
+        watchers.value.push(
+            watch(
+                () => (fl as AttribLayer)?.attLoader?.loadCount() ?? 0,
+                (count: number) => {
+                    loadedRecordCount.value[idx] = count;
+                }
+            )
+        );
+    });
+
+    Promise.all(fancyLayers.map(l => l.loadPromise())).then(() => {
+        const tableAttributePromises: Array<Promise<TabularAttributeSet>> =
+            fancyLayers.map(fl => {
+                return markRaw(fl).getTabularAttributes();
+            });
+
+        Promise.all(tableAttributePromises)
+            .then((tableAttributes: Array<TabularAttributeSet>) => {
                 // check if load was cancelled by checking the loadAborted state
-                if ((fancyLayer as AttribLayer)?.attLoader?.isLoadAborted()) {
+                if (
+                    fancyLayers.every(fl =>
+                        (fl as AttribLayer)?.attLoader?.isLoadAborted()
+                    )
+                ) {
                     // if load was cancelled, don't load grid any further and return
                     isLoadingGrid.value = false;
                     return;
                 }
+
+                const mergedTableAttrs: TabularAttributeSet = {
+                    columns: [],
+                    rows: [],
+                    fields: [],
+                    oidField: ''
+                };
+
+                // merge attributes into one table
+                tableAttributes.forEach((ta, idx) => {
+                    const attrMap: any = [];
+
+                    ta.columns.forEach(col => {
+                        if (gridStore.fieldMap[col.data]) {
+                            attrMap.push({
+                                origAttr: col.data,
+                                mappedAttr: gridStore.fieldMap[col.data]
+                            });
+                            col.data = gridStore.fieldMap[col.data];
+                        } else {
+                            attrMap.push({
+                                origAttr: col.data,
+                                mappedAttr: undefined
+                            });
+                        }
+
+                        if (
+                            !mergedTableAttrs.columns
+                                .map(c => c.data)
+                                .includes(col.data)
+                        ) {
+                            mergedTableAttrs.columns.push(col);
+                        }
+                    });
+
+                    mergedTableAttrs.rows = mergedTableAttrs.rows.concat(
+                        ta.rows.map(row => {
+                            for (const [oldAttr, newAttr] of Object.entries(
+                                gridStore.fieldMap
+                            )) {
+                                if (!row[newAttr]) {
+                                    row[newAttr] = row[oldAttr];
+                                    delete row[oldAttr];
+                                }
+                            }
+                            return row;
+                        })
+                    );
+
+                    mergedTableAttrs.fields = mergedTableAttrs.fields.concat(
+                        ta.fields.map(field => {
+                            return {
+                                name:
+                                    gridStore.fieldMap[field.name] ??
+                                    field.name,
+                                type: field.type,
+                                alias: field.alias ?? undefined,
+                                length: field.length ?? undefined
+                            };
+                        })
+                    );
+                    //TODO: the table currently relies on config author to provide correct oid mapping. maybe return to this for enchancement?
+                    mergedTableAttrs.oidField =
+                        gridStore.fieldMap[ta.oidField] ?? ta.oidField;
+
+                    // tracking which columns correspond with which layer for applyToMap filtering
+                    layerCols.value[fancyLayers[idx].id] = attrMap;
+                });
+
+                // save field that contains oid for this layer
+                oidField.value = mergedTableAttrs.oidField;
 
                 // Iterate through table columns and set up column definitions and column filter stuff.
                 // Also adds the `rvSymbol` and `rvInteractive` columns to the table.
@@ -1258,7 +1333,7 @@ onBeforeMount(() => {
                     'rvRowIndex',
                     'rvSymbol',
                     'rvInteractive',
-                    ...tableAttributes.columns
+                    ...mergedTableAttrs.columns
                 ].forEach((column: any) => {
                     if (
                         config.value.state?.columns[column.data] === undefined
@@ -1308,7 +1383,7 @@ onBeforeMount(() => {
                     };
 
                     // retrieve the field info for the column
-                    let fieldInfo = tableAttributes.fields.find(
+                    let fieldInfo = mergedTableAttrs.fields.find(
                         (field: any) => field.name === col.field
                     );
 
@@ -1344,7 +1419,7 @@ onBeforeMount(() => {
                                 // set up a selector filter instead of a text filter if the `isSelector` flag is true.
                                 setUpSelectorFilter(
                                     col,
-                                    tableAttributes.rows,
+                                    mergedTableAttrs.rows,
                                     config.value.state
                                 );
                             } else {
@@ -1362,13 +1437,10 @@ onBeforeMount(() => {
                 });
 
                 // load layer data into the table.
-                rowData.value = markRaw(tableAttributes.rows);
+                rowData.value = markRaw(mergedTableAttrs.rows);
                 columnDefs.value = markRaw(columnDefs.value);
 
                 updateFilterInfo();
-
-                // save field that contains oid for this layer
-                oidField.value = tableAttributes.oidField;
 
                 // the grid is now ready to be displayed
                 isLoadingGrid.value = false;
@@ -1378,6 +1450,70 @@ onBeforeMount(() => {
                 isLoadingGrid.value = false;
             });
     });
+};
+
+onBeforeMount(() => {
+    config.value = gridStore.grids[props.gridId];
+
+    isLoadingGrid.value = true;
+
+    // re-opening the grid for a cancelled layer doesn't re-render the grid properly
+    // hence we use this force update call to force re-render
+    forceUpdate();
+
+    filterInfo.value = {
+        firstRow: 0,
+        lastRow: 0,
+        visibleRows: 0
+    };
+
+    // import separate components
+    frameworkComponents.value = {
+        agColumnHeader: GridCustomHeaderV,
+        numberFloatingFilter: GridCustomNumberFilterV,
+        textFloatingFilter: GridCustomTextFilterV,
+        selectorFloatingFilter: GridCustomSelectorFilterV,
+        dateFloatingFilter: GridCustomDateFilterV,
+        clearFloatingFilter: GridClearFilterV
+    };
+
+    // set up grid options
+    agGridOptions.value = {
+        // lets header navigation be predictable, otherwise focus lists will be out of sync as soon as a column is shifted
+        ensureDomOrder: true,
+        suppressRowTransform: true,
+        onFilterChanged: () => {
+            applyFiltersToMap();
+            updateFilterInfo();
+        },
+        onBodyScroll: () => {
+            // prevent tooltips from leaving grid panel on scroll
+            [...document.querySelectorAll('[id^=tippy]')].forEach(
+                (element: any) => {
+                    if (
+                        element._tippy &&
+                        el.value?.contains(element._tippy.reference)
+                    ) {
+                        element._tippy.hide();
+                    }
+                }
+            );
+        },
+        onBodyScrollEnd: () => {
+            updateRowInfo();
+        },
+        rowBuffer: 0,
+        suppressColumnVirtualisation: true,
+        // shift tab -> header, tab -> out of grid
+        tabToNextCell: tabToNextCellHandler,
+        // tab vertically instead of horizontally
+        tabToNextHeader: tabToNextHeaderHandler,
+        onModelUpdated: debounce(300, () =>
+            columnApi.value.autoSizeAllColumns()
+        )
+    };
+
+    setUpColumns();
 });
 
 onBeforeUnmount(() => {
