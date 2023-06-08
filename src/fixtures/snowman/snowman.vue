@@ -29,7 +29,6 @@ onMounted(() => {
         // NOTE: only on-map components need this relatively complicated removal process; panels are closed much easier
 
         // removes the snowman from DOM and destroys the instance
-        // TODO: this should be called in the `terminated` life hook; it's called in the timeout just for display
         // this.$destroy(); // destroy Vue component (no longer supported in Vue 3)
         el.value.parentNode!.removeChild(el.value); // remove DOM nodes
         // you can also do it like this 👉 this.$options.iApi.$vApp.$el.removeChild(this.$el.parentNode);

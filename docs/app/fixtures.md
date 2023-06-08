@@ -4,11 +4,10 @@ This covers various ways to create fixtures.
 
 ## Interface
 
-The fixture interface has four methods, all optional. They take no parameters and return no value. If a custom fixture implements them, the RAMP instance will run them at the appropriate time.
+The fixture interface has three methods, all optional. They take no parameters and return no value. If a custom fixture implements them, the RAMP instance will run them at the appropriate time.
 
 - `added()` is run when the fixture has been added to the RAMP instance
-- `initialized()` is run when the fixture is `added` and the instance map has finished initializing
-- `terminated()` is run immediately before the fixture is removed from the RAMP instance
+- `initialized()` is run when the fixture is `added` and the instance Map has finished initializing
 - `removed()` is run after fixture is removed from the RAMP instance
 
 ## Creation

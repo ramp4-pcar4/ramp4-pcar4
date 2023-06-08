@@ -31,13 +31,4 @@ export interface FixtureBase {
      * @memberof Fixture
      */
     initialized?(): void;
-
-    /**
-     * [Optional] Called before the fixture is removed from R4MP.
-     *
-     * This is a clean-up phase, and at this point, any custom content (panels, on-map components, etc.) must be removed.
-     *
-     * @memberof Fixture
-     */
-    terminated?(): void;
 }

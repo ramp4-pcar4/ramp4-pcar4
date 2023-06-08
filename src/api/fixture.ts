@@ -371,7 +371,6 @@ export class FixtureInstance extends APIScope implements FixtureBase {
     added?(): void;
     removed?(): void;
     initialized?(): void;
-    terminated?(): void;
 
     /**
      * Returns the fixture config section (JSON) taken from the global config.
