@@ -147,6 +147,8 @@ const handle = setInterval(() => {
 
 ## Lazy-Loading
 
+#### The current version of RAMP does not include code splitting in production builds. These methods will still work, however the build will not see the benefit of lazy loading. We plan to re-introduce some version of tree-shaking/lazy-loading/code-splitting in the future.
+
 It's possible to lazy-load fixture code for screen panels. This will split code for individual panel screens into separate file and will be loaded on demand. Otherwise, all fixture code is loaded right away and it defeats parts of the idea to make R4MP as flexible as possible. See `gazebo` fixture for examples.
 
 Two methods of lazy loading:
