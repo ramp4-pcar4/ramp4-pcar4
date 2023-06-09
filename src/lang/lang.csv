@@ -47,3 +47,4 @@ panels.alert.minimize,{name} panel minimized,1,Fenêtre {name} réduite,1
 layer.error,{id} failed to load,1,{id} n'a pas pu être chargée,0
 layer.longload,{id} is taking longer than expected to load,1,Le chargement de {id} met plus de temps que prévu,1
 layer.longdraw,{id} is taking longer than expected to draw,1,{id} prend plus longtemps que prévu pour dessiner,0
+layer.mismatch,{id} cannot be displayed in the current projection,1,{id} ne peut pas être affiché dans la projection actuelle,0

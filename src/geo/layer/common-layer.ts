@@ -22,6 +22,7 @@ import {
     LayerType,
     NoGeometry,
     ScaleSet,
+    SpatialReference,
     TreeNode
 } from '@/geo/api';
 
@@ -437,7 +438,7 @@ export class CommonLayer extends LayerInstance {
         // layer base class doesnt have spatial ref, but we will assume all our layers do.
         // consider adding fancy checks if its missing, and if so just promise.resolve
         const lookupPromise = this.$iApi.geo.proj
-            .checkProj((<any>this.esriLayer).spatialReference)
+            .checkProj(this.getSR())
             .then(goodSR => {
                 if (goodSR) {
                     return Promise.resolve();
@@ -897,6 +898,22 @@ export class CommonLayer extends LayerInstance {
      */
     setCustomParameter(key: string, value: string, forceRefresh = true): void {
         this.stubError();
+    }
+
+    /**
+     * Provides the spatial reference of the layer
+     *
+     * @returns {SpatialReference} the layer spatial reference in RAMP API format
+     */
+    getSR(): SpatialReference {
+        if (this.esriLayer) {
+            return SpatialReference.fromESRI(
+                (<any>this.esriLayer).spatialReference!
+            );
+        } else {
+            this.noLayerErr();
+            return SpatialReference.latLongSR();
+        }
     }
 
     /**

@@ -1,7 +1,8 @@
-import { CommonLayer, InstanceAPI } from '@/api/internal';
+import { CommonLayer, InstanceAPI, NotificationType } from '@/api/internal';
 import { DataFormat, LayerFormat, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 import { EsriTileLayer } from '@/geo/esri';
+import { SpatialReference } from '@/geo/api';
 import { markRaw } from 'vue';
 
 export class TileLayer extends CommonLayer {
@@ -56,10 +57,28 @@ export class TileLayer extends CommonLayer {
 
         loadPromises.push(legendPromise);
 
+        this.checkProj();
+
         // TODO once decided, might want to set a value on layer count that indicates nothing to count
 
         // TODO check out whats going on with layer extent. is it set and donethanks?
 
         return loadPromises;
+    }
+
+    /**
+     * Check if the layer's projection matches the current basemap's.
+     * If it does not match, warn the user by sending a notification.
+     */
+    checkProj(): void {
+        const layerSR = this.getSR();
+        const mapSR = this.$iApi.geo.map.getSR();
+
+        if (!mapSR.isEqual(layerSR)) {
+            this.$iApi.notify.show(
+                NotificationType.WARNING,
+                this.$iApi.$i18n.t('layer.mismatch', { id: this.id })
+            );
+        }
     }
 }

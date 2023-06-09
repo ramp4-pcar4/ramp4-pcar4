@@ -173,6 +173,9 @@ Creates or updates the feature maptip
 - `ramp_map_graphichit_creates_maptip` create maptip content when a new feature is hit
 - `ramp_map_mouse_updates_maptip` check for graphics when mouse moves
 
+Changes to the basemap causing tile layers to no longer be visible
+- `ramp_map_basemap_checks_proj` will notify the user if there is a projection mismatch
+
 ### Layer Handlers
 
 Changes to layers causing changes to the legend

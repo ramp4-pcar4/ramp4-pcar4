@@ -15,6 +15,7 @@ import {
     LayerType,
     NoGeometry,
     ScaleSet,
+    SpatialReference,
     TreeNode
 } from '@/geo/api';
 import type {
@@ -329,6 +330,15 @@ export class LayerInstance extends APIScope {
             'Fake tree',
             'getLayerTree() was not implemented in layer'
         );
+    }
+
+    /**
+     * Provides the spatial reference of the layer
+     *
+     * @returns {SpatialReference} the layer spatial reference in RAMP API format
+     */
+    getSR(): SpatialReference {
+        return SpatialReference.latLongSR(); // default fake value to shut up TS.
     }
 
     /**

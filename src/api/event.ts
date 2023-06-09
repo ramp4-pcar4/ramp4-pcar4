@@ -3,7 +3,8 @@ import {
     APIScope,
     InstanceAPI,
     LayerInstance,
-    PanelInstance
+    PanelInstance,
+    TileLayer
 } from './internal';
 import type { AppbarAPI } from '@/fixtures/appbar/api/appbar';
 import type { DetailsAPI } from '@/fixtures/details/api/details';
@@ -17,7 +18,7 @@ import type { SettingsAPI } from '@/fixtures/settings/api/settings';
 import type { WizardAPI } from '@/fixtures/wizard/api/wizard';
 import { useAppbarStore } from '@/fixtures/appbar/store';
 import { useGridStore } from '@/fixtures/grid/store';
-import { LayerState } from '@/geo/api';
+import { LayerState, LayerType } from '@/geo/api';
 import type {
     MapClick,
     MapMove,
@@ -345,6 +346,7 @@ const enum DefEH {
     LAYER_REMOVE_CLOSES_GRID = 'ramp_layer_remove_closes_grid',
     LAYER_REMOVE_UPDATES_LEGEND = 'ramp_layer_remove_updates_legend',
     LAYER_USERADD_UPDATES_LEGEND = 'ramp_layer_useradd_updates_legend',
+    MAP_BASEMAP_CHECKS_TILE_PROJ = 'ramp_map_basemap_checks_tile_proj',
     MAP_BASEMAP_UPDATES_MAP_ATTRIBS = 'ramp_map_basemap_updates_map_attribs',
     MAP_BLUR_UPDATES_KEY_HANDLER = 'ramp_map_blur_updates_key_handler',
     MAP_CLICK_RUNS_IDENTIFY = 'ramp_map_click_runs_identify',
@@ -617,6 +619,7 @@ export class EventAPI extends APIScope {
                 DefEH.LAYER_REMOVE_CLOSES_GRID,
                 DefEH.LAYER_REMOVE_UPDATES_LEGEND,
                 DefEH.LAYER_USERADD_UPDATES_LEGEND,
+                DefEH.MAP_BASEMAP_CHECKS_TILE_PROJ,
                 DefEH.MAP_BASEMAP_UPDATES_MAP_ATTRIBS,
                 DefEH.MAP_BLUR_UPDATES_KEY_HANDLER,
                 DefEH.MAP_CLICK_RUNS_IDENTIFY,
@@ -819,6 +822,23 @@ export class EventAPI extends APIScope {
                 };
                 this.$iApi.event.on(
                     GlobalEvents.USER_LAYER_ADDED,
+                    zeHandler,
+                    handlerName
+                );
+                break;
+
+            case DefEH.MAP_BASEMAP_CHECKS_TILE_PROJ:
+                // check for any tile layer projection mismatches when the basemap changes
+                zeHandler = () => {
+                    this.$iApi.geo.layer
+                        .allLayers()
+                        .filter(l => l.layerType === LayerType.TILE)
+                        .forEach(tl => {
+                            (tl as TileLayer).checkProj();
+                        });
+                };
+                this.$iApi.event.on(
+                    GlobalEvents.MAP_BASEMAPCHANGE,
                     zeHandler,
                     handlerName
                 );
