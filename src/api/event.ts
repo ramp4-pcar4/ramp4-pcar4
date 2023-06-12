@@ -224,6 +224,12 @@ export enum GlobalEvents {
     MAP_MOUSEDOWN = 'map/mousedown',
 
     /**
+     * Fires when the mouse leaves the map.
+     * Payload: `(params: PointerEvent)` (DOM Event)
+     */
+    MAP_MOUSELEAVE = 'map/mouseleave',
+
+    /**
      * Fires when the mouse moves while over the map.
      * Payload: `(params: MapMove)`
      */
@@ -359,6 +365,7 @@ const enum DefEH {
     MAP_KEYUP_UPDATES_KEY_HANDLER = 'ramp_map_keyup_updates_key_handler',
     MAP_MOUSE_UPDATES_COORDS = 'ramp_map_mouse_updates_coords',
     MAP_MOUSE_UPDATES_MAPTIP = 'ramp_map_mouse_updates_maptip',
+    MAP_MOUSELEAVE_REMOVES_MAPTIP = 'ramp_map_mouseleave_removes_maptip',
     MAP_RESIZE_UPDATES_SCALEBAR = 'ramp_map_resize_updates_scalebar',
     MAP_SCALE_UPDATES_SCALEBAR = 'ramp_map_scale_updates_scalebar',
     PANEL_CLOSE_UPDATES_APPBAR = 'ramp_panel_close_updates_appbar',
@@ -632,6 +639,7 @@ export class EventAPI extends APIScope {
                 DefEH.MAP_KEYUP_UPDATES_KEY_HANDLER,
                 DefEH.MAP_MOUSE_UPDATES_COORDS,
                 DefEH.MAP_MOUSE_UPDATES_MAPTIP,
+                DefEH.MAP_MOUSELEAVE_REMOVES_MAPTIP,
                 DefEH.MAP_RESIZE_UPDATES_SCALEBAR,
                 DefEH.MAP_SCALE_UPDATES_SCALEBAR,
                 DefEH.PANEL_CLOSE_UPDATES_APPBAR,
@@ -1045,6 +1053,14 @@ export class EventAPI extends APIScope {
                     throttle(200, (mapMove: MapMove) => zeHandler(mapMove)),
                     handlerName
                 );
+                break;
+
+            case DefEH.MAP_MOUSELEAVE_REMOVES_MAPTIP:
+                // remove the maptip when the mouse leaves the map
+                zeHandler = () => {
+                    this.$iApi.geo.map.maptip.clear();
+                };
+                this.$iApi.event.on(GlobalEvents.MAP_MOUSELEAVE, zeHandler);
                 break;
 
             case DefEH.MAP_RESIZE_UPDATES_SCALEBAR:

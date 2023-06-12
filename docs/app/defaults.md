@@ -105,7 +105,8 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | MAP_IDENTIFY<br>'map/identify'                     | MapIdentifyResult object                                       | A map identify was requested                     |
 | MAP_KEYDOWN<br>'map/keydown'                       | KeyboardEvent object                                           | A key was pressed                                |
 | MAP_KEYUP<br>'map/keyup'                           | KeyboardEvent object                                           | A key was released                               |
-| MAP_MOUSEDOWN<br>'map/mousedown'                   | PointerEvent object                                            | A mouse button was depressed                     |
+| MAP_MOUSEDOWN<br>'map/mousedown'                   | PointerEvent object                                            | A mouse button was depressed
+| MAP_MOUSELEAVE<br>'map/mouseleave'             |     PointerEvent object                                            | The mouse left the map                    |
 | MAP_MOUSEMOVE<br>'map/mousemove'                   | MapMove object                                                 | The mouse moved over the map                     |
 | MAP_MOUSEMOVE_END<br>'map/mousemoveend'            | MapMove object                                                 | The mouse started moving over the map            |
 | MAP_MOUSEMOVE_START<br>'map/mousemovestart'        | MapMove object                                                 | The mouse stopped moving over the map            |
@@ -172,6 +173,7 @@ Creates or updates the feature maptip
 - `ramp_map_extent_updates_maptip` check for graphics when map extent changes
 - `ramp_map_graphichit_creates_maptip` create maptip content when a new feature is hit
 - `ramp_map_mouse_updates_maptip` check for graphics when mouse moves
+- `ramp_map_mouseleave_removes_maptip` remove the maptip when the mouse leaves the map
 
 Changes to the basemap causing tile layers to no longer be visible
 - `ramp_map_basemap_checks_proj` will notify the user if there is a projection mismatch
