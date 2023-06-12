@@ -25,12 +25,12 @@ Les commandes de navigation suivantes se trouvent dans le coin inférieur droit 
 
 | Icône | Fonction | Description |
 | --- | --- | --- |
-| ![L'icône représentant la fonction Zoom In](navigation/zoomin.png) | Zoom avant – Plus (+) | Permet de faire un zoom avant d'un niveau sur la carte pour voir un contenu plus détaillé. |
-| ![L'icône représentant la fonction Zoom arrière](navigation/zoomout.png) | Zoom arrière – Moins (‑) | Permet de faire un zoom arrière d'un niveau sur la carte pour voir un contenu moins détaillé. |
-| ![L'icône représentant la fonction plein écran](navigation/fullscreen.png) | Plein écran | Présente le contenu de la carte sur l'ensemble de la page. Cette fonction n'est disponible que lorsque la carte est intégrée à une autre page. |
-| ![L'icône représentant la fonction Géolocalisation](navigation/geolocate.png) | Votre position | Permet de faire un zoom et un panoramique sur l'emplacement actuel de l'appareil. |
-| ![L'icône représentant la fonction Etendue initiale de la carte](navigation/home.png) | Accueil/étendue initiale | Permet de faire un zoom et un panoramique de façon à afficher l'étendue initiale. |
-| ![L'icône représentant la fonction d'aide](navigation/help.png) | Aide | Ouvre ou ferme la boîte d'aide. |
+| ![L’icône représentant la fonction Zoom avant](navigation/zoomin.png) | Zoom avant – Plus (+) | Permet de faire un zoom avant d'un niveau sur la carte pour voir un contenu plus détaillé. |
+| ![L’icône représentant la fonction Zoom arrière](navigation/zoomout.png) | Zoom arrière – Moins (‑) | Permet de faire un zoom arrière d'un niveau sur la carte pour voir un contenu moins détaillé. |
+| ![L’icône représentant la fonction Mode plein écran](navigation/fullscreen.png) | Plein écran | Présente le contenu de la carte sur l'ensemble de la page. Cette fonction n'est disponible que lorsque la carte est intégrée à une autre page. |
+| ![L’icône représentant la fonction Géolocalisation](navigation/geolocate.png) | Votre position | Permet de faire un zoom et un panoramique sur l'emplacement actuel de l'appareil. |
+| ![L’icône représentant la fonction Retour à l’étendue initiale de la carte](navigation/home.png) | Accueil/étendue initiale | Permet de faire un zoom et un panoramique de façon à afficher l'étendue initiale. |
+| ![L’icône représentant la fonction Aide](navigation/help.png) | Aide | Ouvre ou ferme la boîte d'aide. |
 
 
 # Renseignements de navigation
@@ -68,13 +68,13 @@ Veuillez noter que certains paramètres ne sont nécessairement pas disponibles,
 
 | Icône | Fonction | Description |
 | --- | --- | --- |
-| ![L'icône représentant la fonction Métadonnées](layer/metadata.png) | Métadonnées | Affiche les métadonnées pertinentes dans une fenêtre coulissante. |
-| ![L'icône représentant la fonction Paramètres](layer/settings.png) | Paramètres | Ouvre une fenêtre coulissante à l'intérieur de laquelle la zone de délimitation et les données interrogeables peuvent être affichées ou masquées et le degré d'opacité peut être réglé. |
-| ![L'icône représentant la table de données des fonctions](layer/datatable.png) | Tableau de données | Affiche les données dans un tableau. |
-| ![L'icône représentant la fonction Afficher la légende](layer/legend.png) | Légende | Développe ou réduit la pile d'images de la légende. |
-| ![L'icône représentant la fonction Zoom sur la limite du calque](layer/zoomBoundary.png) | Zoomer à la limite | Permet d'avoir une vue panoramique et de faire un zoom sur la carte afin d'afficher la limite de la couche. |
-| ![L'icône représentant la fonction Recharger](layer/reload.png) | Recharger | Recharge la couche. |
-| ![L'icône représentant la fonction Supprimer](layer/remove.png) | Retirer | Supprime la couche de la carte et de la légende. |
+| ![L’icône représentant la fonction Métadonnées](layer/metadata.png) | Métadonnées | Affiche les métadonnées pertinentes dans une fenêtre coulissante. |
+| ![L’icône représentant la fonction Paramètres](layer/settings.png) | Paramètres | Ouvre une fenêtre coulissante à l'intérieur de laquelle la zone de délimitation et les données interrogeables peuvent être affichées ou masquées et le degré d'opacité peut être réglé. |
+| ![L’icône représentant la fonction Tableau de données](layer/datatable.png) | Tableau de données | Affiche les données dans un tableau. |
+| ![L’icône représentant la fonction Afficher la légende](layer/legend.png) | Légende | Développe ou réduit la pile d'images de la légende. |
+| ![L’icône représentant la fonction Zoom à la limite](layer/zoomBoundary.png) | Zoomer à la limite | Permet d'avoir une vue panoramique et de faire un zoom sur la carte afin d'afficher la limite de la couche. |
+| ![L’icône représentant la fonction Rechargement](layer/reload.png) | Recharger | Recharge la couche. |
+| ![L’icône représentant la fonction Supprimer](layer/remove.png) | Retirer | Supprime la couche de la carte et de la légende. |
 
 
 # Sous‑menu de la couche
@@ -83,10 +83,10 @@ Dans la fenêtre Légende, quatre fonctions s'affichent sur une ligne en haut :
 
 | Icône | Fonction | Description |
 | --- | --- | --- |
-| ![L'icône représentant la fonction Ajouter une couche](layer/addLayer.png) | Ajouter une couche | Options du menu permettant d'ajouter une couche à partir d'un fichier ou d'un service. |
-| ![L'icône représentant la fonction Réorganiser les calques](layer/reorderLayers.png) | Réorganiser les couches | Fournit une solution de rechange à la réorganisation à l'aide de la technique glisser‑déposer, déjà proposée. Lorsque les couches sont sélectionnées, vous ne pouvez les réorganiser qu'en maintenant l'icône de la poignée, située à côté de chaque couche. Cette fonction est très utile pour les appareils à écran tactile. |
-| ![L'icône représentant la fonction Basculer les groupes](layer/toggleGroups.png) | Basculer les groupes | Élargit ou réduit tous les groupes. |
-| ![L'icône représentant la fonction Basculer la visibilité](layer/toggleVisibility.png) | Basculer la visibilité | Affiche ou masque toutes les couches. |
+| ![L’icône représentant la fonction Ajouter une couche](layer/addLayer.png) | Ajouter une couche | Options du menu permettant d'ajouter une couche à partir d'un fichier ou d'un service. |
+| ![L’icône représentant la fonction Réorganiser les couches](layer/reorderLayers.png) | Réorganiser les couches | Fournit une solution de rechange à la réorganisation à l'aide de la technique glisser‑déposer, déjà proposée. Lorsque les couches sont sélectionnées, vous ne pouvez les réorganiser qu'en maintenant l'icône de la poignée, située à côté de chaque couche. Cette fonction est très utile pour les appareils à écran tactile. |
+| ![L’icône représentant la fonction Basculer entre les groupes](layer/toggleGroups.png) | Basculer les groupes | Élargit ou réduit tous les groupes. |
+| ![L’icône représentant la fonction Basculer l’état de visibilité](layer/toggleVisibility.png) | Basculer la visibilité | Affiche ou masque toutes les couches. |
 
 
 # Recherche géolocalisée
@@ -102,10 +102,10 @@ La fonction de recherche géolocalisée permet aux utilisateurs de rechercher de
 - Chaque résultat de recherche comprend les éléments suivants : le nom du lieu (mot‑clé en surbrillance), la province du lieu et le type de lieu (lac, ville, village, etc.).
 - Cliquez sur un résultat distinct pour saisir les coordonnées et faire un zoom sur la carte de façon à ce qu'elle soit centrée sur le lieu souhaité.
 
-**Adresse de rue**: Effectuer une recherche en utilisant les adresses de rue directes pour afficher une liste de résultats liés au terme recherché
+**Adresse municipale** : effectuer une recherche à partir des adresses municipales pour obtenir une liste de résultats liés au terme recherché
 
-- les adresses peuvent être localisées par nom de rue, ou plus précisément par numéro de lieu et nom de rue
-- les résultats sont triés en fonction du degré de correspondance entre l'adresse et le terme recherché.
+- Il est possible de trouver des adresses par le nom de la rue ou, plus précisément, par le numéro d’immeuble et le nom de la rue.
+- Les résultats sont triés en fonction du degré de correspondance entre l’adresse et le terme recherché.
 
 **Recherche par région de tri d'acheminement (RTA)** : une **région de tri d'acheminement (RTA)** est une façon de désigner une zone géographique en fonction des trois premiers caractères d'un code postal canadien. Tous les codes postaux qui commencent par les trois mêmes caractères font partie d'une même **RTA**.
 
@@ -128,7 +128,7 @@ La fonction de recherche géolocalisée permet aux utilisateurs de rechercher de
 
 ### Filtres de la recherche géolocalisée
 
-Lorsque vous recherchez un lieu, une fenêtre s'affiche sous le champ de recherche. Cette fenêtre de résultats contient deux listes déroulantes qui vous permettent de filtrer les résultats de la recherche par **province** et par **type** (lac, ville, rivière, etc.). À droite de ces deux listes se trouve le bouton **Effacer les filtres** ![Une icône représentant la fonction "Effacer"](datatable/clearFilters.png) qui vous permet d'effacer les éléments de filtre sélectionnés.
+Lorsque vous recherchez un lieu, une fenêtre s'affiche sous le champ de recherche. Cette fenêtre de résultats contient deux listes déroulantes qui vous permettent de filtrer les résultats de la recherche par **province** et par **type** (lac, ville, rivière, etc.). À droite de ces deux listes se trouve le bouton **Effacer les filtres** ![Une icône représentant la fonction Effacer](datatable/clearFilters.png) qui vous permet d'effacer les éléments de filtre sélectionnés.
 
 Au bas de la fenêtre des résultats, il y a une case à cocher intitulée **Visible sur la carte**. Cochez cette case pour filtrer davantage les résultats et n'afficher que les lieux qui sont actuellement visibles sur la carte. Si vous déplacez la carte ou si vous faites un zoom avant ou arrière alors que cette case est cochée, les résultats seront automatiquement mis à jour de façon à afficher les lieux qui se trouvent sur la carte.
 
@@ -202,7 +202,7 @@ Ce groupe de commandes est situé en haut du tableau de données et comporte les
   - Lorsque cette option est désactivée, il n'est pas possible de modifier les filtres de colonnes.
   - Les filtres de colonnes demeurent en vigueur même lorsque l'option est désactivée.
 - ![Une icône représentant la fonction « Étendre le filtre »](datatable/extentFilter.png) Filtrer par étendue
-  - Permet de basculer le filtre par portée
+  - Permet d’activer le filtre en fonction de l’étendue.
 - ![Une icône représentant la fonction « Effacer la recherche et les filtres »](datatable/clearFilters.png) Efface la recherche et les filtres
     - Efface toutes les recherches et tous les filtres qui peuvent s'appliquer au tableau.
 
