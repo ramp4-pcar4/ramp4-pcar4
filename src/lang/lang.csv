@@ -8,8 +8,8 @@ ramp.about.open,Open About RAMP,1,Ouvrir À propos de PCAR,1
 ramp.about,About RAMP,1,À propos de PCAR,1
 keyboardInstructions.title,Keyboard Instructions,1,Instructions clavier,1
 keyboardInstructions.open,Open keyboard instructions,1,Instructions clavier ouvert,1
-keyboardInstructions.app,"Use 'Tab' to navigate between sections of the application.",1,"Utilisez la touche Tab pour vous déplacer entre les sections de l’application.",1
-keyboardInstructions.lists,"Use the arrow keys to move between items in lists. With a list item selected you can press 'Space' or 'Enter' to click the item. You can also navigate within the list item using 'Tab'.",1,"Lorsqu’un élément de la liste est sélectionné, vous pouvez appuyer sur « Espace » ou « Entrée » pour cliquer sur l’élément. Vous pouvez également vous déplacer au sein de l’élément de la liste au moyen de la touche « Tab ».",1
+keyboardInstructions.app,"Use 'Tab' to navigate between sections of the application.",1,"Utilisez la touche Tab pour vous déplacer entre les sections de l'application.",1
+keyboardInstructions.lists,"Use the arrow keys to move between items in lists. With a list item selected you can press 'Space' or 'Enter' to click the item. You can also navigate within the list item using 'Tab'.",1,"Lorsqu'un élément de la liste est sélectionné, vous pouvez appuyer sur « Espace » ou « Entrée » pour cliquer sur l'élément. Vous pouvez également vous déplacer au sein de l'élément de la liste au moyen de la touche « Tab ».",1
 keyboardInstructions.map,"When the map is selected, use the arrow keys to move around and 'Enter' to select a point.",1,"Lorsque la carte est sélectionnée, utilisez le pavé curseur pour vous déplacer et appuyez sur « Entrée »  pour sélectionner un point.",1
 keyboardInstructions.OK,OK,1,OK,1
 map.toggleScaleUnits,Toggle between imperial and metric map scale,1,Basculer entre les échelles métriques et impériales pour la carte,1
@@ -44,7 +44,7 @@ panels.controls.moveLeft,Move Left,1,Aller à gauche,1
 panels.alert.open,{name} panel opened,1,Fenêtre {name} ouverte,1
 panels.alert.close,{name} panel closed,1,Fenêtre {name} fermée,1
 panels.alert.minimize,{name} panel minimized,1,Fenêtre {name} réduite,1
-layer.error,{id} failed to load,1,{id} n'a pas pu être chargée,0
+layer.error,{id} failed to load,1,Échec du chargement de {id},1
 layer.longload,{id} is taking longer than expected to load,1,Le chargement de {id} met plus de temps que prévu,1
-layer.longdraw,{id} is taking longer than expected to draw,1,{id} prend plus longtemps que prévu pour dessiner,0
+layer.longdraw,{id} is taking longer than expected to draw,1,{id} prend plus de temps que prévu à extraire,1
 layer.mismatch,{id} cannot be displayed in the current projection,1,{id} ne peut pas être affiché dans la projection actuelle,0
