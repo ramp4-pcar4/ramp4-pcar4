@@ -215,7 +215,12 @@ export class GeoSearchUI {
                         // add first geosearch result as location of NTS map number
                         featureResult = q.featureResults.map((nts: any) => ({
                             name: nts.nts,
-                            bbox: nts.bbox,
+                            bbox: nts.bbox ?? [
+                                nts.LatLon.lon + 0.02,
+                                nts.LatLon.lat - 0.02,
+                                nts.LatLon.lon - 0.02,
+                                nts.LatLon.lat + 0.02
+                            ],
                             type: nts.desc,
                             position: [nts.LatLon.lon, nts.LatLon.lat],
                             location: {
