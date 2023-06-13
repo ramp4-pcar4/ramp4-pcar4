@@ -423,7 +423,7 @@ export interface SpecialColumnDefinition {
         clearFilters?: Function;
     };
     pinned?: string;
-    maxWidth: number;
+    maxWidth?: number;
     cellStyle: Function;
     cellRenderer?: Function;
     cellRendererParams?: any;
@@ -838,7 +838,7 @@ const setUpSpecialColumns = (
             filter: false,
             lockPosition: true,
             isStatic: true,
-            maxWidth: 48,
+            maxWidth: 100,
             cellStyle: () => {
                 return {
                     padding: '0px'
