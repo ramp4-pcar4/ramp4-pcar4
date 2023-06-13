@@ -92,13 +92,16 @@
                 <div v-if="layerExists">
                     <div v-if="identifyItem.loaded">
                         <!-- fancy header for esri features -->
-                        <div class="flex py-8" v-if="supportsFeatures">
+                        <div
+                            class="flex py-8 items-center"
+                            v-if="supportsFeatures"
+                        >
                             <span
                                 v-if="icon"
-                                class="flex-none m-auto symbologyIcon"
+                                class="flex-none symbologyIcon"
                                 v-html="icon"
                             ></span>
-                            <div v-else class="m-auto">
+                            <div v-else>
                                 <div
                                     class="animate-spin spinner h-20 w-20"
                                 ></div>
@@ -106,29 +109,88 @@
                             <span class="flex-grow my-auto text-lg px-8">
                                 {{ itemName }}
                             </span>
-                            <button
-                                type="button"
-                                :content="t('details.item.zoom')"
-                                v-tippy="{ placement: 'bottom' }"
-                                :aria-label="t('details.item.zoom')"
-                                @click="zoomToFeature()"
-                                class="text-gray-600 m-8"
+                            <div
+                                class="flex flex-col items-center flex-shrink-0"
                             >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    height="20"
-                                    viewBox="0 0 24 24"
-                                    width="20"
+                                <button
+                                    type="button"
+                                    :content="t('details.item.zoom')"
+                                    v-tippy="{ placement: 'bottom' }"
+                                    :aria-label="t('details.item.zoom')"
+                                    @click="zoomToFeature()"
+                                    class="text-gray-600 m-8 w-20 h-20"
                                 >
-                                    <path
-                                        d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
-                                    />
-                                    <path d="M0 0h24v24H0V0z" fill="none" />
-                                    <path
-                                        d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"
-                                    />
-                                </svg>
-                            </button>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        height="20"
+                                        viewBox="0 0 24 24"
+                                        width="20"
+                                    >
+                                        <path
+                                            d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                                        />
+                                        <path d="M0 0h24v24H0V0z" fill="none" />
+                                        <path
+                                            d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"
+                                        />
+                                    </svg>
+                                </button>
+                                <div
+                                    v-if="zoomStatus === 'zooming'"
+                                    class="flex items-center"
+                                >
+                                    <div
+                                        class="animate-spin spinner h-20 w-20"
+                                    ></div>
+                                    <span class="ml-4">{{
+                                        t('details.item.zoom.zooming')
+                                    }}</span>
+                                </div>
+                                <div
+                                    v-else-if="zoomStatus === 'zoomed'"
+                                    class="flex items-center"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.5"
+                                        stroke="green"
+                                        class="w-20 h-20"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M4.5 12.75l6 6 9-13.5"
+                                        />
+                                    </svg>
+                                    <span class="ml-4">{{
+                                        t('details.item.zoom.success')
+                                    }}</span>
+                                </div>
+                                <div
+                                    v-else-if="zoomStatus === 'error'"
+                                    class="flex items-center"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.5"
+                                        stroke="red"
+                                        class="w-20 h-20"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                        />
+                                    </svg>
+                                    <span class="ml-4">{{
+                                        t('details.item.zoom.fail')
+                                    }}</span>
+                                </div>
+                            </div>
                         </div>
                         <component
                             :is="detailsTemplate"
@@ -172,7 +234,9 @@ import {
     onBeforeUnmount,
     onBeforeUpdate,
     onMounted,
-    ref
+    ref,
+    watch,
+    type WatchStopHandle
 } from 'vue';
 import type { PropType } from 'vue';
 import { DetailsItemInstance, useDetailsStore } from './store';
@@ -289,6 +353,7 @@ const detailsTemplate = computed(() => {
 });
 
 const icon = ref<string>('');
+const zoomStatus = ref<string>('');
 const currentIdx = ref<number>(0);
 const layerExists = ref<Boolean>(false);
 const handlers = ref<Array<string>>([]);
@@ -325,6 +390,7 @@ const initDetails = () => {
  * Called whenever the displayed item changes
  */
 const itemChanged = () => {
+    zoomStatus.value = '';
     if (identifyItem.value.loaded) {
         const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
             props.result.uid
@@ -433,6 +499,7 @@ const fetchIcon = () => {
  * Zoom to feature on the map
  */
 const zoomToFeature = () => {
+    zoomStatus.value = 'zooming';
     const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
         props.result.uid
     );
@@ -441,6 +508,9 @@ const zoomToFeature = () => {
         console.warn(
             `Could not find layer for uid ${props.result.uid} during zoom geometry lookup`
         );
+        setTimeout(() => {
+            zoomStatus.value = 'error';
+        }, 300);
         return;
     }
 
@@ -448,6 +518,9 @@ const zoomToFeature = () => {
         console.warn(
             'Details zoomToFeature call on item that is still loading. Should be impossible, alert the devs.'
         );
+        setTimeout(() => {
+            zoomStatus.value = 'error';
+        }, 300);
         return;
     }
 
@@ -456,8 +529,14 @@ const zoomToFeature = () => {
     layer.getGraphic(oid, opts).then(g => {
         if (g.geometry.invalid()) {
             console.error(`Could not find graphic for objectid ${oid}`);
+            setTimeout(() => {
+                zoomStatus.value = 'error';
+            }, 300);
         } else {
             iApi.geo.map.zoomMapTo(g.geometry);
+            setTimeout(() => {
+                zoomStatus.value = 'zoomed';
+            }, 300);
         }
     });
 
