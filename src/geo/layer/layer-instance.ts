@@ -586,6 +586,17 @@ export class LayerInstance extends APIScope {
     }
 
     /**
+     * Gets the extent where the provided object id is on the map.
+     * Can only be used on feature layers. Not applicable to point geometry.
+     *
+     * @param objectId the object id to query
+     * @returns {Promise} resolves with the extent where the object id is present
+     */
+    getGraphicExtent(objectId: number): Promise<Extent> {
+        return Promise.resolve(Extent.fromParams('fake', 0, 0, 0, 0));
+    }
+
+    /**
      * Get the parent layer for this layer
      * Only supported for sublayers
      *

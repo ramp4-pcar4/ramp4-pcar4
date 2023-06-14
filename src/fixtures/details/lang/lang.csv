@@ -9,8 +9,8 @@ details.items.title,Details,1,Détails,1
 details.item.see.list,See List,1,Voir la liste,1
 details.item.zoom,Zoom to feature,1,Zoom à l'élément,1
 details.item.zoom.zooming,Zooming...,1,Zoom...,0
-details.item.zoom.fail,Zoom failed,1,Échec du zoom,0
-details.item.zoom.success,Zoomed,1,Zoomé,0
+details.item.zoom.error,Zoom failed,1,Échec du zoom,0
+details.item.zoom.zoomed,Zoomed,1,Zoomé,0
 details.item.previous.item,Previous item,1,Élément précédent,1
 details.item.next.item,Next item,1,Élément suivant,1
 details.item.count,{0} of {1},1,{0} de {1},1
