@@ -39,11 +39,12 @@ const openDetails = () => {
     let data = Object.assign({}, props.params.data);
     delete data['rvInteractive'];
     delete data['rvSymbol'];
+    delete data['rvUid'];
 
     // grid only supports esri features at the moment, so we hardcode that format
     iApi.event.emit(GlobalEvents.DETAILS_TOGGLE, {
         data: data,
-        uid: props.params.uid,
+        uid: props.params.data.rvUid,
         format: IdentifyResultFormat.ESRI
     });
 };

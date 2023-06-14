@@ -349,7 +349,7 @@ const enum DefEH {
     LAYER_RELOAD_END_BINDS_LEGEND = 'ramp_layer_reload_end_binds_legend',
     LAYER_RELOAD_START_UPDATES_LEGEND = 'ramp_layer_reload_start_updates_legend',
     LAYER_REMOVE_UPDATES_DETAILS = 'ramp_layer_remove_updates_details',
-    LAYER_REMOVE_CLOSES_GRID = 'ramp_layer_remove_closes_grid',
+    LAYER_REMOVE_CHECKS_GRID = 'ramp_layer_remove_checks_grid',
     LAYER_REMOVE_UPDATES_LEGEND = 'ramp_layer_remove_updates_legend',
     LAYER_USERADD_UPDATES_LEGEND = 'ramp_layer_useradd_updates_legend',
     MAP_BASEMAP_CHECKS_TILE_PROJ = 'ramp_map_basemap_checks_tile_proj',
@@ -623,7 +623,7 @@ export class EventAPI extends APIScope {
                 DefEH.LAYER_RELOAD_END_BINDS_LEGEND,
                 DefEH.LAYER_RELOAD_START_UPDATES_LEGEND,
                 DefEH.LAYER_REMOVE_UPDATES_DETAILS,
-                DefEH.LAYER_REMOVE_CLOSES_GRID,
+                DefEH.LAYER_REMOVE_CHECKS_GRID,
                 DefEH.LAYER_REMOVE_UPDATES_LEGEND,
                 DefEH.LAYER_USERADD_UPDATES_LEGEND,
                 DefEH.MAP_BASEMAP_CHECKS_TILE_PROJ,
@@ -759,19 +759,27 @@ export class EventAPI extends APIScope {
                 );
                 break;
 
-            case DefEH.LAYER_REMOVE_CLOSES_GRID:
-                // when a layer is removed, close the standard grid if open for that layer
+            case DefEH.LAYER_REMOVE_CHECKS_GRID:
+                // when a layer is removed, remove that layer from the corresponding grid
+                // close the panel if the removed layer was the last one in the grid
                 zeHandler = (layer: LayerInstance) => {
                     if (this.$iApi.fixture.get<GridAPI>('grid')) {
                         const gridStore = useGridStore(this.$vApp.$pinia);
-                        // remove cached grid state for layer from grid store
-                        gridStore.removeGrid(layer.id);
-                        // close grid panel if open or minimized with removed layer
-                        const currentId = gridStore.currentId;
-                        if (layer.id === currentId) {
-                            const panel = this.$iApi.panel.get('grid');
-                            this.$iApi.panel.close(panel);
-                            gridStore.currentId = undefined;
+                        // fetch grid id containing layer with given id
+                        const gridId = gridStore.getGridId(layer.id);
+                        if (gridId === undefined) return;
+                        // remove layerId from grid
+                        gridStore.removeLayer(gridId, layer.id);
+                        if (gridStore.grids[gridId].layerIds.length === 0) {
+                            // remove cached grid state for layer from grid store
+                            gridStore.removeGrid(gridId);
+                            // close grid panel if open or minimized with removed layer
+                            const currentId = gridStore.currentId;
+                            if (gridId === currentId) {
+                                const panel = this.$iApi.panel.get('grid');
+                                this.$iApi.panel.close(panel);
+                                gridStore.currentId = undefined;
+                            }
                         }
                     }
                 };

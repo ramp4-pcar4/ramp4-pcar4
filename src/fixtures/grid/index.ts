@@ -34,7 +34,7 @@ class GridFixture extends GridAPI {
         );
 
         // parse grid config for each layer
-        this._parseConfig();
+        this._parseConfig(this.config);
     }
 
     removed() {
