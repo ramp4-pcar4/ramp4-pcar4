@@ -200,7 +200,7 @@ export class PanelAPI extends APIScope {
      */
     get opened(): PanelInstance[] {
         //@ts-ignore
-        return this.panelStore.orderedItems;
+        return this.panelStore.orderedItems.concat(this.panelStore.teleported);
     }
 
     /**
@@ -213,7 +213,7 @@ export class PanelAPI extends APIScope {
      */
     get visible(): PanelInstance[] {
         //@ts-ignore
-        return this.panelStore.visible;
+        return this.panelStore.visible.concat(this.panelStore.teleported);
     }
 
     /**
@@ -428,6 +428,15 @@ export class PanelAPI extends APIScope {
             panel.registerScreen(route.screen);
         }
 
+        // if this panel is going to be teleported elsewhere, turn off the header by setting the header prop,
+        // unless someone already forced the header to true.
+        if (panel.teleport) {
+            route.props = {
+                header: !!panel.teleport?.showHeader,
+                ...route.props
+            };
+        }
+
         this.panelStore.items[panel.id].route = route;
 
         return panel;
@@ -542,4 +551,35 @@ export interface PanelWidthObject {
      * @memberof PanelWidthObject
      */
     [panel: string]: number | any;
+}
+
+export type PanelTeleportConfig =
+    | PanelTeleportObject
+    | { [id: string]: PanelTeleportObject };
+
+export interface PanelTeleportObject {
+    /**
+     * The element to teleport the panel to. Can be the actual element or a query selector string.
+     *
+     * @type string | Element
+     * @memberof PanelTeleportObject
+     */
+    target?: string | Element;
+
+    /**
+     * Whether or not to show the panel header.
+     *
+     * @type boolean
+     * @memberof PanelTeleportObject
+     */
+    showHeader?: boolean;
+
+    /**
+     * Whether or not opening/closing the panel will show/hide an appbar button for it.
+     * Will only apply to temporary appbar buttons.
+     *
+     * @type boolean
+     * @memberof PanelTeleportObject
+     */
+    showAppbarButton?: boolean;
 }

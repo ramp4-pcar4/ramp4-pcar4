@@ -23,9 +23,6 @@ defineProps({
     panel: {
         type: PanelInstance,
         required: true
-    },
-    header: {
-        type: String
     }
 });
 

@@ -106,6 +106,8 @@ class GazeboFixture extends FixtureInstance {
             },
             { i18n: { messages } }
         );
+
+        this.handlePanelTeleports(['p1', 'p2']);
     }
 }
 

@@ -276,6 +276,44 @@ myRAMPInstance.panel.register(panelConfig);
 
 Your panel is now ready for use! You should now leverage the [API](#the-panel-api) to perform different functions of your choice. For example, you can display the panel on the screen with the `open` method, pin the panel on the screen with the `pin` method, and so on.
 
+## Teleporting panels
+
+Panels that come out of the box can also be rendered outside the panel stack, in the container of your choice. In order to do so, you must provide a teleport configuration inside the fixture config of the fixture that registers the panel. The configuration has three properties:
+
+* `target` - (required) the element where the panel will be rendered instead of its usual spot in the panel stack. The value can be the element itself or a string query selector.
+* `showHeader` - (optional) a boolean indicating whether or not to show the panel's header, defaults to `false`.
+* `showAppbarButton` - (optional) a boolean indicating whether or not opening the panel will show an appbar button for it, defaults to `false`. This only applies to temporary appbar buttons.
+
+Below is a configuration snippet that shows how to configure the legend to appear in your own `div` element:
+
+```JS
+fixtures: {
+    legend: {
+        root: {
+            children: [
+                {
+                    name: 'Keyword search',
+                    layerId: 'climateActionMap',
+                    symbologyExpanded: true
+                }
+            ]
+        },
+        panelTeleport: {
+            target: document.getElementById('legend'),
+            showHeader: true,
+            showAppbarButton: false
+        }
+    }
+}
+```
+
+Some other important things to note include:
+
+* In order to get the regular panel styling, you will need to add the `ramp-app` class to your target element. Otherwise, things are likely to look funny.
+* Teleported panels by have the `focus-container` directive removed by default. If you wish to add this directive back, you can add the `inner-shell` class to your target element.
+* Unlike regular panels, teleported panels will always take up the full width of the target element. Therefore, it is not recommended to teleport multiple panels into one container.
+
+
 ## The Panel API
 
 The API can be accessed through the RAMP Instance API:

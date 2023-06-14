@@ -26,6 +26,8 @@ class BasemapFixture extends FixtureInstance {
             },
             { i18n: { messages } }
         );
+
+        this.handlePanelTeleports(['basemap']);
     }
 
     removed() {

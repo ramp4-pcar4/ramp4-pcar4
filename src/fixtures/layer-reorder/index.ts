@@ -29,6 +29,8 @@ class LayerReorderFixture extends LayerReorderAPI {
                 i18n: { messages }
             }
         );
+
+        this.handlePanelTeleports(['layer-reorder']);
     }
 
     removed() {

@@ -19,5 +19,6 @@ export class AreasOfInterestAPI extends FixtureInstance {
         }
         const areasOfInterestStore = useAreasOfInterestStore(this.$vApp.$pinia);
         areasOfInterestStore.areas = areasOfInterest.areas;
+        this.handlePanelTeleports(['areas-of-interest']);
     }
 }

@@ -6,7 +6,8 @@ import {
     InstanceAPI,
     isVueConstructor,
     isComponentOptions,
-    isTypeofImportVue
+    isTypeofImportVue,
+    type PanelTeleportObject
 } from './internal';
 
 import type {
@@ -48,6 +49,11 @@ export class PanelInstance extends APIScope {
     private readonly loadedScreens: string[] = [];
 
     readonly alertName: string;
+
+    /**
+     * The config for the element to render the panel screen in (instead of its usual spot in the panel stack).
+     */
+    teleport?: PanelTeleportObject;
 
     controls: any;
 
