@@ -7,7 +7,10 @@
         >
             <span class="inline font-bold">{{ val.alias }}</span>
             <span class="flex-auto"></span>
-            <span class="inline" v-html="makeHtmlLink(val.value)"></span>
+            <span
+                class="inline"
+                v-html="makeHtmlLink(val.value, val.alias)"
+            ></span>
         </div>
     </div>
 </template>
@@ -56,7 +59,7 @@ const itemData = () => {
 };
 
 // make links look like links and work like links
-const makeHtmlLink = (html: string): string => {
+const makeHtmlLink = (html: string, alias: string): string => {
     if (!html) {
         return html;
     }
@@ -68,7 +71,7 @@ const makeHtmlLink = (html: string): string => {
             /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i //eslint-disable-line
         )
     ) {
-        return `<img src="${html}" />`;
+        return `<img src="${html}" alt="Image associated with ${alias} field" />`;
     }
 
     const classes = 'underline text-blue-600 break-all';
