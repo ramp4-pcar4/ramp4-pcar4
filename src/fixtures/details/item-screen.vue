@@ -234,16 +234,15 @@ import {
     onBeforeUnmount,
     onBeforeUpdate,
     onMounted,
-    ref,
-    watch,
-    type WatchStopHandle
+    ref
 } from 'vue';
 import type { PropType } from 'vue';
 import { DetailsItemInstance, useDetailsStore } from './store';
 import type { DetailsAPI } from './api/details';
 
 import { GlobalEvents, InstanceAPI } from '@/api';
-import type { FieldDefinition, IdentifyResult, IdentifyItem } from '@/geo/api';
+import type { FieldDefinition, IdentifyItem, IdentifyResult } from '@/geo/api';
+import { GeometryType, LayerType } from '@/geo/api';
 import type { LayerInstance, PanelInstance } from '@/api/internal';
 
 import ESRIDefault from './templates/esri-default.vue';
@@ -353,7 +352,7 @@ const detailsTemplate = computed(() => {
 });
 
 const icon = ref<string>('');
-const zoomStatus = ref<string>('');
+const zoomStatus = ref<'zooming' | 'zoomed' | 'error' | 'none'>('none');
 const currentIdx = ref<number>(0);
 const layerExists = ref<Boolean>(false);
 const handlers = ref<Array<string>>([]);
@@ -390,7 +389,7 @@ const initDetails = () => {
  * Called whenever the displayed item changes
  */
 const itemChanged = () => {
-    zoomStatus.value = '';
+    updateZoomStatus('none');
     if (identifyItem.value.loaded) {
         const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
             props.result.uid
@@ -453,6 +452,19 @@ const seeList = () => {
     });
 };
 
+const updateZoomStatus = (value: 'zooming' | 'zoomed' | 'error' | 'none') => {
+    if (value === 'zoomed' || value === 'error') {
+        setTimeout(() => {
+            zoomStatus.value = value;
+            setTimeout(() => {
+                zoomStatus.value = 'none';
+            }, 3000);
+        }, 300);
+    } else {
+        zoomStatus.value = value;
+    }
+};
+
 /**
  * Advance the item index by direction
  */
@@ -499,7 +511,7 @@ const fetchIcon = () => {
  * Zoom to feature on the map
  */
 const zoomToFeature = () => {
-    zoomStatus.value = 'zooming';
+    updateZoomStatus('zooming');
     const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
         props.result.uid
     );
@@ -508,9 +520,7 @@ const zoomToFeature = () => {
         console.warn(
             `Could not find layer for uid ${props.result.uid} during zoom geometry lookup`
         );
-        setTimeout(() => {
-            zoomStatus.value = 'error';
-        }, 300);
+        updateZoomStatus('error');
         return;
     }
 
@@ -518,29 +528,47 @@ const zoomToFeature = () => {
         console.warn(
             'Details zoomToFeature call on item that is still loading. Should be impossible, alert the devs.'
         );
-        setTimeout(() => {
-            zoomStatus.value = 'error';
-        }, 300);
+        updateZoomStatus('error');
         return;
     }
 
     const oid = identifyItem.value.data[layer.oidField];
-    const opts = { getGeom: true };
-    layer.getGraphic(oid, opts).then(g => {
-        if (g.geometry.invalid()) {
-            console.error(`Could not find graphic for objectid ${oid}`);
-            setTimeout(() => {
-                zoomStatus.value = 'error';
-            }, 300);
-        } else {
-            iApi.geo.map.zoomMapTo(g.geometry);
-            setTimeout(() => {
-                zoomStatus.value = 'zoomed';
-            }, 300);
-        }
-    });
+    const zoomUsingGraphic = () => {
+        const opts = { getGeom: true };
+        layer
+            .getGraphic(oid, opts)
+            .then(g => {
+                if (g.geometry.invalid()) {
+                    console.error(`Could not find graphic for objectid ${oid}`);
+                    updateZoomStatus('error');
+                } else {
+                    iApi.geo.map.zoomMapTo(g.geometry);
+                    updateZoomStatus('zoomed');
+                    iApi.updateAlert(iApi.$i18n.t('details.item.alert.zoom'));
+                }
+            })
+            .catch(() => {
+                updateZoomStatus('error');
+            });
+    };
 
-    iApi.updateAlert(iApi.$i18n.t('details.item.alert.zoom'));
+    if (
+        layer.layerType === LayerType.FEATURE &&
+        layer.geomType !== GeometryType.POINT
+    ) {
+        layer
+            .getGraphicExtent(oid)
+            .then(e => {
+                iApi.geo.map.zoomMapTo(e);
+                updateZoomStatus('zoomed');
+                iApi.updateAlert(iApi.$i18n.t('details.item.alert.zoom'));
+            })
+            .catch(() => {
+                zoomUsingGraphic();
+            });
+    } else {
+        zoomUsingGraphic();
+    }
 };
 
 const onHilightToggle = (value: boolean) => {

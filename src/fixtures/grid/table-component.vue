@@ -838,7 +838,7 @@ const setUpSpecialColumns = (
             filter: false,
             lockPosition: true,
             isStatic: true,
-            maxWidth: 100,
+            maxWidth: 48,
             cellStyle: () => {
                 return {
                     padding: '0px'

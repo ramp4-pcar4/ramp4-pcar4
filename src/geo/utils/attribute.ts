@@ -3,6 +3,7 @@ import type {
     Attributes,
     AttributeSet,
     BaseGeometry,
+    Extent,
     GetGraphicServiceDetails,
     TabularAttributeSet
 } from '@/geo/api';
@@ -409,11 +410,15 @@ export class QuickCache {
 
     private geoms: { [key: number]: any };
 
+    // extents for feature layer graphics that do not have a point geometry
+    private extents: { [key: number]: Extent };
+
     readonly isPoint: boolean;
 
     constructor(geomType: string) {
         this.attribs = {};
         this.geoms = {};
+        this.extents = {};
         this.isPoint = geomType === 'point';
     }
 
@@ -466,8 +471,17 @@ export class QuickCache {
         store[key] = geom;
     }
 
+    getExtent(key: number): Extent {
+        return this.extents[key];
+    }
+
+    setExtent(key: number, extent: Extent) {
+        this.extents[key] = extent;
+    }
+
     clearAll(): void {
         this.attribs = {};
         this.geoms = {};
+        this.extents = {};
     }
 }
