@@ -16,6 +16,7 @@ wizard.format.type.error.invalid,Invalid file or service type,1,Type de fichier 
 wizard.format.type.error.failure,Failed to load data from file/service,1,Échec du chargement des données à partir du fichier/service,1
 wizard.format.info.cors,Service needs to be CORS enabled,1,Le service doit être compatible CORS.,1
 wizard.format.warn.cors,Service may not support CORS,1,Le service ne pend peut-être pas en charge CORS.,1
+wizard.format.warn.vpn,Service may require a VPN connection,1,[fr] Service may require a VPN connection,0
 wizard.fileType.csv,CSV,1,CSV,1
 wizard.fileType.shapefile,zipped Shapefile,1,Shapefile zippé,1
 wizard.fileType.geojson,GeoJSON,1,GeoJSON,1

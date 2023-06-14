@@ -109,7 +109,7 @@
                                           t('wizard.format.warn.cors') +
                                           '.'
                                         : ''
-                                }`
+                                }${' ' + t('wizard.format.warn.vpn') + '.'}`
                             }"
                             @keydown.stop
                         />
@@ -123,7 +123,7 @@
                                     wizardStore.goToStep(0);
                                 }
                             "
-                            :disabled="false"
+                            :disabled="disabled"
                         />
                     </form>
                 </stepper-item>
@@ -320,6 +320,7 @@ const step = computed(() => wizardStore.currStep);
 
 const colour = ref();
 const colourPickerId = ref();
+const disabled = ref(false);
 
 const formatError = ref(false);
 const failureError = ref(false);
@@ -490,6 +491,7 @@ const onUploadContinue = (event: any) => {
 };
 
 const onSelectContinue = async () => {
+    disabled.value = true;
     failureError.value = false;
 
     try {
@@ -508,6 +510,7 @@ const onSelectContinue = async () => {
         }
     } catch (_) {
         failureError.value = true;
+        disabled.value = false;
         return;
     }
 
@@ -526,6 +529,7 @@ const onSelectContinue = async () => {
             },
             configOptions: []
         };
+        disabled.value = false;
         return;
     }
 
@@ -536,6 +540,8 @@ const onSelectContinue = async () => {
     layerInfo.value.configOptions.includes(`sublayers`)
         ? (finishStep.value = false)
         : (finishStep.value = true);
+
+    disabled.value = false;
 };
 
 const onConfigureContinue = async (data: object) => {
