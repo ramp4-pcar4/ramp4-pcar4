@@ -2,6 +2,7 @@ import { AttribLayer, InstanceAPI } from '@/api/internal';
 import {
     DataFormat,
     DefPromise,
+    Extent,
     GeometryType,
     IdentifyResultFormat,
     LayerFormat,
@@ -18,17 +19,20 @@ import type {
     Point
 } from '@/geo/api';
 import { EsriFeatureLayer, EsriRendererFromJson } from '@/geo/esri';
+import { reject } from 'lodash';
 import { markRaw, reactive } from 'vue';
 
 export class FeatureLayer extends AttribLayer {
     declare esriLayer: EsriFeatureLayer | undefined;
 
     tooltipField: string;
+    queryExtentCache: { [oid: number]: Extent };
 
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.dataFormat = DataFormat.ESRI_FEATURE;
         this.tooltipField = '';
+        this.queryExtentCache = {};
         this.supportsIdentify = true;
         this.layerType = LayerType.FEATURE;
         this.layerFormat = LayerFormat.FEATURE;
@@ -308,5 +312,50 @@ export class FeatureLayer extends AttribLayer {
         const sql = this.filter.getCombinedSql(exclusions);
         // feature layer on a server
         this.esriLayer.definitionExpression = sql;
+    }
+
+    /**
+     * Gets the extent where the provided object id is on the map.
+     * Can only be used on feature layers with multipoint, polyline, polygon geometry.
+     *
+     * @param objectId the object id to query
+     * @returns {Promise} resolves with the extent where the object id is present, rejects if geometry type is invalid or esri layer does not exist
+     */
+    queryExtent(objectId: number): Promise<Extent> {
+        return new Promise((resolve, reject) => {
+            if (!this.esriLayer) {
+                this.noLayerErr();
+                reject();
+            } else if (
+                !['multipoint', 'polyline', 'polygon'].includes(
+                    this.esriLayer.geometryType
+                )
+            ) {
+                console.error(
+                    `Attempted to query extent for invalid geometry type ${this.esriLayer.geometryType}.`
+                );
+                reject();
+                // TODO: should the query be re run if the basemap changes, or do we leave it up to user to do the projecting themselves?
+            } else if (this.queryExtentCache[objectId]) {
+                resolve(this.queryExtentCache[objectId]);
+            } else {
+                this.esriLayer
+                    .queryExtent({
+                        objectIds: [objectId],
+                        outSpatialReference: this.$iApi.geo.map.getSR().toESRI()
+                    })
+                    .then(result => {
+                        const rampExtent = Extent.fromESRI(result.extent);
+                        this.queryExtentCache[objectId] = rampExtent;
+                        resolve(rampExtent);
+                    })
+                    .catch(() => {
+                        console.error(
+                            `Extent querying failed for ${objectId}.`
+                        );
+                        reject();
+                    });
+            }
+        });
     }
 }

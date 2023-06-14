@@ -243,7 +243,12 @@ import { DetailsItemInstance, useDetailsStore } from './store';
 import type { DetailsAPI } from './api/details';
 
 import { GlobalEvents, InstanceAPI } from '@/api';
-import type { FieldDefinition, IdentifyResult, IdentifyItem } from '@/geo/api';
+import {
+    type FieldDefinition,
+    type IdentifyResult,
+    type IdentifyItem,
+    LayerType
+} from '@/geo/api';
 import type { LayerInstance, PanelInstance } from '@/api/internal';
 
 import ESRIDefault from './templates/esri-default.vue';
@@ -525,20 +530,45 @@ const zoomToFeature = () => {
     }
 
     const oid = identifyItem.value.data[layer.oidField];
-    const opts = { getGeom: true };
-    layer.getGraphic(oid, opts).then(g => {
-        if (g.geometry.invalid()) {
-            console.error(`Could not find graphic for objectid ${oid}`);
-            setTimeout(() => {
-                zoomStatus.value = 'error';
-            }, 300);
-        } else {
-            iApi.geo.map.zoomMapTo(g.geometry);
-            setTimeout(() => {
-                zoomStatus.value = 'zoomed';
-            }, 300);
-        }
-    });
+    const zoomUsingGraphic = () => {
+        const opts = { getGeom: true };
+        layer
+            .getGraphic(oid, opts)
+            .then(g => {
+                if (g.geometry.invalid()) {
+                    console.error(`Could not find graphic for objectid ${oid}`);
+                    setTimeout(() => {
+                        zoomStatus.value = 'error';
+                    }, 300);
+                } else {
+                    iApi.geo.map.zoomMapTo(g.geometry);
+                    setTimeout(() => {
+                        zoomStatus.value = 'zoomed';
+                    }, 300);
+                }
+            })
+            .catch(() => {
+                setTimeout(() => {
+                    zoomStatus.value = 'error';
+                }, 300);
+            });
+    };
+
+    if (layer.layerType === LayerType.FEATURE) {
+        layer
+            .queryExtent(oid)
+            .then(e => {
+                iApi.geo.map.zoomMapTo(e);
+                setTimeout(() => {
+                    zoomStatus.value = 'zoomed';
+                }, 300);
+            })
+            .catch(() => {
+                zoomUsingGraphic();
+            });
+    } else {
+        zoomUsingGraphic();
+    }
 
     iApi.updateAlert(iApi.$i18n.t('details.item.alert.zoom'));
 };

@@ -85,6 +85,7 @@ import {
 import type { InstanceAPI, LayerInstance } from '@/api/internal';
 import { useI18n } from 'vue-i18n';
 import { useLayerStore } from '@/stores/layer';
+import { LayerType } from '@/geo/api';
 
 const zoomStatus = ref<string>('');
 const props = defineProps(['params']);
@@ -107,20 +108,46 @@ const zoomToFeature = () => {
         return;
     }
     const oid = props.params.data[props.params.oidField];
-    const opts = { getGeom: true };
-    layer.getGraphic(oid, opts).then(g => {
-        if (g.geometry.invalid()) {
-            console.error(`Could not find graphic for objectid ${oid}`);
-            setTimeout(() => {
-                zoomStatus.value = 'error';
-            }, 300);
-        } else {
-            iApi.geo.map.zoomMapTo(g.geometry);
-            setTimeout(() => {
-                zoomStatus.value = 'zoomed';
-            }, 300);
-        }
-    });
+
+    const zoomUsingGraphic = () => {
+        const opts = { getGeom: true };
+        layer
+            .getGraphic(oid, opts)
+            .then(g => {
+                if (g.geometry.invalid()) {
+                    console.error(`Could not find graphic for objectid ${oid}`);
+                    setTimeout(() => {
+                        zoomStatus.value = 'error';
+                    }, 300);
+                } else {
+                    iApi.geo.map.zoomMapTo(g.geometry);
+                    setTimeout(() => {
+                        zoomStatus.value = 'zoomed';
+                    }, 300);
+                }
+            })
+            .catch(() => {
+                setTimeout(() => {
+                    zoomStatus.value = 'error';
+                }, 300);
+            });
+    };
+
+    if (layer.layerType === LayerType.FEATURE) {
+        layer
+            .queryExtent(oid)
+            .then(e => {
+                iApi.geo.map.zoomMapTo(e);
+                setTimeout(() => {
+                    zoomStatus.value = 'zoomed';
+                }, 300);
+            })
+            .catch(() => {
+                zoomUsingGraphic();
+            });
+    } else {
+        zoomUsingGraphic();
+    }
 };
 
 onMounted(() => {
@@ -137,11 +164,12 @@ onMounted(() => {
         (button.value as any)?._tippy.hide();
     });
 
+    // show the button again after 2 seconds of showing success/error
     zoomWatcher = watch(zoomStatus, (newValue, oldValue) => {
         if (newValue === 'error' || newValue === 'zoomed') {
             setTimeout(() => {
                 zoomStatus.value = '';
-            }, 3000);
+            }, 2000);
         }
     });
 });
@@ -161,7 +189,6 @@ onBeforeUnmount(() => {
     props.params.eGridCell.removeEventListener('blur', () => {
         (button.value as any)?._tippy.hide();
     });
-
     zoomWatcher();
 });
 </script>
