@@ -1,16 +1,21 @@
 <template>
-    <div
-        v-if="zoomStatus === 'zooming'"
-        class="flex items-center justify-center"
+    <button
+        type="button"
+        class="flex items-center justify-center w-46 h-44"
+        :content="
+            t(`grid.cells.zoom${zoomStatus === 'none' ? '' : `.${zoomStatus}`}`)
+        "
+        v-tippy="{ placement: 'top' }"
+        @click="zoomToFeature"
+        tabindex="-1"
+        ref="button"
     >
-        <div class="animate-spin spinner h-20 w-20"></div>
-        <span class="ml-4">{{ t('grid.cells.zoom.zooming') }}</span>
-    </div>
-    <div
-        v-else-if="zoomStatus === 'zoomed'"
-        class="flex items-center justify-center"
-    >
+        <div
+            v-if="zoomStatus === 'zooming'"
+            class="m-auto animate-spin spinner h-20 w-20"
+        ></div>
         <svg
+            v-else-if="zoomStatus === 'zoomed'"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -24,13 +29,8 @@
                 d="M4.5 12.75l6 6 9-13.5"
             />
         </svg>
-        <span class="ml-4">{{ t('grid.cells.zoom.success') }}</span>
-    </div>
-    <div
-        v-else-if="zoomStatus === 'error'"
-        class="flex items-center justify-center"
-    >
         <svg
+            v-else-if="zoomStatus === 'error'"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -44,19 +44,8 @@
                 d="M6 18L18 6M6 6l12 12"
             />
         </svg>
-        <span class="ml-4">{{ t('grid.cells.zoom.fail') }}</span>
-    </div>
-    <button
-        type="button"
-        class="flex items-center justify-center w-100 h-44"
-        :content="t('grid.cells.zoom')"
-        v-tippy="{ placement: 'top' }"
-        @click="zoomToFeature"
-        tabindex="-1"
-        ref="button"
-        v-else
-    >
         <svg
+            v-else
             class="m-auto"
             xmlns="http://www.w3.org/2000/svg"
             height="16"
@@ -73,60 +62,89 @@
 </template>
 
 <script setup lang="ts">
-import {
-    inject,
-    onBeforeUnmount,
-    onMounted,
-    ref,
-    watch,
-    type WatchStopHandle
-} from 'vue';
+import { inject, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import type { InstanceAPI, LayerInstance } from '@/api/internal';
 import { useI18n } from 'vue-i18n';
 import { useLayerStore } from '@/stores/layer';
+import { LayerType } from '@/geo/api';
 
-const zoomStatus = ref<string>('');
+const zoomStatus = ref<'zooming' | 'zoomed' | 'error' | 'none'>('none');
 const props = defineProps(['params']);
 const iApi = inject<InstanceAPI>('iApi')!;
 const layerStore = useLayerStore();
 const button = ref<HTMLElement>();
 const { t } = useI18n();
 
-let zoomWatcher: WatchStopHandle;
-
 const zoomToFeature = () => {
+    if (zoomStatus.value !== 'none') {
+        return;
+    }
+
     zoomStatus.value = 'zooming';
     const layer: LayerInstance | undefined = layerStore.getLayerByUid(
         props.params.data.rvUid
     );
     if (layer === undefined) {
-        setTimeout(() => {
-            zoomStatus.value = 'error';
-        }, 300);
+        updateZoomStatus('error');
         return;
     }
     const oid = props.params.data[props.params.oidField];
-    const opts = { getGeom: true };
-    layer.getGraphic(oid, opts).then(g => {
-        if (g.geometry.invalid()) {
-            console.error(`Could not find graphic for objectid ${oid}`);
+
+    const zoomUsingGraphic = () => {
+        const opts = { getGeom: true };
+        layer
+            .getGraphic(oid, opts)
+            .then(g => {
+                if (g.geometry.invalid()) {
+                    console.error(`Could not find graphic for objectid ${oid}`);
+                    updateZoomStatus('error');
+                } else {
+                    iApi.geo.map.zoomMapTo(g.geometry);
+                    updateZoomStatus('zoomed');
+                    iApi.updateAlert(iApi.$i18n.t('grid.cells.alert.zoom'));
+                }
+            })
+            .catch(() => {
+                updateZoomStatus('error');
+            });
+    };
+
+    if (layer.layerType === LayerType.FEATURE) {
+        layer
+            .getGraphicExtent(oid)
+            .then(e => {
+                iApi.geo.map.zoomMapTo(e);
+                updateZoomStatus('zoomed');
+                iApi.updateAlert(iApi.$i18n.t('grid.cells.alert.zoom'));
+            })
+            .catch(() => {
+                zoomUsingGraphic();
+            });
+    } else {
+        zoomUsingGraphic();
+    }
+};
+
+const updateZoomStatus = (value: 'zooming' | 'zoomed' | 'error' | 'none') => {
+    if (value === 'zoomed' || value === 'error') {
+        setTimeout(() => {
+            zoomStatus.value = value;
+            (button.value as any)?._tippy.show();
             setTimeout(() => {
-                zoomStatus.value = 'error';
-            }, 300);
-        } else {
-            iApi.geo.map.zoomMapTo(g.geometry);
-            setTimeout(() => {
-                zoomStatus.value = 'zoomed';
-            }, 300);
-        }
-    });
+                (button.value as any)?._tippy.hide();
+                zoomStatus.value = 'none';
+            }, 3000);
+        }, 300);
+    } else {
+        zoomStatus.value = value;
+    }
 };
 
 onMounted(() => {
     // need to hoist events to top level cell wrapper to be keyboard accessible
     props.params.eGridCell.addEventListener('keydown', (e: KeyboardEvent) => {
-        if (e.key === 'Enter' && zoomStatus.value === '') {
+        if (e.key === 'Enter' && zoomStatus.value === 'none') {
             zoomToFeature();
         }
     });
@@ -135,14 +153,6 @@ onMounted(() => {
     });
     props.params.eGridCell.addEventListener('blur', () => {
         (button.value as any)?._tippy.hide();
-    });
-
-    zoomWatcher = watch(zoomStatus, (newValue, oldValue) => {
-        if (newValue === 'error' || newValue === 'zoomed') {
-            setTimeout(() => {
-                zoomStatus.value = '';
-            }, 3000);
-        }
     });
 });
 
@@ -161,8 +171,6 @@ onBeforeUnmount(() => {
     props.params.eGridCell.removeEventListener('blur', () => {
         (button.value as any)?._tippy.hide();
     });
-
-    zoomWatcher();
 });
 </script>
 

@@ -2,6 +2,7 @@ import { AttribLayer, InstanceAPI } from '@/api/internal';
 import {
     DataFormat,
     DefPromise,
+    Extent,
     GeometryType,
     IdentifyResultFormat,
     LayerFormat,
@@ -308,5 +309,50 @@ export class FeatureLayer extends AttribLayer {
         const sql = this.filter.getCombinedSql(exclusions);
         // feature layer on a server
         this.esriLayer.definitionExpression = sql;
+    }
+
+    /**
+     * Gets the extent where the provided object id is on the map.
+     * Can only be used on feature layers. Not applicable to point geometry.
+     *
+     * @param objectId the object id to query
+     * @returns {Promise} resolves with the extent where the object id is present, rejects if geometry type is invalid or esri layer does not exist
+     */
+    getGraphicExtent(objectId: number): Promise<Extent> {
+        return new Promise((resolve, reject) => {
+            if (!this.esriLayer) {
+                this.noLayerErr();
+                reject();
+            } else if (
+                !['multipoint', 'polyline', 'polygon'].includes(
+                    this.esriLayer.geometryType
+                )
+            ) {
+                console.error(
+                    `Attempted to query extent for invalid geometry type ${this.esriLayer.geometryType}.`
+                );
+                reject();
+                // TODO: should the query be re run if the basemap changes, or do we leave it up to user to do the projecting themselves?
+            } else if (this.quickCache?.getExtent(objectId)) {
+                resolve(this.quickCache.getExtent(objectId));
+            } else {
+                this.esriLayer
+                    .queryExtent({
+                        objectIds: [objectId],
+                        outSpatialReference: this.$iApi.geo.map.getSR().toESRI()
+                    })
+                    .then(result => {
+                        const rampExtent = Extent.fromESRI(result.extent);
+                        this.quickCache?.setExtent(objectId, rampExtent);
+                        resolve(rampExtent);
+                    })
+                    .catch(() => {
+                        console.error(
+                            `Extent querying failed for ${objectId}.`
+                        );
+                        reject();
+                    });
+            }
+        });
     }
 }
