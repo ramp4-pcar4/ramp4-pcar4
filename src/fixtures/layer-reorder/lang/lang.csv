@@ -8,4 +8,4 @@ layer-reorder.collapse,Collapse Sublayers,1,Réduire les sous-couches,1
 layer-reorder.collapsed,{name} sublayers collapsed,1,Sous-couches {name} réduites,1
 layer-reorder.move.up,Move up,1,Déplacer vers le haut,1
 layer-reorder.move.down,Move down,1,Déplacer vers le bas,1
-layer-reorder.layermoved,{name} moved to index {index},1,{name} déplacé vers l’index {index},1
+layer-reorder.layermoved,{name} moved to index {index},1,{name} déplacé vers l'index {index},1

@@ -6,7 +6,7 @@ wizard.upload.file.label,Upload a file,1,Télécharger un fichier,1
 wizard.upload.file.help,Drop or select a file to upload,1,Déposer ou sélectionner un fichier à télécharger,1
 wizard.upload.file.error.failed,File upload failed,1,Le téléchargement du fichier a échoué,1
 wizard.upload.url.label,URL to file or service,1,URL vers fichier ou service,1
-wizard.upload.url.error.required,URL is required,1,L’URL est requise,1
+wizard.upload.url.error.required,URL is required,1,L'URL est requise,1
 wizard.upload.url.error.url,Please enter a valid URL,1,Veuillez saisir une adresse URL valide,1
 wizard.format.title,Select format,1,Choisir un format,1
 wizard.format.type.service,Service type,1,Type de service,1
@@ -20,7 +20,7 @@ wizard.fileType.csv,CSV,1,CSV,1
 wizard.fileType.shapefile,zipped Shapefile,1,Shapefile zippé,1
 wizard.fileType.geojson,GeoJSON,1,GeoJSON,1
 wizard.layerType.esriFeature,ESRI Feature Layer,1,Couche d'éléments d'ESRI,1
-wizard.layerType.esriMapImage,ESRI Map Image Layer,1,Couche d’image de la carte ESRI,1
+wizard.layerType.esriMapImage,ESRI Map Image Layer,1,Couche d'image de la carte ESRI,1
 wizard.layerType.esriImagery,ESRI Image Layer,1,Couche d'images d'ESRI,1
 wizard.layerType.esriTile,ESRI Tile Layer,1,Couche de tuiles d'ESRI,1
 wizard.layerType.ogcWms,OGC Web Map Service,1,Couche WMS de l'OGC,1
@@ -35,7 +35,7 @@ wizard.configure.longField.label,Longitude Field,1,Champ longitude,1
 wizard.configure.sublayers.error.required,Sublayers are required,1,Des sous-couches sont requises,1
 wizard.configure.sublayers.label,Layers,1,Couches,1
 wizard.configure.sublayers.help,Hold Ctrl to select multiple layers,1,Maintenez la touche CTRL enfoncée pour sélectionner plusieurs couches,1
-wizard.configure.sublayers.search,Search layers,1,Couches de recherche,0
+wizard.configure.sublayers.search,Search layers,1,Rechercher des couches,1
 wizard.configure.colour.label,Colour,1,Couleur,1
 wizard.configure.colour.hue,Hue,1,Teinte,1
 wizard.configure.colour.copy,Copy colour,1,Copier la couleur,1
