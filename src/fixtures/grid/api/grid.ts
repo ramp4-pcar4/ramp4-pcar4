@@ -20,7 +20,8 @@ export class GridAPI extends FixtureInstance {
             this.gridStore.addGrid({
                 id: id,
                 layerIds: [id],
-                state: new TableStateManager()
+                state: new TableStateManager(),
+                fieldMap: {}
             });
         }
 
@@ -79,16 +80,18 @@ export class GridAPI extends FixtureInstance {
                     }
                 });
 
+                const mapping: { [source: string]: string } = {};
                 fieldMap?.forEach((map: any) => {
                     map.sources.forEach((source: string) => {
-                        this.gridStore.fieldMap[source] = map.field;
+                        mapping[source] = map.field;
                     });
                 });
 
                 const gridConfig = {
                     id: gridId,
                     layerIds: layerIds,
-                    state: new TableStateManager(options)
+                    state: new TableStateManager(options),
+                    fieldMap: mapping
                 };
                 this.gridStore.addGrid(gridConfig);
             });
@@ -99,7 +102,8 @@ export class GridAPI extends FixtureInstance {
             const gridConfig = {
                 id: layerId,
                 layerIds: [layerId],
-                state: new TableStateManager(layerGridConfigs[layerId])
+                state: new TableStateManager(layerGridConfigs[layerId]),
+                fieldMap: {}
             };
 
             // save the item in the store

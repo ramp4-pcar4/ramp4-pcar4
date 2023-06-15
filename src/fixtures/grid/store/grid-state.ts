@@ -24,6 +24,14 @@ export interface GridConfig {
      * @memberof GridConfig
      */
     state: TableStateManager;
+
+    /**
+     * The field mapping for this grid.
+     *
+     * @type { [source: string]: string }
+     * @memberof GridConfig
+     */
+    fieldMap: { [source: string]: string };
 }
 
 export interface MergeGridConfig {

@@ -26,9 +26,10 @@
 <script setup lang="ts">
 import { inject, onBeforeUnmount, onMounted, ref } from 'vue';
 import { GlobalEvents } from '@/api/internal';
-import type { InstanceAPI } from '@/api/internal';
+import type { InstanceAPI, LayerInstance } from '@/api/internal';
 import { IdentifyResultFormat } from '@/geo/api';
 import { useI18n } from 'vue-i18n';
+import type { AttributeMapPair } from '../store';
 
 const props = defineProps(['params']);
 const { t } = useI18n();
@@ -39,6 +40,20 @@ const openDetails = () => {
     let data = Object.assign({}, props.params.data);
     delete data['rvInteractive'];
     delete data['rvSymbol'];
+
+    // similar to the sql lookup, the details panel must use the original OID field to render symbols
+    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
+        data['rvUid']
+    )!;
+    const oidPair = props.params.layerCols[layer.id].find(
+        (pair: AttributeMapPair) => pair.origAttr === layer.oidField
+    );
+    if (oidPair.mappedAttr) {
+        const oid = data[oidPair.mappedAttr];
+        delete data[oidPair.mappedAttr];
+        data[oidPair.origAttr] = oid;
+    }
+
     delete data['rvUid'];
 
     // grid only supports esri features at the moment, so we hardcode that format
