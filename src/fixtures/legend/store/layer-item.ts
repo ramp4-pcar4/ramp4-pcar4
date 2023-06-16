@@ -40,7 +40,7 @@ export class LayerItem extends LegendItem {
         this._origLayerControls = config.layerControls;
         this._layerDisabledControls = config.disabledLayerControls ?? [];
         this._origLayerDisabledControls = config.disabledLayerControls;
-        this._layerRedrawing = false;
+        this._layerRedrawing = true;
         this._symbologyExpanded = config.symbologyExpanded || false;
         if (config.coverIcon) this._coverIcon = config.coverIcon;
         if (config.description) this._description = config.description;
