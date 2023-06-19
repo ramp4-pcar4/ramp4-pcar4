@@ -7,7 +7,10 @@
         >
             <span class="inline font-bold">{{ val.alias }}</span>
             <span class="flex-auto"></span>
-            <span class="inline" v-html="makeHtmlLink(val.value)"></span>
+            <span
+                class="inline"
+                v-html="makeHtmlLink(val.value, val.alias)"
+            ></span>
         </div>
     </div>
 </template>
@@ -18,6 +21,9 @@ import type { PropType } from 'vue';
 import type { FieldDefinition, IdentifyItem } from '@/geo/api';
 import linkifyHtml from 'linkify-html';
 import type { InstanceAPI } from '@/api';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const iApi = inject<InstanceAPI>('iApi');
 
@@ -56,7 +62,7 @@ const itemData = () => {
 };
 
 // make links look like links and work like links
-const makeHtmlLink = (html: string): string => {
+const makeHtmlLink = (html: string, alias: string): string => {
     if (!html) {
         return html;
     }
@@ -68,7 +74,10 @@ const makeHtmlLink = (html: string): string => {
             /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i //eslint-disable-line
         )
     ) {
-        return `<img src="${html}" />`;
+        return `<img src="${html}" alt="${t(
+            'details.item.alert.defaultAltText',
+            { alias: alias }
+        )}" />`;
     }
 
     const classes = 'underline text-blue-600 break-all';
