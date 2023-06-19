@@ -241,6 +241,9 @@ let config = {
                                 },
                                 {
                                     layerId: 'EcoGeo-9'
+                                },
+                                {
+                                    layerId: 'NPRI'
                                 }
                             ],
                             options: {
