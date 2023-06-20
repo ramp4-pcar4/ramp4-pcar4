@@ -60,7 +60,7 @@ The Geosearch panel has multiple options that can be adjusted through the config
 - `geoProvinceUrl: string`, endpoint for province codes provided by the Geoname service
 - `geoTypesUrl: string`, endpoint for type codes provided by the Geoname service
 
-Also, a `settings` object enables additional fixture customization: 
+Also, a `settings` object enables additional fixture customization:
 
 - `categories: string[]`, filter by [concise type](https://geogratis.gc.ca/services/geoname/en/codes/concise.json) or street address ('ADDR') when using the Geoname service
 - `sortOrder: string[]`, order search results based on category types, where missing types are appended to the bottom of the sorted list
@@ -70,7 +70,7 @@ Also, a `settings` object enables additional fixture customization:
 
 An example of a configured Geosearch panel is below
 
-```text
+```
 geosearch: {
     settings: {
         categories: ['CITY', 'TOWN', 'VILG', 'ADDR'],

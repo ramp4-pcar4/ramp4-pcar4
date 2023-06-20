@@ -23,10 +23,10 @@ The [Startup](api/startup.md) page provides examples of how to instantiate a RAM
 - Configuration for various fixtures
   - [Appbar](app/appbar.md#configuration)
   - [Details Custom Templating](app/details.md#creating-a-custom-template)
-  - [Geosearch](app/geosearch.md#configuration) 
+  - [Geosearch](app/geosearch.md#configuration)
   - [Grid](app/grid.md#configuration)
   - [Layer Settings](app/settings.md#configuration)
-  - [Legend](app/legend.md#components) (configuration snippets are embedded in functional descriptions)  
+  - [Legend](app/legend.md#components) (configuration snippets are embedded in functional descriptions)
 - The [collection of sample configs](https://github.com/ramp4-pcar4/ramp4-pcar4/tree/main/demos/starter-scripts) on the repo may also be of use to see working examples.
 
 ## API Documentation

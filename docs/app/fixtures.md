@@ -146,7 +146,7 @@ const handle = setInterval(() => {
 
 ## Lazy-Loading
 
-::: Warning NOTE
+::: warning NOTE
 The current version of RAMP does not include code splitting in production builds. These methods will still work, however the build will not see the benefit of lazy loading. We plan to re-introduce some version of tree-shaking/lazy-loading/code-splitting in the future.
 :::
 
