@@ -30,6 +30,7 @@ import { inject, onBeforeUnmount, onMounted, ref } from 'vue';
 import type { InstanceAPI, LayerInstance } from '@/api/internal';
 import { useI18n } from 'vue-i18n';
 import { useLayerStore } from '@/stores/layer';
+import type { AttributeMapPair } from '../store';
 
 const props = defineProps(['params']);
 const iApi = inject<InstanceAPI>('iApi')!;
@@ -42,7 +43,13 @@ const zoomToFeature = () => {
         props.params.data.rvUid
     );
     if (layer === undefined) return;
-    const oid = props.params.data[props.params.oidField];
+
+    // similar to the sql lookup, the details panel must use the original OID field to perform zoomies
+    const oidPair = props.params.layerCols[layer.id].find(
+        (pair: AttributeMapPair) => pair.origAttr === layer.oidField
+    );
+    const oid = props.params.data[oidPair.mappedAttr ?? oidPair.origAttr];
+
     const opts = { getGeom: true };
     layer.getGraphic(oid, opts).then(g => {
         if (g.geometry.invalid()) {

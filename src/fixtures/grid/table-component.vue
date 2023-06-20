@@ -470,7 +470,8 @@ const props = defineProps({
 const config = ref<GridConfig>({
     id: 'dummy',
     layerIds: [],
-    state: new TableStateManager()
+    state: new TableStateManager(),
+    fieldMap: {}
 });
 const agGridApi = ref<GridApi>(new GridApi());
 const agGridOptions = ref();
@@ -840,7 +841,8 @@ const setUpSpecialColumns = (
             cellRenderer: DetailsButtonRendererV,
             cellRendererParams: {
                 $iApi: iApi,
-                t: t
+                t: t,
+                layerCols: layerCols.value
             }
         };
         colDef.push(detailsDef);
@@ -859,7 +861,7 @@ const setUpSpecialColumns = (
             cellRenderer: ZoomButtonRendererV,
             cellRendererParams: {
                 $iApi: iApi,
-                oidField: oidField.value
+                layerCols: layerCols.value
             }
         };
         colDef.push(zoomDef);
@@ -1301,14 +1303,18 @@ const setUpColumns = () => {
                 // merge attributes into one table
                 tableAttributes.forEach((ta, idx) => {
                     const attrMap: any = [];
+                    const id: string = fancyLayers[idx].id;
 
                     ta.columns.forEach(col => {
-                        if (gridStore.fieldMap[col.data]) {
+                        if (
+                            config.value.fieldMap &&
+                            config.value.fieldMap[col.data]
+                        ) {
                             attrMap.push({
                                 origAttr: col.data,
-                                mappedAttr: gridStore.fieldMap[col.data]
+                                mappedAttr: config.value.fieldMap[col.data]
                             });
-                            col.data = gridStore.fieldMap[col.data];
+                            col.data = config.value.fieldMap[col.data];
                         } else {
                             attrMap.push({
                                 origAttr: col.data,
@@ -1327,12 +1333,14 @@ const setUpColumns = () => {
 
                     mergedTableAttrs.rows = mergedTableAttrs.rows.concat(
                         ta.rows.map(row => {
-                            for (const [oldAttr, newAttr] of Object.entries(
-                                gridStore.fieldMap
-                            )) {
-                                if (!row[newAttr]) {
-                                    row[newAttr] = row[oldAttr];
-                                    delete row[oldAttr];
+                            if (config.value.fieldMap) {
+                                for (const [oldAttr, newAttr] of Object.entries(
+                                    config.value.fieldMap
+                                )) {
+                                    if (row[oldAttr] && !row[newAttr]) {
+                                        row[newAttr] = row[oldAttr];
+                                        delete row[oldAttr];
+                                    }
                                 }
                             }
                             return row;
@@ -1343,8 +1351,10 @@ const setUpColumns = () => {
                         ta.fields.map(field => {
                             return {
                                 name:
-                                    gridStore.fieldMap[field.name] ??
-                                    field.name,
+                                    config.value.fieldMap &&
+                                    config.value.fieldMap[field.name]
+                                        ? config.value.fieldMap[field.name]
+                                        : field.name,
                                 type: field.type,
                                 alias: field.alias ?? undefined,
                                 length: field.length ?? undefined
@@ -1353,10 +1363,13 @@ const setUpColumns = () => {
                     );
                     //TODO: the table currently relies on config author to provide correct oid mapping. maybe return to this for enchancement?
                     mergedTableAttrs.oidField =
-                        gridStore.fieldMap[ta.oidField] ?? ta.oidField;
+                        config.value.fieldMap &&
+                        config.value.fieldMap[ta.oidField]
+                            ? config.value.fieldMap[ta.oidField]
+                            : ta.oidField;
 
                     // tracking which columns correspond with which layer for applyToMap filtering
-                    layerCols.value[fancyLayers[idx].id] = attrMap;
+                    layerCols.value[id] = attrMap;
                 });
 
                 // save field that contains oid for this layer

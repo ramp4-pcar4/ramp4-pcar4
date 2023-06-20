@@ -19,11 +19,6 @@ export const useGridStore = defineStore('grid', () => {
      */
     const currentId = ref<string>();
 
-    /**
-     * A mapping of grid fields for merging columns
-     */
-    const fieldMap = ref<{ [source: string]: string }>({});
-
     function addGrid(value: GridConfig) {
         grids.value = { ...grids.value, [value.id]: value };
     }
@@ -50,7 +45,6 @@ export const useGridStore = defineStore('grid', () => {
         grids,
         panel,
         currentId,
-        fieldMap,
         addGrid,
         removeGrid,
         getGridId,
