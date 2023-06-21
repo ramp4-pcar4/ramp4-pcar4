@@ -98,6 +98,11 @@
             </div>
 
             <div class="pb-2 flex ml-auto">
+                <copy-dropdown
+                    :columnDefs="columnDefs"
+                    :rowData="rowData"
+                ></copy-dropdown>
+
                 <!-- show/hide columns -->
                 <column-dropdown
                     :columnApi="columnApi"
@@ -107,7 +112,7 @@
                 <!-- clear all filters -->
                 <button
                     type="button"
-                    class="p-4 h-40 text-gray-500 hover:text-black"
+                    class="p-8 h-40 text-gray-500 hover:text-black"
                     @click="clearSearchAndFilters()"
                     :content="t('grid.clearAll')"
                     v-tippy="{
@@ -334,6 +339,7 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
 import { AgGridVue } from 'ag-grid-vue3';
 import ColumnDropdown from './column-dropdown.vue';
+import CopyDropdown from './copy-dropdown.vue';
 import { useGridStore, type AttributeMapPair } from './store';
 import { usePanelStore } from '@/stores/panel';
 import type { GridConfig } from './store';
@@ -397,6 +403,7 @@ export interface ColumnDefinition {
     headerComponentParams: any;
     headerTooltip?: string;
     alias?: string;
+    autoHeight?: boolean;
     width?: number;
     maxWidth?: number;
     minWidth?: number;
@@ -1408,6 +1415,7 @@ const setUpColumns = () => {
                             config.value.state.colFilter &&
                             colConfig.searchable,
                         hide: !colConfig?.visible,
+                        autoHeight: true,
                         minWidth: colConfig.width,
                         maxWidth: colConfig.width ?? 400,
                         cellRenderer: (cell: any) => {
@@ -1487,7 +1495,6 @@ const setUpColumns = () => {
                 // load layer data into the table.
                 rowData.value = markRaw(mergedTableAttrs.rows);
                 columnDefs.value = markRaw(columnDefs.value);
-
                 updateFilterInfo();
 
                 // the grid is now ready to be displayed
