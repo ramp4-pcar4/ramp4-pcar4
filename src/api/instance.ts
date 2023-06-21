@@ -82,7 +82,7 @@ export class InstanceAPI {
     readonly event: EventAPI;
     readonly geo: GeoAPI;
     readonly notify: NotificationAPI;
-    readonly ui: { maptip: MaptipAPI };
+    readonly ui: { maptip: MaptipAPI; exposeOids: boolean };
     startRequired: boolean = false;
 
     /**
@@ -114,7 +114,7 @@ export class InstanceAPI {
         this.panel = new PanelAPI(this);
         this.geo = new GeoAPI(this);
         //TODO before 1.0: does the ui namespace still make sense, should we just leave maptip under geo.map only?
-        this.ui = { maptip: this.geo.map.maptip };
+        this.ui = { maptip: this.geo.map.maptip, exposeOids: false };
         this.notify = new NotificationAPI(this);
 
         this._isFullscreen =
@@ -272,6 +272,9 @@ export class InstanceAPI {
             // process system configurations
             if (langConfig.system?.proxyUrl) {
                 this.geo.proxy = langConfig.system.proxyUrl;
+            }
+            if (langConfig.system?.exposeOid) {
+                this.ui.exposeOids = langConfig.system.exposeOid;
             }
         }
 

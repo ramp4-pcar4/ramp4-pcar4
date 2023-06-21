@@ -1300,6 +1300,8 @@ const setUpColumns = () => {
                     oidField: ''
                 };
 
+                const oidCols = new Set<string>();
+
                 // merge attributes into one table
                 tableAttributes.forEach((ta, idx) => {
                     const attrMap: any = [];
@@ -1349,6 +1351,9 @@ const setUpColumns = () => {
 
                     mergedTableAttrs.fields = mergedTableAttrs.fields.concat(
                         ta.fields.map(field => {
+                            if (field.type === 'oid') {
+                                oidCols.add(field.name);
+                            }
                             return {
                                 name:
                                     config.value.fieldMap &&
@@ -1391,6 +1396,10 @@ const setUpColumns = () => {
                                 field: column.data,
                                 title: column.title
                             });
+                    }
+                    if (!iApi.ui.exposeOids && oidCols.has(column.data)) {
+                        // hide oid column according to global flag
+                        config.value.state.columns[column.data].visible = false;
                     }
                     let colConfig = config.value.state?.columns[column.data];
                     let col: ColumnDefinition = {

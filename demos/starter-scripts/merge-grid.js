@@ -244,13 +244,7 @@ let config = {
                                 }
                             ],
                             options: {
-                                title: 'EcoGeo Data',
-                                columns: [
-                                    {
-                                        field: 'OBJECTID',
-                                        sort: 'asc'
-                                    }
-                                ]
+                                title: 'EcoGeo Data'
                             }
                         },
                         {
@@ -312,13 +306,7 @@ let config = {
                                 }
                             ],
                             options: {
-                                title: 'Errored Data',
-                                columns: [
-                                    {
-                                        field: 'OBJECTID',
-                                        sort: 'asc'
-                                    }
-                                ]
+                                title: 'Errored Data'
                             }
                         }
                     ]
