@@ -311,9 +311,6 @@ let config = {
                                 {
                                     name: 'Icon',
                                     visible: false
-                                },
-                                {
-                                    name: 'OBJECTID'
                                 }
                             ]
                         }
@@ -660,10 +657,6 @@ let config = {
                                     enabled: false
                                 },
                                 columns: [
-                                    {
-                                        data: 'OBJECTID',
-                                        visible: false
-                                    },
                                     {
                                         data: 'Cat?gorie'
                                     },

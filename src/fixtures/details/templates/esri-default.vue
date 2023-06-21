@@ -42,6 +42,11 @@ const props = defineProps({
 const itemData = () => {
     const helper: any = {};
     Object.assign(helper, props.identifyData.data);
+
+    if (!iApi?.ui.exposeOids) {
+        // check global oid flag
+        delete helper[props.fields.find(f => f.type === 'oid')!.name];
+    }
     if (helper.Symbol !== undefined) delete helper.Symbol;
 
     let aliases: any = {};
