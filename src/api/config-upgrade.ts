@@ -93,7 +93,7 @@ function individualConfigUpgrader(r2c: any): any {
         layers: [],
         map: {},
         panels: { open: [] },
-        system: { animate: true },
+        system: { animate: true, exposeOid: false },
         fixturesEnabled: [] // this will be removed in the final step of configUpgrade2to4
     };
 

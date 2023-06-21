@@ -20,6 +20,7 @@ The Instance API provides an interface to manage all aspects of a RAMP instance.
 * `language` - a string representing the current language for the instance.
 * `screenSize` - a string representing the screen size for the app. Returns the largest tailwind screen class on the element. Possible values are 'lg', 'md', 'sm' or 'xs'.
 * `animate` - a boolean representing whether the app has animations enabled.
+* `exposeOid` - a boolean representing whether the app includes Object ID fields of a feature alongside attribute data.
 * `isFullScreen` - a boolean representing whether the app is currently fullscreen.
 * `started` - a boolean representing whether the app has been started.
 

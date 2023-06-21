@@ -102,6 +102,7 @@
                 <column-dropdown
                     :columnApi="columnApi"
                     :columnDefs="columnDefs"
+                    :oidCols="oidCols"
                 ></column-dropdown>
 
                 <!-- clear all filters -->
@@ -504,6 +505,7 @@ const gridLayers = computed(() => {
         );
     } else return [];
 });
+const oidCols = ref<Set<string>>(new Set<string>());
 
 const onGridReady = (params: any) => {
     agGridApi.value = params.api;
@@ -1349,6 +1351,9 @@ const setUpColumns = () => {
 
                     mergedTableAttrs.fields = mergedTableAttrs.fields.concat(
                         ta.fields.map(field => {
+                            if (field.type === 'oid') {
+                                oidCols.value.add(field.name);
+                            }
                             return {
                                 name:
                                     config.value.fieldMap &&
@@ -1391,6 +1396,10 @@ const setUpColumns = () => {
                                 field: column.data,
                                 title: column.title
                             });
+                    }
+                    if (!iApi.ui.exposeOids && oidCols.value.has(column.data)) {
+                        // hide oid column according to global flag
+                        config.value.state.columns[column.data].visible = false;
                     }
                     let colConfig = config.value.state?.columns[column.data];
                     let col: ColumnDefinition = {

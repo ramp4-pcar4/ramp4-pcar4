@@ -145,6 +145,9 @@ let config = {
                         esri: 'Details-Default-Template-Esri'
                     }
                 }
+            },
+            system: {
+                exposeOid: true
             }
         }
     }

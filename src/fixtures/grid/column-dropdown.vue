@@ -28,7 +28,10 @@
         </template>
         <a
             v-for="col in columnDefs.filter(
-                c => c.headerName && c.headerName.length > 0
+                c =>
+                    c.headerName &&
+                    c.headerName.length > 0 &&
+                    !(!iApi.ui.exposeOids && oidCols?.has(c.headerName))
             )"
             :key="col.headerName"
             v-on:click="
@@ -59,13 +62,16 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue';
+import type { InstanceAPI } from '@/api';
+import { inject, type PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+const iApi = inject('iApi') as InstanceAPI;
 const { t } = useI18n();
 
 defineProps({
     columnDefs: { type: Object as PropType<Array<any>>, required: true },
-    columnApi: { type: Object }
+    columnApi: { type: Object },
+    oidCols: { type: Object as PropType<Set<string>> }
 });
 </script>
