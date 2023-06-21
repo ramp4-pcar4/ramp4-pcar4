@@ -92,13 +92,16 @@
                 <div v-if="layerExists">
                     <div v-if="identifyItem.loaded">
                         <!-- fancy header for esri features -->
-                        <div class="flex py-8" v-if="supportsFeatures">
+                        <div
+                            class="flex py-8 items-center"
+                            v-if="supportsFeatures"
+                        >
                             <span
                                 v-if="icon"
-                                class="flex-none m-auto symbologyIcon"
+                                class="flex-none symbologyIcon"
                                 v-html="icon"
                             ></span>
-                            <div v-else class="m-auto">
+                            <div v-else>
                                 <div
                                     class="animate-spin spinner h-20 w-20"
                                 ></div>
@@ -108,17 +111,70 @@
                             </span>
                             <button
                                 type="button"
-                                :content="t('details.item.zoom')"
+                                :content="
+                                    t(
+                                        `details.item.zoom${
+                                            zoomStatus === 'none'
+                                                ? ''
+                                                : `.${zoomStatus}`
+                                        }`
+                                    )
+                                "
                                 v-tippy="{ placement: 'bottom' }"
-                                :aria-label="t('details.item.zoom')"
+                                :aria-label="
+                                    t(
+                                        `grid.cells.zoom${
+                                            zoomStatus === 'none'
+                                                ? ''
+                                                : `.${zoomStatus}`
+                                        }`
+                                    )
+                                "
+                                ref="button"
                                 @click="zoomToFeature()"
-                                class="text-gray-600 m-8"
+                                class="text-gray-600 m-8 w-24 h-24 p-2"
                             >
+                                <div
+                                    v-if="zoomStatus === 'zooming'"
+                                    class="m-auto animate-spin spinner h-20 w-20"
+                                ></div>
                                 <svg
+                                    v-else-if="zoomStatus === 'zoomed'"
                                     xmlns="http://www.w3.org/2000/svg"
-                                    height="20"
+                                    fill="none"
                                     viewBox="0 0 24 24"
-                                    width="20"
+                                    stroke-width="1.5"
+                                    stroke="green"
+                                    class="m-auto w-20 h-20"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M4.5 12.75l6 6 9-13.5"
+                                    />
+                                </svg>
+                                <svg
+                                    v-else-if="zoomStatus === 'error'"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="red"
+                                    class="m-auto w-20 h-20"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M6 18L18 6M6 6l12 12"
+                                    />
+                                </svg>
+                                <svg
+                                    v-else
+                                    class="m-auto"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    width="16"
                                 >
                                     <path
                                         d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
@@ -179,7 +235,8 @@ import { DetailsItemInstance, useDetailsStore } from './store';
 import type { DetailsAPI } from './api/details';
 
 import { GlobalEvents, InstanceAPI } from '@/api';
-import type { FieldDefinition, IdentifyResult, IdentifyItem } from '@/geo/api';
+import type { FieldDefinition, IdentifyItem, IdentifyResult } from '@/geo/api';
+import { GeometryType, LayerType } from '@/geo/api';
 import type { LayerInstance, PanelInstance } from '@/api/internal';
 
 import ESRIDefault from './templates/esri-default.vue';
@@ -289,11 +346,13 @@ const detailsTemplate = computed(() => {
 });
 
 const icon = ref<string>('');
+const zoomStatus = ref<'zooming' | 'zoomed' | 'error' | 'none'>('none');
 const currentIdx = ref<number>(0);
 const layerExists = ref<Boolean>(false);
 const handlers = ref<Array<string>>([]);
 const details = ref<DetailsAPI>(iApi.fixture.get('details'));
 const hilightToggle = ref<boolean>(true);
+const button = ref<HTMLElement>();
 
 /**
  * Clean up for when the details screen is closed.
@@ -325,6 +384,7 @@ const initDetails = () => {
  * Called whenever the displayed item changes
  */
 const itemChanged = () => {
+    updateZoomStatus('none');
     if (identifyItem.value.loaded) {
         const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
             props.result.uid
@@ -387,6 +447,21 @@ const seeList = () => {
     });
 };
 
+const updateZoomStatus = (value: 'zooming' | 'zoomed' | 'error' | 'none') => {
+    if (value === 'zoomed' || value === 'error') {
+        setTimeout(() => {
+            zoomStatus.value = value;
+            (button.value as any)?._tippy.show();
+            setTimeout(() => {
+                (button.value as any)?._tippy.hide();
+                zoomStatus.value = 'none';
+            }, 3000);
+        }, 300);
+    } else {
+        zoomStatus.value = value;
+    }
+};
+
 /**
  * Advance the item index by direction
  */
@@ -433,6 +508,11 @@ const fetchIcon = () => {
  * Zoom to feature on the map
  */
 const zoomToFeature = () => {
+    if (zoomStatus.value !== 'none') {
+        return;
+    }
+
+    updateZoomStatus('zooming');
     const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
         props.result.uid
     );
@@ -441,6 +521,7 @@ const zoomToFeature = () => {
         console.warn(
             `Could not find layer for uid ${props.result.uid} during zoom geometry lookup`
         );
+        updateZoomStatus('error');
         return;
     }
 
@@ -448,20 +529,47 @@ const zoomToFeature = () => {
         console.warn(
             'Details zoomToFeature call on item that is still loading. Should be impossible, alert the devs.'
         );
+        updateZoomStatus('error');
         return;
     }
 
     const oid = identifyItem.value.data[layer.oidField];
-    const opts = { getGeom: true };
-    layer.getGraphic(oid, opts).then(g => {
-        if (g.geometry.invalid()) {
-            console.error(`Could not find graphic for objectid ${oid}`);
-        } else {
-            iApi.geo.map.zoomMapTo(g.geometry);
-        }
-    });
+    const zoomUsingGraphic = () => {
+        const opts = { getGeom: true };
+        layer
+            .getGraphic(oid, opts)
+            .then(g => {
+                if (g.geometry.invalid()) {
+                    console.error(`Could not find graphic for objectid ${oid}`);
+                    updateZoomStatus('error');
+                } else {
+                    iApi.geo.map.zoomMapTo(g.geometry);
+                    updateZoomStatus('zoomed');
+                    iApi.updateAlert(iApi.$i18n.t('details.item.alert.zoom'));
+                }
+            })
+            .catch(() => {
+                updateZoomStatus('error');
+            });
+    };
 
-    iApi.updateAlert(iApi.$i18n.t('details.item.alert.zoom'));
+    if (
+        layer.layerType === LayerType.FEATURE &&
+        layer.geomType !== GeometryType.POINT
+    ) {
+        layer
+            .getGraphicExtent(oid)
+            .then(e => {
+                iApi.geo.map.zoomMapTo(e);
+                updateZoomStatus('zoomed');
+                iApi.updateAlert(iApi.$i18n.t('details.item.alert.zoom'));
+            })
+            .catch(() => {
+                zoomUsingGraphic();
+            });
+    } else {
+        zoomUsingGraphic();
+    }
 };
 
 const onHilightToggle = (value: boolean) => {

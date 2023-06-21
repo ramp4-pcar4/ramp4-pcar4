@@ -2,13 +2,50 @@
     <button
         type="button"
         class="flex items-center justify-center w-46 h-44"
-        :content="t('grid.cells.zoom')"
+        :content="
+            t(`grid.cells.zoom${zoomStatus === 'none' ? '' : `.${zoomStatus}`}`)
+        "
         v-tippy="{ placement: 'top' }"
         @click="zoomToFeature"
         tabindex="-1"
-        ref="el"
+        ref="button"
     >
+        <div
+            v-if="zoomStatus === 'zooming'"
+            class="m-auto animate-spin spinner h-20 w-20"
+        ></div>
         <svg
+            v-else-if="zoomStatus === 'zoomed'"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="green"
+            class="w-20 h-20"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4.5 12.75l6 6 9-13.5"
+            />
+        </svg>
+        <svg
+            v-else-if="zoomStatus === 'error'"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="red"
+            class="w-20 h-20"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+            />
+        </svg>
+        <svg
+            v-else
             class="m-auto"
             xmlns="http://www.w3.org/2000/svg"
             height="16"
@@ -31,18 +68,29 @@ import type { InstanceAPI, LayerInstance } from '@/api/internal';
 import { useI18n } from 'vue-i18n';
 import { useLayerStore } from '@/stores/layer';
 import type { AttributeMapPair } from '../store';
+import { GeometryType, LayerType } from '@/geo/api';
 
+const zoomStatus = ref<'zooming' | 'zoomed' | 'error' | 'none'>('none');
 const props = defineProps(['params']);
 const iApi = inject<InstanceAPI>('iApi')!;
 const layerStore = useLayerStore();
-const el = ref<HTMLElement>();
+const button = ref<HTMLElement>();
 const { t } = useI18n();
 
 const zoomToFeature = () => {
+    if (zoomStatus.value !== 'none') {
+        return;
+    }
+
+    zoomStatus.value = 'zooming';
     const layer: LayerInstance | undefined = layerStore.getLayerByUid(
         props.params.data.rvUid
     );
-    if (layer === undefined) return;
+
+    if (layer === undefined) {
+        updateZoomStatus('error');
+        return;
+    }
 
     // similar to the sql lookup, the details panel must use the original OID field to perform zoomies
     const oidPair = props.params.layerCols[layer.id].find(
@@ -50,28 +98,71 @@ const zoomToFeature = () => {
     );
     const oid = props.params.data[oidPair.mappedAttr ?? oidPair.origAttr];
 
-    const opts = { getGeom: true };
-    layer.getGraphic(oid, opts).then(g => {
-        if (g.geometry.invalid()) {
-            console.error(`Could not find graphic for objectid ${oid}`);
-        } else {
-            iApi.geo.map.zoomMapTo(g.geometry);
-        }
-    });
+    const zoomUsingGraphic = () => {
+        const opts = { getGeom: true };
+        layer
+            .getGraphic(oid, opts)
+            .then(g => {
+                if (g.geometry.invalid()) {
+                    console.error(`Could not find graphic for objectid ${oid}`);
+                    updateZoomStatus('error');
+                } else {
+                    iApi.geo.map.zoomMapTo(g.geometry);
+                    updateZoomStatus('zoomed');
+                    iApi.updateAlert(iApi.$i18n.t('grid.cells.alert.zoom'));
+                }
+            })
+            .catch(() => {
+                updateZoomStatus('error');
+            });
+    };
+
+    if (
+        layer.layerType === LayerType.FEATURE &&
+        layer.geomType !== GeometryType.POINT
+    ) {
+        layer
+            .getGraphicExtent(oid)
+            .then(e => {
+                iApi.geo.map.zoomMapTo(e);
+                updateZoomStatus('zoomed');
+                iApi.updateAlert(iApi.$i18n.t('grid.cells.alert.zoom'));
+            })
+            .catch(() => {
+                zoomUsingGraphic();
+            });
+    } else {
+        zoomUsingGraphic();
+    }
+};
+
+const updateZoomStatus = (value: 'zooming' | 'zoomed' | 'error' | 'none') => {
+    if (value === 'zoomed' || value === 'error') {
+        setTimeout(() => {
+            zoomStatus.value = value;
+            (button.value as any)?._tippy.show();
+            setTimeout(() => {
+                (button.value as any)?._tippy.hide();
+                zoomStatus.value = 'none';
+            }, 3000);
+        }, 300);
+    } else {
+        zoomStatus.value = value;
+    }
 };
 
 onMounted(() => {
     // need to hoist events to top level cell wrapper to be keyboard accessible
     props.params.eGridCell.addEventListener('keydown', (e: KeyboardEvent) => {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && zoomStatus.value === 'none') {
             zoomToFeature();
         }
     });
     props.params.eGridCell.addEventListener('focus', () => {
-        (el.value as any)._tippy.show();
+        (button.value as any)?._tippy.show();
     });
     props.params.eGridCell.addEventListener('blur', () => {
-        (el.value as any)._tippy.hide();
+        (button.value as any)?._tippy.hide();
     });
 });
 
@@ -85,10 +176,10 @@ onBeforeUnmount(() => {
         }
     );
     props.params.eGridCell.removeEventListener('focus', () => {
-        (el.value as any)._tippy.show();
+        (button.value as any)?._tippy.show();
     });
     props.params.eGridCell.removeEventListener('blur', () => {
-        (el.value as any)._tippy.hide();
+        (button.value as any)?._tippy.hide();
     });
 });
 </script>

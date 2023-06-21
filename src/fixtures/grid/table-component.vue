@@ -435,7 +435,7 @@ export interface SpecialColumnDefinition {
         clearFilters?: Function;
     };
     pinned?: string;
-    maxWidth: number;
+    maxWidth?: number;
     cellStyle: Function;
     cellRenderer?: Function;
     cellRendererParams?: any;
