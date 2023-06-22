@@ -173,7 +173,8 @@ export class MapAPI extends CommonMapAPI {
                 extent: this._rampExtentSet.defaultExtent.toESRI(),
                 navigation: {
                     browserTouchPanEnabled: false
-                }
+                },
+                background: { color: bm.backgroundColour }
             })
         );
 
@@ -410,8 +411,10 @@ export class MapAPI extends CommonMapAPI {
 
         const schemaChanged: boolean =
             currentBasemp.tileSchemaId !== bm.tileSchemaId;
+        const canvasChanged: boolean =
+            currentBasemp.backgroundColour !== bm.backgroundColour;
 
-        if (schemaChanged) {
+        if (schemaChanged || canvasChanged) {
             // destroy the map view
             // reset the view promise and created flag before firing the event
 

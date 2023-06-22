@@ -87,7 +87,8 @@ let config = {
                             }
                         ],
                         tileSchemaId:
-                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                        backgroundColour: '#BFE8FE'
                     },
                     {
                         id: 'baseSimple',
@@ -134,7 +135,8 @@ let config = {
                             }
                         ],
                         tileSchemaId:
-                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                        backgroundColour: '#BFE8FE'
                     },
                     {
                         id: 'baseEsriWorld',
