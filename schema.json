@@ -2265,6 +2265,9 @@
                             "items": {
                                 "$ref": "#/$defs/mergeGrid"
                             }
+                        },
+                        "panelWidth": {
+                            "$ref": "#/$defs/panelWidth"
                         }
                     },
                     "required": ["mergeGrids"],
