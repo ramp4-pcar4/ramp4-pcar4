@@ -78,6 +78,7 @@ jobs:
 
     deploy-pages:
         needs: [post-build]
+        if: always() && (needs.post-build.result == 'success')
         name: Deploy the files
         uses: ./.github/workflows/pages.yml
         with:
