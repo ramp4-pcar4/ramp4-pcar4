@@ -15,7 +15,9 @@
         <div class="flex items-center text-left">
             <span
                 >{{ icons[notification.type as NotificationType] }}
-                {{ notification.message }}</span
+                <span class="select-text cursor-text">{{
+                    notification.message
+                }}</span></span
             >
             <span class="flex-grow"></span>
             <div
