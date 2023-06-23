@@ -1315,6 +1315,7 @@ const setUpColumns = () => {
                                 mappedAttr: config.value.fieldMap[col.data]
                             });
                             col.data = config.value.fieldMap[col.data];
+                            col.title = col.data;
                         } else {
                             attrMap.push({
                                 origAttr: col.data,
@@ -1361,7 +1362,7 @@ const setUpColumns = () => {
                             };
                         })
                     );
-                    //TODO: the table currently relies on config author to provide correct oid mapping. maybe return to this for enchancement?
+
                     mergedTableAttrs.oidField =
                         config.value.fieldMap &&
                         config.value.fieldMap[ta.oidField]
