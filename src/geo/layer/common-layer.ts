@@ -939,8 +939,9 @@ export class CommonLayer extends LayerInstance {
                 () =>
                     this.$iApi.notify.show(
                         NotificationType.WARNING,
+                        // layer.longload or layer.longdraw
                         this.$iApi.$i18n.t(`layer.long${type}`, {
-                            id: this.id
+                            id: this.name || this.id
                         })
                     ),
                 this.expectedTime[type]
