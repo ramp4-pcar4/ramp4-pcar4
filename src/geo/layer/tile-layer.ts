@@ -1,16 +1,19 @@
-import { CommonLayer, InstanceAPI, NotificationType } from '@/api/internal';
+import { InstanceAPI, MapLayer, NotificationType } from '@/api/internal';
 import { DataFormat, LayerFormat, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 import { EsriTileLayer } from '@/geo/esri';
 import { markRaw } from 'vue';
 
-export class TileLayer extends CommonLayer {
+/**
+ * A layer class which implements an ESRI Tile Layer.
+ */
+export class TileLayer extends MapLayer {
     declare esriLayer: EsriTileLayer | undefined;
 
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.supportsIdentify = false;
-        this.hovertips = false;
+
         this.layerType = LayerType.TILE;
         this.layerFormat = LayerFormat.TILE;
         this.dataFormat = DataFormat.ESRI_TILE;

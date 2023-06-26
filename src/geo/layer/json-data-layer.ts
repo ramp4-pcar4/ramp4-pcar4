@@ -1,33 +1,34 @@
-// handles static geojson (e.g. from a user file or hardcoded in a config) or a geojson file hosted on a web server
-import { FileLayer, InstanceAPI } from '@/api/internal';
+import { DataLayer, InstanceAPI } from '@/api/internal';
 import { LayerType, type RampLayerConfig } from '@/geo/api';
 
 /**
- * A layer class which implements an ESRI Feature Layer with data from a GeoJSON source.
+ * A layer class which implements a Data Layer with data from a Custom JSON source.
  */
-export class GeoJsonLayer extends FileLayer {
+export class JsonDataLayer extends DataLayer {
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
-        this.layerType = LayerType.GEOJSON;
+        this.layerType = LayerType.DATAJSON;
     }
 
     protected async onInitiate(): Promise<void> {
         // get geojson from appropriate source and set to special property.
-        // then initiate the FileLayer
+        // then initiate the DataLayer to complete setup
         if (
             this.origRampConfig.rawData &&
             (typeof this.origRampConfig.rawData === 'string' ||
                 this.origRampConfig.rawData instanceof Object)
         ) {
             // geojson has been passed in as static string or GeoJSON object
-            this.sourceGeoJson = this.origRampConfig.rawData;
+            this.sourceJson = this.origRampConfig.rawData;
         } else if (this.origRampConfig.url) {
-            this.sourceGeoJson = await this.$iApi.geo.layer.files.fetchFileData(
+            this.sourceJson = await this.$iApi.geo.layer.files.fetchFileData(
                 this.origRampConfig.url,
                 this.layerType
             );
         } else {
-            throw new Error('GeoJson layer config contains no raw data or url');
+            throw new Error(
+                'Json Data layer config contains no raw data or url'
+            );
         }
 
         await super.onInitiate();

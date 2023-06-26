@@ -3,11 +3,11 @@
 
 import {
     ArcServerAttributeLoader,
-    AttributeLoaderBase,
+    AttribSource,
     BaseRenderer,
-    CommonLayer,
     GlobalEvents,
     InstanceAPI,
+    MapLayer,
     QuickCache
 } from '@/api/internal';
 
@@ -35,24 +35,22 @@ import type {
     QueryFeaturesArcServerParams,
     QueryFeaturesParams,
     RampLayerConfig,
-    RampLayerFieldMetadataConfig,
     TabularAttributeSet
 } from '@/geo/api';
-import deepmerge from 'deepmerge';
+
 import to from 'await-to-js';
 import { markRaw, toRaw } from 'vue';
 import { EsriField, EsriRendererFromJson, EsriRequest } from '@/geo/esri';
-import { useLayerStore } from '@/stores/layer';
 
-export class AttribLayer extends CommonLayer {
-    geomType: GeometryType;
-    esriFields: Array<EsriField>;
-    fieldList: string; // list of field names, useful for numerous esri api calls
-    attLoader: AttributeLoaderBase | undefined;
+/**
+ * A common layer class which is inherited by layer classes that implement map-based layers that support ESRI style attributes.
+ */
+export class AttribLayer extends MapLayer {
+    protected attribs: AttribSource;
     renderer: BaseRenderer | undefined;
     serviceUrl: string;
     canModifyLayer: boolean;
-    protected quickCache: QuickCache | undefined;
+
     protected filter: Filter;
 
     protected constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
@@ -61,12 +59,13 @@ export class AttribLayer extends CommonLayer {
         this.geomType = GeometryType.UNKNOWN;
         this.serviceUrl = '';
         this.fieldList = '';
-        this.esriFields = [];
         this.canModifyLayer = true;
         this.filter = new Filter(
             rampConfig.permanentFilteredQuery || '',
             rampConfig.initialFilteredQuery || ''
         );
+        this.hovertips = rampConfig.state?.hovertips ?? true;
+        this.attribs = new AttribSource();
     }
 
     protected notLoadedErr(): void {
@@ -91,14 +90,18 @@ export class AttribLayer extends CommonLayer {
         return esriConfig;
     }
 
-    // serviceUrl: string,
     // NOTE this logic is for ArcGIS Server sourced things.
     //      other sourced attribute layers should override this function.
+
+    /**
+     * Will load and apply metadata from the ArcGIS Server endpoint to this layer.
+     *
+     * @param options loading options. Currently only supports custom renderer override
+     */
     async loadLayerMetadata(
         options: LoadLayerMetadataOptions = {}
     ): Promise<void> {
-        // given all the error handlers, leaving this as a non-async function
-
+        // generally the implementing class will have populated serviceUrl before calling this.
         if (!this.serviceUrl) {
             // case where a non-server subclass ends up calling this via .super magic.
             // will avoid failed attempts at reading a non-existing service.
@@ -106,93 +109,36 @@ export class AttribLayer extends CommonLayer {
             return;
         }
 
-        // extract info for this service
-        const [err, serviceResult] = await to<__esri.RequestResponse>(
-            EsriRequest(this.serviceUrl, { query: { f: 'json' } })
+        const sData = await this.$iApi.geo.layer.loadLayerMetadata(
+            this.serviceUrl
         );
-        if (!serviceResult) {
-            // case where service request was unsuccessful
-            console.error(
-                `Service metadata load error: ${this.serviceUrl}`,
-                err
-            );
-            return Promise.reject(
-                new Error(`Service metadata load error: ${this.serviceUrl}`)
-            );
-        }
-
-        if (!serviceResult.data) {
-            // case where service request was successful but no data appeared in result
-            console.error(`Service metadata load error: ${this.serviceUrl}`);
-            return Promise.reject(
-                new Error(`Service metadata load error: ${this.serviceUrl}`)
-            );
-        }
-
-        const sData: any = serviceResult.data;
 
         // properties for all endpoints
-        this.geomType = this.$iApi.geo.geom.serverGeomTypeToRampGeomType(
-            sData.geometryType
-        );
-        this.quickCache = new QuickCache(this.geomType);
-        this.scaleSet.minScale = sData.effectiveMinScale || sData.minScale;
-        this.scaleSet.maxScale = sData.effectiveMaxScale || sData.maxScale;
-        this.supportsFeatures = false; // saves us from having to keep comparing type to 'Feature Layer' on the client
-        this.canModifyLayer =
-            this.layerType === LayerType.SUBLAYER ? sData.canModifyLayer : true; // Only MILs have sublayers and their filtering is exclusively impacted by the canModifyLayer server flag
-        this.extent =
-            this.extent ??
-            (sData.extent
-                ? Extent.fromArcServer(sData.extent, this.id + '_extent')
-                : undefined);
+        this.geomType = sData.geometryType;
+        this.attribs.quickCache = new QuickCache(this.geomType);
+        this.scaleSet.minScale = sData.minScale;
+        this.scaleSet.maxScale = sData.maxScale;
+        this.dataFormat = sData.dataFormat;
+        this.extent = this.extent ?? sData.extent;
         this._serverVisibility = sData.defaultVisibility;
 
-        if (sData.type === 'Feature Layer') {
+        // stuff for Feature vs Raster
+        if (this.dataFormat === DataFormat.ESRI_FEATURE) {
             this.supportsFeatures = true;
-            this.dataFormat = DataFormat.ESRI_FEATURE;
-            this.esriFields = markRaw(
-                sData.fields.map((f: any) => EsriField.fromJSON(f))
-            );
-            this.fields = this.esriFields.map(f => {
-                return {
-                    name: f.name,
-                    alias: f.alias,
-                    type: f.type,
-                    length: f.length
-                };
-            });
+
+            // Only MILs have sublayers and their filtering is exclusively impacted by the canModifyLayer server flag
+            this.canModifyLayer =
+                this.layerType === LayerType.SUBLAYER
+                    ? sData.canModifyLayer
+                    : true;
+
+            this.fields = sData.fields;
             this.nameField = sData.displayField;
-
-            // find object id field
-            const noFieldDefOid: boolean = this.esriFields.every(elem => {
-                if (elem.type === 'oid') {
-                    this.oidField = elem.name;
-                    return false; // break the loop
-                }
-
-                return true; // keep looping
-            });
-
-            if (noFieldDefOid) {
-                // we encountered a service that does not mark a field as the object id.
-                // attempt to use alternate definition. if neither exists, we are toast.
-                this.oidField =
-                    sData.objectIdField ||
-                    (() => {
-                        // TODO worth pinging the notification api, or pushing layer into error state?
-                        console.error(
-                            `Encountered service with no OID defined: ${this.serviceUrl}`
-                        );
-                        return '';
-                    })();
-            }
+            this.oidField = sData.objectIdField;
 
             // drawOrder field check
             this.drawOrder.forEach(d => {
-                if (
-                    this.esriFields.findIndex(ef => ef.name === d.field) === -1
-                ) {
+                if (this.fields.findIndex(ef => ef.name === d.field) === -1) {
                     console.error(
                         `Draw order for layer ${this.id} references invalid field ${d.field}`
                     );
@@ -200,13 +146,13 @@ export class AttribLayer extends CommonLayer {
             });
 
             // add renderer and legend
-            const renderer =
+            const esriRenderer =
                 options && options.customRenderer && options.customRenderer.type
                     ? options.customRenderer
-                    : EsriRendererFromJson(sData.drawingInfo.renderer);
+                    : sData.renderer;
             this.renderer = this.$iApi.geo.symbology.makeRenderer(
-                renderer,
-                this.esriFields
+                esriRenderer,
+                this.fields
             );
 
             // this array will have a set of promises that resolve when all the legend svg has drawn.
@@ -225,10 +171,13 @@ export class AttribLayer extends CommonLayer {
                 serviceUrl: this.serviceUrl,
                 oidField: this.oidField,
                 batchSize: -1,
-                attribs: '*', // NOTE we set to * here for generic case. loader may override later once config settings are applied
+                attribs: '*', // NOTE we set to * here for generic case. Some subclasses will later call updateFieldList() after parsing config field settings
                 permanentFilter: this.getSqlFilter(CoreFilter.PERMANENT)
             };
-            this.attLoader = new ArcServerAttributeLoader(this.$iApi, loadData);
+            this.attribs.attLoader = new ArcServerAttributeLoader(
+                this.$iApi,
+                loadData
+            );
 
             /* See https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-FeatureLayer.html#title
                In particular, if the service has several layers, then the title of each layer will be the concatenation
@@ -238,70 +187,9 @@ export class AttribLayer extends CommonLayer {
                 this.name = sData.name ?? this.id;
             }
         } else {
-            this.dataFormat = DataFormat.ESRI_RASTER;
-            this.esriFields = [];
+            // raster layer
+            this.supportsFeatures = false;
         }
-    }
-
-    /**
-     * Will take field config metadata and incorporate it into this sublayer.
-     * Should be used after loading process has populated .esriFields property
-     *
-     * @param configMetadata data from the config object. can be undefined
-     */
-    processFieldMetadata(
-        configMetadata: RampLayerFieldMetadataConfig | undefined = undefined
-    ): void {
-        // TODO ensure we do not have to worry about case mismatch of field names.
-
-        // check for no enhancements requested
-        if (!configMetadata) {
-            this.fieldList = '*';
-            return;
-        }
-
-        if (!configMetadata.fieldInfo) {
-            throw new Error(
-                'processFieldMetadata called before fieldInfo was set on config metadata'
-            );
-        }
-
-        // if exlusive fields, only respect fields in the field info array
-        if (configMetadata.exclusiveFields) {
-            // ensure object id field is included
-            if (!configMetadata.fieldInfo.find(f => f.name === this.oidField)) {
-                configMetadata.fieldInfo.push({ name: this.oidField });
-            }
-
-            // TODO do we also need to ensure fields required by other things are auto-included?
-            //      e.g. hovertip
-            //           ref fields for class breaks or unique value renderers
-            //           name field
-            //      alternately, we don't, and insist config author properly defines their fields
-            //      might also want to consider an additional attribute on fields, something like
-            //      "coreHidden" that indicates the field has to exist, but should not be shown
-            //      on things like details panes or grids
-
-            this.fieldList = configMetadata.fieldInfo
-                .map(f => f.name)
-                .join(',');
-            const tempFI = configMetadata.fieldInfo; // required because typescript is throwing a fit about undefineds inside the .filter
-            this.esriFields = this.esriFields.filter(origField => {
-                return tempFI.find(fInfo => fInfo.name === origField.name);
-            });
-        } else {
-            this.fieldList = '*';
-        }
-
-        // if any aliases overrides, apply them
-        configMetadata.fieldInfo.forEach(cf => {
-            if (cf.alias) {
-                const ff = this.esriFields.find(fff => fff.name === cf.name);
-                if (ff) {
-                    ff.alias = cf.alias;
-                }
-            }
-        });
     }
 
     /**
@@ -311,12 +199,19 @@ export class AttribLayer extends CommonLayer {
      * @returns {Promise} resolves with set of attribute values
      */
     getAttributes(): Promise<AttributeSet> {
-        if (this.attLoader) {
-            return this.attLoader.getAttribs();
-        } else {
-            this.noLayerErr();
+        return this.attribs.attLoader.getAttribs();
+
+        // TODO if we find hard errors due to calling this too early are too destructive,
+        //      use the commented block below; apply same block to other methods that use
+        //      this.attribs.x
+        /*
+        try {
+            return this.attribs.attLoader.getAttribs();
+        } catch (e) {
+             this.noLayerErr();
             return Promise.resolve({ oidIndex: {}, features: [] });
         }
+        */
     }
 
     /**
@@ -324,11 +219,7 @@ export class AttribLayer extends CommonLayer {
      *
      */
     abortAttributeLoad(): void {
-        if (this.attLoader) {
-            this.attLoader.abortAttribLoad();
-        } else {
-            this.noLayerErr();
-        }
+        this.attribs.attLoader.abortAttribLoad();
     }
 
     /**
@@ -336,17 +227,9 @@ export class AttribLayer extends CommonLayer {
      *
      */
     clearFeatureCache(): void {
-        if (this.attLoader) {
-            this.attLoader.destroyAttribs();
-        } else {
-            this.noLayerErr();
-        }
-        if (this.quickCache) {
-            this.quickCache.clearAll();
-        }
+        this.attribs.clearAll();
     }
 
-    // formerly known as getFormattedAttributes
     /**
      * Invokes the process to get the full set of attribute values for the layer,
      * formatted in a tabular format. Additional data properties are also included.
@@ -355,129 +238,19 @@ export class AttribLayer extends CommonLayer {
      * @returns {Promise} resolves with set of tabular attribute values
      */
     getTabularAttributes(): Promise<TabularAttributeSet> {
-        // redundant checks to shut up typescript
-        if (!this.attLoader) {
-            throw new Error(
-                'getTabularAttributes call with missing attribute loader'
-            );
-        }
-
-        // TODO rethink how this works. is it better to read from attributes every time?
-        //      if we allow attribute value updates via API, then we probably have to do that.
-        if (!this.attLoader.tabularAttributesCache) {
-            // do not use await here. we want to store the promise and pass it on, not block until the promise resolves.
-            this.attLoader.tabularAttributesCache =
-                this.getTabularAttributesGuts();
-        }
-
-        return this.attLoader.tabularAttributesCache;
-    }
-
-    private async getTabularAttributesGuts(): Promise<TabularAttributeSet> {
-        // this does the heavy lifting. it is abstracted from getTabularAttributes()
-        // because async format is not conductive to grabbing and caching the promise halfway
-        // through the function execution.
-
-        // redundant checks to shut up typescript
-        if (!this.attLoader) {
-            throw new Error(
-                'getTabularAttributesGuts call with missing attribute loader'
-            );
-        }
-
-        if (this.dataFormat === DataFormat.ESRI_RASTER) {
-            throw new Error('Attempting to get attributes on a raster layer.');
-        }
-
-        // TODO figure out how to handle a failure in .getAttribs. See comment catch block at bottom of function.
-        const attSet = await this.attLoader.getAttribs();
-
-        if (!attSet.features || attSet.features.length === 0) {
-            // return empty attributes (this will happen if the attribute load was aborted)
-            return {
-                columns: [],
-                rows: [],
-                fields: [],
-                oidField: ''
-            };
-        }
-
-        // create columns array consumable by datables. We don't include the alias defined in the config here as
-        // the grid handles it seperately.
-        const columns = this.esriFields
-            .filter(field =>
-                // assuming there is at least one attribute - empty attribute bundle promises should be rejected, so it never even gets this far
-                // filter out fields where there is no corresponding attribute data
-                Object.prototype.hasOwnProperty.call(
-                    attSet.features[0],
-                    toRaw(field).name
-                )
-            )
-            .map(field => ({
-                data: toRaw(field).name, // TODO calling this data is really unintuitive. consider global rename to fieldName, name, attribName, etc.
-                title: toRaw(field).alias || toRaw(field).name
-            }));
-
-        // derive the icon for the row
-        // TODO figure out if we want to change the system attributes. making a copy for now with deepmerge.
-        // if we add rv properties to the feature in the attribute set, we may see those fields showing up in details panes, API outputs, etc.
-        // that said, copying means we double the size of attributes in memory.
-        const rows = attSet.features.map(feature => {
-            const att = deepmerge({}, feature);
-            att.rvInteractive = '';
-            att.rvSymbol = this.renderer?.getGraphicIcon(feature);
-            att.rvUid = useLayerStore(this.$vApp.$pinia).getLayerById(
-                this.id
-            )!.uid;
-            return att;
-        });
-
-        // if a field name resembles a function, the data table will treat it as one.
-        // to get around this, we add a function with the same name that returns the value,
-        // tricking that silly datagrid.
-        columns.forEach(c => {
-            if (c.data.slice(-2) === '()') {
-                // have to use function() to get .this to reference the row.
-                // arrow notation will reference the attribFC class.
-                const secretFunc = function () {
-                    // @ts-ignore
-                    return this[c.data];
-                };
-
-                const stub = c.data.slice(0, -2); // function without brackets
-                rows.forEach(r => {
-                    r[stub] = secretFunc;
-                });
-            }
-        });
-
-        // we are storing a promise in tabularAttributesCache
-        //    might need to revert to the way it was structured before.
-        //    or create an async guts and then main caller does a two line cache and return
-        return {
-            columns,
-            rows,
-            fields: this.fields, // keep fields for reference ...
-            oidField: this.oidField // ... keep a reference to id field ...
-        };
-
-        /* OLD PROMISE CATCH BLOCK
-            .catch(e => {
-                this.attLoader.tabularAttributesCache = undefined; // delete cached promise when the geoApi `getAttribs` call fails, so it will be requested again next time `getAttributes` is called;
-                if (e === 'ABORTED') { // TODO see if we're still thowing an error with message ABORTED
-                    throw new Error('ABORTED');
-                } else {
-                    throw new Error('Attrib loading failed');
-                }
-            });
-        */
+        // this call will generate the tabular format, or return the cache if
+        // it exists
+        return this.$iApi.geo.attributes.generateTabularAttributes(
+            this,
+            this.attribs
+        );
     }
 
     /**
      * Gets information on a graphic in the most efficient way possible. Options object properties:
      * - getGeom ; a boolean to indicate if the result should include graphic geometry
      * - getAttribs ; a boolean to indicate if the result should include graphic attributes
-     * - unboundMap ; an optional RampMap reference. Only required if geometry was requested and the layer has not been added to a map.
+     * - getStyle ; a boolean to indicate if the result should graphical styling information
      *
      * @param {Integer} objectId the object id of the graphic to find
      * @param {Object} options options object for the request, see above
@@ -496,28 +269,20 @@ export class AttribLayer extends CommonLayer {
         let resultGeom: BaseGeometry = new NoGeometry();
         const map = this.$iApi.geo.map;
 
-        // redundant checks to shut up typescript
-        if (!this.quickCache) {
-            throw new Error('getGraphic call with missing quickCache');
-        }
-        if (!this.attLoader) {
-            throw new Error('getGraphic call with missing attribute loader');
-        }
-
         let needWebAttr = false;
         let needWebGeom = false;
         let scale = 0;
 
         if (opts.getAttribs || opts.getStyle) {
             // attempt to get attributes from fastest source.
-            const aCache = this.quickCache.getAttribs(objectId);
+            const aCache = this.attribs.quickCache.getAttribs(objectId);
             if (aCache) {
                 // value is already cached. use it
                 resultAttribs = aCache;
-            } else if (this.attLoader.isLoaded() || this.isFile!) {
+            } else if (this.attribs.attLoader.isLoaded() || this.isFile!) {
                 // all attributes have been loaded (or is a file and are local). use that store.
                 // since attributes come from a promise, reset the wait promise to the attribute promise
-                const atSet = await this.attLoader.getAttribs();
+                const atSet = await this.attribs.attLoader.getAttribs();
                 resultAttribs = atSet.features[atSet.oidIndex[objectId]];
             } else {
                 // we will need to download data from the service
@@ -529,7 +294,7 @@ export class AttribLayer extends CommonLayer {
             scale = map.getScale();
 
             // first locate the appropriate cache due to simplifications.
-            const gCache = this.quickCache.getGeom(objectId, scale);
+            const gCache = this.attribs.quickCache.getGeom(objectId, scale);
 
             // attempt to get geometry from fastest source.
             if (gCache) {
@@ -574,7 +339,7 @@ export class AttribLayer extends CommonLayer {
 
             if (needWebGeom) {
                 serviceParams.mapSR = map.getSR().wkid?.toString();
-                if (!this.quickCache.isPoint) {
+                if (!this.attribs.quickCache.isPoint) {
                     serviceParams.maxOffset = map.esriView?.resolution;
                 }
             }
@@ -584,9 +349,9 @@ export class AttribLayer extends CommonLayer {
             );
             if (needWebGeom) {
                 // save our result in the cache
-                this.quickCache.setGeom(
+                this.attribs.quickCache.setGeom(
                     objectId,
-                    <BaseGeometry>webFeat.geometry,
+                    webFeat.geometry,
                     scale
                 );
                 resultGeom = webFeat.geometry;
@@ -594,14 +359,15 @@ export class AttribLayer extends CommonLayer {
 
             if (
                 needWebAttr ||
-                typeof this.quickCache.getAttribs(objectId) === 'undefined'
+                typeof this.attribs.quickCache.getAttribs(objectId) ===
+                    'undefined'
             ) {
                 // extra check in the if is for efficiency. attributes get downloaded in the request
                 // regardless if we wanted them. if we didn't want them, but didn't have them cached,
                 // will cache them anyways to save another hit later.
-                this.quickCache.setAttribs(
+                this.attribs.quickCache.setAttribs(
                     objectId,
-                    <Attributes>webFeat.attributes
+                    webFeat.attributes
                 );
 
                 if (needWebAttr) {
@@ -759,57 +525,6 @@ export class AttribLayer extends CommonLayer {
             this.filter.setCache(cache, impactedFilters, bExt);
         }
         return cache;
-    }
-
-    /**
-     * Will populate the layers featureCount property based on the server metrics.
-     * @returns {Promise} that resolves when the count is populated
-     */
-    async loadFeatureCount(): Promise<void> {
-        if (!this.serviceUrl) {
-            // case where a non-server subclass ends up calling this via .super magic.
-            // will avoid failed attempts at reading a non-existing service.
-            // class should implement their own logic to load feature count (e.g. scrape from file layer)
-            console.warn(
-                'A layer without a url attempted to run the server based feature count routine.'
-            );
-            return;
-        }
-
-        // TODO detect when we are in Raster Layer case? if we do this, we would need the caller of this
-        //      function to wait on the loadLayerMetadata promise, then check this.supportsFeatures
-
-        // extract info for this service
-        const restParam: __esri.RequestOptions = {
-            query: {
-                f: 'json',
-                where: '1=1',
-                returnCountOnly: true,
-                returnGeometry: false
-            }
-        };
-
-        const [err, serviceResult] = await to<__esri.RequestResponse>(
-            EsriRequest(`${this.serviceUrl}/query`, restParam)
-        );
-
-        // Throw console warnings, don't crash the app
-        if (!serviceResult) {
-            // case where service request was unsuccessful
-            console.warn(
-                `Feature count request unsuccessful: ${this.serviceUrl}`,
-                err
-            );
-            return;
-        }
-        if (!serviceResult.data) {
-            // case where service request was successful but no data appeared in result
-            console.warn(`Unable to load feature count: ${this.serviceUrl}`);
-            return;
-        }
-
-        // TODO need to decide on placeholder for unknown count.
-        this.featureCount = serviceResult.data.count;
     }
 
     /**

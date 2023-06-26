@@ -178,6 +178,7 @@ export class FileUtils extends APIScope {
         });
         switch (fileType) {
             case LayerType.GEOJSON:
+            case LayerType.DATAJSON:
                 return JSON.parse(
                     new TextDecoder('utf-8').decode(
                         new Uint8Array(response.data)
@@ -186,6 +187,7 @@ export class FileUtils extends APIScope {
             case LayerType.SHAPEFILE:
                 return response.data;
             case LayerType.CSV:
+            case LayerType.DATACSV:
                 return new TextDecoder('utf-8').decode(
                     new Uint8Array(response.data)
                 );
@@ -455,6 +457,8 @@ export class FileUtils extends APIScope {
         configPackage.renderer = EsriSimpleRenderer.fromJSON(
             defRender.renderer
         );
+
+        // .fields currently has our objectid field. the concat adds the rest
         configPackage.fields = (configPackage.fields || []).concat(
             options.fieldMetadata?.exclusiveFields
                 ? (this.extractGeoJsonFields(geoJson) as Array<Object>).filter(

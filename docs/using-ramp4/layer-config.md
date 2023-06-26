@@ -69,17 +69,20 @@ Defines the type of layer data we are consuming. Will determine how the layer is
 
 Valid values:
 
--  `esri-feature`: ESRI Feature Layer
--  `esri-map-image`: ESRI Map Image Layer (formerly known as Dynamic Layer)
--  `esri-tile`: ESRI Tile Layer
--  `esri-imagery`: ESRI Image Service
--  `esri-graphic`: ESRI Graphic Layer
--  `ogc-wfs`: OGC WFS 3.0
--  `ogc-wms`: OGC WMS
--  `file-geojson`: GeoJSON
--  `file-csv`: CSV File
--  `file-shape`: Shapefile (zipped)
--  `osm-tile`: OpenStreetMap Tile Layer
+- `esri-feature`: ESRI Feature Layer
+- `esri-map-image`: ESRI Map Image Layer (formerly known as Dynamic Layer)
+- `esri-tile`: ESRI Tile Layer
+- `esri-imagery`: ESRI Image Service
+- `esri-graphic`: ESRI Graphic Layer
+- `ogc-wfs`: OGC WFS 3.0
+- `ogc-wms`: OGC WMS
+- `file-geojson`: GeoJSON
+- `file-csv`: CSV File
+- `file-shape`: Shapefile (zipped)
+- `osm-tile`: OpenStreetMap Tile Layer
+- `data-esri-table`  ESRI Table Layer
+- `data-csv` Non Spatial CSV File
+- `data-json` [Compact JSON](../api-guides/layers.md#data-layers) File
 
 ```js
 {
@@ -716,17 +719,20 @@ These represent formats an ESRI Map Image Layer can return.
 
 This indicates which layer types can support certain sets of abilities
 
-| Layer Type      | Identify  | Attributes   | Local Data | Client Data Format |
-| ----------- | ----------- | ------------ | ------------ | ------------ |
-| ESRI Feature Layer  |  Yes     | Yes               | No  | Vector |
-| ESRI Map Image Layer | Yes | No | No | Raster |
-| ESRI M.I.L. Feature Sublayer | Yes | Yes | No | Raster |
-| ESRI M.I.L. Raster Sublayer | No | No | No | Raster |
-| ESRI Image Server Layer | No | No | No | Raster |
-| ESRI Tile Layer | No | No | No | Raster |
-| OGC WMS Layer | Yes | No | No | Raster |
-| OGC WFS 3.0 Layer | Yes | Yes | Yes | Vector |
-| GeoJSON Layer | Yes | Yes | Yes | Vector |
-| CSV Layer | Yes | Yes | Yes | Vector |
-| Shapefile Layer | Yes | Yes | Yes | Vector |
-| OpenStreetMap Tile Layer | No | No | No | Raster |
+| Layer Type      | Map Layer | Identify  | Attributes   | Local Data | Client Data Format |
+| ----------- | ----------- | ----------- | ------------ | ------------ | ------------ |
+| ESRI Feature Layer  |  Yes  |  Yes     | Yes               | No  | Vector |
+| ESRI Map Image Layer |  Yes  | Yes | No | No | Raster |
+| ESRI M.I.L. Feature Sublayer |  Yes  | Yes | Yes | No | Raster |
+| ESRI M.I.L. Raster Sublayer |  Yes  | No | No | No | Raster |
+| ESRI Image Server Layer |  Yes  | No | No | No | Raster |
+| ESRI Tile Layer |  Yes  | No | No | No | Raster |
+| OGC WMS Layer |  Yes  | Yes | No | No | Raster |
+| OGC WFS 3.0 Layer |  Yes  | Yes | Yes | Yes | Vector |
+| GeoJSON Layer |  Yes  | Yes | Yes | Yes | Vector |
+| CSV Layer |  Yes  | Yes | Yes | Yes | Vector |
+| Shapefile Layer |  Yes  | Yes | Yes | Yes | Vector |
+| OpenStreetMap Tile Layer |  Yes  | No | No | No | Raster |
+| ESRI Table Layer |  No  | No | Yes | No | N/A |
+| Non Spatial CSV Layer |  No  | No | Yes | Yes | N/A |
+| Compact JSON Layer |  No  | No | Yes | Yes | N/A |

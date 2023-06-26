@@ -31,7 +31,7 @@ import type {
 
 /**
  * A base class for Layer subclasses. It provides some utility functions to Layer and also gives access to `$iApi` and `$vApp` globals.
- * Mostly it exposes stub methods on LayerBase; this is because layer subclasses can be wildly different, so we don't
+ * Mostly it exposes stub methods; this is because layer subclasses can be wildly different, so we don't
  * have a pile of common things to put here. The stubs will help debugging as they will alert devs when they have not
  * implemented something. The stubs also allow us to get intellisense / typescript happiness when dealing with common
  * layer variables typed as LayerInstance.
@@ -107,6 +107,11 @@ export class LayerInstance extends APIScope {
     supportsFeatures: boolean;
 
     /**
+     * If the layer type can exist on the map
+     */
+    mapLayer: boolean;
+
+    /**
      * Feature count (-1 represents undefined / unknown)
      */
     featureCount: number;
@@ -115,6 +120,11 @@ export class LayerInstance extends APIScope {
      * Array of field definitions about the given layer's fields. Non-feature layers will have empty arrays.
      */
     fields: Array<FieldDefinition>;
+
+    /**
+     * Comma delimeted string of field names (or '*' for all). Useful for numerous ESRI api calls. Non-feature layers will return empty string;
+     */
+    fieldList: string;
 
     /**
      * Field name that contains value considered the name of a feature. Not applicable for non-feature layers.
@@ -234,7 +244,7 @@ export class LayerInstance extends APIScope {
 
         this.config = config;
 
-        this.id = ''; // take from config here?
+        this.id = '';
         this.uid = ''; // shutting up typescript. will get set somewhere else.
         this.name = 'error';
         this.layerState = LayerState.NEW;
@@ -247,18 +257,20 @@ export class LayerInstance extends APIScope {
         this.supportsIdentify = false; // this is updated by subclasses as they will know the real deal.
         this.identifyMode = LayerIdentifyMode.NONE;
         this.supportsFeatures = false;
+        this.mapLayer = true;
         this.featureCount = -1;
         this.fields = [];
+        this.fieldList = '';
         this.nameField = '';
         this.oidField = '';
         this.supportsSublayers = false;
         this.isSublayer = false;
         this.isRemoved = false;
         this.isFile = false;
-        this.isCosmetic = config.cosmetic || false;
+        this.isCosmetic = false;
         this.userAdded = false;
         this.identify = false; // will be updated later based on config/supportsIdentify value
-        this.hovertips = config.state?.hovertips ?? true;
+        this.hovertips = false;
         this.geomType = GeometryType.UNKNOWN;
         this.legend = [];
         this._sublayers = [];
@@ -486,12 +498,9 @@ export class LayerInstance extends APIScope {
      * Invokes the process to get the full set of attribute values for the layer.
      * Repeat calls will re-use the downloaded values unless the values have been explicitly cleared.
      *
-     * @param {Integer | String} [layerIdx] targets a layer index or uid to get attributes for. Uses first/only if omitted.
      * @returns {Promise} resolves with set of attribute values
      */
-    getAttributes(
-        layerIdx: number | string | undefined = undefined
-    ): Promise<AttributeSet> {
+    getAttributes(): Promise<AttributeSet> {
         return Promise.resolve({
             features: [],
             oidIndex: {}
@@ -509,6 +518,26 @@ export class LayerInstance extends APIScope {
      *
      */
     clearFeatureCache(): void {}
+
+    /**
+     * The number of attributes currently downloaded (will update as download progresses)
+     */
+    downloadedAttributes(): number {
+        // TODO ovverride in layers that have attLoader
+        //   .attLoader?.loadCount() ?? 0
+        // TODO document in layer md
+        return 0;
+    }
+
+    /**
+     * Indicates if the attribute load has been aborted.
+     */
+    attribLoadAborted(): boolean {
+        // TODO ovverride in layers that have attLoader
+        //   .attLoader?.isLoadAborted()
+        // TODO document in layer md
+        return false;
+    }
 
     // formerly known as getFormattedAttributes
     /**
