@@ -120,4 +120,11 @@ export class Basemap {
     set attribution(value: Attribution | undefined) {
         this.config.attribution = value;
     }
+
+    /**
+     * Get this basemap's background colour
+     */
+    get backgroundColour(): string {
+        return this.config.backgroundColour ?? '#FFFFFF';
+    }
 }

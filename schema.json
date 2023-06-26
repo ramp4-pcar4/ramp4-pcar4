@@ -1967,6 +1967,11 @@
                     "default": "",
                     "description": "Alt text for the basemap thumbnail image."
                 },
+                "backgroundColour": {
+                    "type": "string",
+                    "default": "",
+                    "description": "The background colour of the basemap."
+                },
                 "hideThumbnail": {
                     "type": "boolean",
                     "default": false,
