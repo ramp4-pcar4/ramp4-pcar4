@@ -1,5 +1,6 @@
 import { AttribLayer, InstanceAPI } from '@/api/internal';
 import {
+    CoreFilter,
     DataFormat,
     DefPromise,
     Extent,
@@ -11,16 +12,19 @@ import {
 } from '@/geo/api';
 import type {
     DiscreteGraphicResult,
+    IdentifyItem,
     IdentifyParameters,
     IdentifyResult,
+    Point,
     QueryFeaturesParams,
-    RampLayerConfig,
-    IdentifyItem,
-    Point
+    RampLayerConfig
 } from '@/geo/api';
 import { EsriFeatureLayer, EsriRendererFromJson } from '@/geo/esri';
 import { markRaw, reactive } from 'vue';
 
+/**
+ * A layer class which implements an ESRI Feature Layer.
+ */
 export class FeatureLayer extends AttribLayer {
     declare esriLayer: EsriFeatureLayer | undefined;
 
@@ -123,12 +127,6 @@ export class FeatureLayer extends AttribLayer {
         const pLD: Promise<void> = this.loadLayerMetadata(
             hasCustRed ? { customRenderer: this.esriLayer?.renderer } : {}
         ).then(() => {
-            if (!this.attLoader) {
-                throw new Error(
-                    'layer metadata loader did not create attribute loader'
-                );
-            }
-
             // apply server visibility in case of missing visibility in config
             this.visibility =
                 this.origRampConfig?.state?.visibility ??
@@ -136,13 +134,17 @@ export class FeatureLayer extends AttribLayer {
                 true;
 
             // apply any config based overrides to the data we just downloaded
+            // TODO should the final default be objectID field? Or will this turn off names / let something have no names?
             this.nameField =
                 this.origRampConfig.nameField || this.nameField || '';
             this.tooltipField =
                 this.origRampConfig.tooltipField || this.nameField;
 
-            this.processFieldMetadata(this.origRampConfig.fieldMetadata);
-            this.attLoader.updateFieldList(this.fieldList);
+            this.$iApi.geo.attributes.applyFieldMetadata(
+                this,
+                this.origRampConfig.fieldMetadata
+            );
+            this.attribs.attLoader.updateFieldList(this.fieldList);
 
             if (!this.esriLayer?.orderBy) {
                 // would be the case if no draw order was provided in the config.
@@ -162,7 +164,14 @@ export class FeatureLayer extends AttribLayer {
             }
         });
 
-        const pFC = this.loadFeatureCount();
+        const pFC = this.$iApi.geo.layer
+            .loadFeatureCount(
+                this.serviceUrl,
+                this.getSqlFilter(CoreFilter.PERMANENT)
+            )
+            .then(count => {
+                this.featureCount = count;
+            });
 
         this.layerTree.name = this.name;
         this.layerTree.layerIdx = featIdx;
@@ -333,25 +342,33 @@ export class FeatureLayer extends AttribLayer {
                 );
                 reject();
                 // TODO: should the query be re run if the basemap changes, or do we leave it up to user to do the projecting themselves?
-            } else if (this.quickCache?.getExtent(objectId)) {
-                resolve(this.quickCache.getExtent(objectId));
             } else {
-                this.esriLayer
-                    .queryExtent({
-                        objectIds: [objectId],
-                        outSpatialReference: this.$iApi.geo.map.getSR().toESRI()
-                    })
-                    .then(result => {
-                        const rampExtent = Extent.fromESRI(result.extent);
-                        this.quickCache?.setExtent(objectId, rampExtent);
-                        resolve(rampExtent);
-                    })
-                    .catch(() => {
-                        console.error(
-                            `Extent querying failed for ${objectId}.`
-                        );
-                        reject();
-                    });
+                const eCache = this.attribs.quickCache.getExtent(objectId);
+                if (eCache) {
+                    resolve(eCache);
+                } else {
+                    this.esriLayer
+                        .queryExtent({
+                            objectIds: [objectId],
+                            outSpatialReference: this.$iApi.geo.map
+                                .getSR()
+                                .toESRI()
+                        })
+                        .then(result => {
+                            const rampExtent = Extent.fromESRI(result.extent);
+                            this.attribs.quickCache.setExtent(
+                                objectId,
+                                rampExtent
+                            );
+                            resolve(rampExtent);
+                        })
+                        .catch(() => {
+                            console.error(
+                                `Extent querying failed for ${objectId}.`
+                            );
+                            reject();
+                        });
+                }
             }
         });
     }

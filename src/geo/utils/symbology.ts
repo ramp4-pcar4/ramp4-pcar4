@@ -8,14 +8,13 @@ import {
     UniqueValueRenderer
 } from '@/api/internal';
 import { LineStyleType } from '@/geo/api';
-import type { Attributes, LegendSymbology } from '@/geo/api';
+import type { Attributes, FieldDefinition, LegendSymbology } from '@/geo/api';
 import {
     EsriRenderer,
     EsriSimpleRenderer,
     EsriUniqueValueRenderer,
     EsriClassBreaksRenderer,
     EsriRendererFromJson,
-    EsriField,
     EsriRequest
 } from '@/geo/esri';
 import svgjs from 'svg.js';
@@ -72,7 +71,7 @@ export class SymbologyAPI extends APIScope {
 
     makeRenderer(
         esriRenderer: EsriRenderer,
-        fields: Array<EsriField>,
+        fields: Array<FieldDefinition>,
         falseRenderer = false
     ): BaseRenderer {
         switch (esriRenderer.type) {
