@@ -68,7 +68,7 @@ import type { InstanceAPI, LayerInstance } from '@/api/internal';
 import { useI18n } from 'vue-i18n';
 import { useLayerStore } from '@/stores/layer';
 import type { AttributeMapPair } from '../store';
-import { GeometryType, LayerType } from '@/geo/api';
+import { GeometryType, LayerState, LayerType } from '@/geo/api';
 
 const zoomStatus = ref<'zooming' | 'zoomed' | 'error' | 'none'>('none');
 const props = defineProps(['params']);
@@ -87,7 +87,7 @@ const zoomToFeature = () => {
         props.params.data.rvUid
     );
 
-    if (layer === undefined) {
+    if (layer === undefined || layer.layerState !== LayerState.LOADED) {
         updateZoomStatus('error');
         return;
     }

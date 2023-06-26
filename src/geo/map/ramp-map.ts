@@ -474,6 +474,7 @@ export class MapAPI extends CommonMapAPI {
                 layer.initiate();
             }
             const layerStore = useLayerStore(this.$vApp.$pinia);
+            layerStore.addInitiatingLayer(layer);
             let timeElapsed = 0;
             // Alternative to this: use event API and watch for layer initiated and layer error events??
             const layerWatcher = setInterval(() => {
@@ -483,6 +484,7 @@ export class MapAPI extends CommonMapAPI {
                     layer.layerState === LayerState.ERROR
                 ) {
                     clearInterval(layerWatcher);
+                    layerStore.removeInitiatingLayer(layer);
                     layerStore.addErrorLayer(layer);
                     layer.onError(); // need this thanks to an edge case where the legend sometimes doesnt update
                     reject();
@@ -492,6 +494,7 @@ export class MapAPI extends CommonMapAPI {
                 ) {
                     clearInterval(layerWatcher);
                     this.esriMap?.add(layer.esriLayer);
+                    layerStore.removeInitiatingLayer(layer);
                     layerStore.addLayer(layer);
                     // if index is provided, reorder the layer to the given index
                     // use the reorder method so that the esri map-stack and the layer store can stay in sync

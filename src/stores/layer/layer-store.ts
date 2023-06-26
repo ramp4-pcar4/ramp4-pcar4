@@ -27,19 +27,30 @@ export const useLayerStore = defineStore('layer', () => {
     // the layers in an error state.
     const penaltyBox = ref<LayerInstance[]>([]);
 
+    // layers currently initiating
+    const initiatingLayers = ref<LayerInstance[]>([]);
+
     // configs for layers
     const layerConfigs = ref<RampLayerConfig[]>([]);
 
     function getLayerByUid(uid: string): LayerInstance | undefined {
         return bfs(
-            layers.value as any,
+            [
+                ...(layers.value as any),
+                ...penaltyBox.value,
+                ...initiatingLayers.value
+            ],
             (layer: LayerInstance | undefined) => layer?.uid === uid
         );
     }
 
     function getLayerById(id: string): LayerInstance | undefined {
         return bfs(
-            layers.value as any,
+            [
+                ...(layers.value as any),
+                ...penaltyBox.value,
+                ...initiatingLayers.value
+            ],
             (layer: LayerInstance | undefined) => layer?.id === id
         );
     }
@@ -54,6 +65,10 @@ export const useLayerStore = defineStore('layer', () => {
 
     function addErrorLayer(value: LayerInstance) {
         penaltyBox.value = [...(penaltyBox.value as any), value];
+    }
+
+    function addInitiatingLayer(value: LayerInstance) {
+        initiatingLayers.value = [...(initiatingLayers.value as any), value];
     }
 
     function reorderLayer(
@@ -88,6 +103,16 @@ export const useLayerStore = defineStore('layer', () => {
         penaltyBox.value = filteredLayers;
     }
 
+    function removeInitiatingLayer(value: LayerInstance | string) {
+        const layerId = value instanceof LayerInstance ? value.id : value;
+        const layerUid = value instanceof LayerInstance ? value.uid : value;
+        // copy to new array so watchers will have a reference to the old value
+        const filteredLayers = initiatingLayers.value.filter(layer => {
+            return layer.id !== layerId && layer.uid !== layerUid;
+        });
+        initiatingLayers.value = filteredLayers;
+    }
+
     function removeLayerConfig(layerId: string) {
         // copy to new array so watchers will have a reference to the old value
         const filteredLayerConfigs = layerConfigs.value.filter(layerConfig => {
@@ -99,15 +124,18 @@ export const useLayerStore = defineStore('layer', () => {
     return {
         layers,
         penaltyBox,
+        initiatingLayers,
         layerConfigs,
         getLayerByUid,
         getLayerById,
         addLayerConfig,
         addLayer,
         addErrorLayer,
+        addInitiatingLayer,
         reorderLayer,
         removeLayer,
         removeErrorLayer,
+        removeInitiatingLayer,
         removeLayerConfig
     };
 });

@@ -108,6 +108,18 @@ export class LayerAPI extends APIScope {
      * @returns {Array<LayerInstance>} all registered layers
      */
     allLayers(): Array<LayerInstance> {
+        return [
+            ...this.allActiveLayers(),
+            ...this.allErrorLayers(),
+            ...this.allInitiatingLayers()
+        ];
+    }
+
+    /**
+     * Returns all layers currently on the map.
+     * @returns {Array<LayerInstance>} all layers on the map
+     */
+    allActiveLayers(): Array<LayerInstance> {
         return (
             (useLayerStore(this.$vApp.$pinia)
                 .layers as unknown as Array<LayerInstance>) || []
@@ -122,6 +134,17 @@ export class LayerAPI extends APIScope {
         return (
             (useLayerStore(this.$vApp.$pinia)
                 .penaltyBox as unknown as Array<LayerInstance>) || []
+        );
+    }
+
+    /**
+     * Returns all layers currently  undergoing initiation process.
+     * @returns {Array<LayerInstance>} all initiating layers
+     */
+    allInitiatingLayers(): Array<LayerInstance> {
+        return (
+            (useLayerStore(this.$vApp.$pinia)
+                .initiatingLayers as unknown as Array<LayerInstance>) || []
         );
     }
 
