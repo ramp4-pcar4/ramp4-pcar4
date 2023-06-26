@@ -295,11 +295,7 @@ let config = {
                                         { name: 'CO2_eq' },
                                         { name: 'E_Units' },
                                         { name: 'Report_Year' },
-                                        { name: 'E_DetailPageURL' },
-                                        {
-                                            name: 'OBJECTID',
-                                            visible: false
-                                        }
+                                        { name: 'E_DetailPageURL' }
                                     ]
                                 }
                             }
@@ -335,8 +331,7 @@ let config = {
                                 { name: 'GridColumn5' },
                                 { name: 'Units' },
                                 { name: 'Report_Year' },
-                                { name: 'E_DetailPageURL' },
-                                { name: 'OBJECTID', visible: false }
+                                { name: 'E_DetailPageURL' }
                             ]
                         }
                     }
@@ -366,8 +361,7 @@ let config = {
                                 { name: 'PM2_5' },
                                 { name: 'E_Units' },
                                 { name: 'Report_Year' },
-                                { name: 'E_DetailPageURL' },
-                                { name: 'OBJECTID', visible: false }
+                                { name: 'E_DetailPageURL' }
                             ]
                         }
                     }
@@ -397,8 +391,7 @@ let config = {
                                 { name: 'SO2' },
                                 { name: 'E_Units' },
                                 { name: 'Report_Year' },
-                                { name: 'E_DetailPageURL' },
-                                { name: 'OBJECTID', visible: false }
+                                { name: 'E_DetailPageURL' }
                             ]
                         }
                     }
@@ -427,8 +420,7 @@ let config = {
                                 { name: 'GridColumn5' },
                                 { name: 'E_Units' },
                                 { name: 'Report_Year' },
-                                { name: 'E_DetailPageURL' },
-                                { name: 'OBJECTID', visible: false }
+                                { name: 'E_DetailPageURL' }
                             ]
                         }
                     },
@@ -463,8 +455,7 @@ let config = {
                                 { name: 'Pb' },
                                 { name: 'E_Units' },
                                 { name: 'Report_Year' },
-                                { name: 'E_DetailPageURL' },
-                                { name: 'OBJECTID', visible: false }
+                                { name: 'E_DetailPageURL' }
                             ]
                         }
                     }
@@ -503,11 +494,7 @@ let config = {
                                         { name: 'E_PA_Zone_Desc' },
                                         { name: 'E_URL' },
                                         { name: 'Report_Year' },
-                                        { name: 'E_DetailPageURL' },
-                                        {
-                                            name: 'OBJECTID',
-                                            visible: false
-                                        }
+                                        { name: 'E_DetailPageURL' }
                                     ]
                                 }
                             }
@@ -558,8 +545,7 @@ let config = {
                                 { name: 'E_URL_Historical' },
                                 { name: 'E_Measure' },
                                 { name: 'Report_Year' },
-                                { name: 'E_DetailPageURL' },
-                                { name: 'OBJECTID', visible: false }
+                                { name: 'E_DetailPageURL' }
                             ]
                         }
                     }
@@ -580,13 +566,6 @@ let config = {
                             state: {
                                 visibility: true,
                                 opacity: 1
-                            },
-                            fixtures: {
-                                grid: {
-                                    columns: [
-                                        { name: 'OBJECTID', visible: false }
-                                    ]
-                                }
                             }
                         },
                         {

@@ -2525,6 +2525,11 @@
                     "type": "boolean",
                     "description": "Will enable visual animation when using the site, such as control transitions.",
                     "default": true
+                },
+                "exposeOid": {
+                    "type": "boolean",
+                    "description": "Determines whether or not to include a feature's object ID field when viewing data on the site (e.g. within the details panel when identifying a feature).",
+                    "default": false
                 }
             },
             "required": [],
