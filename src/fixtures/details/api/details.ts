@@ -77,8 +77,13 @@ export class DetailsAPI extends FixtureInstance {
         };
 
         // feature ids are composed of the layer uid and feature object id
+        const layer: LayerInstance | undefined = this.$iApi.geo.layer.getLayer(
+            featureData.uid
+        );
         const prevFeatureId = this.detailsStore.currentFeatureId;
-        const currFeatureId = `${featureData.uid}-${featureData.data.OBJECTID}`;
+        const currFeatureId = `${featureData.uid}-${
+            featureData.data[layer?.oidField ?? '']
+        }`;
         this.detailsStore.currentFeatureId = featureData.data
             ? currFeatureId
             : undefined;
