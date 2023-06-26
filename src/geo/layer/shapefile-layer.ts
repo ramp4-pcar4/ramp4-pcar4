@@ -1,6 +1,9 @@
 import { FileLayer, InstanceAPI } from '@/api/internal';
 import { LayerType, type RampLayerConfig } from '@/geo/api';
 
+/**
+ * A layer class which implements an ESRI Feature Layer with data from a Shapefile zip.
+ */
 export class ShapefileLayer extends FileLayer {
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);

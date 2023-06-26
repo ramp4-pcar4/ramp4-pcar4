@@ -2,11 +2,10 @@
 // we can add more classes to support more renderer types if we need to
 
 import { RendererType } from '@/geo/api';
-import type { Attributes } from '@/geo/api';
+import type { Attributes, FieldDefinition } from '@/geo/api';
 import {
     EsriClassBreakInfo,
     EsriClassBreaksRenderer,
-    EsriField,
     EsriRenderer,
     EsriSimpleMarkerSymbol,
     EsriSimpleRenderer,
@@ -26,7 +25,7 @@ export class BaseRenderer {
     // a non-feature service, like a tile layer or imagery layer.
     constructor(
         esriRenderer: EsriRenderer,
-        layerFields: Array<EsriField>,
+        layerFields: Array<FieldDefinition>,
         falseRenderer = false
     ) {
         this.innerRenderer = esriRenderer;
@@ -81,7 +80,7 @@ export class BaseRenderer {
     // any character and returns the character. E.g. string would return ', numbers return empty string.
     protected getFieldDelimiter(
         fieldName: string,
-        fields: Array<EsriField>
+        fields: Array<FieldDefinition>
     ): string {
         let delim = `'`;
 
@@ -104,7 +103,7 @@ export class BaseRenderer {
     // corrects for any character-case discrepancy for field names in the renderer vs on the layer
     protected cleanFieldName(
         fieldName: string,
-        fields: Array<EsriField>
+        fields: Array<FieldDefinition>
     ): string {
         if (!fieldName) {
             // testing an undefined/unused field. return original value.
@@ -169,7 +168,7 @@ export class BaseSymbolUnit {
 export class SimpleRenderer extends BaseRenderer {
     constructor(
         esriRenderer: EsriSimpleRenderer,
-        layerFields: Array<EsriField>
+        layerFields: Array<FieldDefinition>
     ) {
         super(esriRenderer, layerFields);
 
@@ -189,7 +188,7 @@ export class UniqueValueRenderer extends BaseRenderer {
 
     constructor(
         esriRenderer: EsriUniqueValueRenderer,
-        layerFields: Array<EsriField>,
+        layerFields: Array<FieldDefinition>,
         falseRenderer = false
     ) {
         super(esriRenderer, layerFields, falseRenderer);
@@ -298,7 +297,7 @@ export class ClassBreaksRenderer extends BaseRenderer {
 
     constructor(
         esriRenderer: EsriClassBreaksRenderer,
-        layerFields: Array<EsriField>,
+        layerFields: Array<FieldDefinition>,
         falseRenderer = false
     ) {
         super(esriRenderer, layerFields, falseRenderer);
