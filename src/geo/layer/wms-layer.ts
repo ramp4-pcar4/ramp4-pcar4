@@ -1,4 +1,4 @@
-import { CommonLayer, InstanceAPI } from '@/api/internal';
+import { InstanceAPI, MapLayer } from '@/api/internal';
 import {
     DataFormat,
     DefPromise,
@@ -23,7 +23,10 @@ import type {
 import { EsriRequest, EsriWMSLayer, EsriWMSSublayer } from '@/geo/esri';
 import { markRaw, reactive } from 'vue';
 
-export class WmsLayer extends CommonLayer {
+/**
+ * A layer class which implements an ESRI WMS Layer.
+ */
+export class WmsLayer extends MapLayer {
     declare esriLayer: EsriWMSLayer | undefined;
     sublayerNames: Array<string>;
     readonly mimeType: string;
@@ -31,7 +34,7 @@ export class WmsLayer extends CommonLayer {
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.supportsIdentify = true;
-        this.hovertips = false;
+
         this.layerType = LayerType.WMS;
         this.layerFormat = LayerFormat.WMS;
         // TODO is there a default? we have a bit of stuff in this file that assumes `text`,
@@ -89,7 +92,7 @@ export class WmsLayer extends CommonLayer {
         };
 
         // do a GetCapabilities call for only the specified layer if it is a geomet layer
-        if (rampLayerConfig.url!.indexOf('/geomet') !== -1) {
+        if (rampLayerConfig.url.indexOf('/geomet') !== -1) {
             // multiple values for layer/layers parameter currently not supported by geomet
             esriConfig.customParameters.layers = lEntries[0].id;
         }

@@ -1,12 +1,12 @@
 // put things here that would be common to all esri attribute layers.
 // used for layer types defined by Core RAMP.
 
-import { CommonLayer, InstanceAPI } from '@/api/internal';
+import { InstanceAPI, MapLayer } from '@/api/internal';
 import type { EsriGraphicsLayer, EsriGraphic } from '@/geo/esri';
 import { DataFormat, Graphic, LayerFormat } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 
-export class CommonGraphicLayer extends CommonLayer {
+export class CommonGraphicLayer extends MapLayer {
     protected constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.dataFormat = DataFormat.ESRI_FEATURE;

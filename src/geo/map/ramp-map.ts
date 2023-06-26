@@ -496,17 +496,29 @@ export class MapAPI extends CommonMapAPI {
                     reject();
                 } else if (
                     layer.initiationState === InitiationState.INITIATED &&
-                    layer.esriLayer
+                    (layer.esriLayer || !layer.mapLayer)
                 ) {
                     clearInterval(layerWatcher);
-                    this.esriMap?.add(layer.esriLayer);
-                    layerStore.removeInitiatingLayer(layer);
-                    layerStore.addLayer(layer);
-                    // if index is provided, reorder the layer to the given index
-                    // use the reorder method so that the esri map-stack and the layer store can stay in sync
-                    if (index !== undefined) {
-                        this.reorder(layer, index);
+                    if (layer.mapLayer) {
+                        this.esriMap?.add(layer.esriLayer!);
+                        layerStore.removeInitiatingLayer(layer);
+                        layerStore.addLayer(layer);
+                        // if index is provided, reorder the layer to the given index
+                        // use the reorder method so that the esri map-stack and the layer store can stay in sync
+                        if (index !== undefined) {
+                            this.reorder(layer, index);
+                        }
+                    } else {
+                        // data layer
+                        // push to the appropriate store
+                        layerStore.removeInitiatingLayer(layer);
+                        layerStore.addDataLayer(layer);
+
+                        // there is no esri layer "load" first, so we trigger
+                        // the data layer load now.
+                        layer.onLoad();
                     }
+
                     // layer has been added to the map, fire layer registered event
                     this.$iApi.event.emit(GlobalEvents.LAYER_REGISTERED, layer);
                     resolve();

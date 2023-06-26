@@ -6,8 +6,7 @@
 import {
     AttribLayer,
     FileLayerAttributeLoader,
-    InstanceAPI,
-    QuickCache
+    InstanceAPI
 } from '@/api/internal';
 
 import type {
@@ -27,6 +26,7 @@ import {
 } from '@/geo/api';
 
 import type {
+    FieldDefinition,
     GeoJsonOptions,
     GetGraphicParams,
     Graphic,
@@ -45,31 +45,9 @@ import {
 } from '@/geo/esri';
 import { markRaw, reactive, toRaw } from 'vue';
 
-// util function to manage trickery. file layer can have field names that are bad keys.
-// our file loader will have corrected them, but ramp layer config .nameField and .tooltipField may
-// still have the original field names.
-// This function will return a valid field name for a given field name. First attempts at
-// direct match, then attempts to reverse any bad field renaming logic.
-function fieldValidator(fields: Array<EsriField>, targetName: string): string {
-    if (fields.findIndex(f => f.name === targetName) === -1) {
-        // no direct match found.
-        const validField = fields.find(f => f.alias === targetName);
-        if (validField) {
-            return validField.name;
-        } else {
-            // give warning and return OBJECTID, which is guaranteed to exist in file layer.
-            // Issue is not critical enough to blow up the app with an error
-            console.warn(
-                `Cannot find name field in layer field list: ${targetName}`
-            );
-            return 'OBJECTID';
-        }
-    } else {
-        // target name was ok
-        return targetName;
-    }
-}
-
+/**
+ * A common layer class which is inherited by layer classes that implement map-based layers that are not server-bound after creation.
+ */
 export class FileLayer extends AttribLayer {
     declare esriLayer: EsriFeatureLayer | undefined;
     declare esriView: __esri.FeatureLayerView | undefined;
@@ -189,7 +167,7 @@ export class FileLayer extends AttribLayer {
 
         if (this.origRampConfig.nameField) {
             esriConfig.displayField =
-                fieldValidator(
+                this.$iApi.geo.attributes.fieldValidator(
                     <Array<EsriField>>esriConfig.fields,
                     this.origRampConfig.nameField!
                 ) || oidField;
@@ -240,19 +218,21 @@ export class FileLayer extends AttribLayer {
         this.extractLayerMetadata();
         // NOTE name field overrides from config have already been applied by this point
         if (this.origRampConfig.tooltipField) {
-            this.tooltipField = fieldValidator(
-                this.esriFields,
-                this.origRampConfig.tooltipField
-            );
+            this.tooltipField =
+                this.$iApi.geo.attributes.fieldValidator(
+                    this.fields,
+                    this.origRampConfig.tooltipField
+                ) || this.nameField;
         } else {
             this.tooltipField = this.nameField;
         }
 
-        this.processFieldMetadata(this.origRampConfig.fieldMetadata);
-        if (!this.attLoader) {
-            throw new Error('file layer did not have attribute loader object');
-        }
-        this.attLoader.updateFieldList(this.fieldList);
+        this.$iApi.geo.attributes.applyFieldMetadata(
+            this,
+            this.origRampConfig.fieldMetadata
+        );
+
+        this.attribs.attLoader.updateFieldList(this.fieldList);
 
         this.featureCount = this.esriLayer?.source.length || 0;
 
@@ -264,7 +244,7 @@ export class FileLayer extends AttribLayer {
         loadPromises.push(this.viewDefProm.getPromise());
 
         // since no "update" cycle, mark layer as up to date after all load promises resolve.
-        // Note looks like the view promise handler in CommonLayer is already setting this.
+        // Note looks like the view promise handler in MapLayer is already setting this.
         // leaving commented code to avoid confusion
         /*
         Promise.all(loadPromises).then(() => {
@@ -415,9 +395,6 @@ export class FileLayer extends AttribLayer {
             l.geometryType
         );
 
-        // here to avoid any null-dereference errors, but never used.
-        this.quickCache = new QuickCache(this.geomType);
-
         // if we ever make config override for scale, would need to apply on the layer constructor, will end up here
         this.scaleSet.minScale = l.minScale || 0;
         this.scaleSet.maxScale = l.maxScale || 0;
@@ -426,8 +403,8 @@ export class FileLayer extends AttribLayer {
         this.extent =
             this.extent ?? Extent.fromESRI(l.fullExtent, this.id + '_extent');
 
-        this.esriFields = markRaw(l.fields.slice());
-        this.fields = this.esriFields.map(f => {
+        const esriFields: Array<EsriField> = markRaw(l.fields.slice());
+        this.fields = esriFields.map(f => {
             return {
                 name: f.name,
                 alias: f.alias,
@@ -442,7 +419,7 @@ export class FileLayer extends AttribLayer {
         // layer was constructed. no need to check here.
         this.renderer = this.$iApi.geo.symbology.makeRenderer(
             l.renderer,
-            this.esriFields
+            this.fields
         );
 
         // this array will have a set of promises that resolve when all the legend svg has drawn.
@@ -457,7 +434,10 @@ export class FileLayer extends AttribLayer {
             attribs: '*', // * as default. layer loader may update after processing config overrides
             batchSize: -1
         };
-        this.attLoader = new FileLayerAttributeLoader(this.$iApi, loadData);
+        this.attribs.attLoader = new FileLayerAttributeLoader(
+            this.$iApi,
+            loadData
+        );
     }
 
     /**
