@@ -87,7 +87,7 @@ const zoomToFeature = () => {
         props.params.data.rvUid
     );
 
-    if (layer === undefined) {
+    if (layer === undefined || !layer.isLoaded) {
         updateZoomStatus('error');
         return;
     }
