@@ -2,8 +2,6 @@
 
 The following fixtures are included in the default setup. Any special interfaces they support is also noted; this information is relevant when replacing defaults fixtures, as discussed in the Examples section below.
 
-TODO maybe these lists go in separate pages, like reference pages.
-
 ### Appbar
 
 The `appbar` provides a means to open and track panels, or run custom commands.

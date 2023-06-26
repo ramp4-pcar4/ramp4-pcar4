@@ -5,6 +5,7 @@ import type {
     Point,
     SpatialReference
 } from '@/geo/api';
+import type { EsriRenderer } from '../esri';
 
 // From the supported ESRI field types
 // https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-support-Field.html#type
@@ -173,6 +174,11 @@ export const enum LayerType {
     // Other
     OSM = 'osm-tile', // open street map
 
+    // Data
+    DATACSV = 'data-csv',
+    DATAJSON = 'data-json',
+    DATATABLE = 'data-esri-table',
+
     UNKNOWN = 'unknown',
 
     SUBLAYER = 'sublayer'
@@ -184,6 +190,7 @@ export const enum LayerFormat {
     GRAPHIC = 'graphic',
     IMAGERY = 'imagery',
     MAPIMAGE = 'map-image',
+    NOLAYER = 'no-layer',
     OSM = 'osm-tile',
     TILE = 'tile',
     UNKNOWN = 'unknown',
@@ -274,6 +281,7 @@ export const enum LayerState {
 
 export const enum DrawState {
     NOT_LOADED = 'not-loaded',
+    NOT_VISUAL = 'not-visual',
     REFRESH = 'refresh',
     UP_TO_DATE = 'up-to-date'
 }
@@ -363,6 +371,23 @@ export interface LegendSymbology {
 export interface ArcGisServerUrl {
     rootUrl: string;
     index: number | undefined;
+}
+
+export interface ArcGisServerMetadata {
+    geometryType: GeometryType;
+    minScale: number;
+    maxScale: number;
+    canModifyLayer: boolean;
+    extent?: Extent;
+    defaultVisibility: boolean;
+    fields: Array<FieldDefinition>;
+    displayField: string;
+    objectIdField: string;
+    renderer?: EsriRenderer;
+    currentVersion: number;
+    name: string;
+    dataFormat: DataFormat;
+    mapLayer: boolean;
 }
 
 export interface GetGraphicParams {
@@ -491,6 +516,12 @@ export interface CsvOptions {
     latfield?: string;
     lonfield?: string;
     delimiter?: string;
+}
+
+// payload format for Data Layer in json form
+export interface CustomJson {
+    fields: Array<string>; // field names
+    data: Array<Array<any>>; // each inner array containts the attribute values per feature. order matches fields array
 }
 
 // ----------------------- CLIENT CONFIG INTERFACES -----------------------------------
