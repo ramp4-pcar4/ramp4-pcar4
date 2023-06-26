@@ -106,19 +106,42 @@ Note that subfolder structures do not have a uid; they exist to organize the hei
 
 ## Supported Layer Types
 
-The following formats have support built in the codebase. The ESRI formats assume being hosted on an ArcGIS Server `MapServer`. `FeatureServer` may work but with some functionality missing. The configuration `layerType` is provided in brackets.
+The following formats have support built in the codebase. The configuration `layerType` is provided in brackets.
 
--   ESRI Feature Layer (`esri-feature`)
--   ESRI Map Image Layer (formerly known as Dynamic Layer) (`esri-map-image`)
--   ESRI Tile Layer (`esri-tile`)
--   ESRI Image Service (`esri-imagery`)
--   ESRI Graphic Layer (`esri-graphic`)
--   OGC WFS 3.0 (`ogc-wfs`)
--   OGC WMS (`ogc-wms`)
--   GeoJSON (`file-geojson`)
--   CSV File (`file-csv`)
--   Shapefile (`file-shape`)
--   OpenStreetMap Tile Layer (`osm-tile`)
+### Map Layers
+
+The ESRI formats assume being hosted on an ArcGIS Server `MapServer`. `FeatureServer` may work but with some functionality missing. 
+
+- ESRI Feature Layer (`esri-feature`)
+- ESRI Map Image Layer (formerly known as Dynamic Layer) (`esri-map-image`)
+- ESRI Tile Layer (`esri-tile`)
+- ESRI Image Service (`esri-imagery`)
+- ESRI Graphic Layer (`esri-graphic`)
+- OGC WFS 3.0 (`ogc-wfs`)
+- OGC WMS (`ogc-wms`)
+- GeoJSON (`file-geojson`)
+- CSV File (`file-csv`)
+- Shapefile (`file-shape`)
+- OpenStreetMap Tile Layer (`osm-tile`)
+
+### Data Layers
+
+- ESRI Table Layer (`data-esri-table`)
+- Non Spatial CSV File (`data-csv`)
+- Compact JSON File (`data-json`)
+
+The Compact JSON file format is designed to remove duplicated field names. A sample is as follows
+
+```js
+{
+    fields: ['Resto_Name', 'Resto_Type', 'Star_Rating'],
+    data: [
+        ['That is a Tasty Burger', 'Burger', 5],
+        ['Value Patties', 'Burger', 2],
+        ['The Hearty Slice', 'Pizza', 4]
+    ]
+}
+```
 
 ## Layer Lifecycle
 
@@ -166,20 +189,33 @@ The properties `layerState` and `isLoaded` can also be used to do a synchronous 
 
 ### Finding A Layer
 
-A Layer or sublayer can be retrieved via the instance API using the Layer ID or the UID.
+A Layer or sublayer registered with the instance can be retrieved via the `getLayer` API using the Layer ID or the UID.
 
 ```js
 var myLayer = instanceApi.geo.layer.getLayer('fancyLayerId'));
 ```
 
-The `getLayer()` method will return layers on the map, layers that have failed, and layers that are being added to the map. You can also access lists of each type of layer.
+Arrays of layers in various states can also be requested.
 
 ```
-var allGoodLayerArray = instanceApi.geo.layer.allActiveLayers();
-var errLayerArray = instanceApi.geo.layer.allErrorLayers();
-var initiatingLayerArray = instanceApi.geo.layer.allInitiatingLayers();
-var mapLayerArray = instanceApi.geo.layer.allLayersOnMap();
+// List of all layers registered with the instance
 var allLayerArray = instanceApi.geo.layer.allLayers();
+
+// List of layers in a use-able state (have initiated, are not in error state)
+var allGoodMapLayerArray = instanceApi.geo.layer.allActiveLayers();
+
+// List of layers in an error state
+var errLayerArray = instanceApi.geo.layer.allErrorLayers();
+
+// List of layers currently initiating
+var initiatingLayerArray = instanceApi.geo.layer.allInitiatingLayers();
+
+// List of layers occupying the map stack, in order (bottom to top). 
+// If a layer has errored but is still in the map, it is included
+var mapLayerArray = instanceApi.geo.layer.allLayersOnMap();
+
+// List of data-based layers that have initiated
+var dataLayersArray = instanceApi.geo.layer.allDataLayers();
 ```
 
 ## Sublayers
@@ -283,6 +319,12 @@ Determine if the Layer supports our standard features (a feature is a geometry w
 
 ```js
 myLayer.supportsFeatures; // true
+```
+
+Determine if the layer can be displayed on the map. If `false`, the layer contains attribute data only.
+
+```js
+myLayer.mapLayer; // true
 ```
 
 Get legend iconography, names, and other metadata.

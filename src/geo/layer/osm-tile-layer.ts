@@ -1,4 +1,4 @@
-import { CommonLayer, InstanceAPI } from '@/api/internal';
+import { InstanceAPI, MapLayer } from '@/api/internal';
 import { DataFormat, LayerFormat, LayerType } from '@/geo/api';
 
 import type { LegendSymbology, RampLayerConfig } from '@/geo/api';
@@ -6,7 +6,10 @@ import type { LegendSymbology, RampLayerConfig } from '@/geo/api';
 import { EsriOpenStreetMapLayer } from '@/geo/esri';
 import { markRaw } from 'vue';
 
-export class OsmTileLayer extends CommonLayer {
+/**
+ * A layer class which implements an OpenStreetMap Tile Layer.
+ */
+export class OsmTileLayer extends MapLayer {
     declare esriLayer: EsriOpenStreetMapLayer | undefined;
 
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
@@ -16,7 +19,6 @@ export class OsmTileLayer extends CommonLayer {
         this.layerFormat = LayerFormat.OSM;
         this.dataFormat = DataFormat.OSM_TILE;
         this.supportsFeatures = false;
-        this.hovertips = false;
     }
 
     protected async onInitiate(): Promise<void> {

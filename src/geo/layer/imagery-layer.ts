@@ -1,10 +1,13 @@
-import { CommonLayer, InstanceAPI } from '@/api/internal';
+import { InstanceAPI, MapLayer } from '@/api/internal';
 import { DataFormat, LayerFormat, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 import { EsriImageryLayer } from '@/geo/esri';
 import { markRaw } from 'vue';
 
-export class ImageryLayer extends CommonLayer {
+/**
+ * A layer class which implements an ESRI Imagery Layer.
+ */
+export class ImageryLayer extends MapLayer {
     declare esriLayer: EsriImageryLayer | undefined;
 
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
