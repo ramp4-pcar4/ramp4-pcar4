@@ -659,6 +659,7 @@ export interface RampBasemapConfig {
     tileSchemaId: string;
     layers: Array<RampBasemapLayerConfig>;
     attribution?: Attribution;
+    backgroundColour?: string;
 }
 
 export interface RampTileSchemaConfig {
