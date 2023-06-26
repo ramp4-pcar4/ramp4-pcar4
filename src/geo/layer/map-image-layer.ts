@@ -2,13 +2,14 @@
 
 import {
     AttribLayer,
-    CommonLayer,
     GlobalEvents,
     InstanceAPI,
     MapImageSublayer,
+    MapLayer,
     NotificationType
 } from '@/api/internal';
 import {
+    CoreFilter,
     DefPromise,
     DrawState,
     Extent,
@@ -40,6 +41,9 @@ import { EsriMapImageLayer, EsriRendererFromJson } from '@/geo/esri';
 import { markRaw, reactive } from 'vue';
 
 // Formerly known as DynamicLayer
+/**
+ * A layer class which implements an ESRI Map Image Layer.
+ */
 export class MapImageLayer extends AttribLayer {
     // indicates if sublayers can have opacity adjusted
     isDynamic: boolean;
@@ -261,7 +265,7 @@ export class MapImageLayer extends AttribLayer {
                     const treeLeaf = new TreeNode(
                         sid,
                         _sublayer.uid,
-                        (_sublayer as CommonLayer).name,
+                        (_sublayer as MapLayer).name,
                         false
                     );
                     parentTreeNode.children.push(treeLeaf);
@@ -275,7 +279,7 @@ export class MapImageLayer extends AttribLayer {
                                 layer: _sublayer
                             }
                         );
-                        (_sublayer.parentLayer as CommonLayer) // the parent of a MapImageSublayer must be a CommonLayer
+                        (_sublayer.parentLayer as MapLayer) // the parent of a MapImageSublayer must be a MapLayer
                             ?.checkVisibility();
                     }),
                     subLayer.watch('opacity', (newval: number) => {
@@ -352,7 +356,11 @@ export class MapImageLayer extends AttribLayer {
                         miSL.opacity =
                             subC.state?.opacity ?? this.origState.opacity ?? 1;
                         miSL.nameField = subC.nameField || miSL.nameField || '';
-                        miSL.processFieldMetadata(subC.fieldMetadata);
+
+                        this.$iApi.geo.attributes.applyFieldMetadata(
+                            miSL,
+                            subC.fieldMetadata
+                        );
 
                         if (!miSL.canModifyLayer) {
                             this.$iApi.notify.show(
@@ -370,18 +378,23 @@ export class MapImageLayer extends AttribLayer {
                     } else {
                         // pulling from parent would be cool, but complex. all the promises would need to be resolved in tree-order
                         // maybe put defaulting here for visible/opac/identify
-                        miSL.processFieldMetadata();
+                        this.$iApi.geo.attributes.applyFieldMetadata(miSL);
                     }
 
                     // do any things that are specific to feature or raster subtypes
                     if (miSL.supportsFeatures) {
-                        if (!miSL.attLoader) {
-                            throw new Error(
-                                'Map Image Sublayer - expected attLoader to exist'
-                            );
-                        }
-                        miSL.attLoader.updateFieldList(miSL.fieldList);
-                        return miSL.loadFeatureCount();
+                        // ensure our massaged field lists get updated inside the sublayer
+                        miSL.updateFieldList();
+
+                        // return request promise to get feature count (will block loaded event)
+                        return this.$iApi.geo.layer
+                            .loadFeatureCount(
+                                miSL.serviceUrl,
+                                miSL.getSqlFilter(CoreFilter.PERMANENT)
+                            )
+                            .then(count => {
+                                miSL.featureCount = count;
+                            });
                     } else {
                         return Promise.resolve();
                     }
@@ -541,6 +554,11 @@ export class MapImageLayer extends AttribLayer {
         });
     }
 
+    // TODO with the numerous refactors since this layer class was written 3 years ago,
+    //      proposing at some point we stop inheriting from AttribLayer and just
+    //      inherit from MapLayer. Can remove all these blocking overrides.
+    //      Most of the common methods should be abstracted out by now. But needs R&D
+
     private noFeaturesErr(): void {
         console.error(
             'This method targets features and must be called on a Sublayer.'
@@ -576,6 +594,16 @@ export class MapImageLayer extends AttribLayer {
      */
     clearFeatureCache(): void {
         this.noFeaturesErr();
+    }
+
+    downloadedAttributes(): number {
+        this.noFeaturesErr();
+        return 0;
+    }
+
+    attribLoadAborted(): boolean {
+        this.noFeaturesErr();
+        return false;
     }
 
     // formerly known as getFormattedAttributes

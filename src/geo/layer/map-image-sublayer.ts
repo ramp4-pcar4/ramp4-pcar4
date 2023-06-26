@@ -9,6 +9,9 @@ import {
 import type { RampLayerConfig } from '@/geo/api';
 import { markRaw } from 'vue';
 
+/**
+ * A layer class which implements an ESRI Map Image Sublayer.
+ */
 export class MapImageSublayer extends AttribLayer {
     tooltipField: string;
 
@@ -262,5 +265,15 @@ export class MapImageSublayer extends AttribLayer {
             this.noLayerErr();
             return SpatialReference.latLongSR();
         }
+    }
+
+    /**
+     * A utility method to allow a parent layer to request this layer to
+     * update its internal attribute loader after field data has been
+     * properly processed.
+     * Generally should only be called internally.
+     */
+    updateFieldList(): void {
+        this.attribs.attLoader.updateFieldList(this.fieldList);
     }
 }
