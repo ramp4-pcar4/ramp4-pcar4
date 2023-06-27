@@ -95,7 +95,7 @@
                             "
                             :formatError="formatError"
                             :failureError="failureError"
-                            :validation="true"
+                            :validation="validation"
                             :validation-messages="{
                                 required: t(
                                     'wizard.format.type.error.required'
@@ -109,7 +109,7 @@
                                           t('wizard.format.warn.cors') +
                                           '.'
                                         : ''
-                                }`
+                                }${' ' + t('wizard.format.warn.vpn') + '.'}`
                             }"
                             @keydown.stop
                         />
@@ -117,13 +117,16 @@
                             @submit="onSelectContinue"
                             @cancel="
                                 () => {
+                                    disabled = false;
                                     formatError = false;
                                     failureError = false;
                                     url ? (goNext = true) : (goNext = false);
+                                    validation = false;
                                     wizardStore.goToStep(0);
                                 }
                             "
-                            :disabled="false"
+                            :animation="true"
+                            :disabled="disabled"
                         />
                     </form>
                 </stepper-item>
@@ -320,11 +323,13 @@ const step = computed(() => wizardStore.currStep);
 
 const colour = ref();
 const colourPickerId = ref();
+const disabled = ref(false);
 
 const formatError = ref(false);
 const failureError = ref(false);
 const goNext = ref(false);
 const finishStep = ref(false);
+const validation = ref(false);
 
 // service layer formats
 const serviceTypeOptions = reactive([
@@ -490,7 +495,9 @@ const onUploadContinue = (event: any) => {
 };
 
 const onSelectContinue = async () => {
+    disabled.value = true;
     failureError.value = false;
+    validation.value = true;
 
     try {
         layerInfo.value = isFileLayer()
@@ -507,6 +514,7 @@ const onSelectContinue = async () => {
             layerInfo.value.config.url = '';
         }
     } catch (_) {
+        disabled.value = false;
         failureError.value = true;
         return;
     }
@@ -526,6 +534,7 @@ const onSelectContinue = async () => {
             },
             configOptions: []
         };
+        disabled.value = false;
         return;
     }
 
@@ -536,6 +545,9 @@ const onSelectContinue = async () => {
     layerInfo.value.configOptions.includes(`sublayers`)
         ? (finishStep.value = false)
         : (finishStep.value = true);
+
+    disabled.value = false;
+    validation.value = false;
 };
 
 const onConfigureContinue = async (data: object) => {
