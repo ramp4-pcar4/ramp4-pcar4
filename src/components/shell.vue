@@ -29,7 +29,11 @@
             <div class="spinner relative inset-x-1/2 inset-y-9/20"></div>
         </div>
 
-        <teleport v-for="panel in teleported()" :to="panel.teleport?.target">
+        <teleport
+            v-for="panel in teleported()"
+            :to="panel.teleport?.target"
+            :key="panel.id"
+        >
             <panel-container
                 :key="`${panel.id}`"
                 :panel="panel"
