@@ -278,11 +278,12 @@ Your panel is now ready for use! You should now leverage the [API](#the-panel-ap
 
 ## Teleporting panels
 
-Panels that come out of the box can also be rendered outside the panel stack, in the container of your choice. In order to do so, you must provide a teleport configuration inside the fixture config of the fixture that registers the panel. The configuration has three properties:
+Panels that come out of the box can also be rendered outside the panel stack, in the container of your choice. In order to do so, you must provide a teleport configuration inside the fixture config of the fixture that registers the panel. The configuration has four properties:
 
 * `target` - (required) the element where the panel will be rendered instead of its usual spot in the panel stack. The value can be the element itself or a string query selector.
 * `showHeader` - (optional) a boolean indicating whether or not to show the panel's header, defaults to `false`.
 * `showAppbarButton` - (optional) a boolean indicating whether or not opening the panel will show an appbar button for it, defaults to `false`. This only applies to temporary appbar buttons.
+* `breakpoints` - (optional) an object with string keys and number values that defines custom class breakpoints for the teleported panel container. The classes will be applied to the panel container, which is the direct child of the teleport target element. This allows you to customize what width specific panel styling will be applied.
 
 Below is a configuration snippet that shows how to configure the legend to appear in your own `div` element:
 
@@ -301,7 +302,15 @@ fixtures: {
         panelTeleport: {
             target: document.getElementById('legend'),
             showHeader: true,
-            showAppbarButton: false
+            showAppbarButton: false,
+            breakpoints: {
+                xs: 100,
+                sm: 200,
+                md: 300,
+                lg: 400,
+                xl: 500
+            }
+
         }
     }
 }
