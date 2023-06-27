@@ -343,6 +343,10 @@
                     "type": "boolean",
                     "description": "Whether to show the appbar button for the panel or not. Only applies to temporary appbar buttons.",
                     "default": false
+                },
+                "breakpoints": {
+                    "type": "object",
+                    "description": "An object of type { className<string>: minWidth<number} pairs. The className will be applied as a CSS class when the container width is greater than or equal to the breakpoint minWidth."
                 }
             },
             "required": ["target"],

@@ -25,8 +25,7 @@ import { onMounted, ref } from 'vue';
 import type { PropType } from 'vue';
 import anime from 'animejs';
 import type { PanelInstance } from '@/api';
-// @ts-ignore
-import ro from '@/scripts/resize-observer.js';
+import CustomResizeObserver from '@/scripts/resize-observer';
 
 const componentEl = ref(null as unknown as Element);
 const props = defineProps({
@@ -41,6 +40,11 @@ const skipTransition = ref(false);
 onMounted(() => {
     // If this panel will be teleported elsewhere, apply tailwind styles directly on the panel.
     if (props.panel.teleport) {
+        const ro = new CustomResizeObserver(
+            // only need default breakpoints for mobile vs non mobile
+            // TODO: Iron out defaulting. Should this be a complete override instead?
+            { xs: 0, sm: 461, ...props.panel.teleport.breakpoints }
+        );
         ro.observe(componentEl.value);
     }
 });

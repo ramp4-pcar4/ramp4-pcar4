@@ -582,4 +582,12 @@ export interface PanelTeleportObject {
      * @memberof PanelTeleportObject
      */
     showAppbarButton?: boolean;
+
+    /**
+     * Custom class breakpoints for the teleported panel.
+     *
+     * @type object
+     * @memberof PanelTeleportObject
+     */
+    breakpoints?: { [key: string]: number };
 }

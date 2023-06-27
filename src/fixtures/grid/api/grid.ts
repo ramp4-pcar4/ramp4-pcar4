@@ -59,7 +59,7 @@ export class GridAPI extends FixtureInstance {
         const layerGridConfigs: any = this.getLayerFixtureConfigs();
 
         // parse merge grid configs
-        if (config) {
+        if (config && config.mergeGrids) {
             config.mergeGrids.forEach((mergeGrid: any) => {
                 const layerIds: string[] = [];
 

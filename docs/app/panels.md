@@ -278,11 +278,13 @@ Your panel is now ready for use! You should now leverage the [API](#the-panel-ap
 
 ## Teleporting panels
 
-Panels that come out of the box can also be rendered outside the panel stack, in the container of your choice. In order to do so, you must provide a teleport configuration inside the fixture config of the fixture that registers the panel. The configuration has three properties:
+Panels that come out of the box can also be rendered outside the panel stack, in the container of your choice. In order to do so, you must provide a teleport configuration inside the fixture config of the fixture that registers the panel. The configuration has four properties:
 
 * `target` - (required) the element where the panel will be rendered instead of its usual spot in the panel stack. The value can be the element itself or a string query selector.
 * `showHeader` - (optional) a boolean indicating whether or not to show the panel's header, defaults to `false`.
 * `showAppbarButton` - (optional) a boolean indicating whether or not opening the panel will show an appbar button for it, defaults to `false`. This only applies to temporary appbar buttons.
+* `breakpoints` - (optional) an object of type `{ className<string>: minWidth<number}` pairs.
+The `className` will be applied as a CSS class when the container width is greater than or equal to the breakpoint `minWidth`. The class will be applied to the panel container i.e. the direct child of the teleport target element. This allows customization in what panel styling will be applied at specific panel widths.
 
 Below is a configuration snippet that shows how to configure the legend to appear in your own `div` element:
 
@@ -301,7 +303,15 @@ fixtures: {
         panelTeleport: {
             target: document.getElementById('legend'),
             showHeader: true,
-            showAppbarButton: false
+            showAppbarButton: false,
+            breakpoints: {
+                xs: 100,
+                sm: 200,
+                md: 300,
+                lg: 400,
+                xl: 500
+            }
+
         }
     }
 }
