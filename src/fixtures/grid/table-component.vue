@@ -1340,7 +1340,10 @@ const setUpColumns = () => {
                                 for (const [oldAttr, newAttr] of Object.entries(
                                     config.value.fieldMap
                                 )) {
-                                    if (row[oldAttr] && !row[newAttr]) {
+                                    if (
+                                        row[oldAttr] !== undefined &&
+                                        row[newAttr] === undefined
+                                    ) {
                                         row[newAttr] = row[oldAttr];
                                         delete row[oldAttr];
                                     }
