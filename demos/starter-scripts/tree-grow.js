@@ -263,6 +263,7 @@ let config = {
                 {
                     id: 'CESI 1',
                     layerType: 'esri-map-image',
+                    name: 'MIL Parent',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                     sublayers: [
                         { index: 0 },
@@ -273,12 +274,14 @@ let config = {
                 {
                     id: 'CESI 2',
                     layerType: 'esri-map-image',
+                    name: 'MIL Parent with extra children',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                     sublayers: [{ index: 8 }]
                 },
                 {
                     id: 'CESI 3',
                     layerType: 'esri-map-image',
+                    name: 'MIL groups',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                     sublayers: [{ index: 21 }, { index: 35 }]
                 },
