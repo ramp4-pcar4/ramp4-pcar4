@@ -536,7 +536,9 @@ export class FileUtils extends APIScope {
                         typeof gr.attributes[attName] === 'object') &&
                     gr.attributes[attName] != null
                 ) {
-                    gr.attributes[attName] = '[Complex Value Removed]';
+                    gr.attributes[attName] = JSON.stringify(
+                        gr.attributes[attName]
+                    );
                 }
             });
         });

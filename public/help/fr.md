@@ -170,6 +170,7 @@ En plus de pouvoir faire défiler les données, vous pouvez :
 - appliquer un filtre sur les colonnes selon une plage numérique, du texte, une sélection ou une date (si la configuration le permet). Vous pouvez appliquer ou supprimer les filtres à partir des options de la carte, situées dans le coin supérieur droit du tableau de données, pour que les modifications apportées au tableau s'affichent sur la carte;
 - afficher et/ou masquer les colonnes en cliquant sur l'icône _Masquer les colonnes_, située dans le coin supérieur droit du tableau de données;
 - vous déplacer dans le tableau au moyen du clavier.
+- Copiez le texte dans une cellule en double-cliquant dessus, ou pour les utilisateurs de clavier, en naviguant jusqu'à la cellule et en appuyant sur la touche Entrée.
 
 Le nombre d'éléments figurant dans la couche est affiché dans le coin supérieur gauche, sous le titre de la couche.
 
