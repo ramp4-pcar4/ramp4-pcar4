@@ -10,8 +10,7 @@
 import '@/styles/main.css';
 import { defineComponent, getCurrentInstance, onMounted } from 'vue';
 import Shell from '@/components/shell.vue';
-// @ts-ignore
-import ro from '@/scripts/resize-observer.js';
+import CustomResizeObserver from '@/scripts/resize-observer';
 import 'tippy.js/animations/scale.css';
 import { setDefaultProps } from 'vue-tippy';
 
@@ -23,7 +22,8 @@ export default defineComponent({
         onMounted(() => {
             // let ResizeObserver observe the app div
             // it applies 'xs' 'sm' 'md' and 'lg' classes to the div depending on the size
-            ro.observe(instance?.proxy?.$refs['app-size']);
+            const ro = new CustomResizeObserver();
+            ro.observe(instance?.proxy?.$refs['app-size'] as Element);
             // Set tooltip defaults, theme does not get applied properly in prod builds if setting the defaults using vue-tippy
             // This bypasses the wrapper and sets the defaults at the tippy.js level
             setDefaultProps({

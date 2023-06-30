@@ -453,7 +453,15 @@ let config = {
                 },
                 grid: {
                     panelTeleport: {
-                        target: document.getElementById('grid')
+                        target: document.getElementById('grid'),
+                        breakpoints: {
+                            burgers: 0,
+                            pizza: 200,
+                            wings: 400,
+                            fries: 600,
+                            macaroni: 800,
+                            'hot-dog': 1000
+                        }
                     }
                 }
             },
