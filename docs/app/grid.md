@@ -19,6 +19,9 @@ Each row in the grid table contains a zoom and details button. The zoom button c
 ## Controls
 Various controls have been added to the grid for user convenience.
 
+### Copy Text
+Any cell with text in it can be copied to the clipboard by clicking on the cell, or for keyboard users, by navigating to the cell and pressing enter. A tooltip will appear to indicate that the text has been successfully copied.
+
 ### Show/Hide Columns
 A dropdown menu located in the upper right corner of the grid panel, labeled `Columns`. This allows the user to hide unwanted columns from the table. Columns that are visible have a checkmark displayed beside them.
 

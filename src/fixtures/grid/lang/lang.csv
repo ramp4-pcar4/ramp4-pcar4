@@ -8,6 +8,8 @@ grid.splash.cancel,Cancel,1,Annuler,1
 grid.clearAll,Clear search and filters,1,Effacer la recherche et les filtres,1
 grid.layer.loading,The layer is loading...,1,La couche est en cours de téléchargement...,1
 grid.label.columns,Hide columns,1,Masquer les colonnes,1
+grid.label.copied,Copied,1,Copié,0
+grid.label.copy,Click to copy,1,Cliquez pour copier,0
 grid.label.filters.show,Show filters,1,Afficher les filtres,1
 grid.label.filters.hide,Hide filters,1,Masquer les filtres,1
 grid.label.filters.apply,Apply filters to map,1,Appliquer les filtres à la carte,1
