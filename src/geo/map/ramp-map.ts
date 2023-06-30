@@ -39,6 +39,7 @@ import { MapCaptionAPI } from './caption';
 import { markRaw, toRaw } from 'vue';
 import { useConfigStore } from '@/stores/config';
 import { debounce, throttle } from 'throttle-debounce';
+import { Colour } from '@/geo/api';
 
 export class MapAPI extends CommonMapAPI {
     // API for managing the maptip
@@ -173,7 +174,8 @@ export class MapAPI extends CommonMapAPI {
                 extent: this._rampExtentSet.defaultExtent.toESRI(),
                 navigation: {
                     browserTouchPanEnabled: false
-                }
+                },
+                background: { color: bm.backgroundColour }
             })
         );
 
@@ -437,6 +439,10 @@ export class MapAPI extends CommonMapAPI {
         } else {
             // change the basemap
             this.applyBasemap(bm);
+            this.esriView.set(
+                'background.color',
+                new Colour(bm.backgroundColour).toESRI()
+            );
         }
 
         // fire the basemap change event
