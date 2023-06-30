@@ -97,10 +97,10 @@ onMounted(() => {
         transform-origin: bottom center;
     }
 }
-.ramp-app.animation-enabled .symbol-0 {
+.ramp-styles.animation-enabled .symbol-0 {
     transition-duration: 0.2s;
 }
-.ramp-app.animation-enabled .symbol-2 {
+.ramp-styles.animation-enabled .symbol-2 {
     transition-duration: 0.2s;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div class="ramp-app animation-enabled" :lang="$i18n.locale">
+    <div class="ramp-app ramp-styles animation-enabled" :lang="$i18n.locale">
         <div class="h-full" ref="app-size">
             <shell></shell>
         </div>
@@ -49,7 +49,7 @@ $font-list: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica
     Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
 @use 'directives/focus-list/focus-list';
 
-.ramp-app {
+.ramp-styles {
     @include focus-list.default-focused-styling;
     height: 100%;
     font-family: $font-list;

@@ -1,4 +1,4 @@
-.ramp-app {
+.ramp-styles {
     @tailwind base;
     @tailwind components;
     @tailwind utilities;
@@ -17,7 +17,7 @@
     }
 }
 
-.ramp-app {
+.ramp-styles {
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI,
         Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
     font-size: 16px;
@@ -25,18 +25,18 @@
     word-wrap: break-word;
 }
 
-.ramp-app button:focus {
+.ramp-styles button:focus {
     outline: 2px solid black;
 }
 
 /* Change ag-grid theme default font (Roboto) to match the rest of the page. */
-.ramp-app .ag-theme-material * {
+.ramp-styles .ag-theme-material * {
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI,
         Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
 }
 
 /* styling for rectangle when Shift+Left-click+Drag zooming */
-.ramp-app .esri-zoom-box__container {
+.ramp-styles .esri-zoom-box__container {
     position: absolute;
     top: 0;
     left: 0;
@@ -44,16 +44,16 @@
     bottom: 0;
 }
 
-.ramp-app .esri-zoom-box__overlay {
+.ramp-styles .esri-zoom-box__overlay {
     width: 100%;
     height: 100%;
 }
 
-.ramp-app .esri-zoom-box__overlay-background {
+.ramp-styles .esri-zoom-box__overlay-background {
     fill: rgba(0, 0, 0, 0.1);
 }
 
-.ramp-app .esri-zoom-box__outline {
+.ramp-styles .esri-zoom-box__outline {
     fill: transparent;
     stroke: #1e90ff;
     stroke-dasharray: 1, 1;
