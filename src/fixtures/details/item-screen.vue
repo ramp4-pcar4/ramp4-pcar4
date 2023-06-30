@@ -517,7 +517,7 @@ const zoomToFeature = () => {
         props.result.uid
     );
 
-    if (layer === undefined) {
+    if (layer === undefined || !layer.isLoaded) {
         console.warn(
             `Could not find layer for uid ${props.result.uid} during zoom geometry lookup`
         );

@@ -172,10 +172,13 @@ A Layer or sublayer can be retrieved via the instance API using the Layer ID or 
 var myLayer = instanceApi.geo.layer.getLayer('fancyLayerId'));
 ```
 
-The `getLayer()` method will only return active valid Layers. A list of all Layers that have failed can also be utilized.
+The `getLayer()` method will return layers on the map, layers that have failed, and layers that are being added to the map. You can also access lists of each type of layer.
 
 ```
+var allGoodLayerArray = instanceApi.geo.layer.allActiveLayers();
 var errLayerArray = instanceApi.geo.layer.allErrorLayers();
+var initiatingLayerArray = instanceApi.geo.layer.allInitiatingLayers();
+var allLayerArray = instanceApi.geo.layer.allLayers();
 ```
 
 ## Sublayers
