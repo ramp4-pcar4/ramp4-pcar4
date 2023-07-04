@@ -1,5 +1,5 @@
 <template>
-    <div class="py-12">
+    <div class="py-12 h-full" id="stepper">
         <slot></slot>
     </div>
 </template>

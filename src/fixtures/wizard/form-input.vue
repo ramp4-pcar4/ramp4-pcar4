@@ -97,6 +97,7 @@
             <div class="relative mb-0.5" data-type="select">
                 <div v-if="multiple">
                     <select
+                        :size="selectSize()"
                         class="block border-solid border-gray-300 w-full p-3 overflow-y-auto"
                         multiple
                         v-model="selected"
@@ -323,6 +324,16 @@ const checkMultiSelectError = (selected: Array<any>) => {
     selected && selected.length > 0
         ? (sublayersError.value = false)
         : (sublayersError.value = true);
+};
+
+const selectSize = () => {
+    // calculates number of visible entries in multi-select list
+    const selectHeight =
+        document.getElementById('stepper')?.clientHeight! - 400;
+    return Math.min(
+        props.options.length,
+        Math.max(Math.floor(selectHeight / 30), 3)
+    );
 };
 </script>
 
