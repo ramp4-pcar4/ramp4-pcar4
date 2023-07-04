@@ -319,7 +319,7 @@ fixtures: {
 
 Some other important things to note include:
 
-* In order to get the regular panel styling, you will need to add the `ramp-app` class to your target element. Otherwise, things are likely to look funny.
+* In order to get the regular panel styling, you will need to add the `ramp-styles` class to your target element. Otherwise, things are likely to look funny.
 * Teleported panels by have the `focus-container` directive removed by default. If you wish to add this directive back, you can add the `inner-shell` class to your target element.
 * Unlike regular panels, teleported panels will always take up the full width of the target element. Therefore, it is not recommended to teleport multiple panels into one container.
 
