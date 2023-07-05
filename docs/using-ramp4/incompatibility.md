@@ -1,7 +1,10 @@
 # Config Incompatibility Guide
 
+::: info
 // TODO: Update this file when we add support for anything or make changes to the schema.
+
 // TODO: a general review of this file's contents is warranted
+:::
 
 Listed below are breaking changes from the RAMP2 schema i.e. properties in the RAMP2 config that cannot be mapped to some part of the RAMP4 config.
 

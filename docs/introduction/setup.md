@@ -1,29 +1,6 @@
-# R4MP
+# Local development
 
-<p align="center"><img src="./assets/logo.svg"></p>
-
-RAMP - The Reusable Accessible Mapping Platform, is a Javascript based web mapping platform that provides a reusable, responsive and WCAG 2.1 AA compliant common viewer for the Government of Canada. The fourth incarnation embraces the following large-scale changes
-
--   Updating the UI framework from Angular 1 to Vue 3
--   Updating the ESRI Mapping API from v3 to v4
--   An application architecture and API that is more open and adjustable
--   UI re-design with mobile use in mind
-
-The previous version (RAMP 2 / RAMP 3) can be found [here](https://github.com/fgpv-vpgf/fgpv-vpgf). Differences between the versions are summarized in the [v4.0.0 Release Notes](https://github.com/ramp4-pcar4/ramp4-pcar4/releases/tag/v4.0.0).
-
-> This is an unsupported product. If you require a supported version please contact applicationsdecartographieweb-webmappingapplications@ec.gc.ca for a cost estimate. The software and code samples available on this website are provided "as is" without warranty of any kind, either express or implied. Use at your own risk. Access to this GitHub repository could become unavailable at any point in time.
-
-![](https://byob.yarr.is/ramp4-pcar4/ramp4-pcar4/tsbadge) ![](https://byob.yarr.is/ramp4-pcar4/ramp4-pcar4/lintbadge)
-
-## Documentation
-
-Documentation Site with unpublished changes can be found [here](https://ramp4-pcar4.github.io/ramp4-pcar4/main/docs/).
-
-Head to the [Releases](https://github.com/ramp4-pcar4/ramp4-pcar4/releases) page for version-specific official documentation sites.
-
-## Local development
-
-### Project Setup
+## Project Setup
 
 Download the latest [Node version](https://nodejs.org/en/download/), currently `v18.3.0` or later.
 
@@ -31,7 +8,7 @@ Download the latest [Node version](https://nodejs.org/en/download/), currently `
 npm ci
 ```
 
-### Compile and Hot-Reload for Development
+## Compile and Hot-Reload for Development
 
 ```sh
 npm run dev
@@ -39,13 +16,13 @@ npm run dev
 
 Open `https://localhost:5173/demos/index-samples.html` in your browser.
 
-#### Serve via `http`
+### Serve via `http`
 
 ```sh
 npm run dev-http
 ```
 
-### Build for production
+## Build for production
 
 ```sh
 npm run build
@@ -53,7 +30,7 @@ npm run build
 
 The production files will be placed in the `dist` folder.
 
-### Preview production build (after running build)
+## Preview production build (after running build)
 
 ```sh
 npm run preview
@@ -61,40 +38,17 @@ npm run preview
 
 Open `http://localhost:5050` in your browser.
 
-###  Preview Vitepress documentation
-
-```sh
-npx vitepress dev docs
-```
-
-###  Build Vitepress documentation
-
-```sh
-npm run build:vite-docs
-```
-
-Static site generated in the `vite-docs` directory.
-
-
-###  Preview/Build TypeDoc documentation
-
-```sh
-npm run build:ts-docs
-```
-
-Static site generated in the `ts-docs` directory. Open `index.html` to preview.
-
-### Recommended IDE Setup
+## Recommended IDE Setup
 
 [VSCode](https://code.visualstudio.com/) with the recommended extensions (VSCode should bug you to install them).
 
-#### Important:
-
+::: tip
 1. Install [Volar](https://marketplace.visualstudio.com/items?itemName=vue.volar).
 2. Disable/remove [Vetur](https://marketplace.visualstudio.com/items?itemName=octref.vetur).
 3. Type `@builtin typescript` in the search box on the VSCode extensions tab and **disable** "TypeScript and JavaScript Language Features". Volar has its own TS language server so we don't want to run two concurrently.
+:::
 
-### public vs demos folders
+## public vs demos folders
 
 The `public` folder is a **static only** folder. It contains the help md files and end-user demo assets and the compiled ramp library source code. Files in this folder are not processed by vite and therefore cannot reference outside files. This is useful for testing if things are broken between the develop and production build.
 
@@ -113,7 +67,7 @@ Run `npm run dev` then open `http://localhost:3000/demos/index.html` in your bro
 
 During build, the `public` folder contents are placed into the `dist` folder.
 
-### Demo Builds
+## Demo Builds
 
 The demos of the most recent build are available at https://ramp4-pcar4.github.io/ramp4-pcar4/main/demos/index-all.html.
 
