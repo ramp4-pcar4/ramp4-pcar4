@@ -672,6 +672,9 @@
                     "type": "string",
                     "description": "The filename of the exported image."
                 },
+                "panelTeleport": {
+                    "$ref": "#/$defs/panelTeleport"
+                },
                 "panelWidth": {
                     "$ref": "#/$defs/panelWidth"
                 }
@@ -2275,6 +2278,9 @@
                                 "$ref": "#/$defs/mergeGrid"
                             }
                         },
+                        "panelTeleport": {
+                            "$ref": "#/$defs/panelTeleport"
+                        },
                         "panelWidth": {
                             "$ref": "#/$defs/panelWidth"
                         }
@@ -2380,6 +2386,55 @@
                 "areas-of-interest": {
                     "$ref": "#/$defs/areas-of-interest",
                     "description": "Provides configuration to the areas of interest fixture"
+                },
+                "basemap": {
+                    "description": "Provides configuration to the basemap fixture",
+                    "type": "object",
+                    "properties": {
+                        "panelTeleport": {
+                            "$ref": "#/$defs/panelTeleport"
+                        }
+                    }
+                },
+                "export": {
+                    "$ref": "#/$defs/export",
+                    "description": "Provides the configuration to the export fixture"
+                },
+                "layer-reorder": {
+                    "description": "Provides configuration to the layer reorder fixture",
+                    "type": "object",
+                    "properties": {
+                        "panelTeleport": {
+                            "$ref": "#/$defs/panelTeleport"
+                        }
+                    }
+                },
+                "metadata": {
+                    "description": "Provides configuration to the metadata fixture",
+                    "type": "object",
+                    "properties": {
+                        "panelTeleport": {
+                            "$ref": "#/$defs/panelTeleport"
+                        }
+                    }
+                },
+                "settings": {
+                    "description": "Provides configuration to the settings fixture",
+                    "type": "object",
+                    "properties": {
+                        "panelTeleport": {
+                            "$ref": "#/$defs/panelTeleport"
+                        }
+                    }
+                },
+                "wizard": {
+                    "description": "Provides configuration to the wizard fixture",
+                    "type": "object",
+                    "properties": {
+                        "panelTeleport": {
+                            "$ref": "#/$defs/panelTeleport"
+                        }
+                    }
                 }
             },
             "unevaluatedProperties": false
