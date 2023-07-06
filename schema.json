@@ -1873,6 +1873,10 @@
                 },
                 "filter": {
                     "$ref": "#/$defs/filter"
+                },
+                "template": {
+                    "type": "string",
+                    "description": "Custom Vue component name to render as cell renderer."
                 }
             },
             "unevaluatedProperties": false

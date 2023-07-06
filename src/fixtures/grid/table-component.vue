@@ -418,6 +418,7 @@ export interface ColumnDefinition {
     isSelector: boolean;
     lockPosition: boolean;
     suppressHeaderKeyboardEvent: Function;
+    autoHeight?: boolean;
 }
 // column definition for specialized columns (index, symbols, etc.)
 export interface SpecialColumnDefinition {
@@ -1463,15 +1464,23 @@ const setUpColumns = () => {
                         if (NUM_TYPES.indexOf(fieldInfo!.type) > -1) {
                             setUpNumberFilter(col, config.value.state);
                             col.filter = 'agNumberColumnFilter';
-                            col.cellRenderer = CellRendererV;
+                            col.autoHeight = true;
+                            col.cellRenderer =
+                                colConfig.template === ''
+                                    ? CellRendererV
+                                    : iApi.component(colConfig.template);
                             col.cellRendererParams = {
                                 type: 'number'
                             };
                         } else if (fieldInfo!.type === FieldType.DATE) {
                             setUpDateFilter(col, config.value.state);
                             col.filter = 'agDateColumnFilter';
+                            col.autoHeight = true;
                             col.minWidth = 400;
-                            col.cellRenderer = CellRendererV;
+                            col.cellRenderer =
+                                colConfig.template === ''
+                                    ? CellRendererV
+                                    : iApi.component(colConfig.template);
                             col.cellRendererParams = {
                                 type: 'date'
                             };
@@ -1487,7 +1496,11 @@ const setUpColumns = () => {
                                 setUpTextFilter(col, config.value.state);
                             }
                             col.filter = 'agTextColumnFilter';
-                            col.cellRenderer = CellRendererV;
+                            col.autoHeight = true;
+                            col.cellRenderer =
+                                colConfig.template === ''
+                                    ? CellRendererV
+                                    : iApi.component(colConfig.template);
                             col.cellRendererParams = {
                                 type: 'string'
                             };
