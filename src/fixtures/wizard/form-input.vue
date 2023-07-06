@@ -110,12 +110,12 @@
                     >
                         <option
                             class="p-6"
-                            v-for="option in options.filter(o =>
+                            v-for="(option, idx) in options.filter(o =>
                                 o.label
                                     .toLowerCase()
                                     .includes(filter.toLowerCase().trim())
                             )"
-                            v-bind:key="option.label"
+                            :key="`${option.label}-${idx}`"
                             :value="option.value"
                         >
                             {{ option.label }}
