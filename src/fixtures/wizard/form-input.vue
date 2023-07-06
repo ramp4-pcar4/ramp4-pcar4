@@ -109,7 +109,7 @@
                         "
                     >
                         <option
-                            class="p-6"
+                            class="p-6 whitespace-pre-wrap"
                             v-for="(option, idx) in options.filter(o =>
                                 o.label
                                     .toLowerCase()
@@ -118,7 +118,9 @@
                             :key="`${option.label}-${idx}`"
                             :value="option.value"
                         >
-                            {{ option.label }}
+                            <span class="whitespace-pre-wrap">{{
+                                option.label
+                            }}</span>
                         </option>
                     </select>
                     <div class="text-gray-400 text-xs mb-1">{{ help }}</div>
@@ -332,6 +334,7 @@ const selectSize = () => {
     // calculates number of visible entries in multi-select list
     const selectHeight =
         iApi.$vApp.$el.querySelector('.stepper')?.clientHeight! - 400;
+
     return Math.min(
         props.options.length,
         Math.max(Math.floor(selectHeight / 30), 3)
