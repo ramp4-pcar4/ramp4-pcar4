@@ -108,7 +108,7 @@
                         "
                     >
                         <option
-                            class="p-6"
+                            class="p-6 whitespace-pre-wrap"
                             v-for="option in options.filter(o =>
                                 o.label
                                     .toLowerCase()
