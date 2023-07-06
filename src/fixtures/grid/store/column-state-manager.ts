@@ -17,6 +17,7 @@ export default class ColumnStateManager {
             max: columnConfig?.filter?.max ?? null,
             static: columnConfig?.filter?.static ?? false
         };
+        this._template = columnConfig.template ?? '';
     }
 
     /**
@@ -135,6 +136,18 @@ export default class ColumnStateManager {
     set filter(val) {
         this._filter = val;
     }
+
+    /**
+     * Sets the vue template of the column
+     * @memberof ColumnStateManager
+     */
+    set template(val: string) {
+        this._template = val;
+    }
+
+    get template(): string {
+        return this._template;
+    }
 }
 
 export default interface ColumnStateManager {
@@ -146,4 +159,5 @@ export default interface ColumnStateManager {
     _sort: string;
     _searchable: boolean;
     _filter: any;
+    _template: string;
 }
