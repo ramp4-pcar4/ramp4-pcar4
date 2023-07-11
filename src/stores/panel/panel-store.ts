@@ -5,7 +5,7 @@ import { DefPromise } from '@/geo/api';
 
 export const usePanelStore = defineStore('panel', () => {
     const pinned = ref<PanelInstance | null>(null);
-    const priority = ref(null);
+    const priority = ref<PanelInstance | null>(null);
     const stackWidth = ref(0);
     const remWidth = ref(0);
     const mobileView = ref(false);
@@ -55,11 +55,11 @@ export const usePanelStore = defineStore('panel', () => {
 
     function openPanel(panel: PanelInstance): void {
         open(panel);
-        priority.value = null;
         updateVisible();
     }
 
     function closePanel(panel: PanelInstance): void {
+        // @ts-ignore
         if (priority.value === panel) {
             priority.value = null;
         }
@@ -73,6 +73,7 @@ export const usePanelStore = defineStore('panel', () => {
     }
 
     function removePanel(panel: PanelInstance): void {
+        // @ts-ignore
         if (priority.value === panel) {
             priority.value = null;
         }
@@ -199,6 +200,8 @@ export const usePanelStore = defineStore('panel', () => {
         } else {
             //@ts-ignore
             orderedItems.value = [...orderedItems.value, panel];
+            // @ts-ignore
+            priority.value = panel;
         }
     }
 
