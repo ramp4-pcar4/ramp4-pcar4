@@ -368,7 +368,7 @@ export class PanelAPI extends APIScope {
 
         // NOTE: we store `pinned` in the store as a reference to a panel instance object
         //@ts-ignore
-        this.panelStore.pinned = pin ? panel : null;
+        this.panelStore.pinned = pin ? panel : undefined;
 
         return panel;
     }
@@ -377,12 +377,12 @@ export class PanelAPI extends APIScope {
      * Returns the currently pinned panel instance, if exists.
      *
      * @readonly
-     * @type {(PanelInstance | null)}
+     * @type {(PanelInstance | undefined)}
      * @memberof PanelAPI
      */
-    get pinned(): PanelInstance | null {
+    get pinned(): PanelInstance | undefined {
         //@ts-ignore
-        return this.panelStore.pinned || null;
+        return this.panelStore.pinned || undefined;
     }
 
     /**

@@ -434,8 +434,7 @@ export class PanelInstance extends APIScope {
      */
     get isPinned(): boolean {
         return (
-            this.$iApi.panel.pinned !== null &&
-            this.$iApi.panel.pinned.id === this.id
+            !!this.$iApi.panel.pinned && this.$iApi.panel.pinned.id === this.id
         );
     }
 
