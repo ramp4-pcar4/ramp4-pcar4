@@ -170,6 +170,7 @@ In addition to scrolling data, it is possible to:
 - Filter the columns by numerical range, text, selection or date (if the configuration allows it). Changes in the table can also be made to reflect on the map by applying or clearing filters from map options, available in the top right corner of the data table
 - Show and/or hide columns by clicking on the *Hide Columns* icon, in the top right corner of the data table.
 - Navigate the table using a keyboard
+- Copy the text in a cell by double clicking on it, or for keyboard users, by navigating to the cell and pressing the control and c keys.
 
 The number of features in the layer is displayed in the top left corner below the layer title.
 

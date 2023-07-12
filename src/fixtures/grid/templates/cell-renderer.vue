@@ -1,30 +1,47 @@
 <template>
-    <div
-        v-truncate="{
-            options: {
-                placement: 'top',
-                hideOnClick: false,
-                theme: 'ramp4',
-                animation: 'scale'
-            }
-        }"
-        :content="formatValue"
-        v-tippy="{ trigger: 'manual' }"
-        tabindex="-1"
-        v-html="formatValue"
-        ref="el"
-    ></div>
+    <div>
+        <div
+            v-truncate="{
+                options: {
+                    placement: 'top',
+                    hideOnClick: false,
+                    theme: 'ramp4',
+                    animation: 'scale'
+                }
+            }"
+            :name="formatValue"
+            :content="formatValue"
+            tabindex="-1"
+            v-html="formatValue"
+            ref="el"
+        ></div>
+        <div class="h-0" ref="copyTooltip"></div>
+    </div>
 </template>
 
 <script setup lang="ts">
 import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
 import type { InstanceAPI } from '@/api';
 import linkifyHtml from 'linkify-html';
+import { useTippy } from 'vue-tippy';
+import { useI18n } from 'vue-i18n';
 
 const iApi = inject<InstanceAPI>('iApi')!;
+const { t } = useI18n();
+const copyTooltip = ref<HTMLElement>();
 const el = ref<HTMLElement>();
+const copyText = ref<string>(t('grid.label.copy'));
 
 const props = defineProps(['params']);
+
+const copy = () => {
+    copyText.value = t('grid.label.copied');
+    show();
+    navigator.clipboard.writeText(el.value?.textContent ?? '');
+    setTimeout(() => {
+        copyText.value = t('grid.label.copy');
+    }, 2000);
+};
 
 const formatValue = computed<string>(() => {
     if (props.params.type === 'number') {
@@ -58,13 +75,37 @@ const formatValue = computed<string>(() => {
     return '';
 });
 
+const { show, hide } = useTippy(copyTooltip, {
+    content: copyText,
+    triggerTarget: el,
+    appendTo: 'parent',
+    placement: 'bottom',
+    hideOnClick: false,
+    delay: [1000, 0]
+});
+
 onMounted(() => {
     // hoist events to cell wrapper for accessibility
+    props.params.eGridCell.addEventListener('dblclick', () => {
+        copy();
+    });
+    props.params.eGridCell.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.ctrlKey && e.code === 'KeyC') {
+            copy();
+        }
+    });
     props.params.eGridCell.addEventListener('blur', () => {
         (el.value as any)._tippy.hide();
+        hide();
     });
     props.params.eGridCell.addEventListener('focus', () => {
         (el.value as any)._tippy.show();
+        // long wait so that copy tooltip does not flicker
+        setTimeout(() => {
+            if (document.activeElement === props.params.eGridCell) {
+                show();
+            }
+        }, 1000);
         if (
             (el.value as any)._tippy.reference.clientWidth >=
             (el.value as any)._tippy.reference.scrollWidth
@@ -76,13 +117,30 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+    props.params.eGridCell.removeEventListener('dblclick', () => {
+        copy();
+    });
+    props.params.eGridCell.removeEventListener(
+        'keydown',
+        (e: KeyboardEvent) => {
+            if (e.ctrlKey && e.code === 'KeyC') {
+                copy();
+            }
+        }
+    );
     props.params.eGridCell.removeEventListener('blur', () => {
         (el.value as any)._tippy.hide();
+        hide();
     });
     props.params.eGridCell.removeEventListener('focus', () => {
         (el.value as any)._tippy.show();
+        show();
     });
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+.tippy-box[data-theme~='ramp4'] {
+    line-height: 1.5;
+}
+</style>
