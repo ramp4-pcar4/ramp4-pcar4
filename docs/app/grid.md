@@ -115,6 +115,7 @@ Every column in the datagrid can be configured separately.
     - `min: string | number`, specifies the default lower bound filter value for number and date types
     - `max: string | number`, specifies the default upper bound filter value for number and date types
     - `static: boolean`, enables/disables filter input
+- `template: string`, specifies a custom Vue component name to use as the cell renderer for the column. Does not apply to the OBJECTID column.
 
 An example of a datatable with a single configured column is below
 
