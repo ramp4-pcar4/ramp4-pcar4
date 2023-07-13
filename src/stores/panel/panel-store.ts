@@ -4,8 +4,8 @@ import type { PanelInstance } from '@/api';
 import { DefPromise } from '@/geo/api';
 
 export const usePanelStore = defineStore('panel', () => {
-    const pinned = ref<PanelInstance | null>(null);
-    const priority = ref(null);
+    const pinned = ref<PanelInstance | undefined>(undefined);
+    const priority = ref<PanelInstance | undefined>(undefined);
     const stackWidth = ref(0);
     const remWidth = ref(0);
     const mobileView = ref(false);
@@ -55,14 +55,12 @@ export const usePanelStore = defineStore('panel', () => {
 
     function openPanel(panel: PanelInstance): void {
         open(panel);
-        priority.value = null;
         updateVisible();
+        // panel has been opened now, so we can reset the priority
+        priority.value = undefined;
     }
 
     function closePanel(panel: PanelInstance): void {
-        if (priority.value === panel) {
-            priority.value = null;
-        }
         close(panel);
         updateVisible();
     }
@@ -73,9 +71,6 @@ export const usePanelStore = defineStore('panel', () => {
     }
 
     function removePanel(panel: PanelInstance): void {
-        if (priority.value === panel) {
-            priority.value = null;
-        }
         remove(panel);
         updateVisible();
     }
@@ -169,8 +164,6 @@ export const usePanelStore = defineStore('panel', () => {
             }
 
             orderedItems.value = newPanelOrder;
-        } else {
-            priority.value = null;
         }
         remWidth.value = remainingWidth;
         //@ts-ignore
@@ -199,6 +192,8 @@ export const usePanelStore = defineStore('panel', () => {
         } else {
             //@ts-ignore
             orderedItems.value = [...orderedItems.value, panel];
+            // @ts-ignore
+            priority.value = panel;
         }
     }
 
@@ -257,8 +252,8 @@ export const usePanelStore = defineStore('panel', () => {
         }
 
         // remove from pinner
-        if (pinned.value !== null && pinned.value.id == panel.id) {
-            pinned.value = null;
+        if (pinned.value && pinned.value.id == panel.id) {
+            pinned.value = undefined;
         }
     }
 
