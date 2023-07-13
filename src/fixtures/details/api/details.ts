@@ -82,7 +82,10 @@ export class DetailsAPI extends FixtureInstance {
         );
         const prevFeatureId = this.detailsStore.currentFeatureId;
         const currFeatureId = `${featureData.uid}-${
-            featureData.data[layer?.oidField ?? '']
+            // see https://github.com/ramp4-pcar4/ramp4-pcar4/issues/1767 for the reasoning behind this
+            layer?.supportsFeatures
+                ? featureData.data[layer?.oidField ?? '']
+                : JSON.stringify(featureData.data)
         }`;
         this.detailsStore.currentFeatureId = featureData.data
             ? currFeatureId

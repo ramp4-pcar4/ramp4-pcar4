@@ -242,42 +242,7 @@ rInstance.$element.component('CCCS-Template', {
         <p>{{ this.$iApi.language === 'en' ? "An error occurred when parsing the data." : "Une erreur s'est produite lors de l'analyse des données" }}</p>
     </div>
     `,
-    async created() {
-        if (
-            !this.identifyData.data.data.features ||
-            this.identifyData.data.data.features.length === 0
-        ) {
-            this.errord = true;
-            this.parsed = true;
-            return;
-        }
-        this.parsed = false;
-        this.errord = false;
-        this.result = {};
-        // Hardcoding these for now since we only have one dataset.
-        // Would need to grab correct URL parameters if we added more.
-        this.result.variable = 'tmax';
-        this.result.timeSlice = 3;
-        this.result.timePeriod = 'annual';
-        this.result.rcp = 'rcp45';
-
-        const tempVal =
-            this.identifyData.data.data.features[0].properties.value;
-        const parsedVal = parseFloat(tempVal).toFixed(1);
-        if (!isNaN(parsedVal)) {
-            this.result.value = (parsedVal >= 0 ? '+' : '') + parsedVal;
-        } else {
-            this.result.value = tempVal;
-        }
-        this.result.latlong = await this.$iApi.geo.proj.projectGeoJson(
-            this.identifyData.data.data.features[0].geometry,
-            3978,
-            4326
-        );
-        this.result.latlong = this.result.latlong.coordinates;
-        this.result.tt = this.getTranslations();
-        this.parsed = true;
-
+    created() {
         // watch for language switch
         // not sure why, but vue only reacts when you make lang a computed property
         // watching $iApi.language won't work
@@ -286,6 +251,14 @@ rInstance.$element.component('CCCS-Template', {
                 this.result.tt = this.getTranslations();
             })
         );
+
+        this.watchers.push(
+            this.$watch('identifyData', () => {
+                this.parseData();
+            })
+        );
+
+        this.parseData();
     },
     beforeUnmount() {
         this.watchers.forEach(unwatch => unwatch());
@@ -296,6 +269,46 @@ rInstance.$element.component('CCCS-Template', {
         }
     },
     methods: {
+        async parseData() {
+            if (
+                !this.identifyData.data.data.features ||
+                this.identifyData.data.data.features.length === 0
+            ) {
+                this.errord = true;
+                this.parsed = true;
+                return;
+            }
+            this.parsed = false;
+            this.errord = false;
+            this.result = {};
+            // Hardcoding these for now since we only have one dataset.
+            // Would need to grab correct URL parameters if we added more.
+            this.result.variable = 'tmax';
+            this.result.timeSlice = 3;
+            this.result.timePeriod = 'annual';
+            this.result.rcp = 'rcp45';
+
+            const tempVal =
+                this.identifyData.data.data.features[0].properties.value;
+            const parsedVal = parseFloat(tempVal).toFixed(1);
+            if (!isNaN(parsedVal)) {
+                this.result.value = (parsedVal >= 0 ? '+' : '') + parsedVal;
+            } else {
+                this.result.value = tempVal;
+            }
+            this.result.latlong = await this.$iApi.geo.proj.projectGeoJson(
+                JSON.parse(
+                    JSON.stringify(
+                        this.identifyData.data.data.features[0].geometry
+                    )
+                ),
+                3978,
+                4326
+            );
+            this.result.latlong = this.result.latlong.coordinates;
+            this.result.tt = this.getTranslations();
+            this.parsed = true;
+        },
         getTranslations() {
             const TRANSLATIONS = {
                 en: {
