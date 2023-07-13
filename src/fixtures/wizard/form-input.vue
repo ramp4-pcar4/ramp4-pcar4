@@ -109,7 +109,7 @@
                         "
                     >
                         <option
-                            class="p-6"
+                            class="p-6 whitespace-pre-wrap"
                             v-for="(option, idx) in options.filter(o =>
                                 o.label
                                     .toLowerCase()
@@ -118,7 +118,9 @@
                             :key="`${option.label}-${idx}`"
                             :value="option.value"
                         >
-                            {{ option.label }}
+                            <span class="whitespace-pre-wrap">{{
+                                option.label
+                            }}</span>
                         </option>
                     </select>
                     <div class="text-gray-400 text-xs mb-1">{{ help }}</div>
@@ -329,13 +331,35 @@ const checkMultiSelectError = (selected: Array<any>) => {
 };
 
 const selectSize = () => {
-    // calculates number of visible entries in multi-select list
-    const selectHeight =
-        iApi.$vApp.$el.querySelector('.stepper')?.clientHeight! - 400;
-    return Math.min(
-        props.options.length,
-        Math.max(Math.floor(selectHeight / 30), 3)
-    );
+    // Slight delay before running to ensure the component has been loaded and populated
+    setTimeout(() => {
+        // calculates number of visible entries in multi-select list
+        const selectHeight =
+            iApi.$vApp.$el.querySelector('.stepper')?.clientHeight! - 400;
+
+        // Find the sublayer selector
+        const sublayerSelector =
+            iApi.$vApp.$el.querySelectorAll('.stepper select')[1];
+
+        // determine the height of the largest entry
+        const sublayerList: HTMLElement[] = Array.from(
+            sublayerSelector.children
+        );
+
+        const maxElementHeight: number = Math.max(
+            ...sublayerList.map((item: any) => {
+                return item.clientHeight;
+            })
+        );
+
+        // determine how many options to display based on the largest option
+        sublayerSelector.size = Math.min(
+            props.options.length,
+            Math.max(Math.floor(selectHeight / maxElementHeight), 2)
+        );
+    }, 300);
+
+    return 0;
 };
 </script>
 
