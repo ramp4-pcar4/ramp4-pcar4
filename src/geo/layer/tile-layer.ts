@@ -2,7 +2,6 @@ import { CommonLayer, InstanceAPI, NotificationType } from '@/api/internal';
 import { DataFormat, LayerFormat, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 import { EsriTileLayer } from '@/geo/esri';
-import { SpatialReference } from '@/geo/api';
 import { markRaw } from 'vue';
 
 export class TileLayer extends CommonLayer {
