@@ -82,7 +82,9 @@ export class DetailsAPI extends FixtureInstance {
         );
         const prevFeatureId = this.detailsStore.currentFeatureId;
         const currFeatureId = `${featureData.uid}-${
-            featureData.data[layer?.oidField ?? '']
+            layer?.supportsFeatures
+                ? featureData.data[layer?.oidField ?? '']
+                : JSON.stringify(featureData.data)
         }`;
         this.detailsStore.currentFeatureId = featureData.data
             ? currFeatureId
