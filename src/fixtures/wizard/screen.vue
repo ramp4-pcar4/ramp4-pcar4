@@ -590,7 +590,11 @@ const latLonOptions = (fieldName: 'lat' | 'lon') => {
 const sublayerOptions = () => {
     return layerInfo.value?.layers!.map((layer: any, idx: number) => {
         return {
-            label: `${layer.indent}${layer.name}`,
+            label: `${layer.indent}${
+                typeSelection.value === LayerType.MAPIMAGE
+                    ? layer.name
+                    : layer.title
+            }`,
             value:
                 typeSelection.value === LayerType.MAPIMAGE
                     ? {

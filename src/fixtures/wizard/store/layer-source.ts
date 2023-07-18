@@ -308,7 +308,7 @@ export class LayerSource extends APIScope {
         };
 
         function flattenWmsLayerList(layers: any, level = 0) {
-            const layerList = [
+            return [].concat.apply(
                 [],
                 layers.map((layer: any) => {
                     layer.level = level;
@@ -330,8 +330,7 @@ export class LayerSource extends APIScope {
                         return layer.id ? layer : [];
                     }
                 })
-            ];
-            return [].concat(...layerList);
+            );
         }
     }
 
