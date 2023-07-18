@@ -65,3 +65,5 @@ package-deps.json
 dist/
 .DS_Store
 /.vs
+
+**/.vitepress/cache

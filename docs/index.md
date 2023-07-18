@@ -1,12 +1,12 @@
 ---
 layout: home
 
-title: R4MP
+title: RAMP4
 titleTemplate: Documentation
 
 hero:
-  name: R4MP
-  text: Reusable Accessible Mapping Platform
+  name: RAMP4
+  text: Reusable Accessible Mapping Platform 4
   tagline: Documentation
   image:
     src: /logo.svg
@@ -14,7 +14,7 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: toc
+      link: overview
     - theme: alt
       text: API Reference
       link: https://ramp4-pcar4.github.io/ramp4-pcar4/{{ramp-version}}/docs/api-tech-docs/index.html
@@ -23,16 +23,16 @@ hero:
       link: https://github.com/ramp4-pcar4/ramp4-pcar4
 
 features:
-  - icon: 😀
-    title: Accessible
-    details: Lorem ipsum...
-  - icon: 🎉
-    title: Vite Markdown
-    details: Lorem ipsum...
-  - icon: 🍁
-    title: Emoji
-    details: Lorem ipsum...
-  - icon: 😎
-    title: Stylish and cool
-    details: Lorem ipsum...
+  - title: Setup Guide
+    link: /introduction/setup
+    details: Quick-start guide to setup RAMP for local development.
+  - title: Using RAMP 4
+    link: /using-ramp4/config-language
+    details: Guide to configure RAMP for usage.
+  - title: API Guides
+    link: /api-guides/instance
+    details: How to use RAMP APIs.
+  - title: Migrating to RAMP 4
+    link: /resources/migration/migration-notes
+    details: Migration guide to RAMP from RAMP 2/3.
 ---

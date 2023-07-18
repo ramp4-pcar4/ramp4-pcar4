@@ -20,13 +20,22 @@
             "./src/lang"
         ],
         "out": "ts-docs",
+        "customCss": "./docs/.typedoc/theme/custom.css",
         "entryPointStrategy": "expand",
-        "readme": "./README.md",
-        "name": "R4MP",
+        "readme": "./docs/typedoc-README.md",
+        "name": "RAMP4",
         "includeVersion": true,
         "githubPages": true,
         "cleanOutputDir": true,
-        "exclude": ["**/*/store/*.ts", "**/fixtures/*/index.ts", "**/tests"]
+        "exclude": [
+            "**/*/store/*.ts",
+            "**/*/index.ts",
+            "**/tests",
+            "**/api/internal.ts",
+            "**/fixtures/geosearch/definitions.ts",
+            "**/fixtures/grid/accessibility.ts",
+            "**/geo/esri.ts"
+        ]
     },
 
     "references": [

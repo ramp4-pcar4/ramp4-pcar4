@@ -10,7 +10,7 @@ The Geosearch component can be broken down into multiple parts: search bar, Geos
 
 In the header of the Geosearch panel, there is a search bar which allows users to search for various locations in Canada using any of the supported search types mentioned below. To the right of the search bar is the usual pin and close panel buttons.
 
-![](./images/geosearch-search.png)
+![](/geosearch-search.png)
 
 #### Supported Search Types
 
@@ -39,17 +39,17 @@ In the header of the Geosearch panel, there is a search bar which allows users t
 
 The row of options immediately below the search bar contains two dropdown boxes that allow you to filter the search results by their **province** (Alberta, British Columbia, Ontario, etc.) and/or **type** (lake, town, river, etc.). To the right of these two filters is a **Clear Filters** button, which clears all existing selected filter options.
 
-![](./images/geosearch-top-filters.png)
+![](/geosearch-top-filters.png)
 
 Near the bottom of the Geosearch panel, there is a checkbox labeled **visible on map**. Checking this box will filter the results to only show locations that are visible in the current map extent. Moving the map around or zooming in/out with this box selected will be reflected by updating the results to display locations within the new map extent.
 
-![](./images/geosearch-bottom-filters.png)
+![](/geosearch-bottom-filters.png)
 
 ### Geosearch Results:
 
 When searching for a location, a list of matched results with all appropriate filters applied (map extent, province, type) will be displayed. This takes up the main body of the Geosearch panel. There is an upper limit of 100 results possible to be displayed. If no matching results are found, then a message will appear in place of the results to inform the users.
 
-![](./images/geosearch-results.png)
+![](/geosearch-results.png)
 
 ## Configuration
 
