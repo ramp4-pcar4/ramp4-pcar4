@@ -247,8 +247,9 @@ export class OgcUtils extends APIScope {
                         }
                     });
                 }
+
                 return {
-                    name: nameNode ? nameNode : null,
+                    name: nameNode?.toString() ?? null,
                     title: titleNode,
                     queryable: layer['@_queryable'] === '1',
                     layers: getLayers(layer),
