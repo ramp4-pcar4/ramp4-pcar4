@@ -9,7 +9,7 @@
             <span class="flex-auto"></span>
             <span
                 class="inline"
-                v-html="makeHtmlLink(val.value, val.alias)"
+                v-html="formatValues(val.value, val.alias, val.type)"
             ></span>
         </div>
     </div>
@@ -51,7 +51,10 @@ const itemData = () => {
 
     let aliases: any = {};
     props.fields.forEach(field => {
-        aliases[field.name] = field.alias || field.name; // use the key name if alias is not defined
+        aliases[field.name] = {
+            name: field.alias || field.name,
+            type: field.type
+        }; // use the key name if alias is not defined
     });
 
     Object.keys(helper).map(key => {
@@ -60,10 +63,22 @@ const itemData = () => {
                 typeof helper[key] === 'number'
                     ? iApi?.$i18n.n(helper[key], 'number')
                     : helper[key],
-            alias: aliases[key] || key // use the key name if alias is undefined
+            alias: aliases[key].name || key, // use the key name if alias is undefined
+            type: aliases[key].type
         };
     });
+
     return helper;
+};
+
+// render value based on type
+const formatValues = (html: string, alias: string, type: string): string => {
+    switch (type) {
+        case 'date':
+            return makeDate(html);
+        default:
+            return makeHtmlLink(html, alias);
+    }
 };
 
 // make links look like links and work like links
@@ -104,6 +119,21 @@ const makeHtmlLink = (html: string, alias: string): string => {
         };
         return linkifyHtml(html, options);
     }
+};
+
+// convert timestamps into date strings that match the datagrid
+const makeDate = (html: string): string => {
+    // the value is saved as a string, so attempt to convert it to a number
+    const numericDate = parseInt(html);
+
+    // if the date can't be converted to a number, then it may already be formatted. Display it as it is.
+    if (isNaN(numericDate)) {
+        return html;
+    }
+
+    // Return in YYYY-MM-DD format
+    const formattedDate = new Date(numericDate);
+    return formattedDate.toISOString().split('T')[0];
 };
 </script>
 
