@@ -12,7 +12,8 @@ let config = {
         'wizard',
         'export',
         'basemap',
-        'layer-reorder'
+        'layer-reorder',
+        'hilight'
     ],
     configs: {
         en: {

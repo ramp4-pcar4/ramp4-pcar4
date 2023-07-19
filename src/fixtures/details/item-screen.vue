@@ -15,7 +15,7 @@
                 <!-- highlight toggle -->
                 <div
                     class="p-8 mb-8 bg-gray-100 flex justify-between"
-                    v-if="details.hasHilighter()"
+                    v-if="details.hasHilighter() && supportsFeatures"
                 >
                     <div>{{ t('details.togglehilight.title') }}</div>
                     <Toggle
@@ -408,11 +408,13 @@ const itemChanged = () => {
                     : ''
             }`
         );
-        if (hilightToggle.value) {
+        if (hilightToggle.value && supportsFeatures.value) {
             details.value.hilightDetailsItems(
                 props.result.items[currentIdx.value],
                 props.result.uid
             );
+        } else if (!supportsFeatures.value) {
+            details.value.removeDetailsHilight();
         }
     } else {
         // wait for load.
