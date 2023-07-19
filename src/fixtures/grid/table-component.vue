@@ -1208,23 +1208,21 @@ const cancelAttributeLoad = () => {
  * Determine if the layer is modifiable
  */
 const filtersEnabled = computed((): boolean | undefined => {
-    if (gridLayers.value) {
-        // // Check to see if all layers are consistent with their modifiability. If not, throw a warning notifiying the user that filtering has been disabled.
-        const modifiable = gridLayers.value.map(layer => {
-            return layer.canModifyLayer;
-        });
+    // Check to see if all layers are consistent with their modifiability. If not, throw a warning notifiying the user that filtering has been disabled.
+    const modifiable = gridLayers.value.map(layer => {
+        return layer.canModifyLayer;
+    });
 
-        if (!modifiable.every(value => value === modifiable[0])) {
-            iApi.notify.show(
-                NotificationType.WARNING,
-                iApi.$i18n.t(`layer.filterwarning`)
-            );
+    if (!modifiable.every(value => value === modifiable[0])) {
+        iApi.notify.show(
+            NotificationType.WARNING,
+            iApi.$i18n.t(`layer.filterwarning`)
+        );
 
-            return true;
-        }
+        return true;
     }
 
-    return iApi.geo.layer.getLayer(props.gridId)?.canModifyLayer;
+    return modifiable.some(Boolean);
 });
 
 const getAttrPair = (
