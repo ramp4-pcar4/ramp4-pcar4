@@ -4,7 +4,6 @@
         :content="t('panels.access')"
         v-tippy="{
             trigger: 'focus',
-            appendTo: 'parent',
             onShow: checkMode,
             popperOptions: {
                 modifiers: [
@@ -20,9 +19,7 @@
             tabindex="-1"
         >
             <back
-                :class="
-                    !!panel.teleport ? 'display-none' : 'block sm:display-none'
-                "
+                :class="!!panel.teleport ? 'display-none' : 'block'"
                 @click="panel.close()"
             ></back>
 

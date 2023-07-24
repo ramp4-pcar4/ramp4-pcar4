@@ -3,7 +3,7 @@
         <button
             type="button"
             class="text-gray-500 hover:text-black focus:text-black p-8"
-            :class="{ 'text-gray-700': active }"
+            :class="{ 'text-gray-700': active, 'display-none': display }"
             :content="t('panels.controls.back')"
             v-tippy="{
                 placement: 'bottom',
@@ -27,11 +27,20 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { ref, onMounted } from 'vue';
 
 defineProps({
     active: Boolean
 });
 const { t } = useI18n();
+
+const display = ref(window.innerWidth > 640);
+
+onMounted(() => {
+    window.addEventListener('resize', () => {
+        display.value = window.innerWidth > 640;
+    });
+});
 </script>
 
 <style lang="scss" scoped></style>
