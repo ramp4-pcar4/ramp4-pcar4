@@ -3,12 +3,13 @@
         class="h-full flex flex-col items-stretch"
         :content="t('panels.access')"
         v-tippy="{
-            trigger: 'focus',
-            appendTo: 'parent',
+            trigger: 'manual',
             onShow: checkMode,
             popperOptions: {
+                placement: 'top',
                 modifiers: [
-                    { name: 'preventOverflow', options: { altAxis: true } }
+                    { name: 'preventOverflow', options: { altAxis: true } },
+                    { name: 'flip', options: { fallbackPlacements: ['top'] } }
                 ]
             }
         }"
@@ -77,7 +78,14 @@
 
 <script setup lang="ts">
 import type { InstanceAPI, PanelInstance } from '@/api';
-import { computed, inject, nextTick, ref } from 'vue';
+import {
+    computed,
+    inject,
+    nextTick,
+    onBeforeUnmount,
+    onMounted,
+    ref
+} from 'vue';
 import type { PropType } from 'vue';
 import { usePanelStore } from '@/stores/panel';
 import { useI18n } from 'vue-i18n';
@@ -87,7 +95,7 @@ const { t } = useI18n();
 const panelStore = usePanelStore();
 const appbarStore = useAppbarStore();
 const iApi = inject<InstanceAPI>('iApi');
-const el = ref<Element>();
+const el = ref<HTMLElement>();
 
 const props = defineProps({
     // prop indicating if the `header` slot should be rendered
@@ -127,6 +135,30 @@ const move = (direction: string) => {
         });
     }
 };
+
+onMounted(() => {
+    el.value?.addEventListener('blur', () => {
+        (el.value as any)._tippy.hide();
+    });
+
+    el.value?.addEventListener('keyup', (e: KeyboardEvent) => {
+        if (e.key === 'Tab' && el.value?.matches(':focus')) {
+            (el.value as any)._tippy.show();
+        }
+    });
+});
+
+onBeforeUnmount(() => {
+    el.value?.removeEventListener('blur', () => {
+        (el.value as any)._tippy.hide();
+    });
+
+    el.value?.removeEventListener('keyup', (e: KeyboardEvent) => {
+        if (e.key === 'Tab' && el.value?.matches(':focus')) {
+            (el.value as any)._tippy.show();
+        }
+    });
+});
 </script>
 
 <style lang="scss" scoped></style>

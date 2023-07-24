@@ -114,11 +114,7 @@ class FocusContainerManager {
             return;
         }
         if (event.key === KEYS.Enter || event.key === KEYS.Space) {
-            this.enableTabbing();
-            const first_tabbable_item = this.element.querySelector(
-                TABBABLE_TAGS
-            ) as HTMLElement;
-            first_tabbable_item.focus();
+            this.enableTabbing().focus();
         }
     }
 
@@ -167,6 +163,7 @@ class FocusContainerManager {
      * Sets tabindex to 0 for every VISIBLE element not under a different focus container or list
      */
     enableTabbing() {
+        let first_tabbable_item: any = undefined;
         Array.prototype.map.call(
             this.element.querySelectorAll(TABBABLE_TAGS),
             el => {
@@ -179,8 +176,12 @@ class FocusContainerManager {
                     !!el.offsetParent
                 ) {
                     el.tabIndex = 0;
+                    if (first_tabbable_item === undefined) {
+                        first_tabbable_item = el;
+                    }
                 }
             }
         );
+        return first_tabbable_item;
     }
 }
