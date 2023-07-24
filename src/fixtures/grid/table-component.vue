@@ -153,10 +153,15 @@
                         href="javascript:;"
                         class="flex leading-snug items-center w-256"
                         :class="{
-                            hover: filtersEnabled ? 'none' : 'text-black',
-                            disabled: !filtersEnabled
+                            hover:
+                                filtersStatus !== 'disabled'
+                                    ? 'none'
+                                    : 'text-black',
+                            disabled: filtersStatus === 'disabled'
                         }"
-                        @click="filtersEnabled && toggleFiltersToMap()"
+                        @click="
+                            filtersStatus !== 'disabled' && toggleFiltersToMap()
+                        "
                     >
                         <div class="md-icon-small inline items-start">
                             <svg
@@ -174,7 +179,10 @@
                                 width="18"
                                 viewBox="0 0 24 24"
                                 class="inline float-right"
-                                v-if="filtersEnabled && config.state.applyToMap"
+                                v-if="
+                                    filtersStatus !== 'disabled' &&
+                                    config.state.applyToMap
+                                "
                             >
                                 <g id="done">
                                     <path
@@ -221,10 +229,16 @@
                         href="javascript:;"
                         class="flex leading-snug items-center w-256"
                         :class="{
-                            hover: filtersEnabled ? 'none' : 'text-black',
-                            disabled: !filtersEnabled
+                            hover:
+                                filtersStatus !== 'disabled'
+                                    ? 'none'
+                                    : 'text-black',
+                            disabled: filtersStatus === 'disabled'
                         }"
-                        @click="filtersEnabled && toggleFilterByExtent()"
+                        @click="
+                            filtersStatus !== 'disabled' &&
+                                toggleFilterByExtent()
+                        "
                     >
                         <div class="md-icon-small inline items-start">
                             <svg
@@ -243,7 +257,7 @@
                                 viewBox="0 0 24 24"
                                 class="inline float-right"
                                 v-if="
-                                    filtersEnabled &&
+                                    filtersStatus !== 'disabled' &&
                                     config.state.filterByExtent
                                 "
                             >
@@ -1207,22 +1221,17 @@ const cancelAttributeLoad = () => {
 /**
  * Determine if the layer is modifiable
  */
-const filtersEnabled = computed((): boolean | undefined => {
+const filtersStatus = computed<'disabled' | 'partial' | 'enabled'>(() => {
     // Check to see if all layers are consistent with their modifiability. If not, throw a warning notifiying the user that filtering has been disabled.
     const modifiable = gridLayers.value.map(layer => {
-        return layer.canModifyLayer;
+        return layer.visibility && layer.canModifyLayer;
     });
 
     if (!modifiable.every(value => value === modifiable[0])) {
-        iApi.notify.show(
-            NotificationType.WARNING,
-            iApi.$i18n.t(`layer.filterwarning`)
-        );
-
-        return true;
+        return 'partial';
     }
 
-    return modifiable.some(Boolean);
+    return modifiable.some(Boolean) ? 'enabled' : 'disabled';
 });
 
 const getAttrPair = (
@@ -1586,6 +1595,24 @@ onBeforeMount(() => {
     };
 
     setUpColumns();
+
+    if (filtersStatus.value === 'partial') {
+        iApi.notify.show(
+            NotificationType.WARNING,
+            iApi.$i18n.t(`layer.filterwarning`)
+        );
+    }
+
+    watchers.value.push(
+        watch(filtersStatus, newStatus => {
+            if (newStatus === 'partial') {
+                iApi.notify.show(
+                    NotificationType.WARNING,
+                    iApi.$i18n.t(`layer.filterwarning`)
+                );
+            }
+        })
+    );
 });
 
 onBeforeUnmount(() => {
