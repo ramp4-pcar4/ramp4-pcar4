@@ -247,8 +247,12 @@ export class OgcUtils extends APIScope {
                         }
                     });
                 }
+
                 return {
-                    name: nameNode ? nameNode : null,
+                    // typecast to string as number IDs need to be stringified in the wms sublayer config
+                    // TODO: What if this ends up being null? Does layer explode?
+                    // If yes, consider adding a warning or notification of some sort.
+                    name: nameNode?.toString() ?? null,
                     title: titleNode,
                     queryable: layer['@_queryable'] === '1',
                     layers: getLayers(layer),

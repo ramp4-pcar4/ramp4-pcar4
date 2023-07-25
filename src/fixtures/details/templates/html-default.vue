@@ -2,7 +2,7 @@
     <div
         class="whitespace-pre-wrap break-words h-full overflow-auto"
         v-if="identifyData"
-        v-html="identifyData.data"
+        v-html="identifyData.data.data ?? identifyData.data"
     ></div>
     <div v-else>{{ t('details.layers.results.empty') }}</div>
 </template>
