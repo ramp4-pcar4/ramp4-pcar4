@@ -131,7 +131,7 @@ var simpleConfig = { id: "funlayer", layerType: "esri-feature", url: "http://map
 var featureLayer = instanceApi.geo.layer.createLayer(simpleConfig));
 ```
 
-For details on the layer configuration objects, visit the [layer configuration](../configuration/layer-config.md) page.
+For details on the layer configuration objects, visit the [layer configuration](../using-ramp4/layer-config.md) page.
 
 To have a Layer appear on the map, it must be added.
 
@@ -308,7 +308,7 @@ Determine if the Layer has been removed from the map / session. This also applie
 myLayer.isRemoved; // false
 ```
 
-Request the layer's spatial reference in [RAMP's format](../api/geometry.md#spatial-reference).
+Request the layer's spatial reference in [RAMP's format](geometry.md#spatial-reference).
 
 ```js
 const sr = myLayer.getSR() // { wkid: 102100, latestWkid: 3857 }
@@ -357,7 +357,7 @@ Options parameter object, with descriptions following:
 }
 ```
 
-- The geometry to identify against. A RAMP API [Geometry](../api/geometry.md). Intersecting features will be returned.
+- The geometry to identify against. A RAMP API [Geometry](geometry.md). Intersecting features will be returned.
 - An optional array of sublayer uids (string) or server indicies / layer indexes (number) that indicate which sublayers to include in the request.
 - An optional integer number to buffer the geometry. Is generally only useful if the geometry is a point (i.e. where a mouse click / crosshair click occurred). The number represents pixels to buffer by (so 5 would be a 10x10 pixel square around the point at the current map scale level).
 - Optional result of a local hit test (a promise resolving in an array of graphic hit results). Utilized when in hybrid identify mode; will ensure any local results are excluded from the server results, avoiding duplicates.

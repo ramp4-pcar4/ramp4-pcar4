@@ -22,7 +22,7 @@ Detailed instructions for how to customize each section can be found in the [cre
 Each panel has a number of buttons that can be used to control various aspects of panel behaviour. You can even create your own panel control buttons (see the [creating your own panel](#Creating-Your-Own-Panel) section for how to do this). However, RAMP also provides a number of "out of the box" panel control buttons, which are listed below:
 * close - closes the panel i.e. removes it from the stack.
 * back - closes the currently visible panel and displays the previously visible panel (if it exists). Only available for mobile screen sizes by default.
-* minimize - minimizes the panel i.e. hides the panel but keeps it in the stack. This button is by default only enabled for panels that have appbar buttons that are not defined in the appbar's confguration. Read the [appbar documentation](./appbar.md) for more details.
+* minimize - minimizes the panel i.e. hides the panel but keeps it in the stack. This button is by default only enabled for panels that have appbar buttons that are not defined in the appbar's confguration. Read the [appbar documentation](../using-ramp4/fixtures/appbar.md) for more details.
 * pin - pins the panel in place, which prevents the panel from being hidden when the stack runs out of space. Therefore, if the leftmost panel is pinned and the stack runs out of space, the pinned panel stays visible and the next most leftmost panel is hidden.
 * left/right - swaps position with the panel to the left/right.
 * expand/collapse - expands the panel to cover the remaining width in the stack when in "expand mode", and collapses panel to its original width when in "collapse mode". This button is by default only enabled for the grid panel.
@@ -39,11 +39,11 @@ A panel in RAMP4 is represented by a `PanelInstance` object. The object has the 
 
     More information about the above options can be found in the [Vue documentation](https://vuejs.org/guide/introduction.html). Additionally, a few basic examples are presented in the [creating your own panel section](#creating-your-own-panel) below.
 * `loadedScreens` - (readonly) a list of strings, where each string is a screen ID (a key in the `screens` object), representing the screens that are ready to be rendered on the page. If a screen is not ready to be rendered, a loading spinner is shown instead of the screen's contents.
-* `alertName` - (readonly) the i18n key for what the panel should be referred to when using RAMP with screen readers. Please see the [localization documentation](../configuration/config-language.md) for details.
+* `alertName` - (readonly) the i18n key for what the panel should be referred to when using RAMP with screen readers. Please see the [localization documentation](../using-ramp4/config-language.md) for details.
 * `controls` - an object with string keys representing a control and boolean values representing whether the control is to be enabled or not. Note that none of the default controls can be enabled/disabled through this object, except the expand control.
 * `button` - an object representing the appbar button for this panel. It has the following properties:
     - `icon` - an embedded SVG tag representing the icon for the appbar button.
-    - `tooltip` - the i18n key for the text to display when hovering over the button. Please see the [localization documentation](../configuration/config-language.md) for details.
+    - `tooltip` - the i18n key for the text to display when hovering over the button. Please see the [localization documentation](../using-ramp4/config-language.md) for details.
 * `route` - an object that represents the current screen to be displayed on the panel. It has the following properties:
     - `screen` - the screen ID to display. This must be a key in the `screens` object.
     - `props` - the props to pass in to the panel screen.
@@ -353,7 +353,7 @@ The API provides the following methods:
 
     These properties are the same as the ones described in the [`PanelInstance` object](#panelinstance-object).
 
-    Additionally, the `PanelRegistrationOptions` object has one optional property of `i18n`, where you should include the localized strings for the panel. For more details on localization, please see the [localization documentation](../configuration/config-language.md)
+    Additionally, the `PanelRegistrationOptions` object has one optional property of `i18n`, where you should include the localized strings for the panel. For more details on localization, please see the [localization documentation](../using-ramp4/config-language.md)
 * `isRegistered(panelId: string | string[]): Promise<any>` - provides a promise that resolves when panels with the specified panel ID(s) have completed registration.
 * `remove(value: string | PanelInstance): void` - removes the specified panel from the panel stack.
 * `get(value: string | PanelInstance): PanelInstance` - finds and returns the specified panel.

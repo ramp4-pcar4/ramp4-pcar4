@@ -498,7 +498,7 @@ This differs from the `initialFilteredQuery`, in that the filter is locked for t
 
 File based layers will still download everything up-front, but will respect the filter afterwards. Same with WFS, but a WFS can apply a similar filter in its URL if the server will respect the parameter.
 
-To align a legend symbol stack with a particular permanent filter, see the `symbologyStack` option of the [legend configuration](../app/legend.md#layer-item-1).
+To align a legend symbol stack with a particular permanent filter, see the `symbologyStack` option of the [legend configuration](../using-ramp4/fixtures/legend.md#layer-item-1).
 
 ```js
 {
@@ -539,7 +539,7 @@ Specifies the file contents on the config. If provided, the `url` property will 
 
 ### singleEntryCollapse
 
-**This is currently not supported.** An alternative is to specify the `sublayerIndex` of the target child layer in the [legend configuration](../app/legend.md#layer-item-1).
+**This is currently not supported.** An alternative is to specify the `sublayerIndex` of the target child layer in the [legend configuration](../using-ramp4/fixtures/legend.md#layer-item-1).
 
 *boolean*, only applies to `esri-map-image`
 

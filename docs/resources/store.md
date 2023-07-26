@@ -92,4 +92,4 @@ const notificationStore = useNotificationStore(this.$vApp.$pinia);
 
 ## How you can access the store
 
-The `InstanceAPI` has a method called `useStore()` which you can call to retrieve a desired store. See the [instance API](../api/instance.md#methods) documentation for details.
+The `InstanceAPI` has a method called `useStore()` which you can call to retrieve a desired store. See the [instance API](../api-guides/instance.md#methods) documentation for details.

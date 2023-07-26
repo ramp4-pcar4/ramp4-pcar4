@@ -80,7 +80,7 @@ TODO add stuff as we make events that core fixtures raise
 
 ## Default Events Handlers
 
-Along with the default fixtures, there are default event handlers that are applied to make them react to each other and to the RAMP core. See the examples section below and the [Events API page](../api/events.md) for details on how to work with event handlers.
+Along with the default fixtures, there are default event handlers that are applied to make them react to each other and to the RAMP core. See the examples section below and the [Events API page](../api-guides/events.md) for details on how to work with event handlers.
 
 ### Map Handlers
 
