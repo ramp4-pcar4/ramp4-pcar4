@@ -2,15 +2,15 @@
 
 TODO: Add missing API links as they become available.
 
-The Instance API provides an interface to manage all aspects of a RAMP instance. When calling the `createInstance(...)` function to place a RAMP instance on a page (see the [startup documentation](./startup.md) for more details on this), it will return an API for the new instance. Detailed below are the properties and methods it provides.
+The Instance API provides an interface to manage all aspects of a RAMP instance. When calling the `createInstance(...)` function to place a RAMP instance on a page (see the [instantiation documentation](../introduction/instantiation.md) for more details on this), it will return an API for the new instance. Detailed below are the properties and methods it provides.
 
 #### APIs
 
 * `fixture` - the fixture API.
-* `panel` - [the panel API](../app/panels.md#the-panel-api)
-* `event` - [the event API](./events.md)
+* `panel` - [the panel API](panels.md#the-panel-api)
+* `event` - [the event API](events.md)
 * `geo` - the geo API
-* `notify` - [the notification API](./notifications.md)
+* `notify` - [the notification API](notifications.md)
 
 #### Other Attributes
 
@@ -35,7 +35,7 @@ Note that all the properties above are read only.
 * `setLanguage(language: string)` - Sets the language of the app to the specified string (e.g. 'en' or 'fr').
 * `toggleFullscreen()` - Toggles fullscreen for the app.
 * `updateAlert(alert: string)` - Updates the screen reader alert. Use this to inform screen reader users of visual changes in the app (pieces of ui appearing/leaving).
-* `start()` - Starts the app i.e. loads the map and layers. Used when `startRequired` is set to true in the [instance options](./startup.md#instance-options).
+* `start()` - Starts the app i.e. loads the map and layers. Used when `startRequired` is set to true in the [instance options](../introduction/instantiation.md#instance-options).
 * `useStore(id: string)` - Returns the store with the specified id, if it exists, else returns undefined. The following out-of-the-box store ID's are currently supported: appbar, areas-of-interest, config, details, export, fixture, geosearch, grid, help, instance, layer, legend, map-caption, mapnav, maptip, metadata, northarrow, notification, overviewmap, panel, scrollgurard, and wizard. Note that for ids that correspond to fixture ids, the fixture must be added before the store can be retrieved.
 
 

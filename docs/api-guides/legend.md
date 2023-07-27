@@ -27,7 +27,7 @@ const myItem = legendApi.getItem('abcdefg');
 myItem.name = 'I have renamed my item!'; // this line will cause the name to update in the UI.
 ```
 
-For more information on the different properties that legend items have, read the [legend component objects section](#legend-component-objects).
+For more information on the different properties that legend items have, read the [legend component objects section](../using-ramp4/fixtures/legend.md#legend-component-objects).
 
 
 ## Update

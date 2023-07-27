@@ -6,7 +6,7 @@ The Appbar is used as a starting point for functionality in the app. Its main us
 
 ## Configuration
 
-The items array can contain Panel IDs as strings or Appbar Item Configs. The below config will add a button for the `legend` panel as well as the component `my-other-appbar-button`. The `my-other-appbar-button` must be registered globally, and the `legend` panel must be registered with a button specified ([details here](panels.md)).
+The items array can contain Panel IDs as strings or Appbar Item Configs. The below config will add a button for the `legend` panel as well as the component `my-other-appbar-button`. The `my-other-appbar-button` must be registered globally, and the `legend` panel must be registered with a button specified ([details here](../../api-guides/panels.md)).
 
 ```js
 {

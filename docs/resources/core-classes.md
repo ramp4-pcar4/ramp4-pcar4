@@ -73,7 +73,7 @@ var gridFixtureInstance = new GridFixture(instanceApi);
 
 Our component classes follow the naming convention: `ComponentnameV` (which extend `Vue` as normal). The `V` allows us to distinguish Vue components from store classes, api classes, etc.
 
-Our store folders export a function rather than a class/object. These are just named as `module`. This function creates an instance of `ModuleState` which should be defined in the `module-state.ts` file. For more info look at the [store docs](./store.md).
+Our store folders export a function rather than a class/object. These are just named as `module`. This function creates an instance of `ModuleState` which should be defined in the `module-state.ts` file. For more info look at the [store docs](store.md).
 
 ## LayerInstance
 
