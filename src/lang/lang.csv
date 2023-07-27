@@ -47,6 +47,6 @@ panels.alert.minimize,{name} panel minimized,1,Fenêtre {name} réduite,1
 layer.error,{id} failed to load,1,Échec du chargement de {id},1
 layer.longload,{id} is taking longer than expected to load,1,Le chargement de {id} met plus de temps que prévu,1
 layer.longdraw,{id} is taking longer than expected to draw,1,{id} prend plus de temps que prévu à extraire,1
-layer.mismatch,{id} cannot be displayed in the current projection,1,{id} ne peut pas être affiché dans la projection actuelle,0
+layer.mismatch,{name} cannot be displayed in the current projection,1,{name} ne peut pas être affiché dans la projection actuelle,0
 layer.filtersdisabled,Filters have been disabled for {name},1,Les filtres ont été désactivés par {name},0
 layer.filterwarning,You are attempting to use a merge grid that contains unmodifiable layers. Filtering will be partially disabled,1,Vous tentez d'utiliser une grille de fusion contenant des calques non modifiables. Le filtrage sera partiellement désactivé,0
