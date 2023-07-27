@@ -515,9 +515,9 @@ const layerCols = ref<{
 const origLayerIds = ref(gridStore.grids[props.gridId].layerIds);
 const gridLayers = computed(() => {
     if (gridStore.grids[props.gridId]) {
-        return gridStore.grids[props.gridId].layerIds.map(
-            id => iApi.geo.layer.getLayer(id) as LayerInstance
-        );
+        return gridStore.grids[props.gridId].layerIds
+            .map(id => iApi.geo.layer.getLayer(id) as LayerInstance)
+            .filter(layer => layer !== undefined);
     } else return [];
 });
 const oidCols = ref<Set<string>>(new Set<string>());
