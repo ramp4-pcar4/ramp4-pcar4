@@ -76,7 +76,9 @@ export class TileLayer extends CommonLayer {
         if (!mapSR.isEqual(layerSR)) {
             this.$iApi.notify.show(
                 NotificationType.WARNING,
-                this.$iApi.$i18n.t('layer.mismatch', { id: this.id })
+                this.$iApi.$i18n.t('layer.mismatch', {
+                    id: this.name || this.id
+                })
             );
         }
     }
