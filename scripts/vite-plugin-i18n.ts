@@ -19,7 +19,6 @@ export default function vueI18nPlugin(): Plugin {
             if (!/lang\.csv/.test(id)) return;
 
             const valueField = 'Value';
-            const validField = 'Valid';
             const res: CsvRows = csvParse(
                 src
                     .replace('export default "', '')
@@ -41,11 +40,7 @@ export default function vueI18nPlugin(): Plugin {
             // fold parsed CSV into the messages object
             res.reduce((map, item) => {
                 locales.forEach(({ lang, column }) => {
-                    // prepend language code to the strings that are not yet confirmed
-                    map[lang][item.key] =
-                        (parseInt(item[`${lang}${validField}`])
-                            ? ''
-                            : `[${lang}] `) + item[column];
+                    map[lang][item.key] = item[column];
                 });
 
                 return map;
