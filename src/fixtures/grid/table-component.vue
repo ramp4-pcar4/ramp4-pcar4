@@ -1040,8 +1040,7 @@ const filterToSql = (col: string, colFilter: { [key: string]: any }): any => {
                 // can change to MOST other characters and should still work (ideally want an escape char no one will search for) - just replace all instances of ௌ
                 newVal = newVal.replace(/%/g, 'ௌ%');
                 newVal = newVal.replace(/_/g, 'ௌ_');
-                const filterVal = `*${newVal}`;
-                newVal = filterVal.split(' ').join('*');
+                newVal = `*${newVal}`;
                 // if val contains a % or _, add ESCAPE 'ௌ' at the end of the query
                 let sqlWhere = `UPPER(${col}) LIKE \'${newVal
                     .replace(/\*/g, '%')
