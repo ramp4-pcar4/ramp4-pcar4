@@ -515,9 +515,9 @@ const layerCols = ref<{
 const origLayerIds = ref(gridStore.grids[props.gridId].layerIds);
 const gridLayers = computed(() => {
     if (gridStore.grids[props.gridId]) {
-        return gridStore.grids[props.gridId].layerIds.map(
-            id => iApi.geo.layer.getLayer(id) as LayerInstance
-        );
+        return gridStore.grids[props.gridId].layerIds
+            .map(id => iApi.geo.layer.getLayer(id) as LayerInstance)
+            .filter(layer => layer !== undefined);
     } else return [];
 });
 const oidCols = ref<Set<string>>(new Set<string>());
@@ -1245,13 +1245,11 @@ const getAttrPair = (
 };
 
 const setUpColumns = () => {
-    const fancyLayers: LayerInstance[] = gridLayers.value
-        .map(layer => {
-            if (layer.supportsFeatures && layer.isLoaded) {
-                return layer;
-            }
-        })
-        .filter(fl => fl !== undefined) as LayerInstance[];
+    const fancyLayers: LayerInstance[] = gridLayers.value.map(layer => {
+        if (layer.supportsFeatures && layer.isLoaded) {
+            return layer;
+        }
+    }) as LayerInstance[];
 
     if (fancyLayers.length === 0) {
         // in the event of error'd layers, otherwise a blank datagrid will appear
