@@ -131,7 +131,7 @@ const config = {
 ```
 
 ### Legend Component Objects
-There are two types of legend component objects for the legend fixture, each one representing a [Component](#Components) mentioned earlier in this documentation.
+There are two types of legend component objects for the legend fixture, each one representing a [Component](#components) mentioned earlier in this documentation.
 
 #### Legend Item
 Every node in the legend tree structure is an instance of a legend item. All legend items share these properties:

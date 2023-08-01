@@ -8,7 +8,7 @@ The grid table is the main component of the grid fixture. It contains a row for 
 **Note**: features will only appear on the grid if they are currently visible
 
 ### Global Search and Column Filters
-The global search and column filters allow the user to display smaller subsets of data within the table. See the [global search](#Global-Search) and [column filters](#Column-Filters).
+The global search and column filters allow the user to display smaller subsets of data within the table. See the [global search](#global-search) and [column filters](#column-filters).
 
 ### Scroll and Filter Status
 The scroll and filter status is located in the upper left corner of the grid panel. It displays the range of rows that are currently visible on the table, and the total number of records that are in the table. If any filters are applied to the grid, the number of filtered rows will be displayed instead of the total number. The range of displayed rows updates as the user scrolls up or down in the table.
@@ -32,7 +32,7 @@ A button located in the upper right corner of the grid panel. This clears the gl
 A control located in the upper right corner of the grid panel, within the `More` dropdown menu. When this control is enabled, features on the map are in sync with filtered features on the grid table.
 
 ### Show/Hide Column Filters
-A control located in the upper right corner of the grid panel, within the `More` dropdown menu. Pressing this button toggles the [column filters](#Column-Filters) on and off.
+A control located in the upper right corner of the grid panel, within the `More` dropdown menu. Pressing this button toggles the [column filters](#column-filters) on and off.
 **Note**: turning the column filter display off will not remove any column filters currently applied to the table.
 
 ### Toggle Extent Filter
@@ -74,12 +74,12 @@ Represented by two date input fields. The date filter works in the same fashion 
 
 Like other fixtures, the grid has multiple options that can be adjusted through the configuration file. Since the grid settings are layer specific, the configuration resides in the fixtures property of layer config objects.
 - `title: string`, renders a custom title above the grid.
-- `columns: Object[]`, an array that specifies how the columns of the grid are defined. Its configuration is defined under [column configuration](#Column-Configuration).
-- `search: boolean`, shows/hides the [global search bar](#Global-Search).
+- `columns: Object[]`, an array that specifies how the columns of the grid are defined. Its configuration is defined under [column configuration](#column-configuration).
+- `search: boolean`, shows/hides the [global search bar](#global-search).
 - `searchFilter: string`, provides an initial filter in the global search bar
-- `showFilter: boolean`, shows/hides the [column filters](#Show/Hide-Column-Filters) on grid load
-- `applyToMap: boolean`, enables/disables the [Apply to Map filter](#Apply-Filters-to-Map) by default
-- `filterByExtent: boolean`, enables/disables the [Extent filter](#Toggle-Extent-Filter) by default
+- `showFilter: boolean`, shows/hides the [column filters](#show-hide-column-filters) on grid load
+- `applyToMap: boolean`, enables/disables the [Apply to Map filter](#apply-filters-to-map) by default
+- `filterByExtent: boolean`, enables/disables the [Extent filter](#toggle-extent-filter) by default
 
 An example of a layer with a configured grid is below
 
