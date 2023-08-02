@@ -64,7 +64,7 @@ Also, a `settings` object enables additional fixture customization:
 
 - `categories: string[]`, filter by [concise type](https://geogratis.gc.ca/services/geoname/en/codes/concise.json) or street address ('ADDR') when using the Geoname service
 - `sortOrder: string[]`, order search results based on category types, where missing types are appended to the bottom of the sorted list
-- `disabledSearchTypes: string[]`, omit results for given [search types](#Supported-Search-Types) (`LAT/LNG`, `FSA`, and `NTS`)
+- `disabledSearchTypes: string[]`, omit results for given [search types](#supported-search-types) (`LAT/LNG`, `FSA`, and `NTS`)
 - `maxResults: number`, specifies the maximum number of results from a query
 - `officialOnly: boolean`, results only use official names for geographic names
 

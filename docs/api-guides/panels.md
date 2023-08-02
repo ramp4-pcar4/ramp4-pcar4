@@ -15,11 +15,11 @@ Panels can also have multiple screens, and the screen to be displayed can be adj
 * content - the main "body" of the panel, where all the content goes.
 * footer - this is for any content you want to appear at the bottom of the panel.
 
-Detailed instructions for how to customize each section can be found in the [creating your own panel](#Creating-Your-Own-Panel) section.
+Detailed instructions for how to customize each section can be found in the [creating your own panel](#creating-your-own-panel) section.
 
 ## Controls
 
-Each panel has a number of buttons that can be used to control various aspects of panel behaviour. You can even create your own panel control buttons (see the [creating your own panel](#Creating-Your-Own-Panel) section for how to do this). However, RAMP also provides a number of "out of the box" panel control buttons, which are listed below:
+Each panel has a number of buttons that can be used to control various aspects of panel behaviour. You can even create your own panel control buttons (see the [creating your own panel](#creating-your-own-panel) section for how to do this). However, RAMP also provides a number of "out of the box" panel control buttons, which are listed below:
 * close - closes the panel i.e. removes it from the stack.
 * back - closes the currently visible panel and displays the previously visible panel (if it exists). Only available for mobile screen sizes by default.
 * minimize - minimizes the panel i.e. hides the panel but keeps it in the stack. This button is by default only enabled for panels that have appbar buttons that are not defined in the appbar's confguration. Read the [appbar documentation](../using-ramp4/fixtures/appbar.md) for more details.
