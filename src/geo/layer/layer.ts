@@ -17,7 +17,12 @@ import {
     WfsLayer,
     WmsLayer
 } from '@/api/internal';
-import { LayerControl, LayerType, type RampLayerConfig } from '@/geo/api';
+import {
+    LayerControl,
+    LayerState,
+    LayerType,
+    type RampLayerConfig
+} from '@/geo/api';
 import { useLayerStore } from '@/stores/layer';
 
 // this class represents the functions that exist on rampApi.geo.layer
@@ -114,10 +119,20 @@ export class LayerAPI extends APIScope {
     }
 
     /**
+     * Returns all layers that have initiated successfully and that have not errored.
+     * @returns {Array<LayerInstance>} all layers that have initiated and not errored
+     */
+    allActiveLayers(): Array<LayerInstance> {
+        return this.allLayersOnMap().filter(
+            l => l.layerState !== LayerState.ERROR
+        );
+    }
+
+    /**
      * Returns all layers currently on the map.
      * @returns {Array<LayerInstance>} all layers on the map
      */
-    allActiveLayers(): Array<LayerInstance> {
+    allLayersOnMap(): Array<LayerInstance> {
         return (
             (useLayerStore(this.$vApp.$pinia)
                 .layers as unknown as Array<LayerInstance>) || []
@@ -130,8 +145,14 @@ export class LayerAPI extends APIScope {
      */
     allErrorLayers(): Array<LayerInstance> {
         return (
-            (useLayerStore(this.$vApp.$pinia)
-                .penaltyBox as unknown as Array<LayerInstance>) || []
+            (
+                useLayerStore(this.$vApp.$pinia)
+                    .penaltyBox as unknown as Array<LayerInstance>
+            ).concat(
+                this.allLayersOnMap().filter(
+                    l => l.layerState === LayerState.ERROR
+                )
+            ) || []
         );
     }
 

@@ -178,6 +178,7 @@ The `getLayer()` method will return layers on the map, layers that have failed, 
 var allGoodLayerArray = instanceApi.geo.layer.allActiveLayers();
 var errLayerArray = instanceApi.geo.layer.allErrorLayers();
 var initiatingLayerArray = instanceApi.geo.layer.allInitiatingLayers();
+var mapLayerArray = instanceApi.geo.layer.allLayersOnMap();
 var allLayerArray = instanceApi.geo.layer.allLayers();
 ```
 
