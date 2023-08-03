@@ -1625,7 +1625,9 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-:deep(.ag-header-cell-sortable) {
+:deep(.ag-header-cell-sortable),
+:deep(.ag-pinned-left-header),
+:deep(.ag-pinned-left-cols-container) {
     cursor: default;
 }
 :deep(.ag-pinned-left-cols-container .ag-row) {
