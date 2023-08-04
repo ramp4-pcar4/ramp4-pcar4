@@ -8,6 +8,29 @@
         .ramp-markdown :not(table, td, img) {
             all: revert;
         }
+
+        [type='text'],
+        [type='email'],
+        [type='url'],
+        [type='password'],
+        [type='number'],
+        [type='date'],
+        [type='datetime-local'],
+        [type='month'],
+        [type='search'],
+        [type='tel'],
+        [type='time'],
+        [type='week'],
+        [multiple],
+        textarea,
+        select {
+            @apply text-base pt-8 pr-12 pb-8 pl-12 font-normal;
+        }
+
+        [type='checkbox'],
+        [type='radio'] {
+            @apply h-16 w-16;
+        }
     }
 
     @layer utilities {

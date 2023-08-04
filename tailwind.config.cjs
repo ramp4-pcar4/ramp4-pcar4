@@ -100,6 +100,8 @@ module.exports = {
             addVariant('md', '.md &');
             addVariant('lg', '.lg &');
         }),
-        require('@tailwindcss/forms')
+        require('@tailwindcss/forms')({
+            strategy: 'base' // only generate global styles
+        })
     ]
 };

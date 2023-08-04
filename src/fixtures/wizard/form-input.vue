@@ -39,7 +39,7 @@
             <label class="text-base font-bold">{{ label }}</label>
             <div class="mb-0.5" data-type="url">
                 <input
-                    class="text-sm w-full border-solid border-gray-300 mb-5 leading-5 focus:border-green-500"
+                    class="text-sm w-full border-solid border-gray-300 mb-5 focus:border-green-500"
                     type="url"
                     name="url"
                     :value="modelValue"
