@@ -18,7 +18,7 @@ const props = defineProps({
 
 const el = ref();
 
-const url = ref('https://i.ya-webdesign.com/images/evil-snowman-png-1.png');
+const url = ref('https://i.imgur.com/p13yknD.png');
 
 onMounted(() => {
     // console.log(this.message);

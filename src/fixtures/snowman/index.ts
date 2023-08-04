@@ -10,13 +10,12 @@ class SnowmanFixture extends FixtureInstance {
         // register snowman appbar button
         this.$iApi.component('snowman-appbar-button', SnowmanAppbarButtonV);
 
-        // instantiate it a new instance of the Snowman component using a helper function which will add `$iApi` to the component automatically
-        // the component will be auto-mounted as well unless you pass `false` to the `extend` function
-        const snowman = this.extend(SnowmanV, {
-            propsData: { message: "I'm snowman prop.", fixture: this }
+        const { el } = this.mount(SnowmanV, {
+            app: this.$element,
+            props: { message: 'This is a snowman prop.', fixture: this }
         });
 
-        this.$vApp.$el.appendChild(snowman);
+        this.$vApp.$el.appendChild(el.childNodes[0]);
 
         // snowman self-terminates from its own component
 
