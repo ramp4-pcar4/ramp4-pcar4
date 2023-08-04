@@ -8,6 +8,9 @@ import { markRaw } from 'vue';
 //      lets us make fancier versions later, and this remains as the vanilla without colliding with
 //      the fancy versions
 
+/**
+ * A common layer class which implements a basic graphic layer (vector graphics not bound to a schema).
+ */
 export class GraphicLayer extends CommonGraphicLayer {
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);

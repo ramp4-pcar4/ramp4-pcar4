@@ -1264,16 +1264,14 @@ const setUpColumns = () => {
     loadedRecordCount.value = new Array(gridLayers.value.length).fill(0);
 
     fancyLayers.forEach(
-        (fl, idx) =>
-            (loadedRecordCount.value[idx] +=
-                (fl as AttribLayer).attLoader?.loadCount() ?? 0)
+        (fl, idx) => (loadedRecordCount.value[idx] += fl.downloadedAttributes())
     );
 
     // watch the load count of the attrib loader
     fancyLayers.forEach((fl, idx) => {
         watchers.value.push(
             watch(
-                () => (fl as AttribLayer)?.attLoader?.loadCount() ?? 0,
+                () => fl.downloadedAttributes(),
                 (count: number) => {
                     loadedRecordCount.value[idx] = count;
                 }
@@ -1290,11 +1288,7 @@ const setUpColumns = () => {
         Promise.all(tableAttributePromises)
             .then((tableAttributes: Array<TabularAttributeSet>) => {
                 // check if load was cancelled by checking the loadAborted state
-                if (
-                    fancyLayers.every(fl =>
-                        (fl as AttribLayer)?.attLoader?.isLoadAborted()
-                    )
-                ) {
+                if (fancyLayers.every(fl => fl.attribLoadAborted())) {
                     // if load was cancelled, don't load grid any further and return
                     isLoadingGrid.value = false;
                     return;

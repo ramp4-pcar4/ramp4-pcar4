@@ -1,7 +1,5 @@
 # Instance API
 
-TODO: Add missing API links as they become available.
-
 The Instance API provides an interface to manage all aspects of a RAMP instance. When calling the `createInstance(...)` function to place a RAMP instance on a page (see the [instantiation documentation](../introduction/instantiation.md) for more details on this), it will return an API for the new instance. Detailed below are the properties and methods it provides.
 
 #### APIs

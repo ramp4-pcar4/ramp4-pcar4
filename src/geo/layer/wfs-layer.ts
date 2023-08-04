@@ -3,6 +3,9 @@
 import { FileLayer, InstanceAPI } from '@/api/internal';
 import { LayerType, type RampLayerConfig, UrlWrapper } from '@/geo/api';
 
+/**
+ * A layer class which implements an ESRI Feature Layer with data from a WFS 3 / OGC API Features source.
+ */
 export class WfsLayer extends FileLayer {
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);

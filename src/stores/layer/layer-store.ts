@@ -3,7 +3,8 @@ import { LayerInstance } from '@/api/internal';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-// searches layers and sublayers using BFS and returns the first layer to satisfy the given predicate
+// searches layers and sublayers using BFS and returns the first layer to satisfy the given predicate.
+// Our initial array is just layers, this lets us crawl into sublayers before moving to the next layer.
 const bfs = (
     layers: Array<LayerInstance>,
     predicate: (layer: LayerInstance | undefined) => boolean
@@ -21,10 +22,13 @@ const bfs = (
 };
 
 export const useLayerStore = defineStore('layer', () => {
-    // the layers that were initiated successfully and are currently in the map stack.
+    // the map layers that were initiated successfully and are currently in the map stack.
     const layers = ref<LayerInstance[]>([]);
 
-    // the layers in an error state.
+    // the data layers that were initiated successfully.
+    const dataLayers = ref<LayerInstance[]>([]);
+
+    // the layers in an error state due to not initiating. Generally considered not usable, if map based will not be in the map stack.
     const penaltyBox = ref<LayerInstance[]>([]);
 
     // layers currently initiating
@@ -35,18 +39,22 @@ export const useLayerStore = defineStore('layer', () => {
 
     function getLayerByUid(uid: string): LayerInstance | undefined {
         return bfs(
-            layers.value
-                .concat(penaltyBox.value)
-                .concat(initiatingLayers.value) as any,
+            layers.value.concat(
+                penaltyBox.value,
+                initiatingLayers.value,
+                dataLayers.value
+            ) as any,
             (layer: LayerInstance | undefined) => layer?.uid === uid
         );
     }
 
     function getLayerById(id: string): LayerInstance | undefined {
         return bfs(
-            layers.value
-                .concat(penaltyBox.value)
-                .concat(initiatingLayers.value) as any,
+            layers.value.concat(
+                penaltyBox.value,
+                initiatingLayers.value,
+                dataLayers.value
+            ) as any,
             (layer: LayerInstance | undefined) => layer?.id === id
         );
     }
@@ -57,6 +65,10 @@ export const useLayerStore = defineStore('layer', () => {
 
     function addLayer(value: LayerInstance) {
         layers.value = [...(layers.value as any), value];
+    }
+
+    function addDataLayer(value: LayerInstance) {
+        dataLayers.value = [...(dataLayers.value as any), value];
     }
 
     function addErrorLayer(value: LayerInstance) {
@@ -83,10 +95,19 @@ export const useLayerStore = defineStore('layer', () => {
 
     function removeLayer(value: LayerInstance) {
         // copy to new array so watchers will have a reference to the old value
-        const filteredLayers = layers.value.filter(layer => {
-            return layer.id !== value.id || layer.uid !== value.uid;
-        });
-        layers.value = filteredLayers;
+        // can probably just assign target var the correct array, but the Ref<>s are giving me grief so
+        // duplicating code blocks for now. Smart person can refactor.
+        if (value.mapLayer) {
+            const filteredLayers = layers.value.filter(layer => {
+                return layer.id !== value.id || layer.uid !== value.uid;
+            });
+            layers.value = filteredLayers;
+        } else {
+            const filteredLayers = dataLayers.value.filter(layer => {
+                return layer.id !== value.id || layer.uid !== value.uid;
+            });
+            dataLayers.value = filteredLayers;
+        }
     }
 
     function removeErrorLayer(value: LayerInstance | string) {
@@ -119,6 +140,7 @@ export const useLayerStore = defineStore('layer', () => {
 
     return {
         layers,
+        dataLayers,
         penaltyBox,
         initiatingLayers,
         layerConfigs,
@@ -126,6 +148,7 @@ export const useLayerStore = defineStore('layer', () => {
         getLayerById,
         addLayerConfig,
         addLayer,
+        addDataLayer,
         addErrorLayer,
         addInitiatingLayer,
         reorderLayer,
