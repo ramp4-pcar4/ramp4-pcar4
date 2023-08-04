@@ -2,7 +2,7 @@
     <div class="relative" @mouseover.stop>
         <!-- TODO: see if getting this to use v-model works; children wouldnt update properly on initial try -->
         <input
-            type="checkbox"
+            :type="isRadio ? 'radio' : 'checkbox'"
             :aria-label="
                 t(
                     checked
@@ -16,7 +16,6 @@
             @keypress.enter.prevent
             @keyup.enter.stop="toggleVisibility()"
             :class="[
-                isRadio ? 'form-radio' : 'form-checkbox rounded-none',
                 disabled
                     ? 'text-gray-400 border-gray-300'
                     : 'text-black cursor-pointer border-gray-500 hover:border-black'
