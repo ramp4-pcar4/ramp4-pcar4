@@ -152,7 +152,7 @@ const moveLeft = (): void => {
             el.value
                 ?.closest('.ag-header-row')
                 ?.querySelectorAll('.ag-header-cell')
-                [index].querySelector('.move-left') as HTMLElement
+                [index - 2].querySelector('.move-left') as HTMLElement
         ).focus();
 
         props.params.api.ensureColumnVisible(allColumns[index]);
