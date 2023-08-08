@@ -6,7 +6,7 @@
             class="w-fit inline-block sm:w-1/2 h-26 mb-8 sm:mb-0 pr-16 sm:pr-0"
         >
             <select
-                class="form-select border-b border-b-gray-600 w-full h-full py-0 cursor-pointer"
+                class="border-b border-b-gray-600 w-full h-full py-0 cursor-pointer"
                 :value="queryParams.province"
                 v-on:change="
                     setProvince({
@@ -29,7 +29,7 @@
         </div>
         <div class="sm:w-1/2 h-26 sm:mx-16 flex">
             <select
-                class="form-select border-b border-b-gray-600 w-full h-full py-0 cursor-pointer max-w-150"
+                class="border-b border-b-gray-600 w-full h-full py-0 cursor-pointer max-w-150"
                 :value="queryParams.type"
                 v-on:change="
                     setType({
