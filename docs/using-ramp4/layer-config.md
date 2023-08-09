@@ -96,10 +96,10 @@ Valid values:
 
 The url where the layer definition and data should be loaded from.
 
-- ESRI type layers will be an ArcGIS Server rest endpoint. Feature layers must target the layer endpoint.
+- ESRI type layers will be an ArcGIS Server rest endpoint. Feature layers and Table layers must target the layer endpoint.
 - WMS layers will be the WMS server url.
 - WFS layers will be the server dataset url (i.e. something that returns GeoJSON).
-- File type layers will point to a web hosted file, or an empty string if the `rawData` property is provided. Relative paths are supported.
+- File type layers will point to a web hosted file, or an empty string if the `rawData` property is provided. Relative paths are supported. Data layers in file formats also apply.
 - OSM layer is an empty string.
 
 ```js
@@ -128,7 +128,7 @@ Generally speaking, this config option is useful when there is a small list of c
 
 ### cosmetic
 
-*boolean*
+*boolean*, only applies to [map layers](#layer-abilities)
 
 Indicates if a layer should be treated as cosmetic; i.e. something that appears on the map to give additional context, but is generally not interacted with when using common functions. If missing, defaults to `false`.
 
@@ -156,7 +156,7 @@ Generally speaking, this config option is useful when there is a small list of c
 
 ### expectedDrawTime
 
-*integer*
+*integer*, only applies to [map layers](#layer-abilities)
 
 Defines a time limit, in milliseconds, for the expected time it would take for the layer to draw itself (i.e. the fetching and processing of data to render the layer in the current extent). If the limit is exceeded, a notification will be issued in the app. If missing, a default of 10 seconds will be used. Setting to `0` will disable the notification.
 
@@ -180,7 +180,7 @@ Defines a time limit, in milliseconds, for the expected time it would take for t
 
 ### extent
 
-*object*
+*object*, only applies to [map layers](#layer-abilities)
 
 Defines a custom extent for the layer. Will be used in scenarios like the "Zoom To Layer Boundary" legend menu. If missing, the extent provided by the service or the extent of file contents will be used.
 
@@ -289,7 +289,7 @@ Is ignored by ESRI Feature Layers since they have a server renderer or a custom 
 
 ### customRenderer
 
-*object*, only applies to layers that [support attributes](#layer-abilities)
+*object*, only applies to layers that [support attributes](#layer-abilities), Data Layers excluded
 
 Specifies a renderer that determines how the layer features should be drawn. Currently only `simple`, `uniqueValue`, and `classBreaks` renderer types are supported. If missing, the server renderer will be used for Feature Layers, and basic renderers for other layer types (circles for Points, solid lines, solid polygons).
 
@@ -511,13 +511,14 @@ To align a legend symbol stack with a particular permanent filter, see the `symb
 
 ### rawData
 
-*string | object | ArrayBuffer*, only applies to file based layers
+*string | object | ArrayBuffer*, only applies to file based layers (including Data layers in file formats)
 
 Specifies the file contents on the config. If provided, the `url` property will be ignored.
 
 - `file-geojson`: The value can be a GeoJSON object, or a string containing the stringified GeoJSON object.
 - `file-csv`: The value is the file content contained in a string, encoded in UTF-8.
 - `file-shape`: The value is an `ArrayBuffer` containing the content of the zipped shapefile package. Given this is binary data, the `rawData` cannot be specified in a static config file, but can be provided if the configuration object is constructed at runtime.
+- `data-json`: The value can be a [Compact JSON](../api-guides/layers.md#data-layers) object, or a string containing the stringified Compact JSON object.
 
 ```js
 {
@@ -700,6 +701,8 @@ These represent control names that can be enabled or disabled throughout the sta
 - `settings`: Access to the Settings fixture panel.
 - `symbology`: Access to the symbology stack in the Legend fixture panel.
 - `visibility`: Layer visibility.
+
+Data Layers will ignore settings that are map-related, with the exception of `visibility`.
 
 ### Image Format Types
 

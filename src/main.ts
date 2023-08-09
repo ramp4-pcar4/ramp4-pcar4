@@ -29,7 +29,7 @@ import type { RampOptions } from '@/api/instance';
 import type { RampConfigs } from './types';
 import type { RampLayerConfig } from './geo/api';
 
-console.log(
+console.info(
     `RAMP v${__RAMP_VERSION__.major}.${__RAMP_VERSION__.minor}.${
         __RAMP_VERSION__.patch
     } [${__RAMP_VERSION__.hash.slice(0, 9)}] (Built on ${new Date(

@@ -3,7 +3,7 @@ import type {
     Attributes,
     AttributeSet,
     BaseGeometry,
-    CustomJson,
+    CompactJson,
     Extent,
     FieldDefinition,
     GetGraphicServiceDetails,
@@ -24,7 +24,7 @@ export interface AttributeLoaderDetails {
     attribs?: string; // comma delimited list of attributes to download. '*' for all
     serviceUrl?: string; // feature layer endpoint on an arcgis server
     sourceGraphics?: __esri.Collection<__esri.Graphic>; // set of graphics from non-ArcGIS server source
-    sourceDataJson?: CustomJson; // payload of raw attributes from a data layer source
+    sourceDataJson?: CompactJson; // payload of raw attributes from a data layer source
     maxId?: number; // current maximum OID we have downloaded. i.e. keeps track of where we are over multiple batches of downloads
     batchSize: number; // calculated maximum amount of attributes that can be downloaded in a single request
     oidField: string; // attribute name of the OID field
@@ -234,14 +234,14 @@ export class AttributeAPI extends APIScope {
     }
 
     /**
-     * Will generate an attribute set from a custom json object. This is our base format for
+     * Will generate an attribute set from a compact json object. This is our base format for
      * DataLayer sources that are not hosted on ArcGIS server. Provided sourceDataJson on the details
      * parameter has already been cleaned and has object ids inserted.
      *
      * @param details defines the parameters for what to load
      * @param controller the controller which provides asyncronous hooks into the load, including loaded count and ability to abort
      */
-    async loadCustomJsonAttributes(
+    async loadCompactJsonAttributes(
         details: AttributeLoaderDetails,
         controller: AsynchAttribController
     ): Promise<AttributeSet> {
@@ -253,7 +253,7 @@ export class AttributeAPI extends APIScope {
 
         const fields = details.sourceDataJson.fields;
 
-        // TODO is there a more efficient way to translate from custom json to attribute objects? Do we care?
+        // TODO is there a more efficient way to translate from compact json to attribute objects? Do we care?
         const rampAttributes: Array<Attributes> =
             details.sourceDataJson.data.map(attRow => {
                 const attNugget: any = {};
@@ -789,7 +789,7 @@ export class DataLayerAttributeLoader extends AttributeLoaderBase {
     }
 
     protected loadPromiseGenerator(): Promise<AttributeSet> {
-        return this.$iApi.geo.attributes.loadCustomJsonAttributes(
+        return this.$iApi.geo.attributes.loadCompactJsonAttributes(
             this.details,
             this.aac
         );

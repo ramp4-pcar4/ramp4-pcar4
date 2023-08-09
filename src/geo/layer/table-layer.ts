@@ -42,7 +42,7 @@ export class TableLayer extends DataLayer {
     }
 
     protected async onInitiate(): Promise<void> {
-        // we do not call super. super has processing code for CustomJSON.
+        // we do not call super. super has processing code for CompactJson.
         // there is really no initiate work here since there is no esri layer to construct,
         // and the server interrogation will happen in onLoadActions.
         //
