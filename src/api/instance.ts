@@ -203,22 +203,39 @@ export class InstanceAPI {
                     // add layers
                     if (langConfig.layers && langConfig.layers.length > 0) {
                         // console.log('Adding layers:', langConfig.layers);
-                        langConfig.layers
+                        const addedLayerProms = langConfig.layers
                             .map(layerConfig => {
                                 const layer =
                                     this.geo.layer.createLayer(layerConfig);
-                                this.geo.map.addLayer(layer!);
+                                this.geo.map.addLayer(layer);
                                 return layer;
                             })
-                            .filter(Boolean)
+                            .filter(Boolean); // strip out any lurking undefined values
+
+                        // do re-order magic on the map layers
+                        addedLayerProms
+                            .filter(l => l.mapLayer) // strip out data layers. they do not occupy the map stack
                             .forEach((layer: LayerInstance, index: number) => {
                                 layer
-                                    ?.loadPromise()
+                                    .loadPromise()
                                     .then(() => {
-                                        if (layer?.isLoaded) {
-                                            this.geo.map.reorder(layer!, index);
+                                        if (layer.isLoaded) {
+                                            this.geo.map.reorder(layer, index);
                                         }
                                     })
+                                    .catch(() =>
+                                        console.error(
+                                            `Failed to add/reorder layer: ${layer.id}.`
+                                        )
+                                    );
+                            });
+
+                        // check for any nastyness on data layers
+                        addedLayerProms
+                            .filter(l => !l.mapLayer)
+                            .forEach((layer: LayerInstance) => {
+                                layer
+                                    .loadPromise()
                                     .catch(() =>
                                         console.error(
                                             `Failed to add/reorder layer: ${layer.id}.`

@@ -22,7 +22,7 @@ import {
 
 import type {
     AttributeSet,
-    CustomJson,
+    CompactJson,
     GetGraphicParams,
     RampLayerConfig,
     TabularAttributeSet
@@ -37,7 +37,7 @@ export class DataLayer extends CommonLayer {
      * The implementation classes will handle that transformation, and common routines in this class can process
      * it onInitiate. Can be in object or stringified form
      */
-    protected sourceJson: CustomJson | string | undefined;
+    protected sourceJson: CompactJson | string | undefined;
     protected attribs: AttribSource;
 
     // ----------- LAYER CONSTRUCTION AND INITIALIZAION -----------
@@ -77,7 +77,7 @@ export class DataLayer extends CommonLayer {
 
         if (this.sourceJson) {
             // align to object format. if we need to do reloads, need to make copy if already an object (see FileLayer.onInitiate)
-            const realJson: CustomJson =
+            const realJson: CompactJson =
                 typeof this.sourceJson === 'string'
                     ? JSON.parse(this.sourceJson)
                     : this.sourceJson;

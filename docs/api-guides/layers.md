@@ -150,7 +150,11 @@ The Compact JSON file format is designed to remove duplicated field names. A sam
 Layers are created by providing a configuration object to the creation function in the `geo` API.
 
 ```js
-var simpleConfig = { id: "funlayer", layerType: "esri-feature", url: "http://maptown.com/maps/rest/fancyService/4" };
+var simpleConfig = {
+    id: "funlayer",
+    layerType: "esri-feature",
+    url: "http://maptown.com/maps/rest/fancyService/4"
+};
 var featureLayer = instanceApi.geo.layer.createLayer(simpleConfig));
 ```
 
@@ -197,7 +201,7 @@ var myLayer = instanceApi.geo.layer.getLayer('fancyLayerId'));
 
 Arrays of layers in various states can also be requested.
 
-```
+```js
 // List of all layers registered with the instance
 var allLayerArray = instanceApi.geo.layer.allLayers();
 
@@ -309,7 +313,7 @@ Determine if the Layer is designated as `cosmetic`. This means the Layer appears
 myLayer.isCosmetic; // true
 ```
 
-Get the visible scale ranges for the Layer or sublayer. A value of `0` on a range indicates there is no limit. Scales are fractions (i.e. a value of `2000` actually means 1/2000 scale), so `min` and `max` can be counterintuitive (large scale means the view is closer to real life size, so the viewport is closer to the ground level).
+Get the visible scale ranges for the Layer or sublayer. A value of `0` on a range indicates there is no limit. Scales are fractions (i.e. a value of `2000` actually means 1/2000 scale), so `min` and `max` can be counterintuitive (large scale means the view is closer to real life size, so the viewport is closer to the ground level). Not supported by Data Layers.
 
 ```js
 myLayer.scaleSet; // { minScale: 0, maxScale: 8500 }
@@ -321,7 +325,7 @@ Determine if the Layer supports our standard features (a feature is a geometry w
 myLayer.supportsFeatures; // true
 ```
 
-Determine if the layer can be displayed on the map. If `false`, the layer contains attribute data only.
+Determine if the Layer can be displayed on the map. If `false`, the Layer contains attribute data only.
 
 ```js
 myLayer.mapLayer; // true
@@ -351,7 +355,7 @@ Determine if the Layer has been removed from the map / session. This also applie
 myLayer.isRemoved; // false
 ```
 
-Request the layer's spatial reference in [RAMP's format](geometry.md#spatial-reference).
+Request the layer's spatial reference in [RAMP's format](geometry.md#spatial-reference). Not supported by Data Layers.
 
 ```js
 const sr = myLayer.getSR() // { wkid: 102100, latestWkid: 3857 }
@@ -445,7 +449,7 @@ result.forEach(r => {
 
 ## Feature Related Operations
 
-**Supports:** Feature Layers, Map Image Sublayers, WFS Layers, File Based Layers
+**Supports:** Feature Layers, Map Image Sublayers, WFS Layers, File Based Layers, Data Layers
 
 This section deals with Layers that have ESRI (or ESRI conforming) Features in a Feature Class. It will have features of the same geometry type, and those features will have attributes with the same set of fields.
 
@@ -461,7 +465,7 @@ Get the total number of features:
 myLayer.featureCount; // 254
 ```
 
-Get the geometry type (`Point`, `MultiPoint`, `LineString`, `Polygon`) of the feature class:
+Get the geometry type (`Point`, `MultiPoint`, `LineString`, `Polygon`, `None`) of the feature class:
 
 ```js
 myLayer.geomType; // "Polygon"
@@ -493,13 +497,13 @@ Get the field name that is designated as the identifying name of the feature (us
 myLayer.nameField; // "site_name"
 ```
 
-Get the draw order of the Layer. Not supported by Map Image Sublayers. Can only be set via layer configuration. ESRI currently only supports ordering by one field.
+Get the draw order of the Layer. Not supported by Map Image Sublayers or Data Layers. Can only be set via layer configuration. ESRI currently only supports ordering by one field.
 
 ```js
 myLayer.drawOrder; // [{ field: 'population', ascending: true }]
 ```
 
-Get or set if the Layer features should show hovertips on the map:
+Get or set if the Layer features should show hovertips on the map. Not supported by Map Image Sublayers or Data Layers.
 
 ```js
 myLayer.hovertips;         // true
@@ -604,7 +608,7 @@ oids.forEach(oid => console.log('matched this object id', oid));
 var fullFilterResult = myLayer.getFilterOIDs();
 ```
 
-Use `applySqlFilter()` to apply all active SQL filters to the Layer on the map. This will actually change how the Layer appears on the map; features that don't pass the filter will not appear. Again, we can provide an exclusion array of keys to omit certain filters from the action
+Use `applySqlFilter()` to apply all active SQL filters to the Layer on the map. This will actually change how the Layer appears on the map; features that don't pass the filter will not appear. Again, we can provide an exclusion array of keys to omit certain filters from the action. Not supported by Data Layers.
 
 ```js
 // use all filters
