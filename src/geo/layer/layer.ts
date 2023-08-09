@@ -215,11 +215,7 @@ export class LayerAPI extends APIScope {
           }
         | undefined {
         // fetch the layer first since given layerId can be layer id or uid
-        const layer: LayerInstance | undefined =
-            this.getLayer(layerId) ??
-            this.allErrorLayers().find(
-                layer => layer.id === layerId || layer.uid === layerId
-            );
+        const layer: LayerInstance | undefined = this.getLayer(layerId);
         if (!layer) {
             return;
         }
@@ -254,6 +250,13 @@ export class LayerAPI extends APIScope {
             {};
         if (!metaConfig.url) {
             controlsToRemove.push(LayerControl.Metadata);
+        }
+
+        if (
+            !layer.mapLayer &&
+            !layer.config.controls?.includes(LayerControl.Settings)
+        ) {
+            controlsToRemove.push(LayerControl.Settings);
         }
 
         controlsToRemove.forEach(control => {
