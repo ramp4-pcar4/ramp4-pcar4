@@ -207,16 +207,17 @@ export class InstanceAPI {
                             .map(layerConfig => {
                                 const layer =
                                     this.geo.layer.createLayer(layerConfig);
-                                this.geo.map.addLayer(layer!);
+                                this.geo.map.addLayer(layer);
                                 return layer;
                             })
-                            .filter(Boolean)
+                            .filter(Boolean) // strip out any lurking undefined values
+                            .filter(l => l.mapLayer) // strip out data layers. they do not occupy the map stack
                             .forEach((layer: LayerInstance, index: number) => {
                                 layer
-                                    ?.loadPromise()
+                                    .loadPromise()
                                     .then(() => {
-                                        if (layer?.isLoaded) {
-                                            this.geo.map.reorder(layer!, index);
+                                        if (layer.isLoaded) {
+                                            this.geo.map.reorder(layer, index);
                                         }
                                     })
                                     .catch(() =>
