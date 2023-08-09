@@ -272,7 +272,8 @@ export class LayerItem extends LegendItem {
                           this._layerId ?? this._layerUid
                       );
             this.layer = layer;
-            this._layerRedrawing = layer.drawState !== DrawState.UP_TO_DATE;
+            this._layerRedrawing =
+                layer.mapLayer && layer.drawState !== DrawState.UP_TO_DATE;
             if (this._loadCancelled) {
                 this.toggleVisibility(false, true, true);
                 return;

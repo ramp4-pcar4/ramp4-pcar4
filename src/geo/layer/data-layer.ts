@@ -17,6 +17,7 @@ import {
     Graphic,
     InitiationState,
     LayerFormat,
+    LayerState,
     NoGeometry
 } from '@/geo/api';
 
@@ -40,6 +41,9 @@ export class DataLayer extends CommonLayer {
     protected sourceJson: CustomJson | string | undefined;
     protected attribs: AttribSource;
 
+    // since this is a mapless layer, only applies to visibility of layer in the grid
+    protected _visibility: boolean;
+
     // ----------- LAYER CONSTRUCTION AND INITIALIZAION -----------
 
     protected constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
@@ -57,6 +61,8 @@ export class DataLayer extends CommonLayer {
         this.mapLayer = false;
 
         this.isFile = false; // TODO revist. see how this gets used. For anything non-spatial?
+
+        this._visibility = rampConfig.state?.visibility ?? true;
 
         // override this timer, since there is nothing to draw.
         // Will ignore config overrides, since there is no draw state change events to
@@ -189,7 +195,16 @@ export class DataLayer extends CommonLayer {
 
         await this.initiate();
 
-        this.$iApi.event.emit(GlobalEvents.LAYER_RELOAD_END, this);
+        // if initiate didn't fail, call onLoad()
+        if (this.layerState !== LayerState.ERROR) {
+            this.onLoad();
+        }
+
+        // this is there to prevent an instant reload, which makes it look like nothing happened in the UI.
+        // Only data layers seem to need this at the moment. Consider different location if more layers require it.
+        setTimeout(() => {
+            this.$iApi.event.emit(GlobalEvents.LAYER_RELOAD_END, this);
+        }, 300);
     }
 
     // performs setup on the layer that needs to occur after server load but
@@ -198,7 +213,20 @@ export class DataLayer extends CommonLayer {
     protected onLoadActions(): Array<Promise<void>> {
         const proms = super.onLoadActions();
 
-        // if data layers become stable and nothing ever happens here, we can delete this method.
+        // set this so that legend fixture can render symbology stack easily
+        this.legend = [
+            {
+                uid: this.$iApi.geo.shared.generateUUID(),
+                label: '',
+                svgcode: '',
+                esriStandard: true,
+                visibility: true,
+                lastVisbility: true,
+                drawPromise: this.getIcon(0).then(svg => {
+                    this.legend[0].svgcode = svg;
+                })
+            }
+        ];
 
         return proms;
     }
@@ -291,5 +319,38 @@ export class DataLayer extends CommonLayer {
     downloadedAttributes(): number {
         // non-table data layer has downloaded everything after initialize.
         return this.featureCount < 0 ? 0 : this.featureCount;
+    }
+
+    /**
+     * Override for data layers.
+     * Used to determine if layer is available for use.
+     */
+    get layerExists(): boolean {
+        return this.isLoaded;
+    }
+
+    /**
+     * Returns the visibility of the layer data
+     *
+     * @returns {Boolean} visibility of the layer data
+     */
+    get visibility(): boolean {
+        return this._visibility;
+    }
+
+    /**
+     * Applies visibility to layer data.
+     *
+     * @param {Boolean} value the new visibility setting
+     */
+    set visibility(value: boolean) {
+        if (this._visibility !== value) {
+            this._visibility = value;
+
+            this.$iApi.event.emit(GlobalEvents.LAYER_VISIBILITYCHANGE, {
+                visibility: value,
+                layer: this
+            });
+        }
     }
 }
