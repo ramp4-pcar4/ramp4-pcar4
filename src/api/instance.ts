@@ -203,6 +203,7 @@ export class InstanceAPI {
                     // add layers
                     if (langConfig.layers && langConfig.layers.length > 0) {
                         // console.log('Adding layers:', langConfig.layers);
+
                         langConfig.layers
                             .map(layerConfig => {
                                 const layer =
@@ -212,10 +213,15 @@ export class InstanceAPI {
                             })
                             .filter(Boolean)
                             .forEach((layer: LayerInstance, index: number) => {
+                                // TODO: This code is fishy. Error'd layers in the map stack are not reordered,
+                                // and all layers that come after a data layer have their index value off by at least one.
+                                // Also, cosmetic layers are not always at the top and can appear in the middle, depending on the order that stuff loads.
+                                // How much does this matter?
+                                // From the testing I've done, this was already not 100% respectful before the introduction of data layers.
                                 layer
                                     ?.loadPromise()
                                     .then(() => {
-                                        if (layer?.isLoaded) {
+                                        if (layer?.isLoaded && layer.mapLayer) {
                                             this.geo.map.reorder(layer!, index);
                                         }
                                     })
