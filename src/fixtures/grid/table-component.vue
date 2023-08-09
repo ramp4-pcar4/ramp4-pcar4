@@ -509,6 +509,7 @@ const gridAccessibilityManager = ref<GridAccessibilityManager | undefined>(
 const onCellKeyPress = GridAccessibilityManager.onCellKeyPress;
 const filterInfo = ref({ firstRow: 0, lastRow: 0, visibleRows: 0 });
 const filteredOids = ref<{ [uid: string]: Array<number> | undefined }>({});
+const layer = iApi.geo.layer.getLayer(props.gridId) as LayerInstance;
 const layerCols = ref<{
     [id: string]: Array<AttributeMapPair>;
 }>({});
@@ -527,10 +528,7 @@ const onGridReady = (params: any) => {
     columnApi.value = params.columnApi;
 
     // get grid title
-    gridTitle.value =
-        config.value.state.title !== ''
-            ? config.value.state.title
-            : props.gridId;
+    gridTitle.value = config.value.state.title || layer?.name || props.gridId;
 
     // initialize filter info + status
     updateFilterInfo();
