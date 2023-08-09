@@ -664,7 +664,7 @@ export class MapAPI extends CommonMapAPI {
             return;
         }
 
-        if (!layerInstance.esriLayer) {
+        if (layerInstance.mapLayer && !layerInstance.esriLayer) {
             throw new Error(
                 'Attempted to remove layer from the map without an esri layer. Likely layer.initiate() was not called or had not finished.'
             );
@@ -689,7 +689,10 @@ export class MapAPI extends CommonMapAPI {
         layerStore.removeLayerConfig(layerInstance.id);
 
         // Remove the layer from the map
-        this.esriMap.remove(layerInstance.esriLayer);
+        if (layerInstance.mapLayer) {
+            this.esriMap.remove(layerInstance.esriLayer!);
+        }
+
         layerInstance.isRemoved = true;
 
         // Fire the layer removal event

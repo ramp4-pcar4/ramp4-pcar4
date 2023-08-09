@@ -329,7 +329,7 @@ export class LayerInstance extends APIScope {
     }
 
     /**
-     * Indicates if the Esri map layer exists.
+     * Indicates if the Esri map layer or data layer equivalent exists.
      */
     get layerExists(): boolean {
         return false;

@@ -216,6 +216,10 @@ export class InstanceAPI {
                         addedLayerProms
                             .filter(l => l.mapLayer) // strip out data layers. they do not occupy the map stack
                             .forEach((layer: LayerInstance, index: number) => {
+                                // TODO: This code is fishy. Error'd layers in the map stack are not reordered.
+                                // Also, cosmetic layers are not always at the top and can appear in the middle, depending on the order that stuff loads.
+                                // How much does this matter?
+                                // From the testing I've done, this was already not 100% respectful before the introduction of data layers.
                                 layer
                                     .loadPromise()
                                     .then(() => {

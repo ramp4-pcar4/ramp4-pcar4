@@ -435,6 +435,13 @@ export class MapLayer extends CommonLayer {
     }
 
     /**
+     * Indicates if the Esri map layer exists
+     */
+    get layerExists(): boolean {
+        return this.esriLayer ? true : false;
+    }
+
+    /**
      * Returns an array describing the draw order of features. Raster layers will have empty arrays
      */
     get drawOrder(): Array<DrawOrder> {
