@@ -698,6 +698,9 @@
                         "$ref": "#/$defs/fileLayer"
                     },
                     {
+                        "$ref": "#/$defs/dataLayer"
+                    },
+                    {
                         "$ref": "#/$defs/wfsLayer"
                     },
                     {
@@ -779,7 +782,7 @@
                 "layerType": {
                     "type": "string",
                     "enum": ["esri-imagery", "esri-tile"],
-                    "description": "Service type shorthand for basic layers."
+                    "description": "Service type for basic layers."
                 },
                 "extent": {
                     "$ref": "#/$defs/extentWithReference"
@@ -850,7 +853,7 @@
                 "layerType": {
                     "type": "string",
                     "enum": ["osm-tile"],
-                    "description": "Service type shorthand for OpenStreetMap layers."
+                    "description": "Service type for OpenStreetMap layers."
                 },
                 "extent": {
                     "$ref": "#/$defs/extentWithReference"
@@ -933,7 +936,7 @@
                     "type": "string",
                     "enum": ["esri-map-image"],
                     "default": "esri-map-image",
-                    "description": "Service type shorthand for map image layers."
+                    "description": "Service type for map image layers."
                 },
                 "singleEntryCollapse": {
                     "type": "boolean",
@@ -1136,7 +1139,7 @@
                 "layerType": {
                     "type": "string",
                     "enum": ["esri-feature"],
-                    "description": "Service type shorthand for feature layers."
+                    "description": "Service type for feature layers."
                 },
                 "mouseTolerance": {
                     "type": "number",
@@ -1253,7 +1256,7 @@
                 "layerType": {
                     "type": "string",
                     "enum": ["file-geojson", "file-csv", "file-shape"],
-                    "description": "Service type shorthand for file layers."
+                    "description": "Format type for file layers."
                 },
                 "latField": {
                     "type": "string",
@@ -1337,6 +1340,87 @@
             "required": ["id", "layerType", "url"],
             "additionalProperties": false
         },
+        "dataLayer": {
+            "type": "object",
+            "description": "Properties describing a data layer (contains attributes but no spatial information).",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "Identification of the layer for referencing within the viewer (does not relate directly to any external service)"
+                },
+                "name": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Display name of the layer."
+                },
+                "nameField": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Display field of the layer. If not present, the viewer will make an attempt to find the first valid field."
+                },
+                "url": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Url path to the data source (web hosted file or ESRI Table service).  It should match the type provided in layerType."
+                },
+                "expectedLoadTime": {
+                    "type": "number",
+                    "default": 4000,
+                    "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
+                },
+                "maxLoadTime": {
+                    "type": "number",
+                    "default": 20000,
+                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will allow the layer to load forever"
+                },
+                "layerType": {
+                    "type": "string",
+                    "enum": ["data-esri-table", "data-json"],
+                    "description": "Format type for data layers."
+                },
+                "controls": {
+                    "$ref": "#/$defs/layerControls",
+                    "default": [
+                        "datatable",
+                        "visibility",
+                        "metadata",
+                        "refresh",
+                        "reload",
+                        "remove",
+                        "settings",
+                        "symbology"
+                    ]
+                },
+                "disabledControls": {
+                    "$ref": "#/$defs/layerControls",
+                    "default": []
+                },
+                "state": {
+                    "$ref": "#/$defs/initialLayerSettings"
+                },
+                "fieldMetadata": {
+                    "$ref": "#/$defs/fieldMetadata"
+                },
+                "initialFilteredQuery": {
+                    "type": "string",
+                    "description": "Initial filter query to be applied to the layer. SQL WHERE clause format."
+                },
+                "permanentFilteredQuery": {
+                    "type": "string",
+                    "description": "Permanent filter query to be applied to the layer. SQL WHERE clause format."
+                },
+                "fixtures": {
+                    "$ref": "#/$defs/layerFixtureConfig"
+                },
+                "rawData": {
+                    "type": "object",
+                    "description": "Optional content to use as the layer source (instead of loading via the url property). Date Json accepts json object or stringified object. Table will ignore.",
+                    "additionalProperties": true
+                }
+            },
+            "required": ["id", "layerType", "url"],
+            "additionalProperties": false
+        },
         "wfsLayer": {
             "type": "object",
             "description": "Properties describing a WFS layer (also an ESRI feature layer).",
@@ -1388,7 +1472,7 @@
                     "type": "string",
                     "enum": ["ogc-wfs"],
                     "default": "ogc-wfs",
-                    "description": "Service type shorthand for WFS layers."
+                    "description": "Service type for WFS layers."
                 },
                 "mouseTolerance": {
                     "type": "number",
@@ -1522,7 +1606,7 @@
                     "type": "string",
                     "enum": ["ogc-wms"],
                     "default": "ogc-wms",
-                    "description": "Service type shorthand for WMS layers."
+                    "description": "Service type for WMS layers."
                 },
                 "featureInfoMimeType": {
                     "type": "string",
