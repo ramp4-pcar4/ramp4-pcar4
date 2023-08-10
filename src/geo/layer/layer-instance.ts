@@ -112,7 +112,7 @@ export class LayerInstance extends APIScope {
     mapLayer: boolean;
 
     /**
-     * Feature count (-1 represents undefined / unknown)
+     * Feature count
      */
     featureCount: number;
 
@@ -258,7 +258,7 @@ export class LayerInstance extends APIScope {
         this.identifyMode = LayerIdentifyMode.NONE;
         this.supportsFeatures = false;
         this.mapLayer = true;
-        this.featureCount = -1;
+        this.featureCount = 0;
         this.fields = [];
         this.fieldList = '';
         this.nameField = '';

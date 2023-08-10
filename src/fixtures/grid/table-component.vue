@@ -1244,11 +1244,9 @@ const getAttrPair = (
 };
 
 const setUpColumns = () => {
-    const fancyLayers: LayerInstance[] = gridLayers.value.map(layer => {
-        if (layer.supportsFeatures && layer.isLoaded) {
-            return layer;
-        }
-    }) as LayerInstance[];
+    const fancyLayers: LayerInstance[] = gridLayers.value.filter(
+        layer => layer && layer.supportsFeatures && layer.isLoaded
+    ) as LayerInstance[];
 
     if (fancyLayers.length === 0) {
         // in the event of error'd layers, otherwise a blank datagrid will appear
