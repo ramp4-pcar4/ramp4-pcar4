@@ -1,4 +1,4 @@
-import { createApp as createRampApp } from 'vue';
+import { createApp as createRampApp, Transition, TransitionGroup } from 'vue';
 import { createPinia } from 'pinia';
 import type {
     ComponentPublicInstance,
@@ -700,6 +700,9 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
     vueElement.component('mapnav-button', MapnavButtonV);
 
     vueElement.component('appbar-button', AppbarButtonV);
+
+    vueElement.component('transition', Transition);
+    vueElement.component('transition-group', TransitionGroup);
 
     // Add the $pinia and $iApi instances to the Vue components.
     vueElement.config.globalProperties.$iApi = iApi;
