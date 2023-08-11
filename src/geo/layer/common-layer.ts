@@ -265,13 +265,6 @@ export class CommonLayer extends LayerInstance {
         return this.layerState === LayerState.LOADED;
     }
 
-    /**
-     * Indicates if the Esri map layer exists
-     */
-    get layerExists(): boolean {
-        return this.esriLayer ? true : false;
-    }
-
     // ----------- LAYER MANAGEMENT -----------
 
     /**
