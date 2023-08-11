@@ -1,5 +1,5 @@
 <template>
-    <div class="step relative flex flex-col px-12 overflow-y-hidden">
+    <div class="step relative flex flex-col px-12">
         <div class="stepper-header flex pb-24">
             <!-- step number -->
             <div

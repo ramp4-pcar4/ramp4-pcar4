@@ -205,8 +205,8 @@
                             v-model="layerInfo.config.sublayers"
                             @select="updateSublayers"
                             :label="t('wizard.configure.sublayers.label')"
-                            :help="t('wizard.configure.sublayers.help')"
-                            :options="sublayerOptions()"
+                            :options="layerInfo.layers!"
+                            :layerType="typeSelection"
                             :multiple="true"
                             :searchable="true"
                             :validation="true"
@@ -582,31 +582,6 @@ const latLonOptions = (fieldName: 'lat' | 'lon') => {
         return {
             value: field,
             label: field
-        };
-    });
-};
-
-// options for sublayers selector
-const sublayerOptions = () => {
-    return layerInfo.value?.layers!.map((layer: any, idx: number) => {
-        return {
-            // set sublayer option properties based on whether its a map image or WMS layer
-            label: `${layer.indent}${
-                typeSelection.value === LayerType.MAPIMAGE
-                    ? layer.name
-                    : layer.title
-            }`,
-            value:
-                typeSelection.value === LayerType.MAPIMAGE
-                    ? {
-                          index: layer.id,
-                          state: { opacity: 1, visibility: true }
-                      }
-                    : // wms
-                      {
-                          id: layer.id
-                      },
-            id: `${layer.indent}${layer.name}-${idx}`
         };
     });
 };

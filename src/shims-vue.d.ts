@@ -24,3 +24,4 @@ declare class ResizeObserver {
 
 declare module 'shpjs/dist/shp.min.js';
 declare module 'csv2geojson';
+declare module '@ramp4-pcar4/vue3-treeselect';
