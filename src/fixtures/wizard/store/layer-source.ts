@@ -9,13 +9,13 @@ export interface LayerInfo {
     configOptions: Array<string>; // the layer's config options that will be taken from user input in the UI
     fields?: Array<FieldDefinition>; // the fields for the layer
     latLonFields?: { lat: Array<string>; lon: Array<string> }; // lat and lon are a list of field names that can be possible lat/lon fields
-    layers?: Array<{
-        id: number;
-        name: string;
-        parentLayerId: number;
-        defaultVisibility: boolean;
-        sublayerIds?: Array<number>;
-    }>; // a flattened list of info for the parent layer, sublayer groups, and sublayers. Only defined for MIL
+    layers?: Array<SublayerInfo>; // a nested list of info for the parent layer, sublayer groups, and sublayers. Only defined for MIL/WMS
+}
+
+export interface SublayerInfo {
+    id: number | string;
+    label: string;
+    children: Array<number | string> | undefined;
 }
 
 export class LayerSource extends APIScope {
@@ -182,6 +182,12 @@ export class LayerSource extends APIScope {
         };
     }
 
+    /**
+     * Gets MIL data from source, formats it as a tree, and returns a promise of the data with configuration
+     *
+     * @param {string} url
+     * @returns {Promise<LayerInfo>} data configuration
+     */
     async getMapImageInfo(url: string): Promise<LayerInfo> {
         const response = await axios.get(url, { params: { f: 'json' } });
         const config = {
@@ -195,44 +201,56 @@ export class LayerSource extends APIScope {
 
         return {
             config,
-            layers: flattenMapImageLayerList(response.data.layers),
+            layers: mapMapImageLayerList(response.data.layers),
             configOptions: ['name', 'sublayers']
         };
 
-        /**
-         * Processes the layer's flattened layer tree to determine the level of each layer in the list.
-         * @param layers the layer's flattened tree that was retrieved from the server.
-         */
-        function flattenMapImageLayerList(layers: any) {
-            return layers.map((layer: any) => {
-                const level = calculateLevel(layer, layers);
+        function mapMapImageLayerList(layers: any[]) {
+            // avoid case of disordered layers from endpoint
+            layers.sort((l1: any, l2: any) => l1.id - l2.id);
 
-                layer.level = level;
-                layer.indent = Array.from(Array(level)).fill('- ').join('');
-                layer.index = layer.id;
-
-                return layer;
-            });
-
-            /**
-             * Calculates the level of the layer in the layer tree i.e. how many parent layers you can go up before you reach the base MIL.
-             * @param layer the layer for which the calculation is occurring.
-             * @param layers a flattened array of the layer tree.
-             */
-            function calculateLevel(layer: any, layers: any): number {
-                if (layer.parentLayerId === -1) {
-                    return 0;
+            // traverses the layer tree to insert child layers
+            const findParent = (id: number, sublayers: Array<any>): any => {
+                if (sublayers === undefined) {
+                    return false;
+                }
+                let i, parent;
+                if (sublayers.find(sl => sl.id === id)) {
+                    return sublayers.find(sl => sl.id === id);
                 } else {
-                    return (
-                        calculateLevel(
-                            layers.find(
-                                (l: any) => l.id === layer.parentLayerId
-                            ),
-                            layers
-                        ) + 1
-                    );
+                    for (i = 0; i < sublayers.length; i += 1) {
+                        parent = findParent(id, sublayers[i].children);
+                        if (parent !== false) {
+                            return parent;
+                        }
+                    }
+                    return false;
+                }
+            };
+
+            const opts: Array<SublayerInfo> = [];
+
+            for (const layer of layers) {
+                if (layer.parentLayerId === -1) {
+                    opts.push({
+                        id: layer.id,
+                        label: layer.name,
+                        children: layer.subLayerIds ? [] : undefined
+                    });
+                } else {
+                    const parentLayer = findParent(layer.parentLayerId, opts);
+                    parentLayer.children = [
+                        ...parentLayer.children,
+                        {
+                            id: layer.id,
+                            label: layer.name,
+                            children: layer.subLayerIds ? [] : undefined
+                        }
+                    ];
                 }
             }
+
+            return opts;
         }
     }
 
@@ -287,6 +305,12 @@ export class LayerSource extends APIScope {
         );
     }
 
+    /**
+     * Gets WMS data from source, formats it, and returns a promise of the data with configuration
+     *
+     * @param {string} url
+     * @returns {Promise<LayerInfo>} data configuration
+     */
     async getWmsInfo(url: string): Promise<LayerInfo> {
         const capabilities = await this.$iApi.geo.layer.ogc.parseCapabilities(
             url
@@ -303,32 +327,23 @@ export class LayerSource extends APIScope {
 
         return {
             config,
-            layers: flattenWmsLayerList(capabilities.layers),
+            layers: mapWmsLayerList(capabilities.layers),
             configOptions: ['name', 'sublayers']
         };
 
-        function flattenWmsLayerList(layers: any, level = 0) {
+        function mapWmsLayerList(layers: any) {
             return [].concat.apply(
                 [],
                 layers.map((layer: any) => {
-                    layer.level = level;
-                    layer.indent = Array.from(Array(level)).fill('- ').join('');
-                    layer.id = layer.name;
-
-                    if (layer.layers.length > 0) {
-                        // ignore sublayers with no id
-                        return layer.id
-                            ? [].concat(
-                                  layer,
-                                  flattenWmsLayerList(layer.layers, level + 1)
-                              )
-                            : [].concat(
-                                  [],
-                                  flattenWmsLayerList(layer.layers, level)
-                              );
-                    } else {
-                        return layer.id ? layer : [];
-                    }
+                    return {
+                        id: layer.name,
+                        label: layer.title,
+                        children:
+                            layer.layers.length > 0
+                                ? mapWmsLayerList(layer.layers)
+                                : undefined,
+                        isDisabled: layer.name === null
+                    };
                 })
             );
         }

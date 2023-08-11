@@ -1,5 +1,5 @@
 <template>
-    <div class="input-wrapper mb-12">
+    <div class="input-wrapper mb-12" ref="el">
         <div v-if="type === 'file'">
             <label class="text-base font-bold">{{ label }}</label>
             <div class="relative py-8 mb-0.5 h-75" data-type="file">
@@ -63,67 +63,37 @@
         </div>
         <div v-else-if="type === 'select'">
             <label class="text-base font-bold">{{ label }}</label>
-            <div
-                v-if="searchable && options.length > 4"
-                class="flex items-center pb-4 min-w-0"
-            >
-                <!-- layer filter -->
-                <input
-                    @keypress.enter.prevent
-                    enterkeyhint="done"
-                    v-model="filter"
-                    class="rv-global-search rv-input w-full min-w-0"
-                    aria-invalid="false"
-                    :aria-label="t('wizard.configure.sublayers.search')"
-                    :placeholder="t('wizard.configure.sublayers.search')"
-                />
-                <div class="-ml-30">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fit=""
-                        preserveAspectRatio="xMidYMid meet"
-                        viewBox="0 0 24 24"
-                        focusable="false"
-                        class="fill-current w-24 h-24 flex-shrink-0"
-                    >
-                        <g id="search_cache224">
-                            <path
-                                d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
-                            ></path>
-                        </g>
-                    </svg>
-                </div>
-            </div>
             <div class="relative mb-0.5" data-type="select">
                 <div v-if="multiple">
-                    <select
-                        :size="selectSize()"
-                        class="block border-solid border-gray-300 w-full p-3 overflow-y-auto"
-                        multiple
+                    <treeselect
                         v-model="selected"
-                        @change="
-                            () => {
-                                emit('select', selected);
-                                checkMultiSelectError(selected);
-                            }
-                        "
+                        :multiple="true"
+                        :options="options"
+                        :default-expand-level="1"
+                        :flat="true"
+                        :placeholder="t('wizard.configure.sublayers.select')"
+                        :noResultsText="t('wizard.configure.sublayers.results')"
+                        @select="handleSelection"
+                        @deselect="handleSelection"
                     >
-                        <option
-                            class="p-6 whitespace-pre-wrap"
-                            v-for="(option, idx) in options.filter(o =>
-                                o.label
-                                    .toLowerCase()
-                                    .includes(filter.toLowerCase().trim())
-                            )"
-                            :key="`${option.label}-${idx}`"
-                            :value="option.value"
+                        <template
+                            v-slot:[optionLabel]="{ node, labelClassName }"
                         >
-                            <span class="whitespace-pre-wrap">{{
-                                option.label
-                            }}</span>
-                        </option>
-                    </select>
-                    <div class="text-gray-400 text-xs mb-1">{{ help }}</div>
+                            <label
+                                :class="labelClassName"
+                                v-truncate="{
+                                    options: {
+                                        placement: 'top',
+                                        hideOnClick: false,
+                                        theme: 'ramp4',
+                                        animation: 'scale'
+                                    }
+                                }"
+                            >
+                                {{ node.label }}
+                            </label>
+                        </template>
+                    </treeselect>
                     <div
                         v-if="validation && sublayersError"
                         class="text-red-900 text-xs"
@@ -193,10 +163,12 @@
 </template>
 
 <script setup lang="ts">
-import type { InstanceAPI } from '@/api';
-import { inject, ref } from 'vue';
+import { LayerType } from '@/geo/api';
+import { ref } from 'vue';
 import type { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
+import Treeselect from 'vue3-treeselect';
+import 'vue3-treeselect/dist/vue3-treeselect.css';
 
 interface ValidationMsgs {
     required?: string;
@@ -204,13 +176,7 @@ interface ValidationMsgs {
     failure?: string;
 }
 
-interface SelectionOption {
-    value: any;
-    label: string;
-}
-
 const { t } = useI18n();
-const iApi = inject('iApi') as InstanceAPI;
 
 const emit = defineEmits([
     'update:modelValue',
@@ -250,10 +216,14 @@ const props = defineProps({
         default: false
     },
     options: {
-        type: Array as PropType<Array<SelectionOption>>,
+        type: Array as PropType<Array<any>>,
         default() {
             return [];
         }
+    },
+    layerType: {
+        type: String as PropType<LayerType>,
+        default: ''
     },
     size: {
         type: [Number, String],
@@ -284,11 +254,12 @@ const props = defineProps({
     }
 });
 
+const el = ref();
 const valid = ref(false);
 const urlError = ref(false);
 const sublayersError = ref(false);
-const selected = ref([]);
-const filter = ref('');
+const selected = ref<Array<string | number>>([]);
+const optionLabel = ref('option-label');
 
 if (props.defaultOption && props.modelValue === '' && props.options.length) {
     // regex to guess closest default value for lat/long fields
@@ -324,42 +295,26 @@ const validUrl = (url: string) => {
     link ? (valid.value = true) : (valid.value = false);
 };
 
-const checkMultiSelectError = (selected: Array<any>) => {
-    selected && selected.length > 0
-        ? (sublayersError.value = false)
-        : (sublayersError.value = true);
+const handleSelection = () => {
+    // small delay so the selected model can update
+    setTimeout(() => {
+        emit('select', sublayerOptions(selected.value));
+        selected.value && selected.value.length > 0
+            ? (sublayersError.value = false)
+            : (sublayersError.value = true);
+    }, 100);
 };
 
-const selectSize = () => {
-    // Slight delay before running to ensure the component has been loaded and populated
-    setTimeout(() => {
-        // calculates number of visible entries in multi-select list
-        const selectHeight =
-            iApi.$vApp.$el.querySelector('.stepper')?.clientHeight! - 400;
-
-        // Find the sublayer selector
-        const sublayerSelector =
-            iApi.$vApp.$el.querySelectorAll('.stepper select')[1];
-
-        // determine the height of the largest entry
-        const sublayerList: HTMLElement[] = Array.from(
-            sublayerSelector.children
-        );
-
-        const maxElementHeight: number = Math.max(
-            ...sublayerList.map((item: any) => {
-                return item.clientHeight;
-            })
-        );
-
-        // determine how many options to display based on the largest option
-        sublayerSelector.size = Math.min(
-            props.options.length,
-            Math.max(Math.floor(selectHeight / maxElementHeight), 2)
-        );
-    }, 300);
-
-    return 0;
+const sublayerOptions = (layers: any[]) => {
+    // set sublayer option properties based on whether its a map image or WMS layer
+    return layers.map((layerIdx: any) => {
+        return props.layerType === LayerType.MAPIMAGE
+            ? {
+                  index: layerIdx,
+                  state: { opacity: 1, visibility: true }
+              }
+            : { id: layerIdx };
+    });
 };
 </script>
 
@@ -372,5 +327,9 @@ const selectSize = () => {
 .configure-select {
     background-image: none;
     padding: 0px;
+}
+
+:deep(.vue-treeselect__input:focus) {
+    @apply ring-transparent pl-0 #{!important};
 }
 </style>
