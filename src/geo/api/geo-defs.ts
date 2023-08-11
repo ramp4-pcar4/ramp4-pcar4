@@ -519,7 +519,7 @@ export interface CsvOptions {
 }
 
 // payload format for Data Layer in json form
-export interface CustomJson {
+export interface CompactJson {
     fields: Array<string>; // field names
     data: Array<Array<any>>; // each inner array containts the attribute values per feature. order matches fields array
 }

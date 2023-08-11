@@ -34,6 +34,6 @@ LayerInstance: RAMP's internal "base class" for layers. Any code dealing with ge
 
 ~ ~ ~ CsvDataLayer: Handles data layers populated by a CSV file.
 
-~ ~ ~ JsonDataLayer: Handles data layers populated by a Custom Json dataset
+~ ~ ~ JsonDataLayer: Handles data layers populated by a Compact Json dataset
 
 ~ ~ ~ TableLayer: Handles data layers populated by an ArcGIS Table

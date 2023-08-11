@@ -2,7 +2,7 @@ import { DataLayer, InstanceAPI } from '@/api/internal';
 import { LayerType, type RampLayerConfig } from '@/geo/api';
 
 /**
- * A layer class which implements a Data Layer with data from a Custom JSON source.
+ * A layer class which implements a Data Layer with data from a Compact JSON source.
  */
 export class JsonDataLayer extends DataLayer {
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
