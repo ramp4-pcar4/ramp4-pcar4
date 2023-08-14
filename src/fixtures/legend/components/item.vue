@@ -605,28 +605,32 @@ const hovered = ref(false);
 onMounted(() => {
     if (props.legendItem instanceof LayerItem) {
         // load the symbology only when the layer is loaded
-        props.legendItem.loadPromise.then(() => {
-            symbologyStack.value = [];
-            // Wait for symbology to load
-            if (!(props.legendItem as LayerItem).layer) {
-                // This should never happen because the layer is loaded before the legend item component is mounted
-                console.warn(
-                    'Attempted to mount legend item component with undefined layer'
-                );
-                return;
-            }
-            Promise.all(
-                toRaw(
-                    (props.legendItem as LayerItem).symbologyStack.map(
-                        (item: LegendSymbology) => item.drawPromise
+        props.legendItem.loadPromise
+            .then(() => {
+                symbologyStack.value = [];
+                // Wait for symbology to load
+                if (!(props.legendItem as LayerItem).layer) {
+                    // This should never happen because the layer is loaded before the legend item component is mounted
+                    console.warn(
+                        'Attempted to mount legend item component with undefined layer'
+                    );
+                    return;
+                }
+                Promise.all(
+                    toRaw(
+                        (props.legendItem as LayerItem).symbologyStack.map(
+                            (item: LegendSymbology) => item.drawPromise
+                        )
                     )
-                )
-            ).then(() => {
-                symbologyStack.value = toRaw(
-                    (props.legendItem as LayerItem).symbologyStack
-                );
+                ).then(() => {
+                    symbologyStack.value = toRaw(
+                        (props.legendItem as LayerItem).symbologyStack
+                    );
+                });
+            })
+            .catch(() => {
+                console.warn('Error loading layer');
             });
-        });
     }
 });
 

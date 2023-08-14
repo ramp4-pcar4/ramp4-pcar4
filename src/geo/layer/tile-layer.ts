@@ -1,5 +1,5 @@
 import { InstanceAPI, MapLayer, NotificationType } from '@/api/internal';
-import { DataFormat, LayerFormat, LayerType } from '@/geo/api';
+import { DataFormat, LayerFormat, LayerState, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 import { EsriTileLayer } from '@/geo/esri';
 import { markRaw } from 'vue';
@@ -59,7 +59,7 @@ export class TileLayer extends MapLayer {
 
         loadPromises.push(legendPromise);
 
-        this.checkProj();
+        loadPromises.push(this.checkProj());
 
         // TODO once decided, might want to set a value on layer count that indicates nothing to count
 
@@ -70,19 +70,39 @@ export class TileLayer extends MapLayer {
 
     /**
      * Check if the layer's projection matches the current basemap's.
-     * If it does not match, warn the user by sending a notification.
+     * If they do not match the layer will enter the error state and the user will receive a warning notification
+     * If the layers do match and the layer was previously in the error state, it will reload.
      */
-    checkProj(): void {
+    checkProj(): Promise<void> {
         const layerSR = this.getSR();
         const mapSR = this.$iApi.geo.map.getSR();
+        const isEqual = mapSR.isEqual(layerSR);
 
-        if (!mapSR.isEqual(layerSR)) {
+        // If the layer is loaded and the projections do not match, it will enter the error state
+        if (this.layerState === LayerState.LOADED && !isEqual) {
             this.$iApi.notify.show(
                 NotificationType.WARNING,
                 this.$iApi.$i18n.t('layer.mismatch', {
                     name: this.name || this.id
                 })
             );
+
+            this.onError();
+            // If the layer has errored and the projections now match, reload the layer
+        } else if (this.layerState === LayerState.ERROR && isEqual) {
+            this.reload();
+            // Reject the promise if the layer has not errored and the projections do not match
+        } else if (this.layerState !== LayerState.ERROR && !isEqual) {
+            this.$iApi.notify.show(
+                NotificationType.WARNING,
+                this.$iApi.$i18n.t('layer.mismatch', {
+                    name: this.name || this.id
+                })
+            );
+
+            return Promise.reject();
         }
+
+        return Promise.resolve();
     }
 }
