@@ -77,7 +77,9 @@ export class TileLayer extends MapLayer {
         const mapSR = this.$iApi.geo.map.getSR();
 
         if (!mapSR.isEqual(layerSR)) {
-            this.$iApi.notify.show(
+            this.onError();
+            
+            this.$iApi.notify.show( 
                 NotificationType.WARNING,
                 this.$iApi.$i18n.t('layer.mismatch', {
                     name: this.name || this.id
