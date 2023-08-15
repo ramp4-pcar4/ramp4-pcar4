@@ -335,7 +335,6 @@ import {
 } from 'vue';
 
 import {
-    AttribLayer,
     GlobalEvents,
     InstanceAPI,
     LayerInstance,
@@ -862,24 +861,27 @@ const setUpSpecialColumns = (
         };
         colDef.push(detailsDef);
 
-        let zoomDef = {
-            sortable: false,
-            filter: false,
-            lockPosition: true,
-            isStatic: true,
-            maxWidth: 48,
-            cellStyle: () => {
-                return {
-                    padding: '0px'
-                };
-            },
-            cellRenderer: ZoomButtonRendererV,
-            cellRendererParams: {
-                $iApi: iApi,
-                layerCols: layerCols.value
-            }
-        };
-        colDef.push(zoomDef);
+        // only render the zoom buttons if there is at least one map layer in the grid
+        if (hasMapLayers.value) {
+            let zoomDef = {
+                sortable: false,
+                filter: false,
+                lockPosition: true,
+                isStatic: true,
+                maxWidth: 48,
+                cellStyle: () => {
+                    return {
+                        padding: '0px'
+                    };
+                },
+                cellRenderer: ZoomButtonRendererV,
+                cellRendererParams: {
+                    $iApi: iApi,
+                    layerCols: layerCols.value
+                }
+            };
+            colDef.push(zoomDef);
+        }
     }
 
     // Set up the symbol column.
@@ -956,14 +958,16 @@ const toggleFiltersToMap = () => {
 };
 
 const applyFiltersToMap = () => {
-    gridLayers.value.forEach(layer => {
-        if (!config.value.state.applyToMap) {
-            layer.setSqlFilter(CoreFilter.GRID, '');
-        } else {
-            const mapFilterQuery = getFiltersQuery(layer.id);
-            layer.setSqlFilter(CoreFilter.GRID, mapFilterQuery);
-        }
-    });
+    gridLayers.value
+        .filter(layer => layer.mapLayer)
+        .forEach(layer => {
+            if (!config.value.state.applyToMap) {
+                layer.setSqlFilter(CoreFilter.GRID, '');
+            } else {
+                const mapFilterQuery = getFiltersQuery(layer.id);
+                layer.setSqlFilter(CoreFilter.GRID, mapFilterQuery);
+            }
+        });
 };
 
 // get filter SQL query string
@@ -1221,7 +1225,7 @@ const cancelAttributeLoad = () => {
 const filtersStatus = computed<'disabled' | 'partial' | 'enabled'>(() => {
     // Check to see if all layers are consistent with their modifiability. If not, throw a warning notifiying the user that filtering has been disabled.
     const modifiable = gridLayers.value.map(layer => {
-        return layer.visibility && layer.canModifyLayer;
+        return layer.visibility && layer.canModifyLayer && layer.mapLayer;
     });
 
     if (!modifiable.every(value => value === modifiable[0])) {
@@ -1230,6 +1234,15 @@ const filtersStatus = computed<'disabled' | 'partial' | 'enabled'>(() => {
 
     return modifiable.some(Boolean) ? 'enabled' : 'disabled';
 });
+
+/**
+ * Determine if the current grid has at least one map layer in it
+ */
+const hasMapLayers = computed<boolean>(() =>
+    gridLayers.value.some(
+        layer => layer.isLoaded && layer.supportsFeatures && layer.mapLayer
+    )
+);
 
 const getAttrPair = (
     id: string,
