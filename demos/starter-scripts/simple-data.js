@@ -279,8 +279,7 @@ let config = {
                     root: {
                         children: [
                             {
-                                layerId: 'dataJson',
-                                disabledControls: ['visibilityButton']
+                                layerId: 'dataJson'
                             },
                             {
                                 layerId: 'table'

@@ -1,5 +1,6 @@
 <template>
     <button
+        v-if="isMapLayer"
         type="button"
         class="flex items-center justify-center w-46 h-44"
         :content="
@@ -62,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { inject, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import type { InstanceAPI, LayerInstance } from '@/api/internal';
 import { useI18n } from 'vue-i18n';
@@ -76,6 +77,13 @@ const iApi = inject<InstanceAPI>('iApi')!;
 const layerStore = useLayerStore();
 const button = ref<HTMLElement>();
 const { t } = useI18n();
+
+const isMapLayer = computed<boolean>((): boolean => {
+    const layer: LayerInstance | undefined = layerStore.getLayerByUid(
+        props.params.data.rvUid
+    );
+    return !!layer && layer.mapLayer;
+});
 
 const zoomToFeature = () => {
     if (zoomStatus.value !== 'none') {
@@ -153,34 +161,42 @@ const updateZoomStatus = (value: 'zooming' | 'zoomed' | 'error' | 'none') => {
 
 onMounted(() => {
     // need to hoist events to top level cell wrapper to be keyboard accessible
-    props.params.eGridCell.addEventListener('keydown', (e: KeyboardEvent) => {
-        if (e.key === 'Enter' && zoomStatus.value === 'none') {
-            zoomToFeature();
-        }
-    });
-    props.params.eGridCell.addEventListener('focus', () => {
-        (button.value as any)?._tippy.show();
-    });
-    props.params.eGridCell.addEventListener('blur', () => {
-        (button.value as any)?._tippy.hide();
-    });
+    if (isMapLayer.value) {
+        props.params.eGridCell.addEventListener(
+            'keydown',
+            (e: KeyboardEvent) => {
+                if (e.key === 'Enter' && zoomStatus.value === 'none') {
+                    zoomToFeature();
+                }
+            }
+        );
+
+        props.params.eGridCell.addEventListener('focus', () => {
+            (button.value as any)?._tippy.show();
+        });
+        props.params.eGridCell.addEventListener('blur', () => {
+            (button.value as any)?._tippy.hide();
+        });
+    }
 });
 
 onBeforeUnmount(() => {
-    props.params.eGridCell.removeEventListener(
-        'keydown',
-        (e: KeyboardEvent) => {
-            if (e.key === 'Enter') {
-                zoomToFeature();
+    if (isMapLayer.value) {
+        props.params.eGridCell.removeEventListener(
+            'keydown',
+            (e: KeyboardEvent) => {
+                if (e.key === 'Enter') {
+                    zoomToFeature();
+                }
             }
-        }
-    );
-    props.params.eGridCell.removeEventListener('focus', () => {
-        (button.value as any)?._tippy.show();
-    });
-    props.params.eGridCell.removeEventListener('blur', () => {
-        (button.value as any)?._tippy.hide();
-    });
+        );
+        props.params.eGridCell.removeEventListener('focus', () => {
+            (button.value as any)?._tippy.show();
+        });
+        props.params.eGridCell.removeEventListener('blur', () => {
+            (button.value as any)?._tippy.hide();
+        });
+    }
 });
 </script>
 
