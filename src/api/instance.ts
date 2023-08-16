@@ -339,6 +339,7 @@ export class InstanceAPI {
         const notificationStore = useNotificationStore(this.$vApp.$pinia);
         const configStore = useConfigStore(this.$vApp.$pinia);
         const fixtureStore = useFixtureStore(this.$vApp.$pinia);
+        const layerStore = useLayerStore(this.$vApp.$pinia);
 
         // remove all fixtures
         // get list of all fixture ids currently added
@@ -357,6 +358,9 @@ export class InstanceAPI {
         // destroy map (calls private destroyMap)
         // @ts-ignore
         this.geo.map.destroyMap();
+
+        // reset the layer store
+        layerStore.$reset();
 
         // remove all event handlers
         this.event.offAll();
