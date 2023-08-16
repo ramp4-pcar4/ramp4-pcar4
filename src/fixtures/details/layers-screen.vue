@@ -133,12 +133,14 @@ const loadPayloadItems = (newPayload: Array<IdentifyResult>): void => {
         return;
     }
 
-    // track last identify request timestamp and add to payload items. If no new results, app is in mobile mode, or if
-    // there is not enough space available to open the detail items panel, then disable the greedy identify.
+    // track last identify request timestamp and add to payload items. If details items panel does not exist, no new results,
+    // app is in mobile mode, or if there is not enough space available to open the detail items panel,
+    // then disable the greedy identify.
     const detailsPanel = iApi.panel.get('details-items');
-    const detailsWidth = detailsPanel.width || 350;
+    const detailsWidth = detailsPanel?.width || 350;
 
     const greedyMode =
+        !detailsPanel ||
         mobileMode.value ||
         (remainingWidth.value < detailsWidth && !detailsPanel.isOpen) ||
         newPayload.length === 0
@@ -169,7 +171,7 @@ const loadPayloadItems = (newPayload: Array<IdentifyResult>): void => {
 const autoOpen = (newPayload: Array<IdentifyResult>): void => {
     const itemsPanel = iApi.panel.get('details-items');
     // if the item panel is already open for a layer, wait on that layer to resolve first
-    if (lastLayerUid.value && itemsPanel.isOpen) {
+    if (lastLayerUid.value && itemsPanel?.isOpen) {
         const lastIdx = layerResults.value.findIndex(
             (item: IdentifyResult) => item.uid === lastLayerUid.value
         );
@@ -276,10 +278,7 @@ const calculateGrandTotal = (newPayload: Array<IdentifyResult>): void => {
  * Closes details item panel.
  */
 const closeResult = (): void => {
-    const itemsPanel = iApi.panel.get('details-items');
-    if (itemsPanel.isOpen) {
-        itemsPanel.close();
-    }
+    iApi.panel.close('details-items');
 };
 
 /**
@@ -292,6 +291,12 @@ const openResult = (index: number) => {
 
         // skip results screen for wms layers
         let itemsPanel = iApi.panel.get('details-items');
+
+        // if the items panel was removed somehow, e.g. via API, abort
+        if (!itemsPanel) {
+            return;
+        }
+
         let props = {
             result: payload.value[index]
         };
