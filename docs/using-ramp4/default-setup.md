@@ -85,7 +85,8 @@ Along with the default fixtures, there are default event handlers that are appli
 ### Map Handlers
 
 - `ramp_map_click_runs_identify` causes the identify process to start when the map is clicked
-- `ramp_map_identify_opens_identify_results` causes the identify results panel to open, displaying the results.
+- `ramp_map_created_initializes_fixtures` calls the `initialized()` method for fixtures when the map is created
+- `ramp_map_identify_opens_identify_results` causes the identify results panel to open, displaying the results
 - `ramp_map_keydown_updates_key_handler` causes a key press to be processed on the map
 - `ramp_map_keyup_updates_key_handler` causes a key release to be processed on the map
 - `ramp_map_blur_updates_key_handler` causes keyboard navigation to stop when the map loses focus
