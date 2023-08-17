@@ -316,7 +316,7 @@
 
                 <!-- offscale icon -->
                 <div
-                    class="relative mx-5"
+                    class="relative mx-5 cursor-default"
                     :content="t('legend.layer.offscale')"
                     v-tippy="{
                         placement: 'top-start'
@@ -328,6 +328,7 @@
                         legendItem instanceof LayerItem &&
                         legendItem.layerOffscale
                     "
+                    focus-icon
                 >
                     <svg
                         class="inline-block fill-gray-400 w-18 h-18"
@@ -341,7 +342,7 @@
 
                 <!-- data only icon -->
                 <div
-                    class="relative mx-5"
+                    class="relative mx-5 cursor-default"
                     :content="t('legend.layer.data.only')"
                     v-tippy="{
                         placement: 'top-end'
@@ -353,6 +354,7 @@
                         legendItem instanceof LayerItem &&
                         !legendItem.layer?.mapLayer
                     "
+                    focus-icon
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
