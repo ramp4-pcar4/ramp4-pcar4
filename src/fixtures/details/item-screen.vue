@@ -15,7 +15,9 @@
                 <!-- highlight toggle -->
                 <div
                     class="p-8 mb-8 bg-gray-100 flex justify-between"
-                    v-if="details.hasHilighter() && supportsFeatures"
+                    v-if="
+                        details.hasHilighter() && supportsFeatures && isMapLayer
+                    "
                 >
                     <div>{{ t('details.togglehilight.title') }}</div>
                     <Toggle
@@ -133,6 +135,7 @@
                                 ref="button"
                                 @click="zoomToFeature()"
                                 class="text-gray-600 m-8 w-24 h-24 p-2"
+                                v-if="isMapLayer"
                             >
                                 <div
                                     v-if="zoomStatus === 'zooming'"
@@ -303,6 +306,12 @@ const supportsFeatures = computed<Boolean>(() => {
     );
     return layer?.supportsFeatures ?? false;
 });
+const isMapLayer = computed<Boolean>(() => {
+    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
+        props.result.uid
+    );
+    return layer?.mapLayer ?? false;
+});
 const fieldsList = computed<Array<FieldDefinition>>(() => {
     // wms layers do not support fields
     if (!supportsFeatures.value) {
@@ -408,12 +417,12 @@ const itemChanged = () => {
                     : ''
             }`
         );
-        if (hilightToggle.value && supportsFeatures.value) {
+        if (hilightToggle.value && supportsFeatures.value && isMapLayer.value) {
             details.value.hilightDetailsItems(
                 props.result.items[currentIdx.value],
                 props.result.uid
             );
-        } else if (!supportsFeatures.value) {
+        } else if (!supportsFeatures.value || !isMapLayer.value) {
             details.value.removeDetailsHilight();
         }
     } else {
