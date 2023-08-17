@@ -82,7 +82,12 @@ export class InstanceAPI {
     readonly event: EventAPI;
     readonly geo: GeoAPI;
     readonly notify: NotificationAPI;
-    readonly ui: { maptip: MaptipAPI; exposeOids: boolean };
+    readonly ui: {
+        maptip: MaptipAPI;
+        exposeOids: boolean;
+        getZoomIcon: () => string;
+        scrollToInstance: boolean;
+    };
     startRequired: boolean = false;
 
     /**
@@ -114,7 +119,12 @@ export class InstanceAPI {
         this.panel = new PanelAPI(this);
         this.geo = new GeoAPI(this);
         //TODO before 1.0: does the ui namespace still make sense, should we just leave maptip under geo.map only?
-        this.ui = { maptip: this.geo.map.maptip, exposeOids: false };
+        this.ui = {
+            maptip: this.geo.map.maptip,
+            exposeOids: false,
+            getZoomIcon: () => '',
+            scrollToInstance: true
+        };
         this.notify = new NotificationAPI(this);
 
         this._isFullscreen =
@@ -297,6 +307,20 @@ export class InstanceAPI {
             if (langConfig.system?.exposeOid) {
                 this.ui.exposeOids = langConfig.system.exposeOid;
             }
+
+            // set up key to SVG bindings for zoom icons
+            const zoomSvgs: { [key: string]: string } = {
+                magnify: `<svg class="m-auto" xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /><path d="M0 0h24v24H0V0z" fill="none" /><path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z" /></svg>`,
+                globe: `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="16" height="16" viewBox="0 0 16 16" xml:space="preserve"><g transform="matrix(0.67 0 0 0.67 8 8)"><path style=" stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: #979797; fill-rule: nonzero; opacity: 1;" transform=" translate(-12, -12)" d="M 12 2 C 6.48 2 2 6.48 2 12 C 2 17.52 6.48 22 12 22 C 17.52 22 22 17.52 22 12 C 22 6.48 17.52 2 12 2 z M 11 19.93 C 7.05 19.44 4 16.08 4 12 C 4 11.38 4.08 10.79 4.21 10.21 L 9 15 L 9 16 C 9 17.1 9.9 18 11 18 L 11 19.93 z M 17.9 17.39 C 17.639999999999997 16.580000000000002 16.9 16 15.999999999999998 16 L 14.999999999999998 16 L 14.999999999999998 13 C 14.999999999999998 12.45 14.549999999999999 12 13.999999999999998 12 L 8 12 L 8 10 L 10 10 C 10.55 10 11 9.55 11 9 L 11 7 L 13 7 C 14.1 7 15 6.1 15 5 L 15 4.59 C 17.93 5.779999999999999 20 8.649999999999999 20 12 C 20 14.08 19.2 15.97 17.9 17.39 z" stroke-linecap="round" /></g></svg>`
+            };
+
+            // Set up custom zoom icon for the map and details panel. If not specified in the config, 'globe' is the default.
+            const zoomKey: string = langConfig.system?.zoomIcon || 'globe';
+            const zoomIcon: string = zoomSvgs[zoomKey] || zoomKey;
+
+            this.ui.getZoomIcon = () => {
+                return zoomIcon;
+            };
         }
 
         // default missing options
@@ -636,6 +660,19 @@ export class InstanceAPI {
         const alertText = document.createTextNode(alert);
         alertSpan.appendChild(alertText);
         alertContainer.insertBefore(alertSpan, null);
+    }
+
+    /**
+     * If `scrollToInstance` is set to true in the configuration file, scrolls the browser to this RAMP component.
+     *
+     * @memberof InstanceAPI
+     */
+    scrollToInstance(): void {
+        if (this.ui.scrollToInstance) {
+            this.$element._container?.scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
     }
 
     start(): void {

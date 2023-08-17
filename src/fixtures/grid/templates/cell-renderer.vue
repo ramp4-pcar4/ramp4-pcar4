@@ -6,7 +6,8 @@
                     placement: 'top',
                     hideOnClick: false,
                     theme: 'ramp4',
-                    animation: 'scale'
+                    animation: 'scale',
+                    interactive: containsLinks
                 }
             }"
             :name="formatValue"
@@ -87,6 +88,14 @@ const formatValue = computed<string>(() => {
         });
     }
     return '';
+});
+
+// Returns true if the cell contains any anchor tags.
+const containsLinks = computed<boolean>(() => {
+    return (
+        /<a[^>]*>[^<]+<\/a>/g.test(props.params.value) ||
+        /(http(s)?:\/\/.*)/g.test(props.params.value)
+    );
 });
 
 onMounted(() => {
