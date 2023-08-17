@@ -429,10 +429,10 @@ export class LayerAPI extends APIScope {
             // case where a non-server subclass ends up calling this via .super magic.
             // will avoid failed attempts at reading a non-existing service.
             // class should implement their own logic to load feature count (e.g. scrape from file layer)
-            console.warn(
+            console.error(
                 'A layer without a url attempted to run the server based feature count routine.'
             );
-            return -1;
+            return 0;
         }
 
         // TODO detect when we are in Raster Layer case? if we do this, we would need the caller of this
@@ -455,18 +455,25 @@ export class LayerAPI extends APIScope {
         // Throw console warnings, don't crash the app
         if (!serviceResult) {
             // case where service request was unsuccessful
-            console.warn(
+            console.error(
                 `Feature count request unsuccessful: ${serviceUrl}`,
                 err
             );
-            return -1;
+            return 0;
         }
         if (!serviceResult.data) {
             // case where service request was successful but no data appeared in result
-            console.warn(`Unable to load feature count: ${serviceUrl}`);
-            return -1;
+            console.error(`Unable to load feature count: ${serviceUrl}`);
+            return 0;
         }
 
-        return serviceResult.data.count;
+        if (Number.isInteger(serviceResult.data.count))
+            return serviceResult.data.count;
+        else {
+            console.error(
+                `Funny result (${serviceResult.data.count}) during feature count: ${serviceUrl}`
+            );
+            return 0;
+        }
     }
 }

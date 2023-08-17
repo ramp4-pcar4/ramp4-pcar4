@@ -318,7 +318,7 @@ export class DataLayer extends CommonLayer {
      */
     downloadedAttributes(): number {
         // non-table data layer has downloaded everything after initialize.
-        return this.featureCount < 0 ? 0 : this.featureCount;
+        return this.featureCount;
     }
 
     /**
