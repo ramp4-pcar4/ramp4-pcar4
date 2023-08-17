@@ -24,6 +24,7 @@ import {
 import type {
     AttributeSet,
     CompactJson,
+    Extent,
     GetGraphicParams,
     RampLayerConfig,
     TabularAttributeSet
@@ -311,6 +312,37 @@ export class DataLayer extends CommonLayer {
         // No reason to run the same logic for every data row.
         return '<svg id="SvgjsSvg1012" width="32" height="32" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" viewBox="0 0 32 32"><defs id="SvgjsDefs1013"></defs><rect id="SvgjsRect1014" width="28" height="28" x="2" y="2" fill="#2e8b57"></rect><text id="SvgjsText1015" font-family="Roboto" font-size="23" fill="#ffffff" font-weight="bold" x="7.6875" y="-6.40000057220459" svgjs:data="{&quot;leading&quot;:&quot;1.3&quot;}"><tspan id="SvgjsTspan1016" dy="29.900000000000002" x="7.6875" svgjs:data="{&quot;newLined&quot;:true}">D</tspan></text></svg>';
     }
+
+    async getFilterOIDs(
+        exclusions: Array<string> = [],
+        extent: Extent | undefined = undefined
+    ): Promise<Array<number> | undefined> {
+        // TODO proper implementation in issue #1847 . For now, returns all
+        return undefined;
+    }
+
+    /**
+     * Since data layers (except table layers) do not have asynch attribute loading, there is nothing to do here.
+     * However, we have it there just so that calling this method for a giant list is peaceful, and filtering
+     * by layer type is not required.
+     */
+    abortAttributeLoad(): void {}
+
+    /**
+     * Since data layers (except table layers) do not have asynch attribute loading, there is nothing to do here.
+     * However, we have it there just so that calling this method for a giant list is peaceful, and filtering
+     * by layer type is not required.
+     */
+    attribLoadAborted(): boolean {
+        return false;
+    }
+
+    /**
+     * Since data layers (except table layers) do not have asynch attribute loading, there is nothing to do here.
+     * However, we have it there just so that calling this method for a giant list is peaceful, and filtering
+     * by layer type is not required.
+     */
+    clearFeatureCache(): void {}
 
     /**
      * The number of attributes currently downloaded (will update as download progresses)

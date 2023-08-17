@@ -107,6 +107,49 @@ let config = {
                     id: 'ErroredLayer',
                     layerType: 'esri-feature',
                     url: 'error'
+                },
+                {
+                    id: 'dataJson',
+                    name: 'Tasty Eats',
+                    layerType: 'data-json',
+                    rawData: {
+                        fields: [
+                            'Name',
+                            'Description',
+                            'Category',
+                            'Group_',
+                            'Year_'
+                        ],
+                        data: [
+                            [
+                                'Grouse Burgers',
+                                'A very tasty burger.',
+                                'Burger',
+                                'Fast Food',
+                                '2019'
+                            ],
+                            [
+                                'Greasy Patties',
+                                'A very greasy burger.',
+                                'Burger',
+                                'Fast Food',
+                                '2022'
+                            ],
+                            [
+                                'Big Dirty Slice',
+                                'The best pizza in the world!',
+                                'Pizza',
+                                'Fast Food',
+                                '2023'
+                            ]
+                        ]
+                    }
+                },
+                {
+                    id: 'table',
+                    name: 'OilSands',
+                    layerType: 'data-esri-table',
+                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/Oilsands/MapServer/5'
                 }
             ],
             fixtures: {
@@ -137,7 +180,11 @@ let config = {
                                     {
                                         infoType: 'text',
                                         content:
-                                            'Represents a grid merging 3 sublayers and a separately defined sublayer with the exact same fields.'
+                                            'Represents a grid merging 3 sublayers, a separately defined feature layer, and a JSON data layer with the exact same fields.'
+                                    },
+
+                                    {
+                                        layerId: 'dataJson'
                                     },
                                     {
                                         layerId: 'EcoGeo',
@@ -165,6 +212,9 @@ let config = {
                                         infoType: 'text',
                                         content:
                                             'Represents a merge grid containing layers with differing fields (including oid field).'
+                                    },
+                                    {
+                                        layerId: 'table'
                                     },
                                     {
                                         layerId: 'MajorCities',
@@ -236,6 +286,9 @@ let config = {
                             gridId: 'EcoGeoMergeGrid',
                             layers: [
                                 {
+                                    layerId: 'dataJson'
+                                },
+                                {
                                     layerId: 'EcoGeo',
                                     sublayers: [6, 7, 8]
                                 },
@@ -250,6 +303,9 @@ let config = {
                         {
                             gridId: 'HeteroMergeGrid',
                             layers: [
+                                {
+                                    layerId: 'table'
+                                },
                                 {
                                     layerId: 'MajorCities'
                                 },
