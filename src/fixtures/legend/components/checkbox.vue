@@ -10,9 +10,8 @@
                         : `legend.visibility.show${label}`
                 )
             "
-            @click.stop
+            @click.stop="toggleVisibility()"
             :checked="checked && initialChecked"
-            @change.stop="toggleVisibility()"
             @keypress.enter.prevent
             @keyup.enter.stop="toggleVisibility()"
             :class="[
