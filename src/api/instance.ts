@@ -82,7 +82,7 @@ export class InstanceAPI {
     readonly event: EventAPI;
     readonly geo: GeoAPI;
     readonly notify: NotificationAPI;
-    readonly ui: { maptip: MaptipAPI; exposeOids: boolean };
+    readonly ui: { maptip: MaptipAPI; exposeOids: boolean; zoomIcon: string };
     startRequired: boolean = false;
 
     /**
@@ -114,7 +114,11 @@ export class InstanceAPI {
         this.panel = new PanelAPI(this);
         this.geo = new GeoAPI(this);
         //TODO before 1.0: does the ui namespace still make sense, should we just leave maptip under geo.map only?
-        this.ui = { maptip: this.geo.map.maptip, exposeOids: false };
+        this.ui = {
+            maptip: this.geo.map.maptip,
+            exposeOids: false,
+            zoomIcon: 'globe'
+        };
         this.notify = new NotificationAPI(this);
 
         this._isFullscreen =
@@ -297,6 +301,11 @@ export class InstanceAPI {
             if (langConfig.system?.exposeOid) {
                 this.ui.exposeOids = langConfig.system.exposeOid;
             }
+
+            // custom zoom icon for the map and details panel. Options are 'globe', 'magnify', or a custom icon.
+            this.ui.zoomIcon = langConfig.system?.zoomIcon
+                ? langConfig.system?.zoomIcon
+                : 'globe';
         }
 
         // default missing options
