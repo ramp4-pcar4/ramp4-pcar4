@@ -1,5 +1,6 @@
 import { useTippy } from 'vue-tippy';
 import type { TippyContent } from 'vue-tippy';
+import linkifyHtml from 'linkify-html';
 import type { Directive, DirectiveBinding } from 'vue';
 
 const TRUNCATE_ATTR = 'truncate-text';
@@ -36,8 +37,9 @@ export const Truncate: Directive = {
         }
 
         useTippy(el, {
-            content: <TippyContent>el.textContent,
+            content: linkifyContent(el.textContent),
             onShow: onShow,
+            allowHTML: true,
             placement: 'bottom-start',
             //flip: false, // can't find a replacement for Vue3
             //boundary: 'window',
@@ -48,7 +50,7 @@ export const Truncate: Directive = {
     updated(el: HTMLElement, binding: DirectiveBinding) {
         // update content and options
         if ((el as any)._tippy) {
-            (el as any)._tippy.setContent(el.textContent);
+            (el as any)._tippy.setContent(linkifyContent(el.textContent));
             if (binding.value && binding.value.options) {
                 (el as any)._tippy.setProps(binding.value.options);
             }
@@ -75,4 +77,23 @@ function onShow(instance: any) {
         // returning false tells tippy to cancel
         return false;
     }
+}
+
+/**
+ * Applies hyperlinks to any URLs in the provided content.
+ *
+ * @param the text content
+ * @returns a string with any URLs hyperlinked.
+ */
+function linkifyContent(content: string | null): TippyContent {
+    if (content === null) {
+        return '';
+    }
+
+    return <TippyContent>linkifyHtml(content, {
+        target: '_blank',
+        validate: {
+            url: (value: string) => /^https?:\/\//.test(value) // only links that begin with a protocol will be hyperlinked
+        }
+    });
 }
