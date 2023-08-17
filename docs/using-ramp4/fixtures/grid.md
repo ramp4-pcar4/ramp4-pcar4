@@ -144,3 +144,18 @@ const config = {
     }
 }
 ```
+
+### Zoom Button Configuration
+It is possible to change the icon for the zoom button in the data grid using the system variable `zoomIcon`. There are two built-in icons: `globe` and `magnify`. If you would like to customize the icon, the variable may be set to any emoji or SVG. Providing this value with a URL will not fetch the remote image.
+
+Note that if the details fixture is added, the zoom icon will be modified there as well.
+
+Example usage which sets the zoom icon to the magnifying glass:
+```
+{
+    configs: {
+        en: {
+            system: { zoomIcon: 'magnify' }
+        }
+    }
+}
