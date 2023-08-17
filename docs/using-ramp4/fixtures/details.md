@@ -72,3 +72,18 @@ const rInstance = RAMP.createInstance(document.getElementById("map"), {
 As shown in the config snippet above, template bindings should be placed under the layer's details fixture configuration. When the details panel first loads, it looks for any template bindings in here. Note that the `template` should match the name of the custom component that you registered on the host page.
 
 After completing these two steps, the custom component should now be displayed when requesting data from `My_New_Layer`.
+
+### Zoom Button Configuration
+It is possible to change the icon for the zoom button in the details fixture by using the system variable `zoomIcon`. There are two built-in icons: `globe` and `magnify`. If you would like to customize the icon, the variable may be set to any emoji or SVG. Providing this value with a URL will not fetch the remote image.
+
+Note that if the grid fixture is added, the zoom icon will be modified there as well.
+
+Example usage which sets the zoom icon to the magnifying glass:
+```
+{
+    configs: {
+        en: {
+            system: { zoomIcon: 'magnify' }
+        }
+    }
+}

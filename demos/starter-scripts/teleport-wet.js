@@ -468,7 +468,7 @@ let config = {
             panels: {
                 reorderable: false
             },
-            system: { animate: true }
+            system: { animate: true, scrollToInstance: true }
         }
     }
 };
