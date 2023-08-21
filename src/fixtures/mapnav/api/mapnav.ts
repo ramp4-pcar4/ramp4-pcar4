@@ -62,7 +62,8 @@ export class MapnavAPI extends FixtureInstance {
             'geolocator',
             'zoom',
             'home',
-            'fullscreen'
+            'fullscreen',
+            'minimize'
         ];
 
         // get the ordered list of items and see if any of them are registered

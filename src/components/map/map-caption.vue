@@ -124,6 +124,11 @@
                 </a>
             </dropdown-menu>
         </div>
+        <div
+            class="w-15 border-l-2 ml-5 -my-5 border-gray-400"
+            @mouseover="panelStore.setOpacity(0.1)"
+            @mouseleave="panelStore.setOpacity(1)"
+        ></div>
     </div>
 </template>
 
@@ -145,8 +150,10 @@ import { useI18n } from 'vue-i18n';
 
 import type { InstanceAPI } from '@/api';
 import { useConfigStore } from '@/stores/config';
+import { usePanelStore } from '@/stores/panel';
 
 const mapCaptionStore = useMapCaptionStore();
+const panelStore = usePanelStore();
 const configStore = useConfigStore();
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;

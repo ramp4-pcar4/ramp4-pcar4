@@ -373,7 +373,8 @@ let config = {
                         'home',
                         'basemap',
                         'legend',
-                        'geosearch'
+                        'geosearch',
+                        'minimize'
                     ]
                 },
                 details: {
