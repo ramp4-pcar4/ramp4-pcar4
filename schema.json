@@ -2692,6 +2692,16 @@
                     "type": "boolean",
                     "description": "Determines whether or not to include a feature's object ID field when viewing data on the site (e.g. within the details panel when identifying a feature).",
                     "default": false
+                },
+                "zoomIcon": {
+                    "type": "string",
+                    "description": "Determines which icon to display for the zoom button in the grid and details panels. Can be 'globe', 'magnify', or a custom icon.",
+                    "default": "globe"
+                },
+                "scrollToInstance": {
+                    "type": "boolean",
+                    "description": "Determines whether the browser will scroll to the RAMP instance when a button within the app is pressed.",
+                    "default": false
                 }
             },
             "required": [],
