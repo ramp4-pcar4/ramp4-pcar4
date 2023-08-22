@@ -42,20 +42,19 @@ const openDetails = () => {
     delete data['rvInteractive'];
     delete data['rvSymbol'];
 
-    // similar to the sql lookup, the details panel must use the original OID field to render symbols
     const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
         data['rvUid']
     )!;
-    const oidPair = props.params.layerCols[layer.id].find(
-        (pair: AttributeMapPair) => pair.origAttr === layer.oidField
-    );
-    if (oidPair.mappedAttr) {
-        const oid = data[oidPair.mappedAttr];
-        delete data[oidPair.mappedAttr];
-        data[oidPair.origAttr] = oid;
-    }
 
     delete data['rvUid'];
+
+    // replace any mapped attributes with original attribute name for details renderer
+    props.params.layerCols[layer.id].forEach((attrPair: AttributeMapPair) => {
+        if (attrPair.mappedAttr) {
+            data[attrPair.origAttr] = data[attrPair.mappedAttr];
+            delete data[attrPair.mappedAttr];
+        }
+    });
 
     // grid only supports esri features at the moment, so we hardcode that format
     iApi.event.emit(GlobalEvents.DETAILS_TOGGLE, {
