@@ -1226,19 +1226,23 @@ const cancelAttributeLoad = () => {
 };
 
 /**
- * Determine if the layer is modifiable
+ * Determine if map filtering for this grid is fully enabled, partially enabled, or disabled.
  */
 const filtersStatus = computed<'disabled' | 'partial' | 'enabled'>(() => {
-    // Check to see if all layers are consistent with their modifiability. If not, throw a warning notifiying the user that filtering has been disabled.
-    const modifiable = gridLayers.value.map(layer => {
+    const filterable = gridLayers.value.map(layer => {
         return layer.visibility && layer.canModifyLayer && layer.mapLayer;
     });
 
-    if (!modifiable.every(value => value === modifiable[0])) {
-        return 'partial';
-    }
+    const unmodifiableExists = gridLayers.value.some(
+        layer => layer.visibility && layer.mapLayer && !layer.canModifyLayer
+    );
+    const filterableExists = filterable.some(Boolean);
 
-    return modifiable.some(Boolean) ? 'enabled' : 'disabled';
+    return unmodifiableExists && filterableExists
+        ? 'partial' // we have an unmodifiable map layer and we also have >= 1 layer that can be filtered, so overall filtering is partial
+        : filterableExists
+        ? 'enabled' // we have >= 1 layer that can be filtered, anything with filtering disabled is a data layer which is not on the map anyways, so overall filtering is enabled
+        : 'disabled'; // no layers that can be filtered, so disable filtering
 });
 
 /**
