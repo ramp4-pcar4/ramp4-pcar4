@@ -31,14 +31,6 @@ export class FixtureAPI extends APIScope {
      */
     constructor(iApi: InstanceAPI) {
         super(iApi);
-        // when the map is created call the initialized method (if defined) for each fixture
-        const onMapCreated = () => {
-            const fixtures = useFixtureStore(this.$vApp.$pinia).items;
-            Object.keys(fixtures).forEach(fId => {
-                fixtures[fId].initialized?.();
-            });
-        };
-        this.$iApi.event.on(GlobalEvents.MAP_CREATED, onMapCreated);
     }
 
     /**

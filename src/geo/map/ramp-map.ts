@@ -95,7 +95,7 @@ export class MapAPI extends CommonMapAPI {
 
         // remove all layers (need to use uid so we don't mutate layers collection when looping)
         this.$iApi.geo.layer
-            .allLayers()
+            .allLayersOnMap()
             .map(l => l.uid)
             .forEach(l => this.removeLayer(l));
 

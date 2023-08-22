@@ -58,13 +58,13 @@ class DetailsFixture extends DetailsAPI {
             // console.log(`[fixture] ${this.id} removed`);
             unwatch();
 
-            this.$iApi.panel.remove('details-items');
             this.$iApi.panel.remove('details-layers');
+            this.$iApi.panel.remove('details-items');
 
             if (this.$iApi.fixture.get('appbar')) {
                 const appbarStore = useAppbarStore(this.$vApp.$pinia);
-                appbarStore.removeButton('details-items');
                 appbarStore.removeButton('details-layers');
+                appbarStore.removeButton('details-items');
             }
 
             const detailsStore = useDetailsStore(this.$vApp.$pinia);

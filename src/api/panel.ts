@@ -110,6 +110,11 @@ export class PanelAPI extends APIScope {
     remove(value: string | PanelInstance): void {
         const panel: PanelInstance = this.get(value);
 
+        // attempting to remove non-existent panel, do nothing
+        if (!panel) {
+            return;
+        }
+
         // close the panel if it is open
         if (panel.isOpen) {
             this.close(panel);
@@ -140,10 +145,12 @@ export class PanelAPI extends APIScope {
      *  - `rInstance.panel.open({ id: 'panel-id', screen: 'screen-id', props: {... } })` -- opens the 'panel-id' panel on the 'screen-id' screen passing supplied `props` to it
      *
      * @param {(string | PanelInstance | PanelInstancePath)} value a panel id, a `PanelInstance` object or an object of the form `{ id: <panel-id>, screen: <id>, props: <object> }`.
-     * @returns {PanelInstance}
+     * @returns {PanelInstance | undefined} the panel instance if the panel is currently registered, undefined otherwise.
      * @memberof PanelAPI
      */
-    open(value: string | PanelInstance | PanelInstancePath): PanelInstance {
+    open(
+        value: string | PanelInstance | PanelInstancePath
+    ): PanelInstance | undefined {
         let panel: PanelInstance,
             screen: string | undefined,
             props: object | undefined;
@@ -154,6 +161,11 @@ export class PanelAPI extends APIScope {
         } else {
             panel = this.get(value.id);
             ({ screen, props } = value);
+        }
+
+        // attempting to open a non-existing panel, do nothing
+        if (!panel) {
+            return panel;
         }
 
         // if panel is hidden off screen minimize it first so it is able to reopen
@@ -220,11 +232,16 @@ export class PanelAPI extends APIScope {
      * Closes the panel specified.
      *
      * @param {(string | PanelInstance)} value
-     * @returns {PanelInstance}
+     * @returns {PanelInstance | undefined} the panel instance if the panel is currently registered, undefined otherwise.
      * @memberof PanelAPI
      */
-    close(value: string | PanelInstance): PanelInstance {
+    close(value: string | PanelInstance): PanelInstance | undefined {
         const panel = this.get(value);
+
+        // attempting to close a non-existing panel, do nothing
+        if (!panel) {
+            return panel;
+        }
 
         // unpin the panel before removing if it was pinned
         if (panel.isPinned) {
@@ -248,11 +265,16 @@ export class PanelAPI extends APIScope {
      * Minimizes the panel specified, mechanically the same as closing however it does not emit the close event so that temporary appbar buttons stay.
      *
      * @param {(string | PanelInstance)} value
-     * @returns {PanelInstance}
+     * @returns {PanelInstance | undefined} the panel instance if the panel is currently registered, undefined otherwise.
      * @memberof PanelAPI
      */
-    minimize(value: string | PanelInstance): PanelInstance {
+    minimize(value: string | PanelInstance): PanelInstance | undefined {
         const panel = this.get(value);
+
+        // attempting to minimize non-existent panel, do nothing
+        if (!panel) {
+            return panel;
+        }
 
         if (panel.isPinned) {
             panel.pin(false);
@@ -276,11 +298,20 @@ export class PanelAPI extends APIScope {
      * Moves the specifed visible panel to the left or right.
      *
      * @param {(string | PanelInstance)} value
-     * @returns {PanelInstance}
+     * @returns {PanelInstance | undefined} the panel instance if the panel is currently registered, undefined otherwise.
      * @memberof PanelAPI
      */
-    move(value: string | PanelInstance, direction: string): PanelInstance {
+    move(
+        value: string | PanelInstance,
+        direction: string
+    ): PanelInstance | undefined {
         const panel = this.get(value);
+
+        // attempting to move non-existent panel, do nothing
+        if (!panel) {
+            return panel;
+        }
+
         this.panelStore.movePanel(panel, direction);
         return panel;
     }
@@ -290,13 +321,13 @@ export class PanelAPI extends APIScope {
      *
      * @param {string | PanelInstance | PanelInstancePath} [value]
      * @param {boolean} toggle Optional param. True forces a panel open, false forces the panel to close.
-     * @returns {PanelInstance}
+     * @returns {PanelInstance | undefined} the panel instance if the panel is currently registered, undefined otherwise.
      * @memberof PanelAPI
      */
     toggle(
         value: string | PanelInstance | PanelInstancePath,
         toggle?: boolean
-    ): PanelInstance {
+    ): PanelInstance | undefined {
         let panel: PanelInstance;
 
         // figure out what is passed to the function, retrieve the panel object and make call to open or close function
@@ -304,6 +335,11 @@ export class PanelAPI extends APIScope {
             panel = this.get(value);
         } else {
             panel = this.get(value.id);
+        }
+
+        // attempting to toggle non-existent panel, do nothing
+        if (!panel) {
+            return panel;
         }
 
         // use specified toggle value if provided + check if toggle value is possible
@@ -320,13 +356,13 @@ export class PanelAPI extends APIScope {
      *
      * @param {string | PanelInstance | PanelInstancePath} [value]
      * @param {boolean} toggle Optional param. True forces a panel open, false forces the panel to minimize.
-     * @returns {PanelInstance}
+     * @returns {PanelInstance | undefined} the panel instance if the panel is currently registered, undefined otherwise.
      * @memberof PanelAPI
      */
     toggleMinimize(
         value: string | PanelInstance | PanelInstancePath,
         toggle?: boolean
-    ): PanelInstance {
+    ): PanelInstance | undefined {
         let panel: PanelInstance;
 
         // figure out what is passed to the function, retrieve the panel object and make call to open or close function
@@ -334,6 +370,11 @@ export class PanelAPI extends APIScope {
             panel = this.get(value);
         } else {
             panel = this.get(value.id);
+        }
+
+        // attempting to toggle non-existent panel, do nothing
+        if (!panel) {
+            return panel;
         }
 
         // use specified toggle value if provided + check if toggle value is possible
@@ -350,11 +391,19 @@ export class PanelAPI extends APIScope {
      *
      * @param {(string | PanelInstance)} value
      * @param {boolean} [pin]
-     * @returns {PanelInstance}
+     * @returns {PanelInstance | undefined} the panel instance if the panel is currently registered, undefined otherwise.
      * @memberof PanelAPI
      */
-    pin(value: string | PanelInstance, pin?: boolean): PanelInstance {
+    pin(
+        value: string | PanelInstance,
+        pin?: boolean
+    ): PanelInstance | undefined {
         const panel = this.get(value);
+
+        // attempting to pin/unpin non-existent panel, do nothing
+        if (!panel) {
+            return panel;
+        }
 
         // use the provided value or negate the existing `isPinned` status of this panel
         pin = typeof pin !== 'undefined' ? pin : !panel.isPinned;
@@ -390,7 +439,7 @@ export class PanelAPI extends APIScope {
      *
      * @param {(string | PanelInstance)} value
      * @param {PanelConfigRoute} route
-     * @returns {PanelInstance}
+     * @returns {PanelInstance | undefined} the panel instance if the panel is currently registered and the specified screen exists, undefined otherwise.
      * @memberof PanelAPI
      */
     // TODO: implement panel route history
@@ -399,6 +448,11 @@ export class PanelAPI extends APIScope {
         route: PanelConfigRoute
     ): PanelInstance | undefined {
         const panel = this.get(value);
+
+        // attempting to show screen on non-existent panel, do nothing
+        if (!panel) {
+            return panel;
+        }
 
         // check if the requested screen exists, or bad things can happen on startup
         if (!panel.screens[route.screen]) {
@@ -448,15 +502,20 @@ export class PanelAPI extends APIScope {
      * @param {(string | PanelInstance)} value
      * @param {object} style
      * @param {boolean} [replace=false] merge with existing styles if `false`; replace if `true`
-     * @returns {(PanelInstance | null)}
+     * @returns {PanelInstance | undefined} the panel instance if the panel is currently registered, undefined otherwise.
      * @memberof PanelAPI
      */
     setStyle(
         value: string | PanelInstance,
         style: object,
         replace: boolean = false
-    ): PanelInstance | null {
+    ): PanelInstance | undefined {
         const panel = this.get(value);
+
+        // attempting to style non-existent panel, do nothing
+        if (!panel) {
+            return panel;
+        }
 
         this.panelStore.items[panel.id].style = replace
             ? (style as PanelConfigStyle)
@@ -470,14 +529,19 @@ export class PanelAPI extends APIScope {
      *
      * @param {(string | PanelInstance)} value
      * @param {boolean} expand Optional. Whether the panel should expand, toggles the value if not set
-     * @returns {(PanelInstance | null)}
+     * @returns {PanelInstance | undefined} the panel instance if the panel is currently registered, undefined otherwise.
      * @memberof PanelAPI
      */
     expand(
         value: string | PanelInstance,
         expand?: boolean
-    ): PanelInstance | null {
+    ): PanelInstance | undefined {
         const panel = this.get(value);
+
+        // attempting to expand/collapse non-existent panel, do nothing
+        if (!panel) {
+            return panel;
+        }
 
         this.panelStore.items[panel.id].expanded =
             expand !== undefined ? expand! : !panel.expanded;

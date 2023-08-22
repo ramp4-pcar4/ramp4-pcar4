@@ -30,6 +30,7 @@ import { debounce, throttle } from 'throttle-debounce';
 import { useMapCaptionStore } from '@/stores/map-caption';
 import { useConfigStore } from '@/stores/config';
 import { useDetailsStore } from '@/fixtures/details/store';
+import { useFixtureStore } from '@/stores/fixture';
 
 // TODO ensure some of the internal types used in the payload comments are published
 //      as part of our API doc generator. Would be ideal if doc output hyperlinked to
@@ -356,6 +357,7 @@ const enum DefEH {
     MAP_BASEMAP_UPDATES_MAP_ATTRIBS = 'ramp_map_basemap_updates_map_attribs',
     MAP_BLUR_UPDATES_KEY_HANDLER = 'ramp_map_blur_updates_key_handler',
     MAP_CLICK_RUNS_IDENTIFY = 'ramp_map_click_runs_identify',
+    MAP_CREATED_INITIALIZES_FIXTURES = 'ramp_map_created_initializes_fixtures',
     MAP_CREATED_UPDATES_MAP_ATTRIBS = 'ramp_map_created_updates_map_attribs',
     MAP_EXTENT_UPDATES_MAPTIP = 'ramp_map_extent_updates_maptip',
     MAP_GRAPHICHIT_CREATES_MAPTIP = 'ramp_map_graphichit_creates_maptip',
@@ -630,6 +632,7 @@ export class EventAPI extends APIScope {
                 DefEH.MAP_BASEMAP_UPDATES_MAP_ATTRIBS,
                 DefEH.MAP_BLUR_UPDATES_KEY_HANDLER,
                 DefEH.MAP_CLICK_RUNS_IDENTIFY,
+                DefEH.MAP_CREATED_INITIALIZES_FIXTURES,
                 DefEH.MAP_CREATED_UPDATES_MAP_ATTRIBS,
                 DefEH.MAP_EXTENT_UPDATES_MAPTIP,
                 DefEH.MAP_GRAPHICHIT_CREATES_MAPTIP,
@@ -895,6 +898,23 @@ export class EventAPI extends APIScope {
                     }
                 };
                 this.on(GlobalEvents.MAP_CLICK, zeHandler, handlerName);
+                break;
+
+            case DefEH.MAP_CREATED_INITIALIZES_FIXTURES:
+                // call the initialized() method for all added fixtures when the map is created
+                zeHandler = () => {
+                    const fixtures = useFixtureStore(this.$vApp.$pinia).items;
+                    Object.keys(fixtures).forEach(fId => {
+                        fixtures[fId].initialized?.();
+                    });
+                };
+                // initialize fixtures if map was created before adding event handler
+                if (this.$iApi.geo.map.created) zeHandler();
+                this.$iApi.event.on(
+                    GlobalEvents.MAP_CREATED,
+                    zeHandler,
+                    handlerName
+                );
                 break;
 
             case DefEH.MAP_CREATED_UPDATES_MAP_ATTRIBS:
