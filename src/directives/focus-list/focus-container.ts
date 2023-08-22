@@ -8,8 +8,9 @@ const enum KEYS {
 
 const CONTAINER_ATTR = 'focus-container';
 const LIST_ATTR = 'focus-list';
+const ICON_ATTR = 'focus-icon';
 const FOCUS_ATTRS = `[${LIST_ATTR}],[${CONTAINER_ATTR}]`;
-const TABBABLE_TAGS = `button,input,select,a,textarea,[contenteditable],.ag-tab-guard,[${LIST_ATTR}],[${CONTAINER_ATTR}]`;
+const TABBABLE_TAGS = `button,input,select,a,textarea,[contenteditable],.ag-tab-guard,[${LIST_ATTR}],[${CONTAINER_ATTR}],[${ICON_ATTR}]`;
 
 let managers: FocusContainerManager[] = [];
 
@@ -161,7 +162,6 @@ class FocusContainerManager {
 
     /**
      * Sets tabindex to 0 for every VISIBLE element not under a different focus container or list.
-     * 
      * @return {HTMLElement} the first valid element
      */
     enableTabbing() {

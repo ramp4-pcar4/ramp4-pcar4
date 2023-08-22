@@ -17,12 +17,13 @@ const enum KEYS {
 
 const LIST_ATTR = 'focus-list';
 const ITEM_ATTR = 'focus-item';
+const ICON_ATTR = 'focus-icon';
 const CONTAINER_ATTR = 'focus-container';
 const FOCUS_ATTRS = `[${LIST_ATTR}],[${CONTAINER_ATTR}]`;
 const TRUNCATE_ATTR = 'truncate-text';
 const SHOW_TRUNCATE = 'show-truncate';
 const FOCUSED_CLASS = 'focused';
-const TABBABLE_TAGS = `button,input,select,a,textarea,[contenteditable],[${LIST_ATTR}]`;
+const TABBABLE_TAGS = `button,input,select,a,textarea,[contenteditable],[${LIST_ATTR}],[${ICON_ATTR}]`;
 
 // TODO: Figure out a way to put the control scheme into the description of the focus-list for screen readers (hidden text?), or see if the help file would be sufficient.
 
