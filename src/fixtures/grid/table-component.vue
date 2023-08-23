@@ -342,6 +342,8 @@ import {
     PanelInstance
 } from '@/api/internal';
 
+import { DefPromise } from '@/geo/api';
+
 import type { Attributes, TabularAttributeSet } from '@/geo/api';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -521,6 +523,10 @@ const gridLayers = computed(() => {
     } else return [];
 });
 const oidCols = ref<Set<string>>(new Set<string>());
+
+// manages fast incoming filter change events. Forces them to finish
+// in order to avoid race conditions
+const filterQueue = ref<Array<DefPromise>>([]);
 
 const onGridReady = (params: any) => {
     agGridApi.value = params.api;
@@ -938,7 +944,31 @@ const doesExternalFilterPass = (node: RowNode) => {
 
 // updates external grid filter based on layer filter and rerenders grid
 const applyLayerFilters = async () => {
-    Promise.all(
+    // a race condition lurks here without the "filterQueue".
+    // if you get calls to this method in a short timeframe, you end up with multiple calls to
+    // getFilterOIDs on the layer(s), once for each change in the filtering state.
+    // These calls can be heavy, so the order they resolve can vary. What we found was
+    // a call on a layer would finish after a similar call on the same layer but with an
+    // updated filter. The result would get written to filteredOids, overwriting the more
+    // recent/accurate result. Would end up with the grid's store of "filtered oids" not
+    // matching reality; would match the random order that calls resolved.
+
+    const thisFilterDef = new DefPromise();
+    // we make a copy so any filters that come after do not change our local array.
+    // this array does not contain thisFilterDef.
+    const activeFilterPromises = filterQueue.value
+        .slice()
+        .map(d => d.getPromise());
+
+    // push our filter in so any requests after this are blocked by us
+    filterQueue.value.push(thisFilterDef);
+
+    // we wait for any filters running before us to finish. This avoids race-condition
+    // overwrites of filterOids values
+    await Promise.all(activeFilterPromises);
+
+    // our turn. get filter oids for any layers in our grid. wait for all layers to report back / update filteredOids
+    await Promise.all(
         gridLayers.value.map(async layer => {
             if (layer && layer.visibility) {
                 await layer
@@ -955,7 +985,21 @@ const applyLayerFilters = async () => {
                 filteredOids.value[layer.uid] = [];
             }
         })
-    ).then(() => agGridApi.value.onFilterChanged());
+    );
+
+    // filterOids are now up to date. Apply them to the grid
+    agGridApi.value.onFilterChanged();
+
+    // unblock our promise, letting any filter behind us start.
+    thisFilterDef.resolveMe();
+
+    // remove our blocker from the queue, since no one should care about this filter request anymore
+    const idx = filterQueue.value.indexOf(thisFilterDef);
+    if (idx === -1) {
+        console.error('Grid could not find filter blocker in filter queue');
+    } else {
+        filterQueue.value.splice(idx, 1);
+    }
 };
 
 const toggleFiltersToMap = () => {
