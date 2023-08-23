@@ -40,9 +40,9 @@
         <!-- render grid if loading is done -->
         <div
             v-show="!isLoadingGrid && !isErrorGrid"
-            class="flex items-center justify-between pl-8 pb-8"
+            class="flex flex-wrap gap-y-8 items-center pl-8 pb-8"
         >
-            <div class="flex flex-1 flex-col">
+            <div class="flex flex-1 grow-[5] flex-col max-w-full">
                 <div
                     v-show="gridTitle !== ''"
                     class="w-full font-bold"
@@ -67,238 +67,241 @@
                 </div>
             </div>
 
-            <!-- show grid components if done loading -->
-            <div
-                class="flex flex-1 items-center justify-center pb-4 mr-8 min-w-0"
-                v-show="config.state.search"
-            >
-                <!-- global search bar -->
-                <input
-                    @input="updateQuickSearch()"
-                    @keypress.enter.prevent
-                    @keyup.enter="
-                        if (panelStore.mobileView) {
-                            //@ts-ignore
-                            $event?.target?.blur();
-                        }
-                    "
-                    enterkeyhint="done"
-                    v-model="config.state.searchFilter"
-                    class="rv-global-search rv-input pr-32 min-w-0"
-                    aria-invalid="false"
-                    :aria-label="t('grid.filters.label.global')"
-                    :placeholder="t('grid.filters.label.global')"
-                />
-                <!-- clear search button -->
-                <div class="-ml-30">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fit=""
-                        preserveAspectRatio="xMidYMid meet"
-                        viewBox="0 0 24 24"
-                        focusable="false"
-                        class="fill-current w-24 h-24 flex-shrink-0"
-                        v-if="config.state.searchFilter.length < 3"
-                    >
-                        <g id="search_cache224">
-                            <path
-                                d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
-                            ></path>
-                        </g>
-                    </svg>
+            <div class="flex flex-1 items-center max-w-full">
+                <!-- show global search -->
+                <div
+                    class="flex flex-1 min-w-0 items-center pb-4 mr-8"
+                    v-show="config.state.search"
+                >
+                    <!-- global search bar -->
+                    <input
+                        @input="updateQuickSearch()"
+                        @keypress.enter.prevent
+                        @keyup.enter="
+                            if (panelStore.mobileView) {
+                                //@ts-ignore
+                                $event?.target?.blur();
+                            }
+                        "
+                        enterkeyhint="done"
+                        v-model="config.state.searchFilter"
+                        class="rv-global-search rv-input pr-32 min-w-0"
+                        aria-invalid="false"
+                        :aria-label="t('grid.filters.label.global')"
+                        :placeholder="t('grid.filters.label.global')"
+                    />
+                    <!-- clear search button -->
+                    <div class="-ml-30">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fit=""
+                            preserveAspectRatio="xMidYMid meet"
+                            viewBox="0 0 24 24"
+                            focusable="false"
+                            class="fill-current w-24 h-24 flex-shrink-0"
+                            v-if="config.state.searchFilter.length < 3"
+                        >
+                            <g id="search_cache224">
+                                <path
+                                    d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                                ></path>
+                            </g>
+                        </svg>
+                        <button
+                            class="flex justify-center fill-current ml-6 cursor-pointer"
+                            @click="resetQuickSearch()"
+                            v-else
+                        >
+                            <svg
+                                data-v-486a0302=""
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 352 512"
+                                class="w-18 h-18 mt-2"
+                            >
+                                <path
+                                    data-v-486a0302=""
+                                    d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
+                                ></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pb-2 flex ml-auto justify-end">
+                    <!-- show/hide columns -->
+                    <column-dropdown
+                        :columnApi="columnApi"
+                        :columnDefs="columnDefs"
+                        :oidCols="oidCols"
+                    ></column-dropdown>
+
+                    <!-- clear all filters -->
                     <button
-                        class="flex justify-center fill-current ml-6 cursor-pointer"
-                        @click="resetQuickSearch()"
-                        v-else
+                        type="button"
+                        class="p-4 h-40 text-gray-500 hover:text-black"
+                        @click="clearSearchAndFilters()"
+                        :content="t('grid.clearAll')"
+                        v-tippy="{
+                            placement: 'bottom'
+                        }"
                     >
                         <svg
-                            data-v-486a0302=""
                             xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 352 512"
-                            class="w-18 h-18 mt-2"
+                            height="24px"
+                            width="24px"
+                            viewBox="0 0 24 24"
+                            class="inline fill-current"
                         >
-                            <path
-                                data-v-486a0302=""
-                                d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
-                            ></path>
+                            <g id="filter_cache958">
+                                <path
+                                    d="M 14.7574,20.8284L 17.6036,17.9822L 14.7574,15.1716L 16.1716,13.7574L 19.0178,16.568L 21.8284,13.7574L 23.2426,15.1716L 20.432,17.9822L 23.2426,20.8284L 21.8284,22.2426L 19.0178,19.3964L 16.1716,22.2426L 14.7574,20.8284 Z M 2,2L 19.9888,2.00001L 20,2.00001L 20,2.01122L 20,3.99999L 19.9207,3.99999L 13,10.9207L 13,22.909L 8.99999,18.909L 8.99999,10.906L 2.09405,3.99999L 2,3.99999L 2,2 Z "
+                                ></path>
+                            </g>
                         </svg>
                     </button>
-                </div>
-            </div>
 
-            <div class="pb-2 flex flex-1 justify-end ml-auto">
-                <!-- show/hide columns -->
-                <column-dropdown
-                    :columnApi="columnApi"
-                    :columnDefs="columnDefs"
-                    :oidCols="oidCols"
-                ></column-dropdown>
-
-                <!-- clear all filters -->
-                <button
-                    type="button"
-                    class="p-4 h-40 text-gray-500 hover:text-black"
-                    @click="clearSearchAndFilters()"
-                    :content="t('grid.clearAll')"
-                    v-tippy="{
-                        placement: 'bottom'
-                    }"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        width="24px"
-                        viewBox="0 0 24 24"
-                        class="inline fill-current"
+                    <!-- grid options dropdown -->
+                    <dropdown-menu
+                        class="h-40 w-40"
+                        :position="'bottom-end'"
+                        :tooltip="t('panels.controls.optionsMenu')"
+                        :centered="false"
                     >
-                        <g id="filter_cache958">
-                            <path
-                                d="M 14.7574,20.8284L 17.6036,17.9822L 14.7574,15.1716L 16.1716,13.7574L 19.0178,16.568L 21.8284,13.7574L 23.2426,15.1716L 20.432,17.9822L 23.2426,20.8284L 21.8284,22.2426L 19.0178,19.3964L 16.1716,22.2426L 14.7574,20.8284 Z M 2,2L 19.9888,2.00001L 20,2.00001L 20,2.01122L 20,3.99999L 19.9207,3.99999L 13,10.9207L 13,22.909L 8.99999,18.909L 8.99999,10.906L 2.09405,3.99999L 2,3.99999L 2,2 Z "
-                            ></path>
-                        </g>
-                    </svg>
-                </button>
-
-                <!-- grid options dropdown -->
-                <dropdown-menu
-                    class="h-40 w-40"
-                    :position="'bottom-end'"
-                    :tooltip="t('panels.controls.optionsMenu')"
-                    :centered="false"
-                >
-                    <template #header
-                        ><svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            class="fill-current m-8 w-24 h-24"
+                        <template #header
+                            ><svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                class="fill-current m-8 w-24 h-24"
+                            >
+                                <path
+                                    d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+                                />
+                            </svg>
+                        </template>
+                        <!-- toggle apply to map -->
+                        <a
+                            href="javascript:;"
+                            class="flex leading-snug items-center w-256"
+                            :class="{
+                                hover:
+                                    filtersStatus !== 'disabled'
+                                        ? 'none'
+                                        : 'text-black',
+                                disabled: filtersStatus === 'disabled'
+                            }"
+                            @click="
+                                filtersStatus !== 'disabled' &&
+                                    toggleFiltersToMap()
+                            "
                         >
-                            <path
-                                d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
-                            />
-                        </svg>
-                    </template>
-                    <!-- toggle apply to map -->
-                    <a
-                        href="javascript:;"
-                        class="flex leading-snug items-center w-256"
-                        :class="{
-                            hover:
-                                filtersStatus !== 'disabled'
-                                    ? 'none'
-                                    : 'text-black',
-                            disabled: filtersStatus === 'disabled'
-                        }"
-                        @click="
-                            filtersStatus !== 'disabled' && toggleFiltersToMap()
-                        "
-                    >
-                        <div class="md-icon-small inline items-start">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                class="fill-current inline w-20 h-20 mr-2 text-gray-500"
-                            >
-                                <path
-                                    d="m 15.585999,21.223066 2.414,-2.414 v 1.811 A 3.616,3.616 0 0 0 21.2,15.309066 l 0.881,-0.881 a 4.82,4.82 0 0 1 -4.080001,7.4 v 1.811 z m -13.5859988,-9.224 a 10,10 0 1 1 19.9999998,0 c 0,0.172 0,0.346 -0.013,0.517 a 5.971,5.971 0 0 0 -2.014001,-1.184001 7.935,7.935 0 0 0 -4.973,-6.742999 v 0.41 a 2,2 0 0 1 -2,2 h -2 v 2 A 1,1 0 0 1 10,9.9990662 H 8.0000002 v 1.9999998 h 5.9999988 a 1,1 0 0 1 0.495,0.131 6,6 0 0 0 -0.184,9.6 10.009,10.009 0 0 1 -12.3109988,-9.731 z m 2,0 a 8,8 0 0 0 6.9999988,7.93 v -1.93 a 2,2 0 0 1 -1.9999988,-2 v -1 l -4.79,-4.79 a 8.07,8.07 0 0 0 -0.21,1.79 z m 9.1729988,5 a 4.827,4.827 0 0 1 4.827,-4.828 v -1.81 l 2.414,2.414 -2.414,2.413 v -1.809 a 3.623,3.623 0 0 0 -3.62,3.62 3.537,3.537 0 0 0 0.42,1.69 l -0.881,0.881 a 4.787,4.787 0 0 1 -0.746,-2.571 z"
-                                />
-                            </svg>
-                            {{ t('grid.label.filters.apply') }}
-                            <svg
-                                height="18"
-                                width="18"
-                                viewBox="0 0 24 24"
-                                class="inline float-right"
-                                v-if="
-                                    filtersStatus !== 'disabled' &&
-                                    config.state.applyToMap
-                                "
-                            >
-                                <g id="done">
+                            <div class="md-icon-small inline items-start">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    class="fill-current inline w-20 h-20 mr-2 text-gray-500"
+                                >
                                     <path
-                                        d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+                                        d="m 15.585999,21.223066 2.414,-2.414 v 1.811 A 3.616,3.616 0 0 0 21.2,15.309066 l 0.881,-0.881 a 4.82,4.82 0 0 1 -4.080001,7.4 v 1.811 z m -13.5859988,-9.224 a 10,10 0 1 1 19.9999998,0 c 0,0.172 0,0.346 -0.013,0.517 a 5.971,5.971 0 0 0 -2.014001,-1.184001 7.935,7.935 0 0 0 -4.973,-6.742999 v 0.41 a 2,2 0 0 1 -2,2 h -2 v 2 A 1,1 0 0 1 10,9.9990662 H 8.0000002 v 1.9999998 h 5.9999988 a 1,1 0 0 1 0.495,0.131 6,6 0 0 0 -0.184,9.6 10.009,10.009 0 0 1 -12.3109988,-9.731 z m 2,0 a 8,8 0 0 0 6.9999988,7.93 v -1.93 a 2,2 0 0 1 -1.9999988,-2 v -1 l -4.79,-4.79 a 8.07,8.07 0 0 0 -0.21,1.79 z m 9.1729988,5 a 4.827,4.827 0 0 1 4.827,-4.828 v -1.81 l 2.414,2.414 -2.414,2.413 v -1.809 a 3.623,3.623 0 0 0 -3.62,3.62 3.537,3.537 0 0 0 0.42,1.69 l -0.881,0.881 a 4.787,4.787 0 0 1 -0.746,-2.571 z"
                                     />
-                                </g>
-                            </svg>
-                        </div>
-                    </a>
-                    <!-- toggle column filters -->
-                    <a
-                        href="javascript:;"
-                        class="flex leading-snug items-center w-256 hover:text-black"
-                        @click="toggleShowFilters()"
-                    >
-                        <div class="md-icon-small inline items-start">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                class="fill-current inline w-20 h-20 mr-2 text-gray-500"
-                            >
-                                <path
-                                    d="M 3,2L 20.9888,2L 21,2L 21,2.01122L 21,3.99999L 20.9207,3.99999L 14,10.9207L 14,22.909L 9.99999,18.909L 10,10.906L 3.09405,3.99999L 3,3.99999L 3,2 Z "
-                                />
-                            </svg>
-                            {{ t('grid.label.filters.show') }}
-                            <svg
-                                height="18"
-                                width="18"
-                                viewBox="0 0 24 24"
-                                class="inline float-right"
-                                v-if="config.state.colFilter"
-                            >
-                                <g id="done">
+                                </svg>
+                                {{ t('grid.label.filters.apply') }}
+                                <svg
+                                    height="18"
+                                    width="18"
+                                    viewBox="0 0 24 24"
+                                    class="inline float-right"
+                                    v-if="
+                                        filtersStatus !== 'disabled' &&
+                                        config.state.applyToMap
+                                    "
+                                >
+                                    <g id="done">
+                                        <path
+                                            d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+                                        />
+                                    </g>
+                                </svg>
+                            </div>
+                        </a>
+                        <!-- toggle column filters -->
+                        <a
+                            href="javascript:;"
+                            class="flex leading-snug items-center w-256 hover:text-black"
+                            @click="toggleShowFilters()"
+                        >
+                            <div class="md-icon-small inline items-start">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    class="fill-current inline w-20 h-20 mr-2 text-gray-500"
+                                >
                                     <path
-                                        d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+                                        d="M 3,2L 20.9888,2L 21,2L 21,2.01122L 21,3.99999L 20.9207,3.99999L 14,10.9207L 14,22.909L 9.99999,18.909L 10,10.906L 3.09405,3.99999L 3,3.99999L 3,2 Z "
                                     />
-                                </g>
-                            </svg>
-                        </div>
-                    </a>
-                    <!-- toggle extent filter -->
-                    <a
-                        href="javascript:;"
-                        class="flex leading-snug items-center w-256"
-                        :class="{
-                            hover:
-                                filtersStatus !== 'disabled'
-                                    ? 'none'
-                                    : 'text-black',
-                            disabled: filtersStatus === 'disabled'
-                        }"
-                        @click="
-                            filtersStatus !== 'disabled' &&
-                                toggleFilterByExtent()
-                        "
-                    >
-                        <div class="md-icon-small inline items-start">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                class="fill-current inline w-20 h-20 mr-2 text-gray-500"
-                            >
-                                <path
-                                    d="M 4 10 Z M 2 2 L 19.9888 2 L 20 2 L 20 2.0112 L 20 4 L 19.9207 4 L 13 10.9207 L 13 22.909 L 9 18.909 L 9 10.906 L 2.0941 4 L 2 4 L 2 2 Z M 24 13 L 21 14 L 18 13 L 15 14 V 22 L 18 21 l 3 1 l 3 -1 z M 21 21 l -3 -1 V 14 l 3 1.055 z"
-                                />
-                            </svg>
-                            {{ t('grid.filters.extent') }}
-                            <svg
-                                height="18"
-                                width="18"
-                                viewBox="0 0 24 24"
-                                class="inline float-right"
-                                v-if="
-                                    filtersStatus !== 'disabled' &&
-                                    config.state.filterByExtent
-                                "
-                            >
-                                <g id="done">
+                                </svg>
+                                {{ t('grid.label.filters.show') }}
+                                <svg
+                                    height="18"
+                                    width="18"
+                                    viewBox="0 0 24 24"
+                                    class="inline float-right"
+                                    v-if="config.state.colFilter"
+                                >
+                                    <g id="done">
+                                        <path
+                                            d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+                                        />
+                                    </g>
+                                </svg>
+                            </div>
+                        </a>
+                        <!-- toggle extent filter -->
+                        <a
+                            href="javascript:;"
+                            class="flex leading-snug items-center w-256"
+                            :class="{
+                                hover:
+                                    filtersStatus !== 'disabled'
+                                        ? 'none'
+                                        : 'text-black',
+                                disabled: filtersStatus === 'disabled'
+                            }"
+                            @click="
+                                filtersStatus !== 'disabled' &&
+                                    toggleFilterByExtent()
+                            "
+                        >
+                            <div class="md-icon-small inline items-start">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    class="fill-current inline w-20 h-20 mr-2 text-gray-500"
+                                >
                                     <path
-                                        d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+                                        d="M 4 10 Z M 2 2 L 19.9888 2 L 20 2 L 20 2.0112 L 20 4 L 19.9207 4 L 13 10.9207 L 13 22.909 L 9 18.909 L 9 10.906 L 2.0941 4 L 2 4 L 2 2 Z M 24 13 L 21 14 L 18 13 L 15 14 V 22 L 18 21 l 3 1 l 3 -1 z M 21 21 l -3 -1 V 14 l 3 1.055 z"
                                     />
-                                </g>
-                            </svg>
-                        </div>
-                    </a>
-                </dropdown-menu>
+                                </svg>
+                                {{ t('grid.filters.extent') }}
+                                <svg
+                                    height="18"
+                                    width="18"
+                                    viewBox="0 0 24 24"
+                                    class="inline float-right"
+                                    v-if="
+                                        filtersStatus !== 'disabled' &&
+                                        config.state.filterByExtent
+                                    "
+                                >
+                                    <g id="done">
+                                        <path
+                                            d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+                                        />
+                                    </g>
+                                </svg>
+                            </div>
+                        </a>
+                    </dropdown-menu>
+                </div>
             </div>
         </div>
 
