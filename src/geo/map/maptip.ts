@@ -121,7 +121,7 @@ export class MaptipAPI extends APIScope {
         this.setContent(
             `<div class="flex items-center space-x-5"><span>${
                 info.icon
-            }</span><span class="truncate">${
+            }</span><span class="line-clamp-3">${
                 info.attributes[
                     info.layer.config.tooltipField || info.layer.nameField
                 ]
