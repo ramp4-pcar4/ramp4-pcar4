@@ -1,5 +1,9 @@
 <template>
-    <div :key="legendItem.uid" v-if="!legendItem.hidden" ref="el">
+    <div
+        :key="`${legendItem.uid}-${legendItem.visibility}`"
+        v-if="!legendItem.hidden"
+        ref="el"
+    >
         <div class="relative">
             <div
                 class="flex items-center hover:bg-gray-200"
