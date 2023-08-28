@@ -144,18 +144,18 @@ const moveLeft = (): void => {
 
     if (canMoveLeft.value) {
         columnApi.value.moveColumn(props.params.column, index);
+        props.params.api.ensureColumnVisible(allColumns[index]);
 
         // Focus the "move left" button on the new column
         // The same column index keeps this element so we can't just use a ref for the buttons;
         // e.g. grid is A | B | C and this is B, if B moves left so the grid B | A | C this element is now A
+
         (
             el.value
                 ?.closest('.ag-header-row')
-                ?.querySelectorAll('.ag-header-cell')
-                [index - 4].querySelector('.move-left') as HTMLElement
-        ).focus();
-
-        props.params.api.ensureColumnVisible(allColumns[index]);
+                ?.querySelector(`[col-id="${props.params.column.colId}"]`)
+                ?.querySelector('.move-left') as HTMLElement
+        )?.focus();
     }
 };
 
