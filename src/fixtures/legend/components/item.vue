@@ -573,7 +573,8 @@ import {
     nextTick,
     onMounted,
     ref,
-    type PropType
+    type PropType,
+    watch
 } from 'vue';
 import { LayerItem } from '../store/layer-item';
 import { LegendControl, LegendType } from '../store/legend-item';
@@ -607,38 +608,6 @@ const mobileMode = ref(panelStore.mobileView);
 const layerConfigs = computed(() => layerStore.layerConfigs);
 const symbologyStack = ref<Array<LegendSymbology>>([]); // ref instead of reactive to maintain reactivity after promise
 const hovered = ref(false);
-
-onMounted(() => {
-    if (props.legendItem instanceof LayerItem) {
-        // load the symbology only when the layer is loaded
-        props.legendItem.loadPromise
-            .then(() => {
-                symbologyStack.value = [];
-                // Wait for symbology to load
-                if (!(props.legendItem as LayerItem).layer) {
-                    // This should never happen because the layer is loaded before the legend item component is mounted
-                    console.warn(
-                        'Attempted to mount legend item component with undefined layer'
-                    );
-                    return;
-                }
-                Promise.all(
-                    toRaw(
-                        (props.legendItem as LayerItem).symbologyStack.map(
-                            (item: LegendSymbology) => item.drawPromise
-                        )
-                    )
-                ).then(() => {
-                    symbologyStack.value = toRaw(
-                        (props.legendItem as LayerItem).symbologyStack
-                    );
-                });
-            })
-            .catch(() => {
-                console.warn('Error loading layer');
-            });
-    }
-});
 
 /**
  * Get the type of layer
@@ -934,6 +903,34 @@ const cancelLayer = () => {
     }
 };
 
+const loadSymbologyStack = () => {
+    // load the symbology only when the layer is loaded
+    props.legendItem.loadPromise
+        .then(() => {
+            symbologyStack.value = [];
+            // Wait for symbology to load
+            if (!(props.legendItem as LayerItem).layer) {
+                // This should never happen because the layer is loaded before the legend item component is mounted
+                console.warn(
+                    'Attempted to mount legend item component with undefined layer'
+                );
+                return;
+            }
+            Promise.all(
+                toRaw(
+                    (props.legendItem as LayerItem).symbologyStack.map(
+                        (item: LegendSymbology) => item.drawPromise
+                    )
+                )
+            ).then(() => {
+                symbologyStack.value = (
+                    props.legendItem as LayerItem
+                ).symbologyStack;
+            });
+        })
+        .catch(() => {});
+};
+
 /**
  * Helper function needed to delay tooltips using the _tippy?.show() workaround
  */
@@ -944,6 +941,16 @@ const hover = (t: EventTarget) => {
         if (hovered.value) mobileMode.value ? null : t._tippy?.show();
     }, 300);
 };
+
+if (props.legendItem instanceof LayerItem) {
+    loadSymbologyStack();
+    watch(
+        () => (props.legendItem as LayerItem).symbologyStack,
+        () => {
+            loadSymbologyStack();
+        }
+    );
+}
 </script>
 
 <style lang="scss" scoped>

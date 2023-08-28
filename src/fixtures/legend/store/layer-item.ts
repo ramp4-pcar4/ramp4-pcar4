@@ -14,6 +14,7 @@ export class LayerItem extends LegendItem {
     _layerOffscale: boolean = false;
     _loadCancelled: boolean = false;
     _treeGrown: boolean = false;
+    _customSymbology: boolean = false;
 
     _coverIcon?: string;
     _description?: string;
@@ -45,6 +46,7 @@ export class LayerItem extends LegendItem {
         if (config.coverIcon) this._coverIcon = config.coverIcon;
         if (config.description) this._description = config.description;
         this._symbologyRenderStyle = config.symbologyRenderStyle ?? 'icons';
+        this._customSymbology = !!config.symbologyStack;
         this._symbologyStack = config.symbologyStack?.map((symbol: any) => {
             return {
                 uid: this.$iApi.geo.shared.generateUUID(),
@@ -91,7 +93,9 @@ export class LayerItem extends LegendItem {
         this._layerId = layer.id;
         this._layerIdx = layer.layerIdx;
         this._layerUid = layer.uid;
-        this._symbologyStack = this._symbologyStack ?? layer.legend; // set this item's symbology stack to layer's default if undefined in config
+        this._symbologyStack = this._customSymbology
+            ? this._symbologyStack
+            : layer.legend; // set this item's symbology stack to layer's default if undefined in config
         this.updateLayerControls();
     }
 
