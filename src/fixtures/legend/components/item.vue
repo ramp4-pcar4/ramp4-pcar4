@@ -670,7 +670,13 @@ const isAnimationEnabled = computed((): boolean => {
  * Get if this item is a group (has at least one child)
  */
 const isGroup = computed((): boolean => {
-    return props.legendItem.children.length > 0;
+    return (
+        props.legendItem.children.length > 0 ||
+        // TODO: Determine why Vue reactivity isn't picking updates to the children property of the parent.
+        // isGroup is being called on the parent before the children are mapped in legend.ts. After they're mapped, isGroup isn't called again.
+        (props.legendItem instanceof LayerItem &&
+            toRaw(props.legendItem!.layer)?.sublayers.length > 0)
+    );
 });
 
 /**
