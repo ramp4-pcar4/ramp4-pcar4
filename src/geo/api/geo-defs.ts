@@ -402,6 +402,7 @@ export interface GetGraphicServiceDetails {
     serviceUrl: string; // feature layer endpoint on an arcgis server
     maxOffset?: number; // indicates detail level required of geometry. can be critical if service is in different projection than the map
     mapSR?: string; // stringified spatial reference of the map
+    geometryPrecision?: number; // number of decimal places to keep in result geometry
     oid: number; // oid of the feature to find
 }
 
