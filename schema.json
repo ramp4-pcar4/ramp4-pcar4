@@ -1896,7 +1896,7 @@
                 },
                 "columns": {
                     "type": "array",
-                    "description": "An array to specify how the columns (properties) of the table are defined. If a column is not present in the array, it is treated as disabled. If the property is not defined, all layer attributes will be shown using default values.",
+                    "description": "An array to specify how the columns (properties) of the table are defined. If a column is not present in the array, it will be shown using default values. If the property is not defined, all layer attributes will be shown using default values.",
                     "items": {
                         "$ref": "#/$defs/column"
                     }
