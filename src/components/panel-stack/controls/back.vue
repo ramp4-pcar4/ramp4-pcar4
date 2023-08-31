@@ -5,6 +5,7 @@
             class="text-gray-500 hover:text-black focus:text-black p-8"
             :class="{ 'text-gray-700': active }"
             :content="t('panels.controls.back')"
+            :aria-label="t('panels.controls.back')"
             v-tippy="{
                 placement: 'bottom',
                 theme: 'ramp4',

@@ -11,6 +11,7 @@
             "
             v-focus-item
             :content="tooltip"
+            :aria-label="String(tooltip)"
             v-tippy="{ placement: 'right' }"
         >
             <slot></slot>

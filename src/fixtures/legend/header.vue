@@ -7,6 +7,7 @@
             class="relative mr-auto text-gray-500 hover:text-black mb-3"
             v-show="getWizardExists() && isControlAvailable('wizard')"
             :content="t('legend.header.addlayer')"
+            :aria-label="t('legend.header.addlayer')"
             v-tippy="{ placement: 'right' }"
         >
             <svg class="fill-current w-18 h-18 mx-8" viewBox="0 0 23 21">
@@ -22,6 +23,7 @@
                 getLayerReorderExists() && isControlAvailable('layerReorder')
             "
             :content="t('legend.header.reorderlayers')"
+            :aria-label="t('legend.header.reorderlayers')"
             v-tippy="{ placement: 'right' }"
         >
             <svg

@@ -6,6 +6,7 @@
             v-model="selectedOption"
             @change="selectionChanged()"
             @mousedown.stop
+            :aria-label="selectedOption"
         >
             <option v-for="option in options" :value="option" :key="option">
                 {{ option }}

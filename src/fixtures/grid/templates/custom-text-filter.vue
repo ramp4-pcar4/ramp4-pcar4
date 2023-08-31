@@ -19,6 +19,11 @@
                     params.column.colDef.headerName
                 ])
             "
+            :aria-label="
+                t('grid.filters.column.label.text', [
+                    params.column.colDef.headerName
+                ])
+            "
         />
     </div>
 </template>
