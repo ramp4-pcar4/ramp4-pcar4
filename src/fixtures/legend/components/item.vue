@@ -135,6 +135,12 @@
                                 ? t('legend.symbology.hide')
                                 : t('legend.symbology.expand')
                         "
+                        :aria-label="
+                            legendItem instanceof LayerItem &&
+                            legendItem.symbologyExpanded
+                                ? t('legend.symbology.hide')
+                                : t('legend.symbology.expand')
+                        "
                         v-tippy="{
                             placement: 'top-start'
                         }"

@@ -44,6 +44,7 @@
                                     : 'text-gray-500 hover:text-black'
                             ]"
                             :content="t('notifications.controls.clearAll')"
+                            :aria-label="t('notifications.controls.clearAll')"
                             v-tippy="{
                                 placement: 'bottom',
                                 theme: 'ramp4',

@@ -17,13 +17,14 @@
                                 : 'text-gray-500 hover:text-black'
                         ]"
                         :content="t('notifications.controls.clearAll')"
+                        :aria-label="t('notifications.controls.clearAll')"
                         v-tippy="{
                             placement: 'bottom',
                             theme: 'ramp4',
                             animation: 'scale'
                         }"
                     >
-                        <!-- https://fonts.google.com/icons?selected=Material%20Icons%3Aclear_all -->
+                        <!-- https://fonts.google.com/icons?selected=Material%20Icons%3Aclear_allss -->
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24"

@@ -4,7 +4,8 @@
             class="m-0 py-1 w-1/2 rv-input bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
             :class="{ 'pointer-events-none': fixed }"
             type="date"
-            placeholder="date min"
+            :placeholder="t('grid.filters.date.min')"
+            :aria-label="t('grid.filters.date.min')"
             v-model="minVal"
             @input="minValChanged()"
             @mousedown.stop
@@ -16,12 +17,15 @@
             "
             enterkeyhint="done"
         />
+
         <span class="w-12" />
+
         <input
             class="m-0 py-1 w-1/2 rv-input bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
             :class="{ 'pointer-events-none': fixed }"
             type="date"
-            placeholder="date max"
+            :placeholder="t('grid.filters.date.max')"
+            :aria-label="t('grid.filters.date.max')"
             v-model="maxVal"
             @input="maxValChanged()"
             @mousedown.stop
@@ -38,6 +42,7 @@
 
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { ColumnDefinition, FilterParams } from '../table-component.vue';
 import { usePanelStore } from '@/stores/panel';
 
@@ -49,7 +54,7 @@ export interface GridCustomDateFilter {
 }
 
 const panelStore = usePanelStore();
-
+const { t } = useI18n();
 const props = defineProps(['params']);
 
 const minVal = ref<string>('');

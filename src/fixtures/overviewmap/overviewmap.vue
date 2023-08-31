@@ -26,6 +26,13 @@
                                 : 'overviewmap.minimize'
                         )
                     "
+                    :aria-label="
+                        t(
+                            minimized
+                                ? 'overviewmap.expand'
+                                : 'overviewmap.minimize'
+                        )
+                    "
                     v-tippy="{ placement: 'left', hideOnClick: false }"
                 >
                     <svg
