@@ -302,12 +302,13 @@ export class AttributeAPI extends APIScope {
             params.query.outSR = details.mapSR;
         }
 
-        // TODO investigate adding `geometryPrecision` to the param.
-        //      if we have bloated decimal places, this will drop them.
-        //      need to be careful of the units of the map and the current scale.
-        //      e.g. a basemap in lat long will certainly need decimal places.
-        //      could add this to the tile schema object of our config. if missing we omit, but allow
-        //      author to define a precision for better performance. could we apply that elsewhere? (e.g. featurelayers?)
+        // set geometry precision if value is a non-negative integer
+        if (
+            typeof details.geometryPrecision !== 'undefined' &&
+            details.geometryPrecision >= 0
+        ) {
+            params.query.geometryPrecision = details.geometryPrecision;
+        }
 
         const [err, serviceResult] = await to<__esri.RequestResponse>(
             EsriRequest(details.serviceUrl + '/query', params)
