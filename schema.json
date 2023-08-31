@@ -1926,6 +1926,38 @@
                     "default": false,
                     "description": "Specifies if the table should filter rows by extent by default."
                 },
+                "controls": {
+                    "type": "array",
+                    "description": "Which action buttons to display for each rows. Pre-defined strings are 'zoom' and 'details'. Other entries may be an object containing an event name, an icon and a tooltip.",
+                    "default": ["zoom", "details"],
+                    "items": {
+                        "oneOf": [
+                            {
+                                "type": "string",
+                                "default": "",
+                                "description": "Either 'zoom' or 'details', the default grid buttons."
+                            },
+                            {
+                                "type": "object",
+                                "description": "Specifies a custom grid row button.",
+                                "properties": {
+                                    "actionName": {
+                                        "type": "string",
+                                        "description": "The name of the event to raise when the button is clicked."
+                                    },
+                                    "icon": {
+                                        "type": "string",
+                                        "description": "Determines which icon to display for the button."
+                                    },
+                                    "tooltip": {
+                                        "type": "string",
+                                        "description": "The tooltip to display when the button is hovered."
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
                 "panelWidth": {
                     "$ref": "#/$defs/panelWidth"
                 }

@@ -66,9 +66,16 @@ export interface TableStateOptions {
     search: boolean;
     searchFilter: string;
     applyToMap: boolean;
+    controls: (string | actionButtonDefinition)[];
 }
 
 export interface AttributeMapPair {
     origAttr: string;
     mappedAttr: string | undefined;
+}
+
+export interface actionButtonDefinition {
+    actionName: string;
+    icon: string;
+    tooltip: string;
 }
