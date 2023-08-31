@@ -136,14 +136,19 @@ onMounted(() => {
         handlers.push(
             iApi.event.on(
                 GlobalEvents.MAP_BASEMAPCHANGE,
-                (payload: { basemapId: string; schemaChanged: boolean }) => {
+                async (payload: {
+                    basemapId: string;
+                    schemaChanged: boolean;
+                }) => {
                     if (!payload.schemaChanged && overviewMap.created) {
                         if (
                             activeBasemap.value &&
                             basemaps.value[activeBasemap.value.tileSchemaId] ===
                                 undefined
                         ) {
+                            await overviewMap.removeMapGraphicLayer();
                             overviewMap.setBasemap(payload.basemapId);
+                            await overviewMap.addMapGraphicLayer();
                         }
                     }
                 }

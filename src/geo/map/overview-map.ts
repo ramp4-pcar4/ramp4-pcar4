@@ -160,7 +160,7 @@ export class OverviewMapAPI extends CommonMapAPI {
         this.esriMap?.add(this.overviewGraphicLayer.esriLayer!);
     }
 
-    removeMapGraphicLayer() {
+    async removeMapGraphicLayer() {
         if (!this.esriMap) {
             this.noMapErr();
             return;
@@ -173,7 +173,7 @@ export class OverviewMapAPI extends CommonMapAPI {
         }
 
         this.overviewGraphicLayer.removeGraphic();
-        this.overviewGraphicLayer.terminate();
+        await this.overviewGraphicLayer.terminate();
         this.esriMap.remove(this.overviewGraphicLayer.esriLayer);
     }
 
@@ -187,8 +187,6 @@ export class OverviewMapAPI extends CommonMapAPI {
         this.esriView?.container.removeEventListener('touchmove', e => {
             e.preventDefault();
         });
-        // remove the extent graphic
-        this.removeMapGraphicLayer();
         super.destroyMapView();
     }
 
@@ -251,7 +249,6 @@ export class OverviewMapAPI extends CommonMapAPI {
         if (differentSchema) {
             this.destroyMapView();
             this.createMapView(bm);
-            this.addMapGraphicLayer();
         } else {
             this.applyBasemap(bm);
         }
