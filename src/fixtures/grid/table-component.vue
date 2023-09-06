@@ -675,6 +675,7 @@ const updateFilterInfo = () => {
             applyFiltersToMap();
         }
         nextTick(() => {
+            agGridOptions.value.api.refreshCells();
             updateRowInfo();
         });
     }
