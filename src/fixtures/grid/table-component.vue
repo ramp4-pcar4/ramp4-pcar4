@@ -675,6 +675,10 @@ const updateFilterInfo = () => {
             applyFiltersToMap();
         }
         nextTick(() => {
+            let cols = columnApi.value.getAllDisplayedColumns();
+            agGridOptions.value.api.refreshCells({
+                columns: [cols[0]] // Limits the refresh action to the row number column.
+            });
             updateRowInfo();
         });
     }
