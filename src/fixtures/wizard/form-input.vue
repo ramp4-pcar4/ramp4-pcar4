@@ -170,10 +170,16 @@
             <div class="relative mb-0.5">
                 <input
                     class="border-solid border-gray-300 p-3 w-full"
+                    :class="{ 'error-border': !valid && !modelValue }"
                     type="text"
                     :value="modelValue"
-                    @change="
-                        emit('text', ($event.target as HTMLInputElement).value)
+                    @change="valid ? (nameError = false) : (nameError = true)"
+                    @input="
+                        event => {
+                            validName((event.target as HTMLInputElement).value);
+                            emit('link', (event.target as HTMLInputElement).value, valid);
+                            nameError = false;
+                        }
                     "
                 />
             </div>
@@ -281,6 +287,7 @@ const props = defineProps({
 const el = ref();
 const valid = ref(false);
 const urlError = ref(false);
+const nameError = ref(false);
 const sublayersError = ref(false);
 const selected = ref<Array<string | number>>([]);
 const valueLabel = ref('value-label');
@@ -307,6 +314,14 @@ if (props.defaultOption && props.modelValue === '' && props.options.length) {
     }
     emit('update:modelValue', defaultValue);
 }
+
+const validName = (name: string) => {
+    if (name.trim() !== '') valid.value = true;
+    else {
+        valid.value = false;
+        iApi!.updateAlert(t('wizard.configure.name.error.required'));
+    }
+};
 
 const validUrl = (url: string) => {
     let newUrl;
@@ -392,5 +407,9 @@ onBeforeUnmount(() => {
 
 :deep(.vue-treeselect__input:focus) {
     @apply ring-transparent pl-0 #{!important};
+}
+
+.error-border {
+    border: 3px solid red;
 }
 </style>
