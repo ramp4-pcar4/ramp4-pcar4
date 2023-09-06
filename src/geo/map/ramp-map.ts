@@ -432,9 +432,68 @@ export class MapAPI extends CommonMapAPI {
                 this.$iApi.event.emit(GlobalEvents.MAP_REFRESH_END);
 
                 // go to equivalent extent in new projection
+
                 this.$iApi.geo.proj
                     .projectExtent(this._rampSR!, extent)
-                    .then(projExtent => this.zoomMapTo(projExtent));
+                    .then(projExtent => {
+                        let changed = false; // tracks if we do any extent clipping
+                        const instanceConfig = this.$iApi.getConfig();
+
+                        if (instanceConfig.map?.boundedReproject) {
+                            // if we've reprojected outside the "full extent" of the new schema,
+                            // crop the view to be within the full extent.
+                            // if we are totally outside, reset to full extent.
+
+                            const fullExt = this.getExtentSet().fullExtent;
+                            const newNums = projExtent.toArray(); // [xmin ymin] [xmax ymax]
+
+                            // TODO prob more elegant way to do this, but fast fix required.
+                            //      refactor later.
+                            if (projExtent.xmin < fullExt.xmin) {
+                                newNums[0][0] = fullExt.xmin;
+                                changed = true;
+                            }
+                            if (projExtent.ymin < fullExt.ymin) {
+                                newNums[0][1] = fullExt.ymin;
+                                changed = true;
+                            }
+                            if (projExtent.xmax > fullExt.xmax) {
+                                newNums[1][0] = fullExt.xmax;
+                                changed = true;
+                            }
+                            if (projExtent.ymax > fullExt.ymax) {
+                                newNums[1][1] = fullExt.ymax;
+                                changed = true;
+                            }
+
+                            if (changed) {
+                                let boundExt: Extent;
+                                // check if we went totally outside. we would have a max less/equal to the min
+                                if (
+                                    newNums[0][0] >= newNums[1][0] ||
+                                    newNums[0][1] >= newNums[1][1]
+                                ) {
+                                    // things are too wild. full reset
+
+                                    boundExt = fullExt;
+                                } else {
+                                    // just needed to clip the edges. enhance
+                                    boundExt = new Extent(
+                                        'r4clipExt',
+                                        newNums[0],
+                                        newNums[1],
+                                        projExtent.sr
+                                    );
+                                }
+                                this.zoomMapTo(boundExt);
+                            }
+                        }
+
+                        if (!changed) {
+                            // no trickery needed. use projected extent
+                            this.zoomMapTo(projExtent);
+                        }
+                    });
             });
         } else {
             // change the basemap

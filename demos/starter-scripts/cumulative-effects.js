@@ -33,6 +33,7 @@ const enConfig = {
                 }
             }
         ],
+        boundedReproject: true,
         caption: {
             mapCoords: {
                 formatter: 'WEB_MERCATOR'
@@ -259,23 +260,39 @@ const enConfig = {
             nameField: 'Initiative',
             layerType: 'esri-feature',
             expanded: true,
-            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/CE_MkIV/MapServer/3',
+            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/4',
             state: {
                 opacity: 0.6,
-                symbologyExpanded: true,
+                symbologyExpanded: false,
                 visibility: true
             },
             identifyMode: 'hybrid',
             customRenderer: {},
             expectedDrawTime: 20000,
-            expectedLoadTime: 20000
+            expectedLoadTime: 20000,
+            fieldMetadata: {
+                fieldInfo: [
+                    { name: 'Overarching_Initiative' },
+                    { name: 'Initiative' },
+                    { name: 'Description' },
+                    { name: 'Management_Assessment_or_Monitoring' },
+                    { name: 'Departments' },
+                    { name: 'Partners' },
+                    { name: 'Province_or_Territory' },
+                    { name: 'Relevant_Industry' },
+                    { name: 'OSDP_or_Open_Data_Links' },
+                    { name: 'Further_Information' },
+                    { name: 'Related_Initiatives' }
+                ],
+                exclusiveFields: true
+            }
         },
         {
             id: 'ce_multipoints',
             name: 'Initiatives - Multipoints',
             nameField: 'Initiative',
             layerType: 'esri-feature',
-            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/CE_MkIV/MapServer/2',
+            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/3',
             state: {
                 visibility: true
             },
@@ -288,7 +305,7 @@ const enConfig = {
             name: 'Initiatives - Lines',
             nameField: 'Initiative',
             layerType: 'esri-feature',
-            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/CE_MkIV/MapServer/1',
+            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/2',
             state: {
                 visibility: true
             },
@@ -301,7 +318,7 @@ const enConfig = {
             name: 'Initiatives - Points',
             nameField: 'Initiative',
             layerType: 'esri-feature',
-            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/CE_MkIV/MapServer/0',
+            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/1',
             state: {
                 visibility: true
             },
@@ -312,9 +329,9 @@ const enConfig = {
         {
             id: 'ce_table',
             name: 'Initiatives - Unmapped',
-            nameField: 'Initiative__EN_',
+            nameField: 'Initiative',
             layerType: 'data-esri-table',
-            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/CE_MkIV/MapServer/4',
+            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/10',
             state: {
                 visibility: true
             },
@@ -329,22 +346,22 @@ const enConfig = {
                     {
                         layerId: 'ce_polygons',
                         name: 'Initiatives - Polygons',
-                        symbologyExpanded: true
+                        symbologyExpanded: false
                     },
                     {
                         layerId: 'ce_multipoints',
                         name: 'Initiatives - Multipoints',
-                        symbologyExpanded: true
+                        symbologyExpanded: false
                     },
                     {
                         layerId: 'ce_lines',
                         name: 'Initiatives - Lines',
-                        symbologyExpanded: true
+                        symbologyExpanded: false
                     },
                     {
                         layerId: 'ce_points',
                         name: 'Initiatives - Points',
-                        symbologyExpanded: true
+                        symbologyExpanded: false
                     },
                     {
                         layerId: 'ce_table',
@@ -391,28 +408,9 @@ const enConfig = {
                                 title: 'Management',
                                 field: 'Management_Assessment_or_Monitoring'
                             },
-                            { width: 235, field: 'Partners' },
-                            // NOTE this only exists in the table layer. I expect it to be removed?
-                            {
-                                visible: false,
-                                field: 'Reporting_Department___Agency'
-                            }
+                            { width: 235, field: 'Partners' }
                         ]
-                    },
-                    // NOTE this is only required because our section917 table service has inconsistent field names.
-                    //      if that gets cleared up, we can drop this
-                    fieldMap: [
-                        { field: 'Initiative', sources: ['Initiative__EN_'] },
-                        { field: 'Description', sources: ['Description__EN_'] },
-                        {
-                            field: 'Management_Assessment_or_Monitoring',
-                            sources: ['Management__Assessment__or_Monitoring']
-                        },
-                        {
-                            field: 'Province_or_Territory',
-                            sources: ['Province___Territory']
-                        }
-                    ]
+                    }
                 }
             ]
         },
@@ -485,6 +483,7 @@ const frConfig = {
                 }
             }
         ],
+        boundedReproject: true,
         caption: {
             mapCoords: {
                 formatter: 'WEB_MERCATOR'
@@ -694,10 +693,10 @@ const frConfig = {
             nameField: 'Initiative',
             layerType: 'esri-feature',
             expanded: true,
-            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/CE_MkIV/MapServer/2',
+            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/9',
             state: {
                 opacity: 0.6,
-                symbologyExpanded: true,
+                symbologyExpanded: false,
                 visibility: true
             },
             identifyMode: 'hybrid',
@@ -710,7 +709,7 @@ const frConfig = {
             name: '[FR] Initiatives - Multipoints',
             nameField: 'Initiative',
             layerType: 'esri-feature',
-            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/CE_MkIV/MapServer/1',
+            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/8',
             state: {
                 visibility: true
             },
@@ -723,7 +722,7 @@ const frConfig = {
             name: 'Initiatives - Lines',
             nameField: 'Initiative',
             layerType: 'esri-feature',
-            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/CE_MkIV/MapServer/1',
+            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/7',
             state: {
                 visibility: true
             },
@@ -736,7 +735,7 @@ const frConfig = {
             name: '[FR] Initiatives - Points',
             nameField: 'Initiative',
             layerType: 'esri-feature',
-            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/CE_MkIV/MapServer/0',
+            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/6',
             state: {
                 visibility: true
             },
@@ -749,7 +748,7 @@ const frConfig = {
             name: '[FR] Initiatives - Unmapped',
             nameField: 'Initiative__EN_',
             layerType: 'data-esri-table',
-            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/CE_MkIV/MapServer/4',
+            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/11',
             state: {
                 visibility: true
             },
@@ -764,22 +763,22 @@ const frConfig = {
                     {
                         layerId: 'ce_polygons',
                         name: '[FR] Initiatives - Polygons',
-                        symbologyExpanded: true
+                        symbologyExpanded: false
                     },
                     {
                         layerId: 'ce_multipoints',
                         name: '[FR] Initiatives - Multipoints',
-                        symbologyExpanded: true
+                        symbologyExpanded: false
                     },
                     {
                         layerId: 'ce_lines',
                         name: '[FR] Initiatives - Lines',
-                        symbologyExpanded: true
+                        symbologyExpanded: false
                     },
                     {
                         layerId: 'ce_points',
                         name: '[FR] Initiatives - Points',
-                        symbologyExpanded: true
+                        symbologyExpanded: false
                     },
                     {
                         layerId: 'ce_table',
@@ -820,35 +819,9 @@ const frConfig = {
                         columns: [
                             { visible: false, field: 'Shape_Length' },
                             { visible: false, field: 'Shape_Area' },
-                            { visible: false, field: 'Department' },
-                            {
-                                width: 235,
-                                title: '[FR] Management',
-                                field: 'Management_Assessment_or_Monitoring'
-                            },
-                            { width: 235, field: 'Partners' },
-
-                            // NOTE this only exists in the table layer. I expect it to be removed?
-                            {
-                                visible: false,
-                                field: 'Reporting_Department___Agency'
-                            }
+                            { visible: false, field: 'Department' }
                         ]
-                    },
-                    // NOTE this is only required because our section917 table service has inconsistent field names.
-                    //      if that gets cleared up, we can drop this
-                    fieldMap: [
-                        { field: 'Initiative', sources: ['Initiative__EN_'] },
-                        { field: 'Description', sources: ['Description__EN_'] },
-                        {
-                            field: 'Management_Assessment_or_Monitoring',
-                            sources: ['Management__Assessment__or_Monitoring']
-                        },
-                        {
-                            field: 'Province_or_Territory',
-                            sources: ['Province___Territory']
-                        }
-                    ]
+                    }
                 }
             ]
         },

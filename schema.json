@@ -2670,6 +2670,11 @@
                     "default": 0,
                     "minimum": 0,
                     "description": "The amount of throttling (in milliseconds) to be used for the map mouse move event. A value of 0 means no throttle."
+                },
+                "boundedReproject": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "When the map changes to a new tile schema, if this flag is true and the reprojected extent is outside the new schemas full extent, it will be clipped to the fall within the full extent. If entirely outside the extent, will go to full extent."
                 }
             },
             "required": ["tileSchemas", "baseMaps"],

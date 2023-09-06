@@ -41,6 +41,7 @@ let config = {
                         imperialScale: true
                     }
                 },
+                boundedReproject: true,
                 mapMouseThrottle: 200,
                 lodSets: [
                     {
