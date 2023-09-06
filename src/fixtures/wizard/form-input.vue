@@ -10,8 +10,7 @@
                     accept=".geojson,.json,.csv,.zip"
                     @input="
                         event => {
-                            emit('upload', (event.target as HTMLInputElement).files![0]);
-                            (event.target as HTMLInputElement).value = '';
+                            handleUpload(event);
                         }
                     "
                 />
@@ -46,9 +45,7 @@
                     @change="valid ? (urlError = false) : (urlError = true)"
                     @input="
                         event => {
-                            validUrl((event.target as HTMLInputElement).value);
-                            emit('link', (event.target as HTMLInputElement).value, valid);
-                            urlError = false;
+                            handleUrlInput(event);
                         }
                     "
                 />
@@ -129,17 +126,7 @@
                         v-bind:class="size && 'configure-select'"
                         :size="size"
                         :value="modelValue"
-                        @input="
-                            size
-                                ? emit(
-                                      'select',
-                                      ($event.target as HTMLInputElement).value
-                                  )
-                                : emit(
-                                      'update:modelValue',
-                                      ($event.target as HTMLInputElement).value
-                                  )
-                        "
+                        @input="handleServiceSelection(size, $event)"
                     >
                         <option
                             class="p-6"
@@ -170,10 +157,14 @@
             <div class="relative mb-0.5">
                 <input
                     class="border-solid border-gray-300 p-3 w-full"
+                    :class="{ 'error-border': !valid && !modelValue }"
                     type="text"
                     :value="modelValue"
-                    @change="
-                        emit('text', ($event.target as HTMLInputElement).value)
+                    @change="valid ? (nameError = false) : (nameError = true)"
+                    @input="
+                        event => {
+                            handleNameInput(event);
+                        }
                     "
                 />
             </div>
@@ -281,6 +272,7 @@ const props = defineProps({
 const el = ref();
 const valid = ref(false);
 const urlError = ref(false);
+const nameError = ref(false);
 const sublayersError = ref(false);
 const selected = ref<Array<string | number>>([]);
 const valueLabel = ref('value-label');
@@ -308,6 +300,14 @@ if (props.defaultOption && props.modelValue === '' && props.options.length) {
     emit('update:modelValue', defaultValue);
 }
 
+const validName = (name: string) => {
+    if (name.trim() !== '') valid.value = true;
+    else {
+        valid.value = false;
+        iApi!.updateAlert(t('wizard.configure.name.error.required'));
+    }
+};
+
 const validUrl = (url: string) => {
     let newUrl;
     try {
@@ -319,6 +319,29 @@ const validUrl = (url: string) => {
 
     const link = newUrl.protocol === 'http:' || newUrl.protocol === 'https:';
     link ? (valid.value = true) : (valid.value = false);
+};
+
+const handleUpload = (event: Event) => {
+    emit('upload', (event.target as HTMLInputElement).files![0]);
+    (event.target as HTMLInputElement).value = '';
+};
+
+const handleUrlInput = (event: Event) => {
+    validUrl((event.target as HTMLInputElement).value);
+    emit('link', (event.target as HTMLInputElement).value, valid);
+    urlError.value = false;
+};
+
+const handleServiceSelection = (size: string | number, event: Event) => {
+    size
+        ? emit('select', (event.target as HTMLInputElement).value)
+        : emit('update:modelValue', (event.target as HTMLInputElement).value);
+};
+
+const handleNameInput = (event: Event) => {
+    validName((event.target as HTMLInputElement).value);
+    emit('link', (event.target as HTMLInputElement).value, valid);
+    nameError.value = false;
 };
 
 const handleSelection = () => {
@@ -392,5 +415,9 @@ onBeforeUnmount(() => {
 
 :deep(.vue-treeselect__input:focus) {
     @apply ring-transparent pl-0 #{!important};
+}
+
+.error-border {
+    border: 3px solid red;
 }
 </style>
