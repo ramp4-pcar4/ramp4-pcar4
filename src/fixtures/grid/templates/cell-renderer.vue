@@ -6,6 +6,7 @@
                     placement: 'top',
                     hideOnClick: false,
                     theme: 'ramp4',
+                    maxWidth: mobileMode ? 300 : 500, // remove this once scrollable tooltip option is implemented
                     animation: 'scale',
                     interactive: containsLinks
                 }
@@ -36,7 +37,9 @@ import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
 import type { InstanceAPI } from '@/api';
 import linkifyHtml from 'linkify-html';
 import { useI18n } from 'vue-i18n';
+import { usePanelStore } from '@/stores/panel';
 
+const panelStore = usePanelStore();
 const iApi = inject<InstanceAPI>('iApi')!;
 const { t } = useI18n();
 const copyTooltip = ref<HTMLElement>();
@@ -44,6 +47,8 @@ const el = ref<HTMLElement>();
 const isCopied = ref<boolean>(false);
 
 const props = defineProps(['params']);
+
+const mobileMode = computed(() => panelStore.mobileView);
 
 const copy = () => {
     if (!el.value?.textContent) {
