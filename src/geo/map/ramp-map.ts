@@ -418,7 +418,8 @@ export class MapAPI extends CommonMapAPI {
             // reset the view promise and created flag before firing the event
 
             // store extent prior to reprojection
-            const extent = this.getExtent();
+            const center = this.getExtent().center();
+            const scale = this.getScale();
 
             this._viewPromise = new DefPromise();
             this.created = false;
@@ -431,10 +432,14 @@ export class MapAPI extends CommonMapAPI {
             this.viewPromise.then(() => {
                 this.$iApi.event.emit(GlobalEvents.MAP_REFRESH_END);
 
+                const newScale = this.findClosestScale(scale);
+
                 // go to equivalent extent in new projection
                 this.$iApi.geo.proj
-                    .projectExtent(this._rampSR!, extent)
-                    .then(projExtent => this.zoomMapTo(projExtent));
+                    .projectGeometry(this._rampSR!, center)
+                    .then(projPoint =>
+                        this.zoomMapTo(projPoint, newScale, false)
+                    );
             });
         } else {
             // change the basemap
@@ -847,6 +852,28 @@ export class MapAPI extends CommonMapAPI {
     }
 
     /**
+     * Finds the tile scale (level of detail) closest to the provided scale.
+     * If using a map with no scale levels, will return the given scale.
+     *
+     * @function findClosestScale
+     * @param  {Number} scale   scale value to search for in the levels of detail
+     * @return {Number}         the level of detail scale closest to the input
+     */
+    findClosestScale(scale: number): number {
+        const lods = this.esriView?.constraints.lods;
+
+        if (!lods) {
+            return scale;
+        }
+        // array of "distance" between LODs and given scale
+        const diffs = lods.map(lod => Math.abs(lod.scale - scale));
+
+        // find closest LOD, return scale
+        const lodIdx = diffs.indexOf(Math.min(...diffs));
+        return lods[lodIdx].scale;
+    }
+
+    /**
      * Create a screenshot of the current view.
      *
      * Possible ESRI takeScreenshot() options:
@@ -1202,6 +1229,10 @@ export class MapAPI extends CommonMapAPI {
             };
         }
     }
+
+    // -------
+    // Key Handler Fun
+    // -------
 
     // list of keys that are currently pressed
     private _activeKeys: string[] = [];
