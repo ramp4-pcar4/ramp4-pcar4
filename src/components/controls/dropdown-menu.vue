@@ -5,6 +5,7 @@
             class="text-gray-500 hover:text-black dropdown-button"
             @click="open = !open"
             :content="tooltip"
+            :aria-label="String(tooltip)"
             v-tippy="{
                 placement: tooltipPlacement,
                 theme: tooltipTheme,

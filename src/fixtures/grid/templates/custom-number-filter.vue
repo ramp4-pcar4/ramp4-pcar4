@@ -16,8 +16,10 @@
             "
             enterkeyhint="done"
             :placeholder="t('grid.filters.number.min')"
+            :aria-label="t('grid.filters.number.min')"
         />
         <span class="w-12" />
+
         <input
             class="rv-max rv-input bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
             :class="{ 'pointer-events-none': fixed }"
@@ -34,6 +36,7 @@
             "
             enterkeyhint="done"
             :placeholder="t('grid.filters.number.max')"
+            :aria-label="t('grid.filters.number.max')"
         />
     </div>
 </template>

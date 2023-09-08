@@ -141,6 +141,7 @@
                         class="p-4 h-40 text-gray-500 hover:text-black"
                         @click="clearSearchAndFilters()"
                         :content="t('grid.clearAll')"
+                        :aria-label="t('grid.clearAll')"
                         v-tippy="{
                             placement: 'bottom'
                         }"
@@ -355,7 +356,7 @@ import { AgGridVue } from 'ag-grid-vue3';
 import ColumnDropdown from './column-dropdown.vue';
 import { useGridStore, type AttributeMapPair } from './store';
 import { usePanelStore } from '@/stores/panel';
-import type { GridConfig } from './store';
+import type { ActionButtonDefinition, GridConfig } from './store';
 import TableStateManager from './store/table-state-manager';
 import ColumnStateManager from './store/column-state-manager';
 import {
@@ -375,6 +376,7 @@ import GridCustomHeaderV from './templates/custom-header.vue';
 // grid button templates
 import DetailsButtonRendererV from './templates/details-button-renderer.vue';
 import ZoomButtonRendererV from './templates/zoom-button-renderer.vue';
+import CustomButtonRendererV from './templates/custom-button-renderer.vue';
 import CellRendererV from './templates/cell-renderer.vue';
 import { CoreFilter, FieldType } from '@/geo/api';
 
@@ -850,6 +852,8 @@ const setUpSpecialColumns = (
 
     // Set up the interactive column that contains the zoom and details button.
     if (col.field === 'rvInteractive') {
+        const buttonControls = config.value.state.controls;
+
         let detailsDef = {
             sortable: false,
             pinned: 'left',
@@ -870,7 +874,11 @@ const setUpSpecialColumns = (
                 isTeleport: props.panel.teleport !== undefined
             }
         };
-        colDef.push(detailsDef);
+
+        // Only add this button if it is defined in the grid controls.
+        if (buttonControls.includes('details')) {
+            colDef.push(detailsDef);
+        }
 
         // only render the zoom buttons if there is at least one map layer in the grid
         if (hasMapLayers.value) {
@@ -893,8 +901,43 @@ const setUpSpecialColumns = (
                     isTeleport: props.panel.teleport !== undefined
                 }
             };
-            colDef.push(zoomDef);
+
+            // Only add this button if it is defined in the grid controls.
+            if (buttonControls.includes('zoom')) {
+                colDef.push(zoomDef);
+            }
         }
+
+        // Handle custom buttons.
+        buttonControls.forEach(
+            (buttonConfig: string | ActionButtonDefinition) => {
+                if (buttonConfig === 'zoom' || buttonConfig === 'details')
+                    return;
+
+                let buttonDef = {
+                    sortable: false,
+                    pinned: 'left',
+                    filter: false,
+                    lockPosition: true,
+                    isStatic: true,
+                    maxWidth: 42,
+                    cellStyle: () => {
+                        return {
+                            padding: '0px'
+                        };
+                    },
+                    cellRenderer: CustomButtonRendererV,
+                    cellRendererParams: {
+                        $iApi: iApi,
+                        t: t,
+                        layerCols: layerCols.value,
+                        config: buttonConfig
+                    }
+                };
+
+                colDef.push(buttonDef);
+            }
+        );
     }
 
     // Set up the symbol column.

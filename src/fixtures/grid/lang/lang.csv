@@ -23,6 +23,8 @@ grid.filters.column.label.text,Search {0}...,1,Rechercher {0}...,1
 grid.filters.clear,Clear filters,1,Supprimer les filtres,1
 grid.filters.number.max,Max,1,Max,1
 grid.filters.number.min,Min,1,Min,1
+grid.filters.date.max,Max Date,1,Max Date,0
+grid.filters.date.min,Min Date,1,Min Date,0
 grid.filters.label.info,{range} of {total} entries shown,1,{range} de {total} saisies affichées,1
 grid.filters.label.filtered,(filtered from {max} total entries),1,(filtré à partir d'un total de {max} saisies),1
 grid.filters.extent,Filter by extent,1,Filtrer par étendue,1

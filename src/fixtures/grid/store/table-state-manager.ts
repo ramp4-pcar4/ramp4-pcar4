@@ -1,5 +1,5 @@
 import ColumnStateManager from '../store/column-state-manager';
-import type { TableStateOptions } from './grid-state';
+import type { ActionButtonDefinition, TableStateOptions } from './grid-state';
 
 /**
  * Saves relevant enhancedTable states so that it can be reset on reload/reopen. A PanelStateManager is linked to a BaseLayer.
@@ -21,6 +21,7 @@ export default class TableStateManager {
         this._search = options?.search ?? true;
         this._searchFilter = options?.searchFilter ?? '';
         this._applyToMap = options?.applyToMap ?? false;
+        this._controls = options?.controls ?? ['zoom', 'details'];
 
         this.parsecolumns();
     }
@@ -268,6 +269,15 @@ export default class TableStateManager {
     set columns(val) {
         this._columns = val;
     }
+
+    /**
+     * Returns an array of grid action buttons.
+     *
+     * @memberof TableStateManager
+     */
+    get controls() {
+        return this._controls;
+    }
 }
 
 export default interface TableStateManager {
@@ -281,4 +291,5 @@ export default interface TableStateManager {
     _search: boolean;
     _searchFilter: string;
     _applyToMap: boolean;
+    _controls: (string | ActionButtonDefinition)[];
 }
