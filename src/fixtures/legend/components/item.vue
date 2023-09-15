@@ -683,9 +683,6 @@ const toggleExpand = () => {
         return;
     }
     props.legendItem.toggleExpanded();
-    nextTick(() =>
-        el.value.querySelector('.legend-group')?.scrollIntoView(false)
-    );
     iApi.updateAlert(
         t(
             `legend.alert.group${
@@ -700,9 +697,6 @@ const toggleExpand = () => {
 const toggleSymbology = (): void => {
     if (controlAvailable(LayerControl.Symbology)) {
         const expanded = (props.legendItem as LayerItem).toggleSymbology();
-        nextTick(() =>
-            el.value.querySelector('.symbology-stack')?.scrollIntoView(false)
-        );
         iApi.updateAlert(
             t(`legend.alert.symbology${expanded ? 'Expanded' : 'Collapsed'}`)
         );
