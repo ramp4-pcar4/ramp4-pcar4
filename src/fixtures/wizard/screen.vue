@@ -489,7 +489,9 @@ const onUploadContinue = (event: any) => {
     wizardStore.goToStep(WizardStep.FORMAT);
 };
 
-const onSelectContinue = async () => {
+const onSelectContinue = async (event: any) => {
+    event?.preventDefault();
+
     disabled.value = true;
     failureError.value = false;
     validation.value = true;
@@ -546,7 +548,10 @@ const onSelectContinue = async () => {
     validation.value = false;
 };
 
-const onConfigureContinue = async (data: object) => {
+const onConfigureContinue = async (data: any) => {
+    // Prevent the page from refreshing when pressing ENTER.
+    data?.preventDefault();
+
     const config: RampLayerConfig = Object.assign(
         layerInfo.value!.config,
         data
