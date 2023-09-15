@@ -34,12 +34,7 @@
                         />
                         <wizard-form-footer
                             @submit="onUploadContinue"
-                            @cancel="
-                                () => {
-                                    goNext = false;
-                                    wizardStore.goToStep(0);
-                                }
-                            "
+                            @cancel="cancelServiceStep"
                             :disabled="!goNext"
                         />
                     </form>
@@ -143,7 +138,7 @@
                             type="text"
                             name="name"
                             v-model="layerInfo.config.name"
-                            @text="updateLayerName"
+                            @link="updateLayerName"
                             :label="t('wizard.configure.name.label')"
                             :validation="true"
                             :validation-messages="{
@@ -268,7 +263,7 @@
                         </ColorPicker>
                         <wizard-form-footer
                             @submit="onConfigureContinue"
-                            @cancel="wizardStore.goToStep(1)"
+                            @cancel="cancelNameStep"
                             :disabled="!finishStep"
                         />
                     </form>
@@ -542,9 +537,10 @@ const onSelectContinue = async () => {
 
     wizardStore.goToStep(WizardStep.CONFIGURE);
 
-    layerInfo.value.configOptions.includes(`sublayers`)
-        ? (finishStep.value = false)
-        : (finishStep.value = true);
+    finishStep.value = !(
+        layerInfo.value.configOptions.includes('sublayers') ||
+        !layerInfo.value!.config.name
+    );
 
     disabled.value = false;
     validation.value = false;
@@ -608,9 +604,9 @@ const updateTypeSelection = (type: string) => {
 };
 
 const updateLayerName = (name: string) => {
-    layerInfo.value!.config.name = name;
+    layerInfo.value!.config.name = name.trim();
     const sublayers = layerInfo.value?.config.sublayers;
-    const canFinish = sublayers ? name && sublayers.length > 0 : name;
+    const canFinish = sublayers ? name && sublayers.length > 0 : name.trim();
     canFinish ? (finishStep.value = true) : (finishStep.value = false);
 };
 
@@ -646,6 +642,16 @@ const updateColour = (eventData: any) => {
             '.vacp-copy-button'
         )!.style.backgroundColor = layerInfo.value?.config.colour;
     });
+};
+
+const cancelServiceStep = () => {
+    goNext.value = false;
+    wizardStore.goToStep(0);
+};
+
+const cancelNameStep = () => {
+    finishStep.value = false;
+    wizardStore.goToStep(1);
 };
 </script>
 
