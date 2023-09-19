@@ -85,7 +85,7 @@ An example of a layer with a configured grid is below
 
 ```
 const config = {
-    layers: {
+    layers: [
         {
             ... layer configurations
             fixtures: {
@@ -96,7 +96,7 @@ const config = {
                 }
             }
         }
-    }
+    ]
 }
 ```
 
@@ -121,7 +121,7 @@ An example of a datatable with a single configured column is below
 
 ```
 const config = {
-    layers: {
+    layers: [
         {
             ... layer configurations
             fixtures: {
@@ -141,7 +141,7 @@ const config = {
                 }
             }
         }
-    }
+    ]
 }
 ```
 
