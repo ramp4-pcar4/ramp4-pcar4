@@ -47,7 +47,7 @@
             </select>
             <button
                 type="button"
-                class="text-gray-400 w-1/8 h-24 pl-8 pr-16 sm:pr-8 hover:text-black disabled:cursor-default disabled:text-gray-400"
+                class="text-gray-500 w-1/8 h-24 pl-8 pr-16 sm:pr-8 hover:text-black disabled:cursor-default disabled:text-gray-300"
                 :disabled="!queryParams.type && !queryParams.province"
                 v-on:click="clearFilters"
                 :content="t('geosearch.filters.clear')"
