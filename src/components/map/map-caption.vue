@@ -67,7 +67,7 @@
                 class="flex-shrink-0 mx-2 sm:mx-10 px-4 pointer-events-auto cursor-pointer border-none"
                 @click="onScaleClick"
                 :aria-pressed="scale?.isImperialScale"
-                :aria-label="t('map.toggleScaleUnits')"
+                :aria-label="changeScaleMessage(scale?.isImperialScale)"
                 v-tippy="{
                     delay: [300, 0],
                     placement: 'top',
@@ -76,7 +76,7 @@
                     animation: 'scale',
                     touch: ['hold', 200]
                 }"
-                :content="t('map.toggleScaleUnits')"
+                :content="changeScaleMessage(scale?.isImperialScale)"
             >
                 <span
                     class="border-solid border-2 border-white border-t-0 h-5 mr-4 inline-block"
@@ -193,6 +193,15 @@ const onScaleClick = () => {
     // undefined argument will toggle the scale unit
     mapCaptionStore.toggleScale();
     iApi.geo.map.caption.updateScale();
+};
+
+/**
+ * Show different scale messages based on the current scale
+ */
+const changeScaleMessage = (isImperialScale: boolean = false) => {
+    return isImperialScale
+        ? t('map.toggleScaleToMetric')
+        : t('map.toggleScaleToImperial');
 };
 </script>
 
