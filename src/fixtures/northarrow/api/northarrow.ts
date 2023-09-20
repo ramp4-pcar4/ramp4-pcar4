@@ -14,7 +14,7 @@ export class NortharrowAPI extends FixtureInstance {
 
         if (!northarrowConfig) return;
         northarrowStore.arrowIcon = northarrowConfig.arrowIcon;
-        northarrowStore.poleIcon, northarrowConfig.poleIcon;
+        northarrowStore.poleIcon = northarrowConfig.poleIcon;
     }
 
     get config(): NortharrowConfig {
