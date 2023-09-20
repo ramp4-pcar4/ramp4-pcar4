@@ -4,21 +4,23 @@
         <button
             type="button"
             @click="toggleWizard"
-            class="relative mr-auto text-gray-500 hover:text-black mb-3"
+            class="relative mr-auto text-gray-500 hover:text-black"
             v-show="getWizardExists() && isControlAvailable('wizard')"
             :content="t('legend.header.addlayer')"
             :aria-label="t('legend.header.addlayer')"
             v-tippy="{ placement: 'right' }"
         >
-            <svg class="fill-current w-18 h-18 mx-8" viewBox="0 0 23 21">
-                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
-            </svg>
+            <div class="p-8">
+                <svg class="fill-current w-18 h-18" viewBox="0 0 23 21">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
+                </svg>
+            </div>
         </button>
         <!-- open layer reorder -->
         <button
             type="button"
             @click="toggleLayerReorder"
-            class="relative mr-auto text-gray-500 hover:text-black p-8 mb-3"
+            class="relative mr-auto text-gray-500 hover:text-black"
             v-show="
                 getLayerReorderExists() && isControlAvailable('layerReorder')
             "
@@ -26,15 +28,14 @@
             :aria-label="t('legend.header.reorderlayers')"
             v-tippy="{ placement: 'right' }"
         >
-            <svg
-                class="fill-current w-18 h-18 mx-8 mt-4 flip"
-                viewBox="0 0 23 21"
-            >
-                <path d="M0 0h24v24H0z" fill="none" />
-                <path
-                    d="M14 5h8v2h-8zm0 5.5h8v2h-8zm0 5.5h8v2h-8zM2 11.5C2 15.08 4.92 18 8.5 18H9v2l3-3-3-3v2h-.5C6.02 16 4 13.98 4 11.5S6.02 7 8.5 7H12V5H8.5C4.92 5 2 7.92 2 11.5z"
-                />
-            </svg>
+            <div class="p-8">
+                <svg class="fill-current w-18 h-18 flip" viewBox="0 0 23 21">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path
+                        d="M14 5h8v2h-8zm0 5.5h8v2h-8zm0 5.5h8v2h-8zM2 11.5C2 15.08 4.92 18 8.5 18H9v2l3-3-3-3v2h-.5C6.02 16 4 13.98 4 11.5S6.02 7 8.5 7H12V5H8.5C4.92 5 2 7.92 2 11.5z"
+                    />
+                </svg>
+            </div>
         </button>
         <span class="flex-1"></span>
         <!-- groups toggle -->
@@ -47,10 +48,7 @@
         >
             <template #header>
                 <div class="p-8">
-                    <svg
-                        class="fill-current w-18 h-18 mx-8"
-                        viewBox="0 0 23 21"
-                    >
+                    <svg class="fill-current w-18 h-18" viewBox="0 0 23 21">
                         <path
                             d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"
                         />

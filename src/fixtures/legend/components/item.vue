@@ -6,14 +6,13 @@
     >
         <div class="relative">
             <div
-                class="flex items-center hover:bg-gray-200"
+                class="flex items-center hover:bg-gray-200 !p-5"
                 :class="[
                     legendItem.type === LegendType.Item
                         ? 'loaded-item default-focus-style'
                         : legendItem.type === LegendType.Error
                         ? 'non-loaded-item bg-red-200'
                         : 'non-loaded-item',
-                    legendItem instanceof LayerItem ? 'p-5' : 'px-5 py-10',
                     (isGroup && controlAvailable(LegendControl.Expand)) ||
                     (!isGroup &&
                         legendItem instanceof LayerItem &&
