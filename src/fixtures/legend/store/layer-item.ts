@@ -93,6 +93,7 @@ export class LayerItem extends LegendItem {
         this._layerId = layer.id;
         this._layerIdx = layer.layerIdx;
         this._layerUid = layer.uid;
+        this._name = layer.name;
         this._symbologyStack = this._customSymbology
             ? this._symbologyStack
             : layer.legend; // set this item's symbology stack to layer's default if undefined in config
