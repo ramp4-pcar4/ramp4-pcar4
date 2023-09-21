@@ -12,7 +12,8 @@ keyboardInstructions.app,"Use 'Tab' to navigate between sections of the applicat
 keyboardInstructions.lists,"Use the arrow keys to move between items in lists. With a list item selected you can press 'Space' or 'Enter' to click the item. You can also navigate within the list item using 'Tab'.",1,"Lorsqu'un élément de la liste est sélectionné, vous pouvez appuyer sur « Espace » ou « Entrée » pour cliquer sur l'élément. Vous pouvez également vous déplacer au sein de l'élément de la liste au moyen de la touche « Tab ».",1
 keyboardInstructions.map,"When the map is selected, use the arrow keys to move around and 'Enter' to select a point.",1,"Lorsque la carte est sélectionnée, utilisez le pavé curseur pour vous déplacer et appuyez sur « Entrée »  pour sélectionner un point.",1
 keyboardInstructions.OK,OK,1,OK,1
-map.toggleScaleUnits,Toggle between imperial and metric map scale,1,Basculer entre les échelles métriques et impériales pour la carte,1
+map.toggleScaleToMetric,Switch to metric map scale,1,Passer à l'échelle métrique de la carte,0
+map.toggleScaleToImperial,Switch to imperial map scale,1,Passer à l'échelle impériale de la carte,0
 map.coordinates.east,E,1,E,1
 map.coordinates.west,W,1,O,1
 map.coordinates.north,N,1,N,1
