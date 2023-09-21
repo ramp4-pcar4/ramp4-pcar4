@@ -142,6 +142,9 @@ export class LegendAPI extends FixtureInstance {
         // will be in a placeholder state until the layer is loaded
         this._insertItem(item as unknown as LegendItem, parent);
 
+        // Updates the legend with the inserted item
+        this.updateLegend(layer);
+
         if (layer.supportsSublayers) {
             // if layer supports sublayers, then we need to parse the
             // layer tree after loading and generate the children
