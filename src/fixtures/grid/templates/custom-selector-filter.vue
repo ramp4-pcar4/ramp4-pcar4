@@ -2,11 +2,14 @@
     <div class="h-full flex items-center justify-center">
         <select
             class="rv-input w-full bg-white text-black-75 h-24 py-0 px-8 border-2 rounded"
-            :class="{ 'pointer-events-none': fixed }"
+            :class="{
+                'cursor-not-allowed': fixed
+            }"
             v-model="selectedOption"
             @change="selectionChanged()"
             @mousedown.stop
             :aria-label="selectedOption"
+            :disabled="fixed"
         >
             <option v-for="option in options" :value="option" :key="option">
                 {{ option }}
