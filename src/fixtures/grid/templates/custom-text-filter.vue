@@ -2,7 +2,9 @@
     <div class="h-full flex items-center justify-center">
         <input
             class="rv-input w-full bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
-            :class="{ 'pointer-events-none': fixed }"
+            :class="{
+                'cursor-not-allowed': fixed
+            }"
             type="text"
             @input="valueChanged()"
             v-model="filterValue"
@@ -24,6 +26,7 @@
                     params.column.colDef.headerName
                 ])
             "
+            :disabled="fixed"
         />
     </div>
 </template>

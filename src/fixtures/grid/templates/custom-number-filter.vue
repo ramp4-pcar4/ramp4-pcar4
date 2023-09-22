@@ -2,7 +2,9 @@
     <div class="h-full flex items-center justify-center">
         <input
             class="rv-min rv-input bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
-            :class="{ 'pointer-events-none': fixed }"
+            :class="{
+                'cursor-not-allowed': fixed
+            }"
             style="width: 45%"
             type="number"
             v-model="minVal"
@@ -17,12 +19,15 @@
             enterkeyhint="done"
             :placeholder="t('grid.filters.number.min')"
             :aria-label="t('grid.filters.number.min')"
+            :disabled="fixed"
         />
         <span class="w-12" />
 
         <input
             class="rv-max rv-input bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
-            :class="{ 'pointer-events-none': fixed }"
+            :class="{
+                'cursor-not-allowed': fixed
+            }"
             style="width: 45%"
             type="number"
             v-model="maxVal"
@@ -37,6 +42,7 @@
             enterkeyhint="done"
             :placeholder="t('grid.filters.number.max')"
             :aria-label="t('grid.filters.number.max')"
+            :disabled="fixed"
         />
     </div>
 </template>

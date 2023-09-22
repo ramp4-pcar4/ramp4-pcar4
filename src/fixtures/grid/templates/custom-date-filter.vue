@@ -2,7 +2,9 @@
     <div class="h-full flex items-center justify-center w-full">
         <input
             class="m-0 py-1 w-1/2 rv-input bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
-            :class="{ 'pointer-events-none': fixed }"
+            :class="{
+                'cursor-not-allowed': fixed
+            }"
             type="date"
             :placeholder="t('grid.filters.date.min')"
             :aria-label="t('grid.filters.date.min')"
@@ -16,13 +18,16 @@
                 }
             "
             enterkeyhint="done"
+            :disabled="fixed"
         />
 
         <span class="w-12" />
 
         <input
             class="m-0 py-1 w-1/2 rv-input bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
-            :class="{ 'pointer-events-none': fixed }"
+            :class="{
+                'cursor-not-allowed': fixed
+            }"
             type="date"
             :placeholder="t('grid.filters.date.max')"
             :aria-label="t('grid.filters.date.max')"
