@@ -41,6 +41,7 @@
                 }
             "
             enterkeyhint="done"
+            :disabled="fixed"
         />
     </div>
 </template>
