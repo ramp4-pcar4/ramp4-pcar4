@@ -45,14 +45,14 @@ const r2config = {
         search: {
             serviceUrls: {
                 geoNames:
-                    'http://geogratis.gc.ca/services/geoname/en/geonames.json',
+                    'https://geogratis.gc.ca/services/geoname/en/geonames.json',
                 geoLocation:
-                    'http://geogratis.gc.ca/services/geolocation/en/locate?q=',
+                    'https://geogratis.gc.ca/services/geolocation/en/locate?q=',
                 geoSuggest:
-                    'http://geogratis.gc.ca/services/geolocation/en/suggest?q=',
+                    'https://geogratis.gc.ca/services/geolocation/en/suggest?q=',
                 provinces:
-                    'http://geogratis.gc.ca/services/geoname/en/codes/province.json',
-                types: 'http://geogratis.gc.ca/services/geoname/en/codes/concise.json'
+                    'https://geogratis.gc.ca/services/geoname/en/codes/province.json',
+                types: 'https://geogratis.gc.ca/services/geoname/en/codes/concise.json'
             }
         }
     },
