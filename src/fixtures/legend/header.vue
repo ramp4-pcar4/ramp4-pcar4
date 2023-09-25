@@ -100,14 +100,14 @@
             </template>
             <a
                 href="javascript:;"
-                class="flex leading-snug items-center w-100 overflow-hidden whitespace-nowrap"
+                class="flex leading-snug items-center overflow-hidden whitespace-nowrap"
                 @click="legendApi.showItems(true)"
             >
                 {{ t('legend.header.visible.show') }}
             </a>
             <a
                 href="javascript:;"
-                class="flex leading-snug items-center w-100 overflow-hidden whitespace-nowrap"
+                class="flex leading-snug items-center overflow-hidden whitespace-nowrap"
                 @click="legendApi.showItems(false)"
             >
                 {{ t('legend.header.visible.hide') }}
