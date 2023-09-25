@@ -6,6 +6,7 @@ import messages from './lang/lang.csv?raw';
 /* import sub fixtures */
 import type ExportLegendFixture from '../export-legend';
 import type ExportMapFixture from '../export-map';
+import type ExportTimestampFixture from '../export-timestamp';
 import type ExportTitleFixture from '../export-title';
 import type ExportNorthArrowFixture from '../export-northarrow';
 import type ExportScalebarFixture from '../export-scalebar';
@@ -20,6 +21,7 @@ class ExportFixture extends ExportAPI {
         this.$iApi.fixture.add('export-legend');
         this.$iApi.fixture.add('export-northarrow');
         this.$iApi.fixture.add('export-scalebar');
+        this.$iApi.fixture.add('export-timestamp');
     }
 
     added(): void {
@@ -70,6 +72,9 @@ class ExportFixture extends ExportAPI {
                 ?.remove();
             this.$iApi.fixture
                 .get<ExportScalebarFixture>('export-scalebar')
+                ?.remove();
+            this.$iApi.fixture
+                .get<ExportTimestampFixture>('export-timestamp')
                 ?.remove();
 
             if (this.$iApi.fixture.get('appbar')) {
