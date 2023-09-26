@@ -5,7 +5,6 @@ import { APIScope, GlobalEvents, InstanceAPI, LayerInstance } from './internal';
 import { useConfigStore } from '@/stores/config';
 import type { FixtureBase } from '@/stores/fixture';
 import { useFixtureStore } from '@/stores/fixture';
-import type { RampConfig } from '@/types';
 import { usePanelStore } from '@/stores/panel';
 
 const fixtureModules = import.meta.glob<{ default: typeof FixtureInstance }>(
@@ -397,7 +396,6 @@ export class FixtureInstance extends APIScope implements FixtureBase {
      */
     getLayerFixtureConfigs(): { [layerId: string]: any } {
         const fixtureConfigs: { [layerId: string]: any } = {};
-        const layerStore = (this as any).$iApi.useStore('layer');
 
         const layerCrawler = (layer: any, parent: any = undefined) => {
             if (layer.fixtures && layer.fixtures[this.id] !== undefined) {
@@ -418,9 +416,9 @@ export class FixtureInstance extends APIScope implements FixtureBase {
         };
 
         // Crawl through the layer store and check for layers that may have a custom config.
-        layerStore.layers?.forEach((layer: LayerInstance) =>
-            layerCrawler(layer.config)
-        );
+        this.$iApi.geo.layer
+            .allLayers()
+            .forEach((layer: LayerInstance) => layerCrawler(layer.config));
 
         return fixtureConfigs;
     }

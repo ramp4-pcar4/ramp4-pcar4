@@ -176,7 +176,7 @@ export class SimpleRenderer extends BaseRenderer {
         const su = new BaseSymbolUnit(this);
         su.label = esriRenderer.label || '';
         su.symbol = esriRenderer.symbol;
-        su.definitionClause = '1=1';
+        su.definitionClause = '';
 
         this.symbolUnits.push(su);
     }

@@ -266,7 +266,8 @@
                     </button>
                 </div>
 
-                <!-- cancel for loading and error'd items -->
+                <!-- Button only appears for loading or errored LayerItems -->
+                <!-- Morphs depending on state. Cancel for loading, Remove for Errored -->
                 <div
                     v-if="
                         legendItem.type !== LegendType.Item &&
@@ -286,7 +287,7 @@
                             placement: 'top-start'
                         }"
                         @mouseover.stop
-                        @click.stop="cancelLayer"
+                        @click.stop="cancelOrRemoveLayer"
                     >
                         <div class="flex p-8">
                             <svg
@@ -572,16 +573,8 @@ import { LayerControl } from '@/geo/api';
 import { useLayerStore } from '@/stores/layer';
 import to from 'await-to-js';
 import { marked } from 'marked';
-import {
-    toRaw,
-    computed,
-    inject,
-    nextTick,
-    onMounted,
-    ref,
-    type PropType,
-    watch
-} from 'vue';
+import type { PropType } from 'vue';
+import { toRaw, computed, inject, ref, watch } from 'vue';
 import { LayerItem } from '../store/layer-item';
 import { LegendControl, LegendType } from '../store/legend-item';
 import { InfoType, SectionItem } from '../store/section-item';
@@ -774,18 +767,7 @@ const reloadLayer = () => {
         (props.legendItem as LayerItem)._loadCancelled = false;
         // call reload on layer if it exists
         if ((props.legendItem as LayerItem).layer !== undefined) {
-            toRaw((props.legendItem as LayerItem).layer!)
-                .reload()
-                .then(() =>
-                    layerStore.removeErrorLayer(
-                        (props.legendItem as LayerItem).layer
-                    )
-                )
-                .catch(() =>
-                    layerStore.addErrorLayer(
-                        (props.legendItem as LayerItem).layer
-                    )
-                );
+            toRaw((props.legendItem as LayerItem).layer!).reload();
         } else {
             // otherwise attempt to re-create layer with layer config
             const layerConfig =
@@ -810,83 +792,89 @@ const reloadLayer = () => {
         });
     }, 500);
 };
+
 /**
  * Attempt to recreate and instantiate layer from config.
+ * Used when an initial layer failed to attach itself to the legend item
  */
 const recreateLayer = async (layerConfig: RampLayerConfig) => {
     try {
-        // try to re-create new layer based on layerConfig
-        // same code to how layers are initialized when layer config array changes, expose this as layer API method?
-        const layer = iApi.geo.layer.createLayer(layerConfig);
-        layerStore.removeErrorLayer(layer);
-        // check if the layer error'd while already in the map
-        const checkLayer = iApi.geo.layer.getLayer(layer.id);
+        // check if the layer exists in store.
+        // if so, attempt to reload.
+        const checkLayer = iApi.geo.layer.getLayer(layerConfig.id);
         if (checkLayer) {
             const [reloadErr] = await to(toRaw(checkLayer).reload());
             if (reloadErr) {
-                layerStore.addErrorLayer(layer);
                 throw new Error();
+            } else {
+                return checkLayer;
             }
         } else {
-            iApi.geo.map.addLayer(layer!).catch(() => {
+            // try to re-create new layer based on layerConfig
+            // same code to how layers are initialized when layer config array changes, expose this as layer API method?
+            const layer = iApi.geo.layer.createLayer(layerConfig);
+
+            await iApi.geo.map.addLayer(layer!).catch(() => {
                 throw new Error();
             });
+
+            return layer;
         }
-        return layer!;
     } catch {
         return;
     }
 };
 
 /**
- * Moves loading layer into error state. Removes error'd layer from legend and map.
+ * Dual use method, leveraged for layers not in a loaded, active state.
+ * For a loading layer, will "Cancel" it. This puts it in the error state but keeps it registered.
+ * For an errored layer, will "Remove" it. Layer deleted from legend, map, and unregistered.
  */
-const cancelLayer = () => {
+const cancelOrRemoveLayer = () => {
     const layerItem: LayerItem = toRaw(props.legendItem as LayerItem); // so that typescript doesn't yell in the whole method
     if (layerItem.type === LegendType.Error) {
-        props.legendItem.toggleHidden(true); // temporarily hide item until we can remove it
-        // layer in error state, remove layer
+        // layer in error state, remove layer permanently
         // layer could appear in store later, so we need to keep checking if its there
-        let everythingRemoved: boolean = false;
+
+        props.legendItem.toggleHidden(true); // temporarily hide item until we can remove it
+
         const removalWatcher = setInterval(() => {
             // layer is gone from everywhere, so we are done
-            if (everythingRemoved) {
+            if (layerItem.layer && layerItem.layer.layerExists) {
+                // stop the interval
                 clearInterval(removalWatcher);
-            } else if (layerItem.layer && layerItem.layer.layerExists) {
+
                 // layer is now there, time to remove!
                 iApi.geo.map.removeLayer(layerItem.layer);
-                // remove layer and layer config from store
-                layerStore.removeErrorLayer(layerItem.layerId);
+
+                // remove layer config from store
                 layerStore.removeLayerConfig(layerItem.layerId);
+
                 // remove layer item from legend
                 iApi.fixture
                     .get<LegendAPI>('legend')
                     ?.removeLayerItem(layerItem.layerId);
-                everythingRemoved = true;
             }
         }, 250);
     } else {
-        // layer in loading state, cancel layer
+        // layer in loading state, "cancel" layer
+        // this puts it in error state. user can then reload or remove
         props.legendItem.error();
         (props.legendItem as LayerItem)._loadCancelled = true;
         // if a sublayer or parent layer was cancelled, cancel the parent layer and all other sublayers.
         // need to keep polling for the parent layer since some sublayers may not be in the config (stuff that came from a group)
+
+        // TODO: revisit the need for this watcher. Now that every registered layer is returned by allLayers, it should always
+        //       find the parent first find(). Unless I'm mis-understanding what parentLayerId is and that can be a
+        //       temporary group node thing. Possibly .parentLayerId on an MIL group isn't set until after load? Sorta makes sense.
         const cancelWatcher = setInterval(() => {
-            const parentLayer =
-                iApi.geo.layer
-                    .allLayers()
-                    .find(
-                        l =>
-                            l.id === layerItem.parentLayerId ||
-                            l.id === layerItem.layerId
-                    ) ??
-                iApi.geo.layer
-                    .allErrorLayers()
-                    .find(
-                        l =>
-                            l.id === layerItem.parentLayerId ||
-                            l.id === layerItem.layerId
-                    );
+            const parentLayer = iApi.geo.layer
+                .allLayers()
+                .find(
+                    l =>
+                        l.id === layerItem.parentLayerId ||
+                        l.id === layerItem.layerId
+                );
             if (parentLayer) {
                 clearInterval(cancelWatcher);
                 const layerItemToCancel = iApi.fixture
