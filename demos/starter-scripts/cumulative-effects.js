@@ -271,16 +271,16 @@ const enConfig = {
             expectedLoadTime: 20000,
             fieldMetadata: {
                 fieldInfo: [
-                    { name: 'Overarching_Initiative' },
                     { name: 'Initiative' },
+                    { name: 'Overarching_Initiative' },
                     { name: 'Description' },
-                    { name: 'Management_Assessment_or_Monitoring' },
+                    { name: 'Initiative_Type' },
                     { name: 'Departments' },
                     { name: 'Partners' },
                     { name: 'Province_or_Territory' },
                     { name: 'Relevant_Industry' },
-                    { name: 'OSDP_or_Open_Data_Links' },
                     { name: 'Further_Information' },
+                    { name: 'Related_OSDP_or_Open_Data_Links' },
                     { name: 'Related_Initiatives' }
                 ],
                 exclusiveFields: true

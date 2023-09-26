@@ -284,7 +284,7 @@ let config = {
                 {
                     id: 'BasinLine',
                     layerType: 'esri-feature',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer/2',
+                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer/2',
                     permanentFilteredQuery: `OBJECTID > 80`
                 },
                 {
