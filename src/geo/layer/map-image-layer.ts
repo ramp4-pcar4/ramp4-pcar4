@@ -61,6 +61,7 @@ export class MapImageLayer extends MapLayer {
         this.esriLayer = markRaw(
             new EsriMapImageLayer(this.makeEsriLayerConfig(this.origRampConfig))
         );
+
         await super.onInitiate();
     }
 

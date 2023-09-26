@@ -155,18 +155,8 @@
 </template>
 
 <script setup lang="ts">
-import {
-    computed,
-    inject,
-    onBeforeMount,
-    onBeforeUnmount,
-    onMounted,
-    ref,
-    toRaw,
-    watch
-} from 'vue';
+import { computed, inject, onBeforeUnmount, onMounted, ref, toRaw } from 'vue';
 
-import { useLayerStore } from '@/stores/layer';
 import { GlobalEvents, LayerInstance } from '@/api';
 import type { InstanceAPI } from '@/api';
 import type { LayerModel } from '../definitions';
@@ -176,17 +166,36 @@ import { LayerState } from '@/geo/api';
 import { useI18n } from 'vue-i18n';
 
 const iApi = inject<InstanceAPI>('iApi')!;
-const layerStore = useLayerStore();
 const { t } = useI18n();
 
-const layers = computed<LayerInstance[]>(
-    () => layerStore.layers as unknown as LayerInstance[]
-);
 const layersModel = ref<Array<LayerModel>>([]);
-const oldOrder = ref<Array<number>>([]); // keeps track of layer order when dragging starts
+
+/**
+ * Snapshots positions when dragging starts. The array has same order as the layersModel.
+ * The values are the model orderIdx, which is the position the layer sits in the store
+ * order array. aka "RAMP order index"
+ */
+const oldOrder = ref<Array<number>>([]);
 const handlers = ref<Array<string>>([]);
 const watchers = ref<Array<Function>>([]);
 const isAnimationEnabled = computed<boolean>(() => iApi.animate);
+
+/*
+General commentary on how this works. 
+We only show stuff actually on the map, and not cosmetic. It's then ordered in the UI list top to bottom.
+The UI is build from a data model, layerModel.
+This model is reactive and gets recreated whenever
+- Layers get added, removed, change status
+- Reorders happen
+So a lot of the "updates" is just the core model getting rebuilt from scratch.
+The model also maps where the layer is indexed in the global layer order array.
+When this fixture "executes" a reorder, either via arrow buttons or a drag, all it does
+is figure out which other layer was occupying the destination in the model/listview. Then
+it grabs that layers global order index, and invokes the ramp API reorder, telling it to
+reorder the "moving" layer to that index. The API handles the rest.
+The trick is to remember a reorder is just a shuffle, not an insert or delete. The layer
+count stays the same.
+*/
 
 /**
  * Convert the layers from the store into a simple LayerModel interface that draggable can use
@@ -202,15 +211,23 @@ const loadLayers = (): void => {
     // reset models
     layersModel.value = [];
 
-    layersModel.value = [...toRaw(layers.value)]
-        .filter(
-            (layer: LayerInstance) =>
-                !layer.isCosmetic && layer.layerState !== LayerState.ERROR
-        ) // filter out cosmetic layers
-        .reverse() // needs to be reverse because map-stack is in reverse order of layer list
+    const layerOrderIds = iApi.geo.layer.layerOrderIds();
+
+    // TODO investigate if we still need the ...toRaw now that this comes from the layer API instead of directly from the store.
+    //      performance hit if we don't, and this gets spammed every time a layer status changes.
+    const mainLayerList = [
+        ...toRaw(iApi.geo.layer.allLayersOnMap(true))
+    ].filter(
+        (layer: LayerInstance) =>
+            !layer.isCosmetic && layer.layerState !== LayerState.ERROR
+    ); // filter out cosmetic layers and error'd layers. This source doesn't lave loading or dead layers.
+
+    layersModel.value = mainLayerList
+        .reverse() // needs to be reverse because map-stack is low to high, and visually the fixture is high to low
         .map((layer: LayerInstance, index: number) => {
-            // get the true index of this layer in the layers list
-            const trueIdx: number = layers.value.indexOf(layer);
+            // get the true index of this layer in the global order
+            const trueIdx: number = layerOrderIds.indexOf(layer.id);
+
             // map layer instance to simpler layer model object
             let model: LayerModel = {
                 id: layer.id,
@@ -227,7 +244,7 @@ const loadLayers = (): void => {
         });
 
     // add load promise listeners to update models
-    layers.value.forEach((layer: LayerInstance) => {
+    mainLayerList.forEach(layer => {
         layer
             .loadPromise()
             .then(() => {
@@ -238,7 +255,9 @@ const loadLayers = (): void => {
 };
 
 /**
- * Update the layer model associated with this layer
+ * Update the layer model associated with this layer. Typically things that
+ * were not available until the layer loads.
+ *
  * @param {LayerInstance} layer the layer that has loaded
  */
 const loadLayerData = (layer: LayerInstance): void => {
@@ -268,6 +287,7 @@ const loadLayerData = (layer: LayerInstance): void => {
 
 /**
  * Toggle expand on a layer model
+ *
  * @param {LayerModel} layerModel the layer model to update
  */
 const toggleExpand = (layerModel: LayerModel): void => {
@@ -299,6 +319,7 @@ const onMoveLayerDragStart = (): void => {
 /**
  * Move a layer's order index
  * Called by draggable after the user stops dragging the layer
+ *
  * @param {CustomEvent} evt draggable event that contains the data on the moved object
  */
 const onMoveLayerDragEnd = (evt: any): void => {
@@ -307,6 +328,7 @@ const onMoveLayerDragEnd = (evt: any): void => {
         return;
     }
 
+    // relative indexes are the positions in the fixtures visual list.
     const layerModel: LayerModel = evt.moved.element;
     const oldRelativeIdx: number = evt.moved.oldIndex;
     const newRelativeIdx: number = evt.moved.newIndex;
@@ -316,18 +338,20 @@ const onMoveLayerDragEnd = (evt: any): void => {
         return;
     }
 
-    const layer: LayerInstance = layers.value.find(
-        (l: LayerInstance) => l.uid === layerModel.uid
-    )!;
+    const layer: LayerInstance = iApi.geo.layer.getLayer(layerModel.uid)!;
 
     // apply changes
-    const newIdx: number = oldOrder.value[newRelativeIdx];
-    iApi.geo.map.reorder(layer, newIdx);
+    // we dragged the layer to a location in our ui list. that location used to be occupied by another layer ("other layer").
+    // so we do a REAL reorder, sending the dragged layer to occupy the global index that the "other layer" was in before
+    // the drag.
+
+    const newGlobalIdx = oldOrder.value[newRelativeIdx];
+    iApi.geo.map.reorder(layer, newGlobalIdx);
 
     iApi.updateAlert(
         t('layer-reorder.layermoved', {
             name: layerModel.name,
-            index: newIdx
+            index: newGlobalIdx
         })!
     );
 };
@@ -339,28 +363,28 @@ const onMoveLayerDragEnd = (evt: any): void => {
  * @param {number} direction direction to move the layer (+1 is up and -1 is down)
  */
 const onMoveLayerButton = (layerModel: LayerModel, direction: number): void => {
-    let layer: LayerInstance = layers.value.find(
-        (l: LayerInstance) => l.uid === layerModel.uid
-    )!;
+    const layer = iApi.geo.layer.getLayer(layerModel.id);
 
-    const currRelativeIdx: number = layersModel.value.indexOf(layerModel);
+    const currRelativeIdx = layersModel.value.indexOf(layerModel);
 
     // just in case
     if (layer === undefined || currRelativeIdx === -1) {
         return;
     }
 
-    // calculate new layer order index
-    const newRelativeIdx: number = currRelativeIdx - direction;
-    const newIdx: number = layersModel.value[newRelativeIdx].orderIdx;
+    // visually the layer we buttoned just switched spots with another layer.
+    // we want to do a "real" reorder to the global position that other layer
+    // was occupying in the ramp map / layer store.
+    const newRelativeIdx = currRelativeIdx - direction; // index of the "other" layer in fixture layersModel
+    const newGlobalIdx = layersModel.value[newRelativeIdx].orderIdx;
 
     // apply changes
-    iApi.geo.map.reorder(layer, newIdx);
+    iApi.geo.map.reorder(layer, newGlobalIdx);
 
     iApi.updateAlert(
         t('layer-reorder.layermoved', {
             name: layerModel.name,
-            index: newIdx
+            index: newGlobalIdx
         })!
     );
 };
@@ -378,15 +402,6 @@ const _isBoundary = (index: number): boolean => {
     return index < 0 || index > layersModel.value.length - 1;
 };
 
-onBeforeMount(() => {
-    watchers.value.push(
-        watch(layers, () => {
-            // want to reload layers in case layers were added/removed, or existing layers have changed
-            loadLayers();
-        })
-    );
-});
-
 onMounted(() => {
     loadLayers();
 
@@ -397,9 +412,19 @@ onMounted(() => {
         })
     );
 
-    // watch for layer state changes
+    // watch for layer state changes.
+    // this will also notice new layers getting added as they go from loading to loaded.
     handlers.value.push(
         iApi.event.on(GlobalEvents.LAYER_LAYERSTATECHANGE, () => {
+            loadLayers();
+        })
+    );
+
+    // watch for layer order changes. will catch reorders from other locations.
+    // mildly inefficient, since when we reorder here it recalcs for fun.
+    // but this fixutre is not a primary ui. Smart people can refactor.
+    handlers.value.push(
+        iApi.event.on(GlobalEvents.MAP_REORDER, () => {
             loadLayers();
         })
     );

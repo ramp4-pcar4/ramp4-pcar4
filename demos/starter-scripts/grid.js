@@ -64,9 +64,9 @@ let config = {
                 {
                     id: 'CleanAir',
                     layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/9',
+                    url: 'BadURL',
                     state: {
-                        opacity: 0.8,
+                        opacity: 1,
                         visibility: true
                     },
                     customRenderer: {}
@@ -121,7 +121,13 @@ const rInstance = createInstance(
 );
 
 rInstance.fixture
-    .addDefaultFixtures(['legend', 'appbar', 'grid', 'details'])
+    .addDefaultFixtures([
+        'legend',
+        'appbar',
+        'grid',
+        'layer-reorder',
+        'details'
+    ])
     .then(() => {
         rInstance.panel.open('legend');
     });
