@@ -1,5 +1,4 @@
 import { FixtureInstance, LayerInstance } from '@/api/internal';
-import { useLayerStore } from '@/stores/layer';
 import type { ExportAPI, ExportSubFixture } from '@/fixtures/export/api/export';
 import { fabric } from 'fabric';
 import type { LegendSymbology } from '@/geo/api';
@@ -56,9 +55,9 @@ class ExportLegendFixture extends FixtureInstance implements ExportSubFixture {
 
     async make(options: any): Promise<fabric.Group> {
         // filter out loading/errored, invisible, and cosmetic layers
-        const layers = useLayerStore(this.$vApp.$pinia).layers.filter(
-            layer => !layer.isCosmetic
-        );
+        const layers = this.$iApi.geo.layer
+            .allLayersOnMap()
+            .filter(layer => !layer.isCosmetic);
 
         if (layers.length === 0) {
             // return an empty group

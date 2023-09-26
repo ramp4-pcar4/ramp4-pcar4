@@ -47,12 +47,64 @@ export class FeatureLayer extends AttribLayer {
         }
     }
 
+    /**
+     * Nap time
+     */
+    async sleep(millsecs: number): Promise<void> {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve();
+            }, millsecs);
+        });
+    }
+
     protected async onInitiate(): Promise<void> {
+        // TODO remove changes here and sleep() above before PR pull
+
+        let sleepytime = 11000;
+
+        // this block is to simulate a fail then reload (sample 11)
+        if (this.id === 'CleanAir' && this.origRampConfig.url === 'BadURL') {
+            // reload test fun
+            // first time hitting our error layer. Keep the disrespect but tweak so we know
+            // it happened once.
+            this.origRampConfig.url = 'BadURLx';
+            sleepytime = 400;
+        } else if (
+            this.id === 'CleanAir' &&
+            this.origRampConfig.url === 'BadURLx'
+        ) {
+            // reload test fun
+            // second time. make it load
+            this.origRampConfig.url =
+                'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/9';
+            sleepytime = 400;
+        }
+
+        // this is OG code, don't clear out
         markRaw(
             (this.esriLayer = new EsriFeatureLayer(
                 this.makeEsriLayerConfig(this.origRampConfig)
             ))
         );
+
+        // this block is to simulate the race condition
+        // will force sample 15 to enter the esri map, in order, L2 L4 L3 L1
+        // old race condition would result L1 L2 L4 L3
+        // we should see L1 L2 L3 L4
+
+        // will also sleep every other feature layer in samples, proving the new code is respectful
+        if (this.id === 'testSecond') {
+            sleepytime = 7000;
+        } else if (this.id === 'testThird') {
+            sleepytime = 9700;
+        } else if (this.id === 'testFourth') {
+            sleepytime = 8200;
+        }
+
+        await this.sleep(sleepytime);
+        // END REMOVE BLOCK
+
         await super.onInitiate();
     }
 

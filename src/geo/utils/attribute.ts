@@ -7,6 +7,7 @@ import type {
     Extent,
     FieldDefinition,
     GetGraphicServiceDetails,
+    RampLayerFieldInfoConfig,
     RampLayerFieldMetadataConfig,
     TabularAttributeSet
 } from '@/geo/api';

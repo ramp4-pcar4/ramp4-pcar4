@@ -218,7 +218,7 @@ export class LayerSource extends APIScope {
             if (sublayers === undefined) {
                 return false;
             }
-            let i, parent;
+            let parent;
             if (sublayers.find(sl => sl.id === id)) {
                 return sublayers.find(sl => sl.id === id);
             } else {
