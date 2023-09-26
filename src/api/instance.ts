@@ -210,52 +210,21 @@ export class InstanceAPI {
                     //@ts-ignore
                     maptipStore.setMaptipInstance(mapViewElement._tippy);
 
-                    // add layers
                     if (langConfig.layers && langConfig.layers.length > 0) {
-                        // console.log('Adding layers:', langConfig.layers);
-                        const addedLayerProms = langConfig.layers
-                            .map(layerConfig => {
-                                const layer =
-                                    this.geo.layer.createLayer(layerConfig);
-                                this.geo.map.addLayer(layer);
-                                return layer;
-                            })
-                            .filter(Boolean); // strip out any lurking undefined values
-
-                        // do re-order magic on the map layers
-                        addedLayerProms
-                            .filter(l => l.mapLayer) // strip out data layers. they do not occupy the map stack
-                            .forEach((layer: LayerInstance, index: number) => {
-                                // TODO: This code is fishy. Error'd layers in the map stack are not reordered.
-                                // Also, cosmetic layers are not always at the top and can appear in the middle, depending on the order that stuff loads.
-                                // How much does this matter?
-                                // From the testing I've done, this was already not 100% respectful before the introduction of data layers.
-                                layer
-                                    .loadPromise()
-                                    .then(() => {
-                                        if (layer.isLoaded) {
-                                            this.geo.map.reorder(layer, index);
-                                        }
-                                    })
-                                    .catch(() =>
-                                        console.error(
-                                            `Failed to add/reorder layer: ${layer.id}.`
-                                        )
-                                    );
-                            });
-
-                        // check for any nastyness on data layers
-                        addedLayerProms
-                            .filter(l => !l.mapLayer)
-                            .forEach((layer: LayerInstance) => {
-                                layer
-                                    .loadPromise()
-                                    .catch(() =>
-                                        console.error(
-                                            `Failed to add/reorder layer: ${layer.id}.`
-                                        )
-                                    );
-                            });
+                        // Add all the config layers to the instance, in order.
+                        // Config layers always get "added first", so we provide order positions here for the map layers.
+                        // Enhanced positioning logic is now handled by map.addLayer()
+                        let mapOrderPos = 0;
+                        langConfig.layers.forEach(layerConfig => {
+                            const layer =
+                                this.geo.layer.createLayer(layerConfig);
+                            this.geo.map.addLayer(layer, mapOrderPos);
+                            if (layer.mapLayer) {
+                                // we only incremenet for map layers. Data layers get added but do not live in the map stack.
+                                // so no ++. We pass the param to map.addLayer above out of lazyness. It gets ignored for data layers.
+                                mapOrderPos++;
+                            }
+                        });
                     }
                 }
             }, 100);

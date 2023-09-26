@@ -20,15 +20,15 @@ import {
     WfsLayer,
     WmsLayer
 } from '@/api/internal';
+import type { ArcGisServerMetadata, RampLayerConfig } from '@/geo/api';
 import {
-    type ArcGisServerMetadata,
     DataFormat,
     Extent,
     GeometryType,
+    InitiationState,
     LayerControl,
     LayerState,
-    LayerType,
-    type RampLayerConfig
+    LayerType
 } from '@/geo/api';
 import { EsriField, EsriRendererFromJson, EsriRequest } from '@/geo/esri';
 import { useLayerStore } from '@/stores/layer';
@@ -115,11 +115,14 @@ export class LayerAPI extends APIScope {
         // this function acts as a nice / obvious endpoint and saves caller
         // from figuring out how to use the store.
 
+        // TODO: make result non-reactive via toRaw ?
+        //       is anything requiring layer reactivity?
+
         let layer: LayerInstance | undefined;
 
         // test if param is layer id
         const layerStore = useLayerStore(this.$vApp.$pinia);
-        layer = layerStore.getLayerById(layerId);
+        layer = layerStore.getLayerByAny(layerId);
         if (!layer) {
             // test if layer is a string uid
             layer = layerStore.getLayerByUid(layerId);
@@ -129,16 +132,44 @@ export class LayerAPI extends APIScope {
     }
 
     /**
+     * Get the current map stack position of a given map layer
+     *
+     * @param {string} layerId layer id or uid of the layer
+     * @returns {number | undefined} The layer position in the map stack. Undefined if a data layer or layer not found
+     */
+    getLayerOrder(layerId: string): number | undefined {
+        // layer search required since order array only tracks layerid, not uid
+        const layer = this.getLayer(layerId);
+        if (layer && layer.mapLayer) {
+            const idx = this.layerOrderIds().findIndex(
+                orderId => orderId === layer.id
+            );
+            return idx === -1 ? undefined : idx;
+        } else {
+            return undefined;
+        }
+    }
+
+    /**
+     * Return the Layer IDs of all registered map layers in the order they occupy,
+     * or will occupy, the map stack.
+     * @returns {Array<string>} layer ids, from bottom to top
+     */
+    layerOrderIds(): Array<string> {
+        // using slice to prevent caller from messing with array.
+        return useLayerStore(this.$vApp.$pinia).mapOrder.slice(0) || [];
+    }
+
+    /**
      * Return all registered layers.
      * @returns {Array<LayerInstance>} all registered layers
      */
     allLayers(): Array<LayerInstance> {
-        // we don't include allDataLayers in the concat here, since
-        // those layers will also appear in the active and error lists
-
-        return this.allActiveLayers().concat(
-            this.allErrorLayers(),
-            this.allInitiatingLayers()
+        // TODO: make result non-reactive via toRaw ?
+        //       is anything requiring layer reactivity?
+        return (
+            (useLayerStore(this.$vApp.$pinia)
+                .layers as unknown as Array<LayerInstance>) || []
         );
     }
 
@@ -147,21 +178,35 @@ export class LayerAPI extends APIScope {
      * @returns {Array<LayerInstance>} all layers that have initiated and not errored
      */
     allActiveLayers(): Array<LayerInstance> {
-        return this.allLayersOnMap()
-            .concat(this.allDataLayers())
-            .filter(l => l.layerState !== LayerState.ERROR);
+        return this.allLayers().filter(
+            l =>
+                l.layerState !== LayerState.ERROR &&
+                l.initiationState === InitiationState.INITIATED
+        );
     }
 
     /**
-     * Returns all layers currently on the map.
      * Returns all map-based layers currently on the map.
+     * Result can be ordered in map stack order. Unordered is more performant.
+     *
+     * @param {boolean} [inMapOrder=true] if result array should be sorted by map order.
      * @returns {Array<LayerInstance>} all layers on the map
      */
-    allLayersOnMap(): Array<LayerInstance> {
-        return (
-            (useLayerStore(this.$vApp.$pinia)
-                .layers as unknown as Array<LayerInstance>) || []
+    allLayersOnMap(inMapOrder: boolean = true): Array<LayerInstance> {
+        let mapLayers = this.allLayers().filter(
+            l => l.mapLayer && l.initiationState === InitiationState.INITIATED
         );
+
+        if (inMapOrder) {
+            const lOrder = this.layerOrderIds();
+            mapLayers.sort((lay1, lay2) => {
+                const l1idx = lOrder.indexOf(lay1.id);
+                const l2idx = lOrder.indexOf(lay2.id);
+                return l1idx - l2idx;
+            });
+        }
+
+        return mapLayers;
     }
 
     /**
@@ -169,9 +214,8 @@ export class LayerAPI extends APIScope {
      * @returns {Array<LayerInstance>} all loaded data layers
      */
     allDataLayers(): Array<LayerInstance> {
-        return (
-            (useLayerStore(this.$vApp.$pinia)
-                .dataLayers as unknown as Array<LayerInstance>) || []
+        return this.allLayers().filter(
+            l => !l.mapLayer && l.initiationState === InitiationState.INITIATED
         );
     }
 
@@ -180,19 +224,7 @@ export class LayerAPI extends APIScope {
      * @returns {Array<LayerInstance>} all errored layers
      */
     allErrorLayers(): Array<LayerInstance> {
-        return (
-            (
-                useLayerStore(this.$vApp.$pinia)
-                    .penaltyBox as unknown as Array<LayerInstance>
-            ).concat(
-                this.allLayersOnMap().filter(
-                    l => l.layerState === LayerState.ERROR
-                ),
-                this.allDataLayers().filter(
-                    l => l.layerState === LayerState.ERROR
-                )
-            ) || []
-        );
+        return this.allLayers().filter(l => l.layerState === LayerState.ERROR);
     }
 
     /**
@@ -200,9 +232,8 @@ export class LayerAPI extends APIScope {
      * @returns {Array<LayerInstance>} all initiating layers
      */
     allInitiatingLayers(): Array<LayerInstance> {
-        return (
-            (useLayerStore(this.$vApp.$pinia)
-                .initiatingLayers as unknown as Array<LayerInstance>) || []
+        return this.allLayers().filter(
+            l => l.initiationState === InitiationState.INITIATING
         );
     }
 
@@ -446,7 +477,7 @@ export class LayerAPI extends APIScope {
         const restParam: __esri.RequestOptions = {
             query: {
                 f: 'json',
-                where: permanentFilter || '1=1',
+                where: permanentFilter || '1=1', // apparently the 1=1 is required to make the count call work on entire dataset
                 returnCountOnly: true,
                 returnGeometry: false
             }

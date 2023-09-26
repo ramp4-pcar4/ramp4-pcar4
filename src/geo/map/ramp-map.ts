@@ -96,7 +96,7 @@ export class MapAPI extends CommonMapAPI {
 
         // remove all layers (need to use uid so we don't mutate layers collection when looping)
         this.$iApi.geo.layer
-            .allLayersOnMap()
+            .allLayersOnMap(false)
             .map(l => l.uid)
             .forEach(l => this.removeLayer(l));
 
@@ -537,8 +537,8 @@ export class MapAPI extends CommonMapAPI {
     }
 
     /**
-     * Adds a layer to the map
-     * Optionally can specify the layer order index
+     * Adds a layer to the map. The layer is considered "registered" with RAMP until it is removed.
+     * Optionally can specify the layer order index for map layers.
      *
      * @param {LayerInstance} layer the Ramp layer to add
      * @param {number | undefined} index optional order index to add the layer to
@@ -561,9 +561,51 @@ export class MapAPI extends CommonMapAPI {
                 // could also await for this but its technically not necessary thanks to the watcher.
                 layer.initiate();
             }
+
+            // figure out insertion position if not provided. We do this before inserting in the store;
+            // afterwards any re-orders and such that happen before the layerWatcher awakes is handled by
+            // the store, and we avoid a race.
+            if (layer.mapLayer && index === undefined) {
+                const currentMapOrder = this.$iApi.geo.layer.layerOrderIds();
+                if (layer.isCosmetic) {
+                    // to the top
+                    index = currentMapOrder.length;
+                } else {
+                    // insert beneath the top-most swath of cosmetic layers
+                    const layerParty = this.$iApi.geo.layer.allLayers();
+                    let searching = true;
+
+                    for (
+                        let i = currentMapOrder.length - 1;
+                        i >= 0 && searching;
+                        i--
+                    ) {
+                        // go backwards down the layer order. Find each layer, test the type
+                        const lTest = layerParty.find(
+                            l => l.id === currentMapOrder[i]
+                        );
+                        if (lTest && !lTest.isCosmetic) {
+                            // found topmost non-cosmetic. insert our incoming layer 1 above
+                            index = i + 1;
+                            searching = false;
+                        }
+                    }
+
+                    if (searching) {
+                        // no friends were found in the for loop.
+                        // can conclude this layer is first non-cosmetic layer. To the bottom with you!
+                        index = 0;
+                    }
+                }
+            }
+
+            // register with the store.
             const layerStore = useLayerStore(this.$vApp.$pinia);
-            layerStore.addInitiatingLayer(layer);
+            layerStore.addLayer(layer, index);
+
             let timeElapsed = 0;
+            // This interval waits for layer initiation, and has a kickout for layers that initiate forever.
+            // After it initiates the callback will start the next step in the loading pipeline.
             // Alternative to this: use event API and watch for layer initiated and layer error events??
             const layerWatcher = setInterval(() => {
                 timeElapsed += 250;
@@ -574,9 +616,8 @@ export class MapAPI extends CommonMapAPI {
                     // Layer took too long to initiate. Move to error to avoid infinite load animation.
                     // Issue #1491 Ponders making the 20 second timeout configurable.
                     clearInterval(layerWatcher);
-                    layerStore.removeInitiatingLayer(layer);
-                    layerStore.addErrorLayer(layer);
                     layer.onError(); // need this thanks to an edge case where the legend sometimes doesnt update
+                    console.error(`Failed to add layer: ${layer.id}.`);
                     reject();
                 } else if (
                     layer.initiationState === InitiationState.INITIATED &&
@@ -586,20 +627,10 @@ export class MapAPI extends CommonMapAPI {
                     // carry on with resolution steps.
                     clearInterval(layerWatcher);
                     if (layer.mapLayer) {
-                        this.esriMap?.add(layer.esriLayer!);
-                        layerStore.removeInitiatingLayer(layer);
-                        layerStore.addLayer(layer);
-                        // if index is provided, reorder the layer to the given index
-                        // use the reorder method so that the esri map-stack and the layer store can stay in sync
-                        if (index !== undefined) {
-                            this.reorder(layer, index);
-                        }
+                        // ramp layer is map ready, add it at the correct position
+                        this.insertToEsriMap(layer);
                     } else {
                         // data layer
-                        // push to the appropriate store
-                        layerStore.removeInitiatingLayer(layer);
-                        layerStore.addDataLayer(layer);
-
                         // there is no esri layer "load" first, so we trigger
                         // the data layer load now.
                         layer.onLoad();
@@ -614,63 +645,211 @@ export class MapAPI extends CommonMapAPI {
     }
 
     /**
-     * Reorders a layer on the map
+     * Utility method to insert a Map Layer into the ESRI map. The position in ESRI map
+     * is derived from global order and what layers are currently in the map.
      *
-     * @param {LayerInstance} layer the RAMP layer to be moved
-     * @param {number} index the RAMP layer index for placing the layer
-     * @param {boolean} ignoreCosmetic indicates if cosmetic layers should be ignored during reordering
+     * @param layer the RAMP layer to insert. Must be a Map layer
+     */
+    insertToEsriMap(layer: LayerInstance): void {
+        // need to re-grab global position from store. This utility is usually called after some
+        // Promise sleeps, so order may have changed in that time.
+
+        let esriNewIndex = 0;
+
+        const globalInsertIndex =
+            this.$iApi.geo.layer.getLayerOrder(layer.id) ?? -1;
+
+        // if global is 0, it will be at bottom of esri map. no need to run the position hunter.
+        if (globalInsertIndex > 0) {
+            // find appropriate position in esri map stack to insert at. Some layers in global order
+            // may not be in the map yet.
+            // we do this by walking backwards down the global order, from layer's index-1 to 0
+            // then attempt to find each "lower" layer in the esri stack. The first one we find
+            // should be directly below where we insert the layer in esri-map-land
+
+            // global positions may have changed since this layer started loading. Get up-to-date
+            const globalPositions = this.$iApi.geo.layer.layerOrderIds();
+
+            // load the layers array to do searches on, instead of using getLayer() on each id.
+            // getLayer() will do BFS into children, and thus slower (children have same "order" as parent)
+            const allLayers = this.$iApi.geo.layer.allLayers();
+
+            for (let i = globalInsertIndex - 1; i > -1; i--) {
+                const testLayerId = globalPositions[i];
+                const matchLayer = allLayers.find(fl => fl.id === testLayerId);
+                if (matchLayer && matchLayer.esriLayer) {
+                    // this layer exists in esri form.
+                    const testEsriIndex = this.esriMap!.layers.indexOf(
+                        matchLayer.esriLayer
+                    );
+                    if (testEsriIndex > -1) {
+                        // it also exists in the map stack. can conclude it is the layer in the
+                        // esri map stack that is immediately below where we want to insert our
+                        // added layer. Our result is + 1, donethanks.
+
+                        esriNewIndex = testEsriIndex + 1;
+                        break; // stop the hunt
+                    }
+                } else if (!matchLayer) {
+                    // this should never happen. report and skip this layer test.
+                    console.error(
+                        'ESRI Layer insert encountered bad state. Layer likely inserted at bottom of map.'
+                    );
+                }
+            }
+        }
+
+        // this check is incase the layer no longer existed in the store after it finished loading.
+        // maybe possible if someone did a fast delete and a promise was still running.
+        if (globalInsertIndex > -1) {
+            this.esriMap?.add(layer.esriLayer!, esriNewIndex);
+        }
+    }
+
+    /**
+     * Reorders a layer on the map. The position is based on the instance layer order state
+     * maintained by the LayerAPI.
+     * If ignoreCosmetic is set, the index changes to a different basis. Essentially the
+     * as if cosmetic layers did not exists in the layer order state.
+     *
+     * @param {LayerInstance} layer the RAMP layer to be moved. If a sublayer is passed, the parent will be reordered.
+     * @param {number} index the RAMP layer index where the layer will be moved to
+     * @param {boolean} ignoreCosmetic indicates if the index should ignore cosmetic layers
      */
     reorder(
         layer: LayerInstance,
         index: number,
         ignoreCosmetic: boolean = false
     ): void {
+        if (index < 0) {
+            // alternative: can set to 0 and continue
+            console.error('Negative index passed to map reorder');
+            return;
+        }
         if (!this.esriMap) {
             this.noMapErr();
             return;
         }
-        if (layer.esriLayer) {
-            if (ignoreCosmetic && layer.isCosmetic) {
+
+        if (layer.isSublayer) {
+            layer = layer.parentLayer!;
+        }
+
+        if (!layer.mapLayer) {
+            console.error('Attempted to reorder a data layer');
+            return;
+        }
+
+        // load the layers array to do searches on, instead of using getLayer() on each id.
+        // getLayer() will do BFS into children, and thus slower (can't reorder children)
+        const allLayers = this.$iApi.geo.layer.allLayers();
+        let globalPositions = this.$iApi.geo.layer.layerOrderIds();
+
+        if (ignoreCosmetic) {
+            if (layer.isCosmetic) {
                 // trying to reorder a cosmetic layer when ignore cosmetic is true
                 return;
+            } else if (index > 0) {
+                // if 0, bottom is bottom. only grind if non-zero;
+                // derive actual layer position in map stack. i.e. reverse collapsed index
+
+                const squashedLayers = globalPositions.filter(testId => {
+                    const matchLayer = allLayers.find(fl => fl.id === testId);
+                    if (matchLayer) {
+                        return !matchLayer.isCosmetic;
+                    } else {
+                        // this should never happen.
+                        console.error('Layer reorder had critical error');
+                        return false;
+                    }
+                });
+
+                // find the non-cosmetic layer at our "ignoreCosmetic" index
+                if (index >= squashedLayers.length) {
+                    // report problem but just set to "top".
+                    console.error('non-cosmetic reorder index was too high');
+                    index = squashedLayers.length - 1;
+                }
+
+                // map to where that layer is in the actual order index.
+                // squashedLayers[index] is the layerid of the non-cosmetic layer currently sitting at
+                // our fake "non-cosmetic" index.  Then find that id's index in the real order.
+                index = globalPositions.indexOf(squashedLayers[index]);
+
+                // at this point, index is no longer in "non-cosmetic" units.
+            }
+        } else if (index >= globalPositions.length) {
+            // report problem but just set to "top".
+            console.error('reorder index was too high');
+            index = globalPositions.length - 1;
+        }
+
+        // need to derive if the layer is going up or down the stack. Find old position before changing the store.
+        const oldIndex = globalPositions.indexOf(layer.id);
+
+        if (oldIndex === index) {
+            // position didn't change
+            return;
+        }
+
+        const layerStore = useLayerStore(this.$vApp.$pinia);
+        // sync layer store order with map order
+        layerStore.reorderLayer(layer, index);
+
+        if (
+            layer.esriLayer &&
+            this.esriMap.layers.indexOf(layer.esriLayer) > -1
+        ) {
+            // the global order is up to date. But the layer is also in the esri map.
+            // need to reorder that as well, taking into account that layers "lower"
+            // on the map may not have loaded yet.
+
+            let esriNewIndex = 0;
+
+            if (index > 0) {
+                // find appropriate position in esri map stack to move to. some layers in global order
+                // may not be in the map yet.
+                // we do this by walking backwards down the global order, from index-1 to 0
+                // then attempt to find each "lower" layer in the esri stack. The first one we find
+                // should be directly below our reordered layer after we reorder the esri map
+
+                // our store has been re-ordered, get again
+                globalPositions = this.$iApi.geo.layer.layerOrderIds();
+
+                for (let i = index - 1; i > -1; i--) {
+                    const testId = globalPositions[i];
+                    const matchLayer = allLayers.find(fl => fl.id === testId);
+                    if (matchLayer && matchLayer.esriLayer) {
+                        // this layer exists in esri form.
+                        const testEsriIndex = this.esriMap.layers.indexOf(
+                            matchLayer.esriLayer
+                        );
+                        if (testEsriIndex > -1) {
+                            // it also exists in the map stack. can conclude it is the layer in the
+                            // esri map stack that is immediately below our reordered layer.
+                            //
+                            // the esri insertion index in relation to the test layer depends
+                            // if we were moving down or up the stack
+                            const upDownOffset = index < oldIndex ? 1 : 0;
+                            esriNewIndex = testEsriIndex + upDownOffset;
+                            break; // stop the hunt
+                        }
+                    } else if (!matchLayer) {
+                        // this should never happen. report and skip this layer test.
+                        console.error('Layer reorder had critical error');
+                    }
+                }
             }
 
-            const layerStore = useLayerStore(this.$vApp.$pinia);
-            const layers = layerStore.layers as unknown as LayerInstance[];
-
-            // number of layers in store but not on map, probably errored (up to target index)
-            const notLoaded: number = layers
-                .slice(0, index + 1)
-                .filter(
-                    layer => !this.esriMap!.layers.find(l => l.id === layer.id)
-                ).length;
-
-            // calculate corresponding map layer index
-            const esriLayerIndex: number = this.esriMap.layers.indexOf(
-                this.esriMap.layers
-                    .filter(esrilayer => {
-                        const l: LayerInstance | undefined = layers.find(
-                            l => l.id === esrilayer.id
-                        );
-                        return !!l && !(ignoreCosmetic && l!.isCosmetic);
-                    })
-                    .slice(0, index + 1 - notLoaded) // adjust for layers not on map
-                    .pop()
-            );
-            // set map order
-            this.esriMap.reorder(layer.esriLayer, esriLayerIndex);
-
-            // sync layer store order with map order
-            layerStore.reorderLayer(layer, index);
-            this.$iApi.event.emit(GlobalEvents.MAP_REORDER, {
-                layer,
-                newIndex: index
-            });
-        } else {
-            console.error(
-                'Attempted reorder without an esri layer. Likely layer.initiate() was not called or had not finished.'
-            );
+            // move our target esri layer to the desired position in the esri map stack
+            this.esriMap.reorder(layer.esriLayer, esriNewIndex);
         }
+
+        // spread the good word
+        this.$iApi.event.emit(GlobalEvents.MAP_REORDER, {
+            layer,
+            newIndex: index
+        });
     }
 
     /**
@@ -716,7 +895,8 @@ export class MapAPI extends CommonMapAPI {
     }
 
     /**
-     * Removes a layer from the map and fires the LAYER_REMOVE event
+     * Removes a layer from the map and fires the layer remove event.
+     * This will also unregister the layer from the Ramp instance.
      *
      * @param {LayerInstance | string} layer the Ramp layer or layer id/uid to remove
      * @returns {Promise<void>} a promise that resolves when the layer has been removed from the map
@@ -1046,9 +1226,9 @@ export class MapAPI extends CommonMapAPI {
      */
 
     runIdentify(targetPoint: MapClick | Point): MapIdentifyResult {
-        const layers: LayerInstance[] | undefined = useLayerStore(
-            this.$vApp.$pinia
-        ).layers as unknown as LayerInstance[];
+        const layers = this.$iApi.geo.layer
+            .allLayersOnMap(false)
+            .filter(l => l.canIdentify());
 
         let mapClick: MapClick;
         if (targetPoint instanceof Point) {
@@ -1077,9 +1257,8 @@ export class MapAPI extends CommonMapAPI {
         if (
             layers.some(l => {
                 return (
-                    l.canIdentify() &&
-                    (l.identifyMode === LayerIdentifyMode.HYBRID ||
-                        l.identifyMode === LayerIdentifyMode.SYMBOLIC)
+                    l.identifyMode === LayerIdentifyMode.HYBRID ||
+                    l.identifyMode === LayerIdentifyMode.SYMBOLIC
                 );
             })
         ) {
@@ -1147,10 +1326,7 @@ export class MapAPI extends CommonMapAPI {
         }
 
         // Get a copy of all layers from the layer store (this will be in reverse order)
-        const layers: LayerInstance[] | undefined = (
-            useLayerStore(this.$vApp.$pinia)
-                .layers as unknown as LayerInstance[]
-        )?.slice(0);
+        const layers = this.$iApi.geo.layer.allLayersOnMap(true);
 
         // Don't perform a hittest request if the layers array hasn't been established yet.
         if (layers === undefined) {
