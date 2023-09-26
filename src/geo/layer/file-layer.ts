@@ -26,7 +26,6 @@ import {
 } from '@/geo/api';
 
 import type {
-    FieldDefinition,
     GeoJsonOptions,
     GetGraphicParams,
     Graphic,

@@ -43,9 +43,6 @@ export class LegendAPI extends FixtureInstance {
         this.$iApi.geo.layer.allLayers().forEach(l => {
             this.updateLegend(l);
         });
-        this.$iApi.geo.layer.allErrorLayers().forEach(l => {
-            this.updateLegend(l);
-        });
     }
 
     // Create

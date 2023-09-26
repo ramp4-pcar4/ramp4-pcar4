@@ -172,19 +172,14 @@ export class MapLayer extends CommonLayer {
             return;
         }
 
-        // TODO verify best default if we can't find actual old position.
-        // top of the stack seems correct? top of data layer stack (to avoid covering north arrow)?
-        let mapStackPosition = 0;
-
         if (this.initiationState === InitiationState.INITIATED) {
             if (this.esriLayer) {
-                // attempt to find esri layer in esri map
+                // attempt to find esri layer in esri map. remove if found
                 const tempPosition =
                     this.$iApi.geo.map.esriMap.layers.findIndex(
                         l => l.id === this.id
                     );
                 if (tempPosition > -1) {
-                    mapStackPosition = tempPosition;
                     this.$iApi.geo.map.esriMap.layers.remove(this.esriLayer);
                 }
             }
@@ -206,7 +201,10 @@ export class MapLayer extends CommonLayer {
             return;
         }
 
-        this.$iApi.geo.map.esriMap.layers.add(this.esriLayer, mapStackPosition);
+        // put back in the ESRI map.
+        // we use this method, since global position of this layer may have changed
+        // during the async terminates and awaits in this method.
+        this.$iApi.geo.map.insertToEsriMap(this);
 
         this.$iApi.event.emit(GlobalEvents.LAYER_RELOAD_END, this);
         this.sublayers.forEach(sublayer =>
