@@ -261,14 +261,28 @@ let config = {
             },
             layers: [
                 {
-                    id: 'Nature',
+                    id: 'testFirst',
+                    name: 'First (Leaf)',
                     layerType: 'esri-feature',
                     url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/6'
                 },
                 {
-                    id: 'Water',
+                    id: 'testSecond',
+                    name: 'Second (Globe)',
+                    layerType: 'esri-feature',
+                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/7'
+                },
+                {
+                    id: 'testThird',
+                    name: 'Third (Water)',
                     layerType: 'esri-feature',
                     url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/8'
+                },
+                {
+                    id: 'testFourth',
+                    name: 'Fourth (Cloud)',
+                    layerType: 'esri-feature',
+                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/9'
                 }
             ],
             fixtures: {
@@ -276,10 +290,16 @@ let config = {
                     root: {
                         children: [
                             {
-                                layerId: 'Nature'
+                                layerId: 'testFirst'
                             },
                             {
-                                layerId: 'Water'
+                                layerId: 'testSecond'
+                            },
+                            {
+                                layerId: 'testThird'
+                            },
+                            {
+                                layerId: 'testFourth'
                             }
                         ]
                     }
