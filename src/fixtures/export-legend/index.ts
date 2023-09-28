@@ -56,7 +56,7 @@ class ExportLegendFixture extends FixtureInstance implements ExportSubFixture {
 
     async make(options: any): Promise<fabric.Group> {
         // filter out loading/errored and invisible layers
-        const layers = useLayerStore(this.$vApp.$pinia).layers;
+        let layers = useLayerStore(this.$vApp.$pinia).layers;
 
         if (layers.length === 0) {
             // return an empty group
@@ -64,6 +64,9 @@ class ExportLegendFixture extends FixtureInstance implements ExportSubFixture {
                 originX: 'left'
             });
         }
+
+        // filter out cosmetic layers from legend
+        layers = layers.filter(layer => !layer.isCosmetic);
 
         // number of columns based on export width and min col width
         const columns = Math.min(
