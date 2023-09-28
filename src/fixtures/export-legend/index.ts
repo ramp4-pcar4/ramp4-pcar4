@@ -65,6 +65,13 @@ class ExportLegendFixture extends FixtureInstance implements ExportSubFixture {
             });
         }
 
+        // filter out all cosmetic layers
+        for (let i = 0; i < layers.length; i++) {
+            if (layers[i].isCosmetic == true) {
+                layers.splice(i, 1);
+            }
+        }
+
         // number of columns based on export width and min col width
         const columns = Math.min(
             layers.length,
