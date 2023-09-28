@@ -55,8 +55,10 @@ class ExportLegendFixture extends FixtureInstance implements ExportSubFixture {
     }
 
     async make(options: any): Promise<fabric.Group> {
-        // filter out loading/errored and invisible layers
-        const layers = useLayerStore(this.$vApp.$pinia).layers;
+        // filter out loading/errored, invisible, and cosmetic layers
+        const layers = useLayerStore(this.$vApp.$pinia).layers.filter(
+            layer => !layer.isCosmetic
+        );
 
         if (layers.length === 0) {
             // return an empty group
