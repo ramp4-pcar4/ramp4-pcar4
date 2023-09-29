@@ -308,7 +308,7 @@ export class PanelInstance extends APIScope {
     }
 
     /**
-     * Checks if this panel is the leftmost visible panel.
+     * Checks if this panel is the leftmost visible and not-teleported panel.
      *
      * @readonly
      * @type {boolean}
@@ -316,13 +316,20 @@ export class PanelInstance extends APIScope {
      */
     get isLeftMostPanel(): boolean {
         if (this.$iApi.panel.visible.length > 0) {
-            return this.id === this.$iApi.panel.visible[0].id;
+            for (let i = 0; i < this.$iApi.panel.visible.length; i++) {
+                if (!this.$iApi.panel.visible[i].teleport) {
+                    if (this.id === this.$iApi.panel.visible[i].id) {
+                        return true;
+                    }
+                    return false;
+                }
+            }
         }
         return false;
     }
 
     /**
-     * Checks if this panel is the rightmost visible panel.
+     * Checks if this panel is the rightmost visible and non-teleported panel.
      *
      * @readonly
      * @type {boolean}
@@ -330,7 +337,14 @@ export class PanelInstance extends APIScope {
      */
     get isRightMostPanel(): boolean {
         if (this.$iApi.panel.visible.length > 0) {
-            return this.id === this.$iApi.panel.visible.slice(-1)[0].id;
+            for (let i = this.$iApi.panel.visible.length - 1; i >= 0; i--) {
+                if (!this.$iApi.panel.visible[i].teleport) {
+                    if (this.id === this.$iApi.panel.visible[i].id) {
+                        return true;
+                    }
+                    return false;
+                }
+            }
         }
         return false;
     }
