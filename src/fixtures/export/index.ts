@@ -4,6 +4,7 @@ import ExportScreenV from './screen.vue';
 import messages from './lang/lang.csv?raw';
 
 /* import sub fixtures */
+import type ExportFootnoteFixture from '../export-footnote';
 import type ExportLegendFixture from '../export-legend';
 import type ExportMapFixture from '../export-map';
 import type ExportTimestampFixture from '../export-timestamp';
@@ -22,6 +23,7 @@ class ExportFixture extends ExportAPI {
         this.$iApi.fixture.add('export-northarrow');
         this.$iApi.fixture.add('export-scalebar');
         this.$iApi.fixture.add('export-timestamp');
+        this.$iApi.fixture.add('export-footnote');
     }
 
     added(): void {
@@ -75,6 +77,9 @@ class ExportFixture extends ExportAPI {
                 ?.remove();
             this.$iApi.fixture
                 .get<ExportTimestampFixture>('export-timestamp')
+                ?.remove();
+            this.$iApi.fixture
+                .get<ExportFootnoteFixture>('export-footnote')
                 ?.remove();
 
             if (this.$iApi.fixture.get('appbar')) {
