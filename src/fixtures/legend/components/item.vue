@@ -6,10 +6,10 @@
     >
         <div class="relative">
             <div
-                class="flex items-center hover:bg-gray-200 !p-5"
+                class="flex items-center hover:bg-gray-200 default-focus-style !p-5"
                 :class="[
                     legendItem.type === LegendType.Item
-                        ? 'loaded-item default-focus-style'
+                        ? 'loaded-item'
                         : legendItem.type === LegendType.Error
                         ? 'non-loaded-item bg-red-200'
                         : 'non-loaded-item',
@@ -67,7 +67,7 @@
             >
                 <!-- smiley face. very important that we migrate this -->
                 <div
-                    class="flex ml-3 mr-10"
+                    class="flex p-5"
                     v-if="legendItem.type !== LegendType.Item"
                 >
                     <svg
@@ -175,14 +175,14 @@
                 <!-- dropdown icon -->
                 <div
                     v-if="isGroup && controlAvailable(LegendControl.Expand)"
-                    class="expand-toggle mr-5 pointer-events-none"
+                    class="expand-toggle p-8 pointer-events-none"
                     :class="{ 'rotate-180': legendItem.expanded }"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        height="24"
+                        height="18"
                         viewBox="0 0 24 24"
-                        width="24"
+                        width="18"
                     >
                         <path
                             d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"
@@ -193,7 +193,7 @@
                 <!-- name or info section-->
                 <div
                     v-if="legendItem instanceof LayerItem"
-                    class="flex-1 pointer-events-none"
+                    class="flex-1 pointer-events-none p-5"
                     v-truncate="{ externalTrigger: true }"
                 >
                     <span>{{
@@ -304,7 +304,7 @@
                             <svg
                                 v-else
                                 class="inline-block fill-current w-18 h-18 mr-1"
-                                viewBox="0 0 23 21"
+                                viewBox="0 1 23 22"
                             >
                                 <path
                                     d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
