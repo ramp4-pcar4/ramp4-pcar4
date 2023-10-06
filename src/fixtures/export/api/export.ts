@@ -108,6 +108,8 @@ export class ExportAPI extends FixtureInstance {
             this.getSubFixture('export-northarrow');
         const exportLegendFixture: ExportSubFixture =
             this.getSubFixture('export-legend');
+        const exportFootnoteFixture: ExportSubFixture =
+            this.getSubFixture('export-footnote');
         const exportTimestampFixture: ExportSubFixture =
             this.getSubFixture('export-timestamp');
 
@@ -116,6 +118,7 @@ export class ExportAPI extends FixtureInstance {
         let fbScaleBar: fabric.Object | undefined;
         let fbNorthArrow: fabric.Object | undefined;
         let fbLegend: fabric.Object | undefined;
+        let fbFootnote: fabric.Object | undefined;
         let fbTimestamp: fabric.Object | undefined;
         const selectedExportComponents: Array<fabric.Object> = [];
 
@@ -196,8 +199,20 @@ export class ExportAPI extends FixtureInstance {
                 top: this.options.runningHeight + 20,
                 width: panelWidth
             });
-            this.options.runningHeight += fbTimestamp.height! + 20;
+            this.options.runningHeight += fbTimestamp.height!;
             selectedExportComponents.push(fbTimestamp);
+        }
+
+        if (selectedState.footnote) {
+            fbFootnote = await exportFootnoteFixture.make({
+                top: this.options.runningHeight,
+                left: panelWidth / this.options.scale + 40
+            });
+
+            fbFootnote.left! += -fbFootnote.width! * 2;
+
+            this.options.runningHeight += fbFootnote.height! + 20;
+            selectedExportComponents.push(fbFootnote);
         }
 
         const fbGroup = new fabric.Group(selectedExportComponents, {
