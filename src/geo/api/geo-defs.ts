@@ -563,6 +563,10 @@ export interface ScaleBar {
     isImperialScale?: boolean;
 }
 
+export interface LangToggle {
+    enabled?: boolean;
+}
+
 export interface RampSpatialReference {
     wkid?: number;
     latestWkid?: number;
@@ -718,6 +722,7 @@ export interface RampLodConfig {
 export interface MapCaptionConfig {
     mapCoords: { disabled?: boolean; formatter?: string };
     scaleBar: { disabled?: boolean; imperialScale?: boolean };
+    langToggle: { enabled?: boolean };
 }
 
 // actual ramp config is kinda wonky, split over lots of classes

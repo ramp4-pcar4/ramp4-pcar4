@@ -648,7 +648,7 @@
                 },
                 "footnote": {
                     "type": "object",
-                    "description": "Configuration for the footnote. Currently not supported.",
+                    "description": "Configuration for the footnote.",
                     "allOf": [
                         {
                             "$ref": "#/$defs/exportComponent"
@@ -665,7 +665,7 @@
                 },
                 "timestamp": {
                     "type": "object",
-                    "description": "Configuration for the timestamp. Currently not supported.",
+                    "description": "Configuration for the timestamp.",
                     "$ref": "#/$defs/exportComponent"
                 },
                 "fileName": {
@@ -2692,6 +2692,16 @@
                                     "type": "boolean",
                                     "description": "Use imperial scale distance units",
                                     "default": false
+                                }
+                            }
+                        },
+                        "langToggle": {
+                            "type": "object",
+                            "description": "Allow language toggle within RAMP",
+                            "properties": {
+                                "enabled": {
+                                    "type": "boolean",
+                                    "default": true
                                 }
                             }
                         }

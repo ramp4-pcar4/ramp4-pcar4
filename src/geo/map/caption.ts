@@ -74,6 +74,16 @@ export class MapCaptionAPI extends APIScope {
                 });
             }
         }
+
+        // check if the language toggle has been enabled
+        if (
+            captionConfig.langToggle == undefined ||
+            captionConfig.langToggle.enabled
+        ) {
+            mapCaptionStore.langtoggle = { enabled: true };
+        } else {
+            mapCaptionStore.langtoggle = { enabled: false };
+        }
     }
 
     /**
