@@ -90,6 +90,7 @@
             <dropdown-menu
                 class="flex-shrink-0 pointer-events-auto focus:outline-none px-4 mr-4 relative top-2"
                 position="top-end"
+                v-if="!langtoggle?.disabled"
                 v-tippy="{
                     delay: [300, 0],
                     placement: 'top-end',
@@ -154,6 +155,7 @@ const iApi = inject('iApi') as InstanceAPI;
 const scale = computed(() => mapCaptionStore.scale);
 const attribution = computed(() => mapCaptionStore.attribution);
 const coords = computed(() => mapCaptionStore.coords);
+const langtoggle = computed(() => mapCaptionStore.langtoggle);
 const mapConfig = computed(() => configStore.config.map);
 
 const lang = ref<Array<string>>([]);
