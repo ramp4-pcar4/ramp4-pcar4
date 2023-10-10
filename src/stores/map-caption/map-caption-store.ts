@@ -1,4 +1,4 @@
-import type { Attribution, MapCoords, ScaleBar } from '@/geo/api';
+import type { Attribution, MapCoords, ScaleBar, LangToggle } from '@/geo/api';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
@@ -6,6 +6,7 @@ export const useMapCaptionStore = defineStore('map-caption', () => {
     const attribution = ref<Attribution>({ text: {}, logo: {} });
     const scale = ref<ScaleBar>({});
     const coords = ref<MapCoords>({});
+    const langtoggle = ref<LangToggle>({});
 
     function toggleScale(value?: boolean) {
         if (value !== undefined) {
@@ -15,5 +16,5 @@ export const useMapCaptionStore = defineStore('map-caption', () => {
         }
     }
 
-    return { attribution, scale, coords, toggleScale };
+    return { attribution, scale, coords, langtoggle, toggleScale };
 });
