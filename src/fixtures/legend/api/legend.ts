@@ -143,24 +143,8 @@ export class LegendAPI extends FixtureInstance {
         this._insertItem(item as unknown as LegendItem, parent);
 
         // Updates the legend with the inserted item
+        // tree growing magic also takes place here for MILs
         this.updateLegend(layer);
-
-        if (layer.supportsSublayers) {
-            // if layer supports sublayers, then we need to parse the
-            // layer tree after loading and generate the children
-
-            await layer.loadPromise();
-
-            // for each child node -> parse & create item config -> create child legend item and append to this item
-            layer
-                .getLayerTree()
-                .children.map(childNode => this._treeWalker(layer, childNode))
-                .map(childConf =>
-                    this.addItem(childConf, item as unknown as LegendItem)
-                );
-        }
-
-        item.treeGrown = true;
 
         return item;
     }
