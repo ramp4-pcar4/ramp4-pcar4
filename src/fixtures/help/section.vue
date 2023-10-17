@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="helpSection.drawn">
         <div>
             <button
                 type="button"
