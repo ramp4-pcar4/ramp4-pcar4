@@ -3,8 +3,19 @@
         <template #header>
             {{ t('help.title') }}
         </template>
-
         <template #content>
+            <div class="h-26 mb-8 mx-8">
+                <input
+                    type="search"
+                    class="rv-help-search-bar border-b w-full text-base py-8 outline-none focus:shadow-outline border-gray-600 h-full min-w-0"
+                    :placeholder="t('help.search')"
+                    v-model="searchTerm"
+                    :aria-label="t('help.search')"
+                    @input="doSearch(searchTerm, helpSections)"
+                    @keypress.enter.prevent
+                    enterkeyhint="done"
+                />
+            </div>
             <help-section
                 v-for="(section, idx) in helpSections"
                 :helpSection="section"
@@ -35,6 +46,7 @@ import { useI18n } from 'vue-i18n';
 const iApi = inject<InstanceAPI>('iApi')!;
 const helpStore = useHelpStore();
 const { t } = useI18n();
+let searchTerm: string;
 
 defineProps({
     panel: {
@@ -46,6 +58,17 @@ defineProps({
 const location = computed<string>(() => helpStore.location);
 const helpSections = ref<Array<any>>([]);
 const watchers = ref<Array<Function>>([]);
+
+// find the help sections which contain the search term
+function doSearch(searchTerm: string, sections: any) {
+    for (let i = 0; i < sections.length; i++) {
+        if (sections[i].info.indexOf(searchTerm) == -1) {
+            sections[i].drawn = false;
+        } else {
+            sections[i].drawn = true;
+        }
+    }
+}
 
 onBeforeMount(() => {
     // make help request when fixture loads or locale changes
@@ -96,7 +119,8 @@ onBeforeMount(() => {
                                 {
                                     renderer
                                 }
-                            )
+                            ),
+                            drawn: true
                         });
                     }
                 });

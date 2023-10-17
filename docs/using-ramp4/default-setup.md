@@ -199,7 +199,7 @@ var options = {
 };
 var rInstance = RAMP.createInstance(domElement, configs, options);
 rInstance.fixtures.add('help', CustomHelpFixtureClass);
-rInstance.fixtures.addDefaultFixtures(['help', 'appbar', 'mapnav']);
+rInstance.fixtures.addDefaultFixtures(['appbar', 'mapnav']);
 ```
 
 ### Specify Starting Fixtures
