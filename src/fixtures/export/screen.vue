@@ -4,7 +4,7 @@
 
         <template #content>
             <div class="overflow-hidden border border-gray-200">
-                <canvas class="export-canvas"></canvas>
+                <canvas class="export-canvas !w-[100%]"></canvas>
             </div>
         </template>
 
@@ -111,8 +111,7 @@ const make = debounce(300, () => {
         '.export-canvas'
     ) as HTMLCanvasElement;
 
-    // TODO: detect size of the canvas container properly
-    fixture.value.make(canvasElement, el.value.clientWidth - 16);
+    fixture.value.make(canvasElement, el.value.clientWidth);
 });
 
 onMounted(() => {
