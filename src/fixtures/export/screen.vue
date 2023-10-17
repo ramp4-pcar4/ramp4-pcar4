@@ -111,8 +111,14 @@ const make = debounce(300, () => {
         '.export-canvas'
     ) as HTMLCanvasElement;
 
-    // TODO: detect size of the canvas container properly
-    fixture.value.make(canvasElement, el.value.clientWidth - 16);
+    const overflowActive = el.value.scrollHeight >= el.value.clientHeight;
+
+    fixture.value.make(
+        canvasElement,
+        overflowActive && el.value.clientHeight < 1210
+            ? el.value.clientWidth - 35
+            : el.value.clientWidth - 16
+    );
 });
 
 onMounted(() => {

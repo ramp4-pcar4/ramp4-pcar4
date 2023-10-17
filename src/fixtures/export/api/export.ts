@@ -172,7 +172,7 @@ export class ExportAPI extends FixtureInstance {
             // keep it inline with the scale bar if scalebar is selected
             fbNorthArrow = await exportNorthArrowFixture.make({
                 top: fbScaleBar.top,
-                left: panelWidth / this.options.scale
+                left: panelWidth / this.options.scale - 20
             });
 
             // adjust position for height and width so it is properly centered
