@@ -5,7 +5,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { toRaw, markRaw } from 'vue';
-import { APIScope, Basemap, InstanceAPI } from '@/api/internal';
+import {
+    APIScope,
+    Basemap,
+    InstanceAPI,
+    NotificationType
+} from '@/api/internal';
 import { EsriMap } from '@/geo/esri';
 import {
     BaseGeometry,
@@ -39,17 +44,26 @@ export class CommonMapAPI extends APIScope {
      */
     created = false;
 
-    // NOTE unlike ESRI3, the map view doesnt have a custom event, it uses property watches.
-    //      so if we want to detect scale change we'll need to have another event, it won't be
-    //      a big bundle of properties like ESRI3 provided
     /**
-     * The internal esri map view. Avoid referencing outside of geoapi.
+     * Tracks if we are watching for the first basemap to load.
      * @private
      */
+    protected trackFirstBasemap = false;
+
+    /**
+     * The internal esri map view. Changes from outside of RAMP may break the instance. Use caution.
+     */
     esriView: __esri.MapView | undefined;
+
+    /**
+     * Internal deferred managing the view promise
+     * @private
+     */
     protected _viewPromise: DefPromise;
 
-    // a promise that resolves when the map view has been created
+    /**
+     * A promise that resolves when the map view has been created
+     */
     get viewPromise(): Promise<void> {
         return this._viewPromise.getPromise();
     }
@@ -115,16 +129,49 @@ export class CommonMapAPI extends APIScope {
      * @param {string | HTMLDivElement} targetDiv the div to be used for the map view
      */
     createMap(config: RampMapConfig, targetDiv: string | HTMLDivElement): void {
-        this._basemapStore = config.basemaps.map(
-            bmConfig => new Basemap(bmConfig)
-        );
+        this._basemapStore = config.basemaps.map(bmConfig => {
+            const bm = new Basemap(bmConfig);
+
+            // this watches for loading problems.
+            // the "loading" won't start until the basemap actually gets
+            // put into the ESRI map.
+            bm.esriBasemap.baseLayers.forEach(baselayer => {
+                baselayer.watch('loadStatus', () => {
+                    if (baselayer.loadStatus === 'loaded') {
+                        // all good. we flip our flag and stop any active tracking.
+                        this.trackFirstBasemap = false;
+                    } else if (baselayer.loadStatus === 'failed') {
+                        // basemap died. always ping notification.
+                        // initiate fallback if first basemap and fallback exists.
+                        this.$iApi.notify.show(
+                            NotificationType.ERROR,
+                            this.$iApi.$i18n.t('layer.error', {
+                                id: bm.name
+                            })
+                        );
+
+                        if (this.trackFirstBasemap) {
+                            this.recoverBasemap(bm.tileSchemaId);
+                        }
+                    }
+                });
+            });
+            return bm;
+        });
 
         const esriConfig: __esri.MapProperties = {};
+
+        // note we can no longer do this here, due to basemap recovery.
+        // doing it here will cause the view promise to block until the basemap fails.
+        // Note that this was redundant anyways. The basemap got set again in createMapView()
+        // even before we wrote the basemap recovery.
+        /*
         if (config.initialBasemapId) {
             esriConfig.basemap = toRaw(
                 this.findBasemap(config.initialBasemapId).esriBasemap
             );
         }
+        */
         this.esriMap = markRaw(new EsriMap(esriConfig));
         this.pointZoomScale =
             config.pointZoomScale && config.pointZoomScale > 0
@@ -270,6 +317,19 @@ export class CommonMapAPI extends APIScope {
     setBasemap(basemapId: string): boolean {
         this.abstractError();
         return false;
+    }
+
+    /**
+     * Will attempt to change to another basemap if the very first basemap failed.
+     * If nothing is defined, will do nothing but manage our watching state.
+     *
+     * This method is overidden as needed
+     *
+     * @param {string} basemapSchemaId the basemap schema id (where the fallback is defined)
+     */
+    recoverBasemap(basemapSchemaId: string): void {
+        // common map does nothing.
+        // this also means the overview map will not attempt trickery
     }
 
     /**
