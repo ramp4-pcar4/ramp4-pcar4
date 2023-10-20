@@ -73,6 +73,7 @@ export class MapAPI extends CommonMapAPI {
      */
     createMap(config: RampMapConfig, targetDiv: string | HTMLDivElement): void {
         this.setMapMouseThrottle(config.mapMouseThrottle ?? 0);
+        this.trackFirstBasemap = true; // we do this here (in this class) to prevent the overview map from tracking
         super.createMap(config, targetDiv);
 
         this.viewPromise.then(() => {
@@ -125,7 +126,6 @@ export class MapAPI extends CommonMapAPI {
             (typeof basemap === 'string'
                 ? this.findBasemap(basemap)
                 : basemap) || this.findBasemap(config.initialBasemapId);
-        this.applyBasemap(bm);
 
         // get the current tile schema we are in
         const tileSchemaConfig: RampTileSchemaConfig | undefined =
@@ -352,6 +352,26 @@ export class MapAPI extends CommonMapAPI {
         this.esriView.when(() => {
             this._viewPromise.resolveMe();
             this.created = true;
+
+            // it appears calling this before the when() check causes the esriView promise to block,
+            // which then blocks our layer loading even though the map is capable of handling the layers.
+            // so set the basemap after we unblock the ramp view promise.
+            this.applyBasemap(bm);
+
+            // if we have a fallback basemap, set up a failure timeout if desired.
+            if (tileSchemaConfig.recoveryBasemap?.basemapId) {
+                // 8 second default. 0 is no waiting.
+                const waitTime =
+                    tileSchemaConfig.recoveryBasemap.timeout ?? 8000;
+                if (waitTime > 0) {
+                    setTimeout(() => {
+                        // check if we're still waiting for a first basemap. Otherwise do nothing.
+                        if (this.trackFirstBasemap) {
+                            this.recoverBasemap(tileSchemaConfig.id);
+                        }
+                    }, waitTime);
+                }
+            }
         });
     }
 
@@ -457,6 +477,43 @@ export class MapAPI extends CommonMapAPI {
         });
 
         return schemaChanged;
+    }
+
+    /**
+     * Will attempt to change to another basemap if the very first basemap failed.
+     * If nothing is defined, will do nothing but manage our watching state.
+     *
+     * @param {string} basemapSchemaId the basemap schema id (where the fallback is defined)
+     */
+    recoverBasemap(basemapSchemaId: string): void {
+        // no hard errors in the method. Just because layer is failing doesn't mean
+        // we need to brick the app. Failed layer > brick party.
+
+        if (!this.esriMap) {
+            this.noMapErr();
+        }
+
+        // turn off trackers regardless of what our config is.
+        // if fallback fails we don't have cascade; just no basemap and buckets of tears.
+        this.trackFirstBasemap = false;
+
+        // see if we have a fallback
+        const configStore = useConfigStore(this.$vApp.$pinia);
+        const config: RampMapConfig = configStore.config.map;
+        if (config) {
+            // get the current tile schema we are in
+            const tileSchemaConfig = config.tileSchemas.find(
+                ts => ts.id === basemapSchemaId
+            );
+
+            if (tileSchemaConfig?.recoveryBasemap?.basemapId) {
+                // there's a fallback, apply it.
+                const fallbackBM = this.findBasemap(
+                    tileSchemaConfig.recoveryBasemap.basemapId
+                );
+                this.applyBasemap(fallbackBM);
+            }
+        }
     }
 
     /**

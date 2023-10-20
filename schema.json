@@ -2080,6 +2080,21 @@
                 "hasNorthPole": {
                     "type": "boolean",
                     "description": "Indicates if this tile schema shows the north pole."
+                },
+                "recoveryBasemap": {
+                    "type": "object",
+                    "properties": {
+                        "basemapId": {
+                            "type": "string",
+                            "description": "Specifies a basemap id to load if the initial basemap fails. Must match the tile schema. Should be on a different server than the initial basemap.",
+                            "default": ""
+                        },
+                        "timeout": {
+                            "type": "number",
+                            "default": 8000,
+                            "description": "Initial basemap time load limit, in milliseconds. If basemap load exceeds, will be considered to have failed. Set to 0 to turn off any timeouts. Ignored if no recovery basemap id exists."
+                        }
+                    }
                 }
             },
             "required": ["id", "name", "default", "extentSetId", "lodSetId"],
