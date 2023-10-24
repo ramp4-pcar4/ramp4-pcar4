@@ -23,6 +23,7 @@
                 v-for="(section, idx) in helpSections"
                 :helpSection="section"
                 :key="idx"
+                @expand="toggleExpanded(section)"
             ></help-section>
         </template>
     </panel-screen>
@@ -59,22 +60,67 @@ defineProps({
 
 const location = computed<string>(() => helpStore.location);
 const helpSections = ref<Array<any>>([]);
+const originalTextArray = ref<Array<any>>([]);
 const watchers = ref<Array<Function>>([]);
 
 const noResults = ref<boolean>(false);
 let numResults: number;
 let searchTerm: string;
 
+//find search term in info sections without impacting the HTML tags
+function findInfo(searchTerm: string, section: any) {
+    const segments: string[] = section.info.split(/(<[^>]*>)/);
+    for (const [i, segment] of segments.entries()) {
+        if (i % 2 === 0) {
+            if (segment.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// highlight the search term
+function highlightSearchTerm(searchTerm: string, idx: number) {
+    const originalText = originalTextArray.value[idx];
+    // split text around <a> and <img> to preserve links
+    const segments: string[] = originalText.split(/(<[^>]*>)/);
+    let highlightedText: string = '';
+    for (const [i, segment] of segments.entries()) {
+        if (i % 2 === 0) {
+            highlightedText += segment.replace(
+                new RegExp(searchTerm, 'gi'),
+                (match: string) => `<mark>${match}</mark>`
+            );
+        } else {
+            highlightedText += segment;
+        }
+    }
+    // text to display set with highlights
+    helpSections.value[idx].info = highlightedText;
+}
+
 // find the help sections which contain the search term
 function doSearch(searchTerm: string, sections: any) {
     numResults = 0;
-    for (let section of sections) {
+    sections.forEach((section: any, index: number) => {
+        //reset the text to original before looking for search term
+        section.info = originalTextArray.value[index];
+        //find the search term in each section
         section.drawn =
-            section.info.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1 ||
+            findInfo(searchTerm, section) ||
             section.header.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1;
         numResults = section.drawn ? numResults + 1 : numResults;
-    }
+        section.expanded = section.drawn && searchTerm.length > 2;
+        if (section.drawn && searchTerm.length > 2) {
+            highlightSearchTerm(searchTerm, index);
+        }
+    });
     noResults.value = numResults === 0;
+}
+
+function toggleExpanded(section: any) {
+    section.expanded = !section.expanded;
 }
 
 onBeforeMount(() => {
@@ -127,8 +173,18 @@ onBeforeMount(() => {
                                     renderer
                                 }
                             ),
-                            drawn: true
+                            drawn: true,
+                            expanded: false
                         });
+                        //copy of the original text to refer to after highlighting
+                        originalTextArray.value.push(
+                            marked(
+                                section[0].split('\n').splice(2).join('\n'),
+                                {
+                                    renderer
+                                }
+                            )
+                        );
                     }
                 });
             },
