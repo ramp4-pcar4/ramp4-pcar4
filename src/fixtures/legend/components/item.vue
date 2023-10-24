@@ -537,8 +537,8 @@
                     </div>
                 </div>
             </div>
-            <div v-else>
-                <!-- display loading text -->
+            <div v-if="!symbologyStackLoaded">
+                <!-- display loading text if the stack hasn't loaded yet -->
                 <div class="flex p-5 ml-48" v-truncate>
                     <div
                         class="relative animate-spin spinner h-20 w-20 mr-10 pt-2"
@@ -612,6 +612,7 @@ const props = defineProps({
 const mobileMode = ref(panelStore.mobileView);
 const layerConfigs = computed(() => layerStore.layerConfigs);
 const symbologyStack = ref<Array<LegendSymbology>>([]); // ref instead of reactive to maintain reactivity after promise
+const symbologyStackLoaded = ref<boolean>(false);
 const hovered = ref(false);
 
 /**
@@ -931,6 +932,9 @@ const loadSymbologyStack = () => {
                 symbologyStack.value = (
                     props.legendItem as LayerItem
                 ).symbologyStack;
+
+                // Mark the symbology stack as loaded.
+                symbologyStackLoaded.value = true;
             });
         })
         .catch(() => {});
