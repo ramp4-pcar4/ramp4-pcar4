@@ -122,7 +122,7 @@ export class ExportAPI extends FixtureInstance {
         let fbTimestamp: fabric.Object | undefined;
         const selectedExportComponents: Array<fabric.Object> = [];
 
-        if (selectedState.title) {
+        if (selectedState.title && exportTitleFixture) {
             fbTitle = await exportTitleFixture.make({
                 /* text: '😸🤖🧙‍♂️🤦‍♀️🎶', */
                 top: this.options.runningHeight,
@@ -135,7 +135,7 @@ export class ExportAPI extends FixtureInstance {
             selectedExportComponents.push(fbTitle);
         }
 
-        if (selectedState.map) {
+        if (selectedState.map && exportMapFixture) {
             fbMap = await exportMapFixture.make({
                 top: this.options.runningHeight
             });
@@ -161,7 +161,7 @@ export class ExportAPI extends FixtureInstance {
                 GLOBAL_MARGIN.LEFT +
                 GLOBAL_MARGIN.RIGHT);
 
-        if (selectedState.mapElements) {
+        if (selectedState.mapElements && exportScaleBarFixture) {
             fbScaleBar = await exportScaleBarFixture.make({
                 top: this.options.runningHeight,
                 left: 0
@@ -169,20 +169,22 @@ export class ExportAPI extends FixtureInstance {
             this.options.runningHeight += fbScaleBar.height! + 40;
             selectedExportComponents.push(fbScaleBar);
 
-            // keep it inline with the scale bar if scalebar is selected
-            fbNorthArrow = await exportNorthArrowFixture.make({
-                top: fbScaleBar.top,
-                left: panelWidth / this.options.scale
-            });
+            if (exportNorthArrowFixture) {
+                // keep it inline with the scale bar.
+                fbNorthArrow = await exportNorthArrowFixture.make({
+                    top: fbScaleBar.top,
+                    left: panelWidth / this.options.scale
+                });
 
-            // adjust position for height and width so it is properly centered
-            fbNorthArrow.top! += fbNorthArrow.height! / 2 - 20;
-            fbNorthArrow.left! += -fbNorthArrow.width! * 2;
+                // adjust position for height and width so it is properly centered
+                fbNorthArrow.top! += fbNorthArrow.height! / 2 - 20;
+                fbNorthArrow.left! += -fbNorthArrow.width! * 2;
 
-            selectedExportComponents.push(fbNorthArrow);
+                selectedExportComponents.push(fbNorthArrow);
+            }
         }
 
-        if (selectedState.legend) {
+        if (selectedState.legend && exportLegendFixture) {
             fbLegend = await exportLegendFixture.make({
                 width:
                     exportLegendFixture.config?.columnWidth ??
@@ -194,7 +196,7 @@ export class ExportAPI extends FixtureInstance {
             selectedExportComponents.push(fbLegend);
         }
 
-        if (selectedState.timestamp) {
+        if (selectedState.timestamp && exportTimestampFixture) {
             fbTimestamp = await exportTimestampFixture.make({
                 top: this.options.runningHeight + 20,
                 width: panelWidth
@@ -203,7 +205,7 @@ export class ExportAPI extends FixtureInstance {
             selectedExportComponents.push(fbTimestamp);
         }
 
-        if (selectedState.footnote) {
+        if (selectedState.footnote && exportFootnoteFixture) {
             fbFootnote = await exportFootnoteFixture.make({
                 top: this.options.runningHeight,
                 left: panelWidth / this.options.scale + 40
