@@ -4,10 +4,10 @@
             <button
                 type="button"
                 class="help-section-header flex items-center py-15 px-25 hover:bg-gray-200 cursor-pointer select-none w-full"
-                @click="toggleExpanded()"
+                @click="$emit('expand')"
                 :content="
                     t(
-                        expanded
+                        helpSection.expanded
                             ? 'help.section.collapse'
                             : 'help.section.expand'
                     )
@@ -22,7 +22,7 @@
                 <!-- dropdown icon -->
                 <div
                     class="dropdown-icon"
-                    :class="{ 'transform -rotate-180': expanded }"
+                    :class="{ 'transform -rotate-180': helpSection.expanded }"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -39,7 +39,7 @@
             </button>
             <transition name="help-item" mode="out-in">
                 <div
-                    v-show="expanded"
+                    v-show="helpSection.expanded"
                     v-html="helpSection.info"
                     class="ramp-markdown section-body px-20 pt-5 ml-10 overflow-hidden"
                 ></div>
@@ -60,11 +60,6 @@ defineProps({
         required: true
     }
 });
-
-const expanded = ref<boolean>(false);
-const toggleExpanded = () => {
-    expanded.value = !expanded.value;
-};
 </script>
 
 <style lang="scss" scoped>
