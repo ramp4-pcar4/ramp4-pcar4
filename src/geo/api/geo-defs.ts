@@ -705,6 +705,10 @@ export interface RampTileSchemaConfig {
     lodSetId: string;
     thumbnailTileUrls: Array<string>;
     hasNorthPole?: boolean;
+    recoveryBasemap?: {
+        basemapId: string;
+        timeout?: number;
+    };
 }
 
 export interface RampLodSetConfig {
