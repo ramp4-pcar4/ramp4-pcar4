@@ -5,10 +5,20 @@
         </template>
 
         <template #content>
+            <div v-if="layerReady">
+                <p v-if="layerUploaded">
+                    {{ layerName }} {{ t('wizard.upload.success') }}
+                </p>
+                <p v-else>{{ layerName }} {{ t('wizard.upload.fail') }}</p>
+            </div>
             <stepper :activeStep="step">
                 <!-- Upload data wizard step -->
                 <stepper-item :title="t('wizard.upload.title')" :summary="url">
-                    <form name="upload" @submit="onUploadContinue">
+                    <form
+                        name="upload"
+                        @submit="onUploadContinue"
+                        @click="layerReady = false"
+                    >
                         <!-- Upload a file -->
                         <wizard-input
                             type="file"
@@ -306,6 +316,8 @@ const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
 const formElement = ref();
 
+const handlers = ref<Array<string>>([]);
+
 defineProps({
     panel: {
         type: Object as PropType<PanelInstance>,
@@ -325,6 +337,10 @@ const failureError = ref(false);
 const goNext = ref(false);
 const finishStep = ref(false);
 const validation = ref(false);
+
+const layerReady = ref<Boolean>(false);
+const layerUploaded = ref<Boolean>(true);
+const layerName = ref<String>('');
 
 // service layer formats
 const serviceTypeOptions = reactive([
@@ -452,6 +468,16 @@ onErrorCaptured(() => {
 });
 
 onMounted(() => {
+    handlers.value.push(
+        iApi.event.on(GlobalEvents.LAYER_LAYERSTATECHANGE, (layer: any) => {
+            if (layer.layer.userAdded) {
+                layerName.value = layer.layer.name;
+                layerReady.value = !(layer.state === 'loading');
+                layerUploaded.value =
+                    layerReady.value && layer.state === 'loaded';
+            }
+        })
+    );
     // runs when the wizard panel was closed on the 'configure' step and reopened
     if (step.value === WizardStep.CONFIGURE) {
         // generates a new colour for the colour picker
@@ -556,7 +582,8 @@ const onConfigureContinue = async (data: any) => {
         layerInfo.value!.config,
         data
     );
-    // console.log('Config:', config);
+    // config.url =
+    //     'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign';
     const layer = iApi.geo.layer.createLayer(config);
     iApi.geo.map.addLayer(layer);
     layer.userAdded = true;
