@@ -44,3 +44,5 @@ wizard.configure.colour.copy,Copy colour,1,Copier la couleur,1
 wizard.configure.colour.hex,Hex,1,Hex,1
 wizard.step.cancel,Cancel,1,Annuler,1
 wizard.step.continue,Continue,1,Continuer,1
+wizard.upload.success,has been uploaded successfully.,1,a été téléchargée avec succès.,0
+wizard.upload.fail,cannot be uploaded.,1,ne peut pas être téléchargée.,0
