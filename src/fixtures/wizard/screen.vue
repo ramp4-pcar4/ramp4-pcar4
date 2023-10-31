@@ -8,7 +8,11 @@
             <stepper :activeStep="step">
                 <!-- Upload data wizard step -->
                 <stepper-item :title="t('wizard.upload.title')" :summary="url">
-                    <form name="upload" @submit="onUploadContinue">
+                    <form
+                        name="upload"
+                        @submit="onUploadContinue"
+                        @click="layerReady = false"
+                    >
                         <!-- Upload a file -->
                         <wizard-input
                             type="file"
@@ -269,6 +273,18 @@
                     </form>
                 </stepper-item>
             </stepper>
+            <div
+                v-if="layerReady"
+                class="p-3 border-solid border-2"
+                :class="
+                    layerUploaded
+                        ? 'bg-green-100 !border-green-900'
+                        : 'bg-red-100 !border-red-900'
+                "
+            >
+                {{ layerName }}
+                {{ t(`wizard.upload.${layerUploaded ? 'success' : 'fail'}`) }}
+            </div>
         </template>
     </panel-screen>
 </template>
@@ -278,6 +294,7 @@ import {
     computed,
     inject,
     nextTick,
+    onBeforeUnmount,
     onErrorCaptured,
     onMounted,
     reactive,
@@ -288,9 +305,9 @@ import {
 import { ColorPicker } from 'vue-accessible-color-picker';
 
 import type { InstanceAPI, PanelInstance } from '@/api';
-import { LayerType } from '@/geo/api';
+import { LayerState, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
-import { GlobalEvents } from '@/api/internal';
+import { GlobalEvents, LayerInstance } from '@/api/internal';
 import { useWizardStore, WizardStep } from './store';
 
 import WizardFormFooter from './form-footer.vue';
@@ -305,6 +322,8 @@ const wizardStore = useWizardStore();
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
 const formElement = ref();
+
+const handlers = ref<Array<string>>([]);
 
 defineProps({
     panel: {
@@ -325,6 +344,10 @@ const failureError = ref(false);
 const goNext = ref(false);
 const finishStep = ref(false);
 const validation = ref(false);
+
+const layerReady = ref<Boolean>(false);
+const layerUploaded = ref<Boolean>(true);
+const layerName = ref<String>('');
 
 // service layer formats
 const serviceTypeOptions = reactive([
@@ -452,6 +475,21 @@ onErrorCaptured(() => {
 });
 
 onMounted(() => {
+    handlers.value.push(
+        iApi.event.on(
+            GlobalEvents.LAYER_LAYERSTATECHANGE,
+            (payload: { state: string; layer: LayerInstance }) => {
+                if (payload.layer.userAdded) {
+                    layerName.value = payload.layer.name;
+                    layerReady.value =
+                        payload.state !== LayerState.LOADING &&
+                        payload.state !== LayerState.NEW;
+                    layerUploaded.value =
+                        layerReady.value && payload.state === LayerState.LOADED;
+                }
+            }
+        )
+    );
     // runs when the wizard panel was closed on the 'configure' step and reopened
     if (step.value === WizardStep.CONFIGURE) {
         // generates a new colour for the colour picker
@@ -463,6 +501,10 @@ onMounted(() => {
             !layerInfo.value?.configOptions.includes(`sublayers`) &&
             !!layerInfo.value?.config.name;
     }
+});
+
+onBeforeUnmount(() => {
+    handlers.value.forEach(handler => iApi.event.off(handler));
 });
 
 // reads uploaded file
@@ -556,7 +598,8 @@ const onConfigureContinue = async (data: any) => {
         layerInfo.value!.config,
         data
     );
-    // console.log('Config:', config);
+    // config.url =
+    //     'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign';
     const layer = iApi.geo.layer.createLayer(config);
     iApi.geo.map.addLayer(layer);
     layer.userAdded = true;
