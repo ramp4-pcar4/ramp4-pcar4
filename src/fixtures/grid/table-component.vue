@@ -128,6 +128,46 @@
                 </div>
 
                 <div class="pb-2 flex ml-auto justify-end">
+                    <!-- Toggle pinned columns -->
+                    <button
+                        v-if="mobileView"
+                        type="button"
+                        class="p-4 h-40 text-gray-500 hover:text-black"
+                        @click="togglePinned()"
+                        :content="t('grid.togglePinned')"
+                        :aria-label="t('grid.togglePinned')"
+                        v-tippy="{
+                            placement: 'bottom'
+                        }"
+                    >
+                        <svg
+                            v-if="pinned"
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="24px"
+                            width="24px"
+                            viewBox="0 0 24 24"
+                            class="inline fill-current"
+                        >
+                            <path
+                                d="M18,8H17V6A5,5 0 0,0 12,1A5,5 0 0,0 7,6V8H6A2,2 0 0,0 4,10V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V10A2,2 0 0,0 18,8M12,3A3,3 0 0,1 15,6V8H9V6A3,3 0 0,1 12,3Z"
+                            />
+                        </svg>
+                        <svg
+                            v-else-if="!pinned"
+                            aria-hidden="true"
+                            fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="24px"
+                            width="24px"
+                            viewBox="0 0 24 24"
+                            class="inline fill-current"
+                        >
+                            <path
+                                d="M18 1.5c2.9 0 5.25 2.35 5.25 5.25v3.75a.75.75 0 01-1.5 0V6.75a3.75 3.75 0 10-7.5 0v3a3 3 0 013 3v6.75a3 3 0 01-3 3H3.75a3 3 0 01-3-3v-6.75a3 3 0 013-3h9v-3c0-2.9 2.35-5.25 5.25-5.25z"
+                            />
+                        </svg>
+                    </button>
+
                     <!-- show/hide columns -->
                     <column-dropdown
                         :columnApi="columnApi"
@@ -474,6 +514,8 @@ const NUM_TYPES: string[] = [
 const iApi = inject<InstanceAPI>('iApi')!;
 const gridStore = useGridStore();
 const panelStore = usePanelStore();
+const pinned = ref<Boolean>(true);
+const mobileView = computed(() => panelStore.mobileView);
 const el = ref<HTMLElement>();
 const { t } = useI18n();
 const forceUpdate = () => getCurrentInstance()?.proxy?.$forceUpdate();
@@ -705,6 +747,16 @@ const clearFilters = () => {
 
     // Refresh the column filters to reset inputs.
     agGridApi.value.refreshHeader();
+};
+
+const togglePinned = () => {
+    pinned.value = !pinned.value;
+
+    let cols = columnApi.value.getAllDisplayedColumns();
+    columnApi.value.setColumnsPinned(
+        cols.slice(0, 3),
+        pinned.value ? 'left' : ''
+    );
 };
 
 const setUpDateFilter = (
