@@ -696,7 +696,7 @@ export class EventAPI extends APIScope {
             case DefEH.LAYER_ERROR_UPDATES_LEGEND:
                 // when a layer errors, have the standard legend update in accordance to the layer
                 zeHandler = (payload: {
-                    state: String;
+                    state: string;
                     layer: LayerInstance;
                 }) => {
                     if (payload.layer.layerState === LayerState.ERROR) {
