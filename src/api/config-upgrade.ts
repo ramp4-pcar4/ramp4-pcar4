@@ -113,7 +113,7 @@ function individualConfigUpgrader(r2c: any): any {
     // and would likely be out-of-core fixtures.
 
     // #1346 adds areas of interest fixture as optional core fixture, so we can support the plugin config upgrader
-    if (r2c.plugins) pluginsUpgrader(r2c.plugins, r4c);
+    // if (r2c.plugins) pluginsUpgrader(r2c.plugins, r4c);
 
     return r4c;
 }
