@@ -262,10 +262,11 @@ let config = {
                     name: 'Greenhouse gas emissions from large facilities',
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer/',
-                    metadataUrl:
-                        'https://indicators-map.ec.gc.ca/metadata/en/Ammonia%20emissions%20by%20facility.xml',
+                    metadata: {
+                        url: 'https://indicators-map.ec.gc.ca/metadata/en/Ammonia%20emissions%20by%20facility.xml'
+                    },
                     catalogueUrl:
-                        'https://open.canada.ca/data/en/dataset/4221c508-00c9-4011-aca6-b0a017fc90dc',
+                        'http://open.canada.ca/data/en/dataset/4221c508-00c9-4011-aca6-b0a017fc90dc',
                     state: {
                         visibility: true,
                         opacity: 1
@@ -304,8 +305,9 @@ let config = {
                     name: 'Sulphur oxide emissions by facility',
                     layerType: 'esri-feature',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer/18',
-                    metadataUrl:
-                        'https://indicators-map.ec.gc.ca/metadata/en/Sulphur%20oxide%20emissions%20by%20facility.xml',
+                    metadata: {
+                        url: 'https://indicators-map.ec.gc.ca/metadata/en/Sulphur%20oxide%20emissions%20by%20facility.xml'
+                    },
                     catalogueUrl:
                         'https://open.canada.ca/data/en/dataset/f4fb2aee-2d1b-4c75-aea1-2a7760cc4b58',
                     state: {
@@ -338,8 +340,9 @@ let config = {
                     name: 'Average fine particulate matter concentrations at monitoring stations',
                     layerType: 'esri-feature',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer/26',
-                    metadataUrl:
-                        'https://indicators-map.ec.gc.ca/metadata/en/Average%20ambient%20fine%20particulate%20matter%20concentrations%20at%20monitoring%20stations.xml',
+                    metadata: {
+                        url: 'https://indicators-map.ec.gc.ca/metadata/en/Average%20ambient%20fine%20particulate%20matter%20concentrations%20at%20monitoring%20stations.xml'
+                    },
                     catalogueUrl:
                         'https://open.canada.ca/data/en/dataset/e6cc3ae2-92b1-4df6-87ff-698a1cd5a7bd',
                     state: {
@@ -368,8 +371,9 @@ let config = {
                     name: 'Average sulphur dioxide concentrations at monitoring stations',
                     layerType: 'esri-feature',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer/28',
-                    metadataUrl:
-                        'https://indicators-map.ec.gc.ca/metadata/en/Average%20ambient%20sulphur%20dioxide%20concentrations%20at%20monitoring%20stations.xml',
+                    metadata: {
+                        url: 'https://indicators-map.ec.gc.ca/metadata/en/Average%20ambient%20sulphur%20dioxide%20concentrations%20at%20monitoring%20stations.xml'
+                    },
                     catalogueUrl:
                         'https://open.canada.ca/data/en/dataset/5f1b78ab-999a-41f0-82e9-351d236010ca',
                     state: {
@@ -428,8 +432,9 @@ let config = {
                     name: 'Releases of lead to water by facility',
                     layerType: 'esri-feature',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer/38',
-                    metadataUrl:
-                        'https://indicators-map.ec.gc.ca/metadata/en/Releases%20of%20lead%20to%20water%20by%20facility.xml',
+                    metadata: {
+                        url: 'https://indicators-map.ec.gc.ca/metadata/en/Releases%20of%20lead%20to%20water%20by%20facility.xml'
+                    },
                     catalogueUrl:
                         'https://open.canada.ca/data/en/dataset/334f4740-c9bd-4193-ba69-04c21443d2b6',
                     state: {
@@ -461,8 +466,9 @@ let config = {
                     name: 'Conserved areas',
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
-                    metadataUrl:
-                        'https://indicators-map.ec.gc.ca/metadata/en/Protected%20Areas.xml',
+                    metadata: {
+                        url: 'https://indicators-map.ec.gc.ca/metadata/en/Protected%20Areas.xml'
+                    },
                     catalogueUrl:
                         'https://open.canada.ca/data/en/dataset/2888ff57-a21c-448c-a4fa-570c4cabd956',
                     state: {
@@ -504,8 +510,9 @@ let config = {
                     name: 'Water quality at monitoring sites',
                     layerType: 'esri-feature',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer/5',
-                    metadataUrl:
-                        'https://indicators-map.ec.gc.ca/metadata/en/Water%20quality%20at%20monitoring%20sites.xml',
+                    metadata: {
+                        url: 'https://indicators-map.ec.gc.ca/metadata/en/Water%20quality%20at%20monitoring%20sites.xml'
+                    },
                     catalogueUrl:
                         'https://open.canada.ca/data/en/dataset/b6b6d5a6-bded-4b6e-9e8a-17f6e1b538dc',
                     state: {
@@ -518,8 +525,9 @@ let config = {
                     name: 'Water quantity at monitoring stations',
                     layerType: 'esri-feature',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer/1',
-                    metadataUrl:
-                        'https://indicators-map.ec.gc.ca/metadata/en/Water%20quantity%20at%20monitoring%20stations.xml',
+                    metadata: {
+                        url: 'https://indicators-map.ec.gc.ca/metadata/en/Water%20quantity%20at%20monitoring%20stations.xml'
+                    },
                     catalogueUrl:
                         'https://open.canada.ca/data/en/dataset/c7cd1178-c72b-4a5a-aa63-9ae59d5bc532',
                     state: {
