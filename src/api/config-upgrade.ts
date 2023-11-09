@@ -70,6 +70,7 @@ export function configUpgrade2to4(r2c: any): RampConfigs {
 
     // add core always-on fixtures
     startingFixtures.push(
+        'grid',
         'crosshairs',
         'scrollguard',
         'panguard',
@@ -126,7 +127,8 @@ function individualConfigUpgrader(r2c: any): any {
 function mapUpgrader(r2Map: any, r4c: any): void {
     if (r2Map.layers) {
         r2Map.layers.forEach((r2layer: any) => {
-            r4c.layers.push(layerUpgrader(r2layer));
+            // r2 layer order is the reverse of how ramp4 works, unshift instead of push
+            r4c.layers.unshift(layerUpgrader(r2layer));
         });
     }
 
