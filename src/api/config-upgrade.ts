@@ -820,6 +820,7 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
     ];
     if (r2layer.controls && r2layer.controls.length > 0) {
         r4layer.controls = controlsUpgrader(r2layer.controls, allowedControls);
+        r4layer.controls.push('symbology');
     }
 
     if (r2layer.disabledControls && r2layer.disabledControls.length > 0) {
