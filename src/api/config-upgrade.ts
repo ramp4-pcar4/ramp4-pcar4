@@ -594,6 +594,7 @@ function legendEntryUpgrader(r2legendEntry: any) {
             r2legendEntry.controls,
             allowedControls
         );
+        r4legendEntry.layerControls.push('symbology');
     }
     if (
         r2legendEntry.disabledControls &&
@@ -962,6 +963,11 @@ function controlsUpgrader(r2controls: String[], allowedControls: String[]) {
     r2controls.forEach((control: any) => {
         if (allowedControls.includes('identify') && control === 'query') {
             r4controls.push('identify');
+        } else if (
+            allowedControls.includes('datatable') &&
+            control === 'data'
+        ) {
+            r4controls.push('datatable');
         } else if (allowedControls.includes(control)) {
             r4controls.push(control);
         } else {
