@@ -189,17 +189,22 @@ export class MapAPI extends CommonMapAPI {
                 //       want to have two event handlers (one on filter, one on extent change) and synch
                 //       between them. They can subscribe to the filter event and get all the info they need.
 
-                const newExtent = <Extent>(
-                    this.$iApi.geo.geom.geomEsriToRamp(
-                        newval,
-                        'map_extent_event'
-                    )
-                );
-                this.$iApi.event.emit(GlobalEvents.MAP_EXTENTCHANGE, newExtent);
-                this.$iApi.event.emit(GlobalEvents.FILTER_CHANGE, {
-                    extent: newExtent,
-                    filterKey: CoreFilter.EXTENT
-                });
+                if (newval) {
+                    const newExtent = <Extent>(
+                        this.$iApi.geo.geom.geomEsriToRamp(
+                            newval,
+                            'map_extent_event'
+                        )
+                    );
+                    this.$iApi.event.emit(
+                        GlobalEvents.MAP_EXTENTCHANGE,
+                        newExtent
+                    );
+                    this.$iApi.event.emit(GlobalEvents.FILTER_CHANGE, {
+                        extent: newExtent,
+                        filterKey: CoreFilter.EXTENT
+                    });
+                }
             })
         });
 
@@ -345,6 +350,21 @@ export class MapAPI extends CommonMapAPI {
             // need this for panning and zooming to work on mobile devices / touchscreens
             // touchmove stops the drag event (what the MapView reacts to) from firing properly
             e.preventDefault();
+        });
+
+        // most browsers have a webgl context limit of 16 (one instance of RAMP can use 2 - map and overview map).
+        // once the number of contexts is higher than the limit, the oldest context will be lost.
+        // when instance is visible on screen, if its map context is lost then recover it.
+        this.esriView.watch('fatalError', () => {
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        this.esriView?.tryFatalErrorRecovery();
+                        observer.disconnect();
+                    }
+                });
+            });
+            observer.observe(this.esriView!.container);
         });
 
         // as of ESRI v4.26, we need to marinate until .when() is done.
