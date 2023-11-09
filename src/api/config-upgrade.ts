@@ -398,7 +398,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
             };
             // layers already mapped through layerUpgrader
             if (r4c.layers) {
-                r4c.layers.forEach((r4layer: any) => {
+                r4c.layers.toReversed().forEach((r4layer: any) => {
                     if (
                         r4layer.type === 'esri-map-image' ||
                         r4layer.type === 'ogc-wms'
