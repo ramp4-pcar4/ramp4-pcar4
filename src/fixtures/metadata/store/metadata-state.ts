@@ -10,6 +10,7 @@ export interface MetadataPayload {
     type: string; // 'xml' or 'html'
     layerName: string;
     url: string;
+    catalogueUrl: string | undefined;
     layer: LayerInstance | undefined;
 }
 

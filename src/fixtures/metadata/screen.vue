@@ -20,7 +20,8 @@
                         v-else-if="
                             payload.type === 'xml' && status == 'success'
                         "
-                        class="flex flex-col justify-center"
+                        v-html="response"
+                        class="flex flex-col justify-center xml-content"
                     ></div>
 
                     <!-- Found Screen, HTML -->
@@ -145,7 +146,48 @@ const loadMetadata = () => {
 
             // Append the content to the panel.
             if (r !== null) {
-                el.value.childNodes[1].appendChild(r);
+                const textContainer = document.createElement('div');
+
+                textContainer.appendChild(
+                    stringToFragment(`${r.firstElementChild.outerHTML}`)
+                );
+
+                if (props.payload.catalogueUrl || props.payload.url) {
+                    textContainer.appendChild(
+                        stringToFragment(
+                            `<h5 class="text-xl font-bold mb-3">${t(
+                                'metadata.xslt.metadata'
+                            )}</h5>`
+                        )
+                    );
+                }
+
+                // Append catalogue URL link if it exists
+                if (props.payload.catalogueUrl) {
+                    textContainer.appendChild(
+                        stringToFragment(
+                            `<p><a style="color: blue;" href="${
+                                props.payload.catalogueUrl
+                            }" target="_blank">${t(
+                                'metadata.xslt.cataloguePage'
+                            )}</a></p>`
+                        )
+                    );
+                }
+
+                // Append raw XML link
+                textContainer.appendChild(
+                    stringToFragment(
+                        `<p><a style="color: blue;" href="${
+                            props.payload.url
+                        }" target="_blank">${t(
+                            'metadata.xslt.metadataPage'
+                        )}</a> (xml)</p>`
+                    )
+                );
+
+                //@ts-ignore
+                metadataStore.response = textContainer.outerHTML;
             }
         });
     } else if (props.payload.type === 'html') {
@@ -243,6 +285,20 @@ const requestContent = (url: string): Promise<MetadataResult> => {
         xobj.send();
     });
 };
+
+// Helper function to convert a HTML string to an HTMLElement.
+function stringToFragment(string: string) {
+    const temp = document.createElement('div');
+    temp.innerHTML = string;
+    return temp;
+}
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+.xml-content {
+    font-size: 14px;
+}
+.metadata-view a {
+    color: blue;
+}
+</style>

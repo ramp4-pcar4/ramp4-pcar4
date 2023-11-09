@@ -227,13 +227,24 @@ const toggleMetadata = () => {
             props.legendItem?.layer?.parentLayer?.config?.metadata ||
             {};
         const name = metaConfig?.name || props.legendItem?.layer?.name || '';
+        const catalogueUrl =
+            props.legendItem?.layer?.config?.catalogueUrl ||
+            (props.legendItem?.layer?.layerType === 'sublayer' &&
+                props.legendItem?.layer?.parentLayer?.config?.catalogueUrl) ||
+            undefined;
 
         if (metaConfig.url) {
+            // Check the file extension to see if this is an XML file. Defaults to HTML.
+            const parseUrl = metaConfig.url.split('.');
+            const metadataType =
+                parseUrl[parseUrl.length - 1] === 'xml' ? 'xml' : 'html';
+
             // TODO: toggle metadata panel through API/store call
             iApi.event.emit(GlobalEvents.METADATA_TOGGLE, {
-                type: 'html',
+                type: metadataType,
                 layerName: name,
                 url: metaConfig.url,
+                catalogueUrl: catalogueUrl,
                 layer: props.legendItem!.layer
             });
         } else {
