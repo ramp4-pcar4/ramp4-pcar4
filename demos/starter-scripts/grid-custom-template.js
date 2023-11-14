@@ -54,7 +54,7 @@ let config = {
                 {
                     id: 'WFSLayer',
                     layerType: 'ogc-wfs',
-                    url: 'https://api.weather.gc.ca/collections/hydrometric-stations/items?startindex=6000',
+                    url: 'https://api.weather.gc.ca/collections/hydrometric-stations/items?offset=6000',
                     xyInAttribs: true,
                     colour: '#FF5555',
                     customRenderer: {},
