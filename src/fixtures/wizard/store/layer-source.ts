@@ -291,11 +291,11 @@ export class LayerSource extends APIScope {
     async getWfsInfo(url: string): Promise<LayerInfo> {
         // get wfs data here then load as geojson layer so we can get fields
         const wrapper = new UrlWrapper(url);
-        const { startindex, limit } = wrapper.queryMap;
+        const { offset, limit } = wrapper.queryMap;
         const wfsJson = await this.$iApi.geo.layer.ogc.loadWfsData(
             url,
             -1,
-            parseInt(startindex) || 0,
+            parseInt(offset) || 0,
             parseInt(limit) || 1000
         );
 
