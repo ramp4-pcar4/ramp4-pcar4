@@ -117,6 +117,21 @@ export class OverviewMapAPI extends CommonMapAPI {
             e.preventDefault();
         });
 
+        // most browsers have a webgl context limit of 16 (one instance of RAMP can use 2 - map and overview map).
+        // once the number of contexts is higher than the limit, the oldest context will be lost.
+        // when instance is visible on screen, if its overview context is lost then recover it.
+        this.esriView.watch('fatalError', () => {
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        this.esriView?.tryFatalErrorRecovery();
+                        observer.disconnect();
+                    }
+                });
+            });
+            observer.observe(this.esriView!.container);
+        });
+
         // as of ESRI v4.26, we need to marinate until .when() is done.
         // otherwise, something happens too fast and the initial calls to view.goTo() grouse quite a lot,
         // and ends up breaking the overview.
