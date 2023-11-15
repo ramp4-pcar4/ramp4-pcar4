@@ -20,7 +20,7 @@ export class OgcUtils extends APIScope {
      *
      * @param {string} url the current url to the wfs service. Should be a /collections/id/items/ endpoint with optional params after the question operator
      * @param {number} [totalCount=-1] the total number of features available on that service. If not provided, the service will be interrogated for the count.
-     * @param {number} [startindex=0] the feature index to start the querying from. default 0
+     * @param {number} [offset=0] the feature index to start the querying from. default 0
      * @param {number} [limit=1000] the limit of how many results we want returned per server request. default 1000
      * @param {WFSData} [wfsData={
      *                 type: 'FeatureCollection',
@@ -33,7 +33,7 @@ export class OgcUtils extends APIScope {
     async loadWfsData(
         url: string,
         totalCount = -1,
-        startindex = 0,
+        offset = 0,
         limit = 1000,
         wfsData: WFSData = {
             type: 'FeatureCollection',
@@ -42,7 +42,7 @@ export class OgcUtils extends APIScope {
         xyInAttribs = false
     ): Promise<any> {
         let newQueryMap: UrlQueryMap = {
-            startindex: startindex.toString(),
+            offset: offset.toString(),
             limit: limit.toString()
         };
 
@@ -85,7 +85,7 @@ export class OgcUtils extends APIScope {
             return this.loadWfsData(
                 url,
                 totalCount,
-                startindex,
+                offset,
                 limit,
                 wfsData,
                 xyInAttribs
@@ -97,16 +97,16 @@ export class OgcUtils extends APIScope {
         wfsData.features = wfsData.features.concat(data.features);
 
         // check if all the requested features are downloaded
-        if (data.features.length < totalCount - startindex) {
+        if (data.features.length < totalCount - offset) {
             // the next limit is either the provided limit or the number of remaining features
             const newLimit = Math.min(
                 limit,
-                totalCount - startindex - data.features.length
+                totalCount - offset - data.features.length
             );
             return this.loadWfsData(
                 requestUrl,
                 totalCount,
-                data.features.length + startindex,
+                data.features.length + offset,
                 newLimit,
                 wfsData,
                 xyInAttribs
