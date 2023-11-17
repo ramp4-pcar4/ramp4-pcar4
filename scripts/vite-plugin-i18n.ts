@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import type { Plugin } from 'vite';
 // @ts-ignore
-import { csvParse } from 'd3-dsv';
+import { dsvFormat } from 'd3-dsv';
 
 export default function vueI18nPlugin(): Plugin {
     type CsvRow = { key: string; [name: string]: string };
@@ -19,7 +19,7 @@ export default function vueI18nPlugin(): Plugin {
             if (!/lang\.csv/.test(id)) return;
 
             const valueField = 'Value';
-            const res: CsvRows = csvParse(
+            const res: CsvRows = dsvFormat(',').parse(
                 src
                     .replace('export default "', '')
                     .replace(/"$/, '')
