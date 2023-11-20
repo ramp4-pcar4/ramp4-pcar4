@@ -5,7 +5,7 @@ import yxList from './reversedAxis.json';
 import { EsriRequest } from '@/geo/esri';
 import axios from 'redaxios';
 import to from 'await-to-js';
-import { parse } from 'fast-xml-parser';
+import { XMLParser } from 'fast-xml-parser';
 
 type WFSResponse = {
     data: { numberMatched: number; features: any[] };
@@ -283,7 +283,7 @@ export class OgcUtils extends APIScope {
             const options: Object = {
                 ignoreAttributes: false // check for tag attributes
             };
-            const jsonObj: any = parse(xmlData, options);
+            const jsonObj: any = new XMLParser(options).parse(xmlData);
             // We get an XML with a <ServiceExceptionReport> tag back when something goes wrong with the request.
             // Might be able to get rid of this now that we are appending missing parameters to the URL.
             if ('ServiceExceptionReport' in jsonObj) {
