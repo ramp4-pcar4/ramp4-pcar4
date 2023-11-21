@@ -33,12 +33,17 @@ import {
     type PointIconStyleOptions,
     type PointMarkerStyleOptions,
     PointStyle,
-    PointStyleType
+    PointStyleType,
+    type RampBasemapConfig,
+    type RampMapConfig,
+    type RampTileSchemaConfig
 } from '@/geo/api';
+import { useConfigStore } from '@/stores/config';
 import flag from './flag.json';
 import { debounce } from 'throttle-debounce';
 import { POLE_MARKER_LAYER_ID } from '.'; // imports from index.ts
 
+const configStore = useConfigStore();
 const northarrowStore = useNortharrowStore();
 const iApi = inject('iApi') as InstanceAPI;
 const el = ref();
@@ -62,7 +67,12 @@ const arrow =
 const poleMarkerAdded = ref(false);
 const handlers = reactive<Array<string>>([]);
 
+const tileSchemas = ref<Array<RampTileSchemaConfig>>([]);
+let basemap: RampBasemapConfig;
+
 onMounted(() => {
+    const mapConfig = configStore.config.map as RampMapConfig;
+    tileSchemas.value = mapConfig.tileSchemas;
     if (arrowIcon?.value) {
         arrow.value = `<img width='25' src='${arrowIcon.value}'>`;
     }
@@ -85,6 +95,16 @@ onBeforeUnmount(() => {
 });
 
 const updateNortharrow = async (newExtent: Extent) => {
+    // determine if there is a hasNorthPole configured
+    basemap = configStore.activeBasemapConfig!;
+    let hasNorthPole: boolean | undefined;
+    for (const tile of tileSchemas.value) {
+        if (basemap?.tileSchemaId === tile.id) {
+            hasNorthPole = tile?.hasNorthPole;
+            break;
+        }
+    }
+
     const innerShell = document.querySelector('.inner-shell')!;
     const arrowWidth = el.value
         .querySelector('.northarrow')!
@@ -92,14 +112,11 @@ const updateNortharrow = async (newExtent: Extent) => {
     const appbarWidth = document.querySelector('.appbar')?.clientWidth || 0;
     const sr = newExtent.sr;
 
-    if (sr.isWebMercator()) {
-        // mercator projection, always in center of viewer with no rotation
-        displayArrow.value = true;
-        angle.value = 0;
-        arrowLeft.value =
-            appbarWidth +
-            (innerShell.clientWidth - appbarWidth - arrowWidth) / 2;
-    } else {
+    if (
+        hasNorthPole ||
+        (typeof hasNorthPole === 'undefined' && !sr.isWebMercator())
+    ) {
+        // set up northpole if it is configured or if it isn't configured and the map isn't mercator
         // north value (set longitude to be half of Canada extent (141° W, 52° W))
         const pole: Point = new Point('pole', { x: -96, y: 90 });
         const projPole = (await iApi.geo.proj.projectGeometry(
@@ -178,6 +195,13 @@ const updateNortharrow = async (newExtent: Extent) => {
                 (poleLayer as CommonGraphicLayer).addGraphic(poleGraphic);
             }
         }
+    } else {
+        // don't specify a northpole if it isn't configured or if the map is mercator
+        displayArrow.value = true;
+        angle.value = 0;
+        arrowLeft.value =
+            appbarWidth +
+            (innerShell.clientWidth - appbarWidth - arrowWidth) / 2;
     }
 };
 </script>
