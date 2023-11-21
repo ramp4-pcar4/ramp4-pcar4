@@ -30,6 +30,31 @@ export class DetailsAPI extends FixtureInstance {
         // Save the provided identify result in the store.
         this.detailsStore.payload = payload;
 
+        // Check to see if each layer has a fixture config in the store.
+        const layerDetailsConfigs: any = this.getLayerFixtureConfigs();
+        payload.forEach(p => {
+            const layer: LayerInstance | undefined = (this as any).$iApi
+                .useStore('layer')
+                .getLayerByUid(p.uid);
+
+            if (layer) {
+                // Check to see if we've already saved this layer's details config.
+                const detailsItem = this.detailsStore.properties[layer.id];
+
+                // If we haven't and the layer has a details config set, add it to the details store.
+                if (
+                    detailsItem === undefined &&
+                    layerDetailsConfigs[layer.id] !== undefined
+                ) {
+                    this.detailsStore.addConfigProperty({
+                        id: layer.id,
+                        name: layerDetailsConfigs[layer.id].name,
+                        template: layerDetailsConfigs[layer.id].template
+                    });
+                }
+            }
+        });
+
         // Open the details panel.
         const layersPanel = this.$iApi.panel.get('details-layers');
         if (!layersPanel.isOpen) {

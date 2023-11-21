@@ -1,7 +1,7 @@
 import { createApp, defineComponent, h, render } from 'vue';
 import type { Component, ComponentOptions } from 'vue';
 
-import { APIScope, GlobalEvents, InstanceAPI } from './internal';
+import { APIScope, GlobalEvents, InstanceAPI, LayerInstance } from './internal';
 import { useConfigStore } from '@/stores/config';
 import type { FixtureBase } from '@/stores/fixture';
 import { useFixtureStore } from '@/stores/fixture';
@@ -398,6 +398,7 @@ export class FixtureInstance extends APIScope implements FixtureBase {
     getLayerFixtureConfigs(): { [layerId: string]: any } {
         const mainConfig: RampConfig = this.$iApi.getConfig();
         const fixtureConfigs: { [layerId: string]: any } = {};
+        const layerStore = (this as any).$iApi.useStore('layer');
 
         const layerCrawler = (layer: any, parent: any = undefined) => {
             if (layer.fixtures && layer.fixtures[this.id] !== undefined) {
@@ -417,7 +418,14 @@ export class FixtureInstance extends APIScope implements FixtureBase {
             }
         };
 
+        // Crawl through the config first.
         mainConfig.layers?.forEach(layer => layerCrawler(layer));
+
+        // Crawl through the layer store and check for layers that may not be in
+        // the main config (added via API) that may have custom config.
+        layerStore.layers?.forEach((layer: LayerInstance) =>
+            layerCrawler(layer.config)
+        );
 
         return fixtureConfigs;
     }
