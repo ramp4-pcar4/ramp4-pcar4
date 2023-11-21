@@ -367,6 +367,7 @@ export class InstanceAPI {
         const configStore = useConfigStore(this.$vApp.$pinia);
         const fixtureStore = useFixtureStore(this.$vApp.$pinia);
         const layerStore = useLayerStore(this.$vApp.$pinia);
+        const gridStore = useGridStore(this.$vApp.$pinia);
 
         // remove all fixtures
         // get list of all fixture ids currently added
@@ -377,6 +378,14 @@ export class InstanceAPI {
             if (this.fixture.get(id) !== undefined) {
                 this.fixture.remove(id);
             }
+        });
+
+        // remove all grids
+        // get list of all grid ids currently added
+        const addedGrids: Array<string> = Object.keys(gridStore.grids);
+        //remove each grid
+        addedGrids.forEach((id: string) => {
+            gridStore.removeGrid(id);
         });
 
         // reset start flag
