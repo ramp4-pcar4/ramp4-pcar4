@@ -386,7 +386,7 @@ export class InstanceAPI {
         //remove each grid
         addedGrids.forEach((id: string) => {
             gridStore.removeGrid(id);
-        })
+        });
 
         // reset start flag
         instanceStore.started = false;
