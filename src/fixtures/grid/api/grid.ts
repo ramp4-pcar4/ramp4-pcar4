@@ -17,10 +17,12 @@ export class GridAPI extends FixtureInstance {
 
         // if no GridConfig exists for the given id, create it.
         if (!gridId) {
+            const layerGridConfigs: any = this.getLayerFixtureConfigs();
+
             this.gridStore.addGrid({
                 id: id,
                 layerIds: [id],
-                state: new TableStateManager(),
+                state: new TableStateManager(layerGridConfigs[id]),
                 fieldMap: {}
             });
         }

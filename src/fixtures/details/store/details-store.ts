@@ -54,6 +54,10 @@ export const useDetailsStore = defineStore('details', () => {
         }
     }
 
+    function addConfigProperty(item: DetailsItemInstance) {
+        properties.value = { ...properties.value, [item.id]: item };
+    }
+
     return {
         payload,
         properties,
@@ -63,6 +67,7 @@ export const useDetailsStore = defineStore('details', () => {
         activeGreedy,
         lastHilight,
         hilightToggle,
-        removeLayer
+        removeLayer,
+        addConfigProperty
     };
 });
