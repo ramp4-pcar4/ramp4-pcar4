@@ -195,27 +195,36 @@
                             :options="latLonOptions('lon')"
                         />
                         <!-- For map image layers -->
-                        <wizard-input
+                        <div
                             v-if="
                                 layerInfo?.configOptions.includes(`sublayers`)
                             "
-                            type="select"
-                            name="sublayers"
-                            v-model="layerInfo.config.sublayers"
-                            @select="updateSublayers"
-                            :label="t('wizard.configure.sublayers.label')"
-                            :options="layerInfo.layers!"
-                            :layerType="typeSelection"
-                            :multiple="true"
-                            :searchable="true"
-                            :validation="true"
-                            :validation-messages="{
-                                required: t(
-                                    'wizard.configure.sublayers.error.required'
-                                )
-                            }"
-                            @keydown.stop
-                        />
+                        >
+                            <wizard-input
+                                type="checkbox"
+                                name="nested"
+                                @nested="updateNested"
+                                :label="t('wizard.configure.sublayers.nested')"
+                            />
+                            <wizard-input
+                                type="select"
+                                name="sublayers"
+                                v-model="layerInfo.config.sublayers"
+                                @select="updateSublayers"
+                                :label="t('wizard.configure.sublayers.label')"
+                                :options="layerInfo.layers!"
+                                :layerType="typeSelection"
+                                :multiple="true"
+                                :searchable="true"
+                                :validation="true"
+                                :validation-messages="{
+                                    required: t(
+                                        'wizard.configure.sublayers.error.required'
+                                    )
+                                }"
+                                @keydown.stop
+                            />
+                        </div>
                         <label
                             class="sr-only"
                             :for="`${colourPickerId}-color-hex`"
@@ -547,7 +556,8 @@ const onSelectContinue = async (event: any) => {
               )!) as LayerInfo)
             : ((await layerSource.value!.fetchServiceInfo(
                   url.value,
-                  typeSelection.value
+                  typeSelection.value,
+                  wizardStore.nested
               )) as LayerInfo);
         if (isFileLayer() && fileData.value) {
             layerInfo.value.config.url = '';
@@ -663,6 +673,22 @@ const updateSublayers = (sublayer: Array<any>) => {
     sublayer.length > 0 && layerInfo.value?.config.name
         ? (finishStep.value = true)
         : (finishStep.value = false);
+};
+
+const updateNested = (isNested: boolean) => {
+    wizardStore.nested = isNested;
+
+    if (typeSelection.value === LayerType.MAPIMAGE) {
+        layerInfo.value.layers = layerSource.value!.createLayerHierarchy(
+            layerInfo.value.layersRaw as any,
+            wizardStore.nested
+        );
+    } else if (typeSelection.value === LayerType.WMS) {
+        layerInfo.value.layers = layerSource.value!.mapWmsLayerList(
+            layerInfo.value.layersRaw as any,
+            wizardStore.nested
+        );
+    }
 };
 
 const generateColour = () => {
