@@ -17,6 +17,23 @@ export interface DetailsConfig {
     panelWidth: PanelWidthObject | number;
 }
 
+export interface DetailsFieldItem {
+    /**
+     * Unique identifier for the field. Aligns with the layer field name.
+     */
+    field: string;
+
+    /**
+     * Specifies the field title.
+     */
+    alias?: string;
+
+    /**
+     * Whether this field is displayed.
+     */
+    visible?: boolean;
+}
+
 export interface DetailsConfigItem {
     /**
      * The layer ID that we want to bind the custom template to.
@@ -41,6 +58,14 @@ export interface DetailsConfigItem {
      * @memberof DetailsConfigItem
      */
     template: string;
+
+    /**
+     * An array to specify how the layer data fields are defined.
+     *
+     * @type {array}
+     * @memberof DetailsConfigItem
+     */
+    fields?: DetailsFieldItem[];
 }
 
 export class DetailsItemInstance implements DetailsConfigItem {
@@ -50,6 +75,8 @@ export class DetailsItemInstance implements DetailsConfigItem {
 
     template: string;
 
+    fields?: DetailsFieldItem[];
+
     componentId?: string;
 
     constructor(value: string | DetailsConfigItem) {
@@ -58,6 +85,11 @@ export class DetailsItemInstance implements DetailsConfigItem {
                 ? { id: value, template: '', name: '' }
                 : value)
         };
-        ({ template: this.template, id: this.id, name: this.name } = params);
+        ({
+            template: this.template,
+            id: this.id,
+            name: this.name,
+            fields: this.fields
+        } = params);
     }
 }

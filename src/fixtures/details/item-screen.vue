@@ -181,6 +181,7 @@
                             :is="detailsTemplate"
                             :identifyData="identifyItem"
                             :fields="fieldsList"
+                            :fixtureFields="fixtureFields"
                         ></component>
                     </div>
                     <!-- identified item is loading -->
@@ -222,7 +223,11 @@ import {
     ref
 } from 'vue';
 import type { PropType } from 'vue';
-import { DetailsItemInstance, useDetailsStore } from './store';
+import {
+    DetailsItemInstance,
+    useDetailsStore,
+    type DetailsFieldItem
+} from './store';
 import type { DetailsAPI } from './api/details';
 
 import { GlobalEvents, InstanceAPI } from '@/api';
@@ -287,6 +292,20 @@ const layerName = computed<string>(() => {
         return detailProperties.value[layer.id].name;
     }
     return layer?.name ?? '';
+});
+const fixtureFields = computed<DetailsFieldItem[] | undefined>(() => {
+    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
+        props.result.uid
+    );
+
+    if (
+        layer &&
+        detailProperties.value[layer.id] &&
+        detailProperties.value[layer.id].fields
+    ) {
+        return detailProperties.value[layer.id].fields;
+    }
+    return undefined;
 });
 const supportsFeatures = computed<Boolean>(() => {
     const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
