@@ -19,6 +19,7 @@
 import { inject } from 'vue';
 import type { PropType } from 'vue';
 import type { FieldDefinition, IdentifyItem } from '@/geo/api';
+import type { DetailsFieldItem } from '@/fixtures/details/store';
 import linkifyHtml from 'linkify-html';
 import type { InstanceAPI } from '@/api';
 import { useI18n } from 'vue-i18n';
@@ -28,6 +29,10 @@ const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi');
 
 const props = defineProps({
+    fixtureFields: {
+        type: Object as PropType<Array<DetailsFieldItem>>,
+        required: false
+    },
     fields: {
         type: Object as PropType<Array<FieldDefinition>>,
         required: true
@@ -47,14 +52,19 @@ const itemData = () => {
         // check global oid flag
         delete helper[props.fields.find(f => f.type === 'oid')!.name];
     }
-    if (helper.Symbol !== undefined) delete helper.Symbol;
 
     let aliases: any = {};
     props.fields.forEach(field => {
+        // Check to see if this field is being overwritten in the fixture config.
+        const checkField = props.fixtureFields?.find(
+            (item: DetailsFieldItem) => field.name == item.field
+        );
+
         aliases[field.name] = {
-            name: field.alias || field.name,
-            type: field.type
-        }; // use the key name if alias is not defined
+            name: checkField?.alias || field.alias || field.name,
+            type: field.type,
+            visible: checkField?.visible ?? true
+        }; // use the key name if alias is not defined. Default visibility to true if it's not defined.
     });
 
     Object.keys(helper).map(key => {
@@ -66,6 +76,11 @@ const itemData = () => {
             alias: aliases[key].name || key, // use the key name if alias is undefined
             type: aliases[key].type
         };
+
+        // If the field is set to invisible, don't display it.
+        if (!aliases[key].visible) {
+            delete helper[key];
+        }
     });
 
     return helper;

@@ -214,10 +214,37 @@
                 "template": {
                     "type": "string",
                     "description": "Custom Vue component to render as details template"
+                },
+                "fields": {
+                    "type": "array",
+                    "description": "An array to specify how the layer data fields are defined. Only applies to attribute layers that do not have an overriding template.",
+                    "items": {
+                        "$ref": "#/$defs/detailsField"
+                    }
                 }
             },
             "required": ["template"],
             "additionalProperties": false
+        },
+        "detailsField": {
+            "type": "object",
+            "description": "",
+            "properties": {
+                "field": {
+                    "type": "string",
+                    "description": "Unique identifier for the field. Aligns with the layer field name."
+                },
+                "alias": {
+                    "type": "string",
+                    "description": "Specifies the field title. If missing, attempts to use the service alias, then defaults to the field name."
+                },
+                "visible": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Specifies if the field is visible by default."
+                }
+            },
+            "required": ["field"]
         },
         "geosearch": {
             "type": "object",

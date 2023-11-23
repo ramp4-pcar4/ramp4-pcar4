@@ -49,7 +49,8 @@ export class DetailsAPI extends FixtureInstance {
                         this.detailsStore.addConfigProperty({
                             id: layer.id,
                             name: layerDetailsConfigs[layer.id].name,
-                            template: layerDetailsConfigs[layer.id].template
+                            template: layerDetailsConfigs[layer.id].template,
+                            fields: layerDetailsConfigs[layer.id].fields
                         });
                     }
                 }
@@ -162,7 +163,8 @@ export class DetailsAPI extends FixtureInstance {
             detailsConfigItems.push({
                 id: layerId,
                 name: layerDetailsConfigs[layerId].name,
-                template: layerDetailsConfigs[layerId].template
+                template: layerDetailsConfigs[layerId].template,
+                fields: layerDetailsConfigs[layerId].fields
             });
         });
 

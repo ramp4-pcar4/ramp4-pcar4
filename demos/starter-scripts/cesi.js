@@ -280,6 +280,14 @@ let config = {
                             },
                             nameField: 'Name',
                             fixtures: {
+                                details: {
+                                    fields: [
+                                        {
+                                            field: 'Symbol',
+                                            visible: false
+                                        }
+                                    ]
+                                },
                                 grid: {
                                     columns: [
                                         { name: 'CompanyName' },
