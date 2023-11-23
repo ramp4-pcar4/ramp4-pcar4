@@ -152,6 +152,20 @@
                 </div>
             </div>
         </div>
+        <div v-else-if="type === 'checkbox'">
+            <input
+                class="text-sm border-solid border-gray-300 mb-5 focus:border-green-500 mr-10"
+                type="checkbox"
+                name="nested"
+                :checked="true"
+                @change="
+                    event => {
+                        handleNestedChecked(event);
+                    }
+                "
+            />
+            <label class="text-base font-bold">{{ label }}</label>
+        </div>
         <div v-else>
             <label class="text-base font-bold">{{ label }}</label>
             <div class="relative mb-0.5">
@@ -177,7 +191,6 @@
 
 <script setup lang="ts">
 import type { InstanceAPI } from '@/api';
-import { LayerType } from '@/geo/api';
 import { inject, onBeforeUnmount, ref } from 'vue';
 import type { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -198,7 +211,8 @@ const emit = defineEmits([
     'link',
     'select',
     'upload',
-    'text'
+    'text',
+    'nested'
 ]);
 
 const props = defineProps({
@@ -236,13 +250,19 @@ const props = defineProps({
             return [];
         }
     },
-    layerType: {
-        type: String as PropType<LayerType>,
-        default: ''
+    selectedValues: {
+        type: Array as PropType<(string | number)[]>,
+        default: () => []
     },
     size: {
         type: [Number, String],
         default: 0
+    },
+    sublayerOptions: {
+        type: Function,
+        default() {
+            return [];
+        }
     },
     multiple: {
         type: Boolean,
@@ -274,7 +294,7 @@ const valid = ref(false);
 const urlError = ref(false);
 const nameError = ref(false);
 const sublayersError = ref(false);
-const selected = ref<Array<string | number>>([]);
+const selected = ref([...props.selectedValues]);
 const valueLabel = ref('value-label');
 const optionLabel = ref('option-label');
 const resizeObserver = ref<ResizeObserver | undefined>(undefined);
@@ -338,6 +358,10 @@ const handleServiceSelection = (size: string | number, event: Event) => {
         : emit('update:modelValue', (event.target as HTMLInputElement).value);
 };
 
+const handleNestedChecked = (event: Event) => {
+    emit('nested', (event.target as HTMLInputElement).checked);
+};
+
 const handleNameInput = (event: Event) => {
     validName((event.target as HTMLInputElement).value);
     emit('link', (event.target as HTMLInputElement).value, valid);
@@ -346,22 +370,10 @@ const handleNameInput = (event: Event) => {
 
 const handleSelection = () => {
     // small delay so the selected model can update
-    emit('select', sublayerOptions(selected.value));
+    emit('select', props.sublayerOptions(selected.value));
     selected.value && selected.value.length > 0
         ? (sublayersError.value = false)
         : (sublayersError.value = true);
-};
-
-const sublayerOptions = (layers: any[]) => {
-    // set sublayer option properties based on whether its a map image or WMS layer
-    return layers.map((layerIdx: any) => {
-        return props.layerType === LayerType.MAPIMAGE
-            ? {
-                  index: layerIdx,
-                  state: { opacity: 1, visibility: true }
-              }
-            : { id: layerIdx };
-    });
 };
 
 const truncateVal = (selected: string) => {

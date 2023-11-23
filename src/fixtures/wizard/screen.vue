@@ -195,27 +195,38 @@
                             :options="latLonOptions('lon')"
                         />
                         <!-- For map image layers -->
-                        <wizard-input
+                        <div
                             v-if="
                                 layerInfo?.configOptions.includes(`sublayers`)
                             "
-                            type="select"
-                            name="sublayers"
-                            v-model="layerInfo.config.sublayers"
-                            @select="updateSublayers"
-                            :label="t('wizard.configure.sublayers.label')"
-                            :options="layerInfo.layers!"
-                            :layerType="typeSelection"
-                            :multiple="true"
-                            :searchable="true"
-                            :validation="true"
-                            :validation-messages="{
-                                required: t(
-                                    'wizard.configure.sublayers.error.required'
-                                )
-                            }"
-                            @keydown.stop
-                        />
+                        >
+                            <wizard-input
+                                type="checkbox"
+                                name="nested"
+                                @nested="updateNested"
+                                :label="t('wizard.configure.sublayers.nested')"
+                            />
+                            <wizard-input
+                                type="select"
+                                :key="componentKey"
+                                name="sublayers"
+                                v-model="layerInfo.config.sublayers"
+                                @select="updateSublayers"
+                                :label="t('wizard.configure.sublayers.label')"
+                                :options="layerInfo.layers!"
+                                :selectedValues="selectedValues"
+                                :sublayerOptions="sublayerOptions"
+                                :multiple="true"
+                                :searchable="true"
+                                :validation="true"
+                                :validation-messages="{
+                                    required: t(
+                                        'wizard.configure.sublayers.error.required'
+                                    )
+                                }"
+                                @keydown.stop
+                            />
+                        </div>
                         <label
                             class="sr-only"
                             :for="`${colourPickerId}-color-hex`"
@@ -337,6 +348,7 @@ const step = computed(() => wizardStore.currStep);
 
 const colour = ref();
 const colourPickerId = ref();
+const componentKey = ref(0);
 const disabled = ref(false);
 
 const formatError = ref(false);
@@ -348,6 +360,8 @@ const validation = ref(false);
 const layerReady = ref<Boolean>(false);
 const layerUploaded = ref<Boolean>(true);
 const layerName = ref<String>('');
+
+const selectedValues = ref<Array<string | number>>([]);
 
 // service layer formats
 const serviceTypeOptions = reactive([
@@ -547,7 +561,8 @@ const onSelectContinue = async (event: any) => {
               )!) as LayerInfo)
             : ((await layerSource.value!.fetchServiceInfo(
                   url.value,
-                  typeSelection.value
+                  typeSelection.value,
+                  wizardStore.nested
               )) as LayerInfo);
         if (isFileLayer() && fileData.value) {
             layerInfo.value.config.url = '';
@@ -598,6 +613,9 @@ const onConfigureContinue = async (data: any) => {
         layerInfo.value!.config,
         data
     );
+
+    selectedValues.value = [];
+
     // config.url =
     //     'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign';
     const layer = iApi.geo.layer.createLayer(config);
@@ -665,6 +683,186 @@ const updateSublayers = (sublayer: Array<any>) => {
         : (finishStep.value = false);
 };
 
+const updateNested = (isNested: boolean) => {
+    wizardStore.nested = isNested;
+    selectedValues.value = [];
+    componentKey.value += 1;
+
+    if (typeSelection.value === LayerType.MAPIMAGE) {
+        layerInfo.value.layers = layerSource.value!.createLayerHierarchy(
+            layerInfo.value.layersRaw as any,
+            wizardStore.nested
+        );
+
+        const previouslySelected = new Set<number>(
+            (layerInfo.value?.config?.sublayers ?? []).map(
+                (sl: any) => sl.index
+            )
+        );
+
+        if (wizardStore.nested) populateNested(layerInfo, previouslySelected);
+        else populateFlat(layerInfo, previouslySelected);
+    } else if (typeSelection.value === LayerType.WMS) {
+        layerInfo.value.layers = layerSource.value!.mapWmsLayerList(
+            layerInfo.value.layersRaw as any,
+            wizardStore.nested
+        );
+
+        const previouslySelected = new Set<string>(
+            (layerInfo.value?.config?.sublayers ?? []).map((sl: any) => sl.id)
+        );
+
+        if (wizardStore.nested)
+            populateNestedWMS(layerInfo, previouslySelected);
+        else populateFlatWMS(layerInfo, previouslySelected);
+    }
+
+    updateSublayers(sublayerOptions(selectedValues.value));
+};
+
+const populateNested = (
+    layerInfo: any,
+    previouslySelected: Set<number>
+): void => {
+    const parentChildMap = new Map<number, number[]>();
+
+    for (const rawLayer of layerInfo.value.layersRaw) {
+        if (rawLayer.parentLayerId !== -1) {
+            const children = parentChildMap.get(rawLayer.parentLayerId) || [];
+            children.push(rawLayer.id);
+            parentChildMap.set(rawLayer.parentLayerId, children);
+        }
+    }
+
+    const allChildrenSelected = (parentId: number): boolean => {
+        const children = parentChildMap.get(parentId);
+        if (!children) return false;
+
+        return children.every(childId => {
+            if (parentChildMap.has(childId))
+                return allChildrenSelected(childId);
+            return previouslySelected.has(childId);
+        });
+    };
+
+    const addSelectedValues = (parentId: number): void => {
+        if (!allChildrenSelected(parentId)) {
+            const children = parentChildMap.get(parentId);
+            if (children) {
+                for (const child of children) {
+                    if (previouslySelected.has(child)) {
+                        selectedValues.value.push(child);
+                    }
+                }
+            }
+        } else selectedValues.value.push(parentId);
+    };
+
+    for (const parentId of parentChildMap.keys()) addSelectedValues(parentId);
+
+    for (const rawLayer of layerInfo.value.layersRaw) {
+        if (
+            rawLayer.parentLayerId === -1 &&
+            !parentChildMap.has(rawLayer.id) &&
+            previouslySelected.has(rawLayer.id)
+        ) {
+            selectedValues.value.push(rawLayer.id);
+        }
+    }
+
+    selectedValues.value = Array.from(new Set(selectedValues.value));
+};
+
+const populateNestedWMS = (
+    layerInfo: any,
+    previouslySelected: Set<string>
+): void => {
+    const allDescendantsSelected = (layer: any): boolean => {
+        if (!layer.layers || layer.layers.length === 0)
+            return previouslySelected.has(layer.name);
+        return layer.layers.every((child: any) =>
+            allDescendantsSelected(child)
+        );
+    };
+
+    const addSelectedLayerNames = (layer: any): void => {
+        if (allDescendantsSelected(layer))
+            selectedValues.value.push(layer.name);
+        else if (layer.layers) layer.layers.forEach(addSelectedLayerNames);
+    };
+
+    const topLayer = layerInfo.value.layersRaw[0];
+
+    if (topLayer && topLayer.layers) {
+        topLayer.layers.forEach((parentLayer: any) =>
+            addSelectedLayerNames(parentLayer)
+        );
+    }
+
+    selectedValues.value = Array.from(new Set(selectedValues.value));
+};
+
+const populateFlat = (
+    layerInfo: any,
+    previouslySelected: Set<number>
+): void => {
+    const lowestChildren = (parentId: number) => {
+        const children = layerInfo.value.layersRaw.filter(
+            (rl: any) => rl.parentLayerId === parentId
+        );
+
+        if (children.length > 0) {
+            for (const child of children) {
+                if (previouslySelected.has(child.id))
+                    selectedValues.value.push(child.id);
+                else lowestChildren(child.id);
+            }
+        } else selectedValues.value.push(parentId);
+    };
+
+    for (const rawLayer of layerInfo.value.layersRaw)
+        if (previouslySelected.has(rawLayer.id)) lowestChildren(rawLayer.id);
+
+    selectedValues.value = Array.from(new Set(selectedValues.value));
+};
+
+const populateFlatWMS = (
+    layerInfo: any,
+    previouslySelected: Set<string>
+): void => {
+    const addLeafLayers = (layer: any): void => {
+        if (layer.layers && layer.layers.length > 0)
+            layer.layers.forEach(addLeafLayers);
+        else selectedValues.value.push(layer.name);
+    };
+
+    const topLayer = layerInfo.value.layersRaw[0];
+
+    for (const prev of previouslySelected) {
+        const parentLayer = topLayer.layers.find(
+            (layer: any) => layer.name === prev
+        );
+
+        if (parentLayer && parentLayer.layers && parentLayer.layers.length > 0)
+            addLeafLayers(parentLayer);
+        else if (parentLayer) selectedValues.value.push(parentLayer.name);
+    }
+
+    selectedValues.value = Array.from(new Set(selectedValues.value));
+};
+
+const sublayerOptions = (layers: any[]) => {
+    // set sublayer option properties based on whether its a map image or WMS layer
+    return layers.map((layerIdx: any) => {
+        return typeSelection.value === LayerType.MAPIMAGE
+            ? {
+                  index: layerIdx,
+                  state: { opacity: 1, visibility: true }
+              }
+            : { id: layerIdx };
+    });
+};
+
 const generateColour = () => {
     // Generates a random 6 character hex string to use a random colour if one is not already selected. The 16777215 is (I think) the number of possible colours.
     colour.value =
@@ -698,6 +896,7 @@ const cancelServiceStep = () => {
 };
 
 const cancelNameStep = () => {
+    selectedValues.value = [];
     finishStep.value = false;
     wizardStore.goToStep(1);
 };
