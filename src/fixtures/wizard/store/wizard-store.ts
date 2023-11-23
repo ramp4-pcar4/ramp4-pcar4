@@ -13,6 +13,7 @@ export const useWizardStore = defineStore('wizard', () => {
     const layerSource = ref<LayerSource>();
     const url = ref('');
     const typeSelection = ref('');
+    const nested = ref(true);
     const fileData = ref<ArrayBuffer | null>(null);
     const layerInfo = ref({
         config: placeholderConfig,
@@ -51,6 +52,7 @@ export const useWizardStore = defineStore('wizard', () => {
                     url.value = '';
                     typeSelection.value = '';
                     fileData.value = null;
+                    nested.value = true;
                     layerInfo.value = {
                         config: placeholderConfig,
                         configOptions: []
@@ -72,6 +74,7 @@ export const useWizardStore = defineStore('wizard', () => {
         layerSource,
         url,
         typeSelection,
+        nested,
         fileData,
         layerInfo,
         currStep,

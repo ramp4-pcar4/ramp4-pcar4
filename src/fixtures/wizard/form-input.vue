@@ -152,6 +152,22 @@
                 </div>
             </div>
         </div>
+        <div v-else-if="type === 'checkbox'">
+            <label class="text-base font-bold">{{ label }}</label>
+            <div class="mb-0.5" data-type="url">
+                <input
+                    class="text-sm border-solid border-gray-300 mb-5 focus:border-green-500"
+                    type="checkbox"
+                    name="nested"
+                    :checked="checked"
+                    @change="
+                        event => {
+                            handleNestedChecked(event);
+                        }
+                    "
+                />
+            </div>
+        </div>
         <div v-else>
             <label class="text-base font-bold">{{ label }}</label>
             <div class="relative mb-0.5">
@@ -198,7 +214,8 @@ const emit = defineEmits([
     'link',
     'select',
     'upload',
-    'text'
+    'text',
+    'nested'
 ]);
 
 const props = defineProps({
@@ -259,6 +276,10 @@ const props = defineProps({
     url: {
         type: [String, Boolean],
         default: false
+    },
+    checked: {
+        type: [Boolean],
+        default: true
     },
     validation: {
         type: Boolean,
@@ -336,6 +357,10 @@ const handleServiceSelection = (size: string | number, event: Event) => {
     size
         ? emit('select', (event.target as HTMLInputElement).value)
         : emit('update:modelValue', (event.target as HTMLInputElement).value);
+};
+
+const handleNestedChecked = (event: Event) => {
+    emit('nested', (event.target as HTMLInputElement).checked);
 };
 
 const handleNameInput = (event: Event) => {

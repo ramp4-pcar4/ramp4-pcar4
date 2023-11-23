@@ -10,6 +10,7 @@ export interface LayerInfo {
     fields?: Array<FieldDefinition>; // the fields for the layer
     latLonFields?: { lat: Array<string>; lon: Array<string> }; // lat and lon are a list of field names that can be possible lat/lon fields
     layers?: Array<SublayerInfo>; // a nested list of info for the parent layer, sublayer groups, and sublayers. Only defined for MIL/WMS
+    layersRaw?: [];
 }
 
 export interface SublayerInfo {
@@ -144,13 +145,14 @@ export class LayerSource extends APIScope {
      */
     async fetchServiceInfo(
         url: string,
-        serviceType: string
+        serviceType: string,
+        nested: boolean
     ): Promise<LayerInfo | undefined> {
         switch (serviceType) {
             case LayerType.FEATURE:
                 return this.getFeatureInfo(url);
             case LayerType.MAPIMAGE:
-                return this.getMapImageInfo(url);
+                return this.getMapImageInfo(url, nested);
             case LayerType.TILE:
                 return this.getTileInfo(url);
             case LayerType.IMAGERY:
@@ -188,7 +190,7 @@ export class LayerSource extends APIScope {
      * @param {string} url
      * @returns {Promise<LayerInfo>} data configuration
      */
-    async getMapImageInfo(url: string): Promise<LayerInfo> {
+    async getMapImageInfo(url: string, nested: boolean): Promise<LayerInfo> {
         const response = await axios.get(url, { params: { f: 'json' } });
         const config = {
             id: `${LayerType.MAPIMAGE}#${++this.layerCount}`,
@@ -201,57 +203,72 @@ export class LayerSource extends APIScope {
 
         return {
             config,
-            layers: mapMapImageLayerList(response.data.layers),
-            configOptions: ['name', 'sublayers']
+            layers: this.createLayerHierarchy(response.data.layers, nested),
+            configOptions: ['name', 'sublayers'],
+            layersRaw: response.data.layers
+        };
+    }
+
+    createLayerHierarchy(layers: any[], nested: Boolean) {
+        // avoid case of disordered layers from endpoint
+        layers.sort((l1: any, l2: any) => l1.id - l2.id);
+
+        // traverses the layer tree to insert child layers
+        const findParent = (id: number, sublayers: Array<any>): any => {
+            if (sublayers === undefined) {
+                return false;
+            }
+            let i, parent;
+            if (sublayers.find(sl => sl.id === id)) {
+                return sublayers.find(sl => sl.id === id);
+            } else {
+                for (i = 0; i < sublayers.length; i += 1) {
+                    parent = findParent(id, sublayers[i].children);
+                    if (parent !== false) {
+                        return parent;
+                    }
+                }
+                return false;
+            }
         };
 
-        function mapMapImageLayerList(layers: any[]) {
-            // avoid case of disordered layers from endpoint
-            layers.sort((l1: any, l2: any) => l1.id - l2.id);
+        const opts: Array<SublayerInfo> = [];
 
-            // traverses the layer tree to insert child layers
-            const findParent = (id: number, sublayers: Array<any>): any => {
-                if (sublayers === undefined) {
-                    return false;
-                }
-                let i, parent;
-                if (sublayers.find(sl => sl.id === id)) {
-                    return sublayers.find(sl => sl.id === id);
-                } else {
-                    for (i = 0; i < sublayers.length; i += 1) {
-                        parent = findParent(id, sublayers[i].children);
-                        if (parent !== false) {
-                            return parent;
-                        }
-                    }
-                    return false;
-                }
-            };
+        const parentIds = new Set(
+            layers
+                .filter(
+                    layer => layer.subLayerIds && layer.subLayerIds.length > 0
+                )
+                .map(layer => layer.id)
+        );
 
-            const opts: Array<SublayerInfo> = [];
-
-            for (const layer of layers) {
-                if (layer.parentLayerId === -1) {
-                    opts.push({
+        for (const layer of layers) {
+            if (nested && layer.parentLayerId === -1) {
+                opts.push({
+                    id: layer.id,
+                    label: layer.name,
+                    children: layer.subLayerIds ? [] : undefined
+                });
+            } else if (nested) {
+                const parentLayer = findParent(layer.parentLayerId, opts);
+                parentLayer.children = [
+                    ...parentLayer.children,
+                    {
                         id: layer.id,
                         label: layer.name,
                         children: layer.subLayerIds ? [] : undefined
-                    });
-                } else {
-                    const parentLayer = findParent(layer.parentLayerId, opts);
-                    parentLayer.children = [
-                        ...parentLayer.children,
-                        {
-                            id: layer.id,
-                            label: layer.name,
-                            children: layer.subLayerIds ? [] : undefined
-                        }
-                    ];
-                }
+                    }
+                ];
+            } else if (!parentIds.has(layer.id)) {
+                opts.push({
+                    id: layer.id,
+                    label: layer.name,
+                    children: undefined
+                });
             }
-
-            return opts;
         }
+
+        return opts;
     }
 
     async getTileInfo(url: string): Promise<LayerInfo> {
