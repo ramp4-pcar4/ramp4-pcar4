@@ -2106,7 +2106,7 @@
                 },
                 "hasNorthPole": {
                     "type": "boolean",
-                    "description": "Indicates if this tile schema shows the north pole."
+                    "description": "Indicates if this tile schema shows the north pole. Will be defaulted to false if the basemap is mercator and true to if it's any other type of basemap."
                 },
                 "recoveryBasemap": {
                     "type": "object",
