@@ -70,6 +70,7 @@ export function configUpgrade2to4(r2c: any): RampConfigs {
 
     // add core always-on fixtures
     startingFixtures.push(
+        'grid',
         'crosshairs',
         'scrollguard',
         'panguard',
@@ -113,7 +114,7 @@ function individualConfigUpgrader(r2c: any): any {
     // and would likely be out-of-core fixtures.
 
     // #1346 adds areas of interest fixture as optional core fixture, so we can support the plugin config upgrader
-    if (r2c.plugins) pluginsUpgrader(r2c.plugins, r4c);
+    //if (r2c.plugins) pluginsUpgrader(r2c.plugins, r4c);
 
     return r4c;
 }
@@ -126,7 +127,7 @@ function individualConfigUpgrader(r2c: any): any {
 function mapUpgrader(r2Map: any, r4c: any): void {
     if (r2Map.layers) {
         r2Map.layers.forEach((r2layer: any) => {
-            r4c.layers.push(layerUpgrader(r2layer));
+            r4c.layers.unshift(layerUpgrader(r2layer));
         });
     }
 
@@ -396,7 +397,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
             };
             // layers already mapped through layerUpgrader
             if (r4c.layers) {
-                r4c.layers.forEach((r4layer: any) => {
+                r4c.layers.toReversed().forEach((r4layer: any) => {
                     if (
                         r4layer.type === 'esri-map-image' ||
                         r4layer.type === 'ogc-wms'
