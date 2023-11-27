@@ -118,6 +118,26 @@ export class DetailsAPI extends FixtureInstance {
             ? currFeatureId
             : undefined;
 
+        // Check to see if the layer has a fixture config in the store.
+        if (layer) {
+            // Check to see if we've already saved this layer's details config.
+            const detailsItem = this.detailsStore.properties[layer.id];
+
+            // If we haven't and the layer has a details config set, add it to the details store.
+            if (detailsItem === undefined) {
+                const layerDetailsConfigs: any = this.getLayerFixtureConfigs();
+
+                if (layerDetailsConfigs[layer.id] !== undefined) {
+                    this.detailsStore.addConfigProperty({
+                        id: layer.id,
+                        name: layerDetailsConfigs[layer.id].name,
+                        template: layerDetailsConfigs[layer.id].template,
+                        fields: layerDetailsConfigs[layer.id].fields
+                    });
+                }
+            }
+        }
+
         // toggle rules based on last opened details panel
         if (open === false) {
             this.$iApi.panel!.close(itemsPanel);
