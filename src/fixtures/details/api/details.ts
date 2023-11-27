@@ -36,25 +36,7 @@ export class DetailsAPI extends FixtureInstance {
                 .useStore('layer')
                 .getLayerByUid(p.uid);
 
-            if (layer) {
-                // Check to see if we've already saved this layer's details config.
-                const detailsItem = this.detailsStore.properties[layer.id];
-
-                // If we haven't and the layer has a details config set, add it to the details store.
-                if (detailsItem === undefined) {
-                    const layerDetailsConfigs: any =
-                        this.getLayerFixtureConfigs();
-
-                    if (layerDetailsConfigs[layer.id] !== undefined) {
-                        this.detailsStore.addConfigProperty({
-                            id: layer.id,
-                            name: layerDetailsConfigs[layer.id].name,
-                            template: layerDetailsConfigs[layer.id].template,
-                            fields: layerDetailsConfigs[layer.id].fields
-                        });
-                    }
-                }
-            }
+            this._loadDetailsConfig(layer);
         });
 
         // Open the details panel.
@@ -117,6 +99,9 @@ export class DetailsAPI extends FixtureInstance {
         this.detailsStore.currentFeatureId = featureData.data
             ? currFeatureId
             : undefined;
+
+        // Check to see if the layer has a fixture config in the store.
+        this._loadDetailsConfig(layer);
 
         // toggle rules based on last opened details panel
         if (open === false) {
@@ -182,6 +167,28 @@ export class DetailsAPI extends FixtureInstance {
         );
 
         this._validateItems();
+    }
+
+    _loadDetailsConfig(layer: LayerInstance | undefined) {
+        // Check to see if the layer has a fixture config in the store.
+        if (layer) {
+            // Check to see if we've already saved this layer's details config.
+            const detailsItem = this.detailsStore.properties[layer.id];
+
+            // If we haven't and the layer has a details config set, add it to the details store.
+            if (detailsItem === undefined) {
+                const layerDetailsConfigs: any = this.getLayerFixtureConfigs();
+
+                if (layerDetailsConfigs[layer.id] !== undefined) {
+                    this.detailsStore.addConfigProperty({
+                        id: layer.id,
+                        name: layerDetailsConfigs[layer.id].name,
+                        template: layerDetailsConfigs[layer.id].template,
+                        fields: layerDetailsConfigs[layer.id].fields
+                    });
+                }
+            }
+        }
     }
 
     /**
