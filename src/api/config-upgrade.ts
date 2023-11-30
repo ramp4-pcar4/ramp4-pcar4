@@ -70,6 +70,7 @@ export function configUpgrade2to4(r2c: any): RampConfigs {
 
     // add core always-on fixtures
     startingFixtures.push(
+        'grid',
         'crosshairs',
         'scrollguard',
         'panguard',
@@ -126,7 +127,7 @@ function individualConfigUpgrader(r2c: any): any {
 function mapUpgrader(r2Map: any, r4c: any): void {
     if (r2Map.layers) {
         r2Map.layers.forEach((r2layer: any) => {
-            r4c.layers.push(layerUpgrader(r2layer));
+            r4c.layers.unshift(layerUpgrader(r2layer));
         });
     }
 
@@ -396,7 +397,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
             };
             // layers already mapped through layerUpgrader
             if (r4c.layers) {
-                r4c.layers.forEach((r4layer: any) => {
+                r4c.layers.toReversed().forEach((r4layer: any) => {
                     if (
                         r4layer.type === 'esri-map-image' ||
                         r4layer.type === 'ogc-wms'
@@ -592,6 +593,7 @@ function legendEntryUpgrader(r2legendEntry: any) {
             r2legendEntry.controls,
             allowedControls
         );
+        r4legendEntry.layerControls.push('symbology');
     }
     if (
         r2legendEntry.disabledControls &&
@@ -817,6 +819,7 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
     ];
     if (r2layer.controls && r2layer.controls.length > 0) {
         r4layer.controls = controlsUpgrader(r2layer.controls, allowedControls);
+        r4layer.controls.push('symbology');
     }
 
     if (r2layer.disabledControls && r2layer.disabledControls.length > 0) {
@@ -960,6 +963,11 @@ function controlsUpgrader(r2controls: String[], allowedControls: String[]) {
     r2controls.forEach((control: any) => {
         if (allowedControls.includes('identify') && control === 'query') {
             r4controls.push('identify');
+        } else if (
+            allowedControls.includes('datatable') &&
+            control === 'data'
+        ) {
+            r4controls.push('datatable');
         } else if (allowedControls.includes(control)) {
             r4controls.push(control);
         } else {
@@ -1357,31 +1365,32 @@ function uiUpgrader(r2ui: any, r4c: any): void {
  * @param r4c entire ramp4 config. param is modded in place, since ramp2 elements end up all over the new config
  */
 function pluginsUpgrader(r2plugins: any, r4c: any): void {
-    if (r2plugins.areasOfInterest) {
+    if (r2plugins.areasOfInterest.enable) {
         // add the areas of interest fixture
         if (!r4c.fixturesEnabled.includes('areas-of-interest')) {
             r4c.fixturesEnabled.push('areas-of-interest');
         }
-
-        r4c.fixtures['areas-of-interest'] = {
-            areas: r2plugins.areasOfInterest.areas.map((area: any) => {
-                return {
-                    title: `${area['title-en-CA']} / ${area['title-fr-CA']}`,
-                    thumbnail: area.thumbnailUrl,
-                    altText: area.altText ?? '',
-                    description: area.description ?? '',
-                    extent: {
-                        xmin: area.xmin,
-                        xmax: area.xmax,
-                        ymin: area.ymin,
-                        ymax: area.ymax,
-                        spatialReference: {
-                            wkid: area.wkid
+        if (r2plugins.areasOfInterest.areas) {
+            r4c.fixtures['areas-of-interest'] = {
+                areas: r2plugins.areasOfInterest.areas.map((area: any) => {
+                    return {
+                        title: `${area['title-en-CA']} / ${area['title-fr-CA']}`,
+                        thumbnail: area.thumbnailUrl,
+                        altText: area.altText ?? '',
+                        description: area.description ?? '',
+                        extent: {
+                            xmin: area.xmin,
+                            xmax: area.xmax,
+                            ymin: area.ymin,
+                            ymax: area.ymax,
+                            spatialReference: {
+                                wkid: area.wkid
+                            }
                         }
-                    }
-                };
-            })
-        };
+                    };
+                })
+            };
+        }
     }
 }
 
