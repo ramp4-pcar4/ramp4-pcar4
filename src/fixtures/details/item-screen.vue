@@ -108,8 +108,10 @@
                                     class="animate-spin spinner h-20 w-20"
                                 ></div>
                             </div>
-                            <span class="flex-grow my-auto text-lg px-8">
-                                {{ itemName }}
+                            <span
+                                class="flex-grow my-auto text-lg px-8"
+                                v-html="makeHtmlLink(itemName)"
+                            >
                             </span>
                             <button
                                 type="button"
@@ -237,6 +239,7 @@ import type { LayerInstance, PanelInstance } from '@/api/internal';
 
 import ESRIDefault from './templates/esri-default.vue';
 import HTMLDefault from './templates/html-default.vue';
+import linkifyHtml from 'linkify-html';
 import Toggle from '../../components/controls/toggle-switch-control.vue';
 import { useI18n } from 'vue-i18n';
 
@@ -360,6 +363,29 @@ const detailsTemplate = computed(() => {
         return ESRIDefault;
     }
 });
+
+// make links look like links and work like links
+const makeHtmlLink = (html: string): string => {
+    const classes = 'underline text-blue-600 break-all';
+    const div = document.createElement('div');
+    div.innerHTML = html.trim();
+
+    // check if the html string is just an <a> tag
+    if (div.firstElementChild?.tagName == 'A') {
+        div.firstElementChild.className = classes;
+        return div.innerHTML;
+    } else {
+        // otherwise, look for any valid links
+        const options = {
+            className: classes,
+            target: '_blank',
+            validate: {
+                url: (value: string) => /^https?:\/\//.test(value) // only links that begin with a protocol will be hyperlinked
+            }
+        };
+        return linkifyHtml(html, options);
+    }
+};
 
 const icon = ref<string>('');
 const zoomStatus = ref<'zooming' | 'zoomed' | 'error' | 'none'>('none');
