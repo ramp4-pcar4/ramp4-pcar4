@@ -1,15 +1,14 @@
 <template>
     <panel-screen :panel="panel">
         <template #header>
-            {{
-                layerExists
-                    ? `${t('settings.title')}: ${layerName}`
-                    : t('settings.title')
-            }}
+            {{ t('settings.title') }}
         </template>
 
         <template #content>
             <div v-if="layerExists">
+                <div class="p-8 font-bold break-words mb-8 bg-gray-100">
+                    {{ layerName }}
+                </div>
                 <div class="flex flex-col justify-center">
                     <span class="rv-subheader">{{
                         t('settings.label.display')
