@@ -108,8 +108,10 @@
                                     class="animate-spin spinner h-20 w-20"
                                 ></div>
                             </div>
-                            <span class="flex-grow my-auto text-lg px-8">
-                                {{ itemName }}
+                            <span
+                                class="flex-grow my-auto text-lg px-8"
+                                v-html="itemName"
+                            >
                             </span>
                             <button
                                 type="button"
