@@ -22,7 +22,6 @@
     },
     "dependencies": {
         "@arcgis/core": "4.26.5",
-        "@ecgc/vue-slider-component": "4.0.0-beta.7",
         "@popperjs/core": "^2.11.6",
         "@ramp4-pcar4/vue3-treeselect": "github:ramp4-pcar4/vue3-treeselect",
         "@tailwindcss/line-clamp": "^0.4.4",
@@ -53,6 +52,7 @@
         "vue": "^3.2.31",
         "vue-accessible-color-picker": "^4.0.3",
         "vue-i18n": "^9.1.7",
+        "vue-slider-component": "^4.1.0-beta.7",
         "vue-tippy": "^6.0.0",
         "vuedraggable": "next"
     },
