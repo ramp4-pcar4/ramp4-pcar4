@@ -21,8 +21,8 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, reactive, ref, watch } from 'vue';
-import VueSlider from '@ecgc/vue-slider-component';
-import '@ecgc/vue-slider-component/theme/default.css';
+import VueSlider from 'vue-slider-component';
+import 'vue-slider-component/theme/antd.css';
 
 const props = defineProps({
     name: String,

@@ -274,46 +274,46 @@ let config = {
                             search: { enabled: false },
                             columns: [
                                 {
-                                    name: 'Category'
+                                    field: 'Category'
                                 },
                                 {
-                                    name: 'Recipient_type'
+                                    field: 'Recipient_type'
                                 },
                                 {
-                                    name: 'Department___Agency___Crown_Corporation'
+                                    field: 'Department___Agency___Crown_Corporation'
                                 },
                                 {
-                                    name: 'Province_Territory'
+                                    field: 'Province_Territory'
                                 },
                                 {
-                                    name: 'Municipality___Community'
+                                    field: 'Municipality___Community'
                                 },
                                 {
-                                    name: 'Program_name'
+                                    field: 'Program_name'
                                 },
                                 {
-                                    name: 'Project_name'
+                                    field: 'Project_name'
                                 },
                                 {
-                                    name: 'Project_description'
+                                    field: 'Project_description'
                                 },
                                 {
-                                    name: 'Ultimate_recipient_name'
+                                    field: 'Ultimate_recipient_name'
                                 },
                                 {
-                                    name: 'Funding_date___estimated_start_date'
+                                    field: 'Funding_date___estimated_start_date'
                                 },
                                 {
-                                    name: 'Program_contribution'
+                                    field: 'Program_contribution'
                                 },
                                 {
-                                    name: 'Estimated_total_project_cost'
+                                    field: 'Estimated_total_project_cost'
                                 },
                                 {
-                                    name: 'Additional_information'
+                                    field: 'Additional_information'
                                 },
                                 {
-                                    name: 'Icon',
+                                    field: 'Icon',
                                     visible: false
                                 }
                             ]
