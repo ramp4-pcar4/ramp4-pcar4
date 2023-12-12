@@ -24,6 +24,7 @@ import EsriMapImageLayer from '@arcgis/core/layers/MapImageLayer';
 import EsriOpenStreetMapLayer from '@arcgis/core/layers/OpenStreetMapLayer';
 import EsriTileLayer from '@arcgis/core/layers/TileLayer';
 import EsriWMSLayer from '@arcgis/core/layers/WMSLayer';
+import EsriFeatureReductionCluster from '@arcgis/core/layers/support/FeatureReductionCluster';
 import EsriField from '@arcgis/core/layers/support/Field';
 import EsriLOD from '@arcgis/core/layers/support/LOD';
 import EsriSublayer from '@arcgis/core/layers/support/Sublayer';
@@ -61,6 +62,7 @@ export {
     EsriExtent,
     EsriFeatureFilter,
     EsriFeatureLayer,
+    EsriFeatureReductionCluster,
     EsriField,
     EsriGeometry,
     EsriGeometryFromJson,
