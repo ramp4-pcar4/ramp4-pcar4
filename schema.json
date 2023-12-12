@@ -1227,6 +1227,11 @@
                     "description": "Determines how features should be identified. By geometry, by symbol, or both.",
                     "default": "hybrid",
                     "enum": ["geometric", "symbolic", "hybrid"]
+                },
+                "pointClustering": {
+                    "type": "object",
+                    "description": "Groups points based on their spatial proximity to one another. Follows ESRI Javascript API for FeatureReductionCluster.",
+                    "additionalProperties": true
                 }
             },
             "required": ["id", "layerType", "url"],
@@ -1365,6 +1370,11 @@
                     "description": "Determines how features should be identified. By geometry, by symbol, or both.",
                     "default": "hybrid",
                     "enum": ["geometric", "symbolic", "hybrid"]
+                },
+                "pointClustering": {
+                    "type": "object",
+                    "description": "Groups points based on their spatial proximity to one another. Follows ESRI Javascript API for FeatureReductionCluster.",
+                    "additionalProperties": true
                 }
             },
             "required": ["id", "layerType", "url"],
@@ -1577,6 +1587,11 @@
                     "description": "Determines how features should be identified. By geometry, by symbol, or both.",
                     "default": "hybrid",
                     "enum": ["geometric", "symbolic", "hybrid"]
+                },
+                "pointClustering": {
+                    "type": "object",
+                    "description": "Groups points based on their spatial proximity to one another. Follows ESRI Javascript API for FeatureReductionCluster.",
+                    "additionalProperties": true
                 }
             },
             "required": ["id", "layerType", "url"],

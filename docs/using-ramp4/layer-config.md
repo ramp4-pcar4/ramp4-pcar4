@@ -30,6 +30,7 @@ Layer Configuration Properties
 - [name](#name)
 - [nameField](#namefield)
 - [permanentFilteredQuery](#permanentfilteredquery)
+- [pointClustering](#pointclustering)
 - [rawData](#rawdata)
 - [singleEntryCollapse](#singleentrycollapse)
 - [state](#state)
@@ -325,7 +326,7 @@ It is highly recommended to use a field with unique values to avoid current limi
 {
     drawOrder: [
         {
-            field: 'sortingId',
+            field: "sortingId",
             ascending: true
         }
     ]
@@ -506,6 +507,34 @@ To align a legend symbol stack with a particular permanent filter, see the `symb
 ```js
 {
     permanentFilteredQuery: "resto_type = 'Hamburger'"
+}
+```
+
+### pointClustering
+
+*object*, only applies to layers that [have vector client data](#layer-abilities)
+
+Specifies reducing points for a layer by grouping them based on their spatial proximity to one another. If missing, supported layers are displayed without point clustering enabled.
+
+The properties in the object structure match the properties in the ESRI Javascript API page for [Point Clustering](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-support-FeatureReductionCluster.html).
+
+```js
+{
+    pointClustering: {
+        type: "cluster",
+        clusterRadius: "100px",
+        clusterMinSize: "24px",
+        clusterMaxSize: "60px",
+        symbol: {
+            type: "simple-marker",
+            style: "circle",
+            color: "#69dcff",
+            outline: {
+                color: "rgba(0, 139, 174, 0.5)",
+                width: 6
+            }
+        }
+    }
 }
 ```
 
