@@ -194,6 +194,11 @@ export class FileLayer extends AttribLayer {
             this._drawOrder = [{ field: oidField, ascending: false }];
         }
 
+        // enable point clustering if set up in config
+        if (rampLayerConfig.pointClustering) {
+            esriConfig!.featureReduction = rampLayerConfig.pointClustering;
+        }
+
         return esriConfig;
     }
 
