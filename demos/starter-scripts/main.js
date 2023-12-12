@@ -144,9 +144,11 @@ let config = {
                     },
                     {
                         id: 'baseProvinces_3978',
-                        name: 'Provincial Outlines',
-                        description: 'Basic Provincial outlines.',
-                        altText: 'Canada Base Map - Province Outlines',
+                        name: 'Provincial and Territorial Boundaries',
+                        description:
+                            "A basic outline of Canada's provincial and territorial boundaries.",
+                        altText:
+                            'Canada Base Map - Provincial and Territorial outlines',
                         hideThumbnail: true,
                         layers: [
                             {
