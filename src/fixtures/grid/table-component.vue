@@ -342,6 +342,25 @@
                                 </g>
                             </svg>
                         </a>
+                        <a
+                            href="javascript:;"
+                            class="flex leading-snug items-center w-256"
+                            :class="{ hover: 'text-black' }"
+                            @click="exportData()"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                class="fill-current inline w-20 h-20 mr-2 text-gray-500"
+                            >
+                                <g>
+                                    <path
+                                        d="M6 2c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6H6zm7 7V3.5L18.5 9H13z"
+                                    ></path>
+                                </g>
+                            </svg>
+                            {{ t('grid.export') }}
+                        </a>
                     </dropdown-menu>
                 </div>
             </div>
@@ -502,6 +521,7 @@ export interface SpecialColumnDefinition {
     cellStyle: Function;
     cellRenderer?: Function;
     cellRendererParams?: any;
+    preventExport: boolean;
 }
 
 // these should match up with the `type` value returned by the attribute promise.
@@ -760,6 +780,18 @@ const togglePinned = () => {
     );
 };
 
+const exportData = () => {
+    // Filter out the 'special columns'
+    const columnsToExport = columnApi.value
+        .getAllDisplayedColumns()
+        .filter(column => !(column.getColDef() as any).preventExport);
+
+    agGridApi.value.exportDataAsCsv({
+        columnKeys: columnsToExport,
+        suppressQuotes: true
+    });
+};
+
 const setUpDateFilter = (
     colDef: ColumnDefinition,
     state: TableStateManager
@@ -901,7 +933,8 @@ const setUpSpecialColumns = (
                 clearFilters: clearFilters,
                 suppressFilterButton: true
             },
-            filter: true
+            filter: true,
+            preventExport: true
         };
 
         colDef.push(indexDef);
@@ -929,7 +962,8 @@ const setUpSpecialColumns = (
                 t: t,
                 layerCols: layerCols.value,
                 isTeleport: props.panel.teleport !== undefined
-            }
+            },
+            preventExport: true
         };
 
         // Only add this button if it is defined in the grid controls.
@@ -956,7 +990,8 @@ const setUpSpecialColumns = (
                     $iApi: iApi,
                     layerCols: layerCols.value,
                     isTeleport: props.panel.teleport !== undefined
-                }
+                },
+                preventExport: true
             };
 
             // Only add this button if it is defined in the grid controls.
@@ -989,7 +1024,8 @@ const setUpSpecialColumns = (
                         t: t,
                         layerCols: layerCols.value,
                         config: buttonConfig
-                    }
+                    },
+                    preventExport: true
                 };
 
                 colDef.push(buttonDef);
@@ -1027,7 +1063,8 @@ const setUpSpecialColumns = (
             cellRendererParams: {
                 $iApi: iApi,
                 oidField: oidField.value
-            }
+            },
+            preventExport: true
         };
 
         colDef.push(iconDef);
