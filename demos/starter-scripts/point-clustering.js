@@ -262,7 +262,7 @@ let config = {
             layers: [
                 {
                     id: 'Water',
-                    name: 'Feature Layer',
+                    name: 'Feature Layer Cluster',
                     layerType: 'esri-feature',
                     url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/8',
                     pointClustering: {
@@ -308,7 +308,7 @@ let config = {
                 },
                 {
                     id: 'WFSLayer',
-                    name: 'WFS Layer',
+                    name: 'WFS Layer Cluster',
                     layerType: 'ogc-wfs',
                     url: 'https://api.weather.gc.ca//collections/ahccd-trends/items?measurement_type__type_mesure=total_precip&period__periode=Ann&offset=0&limit=1000&province__province=on',
                     xyInAttribs: true,
@@ -359,7 +359,7 @@ let config = {
                 },
                 {
                     id: 'CSV',
-                    name: 'CSV',
+                    name: 'CSV Cluster',
                     layerType: 'file-csv',
                     url: '../file-layers/point-cluster.csv',
                     latField: 'Y',
@@ -402,7 +402,7 @@ let config = {
                 },
                 {
                     id: 'GeoJson',
-                    name: 'GeoJson',
+                    name: 'GeoJson Cluster',
                     layerType: 'file-geojson',
                     url: '../file-layers/point-cluster.json',
                     caching: true,

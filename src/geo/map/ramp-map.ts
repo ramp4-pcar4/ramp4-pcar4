@@ -1111,10 +1111,11 @@ export class MapAPI extends CommonMapAPI {
                             .then(({ features }) => {
                                 // @ts-ignore
                                 return features.map(fr => {
+                                    // fr.layer is an esri layer
                                     return {
                                         layerId: fr.layer.id,
                                         layerIdx: 0,
-                                        oid: fr.attributes.OBJECTID
+                                        oid: fr.attributes[fr.layer.objectIdField]
                                     };
                                 });
                             });

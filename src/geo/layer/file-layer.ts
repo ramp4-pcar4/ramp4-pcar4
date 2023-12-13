@@ -196,7 +196,7 @@ export class FileLayer extends AttribLayer {
 
         // enable point clustering if set up in config
         if (rampLayerConfig.pointClustering) {
-            esriConfig!.featureReduction = rampLayerConfig.pointClustering;
+            esriConfig.featureReduction = rampLayerConfig.pointClustering;
         }
 
         return esriConfig;

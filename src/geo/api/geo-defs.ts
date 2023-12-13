@@ -5,7 +5,7 @@ import type {
     Point,
     SpatialReference
 } from '@/geo/api';
-import type { EsriRenderer, EsriFeatureReductionCluster } from '../esri';
+import type { EsriFeatureReductionCluster, EsriRenderer } from '../esri';
 
 // From the supported ESRI field types
 // https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-support-Field.html#type
