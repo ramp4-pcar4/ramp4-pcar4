@@ -27,10 +27,12 @@
                     <!-- Found Screen, HTML -->
                     <div
                         v-else-if="
-                            payload.type === 'html' && status == 'success'
+                            (payload.type === 'html' ||
+                                payload.type === 'md') &&
+                            status == 'success'
                         "
                         v-html="response"
-                        class="flex flex-col justify-center max-w-full"
+                        class="flex flex-col justify-center max-w-full metadata-view"
                     ></div>
 
                     <!-- Error Screen -->
@@ -72,6 +74,7 @@ import {
 } from '@/api';
 import type { MetadataCache, MetadataPayload, MetadataResult } from './store';
 import { useMetadataStore } from './store';
+import { marked } from 'marked';
 
 import XSLT_en from './files/xstyle_default_en.xsl?raw';
 import XSLT_fr from './files/xstyle_default_fr.xsl?raw';
@@ -196,6 +199,12 @@ const loadMetadata = () => {
             //@ts-ignore
             metadataStore.response = r.response;
         });
+    } else if (props.payload.type === 'md') {
+        requestContent(props.payload.url).then(r => {
+            metadataStore.status = r.status;
+            //@ts-ignore
+            metadataStore.response = marked(r.response);
+        });
     }
 };
 
@@ -298,7 +307,33 @@ function stringToFragment(string: string) {
 .xml-content {
     font-size: 14px;
 }
-.metadata-view a {
-    color: blue;
+
+// Tailwind removes basic heading styling, so add some here
+// to make the markdown presentable.
+.metadata-view {
+    a {
+        color: blue;
+    }
+
+    h1 {
+        font-size: 1.5em;
+        margin: 0.1em 0px;
+        font-weight: bold;
+    }
+    h2 {
+        font-size: 1.2em;
+        margin: 0.1em 0px;
+        font-weight: bold;
+    }
+
+    h3 {
+        font-size: 1em;
+        margin: 0.1em 0px;
+        font-weight: bold;
+    }
+
+    p {
+        margin: 0.2em 0px;
+    }
 }
 </style>

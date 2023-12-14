@@ -236,8 +236,11 @@ const toggleMetadata = () => {
         if (metaConfig.url) {
             // Check the file extension to see if this is an XML file. Defaults to HTML.
             const parseUrl = metaConfig.url.split('.');
+            const metadataExtension = parseUrl[parseUrl.length - 1];
             const metadataType =
-                parseUrl[parseUrl.length - 1] === 'xml' ? 'xml' : 'html';
+                metadataExtension === 'xml' || metadataExtension === 'md'
+                    ? metadataExtension
+                    : 'html';
 
             // TODO: toggle metadata panel through API/store call
             iApi.event.emit(GlobalEvents.METADATA_TOGGLE, {

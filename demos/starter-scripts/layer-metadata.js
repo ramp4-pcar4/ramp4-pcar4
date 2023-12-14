@@ -80,8 +80,7 @@ let config = {
                     layerType: 'esri-feature',
                     url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/6',
                     metadata: {
-                        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/6?f=pjson',
-                        name: 'JSON'
+                        url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/main/public/help/en.md'
                     }
                 }
             ],
