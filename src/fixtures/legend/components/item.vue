@@ -325,7 +325,7 @@
 
                 <!-- offscale icon -->
                 <div
-                    class="relative mx-5 cursor-default"
+                    class="relative p-4 cursor-default"
                     :content="t('legend.layer.offscale')"
                     v-tippy="{
                         placement: 'top-start'
@@ -351,7 +351,7 @@
 
                 <!-- data only icon -->
                 <div
-                    class="relative mx-5 cursor-default"
+                    class="relative p-4 cursor-default"
                     :content="t('legend.layer.data.only')"
                     v-tippy="{
                         placement: 'top-end'
