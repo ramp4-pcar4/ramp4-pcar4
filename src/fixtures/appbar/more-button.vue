@@ -7,6 +7,7 @@
             v-focus-item
             :content="t('appbar.more')"
             v-tippy="{ placement: 'right' }"
+            ref="dropdownTrigger"
         >
             <svg
                 class="fill-current w-24 h-24 m-auto"
@@ -21,10 +22,11 @@
         </button>
         <div
             v-show="open"
+            @click="popper.update()"
             @blur="open = false"
-            :position="position"
             id="dropdown"
-            class="dropdown shadow-md border border-gray:200 absolute w-64 flex flex-col bg-white rounded"
+            class="dropdown shadow-md border border-gray:200 absolute w-64 flex flex-col bg-white rounded overflow-y-auto max-h-screen"
+            ref="dropdown"
         >
             <slot></slot>
         </div>
@@ -35,17 +37,30 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+import type { Placement, Modifier, State } from '@popperjs/core';
+import { createPopper, detectOverflow } from '@popperjs/core';
+
 const { t } = useI18n();
 
-defineProps({
+const props = defineProps({
     position: {
         type: String,
-        default: 'bottom-right'
+        default: 'right'
+    },
+    popperOptions: {
+        type: Object,
+        default() {
+            return {};
+        }
     }
 });
 
 const open = ref(false);
+const popper = ref<any>(null);
+
 const el = ref<Element>();
+const dropdownTrigger = ref<Element>();
+const dropdown = ref<HTMLElement>();
 
 onMounted(() => {
     window.addEventListener(
@@ -60,6 +75,45 @@ onMounted(() => {
         },
         { capture: true }
     );
+
+    const overflowScrollModifier: Modifier<'overflowScroll', {}> = {
+        name: 'overflowScroll',
+        enabled: true,
+        phase: 'main',
+        fn({ state }: { state: State }) {
+            const { bottom } = detectOverflow(state);
+            if (bottom < 0) {
+                state.styles.popper.overflowY = 'auto';
+                state.styles.popper.overflowX = 'hidden';
+                state.styles.popper.height =
+                    bottom < -50
+                        ? 'auto'
+                        : `${state.rects.popper.height - bottom - 45}px`;
+            } else {
+                state.styles.popper.height = 'auto';
+            }
+        }
+    };
+
+    if (dropdownTrigger.value && dropdown.value) {
+        createPopper(
+            dropdownTrigger.value as Element,
+            dropdown.value as HTMLElement,
+            {
+                placement: (props.position || 'right') as Placement,
+                modifiers: [
+                    overflowScrollModifier,
+                    {
+                        name: 'offset',
+                        options: {
+                            offset: [0, 5]
+                        }
+                    }
+                ],
+                ...props.popperOptions
+            }
+        );
+    }
 });
 
 onBeforeUnmount(() => {
