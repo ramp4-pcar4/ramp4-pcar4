@@ -3,10 +3,11 @@
         <button
             type="button"
             class="text-gray-400 w-full h-48 focus:outline-none hover:text-white"
-            @click="open = !open"
+            @click="popperSetUp()"
             v-focus-item
             :content="t('appbar.more')"
-            v-tippy="{ placement: 'right' }"
+            v-tippy="{ placement: 'right-end' }"
+            ref="dropdownTrigger"
         >
             <svg
                 class="fill-current w-24 h-24 m-auto"
@@ -21,10 +22,9 @@
         </button>
         <div
             v-show="open"
-            @blur="open = false"
-            :position="position"
             id="dropdown"
             class="dropdown shadow-md border border-gray:200 absolute w-64 flex flex-col bg-white rounded"
+            ref="dropdown"
         >
             <slot></slot>
         </div>
@@ -35,17 +35,81 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+import type { Placement, Modifier, State } from '@popperjs/core';
+import { createPopper } from '@popperjs/core';
+import maxSize from 'popper-max-size-modifier';
+
 const { t } = useI18n();
 
-defineProps({
+const props = defineProps({
     position: {
         type: String,
-        default: 'bottom-right'
+        default: 'right-end'
+    },
+    popperOptions: {
+        type: Object,
+        default() {
+            return {};
+        }
     }
 });
 
 const open = ref(false);
+
 const el = ref<Element>();
+const dropdownTrigger = ref<Element>();
+const dropdown = ref<HTMLElement>();
+
+const popperSetUp = () => {
+    open.value = !open.value;
+
+    const applyMaxSize = {
+        name: 'applyMaxSize',
+        enabled: true,
+        phase: 'beforeWrite',
+        requires: ['maxSize'],
+        fn({ state }: { state: State }) {
+            // The `maxSize` modifier provides this data
+            const { width, height } = state.modifiersData.maxSize;
+
+            state.styles.popper = {
+                ...state.styles.popper,
+                maxWidth: `${width}px`,
+                maxHeight: `${Math.max(80, height) - 38}px`
+            };
+
+            state.styles.popper.overflowY = 'auto';
+            state.styles.popper.overflowX = 'hidden';
+        }
+    };
+
+    const innerShell = document.querySelector('.inner-shell')!;
+    if (dropdownTrigger.value && dropdown.value) {
+        createPopper(
+            dropdownTrigger.value as Element,
+            dropdown.value as HTMLElement,
+            {
+                placement: (props.position || 'right-end') as Placement,
+                modifiers: [
+                    {
+                        ...maxSize,
+                        options: {
+                            boundary: innerShell
+                        }
+                    },
+                    applyMaxSize as Modifier<'applyMaxsize', {}>,
+                    {
+                        name: 'offset',
+                        options: {
+                            offset: [0, 5]
+                        }
+                    }
+                ],
+                ...props.popperOptions
+            }
+        );
+    }
+};
 
 onMounted(() => {
     window.addEventListener(
