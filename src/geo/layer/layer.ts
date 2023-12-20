@@ -7,6 +7,7 @@ import {
     FeatureLayer,
     GeoJsonLayer,
     GraphicLayer,
+    ImageryLayer,
     InstanceAPI,
     JsonDataLayer,
     LayerInstance,
@@ -68,6 +69,9 @@ export class LayerAPI extends APIScope {
                 break;
             case LayerType.TILE:
                 closs = TileLayer;
+                break;
+            case LayerType.IMAGERY:
+                closs = ImageryLayer;
                 break;
             case LayerType.WFS:
                 closs = WfsLayer;
