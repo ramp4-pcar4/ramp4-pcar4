@@ -133,6 +133,7 @@
                         :columnApi="columnApi"
                         :columnDefs="columnDefs"
                         :oidCols="oidCols"
+                        @refreshHeaders="agGridApi.refreshHeader()"
                     ></column-dropdown>
 
                     <!-- clear all filters -->
