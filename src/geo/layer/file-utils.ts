@@ -458,17 +458,48 @@ export class FileUtils extends APIScope {
             defRender.renderer
         );
 
-        // .fields currently has our objectid field. the concat adds the rest
-        configPackage.fields = (configPackage.fields || []).concat(
-            options.fieldMetadata?.exclusiveFields
-                ? (this.extractGeoJsonFields(geoJson) as Array<Object>).filter(
-                      (field: any) =>
-                          options.fieldMetadata?.fieldInfo?.find(
-                              (f: any) => f.name === field.name
-                          )
-                  )
-                : (this.extractGeoJsonFields(geoJson) as Array<Object>)
-        );
+        // .fields currently has our objectid field, add the rest based on the fieldMetaData config
+        if (options.fieldMetadata?.exclusiveFields) {
+            if (options.fieldMetadata?.enforceOrder) {
+                options.fieldMetadata.fieldInfo?.forEach((f: any) => {
+                    configPackage.fields = [
+                        ...(configPackage.fields || []),
+                        ...(
+                            this.extractGeoJsonFields(geoJson) as Array<Object>
+                        ).filter((field: any) => field.name === f.name)
+                    ];
+                });
+            } else {
+                configPackage.fields = (configPackage.fields || [])
+                    .concat(this.extractGeoJsonFields(geoJson) as Array<Object>)
+                    .filter((field: any) =>
+                        options.fieldMetadata?.fieldInfo?.find(
+                            (f: any) => f.name === field.name
+                        )
+                    );
+            }
+        } else {
+            if (options.fieldMetadata?.enforceOrder) {
+                options.fieldMetadata.fieldInfo?.forEach((f: any) => {
+                    configPackage.fields = [
+                        ...(configPackage.fields || []),
+                        ...(
+                            this.extractGeoJsonFields(geoJson) as Array<Object>
+                        ).filter((field: any) => field.name === f.name)
+                    ];
+                });
+                configPackage.fields = (configPackage.fields || [])
+                    .concat(this.extractGeoJsonFields(geoJson) as Array<Object>)
+                    .filter(
+                        (field: any) =>
+                            !options.fieldMetadata?.fieldInfo?.includes(field)
+                    );
+            } else {
+                configPackage.fields = (configPackage.fields || []).concat(
+                    this.extractGeoJsonFields(geoJson) as Array<Object>
+                );
+            }
+        }
 
         // clean the fields. in particular, CSV files can be loaded with spaces in
         // the field names
@@ -479,7 +510,7 @@ export class FileUtils extends APIScope {
         // change latitude and longitude fields from esriFieldTypeString -> esriFieldTypeDouble if they exist
         if (options) {
             if (options.latField) {
-                const latField = configPackage.fields.find(
+                const latField = configPackage.fields!.find(
                     field =>
                         field.name === options.latField ||
                         field.alias === options.latField
@@ -489,7 +520,7 @@ export class FileUtils extends APIScope {
                 }
             }
             if (options.lonField) {
-                const longField = configPackage.fields.find(
+                const longField = configPackage.fields!.find(
                     field =>
                         field.name === options.lonField ||
                         field.alias === options.lonField
