@@ -7,6 +7,7 @@ import type {
     Extent,
     FieldDefinition,
     GetGraphicServiceDetails,
+    RampLayerFieldInfoConfig,
     RampLayerFieldMetadataConfig,
     TabularAttributeSet
 } from '@/geo/api';
@@ -366,6 +367,55 @@ export class AttributeAPI extends APIScope {
     }
 
     /**
+     * Will order the fields of a layer based on its fieldInfo.
+     *
+     * @param currentFields the current order of the fields
+     * @param orderInfo the fieldInfo config that contains the order the fields should be displayed in
+     */
+    orderFields(
+        currentFields: Array<any>,
+        orderInfo: Array<RampLayerFieldInfoConfig>
+    ): Array<Object> {
+        const magicFinder = (sauce: Array<any>, targetName: string): number => {
+            // finds index of matching name, -1 if not in array.
+            return sauce.findIndex(
+                (protoField: any) => protoField.name === targetName
+            );
+        };
+
+        const magicSorter = (
+            field1: FieldDefinition,
+            field2: FieldDefinition
+        ) => {
+            // return value:
+            // negative if f1 is less than f2; positive if f1 is greater than f2; zero if they are equal (should be impossible)
+
+            // find in order, if exists
+            const ordF1 = magicFinder(orderInfo, field1.name);
+            const ordF2 = magicFinder(orderInfo, field2.name);
+
+            if (ordF1 === -1 && ordF2 === -1) {
+                // neither have order. fallback to source order,
+                return (
+                    magicFinder(currentFields, field1.name) -
+                    magicFinder(currentFields, field2.name)
+                );
+            } else if (ordF1 === -1) {
+                // field 1 is unordered, so field 2 must come before
+                return 1;
+            } else if (ordF2 === -1) {
+                // field 2 is unordered, so field 1 must come before
+                return -1;
+            } else {
+                return ordF1 - ordF2;
+            }
+        };
+
+        // copy array so magicFinder doesn't start reading half-sorted values
+        return currentFields.slice().sort(magicSorter);
+    }
+
+    /**
      * Will apply any field config metadata to a layer.
      * Should be used after loading process has populated .fields property of the layer
      *
@@ -382,6 +432,22 @@ export class AttributeAPI extends APIScope {
         if (!fieldMetadata || !fieldMetadata.fieldInfo) {
             layer.fieldList = '*';
             return;
+        }
+
+        // if order enforced, order the fields first before doing exclusive fields check
+        if (
+            fieldMetadata?.enforceOrder &&
+            fieldMetadata?.fieldInfo &&
+            fieldMetadata?.fieldInfo.length > 0
+        ) {
+            // demand respect for order
+            layer.fields = this.orderFields(
+                layer.fields,
+                fieldMetadata.fieldInfo
+            ) as Array<FieldDefinition>;
+            layer.fieldList = fieldMetadata.fieldInfo
+                .map(f => f.name)
+                .join(',');
         }
 
         // if exlusive fields, only respect fields in the field info array
