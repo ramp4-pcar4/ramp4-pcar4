@@ -294,6 +294,17 @@ let config = {
                         details: {
                             template: 'WFSLayer-Custom'
                         }
+                    },
+                    fieldMetadata: {
+                        fieldInfo: [
+                            { name: 'station_name__nom_station' },
+                            { name: 'station_id__id_station' },
+                            { name: 'province__province' },
+                            { name: 'identifier__identifiant' },
+                            { name: 'year_range__annees' }
+                        ],
+                        exclusiveFields: false,
+                        enforceOrder: true
                     }
                 },
                 {

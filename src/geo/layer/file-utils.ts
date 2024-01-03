@@ -11,7 +11,8 @@ import {
     type CsvOptions,
     FieldType,
     type GeoJsonOptions,
-    LayerType
+    LayerType,
+    type FieldDefinition
 } from '@/geo/api';
 
 /**
@@ -458,7 +459,7 @@ export class FileUtils extends APIScope {
             defRender.renderer
         );
 
-        // .fields currently has our objectid field. the concat adds the rest
+        // add all the fields to config.Package
         configPackage.fields = (configPackage.fields || []).concat(
             options.fieldMetadata?.exclusiveFields
                 ? (this.extractGeoJsonFields(geoJson) as Array<Object>).filter(
@@ -469,6 +470,19 @@ export class FileUtils extends APIScope {
                   )
                 : (this.extractGeoJsonFields(geoJson) as Array<Object>)
         );
+
+        // fix the order in configPackage.fields if specified in the config
+        if (
+            options.fieldMetadata?.enforceOrder &&
+            options.fieldMetadata?.fieldInfo &&
+            options.fieldMetadata?.fieldInfo.length > 0
+        ) {
+            // demand respect for order
+            configPackage.fields = this.$iApi.geo.attributes.orderFields(
+                configPackage.fields as Array<FieldDefinition>,
+                options.fieldMetadata?.fieldInfo
+            ) as __esri.FieldProperties[];
+        }
 
         // clean the fields. in particular, CSV files can be loaded with spaces in
         // the field names
