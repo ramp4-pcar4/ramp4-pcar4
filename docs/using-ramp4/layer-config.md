@@ -340,6 +340,7 @@ Specifies additional attribute field information that will override the default 
 
 - `fieldInfo`: An array that contians objects having valid field names and a custom field alias. If using the `exclusiveFields` option, the alias can be left blank to use the field as-is. Field names are case sensitive.
 - `exclusiveFields`: A boolean, if true, only fields in the `fieldInfo` array will be used in the layer.
+- `enforceOrder`: A boolean, if true, the order of the fields in the `fieldInfo` array will be enforced when the grid is displayed. If not all fields are specified in the `fieldInfo` array and the `exclusiveFields` option is not used or is false, then the only thte specified columns will be displayed in order, followed by the rest of the columns in no particular order.
 
 Note that if the system requires additional fields that are missing in the `exclusiveFields` mode, they will be included in the map layer (e.g. an order-by field).
 
@@ -356,7 +357,8 @@ Note that if the system requires additional fields that are missing in the `excl
                 alias: "Address"
             }
         ],
-        exclusiveFields: true
+        exclusiveFields: true,
+        enforceOrder: true
     }
 }
 ```

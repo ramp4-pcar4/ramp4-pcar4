@@ -588,6 +588,7 @@ export interface RampLayerFieldInfoConfig {
 export interface RampLayerFieldMetadataConfig {
     fieldInfo?: Array<RampLayerFieldInfoConfig>;
     exclusiveFields?: boolean; // default to false. if true, means we only recognize and download field in fieldInfo. if false, we download all fields, and fieldInfo provides additional data as needed
+    enforceOrder?: boolean; //default to false. if true, then order the fields in the same order as fieldInfo. if false, randomize ordering of field array
 }
 
 // i.e. a dynamic layer child

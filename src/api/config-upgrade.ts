@@ -1409,7 +1409,8 @@ function fieldsSausageGrinder(r2layer: any, r4layer: any): void {
 
     const struct = {
         fieldInfo: [] as any[],
-        exclusiveFields: false
+        exclusiveFields: false,
+        enforceOrder: false
     };
 
     if (r2layer.fieldMetadata) {
