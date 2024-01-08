@@ -21,6 +21,7 @@ export interface SublayerInfo {
 
 export class LayerSource extends APIScope {
     layerCount = 0;
+    sublayerCount = 0;
 
     constructor($iApi: InstanceAPI) {
         super($iApi);
@@ -218,7 +219,7 @@ export class LayerSource extends APIScope {
             if (sublayers === undefined) {
                 return false;
             }
-            let i, parent;
+            let parent;
             if (sublayers.find(sl => sl.id === id)) {
                 return sublayers.find(sl => sl.id === id);
             } else {
@@ -364,7 +365,7 @@ export class LayerSource extends APIScope {
         if (nested) {
             return modLayers.flatMap((layer: any) => {
                 return {
-                    id: layer.name,
+                    id: `${layer.name}#${++this.sublayerCount}`,
                     label: layer.title,
                     children:
                         layer.layers.length > 0
@@ -377,7 +378,7 @@ export class LayerSource extends APIScope {
                 layer.layers && layer.layers.length > 0
                     ? this.mapWmsLayerList(layer.layers, nested)
                     : {
-                          id: layer.name,
+                          id: `${layer.name}#${++this.sublayerCount}`,
                           label: layer.title
                       }
             );
