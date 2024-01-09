@@ -5,12 +5,13 @@ import {
     LayerInstance
 } from '@/api/internal';
 import { useMaptipStore } from '@/stores/maptip';
-import type {
-    Attributes,
-    GraphicHitResult,
-    MaptipProperties,
-    Point,
-    ScreenPoint
+import {
+    GeometryType,
+    type Attributes,
+    type GraphicHitResult,
+    type MaptipProperties,
+    type Point,
+    type ScreenPoint
 } from '@/geo/api';
 
 export class MaptipAPI extends APIScope {
@@ -55,24 +56,27 @@ export class MaptipAPI extends APIScope {
             return;
         }
 
-        // Check if the same maptip already exists
-        if (
-            this.#lastHit &&
-            this.#lastHit.layerId === graphicHit.layerId &&
-            this.#lastHit.oid === graphicHit.oid &&
-            this.#lastHit.layerIdx === graphicHit.layerIdx
-        ) {
-            // Same maptip, no need for changes
-            // This keeps the maptip in place and saves some trips to Vuex store
-            return;
+        // Get the layer
+        const layerInstance: LayerInstance | undefined =
+            this.$iApi.geo.layer.getLayer(graphicHit.layerId);
+
+        if (layerInstance?.geomType != GeometryType.POLYGON) {
+            // Check if the same maptip already exists
+            if (
+                this.#lastHit &&
+                this.#lastHit.layerId === graphicHit.layerId &&
+                this.#lastHit.oid === graphicHit.oid &&
+                this.#lastHit.layerIdx === graphicHit.layerIdx
+            ) {
+                // Same maptip, no need for changes
+                // This keeps the maptip in place and saves some trips to Vuex store
+                return;
+            }
         }
 
         this.clear();
         this.#lastHit = graphicHit;
 
-        // Get the layer
-        const layerInstance: LayerInstance | undefined =
-            this.$iApi.geo.layer.getLayer(graphicHit.layerId);
         if (!layerInstance) {
             // Something seriously wrong here because esri gave us a non-existent layerID
             console.error(
