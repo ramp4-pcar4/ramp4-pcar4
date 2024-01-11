@@ -854,12 +854,22 @@ const populateFlatWMS = (
 const sublayerOptions = (layers: any[]) => {
     // set sublayer option properties based on whether its a map image or WMS layer
     return layers.map((layerIdx: any) => {
-        return typeSelection.value === LayerType.MAPIMAGE
-            ? {
-                  index: layerIdx,
-                  state: { opacity: 1, visibility: true }
-              }
-            : { id: layerIdx };
+        switch (typeSelection.value) {
+            case LayerType.MAPIMAGE:
+                return {
+                    index: layerIdx,
+                    state: { opacity: 1, visibility: true }
+                };
+            case LayerType.WMS: {
+                // Remove the unique tag added to the end of the ID.
+                const removeHash = layerIdx.lastIndexOf('#');
+                return { id: layerIdx.substring(0, removeHash) };
+            }
+            default:
+                return {
+                    id: layerIdx
+                };
+        }
     });
 };
 
