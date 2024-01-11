@@ -37,6 +37,7 @@
             v-on:click="
                 columnApi?.setColumnVisible(col.field, col.hide);
                 col.hide = !col.hide;
+                $emit('refreshHeaders');
             "
             href="javascript:;"
             class="flex leading-snug items-center w-256"
