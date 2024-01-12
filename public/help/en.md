@@ -89,6 +89,24 @@ In the Legend panel, 4 functions appear in a row at the top:
 | ![The icon representing the Toggle Visibility function](layer/toggleVisibility.png) | Toggle Visibility | Enables or disables the visibility for all layers |
 
 
+# Add Layer
+
+Additional layers can be added to the map viewer. Supported formats include: ESRI Feature Layer, ESRI Map Image Layer, ESRI Tile Layer, ESRI Image Layer, OGC Web Map Service, or a OGC Web Feature Service. The '+' button at the top of the Legend menu will launch the Add Layers menu.
+
+Usage:
+- If you wish to add a file, you can do so by dragging the file over the import wizard, by selecting a file for upload, or by providing the URL to the file.
+- If you wish to add a service, you can do so by entering the service URL into the text box.
+- Click the 'Continue' button to proceed.
+- Select the option from the dropdown menu with the correct file or service type. If an incompatible type is selected, an error will be displayed and users can try the following: try a different layer type, verify the service URL, or ensure the service has CORS support.
+- Click the 'Continue' button to proceed.
+- Depending on the type of dataset being loaded, various parameters can be set in this final phase.
+- A Feature Service allows the choice of a **Primary Field**, which determines the attribute used to identify a feature in the data table panel and map tips. All other information is derived from the service's metadata.
+- A WMS Service allows the choice of the **Layer Name**, which determines the layer in the WMS to be used as the source for the dataset. All other information is derived from the service's metadata.
+- A WFS Service allows the choice of the following: a **Layer Name**, which will be displayed in the Layer Selector; a **Primary Field**, which acts the same as a Feature Service's Primary Attribute; a **Colour**, which determines the colour of the points / lines / polygons on the map. All other information is derived from the service's metadata.
+- File based datasets allow the choice of the following: a **Dataset Name**, which will be displayed in the Layer Selector; a **Primary Field**, which acts the same as in the Feature Service; a **Symbol Colour**, which determines the colour of the points / lines / polygons on the map. CSV files also allow the specification of the columns that contain the Latitude and Longitude values, used to derive the point location on the map.
+- Click the 'Continue' button to insert the layer into the map and closes the Add Layer menu.
+
+
 # Geolocation Search
 
 ### General Use

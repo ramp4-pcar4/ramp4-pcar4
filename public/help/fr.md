@@ -89,6 +89,24 @@ Dans la fenêtre Légende, quatre fonctions s'affichent sur une ligne en haut :
 | ![L'icône représentant la fonction Basculer l'état de visibilité](layer/toggleVisibility.png) | Basculer la visibilité | Affiche ou masque toutes les couches. |
 
 
+# Ajouter une couche
+
+Des couches supplémentaires peuvent être ajoutées au visualiseur de carte. Les formats pris en charge sont les suivants: couche d'éléments d'ESRI, couche d'image de la carte ESRI, couche de tuiles d'ESRI, couche d'images d'ESRI, couche WMS de l'OGC ou service d'entités Web OGC. Le bouton « + » en haut du menu Légende lance le menu « Ajouter une couche ».
+
+Utilisation:
+- Si vous souhaitez ajouter un fichier, vous pouvez le faire en faisant glisser le dossier sur l’importation Wizard, en sélection un fichier à télécharger, ou en fournissant l’adresse URL pour le dossier.
+- Si vous souhaitez ajouter un service, vous pouvez le faire en entrant le service URL dans la boîte de texte.
+- Cliquez sur le bouton « Continuer » pour continuer.
+- Sélectionnez l’option dans le menu déroulant avec le bon dossier ou le type de service. Si un type incompatible est sélectionné, une erreur s'affichera et les utilisateurs pourront essayer ce qui suit : essayez un autre type de couche, vérifiez l'URL du service ou assurez-vous que le service prend en charge CORS.
+- Cliquez sur le bouton « Continuer » pour continuer.
+- Selon le type d'ensemble de données chargé, différents paramètres peuvent être définis dans cette phase finale.
+- Un service d'éléments permet le choix d'un **champ principal**, qui détermine l'attribut utilisé pour identifier un élément (enregistrement) dans le tableau de données et les étiquettes correspondantes sur la carte. Toutes les autres informations proviennent des métadonnées du service.
+- Un service WMS permet le choix du **nom de la couche**, qui détermine la couche dans le WMS à utiliser comme source pour le jeu de données. Toutes les autres informations sont dérivées des métadonnées du service.
+- Un service WFS permet le choix de ce qui suit: une **couche nom**, qui sera affiché dans le sélecteur de la couche; un **champ principal**, qui agit comme une caractéristique du service principal attribut; une **couleur**, qui détermine la couleur des points / activité / des polygones sur la carte. Tous les autres renseignements sont tirés du service des métadonnées.
+- Les jeux de données basés sur des fichiers permettent le choix des attributs suivants: un **nom de jeu de données** qui sera affiché dans le sélecteur de couche; Un **champ principal** qui agit de la même façon que dans le service d'élément; Une **couleur de symbole** qui détermine la couleur des points /lignes/polygones sur la carte. Les fichiers CSV permettent également la spécification des colonnes qui contiennent les valeurs de positionnement (Latitude et Longitude) utilisées pour déterminer l'emplacement des éléments sur la carte.
+- Cliquez sur le bouton « Continuer » pour ajouter la couche à la carte et fermer le menu « Ajouter une couche ».
+
+
 # Recherche géolocalisée
 
 ### Utilisation générale
