@@ -89,6 +89,27 @@ In the Legend panel, 4 functions appear in a row at the top:
 | ![The icon representing the Toggle Visibility function](layer/toggleVisibility.png) | Toggle Visibility | Enables or disables the visibility for all layers |
 
 
+# Add Layer
+
+Additional layers can be added to the map viewer. Supported formats include: ESRI Feature Layer, ESRI Map Image Layer, ESRI Tile Layer, ESRI Imagery Layer, OGC Web Map Service, OGC Web Feature Service, or a file layer (supported formats include GeoJSON, CSV and Shapefile). The '+' button at the top of the Legend will launch the wizard panel.
+
+Usage:
+- If you wish to add a file, you can do so by dragging the file over the import wizard, by selecting a file for upload, or by providing the URL to the file.
+- If you wish to add a service, you can do so by entering the service URL into the text box.
+- Click the 'Continue' button to proceed.
+- Select the option from the dropdown menu with the correct file or service type. If an incompatible type is selected, an error will be displayed and users can try the following: try a different layer type, verify the service URL, or ensure the service has CORS support.
+- Click the 'Continue' button to proceed.
+- Depending on the type of dataset being loaded, various parameters can be set in this final phase.
+- A Feature Layer allows the choice of a **Layer Name**, which will be displayed in the legend; a **Primary Field**, which determines the attribute used to identify a feature in the data table panel and map tips; a **Tooltip Field**, which determines the attribute used as tooltip content when a feature is mouse hovered. All other information is derived from the service's metadata.
+- A Map Image Layer allows the choice of a **Layer Name**, which will be displayed in the legend; a **Nested** option, which maintains layer grouping if applicable; a **Layers** picker, from which you can select which layers will be imported. All other information is derived from the service’s metadata.   
+- A WMS Service allows the choice of a **Layer Name**, which will be displayed in the legend; a **Nested** option, which maintains layer grouping if applicable; a **Layers** picker, from which you can select which layers will be imported. All other information is derived from the service’s metadata.
+- A WFS Service allows the choice of a **Layer Name**, which will be displayed in the legend; a **Primary Field**, which acts the same as in a Feature Layer; a **Colour**, which determines the colour of the points / lines / polygons on the map. All other information is derived from the service's metadata.
+- File based datasets allow the choice a **Layer Name**, which will be displayed in the legend; a **Primary Field** and **Tooltip Field**, which act the same as in a Feature Layer; a **Colour**, which determines the colour of the points / lines / polygons on the map. CSV files also allow the specification of the columns that contain the Latitude and Longitude values, used to derive the point location on the map.
+- FeatureServer layers: Note that it is currently not possible to import a FeatureServer as a Map Image layer, in this case please import layers individually as a Feature Layer by including the layer ID in the service URL.
+- Raster layers: Note that Raster Layer data must be added as a Map Image Layer. It is not possible to add an individual raster layer from a service, please use the main service URL and select the desired layers from the 'Layers' selector in the 'Configure layer' step. Raster Layers do not have attributes or identify support.
+- Click the 'Continue' button to insert the layer into the map.
+
+
 # Geolocation Search
 
 ### General Use
