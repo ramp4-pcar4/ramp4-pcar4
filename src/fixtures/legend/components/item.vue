@@ -523,6 +523,7 @@
                         <checkbox
                             v-if="
                                 modifiableLayer &&
+                                legendItem.layer.supportsFeatures &&
                                 ((!item.imgUrl && symbologyStack.length > 1) ||
                                     (item.imgUrl && item.definitionClause))
                             "

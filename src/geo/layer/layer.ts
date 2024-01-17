@@ -7,6 +7,7 @@ import {
     FeatureLayer,
     GeoJsonLayer,
     GraphicLayer,
+    ImageryLayer,
     InstanceAPI,
     JsonDataLayer,
     LayerInstance,
@@ -86,6 +87,9 @@ export class LayerAPI extends APIScope {
                 break;
             case LayerType.DATAJSON:
                 closs = JsonDataLayer;
+                break;
+            case LayerType.IMAGERY:
+                closs = ImageryLayer;
                 break;
             case LayerType.SHAPEFILE:
                 closs = ShapefileLayer;

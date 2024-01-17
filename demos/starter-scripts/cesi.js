@@ -596,6 +596,14 @@ let config = {
                         }
                     ],
                     disabledControls: ['identify', 'data']
+                },
+                {
+                    id: 'AAFC',
+                    name: 'AAFC Land Use',
+                    layerType: 'esri-imagery',
+                    url: 'https://agriculture.canada.ca/atlas/rest/services/servicesimage/utilisation_des_terres_30m_2020/ImageServer',
+                    catalogueUrl:
+                        'https://open.canada.ca/data/en/dataset/fa84a70f-03ad-4946-b0f8-a3b481dd5248'
                 }
             ],
             fixtures: {
@@ -616,6 +624,10 @@ let config = {
                                         sublayerIndex: 34
                                     }
                                 ]
+                            },
+                            {
+                                name: 'Agriculture and Agri-Food Canada',
+                                layerId: 'AAFC'
                             },
                             {
                                 name: 'Water quantity at monitoring stations',
