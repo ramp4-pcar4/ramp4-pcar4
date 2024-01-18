@@ -1177,8 +1177,8 @@ export class MapAPI extends CommonMapAPI {
                 return result.graphic.layer.id === layer.id;
             });
             if (matchedResult) {
-                if (layer.isCosmetic) {
-                    // means topmost thing was in a cosmetic layer.
+                if (layer.isCosmetic || !layer.supportsFeatures) {
+                    // means topmost thing was in a cosmetic layer, or the layer doesn't support features.
                     // we currently can't do a hovertip on these.
                     // Acually it's graphic layers that are the problem, but
                     // cosmetics shouldnt be interactive anyways. if someone decides
