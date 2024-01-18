@@ -93,6 +93,12 @@ export class FeatureLayer extends AttribLayer {
             }));
             this._drawOrder = rampLayerConfig.drawOrder.slice();
         }
+
+        // enable point clustering if set up in config
+        if (rampLayerConfig.pointClustering) {
+            esriConfig.featureReduction = rampLayerConfig.pointClustering;
+        }
+
         return esriConfig;
     }
 

@@ -1087,13 +1087,47 @@ export class MapAPI extends CommonMapAPI {
                 x: mapClick.screenX,
                 y: mapClick.screenY
             }).then(hitResults => {
-                return hitResults.results.map(hr => {
-                    return {
-                        layerId: hr.layer.id,
-                        layerIdx: 0, // not required for this process, default rather than expensive lookup
-                        oid: (hr as __esri.GraphicHit).graphic.getObjectId()
-                    };
+                const hitPromises = hitResults.results.map(hr => {
+                    // aggregated graphic, represents a cluster of features
+                    if (
+                        (hr as __esri.GraphicHit).graphic.isAggregate === true
+                    ) {
+                        const layerViewPromise = Promise.resolve(
+                            this.esriView?.whenLayerView(hr.layer)
+                        );
+                        return layerViewPromise
+                            .then(layerView => {
+                                // can use an aggregated graphics object id to query the features in the cluster
+                                // @ts-ignore
+                                const query = layerView?.createQuery();
+                                query.aggregateIds = [
+                                    (
+                                        hr as __esri.GraphicHit
+                                    ).graphic.getObjectId()
+                                ];
+                                // @ts-ignore
+                                return layerView?.queryFeatures(query);
+                            })
+                            .then(({ features }) => {
+                                // @ts-ignore
+                                return features.map(fr => {
+                                    // fr.layer is an esri layer
+                                    return {
+                                        layerId: fr.layer.id,
+                                        layerIdx: 0,
+                                        oid: fr.attributes[fr.layer.objectIdField]
+                                    };
+                                });
+                            });
+                    } else {
+                        return {
+                            layerId: hr.layer.id,
+                            layerIdx: 0, // not required for this process, default rather than expensive lookup
+                            oid: (hr as __esri.GraphicHit).graphic.getObjectId()
+                        };
+                    }
                 });
+                return Promise.all(hitPromises).then(results => results.flat());
             });
         }
 
@@ -1177,7 +1211,10 @@ export class MapAPI extends CommonMapAPI {
                 return result.graphic.layer.id === layer.id;
             });
             if (matchedResult) {
-                if (layer.isCosmetic) {
+                if (
+                    layer.isCosmetic ||
+                    matchedResult.graphic.isAggregate === true
+                ) {
                     // means topmost thing was in a cosmetic layer.
                     // we currently can't do a hovertip on these.
                     // Acually it's graphic layers that are the problem, but
