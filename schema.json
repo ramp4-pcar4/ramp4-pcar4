@@ -1821,6 +1821,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "If true, only fields in fieldInfo are recognized and downloaded. Otherwise, all fields are used."
+                },
+                "enforceOrder": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If true, the layer's field array will be ordered the same as fieldInfo. Otherwise, the array will be ordered as it appears in the source."
                 }
             }
         },
