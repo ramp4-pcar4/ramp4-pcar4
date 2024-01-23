@@ -249,6 +249,7 @@ let config = {
                     url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/9',
                     customRenderer: {
                         type: 'simple',
+                        label: 'Super Simple',
                         symbol: {
                             type: 'esriSMS',
                             style: 'esriSMSCross',
@@ -280,6 +281,7 @@ let config = {
                         uniqueValueInfos: [
                             {
                                 value: 'Clean Air',
+                                label: 'The Cleanest Airs',
                                 symbol: {
                                     type: 'esriSMS',
                                     style: 'esriSMSDiamond',
@@ -367,6 +369,7 @@ let config = {
                     xyInAttribs: true,
                     customRenderer: {
                         type: 'simple',
+                        label: 'Ultra Simple',
                         symbol: {
                             type: 'esriSMS',
                             style: 'esriSMSTriangle',
@@ -393,7 +396,7 @@ let config = {
                     xyInAttribs: true,
                     customRenderer: {
                         type: 'uniqueValue',
-                        field1: 'STATUS_EN',
+                        field1: 'joined__rejoint',
                         defaultSymbol: {
                             type: 'esriSMS',
                             style: 'esriSMSCircle',
@@ -411,7 +414,7 @@ let config = {
                         // all possible values must be covered or use defaultSymbol
                         uniqueValueInfos: [
                             {
-                                value: 'Discontinued',
+                                value: 0,
                                 symbol: {
                                     type: 'esriSMS',
                                     style: 'esriSMSDiamond',
@@ -425,10 +428,10 @@ let config = {
                                         width: 0.5
                                     }
                                 },
-                                label: 'Discontinued'
+                                label: 'Not Joined'
                             },
                             {
-                                value: 'Active',
+                                value: 1,
                                 symbol: {
                                     type: 'esriSMS',
                                     style: 'esriSMSDiamond',
@@ -442,7 +445,7 @@ let config = {
                                         width: 0.5
                                     }
                                 },
-                                label: 'Active'
+                                label: 'Joined'
                             }
                         ]
                     },
@@ -525,7 +528,7 @@ let config = {
                 {
                     id: 'MILSimple',
                     layerType: 'esri-map-image',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer',
                     sublayers: [
                         {
                             index: 18,
@@ -535,6 +538,7 @@ let config = {
                             },
                             customRenderer: {
                                 type: 'simple',
+                                label: 'Extra Simple',
                                 symbol: {
                                     type: 'esriSMS',
                                     style: 'esriSMSCircle',
@@ -555,6 +559,7 @@ let config = {
                             },
                             customRenderer: {
                                 type: 'simple',
+                                label: 'Very Simple',
                                 symbol: {
                                     type: 'esriSMS',
                                     style: 'esriSMSCircle',
@@ -572,7 +577,7 @@ let config = {
                 {
                     id: 'MILUniqueValue',
                     layerType: 'esri-map-image',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer',
                     sublayers: [
                         {
                             index: 18,
@@ -582,7 +587,7 @@ let config = {
                             },
                             customRenderer: {
                                 type: 'uniqueValue',
-                                field1: 'GridColumn3', // Province
+                                field1: 'GridColumn3', // aliased to Province
                                 defaultSymbol: {
                                     type: 'esriSMS',
                                     style: 'esriSMSTriangle',
@@ -634,7 +639,7 @@ let config = {
                 {
                     id: 'MILClassBreaks',
                     layerType: 'esri-map-image',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
+                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer',
                     sublayers: [
                         {
                             index: 18,
@@ -699,7 +704,8 @@ let config = {
                         children: [
                             {
                                 name: 'Feature Layer',
-                                exclusiveVisibility: [
+                                exclusive: true,
+                                children: [
                                     {
                                         layerId: 'FeatureSimple',
                                         name: 'Simple'
@@ -716,7 +722,8 @@ let config = {
                             },
                             {
                                 name: '(fake) File Layer',
-                                exclusiveVisibility: [
+                                exclusive: true,
+                                children: [
                                     {
                                         layerId: 'WFSSimple',
                                         name: 'Simple'
@@ -733,7 +740,8 @@ let config = {
                             },
                             {
                                 name: 'Map Image Layer',
-                                exclusiveVisibility: [
+                                exclusive: true,
+                                children: [
                                     {
                                         name: 'Simple',
                                         children: [

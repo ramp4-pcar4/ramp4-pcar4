@@ -510,7 +510,7 @@ export interface GeoJsonOptions {
 }
 
 export interface LoadLayerMetadataOptions {
-    customRenderer?: any; // valid JSON renderer. no handy typescript schema
+    customRenderer?: EsriRenderer; // renderer in ESRI API format
 }
 
 export interface CsvOptions {
