@@ -170,7 +170,8 @@ let config = {
                             },
                             {
                                 name: 'Visibility Set',
-                                exclusiveVisibility: [
+                                exclusive: true,
+                                children: [
                                     {
                                         layerId: 'CleanAir',
                                         name: 'Clean Air in Set'

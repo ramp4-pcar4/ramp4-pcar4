@@ -304,10 +304,14 @@ export class SymbologyAPI extends APIScope {
     /**
      * Generate an SVG string for an ESRI symbol.
      * @private
-     * @param  {Object} symbol an ESRI symbol object in server format
+     * @param  {Object} symbol an ESRI symbol object in JS API format
      * @return {Promise} resolves to an SVG string representing the symbol
      */
     private async symbolToSvg(symbol: any): Promise<string> {
+        // the symbol param remains `any` due to us being cheeky with defaulting and constructing symbol defaults as we go.
+        // e.g. not every symbol has an outline; if we strong type we need to continually check if the symbol subclass
+        // supports outlines first.
+        //
         // TODO now that we are enlightened and using typescript and classes and such, consider taking this monster
         //      function with all it's nested functions and moving them to some type of SVG service / class.
         //      For now, we are using the typescript ignore flag to stop whining about our object-key mappings.

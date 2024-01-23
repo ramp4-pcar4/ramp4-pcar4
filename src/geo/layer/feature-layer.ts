@@ -109,7 +109,7 @@ export class FeatureLayer extends AttribLayer {
             this.esriLayer && this.origRampConfig.customRenderer?.type;
         if (hasCustRed) {
             this.esriLayer!.renderer = EsriRendererFromJson(
-                this.config.customRenderer
+                this.origRampConfig.customRenderer
             );
         }
 
