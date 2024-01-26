@@ -143,10 +143,14 @@ export class AttribLayer extends MapLayer {
             });
 
             // add renderer and legend
+            // use custom renderer if defined. Otherwise use server.
+            // If server does not have a renderer defined, it's not drawing on the map. Can use ! to avoid extra checks, since
+            // layer is already roont.
             const esriRenderer =
                 options && options.customRenderer && options.customRenderer.type
                     ? options.customRenderer
-                    : sData.renderer;
+                    : sData.renderer!;
+
             this.renderer = this.$iApi.geo.symbology.makeRenderer(
                 esriRenderer,
                 this.fields
