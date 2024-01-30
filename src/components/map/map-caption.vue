@@ -67,7 +67,11 @@
                 class="flex-shrink-0 mx-2 sm:mx-10 px-4 pointer-events-auto cursor-pointer border-none"
                 @click="onScaleClick"
                 :aria-pressed="scale?.isImperialScale"
-                :aria-label="changeScaleMessage(scale?.isImperialScale)"
+                :aria-label="`
+                    ${scale?.label} - ${changeScaleMessage(
+                    scale?.isImperialScale
+                )}
+                `"
                 v-tippy="{
                     delay: [300, 0],
                     placement: 'top',
@@ -99,6 +103,9 @@
                     touch: ['hold', 200]
                 }"
                 :content="t('map.changeLanguage')"
+                :ariaLabel="`${t('map.language.short')} - ${t(
+                    'map.changeLanguage'
+                )}`"
             >
                 <template #header>
                     <span

@@ -5,7 +5,7 @@
             class="text-gray-500 hover:text-black dropdown-button"
             @click="open = !open"
             :content="tooltip"
-            :aria-label="String(tooltip)"
+            :aria-label="ariaLabel ? String(ariaLabel) : String(tooltip)"
             v-tippy="{
                 placement: tooltipPlacement,
                 theme: tooltipTheme,
@@ -63,7 +63,8 @@ const props = defineProps({
     tooltipPlacement: { type: String, default: 'bottom' },
     tooltipTheme: { type: String, default: 'ramp4' },
     tooltipAnimation: { type: String, default: 'scale' },
-    centered: { type: Boolean, default: true }
+    centered: { type: Boolean, default: true },
+    ariaLabel: { type: String }
 });
 
 watchers.push(
