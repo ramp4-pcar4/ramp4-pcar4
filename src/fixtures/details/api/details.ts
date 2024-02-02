@@ -40,10 +40,10 @@ export class DetailsAPI extends FixtureInstance {
         });
 
         // Open the details panel.
-        const layersPanel = this.$iApi.panel.get('details-layers');
-        if (!layersPanel.isOpen) {
+        const detailsPanel = this.$iApi.panel.get('details-panel');
+        if (!detailsPanel.isOpen) {
             this.$iApi.panel.open({
-                id: 'details-layers'
+                id: 'details-panel'
             });
         }
     }
@@ -60,13 +60,10 @@ export class DetailsAPI extends FixtureInstance {
         open: boolean | undefined
     ): void {
         // Close the identified layers panel.
-        const panel = this.$iApi.panel.get('details-layers');
+        const panel = this.$iApi.panel.get('details-panel');
         if (panel.isOpen) {
             this.$iApi.panel.close(panel);
         }
-
-        // Toggle or update the items panel
-        const itemsPanel = this.$iApi.panel.get('details-items');
 
         // result: is IdentifyResult class
         const props: any = {
@@ -81,7 +78,8 @@ export class DetailsAPI extends FixtureInstance {
                 ],
                 uid: featureData.uid,
                 loading: Promise.resolve(),
-                loaded: true
+                loaded: true,
+                requestTime: Date.now()
             }
         };
 
@@ -89,7 +87,6 @@ export class DetailsAPI extends FixtureInstance {
         const layer: LayerInstance | undefined = this.$iApi.geo.layer.getLayer(
             featureData.uid
         );
-        const prevFeatureId = this.detailsStore.currentFeatureId;
         const currFeatureId = `${featureData.uid}-${
             // see https://github.com/ramp4-pcar4/ramp4-pcar4/issues/1767 for the reasoning behind this
             layer?.supportsFeatures
@@ -105,22 +102,18 @@ export class DetailsAPI extends FixtureInstance {
 
         // toggle rules based on last opened details panel
         if (open === false) {
-            this.$iApi.panel!.close(itemsPanel);
-        } else if (!itemsPanel.isOpen) {
+            this.$iApi.panel!.close(panel);
+        } else if (!panel.isOpen) {
+            this.detailsStore.payload = [props.result];
+
             // open the items panel
             this.$iApi.panel!.open({
-                id: 'details-items',
-                screen: 'item-screen',
-                props: props
-            });
-        } else if (prevFeatureId !== currFeatureId || open === true) {
-            // update the items screen
-            itemsPanel!.show({
-                screen: 'item-screen',
+                id: 'details-panel',
+                screen: 'details-screen',
                 props: props
             });
         } else {
-            this.$iApi.panel!.close(itemsPanel);
+            this.$iApi.panel!.close(panel);
         }
     }
 
@@ -136,8 +129,8 @@ export class DetailsAPI extends FixtureInstance {
             this.detailsStore.defaultTemplates = config.templates;
         }
 
-        this.handlePanelWidths(['details-items', 'details-layers']);
-        this.handlePanelTeleports(['details-items', 'details-layers']);
+        this.handlePanelWidths(['details-panel']);
+        this.handlePanelTeleports(['details-panel']);
 
         // get all layer fixture configs
         const layerDetailsConfigs: any = this.getLayerFixtureConfigs();
