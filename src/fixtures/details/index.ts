@@ -1,8 +1,6 @@
 import { DetailsAPI } from './api/details';
 import { type DetailsConfig, useDetailsStore } from './store';
-import DetailsLayerScreenV from './layers-screen.vue';
-import DetailsResultScreenV from './result-screen.vue';
-import DetailsItemScreenV from './item-screen.vue';
+import DetailsScreenV from './details-screen.vue';
 import messages from './lang/lang.csv?raw';
 
 import { markRaw } from 'vue';
@@ -12,27 +10,12 @@ class DetailsFixture extends DetailsAPI {
     async added() {
         this.$iApi.panel.register(
             {
-                'details-layers': {
+                'details-panel': {
                     screens: {
-                        'layers-screen': markRaw(DetailsLayerScreenV)
+                        'details-screen': markRaw(DetailsScreenV)
                     },
                     style: {
-                        width: '350px'
-                    },
-                    button: {
-                        tooltip: 'details.layers.title',
-                        // https://fonts.google.com/icons?selected=Material+Icons:place
-                        icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>'
-                    },
-                    alertName: 'details.layers.title'
-                },
-                'details-items': {
-                    screens: {
-                        'results-screen': markRaw(DetailsResultScreenV),
-                        'item-screen': markRaw(DetailsItemScreenV)
-                    },
-                    style: {
-                        width: '350px'
+                        width: '425px'
                     },
                     button: {
                         tooltip: 'details.items.title',
@@ -58,13 +41,11 @@ class DetailsFixture extends DetailsAPI {
             // console.log(`[fixture] ${this.id} removed`);
             unwatch();
 
-            this.$iApi.panel.remove('details-layers');
-            this.$iApi.panel.remove('details-items');
+            this.$iApi.panel.remove('details-panel');
 
             if (this.$iApi.fixture.get('appbar')) {
                 const appbarStore = useAppbarStore(this.$vApp.$pinia);
-                appbarStore.removeButton('details-layers');
-                appbarStore.removeButton('details-items');
+                appbarStore.removeButton('details-panel');
             }
 
             const detailsStore = useDetailsStore(this.$vApp.$pinia);

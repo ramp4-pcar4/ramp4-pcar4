@@ -93,12 +93,6 @@ let config = {
                             }
                         ]
                     }
-                },
-                details: {
-                    panelWidth: {
-                        default: 350,
-                        'details-items': 400
-                    }
                 }
             },
             panels: {

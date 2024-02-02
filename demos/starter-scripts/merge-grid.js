@@ -370,12 +370,6 @@ let config = {
                 mapnav: {
                     items: ['fullscreen', 'help', 'home', 'legend', 'geosearch']
                 },
-                details: {
-                    panelWidth: {
-                        default: 350,
-                        'details-items': 400
-                    }
-                },
                 help: {
                     location: '../help'
                 }
