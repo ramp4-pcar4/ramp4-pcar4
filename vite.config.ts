@@ -68,6 +68,7 @@ export default defineConfig(({ command, mode }) => {
                         form: '/index-form.html',
                         teleport: '/index-teleport.html',
                         teleportWet: '/index-teleport-wet.html',
+                        teleportDetails: '/index-teleport-details.html',
                         multiWet: '/index-multi-wet.html'
                     }
                 }

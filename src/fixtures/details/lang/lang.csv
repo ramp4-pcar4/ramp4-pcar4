@@ -21,3 +21,5 @@ details.item.alert.show.item,Showing result {itemName},1,Affichage du résultat 
 details.item.alert.show.list,Showing all results for {layerName},1,Affichage de tous les résultats pour {layerName},1
 details.item.alert.defaultAltText,Image associated with {alias} field,1,Image associée au champ {alias},0
 details.togglehilight.title,Toggle Highlight,1,Basculer vers l'élément principal,1
+details.item.open,Expand,1,Développer,1
+details.item.collapse,Collapse,1,Réduire,1

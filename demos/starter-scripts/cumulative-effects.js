@@ -419,12 +419,6 @@ const enConfig = {
         mapnav: {
             items: ['help', 'home', 'geolocator', 'basemap']
         },
-        details: {
-            panelWidth: {
-                default: 350,
-                'details-items': 400
-            }
-        },
         export: {
             title: {
                 value: 'Cumulative Effects',
@@ -828,12 +822,6 @@ const frConfig = {
         },
         mapnav: {
             items: ['help', 'home', 'geolocator', 'basemap']
-        },
-        details: {
-            panelWidth: {
-                default: 350,
-                'details-items': 400
-            }
         },
         export: {
             title: {
