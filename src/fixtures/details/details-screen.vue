@@ -3,106 +3,83 @@
         <template #header>
             {{ t('details.layers.title') }}
         </template>
+
         <template #content>
-            <div v-if="activeGreedy === 0">
-                <!-- grond total -->
-                <div class="p-5">
-                    {{
-                        t('details.layers.found', {
-                            numResults: totalResultCount,
-                            numLayers: payload.length
-                        })
-                    }}
+            <div class="relative h-full">
+                <!-- Layer Picker, symbology stacks -->
+                <SymbologyList
+                    :results="layerResults"
+                    :detailsProperties="detailProperties"
+                    :selected="selectedLayer"
+                    @selection-changed="changeLayerSelection"
+                    v-if="layerResults.length > 1"
+                ></SymbologyList>
+
+                <!-- Main Details Panel -->
+                <div class="detailsContentSection overflow-y-auto h-full">
+                    <ResultList
+                        :uid="selectedLayer"
+                        :results="layerResults"
+                        v-if="!noResults"
+                    ></ResultList>
+                    <div class="ml-42 text-center" v-else>
+                        {{ t('details.layers.results.empty') }}
+                    </div>
                 </div>
-                <!-- clicker for each layer -->
-                <button
-                    type="button"
-                    class="w-full px-20 py-10 text-md flex hover:bg-gray-200 cursor-pointer disabled:cursor-default"
-                    v-for="(item, idx) in layerResults"
-                    :key="item.uid"
-                    @click="item.loaded && openResult(idx)"
-                    :disabled="!(item.loaded && item.items.length > 0)"
-                >
-                    <div v-truncate>
-                        {{ layerName(idx) || t('details.layers.loading') }}
-                    </div>
-                    <div class="flex-auto"></div>
-                    <!-- display the count if item exists, else display the loading spinner -->
-                    <div v-if="item.loaded" class="px-5">
-                        {{ item.items.length }}
-                    </div>
-                    <div v-else-if="item.errored" class="px-5">
-                        {{ t('details.layers.error') }}
-                    </div>
-                    <div
-                        v-else
-                        class="animate-spin spinner h-20 w-20 px-5"
-                    ></div>
-                </button>
             </div>
-            <!-- show loading spinner when waiting for identify results -->
-            <div
-                v-else-if="slowLoadingFlag"
-                class="flex justify-center py-10 items-center"
-            >
-                <span class="animate-spin spinner h-20 w-20 px-5 mr-8"></span>
-                {{ t('details.item.loading') }}
-            </div>
-            <!-- clear panel when new identify request came in -->
-            <div v-else></div>
         </template>
     </panel-screen>
 </template>
 
 <script setup lang="ts">
-// This screen is the view of all layers that were interrogated in the identify (the identify panel)
-
 import {
     computed,
-    inject,
     onBeforeMount,
     onBeforeUnmount,
-    onMounted,
     ref,
+    inject,
     watch
 } from 'vue';
-import { useDetailsStore } from './store';
-import type { DetailsItemInstance } from './store';
-import { GlobalEvents, LayerInstance, PanelInstance } from '@/api';
+
+import SymbologyList from './components/symbology-list.vue';
+import ResultList from './components/result-list.vue';
+
+import type { PropType } from 'vue';
 import type { InstanceAPI } from '@/api';
+import type { PanelInstance } from '@/api';
+import type { DetailsItemInstance } from './store';
 import type { IdentifyResult } from '@/geo/api';
-import { usePanelStore } from '@/stores/panel';
+
 import { useI18n } from 'vue-i18n';
-import { useLayerStore } from '@/stores/layer';
+import { useDetailsStore } from './store';
 
 const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
-const layerStore = useLayerStore();
-const panelStore = usePanelStore();
 const detailsStore = useDetailsStore();
 
-defineProps({
-    panel: PanelInstance
-});
-
-const layerResults = ref<Array<IdentifyResult>>([]);
-const lastLayerUid = ref<string>('');
 const handlers = ref<Array<string>>([]);
 const watchers = ref<Array<Function>>([]);
+const layerResults = ref<Array<IdentifyResult>>([]);
+const noResults = ref<boolean>(false);
+const selectedLayer = ref<string>('');
+const userSelectedLayer = ref<boolean>(false);
 
 const activeGreedy = computed<number>(() => detailsStore.activeGreedy);
-const slowLoadingFlag = computed<Boolean>(() => detailsStore.slowLoadingFlag);
 const payload = computed<IdentifyResult[]>(() => detailsStore.payload);
 const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(
     () => detailsStore.properties
 );
-const mobileMode = computed<Boolean>(() => panelStore.mobileView);
-const remainingWidth = computed<number>(() => panelStore.getRemainingWidth);
-const totalResultCount = computed<number>(() =>
-    layerResults.value
-        .map(r => r.items.length)
-        .reduce((a: number, b: number) => a + b, 0)
-);
+
+defineProps({
+    panel: {
+        type: Object as PropType<PanelInstance>
+    }
+});
+
+const changeLayerSelection = (uid: string) => {
+    selectedLayer.value = uid;
+    userSelectedLayer.value = true;
+};
 
 /**
  * Load identify result items after all item's load promise has resolved
@@ -127,7 +104,6 @@ const loadPayloadItems = (newPayload: Array<IdentifyResult>): void => {
     // Would like to revist, as this current solution is unintuitive,
     // nobody writing a new layer type is going to have a clue they need
     // to wrap their identify outputs in reactive() due to disrespectful code.
-
     // if no payload, just return
     if (newPayload === undefined) {
         return;
@@ -136,25 +112,12 @@ const loadPayloadItems = (newPayload: Array<IdentifyResult>): void => {
     // track last identify request timestamp and add to payload items. If details items panel does not exist, no new results,
     // app is in mobile mode, or if there is not enough space available to open the detail items panel,
     // then disable the greedy identify.
-    const detailsPanel = iApi.panel.get('details-items');
-    const detailsWidth = detailsPanel?.width || 350;
-
-    const greedyMode =
-        !detailsPanel ||
-        mobileMode.value ||
-        (remainingWidth.value < detailsWidth && !detailsPanel.isOpen) ||
-        newPayload.length === 0
-            ? 0
-            : newPayload[0].requestTime;
+    const greedyMode = newPayload.length === 0 ? 0 : newPayload[0].requestTime;
     detailsStore.activeGreedy = greedyMode;
     detailsStore.slowLoadingFlag = false;
 
     layerResults.value = newPayload;
 
-    // wait for everything to finish so we can display a grand total
-    calculateGrandTotal(newPayload);
-
-    // procedure to auto open the individual item panel whenever possible
     autoOpen(newPayload);
 };
 
@@ -169,11 +132,10 @@ const loadPayloadItems = (newPayload: Array<IdentifyResult>): void => {
  *              otherwise if there are no results for this previously open layer, follow the same steps as for case 1
  */
 const autoOpen = (newPayload: Array<IdentifyResult>): void => {
-    const itemsPanel = iApi.panel.get('details-items');
     // if the item panel is already open for a layer, wait on that layer to resolve first
-    if (lastLayerUid.value && itemsPanel?.isOpen) {
+    if (userSelectedLayer.value) {
         const lastIdx = layerResults.value.findIndex(
-            (item: IdentifyResult) => item.uid === lastLayerUid.value
+            (item: IdentifyResult) => item.uid === selectedLayer.value
         );
 
         if (lastIdx !== -1) {
@@ -188,7 +150,8 @@ const autoOpen = (newPayload: Array<IdentifyResult>): void => {
                 // update items screen with new results for that layer and turn off greedy loading and abort flags
                 if (lastIdentify.items.length > 0) {
                     detailsStore.activeGreedy = 0;
-                    openResult(lastIdx);
+                    userSelectedLayer.value = false;
+                    noResults.value = false;
                 } else {
                     // otherwise proceed as normal in case 1
                     autoOpenAny(newPayload);
@@ -235,12 +198,13 @@ const autoOpenAny = (newPayload: Array<IdentifyResult>): void => {
             }
 
             // open results item screen and turn off greedy loading and abort flags
-            const idx = layerResults.value.findIndex(
+            const idx = layerResults.value.find(
                 (item: IdentifyResult) => item.uid === res.uid
             );
             detailsStore.activeGreedy = 0;
-            if (idx !== -1) {
-                openResult(idx);
+            if (idx !== undefined) {
+                selectedLayer.value = idx.uid;
+                noResults.value = false;
             }
         })
         .catch(() => {
@@ -249,94 +213,13 @@ const autoOpenAny = (newPayload: Array<IdentifyResult>): void => {
                 return;
             }
 
-            // no promise resolved, clicked on empty map point with no identify results
-            // then clear the last tracked layer and close the items panel
-            lastLayerUid.value = '';
+            // no promise resolved, clicked on empty map point with no identify results.
             detailsStore.activeGreedy = 0;
-            closeResult();
+            noResults.value = true;
         });
 };
 
-/**
- * Wait for all layers to finish loading to alert total number of results to be displayed in identify summary.
- */
-const calculateGrandTotal = (newPayload: Array<IdentifyResult>): void => {
-    Promise.all(newPayload.map((item: IdentifyResult) => item.loading)).then(
-        () => {
-            // alert the user about the number of results found
-            iApi.updateAlert(
-                iApi.$i18n.t('details.layers.found', {
-                    numResults: totalResultCount.value,
-                    numLayers: newPayload.length
-                })
-            );
-        }
-    );
-};
-
-/**
- * Closes details item panel.
- */
-const closeResult = (): void => {
-    iApi.panel.close('details-items');
-};
-
-/**
- * Switches the panel screen to display the data for a given result.
- */
-const openResult = (index: number) => {
-    if (payload.value[index].items.length > 0) {
-        // set greedy mode off for any existing running requests (for case where user manually clicks an item)
-        detailsStore.activeGreedy = 0;
-
-        // skip results screen for wms layers
-        let itemsPanel = iApi.panel.get('details-items');
-
-        // if the items panel was removed somehow, e.g. via API, abort
-        if (!itemsPanel) {
-            return;
-        }
-
-        let props = {
-            result: payload.value[index]
-        };
-        // track last open layer ID every time item panel is opened
-        lastLayerUid.value = payload.value[index].uid;
-
-        if (!itemsPanel.isOpen) {
-            // open the items panel
-            iApi.panel.open({
-                id: 'details-items',
-                screen: 'item-screen',
-                props: props
-            });
-        } else {
-            // update the items screen
-            itemsPanel.show({
-                screen: 'item-screen',
-                props: props
-            });
-        }
-    }
-};
-
-/**
- * Get the layer name given layer's payload index
- */
-const layerName = (idx: number) => {
-    const layerInfo = payload.value[idx];
-    let layer: LayerInstance | undefined = layerStore.getLayerByUid(
-        layerInfo.uid
-    );
-    if (
-        layer &&
-        detailProperties.value[layer.id] &&
-        detailProperties.value[layer.id].name
-    ) {
-        return detailProperties.value[layer.id].name;
-    }
-    return layer?.name ?? '';
-};
+/* Vue Lifecycle Functions */
 
 onBeforeMount(() => {
     // keep track of this watcher because it needs to be removed when this component is unmounted
@@ -352,17 +235,6 @@ onBeforeMount(() => {
                 immediate: true
             }
         )
-    );
-});
-
-onMounted(() => {
-    // if details item screen is closed while greedy open is running, turn abort flag on
-    handlers.value.push(
-        iApi.event.on(GlobalEvents.PANEL_CLOSED, (panel: PanelInstance) => {
-            if (panel.id === 'details-items' || panel.id === 'details-layers') {
-                detailsStore.activeGreedy = 0;
-            }
-        })
     );
 
     watchers.value.push(
@@ -381,4 +253,9 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+.detailsContentSection {
+    padding-right: 8px;
+    margin-right: -8px;
+}
+</style>
