@@ -161,12 +161,6 @@ let config = {
                     title: {
                         value: 'CCCS WMS Sample'
                     }
-                },
-                details: {
-                    panelWidth: {
-                        default: 350,
-                        'details-items': 400
-                    }
                 }
             },
             panels: { open: [{ id: 'legend', pin: true }] },

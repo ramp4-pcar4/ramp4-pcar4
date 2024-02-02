@@ -407,12 +407,6 @@ let config = {
                         'geosearch'
                     ]
                 },
-                details: {
-                    panelWidth: {
-                        default: 350,
-                        'details-items': 400
-                    }
-                },
                 export: {
                     fileName: 'ramp-pcar-4-map-carte'
                 },
@@ -860,12 +854,6 @@ let config = {
                         'legend',
                         'geosearch'
                     ]
-                },
-                details: {
-                    panelWidth: {
-                        default: 350,
-                        'details-items': 400
-                    }
                 },
                 export: {
                     fileName: 'ramp-pcar-4-map-carte'
