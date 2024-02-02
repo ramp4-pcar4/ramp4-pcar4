@@ -302,12 +302,6 @@ let config = {
                         'geosearch'
                     ]
                 },
-                details: {
-                    panelWidth: {
-                        default: 350,
-                        'details-items': 400
-                    }
-                },
                 export: {
                     title: {
                         value: 'Enjoy this Export',
