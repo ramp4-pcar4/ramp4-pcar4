@@ -31,7 +31,10 @@
                 c =>
                     c.headerName &&
                     c.headerName.length > 0 &&
-                    !(!iApi.ui.exposeOids && oidCols?.has(c.headerName))
+                    !(
+                        (!iApi.ui.exposeOids || !iApi.ui.exposeMeasurements) &&
+                        systemCols?.has(c.headerName)
+                    )
             )"
             :key="col.headerName"
             v-on:click="
@@ -73,6 +76,6 @@ const { t } = useI18n();
 defineProps({
     columnDefs: { type: Object as PropType<Array<any>>, required: true },
     columnApi: { type: Object },
-    oidCols: { type: Object as PropType<Set<string>> }
+    systemCols: { type: Object as PropType<Set<string>> }
 });
 </script>

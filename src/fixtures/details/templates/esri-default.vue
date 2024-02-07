@@ -53,6 +53,18 @@ const itemData = () => {
         delete helper[props.fields.find(f => f.type === 'oid')!.name];
     }
 
+    if (!iApi?.ui.exposeMeasurements) {
+        // check Hide system fields flag
+        delete helper[props.fields.find(f => f.type === 'geometry')!.name];
+        delete helper[
+            props.fields.find(f => f.name.toLowerCase() === 'shape_length')!
+                .name
+        ];
+        delete helper[
+            props.fields.find(f => f.name.toLowerCase() === 'shape_area')!.name
+        ];
+    }
+
     let aliases: any = {};
     props.fields.forEach(field => {
         // Check to see if this field is being overwritten in the fixture config.
