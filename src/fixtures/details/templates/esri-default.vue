@@ -48,9 +48,23 @@ const itemData = () => {
     const helper: any = {};
     Object.assign(helper, props.identifyData.data);
 
+    // Remove any fields of type geometry
+    delete helper[props.fields.find(f => f.type === 'geometry')!.name];
+
     if (!iApi?.ui.exposeOids) {
         // check global oid flag
         delete helper[props.fields.find(f => f.type === 'oid')!.name];
+    }
+
+    if (!iApi?.ui.exposeMeasurements) {
+        // check global measurements flag
+        delete helper[
+            props.fields.find(f => f.name.toLowerCase() === 'shape_length')!
+                .name
+        ];
+        delete helper[
+            props.fields.find(f => f.name.toLowerCase() === 'shape_area')!.name
+        ];
     }
 
     let aliases: any = {};
