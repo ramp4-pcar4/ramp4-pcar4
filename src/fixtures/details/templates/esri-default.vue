@@ -43,14 +43,37 @@ const props = defineProps({
     }
 });
 
+const findAndDelete = (
+    fields: FieldDefinition[],
+    propertyType: 'type' | 'name',
+    property: string,
+    helper: any
+) => {
+    const field = fields.find(
+        f => f[propertyType].toLowerCase() === property.toLowerCase()
+    );
+
+    // If the field is found, delete it from the helper object
+    if (field) delete helper[field.name];
+};
+
 // clone identifyData and remove unwanted data
 const itemData = () => {
     const helper: any = {};
     Object.assign(helper, props.identifyData.data);
 
+    // Remove any fields of type geometry
+    findAndDelete(props.fields, 'type', 'geometry', helper);
+
     if (!iApi?.ui.exposeOids) {
         // check global oid flag
-        delete helper[props.fields.find(f => f.type === 'oid')!.name];
+        findAndDelete(props.fields, 'type', 'oid', helper);
+    }
+
+    if (!iApi?.ui.exposeMeasurements) {
+        // check global measurements flag
+        findAndDelete(props.fields, 'name', 'shape_length', helper);
+        findAndDelete(props.fields, 'name', 'shape_area', helper);
     }
 
     let aliases: any = {};

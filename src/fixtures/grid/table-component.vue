@@ -132,7 +132,7 @@
                     <column-dropdown
                         :columnApi="columnApi"
                         :columnDefs="columnDefs"
-                        :oidCols="oidCols"
+                        :systemCols="systemCols"
                         @refreshHeaders="agGridApi.refreshHeader()"
                     ></column-dropdown>
 
@@ -591,7 +591,7 @@ const gridLayers = computed(() => {
             .filter(layer => layer !== undefined);
     } else return [];
 });
-const oidCols = ref<Set<string>>(new Set<string>());
+const systemCols = ref<Set<string>>(new Set<string>());
 
 // manages fast incoming filter change events. Forces them to finish
 // in order to avoid race conditions
@@ -1574,8 +1574,16 @@ const setUpColumns = () => {
 
                     mergedTableAttrs.fields = mergedTableAttrs.fields.concat(
                         ta.fields.map(field => {
-                            if (field.type === 'oid') {
-                                oidCols.value.add(field.name);
+                            // Add system columns to the set if they need to be hidden
+                            if (
+                                (!iApi.ui.exposeOids && field.type === 'oid') ||
+                                (!iApi.ui.exposeMeasurements &&
+                                    (field.name.toLowerCase() ===
+                                        'shape_length' ||
+                                        field.name.toLowerCase() ===
+                                            'shape_area'))
+                            ) {
+                                systemCols.value.add(field.name);
                             }
                             return {
                                 name:
@@ -1620,10 +1628,14 @@ const setUpColumns = () => {
                                 title: column.title
                             });
                     }
-                    if (!iApi.ui.exposeOids && oidCols.value.has(column.data)) {
-                        // hide oid column according to global flag
+                    if (
+                        (!iApi.ui.exposeOids || !iApi.ui.exposeMeasurements) &&
+                        systemCols.value.has(column.data)
+                    ) {
+                        // hide system columns according to their flags
                         config.value.state.columns[column.data].visible = false;
                     }
+
                     let colConfig = config.value.state?.columns[column.data];
                     let col: ColumnDefinition = {
                         headerName: colConfig.title ?? column.title,
