@@ -183,30 +183,42 @@ export class CommonLayer extends LayerInstance {
                 this.onError();
             }
         }, this.maxLoadTime); // configurable time limit for actions to execute
-        const loadPromises: Array<Promise<void>> = this.onLoadActions();
-        Promise.all(loadPromises)
-            .then(() => {
-                clearTimeout(loadTimeout);
-                if (!timedOut) {
-                    // if promise was previously not in pending status, make a new one
-                    // otherwise we're trying to resolve a resolved/rejected promise
-                    if (this.loadPromFulfilled) {
-                        this.loadDefProm = new DefPromise();
+
+        // handling for any errors that are thrown when executing layer onLoadActions call
+        // For issue https://github.com/ramp4-pcar4/ramp4-pcar4/issues/2103, without proper error handling here any subsequent
+        // layer that is added will not trigger its esriLayer.loadStatus watcher, meaning onLoadActions is never called
+        // resulting in this issue. Can attempt a deeper analysis of why this is the case in the future (possible race condition).
+        try {
+            const loadPromises: Array<Promise<void>> = this.onLoadActions();
+            Promise.all(loadPromises)
+                .then(() => {
+                    clearTimeout(loadTimeout);
+                    if (!timedOut) {
+                        // if promise was previously not in pending status, make a new one
+                        // otherwise we're trying to resolve a resolved/rejected promise
+                        if (this.loadPromFulfilled) {
+                            this.loadDefProm = new DefPromise();
+                        }
+                        this.loadDefProm.resolveMe();
+                        this.loadPromFulfilled = true;
+                        this.stopTimer(TimerType.LOAD);
+                        // This will just trigger the above statements for each sublayer
+                        this.sublayers.forEach(sublayer => sublayer.onLoad());
+                        this.updateLayerState(LayerState.LOADED);
+                    } else {
+                        this.visibility = false;
                     }
-                    this.loadDefProm.resolveMe();
-                    this.loadPromFulfilled = true;
-                    this.stopTimer(TimerType.LOAD);
-                    // This will just trigger the above statements for each sublayer
-                    this.sublayers.forEach(sublayer => sublayer.onLoad());
-                    this.updateLayerState(LayerState.LOADED);
-                } else {
-                    this.visibility = false;
-                }
-            })
-            .catch(() => {
-                clearTimeout(loadTimeout);
-                this.onError();
-            });
+                })
+                .catch(() => {
+                    clearTimeout(loadTimeout);
+                    this.onError();
+                });
+        } catch (err) {
+            console.error('Encountered error on layer load: ', err);
+            // set layer to error status if unsuccessful load attempt
+            clearTimeout(loadTimeout);
+            this.onError();
+        }
     }
 
     // TODO what happens if the error state is hit after the layer is loaded?
