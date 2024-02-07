@@ -51,3 +51,4 @@ layer.longdraw,{id} is taking longer than expected to draw,1,{id} prend plus de 
 layer.mismatch,{name} cannot be displayed in the current projection,1,{name} ne peut pas être affiché dans la projection actuelle,0
 layer.filtersdisabled,Filters have been disabled for {name},1,Les filtres ont été désactivés par {name},0
 layer.filterwarning,You are attempting to use a grid that contains unmodifiable layers. Filtering will be partially disabled,1,Vous tentez d'utiliser une grille contenant des calques non modifiables. Le filtrage sera partiellement désactivé,0
+layer.noexportmap,{name} was attempted to be added as a Map Image Layer but Map Export is not enabled for the service,1,{name} a été tenté d'être ajouté en tant que couche d'images cartographiques, mais l'exportation de cartes n'est pas activée pour le service.,0
