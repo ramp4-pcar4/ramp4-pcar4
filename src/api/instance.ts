@@ -86,7 +86,9 @@ export class InstanceAPI {
         maptip: MaptipAPI;
         exposeOids: boolean;
         getZoomIcon: () => string;
+        formatNumber: (num: number) => string;
         scrollToInstance: boolean;
+        suppressNumberLocalization: boolean;
     };
     startRequired: boolean = false;
 
@@ -123,7 +125,9 @@ export class InstanceAPI {
             maptip: this.geo.map.maptip,
             exposeOids: false,
             getZoomIcon: () => '',
-            scrollToInstance: false
+            formatNumber: () => '',
+            scrollToInstance: false,
+            suppressNumberLocalization: false
         };
         this.notify = new NotificationAPI(this);
 
@@ -310,6 +314,10 @@ export class InstanceAPI {
             if (langConfig.system?.scrollToInstance) {
                 this.ui.scrollToInstance = langConfig.system?.scrollToInstance;
             }
+            if (langConfig.system?.suppressNumberLocalization) {
+                this.ui.suppressNumberLocalization =
+                    langConfig.system?.suppressNumberLocalization;
+            }
 
             // set up key to SVG bindings for zoom icons
             const zoomSvgs: { [key: string]: string } = {
@@ -323,6 +331,12 @@ export class InstanceAPI {
 
             this.ui.getZoomIcon = () => {
                 return zoomIcon;
+            };
+
+            this.ui.formatNumber = (num: number) => {
+                return this.ui.suppressNumberLocalization
+                    ? num.toString()
+                    : this.$i18n.n(num, 'number');
             };
         }
 

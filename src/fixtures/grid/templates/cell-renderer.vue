@@ -65,9 +65,8 @@ const copy = () => {
 
 const formatValue = computed<string>(() => {
     if (props.params.type === 'number') {
-        return props.params.value == null
-            ? ''
-            : iApi.$i18n.n(props.params.value, 'number');
+        if (props.params.value == null) return '';
+        return iApi.ui.formatNumber(props.params.value);
     } else if (props.params.type === 'date') {
         // get YYYY-MM-DD from date
         return props.params.value == null

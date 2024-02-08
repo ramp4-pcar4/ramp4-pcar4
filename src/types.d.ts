@@ -23,6 +23,7 @@ export interface RampConfig {
         exposeOid?: boolean;
         zoomIcon?: string;
         scrollToInstance?: boolean;
+        suppressNumberLocalization?: boolean;
     };
 }
 
