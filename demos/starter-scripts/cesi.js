@@ -681,7 +681,8 @@ let config = {
                 }
             },
             system: {
-                animate: true
+                animate: true,
+                overrideNumberFormat: true
             }
         }
     }

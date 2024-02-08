@@ -65,8 +65,10 @@ const copy = () => {
 
 const formatValue = computed<string>(() => {
     if (props.params.type === 'number') {
-        return props.params.value == null
-            ? ''
+        if (props.params.value == null) return '';
+
+        return iApi.ui.overrideNumberFormat
+            ? props.params.value.toString()
             : iApi.$i18n.n(props.params.value, 'number');
     } else if (props.params.type === 'date') {
         // get YYYY-MM-DD from date

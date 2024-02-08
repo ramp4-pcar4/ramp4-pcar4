@@ -71,7 +71,7 @@ const itemData = () => {
         helper[key] = {
             value:
                 typeof helper[key] === 'number'
-                    ? iApi?.$i18n.n(helper[key], 'number')
+                    ? formatNumber(helper[key])
                     : helper[key],
             alias: aliases[key].name || key, // use the key name if alias is undefined
             type: aliases[key].type
@@ -84,6 +84,13 @@ const itemData = () => {
     });
 
     return helper;
+};
+
+// if number format override is set, display value directly from service instead of formatting
+const formatNumber = (value: number) => {
+    return iApi?.ui.overrideNumberFormat
+        ? value.toString()
+        : iApi?.$i18n.n(value, 'number');
 };
 
 // render value based on type

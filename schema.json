@@ -2798,6 +2798,11 @@
                     "type": "boolean",
                     "description": "Determines whether the browser will scroll to the RAMP instance when a button within the app is pressed.",
                     "default": false
+                },
+                "overrideNumberFormat": {
+                    "type": "boolean",
+                    "description": "If set to true, the app will display numbers directly from the service instead of formatting them based on the app language.",
+                    "default": false
                 }
             },
             "required": [],

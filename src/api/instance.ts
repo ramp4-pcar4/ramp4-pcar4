@@ -87,6 +87,7 @@ export class InstanceAPI {
         exposeOids: boolean;
         getZoomIcon: () => string;
         scrollToInstance: boolean;
+        overrideNumberFormat: boolean;
     };
     startRequired: boolean = false;
 
@@ -123,7 +124,8 @@ export class InstanceAPI {
             maptip: this.geo.map.maptip,
             exposeOids: false,
             getZoomIcon: () => '',
-            scrollToInstance: false
+            scrollToInstance: false,
+            overrideNumberFormat: false
         };
         this.notify = new NotificationAPI(this);
 
@@ -309,6 +311,10 @@ export class InstanceAPI {
             }
             if (langConfig.system?.scrollToInstance) {
                 this.ui.scrollToInstance = langConfig.system?.scrollToInstance;
+            }
+            if (langConfig.system?.overrideNumberFormat) {
+                this.ui.overrideNumberFormat =
+                    langConfig.system?.overrideNumberFormat;
             }
 
             // set up key to SVG bindings for zoom icons
