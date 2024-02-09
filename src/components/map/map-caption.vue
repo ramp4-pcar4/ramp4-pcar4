@@ -1,6 +1,6 @@
 <template>
     <div
-        class="map-caption absolute bottom-0 flex justify-end pointer-events-auto cursor-default select-none text-gray-400 bg-black-75 left-0 right-0 py-2 sm:py-6"
+        class="map-caption absolute bottom-0 flex justify-end pointer-events-auto cursor-default select-none text-gray-200 bg-black-75 left-0 right-0 py-2 sm:py-6"
     >
         <about-ramp-dropdown
             class="sm:block display-none ml-8 mr-4"
@@ -109,7 +109,7 @@
             >
                 <template #header>
                     <span
-                        class="text-gray-400 hover:text-white text-sm sm:text-base pb-5"
+                        class="text-gray-200 hover:text-white text-sm sm:text-base pb-5"
                     >
                         {{ t('map.language.short') }}
                     </span>

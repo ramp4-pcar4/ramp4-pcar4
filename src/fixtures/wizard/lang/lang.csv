@@ -22,7 +22,7 @@ wizard.fileType.shapefile,zipped Shapefile,1,Shapefile zippé,1
 wizard.fileType.geojson,GeoJSON,1,GeoJSON,1
 wizard.layerType.esriFeature,ESRI Feature Layer,1,Couche d'éléments d'ESRI,1
 wizard.layerType.esriMapImage,ESRI Map Image Layer,1,Couche d'image de la carte ESRI,1
-wizard.layerType.esriImagery,ESRI Image Layer,1,Couche d'images d'ESRI,1
+wizard.layerType.esriImagery,ESRI Imagery Layer,1,Couche d’imagerie ESRI,0
 wizard.layerType.esriTile,ESRI Tile Layer,1,Couche de tuiles d'ESRI,1
 wizard.layerType.ogcWms,OGC Web Map Service,1,Couche WMS de l'OGC,1
 wizard.layerType.ogcWfs,OGC Web Feature Service,1,Service d'entités Web OGC,1
