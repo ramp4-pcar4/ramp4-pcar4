@@ -682,7 +682,8 @@ let config = {
                 }
             },
             system: {
-                animate: true
+                animate: true,
+                suppressNumberLocalization: true
             }
         }
     }

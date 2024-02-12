@@ -71,7 +71,7 @@ const itemData = () => {
         helper[key] = {
             value:
                 typeof helper[key] === 'number'
-                    ? iApi?.$i18n.n(helper[key], 'number')
+                    ? iApi?.ui.formatNumber(helper[key])
                     : helper[key],
             alias: aliases[key].name || key, // use the key name if alias is undefined
             type: aliases[key].type
