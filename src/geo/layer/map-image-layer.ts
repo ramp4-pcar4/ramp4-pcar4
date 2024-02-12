@@ -142,6 +142,19 @@ export class MapImageLayer extends MapLayer {
 
         this.layerTree.name = this.name;
 
+        // throw error for FeatureServer added as MIL, has no export map function
+        if (!this.esriLayer.capabilities.exportMap) {
+            this.$iApi.notify.show(
+                NotificationType.WARNING,
+                this.$iApi.$i18n.t('layer.noexportmap', {
+                    name: this.name || this.id
+                })
+            );
+
+            throw new Error(
+                'Service does not support Map Image Layer, Map Export is not enabled'
+            );
+        }
         this.isDynamic =
             this.esriLayer.capabilities.exportMap.supportsDynamicLayers;
 

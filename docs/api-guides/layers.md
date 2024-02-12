@@ -174,7 +174,7 @@ The creation of the layer just generates the controlling Layer object. To genera
 
 The `initiationState` property on the Layer will indicate the current state of the Layer in this matter.
 
-If an uninitated Layer is passed to `map.addLayer()`, it will be initialized automatically.
+If an uninitiated Layer is passed to `map.addLayer()`, it will be initialized automatically.
 
 ### Waiting For Layer Load
 
