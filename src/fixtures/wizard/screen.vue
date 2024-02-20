@@ -47,7 +47,7 @@
                 <!-- Select format wizard step -->
                 <stepper-item
                     :title="t('wizard.format.title')"
-                    :summary="typeSelection"
+                    :summary="displayFormat"
                 >
                     <form name="format" @submit="onSelectContinue">
                         <!-- List of file/service types based on layer -->
@@ -361,6 +361,8 @@ const layerReady = ref<Boolean>(false);
 const layerUploaded = ref<Boolean>(true);
 const layerName = ref<String>('');
 
+const displayFormat = ref<string>('');
+
 const selectedValues = ref<Array<string | number>>([]);
 
 // service layer formats
@@ -551,6 +553,14 @@ const onSelectContinue = async (event: any) => {
     disabled.value = true;
     failureError.value = false;
     validation.value = true;
+
+    displayFormat.value = isFileLayer()
+        ? (fileTypeOptions.find(
+              element => element.value === typeSelection.value
+          )?.label as string)
+        : (serviceTypeOptions.find(
+              element => element.value === typeSelection.value
+          )?.label as string);
 
     try {
         layerInfo.value = isFileLayer()
