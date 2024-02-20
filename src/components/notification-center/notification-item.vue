@@ -84,7 +84,7 @@ const props = defineProps({
 const open = ref(false);
 const icons = reactive({
     [NotificationType.WARNING]: '⚠',
-    [NotificationType.INFO]: '☑',
+    [NotificationType.INFO]: 'ℹ️',
     [NotificationType.ERROR]: '❌'
 });
 

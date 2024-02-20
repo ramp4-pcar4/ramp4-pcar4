@@ -47,7 +47,7 @@
                 <!-- Select format wizard step -->
                 <stepper-item
                     :title="t('wizard.format.title')"
-                    :summary="typeSelection"
+                    :summary="displayFormat"
                 >
                     <form name="format" @submit="onSelectContinue">
                         <!-- List of file/service types based on layer -->
@@ -122,6 +122,7 @@
                                     url ? (goNext = true) : (goNext = false);
                                     validation = false;
                                     wizardStore.goToStep(0);
+                                    displayFormat = '';
                                 }
                             "
                             :animation="true"
@@ -361,6 +362,8 @@ const layerReady = ref<Boolean>(false);
 const layerUploaded = ref<Boolean>(true);
 const layerName = ref<String>('');
 
+const displayFormat = ref<string>('');
+
 const selectedValues = ref<Array<string | number>>([]);
 
 // service layer formats
@@ -552,6 +555,14 @@ const onSelectContinue = async (event: any) => {
     failureError.value = false;
     validation.value = true;
 
+    displayFormat.value = isFileLayer()
+        ? (fileTypeOptions.find(
+              element => element.value === typeSelection.value
+          )?.label as string)
+        : (serviceTypeOptions.find(
+              element => element.value === typeSelection.value
+          )?.label as string);
+
     try {
         layerInfo.value = isFileLayer()
             ? ((await layerSource.value!.fetchFileInfo(
@@ -615,6 +626,7 @@ const onConfigureContinue = async (data: any) => {
     );
 
     selectedValues.value = [];
+    displayFormat.value = '';
 
     // config.url =
     //     'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign';
