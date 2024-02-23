@@ -139,7 +139,7 @@
                     <!-- clear all filters -->
                     <button
                         type="button"
-                        class="p-4 h-40 text-gray-500 hover:text-black"
+                        class="grid-clearall p-4 h-40 text-gray-500 hover:text-black"
                         @click="clearSearchAndFilters()"
                         :content="t('grid.clearAll')"
                         :aria-label="t('grid.clearAll')"
