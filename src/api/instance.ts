@@ -85,6 +85,7 @@ export class InstanceAPI {
     readonly ui: {
         maptip: MaptipAPI;
         exposeOids: boolean;
+        exposeMeasurements: boolean;
         getZoomIcon: () => string;
         formatNumber: (num: number) => string;
         scrollToInstance: boolean;
@@ -124,6 +125,7 @@ export class InstanceAPI {
         this.ui = {
             maptip: this.geo.map.maptip,
             exposeOids: false,
+            exposeMeasurements: true,
             getZoomIcon: () => '',
             formatNumber: () => '',
             scrollToInstance: false,
@@ -310,6 +312,10 @@ export class InstanceAPI {
             }
             if (langConfig.system?.exposeOid) {
                 this.ui.exposeOids = langConfig.system.exposeOid;
+            }
+            if (langConfig.system?.exposeMeasurements != undefined) {
+                this.ui.exposeMeasurements =
+                    langConfig.system.exposeMeasurements;
             }
             if (langConfig.system?.scrollToInstance) {
                 this.ui.scrollToInstance = langConfig.system?.scrollToInstance;

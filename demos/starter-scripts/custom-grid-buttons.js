@@ -929,7 +929,7 @@ let config = {
             panels: {
                 open: [{ id: 'legend', pin: true }]
             },
-            system: { animate: true }
+            system: { animate: true, exposeMeasurements: false }
         }
     }
 };

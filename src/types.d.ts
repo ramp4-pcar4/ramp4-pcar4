@@ -21,6 +21,7 @@ export interface RampConfig {
         proxyUrl?: string;
         animate?: boolean;
         exposeOid?: boolean;
+        exposeMeasurements?: boolean;
         zoomIcon?: string;
         scrollToInstance?: boolean;
         suppressNumberLocalization?: boolean;
