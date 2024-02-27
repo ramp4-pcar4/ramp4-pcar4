@@ -39,6 +39,7 @@
         "lodash.clonedeep": "^4.5.0",
         "marked": "^4.0.10",
         "pinia": "^2.0.30",
+        "popper-max-size-modifier": "^0.2.0",
         "proj4": "^2.8.1",
         "redaxios": "^0.5.1",
         "screenfull": "~5.0.2",
