@@ -28,10 +28,10 @@
         "ts:check": "vue-tsc --noEmit",
         "ts:generate": "vue-tsc --declaration --emitDeclarationOnly || true",
         "ts-docs:generate": "npx typedoc",
-        "formatcheck": "prettier . -c",
-        "lintcheck": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts",
         "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
+        "lint:check": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts",
         "format": "prettier .  --write",
+        "format:check": "prettier . -c",
         "vite-docs:generate": "npx vitepress build docs"
     },
     "dependencies": {

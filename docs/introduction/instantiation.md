@@ -147,27 +147,51 @@ Click [here](https://ramp4-pcar4.github.io/ramp4-pcar4/main/index-simple.html) t
 
 ## RAMP Build Files
 
-When you download and open up the folder containing the compiled version of RAMP, you will see three files:
+When you download and open up the folder containing the compiled version of RAMP, you will see several files:
 
 1. `ramp.css`
 
-This is the RAMP stylesheet and should be included in your webpage/app.
+This is the RAMP stylesheet and should be included in your webpage/app. You can include it using a `<link>` tag in your HTML:
 
-2. `ramp.js`
-
-This is a script that you will need to run before you attempt to create any instances. It creates a global `RAMP` variable that has the following properties:
-
-* `createInstance(el, config, options)`. A function that creates a new instance of RAMP. Detailed usage instructions are [here](#creating-an-instance).
-* `configUpgrade(ramp2Config)`. A function that takes in a RAMP2 config or an array of RAMP2 configs and returns converted RAMP4 config(s).
-* `layerConfigUpgrade(ramp2LayerConfig)`. A function that takes in a RAMP2 layer config and returns a converted RAMP4 layer config.
-* `geo`. A module that contains default values for lod sets and tile schemas, as well as the projection API, geometry API, and shared utils API. TODO: Add link to full doc for this module if/when we write it.
-
-3. `ramp.esm.js`
-
-This script works like a module, so you will not need to run it before creating an instance. Instead, you need to import the desired function from the file. It contains the same properties as `ramp.js`. Here is a code snippet showing usage:
-
+```html
+<link rel="stylesheet" href="./ramp.css">
 ```
-import { createInstance, geo } from '../lib/ramp.esm.js';
+
+Alternatively, if you're working in a JavaScript module, you can import it using an asset import and apply it using `document.adoptedStyleSheets`:
+
+```javascript
+import rampStyles from './ramp.css';
+document.adoptedStyleSheets = [rampStyles];
+```
+
+2. `ramp.iife.js` and `ramp.iife.browser.js`
+
+These are the IIFE versions of RAMP. They create a global `RAMP` variable with several properties, including `createInstance`, `configUpgrade`, `layerConfigUpgrade`, and `geo`. Here's an example of using the IIFE version:
+
+```html
+<script src="./ramp.iife.browser.js"></script>
+<script>
+    const config = {...config definition goes here...}
+    const options = {...options definition goes here...}
+
+    const rInstance = RAMP.createInstance(
+        document.getElementById('ramp-instance'),
+        config,
+        options
+    );
+</script>
+```
+
+3. `ramp.esm.js` and `ramp.esm.browser.js`
+
+These scripts are native ES modules, you'll need to import the desired function from the file. They contain the same properties as `ramp.iife.js`. 
+
+The `ramp.esm.js` version is intended for use in a host project that uses npm and has its own bundler like webpack or rollup. This version excludes all RAMP dependencies, expecting them to be handled by the host project's npm manager and bundled into the host's build. This allows for better optimization and deduplication of dependencies in the host project.
+
+Here is a code snippet showing usage:
+
+```javascript
+import { createInstance, geo } from './ramp.esm.js';
 
 const config = {...config definition goes here...}
 const options = {...options definition goes here...}
@@ -178,3 +202,5 @@ const rInstance = createInstance(
     options
 );
 ```
+
+Both ESM and IIFE versions are designed to run in a browser environment, other environments like Node.js are not supported.
