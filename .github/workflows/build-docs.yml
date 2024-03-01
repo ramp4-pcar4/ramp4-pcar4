@@ -72,10 +72,10 @@ jobs:
                   regex: false
 
             - name: Build the ts docs!
-              run: npm run build:ts-docs
+              run: npm run ts-docs:generate
 
             - name: Build the vitepress docs!
-              run: npm run build:vite-docs
+              run: npm run vite-docs:generate
 
             - name: Consolidate docsite files
               run: |

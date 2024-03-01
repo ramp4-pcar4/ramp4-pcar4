@@ -1,13 +1,14 @@
-import { defineConfig, type UserConfigExport } from 'vite';
+import { defineConfig, mergeConfig } from 'vite';
 import mkcert from 'vite-plugin-mkcert';
 import vue from '@vitejs/plugin-vue';
 import VitePluginI18n from './scripts/vite-plugin-i18n';
 import VitePluginVersion from './scripts/vite-plugin-version';
 import { resolve } from 'path';
+import pkg from './package.json';
 
 const distName = resolve(__dirname, process.env.DIST_NAME || 'dist');
 
-const baseConfig: UserConfigExport = {
+const baseConfig = {
     plugins: [vue(), VitePluginI18n(), VitePluginVersion(), mkcert()],
     define: {
         'process.env': process.env
@@ -20,65 +21,130 @@ const baseConfig: UserConfigExport = {
         }
     },
     build: {
-        target: 'esnext'
+        copyPublicDir: false,
+        target: 'esnext',
+        emptyOutDir: false,
+        outDir: distName,
+        cssMinify: false,
+        minify: false,
+        lib: {
+            entry: resolve(__dirname, 'src/main.ts'),
+            name: 'RAMP'
+        },
+        rollupOptions: {
+            output: {
+                inlineDynamicImports: true,
+                assetFileNames: (assetInfo: any) => {
+                    return assetInfo.name === 'style.css'
+                        ? 'bad.css'
+                        : assetInfo.name;
+                }
+            }
+        }
     },
     server: {
         open: '/demos/index-samples.html',
         https: true
     }
-};
+} as Record<string, any>;
 
-export default defineConfig(({ command, mode }) => {
-    if (command == 'build') {
-        if (mode === 'production') {
-            Object.assign(baseConfig.build!, {
-                outDir: distName,
-                lib: {
-                    entry: resolve(__dirname, 'src/main.ts'),
-                    name: 'RAMP',
-                    fileName: (format: string) =>
-                        `lib/ramp${format == 'iife' ? '' : '.esm'}.js`,
-                    formats: ['es', 'iife']
-                },
-                rollupOptions: {
-                    output: {
-                        inlineDynamicImports: true,
-                        dir: distName,
-                        assetFileNames: (assetInfo: any) => {
-                            return assetInfo.name === 'style.css'
-                                ? 'lib/ramp.css'
-                                : assetInfo.name;
-                        }
+function cdnBundleConfig() {
+    return mergeConfig(baseConfig, {
+        build: {
+            cssMinify: true,
+            lib: {
+                fileName: (format: string) => `lib/ramp.browser.${format}.js`,
+                formats: ['es', 'iife']
+            },
+            rollupOptions: {
+                output: {
+                    assetFileNames: (assetInfo: any) => {
+                        return assetInfo.name === 'style.css'
+                            ? 'lib/ramp.css'
+                            : assetInfo.name;
                     }
                 }
-            });
+            }
+        }
+    });
+}
+
+function prodBundleConfig() {
+    return mergeConfig(baseConfig, {
+        build: {
+            minify: true,
+            lib: {
+                fileName: (format: string) =>
+                    `lib/ramp.browser.${format}.prod.js`,
+                formats: ['es', 'iife']
+            }
+        }
+    });
+}
+
+function npmBundleConfig() {
+    const externalImports = Object.keys(pkg.dependencies).map(
+        dep => new RegExp(`^${dep}`)
+    );
+
+    const config = mergeConfig(baseConfig, {
+        build: {
+            lib: {
+                fileName: 'lib/ramp.bundle.es',
+                formats: ['es']
+            },
+            rollupOptions: {
+                external: externalImports
+            }
+        }
+    });
+
+    return config;
+}
+
+function testBuildConfig() {
+    delete baseConfig.build.rollupOptions;
+    delete baseConfig.build.lib;
+
+    const config = mergeConfig(baseConfig, {
+        publicDir: false,
+        root: 'demos',
+        build: {
+            outDir: `${distName}/demos`,
+            rollupOptions: {
+                input: {
+                    main: '/index.html',
+                    multi: '/index-multi.html',
+                    e2e: '/index-e2e.html',
+                    wet: '/index-wet.html',
+                    samples: '/index-samples.html',
+                    all: '/index-all.html',
+                    form: '/index-form.html',
+                    teleport: '/index-teleport.html',
+                    teleportWet: '/index-teleport-wet.html',
+                    teleportDetails: '/index-teleport-details.html',
+                    multiWet: '/index-multi-wet.html'
+                }
+            }
+        }
+    });
+
+    return config;
+}
+
+export default defineConfig(viteConfig => {
+    const { command, mode } = viteConfig;
+    if (command === 'build') {
+        if (mode === 'npm') {
+            return npmBundleConfig();
+        } else if (mode === 'cdn') {
+            return cdnBundleConfig();
+        } else if (mode === 'prod') {
+            return prodBundleConfig();
         } else {
-            baseConfig.publicDir = false;
-            baseConfig.root = 'demos';
-            Object.assign(baseConfig.build!, {
-                outDir: `${distName}/demos`,
-                rollupOptions: {
-                    input: {
-                        main: '/index.html',
-                        multi: '/index-multi.html',
-                        e2e: '/index-e2e.html',
-                        wet: '/index-wet.html',
-                        samples: '/index-samples.html',
-                        all: '/index-all.html',
-                        form: '/index-form.html',
-                        teleport: '/index-teleport.html',
-                        teleportWet: '/index-teleport-wet.html',
-                        teleportDetails: '/index-teleport-details.html',
-                        multiWet: '/index-multi-wet.html'
-                    }
-                }
-            });
+            return testBuildConfig();
         }
     } else {
-        // preview mode
-        if (mode === 'production') {
-            baseConfig.server!.open = '/index.html';
-        }
+        return baseConfig;
     }
-    return baseConfig;
 });

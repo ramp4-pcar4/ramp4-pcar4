@@ -1,24 +1,38 @@
 {
     "name": "ramp",
     "version": "4.5.0-beta",
+    "description": "RAMP4 - The Reusable Accessible Mapping Platform, is a Javascript based web mapping platform that provides a reusable, responsive and WCAG 2.1 AA compliant common viewer for the Government of Canada. ",
     "type": "module",
+    "module": "./dist/lib/ramp.bundle.es.js",
+    "browser": "./dist/lib/ramp.browser.es.js",
+    "style": "./dist/lib/ramp.css",
+    "types": "./dist/ts/main.d.ts",
+    "files": [
+        "dist"
+    ],
     "scripts": {
         "dev": "vite",
         "dev-http": "vite --https=false",
         "launch": "vite --no-open",
-        "build": "vite build",
+        "build": "rm -rf dist && run-p -c -s build:* ts:generate",
+        "postbuild": "(rm dist/bad.css || true) && cp -a public/. dist/",
+        "build:npm": "vite build --mode npm",
+        "build:cdn": "vite build --mode cdn",
+        "build:prod": "vite build --mode prod",
+        "build:demos": "vite build --mode demos",
         "preview": "vite preview --port 5050",
         "test:e2e": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress open'",
         "test:e2e:ci": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress run'",
         "test:unit": "cypress open-ct",
         "test:unit:ci": "cypress run-ct --quiet --reporter spec",
-        "typecheck": "vue-tsc --noEmit",
+        "ts:check": "vue-tsc --noEmit",
+        "ts:generate": "vue-tsc --declaration --emitDeclarationOnly || true",
+        "ts-docs:generate": "npx typedoc",
         "formatcheck": "prettier . -c",
         "lintcheck": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts",
         "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
         "format": "prettier .  --write",
-        "build:ts-docs": "npx typedoc",
-        "build:vite-docs": "npx vitepress build docs"
+        "vite-docs:generate": "npx vitepress build docs"
     },
     "dependencies": {
         "@arcgis/core": "4.26.5",
@@ -97,6 +111,7 @@
         "eslint": "^8.23.1",
         "eslint-plugin-cypress": "^2.12.1",
         "eslint-plugin-vue": "^9.5.1",
+        "npm-run-all2": "^6.1.2",
         "postcss": "^8.4.12",
         "postcss-import": "^14.1.0",
         "prettier": "^2.7.1",
@@ -108,6 +123,6 @@
         "vite": "^4.1.4",
         "vite-plugin-mkcert": "^1.13.3",
         "vitepress": "^1.0.0-beta.1",
-        "vue-tsc": "^1.2.0"
+        "vue-tsc": "^1.8.27"
     }
 }

@@ -8,7 +8,9 @@
             "vue-slider-component": ["./scripts/vue-slider-component.d.ts"]
         },
         "lib": ["DOM", "DOM.Iterable", "ES2020"],
-        "pretty": true
+        "pretty": true,
+        "declaration": true,
+        "declarationDir": "./dist/ts"
     },
 
     "typedocOptions": {
