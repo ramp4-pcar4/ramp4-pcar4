@@ -70,7 +70,7 @@ npx vitepress dev docs
 ###  Build Vitepress documentation
 
 ```sh
-npm run build:vite-docs
+npm run vite-docs:generate
 ```
 
 Static site generated in the `vite-docs` directory.
@@ -79,7 +79,7 @@ Static site generated in the `vite-docs` directory.
 ###  Preview/Build TypeDoc documentation
 
 ```sh
-npm run build:ts-docs
+npm run ts-docs:generate
 ```
 
 Static site generated in the `ts-docs` directory. Open `index.html` to preview.

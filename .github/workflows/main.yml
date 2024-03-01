@@ -10,13 +10,6 @@ on:
             - v**
 
 jobs:
-    build-dev:
-        name: Develop build for demo files
-        uses: ./.github/workflows/build.yml
-        with:
-            build_mode: 'development'
-            cache_sha: ${{ format('{0}-{1}', github.ref_name, github.event.pull_request.head.sha || github.sha) }}
-
     build-prod:
         name: Production build for library files
         uses: ./.github/workflows/build.yml
@@ -33,10 +26,9 @@ jobs:
 
     post-build:
         name: Merge dev & prod into a bundle
-        needs: [build-dev, build-prod, build-docs]
+        needs: [build-prod, build-docs]
         if: |
             always() &&
-            (needs.build-dev.result == 'success' || needs.build-dev.result == 'skipped') &&
             (needs.build-prod.result == 'success' || needs.build-prod.result == 'skipped') &&
             (needs.build-docs.result == 'success' || needs.build-docs.result == 'skipped')
         runs-on: ubuntu-latest
