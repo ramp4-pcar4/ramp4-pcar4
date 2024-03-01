@@ -37,6 +37,9 @@ jobs:
               id: pr-checks
               with:
                   gh-token: ${{ secrets.GITHUB_TOKEN }}
+                  ts-command: 'npm run ts:check'
+                  lint-command: 'npm run lint:check'
+                  format-command: 'npm run format:check'
 
             - name: Typescript badge
               if: always()
