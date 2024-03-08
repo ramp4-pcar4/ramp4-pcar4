@@ -1,5 +1,5 @@
 import type { RampLayerConfig } from '@/geo/api';
-import { LayerInstance } from '@/api/internal';
+import type { LayerInstance } from '@/api/internal';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
@@ -22,40 +22,39 @@ const bfs = (
 };
 
 export const useLayerStore = defineStore('layer', () => {
-    // the map layers that were initiated successfully and are currently in the map stack.
     const layers = ref<LayerInstance[]>([]);
-
-    // the data layers that were initiated successfully.
-    const dataLayers = ref<LayerInstance[]>([]);
-
-    // the layers in an error state due to not initiating. Generally considered not usable, if map based will not be in the map stack.
-    const penaltyBox = ref<LayerInstance[]>([]);
-
-    // layers currently initiating
-    const initiatingLayers = ref<LayerInstance[]>([]);
 
     // configs for layers
     const layerConfigs = ref<RampLayerConfig[]>([]);
 
+    // tracks the relative order of registered map layers, regardless of which
+    // state array they are in. Values are LayerIDs
+    const mapOrder = ref<string[]>([]);
+
+    // TODO for these three layer search methods, revisit and see if
+    //      the undefined param option is still required. Would hope
+    //      our store doesn't have lurking undefineds??
+
     function getLayerByUid(uid: string): LayerInstance | undefined {
         return bfs(
-            layers.value.concat(
-                penaltyBox.value,
-                initiatingLayers.value,
-                dataLayers.value
-            ) as any,
+            layers.value as any,
             (layer: LayerInstance | undefined) => layer?.uid === uid
         );
     }
 
     function getLayerById(id: string): LayerInstance | undefined {
         return bfs(
-            layers.value.concat(
-                penaltyBox.value,
-                initiatingLayers.value,
-                dataLayers.value
-            ) as any,
+            layers.value as any,
             (layer: LayerInstance | undefined) => layer?.id === id
+        );
+    }
+
+    function getLayerByAny(idOrUid: string): LayerInstance | undefined {
+        return bfs(
+            layers.value as any,
+            (layer: LayerInstance | undefined) =>
+                layer !== undefined &&
+                (layer.id === idOrUid || layer.uid === idOrUid)
         );
     }
 
@@ -63,71 +62,88 @@ export const useLayerStore = defineStore('layer', () => {
         layerConfigs.value = [...layerConfigs.value, value];
     }
 
-    function addLayer(value: LayerInstance) {
-        layers.value = [...(layers.value as any), value];
-    }
-
-    function addDataLayer(value: LayerInstance) {
-        dataLayers.value = [...(dataLayers.value as any), value];
-    }
-
-    function addErrorLayer(value: LayerInstance) {
-        penaltyBox.value = [...(penaltyBox.value as any), value];
-    }
-
-    function addInitiatingLayer(value: LayerInstance) {
-        initiatingLayers.value = [...(initiatingLayers.value as any), value];
-    }
-
-    function reorderLayer(
-        layer: LayerInstance,
-        index: number = layers.value.length
+    /**
+     * Adds a layer to the store. Also records the map position if map layer
+     *
+     * @param value the layer to be added to the store
+     * @param index map position. required for map layers. not provided for data layers.
+     */
+    function addLayer(
+        value: LayerInstance,
+        index: number | undefined = undefined
     ) {
-        // find and swap layer with target index
-        const layerIdx = layers.value.findIndex(l => l.uid === layer.uid);
-        if (layerIdx !== -1 && layerIdx !== index) {
-            layers.value.splice(layerIdx, 1);
-            layers.value.splice(index, 0, layer as any);
+        layers.value = [...(layers.value as any), value];
+
+        if (value.mapLayer) {
+            if (index === undefined || index < 0) {
+                // alert devs. then add to top to prevent ramp from bricking.
+                console.error('Map layer added to store with invalid index!');
+                index = mapOrder.value.length;
+            }
+
+            // insert into map order array.
+            mapOrder.value.splice(index, 0, value.id);
             // copy to new array to trigger reactivity
-            layers.value = [...layers.value];
+            mapOrder.value = [...mapOrder.value];
+        }
+    }
+
+    /**
+     * Updates the internal order array. Does not update the map.
+     *
+     * @param layer the layer being reordered
+     * @param index new position in the map order. this is absolte position, not condensed "non-cosmetic" position
+     */
+    function reorderLayer(layer: LayerInstance, index: number) {
+        if (!layer.mapLayer) {
+            console.error('Data layer passed to layer store reorder');
+            return;
+        }
+
+        if (index < 0) {
+            console.error('Negative index passed to layer store reorder');
+            return;
+        }
+
+        if (index >= mapOrder.value.length) {
+            // overshot valid  max index.
+            // TODO console warn? Exit method without doing anything?
+            index = mapOrder.value.length - 1;
+        }
+
+        // find current position of layer id
+        const layerIdx = mapOrder.value.findIndex(
+            layerId => layerId === layer.id
+        );
+        if (layerIdx !== -1 && layerIdx !== index) {
+            // remove from current position. re-insert at new position
+            mapOrder.value.splice(layerIdx, 1);
+            mapOrder.value.splice(index, 0, layer.id);
+            // copy to new array to trigger reactivity
+            mapOrder.value = [...mapOrder.value];
         }
     }
 
     function removeLayer(value: LayerInstance) {
+        // note we do not remove the config from layer config store in this method,
+        // since we may need it. We let the caller decide what is correct.
+
         // copy to new array so watchers will have a reference to the old value
         // can probably just assign target var the correct array, but the Ref<>s are giving me grief so
         // duplicating code blocks for now. Smart person can refactor.
+
+        const filteredLayers = layers.value.filter(layer => {
+            return layer.id !== value.id || layer.uid !== value.uid;
+        });
+        layers.value = filteredLayers;
+
+        // also remove from order array.
         if (value.mapLayer) {
-            const filteredLayers = layers.value.filter(layer => {
-                return layer.id !== value.id || layer.uid !== value.uid;
-            });
-            layers.value = filteredLayers;
-        } else {
-            const filteredLayers = dataLayers.value.filter(layer => {
-                return layer.id !== value.id || layer.uid !== value.uid;
-            });
-            dataLayers.value = filteredLayers;
+            const filteredOrder = mapOrder.value.filter(
+                layerId => layerId !== value.id
+            );
+            mapOrder.value = filteredOrder;
         }
-    }
-
-    function removeErrorLayer(value: LayerInstance | string) {
-        const layerId = value instanceof LayerInstance ? value.id : value;
-        const layerUid = value instanceof LayerInstance ? value.uid : value;
-        // copy to new array so watchers will have a reference to the old value
-        const filteredLayers = penaltyBox.value.filter(layer => {
-            return layer.id !== layerId && layer.uid !== layerUid;
-        });
-        penaltyBox.value = filteredLayers;
-    }
-
-    function removeInitiatingLayer(value: LayerInstance | string) {
-        const layerId = value instanceof LayerInstance ? value.id : value;
-        const layerUid = value instanceof LayerInstance ? value.uid : value;
-        // copy to new array so watchers will have a reference to the old value
-        const filteredLayers = initiatingLayers.value.filter(layer => {
-            return layer.id !== layerId && layer.uid !== layerUid;
-        });
-        initiatingLayers.value = filteredLayers;
     }
 
     function removeLayerConfig(layerId: string) {
@@ -139,22 +155,25 @@ export const useLayerStore = defineStore('layer', () => {
     }
 
     return {
+        /**
+         * All layers registered with the instance (aka the "map")
+         */
         layers,
-        dataLayers,
-        penaltyBox,
-        initiatingLayers,
+
+        /**
+         * Layer ids of map layers (regardless of layer state), in order of map stack.
+         */
+        mapOrder,
         layerConfigs,
         getLayerByUid,
         getLayerById,
+        getLayerByAny,
         addLayerConfig,
         addLayer,
-        addDataLayer,
-        addErrorLayer,
-        addInitiatingLayer,
+
         reorderLayer,
         removeLayer,
-        removeErrorLayer,
-        removeInitiatingLayer,
+
         removeLayerConfig
     };
 });

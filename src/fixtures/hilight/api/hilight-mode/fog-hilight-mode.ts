@@ -20,7 +20,16 @@ export class FogHilightMode extends LiftHilightMode {
             config.options?.offOpacity > 0.02
                 ? config.options.offOpacity
                 : 0.02;
-        this.hilightSetup();
+
+        if (this.$iApi.geo.map.created) {
+            this.hilightSetup();
+        } else {
+            this.handlers.push(
+                this.$iApi.event.on(GlobalEvents.MAP_CREATED, () => {
+                    this.hilightSetup();
+                })
+            );
+        }
 
         this.handlers.push(
             this.$iApi.event.on(GlobalEvents.MAP_BASEMAPCHANGE, () => {
@@ -72,12 +81,14 @@ export class FogHilightMode extends LiftHilightMode {
             return;
         }
 
-        const layers = this.$iApi.geo.layer.allLayers();
-        const fogIdx: number = layers.indexOf(fogLayer);
-        const hilightIdx: number = layers.indexOf(hilightLayer);
+        const layerOrder = this.$iApi.geo.layer.layerOrderIds();
+        const fogIdx = layerOrder.indexOf(fogLayer.id);
+        const hilightIdx = layerOrder.indexOf(hilightLayer.id);
 
-        if (hilightIdx < fogIdx) {
-            this.$iApi.geo.map.reorder(hilightLayer, fogIdx + 1, false);
+        if (hilightIdx < fogIdx && hilightIdx > -1 && fogIdx > -1) {
+            // No +1. Since highlight is below, fog will get pushed down
+            // as things shift.
+            this.$iApi.geo.map.reorder(hilightLayer, fogIdx, false);
         }
     }
 

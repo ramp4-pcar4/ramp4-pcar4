@@ -121,7 +121,13 @@ const rInstance = createInstance(
 );
 
 rInstance.fixture
-    .addDefaultFixtures(['legend', 'appbar', 'grid', 'details'])
+    .addDefaultFixtures([
+        'legend',
+        'appbar',
+        'grid',
+        'layer-reorder',
+        'details'
+    ])
     .then(() => {
         rInstance.panel.open('legend');
     });

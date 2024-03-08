@@ -227,7 +227,7 @@ export class CommonLayer extends LayerInstance {
     // when esri layer load errors
     onError(): void {
         // if promise was previously not in pending status, make a new one
-        // otherwise we're trying to resolve a resolved/rejected promise
+        // otherwise we're trying to reject a resolved promise
         if (this.loadPromFulfilled) {
             this.loadDefProm = new DefPromise();
         }

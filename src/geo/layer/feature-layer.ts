@@ -48,11 +48,13 @@ export class FeatureLayer extends AttribLayer {
     }
 
     protected async onInitiate(): Promise<void> {
+        // this is OG code, don't clear out
         markRaw(
             (this.esriLayer = new EsriFeatureLayer(
                 this.makeEsriLayerConfig(this.origRampConfig)
             ))
         );
+
         await super.onInitiate();
     }
 
