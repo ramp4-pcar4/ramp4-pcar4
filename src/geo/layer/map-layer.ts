@@ -440,7 +440,7 @@ export class MapLayer extends CommonLayer {
     }
 
     /**
-     * Returns an array describing the draw order of features. Raster layers will have empty arrays
+     * Returns an array describing the draw order of features, if applicable.
      */
     get drawOrder(): Array<DrawOrder> {
         return this._drawOrder;
