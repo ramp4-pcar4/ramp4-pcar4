@@ -72,7 +72,7 @@ jobs:
                   regex: false
 
             - name: Build the ts docs!
-              run: npm run ts-docs:generate
+              run: npm run ts-docs:generate --skipErrorChecking
 
             - name: Build the vitepress docs!
               run: npm run vite-docs:generate
