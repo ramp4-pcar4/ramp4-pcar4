@@ -317,7 +317,12 @@ let config = {
                     },
                     mouseTolerance: 5,
                     identifyMode: 'hybrid',
-                    drawOrder: [{ field: 'Program_name', ascending: true }],
+                    drawOrder: [
+                        {
+                            arcade: "Decode(Left($feature.Icon,1),'M',1,'C',2,'P',3,'A',4,'O',5,6)",
+                            ascending: true
+                        }
+                    ],
                     state: {
                         opacity: 1,
                         visibility: true

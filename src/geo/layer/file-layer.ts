@@ -177,21 +177,8 @@ export class FileLayer extends AttribLayer {
 
         delete esriConfig.url;
 
-        if (
-            Array.isArray(rampLayerConfig.drawOrder) &&
-            rampLayerConfig.drawOrder.length > 0
-        ) {
-            // Note esri currently only supports one field, but coding to support multiple when they
-            //      enhance the api to handle that.
-            esriConfig.orderBy = rampLayerConfig.drawOrder.map(dr => ({
-                field: dr.field,
-                order: dr.ascending ? 'ascending' : 'descending'
-            }));
-            this._drawOrder = rampLayerConfig.drawOrder.slice();
-        } else {
-            esriConfig.orderBy = [{ field: oidField, order: 'descending' }];
-            this._drawOrder = [{ field: oidField, ascending: false }];
-        }
+        // process any order-by configuration
+        this.configDrawOrder(rampLayerConfig, esriConfig);
 
         return esriConfig;
     }
