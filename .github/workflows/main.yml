@@ -25,8 +25,20 @@ jobs:
             (needs.build-docs.result == 'success' || needs.build-docs.result == 'skipped')
         runs-on: ubuntu-latest
         steps:
+            - uses: actions/checkout@v3
+              with:
+                  ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+                  repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+
+            - uses: actions/setup-node@v3
+              with:
+                node-version: '17.9.0'
+                cache: 'npm'
+
             - name: Build the files!
-              run: npm run build
+              run: |
+                  npm ci
+                  npm run build
               env:
                   NODE_OPTIONS: '--max-old-space-size=8192'
 
