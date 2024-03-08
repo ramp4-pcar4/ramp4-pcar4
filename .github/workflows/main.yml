@@ -10,20 +10,6 @@ on:
             - v**
 
 jobs:
-    build-dev:
-        name: Develop build for demo files
-        uses: ./.github/workflows/build.yml
-        with:
-            build_mode: 'development'
-            cache_sha: ${{ format('{0}-{1}', github.ref_name, github.event.pull_request.head.sha || github.sha) }}
-
-    build-prod:
-        name: Production build for library files
-        uses: ./.github/workflows/build.yml
-        with:
-            build_mode: 'production'
-            cache_sha: ${{ format('{0}-{1}', github.ref_name, github.event.pull_request.head.sha || github.sha) }}
-
     build-docs:
         name: Build for docsite
         if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v')
@@ -33,37 +19,22 @@ jobs:
 
     post-build:
         name: Merge dev & prod into a bundle
-        needs: [build-dev, build-prod, build-docs]
+        needs: [build-docs]
         if: |
             always() &&
-            (needs.build-dev.result == 'success' || needs.build-dev.result == 'skipped') &&
-            (needs.build-prod.result == 'success' || needs.build-prod.result == 'skipped') &&
             (needs.build-docs.result == 'success' || needs.build-docs.result == 'skipped')
         runs-on: ubuntu-latest
         steps:
-            - name: Get library (prod) files
-              uses: actions/cache@v3
-              with:
-                  path: production
-                  key: production-${{ format('{0}-{1}', github.ref_name, github.event.pull_request.head.sha || github.sha) }}
-
-            - name: Get development files
-              uses: actions/cache@v3
-              with:
-                  path: development
-                  key: development-${{ format('{0}-{1}', github.ref_name, github.event.pull_request.head.sha || github.sha) }}
+            - name: Build the files!
+              run: npm run build
+              env:
+                  NODE_OPTIONS: '--max-old-space-size=8192'
 
             - name: Cache dist files
               uses: actions/cache@v3
               with:
                   path: dist
                   key: dist-${{ format('{0}-{1}', github.ref_name, github.event.pull_request.head.sha || github.sha) }}
-
-            - name: Join both dev/prod caches
-              run: |
-                  rm -rf dist
-                  mkdir dist
-                  mv development/* production/* dist
 
             - name: Get docsite files
               uses: actions/cache@v3

@@ -68,7 +68,6 @@ jobs:
                   key: ${{ inputs.build_mode }}-${{ inputs.cache_sha }}
 
             - name: Build the files!
-              run: npm run build -- --mode=${{ inputs.build_mode }}
+              run: npm run build
               env:
                   NODE_OPTIONS: '--max-old-space-size=8192'
-                  DIST_NAME: ${{ inputs.build_mode }}
