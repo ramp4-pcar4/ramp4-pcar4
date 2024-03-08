@@ -986,7 +986,7 @@ export class EventAPI extends APIScope {
                 // update the caption coordinates when the crosshairs pan over the map
                 this.$iApi.event.on(
                     GlobalEvents.MAP_KEYDOWN,
-                    throttle(200, () => {
+                    throttle(50, () => {
                         // check if coords are disabled
                         // if they are, then do not update
                         const mapCaptionStore = useMapCaptionStore(
@@ -1041,7 +1041,7 @@ export class EventAPI extends APIScope {
                 // update the co-ordinate caption when the mouse moves over the map
                 this.$iApi.event.on(
                     GlobalEvents.MAP_MOUSEMOVE,
-                    throttle(200, (mapMove: MapMove) => {
+                    throttle(50, (mapMove: MapMove) => {
                         // check if coords are disabled
                         // if it is, then do not update it
                         const mapCaptionStore = useMapCaptionStore(
@@ -1078,7 +1078,7 @@ export class EventAPI extends APIScope {
                 };
                 this.$iApi.event.on(
                     GlobalEvents.MAP_MOUSEMOVE,
-                    throttle(200, (mapMove: MapMove) => zeHandler(mapMove)),
+                    throttle(50, (mapMove: MapMove) => zeHandler(mapMove)),
                     handlerName
                 );
                 break;
