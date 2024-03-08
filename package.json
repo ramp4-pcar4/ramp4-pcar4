@@ -27,7 +27,7 @@
         "test:unit:ci": "cypress run-ct --quiet --reporter spec",
         "ts:check": "vue-tsc --noEmit",
         "ts:generate": "vue-tsc --declaration --emitDeclarationOnly || true",
-        "ts-docs:generate": "npx typedoc",
+        "ts-docs:generate": "npx typedoc --skipErrorChecking",
         "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
         "lint:check": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts",
         "format": "prettier .  --write",
