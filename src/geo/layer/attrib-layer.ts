@@ -133,9 +133,13 @@ export class AttribLayer extends MapLayer {
             this.nameField = sData.displayField;
             this.oidField = sData.objectIdField;
 
-            // drawOrder field check
+            // drawOrder field check.
+            // we won't be fancy enough to pick apart Arcade formulas and field check. Config authors need to do good work.
             this.drawOrder.forEach(d => {
-                if (this.fields.findIndex(ef => ef.name === d.field) === -1) {
+                if (
+                    d.field &&
+                    this.fields.findIndex(ef => ef.name === d.field) === -1
+                ) {
                     console.error(
                         `Draw order for layer ${this.id} references invalid field ${d.field}`
                     );
@@ -627,5 +631,43 @@ export class AttribLayer extends MapLayer {
         // returns entire set in a cleaner array
         const discreteResult = await this.queryFeaturesDiscrete(options);
         return Promise.all(discreteResult.map(dr => dr.graphic));
+    }
+
+    /**
+     * Processes any layer order configuration and modifies the passed ESRI layer config
+     * with ESRI-friendly definitions
+     *
+     * @param rampConfig {RampLayerConfig} Ramp layer configuration object.
+     * @param rampConfig {Object} ESRI Feature Layer configuration object
+     */
+    protected configDrawOrder(
+        rampConfig: RampLayerConfig,
+        esriConfig: __esri.FeatureLayerProperties
+    ): void {
+        if (
+            Array.isArray(rampConfig.drawOrder) &&
+            rampConfig.drawOrder.length > 0
+        ) {
+            // Note esri currently only supports one field, but coding to support multiple when they
+            //      enhance the api to handle that.
+
+            esriConfig.orderBy = rampConfig.drawOrder.map(dr => {
+                // pick ascending if no value was defined.
+                const order = dr.ascending ?? true ? 'ascending' : 'descending';
+
+                if (dr.field) {
+                    return {
+                        field: dr.field,
+                        order
+                    };
+                } else {
+                    return {
+                        valueExpression: dr.arcade,
+                        order
+                    };
+                }
+            });
+            this._drawOrder = rampConfig.drawOrder.slice();
+        }
     }
 }

@@ -48,7 +48,6 @@ export class FeatureLayer extends AttribLayer {
     }
 
     protected async onInitiate(): Promise<void> {
-        // this is OG code, don't clear out
         markRaw(
             (this.esriLayer = new EsriFeatureLayer(
                 this.makeEsriLayerConfig(this.origRampConfig)
@@ -83,18 +82,9 @@ export class FeatureLayer extends AttribLayer {
             esriConfig.definitionExpression = this.filter.getCombinedSql();
         }
 
-        if (
-            Array.isArray(rampLayerConfig.drawOrder) &&
-            rampLayerConfig.drawOrder.length > 0
-        ) {
-            // Note esri currently only supports one field, but coding to support multiple when they
-            //      enhance the api to handle that.
-            esriConfig.orderBy = rampLayerConfig.drawOrder.map(dr => ({
-                field: dr.field,
-                order: dr.ascending ? 'ascending' : 'descending'
-            }));
-            this._drawOrder = rampLayerConfig.drawOrder.slice();
-        }
+        // process any order-by configuration
+        this.configDrawOrder(rampLayerConfig, esriConfig);
+
         return esriConfig;
     }
 
@@ -147,23 +137,6 @@ export class FeatureLayer extends AttribLayer {
                 this.origRampConfig.fieldMetadata
             );
             this.attribs.attLoader.updateFieldList(this.fieldList);
-
-            if (!this.esriLayer?.orderBy) {
-                // would be the case if no draw order was provided in the config.
-                // now that we know the OID field, set the layer to draw by OID
-                // so we can determine what is top-most.
-                // "descending" matches the natural drawing order the most. with no order,
-                // things get drawn in order they come back from server. Which is usually
-                // sorted by OID, smallest to largest, so smallest on the bottom, which is descending.
-                // NOTE all my digging can't find any "orderBy" that comes back from a REST API
-                //      endpoint for a mapserver layer. If that becomes a feature or we find a sample
-                //      that supports it, would need some extra code here to use the server draw order
-                //      and synch our _drawOrder with it.
-                this.esriLayer!.orderBy = [
-                    { field: this.oidField, order: 'descending' }
-                ];
-                this._drawOrder = [{ field: this.oidField, ascending: false }];
-            }
         });
 
         const pFC = this.$iApi.geo.layer

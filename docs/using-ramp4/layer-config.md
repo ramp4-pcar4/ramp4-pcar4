@@ -314,12 +314,13 @@ The object structure matches the ArcGIS Server [Renderer](https://developers.arc
 
 *array of objects*, only applies to layers that [have vector client data](#layer-abilities)
 
-Specifies the z-order of how graphics should be drawn on the map. While the array structure supports multiple fields, the current version of the ESRI API (`v4.24`) will only support one field. If missing, the default draw order will be used (usually Object ID, or an alternate primary index defined on the server).
+Specifies the z-order of how graphics should be drawn on the map. While the array structure supports multiple fields, the current version of the ESRI API (`v4.29`) will only support one field. If missing, the draw order will be the order that features are returned from the source.
 
-It is highly recommended to use a field with unique values to avoid current limitations in the ESRI clients ability to determine a top-most feature (will impact maptip accuracy)
+- `field`: string. The field name that contains the values to order by. Case sensitive. The field must have a numeric or date data type.
+- `arcade`: string. An [Arcade](https://developers.arcgis.com/javascript/latest/arcade/) expression that evaluates to a number or date. Draw order will be based on the expression result.
+- `ascending`: boolean. If `true`, smaller values will appear "on top" of larger values. `false` will produce the opposite order. Defaults to `true`.
 
-- `field`: string. The field name that contains the data to order by. Case sensitive.
-- `ascending`: boolean. If `true`, smaller values will appear "on top" of larger values. `false` will produce the opposite order.
+One of `field` or `arcade` must be specified, but not both.
 
 ```js
 {
