@@ -5,6 +5,7 @@
         name="panel-container"
         tag="div"
         ref="el"
+        class="panel-container"
     >
         <!-- TODO: pass a corresponding fixture instance to the panel component as it can be useful -->
         <panel-container
@@ -30,6 +31,9 @@ const iApi = inject<InstanceAPI>('iApi')!;
 const el = ref<ComponentPublicInstance>();
 
 const mobileMode = computed(() => panelStore.mobileView);
+const opacity = computed(() => {
+    return panelStore.opacity;
+});
 
 onMounted(() => {
     // sync the `panel-stack` width into the store so that visible can get calculated
@@ -123,5 +127,10 @@ declare class ResizeObserver {
 // https://vuejs.org/v2/guide/transitions.html#List-Move-Transitions
 .panel-container-move {
     transition: 0.3s transform cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.panel-container {
+    transition: opacity 0.5s ease-out;
+    opacity: v-bind(opacity) !important;
 }
 </style>
