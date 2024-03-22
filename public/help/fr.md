@@ -89,6 +89,27 @@ Dans la fenêtre Légende, quatre fonctions s'affichent sur une ligne en haut :
 | ![L'icône représentant la fonction Basculer l'état de visibilité](layer/toggleVisibility.png) | Basculer la visibilité | Affiche ou masque toutes les couches. |
 
 
+# Ajouter une couche
+
+Des couches de données supplémentaires peuvent être ajoutées à la visionneuse de carte. Les formats pris en charge sont : Couches d’élément ESRI, Couche d’image cartographique ESRI, Couche de pavé cartographique ESRI, Couche d’image ESRI, Couche pour service de cartes Web (WMS) de l’OGC, Service d'entités géographiques Web (WFS) de l'OGC, ou une couche de fichier (les formats pris en charge sont : GeoJSON, CSV et Shapefile). Le bouton '+' au-dessus de la légende lancera l’assistant.
+
+Utilisation :
+ - Si vous voulez ajouter un fichier, vous pouvez le glisser vers l’assistant d’importation en le téléchargeant ou en fournissant le lien URL du fichier.
+ - Si vous voulez ajouter un service, vous pouvez entrer le service dans la boite de texte du lien URL.
+ - Cliquez le bouton “continuer”  pour poursuivre.
+ - Choisir l’option appropriée du menu déroulant pour sélectionner le bon fichier ou le bon type de service. Si un type incompatible est sélectionné, un message d’erreur sera affiché. L’utilisateur pourra alors essayer de choisir un autre type de couche ou vérifier que le service ou lien URL est bon ou encore s’assurer que le service choisi est supporté par CORS.
+ - Cliquez le bouton “continuer”  pour poursuivre.
+ - Tout dépendant du type de données téléchargé, plusieurs paramètres peuvent être définis dans cette étape finale.
+ - Chaque type de couche permet à l’utilisateur d’indiquer un nom de couche qui sera affiché dans la visionneuse.
+ - La couche d’élément permet à l’utilisateur de choisir un champ de données principal qui détermine les caractéristiques utilisées pour identifier un élément dans le panneau de la base de données et dans le panneau des astuces de la carte. Le champ d’assistance détermine la description d’un élément lorsque le curseur passe au-dessus de celui-ci. Toute autre information provient des métadonnées du service.
+ - Une couche d’image cartographique ou un service WMS permet le choix d’une option imbriquée qui permet de maintenir le regroupement de couche si nécessaire.  Une option de sélection de couche permet aussi à l’utilisateur de choisir quelle couche sera sélectionnée pour importation. Toute autre information provient des métadonnées du service.
+ - Des données provenant du service WFS ou d’un fichier; permet de choisir le champ de données principal qui est l’équivalent d’une couche d’élément, permet de choisir un champ d’assistance qui est l’équivalent d’une couche d’élément, permet le choix d’une couleur pour représenter les points ou lignes ou polygones de la carte. Les fichiers CSV nécessitent qu’on indique les colonnes de données qui contiennent les valeurs de latitude et longitude permettant d’obtenir la localisation sur une carte. Toute autre information provient des métadonnées du service.
+ - L’ajout de couches à partir de fichier pour utiliser le lien URL peut ne pas fonctionner dépendant des configurations des serveurs. Dans ces cas, il est recommandé de télécharger le fichier et de le transférer dans l’application comme couche provenant d’un fichier.
+ - Couches provenant d’élément du serveur : Il faut noter qu’il est présentement impossible d’importer des éléments de serveurs comme couche d’image cartographique. Dans ce cas, il faut télécharger individuellement chaque couche comme élément séparé.
+ - Couches matricielles : Noter que les données de couches matricielles doivent être ajoutées comme couche d’image cartographique. Il n’est pas possible d’ajouter une couche individuelle matricielle à partir d’un service, svp utiliser le service d’URL et choisir les couches désirées dans le sélectionneur de couches de l’étape de configuration de la couche. Les couches matricielles ne peuvent présentement avoir d’attributs ou d’identifiants.
+ - Cliquer sur “Continuer” pour insérer une couche sur la carte.
+
+
 # Recherche géolocalisée
 
 ### Utilisation générale
