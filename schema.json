@@ -742,22 +742,26 @@
         },
         "drawOrder": {
             "type": "array",
-            "description": "Attribute fields used to control drawing order on the map for vector features. Note ESRI currently only supports one field.",
+            "description": "Specification of the map drawing order for vector features. A value for the field or arcade property must be provided. Note ESRI currently only supports one definition.",
             "items": {
                 "type": "object",
                 "description": "Draw order for one attribute field.",
                 "properties": {
                     "field": {
                         "type": "string",
-                        "description": "Layer field name contianing the value to order by."
+                        "description": "Layer field name contianing the value to order by. Must be numeric or date field."
+                    },
+                    "arcade": {
+                        "type": "string",
+                        "description": "An Arcade function to derive an ordering value. Must return a numeric or date value."
                     },
                     "ascending": {
                         "type": "boolean",
-                        "description": "Direction to order in. True means smaller values are on top of larger values. False is the opposite."
+                        "description": "Direction to order in. True means smaller values are on top of larger values. False is the opposite.",
+                        "default": true
                     }
                 },
-                "additionalProperties": false,
-                "required": ["field", "ascending"]
+                "additionalProperties": false
             }
         },
         "basicLayer": {
