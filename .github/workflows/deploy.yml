@@ -1,4 +1,4 @@
-name: Publish to GitHub pages
+name: Publish to GitHub pages and NPM
 
 on:
     workflow_call:
@@ -8,25 +8,55 @@ on:
                 required: true
 
 jobs:
-    deploy-to-pages:
-        name: Deploy to GitHub pages
+    deploy:
+        name: Deploy
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                node-version: latest
+                cache: 'npm'
+                registry-url: 'https://registry.npmjs.org'
 
             - name: Get dist files
-              uses: actions/cache@v3
+              uses: actions/cache@v4
               with:
                   path: dist
                   key: dist-${{ inputs.cache_sha }}
 
-            - name: Deploy 🚀
-              uses: JamesIves/github-pages-deploy-action@v4.3.3
+            - name: Get docsite files
+              id: get-docs-cache
+              uses: actions/cache@v4
+              with:
+                path: docs
+                key: docs-${{ inputs.cache_sha }}
+
+            - name: Add docs folder to dist
+              if: steps.get-docs-cache.outputs.cache-hit == 'true'
+              run: mv docs dist
+
+            - name: Deploy to GitHub Pages 🚀
+              uses: JamesIves/github-pages-deploy-action@v4.5.0
               with:
                   branch: gh-pages
                   folder: dist
                   target-folder: ${{ github.head_ref || github.ref_name }}
                   single-commit: true
+
+            - name: Publish to NPM
+              if: github.repository == 'ramp4-pcar4/ramp4-pcar4' && startsWith(github.ref, 'refs/tags/v')
+              run: |
+                TAG_VERSION=${GITHUB_REF#refs/tags/v}
+                PACKAGE_VERSION=$(node -p "require('./package.json').version")
+                if [ "$TAG_VERSION" != "$PACKAGE_VERSION" ]; then
+                    npm version --allow-same-version --no-git-tag-version $TAG_VERSION
+                fi 
+
+                npm publish
+              env:
+                NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
             - uses: actions/github-script@v6
               name: Post link to demo for PR's

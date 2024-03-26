@@ -7,9 +7,6 @@ on:
                 type: string
                 required: true
 
-env:
-    NODE_VERSION: '17.9.0'
-
 jobs:
     install-build:
         name: Install and build
@@ -36,19 +33,19 @@ jobs:
                     exit 1
                   fi
 
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
               with:
                   ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
                   repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
 
-            - uses: actions/setup-node@v3
+            - uses: actions/setup-node@v4
               with:
-                  node-version: ${{ env.NODE_VERSION }}
+                  node-version: latest
                   cache: 'npm'
 
             - name: Try to restore node_modules folder from cache
               id: cache-node-modules
-              uses: actions/cache@v3
+              uses: actions/cache@v4
               with:
                   path: ./node_modules
                   key: npm-${{ hashFiles('./package-lock.json') }}
@@ -58,7 +55,7 @@ jobs:
               run: npm ci
 
             - name: Persist docsite output for other workflows
-              uses: actions/cache@v3
+              uses: actions/cache@v4
               with:
                   path: 'docs'
                   key: docs-${{ inputs.cache_sha }}

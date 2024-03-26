@@ -2,29 +2,21 @@ on:
     pull_request:
         types: [opened, synchronize]
 
-    push:
-        branches:
-            - 'main'
-            - 'develop'
-        tags:
-            - v**
-env:
-    NODE_VERSION: '17.9.0'
 jobs:
     pr-status-checks:
         name: PR Status Checks
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
 
-            - uses: actions/setup-node@v3
+            - uses: actions/setup-node@v4
               with:
-                  node-version: ${{ env.NODE_VERSION }}
+                  node-version: latest
                   cache: 'npm'
 
             - name: Try to restore node_modules folder from cache
               id: cache-node-modules
-              uses: actions/cache@v3
+              uses: actions/cache@v4
               with:
                   path: ./node_modules
                   key: npm-${{ hashFiles('./package-lock.json') }}
@@ -40,25 +32,3 @@ jobs:
                   ts-command: 'npm run ts:check'
                   lint-command: 'npm run lint:check'
                   format-command: 'npm run format:check'
-
-            - name: Typescript badge
-              if: always()
-              uses: RubbaBoy/BYOB@v1.3.0
-              with:
-                  NAME: tsbadge
-                  ICON: typescript
-                  LABEL: 'TS Errors'
-                  STATUS: ${{ steps.pr-checks.outputs.ts-errors }}
-                  COLOR: blue
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-            - name: Lint badge
-              if: always()
-              uses: RubbaBoy/BYOB@v1.3.0
-              with:
-                  NAME: lintbadge
-                  ICON: codecov
-                  LABEL: 'Lint'
-                  STATUS: 'Errors: ${{ steps.pr-checks.outputs.lint-errors }}, Warnings: ${{ steps.pr-checks.outputs.lint-warnings }}'
-                  COLOR: purple
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
