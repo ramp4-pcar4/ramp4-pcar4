@@ -1,0 +1,6 @@
+[focus-list]:focus [focus-item].focused.area-of-interest-item-button[data-v-6666d0e3] {
+  border: solid black 2px;
+}
+[focus-list]:focus [focus-item].focused.area-of-interest-item-button .area-of-interest-item-image[data-v-6666d0e3] {
+  opacity: 0.5;
+}

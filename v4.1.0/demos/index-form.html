@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <title>ramp-core</title>
+      <script type="module" crossorigin src="./assets/preload-helper-388ac9d5.js"></script>
+      <script type="module" crossorigin src="./assets/main-e6c796d9.js"></script>
+      <script type="module" crossorigin src="./assets/form-1ee38834.js"></script>
+      <link rel="stylesheet" href="./assets/main-dcc594cc.css">
+    </head>
+    <body style="margin: 0">
+        <style>
+            #container {
+                display: flex;
+                flex-direction: column;
+                padding: 0 10px;
+                width: 100%;
+                align-items: center;
+                box-sizing: border-box;
+            }
+
+            #ramp-instance {
+                width: 100%;
+                height: 60vh;
+                border: 2px solid black;
+                box-sizing: border-box;
+                margin: 10px 0;
+                border-radius: 6px;
+            }
+
+            #form {
+                width: 40vw;
+                border: 2px solid black;
+                padding: 20px;
+                box-sizing: border-box;
+            }
+
+            #form-input,
+            #form-button {
+                padding: 10px;
+                margin: 10px 0;
+                width: 100%;
+                border-radius: 6px;
+                box-sizing: border-box;
+            }
+
+            #form-input {
+                border: 2px solid #000;
+            }
+
+            #form-button {
+                background: black;
+                color: white;
+                cursor: pointer;
+            }
+
+            @media only screen and (max-width: 768px) {
+                #form {
+                    width: 90vw;
+                }
+            }
+        </style>
+        <noscript>
+            <strong
+                >We're sorry but ramp-core doesn't work properly without
+                JavaScript enabled. Please enable it to continue.</strong
+            >
+        </noscript>
+        <div id="container">
+            <h1 style="text-align: center">RAMP in a form</h1>
+            <form id="form">
+                <input id="form-input" type="text" placeholder="Your input" />
+                <div id="ramp-instance"></div>
+                <button id="form-button" type="submit">Submit</button>
+            </form>
+        </div>
+
+        
+    </body>
+</html>
