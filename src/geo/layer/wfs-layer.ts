@@ -18,17 +18,14 @@ export class WfsLayer extends FileLayer {
         // get start index and limit set on the url
         const { offset, limit } = wrapper.queryMap;
 
-        // fetch data from server only if it has not been cached
-        if (!this.sourceGeoJson) {
-            this.sourceGeoJson = await this.$iApi.geo.layer.ogc.loadWfsData(
-                this.config.url,
-                -1,
-                parseInt(offset) || 0,
-                parseInt(limit) || 1000,
-                undefined,
-                this.config.xyInAttribs
-            );
-        }
+        this.sourceGeoJson = await this.$iApi.geo.layer.ogc.loadWfsData(
+            this.config.url,
+            -1,
+            parseInt(offset) || 0,
+            parseInt(limit) || 1000,
+            undefined,
+            this.config.xyInAttribs
+        );
 
         // TODO error handling? set layer state to error if above call fails?
         await super.onInitiate();

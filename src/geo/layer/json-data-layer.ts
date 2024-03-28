@@ -11,15 +11,15 @@ export class JsonDataLayer extends DataLayer {
     }
 
     protected async onInitiate(): Promise<void> {
-        // get geojson from appropriate source and set to special property.
+        // get json from appropriate source and set to special property.
         // then initiate the DataLayer to complete setup
-        if (
-            this.origRampConfig.rawData &&
-            (typeof this.origRampConfig.rawData === 'string' ||
-                this.origRampConfig.rawData instanceof Object)
-        ) {
-            // geojson has been passed in as static string or GeoJSON object
-            this.sourceJson = this.origRampConfig.rawData;
+        if (this.origRampConfig.rawData) {
+            // json has been passed in as static string or JSON object
+
+            this.sourceJson = this.$iApi.geo.layer.files.rawDataJsonParser(
+                this.origRampConfig.rawData,
+                this.origRampConfig.caching
+            );
         } else if (this.origRampConfig.url) {
             this.sourceJson = await this.$iApi.geo.layer.files.fetchFileData(
                 this.origRampConfig.url,

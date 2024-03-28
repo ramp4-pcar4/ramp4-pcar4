@@ -1451,6 +1451,11 @@
                     "type": "object",
                     "description": "Optional content to use as the layer source (instead of loading via the url property). Date Json accepts json object or stringified object. Table will ignore.",
                     "additionalProperties": true
+                },
+                "caching": {
+                    "type": "boolean",
+                    "description": "Indicates whether to preserve the layer's raw data after initiation.",
+                    "default": "false"
                 }
             },
             "required": ["id", "layerType", "url"],
@@ -1570,11 +1575,6 @@
                 "drawOrder": {
                     "$ref": "#/$defs/drawOrder",
                     "default": []
-                },
-                "caching": {
-                    "type": "boolean",
-                    "description": "Indicates whether to preserve the layer's raw data after initiation. If set to true, reloading will not refresh data from the server.",
-                    "default": "false"
                 },
                 "identifyMode": {
                     "type": "string",

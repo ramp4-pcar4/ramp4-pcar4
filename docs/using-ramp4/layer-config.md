@@ -269,7 +269,13 @@ Defines the desired state of the layer at load time.
 
 *boolean*, only applies to file based layers that have the [rawData](#rawdata) property set
 
-Specifies if a layers raw data should be preserved after the layer is created. This type of layer does not have a server-based source to ask for the data again, so enabling caching will allow for reloads to occur. It will however double the memory footprint of the layer. If missing, defaults to `false`.
+Specifies if a layers raw data should be preserved on the config object after the layer is created. Using this will double the memory footprint of the layer. 
+
+If missing, defaults to `false`.
+
+A scenario where this can be useful is a host page containing a collection of layer configuration objects and controls to allow users to add and remove these layer at whim. Without caching, the `rawData` will get erased after a first add and thus fail if removed and added again.
+
+Enabling caching will allow for layer reloads to occur. In most scenarios there is no reason to reload this type of layer (the data is static, and any load errors will typically recur on reload).
 
 ### colour
 
@@ -517,6 +523,8 @@ To align a legend symbol stack with a particular permanent filter, see the `symb
 *string | object | ArrayBuffer*, only applies to file based layers (including Data layers in file formats)
 
 Specifies the file contents on the config. If provided, the `url` property will be ignored.
+
+For memory considerations, this property will be deleted from the configuration object after the layer loads. If it needs to be preserved, enable the [caching](#caching) configuration.
 
 - `file-geojson`: The value can be a GeoJSON object, or a string containing the stringified GeoJSON object.
 - `file-csv`: The value is the file content contained in a string, encoded in UTF-8.

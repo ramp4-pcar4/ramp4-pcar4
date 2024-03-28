@@ -37,9 +37,9 @@ export class DataLayer extends CommonLayer {
     /**
      * This represents a file content transformed to our common consumption format.
      * The implementation classes will handle that transformation, and common routines in this class can process
-     * it onInitiate. Can be in object or stringified form
+     * it onInitiate.
      */
-    protected sourceJson: CompactJson | string | undefined;
+    protected sourceJson: CompactJson | undefined;
     protected attribs: AttribSource;
 
     // since this is a mapless layer, only applies to visibility of layer in the grid
@@ -83,11 +83,11 @@ export class DataLayer extends CommonLayer {
         //      full data scan to figure out string field length. does this even matter? do we use that length prop anywhere?
 
         if (this.sourceJson) {
-            // align to object format. if we need to do reloads, need to make copy if already an object (see FileLayer.onInitiate)
-            const realJson: CompactJson =
-                typeof this.sourceJson === 'string'
-                    ? JSON.parse(this.sourceJson)
-                    : this.sourceJson;
+            // NOTE: if file based, using rawData, and caching is on, it is the subclasses responsibility
+            //       to ensure .sourceJson is not pointing to rawData by reference. This method will update
+            //       .sourceJson
+
+            const realJson: CompactJson = this.sourceJson;
 
             if (realJson.data.length === 0 || realJson.fields.length === 0) {
                 throw new Error('Data layer with no columns or now rows.');
@@ -169,8 +169,11 @@ export class DataLayer extends CommonLayer {
             }
 
             // attributes are processed, can drop the transitory data.
-            // TODO revisit later to see if we need to consider any caching modes and retain this.
             this.sourceJson = undefined;
+
+            if (!this.origRampConfig.caching) {
+                delete this.origRampConfig.rawData;
+            }
         } else {
             throw new Error(
                 'Attempted to initiate file based data layer, sourceJson is missing'

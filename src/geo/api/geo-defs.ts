@@ -220,6 +220,11 @@ export const enum GeoJsonGeomType {
     MULTIPOLYGON = 'MultiPolygon'
 }
 
+export interface GeoJsonField {
+    name: string;
+    type: string;
+}
+
 // pending https://github.com/ramp4-pcar4/ramp4-pcar4/issues/130
 // commenting out to avoid any undecided constants being exposed
 
