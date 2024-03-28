@@ -415,6 +415,7 @@ export interface DiscreteGraphicResult {
 export interface QueryFeaturesParams {
     filterGeometry?: BaseGeometry; // filter by geometry
     filterSql?: string; // filter by sql query
+    filterOIDs?: Array<number>; // filtering against object ids
     includeGeometry?: boolean; // if geometry should be included in the result
     sourceSR?: SpatialReference; // the spatial reference of the web service. providing helps avoid some reprojection issues
 }
