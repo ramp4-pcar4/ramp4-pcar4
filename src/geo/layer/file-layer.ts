@@ -19,16 +19,17 @@ import {
     DefPromise,
     Extent,
     GeometryType,
+    Graphic,
     IdentifyResultFormat,
     LayerFormat,
     LayerIdentifyMode,
+    NoGeometry,
     Point
 } from '@/geo/api';
 
 import type {
     GeoJsonOptions,
     GetGraphicParams,
-    Graphic,
     IdentifyItem,
     IdentifyParameters,
     IdentifyResult,
@@ -42,6 +43,7 @@ import {
     EsriField,
     EsriRendererFromJson
 } from '@/geo/esri';
+
 import { markRaw, reactive, toRaw } from 'vue';
 
 /**
@@ -442,26 +444,44 @@ export class FileLayer extends AttribLayer {
         objectId: number,
         opts: GetGraphicParams
     ): Promise<Graphic> {
-        const gjOpt: QueryFeaturesParams = {
-            filterSql: `${this.oidField}=${objectId}`,
-            includeGeometry: !!opts.getGeom
-        };
+        let resGraphic: Graphic;
 
-        // TODO not sure how much we care about this. since local, result will always have attribs and geom,
-        //      regardless of what requester asked for.
-        //      if thats a problem, add some logic to pare off properties of the result (might need to clone
-        //      to avoid breaking original source in the layer)
+        if (!opts.getGeom && this.attribs.attLoader.isLoaded()) {
+            // we don't need geometry, and the attribute cache exists.
+            // much faster to use it for lookup (as it it keyed on OID)
 
-        const resultArr = await this.queryFeatures(gjOpt);
-        if (resultArr.length === 0) {
-            throw new Error(`Could not find object id ${objectId}`);
-        } else if (resultArr.length !== 1) {
-            console.warn(
-                'did not get a single result on a query for a specific object id'
+            const atSet = await this.attribs.attLoader.getAttribs();
+
+            resGraphic = new Graphic(
+                new NoGeometry(),
+                '',
+                atSet.features[atSet.oidIndex[objectId]]
             );
-        }
+        } else {
+            // use query against layer innards.
+            // slower because it will scan every record (doesnt have the smarts to realize OID is unique key)
 
-        const resGraphic = resultArr[0];
+            const gjOpt: QueryFeaturesParams = {
+                filterOIDs: [objectId],
+                includeGeometry: !!opts.getGeom
+            };
+
+            // TODO not sure how much we care about this. since local, result will always have attribs and geom,
+            //      regardless of what requester asked for.
+            //      if thats a problem, add some logic to pare off properties of the result (might need to clone
+            //      to avoid breaking original source in the layer)
+
+            const resultArr = await this.queryFeatures(gjOpt);
+            if (resultArr.length === 0) {
+                throw new Error(`Could not find object id ${objectId}`);
+            } else if (resultArr.length !== 1) {
+                console.warn(
+                    'did not get a single result on a query for a specific object id'
+                );
+            }
+
+            resGraphic = resultArr[0];
+        }
 
         if (opts.getStyle) {
             const esriSymb = toRaw(
@@ -477,6 +497,7 @@ export class FileLayer extends AttribLayer {
      * Requests a set of features for this layer that match the criteria of the options
      * - filterGeometry : a RAMP API geometry to restrict results to
      * - filterSql : a where clause to apply against feature attributes
+     * - filterOIDs : an array of Object IDs to filter against (more performant than SQL)
      * - includeGeometry : a boolean to indicate if result features should include the geometry
      * - outFields : a string of comma separated field names. will restrict fields included in the output
      * - sourceSR : a spatial reference indicating what the source layer is encoded in. providing can assist in result geometry being of a proper resolution

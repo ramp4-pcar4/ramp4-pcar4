@@ -83,6 +83,10 @@ export class QueryAPI extends APIScope {
             query.where = options.filterSql;
         }
 
+        if (options.filterOIDs) {
+            query.objectIds = options.filterOIDs;
+        }
+
         await options.layer.loadPromise();
 
         if (!options.layer.esriLayer) {
