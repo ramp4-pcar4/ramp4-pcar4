@@ -20,7 +20,7 @@ legend.symbology.expand,Expand legend,1,Développer la légende,1
 legend.symbology.hide,Hide legend,1,Masquer la légende,1
 legend.symbology.loading,Loading...,1,Chargement en cours...,1
 legend.layer.data,Show more data,1,Afficher plus de données,1
-legend.layer.data.only,Layer not on map,1,Couche pas sur la carte,0
+legend.layer.data.only,Layer not on map,1,Couche non visualisable,1
 legend.layer.offscale,Layer out of scale,1,Couche hors de portée,1
 legend.layer.zoomToVisible,Zoom to visible scale,1,Zoom sur l'échelle visible,1
 legend.layer.options,More options,1,Plus d'options,1
