@@ -16,13 +16,13 @@ wizard.format.type.error.invalid,Invalid file or service type,1,Type de fichier 
 wizard.format.type.error.failure,Failed to load data from file/service,1,Échec du chargement des données à partir du fichier/service,1
 wizard.format.info.cors,Service needs to be CORS enabled,1,Le service doit être compatible CORS.,1
 wizard.format.warn.cors,Service may not support CORS,1,Le service ne pend peut-être pas en charge CORS.,1
-wizard.format.warn.vpn,Service may require a VPN connection,1,Le service peut nécessiter une connexion VPN,0
+wizard.format.warn.vpn,Service may require a VPN connection,1,Le service peut nécessiter une connexion RPV,1
 wizard.fileType.csv,CSV,1,CSV,1
 wizard.fileType.shapefile,zipped Shapefile,1,Shapefile zippé,1
 wizard.fileType.geojson,GeoJSON,1,GeoJSON,1
 wizard.layerType.esriFeature,ESRI Feature Layer,1,Couche d'éléments d'ESRI,1
 wizard.layerType.esriMapImage,ESRI Map Image Layer,1,Couche d'image de la carte ESRI,1
-wizard.layerType.esriImagery,ESRI Imagery Layer,1,Couche d’imagerie ESRI,0
+wizard.layerType.esriImagery,ESRI Imagery Layer,1,Couche d’imagerie d’ESRI,1
 wizard.layerType.esriTile,ESRI Tile Layer,1,Couche de tuiles d'ESRI,1
 wizard.layerType.ogcWms,OGC Web Map Service,1,Couche WMS de l'OGC,1
 wizard.layerType.ogcWfs,OGC Web Feature Service,1,Service d'entités Web OGC,1
@@ -35,15 +35,15 @@ wizard.configure.latField.label,Latitude Field,1,Champ latitude,1
 wizard.configure.longField.label,Longitude Field,1,Champ longitude,1
 wizard.configure.sublayers.error.required,Sublayers are required,1,Des sous-couches sont requises,1
 wizard.configure.sublayers.label,Layers,1,Couches,1
-wizard.configure.sublayers.results,No results,1,Pas de résultats,0
+wizard.configure.sublayers.results,No results,1,Aucun résultat,1
 wizard.configure.sublayers.search,Search layers,1,Rechercher des couches,1
-wizard.configure.sublayers.select,Select layer(s),1,Sélectionner le(s) couche(s),0
-wizard.configure.sublayers.nested,Nested,1,Imbriqué,0
+wizard.configure.sublayers.select,Select layer(s),1,Sélectionner les couches,1
+wizard.configure.sublayers.nested,Nested,1,Imbriquées,1
 wizard.configure.colour.label,Colour,1,Couleur,1
 wizard.configure.colour.hue,Hue,1,Teinte,1
 wizard.configure.colour.copy,Copy colour,1,Copier la couleur,1
 wizard.configure.colour.hex,Hex,1,Hex,1
 wizard.step.cancel,Cancel,1,Annuler,1
 wizard.step.continue,Continue,1,Continuer,1
-wizard.upload.success,has been uploaded successfully.,1,a été téléchargée avec succès.,0
-wizard.upload.fail,failed to upload.,1,n'a pas pu être téléchargé.,0
+wizard.upload.success,has been uploaded successfully.,1,a été téléversé avec succès.,1
+wizard.upload.fail,failed to upload.,1,n’a pas pu être téléversé.,1
