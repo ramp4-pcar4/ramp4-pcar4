@@ -27,7 +27,7 @@ class ExportTitleFixture extends FixtureInstance implements ExportSubFixture {
             originY: 'top'
         };
 
-        if (titleFixtureConfig) {
+        if (titleFixtureConfig?.value !== undefined) {
             fabricTextConfig.text = titleFixtureConfig.value;
         }
 

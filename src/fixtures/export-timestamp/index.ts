@@ -29,7 +29,7 @@ class ExportTimestampFixture
             originX: 'left'
         };
 
-        if (timestampFixtureConfig) {
+        if (timestampFixtureConfig?.value !== undefined) {
             fabricTextConfig.text = timestampFixtureConfig.value;
         }
 

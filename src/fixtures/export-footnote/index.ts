@@ -27,7 +27,7 @@ class ExportFootnoteFixture
             top: 0
         };
 
-        if (footnoteFixtureConfig) {
+        if (footnoteFixtureConfig?.value != undefined) {
             fabricTextConfig.text = footnoteFixtureConfig.value;
         }
 
