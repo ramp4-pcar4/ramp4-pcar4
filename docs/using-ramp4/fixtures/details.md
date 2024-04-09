@@ -1,16 +1,13 @@
 # Details Fixture
 
-TODO this page needs updating to reflect the new two-panel approach
-
 The details fixture adds a panel to RAMP that displays in-depth information about any specific data point on the map. It can be opened by performing an identify query either on the map or through the RAMP API.
 
 ## Panels
-The details fixture consists of three screens:
+The details fixture consists of three sections:
 
-1. The __Layer List__ is the first screen that opens when you issue an identify request. It contains a list of visible map layers and displays how many results were found for each layer. Clicking on one of these layers will bring you to the next screen, the __feature list__.
-2. The __Feature List__ contains a list of all results found for the selected layer. Clicking on an item in this list will bring you to the __feature info__ screen.
-3. The __Feature Info__ screen displays information about one single data point. This screen will look different depending on the format of the information returned by the identify query. This is also the screen that can be customized using custom templates (see below).
-
+1. The __Layer List__ is the vertical column of icons along the left side of the panel. It contains a list of map layers participating in the identify and displays how many results were found for each layer. Clicking on one of these icons will display results for that layer.
+2. The __Feature Info__ view displays information about a single result item. This screen will look different depending on the format of the information returned by the identify query. This is also the screen that can be customized using custom templates (see below). Scroll controls can move the view to other results in the layer. The "See List" button will switch to __List View__.
+3. The __List View__ contains a list of all results found for the selected layer. Clicking on an item in this list will bring you to the __Feature Info__ screen.
 
 ## Creating a Custom Template
 
