@@ -316,7 +316,8 @@ let config = {
                 },
                 help: {
                     location: '../help'
-                }
+                },
+                extentguard: { alwaysOn: true }
             },
             panels: {
                 open: [{ id: 'legend', pin: true }]
@@ -340,6 +341,7 @@ const rInstance = createInstance(
 
 // add export fixtures
 rInstance.fixture.add('export');
+rInstance.fixture.add('extentguard');
 
 // load map if startRequired is true
 // rInstance.start();

@@ -59,11 +59,12 @@ export default {
                         collapsed: true,
                         items: [
                             { text: "Appbar", link: "/using-ramp4/fixtures/appbar" },
-                            { text: "Legend", link: "/using-ramp4/fixtures/legend" },
-                            { text: "Details Custom Templating", link: "/using-ramp4/fixtures/details" },
-                            { text: "Geosearch", link: "/using-ramp4/fixtures/geosearch" },
                             { text: "Data Grid", link: "/using-ramp4/fixtures/grid" },
+                            { text: "Details Custom Templating", link: "/using-ramp4/fixtures/details" },
+                            { text: "Extent Guard", link: "/using-ramp4/fixtures/extentguard" },
+                            { text: "Geosearch", link: "/using-ramp4/fixtures/geosearch" },
                             { text: "Layer Settings", link: "/using-ramp4/fixtures/layer-settings" },
+                            { text: "Legend", link: "/using-ramp4/fixtures/legend" },
                         ]
                     }
                     ]
