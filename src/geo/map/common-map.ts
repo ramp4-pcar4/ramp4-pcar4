@@ -20,8 +20,7 @@ import {
     GeometryType,
     SpatialReference
 } from '@/geo/api';
-
-import type { RampMapConfig } from '@/geo/api';
+import type { RampMapConfig, ZoomEasing } from '@/geo/api';
 
 // Would ideally call this BaseMap, but that would get confused with Basemap.
 // Do not add any event emits or listeners that would be tied to a specific map
@@ -370,13 +369,17 @@ export class CommonMapAPI extends APIScope {
      *
      * @param {BaseGeometry} geom A RAMP API geometry to zoom the map to
      * @param {number} [scale] An optional scale value of the map. Is ignored for non-Point geometries
-     * @param {boolean} [animate] An optional animation setting. On by default
+     * @param {boolean} [animate] Option to turn off the zoom animation. On by default
+     * @param {number} [duration] Option to change animation duration (in milliseconds). Default of 200. Ignored if animate is off.
+     * @param {ZoomEasing} [easing] Option to change animation easing function. Default of 'ease'. Ignored if animate is off.
      * @returns {Promise<void>} A promise that resolves when the map has finished zooming
      */
     async zoomMapTo(
         geom: BaseGeometry,
         scale?: number,
-        animate = true
+        animate = true,
+        duration = 200,
+        easing: ZoomEasing = 'ease'
     ): Promise<void> {
         if (this.esriView) {
             if (geom.invalid()) {
@@ -392,7 +395,7 @@ export class CommonMapAPI extends APIScope {
             if (g.type === GeometryType.POINT) {
                 zoomP.scale = scale || this.pointZoomScale;
             }
-            const opts: any = { animate: animate };
+            const opts: __esri.GoToOptions2D = { animate, duration, easing };
 
             return this.viewPromise.then(() => {
                 return this.esriView!.goTo(zoomP, opts);
