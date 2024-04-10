@@ -6,12 +6,12 @@ grid.splash.loading,Loading data...,1,Chargement des données...,1
 grid.splash.building,Building table...,1,Création du tableau...,1
 grid.splash.cancel,Cancel,1,Annuler,1
 grid.clearAll,Clear search and filters,1,Effacer la recherche et les filtres,1
-grid.pinColumns,Pin columns,1,Épingler les colonnes,0
+grid.pinColumns,Pin columns,1,Épingler les colonnes,1
 grid.export,Export,1,Exporter,1
 grid.layer.loading,The layer is loading...,1,La couche est en cours de téléchargement...,1
 grid.label.columns,Hide columns,1,Masquer les colonnes,1
-grid.label.copied,Copied,1,Copié,0
-grid.label.copy,Press ctrl + c or double click to copy,1,Appuyez sur ctrl + c ou double-cliquez pour copier,0
+grid.label.copied,Copied,1,Copié,1
+grid.label.copy,Press ctrl + c or double click to copy,1,Appuyez sur Ctrl + C ou double-cliquez pour copier,1
 grid.label.filters.show,Show filters,1,Afficher les filtres,1
 grid.label.filters.hide,Hide filters,1,Masquer les filtres,1
 grid.label.filters.apply,Apply filters to map,1,Appliquer les filtres à la carte,1
@@ -25,15 +25,15 @@ grid.filters.column.label.text,Search {0}...,1,Rechercher {0}...,1
 grid.filters.clear,Clear filters,1,Supprimer les filtres,1
 grid.filters.number.max,Max,1,Max,1
 grid.filters.number.min,Min,1,Min,1
-grid.filters.date.max,Max Date,1,Max Date,0
-grid.filters.date.min,Min Date,1,Min Date,0
+grid.filters.date.max,Max Date,1,Date max,1
+grid.filters.date.min,Min Date,1,Date min,1
 grid.filters.label.info,{range} of {total} entries shown,1,{range} de {total} saisies affichées,1
 grid.filters.label.filtered,(filtered from {max} total entries),1,(filtré à partir d'un total de {max} saisies),1
 grid.filters.extent,Filter by extent,1,Filtrer par étendue,1
 grid.cells.zoom,Zoom to feature,1,Zoom à l'élément,1
-grid.cells.zoom.zooming,Zooming...,1,Zoom...,0
-grid.cells.zoom.error,Zoom failed,1,Échec du zoom,0
-grid.cells.zoom.zoomed,Zoomed,1,Zoomé,0
+grid.cells.zoom.zooming,Zooming...,1,Zoom en cours...,1
+grid.cells.zoom.error,Zoom failed,1,Échec du zoom,1
+grid.cells.zoom.zoomed,Zoomed,1,Zoom terminé,1
 grid.cells.alert.zoom,Zoomed into feature,1,Zoom sur la caractéristique,1
 grid.cells.details,Details,1,Détails,1
 grid.button.title,Grid,1,Grille,1
