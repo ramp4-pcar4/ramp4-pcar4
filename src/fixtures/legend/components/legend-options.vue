@@ -148,7 +148,24 @@
                 href="javascript:;"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
-                    disabled: !legendItem!.layerControlAvailable(LayerControl.Reload)
+                    disabled: !legendItem!.layerControlAvailable(LayerControl.Reload) || !reloadableLayer
+                }"
+                :content="
+                    !legendItem!.layerControlAvailable(LayerControl.Reload) ||
+                    !reloadableLayer
+                        ? t('legend.layer.controls.reloadDisabled')
+                        : ''
+                "
+                @mouseover.stop="hover($event.currentTarget!)"
+                @mouseout.self="
+                    //@ts-ignore
+                    mobileMode ? null : $event.currentTarget?._tippy?.hide(),
+                        (hovered = false)
+                "
+                v-tippy="{
+                    placement: 'top-start',
+                    trigger: 'manual focus',
+                    aria: 'describedby'
                 }"
                 @click="reloadLayer"
             >
@@ -169,13 +186,17 @@
 <script setup lang="ts">
 import { GlobalEvents, InstanceAPI } from '@/api';
 import { LayerControl } from '@/geo/api';
-import { inject, ref, toRaw } from 'vue';
+import { computed, inject, ref, toRaw } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { LayerItem } from '../store/layer-item';
+import { usePanelStore } from '@/stores/panel';
 
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
 const dropdown = ref();
+const hovered = ref(false);
+const panelStore = usePanelStore();
+const mobileMode = ref(panelStore.mobileView);
 
 const props = defineProps({
     legendItem: LayerItem
@@ -278,10 +299,31 @@ const removeLayer = () => {
  * Reloads a layer on the map.
  */
 const reloadLayer = () => {
-    if (props.legendItem!.layerControlAvailable(LayerControl.Reload)) {
+    if (
+        props.legendItem!.layerControlAvailable(LayerControl.Reload) &&
+        reloadableLayer.value
+    ) {
         toRaw(props.legendItem!.layer!).reload();
         dropdown.value.open = false;
     }
+};
+
+/**
+ * Determine if the layer can be reloaded
+ */
+const reloadableLayer = computed((): boolean => {
+    return (
+        props.legendItem instanceof LayerItem &&
+        toRaw(props.legendItem!.layer)?.canReload
+    );
+});
+
+const hover = (t: EventTarget) => {
+    hovered.value = true;
+    setTimeout(() => {
+        //@ts-ignore
+        if (hovered.value) mobileMode.value ? null : t._tippy?.show();
+    }, 300);
 };
 
 /**

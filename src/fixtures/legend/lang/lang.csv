@@ -32,6 +32,7 @@ legend.layer.controls.boundaryzoom,Zoom to Layer Boundary,1,Zoomer à la limite,
 legend.layer.controls.cancel,Cancel,1,Annuler,1
 legend.layer.controls.remove,Remove,1,Retirer,1
 legend.layer.controls.reload,Reload,1,Recharger,1
+legend.layer.controls.reloadDisabled,Reload disabled,1,Rechargement désactivé,0
 legend.alert.symbologyExpanded,Layer legend expanded,1,Légende de la couche développée,1
 legend.alert.symbologyCollapsed,Layer legend collapsed,1,Légende de la couche réduite,1
 legend.alert.groupExpanded,Legend group expanded,1,Groupe de légende développé,1

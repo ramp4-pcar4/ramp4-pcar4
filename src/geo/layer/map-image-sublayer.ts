@@ -32,6 +32,8 @@ export class MapImageSublayer extends AttribLayer {
         this.dataFormat = DataFormat.ESRI_FEATURE; // this will get flipped to raster during the server metadata checks if needed
         this.tooltipField = '';
         this.hovertips = false;
+        this.url = this.parentLayer?.url;
+        this.canReload = !(!this.url && !this.origRampConfig.caching);
 
         if (!parent.esriLayer) {
             throw new Error(
