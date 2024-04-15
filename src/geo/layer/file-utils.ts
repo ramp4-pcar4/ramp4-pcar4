@@ -6,13 +6,13 @@ import shp from 'shpjs/dist/shp.min.js';
 import axios from 'redaxios';
 
 import { EsriSimpleRenderer, EsriSpatialReference } from '@/geo/esri';
-import {
-    Colour,
-    type CsvOptions,
-    FieldType,
-    type GeoJsonOptions,
-    LayerType,
-    type FieldDefinition
+import { Colour, FieldType, LayerType } from '@/geo/api';
+
+import type {
+    CsvOptions,
+    FieldDefinition,
+    GeoJsonField,
+    GeoJsonOptions
 } from '@/geo/api';
 
 /**
@@ -28,6 +28,10 @@ const featureTypeToRenderer = {
     Polygon: 'outlinedPoly',
     MultiPolygon: 'outlinedPoly'
 };
+
+// ---------------------
+// NOTE: Avoiding array methods like .forEach() in this file due to large datasets that tend to show up.
+// ---------------------
 
 /**
  * Performs in place assignment of integer ids for a GeoJSON FeatureCollection.
@@ -53,7 +57,9 @@ function assignIds(geoJson: any): void {
 
     // create an 'id' property for every feature, doing autonumber.
     // 0 is not a valid object id
-    geoJson.features.forEach((val: any, idx: number) => {
+
+    for (let i = 0; i < geoJson.features.length; i++) {
+        const val = geoJson.features[i];
         Object.assign(val.properties, { ID_FILE: '', OBJECTID_FILE: '' });
 
         // to avoid double ID columns outside properties
@@ -69,21 +75,21 @@ function assignIds(geoJson: any): void {
             emptyObjID = false;
         }
 
-        val.id = idx + 1;
-    });
+        val.id = i + 1;
+    }
 
     // remove ID_FILE if all empty
     if (emptyID) {
-        geoJson.features.forEach(function (val: any) {
-            delete val.properties.ID_FILE;
-        });
+        for (let i = 0; i < geoJson.features.length; i++) {
+            delete geoJson.features[i].properties.ID_FILE;
+        }
     }
 
     // remove OBJECTID_FILE if all empty
     if (emptyObjID) {
-        geoJson.features.forEach(function (val: any) {
-            delete val.properties.OBJECTID_FILE;
-        });
+        for (let i = 0; i < geoJson.features.length; i++) {
+            delete geoJson.features[i].properties.OBJECTID_FILE;
+        }
     }
 }
 
@@ -126,10 +132,11 @@ function cleanUpFields(
             f.name = newField;
 
             // update the geoJson to reflect the field name change.
-            geoJson.features.forEach((gf: any) => {
+            for (let i = 0; i < geoJson.features.length; i++) {
+                const gf = geoJson.features[i];
                 gf.properties[newField] = gf.properties[oldField];
                 delete gf.properties[oldField];
-            });
+            }
         }
     });
 }
@@ -162,6 +169,21 @@ function cleanUpGeomCollection(geoJson: any, idx: number) {
             type: `Multi${geoms[0].type}`,
             coordinates: merged
         };
+    }
+}
+
+/**
+ * Returns a unified geom type, used to ensure GeoJson is not mixed geometry
+ * @param realGeomType geom type from GeoJson
+ * @returns unified geom type string
+ */
+function validGeomType(realGeomType: string): string {
+    if (realGeomType === 'MultiLineString') {
+        return 'LineString';
+    } else if (realGeomType === 'MultiPolygon') {
+        return 'Polygon';
+    } else {
+        return realGeomType;
     }
 }
 
@@ -202,7 +224,7 @@ export class FileUtils extends APIScope {
     /**
      * Extracts fields from the first feature in the feature collection
      */
-    extractGeoJsonFields(geoJson: any) {
+    extractGeoJsonFields(geoJson: any): Array<GeoJsonField> {
         if (geoJson.features.length < 1) {
             throw new Error(
                 'GeoJSON field extraction requires at least one feature'
@@ -210,60 +232,52 @@ export class FileUtils extends APIScope {
         }
 
         // handle geometry collection structure
-        let geomType = geoJson.features[0].geometry.type;
-        geoJson.features.forEach((feature: any, idx: number) => {
+
+        let overallGeomType = '';
+        for (let i = 0; i < geoJson.features.length; i++) {
+            const feature = geoJson.features[i];
             const featType = feature.geometry.type;
             if (featType === 'GeometryCollection') {
                 const geoms = feature.geometry.geometries;
                 // geometry collection cannot be empty, nor contain empty geometries
                 if (geoms === undefined || geoms.length === 0) {
-                    return Promise.reject(
-                        new Error(
-                            'GeoJSON file has geometry collection with missing/incomplete geometries'
-                        )
+                    throw new Error(
+                        'GeoJSON file has geometry collection with missing/incomplete geometries'
                     );
                 }
 
                 // geometry type must be consistent within geometry collection
-                geomType = geoms[0].type;
-                geoms.forEach((geom: any) => {
-                    if (geom.type !== geomType) {
-                        return Promise.reject(
-                            new Error(
-                                'GeoJSON file has geometry collection containing multiple geometry types'
-                            )
+                const geomType = geoms[0].type;
+                for (let j = 0; j < geoms.length; j++) {
+                    if (geoms[j].type !== geomType) {
+                        throw new Error(
+                            'GeoJSON file has geometry collection containing multiple geometry types'
                         );
                     }
-                });
+                }
 
                 // convert geometry collection to single structure
-                cleanUpGeomCollection(geoJson, idx);
+                cleanUpGeomCollection(geoJson, i);
             }
-        });
 
-        // This ensures that after any cleanup, geometries in the file are of the same type.
-        // LineStrings/MultiLineStrings and Polygons/MultiPolygons can be considered the same type because Esri
-        // doesn't differentiate between the single & multi variants. This is NOT the case for Point/MultiPoint.
-        if (
-            [
-                ...new Set(
-                    geoJson.features.map((f: any) => {
-                        if (f.geometry.type === 'MultiLineString') {
-                            return 'LineString';
-                        } else if (f.geometry.type === 'MultiPolygon') {
-                            return 'Polygon';
-                        } else {
-                            return f.geometry.type;
-                        }
-                    })
-                )
-            ].length !== 1
-        ) {
-            throw new Error('GeoJSON file contains multiple geometry types');
+            // This ensures that after any cleanup, geometries in the file are of the same type.
+            // LineStrings/MultiLineStrings and Polygons/MultiPolygons can be considered the same type because Esri
+            // doesn't differentiate between the single & multi variants. This is NOT the case for Point/MultiPoint.
+
+            const vGeomType = validGeomType(feature.geometry.type);
+            if (overallGeomType === '') {
+                // first one, set lock on type
+                overallGeomType = vGeomType;
+            } else if (overallGeomType !== vGeomType) {
+                // this feature is not consistent
+                throw new Error(
+                    'GeoJSON file contains multiple geometry types'
+                );
+            }
         }
 
         // extract all fields and type them as string for now
-        const fields: { name: string; type: string }[] = Object.keys(
+        const fields: Array<GeoJsonField> = Object.keys(
             geoJson.features[0].properties
         ).map(field => {
             return { name: field, type: 'string' };
@@ -542,7 +556,8 @@ export class FileUtils extends APIScope {
             this.$iApi.geo.geom.geoJsonGeomTypeToEsriGeomType(geoJsonGeomType);
 
         // set proper SR on the geometeries
-        esriJson.forEach((gr: any) => {
+        for (let i = 0; i < esriJson.length; i++) {
+            const gr = esriJson[i];
             gr.geometry.spatialReference = fancySR;
             gr.geometry.type = configPackage.geometryType;
 
@@ -559,9 +574,9 @@ export class FileUtils extends APIScope {
                     );
                 }
             });
-        });
+        }
 
-        configPackage.source = <any>esriJson; // TODO see if this needs to become esriJson.features
+        configPackage.source = <any>esriJson;
         configPackage.spatialReference = fancySR;
         configPackage.id = layerId;
 
@@ -648,5 +663,31 @@ export class FileUtils extends APIScope {
             return FieldType.DOUBLE;
         }
         return FieldType.STRING;
+    }
+
+    /**
+     * Will property convert json-based raw data (on a layer config) to a json object
+     * while respecting caching considerations.
+     *
+     * @param {String | Object} rawData json-compatible payload from config
+     * @param {Boolean=false} caching if layer is concerned about caching the payload
+     * @returns {Object} data as a Json object
+     */
+    rawDataJsonParser(rawData: any, caching: boolean = false): any {
+        let realJson: any;
+        if (typeof rawData === 'string') {
+            // stringified json. enhnace to an object
+            realJson = JSON.parse(rawData);
+        } else if (caching) {
+            // source is object, but needs to remain unchanged for caching scenarios.
+            // some of the json processors adjust byRef, so need a deep clone.
+            realJson = structuredClone(rawData);
+        } else {
+            // not caching, so don't care if source gets corrupted. avoid duplication of object,
+            // pass pointer to the input
+            realJson = rawData;
+        }
+
+        return realJson;
     }
 }

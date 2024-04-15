@@ -15,13 +15,16 @@ export class ShapefileLayer extends FileLayer {
 
         if (
             this.origRampConfig.rawData &&
-            typeof this.origRampConfig.rawData === 'string'
+            this.origRampConfig.rawData instanceof ArrayBuffer
         ) {
             // shapefile data has been passed in as static data.
             // since shapefile is binary, you cannot drop this in a layer config file.
-            // I think what can happen is a wizard could read the file (via file picker)
-            // or some random api code could do pre-processing, and then drop it on the rawData
-            // parameter which allows this routine to consume it.
+            // The wizard does not use this route. It converts the zip to GeoJson ahead of time and
+            // writes the layer config as `file-geojson`.
+            // Only way this would be used is some other code (custom fixture or outside the instance)
+            // has the zipped shape as an array buffer and tacks it onto the layer config it creates
+            // during runtime.
+
             shapefileData = this.origRampConfig.rawData;
         } else if (this.origRampConfig.url) {
             shapefileData = await this.$iApi.geo.layer.files.fetchFileData(
@@ -30,7 +33,7 @@ export class ShapefileLayer extends FileLayer {
             );
         } else {
             throw new Error(
-                'shapefile file config contains no raw data or url'
+                'shapefile config contains no url or no/invalid raw data'
             );
         }
 

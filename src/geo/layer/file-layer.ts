@@ -57,7 +57,7 @@ export class FileLayer extends AttribLayer {
 
     // temporarily stores GeoJSON. acts as a nice way for subclasses to parse their random sources to GeoJSON, drop it here,
     // and have the generic initiation code in this file just grab it.
-    protected sourceGeoJson: string | object | undefined;
+    protected sourceGeoJson: object | undefined;
 
     tooltipField: string; // if we end up having more things that are shared with FeatureLayer, consider making a FeatureBaseLayer class for both to inherit from
 
@@ -93,15 +93,14 @@ export class FileLayer extends AttribLayer {
         // NOTE subclasses of FileLayer should do all their file data processing first,
         //      drop it in this.sourceGeoJson,
         //      then call super.onInitiate() as final step.
+        //      If the configuration uses rawData and caching, the subclass is responsible
+        //      for ensuring sourceGeoJson does not point to same object as rawData.
+        //      sourceGeoJson will get modified by this method, and rawData must remain
+        //      untouched when caching is on.
 
         if (!this.sourceGeoJson) {
-            throw new Error('File Layer is missing raw data.');
+            throw new Error('File Layer is missing source data.');
         }
-
-        const realJson: any =
-            typeof this.sourceGeoJson === 'string'
-                ? JSON.parse(this.sourceGeoJson)
-                : JSON.parse(JSON.stringify(this.sourceGeoJson)); // need a deep copy so that all the manipulation of realJson below does not affect sourceGeoJson
 
         // NOTE: we are not setting the source projection option. It will assume LatLong, or use projection
         //       contained in the geojson file. The option flag is only there in case other blocks of code
@@ -120,7 +119,7 @@ export class FileLayer extends AttribLayer {
         };
 
         this.esriJson = await this.$iApi.geo.layer.files.geoJsonToEsriJson(
-            realJson,
+            this.sourceGeoJson,
             opts
         );
 
@@ -129,7 +128,7 @@ export class FileLayer extends AttribLayer {
         );
 
         this.esriJson = undefined;
-        if (this.origRampConfig.caching !== true) {
+        if (!this.origRampConfig.caching) {
             delete this.origRampConfig.rawData;
         }
         delete this.sourceGeoJson;
