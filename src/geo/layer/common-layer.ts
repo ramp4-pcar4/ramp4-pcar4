@@ -89,7 +89,8 @@ export class CommonLayer extends LayerInstance {
         this.initiationState = InitiationState.NEW;
         this.drawState = DrawState.NOT_LOADED;
         this.loadDefProm = new DefPromise();
-
+        this.url = this.origRampConfig.url;
+        this.canReload = !!(this.url || this.origRampConfig.caching);
         this.loadPromFulfilled = false;
 
         this.layerTree = new TreeNode(0, this.uid, this.name, true); // is a layer with layer index 0 by default. subclasses will change this when they load
